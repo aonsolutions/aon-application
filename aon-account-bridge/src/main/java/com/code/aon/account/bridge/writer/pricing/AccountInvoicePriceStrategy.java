@@ -3,14 +3,14 @@ package com.code.aon.account.bridge.writer.pricing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.util.AccountingUtil;
-import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.Tax;
-import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
@@ -24,16 +24,13 @@ public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AccountInvoicePriceStrategy.class.getName());
 
 	protected void setTaxBreakDownAddInfo(TaxBreakDown breakDown, InvoiceDetail invoiceDetail) {
-		InvoiceType invoiceType = invoiceDetail.getInvoice().getType();
-		InvoiceTransactionType tran = invoiceDetail.getInvoice().getTransaction();
-		breakDown.setAccount(obtainTaxAccount(breakDown.getTaxType(), invoiceType, invoiceDetail));
-		
-		// Este IF es para que aparezca el iva contrario en las contabilización
-		// de las facturas intracomunitarias y de ISP.
-		if (breakDown.getTaxType() == TaxType.VAT && invoiceType != InvoiceType.SALES &&
-				(tran == InvoiceTransactionType.INTRACOMMUNITY ||
-				tran == InvoiceTransactionType.OTHER_ISP) ) {
-			breakDown.setBalancingAccount(obtainTaxAccount(breakDown.getTaxType(), InvoiceType.SALES, invoiceDetail));
+		Invoice invoice = invoiceDetail.getInvoice();
+		breakDown.setAccount(obtainTaxAccount(breakDown.getTaxType(), invoice.getType(), invoiceDetail));
+		if (breakDown.isVat()) {
+			// Para que aparezca el IVA contrario en las contabilización de las facturas intracomunitarias y de ISP.
+			if (!invoice.isSales() && (invoice.isIntracommunity() || invoice.isOtherISP())) {
+				breakDown.setBalancingAccount(obtainTaxAccount(breakDown.getTaxType(), InvoiceType.SALES, invoiceDetail));
+			}
 		}
 	}
 

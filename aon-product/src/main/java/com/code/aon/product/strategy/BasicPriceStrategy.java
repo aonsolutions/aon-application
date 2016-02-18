@@ -370,12 +370,11 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 	}
 
 	protected double obtainDeductibleQuota(TaxBreakDown taxBreakDown) {
-		return obtainDeductibleQuota(taxBreakDown.getBase(), taxBreakDown.getTaxPercent(), taxBreakDown.getDeductiblePercent());
-	}
-
-	protected double obtainDeductibleQuota(double base, double percentage, double deductiblePercentage) {
-		double quota = obtainQuota(base, percentage);
-		return CommonUtil.round(quota * deductiblePercentage / 100);
+		double quota = obtainQuota(taxBreakDown.getBase(), taxBreakDown.getTaxPercent());
+		if (taxBreakDown.getSurchargePercent() != 0) {
+			quota = CommonUtil.round(quota + obtainQuota(taxBreakDown.getBase(), taxBreakDown.getSurchargePercent()));
+		}
+		return CommonUtil.round(quota * taxBreakDown.getDeductiblePercent() / 100);
 	}
 
 }

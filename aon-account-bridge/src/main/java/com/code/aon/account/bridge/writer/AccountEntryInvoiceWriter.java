@@ -161,10 +161,10 @@ public class AccountEntryInvoiceWriter implements Serializable {
 	
 	private Map<Account, Double> obtainRetentionQuotasPerAccount(List<TaxBreakDown> taxBreakDownList, Invoice invoice) throws ManagerBeanException {
 		TaxRecordingTo recordingTo = new TaxRecordingTo();
-		for (TaxBreakDown taxBreakDown : taxBreakDownList ) {
+		for (TaxBreakDown taxBreakDown : taxBreakDownList) {
 			if (taxBreakDown.getTaxType().equals(TaxType.RETENTION)) {
-				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), CommonUtil.round(taxBreakDown.getTaxQuota()+taxBreakDown.getSurchargeQuota()));
-				insertInvoiceTaxAccount(invoice, taxBreakDown, false);
+				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota()));
+				insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getAccount());
 			}
 		}
 		return recordingTo.getTaxQuotaAccountMap();
@@ -172,14 +172,27 @@ public class AccountEntryInvoiceWriter implements Serializable {
 
 	private Map<Account, Double> obtainTaxQuotasPerAccount(List<TaxBreakDown> taxBreakDownList, Invoice invoice, boolean ignoreTaxFree) throws ManagerBeanException {
 		TaxRecordingTo recordingTo = new TaxRecordingTo();
-		for (TaxBreakDown taxBreakDown : taxBreakDownList ) {
+		for (TaxBreakDown taxBreakDown : taxBreakDownList) {
 			if (!taxBreakDown.getTaxType().equals(TaxType.RETENTION)) {
-				double amount = taxBreakDown.getTaxQuota()+taxBreakDown.getSurchargeQuota();
-				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), CommonUtil.round(amount));
-				insertInvoiceTaxAccount(invoice, taxBreakDown, false);
+				double quota = taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota();
+				if (taxBreakDown.getDeductibleQuota() != quota) {
+					quota = taxBreakDown.getDeductibleQuota();
+				}
+				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), CommonUtil.round(quota));
+				insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getAccount());
 				if (ignoreTaxFree) {
-					recordingTo.addTaxQuotaAccount(taxBreakDown.getBalancingAccount(), CommonUtil.round(amount * (-1)));
-					insertInvoiceTaxAccount(invoice, taxBreakDown, true);
+					recordingTo.addTaxQuotaAccount(taxBreakDown.getBalancingAccount(), CommonUtil.round(quota * (-1)));
+					insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getBalancingAccount());
+				} else {
+					if (taxBreakDown.getDeductibleQuota() != (taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota())) {
+						Account account = AccountingUtil.obtainDefaultAccount(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC);
+						if (account == null) {
+							throw new ManagerBeanException("Falta definir la Cuenta de ajustes negativos por IVA");
+						}
+						quota = taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota() - taxBreakDown.getDeductibleQuota();
+						recordingTo.addTaxQuotaAccount(account, CommonUtil.round(quota));
+						insertInvoiceTaxAccount(invoice, taxBreakDown, account);
+					}
 				}
 			}
 		}
@@ -190,12 +203,12 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		Map<Account, Double> basesPerAccount = new HashMap<Account, Double>();
 		if (invoice.isInvestment()) {
 			if (!invoice.isSales()) {
-				fillPurchaseBasesPerAccountFromAmortization(invoice,basesPerAccount);	
+				fillPurchaseBasesPerAccountFromAmortization(invoice, basesPerAccount);	
 			} else {
-				fillSaleBasesPerAccountFromAmortization(invoice,basesPerAccount);
+				fillSaleBasesPerAccountFromAmortization(invoice, basesPerAccount);
 			}
 		} else {
-			fillBasesPerAccountFromInvoiceDetail(invoice,basesPerAccount);
+			fillBasesPerAccountFromInvoiceDetail(invoice, basesPerAccount);
 		}
 		if (basesPerAccount.size() > 1) {
 			double diffBase = invoice.getTaxableBase();
@@ -246,12 +259,12 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_INVOICE_ID), invoice.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_SALES), false );
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_SALES), false);
 		List<ITransferObject> list = bean.getList(criteria);
 		// De momento solo se puede vincular una ficha de amortizacion a una factura.
-		if (list != null && list.size() > 0 ) {
+		if (list != null && list.size() > 0) {
 			AmortizationInvoice ai = (AmortizationInvoice) list.get(0);
-			basesPerAccount.put(ai.getAmortization().getFixedAssetAccount(), invoice.getTaxableBase() );		
+			basesPerAccount.put(ai.getAmortization().getFixedAssetAccount(), invoice.getTaxableBase());		
 		}
 	}
 	
@@ -259,24 +272,24 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_INVOICE_ID), invoice.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_SALES), true );
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_SALES), true);
 		List<ITransferObject> list = bean.getList(criteria);
 		// De momento solo se puede vincular una factura a una ficha de amortizacion.
-		if (list != null && list.size() > 0 ) {
+		if (list != null && list.size() > 0) {
 			AmortizationInvoice ai = (AmortizationInvoice) list.get(0);
 			double amount = ai.getAmortization().getAmount();
-			basesPerAccount.put(ai.getAmortization().getFixedAssetAccount(), amount );
+			basesPerAccount.put(ai.getAmortization().getFixedAssetAccount(), amount);
 			
 			IManagerBean detailBean = BeanManager.getManagerBean(AmortizationDetail.class);
 			criteria = new Criteria();
 			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), ai.getAmortization().getId());
-			criteria.addOrder(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE), false );
+			criteria.addOrder(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE), false);
 			list = detailBean.getList(criteria);
 			double accumulated = 0.0;
-			if (list != null && list.size() > 0 ) {
+			if (list != null && list.size() > 0) {
 				AmortizationDetail ad = (AmortizationDetail) list.get(0);
 				accumulated = ad.getAccumulated();
-				basesPerAccount.put(ai.getAmortization().getAccumulatedAccount(), CommonUtil.round(accumulated*(-1),2) );	
+				basesPerAccount.put(ai.getAmortization().getAccumulatedAccount(), CommonUtil.round(accumulated*(-1),2));	
 			}
 			double profitLoss = CommonUtil.round((invoice.getTaxableBase() + accumulated) - amount,2);
 			Account pl = null;
@@ -299,7 +312,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		invoiceDetailAccountBean.insert(invoiceDetailAccount);
 	}
 
-	private void insertInvoiceTaxAccount(Invoice invoice, TaxBreakDown taxBreakDown, boolean balancingAccount) throws ManagerBeanException {
+	private void insertInvoiceTaxAccount(Invoice invoice, TaxBreakDown taxBreakDown, Account account) throws ManagerBeanException {
 		IManagerBean invoiceTaxAccountBean = BeanManager.getManagerBean(InvoiceTaxAccount.class);
 		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 		Criteria criteria = new Criteria();
@@ -312,7 +325,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 			InvoiceTax invoiceTax = (InvoiceTax) to;
 			InvoiceTaxAccount invoiceTaxAccount = new InvoiceTaxAccount();
 			invoiceTaxAccount.setInvoiceTax(invoiceTax);
-			invoiceTaxAccount.setAccount(balancingAccount?taxBreakDown.getBalancingAccount():taxBreakDown.getAccount());
+			invoiceTaxAccount.setAccount(account);
 			invoiceTaxAccountBean.insert(invoiceTaxAccount);
 		}
 	}
@@ -489,7 +502,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailAccountBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		List<ITransferObject> list = invoiceDetailAccountBean.getList(criteria);
-		for (ITransferObject to : list ) {
+		for (ITransferObject to : list) {
 			InvoiceDetailAccount invoiceDetailAccount = (InvoiceDetailAccount) to;
 			invoiceDetailAccountBean.remove(invoiceDetailAccount);
 		}
@@ -500,7 +513,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceTaxAccountBean.getFieldName(IEntityAlias.INVOICE_TAX_ACCOUNT_INVOICE_TAX_INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		List<ITransferObject> list = invoiceTaxAccountBean.getList(criteria);
-		for (ITransferObject to : list ) {
+		for (ITransferObject to : list) {
 			InvoiceTaxAccount invoiceTaxAccount = (InvoiceTaxAccount) to;
 			invoiceTaxAccountBean.remove(invoiceTaxAccount);
 		}

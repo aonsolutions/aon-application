@@ -35,7 +35,7 @@ public class InvoiceTaxBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				invoiceTax.setDeductiblePercent(100);
 			}
 			if (invoiceTax.getQuota() != 0) {
-				invoiceTax.setDeductibleQuota(CommonUtil.round(invoiceTax.getQuota() * invoiceTax.getDeductiblePercent() / 100));
+				invoiceTax.setDeductibleQuota(CommonUtil.round((invoiceTax.getQuota() + invoiceTax.getSurchargeQuota()) * invoiceTax.getDeductiblePercent() / 100));
 			}
 		} else {
 			invoiceTax.setDeductiblePercent(0);

@@ -58,6 +58,25 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 						mapBreakDown.setBase(CommonUtil.round(mapBreakDown.getBase() + breakDown.getBase(), 4));
 						mapBreakDown.setTaxQuota(CommonUtil.round(mapBreakDown.getTaxQuota() + breakDown.getTaxQuota()));
 						mapBreakDown.setSurchargeQuota(CommonUtil.round(mapBreakDown.getSurchargeQuota() + breakDown.getSurchargeQuota()));
+						if (mapBreakDown.isVat()) {
+							if (breakDown.getDeductibleQuota() != 0) {
+								mapBreakDown.setDeductibleQuota(CommonUtil.round(mapBreakDown.getDeductibleQuota() + breakDown.getDeductibleQuota()));
+							} else {
+								breakDown.setDeductibleQuota(obtainDeductibleQuota(breakDown));
+								if (mapBreakDown.getDeductibleQuota() != 0) {
+									mapBreakDown.setDeductibleQuota(CommonUtil.round(mapBreakDown.getDeductibleQuota() + breakDown.getDeductibleQuota()));
+								} else {
+									if (mapBreakDown.getDeductiblePercent() != breakDown.getDeductiblePercent()) {
+										mapBreakDown.setDeductibleQuota(CommonUtil.round(obtainDeductibleQuota(mapBreakDown) + breakDown.getDeductibleQuota()));
+										if (breakDown.getDeductiblePercent() != 100) {
+											mapBreakDown.setDeductiblePercent(breakDown.getDeductiblePercent());
+										}
+									} else {
+										mapBreakDown.setDeductibleBase(CommonUtil.round(mapBreakDown.getDeductibleBase() + breakDown.getDeductibleBase()));
+									}
+								}
+							}
+						}
 					} else {
 						mapBreakDown = breakDown;
 					}
@@ -77,6 +96,9 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 			} else {
 				breakDown.setSurchargeQuota(0.0);
 				breakDown.setSurchargePercent(0.0);
+			}
+			if (breakDown.getDeductibleQuota() == 0) {
+				breakDown.setDeductibleQuota(obtainDeductibleQuota(breakDown));
 			}
 			taxBreakDowns.add(breakDown);
 		}

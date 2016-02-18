@@ -760,6 +760,9 @@
 	<table name="invest_asset">
 		<column name="type" type="com.code.aon.company.enumeration.InvestAssetType"/>
 		<column name="regime" type="com.code.aon.company.enumeration.InvestAssetRegime"/>
+		<foreign-key constraint-name="FK_INVEST_ASSET_ACTIVITY">
+			<many-to-one property="activity"/>
+		</foreign-key>
 	</table>
 
 	<table name="invoice">
