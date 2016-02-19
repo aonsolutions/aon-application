@@ -308,9 +308,11 @@ public class ContextFunctions {
 		} catch (Exception e) {
 			try {
 				for (ITimedResult<Double> result : context.eval(var.getName(), bindings.getPeriod().getStart(),
-						bindings.getPeriod().getEnd(), Double.class))
-					if ( result.getValue() != null)
+						bindings.getPeriod().getEnd(), Double.class)) {
+					Object value = bindings.get(var.getName()); // read ???
+					if ( result.getValue() != null) 
 						return result.getValue() ;
+				}
 			} catch (Throwable t) {
 
 			}

@@ -759,13 +759,16 @@ public class SalaryDraftBuilder
 		salaryDraft.clear();
 
 	}
-
 	private void addContext(Map<String, ITimedVariable<?>> context) {
 		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {
 
 			String name = entry.getKey();
 			ITimedVariable<?> var = entry.getValue();
-			addVariable(name, var);
+			try {
+				addVariable(name, var);
+			} catch ( Throwable t ) {
+				System.err.print( "TODO [SalaryDraftBuilder]: Impossible get value of '" + entry + "'. " );
+			}
 		}
 	}
 
