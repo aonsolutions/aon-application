@@ -33,8 +33,8 @@ public class FANGeneral implements Serializable, IFanFactory {
 	public String getQuoteIndicator(List<ITransferObject> salaryDataList, Map<String, String> contractDataMap) {
 		ContractCode code = getContractCode(salaryDataList, contractDataMap);
 		if(code!=null && (code.getValue().startsWith("2") || code.getValue().startsWith("3") || code.getValue().startsWith("5"))){
-			String weekHours = obtainWeekHours(salaryDataList, contractDataMap);
-			if( StringUtils.isNotBlank(weekHours) ){
+			if( StringUtils.isNotBlank(obtainWorkedHours(salaryDataList))
+					|| StringUtils.isNotBlank(obtainWeekHours(salaryDataList, contractDataMap))){
 				return "H";
 			}
 		}
