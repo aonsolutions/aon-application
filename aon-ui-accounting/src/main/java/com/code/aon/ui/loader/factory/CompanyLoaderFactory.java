@@ -18,6 +18,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Company;
+import com.code.aon.company.Enterprise;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Tax;
@@ -197,7 +199,7 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
         }
 
 		// Direccion
-		insertRegistryAddressCompany(company.getRegistry(),loaded);
+		insertRegistryAddressCompany(company.getRegistry(),loaded,domainId,params);
 		
 		// Telefono
 		insertRegistryMediaCompany(company.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono1());
@@ -263,7 +265,7 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
 		return company.getId();
 	}
 	
-	private void insertRegistryAddressCompany(Registry registry, LoadedCompany loaded) throws ManagerBeanException {
+	private void insertRegistryAddressCompany(Registry registry, LoadedCompany loaded, Integer domainId, LoaderParams params) throws ManagerBeanException {
 		
 		// Se comprueba si ya existe la direccion principal, si existe se actualiza, sino se añade
 		
@@ -316,7 +318,36 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
 		
 		if (StringUtils.isNotBlank(loaded.getCodigoMunicipio()))
 			address.setMunicipalityCode(loaded.getCodigoMunicipio());
-		bean.insertOrUpdate(address);		
+		address = (RegistryAddress) bean.insertOrUpdate(address);
+		
+		// Comprobar si existe el centro de trabajo, si no existe se crea uno como "PRINCIPAL"
+		IManagerBean bwp = BeanManager.getManagerBean(WorkPlace.class);
+		Criteria cwp = new Criteria();            
+        cwp.addEqualExpression(bwp.getFieldName(IEntityAlias.WORK_PLACE_DOMAIN), domainId);       
+        List<ITransferObject> lwp = bwp.getList(cwp);
+        
+        if (lwp==null || lwp.size()==0) {
+        	
+        	// Obtener el registro de Enterprise del dominio
+    		IManagerBean beanEnterprise = BeanManager.getManagerBean(Enterprise.class);
+    		
+    		Criteria criteriaEnterprise = new Criteria();            
+            criteriaEnterprise.addEqualExpression(beanEnterprise.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN), DomainManager.getCurrentDomain());
+            List<ITransferObject> listEnterprise = beanEnterprise.getList(criteriaEnterprise);
+            
+            Enterprise ep = (Enterprise) listEnterprise.get(0);
+        	        	
+        	// Añadir el centro de trabajo
+            WorkPlace wp = new WorkPlace();
+        	wp.setDomain(domainId);
+        	wp.setAddress(address);
+        	wp.setActive(true);
+        	wp.setDescription("PRINCIPAL");
+        	wp.setScope(params.getScope());
+        	wp.setEnterprise(ep);       	
+        	bwp.insert(wp);        	
+        }
+        
 	}
 		
 	private void insertRegistryMediaCompany(Registry registry, MediaType type, String value) throws ManagerBeanException {
