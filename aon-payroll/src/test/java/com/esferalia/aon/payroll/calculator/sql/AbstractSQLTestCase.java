@@ -691,6 +691,13 @@ public abstract class AbstractSQLTestCase {
 	}
 
 	public static final ContractRecord newContract(AONContext aonContext,
+			Date startDate, Date endDate, Map<String, String> data, String[] payments,
+			String[] deductions, AgreementLevelCategoryRecord category) {
+		return newContract(aonContext, SSRegimeType.GENERAL, CCCType.PRINCIPAL,
+				startDate, endDate, data, payments, deductions, category);
+	}
+
+	public static final ContractRecord newContract(AONContext aonContext,
 			SSRegimeType ssRegimeType, CCCType cccType, Date startDate,
 			Map<String, String> data, String[] payments, String[] deductions,
 			AgreementLevelCategoryRecord category) {

@@ -383,7 +383,8 @@ public class SalarySelect extends Composite {
 					settleDatesProvider.addDataDisplay(dateListBox);
 
 				final Date endDate = SalarySelect.this.salaryPreview
-						.getEndDate();
+						//.getEndDate();
+						.getIssueDate();
 
 				int index = getIndexOfSettle(endDate);
 

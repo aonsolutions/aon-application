@@ -35,6 +35,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
+import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -800,4 +801,20 @@ public class EmployeesServiceHelper {
 		return draftCtx;
 	}
 
+	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSettleCalculatorContextImpl(
+			final Connection conn, final SalaryDraft draft,
+			IContractSalaryCalculatorContext.IListener listener)
+			throws ExpressionException, SQLException {
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
+				draft.getEmployee().getId());
+
+		SQLSettleDraftCalculatorContext draftCtx = new SQLSettleDraftCalculatorContext(
+				draft, conn, draft.getStartDate(), draft.getEndDate(),
+				draft.getIssueDate(), criteria);
+		draftCtx.next();
+		draftCtx.setListener(listener);
+		return draftCtx;
+	}
 }

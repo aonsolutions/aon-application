@@ -803,7 +803,7 @@ public class SQLContractSalaryCalculatorContext
 		private V value;
 		private boolean initialized = false;
 
-		protected Period period = new Period(startDate, endDate);
+		protected Period period = new Period(startDate, getEnd());
 
 		@Override
 		public Period getPeriod() {
@@ -861,7 +861,7 @@ public class SQLContractSalaryCalculatorContext
 	protected abstract class ActiveTimedVariable<V>
 			implements ITimedVariable<V> {
 
-		protected Period period = new Period(startDate, endDate);
+		protected Period period = new Period(startDate, getEnd());
 
 		@Override
 		public Period getPeriod() {
@@ -1070,7 +1070,7 @@ public class SQLContractSalaryCalculatorContext
 
 		this.startDate = new Date(
 				DateUtils.truncate(startDate, Calendar.DAY_OF_MONTH).getTime());
-		this.endDate = new Date(
+		this.endDate =new Date(
 				DateUtils.truncate(endDate, Calendar.DAY_OF_MONTH).getTime());
 		this.issueDate = new Date(issueDate.getTime());
 		this.chargeDate = chargeDate != null ? new Date(chargeDate.getTime())
@@ -1097,30 +1097,30 @@ public class SQLContractSalaryCalculatorContext
 		this.sqlContractEmbargo = new SQLContractEmbargo();
 
 		this.cnae2009 = new SQLCnae2009(connection, this.startDate,
-				this.endDate);
+				this.getEnd());
 
 		calendarFactory = new SQLCalendarFactory(connection, this.startDate,
-				this.endDate);
+				this.getEnd());
 		this.calendars = new LRUCache<Integer, ICalendar>(CACHE_SIZE,
 				calendarFactory);
 		calendarFactory.setCache(calendars); // TODO: Todo en la misma clase???
 
 		agreementPaymentsFactory = new SQLAgreementPaymentsFactory(connection,
-				this.startDate, this.endDate, this.paymentsCriteria);
+				this.startDate, this.getEnd(), this.paymentsCriteria);
 		this.agreementPayments = new LRUCache<AgreementKey, Collection<ISystemPayment>>(
 				CACHE_SIZE, agreementPaymentsFactory);
 
 		cccExpressionContexts = new LRUCache<CCCContextKey, ExpressionContext>(
 				CACHE_SIZE, new SQLSystemExpressionContextFactory(connection,
-						this.startDate, this.endDate, order));
+						this.startDate, this.getEnd(), order));
 
 		agreementContextFactory = new SQLAgreementContextFactory(connection,
-				this::getCCCExpressionContext, this.startDate, this.endDate,
+				this::getCCCExpressionContext, this.startDate, this.getEnd(),
 				order);
 		this.agreementExpressionContexts = new LRUCache<AgreementContextKey, ExpressionContext>(
 				CACHE_SIZE, agreementContextFactory);
 		this.leaveLoader = new SQLContractLeaveLoader(this.startDate,
-				this.endDate);
+				this.getEnd());
 
 	}
 
@@ -1271,7 +1271,7 @@ public class SQLContractSalaryCalculatorContext
 	@Override
 	public String getQuoteGroup() {
 		return contractExpressionContext.getVariable(
-				ContextVariable.QUOTE_GROUP, startDate, endDate, String.class);
+				ContextVariable.QUOTE_GROUP, startDate, getEnd(), String.class);
 	}
 
 	@Override
@@ -1721,7 +1721,7 @@ public class SQLContractSalaryCalculatorContext
 		contractCriteria.addEqualExpression(
 				SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
 
-		return getLiquidCalculatorContext(connection, startDate, endDate,
+		return getLiquidCalculatorContext(connection, startDate, getEnd(),
 				issueDate, contractCriteria, solve, liquid);
 	}
 
@@ -1730,6 +1730,7 @@ public class SQLContractSalaryCalculatorContext
 	protected Date getEnd() {
 		return this.endDate;
 	}
+
 
 	protected Date getStart() {
 		return this.startDate;
@@ -1794,7 +1795,7 @@ public class SQLContractSalaryCalculatorContext
 			sql = CriteriaUtilities.toSQLString(this.criteria, sql);
 		}
 		PreparedStatement stmt = connection.prepareStatement(sql);
-		stmt.setDate(1, toSqlDate(this.endDate));
+		stmt.setDate(1, toSqlDate(this.getEnd()));
 		stmt.setDate(2, toSqlDate(this.startDate));
 		resultSet = stmt.executeQuery();
 	}
@@ -1804,25 +1805,25 @@ public class SQLContractSalaryCalculatorContext
 				PAYMENT_SQL);
 		paymentSql = orderBy(paymentSql, order == OLDER ? NEWER : OLDER);
 		this.paymentStmt = this.connection.prepareStatement(paymentSql);
-		this.paymentStmt.setDate(2, toSqlDate(this.endDate));
+		this.paymentStmt.setDate(2, toSqlDate(this.getEnd()));
 		this.paymentStmt.setDate(3, toSqlDate(this.startDate));
 	}
 
 	private void initDeductionStmt() throws SQLException {
 		this.deductionStmt = this.connection.prepareStatement(DEDUCTION_SQL);
-		this.deductionStmt.setDate(2, toSqlDate(this.endDate));
+		this.deductionStmt.setDate(2, toSqlDate(this.getEnd()));
 		this.deductionStmt.setDate(3, toSqlDate(this.startDate));
 	}
 
 	private void initBonusStmt() throws SQLException {
 		this.bonusStmt = this.connection.prepareStatement(BONUS_SQL);
-		this.bonusStmt.setDate(2, toSqlDate(this.endDate));
+		this.bonusStmt.setDate(2, toSqlDate(this.getEnd()));
 		this.bonusStmt.setDate(3, toSqlDate(this.startDate));
 	}
 
 	private void initEmbargoStmt() throws SQLException {
 		this.embargoStmt = this.connection.prepareStatement(EMBARGO_SQL);
-		this.embargoStmt.setDate(2, toSqlDate(this.endDate));
+		this.embargoStmt.setDate(2, toSqlDate(this.getEnd()));
 		this.embargoStmt.setDate(3, toSqlDate(this.startDate));
 	}
 
@@ -1834,7 +1835,7 @@ public class SQLContractSalaryCalculatorContext
 
 	private void initLeaveStmt() throws SQLException {
 		this.cleaveStmt = this.connection.prepareStatement(CLEAVE_SQL);
-		this.cleaveStmt.setDate(2, toSqlDate(this.endDate));
+		this.cleaveStmt.setDate(2, toSqlDate(this.getEnd()));
 		this.cleaveStmt.setDate(3, toSqlDate(this.startDate));
 	}
 
@@ -2113,7 +2114,7 @@ public class SQLContractSalaryCalculatorContext
 				SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
 		ISalaryCalculatorContext ctx = null;
 		try {
-			ctx = getNoItCalculatorContext(connection, startDate, endDate,
+			ctx = getNoItCalculatorContext(connection, startDate, getEnd(),
 					issueDate, contractCriteria, start - 1, end - 1);
 		} catch (RuntimeException e) {
 			throw e;
@@ -2503,17 +2504,17 @@ public class SQLContractSalaryCalculatorContext
 	public Object agreement(String name)
 			throws ExpressionException, SQLException {
 		ExpressionContext agreementCtx = getAgreementContext();
-		return agreementCtx.getVariable(name, startDate, endDate, Object.class);
+		return agreementCtx.getVariable(name, startDate, getEnd(), Object.class);
 	}
 
 	public Object system(String name) throws ExpressionException, SQLException {
 		ExpressionContext systemCtx = agreementContextFactory
 				.getSystemExpressionContext();
-		Object value = systemCtx.getVariable(name, startDate, endDate,
+		Object value = systemCtx.getVariable(name, startDate, getEnd(),
 				Object.class);
 		if (value != null)
 			return value;
-		return implicitExpressionContext.getVariable(name, startDate, endDate,
+		return implicitExpressionContext.getVariable(name, startDate, getEnd(),
 				Object.class);
 	}
 
@@ -3130,13 +3131,13 @@ public class SQLContractSalaryCalculatorContext
 				startDate);
 		this.contractEndDate = Period.min(
 				getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE),
-				endDate);
+				getEnd());
 
 		if (this.contractExpressionContext != null) {
 			this.contractExpressionContext = null;
 		}
 
-		Period period = new Period(startDate, endDate);
+		Period period = new Period(startDate, getEnd());
 
 		// ActiveTimedVariable<Double> cgcBase = new
 		// ActiveTimedVariable<Double>() {
@@ -3204,34 +3205,34 @@ public class SQLContractSalaryCalculatorContext
 		// TODO: Tiene que ir aqui ???
 		SalaryType salaryType = getSalaryType();
 		this.implicitExpressionContext.setVariable(SALARY,
-				salaryType == SalaryType.SALARY, startDate, endDate);
+				salaryType == SalaryType.SALARY, startDate, getEnd());
 		this.implicitExpressionContext.setVariable(SETTLE,
-				salaryType == SalaryType.SETTLE, startDate, endDate);
+				salaryType == SalaryType.SETTLE, startDate, getEnd());
 		this.implicitExpressionContext.setVariable(DELAY,
-				salaryType == SalaryType.DELAY, startDate, endDate);
+				salaryType == SalaryType.DELAY, startDate, getEnd());
 		this.implicitExpressionContext.setVariable(EXTRA_PAY,
-				salaryType == SalaryType.EXTRA, startDate, endDate);
+				salaryType == SalaryType.EXTRA, startDate, getEnd());
 
 		this.implicitExpressionContext.setVariable(CONTRACT_START,
 				getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE),
-				startDate, endDate);
+				startDate, getEnd());
 		this.implicitExpressionContext.setVariable(SENIORITY_START,
 				getDate(SQLConstants.CONTRACT, ContractColumns.SENIORITY_DATE),
-				startDate, endDate);
+				startDate, getEnd());
 		
 		this.implicitExpressionContext
 				.setVariable(CONTRACT_END,
 						salaryType == SalaryType.SETTLE ? contractEndDate
 								: getDate(SQLConstants.CONTRACT,
 										ContractColumns.END_DATE),
-						startDate, endDate);
+						startDate, getEnd());
 
 		this.implicitExpressionContext.putVariable(IRPF_PERCENT, irpf);
 
 		this.implicitExpressionContext.putVariable(START, start);
 		this.implicitExpressionContext.putVariable(END, end);
 		
-		if ( !this.implicitExpressionContext.containsVariable(SENIORITY, startDate, endDate))
+		if ( !this.implicitExpressionContext.containsVariable(SENIORITY, startDate, getEnd()))
 			this.implicitExpressionContext.putVariable(SENIORITY,
 					new ActiveTimedVariable<Integer>() {
 						@Override
@@ -3371,29 +3372,29 @@ public class SQLContractSalaryCalculatorContext
 				this.implicitExpressionContext, this);
 
 		this.contractExpressionContext.setVariable(CONTEXT,
-				contractExpressionContext, startDate, endDate);
+				contractExpressionContext, startDate, getEnd());
 		this.contractExpressionContext.setVariable(SELF, this, startDate,
-				endDate);
+				getEnd());
 
 		// TODO: at implicitExpressionContext ?
 		loadExpression(this.contractExpressionContext, BR,
-				"def(x){ SELF.br(x)};", this.startDate, this.endDate);
+				"def(x){ SELF.br(x)};", this.startDate, this.getEnd());
 		loadExpression(this.contractExpressionContext, GROSS, String
 				.format("def(x){ %s.gross(x, %s, %s )};", SELF, START, END),
-				this.startDate, this.endDate);
+				this.startDate, this.getEnd());
 		loadExpression(this.contractExpressionContext, LIQUID, String
 				.format("def(x){ %s.liquid(x, %s, %s )};", SELF, START, END),
-				this.startDate, this.endDate);
+				this.startDate, this.getEnd());
 		loadExpression(this.contractExpressionContext, SYSTEM,
-				"def(x){ SELF.system(x)};", this.startDate, this.endDate);
+				"def(x){ SELF.system(x)};", this.startDate, this.getEnd());
 		loadExpression(this.contractExpressionContext, AGREEMENT,
-				"def(x){ SELF.agreement(x)};", this.startDate, this.endDate);
+				"def(x){ SELF.agreement(x)};", this.startDate, this.getEnd());
 
 		try {
 			Method guarantee = SQLContractSalaryCalculatorContext.class
 					.getMethod("guaranteee", double.class);
 			this.contractExpressionContext.setVariable(GUARANTEE,
-					new MethodStub(guarantee), this.startDate, this.endDate);
+					new MethodStub(guarantee), this.startDate, this.getEnd());
 		} catch (SecurityException e) {
 		} catch (NoSuchMethodException e) {
 		}
@@ -3965,7 +3966,7 @@ public class SQLContractSalaryCalculatorContext
 		try {
 			stmt = connection.prepareStatement(SYSTEM_COST_SQL);
 			java.sql.Date sqlEndDate = new java.sql.Date(
-					this.endDate.getTime());
+					this.getEnd().getTime());
 			java.sql.Date sqlStartDate = new java.sql.Date(
 					this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);
@@ -3986,7 +3987,7 @@ public class SQLContractSalaryCalculatorContext
 		try {
 			stmt = connection.prepareStatement(SYSTEM_DEDUCTION_SQL);
 			java.sql.Date sqlEndDate = new java.sql.Date(
-					this.endDate.getTime());
+					this.getEnd().getTime());
 			java.sql.Date sqlStartDate = new java.sql.Date(
 					this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);
@@ -4011,7 +4012,7 @@ public class SQLContractSalaryCalculatorContext
 					SYSTEM_PAYMENT_SQL);
 			stmt = connection.prepareStatement(sql);
 			java.sql.Date sqlEndDate = new java.sql.Date(
-					this.endDate.getTime());
+					this.getEnd().getTime());
 			java.sql.Date sqlStartDate = new java.sql.Date(
 					this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);

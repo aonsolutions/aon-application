@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.shared.HasDomain;
 import com.esferalia.aon.gwt.common.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public abstract class Variable implements HasStartAndEndDate, HasDomain<Integer>, Serializable {
 
@@ -98,7 +99,12 @@ public abstract class Variable implements HasStartAndEndDate, HasDomain<Integer>
 		if (!(obj instanceof Variable))
 			return false;
 		Variable var = (Variable) obj;
-		return ((name == var.name) || ((name != null) && name.equals(var.name)));
+		
+		return ((name == var.name) || ((name != null) && name.equals(var.name)))
+				&& ((startDate == var.startDate) || ((startDate != null) && startDate.equals(var.startDate)))
+				&& ((endDate == var.endDate) || ((endDate != null) && endDate.equals(var.endDate)))
+				;
+//		return ((name == var.name) || ((name != null) && name.equals(var.name)));
 	}
 
 	public static boolean isAgreementVariable(Variable var) {

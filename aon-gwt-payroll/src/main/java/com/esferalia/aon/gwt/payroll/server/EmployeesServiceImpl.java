@@ -3784,7 +3784,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitSettle(
 							SalaryType salaryType) {
 						try {
-							return getSettleCalculatorContextImpl(conn, draft,
+							return EmployeesServiceHelper
+									.getSettleCalculatorContextImpl(conn, draft,
 									listener);
 						} catch (SQLException e) {
 							throw new IllegalArgumentException(e);
@@ -3861,22 +3862,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return draftCtx;
 	}
 
-	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSettleCalculatorContextImpl(
-			final Connection conn, final SalaryDraft draft,
-			IContractSalaryCalculatorContext.IListener listener)
-			throws ExpressionException, SQLException {
-
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
-				draft.getEmployee().getId());
-
-		SQLSettleDraftCalculatorContext draftCtx = new SQLSettleDraftCalculatorContext(
-				draft, conn, draft.getStartDate(), draft.getEndDate(),
-				draft.getIssueDate(), criteria);
-		draftCtx.next();
-		draftCtx.setListener(listener);
-		return draftCtx;
-	}
 
 	private static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getDelayCalculatorContextImpl(
 			final Connection conn, final SalaryDraft draft,

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -70,32 +71,73 @@ public class SalaryDraftObject implements IContextProvider {
 		abstract void removeDraft(T t);
 	}
 
-	private class CompositeUndoableEdit implements Undoable {
+	abstract private class UndoableRemove<T> implements Undoable {
 
-		private Collection<UndoableEdit<?>> edits;
+		T oldT;
 
-		public CompositeUndoableEdit(Collection<UndoableEdit<?>> edits) {
-			this.edits = edits;
+		public UndoableRemove(T oldT) {
+			this.oldT = oldT;
 		}
 
 		@Override
 		public void redo() {
-			for (UndoableEdit<?> edit : edits)
-				edit.redo();
+			removeDraft(oldT);
 		}
 
 		@Override
 		public void undo() {
-			for (UndoableEdit<?> edit : edits)
-				edit.undo();
+			addDraft(oldT);
+		}
+
+		abstract void addDraft(T t);
+
+		abstract void removeDraft(T t);
+	}
+
+	private class CompositeUndoable<T extends Undoable > implements Undoable {
+
+		private Collection<T> undos;
+
+		public CompositeUndoable(Collection<T> undos) {
+			this.undos = undos;
+		}
+
+		@Override
+		public void redo() {
+			for (T undo : undos)
+				undo.redo();
+		}
+
+		@Override
+		public void undo() {
+			for (T undo : undos)
+				undo.undo();
 		}
 
 	}
+
 
 	class UndoableVariableEdit extends UndoableEdit<Variable> {
 
 		public UndoableVariableEdit(Variable oldT, Variable newT) {
 			super(oldT, newT);
+		}
+
+		@Override
+		void addDraft(Variable t) {
+			salaryDraft.addDraftVariable(t);
+		}
+
+		@Override
+		void removeDraft(Variable t) {
+			salaryDraft.removeDraftVariable(t);
+		}
+	}
+
+	class UndoableVariableRemove extends UndoableRemove<Variable> {
+
+		public UndoableVariableRemove(Variable oldT) {
+			super(oldT);
 		}
 
 		@Override
@@ -710,8 +752,19 @@ public class SalaryDraftObject implements IContextProvider {
 
 	}
 
+	public void removeDraftVariables(Collection<Variable> vars){
+		List<UndoableRemove<Variable>> removes = new ArrayList<UndoableRemove<Variable>>(vars.size());
+		for ( Variable var : vars )
+			if ( salaryDraft.removeDraftVariable(var) )
+				removes.add(new UndoableVariableRemove(var));
+		
+		CompositeUndoable<UndoableRemove<Variable>> undoableCompositeRemove = 
+				new CompositeUndoable<UndoableRemove<Variable>>(removes);
+		
+		undoManager.add(undoableCompositeRemove);
+	}
+
 	// ------------------------------------------
-	//
 
 	private Variable clone(Variable var, String newName) {
 		StringVariable newVar = new StringVariable();
@@ -826,7 +879,7 @@ public class SalaryDraftObject implements IContextProvider {
 			Payment oldPayment = salaryDraft.addDraftPayment(payment);
 			edits.add(new UndoablePaymentEdit(oldPayment, payment));
 		}
-		undoManager.add(new CompositeUndoableEdit(edits));
+		undoManager.add(new CompositeUndoable(edits));
 	}
 
 	private List<ITDataPerson> getDrafLeaveIts() {
