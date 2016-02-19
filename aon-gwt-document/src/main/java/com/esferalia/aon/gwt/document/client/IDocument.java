@@ -109,4 +109,8 @@ public interface IDocument extends RemoteService{
 	
 	public LinkedList<Attach>  getAttachList(Vector<FileInfo> fileInfoList);
 
+	public void print(String head, String msg);
+	
+	public String getLink(Domain domain, FileInfo fileInfo, String l);
+	
 }

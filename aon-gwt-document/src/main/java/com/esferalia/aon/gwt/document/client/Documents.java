@@ -706,7 +706,11 @@ public class Documents extends Composite implements EntryPoint {
 						idoc.getLists(getDomain(),new AsyncCallback<Lists>() {
 
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+								String head = "com.esferalia.aon.gwt.document.client.Documents"
+										+ " - init() - getLists";
+								print(head, caught.getMessage());
+							}
 
 							@Override
 							public void onSuccess(Lists result) {
@@ -721,13 +725,21 @@ public class Documents extends Composite implements EntryPoint {
 					}
 
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						String head = "com.esferalia.aon.gwt.document.client.Documents"
+								+ " - init() - getAllFiles";
+						print(head, caught.getMessage());
+					}
 				});
 				}
 				
 			}
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				String head = "com.esferalia.aon.gwt.document.client.Documents"
+						+ " - init() - initAux";
+				print(head, caught.getMessage());
+			}
 		});
 
 		idoc.isGconnection(new AsyncCallback<Boolean>() {
@@ -741,7 +753,11 @@ public class Documents extends Composite implements EntryPoint {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				String head = "com.esferalia.aon.gwt.document.client.Documents"
+						+ " - init() - isGconnection";
+				print(head, caught.getMessage());
+			}
 		});
 	}
 	
@@ -864,13 +880,20 @@ public class Documents extends Composite implements EntryPoint {
 											}
 											@Override
 											public void onFailure(Throwable caught) {
+												String head = "com.esferalia.aon.gwt.document.client.Documents"
+														+ " - Load() - searchFile2";
+												print(head, caught.getMessage());
 											}
 										});
 									}
 								}
 							
 								@Override
-								public void onFailure(Throwable caught) {}
+								public void onFailure(Throwable caught) {
+									String head = "com.esferalia.aon.gwt.document.client.Documents"
+											+ " - Load() - checkDomain";
+									print(head, caught.getMessage());
+								}
 						});
 						
 					}
@@ -948,6 +971,9 @@ public class Documents extends Composite implements EntryPoint {
 											}
 											@Override
 											public void onFailure(Throwable caught) {
+												String head = "com.esferalia.aon.gwt.document.client.Documents"
+														+ " - Load() - searchFile2";
+												print(head, caught.getMessage());
 											}
 									});
 								}
@@ -955,7 +981,11 @@ public class Documents extends Composite implements EntryPoint {
 							}
 							
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+								String head = "com.esferalia.aon.gwt.document.client.Documents"
+										+ " - Load() - checkDomain";
+								print(head, caught.getMessage());
+							}
 						});
 						
 					}
@@ -1484,13 +1514,21 @@ public class Documents extends Composite implements EntryPoint {
 										dataGrid.redraw();
 									}
 									@Override
-									public void onFailure(Throwable caught) {}
+									public void onFailure(Throwable caught) {
+										String head = "com.esferalia.aon.gwt.document.client.Documents"
+												+ " - editFile(SingleUploader up,Boolean multiple) - editFile";
+										print(head, caught.getMessage());
+									}
 								});
 							}
 						}
 						
 						@Override
-						public void onFailure(Throwable caught) {}
+						public void onFailure(Throwable caught) {
+							String head = "com.esferalia.aon.gwt.document.client.Documents"
+									+ " - editFile(SingleUploader up,Boolean multiple) - checkDomain";
+							print(head, caught.getMessage());
+						}
 					});
 					hide();
 					
@@ -1504,7 +1542,11 @@ public class Documents extends Composite implements EntryPoint {
 						public void onSuccess(Void result) {}
 						
 						@Override
-						public void onFailure(Throwable caught) {}
+						public void onFailure(Throwable caught) {
+							String head = "com.esferalia.aon.gwt.document.client.Documents"
+									+ " - editFile(SingleUploader up,Boolean multiple) - clearOuts";
+							print(head, caught.getMessage());
+						}
 					});
 					vertical = new VerticalPanel();				
 				}
@@ -1619,7 +1661,11 @@ public class Documents extends Composite implements EntryPoint {
 							//TODO Actualizar datagrid!!!
 						}
 						@Override
-						public void onFailure(Throwable caught) {}
+						public void onFailure(Throwable caught) {
+							String head = "com.esferalia.aon.gwt.document.client.Documents"
+									+ " - removeFile(Boolean multiple) - deleteMydrive";
+							print(head, caught.getMessage());
+						}
 					});
 				}
 				else{ 
@@ -1639,7 +1685,11 @@ public class Documents extends Composite implements EntryPoint {
 								idoc.removeFile(getDomain(),fvector,new AsyncCallback<Void>() {
 									Boolean multiple = mult;
 									@Override
-									public void onFailure(Throwable caught) {}
+									public void onFailure(Throwable caught) {
+										String head = "com.esferalia.aon.gwt.document.client.Documents"
+												+ " - removeFile(Boolean multiple) - removeFile";
+										print(head, caught.getMessage());
+									}
 									@Override
 									public void onSuccess(Void result) {
 										Integer n =dataGrid.getKeyboardSelectedRow();
@@ -1704,7 +1754,11 @@ public class Documents extends Composite implements EntryPoint {
 						}
 						
 						@Override
-						public void onFailure(Throwable caught) {}
+						public void onFailure(Throwable caught) {
+							String head = "com.esferalia.aon.gwt.document.client.Documents"
+									+ " - removeFile(Boolean multiple) - checkDomain";
+							print(head, caught.getMessage());
+						}
 					});
 					
 				}
@@ -1750,7 +1804,9 @@ public class Documents extends Composite implements EntryPoint {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				
+				String head = "com.esferalia.aon.gwt.document.client.Documents"
+						+ " - getSons() - getSons";
+				print(head, caught.getMessage());
 			}
 		});
 		}
@@ -1926,7 +1982,11 @@ public class Documents extends Composite implements EntryPoint {
 									idoc.insertFile(getDomain(),finsert, new AsyncCallback<Vector<FileInfo>>() {
 
 										@Override
-										public void onFailure(Throwable caught) {}
+										public void onFailure(Throwable caught) {
+											String head = "com.esferalia.aon.gwt.document.client.Documents"
+													+ " - newFile(SingleUploader up) - insertFile";
+											print(head, caught.getMessage());
+										}
 										
 										@Override
 										public void onSuccess(Vector<FileInfo> result) {
@@ -2005,7 +2065,11 @@ public class Documents extends Composite implements EntryPoint {
 								}
 								
 								@Override
-								public void onFailure(Throwable caught) {}
+								public void onFailure(Throwable caught) {
+									String head = "com.esferalia.aon.gwt.document.client.Documents"
+											+ " - newFile(SingleUploader up) - checkDomain";
+									print(head, caught.getMessage());
+								}
 							});
 							
 							vertical = new VerticalPanel();
@@ -2040,14 +2104,20 @@ public class Documents extends Composite implements EntryPoint {
 								}
 								
 								@Override
-								public void onFailure(Throwable caught) {}
+								public void onFailure(Throwable caught) {
+									String head = "com.esferalia.aon.gwt.document.client.Documents"
+											+ " - newFile(SingleUploader up) - check";
+									print(head, caught.getMessage());
+								}
 							});
 						}
 					}
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						
+						String head = "com.esferalia.aon.gwt.document.client.Documents"
+								+ " - newFile(SingleUploader up) - newFile";
+						print(head, caught.getMessage());
 					}
 				});
 			}
@@ -2061,7 +2131,11 @@ public class Documents extends Composite implements EntryPoint {
 					public void onSuccess(Void result) {}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						String head = "com.esferalia.aon.gwt.document.client.Documents"
+								+ " - newFile(SingleUploader up) - oncancel - clearOuts";
+						print(head, caught.getMessage());
+					}
 				});
 				
 				vertical = new VerticalPanel();			
@@ -3672,6 +3746,19 @@ public class Documents extends Composite implements EntryPoint {
 	}
 	
 	private void getViewer(final FileInfo fileInfo, final Integer index, Vector<FileInfo> viewList) {
+		idoc.getLink(getDomain(), fileInfo, GWT.getModuleBaseURL(), new AsyncCallback<String>() {
+				
+			@Override
+			public void onSuccess(String result) {
+				Window.open(result, "_blank", null);
+			}
+			
+			@Override
+				public void onFailure(Throwable caught) {}
+			});
+		
+		/* VISOR GWT
+		
 		idoc.getAttachList(viewList, new AsyncCallback<LinkedList<Attach>>() {
 			
 			@Override
@@ -3681,10 +3768,15 @@ public class Documents extends Composite implements EntryPoint {
 			
 			@Override
 			public void onFailure(Throwable caught) {
+				
 				Window.alert(caught.getMessage());
 			}
 		});
 		
+		*/
+		
+		
+	//	}
 		/*
 		Attach attach = new Attach()
 				.setId(fileInfo.getFileId())
@@ -4310,13 +4402,21 @@ public class Documents extends Composite implements EntryPoint {
 							
 							
 								@Override
-								public void onFailure(Throwable caught) {}
+								public void onFailure(Throwable caught) {
+									String head = "com.esferalia.aon.gwt.document.client.Documents"
+											+ " - editTag(Tag tag) - editTag";
+									print(head, caught.getMessage());
+								}
 							});
 						}
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						String head = "com.esferalia.aon.gwt.document.client.Documents"
+								+ " - editTag(Tag tag) - checkDomain";
+						print(head, caught.getMessage());
+					}
 				});
 				
 			}
@@ -4419,7 +4519,11 @@ public class Documents extends Composite implements EntryPoint {
 						}
 						
 						@Override
-						public void onFailure(Throwable caught) {}
+						public void onFailure(Throwable caught) {
+							String head = "com.esferalia.aon.gwt.document.client.Documents"
+									+ " - removeTag(Tag tag) - deleteTag";
+							print(head, caught.getMessage());
+						}
 				});
 			}
 
@@ -4484,13 +4588,21 @@ public class Documents extends Composite implements EntryPoint {
 								}
 							
 								@Override
-								public void onFailure(Throwable caught) {}
+								public void onFailure(Throwable caught) {
+									String head = "com.esferalia.aon.gwt.document.client.Documents"
+											+ " - editCategory(Category category) - editCategory";
+									print(head, caught.getMessage());
+								}
 							});
 						}
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						String head = "com.esferalia.aon.gwt.document.client.Documents"
+								+ " - editCategory(Category category) - checkDomain";
+						print(head, caught.getMessage());
+					}
 				});
 			
 			}
@@ -4572,13 +4684,21 @@ public class Documents extends Composite implements EntryPoint {
 								}
 							
 								@Override
-								public void onFailure(Throwable caught) {}
+								public void onFailure(Throwable caught) {
+									String head = "com.esferalia.aon.gwt.document.client.Documents"
+											+ " - removeCategory(Category category) - deleteCategory";
+									print(head, caught.getMessage());
+								}
 							});
 						}
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						String head = "com.esferalia.aon.gwt.document.client.Documents"
+								+ " - removeCategory(Category category) - checkDomain";
+						print(head, caught.getMessage());
+					} 
 				});
 				 
 			}
@@ -4589,8 +4709,6 @@ public class Documents extends Composite implements EntryPoint {
 		popup.addStyleName("gwt-PopupPanel-document");
 		popup.setGlassEnabled(true);
 		popup.show();
-		 
-		
 	}
 	
 	public  void addToLote(FileInfo fi,Boolean multiple) {
@@ -4598,15 +4716,11 @@ public class Documents extends Composite implements EntryPoint {
 			if(multiple) fvector = selFiles;
 			else fvector.add(fi);
 			lote.addAll(fvector);
-			
-			//bd.addToBatch(new  );
 	}
 	
 	Boolean isLote = false;
 	Vector<FileInfo> lote = new Vector<FileInfo>();
-	
 
-	
 	@UiHandler("loteButton")
 	void lote(ClickEvent event) {
 		idoc.checkDomain(getDomain(), docs,"loteButton", new AsyncCallback<Boolean>() {
@@ -4640,7 +4754,11 @@ public class Documents extends Composite implements EntryPoint {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				String head = "com.esferalia.aon.gwt.document.client.Documents"
+						+ " - lote(ClickEvent event) - checkDomain";
+				print(head, caught.getMessage());
+			}
 		});
 	}
 	
@@ -4676,7 +4794,11 @@ public class Documents extends Composite implements EntryPoint {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				String head = "com.esferalia.aon.gwt.document.client.Documents"
+						+ " - cleanLote(ClickEvent event) - checkDomain";
+				print(head, caught.getMessage());
+			}
 		});	
 	}
 	
@@ -4741,9 +4863,12 @@ public class Documents extends Composite implements EntryPoint {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				String head = "com.esferalia.aon.gwt.document.client.Documents"
+						+ " - sendLote(ClickEvent event) - getMailAccounts";
+				print(head, caught.getMessage());
+			}
 		});
-		
 	}
 	
 	// ------------------------------------------------------------------------
@@ -4763,16 +4888,13 @@ public class Documents extends Composite implements EntryPoint {
 			viewList.add(fileInfo);
 		}
 		getViewer(viewList.get(index), index, viewList);
-		//getAsHTMl(viewList.get(index), index, viewList);
 	}
-
 
 	public static native void exportPreview(Documents thiz) /*-{
     	$wnd.preview = function(index, files) {
     		thiz.@com.esferalia.aon.gwt.document.client.Documents::preview(*)(index, files);
     	}
 	}-*/;
-	
 	
 	public void reload(){
 		pop = new PopupPanel();
@@ -4785,18 +4907,16 @@ public class Documents extends Composite implements EntryPoint {
 			public void onSuccess(Document result) {
 				reset();
 				pop.hide();		
-				
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				
+				String head = "com.esferalia.aon.gwt.document.client.Documents"
+						+ " - reload() - getAllFiles";
+				print(head, caught.getMessage());
 			}
-		});
-		
-			
+		});	
 	}
-
 
 	public static native void exportReload(Documents thiz) /*-{
     	$wnd.reloadDocumental = function() {
@@ -4804,11 +4924,7 @@ public class Documents extends Composite implements EntryPoint {
     	}
 	}-*/;
 	
-	public void popup(){
-
-		
-	}
-
+	public void popup(){}
 
 	public static native void exportPopup(Documents thiz) /*-{
     	$wnd.popup = function() {
@@ -4818,12 +4934,15 @@ public class Documents extends Composite implements EntryPoint {
 	
 	public void selectedMenu(){
 		idoc.selectedMenu(getDomain(), new AsyncCallback<Void>() {
-			
 			@Override
 			public void onSuccess(Void result) {}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				String head = "com.esferalia.aon.gwt.document.client.Documents"
+						+ " - selectedMenu() - selectedMenu";
+				print(head, caught.getMessage());
+			}
 		});
 	}
 	
@@ -4832,4 +4951,11 @@ public class Documents extends Composite implements EntryPoint {
 		return new Domain().setId(getCurrentDomain()).setName(getCurrentDomainName());
 	}
 	
+	private static void print(String head, String msg) {
+		final IDocumentAsync DOC_IMPL = GWT.create(IDocument.class);
+		DOC_IMPL.print(head, msg, new AsyncCallback<Void>() {
+			@Override public void onSuccess(Void result) {}
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
 }

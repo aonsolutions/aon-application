@@ -4,6 +4,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,6 +23,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.util.ImageIOUtil;
+
+import com.esferalia.aon.gwt.viewer.pdfbox.AonPDPage;
 import com.esferalia.aon.gwt.viewer.server.html2Image.Html2Image;
 import com.esferalia.aon.gwt.viewer.server.html2Image.ImageRenderer;
 import com.esferalia.aon.occam.api.AON;
@@ -29,10 +36,6 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
-import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 
@@ -52,6 +55,9 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 	public static final String FORMAT_PARAM = "format";
 
 	private static ViewerCache<String, PDFFile> PDFS = new ViewerCache<String, PDFFile>(30);
+	private static ViewerCache<String, byte[]> datas = new ViewerCache<String, byte[]>(30);
+	
+	private static ViewerCache<String, Boolean> library = new ViewerCache<>(10);
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -62,7 +68,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		String format = ext != null ? ext : DEFAULT_FORMAT;
 
 		OutputStream os = resp.getOutputStream();
-
+		
 		Map<String, String[]> params = req.getParameterMap();
 		int page = params.containsKey(PAGE_PARAM) ? Integer.parseInt(params
 				.get(PAGE_PARAM)[0]) : 1;
@@ -71,28 +77,70 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		Integer id = null;
 		if(params.containsKey("id"))
 			 id = Integer.parseInt(req.getParameter("id"));
-		
+
 		resp.setContentType(String.format("image/%s", format));
 		Attach attach = new Attach();
 		attach.setId(id);
 		attach.setMd5(rattach);
-		PDFFile pdfFile;
-		try {
-			pdfFile = getPDFFile(attach);
-			pdf2Image(pdfFile, os, page, format, zoom);
-		} catch (GeneralSecurityException e) {
-			e.printStackTrace();
+		
+		Boolean ok = false;
+		Boolean pdfBox = true;
+		if(library.containsKey(attach.getMd5())){
+			pdfBox = library.get(attach.getMd5());
+		}
+		
+		if( pdfBox && datas.containsKey(attach.getMd5())){
+			ok = pdf2ImagePDFBox(datas.get(attach.getMd5()), os, page, format, zoom);
+			library.put(attach.getMd5(), ok);
+		}
+		if(!ok){
+			PDFFile pdfFile;
+			try {
+				pdfFile = getPDFFile(attach);
+				ok = pdf2Image(pdfFile, os, page, format, zoom);
+				if(!ok) {
+					ok = pdf2ImagePDFBox(datas.get(attach.getMd5()), os, page, format, zoom);
+					library.put(attach.getMd5(), ok);
+				}
+			} catch (GeneralSecurityException e) {
+				e.printStackTrace();
+			}
 		}
 		os.flush();
-		
+		os.close();
 	}
+	
+	protected static Integer getPDFFile2(Attach attach) throws IOException, GeneralSecurityException{
+		if(!PDFS.containsKey(attach.getMd5())){
+			ByteBuffer byteBuffer = getPdfByeBuffer(attach);
+			PDFS.put(attach.getMd5(), new PDFFile(byteBuffer));
+			if(attach.getMimeType().equals(MimeType.PDF))
+				datas.put(attach.getMd5(), byteBuffer.array());
+			byteBuffer.clear();
+		}
+		return PDFS.get(attach.getMd5()).getNumPages();
+	}
+	
 	
 	protected static PDFFile getPDFFile(Attach attach) throws IOException, GeneralSecurityException{
 		if(!PDFS.containsKey(attach.getMd5())){
 			ByteBuffer byteBuffer = getPdfByeBuffer(attach);
 			PDFS.put(attach.getMd5(), new PDFFile(byteBuffer));
+			if(attach.getMimeType().equals(MimeType.PDF))
+				datas.put(attach.getMd5(), byteBuffer.array());
+			byteBuffer.clear();
 		}
 		return PDFS.get(attach.getMd5());
+	}
+	
+	
+	protected static PDDocument getPDFFile3(Attach attach) throws IOException, GeneralSecurityException{
+		if(!datas.containsKey(attach.getMd5())){
+			ByteBuffer byteBuffer = getPdfByeBuffer(attach);
+			datas.put(attach.getMd5(), byteBuffer.array());
+			byteBuffer.clear();
+		}
+		return PDDocument.load(new ByteArrayInputStream(datas.get(attach.getMd5())));
 	}
 
 	private static ByteBuffer getPdfByeBuffer(Attach attach) throws IOException, GeneralSecurityException {
@@ -115,6 +163,8 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		RandomAccessFile randomAccessFile  = null;
 		try{
 			if (mimeType == MimeType.PDF) {
+				return ByteBuffer.wrap(bytes);
+				/*
 				ByteArrayOutputStream os = new ByteArrayOutputStream();
 				PdfReader reader = new PdfReader(bytes);
 				PdfStamper stamper;
@@ -124,7 +174,11 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 				} catch (DocumentException e) {
 					e.printStackTrace();
 				}
-				return ByteBuffer.wrap(os.toByteArray());
+				ByteBuffer bb = ByteBuffer.wrap(os.toByteArray());
+				os.flush();
+				os.close();
+				reader.close();
+				return bb;*/
 			}
 			String tmpDir = System.getProperty("java.io.tmpdir");
 			File inputFile = new File(tmpDir, md5 + "." + mimeType.getExtension());
@@ -142,16 +196,15 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 				"r");
 
 			FileChannel fileChannel = randomAccessFile.getChannel();
-
 			return fileChannel.map(MapMode.READ_ONLY, 0, randomAccessFile.length());
 		}finally{
 			if(randomAccessFile != null) randomAccessFile.close();
 		}
 	}
 
-	private static void pdf2Image(PDFFile pdffile, OutputStream os, int page,
+	private static Boolean pdf2Image(PDFFile pdffile, OutputStream os, int page,
 			String format, int zoom) throws IOException {
-
+		try{
 		PDFPage pdfPage = pdffile.getPage(page);
 
 		// get the width and height for the doc at the default zoom
@@ -191,12 +244,46 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
   		ImageIO.write(bufferedImage, format, baos);
 		byte[] data = baos.toByteArray();
 		String md5 = AonFileUtils.getMD5Checksum(data);
-		if(md5.equals("968634550561b68ca4675b1ffe77fd6f")) error2Image(os);
+		if(md5.equals("968634550561b68ca4675b1ffe77fd6f"))
+			//error2Image(os);
+			return false;
 		else ImageIO.write(bufferedImage, format, os);
+		image.flush();
+		bufferedImage.flush();
+		return true;
+		}catch (Throwable e){
+			return false;
+		}
+	}
+	
+	public static Boolean fontError = false;
+	  
+	private static Boolean pdf2ImagePDFBox(byte[] bb, OutputStream os, int page,
+			String format, int zoom) throws IOException {
+		PDDocument document = PDDocument.load(new ByteArrayInputStream(bb));
+		BufferedImage bim = null;
+		try{
+			PDPage pdPage = (PDPage) document.getDocumentCatalog().getAllPages().get(page-1);
+			AonPDPage aonPdPage = new AonPDPage(pdPage); 
+			bim = aonPdPage.convertToImage(BufferedImage.TYPE_INT_RGB, (zoom * 72) /100 );
+			if(fontError){
+				return false;
+			}
+			ImageIOUtil.writeImage(bim, format, os);
+			return true; 
+		} catch (OutOfMemoryError e){
+			System.out.println("error -> " +  e);
+			return true;
+		} catch (Throwable e){ 
+			e.printStackTrace();
+			return false;
+		} finally {
+			document.close();
+			if(bim != null) bim.flush();
+		}
 	}
 	
 	private static void error2Image(OutputStream os) throws IOException {
-
 	    String html = "<html>" +
 	            "<h1> ERROR DE VISUALIZACIÓN</h1>" +
 	    		"<span> El Documento no se puede visualizar, pulse en Descargar.</span>" +

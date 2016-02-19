@@ -168,26 +168,26 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 
 			PrintStream printStream = new PrintStream(os);
 			
-			PDFFile pdfFile = OpenDocument2ImageServlet.getPDFFile(attach);
-			Integer page = pdfFile.getNumPages();
+			Integer page = OpenDocument2ImageServlet.getPDFFile2(attach);
+
 			
-			Boolean error = pdf2ImageBool(pdfFile, os, page, "png", zoom);
 			
-			if(!error){
+			//Boolean error = pdf2ImageBool(pdfFile, os, page, "png", zoom);
+			
+			//if(!error){
 				for(Integer i = 1; i<= page; i++){
-					PDFPage pdfPage = pdfFile.getPage(i);
-					double width =  pdfPage.getBBox().getWidth() * zoom / 100;
-					double height = pdfPage.getBBox().getHeight() * zoom / 100;
-				
-					printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
-						(long)width,
-						(long)height,
-						attach.getMd5(),
-						PAGE_PARAM, i,
-						ZOOM_PARAM, zoom,
-						attach.getId());
+					printStream.printf("<div class='page'><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
+							attach.getMd5(),	PAGE_PARAM, i, ZOOM_PARAM, zoom,attach.getId());
+					/*printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
+						(long)width, (long)height, attach.getMd5(),	PAGE_PARAM, i,
+						ZOOM_PARAM, zoom,attach.getId());
+						*/
 				}
-			} else {
+				
+			/*} else {
+				
+				
+			
 				String html="<div class='page' style=' width:150%s; background-color:#FFF;'>"
 						+ "<table style='padding-top:10px; padding-bottom:5px;'>";
 				String icon = "aon-icon-google-drive-unknown";
@@ -196,7 +196,7 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 			
 				html = html + "</table></div>";
 				printStream.printf(html,"%");
-			}
+			}*/
 		}
 	}
 

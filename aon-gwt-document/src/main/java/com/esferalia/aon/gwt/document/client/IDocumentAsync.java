@@ -112,4 +112,8 @@ public interface IDocumentAsync {
 
 	void getAttachList(Vector<FileInfo> fileInfoList, AsyncCallback<LinkedList<Attach>> callback);
 
+	void print(String head, String msg, AsyncCallback<Void> callback);
+
+	void getLink(Domain domain, FileInfo fileInfo, String l, AsyncCallback<String> callback);
+
 }

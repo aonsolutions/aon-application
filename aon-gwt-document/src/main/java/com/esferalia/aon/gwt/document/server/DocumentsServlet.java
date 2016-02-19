@@ -834,6 +834,25 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	}
 	
 	
+	public String getLink(Domain domain, FileInfo fileInfo, String l){
+		Domain d = AON.getDomain(domain.getName(), domain.getId(), getUser().getLogin());
+		String link;
+		if(fileInfo.getDriveId() != null){
+			File file =	DriveUtils.getDriveFile(d, getUser(), fileInfo.getDriveId(), fileInfo.getFileId());
+			link = file.getAlternateLink();
+		} else{
+			fileInfo = setmd5(domain, fileInfo);
+			String md5 =fileInfo.getMd5();
+			if(l.contains("aon_gwt_document")){
+				Integer pos = l.lastIndexOf("/");
+				Integer pos2 = l.substring(0, pos).lastIndexOf("/");
+				l = l.substring(0,pos2);
+			}
+			link = l+"/aonDocuments/"+ fileInfo.getFileId() +"-"+ md5;
+		}
+		return link;
+	}
+	
 	public String copyLink(FileInfo doc,String l){
 		String link;
 		Urlshortener u = null;
@@ -1412,4 +1431,13 @@ public Vector<FileInfo> insertFileMultiple(Domain domain, FileInfo fi) {
 		}
 	}
 	
+	public void print(String head, String msg){
+		System.out.println("+++++++++++++++ GWT DOCUMENT +++++++++++++++");
+		System.out.println();
+		System.out.println(head);
+		System.out.println();
+		System.out.println(msg);
+		System.out.println();
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++");
+	}
 }
