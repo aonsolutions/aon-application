@@ -323,9 +323,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; 
 
-		Assert.assertEquals( 20 * (2/12.00) * br + ( br * (10 + noHolidays) ), settle.getTotalPayment());
+		Assert.assertEquals( 20 * (2/12.00) * br + ( br * (10 + noHolidays) ), settle.getTotalPayment(), DELTA);
 		
-		Assert.assertEquals( br * ( 10 + noHolidays) , settle.getCommonBase());
+		Assert.assertEquals( br * ( 10 + noHolidays) , settle.getCommonBase(), DELTA);
 		
 		SalaryData cgcBases [] = settle.getSalaryDatas()
 				.stream()
@@ -337,11 +337,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 		Assert.assertEquals(startNoHolidays, cgcBases[0].getStartDate());
 		Assert.assertEquals(endNoHolidays, cgcBases[0].getEndDate());
-		Assert.assertEquals(br*noHolidays, Double.parseDouble(cgcBases[0].getExpression()));
+		Assert.assertEquals(br*noHolidays, Double.parseDouble(cgcBases[0].getExpression()), DELTA);
 		
 		Assert.assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 1), cgcBases[1].getStartDate());
 		Assert.assertEquals(AonDateUtils.add(endNoHolidays, DAY_OF_MONTH, 10), cgcBases[1].getEndDate());
-		Assert.assertEquals(br*10.00, Double.parseDouble(cgcBases[1].getExpression()));
+		Assert.assertEquals(br*10.00, Double.parseDouble(cgcBases[1].getExpression()), DELTA);
 		
 	}
 
