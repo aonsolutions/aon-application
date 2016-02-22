@@ -25,187 +25,208 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.jsonp.client.JsonpRequestBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AonHub  {
+public class AonHub {
 
 	private static String accessToken = null;
 	private static String baseUrl = "https://api.github.com/";
 	private static String repositoryUrl = "https://api.github.com/";
 	private static boolean authorized = false;
-	
+
 	public AonHub(String url) {
 		this.baseUrl = url;
-	}	
-	
+	}
+
 	public void setRepositoryUrl(String repositoryUrl) {
 		this.repositoryUrl = repositoryUrl;
 	}
-	
+
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 	}
-	
+
 	public boolean isAuthorized() {
 		return this.isAuthorized();
 	}
-	
+
 	// ************** USERS *************** //
-	
+
 	public void getUser(String login, AsyncCallback<AJSON<JsUser>> callback) {
 		get(baseUrl + "users/" + URL.encode(login), callback);
 	}
-	
 
 	// *********** REPOSITORIES *********** //
-		
-	public void createRepository(RepoValue prop, AsyncCallback<JsRepo> callback) {
+
+	public void createRepository(RepoValue prop,
+			AsyncCallback<JsRepo> callback) {
 		post(baseUrl + "user/repos", prop, callback);
-	}	
-	
+	}
+
 	public void getRepoOrganization(String organization,
 			AsyncCallback<JSON<JsRepo>> callback) {
-		get(baseUrl + "orgs/"+ organization + "/repos", callback);
+		get(baseUrl + "orgs/" + organization + "/repos", callback);
 	}
-	
+
 	public void getRepos(String user, AsyncCallback<JSON<JsRepo>> callback) {
 		get(baseUrl + "users/" + URL.encode(user) + "/repos", callback);
 	}
-	
+
 	public void getRepo(String login, String name,
 			AsyncCallback<AJSON<JsRepo>> callback) {
-		get(baseUrl + "repos/" + URL.encode(login) + "/" + URL.encode(name), callback);
+		get(baseUrl + "repos/" + URL.encode(login) + "/" + URL.encode(name),
+				callback);
 	}
-	
-	public void saveRepo(RepoValue prop,
-			AsyncCallback<JsRepo> callback) {		
+
+	public void saveRepo(RepoValue prop, AsyncCallback<JsRepo> callback) {
 		post(repositoryUrl, prop, callback);
 	}
-	
-	public void deleteRepository(AsyncCallback<JsRepo> callback) {		
+
+	public void deleteRepository(AsyncCallback<JsRepo> callback) {
 		delete(repositoryUrl, callback);
 	}
 
 	// ************** ISSUES ************** //
-	
+
 	/**
-	 *  para tratar el metodo desde una api, los parametros deben ser los siguientes:
-	 *  String user: Id del dominio.
-	 *  String repo: Nombre del dominio.
+	 * para tratar el metodo desde una api, los parametros deben ser los
+	 * siguientes: String user: Id del dominio. String repo: Nombre del dominio.
 	 */
 
 	public void getOpenIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
-		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=open", callback);
+		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=open",
+				callback);
 	}
-	
+
 	public void getClosedIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
-		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=closed", callback);
+		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=closed",
+				callback);
 	}
-	
+
 	public void getAllIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
-		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=all", callback);
+		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=all",
+				callback);
 	}
 
 	public void createIssue(String user, String repo, IssueValue prop,
-			AsyncCallback<JsIssue> callback) {		
-		post(baseUrl + "repos/" + user + "/" + repo + "/issues", prop, callback);
-	}
-	
-	public void editIssue(String user, String repo, JsIssue issue, IssueValue prop,
 			AsyncCallback<JsIssue> callback) {
+		post(baseUrl + "repos/" + user + "/" + repo + "/issues", prop,
+				callback);
+	}
+
+	public void editIssue(String user, String repo, JsIssue issue,
+			IssueValue prop, AsyncCallback<JsIssue> callback) {
 
 		if (issue == null)
 			createIssue(user, repo, prop, callback);
 		else
-			post(baseUrl + "repos/" + user + "/" + repo + "/issues/" + issue.getNumber(), prop, callback);
+			post(baseUrl + "repos/" + user + "/" + repo + "/issues/"
+					+ issue.getNumber(), prop, callback);
 	}
-	
-	public void saveNotice (String url, IssueValue prop, AsyncCallback<JsIssue> callback) {
+
+	public void saveNotice(String url, IssueValue prop,
+			AsyncCallback<JsIssue> callback) {
 		post(url, prop, callback);
-	
+
 	}
-	
-	public void addLabel2Issue (JsRepo repo, JsIssue issue, LabelValue prop, AsyncCallback<JsLabel> callback) {
-		post(repo.getUrl() + "/issues/" + issue.getNumber() + "/labels", prop, callback);
-	}	
-	
+
+	public void addLabel2Issue(JsRepo repo, JsIssue issue, LabelValue prop,
+			AsyncCallback<JsLabel> callback) {
+		post(repo.getUrl() + "/issues/" + issue.getNumber() + "/labels", prop,
+				callback);
+	}
+
 	public void deleteIssue(String user, String repo, JsIssue issue,
 			AsyncCallback<JsIssue> callback) {
-		delete(baseUrl + "repos/" + user + "/" + repo + "/issues/" + issue.getNumber(), callback);
+		delete(baseUrl + "repos/" + user + "/" + repo + "/issues/"
+				+ issue.getNumber(), callback);
 	}
-
 
 	// *************** COMMENTS ****************** //
-	
+
 	public void getIssueComments(String user, String repo, JsIssue issue,
 			AsyncCallback<JSON<JsIssueComment>> callback) {
-		get(baseUrl + "repos/" + user + "/" + repo + "/issues/" + issue.getNumber() + "/comments", callback);
+		get(baseUrl + "repos/" + user + "/" + repo + "/issues/"
+				+ issue.getNumber() + "/comments", callback);
 	}
-	
+
 	public void createIssueComment(String user, String repo, JsIssue issue,
 			IssueCommentValue prop, AsyncCallback<JsIssueComment> callback) {
-		post(baseUrl + "repos/" + user + "/" + repo + "/issues/" + issue.getNumber() + "/comments", prop, callback);
-	}	
-	
-	public void editIssueComment(String user, String repo,
-			Integer id, IssueCommentValue prop,
-			AsyncCallback<JsIssueComment> callback) {
-		post(baseUrl + "repos/" + user + "/" + repo + "/issues/comments/" + id , prop, callback);
-	}	
-	
+		post(baseUrl + "repos/" + user + "/" + repo + "/issues/"
+				+ issue.getNumber() + "/comments", prop, callback);
+	}
+
+	public void editIssueComment(String user, String repo, Integer id,
+			IssueCommentValue prop, AsyncCallback<JsIssueComment> callback) {
+		post(baseUrl + "repos/" + user + "/" + repo + "/issues/comments/" + id,
+				prop, callback);
+	}
+
 	public void deleteIssueComment(String user, String repo, Integer id,
 			AsyncCallback<JsIssue> callback) {
-		delete(baseUrl + "repos/" + user + "/" + repo + "/issues/comments/" + id, callback);
-		
+		delete(baseUrl + "repos/" + user + "/" + repo + "/issues/comments/"
+				+ id, callback);
+
 	}
 
 	// *************** LABELS ****************** //
-	
-	public void getLabels(String user, String repo, AsyncCallback<JSON<JsLabel>> callback) {
+
+	public void getLabels(String user, String repo,
+			AsyncCallback<JSON<JsLabel>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/labels", callback);
 	}
-	
+
 	public void createLabel(String user, String repo, LabelValue prop,
 			AsyncCallback<JsLabel> callback) {
 		post(baseUrl + "repos/" + user + "/" + repo + "/", prop, callback);
 	}
-	
-	public void saveLabel(String user, String repo, String name, LabelValue prop,
+
+	public void removeAndAssignLabelFromIssue(String user, String repo,
+			Integer issueNumber, String labelName,
 			AsyncCallback<JsLabel> callback) {
+		get(baseUrl + "repos/" + user + "/" + repo + "/issues/" + issueNumber
+				+ "/labels/" + URL.encode(labelName), callback);
+	}
+
+	public void saveLabel(String user, String repo, String name,
+			LabelValue prop, AsyncCallback<JsLabel> callback) {
 		if (name == null)
 			createLabel(user, repo, prop, callback);
 		else
-			post(baseUrl + "repos/" + user + "/" + repo + "/labels/" + URL.encode(name), prop, callback);
+			post(baseUrl + "repos/" + user + "/" + repo + "/labels/"
+					+ URL.encode(name), prop, callback);
 	}
-	
-	public void saveLabel(String user, String repo, JsLabel label, LabelValue prop,
-			AsyncCallback<JsLabel> callback) {
+
+	public void saveLabel(String user, String repo, JsLabel label,
+			LabelValue prop, AsyncCallback<JsLabel> callback) {
 		if (label == null)
 			createLabel(user, repo, prop, callback);
 		else
-			post(baseUrl + "repos/" + user + "/" + repo + "/labels/" + URL.encode(label.getName()),
-					prop, callback);
+			post(baseUrl + "repos/" + user + "/" + repo + "/labels/"
+					+ URL.encode(label.getName()), prop, callback);
 	}
-	
+
 	public void deleteLabel(String user, String repo, String labelName,
 			AsyncCallback<JsLabel> callback) {
-		delete(baseUrl + "repos/" + user + "/" + repo + "/labels/" + URL.encode(labelName), callback);
+		delete(baseUrl + "repos/" + user + "/" + repo + "/labels/"
+				+ URL.encode(labelName), callback);
 	}
-	
+
 	// *************** REGISTRIES ****************** //
 	/**
 	 * 
-	 * @param domain id del current domain
-	 * @param domainName nombre del current domain
+	 * @param domain
+	 *            id del current domain
+	 * @param domainName
+	 *            nombre del current domain
 	 * @param callback
 	 */
-	public void getRegistries(String user, String repo, 
-			AsyncCallback<JSON<JsRegistry>> callback) {		
+	public void getRegistries(String user, String repo,
+			AsyncCallback<JSON<JsRegistry>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/registries", callback);
 	}
 
-	
 	// ********* PUBLIC STATIC METHODS *********** //
 
 	private static <T extends JavaScriptObject> AsyncCallback<T> hookCallback(
@@ -230,28 +251,27 @@ public class AonHub  {
 			final AsyncCallback<T> callback) {
 
 		String requestUrl = makeRequestUrl(url);
-		
-		if ( baseUrl.contains("api.github.com") ) {
-			//API GITHUB
+
+		if (baseUrl.contains("api.github.com")) {
+			// API GITHUB
 			GWT.log("[GET] " + requestUrl);
-			JsonpRequestBuilder jsonp = new JsonpRequestBuilder();		
+			JsonpRequestBuilder jsonp = new JsonpRequestBuilder();
 			jsonp.requestObject(requestUrl, hookCallback(callback));
-		}
-		else {
-			//OTRA URL
+		} else {
+			// OTRA URL
 			RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
 					requestUrl);
 
 			final AsyncCallback<T> hookedCallback = hookCallback(callback);
 			final StringBuilder log = new StringBuilder();
 			log.append("[GET]" + requestUrl);
-			
-			try {			
+
+			try {
 				builder.sendRequest(null, new RequestCallback() {
 					@Override
 					public void onResponseReceived(Request request,
 							Response response) {
-						
+
 						T result = JsonUtils.<T> safeEval(response.getText());
 						log.append("\n\n--" + response.getStatusText() + ":"
 								+ response.getStatusCode() + "\n"
@@ -274,11 +294,11 @@ public class AonHub  {
 			}
 		}
 	}
-	
-	private <T extends JavaScriptObject> void post(String url,  
-			Value<?> request, AsyncCallback<T> callback) {
-			
-		String requestUrl = makeRequestUrl(url); 
+
+	private <T extends JavaScriptObject> void post(String url, Value<?> request,
+			AsyncCallback<T> callback) {
+
+		String requestUrl = makeRequestUrl(url);
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
 				requestUrl);
 
@@ -286,13 +306,13 @@ public class AonHub  {
 		final AsyncCallback<T> hookedCallback = hookCallback(callback);
 		final StringBuilder log = new StringBuilder();
 		log.append("[POST]" + requestUrl + "\n" + requestJson);
-		
-		try {			
+
+		try {
 			builder.sendRequest(requestJson, new RequestCallback() {
 				@Override
 				public void onResponseReceived(Request request,
 						Response response) {
-					
+
 					T result = JsonUtils.<T> safeEval(response.getText());
 					log.append("\n\n--" + response.getStatusText() + ":"
 							+ response.getStatusCode() + "\n"
@@ -314,27 +334,29 @@ public class AonHub  {
 			GWT.log(log.toString());
 		}
 	}
-	
-	private <T extends JavaScriptObject> void delete(String url, 
+
+	private <T extends JavaScriptObject> void delete(String url,
 			AsyncCallback<T> callback) {
-		String requestUrl = makeRequestUrl(url); 		
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.DELETE, requestUrl);
+		String requestUrl = makeRequestUrl(url);
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.DELETE,
+				requestUrl);
 		final AsyncCallback<T> hookedCallback = hookCallback(callback);
 		final StringBuilder log = new StringBuilder();
 		log.append(" [DELETE] ---> " + requestUrl);
-		
+
 		try {
 			builder.sendRequest(null, new RequestCallback() {
-				
+
 				@Override
-				public void onResponseReceived(Request request, Response response) {					
+				public void onResponseReceived(Request request,
+						Response response) {
 					log.append("\n\n--" + response.getStatusText() + ":"
 							+ response.getStatusCode() + "\n"
 							+ response.getText());
 					hookedCallback.onSuccess(null);
 					GWT.log(log.toString());
 				}
-				
+
 				@Override
 				public void onError(Request request, Throwable e) {
 					log.append("\n\n--" + e.getStackTrace());
@@ -342,15 +364,14 @@ public class AonHub  {
 					GWT.log(log.toString());
 				}
 			});
-			
-		} catch ( RequestException ex) {
+
+		} catch (RequestException ex) {
 			log.append("\n\n--" + ex.getStackTrace());
 			hookedCallback.onFailure(ex);
 			GWT.log(log.toString());
 
 		}
 	}
-	
 
 	private static String makeRequestUrl(String url) {
 		String prefix = "?";

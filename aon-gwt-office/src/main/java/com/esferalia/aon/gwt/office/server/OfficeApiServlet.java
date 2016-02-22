@@ -21,11 +21,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.office.exceptions.LabelNotDeletedException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.safehtml.shared.UriUtils;
 
 /**
@@ -141,7 +142,7 @@ public class OfficeApiServlet extends HttpServlet {
 	private static class CreateIssue extends RegExpRequestHandler {
 
 		public CreateIssue() {
-			super("/repos/(\\d+)/(.+)/issues");
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues");
 		}
 
 		@Override
@@ -181,7 +182,7 @@ public class OfficeApiServlet extends HttpServlet {
 				notice.setTitle(json.getString("title"));
 				notice.setBody(json.getString("body"));
 				notice.setStatus(json.getString("state"));
-				
+
 				User user = new User();
 				user.setId(Integer.parseInt(json.getString("sender")));
 				user.setDomain(domain);
@@ -199,6 +200,7 @@ public class OfficeApiServlet extends HttpServlet {
 						String name = tags.getString(x);
 						Tag tag = AON.getTag(domain, domainName, userName,
 								name);
+						tag.setUser(user);
 						notice.addTag(tag);
 					}
 				}
@@ -214,7 +216,7 @@ public class OfficeApiServlet extends HttpServlet {
 	private static class EditIssue extends RegExpRequestHandler {
 
 		public EditIssue() {
-			super("/repos/(\\d+)/(.+)/issues/(\\d+)");
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues/(\\d+)");
 		}
 
 		@Override
@@ -222,35 +224,42 @@ public class OfficeApiServlet extends HttpServlet {
 				throws ServletException, IOException {
 
 			Integer domain = null;
-			String domainName = "";
+			String domainName = null;
+			Integer noticeId = null;
 
 			try {
 
 				domain = getDomainId();
 				domainName = getDomainName();
+				noticeId = Integer.parseInt(group(3));
 
 			} catch (Exception ex) {
 				String aux = getRequestAction(req);
 				String[] auxArr = aux.split("/");
 				domain = Integer.parseInt(auxArr[2]);
 				domainName = auxArr[3];
+				noticeId = Integer.parseInt(auxArr[5]);
+				
 
 			} finally {
-				editIssue(req, resp, domain, domainName);
+				editIssue(req, resp, domain, domainName, noticeId);
 			}
 
 		}
 
 		private void editIssue(HttpServletRequest req, HttpServletResponse resp,
-				Integer domain, String domainName) {
+				Integer domain, String domainName, Integer noticeId) {
 			try {
 				String object = getJsonObject(req);
 				JSONObject json = new JSONObject(object);
 
 				Notice notice = new Notice();
-				notice.setId(Integer.parseInt(group(3)));
+				notice.setId(noticeId);
+				
+				User user = AON.getUser(domain, domainName, AonServletUtils.getLoggedUser(), AonServletUtils.getRequestUserId(req));
+				notice.setSender(user);
 
-				if (json.isNull("state") == false) {
+				if (json.isNull("state") == false) {					
 					notice.setStatus(json.getString("state"));
 					getChangeStatusNotice(resp, domain, domainName, notice);
 				} else {
@@ -270,7 +279,7 @@ public class OfficeApiServlet extends HttpServlet {
 			extends RegExpRequestHandler {
 
 		public GetAllIssuesRequestHandler() {
-			super("/repos/(.+)/(.+)/issues");
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues");
 		}
 
 		@Override
@@ -342,7 +351,7 @@ public class OfficeApiServlet extends HttpServlet {
 	private static class ListAllLabels extends RegExpRequestHandler {
 
 		public ListAllLabels() {
-			super("/repos/(.+)/(.+)/labels");
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/labels");
 		}
 
 		@Override
@@ -371,9 +380,8 @@ public class OfficeApiServlet extends HttpServlet {
 				Integer domainId, String domainName) {
 
 			try {
-				String user_name = AonServletUtils.getLoggedUser();
 
-				List<Tag> tags = AON.getTags(domainId, domainName, user_name);
+				List<Tag> tags = AON.getTags(domainId, domainName, AonServletUtils.getLoggedUser());
 
 				PrintWriter pw = resp.getWriter();
 				pw.append('{');
@@ -394,7 +402,7 @@ public class OfficeApiServlet extends HttpServlet {
 		private HttpServletResponse resp;
 
 		public CreateComment() {
-			super("/repos/(\\d+)/(.+)/issues/(\\d+)/comments");
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues/(\\d+)/comments");
 		}
 
 		@Override
@@ -406,7 +414,7 @@ public class OfficeApiServlet extends HttpServlet {
 
 			Integer domain = null;
 			Integer noticeHeadId = null;
-			String domainName = "";
+			String domainName = null;
 
 			try {
 				domain = getDomainId();
@@ -432,10 +440,9 @@ public class OfficeApiServlet extends HttpServlet {
 				JSONObject json = new JSONObject(object);
 				Notice comment = new Notice();
 				comment.setDomain(domainId);
-				
-				User user = new User();
-				user.setId(AonServletUtils.getRequestUserId(this.req));				
-				comment.setSender(user);				
+
+				User user = AON.getUser(domainId, domainName, AonServletUtils.getLoggedUser(), AonServletUtils.getRequestUserId(req));
+				comment.setSender(user);
 				comment.setBody(json.getString("body"));
 				jsonComment(resp, domainId, domainName, noticeHeadId, comment);
 
@@ -451,7 +458,7 @@ public class OfficeApiServlet extends HttpServlet {
 		HttpServletResponse resp;
 
 		public EditComment() {
-			super("/repos/(\\d+)/(.+)/issues/comments/(\\d+)");
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues/comments/(\\d+)");
 		}
 
 		@Override
@@ -499,7 +506,7 @@ public class OfficeApiServlet extends HttpServlet {
 	private static class GetRegistries extends RegExpRequestHandler {
 
 		public GetRegistries() {
-			super("/repos/(.+)/(.+)/registries");
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/registries");
 		}
 
 		@Override
@@ -549,7 +556,7 @@ public class OfficeApiServlet extends HttpServlet {
 	private static class CreateLabel extends RegExpRequestHandler {
 
 		public CreateLabel() {
-			super("/repos/(\\d+)/(.+)/");
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/");
 		}
 
 		@Override
@@ -596,7 +603,7 @@ public class OfficeApiServlet extends HttpServlet {
 	private static class UpdateLabel extends RegExpRequestHandler {
 
 		public UpdateLabel() {
-			super("/repos/(\\d+)/(.+)/labels/(.+)");
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/labels/(.+)");
 		}
 
 		@Override
@@ -627,10 +634,8 @@ public class OfficeApiServlet extends HttpServlet {
 			try {
 
 				String object = getJsonObject(req);
-				System.out.println("Object: " + object);
 				JSONObject json = new JSONObject(object);
 				String labelName = URLDecoder.decode(group(3), "UTF-8");
-				System.out.println("Deco2: " + labelName);
 				Tag tag = new Tag();
 
 				if (json.isNull("name") == false)
@@ -650,70 +655,206 @@ public class OfficeApiServlet extends HttpServlet {
 	}
 
 	private static class DeleteLabel extends RegExpRequestHandler {
+		
+		private HttpServletResponse resp;
+		
+		private Integer domainId;
+		private String domainName;
+		private String labelName;
 
 		public DeleteLabel() {
-			super("/repos/(\\d+)/(.+)/labels/(.+)");
-		}
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/labels/(.+)");
+		}		
 
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-
-			Integer domainId = getDomainId();
-			String domainName = getDomainName();
-			String userName = AonServletUtils.getLoggedUser();
-
-			String decoded = URLDecoder.decode(group(3), "UTF-8");
-
-			boolean deleted = AON.deleteTag(domainId, domainName, userName,
-					decoded);
-			System.out.println("Borrado: " + deleted);
-
-			if (deleted) {
-				resp.setStatus(200);
-			} else {
-				resp.setStatus(404);
+			
+			
+			this.resp = resp;
+			
+			try {
+				
+				this.domainId = getDomainId();
+				this.domainName = getDomainName();
+				this.labelName = URLDecoder.decode(group(3), "UTF-8");
+				
+			} catch (Exception ex) {
+				String ver = getRequestAction(req);
+				String[] actionArr = ver.split("/");
+				this.domainId = Integer.parseInt(actionArr[2]);
+				this.domainName = actionArr[3];
+				this.labelName = URLDecoder.decode(actionArr[5], "UTF-8");
+			
+			} finally {
+				deleteLabel();
 			}
+		}
+		
+		private void deleteLabel() {
+			
+			PrintWriter pw = null;
+			
+			try {
+				pw = resp.getWriter();
+				
+				boolean deleted = AON.deleteTag(domainId, domainName, AonServletUtils.getLoggedUser(),
+						labelName);				
 
-			PrintWriter pw = resp.getWriter();
-			pw.append("{\n");
-			pw.append("}");
-			pw.flush();
-
+				if (deleted) {
+					resp.setStatus(200);
+				} else {
+					throw new LabelNotDeletedException();					
+				}
+				
+				pw.append("{\n");
+				pw.append("}");
+				pw.flush();
+				
+			} catch(LabelNotDeletedException ex) {
+				resp.setStatus(404);
+				System.out.println("Etiqueta no eliminada: " + ex.getMessage());
+				pw.flush();
+			} catch (IOException ex) {
+				resp.setStatus(404);
+				System.out.println("Se ha producido un error: " + ex.getMessage());
+				pw.flush();
+			}
 		}
 	}
 
 	private static class DeleteNotice extends RegExpRequestHandler {
-
+		
+		private HttpServletResponse resp;
+		
+		private Integer domainId;
+		private String domainName;
+		private Integer noticeId;
+		
+		
 		public DeleteNotice() {
-			super("/repos/(\\d+)/(.+)/issues/(\\d+)");
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues/(\\d+)");
+		}
+
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			
+			this.resp = resp;
+			
+			try {
+
+				this.domainId = getDomainId();
+				this.domainName = getDomainName();
+				this.noticeId = Integer.parseInt(group(3));
+				
+			} catch (Exception ex) {
+				String ver = getRequestAction(req);
+				String[] actionArr = ver.split("/");
+				this.domainId = Integer.parseInt(actionArr[2]);
+				this.domainName = actionArr[3];
+				this.noticeId = Integer.parseInt(actionArr[5]);
+			
+			} finally {
+				deleteNotice();
+			}
+		}
+		
+		private void deleteNotice() {
+			
+			PrintWriter pw = null;
+			
+			try {
+				pw = resp.getWriter();
+				
+				boolean deleted = AON.deleteNotice(domainId, domainName, AonServletUtils.getLoggedUser(),
+						noticeId);
+
+				if (deleted)
+					resp.setStatus(200);
+				else
+					resp.setStatus(404);
+				
+				pw.append("{\n");
+				pw.append("}");
+				pw.flush();
+				
+				
+			} catch (Exception ex) {
+				resp.setStatus(404);
+				System.out.println("Se ha producido un error: " + ex.getMessage());
+				pw.flush();
+			}
+		}
+	}
+
+	private static class DeleteAndAssignLabelFromIssue extends RegExpRequestHandler {
+
+		private HttpServletRequest req;
+		private HttpServletResponse resp;
+		private Integer domainId;
+		private Integer noticeId;
+		private String domainName;
+		private String labelName;
+
+		public DeleteAndAssignLabelFromIssue() {
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues/(\\d+)/labels/(.+)");
 		}
 
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 
-			Integer domainId = getDomainId();
-			String domainName = getDomainName();
-			String userName = AonServletUtils.getLoggedUser();
+			this.req = req;
+			this.resp = resp;
 
-			Integer noticeId = Integer
-					.parseInt(URLDecoder.decode(group(3), "UTF-8"));
-			System.out.println("Number: " + noticeId);
+			try {
 
-			boolean deleted = AON.deleteNotice(domainId, domainName, userName,
-					noticeId);
-			System.out.println("BORRADO: " + deleted);
+				this.domainId = getDomainId();
+				this.domainName = getDomainName();
+				this.noticeId = Integer.parseInt(group(3));
+				this.labelName = URLDecoder.decode(group(4), "UTF-8");
 
-			if (deleted)
-				resp.setStatus(200);
-			else
-				resp.setStatus(404);
+			} catch (Exception ex) {
+				String ver = getRequestAction(req);
+				String[] actionArr = ver.split("/");
+				this.domainId = Integer.parseInt(actionArr[2]);
+				this.domainName = actionArr[3];
+				this.noticeId = Integer.parseInt(actionArr[5]);
+				this.labelName = URLDecoder.decode(actionArr[7], "UTF-8");
 
-			PrintWriter pw = resp.getWriter();
-			pw.append("{\n");
-			pw.append("}");
-			pw.flush();
+			} finally {
+				deleteLabel();
+			}
+		}
+
+		private void deleteLabel() throws ServletException, IOException {
+
+			try {
+
+				User user = AON.getUser(domainId, domainName,
+						AonServletUtils.getLoggedUser(),
+						AonServletUtils.getRequestUserId(req));
+				Tag tag = AON.getTag(domainId, domainName,
+						AonServletUtils.getLoggedUser(), labelName);
+				tag.setUser(user);
+
+				boolean deleted = AON.DeleteAndAssignLabelFromIssue(domainId, domainName,
+						AonServletUtils.getLoggedUser(), noticeId, tag);
+
+				if (deleted)
+					resp.setStatus(200);
+				else
+					throw new LabelNotDeletedException();
+				
+				PrintWriter pw = resp.getWriter();
+				pw.append(getLabel(tag));
+				pw.flush();
+
+			} catch (LabelNotDeletedException ex) {
+				System.err.println(
+						"La etiqueta no se ha podido cerrar correctamente");
+			}
 		}
 	}
 
@@ -722,7 +863,8 @@ public class OfficeApiServlet extends HttpServlet {
 			new GetUser(),
 			new GetRegistries(),
 			new GetAllIssuesRequestHandler(),
-			new ListAllLabels()
+			new ListAllLabels(),
+			new DeleteAndAssignLabelFromIssue(),
 	};
 	
 	private static final HttpRequestHandler POST_HANDLERS[] = {
@@ -731,12 +873,12 @@ public class OfficeApiServlet extends HttpServlet {
 			new CreateLabel(),
 			new UpdateLabel(),
 			new CreateComment(),
-			new EditComment()
+			new EditComment(),
 	};
 
 	private static final HttpRequestHandler DELETE_HANDLERS[] = {
 			new DeleteLabel(),
-			new DeleteNotice(),
+			new DeleteNotice(),			
 	};
 	// @formatter:on
 
@@ -775,6 +917,7 @@ public class OfficeApiServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		resp.setContentType("application/json;charset=UTF-8");
+		resp.setCharacterEncoding("UTF-8");
 
 		for (HttpRequestHandler handler : DELETE_HANDLERS) {
 			if (handler.accept(req)) {
@@ -828,15 +971,15 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append(
 				String.format("\"state\":\"%s\",\r\n", notice.getStatus()));
 		buffer.append(String.format("\"company\":\"%s\",\r\n",
-				notice.getCompany() != null ? notice.getCompany() : ""));
+				notice.getCompany() != null ? UriUtils.encode(notice.getCompany()) : ""));
 		buffer.append(String.format("\"source\":\"%s\",\r\n",
-				notice.getSource() != null ? notice.getSource() : ""));
+				notice.getSource() != null ? UriUtils.encode(notice.getSource()) : ""));
 		buffer.append(String.format("\"user\":%s,\r\n",
 				buildUserSender(notice.getSender())));
 		buffer.append(String.format("\"type\":\"%s\",\r\n",
-				(notice.getType() != null) ? notice.getType() : "Sin asignar"));
+				(notice.getType() != null) ? UriUtils.encode(notice.getType()) : "Sin asignar"));
 		buffer.append(String.format("\"priority\":\"%s\",\r\n",
-				(notice.getPriority() != null) ? notice.getPriority()
+				(notice.getPriority() != null) ? UriUtils.encode(notice.getPriority())
 						: "Sin asignar"));
 		buffer.append(String.format("\"created_at\":\"%s\",\r\n",
 				notice.getStartDate()));
@@ -897,7 +1040,7 @@ public class OfficeApiServlet extends HttpServlet {
 			pw = resp.getWriter();
 			Notice editNotice = AON.changeNoticeStatus(domainId, domainName,
 					AonServletUtils.getLoggedUser(), notice);
-			 pw.append(getNotice(editNotice));
+			pw.append(getNotice(editNotice));
 			pw.flush();
 		} catch (Exception ex) {
 			System.out.println("Exception: " + ex.getMessage());
@@ -931,8 +1074,8 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append("{\n");
 		buffer.append(
 				String.format("\"id\":%s,\r\n", String.valueOf(user.getId())));
-		buffer.append(String.format("\"login\":\"%s\",\r\n", user.getLogin()));
-		buffer.append(String.format("\"name\":\"%s\"\r\n", user.getName()));
+		buffer.append(String.format("\"login\":\"%s\",\r\n", UriUtils.encode(user.getLogin())));
+		buffer.append(String.format("\"name\":\"%s\"\r\n", UriUtils.encode(user.getName())));
 		buffer.append("}");
 		return buffer.toString();
 	}
@@ -995,7 +1138,7 @@ public class OfficeApiServlet extends HttpServlet {
 				String.format("\"id\":%s,\r\n", String.valueOf(tag.getId())));
 		buffer.append(String.format("\"type\":%s,\r\n",
 				String.valueOf(tag.getType())));
-		buffer.append(String.format("\"name\":\"%s\",\r\n", tag.getName()));
+		buffer.append(String.format("\"name\":\"%s\",\r\n", UriUtils.encode(tag.getName())));
 		buffer.append(String.format("\"domain\":\"%s\",\r\n",
 				String.valueOf(tag.getDomain())));
 		buffer.append(String.format("\"color\":\"%s\"\r\n",
@@ -1027,10 +1170,9 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append(String.format("\"id\":%s,\r\n",
 				String.valueOf(registry.getId())));
 		buffer.append(String.format("\"name\":\"%s\",\r\n",
-				(registry.getName() != null) ? registry.getName() : ""));
-		buffer.append(
-				String.format("\"alias\":\"%s\",\r\n", 
-						(registry.getAlias() != null) ? registry.getAlias() : ""));
+				(registry.getName() != null) ? UriUtils.encode(registry.getName()) : ""));
+		buffer.append(String.format("\"alias\":\"%s\",\r\n",
+				(registry.getAlias() != null) ? UriUtils.encode(registry.getAlias()) : ""));
 		buffer.append(String.format("\"document\":\"%s\"\r\n",
 				registry.getDocument()));
 		buffer.append("}");

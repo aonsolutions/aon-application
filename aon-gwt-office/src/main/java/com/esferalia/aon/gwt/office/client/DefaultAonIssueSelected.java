@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.common.shared.Base64;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
@@ -24,6 +23,8 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 	
 	private String title;
 	private String body;
+	private String type;
+	private String priority;
 	
 	public DefaultAonIssueSelected(JsIssue issue) {
 		this.issue = issue;
@@ -36,6 +37,8 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 		
 		this.title = URL.decode(issue.getTitle());
 		this.body = URL.decode(issue.getBody());
+		this.type = URL.decode(issue.getType());
+		this.priority = URL.decode(issue.getPriority());
 		
 		initTagList(issue.getLabels());
 		initCommentList(issue.getIssueComments());
@@ -81,29 +84,35 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 	
 	@Override
 	public String getCompany() {		
-		return issue.getCompany();
+		return URL.decode(issue.getCompany());
+	}	
+	
+	public void setPriority(String priority) {
+		this.priority = priority;
 	}
 
 	@Override
 	public String getPriority() {
-		return issue.getPriority();
+		return this.priority;
+	}
+	
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	@Override
 	public String getType() {
-		return issue.getType();
+		return this.type;
 	}
 
 	@Override
 	public String getTitle() {
 		return this.title;
-//		return issue.getTitle();
 	}
 
 	@Override
 	public String getBody() {
 		return this.body;
-//		return issue.getBody();
 	}
 
 	@Override

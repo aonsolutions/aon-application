@@ -58,12 +58,11 @@
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='openIssuesButton'
 									styleName="aon-finding-toolbar-item
-								 aon-icon-issue-opened"
-									enabled="false" text="Abiertas" />
+								 {aonResources.css.aonIconIssueOpen}"
+									enabled="false" title="Cargar incidencias abiertas o reabiertas" />
 								<g:Button ui:field='closedIssuesButton'
-									styleName="aon-finding-toolbar-item
-								 aon-icon-issue-opened"
-									text="Cerradas" />
+									styleName="aon-finding-toolbar-item {aonResources.css.aonIconIssueClosed}"
+									title="Cargar incidencias cerradas" />
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
@@ -108,12 +107,13 @@
 					</g:HTMLPanel>
 				</g:ResizeLayoutPanel>
 
-				<g:DockLayoutPanel ui:field="readIssuePanel">
-					<g:center>
+				<g:ResizeLayoutPanel ui:field="readIssuePanel">
+					<g:HTMLPanel styleName="aon-scroll-area">
 						<g:SimpleLayoutPanel ui:field="readIssueLayoutPanel"
 							height="100%" />
-					</g:center>
-				</g:DockLayoutPanel>
+					</g:HTMLPanel>
+				</g:ResizeLayoutPanel>
+
 			</g:DeckLayoutPanel>
 		</g:center>
 

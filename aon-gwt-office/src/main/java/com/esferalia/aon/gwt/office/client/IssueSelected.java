@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
+import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 
 public interface IssueSelected {
 
@@ -35,6 +36,8 @@ public interface IssueSelected {
 	DefaultAonIssueComments addComment(JsIssueComment comment);
 	
 	DefaultAonIssueComments editComment(JsIssueComment comment);
+	
+	DefaultAonTagIssueSelected editTag(JsLabel label);
 	
 	List<DefaultAonTagIssueSelected> getTags();
 	

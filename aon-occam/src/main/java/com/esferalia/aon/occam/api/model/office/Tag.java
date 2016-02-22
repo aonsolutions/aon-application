@@ -1,11 +1,13 @@
 package com.esferalia.aon.occam.api.model.office;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.HasId;
+import com.esferalia.aon.occam.api.model.security.User;
 
 public class Tag implements Serializable, HasId {
-	
+
 	/**
 	 * 
 	 */
@@ -15,54 +17,83 @@ public class Tag implements Serializable, HasId {
 	private byte type;
 	private String name;
 	private String color;
-	
+	private Date startDate;
+	private Date endDate;
+	private User user;
+
 	public Tag() {
-		
+
 	}
-	
-	public Tag setId (Integer id) {
+
+	public Tag setId(Integer id) {
 		this.id = id;
 		return this;
 	}
-	
+
 	@Override
-	public Integer getId() {		
+	public Integer getId() {
 		return id;
 	}
 
-	public Tag setDomain (Integer domain) {
+	public Tag setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
-	
-	public Integer getDomain () {
+
+	public Integer getDomain() {
 		return this.domain;
 	}
-	
+
 	public Tag setType(byte type) {
 		this.type = type;
 		return this;
 	}
-	
+
 	public byte getType() {
 		return type;
 	}
-	
-	public Tag setName (String name) {
+
+	public Tag setName(String name) {
 		this.name = name;
 		return this;
 	}
-	
-	public String getName () {
+
+	public String getName() {
 		return this.name;
 	}
-	
-	public Tag setColor (String color) {
+
+	public Tag setColor(String color) {
 		this.color = color;
 		return this;
 	}
-	
-	public String getColor () {
+
+	public String getColor() {
 		return color;
 	}
+	
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+	
+	public Date getStartDate() {
+		return startDate;
+	}
+	
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+	
+	public Date getEndDate() {
+		return endDate;
+	}
+	
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+	public User getUser() {
+		return user;
+	}
+	
+	
 }

@@ -10,7 +10,7 @@ public interface AonHubMessages extends Messages {
 	// Ú --> \u00DA ú --> \u00FA
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// º --> \u00AA ª --> \u00BA
-	// ¿ --> \u00BF
+	// ¿ --> \u00BF ! --> \u0021 ¡ --> \u00A1
 	
 	@DefaultMessage("N\u00FAmero")
 	String number();

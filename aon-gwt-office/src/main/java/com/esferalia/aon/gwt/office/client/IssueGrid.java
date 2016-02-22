@@ -11,19 +11,20 @@ import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
+import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.dom.builder.shared.TableCellBuilder;
 import com.google.gwt.dom.builder.shared.TableRowBuilder;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.dom.client.Style.Overflow;
-import com.google.gwt.dom.client.Style.TextOverflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.AbstractCellTableBuilder;
 import com.google.gwt.user.cellview.client.AbstractHeaderOrFooterBuilder;
 import com.google.gwt.user.cellview.client.Column;
@@ -78,6 +79,24 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		}
 		
 		@Override
+		public DefaultAonTagIssueSelected editTag(JsLabel label) {			
+			for (DefaultAonTagIssueSelected tag : getTags()) {
+				if (tag.getType() == label.getType())
+					getTags().remove(tag);
+			}
+			
+			DefaultAonTagIssueSelected defaultTag = new DefaultAonTagIssueSelected(label);			
+			getTags().add(defaultTag);
+			
+			if (defaultTag.getType() == TagType.OFFICE_TYPE.value())
+				setType(defaultTag.getName());
+			else if (defaultTag.getType() == TagType.OFFICE_PRIORITY.value())
+				setPriority(defaultTag.getName());
+			
+			return defaultTag;
+		}
+		
+		@Override
 		public String getStateIconStyle() {			
 			return AON.AON_CSS.aonIconIssueOpen();
 		}
@@ -103,6 +122,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			super(issue);
 		}
 
+		@Override
+		public DefaultAonTagIssueSelected editTag(JsLabel label) {
+			return null;
+		}
+		
 		@Override
 		public String getStateIconStyle() {
 			return AON.AON_CSS.aonIconIssueClosed();
@@ -213,7 +237,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		private final String rowStyle;
 		private final String selectedRowStyle;
 
-		public CellTableBuilder() {
+		public CellTableBuilder() {			
 			super(IssueGrid.this);
 
 			rowStyle = getResources().style().evenRow();
@@ -272,8 +296,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			td.endTD();
 
 			td = row.startTD().align(
-					HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString());
-			td.style().overflow(Overflow.HIDDEN);
+					HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString());			
 			td.className(AON.AON_CSS.aonDataTableTextColumn());
 			renderCell(td, createContext(col++), labelsColumn, rowValue);
 			td.endTD();
@@ -382,7 +405,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 				return object.getStateIconStyle();
 			}
 		};
-		setColumnWidth(col++, 2, Unit.PCT);
+		setColumnWidth(col++, 5, Unit.PX);
 		
 		typeColumn = new Column<IssueSelected, String>(new ClickableTextCell()) {
 
@@ -451,7 +474,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			}
 		};
 		
-		setColumnWidth(col++, 40, Unit.PX);
+		setColumnWidth(col++, 30, Unit.PX);
 		
 		createdAtColumn = new Column<IssueSelected, String>(new TextCell()) {
 			
@@ -461,15 +484,15 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 				
 				switch (days) {
 				case 0:
-					return "Hoy";
+					return "Hoy (" + DateTimeFormat.getFormat("HH:mm").format(object.getCreateAt()) + ")";
 				case 1:
-					return "Ayer";
+					return "Ayer (" + DateTimeFormat.getFormat("HH:mm").format(object.getCreateAt()) + ")";
 				default:
-					return AON.DATE_FORMAT.format(object.getCreateAt());
+					return DateTimeFormat.getFormat("E dd MMMM HH:mm").format(object.getCreateAt());					
 				}
 			}
 		};
-		setColumnWidth(col++, 20, Unit.PX);
+		setColumnWidth(col++, 35, Unit.PX);
 	}
 
 	public Set<IssueSelected> getSelectedObject() {

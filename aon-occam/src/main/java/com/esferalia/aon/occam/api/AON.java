@@ -2079,7 +2079,7 @@ public class AON {
 	// ****************************** GWT-OFFICE **
 	// ********************************************
 	
-	public static com.esferalia.aon.occam.api.model.office.User getUser(
+	public static User getUser(
 			Integer domainId, String domainName, String userName, Integer userId) {
 		AONContext ctx = null;
 		try {
@@ -2089,7 +2089,6 @@ public class AON {
 			if (ctx != null)
 				ctx.close();
 		}
-		
 	}
 
 	public static List<Notice> getAllNotices(Integer domainId,
@@ -2269,6 +2268,18 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			return getOffice().getRegistries(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static boolean DeleteAndAssignLabelFromIssue(Integer domainId, String domainName, String userName, 
+			Integer issueId, Tag tag) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().DeleteAndAssignLabelFromIssue(ctx, issueId, tag);
 		} finally {
 			if (ctx != null)
 				ctx.close();

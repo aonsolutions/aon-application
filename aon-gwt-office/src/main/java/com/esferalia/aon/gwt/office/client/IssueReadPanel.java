@@ -5,8 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.occam.api.model.office.User;
+import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -15,8 +17,10 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -24,18 +28,20 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
-public class IssueReadPanel extends Composite
-		implements SelectionHandler<TreeItem> {
+public class IssueReadPanel extends Composite {
 
 	interface Callback<T> {
 
@@ -56,6 +62,10 @@ public class IssueReadPanel extends Composite
 
 		void onIssueCommentButtonClick(String body,
 				Callback<DefaultAonIssueComments> callback);
+
+		void onTypeTagValueChange(String name, Callback<DefaultAonTagIssueSelected> callback);
+
+		void onPriorityValueChange(String name, Callback<DefaultAonTagIssueSelected> callback);
 	}
 
 	interface GridStyle extends CssResource {
@@ -67,6 +77,9 @@ public class IssueReadPanel extends Composite
 
 		@ClassName("edit-button")
 		String editButton();
+
+		@ClassName("header-title")
+		String headerTitle();
 	}
 
 	private static IssueReadPanelUiBinder uiBinder = GWT
@@ -77,19 +90,20 @@ public class IssueReadPanel extends Composite
 
 	@UiField
 	GridStyle style;
-	@UiField
-	Label companyLabel;
-	@UiField
-	Label userLogged;
 
 	@UiField
-	Label titleLabel;
+	FlexTable headerFlexTable;
+
 	@UiField
-	HorizontalPanel labelsHPanel;
+	Label userLogged;
 	@UiField
 	Label typeLabel;
 	@UiField
 	Label priorityLabel;
+
+	@UiField
+	VerticalPanel labelsVPanel;
+
 	@UiField
 	FlowPanel historialVPanel;
 
@@ -101,8 +115,18 @@ public class IssueReadPanel extends Composite
 	@UiField
 	TextArea commentTextArea;
 
+	@UiField
+	Button typeButton;
+	@UiField
+	Button priorityButton;
+	@UiField
+	Button tagButton;
+
 	private List<Listener> listeners;
-	private IssueSelected issue;	
+	private IssueSelected issue;
+
+	private String type;
+	private String priority;
 
 	private DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");
 
@@ -111,19 +135,16 @@ public class IssueReadPanel extends Composite
 
 		this.listeners = new LinkedList<Listener>();
 		this.issue = issue;
-		
-		setCompany(issue.getCompany());
-		setType(issue.getType());
-		setPriority(issue.getPriority());
-		setAsunto(issue.getTitle());
-		setLabels(issue.getTags());
+		this.type = issue.getType();
+		this.priority = issue.getPriority();
+
+		initHeader(issue);
 		printBody(issue);
-		
 
 		for (DefaultAonIssueComments comment : issue.getComments()) {
 			printComment(comment,
 					(issue instanceof IssueGrid.IssueOpenLoadSelected));
-		}		
+		}
 
 		if (issue instanceof IssueGrid.IssueOpenLoadSelected) {
 			createClosedButton();
@@ -134,9 +155,30 @@ public class IssueReadPanel extends Composite
 			createReopenButton();
 		}
 	}
-	
+
 	public void setUser(User user) {
 		userLogged.setText(user.getName());
+	}
+
+	public void setTags(List<Tag> tags) {
+
+		List<Tag> typesList = new LinkedList<Tag>();
+		List<Tag> priorityList = new LinkedList<Tag>();
+		List<Tag> officeList = new LinkedList<Tag>();
+
+		for (Tag tag : tags) {
+			if (tag.getType() == TagType.OFFICE_TYPE.value())
+				typesList.add(tag);
+			else if (tag.getType() == TagType.OFFICE_PRIORITY.value())
+				priorityList.add(tag);
+			else if (tag.getType() == TagType.OFFICE_NOTICE.value())
+				officeList.add(tag);
+		}
+
+		initTypeButton(typesList);
+		initPriorityButton(priorityList);
+		initTagButton(officeList);
+
 	}
 
 	public void addListener(Listener listener) {
@@ -146,33 +188,56 @@ public class IssueReadPanel extends Composite
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
-	
+
 	@UiHandler("commentTextArea")
 	void onKeyPressEvent(KeyUpEvent event) {
-		commentButton.setEnabled(commentTextArea.getValue().trim().isEmpty() == false);
-	}
-	
-	private void setCompany(String company) {
-		companyLabel.setText(company.toUpperCase());
+		commentButton.setEnabled(
+				commentTextArea.getValue().trim().isEmpty() == false);
 	}
 
-	private void setAsunto(String asunto) {
-		this.titleLabel.setText(asunto.toUpperCase());
-	}
-	
-	private void setType(String type) {
-		this.typeLabel.setText(type);
-	}
+	private String getStateIcon(String state) {
 
-	private void setPriority(String priority) {
-		this.priorityLabel.setText(priority);
-	}
+		String value = "";
 
-	private void setLabels(List<DefaultAonTagIssueSelected> tags) {
-
-		for (DefaultAonTagIssueSelected tag : tags) {
-			labelsHPanel.add(new Label(tag.getName()));
+		if (state.compareTo(NoticeStatus.OPEN.getValue()) == 0) {
+			value = AON.AON_CSS.aonIconIssueOpenedGreen();
+		} else if (state.compareTo(NoticeStatus.REOPEN.getValue()) == 0) {
+			value = AON.AON_CSS.aonIconIssueReOpenedBlue();
+		} else {
+			value = AON.AON_CSS.aonIconIssueClosed();
 		}
+
+		return value;
+	}
+
+	private void initHeader(IssueSelected issue) {
+
+		Label titleLabel = new Label(issue.getTitle().toUpperCase());
+		titleLabel.setStyleName(AON.AON_BOLD);
+		titleLabel.addStyleName(style.headerTitle());
+
+		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.setSpacing(5);
+
+		Label infoIssue = new Label(
+				issue.getUser().getName() + " gener\u00F3 la incidencia el "
+						+ fmt.format(issue.getCreateAt()));
+		Label iconLabel = new Label();
+		iconLabel.setStyleName(getStateIcon(issue.getState()));
+		hPanel.add(iconLabel);
+		hPanel.add(infoIssue);
+
+		headerFlexTable.getFlexCellFormatter().setColSpan(0, 0, 2);
+		headerFlexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
+		headerFlexTable.setWidget(0, 0, titleLabel);
+		headerFlexTable.setWidget(1, 0, hPanel);
+
+		Label notified = new Label("Notificada por: ");
+		notified.setStyleName(AON.AON_BOLD);
+
+		headerFlexTable.setWidget(2, 0, notified);
+		headerFlexTable.setWidget(2, 1, new Label(issue.getCompany()));
+
 	}
 
 	public void printBody(IssueSelected issue) {
@@ -183,8 +248,8 @@ public class IssueReadPanel extends Composite
 				+ " el " + fmt.format(issue.getCreateAt()) + " (hace " + days
 				+ ((days == 1) ? " d\u00EDas)" : " d\u00EDas)"));
 		label.setStyleName(AON.AON_BOLD);
-		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);	
-		
+		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+
 		final Button editButton = new Button();
 
 		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
@@ -193,7 +258,7 @@ public class IssueReadPanel extends Composite
 
 		final TextArea textArea = getTextArea(issue.getBody());
 		textArea.setName(String.valueOf(issue.getId()));
-		
+
 		editButton.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -223,9 +288,9 @@ public class IssueReadPanel extends Composite
 		int days = CalendarUtil.getDaysBetween(issueComment.getCreatedAt(),
 				new Date());
 		Label label = new Label();
-		label.setText("COMENTADO por " + issueComment.getUser().getName() + " el "
-				+ fmt.format(issueComment.getCreatedAt()) + " (hace " + days
-				+ ((days == 1) ? " d\u00EDas)" : " d\u00EDas)"));
+		label.setText("COMENTADO por " + issueComment.getUser().getName()
+				+ " el " + fmt.format(issueComment.getCreatedAt()) + " (hace "
+				+ days + ((days == 1) ? " d\u00EDas)" : " d\u00EDas)"));
 		label.setStyleName(AON.AON_BOLD);
 		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
 
@@ -234,18 +299,18 @@ public class IssueReadPanel extends Composite
 		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		editButton.addStyleName(style.editButton());
 		editButton.setTitle("Editar comentario");
-		
+
 		final TextArea textArea = getTextArea(issueComment.getBody());
 
 		textArea.setName(String.valueOf(issueComment.getId()));
-		
+
 		editButton.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
 
 				if (editButton.getStyleName().contains(AON.AON_ICON_EDIT_ADD))
-					onEditCommentButtonClick(textArea, editButton);					
+					onEditCommentButtonClick(textArea, editButton);
 				else
 					onAcceptEditCommentButtonClick(textArea, editButton);
 			}
@@ -263,9 +328,166 @@ public class IssueReadPanel extends Composite
 
 	}
 
-	@Override
-	public void onSelection(SelectionEvent<TreeItem> event) {
-		Window.alert("Selection");
+	private void initTypeButton(final List<Tag> typeTags) {
+		typeButton.addClickHandler(new ClickHandler() {
+
+			private PopupPanel popup = new PopupPanel(true);
+
+			{
+				VerticalPanel vPanel = new VerticalPanel();
+
+				for (Tag tag : typeTags) {
+
+					RadioButton rb = new RadioButton("TYPE", tag.getName());
+					rb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+						@Override
+						public void onValueChange(
+								ValueChangeEvent<Boolean> event) {
+							RadioButton radio = (RadioButton) event.getSource();
+							IssueReadPanel.this.type = radio.getText();
+						}
+					});
+
+					rb.setValue(tag.getName().compareTo(issue.getType()) == 0);
+					rb.setEnabled(
+							issue instanceof IssueGrid.IssueOpenLoadSelected);
+					vPanel.add(rb);
+				}
+
+				popup.add(vPanel);
+				typeLabel.setText(issue.getType());
+				popup.addCloseHandler(new CloseHandler<PopupPanel>() {
+
+					@Override
+					public void onClose(CloseEvent<PopupPanel> event) {
+						String typeAux = IssueReadPanel.this.type;
+						if (typeAux.compareTo(issue.getType()) != 0)
+							onTypeLabelChangeEvent(typeAux);
+					}
+				});
+			}
+
+			@Override
+			public void onClick(ClickEvent event) {
+				int left = typeButton.getAbsoluteLeft();
+				int top = typeButton.getAbsoluteTop()
+						+ typeButton.getOffsetHeight();
+
+				popup.setPopupPosition(left, top);
+				popup.show();
+			}
+		});
+	}
+
+	private void initPriorityButton(final List<Tag> priorityTags) {
+		priorityButton.addClickHandler(new ClickHandler() {
+
+			private PopupPanel popup = new PopupPanel(true);
+
+			{
+				VerticalPanel vPanel = new VerticalPanel();
+
+				for (Tag tag : priorityTags) {
+
+					RadioButton rb = new RadioButton("PRIORITY", tag.getName());
+					rb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+						@Override
+						public void onValueChange(
+								ValueChangeEvent<Boolean> event) {
+							RadioButton radio = (RadioButton) event.getSource();
+							IssueReadPanel.this.priority = radio.getText();
+						}
+					});
+
+					rb.setValue(
+							tag.getName().compareTo(issue.getPriority()) == 0);
+					rb.setEnabled(
+							issue instanceof IssueGrid.IssueOpenLoadSelected);
+
+					vPanel.add(rb);
+				}
+
+				popup.add(vPanel);
+				priorityLabel.setText(issue.getPriority());
+				popup.addCloseHandler(new CloseHandler<PopupPanel>() {
+
+					@Override
+					public void onClose(CloseEvent<PopupPanel> event) {
+						String aux = IssueReadPanel.this.priority;
+						if (aux.compareTo(issue.getPriority()) != 0) {
+							onPriorityLabelChangeEvent(aux);
+						}
+					}
+				});
+			}
+
+			@Override
+			public void onClick(ClickEvent event) {
+				int left = priorityButton.getAbsoluteLeft();
+				int top = priorityButton.getAbsoluteTop()
+						+ priorityButton.getOffsetHeight();
+
+				popup.setPopupPosition(left, top);
+				popup.show();
+			}
+		});
+	}
+
+	private void initTagButton(final List<Tag> noticeTags) {
+		tagButton.addClickHandler(new ClickHandler() {
+
+			private PopupPanel popup = new PopupPanel(true);
+
+			{
+				VerticalPanel vPanel = new VerticalPanel();
+
+				for (Tag tag : noticeTags) {
+
+					CheckBox cb = new CheckBox(tag.getName());
+					cb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+						@Override
+						public void onValueChange(
+								ValueChangeEvent<Boolean> event) {
+						}
+					});
+
+					cb.setValue(containsOfficeTag(tag.getName()));
+					vPanel.add(cb);
+				}
+
+				popup.add(vPanel);
+				popup.addCloseHandler(new CloseHandler<PopupPanel>() {
+
+					@Override
+					public void onClose(CloseEvent<PopupPanel> event) {
+					}
+				});
+			}
+
+			@Override
+			public void onClick(ClickEvent event) {
+				int left = tagButton.getAbsoluteLeft();
+				int top = tagButton.getAbsoluteTop()
+						+ tagButton.getOffsetHeight();
+
+				popup.setPopupPosition(left, top);
+				popup.show();
+			}
+
+		});
+	}
+
+	private boolean containsOfficeTag(String name) {
+		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
+			if (tag.getName().compareTo(name) == 0) {
+				labelsVPanel.add(new Label(name));
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void createCommentButton() {
@@ -315,11 +537,20 @@ public class IssueReadPanel extends Composite
 						public void onSucess(DefaultAonIssueComments comment) {
 							printComment(comment, true);
 							commentTextArea.setValue("");
+							commentButton.setEnabled(false);
 						}
 					});
 	}
 
 	private void onClosedButtonClick() {
+
+		if (commentTextArea.getValue().trim().isEmpty() == false
+				&& Window.confirm(
+						"\u00A1Ey\u0021. Parece que estabas escribiendo un comentario. "
+								+ "\n\u00BFQuieres guardarlo?")) {
+			onCommentButtonClick();
+		}
+
 		for (Listener listener : listeners)
 			listener.onUpdateIssueState(NoticeStatus.CLOSED.getValue());
 	}
@@ -329,16 +560,16 @@ public class IssueReadPanel extends Composite
 			listener.onUpdateIssueState(NoticeStatus.REOPEN.getValue());
 	}
 
-	private void onEditCommentButtonClick(final TextArea textArea, final Button button) {
+	private void onEditCommentButtonClick(final TextArea textArea,
+			final Button button) {
 		button.removeStyleName(AON.AON_ICON_EDIT_ADD);
 		button.addStyleName(AON.AON_ICON_ACCEPT);
 		textArea.setReadOnly(false);
 		textArea.setFocus(true);
 		textArea.selectAll();
-		
 
 		textArea.addKeyDownHandler(new KeyDownHandler() {
-			
+
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
 				int keyCode = event.getNativeKeyCode();
@@ -348,10 +579,45 @@ public class IssueReadPanel extends Composite
 		});
 	}
 	
+	private void onTypeLabelChangeEvent(final String name) {
+		for (Listener listener : listeners)
+			listener.onTypeTagValueChange(name, new Callback<DefaultAonTagIssueSelected>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("Error al cerrar la etiqueta");
+				}
+
+				@Override
+				public void onSucess(DefaultAonTagIssueSelected label) {
+					typeLabel.setText(label.getName());
+					IssueReadPanel.this.type = label.getName();
+				}
+			});
+	}
+	
+	
+	private void onPriorityLabelChangeEvent(final String name) {
+		for (Listener listener : listeners)
+			listener.onPriorityValueChange(name, new Callback<DefaultAonTagIssueSelected>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("Error al cerrar la etiqueta");
+				}
+
+				@Override
+				public void onSucess(DefaultAonTagIssueSelected label) {
+					priorityLabel.setText(label.getName());
+					IssueReadPanel.this.priority = label.getName();
+				}
+			});
+	}
+
 	private void onCancelEditComment(TextArea textArea, Button button) {
 		button.removeStyleName(AON.AON_ICON_ACCEPT);
-		button.addStyleName(AON.AON_ICON_EDIT_ADD);	
-		textArea.setReadOnly(true);	
+		button.addStyleName(AON.AON_ICON_EDIT_ADD);
+		textArea.setReadOnly(true);
 		textArea.setFocus(false);
 	}
 

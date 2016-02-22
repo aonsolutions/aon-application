@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.HasId;
+import com.esferalia.aon.occam.api.model.security.User;
 
 public class Notice implements Serializable, HasId {
 

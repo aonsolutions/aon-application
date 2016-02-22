@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.security.User;
 
 public interface IOffice {
 
@@ -34,6 +34,8 @@ public interface IOffice {
 	public boolean deleteNotice(AONContext ctx, Integer id);
 
 	public boolean deleteTag(AONContext ctx, String labelName);
+	
+	public boolean DeleteAndAssignLabelFromIssue(AONContext ctx, Integer issueId, Tag tag);
 
 	public Tag addNewTag(AONContext ctx, Tag tag)
 			throws IllegalArgumentException;

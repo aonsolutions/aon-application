@@ -32,84 +32,87 @@
 			width: 16px;
 		}
 		
-		.title {
-			font-size: 20px;
-			padding-bottom: 10px;
+		.header-title {
+			font-size: 30px;
 			padding-top: 10px;
 			color: #aaa;
 		}
 		</ui:style>
 
-	<g:ScrollPanel styleName="{style.scrollpanel-options}">
-		<g:VerticalPanel height="100%">
-			<g:Grid styleName="aon-panelGrid-formatting" cellSpacing="10"
-				height="100%">
-				<g:row>
-					<g:customCell styleName="{aonResources.css.aonPanelGridOdd}">
-						<g:Label styleName="aon-outputLabel" text="Remitente" />
-					</g:customCell>
-					<g:customCell styleName="{aonResources.css.aonPanelGridEven}">
-						<g:Label ui:field="companyLabel" />
-					</g:customCell>
-				</g:row>
-				<g:row>
-					<g:customCell styleName="{aonResources.css.aonPanelGridOdd}">
-						<g:Label styleName="aon-outputLabel" text="Tipo Aviso" />
-					</g:customCell>
-					<g:customCell styleName="{aonResources.css.aonPanelGridEven}">
-						<g:Label ui:field="typeLabel" />
-					</g:customCell>
-				</g:row>
-				<g:row>
-					<g:customCell styleName="{aonResources.css.aonPanelGridOdd}">
-						<g:Label styleName="aon-outputLabel" text="Prioridad" />
-					</g:customCell>
-					<g:customCell styleName="{aonResources.css.aonPanelGridEven}">
-						<g:Label ui:field="priorityLabel" />
-					</g:customCell>
-				</g:row>
-				<g:row>
-					<g:customCell styleName="{aonResources.css.aonPanelGridOdd}">
-						<g:Label styleName="aon-outputLabel" text="{msg.labelsIssues}" />
-					</g:customCell>
-					<g:customCell styleName="{aonResources.css.aonPanelGridEven}">
-						<g:HorizontalPanel ui:field="labelsHPanel"
-							spacing="5" />	
-					</g:customCell>
-				</g:row>
-			</g:Grid>
-			<g:VerticalPanel spacing="10" width="100%" height="100%">
-				<g:Label styleName="{aonResources.css.aonBold} 
-		{style.title}"
-					ui:field="titleLabel" />
-				<g:FlowPanel ui:field="historialVPanel" width="100%"
-					height="100%" />
-				<g:TextArea visibleLines="5" characterWidth="10"
-					styleName="{style.options-text-area}" ui:field="commentTextArea" />
-				<g:Grid width="100%" height="100%">
-					<g:row>
-						<g:customCell>
-							<g:HTMLPanel height="100%" width="100%">
-								<div>
-									<g:InlineLabel styleName="{aonResources.css.aonBold}"
-										text="Usuario: " />
-									<g:InlineLabel ui:field="userLogged"
-										styleName="{aonResources.css.aonColorGreen}" />
-								</div>
-							</g:HTMLPanel>
-						</g:customCell>
-						<g:customCell>
-							<g:HTMLPanel height="100%" width="100%">
-								<div class="{style.buttons}">
-									<g:Button ui:field="closedButton" text="Cerrar" />
-									<g:Button ui:field="commentButton" text="Comentar" enabled="false" />
-								</div>
-							</g:HTMLPanel>
-						</g:customCell>
-					</g:row>
-				</g:Grid>
-			</g:VerticalPanel>
-		</g:VerticalPanel>
-	</g:ScrollPanel>
+	<g:DockLayoutPanel>
+		<g:east size="350">
+			<g:ScrollPanel>
+				<g:VerticalPanel spacing="10" width="100%" height="100%">
+
+					<g:AbsolutePanel width="150px">
+						<g:VerticalPanel spacing="10">
+							<g:HorizontalPanel>
+								<g:Label text="Tipo Incidencia" styleName="{aonResources.css.aonBold}" />
+								<g:Button ui:field="typeButton" text="Tipo incidencia"
+									styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
+							</g:HorizontalPanel>
+							<g:Label ui:field="typeLabel" />
+						</g:VerticalPanel>
+					</g:AbsolutePanel>
+
+					<g:AbsolutePanel width="150px">
+						<g:VerticalPanel spacing="10">
+							<g:HorizontalPanel>
+								<g:Label text="Prioridad" styleName="{aonResources.css.aonBold}" />
+								<g:Button ui:field="priorityButton" text="Prioridad"
+									styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
+							</g:HorizontalPanel>
+							<g:Label ui:field="priorityLabel" />
+						</g:VerticalPanel>
+					</g:AbsolutePanel>
+
+					<g:AbsolutePanel width="150px">
+						<g:VerticalPanel ui:field="labelsVPanel" spacing="10">
+							<g:HorizontalPanel>
+								<g:Label text="Etiquetas" styleName="{aonResources.css.aonBold}" />
+								<g:Button ui:field="tagButton" text="Etiquetas"
+									styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
+							</g:HorizontalPanel>
+						</g:VerticalPanel>
+					</g:AbsolutePanel>
+					
+				</g:VerticalPanel>
+			</g:ScrollPanel>
+		</g:east>
+		<g:center>
+			<g:ScrollPanel styleName="{style.scrollpanel-options}">
+				<g:VerticalPanel spacing="10" height="100%">
+					<g:FlexTable ui:field="headerFlexTable" />
+					<g:FlowPanel ui:field="historialVPanel" width="100%"
+						height="100%" />
+					<g:TextArea visibleLines="5" characterWidth="10"
+						styleName="{style.options-text-area}" ui:field="commentTextArea" />
+					<g:Grid width="100%" height="100%">
+						<g:row>
+							<g:customCell>
+								<g:HTMLPanel height="100%" width="100%">
+									<div>
+										<g:InlineLabel styleName="{aonResources.css.aonBold}"
+											text="Usuario: " />
+										<g:InlineLabel ui:field="userLogged"
+											styleName="{aonResources.css.aonColorGreen}" />
+									</div>
+								</g:HTMLPanel>
+							</g:customCell>
+							<g:customCell>
+								<g:HTMLPanel height="100%" width="100%">
+									<div class="{style.buttons}">
+										<g:Button ui:field="closedButton" text="Cerrar" />
+										<g:Button ui:field="commentButton" text="Comentar"
+											enabled="false" />
+									</div>
+								</g:HTMLPanel>
+							</g:customCell>
+						</g:row>
+					</g:Grid>
+				</g:VerticalPanel>
+			</g:ScrollPanel>
+		</g:center>
+	</g:DockLayoutPanel>
 
 </ui:UiBinder> 

@@ -1,14 +1,13 @@
 package com.esferalia.aon.occam.impl.jooq;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IOffice;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 
@@ -87,6 +86,12 @@ public class OfficeImpl implements IOffice {
 	@Override
 	public boolean deleteTag(AONContext ctx, String labelName) {
 		return AonHubDAO.deleteTag(ctx, labelName);
+	}
+	
+	@Override
+	public boolean DeleteAndAssignLabelFromIssue(AONContext ctx, Integer issueId,
+			Tag tag) {
+		return AonHubDAO.DeleteAndAssignLabelFromIssue(ctx, issueId, tag);
 	}
 	
 	@Override

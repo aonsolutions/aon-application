@@ -1,13 +1,16 @@
 package com.esferalia.aon.gwt.office.client;
 
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.google.gwt.http.client.URL;
 
 public class DefaultAonTagIssueSelected implements LabelSelected {
 	
 	protected JsLabel label;
+	private String name;
 	
 	public DefaultAonTagIssueSelected(JsLabel label) {
 		this.label = label;
+		this.name = URL.decode(label.getName());
 	}
 	
 	@Override
@@ -22,7 +25,7 @@ public class DefaultAonTagIssueSelected implements LabelSelected {
 	
 	@Override
 	public String getName() {	
-		return label.getName();
+		return this.name;
 	}
 	
 	@Override

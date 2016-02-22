@@ -7,7 +7,6 @@ import java.util.Map;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.office.client.IssueGrid.IssueOpenLoadSelected;
 import com.esferalia.aon.gwt.office.client.IssueReadPanel.Callback;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
@@ -22,14 +21,15 @@ import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.office.User;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -73,7 +73,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	@UiField
 	SimpleLayoutPanel readIssueLayoutPanel;
 	@UiField
-	DockLayoutPanel readIssuePanel;
+	ResizeLayoutPanel readIssuePanel;
 
 	@UiField
 	IssueGrid dataGrid;
@@ -85,7 +85,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private User user;
 
-	private IssuePanel issuePanel;	
+	private IssuePanel issuePanel;
 
 	private IssueSelected issueSelected;
 	private AonHub gitHub = new AonHub(GWT.getModuleBaseURL() + "api/");
@@ -135,7 +135,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 		loadRegistries();
 		loadLabels();
-		loadOpenIssues();		
+		loadOpenIssues();
 	}
 
 	private void loadRegistries() {
@@ -215,7 +215,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						for (int x = 0; x < result.getData().length(); x++)
 							addCloseIssue(result.getData().get(x));
 					}
-				});	
+				});
 		showDockOfficePanel();
 	}
 
@@ -245,11 +245,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("returnButton")
 	void onReturnButtonClick(ClickEvent event) {
-		if ( openIssuesButton.isEnabled() == false)
+		if (openIssuesButton.isEnabled() == false)
 			loadOpenIssues();
 		else
 			loadClosedIssues();
-		
+
 		returnButton.setEnabled(false);
 	}
 
@@ -262,7 +262,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	@UiHandler("closedIssuesButton")
 	void onClosedIssuesButton(ClickEvent event) {
 		enabledIssuesButton();
-		loadClosedIssues();	
+		loadClosedIssues();
 	}
 
 	private void initEnabledIssuesButton() {
@@ -313,8 +313,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	void userIdentificated(JsUser jsUser) {
 		this.user = new User();
 		this.user.setId(jsUser.getId());
-		this.user.setName(jsUser.getName());
-		this.user.setLogin(jsUser.getLogin());
+		this.user.setName(URL.decode(jsUser.getName()));
+		this.user.setLogin(URL.decode(jsUser.getLogin()));
 	}
 
 	private void addLabels2List(JsLabel jsLabel) {
@@ -335,8 +335,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	private void addRegistry2List(JsRegistry jsRegistry) {
 		Registry registry = new Registry();
 		registry.setId(jsRegistry.getId());
-		registry.setAlias(jsRegistry.getAlias());
-		registry.setName(jsRegistry.getName());
+		registry.setAlias(URL.decode(jsRegistry.getAlias()));		
+		registry.setName(URL.decode(jsRegistry.getName()));
 		registry.setDocument(jsRegistry.getDocument());
 
 		registries.add(registry);
@@ -409,12 +409,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	public void onSelectionTitle(IssueSelected issue) {
 		this.issueSelected = issue;
 		IssueReadPanel issueReadPanel = new IssueReadPanel(issue);
-		issueReadPanel.setUser(user);
+		issueReadPanel.setUser(this.user);
+		issueReadPanel.setTags(this.tagList);
 		issueReadPanel.addListener(this);
 		readIssueLayoutPanel.clear();
 		readIssueLayoutPanel.add(issueReadPanel);
 		returnButton.setEnabled(true);
-		
+
 		showReadIssuePanel();
 	}
 
@@ -455,9 +456,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsIssue result) {
-						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(result);
+						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(
+								result);
 						openIssues.add(0, issue);
-						onSelectionTitle(issue);						
+						onSelectionTitle(issue);
 					}
 				});
 	}
@@ -483,10 +485,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					@Override
 					public void onSuccess(JsIssue result) {
 						final IssueSelected issue;
-						if (result.getState().compareTo(NoticeStatus.REOPEN.getValue()) == 0)
+						if (result.getState()
+								.compareTo(NoticeStatus.REOPEN.getValue()) == 0)
 							issue = new IssueGrid.IssueOpenLoadSelected(result);
 						else
-							issue = new IssueGrid.IssueClosedLoadSelected(result);
+							issue = new IssueGrid.IssueClosedLoadSelected(
+									result);
 						onSelectionTitle(issue);
 					}
 				});
@@ -511,7 +515,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsIssue result) {
-						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(result);
+						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(
+								result);
 						callback.onSucess(issue);
 					}
 				});
@@ -521,7 +526,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	public void onIssueCommentButtonClick(String body,
 			final Callback<DefaultAonIssueComments> callback) {
 		IssueCommentValue value = new IssueCommentValue();
-		value.setBody(body);		
+		value.setBody(body);
 
 		gitHub.createIssueComment(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), issueSelected.getJsIssue(), value,
@@ -548,7 +553,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 			final Callback<DefaultAonIssueComments> callback) {
 		IssueCommentValue value = new IssueCommentValue();
 		value.setBody(body);
-
 		gitHub.editIssueComment(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), id, value,
 				new AsyncCallback<JsIssueComment>() {
@@ -563,6 +567,44 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						DefaultAonIssueComments comment = issueSelected
 								.editComment(result);
 						callback.onSucess(comment);
+					}
+				});
+	}
+
+	@Override
+	public void onTypeTagValueChange(final String name, final Callback<DefaultAonTagIssueSelected> callback) {
+		gitHub.removeAndAssignLabelFromIssue(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), issueSelected.getNumber(), name,
+				new AsyncCallback<JsLabel>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(JsLabel result) {	
+						DefaultAonTagIssueSelected tagDefault = issueSelected.editTag(result);
+						callback.onSucess(tagDefault);
+					}
+				});
+	}
+
+	@Override
+	public void onPriorityValueChange(final String name, final Callback<DefaultAonTagIssueSelected> callback) {
+		gitHub.removeAndAssignLabelFromIssue(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), issueSelected.getNumber(), name,
+				new AsyncCallback<JsLabel>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(JsLabel result) {
+						DefaultAonTagIssueSelected tagDefault = issueSelected.editTag(result);
+						callback.onSucess(tagDefault);
 					}
 				});
 	}
