@@ -15,16 +15,16 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
 public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder<T> {
-	
+
 	protected Function<Double, Double> f;
 	protected ISalaryBuilder<T> salaryBuilder;
-	
+
 	public RoundSalaryBuilder(ISalaryBuilder<T> salaryBuilder, Function<Double, Double> f) {
 		this.f = f;
 		this.salaryBuilder = salaryBuilder;
 	}
 	// ------------------------------------------------------------------------
-	
+
 	// ------------------------------------------------------------------------
 
 	public void setContract(Object contract) {
@@ -104,11 +104,15 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	}
 
 	public void setRawCgcBase(Double rawCgcBase) {
-		salaryBuilder.setRawCgcBase(f.apply(rawCgcBase));
+		try {
+			salaryBuilder.setRawCgcBase(f.apply(rawCgcBase));
+		} catch ( NullPointerException e) {
+			salaryBuilder.setRawCgcBase(0.00);
+		}
 	}
 
 	// ------------------------------------------------------------------------
-	
+
 	private double remuneration;
 	private double proExtBase;
 	private double cgpBase;
@@ -125,10 +129,9 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	private double totalIrpf;
 	private double totalSS;
 	private double totalEnterprise;
-	
-	
+
 	public void createNewSalary() {
-		
+
 		this.remuneration = 0;
 		this.proExtBase = 0;
 		this.cgcBase = 0;
@@ -145,82 +148,125 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		this.totalIrpf = 0;
 		this.totalSS = 0;
 		this.totalEnterprise = 0;
-		
-		
+
 		salaryBuilder.createNewSalary();
 	}
-	
-	
 
 	public T getSalary() {
 		round();
 		return salaryBuilder.getSalary();
 	}
 
-
 	public void setCgcBase(Double cgcBase) {
-		this.cgcBase = cgcBase;
+		try {
+			this.cgcBase = cgcBase;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setCgpBase(Double cgpBase) {
-		this.cgpBase = cgpBase;
+		try {
+			this.cgpBase = cgpBase;
+		} catch (NullPointerException e) {
+		}
 	}
 
-
 	public void setItBase(Double itBase) {
-		this.itBase = itBase;
+		try {
+			this.itBase = itBase;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setRemuneration(Double remuneration) {
-		this.remuneration = remuneration;
+		try {
+			this.remuneration = remuneration;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setProExtBase(Double proExtBase) {
-		this.proExtBase = proExtBase;
+		try {
+			this.proExtBase = proExtBase;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setIrpfBase(Double irpfBase) {
-		this.irpfBase = irpfBase;
+		try {
+			this.irpfBase = irpfBase;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setMoneyIrpfBase(Double moneyIrpfBase) {
-		this.moneyIrpfBase = moneyIrpfBase;
+		try {
+			this.moneyIrpfBase = moneyIrpfBase;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
-		this.inkindIrpfBase = inkindIrpfBase;
+		try {
+			this.inkindIrpfBase = inkindIrpfBase;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setHExtraBase(Double hExtraBase) {
-		this.hExtraBase = hExtraBase;
+		try {
+			this.hExtraBase = hExtraBase;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setNonHExtraBase(Double nonHExtraBase) {
-		this.nonHExtraBase = nonHExtraBase;
+		try {
+			this.nonHExtraBase = nonHExtraBase;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setTotalLiquid(Double totalLiquid) {
-		this.totalLiquid = totalLiquid;
+		try {
+			this.totalLiquid = totalLiquid;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setTotalPayment(Double totalPayment) {
-		this.totalPayment = totalPayment;
+		try {
+			this.totalPayment = totalPayment;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setTotalDeduction(Double totalDeduction) {
-		this.totalDeduction = totalDeduction;
+		try {
+			this.totalDeduction = totalDeduction;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setTotalIrpf(Double totalIrpf) {
-		this.totalIrpf = totalIrpf;
+		try {
+			this.totalIrpf = totalIrpf;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setTotalSS(Double socialSecurityContributions) {
-		this.totalSS = socialSecurityContributions;
+		try {
+			this.totalSS = socialSecurityContributions;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	public void setTotalEnterprise(Double totalEnterprise) {
-		this.totalEnterprise = totalEnterprise;
+		try {
+			this.totalEnterprise = totalEnterprise;
+		} catch (NullPointerException e) {
+		}
 	}
 
 	// ------------------------------------------------------------------------
@@ -266,10 +312,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	}
 
 	// ------------------------------------------------------------------------
-	
+
 	private void round() {
-		
-		double totalOther = totalDeduction - ( totalIrpf + totalSS);
+
+		double totalOther = totalDeduction - (totalIrpf + totalSS);
 		totalSS = f.apply(totalSS);
 		totalIrpf = f.apply(totalIrpf);
 		totalOther = f.apply(totalOther);
@@ -277,25 +323,24 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		salaryBuilder.setTotalIrpf(totalIrpf);
 		salaryBuilder.setTotalSS(totalSS);
 		salaryBuilder.setTotalDeduction(totalDeduction);
-		
-		double totalEmbargo = totalPayment - totalLiquid  - totalDeduction;
+
+		double totalEmbargo = totalPayment - totalLiquid - totalDeduction;
 		totalEmbargo = f.apply(totalEmbargo);
 		totalPayment = f.apply(totalPayment);
-		totalLiquid =  totalPayment - totalDeduction - totalEmbargo;
+		totalLiquid = totalPayment - totalDeduction - totalEmbargo;
 		salaryBuilder.setTotalPayment(totalPayment);
 		salaryBuilder.setTotalLiquid(totalLiquid);
-		
+
 		moneyIrpfBase = f.apply(moneyIrpfBase);
 		inkindIrpfBase = f.apply(inkindIrpfBase);
 		remuneration = moneyIrpfBase;
-		irpfBase =  moneyIrpfBase + inkindIrpfBase;
+		irpfBase = moneyIrpfBase + inkindIrpfBase;
 		salaryBuilder.setIrpfBase(irpfBase);
 		salaryBuilder.setMoneyIrpfBase(moneyIrpfBase);
 		salaryBuilder.setInkindIrpfBase(inkindIrpfBase);
 		salaryBuilder.setRemuneration(remuneration);
-		
 
-		//---
+		// ---
 		itBase = f.apply(itBase);
 		proExtBase = f.apply(proExtBase);
 		salaryBuilder.setItBase(itBase);
@@ -307,13 +352,13 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		salaryBuilder.setHExtraBase(hExtraBase);
 		salaryBuilder.setCgcBase(cgcBase);
 		salaryBuilder.setNonHExtraBase(nonHExtraBase);
-		
+
 		cgpBase = Math.min(cgcBase + nonHExtraBase + hExtraBase, f.apply(cgcBase));
 		salaryBuilder.setCgpBase(cgpBase);
 
 		totalEnterprise = f.apply(totalEnterprise);
 		salaryBuilder.setTotalEnterprise(totalEnterprise);
-		
+
 	}
-	
+
 }
