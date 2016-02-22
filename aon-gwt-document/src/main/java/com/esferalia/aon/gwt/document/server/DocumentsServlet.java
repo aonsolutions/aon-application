@@ -838,7 +838,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		Domain d = AON.getDomain(domain.getName(), domain.getId(), getUser().getLogin());
 		String link;
 		if(fileInfo.getDriveId() != null){
-			File file =	DriveUtils.getDriveFile(d, getUser(), fileInfo.getDriveId(), fileInfo.getFileId());
+			File file =	DriveUtils.getDriveFile(d, getUser(), fileInfo.getDriveId(), fileInfo.getFileId(), true);
 			link = file.getAlternateLink();
 		} else{
 			fileInfo = setmd5(domain, fileInfo);
@@ -952,7 +952,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
         		doc.setMd5(file.getMd5Checksum());
         	}
         	else{
-        		File file = DriveUtils.getDriveFile(domainAux, getUser(), doc.getDriveId(), doc.getFileId());
+        		File file = DriveUtils.getDriveFile(domainAux, getUser(), doc.getDriveId(), doc.getFileId(), false);
         		doc.setMd5(file.getMd5Checksum());
         	}
 		}
