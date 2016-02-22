@@ -343,7 +343,7 @@ public class ActionDeniedController implements Serializable {
 	
 	private String getManagedBean( ApplicationOption option ) {
 		String managedBean = StringUtils.substringBefore(option.getAction(), "-");
-		return StringUtils.substringBefore(managedBean, "_");
+		return StringUtils.substringBeforeLast(managedBean, "_");
 	}
 	
 	private boolean isMainOption( ApplicationOption option ) {
