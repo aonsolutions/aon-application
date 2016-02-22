@@ -54,6 +54,10 @@ public class MainEntryPoint implements EntryPoint {
 				.equalsIgnoreCase(Constants.MAIN_CRETA_ENTRY_POINT)) {
 			MainCreta mainCreta = new MainCreta();
 			mainCreta.onModuleLoad();
+		} else if (entryPoint
+				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
+			ActivitySummary activitySummary = new ActivitySummary();
+			activitySummary.onModuleLoad();
 		}
 
 	}

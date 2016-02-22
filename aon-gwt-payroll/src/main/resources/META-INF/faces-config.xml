@@ -85,5 +85,13 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- =================== Main Agreement  ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_activity_summary</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/activitySummary.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 </faces-config>
 		

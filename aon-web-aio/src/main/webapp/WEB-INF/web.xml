@@ -229,6 +229,17 @@
 		<servlet-name>TemplatePreview</servlet-name>
 		<url-pattern>*.template</url-pattern>
 	</servlet-mapping>
+	
+	<!-- Payroll Activity Summary -->
+
+	<servlet>
+		<servlet-name>ActivitySummaryServlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.payroll.server.ActivitySummaryServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ActivitySummaryServlet</servlet-name>
+		<url-pattern>/aon_gwt_payroll/activity_summary</url-pattern>
+	</servlet-mapping>
 
 	<!-- Payroll Contract Image Servlet -->
 	<servlet>

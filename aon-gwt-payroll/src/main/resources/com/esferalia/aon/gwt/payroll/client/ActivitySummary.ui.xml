@@ -1,0 +1,69 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core"
+	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+	
+	
+	<g:DockLayoutPanel unit="EM" styleName="aondockLayoutPanel-template">
+	
+		<g:north size="2">
+			<g:FlowPanel styleName="aon-finding-title-toolbar">
+				<g:HorizontalPanel  visible="true">
+					<g:HTMLPanel styleName="aon-finding-title">
+						<g:HTMLPanel styleName="aon-finding-title-internal">
+							<g:Label styleName="aon-outputText" text="Resumen de actividad" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="aon-finding-subtitle">
+						<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+							<g:Label styleName="aon-outputText" text="Listado" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HorizontalPanel  styleName="aon-finding-toolbar">
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							<g:Label styleName="aon-outputText" text="" />
+						</g:HTMLPanel>
+					</g:HorizontalPanel>
+				</g:HorizontalPanel>
+			</g:FlowPanel>
+		</g:north>
+	
+		<g:center>
+					
+			<g:DockLayoutPanel unit="EM" styleName="aondockLayoutPanel-template">
+				<g:north size="6">
+					<g:HTMLPanel  styleName="aon-panelGrid-search searchPanel-template">
+						
+						<div class="aon-panelGrid-search-info">
+							<span class="aon-panelGrid-search-info-internal">Filtrar:</span>
+						</div>
+						
+						<table class="aon-panelGrid">
+							<tr>
+								<td> <span class="aon-panelGrid-search-info-internal2-template">Desde:</span> </td>
+								<td style="width:70px">
+									<common:DateBoxEx ui:field="startDate" />
+								</td>
+								<td> <span class="aon-panelGrid-search-info-internal2-template">Hasta:</span> </td>
+								<td style="width:70px">
+									<common:DateBoxEx ui:field="endDate" />
+								</td>
+							</tr>
+						</table>
+						
+					</g:HTMLPanel>
+					
+				</g:north>
+				
+				<g:center>
+					<c:DataGrid ui:field='dataGrid' visible="true" styleName="aon_dataGrid-template" />
+				</g:center>
+				
+			</g:DockLayoutPanel>
+			
+		</g:center>
+		
+	</g:DockLayoutPanel>
+	
+
+</ui:UiBinder>

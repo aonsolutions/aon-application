@@ -77,6 +77,7 @@ public class AON {
 	public static final String AON_GREEN = "aon-green";
 	public static final String AON_WIDTH_ALL = "aon-width-all";
 	public static final String AON_WIDTH_HALF = "aon-width-half";
+	public static final String AON_TEXT_LEFT = "aon-text-left";
 	public static final String AON_TEXT_RIGHT = "aon-text-right";
 	public static final String AON_TEXT_CENTER = "aon-text-center";
 	public static final String AON_ICON_RESET = "aon-icon-reset";
