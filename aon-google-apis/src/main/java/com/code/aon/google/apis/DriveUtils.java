@@ -547,7 +547,7 @@ public class DriveUtils implements IBlobManager {
 		return f;
 	}
 	
-	public static File getDriveFile(Domain domain, User user, String driveId, Integer attachId){
+	public static File getDriveFile(Domain domain, User user, String driveId, Integer attachId, Boolean permission){
 		HashMap<Integer, DomainGserviceaccount> map = DBConsults.getServiceAccountMap(domain, user);
 		
 		if(map.containsKey(domain.getId())){
@@ -558,7 +558,16 @@ public class DriveUtils implements IBlobManager {
 					drive= serviceInitializeOld(map.get(domain.getId()));
 					file = getFile(drive, driveId, attachId);
 				}
-				if(file != null) return file;
+				if(file != null){
+					if(permission){
+						Permission p = new Permission();
+						p.setValue(domain.getName());
+						p.setType("anyone");// user || group || domain || anyone
+						p.setRole("reader");// owner || reader || writer || commenter
+						drive.permissions().insert(driveId, p).execute();
+					}
+					return file;
+				}
 			} catch (IOException | GeneralSecurityException e) {
 				e.printStackTrace();
 			}
@@ -572,7 +581,16 @@ public class DriveUtils implements IBlobManager {
 					drive= serviceInitializeOld(map.get(domain.getParentId()));
 					file = getFile(drive, driveId, attachId);
 				}
-				if(file != null) return file;
+				if(file != null){
+					if(permission){
+						Permission p = new Permission();
+						p.setValue(domain.getName());
+						p.setType("anyone");// user || group || domain || anyone
+						p.setRole("reader");// owner || reader || writer || commenter
+						drive.permissions().insert(driveId, p).execute();
+					}
+					return file;
+				}
 			} catch (IOException | GeneralSecurityException e) {
 				e.printStackTrace();
 			}
@@ -586,7 +604,16 @@ public class DriveUtils implements IBlobManager {
 					drive= serviceInitializeOld(map.get(0));
 					file = getFile(drive, driveId, attachId);
 				}
-				if(file != null) return file;
+				if(file != null){
+					if(permission){
+						Permission p = new Permission();
+						p.setValue(domain.getName());
+						p.setType("anyone");// user || group || domain || anyone
+						p.setRole("reader");// owner || reader || writer || commenter
+						drive.permissions().insert(driveId, p).execute();
+					}
+					return file;
+				}
 			} catch (IOException | GeneralSecurityException e) {
 				e.printStackTrace();
 			}
