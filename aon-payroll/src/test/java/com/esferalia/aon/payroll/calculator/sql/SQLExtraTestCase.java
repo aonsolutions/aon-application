@@ -927,6 +927,72 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		}
 		
 	}
+
+	@Test
+	public void testDuplicatePaymentsIX() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P";
+						this.month = Month.DECEMBER;
+						this.start = "01/12";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+
+		PaymentConceptRecord concept = addConcept(aonContext, "P");
+
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String, String>() {
+				
+				}, new String[] {}, new String[] {}, category);
+		//@formatter:off
+		
+		addPayment(aonContext, contract, concept, String.format("REMOVE()"));
+		addPayment(aonContext, contract, concept, String.format("SIN_DEFINIR * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		addPayment(aonContext, contract, concept, String.format("1000 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		addPayment(aonContext, contract, concept, String.format("500 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		addPayment(aonContext, contract, concept, String.format("250 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		addPayment(aonContext, contract, concept, String.format("125 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, 6);
+		calendar.set(DAY_OF_MONTH, 1);
+		Date startDate = new Date(calendar.getTimeInMillis());
+		
+		calendar.add(YEAR, 1);
+		calendar.set(MONTH, 6);
+		calendar.set(DAY_OF_MONTH, 30);
+		Date issueDate = new Date(calendar.getTimeInMillis());
+		
+		calendar.set(MONTH, 5);
+		calendar.set(DAY_OF_MONTH, 30);
+		Date endDate = new Date(calendar.getTimeInMillis());
+
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+
+		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
+		
+		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1875.00, salary.getTotalPayment(), DELTA);
+		
+
+	}
 	// ------------------------------------------------------------------------
 	
 	protected ContextVariable getPeriodVariable() {
