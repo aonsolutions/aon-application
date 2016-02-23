@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,8 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.jooq.Record4;
+import org.jooq.Record5;
 import org.jooq.Record6;
 import org.jooq.Result;
+import org.jooq.impl.DSL;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.config.controller.ConfigConstants;
@@ -24,6 +28,7 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.client.ActivitySummaryService;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 
@@ -51,30 +56,52 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 		
 		Map<Integer, ActivitySummaryObject> summaryMap = null;
 		Map<Integer, ActivitySummaryObject> salaryMap = null;
+		Map<Integer, ActivitySummaryObject> itMap = null;
 		if(domainSwitcher.isParentDomain()){
 			try {
 				Integer[] childDomains = getChildDomainIDs(domainId);
 				summaryMap = getSummaryEnterprise(childDomains, domainId, domainName, startDate, endDate);
 				salaryMap = getSummaryEnterpriseSalary(childDomains, domainId, domainName, startDate, endDate);
+				itMap = getSummaryEnterpriseIT(childDomains, domainId, domainName, startDate, endDate);
 			} catch (ManagerBeanException e) {
 				throw new RuntimeException(e.getMessage());
 			}
 		} else {
 			summaryMap = getSummaryEmployee(domainId, domainName, startDate, endDate);
 			salaryMap = getSummaryEmployeeSalary(domainId, domainName, startDate, endDate);
+			itMap = getSummaryEmployeeIT(domainId, domainName, startDate, endDate);
 		}
 		fillMapData(summaryMap, salaryMap);
+		fillMapData(summaryMap, itMap);
 		return new ArrayList<>(summaryMap.values());
 	}
 	
-	private void fillMapData(Map<Integer, ActivitySummaryObject> summaryMap, Map<Integer, ActivitySummaryObject> salaryMap){
-		salaryMap.keySet().stream().forEach(
+	private void fillMapData(Map<Integer, ActivitySummaryObject> summaryMap, Map<Integer, ActivitySummaryObject> dataMap){
+		dataMap.keySet().stream().forEach(
 				key -> {
 					ActivitySummaryObject obj = summaryMap.get(key);
 					if(obj!=null){
-						obj.setSalaryCount(salaryMap.get(key).getSalaryCount());
-						obj.setSalaryExtraCount(salaryMap.get(key).getSalaryExtraCount());
-						obj.setSalaryOtherCount(salaryMap.get(key).getSalaryOtherCount());
+						if(dataMap.get(key).getSalaryCount()!=null){
+							obj.setSalaryCount(dataMap.get(key).getSalaryCount());
+						}
+						if(dataMap.get(key).getSalaryExtraCount()!=null){
+							obj.setSalaryExtraCount(dataMap.get(key).getSalaryExtraCount());
+						}
+						if(dataMap.get(key).getSalaryOtherCount()!=null){
+							obj.setSalaryOtherCount(dataMap.get(key).getSalaryOtherCount());
+						}
+						if(dataMap.get(key).getItCommonDiseaseCount()!=null){
+							obj.setItCommonDiseaseCount(dataMap.get(key).getItCommonDiseaseCount());
+						}
+						if(dataMap.get(key).getItOccupationalDiseaseCount()!=null){
+							obj.setItOccupationalDiseaseCount(dataMap.get(key).getItOccupationalDiseaseCount());
+						}
+						if(dataMap.get(key).getItMaternityCount()!=null){
+							obj.setItMaternityCount(dataMap.get(key).getItMaternityCount());
+						}
+						if(dataMap.get(key).getItOtherCount()!=null){
+							obj.setItOtherCount(dataMap.get(key).getItOtherCount());
+						}
 					}
 				});
 	}
@@ -91,10 +118,11 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 							CONTRACT.END_DATE, 
 							CONTRACT.ID
 							)
-					.from(CONTRACT.join(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-						.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(PERSON.REGISTRY)))
-					.where(CONTRACT.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
-					.and(CONTRACT.DOMAIN.eq(domainId))
+					.from(CONTRACT.leftOuterJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+							.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(PERSON.REGISTRY)))
+					.where(CONTRACT.DOMAIN.eq(domainId))
+					.and(CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime())))
+					.and((CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime())).or(CONTRACT.END_DATE.isNull())))
 					.groupBy(CONTRACT.ID)
 					.orderBy(PERSON.FIRST_SURNAME.asc(), 
 							PERSON.SECOND_SURNAME.asc(), 
@@ -124,20 +152,22 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
-			Result<Record4<Integer, String, Integer, Integer>> result = ctx.getDslContext()
+			Result<Record4<Integer, String, BigDecimal, BigDecimal>> result = ctx.getDslContext()
 					.select(DOMAIN.ID, 
 							DOMAIN.DESCRIPTION,
-							org.jooq.impl.DSL.count( org.jooq.impl.DSL.field(CONTRACT.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(startDate.getTime()))).coerce(Integer.class)),
-							org.jooq.impl.DSL.count( org.jooq.impl.DSL.field(CONTRACT.END_DATE.between(new java.sql.Date(endDate.getTime()), new java.sql.Date(endDate.getTime()))).coerce(Integer.class))
+							DSL.sum( DSL.field(CONTRACT.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime()))).coerce(Integer.class)),
+							DSL.sum( DSL.field(CONTRACT.END_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime()))).coerce(Integer.class))
 							)
-							.from(DOMAIN.join(CONTRACT).on(CONTRACT.DOMAIN.eq(DOMAIN.ID)))
-									.where(CONTRACT.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
-									.and(DOMAIN.ID.in(childDomainIds))
-									.and(DOMAIN.ACTIVE.eq((byte)1))
-									.groupBy(DOMAIN.ID)
-									.orderBy(DOMAIN.ID.asc(), 
-											CONTRACT.START_DATE.desc())
-											.fetch();
+					.from(DOMAIN
+							.leftOuterJoin(CONTRACT).on(CONTRACT.DOMAIN.eq(DOMAIN.ID)))
+					.where(DOMAIN.ID.in(childDomainIds))
+					.and(DOMAIN.ACTIVE.eq((byte)1))
+					.and(CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime())))
+					.and((CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime())).or(CONTRACT.END_DATE.isNull())))
+					.groupBy(DOMAIN.ID)
+					.orderBy(DOMAIN.ID.asc(),
+							CONTRACT.START_DATE.desc())
+					.fetch();
 			
 			Map<Integer, ActivitySummaryObject> map = new HashMap<>();
 			result.stream().forEach(record ->{
@@ -161,18 +191,18 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
 			Result<Record4<Integer, BigDecimal, BigDecimal, BigDecimal>> result = ctx.getDslContext()
 					.select(CONTRACT.ID, 
-							org.jooq.impl.DSL.sum( org.jooq.impl.DSL.field(com.esferalia.aon.jooq.tables.Salary.SALARY.TYPE.eq((byte) SalaryType.SALARY.ordinal())).coerce(Integer.class)),
-							org.jooq.impl.DSL.sum( org.jooq.impl.DSL.field(com.esferalia.aon.jooq.tables.Salary.SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal())).coerce(Integer.class)),
-							org.jooq.impl.DSL.sum( org.jooq.impl.DSL.field(com.esferalia.aon.jooq.tables.Salary.SALARY.TYPE.gt((byte) SalaryType.EXTRA.ordinal())).coerce(Integer.class)))
-							.from(CONTRACT
-								.leftOuterJoin(com.esferalia.aon.jooq.tables.Salary.SALARY)
-								.on(com.esferalia.aon.jooq.tables.Salary.SALARY.CONTRACT.eq(CONTRACT.ID)))
-							.where(CONTRACT.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
-							.and(com.esferalia.aon.jooq.tables.Salary.SALARY.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
-							.and(CONTRACT.DOMAIN.eq(domainId))
-							.groupBy(CONTRACT.ID)
-							.orderBy(CONTRACT.ID.desc(), CONTRACT.START_DATE.desc())
-							.fetch();
+							DSL.sum( DSL.field(SALARY.TYPE.eq((byte) SalaryType.SALARY.ordinal())).coerce(Integer.class)),
+							DSL.sum( DSL.field(SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal())).coerce(Integer.class)),
+							DSL.sum( DSL.field(SALARY.TYPE.gt((byte) SalaryType.EXTRA.ordinal())).coerce(Integer.class)))
+					.from(CONTRACT
+							.leftOuterJoin(SALARY).on(SALARY.CONTRACT.eq(CONTRACT.ID)))
+					.where(CONTRACT.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+					.and(SALARY.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+					.and(CONTRACT.DOMAIN.eq(domainId))
+					.groupBy(CONTRACT.ID)
+					.orderBy(CONTRACT.ID.desc(), 
+							CONTRACT.START_DATE.desc())
+					.fetch();
 			
 			Map<Integer, ActivitySummaryObject> map = new HashMap<>();
 			result.stream().forEach(record ->{
@@ -197,18 +227,17 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
 			Result<Record4<Integer, BigDecimal, BigDecimal, BigDecimal>> result = ctx.getDslContext()
 					.select(DOMAIN.ID, 
-							org.jooq.impl.DSL.sum( org.jooq.impl.DSL.field(com.esferalia.aon.jooq.tables.Salary.SALARY.TYPE.eq((byte) SalaryType.SALARY.ordinal())).coerce(Integer.class)),
-							org.jooq.impl.DSL.sum( org.jooq.impl.DSL.field(com.esferalia.aon.jooq.tables.Salary.SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal())).coerce(Integer.class)),
-							org.jooq.impl.DSL.sum( org.jooq.impl.DSL.field(com.esferalia.aon.jooq.tables.Salary.SALARY.TYPE.gt((byte) SalaryType.EXTRA.ordinal())).coerce(Integer.class)))
-							.from(DOMAIN
-									.leftOuterJoin(com.esferalia.aon.jooq.tables.Salary.SALARY)
-									.on(com.esferalia.aon.jooq.tables.Salary.SALARY.DOMAIN.eq(DOMAIN.ID)))
-									.where(com.esferalia.aon.jooq.tables.Salary.SALARY.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
-									.and(DOMAIN.ID.in(childDomainIds))
-									.and(DOMAIN.ACTIVE.eq((byte)1))
-									.groupBy(DOMAIN.ID)
-									.orderBy(DOMAIN.ID.asc())
-									.fetch();
+							DSL.sum( DSL.field(SALARY.TYPE.eq((byte) SalaryType.SALARY.ordinal())).coerce(Integer.class)),
+							DSL.sum( DSL.field(SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal())).coerce(Integer.class)),
+							DSL.sum( DSL.field(SALARY.TYPE.gt((byte) SalaryType.EXTRA.ordinal())).coerce(Integer.class)))
+					.from(DOMAIN
+							.leftOuterJoin(SALARY).on(SALARY.DOMAIN.eq(DOMAIN.ID)))
+					.where(SALARY.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+					.and(DOMAIN.ID.in(childDomainIds))
+					.and(DOMAIN.ACTIVE.eq((byte)1))
+					.groupBy(DOMAIN.ID)
+					.orderBy(DOMAIN.ID.asc())
+					.fetch();
 			
 			Map<Integer, ActivitySummaryObject> map = new HashMap<>();
 			result.stream().forEach(record ->{
@@ -216,6 +245,79 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 				obj.setSalaryCount(record.value2()!=null?record.value2().intValue():0);
 				obj.setSalaryExtraCount(record.value3()!=null?record.value3().intValue():0);
 				obj.setSalaryOtherCount(record.value4()!=null?record.value4().intValue():0);
+				map.put(record.value1(), obj);
+			});
+			return map;
+			
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
+		
+	}
+	private Map<Integer, ActivitySummaryObject> getSummaryEmployeeIT(Integer domainId, String domainName, Date startDate, Date endDate) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
+			Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = ctx.getDslContext()
+					.select(CONTRACT.ID, 
+							DSL.sum( DSL.field(CONTRACT_LEAVE.TYPE.eq((byte) LeaveType.COMMON_DISEASE.ordinal())).coerce(Integer.class)),
+							DSL.sum( DSL.field(CONTRACT_LEAVE.TYPE.eq((byte) LeaveType.OCCUPATIONAL_DISEASE.ordinal())).coerce(Integer.class)),
+							DSL.sum( DSL.field(CONTRACT_LEAVE.TYPE.in((byte) LeaveType.MATERNITY.ordinal(), (byte) LeaveType.PATERNITY.ordinal())).coerce(Integer.class)),
+							DSL.sum( DSL.field(CONTRACT_LEAVE.TYPE.notIn((byte) LeaveType.COMMON_DISEASE.ordinal(), (byte) LeaveType.OCCUPATIONAL_DISEASE.ordinal(), (byte) LeaveType.MATERNITY.ordinal(), (byte) LeaveType.PATERNITY.ordinal())).coerce(Integer.class)))
+					.from(CONTRACT
+							.leftOuterJoin(CONTRACT_LEAVE).on(CONTRACT_LEAVE.CONTRACT.eq(CONTRACT.ID)))
+					.where(CONTRACT.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+					.and(CONTRACT_LEAVE.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+					.and(CONTRACT.DOMAIN.eq(domainId))
+					.groupBy(CONTRACT.ID)
+					.orderBy(CONTRACT.ID.desc(), CONTRACT.START_DATE.desc())
+					.fetch();
+			
+			Map<Integer, ActivitySummaryObject> map = new HashMap<>();
+			result.stream().forEach(record ->{
+				ActivitySummaryObject obj = new ActivitySummaryObject();
+				obj.setItCommonDiseaseCount(record.value2()!=null?record.value2().intValue():0);
+				obj.setItOccupationalDiseaseCount(record.value3()!=null?record.value3().intValue():0);
+				obj.setItMaternityCount(record.value4()!=null?record.value4().intValue():0);
+				obj.setItOtherCount(record.value5()!=null?record.value5().intValue():0);
+				map.put(record.value1(), obj);
+			});
+			return map;
+			
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
+		
+	}
+	
+	private Map<Integer, ActivitySummaryObject> getSummaryEnterpriseIT(Integer[] childDomainIds, Integer domainId, String domainName, Date startDate, Date endDate) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
+			Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = ctx.getDslContext()
+					.select(DOMAIN.ID,
+							DSL.sum( DSL.field(CONTRACT_LEAVE.TYPE.eq((byte) LeaveType.COMMON_DISEASE.ordinal())).coerce(Integer.class)),
+							DSL.sum( DSL.field(CONTRACT_LEAVE.TYPE.eq((byte) LeaveType.OCCUPATIONAL_DISEASE.ordinal())).coerce(Integer.class)),
+							DSL.sum( DSL.field(CONTRACT_LEAVE.TYPE.in((byte) LeaveType.MATERNITY.ordinal(), (byte) LeaveType.PATERNITY.ordinal())).coerce(Integer.class)),
+							DSL.sum( DSL.field(CONTRACT_LEAVE.TYPE.notIn((byte) LeaveType.COMMON_DISEASE.ordinal(), (byte) LeaveType.OCCUPATIONAL_DISEASE.ordinal(), (byte) LeaveType.MATERNITY.ordinal(), (byte) LeaveType.PATERNITY.ordinal())).coerce(Integer.class)))
+					.from(DOMAIN
+							.leftOuterJoin(CONTRACT_LEAVE).on(CONTRACT_LEAVE.DOMAIN.eq(DOMAIN.ID)))
+					.where(CONTRACT_LEAVE.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+					.and(DOMAIN.ID.in(childDomainIds))
+					.and(DOMAIN.ACTIVE.eq((byte)1))
+					.groupBy(DOMAIN.ID)
+					.orderBy(DOMAIN.ID.asc())
+					.fetch();
+			
+			Map<Integer, ActivitySummaryObject> map = new HashMap<>();
+			result.stream().forEach(record ->{
+				ActivitySummaryObject obj = new ActivitySummaryObject();
+				obj.setItCommonDiseaseCount(record.value2()!=null?record.value2().intValue():0);
+				obj.setItOccupationalDiseaseCount(record.value3()!=null?record.value3().intValue():0);
+				obj.setItMaternityCount(record.value4()!=null?record.value4().intValue():0);
+				obj.setItOtherCount(record.value5()!=null?record.value5().intValue():0);
 				map.put(record.value1(), obj);
 			});
 			return map;

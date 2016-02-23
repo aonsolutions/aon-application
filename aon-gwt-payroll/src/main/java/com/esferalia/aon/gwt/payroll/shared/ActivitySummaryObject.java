@@ -23,6 +23,11 @@ public class ActivitySummaryObject implements Serializable {
 	private Integer salaryCount;
 	private Integer salaryExtraCount;
 	private Integer salaryOtherCount;
+
+	private Integer itCommonDiseaseCount;
+	private Integer itOccupationalDiseaseCount;
+	private Integer itMaternityCount;
+	private Integer itOtherCount;
 	
 	public String getName() {
 		return name;
@@ -103,6 +108,31 @@ public class ActivitySummaryObject implements Serializable {
 
 		return sb.toString();
 	}
+	public Integer getItCommonDiseaseCount() {
+		return itCommonDiseaseCount;
+	}
+	public void setItCommonDiseaseCount(Integer itCommonDiseaseCount) {
+		this.itCommonDiseaseCount = itCommonDiseaseCount;
+	}
+	public Integer getItOccupationalDiseaseCount() {
+		return itOccupationalDiseaseCount;
+	}
+	public void setItOccupationalDiseaseCount(Integer itOccupationalDiseaseCount) {
+		this.itOccupationalDiseaseCount = itOccupationalDiseaseCount;
+	}
+	public Integer getItMaternityCount() {
+		return itMaternityCount;
+	}
+	public void setItMaternityCount(Integer itMaternityCount) {
+		this.itMaternityCount = itMaternityCount;
+	}
+	public Integer getItOtherCount() {
+		return itOtherCount;
+	}
+	public void setItOtherCount(Integer itOtherCount) {
+		this.itOtherCount = itOtherCount;
+	}
+	
 	
 	
 }

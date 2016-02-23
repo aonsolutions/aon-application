@@ -424,16 +424,131 @@ public class ActivitySummary extends MainEntryPoint {
 		salaryOtherCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
 		Header<String> salaryOtherCountFooter = new Header<String>(new TextCell()) {
 			@Override
-			public String getHeaderStyleNames() {
-				return AON.AON_TEXT_CENTER;
-			}
-			@Override
 			public String getValue() {
 				return String.valueOf(getTotalCountOtherSalary());
 			}
 		};
 		dataGrid.addColumn(salaryOtherCountColumn, salaryOtherCountHeader, salaryOtherCountFooter);
 		dataGrid.setColumnWidth(salaryOtherCountColumn, 7, Unit.EM);
+		
+		/**
+		 * IT Common Disease Column
+		 */
+		Column<ActivitySummaryObject, String> itCommonDiseaseCountColumn = new Column<ActivitySummaryObject, String>(
+				new TextCell()) {
+			@Override
+			public String getValue(ActivitySummaryObject object) {
+				return object.getItCommonDiseaseCount()!=null?object.getItCommonDiseaseCount().toString():"0";
+			}
+		};
+		itCommonDiseaseCountColumn.setSortable(true);
+		sortHandler.setComparator(itCommonDiseaseCountColumn,
+				new Comparator<ActivitySummaryObject>() {
+			@Override
+			public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
+				return o1.getItCommonDiseaseCount().compareTo(o2.getItCommonDiseaseCount());
+			}
+		});
+		SafeHtmlHeader itCommonDiseaseCountHeader = new SafeHtmlHeader(
+				SafeHtmlUtils.fromTrustedString("<span title=\"Enfermedad comun - Accidente no laboral\">IT EC/AN</span>"));
+		itCommonDiseaseCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
+		Header<String> itCommonDiseaseCountFooter = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return String.valueOf(getTotalCountITCommonDiseaseSalary());
+			}
+		};
+		dataGrid.addColumn(itCommonDiseaseCountColumn, itCommonDiseaseCountHeader, itCommonDiseaseCountFooter);
+		dataGrid.setColumnWidth(itCommonDiseaseCountColumn, 7, Unit.EM);
+		
+		/**
+		 * IT Occupational Disease Column
+		 */
+		Column<ActivitySummaryObject, String> itOccupationalDiseaseCountColumn = new Column<ActivitySummaryObject, String>(
+				new TextCell()) {
+			@Override
+			public String getValue(ActivitySummaryObject object) {
+				return object.getItOccupationalDiseaseCount()!=null?object.getItOccupationalDiseaseCount().toString():"0";
+			}
+		};
+		itOccupationalDiseaseCountColumn.setSortable(true);
+		sortHandler.setComparator(itOccupationalDiseaseCountColumn,
+				new Comparator<ActivitySummaryObject>() {
+			@Override
+			public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
+				return o1.getItOccupationalDiseaseCount().compareTo(o2.getItOccupationalDiseaseCount());
+			}
+		});
+		SafeHtmlHeader itOccupationalDiseaseCountHeader = new SafeHtmlHeader(
+				SafeHtmlUtils.fromTrustedString("<span title=\"Accidente de trabajo - Enfermedad profesional\">IT AT/EP</span>"));
+		itOccupationalDiseaseCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
+		Header<String> itOccupationalDiseaseCountFooter = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return String.valueOf(getTotalCountITOccupationalDiseaseSalary());
+			}
+		};
+		dataGrid.addColumn(itOccupationalDiseaseCountColumn, itOccupationalDiseaseCountHeader, itOccupationalDiseaseCountFooter);
+		dataGrid.setColumnWidth(itOccupationalDiseaseCountColumn, 7, Unit.EM);
+		
+		/**
+		 * IT Maternity Column
+		 */
+		Column<ActivitySummaryObject, String> itMaternityCountColumn = new Column<ActivitySummaryObject, String>(
+				new TextCell()) {
+			@Override
+			public String getValue(ActivitySummaryObject object) {
+				return object.getItMaternityCount()!=null?object.getItMaternityCount().toString():"0";
+			}
+		};
+		itMaternityCountColumn.setSortable(true);
+		sortHandler.setComparator(itMaternityCountColumn,
+				new Comparator<ActivitySummaryObject>() {
+			@Override
+			public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
+				return o1.getItMaternityCount().compareTo(o2.getItMaternityCount());
+			}
+		});
+		SafeHtmlHeader itMaternityCountHeader = new SafeHtmlHeader(
+				SafeHtmlUtils.fromTrustedString("<span title=\"Maternidad - Paternidad\">IT M/P</span>"));
+		itMaternityCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
+		Header<String> itMaternityCountFooter = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return String.valueOf(getTotalCountITMaternitySalary());
+			}
+		};
+		dataGrid.addColumn(itMaternityCountColumn, itMaternityCountHeader, itMaternityCountFooter);
+		dataGrid.setColumnWidth(itMaternityCountColumn, 7, Unit.EM);
+
+		/**
+		 * IT Other Column
+		 */
+		Column<ActivitySummaryObject, String> itOtherCountColumn = new Column<ActivitySummaryObject, String>(
+				new TextCell()) {
+			@Override
+			public String getValue(ActivitySummaryObject object) {
+				return object.getItOtherCount()!=null?object.getItOtherCount().toString():"0";
+			}
+		};
+		itOtherCountColumn.setSortable(true);
+		sortHandler.setComparator(itOtherCountColumn,
+				new Comparator<ActivitySummaryObject>() {
+			@Override
+			public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
+				return o1.getItOtherCount().compareTo(o2.getItOtherCount());
+			}
+		});
+		SafeHtmlHeader itOtherCountHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("IT Otros"));
+		itOtherCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
+		Header<String> itOtherCountFooter = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return String.valueOf(getTotalCountITOtherSalary());
+			}
+		};
+		dataGrid.addColumn(itOtherCountColumn, itOtherCountHeader, itOtherCountFooter);
+		dataGrid.setColumnWidth(itOtherCountColumn, 7, Unit.EM);
 	}
 	
 	private Integer getTotalCountEmployee(){
@@ -442,7 +557,7 @@ public class ActivitySummary extends MainEntryPoint {
 	
 	private Integer getTotalCountStartEmployee(){
 		int count=0;
-		for (Integer i = 0; i < getSummaryList().size() - 1; i++) {
+		for (Integer i = 0; i < getSummaryList().size(); i++) {
 			if(getSummaryList().get(i).getStartCount()!=null){
 				count += getSummaryList().get(i).getStartCount();
 			}
@@ -452,7 +567,7 @@ public class ActivitySummary extends MainEntryPoint {
 	
 	private Integer getTotalCountEndEmployee(){
 		int count=0;
-		for (Integer i = 0; i < getSummaryList().size() - 1; i++) {
+		for (Integer i = 0; i < getSummaryList().size(); i++) {
 			if(getSummaryList().get(i).getEndCount()!=null){
 				count += getSummaryList().get(i).getEndCount();
 			}
@@ -462,7 +577,7 @@ public class ActivitySummary extends MainEntryPoint {
 	
 	private Integer getTotalCountSalary(){
 		int count=0;
-		for (Integer i = 0; i < getSummaryList().size() - 1; i++) {
+		for (Integer i = 0; i < getSummaryList().size(); i++) {
 			if(getSummaryList().get(i).getSalaryCount()!=null){
 				count += getSummaryList().get(i).getSalaryCount();
 			}
@@ -472,7 +587,7 @@ public class ActivitySummary extends MainEntryPoint {
 	
 	private Integer getTotalCountExtraSalary(){
 		int count=0;
-		for (Integer i = 0; i < getSummaryList().size() - 1; i++) {
+		for (Integer i = 0; i < getSummaryList().size(); i++) {
 			if(getSummaryList().get(i).getSalaryExtraCount()!=null){
 				count += getSummaryList().get(i).getSalaryExtraCount();
 			}
@@ -482,9 +597,49 @@ public class ActivitySummary extends MainEntryPoint {
 	
 	private Integer getTotalCountOtherSalary(){
 		int count=0;
-		for (Integer i = 0; i < getSummaryList().size() - 1; i++) {
+		for (Integer i = 0; i < getSummaryList().size(); i++) {
 			if(getSummaryList().get(i).getSalaryOtherCount()!=null){
 				count += getSummaryList().get(i).getSalaryOtherCount();
+			}
+		}
+		return count;
+	}
+	
+	private Integer getTotalCountITCommonDiseaseSalary() {
+		int count=0;
+		for (Integer i = 0; i < getSummaryList().size(); i++) {
+			if(getSummaryList().get(i).getItCommonDiseaseCount()!=null){
+				count += getSummaryList().get(i).getItCommonDiseaseCount();
+			}
+		}
+		return count;
+	}
+	
+	private Integer getTotalCountITOccupationalDiseaseSalary() {
+		int count=0;
+		for (Integer i = 0; i < getSummaryList().size(); i++) {
+			if(getSummaryList().get(i).getItOccupationalDiseaseCount()!=null){
+				count += getSummaryList().get(i).getItOccupationalDiseaseCount();
+			}
+		}
+		return count;
+	}
+	
+	private Integer getTotalCountITMaternitySalary() {
+		int count=0;
+		for (Integer i = 0; i < getSummaryList().size(); i++) {
+			if(getSummaryList().get(i).getItMaternityCount()!=null){
+				count += getSummaryList().get(i).getItMaternityCount();
+			}
+		}
+		return count;
+	}
+	
+	private Integer getTotalCountITOtherSalary() {
+		int count=0;
+		for (Integer i = 0; i < getSummaryList().size(); i++) {
+			if(getSummaryList().get(i).getItOtherCount()!=null){
+				count += getSummaryList().get(i).getItOtherCount();
 			}
 		}
 		return count;
