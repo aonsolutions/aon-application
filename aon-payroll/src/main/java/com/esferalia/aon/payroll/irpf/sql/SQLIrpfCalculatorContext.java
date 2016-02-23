@@ -62,6 +62,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
 
 public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
@@ -110,7 +111,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		@Override
 		public Object liquid(double liquid, Date start, Date end)
 				throws ExpressionException, SQLException, SalaryException {
-			throw new ExpressionException(
+			throw new InterruptedException(
 					"Lo sentimos no soportamos la funcionalidad NETO en extras si esta activado el c\u00E1lculo autom\u00E1tico de IRPF.");
 		}
 

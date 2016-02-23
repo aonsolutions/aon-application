@@ -8,12 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.xml.stream.events.StartDocument;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -23,7 +18,6 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
-import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -33,7 +27,6 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.salary.payment.CompositePayment;
 
 public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculatorContext {
 
@@ -104,7 +97,12 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			if (StringUtils.isNotBlank(p.getName()) && p.getSalaryType() == SalaryType.SALARY) {
 				try {
 					addSalaryPayment(expressionContext, p, paymentStart, paymentEnd);
-				} catch (ExpressionException e) {
+				} catch (com.esferalia.aon.salary.expression.InterruptedException e) {
+					throw e;
+				}
+				catch (ExpressionException e) {
+					e.printStackTrace();
+					System.err.println(String.format("ERROR [%s]: %s", p.getName(), e.getLocalizedMessage()));
 				}
 			}
 		}
