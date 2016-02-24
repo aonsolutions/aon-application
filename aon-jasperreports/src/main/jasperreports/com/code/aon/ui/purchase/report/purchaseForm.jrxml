@@ -198,102 +198,99 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{issueDate}]]></textFieldExpression>
 			</textField>
-			<frame>
-				<reportElement uuid="4b352367-e166-4839-9048-2937410119dc" x="164" y="3" width="138" height="72"/>
-				<textField isBlankWhenNull="true">
-					<reportElement uuid="a622ac1b-a092-4fdd-9767-e489b55b7bc5" key="textField-130" positionType="Float" x="0" y="60" width="136" height="12" isRemoveLineWhenBlank="true">
-						<printWhenExpression><![CDATA[$P{printHeader} && !$P{web}.getValue().trim().isEmpty()]]></printWhenExpression>
-					</reportElement>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{web}.getValue().trim().isEmpty()?null:"w" + ": " + $P{web}.getValue()]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement uuid="4728807c-6fb4-4e70-85b5-241409580a77" key="textField-83" x="0" y="0" width="136" height="12">
-						<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-					</reportElement>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{address}.getFullAddress()]]></textFieldExpression>
-				</textField>
-				<textField pattern="" isBlankWhenNull="true">
-					<reportElement uuid="591cfff5-1324-4157-b9f1-46350c517d7b" key="textField-131" positionType="Float" mode="Transparent" x="0" y="48" width="136" height="12" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
-						<printWhenExpression><![CDATA[$P{printHeader} && !$P{email}.getValue().trim().isEmpty()]]></printWhenExpression>
-					</reportElement>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
-						<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{email}.getValue().trim().isEmpty()?null:"e" + ": " + $P{email}.getValue()]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement uuid="b881c6ed-9b21-46f9-a6d3-8230015026d2" key="textField-81" positionType="Float" x="0" y="24" width="136" height="12" isRemoveLineWhenBlank="true">
-						<printWhenExpression><![CDATA[$P{printHeader} && !$P{phone}.getValue().trim().isEmpty()]]></printWhenExpression>
-					</reportElement>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{phone}.getValue().trim().isEmpty()?null:"t" + ": " + $P{phone}.getValue()]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement uuid="40c2d920-2d38-4082-ae7c-8cb2fbdf97d5" key="textField-89" positionType="Float" x="0" y="36" width="136" height="12" isRemoveLineWhenBlank="true">
-						<printWhenExpression><![CDATA[$P{printHeader} && !$P{fax}.getValue().trim().isEmpty()]]></printWhenExpression>
-					</reportElement>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{fax}.getValue().trim().isEmpty()?null:"f" + ": " + $P{fax}.getValue()]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement uuid="dbd08c64-fb2e-4170-9cac-4669b99c2916" key="textField-82" x="0" y="12" width="136" height="12">
-						<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-					</reportElement>
-					<box>
-						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="0.0" lineColor="#000000"/>
-						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
-				</textField>
-			</frame>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a622ac1b-a092-4fdd-9767-e489b55b7bc5" key="textField-130" positionType="Float" x="150" y="64" width="179" height="12" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{printHeader} && !$P{web}.getValue().trim().isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{web}.getValue().trim().isEmpty()?null:"w" + ": " + $P{web}.getValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="dbd08c64-fb2e-4170-9cac-4669b99c2916" key="textField-82" x="150" y="16" width="179" height="12">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4728807c-6fb4-4e70-85b5-241409580a77" key="textField-83" x="150" y="4" width="179" height="12">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{address}.getFullAddress()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b881c6ed-9b21-46f9-a6d3-8230015026d2" key="textField-81" positionType="Float" x="150" y="28" width="179" height="12" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{printHeader} && !$P{phone}.getValue().trim().isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{phone}.getValue().trim().isEmpty()?null:"t" + ": " + $P{phone}.getValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="40c2d920-2d38-4082-ae7c-8cb2fbdf97d5" key="textField-89" positionType="Float" x="150" y="40" width="179" height="12" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{printHeader} && !$P{fax}.getValue().trim().isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fax}.getValue().trim().isEmpty()?null:"f" + ": " + $P{fax}.getValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="591cfff5-1324-4157-b9f1-46350c517d7b" key="textField-131" positionType="Float" mode="Transparent" x="150" y="52" width="179" height="12" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$P{printHeader} && !$P{email}.getValue().trim().isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{email}.getValue().trim().isEmpty()?null:"e" + ": " + $P{email}.getValue()]]></textFieldExpression>
+			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="ce9a16ff-b93d-442f-916a-1cc6d8e9745a" key="textField-134" x="302" y="3" width="236" height="21" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="ce9a16ff-b93d-442f-916a-1cc6d8e9745a" key="textField-134" x="329" y="3" width="209" height="21" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -594,7 +591,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 				<textFieldExpression><![CDATA[$F{carrier}.getRegistry().getFullName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="29d30b5f-fdfb-46b2-8c99-ef187ab78630" key="textField-118" x="0" y="117" width="52" height="13" isRemoveLineWhenBlank="true"/>
+				<reportElement uuid="29d30b5f-fdfb-46b2-8c99-ef187ab78630" key="textField-118" x="0" y="106" width="52" height="23" isRemoveLineWhenBlank="true"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
@@ -632,32 +629,6 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 				<textFieldExpression><![CDATA[$R{aon_supplier}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="69895e89-ced0-491e-8528-290ac5177715" key="textField-114" positionType="Float" x="270" y="38" width="52" height="66" isRemoveLineWhenBlank="true"/>
-				<box>
-					<leftPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_address}+ ":"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="f463a626-612a-40e5-869d-c4b561923d02" key="textField-115" positionType="Float" x="322" y="38" width="215" height="66" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
-				<box topPadding="0" leftPadding="3" bottomPadding="0">
-					<pen lineWidth="0.5" lineStyle="Solid"/>
-					<topPen lineWidth="0.0" lineStyle="Solid"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
-					<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{addressLine1}
-+ ($V{addressLine1}!="" && $V{addressLine2}!=""?", ":"")
-+ $V{addressLine2}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="false">
 				<reportElement uuid="c56e115f-c354-4b2e-bec2-d331dd75c0f4" key="textField-112" positionType="Float" x="270" y="15" width="52" height="23" isRemoveLineWhenBlank="true"/>
 				<box>
 					<leftPen lineWidth="0.0"/>
@@ -668,7 +639,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 				<textFieldExpression><![CDATA[$R{purchase_shipping_recipient}+":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="231218e1-82c9-4a24-b884-382953383646" key="textField-119" x="52" y="104" width="218" height="13" isRemoveLineWhenBlank="true"/>
+				<reportElement uuid="231218e1-82c9-4a24-b884-382953383646" key="textField-119" x="52" y="83" width="218" height="23" isRemoveLineWhenBlank="true"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -683,14 +654,14 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 + ((org.apache.commons.lang.ArrayUtils.getLength($V{phones})>1)?(" - " + ($V{phones}[1]).trim()):(""))]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="84d6939c-3961-44c2-b25b-c89fa78c2134" key="textField-114" x="0" y="38" width="52" height="66"/>
+				<reportElement uuid="84d6939c-3961-44c2-b25b-c89fa78c2134" key="textField-114" x="0" y="38" width="52" height="23"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_address}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="185a9ca0-0b2b-4c43-86dd-3d611f9ceab2" key="textField-115" x="52" y="38" width="218" height="66"/>
+				<reportElement uuid="185a9ca0-0b2b-4c43-86dd-3d611f9ceab2" key="textField-115" x="52" y="38" width="218" height="15"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -701,11 +672,10 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registryAddress}.getFullAddress() + ", " + $F{registryAddress}.getZip() + " " +
-$F{registryAddress}.getCity() + " (" + $F{registryAddress}.getGeozone().getName() + ")"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{registryAddress}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="4db79deb-acc1-47be-abed-fa58615be649" key="textField-118" x="0" y="104" width="52" height="13" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="4db79deb-acc1-47be-abed-fa58615be649" key="textField-118" x="0" y="83" width="52" height="23" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
@@ -726,7 +696,7 @@ $F{registryAddress}.getCity() + " (" + $F{registryAddress}.getGeozone().getName(
 				<textFieldExpression><![CDATA[$F{supplier}.getRegistry().getFullName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="d4aa60ec-2aa1-4853-8c06-a275ca827fa0" key="textField-118" positionType="Float" x="270" y="117" width="52" height="13" isRemoveLineWhenBlank="true">
+				<reportElement uuid="d4aa60ec-2aa1-4853-8c06-a275ca827fa0" key="textField-118" positionType="Float" x="270" y="106" width="52" height="23" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{shippingAlternativeAddressDefined}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -738,7 +708,7 @@ $F{registryAddress}.getCity() + " (" + $F{registryAddress}.getGeozone().getName(
 				<textFieldExpression><![CDATA[$R{aon_phone}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="198d518f-eba2-4895-9efc-f391b11dfb33" key="textField-119" positionType="Float" x="322" y="117" width="215" height="13" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+				<reportElement uuid="198d518f-eba2-4895-9efc-f391b11dfb33" key="textField-119" positionType="Float" x="322" y="106" width="215" height="23" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
 					<printWhenExpression><![CDATA[$V{shippingAlternativeAddressDefined}]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
@@ -754,7 +724,7 @@ $F{registryAddress}.getCity() + " (" + $F{registryAddress}.getGeozone().getName(
 				<textFieldExpression><![CDATA[$F{shippingAlternativePhone}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="69054a40-f821-4545-a820-bbb8a7975212" key="textField-119" x="52" y="117" width="218" height="13" isRemoveLineWhenBlank="true"/>
+				<reportElement uuid="69054a40-f821-4545-a820-bbb8a7975212" key="textField-119" x="52" y="106" width="218" height="23" isRemoveLineWhenBlank="true"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -769,7 +739,7 @@ $F{registryAddress}.getCity() + " (" + $F{registryAddress}.getGeozone().getName(
 + ((org.apache.commons.lang.ArrayUtils.getLength($V{cellulars})>1)?(" - " + ($V{cellulars}[1]).trim()):(""))]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="81bfe270-85a6-4dc4-aa5a-843151a7bb99" key="textField-112" positionType="Float" x="270" y="104" width="52" height="13" isRemoveLineWhenBlank="true">
+				<reportElement uuid="81bfe270-85a6-4dc4-aa5a-843151a7bb99" key="textField-112" positionType="Float" x="270" y="83" width="52" height="23" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{shippingContact}!=null && !$F{shippingContact}.equals( "" )]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -781,7 +751,7 @@ $F{registryAddress}.getCity() + " (" + $F{registryAddress}.getGeozone().getName(
 				<textFieldExpression><![CDATA[$R{purchase_shipping_contact}+":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="cd3ce8ae-0217-494f-9669-80bb796c45f1" key="textField-119" positionType="Float" x="322" y="104" width="215" height="13" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+				<reportElement uuid="cd3ce8ae-0217-494f-9669-80bb796c45f1" key="textField-119" positionType="Float" x="322" y="83" width="215" height="23" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
 					<printWhenExpression><![CDATA[$F{shippingContact}!=null && !$F{shippingContact}.equals( "" )]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="3" bottomPadding="2">
@@ -796,6 +766,92 @@ $F{registryAddress}.getCity() + " (" + $F{registryAddress}.getGeozone().getName(
 				</textElement>
 				<textFieldExpression><![CDATA[$F{shippingContact} + ($F{shippingPeriod}==null?"":
     ", " + $R{aon_calendar_schedule} + ":" + $F{shippingPeriod}.getName( $P{REPORT_LOCALE} ))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="d95d1f97-7d81-4dc7-8170-958e3666ae02" key="textField-115" positionType="Float" x="322" y="38" width="215" height="23" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{addressLine1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="a3059007-3ba6-4161-bf29-562cbd4c8c99" key="textField-119" positionType="Float" x="322" y="61" width="215" height="22" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{addressLine2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="2748ba6e-fb86-4131-bb70-8ff09b8715e4" key="textField-118" positionType="Float" x="270" y="61" width="52" height="22" isRemoveLineWhenBlank="true"/>
+				<box>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="562ce7a8-2819-4c7d-84b7-7e6377acebab" key="textField-114" positionType="Float" x="270" y="38" width="52" height="23" isRemoveLineWhenBlank="true"/>
+				<box>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{aon_address}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="eb852caf-5719-4178-8b72-ccc6f341bce9" key="textField-115" x="52" y="53" width="218" height="15"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{registryAddress}.getZip() + " " + $F{registryAddress}.getCity() ]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a1a6b27d-d262-45c7-9a63-c25785cca316" key="textField-115" x="52" y="68" width="218" height="15"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{registryAddress}.getGeozone().getName()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="e72d4db3-52a8-4859-ba8d-66aca9557d1f" key="textField-118" positionType="Float" x="0" y="61" width="52" height="22" isRemoveLineWhenBlank="true"/>
+				<box>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
