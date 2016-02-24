@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +31,13 @@ import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.ui.payroll.controller.EnterpriseParamsController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
@@ -342,6 +344,22 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	public Collection<?> getCollection(boolean forceRefresh)
 			throws ManagerBeanException {
 		return getCollection();
+	}
+	
+	public String getReportKey() {
+		try {
+			EnterpriseParamsController enterpriseParams = (EnterpriseParamsController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_PARAMS_CONTROLLER_NAME);
+			String reportKey = enterpriseParams.getParameter("PAY_REPORT_enterpriseSalary_PAY").getExpression();
+			if(StringUtils.isBlank(reportKey) || reportKey.equals("salaryExpense")) {
+				return IPayrollConstants.COST_REPORT;
+			} else if(reportKey.equals("salaryExpenseExtended")) {
+				return IPayrollConstants.COST_REPORT_DETAILED;
+			}
+			return StringUtils.isNotBlank(reportKey)?reportKey:IPayrollConstants.COST_REPORT;
+		} catch (ManagerBeanException e) {
+			LOGGER.error("*** Unable to load salary cost reportKey -> " + e.getMessage());
+		}
+		return IPayrollConstants.COST_REPORT;
 	}
 	
 	
