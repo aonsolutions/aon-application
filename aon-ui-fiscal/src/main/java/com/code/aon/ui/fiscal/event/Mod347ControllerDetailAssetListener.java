@@ -1,5 +1,7 @@
 package com.code.aon.ui.fiscal.event;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.fiscal.Mod347Detail;
 import com.code.aon.registry.RegistryDocument;
@@ -18,7 +20,9 @@ public class Mod347ControllerDetailAssetListener  extends ControllerAdapter {
 			throws ControllerListenerException {
 		IController c = event.getController();
 		Mod347Detail  detail = (Mod347Detail) c.getTo();
-		detail.setAssetLocation("1");
+		if (StringUtils.isBlank(detail.getAssetLocation())) {
+			detail.setAssetLocation("1");	
+		}
 		check(detail);
 	}
 	@Override
