@@ -28,9 +28,9 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		checkItem(item);
 
 		try {
+			checkValidSerialNumber(item, null);
 			checkValidBarCode(item, null);
 			checkValidDetails(item, null);
-			checkValidSerialNumber(item, null);
 		} catch(ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}
@@ -43,9 +43,9 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 		try {
 			Item itemDB = (Item)BeanManager.getManagerBean(Item.class).get(item.getId());
+			checkValidSerialNumber(item, itemDB);
 			checkValidBarCode(item, itemDB);
 			checkValidDetails(item, itemDB);
-			checkValidSerialNumber(item, itemDB);
 		} catch(ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}
@@ -63,6 +63,39 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     	}
     	if (!item.getProduct().isComposition() && item.getProduct().isCompositionPrice()) {
     		item.getProduct().setCompositionPrice(false);
+    	}
+	}
+
+    private void checkValidSerialNumber(Item to, Item itemDB) throws ManagerBeanException {
+    	if (StringUtils.isNotEmpty(to.getSerialNumber())) {
+			boolean checkInDomain = true;
+			if (itemDB != null) {
+				checkInDomain = !StringUtils.equals(to.getSerialNumber(), itemDB.getSerialNumber());
+			}
+			if (checkInDomain) {
+				IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+				Criteria criteria = new Criteria();
+				if (itemDB != null) {
+					criteria.addNotEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), to.getId());
+				}
+				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), to.getProduct().getId());
+				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), to.getSerialNumber());
+		    	if (StringUtils.isNotEmpty(to.getDetail())) {
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL), to.getDetail());
+		    	}
+		    	if (StringUtils.isNotEmpty(to.getDetail2())) {
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL2), to.getDetail2());
+		    	}
+		    	if (StringUtils.isNotEmpty(to.getDetail3())) {
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL3), to.getDetail3());
+		    	}
+				List<ITransferObject> itemList = itemBean.getList(criteria);
+				if (!itemList.isEmpty()) {
+					Item duplicate = (Item)itemList.get(0);
+					throw new ManagerBeanException("Ya existe el Número de Serie (" + duplicate.getSerialNumber() + ")");	
+				}				
+			}
+
     	}
 	}
 
@@ -129,37 +162,21 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		    	if (StringUtils.isNotEmpty(to.getDetail3())) {
 					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_DETAIL3), to.getDetail3());
 		    	}
-				List<ITransferObject> itemList = itemBean.getList(criteria);
+		    	if (StringUtils.isNotEmpty(to.getSerialNumber())) {
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), to.getSerialNumber());
+		    	} else {
+					criteria.addNullExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+		    	}
+		    	List<ITransferObject> itemList = itemBean.getList(criteria);
 				if (!itemList.isEmpty()) {
 					Item duplicate = (Item)itemList.get(0);
-					throw new ManagerBeanException("Ya existe el Detalle (" + duplicate.getDetails() + ")");	
+					String message = "Ya existe el Detalle (" + duplicate.getDetails() + ")";
+			    	if (StringUtils.isNotEmpty(to.getSerialNumber())) {
+			    		message += " para el Numero de Serie: " + to.getSerialNumber();
+			    	}
+					throw new ManagerBeanException(message);	
 				}				
 			}
-
-    	}
-	}
-
-    private void checkValidSerialNumber(Item to, Item itemDB) throws ManagerBeanException {
-    	if (StringUtils.isNotEmpty(to.getSerialNumber())) {
-			boolean checkInDomain = true;
-			if (itemDB != null) {
-				checkInDomain = !StringUtils.equals(to.getSerialNumber(), itemDB.getSerialNumber());
-			}
-			if (checkInDomain) {
-				IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-				Criteria criteria = new Criteria();
-				if (itemDB != null) {
-					criteria.addNotEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), to.getId());
-				}
-				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), to.getProduct().getId());
-				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), to.getSerialNumber());
-				List<ITransferObject> itemList = itemBean.getList(criteria);
-				if (!itemList.isEmpty()) {
-					Item duplicate = (Item)itemList.get(0);
-					throw new ManagerBeanException("Ya existe el Número de Serie (" + duplicate.getSerialNumber() + ")");	
-				}				
-			}
-
     	}
 	}
 
