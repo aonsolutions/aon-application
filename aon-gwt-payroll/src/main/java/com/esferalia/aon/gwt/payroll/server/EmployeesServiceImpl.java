@@ -730,7 +730,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
 
-			reportManager.execute(out, IPayrollConstants.COST_REPORT,
+			reportManager.execute(out, controller.getReportKey(),
 					parameters);
 
 			for (Entry<Object, Object> image : images.entrySet()) {

@@ -28,15 +28,6 @@
 					<aon:outputText value="#{to.description}" />
 				</aon:column>
 				
-				<aon:if test="#{actionDenied.manager.renderPayrollConfig}">
-					<aon:column styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.payroll_activity_quoteRegime}" />
-						</f:facet>
-						<aon:outputText value="#{to.type}" />
-					</aon:column>
-				</aon:if>
-				
 				<aon:column styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.company_cnae2009_module}" />

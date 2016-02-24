@@ -82,6 +82,7 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -90,6 +91,7 @@ public class Model111 extends MainEntryPoint {
 
 	final static int IDENTIFICATION_TAB = 0;
 	final static int LIQUIDATION_TAB = 1;
+	final static int FISCAL_INFORMATION_TAB = 2;
 	
 	final static int NOTIFICATIONS_TAB = 0;
 	final static int INFORMATION_TAB = 1;
@@ -101,6 +103,11 @@ public class Model111 extends MainEntryPoint {
 	}
 	private static final Model111Binder MODEL_111_BINDER = GWT
 			.create(Model111Binder.class);
+	
+	private static final String MODEL111_PRINT = "/aon_gwt_fiscal/Model111Print";
+	private static final String MODEL111_PRINT_PDF ="/aon_gwt_fiscal/Model111PrintPDF";
+	protected static final String MODEL111_FILE = "/aon_gwt_fiscal/Model111File";
+	protected static final String MODEL111_PRINT_AEAT = "/aon_gwt_fiscal/Model111PrintAEAT";
 
 	public static interface IMod111Declaration extends IsWidget {
 		Widget getInfoPanel(Mod111 mod111);
@@ -176,7 +183,7 @@ public class Model111 extends MainEntryPoint {
 	@UiField
 	Label complementaryLabel;
 	@UiField
-	IntegerBox replacedNumber;
+	TextBox replacedNumber;
 	@UiField
 	Label replacedNumberLabel;
 	@UiField
@@ -598,6 +605,9 @@ public class Model111 extends MainEntryPoint {
 						select(result);
 						popup.hide();
 						saveButton.setEnabled(true);
+						cleanInfo();
+						tabLayout.selectTab(INFORMATION_TAB);
+						closeFootPanel();
 					}
 
 					@Override
@@ -678,6 +688,9 @@ public class Model111 extends MainEntryPoint {
 					@Override
 					public void onSuccess(Mod111 m111) {
 						currentMod111 = m111;
+						cleanInfo();
+						tabLayout.selectTab(INFORMATION_TAB);
+						closeFootPanel();
 						showNewDeclarationPopup();
 						newButton.setEnabled(true);
 					}
@@ -715,7 +728,8 @@ public class Model111 extends MainEntryPoint {
 		
 		final Label previousLabel = new Label(AON.MSG.previousDeclaration()); 
 		previousLabel.setVisible(currentMod111.isReplacedNumberAvailable());
-		final IntegerBox previous = new IntegerBox();
+		final TextBox previous = new TextBox();
+		previous.setStyleName(AON.AON_CSS.aonInputText());
 		previous.setVisible(currentMod111.isReplacedNumberAvailable());
 		
 		final CheckBox replacement = new CheckBox(AON.MSG.replacement());
@@ -972,53 +986,66 @@ public class Model111 extends MainEntryPoint {
 	
 	@UiHandler("printButton")
 	void onPrintButtonClick(ClickEvent event) {
-		new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
+		if (isDirty()) {
+			new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
+					, new ConfirmDialogCallback() {
+					
+					@Override
+					public void onAccept() {
+						submitForm(MODEL111_PRINT);
+					}
+	
+					@Override
+					public void onCancel() {
+						// Nothing
+					}
+				});
+		} else {
+			submitForm(MODEL111_PRINT);
+		}
+			
+	}
+
+	@UiHandler("printPDFButton")
+	void onPrintPDFButtonClick(ClickEvent event) {
+		if (isDirty()) {
+			new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
 				, new ConfirmDialogCallback() {
 				
 				@Override
 				public void onAccept() {
-					submitForm("/aon_gwt_fiscal/Model111Print");
+					submitForm(MODEL111_PRINT_PDF);
 				}
-
+	
 				@Override
 				public void onCancel() {
 					// Nothing
 				}
 			});
-	}
-
-	@UiHandler("printPDFButton")
-	void onPrintPDFButtonClick(ClickEvent event) {
-		new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
-			, new ConfirmDialogCallback() {
-			
-			@Override
-			public void onAccept() {
-				submitForm("/aon_gwt_fiscal/Model111PrintPDF");
-			}
-
-			@Override
-			public void onCancel() {
-				// Nothing
-			}
-		});
+		} else {
+			submitForm(MODEL111_PRINT_PDF);
+		}
 	}
 	
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
-		new ConfirmDialog().confirm(AON.MSG.fileGeneration(),AON.MSG.fileGenerationNote() 
-			, new ConfirmDialogCallback() {
-			
-			@Override
-			public void onAccept() {
-				submitForm("/aon_gwt_fiscal/Model111File");
-			}
-
-			@Override
-			public void onCancel() {
-				// Nothing
-			}
-		});
+		if (isDirty()) {
+			new ConfirmDialog().confirm(AON.MSG.fileGeneration(),AON.MSG.fileGenerationNote() 
+				, new ConfirmDialogCallback() {
+				
+				@Override
+				public void onAccept() {
+					submitForm(MODEL111_FILE);
+				}
+	
+				@Override
+				public void onCancel() {
+					// Nothing
+				}
+			});
+		} else {
+			submitForm(MODEL111_FILE);
+		}
 	}
 
 	private void submitForm(String action) {
@@ -1041,7 +1068,7 @@ public class Model111 extends MainEntryPoint {
 				
 				@Override
 				public void onAccept() {
-					submitForm("/aon_gwt_fiscal/Model111PrintAEAT");
+					submitForm(MODEL111_PRINT_AEAT);
 				}
 
 				@Override
@@ -1085,7 +1112,7 @@ public class Model111 extends MainEntryPoint {
 		splitLayoutPanel.animate(500);
 	}
 	private void openFootPanelIfNeeded() {
-		if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
+		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
 			openFootPanel();
 		}
 	}

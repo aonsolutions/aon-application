@@ -10,11 +10,12 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod115.Model115.IMod115Declaration;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
-import com.esferalia.aon.occam.api.model.fiscal.mod115.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod115.Model115ScriptProvider;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.api.model.type.Mod115KeyInfo;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -38,7 +39,7 @@ public abstract class Model115Base extends ResizeComposite implements RequiresRe
 	protected static final boolean HAS_NOT_INFO = false;
 	
 	private static final int MAX_LABEL_LENGTH = 100;
-	private static final int COL_NUMBER = 4;
+	private static final int COL_NUMBER = 8;
 	
 	private FlexTable table;
 	private EnumMap<Mod115Key,DoubleBox> fieldsMap;
@@ -79,7 +80,7 @@ public abstract class Model115Base extends ResizeComposite implements RequiresRe
 		}
 		defineTable();
 		
-		for (IModelScript ms : Model115ScriptProvider.obtainScript(mod115)) {
+		for (IModelScript<Mod115Key> ms : Model115ScriptProvider.obtainScript(mod115)) {
 			if (ms.paintHeaderBefore()) {
 				paintHeader();
 			}
@@ -100,7 +101,15 @@ public abstract class Model115Base extends ResizeComposite implements RequiresRe
 		getTable().getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
 		getTable().getColumnFormatter().setWidth(2, "140px");
 		
-		getTable().getColumnFormatter().setWidth(3, "25px");
+		getTable().getColumnFormatter().setWidth(3, "40px");
+		getTable().getColumnFormatter().setStyleName(3, AON.AON_CSS.aonTextCenter());
+		getTable().getColumnFormatter().setWidth(4, "140px");
+		
+		getTable().getColumnFormatter().setWidth(5, "40px");
+		getTable().getColumnFormatter().setStyleName(5, AON.AON_CSS.aonTextCenter());
+		getTable().getColumnFormatter().setWidth(6, "140px");
+		
+		getTable().getColumnFormatter().setWidth(7, "50px");
 	}
 	
 	protected void paintHeader() {
@@ -111,18 +120,32 @@ public abstract class Model115Base extends ResizeComposite implements RequiresRe
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottom() );
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderTop() );
 
-		getTable().setWidget(row, 1, new Label(AON.MSG.amount()));
+		getTable().setWidget(row, 1, new Label(AON.MSG.receivers()));
 		getTable().getFlexCellFormatter().setStyleName(row, 1,AON.AON_CSS.aonBold() );
 		getTable().getFlexCellFormatter().addStyleName(row, 1,AON.AON_CSS.aonTextCenter() );
 		getTable().getFlexCellFormatter().addStyleName(row, 1,AON.AON_CSS.aonBorderBottom() );
 		getTable().getFlexCellFormatter().addStyleName(row, 1,AON.AON_CSS.aonBorderTop() );
 		getTable().getFlexCellFormatter().setColSpan(row, 1, 2);
-		
-		getTable().setWidget(row, 2, new Label("Inf."));
+
+		getTable().setWidget(row, 2, new Label(AON.MSG.perceptions()));
 		getTable().getFlexCellFormatter().setStyleName(row, 2,AON.AON_CSS.aonBold() );
 		getTable().getFlexCellFormatter().addStyleName(row, 2,AON.AON_CSS.aonTextCenter() );
 		getTable().getFlexCellFormatter().addStyleName(row, 2,AON.AON_CSS.aonBorderBottom() );
 		getTable().getFlexCellFormatter().addStyleName(row, 2,AON.AON_CSS.aonBorderTop() );
+		getTable().getFlexCellFormatter().setColSpan(row, 2, 2);
+
+		getTable().setWidget(row, 3, new Label(AON.MSG.retentionAccountShort()));
+		getTable().getFlexCellFormatter().setStyleName(row, 3,AON.AON_CSS.aonBold() );
+		getTable().getFlexCellFormatter().addStyleName(row, 3,AON.AON_CSS.aonTextCenter() );
+		getTable().getFlexCellFormatter().addStyleName(row, 3,AON.AON_CSS.aonBorderBottom() );
+		getTable().getFlexCellFormatter().addStyleName(row, 3,AON.AON_CSS.aonBorderTop() );
+		getTable().getFlexCellFormatter().setColSpan(row, 3, 2);
+		
+		getTable().setWidget(row, 4, new Label("Inf."));
+		getTable().getFlexCellFormatter().setStyleName(row, 4,AON.AON_CSS.aonBold() );
+		getTable().getFlexCellFormatter().addStyleName(row, 4,AON.AON_CSS.aonTextCenter() );
+		getTable().getFlexCellFormatter().addStyleName(row, 4,AON.AON_CSS.aonBorderBottom() );
+		getTable().getFlexCellFormatter().addStyleName(row, 4,AON.AON_CSS.aonBorderTop() );
 	}
 		
 	protected void paintEmptyRow() {
@@ -131,7 +154,7 @@ public abstract class Model115Base extends ResizeComposite implements RequiresRe
 		table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);
 	}
 
-	protected void paintRow(final Mod115 mod115, IModelScript script) {
+	protected void paintRow(final Mod115 mod115, IModelScript<Mod115Key> script) {
 		if (script.hasGraphicParticularity()) {
 			paintParticularyRow(mod115,script);		
 		} else {
@@ -140,20 +163,29 @@ public abstract class Model115Base extends ResizeComposite implements RequiresRe
 			if (script.getKeys() == null) {
 				table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);	
 			} else {
+				table.getFlexCellFormatter().setColSpan(row, 0, 
+						(script.getKeys().length==1
+							?5:
+							(script.getKeys().length==2
+								?3
+								:1)
+						) 
+					);
 				int col = 1;
-				Mod115Key key = script.getKeys()[0];
-				col = paintBox( row, col, key );
-				col = paintField( row, col, mod115, script, key );
-				paintInfoCol(row,col,mod115,script);
+				for (Mod115Key key : script.getKeys()) {
+					col = paintBox( row, col, key );
+					col = paintField( row, col, mod115, script, key );
+				}
+				paintInfoCol(row,col,mod115,script);	
 			}
 		}
 	}
 	
-	protected void paintParticularyRow(final Mod115 mod115, IModelScript script) {
+	protected void paintParticularyRow(final Mod115 mod115, IModelScript<Mod115Key> script) {
 		
 	}
 	
-	protected void paintLabel( int row,Mod115 mod115, IModelScript script) {
+	protected void paintLabel( int row,Mod115 mod115, IModelScript<Mod115Key> script) {
 		String labelText = script.getLabel();
 		Label label = new Label();
 		if (AonStringUtils.length(labelText) > MAX_LABEL_LENGTH) {
@@ -164,8 +196,10 @@ public abstract class Model115Base extends ResizeComposite implements RequiresRe
 		table.setWidget(row, 0, label);
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		if (!script.isEnabled() ) {
+		if (script.isTitle() ) {
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBold() );
+		} else {
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft20() );
 		}
 	}
 	
@@ -174,7 +208,7 @@ public abstract class Model115Base extends ResizeComposite implements RequiresRe
 		return ++col;
 	}
 
-	private int paintField(int row, int col, final Mod115 mod115, IModelScript script, final Mod115Key key) {
+	private int paintField(int row, int col, final Mod115 mod115, IModelScript<Mod115Key> script, final Mod115Key key) {
 		final FiscalModelDetail det1 = mod115.ensureDetail(key);
 		final DoubleBox input = new DoubleBox();
 		input.setResolver(resolver);
@@ -184,6 +218,12 @@ public abstract class Model115Base extends ResizeComposite implements RequiresRe
 		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
+				double result = mod115.getResultAmount(key);
+				double adjust = mod115.getAdjustAmount(key);
+				double amount = input.getValue();
+				if (AonMathUtils.isNotZero(result - adjust - amount)) {
+					mod115.ensureDetail(key).setAdjustAmount( result - amount);	
+				}
 				mod115.ensureDetail(key).setAmount(input.getValue());
 				if (input.isEnabled()) {
 					calculateAndRefresh( mod115 );
@@ -195,38 +235,47 @@ public abstract class Model115Base extends ResizeComposite implements RequiresRe
 		return ++col;
 	}
 	
-	private void paintInfoCol(int row, int col, final Mod115 mod115, final IModelScript script) {
-		if (script.getInfoKey() == Mod115KeyInfo.INVOICE) {
-			final Button button = new Button("");
-			button.setTitle(script.getInfoKey().getLabel());
-			button.setStyleName(AON.AON_CSS.aonIconCommandButton());
-			button.addStyleName(AON.AON_CSS.aonIconQuestion());
-			button.addClickHandler(new ClickHandler() {
+	private void paintInfoCol(int row, int col, final Mod115 mod115, final IModelScript<Mod115Key> script) {
+		FlowPanel buttonContainer = new FlowPanel();
+		for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
+			buttonContainer.setStyleName(AON.AON_CSS.aonNowrap());
+			if 	(infoKey != FiscalModelKeyInfo.NONE) {
+				final Button button = new Button("");
+				button.setTitle(infoKey.getLabel());
+				button.setStyleName(AON.AON_CSS.aonIconCommandButton());
 				
-				@Override
-				public void onClick(ClickEvent event) {
-					Model115.fiscalService.getInfo(Model115.getCurrentDomainName(),Model115.getCurrentDomain(),
-						mod115,script.getKeys()[0], script.getInfoKey(),new AsyncCallback<String>() {
+				if 	(infoKey == FiscalModelKeyInfo.INVOICE) button.addStyleName(AON.AON_CSS.aonIconInvoice());
+				if 	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE) button.addStyleName(AON.AON_CSS.aonIconDiff());
+				if 	(infoKey == FiscalModelKeyInfo.SALARY) button.addStyleName(AON.AON_CSS.aonIconPayroll());
+				if 	(infoKey == FiscalModelKeyInfo.SALARY_IN_KIND) button.addStyleName(AON.AON_CSS.aonIconPayroll());
+				if 	(infoKey == FiscalModelKeyInfo.DIFF_SALARY) button.addStyleName(AON.AON_CSS.aonIconDiff());
+				if 	(infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.AON_CSS.aonIconCalculator());
+				
+				button.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						Model115.fiscalService.getInfo(Model115.getCurrentDomainName(),Model115.getCurrentDomain(),
+							mod115,script, infoKey,new AsyncCallback<String>() {
 
-								@Override
-								public void onFailure(Throwable caught) {
-									callback.showErrorMsg(AON.MSG.errorMessage());
-								}
+									@Override
+									public void onFailure(Throwable caught) {
+										callback.showErrorMsg(AON.MSG.errorMessage());
+									}
 
-								@Override
-								public void onSuccess(String result) {
-									callback.showInfoPanel(result);
+									@Override
+									public void onSuccess(String result) {
+										callback.showInfoPanel(result);
+									}
+							
 								}
-						
-							}
-						);	
-				}
-			});
-			table.setWidget(row, col, button);
-		} else {
-			table.setWidget(row, col, new Label());	
+							);	
+					}
+				});
+				buttonContainer.add(button);
+			}
+			table.setWidget(row, col, buttonContainer);
 		}
-		
 	}
 
 	@Override

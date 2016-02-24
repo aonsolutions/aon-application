@@ -10,11 +10,12 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111.IMod111Declaration;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.fiscal.mod111.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -79,7 +80,7 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 		}
 		defineTable();
 		
-		for (IModelScript ms : Model111ScriptProvider.obtainScript(mod111)) {
+		for (IModelScript<Mod111Key> ms : Model111ScriptProvider.obtainScript(mod111)) {
 			if (ms.paintHeaderBefore()) {
 				paintHeader();
 			}
@@ -108,7 +109,7 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 		getTable().getColumnFormatter().setStyleName(5, AON.AON_CSS.aonTextCenter());
 		getTable().getColumnFormatter().setWidth(6, "140px");
 		
-		getTable().getColumnFormatter().setWidth(7, "25px");
+		getTable().getColumnFormatter().setWidth(7, "50px");
 	}
 	
 	protected void paintHeader() {
@@ -153,7 +154,7 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 		table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);
 	}
 
-	protected void paintRow(final Mod111 mod111, IModelScript script) {
+	protected void paintRow(final Mod111 mod111, IModelScript<Mod111Key> script) {
 		if (script.hasGraphicParticularity()) {
 			paintParticularyRow(mod111,script);		
 		} else {
@@ -180,11 +181,11 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 		}
 	}
 	
-	protected void paintParticularyRow(final Mod111 mod111, IModelScript script) {
+	protected void paintParticularyRow(final Mod111 mod111, IModelScript<Mod111Key> script) {
 		
 	}
 	
-	protected void paintLabel( int row,Mod111 mod111, IModelScript script) {
+	protected void paintLabel( int row,Mod111 mod111, IModelScript<Mod111Key> script) {
 		String labelText = script.getLabel();
 		Label label = new Label();
 		if (AonStringUtils.length(labelText) > MAX_LABEL_LENGTH) {
@@ -195,8 +196,10 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 		table.setWidget(row, 0, label);
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		if (!script.isEnabled() ) {
+		if (script.isTitle() ) {
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBold() );
+		} else {
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft20() );
 		}
 	}
 	
@@ -205,7 +208,7 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 		return ++col;
 	}
 
-	private int paintField(int row, int col, final Mod111 mod111, IModelScript script, final Mod111Key key) {
+	private int paintField(int row, int col, final Mod111 mod111, IModelScript<Mod111Key> script, final Mod111Key key) {
 		final FiscalModelDetail det1 = mod111.ensureDetail(key);
 		final DoubleBox input = new DoubleBox();
 		input.setResolver(resolver);
@@ -215,6 +218,12 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
+				double result = mod111.getResultAmount(key);
+				double adjust = mod111.getAdjustAmount(key);
+				double amount = input.getValue();
+				if (AonMathUtils.isNotZero(result - adjust - amount)) {
+					mod111.ensureDetail(key).setAdjustAmount( result - amount);	
+				}
 				mod111.ensureDetail(key).setAmount(input.getValue());
 				if (input.isEnabled()) {
 					calculateAndRefresh( mod111 );
@@ -226,38 +235,47 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 		return ++col;
 	}
 	
-	private void paintInfoCol(int row, int col, final Mod111 mod111, final IModelScript script) {
-		if (script.getInfoKey() == Mod111KeyInfo.INVOICE || script.getInfoKey() == Mod111KeyInfo.SALARY) {
-			final Button button = new Button("");
-			button.setTitle(script.getInfoKey().getLabel());
-			button.setStyleName(AON.AON_CSS.aonIconCommandButton());
-			button.addStyleName(AON.AON_CSS.aonIconQuestion());
-			button.addClickHandler(new ClickHandler() {
+	private void paintInfoCol(int row, int col, final Mod111 mod111, final IModelScript<Mod111Key> script) {
+		FlowPanel buttonContainer = new FlowPanel();
+		for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
+			buttonContainer.setStyleName(AON.AON_CSS.aonNowrap());
+			if 	(infoKey != FiscalModelKeyInfo.NONE) {
+				final Button button = new Button("");
+				button.setTitle(infoKey.getLabel());
+				button.setStyleName(AON.AON_CSS.aonIconCommandButton());
 				
-				@Override
-				public void onClick(ClickEvent event) {
-					Model111.fiscalService.getInfo(Model111.getCurrentDomainName(),Model111.getCurrentDomain(),
-						mod111,script.getKeys()[0], script.getInfoKey(),new AsyncCallback<String>() {
+				if 	(infoKey == FiscalModelKeyInfo.INVOICE) button.addStyleName(AON.AON_CSS.aonIconInvoice());
+				if 	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE) button.addStyleName(AON.AON_CSS.aonIconDiff());
+				if 	(infoKey == FiscalModelKeyInfo.SALARY) button.addStyleName(AON.AON_CSS.aonIconPayroll());
+				if 	(infoKey == FiscalModelKeyInfo.SALARY_IN_KIND) button.addStyleName(AON.AON_CSS.aonIconPayroll());
+				if 	(infoKey == FiscalModelKeyInfo.DIFF_SALARY) button.addStyleName(AON.AON_CSS.aonIconDiff());
+				if 	(infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.AON_CSS.aonIconCalculator());
+				
+				button.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						Model111.fiscalService.getInfo(Model111.getCurrentDomainName(),Model111.getCurrentDomain(),
+							mod111,script, infoKey,new AsyncCallback<String>() {
 
-								@Override
-								public void onFailure(Throwable caught) {
-									callback.showErrorMsg(AON.MSG.errorMessage());
-								}
+									@Override
+									public void onFailure(Throwable caught) {
+										callback.showErrorMsg(AON.MSG.errorMessage());
+									}
 
-								@Override
-								public void onSuccess(String result) {
-									callback.showInfoPanel(result);
+									@Override
+									public void onSuccess(String result) {
+										callback.showInfoPanel(result);
+									}
+							
 								}
-						
-							}
-						);	
-				}
-			});
-			table.setWidget(row, col, button);
-		} else {
-			table.setWidget(row, col, new Label());	
+							);	
+					}
+				});
+				buttonContainer.add(button);
+			}
+			table.setWidget(row, col, buttonContainer);
 		}
-		
 	}
 
 	@Override

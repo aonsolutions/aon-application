@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:column alias="IAE.section" 
+		styleClass="aon-editDataTable-textColumn aon-width-30">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.registry_rd_section}" />
+		</f:facet>
+		<aon:outputText value="#{to.section}" />
+	</aon:column>
+
+	<aon:column alias="IAE.epigraph" 
+		styleClass="aon-editDataTable-textColumn aon-width-70">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.fiscal_epigraph}" />
+		</f:facet>
+		<aon:outputText value="#{to.epigraph}" />
+	</aon:column>
+
+	<aon:column alias="IAE.title"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_description}" />
+		</f:facet>
+		<aon:outputText value="#{to.title}" title="#{to.title}" >
+			<aon:abbreviateConverter maxWidth="70" />
+		</aon:outputText>
+	</aon:column>
+
+</ui:composition>

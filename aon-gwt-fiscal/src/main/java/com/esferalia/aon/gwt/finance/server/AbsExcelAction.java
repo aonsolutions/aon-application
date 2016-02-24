@@ -41,6 +41,7 @@ public abstract class AbsExcelAction  {
 	protected XSSFCellStyle headerCellStyle;
 	protected Font boldFont;
 	protected Font defaulFont;	
+	protected Font smallFont;
 	
 	public void initialize(String name) {
 		initialize(name, true);
@@ -72,6 +73,8 @@ public abstract class AbsExcelAction  {
 		defaulFont= workbook.createFont();
 		defaulFont.setFontHeightInPoints((short) 9);
 		
+		smallFont = workbook.createFont();
+		smallFont.setFontHeightInPoints((short) 8);
 
 		boldFont= workbook.createFont();
 		boldFont.setFontHeightInPoints((short) 9);

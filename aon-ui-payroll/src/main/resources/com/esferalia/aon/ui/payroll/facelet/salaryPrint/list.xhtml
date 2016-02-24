@@ -110,7 +110,7 @@
 									target="#{salaryExpense.startDate}" value="#{salaryPrint.fromDate}" />
 								<f:setPropertyActionListener
 									target="#{salaryExpense.endDate}" value="#{salaryPrint.toDate}" />
-								<f:param name="reportKey" value="salaryExpenseReport" />
+								<f:param name="reportKey" value="#{salaryExpense.reportKey}" />
 								<f:param name="outputFormat" value="PDF" />
 							</aon:htmlCommandLink>	
 			 			</aon:menuItem>

@@ -82,6 +82,29 @@ public class FiscalModelDAO {
 		return getModelRecords(ctx, domain, model).map( record -> map(record) );
 	}
 
+	public static Stream<FiscalModel> getPreviousModels(AONContext ctx,FiscalModel fiscalModel) {
+		ctx.checkRead();
+		return ctx.getDslContext()
+				.select(FS_MODEL.fields())
+				.select(FINANCE.fields())
+				.select(REGISTRY.fields())
+				.from(FS_MODEL)
+				.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
+				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
+				.where(FS_MODEL.DOMAIN.eq(fiscalModel.getDomain()))
+				.and(FS_MODEL.MODEL.eq(fiscalModel.getModel().getValue()))
+				.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
+				.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().getValue()))
+				.and(FS_MODEL.PERIOD.lessThan(fiscalModel.getPeriod().getValue()))
+				.orderBy(FS_MODEL.PERIOD)
+				.fetch()
+				.stream()
+				.map( record -> map(record))
+				.peek( model -> getModelDetails(ctx,model)
+								.forEach( detail -> model.put( detail) )
+					 );
+	}
+
 	public static Stream<Record> getModelRecords(AONContext ctx,int domain, FiscalModelType model) {
 		ctx.checkRead();
 		return ctx.getDslContext()
@@ -335,52 +358,6 @@ public class FiscalModelDAO {
 		return builder.create( new FiscalModelTemplate(record) );
 	}
 	
-/*
-	public static <FM extends IFiscalModel> FM map(FM fm,Record record) {
-		((FiscalModel) fm).setId(record.getValue(FS_MODEL.ID))
-			.setDomain(record.getValue(FS_MODEL.DOMAIN))
-			.setYear(record.getValue(FS_MODEL.YEAR))
-			.setPeriod(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(
-					Period.class, record.getValue(FS_MODEL.PERIOD)))
-			.setAdministration(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(
-					Administration.class,record.getValue(FS_MODEL.ADMINISTRATION)))
-			.setStatus( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(
-					FiscalStatus.class,record.getValue(FS_MODEL.STATUS)))
-			.setConfidential(AonEnumUtils.getBoolean( record.getValue(FS_MODEL.SECURITY_LEVEL)))
-			.setComplementary( AonEnumUtils.getBoolean( record.getValue(FS_MODEL.COMPLEMENTARY)))
-			.setReplacement( AonEnumUtils.getBoolean( record.getValue(FS_MODEL.REPLACEMENT)))
-			.setWithoutActivity( AonEnumUtils.getBoolean( record.getValue(FS_MODEL.WITHOUTACTIVITY)))
-			.setModel(FiscalModelType.safeValueOf( record.getValue(FS_MODEL.MODEL)))
-			.setNumber(record.getValue(FS_MODEL.NUMBER))
-			.setReplacedNumber(record.getValue(FS_MODEL.REPLACED_NUMBER))
-			.setComments(record.getValue(FS_MODEL.COMMENTS))
-			.setFinance(record.getValue(FS_MODEL.FINANCE) == null?null:new FinanceDAO.FullFinanceFiller().apply(record))
-			.setDocument(record.getValue(FS_MODEL.DOCUMENT))
-			.setSurname(record.getValue(FS_MODEL.SURNAME))
-			.setName(record.getValue(FS_MODEL.NAME))
-			.setStreetInitial(record.getValue(FS_MODEL.STREET_INITIAL))
-			.setStreetName(record.getValue(FS_MODEL.STREET_NAME))
-			.setStreetNumber(record.getValue(FS_MODEL.STREET_NUMBER))
-			.setStreetStair(record.getValue(FS_MODEL.STREET_STAIR))
-			.setStreetFloor(record.getValue(FS_MODEL.STREET_FLOOR))
-			.setStreetDoor(record.getValue(FS_MODEL.STREET_DOOR))
-			.setPhone(record.getValue(FS_MODEL.PHONE))
-			.setTown(record.getValue(FS_MODEL.TOWN))
-			.setProvince(record.getValue(FS_MODEL.PROVINCE))
-			.setZip(record.getValue(FS_MODEL.ZIP))
-			.setAdmonAeat(record.getValue(FS_MODEL.ADMON_AEAT))
-			.setContactPerson(record.getValue(FS_MODEL.CONTACT_PERSON))
-			.setContactPhone(record.getValue(FS_MODEL.CONTACT_PHONE))
-			.setContactCellular(record.getValue(FS_MODEL.CONTACT_CELLULAR))
-			.setContactEmail(record.getValue(FS_MODEL.CONTACT_EMAIL))
-			.setCreationUser(record.getValue(FS_MODEL.CREATION_USER))
-			.setCreationDate(record.getValue(FS_MODEL.CREATION_DATE))
-			.setModificationUser(record.getValue(FS_MODEL.MODIFICATION_USER))
-			.setModificationDate(record.getValue(FS_MODEL.MODIFICATION_DATE))
-			;
-		return fm;	
-	}
-*/	
 	public static class FiscalModelDetailFiller  implements Function<Record,FiscalModelDetail> {
 		@Override
 		public FiscalModelDetail apply(Record record) {
@@ -488,11 +465,11 @@ public class FiscalModelDAO {
 			return FiscalModelType.safeValueOf( record.getValue(FS_MODEL.MODEL));
 		}
 		@Override
-		public Integer getNumber() {
+		public String getNumber() {
 			return record.getValue(FS_MODEL.NUMBER);
 		}
 		@Override
-		public Integer getReplacedNumber() {
+		public String getReplacedNumber() {
 			return record.getValue(FS_MODEL.REPLACED_NUMBER);
 		}
 		@Override

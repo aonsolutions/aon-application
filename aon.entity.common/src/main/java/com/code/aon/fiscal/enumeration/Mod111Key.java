@@ -53,7 +53,14 @@ public enum Mod111Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	AR_C29 ("111-AR-29"  ,false,1,false,false,new Administration[]{Administration.ALAVA}),
 	AR_C30 ("111-AR-30"  ,false,1,false,false,new Administration[]{Administration.ALAVA}),
 	AR_C31 ("111-AR-31"  ,false,1,true ,false,new Administration[]{Administration.ALAVA}),
-
+	AR_C907("111-AR-907" ,true ,1,true ,false,new Administration[]{Administration.ALAVA}),
+	AR_C908("111-AR-908" ,true ,1,true ,false,new Administration[]{Administration.ALAVA}),
+	AR_C909("111-AR-909" ,true ,1,true ,false,new Administration[]{Administration.ALAVA}),
+	AR_C80 ("111-AR_80" ,true ,1,true ,false,new Administration[]{Administration.ALAVA}),
+	AR_C81 ("111-AR-81" ,true ,1,true ,false,new Administration[]{Administration.ALAVA}),
+	AR_C83 ("111-AR-83" ,true ,1,true ,false,new Administration[]{Administration.ALAVA}),
+	AR_TIP ("111-AR-DT" ,true ,1,true ,false,new Administration[]{Administration.ALAVA}),
+	
 	// BIZKAIA
 	BZ_H1  ("111-BZ-H1"  ,true ,0,false,false,new Administration[]{Administration.BIZKAIA}),
 	BZ_C01 ("111-BZ-01"  ,false,2,false,false,new Administration[]{Administration.BIZKAIA}),
@@ -104,6 +111,10 @@ public enum Mod111Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	BZ_C35 ("111-BZ-35"  ,false,2,false,true ,new Administration[]{Administration.BIZKAIA}),
 	BZ_C36 ("111-BZ-36"  ,false,2,false,true ,new Administration[]{Administration.BIZKAIA}),
 	BZ_C37 ("111-BZ-37"  ,false,1,true ,false,new Administration[]{Administration.BIZKAIA}),
+	BZ_TIP ("111-BZ-DT"  ,true ,1,true ,false,new Administration[]{Administration.BIZKAIA}),
+	BZ_CT34("111-BZ-T34"  ,false,2,false,true ,new Administration[]{Administration.BIZKAIA}),
+	BZ_CT35("111-BZ-T35"  ,false,2,false,true ,new Administration[]{Administration.BIZKAIA}),
+	BZ_CT36("111-BZ-T36"  ,false,2,false,true ,new Administration[]{Administration.BIZKAIA}),
 	
 	// TERRITORIO COMUN
 	CT_H1  ("111-CT-H1"  ,true ,0,false,false,new Administration[]{Administration.COMMON_TERRITORY}),
@@ -189,9 +200,16 @@ public enum Mod111Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	GP_C23 ("111-GP-23"  ,false,2,false,true ,new Administration[]{Administration.GIPUZKOA}),
 	GP_C24 ("111-GP-24"  ,false,2,false,true ,new Administration[]{Administration.GIPUZKOA}),
 	GP_C25 ("111-GP-25"  ,false,1,true ,false,new Administration[]{Administration.GIPUZKOA}),
-
+	GP_TIP ("111-GP-DT"  ,true ,1,true ,false,new Administration[]{Administration.GIPUZKOA}),
+	GP_CT13("111-GP-T13" ,false,2,false,true ,new Administration[]{Administration.GIPUZKOA}),
+	GP_CT14("111-GP-T14" ,false,2,false,true ,new Administration[]{Administration.GIPUZKOA}),
+	GP_CT27("111-GP-T27" ,false,2,false,true ,new Administration[]{Administration.GIPUZKOA}),
+	GP_CT28("111-GP-T28" ,false,2,false,true ,new Administration[]{Administration.GIPUZKOA}),
+				
 	// NAFARROA
-	NF_A1  ("111-NF-A1"  ,false,2,false,true,new Administration[]{Administration.NAVARRA});
+	NF_A1  ("111-NF-A1"  ,false,2,false,true,new Administration[]{Administration.NAVARRA}),
+	NF_TIP ("111-NF-DT"  ,true ,1,true ,false,new Administration[]{Administration.NAVARRA}),
+	;
 
 	private static final String MSG_KEY_PREFIX = "aon_enum_mod";
 

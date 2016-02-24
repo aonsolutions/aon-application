@@ -1,12 +1,14 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod111;
 
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Mod111Key;
 
 public class Model111ScriptProvider {
 
-	public static IModelScript[] obtainScript(Mod111 mod111) {
-		IModelScript[] ms = null;
+	public static IModelScript<Mod111Key>[] obtainScript(Mod111 mod111) {
+		IModelScript<Mod111Key>[] ms = null;
 		if (mod111.getAdministration() == Administration.COMMON_TERRITORY) {
 			ms = Model111AEATScript.values();
 		} else if (mod111.getAdministration() == Administration.GIPUZKOA) {

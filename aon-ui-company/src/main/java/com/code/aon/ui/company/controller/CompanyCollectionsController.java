@@ -354,6 +354,7 @@ public class CompanyCollectionsController implements Serializable {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), company.getId());
 			criteria.addOrder(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_PRINCIPAL), Boolean.FALSE);
+			criteria.addOrder(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_END_DATE));
 			criteria.addOrder(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_DESCRIPTION));
 			for (ITransferObject ito : activityBean.getList(criteria)) {
 				EnterpriseActivity activity = (EnterpriseActivity)ito;
@@ -372,6 +373,41 @@ public class CompanyCollectionsController implements Serializable {
 			IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), company.getId());
+			return activityBean.getCount(criteria);
+    	}
+		return 0;
+	}
+
+	public List<SelectItem> getActiveCompanyActivities() throws ManagerBeanException {
+		List<SelectItem> activities = new LinkedList<SelectItem>();
+    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+    	Iterator<?> iterator = companyBean.getList(null).iterator();
+    	if (iterator.hasNext()) {
+    		Company company = (Company)iterator.next();
+			IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), company.getId());
+			criteria.addNullExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_END_DATE));
+			criteria.addOrder(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_PRINCIPAL), Boolean.FALSE);
+			criteria.addOrder(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_DESCRIPTION));
+			for (ITransferObject ito : activityBean.getList(criteria)) {
+				EnterpriseActivity activity = (EnterpriseActivity)ito;
+				SelectItem item = new SelectItem(activity, activity.getDescription());
+				activities.add(item);
+			}
+    	}
+		return activities;
+	}
+
+	public int getActiveCompanyActivitiesCount() throws ManagerBeanException {
+    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+    	Iterator<?> iterator = companyBean.getList(null).iterator();
+    	if (iterator.hasNext()) {
+    		Company company = (Company)iterator.next();
+			IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), company.getId());
+			criteria.addNullExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_END_DATE));
 			return activityBean.getCount(criteria);
     	}
 		return 0;

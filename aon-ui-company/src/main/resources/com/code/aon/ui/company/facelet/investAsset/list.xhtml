@@ -29,8 +29,17 @@
 							<aon:outputText value="#{to.description}" />
 						</aon:column>
 	
+						<aon:column alias="InvestAsset.activity.id"
+							styleClass="aon-editDataTable-textColumn aon-width-220">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_activity}" />
+							</f:facet>
+							<aon:outputText value="#{bundle.aon_common_all}" rendered="#{to.activity == null}" />
+							<aon:outputText value="#{to.activity.description}" rendered="#{to.activity != null}" />
+						</aon:column>
+
 						<aon:column alias="InvestAsset.type"
-							styleClass="aon-editDataTable-textColumn aon-width-200">
+							styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_type}" />
 							</f:facet>
@@ -38,7 +47,7 @@
 						</aon:column>
 
 						<aon:column alias="InvestAsset.regime"
-							styleClass="aon-editDataTable-textColumn aon-width-250">
+							styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.pms_regime}" />
 							</f:facet>

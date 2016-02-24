@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.42.2
+# Version: 8.43.0
 # Created by: girazu
-# Creation Date: 18/02/2016 17:40
+# Creation Date: 24/02/2016 11:30
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -4370,8 +4370,8 @@ CREATE TABLE `fs_model` (
   `replacement` tinyint(1) default '0' COMMENT 'Declaracion sustitutiva',
   `withoutActivity` tinyint(1) default '0' COMMENT 'Sin Actividad',
   `model` varchar(3) collate latin1_spanish_ci NOT NULL COMMENT 'Tipo de modelo',
-  `number` int(4) default '0' COMMENT 'Numero de Declaracion',
-  `replaced_number` int(4) default '0' COMMENT 'Numero de Declaracion complementada o sustituida',
+  `number` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de Declaracion',
+  `replaced_number` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de Declaracion complementada o sustituida',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
   `finance` int(4) default NULL COMMENT 'Identificador de Vencimiento',
   `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF',
@@ -8094,7 +8094,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.42.2');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.43.0');
 
 COMMIT;
 

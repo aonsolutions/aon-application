@@ -779,7 +779,7 @@ public class SalaryPrintController extends BasicController implements ICollectio
 		ReportManager reportManager = new ReportManager();
 		reportManager.setOutputFormat(OutputFormat.PDF);
 		reportManager.setCollectionProvider( salaryExpense );
-		reportManager.execute( out, COST_REPORT );
+		reportManager.execute( out, salaryExpense.getReportKey() );
 	}
 
 	private String writeTPContractHoursReport( OutputStream out ) throws ReportException {

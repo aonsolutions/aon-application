@@ -11,6 +11,14 @@
 	<aon:inputText id="InvestAsset_description" size="40"
 		valueChangeListener="#{controller.addExpression}" />
 
+	<aon:outputLabel for="InvestAsset_activity" 
+		value="#{bundle.aon_activity}" />
+	<aon:selectOneMenu id="InvestAsset_activity"
+		value="#{searchController.activity}">
+		<f:selectItem itemLabel=" - " value="#{null}" />
+		<f:selectItems value="#{companyCollections.companyActivities}" />
+	</aon:selectOneMenu>
+
 	<aon:outputLabel for="InvestAsset_type" 
 		value="#{bundle.aon_type}" />
 	<aon:selectOneMenu id="InvestAsset_type"

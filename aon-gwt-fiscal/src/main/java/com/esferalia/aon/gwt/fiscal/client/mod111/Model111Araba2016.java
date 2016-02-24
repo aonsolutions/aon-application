@@ -8,10 +8,9 @@ import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.fiscal.mod111.IModelScript;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -32,7 +31,7 @@ public class Model111Araba2016 extends Model111Base {
 	}
 
 	@Override
-	protected void paintParticularyRow(Mod111 mod111, IModelScript script) {
+	protected void paintParticularyRow(Mod111 mod111, IModelScript<Mod111Key> script) {
 		if (script.getKeys() == null) return;
 		
 		if (script.getKeys()[0] == Mod111Key.AR_907) {
@@ -44,7 +43,7 @@ public class Model111Araba2016 extends Model111Base {
 		}
 	}
 
-	private void paintRow907(Mod111 mod111, IModelScript script) {
+	private void paintRow907(Mod111 mod111, IModelScript<Mod111Key> script) {
 		int row = getTable().getRowCount();
 		final FiscalModelDetail ar907 = mod111.ensureDetail(Mod111Key.AR_907);
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
@@ -66,7 +65,7 @@ public class Model111Araba2016 extends Model111Base {
 		});
 		getTable().setWidget(row, 2, w907 );
 	}
-	private void paintRow908(Mod111 mod111, IModelScript script) {
+	private void paintRow908(Mod111 mod111, IModelScript<Mod111Key> script) {
 		int row = getTable().getRowCount();
 		final  FiscalModelDetail ar908 = mod111.ensureDetail(Mod111Key.AR_908);
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
@@ -91,7 +90,7 @@ public class Model111Araba2016 extends Model111Base {
 		});
 		getTable().setWidget(row, 2, w908 );
 	}
-	private void paintRow909(Mod111 mod111, IModelScript script) {
+	private void paintRow909(Mod111 mod111, IModelScript<Mod111Key> script) {
 		int row = getTable().getRowCount();
 		final FiscalModelDetail ar909 = mod111.ensureDetail(Mod111Key.AR_909);
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
@@ -103,16 +102,12 @@ public class Model111Araba2016 extends Model111Base {
 		final DateBoxEx w909 = new DateBoxEx();
 		w909.setEnabled(mod111.isNotFinished());
 		if (AonStringUtils.isNotEmpty( ar909.getDescription() ) ) {
-			w909.parse(ar909.getDescription() , false);
+			w909.setValue( w909.parse(ar909.getDescription() , false) );
 		}
 		w909.addValueChangeHandler( new ValueChangeHandler<Date>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				if (AonMathUtils.isNotZero(ar909.getAmount()) ) {
-					ar909.setDescription(w909.format());
-				} else {
-					ar909.setDescription(null);
-				}
+				ar909.setDescription(w909.format());
 				getCallback().markAsDirty();
 			}
 		});

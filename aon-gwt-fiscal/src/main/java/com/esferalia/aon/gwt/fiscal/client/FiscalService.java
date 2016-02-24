@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
@@ -28,10 +29,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.api.model.type.Mod115KeyInfo;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -112,7 +112,7 @@ public interface FiscalService extends RemoteService {
 	void deleteMod111(String domainName, Mod111 mod111) throws AonCoreException;
 	Mod111 initializeMod111(String domainName, int domain, Mod111 mod111);
 	Mod111 createMod111(String domainName, int domain, Mod111 mod111) throws AonCoreException;
-	String getInfo(String domainName, int domain, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey) throws AonCoreException;
+	String getInfo(String domainName, int domain, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 
 	// ---------------------------------------------------------------MODELO 115
 	Mod115 getMod115(String domainName, int domain, int id) throws AonCoreException;
@@ -126,7 +126,7 @@ public interface FiscalService extends RemoteService {
 	void deleteMod115(String domainName, Mod115 mod115) throws AonCoreException;
 	Mod115 initializeMod115(String domainName, int domain, Mod115 mod115);
 	Mod115 createMod115(String domainName, int domain, Mod115 mod115) throws AonCoreException;
-	String getInfo(String domainName, int domain, Mod115 mod115, Mod115Key key, Mod115KeyInfo infoKey) throws AonCoreException;
+	String getInfo(String domainName, int domain, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 
 	// ---------------------------------------------------------------MODELO 202
 	Mod202 getMod202(String domainName, int domain, int id) throws AonCoreException;

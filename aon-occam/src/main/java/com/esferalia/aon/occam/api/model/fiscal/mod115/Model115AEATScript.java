@@ -1,30 +1,31 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod115;
 
-import static com.esferalia.aon.occam.api.model.type.Mod115KeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.Mod115KeyInfo.INVOICE;
-import static com.esferalia.aon.occam.api.model.type.Mod115KeyInfo.NONE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.api.model.type.Mod115KeyInfo;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 
-public enum Model115AEATScript implements IModelScript {
+public enum Model115AEATScript implements IModelScript<Mod115Key> {
 	
-	 R00 ("Retenciones e ingresos a cuenta",null, null)
-	,R01 ("N\u00AA perceptores",new Mod115Key[]{Mod115Key.CT_C01},INVOICE)
-	,R02 ("Base de las retenciones e ingresos a cuenta",new Mod115Key[]{Mod115Key.CT_C02},INVOICE)
-	,R03 ("Retenciones e ingresos a cuenta",new Mod115Key[]{Mod115Key.CT_C03},INVOICE)
-	,R04 ("Rendimientos dinerarios" ,new Mod115Key[]{Mod115Key.CT_C04},NONE)
-	,R05 ("Resultado a ingresar",new Mod115Key[]{Mod115Key.CT_C05},COMPUTE)
+	 R00 ("Retenciones e ingresos a cuenta",new Mod115Key[]{Mod115Key.CT_C01,Mod115Key.CT_C02,Mod115Key.CT_C03},INVOICE,DIFF_INVOICE)
+	,R01 ("A deducir. Resultados a ingresar de anteriores autoliquidaciones por el mismo concepto, ejercicio y periodo." 
+			,new Mod115Key[]{Mod115Key.CT_C04},NONE)
+	,R02 ("Resultado a ingresar",new Mod115Key[]{Mod115Key.CT_C05},COMPUTE)
 	;
 	
 	private String label;
 	private Mod115Key[] keys;
-	private Mod115KeyInfo infoKey;
+	private FiscalModelKeyInfo[] infoKeys;
 	
-	private Model115AEATScript(String label, Mod115Key[] keys,Mod115KeyInfo infoKey) {
+	private Model115AEATScript(String label, Mod115Key[] keys,FiscalModelKeyInfo ... infoKeys ) {
 		this.label = label;
 		this.keys = keys;
-		this.infoKey = infoKey;
+		this.infoKeys = infoKeys;
 	}
 
 	@Override
@@ -36,13 +37,17 @@ public enum Model115AEATScript implements IModelScript {
 		return keys;
 	}
 	@Override
-	public boolean isEnabled() {
-		return (getInfoKey() != null && getInfoKey() != COMPUTE);
+	public boolean isTitle() {
+		return getInfoKeys()[0] == TITLE;
 	}
 	@Override
-	public Mod115KeyInfo getInfoKey() {
-		return infoKey;
-	};
+	public boolean isEnabled() {
+		return getInfoKeys()[0] != COMPUTE && getInfoKeys()[0] != TITLE;
+	}
+	@Override
+	public FiscalModelKeyInfo[] getInfoKeys() {
+		return infoKeys;
+	}
 	
 	@Override
 	public boolean hasGraphicParticularity() {
