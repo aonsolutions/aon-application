@@ -61,6 +61,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
@@ -97,11 +98,10 @@ import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.api.model.type.Mod115KeyInfo;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
@@ -1068,12 +1068,12 @@ public class AON {
 		}
 	}
 
-	public static String getMod111Info(String domainName, int domain, String user, Mod111 mod111, Mod111Key key,
-			Mod111KeyInfo infoKey) {
+	public static String getMod111Info(String domainName, int domain, String user, Mod111 mod111
+			,IModelScript<Mod111Key> script,FiscalModelKeyInfo infoKey) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain,user);
-			return getFiscal().getMod111Info(ctx, mod111, key, infoKey);
+			return getFiscal().getMod111Info(ctx, mod111, script, infoKey);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1202,12 +1202,12 @@ public class AON {
 		}
 	}
 
-	public static String getMod115Info(String domainName, int domain, String user, Mod115 mod115, Mod115Key key,
-			Mod115KeyInfo infoKey) {
+	public static String getMod115Info(String domainName, int domain, String user, Mod115 mod115, IModelScript<Mod115Key> script,
+			FiscalModelKeyInfo infoKey) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain,user);
-			return getFiscal().getMod115Info(ctx, mod115, key, infoKey);
+			return getFiscal().getMod115Info(ctx, mod115, script, infoKey);
 		} finally {
 			if (ctx != null)
 				ctx.close();

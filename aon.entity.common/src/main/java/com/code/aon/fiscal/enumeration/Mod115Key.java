@@ -26,7 +26,18 @@ public enum Mod115Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	C08("115-08" ,false  ,0    ,false     ,true ,null),
 	C09("115-09" ,false  ,0    ,false     ,false,new Administration[]{Administration.ALAVA}),
 	C10("115-10" ,false  ,0    ,false     ,false,new Administration[]{Administration.ALAVA}),
-	C11("115-11" ,false  ,0    ,false     ,true ,new Administration[]{Administration.ALAVA});
+	C11("115-11" ,false  ,0    ,false     ,true ,new Administration[]{Administration.ALAVA}),
+	
+	C12("115-AR-907",false  ,0    ,false     ,true ,new Administration[]{Administration.ALAVA}),
+	C13("115-AR-908",false  ,0    ,false     ,true ,new Administration[]{Administration.ALAVA}),
+	C14("115-AR-909",false  ,0    ,false     ,true ,new Administration[]{Administration.ALAVA}),
+	C15("115-AJ"	,false  ,0    ,false     ,true ,new Administration[]{Administration.ALAVA}),
+	C16("115-AR-DT",false  ,0    ,false     ,true ,new Administration[]{Administration.ALAVA}),
+	C17("115-BZ-DT",false  ,0    ,false     ,true ,new Administration[]{Administration.BIZKAIA}),
+	C18("115-CT-DT",false  ,0    ,false     ,true ,new Administration[]{Administration.COMMON_TERRITORY}),
+	C19("115-GP-DT",false  ,0    ,false     ,true ,new Administration[]{Administration.GIPUZKOA}),
+	C20("115-NF-DT",false  ,0    ,false     ,true ,new Administration[]{Administration.NAVARRA}),
+	;
 	
 	
 

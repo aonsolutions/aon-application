@@ -908,5 +908,18 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-icon-title")
 	String aonIconTitle();
+
+	
+	@ClassName("aon-icon-invoice")
+	String aonIconInvoice();
+
+	@ClassName("aon-icon-diff")
+	String aonIconDiff();
+
+	@ClassName("aon-icon-payroll")
+	String aonIconPayroll();
+	
+	@ClassName("aon-icon-calculator")
+	String aonIconCalculator();
 }
 

@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.CNAE;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -648,7 +649,7 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 	private FlowPanel getInputPanel(Mod202Key key) {
 		FlowPanel p = new FlowPanel();
 		p.setStyleName(AON.AON_CSS.aonNowrap());
-		InlineLabel l = new InlineLabel( key.getBox() );
+		InlineLabel l = new InlineLabel( AonNumberUtils.toString( key.getBox()) );
 		l.setStyleName(AON.AON_CSS.aonFiscalModelDataTableBox());
 		p.add(l);
 		DoubleBox doubleBox = new DoubleBox();

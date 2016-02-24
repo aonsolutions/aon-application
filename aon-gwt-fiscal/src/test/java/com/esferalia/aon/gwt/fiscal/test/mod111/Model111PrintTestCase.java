@@ -6,9 +6,10 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.fiscal.server.Mod111ExcelAction;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.fiscal.mod111.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
+import com.esferalia.aon.occam.api.model.type.Mod111Key;
 
 public class Model111PrintTestCase {
 
@@ -26,7 +27,7 @@ public class Model111PrintTestCase {
 		}
 	}
 
-	private static void toExcel(Mod111 mod111, IModelScript[] script) throws IOException {
+	private static void toExcel(Mod111 mod111, IModelScript<Mod111Key>[] script) throws IOException {
 		Mod111ExcelAction action = new Mod111ExcelAction(mod111);
 		action.initialize(mod111.getModel().getName(mod111.getAdministration(), mod111.getPeriod()));
 		
@@ -50,7 +51,7 @@ public class Model111PrintTestCase {
 			+ ".xlsx";
 
 		FileOutputStream out = new FileOutputStream(fileName);
-		for (IModelScript ms : script) {
+		for (IModelScript<Mod111Key> ms : script) {
 			action.accept(ms);
 		}
 		action.finalize(out);

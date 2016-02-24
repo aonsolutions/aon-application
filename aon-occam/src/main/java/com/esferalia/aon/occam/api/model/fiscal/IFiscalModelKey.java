@@ -5,5 +5,6 @@ import java.io.Serializable;
 public interface IFiscalModelKey extends Serializable {
 	
 	String getValue();
+	int getBox();
 	
 }

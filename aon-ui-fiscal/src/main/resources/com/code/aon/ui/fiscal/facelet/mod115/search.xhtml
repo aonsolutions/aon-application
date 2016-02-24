@@ -7,6 +7,19 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
+		<aon:if test="#{customize.snapshotVersion}">
+			<aon:div styleClass="aon-panelGrid-search aon-margin-bottom aon-text-center">	
+				<aon:outputText value="PROGRAMA OBSOLETO" style="color:red; font-weight: bold; font-size: 14px;"/>
+				<aon:form>
+				<aon:commandLink 
+					style="margin-left: 10px;"
+					id="gwt_mod115" 
+					action="gwt_mod115" 
+					value="[Pruebe el nuevo]">
+				</aon:commandLink>
+				</aon:form>
+			</aon:div>
+		</aon:if>
 		<ui:include src="/com/code/aon/ui/fiscal/facelet/model/search.xhtml">
 			<ui:param name="moduleLabel" value="#{bundle.fiscal_model_115_module_abbr}" />
 			<ui:param name="controller" value="#{mod115}" />

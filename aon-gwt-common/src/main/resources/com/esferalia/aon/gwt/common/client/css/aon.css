@@ -773,6 +773,25 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	width: auto;
 }
 
+@sprite .aon-icon-invoice{
+	gwt-image: "aonIconInvoice";
+	width: auto;
+}
+
+@sprite .aon-icon-diff{
+	gwt-image: "aonIconDiff";
+	width: auto;
+}
+
+@sprite .aon-icon-payroll{
+	gwt-image: "aonIconPayroll";
+	width: auto;
+}
+
+@sprite .aon-icon-calculator{
+	gwt-image: "aonIconCalculator";
+	width: auto;
+}
 .aon-icon-button {
 	background: #eaeced;
 	background-image: -webkit-linear-gradient(top, #eaeced, #cfcfcf);

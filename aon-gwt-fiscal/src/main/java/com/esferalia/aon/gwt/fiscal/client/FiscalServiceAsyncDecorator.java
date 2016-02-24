@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
@@ -30,10 +31,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.api.model.type.Mod115KeyInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
@@ -440,10 +440,10 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 				callback));
 	}
 	@Override
-	public void getInfo(String domainName, int domain, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey,
+	public void getInfo(String domainName, int domain, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey,
 			AsyncCallback<String> callback) {
 		AON.start();
-		fsa.getInfo(domainName, domain, mod111, key, infoKey,new AsyncCallbackWrapper<String>(callback));
+		fsa.getInfo(domainName, domain, mod111, script, infoKey,new AsyncCallbackWrapper<String>(callback));
 		
 	}
 	
@@ -537,10 +537,10 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 				callback));
 	}
 	@Override
-	public void getInfo(String domainName, int domain, Mod115 mod115, Mod115Key key, Mod115KeyInfo infoKey,
+	public void getInfo(String domainName, int domain, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey,
 			AsyncCallback<String> callback) {
 		AON.start();
-		fsa.getInfo(domainName, domain, mod115, key, infoKey,new AsyncCallbackWrapper<String>(callback));
+		fsa.getInfo(domainName, domain, mod115, script, infoKey,new AsyncCallbackWrapper<String>(callback));
 		
 	}
 

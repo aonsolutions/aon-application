@@ -20,10 +20,11 @@ import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.fiscal.mod111.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -49,7 +50,7 @@ public class Mod111PrintPDF extends HttpServlet {
 			Mod111ExcelAction action = new Mod111ExcelAction(mod111);
 			action.initialize(mod111.getModel().getName(mod111.getAdministration(), mod111.getPeriod()));
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			for (IModelScript ms : Model111ScriptProvider.obtainScript(mod111)) {
+			for (IModelScript<Mod111Key> ms : Model111ScriptProvider.obtainScript(mod111)) {
 				action.accept(ms);
 			}
 			action.beforeFinalize();

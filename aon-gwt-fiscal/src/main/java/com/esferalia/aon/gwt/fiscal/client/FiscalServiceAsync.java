@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
@@ -28,10 +29,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.api.model.type.Mod115KeyInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface FiscalServiceAsync {
@@ -110,7 +110,7 @@ public interface FiscalServiceAsync {
 	void reopenMod111(String domainName, Mod111 mod111,AsyncCallback<Mod111> asyncCallback);
 	void initializeMod111(String domainName, int domain, Mod111 mod111,AsyncCallback<Mod111> asyncCallback);
 	void createMod111(String domainName, int domain, Mod111 mod111, AsyncCallback<Mod111> callback);
-	void getInfo(String domainName, int domain, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey,AsyncCallback<String> callback);
+	void getInfo(String domainName, int domain, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
 	
 	// ---------------------------------------------------------------MODELO 115
 	void getMod115(String domainName, int domain, int id,AsyncCallback<Mod115> callback);
@@ -124,7 +124,7 @@ public interface FiscalServiceAsync {
 	void reopenMod115(String domainName, Mod115 mod115,AsyncCallback<Mod115> asyncCallback);
 	void initializeMod115(String domainName, int domain, Mod115 mod115,AsyncCallback<Mod115> asyncCallback);
 	void createMod115(String domainName, int domain, Mod115 mod115, AsyncCallback<Mod115> callback);
-	void getInfo(String domainName, int domain, Mod115 mod115, Mod115Key key, Mod115KeyInfo infoKey,AsyncCallback<String> callback);
+	void getInfo(String domainName, int domain, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
 
 	// ---------------------------------------------------------------MODELO 202
 	void getMod202(String domainName, int domain, int id,AsyncCallback<Mod202> callback);

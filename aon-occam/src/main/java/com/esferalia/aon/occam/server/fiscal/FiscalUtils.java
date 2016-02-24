@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class FiscalUtils {
 	
@@ -23,5 +24,14 @@ public class FiscalUtils {
 		c.add(Calendar.DAY_OF_MONTH, -1);
 		return c.getTime();
 	}
+	
+	public static boolean isInPeriodRange(IFiscalModel mod, Date date ) {
+		if (date == null || mod == null) return false;
+		Date start = AonDateUtils.truncate( getPeriodStart(mod), Calendar.DAY_OF_MONTH);
+		Date end = AonDateUtils.truncate( getPeriodEnd(mod), Calendar.DAY_OF_MONTH);
+		return !( date.before(start) || date.after(end));
+	}
+	
+	
 
 }

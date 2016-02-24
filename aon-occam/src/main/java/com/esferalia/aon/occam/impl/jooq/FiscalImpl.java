@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.IFiscal;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
@@ -21,10 +22,9 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.api.model.type.Mod115KeyInfo;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod111DAO;
@@ -337,8 +337,8 @@ public class FiscalImpl implements IFiscal {
 		return Mod111DAO.createMod111(ctx,mod111);
 	}
 	@Override
-	public String getMod111Info(AONContext ctx, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey) {
-		return Mod111DAO.getMod111Info(ctx,mod111,key,infoKey);
+	public String getMod111Info(AONContext ctx, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey) {
+		return Mod111DAO.getMod111Info(ctx,mod111,script,infoKey);
 	}
 
 	// ----------------------------------------------------------- [MODELO 115]
@@ -398,8 +398,8 @@ public class FiscalImpl implements IFiscal {
 		return Mod115DAO.createMod115(ctx,mod115);
 	}
 	@Override
-	public String getMod115Info(AONContext ctx, Mod115 mod115, Mod115Key key, Mod115KeyInfo infoKey) {
-		return Mod115DAO.getMod115Info(ctx,mod115,key,infoKey);
+	public String getMod115Info(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) {
+		return Mod115DAO.getMod115Info(ctx,mod115,script,infoKey);
 	}
 
 	// ----------------------------------------------------------- [MODELO 202]

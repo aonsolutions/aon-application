@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
@@ -44,10 +45,9 @@ import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.occam.api.model.type.Mod111KeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.api.model.type.Mod115KeyInfo;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.XMLtoMod2002014;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Import2013;
@@ -343,9 +343,9 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		AON.deleteMod111(domainName, this.getUserLogin(), mod111);
 	}
 	@Override
-	public String getInfo(String domainName, int domain, Mod111 mod111, Mod111Key key, Mod111KeyInfo infoKey)
+	public String getInfo(String domainName, int domain, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey)
 			throws AonCoreException {
-		return AON.getMod111Info(domainName, domain, this.getUserLogin(), mod111, key, infoKey);
+		return AON.getMod111Info(domainName, domain, this.getUserLogin(), mod111, script, infoKey);
 		
 	}
 
@@ -407,9 +407,9 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		AON.deleteMod115(domainName, this.getUserLogin(), mod115);
 	}
 	@Override
-	public String getInfo(String domainName, int domain, Mod115 mod115, Mod115Key key, Mod115KeyInfo infoKey)
+	public String getInfo(String domainName, int domain, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey)
 			throws AonCoreException {
-		return AON.getMod115Info(domainName, domain, this.getUserLogin(), mod115, key, infoKey);
+		return AON.getMod115Info(domainName, domain, this.getUserLogin(), mod115, script, infoKey);
 		
 	}
 

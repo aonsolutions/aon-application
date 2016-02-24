@@ -6,7 +6,6 @@ import java.util.Date;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class IrpfBreakdown implements Serializable{
@@ -17,6 +16,7 @@ public class IrpfBreakdown implements Serializable{
 	private String name;
 	private Date issueDate;
 	private boolean fromSalary;
+	private boolean insidePeriod;
 	
 	// ------------------- facturas
 	private InvoiceType invoiceType;
@@ -27,15 +27,10 @@ public class IrpfBreakdown implements Serializable{
 	private Date taxDate;
 	private WithholdingType withholdingType;
 	private IRPFRegime regime;
+	private boolean inKind;
 	private double base;
 	private double percent;
 	private double quota;
-	
-	// ------------------- Nominas
-	private double moneyBase;
-	private double moneyQuota;
-	private double inKindBase;
-	private double inKindQuota;
 	
 	public String getDocument() {
 		return document;
@@ -66,6 +61,14 @@ public class IrpfBreakdown implements Serializable{
 	}
 	public IrpfBreakdown setFromSalary(boolean fromSalary) {
 		this.fromSalary = fromSalary;
+		return this;
+	}
+	
+	public boolean isInsidePeriod() {
+		return insidePeriod;
+	}
+	public IrpfBreakdown setInsidePeriod(boolean insidePeriod) {
+		this.insidePeriod = insidePeriod;
 		return this;
 	}
 	// ----------------------------------------------------------------
@@ -125,7 +128,7 @@ public class IrpfBreakdown implements Serializable{
 		this.regime = regime;
 		return this;
 	}
-	public double getBase() {
+	public Double getBase() {
 		return base;
 	}
 	public IrpfBreakdown setBase(double base) {
@@ -146,40 +149,12 @@ public class IrpfBreakdown implements Serializable{
 		this.quota = quota;
 		return this;
 	}
-	// ----------------------------------------------------------------
-	public double getMoneyBase() {
-		return moneyBase;
+	public boolean isInKind() {
+		return inKind;
 	}
-	public IrpfBreakdown setMoneyBase(double moneyBase) {
-		this.moneyBase = moneyBase;
+	public IrpfBreakdown setInKind(boolean inKind) {
+		this.inKind = inKind;
 		return this;
-	}
-	public double getMoneyQuota() {
-		return moneyQuota;
-	}
-	public IrpfBreakdown setMoneyQuota(double moneyQuota) {
-		this.moneyQuota = moneyQuota;
-		return this;
-	}
-	public double getInKindBase() {
-		return inKindBase;
-	}
-	public IrpfBreakdown setInKindBase(double inKindBase) {
-		this.inKindBase = inKindBase;
-		return this;
-	}
-	public double getInKindQuota() {
-		return inKindQuota;
-	}
-	public IrpfBreakdown setInKindQuota(double inKindQuota) {
-		this.inKindQuota = inKindQuota;
-		return this;
-	}
-	public boolean isMoneyRetention() {
-		return (AonMathUtils.isNotZero( moneyBase) || AonMathUtils.isNotZero( moneyQuota));
-	}
-	public boolean isInKindRetention() {
-		return (AonMathUtils.isNotZero( inKindBase) || AonMathUtils.isNotZero( inKindQuota));
 	}
 	
 	public String getDocumentNumber() {
@@ -197,10 +172,10 @@ public class IrpfBreakdown implements Serializable{
 	
 	//
 	public boolean isSalaryRetention() {
-		return isFromSalary() && !isSalaryInKindRetention();
+		return isFromSalary() && !isInKind();
 	}
 	public boolean isSalaryInKindRetention() {
-		return isFromSalary() && (AonMathUtils.isNotZero(inKindBase) || AonMathUtils.isNotZero(inKindQuota));
+		return isFromSalary() && isInKind();
 	}
 	public boolean isProfessional() {
 		return isFromInvoice() && withholdingType == WithholdingType.PROFESSIONAL;

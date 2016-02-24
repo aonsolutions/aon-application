@@ -391,7 +391,25 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		FiscalModelDetail detail = ensureDetail(key);
 		detail.setDescription(description);
 	}
-
+	
+	public double getDeclaredAmount(IFiscalModelKey key) {
+		return getDeclaredAmount(key.getValue());
+	}
+	public double getDeclaredAmount(String key) {
+		return ensureDetail(key).getResultAmount();
+	}
+	public double getResultAmount(IFiscalModelKey key) {
+		return getResultAmount(key.getValue());
+	}
+	public double getResultAmount(String key) {
+		return ensureDetail(key).getResultAmount();
+	}
+	public double getAdjustAmount(IFiscalModelKey key) {
+		return getAdjustAmount(key.getValue());
+	}
+	public double getAdjustAmount(String key) {
+		return ensureDetail(key).getAdjustAmount();
+	}
 	public double getAmount(IFiscalModelKey key) {
 		return getAmount(key.getValue());
 	}

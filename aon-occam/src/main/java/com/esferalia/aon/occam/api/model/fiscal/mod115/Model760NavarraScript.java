@@ -1,22 +1,25 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod115;
 
 
-import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.api.model.type.Mod115KeyInfo;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
-public enum Model760NavarraScript implements IModelScript {
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.Mod115Key;
+
+public enum Model760NavarraScript implements IModelScript<Mod115Key> {
 	
-	 R00 ("Deuda tributaria a ingresar",new Mod115Key[]{Mod115Key.NF_C01},Mod115KeyInfo.NONE)
+	 R00 ("Deuda tributaria a ingresar",new Mod115Key[]{Mod115Key.NF_C01},FiscalModelKeyInfo.NONE)
 	;
 	
 	private String label;
 	private Mod115Key[] keys;
-	private Mod115KeyInfo infoKey;
+	private FiscalModelKeyInfo[] infoKeys;
 	
-	private Model760NavarraScript(String label, Mod115Key[] keys,Mod115KeyInfo infoKey) {
+	private Model760NavarraScript(String label, Mod115Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
-		this.infoKey = infoKey;
+		this.infoKeys = infoKeys;
 	}
 
 	@Override
@@ -28,12 +31,16 @@ public enum Model760NavarraScript implements IModelScript {
 		return keys;
 	}
 	@Override
-	public boolean isEnabled() {
-		return getInfoKey() != Mod115KeyInfo.COMPUTE;
+	public boolean isTitle() {
+		return getInfoKeys()[0] == TITLE;
 	}
 	@Override
-	public Mod115KeyInfo getInfoKey() {
-		return infoKey;
+	public boolean isEnabled() {
+		return true;
+	}
+	@Override
+	public FiscalModelKeyInfo[] getInfoKeys() {
+		return infoKeys;
 	};
 	@Override
 	public boolean hasGraphicParticularity() {
