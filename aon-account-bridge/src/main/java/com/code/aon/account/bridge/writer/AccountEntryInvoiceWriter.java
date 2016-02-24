@@ -117,6 +117,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		}
 		Date entryDate = invoice.getIssueDate();
 		entry.setAccountPeriod(getAccountingUtil().obtainPeriod(entryDate));
+		entry.setActivity((invoice.getActivity() != null && invoice.getActivity().getId() != null) ? invoice.getActivity() : null);
 		entry.setEntryDate(entryDate);
 		entry.setJournal(null);
 		AccountEntryType accountEntryType = null;
@@ -372,7 +373,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 
 	public AccountEntry insertOrUpdateAccountEntry(AccountEntry entry) throws ManagerBeanException {
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
-		return  (AccountEntry) entryBean.insertOrUpdate(entry);
+		return (AccountEntry)entryBean.insertOrUpdate(entry);
 	}
 
 	public List<AccountEntryDetail> insertEntryDetails(AccountEntry entry, Account account, 

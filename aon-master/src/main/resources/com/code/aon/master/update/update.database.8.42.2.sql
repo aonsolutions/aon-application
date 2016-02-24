@@ -1078,6 +1078,10 @@ INSERT INTO `iae` (`section`,`epigraph`,`title`) VALUES
 
 UPDATE `enterprise_activity` SET `surcharge` = (SELECT MAX(`surcharge`) FROM `company` WHERE `domain` = `enterprise_activity`.`domain`);
 
+UPDATE `account_entry`, `invoice`, `account_entry_invoice` SET `account_entry`.`activity` = `invoice`.`activity`
+    WHERE `invoice`.`activity` IS NOT NULL AND `invoice`.`status` = 1
+    AND `account_entry_invoice`.`account_entry` = `account_entry`.`id` AND `account_entry_invoice`.`invoice` = `invoice`.`id`;
+
 ALTER TABLE `fs_model` MODIFY `number` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de Declaracion';
 ALTER TABLE `fs_model` MODIFY `replaced_number` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de Declaracion complementada o sustituida';
 
