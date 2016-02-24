@@ -16,7 +16,7 @@
 
 		<aon:outputLabel for="#{controller.pojoShortName}_status" value="#{bundle.aon_status}" />
 		<aon:selectOneRadio id="#{controller.pojoShortName}_status" value="#{controller.to.status}"
-			disabled="#{controller.to.wildCard}">
+			disabled="#{controller.to.wildCard and controller.to.active}">
 			<f:selectItems value="#{productCollections.productStatuses}" />
 		</aon:selectOneRadio>
 
