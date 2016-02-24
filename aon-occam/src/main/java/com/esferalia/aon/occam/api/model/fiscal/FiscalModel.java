@@ -33,8 +33,8 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	private boolean complementary;
 	private boolean replacement;
 	private boolean withoutActivity;
-	private Integer number;
-	private Integer replacedNumber;
+	private String number;
+	private String replacedNumber;
 	private String comments;
 	private String document;
 	private String surname;
@@ -179,17 +179,17 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		this.withoutActivity = withoutActivity;
 		return this;
 	}
-	public Integer getNumber() {
+	public String getNumber() {
 		return number;
 	}
-	public FiscalModel setNumber(Integer number) {
+	public FiscalModel setNumber(String number) {
 		this.number = number;
 		return this;
 	}
-	public Integer getReplacedNumber() {
+	public String getReplacedNumber() {
 		return replacedNumber;
 	}
-	public FiscalModel setReplacedNumber(Integer replacedNumber) {
+	public FiscalModel setReplacedNumber(String replacedNumber) {
 		this.replacedNumber = replacedNumber;
 		return this;
 	}

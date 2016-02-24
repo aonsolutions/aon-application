@@ -11,7 +11,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
-import org.jooq.conf.ParamType;
 import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.jooq.tables.records.FsModelRecord;
@@ -466,11 +465,11 @@ public class FiscalModelDAO {
 			return FiscalModelType.safeValueOf( record.getValue(FS_MODEL.MODEL));
 		}
 		@Override
-		public Integer getNumber() {
+		public String getNumber() {
 			return record.getValue(FS_MODEL.NUMBER);
 		}
 		@Override
-		public Integer getReplacedNumber() {
+		public String getReplacedNumber() {
 			return record.getValue(FS_MODEL.REPLACED_NUMBER);
 		}
 		@Override

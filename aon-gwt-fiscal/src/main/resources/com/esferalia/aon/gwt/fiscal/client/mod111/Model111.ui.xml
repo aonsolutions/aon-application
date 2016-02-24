@@ -109,7 +109,7 @@
 											<td class="{aonResources.css.aonPanelGridEven}">
 												<g:Label ui:field="replacedNumberLabel" text="{msg.previousDeclaration}"
 													styleName="{aonResources.css.aonInnerLabel}"/>
-												<aon:IntegerBox  ui:field="replacedNumber" />
+												<g:TextBox  ui:field="replacedNumber" styleName="{aonResources.css.aonInputText}"/>
 											</td>
 											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonFontSmall} {aonResources.css.aonTextCenter}">
 												<g:InlineLabel ui:field="dirtyLabel" 

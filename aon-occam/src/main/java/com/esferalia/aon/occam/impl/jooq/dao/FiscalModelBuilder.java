@@ -23,8 +23,8 @@ public class FiscalModelBuilder<FM extends FiscalModel> {
 		boolean isReplacement();
 		boolean isWithoutActivity();
 		FiscalModelType getModel();
-		Integer getNumber();
-		Integer getReplacedNumber();
+		String getNumber();
+		String getReplacedNumber();
 		String  getComments();
 		Finance getFinance();
 		String  getDocument();
@@ -107,12 +107,12 @@ public class FiscalModelBuilder<FM extends FiscalModel> {
 		return this;
 	}
 
-	private FiscalModelBuilder<FM> setNumber(Integer number) {
+	private FiscalModelBuilder<FM> setNumber(String number) {
 		model.setNumber(number);
 		return this;
 	}
 
-	private FiscalModelBuilder<FM> setReplacedNumber(Integer replacedNumber) {
+	private FiscalModelBuilder<FM> setReplacedNumber(String replacedNumber) {
 		model.setReplacedNumber(replacedNumber);
 		return this;
 	}

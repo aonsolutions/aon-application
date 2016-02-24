@@ -82,6 +82,7 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -182,7 +183,7 @@ public class Model111 extends MainEntryPoint {
 	@UiField
 	Label complementaryLabel;
 	@UiField
-	IntegerBox replacedNumber;
+	TextBox replacedNumber;
 	@UiField
 	Label replacedNumberLabel;
 	@UiField
@@ -727,7 +728,8 @@ public class Model111 extends MainEntryPoint {
 		
 		final Label previousLabel = new Label(AON.MSG.previousDeclaration()); 
 		previousLabel.setVisible(currentMod111.isReplacedNumberAvailable());
-		final IntegerBox previous = new IntegerBox();
+		final TextBox previous = new TextBox();
+		previous.setStyleName(AON.AON_CSS.aonInputText());
 		previous.setVisible(currentMod111.isReplacedNumberAvailable());
 		
 		final CheckBox replacement = new CheckBox(AON.MSG.replacement());
