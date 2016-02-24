@@ -252,7 +252,7 @@ public class NormalizedMemory extends ResizeComposite {
 			generateFileButton.setVisible(false);
 		}
 		
-		depositType.setText("Abreviado");
+		depositType.setText("Deposito");
 	}
 
 	public static native int getCurrentDomain()
@@ -330,6 +330,7 @@ public class NormalizedMemory extends ResizeComposite {
 									deleteButton.setVisible(true);
 									generateFileButton.setVisible(true);		
 									importAllButton.setVisible(true);
+									deposit.getNewContextMenu().removeDeposit(year);
 								}
 					});
 					
@@ -722,6 +723,8 @@ public class NormalizedMemory extends ResizeComposite {
 						public void onSuccess(Void result) {
 							digitalDepositTreeNode.removeItems();
 							digitalDepositTreeNode.select(deposit);
+							deposit.getNewContextMenu().addDeposit(year);
+							deposit.getToolbar().setVisible(true);
 						}
 					});
 				}
@@ -777,7 +780,13 @@ public class NormalizedMemory extends ResizeComposite {
 
 			@Override
 			public void onSuccess(String[] result) {
-				DepositDialog popup = new DepositDialog(
+				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_deposit/"
+		            	+ "?domain_id=" + Integer.toString(enterprise.getDomain())
+		            	+ "&year="+ year;
+				Window.open( fileDownloadURL, "_blank",null);
+				
+				
+				/*DepositDialog popup = new DepositDialog(
 						"Exportar Deposito", "export", enterprise,
 						"", null, false, result, year) {
 					@Override
@@ -798,7 +807,7 @@ public class NormalizedMemory extends ResizeComposite {
 				};
 				popup.addStyleName("gwt-PopupPanel-template");
 				popup.setGlassEnabled(true);
-				popup.show();
+				popup.show();*/
 			}
 		});
 	}

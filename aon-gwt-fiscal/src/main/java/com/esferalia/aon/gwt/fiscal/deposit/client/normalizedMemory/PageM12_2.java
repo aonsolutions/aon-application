@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -37,7 +38,12 @@ public class PageM12_2 extends PageAbs {
 	}
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
-
+	
+	@UiField InlineLabel tableTitle;
+	@UiField InlineLabel table1Title;
+	@UiField InlineLabel table2Title;
+	@UiField InlineLabel table3Title;
+	
 	@UiField(provided = true)
 	FlexTable table1;
 	
@@ -77,20 +83,29 @@ public class PageM12_2 extends PageAbs {
 
 	@Override
 	protected void initializeTable() {
+		tableTitle.setText(AON.MSG.memory12_1_2X(year));
+		table1Title.setText(AON.MSG.memory12_1_2X(year-1));
+		table2Title.setText(AON.MSG.memory12_3_4X(year));
+		table3Title.setText(AON.MSG.memory12_3_4X(year-1));
 		
-		tabPanel.selectTab(0);
+		if(tabPanel.getTabBar().getSelectedTab() != 0)
+			tabPanel.selectTab(tabPanel.getTabBar().getSelectedTab());
+		else tabPanel.selectTab(0);
+		
 		defineMRNTable(table, MRN_HEADERS, D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_1);
 		defineMRNTable(table1, MRN_HEADERS, D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_2);
-		defineMRNTable(table3, MRN_HEADERS, D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_4);
+		//defineMRNTable(table3, MRN_HEADERS, D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_4);
 		
 		switch (year) {
 		case 2014:
 			if (isPymes()) {
 				defineMRNTable(table2, MRN_HEADERS, D2PDepositConstants.MRN12_PYMES_KEYS_3);
+				defineMRNTable(table3, MRN_HEADERS, D2PDepositConstants.MRN12_PYMES_KEYS_4);
 				defineMRNTable(table4, PERIODS2014, D2PDepositConstants.MRN12_PYMES_KEYS_5);
 				defineMRNTable(table5, PERIODS2014, D2PDepositConstants.MRN12_PYMES_KEYS_6);
 			} else {
 				defineMRNTable(table2, MRN_HEADERS, D2DepositConstants.MRN12_ABREVIATE_KEYS_3);
+				defineMRNTable(table3, MRN_HEADERS, D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_4);
 				defineMRNTable(table4, PERIODS2014, D2DepositConstants.MRN12_ABREVIATE_KEYS_5);
 				defineMRNTable(table5, PERIODS2014, D2DepositConstants.MRN12_ABREVIATE_KEYS_6);
 			}
@@ -98,10 +113,12 @@ public class PageM12_2 extends PageAbs {
 		case 2015:
 			if (isPymes()) {
 				defineMRNTable(table2, MRN_HEADERS, D2PDepositConstants.MRN12_PYMES_KEYS_3);
+				defineMRNTable(table3, MRN_HEADERS, D2PDepositConstants.MRN12_PYMES_KEYS_4);
 				defineMRNTable(table4, PERIODS2015, D2PDepositConstants.MRN12_PYMES_KEYS_5);
 				defineMRNTable(table5, PERIODS2015, D2PDepositConstants.MRN12_PYMES_KEYS_6);
 			} else {
 				defineMRNTable(table2, MRN_HEADERS, D2DepositConstants.MRN12_ABREVIATE_KEYS_3);
+				defineMRNTable(table3, MRN_HEADERS, D2DepositConstants.MRN12_ABREVIATE_PYMES_KEYS_4);
 				defineMRNTable(table4, PERIODS2015, D2DepositConstants.MRN12_ABREVIATE_KEYS_5);
 				defineMRNTable(table5, PERIODS2015, D2DepositConstants.MRN12_ABREVIATE_KEYS_6);
 			}
@@ -119,7 +136,6 @@ public class PageM12_2 extends PageAbs {
 		tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidthAuto());
 		tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonNowrap());
 		col++;
-		
 		for (String primary : headers) {
 			
 			tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidth140());
@@ -129,10 +145,8 @@ public class PageM12_2 extends PageAbs {
 			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
 			++col;
 		}
-		
 		++row;
 		col = 0;
-		
 		for (D2DepositKey[] innerKeys : keys) {
 			col = 0;
 			paintKeyDescription(tab, innerKeys[0], row, col);

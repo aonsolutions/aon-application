@@ -32,11 +32,13 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositPreviousToCurrentConstants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2Compute;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2MVELContext;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2PrevioustoD2Current;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves;
@@ -70,7 +72,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	public Integer initialize() {
 		return null;
 	}
-
+	
 	public Map<String, String> getSchema(String cif,
 			Integer domainId, Boolean textMode, Integer year) {
 		HttpServletRequest request = getThreadLocalRequest();
@@ -516,7 +518,24 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		HttpServletRequest request = getThreadLocalRequest();
 		String domainName = AonServletUtils.getRequestDomainName(request);
 		Enterprise enterprise = AON.getEnterprise(domainName, domainId, this.getUserLogin(), id);
-		byte[] b = Utils.CreateXml(enterprise, name, type, domainName, year);
+		
+		Esquema previousSchema = getSchema(domainId, year-1);
+		
+		Map<D2DepositHeaderKey, Double> mapPrevious = getHeaderKeySchema(previousSchema);
+		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
+		D2PrevioustoD2Current.fillBalance(ctx, mapPrevious);
+		D2PrevioustoD2Current.fillPyg(ctx, mapPrevious);
+		
+		Map<D2DepositKey, Double> mapPreviousMem = getKeySchema(previousSchema);
+		System.out.println(mapPreviousMem.get(D2DepositKey.MA391003));
+		System.out.println(mapPreviousMem.get(D2DepositKey.MA3910039));
+		System.out.println(mapPreviousMem.get(D2DepositKey.MA391012));
+		System.out.println(mapPreviousMem.get(D2DepositKey.MA3910129));
+		Map<D2DepositKey, Double> ctxMem = new LinkedHashMap<D2DepositKey, Double>();
+		D2PrevioustoD2Current.fill2(ctxMem, mapPreviousMem);
+		
+		byte[] b = Utils.CreateXml(ctx, ctxMem, enterprise, name, type, domainName, year);
+		
 		DBConsults.insertDeposit(domainName, b, domainId, year, this.getUserLogin());
 		return getSchema(enterprise.getDocument(), domainId, false, year);
 	}
@@ -697,4 +716,154 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		return AON.getParentEnterprises(domainName, domain, this.getUserLogin(), query);		
 	}
 
+	public Esquema getSchema(Integer domainId, Integer year){
+		HttpServletRequest request = getThreadLocalRequest();
+		String domain = AonServletUtils.getRequestDomainName(request);
+		return DBConsults.getDeposit(domain, domainId, year, "");
+	}
+	
+	public Map<D2DepositHeaderKey, Double> getHeaderKeySchema(Esquema schema) {
+		Map<D2DepositHeaderKey, Double> map = new HashMap<D2DepositHeaderKey, Double>();
+		for(Integer i = 0; i < D2DepositPreviousToCurrentConstants.BALANCE.length; i++){
+			D2DepositHeaderKey headerKey = D2DepositPreviousToCurrentConstants.BALANCE[i];
+			for(Clave clave :schema.getClaves().getClave()){
+				if(clave.getCodigo().toString().equals(headerKey.getCode())){
+					String d = clave.getValor();
+					Double value = d != null ? Double.parseDouble(d) : 0.0;
+					map.put(headerKey, value);
+				}
+			}
+		}
+		
+		for(Integer i = 0; i < D2DepositPreviousToCurrentConstants.PYG.length; i++){
+			D2DepositHeaderKey headerKey = D2DepositPreviousToCurrentConstants.PYG[i];
+			for(Clave clave :schema.getClaves().getClave()){
+				if(clave.getCodigo().toString().equals(headerKey.getCode())){
+					String d = clave.getValor();
+					Double value = d != null ? Double.parseDouble(d) : 0.0;
+					map.put(headerKey, value);
+				}
+			}
+		}
+		
+		return map;
+	}
+
+	
+	public Map<D2DepositKey, Double> getKeySchema(Esquema schema) {
+		Map<D2DepositKey, Double> map = new HashMap<D2DepositKey, Double>();
+		
+		for(Integer i = 0; i < D2DepositPreviousToCurrentConstants.MEM_AP3.length; i++){
+			D2DepositKey headerKey = D2DepositPreviousToCurrentConstants.MEM_AP3[i];
+			for(Clave clave :schema.getClaves().getClave()){
+				if(clave.getCodigo().toString().equals(headerKey.getCode())){
+					String d = clave.getValor();
+					Double value = d != null ? Double.parseDouble(d) : 0.0;
+					map.put(headerKey, value);
+				}
+			}
+		}
+		
+		for(Integer i = 0; i < D2DepositPreviousToCurrentConstants.MEM_AP5.length; i++){
+			D2DepositKey headerKey = D2DepositPreviousToCurrentConstants.MEM_AP5[i];
+			for(Clave clave :schema.getClaves().getClave()){
+				if(clave.getCodigo().toString().equals(headerKey.getCode())){
+					String d = clave.getValor();
+					Double value = d != null ? Double.parseDouble(d) : 0.0;
+					map.put(headerKey, value);
+				}
+			}
+		}
+		
+		for(Integer i = 0; i < D2DepositPreviousToCurrentConstants.MEM_AP6.length; i++){
+			D2DepositKey headerKey = D2DepositPreviousToCurrentConstants.MEM_AP6[i];
+			for(Clave clave :schema.getClaves().getClave()){
+				if(clave.getCodigo().toString().equals(headerKey.getCode())){
+					String d = clave.getValor();
+					Double value = d != null ? Double.parseDouble(d) : 0.0;
+					map.put(headerKey, value);
+				}
+			}
+		}
+		
+		for(Integer i = 0; i < D2DepositPreviousToCurrentConstants.MEM_AP7.length; i++){
+			D2DepositKey headerKey = D2DepositPreviousToCurrentConstants.MEM_AP7[i];
+			for(Clave clave :schema.getClaves().getClave()){
+				if(clave.getCodigo().toString().equals(headerKey.getCode())){
+					String d = clave.getValor();
+					Double value = d != null ? Double.parseDouble(d) : 0.0;
+					map.put(headerKey, value);
+				}
+			}
+		}
+		
+		for(Integer i = 0; i < D2DepositPreviousToCurrentConstants.MEM_AP10.length; i++){
+			D2DepositKey headerKey = D2DepositPreviousToCurrentConstants.MEM_AP10[i];
+			for(Clave clave :schema.getClaves().getClave()){
+				if(clave.getCodigo().toString().equals(headerKey.getCode())){
+					String d = clave.getValor();
+					Double value = d != null ? Double.parseDouble(d) : 0.0;
+					map.put(headerKey, value);
+				}
+			}
+		}
+		
+		for(Integer i = 0; i < D2DepositPreviousToCurrentConstants.MEM_AP11.length; i++){
+			D2DepositKey headerKey = D2DepositPreviousToCurrentConstants.MEM_AP11[i];
+			for(Clave clave :schema.getClaves().getClave()){
+				if(clave.getCodigo().toString().equals(headerKey.getCode())){
+					String d = clave.getValor();
+					Double value = d != null ? Double.parseDouble(d) : 0.0;
+					map.put(headerKey, value);
+				}
+			}
+		}
+		
+		for(Integer i = 0; i < D2DepositPreviousToCurrentConstants.MEM_AP12.length; i++){
+			D2DepositKey headerKey = D2DepositPreviousToCurrentConstants.MEM_AP12[i];
+			for(Clave clave :schema.getClaves().getClave()){
+				if(clave.getCodigo().toString().equals(headerKey.getCode())){
+					String d = clave.getValor();
+					Double value = d != null ? Double.parseDouble(d) : 0.0;
+					map.put(headerKey, value);
+				}
+			}
+		}
+		
+		for(Integer i = 0; i < D2DepositPreviousToCurrentConstants.MEM_AP13.length; i++){
+			D2DepositKey headerKey = D2DepositPreviousToCurrentConstants.MEM_AP13[i];
+			for(Clave clave :schema.getClaves().getClave()){
+				if(clave.getCodigo().toString().equals(headerKey.getCode())){
+					String d = clave.getValor();
+					Double value = d != null ? Double.parseDouble(d) : 0.0;
+					map.put(headerKey, value);
+				}
+			}
+		}
+		
+		for(Integer i = 0; i < D2DepositPreviousToCurrentConstants.MEM_AP14.length; i++){
+			D2DepositKey headerKey = D2DepositPreviousToCurrentConstants.MEM_AP14[i];
+			for(Clave clave :schema.getClaves().getClave()){
+				if(clave.getCodigo().toString().equals(headerKey.getCode())){
+					String d = clave.getValor();
+					Double value = d != null ? Double.parseDouble(d) : 0.0;
+					map.put(headerKey, value);
+				}
+			}
+		}
+		
+		for(Integer i = 0; i < D2DepositPreviousToCurrentConstants.MEM_AP15.length; i++){
+			D2DepositKey headerKey = D2DepositPreviousToCurrentConstants.MEM_AP15[i];
+			for(Clave clave :schema.getClaves().getClave()){
+				if(clave.getCodigo().toString().equals(headerKey.getCode())){
+					String d = clave.getValor();
+					Double value = d != null ? Double.parseDouble(d) : 0.0;
+					map.put(headerKey, value);
+				}
+			}
+		}
+		
+		return map;
+	}
+	
 }

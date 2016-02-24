@@ -2,17 +2,23 @@ package com.esferalia.aon.gwt.fiscal.deposit.client;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Stack;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
+import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
 import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
+import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.DepositDialog;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemory;
 import com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory.INormalizedMemoryAsync;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -25,6 +31,8 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -32,12 +40,13 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Deposit implements EntryPoint {
+public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
 	
 	interface DepositBinder extends UiBinder<Widget, Deposit> {
@@ -50,6 +59,7 @@ public class Deposit implements EntryPoint {
 	
 	TreeNode<Enterprise> rootNode;
 	TreeNode<Enterprise> enterpriseDataNode;
+	NewContextMenu newContextMenu;
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
@@ -97,6 +107,7 @@ public class Deposit implements EntryPoint {
 		toolbar.setVisibleDraftButton(false);
 		toolbar.setVisiblePasteButton(false);
 		toolbar.setVisible(false);
+		toolbar.addListener(this);
 				
 		inma.getParentEnterprises(getCurrentDomainName(),getCurrentDomain(),"%"
 				,new AsyncCallback<LinkedList<Enterprise>>() {
@@ -200,8 +211,17 @@ public class Deposit implements EntryPoint {
 		return null;
 	}
 	
+	public NewContextMenu getNewContextMenu() {
+		return newContextMenu;
+	}
+	
+	public OptionsToolbar getToolbar(){
+		return toolbar;
+	}
+	
 	Integer yearAux;
 	private void initialize(final Enterprise enterprise, Boolean isParent) {
+		newContextMenu = new NewContextMenu();
 		this.enterprise = enterprise;
 		subtitle.setText(AON.MSG.enterprise());
 		tree.removeItems();
@@ -211,12 +231,16 @@ public class Deposit implements EntryPoint {
 		// Nodo:  "Datos de la empresa"
 		//enterpriseDataNode = TreeNodeTypes.ENTERPRISE_DATA.getInstance().render(rootNode, enterprise);
 		
-		for(Integer y = 2013; y <= CURRENT_YEAR; y++){
+		for(Integer y = 2014; y < CURRENT_YEAR; y++){
 			yearAux = y;
 			inma.isDigitalDeposit(enterprise.getDomain(), y, new AsyncCallback<Boolean>() {
 				Integer year = yearAux;
 				@Override
 				public void onSuccess(Boolean result) {
+					if(!result) {
+						toolbar.setVisible(true);
+						newContextMenu.addDeposit(year);
+					}
 					if(result || year == CURRENT_YEAR -1){// Has Fiscal Model or deposit
 						// Nodo:  "Ejercicio YEAR"
 						EnterpriseYear ey = new EnterpriseYear();
@@ -234,7 +258,7 @@ public class Deposit implements EntryPoint {
 						}
 						if(year == CURRENT_YEAR - 1)
 							yearTreeNode.setState(true);
-					}						
+					}
 		    	}
 		  
 		    	@Override
@@ -385,5 +409,195 @@ public class Deposit implements EntryPoint {
 			widget.add(label);
 		}
 		return widget;
+	}
+	
+	
+	public class NewContextMenu extends ContextMenu {
+		MenuItem d2014;
+		MenuItem d2015;
+		
+		public NewContextMenu() {	
+			addStyleName(AON.AON_CSS.aonSelector());
+		}
+		
+		public void addItem(FiscalModelType model, String text, ScheduledCommand cmd) {
+			super.addItem(model.getValue(), text, cmd);
+		}
+		
+		public void addDeposit(Integer year){
+			if(year.equals(2014)) addNewDeposit2014();
+			if(year.equals(2015)) addNewDeposit2015();
+		}
+
+		public void removeDeposit(Integer year){ 
+			newContextMenu = new NewContextMenu();
+			toolbar.setVisible(false);
+			for(Integer y = 2014; y < CURRENT_YEAR; y++){
+				if(!y.equals(year)){
+					final Integer yearAux = y; 
+					inma.isDigitalDeposit(enterprise.getDomain(), y, new AsyncCallback<Boolean>() {
+						Integer year = yearAux;
+						@Override public void onSuccess(Boolean result) {
+							if(!result) {
+								toolbar.setVisible(true);
+								newContextMenu.addDeposit(year);
+							}
+			    		}
+			    		@Override public void onFailure(Throwable caught) {};
+					});	
+				}
+			}
+		}
+		
+		protected NewContextMenu addNewDeposit2014() {
+			d2014 = addItem("Nuevo Deposito 2014", new ScheduledCommand() {
+				Integer year = 2014;
+				@Override
+				public void execute() {
+					String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
+					PopupPanel popup =  new DepositDialog("Nuevo Deposito","new", enterprise,url,null, false, null, year){
+						
+						@Override
+						protected void onCancel() {
+							hide();
+						}
+						
+						@Override
+						protected void onAccept() {
+							final ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+							 final TextBox tb = (TextBox) flex_table.getWidget(1, 1);
+							 ListBox lb3 = (ListBox) flex_table.getWidget(3, 1);
+							 final Integer year = Integer.parseInt(lb3.getSelectedItemText());
+							 hide();
+							 inma.isDigitalDeposit(enterprise.getDomain(), year, new AsyncCallback<Boolean>() {
+																
+								 @Override
+								 public void onSuccess(Boolean result) {
+									 if(result){
+										 DigitalDepositTreeNode ddtn = getDepositNode(year);
+										 ddtn.select(Deposit.this);
+									 } else{
+										 inma.createD2Deposit(enterprise.getDomain(),
+												 enterprise.getId(), tb.getValue(),
+												 lb.getSelectedItemText(),year,
+												 new AsyncCallback<Map<String, String>>() {
+											 @Override
+											 public void onFailure(Throwable caught) {
+												 
+											 }
+											 @Override
+											 public void onSuccess(Map<String, String> result) {
+												 DigitalDepositTreeNode ddtn = getDepositNode(year);
+												 //ddtn.newFromFiscalTree(Deposit.this, new D2DepositTreeObject(enterprise, year), result);
+												 ddtn.select(Deposit.this);
+												 tree.setSelectedItem(ddtn);
+												 removeDeposit(year);
+											 }
+										 });
+									 }									
+								 }
+								 								
+								 @Override
+								 public void onFailure(Throwable caught) {}
+							 });
+						}
+						};
+					popup.addStyleName("gwt-PopupPanel-template");
+					popup.setGlassEnabled(true);
+					popup.show();
+				}
+			});
+			return this; 
+		}
+		
+		protected NewContextMenu addNewDeposit2015() {
+			d2015 = addItem("Nuevo Deposito 2015", new ScheduledCommand() {
+				Integer year = 2015;
+				@Override
+				public void execute() {
+					String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
+					PopupPanel popup =  new DepositDialog("Nuevo Deposito","new", enterprise,url,null, false, null, year){
+						
+						@Override
+						protected void onCancel() {
+							hide();
+						}
+						
+						@Override
+						protected void onAccept() {
+							final ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+							 final TextBox tb = (TextBox) flex_table.getWidget(1, 1);
+							 ListBox lb3 = (ListBox) flex_table.getWidget(3, 1);
+							 final Integer year = Integer.parseInt(lb3.getSelectedItemText());
+							 hide();
+							 inma.isDigitalDeposit(enterprise.getDomain(), year, new AsyncCallback<Boolean>() {
+																
+								 @Override
+								 public void onSuccess(Boolean result) {
+									 if(result){
+										 DigitalDepositTreeNode ddtn = getDepositNode(year);
+										 ddtn.select(Deposit.this);
+									 } else{
+										 inma.createD2Deposit(enterprise.getDomain(),
+												 enterprise.getId(), tb.getValue(),
+												 lb.getSelectedItemText(),year,
+												 new AsyncCallback<Map<String, String>>() {
+											 @Override
+											 public void onFailure(Throwable caught) {
+												 
+											 }
+											 @Override
+											 public void onSuccess(Map<String, String> result) {
+												 DigitalDepositTreeNode ddtn = getDepositNode(year);
+												 //ddtn.newFromFiscalTree(Deposit.this, new D2DepositTreeObject(enterprise, year), result);
+												 ddtn.select(Deposit.this);
+												 tree.setSelectedItem(ddtn);
+												 removeDeposit(year);
+											 }
+										 });
+									 }									
+								 }
+								 								
+								 @Override
+								 public void onFailure(Throwable caught) {}
+							 });
+						}
+						};
+					popup.addStyleName("gwt-PopupPanel-template");
+					popup.setGlassEnabled(true);
+					popup.show();
+				}
+			});
+			return this; 
+		}
+
+	}
+
+	@Override
+	public void onNewButtonClick(ClickEvent event) {
+		NativeEvent nativeEvent = event.getNativeEvent();
+		newContextMenu.setPopupPosition(nativeEvent.getClientX(),
+				nativeEvent.getClientY());
+		newContextMenu.show();
+	}
+
+	@Override
+	public void onPasteButtonClick(ClickEvent event) {
+		
+	}
+
+	@Override
+	public void onCopyButtonClick(ClickEvent event) {
+		
+	}
+
+	@Override
+	public void onDraftButtonClick(ClickEvent event) {
+		
+	}
+
+	@Override
+	public void onCollapseAllButtonClick(ClickEvent event) {
+		
 	}
 }

@@ -18,7 +18,7 @@
 					<div class="{aonResources.css.aonGroupBody}">
 						<div class="{aonResources.css.aonGroup}">
 							<div class="{aonResources.css.aonGroupTitle}">
-								<g:InlineLabel text="{msg.memory12_2Table1}" />
+								<g:InlineLabel ui:field="tableTitle" text="{msg.memory12_2Table1}" />
 							</div>
 							<div class="{aonResources.css.aonGroupBody}">
 								<div
@@ -39,7 +39,7 @@
 
 						<div class="{aonResources.css.aonGroup}">
 							<div class="{aonResources.css.aonGroupTitle}">
-								<g:InlineLabel text="{msg.memory12_2Table2}" />
+								<g:InlineLabel ui:field="table1Title" text="{msg.memory12_2Table2}" />
 							</div>
 							<div class="{aonResources.css.aonGroupBody}">
 								<div
@@ -61,7 +61,7 @@
 
 						<div class="{aonResources.css.aonGroup}">
 							<div class="{aonResources.css.aonGroupTitle}">
-								<g:InlineLabel text="{msg.memory12_2Table3}" />
+								<g:InlineLabel ui:field="table2Title" text="{msg.memory12_2Table3}" />
 							</div>
 							<div class="{aonResources.css.aonGroupBody}">
 								<div
@@ -83,7 +83,7 @@
 
 						<div class="{aonResources.css.aonGroup}">
 							<div class="{aonResources.css.aonGroupTitle}">
-								<g:InlineLabel text="{msg.memory12_2Table4}" />
+								<g:InlineLabel ui:field="table3Title"  text="{msg.memory12_2Table4}" />
 							</div>
 							<div class="{aonResources.css.aonGroupBody}">
 								<div

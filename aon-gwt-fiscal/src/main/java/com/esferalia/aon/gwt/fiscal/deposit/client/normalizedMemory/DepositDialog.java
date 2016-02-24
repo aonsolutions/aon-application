@@ -69,7 +69,7 @@ public abstract class DepositDialog extends CustomDialogB {
 		case DIALOG_IMPORT: label.setText("Al importar un archivo se eliminarán todos los datos referentes a la memoria normalizada.");
 							importar(enterprise, url);break;
 		case DIALOG_IMPORT_TEXT: importarTextos(mts);break;
-		case DIALOG_IMPORT_ALL: importAll(mts, enterprise, url); break;
+		case DIALOG_IMPORT_ALL: importAll(mts, enterprise, url,year); break;
 		case DIALOG_DELETE: label.setText("Esta seguro de eliminar el Deposito");break;
 		case DIALOG_EXPORT: exportar(exercises);break;
 		default:
@@ -250,7 +250,8 @@ public abstract class DepositDialog extends CustomDialogB {
 	
 	Vector<MemoryTemplate> mtsAux;
 	Enterprise enterpriseAux;	
-	private void importAll(Vector<MemoryTemplate> mts, Enterprise enterprise, String url){
+	private void importAll(Vector<MemoryTemplate> mts, Enterprise enterprise, String url, final Integer year){
+		
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
 		flex_table.setBorderWidth(1);
@@ -272,6 +273,7 @@ public abstract class DepositDialog extends CustomDialogB {
 			Enterprise enterprise = enterpriseAux;
 			@Override
 			public void onChange(ChangeEvent event) {
+				Integer lastYear = year -1;
 				if(lb.getSelectedItemText().equals("Balance (I.S.)")){
 					ListBox lb1 = new ListBox();
 					lb1.addItem("Sociedades");
@@ -281,8 +283,8 @@ public abstract class DepositDialog extends CustomDialogB {
 					flex_table.setWidget(1,	1, lb1);
 					
 					ListBox lb2 = new ListBox();
-					lb2.addItem("2013");
-					lb2.addItem("2014");
+					lb2.addItem(lastYear.toString());
+					lb2.addItem(year.toString());
 					flex_table.setWidget(2, 0, new Label("Ejercicio"));
 					flex_table.setWidget(2,	1, lb2);					
 				}
@@ -295,8 +297,8 @@ public abstract class DepositDialog extends CustomDialogB {
 					flex_table.setWidget(1,	1, lb1);
 					
 					ListBox lb2 = new ListBox();
-					lb2.addItem("2013");
-					lb2.addItem("2014");
+					lb2.addItem(lastYear.toString());
+					lb2.addItem(year.toString());
 					flex_table.setWidget(2, 0, new Label("Ejercicio"));
 					flex_table.setWidget(2,	1, lb2);	
 				}
@@ -309,8 +311,8 @@ public abstract class DepositDialog extends CustomDialogB {
 					flex_table.setWidget(1,	1, lb1);
 					
 					ListBox lb2 = new ListBox();
-					lb2.addItem("2013");
-					lb2.addItem("2014");
+					lb2.addItem(lastYear.toString());
+					lb2.addItem(year.toString());
 					flex_table.setWidget(2, 0, new Label("Ejercicio"));
 					flex_table.setWidget(2,	1, lb2);	
 				}
@@ -329,7 +331,7 @@ public abstract class DepositDialog extends CustomDialogB {
 				if(lb.getSelectedItemText().equals("Memoria (Deposito.xml)")){
 					ListBox lb1 = new ListBox();
 					//lb1.addItem("2013");
-					lb1.addItem("2014");
+					lb1.addItem(year.toString());
 					flex_table.setWidget(1, 0, new Label("Ejercicio"));
 					flex_table.setWidget(1,	1, lb1);	
 					

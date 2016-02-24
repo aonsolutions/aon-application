@@ -113,30 +113,30 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP.put(D2DepositKey.MA6193241,"Activos financieros disponibles para la venta");
 		
 		
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293301,"P\u00E9rdida por deterioro al inicio del ejercicio # ");
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293311,"(+)Correci\u00F3n valorativo por deterior");
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293321,"(-) Reversi\u00F3n del deterioro");
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293331,"(-) Salidas y reducciones");
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293341,"(+/-) Traspasos y otras variaciones (combinaciones de negocio,etc.)");
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293351,"P\u00E9rdida por deterioro al final del ejercicio # ");
-		//TODO
-		DESCRIPTION_MAP.put(D2DepositKey.MA62933019,"P\u00E9rdida por deterioro al inicio del ejercicio @ ");
-		DESCRIPTION_MAP.put(D2DepositKey.MA62933119,"(+)Correcci\u00F3n valorativo por deterioro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62933019,"P\u00E9rdida por deterioro al inicio del ejercicio # ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62933119,"(+)Correci\u00F3n valorativo por deterior");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933219,"(-) Reversi\u00F3n del deterioro");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933319,"(-) Salidas y reducciones");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933419,"(+/-) Traspasos y otras variaciones (combinaciones de negocio,etc.)");
-		DESCRIPTION_MAP.put(D2DepositKey.MA62933519,"P\u00E9rdida por deterioro al final del ejercicio @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62933519,"P\u00E9rdida por deterioro al final del ejercicio # ");
+		//TODO
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293301,"P\u00E9rdida por deterioro al inicio del ejercicio @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293311,"(+)Correcci\u00F3n valorativo por deterioro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293321,"(-) Reversi\u00F3n del deterioro");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293331,"(-) Salidas y reducciones");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293341,"(+/-) Traspasos y otras variaciones (combinaciones de negocio,etc.)");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293351,"P\u00E9rdida por deterioro al final del ejercicio @ ");
 
 		
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293401,"Valor razonable al inicio del ejercicio # ");
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293411,"Variaciones del valor razonable registradas en p\u00E9rdidas y ganancias en el ejercicio # ");
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293421,"Variaciones del valor razonable registradas en patrimonio neto en el ejercicio # ");
-		DESCRIPTION_MAP.put(D2DepositKey.MA6293431,"Valor razonable al final del ejercicio # ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62934019,"Valor razonable al inicio del ejercicio # ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62934119,"Variaciones del valor razonable registradas en p\u00E9rdidas y ganancias en el ejercicio # ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62934219,"Variaciones del valor razonable registradas en patrimonio neto en el ejercicio # ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62934319,"Valor razonable al final del ejercicio # ");
 		//TODO
-		DESCRIPTION_MAP.put(D2DepositKey.MA62934019,"Valor razonable al inicio del ejercicio @ ");
-		DESCRIPTION_MAP.put(D2DepositKey.MA62934119,"Variaciones del valor razonable registradas en p\u00E9rdidas y ganancias en el ejercicio @ ");
-		DESCRIPTION_MAP.put(D2DepositKey.MA62934219,"Variaciones del valor razonable registradas en patrimonio neto en el ejercicio @ ");
-		DESCRIPTION_MAP.put(D2DepositKey.MA62934319,"Valor razonable al final del ejercicio @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293401,"Valor razonable al inicio del ejercicio @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293411,"Variaciones del valor razonable registradas en p\u00E9rdidas y ganancias en el ejercicio @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293421,"Variaciones del valor razonable registradas en patrimonio neto en el ejercicio @ ");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6293431,"Valor razonable al final del ejercicio @ ");
 
 		DESCRIPTION_MAP.put(D2DepositKey.MA62935059,"Empresas del grupo");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62935159,"Empresas multigrupo");
@@ -391,8 +391,13 @@ public class D2DepositDescription {
 		
 		
 		//////////////////////////////////////////********PYMES*******//////////////////////////////////////////
+		
 		DESCRIPTION_MAP.put(D2DepositKey.MP12B97591,"a)Clientes por ventas y prestaci\u00F3n de servicios a largo plazo, de las cuales:");
 		DESCRIPTION_MAP.put(D2DepositKey.MP12B97601,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro a largo plazo");		
+		
+		DESCRIPTION_MAP.put(D2DepositKey.MP12B975919,"a)Clientes por ventas y prestaci\u00F3n de servicios a largo plazo, de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MP12B976019,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro a largo plazo");		
+
 		////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		DESCRIPTION_MAP.put(D2DepositKey.MA12B973019,"A) ACTIVO NO CORRIENTE");

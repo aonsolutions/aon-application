@@ -324,28 +324,30 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 		cpg.setText("Cuenta de P\u00e9rdidas y Ganancias");
 		this.addItem(cpg);
 		
-		TreeNode<Enterprise> ecpn = new TreeNode<Enterprise>() {
+		if(d2Deposit2014.getYear() < 2015){
+			TreeNode<Enterprise> ecpn = new TreeNode<Enterprise>() {
 			
-			@Override
-			public void select(Deposit fiscalPanel) {
-    			normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
-    			PageH4 ph4 = new PageH4(d2Deposit2014.getEnterprise(), normalizedMemory, d2Deposit2014.getYear());
-    			normalizedMemory.setPagesPanel(ph4);
-    			fiscalPanel.setContent(normalizedMemory);
-			}
+				@Override
+				public void select(Deposit fiscalPanel) {
+    				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
+    				PageH4 ph4 = new PageH4(d2Deposit2014.getEnterprise(), normalizedMemory, d2Deposit2014.getYear());
+    				normalizedMemory.setPagesPanel(ph4);
+    				fiscalPanel.setContent(normalizedMemory);
+				}
 			
-			@Override
-			public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
-				return null;
-			}
+				@Override
+				public TreeNode<Enterprise> render(HasTreeItems parent, Enterprise t) {
+					return null;
+				}
 			
-			@Override
-			public Enterprise getTreeObject() {
-				return (Enterprise) getUserObject();
-			}
-		};
-		ecpn.setText("Estado de Cambios en el Patrimonio Neto");
-		this.addItem(ecpn);
+				@Override
+				public Enterprise getTreeObject() {
+					return (Enterprise) getUserObject();
+				}
+			};
+			ecpn.setText("Estado de Cambios en el Patrimonio Neto");
+			this.addItem(ecpn);
+		}
 		
 		TreeNode<Enterprise> dm = new TreeNode<Enterprise>() {
 			

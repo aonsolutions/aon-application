@@ -2367,11 +2367,17 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Operaciones con partes vinculadas en el ejercicio 2013")
  	String memory12_2Table2();
  	
+ 	@DefaultMessage("Operaciones con partes vinculadas en el ejercicio {0}")
+ 	String memory12_1_2X(Integer year);
+ 	
  	@DefaultMessage("Saldos pendientes con partes vinculadas en el ejercicio 2014")
  	String memory12_2Table3();
  	
  	@DefaultMessage("Saldos pendientes con partes vinculadas en el ejercicio 2013")
  	String memory12_2Table4();
+ 	
+ 	@DefaultMessage("Saldos pendientes con partes vinculadas en el ejercicio {0}")
+ 	String memory12_3_4X(Integer year);
  	
  	@DefaultMessage("Importes recibidos por el personal de alta direcci\u00f3n")
  	String memory12_2Table5();

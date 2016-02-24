@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.d2_deposit;
 
+import static com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2DepositInitialization.INITIALIZE_EXPRESSION_MAP;
 import static com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2DepositInitialization.INITIALIZE_EXPRESSION_MAP_D2;
 
 import java.io.ByteArrayInputStream;
@@ -38,6 +39,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
@@ -51,6 +53,8 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 
 public class Utils {
+	final static String ABREVIATE = "Abreviado";
+	final static String PYMES = "Pymes";
 	
 	public static byte[] writeXml(Esquema schema) throws JAXBException, IOException{
 		JAXBContext ctx = JAXBContext.newInstance(Esquema.class);
@@ -352,7 +356,45 @@ public class Utils {
 		return b;
 	}
 	
+	
+	public static byte[] CreateXml(Map<D2DepositHeaderKey, Double> ctx, Map<D2DepositKey, Double> ctxMem, Enterprise enterprise, String name, String type , String domain, Integer year) {
+		Esquema  schema = createXml(enterprise, name, type, domain, year);
+		
+		for (D2DepositHeaderKey key : ctx.keySet()) {
+			Clave clave = new Clave();
+			clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key.getCode())));
+			clave.setValor(ctx.get(key).toString());
+			schema.getClaves().getClave().add(clave);
+		}
+		
+		for (D2DepositKey key : ctxMem.keySet()) {
+			Clave clave = new Clave();
+			clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key.getCode())));
+			clave.setValor(ctxMem.get(key).toString());
+			schema.getClaves().getClave().add(clave);
+		}
+		
+		byte[] b = null;
+		try {
+			b = writeXml(schema);
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
+		return b;
+	}
+	
 	public static byte[] CreateXml(Enterprise enterprise, String name, String type , String domain, Integer year) {
+		Esquema  schema = createXml(enterprise, name, type, domain, year);
+		byte[] b = null;
+		try {
+			b = writeXml(schema);
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
+		return b;
+	}
+	
+	public static Esquema createXml(Enterprise enterprise, String name, String type , String domain, Integer year){
 		Esquema schema = new Esquema();
 		Cabecera header = new Cabecera();
 		Claves keys = new Claves();
@@ -365,13 +407,13 @@ public class Utils {
 		header.setMemoriaNormalizada(true);
 		schema.setCabecera(header);
 		
-		if(type.equals("Abreviado")){
+		if(type.equals(ABREVIATE)){
 			Clave c8080805 = new Clave();
 			c8080805.setCodigo(BigInteger.valueOf(8080805));
 			c8080805.setValor("1");
 			keys.getClave().add(c8080805);
 		}
-		else if(type.equals("Pymes")){
+		else if(type.equals(PYMES)){
 			Clave c8080852 = new Clave();
 			c8080852.setCodigo(BigInteger.valueOf(8080852));
 			c8080852.setValor("1");
@@ -447,7 +489,7 @@ public class Utils {
 		
 		Clave c11021 = new Clave();
 		c11021.setCodigo(BigInteger.valueOf(11021));
-		c11021.setValor("2014");
+		c11021.setValor(year.toString());
 		keys.getClave().add(c11021);
 		   
 		Clave c11022 = new Clave();
@@ -462,7 +504,7 @@ public class Utils {
 		    
 		Clave c11011 = new Clave();
 		c11011.setCodigo(BigInteger.valueOf(11011));
-		c11011.setValor("2014");
+		c11011.setValor(year.toString());
 		keys.getClave().add(c11011);
 		
 		Clave c11012 = new Clave();
@@ -477,7 +519,8 @@ public class Utils {
 		
 		Clave c110219 = new Clave();
 		c110219.setCodigo(BigInteger.valueOf(110219));
-		c110219.setValor("2013");
+		Integer yearAux = year - 1; 
+		c110219.setValor(yearAux.toString());
 		keys.getClave().add(c110219);
 		
 		Clave c110229 = new Clave();
@@ -520,7 +563,7 @@ public class Utils {
 		
 		Clave c110119 = new Clave();
 		c110119.setCodigo(BigInteger.valueOf(110119));
-		c110119.setValor("2013");
+		c110119.setValor(yearAux.toString());
 		keys.getClave().add(c110119);
 		
 		Clave c11013 = new Clave();
@@ -571,37 +614,46 @@ public class Utils {
 		c9000000.setValor("1");
 		keys.getClave().add(c9000000);
 		
-		/* INICIALIZAR LOS VALORES DE LAS CUENTAS ANUALES MEDIANTE SUS FORMULAS DE CÁLCULO.
+		/* INICIALIZAR LOS VALORES DE LAS CUENTAS ANUALES MEDIANTE SUS FORMULAS DE CÁLCULO. 
+
 		AONContext ctx2 = null;
 		try {
 			ctx2 = AONContext.getAONContext( domain ,enterprise.getDomain());
-			AccMiningMVELContext acc = initialize(ctx2);
+			
+			//Valores de D2DepositHeaderKey
+			AccMiningMVELContext acc = initializeHeaderKey(ctx2, year, type);
 			for (String value : acc.keySet()) {
-				D2DepositKey k = D2DepositKey.valueOf(value);
-
-				Clave clave = new Clave();
-				Integer code = Integer.parseInt(k.getCode());
-				clave.setCodigo(BigInteger.valueOf(code));
-				clave.setValor(acc.get(value).toString());
-				
-				keys.getClave().add(clave);
+				if(!value.equalsIgnoreCase(ABREVIATE)){
+					D2DepositHeaderKey k = D2DepositHeaderKey.valueOf(value);
+					Clave clave = new Clave();
+					Integer code = Integer.parseInt(k.getCode());
+					clave.setCodigo(BigInteger.valueOf(code));
+					clave.setValor(acc.get(value).toString());	
+					keys.getClave().add(clave);
+				}
 			}
-		}finally {
+			
+			//Valores de D2DepositKey
+			AccMiningMVELContext acc2 = initializeKey(ctx2, year, type);
+			for (String value : acc2.keySet()) {
+				if(!value.equalsIgnoreCase(ABREVIATE)){
+					D2DepositKey k = D2DepositKey.valueOf(value);
+					Clave clave = new Clave();
+					Integer code = Integer.parseInt(k.getCode());
+					clave.setCodigo(BigInteger.valueOf(code));
+					clave.setValor(acc.get(value).toString());	
+					keys.getClave().add(clave);
+				}
+			}
+			
+		}finally{
 			if (ctx2 != null) ctx2.close();
 		}
 		*/
 		
-		schema.setClaves(keys);		
-		
-		byte[] b = null;
-		try {
-			b = writeXml(schema);
-		} catch (JAXBException | IOException e) {
-			e.printStackTrace();
-		}
-		return b;
+		schema.setClaves(keys);	
+		return schema;
 	}
-	
 	
 	private static final IAccMiningKeyAccept ACCEPTER = new IAccMiningKeyAccept() {
 		
@@ -634,28 +686,76 @@ public class Utils {
 		return params;
 	}
 	
-	public static AccMiningMVELContext initialize(AONContext ctx) {
-		
-		
-		Integer domainId = 1;
-		Integer year = 2014;
+	public static AccMiningMVELContext initializeHeaderKey(AONContext ctx, Integer year, String type) {
 		AccMiningMVELContext mvlCtx = new AccMiningMVELContext(ACCEPTER);
-		AccMiningParameters params =  getParams(ctx, domainId, year); //getParams(ctx,mod200);
+		AccMiningParameters params =  getParams(ctx, ctx.getDomainId(), year); //getParams(ctx,mod200);
+		if (params != null) {
+			mvlCtx.setAccounts(AON.getAccountBalances(ctx, params) );
+		} else {
+			mvlCtx.setAccounts( new HashMap<String,AccountBalance>() );
+		}
+		mvlCtx.setExpressionMap(INITIALIZE_EXPRESSION_MAP);
+		mvlCtx.put("ABREVIADO", type.equals(ABREVIATE));
+
+		for (String stringKey : INITIALIZE_EXPRESSION_MAP.keySet()) {
+			String expression = INITIALIZE_EXPRESSION_MAP.get(stringKey);
+			mvlCtx.put(stringKey, 0.0 );
+			Object ret = mvlCtx.evaluateExpression(stringKey,expression);
+			mvlCtx.put(stringKey, ret );
+		}	
+		return mvlCtx;
+	}
+	
+	public static AccMiningMVELContext initializeKey(AONContext ctx, Integer year, String type) {
+		AccMiningMVELContext mvlCtx = new AccMiningMVELContext(ACCEPTER);
+		AccMiningParameters params =  getParams(ctx, ctx.getDomainId(), year); //getParams(ctx,mod200);
 		if (params != null) {
 			mvlCtx.setAccounts(AON.getAccountBalances(ctx, params) );
 		} else {
 			mvlCtx.setAccounts( new HashMap<String,AccountBalance>() );
 		}
 		mvlCtx.setExpressionMap(INITIALIZE_EXPRESSION_MAP_D2);
-		for (String stringKey : INITIALIZE_EXPRESSION_MAP_D2.keySet()) {
-			D2DepositKey k = D2DepositKey.valueOf(stringKey.toString());
+
+		mvlCtx.put("ABREVIADO", type.equals(ABREVIATE));
+		for(String stringKey : INITIALIZE_EXPRESSION_MAP_D2.keySet()){
 			String expression = INITIALIZE_EXPRESSION_MAP_D2.get(stringKey);
-			mvlCtx.put(stringKey, 0.0 );
+			mvlCtx.put(stringKey, 0.0);
 			Object ret = mvlCtx.evaluateExpression(stringKey,expression);
 			mvlCtx.put(stringKey, ret );
-		}	
-	
+		}
 		return mvlCtx;
-	}
+	}	
 	
+	
+	/*
+	public static AccMiningMVELContext compute(AccMiningMVELContext map) {
+		map.get(keyObject)
+		D2MVELContext ctx = new D2MVELContext(map, resolver)
+		ctx.setExpressionMap(D2Compute.COMPUTE_MAP);
+		
+		for(String key : map.keySet()){
+			try {
+				if (AonStringUtils.isNotEmpty( map.get(key) )) {
+					Double d = Double.parseDouble(map.get(key));
+					ctx.put("Q"+key, d);
+				}
+			} catch (NumberFormatException e) {
+				// Ignore value
+			}
+		}
+
+		ctx.put("PYMES", map.get(D2DepositConstants.DEPOSIT_TYPE).equals("Pymes"));
+		for (String key : D2Compute.COMPUTE_MAP.keySet()) {
+			String expression = D2Compute.COMPUTE_MAP.get(key);
+			Object ret = ctx.evaluateExpression(key,expression);
+			if (ret instanceof Double) {
+				Double calculated = (Double) ret;
+				ctx.put("Q"+key, calculated);
+				
+				if(map.containsKey(key)) map.remove(key);
+				map.put(key, calculated.toString());
+			}
+		}
+		return map;
+	}*/
 }
