@@ -37,6 +37,32 @@
 			padding-top: 10px;
 			color: #aaa;
 		}
+		
+		.style-label {			
+			flex: 0 0 50px;
+			font-family: monospace;
+			font-size: 11px;
+			margin-right: 3px;
+			padding: 2px;
+			text-align: center;
+			vertical-align: middle;
+			width: auto;
+		}
+		
+		.type-label {
+			color: #668cff;
+			border: 0.5px solid #85a3e0;
+		}
+		
+		.priority-label {			
+			color: #ff5c33;
+			border: 0.5px solid #ff704d;
+		}
+		
+		.notice-label {			
+			color: #a30c51;
+			border: 0.5px solid #a30c51;
+		}
 		</ui:style>
 
 	<g:DockLayoutPanel>
@@ -51,7 +77,7 @@
 								<g:Button ui:field="typeButton" text="Tipo incidencia"
 									styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
 							</g:HorizontalPanel>
-							<g:Label ui:field="typeLabel" />
+							<g:Label ui:field="typeLabel" styleName="{style.style-label} {style.type-label}" />
 						</g:VerticalPanel>
 					</g:AbsolutePanel>
 
@@ -62,7 +88,7 @@
 								<g:Button ui:field="priorityButton" text="Prioridad"
 									styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
 							</g:HorizontalPanel>
-							<g:Label ui:field="priorityLabel" />
+							<g:Label ui:field="priorityLabel" styleName="{style.style-label} {style.priority-label}" />
 						</g:VerticalPanel>
 					</g:AbsolutePanel>
 
@@ -75,7 +101,7 @@
 							</g:HorizontalPanel>
 						</g:VerticalPanel>
 					</g:AbsolutePanel>
-					
+
 				</g:VerticalPanel>
 			</g:ScrollPanel>
 		</g:east>

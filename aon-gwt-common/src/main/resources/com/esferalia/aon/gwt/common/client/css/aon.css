@@ -247,7 +247,7 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 }
 
 .aon-gwt-office-dataTable {
-	width: 100%;
+	width: 99%;
 	font-family: arial, verdana, "sans serif";
 	border: #ccc 1px solid;
 	border-collapse: collapse;

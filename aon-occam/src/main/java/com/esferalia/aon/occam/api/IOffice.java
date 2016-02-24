@@ -35,12 +35,16 @@ public interface IOffice {
 
 	public boolean deleteTag(AONContext ctx, String labelName);
 	
-	public boolean DeleteAndAssignLabelFromIssue(AONContext ctx, Integer issueId, Tag tag);
+	public boolean removeLabelFromIssue(AONContext ctx, Integer issueId, Tag tag);
+	
+	public Notice replaceLabelsForIssue(AONContext ctx, Integer noticeId, List<Tag> add, List<Tag> deleted);
 
 	public Tag addNewTag(AONContext ctx, Tag tag)
 			throws IllegalArgumentException;
 
 	public Tag editTag(AONContext ctx, String labelName, Tag tag);
+	
+	public Notice addLabelsToAnIssue(AONContext ctx, Integer noticeId, List<Tag> tagList);
 
 	public Tag getTag(AONContext ctx, String name)
 			throws IllegalArgumentException;

@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.office.client.models.repos.JsRegistry;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
+import com.esferalia.aon.gwt.office.client.values.LabelControlValue;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.RepoValue;
 import com.esferalia.aon.gwt.office.client.values.Value;
@@ -131,12 +132,6 @@ public class AonHub {
 
 	}
 
-	public void addLabel2Issue(JsRepo repo, JsIssue issue, LabelValue prop,
-			AsyncCallback<JsLabel> callback) {
-		post(repo.getUrl() + "/issues/" + issue.getNumber() + "/labels", prop,
-				callback);
-	}
-
 	public void deleteIssue(String user, String repo, JsIssue issue,
 			AsyncCallback<JsIssue> callback) {
 		delete(baseUrl + "repos/" + user + "/" + repo + "/issues/"
@@ -182,10 +177,21 @@ public class AonHub {
 		post(baseUrl + "repos/" + user + "/" + repo + "/", prop, callback);
 	}
 
-	public void removeAndAssignLabelFromIssue(String user, String repo,
-			Integer issueNumber, String labelName,
-			AsyncCallback<JsLabel> callback) {
-		get(baseUrl + "repos/" + user + "/" + repo + "/issues/" + issueNumber
+	public void addLabelsToAnIssue(String user, String repo, Integer issueId,
+			IssueValue prop, AsyncCallback<JsIssue> callback) {
+		post(baseUrl + "repos/" + user + "/" + repo + "/issues/" + issueId
+				+ "/labels/", prop, callback);
+	}
+
+	public void replaceLabelsForIssue(String user, String repo, Integer issueId,
+			LabelControlValue prop, AsyncCallback<JsIssue> callback) {
+		post(baseUrl + "repos/" + user + "/" + repo + "/notice/" + issueId
+				+ "/labels/", prop, callback);
+	}
+
+	public void removeLabelFromIssue(String user, String repo, Integer issueId,
+			String labelName, AsyncCallback<JsLabel> callback) {
+		delete(baseUrl + "repos/" + user + "/" + repo + "/issues/" + issueId
 				+ "/labels/" + URL.encode(labelName), callback);
 	}
 

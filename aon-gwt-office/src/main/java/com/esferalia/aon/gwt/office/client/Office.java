@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
@@ -17,6 +18,7 @@ import com.esferalia.aon.gwt.office.client.models.repos.JsRegistry;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
+import com.esferalia.aon.gwt.office.client.values.LabelControlValue;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.esferalia.aon.occam.api.model.office.Notice;
@@ -29,6 +31,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -39,6 +42,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
@@ -59,21 +63,22 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	@UiField
 	Button newIssueButton;
 	@UiField
-	Button openIssuesButton;
-	@UiField
-	Button closedIssuesButton;
-	@UiField
 	Button tagButton;
 	@UiField
 	Button returnButton;
 	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
-	ResizeLayoutPanel dockOfficePanel;
+	DockLayoutPanel dockOfficePanel;
 	@UiField
 	SimpleLayoutPanel readIssueLayoutPanel;
 	@UiField
 	ResizeLayoutPanel readIssuePanel;
+
+	@UiField
+	RadioButton openIssuesRb;
+	@UiField
+	RadioButton closedIssuesRb;
 
 	@UiField
 	IssueGrid dataGrid;
@@ -94,7 +99,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private ListDataProvider<IssueSelected> openIssuesProvider;
 	private ListDataProvider<IssueSelected> closeIssuesProvider;
-	private List<Tag> tagList;
+	private List<DefaultAonTagIssueSelected> tagList;
 	private List<Registry> registries;
 
 	private Map<Integer, JsIssue> issuesMap;
@@ -112,7 +117,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 
-		this.tagList = new LinkedList<Tag>();
+		this.tagList = new LinkedList<DefaultAonTagIssueSelected>();
 		this.registries = new LinkedList<Registry>();
 
 		this.dataGrid.addListener(this);
@@ -245,7 +250,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("returnButton")
 	void onReturnButtonClick(ClickEvent event) {
-		if (openIssuesButton.isEnabled() == false)
+
+		if (openIssuesRb.getValue())
 			loadOpenIssues();
 		else
 			loadClosedIssues();
@@ -253,24 +259,24 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		returnButton.setEnabled(false);
 	}
 
-	@UiHandler("openIssuesButton")
-	void onOpenIssuesButton(ClickEvent event) {
-		enabledIssuesButton();
-		loadOpenIssues();
+	@UiHandler("openIssuesRb")
+	void onSelectedOpenIssuesRb(ValueChangeEvent<Boolean> event) {
+
+		if (event.getValue()) {
+			closedIssuesRb.removeStyleName(AON.AON_BOLD);
+			openIssuesRb.setStyleName(AON.AON_BOLD);
+			loadOpenIssues();
+		}
 	}
 
-	@UiHandler("closedIssuesButton")
-	void onClosedIssuesButton(ClickEvent event) {
-		enabledIssuesButton();
-		loadClosedIssues();
-	}
+	@UiHandler("closedIssuesRb")
+	void onSelectedClosedIssuesRb(ValueChangeEvent<Boolean> event) {
 
-	private void initEnabledIssuesButton() {
-	}
-
-	private void enabledIssuesButton() {
-		openIssuesButton.setEnabled(!openIssuesButton.isEnabled());
-		closedIssuesButton.setEnabled(!closedIssuesButton.isEnabled());
+		if (event.getValue()) {
+			openIssuesRb.removeStyleName(AON.AON_BOLD);
+			closedIssuesRb.setStyleName(AON.AON_BOLD);
+			loadClosedIssues();
+		}
 	}
 
 	// ******************************************************************
@@ -319,23 +325,24 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private void addLabels2List(JsLabel jsLabel) {
 
+		DefaultAonTagIssueSelected defaultTag = new DefaultAonTagIssueSelected(
+				jsLabel);
+		tagList.add(defaultTag);
+
 		Tag tag = new Tag();
-		tag.setId(jsLabel.getId());
-		tag.setName(jsLabel.getName());
-		tag.setType(jsLabel.getType());
-		tag.setColor(jsLabel.getColor());
-		tag.setDomain(jsLabel.getDomain());
+		tag.setId(defaultTag.getId());
+		tag.setDomain(defaultTag.getDomain());
+		tag.setName(defaultTag.getName());
+		tag.setType(defaultTag.getType());
 
-		tagList.add(tag);
-
-		if (tag.getDomain() != 0)
+		if (defaultTag.getDomain() != 0)
 			tagTree.insertTag(tag);
 	}
 
 	private void addRegistry2List(JsRegistry jsRegistry) {
 		Registry registry = new Registry();
 		registry.setId(jsRegistry.getId());
-		registry.setAlias(URL.decode(jsRegistry.getAlias()));		
+		registry.setAlias(URL.decode(jsRegistry.getAlias()));
 		registry.setName(URL.decode(jsRegistry.getName()));
 		registry.setDocument(jsRegistry.getDocument());
 
@@ -543,7 +550,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 								result);
 						issueSelected.addComment(result);
 						callback.onSucess(comment);
-
 					}
 				});
 	}
@@ -572,28 +578,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	@Override
-	public void onTypeTagValueChange(final String name, final Callback<DefaultAonTagIssueSelected> callback) {
-		gitHub.removeAndAssignLabelFromIssue(String.valueOf(getCurrentDomain()),
-				getCurrentDomainName(), issueSelected.getNumber(), name,
-				new AsyncCallback<JsLabel>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						callback.onFailure(caught);
-					}
-
-					@Override
-					public void onSuccess(JsLabel result) {	
-						DefaultAonTagIssueSelected tagDefault = issueSelected.editTag(result);
-						callback.onSucess(tagDefault);
-					}
-				});
-	}
-
-	@Override
-	public void onPriorityValueChange(final String name, final Callback<DefaultAonTagIssueSelected> callback) {
-		gitHub.removeAndAssignLabelFromIssue(String.valueOf(getCurrentDomain()),
-				getCurrentDomainName(), issueSelected.getNumber(), name,
+	public void onRemoveLabelFromIssue(final String labelName,
+			final Callback<DefaultAonTagIssueSelected> callback) {
+		gitHub.removeLabelFromIssue(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), issueSelected.getId(), labelName,
 				new AsyncCallback<JsLabel>() {
 
 					@Override
@@ -603,10 +591,77 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsLabel result) {
-						DefaultAonTagIssueSelected tagDefault = issueSelected.editTag(result);
-						callback.onSucess(tagDefault);
+						issueSelected.deleteTag(labelName);
+						callback.onSucess(null);
 					}
 				});
+	}
+
+	@Override
+	public void addLabelToAnIssue(List<String> labels) {
+
+		String[] labelsArr = new String[labels.size()];
+		for (int x = 0; x < labels.size(); x++)
+			labelsArr[x] = labels.get(x);
+
+		final IssueValue prop = new IssueValue();
+		prop.setLabels(labelsArr);
+
+		gitHub.addLabelsToAnIssue(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), issueSelected.getId(), prop,
+				new AsyncCallback<JsIssue>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Error al cargar la incidencia");
+					}
+
+					@Override
+					public void onSuccess(JsIssue result) {
+						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(
+								result);
+						openIssues.add(0, issue);
+						onSelectionTitle(issue);
+					}
+				});
+	}
+
+	@Override
+	public void onReplaceLabelsForIssue(
+			List<DefaultAonTagIssueSelected> addLabels,
+			List<DefaultAonTagIssueSelected> deletedLabels) {
+
+		String[] addLabelsArr = new String[addLabels.size()];
+		String[] delLabelsArr = new String[deletedLabels.size()];
+
+		for (int x = 0; x < addLabels.size(); x++)
+			addLabelsArr[x] = addLabels.get(x).getName();
+
+		for (int y = 0; y < deletedLabels.size(); y++)
+			delLabelsArr[y] = deletedLabels.get(y).getName();
+
+		final LabelControlValue prop = new LabelControlValue();
+		prop.addLabels(addLabelsArr);
+		prop.deletedLabels(delLabelsArr);
+
+		gitHub.replaceLabelsForIssue(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), issueSelected.getId(), prop,
+				new AsyncCallback<JsIssue>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Error en la gestion de etiquetas");
+					}
+
+					@Override
+					public void onSuccess(JsIssue result) {
+						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(
+								result);
+						openIssues.add(0, issue);
+						onSelectionTitle(issue);
+					}
+				});
+
 	}
 
 	private static native <T extends JavaScriptObject> T eval(String javascript)

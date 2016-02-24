@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -63,9 +62,13 @@ public class IssueReadPanel extends Composite {
 		void onIssueCommentButtonClick(String body,
 				Callback<DefaultAonIssueComments> callback);
 
-		void onTypeTagValueChange(String name, Callback<DefaultAonTagIssueSelected> callback);
+		void onRemoveLabelFromIssue(String name,
+				Callback<DefaultAonTagIssueSelected> callback);
 
-		void onPriorityValueChange(String name, Callback<DefaultAonTagIssueSelected> callback);
+		void onReplaceLabelsForIssue(List<DefaultAonTagIssueSelected> addLabels,
+				List<DefaultAonTagIssueSelected> deletedLabels);
+
+		void addLabelToAnIssue(List<String> labels);
 	}
 
 	interface GridStyle extends CssResource {
@@ -80,6 +83,12 @@ public class IssueReadPanel extends Composite {
 
 		@ClassName("header-title")
 		String headerTitle();
+
+		@ClassName("style-label")
+		String styleLabel();
+
+		@ClassName("notice-label")
+		String noticeLabel();
 	}
 
 	private static IssueReadPanelUiBinder uiBinder = GWT
@@ -130,6 +139,10 @@ public class IssueReadPanel extends Composite {
 
 	private DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");
 
+	private List<DefaultAonTagIssueSelected> assignTags;
+	private List<DefaultAonTagIssueSelected> addTagsMap;
+	private List<DefaultAonTagIssueSelected> deletedTagsMap;
+
 	public IssueReadPanel(IssueSelected issue) {
 		initWidget(uiBinder.createAndBindUi(this));
 
@@ -137,6 +150,13 @@ public class IssueReadPanel extends Composite {
 		this.issue = issue;
 		this.type = issue.getType();
 		this.priority = issue.getPriority();
+
+		this.addTagsMap = new LinkedList<DefaultAonTagIssueSelected>();
+		this.deletedTagsMap = new LinkedList<DefaultAonTagIssueSelected>();
+		this.assignTags = new LinkedList<DefaultAonTagIssueSelected>();
+
+		for (DefaultAonTagIssueSelected tag : issue.getTags())
+			assignTags.add(tag);
 
 		initHeader(issue);
 		printBody(issue);
@@ -160,13 +180,13 @@ public class IssueReadPanel extends Composite {
 		userLogged.setText(user.getName());
 	}
 
-	public void setTags(List<Tag> tags) {
+	public void setTags(List<DefaultAonTagIssueSelected> tags) {
 
-		List<Tag> typesList = new LinkedList<Tag>();
-		List<Tag> priorityList = new LinkedList<Tag>();
-		List<Tag> officeList = new LinkedList<Tag>();
+		List<DefaultAonTagIssueSelected> typesList = new LinkedList<DefaultAonTagIssueSelected>();
+		List<DefaultAonTagIssueSelected> priorityList = new LinkedList<DefaultAonTagIssueSelected>();
+		List<DefaultAonTagIssueSelected> officeList = new LinkedList<DefaultAonTagIssueSelected>();
 
-		for (Tag tag : tags) {
+		for (DefaultAonTagIssueSelected tag : tags) {
 			if (tag.getType() == TagType.OFFICE_TYPE.value())
 				typesList.add(tag);
 			else if (tag.getType() == TagType.OFFICE_PRIORITY.value())
@@ -328,7 +348,8 @@ public class IssueReadPanel extends Composite {
 
 	}
 
-	private void initTypeButton(final List<Tag> typeTags) {
+	private void initTypeButton(
+			final List<DefaultAonTagIssueSelected> typeTags) {
 		typeButton.addClickHandler(new ClickHandler() {
 
 			private PopupPanel popup = new PopupPanel(true);
@@ -336,7 +357,7 @@ public class IssueReadPanel extends Composite {
 			{
 				VerticalPanel vPanel = new VerticalPanel();
 
-				for (Tag tag : typeTags) {
+				for (DefaultAonTagIssueSelected tag : typeTags) {
 
 					RadioButton rb = new RadioButton("TYPE", tag.getName());
 					rb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -362,8 +383,10 @@ public class IssueReadPanel extends Composite {
 					@Override
 					public void onClose(CloseEvent<PopupPanel> event) {
 						String typeAux = IssueReadPanel.this.type;
-						if (typeAux.compareTo(issue.getType()) != 0)
-							onTypeLabelChangeEvent(typeAux);
+						if (typeAux.compareTo(issue.getType()) != 0) {
+							onRemoveTypeLabelFromIssue(typeLabel.getText(),
+									typeAux);
+						}
 					}
 				});
 			}
@@ -380,7 +403,8 @@ public class IssueReadPanel extends Composite {
 		});
 	}
 
-	private void initPriorityButton(final List<Tag> priorityTags) {
+	private void initPriorityButton(
+			final List<DefaultAonTagIssueSelected> priorityTags) {
 		priorityButton.addClickHandler(new ClickHandler() {
 
 			private PopupPanel popup = new PopupPanel(true);
@@ -388,7 +412,7 @@ public class IssueReadPanel extends Composite {
 			{
 				VerticalPanel vPanel = new VerticalPanel();
 
-				for (Tag tag : priorityTags) {
+				for (DefaultAonTagIssueSelected tag : priorityTags) {
 
 					RadioButton rb = new RadioButton("PRIORITY", tag.getName());
 					rb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -417,7 +441,7 @@ public class IssueReadPanel extends Composite {
 					public void onClose(CloseEvent<PopupPanel> event) {
 						String aux = IssueReadPanel.this.priority;
 						if (aux.compareTo(issue.getPriority()) != 0) {
-							onPriorityLabelChangeEvent(aux);
+							onRemovePriorityLabel(priorityLabel.getText(), aux);
 						}
 					}
 				});
@@ -435,7 +459,8 @@ public class IssueReadPanel extends Composite {
 		});
 	}
 
-	private void initTagButton(final List<Tag> noticeTags) {
+	private void initTagButton(
+			final List<DefaultAonTagIssueSelected> noticeTags) {
 		tagButton.addClickHandler(new ClickHandler() {
 
 			private PopupPanel popup = new PopupPanel(true);
@@ -443,7 +468,7 @@ public class IssueReadPanel extends Composite {
 			{
 				VerticalPanel vPanel = new VerticalPanel();
 
-				for (Tag tag : noticeTags) {
+				for (final DefaultAonTagIssueSelected tag : noticeTags) {
 
 					CheckBox cb = new CheckBox(tag.getName());
 					cb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -451,6 +476,11 @@ public class IssueReadPanel extends Composite {
 						@Override
 						public void onValueChange(
 								ValueChangeEvent<Boolean> event) {
+
+							if (event.getValue() == true)
+								evalAssignTag(tag);
+							else
+								evalUnAssingTag(tag);
 						}
 					});
 
@@ -463,6 +493,7 @@ public class IssueReadPanel extends Composite {
 
 					@Override
 					public void onClose(CloseEvent<PopupPanel> event) {
+						onReplaceNoticeTag();
 					}
 				});
 			}
@@ -480,10 +511,38 @@ public class IssueReadPanel extends Composite {
 		});
 	}
 
+	private void evalAssignTag(DefaultAonTagIssueSelected tag) {
+
+		for (DefaultAonTagIssueSelected tagAux : assignTags) {
+			if (tagAux.getName().compareTo(tag.getName()) == 0
+					&& tagAux.getType() == tag.getType()) {
+				deletedTagsMap.remove(tag);
+				return;
+			}
+		}
+		addTagsMap.add(tag);
+	}
+
+	private void evalUnAssingTag(DefaultAonTagIssueSelected tag) {
+
+		for (DefaultAonTagIssueSelected tagAux : assignTags) {
+			if (tagAux.getName().compareTo(tag.getName()) == 0
+					&& tagAux.getType() == tag.getType()) {
+				deletedTagsMap.add(tag);
+				return;
+			}
+		}
+
+		addTagsMap.remove(tag);
+	}
+
 	private boolean containsOfficeTag(String name) {
 		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
 			if (tag.getName().compareTo(name) == 0) {
-				labelsVPanel.add(new Label(name));
+				Label label = new Label(name);
+				label.setStyleName(style.styleLabel());
+				label.addStyleName(style.noticeLabel());
+				labelsVPanel.add(label);
 				return true;
 			}
 		}
@@ -578,40 +637,60 @@ public class IssueReadPanel extends Composite {
 			}
 		});
 	}
-	
-	private void onTypeLabelChangeEvent(final String name) {
+
+	private void onRemoveTypeLabelFromIssue(final String oldName,
+			final String newName) {
 		for (Listener listener : listeners)
-			listener.onTypeTagValueChange(name, new Callback<DefaultAonTagIssueSelected>() {
+			listener.onRemoveLabelFromIssue(oldName,
+					new Callback<DefaultAonTagIssueSelected>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					Window.alert("Error al cerrar la etiqueta");
-				}
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("Error al cerrar la etiqueta");
+						}
 
-				@Override
-				public void onSucess(DefaultAonTagIssueSelected label) {
-					typeLabel.setText(label.getName());
-					IssueReadPanel.this.type = label.getName();
-				}
-			});
+						@Override
+						public void onSucess(
+								DefaultAonTagIssueSelected comment) {
+							onAddTypeLabelFromAnIssue(newName);
+						}
+					});
 	}
-	
-	
-	private void onPriorityLabelChangeEvent(final String name) {
+
+	private void onAddTypeLabelFromAnIssue(final String name) {
+		List<String> list = new LinkedList<String>();
+		list.add(name);
+
 		for (Listener listener : listeners)
-			listener.onPriorityValueChange(name, new Callback<DefaultAonTagIssueSelected>() {
+			listener.addLabelToAnIssue(list);
+	}
 
-				@Override
-				public void onFailure(Throwable caught) {
-					Window.alert("Error al cerrar la etiqueta");
-				}
+	private void onAddPriorityLabelFromAnIssue(final String name) {
+		List<String> list = new LinkedList<String>();
+		list.add(name);
 
-				@Override
-				public void onSucess(DefaultAonTagIssueSelected label) {
-					priorityLabel.setText(label.getName());
-					IssueReadPanel.this.priority = label.getName();
-				}
-			});
+		for (Listener listener : listeners)
+			listener.addLabelToAnIssue(list);
+	}
+
+	private void onRemovePriorityLabel(final String oldName,
+			final String newName) {
+		for (Listener listener : listeners)
+			listener.onRemoveLabelFromIssue(oldName,
+					new Callback<DefaultAonTagIssueSelected>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert(
+									"Error al cerrar la etiqueta de prioridad");
+						}
+
+						@Override
+						public void onSucess(
+								DefaultAonTagIssueSelected comment) {
+							onAddPriorityLabelFromAnIssue(newName);
+						}
+					});
 	}
 
 	private void onCancelEditComment(TextArea textArea, Button button) {
@@ -668,6 +747,12 @@ public class IssueReadPanel extends Composite {
 							textArea.setReadOnly(true);
 						}
 					});
+	}
+	
+	private void onReplaceNoticeTag() {
+		
+		for (Listener listener : listeners)
+			listener.onReplaceLabelsForIssue(addTagsMap, deletedTagsMap);
 	}
 
 	private TextArea getTextArea(String text) {

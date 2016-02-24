@@ -9,4 +9,6 @@ public interface LabelSelected {
 	String getName();
 	
 	String getColor();
+	
+	Integer getDomain();
 }

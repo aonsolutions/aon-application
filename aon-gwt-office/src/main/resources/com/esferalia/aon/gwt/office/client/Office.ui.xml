@@ -14,6 +14,13 @@
 		padding: 0.7em 0.5em 0.7em 0.6em;
 	}
 	
+	.searchPanel {
+		left: 1em !important;
+		right: 2em !important;
+		bottom: 0.5em !important;
+		border-bottom: 1px solid #D8D27A !important;
+	}
+	
 	.aon-editDataTable-buttonWest {
 		min-height: 22px;
 		border: 0;
@@ -40,39 +47,14 @@
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
-		<g:north size="72">
-			<g:FlowPanel>
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
-					<g:HorizontalPanel>
-						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText" text="Incidencias" />
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-								<g:Label styleName="aon-outputText" />
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field='openIssuesButton'
-									styleName="aon-finding-toolbar-item
-								 {aonResources.css.aonIconIssueOpen}"
-									enabled="false" title="Cargar incidencias abiertas o reabiertas" />
-								<g:Button ui:field='closedIssuesButton'
-									styleName="aon-finding-toolbar-item {aonResources.css.aonIconIssueClosed}"
-									title="Cargar incidencias cerradas" />
-							</g:HTMLPanel>
-						</g:HorizontalPanel>
-					</g:HorizontalPanel>
-				</g:FlowPanel>
+		<g:north size="25">
+			
 
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText">Edici&oacute;n</g:Label>
+								<g:Label styleName="aon-outputText" text="Incidencias" />
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
@@ -93,20 +75,43 @@
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
-			</g:FlowPanel>
+		
 		</g:north>
 
 		<g:center>
 			<g:DeckLayoutPanel ui:field="deckPanel">
-				<g:ResizeLayoutPanel ui:field="dockOfficePanel">
-					<g:HTMLPanel styleName="aon-scroll-area">
-						<g:SimpleLayoutPanel ui:field="resultsPanel"
-							height="100%">
-							<office:IssueGrid ui:field="dataGrid" />
-						</g:SimpleLayoutPanel>
-					</g:HTMLPanel>
-				</g:ResizeLayoutPanel>
 
+				<g:DockLayoutPanel ui:field="dockOfficePanel"
+					unit="PX">
+					<g:north size="90">
+						<g:HTMLPanel styleName="aon-panelGrid-search {style.searchPanel}">
+							<div class="aon-panelGrid-search-info">
+								<g:Label styleName="aon-panelGrid-search-info-internal"
+									text="Criterio de búsqueda" />
+							</div>
+							<table class="aon-panelGrid">
+								<tr>
+									<td>
+										<g:RadioButton ui:field="openIssuesRb" name="showIssuesRb"
+										value="true" styleName="{aonResources.css.aonBold}"> Abiertas </g:RadioButton>
+									</td>
+									<td>
+										<g:RadioButton ui:field="closedIssuesRb" name="showIssuesRb"
+										value="false" > Cerradas </g:RadioButton>
+									</td>
+								</tr>
+							</table>
+						</g:HTMLPanel>
+					</g:north>
+					<g:center>
+						<g:HTMLPanel styleName="aon-scroll-area">
+							<g:SimpleLayoutPanel ui:field="resultsPanel"
+								height="100%">
+								<office:IssueGrid ui:field="dataGrid" />
+							</g:SimpleLayoutPanel>
+						</g:HTMLPanel>
+					</g:center>
+				</g:DockLayoutPanel>
 				<g:ResizeLayoutPanel ui:field="readIssuePanel">
 					<g:HTMLPanel styleName="aon-scroll-area">
 						<g:SimpleLayoutPanel ui:field="readIssueLayoutPanel"

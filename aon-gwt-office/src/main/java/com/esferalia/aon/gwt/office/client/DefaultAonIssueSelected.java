@@ -142,6 +142,22 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 	}
 	
 	@Override
+	public void addTag(DefaultAonTagIssueSelected tag) {
+		getTags().add(tag);
+	}
+	
+	@Override
+	public void deleteTag(String name) {
+		
+		for (DefaultAonTagIssueSelected tag : getTags()) {
+			if (tag.getName().compareTo(name) == 0) {
+				getTags().remove(tag);
+				break;
+			}
+		}		
+	}
+	
+	@Override
 	public DefaultAonIssueComments addComment(JsIssueComment comment) {
 		DefaultAonIssueComments newComment = new DefaultAonIssueComments(comment);
 		this.comments.add(newComment);

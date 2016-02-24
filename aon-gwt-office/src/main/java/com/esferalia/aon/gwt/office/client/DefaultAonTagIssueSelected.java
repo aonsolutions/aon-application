@@ -19,6 +19,11 @@ public class DefaultAonTagIssueSelected implements LabelSelected {
 	}
 	
 	@Override
+	public Integer getDomain() {		
+		return label.getDomain();
+	}
+	
+	@Override
 	public byte getType() {	
 		return label.getType();
 	}

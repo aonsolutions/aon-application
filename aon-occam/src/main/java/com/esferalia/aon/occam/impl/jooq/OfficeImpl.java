@@ -56,6 +56,12 @@ public class OfficeImpl implements IOffice {
 	public Tag editTag(AONContext ctx, String labelName, Tag tag) {		
 		return AonHubDAO.editTag(ctx, labelName, tag);
 	}
+	
+	@Override
+	public Notice addLabelsToAnIssue(AONContext ctx, Integer noticeId,
+			List<Tag> tagList) {
+		return AonHubDAO.addLabelsToAnIssue(ctx, noticeId, tagList); 
+	}
 
 	@Override
 	public List<Tag> getTags(AONContext ctx) throws IllegalArgumentException {
@@ -89,9 +95,15 @@ public class OfficeImpl implements IOffice {
 	}
 	
 	@Override
-	public boolean DeleteAndAssignLabelFromIssue(AONContext ctx, Integer issueId,
+	public boolean removeLabelFromIssue(AONContext ctx, Integer issueId,
 			Tag tag) {
-		return AonHubDAO.DeleteAndAssignLabelFromIssue(ctx, issueId, tag);
+		return AonHubDAO.removeLabelFromIssue(ctx, issueId, tag);
+	}
+	
+	@Override
+	public Notice replaceLabelsForIssue(AONContext ctx, Integer noticeId, List<Tag> add,
+			List<Tag> deleted) {		
+		return AonHubDAO.replaceLabelsForIssue(ctx, noticeId, add, deleted);
 	}
 	
 	@Override

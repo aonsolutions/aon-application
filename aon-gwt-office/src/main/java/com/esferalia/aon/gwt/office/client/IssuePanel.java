@@ -126,10 +126,10 @@ public class IssuePanel extends CustomDialog {
 		}
 	}
 	
-	public void setTagList(List<Tag> tagList) {
+	public void setTagList(List<DefaultAonTagIssueSelected> tagList) {
 		this.registrySuggest.setEnabled(true);
 		
-		for (Tag tag : tagList)
+		for (DefaultAonTagIssueSelected tag : tagList)
 			addTag(tag);
 	}
 	
@@ -141,7 +141,7 @@ public class IssuePanel extends CustomDialog {
 		selectedTags.remove(name);
 	}
 
-	public void addTag(Tag tag) {
+	public void addTag(DefaultAonTagIssueSelected tag) {
 
 		if (tag.getType() == TagType.OFFICE_NOTICE.value()) {
 			CheckBox check = new CheckBox(tag.getName());			

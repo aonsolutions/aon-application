@@ -39,6 +39,10 @@ public interface IssueSelected {
 	
 	DefaultAonTagIssueSelected editTag(JsLabel label);
 	
+	void addTag (DefaultAonTagIssueSelected tag);
+	
+	void deleteTag(String name);
+	
 	List<DefaultAonTagIssueSelected> getTags();
 	
 	List<DefaultAonIssueComments> getComments();

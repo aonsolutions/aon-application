@@ -455,9 +455,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 				ListIterator<DefaultAonTagIssueSelected> iterator = object.getTags().listIterator();
 				while ( iterator.hasNext() ) {
 					DefaultAonTagIssueSelected tag = iterator.next();
-					buffer.append(tag.getName().toUpperCase());
-					if ( iterator.hasNext() )
-						buffer.append(" - ");
+					if (tag.getType() == TagType.OFFICE_NOTICE.value()) {
+						buffer.append(tag.getName().toUpperCase());
+						if ( iterator.hasNext() )
+							buffer.append(" - ");
+					}
 				}
 				
 				return buffer.toString();

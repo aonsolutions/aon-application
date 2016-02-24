@@ -2274,12 +2274,34 @@ public class AON {
 		}
 	}
 	
-	public static boolean DeleteAndAssignLabelFromIssue(Integer domainId, String domainName, String userName, 
-			Integer issueId, Tag tag) {
+	public static Notice addLabelsToAnIssue(Integer domainId, String domainName, String userName, Integer issueId, List<Tag> tagList) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().DeleteAndAssignLabelFromIssue(ctx, issueId, tag);
+			return getOffice().addLabelsToAnIssue(ctx, issueId, tagList);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static boolean removeLabelFromIssue(Integer domainId, String domainName, String userName, Integer issueId, Tag tag) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().removeLabelFromIssue(ctx, issueId, tag);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Notice replaceLabelFromIssue(Integer domainId, String domainName, String userName, Integer issueId, 
+			List<Tag> addLabels, List<Tag> deletedTags) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().replaceLabelsForIssue(ctx, issueId, addLabels, deletedTags);
 		} finally {
 			if (ctx != null)
 				ctx.close();
