@@ -25,6 +25,8 @@ import com.code.aon.fiscal.enumeration.Mod347Type;
 import com.code.aon.fiscal.enumeration.Mod349Status;
 import com.code.aon.fiscal.enumeration.Mod349Type;
 import com.code.aon.fiscal.enumeration.Period;
+import com.code.aon.fiscal.enumeration.RetentionRegime;
+import com.code.aon.fiscal.enumeration.VatRegime;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.fiscal.enumeration.VatType;
@@ -40,6 +42,8 @@ public class FiscalCollectionsController implements Serializable {
 	private List<SelectItem> vatTaxStatuses;
 	private List<SelectItem> vatTaxDeclarationStatuses;
 	private List<SelectItem> vatTypes;
+	private List<SelectItem> vatRegimes;
+	private List<SelectItem> retentionRegimes;
 	private List<SelectItem> invoiceOrders;
 	private List<SelectItem> periods;
 	private List<SelectItem> quarterPeriods;
@@ -112,6 +116,30 @@ public class FiscalCollectionsController implements Serializable {
 			}
 		}
 		return vatTypes;
+	}
+
+	public List<SelectItem> getVatRegimes() {
+		if (vatRegimes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			vatRegimes = new LinkedList<SelectItem>();
+			for (VatRegime regime : VatRegime.values()) {
+				SelectItem item = new SelectItem(regime, regime.getName(locale));
+				vatRegimes.add(item);
+			}
+		}
+		return vatRegimes;
+	}
+
+	public List<SelectItem> getRetentionRegimes() {
+		if (retentionRegimes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			retentionRegimes = new LinkedList<SelectItem>();
+			for (RetentionRegime regime : RetentionRegime.values()) {
+				SelectItem item = new SelectItem(regime, regime.getName(locale));
+				retentionRegimes.add(item);
+			}
+		}
+		return retentionRegimes;
 	}
 
 	public List<SelectItem> getInvoiceReportOrders() {

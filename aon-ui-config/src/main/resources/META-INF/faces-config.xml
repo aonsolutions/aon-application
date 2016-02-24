@@ -693,6 +693,60 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************ IAE ************** -->
+	<managed-bean>
+		<managed-bean-name>iae</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.controller.FiltrableBasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.IAE</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>iae</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>IAE_title</value>
+		</managed-property>
+	</managed-bean>	
+
+	<!-- ************ IAE LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>iaeLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>iaeLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.config.IAE</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>IAE_section,IAE_epigraph</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>IAE_title</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/iae/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/iae/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
+	
 	<!-- ************ DOMAIN LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>domainLookup</managed-bean-name>

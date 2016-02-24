@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
+		<ui:param name="lookupBean" value="#{iaeLookup}" />
+		<ui:param name="controller" value="#{iae}" />
+		<ui:param name="lookupInputValue" value="#{lookupTo.epigraph}"/>
+		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.title}" />
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.title}"/>
+		<ui:param name="skipNewButton" value="true" />
+		<ui:param name="skipGoToButton" value="true" />
+		<ui:param name="lookupLabel" value="#{bundle.config_iae}" />
+		<ui:param name="searchButtonTitle" value="#{bundle.config_iae_selection}" />
+		
+		<ui:define name="lookupInputTextContent">
+			<aon:joinProperty alias="IAE_epigraph" value="#{lookupInputValue}" />
+		</ui:define>		
+	</ui:decorate>
+	
+</ui:composition>

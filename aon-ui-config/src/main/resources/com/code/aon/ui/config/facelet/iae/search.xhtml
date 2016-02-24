@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html" >
+
+	<aon:outputLabel for="IAE_section"
+		value="#{bundle.registry_rd_section}" />
+	<aon:inputText id="IAE_section" size="2"
+		valueChangeListener="#{lookup.addExpression}" />
+
+	<aon:outputLabel for="IAE_epigraph"
+		value="#{bundle.fiscal_epigraph}" />
+	<aon:inputText id="IAE_epigraph" size="5"
+		valueChangeListener="#{lookup.addExpression}" />
+
+	<aon:outputLabel for="IAE_title"
+		value="#{bundle.aon_description}" />
+	<aon:inputText id="IAE_title" size="40"
+		valueChangeListener="#{lookup.addExpression}" />
+		
+</ui:composition>

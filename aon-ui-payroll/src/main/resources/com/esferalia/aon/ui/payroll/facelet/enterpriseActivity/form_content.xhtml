@@ -13,10 +13,57 @@
 			maxlength="32" value="#{controller.to.description}"
 			required="true" />
 	
+		<ui:include src="/com/code/aon/ui/config/facelet/cnae2009/lookup.xhtml">
+			<ui:param name="lookupTo" value="#{controller.to.cnae2009}" />
+			<ui:param name="idRequired" value="#{true}" />
+		</ui:include>				
+
+		<aon:if test="#{!skipFiscalInfo}">
+			<ui:include src="/com/code/aon/ui/config/facelet/iae/lookup.xhtml">
+				<ui:param name="lookupTo" value="#{controller.to.iae}" />
+				<ui:param name="idRequired" value="#{true}" />
+			</ui:include>				
+
+			<aon:outputLabel for="EnterpriseActivity_vatRegime"
+				value="#{bundle.fiscal_vat_regime}" />
+			<aon:div>
+				<aon:selectOneMenu id="EnterpriseActivity_vatRegime"
+					value="#{controller.to.vatRegime}">
+					<f:selectItem itemLabel="-" value="#{null}" />		
+					<f:selectItems value="#{fiscalCollections.vatRegimes}" />
+				</aon:selectOneMenu>
+				<aon:selectBooleanCheckbox id="EnterpriseActivity_surcharge"
+					styleClass="aon-margin-left"
+					value="#{controller.to.surcharge}" />
+				<aon:outputLabel for="EnterpriseActivity_surcharge" styleClass="aon-italic"
+					value="#{bundle.aon_surcharge_full}" />
+			</aon:div>
+
+			<aon:outputLabel for="EnterpriseActivity_retentionRegime"
+				value="#{bundle.fiscal_retention_regime}" />
+			<aon:selectOneMenu id="EnterpriseActivity_retentionRegime"
+				value="#{controller.to.retentionRegime}">
+				<f:selectItem itemLabel="-" value="#{null}" />		
+				<f:selectItems value="#{fiscalCollections.retentionRegimes}" />
+			</aon:selectOneMenu>
+
+			<aon:outputLabel for="EnterpriseActivity_startDate" value="#{bundle.accounting_initial_date}" />
+			<aon:selectInputDate id="EnterpriseActivity_startDate"
+				value="#{controller.to.startDate}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}" />
+
+			<aon:outputLabel for="EnterpriseActivity_endDate" value="#{bundle.accounting_cancellation_date}" />
+			<aon:selectInputDate id="EnterpriseActivity_endDate"
+				value="#{controller.to.endDate}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}" />
+		</aon:if>
+
 		<aon:if test="#{actionDenied.manager.renderPayrollConfig}">
 			<aon:outputLabel for="EnterpriseActivity_quoteRegime"
 				value="#{bundle.payroll_activity_quoteRegime}" />
-			<aon:selectOneMenu id="EnterpriseActivity_quoteRegime" required="true"
+			<aon:selectOneMenu id="EnterpriseActivity_quoteRegime" required="#{controller.nevv}"
 				value="#{controller.to.type}"
 				rendered="#{controller.nevv}">
 				<f:selectItems value="#{payrollCollections.availableSsRegimes}" />
@@ -25,11 +72,6 @@
 				rendered="#{!controller.nevv}" />
 		</aon:if>
 		
-		<ui:include src="/com/code/aon/ui/config/facelet/cnae2009/lookup.xhtml" >
-			<ui:param name="lookupTo" value="#{controller.to.cnae2009}" />
-			<ui:param name="idRequired" value="#{true}" />
-		</ui:include>				
-
 		<aon:outputLabel for="EnterpriseActivity_principal"
 			value="#{bundle.aon_activity_principal}" />
 		<aon:selectOneRadio id="EnterpriseActivity_principal" required="true"

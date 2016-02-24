@@ -25,6 +25,18 @@
 						value="#{investAsset.to.description}" required="#{true}"
 						size="40" maxlength="64" />
 
+					<aon:outputLabel for="InvestAsset_activity" value="#{bundle.aon_activity}" />
+					<aon:selectOneMenu id="InvestAsset_activity"
+						value="#{investAsset.to.activity}">
+						<f:selectItem itemLabel="- #{bundle.aon_common_all} -" value="#{null}" />
+						<aon:if test="#{investAsset.nevv or investAsset.to.endDate == null}">
+							<f:selectItems value="#{companyCollections.activeCompanyActivities}" />
+						</aon:if>
+						<aon:if test="#{!investAsset.nevv and investAsset.to.endDate != null}">
+							<f:selectItems value="#{companyCollections.companyActivities}" />
+						</aon:if>
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="InvestAsset_type" value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="InvestAsset_type"
 						value="#{investAsset.to.type}" required="#{true}">
