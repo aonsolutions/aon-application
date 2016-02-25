@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer;
@@ -42,7 +42,7 @@ public class Mod202Print extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("modId"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod202 mod202 = AON.getMod202(domainName, domainId,AonServletUtils.getLoggedUser(),id);
+			Mod202 mod202 = FISCAL.getMod202(domainName, domainId,AonServletUtils.getLoggedUser(),id);
 
 			String s = mod202.getName();
 			StringBuilder sb = new StringBuilder();

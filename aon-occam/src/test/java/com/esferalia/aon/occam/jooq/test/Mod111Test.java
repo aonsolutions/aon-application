@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -24,12 +24,12 @@ public class Mod111Test {
 	
 	@Test
 	public void testInitializeAlava() throws IOException {
-		Mod111 mod111 = AON.initializeMod111(DOMAIN_NAME, DOMAIN_ID, USER, null);
+		Mod111 mod111 = FISCAL.initializeMod111(DOMAIN_NAME, DOMAIN_ID, USER, null);
 		mod111.setAdministration(Administration.ALAVA);
 		System.out.println("INITIALIZED!");
 		print(mod111);
 		
-		mod111 = AON.createMod111(DOMAIN_NAME, DOMAIN_ID, USER, mod111);
+		mod111 = FISCAL.createMod111(DOMAIN_NAME, DOMAIN_ID, USER, mod111);
 		
 		System.out.println("CREATED!");
 		print(mod111);
@@ -44,7 +44,7 @@ public class Mod111Test {
 		mod111.ensureDetail(Mod111Key.AR_C84).setAmount(20.0);
 		mod111.ensureDetail(Mod111Key.AR_C85).setAmount(30.0);
 		
-		mod111 = AON.calculate(DOMAIN_NAME, USER, mod111);
+		mod111 = FISCAL.calculate(DOMAIN_NAME, USER, mod111);
 		
 		System.out.println("CALCULATED!");
 		print(mod111);
@@ -58,7 +58,7 @@ public class Mod111Test {
 		mod111.setAdministration(Administration.BIZKAIA);
 		mod111.setYear(2016);
 		mod111.setPeriod(Period.M01);
-		mod111 = AON.initializeMod111(DOMAIN_NAME, DOMAIN_ID, USER, mod111);
+		mod111 = FISCAL.initializeMod111(DOMAIN_NAME, DOMAIN_ID, USER, mod111);
 		print(mod111);
 	}
 
@@ -70,7 +70,7 @@ public class Mod111Test {
 		mod111.setAdministration(Administration.COMMON_TERRITORY);
 		mod111.setYear(2016);
 		mod111.setPeriod(Period.M01);
-		mod111 = AON.initializeMod111(DOMAIN_NAME, DOMAIN_ID, USER, mod111);
+		mod111 = FISCAL.initializeMod111(DOMAIN_NAME, DOMAIN_ID, USER, mod111);
 		print(mod111);
 	}
 
@@ -82,7 +82,7 @@ public class Mod111Test {
 		mod111.setAdministration(Administration.GIPUZKOA);
 		mod111.setYear(2016);
 		mod111.setPeriod(Period.M01);
-		mod111 = AON.initializeMod111(DOMAIN_NAME, DOMAIN_ID, USER, mod111);
+		mod111 = FISCAL.initializeMod111(DOMAIN_NAME, DOMAIN_ID, USER, mod111);
 		print(mod111);
 	}
 
@@ -94,7 +94,7 @@ public class Mod111Test {
 		mod111.setAdministration(Administration.NAVARRA);
 		mod111.setYear(2016);
 		mod111.setPeriod(Period.M01);
-		mod111 = AON.initializeMod111(DOMAIN_NAME, DOMAIN_ID, USER, mod111);
+		mod111 = FISCAL.initializeMod111(DOMAIN_NAME, DOMAIN_ID, USER, mod111);
 		print(mod111);
 	}
 

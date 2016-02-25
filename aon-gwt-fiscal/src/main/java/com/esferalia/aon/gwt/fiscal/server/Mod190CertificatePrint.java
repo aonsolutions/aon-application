@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.RetentionCertificate;
@@ -52,7 +52,7 @@ public class Mod190CertificatePrint extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod190"));
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String domainName = req.getParameter("domainName");
-			Mod190 mod190 = AON.getMod190(domainName, domainId,
+			Mod190 mod190 = FISCAL.getMod190(domainName, domainId,
 					AonServletUtils.getLoggedUser(),id);
 
 			// Trabajadores

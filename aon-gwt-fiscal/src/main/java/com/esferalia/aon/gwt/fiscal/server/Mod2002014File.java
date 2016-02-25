@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Writer;
@@ -32,7 +32,7 @@ public class Mod2002014File extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("modId"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod2002014 mod200 = AON.getMod2002014ById(domainName,domainId,AonServletUtils.getLoggedUser(),id);
+			Mod2002014 mod200 = FISCAL.getMod2002014ById(domainName,domainId,AonServletUtils.getLoggedUser(),id);
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
 			try {

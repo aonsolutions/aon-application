@@ -13,7 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -41,7 +41,7 @@ public class Mod200toD2Test {
 	
 	@Test
 	public void testInitialize() throws IOException {
-		Mod2002014 mod200 = AON.getMod2002014ByYear(DOMAIN_NAME, DOMAIN_ID, LOGIN, 2014);
+		Mod2002014 mod200 = FISCAL.getMod2002014ByYear(DOMAIN_NAME, DOMAIN_ID, LOGIN, 2014);
 		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 		Mod2002014toD2.fillBalance(ctx, mod200);
 		System.out.println(AonStringUtils.repeat('-', 104));
@@ -53,7 +53,7 @@ public class Mod200toD2Test {
 		System.out.println();
 		System.out.println();
 		
-		Mod2002013 mod2002013 = AON.getMod2002013ByYear(DOMAIN_NAME, DOMAIN_ID, LOGIN, 2013);
+		Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(DOMAIN_NAME, DOMAIN_ID, LOGIN, 2013);
 		Map<D2DepositHeaderKey, Double> ctx2013 = new LinkedHashMap<D2DepositHeaderKey, Double>();
 		Mod2002013toD2.fillBalance(ctx2013, mod2002013);
 		System.out.println(AonStringUtils.repeat('-', 104));

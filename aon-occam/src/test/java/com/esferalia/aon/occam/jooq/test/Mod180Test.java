@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 
 
@@ -18,13 +18,13 @@ public class Mod180Test {
 
 	@Test(expected=NullPointerException.class)
 	public void testGetByIdNull() throws IOException {
-		Mod180 mod180 = AON.getMod180(DOMAIN_NAME, DOMAIN_ID,USER, 97987987);
+		Mod180 mod180 = FISCAL.getMod180(DOMAIN_NAME, DOMAIN_ID,USER, 97987987);
 		mod180.getId(); // NullPointer
 	}
 		
 	@Test
 	public void testGetById() throws IOException {
-		Mod180 mod180 = AON.getMod180(DOMAIN_NAME, DOMAIN_ID, USER, 36);
+		Mod180 mod180 = FISCAL.getMod180(DOMAIN_NAME, DOMAIN_ID, USER, 36);
 		mod180.getId(); // Not NullPointer
 	}
 }

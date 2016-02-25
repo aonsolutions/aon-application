@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.fiscal.deposit.shared.D2Deposit2014;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryFiles;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -382,8 +383,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		String domainName = getDomainName(domainId);
 		if (type.equals("Balance (I.S.)")) {
 			if (ejercicio.equals("2013")) {
-				Mod2002013 mod2002013 = com.esferalia.aon.occam.api.AON
-						.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
+				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002013toD2.fillBalance(ctx, mod2002013);
 
@@ -394,8 +394,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 							.toString());
 				}
 			} else if (ejercicio.equals("2014")) {
-				Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON
-						.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
+				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002014toD2.fillBalance(ctx, mod2002014);
 
@@ -408,8 +407,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 			}
 		} else if (type.equals("Perdidas y ganancias (I.S.)")) {
 			if (ejercicio.equals("2013")) {
-				Mod2002013 mod2002013 = com.esferalia.aon.occam.api.AON
-						.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
+				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002013toD2.fillPyg(ctx, mod2002013);
 
@@ -420,8 +418,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 							.toString());
 				}
 			} else if (ejercicio.equals("2014")) {
-				Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON
-						.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
+				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002014toD2.fillPyg(ctx, mod2002014);
 
@@ -434,8 +431,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 			}
 		} else if (type.equals("ECPN (I.S.)")) {
 			if (ejercicio.equals("2013")) {
-				Mod2002013 mod2002013 = com.esferalia.aon.occam.api.AON
-						.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
+				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(domainName, domainId, getUserLogin(), 2013);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002013toD2.fillEcpn(ctx, mod2002013);
 				Mod2002013toD2.fillEcpn2(ctx, mod2002013);
@@ -447,8 +443,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 							.toString());
 				}
 			} else if (ejercicio.equals("2014")) {
-				Mod2002014 mod2002014 = com.esferalia.aon.occam.api.AON
-						.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
+				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 				Mod2002014toD2.fillEcpn(ctx, mod2002014);
 				Mod2002014toD2.fillEcpn2(ctx, mod2002014);

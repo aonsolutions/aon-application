@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.server.fiscal.format.mod180.Mod180Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -43,7 +43,7 @@ public class Mod180Print extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod180"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod180 mod180 = AON.getMod180(domainName, domainId,AonServletUtils.getLoggedUser(), id);
+			Mod180 mod180 = FISCAL.getMod180(domainName, domainId,AonServletUtils.getLoggedUser(), id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;

@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.occam.server.fiscal.format.mod123.Mod123Writer;
@@ -45,7 +45,7 @@ public class Mod123PrintAEAT extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = AonServletUtils.getLoggedUser();
-			Mod123 mod123 = AON.getMod123(domainName, domainId, user,id);
+			Mod123 mod123 = FISCAL.getMod123(domainName, domainId, user,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;

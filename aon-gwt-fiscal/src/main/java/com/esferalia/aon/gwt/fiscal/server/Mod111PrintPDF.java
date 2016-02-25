@@ -19,7 +19,7 @@ import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
@@ -44,7 +44,7 @@ public class Mod111PrintPDF extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = AonServletUtils.getLoggedUser();
-			Mod111 mod111 = AON.getMod111(domainName, domainId, user, id);
+			Mod111 mod111 = FISCAL.getMod111(domainName, domainId, user, id);
 			
 			// ------------------------------------------ OBTAIN EXCEL REPORT
 			Mod111ExcelAction action = new Mod111ExcelAction(mod111);

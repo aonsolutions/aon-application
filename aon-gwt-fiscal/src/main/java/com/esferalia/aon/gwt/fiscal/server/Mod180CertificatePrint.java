@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -43,7 +43,7 @@ public class Mod180CertificatePrint extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod180"));
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String domainName = req.getParameter("domainName");
-			Mod180 mod180 = AON.getMod180(domainName, domainId, AonServletUtils.getLoggedUser(),id);
+			Mod180 mod180 = FISCAL.getMod180(domainName, domainId, AonServletUtils.getLoggedUser(),id);
 
 			byte[] data = null;
 			if(mod180!=null){

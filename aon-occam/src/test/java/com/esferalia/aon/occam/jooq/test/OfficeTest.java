@@ -7,15 +7,12 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
-import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.NoticeType;
@@ -28,9 +25,6 @@ public class OfficeTest {
 	private static String DOMAIN_NAME = "mac.amtzdelagos.dev";
 	private static int DOMAIN_ID = 553;
 	private static String USER_NAME = "mac";
-
-	private static List<NoticeRecord> noticeList = new LinkedList<NoticeRecord>();
-	private static List<TagRecord> tagList = new LinkedList<TagRecord>();
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException,

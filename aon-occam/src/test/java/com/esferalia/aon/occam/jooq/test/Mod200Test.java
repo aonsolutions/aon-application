@@ -9,8 +9,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 
 
@@ -33,8 +33,8 @@ public class Mod200Test {
 		Mod2002013 mod200 = new Mod2002013();
 		mod200.setYear(2013);
 		mod200.setDomain(DOMAIN_ID);
-		mod200 = AON.initializeNewMod2002013(DOMAIN_NAME, DOMAIN_ID, LOGIN, mod200);
-		AON.initializeMod2002013(DOMAIN_NAME, DOMAIN_ID, LOGIN, mod200);
+		mod200 = FISCAL.initializeNewMod2002013(DOMAIN_NAME, DOMAIN_ID, LOGIN, mod200);
+		FISCAL.initializeMod2002013(DOMAIN_NAME, DOMAIN_ID, LOGIN, mod200);
 	}
 		
 	@AfterClass

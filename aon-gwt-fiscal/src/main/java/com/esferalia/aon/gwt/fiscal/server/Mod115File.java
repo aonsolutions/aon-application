@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
@@ -33,7 +33,7 @@ public class Mod115File extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = AonServletUtils.getLoggedUser(); 
-			Mod115 mod115 = AON.getMod115(domainName, domainId, user ,id);
+			Mod115 mod115 = FISCAL.getMod115(domainName, domainId, user ,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;

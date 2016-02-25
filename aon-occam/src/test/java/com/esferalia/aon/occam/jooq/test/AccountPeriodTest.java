@@ -21,11 +21,12 @@ public class AccountPeriodTest {
 	private static AONContext ctx;
 	private static String DOMAIN_NAME = "alhymotion-mac.ecastellano.dev";
 	private static int DOMAIN_ID = 3034;
+	private static String USER = "mac";
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
 		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );
-		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID);
+		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);
 	}
 	
 	@Test(expected=AonCoreException.class)

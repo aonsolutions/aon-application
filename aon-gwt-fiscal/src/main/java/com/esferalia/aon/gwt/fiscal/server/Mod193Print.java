@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.server.fiscal.format.mod193.Mod193Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -43,7 +43,7 @@ public class Mod193Print extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod193"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod193 mod193 = AON.getMod193(domainName, domainId, AonServletUtils.getLoggedUser(),id);
+			Mod193 mod193 = FISCAL.getMod193(domainName, domainId, AonServletUtils.getLoggedUser(),id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;

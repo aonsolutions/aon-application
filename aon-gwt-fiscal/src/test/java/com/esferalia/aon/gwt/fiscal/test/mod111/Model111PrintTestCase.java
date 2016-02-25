@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.fiscal.server.Mod111ExcelAction;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
@@ -18,10 +18,10 @@ public class Model111PrintTestCase {
 	private static String USER = "mac";
 
 	public static void main(String[] args) throws IOException {
-		LinkedList<Mod111> list = AON.getMod111s(DOMAIN_NAME, DOMAIN_ID, USER);
+		LinkedList<Mod111> list = FISCAL.getMod111s(DOMAIN_NAME, DOMAIN_ID, USER);
 		for (Mod111 mod111 : list) {
 			if (mod111.getYear() == 2015) {
-				mod111 = AON.getMod111(DOMAIN_NAME, DOMAIN_ID, USER, mod111.getId());
+				mod111 = FISCAL.getMod111(DOMAIN_NAME, DOMAIN_ID, USER, mod111.getId());
 				toExcel(mod111, Model111ScriptProvider.obtainScript(mod111));
 			}
 		}

@@ -12,7 +12,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.jaxb.MOD2002013;
@@ -30,7 +30,7 @@ public class Mod2002013AccountingFile extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("modId"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod2002013 mod200 = AON.getMod2002013ById(domainName,domainId,AonServletUtils.getLoggedUser(),id);
+			Mod2002013 mod200 = FISCAL.getMod2002013ById(domainName,domainId,AonServletUtils.getLoggedUser(),id);
 
 			MOD2002013 mod = Mod2002013toMOD2002013.getMOD2002013(mod200);
 			StringWriter writer = new StringWriter();

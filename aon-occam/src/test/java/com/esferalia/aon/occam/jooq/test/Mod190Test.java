@@ -11,12 +11,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.jooq.Record4;
-import org.jooq.conf.ParamType;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -32,13 +30,13 @@ public class Mod190Test {
 
 	@Test
 	public void testDelete() throws IOException {
-		AON.deleteMod190(DOMAIN_NAME, DOMAIN_ID, USER, getYearMod190());		
+		FISCAL.deleteMod190(DOMAIN_NAME, DOMAIN_ID, USER, getYearMod190());		
 	}
 
 	@Test
 	public void testInsert() throws IOException {
-		Mod190 mod190 = AON.initializeMod190(DOMAIN_NAME, DOMAIN_ID, USER, YEAR);
-		AON.saveMod190(DOMAIN_NAME, DOMAIN_ID, USER, mod190);
+		Mod190 mod190 = FISCAL.initializeMod190(DOMAIN_NAME, DOMAIN_ID, USER, YEAR);
+		FISCAL.saveMod190(DOMAIN_NAME, DOMAIN_ID, USER, mod190);
 	}
 		
 	@Test
@@ -120,7 +118,7 @@ public class Mod190Test {
 	*/
 
 	private Mod190 getYearMod190() {
-		List<Mod190> mod190s = AON.getMod190s(DOMAIN_NAME, DOMAIN_ID, USER);
+		List<Mod190> mod190s = FISCAL.getMod190s(DOMAIN_NAME, DOMAIN_ID, USER);
 		for (Mod190 mod190 : mod190s) {
 			if (mod190.getYear() == YEAR) {
 				return mod190;		

@@ -12,8 +12,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer;
 
@@ -34,9 +34,9 @@ public class Mod202Test {
 	@Test
 	public void testFile() throws IOException {
 		Writer writer = new OutputStreamWriter( new FileOutputStream( "/tmp/mod202.txt" ),"ISO-8859-15");  
-		List<Mod202> list = AON.getMod202s(DOMAIN_NAME, DOMAIN_ID, USER_NAME);
+		List<Mod202> list = FISCAL.getMod202s(DOMAIN_NAME, DOMAIN_ID, USER_NAME);
 		for (Mod202 mod202 : list) {
-			Mod202 m202 = AON.getMod202(DOMAIN_NAME, DOMAIN_ID, USER_NAME, mod202.getId());
+			Mod202 m202 = FISCAL.getMod202(DOMAIN_NAME, DOMAIN_ID, USER_NAME, mod202.getId());
 			Mod202Writer.fill(writer, m202);
 		}
 		writer.flush();

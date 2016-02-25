@@ -22,11 +22,12 @@ public class FiscalMatrixTest {
 	private static AONContext ctx;
 	private static String DOMAIN_NAME = "miguelsilvestre.ecastellano.dev";
 	private static Integer DOMAIN_ID = 2155;
+	private static String USER = "mac";
 	
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
 		Class.forName( org.gjt.mm.mysql.Driver.class.getName() );
-		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID);
+		ctx = AONContext.getAONContext(DOMAIN_NAME, DOMAIN_ID,USER);
 	}
 	
 	@Test
