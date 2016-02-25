@@ -6,24 +6,20 @@ import java.util.GregorianCalendar;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
 
-
 public class AonDateUtils {
 
-    private final static int MODIFY_ROUND = 1;
-    private final static int MODIFY_CEILING= 2;
+	private final static int MODIFY_ROUND = 1;
+	private final static int MODIFY_CEILING = 2;
 	private final static int MODIFY_TRUNCATE = 0;
-    private final static int SEMI_MONTH = 1001;
-    private static final int[][] fields = {
-        {Calendar.MILLISECOND},
-        {Calendar.SECOND},
-        {Calendar.MINUTE},
-        {Calendar.HOUR_OF_DAY, Calendar.HOUR},
-        {Calendar.DATE, Calendar.DAY_OF_MONTH, Calendar.AM_PM},
-        {Calendar.MONTH, SEMI_MONTH},
-        {Calendar.YEAR},
-        {Calendar.ERA}};
+	private final static int SEMI_MONTH = 1001;
+	private static final int[][] fields = { { Calendar.MILLISECOND },
+			{ Calendar.SECOND }, { Calendar.MINUTE },
+			{ Calendar.HOUR_OF_DAY, Calendar.HOUR },
+			{ Calendar.DATE, Calendar.DAY_OF_MONTH, Calendar.AM_PM },
+			{ Calendar.MONTH, SEMI_MONTH }, { Calendar.YEAR },
+			{ Calendar.ERA } };
 
-    /**
+	/**
 	 * Comprueba si las fecha pasadas por parámetros son el mismo dia. Si
 	 * cualquiera de las dos es NULL, devuelve false.
 	 * 
@@ -63,14 +59,16 @@ public class AonDateUtils {
 			return false;
 		}
 		return (cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA)
-				&& cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1
-					.get(Calendar.DAY_OF_YEAR) == cal2
-				.get(Calendar.DAY_OF_YEAR));
+				&& cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
+				&& cal1.get(Calendar.DAY_OF_YEAR) == cal2
+						.get(Calendar.DAY_OF_YEAR));
 	}
 
 	/**
-	 * @param Convierte la fecha pasada por parámetro en un objeto java.sql.Date. 
-	 * @return El objeto java.sql.Date correspondiente. Si la fecha es NULL, devuelve NULL.
+	 * @param Convierte
+	 *            la fecha pasada por parámetro en un objeto java.sql.Date.
+	 * @return El objeto java.sql.Date correspondiente. Si la fecha es NULL,
+	 *         devuelve NULL.
 	 */
 	public static java.sql.Date toSql(Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
@@ -78,9 +76,13 @@ public class AonDateUtils {
 
 	/**
 	 * Devuelve un objecto java.sql.Date para los parámetros indicados.
-	 * @param year El año de la fecha.
-	 * @param month El mes de la fecha. (0-11).
-	 * @param day El dia de la fecha.
+	 * 
+	 * @param year
+	 *            El año de la fecha.
+	 * @param month
+	 *            El mes de la fecha. (0-11).
+	 * @param day
+	 *            El dia de la fecha.
 	 * @return
 	 */
 	public static java.sql.Date getSqlDate(int year, int month, int day) {
@@ -90,14 +92,18 @@ public class AonDateUtils {
 		c.set(Calendar.DAY_OF_MONTH, day);
 		Date date = c.getTime();
 		date = truncate(date, Calendar.DAY_OF_MONTH);
-		return  new java.sql.Date(date.getTime());
+		return new java.sql.Date(date.getTime());
 	}
 
 	/**
 	 * Devuelve un objecto java.sql.Date para los parámetros indicados.
-	 * @param year El año de la fecha.
-	 * @param month El mes de la fecha. (0-11).
-	 * @param day El dia de la fecha.
+	 * 
+	 * @param year
+	 *            El año de la fecha.
+	 * @param month
+	 *            El mes de la fecha. (0-11).
+	 * @param day
+	 *            El dia de la fecha.
 	 * @return
 	 */
 	public static Date getDate(int year, int month, int day) {
@@ -109,170 +115,189 @@ public class AonDateUtils {
 		return truncate(date, Calendar.DAY_OF_MONTH);
 	}
 
-    /**
-     * <p>Truncate this date, leaving the field specified as the most
-     * significant field.</p>
-     *
-     * <p>For example, if you had the datetime of 28 Mar 2002
-     * 13:45:01.231, if you passed with HOUR, it would return 28 Mar
-     * 2002 13:00:00.000.  If this was passed with MONTH, it would
-     * return 1 Mar 2002 0:00:00.000.</p>
-     * 
-     * @param date  the date to work with
-     * @param field  the field from <code>Calendar</code>
-     *  or <code>SEMI_MONTH</code>
-     * @return the rounded date
-     * @throws IllegalArgumentException if the date is <code>null</code>
-     * @throws ArithmeticException if the year is over 280 million
-     */
-    public static Date truncate(Date date, int field) {
-        if (date == null) {
-            throw new IllegalArgumentException("The date must not be null");
-        }
-        Calendar gval = Calendar.getInstance();
-        gval.setTime(date);
-        modify(gval, field, MODIFY_TRUNCATE);
-        return gval.getTime();
-    }
-	
-    private static void modify(Calendar val, int field, int modType) {
-        if (val.get(Calendar.YEAR) > 280000000) {
-            throw new ArithmeticException("Calendar value too large for accurate calculations");
-        }
-        
-        if (field == Calendar.MILLISECOND) {
-            return;
-        }
+	/**
+	 * <p>
+	 * Truncate this date, leaving the field specified as the most significant
+	 * field.
+	 * </p>
+	 *
+	 * <p>
+	 * For example, if you had the datetime of 28 Mar 2002 13:45:01.231, if you
+	 * passed with HOUR, it would return 28 Mar 2002 13:00:00.000. If this was
+	 * passed with MONTH, it would return 1 Mar 2002 0:00:00.000.
+	 * </p>
+	 * 
+	 * @param date
+	 *            the date to work with
+	 * @param field
+	 *            the field from <code>Calendar</code> or
+	 *            <code>SEMI_MONTH</code>
+	 * @return the rounded date
+	 * @throws IllegalArgumentException
+	 *             if the date is <code>null</code>
+	 * @throws ArithmeticException
+	 *             if the year is over 280 million
+	 */
+	public static Date truncate(Date date, int field) {
+		if (date == null) {
+			throw new IllegalArgumentException("The date must not be null");
+		}
+		Calendar gval = Calendar.getInstance();
+		gval.setTime(date);
+		modify(gval, field, MODIFY_TRUNCATE);
+		return gval.getTime();
+	}
 
-        // ----------------- Fix for LANG-59 ---------------------- START ---------------
-        // see http://issues.apache.org/jira/browse/LANG-59
-        //
-        // Manually truncate milliseconds, seconds and minutes, rather than using
-        // Calendar methods.
+	private static void modify(Calendar val, int field, int modType) {
+		if (val.get(Calendar.YEAR) > 280000000) {
+			throw new ArithmeticException(
+					"Calendar value too large for accurate calculations");
+		}
 
-        Date date = val.getTime();
-        long time = date.getTime();
-        boolean done = false;
+		if (field == Calendar.MILLISECOND) {
+			return;
+		}
 
-        // truncate milliseconds
-        int millisecs = val.get(Calendar.MILLISECOND);
-        if (MODIFY_TRUNCATE == modType || millisecs < 500) {
-            time = time - millisecs;
-        }
-        if (field == Calendar.SECOND) {
-            done = true;
-        }
+		// ----------------- Fix for LANG-59 ---------------------- START
+		// ---------------
+		// see http://issues.apache.org/jira/browse/LANG-59
+		//
+		// Manually truncate milliseconds, seconds and minutes, rather than
+		// using
+		// Calendar methods.
 
-        // truncate seconds
-        int seconds = val.get(Calendar.SECOND);
-        if (!done && (MODIFY_TRUNCATE == modType || seconds < 30)) {
-            time = time - (seconds * 1000L);
-        }
-        if (field == Calendar.MINUTE) {
-            done = true;
-        }
+		Date date = val.getTime();
+		long time = date.getTime();
+		boolean done = false;
 
-        // truncate minutes
-        int minutes = val.get(Calendar.MINUTE);
-        if (!done && (MODIFY_TRUNCATE == modType || minutes < 30)) {
-            time = time - (minutes * 60000L);
-        }
+		// truncate milliseconds
+		int millisecs = val.get(Calendar.MILLISECOND);
+		if (MODIFY_TRUNCATE == modType || millisecs < 500) {
+			time = time - millisecs;
+		}
+		if (field == Calendar.SECOND) {
+			done = true;
+		}
 
-        // reset time
-        if (date.getTime() != time) {
-            date.setTime(time);
-            val.setTime(date);
-        }
-        // ----------------- Fix for LANG-59 ----------------------- END ----------------
+		// truncate seconds
+		int seconds = val.get(Calendar.SECOND);
+		if (!done && (MODIFY_TRUNCATE == modType || seconds < 30)) {
+			time = time - (seconds * 1000L);
+		}
+		if (field == Calendar.MINUTE) {
+			done = true;
+		}
 
-        boolean roundUp = false;
-        for (int i = 0; i < fields.length; i++) {
-            for (int j = 0; j < fields[i].length; j++) {
-                if (fields[i][j] == field) {
-                    //This is our field... we stop looping
-                    if (modType == MODIFY_CEILING || (modType == MODIFY_ROUND && roundUp)) {
-                        if (field == SEMI_MONTH) {
-                            //This is a special case that's hard to generalize
-                            //If the date is 1, we round up to 16, otherwise
-                            //  we subtract 15 days and add 1 month
-                            if (val.get(Calendar.DATE) == 1) {
-                                val.add(Calendar.DATE, 15);
-                            } else {
-                                val.add(Calendar.DATE, -15);
-                                val.add(Calendar.MONTH, 1);
-                            }
-// ----------------- Fix for LANG-440 ---------------------- START ---------------
-                        } else if (field == Calendar.AM_PM) {
-                            // This is a special case
-                            // If the time is 0, we round up to 12, otherwise
-                            //  we subtract 12 hours and add 1 day
-                            if (val.get(Calendar.HOUR_OF_DAY) == 0) {
-                                val.add(Calendar.HOUR_OF_DAY, 12);
-                            } else {
-                                val.add(Calendar.HOUR_OF_DAY, -12);
-                                val.add(Calendar.DATE, 1);
-                            }
-// ----------------- Fix for LANG-440 ---------------------- END ---------------
-                        } else {
-                            //We need at add one to this field since the
-                            //  last number causes us to round up
-                            val.add(fields[i][0], 1);
-                        }
-                    }
-                    return;
-                }
-            }
-            //We have various fields that are not easy roundings
-            int offset = 0;
-            boolean offsetSet = false;
-            //These are special types of fields that require different rounding rules
-            switch (field) {
-                case SEMI_MONTH:
-                    if (fields[i][0] == Calendar.DATE) {
-                        //If we're going to drop the DATE field's value,
-                        //  we want to do this our own way.
-                        //We need to subtrace 1 since the date has a minimum of 1
-                        offset = val.get(Calendar.DATE) - 1;
-                        //If we're above 15 days adjustment, that means we're in the
-                        //  bottom half of the month and should stay accordingly.
-                        if (offset >= 15) {
-                            offset -= 15;
-                        }
-                        //Record whether we're in the top or bottom half of that range
-                        roundUp = offset > 7;
-                        offsetSet = true;
-                    }
-                    break;
-                case Calendar.AM_PM:
-                    if (fields[i][0] == Calendar.HOUR_OF_DAY) {
-                        //If we're going to drop the HOUR field's value,
-                        //  we want to do this our own way.
-                        offset = val.get(Calendar.HOUR_OF_DAY);
-                        if (offset >= 12) {
-                            offset -= 12;
-                        }
-                        roundUp = offset >= 6;
-                        offsetSet = true;
-                    }
-                    break;
-            }
-            if (!offsetSet) {
-                int min = val.getActualMinimum(fields[i][0]);
-                int max = val.getActualMaximum(fields[i][0]);
-                //Calculate the offset from the minimum allowed value
-                offset = val.get(fields[i][0]) - min;
-                //Set roundUp if this is more than half way between the minimum and maximum
-                roundUp = offset > ((max - min) / 2);
-            }
-            //We need to remove this field
-            if (offset != 0) {
-                val.set(fields[i][0], val.get(fields[i][0]) - offset);
-            }
-        }
-        throw new IllegalArgumentException("The field " + field + " is not supported");
+		// truncate minutes
+		int minutes = val.get(Calendar.MINUTE);
+		if (!done && (MODIFY_TRUNCATE == modType || minutes < 30)) {
+			time = time - (minutes * 60000L);
+		}
 
-    }
-    
+		// reset time
+		if (date.getTime() != time) {
+			date.setTime(time);
+			val.setTime(date);
+		}
+		// ----------------- Fix for LANG-59 ----------------------- END
+		// ----------------
+
+		boolean roundUp = false;
+		for (int i = 0; i < fields.length; i++) {
+			for (int j = 0; j < fields[i].length; j++) {
+				if (fields[i][j] == field) {
+					// This is our field... we stop looping
+					if (modType == MODIFY_CEILING
+							|| (modType == MODIFY_ROUND && roundUp)) {
+						if (field == SEMI_MONTH) {
+							// This is a special case that's hard to generalize
+							// If the date is 1, we round up to 16, otherwise
+							// we subtract 15 days and add 1 month
+							if (val.get(Calendar.DATE) == 1) {
+								val.add(Calendar.DATE, 15);
+							} else {
+								val.add(Calendar.DATE, -15);
+								val.add(Calendar.MONTH, 1);
+							}
+							// ----------------- Fix for LANG-440
+							// ---------------------- START ---------------
+						} else if (field == Calendar.AM_PM) {
+							// This is a special case
+							// If the time is 0, we round up to 12, otherwise
+							// we subtract 12 hours and add 1 day
+							if (val.get(Calendar.HOUR_OF_DAY) == 0) {
+								val.add(Calendar.HOUR_OF_DAY, 12);
+							} else {
+								val.add(Calendar.HOUR_OF_DAY, -12);
+								val.add(Calendar.DATE, 1);
+							}
+							// ----------------- Fix for LANG-440
+							// ---------------------- END ---------------
+						} else {
+							// We need at add one to this field since the
+							// last number causes us to round up
+							val.add(fields[i][0], 1);
+						}
+					}
+					return;
+				}
+			}
+			// We have various fields that are not easy roundings
+			int offset = 0;
+			boolean offsetSet = false;
+			// These are special types of fields that require different rounding
+			// rules
+			switch (field) {
+			case SEMI_MONTH:
+				if (fields[i][0] == Calendar.DATE) {
+					// If we're going to drop the DATE field's value,
+					// we want to do this our own way.
+					// We need to subtrace 1 since the date has a minimum of 1
+					offset = val.get(Calendar.DATE) - 1;
+					// If we're above 15 days adjustment, that means we're in
+					// the
+					// bottom half of the month and should stay accordingly.
+					if (offset >= 15) {
+						offset -= 15;
+					}
+					// Record whether we're in the top or bottom half of that
+					// range
+					roundUp = offset > 7;
+					offsetSet = true;
+				}
+				break;
+			case Calendar.AM_PM:
+				if (fields[i][0] == Calendar.HOUR_OF_DAY) {
+					// If we're going to drop the HOUR field's value,
+					// we want to do this our own way.
+					offset = val.get(Calendar.HOUR_OF_DAY);
+					if (offset >= 12) {
+						offset -= 12;
+					}
+					roundUp = offset >= 6;
+					offsetSet = true;
+				}
+				break;
+			}
+			if (!offsetSet) {
+				int min = val.getActualMinimum(fields[i][0]);
+				int max = val.getActualMaximum(fields[i][0]);
+				// Calculate the offset from the minimum allowed value
+				offset = val.get(fields[i][0]) - min;
+				// Set roundUp if this is more than half way between the minimum
+				// and maximum
+				roundUp = offset > ((max - min) / 2);
+			}
+			// We need to remove this field
+			if (offset != 0) {
+				val.set(fields[i][0], val.get(fields[i][0]) - offset);
+			}
+		}
+		throw new IllegalArgumentException(
+				"The field " + field + " is not supported");
+
+	}
+
 	/**
 	 * Devuelve el ultimo dia del año en funcion de año pasado por parametro.
 	 * 
@@ -337,23 +362,25 @@ public class AonDateUtils {
 	}
 
 	public static Date[] getWeekDateRange(Date date) {
-	    Calendar cal = Calendar.getInstance();
-	    cal.setTime(date);
-	    cal.add(Calendar.DAY_OF_YEAR, (cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY) * (-1));
-	    Date start = cal.getTime();
-	    cal.add(Calendar.DAY_OF_YEAR, +6);
-	    Date end = cal.getTime();
-		return new Date[]{start,end};
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DAY_OF_YEAR,
+				(cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY) * (-1));
+		Date start = cal.getTime();
+		cal.add(Calendar.DAY_OF_YEAR, +6);
+		Date end = cal.getTime();
+		return new Date[] { start, end };
 	}
-    
+
 	public static Date[] getTwoWeekDateRange(Date date) {
-	    Calendar cal = Calendar.getInstance();
-	    cal.setTime(date);
-	    cal.add(Calendar.DAY_OF_YEAR, (cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY) * (-1));
-	    Date start = cal.getTime();
-	    cal.add(Calendar.DAY_OF_YEAR, +13);
-	    Date end = cal.getTime();
-		return new Date[]{start,end};
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DAY_OF_YEAR,
+				(cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY) * (-1));
+		Date start = cal.getTime();
+		cal.add(Calendar.DAY_OF_YEAR, +13);
+		Date end = cal.getTime();
+		return new Date[] { start, end };
 	}
 
 	/**
@@ -368,21 +395,26 @@ public class AonDateUtils {
 	 *            Chequear que from sea anterior a to.
 	 * @return Dias entre las fechas.
 	 */
-	public static long getDaysBetweenDates(Date from, Date to, boolean checkDates) {
+	public static long getDaysBetweenDates(Date from, Date to,
+			boolean checkDates) {
 		if (from == null) {
-			throw new IllegalArgumentException("Date 'from' value can not be null.");
+			throw new IllegalArgumentException(
+					"Date 'from' value can not be null.");
 		}
 		if (to == null) {
-			throw new IllegalArgumentException("Date 'to' value can not be null.");
+			throw new IllegalArgumentException(
+					"Date 'to' value can not be null.");
 		}
 		if (checkDates && to.before(from)) {
-			throw new IllegalArgumentException("Date 'to' can not be earlier than date 'from'.");
+			throw new IllegalArgumentException(
+					"Date 'to' can not be earlier than date 'from'.");
 		}
 		Calendar c1 = Calendar.getInstance();
 		Calendar c2 = Calendar.getInstance();
 		c1.setTime(from);
 		c2.setTime(to);
-		double r = (double) (c2.getTimeInMillis() - c1.getTimeInMillis()) / (double) (24 * 3600 * 1000);
+		double r = (double) (c2.getTimeInMillis() - c1.getTimeInMillis())
+				/ (double) (24 * 3600 * 1000);
 		r = AonMathUtils.round(r, 0);
 		return (long) r;
 	}
@@ -449,10 +481,10 @@ public class AonDateUtils {
 	 * @return boolean TRUE si es bisiesto.
 	 */
 	public static boolean isLeapYear(int year) {
-		GregorianCalendar c = (GregorianCalendar) GregorianCalendar.getInstance();
+		GregorianCalendar c = (GregorianCalendar) GregorianCalendar
+				.getInstance();
 		return c.isLeapYear(year);
 	}
-
 
 	/**
 	 * Devuelve el primer dia del mes de la fecha pasada.
@@ -463,7 +495,7 @@ public class AonDateUtils {
 	 * @return Un java.util.Date con el primer dia de ese mes.
 	 */
 	public static Date getMonthFirstDay(Date date) {
-		return getDate(getYear(date),getMonth(date),1 );
+		return getDate(getYear(date), getMonth(date), 1);
 	}
 
 	/**
@@ -476,28 +508,31 @@ public class AonDateUtils {
 	 * @return Un java.util.Date con el ultimo dia de ese mes.
 	 */
 	public static Date getMonthLastDay(Date date) {
-		return getDate(getYear(date),getMonth(date), AonDateUtils.daysInMonth(date) );
+		return getDate(getYear(date), getMonth(date),
+				AonDateUtils.daysInMonth(date));
 	}
-	
+
 	/**
 	 * Devuelve el primer dia del bimestre de la fecha pasada.
 	 * 
 	 * @param date
-	 *            La fecha de la que se se desea saber el primer dia del bimestre.
+	 *            La fecha de la que se se desea saber el primer dia del
+	 *            bimestre.
 	 * 
 	 * @return Un java.util.Date con el primer dia de ese bimestre.
 	 */
 	public static Date getBiMonthFirstDay(Date date) {
 		int month = getMonth(date) / 2;
-		month = month * 2; 
-		return getDate(getYear(date),month,1 );
+		month = month * 2;
+		return getDate(getYear(date), month, 1);
 	}
-	
+
 	/**
 	 * Devuelve el último dia del bimestre de la fecha pasada.
 	 * 
 	 * @param date
-	 *            La fecha de la que se se desea saber el último dia del bimestre.
+	 *            La fecha de la que se se desea saber el último dia del
+	 *            bimestre.
 	 * 
 	 * @return Un java.util.Date con el último dia de ese bimestre.
 	 */
@@ -507,32 +542,34 @@ public class AonDateUtils {
 		Date tmp = getDate(getYear(date), month, getDay(date));
 		return getMonthLastDay(tmp);
 	}
-	
+
 	/**
 	 * Devuelve el primer dia del trimestre de la fecha pasada.
 	 * 
 	 * @param date
-	 *            La fecha de la que se se desea saber el primer dia del trimestre.
+	 *            La fecha de la que se se desea saber el primer dia del
+	 *            trimestre.
 	 * 
 	 * @return Un java.util.Date con el primer dia de ese trimestre.
 	 */
 	public static Date getQuarterFirstDay(Date date) {
 		int month = getMonth(date) / 3;
-		month = month * 3; 
-		return getDate(getYear(date),month,1 );
+		month = month * 3;
+		return getDate(getYear(date), month, 1);
 	}
-	
+
 	/**
 	 * Devuelve el último dia del trimestre de la fecha pasada.
 	 * 
 	 * @param date
-	 *            La fecha de la que se se desea saber el último dia del trimestre.
+	 *            La fecha de la que se se desea saber el último dia del
+	 *            trimestre.
 	 * 
 	 * @return Un java.util.Date con el último dia de ese trimestre.
 	 */
 	public static Date getQuarterLastDay(Date date) {
 		int month = getMonth(date) / 3;
-		month = (month * 3) + 2; 
+		month = (month * 3) + 2;
 		Date tmp = getDate(getYear(date), month, getDay(date));
 		return getMonthLastDay(tmp);
 	}
@@ -541,27 +578,29 @@ public class AonDateUtils {
 	 * Devuelve el primer dia del cuatrimestre de la fecha pasada.
 	 * 
 	 * @param date
-	 *            La fecha de la que se se desea saber el primer dia del cuatrimestre.
+	 *            La fecha de la que se se desea saber el primer dia del
+	 *            cuatrimestre.
 	 * 
 	 * @return Un java.util.Date con el primer dia de ese cuatrimestre.
 	 */
 	public static Date getFourMonthFirstDay(Date date) {
 		int month = getMonth(date) / 4;
-		month = month * 4; 
-		return getDate(getYear(date),month,1 );
+		month = month * 4;
+		return getDate(getYear(date), month, 1);
 	}
-	
+
 	/**
 	 * Devuelve el último dia del cuatrimestre de la fecha pasada.
 	 * 
 	 * @param date
-	 *            La fecha de la que se se desea saber el último dia del cuatrimestre.
+	 *            La fecha de la que se se desea saber el último dia del
+	 *            cuatrimestre.
 	 * 
 	 * @return Un java.util.Date con el último dia de ese cuatrimestre.
 	 */
 	public static Date getFourMonthLastDay(Date date) {
 		int month = getMonth(date) / 4;
-		month = (month * 4) + 3; 
+		month = (month * 4) + 3;
 		Date tmp = getDate(getYear(date), month, getDay(date));
 		return getMonthLastDay(tmp);
 	}
@@ -570,162 +609,226 @@ public class AonDateUtils {
 	 * Devuelve el primer dia del semestre de la fecha pasada.
 	 * 
 	 * @param date
-	 *            La fecha de la que se se desea saber el primer dia del semestre.
+	 *            La fecha de la que se se desea saber el primer dia del
+	 *            semestre.
 	 * 
 	 * @return Un java.util.Date con el primer dia de ese semestre.
 	 */
 	public static Date getHalfYearFirstDay(Date date) {
 		int month = getMonth(date) / 6;
-		month = month * 6; 
-		return getDate(getYear(date),month,1 );
+		month = month * 6;
+		return getDate(getYear(date), month, 1);
 	}
-	
+
 	/**
 	 * Devuelve el último dia del semestre de la fecha pasada.
 	 * 
 	 * @param date
-	 *            La fecha de la que se se desea saber el último dia del semestre.
+	 *            La fecha de la que se se desea saber el último dia del
+	 *            semestre.
 	 * 
 	 * @return Un java.util.Date con el último dia de ese semestre.
 	 */
 	public static Date getHalfYearLastDay(Date date) {
 		int month = getMonth(date) / 6;
-		month = (month * 6) + 5; 
+		month = (month * 6) + 5;
 		Date tmp = getDate(getYear(date), month, getDay(date));
 		return getMonthLastDay(tmp);
 	}
-    
-    //-----------------------------------------------------------------------
-    /**
-     * Adds a number of years to a date returning a new object.
-     * The original date object is unchanged.
-     *
-     * @param date  the date, not null
-     * @param amount  the amount to add, may be negative
-     * @return the new date object with the amount added
-     * @throws IllegalArgumentException if the date is null
-     */
-    public static Date addYears(Date date, int amount) {
-        return add(date, Calendar.YEAR, amount);
-    }
+	
+	/**
+	 * 
+	 * @param date
+	 * 				La fecha de la se desea saber el primer dia de la semana
+	 * @return Un java.util.Date con el primer dia de la semana
+	 */
 
-    //-----------------------------------------------------------------------
-    /**
-     * Adds a number of months to a date returning a new object.
-     * The original date object is unchanged.
-     *
-     * @param date  the date, not null
-     * @param amount  the amount to add, may be negative
-     * @return the new date object with the amount added
-     * @throws IllegalArgumentException if the date is null
-     */
-    public static Date addMonths(Date date, int amount) {
-        return add(date, Calendar.MONTH, amount);
-    }
+	public static Date getFirstDayOfWeek(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		int day = calendar.get(Calendar.DAY_OF_YEAR);
+		while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
+			calendar.set(Calendar.DAY_OF_YEAR, --day);
+		}
+		return calendar.getTime();
+	}
+	
+	/**
+	 * 
+	 * @param date
+	 * 				La fecha de la que se desea saber el ultimo dia de la semana
+	 * @return Un java.util.Date con ultimo dia de la semana.
+	 */
+	
+	public static Date getLastDayOfWeek(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		int day = calendar.get(Calendar.DAY_OF_YEAR);
+		while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+			calendar.set(Calendar.DAY_OF_YEAR, ++day);
+		}
+		return calendar.getTime();
+	}
 
-    //-----------------------------------------------------------------------
-    /**
-     * Adds a number of weeks to a date returning a new object.
-     * The original date object is unchanged.
-     *
-     * @param date  the date, not null
-     * @param amount  the amount to add, may be negative
-     * @return the new date object with the amount added
-     * @throws IllegalArgumentException if the date is null
-     */
-    public static Date addWeeks(Date date, int amount) {
-        return add(date, Calendar.WEEK_OF_YEAR, amount);
-    }
+	// -----------------------------------------------------------------------
+	/**
+	 * Adds a number of years to a date returning a new object. The original
+	 * date object is unchanged.
+	 *
+	 * @param date
+	 *            the date, not null
+	 * @param amount
+	 *            the amount to add, may be negative
+	 * @return the new date object with the amount added
+	 * @throws IllegalArgumentException
+	 *             if the date is null
+	 */
+	public static Date addYears(Date date, int amount) {
+		return add(date, Calendar.YEAR, amount);
+	}
 
-    //-----------------------------------------------------------------------
-    /**
-     * Adds a number of days to a date returning a new object.
-     * The original date object is unchanged.
-     *
-     * @param date  the date, not null
-     * @param amount  the amount to add, may be negative
-     * @return the new date object with the amount added
-     * @throws IllegalArgumentException if the date is null
-     */
-    public static Date addDays(Date date, int amount) {
-        return add(date, Calendar.DAY_OF_MONTH, amount);
-    }
+	// -----------------------------------------------------------------------
+	/**
+	 * Adds a number of months to a date returning a new object. The original
+	 * date object is unchanged.
+	 *
+	 * @param date
+	 *            the date, not null
+	 * @param amount
+	 *            the amount to add, may be negative
+	 * @return the new date object with the amount added
+	 * @throws IllegalArgumentException
+	 *             if the date is null
+	 */
+	public static Date addMonths(Date date, int amount) {
+		return add(date, Calendar.MONTH, amount);
+	}
 
-    //-----------------------------------------------------------------------
-    /**
-     * Adds a number of hours to a date returning a new object.
-     * The original date object is unchanged.
-     *
-     * @param date  the date, not null
-     * @param amount  the amount to add, may be negative
-     * @return the new date object with the amount added
-     * @throws IllegalArgumentException if the date is null
-     */
-    public static Date addHours(Date date, int amount) {
-        return add(date, Calendar.HOUR_OF_DAY, amount);
-    }
+	// -----------------------------------------------------------------------
+	/**
+	 * Adds a number of weeks to a date returning a new object. The original
+	 * date object is unchanged.
+	 *
+	 * @param date
+	 *            the date, not null
+	 * @param amount
+	 *            the amount to add, may be negative
+	 * @return the new date object with the amount added
+	 * @throws IllegalArgumentException
+	 *             if the date is null
+	 */
+	public static Date addWeeks(Date date, int amount) {
+		return add(date, Calendar.WEEK_OF_YEAR, amount);
+	}
 
-    //-----------------------------------------------------------------------
-    /**
-     * Adds a number of minutes to a date returning a new object.
-     * The original date object is unchanged.
-     *
-     * @param date  the date, not null
-     * @param amount  the amount to add, may be negative
-     * @return the new date object with the amount added
-     * @throws IllegalArgumentException if the date is null
-     */
-    public static Date addMinutes(Date date, int amount) {
-        return add(date, Calendar.MINUTE, amount);
-    }
+	// -----------------------------------------------------------------------
+	/**
+	 * Adds a number of days to a date returning a new object. The original date
+	 * object is unchanged.
+	 *
+	 * @param date
+	 *            the date, not null
+	 * @param amount
+	 *            the amount to add, may be negative
+	 * @return the new date object with the amount added
+	 * @throws IllegalArgumentException
+	 *             if the date is null
+	 */
+	public static Date addDays(Date date, int amount) {
+		return add(date, Calendar.DAY_OF_MONTH, amount);
+	}
 
-    //-----------------------------------------------------------------------
-    /**
-     * Adds a number of seconds to a date returning a new object.
-     * The original date object is unchanged.
-     *
-     * @param date  the date, not null
-     * @param amount  the amount to add, may be negative
-     * @return the new date object with the amount added
-     * @throws IllegalArgumentException if the date is null
-     */
-    public static Date addSeconds(Date date, int amount) {
-        return add(date, Calendar.SECOND, amount);
-    }
+	// -----------------------------------------------------------------------
+	/**
+	 * Adds a number of hours to a date returning a new object. The original
+	 * date object is unchanged.
+	 *
+	 * @param date
+	 *            the date, not null
+	 * @param amount
+	 *            the amount to add, may be negative
+	 * @return the new date object with the amount added
+	 * @throws IllegalArgumentException
+	 *             if the date is null
+	 */
+	public static Date addHours(Date date, int amount) {
+		return add(date, Calendar.HOUR_OF_DAY, amount);
+	}
 
-    //-----------------------------------------------------------------------
-    /**
-     * Adds a number of milliseconds to a date returning a new object.
-     * The original date object is unchanged.
-     *
-     * @param date  the date, not null
-     * @param amount  the amount to add, may be negative
-     * @return the new date object with the amount added
-     * @throws IllegalArgumentException if the date is null
-     */
-    public static Date addMilliseconds(Date date, int amount) {
-        return add(date, Calendar.MILLISECOND, amount);
-    }
+	// -----------------------------------------------------------------------
+	/**
+	 * Adds a number of minutes to a date returning a new object. The original
+	 * date object is unchanged.
+	 *
+	 * @param date
+	 *            the date, not null
+	 * @param amount
+	 *            the amount to add, may be negative
+	 * @return the new date object with the amount added
+	 * @throws IllegalArgumentException
+	 *             if the date is null
+	 */
+	public static Date addMinutes(Date date, int amount) {
+		return add(date, Calendar.MINUTE, amount);
+	}
 
-    //-----------------------------------------------------------------------
-    /**
-     * Adds to a date returning a new object.
-     * The original date object is unchanged.
-     *
-     * @param date  the date, not null
-     * @param calendarField  the calendar field to add to
-     * @param amount  the amount to add, may be negative
-     * @return the new date object with the amount added
-     * @throws IllegalArgumentException if the date is null
-     */
-    public static Date add(Date date, int calendarField, int amount) {
-        if (date == null) {
-            throw new IllegalArgumentException("The date must not be null");
-        }
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        c.add(calendarField, amount);
-        return c.getTime();
-    }
+	// -----------------------------------------------------------------------
+	/**
+	 * Adds a number of seconds to a date returning a new object. The original
+	 * date object is unchanged.
+	 *
+	 * @param date
+	 *            the date, not null
+	 * @param amount
+	 *            the amount to add, may be negative
+	 * @return the new date object with the amount added
+	 * @throws IllegalArgumentException
+	 *             if the date is null
+	 */
+	public static Date addSeconds(Date date, int amount) {
+		return add(date, Calendar.SECOND, amount);
+	}
+
+	// -----------------------------------------------------------------------
+	/**
+	 * Adds a number of milliseconds to a date returning a new object. The
+	 * original date object is unchanged.
+	 *
+	 * @param date
+	 *            the date, not null
+	 * @param amount
+	 *            the amount to add, may be negative
+	 * @return the new date object with the amount added
+	 * @throws IllegalArgumentException
+	 *             if the date is null
+	 */
+	public static Date addMilliseconds(Date date, int amount) {
+		return add(date, Calendar.MILLISECOND, amount);
+	}
+
+	// -----------------------------------------------------------------------
+	/**
+	 * Adds to a date returning a new object. The original date object is
+	 * unchanged.
+	 *
+	 * @param date
+	 *            the date, not null
+	 * @param calendarField
+	 *            the calendar field to add to
+	 * @param amount
+	 *            the amount to add, may be negative
+	 * @return the new date object with the amount added
+	 * @throws IllegalArgumentException
+	 *             if the date is null
+	 */
+	public static Date add(Date date, int calendarField, int amount) {
+		if (date == null) {
+			throw new IllegalArgumentException("The date must not be null");
+		}
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.add(calendarField, amount);
+		return c.getTime();
+	}
 
 }
