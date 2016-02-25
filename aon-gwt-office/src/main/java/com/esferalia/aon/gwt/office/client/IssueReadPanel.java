@@ -485,6 +485,7 @@ public class IssueReadPanel extends Composite {
 					});
 
 					cb.setValue(containsOfficeTag(tag.getName()));
+					cb.setEnabled(issue instanceof IssueGrid.IssueOpenLoadSelected);
 					vPanel.add(cb);
 				}
 
