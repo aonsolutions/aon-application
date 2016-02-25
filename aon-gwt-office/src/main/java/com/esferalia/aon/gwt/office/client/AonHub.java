@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.office.client;
 
+import java.util.Date;
+
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
@@ -23,6 +25,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.jsonp.client.JsonpRequestBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -31,6 +34,7 @@ public class AonHub {
 	private static String accessToken = null;
 	private static String baseUrl = "https://api.github.com/";
 	private static String repositoryUrl = "https://api.github.com/";
+	private static String since = null;
 	private static boolean authorized = false;
 
 	public AonHub(String url) {
@@ -47,6 +51,11 @@ public class AonHub {
 
 	public boolean isAuthorized() {
 		return this.isAuthorized();
+	}
+
+	public void setSinceCriteria(Date since) {
+		DateTimeFormat fmt = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");		
+		this.since = fmt.format(since);
 	}
 
 	// ************** USERS *************** //
@@ -94,20 +103,20 @@ public class AonHub {
 
 	public void getOpenIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
-		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=open",
-				callback);
+		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=open"
+				+ (since != null ? "&since=" + this.since : ""), callback);
 	}
 
 	public void getClosedIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
-		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=closed",
-				callback);
+		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=closed"
+				+ (since != null ? "&since=" + this.since : ""), callback);
 	}
 
 	public void getAllIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
-		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=all",
-				callback);
+		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=all"
+				+ (since != null ? "&since=" + this.since : ""), callback);
 	}
 
 	public void createIssue(String user, String repo, IssueValue prop,
@@ -375,7 +384,6 @@ public class AonHub {
 			log.append("\n\n--" + ex.getStackTrace());
 			hookedCallback.onFailure(ex);
 			GWT.log(log.toString());
-
 		}
 	}
 

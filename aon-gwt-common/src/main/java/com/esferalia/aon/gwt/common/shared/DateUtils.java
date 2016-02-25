@@ -1,20 +1,14 @@
 package com.esferalia.aon.gwt.common.shared;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
-/**
- * @author ecastellano
- * @Deprecated use com.esferalia.aon.watson.util.AonDateUtils 
- */
-@Deprecated
 public class DateUtils {
-	
-	
-	
+
 	public static int getYear() {
-		return getYear(new Date());		
+		return getYear(new Date());
 	}
 
 	public static int getYear(Date date) {
@@ -38,7 +32,7 @@ public class DateUtils {
 	}
 
 	public static Date addYears2Date(Date date, int years) {
-		CalendarUtil.addMonthsToDate(date, years * 12);		
+		CalendarUtil.addMonthsToDate(date, years * 12);
 		return date;
 	}
 
@@ -48,7 +42,7 @@ public class DateUtils {
 	}
 
 	public static Date getFirstDayOfYear() {
-		return getFirstDayOfMonth(new Date());
+		return getFirstDayOfYear(new Date());		
 	}
 
 	public static Date getFirstDayOfMonth() {
@@ -74,13 +68,13 @@ public class DateUtils {
 			return false; // a != null
 		return a.after(b) || a.equals(b);
 	}
-	
+
 	public static boolean isBeforeOrEquals(Date a, Date b) {
 		if (a == null)
 			return false;
 		if (b == null)
 			return true;
-		
+
 		return a.before(b) || a.equals(b);
 	}
 
@@ -185,13 +179,12 @@ public class DateUtils {
 	}
 
 	public static int compare(Date d0, Date d1) {
-		if ( d0 == d1 )
+		if (d0 == d1)
 			return 0;
-		if ( d0 == null)
+		if (d0 == null)
 			return 1;
-		if ( d1 == null)
+		if (d1 == null)
 			return -1;
-		
 
 		return ((d0.getYear() - d1.getYear()) * 372)
 				+ ((d0.getMonth() - d1.getMonth()) * 31) + // max = 11*31
@@ -203,22 +196,22 @@ public class DateUtils {
 		return new Date(Date.UTC(date.getYear(), date.getMonth(),
 				date.getDate(), 0, 0, 0));
 	}
-	
-	/**
-	   * Resets the date to have no time modifiers. Note that the hour might not be zero if the time
-	   * hits a DST transition date.
-	   *
-	   * @param date the date
-	   */
-	  @SuppressWarnings("deprecation") // GWT requires Date
-	  public static void resetTime(Date date) {
-	    long msec = date.getTime();
-	    msec = (msec / 1000) * 1000;
-	    date.setTime(msec);
-	    date.setHours(0);
-	    date.setMinutes(0);
-	    date.setSeconds(0);
-	  }
 
+	/**
+	 * Resets the date to have no time modifiers. Note that the hour might not
+	 * be zero if the time hits a DST transition date.
+	 *
+	 * @param date
+	 *            the date
+	 */
+	@SuppressWarnings("deprecation") // GWT requires Date
+	public static void resetTime(Date date) {
+		long msec = date.getTime();
+		msec = (msec / 1000) * 1000;
+		date.setTime(msec);
+		date.setHours(0);
+		date.setMinutes(0);
+		date.setSeconds(0);
+	}
 
 }

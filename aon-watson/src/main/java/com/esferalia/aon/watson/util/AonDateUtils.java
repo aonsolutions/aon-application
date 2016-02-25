@@ -24,42 +24,6 @@ public class AonDateUtils {
 		return b == null ? -1 : a.compareTo(b);
 	}
 	
-	public static <T extends Date> T getFirstDateOfWeek(T date,
-			LongFunction<T> longFunction) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		int day = calendar.get(Calendar.DAY_OF_YEAR);
-		while(calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY)
-			calendar.set(Calendar.DAY_OF_YEAR, --day);
-		return longFunction.apply(calendar.getTimeInMillis());
-	}
-	
-	public static Date getFirstDayOfWeek(Date date) {
-		return getFirstDateOfWeek(date, Date::new);
-	}
-	
-	public static Date getFirstDayOfWeek(java.sql.Date date) {
-		return getFirstDateOfWeek(date, Date::new);
-	}
-	
-	public static <T extends Date> T getLastDateOfWeek(T date,
-			LongFunction<T> longFunction) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		int day = calendar.get(Calendar.DAY_OF_YEAR);
-		while(calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY)
-			calendar.set(Calendar.DAY_OF_YEAR, ++day);
-		return longFunction.apply(calendar.getTimeInMillis());
-	}
-	
-	public static Date getLastDayOfWeek(Date date) {
-		return getLastDateOfWeek(date, Date::new);
-	}
-	
-	public static Date getLastDayOfWeek(java.sql.Date date) {
-		return getLastDateOfWeek(date, Date::new);
-	}
-	
 	public static <T extends Date> T getFirstDayOfYear(T date,
 			LongFunction<T> longFunction) {
 		Calendar calendar = Calendar.getInstance();

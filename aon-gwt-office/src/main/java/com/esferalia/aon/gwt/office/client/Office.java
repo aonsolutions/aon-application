@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.office.client;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.office.client.IssueReadPanel.Callback;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
@@ -30,6 +32,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.http.client.URL;
@@ -42,6 +45,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -74,11 +78,14 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	SimpleLayoutPanel readIssueLayoutPanel;
 	@UiField
 	ResizeLayoutPanel readIssuePanel;
-
+	@UiField
+	ListBox fromListBox;
 	@UiField
 	RadioButton openIssuesRb;
 	@UiField
 	RadioButton closedIssuesRb;
+	@UiField
+	RadioButton allIssuesRb;
 
 	@UiField
 	IssueGrid dataGrid;
@@ -89,16 +96,18 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	TagTree tagTree;
 
 	private User user;
-
 	private IssuePanel issuePanel;
 
 	private IssueSelected issueSelected;
 	private AonHub gitHub = new AonHub(GWT.getModuleBaseURL() + "api/");
 	private List<IssueSelected> openIssues;
 	private List<IssueSelected> closedIssues;
+	private List<IssueSelected> allIssues;
 
 	private ListDataProvider<IssueSelected> openIssuesProvider;
 	private ListDataProvider<IssueSelected> closeIssuesProvider;
+	private ListDataProvider<IssueSelected> allIssuesProvider;
+	
 	private List<DefaultAonTagIssueSelected> tagList;
 	private List<Registry> registries;
 
@@ -137,10 +146,20 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						userIdentificated(result.getData());
 					}
 				});
-
+		
+		initFromListBox();
 		loadRegistries();
 		loadLabels();
 		loadOpenIssues();
+	}
+	
+	private void initFromListBox() {
+		fromListBox.addItem(" -------- ", "all");
+		fromListBox.addItem("Hoy", "today");
+		fromListBox.addItem("Esta semana", "thisWeek");
+		fromListBox.addItem("Este mes", "thisMonth");
+		fromListBox.addItem("Este a\u00F1o", "thisYear");		
+		fromListBox.setSelectedIndex(0);		
 	}
 
 	private void loadRegistries() {
@@ -159,7 +178,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 							addRegistry2List(registries.get(x));
 					}
 				});
-
 	}
 
 	private void loadLabels() {
@@ -223,6 +241,25 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 				});
 		showDockOfficePanel();
 	}
+	
+	private void loadAllIssues() {		
+		initAllIssues();
+		
+		gitHub.getAllIssues(String.valueOf(getCurrentDomain()), getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
+			
+			@Override
+			public void onSuccess(JSON<JsIssue> result) {
+				for (int x = 0; x < result.getData().length(); x++)
+					addAllIssue(result.getData().get(x));
+			}
+		});
+		showDockOfficePanel();
+	}
 
 	@Override
 	public void onSelectionChangeHandler(SelectionChangeEvent event) {
@@ -250,12 +287,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("returnButton")
 	void onReturnButtonClick(ClickEvent event) {
-
-		if (openIssuesRb.getValue())
-			loadOpenIssues();
-		else
-			loadClosedIssues();
-
+		evalRadioButtons();
 		returnButton.setEnabled(false);
 	}
 
@@ -264,6 +296,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 		if (event.getValue()) {
 			closedIssuesRb.removeStyleName(AON.AON_BOLD);
+			allIssuesRb.removeStyleName(AON.AON_BOLD);
 			openIssuesRb.setStyleName(AON.AON_BOLD);
 			loadOpenIssues();
 		}
@@ -274,14 +307,55 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 		if (event.getValue()) {
 			openIssuesRb.removeStyleName(AON.AON_BOLD);
+			allIssuesRb.removeStyleName(AON.AON_BOLD);
 			closedIssuesRb.setStyleName(AON.AON_BOLD);
 			loadClosedIssues();
 		}
+	}
+	
+	@UiHandler("allIssuesRb")
+	void onSelectedAllIssuesRb(ValueChangeEvent<Boolean> event) {
+		
+		if (event.getValue()) {
+			openIssuesRb.removeStyleName(AON.AON_BOLD);
+			closedIssuesRb.removeStyleName(AON.AON_BOLD);
+			allIssuesRb.setStyleName(AON.AON_BOLD);
+			loadAllIssues();
+		}
+	}
+	
+	@UiHandler("fromListBox")
+	void onChangeEventListBox(ChangeEvent event) {
+		
+		String name = fromListBox.getSelectedValue();
+		Date criteria = null;
+		if (name.compareTo("today") == 0)
+			criteria = new Date();
+		else if(name.compareTo("thisWeek") == 0)
+			criteria = DateUtils.getFirstDayOfWorkWeek(new Date());
+		else if(name.compareTo("thisMonth") == 0)
+			criteria = DateUtils.getFirstDayOfMonth();
+		else if(name.compareTo("thisYear") == 0)
+			criteria = DateUtils.getFirstDayOfYear();
+		
+		gitHub.setSinceCriteria(criteria);
+		evalRadioButtons();
+		
 	}
 
 	// ******************************************************************
 	// ********************** PRIVATE METHODS ***************************
 	// ******************************************************************
+	
+	void evalRadioButtons() {
+		
+		if (openIssuesRb.getValue())
+			loadOpenIssues();
+		else if (closedIssuesRb.getValue())
+			loadClosedIssues();
+		else if (allIssuesRb.getValue())
+			loadAllIssues();
+	}
 
 	void initOpenIssues() {
 		openIssues = new LinkedList<IssueSelected>();
@@ -296,6 +370,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		closeIssuesProvider.addDataDisplay(dataGrid);
 		closedIssues = closeIssuesProvider.getList();
 	}
+	
+	void initAllIssues() {
+		allIssues = new LinkedList<IssueSelected>();
+		allIssuesProvider = new ListDataProvider<IssueSelected>();
+		allIssuesProvider.addDataDisplay(dataGrid);
+		allIssues = allIssuesProvider.getList();
+	}
 
 	void addOpenIssue(JsIssue issue) {
 		IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(
@@ -308,7 +389,20 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 				issue);
 		closedIssues.add(issueSelected);
 	}
-
+	
+	void addAllIssue(JsIssue issue) {
+		IssueSelected issueSelected = null;
+		if (issue.getState().compareTo(NoticeStatus.OPEN.getValue()) == 0)
+			issueSelected = new IssueGrid.IssueOpenLoadSelected(issue);
+		else if (issue.getState().compareTo(NoticeStatus.REOPEN.getValue()) == 0)
+			issueSelected = new IssueGrid.IssueOpenLoadSelected(issue);
+		else if (issue.getState().compareTo(NoticeStatus.CLOSED.getValue()) == 0)
+			issueSelected = new IssueGrid.IssueClosedLoadSelected(issue);
+		
+		if ( issueSelected != null)
+			allIssues.add(issueSelected);
+	}
+	
 	void initCloseIssues() {
 		closedIssues = new LinkedList<IssueSelected>();
 		closeIssuesProvider = new ListDataProvider<IssueSelected>();

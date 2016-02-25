@@ -14,11 +14,11 @@ public class IssueValue extends Value<IssueValue.Prop> {
         Body("body"),
         Assignee("assignee"),
         Recipient("recipient"),
-        State("state"),
-        Milestone("milestone"),
+        State("state"),        
         Type("type"),
-        Workgroup("workgroup"),
-        Labels("labels")
+        Labels("labels"),
+        StartDate("startDate"),
+        EndDate("endDate")
 		;
         private final String value;
         
@@ -66,14 +66,6 @@ public class IssueValue extends Value<IssueValue.Prop> {
 	
 	public void setRecipient(Integer recipient) {
 		prop.put(Prop.Recipient, recipient);
-	}
-
-	public void setMilestone(Integer number) {
-		prop.put(Prop.Milestone, number);
-	}
-	
-	public void setWorkgroup(Integer workgroup) {
-		prop.put(Prop.Workgroup, workgroup);
 	}
 	
 	public void setType(String type) {

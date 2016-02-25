@@ -48,34 +48,34 @@
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:north size="25">
-			
 
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
-					<g:HorizontalPanel>
-						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText" text="Incidencias" />
-							</g:HTMLPanel>
+
+			<g:FlowPanel styleName="aon-finding-title-toolbar">
+				<g:HorizontalPanel>
+					<g:HTMLPanel styleName="aon-finding-title">
+						<g:HTMLPanel styleName="aon-finding-title-internal">
+							<g:Label styleName="aon-outputText" text="Incidencias" />
 						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-								<g:Label styleName="aon-outputText"></g:Label>
-							</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="aon-finding-subtitle">
+						<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+							<g:Label styleName="aon-outputText"></g:Label>
 						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-							<g:Button ui:field='newIssueButton'
-								styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
-								text="AVISO" />
-							<g:Button ui:field='tagButton'
-								styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
-								text="ETIQUETAS" />
-							<g:Button ui:field='returnButton'
-								styleName='aon-finding-toolbar-item {aonResources.css.aonIconCancel}'
-								text="VOLVER" enabled="false" />
-						</g:HTMLPanel>
-					</g:HorizontalPanel>
-				</g:FlowPanel>
-		
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+						<g:Button ui:field='newIssueButton'
+							styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
+							text="AVISO" />
+						<g:Button ui:field='tagButton'
+							styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
+							text="ETIQUETAS" />
+						<g:Button ui:field='returnButton'
+							styleName='aon-finding-toolbar-item {aonResources.css.aonIconCancel}'
+							text="VOLVER" enabled="false" />
+					</g:HTMLPanel>
+				</g:HorizontalPanel>
+			</g:FlowPanel>
+
 		</g:north>
 
 		<g:center>
@@ -89,18 +89,29 @@
 								<g:Label styleName="aon-panelGrid-search-info-internal"
 									text="Criterio de búsqueda" />
 							</div>
-							<table class="aon-panelGrid">
-								<tr>
-									<td>
+
+							<g:Grid>
+								<g:row>
+									<g:customCell>
+										<g:Label text="Mostrar a partir de " styleName="{aonResources.css.aonBold}" />
+									</g:customCell>
+									<g:customCell>
+										<g:ListBox ui:field="fromListBox" />
+									</g:customCell>
+									<g:customCell>
 										<g:RadioButton ui:field="openIssuesRb" name="showIssuesRb"
-										value="true" styleName="{aonResources.css.aonBold}"> Abiertas </g:RadioButton>
-									</td>
-									<td>
+											value="true" styleName="{aonResources.css.aonBold}"> Abiertas </g:RadioButton>
+									</g:customCell>
+									<g:customCell>
 										<g:RadioButton ui:field="closedIssuesRb" name="showIssuesRb"
-										value="false" > Cerradas </g:RadioButton>
-									</td>
-								</tr>
-							</table>
+											value="false"> Cerradas </g:RadioButton>
+									</g:customCell>
+									<g:customCell>
+										<g:RadioButton ui:field="allIssuesRb" name="showIssuesRb"
+											value="false"> Todas </g:RadioButton>
+									</g:customCell>
+								</g:row>
+							</g:Grid>
 						</g:HTMLPanel>
 					</g:north>
 					<g:center>

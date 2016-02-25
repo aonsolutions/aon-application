@@ -2228,12 +2228,12 @@ public class AON {
 	}
 
 	public static List<Notice> getAllNotices(Integer domainId,
-			String domainName, String userName) {
+			String domainName, String userName, String since) {
 
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getAllIssues(ctx);
+			return getOffice().getAllIssues(ctx, since);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2241,12 +2241,12 @@ public class AON {
 	}
 
 	public static List<Notice> getOpenNotices(Integer domainId,
-			String domainName, String userName) {
+			String domainName, String userName, String since) {
 
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getOpenNotices(ctx);
+			return getOffice().getOpenNotices(ctx, since);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2254,11 +2254,11 @@ public class AON {
 	}
 
 	public static List<Notice> getClosedNotices(Integer domainId,
-			String domainName, String userName) {
+			String domainName, String userName, String since) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getClosedNotices(ctx);
+			return getOffice().getClosedNotices(ctx, since);
 
 		} finally {
 			if (ctx != null)

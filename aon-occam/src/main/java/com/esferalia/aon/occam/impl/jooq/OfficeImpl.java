@@ -18,21 +18,21 @@ public class OfficeImpl implements IOffice {
 		return AonHubDAO.getUser(ctx, id);
 	}
 	@Override
-	public List<Notice> getOpenNotices(AONContext ctx)
+	public List<Notice> getOpenNotices(AONContext ctx, String since)
 			throws IllegalArgumentException {
-		return AonHubDAO.getOpenNotices(ctx);
+		return AonHubDAO.getOpenNotices(ctx, since);
 	}
 
 	@Override
-	public List<Notice> getClosedNotices(AONContext ctx)
+	public List<Notice> getClosedNotices(AONContext ctx, String since)
 			throws IllegalArgumentException {		
-		return AonHubDAO.getClosedIsues(ctx);
+		return AonHubDAO.getClosedIsues(ctx, since);
 	}
 
 	@Override
-	public List<Notice> getAllIssues(AONContext ctx)
+	public List<Notice> getAllIssues(AONContext ctx, String since)
 			throws IllegalArgumentException {
-		return AonHubDAO.getAllNotices(ctx);
+		return AonHubDAO.getAllNotices(ctx, since);
 	}
 	
 	@Override

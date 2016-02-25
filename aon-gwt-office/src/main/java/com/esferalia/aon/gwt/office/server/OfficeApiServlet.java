@@ -27,7 +27,6 @@ import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.google.gwt.json.client.JSONException;
 import com.google.gwt.safehtml.shared.UriUtils;
 
 /**
@@ -318,18 +317,24 @@ public class OfficeApiServlet extends HttpServlet {
 				pw = resp.getWriter();
 
 				String state = req.getParameter("state");
+				String since = req.getParameter("since");
+
 				switch (state) {
 				case "open":
 					notices = AON.getOpenNotices(domainId, domainName,
-							userName);
+							userName, since);
 					break;
 				case "closed":
 					notices = AON.getClosedNotices(domainId, domainName,
-							userName);
+							userName, since);
+					break;
+					
+				case "all":
+					notices = AON.getAllNotices(domainId, domainName, userName, since);
 					break;
 
 				default:
-					notices = AON.getAllNotices(domainId, domainName, userName);
+					notices = AON.getAllNotices(domainId, domainName, userName, since);
 					break;
 				}
 

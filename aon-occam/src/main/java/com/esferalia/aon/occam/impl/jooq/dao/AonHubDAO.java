@@ -8,10 +8,15 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.jooq.Cursor;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -32,6 +37,9 @@ import com.esferalia.aon.occam.api.model.type.NoticeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 public class AonHubDAO {
+
+	private static SimpleDateFormat sdf = new SimpleDateFormat(
+			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 	public static User getUser(AONContext ctx, Integer id) {
 
@@ -278,7 +286,7 @@ public class AonHubDAO {
 
 			for (Tag tag : tagList) {
 				evalOpenTag(ctx, noticeId, tag, today);
-				
+
 				ctx.getDslContext().insertInto(NOTICE_TAG)
 						.set(NOTICE_TAG.NOTICE, noticeId)
 						.set(NOTICE_TAG.TAG, tag.getId())
@@ -326,13 +334,14 @@ public class AonHubDAO {
 			return false;
 		}
 	}
-	
-	public static Notice replaceLabelsForIssue(AONContext ctx, Integer noticeId, List<Tag> addLabels, List<Tag> deletedLabels) {
-	
+
+	public static Notice replaceLabelsForIssue(AONContext ctx, Integer noticeId,
+			List<Tag> addLabels, List<Tag> deletedLabels) {
+
 		Date today = new Date();
-		
+
 		for (Tag tag : deletedLabels) {
-			
+
 			Record result = ctx.getDslContext()
 					.selectFrom(NOTICE_TAG.rightOuterJoin(TAG)
 							.on(NOTICE_TAG.TAG.eq(TAG.ID)))
@@ -341,20 +350,20 @@ public class AonHubDAO {
 							.and(NOTICE_TAG.END_DATE.isNull())
 							.and(NOTICE_TAG.NOTICE.eq(noticeId)))
 					.fetchOne();
-			
+
 			if (result != null) {
 				ctx.getDslContext().update(NOTICE_TAG)
-				.set(NOTICE_TAG.END_DATE,
-						new java.sql.Timestamp((today).getTime()))
-				.set(NOTICE_TAG.USER, tag.getUser().getId())
-				.where(NOTICE_TAG.ID.eq(result.getValue(NOTICE_TAG.ID)))
-				.execute();
+						.set(NOTICE_TAG.END_DATE,
+								new java.sql.Timestamp((today).getTime()))
+						.set(NOTICE_TAG.USER, tag.getUser().getId())
+						.where(NOTICE_TAG.ID.eq(result.getValue(NOTICE_TAG.ID)))
+						.execute();
 			}
 		}
-		
+
 		for (Tag tag : addLabels) {
 			evalOpenTag(ctx, noticeId, tag, today);
-			
+
 			ctx.getDslContext().insertInto(NOTICE_TAG)
 					.set(NOTICE_TAG.NOTICE, noticeId)
 					.set(NOTICE_TAG.TAG, tag.getId())
@@ -519,12 +528,47 @@ public class AonHubDAO {
 
 		return notice;
 	}
+	
+	
+	
+	private static Date getTomorrow() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.add(Calendar.DATE, 1);
+		cal.add(Calendar.HOUR_OF_DAY, 0);
+		return cal.getTime();
+	}
+	
+	private static Date getSince(String pSince) {
+		
+		Date since = null;
+		try {
+			since = sdf.parse(pSince);	
+		} catch (Exception ex) {
+			return null;
+		}
+		
+		if (since == null)
+			return null;
+		else
+		{			
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(since);
+			cal.add(Calendar.DATE, -1);
+			cal.add(Calendar.HOUR_OF_DAY, 0);
+			return cal.getTime();
+		}
+	}
 
-	public static List<Notice> getOpenNotices(AONContext ctx) {
+	public static List<Notice> getOpenNotices(AONContext ctx, String pSince) {
 
 		List<Notice> notices = new LinkedList<Notice>();
-
 		Integer domainId = ctx.getDomainId();
+		
+		Date since = getSince(pSince);
+		Date tomorrow = getTomorrow();
+		
+		System.out.println("Fecha: " + since);
 
 		SelectConditionStep<Record1<Integer>> openId = ctx.getDslContext()
 				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
@@ -536,14 +580,19 @@ public class AonHubDAO {
 				.and(TAG.NAME.eq(NoticeStatus.REOPEN.getValue())
 						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
 
-		Result<Record> record = ctx.getDslContext().select().from(NOTICE)
+		SelectConditionStep<Record> select = ctx.getDslContext().select().from(NOTICE)
 				.rightOuterJoin(NOTICE_TAG).on(NOTICE.ID.eq(NOTICE_TAG.NOTICE))
 				.rightOuterJoin(TAG).on(NOTICE_TAG.TAG.eq(TAG.ID))
 				.where(NOTICE.DOMAIN.eq(domainId).and(NOTICE.NOTICE_.isNull())
 						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
 						.and(TAG.ID.eq(openId).or(TAG.ID.eq(reopenId)))
-						.and(NOTICE_TAG.END_DATE.isNull()))
-				.orderBy(NOTICE.DATE.desc()).fetch();
+						.and(NOTICE_TAG.END_DATE.isNull()));
+		
+		if (since != null) {
+			select = select.and(NOTICE.DATE.between(
+					new java.sql.Timestamp(since.getTime()), new java.sql.Timestamp(tomorrow.getTime())));
+		}	
+		Result<Record> record = select.orderBy(NOTICE.DATE.desc()).fetch();
 
 		if (record != null) {
 
@@ -556,24 +605,32 @@ public class AonHubDAO {
 		return notices;
 	}
 
-	public static List<Notice> getClosedIsues(AONContext ctx) {
+	public static List<Notice> getClosedIsues(AONContext ctx, String pSince) {
 
 		List<Notice> notices = new LinkedList<Notice>();
+		
+		Date since = getSince(pSince);
+		Date tomorrow = getTomorrow();
 
 		SelectConditionStep<Record1<Integer>> closedId = ctx.getDslContext()
 				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
 				.and(TAG.NAME.eq(NoticeStatus.CLOSED.getValue())
 						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
 
-		Result<Record> record = ctx.getDslContext().select().from(NOTICE)
+		SelectConditionStep<Record> select = ctx.getDslContext().select().from(NOTICE)
 				.rightOuterJoin(NOTICE_TAG).on(NOTICE_TAG.NOTICE.eq(NOTICE.ID))
 				.rightOuterJoin(TAG).on(NOTICE_TAG.TAG.eq(TAG.ID))
 				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
 						.and(NOTICE.NOTICE_.isNull())
 						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
 						.and(TAG.ID.eq(closedId))
-						.and(NOTICE_TAG.END_DATE.isNull()))
-				.orderBy(NOTICE.DATE.desc()).fetch();
+						.and(NOTICE_TAG.END_DATE.isNull()));
+				
+		if (since != null) {
+			select = select.and(NOTICE.DATE.between(
+					new java.sql.Timestamp(since.getTime()), new java.sql.Timestamp(tomorrow.getTime())));
+		}
+		Result<Record> record = select.orderBy(NOTICE.DATE.desc()).fetch();
 
 		if (record != null)
 
@@ -585,28 +642,54 @@ public class AonHubDAO {
 		return notices;
 	}
 
-	public static List<Notice> getAllNotices(AONContext ctx) {
+	public static List<Notice> getAllNotices(AONContext ctx, String pSince) {
 
 		List<Notice> notices = new LinkedList<Notice>();
+		
+		Date since = getSince(pSince);
+		Date tomorrow = getTomorrow();
 
-		ctx.getDslContext().select()
+		SelectConditionStep<Record1<Integer>> openId = ctx.getDslContext()
+				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
+				.and(TAG.NAME.eq(NoticeStatus.OPEN.getValue())
+						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
+
+		SelectConditionStep<Record1<Integer>> reopenId = ctx.getDslContext()
+				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
+				.and(TAG.NAME.eq(NoticeStatus.REOPEN.getValue())
+						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
+
+		SelectConditionStep<Record1<Integer>> closedId = ctx.getDslContext()
+				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
+				.and(TAG.NAME.eq(NoticeStatus.CLOSED.getValue())
+						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
+
+		SelectConditionStep<Record> select = ctx.getDslContext().select()
 				.from(NOTICE.rightOuterJoin(NOTICE_TAG)
 						.on(NOTICE.ID.eq(NOTICE_TAG.NOTICE)).rightOuterJoin(TAG)
 						.on(NOTICE_TAG.TAG.eq(TAG.ID)))
-				.where(TAG.DOMAIN.eq(0)
-						.and(TAG.NAME.eq(NoticeStatus.CLOSED.getValue())
-								.or(TAG.NAME.eq(NoticeStatus.OPEN.getValue()))
-								.or(TAG.NAME.eq(NoticeStatus.REOPEN.getValue()))
-								.or(TAG.NAME.eq(
-										NoticeStatus.DUPLICATED.getValue())))
+				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
 						.and(NOTICE.NOTICE_.isNull())
-						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value())))
-				.orderBy(NOTICE.DATE.desc()).fetch().stream()
-				.forEach(record -> {
+						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
+						.and(TAG.ID.eq(openId)
+								.or(TAG.ID.eq(reopenId)
+										.or(TAG.ID.eq(closedId))))
+						.and(NOTICE_TAG.END_DATE.isNull()));
+		
+		if (since != null) {
+			select = select.and(NOTICE.DATE.between(
+					new java.sql.Timestamp(since.getTime()), new java.sql.Timestamp(tomorrow.getTime())));
+		}
+		
+		Result<Record> record = select.orderBy(NOTICE.DATE.desc()).fetch();
 
-					Notice notice = buildNotice(ctx, record);
-					notices.add(notice);
-				});
+		if (record != null) {
+			record.stream().forEach(result -> {
+				Notice notice = buildNotice(ctx, result);
+				notices.add(notice);
+
+			});
+		}
 		return notices;
 	}
 
