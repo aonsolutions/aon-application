@@ -190,12 +190,20 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 	}
 	
 	public void setValue(Creditor creditor) {
-		id = creditor.getId();
-		creditorTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-		creditorTextBox.setValue(creditor.getRegistry().getDocument());
-		description = creditor.getRegistry().getName();
-		descriptionLabel.setText(description);
-		descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+		if (creditor != null && creditor.getId() != null) {
+			id = creditor.getId();	
+			creditorTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+			creditorTextBox.setValue(creditor.getRegistry().getDocument());
+			description = creditor.getRegistry().getName();
+			descriptionLabel.setText(description);
+			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+		} else {
+			id = null;	
+			creditorTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
+			creditorTextBox.setValue(null);
+			descriptionLabel.setText(null);
+			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+		}
 	}
 
 	private void reset() {

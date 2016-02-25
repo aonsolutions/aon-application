@@ -27,25 +27,25 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.fiscal.Mod115;
+import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
-import com.esferalia.aon.occam.server.fiscal.format.mod115.Mod115Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod123.Mod123Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod115 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/Model115PrintAEAT" })
-public class Mod115PrintAEAT extends HttpServlet {
+@WebServlet(name = "Mod123 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/Model123PrintAEAT" })
+public class Mod123PrintAEAT extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
 		try {
-			int id = Integer.parseInt(req.getParameter("mod115"));
+			int id = Integer.parseInt(req.getParameter("mod123"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = AonServletUtils.getLoggedUser();
-			Mod115 mod115 = AON.getMod115(domainName, domainId, user,id);
+			Mod123 mod123 = AON.getMod123(domainName, domainId, user,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -55,10 +55,10 @@ public class Mod115PrintAEAT extends HttpServlet {
 				wr = new OutputStreamWriter(output);
 			}
 			PrintWriter writer = new PrintWriter(wr);
-			Mod115Writer.fillWriter(mod115, writer);
+			Mod123Writer.fillWriter(mod123, writer);
 			
-			String fileName = AonFiscalFileUtils.getFileName(mod115); 
-			downloadPDF(req, resp, mod115, fileName, output.toByteArray());
+			String fileName = AonFiscalFileUtils.getFileName(mod123); 
+			downloadPDF(req, resp, mod123, fileName, output.toByteArray());
 
 		} catch (Throwable e) {
 			throw new ServletException(e);
@@ -67,7 +67,7 @@ public class Mod115PrintAEAT extends HttpServlet {
 	}
 
 	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
-			Mod115 mod115,String fileName, byte[] content) throws IOException, KeyManagementException, NoSuchAlgorithmException {
+			Mod123 mod123,String fileName, byte[] content) throws IOException, KeyManagementException, NoSuchAlgorithmException {
 		String fileString = new String(content);
 		fileString = fileString.replace("'", " ");
 		fileString = fileString.replace("&", " ");
@@ -75,17 +75,17 @@ public class Mod115PrintAEAT extends HttpServlet {
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 		
-		String urlParameters = "HID=INV5115A" 
+		String urlParameters = "HID=IE51230A" 
 				+"&IDI=ES"
 				+"&LEV=000000000000"
 				+"&FIC=" + encodedFile
 				+"&RUT="
-				+"&PRG=PTLINK6F"
+				+"&PRG="
 				+"&FIN=" 
-				+"&EJF=" + mod115.getYear() 
-				+"&MOD=115";
+				+"&EJF=" + mod123.getYear() 
+				+"&MOD=123";
 		// Validacion e impresion
-		String request = "https://www6.aeat.es/es13/l/zi22zilk0022";
+		String request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
 				
 		URL url = new URL(request);
 

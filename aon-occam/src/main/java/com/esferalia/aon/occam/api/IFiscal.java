@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
+import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -23,6 +24,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.occam.api.model.type.Mod123Key;
 
 public interface IFiscal {
 	// 			        FISCAL PANEL
@@ -107,6 +109,20 @@ public interface IFiscal {
 	public Mod115 createMod115(AONContext ctx, Mod115 mod115);
 	public void deleteMod115(AONContext ctx, Mod115 mod115);
 	public String getMod115Info(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey);
+
+	// 				   		  MOD123
+	public Mod123 getMod123(AONContext ctx, int id);
+	public LinkedList<Mod123> getMod123s(AONContext ctx, int domain);
+	public Mod123 calculateMod123(AONContext ctx, Mod123 mod123);
+	public Mod123 saveMod123(AONContext ctx, Mod123 mod123);
+	public Mod123 saveCommentsMod123(AONContext ctx, Mod123 mod123);
+	public Mod123 initializeForFinishMod123(AONContext ctx, Mod123 mod123);
+	public Mod123 finishMod123(AONContext ctx, Mod123 mod123);
+	public Mod123 reopenMod123(AONContext ctx, Mod123 mod123);
+	public Mod123 initializeMod123(AONContext ctx, Mod123 mod123);
+	public Mod123 createMod123(AONContext ctx, Mod123 mod123);
+	public void deleteMod123(AONContext ctx, Mod123 mod123);
+	public String getMod123Info(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey);
 
 	// 				   		  MOD202
 	public Mod202 getMod202(AONContext ctx, int id);

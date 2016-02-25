@@ -176,7 +176,7 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 
 		CellUtil.createCell(row, cellCount, "Concepto", headerCellStyle);
 		sheet.setColumnWidth(cellCount++, 8 * 256);
-		sheet.setColumnWidth(cellCount++, 45 * 256);
+		sheet.setColumnWidth(cellCount++, 40 * 256);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 		
 		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();

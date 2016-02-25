@@ -66,6 +66,10 @@ public enum FiscalModelType implements Serializable{
 			} else  if (admon == Administration.NAVARRA) {
 				return (period.isMonthPeriod()?"760":"759");	
 			}
+		} else if (this == M123) {
+			if (admon == Administration.NAVARRA) {
+				return "716";
+			}
 		}
 		return name;
 	}

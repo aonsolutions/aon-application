@@ -410,7 +410,7 @@ public class Mod115DAO extends FiscalModelDAO {
 				buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG_BOLD,AonStringUtils.center("Casilla: " + box + " - " + script.getLabel(), headerLength)));
 				Object ret = MVEL.eval(keyDAO.getExpression(), mvelCtx, mvelCtx);
 				resu.append(" = ");
-				resu.append(ret);
+				resu.append(AonMathUtils.round((Double) ret));
 				expr.append(" = ");
 				expr.append(box);
 				buf.append(MessageFormat.format(IRPFFormatter.DIV_MSG,"<b>F\u00F3rmula:</b> " + expr.toString()));		

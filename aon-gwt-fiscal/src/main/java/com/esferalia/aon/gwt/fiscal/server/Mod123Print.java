@@ -13,40 +13,40 @@ import javax.servlet.http.HttpServletResponse;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111ScriptProvider;
+import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.mod123.Model123ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod111 Print", urlPatterns = { "/aon_gwt_fiscal/Model111Print" })
-public class Mod111Print extends HttpServlet {
+@WebServlet(name = "Mod123 Print", urlPatterns = { "/aon_gwt_fiscal/Model123Print" })
+public class Mod123Print extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
 		try {
-			int id = Integer.parseInt(req.getParameter("mod111"));
+			int id = Integer.parseInt(req.getParameter("mod123"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = AonServletUtils.getLoggedUser();
-			Mod111 mod111 = AON.getMod111(domainName, domainId, user,id);
+			Mod123 mod123 = AON.getMod123(domainName, domainId, user,id);
 
-			Mod111ExcelAction action = new Mod111ExcelAction(mod111);
-			action.initialize(mod111.getModel().getName(mod111.getAdministration(), mod111.getPeriod()));
+			Mod123ExcelAction action = new Mod123ExcelAction(mod123);
+			action.initialize(mod123.getModel().getName(mod123.getAdministration(), mod123.getPeriod()));
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			
-			for (IModelScript<Mod111Key> ms : Model111ScriptProvider.obtainScript(mod111)) {
+			for (IModelScript<Mod123Key> ms : Model123ScriptProvider.obtainScript(mod123)) {
 				action.accept(ms);
 			}
 			action.beforeFinalize();
 			action.finalize(output);
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 			
-			String fileName = AonFiscalFileUtils.getFileName(mod111);
+			String fileName = AonFiscalFileUtils.getFileName(mod123);
 			resp.setContentType(MimeType.MS_EXCEL.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "."+ MimeType.MS_EXCEL.getExtension()+ "\";");
 			AonIOUtils.copy(in, resp.getOutputStream());

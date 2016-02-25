@@ -158,40 +158,45 @@ public class IRPFFormatter {
 		buf.append(MessageFormat.format(DIV_MSG_BOLD,AonStringUtils.repeat("-", headerLength)));
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", headerLength)));
 		
-		String oldDoc = null;
-		int counted = 0;
-		boolean isCounted = false;
-		int periodCounted = 0;
-		boolean isPeriodCounted = false;
+		
+		HashSet<String> beforePeriodDocs = new HashSet<String>();
+		HashSet<String> periodDocs = new HashSet<String>();
+		HashSet<String> acumDocs = new HashSet<String>();
 		
 		double sumBase = 0;
 		double sumQuota = 0;
+		double sumBeforePeriodBase = 0;
+		double sumBeforePeriodQuota = 0;
 		double sumPeriodBase = 0;
 		double sumPeriodQuota = 0;
 
 		for (IrpfBreakdown br : list) {
-			if (!AonStringUtils.equals(oldDoc, br.getDocument())) {
-				oldDoc = br.getDocument();
-				isCounted = false;
-				isPeriodCounted = false;
-			}
-			if ( !isCounted) {
-				isCounted = true;
-				++counted;
-			}
-			if (br.isInsidePeriod() && !isPeriodCounted ) {
-				isPeriodCounted = true;
-				++periodCounted;
+			acumDocs.add(br.getDocument());
+			if (br.isInsidePeriod()) {
+				periodDocs.add(br.getDocument());
+			} else {
+				beforePeriodDocs.add(br.getDocument());
 			}
 			sumBase += br.getBase(); 
 			sumQuota += br.getQuota();
+			sumBeforePeriodBase += br.isInsidePeriod()?0.0:br.getBase(); 
+			sumBeforePeriodQuota += br.isInsidePeriod()?0.0:br.getQuota();
 			sumPeriodBase += br.isInsidePeriod()?br.getBase():0.0; 
 			sumPeriodQuota += br.isInsidePeriod()?br.getQuota():0.0;
 		}
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
+				+ AonStringUtils.leftPad("ACUMULADO HASTA INICIO DEL PER\u00CDODO :",40)
+				+ AonStringUtils.SPACE
+				+ AonStringUtils.leftPad(AonNumberUtils.toString( beforePeriodDocs.size()),15)
+				+ AonStringUtils.leftPad(DEC.format(sumBeforePeriodBase),15)		
+				+ AonStringUtils.rightPad(" ",8)
+				+ AonStringUtils.leftPad(DEC.format(sumBeforePeriodQuota),15)
+				+ AonStringUtils.repeat(" ", 2)
+				));
+		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
 				+ AonStringUtils.leftPad("ACUMULADO PER\u00CDODO :",40)
 				+ AonStringUtils.SPACE
-				+ AonStringUtils.leftPad(AonNumberUtils.toString( periodCounted),15)
+				+ AonStringUtils.leftPad(AonNumberUtils.toString( periodDocs.size()),15)
 				+ AonStringUtils.leftPad(DEC.format(sumPeriodBase),15)		
 				+ AonStringUtils.rightPad(" ",8)
 				+ AonStringUtils.leftPad(DEC.format(sumPeriodQuota),15)
@@ -201,7 +206,7 @@ public class IRPFFormatter {
 		buf.append(MessageFormat.format(DIV_MSG_BOLD_BLUE,AonStringUtils.repeat(" ", 2)
 				+ AonStringUtils.leftPad("ACUMULADO DESDE 1 DE ENERO (A):",40)
 				+ AonStringUtils.SPACE
-				+ AonStringUtils.leftPad(AonNumberUtils.toString( counted),15)
+				+ AonStringUtils.leftPad(AonNumberUtils.toString( acumDocs.size()),15)
 				+ AonStringUtils.leftPad(DEC.format(sumBase),15)		
 				+ AonStringUtils.rightPad(" ",8)
 				+ AonStringUtils.leftPad(DEC.format(sumQuota),15)

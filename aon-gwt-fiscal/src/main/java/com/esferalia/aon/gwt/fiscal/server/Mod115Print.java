@@ -48,7 +48,7 @@ public class Mod115Print extends HttpServlet {
 			
 			String fileName = AonFiscalFileUtils.getFileName(mod115);
 			resp.setContentType(MimeType.MS_EXCEL.getName());
-			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xslx\";");
+			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "."+ MimeType.MS_EXCEL.getExtension()+ "\";");
 			AonIOUtils.copy(in, resp.getOutputStream());
 			resp.flushBuffer();
 

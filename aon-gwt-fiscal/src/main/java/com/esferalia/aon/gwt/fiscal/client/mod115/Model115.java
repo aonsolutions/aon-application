@@ -102,6 +102,11 @@ public class Model115 extends MainEntryPoint {
 	}
 	private static final Model115Binder MODEL_115_BINDER = GWT
 			.create(Model115Binder.class);
+	
+	private static final String MODEL115_PRINT = "/aon_gwt_fiscal/Model115Print";
+	private static final String MODEL115_PRINT_PDF ="/aon_gwt_fiscal/Model115PrintPDF";
+	private static final String MODEL115_FILE = "/aon_gwt_fiscal/Model115File";
+	private static final String MODEL115_PRINT_AEAT = "/aon_gwt_fiscal/Model115PrintAEAT";
 
 	public static interface IMod115Declaration extends IsWidget {
 		Widget getInfoPanel(Mod115 mod115);
@@ -966,53 +971,67 @@ public class Model115 extends MainEntryPoint {
 	
 	@UiHandler("printButton")
 	void onPrintButtonClick(ClickEvent event) {
-		new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
+		if (isDirty()) {
+			new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
+					, new ConfirmDialogCallback() {
+					
+					@Override
+					public void onAccept() {
+						submitForm(MODEL115_PRINT);
+					}
+	
+					@Override
+					public void onCancel() {
+						// Nothing
+					}
+				});
+		} else {
+			submitForm(MODEL115_PRINT);
+		}
+			
+	}
+
+	@UiHandler("printPDFButton")
+	void onPrintPDFButtonClick(ClickEvent event) {
+		if (isDirty()) {
+			new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
 				, new ConfirmDialogCallback() {
 				
 				@Override
 				public void onAccept() {
-					submitForm("/aon_gwt_fiscal/Model115Print");
+					submitForm(MODEL115_PRINT_PDF);
 				}
-
+	
 				@Override
 				public void onCancel() {
 					// Nothing
 				}
 			});
-	}
-
-	@UiHandler("printPDFButton")
-	void onPrintPDFButtonClick(ClickEvent event) {
-		new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
-			, new ConfirmDialogCallback() {
+		} else {
+			submitForm(MODEL115_PRINT_PDF);
+		}
 			
-			@Override
-			public void onAccept() {
-				submitForm("/aon_gwt_fiscal/Model115PrintPDF");
-			}
-
-			@Override
-			public void onCancel() {
-				// Nothing
-			}
-		});
 	}
 	
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
-		new ConfirmDialog().confirm(AON.MSG.fileGeneration(),AON.MSG.fileGenerationNote() 
-			, new ConfirmDialogCallback() {
-			
-			@Override
-			public void onAccept() {
-				submitForm("/aon_gwt_fiscal/Model115File");
-			}
-
-			@Override
-			public void onCancel() {
-				// Nothing
-			}
-		});
+		if (isDirty()) {
+			new ConfirmDialog().confirm(AON.MSG.fileGeneration(),AON.MSG.fileGenerationNote() 
+				, new ConfirmDialogCallback() {
+				
+				@Override
+				public void onAccept() {
+					submitForm(MODEL115_FILE);
+				}
+	
+				@Override
+				public void onCancel() {
+					// Nothing
+				}
+			});
+		} else {
+			submitForm(MODEL115_FILE);
+		}
 	}
 
 	private void submitForm(String action) {
@@ -1035,7 +1054,7 @@ public class Model115 extends MainEntryPoint {
 				
 				@Override
 				public void onAccept() {
-					submitForm("/aon_gwt_fiscal/Model115PrintAEAT");
+					submitForm(MODEL115_PRINT_AEAT);
 				}
 
 				@Override
@@ -1184,10 +1203,11 @@ public class Model115 extends MainEntryPoint {
 			tab.setWidget(row, 0, new Label(AON.MSG.creditor()));
 			fmt.addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 			Finance finance = currentMod115.getFinance();
-			creditorBox.setValue(new Creditor()
-									.setId(finance.getRegistry().getId())
-									.setRegistry(finance.getRegistry())
-								);
+			creditorBox.setValue(
+					new Creditor()
+						.setRegistry(finance.getRegistry())
+						.setId(finance.getRegistry()==null?null:finance.getRegistry().getId())
+					);
 			creditorBox.addSelectionHandler(new SelectionHandler<Creditor>() {
 				
 				@Override

@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
+import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -336,6 +337,8 @@ public class FiscalModelDAO {
 			return map111(new Mod111(), record);
 		} else if (type == FiscalModelType.M115) {
 			return map115(new Mod115(), record);
+		} else if (type == FiscalModelType.M123) {
+			return map123(new Mod123(), record);
 		} else {
 			return mapGeneric(new Mod115(), record);
 		}
@@ -347,6 +350,10 @@ public class FiscalModelDAO {
 	}
 	public static Mod115 map115(Mod115 mod115,Record record) {
 		FiscalModelBuilder<Mod115> builder = new FiscalModelBuilder<Mod115>(new Mod115());
+		return builder.create( new FiscalModelTemplate(record) );
+	}
+	public static Mod123 map123(Mod123 mod123,Record record) {
+		FiscalModelBuilder<Mod123> builder = new FiscalModelBuilder<Mod123>(new Mod123());
 		return builder.create( new FiscalModelTemplate(record) );
 	}
 	public static Mod202 map202(Mod202 mod202,Record record) {

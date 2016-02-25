@@ -43,13 +43,7 @@
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconUnlock}" />
 								<g:Button ui:field="finalizeButton" text="{msg.finish}"
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconLock}" />
-<!-- 
-								<g:Button ui:field="calculateButton"
-									styleName="aon-finding-toolbar-item aon-icon-calc" text="{msg.calculateAction}" />
-								<g:Button ui:field="calculateCheckButton"
-									styleName="aon-finding-toolbar-item" text="{msg.authomaticCalculation}" />
-								<g:Anchor ui:field="download" visible="false"/>							
- -->
+									
 								<g:Button ui:field="auditButton" text="{msg.audit}" 
 									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAudit}" />
 								<g:FlowPanel ui:field="formContainer"/>
@@ -108,7 +102,7 @@
 											<td class="{aonResources.css.aonPanelGridEven}">
 												<g:Label ui:field="replacedNumberLabel" text="{msg.previousDeclaration}"
 													styleName="{aonResources.css.aonInnerLabel}"/>
-												<g:TextBox  ui:field="replacedNumber" styleName="{aonResources.css.aonInputText}"/>
+												<g:TextBox ui:field="replacedNumber" styleName="{aonResources.css.aonInputText}"/>
 											</td>
 											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonFontSmall} {aonResources.css.aonTextCenter}">
 												<g:InlineLabel ui:field="dirtyLabel" 

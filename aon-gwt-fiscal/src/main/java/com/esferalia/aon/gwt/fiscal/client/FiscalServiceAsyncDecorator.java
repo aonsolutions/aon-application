@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
+import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -34,6 +35,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
@@ -541,6 +543,103 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 			AsyncCallback<String> callback) {
 		AON.start();
 		fsa.getInfo(domainName, domain, mod115, script, infoKey,new AsyncCallbackWrapper<String>(callback));
+		
+	}
+
+	// ---------------------------------------------------------------MODELO 123
+
+	@Override
+	public void getMod123(String domainName, int domain, int id,
+			AsyncCallback<Mod123> callback) {
+		AON.start();
+		fsa.getMod123(domainName, domain, id, new AsyncCallbackWrapper<Mod123>(
+				callback));
+	}
+
+	@Override
+	public void getMod123s(String domainName, int domain,
+			AsyncCallback<LinkedList<Mod123>> callback) {
+		AON.start();
+		fsa.getMod123s(domainName, domain,
+				new AsyncCallbackWrapper<LinkedList<Mod123>>(callback));
+	}
+
+	@Override
+	public void calculateMod123(String domainName, Mod123 mod123,
+			AsyncCallback<Mod123> callback) {
+		AON.start();
+		fsa.calculateMod123(domainName, mod123,
+				new AsyncCallbackWrapper<Mod123>(callback));
+	}
+
+	@Override
+	public void saveMod123(String domainName, Mod123 mod123,
+			AsyncCallback<Mod123> callback) {
+		AON.start();
+		fsa.saveMod123(domainName, mod123, new AsyncCallbackWrapper<Mod123>(
+				callback));
+	}
+	
+	@Override
+	public void saveCommentsMod123(String domainName, Mod123 mod123,
+			AsyncCallback<Mod123> callback) {
+		AON.start();
+		fsa.saveCommentsMod123(domainName, mod123, new AsyncCallbackWrapper<Mod123>(
+				callback));
+	}
+
+	@Override
+	public void initializeForFinishMod123(String domainName, Mod123 mod123,
+			AsyncCallback<Mod123> callback) {
+		AON.start();
+		fsa.initializeForFinishMod123(domainName, mod123, new AsyncCallbackWrapper<Mod123>(
+				callback));
+	}
+	
+	@Override
+	public void finishMod123(String domainName, Mod123 mod123,
+			AsyncCallback<Mod123> callback) {
+		AON.start();
+		fsa.finishMod123(domainName, mod123, new AsyncCallbackWrapper<Mod123>(
+				callback));
+	}
+	
+	@Override
+	public void reopenMod123(String domainName, Mod123 mod123,
+			AsyncCallback<Mod123> callback) {
+		AON.start();
+		fsa.reopenMod123(domainName, mod123, new AsyncCallbackWrapper<Mod123>(
+				callback));
+	}
+
+	@Override
+	public void initializeMod123(String domainName, int currentDomain,
+			Mod123 mod123, AsyncCallback<Mod123> callback) {
+		AON.start();
+		fsa.initializeMod123(domainName, currentDomain,mod123,new AsyncCallbackWrapper<Mod123>(callback));
+
+	}
+
+	@Override
+	public void createMod123(String domainName, int currentDomain,
+			Mod123 mod123, AsyncCallback<Mod123> callback) {
+		AON.start();
+		fsa.createMod123(domainName, currentDomain, mod123,new AsyncCallbackWrapper<Mod123>(callback));
+
+	}
+
+	@Override
+	public void deleteMod123(String domainName, Mod123 mod123,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.deleteMod123(domainName, mod123, new AsyncCallbackWrapper<Void>(
+				callback));
+	}
+	@Override
+	public void getInfo(String domainName, int domain, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey,
+			AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getInfo(domainName, domain, mod123, script, infoKey,new AsyncCallbackWrapper<String>(callback));
 		
 	}
 
