@@ -175,23 +175,23 @@ public class AccountEntryInvoiceWriter implements Serializable {
 		TaxRecordingTo recordingTo = new TaxRecordingTo();
 		for (TaxBreakDown taxBreakDown : taxBreakDownList) {
 			if (!taxBreakDown.getTaxType().equals(TaxType.RETENTION)) {
-				double quota = taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota();
+				double quota = CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota());
 				if (taxBreakDown.getDeductibleQuota() != quota) {
 					quota = taxBreakDown.getDeductibleQuota();
 				}
-				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), CommonUtil.round(quota));
+				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), quota);
 				insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getAccount());
 				if (ignoreTaxFree) {
 					recordingTo.addTaxQuotaAccount(taxBreakDown.getBalancingAccount(), CommonUtil.round(quota * (-1)));
 					insertInvoiceTaxAccount(invoice, taxBreakDown, taxBreakDown.getBalancingAccount());
 				} else {
-					if (taxBreakDown.getDeductibleQuota() != (taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota())) {
+					if (taxBreakDown.getDeductibleQuota() != CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota())) {
 						Account account = AccountingUtil.obtainDefaultAccount(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC);
 						if (account == null) {
 							throw new ManagerBeanException("Falta definir la Cuenta de ajustes negativos por IVA");
 						}
-						quota = taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota() - taxBreakDown.getDeductibleQuota();
-						recordingTo.addTaxQuotaAccount(account, CommonUtil.round(quota));
+						quota = CommonUtil.round(taxBreakDown.getTaxQuota() + taxBreakDown.getSurchargeQuota() - taxBreakDown.getDeductibleQuota());
+						recordingTo.addTaxQuotaAccount(account, quota);
 						insertInvoiceTaxAccount(invoice, taxBreakDown, account);
 					}
 				}
