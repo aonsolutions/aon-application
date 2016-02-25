@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.connect.client.ConnectService;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
@@ -99,11 +100,11 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements
 				int enterpriseID = company.getId();
 				mod200.setDomain(domain.getId());
 				mod200.setEnterprise(enterpriseID);
-				Mod2002013 mod2002013 = AON.getMod2002013ByYear(domain.getName(), domain.getId(), getUserLogin(), 2013);
+				Mod2002013 mod2002013 = FISCAL.getMod2002013ByYear(domain.getName(), domain.getId(), getUserLogin(), 2013);
 				if (mod2002013 != null && mod2002013.getId() != null) {
 					messages.add("Modelo 200 ya creado en el ejercicio 2013, no se graba");
 				} else {
-					AON.saveMod2002013(domain.getName(), domain.getId(), getUserLogin(), mod200);
+					FISCAL.saveMod2002013(domain.getName(), domain.getId(), getUserLogin(), mod200);
 					messages.add("Modelo 200 del ejercicio 2013 grabado.");
 				}
 				messages.add("");
