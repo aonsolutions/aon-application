@@ -10,4 +10,7 @@ public interface IFiscalModelCallback<T extends FiscalModel> {
 	void markAsDirty();
 	void identificationLabelChanged();
 	void showInfoPanel(String text);
+	String getDomainName();
+	int getDomain();
+	void doFinish();
 }

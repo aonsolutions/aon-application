@@ -30,7 +30,18 @@ public enum Mod123Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	C10("123-10",false,0,false,false,new Administration[]{Administration.COMMON_TERRITORY}),
 	C11("123-11",false,0,false,false,new Administration[]{Administration.ALAVA}),
 	C12("123-12",false,0,false,false,new Administration[]{Administration.ALAVA}),
-	C13("123-13",false,0,true ,false,null);
+	C13("123-13",false,0,true ,false,null),
+	
+	C14("123-AR-907",false  ,0    ,false     ,true ,new Administration[]{Administration.ALAVA}),
+	C15("123-AR-908",false  ,0    ,false     ,true ,new Administration[]{Administration.ALAVA}),
+	C16("123-AR-909",false  ,0    ,false     ,true ,new Administration[]{Administration.ALAVA}),
+	C17("123-AJ"	,false  ,0    ,false     ,true ,new Administration[]{Administration.ALAVA}),
+	C18("123-AR-DT",false  ,0    ,false     ,true ,new Administration[]{Administration.ALAVA}),
+	C19("123-BZ-DT",false  ,0    ,false     ,true ,new Administration[]{Administration.BIZKAIA}),
+	C20("123-CT-DT",false  ,0    ,false     ,true ,new Administration[]{Administration.COMMON_TERRITORY}),
+	C21("123-GP-DT",false  ,0    ,false     ,true ,new Administration[]{Administration.GIPUZKOA}),
+	C22("123-NF-DT",false  ,0    ,false     ,true ,new Administration[]{Administration.NAVARRA}),
+	;
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_mod";
 

@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.mod111.Model111Araba2016Script;
-import com.esferalia.aon.occam.api.model.type.Mod111DeclarationType;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -358,7 +358,7 @@ public class Mod111Writer {
 				,(wr, mod) -> wr.append((mod.isReplacement()?"S":(mod.isComplementary()?"C":" ")))
 				,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getReplacedNumber(),13))
 				,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceCCC(),20))
-				,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationType() == Mod111DeclarationType.DEPOSIT?"1":"0",1))				
+				,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationType() == FiscalModelDeclarationType.DEPOSIT?"1":"0",1))				
 				,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 22))
 				,(wr, mod) -> wr.append(AonStringUtils.repeat('0', 8))
 				,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 28))

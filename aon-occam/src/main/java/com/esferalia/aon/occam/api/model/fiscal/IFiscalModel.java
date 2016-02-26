@@ -12,6 +12,9 @@ public interface IFiscalModel extends Serializable {
 	String getDomainName();
 	FiscalModelType getModel();
 	
+	IFiscalModelKey getDeclarationTypeKey();
+	double getResult();
+	
 	int getYear();
 	Period getPeriod();
 	Administration getAdministration();

@@ -32,8 +32,8 @@ public class UploadFileServlet extends UploadAction {
 
 	
 
-				request.getSession().putValue("D2DepositFile"+domain_id, item.get());
-				request.getSession().putValue("D2DepositMimeType"+domain_id, item.getContentType());
+				request.getSession().setAttribute("D2DepositFile"+domain_id, item.get());
+				request.getSession().setAttribute("D2DepositMimeType"+domain_id, item.getContentType());
 				
 
 				/*

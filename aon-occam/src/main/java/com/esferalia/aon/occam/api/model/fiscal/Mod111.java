@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.occam.api.model.type.Mod111DeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 
 public class Mod111 extends FiscalModel implements Serializable {
@@ -49,7 +48,7 @@ public class Mod111 extends FiscalModel implements Serializable {
 		return 0;
 	}
 	
-	private Mod111Key getDeclarationTypeKey() {
+	public Mod111Key getDeclarationTypeKey() {
 		if (getAdministration() == null) return null;
 		else if (isAraba()) return Mod111Key.AR_TIP;
 		else if (isAEAT()) return Mod111Key.CT_TIP;
@@ -58,14 +57,5 @@ public class Mod111 extends FiscalModel implements Serializable {
 		else if (isNavarra()) return Mod111Key.NF_TIP;
 		return null;
 	}
-	public Mod111DeclarationType getDeclarationType() {
-		return Mod111DeclarationType.safeValueOf( getDescription( getDeclarationTypeKey() ));
-	}
-	public void setDeclarationType(Mod111DeclarationType type) {
-		putDescription(getDeclarationTypeKey(),type == null? null : type.getValue());
-	}
-	@Override
-	public void setDeclarationType(String type) {
-		setDeclarationType( Mod111DeclarationType.safeValueOf(type));
-	}
+	
 }

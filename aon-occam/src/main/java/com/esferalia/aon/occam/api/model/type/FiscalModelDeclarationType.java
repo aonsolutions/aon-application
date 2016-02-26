@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.api.model.type;
 
-public enum Mod115DeclarationType {
+public enum FiscalModelDeclarationType {
 
 	//-----------------------------------------------FINANCE-----BANK---------
 	 NEGATIVE("N","Negativa, cero \u00F3 sin. act."	,false		,false)
@@ -15,7 +15,7 @@ public enum Mod115DeclarationType {
 	private boolean mustCreateFinance;
 	private boolean bankRequired;
 
-	private Mod115DeclarationType(String value,String description,boolean mustCreateFinance,boolean bankRequired) {
+	private FiscalModelDeclarationType(String value,String description,boolean mustCreateFinance,boolean bankRequired) {
 		this.value = value;
 		this.description = description;
 		this.mustCreateFinance = mustCreateFinance;
@@ -35,9 +35,9 @@ public enum Mod115DeclarationType {
 		return bankRequired;
 	}
 	
-	public static Mod115DeclarationType safeValueOf( String value ) {
+	public static FiscalModelDeclarationType safeValueOf( String value ) {
 		if (value == null) return null;
-		for (Mod115DeclarationType t : Mod115DeclarationType.values()) {
+		for (FiscalModelDeclarationType t : FiscalModelDeclarationType.values()) {
 			if (t.getValue().equals(value)) return t;
 		}
 		return null;

@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModelKey;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -396,5 +397,15 @@ public class Mod2002014 implements IFiscalModel {
 	@Override
 	public String getDomainName() {
 		return null;
+	}
+	@Override
+	public IFiscalModelKey getDeclarationTypeKey() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public double getResult() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

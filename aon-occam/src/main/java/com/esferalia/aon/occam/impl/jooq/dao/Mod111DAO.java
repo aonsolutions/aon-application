@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -22,10 +21,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.registry.Creditor;
-import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.api.model.type.Mod111DeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -847,58 +843,8 @@ public class Mod111DAO extends FiscalModelDAO {
 
 
 	// -------------------------------------------------------------------- UTIL
-	
-	public static Mod111 initializeForFinish(AONContext ctx,Mod111 mod111) {
-		
-		if (AonMathUtils.round( mod111.getResult() ) > 0) {
-			FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
-			Integer creditorId = params.getAdmonCreditor();
-			Creditor creditor = null;
-			if ( creditorId != null ) {
-				creditor = CreditorDAO
-						.getBasicCreditors(ctx, p -> p.getIdProperty().eq(creditorId))
-						.findFirst()
-						.orElse(null);
-			}
-			String concept = "Mod." + mod111.getModelName() 
-				+ " - " + mod111.getYear() 
-				+ " / " + mod111.getPeriod().getName( );
-
-			concept = AonStringUtils.abbreviate(concept, 32);
-			Finance finance = new Finance()
-					.setPayment(true)
-					.setRegistry(creditor!=null?creditor.getRegistry():null)
-					.setRegistryDocument(creditor!=null?creditor.getRegistry().getDocument():null)
-					.setRegistryDocumentCountry(creditor!=null?creditor.getRegistry().getDocumentCountry():null)
-					.setRegistryDocumentType(creditor!=null?creditor.getRegistry().getDocumentType():null)
-					.setRegistryName(creditor!=null?creditor.getRegistry().getName():null)
-					.setConfidential(mod111.isConfidential())
-					.setAmount(mod111.getResult())
-					.setFinanceStatus(FinanceStatus.PENDING)
-					.setDueDate(FiscalUtils.getPeriodEnd(mod111))
-					.setConcept(concept)
-					;
-			mod111.setFinance(finance);
-			if (mod111.isAEAT()) {
-				mod111.setDeclarationType(Mod111DeclarationType.DEPOSIT);
-			}
-		} else {
-			if (mod111.isAEAT()) {
-				mod111.setDeclarationType(Mod111DeclarationType.NEGATIVE);
-			}
-		}
-		return mod111;
-	}
 	public static Mod111 finish(AONContext ctx,Mod111 mod111) {
-		mod111.setStatus(FiscalStatus.FINISHED);
-		if (mod111.getDeclarationType() != null && mod111.getDeclarationType().mustCreateFinance()) {
-			mod111.getFinance().setFinanceStatus(FinanceStatus.PENDING);
-			mod111.getFinance().setDomain(mod111.getDomain());
-			Integer financeId = FinanceDAO.save(ctx, mod111.getFinance());
-			mod111.setFinance(mod111.getFinance().setId(financeId));	
-		} else {
-			mod111.setFinance(null);
-		}
+		mod111 = FiscalModelDAO.finish(ctx, mod111);
 		return saveMod111(ctx, mod111);
 	}
 	

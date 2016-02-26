@@ -31,7 +31,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
-import com.esferalia.aon.occam.api.model.type.Mod115DeclarationType;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -411,14 +411,27 @@ public class FiscalModelDAO {
 					;
 			fiscalModel.setFinance(finance);
 			if (fiscalModel.isAEAT()) {
-				fiscalModel.setDeclarationType(Mod115DeclarationType.DEPOSIT.getValue());
+				fiscalModel.setDeclarationType(FiscalModelDeclarationType.DEPOSIT.getValue());
 			}
 		} else {
 			if (fiscalModel.isAEAT()) {
-				fiscalModel.setDeclarationType(Mod115DeclarationType.NEGATIVE.getValue());
+				fiscalModel.setDeclarationType(FiscalModelDeclarationType.NEGATIVE.getValue());
 			}
 		}
 		return fiscalModel;
+	}
+	
+	public static <T extends FiscalModel> T finish(AONContext ctx,T fm) {
+		fm.setStatus(FiscalStatus.FINISHED);
+		if (fm.getDeclarationType() != null && fm.getDeclarationType().mustCreateFinance()) {
+			fm.getFinance().setFinanceStatus(FinanceStatus.PENDING);
+			fm.getFinance().setDomain(fm.getDomain());
+			Integer financeId = FinanceDAO.save(ctx, fm.getFinance());
+			fm.setFinance(fm.getFinance().setId(financeId));	
+		} else {
+			fm.setFinance(null);
+		}
+		return fm;
 	}
 	
 	private static class FiscalModelTemplate implements FiscalModelBuilder.Template {

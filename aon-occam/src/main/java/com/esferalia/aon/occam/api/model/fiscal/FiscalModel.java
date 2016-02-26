@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -531,11 +532,37 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		return this;
 	}
 	
+	public FiscalModelDeclarationType getDeclarationType() {
+		return FiscalModelDeclarationType.safeValueOf( getDescription( getDeclarationTypeKey() ));
+	}
+	public void setDeclarationType(FiscalModelDeclarationType type) {
+		putDescription(getDeclarationTypeKey(),type == null? null : type.getValue());
+	}
 	public void setDeclarationType(String type) {
-		// REDEFINE
+		setDeclarationType( FiscalModelDeclarationType.safeValueOf(type));
+	}
+
+	public IFiscalModelKey getDeclarationTypeKey() {
+		return null;
 	}
 	public double getResult() {
 		// REDEFINE
 		return 0;
+	}
+	public boolean isReplacedNumberAvailable() {
+		// REDEFINE
+		return false;
+	}
+	public boolean isReplacementDeclarationAvailable() {
+		// REDEFINE
+		return false;
+	}
+	public boolean isComplementaryNumberAvailable() {
+		// REDEFINE
+		return false;
+	}
+	public boolean isComplementaryDeclarationAvailable() {
+		// REDEFINE
+		return false;
 	}
 }
