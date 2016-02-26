@@ -63,9 +63,9 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 		,new ReportColumnMetadata(RNAME,Types.VARCHAR,"Titular",40)
 		,new ReportColumnMetadata(TAX_TYPE,Types.VARCHAR,"Tipo Imp.",6)
 		,new ReportColumnMetadata(TAXABLE_BASE,Types.DOUBLE,"B.Imp.",10)
-		,new ReportColumnMetadata(PERCENTAGE,Types.DOUBLE,"Porc.",5)
+		,new ReportColumnMetadata(PERCENTAGE,Types.VARCHAR,"Porc.",5)
 		,new ReportColumnMetadata(QUOTA,Types.DOUBLE,"Cuota",10)
-		,new ReportColumnMetadata(SURCHARGE_PERCENTAGE,Types.DOUBLE,"Porc.Rec.",10)
+		,new ReportColumnMetadata(SURCHARGE_PERCENTAGE,Types.VARCHAR,"Porc.Rec.",10)
 		,new ReportColumnMetadata(SURCHARGE_QUOTA,Types.DOUBLE,"Recargo",10)
 	};
 
@@ -201,15 +201,43 @@ public class OperationReportController implements IAccountingBookItem, Serializa
 						}
 						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getTaxType() );
 						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getBase() );
-						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getPercentage() );
+						exporter.exportColumn(metadata.getColumns().get((i++)), String.format( "%.2f", opt.getPercentage()!=null?opt.getPercentage():0) );
 						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getQuota() );
-						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getSurchargePercentage() );
+						exporter.exportColumn(metadata.getColumns().get((i++)), String.format( "%.2f", opt.getSurchargePercentage()!=null?opt.getSurchargePercentage():0) );
 						exporter.exportColumn(metadata.getColumns().get((i++)), opt.getSurchargeQuota() );
 						first = false;
 					}
 				}
 				exporter.endLine();
 			}
+			
+			// row for total amounts
+			int i = 0;
+			exporter.startLine();
+			exporter.exportColumn(metadata.getColumns().get((i++)), null);
+			exporter.exportColumn(metadata.getColumns().get((i++)), null);
+			exporter.exportColumn(metadata.getColumns().get((i++)), null);
+			exporter.exportColumn(metadata.getColumns().get((i++)), null);
+			exporter.exportColumn(metadata.getColumns().get((i++)), list
+					.stream().filter(o -> o.getTotalBase() != null)
+					.mapToDouble(OperationReport::getTotalBase).sum());
+			exporter.exportColumn(metadata.getColumns().get((i++)), null);
+			exporter.exportColumn(metadata.getColumns().get((i++)), null);
+			exporter.exportColumn(metadata.getColumns().get((i++)), null);
+			exporter.exportColumn(metadata.getColumns().get((i++)), null);
+			exporter.exportColumn(metadata.getColumns().get((i++)), list
+					.stream().filter(o -> o.getTotalBase() != null)
+					.mapToDouble(OperationReport::getTotalBase).sum());
+			exporter.exportColumn(metadata.getColumns().get((i++)), null);
+			exporter.exportColumn(metadata.getColumns().get((i++)), list
+					.stream().filter(o -> o.getTotalQuota() != null)
+					.mapToDouble(OperationReport::getTotalQuota).sum());
+			exporter.exportColumn(metadata.getColumns().get((i++)), null);
+			exporter.exportColumn(metadata.getColumns().get((i++)), list
+					.stream().filter(o -> o.getTotalSurchargeQuota() != null)
+					.mapToDouble(OperationReport::getTotalSurchargeQuota).sum());
+			exporter.endLine();
+			
 			exporter.endExport(output);
 			output.flush();
 			response.flushBuffer();

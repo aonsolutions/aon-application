@@ -102,7 +102,7 @@
 							</aon:outputText>
 						</aon:column>
 						
-						<aon:column styleClass="aon-width-200">
+						<aon:column styleClass="aon-width-250">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_type}" />
 							</f:facet>
@@ -113,42 +113,43 @@
 								columnClasses="aon-noborder
 												,aon-noborder
 												,aon-noborder
+												,aon-noborder
 												,aon-noborder">
 								<aon:column styleClass="aon-width-30" style="font-size: 0.9em;vertical-align: top;">
 									<aon:outputText value="#{tot.taxType}" />
 								</aon:column>
 						
-								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;vertical-align: top;">
+								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50" style="font-size: 0.9em;vertical-align: top;">
 									<aon:outputText value="#{tot.base}">
 										<f:convertNumber pattern="#,##0.00" />
 									</aon:outputText>
 								</aon:column>
 								
-								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50" style="font-size: 0.9em;vertical-align: top;">
+								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;vertical-align: top;">
 									<aon:outputText value="#{tot.percentage}">
 										<f:convertNumber pattern="#,##0.00" />
 									</aon:outputText>
-									<c:if test="#{not empty tot.surchargePercentage and tot.surchargePercentage!=0}">
-										<aon:outputText value="+"/>
-										<aon:outputText value="#{tot.surchargePercentage}">
-											<f:convertNumber pattern="#,##0.00" />
-										</aon:outputText>
-									</c:if>
+									<aon:outputText value="+"
+										rendered="#{tot.surchargePercentage!=null}" />
+									<aon:outputText value="#{tot.surchargePercentage}"
+										rendered="#{tot.surchargePercentage!=null}">
+										<f:convertNumber pattern="#,##0.00" />
+									</aon:outputText>
 								</aon:column>
 		
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;vertical-align: top;">
 									<aon:outputText value="#{tot.quota}">
 										<f:convertNumber pattern="#,##0.00" />
 									</aon:outputText>
-								</aon:column>
-		
-								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;vertical-align: top;">
-									<aon:outputText value="#{tot.surchargeQuota}">
+									<aon:outputText value="+"
+										rendered="#{tot.surchargeQuota!=null}" />
+									<aon:outputText value="#{tot.surchargeQuota}"
+										rendered="#{tot.surchargeQuota!=null}" >
 										<f:convertNumber pattern="#,##0.00" />
 									</aon:outputText>
 								</aon:column>
 		
-								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;vertical-align: top;">
+								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50" style="font-size: 0.9em;vertical-align: top;">
 									<aon:outputText value="#{tot.quota + tot.surchargeQuota}">
 										<f:convertNumber pattern="#,##0.00" />
 									</aon:outputText>
