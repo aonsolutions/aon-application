@@ -104,3 +104,15 @@
 	min-width:11em;
 }
 
+.form-send-email-dialog textarea {
+	resize: none;		
+}
+
+.aon-check-send-email-dialog{
+	color: red;	
+}
+
+.aon-check-button-send-email-dialog{
+	padding-right: 0px;	
+}
+

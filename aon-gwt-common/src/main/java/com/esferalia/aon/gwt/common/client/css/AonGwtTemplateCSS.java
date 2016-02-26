@@ -49,4 +49,14 @@ public interface AonGwtTemplateCSS extends CssResource{
 
 	@ClassName("aon-box-width-template")
 	String aonBoxWidthTemplate();
+	
+	@ClassName("form-send-email-dialog")
+	String aonFormSendEmailDialog();
+	
+	@ClassName("aon-check-button-send-email-dialog")
+	String aonAonCheckButtonSendEmailDialog();
+	
+	@ClassName("aon-check-send-email-dialog")
+	String aonAonCheckSendEmailDialog();
+	
 }

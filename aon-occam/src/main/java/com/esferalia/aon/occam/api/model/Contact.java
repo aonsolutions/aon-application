@@ -11,6 +11,8 @@ public class Contact implements Serializable{
 	String displayName;
 	Integer contactData;
 	
+	String email;
+	
 	public Contact() {}
 	
 	public Contact(Integer id, Integer domain, Integer userId, String displayName, Integer contactData) {
@@ -54,6 +56,15 @@ public class Contact implements Serializable{
 	}
 	public Contact setContactData(Integer contactData) {
 		this.contactData = contactData;
+		return this;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public Contact setEmail(String email) {
+		this.email = email;
 		return this;
 	}
 	
