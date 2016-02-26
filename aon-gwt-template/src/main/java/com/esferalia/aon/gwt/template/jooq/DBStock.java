@@ -245,13 +245,13 @@ public class DBStock {
 					Condition serialNumber = ITEM.SERIAL_NUMBER.eq(s.getSerialNumber());
 					if(s.getSerialNumber() == null)
 						serialNumber = ITEM.SERIAL_NUMBER.isNull();
-					Result<Record2<Integer, Double>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
+					Result<Record3<Integer, Double, Integer>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PRODUCT)
 						.from(ITEM)
 						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domain.getId()))
 						.and(serialNumber).fetch();
 					if(data.isEmpty()){
 
-						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
+						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PRODUCT)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 										.and(PRODUCT.DOMAIN.eq(domain.getId()))
@@ -270,7 +270,7 @@ public class DBStock {
 						if(s.getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 						
-						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE)
+						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PRODUCT)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 									.and(detail)
@@ -290,7 +290,9 @@ public class DBStock {
 				*/
 					// TODO update
 					if(!data.isEmpty()){
-						Byte lotable = data.get(0).getValue(PRODUCT.LOTABLE);
+						Integer productId = data.get(0).getValue(ITEM.PRODUCT);
+						Byte lotable = sctx.getDslContext().select(PRODUCT.LOTABLE).from(PRODUCT)
+								.where(PRODUCT.ID.eq(productId)).limit(1).fetch().get(0).getValue(PRODUCT.LOTABLE); 
 						if((s.getSerialNumber() != null && lotable != 1) && s.getQuantity() > 1 ){
 							v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
 							error.setError(false);
@@ -444,13 +446,13 @@ public class DBStock {
 					if(s.getSerialNumber() == null)
 						serialNumber = ITEM.SERIAL_NUMBER.isNull();
 					
-					Result<Record1< Integer>> data = sctx.getDslContext().select(ITEM.ID)
+					Result<Record2< Integer, Integer>> data = sctx.getDslContext().select(ITEM.ID, ITEM.PRODUCT)
 						.from(ITEM)
 						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domain.getId()))
 						.and(serialNumber).fetch();
 					if(data.isEmpty()){
 
-						data = sctx.getDslContext().select(ITEM.ID)
+						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRODUCT)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 										.and(PRODUCT.DOMAIN.eq(domain.getId()))
@@ -469,7 +471,7 @@ public class DBStock {
 						if(s.getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 
-						data = sctx.getDslContext().select(ITEM.ID)
+						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRODUCT)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
 									.and(detail)
@@ -479,7 +481,9 @@ public class DBStock {
 									.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
 					}
 					if(!data.isEmpty()){
-						Byte lotable = data.get(0).getValue(PRODUCT.LOTABLE);
+						Integer productId = data.get(0).getValue(ITEM.PRODUCT);
+						Byte lotable = sctx.getDslContext().select(PRODUCT.LOTABLE).from(PRODUCT)
+								.where(PRODUCT.ID.eq(productId)).limit(1).fetch().get(0).getValue(PRODUCT.LOTABLE); 
 						if((s.getSerialNumber() != null && lotable != 1) && s.getQuantity() > 1 ){
 							v.add("*Fila " +(s.getRow()+1) + " : La cantidad no puede ser mayor que 1.");
 							error.setError(false);
