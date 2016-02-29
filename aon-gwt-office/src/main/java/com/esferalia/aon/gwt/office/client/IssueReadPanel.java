@@ -117,6 +117,8 @@ public class IssueReadPanel extends Composite {
 	private String priority;
 
 	private DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");
+	private DateTimeFormat date = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private DateTimeFormat hour = DateTimeFormat.getFormat("HH:mm");
 
 	private List<DefaultAonTagIssueSelected> assignTags;
 	private List<DefaultAonTagIssueSelected> addTagsMap;
@@ -274,7 +276,7 @@ public class IssueReadPanel extends Composite {
 		ownLabel.setStyleName(AON.AON_BOLD);
 		hPanel.add(ownLabel);
 
-		Label dateLabel = new Label(" el " + fmt.format(tag.getCreateAt()));
+		Label dateLabel = new Label(" el " + date.format(tag.getCreateAt()) + " a las " + hour.format(tag.getCreateAt()));
 		hPanel.add(dateLabel);
 
 		return hPanel;
@@ -296,7 +298,7 @@ public class IssueReadPanel extends Composite {
 		ownLabel.setStyleName(AON.AON_BOLD);
 		hPanel.add(ownLabel);
 
-		Label dateLabel = new Label(" el " + fmt.format(tag.getCreateAt()));
+		Label dateLabel = new Label(" el " + date.format(tag.getCreateAt()) + " a las " + hour.format(tag.getCreateAt()));
 		hPanel.add(dateLabel);
 		infoHeaderContent.add(hPanel);
 	}

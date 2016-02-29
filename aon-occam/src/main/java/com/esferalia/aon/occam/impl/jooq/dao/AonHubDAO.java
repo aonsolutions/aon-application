@@ -603,9 +603,9 @@ public class AonHubDAO {
 		
 		SelectConditionStep<Record1<Integer>> openId = getOpenNoticesId(
 				ctx.getDslContext());
-		SelectConditionStep<Record1<Integer>> reopenId = getOpenNoticesId(
+		SelectConditionStep<Record1<Integer>> reopenId = getReOpenNoticesId(
 				ctx.getDslContext());
-		SelectConditionStep<Record1<Integer>> closedId = getOpenNoticesId(
+		SelectConditionStep<Record1<Integer>> closedId = getClosedNoticesId(
 				ctx.getDslContext());
 
 		SelectConditionStep<Record> select = ctx.getDslContext().select()
