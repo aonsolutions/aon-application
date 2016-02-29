@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.office.client.models.issues;
 
+import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.google.gwt.core.client.JavaScriptObject;
 
 public class JsLabel extends JavaScriptObject {
@@ -19,10 +20,6 @@ public class JsLabel extends JavaScriptObject {
 		return this.color;
 	}-*/;
 
-	public final native String getUrl() /*-{
-		return this.url;
-	}-*/;
-
 	public final native int getDomain() /*-{
 		return this.domain;
 	}-*/;
@@ -30,4 +27,17 @@ public class JsLabel extends JavaScriptObject {
 	public final native String getName() /*-{
 		return this.name;
 	}-*/;
+
+	public final native JsUser getUser() /*-{
+		return this.user;
+	}-*/;
+
+	public final native String getCreatedAt() /*-{
+		return this.created_at;
+	}-*/;
+
+	public final native String getDeletedAt() /*-{
+		return this.deleted_at;
+	}-*/;
+
 }

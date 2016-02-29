@@ -49,7 +49,6 @@ public class OfficeApiServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
-
 	private static class GetUser extends RegExpRequestHandler {
 
 		public GetUser() {
@@ -84,7 +83,7 @@ public class OfficeApiServlet extends HttpServlet {
 				String domainName = AonServletUtils.getRequestDomainName(req);
 				String userName = AonServletUtils.getLoggedUser();
 				Integer userId = AonServletUtils.getRequestUserId(req);
-				
+
 				User user = AON.getUser(domainId, domainName, userName, userId);
 
 				pw = resp.getWriter();
@@ -105,10 +104,10 @@ public class OfficeApiServlet extends HttpServlet {
 
 		private HttpServletRequest req;
 		private HttpServletResponse resp;
-		
+
 		private Integer domain;
 		private String domainName;
-		
+
 		public CreateIssue() {
 			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues");
 		}
@@ -116,7 +115,7 @@ public class OfficeApiServlet extends HttpServlet {
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-			
+
 			this.req = req;
 			this.resp = resp;
 
@@ -148,7 +147,7 @@ public class OfficeApiServlet extends HttpServlet {
 				notice.setTitle(json.getString("title"));
 				notice.setBody(json.getString("body"));
 				notice.setStatus(json.getString("state"));
-				
+
 				Integer userId = Integer.parseInt(json.getString("sender"));
 				User user = AON.getUser(domain, domainName, userName, userId);
 				notice.setSender(user);
@@ -286,20 +285,22 @@ public class OfficeApiServlet extends HttpServlet {
 
 				switch (state) {
 				case "open":
-					notices = AON.getOpenNotices(domainId, domainName,
-							userName, since);
+					notices = AON.getOpenNotices(domainId, domainName, userName,
+							since);
 					break;
 				case "closed":
 					notices = AON.getClosedNotices(domainId, domainName,
 							userName, since);
 					break;
-					
+
 				case "all":
-					notices = AON.getAllNotices(domainId, domainName, userName, since);
+					notices = AON.getAllNotices(domainId, domainName, userName,
+							since);
 					break;
 
 				default:
-					notices = AON.getAllNotices(domainId, domainName, userName, since);
+					notices = AON.getAllNotices(domainId, domainName, userName,
+							since);
 					break;
 				}
 
@@ -694,18 +695,19 @@ public class OfficeApiServlet extends HttpServlet {
 				User user = AON.getUser(domain, domainName,
 						AonServletUtils.getLoggedUser(),
 						AonServletUtils.getRequestUserId(req));
-				
+
 				String object = getJsonObject(this.req);
 				JSONObject json = new JSONObject(object);
 
 				JSONArray addLabelsAux = json.getJSONArray("addLabels");
 				JSONArray delLabelsAux = json.getJSONArray("deletedLabels");
-				
-				List<Tag> addLabelsList = getListFromJsArray(addLabelsAux, user);
+
+				List<Tag> addLabelsList = getListFromJsArray(addLabelsAux,
+						user);
 				List<Tag> delLabelList = getListFromJsArray(delLabelsAux, user);
 
-				Notice notice = AON.replaceLabelFromIssue(domain, domainName, 
-						AonServletUtils.getLoggedUser(), noticeId, 
+				Notice notice = AON.replaceLabelFromIssue(domain, domainName,
+						AonServletUtils.getLoggedUser(), noticeId,
 						addLabelsList, delLabelList);
 
 				pw = resp.getWriter();
@@ -1093,7 +1095,7 @@ public class OfficeApiServlet extends HttpServlet {
 		// return req.getRequestURI().substring(req.getServletPath().length());
 
 	}
-	
+
 	// --------------------------------------------------------------------
 
 	private static String getNotice(Notice notice) throws Exception {
@@ -1120,8 +1122,10 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append(String.format("\"user\":%s,\r\n",
 				buildUserSender(notice.getSender())));
 		buffer.append(
-				String.format("\"type\":\"%s\",\r\n", (notice.getType() != null)
-						? UriUtils.encode(notice.getType()) : Constants.NOT_ASSIGNED));
+				String.format("\"type\":\"%s\",\r\n",
+						(notice.getType() != null)
+								? UriUtils.encode(notice.getType())
+								: Constants.NOT_ASSIGNED));
 		buffer.append(String.format("\"priority\":\"%s\",\r\n",
 				(notice.getPriority() != null)
 						? UriUtils.encode(notice.getPriority())
@@ -1285,6 +1289,22 @@ public class OfficeApiServlet extends HttpServlet {
 				String.format("\"id\":%s,\r\n", String.valueOf(tag.getId())));
 		buffer.append(String.format("\"type\":%s,\r\n",
 				String.valueOf(tag.getType())));
+
+		if ( tag.getUser() != null) {
+			buffer.append(String.format("\"user\":%s,\r\n",
+					buildUserSender(tag.getUser())));
+		}
+
+		if ( tag.getStartDate() != null) {
+			buffer.append(String.format("\"created_at\":\"%s\",\r\n",
+					tag.getStartDate()));
+		}
+
+		if ( tag.getEndDate() != null) {
+			buffer.append(String.format("\"deleted_at\":\"%s\",\r\n",
+					tag.getEndDate()));
+		}
+		
 		buffer.append(String.format("\"name\":\"%s\",\r\n",
 				UriUtils.encode(tag.getName())));
 		buffer.append(String.format("\"domain\":\"%s\",\r\n",

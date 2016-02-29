@@ -8,15 +8,15 @@
 		field="aonResources"></ui:with>
 
 	<ui:style>
-		.scrollpanel-options {
-			padding-left: 20%;
-		}
-		
-		.buttons {
-			padding-top: 10px;
-			text-align: right;
-		}
-		</ui:style>
+	.scrollpanel-options {
+		padding-left: 20%;
+	}
+	
+	.buttons {
+		padding-top: 10px;
+		text-align: right;
+	}
+	</ui:style>
 
 	<g:DockLayoutPanel>
 		<g:east size="350">
@@ -30,7 +30,8 @@
 								<g:Button ui:field="typeButton" text="Tipo incidencia"
 									styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
 							</g:HorizontalPanel>
-							<g:Label ui:field="typeLabel" styleName="{aonResources.css.tagStyle} {aonResources.css.tagType}" />
+							<g:Label ui:field="typeLabel"
+								styleName="{aonResources.css.tagStyle} {aonResources.css.tagType}" />
 						</g:VerticalPanel>
 					</g:AbsolutePanel>
 
@@ -41,7 +42,8 @@
 								<g:Button ui:field="priorityButton" text="Prioridad"
 									styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
 							</g:HorizontalPanel>
-							<g:Label ui:field="priorityLabel" styleName="{aonResources.css.tagStyle} {aonResources.css.tagPriority}" />
+							<g:Label ui:field="priorityLabel"
+								styleName="{aonResources.css.tagStyle} {aonResources.css.tagPriority}" />
 						</g:VerticalPanel>
 					</g:AbsolutePanel>
 
@@ -61,6 +63,7 @@
 		<g:center>
 			<g:ScrollPanel styleName="{style.scrollpanel-options}">
 				<g:VerticalPanel spacing="10" height="100%">
+					<g:VerticalPanel ui:field="headerVPanel" spacing="10" />
 					<g:FlexTable ui:field="headerFlexTable" />
 					<g:FlowPanel ui:field="historialVPanel" width="100%"
 						height="100%" />

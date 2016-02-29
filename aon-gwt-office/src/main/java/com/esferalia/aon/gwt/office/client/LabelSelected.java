@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.office.client;
 
+import java.util.Date;
+
 public interface LabelSelected {
 	
 	Integer getId();
@@ -11,4 +13,10 @@ public interface LabelSelected {
 	String getColor();
 	
 	Integer getDomain();
+	
+	Date getCreateAt();
+	
+	Date getDeletedAt();
+	
+	DefaultAonUserIssueSelected getUser();
 }

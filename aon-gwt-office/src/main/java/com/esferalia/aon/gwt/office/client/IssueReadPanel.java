@@ -29,6 +29,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -79,7 +80,8 @@ public class IssueReadPanel extends Composite {
 
 	@UiField
 	FlexTable headerFlexTable;
-
+	@UiField
+	VerticalPanel headerVPanel;
 	@UiField
 	Label userLogged;
 	@UiField
@@ -120,6 +122,8 @@ public class IssueReadPanel extends Composite {
 	private List<DefaultAonTagIssueSelected> addTagsMap;
 	private List<DefaultAonTagIssueSelected> deletedTagsMap;
 
+	private VerticalPanel infoHeaderContent;
+
 	public IssueReadPanel(IssueSelected issue) {
 		initWidget(uiBinder.createAndBindUi(this));
 
@@ -127,7 +131,8 @@ public class IssueReadPanel extends Composite {
 		this.issue = issue;
 		this.type = issue.getType();
 		this.priority = issue.getPriority();
-
+		this.infoHeaderContent = new VerticalPanel();
+		this.infoHeaderContent.setSpacing(5);
 		this.addTagsMap = new LinkedList<DefaultAonTagIssueSelected>();
 		this.deletedTagsMap = new LinkedList<DefaultAonTagIssueSelected>();
 		this.assignTags = new LinkedList<DefaultAonTagIssueSelected>();
@@ -135,7 +140,7 @@ public class IssueReadPanel extends Composite {
 		for (DefaultAonTagIssueSelected tag : issue.getTags())
 			assignTags.add(tag);
 
-		initHeader(issue);
+		initHeaderAux(issue);
 		printBody(issue);
 
 		for (DefaultAonIssueComments comment : issue.getComments()) {
@@ -207,41 +212,100 @@ public class IssueReadPanel extends Composite {
 		return value;
 	}
 
-	private void initHeader(IssueSelected issue) {
+	private void initHeaderAux(IssueSelected issue) {
+		
+		HorizontalPanel hPanel = null;
 
 		Label titleLabel = new Label(issue.getTitle().toUpperCase());
 		titleLabel.setStyleName(AON.AON_BOLD);
 		titleLabel.addStyleName(AON.AON_CSS.headerTitle());
+		headerVPanel.add(titleLabel);
+
+		DisclosurePanel disclosurePanel = new DisclosurePanel();
+		disclosurePanel.setAnimationEnabled(true);
+
+		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
+
+			if (tag.getType() != TagType.OFFICE_STATUS.value())
+				continue;
+
+			if (tag.getDeletedAt() == null)
+				hPanel = setHistorialHeader(tag);				
+			else
+				setContent(tag);
+		}
+
+		if (infoHeaderContent.getWidgetCount() > 0) {
+			Label icon = new Label();
+			icon.setStyleName(AON.AON_CSS.aonIconView());
+			hPanel.insert(icon, 0);
+			disclosurePanel.setHeader(hPanel);
+			disclosurePanel.setContent(infoHeaderContent);
+			headerVPanel.add(disclosurePanel);
+		}
+		else
+			headerVPanel.add(hPanel);
+		
+		if (issue.getCompany().trim().isEmpty() == false) {
+			HorizontalPanel companyPanel = new HorizontalPanel();
+			companyPanel.setSpacing(5);
+			
+			Label notified = new Label("Notificada por: ");
+			notified.setStyleName(AON.AON_BOLD);
+			companyPanel.add(notified);
+			companyPanel.add(new Label(issue.getCompany()));
+			headerVPanel.add(companyPanel);
+		}
+	}
+
+	private HorizontalPanel setHistorialHeader(DefaultAonTagIssueSelected tag) {
 
 		HorizontalPanel hPanel = new HorizontalPanel();
 		hPanel.setSpacing(5);
 
-		Label infoIssue = new Label(
-				issue.getUser().getName() + " gener\u00F3 la incidencia el "
-						+ fmt.format(issue.getCreateAt()));
-		Label iconLabel = new Label();
-		iconLabel.setStyleName(getStateIcon(issue.getState()));
-		hPanel.add(iconLabel);
-		hPanel.add(infoIssue);
+		Label headerIconLabel = new Label();
+		String iconState = getStateIcon(tag.getName());
+		headerIconLabel.setStyleName(iconState);
+		hPanel.add(headerIconLabel);
 
-		headerFlexTable.getFlexCellFormatter().setColSpan(0, 0, 2);
-		headerFlexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
-		headerFlexTable.setWidget(0, 0, titleLabel);
-		headerFlexTable.setWidget(1, 0, hPanel);
+		hPanel.add(new Label(tag.getName() + " por "));
 
-		Label notified = new Label("Notificada por: ");
-		notified.setStyleName(AON.AON_BOLD);
+		Label ownLabel = new Label(tag.getUser().getName());
+		ownLabel.setStyleName(AON.AON_BOLD);
+		hPanel.add(ownLabel);
 
-		headerFlexTable.setWidget(2, 0, notified);
-		headerFlexTable.setWidget(2, 1, new Label(issue.getCompany()));
+		Label dateLabel = new Label(" el " + fmt.format(tag.getCreateAt()));
+		hPanel.add(dateLabel);
 
+		return hPanel;
+	}
+
+	private void setContent(DefaultAonTagIssueSelected tag) {
+
+		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.setSpacing(5);
+
+		Label headerIconLabel = new Label();
+		String iconState = getStateIcon(tag.getName());
+		headerIconLabel.setStyleName(iconState);
+		hPanel.add(headerIconLabel);
+
+		hPanel.add(new Label(tag.getName() + " por "));
+
+		Label ownLabel = new Label(tag.getUser().getName());
+		ownLabel.setStyleName(AON.AON_BOLD);
+		hPanel.add(ownLabel);
+
+		Label dateLabel = new Label(" el " + fmt.format(tag.getCreateAt()));
+		hPanel.add(dateLabel);
+		infoHeaderContent.add(hPanel);
 	}
 
 	public void printBody(IssueSelected issue) {
 
 		int days = CalendarUtil.getDaysBetween(issue.getCreateAt(), new Date());
 		Label label = new Label();
-		label.setText(issue.getState() + " por " + issue.getUser().getName()
+		label.setText(" COMENTADO por " + issue.getUser().getName()
 				+ " el " + fmt.format(issue.getCreateAt()) + " (hace " + days
 				+ ((days == 1) ? " d\u00EDas)" : " d\u00EDas)"));
 		label.setStyleName(AON.AON_BOLD);
