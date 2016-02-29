@@ -7,8 +7,6 @@ import java.net.URLDecoder;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -21,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.office.exceptions.LabelNotDeletedException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.office.Notice;
@@ -50,43 +49,6 @@ public class OfficeApiServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static interface HttpRequestHandler {
-
-		boolean accept(HttpServletRequest req);
-
-		void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException;
-	}
-
-	private static abstract class RegExpRequestHandler
-			implements HttpRequestHandler {
-
-		private Pattern pattern;
-		private Matcher matcher;
-
-		public RegExpRequestHandler(String regexp) {
-			this.pattern = Pattern.compile(regexp);
-		}
-
-		@Override
-		public boolean accept(HttpServletRequest req) {
-			String action = getRequestAction(req);
-			this.matcher = pattern.matcher(action);
-			return matcher.matches();
-		}
-
-		protected String group(int group) {
-			return matcher.group(group);
-		}
-
-		protected Integer getDomainId() {
-			return Integer.parseInt(group(1));
-		}
-
-		protected String getDomainName() {
-			return group(2);
-		}
-	}
 
 	private static class GetUser extends RegExpRequestHandler {
 
@@ -122,7 +84,7 @@ public class OfficeApiServlet extends HttpServlet {
 				String domainName = AonServletUtils.getRequestDomainName(req);
 				String userName = AonServletUtils.getLoggedUser();
 				Integer userId = AonServletUtils.getRequestUserId(req);
-
+				
 				User user = AON.getUser(domainId, domainName, userName, userId);
 
 				pw = resp.getWriter();
@@ -141,6 +103,12 @@ public class OfficeApiServlet extends HttpServlet {
 
 	private static class CreateIssue extends RegExpRequestHandler {
 
+		private HttpServletRequest req;
+		private HttpServletResponse resp;
+		
+		private Integer domain;
+		private String domainName;
+		
 		public CreateIssue() {
 			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues");
 		}
@@ -148,28 +116,26 @@ public class OfficeApiServlet extends HttpServlet {
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
-
-			Integer domainId = null;
-			String domainName = "";
+			
+			this.req = req;
+			this.resp = resp;
 
 			try {
-
-				domainId = getDomainId();
-				domainName = getDomainName();
+				this.domain = getDomainId();
+				this.domainName = getDomainName();
 
 			} catch (Exception ex) {
 				String aux = getRequestAction(req);
 				String[] auxArr = aux.split("/");
-				domainId = Integer.parseInt(auxArr[2]);
-				domainName = auxArr[3];
+				this.domain = Integer.parseInt(auxArr[2]);
+				this.domainName = auxArr[3];
 
 			} finally {
-				createNotice(req, resp, domainId, domainName);
+				createNotice();
 			}
 		}
 
-		private void createNotice(HttpServletRequest req,
-				HttpServletResponse resp, Integer domain, String domainName) {
+		private void createNotice() {
 
 			try {
 
@@ -182,10 +148,9 @@ public class OfficeApiServlet extends HttpServlet {
 				notice.setTitle(json.getString("title"));
 				notice.setBody(json.getString("body"));
 				notice.setStatus(json.getString("state"));
-
-				User user = new User();
-				user.setId(Integer.parseInt(json.getString("sender")));
-				user.setDomain(domain);
+				
+				Integer userId = Integer.parseInt(json.getString("sender"));
+				User user = AON.getUser(domain, domainName, userName, userId);
 				notice.setSender(user);
 
 				if (json.isNull("company") == false) {
@@ -1128,7 +1093,7 @@ public class OfficeApiServlet extends HttpServlet {
 		// return req.getRequestURI().substring(req.getServletPath().length());
 
 	}
-
+	
 	// --------------------------------------------------------------------
 
 	private static String getNotice(Notice notice) throws Exception {
@@ -1156,11 +1121,11 @@ public class OfficeApiServlet extends HttpServlet {
 				buildUserSender(notice.getSender())));
 		buffer.append(
 				String.format("\"type\":\"%s\",\r\n", (notice.getType() != null)
-						? UriUtils.encode(notice.getType()) : "Sin asignar"));
+						? UriUtils.encode(notice.getType()) : Constants.NOT_ASSIGNED));
 		buffer.append(String.format("\"priority\":\"%s\",\r\n",
 				(notice.getPriority() != null)
 						? UriUtils.encode(notice.getPriority())
-						: "Sin asignar"));
+						: Constants.NOT_ASSIGNED));
 		buffer.append(String.format("\"created_at\":\"%s\",\r\n",
 				notice.getStartDate()));
 		buffer.append(String.format("\"comments\":%s,\r\n",

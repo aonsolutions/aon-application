@@ -10,12 +10,13 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 
 public class OfficeImpl implements IOffice {
 
 	@Override
 	public User getUser(AONContext ctx, Integer id) {		
-		return AonHubDAO.getUser(ctx, id);
+		return UserDAO.getUser(ctx, id);
 	}
 	@Override
 	public List<Notice> getOpenNotices(AONContext ctx, String since)

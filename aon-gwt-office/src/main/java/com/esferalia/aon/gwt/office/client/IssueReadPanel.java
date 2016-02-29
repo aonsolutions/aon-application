@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -21,7 +22,6 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -62,7 +62,7 @@ public class IssueReadPanel extends Composite {
 		void onIssueCommentButtonClick(String body,
 				Callback<DefaultAonIssueComments> callback);
 
-		void onRemoveLabelFromIssue(String name,
+		void onRemoveLabelFromIssue(String oldName, String newName,
 				Callback<DefaultAonTagIssueSelected> callback);
 
 		void onReplaceLabelsForIssue(List<DefaultAonTagIssueSelected> addLabels,
@@ -71,34 +71,11 @@ public class IssueReadPanel extends Composite {
 		void addLabelToAnIssue(List<String> labels);
 	}
 
-	interface GridStyle extends CssResource {
-		@ClassName("options-text-area")
-		String optionsTextArea();
-
-		@ClassName("row-background")
-		String rowBackground();
-
-		@ClassName("edit-button")
-		String editButton();
-
-		@ClassName("header-title")
-		String headerTitle();
-
-		@ClassName("style-label")
-		String styleLabel();
-
-		@ClassName("notice-label")
-		String noticeLabel();
-	}
-
 	private static IssueReadPanelUiBinder uiBinder = GWT
 			.create(IssueReadPanelUiBinder.class);
 
 	interface IssueReadPanelUiBinder extends UiBinder<Widget, IssueReadPanel> {
 	}
-
-	@UiField
-	GridStyle style;
 
 	@UiField
 	FlexTable headerFlexTable;
@@ -234,7 +211,7 @@ public class IssueReadPanel extends Composite {
 
 		Label titleLabel = new Label(issue.getTitle().toUpperCase());
 		titleLabel.setStyleName(AON.AON_BOLD);
-		titleLabel.addStyleName(style.headerTitle());
+		titleLabel.addStyleName(AON.AON_CSS.headerTitle());
 
 		HorizontalPanel hPanel = new HorizontalPanel();
 		hPanel.setSpacing(5);
@@ -274,7 +251,7 @@ public class IssueReadPanel extends Composite {
 
 		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
 		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
-		editButton.addStyleName(style.editButton());
+		editButton.addStyleName(AON.AON_CSS.editButton());
 
 		final TextArea textArea = getTextArea(issue.getBody());
 		textArea.setName(String.valueOf(issue.getId()));
@@ -317,7 +294,7 @@ public class IssueReadPanel extends Composite {
 		final Button editButton = new Button();
 		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
 		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
-		editButton.addStyleName(style.editButton());
+		editButton.addStyleName(AON.AON_CSS.editButton());
 		editButton.setTitle("Editar comentario");
 
 		final TextArea textArea = getTextArea(issueComment.getBody());
@@ -485,7 +462,8 @@ public class IssueReadPanel extends Composite {
 					});
 
 					cb.setValue(containsOfficeTag(tag.getName()));
-					cb.setEnabled(issue instanceof IssueGrid.IssueOpenLoadSelected);
+					cb.setEnabled(
+							issue instanceof IssueGrid.IssueOpenLoadSelected);
 					vPanel.add(cb);
 				}
 
@@ -541,8 +519,8 @@ public class IssueReadPanel extends Composite {
 		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
 			if (tag.getName().compareTo(name) == 0) {
 				Label label = new Label(name);
-				label.setStyleName(style.styleLabel());
-				label.addStyleName(style.noticeLabel());
+				label.setStyleName(AON.AON_CSS.tagStyle());
+				label.addStyleName(AON.AON_CSS.tagNotice());
 				labelsVPanel.add(label);
 				return true;
 			}
@@ -641,21 +619,26 @@ public class IssueReadPanel extends Composite {
 
 	private void onRemoveTypeLabelFromIssue(final String oldName,
 			final String newName) {
-		for (Listener listener : listeners)
-			listener.onRemoveLabelFromIssue(oldName,
-					new Callback<DefaultAonTagIssueSelected>() {
 
-						@Override
-						public void onFailure(Throwable caught) {
-							Window.alert("Error al cerrar la etiqueta");
-						}
+		if (oldName.compareTo(Constants.NOT_ASSIGNED) == 0)
+			onAddTypeLabelFromAnIssue(newName);
+		else {
+			for (Listener listener : listeners)
+				listener.onRemoveLabelFromIssue(oldName, newName,
+						new Callback<DefaultAonTagIssueSelected>() {
 
-						@Override
-						public void onSucess(
-								DefaultAonTagIssueSelected comment) {
-							onAddTypeLabelFromAnIssue(newName);
-						}
-					});
+							@Override
+							public void onFailure(Throwable caught) {
+								Window.alert("Error al cerrar la etiqueta");
+							}
+
+							@Override
+							public void onSucess(
+									DefaultAonTagIssueSelected comment) {
+								onAddTypeLabelFromAnIssue(newName);
+							}
+						});
+		}
 	}
 
 	private void onAddTypeLabelFromAnIssue(final String name) {
@@ -676,22 +659,27 @@ public class IssueReadPanel extends Composite {
 
 	private void onRemovePriorityLabel(final String oldName,
 			final String newName) {
-		for (Listener listener : listeners)
-			listener.onRemoveLabelFromIssue(oldName,
-					new Callback<DefaultAonTagIssueSelected>() {
 
-						@Override
-						public void onFailure(Throwable caught) {
-							Window.alert(
-									"Error al cerrar la etiqueta de prioridad");
-						}
+		if (oldName.compareTo(Constants.NOT_ASSIGNED) == 0)
+			onAddPriorityLabelFromAnIssue(newName);
+		else {
+			for (Listener listener : listeners)
+				listener.onRemoveLabelFromIssue(oldName, newName,
+						new Callback<DefaultAonTagIssueSelected>() {
 
-						@Override
-						public void onSucess(
-								DefaultAonTagIssueSelected comment) {
-							onAddPriorityLabelFromAnIssue(newName);
-						}
-					});
+							@Override
+							public void onFailure(Throwable caught) {
+								Window.alert(
+										"Error al cerrar la etiqueta de prioridad");
+							}
+
+							@Override
+							public void onSucess(
+									DefaultAonTagIssueSelected comment) {
+								onAddPriorityLabelFromAnIssue(newName);
+							}
+						});
+		}
 	}
 
 	private void onCancelEditComment(TextArea textArea, Button button) {
@@ -749,9 +737,9 @@ public class IssueReadPanel extends Composite {
 						}
 					});
 	}
-	
+
 	private void onReplaceNoticeTag() {
-		
+
 		for (Listener listener : listeners)
 			listener.onReplaceLabelsForIssue(addTagsMap, deletedTagsMap);
 	}
@@ -762,7 +750,7 @@ public class IssueReadPanel extends Composite {
 		textArea.setVisibleLines(5);
 		textArea.setCharacterWidth(10);
 		textArea.setWidth("600px");
-		textArea.setStylePrimaryName(style.optionsTextArea());
+		textArea.setStylePrimaryName(AON.AON_CSS.textAreaStyle());
 		textArea.setValue(text);
 		return textArea;
 	}

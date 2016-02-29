@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.office.client.IssueReadPanel.Callback;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
@@ -107,7 +108,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	private ListDataProvider<IssueSelected> openIssuesProvider;
 	private ListDataProvider<IssueSelected> closeIssuesProvider;
 	private ListDataProvider<IssueSelected> allIssuesProvider;
-	
+
 	private List<DefaultAonTagIssueSelected> tagList;
 	private List<Registry> registries;
 
@@ -146,20 +147,20 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						userIdentificated(result.getData());
 					}
 				});
-		
+
 		initFromListBox();
 		loadRegistries();
 		loadLabels();
 		loadOpenIssues();
 	}
-	
+
 	private void initFromListBox() {
 		fromListBox.addItem(" -------- ", "all");
 		fromListBox.addItem("Hoy", "today");
 		fromListBox.addItem("Esta semana", "thisWeek");
 		fromListBox.addItem("Este mes", "thisMonth");
-		fromListBox.addItem("Este a\u00F1o", "thisYear");		
-		fromListBox.setSelectedIndex(0);		
+		fromListBox.addItem("Este a\u00F1o", "thisYear");
+		fromListBox.setSelectedIndex(0);
 	}
 
 	private void loadRegistries() {
@@ -241,23 +242,24 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 				});
 		showDockOfficePanel();
 	}
-	
-	private void loadAllIssues() {		
+
+	private void loadAllIssues() {
 		initAllIssues();
-		
-		gitHub.getAllIssues(String.valueOf(getCurrentDomain()), getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-			}
-			
-			@Override
-			public void onSuccess(JSON<JsIssue> result) {
-				for (int x = 0; x < result.getData().length(); x++)
-					addAllIssue(result.getData().get(x));
-			}
-		});
+
+		gitHub.getAllIssues(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JSON<JsIssue> result) {
+						for (int x = 0; x < result.getData().length(); x++)
+							addAllIssue(result.getData().get(x));
+					}
+				});
 		showDockOfficePanel();
 	}
 
@@ -312,10 +314,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 			loadClosedIssues();
 		}
 	}
-	
+
 	@UiHandler("allIssuesRb")
 	void onSelectedAllIssuesRb(ValueChangeEvent<Boolean> event) {
-		
+
 		if (event.getValue()) {
 			openIssuesRb.removeStyleName(AON.AON_BOLD);
 			closedIssuesRb.removeStyleName(AON.AON_BOLD);
@@ -323,32 +325,32 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 			loadAllIssues();
 		}
 	}
-	
+
 	@UiHandler("fromListBox")
 	void onChangeEventListBox(ChangeEvent event) {
-		
+
 		String name = fromListBox.getSelectedValue();
 		Date criteria = null;
 		if (name.compareTo("today") == 0)
 			criteria = new Date();
-		else if(name.compareTo("thisWeek") == 0)
+		else if (name.compareTo("thisWeek") == 0)
 			criteria = DateUtils.getFirstDayOfWorkWeek(new Date());
-		else if(name.compareTo("thisMonth") == 0)
+		else if (name.compareTo("thisMonth") == 0)
 			criteria = DateUtils.getFirstDayOfMonth();
-		else if(name.compareTo("thisYear") == 0)
+		else if (name.compareTo("thisYear") == 0)
 			criteria = DateUtils.getFirstDayOfYear();
-		
+
 		gitHub.setSinceCriteria(criteria);
 		evalRadioButtons();
-		
+
 	}
 
 	// ******************************************************************
 	// ********************** PRIVATE METHODS ***************************
 	// ******************************************************************
-	
+
 	void evalRadioButtons() {
-		
+
 		if (openIssuesRb.getValue())
 			loadOpenIssues();
 		else if (closedIssuesRb.getValue())
@@ -370,7 +372,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		closeIssuesProvider.addDataDisplay(dataGrid);
 		closedIssues = closeIssuesProvider.getList();
 	}
-	
+
 	void initAllIssues() {
 		allIssues = new LinkedList<IssueSelected>();
 		allIssuesProvider = new ListDataProvider<IssueSelected>();
@@ -389,20 +391,22 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 				issue);
 		closedIssues.add(issueSelected);
 	}
-	
+
 	void addAllIssue(JsIssue issue) {
 		IssueSelected issueSelected = null;
 		if (issue.getState().compareTo(NoticeStatus.OPEN.getValue()) == 0)
 			issueSelected = new IssueGrid.IssueOpenLoadSelected(issue);
-		else if (issue.getState().compareTo(NoticeStatus.REOPEN.getValue()) == 0)
+		else if (issue.getState()
+				.compareTo(NoticeStatus.REOPEN.getValue()) == 0)
 			issueSelected = new IssueGrid.IssueOpenLoadSelected(issue);
-		else if (issue.getState().compareTo(NoticeStatus.CLOSED.getValue()) == 0)
+		else if (issue.getState()
+				.compareTo(NoticeStatus.CLOSED.getValue()) == 0)
 			issueSelected = new IssueGrid.IssueClosedLoadSelected(issue);
-		
-		if ( issueSelected != null)
+
+		if (issueSelected != null)
 			allIssues.add(issueSelected);
 	}
-	
+
 	void initCloseIssues() {
 		closedIssues = new LinkedList<IssueSelected>();
 		closeIssuesProvider = new ListDataProvider<IssueSelected>();
@@ -672,10 +676,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	@Override
-	public void onRemoveLabelFromIssue(final String labelName,
+	public void onRemoveLabelFromIssue(final String oldName,
+			final String newName,
 			final Callback<DefaultAonTagIssueSelected> callback) {
+
 		gitHub.removeLabelFromIssue(String.valueOf(getCurrentDomain()),
-				getCurrentDomainName(), issueSelected.getId(), labelName,
+				getCurrentDomainName(), issueSelected.getId(), oldName,
 				new AsyncCallback<JsLabel>() {
 
 					@Override
@@ -685,7 +691,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsLabel result) {
-						issueSelected.deleteTag(labelName);
+						issueSelected.deleteTag(oldName);
 						callback.onSucess(null);
 					}
 				});

@@ -53,13 +53,9 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 	public enum Columns {
 
-		STATE(""),
-		TYPE("TIPO"),
-		COMPANY("EMPRESA"),
-		TITLE("ASUNTO"),
-		LABELS("ETIQUETAS"),
-		OWNER("CREADO POR"),
-		CREATED_AT("FECHA");
+		STATE(""), TYPE("TIPO"), PRIORITY("PRIORIDAD"), COMPANY(
+				"EMPRESA"), TITLE("ASUNTO"), LABELS("ETIQUETAS"), OWNER(
+						"CREADO POR"), CREATED_AT("FECHA");
 
 		private String mensaje;
 
@@ -71,46 +67,47 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			return mensaje;
 		}
 	}
-	
+
 	public static class IssueOpenLoadSelected extends DefaultAonIssueSelected {
 
 		public IssueOpenLoadSelected(JsIssue issue) {
 			super(issue);
 		}
-		
+
 		@Override
-		public DefaultAonTagIssueSelected editTag(JsLabel label) {			
+		public DefaultAonTagIssueSelected editTag(JsLabel label) {
 			for (DefaultAonTagIssueSelected tag : getTags()) {
 				if (tag.getType() == label.getType())
 					getTags().remove(tag);
 			}
-			
-			DefaultAonTagIssueSelected defaultTag = new DefaultAonTagIssueSelected(label);			
+
+			DefaultAonTagIssueSelected defaultTag = new DefaultAonTagIssueSelected(
+					label);
 			getTags().add(defaultTag);
-			
+
 			if (defaultTag.getType() == TagType.OFFICE_TYPE.value())
 				setType(defaultTag.getName());
 			else if (defaultTag.getType() == TagType.OFFICE_PRIORITY.value())
 				setPriority(defaultTag.getName());
-			
+
 			return defaultTag;
 		}
-		
+
 		@Override
-		public String getStateIconStyle() {			
+		public String getStateIconStyle() {
 			return AON.AON_CSS.aonIconIssueOpen();
 		}
-		
+
 		@Override
-		public DefaultAonIssueComments editComment(JsIssueComment comment) {		
-			
-			for ( DefaultAonIssueComments aux : getComments()) {
-				
-				if ( aux.getId() == comment.getId()) {
-					getComments().remove(aux);				
+		public DefaultAonIssueComments editComment(JsIssueComment comment) {
+
+			for (DefaultAonIssueComments aux : getComments()) {
+
+				if (aux.getId() == comment.getId()) {
+					getComments().remove(aux);
 				}
 			}
-			
+
 			return new DefaultAonIssueComments(comment);
 		}
 	}
@@ -126,14 +123,14 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		public DefaultAonTagIssueSelected editTag(JsLabel label) {
 			return null;
 		}
-		
+
 		@Override
 		public String getStateIconStyle() {
 			return AON.AON_CSS.aonIconIssueClosed();
 		}
-		
+
 		@Override
-		public DefaultAonIssueComments editComment(JsIssueComment comment) {			
+		public DefaultAonIssueComments editComment(JsIssueComment comment) {
 			return null;
 		}
 	}
@@ -162,6 +159,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 				Columns.STATE.getColumnName());
 		private Header<String> typeHeader = new TextHeader(
 				Columns.TYPE.getColumnName());
+		private Header<String> priorityHeader = new TextHeader(
+				Columns.PRIORITY.getColumnName());
 		private Header<String> companyHeader = new TextHeader(
 				Columns.COMPANY.getColumnName());
 		private Header<String> titleHeader = new TextHeader(
@@ -198,12 +197,14 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 					isSortAscending, false, false);
 			buildHeader(tr, typeHeader, typeColumn, sortedColumn,
 					isSortAscending, false, false);
+			buildHeader(tr, priorityHeader, priorityColumn, sortedColumn,
+					isSortAscending, false, false);
 			buildHeader(tr, companyHeader, companyColumn, sortedColumn,
 					isSortAscending, false, false);
-			buildHeader(tr, titleHeader, titleColumn, sortedColumn, isSortAscending,
-					false, false);
-			buildHeader(tr, labelsHeader, labelsColumn, sortedColumn, isSortAscending,
-					false, false);
+			buildHeader(tr, titleHeader, titleColumn, sortedColumn,
+					isSortAscending, false, false);
+			buildHeader(tr, labelsHeader, labelsColumn, sortedColumn,
+					isSortAscending, false, false);
 			buildHeader(tr, ownerHeader, ownerColumn, sortedColumn,
 					isSortAscending, false, false);
 			buildHeader(tr, createdAtHeader, createdAtColumn, sortedColumn,
@@ -220,7 +221,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 			boolean isSorted = (sortedColumn == column);
 			TableCellBuilder th = out.startTH();
-			th.className("aon-dataTable-header");
+			th.className(AON.AON_CSS.aonDataTableHeader());
 			enableColumnHandlers(th, column);
 			Context context = new Context(0, 1, header.getKey());
 			renderSortableHeader(th, context, header, isSorted,
@@ -237,7 +238,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		private final String rowStyle;
 		private final String selectedRowStyle;
 
-		public CellTableBuilder() {			
+		public CellTableBuilder() {
 			super(IssueGrid.this);
 
 			rowStyle = getResources().style().evenRow();
@@ -275,12 +276,18 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			td.title(rowValue.getState());
 			renderCell(td, createContext(col++), stateColumn, rowValue);
 			td.endTD();
-			
+
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
 			td.style().cursor(Cursor.POINTER);
 			td.className(AON.AON_CSS.aonDataTableTextColumn());
 			renderCell(td, createContext(col++), typeColumn, rowValue);
+			td.endTD();
+
+			td = row.startTD().align(
+					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
+			td.className(AON.AON_CSS.aonDataTableTextColumn());
+			renderCell(td, createContext(col++), priorityColumn, rowValue);
 			td.endTD();
 
 			td = row.startTD().align(
@@ -296,8 +303,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			td.endTD();
 
 			td = row.startTD().align(
-					HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString());			
-			td.className(AON.AON_CSS.aonDataTableTextColumn());
+					HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString());
 			renderCell(td, createContext(col++), labelsColumn, rowValue);
 			td.endTD();
 
@@ -331,6 +337,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 	private Column<IssueSelected, String> stateColumn;
 	private Column<IssueSelected, String> typeColumn;
+	private Column<IssueSelected, String> priorityColumn;
 	private Column<IssueSelected, String> companyColumn;
 	private Column<IssueSelected, String> titleColumn;
 	private Column<IssueSelected, String> labelsColumn;
@@ -406,8 +413,9 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			}
 		};
 		setColumnWidth(col++, 5, Unit.PX);
-		
-		typeColumn = new Column<IssueSelected, String>(new ClickableTextCell()) {
+
+		typeColumn = new Column<IssueSelected, String>(
+				new ClickableTextCell()) {
 
 			@Override
 			public String getValue(IssueSelected object) {
@@ -415,12 +423,21 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			}
 		};
 		typeColumn.setFieldUpdater(new FieldUpdater<IssueSelected, String>() {
-			
+
 			@Override
 			public void update(int index, IssueSelected object, String value) {
 				onSelectionTitle(object);
 			}
 		});
+		setColumnWidth(col++, 20, Unit.PX);
+
+		priorityColumn = new Column<IssueSelected, String>(new TextCell()) {
+
+			@Override
+			public String getValue(IssueSelected object) {
+				return object.getPriority();
+			}
+		};
 		setColumnWidth(col++, 20, Unit.PX);
 
 		companyColumn = new Column<IssueSelected, String>(new TextCell()) {
@@ -432,7 +449,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		};
 		setColumnWidth(col++, 40, Unit.PX);
 
-		
 		titleColumn = new Column<IssueSelected, String>(new TextCell()) {
 
 			@Override
@@ -442,55 +458,61 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		};
 		setColumnWidth(col++, 80, Unit.PX);
 
-		labelsColumn = new Column<IssueSelected, String>(new ClickableTextCell()) {
+		labelsColumn = new Column<IssueSelected, String>(
+				new ClickableTextCell()) {
 
 			@Override
 			public String getValue(IssueSelected object) {
-				
+
 				String labels = "";
-				if ( object.getTags() == null)
+				if (object.getTags() == null)
 					return labels;
-				
+
 				StringBuffer buffer = new StringBuffer();
-				ListIterator<DefaultAonTagIssueSelected> iterator = object.getTags().listIterator();
-				while ( iterator.hasNext() ) {
+				ListIterator<DefaultAonTagIssueSelected> iterator = object
+						.getTags().listIterator();
+				while (iterator.hasNext()) {
 					DefaultAonTagIssueSelected tag = iterator.next();
 					if (tag.getType() == TagType.OFFICE_NOTICE.value()) {
 						buffer.append(tag.getName().toUpperCase());
-						if ( iterator.hasNext() )
+						if (iterator.hasNext())
 							buffer.append(" - ");
 					}
 				}
-				
+
 				return buffer.toString();
 			}
 		};
 		setColumnWidth(col++, 40, Unit.PX);
 
-
-		ownerColumn = new Column<IssueSelected, String>(new ClickableTextCell()) {
+		ownerColumn = new Column<IssueSelected, String>(
+				new ClickableTextCell()) {
 
 			@Override
 			public String getValue(IssueSelected object) {
 				return object.getUser().getName();
 			}
 		};
-		
+
 		setColumnWidth(col++, 30, Unit.PX);
-		
+
 		createdAtColumn = new Column<IssueSelected, String>(new TextCell()) {
-			
+
 			@Override
 			public String getValue(IssueSelected object) {
-				int days = CalendarUtil.getDaysBetween(object.getCreateAt(), new Date());
-				
+				int days = CalendarUtil.getDaysBetween(object.getCreateAt(),
+						new Date());
+
 				switch (days) {
 				case 0:
-					return "Hoy (" + DateTimeFormat.getFormat("HH:mm").format(object.getCreateAt()) + ")";
+					return "Hoy (" + DateTimeFormat.getFormat("HH:mm")
+							.format(object.getCreateAt()) + ")";
 				case 1:
-					return "Ayer (" + DateTimeFormat.getFormat("HH:mm").format(object.getCreateAt()) + ")";
+					return "Ayer (" + DateTimeFormat.getFormat("HH:mm")
+							.format(object.getCreateAt()) + ")";
 				default:
-					return DateTimeFormat.getFormat("E dd MMMM HH:mm").format(object.getCreateAt());					
+					return DateTimeFormat.getFormat("E dd MMMM HH:mm")
+							.format(object.getCreateAt());
 				}
 			}
 		};
@@ -504,7 +526,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 	public void clearSelected(IssueSelected object) {
 		selectionModel.setSelected(object, false);
 	}
-	
+
 	private void onSelectionTitle(IssueSelected issue) {
 		for (Listener listener : listeners)
 			listener.onSelectionTitle(issue);

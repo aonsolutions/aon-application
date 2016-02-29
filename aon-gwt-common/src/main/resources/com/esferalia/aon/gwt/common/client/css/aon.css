@@ -264,7 +264,6 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	white-space: nowrap;
 }
 
-
 @sprite .aon-dataTable-header {
 	padding: 5px 1em;
 	height: 14.4px;
@@ -543,6 +542,7 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-icon-padding-left {
 	padding-left: 17px;
 }
+
 .aon-padding-left-20 {
 	padding-left: 20px;
 }
@@ -773,25 +773,26 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	width: auto;
 }
 
-@sprite .aon-icon-invoice{
+@sprite .aon-icon-invoice {
 	gwt-image: "aonIconInvoice";
 	width: auto;
 }
 
-@sprite .aon-icon-diff{
+@sprite .aon-icon-diff {
 	gwt-image: "aonIconDiff";
 	width: auto;
 }
 
-@sprite .aon-icon-payroll{
+@sprite .aon-icon-payroll {
 	gwt-image: "aonIconPayroll";
 	width: auto;
 }
 
-@sprite .aon-icon-calculator{
+@sprite .aon-icon-calculator {
 	gwt-image: "aonIconCalculator";
 	width: auto;
 }
+
 .aon-icon-button {
 	background: #eaeced;
 	background-image: -webkit-linear-gradient(top, #eaeced, #cfcfcf);
@@ -1669,7 +1670,8 @@ input:disabled+label {
 	gwt-image: "aonIconModel";
 	width: auto !important;
 }
-@sprite .aon-icon-identification  {
+
+@sprite .aon-icon-identification {
 	gwt-image: "employee";
 	width: auto !important;
 }
@@ -2386,16 +2388,30 @@ input:disabled+label {
 	animation-duration: 0.5s;
 	animation-iteration-count: 1;
 }
+
 .aon-toast .aon-widget-close {
 	border: 1px solid darkgray;
 }
 
 @
-keyframes aon-toast { 
-	0%  {top: 160px; right: -300px;}
-	100%{top: 160px; right:15px;}
+keyframes aon-toast { 0% {
+	top: 160px;
+	right: -300px;
 }
 
+100%{
+top
+:
+ 
+160
+px
+;
+ 
+right
+:
+15px;
+}
+}
 .aon-toast-header {
 	padding-left: 10px;
 	font-weight: bold;
@@ -2404,4 +2420,56 @@ keyframes aon-toast {
 
 .aon-toast-content {
 	padding: 10px;
+}
+
+/* 
+	*********************************************
+	************************************** AONHUB
+	********************************************* 
+*/
+
+.commentHeader-background {
+	background-color: #f0f0f4;
+}
+
+.text-area {
+	width: 600px;
+	resize: none;
+}
+
+.edit-button {
+	height: 16px;
+	width: 16px;
+}
+
+.header-title {
+	font-size: 30px;
+	padding-top: 10px;
+	color: #aaa;
+}
+
+.tag-style {
+	flex: 0 0 50px;
+	font-family: monospace;
+	font-size: 11px;
+	margin-right: 3px;
+	padding: 2px;
+	text-align: center;
+	vertical-align: middle;
+	width: auto;
+}
+
+.tag-type {
+	color: #668cff;
+	border: 0.5px solid #85a3e0;
+}
+
+.tag-priority {
+	color: #ff5c33;
+	border: 0.5px solid #ff704d;
+}
+
+.tag-notice {
+	color: #a30c51;
+	border: 0.5px solid #a30c51;
 }

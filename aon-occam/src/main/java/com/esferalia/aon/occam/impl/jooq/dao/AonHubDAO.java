@@ -6,7 +6,6 @@ import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
-import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -15,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jooq.Cursor;
+import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
@@ -23,7 +23,6 @@ import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
-import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -38,31 +37,14 @@ public class AonHubDAO {
 	private static SimpleDateFormat sdf = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-	public static User getUser(AONContext ctx, Integer id) {
-
-		UserRecord userRecord = ctx.getDslContext().selectFrom(USER)
-				.where(USER.ID.eq(id)).fetchOne();
-
-		User user = new User();
-		user.setId(userRecord.getValue(USER.ID));
-		user.setLogin(userRecord.getValue(USER.LOGIN));
-		user.setName(userRecord.getValue(USER.NAME));
-		user.setDomain(userRecord.getValue(USER.DOMAIN));
-
-		return user;
-
-	}
-
 	public static Notice addNewNotice(AONContext ctx, Notice notice)
 			throws Exception {
-
-		User user = getUser(ctx, notice.getSender().getId());
 
 		NoticeRecord noticeRecord = ctx.getDslContext().insertInto(NOTICE)
 				.set(NOTICE.DOMAIN, ctx.getDomainId())
 				.set(NOTICE.DATE,
 						new java.sql.Timestamp((new Date()).getTime()))
-				.set(NOTICE.SENDER, user.getId())
+				.set(NOTICE.SENDER, notice.getSender().getId())
 				.set(NOTICE.SUBJECT, notice.getTitle())
 				.set(NOTICE.STATUS, NoticeStatus.OPEN.value())
 				.set(NOTICE.TYPE, NoticeType.TICKET.value())
@@ -384,39 +366,43 @@ public class AonHubDAO {
 
 		try {
 
-			User user = getUser(ctx, record.getValue(NOTICE.SENDER));
+			User user = UserDAO.getUser(ctx, record.getValue(NOTICE.SENDER));
 
 			notice.setSender(user);
 			notice.setTitle(record.getValue(NOTICE.SUBJECT));
 			notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
-
-			Record statusRecord = ctx.getDslContext()
+			
+			Result<Record> statusListRecord = ctx.getDslContext()
 					.selectFrom(NOTICE_TAG.rightOuterJoin(TAG)
 							.on(NOTICE_TAG.TAG.eq(TAG.ID)))
 					.where(NOTICE_TAG.NOTICE.eq(noticeId)
-							.and(NOTICE_TAG.END_DATE.isNull())
 							.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value()))
 							.and(TAG.DOMAIN.eq(0)))
-					.fetchOne();
-
-			if (statusRecord != null) {
-				Tag tag = new Tag();
-				tag.setId(statusRecord.getValue(TAG.ID));
-				tag.setDomain(record.getValue(NOTICE.DOMAIN));
-				tag.setName(statusRecord.getValue(TAG.NAME));
-				tag.setStartDate(statusRecord.getValue(NOTICE_TAG.START_DATE));
-				tag.setEndDate(statusRecord.getValue(NOTICE_TAG.END_DATE));
-				tag.setType(statusRecord.getValue(TAG.TYPE));
-				tag.setColor(statusRecord.getValue(TAG.COLOR));
-
-				if (statusRecord.getValue(NOTICE_TAG.USER) != null) {
-					tag.setUser(getUser(ctx,
-							statusRecord.getValue(NOTICE_TAG.USER)));
-				} else {
-					tag.setUser(getUser(ctx, notice.getSender().getId()));
+					.orderBy(NOTICE_TAG.START_DATE.desc()).fetch();
+			
+			if (statusListRecord != null) {
+				for (Record statusRecord : statusListRecord) {
+					Tag tag = new Tag();
+					tag.setId(statusRecord.getValue(TAG.ID));
+					tag.setDomain(statusRecord.getValue(NOTICE.DOMAIN));
+					tag.setName(statusRecord.getValue(TAG.NAME));
+					tag.setStartDate(statusRecord.getValue(NOTICE_TAG.START_DATE));
+					tag.setEndDate(statusRecord.getValue(NOTICE_TAG.END_DATE));
+					tag.setType(statusRecord.getValue(TAG.TYPE));
+					tag.setColor(statusRecord.getValue(TAG.COLOR));
+					
+					if (statusRecord.getValue(NOTICE_TAG.USER) != null) {
+						tag.setUser(UserDAO.getUser(ctx,
+								statusRecord.getValue(NOTICE_TAG.USER)));
+					} else {
+						tag.setUser(
+								UserDAO.getUser(ctx, notice.getSender().getId()));
+					}
+					notice.addTag(tag);
+					
+					if ( statusRecord.getValue(NOTICE_TAG.END_DATE) == null )
+						notice.setStatus(statusRecord.getValue(TAG.NAME));
 				}
-				notice.addTag(tag);
-				notice.setStatus(statusRecord.getValue(TAG.NAME));
 			}
 
 			String body = "";
@@ -436,65 +422,71 @@ public class AonHubDAO {
 			}
 
 			notice.setBody(body);
-
-			Record priorityRecord = ctx.getDslContext()
+			
+			Result<Record> priorityListRecord = ctx.getDslContext()
 					.selectFrom(NOTICE_TAG.rightOuterJoin(TAG)
 							.on(NOTICE_TAG.TAG.eq(TAG.ID)))
 					.where(NOTICE_TAG.NOTICE.eq(noticeId)
-							.and(NOTICE_TAG.END_DATE.isNull())
 							.and(TAG.TYPE.eq(TagType.OFFICE_PRIORITY.value()))
 							.and(TAG.DOMAIN.eq(ctx.getDomainId())))
-					.fetchOne();
-
-			if (priorityRecord != null) {
-				Tag tag = new Tag();
-				tag.setId(priorityRecord.getValue(TAG.ID));
-				tag.setDomain(record.getValue(NOTICE.DOMAIN));
-				tag.setName(priorityRecord.getValue(TAG.NAME));
-				tag.setStartDate(
-						priorityRecord.getValue(NOTICE_TAG.START_DATE));
-				tag.setEndDate(priorityRecord.getValue(NOTICE_TAG.END_DATE));
-				tag.setType(priorityRecord.getValue(TAG.TYPE));
-				tag.setColor(priorityRecord.getValue(TAG.COLOR));
-
-				if (priorityRecord.getValue(NOTICE_TAG.USER) != null) {
-					tag.setUser(getUser(ctx,
-							statusRecord.getValue(NOTICE_TAG.USER)));
-				} else {
-					tag.setUser(getUser(ctx, notice.getSender().getId()));
+					.orderBy(NOTICE_TAG.START_DATE.desc()).fetch();
+			
+			if (priorityListRecord != null) {
+				for (Record priorityRecord : priorityListRecord) {
+					Tag tag = new Tag();
+					tag.setId(priorityRecord.getValue(TAG.ID));
+					tag.setDomain(priorityRecord.getValue(NOTICE.DOMAIN));
+					tag.setName(priorityRecord.getValue(TAG.NAME));
+					tag.setStartDate(priorityRecord.getValue(NOTICE_TAG.START_DATE));
+					tag.setEndDate(priorityRecord.getValue(NOTICE_TAG.END_DATE));
+					tag.setType(priorityRecord.getValue(TAG.TYPE));
+					tag.setColor(priorityRecord.getValue(TAG.COLOR));
+					
+					if (priorityRecord.getValue(NOTICE_TAG.USER) != null) {
+						tag.setUser(UserDAO.getUser(ctx,
+								priorityRecord.getValue(NOTICE_TAG.USER)));
+					} else {
+						tag.setUser(
+								UserDAO.getUser(ctx, notice.getSender().getId()));
+					}
+					notice.addTag(tag);
+					
+					if ( priorityRecord.getValue(NOTICE_TAG.END_DATE) == null )
+						notice.setPriority(priorityRecord.getValue(TAG.NAME));
 				}
-				notice.addTag(tag);
-				notice.setPriority(priorityRecord.getValue(TAG.NAME));
 			}
-
-			Record typeRecord = ctx.getDslContext()
+			
+			Result<Record> typeListRecord = ctx.getDslContext()
 					.selectFrom(NOTICE_TAG.rightOuterJoin(TAG)
 							.on(NOTICE_TAG.TAG.eq(TAG.ID)))
 					.where(NOTICE_TAG.NOTICE.eq(noticeId)
-							.and(NOTICE_TAG.END_DATE.isNull())
 							.and(TAG.TYPE.eq(TagType.OFFICE_TYPE.value()))
 							.and(TAG.DOMAIN.eq(ctx.getDomainId())))
-					.fetchOne();
-
-			if (typeRecord != null) {
-				Tag tag = new Tag();
-				tag.setId(typeRecord.getValue(TAG.ID));
-				tag.setDomain(record.getValue(NOTICE.DOMAIN));
-				tag.setName(typeRecord.getValue(TAG.NAME));
-				tag.setStartDate(typeRecord.getValue(NOTICE_TAG.START_DATE));
-				tag.setEndDate(typeRecord.getValue(NOTICE_TAG.END_DATE));
-				tag.setType(typeRecord.getValue(TAG.TYPE));
-				tag.setColor(typeRecord.getValue(TAG.COLOR));
-
-				if (typeRecord.getValue(NOTICE_TAG.USER) != null) {
-					tag.setUser(
-							getUser(ctx, typeRecord.getValue(NOTICE_TAG.USER)));
-				} else {
-					tag.setUser(getUser(ctx, notice.getSender().getId()));
+					.orderBy(NOTICE_TAG.START_DATE.desc()).fetch();
+			
+			if (typeListRecord != null) {
+				for (Record typeRecord : typeListRecord) {
+					Tag tag = new Tag();
+					tag.setId(typeRecord.getValue(TAG.ID));
+					tag.setDomain(typeRecord.getValue(NOTICE.DOMAIN));
+					tag.setName(typeRecord.getValue(TAG.NAME));
+					tag.setStartDate(typeRecord.getValue(NOTICE_TAG.START_DATE));
+					tag.setEndDate(typeRecord.getValue(NOTICE_TAG.END_DATE));
+					tag.setType(typeRecord.getValue(TAG.TYPE));
+					tag.setColor(typeRecord.getValue(TAG.COLOR));
+					
+					if (typeRecord.getValue(NOTICE_TAG.USER) != null) {
+						tag.setUser(UserDAO.getUser(ctx,
+								typeRecord.getValue(NOTICE_TAG.USER)));
+					} else {
+						tag.setUser(
+								UserDAO.getUser(ctx, notice.getSender().getId()));
+					}
+					notice.addTag(tag);
+					
+					if ( typeRecord.getValue(NOTICE_TAG.END_DATE) == null )
+						notice.setType(typeRecord.getValue(TAG.NAME));
 				}
-
-				notice.addTag(tag);
-				notice.setType(typeRecord.getValue(TAG.NAME));
 			}
 
 			ctx.getDslContext().select().from(NOTICE_TAG).rightOuterJoin(TAG)
@@ -503,13 +495,14 @@ public class AonHubDAO {
 							.and(TAG.TYPE.eq(TagType.OFFICE_NOTICE.value()))
 							.and(TAG.DOMAIN.eq(ctx.getDomainId()))
 							.and(NOTICE_TAG.END_DATE.isNull()))
+					.orderBy(NOTICE_TAG.END_DATE.desc())
 					.fetch().stream().forEach(noticeTag -> {
 						Tag tag = buildTag(noticeTag);
 
-						Integer id = noticeTag.getValue(NOTICE_TAG.USER) != null
+						Integer userId = noticeTag.getValue(NOTICE_TAG.USER) != null
 								? noticeTag.getValue(NOTICE_TAG.USER)
 								: notice.getSender().getId();
-						User userTag = getUser(ctx, id);
+						User userTag = UserDAO.getUser(ctx, userId);
 						tag.setUser(userTag);
 						tag.setStartDate(
 								noticeTag.getValue(NOTICE_TAG.START_DATE));
@@ -525,70 +518,34 @@ public class AonHubDAO {
 
 		return notice;
 	}
-	
-	
-	
-	private static Date getTomorrow() {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-		cal.add(Calendar.DATE, 1);
-		cal.add(Calendar.HOUR_OF_DAY, 0);
-		return cal.getTime();
-	}
-	
-	private static Date getSince(String pSince) {
-		
-		Date since = null;
-		try {
-			since = sdf.parse(pSince);	
-		} catch (Exception ex) {
-			return null;
-		}
-		
-		if (since == null)
-			return null;
-		else
-		{			
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(since);
-			cal.add(Calendar.DATE, -1);
-			cal.add(Calendar.HOUR_OF_DAY, 0);
-			return cal.getTime();
-		}
-	}
 
 	public static List<Notice> getOpenNotices(AONContext ctx, String pSince) {
 
 		List<Notice> notices = new LinkedList<Notice>();
 		Integer domainId = ctx.getDomainId();
-		
+
 		Date since = getSince(pSince);
 		Date tomorrow = getTomorrow();
-		
-		System.out.println("Fecha: " + since);
 
-		SelectConditionStep<Record1<Integer>> openId = ctx.getDslContext()
-				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
-				.and(TAG.NAME.eq(NoticeStatus.OPEN.getValue())
-						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
+		SelectConditionStep<Record1<Integer>> openId = getOpenNoticesId(
+				ctx.getDslContext());
+		SelectConditionStep<Record1<Integer>> reopenId = getReOpenNoticesId(
+				ctx.getDslContext());
 
-		SelectConditionStep<Record1<Integer>> reopenId = ctx.getDslContext()
-				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
-				.and(TAG.NAME.eq(NoticeStatus.REOPEN.getValue())
-						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
-
-		SelectConditionStep<Record> select = ctx.getDslContext().select().from(NOTICE)
-				.rightOuterJoin(NOTICE_TAG).on(NOTICE.ID.eq(NOTICE_TAG.NOTICE))
-				.rightOuterJoin(TAG).on(NOTICE_TAG.TAG.eq(TAG.ID))
+		SelectConditionStep<Record> select = ctx.getDslContext().select()
+				.from(NOTICE).rightOuterJoin(NOTICE_TAG)
+				.on(NOTICE.ID.eq(NOTICE_TAG.NOTICE)).rightOuterJoin(TAG)
+				.on(NOTICE_TAG.TAG.eq(TAG.ID))
 				.where(NOTICE.DOMAIN.eq(domainId).and(NOTICE.NOTICE_.isNull())
 						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
 						.and(TAG.ID.eq(openId).or(TAG.ID.eq(reopenId)))
 						.and(NOTICE_TAG.END_DATE.isNull()));
-		
+
 		if (since != null) {
-			select = select.and(NOTICE.DATE.between(
-					new java.sql.Timestamp(since.getTime()), new java.sql.Timestamp(tomorrow.getTime())));
-		}	
+			select = select.and(
+					NOTICE.DATE.between(new java.sql.Timestamp(since.getTime()),
+							new java.sql.Timestamp(tomorrow.getTime())));
+		}
 		Result<Record> record = select.orderBy(NOTICE.DATE.desc()).fetch();
 
 		if (record != null) {
@@ -605,27 +562,27 @@ public class AonHubDAO {
 	public static List<Notice> getClosedIsues(AONContext ctx, String pSince) {
 
 		List<Notice> notices = new LinkedList<Notice>();
-		
+
 		Date since = getSince(pSince);
 		Date tomorrow = getTomorrow();
 
-		SelectConditionStep<Record1<Integer>> closedId = ctx.getDslContext()
-				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
-				.and(TAG.NAME.eq(NoticeStatus.CLOSED.getValue())
-						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
+		SelectConditionStep<Record1<Integer>> closedId = getClosedNoticesId(
+				ctx.getDslContext());
 
-		SelectConditionStep<Record> select = ctx.getDslContext().select().from(NOTICE)
-				.rightOuterJoin(NOTICE_TAG).on(NOTICE_TAG.NOTICE.eq(NOTICE.ID))
-				.rightOuterJoin(TAG).on(NOTICE_TAG.TAG.eq(TAG.ID))
+		SelectConditionStep<Record> select = ctx.getDslContext().select()
+				.from(NOTICE).rightOuterJoin(NOTICE_TAG)
+				.on(NOTICE_TAG.NOTICE.eq(NOTICE.ID)).rightOuterJoin(TAG)
+				.on(NOTICE_TAG.TAG.eq(TAG.ID))
 				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
 						.and(NOTICE.NOTICE_.isNull())
 						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
 						.and(TAG.ID.eq(closedId))
 						.and(NOTICE_TAG.END_DATE.isNull()));
-				
+
 		if (since != null) {
-			select = select.and(NOTICE.DATE.between(
-					new java.sql.Timestamp(since.getTime()), new java.sql.Timestamp(tomorrow.getTime())));
+			select = select.and(
+					NOTICE.DATE.between(new java.sql.Timestamp(since.getTime()),
+							new java.sql.Timestamp(tomorrow.getTime())));
 		}
 		Result<Record> record = select.orderBy(NOTICE.DATE.desc()).fetch();
 
@@ -642,24 +599,16 @@ public class AonHubDAO {
 	public static List<Notice> getAllNotices(AONContext ctx, String pSince) {
 
 		List<Notice> notices = new LinkedList<Notice>();
-		
+
 		Date since = getSince(pSince);
 		Date tomorrow = getTomorrow();
-
-		SelectConditionStep<Record1<Integer>> openId = ctx.getDslContext()
-				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
-				.and(TAG.NAME.eq(NoticeStatus.OPEN.getValue())
-						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
-
-		SelectConditionStep<Record1<Integer>> reopenId = ctx.getDslContext()
-				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
-				.and(TAG.NAME.eq(NoticeStatus.REOPEN.getValue())
-						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
-
-		SelectConditionStep<Record1<Integer>> closedId = ctx.getDslContext()
-				.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
-				.and(TAG.NAME.eq(NoticeStatus.CLOSED.getValue())
-						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
+		
+		SelectConditionStep<Record1<Integer>> openId = getOpenNoticesId(
+				ctx.getDslContext());
+		SelectConditionStep<Record1<Integer>> reopenId = getOpenNoticesId(
+				ctx.getDslContext());
+		SelectConditionStep<Record1<Integer>> closedId = getOpenNoticesId(
+				ctx.getDslContext());
 
 		SelectConditionStep<Record> select = ctx.getDslContext().select()
 				.from(NOTICE.rightOuterJoin(NOTICE_TAG)
@@ -672,12 +621,13 @@ public class AonHubDAO {
 								.or(TAG.ID.eq(reopenId)
 										.or(TAG.ID.eq(closedId))))
 						.and(NOTICE_TAG.END_DATE.isNull()));
-		
+
 		if (since != null) {
-			select = select.and(NOTICE.DATE.between(
-					new java.sql.Timestamp(since.getTime()), new java.sql.Timestamp(tomorrow.getTime())));
+			select = select.and(
+					NOTICE.DATE.between(new java.sql.Timestamp(since.getTime()),
+							new java.sql.Timestamp(tomorrow.getTime())));
 		}
-		
+
 		Result<Record> record = select.orderBy(NOTICE.DATE.desc()).fetch();
 
 		if (record != null) {
@@ -723,7 +673,8 @@ public class AonHubDAO {
 			comment.setId(noticeRecord.getValue(NOTICE.ID));
 			comment.setDomain(noticeRecord.getValue(NOTICE.DOMAIN));
 			comment.setStartDate(noticeRecord.getValue(NOTICE.DATE));
-			User user = getUser(ctx, noticeRecord.getValue(NOTICE.SENDER));
+			User user = UserDAO.getUser(ctx,
+					noticeRecord.getValue(NOTICE.SENDER));
 			comment.setSender(user);
 			comment.setBody(noticeRecord.getValue(NOTICE.SUBJECT));
 		}
@@ -745,7 +696,8 @@ public class AonHubDAO {
 				notice.setId(record.getValue(NOTICE.ID));
 				notice.setDomain(record.getValue(NOTICE.DOMAIN));
 				notice.setStartDate(record.getValue(NOTICE.DATE));
-				User user = getUser(ctx, record.getValue(NOTICE.SENDER));
+				User user = UserDAO.getUser(ctx,
+						record.getValue(NOTICE.SENDER));
 				notice.setSender(user);
 				notice.setBody(record.getValue(NOTICE.SUBJECT));
 				comments.add(notice);
@@ -803,6 +755,30 @@ public class AonHubDAO {
 
 	// -----------------------------------------------------------------------
 
+	private static SelectConditionStep<Record1<Integer>> getOpenNoticesId(
+			DSLContext dsl) {
+
+		return dsl.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
+				.and(TAG.NAME.eq(NoticeStatus.OPEN.getValue())
+						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
+	}
+
+	private static SelectConditionStep<Record1<Integer>> getReOpenNoticesId(
+			DSLContext dsl) {
+
+		return dsl.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
+				.and(TAG.NAME.eq(NoticeStatus.REOPEN.getValue())
+						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
+	}
+
+	private static SelectConditionStep<Record1<Integer>> getClosedNoticesId(
+			DSLContext dsl) {
+
+		return dsl.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
+				.and(TAG.NAME.eq(NoticeStatus.CLOSED.getValue())
+						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
+	}
+
 	private static Notice buildNoticeById(AONContext ctx, Integer id) {
 
 		NoticeRecord noticeRecord = ctx.getDslContext().selectFrom(NOTICE)
@@ -847,6 +823,34 @@ public class AonHubDAO {
 		} finally {
 			if (cursor != null)
 				cursor.close();
+		}
+	}
+
+	private static Date getTomorrow() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.add(Calendar.DATE, 1);
+		cal.add(Calendar.HOUR_OF_DAY, 0);
+		return cal.getTime();
+	}
+
+	private static Date getSince(String pSince) {
+
+		Date since = null;
+		try {
+			since = sdf.parse(pSince);
+		} catch (Exception ex) {
+			return null;
+		}
+
+		if (since == null)
+			return null;
+		else {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(since);
+			cal.add(Calendar.DATE, -1);
+			cal.add(Calendar.HOUR_OF_DAY, 0);
+			return cal.getTime();
 		}
 	}
 }
