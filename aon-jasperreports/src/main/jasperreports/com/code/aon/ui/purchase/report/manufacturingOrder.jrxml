@@ -336,7 +336,7 @@
 	<detail>
 		<band height="693" splitType="Stretch">
 			<subreport isUsingCache="true">
-				<reportElement uuid="dda690fe-1373-4ed3-b049-d19f03cc401b" key="subreport-1" positionType="Float" x="2" y="12" width="536" height="670"/>
+				<reportElement uuid="dda690fe-1373-4ed3-b049-d19f03cc401b" key="subreport-1" positionType="Float" x="2" y="4" width="536" height="680"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<subreportParameter name="printValue">
 					<subreportParameterExpression><![CDATA[$P{printValue}]]></subreportParameterExpression>

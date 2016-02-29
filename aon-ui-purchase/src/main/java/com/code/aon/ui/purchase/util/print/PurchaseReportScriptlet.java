@@ -92,6 +92,7 @@ public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Seria
 					list.add(ecommerceProduct);
 				}
 			}
+			list.sort((o1, o2) -> o1.getTemplate().getEcommerce().compareTo(o2.getTemplate().getEcommerce()));
 		} catch (JAXBException e) {
 			String msg = "No se han podido obtener los valores de la plantilla del producto";
 			LOGGER.error(msg,e);
