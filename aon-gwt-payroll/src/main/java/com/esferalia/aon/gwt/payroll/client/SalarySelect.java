@@ -471,7 +471,9 @@ public class SalarySelect extends Composite {
 
 		List<Date> dates = new ArrayList<Date>(length);
 
-		Date date = DateUtils.copyDateOnly(new Date());
+		
+		Date date = DateUtils.copyDateOnly(employee.getStartDate());
+		
 		for (DateUtils.addDays2Date(date, start); dates.size() < length
 				&& DateUtils.compare(date, contractEndDate) <= 0; DateUtils
 				.addDays2Date(date, 1)) {
