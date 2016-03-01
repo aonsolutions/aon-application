@@ -1,23 +1,17 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMPENSATION_CAUSE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_COMPLETE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OBJECTIVE;
-import static com.esferalia.aon.watson.util.AonDateUtils.add;
-import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
-import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
-import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
+import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
-import static java.util.Calendar.DAY_OF_YEAR;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,12 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -39,9 +30,6 @@ import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryData;
-import com.esferalia.aon.payroll.SalaryDeduction;
-import com.esferalia.aon.payroll.SalaryEmbargo;
-import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -52,6 +40,8 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
+
+import junit.framework.Assert;
 
 public class SQLSettleTestCase extends AbstractSQLTestCase {
 	
@@ -91,14 +81,14 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				new HashMap<String, String>() {
 					{
 						put(MONTH_DAYS.getName(), format("%d", 30));
-						put(COMPENSATION_CAUSE.getName(), ContextVariable.CONTRACT_END.getName());
+						put(COMPENSATION_CAUSE.getName(), CONTRACT_COMPLETE.getName());
 					}
 				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
 						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
 						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
 						new String[] {
 						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
-						"BASE_IRPF * PORCENTAJE_IRPF/100" }, category);
+						"BASE_IRPF * 0.00/100" }, category);
 		//@formatter:off
 		
 		addSSRegimeStuff(aonContext);
@@ -214,7 +204,8 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 					}
 				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
 						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
-						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES"
+						}, 
 						new String[] {
 						"BASE_CGC * 0.10", 
 						"BASE_CGP * 0.05",
@@ -238,6 +229,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; 
+		
+		settle.getSalaryDatas().stream().forEach(d->System.out.println(d.getName() + " = "  + d.getExpression() ));
+		settle.getSalaryPayments().stream().forEach(p->System.out.println(p.getExpression() + " = "  + p.getAmount() ));
 
 		Assert.assertEquals( 20 * (2/12.00) * br + ( br * 4 ), settle.getTotalPayment());
 		
@@ -455,6 +449,55 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 	}
 
 
+	@Test
+	public void testSettleVacationsCGC() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		Date contractStart = add(getToday(), Calendar.MONTH, -2);
+		Date endContract = getLastDayOfMonth(getToday());
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), format("%d", 30));
+						put(COMPENSATION_CAUSE.getName(), OBJECTIVE.getName());
+					}
+				}, 
+				new String[] { "1000.00 * DIAS_TRABAJADOS / DIAS_MES"}, 
+				new String[] {"BASE_CGC * PORCENTAJE_CGC / 100.00 "}, 
+				null);
+		//@formatter:off
+		
+		addSSRegimeStuff(aonContext);
+		
+		Date startNoHolidays = add(endContract, Calendar.DAY_OF_MONTH,1);
+		Date endNoHolidays = add(endContract, Calendar.DAY_OF_MONTH,11);
+		
+		
+		setData(aonContext, contract, 
+				startNoHolidays
+				, endNoHolidays
+				, new HashMap<String, String>() {
+			{
+				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 10));
+			}
+		});
+		
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSQLContractSettleContext(connection, contractStart, contract);
+		
+		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		Assert.assertEquals(( 1000.00 * 12 / 365 * 10.00 ) , settle.getCommonBase());
+		Assert.assertEquals(( 1000.00 * 12 / 365  * 10.00 ) * (4.70/100.00), settle.getTotalDeduction());
+		
+		
+	}
+
 	public  void addSSRegimeStuff(AONContext aonContext) {
 		
 		Date startDate = AonDateUtils.add(getFirstDayOfYear(getToday()), Calendar.YEAR, -2);
@@ -465,6 +508,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				null, 
 				new HashMap<String, String>() {
 					{
+						put("PORCENTAJE_CGC", format("%f", 4.70));
 						put("DIAS_INDEMNIZACION_FIN", format("%d", 12));
 						put("BASE_CGC_MAX","(3642.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");						
 						put("BASE_CGC_MIN","(TIEMPO_COMPLETO ? 1056.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.37 * HORAS_NOMINA)");						
@@ -529,19 +573,6 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			ContractRecord contract, Date startDate, Date endDate,
 			Map<String, String> datas) {
 		AbstractSQLTestCase.addData(aonContext, contract, startDate, endDate, datas);
-	}
-
-	protected  ISQLContractSalaryCalculatorContext getSQLContractSettleContext(Connection connection,
-			Date contractStart, ContractRecord contract) throws SQLException,
-			ExpressionException {
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-		ISQLContractSalaryCalculatorContext ctx = new SQLContractSettleCalculatorContext(
-				connection, contractStart, getToday(), getToday(), criteria);
-		ctx.next();
-		return ctx;
 	}
 	
 	

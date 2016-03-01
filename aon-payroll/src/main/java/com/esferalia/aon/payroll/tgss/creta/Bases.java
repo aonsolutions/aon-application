@@ -64,6 +64,7 @@ import org.mvel2.MVEL;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -1288,8 +1289,13 @@ public class Bases {
 							.add(new DatoBuilder().setCodigo(dato.getCodigo())
 									.setTipo(dato.getTipoDato()).create());
 
-			trabajadores(liquidacionMesBuilder, ctx, liquidacion.getCcc(),
-					liquidacionMes.getMesLiquidativo(), trabajadores, cbs);
+			trabajadores(liquidacionMesBuilder, 
+					ctx, 
+					liquidacion.getCcc(),
+					liquidacion.getTipo(),
+					liquidacionMes.getMesLiquidativo(), 
+					trabajadores, 
+					cbs);
 
 			liquidacionBuilder
 					.addLiquidacionMes(liquidacionMesBuilder.create());
@@ -1318,9 +1324,13 @@ public class Bases {
 	}
 
 	private static <D extends DatoSolicitado> void trabajadores(
-			LiquidacionMesBuilder liquidacionMesBuilder, AONContext ctx,
-			CtaCot ctaCot, Periodo mesLiquidativo,
-			Map<String, Trabajador<D>> trabajadores, BasesCallback... cbs) {
+			LiquidacionMesBuilder liquidacionMesBuilder, 
+			AONContext ctx,
+			CtaCot ctaCot, 
+			String tipo,
+			Periodo mesLiquidativo,
+			Map<String, Trabajador<D>> trabajadores, 
+			BasesCallback... cbs) {
 
 		String ccc = String.format("%s%s", ctaCot.getProvincia(),
 				ctaCot.getNumero());
@@ -1339,7 +1349,9 @@ public class Bases {
 				props -> props.getCCCProperty().eq(ccc)
 						.and(props.getEndDateProperty().ge(startDate))
 						.and(props.getStartDateProperty().le(endDate))
-						.and(props.getIsSalaryProperty().eq(true))).forEach(
+						.and(props.getIsSalaryProperty().eq(AonStringUtils.equalsIgnoreCase("L00", tipo)))
+						.and(props.getIsSettlementProperty().eq(AonStringUtils.equalsIgnoreCase("L13", tipo))))
+						.forEach(
 				salary -> trabajador(liquidacionMesBuilder, salary,
 						trabajadores, cbs));
 		;
