@@ -9,14 +9,6 @@
 
 	<ui:include src="/com/code/aon/ui/product/facelet/item/listBasic.xhtml" />
 
-	<aon:column alias="Item.barcode"
-		styleClass="aon-editDataTable-textColumn">
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.product_barcode}" />
-		</f:facet>
-		<aon:outputText value="#{to.barcode}" />
-	</aon:column>
-
 	<aon:if test="#{aonConfiguration.bean.product.showSerializable and productCollections.serializableProductCount > 0}">
 		<aon:column alias="Item.serialNumber"
 			styleClass="aon-editDataTable-textColumn">
