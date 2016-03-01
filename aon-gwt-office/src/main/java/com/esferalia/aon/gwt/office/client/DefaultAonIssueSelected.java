@@ -22,7 +22,7 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 	private List<DefaultAonIssueComments> comments;
 	
 	private String title;
-	private String body;
+//	private String body;
 	private String type;
 	private String priority;
 	
@@ -36,7 +36,7 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 		this.comments = new LinkedList<DefaultAonIssueComments>();
 		
 		this.title = URL.decode(issue.getTitle());
-		this.body = URL.decode(issue.getBody());
+//		this.body = URL.decode(issue.getBody());
 		this.type = URL.decode(issue.getType());
 		this.priority = URL.decode(issue.getPriority());
 		
@@ -112,7 +112,8 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 
 	@Override
 	public String getBody() {
-		return this.body;
+//		return this.body;
+		return "";
 	}
 
 	@Override

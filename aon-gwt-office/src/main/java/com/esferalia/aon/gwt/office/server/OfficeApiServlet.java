@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jooq.impl.DateAsTimestampBinding;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -107,7 +110,8 @@ public class OfficeApiServlet extends HttpServlet {
 
 		private Integer domain;
 		private String domainName;
-
+		private static SimpleDateFormat sdf = new SimpleDateFormat(
+				"yyyy-MM-dd'T'HH:mm:ss'Z'");
 		public CreateIssue() {
 			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues");
 		}
@@ -145,9 +149,16 @@ public class OfficeApiServlet extends HttpServlet {
 
 				Notice notice = new Notice();
 				notice.setTitle(json.getString("title"));
-				notice.setBody(json.getString("body"));
-				notice.setStatus(json.getString("state"));
-
+//				notice.setBody(json.getString("body"));
+				
+				String dateString = json.getString("startDate");
+				Date startDate = null;
+				try {
+					startDate = sdf.parse(dateString);
+				} catch (Exception ex) {
+					startDate = new Date();
+				}
+				notice.setStartDate(startDate);
 				Integer userId = Integer.parseInt(json.getString("sender"));
 				User user = AON.getUser(domain, domainName, userName, userId);
 				notice.setSender(user);
@@ -236,7 +247,6 @@ public class OfficeApiServlet extends HttpServlet {
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
 			}
-
 		}
 	}
 
@@ -374,6 +384,8 @@ public class OfficeApiServlet extends HttpServlet {
 
 		private HttpServletRequest req;
 		private HttpServletResponse resp;
+		private static SimpleDateFormat sdf = new SimpleDateFormat(
+				"yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 		public CreateComment() {
 			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues/(\\d+)/comments");
@@ -414,7 +426,16 @@ public class OfficeApiServlet extends HttpServlet {
 				JSONObject json = new JSONObject(object);
 				Notice comment = new Notice();
 				comment.setDomain(domainId);
-
+				
+				String dateString = json.getString("startDate");
+				Date startDate = null;
+				try {
+					startDate = sdf.parse(dateString);
+				} catch (Exception ex) {
+					startDate = new Date();
+				}
+				comment.setStartDate(startDate);
+				
 				User user = AON.getUser(domainId, domainName,
 						AonServletUtils.getLoggedUser(),
 						AonServletUtils.getRequestUserId(req));
@@ -1109,8 +1130,8 @@ public class OfficeApiServlet extends HttpServlet {
 				String.valueOf(notice.getId())));
 		buffer.append(String.format("\"title\":\"%s\",\r\n",
 				UriUtils.encode(notice.getTitle())));
-		buffer.append(String.format("\"body\":\"%s\",\r\n",
-				UriUtils.encode(notice.getBody())));
+//		buffer.append(String.format("\"body\":\"%s\",\r\n",
+//				UriUtils.encode(notice.getBody())));
 		buffer.append(
 				String.format("\"state\":\"%s\",\r\n", notice.getStatus()));
 		buffer.append(String.format("\"company\":\"%s\",\r\n",

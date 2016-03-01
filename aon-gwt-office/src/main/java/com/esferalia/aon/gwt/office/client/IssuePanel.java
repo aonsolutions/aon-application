@@ -54,28 +54,25 @@ public class IssuePanel extends CustomDialog {
 	Label dateLabel;
 	@UiField
 	Label loggedLabel;
-	@UiField
-	HorizontalPanel priorityHPanel;
-	@UiField
-	HorizontalPanel typeHPanel;
-	@UiField	
-	VerticalPanel vPanelTagsContainer;
+//	@UiField
+//	HorizontalPanel priorityHPanel;
+//	@UiField
+//	HorizontalPanel typeHPanel;
+//	@UiField	
+//	VerticalPanel vPanelTagsContainer;
 
 	@UiField
 	TextBox titleTextBox;
 	@UiField (provided = true)
 	SuggestBox registrySuggest;
-	@UiField
-	TextArea commentTextArea;
+//	@UiField
+//	TextArea commentTextArea;
 
 	@UiField
 	Button acceptButton;
 	@UiField
 	Button cancelButton;
 
-	
-	private String type;
-	private String priority;
 	private String registry;
 	private Date date;
 	
@@ -121,17 +118,18 @@ public class IssuePanel extends CustomDialog {
 
 	public void setRegistries(List<Registry> registries) {		
 		this.registryList = registries;
+		this.registrySuggest.setEnabled(registries.size() > 0);
 		for ( Registry registry : registries ) {			
 			this.registries.add(registry.getName());			
 		}
 	}
 	
-	public void setTagList(List<DefaultAonTagIssueSelected> tagList) {
-		this.registrySuggest.setEnabled(true);
-		
-		for (DefaultAonTagIssueSelected tag : tagList)
-			addTag(tag);
-	}
+//	public void setTagList(List<DefaultAonTagIssueSelected> tagList) {
+//		this.registrySuggest.setEnabled(true);
+//		
+//		for (DefaultAonTagIssueSelected tag : tagList)
+//			addTag(tag);
+//	}
 	
 	private void addTagSelected(String name) {
 		selectedTags.put(name, name);
@@ -141,74 +139,74 @@ public class IssuePanel extends CustomDialog {
 		selectedTags.remove(name);
 	}
 
-	public void addTag(DefaultAonTagIssueSelected tag) {
-
-		if (tag.getType() == TagType.OFFICE_NOTICE.value()) {
-			CheckBox check = new CheckBox(tag.getName());			
-			check.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-				@Override
-				public void onValueChange(ValueChangeEvent<Boolean> event) {
-					CheckBox cb = (CheckBox) event.getSource();
-					if (cb.getValue() == false)
-						removeTagSelected(cb.getText());
-						
-					else
-						addTagSelected(cb.getText());						
-				}
-			});
-			insertTag(check);
-
-		} else if (tag.getType() == TagType.OFFICE_PRIORITY.value()) {
-			RadioButton radioButton = new RadioButton("PRIORITY",
-					tag.getName());
-			radioButton
-					.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-						@Override
-						public void onValueChange(
-								ValueChangeEvent<Boolean> event) {
-							RadioButton rb = (RadioButton) event.getSource();
-							IssuePanel.this.priority = rb.getText();
-						}
-					});
-			priorityHPanel.add(radioButton);
-		}
-
-		else if (tag.getType() == TagType.OFFICE_TYPE.value()) {
-			RadioButton radioButton = new RadioButton("TYPE", tag.getName());
-			radioButton
-					.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-						@Override
-						public void onValueChange(
-								ValueChangeEvent<Boolean> event) {
-							RadioButton rb = (RadioButton) event.getSource();
-							IssuePanel.this.type = rb.getText();
-						}
-					});
-			typeHPanel.add(radioButton);
-		}
-	}
-	
-	private void insertTag(CheckBox check) {
-		int childs = vPanelTagsContainer.getWidgetCount();
-		
-		if (childs == 0) {
-			vPanelTagsContainer.add(getHorizontalPanel());
-		}
-		
-		HorizontalPanel hPanel = (HorizontalPanel) vPanelTagsContainer.getWidget(
-				vPanelTagsContainer.getWidgetCount() - 1);
-		
-		if ( hPanel.getWidgetCount() < 6)
-			hPanel.add(check);
-		else {
-			vPanelTagsContainer.add(getHorizontalPanel());
-			insertTag(check);
-		}
-
-	}
+//	public void addTag(DefaultAonTagIssueSelected tag) {
+//
+//		if (tag.getType() == TagType.OFFICE_NOTICE.value()) {
+//			CheckBox check = new CheckBox(tag.getName());			
+//			check.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+//
+//				@Override
+//				public void onValueChange(ValueChangeEvent<Boolean> event) {
+//					CheckBox cb = (CheckBox) event.getSource();
+//					if (cb.getValue() == false)
+//						removeTagSelected(cb.getText());
+//						
+//					else
+//						addTagSelected(cb.getText());						
+//				}
+//			});
+//			insertTag(check);
+//
+//		} else if (tag.getType() == TagType.OFFICE_PRIORITY.value()) {
+//			RadioButton radioButton = new RadioButton("PRIORITY",
+//					tag.getName());
+//			radioButton
+//					.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+//
+//						@Override
+//						public void onValueChange(
+//								ValueChangeEvent<Boolean> event) {
+//							RadioButton rb = (RadioButton) event.getSource();
+//							IssuePanel.this.priority = rb.getText();
+//						}
+//					});
+//			priorityHPanel.add(radioButton);
+//		}
+//
+//		else if (tag.getType() == TagType.OFFICE_TYPE.value()) {
+//			RadioButton radioButton = new RadioButton("TYPE", tag.getName());
+//			radioButton
+//					.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+//
+//						@Override
+//						public void onValueChange(
+//								ValueChangeEvent<Boolean> event) {
+//							RadioButton rb = (RadioButton) event.getSource();
+//							IssuePanel.this.type = rb.getText();
+//						}
+//					});
+//			typeHPanel.add(radioButton);
+//		}
+//	}
+//	
+//	private void insertTag(CheckBox check) {
+//		int childs = vPanelTagsContainer.getWidgetCount();
+//		
+//		if (childs == 0) {
+//			vPanelTagsContainer.add(getHorizontalPanel());
+//		}
+//		
+//		HorizontalPanel hPanel = (HorizontalPanel) vPanelTagsContainer.getWidget(
+//				vPanelTagsContainer.getWidgetCount() - 1);
+//		
+//		if ( hPanel.getWidgetCount() < 6)
+//			hPanel.add(check);
+//		else {
+//			vPanelTagsContainer.add(getHorizontalPanel());
+//			insertTag(check);
+//		}
+//
+//	}
 	
 	private HorizontalPanel getHorizontalPanel() {
 		HorizontalPanel hPanel = new HorizontalPanel();
@@ -220,31 +218,30 @@ public class IssuePanel extends CustomDialog {
 		titleTextBox.setValue(title);
 	}
 
-	public void setBody(String body) {
-		commentTextArea.setValue(body);
-	}
+//	public void setBody(String body) {
+//		commentTextArea.setValue(body);
+//	}
 
-	public void setPriority(String priority) {
+//	public void setPriority(String priority) {
+//
+//		Iterator<Widget> iter = priorityHPanel.iterator();
+//
+//		while (iter.hasNext()) {
+//			RadioButton rb = (RadioButton) iter.next();
+//			if (rb.getText().compareTo(priority) == 0)
+//				rb.setValue(true);
+//		}
+//	}
 
-		Iterator<Widget> iter = priorityHPanel.iterator();
-
-		while (iter.hasNext()) {
-			RadioButton rb = (RadioButton) iter.next();
-			if (rb.getText().compareTo(priority) == 0)
-				rb.setValue(true);
-		}
-	}
-
-	public void setType(String type) {
-		Iterator<Widget> iter = typeHPanel.iterator();
-
-		while (iter.hasNext()) {
-			RadioButton rb = (RadioButton) iter.next();
-			if (rb.getText().compareTo(type) == 0)
-				rb.setValue(true);
-		}
-
-	}
+//	public void setType(String type) {
+//		Iterator<Widget> iter = typeHPanel.iterator();
+//
+//		while (iter.hasNext()) {
+//			RadioButton rb = (RadioButton) iter.next();
+//			if (rb.getText().compareTo(type) == 0)
+//				rb.setValue(true);
+//		}
+//	}
 
 	// ----------------------------------------------------
 	// ------------------------------------------- Handlers
@@ -256,25 +253,26 @@ public class IssuePanel extends CustomDialog {
 		if ( titleTextBox.getText().trim().isEmpty())
 			return;
 		
-		if ( commentTextArea.getText().trim().isEmpty() && 
-				Window.confirm("Mensaje vacio \u00BFDesea continuar?") == false)
-			return;
+//		if ( commentTextArea.getText().trim().isEmpty() && 
+//				Window.confirm("Mensaje vacio \u00BFDesea continuar?") == false)
+//			return;
 		
 		Notice notice = new Notice();
 		notice.setTitle((titleTextBox.getValue().isEmpty()) ? ""
 				: titleTextBox.getValue());
 		notice.setStatus(NoticeStatus.OPEN.getValue());
 		notice.setSender(user);
+		notice.setStartDate(date);
 		
-		if (priority != null) {
-			Tag priorityTag = getPriorityTag(priority);			
-			notice.addTag(priorityTag);
-		}			
+//		if (priority != null) {
+//			Tag priorityTag = getPriorityTag(priority);			
+//			notice.addTag(priorityTag);
+//		}			
 
-		if (type != null) {
-			Tag tagType = getTypeTag(type);
-			notice.addTag(tagType);
-		}
+//		if (type != null) {
+//			Tag tagType = getTypeTag(type);
+//			notice.addTag(tagType);
+//		}
 		
 		if (registry != null) {
 			int recipientId = -1;
@@ -292,15 +290,15 @@ public class IssuePanel extends CustomDialog {
 			notice.setSource(String.valueOf(recipientId));
 		}
 
-		for ( String name : selectedTags.keySet()) {
-			Tag tag = new Tag();
-			tag.setName(name);
-			tag.setType(TagType.OFFICE_NOTICE.value());
-			notice.addTag(tag);
-		}
+//		for ( String name : selectedTags.keySet()) {
+//			Tag tag = new Tag();
+//			tag.setName(name);
+//			tag.setType(TagType.OFFICE_NOTICE.value());
+//			notice.addTag(tag);
+//		}
 
-		notice.setBody((commentTextArea.getValue().isEmpty()) ? ""
-				: commentTextArea.getValue());
+//		notice.setBody((commentTextArea.getValue().isEmpty()) ? ""
+//				: commentTextArea.getValue());
 		onCreateNewIssue(notice);
 		hide();
 
@@ -321,17 +319,17 @@ public class IssuePanel extends CustomDialog {
 			listener.onCreateNewIssue(notice);
 	}
 	
-	private Tag getPriorityTag(String priority) {
-		Tag priorityTag = new Tag();		
-		priorityTag.setName(priority);
-		priorityTag.setType(TagType.OFFICE_PRIORITY.value());
-		return priorityTag;
-	}
+//	private Tag getPriorityTag(String priority) {
+//		Tag priorityTag = new Tag();		
+//		priorityTag.setName(priority);
+//		priorityTag.setType(TagType.OFFICE_PRIORITY.value());
+//		return priorityTag;
+//	}
 	
-	private Tag getTypeTag(String type) {
-		Tag typeTag = new Tag();
-		typeTag.setName(type);
-		typeTag.setType(TagType.OFFICE_TYPE.value());
-		return typeTag;
-	}
+//	private Tag getTypeTag(String type) {
+//		Tag typeTag = new Tag();
+//		typeTag.setName(type);
+//		typeTag.setType(TagType.OFFICE_TYPE.value());
+//		return typeTag;
+//	}
 }

@@ -12,7 +12,7 @@
 		height: 99%;
 	}
 	
-	.options-text-area {		
+	.options-text-area {
 		height: 200px;
 		resize: none;
 	}
@@ -95,53 +95,25 @@
 					<td>
 					</td>
 				</tr>
-
-				<tr>
-					<td class="{aonResources.css.aonPanelGridOdd}">
-						<g:InlineLabel styleName="{aonResources.css.aonBold}"
-							text="{msg.priority}" />
-					</td>
-					<td class="{aonResources.css.aonPanelGridEven}">
-						<g:HorizontalPanel ui:field="priorityHPanel">
-						</g:HorizontalPanel>
-					</td>
-				</tr>
-
-				<tr>
-					<td class="{aonResources.css.aonPanelGridOdd}">
-						<g:InlineLabel styleName="{aonResources.css.aonBold}"
-							text="Tipo de aviso" />
-					</td>
-					<td class="{aonResources.css.aonPanelGridEven}">
-						<g:HorizontalPanel ui:field="typeHPanel">
-						</g:HorizontalPanel>
-					</td>
-				</tr>
-
-
-				<tr>
-					<td class="{aonResources.css.aonPanelGridOdd}">
-						<g:InlineLabel styleName="{aonResources.css.aonBold}"
-							text="Etiquetas" />
-
-					</td>
-					<td class="{aonResources.css.aonPanelGridEven}">
-						<g:VerticalPanel ui:field="vPanelTagsContainer" />					
-					</td>
-				</tr>
-
-				<tr>
-					<td colspan="3" class="{aonResources.css.aonPanelGridEven}">
-						<g:TextArea ui:field="commentTextArea" characterWidth="10"
-							visibleLines="9" width="97%" styleName="{style.options-text-area}" />
-					</td>
-				</tr>
-
+				<!-- <tr> <td class="{aonResources.css.aonPanelGridOdd}"> <g:InlineLabel 
+					styleName="{aonResources.css.aonBold}" text="{msg.priority}" /> </td> <td 
+					class="{aonResources.css.aonPanelGridEven}"> <g:HorizontalPanel ui:field="priorityHPanel"> 
+					</g:HorizontalPanel> </td> </tr> <tr> <td class="{aonResources.css.aonPanelGridOdd}"> 
+					<g:InlineLabel styleName="{aonResources.css.aonBold}" text="Tipo de aviso" 
+					/> </td> <td class="{aonResources.css.aonPanelGridEven}"> <g:HorizontalPanel 
+					ui:field="typeHPanel"> </g:HorizontalPanel> </td> </tr> <tr> <td class="{aonResources.css.aonPanelGridOdd}"> 
+					<g:InlineLabel styleName="{aonResources.css.aonBold}" text="Etiquetas" /> 
+					</td> <td class="{aonResources.css.aonPanelGridEven}"> <g:VerticalPanel ui:field="vPanelTagsContainer" 
+					/> </td> </tr> <tr> <td colspan="3" class="{aonResources.css.aonPanelGridEven}"> 
+					<g:TextArea ui:field="commentTextArea" characterWidth="10" visibleLines="9" 
+					width="97%" styleName="{style.options-text-area}" /> </td> </tr> -->
 				<tr>
 					<td colspan="2">
-						<g:InlineLabel styleName="{aonResources.css.aonBold}" text="Usuario: "/>
-						<g:InlineLabel ui:field="loggedLabel" styleName="{aonResources.css.aonColorGreen}" />
-						
+						<g:InlineLabel styleName="{aonResources.css.aonBold}"
+							text="Usuario: " />
+						<g:InlineLabel ui:field="loggedLabel"
+							styleName="{aonResources.css.aonColorGreen}" />
+
 					</td>
 					<td>
 						<div class="{style.buttons}">
@@ -152,6 +124,7 @@
 					</td>
 
 				</tr>
+
 			</table>
 		</g:HTMLPanel>
 

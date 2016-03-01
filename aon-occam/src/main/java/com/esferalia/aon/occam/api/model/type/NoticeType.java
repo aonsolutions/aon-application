@@ -9,9 +9,9 @@ public enum NoticeType implements Serializable {
     COMMUNICATION,
     ISSUE,
     TICKET,
-    AVISO, //warning = aviso
-    NOTA,
-    COMENTARIO
+    WARNING, //warning = aviso
+    NOTE,
+    COMMENT
     ;
 
 	public byte value() {

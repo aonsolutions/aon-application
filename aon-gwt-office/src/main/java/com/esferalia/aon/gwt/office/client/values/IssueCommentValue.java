@@ -4,7 +4,8 @@ public class IssueCommentValue extends Value<IssueCommentValue.Prop> {
 
 	public static enum Prop implements ValueProp {
 		
-		BODY("body")
+		BODY("body"),
+		StartDate("startDate")
 		;
 		
 		public final String value;
@@ -21,5 +22,9 @@ public class IssueCommentValue extends Value<IssueCommentValue.Prop> {
 	
 	public void setBody(String body) {
 		prop.put(Prop.BODY, body);
+	}
+	
+	public void setStartDate(String startDate) {
+		prop.put(Prop.StartDate, startDate);
 	}
 }

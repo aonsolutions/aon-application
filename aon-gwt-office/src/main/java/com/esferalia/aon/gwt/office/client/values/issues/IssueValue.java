@@ -75,4 +75,8 @@ public class IssueValue extends Value<IssueValue.Prop> {
 	public void setLabels(String[] labels) {
 		prop.put(Prop.Labels, labels);
 	}
+	
+	public void setStartDate(String startDate) {
+		prop.put(Prop.StartDate, startDate);
+	}
 }

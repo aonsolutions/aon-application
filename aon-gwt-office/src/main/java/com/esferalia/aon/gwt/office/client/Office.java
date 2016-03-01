@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.office.client.IssueReadPanel.Callback;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
@@ -37,6 +36,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -98,7 +98,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private User user;
 	private IssuePanel issuePanel;
-
+	
 	private IssueSelected issueSelected;
 	private AonHub gitHub = new AonHub(GWT.getModuleBaseURL() + "api/");
 	private List<IssueSelected> openIssues;
@@ -114,6 +114,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private Map<Integer, JsIssue> issuesMap;
 	private Map<Integer, JsRepo> repositories;
+	
+	private DateTimeFormat fmt = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 	public Office() {
 		Widget ui = uiBinder.createAndBindUi(this);
@@ -276,7 +278,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	void onNewIssueClick(ClickEvent event) {
 		issuePanel = new IssuePanel(this.user);
 		issuePanel.addListener(this);
-		issuePanel.setTagList(tagList);
+//		issuePanel.setTagList(tagList);
 		if (registries.size() > 0)
 			issuePanel.setRegistries(registries);
 		issuePanel.showPopupPanel();
@@ -530,11 +532,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@Override
 	public void onCreateNewIssue(Notice notice) {
+		
 		IssueValue value = new IssueValue();
-		value.setTitle(notice.getTitle());
-		value.setBody(notice.getBody());
-		value.setState(notice.getStatus());
+		value.setTitle(notice.getTitle());		
 		value.setSender(String.valueOf(notice.getSender().getId()));
+		value.setStartDate(fmt.format(notice.getStartDate()));
 
 		if (notice.getCompany() != null) {
 			value.setCompany(notice.getCompany());
@@ -632,6 +634,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 			final Callback<DefaultAonIssueComments> callback) {
 		IssueCommentValue value = new IssueCommentValue();
 		value.setBody(body);
+		value.setStartDate(fmt.format(new Date()));
 
 		gitHub.createIssueComment(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), issueSelected.getJsIssue(), value,
