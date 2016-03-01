@@ -79,8 +79,6 @@ public class IssueReadPanel extends Composite {
 	}
 
 	@UiField
-	FlexTable headerFlexTable;
-	@UiField
 	VerticalPanel headerVPanel;
 	@UiField
 	Label userLogged;
@@ -538,7 +536,8 @@ public class IssueReadPanel extends Composite {
 
 					@Override
 					public void onClose(CloseEvent<PopupPanel> event) {
-						onReplaceNoticeTag();
+						if(issue instanceof IssueGrid.IssueOpenLoadSelected)
+							onReplaceNoticeTag();
 					}
 				});
 			}
