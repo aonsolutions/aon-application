@@ -57,7 +57,7 @@ public class ExpressionContext {
 	private static ThreadLocal<PeriodMap> currentBindings = new ThreadLocal<Variables.PeriodMap>();
 
 	private static final Pattern VARIABLE_PATTERN = Pattern
-			.compile("[A-Za-z_][A-Za-z0-9_]*");
+			.compile("[A-Za-z_\u00F1][A-Za-z0-9_\u00D1]*");
 
 	private static final Set<String> RESERVED_WORDS = new HashSet<String>() {
 		{
@@ -485,6 +485,7 @@ public class ExpressionContext {
 
 		List<PeriodMap> bindings = variables.getBindings(inputs, start, end);
 		for (PeriodMap periodMap : bindings) {
+			
 			putVariable(expression.getName(), new ITimedVariable<V>() {
 
 				Period period = periodMap.getPeriod();

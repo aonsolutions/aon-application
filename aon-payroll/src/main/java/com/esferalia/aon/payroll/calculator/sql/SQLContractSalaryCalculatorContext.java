@@ -1110,9 +1110,9 @@ public class SQLContractSalaryCalculatorContext
 		this.agreementPayments = new LRUCache<AgreementKey, Collection<ISystemPayment>>(
 				CACHE_SIZE, agreementPaymentsFactory);
 
-		cccExpressionContexts = new LRUCache<CCCContextKey, ExpressionContext>(
-				CACHE_SIZE, new SQLSystemExpressionContextFactory(connection,
-						this.startDate, this.getEnd(), order));
+//		cccExpressionContexts = new LRUCache<CCCContextKey, ExpressionContext>(
+//				CACHE_SIZE, new SQLSystemExpressionContextFactory(connection,
+//						this.startDate, this.getEnd(), order));
 
 		agreementContextFactory = new SQLAgreementContextFactory(connection,
 				this::getCCCExpressionContext, this.startDate, this.getEnd(),
@@ -1167,10 +1167,10 @@ public class SQLContractSalaryCalculatorContext
 	@Override
 	public ExpressionContext getSystemExpressionContext() {
 		try {
-			return cccExpressionContexts
+			return getCccExpressionContexts()
 					.get(new CCCContextKey(getCCCType(), getSSRegime()));
 		} catch (Exception e) {
-			return cccExpressionContexts.get(new CCCContextKey(null, null));
+			return getCccExpressionContexts().get(new CCCContextKey(null, null));
 			// TODO: This is very simple, too much
 		}
 	}
@@ -2697,11 +2697,20 @@ public class SQLContractSalaryCalculatorContext
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(salaryBuilder);
 		Salary salary = calculator.calculate(ctx);
+		
+		
 
-		double totalPayment = salary.getTotalPayment();
+		double quoteDys = ctx.getExpressionContext().getVariable(QUOTE_DAYS,
+				ctx.getStartDate(), ctx.getEndDate(), Number.class).doubleValue();
+		
+		double monthDays = ctx.getExpressionContext().getVariable(MONTH_DAYS,
+				ctx.getStartDate(), ctx.getEndDate(), Number.class).doubleValue();
+
+		double totalPayment = salary.getTotalPayment()  ;
 		double extraPayProration = salary.getExtraPayProration();
-
-		return (totalPayment + extraPayProration) * 12 / 365;
+		
+		
+		return (totalPayment + extraPayProration) * monthDays / quoteDys * 12 / 365;
 
 	}
 
@@ -3319,6 +3328,11 @@ public class SQLContractSalaryCalculatorContext
 		this.implicitExpressionContext.putVariable(WORKED_YEARS,
 				new ActiveTimedExpressionVariable<Double>(WORKED_YEARS.name(),
 						ExpressionScope.CONTRACT) {
+					@Override
+					public Period getPeriod() {
+						return new Period(startDate, endDate);
+					}
+
 					@Override
 					public Double getValue(Period period) {
 						return getWorkedYears(period.getStart(),
@@ -4029,7 +4043,7 @@ public class SQLContractSalaryCalculatorContext
 	}
 
 	private ExpressionContext getCCCExpressionContext() {
-		return cccExpressionContexts
+		return getCccExpressionContexts()
 				.get(new CCCContextKey(getCCCType(), getSSRegime()));
 	}
 
@@ -4083,7 +4097,15 @@ public class SQLContractSalaryCalculatorContext
 			periods.add(obj.getPeriod());
 		return periods;
 	}
-
+	
+	
+	public LRUCache<CCCContextKey, ExpressionContext> getCccExpressionContexts() {
+		if ( cccExpressionContexts == null )
+			cccExpressionContexts = new LRUCache<CCCContextKey, ExpressionContext>(
+					CACHE_SIZE, new SQLSystemExpressionContextFactory(connection,
+							this.startDate, this.getEnd(), order));
+		return cccExpressionContexts;
+	}
 	// ------------------------------------------------------------------------
 
 	/**
