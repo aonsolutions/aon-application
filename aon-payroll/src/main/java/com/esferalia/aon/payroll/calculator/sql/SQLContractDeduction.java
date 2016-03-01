@@ -80,7 +80,13 @@ public class SQLContractDeduction
 	public DeductionType getType() {
 		Integer ordinal = getInt(ContractDeductionColumns.TYPE, 
 				DeductionConceptColumns.TYPE);
-		return ordinal != null ? DeductionType.values()[ordinal] : null ;
+		try {
+			return DeductionType.values()[ordinal];
+		} catch ( NullPointerException e) {
+			return DeductionType.OTHER; 
+		}catch ( IndexOutOfBoundsException e) {
+			return DeductionType.OTHER; 
+		}
 	}
 
 	@Override
