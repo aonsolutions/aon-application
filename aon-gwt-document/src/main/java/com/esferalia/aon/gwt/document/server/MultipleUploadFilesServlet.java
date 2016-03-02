@@ -1,8 +1,5 @@
 package com.esferalia.aon.gwt.document.server;
 
-import gwtupload.server.UploadAction;
-import gwtupload.server.exceptions.UploadActionException;
-
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload.FileItem;
 
 import com.esferalia.aon.gwt.document.shared.FileInfo;
+
+import gwtupload.server.UploadAction;
+import gwtupload.server.exceptions.UploadActionException;
 
 
 public class MultipleUploadFilesServlet extends  UploadAction{
@@ -26,12 +26,12 @@ public class MultipleUploadFilesServlet extends  UploadAction{
 	
 	  @Override
 	  public String executeAction(HttpServletRequest request, List<FileItem> sessionFiles) throws UploadActionException {
-		  
 		String response = "";
 	    for (FileItem item : sessionFiles) {
 	    	
 	    	System.out.println(item.isFormField());
 	      if (false == item.isFormField()) {
+	    	  String dialogCode =  item.getFieldName().substring(0, 10);
 	    	  String name = item.getName();
 	    	  if(name.contains(".")){
 	    		  Integer pos = name.lastIndexOf(".");
@@ -43,7 +43,7 @@ public class MultipleUploadFilesServlet extends  UploadAction{
 	          fi.setSize(size.intValue());
 	    	  fi.setData(item.get());
 	    	  fi.setMimeString(item.getContentType());
-	    	  DocumentsServlet.addOuts(fi, request);
+	    	  DocumentsServlet.addOuts(dialogCode, fi, request);
 	      }
 	    }
 	    
@@ -53,8 +53,4 @@ public class MultipleUploadFilesServlet extends  UploadAction{
 	    /// Send your customized message to the client.
 	    return response;
 	  }
-	  
-	 
-	
-	
 }

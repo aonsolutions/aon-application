@@ -212,3 +212,10 @@
 .aon-check-button-document{
 	padding-right: 0px;	
 }
+
+.cargando-document{
+	top:50% !important;
+	left:50% !important;
+	padding:0 !important;
+	border:0 !important;
+}

@@ -40,9 +40,9 @@ public interface IDocument extends RemoteService{
 	
 	public void removeFile(Domain domain, Vector<FileInfo> fvector);
 	
-	public Vector<FileInfo> editFile(Domain domain, FileInfo fi, Vector<FileInfo> fvector);
+	public Vector<FileInfo> editFile(Domain domain, String dialogCode, FileInfo fi, Vector<FileInfo> fvector);
 	
-	public Boolean newFile(FileInfo fi);
+	public Boolean newFile(String dialogCode, FileInfo fi);
 
 	public Boolean check();
 
@@ -50,7 +50,7 @@ public interface IDocument extends RemoteService{
 	
 	public Vector<TreeDriveInfo> myDrive(String id);
 	
-	public Vector<FileInfo> insertFile(Domain domain, FileInfo fi);
+	public Vector<FileInfo> insertFile(Domain domain, String dialogCode, FileInfo fi);
 	
 	public void share(Domain domain, String email,Vector<FileInfo> fvector); 
 	
@@ -89,15 +89,15 @@ public interface IDocument extends RemoteService{
 
 	public MailAccountList getMailAccounts(Domain domain);
 	
-	public void sendEmail(Domain domain, MailAccount ma, Emessage em);
+	public void sendEmail(Domain domain, String dialogCode, MailAccount ma, Emessage em);
 	
-	public void sendGmail(Domain domain, MailAccount ma, Emessage em);
+	public void sendGmail(Domain domain, String dialogCode, MailAccount ma, Emessage em);
 	
 	public  ContactList getContacts(Domain domain);
 	
 	public void downloadMultiple(Vector<FileInfo> fvector);
 	
-	public Vector<FileInfo> insertFileMultiple(Domain domain, FileInfo fi);
+	public Vector<FileInfo> insertFileMultiple(Domain domain, String dialogCode, FileInfo fi);
 	
 	public String copyLink(FileInfo doc,String l);
 	
@@ -105,7 +105,7 @@ public interface IDocument extends RemoteService{
 	
 	public void selectedMenu(Domain domain);
 	
-	public void clearOuts();
+	public void clearOuts(String dialogCode);
 	
 	public LinkedList<Attach>  getAttachList(Vector<FileInfo> fileInfoList);
 

@@ -327,33 +327,33 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		}
 	}
 	
-	public static Vector<FileInfo> getOuts(HttpServletRequest request){
-		Vector<FileInfo> outs = (Vector<FileInfo>) request.getSession().getAttribute("documentalDataOuts");
+	public static Vector<FileInfo> getOuts(String dialogCode, HttpServletRequest request){
+		Vector<FileInfo> outs = (Vector<FileInfo>) request.getSession().getAttribute("documentalDataOuts"+dialogCode);
 		if(outs == null){
 			outs = new Vector<FileInfo>();
-			request.getSession().setAttribute("documentalDataOuts", new Vector<FileInfo>());
+			request.getSession().setAttribute("documentalDataOuts"+dialogCode, new Vector<FileInfo>());
 		}
 		return outs;
 	}
 	
-	public static void clearOuts(Vector<FileInfo> outs, HttpServletRequest request){
+	public static void clearOuts(String dialogCode, Vector<FileInfo> outs, HttpServletRequest request){
 		if(outs == null)
-			request.getSession().setAttribute("documentalDataOuts", new Vector<FileInfo>());
+			request.getSession().setAttribute("documentalDataOuts"+dialogCode, new Vector<FileInfo>());
 		else
-			request.getSession().setAttribute("documentalDataOuts", outs);
+			request.getSession().setAttribute("documentalDataOuts"+dialogCode, outs);
 	}
 	
-	public void clearOuts(){
-		clearOuts(new Vector<FileInfo>(), getThreadLocalRequest());
+	public void clearOuts(String dialogCode){
+		clearOuts(dialogCode, new Vector<FileInfo>(), getThreadLocalRequest());
 	}
 	
-	public static void addOuts(FileInfo fi, HttpServletRequest request){
-		Vector<FileInfo> outs = (Vector<FileInfo>) request.getSession().getAttribute("documentalDataOuts");
+	public static void addOuts(String dialogCode, FileInfo fi, HttpServletRequest request){
+		Vector<FileInfo> outs = (Vector<FileInfo>) request.getSession().getAttribute("documentalDataOuts"+dialogCode);
 		if(outs == null){
 			outs = new Vector<FileInfo>();
 		}
 		outs.add(fi);
-		request.getSession().setAttribute("documentalDataOuts", outs);
+		request.getSession().setAttribute("documentalDataOuts"+dialogCode, outs);
 	}
 	
 	public static byte[] getOut() {
@@ -364,8 +364,8 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		out = out2;
 	}
 
-	public Boolean newFile(FileInfo fi) {
-		Vector<FileInfo> files = getOuts(getThreadLocalRequest());
+	public Boolean newFile(String dialogCode, FileInfo fi) {
+		Vector<FileInfo> files = getOuts(dialogCode, getThreadLocalRequest());
 		if(files.size()>1 && !fi.getDomain().equals("false"))
 			return true;
 		if (files.size()>0
@@ -376,9 +376,9 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		return false;
 	}
 	
-	public Vector<FileInfo> insertFile(Domain domain, FileInfo fi) {
+	public Vector<FileInfo> insertFile(Domain domain, String dialogCode, FileInfo fi) {
 		Domain domainAux = DBConsults.getDomain(domain, getUser());
-		Vector<FileInfo> files = getOuts(getThreadLocalRequest());
+		Vector<FileInfo> files = getOuts(dialogCode, getThreadLocalRequest());
 		Vector<FileInfo> vector = new Vector<FileInfo>();
 
 		for (FileInfo f : files) {
@@ -474,7 +474,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			} catch (GeneralSecurityException e) {
 			}
 		}
-		clearOuts(new Vector<FileInfo>(), getThreadLocalRequest());
+		clearOuts(dialogCode, new Vector<FileInfo>(), getThreadLocalRequest());
 		
 		return vector;
 	}
@@ -483,7 +483,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		return getMimetype()==null;//.equals("application/octet-stream");
 	}
 	
-	public Vector<FileInfo> editFile(Domain domain, FileInfo fi,Vector<FileInfo> fvector){
+	public Vector<FileInfo> editFile(Domain domain, String dialogCode, FileInfo fi,Vector<FileInfo> fvector){
 		com.code.aon.google.apis.FileInfo fileInfo = new com.code.aon.google.apis.FileInfo();
 		if(fvector != null){
 			for(FileInfo f : fvector){
@@ -1037,7 +1037,7 @@ public MailAccountList getMailAccounts(Domain domain) {
 	return mal;
 }
 
-	public void sendEmail(Domain domain, MailAccount ma, Emessage em) {
+	public void sendEmail(Domain domain, String dialogCode, MailAccount ma, Emessage em) {
 		try {
 				initFacesContext();
 				MailConfigController mcg = (MailConfigController) AonUtil
@@ -1061,7 +1061,7 @@ public MailAccountList getMailAccounts(Domain domain) {
 				mc.setSenderMailAccount(ima2);
 				mc.setSubject(em.getSubject());
 
-				Vector<FileInfo> files = getOuts(getThreadLocalRequest());
+				Vector<FileInfo> files = getOuts(dialogCode, getThreadLocalRequest());
 
 				ZipOutputStream zos;
 				try {
@@ -1144,15 +1144,15 @@ public MailAccountList getMailAccounts(Domain domain) {
 			} finally {
 				releaseFacesContext();
 			}
-			clearOuts(new Vector<FileInfo>(), getThreadLocalRequest());
+			clearOuts(dialogCode,new Vector<FileInfo>(), getThreadLocalRequest());
 
 	}
 	
-	public void sendGmail(Domain domain, MailAccount ma, Emessage em) {
+	public void sendGmail(Domain domain,String dialogCode, MailAccount ma, Emessage em) {
 		domain = AON.getDomain(domain.getName(), domain.getId(), getUser().getLogin());
 		Gmail gmail = GoogleDriveController.uconnection.getGmail();
 
-		Vector<FileInfo> files = getOuts(getThreadLocalRequest());
+		Vector<FileInfo> files = getOuts(dialogCode, getThreadLocalRequest());
 		
 		ZipOutputStream zos;
 		try {
@@ -1229,7 +1229,7 @@ public MailAccountList getMailAccounts(Domain domain) {
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 		}
-		clearOuts(new Vector<FileInfo>(), getThreadLocalRequest());
+		clearOuts(dialogCode, new Vector<FileInfo>(), getThreadLocalRequest());
 
 	}
 
@@ -1252,10 +1252,10 @@ public static void setDown(Vector<FileInfo> down) {
 	DocumentsServlet.down = down;
 }
 
-public Vector<FileInfo> insertFileMultiple(Domain domain, FileInfo fi) {
+public Vector<FileInfo> insertFileMultiple(Domain domain, String dialogCode, FileInfo fi) {
 	Domain domainAux = DBConsults.getDomain(domain, getUser());
 	
-	Vector<FileInfo> files = getOuts(getThreadLocalRequest());
+	Vector<FileInfo> files = getOuts(dialogCode, getThreadLocalRequest());
 	for(FileInfo f : files){
 		Date date = null;
 		if (fi.getDate() != null)
@@ -1334,7 +1334,7 @@ public Vector<FileInfo> insertFileMultiple(Domain domain, FileInfo fi) {
 			LOGGER.error(e.getMessage());
 		}
 	}
-	clearOuts(new Vector<FileInfo>(), getThreadLocalRequest());
+	clearOuts(dialogCode, new Vector<FileInfo>(), getThreadLocalRequest());
 	return files;
 }
 // ----------------------------------------------------------------------------

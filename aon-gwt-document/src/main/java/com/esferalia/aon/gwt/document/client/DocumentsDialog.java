@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.Dialog;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.Lists;
+import com.esferalia.aon.gwt.document.shared.PasswordGenerator;
 import com.esferalia.aon.gwt.document.shared.Scope;
 import com.esferalia.aon.gwt.document.shared.Tag;
 import com.google.gwt.core.shared.GWT;
@@ -83,6 +84,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 	Boolean confidentialUserDialog = null;
 	Boolean isServiconvenios = false;
 	public DocumentsDialog(Dialog dialog) {
+		setWindowCode(PasswordGenerator.getPassword(10));
 		if(dialog.getIsServiconvenios()!= null) isServiconvenios = dialog.getIsServiconvenios();
 		if(dialog.getConfidentialUser()!= null) confidentialUserDialog = dialog.getConfidentialUser();
 		num = 0;
@@ -234,27 +236,22 @@ public abstract class DocumentsDialog extends CustomDialogB {
 		});*/
         
         MultiUploader mupload = new MultiUploader();
-		
+		mupload.setFileInputPrefix(getWindowCode());
 		mupload.setAutoSubmit(true);
         mupload.setServletPath( dialog.getBaseUrl() + "/gwt_multiple_upload");
-        
         mupload.setMaximumFiles(5);
-
         mupload.setTitle("multipleUploadFormElement");
 		mupload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
 			
 			@Override
 			public void onFinish(IUploader uploader) {
-				
 				num ++;
 				if(num > 1){
 					//grid.getWidget(1, 0).setVisible(false);
 					//grid.getWidget(1, 1).setVisible(false);
 					grid.removeRow(1);
-
 				}
 				else{
-					
 					String s = uploader.getFileInput().getFilenames().get(0);
 					Integer pos = s.lastIndexOf(".");
 					TextBox tb = (TextBox) grid.getWidget(1, 1);
@@ -262,7 +259,6 @@ public abstract class DocumentsDialog extends CustomDialogB {
 						tb.setText(s.substring(0, pos));
 					}
 				}
-				
 			}
 		});
 		
@@ -1587,6 +1583,17 @@ public abstract class DocumentsDialog extends CustomDialogB {
 				lb.removeItem(i);
 			}
 		}	
+	}
+	
+	private String windowCode;
+	
+	
+	public String getWindowCode() {
+		return windowCode;
+	}
+
+	public void setWindowCode(String windowCode) {
+		this.windowCode = windowCode;
 	}
 }
 

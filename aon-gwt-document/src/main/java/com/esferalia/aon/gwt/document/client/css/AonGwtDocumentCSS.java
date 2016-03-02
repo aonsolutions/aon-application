@@ -108,5 +108,6 @@ public interface AonGwtDocumentCSS extends CssResource{
 	@ClassName("aon-check-button-document")
 	String aonCheckButtonDocument();
 	
-	
+	@ClassName("cargando-document")
+	String cargandoDocument();
 }

@@ -25,6 +25,7 @@ import com.esferalia.aon.gwt.document.shared.FilterUtil;
 import com.esferalia.aon.gwt.document.shared.Init;
 import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.MailAccountList;
+import com.esferalia.aon.gwt.document.shared.PasswordGenerator;
 import com.esferalia.aon.gwt.document.shared.Scope;
 import com.esferalia.aon.gwt.document.shared.SearchInfo;
 import com.esferalia.aon.gwt.document.shared.Tag;
@@ -219,7 +220,7 @@ public class Documents extends Composite implements EntryPoint {
 
 	}
 
-	
+
 	class DocumentContextMenu extends ContextMenu {
 
 		ScheduledCommand viewCommand = new ScheduledCommand() {
@@ -235,26 +236,19 @@ public class Documents extends Composite implements EntryPoint {
 		};		
 
 		ScheduledCommand editCommand = new ScheduledCommand() {
-			public void execute() {
-
-				
+			public void execute() {			
 				editFile(null,selFiles.size()>1);
-				
 			};
 		};
+		
 		ScheduledCommand removeCommand = new ScheduledCommand() {
 			public void execute() {
-
-	
 				removeFile(selFiles.size()>1);
-				
 			};
 		};
 		
 		ScheduledCommand batchCommand = new ScheduledCommand() {
 			public void execute() {
-
-			
 				FileInfo object;
 				if(selFiles.size() == 1) object = selFiles.get(0);
 				else object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
@@ -264,24 +258,19 @@ public class Documents extends Composite implements EntryPoint {
 		
 		ScheduledCommand downloadCommand = new ScheduledCommand() {
 			public void execute() {	
-
-		
 				FileInfo object;
 				if(selFiles.size() == 1) object = selFiles.get(0);
 				else object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
 				download(object,selFiles.size()>1);
-			
 			};
 		};
 		
 		ScheduledCommand shareCommand = new ScheduledCommand() {
 			public void execute() {
-
 				FileInfo object;
 				if(selFiles.size() == 1) object = selFiles.get(0);
 				else object= dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
 				share(object,selFiles.size()>1);
-				
 			};
 		};
 		
@@ -305,7 +294,6 @@ public class Documents extends Composite implements EntryPoint {
 		private Boolean loteBool = false;
 		private Boolean copyBool = false;
 
-		
 		public Integer getHeigth() {
 			switch (number) {
 			case 8:
@@ -431,25 +419,19 @@ public class Documents extends Composite implements EntryPoint {
 
 		@Override
 		public void show() {
-			//sync();
 			super.show();
 		}
-
-		//private void sync() {
-			//Agreement agreement = Agreements.this.getSelectedAgreement();
-			
-			//deleteItem.setEnabled(agreement.canDelete());
-		//}
-
 	}
 	
 	
 	class TagContextMenu extends ContextMenu {
+		
 		ScheduledCommand editCommand = new ScheduledCommand() {
 			public void execute() {
 				editTag(tag);
 			};
 		};
+		
 		ScheduledCommand removeCommand = new ScheduledCommand() {
 			public void execute() {
 				removeTag(tag);
@@ -459,6 +441,7 @@ public class Documents extends Composite implements EntryPoint {
 		private MenuItem editItem;
 		private MenuItem removeItem;
 		private Tag tag;
+		
 		public TagContextMenu(Tag t){
 			tag = t;
 			if(t.getIsParent()){
@@ -492,6 +475,7 @@ public class Documents extends Composite implements EntryPoint {
 				removeItem.setEnabled(true);
 			}
 		}
+		
 		public TagContextMenu() {}
 
 		@Override
@@ -502,11 +486,13 @@ public class Documents extends Composite implements EntryPoint {
 	
 	
 	class CategoryContextMenu extends ContextMenu {
+		
 		ScheduledCommand editCommand = new ScheduledCommand() {
 			public void execute() {
 				editCategory(category);
 			};
 		};
+		
 		ScheduledCommand removeCommand = new ScheduledCommand() {
 			public void execute() {
 				removeCategory(category);
@@ -516,6 +502,7 @@ public class Documents extends Composite implements EntryPoint {
 		private MenuItem editItem;
 		private MenuItem removeItem;
 		private Category category;
+		
 		public CategoryContextMenu(Category c){
 			category = c;
 			if(c.getIsParent()){
@@ -549,22 +536,13 @@ public class Documents extends Composite implements EntryPoint {
 				removeItem.setEnabled(true);
 			}
 		}
-		public CategoryContextMenu() {
-			
-		}
+		
+		public CategoryContextMenu() {}
 
 		@Override
 		public void show() {
-			//sync();
 			super.show();
 		}
-
-		//private void sync() {
-			//Agreement agreement = Agreements.this.getSelectedAgreement();
-			
-			//deleteItem.setEnabled(agreement.canDelete());
-		//}
-
 	}
 	
 	//DocumentContextMenu contextMenu = new DocumentContextMenu();
@@ -680,7 +658,9 @@ public class Documents extends Composite implements EntryPoint {
 	Boolean confidentialUser;
 	Vector<FileInfo> selFiles;
 	ShowMorePager showMorePager;
+	
 	private void init() {
+		initializeCargando();
 		if(!Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT))){
 			pop = new PopupPanel();
 			pop.setStyleName("aon-outputConnectionStatus-start");
@@ -1358,6 +1338,8 @@ public class Documents extends Composite implements EntryPoint {
 				FileInfo fiAux;
 				@Override
 				protected void onAccept() {
+					final String dialogCode = getWindowCode();
+					cargando.show();
 					Integer n =dataGrid.getKeyboardSelectedRow();
         			FileInfo fileInfo = dataProvider.getList().get(n);
         			if (multiple) fileInfo = new FileInfo();
@@ -1450,9 +1432,10 @@ public class Documents extends Composite implements EntryPoint {
 								reload();
 							}
 							else{
-								idoc.editFile(getDomain(), fileInfo,fvector,new AsyncCallback<Vector<FileInfo>>() {
+								idoc.editFile(getDomain(), dialogCode, fileInfo,fvector,new AsyncCallback<Vector<FileInfo>>() {
 									@Override
 									public void onSuccess(Vector<FileInfo> result) {
+										cargando.hide();
 										vertical = new VerticalPanel();
 										Vector<FileInfo> aux = new Vector<FileInfo>();
 										for (FileInfo f : docs.getFiles()) {
@@ -1535,8 +1518,9 @@ public class Documents extends Composite implements EntryPoint {
 				}
 				@Override
 				protected void onCancel() {
+					final String dialogCode = getWindowCode();
 					hide();
-					idoc.clearOuts(new AsyncCallback<Void>() {
+					idoc.clearOuts(dialogCode, new AsyncCallback<Void>() {
 						
 						@Override
 						public void onSuccess(Void result) {}
@@ -1648,16 +1632,17 @@ public class Documents extends Composite implements EntryPoint {
 			
 			@Override
 			protected void onAccept() {
+				cargando.show();
 				hide();
 				Vector<FileInfo> fvector = new Vector<FileInfo>();
 				if(getFileInfo().getIsDrive()){
-					
 					if(multiple) 
 						fvector = selFiles;
 					else fvector.add(getFileInfo());
 					idoc.deleteMydrive(fvector, new AsyncCallback<Void>() {
 						@Override
 						public void onSuccess(Void result) {
+							cargando.hide();
 							//TODO Actualizar datagrid!!!
 						}
 						@Override
@@ -1692,6 +1677,7 @@ public class Documents extends Composite implements EntryPoint {
 									}
 									@Override
 									public void onSuccess(Void result) {
+										cargando.hide();
 										Integer n =dataGrid.getKeyboardSelectedRow();
 										FileInfo fi = dataProvider.getList().get(n);
 										Vector<FileInfo> fvector = new Vector<FileInfo>();
@@ -1861,9 +1847,8 @@ public class Documents extends Composite implements EntryPoint {
 		popup2 = new DocumentsDialog(d){ 
 			
 			@Override
-			protected void onAccept() {				
-	//upload.getForm().submit();
-	            
+			protected void onAccept() {		
+				final String dialogCode = getWindowCode();
 				Integer auxNum = 1;
 				FileInfo fi = new  FileInfo();
             	// Descripción - Description
@@ -1964,22 +1949,25 @@ public class Documents extends Composite implements EntryPoint {
             		else fi.setDomain(Utils.getOracleString(sb.getText()));
             	}
             	else fi.setDomain("");
+            	
             	finsert= fi;
-                idoc.newFile(fi,new AsyncCallback<Boolean>() {
+                idoc.newFile(dialogCode, fi,new AsyncCallback<Boolean>() {
 					
 					@Override
 					public void onSuccess(Boolean result) {
 						if(result){
 							hide();
+							cargando.show();
 							idoc.checkDomain(getDomain(), docs, "insertFile", new AsyncCallback<Boolean>() {
 								
 								@Override
 								public void onSuccess(Boolean result) {
 									if(!result){
 										reload();
+										cargando.hide();
 									}
 									else{
-									idoc.insertFile(getDomain(),finsert, new AsyncCallback<Vector<FileInfo>>() {
+									idoc.insertFile(getDomain(), dialogCode, finsert, new AsyncCallback<Vector<FileInfo>>() {
 
 										@Override
 										public void onFailure(Throwable caught) {
@@ -1990,6 +1978,7 @@ public class Documents extends Composite implements EntryPoint {
 										
 										@Override
 										public void onSuccess(Vector<FileInfo> result) {
+											cargando.hide();
 											Vector<FileInfo> aux = new Vector<FileInfo>();
 											for (FileInfo f : docs.getFiles()) {
 												aux.add(f);		
@@ -2124,8 +2113,9 @@ public class Documents extends Composite implements EntryPoint {
 			
 			@Override
 			protected void onCancel() {
+				final String dialogCode = getWindowCode();
 				hide();
-				idoc.clearOuts(new AsyncCallback<Void>() {
+				idoc.clearOuts(dialogCode, new AsyncCallback<Void>() {
 					
 					@Override
 					public void onSuccess(Void result) {}
@@ -2143,6 +2133,7 @@ public class Documents extends Composite implements EntryPoint {
 
 			@Override
 			protected void onNext() {
+				final String dialogCode = getWindowCode();
 				Integer auxNum = 1;
 				FileInfo fi = new  FileInfo();
             	// Descripción - Description
@@ -2247,6 +2238,146 @@ public class Documents extends Composite implements EntryPoint {
             		else fi.setDomain(Utils.getOracleString(sb.getText()));
 				}
             	else fi.setDomain("");
+            	            	
+            	finsert= fi;
+                idoc.newFile(dialogCode, fi,new AsyncCallback<Boolean>() {
+					
+					@Override
+					public void onSuccess(Boolean result) {
+						if(result){
+							cargando.show();
+							idoc.checkDomain(getDomain(),docs,"insertFile", new AsyncCallback<Boolean>() {
+								
+								@Override
+								public void onSuccess(Boolean result) {
+									if(!result){
+										reload();
+										cargando.hide();
+									}
+									else{
+									idoc.insertFile(getDomain(), dialogCode, finsert, new AsyncCallback<Vector<FileInfo>>() {
+
+										@Override
+										public void onFailure(Throwable caught) {}
+										
+										@Override
+										public void onSuccess(Vector<FileInfo> result) {
+											cargando.hide();
+											Vector<FileInfo> aux = new Vector<FileInfo>();
+											for (FileInfo f : docs.getFiles()) {
+												aux.add(f);		
+											}
+											aux.addAll(result);
+											docs.setFiles(aux);
+											Integer index=0;
+											while(docs.getFilter().get(index).getIsParent()){
+												index++;
+											}
+											if(result.get(0).getDomain().equals(docs.getFilter().get(index).getDomain())){
+												aux = new Vector<FileInfo>();
+												for (FileInfo f : docs.getEfiles()) {
+													aux.add(f);		
+												}
+												aux.addAll(result);
+												docs.setEfiles(aux);
+
+										
+												if(html.isVisible()){
+													Integer i = 0;
+
+													while(i<result.get(0).getTags().size() && !html.getText().equals(result.get(0).getTags().get(i).getName())){
+														i++;
+													}
+													if(!html.isVisible() || (html.isVisible() && (html.getText().equals(result.get(0).getCategoryStr()) || result.get(0).getTags().size()>i))){
+														aux= new Vector<FileInfo>();
+														for (FileInfo f : docs.getFilter()) {
+															aux.add(f);
+														}
+														aux.addAll(result);
+														docs.setFilter(aux);
+														aux= new Vector<FileInfo>();
+														for (FileInfo f : dataProvider.getList()) {
+															aux.add(f);
+															dataGrid.getSelectionModel().setSelected(f, false);
+
+														}
+														aux.addAll(result);
+														dataProvider = new ListDataProvider<FileInfo>(aux);
+														dataProvider.addDataDisplay(dataGrid); 
+														updateDatagridColumns();
+														dataGrid.redraw();
+													}
+												}
+												else{
+													aux= new Vector<FileInfo>();
+													for (FileInfo f : docs.getFilter()) {
+														aux.add(f);
+													}
+													aux.addAll(result);
+													docs.setFilter(aux);
+													aux= new Vector<FileInfo>();
+													for (FileInfo f : dataProvider.getList()) {
+														aux.add(f);
+														dataGrid.getSelectionModel().setSelected(f, false);
+													}
+													aux.addAll(result);
+													dataProvider = new ListDataProvider<FileInfo>(aux);
+													dataProvider.addDataDisplay(dataGrid); 
+													updateDatagridColumns();
+													dataGrid.redraw();
+												}
+											}
+										}
+									});
+									vertical = new VerticalPanel();
+									}
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {}
+							});
+						}
+						else{
+							TextBox tb =(TextBox) grid.getWidget(0, 1);
+							SuggestBox sb =(SuggestBox) grid.getWidget(7, 1);
+							if(tb.getText().equals("")) grid.getWidget(0, 1).addStyleName("dateBoxFormatError");
+							else grid.getWidget(0, 1).setStyleName("aon-inputText");
+							if(!esta(sb.getText())) grid.getWidget(7, 1).addStyleName("dateBoxFormatError");
+							else grid.getWidget(7, 1).setStyleName("aon-inputText");
+							idoc.check(new AsyncCallback<Boolean>() {
+														
+								@Override
+								public void onSuccess(Boolean result) {
+									if(result){
+										final SingleUploader upload2 = newUploader(null,GWT.getModuleBaseURL());
+										upload2.addBitlessDomHandler(new ChangeHandler() {
+											
+											@Override
+											public void onChange(ChangeEvent event) {
+												upload2.removeStyleName("dateBoxFormatError");
+												upload2.addStyleName("aon-inputTextBackground");
+											}
+										},ChangeEvent.getType());
+										
+										upload2.addStyleName("dateBoxFormatError");
+										
+										grid.setWidget(1, 1, upload2);
+									}
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {}
+							});
+						}
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						
+					}
+				});
+                
+                setWindowCode(PasswordGenerator.getPassword(10));
             	
             	if(auxNum == 1){
 					Label l1 = (Label) grid.getWidget(1, 0);
@@ -2292,7 +2423,7 @@ public class Documents extends Composite implements EntryPoint {
                 mupload.setServletPath( url + "/gwt_multiple_upload");
                 
                 mupload.setMaximumFiles(5);
-
+                mupload.setFileInputPrefix(getWindowCode());
                 mupload.setTitle("multipleUploadFormElement");
         		mupload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
         			
@@ -2396,144 +2527,6 @@ public class Documents extends Composite implements EntryPoint {
                 	}
 
         		}
-            	
-            	finsert= fi;
-                idoc.newFile(fi,new AsyncCallback<Boolean>() {
-					
-					@Override
-					public void onSuccess(Boolean result) {
-						if(result){
-							idoc.checkDomain(getDomain(),docs,"insertFile", new AsyncCallback<Boolean>() {
-								
-								@Override
-								public void onSuccess(Boolean result) {
-									if(!result){
-										reload();
-									}
-									else{
-										
-								
-									idoc.insertFile(getDomain(),finsert, new AsyncCallback<Vector<FileInfo>>() {
-
-										@Override
-										public void onFailure(Throwable caught) {}
-										
-										@Override
-										public void onSuccess(Vector<FileInfo> result) {
-											Vector<FileInfo> aux = new Vector<FileInfo>();
-											for (FileInfo f : docs.getFiles()) {
-												aux.add(f);		
-											}
-											aux.addAll(result);
-											docs.setFiles(aux);
-											Integer index=0;
-											while(docs.getFilter().get(index).getIsParent()){
-												index++;
-											}
-											if(result.get(0).getDomain().equals(docs.getFilter().get(index).getDomain())){
-												aux = new Vector<FileInfo>();
-												for (FileInfo f : docs.getEfiles()) {
-													aux.add(f);		
-												}
-												aux.addAll(result);
-												docs.setEfiles(aux);
-
-										
-												if(html.isVisible()){
-													Integer i = 0;
-
-													while(i<result.get(0).getTags().size() && !html.getText().equals(result.get(0).getTags().get(i).getName())){
-														i++;
-													}
-													if(!html.isVisible() || (html.isVisible() && (html.getText().equals(result.get(0).getCategoryStr()) || result.get(0).getTags().size()>i))){
-														aux= new Vector<FileInfo>();
-														for (FileInfo f : docs.getFilter()) {
-															aux.add(f);
-														}
-														aux.addAll(result);
-														docs.setFilter(aux);
-														aux= new Vector<FileInfo>();
-														for (FileInfo f : dataProvider.getList()) {
-															aux.add(f);
-															dataGrid.getSelectionModel().setSelected(f, false);
-
-														}
-														aux.addAll(result);
-														dataProvider = new ListDataProvider<FileInfo>(aux);
-														dataProvider.addDataDisplay(dataGrid); 
-														updateDatagridColumns();
-														dataGrid.redraw();
-													}
-												}
-												else{
-													aux= new Vector<FileInfo>();
-													for (FileInfo f : docs.getFilter()) {
-														aux.add(f);
-													}
-													aux.addAll(result);
-													docs.setFilter(aux);
-													aux= new Vector<FileInfo>();
-													for (FileInfo f : dataProvider.getList()) {
-														aux.add(f);
-														dataGrid.getSelectionModel().setSelected(f, false);
-													}
-													aux.addAll(result);
-													dataProvider = new ListDataProvider<FileInfo>(aux);
-													dataProvider.addDataDisplay(dataGrid); 
-													updateDatagridColumns();
-													dataGrid.redraw();
-												}
-											}
-										}
-									});
-									vertical = new VerticalPanel();
-									}
-								}
-								
-								@Override
-								public void onFailure(Throwable caught) {}
-							});
-						}
-						else{
-														
-							TextBox tb =(TextBox) grid.getWidget(0, 1);
-							SuggestBox sb =(SuggestBox) grid.getWidget(7, 1);
-							if(tb.getText().equals("")) grid.getWidget(0, 1).addStyleName("dateBoxFormatError");
-							else grid.getWidget(0, 1).setStyleName("aon-inputText");
-							if(!esta(sb.getText())) grid.getWidget(7, 1).addStyleName("dateBoxFormatError");
-							else grid.getWidget(7, 1).setStyleName("aon-inputText");
-							idoc.check(new AsyncCallback<Boolean>() {
-														
-								@Override
-								public void onSuccess(Boolean result) {
-									if(result){
-										final SingleUploader upload2 = newUploader(null,GWT.getModuleBaseURL());
-										upload2.addBitlessDomHandler(new ChangeHandler() {
-											
-											@Override
-											public void onChange(ChangeEvent event) {
-												upload2.removeStyleName("dateBoxFormatError");
-												upload2.addStyleName("aon-inputTextBackground");
-											}
-										},ChangeEvent.getType());
-										
-										upload2.addStyleName("dateBoxFormatError");
-										
-										grid.setWidget(1, 1, upload2);
-									}
-								}
-								
-								@Override
-								public void onFailure(Throwable caught) {}
-							});
-						}
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						
-					}
-				});
 			}
 		};
 		}
@@ -4804,6 +4797,7 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiHandler("send")
 	void sendLote(ClickEvent event) {
+		
 		idoc.getMailAccounts(getDomain(), new AsyncCallback<MailAccountList>() {
 			
 			@Override
@@ -4812,6 +4806,7 @@ public class Documents extends Composite implements EntryPoint {
 
 					@Override
 					protected void onAccept(String s) {
+						final String dialogCode = getWindowCode();
 						hide();	
 						
 						Emessage em = new Emessage();
@@ -4832,7 +4827,7 @@ public class Documents extends Composite implements EntryPoint {
 						
 						em.setFiles(lote);
 						if(s.equals("mail"))
-						idoc.sendEmail(getDomain(), ma, em, new AsyncCallback<Void>() {
+						idoc.sendEmail(getDomain(), dialogCode, ma, em, new AsyncCallback<Void>() {
 							
 							@Override
 							public void onSuccess(Void result) {}
@@ -4842,7 +4837,7 @@ public class Documents extends Composite implements EntryPoint {
 						});
 						
 						else if(s.equals("gmail"))
-						idoc.sendGmail(getDomain(), ma, em, new AsyncCallback<Void>() {
+						idoc.sendGmail(getDomain(), dialogCode, ma, em, new AsyncCallback<Void>() {
 							
 							@Override
 							public void onSuccess(Void result) {}
@@ -4957,5 +4952,20 @@ public class Documents extends Composite implements EntryPoint {
 			@Override public void onSuccess(Void result) {}
 			@Override public void onFailure(Throwable caught) {}
 		});
+	}
+	
+	Cargando cargando;
+	private void initializeCargando(){
+		cargando = new Cargando() {}; 
+		cargando.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				// Nothing						
+			}
+		});
+		cargando.setAutoHideEnabled(false);
+		cargando.addStyleName("cargando-document");
+		cargando.setGlassEnabled(true);
 	}
 }

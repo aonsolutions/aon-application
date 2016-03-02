@@ -1,0 +1,33 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' >
+
+	<ui:style>
+	
+		*:focus  {  outline: none;  }
+	
+		@sprite .loading {
+			gwt-image: 'loading';
+			color: #FFF;
+			font-weight: bold;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			overflow: visible;
+			padding-left: 25px;
+			background-color: transparent;
+			background-size:50px;
+		}
+	
+	</ui:style>
+	
+	<ui:image field='loading' src='loading.gif' />
+
+	<g:FocusPanel ui:field="focusPanel">
+		<g:FlowPanel >
+			<g:Label styleName="{style.loading}" ui:field="load"  visible="true" >
+			</g:Label>
+			
+		</g:FlowPanel>
+	</g:FocusPanel>
+
+</ui:UiBinder>

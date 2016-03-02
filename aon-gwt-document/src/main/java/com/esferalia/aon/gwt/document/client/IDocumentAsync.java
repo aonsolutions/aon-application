@@ -37,9 +37,10 @@ public interface IDocumentAsync {
 
 	void removeFile(Domain domain, Vector<FileInfo> fvector, AsyncCallback<Void> callback);
 
-	void newFile(FileInfo fi, AsyncCallback<Boolean> callback);
+	void newFile(String dialogCode, FileInfo fi, AsyncCallback<Boolean> callback);
 
-	void editFile(Domain domain, FileInfo fi, Vector<FileInfo> fvector, AsyncCallback<Vector<FileInfo>> callback);
+	void editFile(Domain domain, String dialogCode, FileInfo fi, Vector<FileInfo> fvector,
+			AsyncCallback<Vector<FileInfo>> callback);
 
 	void check(AsyncCallback<Boolean> callback);
 
@@ -47,7 +48,7 @@ public interface IDocumentAsync {
 
 	void myDrive(String id, AsyncCallback<Vector<TreeDriveInfo>> callback);
 
-	void insertFile(Domain domain, FileInfo fi, AsyncCallback<Vector<FileInfo>> callback);
+	void insertFile(Domain domain, String dialogCode, FileInfo fi, AsyncCallback<Vector<FileInfo>> callback);
 
 	void share(Domain domain, String email, Vector<FileInfo> fvector, AsyncCallback<Void> callback);
 
@@ -91,16 +92,15 @@ public interface IDocumentAsync {
 
 	void getMailAccounts(Domain domain, AsyncCallback<MailAccountList> callback);
 
-	void sendEmail(Domain domain, com.esferalia.aon.occam.api.model.MailAccount ma, Emessage em,
-			AsyncCallback<Void> callback);
+	void sendEmail(Domain domain, String dialogCode, MailAccount ma, Emessage em, AsyncCallback<Void> callback);
 
 	void getContacts(Domain domain, AsyncCallback<ContactList> callback);
 
-	void sendGmail(Domain domain, MailAccount ma, Emessage em, AsyncCallback<Void> callback);
+	void sendGmail(Domain domain, String dialogCode, MailAccount ma, Emessage em, AsyncCallback<Void> callback);
 
 	void downloadMultiple(Vector<FileInfo> fvector, AsyncCallback<Void> callback);
 
-	void insertFileMultiple(Domain domain, FileInfo fi, AsyncCallback<Vector<FileInfo>> callback);
+	void insertFileMultiple(Domain domain, String dialogCode, FileInfo fi, AsyncCallback<Vector<FileInfo>> callback);
 
 	void copyLink(FileInfo doc, String l, AsyncCallback<String> callback);
 
@@ -108,7 +108,7 @@ public interface IDocumentAsync {
 
 	void selectedMenu(Domain domain, AsyncCallback<Void> callback);
 
-	void clearOuts(AsyncCallback<Void> callback);
+	void clearOuts(String dialogCode, AsyncCallback<Void> callback);
 
 	void getAttachList(Vector<FileInfo> fileInfoList, AsyncCallback<LinkedList<Attach>> callback);
 

@@ -2,10 +2,11 @@ package com.esferalia.aon.gwt.document.client;
 
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.common.client.richtexttoolbar.RichTextToolbar;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
-import com.esferalia.aon.gwt.document.client.richtexttoolbar.RichTextToolbar;
 import com.esferalia.aon.gwt.document.shared.FileInfo;
 import com.esferalia.aon.gwt.document.shared.MailAccountList;
+import com.esferalia.aon.gwt.document.shared.PasswordGenerator;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -46,8 +47,10 @@ public abstract class SendEmailDialog extends CustomDialogB  {
 	@UiField(provided = true) VerticalPanel vp;
 	@UiField(provided = true) AbsolutePanel mailpanel;
 	MailAccount ma;
-
+	private String windowCode;
+	
 	public SendEmailDialog(MailAccountList mal, Vector<FileInfo> lote,String url,Boolean isGoogle) {
+		setWindowCode(PasswordGenerator.getPassword(10));
 		vp = new VerticalPanel();
 		grid = new FlexTable();
 		textEditor = new FlexTable();
@@ -122,7 +125,6 @@ public abstract class SendEmailDialog extends CustomDialogB  {
 
 			ma = mal.getList().get(lb.getSelectedIndex());
 		    RichTextToolbar toolbar = new RichTextToolbar(area);
-		    new RichTextToolbar(area);
 		    toolbar.setWidth("100%");
 		    textEditor.setWidth("400px");
 		    textEditor.setCellSpacing(0);
@@ -217,5 +219,14 @@ public abstract class SendEmailDialog extends CustomDialogB  {
 			}
 		}
 	}
+
+	public String getWindowCode() {
+		return windowCode;
+	}
+
+	public void setWindowCode(String windowCode) {
+		this.windowCode = windowCode;
+	}
+	
 }
 
