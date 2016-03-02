@@ -172,7 +172,7 @@
 										styleName="{aonResources.css.aonIconInfo} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
 										text="{msg.informationBreakdown}" />
 								</g:customHeader>
-								<g:ScrollPanel ui:field="informationPanel" styleName="{aonResources.css.aonTextCenter}"/>
+								<g:ScrollPanel ui:field="informationPanel" styleName="{aonResources.css.aonPadding}"/>
 							</g:tab>
 						</g:TabLayoutPanel>
 					</aon:MinimizePanel>

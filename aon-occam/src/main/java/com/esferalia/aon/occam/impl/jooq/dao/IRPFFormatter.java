@@ -15,13 +15,16 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class IRPFFormatter {
 
-	private static final SimpleDateFormat FMT = new SimpleDateFormat("dd/MM/yyyy");
-	private static final DecimalFormat DEC = new DecimalFormat("#,##0.00");
+	public static final SimpleDateFormat FMT = new SimpleDateFormat("dd/MM/yyyy");
+	public static final DecimalFormat DEC = new DecimalFormat("#,##0.00");
 	private static final String NO_DATA = "<div>NO SE ENCONTRARON DATOS</div>";
 	static final String DIV_MSG = "<div>{0}</div>";
+	static final String DIV_MSG_BORDER_BOTTOM = "<div style=\"border-bottom:solid black 1px;\">{0}</div>";
+	static final String LI_MSG = "<li>{0}</li>";
 	static final String DIV_MSG_BLUE= "<div style=\"color: blue;\">{0}</div>";
 	static final String DIV_MSG_BLUE_BORDER_BOTTOM = "<div style=\"color: blue; border-bottom:solid blue 1px;\">{0}</div>";
 	static final String DIV_MSG_BOLD= "<div><b>{0}</b></div>";
+	static final String DIV_MSG_BOLD_BORDER_BOTTOM = "<div style=\"border-bottom:solid black 1px;\"><b>{0}</b></div>";
 	static final String DIV_MSG_BOLD_BLUE= "<div style=\"color: blue;\"><b>{0}</b></div>";
 	private static final String SPAN_MSG_ORANGE= "<span style=\"color: red;\">{0}</span>";
 	
