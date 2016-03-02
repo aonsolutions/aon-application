@@ -6,6 +6,9 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,6 +26,7 @@ import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
 import javax.servlet.annotation.WebServlet;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -41,6 +45,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 
@@ -51,11 +56,14 @@ import com.sun.pdfview.PDFPage;
 @WebServlet(name = "Viewer Servlet", urlPatterns = {
 		"/aon_gwt_document/Viewer"
 		, "/aon_gwt_deposit/Viewer"
-		, "/aon_gwt_fiscal/Viewer"})
+		, "/aon_gwt_fiscal/Viewer"
+		, "/aon_gwt_template/Viewer"})
 public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 
 	private static final String ZOOM_PARAM = "zoom";
 	private static final String PAGE_PARAM = "page";
+	private static final int DEFAULT_OFFICE_PORT = 2002;
+
 	
 	@Override
 	public String getAsHTML(Attach attach, int zoom) {
@@ -97,7 +105,6 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 	public static final Map<MimeType, IDocument2HtmlConverter> DOC2HTML_CONVERTERS = 
 			new HashMap<MimeType, IDocument2HtmlConverter>(){
 		private static final long serialVersionUID = 1L;
-
 		{
 			put(MimeType.PDF, OpenDocument2HtmlConverter.INSTANCE);
 			put(MimeType.MS_WORD, OpenDocument2HtmlConverter.INSTANCE );
@@ -115,7 +122,6 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 			put(MimeType.JPEG, Image2HtmlConverter.INSTANCE );
 			put(MimeType.PNG, Image2HtmlConverter.INSTANCE );
 			put(MimeType.GIF, Image2HtmlConverter.INSTANCE );
-			
 			put(MimeType.ZIP, Zip2HtmlConverter.INSTANCE);
 		}
 	};
@@ -165,19 +171,18 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 
 		@Override
 		public void transform(Attach attach, OutputStream os, int zoom) throws Exception {
-
 			PrintStream printStream = new PrintStream(os);
-			
 			Integer page = OpenDocument2ImageServlet.getPDFFile2(attach);
-
-			
-			
 			//Boolean error = pdf2ImageBool(pdfFile, os, page, "png", zoom);
 			
 			//if(!error){
 				for(Integer i = 1; i<= page; i++){
-					printStream.printf("<div class='page'><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
-							attach.getMd5(),	PAGE_PARAM, i, ZOOM_PARAM, zoom,attach.getId());
+					if(attach.getId() != null)
+						printStream.printf("<div class='page'><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
+								attach.getMd5(),	PAGE_PARAM, i, ZOOM_PARAM, zoom,attach.getId());
+					else printStream.printf("<div class='page'><img src='openDocument2Image/%s.png?%s=%d&%s=%d'></img> </div>",
+							attach.getMd5(),	PAGE_PARAM, i, ZOOM_PARAM, zoom); 
+						
 					/*printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%s.png?%s=%d&%s=%d&id=%d'></img> </div>",
 						(long)width, (long)height, attach.getMd5(),	PAGE_PARAM, i,
 						ZOOM_PARAM, zoom,attach.getId());
@@ -185,9 +190,6 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 				}
 				
 			/*} else {
-				
-				
-			
 				String html="<div class='page' style=' width:150%s; background-color:#FFF;'>"
 						+ "<table style='padding-top:10px; padding-bottom:5px;'>";
 				String icon = "aon-icon-google-drive-unknown";
@@ -316,9 +318,18 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 
 	}
 	
-	public void sendEmail(Domain domain, String from, String to, String issue, String message, Attach attach){
+	public void sendEmail(Domain domain, String from, String to, String issue, String message, Boolean pdf, Attach attach){
 		Integer mailAccountId = Integer.parseInt(from);
-		String encode = Base64.getEncoder().encodeToString(getByteArray(attach));
+		byte[] data = getByteArray(attach);
+		if(pdf){
+			try {
+				data  = toPdf(attach, data);
+				attach.setMimeType(MimeType.PDF);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		String encode = Base64.getEncoder().encodeToString(data);
 		try {
 			JSONObject json = new JSONObject();
 			json.put("mailAccountId", mailAccountId)
@@ -341,13 +352,15 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 	protected static void sendPostHttpClient(String domainName, JSONObject json) {
 		try{
 			String url = "http://"+domainName+"/send_email/";
+			System.out.println(url);
 			HttpClientBuilder base = HttpClientBuilder.create();
 			HttpClient client = base.build();
 			HttpPost post = new HttpPost(url);
 			List<NameValuePair> urlParameters =  new ArrayList<NameValuePair>();
 			urlParameters.add(new BasicNameValuePair("details", json.toString()));
 			post.setEntity(new UrlEncodedFormEntity(urlParameters));
-			client.execute(post);
+			HttpResponse resp = client.execute(post);
+			System.out.println(resp);
 		} catch (IOException e){
 			e.printStackTrace();
 		}
@@ -426,7 +439,7 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 	
 		return md5.equals("968634550561b68ca4675b1ffe77fd6f");
 	}
-	
+		
 	public void print(String head, String msg){
 		System.out.println("+++++++++++++++ GWT VIEWER +++++++++++++++");
 		System.out.println();
@@ -435,5 +448,29 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 		System.out.println(msg);
 		System.out.println();
 		System.out.println("++++++++++++++++++++++++++++++++++++++++++");
+	}
+	
+	private byte[] toPdf(Attach attach, byte[] data) throws IOException {
+		File inputFile = null;
+		File outputFile = null;
+		try{
+			if (attach.getMimeType().equals(MimeType.PDF)) 
+				return data;
+			
+			String tmpDir = System.getProperty("java.io.tmpdir");
+			inputFile = new File(tmpDir, attach.getDescription() + "." + attach.getMimeType().getExtension());
+
+			FileOutputStream inputFileOs = new FileOutputStream(inputFile);
+			inputFileOs.write(data);
+			inputFileOs.close();
+
+			outputFile = new File(tmpDir, attach.getDescription() + "."
+				+ MimeType.PDF.getExtension());
+			OpenDocumentConverterServlet.convert(inputFile, outputFile);
+			return AonIOUtils.toByteArray(new FileInputStream(outputFile));
+		}finally{
+			if (inputFile != null && inputFile.canWrite()) inputFile.delete();
+			if (outputFile != null && outputFile.canWrite()) outputFile.delete();
+		}
 	}
 }

@@ -1,9 +1,206 @@
 @external .*;
 
-.gwt-PopupPanel-viewer{
-	width: 100% !important;
-	border: none !important;
-	padding: 0px !important;
-	background: none !important;
-	overflow:hidden !important;
-}
+	.gwt-PopupPanel-viewer{
+		width: 100% !important;
+		border: none !important;
+		padding: 0px !important;
+		background: none !important;
+		overflow:hidden !important;
+	}
+
+	.editor-viewer {
+		background: rgba(0, 0, 0, 0.75);
+	}
+	
+	.label-viewer {
+		color: #FFF;
+		min-height: 22px;
+		padding-left: 25px;
+		padding-top: 10px;
+	}
+	
+	.document-viewer {
+		margin-top: 60px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 15px;
+	}
+	
+	.toolbar-viewer {
+		height: 22px;
+		width: 100%;
+		padding: 8px 0px;
+		top: 0px;
+		left: 0px;
+		position: absolute;
+		background-color: rgba(0, 0, 0, 0.8);
+	}
+	
+	.toolbar-left-viewer {
+		width: 35%;
+	}
+	
+	.toolbar-left-viewer>:first-child {
+		margin-left: 15px;
+	}
+	
+	.toolbar-center-viewer {
+		width: 30%;
+	}
+	
+	.toolbar-center-viewer>* {
+		margin: auto;
+	}
+	
+	.toolbar-right-viewer {
+		width: 35%;
+		vertical-align: top;
+	}
+	
+	.toolbar-right-viewer>:first-child {
+		margin-left: auto;
+	}
+	
+	.toolbar-right-viewer>:last-child {
+		margin-right: 15px;
+	}
+	
+	.toolbar-button-viewer {
+		border: 0px none;
+		width: 21px !important;
+		height: 21px !important;
+		cursor: pointer;
+		overflow: visible !important; /* for tooltip */
+		margin-right: 16px;
+	}
+	/* tooltip for toolbar buttons */
+	.toolbar-button-viewer:hover:after {
+		color: #FFF;
+		font-size: 11px;
+		font-weight: bold;
+		top: 25px;
+		left: -10px;
+		position: relative;
+		margin: 15px 15px;
+		padding: 5px 10px;
+		background: rgba(0, 0, 0, 0.8);
+	}
+	
+	.open-button-viewer {
+		background-position: 0px -1280px !important;
+	}
+	
+	.open-button-viewer:hover:after {
+		content: 'Ventana Externa';
+	}
+	
+	.close-button-viewer {
+		background-position: 0px -720px !important;
+	}
+	
+	.close-button-viewer:hover:after {
+		left: -30px;
+		content: 'Cerrar';
+	}
+	
+	.print-button-viewer {
+		background-position: 0px -240px !important;
+	}
+	
+	.print-button-viewer:hover:after {
+		left: -40px;
+		content: 'Imprimir';
+	}
+	
+	.download-button-viewer {
+		background-position: 0px -960px !important;
+	}
+	
+	.download-button-viewer:hover:after {
+		left: -45px;
+		content: 'Descargar';
+	}
+	
+	.zoom-in-button-viewer {
+		background-position: 0px -480px !important;
+	}
+	
+	.zoom-in-button-viewer:hover:after {
+		left: -35px;
+		content: 'Ampliar';
+	}
+	
+	.zoom-out-button-viewer {
+		background-position: 0px -280px !important;
+	}
+	
+	.zoom-out-button-viewer:hover:after {
+		left: -35px;
+		content: 'Reducir';
+	}
+	
+	.share-button-viewer {
+		background-position: 0px -1960px !important;
+	}
+	
+	.share-button-viewer:hover:after {
+		left: -45px;
+		content: 'Compartir';
+	}
+	
+	.sidebar-button-viewer {
+		width: 40px !important;
+		height: 30px !important;
+		border: 0px none;
+		border-radius: 3px;
+		position: absolute;
+		top: 50%;
+		overflow: visible !important;
+		background-color: rgba(0, 0, 0, 0.8) !important;
+	}
+	
+	/* tooltip for sidebar buttons */
+	.sidebar-button-viewer:hover:after {
+		left: -100px;
+		color: #FFF;
+		font-size: 11px;
+		font-weight: bold;
+		position: relative;
+		padding: 5px 10px;
+		background: rgba(0, 0, 0, 0.8);
+	}
+	
+	.next-button-viewer {
+		right: 15px;
+		cursor:pointer;
+		background-position: 7px -1398px !important;
+	}
+	
+	.next-button-viewer:hover {
+		background-position: 7px -1158px !important;
+	}
+	
+	.next-button-viewer:hover:after {
+		content: 'Siguiente';
+	}
+	
+	.prev-button-viewer {
+		left: 15px;
+		cursor:pointer;
+		background-position: 7px -2238px !important;
+	}
+	
+	.prev-button-viewer:hover {
+		background-position: 7px -1478px !important;
+	}
+	
+	.prev-button-viewer:hover:after {
+		left: 46px;
+		content: 'Anterior';
+	}
+	
+	.share-label-viewer{
+		padding-top: 3px;
+	}
+	
+	

@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.css.ViewerResources;
 import com.esferalia.aon.gwt.viewer.shared.Icon;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -23,10 +24,15 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasEnabled;
+import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -71,6 +77,7 @@ public abstract class Viewer extends PopupPanel {
 		GWT.<ViewerResources> create(ViewerResources.class).css().ensureInjected();		
 		setWidget(binder.createAndBindUi(this));
 		addStyleName("gwt-PopupPanel-viewer");
+		initialize();
 		eraser = new Timer() {
 			@Override
 			public void run() {
@@ -129,6 +136,8 @@ public abstract class Viewer extends PopupPanel {
 	protected abstract void onZoomPlus(int zoom);
 
 	protected abstract void onZoomMinus(int zoom);
+	
+	protected abstract void onClose();
 
 	@Override
 	public void show() {
@@ -149,6 +158,7 @@ public abstract class Viewer extends PopupPanel {
 
 	@UiHandler("close")
 	void close(ClickEvent event) {
+		onClose();
 		hide();
 	}
 
@@ -316,12 +326,13 @@ public abstract class Viewer extends PopupPanel {
 		return getViewer(attach, 0, attachList);
 	}
 	
-	public static Viewer getViewer(String domainName, Integer domainId, byte[] data, MimeType mimetype){
+	public static Viewer getViewer(String domainName, Integer domainId, byte[] data, MimeType mimetype, AttachType attachType){
 		Domain domain = new Domain().setName(domainName).setId(domainId);
 		Attach attach = new Attach()
 				.setDomain(domain)
 				.setData(data)
 				.setDescription("Data")
+				.setMimeType(mimetype)
 				.setIcon(Icon.icon(mimetype.getName()));
 		LinkedList<Attach> attachList = new LinkedList<Attach>();
 		attachList.add(attach);
@@ -413,12 +424,18 @@ public abstract class Viewer extends PopupPanel {
 								}
 							});						
 						} else if(isEmail){
-							ListBox lb = (ListBox) content.getWidget(0, 1);
+							HorizontalPanel hp = (HorizontalPanel) content.getWidget(0, 1);
+							ListBox lb = (ListBox) hp.getWidget(0);
+							Boolean pdf = false;
+							if(hp.getWidgetCount()> 1){
+								CheckBox cb = (CheckBox) hp.getWidget(1);
+								pdf = cb.getValue();
+							}
 							TextBox tb1 = (TextBox) content.getWidget(1, 1);
 							TextBox tb2 = (TextBox) content.getWidget(2, 1);
 							TextArea ta = (TextArea) content.getWidget(3, 1);
 							hide();
-							VIEWER_IMPL.sendEmail(attach.getDomain(), lb.getSelectedValue(), tb1.getText(), tb2.getText(), ta.getText(), viewerAttach, new AsyncCallback<Void>() {
+							VIEWER_IMPL.sendEmail(attach.getDomain(), lb.getSelectedValue(), tb1.getText(), tb2.getText(), ta.getText(), pdf, viewerAttach, new AsyncCallback<Void>() {
 								@Override public void onSuccess(Void result) {}
 								@Override public void onFailure(Throwable caught) {
 									String head = "com.esferalia.aon.gwt.viewer.client.Viewer"
@@ -439,15 +456,7 @@ public abstract class Viewer extends PopupPanel {
 			
 			@Override
 			protected void onPrint() {
-				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_print/"
-						+ "?drive_id=" + viewerAttach.getDriveId()
-						+ "&attach_id=" + viewerAttach.getId()
-						+ "&attach_type=" + viewerAttach.getAttachType().value()
-						+ "&attach_name=" + viewerAttach.getDescription()
-						+ "&mimetype=" + viewerAttach.getMimeType().value()
-						+ "&domain_name=" + viewerAttach.getDomain().getName()
-						+ "&domain_id=" + viewerAttach.getDomain().getId();
-				PrintWindow.open(fileDownloadURL, "_blank", null);
+				PrintWindow.open(getPrintUrl(viewerAttach), "_blank", null);
 			}
 			
 			@Override
@@ -470,15 +479,9 @@ public abstract class Viewer extends PopupPanel {
 			
 			@Override
 			protected void onDownload() {
-				String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_viewer/"
-						+ "?drive_id=" + viewerAttach.getDriveId()
-						+ "&attach_id=" + viewerAttach.getId()
-						+ "&attach_type=" + viewerAttach.getAttachType().value()
-						+ "&attach_name=" + viewerAttach.getDescription()
-						+ "&mimetype=" + viewerAttach.getMimeType().value()
-						+ "&domain_name=" + viewerAttach.getDomain().getName()
-						+ "&domain_id=" + viewerAttach.getDomain().getId();
-				Window.open(fileDownloadURL, "_blank", null);
+				if(viewerAttach.getAttachType().isModel()){
+					submitForm(attach);
+				} else Window.open(getDownloadUrl(viewerAttach), "_blank", null);
 			}
 			
 			@Override
@@ -503,7 +506,12 @@ public abstract class Viewer extends PopupPanel {
 					}
 				});				
 			}
-		};
+			
+			@Override
+			protected void onClose(){
+				
+			}
+		};		
 		viewer.setTitle(attach.getDescription(), Icon.icon(attach.getMimeType().getName()));
 		viewer.setPrevEnabled(index > 0);
 		viewer.setNextEnabled(index < (attachList.size() -1 ));
@@ -535,4 +543,91 @@ public abstract class Viewer extends PopupPanel {
 			@Override public void onFailure(Throwable caught) {}
 		});
 	}
+	
+	public static String getPrintUrl(Attach attach){
+		if(attach.getAttachType().isModel()){
+			String url = "";
+			if(attach.getAttachType().equals(AttachType.MOD111))
+				url = GWT.getModuleBaseURL()+ "/Model111PrintPDF";
+			else if(attach.getAttachType().equals(AttachType.MOD115))
+				url = GWT.getModuleBaseURL()+ "/Model115PrintPDF";
+			else if(attach.getAttachType().equals(AttachType.MOD123))
+				url = GWT.getModuleBaseURL()+ "/Model123PrintPDF";
+ 			return  url	+ "?domainName=" + attach.getDomain().getName() 
+					+ "&domainId=" + attach.getDomain().getId()
+					+ "&mod111=" + attach.getId()
+					+ "&mimetype=" + attach.getMimeType().value()
+					+ "&attach_type=" + attach.getAttachType().value(); 
+		}
+		return GWT.getModuleBaseURL()+ "/gwt_print/"
+				+ "?drive_id=" + attach.getDriveId()
+				+ "&attach_id=" + attach.getId()
+				+ "&attach_type=" + attach.getAttachType().value()
+				+ "&attach_name=" + attach.getDescription()
+				+ "&mimetype=" + attach.getMimeType().value()
+				+ "&domain_name=" + attach.getDomain().getName()
+				+ "&domain_id=" + attach.getDomain().getId();
+	}
+
+	public static String getDownloadUrl(Attach attach){
+		if(attach.getAttachType().equals(AttachType.MOD111)){
+			return GWT.getModuleBaseURL()+ "/gwt_download_viewer/"
+					+ "?domainName=" + attach.getDomain().getName() 
+					+ "&domainId=" + attach.getDomain().getId()
+					+ "&mod111=" + attach.getId()
+					+ "&mimetype=" + attach.getMimeType().value()
+					+ "&attach_type=" + attach.getAttachType().value(); 
+		}
+		return GWT.getModuleBaseURL()+ "/gwt_download_viewer/"
+				+ "?drive_id=" + attach.getDriveId()
+				+ "&attach_id=" + attach.getId()
+				+ "&attach_type=" + attach.getAttachType().value()
+				+ "&attach_name=" + attach.getDescription()
+				+ "&mimetype=" + attach.getMimeType().value()
+				+ "&domain_name=" + attach.getDomain().getName()
+				+ "&domain_id=" + attach.getDomain().getId();
+	}
+	
+	
+	// SERVLETS GWT FISCAL
+	
+	private static final String MODEL111_PRINT = "/aon_gwt_fiscal/Model111Print";
+	private static final String MODEL115_PRINT = "/aon_gwt_fiscal/Model115Print";
+	private static final String MODEL123_PRINT = "/aon_gwt_fiscal/Model123Print";
+
+
+	private static FormPanel diskForm;
+	private static Hidden mod111Hidden;
+	private static Hidden domainIdHidden;
+	private static Hidden domainNameHidden;
+	
+	
+	private static  void initialize() {
+		diskForm = new FormPanel("_blank");
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		mod111Hidden = new Hidden("mod111");
+		formFlowPanel.add(mod111Hidden);
+		domainIdHidden = new Hidden("domainId");
+		formFlowPanel.add(domainIdHidden);
+		domainNameHidden = new Hidden("domainName");
+		formFlowPanel.add(domainNameHidden);
+	}
+	
+	private static void submitForm(Attach attach) {
+		String action = "";
+		if(attach.getAttachType().equals(AttachType.MOD111))
+			action = MODEL111_PRINT;
+		else if(attach.getAttachType().equals(AttachType.MOD115))
+			action = MODEL115_PRINT;
+		else if(attach.getAttachType().equals(AttachType.MOD123))
+			action = MODEL123_PRINT;
+		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		mod111Hidden.setValue(String.valueOf(attach.getId()));
+		domainIdHidden.setValue(String.valueOf(attach.getDomain().getId()));
+		domainNameHidden.setValue(attach.getDomain().getName());
+		diskForm.submit();	
+	}
+	
 }

@@ -158,9 +158,11 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 		return getPdfByeBuffer(attach.getMd5(), mimetype, b);
 	}
 
-	private static ByteBuffer getPdfByeBuffer(String md5, MimeType mimeType,
+	public static ByteBuffer getPdfByeBuffer(String md5, MimeType mimeType,
 			byte[] bytes) throws IOException {
 		RandomAccessFile randomAccessFile  = null;
+		File inputFile = null;
+		File outputFile = null;
 		try{
 			if (mimeType == MimeType.PDF) {
 				return ByteBuffer.wrap(bytes);
@@ -181,13 +183,13 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 				return bb;*/
 			}
 			String tmpDir = System.getProperty("java.io.tmpdir");
-			File inputFile = new File(tmpDir, md5 + "." + mimeType.getExtension());
+			inputFile = new File(tmpDir, md5 + "." + mimeType.getExtension());
 
 			FileOutputStream inputFileOs = new FileOutputStream(inputFile);
 			inputFileOs.write(bytes);
 			inputFileOs.close();
 
-			File outputFile = new File(tmpDir, md5 + "."
+			outputFile = new File(tmpDir, md5 + "."
 				+ MimeType.PDF.getExtension());
 
 			convert(inputFile, outputFile);
@@ -198,6 +200,8 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 			FileChannel fileChannel = randomAccessFile.getChannel();
 			return fileChannel.map(MapMode.READ_ONLY, 0, randomAccessFile.length());
 		}finally{
+			if (inputFile != null && inputFile.canWrite()) inputFile.delete();
+			if (outputFile != null && outputFile.canWrite()) outputFile.delete();
 			if(randomAccessFile != null) randomAccessFile.close();
 		}
 	}

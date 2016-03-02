@@ -35,7 +35,14 @@ public class Mod111PrintPDF extends HttpServlet {
 	private static final int DEFAULT_OFFICE_PORT = 2002;
 
 	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.setAttribute("doget", "doget");
+		doPost(req, resp);
+	}
+	
+	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Boolean doget = req.getAttribute("doget") != null;
 		File inputFile = null;
 		File outputFile = null;
 		OfficeManager officeManager = null;
@@ -75,7 +82,8 @@ public class Mod111PrintPDF extends HttpServlet {
 			converter.convert(inputFile, outputFile);
 
 			resp.setContentType(MimeType.PDF.getName());
-			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
+			if(doget) resp.setHeader("Content-disposition", "inline; filename=\"" + fileName + ".pdf\";");
+			else resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
 			AonIOUtils.copy(new FileInputStream(outputFile), resp.getOutputStream());
 			resp.flushBuffer();
 

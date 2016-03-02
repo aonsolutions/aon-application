@@ -31,28 +31,32 @@ public class DownloadFilesServlet extends HttpServlet {
 
 	@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
-		
-		String attachName = req.getParameter("attach_name");
-		MimeType mimeType = MimeType.values()[Integer.parseInt(req.getParameter("mimetype"))];
-		String driveId = req.getParameter("driveId") != null
-				&& !req.getParameter("drive_id").equals("null") 
-				&& !req.getParameter("drive_id").equals("undefined")  
-				? req.getParameter("drive_id") : null;
-		Integer attachId = Integer.parseInt(req.getParameter("attach_id"));
 		AttachType attachType = AttachType.values()[Integer.parseInt(req.getParameter("attach_type"))];
-		String domainName = req.getParameter("domain_name");
-		Integer domainId = Integer.parseInt(req.getParameter("domain_id"));
+		MimeType mimeType = MimeType.values()[Integer.parseInt(req.getParameter("mimetype"))];
+		byte[] data = null;
+		Attach attach;
 		String login = "";
+
+			String attachName = req.getParameter("attach_name");
+			String driveId = req.getParameter("driveId") != null
+					&& !req.getParameter("drive_id").equals("null") 
+					&& !req.getParameter("drive_id").equals("undefined")  
+					? req.getParameter("drive_id") : null;
+			Integer attachId = Integer.parseInt(req.getParameter("attach_id"));
 		
-		Domain domain = AON.getDomain(domainName, domainId, login);
-		Attach attach = new Attach().setDomain(domain)
+			String domainName = req.getParameter("domain_name");
+			Integer domainId = Integer.parseInt(req.getParameter("domain_id"));
+		
+			Domain domain = AON.getDomain(domainName, domainId, login);
+			attach = new Attach().setDomain(domain)
 				.setDescription(attachName)
 				.setDriveId(driveId)
 				.setId(attachId)
 				.setAttachType(attachType)
 				.setMimeType(mimeType);
+			data = getData(attach, login);
 		
-		byte[] data = getData(attach, login);
+		
         
         Integer length = data.length;
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
@@ -80,7 +84,7 @@ public class DownloadFilesServlet extends HttpServlet {
     }
 	
 	public byte[] getData(Attach attach, String login){
-		byte[] b = "".getBytes();
+		byte[] b = "".getBytes(); 
 		if(attach.getDriveId() != null || 
 				(attach.getId() != null && attach.getAttachType() != null)){
 			Integer attachId = attach.getId();

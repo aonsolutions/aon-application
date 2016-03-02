@@ -3,277 +3,72 @@
 
 	<ui:style>
 	
-	*:focus  {  outline: none;  }
+		*:focus  {  outline: none;  }
 	
-	.label {
-		color: #FFF;
-		min-height: 22px;
-		padding-left: 25px;
-		padding-top: 10px;
-	}
+		@sprite .button {
+			gwt-image: 'viewer';
+		}
 	
-	.editor {
-		background: rgba(0, 0, 0, 0.75);
-	}
-	
-	.document {
-		margin-top: 60px;
-		margin-left: auto;
-		margin-right: auto;
-		margin-bottom: 15px;
-	}
-	
-	.toolbar {
-		height: 22px;
-		width: 100%;
-		padding: 8px 0px;
-		top: 0px;
-		left: 0px;
-		position: absolute;
-		background-color: rgba(0, 0, 0, 0.8);
-	}
-	
-	.toolbar-left {
-		width: 35%;
-	}
-	
-	.toolbar-left>:first-child {
-		margin-left: 15px;
-	}
-	
-	.toolbar-center {
-		width: 30%;
-	}
-	
-	.toolbar-center>* {
-		margin: auto;
-	}
-	
-	.toolbar-right {
-		width: 35%;
-		vertical-align: top;
-	}
-	
-	.toolbar-right>:first-child {
-		margin-left: auto;
-	}
-	
-	.toolbar-right>:last-child {
-		margin-right: 15px;
-	}
-	
-	@sprite .button {
-		gwt-image: 'viewer';
-	}
-	
-	.toolbar-button {
-		border: 0px none;
-		width: 21px;
-		height: 21px;
-		cursor: pointer;
-		overflow: visible; /* for tooltip */
-		margin-right: 16px;
-	}
-	/* tooltip for toolbar buttons */
-	.toolbar-button:hover:after {
-		color: #FFF;
-		font-size: 11px;
-		font-weight: bold;
-		top: 25px;
-		left: -10px;
-		position: relative;
-		margin: 15px 15px;
-		padding: 5px 10px;
-		background: rgba(0, 0, 0, 0.8);
-	}
-	
-	.open-button {
-		background-position: 0px -1280px
-	}
-	
-	.open-button:hover:after {
-		content: 'Ventana Externa';
-	}
-	
-	.close-button {
-		background-position: 0px -720px
-	}
-	
-	.close-button:hover:after {
-		left: -30px;
-		content: 'Cerrar';
-	}
-	
-	.print-button {
-		background-position: 0px -240px
-	}
-	
-	.print-button:hover:after {
-		left: -40px;
-		content: 'Imprimir';
-	}
-	
-	.download-button {
-		background-position: 0px -960px
-	}
-	
-	.download-button:hover:after {
-		left: -45px;
-		content: 'Descargar';
-	}
-	
-	.zoom-in-button {
-		background-position: 0px -480px
-	}
-	
-	.zoom-in-button:hover:after {
-		left: -35px;
-		content: 'Ampliar';
-	}
-	
-	.zoom-out-button {
-		background-position: 0px -280px
-	}
-	
-	.zoom-out-button:hover:after {
-		left: -35px;
-		content: 'Reducir';
-	}
-	
-	.share-button {
-		background-position: 0px -1960px
-	}
-	
-	.share-button:hover:after {
-		left: -45px;
-		content: 'Compartir';
-	}
-	
-	.sidebar-button {
-		width: 40px;
-		height: 30px;
-		border: 0px none;
-		border-radius: 3px;
-		position: absolute;
-		top: 50%;
-		overflow: visible;
-		background-color: rgba(0, 0, 0, 0.8)
-	}
-	
-	/* tooltip for sidebar buttons */
-	.sidebar-button:hover:after {
-		left: -100px;
-		color: #FFF;
-		font-size: 11px;
-		font-weight: bold;
-		position: relative;
-		padding: 5px 10px;
-		background: rgba(0, 0, 0, 0.8);
-	}
-	
-	.sidebar-button:hover:before {
-		left: -16px;
-		bottom: 3px;
-		content: '';
-		position: relative;
-		font-size: 0px;
-		border-width: 7px;
-		border-style: solid;
-		border-color: transparent transparent transparent rgba(0, 0, 0, 0.8);
-	}
-	
+		@sprite .loading {
+			gwt-image: 'loading';
+			color: #FFF;
+			font-weight: bold;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			overflow: visible;
+			padding-left: 25px;
+			background-color: transparent;
+		}
 
-	.next-button {
-		right: 15px;
-		cursor:pointer;
-		background-position: 7px -1398px
-	}
+		@external .page;
+		.page {
+			background: white;
+		}
 	
-	.next-button:hover {
-		background-position: 7px -1158px
-	}
-	
-	.next-button:hover:after {
-		content: 'Siguiente';
-	}
-	
-	.prev-button {
-		left: 15px;
-		cursor:pointer;
-		background-position: 7px -2238px;
-	}
-	
-	.prev-button:hover {
-		background-position: 7px -1478px;
-	}
-	
-	.prev-button:hover:after {
-		left: 31px;
-		content: 'Anterior';
-	}
-	.prev-button:hover:before {
-		left: 32px;
-		border-color: transparent rgba(0, 0, 0, 0.8) transparent transparent ;
-	}
-	
-	@sprite .loading {
-		gwt-image: 'loading';
-		color: #FFF;
-		font-weight: bold;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		overflow: visible;
-		padding-left: 25px;
-		background-color: transparent;
-	}
-
-	
-	@external .page;
-	.page {
-		background: white;
-	}
 	</ui:style>
+	
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.ViewerResources" field="viewerResources"></ui:with>
 
 	<ui:image field='viewer' src='viewer.png' />
 	<ui:image field='loading' src='loading.gif' />
 
 	<g:FocusPanel ui:field="focusPanel">
 		<g:FlowPanel >
-			<g:ScrollPanel styleName="{style.editor}" ui:field="scrollPanel">
-				<g:VerticalPanel styleName="{style.document}">
+			<g:ScrollPanel styleName="{viewerResources.css.editorViewer}" ui:field="scrollPanel">
+				<g:VerticalPanel styleName="{viewerResources.css.documentViewer}">
 					<g:HTML ui:field='html' styleName="reset" wordWrap='true' >
 					</g:HTML>
 				</g:VerticalPanel>
 			</g:ScrollPanel>
-			<g:Grid styleName="{style.toolbar}" ui:field="menu" visible="false" >
+			<g:Grid styleName="{viewerResources.css.toolbarViewer}" ui:field="menu" visible="false" >
 				<g:row>
 	
-					<g:customCell styleName="{style.toolbar-left}">
+					<g:customCell styleName="{viewerResources.css.toolbarLeftViewer}">
 						<g:HorizontalPanel>
-							<g:Label ui:field="title" styleName="{style.label}"></g:Label>
+							<g:Label ui:field="title" styleName="{viewerResources.css.labelViewer}"></g:Label>
 						</g:HorizontalPanel>
 					</g:customCell>
 	
-					<g:customCell styleName="{style.toolbar-center}">
+					<g:customCell styleName="{viewerResources.css.toolbarCenterViewer}">
 						<g:HorizontalPanel>
 							<g:Button ui:field="print"
-								styleName="{style.button} {style.toolbar-button} {style.print-button}"></g:Button>
+								styleName="{style.button} {viewerResources.css.toolbarButtonViewer} {viewerResources.css.printButtonViewer}"></g:Button>
 							<g:Button ui:field="share"
-								styleName="{style.button} {style.toolbar-button} {style.share-button}"></g:Button>
+								styleName="{style.button} {viewerResources.css.toolbarButtonViewer} {viewerResources.css.shareButtonViewer}"></g:Button>
 							<g:Button ui:field="download"
-								styleName="{style.button} {style.toolbar-button} {style.download-button}"></g:Button>
+								styleName="{style.button} {viewerResources.css.toolbarButtonViewer} {viewerResources.css.downloadButtonViewer}"></g:Button>
 						</g:HorizontalPanel>
 					</g:customCell>
 	
-					<g:customCell styleName="{style.toolbar-right}">
+					<g:customCell styleName="{viewerResources.css.toolbarRightViewer}">
 						<g:HorizontalPanel>
 							<g:Button ui:field="zoom_plus"
-								styleName="{style.button} {style.toolbar-button} {style.zoom-in-button}"></g:Button>
+								styleName="{style.button} {viewerResources.css.toolbarButtonViewer} {viewerResources.css.zoomInButtonViewer}"></g:Button>
 							<g:Button ui:field="zoom_minus"
-								styleName="{style.button} {style.toolbar-button} {style.zoom-out-button}"></g:Button>
+								styleName="{style.button} {viewerResources.css.toolbarButtonViewer} {viewerResources.css.zoomOutButtonViewer}"></g:Button>
 							<g:Button ui:field="close"
-								styleName="{style.button} {style.toolbar-button} {style.close-button}"></g:Button>
+								styleName="{style.button} {viewerResources.css.toolbarButtonViewer} {viewerResources.css.closeButtonViewer}"></g:Button>
 						</g:HorizontalPanel>
 					</g:customCell>
 	
@@ -283,9 +78,9 @@
 			<g:Label styleName="{style.loading}" ui:field="load"  visible="false" >Cargando</g:Label>
 			
 			<g:Button ui:field="next"
-				styleName="{style.button} {style.sidebar-button} {style.next-button}" visible="false" enabled="false"></g:Button>
+				styleName="{style.button} {viewerResources.css.sidebarButtonViewer} {viewerResources.css.nextButtonViewer}" visible="false" enabled="false"></g:Button>
 			<g:Button ui:field="prev"
-				styleName="{style.button} {style.sidebar-button} {style.prev-button}" visible="false" enabled="false"></g:Button>
+				styleName="{style.button} {viewerResources.css.sidebarButtonViewer} {viewerResources.css.prevButtonViewer}" visible="false" enabled="false"></g:Button>
 	
 	
 		</g:FlowPanel>

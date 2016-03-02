@@ -41,33 +41,37 @@ public class PdfPrintServlet extends HttpServlet{
 
 	@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException{
-
-		String driveId = req.getParameter("driveId") != null
+		AttachType attachType = AttachType.values()[Integer.parseInt(req.getParameter("attach_type"))];
+		MimeType mimeType = MimeType.values()[Integer.parseInt(req.getParameter("mimetype"))];
+		byte[] data = null;
+		Attach attach;
+		String login = "";
+		
+			String driveId = req.getParameter("driveId") != null
 				&& !req.getParameter("drive_id").equals("null")
 				&& !req.getParameter("drive_id").equals("undefined") 
 				? req.getParameter("drive_id") : null;
-		Integer attachId = Integer.parseInt(req.getParameter("attach_id"));
-		AttachType attachType = AttachType.values()[Integer.parseInt(req.getParameter("attach_type"))];
-		String attachName = req.getParameter("attach_name");
-		MimeType mimeType = MimeType.values()[Integer.parseInt(req.getParameter("mimetype"))];
-		String domainName = req.getParameter("domain_name");
-		Integer domainId = Integer.parseInt(req.getParameter("domain_id"));
-		String login = "";
+			Integer attachId = Integer.parseInt(req.getParameter("attach_id"));
+			String attachName = req.getParameter("attach_name");
 		
-		Domain domain = AON.getDomain(domainName, domainId, login);
-		Attach attach = new Attach().setDomain(domain)
+			String domainName = req.getParameter("domain_name");
+			Integer domainId = Integer.parseInt(req.getParameter("domain_id"));
+				
+			Domain domain = AON.getDomain(domainName, domainId, login);
+			attach = new Attach().setDomain(domain)
 				.setDescription(attachName)
 				.setDriveId(driveId)
 				.setId(attachId)
 				.setAttachType(attachType)
 				.setMimeType(mimeType);
 		
-		byte[] data = getData(attach, login);
+			data = getData(attach, login);
 		
 		String md5 = AonFileUtils.getMD5Checksum(data);
 		
 		if (isOffice(mimeType)) {
 			data = AonIOUtils.toByteArray(new FileInputStream(getPdfByeBuffer(md5, mimeType, data)));
+			mimeType = MimeType.PDF;
 		}
 
         Integer length = data.length;

@@ -19,7 +19,7 @@ public interface IViewer extends RemoteService {
 	
 	public void sendGmail(String to, String issue, String message, Attach attach);
 	
-	public void sendEmail(Domain domain, String from, String to, String issue, String message, Attach attach);
+	public void sendEmail(Domain domain, String from, String to, String issue, String message, Boolean pdf, Attach attach);
 	
 	public LinkedList<MailAccount> getMailAccountList(Domain domain);
 	

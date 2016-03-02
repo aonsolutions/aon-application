@@ -8,7 +8,10 @@ public enum AttachType {
 	,OFFER("offer")
 	,PAYROLL("payroll")
 	,PROJECT("project")
-	,SEPE("sepe");
+	,SEPE("sepe")
+	,MOD111("mod111")
+	,MOD115("mod115")
+	,MOD123("mod123");
 	
 	private String name;
 	
@@ -22,5 +25,9 @@ public enum AttachType {
 	
 	public Byte value(){
 		return (byte) ordinal();
+	}
+	
+	public Boolean isModel(){
+		return this.equals(MOD111) || this.equals(MOD115) || this.equals(MOD123);
 	}
 }

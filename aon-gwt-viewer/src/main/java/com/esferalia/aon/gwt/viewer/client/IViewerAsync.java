@@ -14,7 +14,7 @@ public interface IViewerAsync {
 
 	void sendGmail(String to, String issue, String message, Attach attach, AsyncCallback<Void> callback);
 	
-	void sendEmail(Domain domain, String from, String to, String issue, String message, Attach attach, AsyncCallback<Void> callback);
+	void sendEmail(Domain domain, String from, String to, String issue, String message, Boolean pdf, Attach attach, AsyncCallback<Void> callback);
 
 	void getMailAccountList(Domain domain, AsyncCallback<LinkedList<MailAccount>> callback);
 

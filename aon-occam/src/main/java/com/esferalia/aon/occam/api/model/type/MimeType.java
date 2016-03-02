@@ -108,4 +108,9 @@ public enum MimeType implements Serializable {
     	return (byte) this.ordinal();
     }
 
+    public Boolean isOffice(){
+    	return this.equals(MS_EXCEL) || this.equals(MS_EXCEL_2007)
+    			|| this.equals(MS_POWER_POINT) || this.equals(MS_POWER_POINT_2007)
+    			|| this.equals(MS_WORD) || this.equals(MS_WORD_2007);
+    }
 }

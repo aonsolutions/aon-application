@@ -18,8 +18,10 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -202,7 +204,7 @@ public abstract class SharePanel extends PopupPanel {
 		content.setWidget(2, 1, ta);
 	}
 	
-	private void paintEmailPanel(Attach attach) {
+	private void paintEmailPanel(final Attach attach) {
 		final IViewerAsync VIEWER_IMPL = GWT.create(IViewer.class);
 		content.removeAllRows();
 		
@@ -218,13 +220,22 @@ public abstract class SharePanel extends PopupPanel {
 				}
 				lb.addStyleName("aon-inputText");
 				content.setWidget(0, 0, l1);
-				content.setWidget(0, 1, lb);
+				
+				HorizontalPanel hp = new HorizontalPanel();
+				hp.add(lb);
+				if(attach.getMimeType().isOffice()){
+					hp.add(new CheckBox());
+					Label label = new Label("Archivo en pdf");
+					label.addStyleName("share-label-viewer");
+					hp.add(label);					
+				}
+				content.setWidget(0, 1, hp);
 				
 				Label l2 = new Label("Para");
 				l2.addStyleName("aon-bold");
 				TextBox tb1 = new TextBox();
 				tb1.setStyleName("aon-inputText");
-				tb1.setWidth("300px");
+				tb1.setWidth("304px");
 				content.setWidget(1, 0, l2);
 				content.setWidget(1, 1, tb1);
 				
@@ -232,7 +243,7 @@ public abstract class SharePanel extends PopupPanel {
 				l3.addStyleName("aon-bold");
 				TextBox tb2 = new TextBox();
 				tb2.setStyleName("aon-inputText");
-				tb2.setWidth("300px");
+				tb2.setWidth("304px");
 				content.setWidget(2, 0, l3);
 				content.setWidget(2, 1, tb2);
 				
