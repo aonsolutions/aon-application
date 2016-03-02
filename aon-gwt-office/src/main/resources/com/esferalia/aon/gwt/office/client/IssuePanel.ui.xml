@@ -54,7 +54,8 @@
 					</td>
 					<td class="{aonResources.css.aonPanelGridEven}">
 						<g:SuggestBox styleName="{aonResources.css.aonInputText}"
-							width="100%" enabled="false" ui:field="registrySuggest" />
+							width="500px" enabled="false" ui:field="rmediaSuggest" />
+
 					</td>
 					<td>
 						<g:InlineLabel
@@ -69,11 +70,11 @@
 						<table>
 							<tr>
 								<td class="{aonResources.css.aonPanelGridOdd}">
-									<g:InlineLabel text="Contacto" />
+									<g:InlineLabel text="Empresa" />
 								</td>
 								<td class="{aonResources.css.aonPanelGridEven}">
 									<g:SuggestBox styleName="{aonResources.css.aonInputText}"
-										width="300px" enabled="false" />
+										width="300px" enabled="false" ui:field="registrySuggest" />
 								</td>
 							</tr>
 						</table>

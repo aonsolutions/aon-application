@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.gwt.office.client.models.repos.JsRMedia;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRegistry;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
@@ -26,6 +27,7 @@ import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.google.gwt.core.client.EntryPoint;
@@ -98,7 +100,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private User user;
 	private IssuePanel issuePanel;
-	
+
 	private IssueSelected issueSelected;
 	private AonHub gitHub = new AonHub(GWT.getModuleBaseURL() + "api/");
 	private List<IssueSelected> openIssues;
@@ -111,11 +113,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private List<DefaultAonTagIssueSelected> tagList;
 	private List<Registry> registries;
+	private List<RegistryMedia> rmedias;
 
 	private Map<Integer, JsIssue> issuesMap;
 	private Map<Integer, JsRepo> repositories;
-	
-	private DateTimeFormat fmt = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+	private DateTimeFormat fmt = DateTimeFormat
+			.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 	public Office() {
 		Widget ui = uiBinder.createAndBindUi(this);
@@ -131,6 +135,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 		this.tagList = new LinkedList<DefaultAonTagIssueSelected>();
 		this.registries = new LinkedList<Registry>();
+		this.rmedias = new LinkedList<RegistryMedia>();
 
 		this.dataGrid.addListener(this);
 		this.tagTree.addListener(this);
@@ -152,6 +157,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 		initFromListBox();
 		loadRegistries();
+		loadRMedias();
 		loadLabels();
 		loadOpenIssues();
 	}
@@ -179,6 +185,24 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						JsArray<JsRegistry> registries = result.getData();
 						for (int x = 0; x < registries.length(); x++)
 							addRegistry2List(registries.get(x));
+					}
+				});
+	}
+
+	private void loadRMedias() {
+		gitHub.getRMedias(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), new AsyncCallback<JSON<JsRMedia>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("getRMedia() " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JSON<JsRMedia> result) {
+						JsArray<JsRMedia> rmedias = result.getData();
+						for (int x = 0; x < rmedias.length(); x++)
+							addRMedia2List(rmedias.get(x));
 					}
 				});
 	}
@@ -278,9 +302,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	void onNewIssueClick(ClickEvent event) {
 		issuePanel = new IssuePanel(this.user);
 		issuePanel.addListener(this);
-//		issuePanel.setTagList(tagList);
+
 		if (registries.size() > 0)
 			issuePanel.setRegistries(registries);
+		
+		if (rmedias.size() > 0)
+			issuePanel.setRMedias(rmedias);
+			
 		issuePanel.showPopupPanel();
 	}
 
@@ -448,6 +476,24 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 		registries.add(registry);
 	}
+	
+	private void addRMedia2List(JsRMedia jsRMedia) {
+		RegistryMedia rmedia = new RegistryMedia();
+		rmedia.setId(jsRMedia.getId());
+		rmedia.setDomain(jsRMedia.getDomain());
+		rmedia.setMedia(jsRMedia.getMedia());
+		rmedia.setValue(URL.decode(jsRMedia.getValue()));
+		rmedia.setComment(URL.decode(jsRMedia.getComment()));
+		
+		Registry registry = new Registry();
+		registry.setId(jsRMedia.getRegistry().getId());
+		registry.setAlias(URL.decode(jsRMedia.getRegistry().getAlias()));
+		registry.setName(URL.decode(jsRMedia.getRegistry().getName()));
+		registry.setDocument(jsRMedia.getRegistry().getDocument());
+		
+		rmedia.setRegistry(registry);
+		rmedias.add(rmedia);
+	}
 
 	private void showDockOfficePanel() {
 		deckPanel.showWidget(dockOfficePanel);
@@ -532,9 +578,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@Override
 	public void onCreateNewIssue(Notice notice) {
-		
+
 		IssueValue value = new IssueValue();
-		value.setTitle(notice.getTitle());		
+		value.setTitle(notice.getTitle());
 		value.setSender(String.valueOf(notice.getSender().getId()));
 		value.setStartDate(fmt.format(notice.getStartDate()));
 

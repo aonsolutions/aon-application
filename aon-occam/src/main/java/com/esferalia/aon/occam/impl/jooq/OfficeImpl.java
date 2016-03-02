@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.IOffice;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
@@ -118,6 +119,13 @@ public class OfficeImpl implements IOffice {
 			throws IllegalArgumentException {		
 		Integer parentID = DomainDAO.getParentDomain(ctx);
 		return AonHubDAO.getRegistries(ctx, parentID);
+	}
+	
+	@Override
+	public List<RegistryMedia> getRMedias(AONContext ctx)
+			throws IllegalArgumentException {
+		Integer parentID = DomainDAO.getParentDomain(ctx);
+		return AonHubDAO.getRMedias(ctx, parentID);
 	}
 
 }

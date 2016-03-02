@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
 import java.text.SimpleDateFormat;
@@ -27,7 +28,9 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.NoticeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -56,19 +59,6 @@ public class AonHubDAO {
 								? String.valueOf(notice.getSource()) : null)
 				.set(NOTICE.PRIORITY, (byte) 0).returning().fetchOne();
 
-		// ctx.getDslContext().insertInto(NOTICE)
-		// .set(NOTICE.DOMAIN, noticeRecord.getValue(NOTICE.DOMAIN))
-		// .set(NOTICE.DATE, noticeRecord.getValue(NOTICE.DATE))
-		// .set(NOTICE.SENDER, noticeRecord.getValue(NOTICE.SENDER))
-		// .set(NOTICE.SUBJECT, notice.getBody())
-		// .set(NOTICE.STATUS, noticeRecord.getValue(NOTICE.STATUS))
-		// .set(NOTICE.TYPE, NoticeType.MESSAGE.value())
-		// .set(NOTICE.PRIORITY, noticeRecord.getValue(NOTICE.PRIORITY))
-		// .set(NOTICE.COMPANY, noticeRecord.getValue(NOTICE.COMPANY))
-		// .set(NOTICE.SOURCE, noticeRecord.getValue(NOTICE.SOURCE))
-		// .set(NOTICE.NOTICE_, noticeRecord.getValue(NOTICE.ID))
-		// .execute();
-
 		SelectConditionStep<Record1<Integer>> openId = getOpenNoticesId(
 				ctx.getDslContext());
 
@@ -78,16 +68,6 @@ public class AonHubDAO {
 				.set(NOTICE_TAG.TAG, openId)
 				.set(NOTICE_TAG.USER, noticeRecord.getValue(NOTICE.SENDER))
 				.execute();
-
-		// for (Tag tag : notice.getTags()) {
-		//
-		// ctx.getDslContext().insertInto(NOTICE_TAG)
-		// .set(NOTICE_TAG.NOTICE, noticeRecord.getValue(NOTICE.ID))
-		// .set(NOTICE_TAG.START_DATE,
-		// noticeRecord.getValue(NOTICE.DATE))
-		// .set(NOTICE_TAG.USER, tag.getUser().getId())
-		// .set(NOTICE_TAG.TAG, tag.getId()).execute();
-		// }
 
 		return buildNoticeById(ctx, noticeRecord.getValue(NOTICE.ID));
 	}
@@ -823,6 +803,59 @@ public class AonHubDAO {
 				.where(NOTICE.ID.eq(id)).fetchOne();
 
 		return buildNotice(ctx, noticeRecord);
+	}
+	
+	public static List<RegistryMedia> getRMedias(AONContext ctx, Integer parentDomain) {
+		
+		Cursor<Record> cursor = null;
+		List<RegistryMedia> rmedias = new LinkedList<RegistryMedia>();
+		
+		try {
+			
+			if (parentDomain == null)
+				return rmedias;
+			
+			SelectConditionStep<Record1<Integer>> domainSelect = ctx
+					.getDslContext().select(DOMAIN.ID).from(DOMAIN)
+					.where(DOMAIN.ID.eq(ctx.getDomainId())
+							.and(DOMAIN.PARENT.eq(parentDomain)));
+			
+			cursor = ctx.getDslContext().select()
+			.from(RMEDIA.rightOuterJoin(REGISTRY).on(RMEDIA.REGISTRY.eq(REGISTRY.ID))
+					.rightOuterJoin(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID)))
+			.where(REGISTRY.DOMAIN.in(domainSelect)
+					.and(CUSTOMER.STATUS.eq((byte) 0 ))
+					.and(RMEDIA.MEDIA.eq(MediaType.CELLULAR.value())
+							.or(RMEDIA.MEDIA.eq(MediaType.EMAIL.value())))).fetchLazy();
+			
+			if (cursor != null) {
+				
+				for (Record value : cursor) {
+					RegistryMedia rmedia = new RegistryMedia();
+					rmedia.setId(value.getValue(RMEDIA.ID));
+					rmedia.setDomain(value.getValue(RMEDIA.DOMAIN));
+					rmedia.setMedia(value.getValue(RMEDIA.MEDIA));
+					rmedia.setValue(value.getValue(RMEDIA.VALUE));
+					rmedia.setComment(value.getValue(RMEDIA.COMMENT));
+					
+					Registry reg = new Registry();
+					reg.setId(value.getValue(REGISTRY.ID));
+					reg.setName(value.getValue(REGISTRY.NAME));
+					reg.setAlias(value.getValue(REGISTRY.ALIAS));
+					reg.setDocument(value.getValue(REGISTRY.DOCUMENT));
+					rmedia.setRegistry(reg);
+					
+					rmedias.add(rmedia);
+				}
+				
+			}
+			
+			return rmedias;
+			
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
 	}
 
 	public static List<Registry> getRegistries(AONContext ctx,

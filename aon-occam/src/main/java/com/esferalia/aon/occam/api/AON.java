@@ -74,6 +74,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -1272,6 +1273,17 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			return getOffice().getRegistries(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static List<RegistryMedia> getRMedias(Integer domainId, String domainName, String userName) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().getRMedias(ctx);
 		} finally {
 			if (ctx != null)
 				ctx.close();

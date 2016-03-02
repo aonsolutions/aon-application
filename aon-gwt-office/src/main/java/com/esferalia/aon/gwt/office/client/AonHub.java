@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.gwt.office.client.models.repos.JsRMedia;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRegistry;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
@@ -241,6 +242,12 @@ public class AonHub {
 			AsyncCallback<JSON<JsRegistry>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/registries", callback);
 	}
+	
+	public void getRMedias(String user, String repo,
+			AsyncCallback<JSON<JsRMedia>> callback) {
+		get(baseUrl + "repos/" + user + "/" + repo + "/rmedia", callback);
+	}
+	
 
 	// ********* PUBLIC STATIC METHODS *********** //
 

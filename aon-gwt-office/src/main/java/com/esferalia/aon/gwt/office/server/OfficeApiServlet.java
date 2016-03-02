@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tools.ant.types.CommandlineJava.SysProperties;
 import org.jooq.impl.DateAsTimestampBinding;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,6 +29,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.safehtml.shared.UriUtils;
 
@@ -149,7 +151,6 @@ public class OfficeApiServlet extends HttpServlet {
 
 				Notice notice = new Notice();
 				notice.setTitle(json.getString("title"));
-//				notice.setBody(json.getString("body"));
 				
 				String dateString = json.getString("startDate");
 				Date startDate = null;
@@ -541,6 +542,60 @@ public class OfficeApiServlet extends HttpServlet {
 				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
 				pw.printf("\"data\":%s",
 						buildRegistries(registries.listIterator()));
+				pw.append('}');
+				pw.flush();
+
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+			}
+		}
+	}
+	
+	private static class GetRMedias extends RegExpRequestHandler {
+
+		private HttpServletRequest req;
+		private HttpServletResponse resp;
+		
+		private Integer domain;
+		private String domainName;
+		
+		public GetRMedias() {
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/rmedia");
+		}
+		
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+
+			try {
+				this.req = req;
+				this.resp = resp;
+				this.domain = getDomainId();
+				this.domainName = getDomainName();
+
+			} catch (Exception ex) {
+				String ver = getRequestAction(req);
+				String[] actionArr = ver.split("/");
+				this.domain = Integer.parseInt(actionArr[2]);
+				this.domainName = actionArr[3];
+			}
+
+			finally {
+				getRMedias();
+			}
+		}
+		
+		private void getRMedias() {
+
+			PrintWriter pw = null;
+			try {
+				String userName = AonServletUtils.getLoggedUser();
+				List<RegistryMedia> rmedias = AON.getRMedias(domain, domainName, userName);				
+				pw = resp.getWriter();
+				pw.append('{');
+				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
+				pw.printf("\"data\":%s",
+						buildRMedia(rmedias.listIterator()));
 				pw.append('}');
 				pw.flush();
 
@@ -1024,6 +1079,7 @@ public class OfficeApiServlet extends HttpServlet {
 	private static final HttpRequestHandler GET_HANDLERS[] = {
 			new GetUser(),
 			new GetRegistries(),
+			new GetRMedias(),
 			new GetAllIssuesRequestHandler(),
 			new ListAllLabels(),			
 	};
@@ -1130,8 +1186,6 @@ public class OfficeApiServlet extends HttpServlet {
 				String.valueOf(notice.getId())));
 		buffer.append(String.format("\"title\":\"%s\",\r\n",
 				UriUtils.encode(notice.getTitle())));
-//		buffer.append(String.format("\"body\":\"%s\",\r\n",
-//				UriUtils.encode(notice.getBody())));
 		buffer.append(
 				String.format("\"state\":\"%s\",\r\n", notice.getStatus()));
 		buffer.append(String.format("\"company\":\"%s\",\r\n",
@@ -1336,6 +1390,22 @@ public class OfficeApiServlet extends HttpServlet {
 
 		return buffer.toString();
 	}
+	
+	private static String buildRMedia(ListIterator<RegistryMedia> rmediaIterator) {
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("[\n");
+		while (rmediaIterator.hasNext()) {
+			buffer.append(getRegistry(rmediaIterator.next()));
+
+			if (rmediaIterator.hasNext())
+				buffer.append(",\n");
+		}
+		buffer.append("]");
+
+		return buffer.toString();
+	}
+
 
 	private static String buildRegistries(ListIterator<Registry> regsIterator) {
 
@@ -1351,6 +1421,30 @@ public class OfficeApiServlet extends HttpServlet {
 
 		return buffer.toString();
 	}
+	
+	private static String getRegistry(RegistryMedia rmedia) {
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("{\n");
+		buffer.append(String.format("\"id\":%s,\r\n",
+				String.valueOf(rmedia.getId())));
+		buffer.append(String.format("\"domain\":%s,\r\n",
+				String.valueOf(rmedia.getDomain())));
+		buffer.append(String.format("\"registry\":%s,\r\n",
+				getRegistry(rmedia.getRegistry())));
+		buffer.append(String.format("\"media\":%s,\r\n",
+				String.valueOf(rmedia.getMedia())));		
+		buffer.append(String.format("\"value\":\"%s\",\r\n",
+				(rmedia.getValue() != null)
+						? UriUtils.encode(rmedia.getValue()) : UriUtils.encode("")));
+		buffer.append(String.format("\"comment\":\"%s\"\r\n",
+				(rmedia.getComment() != null)
+						? UriUtils.encode(rmedia.getComment()) : UriUtils.encode("")));
+		buffer.append("}");
+
+		return buffer.toString();
+	}
+
 
 	private static String getRegistry(Registry registry) {
 
