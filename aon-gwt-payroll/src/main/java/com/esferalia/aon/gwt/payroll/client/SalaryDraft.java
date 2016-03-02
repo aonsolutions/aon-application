@@ -898,7 +898,6 @@ public class SalaryDraft extends ResizeComposite
 	abstract class ItemChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers & Focusable, I extends Item> {
 
 		I item;
-		int row;
 		T expressionWidget;
 		T descriptionWidget;
 
@@ -906,9 +905,6 @@ public class SalaryDraft extends ResizeComposite
 			this.item = item;
 		}
 
-		public void setRow(int row) {
-			this.row = row;
-		}
 
 		public void setDescriptionWidget(final T widget) {
 			descriptionWidget = widget;
@@ -966,10 +962,10 @@ public class SalaryDraft extends ResizeComposite
 				@Override
 				public void onClick(ClickEvent event) {
 					if (isExpand(expandButton)) {
-						onExpand();
+						onExpand(event);
 						setCollapse(expandButton);
 					} else {
-						onCollapse();
+						onCollapse(event);
 						setExpand(expandButton);
 					}
 				}
@@ -1012,13 +1008,14 @@ public class SalaryDraft extends ResizeComposite
 
 		abstract void onEdit();
 
-		abstract void onExpand();
+		abstract void onExpand(ClickEvent event);
 
-		abstract void onCollapse();
+		abstract void onCollapse(ClickEvent event);
 
 		abstract void onExpressionChange(I item, String expression);
 
 		abstract void onDescriptionChange(I item, String description);
+		
 
 	}
 
@@ -1065,7 +1062,8 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		@Override
-		void onExpand() {
+		void onExpand(ClickEvent event) {
+			int row = getRowIndex(event);
 			int childs = ((CompositePayment) item).getChilds().size();
 			for (int i = 1; i <= childs; i++)
 				paymentsTable.getRowFormatter().getElement(row + i).getStyle().clearDisplay();
@@ -1073,7 +1071,8 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		@Override
-		void onCollapse() {
+		void onCollapse(ClickEvent event) {
+			int row = getRowIndex(event);
 			int childs = ((CompositePayment) item).getChilds().size();
 			for (int i = 1; i <= childs; i++)
 				paymentsTable.getRowFormatter().getElement(row + i).getStyle().setDisplay(Display.NONE);
@@ -1104,6 +1103,10 @@ public class SalaryDraft extends ResizeComposite
 				if (StringUtils.equals(payment.getName(), item.getName()))
 					return payment;
 			return null;
+		}
+
+		private int getRowIndex(ClickEvent event){
+			return paymentsTable.getCellForEvent(event).getRowIndex();
 		}
 
 		private CalculateCallback getNextPaymentFocusCallback() {
@@ -1187,7 +1190,8 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		@Override
-		void onExpand() {
+		void onExpand(ClickEvent event) {
+			int row = getRowIndex(event);
 			int childs = ((CompositeDeduction) item).getChilds().size();
 			for (int i = 1; i <= childs; i++)
 				paymentsTable.getRowFormatter().getElement(row + i).getStyle().clearDisplay();
@@ -1195,7 +1199,8 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		@Override
-		void onCollapse() {
+		void onCollapse(ClickEvent event) {
+			int row = getRowIndex(event);
 			int childs = ((CompositeDeduction) item).getChilds().size();
 			for (int i = 1; i <= childs; i++)
 				paymentsTable.getRowFormatter().getElement(row + i).getStyle().setDisplay(Display.NONE);
@@ -1232,6 +1237,10 @@ public class SalaryDraft extends ResizeComposite
 
 			salaryDraftObject.calculate(SalaryDraft.this);
 		}
+		
+		private int getRowIndex(ClickEvent event) {
+			return paymentsTable.getCellForEvent(event).getRowIndex();
+		}
 	}
 
 	class BonusChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers & Focusable>
@@ -1264,13 +1273,13 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		@Override
-		void onExpand() {
+		void onExpand(ClickEvent event) {
 			// TODO Auto-generated method stub
 
 		}
 
 		@Override
-		void onCollapse() {
+		void onCollapse(ClickEvent event) {
 			// TODO Auto-generated method stub
 
 		}
@@ -3370,8 +3379,6 @@ public class SalaryDraft extends ResizeComposite
 	private <I extends Item> void dumpItem(I item, int row, String iconStyleName, ItemChangeHandler<TextBox, I> handler,
 			boolean isDeduction, Widget labelWidget, Button expandButton, boolean isEditable) {
 
-		handler.setRow(row);
-
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
 		editButton.setTabIndex(Short.MAX_VALUE);
@@ -3579,7 +3586,6 @@ public class SalaryDraft extends ResizeComposite
 			panel.add(expandButton);
 			paymentsTable.setWidget(row, 0, panel);
 			DeductionChangeHandler<TextBox> handler = new DeductionChangeHandler<TextBox>((Deduction) deduction);
-			handler.setRow(row);
 			handler.setExpandButton(expandButton);
 		} else {
 			paymentsTable.setWidget(row, 0, iconLabel);
@@ -4153,25 +4159,30 @@ public class SalaryDraft extends ResizeComposite
 		ItemComparator comparator = new ItemComparator();
 
 		int idx = 0;
-		for (; idx < payments.size(); idx++)
-			if (comparator.compare(payments.get(idx), payment) > 0)
+		int row = 0;
+		for (; idx < payments.size(); idx++) {
+			Payment  p = payments.get(idx);
+			if (comparator.compare(p, payment) > 0)
 				break;
-
+			row += ( p instanceof CompositePayment ) ? 1 + ((CompositePayment)p).getChilds().size():1;
+		}
+		
+		
 		payments.add(idx, payment);
 
-		idx += 1; // We add one due to header
+		row += 1; // We add one due to header
 
-		paymentsTable.insertRow(idx);
+		paymentsTable.insertRow(row);
 		PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(payment);
-		dumpPayment(payment, idx, iconStyleName, handler);
+		dumpPayment(payment, row, iconStyleName, handler);
 		paymentChangeHandlers.add(handler);
 
 		CellFormatter fomatter = paymentsTable.getCellFormatter();
-		for (int col = 0; col < paymentsTable.getCellCount(idx); col++) {
-			fomatter.addStyleName(idx, col, textStyleName);
+		for (int col = 0; col < paymentsTable.getCellCount(row); col++) {
+			fomatter.addStyleName(row, col, textStyleName);
 		}
 
-		return paymentsTable.getRowFormatter().getElement(idx);
+		return paymentsTable.getRowFormatter().getElement(row);
 
 	}
 
