@@ -398,7 +398,7 @@ public class Model115 extends MainEntryPoint {
 		if (currentMod115.isComplementaryDeclarationAvailable()) {
 			complementaryLabel.setText(AON.MSG.complementary());
 			complementaryLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			complementaryLabel.addStyleName(currentMod115.isReplacement()
+			complementaryLabel.addStyleName(currentMod115.isComplementary()
 					?AON.AON_CSS.aonIconChecked()
 					:AON.AON_CSS.aonIconCheck()
 				);
@@ -646,8 +646,8 @@ public class Model115 extends MainEntryPoint {
 	}		
 		
 	private void showNewDeclarationPopup() {
-		NewDeclarationPopup<Mod115> newDialog = new NewDeclarationPopup<Mod115>(currentMod115
-				, new INewDeclarationCallback() {
+		NewDeclarationPopup<Mod115> newDialog = new NewDeclarationPopup<Mod115>(
+			new INewDeclarationCallback<Mod115>() {
 
 					@Override
 					public void onAccept() {
@@ -671,6 +671,11 @@ public class Model115 extends MainEntryPoint {
 					@Override
 					public void onCancel() {
 						cancel();
+					}
+
+					@Override
+					public Mod115 getFiscalModel() {
+						return currentMod115;
 					}
 				}
 			); 

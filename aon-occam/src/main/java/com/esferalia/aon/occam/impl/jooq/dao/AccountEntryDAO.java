@@ -4,6 +4,8 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.Iae.IAE;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -40,8 +42,10 @@ import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailProperties;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryProperties;
+import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
+import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountEntryValidation;
 import com.esferalia.aon.watson.AonError;
@@ -429,6 +433,52 @@ public class AccountEntryDAO {
 			map.put(account, new AccountBalance(type,debit,credit));	
 		}
 	}
+	
+	public static Stream<AccountingBreakdown> getAccountingBreakdown(AONContext ctx, AccountEntryDetailFilter filter) {
+		return ctx.getDslContext().select(
+				ACCOUNT_ENTRY.ENTRY_DATE
+				,IAE.EPIGRAPH
+				,IAE.SECTION
+				,IAE.EPIGRAPH
+				,ENTERPRISE_ACTIVITY.RETENTION_REGIME
+				,ACCOUNT_ENTRY_DETAIL.ACCOUNT
+				,ACCOUNT.CODE
+				,ACCOUNT.DESCRIPTION
+				,ACCOUNT_ENTRY_DETAIL.CONCEPT
+				,ACCOUNT_ENTRY_DETAIL.DEBIT
+				,ACCOUNT_ENTRY_DETAIL.CREDIT
+				)
+			.from(ACCOUNT_ENTRY)
+			.join(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.equal(ACCOUNT_ENTRY.ID))
+			.join(ACCOUNT).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(ACCOUNT.ID))
+			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(ACCOUNT_ENTRY.ACTIVITY))
+			.leftOuterJoin(IAE).on(ENTERPRISE_ACTIVITY.IAE.equal(IAE.ID))
+			.where(ACCOUNT_ENTRY_DETAIL_PROPERTIES.getConditions(filter))
+			.fetch()
+			.stream()
+			.map(new AccountingBreakdownFiller());
+	}
+	
+
+	private static class AccountingBreakdownFiller  implements Function<Record,AccountingBreakdown> {
+		@Override
+		public AccountingBreakdown apply(Record record) {
+			return new AccountingBreakdown()
+			.setIssueDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+			.setEpigraph(record.getValue(IAE.EPIGRAPH))
+			.setEpigraphSection(record.getValue(IAE.SECTION))
+			.setRegime( IRPFRegime.safeValueOf(record.getValue(ENTERPRISE_ACTIVITY.RETENTION_REGIME)))
+			.setAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+			.setAccountCode(record.getValue(ACCOUNT.CODE))
+			.setAccountDescription(record.getValue(ACCOUNT.DESCRIPTION))
+			.setConcept(record.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT))
+			.setDebit(record.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT))
+			.setCredit(record.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT))
+			;
+		}
+
+			
+	}
 
 	private static class FullAccountEntryFiller  implements Function<Record,AccountEntry> {
 		@Override
@@ -536,6 +586,16 @@ public class AccountEntryDAO {
 		@Override
 		public Property<Integer> getAccountProperty() {
 			return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY_DETAIL.ACCOUNT);
+		}
+
+		@Override
+		public Property<String> getAccountCodeProperty() {
+			return new FilterDAO.PropertyDAO<String>(ACCOUNT.CODE);
+		}
+		
+		@Override
+		public Property<String> getAccountDescriptionProperty() {
+			return new FilterDAO.PropertyDAO<String>(ACCOUNT.DESCRIPTION);
 		}
 
 		@Override

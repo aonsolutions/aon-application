@@ -112,7 +112,7 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 
 	}
 
-	private void printModelInfo() {
+	protected void printModelInfo() {
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 
@@ -276,8 +276,13 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 
 		}
 	}
+
+	protected String getDeclarationType() {
+		return (model.getDeclarationType()!=null
+				?model.getDeclarationType().getDescription()
+				:AonStringUtils.EMPTY);
+	}
 	
 	protected abstract String getTitle();
-	protected abstract String getDeclarationType();
 	protected abstract void fillParticularityCell(Cell cell ,CellStyle style,K key);
 }

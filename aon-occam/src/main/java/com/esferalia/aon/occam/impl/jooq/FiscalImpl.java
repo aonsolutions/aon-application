@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -27,11 +28,13 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
+import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod111DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod115DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod123DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod130DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod184DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod190DAO;
@@ -464,6 +467,67 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public String getMod123Info(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod123DAO.getMod123Info(ctx,mod123,script,infoKey);
+	}
+
+	// ----------------------------------------------------------- [MODELO 130]
+	@Override
+	public Mod130 getMod130(AONContext ctx, int id) {
+		return Mod130DAO.getMod130(ctx, id);
+	}
+	@Override
+	public LinkedList<Mod130> getMod130s(AONContext ctx, int domain) {
+		LinkedList<Mod130> list = new LinkedList<Mod130>();
+		Mod130DAO.getMod130s(ctx, domain)
+			.forEach(list::add);
+		return list;
+	}
+	@Override
+	public Mod130 calculateMod130(AONContext ctx, Mod130 mod130) {
+		return Mod130DAO.calculateMod130(ctx, mod130);
+	}
+	@Override
+	public Mod130 saveMod130(AONContext ctx, Mod130 mod130) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod130DAO.saveMod130(ctx, mod130));		
+	}
+	@Override
+	public Mod130 saveCommentsMod130(AONContext ctx, Mod130 mod130) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod130DAO.saveCommentsMod130(ctx, mod130));		
+	}
+	@Override
+	public Mod130 initializeForFinishMod130(AONContext ctx, Mod130 mod130){
+		return Mod130DAO.initializeForFinish(ctx, mod130);
+	}
+	@Override
+	public Mod130 finishMod130(AONContext ctx, Mod130 mod130){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod130DAO.finish(ctx, mod130));		
+	}
+	@Override
+	public Mod130 reopenMod130(AONContext ctx, Mod130 mod130){
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod130DAO.reopen(ctx, mod130));		
+	}
+	
+	@Override
+	public void deleteMod130(AONContext ctx, Mod130 mod130) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod130DAO.delete(ctx, mod130));
+	}
+
+	@Override
+	public Mod130 initializeMod130(AONContext ctx, Mod130 mod130) {
+		return Mod130DAO.initializeMod130(ctx,mod130);
+	}
+
+	@Override
+	public Mod130 createMod130(AONContext ctx, Mod130 mod130) {
+		return Mod130DAO.createMod130(ctx,mod130);
+	}
+	@Override
+	public String getMod130Info(AONContext ctx, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey) {
+		return Mod130DAO.getMod130Info(ctx,mod130,script,infoKey);
 	}
 
 	// ----------------------------------------------------------- [MODELO 202]

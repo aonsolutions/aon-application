@@ -25,5 +25,14 @@ public enum IRPFRegime implements Serializable {
 	public byte value() {
 		return (byte) ordinal();
 	}	
+	public static IRPFRegime safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static IRPFRegime safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i > IRPFRegime.values().length) return null;
+		return IRPFRegime.values()[i];
+	}
 
 }

@@ -10,6 +10,7 @@ public enum FiscalModelKeyInfo implements Serializable {
 	, SALARY_IN_KIND(true,  "Ver desglose de retenciones en especie en n\u00F3minas")
 	, DIFF_SALARY	(true,  "Detalle del c\u00E1lculo por diferencia. N\u00F3minas - declarado")
 	, COMPUTE		(false, "Ver desglose de c\u00E1lculos")
+	, COMPUTE_KEY	(false, "Ver desglose de c\u00E1lculos")
 	, TITLE 		(false, "Título")
 	;
 	

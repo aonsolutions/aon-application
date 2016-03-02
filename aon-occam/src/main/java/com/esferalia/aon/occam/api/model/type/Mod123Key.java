@@ -71,6 +71,7 @@ public enum Mod123Key implements IFiscalModelKey {
 	public String getValue() {
 		return value;
 	}
+    @Override
 	public int getBox() {
 		return box;
 	}

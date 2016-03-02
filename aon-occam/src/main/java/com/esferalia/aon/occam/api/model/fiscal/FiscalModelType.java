@@ -74,5 +74,11 @@ public enum FiscalModelType implements Serializable{
 		return name;
 	}
 	
+	public boolean isMonthly(Administration admon) {
+		if (this == M130) {
+			return false;
+		}
+		return true;
+	}
 	
 }

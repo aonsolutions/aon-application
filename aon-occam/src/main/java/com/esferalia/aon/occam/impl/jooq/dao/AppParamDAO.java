@@ -12,6 +12,8 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.IRPFRegime;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AppParamDAO {
@@ -130,6 +132,18 @@ public class AppParamDAO {
 			params.setName(company.getName());
 		}
 		return params;
+	}
+	
+	public static IRPFRegime getDefaultIRPFRegime(AONContext ctx) {
+		ApplicationParameter ap  = AppParamDAO.fetchOne(ctx, AppParam.FS_TAX_REGIME);
+		if (ap == null || AonStringUtils.isBlank(ap.getValue())) return null;
+		int i = AonNumberUtils.toInteger( ap.getValue() );
+		return IRPFRegime.safeValueOf(i);
+	}
+	public static boolean isPermAddressChanges(AONContext ctx) {
+		ApplicationParameter ap  = AppParamDAO.fetchOne(ctx, AppParam.FS_PERM_ADDRESS_CHANGES);
+		if (ap == null || AonStringUtils.isBlank(ap.getValue())) return false;
+		return (AonNumberUtils.toInteger( ap.getValue() )==1);
 	}
 
 }

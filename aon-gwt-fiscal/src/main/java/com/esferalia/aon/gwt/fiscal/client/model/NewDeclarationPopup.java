@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -15,174 +16,213 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	
-	public static interface INewDeclarationCallback {
-	  void onAccept();
-	  void onCancel();
+	final protected FlexTable tab = new FlexTable();
+	final protected AdministrationListBox admonList = new AdministrationListBox();
+	final protected IntegerBox yearBox = new IntegerBox();	
+	final protected InlineLabel previousLabel = new InlineLabel();
+	final protected TextBox previous = new TextBox();
+	final protected CheckBox replacement = new CheckBox();
+	final protected CheckBox complementary = new CheckBox();
+		
+	protected int row = 0;
+	protected INewDeclarationCallback<T> callback;
+
+	public static interface INewDeclarationCallback<T> {
+		T getFiscalModel();
+		void onAccept();
+		void onCancel();
 	}
 	
-	public NewDeclarationPopup(final T fm, final INewDeclarationCallback callback) {
+	public NewDeclarationPopup(final INewDeclarationCallback<T> callback) {
+		this.callback = callback;
 		setCaption(AON.MSG.newDeclaration());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
+		
+		FlowPanel rootPanel = new FlowPanel(); 
+		initializeTable(tab);
+		paintAdministration();
+		paintYear();
+		paintPeriod();
+		paintVariablePanel();
+		paintModelSpecificPanel();
+		rootPanel.add(tab);
+		rootPanel.add(getButtonsPanels());
+		add(rootPanel);
+	}
 
-		FlexTable tab = new FlexTable();
-		tab.setCellPadding(0);
-		tab.setCellSpacing(0);
-		tab.setStyleName(AON.AON_CSS.aonMarginTop());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
-		ColumnFormatter cf = tab.getColumnFormatter();
+	protected void paintModelSpecificPanel() {
+	}
+
+	private Widget getPreviousNumberPanel() {
+		FlowPanel prevPanel = new FlowPanel();
+		prevPanel.setStyleName(AON.AON_CSS.aonTextCenter());
+		prevPanel.addStyleName(AON.AON_CSS.aonMarginTop());
+		previousLabel.setText(AON.MSG.previousDeclaration());
+		previousLabel.setStyleName(AON.AON_CSS.aonMarginRight());
+		previousLabel.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
+		prevPanel.add(previousLabel);
+		previous.setStyleName(AON.AON_CSS.aonInputText());
+		previous.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
+		previous.setMaxLength(13);
+		previous.setVisibleLength(13);
+		previous.setValue(callback.getFiscalModel().getReplacedNumber());
+		previous.addChangeHandler( new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				callback.getFiscalModel().setReplacedNumber( previous.getValue() );
+			}
+		});
+		prevPanel.add(previous);
+		return prevPanel;
+	}
+
+	protected void initializeTable(FlexTable table) {
+		table.setCellPadding(0);
+		table.setCellSpacing(0);
+		table.setStyleName(AON.AON_CSS.aonMarginTop());
+		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		table.addStyleName(AON.AON_CSS.aonPanelGrid());
+		ColumnFormatter cf = table.getColumnFormatter();
 		cf.setWidth(0, "130px");
 		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
 		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
 		cf.setWidth(1, "250px");
 		cf.addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
 		cf.addStyleName(0, AON.AON_CSS.aonPaddingRight() );
-		
-		FlexCellFormatter fmt = tab.getFlexCellFormatter();
-		final InlineLabel previousLabel = new InlineLabel(AON.MSG.previousDeclaration());
-		previousLabel.setStyleName(AON.AON_CSS.aonMarginRight());
-		previousLabel.setVisible(fm.isReplacedNumberAvailable());
-		final TextBox previous = new TextBox();
-		previous.setStyleName(AON.AON_CSS.aonInputText());
-		previous.setVisible(fm.isReplacedNumberAvailable());
-		
-		final CheckBox replacement = new CheckBox(AON.MSG.replacement());
-		final CheckBox complementary = new CheckBox(AON.MSG.complementary());
-		replacement.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				fm.setReplacement(replacement.getValue());
-				complementary.setEnabled(!replacement.getValue());
-				previousLabel.setVisible(fm.isReplacedNumberAvailable());
-				previous.setVisible(fm.isReplacedNumberAvailable());
-				if (replacement.getValue()) {
-					complementary.setValue(false);
-				}
-			}
-		});
-		replacement.setVisible(fm.isReplacementDeclarationAvailable());
-		
-		complementary.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				fm.setComplementary(complementary.getValue());
-				replacement.setEnabled(!complementary.getValue());
-				previousLabel.setVisible(fm.isReplacedNumberAvailable());
-				previous.setVisible(fm.isReplacedNumberAvailable());
-				if (complementary.getValue()) {
-					replacement.setValue(false);
-				}
-			}
-		});
-		complementary.setVisible(fm.isComplementaryDeclarationAvailable());
-		
-		int row = 0;
-		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+	}
+
+	protected void paintAdministration() {
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
-		fmt.addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		final AdministrationListBox admonList = new AdministrationListBox();
-		admonList.setSelectedIndex( fm.getAdministration().ordinal());
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		admonList.setSelectedIndex( callback.getFiscalModel().getAdministration().ordinal());
 		admonList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				fm.setAdministration( admonList.getValue() );
-				replacement.setVisible(fm.isReplacementDeclarationAvailable());
-				complementary.setVisible(fm.isComplementaryDeclarationAvailable());
-				previousLabel.setVisible(fm.isReplacedNumberAvailable());
-				previous.setVisible(fm.isReplacedNumberAvailable());
+				callback.getFiscalModel().setAdministration( admonList.getValue() );
+				replacement.setVisible(callback.getFiscalModel().isReplacementDeclarationAvailable());
+				complementary.setVisible(callback.getFiscalModel().isComplementaryDeclarationAvailable());
+				previousLabel.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
+				previous.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
 			}
 		});
 		tab.setWidget(row, 1, admonList);
 		row++;
-		
-		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+	}
+
+	private void paintYear() {
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.year()));
-		fmt.addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		final IntegerBox yearBox = new IntegerBox();
-		yearBox.setValue(fm.getYear());
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		yearBox.setValue(callback.getFiscalModel().getYear());
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
 		yearBox.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
-				fm.setYear(yearBox.getValue());
+				callback.getFiscalModel().setYear(yearBox.getValue());
 			}
 		});
 		tab.setWidget(row, 1,yearBox);
 		row++;
-		
-		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+	}
+
+	private void paintPeriod() {
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.period()));
-		fmt.addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		final PeriodListBox periodList = new PeriodListBox();
-		if (fm.getPeriod() != null) {
-			periodList.setSelectedIndex(fm.getPeriod().ordinal() + 1);
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		boolean months = callback.getFiscalModel().getModel().isMonthly(callback.getFiscalModel().getAdministration());
+		final PeriodListBox periodList = new PeriodListBox(months);
+		if (callback.getFiscalModel().getPeriod() != null) {
+			for (int i = 0; i < periodList.getItemCount(); i++) {
+				Integer value = AonNumberUtils.toInteger(periodList.getValue(i));
+				if (value != null && callback.getFiscalModel().getPeriod().ordinal() == value) {
+					periodList.setSelectedIndex(i);
+					break;
+				}
+			}
 		}
-		
 		periodList.addChangeHandler( new ChangeHandler() {
-			
 			@Override
 			public void onChange(ChangeEvent event) {
-				fm.setPeriod( periodList.getValue() );
+				callback.getFiscalModel().setPeriod( periodList.getValue() );
 			}
 		});
 		tab.setWidget(row, 1, periodList);
 		row++;
-		
-		FlowPanel endPanel = new FlowPanel();
-		fmt.setColSpan(row, 0, 2);
-		fmt.addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		tab.setWidget(row, 0, endPanel);
-		
+	}
+
+	private void paintVariablePanel() {
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		FlowPanel decPanel = new FlowPanel();
-		
+		decPanel.add(getComplementaryPanel());
+		decPanel.add(getReplacementPanel());
+		tab.setWidget(row, 0, decPanel);
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(row, 1, getPreviousNumberPanel());
+		row++;
+	}
+	
+	private FlowPanel getReplacementPanel() {
 		FlowPanel replPanel = new FlowPanel();
 		replPanel.setStyleName(AON.AON_CSS.aonTextCenter());
-		replPanel.add(replacement);
-		decPanel.add(replPanel);
-		
-		FlowPanel compPanel = new FlowPanel();
-		compPanel.setStyleName(AON.AON_CSS.aonTextCenter());
-		compPanel.addStyleName(AON.AON_CSS.aonMarginTop());
-		compPanel.add(complementary);
-		decPanel.add(compPanel);
-		
-		FlowPanel prevPanel = new FlowPanel();
-		prevPanel.setStyleName(AON.AON_CSS.aonTextCenter());
-		prevPanel.addStyleName(AON.AON_CSS.aonMarginTop());
-		prevPanel.add(previousLabel);
-		prevPanel.add(previous);
-		decPanel.add(prevPanel);
-		
-		previous.setMaxLength(13);
-		previous.setVisibleLength(13);
-		previous.setValue(fm.getReplacedNumber());
-		previous.addChangeHandler( new ChangeHandler() {
+		replacement.setText(AON.MSG.replacement());
+		replacement.addClickHandler(new ClickHandler() {
 			
 			@Override
-			public void onChange(ChangeEvent event) {
-				fm.setReplacedNumber( previous.getValue() );
+			public void onClick(ClickEvent event) {
+				callback.getFiscalModel().setReplacement(replacement.getValue());
+				complementary.setEnabled(!replacement.getValue());
+				previousLabel.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
+				previous.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
+				if (replacement.getValue()) {
+					complementary.setValue(false);
+				}
 			}
 		});
+		replacement.setVisible(callback.getFiscalModel().isReplacementDeclarationAvailable());
+		replPanel.add(replacement);
+		return replPanel;
+	}
 
-		endPanel.add(decPanel);
-		
-		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.setStyleName(AON.AON_CSS.aonPadding());
-		flowPanel.addStyleName(AON.AON_CSS.aonMarginTop());
-		flowPanel.addStyleName(AON.AON_CSS.aonTextCenter());
+	private Widget getComplementaryPanel() {
+		FlowPanel compPanel = new FlowPanel();
+		compPanel.setStyleName(AON.AON_CSS.aonTextCenter());
+		complementary.setText(AON.MSG.complementary());
+		complementary.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.getFiscalModel().setComplementary(complementary.getValue());
+				replacement.setEnabled(!complementary.getValue());
+				previousLabel.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
+				previous.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
+				if (complementary.getValue()) {
+					replacement.setValue(false);
+				}
+			}
+		});
+		complementary.setVisible(callback.getFiscalModel().isComplementaryDeclarationAvailable());
+		compPanel.add(complementary);
+		return compPanel;
+	}
+	
+	private Widget getButtonsPanels() {
+		FlowPanel buttonsPanel = new FlowPanel();
+		buttonsPanel.setStyleName(AON.AON_CSS.aonPadding());
+		buttonsPanel.addStyleName(AON.AON_CSS.aonMarginTop());
+		buttonsPanel.addStyleName(AON.AON_CSS.aonTextCenter());
 		Button acceptButton = new Button();
 		acceptButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
 		acceptButton.setText( AON.MSG.accept());
@@ -195,7 +235,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 				callback.onAccept();
 			}
 		});
-		flowPanel.add(acceptButton);
+		buttonsPanel.add(acceptButton);
 		Button cancelButton = new Button();
     	cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
     	cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());
@@ -209,10 +249,8 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 			}
 			
 		});
-		flowPanel.add(cancelButton);
-		endPanel.add(flowPanel);
-		
-		add(tab);
+		buttonsPanel.add(cancelButton);
+		return buttonsPanel;
 	}
-
+	
 }

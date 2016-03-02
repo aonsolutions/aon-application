@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -34,6 +35,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
+import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -143,6 +145,20 @@ public interface FiscalService extends RemoteService {
 	Mod123 initializeMod123(String domainName, int domain, Mod123 mod123);
 	Mod123 createMod123(String domainName, int domain, Mod123 mod123) throws AonCoreException;
 	String getInfo(String domainName, int domain, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
+
+	// ---------------------------------------------------------------MODELO 130
+	Mod130 getMod130(String domainName, int domain, int id) throws AonCoreException;
+	LinkedList<Mod130> getMod130s(String domainName, int domain) throws AonCoreException;
+	Mod130 calculateMod130(String domainName, Mod130 mod130) throws AonCoreException;
+	Mod130 saveMod130(String domainName, Mod130 mod130) throws AonCoreException;
+	Mod130 saveCommentsMod130(String domainName, Mod130 mod130) throws AonCoreException;
+	Mod130 initializeForFinishMod130(String domainName, Mod130 mod130) throws AonCoreException;
+	Mod130 finishMod130(String domainName, Mod130 mod130) throws AonCoreException;
+	Mod130 reopenMod130(String domainName, Mod130 mod130) throws AonCoreException;
+	void deleteMod130(String domainName, Mod130 mod130) throws AonCoreException;
+	Mod130 initializeMod130(String domainName, int domain, Mod130 mod130);
+	Mod130 createMod130(String domainName, int domain, Mod130 mod130) throws AonCoreException;
+	String getInfo(String domainName, int domain, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 
 	// ---------------------------------------------------------------MODELO 202
 	Mod202 getMod202(String domainName, int domain, int id) throws AonCoreException;

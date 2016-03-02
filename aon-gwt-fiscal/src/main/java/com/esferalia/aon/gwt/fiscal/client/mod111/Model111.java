@@ -664,8 +664,8 @@ public class Model111 extends MainEntryPoint {
 	}		
 		
 	private void showNewDeclarationPopup() {
-		NewDeclarationPopup<Mod111> newDialog = new NewDeclarationPopup<Mod111>(currentMod111
-				, new INewDeclarationCallback() {
+		NewDeclarationPopup<Mod111> newDialog = new NewDeclarationPopup<Mod111>(
+				new INewDeclarationCallback<Mod111>() {
 
 					@Override
 					public void onAccept() {
@@ -689,6 +689,11 @@ public class Model111 extends MainEntryPoint {
 					@Override
 					public void onCancel() {
 						cancel();
+					}
+
+					@Override
+					public Mod111 getFiscalModel() {
+						return currentMod111;
 					}
 				}
 			); 

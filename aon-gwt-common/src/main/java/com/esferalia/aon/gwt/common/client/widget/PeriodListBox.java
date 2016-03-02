@@ -2,18 +2,23 @@ package com.esferalia.aon.gwt.common.client.widget;
 
 
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class PeriodListBox extends ListBox {
 
 	
 	public PeriodListBox() {
+		this(true);
+	}
+	public PeriodListBox(boolean monthPeriods) {
 		setWidth("90px");
 		this.addItem(" --- ", "");
 		for (Period p : Period.values()) {
-			if (p != Period.YEAR ) {
-				this.addItem( p.getDescription(), Integer.toString( p.ordinal() ) );
-			}
+			boolean insert = true;
+			if (p == Period.YEAR ) insert = false;
+			if (insert && !monthPeriods && p.isMonthPeriod()) insert = false;
+			if (insert) this.addItem( p.getDescription(), Integer.toString( p.ordinal() ) );	
 		}
 	}
 
@@ -27,6 +32,6 @@ public class PeriodListBox extends ListBox {
 	
 	public Period getValue() {
 		if (getSelectedIndex() == 0) return null;
-		return Period.values()[ getSelectedIndex() -1 ];
+		return Period.values()[ AonNumberUtils.toInteger( getSelectedValue() ) ];
 	}
 }

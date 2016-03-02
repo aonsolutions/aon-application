@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -36,6 +37,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
+import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
@@ -643,6 +645,103 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		
 	}
 
+	// ---------------------------------------------------------------MODELO 130
+
+	@Override
+	public void getMod130(String domainName, int domain, int id,
+			AsyncCallback<Mod130> callback) {
+		AON.start();
+		fsa.getMod130(domainName, domain, id, new AsyncCallbackWrapper<Mod130>(
+				callback));
+	}
+
+	@Override
+	public void getMod130s(String domainName, int domain,
+			AsyncCallback<LinkedList<Mod130>> callback) {
+		AON.start();
+		fsa.getMod130s(domainName, domain,
+				new AsyncCallbackWrapper<LinkedList<Mod130>>(callback));
+	}
+
+	@Override
+	public void calculateMod130(String domainName, Mod130 mod130,
+			AsyncCallback<Mod130> callback) {
+		AON.start();
+		fsa.calculateMod130(domainName, mod130,
+				new AsyncCallbackWrapper<Mod130>(callback));
+	}
+
+	@Override
+	public void saveMod130(String domainName, Mod130 mod130,
+			AsyncCallback<Mod130> callback) {
+		AON.start();
+		fsa.saveMod130(domainName, mod130, new AsyncCallbackWrapper<Mod130>(
+				callback));
+	}
+	
+	@Override
+	public void saveCommentsMod130(String domainName, Mod130 mod130,
+			AsyncCallback<Mod130> callback) {
+		AON.start();
+		fsa.saveCommentsMod130(domainName, mod130, new AsyncCallbackWrapper<Mod130>(
+				callback));
+	}
+
+	@Override
+	public void initializeForFinishMod130(String domainName, Mod130 mod130,
+			AsyncCallback<Mod130> callback) {
+		AON.start();
+		fsa.initializeForFinishMod130(domainName, mod130, new AsyncCallbackWrapper<Mod130>(
+				callback));
+	}
+	
+	@Override
+	public void finishMod130(String domainName, Mod130 mod130,
+			AsyncCallback<Mod130> callback) {
+		AON.start();
+		fsa.finishMod130(domainName, mod130, new AsyncCallbackWrapper<Mod130>(
+				callback));
+	}
+	
+	@Override
+	public void reopenMod130(String domainName, Mod130 mod130,
+			AsyncCallback<Mod130> callback) {
+		AON.start();
+		fsa.reopenMod130(domainName, mod130, new AsyncCallbackWrapper<Mod130>(
+				callback));
+	}
+
+	@Override
+	public void initializeMod130(String domainName, int currentDomain,
+			Mod130 mod130, AsyncCallback<Mod130> callback) {
+		AON.start();
+		fsa.initializeMod130(domainName, currentDomain,mod130,new AsyncCallbackWrapper<Mod130>(callback));
+
+	}
+
+	@Override
+	public void createMod130(String domainName, int currentDomain,
+			Mod130 mod130, AsyncCallback<Mod130> callback) {
+		AON.start();
+		fsa.createMod130(domainName, currentDomain, mod130,new AsyncCallbackWrapper<Mod130>(callback));
+
+	}
+
+	@Override
+	public void deleteMod130(String domainName, Mod130 mod130,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.deleteMod130(domainName, mod130, new AsyncCallbackWrapper<Void>(
+				callback));
+	}
+	@Override
+	public void getInfo(String domainName, int domain, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey,
+			AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getInfo(domainName, domain, mod130, script, infoKey,new AsyncCallbackWrapper<String>(callback));
+		
+	}
+	
 	// ---------------------------------------------------------------MODELO 202
 
 	@Override

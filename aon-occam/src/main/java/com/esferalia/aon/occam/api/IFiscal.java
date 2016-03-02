@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -25,6 +26,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
+import com.esferalia.aon.occam.api.model.type.Mod130Key;
 
 public interface IFiscal {
 	// 			        FISCAL PANEL
@@ -124,6 +126,20 @@ public interface IFiscal {
 	public void deleteMod123(AONContext ctx, Mod123 mod123);
 	public String getMod123Info(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey);
 
+	// 				   		  MOD130
+	public Mod130 getMod130(AONContext ctx, int id);
+	public LinkedList<Mod130> getMod130s(AONContext ctx, int domain);
+	public Mod130 calculateMod130(AONContext ctx, Mod130 mod130);
+	public Mod130 saveMod130(AONContext ctx, Mod130 mod130);
+	public Mod130 saveCommentsMod130(AONContext ctx, Mod130 mod130);
+	public Mod130 initializeForFinishMod130(AONContext ctx, Mod130 mod130);
+	public Mod130 finishMod130(AONContext ctx, Mod130 mod130);
+	public Mod130 reopenMod130(AONContext ctx, Mod130 mod130);
+	public Mod130 initializeMod130(AONContext ctx, Mod130 mod130);
+	public Mod130 createMod130(AONContext ctx, Mod130 mod130);
+	public void deleteMod130(AONContext ctx, Mod130 mod130);
+	public String getMod130Info(AONContext ctx, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey);
+	
 	// 				   		  MOD202
 	public Mod202 getMod202(AONContext ctx, int id);
 	public LinkedList<Mod202> getMod202s(AONContext ctx, int domain);

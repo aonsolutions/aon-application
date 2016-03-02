@@ -6,7 +6,6 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.ActivityGroup;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
@@ -49,15 +48,6 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Meses")
 	String months();
-
-	@DefaultMessage("----------")
-	@AlternateMessage({
-		 "ALAVA", "Araba/Alava"
-		,"BIZKAIA", "Bizkaia"
-		,"GIPUZKOA", "Gipuzkoa"
-		, "NAVARRA", "Navarra"
-		, "COMMON_TERRITORY", "Territorio Com\u00FAn"})
-	String administrationName(@Select Administration administration);
 
 	/**
 	 * @param province
@@ -880,6 +870,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Anualidades por alimentos")
 	String foodAnnuality();
+	
+	@DefaultMessage("Realiza pagos por pr\u00E9stamos destinados a la adquisici\u00F3n o rehabilitaci\u00F3n de su vivienda habitual.")
+	String regularHomePayments(); 
 
 	@DefaultMessage("Comunicaci\u00F3n pr\u00E9stamos vivienda habitual")
 	String homeLoanCommunnication();

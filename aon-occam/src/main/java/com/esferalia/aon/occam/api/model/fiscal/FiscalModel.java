@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalModel implements IFiscalModel, HasAudit {
@@ -424,6 +425,10 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 
 	public void putAmount(IFiscalModelKey key, double amount) {
 		putAmount(key.getValue(), amount);
+	}
+	public void addAmount(IFiscalModelKey key, double amount) {
+		FiscalModelDetail detail = ensureDetail(key);
+		putAmount(key.getValue(), AonMathUtils.round(detail.getAmount() + amount));
 	}
 
 	public void putAmount(String key, double amount) {
