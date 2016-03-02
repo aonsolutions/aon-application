@@ -24,6 +24,8 @@ import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelTable;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
 import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup.INewDeclarationCallback;
+import com.esferalia.aon.gwt.viewer.client.Viewer;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -778,6 +780,7 @@ public class Model115 extends MainEntryPoint {
 					
 					@Override
 					public void onAccept() {
+						//showViewer();
 						submitForm(MODEL115_PRINT);
 					}
 	
@@ -787,9 +790,9 @@ public class Model115 extends MainEntryPoint {
 					}
 				});
 		} else {
+			//showViewer();
 			submitForm(MODEL115_PRINT);
-		}
-			
+		}	
 	}
 
 	@UiHandler("printPDFButton")
@@ -942,4 +945,16 @@ public class Model115 extends MainEntryPoint {
 		finalizeDialog.show();
 	}
 	
+	private void showViewer(){
+		fiscalService.getMod115Attach(getCurrentDomainName(), currentMod115, new AsyncCallback<Attach>() {
+			
+			@Override public void onSuccess(Attach result) {
+				Viewer.getViewer(result);
+			}
+			
+			@Override public void onFailure(Throwable caught) {
+				showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+			}
+		});
+	}
 }

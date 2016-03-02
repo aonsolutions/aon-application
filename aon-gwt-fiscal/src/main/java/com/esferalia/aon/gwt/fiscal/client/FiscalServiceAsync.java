@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelMatrix;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -224,5 +225,10 @@ public interface FiscalServiceAsync {
 	void getAccountBalance(String domainName, int domain, 
 			AccountStatementParams params,
 			AsyncCallback<LinkedList<AccountStatement>> callback);
+
+	
+	void getMod111Attach(String domainName, Mod111 mod111, AsyncCallback<Attach> callback);
+	void getMod115Attach(String domainName, Mod115 mod115, AsyncCallback<Attach> callback);
+	void getMod123Attach(String domainName, Mod123 mod123, AsyncCallback<Attach> callback);
 
 }
