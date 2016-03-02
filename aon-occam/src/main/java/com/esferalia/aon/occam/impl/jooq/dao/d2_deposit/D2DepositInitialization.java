@@ -27,7 +27,8 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112200.toString(), "sdb({30,31,32,33,34,35,36,407})-sab({39})");
 	
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112380.toString(), "sdb({430,431,432,433,434,435,436})-sab({437,490,493})");		
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112381.toString(), "0.0");	// TODO NECA 6.ª 8 (abreviado)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112381.toString(), "sdb({430,431,432,435,436})-sab({437,490,4935})");
+			//***** la formula la he cogido de Mod2002014Initialization *****//"0.0");	// TODO NECA 6.ª 8 (abreviado)
 																						// TODO NECA 5.ª 5 (pymes)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112382.toString(), "0.0");	// TODO NECA 6.ª 8 (abreviado)
 																						// TODO NECA 5.ª 5 (pymes)

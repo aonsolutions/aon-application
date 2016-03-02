@@ -542,7 +542,6 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 				return AonStringUtils.isNotEmpty((String) key);
 			}
 		});
-		ctx.setExpressionMap(D2Compute.COMPUTE_MAP);
 		
 		for(String key : map.keySet()){
 			try {
@@ -554,10 +553,20 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 				// Ignore value
 			}
 		}
+		ctx.put("PYMES", map.get(D2DepositConstants.DEPOSIT_TYPE).equals("Pymes"));		
+		
+		ctx.setExpressionMap(D2Compute.COMPUTE_MAP_CURRENT);
+		map = calculate(map, ctx, D2Compute.COMPUTE_MAP_CURRENT);
+		
+		ctx.setExpressionMap(D2Compute.COMPUTE_MAP_PREVIOUS);
+		map = calculate(map, ctx, D2Compute.COMPUTE_MAP_PREVIOUS);
 
-		ctx.put("PYMES", map.get(D2DepositConstants.DEPOSIT_TYPE).equals("Pymes"));
-		for (String key : D2Compute.COMPUTE_MAP.keySet()) {
-			String expression = D2Compute.COMPUTE_MAP.get(key);
+		return map;
+	}
+	
+	public Map<String, String> calculate(Map<String, String> map, D2MVELContext ctx, Map<String, String> computeMap){
+		for (String key : computeMap.keySet()) {
+			String expression = computeMap.get(key);
 			Object ret = ctx.evaluateExpression(key,expression);
 			if (ret instanceof Double) {
 				Double calculated = (Double) ret;

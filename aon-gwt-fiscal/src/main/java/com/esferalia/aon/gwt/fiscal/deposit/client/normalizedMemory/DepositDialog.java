@@ -66,11 +66,11 @@ public abstract class DepositDialog extends CustomDialogB {
 		switch (type) {
 		case DIALOG_NEW: newDeposit(enterprise, ej, year);break;
 		case DIALOG_NEW2: newDeposit2();break;
-		case DIALOG_IMPORT: label.setText("Al importar un archivo se eliminarán todos los datos referentes a la memoria normalizada.");
+		case DIALOG_IMPORT: label.setText("Al importar un archivo se eliminar\u00e1n todos los datos referentes a la memoria normalizada.");
 							importar(enterprise, url);break;
 		case DIALOG_IMPORT_TEXT: importarTextos(mts);break;
 		case DIALOG_IMPORT_ALL: importAll(mts, enterprise, url,year); break;
-		case DIALOG_DELETE: label.setText("Esta seguro de eliminar el Deposito");break;
+		case DIALOG_DELETE: label.setText("Est\u00e1 seguro de eliminar el Deposito");break;
 		case DIALOG_EXPORT: exportar(exercises);break;
 		default:
 			break;

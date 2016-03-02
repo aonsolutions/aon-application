@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 
@@ -614,11 +615,13 @@ public class Utils {
 		c9000000.setValor("1");
 		keys.getClave().add(c9000000);
 		
-		/* INICIALIZAR LOS VALORES DE LAS CUENTAS ANUALES MEDIANTE SUS FORMULAS DE CÁLCULO. 
+		/* INICIALIZAR LOS VALORES DE LAS CUENTAS ANUALES MEDIANTE SUS FORMULAS DE CÁLCULO. */
 
 		AONContext ctx2 = null;
 		try {
 			ctx2 = AONContext.getAONContext( domain ,enterprise.getDomain());
+			
+			Map<String,String> computeMap = new HashMap<String, String>();
 			
 			//Valores de D2DepositHeaderKey
 			AccMiningMVELContext acc = initializeHeaderKey(ctx2, year, type);
@@ -630,6 +633,7 @@ public class Utils {
 					clave.setCodigo(BigInteger.valueOf(code));
 					clave.setValor(acc.get(value).toString());	
 					keys.getClave().add(clave);
+					computeMap.put(k.getCode(),acc.get(value).toString());
 				}
 			}
 			
@@ -643,13 +647,23 @@ public class Utils {
 					clave.setCodigo(BigInteger.valueOf(code));
 					clave.setValor(acc.get(value).toString());	
 					keys.getClave().add(clave);
+					computeMap.put(k.getCode(),acc2.get(value).toString());
 				}
 			}
+			
+			Map<String, String> c = compute(computeMap, type);
+			for (String key : c.keySet()) {
+				Clave clave = new Clave();
+				clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key)));
+				clave.setValor(c.get(key));
+				keys.getClave().add(clave);
+			}
+			
+			
 			
 		}finally{
 			if (ctx2 != null) ctx2.close();
 		}
-		*/
 		
 		schema.setClaves(keys);	
 		return schema;
@@ -725,13 +739,15 @@ public class Utils {
 		}
 		return mvlCtx;
 	}	
-	
-	
-	/*
-	public static AccMiningMVELContext compute(AccMiningMVELContext map) {
-		map.get(keyObject)
-		D2MVELContext ctx = new D2MVELContext(map, resolver)
-		ctx.setExpressionMap(D2Compute.COMPUTE_MAP);
+
+	public static Map<String, String> compute(Map<String, String> map, String type) {
+		D2MVELContext ctx = new D2MVELContext(map, new IAccMiningKeyAccept() {
+			@Override
+			public boolean acceptKey(Object key) {
+				return AonStringUtils.isNotEmpty((String) key);
+			}
+		});
+		ctx.setExpressionMap(D2Compute.COMPUTE_MAP_CURRENT);
 		
 		for(String key : map.keySet()){
 			try {
@@ -743,19 +759,19 @@ public class Utils {
 				// Ignore value
 			}
 		}
-
-		ctx.put("PYMES", map.get(D2DepositConstants.DEPOSIT_TYPE).equals("Pymes"));
-		for (String key : D2Compute.COMPUTE_MAP.keySet()) {
-			String expression = D2Compute.COMPUTE_MAP.get(key);
+		Map<String, String> m = new HashMap<String, String>();
+		ctx.put("PYMES", type.equals(PYMES));
+		for (String key : D2Compute.COMPUTE_MAP_CURRENT.keySet()) {
+			String expression = D2Compute.COMPUTE_MAP_CURRENT.get(key);
 			Object ret = ctx.evaluateExpression(key,expression);
 			if (ret instanceof Double) {
 				Double calculated = (Double) ret;
 				ctx.put("Q"+key, calculated);
 				
 				if(map.containsKey(key)) map.remove(key);
-				map.put(key, calculated.toString());
+				m.put(key, calculated.toString());
 			}
 		}
-		return map;
-	}*/
+		return m;
+	}
 }

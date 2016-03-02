@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Stack;
@@ -32,7 +33,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -54,7 +54,8 @@ public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 
 	private static final DepositBinder BINDER = GWT.create(DepositBinder.class);
 	
-	public static final int CURRENT_YEAR = 2016;
+	public static final int CURRENT_YEAR = 1900 + new Date().getYear();
+	
 	Enterprise enterprise;
 	
 	TreeNode<Enterprise> rootNode;
@@ -411,11 +412,7 @@ public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 		return widget;
 	}
 	
-	
 	public class NewContextMenu extends ContextMenu {
-		MenuItem d2014;
-		MenuItem d2015;
-		
 		public NewContextMenu() {	
 			addStyleName(AON.AON_CSS.aonSelector());
 		}
@@ -424,9 +421,61 @@ public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 			super.addItem(model.getValue(), text, cmd);
 		}
 		
-		public void addDeposit(Integer year){
-			if(year.equals(2014)) addNewDeposit2014();
-			if(year.equals(2015)) addNewDeposit2015();
+		public NewContextMenu addDeposit(final Integer year){
+			addItem("Nuevo Deposito "+year, new ScheduledCommand() {
+				@Override
+				public void execute() {
+					String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
+					PopupPanel popup =  new DepositDialog("Nuevo Deposito","new", enterprise,url,null, false, null, year){
+						
+						@Override
+						protected void onCancel() {
+							hide();
+						}
+						
+						@Override
+						protected void onAccept() {
+							final ListBox lb = (ListBox) flex_table.getWidget(0, 1);
+							 final TextBox tb = (TextBox) flex_table.getWidget(1, 1);
+							 ListBox lb3 = (ListBox) flex_table.getWidget(3, 1);
+							 final Integer year = Integer.parseInt(lb3.getSelectedItemText());
+							 hide();
+							 inma.isDigitalDeposit(enterprise.getDomain(), year, new AsyncCallback<Boolean>() {
+																
+								 @Override
+								 public void onSuccess(Boolean result) {
+									 if(result){
+										 DigitalDepositTreeNode ddtn = getDepositNode(year);
+										 ddtn.select(Deposit.this);
+									 } else{
+										 inma.createD2Deposit(enterprise.getDomain(),
+												 enterprise.getId(), tb.getValue(),
+												 lb.getSelectedItemText(),year,
+												 new AsyncCallback<Map<String, String>>() {
+											 @Override
+											 public void onFailure(Throwable caught) {
+												 
+											 }
+											 @Override
+											 public void onSuccess(Map<String, String> result) {
+												 DigitalDepositTreeNode ddtn = getDepositNode(year);
+												 tree.setSelectedItem(ddtn);
+												 removeDeposit(year);
+											 }
+										 });
+									 }									
+								 }
+								 								
+								 @Override public void onFailure(Throwable caught) {}
+							 });
+						}
+						};
+					popup.addStyleName("gwt-PopupPanel-template");
+					popup.setGlassEnabled(true);
+					popup.show();
+				}
+			});
+			return this; 
 		}
 
 		public void removeDeposit(Integer year){ 
@@ -447,130 +496,7 @@ public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 					});	
 				}
 			}
-		}
-		
-		protected NewContextMenu addNewDeposit2014() {
-			d2014 = addItem("Nuevo Deposito 2014", new ScheduledCommand() {
-				Integer year = 2014;
-				@Override
-				public void execute() {
-					String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
-					PopupPanel popup =  new DepositDialog("Nuevo Deposito","new", enterprise,url,null, false, null, year){
-						
-						@Override
-						protected void onCancel() {
-							hide();
-						}
-						
-						@Override
-						protected void onAccept() {
-							final ListBox lb = (ListBox) flex_table.getWidget(0, 1);
-							 final TextBox tb = (TextBox) flex_table.getWidget(1, 1);
-							 ListBox lb3 = (ListBox) flex_table.getWidget(3, 1);
-							 final Integer year = Integer.parseInt(lb3.getSelectedItemText());
-							 hide();
-							 inma.isDigitalDeposit(enterprise.getDomain(), year, new AsyncCallback<Boolean>() {
-																
-								 @Override
-								 public void onSuccess(Boolean result) {
-									 if(result){
-										 DigitalDepositTreeNode ddtn = getDepositNode(year);
-										 ddtn.select(Deposit.this);
-									 } else{
-										 inma.createD2Deposit(enterprise.getDomain(),
-												 enterprise.getId(), tb.getValue(),
-												 lb.getSelectedItemText(),year,
-												 new AsyncCallback<Map<String, String>>() {
-											 @Override
-											 public void onFailure(Throwable caught) {
-												 
-											 }
-											 @Override
-											 public void onSuccess(Map<String, String> result) {
-												 DigitalDepositTreeNode ddtn = getDepositNode(year);
-												 //ddtn.newFromFiscalTree(Deposit.this, new D2DepositTreeObject(enterprise, year), result);
-												 ddtn.select(Deposit.this);
-												 tree.setSelectedItem(ddtn);
-												 removeDeposit(year);
-											 }
-										 });
-									 }									
-								 }
-								 								
-								 @Override
-								 public void onFailure(Throwable caught) {}
-							 });
-						}
-						};
-					popup.addStyleName("gwt-PopupPanel-template");
-					popup.setGlassEnabled(true);
-					popup.show();
-				}
-			});
-			return this; 
-		}
-		
-		protected NewContextMenu addNewDeposit2015() {
-			d2015 = addItem("Nuevo Deposito 2015", new ScheduledCommand() {
-				Integer year = 2015;
-				@Override
-				public void execute() {
-					String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
-					PopupPanel popup =  new DepositDialog("Nuevo Deposito","new", enterprise,url,null, false, null, year){
-						
-						@Override
-						protected void onCancel() {
-							hide();
-						}
-						
-						@Override
-						protected void onAccept() {
-							final ListBox lb = (ListBox) flex_table.getWidget(0, 1);
-							 final TextBox tb = (TextBox) flex_table.getWidget(1, 1);
-							 ListBox lb3 = (ListBox) flex_table.getWidget(3, 1);
-							 final Integer year = Integer.parseInt(lb3.getSelectedItemText());
-							 hide();
-							 inma.isDigitalDeposit(enterprise.getDomain(), year, new AsyncCallback<Boolean>() {
-																
-								 @Override
-								 public void onSuccess(Boolean result) {
-									 if(result){
-										 DigitalDepositTreeNode ddtn = getDepositNode(year);
-										 ddtn.select(Deposit.this);
-									 } else{
-										 inma.createD2Deposit(enterprise.getDomain(),
-												 enterprise.getId(), tb.getValue(),
-												 lb.getSelectedItemText(),year,
-												 new AsyncCallback<Map<String, String>>() {
-											 @Override
-											 public void onFailure(Throwable caught) {
-												 
-											 }
-											 @Override
-											 public void onSuccess(Map<String, String> result) {
-												 DigitalDepositTreeNode ddtn = getDepositNode(year);
-												 //ddtn.newFromFiscalTree(Deposit.this, new D2DepositTreeObject(enterprise, year), result);
-												 ddtn.select(Deposit.this);
-												 tree.setSelectedItem(ddtn);
-												 removeDeposit(year);
-											 }
-										 });
-									 }									
-								 }
-								 								
-								 @Override
-								 public void onFailure(Throwable caught) {}
-							 });
-						}
-						};
-					popup.addStyleName("gwt-PopupPanel-template");
-					popup.setGlassEnabled(true);
-					popup.show();
-				}
-			});
-			return this; 
-		}
-
+		}	
 	}
 
 	@Override
