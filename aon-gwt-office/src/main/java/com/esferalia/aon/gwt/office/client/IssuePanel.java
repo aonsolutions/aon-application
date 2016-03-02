@@ -203,6 +203,7 @@ public class IssuePanel extends CustomDialog {
 	@UiHandler("registrySuggest")
 	void onRegistrySelectionValue(SelectionEvent<SuggestOracle.Suggestion> event) {
 		this.registry = event.getSelectedItem().getReplacementString();
+		this.rmediaSuggest.setText("");
 	}
 	
 	@UiHandler("rmediaSuggest")
