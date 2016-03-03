@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.office.client;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -8,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.office.shared.RegistrySuggestion;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -27,7 +25,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -112,14 +109,11 @@ public class IssuePanel extends CustomDialog {
 	// ----------------------------------------------------
 
 	public void setRegistries(List<Registry> registries) {
-		
-		Collection<Suggestion> sugges = new LinkedList<SuggestOracle.Suggestion>();
 	
 		this.registryList = registries;
 		this.registrySuggest.setEnabled(registries.size() > 0);
 		
-		for (Registry registry : registries) {
-			sugges.add(new RegistrySuggestion(registry));
+		for (Registry registry : registries) {			
 			StringBuilder sb = new StringBuilder();
 			if (registry.getName().trim().isEmpty() == false) {
 				sb.append(registry.getName());
