@@ -61,7 +61,7 @@ public class DeliveryDetailController extends LinesController implements IWareho
 		setLongDescription(true);
 
 		DeliveryDetail deliveryDetail = (DeliveryDetail)getTo();
-		if (StringUtils.equals(deliveryDetail.getItem().getProduct().getName().trim(), deliveryDetail.getDescription().trim())) {
+		if (StringUtils.equals(deliveryDetail.getItem().getFullName().trim(), deliveryDetail.getDescription().trim())) {
 			String longDescription = deliveryDetail.getItem().getDescription();
 			if (!StringUtils.isEmpty(longDescription)) {
 				deliveryDetail.setDescription(deliveryDetail.getDescription() + "\r\n" + longDescription);

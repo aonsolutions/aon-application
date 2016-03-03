@@ -2,6 +2,8 @@ package com.code.aon.sales.event;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
@@ -80,8 +82,8 @@ public class SalesDetailBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
 		SalesDetail detail = (SalesDetail)evt.getTo();
-		if (detail.getOfferDetail() != null && detail.getOfferDetail().getId() != null) {
-			updateRelatedOffer(detail.getOfferDetail());
+		if (!detail.isSkipOfferUpdate() && detail.getOfferDetail() != null && detail.getOfferDetail().getId() != null) {
+			updateRelatedOffer(detail, detail.getOfferDetail());
 		}
 
 		IManagerBean detailBean = BeanManager.getManagerBean(SalesDetail.class);
@@ -102,20 +104,39 @@ public class SalesDetailBeanListener extends ManagerBeanListenerAdapter {
 		}
 	}
 
-	private void updateRelatedOffer(OfferDetail offerDetail) throws ManagerBeanException {
-		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
-		offerDetail.setStatus(OfferDetailStatus.PENDING);
-		offerDetailBean.update(offerDetail);
-
+	private void updateRelatedOffer(SalesDetail salesDetail, OfferDetail offerDetail) throws ManagerBeanException {
+		IManagerBean detailBean = BeanManager.getManagerBean(SalesDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ID), offerDetail.getOffer().getId());
-		criteria.addNotNullExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_ID));
-		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_SALE);
-		if (offerDetailBean.getCount(criteria) == 0) {
-			IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
-			Offer offer = offerDetail.getOffer();
-			offer.setStatus(OfferStatus.PENDING);
-			offerBean.update(offer);
+		criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.SALES_DETAIL_OFFER_DETAIL_ID), offerDetail.getId());
+		if (detailBean.getCount(criteria) == 0) {
+			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+			offerDetail.setStatus(OfferDetailStatus.PENDING);
+			offerDetailBean.update(offerDetail);
+			
+			criteria = new Criteria();
+			criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ID), offerDetail.getOffer().getId());
+			criteria.addNotNullExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_ID));
+			criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_SALE);
+			if (offerDetailBean.getCount(criteria) == 0) {
+				IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
+				Offer offer = offerDetail.getOffer();
+				offer.setStatus(OfferStatus.PENDING);
+				offerBean.update(offer);
+			}
+		} else {
+			if (!StringUtils.isBlank(salesDetail.getItem().getSerialNumber())) {
+				criteria = new Criteria();
+				criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), salesDetail.getSales().getId());
+				criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.SALES_DETAIL_OFFER_DETAIL_ID), offerDetail.getId());
+				criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.SALES_DETAIL_ITEM_PRODUCT_ID), salesDetail.getItem().getProduct().getId());
+				criteria.addNullExpression(detailBean.getFieldName(IEntityAlias.SALES_DETAIL_ITEM_SERIAL_NUMBER));
+				for (ITransferObject ito : detailBean.getList(criteria)) {
+					SalesDetail wildCardDetail = (SalesDetail)ito;
+					wildCardDetail.setQuantity(wildCardDetail.getQuantity() + salesDetail.getQuantity());
+					detailBean.update(wildCardDetail);
+					break;
+				}
+			}
 		}
 	}
 

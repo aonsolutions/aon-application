@@ -73,7 +73,7 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		setLongDescription(true);
 
 		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
-		if (StringUtils.equals(invoiceDetail.getItem().getProduct().getName().trim(), invoiceDetail.getDescription().trim())) {
+		if (StringUtils.equals(invoiceDetail.getItem().getFullName().trim(), invoiceDetail.getDescription().trim())) {
 			String longDescription = invoiceDetail.getItem().getDescription();
 			if (!StringUtils.isEmpty(longDescription)) {
 				invoiceDetail.setDescription(invoiceDetail.getDescription() + "\r\n" + longDescription);

@@ -75,7 +75,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		setLongDescription(true);
 
 		SalesDetail salesDetail = (SalesDetail)getTo();
-		if (StringUtils.equals(salesDetail.getItem().getProduct().getName().trim(), salesDetail.getDescription().trim())) {
+		if (StringUtils.equals(salesDetail.getItem().getFullName().trim(), salesDetail.getDescription().trim())) {
 			String longDescription = salesDetail.getItem().getDescription();
 			if (!StringUtils.isEmpty(longDescription)) {
 				salesDetail.setDescription(salesDetail.getDescription() + "\r\n" + longDescription);
@@ -248,7 +248,8 @@ public class SalesDetailController extends LinesController implements ISalesCons
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				
-				assignSerialNumber(getSalesDetail());
+				SalesDetail salesDetail = (SalesDetail)HibernateUtil.getSession(sessionName).merge(getSalesDetail()); 
+				assignSerialNumber(salesDetail);
 				onSearch(event);
 				
 				HibernateUtil.commitTransaction(sessionName);
@@ -275,6 +276,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 			getManagerBean().restoreNullSubPOJOs(salesDetail);
 			getManagerBean().update(salesDetail);
 		} else {
+			salesDetail.setSkipOfferUpdate(true);
 			getManagerBean().remove(salesDetail);
 			--line;
 		}
@@ -285,7 +287,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 				newSalesDetail.setSales(salesDetail.getSales());
 				newSalesDetail.setLine(++line);
 				newSalesDetail.setItem(item);
-				newSalesDetail.setDescription(item.getFullName());
+				newSalesDetail.setDescription(salesDetail.getDescription() + " #" + item.getSerialNumber());
 				newSalesDetail.setQuantity(getSerializableQuantity());
 				newSalesDetail.setPrice(salesDetail.getPrice());
 				newSalesDetail.setDiscountExpression(salesDetail.getDiscountExpression());

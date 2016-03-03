@@ -102,7 +102,7 @@ public class FeeAssignmentController extends CustomerListController {
 	public void onLongDescription(ActionEvent event) {
 		setLongDescription(true);
 
-		if (StringUtils.equals(getFee().getItem().getProduct().getName().trim(), getFee().getDescription().trim())) {
+		if (StringUtils.equals(getFee().getItem().getFullName().trim(), getFee().getDescription().trim())) {
 			String longDescription = getFee().getItem().getDescription();
 			if (!StringUtils.isEmpty(longDescription)) {
 				getFee().setDescription(getFee().getDescription() + "\r\n" + longDescription);

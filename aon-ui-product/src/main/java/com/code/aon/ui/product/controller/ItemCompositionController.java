@@ -28,7 +28,7 @@ public class ItemCompositionController extends LinesController {
 		setLongDescription(true);
 
 		ItemComposition itemComposition = (ItemComposition)getTo();
-		if (StringUtils.equals(itemComposition.getCompositionItem().getProduct().getName().trim(), itemComposition.getDescription().trim())) {
+		if (StringUtils.equals(itemComposition.getCompositionItem().getFullName().trim(), itemComposition.getDescription().trim())) {
 			String longDescription = itemComposition.getCompositionItem().getDescription();
 			if (!StringUtils.isEmpty(longDescription)) {
 				itemComposition.setDescription(itemComposition.getDescription() + "\r\n" + longDescription);

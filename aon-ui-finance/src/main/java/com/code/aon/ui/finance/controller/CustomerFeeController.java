@@ -98,7 +98,7 @@ public class CustomerFeeController extends LinesController implements IFinanceCo
 		setLongDescription(true);
 
 		CustomerFee customerFee = (CustomerFee)getTo();
-		if (StringUtils.equals(customerFee.getItem().getProduct().getName().trim(), customerFee.getDescription().trim())) {
+		if (StringUtils.equals(customerFee.getItem().getFullName().trim(), customerFee.getDescription().trim())) {
 			String longDescription = customerFee.getItem().getDescription();
 			if (!StringUtils.isEmpty(longDescription)) {
 				customerFee.setDescription(customerFee.getDescription() + "\r\n" + longDescription);

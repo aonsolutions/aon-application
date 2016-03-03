@@ -45,7 +45,7 @@ public class IncomeDetailController extends LinesController implements IWarehous
 		setLongDescription(true);
 
 		IncomeDetail incomeDetail = (IncomeDetail)getTo();
-		if (StringUtils.equals(incomeDetail.getItem().getProduct().getName().trim(), incomeDetail.getDescription().trim())) {
+		if (StringUtils.equals(incomeDetail.getItem().getFullName().trim(), incomeDetail.getDescription().trim())) {
 			String longDescription = incomeDetail.getItem().getDescription();
 			if (!StringUtils.isEmpty(longDescription)) {
 				incomeDetail.setDescription(incomeDetail.getDescription() + "\r\n" + longDescription);

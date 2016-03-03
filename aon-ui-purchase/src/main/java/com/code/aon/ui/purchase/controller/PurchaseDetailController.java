@@ -82,7 +82,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		setLongDescription(true);
 
 		PurchaseDetail purchaseDetail = (PurchaseDetail)getTo();
-		if (StringUtils.equals(purchaseDetail.getItem().getProduct().getName().trim(), purchaseDetail.getDescription().trim())) {
+		if (StringUtils.equals(purchaseDetail.getItem().getFullName().trim(), purchaseDetail.getDescription().trim())) {
 			String longDescription = purchaseDetail.getItem().getDescription();
 			if (!StringUtils.isEmpty(longDescription)) {
 				purchaseDetail.setDescription(purchaseDetail.getDescription() + "\r\n" + longDescription);
@@ -326,7 +326,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 				newPurchaseDetail.setProject(purchaseDetail.getProject());
 				newPurchaseDetail.setLine(++line);
 				newPurchaseDetail.setItem(item);
-				newPurchaseDetail.setDescription(item.getFullName());
+				newPurchaseDetail.setDescription(purchaseDetail.getDescription() + " #" + item.getSerialNumber());
 				newPurchaseDetail.setQuantity(breakdown.getQuantity());
 				newPurchaseDetail.setPrice(purchaseDetail.getPrice());
 				newPurchaseDetail.setDiscountExpression(purchaseDetail.getDiscountExpression());

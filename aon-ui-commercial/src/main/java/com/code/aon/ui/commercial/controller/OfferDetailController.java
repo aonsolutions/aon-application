@@ -56,7 +56,7 @@ public class OfferDetailController extends LinesController implements ICommercia
 		setLongDescription(true);
 
 		OfferDetail offerDetail = (OfferDetail)getTo();
-		if (StringUtils.equals(offerDetail.getItem().getProduct().getName().trim(), offerDetail.getDescription().trim())) {
+		if (StringUtils.equals(offerDetail.getItem().getFullName().trim(), offerDetail.getDescription().trim())) {
 			String longDescription = offerDetail.getItem().getDescription();
 			if (!StringUtils.isEmpty(longDescription)) {
 				offerDetail.setDescription(offerDetail.getDescription() + "\r\n" + longDescription);

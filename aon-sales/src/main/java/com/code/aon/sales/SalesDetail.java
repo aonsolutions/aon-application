@@ -20,8 +20,13 @@ public class SalesDetail extends SalesDetailDB implements ICalculable, IAuditabl
 
     private double transfered;
     private boolean forcePendingQuantityCancel;
+	private boolean skipOfferUpdate;
 
-    public void setPrice(double price) {
+	public SalesDetail() {
+		setSkipOfferUpdate(false);
+	}
+
+	public void setPrice(double price) {
         super.setPrice(CommonUtil.round(price, 4));
     }
 
@@ -29,19 +34,29 @@ public class SalesDetail extends SalesDetailDB implements ICalculable, IAuditabl
 	public double getPendingQuantity() {
 		return CommonUtil.round(getQuantity() - getDelivered(), 3);
 	}
-	@Transient
+
+    @Transient
 	public double getTransfered() {
 		return transfered;
 	}
 	public void setTransfered(double transfered) {
 		this.transfered = transfered;
 	}
+
 	@Transient
 	public boolean isForcePendingQuantityCancel() {
 		return forcePendingQuantityCancel;
 	}
 	public void setForcePendingQuantityCancel(boolean forcePendingQuantityCancel) {
 		this.forcePendingQuantityCancel = forcePendingQuantityCancel;
+	}
+
+	@Transient
+	public boolean isSkipOfferUpdate() {
+		return skipOfferUpdate;
+	}
+	public void setSkipOfferUpdate(boolean skipOfferUpdate) {
+		this.skipOfferUpdate = skipOfferUpdate;
 	}
 
 	@Transient
