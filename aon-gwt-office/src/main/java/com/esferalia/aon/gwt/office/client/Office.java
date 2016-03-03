@@ -34,8 +34,12 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -58,7 +62,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
-		IssuePanel.Listener, IssueReadPanel.Listener, TagTree.Listener {
+		IssuePanel.Listener, IssueReadPanel.Listener, TagTree.Listener, ScrollHandler {
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
@@ -97,7 +101,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	StackLayoutPanel stackLayoutPanel;
 	@UiField
 	TagTree tagTree;
-
+	
+	/**
+	 *  The last scroll position
+	 */
+	private int lastScrollPos = 0;
+	private int incrementSize = 50;
+	
 	private User user;
 	private IssuePanel issuePanel;
 
@@ -136,9 +146,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.tagList = new LinkedList<DefaultAonTagIssueSelected>();
 		this.registries = new LinkedList<Registry>();
 		this.rmedias = new LinkedList<RegistryMedia>();
-
+	
 		this.dataGrid.addListener(this);
+		this.dataGrid.getScrollPanel().addScrollHandler(this);
 		this.tagTree.addListener(this);
+		
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
 
 		gitHub.getUser(String.valueOf(getCurrentDomain()),
@@ -293,6 +305,23 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	public void onSelectionChangeHandler(SelectionChangeEvent event) {
 
 	}
+	
+	@Override
+	public void onScroll(ScrollEvent event) {
+
+		int scrollPos = dataGrid.getScrollPanel().getVerticalScrollPosition();
+		if (lastScrollPos >= scrollPos) {
+			lastScrollPos = scrollPos;
+			return;
+		}
+		
+		lastScrollPos = scrollPos;
+		int maxScrollPos = dataGrid.getScrollPanel().getMaximumVerticalScrollPosition();
+		if ((lastScrollPos + (maxScrollPos / 10)) >= maxScrollPos) {
+			incrementSize += 50;
+			dataGrid.setVisibleRange(0, dataGrid.getVisibleRange().getLength() + incrementSize);
+		}
+	}
 
 	// ******************************************************************
 	// *************************** UI - HANDLERS ************************
@@ -325,7 +354,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("openIssuesRb")
 	void onSelectedOpenIssuesRb(ValueChangeEvent<Boolean> event) {
-
+		
 		if (event.getValue()) {
 			closedIssuesRb.removeStyleName(AON.AON_BOLD);
 			allIssuesRb.removeStyleName(AON.AON_BOLD);
@@ -336,7 +365,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("closedIssuesRb")
 	void onSelectedClosedIssuesRb(ValueChangeEvent<Boolean> event) {
-
+		
 		if (event.getValue()) {
 			openIssuesRb.removeStyleName(AON.AON_BOLD);
 			allIssuesRb.removeStyleName(AON.AON_BOLD);
@@ -347,7 +376,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("allIssuesRb")
 	void onSelectedAllIssuesRb(ValueChangeEvent<Boolean> event) {
-
+		
 		if (event.getValue()) {
 			openIssuesRb.removeStyleName(AON.AON_BOLD);
 			closedIssuesRb.removeStyleName(AON.AON_BOLD);
@@ -372,7 +401,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 		gitHub.setSinceCriteria(criteria);
 		evalRadioButtons();
-
 	}
 
 	// ******************************************************************

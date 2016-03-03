@@ -48,7 +48,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		void onSelectionChangeHandler(SelectionChangeEvent event);
 
 		void onSelectionTitle(IssueSelected issue);
-
 	}
 
 	public enum Columns {
@@ -172,7 +171,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		private Header<String> createdAtHeader = new TextHeader(
 				Columns.CREATED_AT.getColumnName());
 
-		public HeaderBuilder() {
+		public HeaderBuilder() {			
 			super(IssueGrid.this, false);
 			setSortIconStartOfLine(false);
 		}
@@ -351,8 +350,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 		selectionModel = new MultiSelectionModel<IssueSelected>();
 
-		setStyleName(AON.AON_CSS.aonGwtOfficeDataTable());
-
+		setStyleName(AON.AON_CSS.aonGwtOfficeDataTable());		
 		setAutoHeaderRefreshDisabled(false);
 		initializeSelectionModel();
 		setSkipRowHoverCheck(true);
@@ -531,5 +529,4 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		for (Listener listener : listeners)
 			listener.onSelectionTitle(issue);
 	}
-
 }

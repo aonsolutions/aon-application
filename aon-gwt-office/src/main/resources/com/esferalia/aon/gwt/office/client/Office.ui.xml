@@ -116,8 +116,7 @@
 					</g:north>
 					<g:center>
 						<g:HTMLPanel styleName="aon-scroll-area">
-							<g:SimpleLayoutPanel ui:field="resultsPanel"
-								height="100%">
+							<g:SimpleLayoutPanel height="100%">
 								<office:IssueGrid ui:field="dataGrid" />
 							</g:SimpleLayoutPanel>
 						</g:HTMLPanel>
