@@ -95,12 +95,12 @@ public class OperationReport implements Serializable {
 		return StringUtils.abbreviate(getAccount(), 60);
 	}
 	public Double getTotalBase(){
-		return taxes.stream().filter(o -> o.getBase()!=null).mapToDouble(OperationReportTax::getBase).sum();
+		return taxes==null?0.0:taxes.stream().filter(o -> o.getBase()!=null).mapToDouble(OperationReportTax::getBase).sum();
 	}
 	public Double getTotalQuota(){
-		return taxes.stream().filter(o -> o.getQuota()!=null).mapToDouble(OperationReportTax::getQuota).sum();
+		return taxes==null?0.0:taxes.stream().filter(o -> o.getQuota()!=null).mapToDouble(OperationReportTax::getQuota).sum();
 	}
 	public Double getTotalSurchargeQuota(){
-		return taxes.stream().filter((o) -> o.getSurchargeQuota()!=null).mapToDouble(OperationReportTax::getSurchargeQuota).sum();
+		return taxes==null?0.0:taxes.stream().filter((o) -> o.getSurchargeQuota()!=null).mapToDouble(OperationReportTax::getSurchargeQuota).sum();
 	}
 }
