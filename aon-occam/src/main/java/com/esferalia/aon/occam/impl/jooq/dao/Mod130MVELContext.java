@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +12,6 @@ import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod130MVELContext implements Map<String, Object> {
@@ -139,7 +140,18 @@ public class Mod130MVELContext implements Map<String, Object> {
 	}
 
 	// ************************ Métodos disponibles en las expresiones MVEL.
-	
+	public double round(double value, int precision) {
+		return new BigDecimal(Double.toString(value)).setScale(precision, RoundingMode.HALF_UP).doubleValue();
+ 	}
+	public double round(double value) {
+		return round(value, 2);
+	}
+	public boolean isZero(double value) {
+		return round( value ) == 0.0;
+	}
+	public boolean isNotZero(double value) {
+		return !isZero(value);
+	}
 	
 	// ********************************************************** CASILLA 16
 	/**
@@ -196,11 +208,11 @@ public class Mod130MVELContext implements Map<String, Object> {
 		if (p2 != null && p2 == 1) {
 			double c03 = (Double) get(Mod130Key.C03.toString());
 			double c08 = (Double) get(Mod130Key.C08.toString());
-			if (AonMathUtils.isNotZero(c03) && AonMathUtils.isNotZero(c08)) {
+			if (isNotZero(c03) && isNotZero(c08)) {
 				return 0.0;
 			}
 			double cXX = c08 > c03 ? c08 : c03;
-			cXX = AonMathUtils.round(cXX * 2 / 100);
+			cXX = round(cXX * 2 / 100);
 			double c14 = (Double) get(Mod130Key.C14.toString());
 			double c15 = (Double) get(Mod130Key.C15.toString());
 			cXX = (cXX > (c14 - c15)?(c14 - c15):cXX);

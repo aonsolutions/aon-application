@@ -106,6 +106,28 @@ public class FiscalModelDAO {
 								.forEach( detail -> model.put( detail) )
 					 );
 	}
+	public static Stream<FiscalModel> getSamePeriodModels(AONContext ctx,FiscalModel fiscalModel) {
+		ctx.checkRead();
+		return ctx.getDslContext()
+				.select(FS_MODEL.fields())
+				.select(FINANCE.fields())
+				.select(REGISTRY.fields())
+				.from(FS_MODEL)
+				.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
+				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
+				.where(FS_MODEL.DOMAIN.eq(fiscalModel.getDomain()))
+				.and(FS_MODEL.MODEL.eq(fiscalModel.getModel().getValue()))
+				.and(FS_MODEL.YEAR.eq(fiscalModel.getYear()))
+				.and(FS_MODEL.ADMINISTRATION.eq(fiscalModel.getAdministration().getValue()))
+				.and(FS_MODEL.PERIOD.eq(fiscalModel.getPeriod().getValue()))
+				.orderBy(FS_MODEL.PERIOD)
+				.fetch()
+				.stream()
+				.map( record -> map(record))
+				.peek( model -> getModelDetails(ctx,model)
+								.forEach( detail -> model.put( detail) )
+					 );
+	}
 
 	public static Stream<Record> getModelRecords(AONContext ctx,int domain, FiscalModelType model) {
 		ctx.checkRead();

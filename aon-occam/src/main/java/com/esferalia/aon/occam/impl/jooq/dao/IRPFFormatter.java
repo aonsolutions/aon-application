@@ -220,20 +220,27 @@ public class IRPFFormatter {
 		buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat("-", headerLength)));
 		double sumDeclaredBase = 0;
 		double sumDeclaredQuota = 0;
-		IFiscalModelKey baseKey = keys[1];
-		IFiscalModelKey quotaKey = keys[2];
+		IFiscalModelKey baseKey = null;
+		IFiscalModelKey quotaKey = null;
+		if (keys.length > 1) {
+			baseKey = keys[1];
+			quotaKey = keys[2];
+		} else {
+			quotaKey = keys[0];
+		}
 		for (FiscalModel fm : models) {
 			buf.append(MessageFormat.format(DIV_MSG,AonStringUtils.repeat(" ", 2)
 					+ AonStringUtils.leftPad( fm.getPeriod().getDescription(),40)
 					+ AonStringUtils.rightPad(fm.isComplementary()?" [Comp.]":fm.isReplacement()?" [Sust.]":" ",16)
-					+ AonStringUtils.leftPad(DEC.format(fm.getAmount(baseKey)),15)		
+					+ AonStringUtils.leftPad(DEC.format(baseKey!=null?fm.getAmount(baseKey):0.0),15)		
 					+ AonStringUtils.rightPad(" ",8)
 					+ AonStringUtils.leftPad(DEC.format(fm.getAmount(quotaKey)),15)
 					+ AonStringUtils.repeat(" ", 2)
 					));
-			sumDeclaredBase += fm.getAmount(baseKey);
+			sumDeclaredBase += baseKey!=null?fm.getAmount(baseKey):0.0;
 			sumDeclaredQuota += fm.getAmount(quotaKey);
 		}
+
 		double sumToDeclareBase = sumBase - sumDeclaredBase;
 		double sumToDeclareQuota = sumQuota - sumDeclaredQuota;
 		

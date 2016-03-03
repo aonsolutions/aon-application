@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import java.text.MessageFormat;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.mvel2.MVEL;
@@ -43,9 +45,11 @@ public class Mod130DAO extends FiscalModelDAO {
 	private static final String INFO_MSG = "<pre class='aon-fixed-font aon-font-medium aon-margin-bottom'>{0}<pre>";
 	private static final String NONE_INFO = "No hay datos";
 	private static enum Mod130KeyInfoDAO {
-		 NONE   	( ((ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, NONE_INFO)) )
-		,COMPUTE	( ((ctx, mod, script,keyDAO) -> getExpression(mod, script)))
-		,COMPUTE_KEY( ((ctx, mod, script,keyDAO) -> getExpression(mod, script)))
+		 NONE   	 ( (ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, NONE_INFO))
+		,COMPUTE	 ( (ctx, mod, script,keyDAO) -> getCompute(ctx,mod, script))
+		,COMPUTE_KEY ( (ctx, mod, script,keyDAO) -> getComputeKey(ctx,mod, script,keyDAO))
+		,INVOICE	 ( (ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getInvoicesInfo(ctx, mod, script,keyDAO, keyDAO==Mod130KeyDAO.C10)))
+		,DIFF_INVOICE( (ctx, mod, script,keyDAO) -> MessageFormat.format(INFO_MSG, getDiffInvoicesInfo(ctx, mod, script,keyDAO, keyDAO==Mod130KeyDAO.C10)))
 		
 		;
 		private IModelInfoProvider provider;
@@ -76,14 +80,31 @@ public class Mod130DAO extends FiscalModelDAO {
 		,P1  (Mod130Key.P1  , (mod -> mod.isAEAT()),null,null,null)
 		,P2  (Mod130Key.P2  , (mod -> mod.isAEAT()),null,null,null)
 		,C01 (Mod130Key.C01 , (mod -> mod.isAEAT())
-			,(ctx,mod) -> initializeC01(ctx,mod)
+			,(ctx,mod) -> mod.putAmount(Mod130Key.C01, getInitialC01(ctx,mod))
 			,null
 			,"<li>Desde contabilidad, saldo acreedor de las cuentas del grupo 7 desde el @{yearStartDate} al @{periodEndDate}</li>"
+			+"<li>Resultado: @{RAW_C01}</li>"
+			+"<li>Porcentaje de participaci\u00F3n: <b>@{P1}%</b></li>"
 			+"<li>Resultado: <b>@{C01}</b></li>")
 		,C02 (Mod130Key.C02 , (mod -> mod.isAEAT())
-			,(ctx,mod) -> initializeC02(ctx,mod)
+			,(ctx,mod) -> mod.putAmount(Mod130Key.C02, getInitialC02(ctx,mod))
 			,null
 			,"<li>Desde contabilidad, saldo deudor de las cuentas del grupo 6 desde el @{yearStartDate} al @{periodEndDate}</li>"
+			+"<li>Resultado: @{RAW_C02}</li>"
+			+"@if{ P0 == 1}"
+				+"<li>R\u00E9gimen de determinaci\u00F3n de rendimientos: Estimaci\u00F3n directa simplificada</li>"
+				+"<li>Se procede a la aplicaci\u00F3n del 5% de gastos de dif\u00EDcil justificaci\u00F3n</li>"
+				+"@code{c02p=com.esferalia.aon.watson.util.AonMathUtils.round(RAW_C01-RAW_C02)}"
+				+"<li>Rendimiento neto previo es igual @{RAW_C01} - @{RAW_C02} = @{c02p}</li>"
+				+"@if{ c02p < 0 }"
+					+"<li>Al ser el rendimiento neto previo menor que cero, no se aplican los gastos de dif\u00EDcil justificaci\u00F3n</li>"
+				+"@else{}"
+					+"@code{c02a=com.esferalia.aon.watson.util.AonMathUtils.round(c02p * 5 / 100)}"
+					+"@code{c02b=com.esferalia.aon.watson.util.AonMathUtils.round(c02a + RAW_C02)}"
+					+"<li>5% de @{c02p} --> @{c02a} sumado a @{RAW_C02} --> @{c02b}</li>"
+				+"@end{}"
+			+"@end{}"
+			+"<li>Porcentaje de participaci\u00F3n: <b>@{P1}%</b></li>"
 			+"<li>Resultado: <b>@{C02}</b></li>")
 		,C03 (Mod130Key.C03 , (mod -> mod.isAEAT()),null
 			,"C01 - C02"
@@ -95,28 +116,94 @@ public class Mod130DAO extends FiscalModelDAO {
 			 +"@else{}"
 			 +"<li>Al ser la casilla [003] menor que cero (@{C03}), el resultado es <b>cero.</b></li>"
 			 +"@end{}")
-		,C05 (Mod130Key.C05 , (mod -> mod.isAEAT()),null,null,null)
-		,C06 (Mod130Key.C06 , (mod -> mod.isAEAT()),null,null,null)
+		,C05 (Mod130Key.C05 , (mod -> mod.isAEAT())
+			,(ctx,mod) -> mod.putAmount(Mod130Key.C05, getInitialC05(ctx,mod))
+			,null
+			,"<li>Trimestres anteriores:<ul style=\"padding-left: 20px;\">" 
+			+"@code{c07Sum = 0.0;c13Sum = 0.0;}"
+			+"@foreach{fm : previousModels}" 
+				+"@code{X07 =  fm.getAmount('"+Mod130Key.C07.getValue()+"'); X13 =  fm.getAmount('"+Mod130Key.C13.getValue()+"')}"
+				+"@code{c07Sum = c07Sum + X07;c13Sum = c13Sum + X13;}"
+				+"<li>@{fm.getPeriod().getDescription()}			Casilla [007] --> @{X07}</li>"
+				+"<li>				Casilla [013] --> @{X13}</li>"
+			+"@end{}"
+			+"</ul></li>"
+			+"<li>Sumatorio de las casillas [007] --> @{c07Sum}</li>"
+			+"<li>Sumatorio de las casillas [013] --> @{c13Sum}</li>"
+			+"<li>Resultado: <b>@{C05}</b></li>")
+		,C06 (Mod130Key.C06 , (mod -> mod.isAEAT())
+			,(ctx,mod) -> mod.putAmount(Mod130Key.C06, 
+					IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod)
+						.filter( i -> !i.isFarmer())
+						.mapToDouble(br -> br.getQuota())
+						.sum())
+			,null
+			,null)
 		,C07 (Mod130Key.C07 , (mod -> mod.isAEAT()),null
 			,"C04 - C05 - C06"
 			,"<li>@{C04} menos @{C05} menos @{C06} igual <b>@{C07}</b></li>")
-		,C08 (Mod130Key.C08 , (mod -> mod.isAEAT()),null,null,null)
+		,C08 (Mod130Key.C08 , (mod -> mod.isAEAT())
+			,(ctx,mod) -> mod.putAmount(Mod130Key.C08, getInitialC08(ctx,mod))
+			,null
+			,"<li>Desde contabilidad, saldo acreedor de las cuentas del grupo 7 desde el @{yearStartDate} al @{periodEndDate}</li>"
+			+"<li>Actividades agr\u00EDcolas (la actividad del apunte contable debe ser agr\u00EDcola)</li>"			
+			+"<li>Resultado: @{RAW_C08}</li>"
+			+"<li>Porcentaje de participaci\u00F3n: <b>@{P1}%</b></li>"
+			+"<li>Resultado: <b>@{C08}</b></li>")
 		,C09 (Mod130Key.C09 , (mod -> mod.isAEAT()),null
 			,"C08 * 2 / 100"
 			,"<li>2% de @{C08} igual <b>@{C09}</b></li>")
-		,C10 (Mod130Key.C10 , (mod -> mod.isAEAT()),null,null,null)
+		,C10 (Mod130Key.C10 , (mod -> mod.isAEAT())
+			,(ctx,mod) -> mod.putAmount(Mod130Key.C06, 
+					IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod)
+						.filter( i -> i.isFarmer())
+						.mapToDouble(br -> br.getQuota())
+						.sum())
+			,null
+			,null)
 		,C11 (Mod130Key.C11 , (mod -> mod.isAEAT()),null
 			,"C09 - C10"
 			,"<li>@{C09} menos @{C10} igual <b>@{C11}</b></li>")
 		,C12 (Mod130Key.C12 , (mod -> mod.isAEAT()),null
-			,"C07 - C11"
-			,"<li>@{C07} menos @{C11} igual <b>@{C12}</b></li>")
-		,C13 (Mod130Key.C13 , (mod -> mod.isAEAT() && mod.getYear() >  2014),null,null,null)
-		,C131(Mod130Key.C131, (mod -> mod.isAEAT() && mod.getYear() <= 2014),null,null,null)
+			,"(C07 - C11)<0?0.0:(C07 - C11)"
+			,"@if{ (C07 - C11) >= 0}"
+					+"<li>@{C07} menos @{C11} igual <b>@{C12}</b></li>"
+			+"@else{}"
+					+"<li>Al ser [007] - [011] una cantidad negativa, se consigna cero"
+			+"@end{}"
+			+"<li>Resultado: <b>@{C12}</b></li>")
+		,C131(Mod130Key.C131, (mod -> mod.isAEAT() && mod.getYear() > 2014)
+			,(ctx,mod) -> mod.putAmount(Mod130Key.C131, getInitialC13(ctx,mod))
+			,null
+			,null)
+		,C13 (Mod130Key.C13 , (mod -> mod.isAEAT() && mod.getYear() <=  2014)
+			,null
+			,null
+			,null)
 		,C14 (Mod130Key.C14 , (mod -> mod.isAEAT()),null
-			,"C12 - C13"
-			,"<li>@{C12} menos @{C13} igual <b>@{C14}</b></li>")
-		,C15 (Mod130Key.C15 , (mod -> mod.isAEAT()),null,null,null)
+			,"C12 - C131"
+			,"<li>@{C12} menos @{C131} igual <b>@{C14}</b></li>")
+		,C15 (Mod130Key.C15 , (mod -> mod.isAEAT())
+			,(ctx,mod) -> mod.putAmount(Mod130Key.C15, getInitialC15(ctx,mod))
+			,null
+			,"<li>Trimestres anteriores:<ul style=\"padding-left: 20px;\">" 
+			+"<li>cantidades negtivas [019] y deducidas [015]:<ul style=\"padding-left: 20px;\">"
+			+"@code{c19Sum = 0.0;c15Sum = 0.0;}"
+			+"@foreach{fm : previousModels}" 
+				+"@code{X19 =  fm.getAmount('"+Mod130Key.C19.getValue()+"');"
+					  +"X15 =  fm.getAmount('"+Mod130Key.C15.getValue()+"');"
+					  +"X19 =  X19 < 0 ? X19 : 0.0;"
+					  +"c19Sum = c19Sum + X19;"
+					  +"c15Sum = c15Sum + X15;"
+					+ "}"
+				+"<li>@{fm.getPeriod().getDescription()}			Casilla [019] --> @{X07}</li>"
+				+"<li>				Casilla [015] --> @{X13}</li>"
+			+"@end{}"
+			+"</ul></li>"
+			+"<li>Sumatorio de las casillas [019] --> @{c19Sum}</li>"
+			+"<li>Sumatorio de las casillas [015] --> @{c15Sum}</li>"
+			+"<li>Resultado: <b>@{C15}</b></li>")
+
 		,C16 (Mod130Key.C16 , (mod -> mod.isAEAT()),null
 			,"computeC16()"
 			,"@if{ P2 <= 0}"
@@ -128,16 +215,15 @@ public class Mod130DAO extends FiscalModelDAO {
 			 	+"@else{}"
 			 		+"@code{cXX=C03>C08?C03:C08}"
 			 		+"<li>Se toma el mayor valor entre las casillas [003] y [008]: @{cXX}</li>"
-			 		+"@code{cYY=cXX*2/100}"
+			 		+"@code{cYY=com.esferalia.aon.watson.util.AonMathUtils.round(cXX*2/100)}"
 			 		+"<li>2% de @{cXX} = @{cYY}</li>"
 			 		+"@if{ cYY > (C14 - C15)}"
 			 			+"<li>El importe consignado en la casilla [016] no podr\u00E1 ser superior a la diferencia positiva entre las casillas [014] y [015].</li>"
-			 			+"@code{cYY=C14 - C15}"
+			 			+"@code{cYY=com.esferalia.aon.watson.util.AonMathUtils.round(C14 - C15)}"
 			 			+"<li>@{C14} - @{C15} = @{cYY}</li>"
 			 		+"@end{}"
-					+"@code{cMax="+Mod130MVELContext.C16_MAX_VALUE+"}"
-					+"@if{ cYY > cMax}"
-						+"<li>Se aplica el l\u00EDmite m\u00E1ximo de @{cMax}</li>"		 			
+					+"@if{ cYY > C16_MAX_VALUE}"
+						+"<li>Se aplica el l\u00EDmite m\u00E1ximo de @{C16_MAX_VALUE}</li>"		 			
 					+"@end{}"
 			 	+"@end{}"
 			 +"@end{}"
@@ -146,7 +232,21 @@ public class Mod130DAO extends FiscalModelDAO {
 		,C17 (Mod130Key.C17 , (mod -> mod.isAEAT()),null
 			,"C14 - C15 - C16"
 			,"<li>@{C14} menos @{C15} menos @{C16} igual <b>@{C17}</b></li>")
-		,C18 (Mod130Key.C18 , (mod -> mod.isAEAT()),null,null,null)
+		,C18 (Mod130Key.C18 , (mod -> mod.isAEAT())
+			,(ctx,mod) ->  
+					mod.putAmount(Mod130Key.C18,mod.isComplementary()
+							?getSamePeriodModels(ctx, mod)
+									.mapToDouble(fm -> fm.getResult())
+									.sum()
+							:0.0)
+			,null
+			,"<li>Declarciones en el mismo periodo/ejercicio:<ul style=\"padding-left: 20px;\">" 
+			+"@code{c07Sum = 0.0;c13Sum = 0.0;}"
+			+"@foreach{fm : periodModels}" 
+				+"<li>Resultado:	Casilla [019] --> @{fm.getResult()}</li>"
+			+"@end{}"
+			+"</ul></li>"
+			+"<li>Resultado: <b>@{C18}</b></li>")
 		,C19 (Mod130Key.C19 , (mod -> mod.isAEAT()),null
 			,"C17 - C18"
 			,"<li>@{C17} menos @{C18} igual <b>@{C19}</b></li>")
@@ -227,7 +327,7 @@ public class Mod130DAO extends FiscalModelDAO {
 		return mod130;
 	}
 
-	private static Mod130MVELContext getMVELcontext(Mod130 mod130) {
+	private static Mod130MVELContext getMVELcontext(AONContext ctx,Mod130 mod130) {
 		Mod130MVELContext mvelCtx = new Mod130MVELContext();
 		for (String key : mod130.getMap().keySet()) {
 			Mod130Key mod130Key = Mod130Key.getKey(key);
@@ -236,11 +336,12 @@ public class Mod130DAO extends FiscalModelDAO {
 				mvelCtx.put(mod130Key.toString(), detail==null?0.0:detail.getAmount());
 			}
 		}
+		mvelCtx.put("C16_MAX_VALUE",660.14);
 		return mvelCtx;
 	}
 	
 	public static Mod130 calculateMod130(AONContext ctx, Mod130 mod130) {
-		Mod130MVELContext mvelCtx = getMVELcontext(mod130);
+		Mod130MVELContext mvelCtx = getMVELcontext(ctx,mod130);
 		for (Mod130KeyDAO key : Mod130KeyDAO.values()) {
 			if (AonStringUtils.isNotEmpty( key.getExpression()) && key.acceptModel(mod130)) {
 				Object ret =  MVEL.eval( key.getExpression() , mvelCtx , mvelCtx);
@@ -289,7 +390,23 @@ public class Mod130DAO extends FiscalModelDAO {
 	}
 	
 	// -------------------------------------------------------------------- INFO
-	private static String getExpression(Mod130 mod130, IModelScript<Mod130Key> script) {
+	private static String getCompute(AONContext ctx, Mod130 mod130, IModelScript<Mod130Key> script) {
+		return getCompute(ctx, mod130, script, getMVELcontext(ctx,mod130));
+	}
+	private static String getComputeKey(AONContext ctx, Mod130 mod130, IModelScript<Mod130Key> script,Mod130KeyDAO keyDAO) {
+		Mod130MVELContext mvelCtx = getMVELcontext(ctx,mod130);
+		mvelCtx.put("RAW_C01", getRawC01(ctx, mod130));
+		mvelCtx.put("RAW_C02", getRawC02(ctx, mod130));
+		mvelCtx.put("RAW_C08", getRawC08(ctx, mod130));
+		mvelCtx.put("yearStartDate", IRPFFormatter.FMT.format(AonDateUtils.getYearFirstDay(mod130.getYear())));
+		mvelCtx.put("periodStartDate",IRPFFormatter.FMT.format(FiscalUtils.getPeriodStart(mod130)));
+		mvelCtx.put("periodEndDate",IRPFFormatter.FMT.format(FiscalUtils.getPeriodEnd(mod130)));
+		mvelCtx.put("previousModels", getPreviousModels(ctx, mod130).collect(Collectors.toCollection(LinkedList::new)));
+		mvelCtx.put("periodModels", getSamePeriodModels(ctx, mod130).collect(Collectors.toCollection(LinkedList::new)));
+		return getCompute(ctx, mod130, script,mvelCtx);
+	}
+	
+	private static String getCompute(AONContext ctx, Mod130 mod130, IModelScript<Mod130Key> script,Mod130MVELContext mvelCtx) {
 		StringBuilder buf = new StringBuilder();
 		buf.append("<pre style=\"font-family: Fixed, monospace;font-size: 0.9em; margin-bottom: 1em; padding: 1em;\">");
 		for (Mod130Key key : script.getKeys() ) {
@@ -306,9 +423,6 @@ public class Mod130DAO extends FiscalModelDAO {
 				}
 				String template = keyDAO.getTemplate();
 				if (AonStringUtils.isNotBlank( template )) {
-					Mod130MVELContext mvelCtx = getMVELcontext(mod130);
-					mvelCtx.put("yearStartDate", IRPFFormatter.FMT.format(AonDateUtils.getYearFirstDay(mod130.getYear())));
-					mvelCtx.put("periodEndDate",IRPFFormatter.FMT.format(FiscalUtils.getPeriodEnd(mod130)));
 					Object result = TemplateRuntime.eval(template, mvelCtx);
 					buf.append(result != null ? result.toString() : null);
 				}
@@ -318,7 +432,37 @@ public class Mod130DAO extends FiscalModelDAO {
 		buf.append("</pre>");
 		return buf.toString();
 	}
-
+	
+	private static String getInvoicesInfo(AONContext ctx, final Mod130 mod130
+			, final IModelScript<Mod130Key> script, Mod130KeyDAO keyDAO, boolean farmer) {
+		
+		String title = "FACTURAS CON RETENCIONES QUE AFECTAN A LA CONFECCI\u00D3N DEL MODELO " 
+				+ mod130.getModelName() 
+				+ " DEL " + mod130.getPeriod().getDescription()
+				+ " DE " + mod130.getYear();
+		return IRPFFormatter.formatInvoices(title,script.getLabel()
+			,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod130)
+					.filter(i -> i.isFarmer() == farmer)
+					.collect(Collectors.toCollection(LinkedList::new))
+		);
+	}
+	
+	private static String getDiffInvoicesInfo(AONContext ctx, final Mod130 mod130
+			, final IModelScript<Mod130Key> script, Mod130KeyDAO keyDAO, boolean farmer) {
+		String title = "DETALLE DEL C\u00C1LCULO POR DIFERENCIA DEL MODELO "
+			+ mod130.getModelName() 
+			+ " DEL " + mod130.getPeriod().getDescription()
+			+ " DE " + mod130.getYear();
+		return IRPFFormatter.formatDiffInvoices(title
+			,script.getLabel()
+			,script.getKeys()
+			, getPreviousModels(ctx,mod130)
+			 	.collect(Collectors.toCollection(LinkedList::new))	
+			,IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod130)
+				.filter(i -> i.isFarmer() == farmer)
+				.collect(Collectors.toCollection(LinkedList::new))
+		);
+	}
 	// -------------------------------------------------------------------- UTIL
 	public static Mod130 finish(AONContext ctx,Mod130 mod130) {
 		mod130 = FiscalModelDAO.finish(ctx, mod130);
@@ -338,8 +482,8 @@ public class Mod130DAO extends FiscalModelDAO {
 	}
 
 	// --------------------------------------------------- KEY INTITIALIZATION
-	private static void initializeC01(AONContext ctx, final Mod130 mod) {
-		double c01 = AccountEntryDAO.getAccountingBreakdown(ctx,
+	private static double getRawC01(AONContext ctx, final Mod130 mod) {
+		return AccountEntryDAO.getAccountingBreakdown(ctx,
 				p -> p.getDomainProperty().eq(ctx.getDomainId())
 					.and(p.getEntryDateProperty().ge(AonDateUtils.getYearFirstDay(mod.getYear())))
 					.and(p.getEntryDateProperty().le(FiscalUtils.getPeriodEnd(mod)))
@@ -348,10 +492,16 @@ public class Mod130DAO extends FiscalModelDAO {
 			.filter( br -> (!br.isFarmer() && !br.isObjectiveRegime()))
 			.mapToDouble(br -> br.getCreditBalance())
 			.sum();
-		double percent = mod.getAmount(Mod130Key.P1);
-		mod.putAmount(Mod130Key.C01, AonMathUtils.round(c01 * percent / 100 ));
 	}
-	private static void initializeC02(AONContext ctx, final Mod130 mod) {
+	
+	private static double getInitialC01(AONContext ctx, final Mod130 mod) {
+		double c01 = getRawC01(ctx, mod);  
+		double percent = mod.getAmount(Mod130Key.P1);
+		c01 = AonMathUtils.round(c01 * percent / 100 );
+		return c01; 
+	}
+	
+	private static double getRawC02(AONContext ctx, final Mod130 mod) {
 		double c02 = AccountEntryDAO.getAccountingBreakdown(ctx,
 				p -> p.getDomainProperty().eq(ctx.getDomainId())
 					.and(p.getEntryDateProperty().ge(AonDateUtils.getYearFirstDay(mod.getYear())))
@@ -361,16 +511,66 @@ public class Mod130DAO extends FiscalModelDAO {
 			.filter( br -> (!br.isFarmer() && !br.isObjectiveRegime()))
 			.mapToDouble(br -> br.getDebitBalance())
 			.sum();
-		// Cálculo según el método de E.D. simplificada.
+		return c02;
+	}
+	private static double getInitialC02(AONContext ctx, final Mod130 mod) {
+		double c02 = getRawC02(ctx, mod);
 		if (mod.getRegime() != null && mod.getRegime() == IRPFRegime.SIMPLIFIED) { 
-			double c01 = mod.getAmount(Mod130Key.C01);
+			double c01 = getRawC01(ctx, mod);
 			double c02_ = AonMathUtils.round( c01 - c02);
 			if (c02_ > 0 ) {
-				c02 = AonMathUtils.round( c02 + (c02_ - (c02_*5/100)) ); 
+				c02 = AonMathUtils.round( c02 + (c02_*5/100) ); 
 			}
 		}
 		double percent = mod.getAmount(Mod130Key.P1);
-		mod.putAmount(Mod130Key.C02, AonMathUtils.round(c02 * percent / 100 ));
+		c02 = AonMathUtils.round(c02 * percent / 100 );
+		return c02;
 	}
 	
+	private static double getInitialC05(AONContext ctx, final Mod130 mod) {
+		LinkedList<FiscalModel> list = getPreviousModels(ctx, mod)
+				.collect(Collectors.toCollection(LinkedList::new));
+		double c05 = 0;
+		for (FiscalModel fm : list) {
+			c05 = AonMathUtils.round( c05 + (fm.getAmount(Mod130Key.C07) - fm.getAmount(Mod130Key.C16)));
+		}
+		return c05;
+	}
+	
+	private static double getRawC08(AONContext ctx, final Mod130 mod) {
+		return AccountEntryDAO.getAccountingBreakdown(ctx,
+				p -> p.getDomainProperty().eq(ctx.getDomainId())
+				.and(p.getEntryDateProperty().ge(AonDateUtils.getYearFirstDay(mod.getYear())))
+				.and(p.getEntryDateProperty().le(FiscalUtils.getPeriodEnd(mod)))
+				.and(p.getAccountCodeProperty().like("7%"))
+				)
+			.filter( br -> (br.isFarmer() && !br.isObjectiveRegime()))
+			.mapToDouble(br -> br.getCreditBalance())
+			.sum();
+	}
+	private static double getInitialC08(AONContext ctx, final Mod130 mod) {
+		double c08 = getRawC08(ctx, mod); 
+		double percent = mod.getAmount(Mod130Key.P1);
+		c08 = AonMathUtils.round(c08 * percent / 100 );
+		return c08; 
+	}
+	
+	private static double getInitialC13(AONContext ctx, final Mod130 mod) {
+		return 0.0;
+	}
+	private static double getInitialC15(AONContext ctx, final Mod130 mod) {
+		double c14 = mod.getAmount(Mod130Key.C14);
+		double c15 = 0.0; 
+		if (c14 > 0) {
+			c15 = getPreviousModels(ctx, mod)
+				.mapToDouble(fm -> AonMathUtils.round(
+					AonMathUtils.absRounded(fm.getAmount(Mod130Key.C19)>0?0:(fm.getAmount(Mod130Key.C19))
+					- fm.getAmount(Mod130Key.C15) )))
+				.sum()
+			;
+			c15 = c15>c14?c14:c15;
+		}
+		return c15;
+	}
+
 }

@@ -280,6 +280,9 @@ public class Model130 extends MainEntryPoint {
 
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
+		
+		// http://code.google.com/p/google-web-toolkit/issues/detail?id=6889
+		deckPanel.onResize();
 	}
 
 	public static native String getCurrentDomainName()

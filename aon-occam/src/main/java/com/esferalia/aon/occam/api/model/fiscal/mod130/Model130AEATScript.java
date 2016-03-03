@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.fiscal.mod130;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
@@ -37,12 +39,12 @@ public enum Model130AEATScript implements IModelScript<Mod130Key> {
 	,C05	("A deducir. De los trimestres anteriores: suma de los importe"
 			+ "s positivos de la casilla [07] menos la suma de los importe"
 			+ "s de la casilla [16]"
-			,new Mod130Key[]{Mod130Key.C05},NONE)
+			,new Mod130Key[]{Mod130Key.C05},COMPUTE_KEY)
 	,C06	("A deducir. Retenciones e ingresos a cuenta soportados por la"
 			+ "s actividades incluidas en este apartado y correspondientes"
 			+ " al per\u00EDodo comprendido entre el primer d\u00EDa del a\u00F1o y el \u00FAl"
 			+ "timo d\u00EDa del trimestre"
-			,new Mod130Key[]{Mod130Key.C06},NONE)
+			,new Mod130Key[]{Mod130Key.C06},INVOICE,DIFF_INVOICE)
 	,C07	("Pago fraccionado previo del trimestre ([04]-[05]-[06])"
 			,new Mod130Key[]{Mod130Key.C07},COMPUTE)
 	,R01	("II. Actividades agr\u00EDcolas, ganaderas, forestales y pesqueras "
@@ -50,13 +52,13 @@ public enum Model130AEATScript implements IModelScript<Mod130Key> {
 			,null,TITLE)
 	,C08	("Volumen de ingresos del trimestre (excluidas las subvenciones"
 			+ " de capital y las indemnizaciones)"
-			,new Mod130Key[]{Mod130Key.C08},NONE)
+			,new Mod130Key[]{Mod130Key.C08},COMPUTE_KEY)
 	,C09	("2 por 100 del importe de la casilla [08]"
 			,new Mod130Key[]{Mod130Key.C09},COMPUTE)
 	,C10	("A deducir: Retenciones e ingresos a cuenta soportados por las"
 			+ " actividades incluidas en este apartado y correspondientes a"
 			+ "l trimestre"
-			,new Mod130Key[]{Mod130Key.C10},NONE)
+			,new Mod130Key[]{Mod130Key.C10},INVOICE,DIFF_INVOICE)
 	,C11	("Pago fraccionado previo del trimestre ([09]-[10])"
 			,new Mod130Key[]{Mod130Key.C11},COMPUTE)
 	,R02	("III. Total liquidaci\u00F3n",null,TITLE)
@@ -64,7 +66,7 @@ public enum Model130AEATScript implements IModelScript<Mod130Key> {
 			,new Mod130Key[]{Mod130Key.C12},COMPUTE)
 	,C13	("A deducir: Minoraci\u00F3n por aplicaci\u00F3n de la deducci\u00F3n a que se "
 			+ "refiere el art\u00EDculo 110.3 c) del Reglamento del Impuesto"
-			,new Mod130Key[]{Mod130Key.C13},NONE)
+			,new Mod130Key[]{Mod130Key.C131},NONE)
 	,C14	("Diferencia ([12]-[13]). Si se obtiene una cantidad negativa, co"
 			+ "ns\u00EDgnela con signo menos (-)"
 			,new Mod130Key[]{Mod130Key.C14},COMPUTE)
@@ -77,7 +79,7 @@ public enum Model130AEATScript implements IModelScript<Mod130Key> {
 			,new Mod130Key[]{Mod130Key.C17},COMPUTE)
 	,C18	("Resultado a ingresar de las anteriores autoliquidaciones presenta"
 			+ "das por el mismo concepto, ejercicio y per\u00EDodo"
-			,new Mod130Key[]{Mod130Key.C18},NONE)
+			,new Mod130Key[]{Mod130Key.C18},COMPUTE_KEY)
 	,C19	("Resultado de la autoliquidaci\u00F3n ([17]-[18])"
 			,new Mod130Key[]{Mod130Key.C19},COMPUTE)
 	;

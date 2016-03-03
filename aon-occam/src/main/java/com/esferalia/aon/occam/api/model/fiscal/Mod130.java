@@ -10,7 +10,6 @@ public class Mod130 extends FiscalModel implements Serializable {
 	
 	private static final long serialVersionUID = -6579562925389189514L;
 
-	private IRPFRegime regime;
 	private LinkedList<FiscalModel> deponents;
 	
 	public Mod130() {
@@ -19,10 +18,10 @@ public class Mod130 extends FiscalModel implements Serializable {
 	}
 	
 	public IRPFRegime getRegime() {
-		return regime;
+		return getAmount(Mod130Key.P0)==1?IRPFRegime.SIMPLIFIED:IRPFRegime.NORMAL;
 	}
 	public void setRegime(IRPFRegime regime) {
-		this.regime = regime;
+		putAmount(Mod130Key.P0,regime==IRPFRegime.SIMPLIFIED?1:0);
 	}
 
 	public LinkedList<FiscalModel> getDeponents() {

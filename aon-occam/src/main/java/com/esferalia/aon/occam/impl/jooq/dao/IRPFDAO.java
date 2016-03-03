@@ -107,44 +107,44 @@ public class IRPFDAO extends FiscalModelDAO {
 		return list.stream();
 		
 	}
-	
-//	private static class IrpfSalaryBreakdown implements Function<Record, IrpfBreakdown> {
-//		@Override
-//		public IrpfBreakdown apply(Record rec) {
-//			IrpfBreakdown br = new IrpfBreakdown()
-//					.setFromSalary(true)
-//					.setDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
-//					.setName(rec.field(SALARY.EMPLOYEE_NAME) != null ? rec.getValue(SALARY.EMPLOYEE_NAME) : null)
-//					.setIssueDate(rec.field(SALARY.ISSUE_DATE) != null ? rec.getValue(SALARY.ISSUE_DATE): null); 
-//
-//			
-//			double base = rec.getValue(SALARY.IRPF_BASE);
-//			double quota = rec.getValue(SALARY.TOTAL_IRPF);
-//			double inKindBase = rec.getValue(SALARY.INKIND_IRPF_BASE);
-//			if (inKindBase != 0) {
-//				double moneyBase = base;
-//				double moneyQuota = quota;
-//				double inKindQuota = 0;
-//				moneyBase = rec.getValue(SALARY.MONEY_IRPF_BASE);
-//				moneyQuota = AonMathUtils.round( moneyBase * quota  / base ); 	
-//				inKindQuota = AonMathUtils.round( quota - moneyQuota);
-//				inKindBase = AonMathUtils.round( inKindBase );
-//				br.setInKind(true)
-//				  .setBase(inKindBase)
-//				  .setQuota(inKindQuota);
-//			} else {
-//				br.setInKind(false)
-//				  .setBase(AonMathUtils
-//				  .round( base))
-//				  .setQuota(AonMathUtils.round( quota));
-//			}
-//			return br;
-//		}
-//	}
-
 	// -------------------------------------------------------------------- STREAM FUNCTIONS
 
 	// -------------------------------------------------------------------- INVOICE
+
+	public static Stream<IrpfBreakdown> getSalesInvoiceIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
+		return getSalesInvoiceIrpfBreakdown(ctx, fm, false);
+	}
+	
+	public static Stream<IrpfBreakdown> getSalesInvoiceDiffIrpfBreakdown(final AONContext ctx, final  FiscalModel fm) {
+		return getSalesInvoiceIrpfBreakdown(ctx, fm, true);	
+	}
+
+	private static Stream<IrpfBreakdown> getSalesInvoiceIrpfBreakdown(final AONContext ctx, final FiscalModel fm, final boolean diff) {
+		java.sql.Date dateFrom = diff
+				?AonDateUtils.toSql( AonDateUtils.getYearFirstDay(fm.getYear()))
+				:AonDateUtils.toSql( FiscalUtils.getPeriodStart(fm));
+		java.sql.Date dateTo = AonDateUtils.toSql( FiscalUtils.getPeriodEnd(fm));
+		return 	ctx.getDslContext()
+			.select(INVOICE.ID
+					,INVOICE.TYPE,INVOICE.SERIES,INVOICE.NUMBER,INVOICE.REFERENCE_CODE
+					,INVOICE.ISSUE_DATE,INVOICE.TAX_DATE
+					,INVOICE.RDOCUMENT,INVOICE.RNAME
+					,INVOICE_TAX.WITHHOLDING_TYPE,ENTERPRISE_ACTIVITY.RETENTION_REGIME
+					,INVOICE_TAX.BASE,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.QUOTA)
+				.from(INVOICE)
+				.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+				.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.equal(ENTERPRISE_ACTIVITY.ID))
+				.where(INVOICE.DOMAIN.equal(fm.getDomain()))
+					.and(INVOICE.TAX_DATE.between(dateFrom,dateTo))
+					.and(INVOICE.TYPE.equal(InvoiceType.SALES.value() ))
+					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+				.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
+				.fetch()
+				.stream()
+				.map( new IrpfInvoiceBreakdown() )
+				.peek( br -> br.setInsidePeriod( FiscalUtils.isInPeriodRange(fm, br.getTaxDate() )));
+	}
 
 	public static Stream<IrpfBreakdown> getInvoiceIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
 		return getInvoiceIrpfBreakdown(ctx, fm, false);
