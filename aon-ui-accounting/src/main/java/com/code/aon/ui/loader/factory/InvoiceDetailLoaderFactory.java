@@ -167,6 +167,8 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		detail.setPrice(loaded.getPrecio());
 		if (StringUtils.isNotBlank(loaded.getDescuentos())) {
 			detail.setDiscountExpression(new DiscountExpression(loaded.getDescuentos()));
+		} else {
+			detail.setDiscountExpression(new DiscountExpression("0.0"));
 		}
 		detail.setQuantity(loaded.getCantidad());
 		detail.setTaxableBase(loaded.getBaseImponible());
