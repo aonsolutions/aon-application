@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -31,6 +33,7 @@ public class ExcelReportExporter implements IReportExporter {
     private CellStyle numberCellStyle;
     private CellStyle decimalCellStyle;
     private CellStyle dateCellStyle;
+    private Map<String, ExcelSheet> sheetMap;
 
 	public void startExport(String name) throws ReportException {
 	    workbook = new HSSFWorkbook();
@@ -40,7 +43,11 @@ public class ExcelReportExporter implements IReportExporter {
 	}
 	
 	public ExcelSheet createSheet( String name ) {
-		return new ExcelSheet(workbook, name);
+		if(sheetMap==null){
+			sheetMap = new HashMap<String, ExcelSheet>();
+		}
+		sheetMap.put(name, new ExcelSheet(workbook, name));
+		return sheetMap.get(name);
 	}
 	
 	public ExcelSheet getSheet() {
@@ -49,6 +56,14 @@ public class ExcelReportExporter implements IReportExporter {
 
 	public void setSheet(ExcelSheet sheet) {
 		this.sheet = sheet;
+	}
+	
+	public void restoreSheet(String name) throws ReportException {
+		if(sheetMap.containsKey(name)){
+			setSheet(sheetMap.get(name));
+		} else {
+			throw new ReportException(" The specified sheet does not exist. Create it first!");
+		}
 	}
 
 	public HSSFCellStyle createHeaderStyle() {
