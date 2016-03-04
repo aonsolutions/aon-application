@@ -141,7 +141,6 @@ public class IssueReadPanel extends Composite {
 			assignTags.add(tag);
 
 		initHeaderAux(issue);
-//		printBody(issue);	
 
 		for (DefaultAonIssueComments comment : issue.getComments()) {
 			printComment(comment,
@@ -192,7 +191,7 @@ public class IssueReadPanel extends Composite {
 	}
 
 	@UiHandler("commentTextArea")
-	void onKeyPressEvent(KeyUpEvent event) {
+	void onKeyUpEvent(KeyUpEvent event) {
 		commentButton.setEnabled(
 				commentTextArea.getValue().trim().isEmpty() == false);
 	}
@@ -300,50 +299,6 @@ public class IssueReadPanel extends Composite {
 		hPanel.add(dateLabel);
 		infoHeaderContent.add(hPanel);
 	}
-
-//	public void printBody(IssueSelected issue) {
-//
-//		int days = CalendarUtil.getDaysBetween(issue.getCreateAt(), new Date());
-//		Label label = new Label();
-//		label.setText(" COMENTADO por " + issue.getUser().getName()
-//				+ " el " + fmt.format(issue.getCreateAt()) + " (hace " + days
-//				+ ((days == 1) ? " d\u00EDas)" : " d\u00EDas)"));
-//		label.setStyleName(AON.AON_BOLD);
-//		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
-//
-//		final Button editButton = new Button();
-//
-//		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
-//		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
-//		editButton.addStyleName(AON.AON_CSS.editButton());
-//
-//		final TextArea textArea = getTextArea(issue.getBody());
-//		textArea.setName(String.valueOf(issue.getId()));
-//
-//		editButton.addClickHandler(new ClickHandler() {
-//
-//			@Override
-//			public void onClick(ClickEvent event) {
-//
-//				if (editButton.getStyleName().contains(AON.AON_ICON_EDIT_ADD))
-//					onEditCommentButtonClick(textArea, editButton);
-//				else
-//					onAcceptEditBodyButtonClick(textArea, editButton);
-//			}
-//		});
-//		editButton.setVisible(issue instanceof IssueGrid.IssueOpenLoadSelected);
-//
-//		FlexTable flexTable = new FlexTable();
-//		flexTable.setWidget(0, 0, label);
-//		flexTable.setWidget(0, 1, editButton);
-//		flexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
-//		flexTable.setWidget(1, 0, textArea);
-//
-//		historialVPanel.add(flexTable);
-//
-//	}
-	
-	
 
 	public void printComment(DefaultAonIssueComments issueComment,
 			boolean editVisible) {
@@ -754,30 +709,6 @@ public class IssueReadPanel extends Composite {
 		button.addStyleName(AON.AON_ICON_EDIT_ADD);
 		textArea.setReadOnly(true);
 		textArea.setFocus(false);
-	}
-
-	private void onAcceptEditBodyButtonClick(final TextArea textArea,
-			final Button button) {
-
-		for (Listener listener : listeners)
-			listener.onUpdateIssueBody(issue.getTitle(), textArea.getValue(),
-					new Callback<IssueSelected>() {
-
-						@Override
-						public void onFailure(Throwable caught) {
-							Window.alert(
-									"Error al modificar el cuerpo del aviso "
-											+ caught.getMessage());
-						}
-
-						@Override
-						public void onSucess(IssueSelected comment) {
-							button.removeStyleName(AON.AON_ICON_ACCEPT);
-							button.addStyleName(AON.AON_ICON_EDIT_ADD);
-							textArea.setValue(comment.getBody());
-							textArea.setReadOnly(true);
-						}
-					});
 	}
 
 	private void onAcceptEditCommentButtonClick(final TextArea textArea,

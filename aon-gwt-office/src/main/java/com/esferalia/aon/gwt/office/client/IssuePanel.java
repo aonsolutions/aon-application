@@ -65,21 +65,25 @@ public class IssuePanel extends CustomDialog {
 	private User user;
 
 	private List<Listener> listeners;
-	private List<Registry> registryList;
+	
+	private Map<Integer, Registry> registryMap;
+
 	private List<RegistryMedia> rmediasList;
 	private MultiWordSuggestOracle registries = new MultiWordSuggestOracle();	
 	private MultiWordSuggestOracle rmedias = new MultiWordSuggestOracle();
-
-	private Map<String, Integer> idsRmediaMap;
+	
+	// *******************************
+	private Map<String, Integer> registryDrashMap = new HashMap<String, Integer>();
+	private Map<String, Integer> rmediaDrashMap = new HashMap<String, Integer>();	
+	// *******************************
 	
 	private DateTimeFormat format = DateTimeFormat
 			.getFormat("dd-MM-yyyy HH:mm");
 
 	public IssuePanel(User user) {
 		setCaption("Nueva Incidencia");
-		registrySuggest = new SuggestBox(registries);		
-		
-		rmediaSuggest = new SuggestBox(rmedias);
+		this.registrySuggest = new SuggestBox(registries);		
+		this.rmediaSuggest = new SuggestBox(rmedias);
 		
 		setWidget(uiBinder.createAndBindUi(this));
 
@@ -87,8 +91,7 @@ public class IssuePanel extends CustomDialog {
 		setGlassEnabled(true);
 
 		this.user = user;
-		this.listeners = new LinkedList<Listener>();
-		this.idsRmediaMap = new HashMap<String, Integer>();
+		this.listeners = new LinkedList<Listener>();		
 		this.date = new Date();
 		dateLabel.setText(format.format(date));
 		loggedLabel.setText(user.getName());
@@ -108,20 +111,26 @@ public class IssuePanel extends CustomDialog {
 
 	// ----------------------------------------------------
 
-	public void setRegistries(List<Registry> registries) {
+	public void setSender(String sender) {
+		this.registry = sender;
+		this.registrySuggest.setText(sender);
+	}
 	
-		this.registryList = registries;
-		this.registrySuggest.setEnabled(registries.size() > 0);
+	public void setRegistries(Map<Integer, Registry> map) {
+	
+		this.registryMap = map;
+		this.registrySuggest.setEnabled(registryMap.size() > 0);
 		
-		for (Registry registry : registries) {			
+		for (Registry registry : map.values()) {			
 			StringBuilder sb = new StringBuilder();
 			if (registry.getName().trim().isEmpty() == false) {
 				sb.append(registry.getName());
 			}			
 			this.registries.add(sb.toString());
+			this.registryDrashMap.put(sb.toString(), registry.getId());
 		}		
 	}
-	
+
 	public void setRMedias(List<RegistryMedia> rmedias) {
 		this.rmediasList = rmedias;
 		this.rmediaSuggest.setEnabled(rmedias.size() > 0);
@@ -150,7 +159,7 @@ public class IssuePanel extends CustomDialog {
 				sb.append(rmedia.getComment());
 			}
 			this.rmedias.add(sb.toString());
-			this.idsRmediaMap.put(sb.toString(), rmedia.getRegistry().getId());
+			this.rmediaDrashMap.put(sb.toString(), rmedia.getRegistry().getId());
 		}
 	}
 
@@ -176,19 +185,10 @@ public class IssuePanel extends CustomDialog {
 		notice.setStartDate(date);
 
 		if (registry != null) {
-			int recipientId = -1;
-			for (Registry registry : registryList) {
-				if (registry.getName().compareTo(this.registry) == 0)
-					recipientId = registry.getId();
-			}
-
-			if (recipientId == -1) {
-				Window.alert("Remitente no encontrado.");
-				return;
-			}
-
-			notice.setCompany(registry);
-			notice.setSource(String.valueOf(recipientId));
+			int id = registryDrashMap.get(registry);
+			Registry aux = registryMap.get(id);
+			notice.setCompany(aux.getName());
+			notice.setSource(String.valueOf(aux.getId()));
 		}
 
 		onCreateNewIssue(notice);
@@ -209,16 +209,10 @@ public class IssuePanel extends CustomDialog {
 	
 	@UiHandler("rmediaSuggest")
 	void onRmediaSelectionValue(SelectionEvent<SuggestOracle.Suggestion> event) {
-		String selected = event.getSelectedItem().getReplacementString();			
-		Integer registryId = idsRmediaMap.get(selected);
+		String selected = event.getSelectedItem().getReplacementString();		
+		Integer registryId = rmediaDrashMap.get(selected);
 		
-		Registry aux = null;
-		for (RegistryMedia rmedia : rmediasList) {
-			if (rmedia.getRegistry().getId() == registryId) {
-				aux = rmedia.getRegistry();
-				break;
-			}
-		}
+		Registry aux = registryMap.get(registryId);
 		
 		if (aux != null) {
 			this.registry = aux.getName();

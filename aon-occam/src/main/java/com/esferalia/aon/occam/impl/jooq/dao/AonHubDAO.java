@@ -502,7 +502,7 @@ public class AonHubDAO {
 		return notice;
 	}
 
-	public static List<Notice> getOpenNotices(AONContext ctx, String pSince) {
+	public static List<Notice> getOpenNotices(AONContext ctx, String pSince, String sender) {
 
 		changeMessageType2CommentType(ctx);
 
@@ -531,6 +531,11 @@ public class AonHubDAO {
 					NOTICE.DATE.between(new java.sql.Timestamp(since.getTime()),
 							new java.sql.Timestamp(tomorrow.getTime())));
 		}
+		
+		if (sender != null) {
+			select = select.and(NOTICE.COMPANY.eq(sender));
+		}
+		
 		Result<Record> record = select.orderBy(NOTICE.DATE.desc()).fetch();
 
 		if (record != null) {
@@ -544,7 +549,7 @@ public class AonHubDAO {
 		return notices;
 	}
 
-	public static List<Notice> getClosedIsues(AONContext ctx, String pSince) {
+	public static List<Notice> getClosedIsues(AONContext ctx, String pSince, String sender) {
 
 		List<Notice> notices = new LinkedList<Notice>();
 
@@ -569,6 +574,11 @@ public class AonHubDAO {
 					NOTICE.DATE.between(new java.sql.Timestamp(since.getTime()),
 							new java.sql.Timestamp(tomorrow.getTime())));
 		}
+		
+		if (sender != null) {
+			select = select.and(NOTICE.COMPANY.eq(sender));
+		}
+
 		Result<Record> record = select.orderBy(NOTICE.DATE.desc()).fetch();
 
 		if (record != null)
@@ -581,7 +591,7 @@ public class AonHubDAO {
 		return notices;
 	}
 
-	public static List<Notice> getAllNotices(AONContext ctx, String pSince) {
+	public static List<Notice> getAllNotices(AONContext ctx, String pSince, String sender) {
 
 		List<Notice> notices = new LinkedList<Notice>();
 
@@ -611,6 +621,10 @@ public class AonHubDAO {
 			select = select.and(
 					NOTICE.DATE.between(new java.sql.Timestamp(since.getTime()),
 							new java.sql.Timestamp(tomorrow.getTime())));
+		}
+		
+		if (sender != null) {
+			select = select.and(NOTICE.COMPANY.eq(sender));
 		}
 
 		Result<Record> record = select.orderBy(NOTICE.DATE.desc()).fetch();

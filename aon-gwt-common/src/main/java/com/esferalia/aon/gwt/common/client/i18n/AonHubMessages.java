@@ -12,57 +12,36 @@ public interface AonHubMessages extends Messages {
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF ! --> \u0021 ¡ --> \u00A1
 	
-	@DefaultMessage("N\u00FAmero")
-	String number();
+	@DefaultMessage("Incidencias")
+	String issues();
 	
-	@DefaultMessage("Identificaci\u00F3n")
-	String login();
-	
-	@DefaultMessage("Notificaciones")
-	String notifications();
- 	
- 	@DefaultMessage("Repositorios")
-	String repositories();
- 	
- 	@DefaultMessage("Search AonHub")
-	String searchAonHub();
- 	
- 	@DefaultMessage("Nuevo")
+	@DefaultMessage("AVISO")
 	String newIssue();
+	
+	@DefaultMessage("ETIQUETAS")
+	String labels();
+  	
+ 	@DefaultMessage("Criterio de b\u00FAsqueda")
+	String searchCriteria();
+  	
+ 	@DefaultMessage("Mostrar a partir de ")
+	String showFrom(); 	
+
+ 	@DefaultMessage("Abiertas")
+	String openIssues();
  	
- 	@DefaultMessage("Pendientes")
-	String openedIssues();
- 	
- 	@DefaultMessage("Cerrados")
+ 	@DefaultMessage("Cerradas")
 	String closedIssues();
 
- 	@DefaultMessage("Todos")
+ 	@DefaultMessage("Mostrar Todas")
 	String allIssues();
 
- 	@DefaultMessage("Eliminados")
-	String deletedIssues();
-
- 	@DefaultMessage("Consultas")
-	String questionIssues();
-
- 	@DefaultMessage("Errores")
-	String errorIssues();
-
- 	@DefaultMessage("FAQs")
-	String faqsIssues();
- 	
- 	@DefaultMessage("Etiquetas")
-	String labelsIssues();
- 	
  	@DefaultMessage("T\u00EDtulo")
 	String title();
  	
- 	@DefaultMessage("Remite")
+ 	@DefaultMessage("Remitente")
 	String sender();
- 	
- 	@DefaultMessage("Escribir")
-	String write();
- 	
+  	
  	@DefaultMessage("Grabar")
 	String save();
 	
@@ -107,4 +86,8 @@ public interface AonHubMessages extends Messages {
  	
  	@DefaultMessage("Grupo de trabajo asignado al aviso")
  	String titleWorkgroup();
+	
+	@DefaultMessage("VOLVER")
+	String back();
+ 
 }

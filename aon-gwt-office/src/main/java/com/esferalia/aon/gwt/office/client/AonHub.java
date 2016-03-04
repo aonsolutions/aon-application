@@ -36,6 +36,7 @@ public class AonHub {
 	private static String baseUrl = "https://api.github.com/";
 	private static String repositoryUrl = "https://api.github.com/";
 	private static String since = null;
+	private static String sender = null;
 	private static boolean authorized = false;
 
 	public AonHub(String url) {
@@ -57,6 +58,10 @@ public class AonHub {
 	public void setSinceCriteria(Date since) {
 		DateTimeFormat fmt = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");		
 		this.since = fmt.format(since);
+	}
+	
+	public void setSender(String sender) {
+		this.sender = sender;
 	}
 
 	// ************** USERS *************** //
@@ -105,19 +110,22 @@ public class AonHub {
 	public void getOpenIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=open"
-				+ (since != null ? "&since=" + this.since : ""), callback);
+				+ (since != null ? "&since=" + this.since : "")
+				+ (sender != null ? "&sender=" + URL.encode(sender) : ""), callback);
 	}
 
 	public void getClosedIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=closed"
-				+ (since != null ? "&since=" + this.since : ""), callback);
+				+ (since != null ? "&since=" + this.since : "")
+				+ (sender != null ? "&sender=" + URL.encode(sender) : ""), callback);
 	}
 
 	public void getAllIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=all"
-				+ (since != null ? "&since=" + this.since : ""), callback);
+				+ (since != null ? "&since=" + this.since : "")
+				+ (sender != null ? "&sender=" + URL.encode(sender) : ""), callback);
 	}
 
 	public void createIssue(String user, String repo, IssueValue prop,

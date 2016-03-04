@@ -45,7 +45,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		implements HasSelectionHandlers<IssueSelected> {
 
 	interface Listener {
-		void onSelectionChangeHandler(SelectionChangeEvent event);
 
 		void onSelectionTitle(IssueSelected issue);
 	}
@@ -387,8 +386,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		selectionModel.addSelectionChangeHandler(new Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				for (Listener listener : listeners)
-					listener.onSelectionChangeHandler(event);
+//				for (Listener listener : listeners)
+//					listener.onSelectionChangeHandler(event);
 				SelectionEvent.fire(IssueGrid.this, getIssueSelected());
 			}
 		});

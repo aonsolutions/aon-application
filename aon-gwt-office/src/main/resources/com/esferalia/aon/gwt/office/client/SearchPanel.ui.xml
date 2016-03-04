@@ -1,0 +1,52 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.AonHubMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+	<ui:style>
+	
+	</ui:style>
+	<g:Grid>
+		<g:row>
+			<g:customCell>
+				<g:Label text="{msg.showFrom}" styleName="{aonResources.css.aonBold}" />
+			</g:customCell>
+			<g:customCell>
+				<g:ListBox ui:field="fromListBox" />
+			</g:customCell>
+			<g:customCell>
+				<g:RadioButton ui:field="openIssuesRb" name="showIssuesRb"
+					value="true" styleName="{aonResources.css.aonBold}" text="{msg.openIssues}" />
+			</g:customCell>
+			<g:customCell>
+				<g:RadioButton ui:field="closedIssuesRb" name="showIssuesRb"
+					value="false" text="{msg.closedIssues}" />
+			</g:customCell>
+			<g:customCell>
+				<g:RadioButton ui:field="allIssuesRb" name="showIssuesRb"
+					value="false" text="{msg.allIssues}" />
+			</g:customCell>
+			<g:customCell>
+				<g:HTMLPanel styleName="{aonResources.css.aonGroupBody}">
+					<table>
+						<row>
+							<td>
+								<g:Label styleName="{aonResources.css.aonIconCompany}" />
+							</td>
+							<td>
+								<g:SuggestBox styleName="{aonResources.css.aonInputText}"
+									width="300px" ui:field="registrySuggest" />
+
+							</td>
+						</row>
+					</table>
+				</g:HTMLPanel>
+			</g:customCell>
+
+		</g:row>
+	</g:Grid>
+</ui:UiBinder> 

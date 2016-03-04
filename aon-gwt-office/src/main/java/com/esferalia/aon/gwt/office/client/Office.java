@@ -1,15 +1,14 @@
 package com.esferalia.aon.gwt.office.client;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.office.client.IssueReadPanel.Callback;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
@@ -34,7 +33,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
@@ -50,17 +48,15 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
-		IssuePanel.Listener, IssueReadPanel.Listener, TagTree.Listener, ScrollHandler {
+		IssuePanel.Listener, IssueReadPanel.Listener, TagTree.Listener,
+		SearchPanel.Listener, ScrollHandler {
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
@@ -83,44 +79,36 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	SimpleLayoutPanel readIssueLayoutPanel;
 	@UiField
 	ResizeLayoutPanel readIssuePanel;
-	@UiField
-	ListBox fromListBox;
-	@UiField
-	RadioButton openIssuesRb;
-	@UiField
-	RadioButton closedIssuesRb;
-	@UiField
-	RadioButton allIssuesRb;
 
 	@UiField
 	IssueGrid dataGrid;
 
 	@UiField
 	StackLayoutPanel stackLayoutPanel;
+
+	@UiField
+	SearchPanel searchPanel;
 	@UiField
 	TagTree tagTree;
-	
+
 	/**
-	 *  The last scroll position
+	 * The last scroll position
 	 */
 	private int lastScrollPos = 0;
 	private int incrementSize = 50;
-	
+
 	private User user;
 	private IssuePanel issuePanel;
+	private String registrySelected;
 
 	private IssueSelected issueSelected;
 	private AonHub gitHub = new AonHub(GWT.getModuleBaseURL() + "api/");
-	private List<IssueSelected> openIssues;
-	private List<IssueSelected> closedIssues;
-	private List<IssueSelected> allIssues;
 
-	private ListDataProvider<IssueSelected> openIssuesProvider;
-	private ListDataProvider<IssueSelected> closeIssuesProvider;
-	private ListDataProvider<IssueSelected> allIssuesProvider;
+	private List<IssueSelected> issues;
+	private ListDataProvider<IssueSelected> issuesProvider;
 
 	private List<DefaultAonTagIssueSelected> tagList;
-	private List<Registry> registries;
+	private Map<Integer, Registry> registryMap;
 	private List<RegistryMedia> rmedias;
 
 	private Map<Integer, JsIssue> issuesMap;
@@ -142,13 +130,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 
 		this.tagList = new LinkedList<DefaultAonTagIssueSelected>();
-		this.registries = new LinkedList<Registry>();
+		this.registryMap = new HashMap<Integer, Registry>();
 		this.rmedias = new LinkedList<RegistryMedia>();
-	
+		this.searchPanel.addListener(this);
 		this.dataGrid.addListener(this);
 		this.dataGrid.getScrollPanel().addScrollHandler(this);
 		this.tagTree.addListener(this);
-		
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
 
 		gitHub.getUser(String.valueOf(getCurrentDomain()),
@@ -165,20 +152,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					}
 				});
 
-		initFromListBox();
 		loadRegistries();
 		loadRMedias();
 		loadLabels();
 		loadOpenIssues();
-	}
-
-	private void initFromListBox() {
-		fromListBox.addItem(" -------- ", "all");
-		fromListBox.addItem("Hoy", "today");
-		fromListBox.addItem("Esta semana", "thisWeek");
-		fromListBox.addItem("Este mes", "thisMonth");
-		fromListBox.addItem("Este a\u00F1o", "thisYear");
-		fromListBox.setSelectedIndex(0);
 	}
 
 	private void loadRegistries() {
@@ -239,7 +216,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private void loadOpenIssues() {
 
-		initOpenIssues();
+		initIssuesList();
 		gitHub.getOpenIssues(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
 
@@ -260,7 +237,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	private void loadClosedIssues() {
-		initClosedIssues();
+		initIssuesList();
 		gitHub.getClosedIssues(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
 
@@ -273,15 +250,15 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					public void onSuccess(JSON<JsIssue> result) {
 
 						for (int x = 0; x < result.getData().length(); x++)
-							addCloseIssue(result.getData().get(x));
+							addClosedIssue(result.getData().get(x));
+						// addCloseIssue(result.getData().get(x));
 					}
 				});
 		showDockOfficePanel();
 	}
 
 	private void loadAllIssues() {
-		initAllIssues();
-
+		initIssuesList();
 		gitHub.getAllIssues(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
 
@@ -300,11 +277,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	@Override
-	public void onSelectionChangeHandler(SelectionChangeEvent event) {
-
-	}
-	
-	@Override
 	public void onScroll(ScrollEvent event) {
 
 		int scrollPos = dataGrid.getScrollPanel().getVerticalScrollPosition();
@@ -312,12 +284,14 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 			lastScrollPos = scrollPos;
 			return;
 		}
-		
+
 		lastScrollPos = scrollPos;
-		int maxScrollPos = dataGrid.getScrollPanel().getMaximumVerticalScrollPosition();
+		int maxScrollPos = dataGrid.getScrollPanel()
+				.getMaximumVerticalScrollPosition();
 		if ((lastScrollPos + (maxScrollPos / 10)) >= maxScrollPos) {
 			incrementSize += 50;
-			dataGrid.setVisibleRange(0, dataGrid.getVisibleRange().getLength() + incrementSize);
+			dataGrid.setVisibleRange(0,
+					dataGrid.getVisibleRange().getLength() + incrementSize);
 		}
 	}
 
@@ -330,12 +304,15 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		issuePanel = new IssuePanel(this.user);
 		issuePanel.addListener(this);
 
-		if (registries.size() > 0)
-			issuePanel.setRegistries(registries);
-		
+		if (registryMap.size() > 0)
+			issuePanel.setRegistries(registryMap);
+
 		if (rmedias.size() > 0)
 			issuePanel.setRMedias(rmedias);
-			
+		
+		if (registrySelected != null)
+			issuePanel.setSender(this.registrySelected);
+		
 		issuePanel.showPopupPanel();
 	}
 
@@ -350,102 +327,35 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		returnButton.setEnabled(false);
 	}
 
-	@UiHandler("openIssuesRb")
-	void onSelectedOpenIssuesRb(ValueChangeEvent<Boolean> event) {
-		
-		if (event.getValue()) {
-			closedIssuesRb.removeStyleName(AON.AON_BOLD);
-			allIssuesRb.removeStyleName(AON.AON_BOLD);
-			openIssuesRb.setStyleName(AON.AON_BOLD);
-			loadOpenIssues();
-		}
-	}
-
-	@UiHandler("closedIssuesRb")
-	void onSelectedClosedIssuesRb(ValueChangeEvent<Boolean> event) {
-		
-		if (event.getValue()) {
-			openIssuesRb.removeStyleName(AON.AON_BOLD);
-			allIssuesRb.removeStyleName(AON.AON_BOLD);
-			closedIssuesRb.setStyleName(AON.AON_BOLD);
-			loadClosedIssues();
-		}
-	}
-
-	@UiHandler("allIssuesRb")
-	void onSelectedAllIssuesRb(ValueChangeEvent<Boolean> event) {
-		
-		if (event.getValue()) {
-			openIssuesRb.removeStyleName(AON.AON_BOLD);
-			closedIssuesRb.removeStyleName(AON.AON_BOLD);
-			allIssuesRb.setStyleName(AON.AON_BOLD);
-			loadAllIssues();
-		}
-	}
-
-	@UiHandler("fromListBox")
-	void onChangeEventListBox(ChangeEvent event) {
-
-		String name = fromListBox.getSelectedValue();
-		Date criteria = null;
-		if (name.compareTo("today") == 0)
-			criteria = new Date();
-		else if (name.compareTo("thisWeek") == 0)
-			criteria = DateUtils.getFirstDayOfWorkWeek(new Date());
-		else if (name.compareTo("thisMonth") == 0)
-			criteria = DateUtils.getFirstDayOfMonth();
-		else if (name.compareTo("thisYear") == 0)
-			criteria = DateUtils.getFirstDayOfYear();
-
-		gitHub.setSinceCriteria(criteria);
-		evalRadioButtons();
-	}
-
 	// ******************************************************************
 	// ********************** PRIVATE METHODS ***************************
 	// ******************************************************************
 
 	void evalRadioButtons() {
 
-		if (openIssuesRb.getValue())
+		if (searchPanel.openIsSelected())
 			loadOpenIssues();
-		else if (closedIssuesRb.getValue())
+		else if (searchPanel.closedIsSelected())
 			loadClosedIssues();
-		else if (allIssuesRb.getValue())
+		else if (searchPanel.allIsSelected())
 			loadAllIssues();
 	}
 
-	void initOpenIssues() {
-		openIssues = new LinkedList<IssueSelected>();
-		openIssuesProvider = new ListDataProvider<IssueSelected>();
-		openIssuesProvider.addDataDisplay(dataGrid);
-		openIssues = openIssuesProvider.getList();
-	}
-
-	void initClosedIssues() {
-		closedIssues = new LinkedList<IssueSelected>();
-		closeIssuesProvider = new ListDataProvider<IssueSelected>();
-		closeIssuesProvider.addDataDisplay(dataGrid);
-		closedIssues = closeIssuesProvider.getList();
-	}
-
-	void initAllIssues() {
-		allIssues = new LinkedList<IssueSelected>();
-		allIssuesProvider = new ListDataProvider<IssueSelected>();
-		allIssuesProvider.addDataDisplay(dataGrid);
-		allIssues = allIssuesProvider.getList();
+	void initIssuesList() {
+		this.issues = new LinkedList<IssueSelected>();
+		this.issuesProvider = new ListDataProvider<IssueSelected>();
+		this.issuesProvider.addDataDisplay(dataGrid);
+		this.issues = issuesProvider.getList();
 	}
 
 	void addOpenIssue(JsIssue issue) {
-		IssueSelected issueSelected = new IssueGrid.IssueOpenLoadSelected(
-				issue);
-		openIssues.add(issueSelected);
+		IssueSelected selected = new IssueGrid.IssueOpenLoadSelected(issue);
+		issues.add(selected);
 	}
 
-	void addCloseIssue(JsIssue issue) {
-		IssueSelected issueSelected = new IssueGrid.IssueClosedLoadSelected(
-				issue);
-		closedIssues.add(issueSelected);
+	void addClosedIssue(JsIssue issue) {
+		IssueSelected selected = new IssueGrid.IssueClosedLoadSelected(issue);
+		issues.add(selected);
 	}
 
 	void addAllIssue(JsIssue issue) {
@@ -460,14 +370,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 			issueSelected = new IssueGrid.IssueClosedLoadSelected(issue);
 
 		if (issueSelected != null)
-			allIssues.add(issueSelected);
-	}
-
-	void initCloseIssues() {
-		closedIssues = new LinkedList<IssueSelected>();
-		closeIssuesProvider = new ListDataProvider<IssueSelected>();
-		closeIssuesProvider.addDataDisplay(dataGrid);
-		closedIssues = closeIssuesProvider.getList();
+			issues.add(issueSelected);
 	}
 
 	void userIdentificated(JsUser jsUser) {
@@ -500,9 +403,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		registry.setName(URL.decode(jsRegistry.getName()));
 		registry.setDocument(jsRegistry.getDocument());
 
-		registries.add(registry);
+		this.registryMap.put(registry.getId(), registry);
+		this.searchPanel.addRegistry(registry);
 	}
-	
+
 	private void addRMedia2List(JsRMedia jsRMedia) {
 		RegistryMedia rmedia = new RegistryMedia();
 		rmedia.setId(jsRMedia.getId());
@@ -510,13 +414,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		rmedia.setMedia(jsRMedia.getMedia());
 		rmedia.setValue(URL.decode(jsRMedia.getValue()));
 		rmedia.setComment(URL.decode(jsRMedia.getComment()));
-		
+
 		Registry registry = new Registry();
 		registry.setId(jsRMedia.getRegistry().getId());
 		registry.setAlias(URL.decode(jsRMedia.getRegistry().getAlias()));
 		registry.setName(URL.decode(jsRMedia.getRegistry().getName()));
 		registry.setDocument(jsRMedia.getRegistry().getDocument());
-		
+
 		rmedia.setRegistry(registry);
 		rmedias.add(rmedia);
 	}
@@ -581,6 +485,41 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	// ******************************************************************
+	// ************************* SEARCH PANEL ***************************
+	// ******************************************************************
+
+	@Override
+	public void onOpenIssuesRbSelected(ValueChangeEvent<Boolean> event) {
+		incrementSize = 50;
+		loadOpenIssues();
+	}
+
+	@Override
+	public void onClosedIssuesRbSelected(ValueChangeEvent<Boolean> event) {
+		incrementSize = 50;
+		loadClosedIssues();
+	}
+
+	@Override
+	public void onAllIssuesRbSelected(ValueChangeEvent<Boolean> event) {
+		incrementSize = 50;
+		loadAllIssues();
+	}
+
+	@Override
+	public void onChangeEventListBox(Date criteria) {
+		gitHub.setSinceCriteria(criteria);
+		evalRadioButtons();
+	}
+	
+	@Override
+	public void onSuggestBoxChangeValue(String sender) {
+		this.registrySelected = sender;
+		gitHub.setSender(sender);
+		evalRadioButtons();
+	}
+
+	// ******************************************************************
 	// ********************** ISSUES DATA GRID **************************
 	// ******************************************************************
 
@@ -637,7 +576,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					public void onSuccess(JsIssue result) {
 						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(
 								result);
-						openIssues.add(0, issue);
+						issues.add(0, issue);
 						onSelectionTitle(issue);
 					}
 				});
@@ -795,7 +734,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					public void onSuccess(JsIssue result) {
 						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(
 								result);
-						openIssues.add(0, issue);
+						issues.add(0, issue);
 						onSelectionTitle(issue);
 					}
 				});
@@ -832,7 +771,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					public void onSuccess(JsIssue result) {
 						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(
 								result);
-						openIssues.add(0, issue);
+						// openIssues.add(0, issue);
+						issues.add(0, issue);
 						onSelectionTitle(issue);
 					}
 				});

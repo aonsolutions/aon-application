@@ -54,28 +54,27 @@
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName="aon-finding-title">
 						<g:HTMLPanel styleName="aon-finding-title-internal">
-							<g:Label styleName="aon-outputText" text="Incidencias" />
+							<g:Label styleName="aon-outputText" text="{msg.issues}" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="aon-finding-subtitle">
 						<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-							<g:Label styleName="aon-outputText"></g:Label>
+							<g:Label styleName="aon-outputText" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 						<g:Button ui:field='newIssueButton'
 							styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
-							text="AVISO" />
+							text="{msg.newIssue}" />
 						<g:Button ui:field='tagButton'
 							styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
-							text="ETIQUETAS" />
+							text="{msg.labels}" />
 						<g:Button ui:field='returnButton'
 							styleName='aon-finding-toolbar-item {aonResources.css.aonIconCancel}'
-							text="VOLVER" enabled="false" />
+							text="{msg.back}" enabled="false" />
 					</g:HTMLPanel>
 				</g:HorizontalPanel>
 			</g:FlowPanel>
-
 		</g:north>
 
 		<g:center>
@@ -87,31 +86,9 @@
 						<g:HTMLPanel styleName="aon-panelGrid-search {style.searchPanel}">
 							<div class="aon-panelGrid-search-info">
 								<g:Label styleName="aon-panelGrid-search-info-internal"
-									text="Criterio de búsqueda" />
+									text="{msg.searchCriteria}" />
 							</div>
-
-							<g:Grid>
-								<g:row>
-									<g:customCell>
-										<g:Label text="Mostrar a partir de " styleName="{aonResources.css.aonBold}" />
-									</g:customCell>
-									<g:customCell>
-										<g:ListBox ui:field="fromListBox" />
-									</g:customCell>
-									<g:customCell>
-										<g:RadioButton ui:field="openIssuesRb" name="showIssuesRb"
-											value="true" styleName="{aonResources.css.aonBold}"> Abiertas </g:RadioButton>
-									</g:customCell>
-									<g:customCell>
-										<g:RadioButton ui:field="closedIssuesRb" name="showIssuesRb"
-											value="false"> Cerradas </g:RadioButton>
-									</g:customCell>
-									<g:customCell>
-										<g:RadioButton ui:field="allIssuesRb" name="showIssuesRb"
-											value="false"> Todas </g:RadioButton>
-									</g:customCell>
-								</g:row>
-							</g:Grid>
+							<office:SearchPanel ui:field="searchPanel" />
 						</g:HTMLPanel>
 					</g:north>
 					<g:center>
