@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod130;
 
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -53,6 +55,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -240,8 +243,17 @@ public class Model130 extends MainEntryPoint {
 
 	};
 
+	private Logger logger = Logger.getLogger(Mod130.class.getName()); 
 	@Override
 	public void onModuleLoad() {
+		
+		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
+		    @Override
+		    public void onUncaughtException(Throwable e) {
+		    	logger.log(Level.SEVERE,"No caught!",e);
+		    }
+		  });
+		
 		AON.ensureInjected();
 
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
@@ -893,7 +905,7 @@ public class Model130 extends MainEntryPoint {
 	}
 	
 	private void cleanErrorMessage() {
-		SimplePanel panel = new SimplePanel();
+		SimpleLayoutPanel panel = new SimpleLayoutPanel();
 		resultsPanel.setWidget(panel);
 		closeFootPanel();
 	}
@@ -901,7 +913,7 @@ public class Model130 extends MainEntryPoint {
 	private void showErrorMessage(String msg) {
 		openFootPanelIfNeeded();
 		tabLayout.selectTab(NOTIFICATIONS_TAB);
-		SimplePanel panel = new SimplePanel();
+		SimpleLayoutPanel panel = new SimpleLayoutPanel();
 		Label label = new Label(msg);
 		label.addStyleName("aon-icon-errorwarning");
 		label.addStyleName("aon-message-error");

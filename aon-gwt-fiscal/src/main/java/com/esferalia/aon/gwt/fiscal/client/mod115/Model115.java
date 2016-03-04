@@ -56,6 +56,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -908,7 +909,7 @@ public class Model115 extends MainEntryPoint {
 	}
 	
 	private void cleanErrorMessage() {
-		SimplePanel panel = new SimplePanel();
+		SimpleLayoutPanel panel = new SimpleLayoutPanel();
 		resultsPanel.setWidget(panel);
 		closeFootPanel();
 	}
@@ -916,7 +917,7 @@ public class Model115 extends MainEntryPoint {
 	private void showErrorMessage(String msg) {
 		openFootPanelIfNeeded();
 		tabLayout.selectTab(NOTIFICATIONS_TAB);
-		SimplePanel panel = new SimplePanel();
+		SimpleLayoutPanel panel = new SimpleLayoutPanel();
 		Label label = new Label(msg);
 		label.addStyleName("aon-icon-errorwarning");
 		label.addStyleName("aon-message-error");

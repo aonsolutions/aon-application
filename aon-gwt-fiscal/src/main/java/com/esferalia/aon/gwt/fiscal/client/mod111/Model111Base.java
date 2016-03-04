@@ -28,10 +28,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RequiresResize;
-import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.SimplePanel;
 
-public abstract class Model111Base extends ResizeComposite implements RequiresResize, IMod111Declaration {
+public abstract class Model111Base extends SimplePanel implements IMod111Declaration {
 
 	protected static final boolean ENABLED = true;
 	protected static final boolean DISABLED = false;
@@ -54,13 +53,9 @@ public abstract class Model111Base extends ResizeComposite implements RequiresRe
 	public Model111Base(IFiscalModelCallback<Mod111> callback) {
 		this.callback = callback;
 		fieldsMap = new EnumMap<>(Mod111Key.class);
-		FlowPanel container = new FlowPanel();
 		table = new FlexTable();
-		container.add(table);
-		
 		paintDeclaration(callback.getFiscalModel());
-		
-		initWidget(container);
+		setWidget(table);
 	}
 	
 	protected IFiscalModelCallback<Mod111> getCallback() {

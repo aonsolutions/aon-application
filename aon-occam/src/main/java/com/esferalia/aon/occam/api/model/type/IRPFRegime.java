@@ -31,7 +31,7 @@ public enum IRPFRegime implements Serializable {
 	}
 	public static IRPFRegime safeValueOf( Integer i ) {
 		if (i == null) return null;
-		if (i < 0 || i > IRPFRegime.values().length) return null;
+		if (i < 0 || i.intValue() >= IRPFRegime.values().length) return null;
 		return IRPFRegime.values()[i];
 	}
 
