@@ -22,6 +22,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -161,6 +162,8 @@ public class ItemTagPrintController extends ItemController {
 		} catch (ManagerBeanException e) {
 			LOGGER.error("No se ha podido filtrar los productos base");
 		}
+		CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		reportTemplate = company.getItemTagTemplate();
 	}
 	
 	private String obtainDefaultText() {
@@ -186,14 +189,27 @@ public class ItemTagPrintController extends ItemController {
 		}
 	}
 	
+	public void onItemTagPrintShow(ActionEvent event, List<Integer> idList) throws ManagerBeanException {
+		ItemTagPrintController itemTagController = (ItemTagPrintController) FormUtil.getController(IItemConstants.ITEM_TAG_PRINT_CONTROLLER_NAME);
+		itemTagController.onEditSearch(event);
+		itemTagController.getCriteria().addInExpression(itemTagController.getFieldName(IEntityAlias.ITEM_ID), idList);
+		itemTagController.onSearch(event);
+		itemTagController.checkAll(event);
+	}
+	
 	///////////////////////////////////////
 	// JASPER PRINT
 	///////////////////////////////////////
 	
-	public String getReportTemplate(){
-		CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		ItemTagTemplate template = company.getItemTagTemplate();
-		return template==null ? ItemTagTemplate.TEMPLATE_1.getValue() : template.getValue();
+	private ItemTagTemplate reportTemplate;
+	public ItemTagTemplate getReportTemplate(){
+		return reportTemplate==null ? ItemTagTemplate.TEMPLATE_1 : reportTemplate;
+	}
+	public void setReportTemplate(ItemTagTemplate reportTemplate) {
+		this.reportTemplate = reportTemplate;
+	}
+	public String getReportKey(){
+		return getReportTemplate().getValue();
 	}
 
 	@Override

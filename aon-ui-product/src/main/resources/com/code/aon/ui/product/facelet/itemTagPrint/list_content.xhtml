@@ -11,18 +11,29 @@
 	<aon:div id="itemTagPrint_list">
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 			<ui:param name="toolbarTitle" value="#{bundle.product_tag_print_module}" />
+			<ui:param name="toolbarDescription" value="#{bundle.aon_listing}" />
 			<ui:param name="controller" value="#{itemTagPrint}" />
 			<ui:param name="skipResetButton" value="#{true}" />
 
+			<ui:define name="beforeToolbarContent">
+				<aon:if test="#{showItemTagReportTemplate}">
+					<aon:selectOneMenu id="itemTagPrint_reportTemplate"
+						value="#{itemTagPrint.reportTemplate}" >
+						<f:selectItems value="#{companyCollections.itemTagTemplate}" />
+						<a4j:support event="onchange" reRender="itemTagPrint-report" ajaxSingle="#{true}" />
+					</aon:selectOneMenu>
+				</aon:if>
+			</ui:define>
+
 			<ui:define name="additionalToolbarContent">
 				<aon:htmlCommandLink id="itemTagPrint-report"
-					value="#{bundle.aon_listing}" target="_blank"
+					value="#{bundle.aon_report}" target="_blank"
 					rendered="#{!(empty itemTagPrint.checkedItems) and itemTagPrint.checkedItems>0}"
 					disabled="#{empty itemTagPrint.reportTemplate}"
 					action="#{report.onExecute}" 
 					styleClass="aon-finding-toolbar-item aon-icon-pdf"
 					accesskey="#{bundle.aon_key_print}">
-					<f:param name="reportKey" value="#{itemTagPrint.reportTemplate}" />
+					<f:param name="reportKey" value="#{itemTagPrint.reportKey}" />
 				</aon:htmlCommandLink>
 			</ui:define>
 
@@ -76,7 +87,7 @@
 				<ui:define name="columns">
 					<aon:column styleClass="aon-editDataTable-iconColumn">
 						<f:facet name="header">
-							<aon:panelGroup rendered="#{!skipChecksButtons}">
+							<aon:panelGroup rendered="#{showChecksButtons}">
 								<aon:commandButton styleClass="aon-icon-commandButton aon-icon-checkAll"
 									title="#{bundle.aon_check_all}"
 									value="&#160;"

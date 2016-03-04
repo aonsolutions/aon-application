@@ -12,7 +12,9 @@
 	<ui:define name="content">
 	
 		<aon:form>
-			<ui:decorate template="/com/code/aon/ui/product/facelet/itemTagPrint/list_content.xhtml" />
+			<ui:decorate template="/com/code/aon/ui/product/facelet/itemTagPrint/list_content.xhtml" >
+				<ui:param name="showChecksButtons" value="#{true}" />
+			</ui:decorate>
 		</aon:form>
 		
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" >

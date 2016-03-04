@@ -49,6 +49,8 @@ import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.product.controller.IItemConstants;
+import com.code.aon.ui.product.controller.ItemTagPrintController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
 import com.code.aon.ui.util.AonUtil;
@@ -654,6 +656,15 @@ public class IncomeController extends BasicController implements IWarehouseConst
 			return true;
 		}
 		return false;
+	}
+	
+	public void onItemTagPrintShow(ActionEvent event) throws ManagerBeanException {
+		List<Integer> idList = new LinkedList<Integer>();
+		IController detailController = FormUtil.getController(IWarehouseConstants.INCOME_DETAIL_CONTROLLER_NAME);
+		List<ITransferObject> list = detailController.getManagerBean().getList(detailController.getCriteria());
+		list.forEach(to -> {idList.add(((IncomeDetail)to).getItem().getId());});
+		ItemTagPrintController itemTagController = (ItemTagPrintController) FormUtil.getController(IItemConstants.ITEM_TAG_PRINT_CONTROLLER_NAME);
+		itemTagController.onItemTagPrintShow(event, idList);
 	}
 
 }

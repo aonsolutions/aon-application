@@ -94,19 +94,12 @@ public class ManufacturingOrderController extends PurchaseController {
 	}
 	
 	public void onItemTagPrintShow(ActionEvent event) throws ManagerBeanException {
-		IController detailController = FormUtil.getController(IPurchaseConstants.MANUFACTURING_ORDER_DETAIL_CONTROLLER_NAME);
 		List<Integer> idList = new LinkedList<Integer>();
+		IController detailController = FormUtil.getController(IPurchaseConstants.MANUFACTURING_ORDER_DETAIL_CONTROLLER_NAME);
 		List<ITransferObject> list = detailController.getManagerBean().getList(detailController.getCriteria());
-		for(ITransferObject to: list){
-			PurchaseDetail detail = (PurchaseDetail)to;
-			idList.add(detail.getItem().getId());
-		}
-		
+		list.forEach(to -> {idList.add(((PurchaseDetail)to).getItem().getId());});
 		ItemTagPrintController itemTagController = (ItemTagPrintController) FormUtil.getController(IItemConstants.ITEM_TAG_PRINT_CONTROLLER_NAME);
-		itemTagController.onEditSearch(event);
-		itemTagController.getCriteria().addInExpression(itemTagController.getFieldName(IEntityAlias.ITEM_ID), idList);
-		itemTagController.onSearch(event);
-		itemTagController.checkAll(event);
+		itemTagController.onItemTagPrintShow(event, idList);
 	}
 	
 }
