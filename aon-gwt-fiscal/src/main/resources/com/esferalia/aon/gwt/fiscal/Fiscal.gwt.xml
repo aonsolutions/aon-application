@@ -5,7 +5,8 @@
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name="com.google.gwt.i18n.I18N" />
 	<inherits name='com.google.gwt.visualization.Visualization'/>
-	 
+	<inherits name="com.google.gwt.logging.Logging"/>
+		 
 	<!-- Spanish language, independent of country -->
 	<extend-property name="locale" values="es" />
 
