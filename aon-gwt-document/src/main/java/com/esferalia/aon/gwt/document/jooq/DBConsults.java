@@ -66,7 +66,7 @@ public class DBConsults {
 		filesGwt = new Vector<FileInfo>();
 		Vector<FileInfo> 
 		vaux = new Vector<FileInfo>();
-		if(user.getDomain() == domain.getParentId()){
+		if(user.getDomain().equals(domain.getParentId())){
 			// Todos los archivos del documental del dominio actual
 			LinkedList<FileInfo> s = AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(),
 					f -> f.getDomainProperty().eq(domain.getId())
