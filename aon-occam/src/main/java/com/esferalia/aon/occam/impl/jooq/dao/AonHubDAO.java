@@ -502,7 +502,8 @@ public class AonHubDAO {
 		return notice;
 	}
 
-	public static List<Notice> getOpenNotices(AONContext ctx, String pSince, String sender) {
+	public static List<Notice> getOpenNotices(AONContext ctx, String pSince,
+			String sender) {
 
 		changeMessageType2CommentType(ctx);
 
@@ -531,11 +532,11 @@ public class AonHubDAO {
 					NOTICE.DATE.between(new java.sql.Timestamp(since.getTime()),
 							new java.sql.Timestamp(tomorrow.getTime())));
 		}
-		
+
 		if (sender != null) {
 			select = select.and(NOTICE.COMPANY.eq(sender));
 		}
-		
+
 		Result<Record> record = select.orderBy(NOTICE.DATE.desc()).fetch();
 
 		if (record != null) {
@@ -549,7 +550,8 @@ public class AonHubDAO {
 		return notices;
 	}
 
-	public static List<Notice> getClosedIsues(AONContext ctx, String pSince, String sender) {
+	public static List<Notice> getClosedIsues(AONContext ctx, String pSince,
+			String sender) {
 
 		List<Notice> notices = new LinkedList<Notice>();
 
@@ -574,7 +576,7 @@ public class AonHubDAO {
 					NOTICE.DATE.between(new java.sql.Timestamp(since.getTime()),
 							new java.sql.Timestamp(tomorrow.getTime())));
 		}
-		
+
 		if (sender != null) {
 			select = select.and(NOTICE.COMPANY.eq(sender));
 		}
@@ -591,7 +593,8 @@ public class AonHubDAO {
 		return notices;
 	}
 
-	public static List<Notice> getAllNotices(AONContext ctx, String pSince, String sender) {
+	public static List<Notice> getAllNotices(AONContext ctx, String pSince,
+			String sender) {
 
 		List<Notice> notices = new LinkedList<Notice>();
 
@@ -622,7 +625,7 @@ public class AonHubDAO {
 					NOTICE.DATE.between(new java.sql.Timestamp(since.getTime()),
 							new java.sql.Timestamp(tomorrow.getTime())));
 		}
-		
+
 		if (sender != null) {
 			select = select.and(NOTICE.COMPANY.eq(sender));
 		}
@@ -818,32 +821,37 @@ public class AonHubDAO {
 
 		return buildNotice(ctx, noticeRecord);
 	}
-	
-	public static List<RegistryMedia> getRMedias(AONContext ctx, Integer parentDomain) {
-		
+
+	public static List<RegistryMedia> getRMedias(AONContext ctx,
+			Integer parentDomain) {
+
 		Cursor<Record> cursor = null;
 		List<RegistryMedia> rmedias = new LinkedList<RegistryMedia>();
-		
+
 		try {
-			
+
 			if (parentDomain == null)
 				return rmedias;
-			
+
 			SelectConditionStep<Record1<Integer>> domainSelect = ctx
 					.getDslContext().select(DOMAIN.ID).from(DOMAIN)
 					.where(DOMAIN.ID.eq(ctx.getDomainId())
 							.and(DOMAIN.PARENT.eq(parentDomain)));
-			
+
 			cursor = ctx.getDslContext().select()
-			.from(RMEDIA.rightOuterJoin(REGISTRY).on(RMEDIA.REGISTRY.eq(REGISTRY.ID))
-					.rightOuterJoin(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID)))
-			.where(REGISTRY.DOMAIN.in(domainSelect)
-					.and(CUSTOMER.STATUS.eq((byte) 0 ))
-					.and(RMEDIA.MEDIA.eq(MediaType.CELLULAR.value())
-							.or(RMEDIA.MEDIA.eq(MediaType.EMAIL.value())))).fetchLazy();
-			
+					.from(RMEDIA.rightOuterJoin(REGISTRY)
+							.on(RMEDIA.REGISTRY.eq(REGISTRY.ID))
+							.rightOuterJoin(CUSTOMER)
+							.on(CUSTOMER.REGISTRY.eq(REGISTRY.ID)))
+					.where(REGISTRY.DOMAIN.in(domainSelect)
+							.and(CUSTOMER.STATUS.eq((byte) 0))
+							.and(RMEDIA.MEDIA.eq(MediaType.CELLULAR.value())
+									.or(RMEDIA.MEDIA
+											.eq(MediaType.EMAIL.value()))))
+					.fetchLazy();
+
 			if (cursor != null) {
-				
+
 				for (Record value : cursor) {
 					RegistryMedia rmedia = new RegistryMedia();
 					rmedia.setId(value.getValue(RMEDIA.ID));
@@ -851,21 +859,21 @@ public class AonHubDAO {
 					rmedia.setMedia(value.getValue(RMEDIA.MEDIA));
 					rmedia.setValue(value.getValue(RMEDIA.VALUE));
 					rmedia.setComment(value.getValue(RMEDIA.COMMENT));
-					
+
 					Registry reg = new Registry();
 					reg.setId(value.getValue(REGISTRY.ID));
 					reg.setName(value.getValue(REGISTRY.NAME));
 					reg.setAlias(value.getValue(REGISTRY.ALIAS));
 					reg.setDocument(value.getValue(REGISTRY.DOCUMENT));
 					rmedia.setRegistry(reg);
-					
+
 					rmedias.add(rmedia);
 				}
-				
+
 			}
-			
+
 			return rmedias;
-			
+
 		} finally {
 			if (cursor != null)
 				cursor.close();
@@ -915,7 +923,11 @@ public class AonHubDAO {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		cal.add(Calendar.DATE, 1);
-		cal.add(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
 		return cal.getTime();
 	}
 
@@ -933,8 +945,10 @@ public class AonHubDAO {
 		else {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(since);
-			cal.add(Calendar.DATE, -1);
-			cal.add(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
 			return cal.getTime();
 		}
 	}

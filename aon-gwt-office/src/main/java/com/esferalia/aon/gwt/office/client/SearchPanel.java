@@ -25,6 +25,20 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SearchPanel extends Composite implements KeyUpHandler {
+	
+	enum DateRange {
+		ALL("all"),
+		TODAY("today"),
+		YESTERDAY("yesterday"),
+		THIS_WEEK("thisWeek"),
+		THIS_MONTH("thisMonth"),
+		FIVETEEN_DAYS_AGO("fiveteenDaysAgo"),
+		THIRTY_DAYS_AGO("fiveteenDaysAgo"),
+		THIS_YEAR("thisYear");
+		
+		private DateRange(String range) {
+		}
+	}
 
 	private static SearchPanelUiBinder uiBinder = GWT
 			.create(SearchPanelUiBinder.class);
@@ -67,11 +81,14 @@ public class SearchPanel extends Composite implements KeyUpHandler {
 		this.listeners = new LinkedList<Listener>();
 		this.registrySuggest.getValueBox().addKeyUpHandler(this);
 		
-		fromListBox.addItem(" -------- ", "all");
-		fromListBox.addItem("Hoy", "today");
-		fromListBox.addItem("Esta semana", "thisWeek");
-		fromListBox.addItem("Este mes", "thisMonth");
-		fromListBox.addItem("Este a\u00F1o", "thisYear");
+		fromListBox.addItem(" ", DateRange.ALL.name());
+		fromListBox.addItem("Hoy", DateRange.TODAY.name());
+		fromListBox.addItem("Ayer", DateRange.YESTERDAY.name());
+		fromListBox.addItem("Esta semana", DateRange.THIS_WEEK.name());
+		fromListBox.addItem("Este mes", DateRange.THIS_MONTH.name());
+		fromListBox.addItem("15 d\u00EDas", DateRange.FIVETEEN_DAYS_AGO.name());
+		fromListBox.addItem("30 d\u00EDas", DateRange.THIRTY_DAYS_AGO.name());
+		fromListBox.addItem("Este a\u00F1o", DateRange.THIS_YEAR.name());
 		fromListBox.setSelectedIndex(0);
 	}
 	
@@ -92,18 +109,25 @@ public class SearchPanel extends Composite implements KeyUpHandler {
 
 		String name = fromListBox.getSelectedValue();
 		Date criteria = null;
-		if (name.compareTo("today") == 0)
+		if (name.compareTo(DateRange.ALL.name()) == 0)
+			criteria = null;
+		else if (name.compareTo(DateRange.TODAY.name()) == 0)
 			criteria = new Date();
-		else if (name.compareTo("thisWeek") == 0)
+		else if (name.compareTo(DateRange.YESTERDAY.name()) == 0)
+			criteria = DateUtils.getPrevDay(new Date());
+		else if (name.compareTo(DateRange.THIS_WEEK.name()) == 0)
 			criteria = DateUtils.getFirstDayOfWorkWeek(new Date());
-		else if (name.compareTo("thisMonth") == 0)
+		else if (name.compareTo(DateRange.THIS_MONTH.name()) == 0)
 			criteria = DateUtils.getFirstDayOfMonth();
-		else if (name.compareTo("thisYear") == 0)
+		else if (name.compareTo(DateRange.FIVETEEN_DAYS_AGO.name()) == 0)
+			criteria = DateUtils.deleteDays2Date(new Date(), 15);
+		else if (name.compareTo(DateRange.THIRTY_DAYS_AGO.name()) == 0)
+			criteria = DateUtils.deleteDays2Date(new Date(), 30);
+		else if (name.compareTo(DateRange.THIS_YEAR.name()) == 0)
 			criteria = DateUtils.getFirstDayOfYear();
 
-		if (criteria != null)
-			for (Listener listener : listeners)
-				listener.onChangeEventListBox(criteria);
+		for (Listener listener : listeners)
+			listener.onChangeEventListBox(criteria);
 	}
 
 	@UiHandler("openIssuesRb")

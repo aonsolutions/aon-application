@@ -56,8 +56,13 @@ public class AonHub {
 	}
 
 	public void setSinceCriteria(Date since) {
-		DateTimeFormat fmt = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");		
-		this.since = fmt.format(since);
+		DateTimeFormat fmt = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		try {
+			this.since = fmt.format(since);	
+		} catch (Exception ex) {
+			this.since = null;
+		}
+		
 	}
 	
 	public void setSender(String sender) {

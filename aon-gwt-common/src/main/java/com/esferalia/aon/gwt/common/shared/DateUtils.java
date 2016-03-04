@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.common.shared;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import com.google.gwt.user.datepicker.client.CalendarUtil;
@@ -28,6 +27,11 @@ public class DateUtils {
 
 	public static Date addDays2Date(Date date, int days) {
 		date.setDate(date.getDate() + days);
+		return date;
+	}
+
+	public static Date deleteDays2Date(Date date, int days) {
+		date.setDate(date.getDate() - days);
 		return date;
 	}
 
