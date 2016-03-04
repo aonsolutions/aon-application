@@ -184,7 +184,8 @@ public class SQLDaySalaryTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = 
 				getSQLContractSettleContext(
 				connection, 
-				startDate, 
+				startDate,
+				endDate,
 				contract);
 		
 		List<ITimedResult<Double>> daySalaries = 

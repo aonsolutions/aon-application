@@ -654,6 +654,18 @@ public abstract class AbstractSQLTestCase {
 			}
 
 
+	protected ISQLContractSalaryCalculatorContext getSQLContractSettleContext(Connection connection, Date contractStart, Date contractEnd,  ContractRecord contract)
+			throws SQLException, ExpressionException {
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(
+						CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+						contract.getId());
+				ISQLContractSalaryCalculatorContext ctx = new SQLContractSettleCalculatorContext(
+						connection, contractStart, contractEnd, contractEnd, criteria);
+				ctx.next();
+				return ctx;
+			}
+
 	protected ISQLContractSalaryCalculatorContext getSQLContractSettleContext(Connection connection, Date contractStart, ContractRecord contract)
 			throws SQLException, ExpressionException {
 				Criteria criteria = new Criteria();
