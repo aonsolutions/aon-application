@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.44</version>
+		<version>8.45-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -20,7 +20,7 @@
 	<scm>
 		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-common-resources</developerConnection>
 		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-common-resources</connection>
-	  <tag>8.44.x</tag>
+	  <tag>HEAD</tag>
   </scm>
 
   	<build>
