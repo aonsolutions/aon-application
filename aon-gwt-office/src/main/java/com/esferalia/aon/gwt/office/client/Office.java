@@ -141,7 +141,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.dataGrid.setEmptyTableWidget(new Label("No hay registros"));
 		this.tagTree.addListener(this);
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
-
+		
 		gitHub.getUser(String.valueOf(getCurrentDomain()),
 				new AsyncCallback<AJSON<JsUser>>() {
 
@@ -321,13 +321,14 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("tagButton")
 	void onTagButtonClick(ClickEvent event) {
-		dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 220);
+		dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 220);		
 	}
 
 	@UiHandler("returnButton")
 	void onReturnButtonClick(ClickEvent event) {
 		initIssuesList();
 		this.incrementSize = 0;
+		this.gitHub.setOffset(incrementSize);
 		evalRadioButtons();
 		returnButton.setEnabled(false);
 	}
