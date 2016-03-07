@@ -18,13 +18,13 @@ public interface IOffice {
 
 	public Notice changeNoticeStatus(AONContext ctx, Notice notice);
 
-	public List<Notice> getOpenNotices(AONContext ctx, String since, String sender)
+	public List<Notice> getOpenNotices(AONContext ctx, String since, String sender, int offset)
 			throws IllegalArgumentException;
 
-	public List<Notice> getClosedNotices(AONContext ctx, String since, String sender)
+	public List<Notice> getClosedNotices(AONContext ctx, String since, String sender, int offset)
 			throws IllegalArgumentException;
 
-	public List<Notice> getAllIssues(AONContext ctx, String since, String sender)
+	public List<Notice> getAllIssues(AONContext ctx, String since, String sender, int offset)
 			throws IllegalArgumentException;
 
 	public Notice createComment(AONContext ctx, Integer headId, Notice comment)

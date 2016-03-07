@@ -37,6 +37,8 @@ public class AonHub {
 	private static String repositoryUrl = "https://api.github.com/";
 	private static String since = null;
 	private static String sender = null;
+	
+	private static int offset = 0;
 	private static boolean authorized = false;
 
 	public AonHub(String url) {
@@ -62,7 +64,10 @@ public class AonHub {
 		} catch (Exception ex) {
 			this.since = null;
 		}
-		
+	}
+	
+	public void setOffset(int offset) {
+		this.offset = offset;
 	}
 	
 	public void setSender(String sender) {
@@ -116,21 +121,24 @@ public class AonHub {
 			AsyncCallback<JSON<JsIssue>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=open"
 				+ (since != null ? "&since=" + this.since : "")
-				+ (sender != null ? "&sender=" + URL.encode(sender) : ""), callback);
+				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
+				+ "&offset=" + offset, callback);
 	}
 
 	public void getClosedIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=closed"
 				+ (since != null ? "&since=" + this.since : "")
-				+ (sender != null ? "&sender=" + URL.encode(sender) : ""), callback);
+				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
+				+ "&offset=" + offset, callback);
 	}
 
 	public void getAllIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=all"
 				+ (since != null ? "&since=" + this.since : "")
-				+ (sender != null ? "&sender=" + URL.encode(sender) : ""), callback);
+				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
+				+ "&offset=" + offset, callback);
 	}
 
 	public void createIssue(String user, String repo, IssueValue prop,

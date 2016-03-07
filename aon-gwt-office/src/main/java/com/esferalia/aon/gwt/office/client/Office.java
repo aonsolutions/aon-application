@@ -48,6 +48,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
@@ -94,8 +95,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	/**
 	 * The last scroll position
 	 */
+	
+	private static final int DEFAULT_INCREMENT = 50; 
 	private int lastScrollPos = 0;
-	private int incrementSize = 50;
+	private int incrementSize = 0;
 
 	private User user;
 	private IssuePanel issuePanel;
@@ -135,6 +138,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.searchPanel.addListener(this);
 		this.dataGrid.addListener(this);
 		this.dataGrid.getScrollPanel().addScrollHandler(this);
+		this.dataGrid.setEmptyTableWidget(new Label("No hay registros"));
 		this.tagTree.addListener(this);
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
 
@@ -155,6 +159,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		loadRegistries();
 		loadRMedias();
 		loadLabels();
+		initIssuesList();
 		loadOpenIssues();
 	}
 
@@ -215,8 +220,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	private void loadOpenIssues() {
-
-		initIssuesList();
 		gitHub.getOpenIssues(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
 
@@ -237,7 +240,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	private void loadClosedIssues() {
-		initIssuesList();
 		gitHub.getClosedIssues(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
 
@@ -258,7 +260,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	private void loadAllIssues() {
-		initIssuesList();
 		gitHub.getAllIssues(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
 
@@ -289,6 +290,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		int maxScrollPos = dataGrid.getScrollPanel()
 				.getMaximumVerticalScrollPosition();
 		if ((lastScrollPos + (maxScrollPos / 10)) >= maxScrollPos) {
+			gitHub.setOffset(incrementSize + DEFAULT_INCREMENT);
+			evalRadioButtons();
 			incrementSize += 50;
 			dataGrid.setVisibleRange(0,
 					dataGrid.getVisibleRange().getLength() + incrementSize);
@@ -323,6 +326,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("returnButton")
 	void onReturnButtonClick(ClickEvent event) {
+		initIssuesList();
+		this.incrementSize = 0;
 		evalRadioButtons();
 		returnButton.setEnabled(false);
 	}
@@ -490,32 +495,45 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@Override
 	public void onOpenIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		incrementSize = 50;
+		this.incrementSize = 0;
+		this.gitHub.setOffset(incrementSize);
+		initIssuesList();
 		loadOpenIssues();
 	}
 
 	@Override
 	public void onClosedIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		incrementSize = 50;
+		this.incrementSize = 0;
+		this.gitHub.setOffset(incrementSize);
+		initIssuesList();
 		loadClosedIssues();
 	}
 
 	@Override
 	public void onAllIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		incrementSize = 50;
+		this.incrementSize = 0;
+		this.gitHub.setOffset(incrementSize);
+		initIssuesList();
 		loadAllIssues();
 	}
 
 	@Override
 	public void onChangeEventListBox(Date criteria) {
+		this.incrementSize = 0;
+		this.gitHub.setOffset(incrementSize);
 		gitHub.setSinceCriteria(criteria);
+		initIssuesList();
 		evalRadioButtons();
 	}
 	
 	@Override
 	public void onSuggestBoxChangeValue(String sender) {
+		this.incrementSize = 0;
+		this.gitHub.setOffset(incrementSize);
 		this.registrySelected = sender;
-		gitHub.setSender(sender);
+		this.gitHub.setSender(sender);
+		this.gitHub.setOffset(0);
+		initIssuesList();
 		evalRadioButtons();
 	}
 

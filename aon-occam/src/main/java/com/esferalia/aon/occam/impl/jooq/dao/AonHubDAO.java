@@ -503,7 +503,7 @@ public class AonHubDAO {
 	}
 
 	public static List<Notice> getOpenNotices(AONContext ctx, String pSince,
-			String sender) {
+			String sender, int offset) {
 
 		changeMessageType2CommentType(ctx);
 
@@ -537,7 +537,8 @@ public class AonHubDAO {
 			select = select.and(NOTICE.COMPANY.eq(sender));
 		}
 
-		Result<Record> record = select.orderBy(NOTICE.DATE.desc()).fetch();
+		Result<Record> record = select.orderBy(NOTICE.DATE.desc())
+				.limit(offset, 50).fetch();
 
 		if (record != null) {
 
@@ -551,7 +552,7 @@ public class AonHubDAO {
 	}
 
 	public static List<Notice> getClosedIsues(AONContext ctx, String pSince,
-			String sender) {
+			String sender, int offset) {
 
 		List<Notice> notices = new LinkedList<Notice>();
 
@@ -581,7 +582,8 @@ public class AonHubDAO {
 			select = select.and(NOTICE.COMPANY.eq(sender));
 		}
 
-		Result<Record> record = select.orderBy(NOTICE.DATE.desc()).fetch();
+		Result<Record> record = select.orderBy(NOTICE.DATE.desc())
+				.limit(offset, 50).fetch();
 
 		if (record != null)
 
@@ -594,7 +596,7 @@ public class AonHubDAO {
 	}
 
 	public static List<Notice> getAllNotices(AONContext ctx, String pSince,
-			String sender) {
+			String sender, int offset) {
 
 		List<Notice> notices = new LinkedList<Notice>();
 
@@ -630,7 +632,8 @@ public class AonHubDAO {
 			select = select.and(NOTICE.COMPANY.eq(sender));
 		}
 
-		Result<Record> record = select.orderBy(NOTICE.DATE.desc()).fetch();
+		Result<Record> record = select.orderBy(NOTICE.DATE.desc())
+				.limit(offset, 50).fetch();
 
 		if (record != null) {
 			record.stream().forEach(result -> {

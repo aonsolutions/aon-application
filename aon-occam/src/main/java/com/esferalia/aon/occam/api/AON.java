@@ -133,9 +133,9 @@ public class AON {
 		return new SystemImpl();
 	}
 
-//	private static IFiscal getFiscal() {
-//		return new FiscalImpl();
-//	}
+	// private static IFiscal getFiscal() {
+	// return new FiscalImpl();
+	// }
 
 	private static IFinance getFinance() {
 		return new FinanceImpl();
@@ -188,7 +188,7 @@ public class AON {
 	private static IMarketplace getMarketplace() {
 		return new MarketplaceImpl();
 	}
-	
+
 	private static IPMS getPMS() {
 		return new PMSImpl();
 	}
@@ -207,8 +207,8 @@ public class AON {
 		}
 	}
 
-	public static Integer[] getUserScopes(String domainName, int domainId, String login,
-			Integer userId) {
+	public static Integer[] getUserScopes(String domainName, int domainId,
+			String login, Integer userId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -286,9 +286,9 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	public static HashMap<Integer, DomainGserviceaccount> getDomainGserviceaccountMap(String domainName, Integer domainId, String login,
-			Integer parent) {
+
+	public static HashMap<Integer, DomainGserviceaccount> getDomainGserviceaccountMap(
+			String domainName, Integer domainId, String login, Integer parent) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -390,7 +390,7 @@ public class AON {
 			int domainId, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId,login);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getCommon().getFiscalParameters(ctx);
 		} finally {
 			if (ctx != null)
@@ -398,7 +398,8 @@ public class AON {
 		}
 	}
 
-	public static ApplicationParameter fetchApplicationParameter(AONContext ctx, AppParam param) {
+	public static ApplicationParameter fetchApplicationParameter(AONContext ctx,
+			AppParam param) {
 		return getCommon().fetchOne(ctx, param);
 	}
 
@@ -407,7 +408,7 @@ public class AON {
 			int domain, String login, String query) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain,login);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			return getCommon().getParentEnterprises(ctx, query);
 		} finally {
 			if (ctx != null)
@@ -415,10 +416,11 @@ public class AON {
 		}
 	}
 
-	public static Enterprise getEnterprise(String domainName, int domain, String login, int id) {
+	public static Enterprise getEnterprise(String domainName, int domain,
+			String login, int id) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain,login);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			return getCommon().getEnterprise(ctx, id);
 		} finally {
 			if (ctx != null)
@@ -426,7 +428,8 @@ public class AON {
 		}
 	}
 
-	public static Company getCompanyForDomain(String domainName, int domainId, String login) {
+	public static Company getCompanyForDomain(String domainName, int domainId,
+			String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -441,7 +444,7 @@ public class AON {
 			int domain, String login, int enterprise) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domain,login);
+			ctx = AONContext.getAONContext(domainName, domain, login);
 			return getCommon().getCompanyBanks(ctx, enterprise);
 		} finally {
 			if (ctx != null)
@@ -450,7 +453,7 @@ public class AON {
 	}
 
 	public static LinkedList<CompanyBank> getCompanyBanks(String domainName,
-			int domain,String login) {
+			int domain, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, login);
@@ -500,7 +503,8 @@ public class AON {
 		}
 	}
 
-	public static List<String> getProductTags(String domainName, int domainId, String login) {
+	public static List<String> getProductTags(String domainName, int domainId,
+			String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -549,7 +553,7 @@ public class AON {
 	}
 
 	public static Account getAccount(String domainName, int domainId,
-			String code,String login) {
+			String code, String login) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -560,11 +564,11 @@ public class AON {
 		}
 	}
 
-	public static Stream<Account> getAccounts(String domainName, int domainId,String login, 
-			AccountFilter filter) {
+	public static Stream<Account> getAccounts(String domainName, int domainId,
+			String login, AccountFilter filter) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId,login);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getAccounting().getAccounts(ctx, filter);
 		} finally {
 			if (ctx != null)
@@ -894,7 +898,7 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
+
 	// ********************************************
 	// ********************************* FINANCE **
 	// ********************************************
@@ -1083,9 +1087,9 @@ public class AON {
 	// ********************************************
 	// ****************************** GWT-OFFICE **
 	// ********************************************
-	
-	public static User getUser(
-			Integer domainId, String domainName, String userName, Integer userId) {
+
+	public static User getUser(Integer domainId, String domainName,
+			String userName, Integer userId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
@@ -1097,12 +1101,13 @@ public class AON {
 	}
 
 	public static List<Notice> getAllNotices(Integer domainId,
-			String domainName, String userName, String since, String sender) {
+			String domainName, String userName, String since, String sender,
+			int offset) {
 
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getAllIssues(ctx, since, sender);
+			return getOffice().getAllIssues(ctx, since, sender, offset);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1110,12 +1115,13 @@ public class AON {
 	}
 
 	public static List<Notice> getOpenNotices(Integer domainId,
-			String domainName, String userName, String since, String sender) {
+			String domainName, String userName, String since, String sender,
+			int offset) {
 
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getOpenNotices(ctx, since, sender);
+			return getOffice().getOpenNotices(ctx, since, sender, offset);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1123,30 +1129,33 @@ public class AON {
 	}
 
 	public static List<Notice> getClosedNotices(Integer domainId,
-			String domainName, String userName, String since, String sender) {
+			String domainName, String userName, String since, String sender,
+			int offset) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getClosedNotices(ctx, since, sender);
+			return getOffice().getClosedNotices(ctx, since, sender, offset);
 
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static Notice createComment(Integer domainId, String domainName, String userName, Integer noticeHeadId, Notice comment) {
+
+	public static Notice createComment(Integer domainId, String domainName,
+			String userName, Integer noticeHeadId, Notice comment) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			return getOffice().createComment(ctx, noticeHeadId, comment);
 		} finally {
-			if(ctx != null)
+			if (ctx != null)
 				ctx.close();
 		}
 	}
-	
-	public static Notice editComment(Integer domainId, String domainName, String userName, Integer commentId, String body) {
+
+	public static Notice editComment(Integer domainId, String domainName,
+			String userName, Integer commentId, String body) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
@@ -1278,8 +1287,9 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	public static List<RegistryMedia> getRMedias(Integer domainId, String domainName, String userName) {
+
+	public static List<RegistryMedia> getRMedias(Integer domainId,
+			String domainName, String userName) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
@@ -1289,8 +1299,9 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	public static Notice addLabelsToAnIssue(Integer domainId, String domainName, String userName, Integer issueId, List<Tag> tagList) {
+
+	public static Notice addLabelsToAnIssue(Integer domainId, String domainName,
+			String userName, Integer issueId, List<Tag> tagList) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
@@ -1300,8 +1311,9 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	public static boolean removeLabelFromIssue(Integer domainId, String domainName, String userName, Integer issueId, Tag tag) {
+
+	public static boolean removeLabelFromIssue(Integer domainId,
+			String domainName, String userName, Integer issueId, Tag tag) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
@@ -1311,13 +1323,15 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	public static Notice replaceLabelFromIssue(Integer domainId, String domainName, String userName, Integer issueId, 
+
+	public static Notice replaceLabelFromIssue(Integer domainId,
+			String domainName, String userName, Integer issueId,
 			List<Tag> addLabels, List<Tag> deletedTags) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().replaceLabelsForIssue(ctx, issueId, addLabels, deletedTags);
+			return getOffice().replaceLabelsForIssue(ctx, issueId, addLabels,
+					deletedTags);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1551,27 +1565,34 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
+
 	public static void updateAttachDriveId(String domainName, Integer domainId,
-			String login, Integer attachId, String driveId, AttachType attachType) {
+			String login, Integer attachId, String driveId,
+			AttachType attachType) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 
 			if (attachType.equals(AttachType.REGISTRY))
-				getAttachment().updateRegistryAttachDriveId(ctx, attachId, driveId);
+				getAttachment().updateRegistryAttachDriveId(ctx, attachId,
+						driveId);
 			else if (attachType.equals(AttachType.CONTRACT))
-				getAttachment().updateContractAttachDriveId(ctx, attachId, driveId);
+				getAttachment().updateContractAttachDriveId(ctx, attachId,
+						driveId);
 			else if (attachType.equals(AttachType.INVOICE))
-				getAttachment().updateInvoiceAttachDriveId(ctx, attachId, driveId);
+				getAttachment().updateInvoiceAttachDriveId(ctx, attachId,
+						driveId);
 			else if (attachType.equals(AttachType.ITEM))
 				getAttachment().updateItemAttachDriveId(ctx, attachId, driveId);
 			else if (attachType.equals(AttachType.OFFER))
-				getAttachment().updateOfferAttachDriveId(ctx, attachId, driveId);
+				getAttachment().updateOfferAttachDriveId(ctx, attachId,
+						driveId);
 			else if (attachType.equals(AttachType.PAYROLL))
-				getAttachment().updatePayrollAttachDriveId(ctx, attachId, driveId);
+				getAttachment().updatePayrollAttachDriveId(ctx, attachId,
+						driveId);
 			else if (attachType.equals(AttachType.PROJECT))
-				getAttachment().updateProjectAttachDriveId(ctx, attachId, driveId);
+				getAttachment().updateProjectAttachDriveId(ctx, attachId,
+						driveId);
 			else if (attachType.equals(AttachType.SEPE))
 				getAttachment().updateSepeAttachDriveId(ctx, attachId, driveId);
 
@@ -1999,13 +2020,13 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
+
 	// ********************************************
 	// ******************************** CREDITOR **
 	// ********************************************
 
-	public static Stream<Creditor> getBasicCreditors(String domainName, int domainId,String login, 
-			CreditorFilter filter) {
+	public static Stream<Creditor> getBasicCreditors(String domainName,
+			int domainId, String login, CreditorFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
@@ -2016,7 +2037,6 @@ public class AON {
 		}
 
 	}
-	
 
 	// ********************************************
 	// ****************************** Commercial **
@@ -2214,14 +2234,15 @@ public class AON {
 		}
 	}
 
-	public static void deleteReservationCreditCard(String domainName, Integer domainId, String login
-			, Integer reservationId){
+	public static void deleteReservationCreditCard(String domainName,
+			Integer domainId, String login, Integer reservationId) {
 		AONContext ctx = null;
-		try{
+		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getPMS().deleteReservationCreditCard(ctx, reservationId);
-		} finally{
-			if(ctx != null) ctx.close();
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 

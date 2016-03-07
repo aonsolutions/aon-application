@@ -290,29 +290,32 @@ public class OfficeApiServlet extends HttpServlet {
 				pw = resp.getWriter();
 
 				String state = req.getParameter("state");
-				String since = req.getParameter("since");
-				String sender = null;
+				String since = req.getParameter("since");				
+				String sender = null;				
+				
 				if (req.getParameter("sender") != null)
 					sender = URLDecoder.decode(req.getParameter("sender"), "UTF-8");			
 
+				int offset = Integer.parseInt(req.getParameter("offset"));
+				
 				switch (state) {
 				case "open":
 					notices = AON.getOpenNotices(domainId, domainName, userName,
-							since, sender);
+							since, sender, offset);
 					break;
 				case "closed":
 					notices = AON.getClosedNotices(domainId, domainName,
-							userName, since, sender);
+							userName, since, sender, offset);
 					break;
 
 				case "all":
 					notices = AON.getAllNotices(domainId, domainName, userName,
-							since, sender);
+							since, sender, offset);
 					break;
 
 				default:
 					notices = AON.getAllNotices(domainId, domainName, userName,
-							since, sender);
+							since, sender, offset);
 					break;
 				}
 
