@@ -8,9 +8,8 @@
 	<inherits name="com.esferalia.aon.occam.api.Occam" />
 	<inherits name="com.google.gwt.resources.Resources" />
 	
-	<!--  POLYMERS
-		<inherits name="com.vaadin.polymer.Elements"/>
-	-->
+	<inherits name="com.vaadin.polymer.Elements"/>
+
 	<!--inherits name='com.smartgwt.SmartGwt'/-->
 	
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />

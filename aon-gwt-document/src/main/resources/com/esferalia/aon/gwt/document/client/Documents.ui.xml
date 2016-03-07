@@ -5,12 +5,12 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:doc='urn:import:com.esferalia.aon.gwt.document.client'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core"
-	>
-	<!-- POLYMERS
+	
+
 	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
 	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'
-	-->
-	
+
+	>
 
 	<ui:style>
 	
@@ -130,7 +130,7 @@
 					</g:header>
 					<g:ScrollPanel styleName="stackBorder-document">
 						<g:HTMLPanel>
-						<!-- POLYMERS
+		
 							<p:PaperMenu>
 								<p:PaperItem ui:field="allFilesPaper">
               						<i:IronIcon icon="attachment"/>
@@ -149,26 +149,8 @@
                						<p:PaperRipple/>
             					</p:PaperItem>  	        			
 							</p:PaperMenu>
-						-->
+						
 							<g:VerticalPanel styleName="vpanel-document">
-							<g:AbsolutePanel>
-								<g:Button styleName="aon-editDataTable-buttonWest-document aon-icon-big-allfiles lateral-menu-document"
-									ui:field="allButton">
-									Todos los Archivos
-								</g:Button>
-							</g:AbsolutePanel>
-							<g:AbsolutePanel>
-								<g:Button styleName="aon-editDataTable-buttonWest-document aon-icon-big-serviconvenios lateral-menu-document"
-									ui:field="serviConveniosButton" >
-									ServiConvenios
-								</g:Button>
-							</g:AbsolutePanel>
-							<g:AbsolutePanel>
-								<g:Button styleName="aon-editDataTable-buttonWest-document aon-icon-big-lote lateral-menu-document"
-									ui:field="loteButton">
-									Lote
-								</g:Button>
-							</g:AbsolutePanel>
 							
 							<g:HorizontalPanel>
 								<g:DisclosurePanel ui:field="dpanel" styleName="gwt-DisclosurePanel">

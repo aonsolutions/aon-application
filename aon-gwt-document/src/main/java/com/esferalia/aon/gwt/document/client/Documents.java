@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.document.client;
 
 import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
@@ -117,6 +118,9 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionModel;
+import com.vaadin.polymer.Polymer;
+import com.vaadin.polymer.elemental.Function;
+import com.vaadin.polymer.paper.widget.PaperItem;
 
 import gwtupload.client.IUploader;
 import gwtupload.client.IUploader.OnCancelUploaderHandler;
@@ -584,15 +588,9 @@ public class Documents extends Composite implements EntryPoint {
 	 * @UiField RangeLabelPager rangeLabelPager;
 	 */
 	
-	/* POLYMERS
 	@UiField PaperItem allFilesPaper;
 	@UiField PaperItem serviConveniosPaper;
 	@UiField PaperItem lotePaper;
-	*/
-	
-	@UiField Button allButton;
-	@UiField Button serviConveniosButton;
-	@UiField Button loteButton;
 	
 	@UiField(provided = true) HorizontalPanel prueba2;
 	
@@ -757,15 +755,15 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		/* POLYMERS
 		Polymer.importHref(Arrays.asList("iron-icons/iron-icons.html"), new Function() {
-				
-				@Override
-				public Object call(Object arg) {
-					return null;
-				}
-			});
-		*/
+			
+			@Override
+			public Object call(Object arg) {
+				// TODO Apéndice de método generado automáticamente
+				return null;
+			}
+		});
+		
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		GWT.<AonGwtDocumentResources> create(AonGwtDocumentResources.class).css().ensureInjected();
@@ -1235,23 +1233,32 @@ public class Documents extends Composite implements EntryPoint {
 		showMorePager = new ShowMorePager((CustomDataGrid<FileInfo>) dataGrid);
 		
 		// Inject rich styles.
-
-
-		// Create the UI defined in DSIImportForm.ui.xml.
+		
 		Widget ui = binder.createAndBindUi(this);
-		// pagerPanel.setDisplay(dataGrid);
-		// rangeLabelPager.setDisplay(dataGrid);
-		// Add the outer panel to the RootLayoutPanel, so that it will be
-		// displayed.
-
 		
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
 		
+		allFilesPaper.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {
+				allFilesClickAction();
+			}
+		});
+		
+		serviConveniosPaper.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {
+				serviconveniosClickAction();
+			}
+		});
+		
+		lotePaper.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {
+				loteClickAction();
+			}
+		});
 		
 		if(!documentManager){
-			// POLYMERS lotePaper.setVisible(false);
-			loteButton.setVisible(false);
+			lotePaper.setVisible(false);
 			newFile.setVisible(false);
 			ftoolbar.setVisible(false);
 		}
@@ -1319,21 +1326,6 @@ public class Documents extends Composite implements EntryPoint {
 		}
 		
 		return false;
-	}
-	
-	@UiHandler("allButton")
-	void allButton(ClickEvent event){
-		allFilesClickAction();
-	}
-	
-	@UiHandler("serviConveniosButton")
-	void serviConveniosButton(ClickEvent event){
-		serviconveniosClickAction();
-	}
-	
-	@UiHandler("loteButton")
-	void loteButton(ClickEvent event){
-		loteClickAction();
 	}
 	
 	@UiHandler("editFile")
