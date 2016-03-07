@@ -460,5 +460,22 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		}
 		return null;
 	}
+	
+	@Transient
+	public double getPrepaymentTotal() {
+		double totalQuantity = 0;
+		try {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_PREPAYMENT), Boolean.TRUE);
+			Projection projection = Projection.sum(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_TAXABLE_BASE));
+    		Object result = invoiceDetailBean.getUniqueResult(projection, criteria);
+    		totalQuantity = (result != null) ? CommonUtil.round(((Double)result).doubleValue(), 3) : 0;
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining invoiceDetail list", e);
+		}
+		return totalQuantity;
+	}
 
 }
