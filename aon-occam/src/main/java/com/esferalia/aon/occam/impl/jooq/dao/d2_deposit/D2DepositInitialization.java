@@ -67,7 +67,8 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2131500.toString(),"sab({181})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2131600.toString(),"0.0");	// TODO NECA 6.ª 16 (ABREVIADO)
 																						// TODO NECA 5.ª 11 (PYMES)
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2131700.toString(),"0.0"); 	// TODO 15; (NECA 6.ª 17) (ABREVIADO)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2131700.toString(),"sab({15})"); 
+			//***** la formula la he cogido de Mod2002014Initialization *****//"0.0"); 	// TODO 15; (NECA 6.ª 17) (ABREVIADO)
 																						// TODO 15;NECA 5.ª 12 (PYMES)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232100.toString(),"ABREVIADO?sab({585,586,587,588,589})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232200.toString(),"sab({499,529})");
@@ -79,12 +80,14 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232580.toString(),"ABREVIADO?sab({400,401,403,404,405})-sdb({406})"); // TODO ¿¿??
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232581.toString(),"0.0"); 	// TODO NECA 6.ª 16 (ABREVIADO)
 																						// TODO NECA 5.ª 11 (PYMES)
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232582.toString(),"0.0"); 	// TODO NECA 6.ª 16 (ABREVIADO)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232582.toString(),"sab({400,401,405})-sdb({406})"); 
+			//***** la formula la he cogido de Mod2002014Initialization *****//"0.0"); 	// TODO NECA 6.ª 16 (ABREVIADO)
 																						// TODO NECA 5.ª 11 (PYMES)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232590.toString(),"ABREVIADO?sab({41,438,465,466,475,476,477})"
 																				+ ":sab({41,438,465,475,476,477})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232600.toString(),"sab({485,568})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232600.toString(),"0.0"); 	//TODO 502,507; NECA 6.ª 17 (ABREVIADO)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232700.toString(),"sab({502,507})"); 	
+			//***** la formula la he cogido de Mod2002014Initialization *****//"0.0"); 	//TODO 502,507; NECA 6.ª 17 (ABREVIADO)
 																						// TODO 502,507;NECA 5.ª 12 (PYMES)
 	}
 	static { // CUENTA DE PERDIDAS Y GANANCIAS 
@@ -101,10 +104,10 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41000.toString(), "ABREVIADO?sap({7951,7952,7955,7956})"
 																				+ ": sap({7951,7952,7955})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41100.toString(), "sap({770,771,772,790,791,792})-sdp({670,671,672,690,691,692})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41200.toString(), "0.0"); // TODO 774; (NECA 7.ª 6)
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41300.toString(), "0.0"); // TODO (678),778; (NECA 7.ª 9) (ABREVIADO)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41200.toString(), "sap({774})"); // TODO 774; (NECA 7.ª 6)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41300.toString(), "sap({778})-sdp({678})"); // TODO (678),778; (NECA 7.ª 9) (ABREVIADO)
 																					 // TODO (678),778;NECA 6.ª 6 (PYMES)
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41430.toString(), "0.0"); // TODO 746; (NECA 7.ª 4) (ABREVIADO)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41430.toString(), "sap({746})"); // TODO 746; (NECA 7.ª 4) (ABREVIADO)
 																					 // TODO 746;NECA 6.ª 4 (PYMES)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41490.toString(), "ABREVIADO?sap({760,761,762,767,769})"
 																				+ ": sap({760,761,762,769})");
@@ -112,25 +115,25 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41600.toString(), "sap({763})-sdp({663})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41700.toString(), "sap({768})-sdp({668})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41800.toString(), "sap({766,773,775,796,797,798,799})-sdp({666,667,673,675,696,697,698,699})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41900.toString(), "0.0"); // TODO -
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA41900.toString(), "sap({6301,638})-sdp({6300,633})"); 
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA42110.toString(), "0.0"); // TODO -
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA42120.toString(), "0.0"); // TODO -
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA42130.toString(), "sap({6301,638})-sdp({6300,633})");
-	}
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PA42130.toString(), "0.0"); // TODO -
+ 	}
 	
 	static { //ESTADO DE CAMBIOS EN EL PATRIMONIO NETO. ESTADO DE INGRESOS Y GASTOS RECONOCIDOS EN EL EJERCICIO
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150010.toString(), "ABREVIADO?sab({900,991,992})+sdb({800,89})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150020.toString(), "ABREVIADO?sab({910})+sdb({810})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150030.toString(), "ABREVIADO?sab({94})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150040.toString(), "ABREVIADO?sab({95})+sdb({85})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150050.toString(), "0.0"); // TODO (860),900; (NECA 8.ª 1.2)
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150060.toString(), "0.0"); // TODO (820),920; (NECA 8.ª 1.3)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150050.toString(), "(sab({900})+sdb({860}))"); // TODO (860),900; (NECA 8.ª 1.2)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150060.toString(), "(sab({920})+sdb({820}))"); // TODO (820),920; (NECA 8.ª 1.3)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150070.toString(), "ABREVIADO?sab({8301,834,835,838})+sdb({8300,833})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150080.toString(), "ABREVIADO?sab({902,993,994})+sdb({802})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150090.toString(), "ABREVIADO?sab({912})+sdb({812})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150100.toString(), "ABREVIADO?sdb({84})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150110.toString(), "0.0"); // TODO (862),902; (NECA 8.ª 1.2)
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150120.toString(), "0.0"); // TODO (821),921; (NECA 8.ª 1.3)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150110.toString(), "(sab({902})+sdb({862}))"); // TODO (862),902; (NECA 8.ª 1.2)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150120.toString(), "(sab({921})+sdb({821}))"); // TODO (821),921; (NECA 8.ª 1.3)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.PNA150130.toString(), "ABREVIADO?sab({8301})+sdb({836,837})");
 	}
 

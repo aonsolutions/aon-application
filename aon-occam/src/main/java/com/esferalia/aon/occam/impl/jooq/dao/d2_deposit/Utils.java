@@ -645,7 +645,7 @@ public class Utils {
 					Clave clave = new Clave();
 					Integer code = Integer.parseInt(k.getCode());
 					clave.setCodigo(BigInteger.valueOf(code));
-					clave.setValor(acc.get(value).toString());	
+					clave.setValor(acc2.get(value).toString());	
 					keys.getClave().add(clave);
 					computeMap.put(k.getCode(),acc2.get(value).toString());
 				}
