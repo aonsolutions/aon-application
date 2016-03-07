@@ -32,7 +32,7 @@ public enum PayMethodType implements Serializable {
 	}
 	public static PayMethodType safeValueOf( Integer i ) {
 		if (i == null) return null;
-		if (i < 0 || i > PayMethodType.values().length) return null;
+		if (i < 0 || i >= PayMethodType.values().length) return null;
 		return PayMethodType.values()[i];
 	}
 

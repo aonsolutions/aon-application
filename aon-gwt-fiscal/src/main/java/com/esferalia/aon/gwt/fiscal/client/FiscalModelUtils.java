@@ -1,56 +1,17 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.CreditorBox;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
-import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
-import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
-import com.esferalia.aon.occam.api.model.CompanyBank;
-import com.esferalia.aon.occam.api.model.IIbanContainer;
-import com.esferalia.aon.occam.api.model.finance.BankAccount;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.registry.Creditor;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 public class FiscalModelUtils {
-	
-	static CommonServiceAsync commonService;
-	static {
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
-	}
 	
 	public static void paintHeaderTable(SimplePanel headerPanel, FiscalModel fm) {
 		Administration admon = (fm == null?Administration.COMMON_TERRITORY:fm.getAdministration());
@@ -155,7 +116,7 @@ public class FiscalModelUtils {
 		} 
 		return AON.AON_RESOURCES.aonAeat();
 	}
-
+/*
 	public static <T extends FiscalModel> CustomDialog getFinalizeDialog(final IFiscalModelCallback<T> callback) {
 		final CustomDialog finalizeDialog = new CustomDialog();
 		finalizeDialog.setCaption(AON.MSG.finish());
@@ -163,7 +124,6 @@ public class FiscalModelUtils {
 		finalizeDialog.setAnimationEnabled(true);
 		
 		FlexTable tab = new FlexTable();
-		
 		tab.setCellPadding(0);
 		tab.setCellSpacing(0);
 		tab.setStyleName(AON.AON_CSS.aonMarginTop());
@@ -303,39 +263,7 @@ public class FiscalModelUtils {
 		finalizeDialog.add(tab);
 		return finalizeDialog;
 	}
-
-	private static class EnterpriseSuggestOracle<T extends FiscalModel> extends MultiWordSuggestOracle {
-		private IFiscalModelCallback<T> modelCallback;
-
-		private EnterpriseSuggestOracle(final IFiscalModelCallback<T> modelCallback) {
-			super();
-			this.modelCallback = modelCallback;
-		}
-		
-		@Override
-		public void requestSuggestions(final Request request,
-				final Callback callback) {
-			commonService.getCompanyBanks (modelCallback.getDomainName(),modelCallback.getDomain(), 
-					new AsyncCallback<LinkedList<CompanyBank>>() {
-
-						public void onFailure(Throwable caught) {
-							modelCallback.showErrorMsg(AON.MSG.unableToShowCompanyBanks(caught.getMessage()) );
-						}
-
-						public void onSuccess(LinkedList<CompanyBank> result) {
-							ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
-							if (result != null) {
-								for (final CompanyBank cb : result) {
-									suggestions.add(new IbanTextBox.IbanSuggestion(cb));
-								}
-							}
-							Response resp = new Response(suggestions);
-							callback.onSuggestionsReady(request, resp);
-						}
-					});
-		}
-	}
-	
+*/	
 	public static <T extends FiscalModel> void paintPaymentInfo(FlowPanel paymentInfo,T mod) {
 		paymentInfo.clear();
 		paymentInfo.setVisible(mod.isFinished());

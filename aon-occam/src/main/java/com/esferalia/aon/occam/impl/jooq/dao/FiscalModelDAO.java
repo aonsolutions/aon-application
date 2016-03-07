@@ -32,7 +32,6 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
-import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -410,7 +409,7 @@ public class FiscalModelDAO {
 	}
 	
 	public static <T extends FiscalModel> T initializeForFinish(AONContext ctx,T fiscalModel) {
-		if (AonMathUtils.round( fiscalModel.getResult() ) > 0) {
+		if (AonMathUtils.isGreatherThanZero(fiscalModel.getResult() )) {
 			FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
 			Integer creditorId = params.getAdmonCreditor();
 			Creditor creditor = null;
@@ -439,14 +438,8 @@ public class FiscalModelDAO {
 					.setConcept(concept)
 					;
 			fiscalModel.setFinance(finance);
-			if (fiscalModel.isAEAT()) {
-				fiscalModel.setDeclarationType(FiscalModelDeclarationType.DEPOSIT.getValue());
-			}
-		} else {
-			if (fiscalModel.isAEAT()) {
-				fiscalModel.setDeclarationType(FiscalModelDeclarationType.NEGATIVE.getValue());
-			}
 		}
+		fiscalModel.setDefaultDeclarationType();
 		return fiscalModel;
 	}
 	

@@ -76,7 +76,7 @@ public enum Province implements Serializable {
 		if (i == null) {
 			return null;
 		}
-		if (i < 0 || i > Province.values().length) {
+		if (i < 0 || i >= Province.values().length) {
 			return null;
 		}
 		return Province.values()[i];

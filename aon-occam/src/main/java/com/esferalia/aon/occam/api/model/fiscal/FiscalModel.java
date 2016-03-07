@@ -570,4 +570,22 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 		// REDEFINE
 		return false;
 	}
+	public boolean isToDeduceAvailable() {
+		// REDEFINE
+		return false;
+	}
+	public boolean isNegativeAvailable(){
+		// REDEFINE
+		return false;
+	}
+	
+	public void setDefaultDeclarationType(){
+		if (isAEAT()) {
+			if (AonMathUtils.isGreatherThanZero(getResult() )) {
+				setDeclarationType(FiscalModelDeclarationType.DEPOSIT);
+			} else {
+				setDeclarationType(FiscalModelDeclarationType.NEGATIVE);
+			}
+		}
+	}
 }

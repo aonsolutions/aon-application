@@ -36,24 +36,24 @@ public class Model130AEAT extends Model130Base {
 	}
 	
 	@Override
-	protected void paintParticularyRow(Mod130 mod130, IModelScript<Mod130Key> script) {
+	protected void paintParticularyRow(final IFiscalModelCallback<Mod130> callback, IModelScript<Mod130Key> script) {
 		if (script.getKeys() == null) return;
 		if (script.getKeys()[0] == Mod130Key.P0) {
-			paintRowP00(mod130,script);
+			paintRowP00(callback,script);
 		} else if (script.getKeys()[0] == Mod130Key.P1) {
-			paintRowP01(mod130,script);
+			paintRowP01(callback,script);
 		} else if (script.getKeys()[0] == Mod130Key.P2) {
-			paintRowP02(mod130,script);
+			paintRowP02(callback,script);
 		} 
 	}
 	
-	private void paintRowP00(Mod130 mod130, IModelScript<Mod130Key> script) {
+	private void paintRowP00(final IFiscalModelCallback<Mod130> callback, IModelScript<Mod130Key> script) {
 		int row = getTable().getRowCount();
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextRight() );
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingRight() );
 		getTable().setWidget(row, 1, new Label());
-		final FiscalModelDetail p1 = mod130.ensureDetail(Mod130Key.P0);
+		final FiscalModelDetail p1 = callback.getFiscalModel().ensureDetail(Mod130Key.P0);
 		String labelText = IRPFRegime.NORMAL.getDescription();
 		if (p1 != null && p1.getAmount() == 1) {
 			labelText = IRPFRegime.SIMPLIFIED.getDescription();	
@@ -61,19 +61,19 @@ public class Model130AEAT extends Model130Base {
 		getTable().setWidget(row, 2, new Label( labelText ));
 	}
 
-	private void paintRowP01(Mod130 mod130, IModelScript<Mod130Key> script) {
+	private void paintRowP01(final IFiscalModelCallback<Mod130> callback, IModelScript<Mod130Key> script) {
 		int row = getTable().getRowCount();
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextRight() );
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingRight() );
 		getTable().setWidget(row, 1, new Label());
-		final FiscalModelDetail p1 = mod130.ensureDetail(Mod130Key.P1);
+		final FiscalModelDetail p1 = callback.getFiscalModel().ensureDetail(Mod130Key.P1);
 		getTable().setWidget(row, 2, new Label( AON.FMT.format(p1.getAmount()) + "%"));
 	}
 
-	private void paintRowP02(Mod130 mod130, IModelScript<Mod130Key> script) {
+	private void paintRowP02(final IFiscalModelCallback<Mod130> callback, IModelScript<Mod130Key> script) {
 		int row = getTable().getRowCount();
-		final FiscalModelDetail p2 = mod130.ensureDetail(Mod130Key.P2);
+		final FiscalModelDetail p2 = callback.getFiscalModel().ensureDetail(Mod130Key.P2);
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextRight() );
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingRight() );

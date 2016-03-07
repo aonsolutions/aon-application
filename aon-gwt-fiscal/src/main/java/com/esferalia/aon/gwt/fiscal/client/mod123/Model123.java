@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -18,12 +17,12 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelIdentificationData;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelProvidesKey;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelTable;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
-import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup.INewDeclarationCallback;
 import com.esferalia.aon.gwt.viewer.client.Viewer;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -88,7 +87,7 @@ public class Model123 extends MainEntryPoint {
 	
 	public static interface IMod123Declaration extends IsWidget {
 		Widget getInfoPanel(Mod123 mod123);
-		void calculateAndRefresh(Mod123 mod123);
+		void calculateAndRefresh(IFiscalModelCallback<Mod123> callback);
 	}
 	
 	private Mod123 currentMod123;
@@ -188,7 +187,7 @@ public class Model123 extends MainEntryPoint {
 	Hidden domainIdHidden;
 	Hidden domainNameHidden;
 
-	IFiscalModelCallback<Mod123> callback = new IFiscalModelCallback<Mod123>() {
+	private abstract class FiscalModelCallback implements IFiscalModelCallback<Mod123> {
 		
 		@Override
 		public void showErrorMsg(String msg) {
@@ -235,11 +234,6 @@ public class Model123 extends MainEntryPoint {
 		@Override
 		public int getDomain() {
 			return getCurrentDomain();
-		}
-
-		@Override
-		public void doFinish() {
-			finish();
 		}
 
 	};
@@ -426,6 +420,14 @@ public class Model123 extends MainEntryPoint {
 		FiscalModelUtils.paintPaymentInfo(paymentInfo,currentMod123);
 		FiscalModelUtils.paintHeaderTable(headerPanel,currentMod123);
 		
+		FiscalModelCallback callback = new FiscalModelCallback(){
+			@Override
+			public void onAccept() {}
+
+			@Override
+			public void onCancel() {}
+			
+		}; 
 		FiscalModelIdentificationData<Mod123> identificationData = new FiscalModelIdentificationData<Mod123>(callback);
 		identificationContainer.setWidget( identificationData);
 		if (currentMod123.getAdministration() == Administration.COMMON_TERRITORY) {
@@ -647,7 +649,7 @@ public class Model123 extends MainEntryPoint {
 	}
 	private void showNewDeclarationPopup() {
 		NewDeclarationPopup<Mod123> newDialog = new NewDeclarationPopup<Mod123>(
-				new INewDeclarationCallback<Mod123>() {
+			new FiscalModelCallback() {
 
 				@Override
 				public void onAccept() {
@@ -937,7 +939,19 @@ public class Model123 extends MainEntryPoint {
 	}
 
 	private void showFinalizePopup() {
-		final CustomDialog finalizeDialog = FiscalModelUtils.getFinalizeDialog(callback);
+		FinishDeclarationPopup<Mod123> finalizeDialog = new FinishDeclarationPopup<>( 
+				new FiscalModelCallback() {
+			
+			@Override
+			public void onAccept() {
+				finish();
+			}
+			@Override
+			public void onCancel() {
+				
+			}
+			
+		});
 		finalizeDialog.center();
 		finalizeDialog.show();
 	}

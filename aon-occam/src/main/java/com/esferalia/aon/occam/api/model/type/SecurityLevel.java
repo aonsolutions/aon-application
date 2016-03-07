@@ -17,7 +17,7 @@ public enum SecurityLevel implements Serializable{
 	}
 	public static SecurityLevel safeValueOf( Integer i ) {
 		if (i == null) return null;
-		if (i < 0 || i > SecurityLevel.values().length) return null;
+		if (i < 0 || i >= SecurityLevel.values().length) return null;
 		return SecurityLevel.values()[i];
 	}
 	

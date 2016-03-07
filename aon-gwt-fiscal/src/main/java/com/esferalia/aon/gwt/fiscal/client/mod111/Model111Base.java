@@ -42,7 +42,7 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 	
 	private FlexTable table;
 	private EnumMap<Mod111Key,DoubleBox> fieldsMap;
-	private IFiscalModelCallback<Mod111> callback;
+	
 	private ExpressionResolver resolver = new ExpressionResolver() {
 		@Override
 		public void resolve(String expression, AsyncCallback<Double> callback) {
@@ -51,15 +51,10 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 	}; 
 
 	public Model111Base(IFiscalModelCallback<Mod111> callback) {
-		this.callback = callback;
 		fieldsMap = new EnumMap<>(Mod111Key.class);
 		table = new FlexTable();
-		paintDeclaration(callback.getFiscalModel());
+		paintDeclaration(callback);
 		setWidget(table);
-	}
-	
-	protected IFiscalModelCallback<Mod111> getCallback() {
-		return callback;
 	}
 	
 	protected FlexTable getTable() {
@@ -69,17 +64,17 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 		return fieldsMap;
 	}
 	
-	protected void paintDeclaration(final Mod111 mod111) {
+	protected void paintDeclaration(final IFiscalModelCallback<Mod111> callback) {
 		if (getTable().getRowCount() > 0) {
 			getTable().removeAllRows();
 		}
 		defineTable();
 		
-		for (IModelScript<Mod111Key> ms : Model111ScriptProvider.obtainScript(mod111)) {
+		for (IModelScript<Mod111Key> ms : Model111ScriptProvider.obtainScript(callback.getFiscalModel())) {
 			if (ms.paintHeaderBefore()) {
 				paintHeader();
 			}
-			paintRow(mod111,ms);	
+			paintRow(callback,ms);	
 		}
 	}
 
@@ -149,12 +144,12 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 		table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);
 	}
 
-	protected void paintRow(final Mod111 mod111, IModelScript<Mod111Key> script) {
+	protected void paintRow(final IFiscalModelCallback<Mod111> callback, IModelScript<Mod111Key> script) {
 		if (script.hasGraphicParticularity()) {
-			paintParticularyRow(mod111,script);		
+			paintParticularyRow(callback,script);		
 		} else {
 			int row = table.getRowCount();
-			paintLabel(row,mod111,script);
+			paintLabel(row,callback,script);
 			if (script.getKeys() == null) {
 				table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);	
 			} else {
@@ -169,18 +164,18 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 				int col = 1;
 				for (Mod111Key key : script.getKeys()) {
 					col = paintBox( row, col, key );
-					col = paintField( row, col, mod111, script, key );
+					col = paintField( row, col, callback, script, key );
 				}
-				paintInfoCol(row,col,mod111,script);	
+				paintInfoCol(row,col,callback,script);	
 			}
 		}
 	}
 	
-	protected void paintParticularyRow(final Mod111 mod111, IModelScript<Mod111Key> script) {
+	protected void paintParticularyRow(final IFiscalModelCallback<Mod111> callback, IModelScript<Mod111Key> script) {
 		
 	}
 	
-	protected void paintLabel( int row,Mod111 mod111, IModelScript<Mod111Key> script) {
+	protected void paintLabel( int row,final IFiscalModelCallback<Mod111> callback, IModelScript<Mod111Key> script) {
 		String labelText = script.getLabel();
 		Label label = new Label();
 		if (AonStringUtils.length(labelText) > MAX_LABEL_LENGTH) {
@@ -203,25 +198,25 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 		return ++col;
 	}
 
-	private int paintField(int row, int col, final Mod111 mod111, IModelScript<Mod111Key> script, final Mod111Key key) {
-		final FiscalModelDetail det1 = mod111.ensureDetail(key);
+	private int paintField(int row, int col, final IFiscalModelCallback<Mod111> callback, IModelScript<Mod111Key> script, final Mod111Key key) {
+		final FiscalModelDetail det1 = callback.getFiscalModel().ensureDetail(key);
 		final DoubleBox input = new DoubleBox();
 		input.setResolver(resolver);
 		fieldsMap.put(key, input);
-		input.setEnabled(mod111.isNotFinished() && script.isEnabled()); 
+		input.setEnabled(callback.getFiscalModel().isNotFinished() && script.isEnabled()); 
 		input.setValue(det1.getAmount());
 		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				double result = mod111.getResultAmount(key);
-				double adjust = mod111.getAdjustAmount(key);
+				double result = callback.getFiscalModel().getResultAmount(key);
+				double adjust = callback.getFiscalModel().getAdjustAmount(key);
 				double amount = input.getValue();
 				if (AonMathUtils.isNotZero(result - adjust - amount)) {
-					mod111.ensureDetail(key).setAdjustAmount( result - amount);	
+					callback.getFiscalModel().ensureDetail(key).setAdjustAmount( result - amount);	
 				}
-				mod111.ensureDetail(key).setAmount(input.getValue());
+				callback.getFiscalModel().ensureDetail(key).setAmount(input.getValue());
 				if (input.isEnabled()) {
-					calculateAndRefresh( mod111 );
+					calculateAndRefresh( callback );
 				}
 				callback.markAsDirty();
 			}
@@ -230,7 +225,7 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 		return ++col;
 	}
 	
-	private void paintInfoCol(int row, int col, final Mod111 mod111, final IModelScript<Mod111Key> script) {
+	private void paintInfoCol(int row, int col, final IFiscalModelCallback<Mod111> callback, final IModelScript<Mod111Key> script) {
 		FlowPanel buttonContainer = new FlowPanel();
 		for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
 			buttonContainer.setStyleName(AON.AON_CSS.aonNowrap());
@@ -251,7 +246,7 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 					@Override
 					public void onClick(ClickEvent event) {
 						Model111.fiscalService.getInfo(Model111.getCurrentDomainName(),Model111.getCurrentDomain(),
-							mod111,script, infoKey,new AsyncCallback<String>() {
+							callback.getFiscalModel(),script, infoKey,new AsyncCallback<String>() {
 
 									@Override
 									public void onFailure(Throwable caught) {
@@ -274,8 +269,8 @@ public abstract class Model111Base extends SimplePanel implements IMod111Declara
 	}
 
 	@Override
-	public void calculateAndRefresh(Mod111 mod111) {
-		Model111.fiscalService.calculateMod111(Model111.getCurrentDomainName(),mod111,
+	public void calculateAndRefresh(final IFiscalModelCallback<Mod111> callback) {
+		Model111.fiscalService.calculateMod111(Model111.getCurrentDomainName(),callback.getFiscalModel(),
 				new AsyncCallback<Mod111>() {
 
 					@Override

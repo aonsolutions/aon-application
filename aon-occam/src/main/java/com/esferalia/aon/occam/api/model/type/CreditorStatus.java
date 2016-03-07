@@ -28,7 +28,7 @@ public enum CreditorStatus implements Serializable {
 	}
 	public static CreditorStatus safeValueOf( Integer i ) {
 		if (i == null) return null;
-		if (i < 0 || i > CreditorStatus.values().length) return null;
+		if (i < 0 || i >= CreditorStatus.values().length) return null;
 		return CreditorStatus.values()[i];
 	}
 

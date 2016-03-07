@@ -30,7 +30,7 @@ public enum FinanceStatus implements Serializable {
 	}
 	public static FinanceStatus safeValueOf( Integer i ) {
 		if (i == null) return null;
-		if (i < 0 || i > FinanceStatus.values().length) return null;
+		if (i < 0 || i >= FinanceStatus.values().length) return null;
 		return FinanceStatus.values()[i];
 	}
 }

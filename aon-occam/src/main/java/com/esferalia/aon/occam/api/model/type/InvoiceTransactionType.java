@@ -30,7 +30,7 @@ public enum InvoiceTransactionType implements Serializable {
 	}
 	public static InvoiceTransactionType safeValueOf( Integer i ) {
 		if (i == null) return null;
-		if (i < 0 || i > InvoiceTransactionType.values().length) return null;
+		if (i < 0 || i >= InvoiceTransactionType.values().length) return null;
 		return InvoiceTransactionType.values()[i];
 	}
 

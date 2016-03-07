@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod130;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -20,7 +21,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130>{
 
-	public Model130NewDeclarationPopup(INewDeclarationCallback<Mod130> callback) {
+	public Model130NewDeclarationPopup(IFiscalModelCallback<Mod130> callback) {
 		super(callback);
 	}
 	

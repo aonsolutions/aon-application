@@ -31,43 +31,42 @@ public class Model123Araba2016 extends Model123Base {
 	}
 
 	@Override
-	protected void paintParticularyRow(Mod123 mod123, IModelScript<Mod123Key> script) {
+	protected void paintParticularyRow(final IFiscalModelCallback<Mod123> callback, IModelScript<Mod123Key> script) {
 		if (script.getKeys() == null) return;
 		
 		if (script.getKeys()[0] == Mod123Key.AR_907) {
-			paintRow907(mod123,script);
+			paintRow907(callback,script);
 		} else if (script.getKeys()[0] == Mod123Key.AR_908) {
-			paintRow908(mod123,script);
+			paintRow908(callback,script);
 		} else if (script.getKeys()[0] == Mod123Key.AR_909) {
-			paintRow909(mod123,script);
+			paintRow909(callback,script);
 		}
 	}
 
-	private void paintRow907(Mod123 mod123, IModelScript<Mod123Key> script) {
+	private void paintRow907(final IFiscalModelCallback<Mod123> callback, IModelScript<Mod123Key> script) {
 		int row = getTable().getRowCount();
-		final FiscalModelDetail ar907 = mod123.ensureDetail(Mod123Key.AR_907);
+		final FiscalModelDetail ar907 = callback.getFiscalModel().ensureDetail(Mod123Key.AR_907);
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextRight() );
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingRight() );
-//		getTable().getFlexCellFormatter().setColSpan(row, 0, 5);
 		
 		getTable().setWidget(row, 1, new BoxLabel(Mod123Key.AR_907.getBox()));
 		final CheckBox w907 = new CheckBox();
-		w907.setEnabled(mod123.isNotFinished());
+		w907.setEnabled(callback.getFiscalModel().isNotFinished());
 		w907.setValue(ar907.getAmount() == 1);
 		w907.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				ar907.setAmount(w907.getValue()?1.0:0.0);
-				getCallback().markAsDirty();
+				callback.markAsDirty();
 			}
 		});
 		getTable().setWidget(row, 2, w907 );
 	}
-	private void paintRow908(Mod123 mod123, IModelScript<Mod123Key> script) {
+	private void paintRow908(final IFiscalModelCallback<Mod123> callback, IModelScript<Mod123Key> script) {
 		int row = getTable().getRowCount();
-		final  FiscalModelDetail ar908 = mod123.ensureDetail(Mod123Key.AR_908);
+		final  FiscalModelDetail ar908 = callback.getFiscalModel().ensureDetail(Mod123Key.AR_908);
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextRight() );
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingRight() );
@@ -75,7 +74,7 @@ public class Model123Araba2016 extends Model123Base {
 		
 		getTable().setWidget(row, 1, new BoxLabel(Mod123Key.AR_908.getBox()));
 		final ListBox w908 = new ListBox();
-		w908.setEnabled(mod123.isNotFinished());
+		w908.setEnabled(callback.getFiscalModel().isNotFinished());
 		w908.addItem("---");
 		w908.addItem(AON.MSG.preInsolvencyState());
 		w908.addItem(AON.MSG.postInsolvencyState());
@@ -85,14 +84,14 @@ public class Model123Araba2016 extends Model123Base {
 			@Override
 			public void onChange(ChangeEvent event) {
 				ar908.setAmount(w908.getSelectedIndex());
-				getCallback().markAsDirty();
+				callback.markAsDirty();
 			}
 		});
 		getTable().setWidget(row, 2, w908 );
 	}
-	private void paintRow909(Mod123 mod123, IModelScript<Mod123Key> script) {
+	private void paintRow909(final IFiscalModelCallback<Mod123> callback, IModelScript<Mod123Key> script) {
 		int row = getTable().getRowCount();
-		final FiscalModelDetail ar909 = mod123.ensureDetail(Mod123Key.AR_909);
+		final FiscalModelDetail ar909 = callback.getFiscalModel().ensureDetail(Mod123Key.AR_909);
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextRight() );
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingRight() );
@@ -100,7 +99,7 @@ public class Model123Araba2016 extends Model123Base {
 		
 		getTable().setWidget(row, 1, new BoxLabel(Mod123Key.AR_909.getBox()));
 		final DateBoxEx w909 = new DateBoxEx();
-		w909.setEnabled(mod123.isNotFinished());
+		w909.setEnabled(callback.getFiscalModel().isNotFinished());
 		if (AonStringUtils.isNotEmpty( ar909.getDescription() ) ) {
 			w909.setValue( w909.parse(ar909.getDescription() , false) );
 		}
@@ -108,7 +107,7 @@ public class Model123Araba2016 extends Model123Base {
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				ar909.setDescription(w909.format());
-				getCallback().markAsDirty();
+				callback.markAsDirty();
 			}
 		});
 		getTable().setWidget(row, 2, w909 );

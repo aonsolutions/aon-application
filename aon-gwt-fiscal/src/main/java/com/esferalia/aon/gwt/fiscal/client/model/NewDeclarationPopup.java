@@ -34,15 +34,9 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	final protected CheckBox complementary = new CheckBox();
 		
 	protected int row = 0;
-	protected INewDeclarationCallback<T> callback;
+	protected IFiscalModelCallback<T> callback;
 
-	public static interface INewDeclarationCallback<T> {
-		T getFiscalModel();
-		void onAccept();
-		void onCancel();
-	}
-	
-	public NewDeclarationPopup(final INewDeclarationCallback<T> callback) {
+	public NewDeclarationPopup(final IFiscalModelCallback<T> callback) {
 		this.callback = callback;
 		setCaption(AON.MSG.newDeclaration());
 		setGlassEnabled(true);

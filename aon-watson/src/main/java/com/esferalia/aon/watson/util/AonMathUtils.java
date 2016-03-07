@@ -94,7 +94,7 @@ public class AonMathUtils {
 	}
 
 	/**
-	 * Devuleve verdadero si el valor es igual a cero. 
+	 * Devuelve verdadero si el valor es igual a cero. 
 	 * 
 	 * @param value
 	 *            el valor a evaluar
@@ -105,7 +105,29 @@ public class AonMathUtils {
 	}
 
 	/**
-	 * Devuleve verdadero si el valor es diferente de cero. 
+	 * Devuelve verdadero si el valor es menor a cero. 
+	 * 
+	 * @param value
+	 *            el valor a evaluar
+	 * @return boolean verdadero si el valor es igual a cero.
+	 */
+	public static boolean isLessThanZero(double value) {
+		return round( value ) < 0.0;
+	}
+
+	/**
+	 * Devuelve verdadero si el valor es mayor a cero. 
+	 * 
+	 * @param value
+	 *            el valor a evaluar
+	 * @return boolean verdadero si el valor es igual a cero.
+	 */
+	public static boolean isGreatherThanZero(double value) {
+		return round( value ) > 0.0;
+	}
+
+	/**
+	 * Devuelve verdadero si el valor es diferente de cero. 
 	 * 
 	 * @param value
 	 *            el valor a evaluar
@@ -116,7 +138,7 @@ public class AonMathUtils {
 	}
 	
 	/**
-	 * Devuleve verdadero si el valor es diferente de cero. 
+	 * Devuelve verdadero si el valor es diferente de cero. 
 	 * 
 	 * @param value
 	 *            el valor a evaluar
@@ -137,7 +159,7 @@ public class AonMathUtils {
 	}
 	
 	/**
-	 * Devuleve el tipo primitivo, y cero si el objeto es null. 
+	 * Devuelve el tipo primitivo, y cero si el objeto es null. 
 	 * 
 	 * @param value
 	 *            el valor a evaluar
@@ -148,7 +170,7 @@ public class AonMathUtils {
 	}
 
 	/**
-	 * Devuleve el tipo primitivo, y cero si el objeto es null. 
+	 * Devuelve el tipo primitivo, y cero si el objeto es null. 
 	 * 
 	 * @param value
 	 *            el valor a evaluar

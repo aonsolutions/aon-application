@@ -33,7 +33,7 @@ public enum DocumentType implements Serializable {
 	}
 	public static DocumentType safeValueOf( Integer i ) {
 		if (i == null) return null;
-		if (i < 0 || i > DocumentType.values().length) return null;
+		if (i < 0 || i >= DocumentType.values().length) return null;
 		return DocumentType.values()[i];
 	}
 	

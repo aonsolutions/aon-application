@@ -3,8 +3,11 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
+import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod130 extends FiscalModel implements Serializable {
 	
@@ -52,6 +55,25 @@ public class Mod130 extends FiscalModel implements Serializable {
 	}
 	
 	@Override
+	public boolean isToDeduceAvailable() {
+		if (getAdministration() == null) return false;
+		return isAEAT()
+			&& !AonMathUtils.isGreatherThanZero(getResult())
+			&& (getPeriod() == Period.T1
+			 || getPeriod() == Period.T2
+			 || getPeriod() == Period.T3)
+			;
+	}
+	
+	@Override
+	public boolean isNegativeAvailable() {
+		if (getAdministration() == null) return false;
+		return isAEAT() 
+			&& !AonMathUtils.isGreatherThanZero(getResult()) 
+			&& getPeriod() == Period.T4; 
+	}
+
+	@Override
 	public double getResult() {
 		if (getAdministration() == null) return 0;
 		else if (isAEAT()) return getAmount(Mod130Key.C19);
@@ -65,4 +87,16 @@ public class Mod130 extends FiscalModel implements Serializable {
 		return null;
 	}
 
+	@Override
+	public void setDefaultDeclarationType(){
+		if (AonMathUtils.isGreatherThanZero(getResult() )) {
+			setDeclarationType(FiscalModelDeclarationType.DEPOSIT);
+		} else {
+			if (getPeriod() == Period.T4) {
+				setDeclarationType(FiscalModelDeclarationType.NEGATIVE);	
+			} else {
+				setDeclarationType(FiscalModelDeclarationType.TO_DEDUCE);
+			}
+		}
+	}
 }
