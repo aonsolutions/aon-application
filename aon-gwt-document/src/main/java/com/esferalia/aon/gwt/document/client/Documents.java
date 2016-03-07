@@ -117,7 +117,6 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionModel;
-//import org.eclipse.jetty.webapp.WebInfConfiguration;
 
 import gwtupload.client.IUploader;
 import gwtupload.client.IUploader.OnCancelUploaderHandler;
@@ -585,6 +584,15 @@ public class Documents extends Composite implements EntryPoint {
 	 * @UiField RangeLabelPager rangeLabelPager;
 	 */
 	
+	/* POLYMERS
+	@UiField PaperItem allFilesPaper;
+	@UiField PaperItem serviConveniosPaper;
+	@UiField PaperItem lotePaper;
+	*/
+	
+	@UiField Button allButton;
+	@UiField Button serviConveniosButton;
+	@UiField Button loteButton;
 	
 	@UiField(provided = true) HorizontalPanel prueba2;
 	
@@ -611,12 +619,6 @@ public class Documents extends Composite implements EntryPoint {
 	@UiField SplitLayoutPanel splitLayoutPanel;
 
 	@UiField StackLayoutPanel stack1;
-
-	@UiField Button allButton;
-
-	@UiField Button serviConveniosButton;
-	
-	@UiField Button loteButton;
 	
 	@UiField HorizontalPanel ftoolbar;
 	
@@ -698,6 +700,7 @@ public class Documents extends Composite implements EntryPoint {
 								lists = result;
 								DisclosureImages di = new DisclosureImages();
 								dpanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Categor\u00edas");
+								dpanel.getHeader().setStyleName("headerTextDisclosure-document");
 								epanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Etiquetas");
 								Load();
 							}
@@ -754,7 +757,15 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		
+		/* POLYMERS
+		Polymer.importHref(Arrays.asList("iron-icons/iron-icons.html"), new Function() {
+				
+				@Override
+				public Object call(Object arg) {
+					return null;
+				}
+			});
+		*/
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		GWT.<AonGwtDocumentResources> create(AonGwtDocumentResources.class).css().ensureInjected();
@@ -777,7 +788,6 @@ public class Documents extends Composite implements EntryPoint {
 	Tag tAux;
 	
 	public void Load() {
-
 		tree();
 		getSons();
 
@@ -1234,9 +1244,13 @@ public class Documents extends Composite implements EntryPoint {
 		// Add the outer panel to the RootLayoutPanel, so that it will be
 		// displayed.
 
+		
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
+		
+		
 		if(!documentManager){
+			// POLYMERS lotePaper.setVisible(false);
 			loteButton.setVisible(false);
 			newFile.setVisible(false);
 			ftoolbar.setVisible(false);
@@ -1305,6 +1319,21 @@ public class Documents extends Composite implements EntryPoint {
 		}
 		
 		return false;
+	}
+	
+	@UiHandler("allButton")
+	void allButton(ClickEvent event){
+		allFilesClickAction();
+	}
+	
+	@UiHandler("serviConveniosButton")
+	void serviConveniosButton(ClickEvent event){
+		serviconveniosClickAction();
+	}
+	
+	@UiHandler("loteButton")
+	void loteButton(ClickEvent event){
+		loteClickAction();
 	}
 	
 	@UiHandler("editFile")
@@ -2845,13 +2874,8 @@ public class Documents extends Composite implements EntryPoint {
 			}
 		}	
 	}
-
-	@UiHandler("allButton")
-	void getAllAttach(ClickEvent event) {
-		all();
-	}
 	
-	public void all(){
+	public void allFilesClickAction(){
 		newFile.setVisible(true); sConvenios.setVisible(false);
 		gestionLote.setVisible(false);
 		gestionDocs.setVisible(true);
@@ -2919,8 +2943,8 @@ public class Documents extends Composite implements EntryPoint {
 	Boolean isServiconvenios=false;
 	Boolean conf;
 	PopupPanel pop;
-	@UiHandler("serviConveniosButton")
-	void getServiConveniosAttach(ClickEvent event) {
+	
+	private void serviconveniosClickAction(){
 		pop = new PopupPanel();
 		pop.setStyleName("aon-outputConnectionStatus-start");
 		pop.setPopupPosition(25, 5);
@@ -2968,7 +2992,6 @@ public class Documents extends Composite implements EntryPoint {
 		}
 
 		docs.setFilter(docs.getServiconvenios());
-		
 	}
 
 	private void initTableColumns(
@@ -4714,8 +4737,7 @@ public class Documents extends Composite implements EntryPoint {
 	Boolean isLote = false;
 	Vector<FileInfo> lote = new Vector<FileInfo>();
 
-	@UiHandler("loteButton")
-	void lote(ClickEvent event) {
+	private void loteClickAction() {
 		idoc.checkDomain(getDomain(), docs,"loteButton", new AsyncCallback<Boolean>() {
 			
 			@Override
@@ -4752,7 +4774,7 @@ public class Documents extends Composite implements EntryPoint {
 						+ " - lote(ClickEvent event) - checkDomain";
 				print(head, caught.getMessage());
 			}
-		});
+		});	
 	}
 	
 	public Boolean estaLote(FileInfo fi){

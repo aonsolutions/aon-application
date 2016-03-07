@@ -3114,9 +3114,21 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
      .aon-icon-google-search{
 	background:transparent url(images/aon-icon/aon-icon-google-search.png) scroll left center no-repeat;	
  }
-      .aon-icon-serviconvenios{
-	background:transparent url(images/aon-icon/aon-icon-serviconvenios.png) scroll left center no-repeat;	
- }
+    .aon-icon-serviconvenios{
+		background:transparent url(images/aon-icon/aon-icon-serviconvenios.png) scroll left center no-repeat;	
+ 	}
+ 	
+ 	.aon-icon-big-serviconvenios{
+		background:transparent url(images/aon-icon-big/aon-icon-big-serviconvenios.png) scroll left center no-repeat;	
+ 	}
+ 	
+ 	.aon-icon-big-allfiles{
+		background:transparent url(images/aon-icon-big/aon-icon-big-allfiles.png) scroll left center no-repeat;	
+ 	}
+ 	
+ 	.aon-icon-big-lote{
+		background:transparent url(images/aon-icon-big/aon-icon-big-lote.png) scroll left center no-repeat;	
+ 	}
 
  .aon-icon-documental-docs{
 	background:transparent url(images/aon-icon/aon-icon-documental-docs.png) scroll left center no-repeat;	

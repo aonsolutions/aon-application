@@ -110,4 +110,12 @@ public interface AonGwtDocumentCSS extends CssResource{
 	
 	@ClassName("cargando-document")
 	String cargandoDocument();
+	
+	@ClassName("headerTextDisclosure-document")
+	String headerTextDiscosureDocument();
+	
+	@ClassName("lateral-menu-document")
+	String lateralMenuDocument();
+	
+	
 }

@@ -219,3 +219,19 @@
 	padding:0 !important;
 	border:0 !important;
 }
+
+	.headerTextDisclosure-document{
+		font-family: 'Roboto', 'Noto', sans-serif;
+   		font-size: 14px;
+    	line-height: 24px;
+	}	
+	
+	.lateral-menu-document{
+			font-family: 'Roboto', 'Noto', sans-serif;
+   		font-size: 14px;
+    	line-height: 24px;
+    	color: #212121 !important;
+		padding-left: 24px;
+	}
+}
+

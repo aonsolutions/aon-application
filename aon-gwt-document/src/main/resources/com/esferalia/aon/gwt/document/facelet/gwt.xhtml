@@ -11,6 +11,11 @@
 
 	<meta name="gwt:property" content="locale=es_ES" />
 
+<!-- POLYMERS
+	<meta name="viewport"
+       content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+-->
+
 	<aon:valueParam name="entryPoint" default="documents" />
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
@@ -62,7 +67,9 @@
         ]]>
     </script>
 
-
+<!-- POLYMERS
+    <script src="#{module}/bower_components/webcomponentsjs/webcomponents.js"></script>
+-->
 	<script type="text/javascript"
 		src="#{module}/#{module}.nocache.js?entryPoint=#{entryPoint}" />
 
