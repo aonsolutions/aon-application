@@ -9,7 +9,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-		<aon:if test="#{customize.snapshotVersion}">
+		<aon:if test="#{domainSwitcher.betaDomain}">
 			<aon:div styleClass="aon-panelGrid-search aon-margin-bottom aon-text-center">	
 				<aon:outputText value="PROGRAMA OBSOLETO" style="color:red; font-weight: bold; font-size: 14px;"/>
 				<aon:form>

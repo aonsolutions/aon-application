@@ -33,7 +33,7 @@
 											actionListener="#{accountEntry.onEditSearch}"
 											value="#{bundle.accounting_entry_module}" />
 									</aon:div>
-									<aon:if test="#{customize.snapshotVersion}">
+									<aon:if test="#{domainSwitcher.betaDomain}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_accountEntry"
 												action="gwt_accountEntry-deposit"

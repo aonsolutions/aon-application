@@ -78,7 +78,7 @@
 											action="increaseItem-management" 
 											value="#{bundle.aon_increases}" />
 									</aon:div>
-									<aon:if test="#{customize.snapshotVersion}">
+									<aon:if test="#{domainSwitcher.betaDomain}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_invoiceStats"
 												action="gwt_invoiceStats"

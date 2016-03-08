@@ -41,13 +41,16 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomainChangeListener;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.DomainData;
 import com.code.aon.ui.form.ITemplateController;
+import com.code.aon.ui.resources.bean.CustomizeController;
 import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AONContext;
@@ -422,6 +425,21 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		DomainType type = getDomainType(AonUtil.getAuthPrincipal()
 				.getDomainId());
 		return type == DomainType.ADMIN;
+	}
+	
+	public boolean isSnapshotVersion() {
+		CustomizeController customize = (CustomizeController) AonUtil.getRegisteredBean(ICommonConstants.CUSTOMIZE_CONTROLLER_NAME);
+		return customize.isSnapshotVersion();
+	}
+
+	public boolean isBetaDomainEnabled() {
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.AON_BETA_ENABLED, principal.getUserDomainId());
+		return (appParam!=null && new Boolean(appParam.getValue()));
+	}
+	
+	public boolean isBetaDomain() {
+		return isSnapshotVersion() || isBetaDomainEnabled();
 	}
 
 	public static DomainType getDomainType(Integer domainId) {
