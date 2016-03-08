@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -105,7 +106,9 @@ public class SearchPanel extends Composite implements KeyUpHandler {
 	TextBox textTextBox;
 
 	@UiField
-	HorizontalPanel filterHPanel;
+	HorizontalPanel labelsHP;
+	@UiField
+	VerticalPanel filterHPanel;
 
 	private List<Listener> listeners;
 	private List<DefaultAonTagIssueSelected> typeTagList;
@@ -274,6 +277,10 @@ public class SearchPanel extends Composite implements KeyUpHandler {
 			cb.setValue(false);
 		}
 		
+		for (int x = 0; x < labelsHP.getWidgetCount(); x++) {
+			labelsHP.remove(x);
+		}
+		
 		drashTagList.clear();
 		registrySuggest.getValueBox().setValue("");
 		textTextBox.setText("");
@@ -332,10 +339,12 @@ public class SearchPanel extends Composite implements KeyUpHandler {
 							
 							if (event.getValue()) {
 								cb.setStyleName(AON.AON_BOLD);
+								addLabel2HPanel(tag.getName());
 								addTag2List(tag);
 							}
 							else {
 								cb.removeStyleName(AON.AON_BOLD);
+								removeLabelFromHPanel(tag.getName());
 								removeTagFromList(Integer.parseInt(cb.getName()));
 							}
 						}
@@ -377,10 +386,12 @@ public class SearchPanel extends Composite implements KeyUpHandler {
 						public void onValueChange(ValueChangeEvent<Boolean> event) {							
 							if (event.getValue()) {
 								cb.setStyleName(AON.AON_BOLD);
+								addLabel2HPanel(tag.getName());
 								addTag2List(tag);
 							}
 							else {
 								cb.removeStyleName(AON.AON_BOLD);
+								removeLabelFromHPanel(tag.getName());
 								removeTagFromList(Integer.parseInt(cb.getName()));
 							}
 						}
@@ -415,6 +426,24 @@ public class SearchPanel extends Composite implements KeyUpHandler {
 		for (Tag tag : drashTagList) {
 			if (tag.getId() == id) {
 				drashTagList.remove(tag);
+				break;
+			}
+		}
+	}
+	
+	private void addLabel2HPanel(String name) {
+		Label label = new Label();
+		label.setText(name);
+		label.setStyleName(AON.AON_GREEN);
+		labelsHP.add(label);
+	}
+	
+	private void removeLabelFromHPanel(String name) {
+		
+		for (int x = 0; x < labelsHP.getWidgetCount(); x++) {
+			Label label = (Label) labelsHP.getWidget(x);
+			if (label.getText().compareTo(name) == 0) {
+				labelsHP.remove(x);
 				break;
 			}
 		}

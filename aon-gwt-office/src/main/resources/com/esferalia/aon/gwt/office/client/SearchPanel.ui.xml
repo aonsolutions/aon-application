@@ -58,46 +58,52 @@
 					visible="false" />
 			</div>
 
-			<g:HorizontalPanel ui:field="filterHPanel"
-				styleName="{aonResources.css.aonGroupBody}" spacing="10" visible="false">
+			<g:VerticalPanel spacing="0" ui:field="filterHPanel" visible="false">
+				<g:HorizontalPanel
+					styleName="{aonResources.css.aonGroupBody}" spacing="10">
 
-				<g:HorizontalPanel spacing="5">
-					<g:Label styleName="{aonResources.css.aonBold}" text="Filtrar por: " />
-				</g:HorizontalPanel>
+					<g:HorizontalPanel spacing="5">
+						<g:Label styleName="{aonResources.css.aonBold}" text="Filtrar por: " />
+					</g:HorizontalPanel>
 
-				<g:HorizontalPanel spacing="5">
-					<g:Label text="Tipo" />
-					<g:Button ui:field="typeButton" text="Tipo"
-						styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
-				</g:HorizontalPanel>
+					<g:HorizontalPanel spacing="5">
+						<g:Label text="Tipo" />
+						<g:Button ui:field="typeButton" text="Tipo"
+							styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
+					</g:HorizontalPanel>
 
-				<g:HorizontalPanel spacing="5">
-					<g:Label text="Prioridad" />
-					<g:Button ui:field="priorityButton" text="Prioridad"
-						styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
-				</g:HorizontalPanel>
+					<g:HorizontalPanel spacing="5">
+						<g:Label text="Prioridad" />
+						<g:Button ui:field="priorityButton" text="Prioridad"
+							styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
+					</g:HorizontalPanel>
 
-				<g:HorizontalPanel spacing="5">
-					<g:Label styleName="{aonResources.css.aonIconCompany}"
-						title="Empresa" />
-					<g:SuggestBox styleName="{aonResources.css.aonInputText}"
-						width="300px" ui:field="searchRegistrySuggest" />
-				</g:HorizontalPanel>
+					<g:HorizontalPanel spacing="5">
+						<g:Label styleName="{aonResources.css.aonIconCompany}"
+							title="Empresa" />
+						<g:SuggestBox styleName="{aonResources.css.aonInputText}"
+							width="300px" ui:field="searchRegistrySuggest" />
+					</g:HorizontalPanel>
 
-				<g:HorizontalPanel spacing="5">
-					<g:Label text="Texto " />
-					<g:TextBox ui:field="textTextBox" styleName="{aonResources.css.aonInputText}" />
-				</g:HorizontalPanel>
+					<g:HorizontalPanel spacing="5">
+						<g:Label text="Texto " />
+						<g:TextBox ui:field="textTextBox" styleName="{aonResources.css.aonInputText}" />
+					</g:HorizontalPanel>
 
-				<g:HorizontalPanel spacing="5">
-					<g:Button ui:field="searchButton"
-						styleName="{aonResources.css.aonIconSearch} {aonResources.css.aonIconCommandButton}"
-						text="Buscar" />
-					<g:Button ui:field="clearSearchButton"
-						styleName="{aonResources.css.aonIconDelete} {aonResources.css.aonIconCommandButton}"
-						text="Limpiar" />
+					<g:HorizontalPanel spacing="5">
+						<g:Button ui:field="searchButton"
+							styleName="{aonResources.css.aonIconSearch} {aonResources.css.aonIconCommandButton}"
+							text="Buscar" />
+						<g:Button ui:field="clearSearchButton"
+							styleName="{aonResources.css.aonIconDelete} {aonResources.css.aonIconCommandButton}"
+							text="Limpiar" />
+					</g:HorizontalPanel>
 				</g:HorizontalPanel>
-			</g:HorizontalPanel>
+				
+					<g:HorizontalPanel ui:field="labelsHP"
+					styleName="{aonResources.css.aonGroupBody}" spacing="0"/>
+
+			</g:VerticalPanel>
 		</g:HTMLPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 
