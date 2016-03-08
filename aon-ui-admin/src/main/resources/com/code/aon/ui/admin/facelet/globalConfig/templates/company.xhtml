@@ -31,12 +31,12 @@
 					<aon:panelGrid  columns="2" style="padding:10px;">
 						<aon:outputText value="Opciones BETA" />
 						<aon:commandButton value="No habilitado" title="#{bundle.aon_enable}"
-							rendered="#{!domainSwitcher.betaDomainEnabled}"
+							rendered="#{!domainSwitcher.betaEnabled}"
 							reRender="globalConfigCompanyForm"
 							styleClass="aon-finding-toolbar-item aon-noborder aon-icon-check"
 							actionListener="#{company.onEnableBetaDomain}" />
 						<aon:commandButton value="Habilitado" title="#{bundle.aon_disable}"
-							rendered="#{domainSwitcher.betaDomainEnabled}"
+							rendered="#{domainSwitcher.betaEnabled}"
 							reRender="globalConfigCompanyForm"
 							styleClass="aon-finding-toolbar-item aon-noborder aon-icon-checked"
 							actionListener="#{company.onDisableBetaDomain}" />

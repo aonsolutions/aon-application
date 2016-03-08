@@ -432,14 +432,19 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return customize.isSnapshotVersion();
 	}
 
-	public boolean isBetaDomainEnabled() {
+	public boolean isBetaEnabled() {
+		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.AON_BETA_ENABLED);
+		return (appParam!=null && new Boolean(appParam.getValue()));
+	}
+	
+	public boolean isBetaUser() {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.AON_BETA_ENABLED, principal.getUserDomainId());
 		return (appParam!=null && new Boolean(appParam.getValue()));
 	}
 	
 	public boolean isBetaDomain() {
-		return isSnapshotVersion() || isBetaDomainEnabled();
+		return isSnapshotVersion() || isBetaUser();
 	}
 
 	public static DomainType getDomainType(Integer domainId) {
