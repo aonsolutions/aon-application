@@ -10,43 +10,94 @@
 	<ui:style>
 	
 	</ui:style>
-	<g:Grid>
-		<g:row>
-			<g:customCell>
-				<g:Label text="{msg.showFrom}" styleName="{aonResources.css.aonBold}" />
-			</g:customCell>
-			<g:customCell>
-				<g:ListBox ui:field="fromListBox" />
-			</g:customCell>
-			<g:customCell>
-				<g:RadioButton ui:field="openIssuesRb" name="showIssuesRb"
-					value="true" styleName="{aonResources.css.aonBold}" text="{msg.openIssues}" />
-			</g:customCell>
-			<g:customCell>
-				<g:RadioButton ui:field="closedIssuesRb" name="showIssuesRb"
-					value="false" text="{msg.closedIssues}" />
-			</g:customCell>
-			<g:customCell>
-				<g:RadioButton ui:field="allIssuesRb" name="showIssuesRb"
-					value="false" text="{msg.allIssues}" />
-			</g:customCell>
-			<g:customCell>
-				<g:HTMLPanel styleName="{aonResources.css.aonGroupBody}">
-					<table>
-						<row>
-							<td>
-								<g:Label styleName="{aonResources.css.aonIconCompany}" />
-							</td>
-							<td>
-								<g:SuggestBox styleName="{aonResources.css.aonInputText}"
-									width="300px" ui:field="registrySuggest" />
+	<g:HTMLPanel>
+		<g:Grid styleName="{aonResources.css.aonGroupBody}">
+			<g:row>
+				<g:customCell>
+					<g:Label text="{msg.showFrom}" styleName="{aonResources.css.aonBold}" />
+				</g:customCell>
+				<g:customCell>
+					<g:ListBox ui:field="fromListBox" />
+				</g:customCell>
+				<g:customCell>
+					<g:RadioButton ui:field="openIssuesRb" name="showIssuesRb"
+						value="true" styleName="{aonResources.css.aonBold}" text="{msg.openIssues}" />
+				</g:customCell>
+				<g:customCell>
+					<g:RadioButton ui:field="closedIssuesRb" name="showIssuesRb"
+						value="false" text="{msg.closedIssues}" />
+				</g:customCell>
+				<g:customCell>
+					<g:RadioButton ui:field="allIssuesRb" name="showIssuesRb"
+						value="false" text="{msg.allIssues}" />
+				</g:customCell>
+				<g:customCell>
+					<g:HTMLPanel styleName="{aonResources.css.aonGroupBody}">
+						<table>
+							<row>
+								<td>
+									<g:Label styleName="{aonResources.css.aonIconCompany}" />
+								</td>
+								<td>
+									<g:SuggestBox styleName="{aonResources.css.aonInputText}"
+										width="300px" ui:field="registrySuggest" />
+								</td>
+							</row>
+						</table>
+					</g:HTMLPanel>
+				</g:customCell>
+			</g:row>
+		</g:Grid>
 
-							</td>
-						</row>
-					</table>
-				</g:HTMLPanel>
-			</g:customCell>
+		<g:HTMLPanel styleName="{aonResources.css.aonGroupBody}">
+			<div>
+				<g:Button ui:field="advanceSearch" text="Búsqueda avanzada"
+					styleName="aon-editDataTable-button aon-icon-search" />
+				<g:Button ui:field="hideSearchPanel" text="Ocultar búsqueda avanzada"
+					styleName="aon-editDataTable-button {aonResources.css.aonIconCancel}"
+					visible="false" />
+			</div>
 
-		</g:row>
-	</g:Grid>
+			<g:HorizontalPanel ui:field="filterHPanel"
+				styleName="{aonResources.css.aonGroupBody}" spacing="10" visible="false">
+
+				<g:HorizontalPanel spacing="5">
+					<g:Label styleName="{aonResources.css.aonBold}" text="Filtrar por: " />
+				</g:HorizontalPanel>
+
+				<g:HorizontalPanel spacing="5">
+					<g:Label text="Tipo" />
+					<g:Button ui:field="typeButton" text="Tipo"
+						styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
+				</g:HorizontalPanel>
+
+				<g:HorizontalPanel spacing="5">
+					<g:Label text="Prioridad" />
+					<g:Button ui:field="priorityButton" text="Prioridad"
+						styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
+				</g:HorizontalPanel>
+
+				<g:HorizontalPanel spacing="5">
+					<g:Label styleName="{aonResources.css.aonIconCompany}"
+						title="Empresa" />
+					<g:SuggestBox styleName="{aonResources.css.aonInputText}"
+						width="300px" ui:field="searchRegistrySuggest" />
+				</g:HorizontalPanel>
+
+				<g:HorizontalPanel spacing="5">
+					<g:Label text="Texto " />
+					<g:TextBox ui:field="textTextBox" styleName="{aonResources.css.aonInputText}" />
+				</g:HorizontalPanel>
+
+				<g:HorizontalPanel spacing="5">
+					<g:Button ui:field="searchButton"
+						styleName="{aonResources.css.aonIconSearch} {aonResources.css.aonIconCommandButton}"
+						text="Buscar" />
+					<g:Button ui:field="clearSearchButton"
+						styleName="{aonResources.css.aonIconDelete} {aonResources.css.aonIconCommandButton}"
+						text="Limpiar" />
+				</g:HorizontalPanel>
+			</g:HorizontalPanel>
+		</g:HTMLPanel>
+	</g:HTMLPanel>
 </ui:UiBinder> 

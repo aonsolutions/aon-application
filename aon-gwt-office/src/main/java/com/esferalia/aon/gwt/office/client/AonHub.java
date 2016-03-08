@@ -38,6 +38,10 @@ public class AonHub {
 	private static String since = null;
 	private static String sender = null;
 	
+	private static String filterTagList = null;
+	private static String company;
+	private static String text;
+	
 	private static int offset = 0;
 	private static boolean authorized = false;
 
@@ -72,6 +76,23 @@ public class AonHub {
 	
 	public void setSender(String sender) {
 		this.sender = sender;
+	}
+	
+	public void setFilterTagList(String[] filterTag) {
+		if (filterTag == null) 
+			this.filterTagList = null;
+		else {
+			String aux = makeLabelsString(filterTag);
+			this.filterTagList = aux;
+		}
+	}
+	
+	public void setCompany(String company) {
+		this.company = company;
+	}
+	
+	public void setText(String text) {
+		this.text = text;
 	}
 
 	// ************** USERS *************** //
@@ -122,7 +143,10 @@ public class AonHub {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=open"
 				+ (since != null ? "&since=" + this.since : "")
 				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
-				+ "&offset=" + offset, callback);
+				+ "&offset=" + offset
+				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")
+				+ (company != null ? "&company=" + URL.encode(company) : "")
+				+ (text != null ? "&text=" + URL.encode(text) : ""), callback);
 	}
 
 	public void getClosedIssues(String user, String repo,
@@ -130,7 +154,10 @@ public class AonHub {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=closed"
 				+ (since != null ? "&since=" + this.since : "")
 				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
-				+ "&offset=" + offset, callback);
+				+ "&offset=" + offset
+				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")
+				+ (company != null ? "&company=" + URL.encode(company) : "")
+				+ (text != null ? "&text=" + URL.encode(text) : ""), callback);
 	}
 
 	public void getAllIssues(String user, String repo,
@@ -138,7 +165,10 @@ public class AonHub {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=all"
 				+ (since != null ? "&since=" + this.since : "")
 				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
-				+ "&offset=" + offset, callback);
+				+ "&offset=" + offset
+				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")
+				+ (company != null ? "&company=" + URL.encode(company) : "")
+				+ (text != null ? "&text=" + URL.encode(text) : ""), callback);
 	}
 
 	public void createIssue(String user, String repo, IssueValue prop,
@@ -425,5 +455,14 @@ public class AonHub {
 			url += prefix + "access_token=" + accessToken;
 		}
 		return url;
+	}
+	
+	private static String makeLabelsString(String[] labels) {
+		StringBuilder sb = new StringBuilder();
+		for (int x = 0; x < labels.length; x++) {
+			sb.append(labels[x]);
+			sb.append(',');
+		}
+		return sb.toString().substring(0, sb.length() - 1);
 	}
 }

@@ -294,28 +294,47 @@ public class OfficeApiServlet extends HttpServlet {
 				String sender = null;				
 				
 				if (req.getParameter("sender") != null)
-					sender = URLDecoder.decode(req.getParameter("sender"), "UTF-8");			
+					sender = URLDecoder.decode(req.getParameter("sender"), "UTF-8");
+				
+				List<Integer> tagsList = new LinkedList<Integer>();
+				if (req.getParameter("labels") != null) {					
+					String aux = URLDecoder.decode(req.getParameter("labels"), "UTF-8");
+					String[] auxArr = aux.split(",");
+					
+					for (int z = 0; z < auxArr.length; z++) {
+						Integer id = Integer.parseInt(auxArr[z]);
+						tagsList.add(id);
+					}
+				}
+				
+				String company = null;
+				if (req.getParameter("company") != null)
+					company = URLDecoder.decode(req.getParameter("company"), "UTF-8");
+				
+				String text = null;
+				if (req.getParameter("text") != null)
+					text = URLDecoder.decode(req.getParameter("text"), "UTF-8");
 
 				int offset = Integer.parseInt(req.getParameter("offset"));
 				
 				switch (state) {
 				case "open":
 					notices = AON.getOpenNotices(domainId, domainName, userName,
-							since, sender, offset);
+							since, sender, offset, tagsList, company, text);
 					break;
 				case "closed":
 					notices = AON.getClosedNotices(domainId, domainName,
-							userName, since, sender, offset);
+							userName, since, sender, offset, tagsList, company, text);
 					break;
 
 				case "all":
 					notices = AON.getAllNotices(domainId, domainName, userName,
-							since, sender, offset);
+							since, sender, offset, tagsList, company, text);
 					break;
 
 				default:
 					notices = AON.getAllNotices(domainId, domainName, userName,
-							since, sender, offset);
+							since, sender, offset, tagsList, company, text);
 					break;
 				}
 

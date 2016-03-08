@@ -48,6 +48,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -83,6 +84,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiField
 	IssueGrid dataGrid;
+	
+	@UiField
+	HTMLPanel htmlOfficePanel;
 
 	@UiField
 	StackLayoutPanel stackLayoutPanel;
@@ -95,8 +99,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	/**
 	 * The last scroll position
 	 */
-	
-	private static final int DEFAULT_INCREMENT = 50; 
+
+	private static final int DEFAULT_INCREMENT = 50;
 	private int lastScrollPos = 0;
 	private int incrementSize = 0;
 
@@ -141,7 +145,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.dataGrid.setEmptyTableWidget(new Label("No hay registros"));
 		this.tagTree.addListener(this);
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
-		
+
 		gitHub.getUser(String.valueOf(getCurrentDomain()),
 				new AsyncCallback<AJSON<JsUser>>() {
 
@@ -160,7 +164,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		loadRMedias();
 		loadLabels();
 		initIssuesList();
-		loadOpenIssues();
+		loadOpenIssues();		
 	}
 
 	private void loadRegistries() {
@@ -214,7 +218,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						JsArray<JsLabel> labels = result.getData();
 
 						for (int x = 0; x < labels.length(); x++)
-							addLabels2List(labels.get(x));
+							addLabels2List(labels.get(x));						
+						Office.this.searchPanel.addTagList(tagList);
 					}
 				});
 	}
@@ -312,16 +317,16 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 		if (rmedias.size() > 0)
 			issuePanel.setRMedias(rmedias);
-		
+
 		if (registrySelected != null)
 			issuePanel.setSender(this.registrySelected);
-		
+
 		issuePanel.showPopupPanel();
 	}
 
 	@UiHandler("tagButton")
 	void onTagButtonClick(ClickEvent event) {
-		dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 220);		
+		dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 220);
 	}
 
 	@UiHandler("returnButton")
@@ -399,7 +404,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		tag.setType(defaultTag.getType());
 
 		if (defaultTag.getDomain() != 0)
-			tagTree.insertTag(tag);
+			tagTree.insertTag(tag);	
 	}
 
 	private void addRegistry2List(JsRegistry jsRegistry) {
@@ -526,7 +531,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		initIssuesList();
 		evalRadioButtons();
 	}
-	
+
 	@Override
 	public void onSuggestBoxChangeValue(String sender) {
 		this.incrementSize = 0;
@@ -536,6 +541,53 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.gitHub.setOffset(0);
 		initIssuesList();
 		evalRadioButtons();
+	}
+	
+	@Override
+	public void onAdvancedSearchClick(ClickEvent event) {
+		this.dockOfficePanel.setWidgetSize(htmlOfficePanel, 170);
+	}
+	
+	@Override
+	public void onHideSearchPanel(ClickEvent event) {
+		this.dockOfficePanel.setWidgetSize(htmlOfficePanel, 120);
+	}
+	
+	@Override
+	public void onSearchButtonClick(List<Tag> tags, String company,
+		String text) {
+		
+		if (tags.size() == 0)
+			this.gitHub.setFilterTagList(null);
+		else {
+			String[] tagArr = new String[tags.size()];
+			for (int x = 0; x < tags.size() ; x++)
+				tagArr[x] = String.valueOf(tags.get(x).getId());
+			
+			this.gitHub.setFilterTagList(tagArr);
+		}
+		
+		if (company.trim().isEmpty())
+			this.gitHub.setCompany(null);
+		else
+			this.gitHub.setCompany(company);
+		
+		if (text.trim().isEmpty())
+			this.gitHub.setText(null);
+		else
+			this.gitHub.setText(text);
+		
+		initIssuesList();
+		evalRadioButtons();
+	}
+	
+	@Override
+	public void onClearSearchClickEvent(ClickEvent event) {
+		this.gitHub.setFilterTagList(null);
+		this.gitHub.setCompany(null);
+		this.gitHub.setText(null);
+		this.incrementSize = 0;
+		this.gitHub.setOffset(incrementSize);	
 	}
 
 	// ******************************************************************

@@ -503,7 +503,7 @@ public class AonHubDAO {
 	}
 
 	public static List<Notice> getOpenNotices(AONContext ctx, String pSince,
-			String sender, int offset) {
+			String sender, int offset, List<Integer> tags, String company, String text) {
 
 		changeMessageType2CommentType(ctx);
 
@@ -532,6 +532,19 @@ public class AonHubDAO {
 					NOTICE.DATE.between(new java.sql.Timestamp(since.getTime()),
 							new java.sql.Timestamp(tomorrow.getTime())));
 		}
+		
+		if (tags.size() > 0) {
+			for (Integer id : tags)
+				select = select.or(TAG.ID.eq(id));
+		}
+		
+		if (company != null) {
+			select = select.and(NOTICE.COMPANY.like("%" + company + "%" ));
+		}
+		
+		if (text != null) {
+			select = select.and(NOTICE.SUBJECT.like("%" + text + "%" ));
+		}
 
 		if (sender != null) {
 			select = select.and(NOTICE.COMPANY.eq(sender));
@@ -552,7 +565,7 @@ public class AonHubDAO {
 	}
 
 	public static List<Notice> getClosedIsues(AONContext ctx, String pSince,
-			String sender, int offset) {
+			String sender, int offset, List<Integer> tags, String company, String text) {
 
 		List<Notice> notices = new LinkedList<Notice>();
 
@@ -581,6 +594,21 @@ public class AonHubDAO {
 		if (sender != null) {
 			select = select.and(NOTICE.COMPANY.eq(sender));
 		}
+		
+		
+		if (tags.size() > 0) {
+			for (Integer id : tags)
+				select = select.and(NOTICE_TAG.TAG.eq(id));
+		}
+		
+		if (company != null) {
+			select = select.and(NOTICE.COMPANY.like("%" + company + "%" ));
+		}
+		
+		if (text != null) {
+			select = select.and(NOTICE.SUBJECT.like("%" + text + "%" ));
+		}
+
 
 		Result<Record> record = select.orderBy(NOTICE.DATE.desc())
 				.limit(offset, 50).fetch();
@@ -596,7 +624,7 @@ public class AonHubDAO {
 	}
 
 	public static List<Notice> getAllNotices(AONContext ctx, String pSince,
-			String sender, int offset) {
+			String sender, int offset, List<Integer> tags, String company, String text) {
 
 		List<Notice> notices = new LinkedList<Notice>();
 
@@ -630,6 +658,19 @@ public class AonHubDAO {
 
 		if (sender != null) {
 			select = select.and(NOTICE.COMPANY.eq(sender));
+		}
+		
+		if (tags.size() > 0) {
+			for (Integer id : tags)
+				select = select.and(NOTICE_TAG.TAG.eq(id));
+		}
+		
+		if (company != null) {
+			select = select.and(NOTICE.COMPANY.like("%" + company + "%" ));
+		}
+		
+		if (text != null) {
+			select = select.and(NOTICE.SUBJECT.like("%" + text + "%" ));
 		}
 
 		Result<Record> record = select.orderBy(NOTICE.DATE.desc())

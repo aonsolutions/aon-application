@@ -44,6 +44,12 @@
 		border-bottom: 1px solid #BBB;
 		border-right: 0px !important;
 	}
+	
+	.advanced-options {
+		font-size: 10px;
+		font-weight: bold;
+		float: right;
+	}
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
@@ -82,8 +88,8 @@
 
 				<g:DockLayoutPanel ui:field="dockOfficePanel"
 					unit="PX">
-					<g:north size="90">
-						<g:HTMLPanel styleName="aon-panelGrid-search {style.searchPanel}">
+					<g:north size="120">
+						<g:HTMLPanel ui:field="htmlOfficePanel" styleName="aon-panelGrid-search {style.searchPanel}">
 							<div class="aon-panelGrid-search-info">
 								<g:Label styleName="aon-panelGrid-search-info-internal"
 									text="{msg.searchCriteria}" />

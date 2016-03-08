@@ -1102,12 +1102,13 @@ public class AON {
 
 	public static List<Notice> getAllNotices(Integer domainId,
 			String domainName, String userName, String since, String sender,
-			int offset) {
+			int offset, List<Integer> tagList, String company, String text) {
 
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getAllIssues(ctx, since, sender, offset);
+			return getOffice().getAllIssues(ctx, since, sender, offset, tagList,
+					company, text);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1116,12 +1117,13 @@ public class AON {
 
 	public static List<Notice> getOpenNotices(Integer domainId,
 			String domainName, String userName, String since, String sender,
-			int offset) {
+			int offset, List<Integer> tagList, String company, String text) {
 
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getOpenNotices(ctx, since, sender, offset);
+			return getOffice().getOpenNotices(ctx, since, sender, offset,
+					tagList, company, text);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1130,12 +1132,12 @@ public class AON {
 
 	public static List<Notice> getClosedNotices(Integer domainId,
 			String domainName, String userName, String since, String sender,
-			int offset) {
+			int offset, List<Integer> tagList, String company, String text) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getClosedNotices(ctx, since, sender, offset);
-
+			return getOffice().getClosedNotices(ctx, since, sender, offset,
+					tagList, company, text);
 		} finally {
 			if (ctx != null)
 				ctx.close();
