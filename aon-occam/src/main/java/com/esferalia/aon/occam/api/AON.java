@@ -1102,13 +1102,13 @@ public class AON {
 
 	public static List<Notice> getAllNotices(Integer domainId,
 			String domainName, String userName, String since, String sender,
-			int offset, List<Integer> tagList, String company, String text) {
+			int offset, List<Integer> tagList, String text) {
 
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			return getOffice().getAllIssues(ctx, since, sender, offset, tagList,
-					company, text);
+					text);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1117,13 +1117,13 @@ public class AON {
 
 	public static List<Notice> getOpenNotices(Integer domainId,
 			String domainName, String userName, String since, String sender,
-			int offset, List<Integer> tagList, String company, String text) {
+			int offset, List<Integer> tagList, String text) {
 
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			return getOffice().getOpenNotices(ctx, since, sender, offset,
-					tagList, company, text);
+					tagList, text);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1132,12 +1132,12 @@ public class AON {
 
 	public static List<Notice> getClosedNotices(Integer domainId,
 			String domainName, String userName, String since, String sender,
-			int offset, List<Integer> tagList, String company, String text) {
+			int offset, List<Integer> tagList, String text) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			return getOffice().getClosedNotices(ctx, since, sender, offset,
-					tagList, company, text);
+					tagList, text);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1187,19 +1187,6 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
 			return getOffice().editNotice(ctx, notice);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static boolean deleteNotice(Integer domainId, String domainName,
-			String userName, Integer id) {
-
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().deleteNotice(ctx, id);
 		} finally {
 			if (ctx != null)
 				ctx.close();

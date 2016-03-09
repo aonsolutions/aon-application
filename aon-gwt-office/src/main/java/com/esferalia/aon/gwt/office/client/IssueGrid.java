@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
+import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ClickableTextCell;
@@ -93,7 +94,12 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 		@Override
 		public String getStateIconStyle() {
-			return AON.AON_CSS.aonIconIssueOpen();
+			if (issue.getState().compareTo(NoticeStatus.OPEN.getValue()) == 0)
+				return AON.AON_CSS.aonIconIssueOpen();
+			else if(issue.getState().compareTo(NoticeStatus.REOPEN.getValue()) == 0)
+				return AON.AON_CSS.aonIconIssueReOpenedBlue();
+			else
+				return AON.AON_CSS.aonIconIssueOpen();
 		}
 
 		@Override

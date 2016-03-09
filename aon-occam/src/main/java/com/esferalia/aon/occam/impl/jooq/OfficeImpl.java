@@ -22,23 +22,23 @@ public class OfficeImpl implements IOffice {
 
 	@Override
 	public List<Notice> getOpenNotices(AONContext ctx, String since,
-			String sender, int offset, List<Integer> tags, String company,
-			String text) throws IllegalArgumentException {
-		return AonHubDAO.getOpenNotices(ctx, since, sender, offset, tags, company, text);
+			String sender, int offset, List<Integer> tags, String text)
+					throws IllegalArgumentException {
+		return AonHubDAO.getOpenNotices(ctx, since, sender, offset, tags, text);
 	}
 
 	@Override
 	public List<Notice> getClosedNotices(AONContext ctx, String since,
-			String sender, int offset, List<Integer> tags, String company,
-			String text) throws IllegalArgumentException {
-		return AonHubDAO.getClosedIsues(ctx, since, sender, offset, tags, company, text);
+			String sender, int offset, List<Integer> tags, String text)
+					throws IllegalArgumentException {
+		return AonHubDAO.getClosedIsues(ctx, since, sender, offset, tags, text);
 	}
 
 	@Override
 	public List<Notice> getAllIssues(AONContext ctx, String since,
-			String sender, int offset, List<Integer> tags, String company,
-			String text) throws IllegalArgumentException {
-		return AonHubDAO.getAllNotices(ctx, since, sender, offset, tags, company, text);
+			String sender, int offset, List<Integer> tags, String text)
+					throws IllegalArgumentException {
+		return AonHubDAO.getAllNotices(ctx, since, sender, offset, tags, text);
 	}
 
 	@Override
@@ -87,11 +87,6 @@ public class OfficeImpl implements IOffice {
 	@Override
 	public Notice changeNoticeStatus(AONContext ctx, Notice notice) {
 		return AonHubDAO.changeNoticeState(ctx, notice);
-	}
-
-	@Override
-	public boolean deleteNotice(AONContext ctx, Integer id) {
-		return AonHubDAO.deleteNotice(ctx, id);
 	}
 
 	@Override

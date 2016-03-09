@@ -79,13 +79,6 @@
 					</g:HorizontalPanel>
 
 					<g:HorizontalPanel spacing="5">
-						<g:Label styleName="{aonResources.css.aonIconCompany}"
-							title="Empresa" />
-						<g:SuggestBox styleName="{aonResources.css.aonInputText}"
-							width="300px" ui:field="searchRegistrySuggest" />
-					</g:HorizontalPanel>
-
-					<g:HorizontalPanel spacing="5">
 						<g:Label text="Texto " />
 						<g:TextBox ui:field="textTextBox" styleName="{aonResources.css.aonInputText}" />
 					</g:HorizontalPanel>

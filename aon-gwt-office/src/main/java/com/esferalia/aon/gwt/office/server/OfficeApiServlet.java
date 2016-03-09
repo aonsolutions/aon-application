@@ -307,10 +307,6 @@ public class OfficeApiServlet extends HttpServlet {
 					}
 				}
 				
-				String company = null;
-				if (req.getParameter("company") != null)
-					company = URLDecoder.decode(req.getParameter("company"), "UTF-8");
-				
 				String text = null;
 				if (req.getParameter("text") != null)
 					text = URLDecoder.decode(req.getParameter("text"), "UTF-8");
@@ -320,21 +316,21 @@ public class OfficeApiServlet extends HttpServlet {
 				switch (state) {
 				case "open":
 					notices = AON.getOpenNotices(domainId, domainName, userName,
-							since, sender, offset, tagsList, company, text);
+							since, sender, offset, tagsList, text);
 					break;
 				case "closed":
 					notices = AON.getClosedNotices(domainId, domainName,
-							userName, since, sender, offset, tagsList, company, text);
+							userName, since, sender, offset, tagsList, text);
 					break;
 
 				case "all":
 					notices = AON.getAllNotices(domainId, domainName, userName,
-							since, sender, offset, tagsList, company, text);
+							since, sender, offset, tagsList, text);
 					break;
 
 				default:
 					notices = AON.getAllNotices(domainId, domainName, userName,
-							since, sender, offset, tagsList, company, text);
+							since, sender, offset, tagsList, text);
 					break;
 				}
 
@@ -963,70 +959,6 @@ public class OfficeApiServlet extends HttpServlet {
 		}
 	}
 
-	private static class DeleteNotice extends RegExpRequestHandler {
-
-		private HttpServletResponse resp;
-
-		private Integer domainId;
-		private String domainName;
-		private Integer noticeId;
-
-		public DeleteNotice() {
-			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues/(\\d+)");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-
-			this.resp = resp;
-
-			try {
-
-				this.domainId = getDomainId();
-				this.domainName = getDomainName();
-				this.noticeId = Integer.parseInt(group(3));
-
-			} catch (Exception ex) {
-				String ver = getRequestAction(req);
-				String[] actionArr = ver.split("/");
-				this.domainId = Integer.parseInt(actionArr[2]);
-				this.domainName = actionArr[3];
-				this.noticeId = Integer.parseInt(actionArr[5]);
-
-			} finally {
-				deleteNotice();
-			}
-		}
-
-		private void deleteNotice() {
-
-			PrintWriter pw = null;
-
-			try {
-				pw = resp.getWriter();
-
-				boolean deleted = AON.deleteNotice(domainId, domainName,
-						AonServletUtils.getLoggedUser(), noticeId);
-
-				if (deleted)
-					resp.setStatus(200);
-				else
-					resp.setStatus(404);
-
-				pw.append("{\n");
-				pw.append("}");
-				pw.flush();
-
-			} catch (Exception ex) {
-				resp.setStatus(404);
-				System.out.println(
-						"Se ha producido un error: " + ex.getMessage());
-				pw.flush();
-			}
-		}
-	}
-
 	private static class RemoveLabelFromIssue extends RegExpRequestHandler {
 
 		private HttpServletRequest req;
@@ -1119,8 +1051,7 @@ public class OfficeApiServlet extends HttpServlet {
 	};
 
 	private static final HttpRequestHandler DELETE_HANDLERS[] = {
-			new DeleteLabel(),
-			new DeleteNotice(),		
+			new DeleteLabel(),			
 			new RemoveLabelFromIssue(),
 	};
 	// @formatter:on

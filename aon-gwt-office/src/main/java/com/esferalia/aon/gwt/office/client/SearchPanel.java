@@ -67,7 +67,7 @@ public class SearchPanel extends Composite implements KeyUpHandler {
 
 		void onHideSearchPanel(ClickEvent event);
 		
-		void onSearchButtonClick(List<Tag> tags, String company, String text);
+		void onSearchButtonClick(List<Tag> tags, String text);
 		
 		void onClearSearchClickEvent(ClickEvent event);
 	}
@@ -100,8 +100,6 @@ public class SearchPanel extends Composite implements KeyUpHandler {
 	@UiField
 	Button clearSearchButton;
 
-	@UiField(provided = true)
-	SuggestBox searchRegistrySuggest;
 	@UiField
 	TextBox textTextBox;
 
@@ -117,14 +115,12 @@ public class SearchPanel extends Composite implements KeyUpHandler {
 	private List<Tag> drashTagList;
 	
 	private MultiWordSuggestOracle registries = new MultiWordSuggestOracle();
-	private MultiWordSuggestOracle searchRegistries = new MultiWordSuggestOracle();
 	
 	private VerticalPanel typeVPanel;
 	private VerticalPanel priorityVPanel;
 
 	public SearchPanel() {
-		this.registrySuggest = new SuggestBox(registries);
-		this.searchRegistrySuggest = new SuggestBox(searchRegistries);
+		this.registrySuggest = new SuggestBox(registries);		
 		initWidget(uiBinder.createAndBindUi(this));
 
 		this.listeners = new LinkedList<Listener>();
@@ -145,8 +141,7 @@ public class SearchPanel extends Composite implements KeyUpHandler {
 	}
 
 	public void addRegistry(Registry registry) {
-		registries.add(registry.getName());
-		searchRegistries.add(registry.getName());
+		registries.add(registry.getName());		
 	}
 	
 	public void addTagList(List<DefaultAonTagIssueSelected> list) {
@@ -277,10 +272,7 @@ public class SearchPanel extends Composite implements KeyUpHandler {
 			cb.setValue(false);
 		}
 		
-		for (int x = 0; x < labelsHP.getWidgetCount(); x++) {
-			labelsHP.remove(x);
-		}
-		
+		labelsHP.clear();
 		drashTagList.clear();
 		registrySuggest.getValueBox().setValue("");
 		textTextBox.setText("");
@@ -303,7 +295,7 @@ public class SearchPanel extends Composite implements KeyUpHandler {
 	void onSearchButtonClick(ClickEvent event) {
 		
 		for (Listener listener : listeners)
-			listener.onSearchButtonClick(drashTagList, searchRegistrySuggest.getText(), textTextBox.getText());
+			listener.onSearchButtonClick(drashTagList, textTextBox.getText());
 	}
 
 	public boolean openIsSelected() {

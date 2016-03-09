@@ -554,8 +554,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 	
 	@Override
-	public void onSearchButtonClick(List<Tag> tags, String company,
-		String text) {
+	public void onSearchButtonClick(List<Tag> tags, String text) {
 		
 		if (tags.size() == 0)
 			this.gitHub.setFilterTagList(null);
@@ -567,15 +566,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 			this.gitHub.setFilterTagList(tagArr);
 		}
 		
-		if (company.trim().isEmpty())
-			this.gitHub.setCompany(null);
-		else
-			this.gitHub.setCompany(company);
-		
 		if (text.trim().isEmpty())
 			this.gitHub.setText(null);
 		else
 			this.gitHub.setText(text);
+		
+		this.incrementSize = 0;
+		this.gitHub.setOffset(incrementSize);
 		
 		initIssuesList();
 		evalRadioButtons();
@@ -584,10 +581,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	@Override
 	public void onClearSearchClickEvent(ClickEvent event) {
 		this.gitHub.setFilterTagList(null);
-		this.gitHub.setCompany(null);
 		this.gitHub.setText(null);
 		this.incrementSize = 0;
-		this.gitHub.setOffset(incrementSize);	
+		this.gitHub.setOffset(incrementSize);
+		
+		initIssuesList();
+		evalRadioButtons();
 	}
 
 	// ******************************************************************

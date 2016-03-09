@@ -38,8 +38,7 @@ public class AonHub {
 	private static String since = null;
 	private static String sender = null;
 	
-	private static String filterTagList = null;
-	private static String company;
+	private static String filterTagList = null;	
 	private static String text;
 	
 	private static int offset = 0;
@@ -85,10 +84,6 @@ public class AonHub {
 			String aux = makeLabelsString(filterTag);
 			this.filterTagList = aux;
 		}
-	}
-	
-	public void setCompany(String company) {
-		this.company = company;
 	}
 	
 	public void setText(String text) {
@@ -144,8 +139,7 @@ public class AonHub {
 				+ (since != null ? "&since=" + this.since : "")
 				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
 				+ "&offset=" + offset
-				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")
-				+ (company != null ? "&company=" + URL.encode(company) : "")
+				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				
 				+ (text != null ? "&text=" + URL.encode(text) : ""), callback);
 	}
 
@@ -155,8 +149,7 @@ public class AonHub {
 				+ (since != null ? "&since=" + this.since : "")
 				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
 				+ "&offset=" + offset
-				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")
-				+ (company != null ? "&company=" + URL.encode(company) : "")
+				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				
 				+ (text != null ? "&text=" + URL.encode(text) : ""), callback);
 	}
 
@@ -166,8 +159,7 @@ public class AonHub {
 				+ (since != null ? "&since=" + this.since : "")
 				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
 				+ "&offset=" + offset
-				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")
-				+ (company != null ? "&company=" + URL.encode(company) : "")
+				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				
 				+ (text != null ? "&text=" + URL.encode(text) : ""), callback);
 	}
 
@@ -191,12 +183,6 @@ public class AonHub {
 			AsyncCallback<JsIssue> callback) {
 		post(url, prop, callback);
 
-	}
-
-	public void deleteIssue(String user, String repo, JsIssue issue,
-			AsyncCallback<JsIssue> callback) {
-		delete(baseUrl + "repos/" + user + "/" + repo + "/issues/"
-				+ issue.getNumber(), callback);
 	}
 
 	// *************** COMMENTS ****************** //

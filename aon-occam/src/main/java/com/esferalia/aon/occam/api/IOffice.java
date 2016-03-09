@@ -19,23 +19,21 @@ public interface IOffice {
 	public Notice changeNoticeStatus(AONContext ctx, Notice notice);
 
 	public List<Notice> getOpenNotices(AONContext ctx, String since,
-			String sender, int offset, List<Integer> tags, String company,
+			String sender, int offset, List<Integer> tags, 
 			String text) throws IllegalArgumentException;
 
 	public List<Notice> getClosedNotices(AONContext ctx, String since,
-			String sender, int offset, List<Integer> tags, String company,
+			String sender, int offset, List<Integer> tags,
 			String text) throws IllegalArgumentException;
 
 	public List<Notice> getAllIssues(AONContext ctx, String since,
-			String sender, int offset, List<Integer> tags, String company,
+			String sender, int offset, List<Integer> tags,
 			String text) throws IllegalArgumentException;
 
 	public Notice createComment(AONContext ctx, Integer headId, Notice comment)
 			throws IllegalArgumentException;
 
 	public Notice editComment(AONContext ctx, Integer commentId, String body);
-
-	public boolean deleteNotice(AONContext ctx, Integer id);
 
 	public boolean deleteTag(AONContext ctx, String labelName);
 

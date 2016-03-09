@@ -83,54 +83,6 @@ public class GWTExtendsOfficeTestCase extends GWTOfficeTestCase {
 	@Override @Ignore
 	public void testDeleteComments() {}
 	
-	public void testDeleteNotice() {
-		
-		System.out.println("testDeleteNotices() ....... ");
-		
-		getAonHub().getOpenIssues(USER, REPONAME, new AsyncCallback<JSON<JsIssue>>() {
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				fail("Error en testDeleteNotice --> getOpenIssues(): " + caught.getMessage());
-				finishTest();
-			}
-			
-			@Override
-			public void onSuccess(JSON<JsIssue> result) {
-				assertNotNull(result);
-				assertNotNull(result.getData());
-				
-				JsArray<JsIssue> issues = result.getData();
-				assertTrue(issues.length() > 0);
-				
-				
-				for ( int x = 0; x < issues.length(); x++ ) {
-					final JsIssue issue = issues.get(x);
-					if (issue.getTitle().startsWith(PRUEBA_TEST))
-						deleteNotice(issue);
-				}
-			}
-		});
-	}
-	
-	private void deleteNotice(JsIssue issue) {
-		
-		getAonHub().deleteIssue(USER, REPONAME, issue, new AsyncCallback<JsIssue>() {
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				fail(caught.getMessage());
-				System.err.println("Notice no borrado ...");
-				finishTest();
-			}
-			
-			@Override
-			public void onSuccess(JsIssue result) {
-				System.out.println(" ..... OK ....");
-			}
-		});
-	}
-	
 	@Override @Ignore
 	public void testDeleteRepository() {}	
 }
