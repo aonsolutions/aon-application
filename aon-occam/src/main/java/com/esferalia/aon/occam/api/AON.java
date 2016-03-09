@@ -1102,7 +1102,7 @@ public class AON {
 
 	public static List<Notice> getAllNotices(Integer domainId,
 			String domainName, String userName, String since, String sender,
-			int offset, List<Integer> tagList, String text) {
+			int offset, List<String> tagList, String text) {
 
 		AONContext ctx = null;
 		try {
@@ -1117,7 +1117,7 @@ public class AON {
 
 	public static List<Notice> getOpenNotices(Integer domainId,
 			String domainName, String userName, String since, String sender,
-			int offset, List<Integer> tagList, String text) {
+			int offset, List<String> tagList, String text) {
 
 		AONContext ctx = null;
 		try {
@@ -1132,7 +1132,7 @@ public class AON {
 
 	public static List<Notice> getClosedNotices(Integer domainId,
 			String domainName, String userName, String since, String sender,
-			int offset, List<Integer> tagList, String text) {
+			int offset, List<String> tagList, String text) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);

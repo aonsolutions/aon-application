@@ -561,7 +561,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		else {
 			String[] tagArr = new String[tags.size()];
 			for (int x = 0; x < tags.size() ; x++)
-				tagArr[x] = String.valueOf(tags.get(x).getId());
+				tagArr[x] = String.valueOf(tags.get(x).getName());
 			
 			this.gitHub.setFilterTagList(tagArr);
 		}

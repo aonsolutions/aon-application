@@ -463,12 +463,11 @@ public class AonHubDAO {
 	}
 
 	public static List<Notice> getOpenNotices(AONContext ctx, String pSince,
-			String sender, int offset, List<Integer> tags, String text) {
+			String sender, int offset, List<String> tags, String text) {
 
 		changeMessageType2CommentType(ctx);
 
-		List<Notice> notices = new LinkedList<Notice>();
-		Integer domainId = ctx.getDomainId();
+		List<Notice> notices = new LinkedList<Notice>();		
 
 		Date since = getSince(pSince);
 		Date tomorrow = getTomorrow();
@@ -482,7 +481,7 @@ public class AonHubDAO {
 				.from(NOTICE).rightOuterJoin(NOTICE_TAG)
 				.on(NOTICE.ID.eq(NOTICE_TAG.NOTICE)).rightOuterJoin(TAG)
 				.on(NOTICE_TAG.TAG.eq(TAG.ID))
-				.where(NOTICE.DOMAIN.eq(domainId).and(NOTICE.NOTICE_.isNull())
+				.where(NOTICE.DOMAIN.eq(ctx.getDomainId()).and(NOTICE.NOTICE_.isNull())
 						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
 						.and(TAG.ID.eq(openId).or(TAG.ID.eq(reopenId)))
 						.and(NOTICE_TAG.END_DATE.isNull()));
@@ -491,11 +490,6 @@ public class AonHubDAO {
 			select = select.and(
 					NOTICE.DATE.between(new java.sql.Timestamp(since.getTime()),
 							new java.sql.Timestamp(tomorrow.getTime())));
-		}
-
-		if (tags.size() > 0) {
-			for (Integer id : tags)  
-				select = select.or(TAG.ID.eq(id));			
 		}
 
 		if (text != null) {
@@ -511,9 +505,24 @@ public class AonHubDAO {
 
 		if (record != null) {
 
-			record.stream().forEach(result -> {
+			record.stream().forEach(result -> {				
 				Notice notice = buildNotice(ctx, result);
-				notices.add(notice);
+				if (tags.size() > 0) {
+					boolean encontrado = false;
+					for (Tag tag : notice.getTags()) {
+						for (String name : tags) {
+							if (tag.getName().compareTo(name) == 0) {
+								encontrado = true;
+								break;
+							}
+						}
+					}
+					if (encontrado)
+						notices.add(notice);
+				}
+				else {
+					notices.add(notice);	
+				}
 			});
 		}
 
@@ -521,7 +530,7 @@ public class AonHubDAO {
 	}
 
 	public static List<Notice> getClosedIsues(AONContext ctx, String pSince,
-			String sender, int offset, List<Integer> tags, String text) {
+			String sender, int offset, List<String> tags, String text) {
 
 		List<Notice> notices = new LinkedList<Notice>();
 
@@ -551,30 +560,41 @@ public class AonHubDAO {
 			select = select.and(NOTICE.COMPANY.eq(sender));
 		}
 
-		if (tags.size() > 0) {
-			for (Integer id : tags)
-				select = select.and(NOTICE_TAG.TAG.eq(id));
-		}
-
 		if (text != null) {
 			select = select.and(NOTICE.SUBJECT.like("%" + text + "%"));
 		}
 
 		Result<Record> record = select.orderBy(NOTICE.DATE.desc())
-				.limit(offset, 50).fetch();
+				.limit(offset, 50)
+				.fetch();
 
 		if (record != null)
 
 			record.stream().forEach(result -> {
 				Notice notice = buildNotice(ctx, result);
-				notices.add(notice);
+				if (tags.size() > 0) {
+					boolean encontrado = false;
+					for (Tag tag : notice.getTags()) {
+						for (String name : tags) {
+							if (tag.getName().compareTo(name) == 0) {
+								encontrado = true;
+								break;
+							}
+						}
+					}
+					if (encontrado)
+						notices.add(notice);
+				}
+				else {
+					notices.add(notice);	
+				}
 			});
 
 		return notices;
 	}
 
 	public static List<Notice> getAllNotices(AONContext ctx, String pSince,
-			String sender, int offset, List<Integer> tags, String text) {
+			String sender, int offset, List<String> tags, String text) {
 
 		List<Notice> notices = new LinkedList<Notice>();
 
@@ -610,11 +630,6 @@ public class AonHubDAO {
 			select = select.and(NOTICE.COMPANY.eq(sender));
 		}
 
-		if (tags.size() > 0) {
-			for (Integer id : tags)
-				select = select.and(NOTICE_TAG.TAG.eq(id));
-		}
-
 		if (text != null) {
 			select = select.and(NOTICE.SUBJECT.like("%" + text + "%"));
 		}
@@ -625,8 +640,22 @@ public class AonHubDAO {
 		if (record != null) {
 			record.stream().forEach(result -> {
 				Notice notice = buildNotice(ctx, result);
-				notices.add(notice);
-
+				if (tags.size() > 0) {
+					boolean encontrado = false;
+					for (Tag tag : notice.getTags()) {
+						for (String name : tags) {
+							if (tag.getName().compareTo(name) == 0) {
+								encontrado = true;
+								break;
+							}
+						}
+					}
+					if (encontrado)
+						notices.add(notice);
+				}
+				else {
+					notices.add(notice);	
+				}
 			});
 		}
 		return notices;

@@ -296,14 +296,14 @@ public class OfficeApiServlet extends HttpServlet {
 				if (req.getParameter("sender") != null)
 					sender = URLDecoder.decode(req.getParameter("sender"), "UTF-8");
 				
-				List<Integer> tagsList = new LinkedList<Integer>();
+				List<String> tagsList = new LinkedList<String>();
 				if (req.getParameter("labels") != null) {					
 					String aux = URLDecoder.decode(req.getParameter("labels"), "UTF-8");
 					String[] auxArr = aux.split(",");
 					
 					for (int z = 0; z < auxArr.length; z++) {
-						Integer id = Integer.parseInt(auxArr[z]);
-						tagsList.add(id);
+						String name = auxArr[z];
+						tagsList.add(name);
 					}
 				}
 				
