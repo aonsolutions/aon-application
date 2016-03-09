@@ -117,5 +117,10 @@ public interface AonGwtDocumentCSS extends CssResource{
 	@ClassName("lateral-menu-document")
 	String lateralMenuDocument();
 	
+	@ClassName("filter-label-document")
+	String filterLabelDocument();
+	
+	@ClassName("filter-item-document")
+	String filterItemDocument();
 	
 }

@@ -24,6 +24,7 @@ import com.code.aon.ui.google.apis.controller.GoogleDriveController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.document.jooq.DBConsults;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -54,7 +55,9 @@ public class DownloadFilesServlet extends HttpServlet {
         	domainID = DBDrive.getRAttachDomainID(domain, idFile);
         }
         else domainID = Integer.parseInt(domainId);
-       domain.setId(domainID);
+       
+       domain = AON.getDomain(domainName, domainID, login);
+       
        User user = new User().setLogin(login);
 
         Integer m = Integer.parseInt(mtype);

@@ -92,7 +92,6 @@ import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -120,7 +119,9 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionModel;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.elemental.Function;
+import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperItem;
+import com.vaadin.polymer.paper.widget.PaperMenu;
 
 import gwtupload.client.IUploader;
 import gwtupload.client.IUploader.OnCancelUploaderHandler;
@@ -591,6 +592,7 @@ public class Documents extends Composite implements EntryPoint {
 	@UiField PaperItem allFilesPaper;
 	@UiField PaperItem serviConveniosPaper;
 	@UiField PaperItem lotePaper;
+	@UiField PaperMenu lateralMenuPaper;
 	
 	@UiField(provided = true) HorizontalPanel prueba2;
 	
@@ -598,11 +600,8 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiField Button upDrive;
 	
-	@UiField InlineHTML html;
-	
-	
-	@UiField Button filterButton;
-	
+	@UiField HorizontalPanel filterPanel;
+		
 	@UiField Button advanceSearch;
 
 	@UiField(provided=true) DisclosurePanel epanel;
@@ -756,14 +755,10 @@ public class Documents extends Composite implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList("iron-icons/iron-icons.html"), new Function() {
-			
-			@Override
-			public Object call(Object arg) {
-				// TODO Apéndice de método generado automáticamente
+			@Override public Object call(Object arg) {
 				return null;
 			}
 		});
-		
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		GWT.<AonGwtDocumentResources> create(AonGwtDocumentResources.class).css().ensureInjected();
@@ -818,74 +813,7 @@ public class Documents extends Composite implements EntryPoint {
 					ccm.show();
 				}
 			}, ContextMenuEvent.getType());
-			b.addClickHandler(new ClickHandler() {
-					Category c = cAux;
-					@Override
-					public void onClick(ClickEvent event) {
-						newFile.setVisible(true); sConvenios.setVisible(false);
-						gestionLote.setVisible(false);
-						gestionDocs.setVisible(true);
-						editFile.setVisible(false);
-						delFile.setVisible(false);
-						optionFile.setVisible(false);
-
-						idoc.checkDomain(getDomain(),docs,"searchFile2", new AsyncCallback<Boolean>() {
-							
-							@Override
-							public void onSuccess(Boolean result) {
-								if(!result){
-									reload();
-								}
-								else{
-									SearchInfo si = new SearchInfo();
-									si.setCategory(c.getName());
-									idoc.searchFile2(si, docs.getEfiles(),
-										new AsyncCallback<FilterUtil>() {
-											@Override
-											public void onSuccess(FilterUtil result) {
-												
-												
-												searchs = result.getFiles();
-												docs.setFilter(result.getFiles());
-												for(FileInfo f : dataProvider.getList()){
-													dataGrid.getSelectionModel().setSelected(f, false);
-												}
-												dataProvider = new ListDataProvider<FileInfo>(
-														searchs);
-												dataProvider.addDataDisplay(dataGrid);
-												isServiconvenios=false;
-												isLote = false;
-												/*filterLabel= new Label();
-												filterLabel.setStyleName("aon-icon-category");
-												filterLabel.setText(cAux.getName());
-												*/
-
-												html.setText(result.getCategory());
-												html.setVisible(true);
-												filterButton.setVisible(true);
-												updateDatagridColumns();
-												dataGrid.redraw();
-											}
-											@Override
-											public void onFailure(Throwable caught) {
-												String head = "com.esferalia.aon.gwt.document.client.Documents"
-														+ " - Load() - searchFile2";
-												print(head, caught.getMessage());
-											}
-										});
-									}
-								}
-							
-								@Override
-								public void onFailure(Throwable caught) {
-									String head = "com.esferalia.aon.gwt.document.client.Documents"
-											+ " - Load() - checkDomain";
-									print(head, caught.getMessage());
-								}
-						});
-						
-					}
-			});
+			b.addClickHandler(categoryClickHandler(cAux));
 			vcat.add(b); 
 		}
 		//dpanel.add(vcat);
@@ -908,76 +836,7 @@ public class Documents extends Composite implements EntryPoint {
 					tcm.show();
 				}
 			}, ContextMenuEvent.getType());
-			b.addClickHandler(new ClickHandler() {
-				Tag t=tAux;	
-				@Override
-					public void onClick(ClickEvent event) {
-						newFile.setVisible(true); sConvenios.setVisible(false);
-						gestionLote.setVisible(false);
-						gestionDocs.setVisible(true);
-						editFile.setVisible(false);
-						delFile.setVisible(false);
-						optionFile.setVisible(false);
-						
-						idoc.checkDomain(getDomain(), docs,"searchFile2", new AsyncCallback<Boolean>() {
-							
-							@Override
-							public void onSuccess(Boolean result) {
-								if(!result){
-									reload();
-								}
-								else{
-									SearchInfo si = new SearchInfo();
-									Vector<String> v = new Vector<String>();
-									v.add(t.getName());
-									si.setTag(v);
-									idoc.searchFile2(si, docs.getEfiles(),
-										new AsyncCallback<FilterUtil>() {
-											@Override
-											public void onSuccess(FilterUtil result) {
-												searchs = result.getFiles();
-												docs.setFilter(result.getFiles());
-												for(FileInfo f : dataProvider.getList()){
-													dataGrid.getSelectionModel().setSelected(f, false);
-												}
-												dataProvider = new ListDataProvider<FileInfo>(
-														searchs);
-												dataProvider.addDataDisplay(dataGrid);
-												isServiconvenios=false;
-												isLote = false;
-												/*filterLabel= new Label();
-												filterLabel.setStyleName("aon-icon-tag");
-												filterLabel.setText(tAux.getName());
-												*/
-												html.setText(result.getTag());
-												html.setVisible(true);
-												
-												filterButton.setVisible(true);
-												
-												updateDatagridColumns();
-												dataGrid.redraw();
-											}
-											@Override
-											public void onFailure(Throwable caught) {
-												String head = "com.esferalia.aon.gwt.document.client.Documents"
-														+ " - Load() - searchFile2";
-												print(head, caught.getMessage());
-											}
-									});
-								}
-								
-							}
-							
-							@Override
-							public void onFailure(Throwable caught) {
-								String head = "com.esferalia.aon.gwt.document.client.Documents"
-										+ " - Load() - checkDomain";
-								print(head, caught.getMessage());
-							}
-						});
-						
-					}
-				});
+			b.addClickHandler(tagClickHandler(tAux));
 			vtag.add(b); 
 		}
 		//epanel.add(vtag);
@@ -1155,55 +1014,10 @@ public class Documents extends Composite implements EntryPoint {
 			}
 		};
 	
-		
  		dataGrid = new CustomDataGrid<FileInfo>(30,
 				FileInfo.PROVIDES_KEY);
  		dataGrid.addHandler(selHandler, CellPreviewEvent.getType());
- 		
- 		
-		/*dataGrid.addBitlessDomHandler(new DragOverHandler() {
-			
-			@Override
-			public void onDragOver(DragOverEvent event) {
-				event.preventDefault();
-				dataGrid.addStyleName("aon-dataGrid-dragOver");
-				dataGrid.redraw();
-			}
-		}, DragOverEvent.getType());
-		
-		dataGrid.addBitlessDomHandler(new DragLeaveHandler() {
-			
-			@Override
-			public void onDragLeave(DragLeaveEvent event) {
-				 
-				dataGrid.removeStyleName("aon-dataGrid-dragOver");
-				dataGrid.redraw();				
-			}
-		}, DragLeaveEvent.getType());
-		
-		
-	
-		dataGrid.addBitlessDomHandler(new DropHandler() {
-			
-			@Override
-			public void onDrop(DropEvent event) {
-				event.preventDefault();
-				
-				Window.alert("subir archivo");
-			
-				
-			/*	FileUpload fu = FileUpload();
-				JavaScriptObject jso = event.getNativeEvent().cast();
-				//fu.onBrowserEvent((Event) event.getNativeEvent());
-				
-				SingleUploader si = new SingleUploader();
-				si.onBrowserEvent((Event) event.getNativeEvent());
-				newFile2(si);
-				
-				
-			}
-		}, DropEvent.getType());
-		*/
+
 		dataGrid.setWidth("100%");
 		
 		dataGrid.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
@@ -1227,7 +1041,6 @@ public class Documents extends Composite implements EntryPoint {
 		dataGrid.setSelectionModel(selectionModel,
 				DefaultSelectionEventManager.<FileInfo> createCheckboxManager());
 		//dataGrid.setSelectionModel(selectionModel);
-		
 		initTableColumns(selectionModel, sortHandler);
 		
 		showMorePager = new ShowMorePager((CustomDataGrid<FileInfo>) dataGrid);
@@ -1244,13 +1057,13 @@ public class Documents extends Composite implements EntryPoint {
 				allFilesClickAction();
 			}
 		});
-		
+
 		serviConveniosPaper.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				serviconveniosClickAction();
 			}
 		});
-		
+
 		lotePaper.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				loteClickAction();
@@ -1277,12 +1090,9 @@ public class Documents extends Composite implements EntryPoint {
 		}
 	}
 	
-	
-	
 	private ListHandler<FileInfo> getSortHandler() {
 		return new ListHandler<FileInfo>(dataProvider.getList()){
-	
-			
+
 			@Override
 			public void onColumnSort(ColumnSortEvent event) {
 				super.setList(dataProvider.getList());
@@ -1292,10 +1102,8 @@ public class Documents extends Composite implements EntryPoint {
  				for(Integer i = 0 ; i< aux.size()-1;i++){
  					aux2.set(i, aux.get(aux.size()-1-i ));
  				} 				
-				dataProvider.setList(aux2);
-				
+				dataProvider.setList(aux2);	
 			}
-
 		};
 	}
 
@@ -2022,14 +1830,22 @@ public class Documents extends Composite implements EntryPoint {
 												aux.addAll(result);
 												docs.setEfiles(aux);
 
-										
-												if(html.isVisible()){
-													Integer i = 0;
-
-													while(i<result.get(0).getTags().size() && !html.getText().equals(result.get(0).getTags().get(i).getName())){
-														i++;
-													}
-													if(!html.isVisible() || (html.isVisible() && (html.getText().equals(result.get(0).getCategoryStr()) || result.get(0).getTags().size()>i))){
+												if(hasFilter()){
+													FileInfo fi = result.get(0);
+													Boolean showCatfilter = false;
+													if(categoryFilterList != null && categoryFilterList.size()>0){
+														if(contains(fi.getCategoryStr(), categoryFilterList))
+															showCatfilter = true;
+													} else showCatfilter = true;
+													
+													Boolean showTagfilter = false;
+													if(tagFilterList != null && tagFilterList.size()>0){
+														for(Tag tag : fi.getTags()){
+															if(contains(tag.getName(), tagFilterList))
+																showTagfilter = true;
+														}
+													} else showTagfilter = true;
+													if(showTagfilter && showCatfilter){
 														aux= new Vector<FileInfo>();
 														for (FileInfo f : docs.getFilter()) {
 															aux.add(f);
@@ -2302,14 +2118,23 @@ public class Documents extends Composite implements EntryPoint {
 												aux.addAll(result);
 												docs.setEfiles(aux);
 
-										
-												if(html.isVisible()){
-													Integer i = 0;
-
-													while(i<result.get(0).getTags().size() && !html.getText().equals(result.get(0).getTags().get(i).getName())){
-														i++;
-													}
-													if(!html.isVisible() || (html.isVisible() && (html.getText().equals(result.get(0).getCategoryStr()) || result.get(0).getTags().size()>i))){
+												if(hasFilter()){
+													FileInfo fi = result.get(0);
+													Boolean showCatfilter = false;
+													if(categoryFilterList != null && categoryFilterList.size()>0){
+														if(contains(fi.getCategoryStr(), categoryFilterList))
+															showCatfilter = true;
+													}else showCatfilter = true;
+													
+													Boolean showTagfilter = false;
+													if(tagFilterList != null && tagFilterList.size()>0){
+														for(Tag tag : fi.getTags()){
+															if(contains(tag.getName(), tagFilterList))
+																showTagfilter = true;
+														}
+													}else showTagfilter = true;
+													
+													if(showTagfilter && showCatfilter){
 														aux= new Vector<FileInfo>();
 														for (FileInfo f : docs.getFilter()) {
 															aux.add(f);
@@ -2320,7 +2145,6 @@ public class Documents extends Composite implements EntryPoint {
 														for (FileInfo f : dataProvider.getList()) {
 															aux.add(f);
 															dataGrid.getSelectionModel().setSelected(f, false);
-
 														}
 														aux.addAll(result);
 														dataProvider = new ListDataProvider<FileInfo>(aux);
@@ -2634,9 +2458,7 @@ public class Documents extends Composite implements EntryPoint {
 	void sbutton(ClickEvent event) {
 		removeFilterCat();
 		removeFilterTag();
-		html.setVisible(false);
-		filterButton.setVisible(false);
-		
+		removeFilterItems();
 		idoc.checkDomain(getDomain(), docs,"esearchFile", new AsyncCallback<Boolean>() {
 			
 			@Override
@@ -2688,6 +2510,7 @@ public class Documents extends Composite implements EntryPoint {
 				catname = c.getName();
 				Button b =new Button(Character.toString((char)9660)+c.getName()); 
 				b.setStyleName("aon-editDataTable-button aon-icon-category");
+				catAux = c ;
 				b.addDomHandler(new ContextMenuHandler() {
 					Category c = catAux;
 					@Override
@@ -2701,64 +2524,7 @@ public class Documents extends Composite implements EntryPoint {
 						ccm.show();
 					}
 				}, ContextMenuEvent.getType());
-				b.addClickHandler(new ClickHandler() {
-						String s = catname;
-						@Override
-						public void onClick(ClickEvent event) {
-							gestionLote.setVisible(false);
-							gestionDocs.setVisible(true);
-							editFile.setVisible(false);
-							delFile.setVisible(false);
-							optionFile.setVisible(false);
-							
-							idoc.checkDomain(getDomain(), docs, "searchFile2", new AsyncCallback<Boolean>() {
-								
-								@Override
-								public void onSuccess(Boolean result) {
-									if(!result){
-										reload();
-									}
-									else{
-									SearchInfo si = new SearchInfo();
-									si.setCategory(s);
-									idoc.searchFile2(si, docs.getEfiles(),
-											new AsyncCallback<FilterUtil>() {
-												@Override
-												public void onSuccess(FilterUtil result) {
-													searchs = result.getFiles();
-													docs.setFilter(result.getFiles());
-													for(FileInfo f : dataProvider.getList()){
-														dataGrid.getSelectionModel().setSelected(f, false);
-													}
-													dataProvider = new ListDataProvider<FileInfo>(
-															searchs);
-													dataProvider.addDataDisplay(dataGrid);
-													isServiconvenios=false;
-													isLote = false;
-													/*filterLabel= new Label();
-													filterLabel.setStyleName("aon-icon-category");
-													filterLabel.setText(cAux.getName());
-													*/
-													
-													html.setText(result.getCategory());
-													html.setVisible(true);
-													filterButton.setVisible(true);
-													updateDatagridColumns();
-													dataGrid.redraw();
-												}
-												@Override
-												public void onFailure(Throwable caught) {
-												}
-											});
-									}
-								}
-								
-								@Override
-								public void onFailure(Throwable caught) {}
-							});
-							
-						}
-					});
+				b.addClickHandler(categoryClickHandler(c));
 				v.add(b);
 			}
 		}
@@ -2783,67 +2549,7 @@ public class Documents extends Composite implements EntryPoint {
 						tcm.show();
 					}
 				}, ContextMenuEvent.getType());
-				b.addClickHandler(new ClickHandler() {
-					String s=tagname;	
-					@Override
-					public void onClick(ClickEvent event) {
-						gestionLote.setVisible(false);
-						gestionDocs.setVisible(true);
-						editFile.setVisible(false);
-						delFile.setVisible(false);
-						optionFile.setVisible(false);
-						idoc.checkDomain(getDomain(),docs,"searchFile2",new AsyncCallback<Boolean>() {
-							
-							@Override
-							public void onSuccess(Boolean result) {
-								if(!result){
-									reload();
-								}
-								else{
-								
-								SearchInfo si = new SearchInfo();
-								Vector<String> v = new Vector<String>();
-								v.add(s);
-								si.setTag(v);
-								idoc.searchFile2(si, docs.getEfiles(),
-										new AsyncCallback<FilterUtil>() {
-											@Override
-											public void onSuccess(FilterUtil result) {
-												searchs = result.getFiles();
-												docs.setFilter(result.getFiles());
-												for(FileInfo f : dataProvider.getList()){
-													dataGrid.getSelectionModel().setSelected(f, false);
-												}
-												dataProvider = new ListDataProvider<FileInfo>(
-													searchs);
-												dataProvider.addDataDisplay(dataGrid);
-												isServiconvenios=false;
-												isLote = false;
-												/*filterLabel= new Label();
-												filterLabel.setStyleName("aon-icon-tag");
-												filterLabel.setText(tAux.getName());
-											 */
-												html.setText(result.getTag());
-												html.setVisible(true);
-											
-												filterButton.setVisible(true);
-											
-												updateDatagridColumns();
-												dataGrid.redraw();
-											}
-											@Override
-											public void onFailure(Throwable caught) {
-											}
-									});
-								}
-							}
-							
-							@Override
-							public void onFailure(Throwable caught) {}
-						});
-						
-						}
-					});
+				b.addClickHandler(tagClickHandler(t));
 				v.add(b);
 			}}
 		
@@ -2874,8 +2580,7 @@ public class Documents extends Composite implements EntryPoint {
 		editFile.setVisible(false);
 		delFile.setVisible(false);
 		optionFile.setVisible(false);
-		html.setVisible(false);
-		filterButton.setVisible(false);
+		removeFilterItems();
 		
 		idoc.checkDomain(getDomain(),docs,"allFiles", new AsyncCallback<Boolean>() {
 			
@@ -2949,8 +2654,7 @@ public class Documents extends Composite implements EntryPoint {
 		optionFile.setVisible(false);
 		isServiconvenios= true;
 		isLote = false;
-		html.setVisible(false);
-		filterButton.setVisible(false);
+		removeFilterItems();
 		if(docs.getServiconvenios().isEmpty()){
 			idoc.getServiConveniosFiles(getDomain(),new AsyncCallback<Vector<FileInfo>>() {
 			
@@ -3293,8 +2997,7 @@ public class Documents extends Composite implements EntryPoint {
 			
 			@Override
 			protected void onAccept() {
-				html.setVisible(false);
-				filterButton.setVisible(false);
+				removeFilterItems();
 				
 				SearchInfo si = new SearchInfo();
 				if(getSons().size()!=1 && !isServiconvenios){
@@ -3702,38 +3405,6 @@ public class Documents extends Composite implements EntryPoint {
 			public void onFailure(Throwable caught) {
 			}
 		});
-
-	}
-	@UiHandler("filterButton")
-	void close(ClickEvent event){
-		idoc.checkDomain(getDomain(), docs,"filterButton", new AsyncCallback<Boolean>() {
-			
-			@Override
-			public void onSuccess(Boolean result) {
-				if(!result){
-					reload();
-				}
-				else{
-					html.setVisible(false);
-					filterButton.setVisible(false);
-					if(!isServiconvenios && !isLote)
-						addDataDisplay(dataGrid);
-					else {
-						for(FileInfo f : dataProvider.getList()){
-							dataGrid.getSelectionModel().setSelected(f, false);
-						}
-						if(isServiconvenios) dataProvider = new ListDataProvider<FileInfo>(docs.getServiconvenios());
-						else if(isLote) dataProvider = new ListDataProvider<FileInfo>(lote);
-						dataProvider.addDataDisplay(dataGrid); 
-					}
-					updateDatagridColumns();
-					dataGrid.redraw();
-				}
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});		
 	}
 	
 	private void getViewer(final Attach attach, final Integer index, final LinkedList<Attach> attachList){
@@ -3822,6 +3493,7 @@ public class Documents extends Composite implements EntryPoint {
 					reload();
 				}
 				else{
+					lateralMenuPaper.setSelected("0");
 					removeFilterCat();
 					removeFilterTag();
 					searchDomain = docs.getDomain();
@@ -3831,8 +3503,7 @@ public class Documents extends Composite implements EntryPoint {
 					editFile.setVisible(false);
 					delFile.setVisible(false);
 					optionFile.setVisible(false);
-					html.setVisible(false);
-					filterButton.setVisible(false);
+					removeFilterItems();
 				
 					if(getSons().size()==1){
 						for(FileInfo f : dataProvider.getList()){
@@ -4097,67 +3768,7 @@ public class Documents extends Composite implements EntryPoint {
 									tcm.show();
 								}
 							}, ContextMenuEvent.getType());
-							b.addClickHandler(new ClickHandler() {
-								String s=tagname;	
-								@Override
-									public void onClick(ClickEvent event) {
-										gestionLote.setVisible(false);
-										gestionDocs.setVisible(true);
-										editFile.setVisible(false);
-										delFile.setVisible(false);
-										optionFile.setVisible(false);
-										
-										idoc.checkDomain(getDomain(), docs,"searchFile2", new AsyncCallback<Boolean>() {
-											
-											@Override
-											public void onSuccess(Boolean result) {
-												if(!result){
-													reload();
-												}
-												else{
-													SearchInfo si = new SearchInfo();
-													Vector<String> v = new Vector<String>();
-													v.add(s);
-													si.setTag(v);
-													idoc.searchFile2(si, docs.getEfiles(),
-															new AsyncCallback<FilterUtil>() {
-																@Override
-																public void onSuccess(FilterUtil result) {
-																	searchs = result.getFiles();
-																	docs.setFilter(result.getFiles());
-																	for(FileInfo f : dataProvider.getList()){
-																		dataGrid.getSelectionModel().setSelected(f, false);
-																	}
-
-																	dataProvider = new ListDataProvider<FileInfo>(
-																			searchs);
-																	dataProvider.addDataDisplay(dataGrid);
-																	isServiconvenios=false;
-																	isLote = false;
-																	/*filterLabel= new Label();
-																	filterLabel.setStyleName("aon-icon-tag");
-																	filterLabel.setText(tAux.getName());
-																	*/
-																	html.setText(result.getTag());
-																	html.setVisible(true);
-																	
-																	filterButton.setVisible(true);
-																	
-																	updateDatagridColumns();
-																	dataGrid.redraw();
-																}
-																@Override
-																public void onFailure(Throwable caught) {
-																}
-															});
-												}
-											}
-											
-											@Override
-											public void onFailure(Throwable caught) {}
-										});
-									}
-								});
+							b.addClickHandler(tagClickHandler(tagAux));
 							v.remove(v.getWidgetCount() - 1);
 							v.add(b);
 						}
@@ -4217,64 +3828,7 @@ public class Documents extends Composite implements EntryPoint {
 									ccm.show();
 								}
 							}, ContextMenuEvent.getType());
-							b.addClickHandler(new ClickHandler() {
-									String s = catname;
-									@Override
-									public void onClick(ClickEvent event) {
-										gestionLote.setVisible(false);
-										gestionDocs.setVisible(true);
-										editFile.setVisible(false);
-										delFile.setVisible(false);
-										optionFile.setVisible(false);
-																					
-										idoc.checkDomain(getDomain(), docs, "searchFile2",new AsyncCallback<Boolean>() {
-											
-											@Override
-											public void onSuccess(Boolean result) {
-												if(!result){
-													reload();
-												}
-												else{
-												
-												SearchInfo si = new SearchInfo();
-												si.setCategory(s);
-												idoc.searchFile2(si, docs.getEfiles(),
-														new AsyncCallback<FilterUtil>() {
-															@Override
-															public void onSuccess(FilterUtil result) {
-																searchs = result.getFiles();
-																docs.setFilter(result.getFiles());
-																for(FileInfo f : dataProvider.getList()){
-																	dataGrid.getSelectionModel().setSelected(f, false);
-																}
-																dataProvider = new ListDataProvider<FileInfo>(
-																		searchs);
-																dataProvider.addDataDisplay(dataGrid);
-																isServiconvenios=false;
-																isLote = false;
-																/*filterLabel= new Label();
-																filterLabel.setStyleName("aon-icon-category");
-																filterLabel.setText(cAux.getName());
-																*/
-
-																html.setText(result.getCategory());
-																html.setVisible(true);
-																filterButton.setVisible(true);
-																updateDatagridColumns();
-																dataGrid.redraw();
-															}
-															@Override
-															public void onFailure(Throwable caught) {
-															}
-														});
-												}
-											}
-											
-											@Override
-											public void onFailure(Throwable caught) {}
-										});
-									}
-								});
+							b.addClickHandler(categoryClickHandler(catAux));
 							v.remove(v.getWidgetCount() - 1);
 							v.add(b);
 						}
@@ -4747,9 +4301,8 @@ public class Documents extends Composite implements EntryPoint {
 					optionFile.setVisible(false);
 					isLote= true;
 					isServiconvenios = false;
-					html.setVisible(false);
-					filterButton.setVisible(false);
-					
+					removeFilterItems();
+										
 					for(FileInfo f : dataProvider.getList()){
 						dataGrid.getSelectionModel().setSelected(f, false);
 					}
@@ -4981,5 +4534,233 @@ public class Documents extends Composite implements EntryPoint {
 		cargando.setAutoHideEnabled(false);
 		cargando.addStyleName("cargando-document");
 		cargando.setGlassEnabled(true);
+	}
+	
+
+	LinkedList<String> categoryFilterList;
+	LinkedList<String> tagFilterList;
+	private ClickHandler categoryClickHandler(final Category category){
+		return new ClickHandler() {
+			@Override 
+			public void onClick(ClickEvent event) {
+				newFile.setVisible(true); sConvenios.setVisible(false);
+				gestionLote.setVisible(false);
+				gestionDocs.setVisible(true);
+				editFile.setVisible(false);
+				delFile.setVisible(false);
+				optionFile.setVisible(false);
+				if(categoryFilterList == null) categoryFilterList = new LinkedList<String>();
+				if(!contains(category.getName(), categoryFilterList)){
+					categoryFilterList.add(category.getName());	
+					SearchInfo si = new SearchInfo()
+						.setCategoryList(categoryFilterList)
+						.setTagList(tagFilterList);
+					idoc.searchFile2(si, docs.getEfiles(), new AsyncCallback<FilterUtil>() {
+						@Override 
+						public void onSuccess(FilterUtil result) {
+							searchs = result.getFiles();
+							docs.setFilter(result.getFiles());
+							for(FileInfo f : dataProvider.getList()){
+								dataGrid.getSelectionModel().setSelected(f, false);
+							}
+							dataProvider = new ListDataProvider<FileInfo>(searchs);
+							dataProvider.addDataDisplay(dataGrid);
+							isServiconvenios=false;
+							isLote = false;
+							addCategoryFilterItem(category);
+							updateDatagridColumns();
+							dataGrid.redraw();
+						}
+		
+						@Override
+						public void onFailure(Throwable caught) {
+							String head = "com.esferalia.aon.gwt.document.client.Documents"
+								+ " - Load() - searchFile2";
+							print(head, caught.getMessage());
+						}
+					});
+				}
+			}		
+		};
+	}
+	
+	private ClickHandler tagClickHandler(final Tag tag){
+		return new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				newFile.setVisible(true); sConvenios.setVisible(false);
+				gestionLote.setVisible(false);
+				gestionDocs.setVisible(true);
+				editFile.setVisible(false);
+				delFile.setVisible(false);
+				optionFile.setVisible(false);
+				if(tagFilterList == null) tagFilterList = new LinkedList<String>();
+				if(!contains(tag.getName(), tagFilterList)){
+					tagFilterList.add(tag.getName());	
+					SearchInfo si = new SearchInfo()
+						.setCategoryList(categoryFilterList)
+						.setTagList(tagFilterList);
+			
+					idoc.searchFile2(si, docs.getEfiles(), new AsyncCallback<FilterUtil>() {
+						@Override
+						public void onSuccess(FilterUtil result) {
+							searchs = result.getFiles();
+							docs.setFilter(result.getFiles());
+							for(FileInfo f : dataProvider.getList()){
+								dataGrid.getSelectionModel().setSelected(f, false);
+							}
+							dataProvider = new ListDataProvider<FileInfo>(searchs);
+							dataProvider.addDataDisplay(dataGrid);
+							isServiconvenios=false;
+							isLote = false;
+							addTagFilterItem(tag);		
+							updateDatagridColumns();
+							dataGrid.redraw();
+						}
+					
+						@Override
+						public void onFailure(Throwable caught) {
+							String head = "com.esferalia.aon.gwt.document.client.Documents"
+									+ " - Load() - searchFile2";
+							print(head, caught.getMessage());
+						}
+					});
+				}
+			}						
+		};
+	}
+	
+	private Boolean contains(String string, LinkedList<String> list){
+		for(String s : list){
+			if(s.equals(string)) return true;
+		}
+		return false;
+	}
+	
+	
+	private void addTagFilterItem(final Tag tag){
+		IronIcon closeIcon = new IronIcon();
+		closeIcon.setIcon("close");
+		closeIcon.setHeight("16px");
+		closeIcon.setWidth("16px");
+		closeIcon.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {
+				for(Integer i = 1; i < filterPanel.getWidgetCount(); i++){
+					PaperItem filterItem = (PaperItem) filterPanel.getWidget(i);
+					if(filterItem.getTitle().equals(tag.getName()))
+						filterPanel.remove(i);
+				}
+				LinkedList<String> auxiliarList = new LinkedList<String>();
+				for(Integer i = 0; i< tagFilterList.size(); i++){
+					if(!tagFilterList.get(i).equals(tag.getName()))
+						auxiliarList.add(tagFilterList.get(i));
+				}
+				tagFilterList = auxiliarList;
+				SearchInfo si = new SearchInfo()
+						.setCategoryList(categoryFilterList)
+						.setTagList(tagFilterList);
+			
+				idoc.searchFile2(si, docs.getEfiles(), new AsyncCallback<FilterUtil>() {
+					@Override
+					public void onSuccess(FilterUtil result) {
+						searchs = result.getFiles();
+						docs.setFilter(result.getFiles());
+						for(FileInfo f : dataProvider.getList()){
+							dataGrid.getSelectionModel().setSelected(f, false);
+						}
+						dataProvider = new ListDataProvider<FileInfo>(searchs);
+						dataProvider.addDataDisplay(dataGrid);
+						isServiconvenios=false;
+						isLote = false;
+						updateDatagridColumns();
+						dataGrid.redraw();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						String head = "com.esferalia.aon.gwt.document.client.Documents"
+								+ " - Load() - searchFile2";
+						print(head, caught.getMessage());
+					}
+				});
+			}
+		});
+		
+		PaperItem filterItem = new PaperItem();
+		filterItem.setTitle(tag.getName());
+		filterItem.add(new Label(tag.getName()));
+		filterItem.add(closeIcon);
+		filterItem.addStyleName("filter-item-document");
+
+		filterPanel.add(filterItem);
+	}
+	
+	private void addCategoryFilterItem(final Category category){			
+		IronIcon closeIcon = new IronIcon();
+		closeIcon.setIcon("close");
+		closeIcon.setHeight("16px");
+		closeIcon.setWidth("16px");
+		closeIcon.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {
+				for(Integer i = 1; i < filterPanel.getWidgetCount(); i++){
+					PaperItem filterItem = (PaperItem) filterPanel.getWidget(i);
+					if(filterItem.getTitle().equals(category.getName()))
+						filterPanel.remove(i);
+				}
+				LinkedList<String> auxiliarList = new LinkedList<String>();
+				for(Integer i = 0; i< categoryFilterList.size(); i++){
+					if(!categoryFilterList.get(i).equals(category.getName()))
+						auxiliarList.add(categoryFilterList.get(i));
+				}
+				categoryFilterList = auxiliarList;
+				SearchInfo si = new SearchInfo()
+						.setCategoryList(categoryFilterList)
+						.setTagList(tagFilterList);
+			
+				idoc.searchFile2(si, docs.getEfiles(), new AsyncCallback<FilterUtil>() {
+					@Override
+					public void onSuccess(FilterUtil result) {
+						searchs = result.getFiles();
+						docs.setFilter(result.getFiles());
+						for(FileInfo f : dataProvider.getList()){
+							dataGrid.getSelectionModel().setSelected(f, false);
+						}
+						dataProvider = new ListDataProvider<FileInfo>(searchs);
+						dataProvider.addDataDisplay(dataGrid);
+						isServiconvenios=false;
+						isLote = false;
+						updateDatagridColumns();
+						dataGrid.redraw();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						String head = "com.esferalia.aon.gwt.document.client.Documents"
+								+ " - Load() - searchFile2";
+						print(head, caught.getMessage());
+					}
+				});
+			}
+		});
+		
+		PaperItem filterItem = new PaperItem();
+		filterItem.setTitle(category.getName());
+		filterItem.add(new Label(category.getName()));
+		filterItem.add(closeIcon);
+		filterItem.addStyleName("filter-item-document");
+
+		filterPanel.add(filterItem);
+	}
+	
+	private void removeFilterItems(){
+		categoryFilterList = new LinkedList<String>();
+		tagFilterList = new LinkedList<String>();
+		for(Integer i = filterPanel.getWidgetCount(); i > 1; i--){
+			filterPanel.remove(i-1);
+		}
+	}
+	
+	private Boolean hasFilter(){
+		return (categoryFilterList != null && categoryFilterList.size()>1) || (tagFilterList != null && tagFilterList.size() >1);
 	}
 }

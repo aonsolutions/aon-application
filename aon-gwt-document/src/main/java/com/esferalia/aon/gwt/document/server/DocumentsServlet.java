@@ -283,6 +283,22 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			if(!si.getDomain().equals(fi.getDomain()))
 				return false;;
 		}
+		if(si.getCategoryList() != null && si.getCategoryList().size() > 0){
+			Boolean bool = false;
+			for(String s : si.getCategoryList()){
+				if(s.equals(fi.getCategoryStr())) 
+					bool = true;
+			}
+			if(!bool) return false;
+		}
+		if(si.getTagList() != null && si.getTagList().size() > 0){
+			Boolean bool = false;
+			for(String s : si.getTagList()){
+				if(Tags.contain(s,fi.getTags())) 
+					bool = true;
+			}
+			if(!bool) return false;
+		}
 		return true;
 	}
 
@@ -425,8 +441,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			Byte conf;
 			if (fi.getConfidential())
 				conf = 1;
-			else
-				conf = 0;
+			else conf = 0;
 			fileInfo.setSecurityLevel(conf);
 			//f.setConfidential(fi.getConfidential());
 			if(!fi.getDomain().equals("")){

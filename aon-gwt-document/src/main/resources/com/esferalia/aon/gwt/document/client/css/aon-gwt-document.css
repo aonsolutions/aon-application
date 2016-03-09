@@ -35,9 +35,6 @@
 }
 
 .aon-panelGrid-search-info-internal2-document {
-	background: transparent
-		url(images/aon-icon/aon-icon-search-title-item.png) scroll left 8px
-		no-repeat;
 	padding-left: 15px;
 	font-weight: bold;/* SendEmailDialog */
 	margin-left: 5px;
@@ -233,5 +230,16 @@
     	color: #212121 !important;
 		padding-left: 24px;
 	}
+	
+	.filter-label-document{
+		padding-left:7px;
+		padding-right: 7px;
+	}
+	
+	.filter-item-document{
+		min-height: 16px !important;
+   		height: 16px;
+	}
+
 }
 

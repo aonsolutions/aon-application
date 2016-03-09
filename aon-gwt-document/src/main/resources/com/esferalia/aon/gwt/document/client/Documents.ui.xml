@@ -130,8 +130,7 @@
 					</g:header>
 					<g:ScrollPanel styleName="stackBorder-document">
 						<g:HTMLPanel>
-		
-							<p:PaperMenu>
+							<p:PaperMenu ui:field="lateralMenuPaper" selected="0">
 								<p:PaperItem ui:field="allFilesPaper">
               						<i:IronIcon icon="attachment"/>
                						<div>Todos los Archivos</div>
@@ -147,9 +146,10 @@
               						<i:IronIcon icon="mail"/>
                						<div>Lote</div>
                						<p:PaperRipple/>
-            					</p:PaperItem>  	        			
+            					</p:PaperItem>     		
 							</p:PaperMenu>
-						
+							
+							
 							<g:VerticalPanel styleName="vpanel-document">
 							
 							<g:HorizontalPanel>
@@ -284,43 +284,29 @@
 
 							<g:HTMLPanel  styleName="aon-panelGrid-search searchPanel-document">
 								<div class="aon-panelGrid-search-info">
-									<span class="aon-panelGrid-search-info-internal">Filtrar:</span>
-								<g:InlineHTML ui:field="html" visible="false">
-									
-								</g:InlineHTML>
-								<g:Button ui:field="filterButton" visible="false" text="&nbsp;" styleName="aon-editDataTable-button aon-icon-close">
 								
-								</g:Button> 
+									<g:HorizontalPanel styleName="aon-width-all">
+										<g:HorizontalPanel ui:field="filterPanel">
+											<g:HTMLPanel>
+												<span class="aon-panelGrid-search-info-internal" style="position: relative;top: 2px;">Filtrar:</span>						
+											</g:HTMLPanel>
+
+										</g:HorizontalPanel>
+
+										<g:HTMLPanel>
+											<a style="font-size:10px;font-weight:bold;float:right;"
+												onclick="" href="#">
+												<span class="aon-outputText">
+										  	 	 	<g:Button ui:field="advanceSearch" text="Búsqueda Avanzada" styleName="aon-editDataTable-button aon-icon-search">
+										    	    
+										    		</g:Button>
+												</span>
+											</a>
+										</g:HTMLPanel>
+									</g:HorizontalPanel>
+							
 									
-									<!--span class="{style.aon-filter}">
-										<button  class="aon-editDataTable-button aon-icon-exclude">
-										     
-										 </button>
-										<span class="aon-icon-category">
-											<g:InlineLabel styleName="{style.aon-filter2}">Fiscal</g:InlineLabel>
-										</span>
-										
-									</span-->
-										<!-- span class="{style.aon-filter}" >
-											
-										    <g:Button ui:field="filter" visible="false" styleName="aon-editDataTable-button aon-icon-search">
-										        
-										    </g:Button>
-										    <g:Button ui:field="close" text="" visible="false" styleName="aon-editDataTable-button aon-icon-close">
-										        
-										    </g:Button>
-										    
-										</span-->
 									
-									<a style="font-size:10px;font-weight:bold;float:right;"
-										onclick="" href="#">
-										<span class="aon-outputText">
-										    <g:Button ui:field="advanceSearch" text="Búsqueda Avanzada" styleName="aon-editDataTable-button aon-icon-search">
-										        
-										    </g:Button>
-										    
-										</span>
-									</a>
 								</div>
 								<table class="aon-panelGrid">
 									<tr>
