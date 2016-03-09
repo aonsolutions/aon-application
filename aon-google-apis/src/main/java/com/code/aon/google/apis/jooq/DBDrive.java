@@ -124,6 +124,15 @@ public class DBDrive {
 	
 	/**********************************************/
 	
+	public static void updateDriveId(Domain domain, User user, File file, Integer attachId){
+		String aonType = "";
+		for (Property p : file.getProperties()) {
+			if(p.getKey().equals("aontype"))
+				aonType = p.getValue();
+		}
+		AON.updateAttachDriveId(domain.getName(), domain.getId(), user.getLogin(), attachId, file.getId(), AttachType.getAttachType(aonType));
+	}
+	
 	public static void updateDriveId(File f, Integer id){
 
 		String domainName = "";

@@ -553,10 +553,10 @@ public class DriveUtils implements IBlobManager {
 		if(map.containsKey(domain.getId())){
 			try {
 				Drive drive = serviceInitialize(map.get(domain.getId()));
-				File file = getFile(drive, driveId, attachId );
+				File file = getFileApp(drive, domain, user, driveId, attachId );
 				if(file == null){
 					drive= serviceInitializeOld(map.get(domain.getId()));
-					file = getFile(drive, driveId, attachId);
+					file = getFileApp(drive, domain, user, driveId, attachId);
 				}
 				if(file != null){
 					if(permission){
@@ -564,7 +564,7 @@ public class DriveUtils implements IBlobManager {
 						p.setValue(domain.getName());
 						p.setType("anyone");// user || group || domain || anyone
 						p.setRole("reader");// owner || reader || writer || commenter
-						drive.permissions().insert(driveId, p).execute();
+						drive.permissions().insert(file.getId(), p).execute();
 					}
 					return file;
 				}
@@ -576,10 +576,10 @@ public class DriveUtils implements IBlobManager {
 		if(domain.getParentId() != null && map.containsKey(domain.getParentId())){
 			try{
 				Drive drive = serviceInitialize(map.get(domain.getParentId()));
-				File file = getFile(drive, driveId, attachId );
+				File file = getFileApp(drive, domain, user, driveId, attachId );
 				if(file == null){
 					drive= serviceInitializeOld(map.get(domain.getParentId()));
-					file = getFile(drive, driveId, attachId);
+					file = getFileApp(drive, domain, user, driveId, attachId);
 				}
 				if(file != null){
 					if(permission){
@@ -587,7 +587,7 @@ public class DriveUtils implements IBlobManager {
 						p.setValue(domain.getName());
 						p.setType("anyone");// user || group || domain || anyone
 						p.setRole("reader");// owner || reader || writer || commenter
-						drive.permissions().insert(driveId, p).execute();
+						drive.permissions().insert(file.getId(), p).execute();
 					}
 					return file;
 				}
@@ -599,10 +599,10 @@ public class DriveUtils implements IBlobManager {
 		if(map.containsKey(0)){
 			try {
 				Drive drive = serviceInitialize(map.get(0));
-				File file = getFile(drive, driveId, attachId );
+				File file = getFileApp(drive, domain, user, driveId, attachId );
 				if(file == null){
 					drive= serviceInitializeOld(map.get(0));
-					file = getFile(drive, driveId, attachId);
+					file = getFileApp(drive, domain, user, driveId, attachId);
 				}
 				if(file != null){
 					if(permission){
@@ -610,7 +610,7 @@ public class DriveUtils implements IBlobManager {
 						p.setValue(domain.getName());
 						p.setType("anyone");// user || group || domain || anyone
 						p.setRole("reader");// owner || reader || writer || commenter
-						drive.permissions().insert(driveId, p).execute();
+						drive.permissions().insert(file.getId(), p).execute();
 					}
 					return file;
 				}
@@ -627,10 +627,10 @@ public class DriveUtils implements IBlobManager {
 		if(map.containsKey(domain.getId())){
 			try {
 				Drive drive = serviceInitialize(map.get(domain.getId()));
-				File file = getFile(drive, driveId, attachId );
+				File file = getFileApp(drive, domain, user, driveId, attachId );
 				if(file == null){
 					drive= serviceInitializeOld(map.get(domain.getId()));
-					file = getFile(drive, driveId, attachId);
+					file = getFileApp(drive, domain, user, driveId, attachId);
 				}
 				if(file != null){
 					InputStream data = downloadFile(drive, file);
@@ -644,10 +644,10 @@ public class DriveUtils implements IBlobManager {
 		if(domain.getParentId() != null && map.containsKey(domain.getParentId())){
 			try{
 				Drive drive = serviceInitialize(map.get(domain.getParentId()));
-				File file = getFile(drive, driveId, attachId );
+				File file = getFileApp(drive, domain, user, driveId, attachId );
 				if(file == null){
 					drive= serviceInitializeOld(map.get(domain.getParentId()));
-					file = getFile(drive, driveId, attachId);
+					file = getFileApp(drive, domain, user, driveId, attachId);
 				}
 				if(file != null){
 					InputStream data = downloadFile(drive, file);
@@ -661,10 +661,10 @@ public class DriveUtils implements IBlobManager {
 		if(map.containsKey(0)){
 			try {
 				Drive drive = serviceInitialize(map.get(0));
-				File file = getFile(drive, driveId, attachId );
+				File file = getFileApp(drive, domain, user, driveId, attachId );
 				if(file == null){
 					drive= serviceInitializeOld(map.get(0));
-					file = getFile(drive, driveId, attachId);
+					file = getFileApp(drive, domain, user, driveId, attachId);
 				}
 				if(file != null){
 					InputStream data = downloadFile(drive, file);
@@ -677,13 +677,14 @@ public class DriveUtils implements IBlobManager {
 		return null;
 	}
 	
-	public static File getFile(Drive drive, String driveId, Integer attachId) throws IOException, KeyStoreException, GeneralSecurityException {
+	public static File getFileApp(Drive drive, Domain domain, User user, String driveId, Integer attachId) throws IOException {
 		File f = null;
 		FileList fileList =SearchFiles.searchFilesProperties(drive, "oldDriveId",driveId);
 		if(fileList.getItems().size()>0){
 			f = fileList.getItems().get(0);
-			if(attachId != null)
-				DBDrive.updateDriveId(f,attachId);
+			if(attachId != null){
+				DBDrive.updateDriveId(domain, user, f, attachId);
+			}
 		} else
 			f = getFile(drive, driveId);
 		return f;
