@@ -12,6 +12,7 @@ public enum FiscalModelKeyInfo implements Serializable {
 	, COMPUTE		(false, "Ver desglose de c\u00E1lculos")
 	, COMPUTE_KEY	(false, "Ver desglose de c\u00E1lculos")
 	, TITLE 		(false, "Título")
+	, IRPF_ACTIVITY	(false, "Detalle de la actividad")
 	;
 	
 	private String label;

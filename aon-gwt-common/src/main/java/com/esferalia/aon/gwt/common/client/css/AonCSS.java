@@ -186,6 +186,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-dataTable-header")
 	String aonDataTableHeader();
+	
+	@ClassName("aon-dataTable_td")
+	String aonDataTableTD();
 
 	@ClassName("aon-table-row-link")
 	String aonTableRowLink();
@@ -519,6 +522,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-icon-comment-red")
 	String aonIconCommentRed();
+
+	@ClassName("aon-icon-root")
+	String aonIconRoot();
 
 	@ClassName("aon-icon-error")
 	String aonIconError();

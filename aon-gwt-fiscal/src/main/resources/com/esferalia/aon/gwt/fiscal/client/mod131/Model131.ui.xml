@@ -1,0 +1,192 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:aon="urn:import:com.esferalia.aon.gwt.common.client.widget"
+	xmlns:fiscal="urn:import:com.esferalia.aon.gwt.fiscal.client.widget"
+	xmlns:model="urn:import:com.esferalia.aon.gwt.fiscal.client.model">
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:DockLayoutPanel>
+		<g:north size="26">
+			<g:HTMLPanel height="100%" 
+				styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
+				<table cellpadding="0" cellspacing="0" class="{aonResources.css.aonWidthAll}">				
+					<tr>
+						<td class="{aonResources.css.aonFindingTitle}">
+							<g:FlowPanel styleName="{aonResources.css.aonFindingTitleInternal}">
+								<g:Label text="{msg.retentionAccount}" />
+							</g:FlowPanel>
+						</td>
+						<td>
+							<g:HTMLPanel styleName="{aonResources.css.aonFindingSubtitleIternal}">
+								<g:Label/>
+							</g:HTMLPanel>
+						</td>
+						<td class="{aonResources.css.aonFindingToolbar}">
+							<g:FlowPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
+								<g:Button ui:field="newButton" text="{msg.newAction}" 
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconReset}"/>
+								<g:Button ui:field="saveButton"  text="{msg.saveAction}" 
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconSave}"/>
+								<g:Button ui:field="cancelButton" text="{msg.cancelAction}" 
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" />
+								<g:Button ui:field="deleteButton" text="{msg.deleteAction}" 
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" />
+								<g:Button ui:field="printButton" text="&nbsp;" 
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" />
+								<g:Button ui:field="printPDFButton" text="{msg.draft}"
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconPdfPreview}" />
+
+								<g:Button ui:field="reopenButton" text="{msg.reopen}"
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconUnlock}" />
+								<g:Button ui:field="finalizeButton" text="{msg.finish}"
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconLock}" />
+									
+								<g:Button ui:field="auditButton" text="{msg.audit}" 
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAudit}" />
+								<g:FlowPanel ui:field="formContainer"/>
+							</g:FlowPanel>
+						</td>
+					</tr>
+				</table>
+			</g:HTMLPanel>
+		</g:north>
+		<g:center>
+			<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+				<g:center>
+					<g:DeckLayoutPanel ui:field="deckPanel">
+						<g:DockLayoutPanel ui:field="formPanel" unit="PX">
+							<g:north size="65">
+								<g:SimplePanel ui:field="headerPanel"/>
+							</g:north>
+							<g:north size="75">
+								<g:HTMLPanel styleName="{aonResources.css.aonScrollArea}">
+									<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
+										<colgroup>
+											<col style="width: auto; white-space: nowrap;" />
+											<col style="width: 280px;" />
+											<col style="width: 120px;" />
+											<col style="width: 150px;" />
+											<col style="width: 110px;" />
+										</colgroup>
+										<tr>
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap}"
+												rowspan="2">
+												<g:FlowPanel styleName="{aonResources.css.aonFontBig} {aonResources.css.aonTextCenter}">
+													<g:InlineLabel ui:field="documentLabel" styleName="{aonResources.css.aonMarginRight}"/>
+													<g:InlineLabel text="-"/>
+													<g:InlineLabel ui:field="nameLabel" styleName="{aonResources.css.aonMarginLeft}"/>
+													<g:InlineLabel ui:field="surnameLabel" styleName="{aonResources.css.aonMarginLeft}"/>
+												</g:FlowPanel>
+												<g:FlowPanel ui:field="paymentInfo" styleName="{aonResources.css.aonFontSmall} {aonResources.css.aonTextRight}"/>
+											</td>
+											<td class="{aonResources.css.aonPanelGridEven}">
+												<g:Label ui:field="replacementLabel" />
+												<g:Label ui:field="complementaryLabel" />
+											</td>
+											<td class="{aonResources.css.aonPanelGridEven}">
+												<g:CheckBox ui:field="confidential" text="{msg.confidential}"/>
+											</td>
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap}">
+												<g:Button ui:field="printViaAeatButton" text="{msg.printViaAeat}"
+													styleName="{aonResources.css.aonIconCommandButton} {aonResources.css.aonIconAeat}" />
+											</td>
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonTextRight}">
+												<g:Button ui:field="commentsButton" text="{msg.comments}" 
+													styleName="{aonResources.css.aonIconCommandButton}"/>
+											</td>
+										</tr>
+										<tr>
+											<td class="{aonResources.css.aonPanelGridEven}">
+												<g:Label ui:field="replacedNumberLabel" text="{msg.previousDeclaration}"
+													styleName="{aonResources.css.aonInnerLabel}"/>
+												<g:TextBox ui:field="replacedNumber" styleName="{aonResources.css.aonInputText}"/>
+											</td>
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonFontSmall} {aonResources.css.aonTextCenter}">
+												<g:InlineLabel ui:field="dirtyLabel" 
+													styleName="{aonResources.css.aonColorRed}"/>
+											</td>
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap}">
+												<g:Button ui:field="generateFileButton" text="{msg.generateFile}" />
+											</td>
+											<td class="{aonResources.css.aonPanelGridEven} {aonResources.css.aonNowrap} {aonResources.css.aonTextCenter}">
+												<g:Label ui:field="statusLabel" />
+											</td>
+										</tr>
+									</table>
+								</g:HTMLPanel>
+							</g:north>
+							<g:center>
+								<g:SimpleLayoutPanel styleName="{aonResources.css.aonSelector}">
+									<g:TabLayoutPanel ui:field="tabPanel" barHeight="26" barUnit="PX" width="100%">
+										<g:tab>
+											<g:customHeader>
+												<g:Label
+													styleName="{aonResources.css.aonIconIdentification} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
+													text="{msg.identification}" />
+											</g:customHeader>
+											<g:ScrollPanel ui:field="identificationContainer" styleName="{aonResources.css.aonScrollArea}"/>									
+										</g:tab>
+										
+										<g:tab>
+											<g:customHeader>
+												<g:Label
+													styleName="{aonResources.css.aonIconRoot} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
+													text="{msg.activities}" />
+											</g:customHeader>
+											<g:ScrollPanel ui:field="activitiesContainer" styleName="{aonResources.css.aonScrollArea}"/>
+										</g:tab>
+
+										<g:tab>
+											<g:customHeader>
+												<g:Label
+													styleName="{aonResources.css.aonIconModel} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
+													text="{msg.liquidacion}" />
+											</g:customHeader>
+											<g:ScrollPanel ui:field="declarationContainer" styleName="{aonResources.css.aonScrollArea}"/>
+										</g:tab>
+										<g:tab>
+											<g:customHeader>
+												<g:Label ui:field="fiscalInformationLabel" text="{msg.fiscalInformation}" />
+											</g:customHeader>
+											<g:ScrollPanel ui:field="infoContainer" styleName="{aonResources.css.aonScrollArea}"/>
+										</g:tab>
+									
+									</g:TabLayoutPanel>
+								</g:SimpleLayoutPanel>
+							</g:center>
+						</g:DockLayoutPanel>
+		
+						<g:ScrollPanel ui:field="listPanel" styleName="{aonResources.css.aonScrollArea}">
+							<model:FiscalModelTable ui:field="table" />
+						</g:ScrollPanel>
+					</g:DeckLayoutPanel>
+				</g:center>
+				<g:south size="30">
+					<aon:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}">
+						<g:TabLayoutPanel ui:field="tabLayout" barHeight="26" barUnit="PX" width="100%">
+							<g:tab>
+								<g:customHeader>
+									<g:Label
+										styleName="{aonResources.css.aonIconJournalLog} {aonResources.css.aonPaddingRight}"  
+										text="{msg.notifications}" />
+								</g:customHeader>
+								<aon:ResultsPanel ui:field="resultsPanel" />
+							</g:tab>
+							<g:tab>
+								<g:customHeader>
+									<g:Label
+										styleName="{aonResources.css.aonIconInfo} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
+										text="{msg.informationBreakdown}" />
+								</g:customHeader>
+								<g:ScrollPanel ui:field="informationPanel" styleName="{aonResources.css.aonPadding}"/>
+							</g:tab>
+						</g:TabLayoutPanel>
+					</aon:MinimizePanel>
+				</g:south>
+			</g:SplitLayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder>

@@ -180,7 +180,7 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 		};
 		this.addColumn(amountColumn, AON.MSG.result());
 		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 120, Unit.PCT);
+		this.setColumnWidth(amountColumn, 120, Unit.PX);
 	}	
 
 	private void addFinanceStatusColumn() {
@@ -195,7 +195,7 @@ public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 		};
 		this.addColumn(financeStatusColumn, AON.MSG.financeStatus());
 		financeStatusColumn.setCellStyleNames(AON.AON_CSS.aonTextCenter());
-		this.setColumnWidth(financeStatusColumn, 140, Unit.PCT);
+		this.setColumnWidth(financeStatusColumn, 140, Unit.PX);
 	}	
 
 	public FM getSelected() {

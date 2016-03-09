@@ -432,6 +432,9 @@ public interface CommonMessages extends Messages {
 			+ "El fichero se genera a partir de los datos guardados.")
 	String fileGenerationNote();
 
+	@DefaultMessage("Ver detalle")
+	String seeDetail();
+
 	@DefaultMessage("Imprimir via AEAT")
 	String printViaAeat();
 
@@ -679,6 +682,12 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Importe")
 	String amount();
+
+	@DefaultMessage("Unidad")
+	String unit();
+
+	@DefaultMessage("Factor")
+	String factor();
 
 	@DefaultMessage("Actividad")
 	String activity();

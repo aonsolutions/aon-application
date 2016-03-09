@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -62,6 +63,7 @@ import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
+import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.XMLtoMod2002014;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002014Import2013;
@@ -555,6 +557,70 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 		
 	}
 
+	// ---------------------------------------------------------------MODELO 131
+	@Override
+	public Mod131 getMod131(String domainName,
+			int domain,int id) throws AonCoreException {
+		return FISCAL.getMod131(domainName, domain, this.getUserLogin(), id);
+	}
+
+	@Override
+	public LinkedList<Mod131> getMod131s(String domainName,
+			int domain) throws AonCoreException {
+		return FISCAL.getMod131s(domainName, domain, this.getUserLogin());
+	}
+
+	@Override
+	public Mod131 calculateMod131(String domainName, Mod131 mod131) {
+		return FISCAL.calculate(domainName, this.getUserLogin(), mod131);
+	}
+
+	@Override
+	public Mod131 saveMod131(String domainName, Mod131 mod131) {
+		return FISCAL.save(domainName, this.getUserLogin(), mod131);
+	}
+
+	@Override
+	public Mod131 saveCommentsMod131(String domainName, Mod131 mod131) {
+		return FISCAL.saveComments(domainName, this.getUserLogin(), mod131);
+	}
+
+	@Override
+	public Mod131 initializeForFinishMod131(String domainName, Mod131 mod131) {
+		return FISCAL.initializeForFinish(domainName, this.getUserLogin(), mod131);
+	}
+
+	@Override
+	public Mod131 finishMod131(String domainName, Mod131 mod131) {
+		return FISCAL.finish(domainName, this.getUserLogin(), mod131);
+	}
+
+	@Override
+	public Mod131 reopenMod131(String domainName, Mod131 mod131) {
+		return FISCAL.reopen(domainName, this.getUserLogin(), mod131);
+	}
+
+	@Override
+	public Mod131 initializeMod131(String domainName, int domain, Mod131 mod131) {
+		return FISCAL.initializeMod131(domainName, domain, this.getUserLogin(), mod131);
+	}
+
+	@Override
+	public Mod131 createMod131(String domainName, int domain, Mod131 mod131) {
+		return FISCAL.createMod131(domainName, domain, this.getUserLogin(), mod131);
+	}
+
+	@Override
+	public void deleteMod131(String domainName, Mod131 mod131) {
+		FISCAL.deleteMod131(domainName, this.getUserLogin(), mod131);
+	}
+	@Override
+	public String getInfo(String domainName, int domain, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey)
+			throws AonCoreException {
+		return FISCAL.getMod131Info(domainName, domain, this.getUserLogin(), mod131, script, infoKey);
+		
+	}
+	
 	// ---------------------------------------------------------------MODELO 202
 	@Override
 	public Mod202 getMod202(String domainName,

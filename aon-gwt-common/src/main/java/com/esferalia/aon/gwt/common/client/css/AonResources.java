@@ -261,6 +261,9 @@ public interface AonResources extends ClientBundle, Images {
 
 	@Source("images/aon-icon-comment-red.gif")
 	ImageResource aonIconCommentRed();
+	
+	@Source("images/aon-icon-root.png")
+	ImageResource aonIconRoot();
 
 // ------------------------------------------------------------------------
 

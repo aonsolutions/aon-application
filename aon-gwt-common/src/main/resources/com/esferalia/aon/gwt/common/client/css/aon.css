@@ -289,6 +289,14 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	border: #ccc 1px solid;
 }
 
+.aon-dataTable_td {
+	padding-top: 1px;
+	padding-bottom: 1px;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	border: #ccc 1px solid;
+}
+
 .aon-wrap {
 	white-space: normal;
 }
@@ -1707,6 +1715,11 @@ input:disabled+label {
 
 @sprite .aon-icon-comment-red {
 	gwt-image: "aonIconCommentRed";
+	width: auto;
+}
+
+@sprite .aon-icon-root {
+	gwt-image: "aonIconRoot";
 	width: auto;
 }
 

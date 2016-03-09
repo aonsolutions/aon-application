@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -27,6 +28,7 @@ import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
+import com.esferalia.aon.occam.api.model.type.Mod131Key;
 
 public interface IFiscal {
 	// 			        FISCAL PANEL
@@ -140,6 +142,20 @@ public interface IFiscal {
 	public void deleteMod130(AONContext ctx, Mod130 mod130);
 	public String getMod130Info(AONContext ctx, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey);
 	
+	// 				   		  MOD131
+	public Mod131 getMod131(AONContext ctx, int id);
+	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain);
+	public Mod131 calculateMod131(AONContext ctx, Mod131 mod131);
+	public Mod131 saveMod131(AONContext ctx, Mod131 mod131);
+	public Mod131 saveCommentsMod131(AONContext ctx, Mod131 mod131);
+	public Mod131 initializeForFinishMod131(AONContext ctx, Mod131 mod131);
+	public Mod131 finishMod131(AONContext ctx, Mod131 mod131);
+	public Mod131 reopenMod131(AONContext ctx, Mod131 mod131);
+	public Mod131 initializeMod131(AONContext ctx, Mod131 mod131);
+	public Mod131 createMod131(AONContext ctx, Mod131 mod131);
+	public void deleteMod131(AONContext ctx, Mod131 mod131);
+	public String getMod131Info(AONContext ctx, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey);
+
 	// 				   		  MOD202
 	public Mod202 getMod202(AONContext ctx, int id);
 	public LinkedList<Mod202> getMod202s(AONContext ctx, int domain);
