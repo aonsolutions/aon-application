@@ -644,11 +644,15 @@ public class FANWriter implements Serializable {
 	
 	private void createEDLRecords(Contract contract, List<ITransferObject> salaryDataList, DAT dat, List<DAT> datList) {
 		Salary salary = null;
+		Double baseCgc = null;
+		Double baseCgp = null;
 	
 		if(liquidationType==LiquidationType.L00){
 		
 			salary = getSalary(contract, SalaryType.SALARY);
-		
+			baseCgc = salary.getCommonBase();
+			baseCgp = getProfessionalBase(salary, salaryDataList);
+			
 			if(salary!=null){
 					
 				if(dat.getIndicadoresPerfil()==null 
@@ -663,8 +667,8 @@ public class FANWriter implements Serializable {
 					} else if(isErePartial(salary, salaryDataList) || isEreTotal(salary, salaryDataList)){
 						decreaseBase = getEreBase(salary,salaryDataList);
 					}
-					fanFactory.createEDLBa01Segment(salary.getCommonBase()-decreaseBase, dat);
-					fanFactory.createEDLBa02Segment(salary.getProfessionalBase()-decreaseBase, dat);
+					fanFactory.createEDLBa01Segment(baseCgc-decreaseBase, dat);
+					fanFactory.createEDLBa02Segment(baseCgp-decreaseBase, dat);
 					
 					
 					fanFactory.createEDLBa05Segment();
@@ -693,20 +697,20 @@ public class FANWriter implements Serializable {
 						Calendar cal = Calendar.getInstance();
 						cal.setTime(getStartDate());
 						Double itBase = getITBase(salary);
-						fanFactory.createEDLBa01Segment(datList.size()>1?itBase:salary.getCommonBase(), dat);
-						fanFactory.createEDLBa02Segment(datList.size()>1?itBase:salary.getProfessionalBase(), dat);
+						fanFactory.createEDLBa01Segment(datList.size()>1?itBase:baseCgc, dat);
+						fanFactory.createEDLBa02Segment(datList.size()>1?itBase:baseCgp, dat);
 						fanFactory.createEDLCd01Segment(getECSSAmount(salary), dat);
 						fanFactory.createEDLCd03Segment(getATEPAmount(salary), dat);
 					} else if(isContractLeaveMaternity(contract)){
 						Calendar cal = Calendar.getInstance();
 						cal.setTime(getStartDate());
 						Double itBase = getITBase(salary);
-						fanFactory.createEDLBa21Segment(datList.size()>1?itBase:salary.getCommonBase(), dat);
-						fanFactory.createEDLBa22Segment(datList.size()>1?itBase:salary.getProfessionalBase(), dat);
+						fanFactory.createEDLBa21Segment(datList.size()>1?itBase:baseCgc, dat);
+						fanFactory.createEDLBa22Segment(datList.size()>1?itBase:baseCgp, dat);
 					} else if(isErePartial(salary, salaryDataList) || isEreTotal(salary, salaryDataList)){
 						Double ereBase = getEreBase(salary, salaryDataList);
-						fanFactory.createEDLBa21Segment(datList.size()>1?ereBase:salary.getCommonBase(), dat);
-						fanFactory.createEDLBa22Segment(datList.size()>1?ereBase:salary.getProfessionalBase(), dat);
+						fanFactory.createEDLBa21Segment(datList.size()>1?ereBase:baseCgc, dat);
+						fanFactory.createEDLBa22Segment(datList.size()>1?ereBase:baseCgp, dat);
 					}  
 				}
 
@@ -724,8 +728,8 @@ public class FANWriter implements Serializable {
 		} else if(liquidationType==LiquidationType.L13){
 			salary = getSalary(contract, SalaryType.SETTLE);
 			if(salary!=null){
-				fanFactory.createEDLBa01Segment(salary.getCommonBase(), dat);
-				fanFactory.createEDLBa02Segment(salary.getProfessionalBase(), dat);
+				fanFactory.createEDLBa01Segment(baseCgc, dat);
+				fanFactory.createEDLBa02Segment(baseCgp, dat);
 			}
 		}
 		
@@ -831,6 +835,23 @@ public class FANWriter implements Serializable {
 				edl.setImporte((edl.getImporte()*diasHoras)/totalDiasHoras);
 			}
 		}
+	}
+	
+	private Double getProfessionalBase(Salary salary, List<ITransferObject> salaryDataList) {
+		Double profBase = 0.0;
+		String _profBase = null;
+		for(ITransferObject to: salaryDataList){
+			SalaryData sd = (SalaryData) to;
+			if(sd.getName().equals(ContextVariable.CGP_BASE.getName())){
+				_profBase = sd.getExpression();
+			}
+		}
+		if(_profBase!=null && NumberUtils.isNumber(_profBase)){
+			profBase = Double.parseDouble(_profBase);
+		} else {
+			profBase = salary.getProfessionalBase();
+		}
+		return profBase;
 	}
 	
 	private Double getEreBase(Salary salary, List<ITransferObject> salaryDataList) {
