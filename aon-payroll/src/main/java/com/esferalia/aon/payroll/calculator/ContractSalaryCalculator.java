@@ -29,14 +29,13 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
-import org.mvel2.MVEL;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
-import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
@@ -47,7 +46,6 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
@@ -59,6 +57,7 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalculator<T> {
 
@@ -322,12 +321,13 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		salaryBuilder.setTotalLiquid(totalPayment - totalDeduction
 				- totalEmbargos);
 
-		//salaryBuilder.setTimeUnits(getTimeUnits(contractSalaryCalculatorContext, start, end));
+		fillTimeUnits(contractSalaryCalculatorContext);
 		
 		fillData(contractSalaryCalculatorContext);
 		
 		return salaryBuilder.getSalary();
 	}
+
 
 	// -------------------------------------------------------------- Protected
 
@@ -353,8 +353,6 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		salaryBuilder.setStartDate(ctx.getStartDate());
 		salaryBuilder.setEndDate(ctx.getEndDate());
 		salaryBuilder.setChargeDate(ctx.getChargeDate());
-		long days = CommonUtil.getDaysBetweenDates(ctx.getStartDate(),ctx.getEndDate()) + 1;
-		 salaryBuilder.setTimeUnits((int) days);
 		salaryBuilder.setType(ctx.getSalaryType());
 
 	}
@@ -861,7 +859,6 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		String name = contractPayment.getName();
 
 		try {
-//			System.out.print(contractPayment.getExpression() + " = " );
 			List<ITimedResult<Double>> results = expressionContext.eval(
 					contractPayment.getExpression(), paymentStart, paymentEnd,
 					Double.class);
@@ -1086,6 +1083,20 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		}
 	}
 	
+	protected void fillTimeUnits(IContractSalaryCalculatorContext ctx) {
+		try {
+			salaryBuilder.setTimeUnits(
+			ctx.getExpressionContext()
+			.getVariables(ContextVariable.QUOTE_DAYS).stream()
+			.map(var-> (Number)var.getValue(var.getPeriod()))
+			.collect(Collectors.summingDouble(number->number.doubleValue()))
+			.intValue()
+			);
+		}catch ( Exception e ) {
+			salaryBuilder.setTimeUnits((int)(AonDateUtils.getDaysBetweenDates(ctx.getStartDate(), ctx.getEndDate())+1));
+		}
+	}
+
 	private void onInvalidData(String... variableNames) {
 		if (listener != null) {
 			for (int i = 0; i < variableNames.length; i++) {
@@ -1218,10 +1229,5 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		return calendar.getTime();
 	}
 
-	public static void main(String[] args) {
-		System.out
-				.println(MVEL
-						.eval("($ in [[172.05,147.86],[268.80,244.62],[365.60,341.40],[462.40,438.17],[559.10,534.95],[655.90,631.73],[753.00,753.00],[Double.MAX_VALUE,790.65]] if $[0] >= 312 )[0][1]"));
-	}
 
 }

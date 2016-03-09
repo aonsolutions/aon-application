@@ -2574,7 +2574,7 @@ public class SalaryDraft extends ResizeComposite
 		Date endDate = salaryDraftObject.getEndDate();
 
 		periodLabel.setText(format(startDate) + " - " + format(endDate));
-		daysLabel.setText(Integer.toString(CalendarUtil.getDaysBetween(startDate, endDate) + 1));
+		daysLabel.setText(Integer.toString(salaryDraftObject.getTimeUnits()));
 
 		totalPaymentsLabel.setText(format(salaryDraftObject.getTotalPayment()), displayChanges);
 		dbTotalPaymentsLabel.setText(format(salaryDraftObject.getDbTotalPayment()));

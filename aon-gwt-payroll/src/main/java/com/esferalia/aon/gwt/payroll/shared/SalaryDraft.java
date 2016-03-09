@@ -105,6 +105,8 @@ public class SalaryDraft extends SalaryPreview {
 	private Date employeeSeniorityDate;
 	private String community;
 
+	private Integer timeUnits;
+
 	private Double cgcBase;
 	private Double dbGgcBase;
 	private Double rawCgcBase;
@@ -612,7 +614,15 @@ public class SalaryDraft extends SalaryPreview {
 		this.employeeDocument = employeeDocument;
 		return this;
 	}
+	
+	public Integer getTimeUnits() {
+		return timeUnits;
+	}
 
+	public void setTimeUnits(Integer timeUnits) {
+		this.timeUnits = timeUnits;
+	}
+	
 	public Double getCgcBase() {
 		return cgcBase;
 	}

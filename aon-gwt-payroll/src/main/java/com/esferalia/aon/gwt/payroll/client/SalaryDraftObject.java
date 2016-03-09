@@ -649,6 +649,10 @@ public class SalaryDraftObject implements IContextProvider {
 	public List<Variable> getDrafContext() {
 		return salaryDraft.getDraftContext();
 	}
+	
+	public Integer getTimeUnits() {
+		return salaryDraft.getTimeUnits();
+	}
 
 	// ------------------------------------------
 	//

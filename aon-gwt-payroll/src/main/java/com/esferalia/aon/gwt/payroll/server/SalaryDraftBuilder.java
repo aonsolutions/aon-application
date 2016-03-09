@@ -292,8 +292,7 @@ public class SalaryDraftBuilder
 
 	@Override
 	public void setTimeUnits(Integer timeUnits) {
-		// TODO Auto-generated method stub
-
+		salaryDraft.setTimeUnits(timeUnits);
 	}
 
 	@Override
