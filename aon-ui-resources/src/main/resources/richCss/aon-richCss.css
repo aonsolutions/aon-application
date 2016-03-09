@@ -435,6 +435,9 @@ color:#000;
  .aon-icon-new-text{
 	background:transparent url(images/aon-icon/aon-new-icon.png) scroll left center no-repeat;
  }
+ .aon-icon-beta-text{
+	background:transparent url(images/aon-icon/aon-beta-icon.png) scroll left center no-repeat;
+ }
  .aon-icon-tree{
    background:transparent url(images/aon-icon/aon-icon-tree.png) scroll left center no-repeat;
  }
