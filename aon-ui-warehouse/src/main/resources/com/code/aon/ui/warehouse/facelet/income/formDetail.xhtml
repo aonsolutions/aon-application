@@ -90,13 +90,15 @@
 					</aon:inputTextarea>
 					<aon:commandLink id="IncomeDetail_description_short" immediate="true"
 						value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
-						styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+						styleClass="aon-icon-edit-end-simple aon-vertical-align-top" 
+						style="margin-left: 5px; padding-right: 12px;"
 						rendered="#{incomeDetail.longDescription and incomeDetail.to.item.product.code != null}"
 						actionListener="#{incomeDetail.onShortDescription}" 
 						reRender="incomeDetailItemEdit" ajaxSingle="true" />
 					<aon:commandLink id="IncomeDetail_description_long" immediate="true"
 						value="&#160;" title="#{bundle.aon_edit}"
-						styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+						styleClass="aon-icon-edit-add-simple aon-vertical-align-top" 
+						style="margin-left: 5px; padding-right: 12px;"
 						rendered="#{!incomeDetail.longDescription and incomeDetail.to.item.product.code != null}"
 						actionListener="#{incomeDetail.onLongDescription}"
 						reRender="incomeDetailItemEdit" ajaxSingle="true" />
@@ -129,13 +131,15 @@
 							</aon:inputTextarea>
 							<aon:commandLink id="IncomeDetail_description_short-New" immediate="true"
 								value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
-								styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+								styleClass="aon-icon-edit-end-simple aon-vertical-align-top" 
+								style="margin-left: 5px; padding-right: 12px;"
 								rendered="#{incomeDetail.longDescription and incomeDetail.to.item.product.code != null}"
 								actionListener="#{incomeDetail.onShortDescription}" 
 								reRender="incomeDetailItemNew" ajaxSingle="true" />
 							<aon:commandLink id="IncomeDetail_description_long-New" immediate="true"
 								value="&#160;" title="#{bundle.aon_edit}"
-								styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+								styleClass="aon-icon-edit-add-simple aon-vertical-align-top" 
+								style="margin-left: 5px; padding-right: 12px;"
 								rendered="#{!incomeDetail.longDescription and incomeDetail.to.item.product.code != null}"
 								actionListener="#{incomeDetail.onLongDescription}"
 								reRender="incomeDetailItemNew" ajaxSingle="true" />

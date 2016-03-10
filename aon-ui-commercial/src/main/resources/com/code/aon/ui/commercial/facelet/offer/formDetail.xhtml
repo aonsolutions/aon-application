@@ -98,12 +98,20 @@
 						style="#{!offerDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 						<f:validateLength maximum="1024" />
 					</aon:inputTextarea>
-					<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-						actionListener="#{offerDetail.onShortDescription}" reRender="OfferDetail_description"
-						rendered="#{offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
-					<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-						actionListener="#{offerDetail.onLongDescription}" reRender="OfferDetail_description"
-						rendered="#{!offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
+					<aon:commandLink id="OfferDetail_description_short" immediate="true"
+						value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+						styleClass="aon-icon-edit-end-simple aon-vertical-align-top"
+						style="margin-left: 5px; padding-right: 12px;"
+						rendered="#{offerDetail.longDescription and offerDetail.to.item.product.code != null}"
+						actionListener="#{offerDetail.onShortDescription}" 
+						reRender="offerDetailItemEdit" ajaxSingle="true" />
+					<aon:commandLink id="OfferDetail_description_long" immediate="true"
+						value="&#160;" title="#{bundle.aon_edit}"
+						styleClass="aon-icon-edit-add-simple aon-vertical-align-top" 
+						style="margin-left: 5px; padding-right: 12px;"
+						rendered="#{!offerDetail.longDescription and offerDetail.to.item.product.code != null}"
+						actionListener="#{offerDetail.onLongDescription}"
+						reRender="offerDetailItemEdit" ajaxSingle="true" />
 				</aon:panelGroup>
 				<f:facet name="footer">
 					<aon:div>
@@ -118,7 +126,8 @@
 							<aon:if test="#{aonConfiguration.bean.product.showAlternatives}">
 								<aon:commandLink id="OfferDetail_itemInfo-New"
 									value="&#160;" title="#{bundle.product_info}"
-									styleClass="aon-icon-info" style="margin-left: 5px; padding-right: 12px; padding-top: 1px;"
+									styleClass="aon-icon-info aon-vertical-align-top" 
+									style="margin-left: 5px; padding-right: 12px; padding-top: 1px;"
 									rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null and !offerDetail.to.item.active}"
 									actionListener="#{itemInfo.onShowPanel}"
 									reRender="itemInfoContainer">
@@ -136,12 +145,20 @@
 								style="#{!offerDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
 								<f:validateLength maximum="1024" />
 							</aon:inputTextarea>
-							<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-								actionListener="#{offerDetail.onShortDescription}" reRender="OfferDetail_description-New"
-								rendered="#{offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
-							<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-								actionListener="#{offerDetail.onLongDescription}" reRender="OfferDetail_description-New"
-								rendered="#{!offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
+							<aon:commandLink id="OfferDetail_description_short-New" immediate="true"
+								value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
+								styleClass="aon-icon-edit-end-simple aon-vertical-align-top" 
+								style="margin-left: 5px; padding-right: 12px;"
+								rendered="#{offerDetail.longDescription and offerDetail.to.item.product.code != null}"
+								actionListener="#{offerDetail.onShortDescription}" 
+								reRender="offerDetailItemNew" ajaxSingle="true" />
+							<aon:commandLink id="OfferDetail_description_long-New" immediate="true"
+								value="&#160;" title="#{bundle.aon_edit}"
+								styleClass="aon-icon-edit-add-simple aon-vertical-align-top" 
+								style="margin-left: 5px; padding-right: 12px;"
+								rendered="#{!offerDetail.longDescription and offerDetail.to.item.product.code != null}"
+								actionListener="#{offerDetail.onLongDescription}"
+								reRender="offerDetailItemNew" ajaxSingle="true" />
 						</aon:panelGroup>
 					</aon:div>
 				</f:facet>

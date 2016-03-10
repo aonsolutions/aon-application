@@ -117,13 +117,15 @@
 					</aon:inputTextarea>
 					<aon:commandLink id="SalesDetail_description_short" immediate="true"
 						value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
-						styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+						styleClass="aon-icon-edit-end-simple aon-vertical-align-top" 
+						style="margin-left: 5px; padding-right: 12px;"
 						rendered="#{salesDetail.longDescription and salesDetail.to.item.product.code != null}"
 						actionListener="#{salesDetail.onShortDescription}" 
 						reRender="salesDetailItemEdit" ajaxSingle="true" />
 					<aon:commandLink id="SalesDetail_description_long" immediate="true"
 						value="&#160;" title="#{bundle.aon_edit}"
-						styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+						styleClass="aon-icon-edit-add-simple aon-vertical-align-top" 
+						style="margin-left: 5px; padding-right: 12px;"
 						rendered="#{!salesDetail.longDescription and salesDetail.to.item.product.code != null}"
 						actionListener="#{salesDetail.onLongDescription}"
 						reRender="salesDetailItemEdit" ajaxSingle="true" />
@@ -149,7 +151,8 @@
 							<aon:if test="#{aonConfiguration.bean.product.showStock}">
 								<aon:commandLink id="SalesDetail_itemInfo-New"
 									value="&#160;" title="#{bundle.product_info}"
-									styleClass="aon-icon-info" style="margin-left: 5px; padding-right: 12px; padding-top: 1px;"
+									styleClass="aon-icon-info aon-vertical-align-top" 
+									style="margin-left: 5px; padding-right: 12px; padding-top: 1px;"
 									rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null and salesDetail.to.item.product.inventoriable}"
 									actionListener="#{itemInfo.onShowPanel}"
 									reRender="itemInfoContainer">
@@ -170,13 +173,15 @@
 							</aon:inputTextarea>
 							<aon:commandLink id="SalesDetail_description_short-New" immediate="true"
 								value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
-								styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+								styleClass="aon-icon-edit-end-simple aon-vertical-align-top" 
+								style="margin-left: 5px; padding-right: 12px;"
 								rendered="#{salesDetail.longDescription and salesDetail.to.item.product.code != null}"
 								actionListener="#{salesDetail.onShortDescription}" 
 								reRender="salesDetailItemNew" ajaxSingle="true" />
 							<aon:commandLink id="SalesDetail_description_long-New" immediate="true"
 								value="&#160;" title="#{bundle.aon_edit}"
-								styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+								styleClass="aon-icon-edit-add-simple aon-vertical-align-top" 
+								style="margin-left: 5px; padding-right: 12px;"
 								rendered="#{!salesDetail.longDescription and salesDetail.to.item.product.code != null}"
 								actionListener="#{salesDetail.onLongDescription}"
 								reRender="salesDetailItemNew" ajaxSingle="true" />
