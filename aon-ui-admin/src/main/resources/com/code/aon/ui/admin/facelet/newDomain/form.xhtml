@@ -141,13 +141,20 @@
 						</aon:if>
 						<aon:if test="#{!adminNewDomain.enableHeredity}">
 							<aon:div styleClass="aon-margin-top">
-								<aon:selectOneMenu id="Domain_loadDefaults"
-									required="true" reRender="valuesDiv,expirationDateDiv"
-									actionListener="#{adminNewDomain.onChangedLoadDefaultValues}"
-									value="#{adminNewDomain.loadDefaultValuesEnabled}">
-									<f:selectItem itemValue="#{true}" itemLabel="#{bundle.admin_new_domain_defaults_1}" />
-									<f:selectItem itemValue="#{false}" itemLabel="#{bundle.admin_new_domain_defaults_2}" />
-								</aon:selectOneMenu>				
+							
+								<aon:if test="#{adminNewDomain.allowDuplicateDomain}">
+									<aon:selectOneMenu id="Domain_loadDefaults"
+										required="true" reRender="valuesDiv,expirationDateDiv"
+										actionListener="#{adminNewDomain.onChangedLoadDefaultValues}"
+										value="#{adminNewDomain.loadDefaultValuesEnabled}">
+										<f:selectItem itemValue="#{true}" itemLabel="#{bundle.admin_new_domain_defaults_1}" />
+										<f:selectItem itemValue="#{false}" itemLabel="#{bundle.admin_new_domain_defaults_2}" />
+									</aon:selectOneMenu>				
+								</aon:if>
+								<aon:if test="#{!adminNewDomain.allowDuplicateDomain}">
+									<aon:outputText value="(#{bundle.admin_new_domain_defaults_1})" />
+								</aon:if>
+								
 								<aon:if test="#{adminNewDomain.loadDefaultValuesEnabled and (adminNewDomain.parentDomain == null)}">
 									<aon:div styleClass="aon-margin-top">
 										<aon:outputLabel for="Domain_domainManagement"

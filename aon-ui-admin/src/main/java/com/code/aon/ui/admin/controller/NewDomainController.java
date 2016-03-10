@@ -87,6 +87,7 @@ public class NewDomainController implements Serializable {
 	private boolean enableHeredity;
 	private boolean domainManagement;
 	private DomainType type;
+	private boolean allowDuplicateDomain;
 	private String owner;
 	private boolean activeExpirationDate;
 	private Date expirationDate;
@@ -153,6 +154,14 @@ public class NewDomainController implements Serializable {
 		this.type = type;
 	}
 	
+	public boolean isAllowDuplicateDomain() {
+		return allowDuplicateDomain;
+	}
+	
+	public void setAllowDuplicateDomain(boolean allowDuplicateDomain) {
+		this.allowDuplicateDomain = allowDuplicateDomain;
+	}
+	
 	public boolean isEnableHeredity() {
 		return enableHeredity;
 	}
@@ -215,6 +224,7 @@ public class NewDomainController implements Serializable {
 		setActiveExpirationDate(false);
 		setExpirationDate(null);
 		setType(DomainType.ENTERPRISE);
+		setAllowDuplicateDomain(new Boolean(AppParamUtil.getValue(AppParam.AON_ALLOW_DUPLICATE_DOMAIN)));
 		setParentDomain(parentDomain);
 		setTemplateDomain((Domain)BeanManager.getManagerBean(Domain.class).createNewTo());
 		if ( suffixDomain != null ) {
