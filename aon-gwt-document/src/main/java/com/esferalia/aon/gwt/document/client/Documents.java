@@ -63,6 +63,8 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -119,7 +121,6 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionModel;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.elemental.Function;
-import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperItem;
 import com.vaadin.polymer.paper.widget.PaperMenu;
 
@@ -131,7 +132,7 @@ import gwtupload.client.SingleUploader;
 
 
 public class Documents extends Composite implements EntryPoint {
-
+	
 	private static final String SILENT = "silent";
 	private static final int DEFAULT_ZOOM = 130;
 
@@ -785,15 +786,6 @@ public class Documents extends Composite implements EntryPoint {
 		getSons();
 
 		/** CATEGORIES **/
-	/*	filterButton = new Button();
-	filterButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				close();
-			}
-		});
-		*/
 		VerticalPanel vcat =  new VerticalPanel();
 		for(Category c : lists.getCategoryList().getList()){
 			
@@ -816,7 +808,7 @@ public class Documents extends Composite implements EntryPoint {
 			b.addClickHandler(categoryClickHandler(cAux));
 			vcat.add(b); 
 		}
-		//dpanel.add(vcat);
+
 		dpanel.setContent(vcat);
 		VerticalPanel vtag =  new VerticalPanel();
 		for(Tag t : lists.getTagList().getList()){
@@ -839,7 +831,7 @@ public class Documents extends Composite implements EntryPoint {
 			b.addClickHandler(tagClickHandler(tAux));
 			vtag.add(b); 
 		}
-		//epanel.add(vtag);
+
 		epanel.setContent(vtag);
 		
 		searchBox = new TextBox();
@@ -856,38 +848,6 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
 				if(!Utils.isNotAlpKey(event.getNativeEvent().getKeyCode())){
-					/*event.getNativeEvent().preventDefault();
-					if(KeyCodes.KEY_DELETE != event.getNativeEvent().getKeyCode() && KeyCodes.KEY_BACKSPACE != event.getNativeEvent().getKeyCode()){
-						/*char c = (char) event.getNativeEvent().getCharCode();
-						searchBox.setText(searchBox.getText()+Character.toString(c));
-					}
-					else{
-						Integer pos = searchBox.getCursorPos();
-						String str = searchBox.getText();
-						Integer length = str.length();
-						if(KeyCodes.KEY_DELETE == event.getNativeEvent().getKeyCode()){
-							if(pos<str.length()){
-								if(pos.equals(0))
-									searchBox.setText(str.substring(pos+1));
-								else if(pos.equals(length-1))
-									searchBox.setText(str.substring(0, pos));
-								else
-									searchBox.setText(str.substring(0,pos)+str.substring(pos+1));						
-								searchBox.setCursorPos(pos);
-							}
-						}
-						if(KeyCodes.KEY_BACKSPACE == event.getNativeEvent().getKeyCode()){
-							if(pos>0 && pos<=length){
-								if(pos.equals(1))
-									searchBox.setText(str.substring(pos));
-								else if(pos.equals(length))
-									searchBox.setText(str.substring(0,pos-1));
-								else
-									searchBox.setText(str.substring(0,pos-1)+str.substring(pos));		
-								searchBox.setCursorPos(pos-1);
-							}
-						}
-					}*/
 					searchButton.click();
 				}
 			}
@@ -896,8 +856,6 @@ public class Documents extends Composite implements EntryPoint {
 		enterpriseSearchBox = new SuggestBox(Utils.createOracle(getSons()));
 		if (getSons().size() == 1) {
 			enterpriseSearchBox.setEnabled(false);	
-			
-			//reset.setVisible(false);
 		}
 		enterpriseSearchBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			
@@ -1008,21 +966,21 @@ public class Documents extends Composite implements EntryPoint {
 
 
 				}
-				
-				//else super.onCellPreview(event);	
-				
 			}
 		};
 	
  		dataGrid = new CustomDataGrid<FileInfo>(30,
 				FileInfo.PROVIDES_KEY);
+ 	
+ 		
+ 		Element a = (Element) dataGrid.getElement().getLastChild();
+ 		a.getStyle().setProperty("min-height", "100%");
+ 	
  		dataGrid.addHandler(selHandler, CellPreviewEvent.getType());
-
 		dataGrid.setWidth("100%");
-		
 		dataGrid.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
 		dataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-		dataGrid.setAutoHeaderRefreshDisabled(true);
+		dataGrid.setAutoHeaderRefreshDisabled(false);
 		dataGrid.setEmptyTableWidget(new Label("No hay ning\u00fan archivo."));
 		
 		if(docs.getIsServiconvenios()){
@@ -1044,12 +1002,21 @@ public class Documents extends Composite implements EntryPoint {
 		initTableColumns(selectionModel, sortHandler);
 		
 		showMorePager = new ShowMorePager((CustomDataGrid<FileInfo>) dataGrid);
-		
+	
 		// Inject rich styles.
-		
+	
 		Widget ui = binder.createAndBindUi(this);
 		
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		root.addDomHandler(new MouseOverHandler(){
+
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				Element element = (Element) dataGrid.getElement().getLastChild();
+				element.getStyle().setProperty("top", "21px");
+			}
+			
+		}, MouseOverEvent.getType());
 		root.add(ui);
 		
 		allFilesPaper.addClickHandler(new ClickHandler() {
@@ -1087,7 +1054,8 @@ public class Documents extends Composite implements EntryPoint {
 			isServiconvenios = true;
 			newFile.setVisible(false); 
 			sConvenios.setVisible(true);
-		}
+		} 		
+
 	}
 	
 	private ListHandler<FileInfo> getSortHandler() {
@@ -1472,7 +1440,6 @@ public class Documents extends Composite implements EntryPoint {
 						@Override
 						public void onSuccess(Void result) {
 							cargando.hide();
-							//TODO Actualizar datagrid!!!
 						}
 						@Override
 						public void onFailure(Throwable caught) {
@@ -3207,7 +3174,6 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			protected void onAccept() {
 				TextBox tb = (TextBox) grid.getWidget(0, 1);
-				// TODO CHECK EMAIL
 				hide();
 				Vector<FileInfo> fvector = new Vector<FileInfo>();
 				if(multiple) fvector = selFiles;
@@ -3562,9 +3528,7 @@ public class Documents extends Composite implements EntryPoint {
             	
             	idoc.upload(fi,driveId, new AsyncCallback<Void>() {
 					@Override
-					public void onSuccess(Void result) {
-						//TODO Actualizar datagrid!!!
-					}
+					public void onSuccess(Void result) {}
 					@Override
 					public void onFailure(Throwable caught) {}
 				});
@@ -4639,11 +4603,14 @@ public class Documents extends Composite implements EntryPoint {
 	
 	
 	private void addTagFilterItem(final Tag tag){
-		IronIcon closeIcon = new IronIcon();
-		closeIcon.setIcon("close");
-		closeIcon.setHeight("16px");
-		closeIcon.setWidth("16px");
-		closeIcon.addClickHandler(new ClickHandler() {
+		PaperItem filterItem = new PaperItem();
+		filterItem.setTitle(tag.getName());
+		Label label = new Label(tag.getName());
+		label.addStyleName("aon-icon-tag");
+		label.addStyleName("filter-label-document");
+		filterItem.add(label);
+		filterItem.addStyleName("filter-item-document");
+		filterItem.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				for(Integer i = 1; i < filterPanel.getWidgetCount(); i++){
 					PaperItem filterItem = (PaperItem) filterPanel.getWidget(i);
@@ -4685,23 +4652,21 @@ public class Documents extends Composite implements EntryPoint {
 				});
 			}
 		});
-		
-		PaperItem filterItem = new PaperItem();
-		filterItem.setTitle(tag.getName());
-		filterItem.add(new Label(tag.getName()));
-		filterItem.add(closeIcon);
-		filterItem.addStyleName("filter-item-document");
-
 		filterPanel.add(filterItem);
 	}
 	
 	private void addCategoryFilterItem(final Category category){			
-		IronIcon closeIcon = new IronIcon();
-		closeIcon.setIcon("close");
-		closeIcon.setHeight("16px");
-		closeIcon.setWidth("16px");
-		closeIcon.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {
+		PaperItem filterItem = new PaperItem();
+		filterItem.setTitle(category.getName());
+		Label label = new Label(category.getName());
+		label.addStyleName("aon-icon-category");
+		label.addStyleName("filter-label-document");
+		filterItem.add(label);
+		filterItem.addStyleName("filter-item-document");
+		filterItem.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
 				for(Integer i = 1; i < filterPanel.getWidgetCount(); i++){
 					PaperItem filterItem = (PaperItem) filterPanel.getWidget(i);
 					if(filterItem.getTitle().equals(category.getName()))
@@ -4742,14 +4707,7 @@ public class Documents extends Composite implements EntryPoint {
 				});
 			}
 		});
-		
-		PaperItem filterItem = new PaperItem();
-		filterItem.setTitle(category.getName());
-		filterItem.add(new Label(category.getName()));
-		filterItem.add(closeIcon);
-		filterItem.addStyleName("filter-item-document");
-
-		filterPanel.add(filterItem);
+		filterPanel.insert(filterItem, 1);
 	}
 	
 	private void removeFilterItems(){
