@@ -82,6 +82,7 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 	private final String CUSTOMER_NAME = "Nombre_RazonSocial";
 	private final String INVOICE_DOCUMENT = "Factura ML";
 	private final String INVOICE_DATE = "Fecha_Facturacion";
+	private final String INVOICE_PAYMENT_DATE = "Fecha Vencimiento";
 	private final String INVOICE_VAT_PERCENT = "%_iva";
 	private final String INVOICE_VAT_BASE = "Base_Iva";
 	private final String INVOICE_VAT_AMOUNT = "Importe_Iva";
@@ -99,6 +100,7 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 			CUSTOMER_NAME,
 			INVOICE_DOCUMENT,
 			INVOICE_DATE,
+			INVOICE_PAYMENT_DATE,
 			
 			INVOICE_BASE_TERMINO_POTENCIA,
 			INVOICE_BASE_EXCESOS_POTENCIA,
@@ -163,6 +165,7 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 	        writer.print("cuentaExplotacion4|");
 	        
 	        writer.print("totalFactura|");
+	        writer.print("fechaVto|");
 	        writer.print("formaPago|");
 	        writer.print("cuentaBanco");
 	        writer.println();
@@ -193,6 +196,7 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
         			String serie = obtainInvoiceSeries(invoiceNumber);
         			String num = obtainInvoiceNumber(invoiceNumber);
         			Date invoiceDate = getDateCellValue(row.getCell(headers.indexOf(INVOICE_DATE)));
+        			Date invoicePaymentDate = getDateCellValue(row.getCell(headers.indexOf(INVOICE_PAYMENT_DATE)));
         			String bankAccount = null;
         			if(headers.contains(INVOICE_BANK_ACCOUNT)){
         				bankAccount = getStringCellValue(row.getCell(headers.indexOf(INVOICE_BANK_ACCOUNT)));
@@ -247,6 +251,7 @@ public class OppidumSalesLoader implements Serializable, ICustomLoaderFactory {
 					writer.print("606000001|");
 					
 					writer.print(CommonUtil.round(invoiceTotal) + "|");
+					writer.print( dateFormat.format(invoicePaymentDate) + "|");
 					String ccc = getFormatBankAccount(bankAccount);
 					writer.print((StringUtils.isNotBlank(ccc)?negotiablePaymethod:"") + "|");
 					writer.print(ccc);
