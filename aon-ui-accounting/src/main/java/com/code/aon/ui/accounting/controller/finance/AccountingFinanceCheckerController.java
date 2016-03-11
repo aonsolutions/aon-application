@@ -110,7 +110,7 @@ public class AccountingFinanceCheckerController implements Serializable {
 		try {
 			LinkedList<AccountingFinanceCheck> list = new LinkedList<AccountingFinanceCheck>();
 			list.addAll(AccountingFinanceChecker.getChecks(AonUtil.getDomainName(),
-					DomainManager.getCurrentDomain(), getParams()));
+					DomainManager.getCurrentDomain(), AonUtil.getRemoteUser(),getParams()));
 			model = new SerializableListDataModel(list);
 		} catch (AonException e) {
 			String msg = "No se pudo mostrar el resultado. " + e.getMessage();
@@ -176,7 +176,7 @@ public class AccountingFinanceCheckerController implements Serializable {
 	private void finance() {
 		try {
 			List<AccountingFinanceCheck> list =  AccountingFinanceChecker.getFinances(
-				AonUtil.getDomainName(),DomainManager.getCurrentDomain(), getParams() );
+				AonUtil.getDomainName(),DomainManager.getCurrentDomain(), AonUtil.getRemoteUser(),getParams() );
 			financesModel = new SerializableListDataModel(list);
 		} catch (ManagerBeanException e) {
 			String msg = "No se pudo realizar el acceso a vencimientos.";
@@ -259,7 +259,7 @@ public class AccountingFinanceCheckerController implements Serializable {
 	private void strippedStatement() {
 		try {
 			List<StrippedStatement> list =  AccountingFinanceChecker.getStrippedStatement(
-					AonUtil.getDomainName(),DomainManager.getCurrentDomain(), getParams() );
+					AonUtil.getDomainName(),DomainManager.getCurrentDomain(), AonUtil.getRemoteUser(),getParams() );
 //			if (strippedType != StrippedType.ALL) {
 //				List<StrippedStatement> newList = new LinkedList<StrippedStatement>();
 //				

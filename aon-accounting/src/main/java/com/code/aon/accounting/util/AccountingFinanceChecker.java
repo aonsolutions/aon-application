@@ -68,11 +68,12 @@ public class AccountingFinanceChecker implements Serializable {
 				),PENDING_FIELD));
 	}
 
-	public static Collection<AccountingFinanceCheck> getChecks(String domainName,int domainId,AccountingFinanceCheckerParams params) throws AonException {
+	public static Collection<AccountingFinanceCheck> getChecks(String domainName,int domainId
+			,String user,AccountingFinanceCheckerParams params) throws AonException {
 		AONContext ctx = null;
 		try {
 			java.sql.Date date = AonDateUtils.toSql( params.getDeadline() );
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId, user);
 			final Map<Integer,AccountingFinanceCheck> financeMap = ctx.getDslContext()
 				.select(FINANCE.REGISTRY,FINANCE.RNAME,SUM_AMOUNT)
 				.from(FINANCE)
@@ -152,13 +153,31 @@ public class AccountingFinanceChecker implements Serializable {
 			
 			
 			//TODO.  Merge maps. do it more ..... beauty.
+			final AONContext ctx2 = ctx;
 			financeMap.entrySet()
 			.stream()
 			.forEach( entry -> {
 				if (accountingMap.containsKey(entry.getKey())){
 					accountingMap.get(entry.getKey()).setFinBalance(entry.getValue().getFinBalance());
 				} else {
-					accountingMap.put(entry.getKey(),entry.getValue());
+					boolean toAdd = false;
+					if (params.isCreditorsEnabled() && params.isCustomersEnabled() && params.isCreditorsEnabled()) {
+						toAdd = true;
+					} else {
+						Field<Integer> f = DSL.count();
+						if (params.isCustomersEnabled()) {
+							toAdd = ctx2.getDslContext().select(f).from(CUSTOMER).where(CUSTOMER.REGISTRY.equal(entry.getKey())).fetchOne(f) > 0;
+						}
+						if (!toAdd && params.isCreditorsEnabled()) {
+							toAdd = ctx2.getDslContext().select(f).from(CREDITOR).where(CREDITOR.REGISTRY.equal(entry.getKey())).fetchOne(f) > 0;							
+						}
+						if (!toAdd && params.isSuppliersEnabled()) {
+							toAdd = ctx2.getDslContext().select(f).from(SUPPLIER).where(SUPPLIER.REGISTRY.equal(entry.getKey())).fetchOne(f) > 0;
+						}
+					}
+					if (toAdd) {
+						accountingMap.put(entry.getKey(),entry.getValue());
+					}
 				}
 				})
 			;
@@ -177,11 +196,12 @@ public class AccountingFinanceChecker implements Serializable {
 		}
 	}
 
-	public static List<StrippedStatement> getStrippedStatement(String domainName, int domainId, AccountingFinanceCheckerParams params ) throws AonException {
+	public static List<StrippedStatement> getStrippedStatement(String domainName, int domainId
+			,String user, AccountingFinanceCheckerParams params ) throws AonException {
 		AONContext ctx = null;
 		try {
 			java.sql.Date date = AonDateUtils.toSql( params.getDeadline() );
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId,user);
 			final String DEFAULT_DOCUMENT = "APUNTES SIN N\u00DAMERO DE DOCUMENTO";
 			Field<String> doc = DSL.nvl(DSL.trim(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER),DEFAULT_DOCUMENT);
 			Field<BigDecimal> sumDebit = DSL.sum(ACCOUNT_ENTRY_DETAIL.DEBIT); 
@@ -210,11 +230,12 @@ public class AccountingFinanceChecker implements Serializable {
 		}
 	}
 	
-	public static List<AccountingFinanceCheck> getFinances(String domainName, int domainId, AccountingFinanceCheckerParams params ) throws AonException {
+	public static List<AccountingFinanceCheck> getFinances(String domainName, int domainId
+			,String user, AccountingFinanceCheckerParams params ) throws AonException {
 		AONContext ctx = null;
 		try {
 			java.sql.Date date = AonDateUtils.toSql( params.getDeadline() );
-			ctx = AONContext.getAONContext(domainName, domainId);
+			ctx = AONContext.getAONContext(domainName, domainId,user);
 			return ctx.getDslContext()
 				.select(FINANCE.REGISTRY
 						,FINANCE.RNAME
