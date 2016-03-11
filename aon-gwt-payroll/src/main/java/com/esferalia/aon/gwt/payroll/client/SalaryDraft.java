@@ -334,12 +334,12 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		// --------------------------------------------------------- HasEnabled
-		
+
 		@Override
 		public boolean isEnabled() {
 			return datebox.isEnabled();
 		}
-		
+
 		@Override
 		public void setEnabled(boolean enabled) {
 			datebox.setEnabled(enabled);
@@ -725,7 +725,6 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 	}
-	
 
 	class NoHolidaysChangeHanlder<T extends HasValue<String> & HasAllFocusHandlers & Focusable>
 			extends VariableChangeHandler<T> {
@@ -738,26 +737,26 @@ public class SalaryDraft extends ResizeComposite
 		public void onValueChange(ValueChangeEvent<String> event) {
 
 			double noHolidays = Double.parseDouble(event.getValue());
-			
+
 			List<Variable> noHolidaysVars = new ArrayList();
-			for ( Variable var : salaryDraftObject.getDrafContext() )
-				if ( var.getName().equals(variable.getName()))
+			for (Variable var : salaryDraftObject.getDrafContext())
+				if (var.getName().equals(variable.getName()))
 					noHolidaysVars.add(var);
 
 			salaryDraftObject.removeDraftVariables(noHolidaysVars);
 
 			Date startDate = DateUtils.copyDateOnly(salaryDraftObject.asSalaryPreview().getIssueDate());
 			DateUtils.addDays2Date(startDate, 1);
-			
+
 			int prevDays = 0;
 			NoHolidaysVariable noHolidaysVar = null;
-			
-			while ( noHolidays > 0 ) {
-				
-				int monthDays = DateUtils.getDaysBetween(startDate, DateUtils.getLastDayOfMonth(startDate))+1;
-				
-				double days = Math.min(noHolidays,  monthDays);
-				
+
+			while (noHolidays > 0) {
+
+				int monthDays = DateUtils.getDaysBetween(startDate, DateUtils.getLastDayOfMonth(startDate)) + 1;
+
+				double days = Math.min(noHolidays, monthDays);
+
 				noHolidaysVar = new NoHolidaysVariable();
 				noHolidaysVar.setDays(days);
 				noHolidaysVar.setPrevDays(prevDays);
@@ -765,25 +764,24 @@ public class SalaryDraft extends ResizeComposite
 				noHolidaysVar.setScope(Scope.SALARY);
 				noHolidaysVar.setName(variable.getName());
 				noHolidaysVar.setSalaryDraft(salaryDraftObject.asSalaryPreview());
-								
+
 				salaryDraftObject.addDraftVariable(noHolidaysVar);
-				
+
 				noHolidays -= days;
-				prevDays = (int)Math.ceil(days);
+				prevDays = (int) Math.ceil(days);
 				DateUtils.addDays2Date(startDate, prevDays);
-				
 
 			}
 
 			// TODO: REMOVE
-			//var.setExpression(StringUtils.isEmpty(value) ? "REMOVE_VARIABLE()" : value);
+			// var.setExpression(StringUtils.isEmpty(value) ?
+			// "REMOVE_VARIABLE()" : value);
 
-			
-			//salaryDraftObject.asSalaryPreview().setEndDate(var.getEndDate());
+			// salaryDraftObject.asSalaryPreview().setEndDate(var.getEndDate());
 			salaryDraftObject.setDraftPeriod(salaryDraftObject.getDraftStartDate(), noHolidaysVar.getEndDate());
 
 			SalaryDraft.this.calculate(getNextVariableFocusCallback());
-			
+
 		}
 
 	}
@@ -892,15 +890,10 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		protected StringVariable newVariable() {
-			//@formatter:off
-			return new StringVariable.Builder()
-					.setImplicit(true)
-					.setScope(Scope.SALARY)
-					.setName(variable.getName())
-					.setEndDate(variable.getEndDate())
-					.setStartDate(variable.getStartDate())
-					.create();
-			//@formatter:on
+			// @formatter:off
+			return new StringVariable.Builder().setImplicit(true).setScope(Scope.SALARY).setName(variable.getName())
+					.setEndDate(variable.getEndDate()).setStartDate(variable.getStartDate()).create();
+			// @formatter:on
 		}
 
 	}
@@ -914,7 +907,6 @@ public class SalaryDraft extends ResizeComposite
 		public ItemChangeHandler(I item) {
 			this.item = item;
 		}
-
 
 		public void setDescriptionWidget(final T widget) {
 			descriptionWidget = widget;
@@ -1025,7 +1017,6 @@ public class SalaryDraft extends ResizeComposite
 		abstract void onExpressionChange(I item, String expression);
 
 		abstract void onDescriptionChange(I item, String description);
-		
 
 	}
 
@@ -1115,7 +1106,7 @@ public class SalaryDraft extends ResizeComposite
 			return null;
 		}
 
-		private int getRowIndex(ClickEvent event){
+		private int getRowIndex(ClickEvent event) {
 			return paymentsTable.getCellForEvent(event).getRowIndex();
 		}
 
@@ -1247,7 +1238,7 @@ public class SalaryDraft extends ResizeComposite
 
 			salaryDraftObject.calculate(SalaryDraft.this);
 		}
-		
+
 		private int getRowIndex(ClickEvent event) {
 			return paymentsTable.getCellForEvent(event).getRowIndex();
 		}
@@ -2660,7 +2651,8 @@ public class SalaryDraft extends ResizeComposite
 		insertBlankPaymentRow();
 		insertBlankPaymentRow();
 
-		List<Variable> context = getContext(salaryDraftObject);//new ArrayList<Variable>(salaryDraftObject.getContext());
+		List<Variable> context = getContext(salaryDraftObject);// new
+																// ArrayList<Variable>(salaryDraftObject.getContext());
 
 		Scope nextScope = null;
 		boolean show = scope.compareTo(Scope.CONTRACT) >= 0;
@@ -3970,7 +3962,7 @@ public class SalaryDraft extends ResizeComposite
 		StringBuffer text = new StringBuffer(variable.getName());
 
 		try {
-			if (!agreeWithDraftPeriod(variable) && !(variable instanceof UndefinedVariable) ) {
+			if (!agreeWithDraftPeriod(variable) && !(variable instanceof UndefinedVariable)) {
 				Date startDate = variable.getStartDate();
 				Date endDate = variable.getEndDate();
 				DateTimeFormat format = DateTimeFormat.getFormat("dd/MM");
@@ -3992,12 +3984,11 @@ public class SalaryDraft extends ResizeComposite
 
 		return label;
 	}
-	
+
 	private boolean agreeWithDraftPeriod(Variable variable) {
 		Date startDate = variable.getStartDate();
 		Date endDate = variable.getEndDate();
-		return (startDate.equals(salaryDraftObject.getStartDate())
-				&& endDate.equals(salaryDraftObject.getEndDate()));
+		return (startDate.equals(salaryDraftObject.getStartDate()) && endDate.equals(salaryDraftObject.getEndDate()));
 	}
 
 	private Button getSystemVarButton(Variable variable) {
@@ -4177,13 +4168,12 @@ public class SalaryDraft extends ResizeComposite
 		int idx = 0;
 		int row = 0;
 		for (; idx < payments.size(); idx++) {
-			Payment  p = payments.get(idx);
+			Payment p = payments.get(idx);
 			if (comparator.compare(p, payment) > 0)
 				break;
-			row += ( p instanceof CompositePayment ) ? 1 + ((CompositePayment)p).getChilds().size():1;
+			row += (p instanceof CompositePayment) ? 1 + ((CompositePayment) p).getChilds().size() : 1;
 		}
-		
-		
+
 		payments.add(idx, payment);
 
 		row += 1; // We add one due to header
@@ -4658,7 +4648,8 @@ public class SalaryDraft extends ResizeComposite
 		return false;
 	}
 
-	static <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled> T createEditor(Variable variable) {
+	static <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled> T createEditor(
+			Variable variable) {
 		for (VariableEditorFactory<T> factory : VARIABLE_EDITOR_FACTORIES) {
 			if (factory.accept(variable))
 				return factory.create(variable);
@@ -4874,19 +4865,25 @@ public class SalaryDraft extends ResizeComposite
 	private static <T extends Item<?>> boolean isCgpBaseDeduction(T item) {
 		return StringUtils.equalsIgnoreCase("BASE_CGP", item.getDescription());
 	}
-	
+
 	private static List<Variable> getContext(SalaryDraftObject salaryDraftObject) {
 		List<Variable> context = new ArrayList();
-		for ( Variable var: salaryDraftObject.getContext() ) {
-			
-			if ( var instanceof UndefinedVariable )
-				for ( Variable v : context )
-					if ( v.getName().equals(var.getName()))
-						continue; // Already at context
-			
+		for (Variable var : salaryDraftObject.getContext()) {
+
+			if (var instanceof UndefinedVariable)
+				if (contains(context, var.getName()))
+					continue;
+
 			context.add(var);
-		
+
 		}
 		return context;
+	}
+
+	private static boolean contains(List<Variable> vars, String name) {
+		for (Variable v : vars)
+			if (v.getName().equals(name))
+				return true; // Already at context
+		return false;
 	}
 }
