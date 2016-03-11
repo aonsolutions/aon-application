@@ -294,10 +294,10 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		if(si.getTagList() != null && si.getTagList().size() > 0){
 			Boolean bool = false;
 			for(String s : si.getTagList()){
-				if(Tags.contain(s,fi.getTags())) 
+				if(!Tags.contain(s,fi.getTags())) 
 					bool = true;
 			}
-			if(!bool) return false;
+			if(bool) return false;
 		}
 		return true;
 	}
@@ -1410,10 +1410,6 @@ public Vector<FileInfo> insertFileMultiple(Domain domain, String dialogCode, Fil
 				}
 			}
 		}
-		return true;
-	}
-	
-	public Boolean checkDomain(Domain domain, Document document, String type){
 		return true;
 	}
 	

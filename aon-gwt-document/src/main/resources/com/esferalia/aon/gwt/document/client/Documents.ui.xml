@@ -286,12 +286,10 @@
 								<div class="aon-panelGrid-search-info">
 								
 									<g:HorizontalPanel styleName="aon-width-all">
-										<g:HorizontalPanel ui:field="filterPanel">
-											<g:HTMLPanel>
-												<span class="aon-panelGrid-search-info-internal" style="position: relative;top: 2px;">Filtrar:</span>						
-											</g:HTMLPanel>
+										<g:HTMLPanel>
+											<span class="aon-panelGrid-search-info-internal" style="position: relative;top: 2px;">Filtrar:</span>						
+										</g:HTMLPanel>
 
-										</g:HorizontalPanel>
 
 										<g:HTMLPanel>
 											<a style="font-size:10px;font-weight:bold;float:right;"
@@ -301,12 +299,17 @@
 										    	    
 										    		</g:Button>
 												</span>
+											</a>	
+											<a style="font-size:10px;font-weight:bold;float:right;"
+												onclick="" href="#">
+												<span class="aon-outputText">
+										  	 	 	<g:Button ui:field="cleanFilterButton" text="Limpiar Filtro" styleName="aon-editDataTable-button aon-icon-rubber">
+										    		
+										    		</g:Button>
+												</span>
 											</a>
 										</g:HTMLPanel>
-									</g:HorizontalPanel>
-							
-									
-									
+									</g:HorizontalPanel>					
 								</div>
 								<table class="aon-panelGrid">
 									<tr>
@@ -332,48 +335,19 @@
 										</td>
 									</tr>
 								</table>
-
-
 							</g:HTMLPanel>
-							<!--g:AbsolutePanel styleName="{style.hpanel}"> <g:HorizontalPanel> 
-								<g:Label>Filtrar:</g:Label> <g:SuggestBox ui:field="searchBox" styleName="{style.aon-search-box}" 
-								autoSelectEnabled="true" popupStyleName="{style.aon-search-box-popup}"> </g:SuggestBox> 
-								<g:Button ui:field="searchButton" >Buscar </g:Button> </g:HorizontalPanel> 
-								</g:AbsolutePanel -->
-
-
 						</g:north>
 						<g:center>
-							
-							<c:DataGrid ui:field='dataGrid'>
-							
- 							</c:DataGrid>
-
-							    
-							
-							
-
-							<!-- g:HTMLPanel> <table cellspacing='15' cellpadding='15' style='width:100%;'> 
-								<tr> <td valign='top'> <g:ScrollPanel pixelSize="800, 800"> <c:CellTable 
-								addStyleNames='{style.cellTable}' pageSize='30' ui:field='cellTable'/> <c:DataGrid 
-								ui:field='dataGrid' /> </g:ScrollPanel> <s2:ShowMorePagerPanel addStyleNames='{style.scrollable}' 
-								ui:field='pagerPanel'/> <s:RangeLabelPager ui:field='rangeLabelPager' /> 
-								</td> </tr> </table> </g:HTMLPanel -->
+							<c:DataGrid ui:field='dataGrid'></c:DataGrid>
 						</g:center>
-			
-							
-			
 					</g:DockLayoutPanel>
-
 				</g:center>
 				<g:east size="1">
 					<g:AbsolutePanel></g:AbsolutePanel>
 				</g:east>
 			</g:DockLayoutPanel>
-
 		</g:center>
 		<!-- **************************** FIN CENTER **************************** -->
-
 	</g:SplitLayoutPanel>
 
 </ui:UiBinder>

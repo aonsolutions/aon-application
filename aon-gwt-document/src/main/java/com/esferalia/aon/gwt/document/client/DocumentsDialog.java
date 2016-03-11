@@ -184,6 +184,8 @@ public abstract class DocumentsDialog extends CustomDialogB {
 	
 	HorizontalPanel h2;
 	VerticalPanel vertical;
+	HorizontalPanel categoryHP;
+	VerticalPanel categoryVP;
 	String url;
 	
 	
@@ -813,6 +815,10 @@ public abstract class DocumentsDialog extends CustomDialogB {
 
 		lb2.addChangeHandler(OneHandler());
 		
+		/********************************/
+		lb1.addChangeHandler(categoryOneHandler());
+
+		
 		grid.setStyleName("aon-panelGrid");
 		grid.setWidth("400px");
 		grid.setBorderWidth(1);
@@ -907,8 +913,25 @@ public abstract class DocumentsDialog extends CustomDialogB {
 		grid.setWidget(3, 0, new Label("Fecha"));
 		grid.setWidget(3, 1, dateBox);
 
-		grid.setWidget(4, 0, new Label("Categor\u00eda"));
-		grid.setWidget(4, 1, lb1);
+		
+		bool = lb1.getItemCount() <= 2;
+		if (lb1.getItemCount() <= 2) {
+			VerticalPanel vp= new VerticalPanel();
+			HorizontalPanel hp = new HorizontalPanel();
+			hp.add(lb1);
+			vp.add(hp);
+			grid.setWidget(4, 0, new Label("Categor\u00eda"));
+			grid.setWidget(4, 1, vp);
+		} else {
+			categoryHP = new HorizontalPanel();
+			categoryVP = new VerticalPanel();
+			categoryHP.add(lb1);
+			categoryVP.add(categoryHP);
+			grid.setWidget(4, 0, new Label("Categor\u00eda"));
+			grid.setWidget(4, 1, categoryVP);
+		}
+		
+		
 		bool = lb2.getItemCount() <= 2;
 		if (lb2.getItemCount() <= 2) {
 			VerticalPanel vp= new VerticalPanel();
@@ -926,7 +949,6 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			vertical.add(h2);
 			grid.setWidget(5, 0, new Label("Etiqueta"));
 			grid.setWidget(5, 1, vertical);
-
 		}
 		grid.setWidget(6, 0, new Label("\u00c1mbito"));
 		grid.setWidget(6, 1, lb3);
@@ -1126,6 +1148,30 @@ public abstract class DocumentsDialog extends CustomDialogB {
 		return ch;
 
 	}
+	public ChangeHandler categoryOneHandler(){
+		return new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				ListBox lb = (ListBox) categoryHP.getWidget(0);
+				String s = null;
+				for (int i = 0; i < lb.getItemCount(); i++) {
+					if (lb.isItemSelected(i)) {
+						s = lb.getValue(i);
+					}
+				}
+				
+				if(categoryHP.getWidgetCount() == 1){
+					Button mas = new Button("");
+					mas.setStyleName("aon-finding-toolbar-item aon-search-add");
+					mas.addClickHandler(categoryMasHandler());
+					categoryHP.add(mas);
+				}
+				if(s.equals("-")){
+					categoryHP.remove(1);
+				}				
+			}
+		};
+	}
 	
 	public ChangeHandler OneHandler2(){
 		ChangeHandler ch = new ChangeHandler() {
@@ -1186,6 +1232,32 @@ public abstract class DocumentsDialog extends CustomDialogB {
 
 	}
 	
+	public ChangeHandler categoryTwoHandler(){
+		return new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				ListBox lb = (ListBox) categoryHP.getWidget(0);
+				String s = null;
+				for (int i = 0; i < lb.getItemCount(); i++) {
+					if (lb.isItemSelected(i)) {
+						s = lb.getValue(i);
+					}
+				}
+				if(categoryHP.getWidgetCount() == 2){
+					Button bMas = new Button();
+					bMas.setStyleName("aon-finding-toolbar-item aon-search-add");
+					bMas.addClickHandler(categoryMasHandler());
+					
+					if(categoryVP.getWidgetCount()<lb.getItemCount()-1){//lists2.getTagList().getLength()){
+						categoryHP.add(bMas);
+					}
+				}
+				if(s.equals("-")){
+					categoryHP.remove(2);
+				}
+			}
+		};
+	}
 	
 	public ChangeHandler TwoHandler2(){
 		ChangeHandler ch = new ChangeHandler() {
@@ -1288,6 +1360,68 @@ public abstract class DocumentsDialog extends CustomDialogB {
 		return ch;
 	}
 	
+	public ClickHandler categoryMasHandler() {
+		ClickHandler ch = new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				ListBox lb2 = new ListBox();
+				lb2.addItem("-");
+				if(isServiconvenios){
+					for(Category category : lists2.getCategoryListDomainZero().getList()){
+						lb2.addItem(category.getName());
+					}
+				}
+				else{
+					for (Category category : lists2.getCategoryList().getList()) {
+						if(category.getIsParent())
+							lb2.addItem(Character.toString((char)9650)+category.getName());
+						else if(category.getIsSon())
+							lb2.addItem(Character.toString((char)9660)+category.getName());
+						else lb2.addItem(category.getName());
+					}
+				}
+				
+				//TODO				
+				if(son1){
+					for(Category category : lists2.getCategoryListSon().getList()){
+						if(category.getDomain().equals(domainSon)){
+							lb2.addItem(Character.toString((char)9660)+category.getName());
+						}
+					}
+				}
+				lb2.addChangeHandler(categoryTwoHandler());
+				
+				categoryHP = new HorizontalPanel();
+				categoryHP.add(lb2);
+				
+				Button bMenos = new Button();
+				bMenos.setStyleName("aon-finding-toolbar-item aon-search-minus");
+				bMenos.addClickHandler(categoryMenosHandler());
+				categoryHP.add(bMenos);
+				
+				categoryVP.add(categoryHP);
+				VerticalPanel p = (VerticalPanel)grid.getWidget(4,1);
+				HorizontalPanel hp =(HorizontalPanel)p.getWidget(p.getWidgetCount()-2);
+				if(p.getWidgetCount()==2){
+					ListBox l = (ListBox)hp.getWidget(0);
+					l.setEnabled(false);
+					hp.remove(1);
+				}
+				else {
+					ListBox l = (ListBox)hp.getWidget(0);
+					l.setEnabled(false);
+					hp.remove(2);
+					hp.remove(1);
+				}
+				categoryHP.addStyleName("aon-gwt-tags-popup");
+				p.add(categoryHP);
+				
+				grid.setWidget(4, 1, p);
+			}
+		};
+		
+		return ch;
+	}
 	
 	public ClickHandler masHandler2() {
 		ClickHandler ch = new ClickHandler() {
@@ -1385,6 +1519,44 @@ public abstract class DocumentsDialog extends CustomDialogB {
 		
 		return ch;
 	}
+	
+	public ClickHandler categoryMenosHandler() {
+		ClickHandler ch = new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+			
+				Button bMas = new Button();
+				bMas.setStyleName("aon-finding-toolbar-item aon-search-add");
+				bMas.addClickHandler(categoryMasHandler());
+				Button bMenos = new Button();
+				bMenos.setStyleName("aon-finding-toolbar-item aon-search-minus");
+				bMenos.addClickHandler(categoryMenosHandler());
+				
+				VerticalPanel p = (VerticalPanel)grid.getWidget(4,1);
+				HorizontalPanel hp =(HorizontalPanel)p.getWidget(p.getWidgetCount()-2);
+		
+				if(p.getWidgetCount()==2){
+						ListBox l = (ListBox)hp.getWidget(0);
+						l.setEnabled(true);
+						hp.add(bMas);
+				}
+				else {
+					ListBox l = (ListBox)hp.getWidget(0);
+					l.setEnabled(true);
+					hp.add(bMenos);
+					hp.add(bMas);		
+				}
+				p.remove(p.getWidgetCount()-1);
+				//vertical.remove(vertical.getWidgetCount()-1);
+				grid.setWidget(4, 1, p);
+				
+			}
+		};
+		
+		return ch;
+	}
+
 
 	
 	public ClickHandler menosHandler2() {

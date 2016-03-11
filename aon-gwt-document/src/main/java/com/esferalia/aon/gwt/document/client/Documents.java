@@ -601,7 +601,7 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiField Button upDrive;
 	
-	@UiField HorizontalPanel filterPanel;
+	@UiField Button cleanFilterButton;
 		
 	@UiField Button advanceSearch;
 
@@ -805,7 +805,7 @@ public class Documents extends Composite implements EntryPoint {
 					ccm.show();
 				}
 			}, ContextMenuEvent.getType());
-			b.addClickHandler(categoryClickHandler(cAux));
+			b.addClickHandler(categoryClickHandler(b, cAux));
 			vcat.add(b); 
 		}
 
@@ -828,7 +828,7 @@ public class Documents extends Composite implements EntryPoint {
 					tcm.show();
 				}
 			}, ContextMenuEvent.getType());
-			b.addClickHandler(tagClickHandler(tAux));
+			b.addClickHandler(tagClickHandler(b,tAux));
 			vtag.add(b); 
 		}
 
@@ -1115,6 +1115,7 @@ public class Documents extends Composite implements EntryPoint {
 		
 		editFile(null,selFiles.size()>1);
 	}
+	
 	Boolean mult;
 	public void editFile(SingleUploader up,Boolean multiple) {
 		FileInfo fi;
@@ -1131,8 +1132,8 @@ public class Documents extends Composite implements EntryPoint {
 			mult = multiple;
 			popup2 = new DocumentsDialog(d){
 				Boolean multiple = mult;
-				Vector<FileInfo> vectorAux;
-				FileInfo fiAux;
+				//Vector<FileInfo> vectorAux;
+				//FileInfo fiAux;
 				@Override
 				protected void onAccept() {
 					final String dialogCode = getWindowCode();
@@ -1217,99 +1218,80 @@ public class Documents extends Composite implements EntryPoint {
             		
             		Vector<FileInfo> fvector = null;
             		if(multiple) fvector = selFiles;
-            		fiAux = fileInfo;
-            		vectorAux = fvector;
             		
-            		idoc.checkDomain(getDomain(),docs, "editFile", new AsyncCallback<Boolean>() {
-						FileInfo fileInfo = fiAux;
-						Vector<FileInfo> fvector = vectorAux;
+					idoc.editFile(getDomain(), dialogCode, fileInfo,fvector,new AsyncCallback<Vector<FileInfo>>() {
 						@Override
-						public void onSuccess(Boolean result) {
-							if(!result){
-								reload();
+						public void onSuccess(Vector<FileInfo> result) {
+							cargando.hide();
+							vertical = new VerticalPanel();
+							Vector<FileInfo> aux = new Vector<FileInfo>();
+							for (FileInfo f : docs.getFiles()) {
+								Boolean boolAdd = false;
+								for(FileInfo f1 : result){
+									if(f.getFileId() == f1.getFileId()){
+										aux.add(f1);
+										boolAdd= true;
+									}
+								}
+								if(!boolAdd) aux.add(f);
 							}
-							else{
-								idoc.editFile(getDomain(), dialogCode, fileInfo,fvector,new AsyncCallback<Vector<FileInfo>>() {
-									@Override
-									public void onSuccess(Vector<FileInfo> result) {
-										cargando.hide();
-										vertical = new VerticalPanel();
-										Vector<FileInfo> aux = new Vector<FileInfo>();
-										for (FileInfo f : docs.getFiles()) {
-											Boolean boolAdd = false;
-											for(FileInfo f1 : result){
-												if(f.getFileId() == f1.getFileId()){
-													aux.add(f1);
-													boolAdd= true;
-												}
-											}
-											if(!boolAdd) aux.add(f);
-										}
-										docs.setFiles(aux);
-										aux = new Vector<FileInfo>();
-										for (FileInfo f : docs.getEfiles()) {
-											Boolean boolAdd = false;
-
-											for(FileInfo f1 : result){
-												if(f.getFileId() == f1.getFileId()){
-													aux.add(f1);
-													boolAdd= true;
-												}
-											}
-											if(!boolAdd) aux.add(f);
-										}
-										docs.setEfiles(aux);
-										aux = new Vector<FileInfo>();
+							docs.setFiles(aux);
+							aux = new Vector<FileInfo>();
+							for (FileInfo f : docs.getEfiles()) {
+								Boolean boolAdd = false;
 								
-											for (FileInfo f : docs.getFilter()) {
-												Boolean boolAdd = false;
-
-												for(FileInfo f1 : result){
-													if(f.getFileId() == f1.getFileId()){
-														aux.add(f1);
-														boolAdd= true;
-													}
-												}
-												if(!boolAdd) aux.add(f);	
-											}
-									
-										docs.setFilter(aux);
-										aux= new Vector<FileInfo>();
-											for (FileInfo f : dataProvider.getList()) {
-												Boolean boolAdd = false;
-
-												for(FileInfo f1 : result){
-													if(f.getFileId() == f1.getFileId()){
-														aux.add(f1);
-														boolAdd= true;
-													}
-												}
-												if(!boolAdd) aux.add(f);
-												dataGrid.getSelectionModel().setSelected(f, false);
-											}
-									
-										dataProvider = new ListDataProvider<FileInfo>(aux);
-										dataProvider.addDataDisplay(dataGrid);
-										updateDatagridColumns();
-										dataGrid.redraw();
+								for(FileInfo f1 : result){
+									if(f.getFileId() == f1.getFileId()){
+										aux.add(f1);
+										boolAdd= true;
 									}
-									@Override
-									public void onFailure(Throwable caught) {
-										String head = "com.esferalia.aon.gwt.document.client.Documents"
-												+ " - editFile(SingleUploader up,Boolean multiple) - editFile";
-										print(head, caught.getMessage());
-									}
-								});
+								}
+								if(!boolAdd) aux.add(f);
 							}
+							docs.setEfiles(aux);
+							aux = new Vector<FileInfo>();
+							
+							for (FileInfo f : docs.getFilter()) {
+								Boolean boolAdd = false;
+								
+								for(FileInfo f1 : result){
+									if(f.getFileId() == f1.getFileId()){
+										aux.add(f1);
+										boolAdd= true;
+									}
+								}
+								if(!boolAdd) aux.add(f);	
+							}
+							
+							docs.setFilter(aux);
+							aux= new Vector<FileInfo>();
+							for (FileInfo f : dataProvider.getList()) {
+								Boolean boolAdd = false;
+								
+								for(FileInfo f1 : result){
+									if(f.getFileId() == f1.getFileId()){
+										aux.add(f1);
+										boolAdd= true;
+									}
+								}
+								if(!boolAdd) aux.add(f);
+								dataGrid.getSelectionModel().setSelected(f, false);
+							}
+							
+							dataProvider = new ListDataProvider<FileInfo>(aux);
+							dataProvider.addDataDisplay(dataGrid);
+							updateDatagridColumns();
+							dataGrid.redraw();
 						}
 						
 						@Override
 						public void onFailure(Throwable caught) {
 							String head = "com.esferalia.aon.gwt.document.client.Documents"
-									+ " - editFile(SingleUploader up,Boolean multiple) - checkDomain";
+									+ " - editFile(SingleUploader up,Boolean multiple) - editFile";
 							print(head, caught.getMessage());
 						}
 					});
+					
 					hide();
 					
 				}
@@ -1421,7 +1403,7 @@ public class Documents extends Composite implements EntryPoint {
 		mult = multiple;
 		popup2 = new DocumentsDialog(d) {
 			Boolean multiple = mult;
-			Vector<FileInfo> vectorAux;
+			
 			@Override
 			protected void onCancel() {
 				hide();				
@@ -1454,95 +1436,74 @@ public class Documents extends Composite implements EntryPoint {
 						fvector = selFiles;
 					else fvector.add(getFileInfo());
 					
-					vectorAux = fvector;
-					idoc.checkDomain(getDomain(), docs,"removeFile",new AsyncCallback<Boolean>() {
-						Vector<FileInfo> fvector = vectorAux;
-						@Override
-						public void onSuccess(Boolean result) {
-							if(!result){
-								reload();
-							}
-							else{
-								idoc.removeFile(getDomain(),fvector,new AsyncCallback<Void>() {
-									Boolean multiple = mult;
-									@Override
-									public void onFailure(Throwable caught) {
-										String head = "com.esferalia.aon.gwt.document.client.Documents"
-												+ " - removeFile(Boolean multiple) - removeFile";
-										print(head, caught.getMessage());
-									}
-									@Override
-									public void onSuccess(Void result) {
-										cargando.hide();
-										Integer n =dataGrid.getKeyboardSelectedRow();
-										FileInfo fi = dataProvider.getList().get(n);
-										Vector<FileInfo> fvector = new Vector<FileInfo>();
-										if(multiple) fvector = selFiles;
-										else fvector.add(fi);
-										Vector<FileInfo> l = new Vector<FileInfo>();
-										for (Integer i = 0; i<docs.getFiles().size();i++) {
-											Boolean boolAdd = false;
-											for(FileInfo f : fvector){
-												if(docs.getFiles().get(i).getFileId() == f.getFileId()){
-													boolAdd = true;
-												}
-											}
-											if(!boolAdd) l.add(docs.getFiles().get(i));
-										}
-										docs.setFiles(l);
-										l = new Vector<FileInfo>();
-										for (Integer i = 0; i<docs.getEfiles().size();i++) {
-											Boolean boolAdd = false;
-											for(FileInfo f : fvector){
-												if(docs.getEfiles().get(i).getFileId() == f.getFileId()){
-													boolAdd = true;
-												}	
-											}
-											if(!boolAdd)l.add(docs.getEfiles().get(i));
-										}
-										docs.setEfiles(l);
-										l = new Vector<FileInfo>();
-										for (Integer i = 0; i<docs.getFilter().size();i++) {
-											Boolean boolAdd = false;
-											for(FileInfo f : fvector){
-												if(docs.getFilter().get(i).getFileId() == f.getFileId()){
-													boolAdd = true;
-												}
-											}
-											if(!boolAdd) l.add(docs.getFilter().get(i));
-										}
-										docs.setFilter(l);
-										l = new Vector<FileInfo>();
-										
-										for(Integer j = 0 ; j<dataProvider.getList().size();j++){
-											Boolean boolAdd = false;
-											for(FileInfo f : fvector){
-												if(dataProvider.getList().get(j).getFileId() == f.getFileId()){
-													boolAdd = true;
-												}	
-											}
-											if(!boolAdd) l.add(dataProvider.getList().get(j));
-											dataGrid.getSelectionModel().setSelected(dataProvider.getList().get(j), false);
-										}
-								
-										dataProvider = new ListDataProvider<FileInfo>(l);
-										dataProvider.addDataDisplay(dataGrid);
-										updateDatagridColumns();
-										dataGrid.redraw();
-									
-									}
-								} );
-							}
-						}
-						
+					idoc.removeFile(getDomain(),fvector,new AsyncCallback<Void>() {
+						Boolean multiple = mult;
 						@Override
 						public void onFailure(Throwable caught) {
 							String head = "com.esferalia.aon.gwt.document.client.Documents"
-									+ " - removeFile(Boolean multiple) - checkDomain";
+									+ " - removeFile(Boolean multiple) - removeFile";
 							print(head, caught.getMessage());
 						}
-					});
-					
+						@Override
+						public void onSuccess(Void result) {
+							cargando.hide();
+							Integer n =dataGrid.getKeyboardSelectedRow();
+							FileInfo fi = dataProvider.getList().get(n);
+							Vector<FileInfo> fvector = new Vector<FileInfo>();
+							if(multiple) fvector = selFiles;
+							else fvector.add(fi);
+							Vector<FileInfo> l = new Vector<FileInfo>();
+							for (Integer i = 0; i<docs.getFiles().size();i++) {
+								Boolean boolAdd = false;
+								for(FileInfo f : fvector){
+									if(docs.getFiles().get(i).getFileId() == f.getFileId()){
+										boolAdd = true;
+									}
+								}
+								if(!boolAdd) l.add(docs.getFiles().get(i));
+							}
+							docs.setFiles(l);
+							l = new Vector<FileInfo>();
+							for (Integer i = 0; i<docs.getEfiles().size();i++) {
+								Boolean boolAdd = false;
+								for(FileInfo f : fvector){
+									if(docs.getEfiles().get(i).getFileId() == f.getFileId()){
+										boolAdd = true;
+									}	
+								}
+								if(!boolAdd)l.add(docs.getEfiles().get(i));
+							}
+							docs.setEfiles(l);
+							l = new Vector<FileInfo>();
+							for (Integer i = 0; i<docs.getFilter().size();i++) {
+								Boolean boolAdd = false;
+								for(FileInfo f : fvector){
+									if(docs.getFilter().get(i).getFileId() == f.getFileId()){
+										boolAdd = true;
+									}
+								}
+								if(!boolAdd) l.add(docs.getFilter().get(i));
+							}
+							docs.setFilter(l);
+							l = new Vector<FileInfo>();
+							
+							for(Integer j = 0 ; j<dataProvider.getList().size();j++){
+								Boolean boolAdd = false;
+								for(FileInfo f : fvector){
+									if(dataProvider.getList().get(j).getFileId() == f.getFileId()){
+										boolAdd = true;
+									}	
+								}
+								if(!boolAdd) l.add(dataProvider.getList().get(j));
+								dataGrid.getSelectionModel().setSelected(dataProvider.getList().get(j), false);
+							}
+								
+							dataProvider = new ListDataProvider<FileInfo>(l);
+							dataProvider.addDataDisplay(dataGrid);
+							updateDatagridColumns();
+							dataGrid.redraw();
+						}
+					} );
 				}
 			}
 
@@ -1754,117 +1715,100 @@ public class Documents extends Composite implements EntryPoint {
 						if(result){
 							hide();
 							cargando.show();
-							idoc.checkDomain(getDomain(), docs, "insertFile", new AsyncCallback<Boolean>() {
-								
-								@Override
-								public void onSuccess(Boolean result) {
-									if(!result){
-										reload();
-										cargando.hide();
-									}
-									else{
-									idoc.insertFile(getDomain(), dialogCode, finsert, new AsyncCallback<Vector<FileInfo>>() {
+							
+							idoc.insertFile(getDomain(), dialogCode, finsert, new AsyncCallback<Vector<FileInfo>>() {
 
-										@Override
-										public void onFailure(Throwable caught) {
-											String head = "com.esferalia.aon.gwt.document.client.Documents"
-													+ " - newFile(SingleUploader up) - insertFile";
-											print(head, caught.getMessage());
-										}
-										
-										@Override
-										public void onSuccess(Vector<FileInfo> result) {
-											cargando.hide();
-											Vector<FileInfo> aux = new Vector<FileInfo>();
-											for (FileInfo f : docs.getFiles()) {
-												aux.add(f);		
-											}
-
-											aux.addAll(result);
-											docs.setFiles(aux);
-											Integer index=0;
-											
-											while(index < docs.getFilter().size() && docs.getFilter().get(index).getIsParent()){
-												index++;
-											}
-											
-											if(docs.getFilter().size() == 0 || result.get(0).getDomain().equals(docs.getFilter().get(index).getDomain())){
-
-												aux = new Vector<FileInfo>();
-												for (FileInfo f : docs.getEfiles()) {
-													aux.add(f);		
-												}
-												aux.addAll(result);
-												docs.setEfiles(aux);
-
-												if(hasFilter()){
-													FileInfo fi = result.get(0);
-													Boolean showCatfilter = false;
-													if(categoryFilterList != null && categoryFilterList.size()>0){
-														if(contains(fi.getCategoryStr(), categoryFilterList))
-															showCatfilter = true;
-													} else showCatfilter = true;
-													
-													Boolean showTagfilter = false;
-													if(tagFilterList != null && tagFilterList.size()>0){
-														for(Tag tag : fi.getTags()){
-															if(contains(tag.getName(), tagFilterList))
-																showTagfilter = true;
-														}
-													} else showTagfilter = true;
-													if(showTagfilter && showCatfilter){
-														aux= new Vector<FileInfo>();
-														for (FileInfo f : docs.getFilter()) {
-															aux.add(f);
-														}
-														aux.addAll(result);
-														docs.setFilter(aux);
-														aux= new Vector<FileInfo>();
-														for (FileInfo f : dataProvider.getList()) {
-															aux.add(f);
-															dataGrid.getSelectionModel().setSelected(f, false);
-														}
-														aux.addAll(result);
-														dataProvider = new ListDataProvider<FileInfo>(aux);
-														dataProvider.addDataDisplay(dataGrid); 
-														updateDatagridColumns();
-														dataGrid.redraw();
-													}
-												}
-												else{
-													aux= new Vector<FileInfo>();
-													for (FileInfo f : docs.getFilter()) {
-														aux.add(f);
-													}
-													aux.addAll(result);
-													docs.setFilter(aux);
-													aux= new Vector<FileInfo>();
-													for (FileInfo f : dataProvider.getList()) {
-														aux.add(f);
-														dataGrid.getSelectionModel().setSelected(f, false);
-
-													}
-
-													aux.addAll(result);
-													dataProvider = new ListDataProvider<FileInfo>(aux);
-													dataProvider.addDataDisplay(dataGrid); 
-													updateDatagridColumns();
-													dataGrid.redraw();
-												}
-											}
-										}
-									});
-									}
-								}
-								
 								@Override
 								public void onFailure(Throwable caught) {
 									String head = "com.esferalia.aon.gwt.document.client.Documents"
-											+ " - newFile(SingleUploader up) - checkDomain";
+											+ " - newFile(SingleUploader up) - insertFile";
 									print(head, caught.getMessage());
 								}
+										
+								@Override
+								public void onSuccess(Vector<FileInfo> result) {
+									cargando.hide();
+									Vector<FileInfo> aux = new Vector<FileInfo>();
+									for (FileInfo f : docs.getFiles()) {
+										aux.add(f);		
+									}
+									
+									aux.addAll(result);
+									docs.setFiles(aux);
+									Integer index=0;
+									
+									while(index < docs.getFilter().size() && docs.getFilter().get(index).getIsParent()){
+										index++;
+									}
+									
+									if(docs.getFilter().size() == 0 || result.get(0).getDomain().equals(docs.getFilter().get(index).getDomain())){
+										
+										aux = new Vector<FileInfo>();
+										for (FileInfo f : docs.getEfiles()) {
+											aux.add(f);		
+										}
+										aux.addAll(result);
+										docs.setEfiles(aux);
+										
+										if(hasFilter()){
+											FileInfo fi = result.get(0);
+											Boolean showCatfilter = false;
+											if(categoryFilterList != null && categoryFilterList.size()>0){
+												if(contains(fi.getCategoryStr(), categoryFilterList))
+													showCatfilter = true;
+											} else showCatfilter = true;
+													
+											Boolean showTagfilter = false;
+											if(tagFilterList != null && tagFilterList.size()>0){
+												for(Tag tag : fi.getTags()){
+													if(contains(tag.getName(), tagFilterList))
+														showTagfilter = true;
+												}		
+											} else showTagfilter = true;
+											if(showTagfilter && showCatfilter){
+												aux= new Vector<FileInfo>();
+												for (FileInfo f : docs.getFilter()) {
+													aux.add(f);
+												}
+												aux.addAll(result);
+												docs.setFilter(aux);
+												aux= new Vector<FileInfo>();
+												for (FileInfo f : dataProvider.getList()) {
+													aux.add(f);
+													dataGrid.getSelectionModel().setSelected(f, false);
+												}
+												aux.addAll(result);
+												dataProvider = new ListDataProvider<FileInfo>(aux);
+												dataProvider.addDataDisplay(dataGrid); 
+												updateDatagridColumns();
+												dataGrid.redraw();
+											}
+										}
+										else{
+											aux= new Vector<FileInfo>();
+											for (FileInfo f : docs.getFilter()) {
+												aux.add(f);
+											}
+											aux.addAll(result);
+											docs.setFilter(aux);
+											aux= new Vector<FileInfo>();
+											for (FileInfo f : dataProvider.getList()) {
+												aux.add(f);
+												dataGrid.getSelectionModel().setSelected(f, false);	
+
+											}
+
+											aux.addAll(result);
+											dataProvider = new ListDataProvider<FileInfo>(aux);
+											dataProvider.addDataDisplay(dataGrid); 
+											updateDatagridColumns();
+											dataGrid.redraw();
+										}
+									}
+								}
 							});
-							
+					
+                
 							vertical = new VerticalPanel();
 						}
 						else{
@@ -2050,104 +1994,89 @@ public class Documents extends Composite implements EntryPoint {
 					public void onSuccess(Boolean result) {
 						if(result){
 							cargando.show();
-							idoc.checkDomain(getDomain(),docs,"insertFile", new AsyncCallback<Boolean>() {
-								
-								@Override
-								public void onSuccess(Boolean result) {
-									if(!result){
-										reload();
-										cargando.hide();
-									}
-									else{
-									idoc.insertFile(getDomain(), dialogCode, finsert, new AsyncCallback<Vector<FileInfo>>() {
+							idoc.insertFile(getDomain(), dialogCode, finsert, new AsyncCallback<Vector<FileInfo>>() {
 
-										@Override
-										public void onFailure(Throwable caught) {}
-										
-										@Override
-										public void onSuccess(Vector<FileInfo> result) {
-											cargando.hide();
-											Vector<FileInfo> aux = new Vector<FileInfo>();
-											for (FileInfo f : docs.getFiles()) {
-												aux.add(f);		
-											}
-											aux.addAll(result);
-											docs.setFiles(aux);
-											Integer index=0;
-											while(docs.getFilter().get(index).getIsParent()){
-												index++;
-											}
-											if(result.get(0).getDomain().equals(docs.getFilter().get(index).getDomain())){
-												aux = new Vector<FileInfo>();
-												for (FileInfo f : docs.getEfiles()) {
-													aux.add(f);		
-												}
-												aux.addAll(result);
-												docs.setEfiles(aux);
-
-												if(hasFilter()){
-													FileInfo fi = result.get(0);
-													Boolean showCatfilter = false;
-													if(categoryFilterList != null && categoryFilterList.size()>0){
-														if(contains(fi.getCategoryStr(), categoryFilterList))
-															showCatfilter = true;
-													}else showCatfilter = true;
-													
-													Boolean showTagfilter = false;
-													if(tagFilterList != null && tagFilterList.size()>0){
-														for(Tag tag : fi.getTags()){
-															if(contains(tag.getName(), tagFilterList))
-																showTagfilter = true;
-														}
-													}else showTagfilter = true;
-													
-													if(showTagfilter && showCatfilter){
-														aux= new Vector<FileInfo>();
-														for (FileInfo f : docs.getFilter()) {
-															aux.add(f);
-														}
-														aux.addAll(result);
-														docs.setFilter(aux);
-														aux= new Vector<FileInfo>();
-														for (FileInfo f : dataProvider.getList()) {
-															aux.add(f);
-															dataGrid.getSelectionModel().setSelected(f, false);
-														}
-														aux.addAll(result);
-														dataProvider = new ListDataProvider<FileInfo>(aux);
-														dataProvider.addDataDisplay(dataGrid); 
-														updateDatagridColumns();
-														dataGrid.redraw();
-													}
-												}
-												else{
-													aux= new Vector<FileInfo>();
-													for (FileInfo f : docs.getFilter()) {
-														aux.add(f);
-													}
-													aux.addAll(result);
-													docs.setFilter(aux);
-													aux= new Vector<FileInfo>();
-													for (FileInfo f : dataProvider.getList()) {
-														aux.add(f);
-														dataGrid.getSelectionModel().setSelected(f, false);
-													}
-													aux.addAll(result);
-													dataProvider = new ListDataProvider<FileInfo>(aux);
-													dataProvider.addDataDisplay(dataGrid); 
-													updateDatagridColumns();
-													dataGrid.redraw();
-												}
-											}
-										}
-									});
-									vertical = new VerticalPanel();
-									}
-								}
-								
 								@Override
 								public void onFailure(Throwable caught) {}
+								
+								@Override
+								public void onSuccess(Vector<FileInfo> result) {
+									cargando.hide();
+									Vector<FileInfo> aux = new Vector<FileInfo>();
+									for (FileInfo f : docs.getFiles()) {
+										aux.add(f);		
+									}
+									aux.addAll(result);
+									docs.setFiles(aux);
+									Integer index=0;
+									while(docs.getFilter().get(index).getIsParent()){
+										index++;
+									}
+									if(result.get(0).getDomain().equals(docs.getFilter().get(index).getDomain())){
+										aux = new Vector<FileInfo>();
+										for (FileInfo f : docs.getEfiles()) {
+											aux.add(f);		
+										}
+										aux.addAll(result);
+										docs.setEfiles(aux);
+										
+										if(hasFilter()){
+											FileInfo fi = result.get(0);
+											Boolean showCatfilter = false;
+											if(categoryFilterList != null && categoryFilterList.size()>0){
+												if(contains(fi.getCategoryStr(), categoryFilterList))
+													showCatfilter = true;
+											}else showCatfilter = true;
+													
+											Boolean showTagfilter = false;
+											if(tagFilterList != null && tagFilterList.size()>0){
+												for(Tag tag : fi.getTags()){
+													if(contains(tag.getName(), tagFilterList))
+														showTagfilter = true;
+												}
+											}else showTagfilter = true;
+											
+											if(showTagfilter && showCatfilter){
+												aux= new Vector<FileInfo>();
+												for (FileInfo f : docs.getFilter()) {
+													aux.add(f);
+												}
+												aux.addAll(result);
+												docs.setFilter(aux);
+												aux= new Vector<FileInfo>();
+												for (FileInfo f : dataProvider.getList()) {
+													aux.add(f);
+													dataGrid.getSelectionModel().setSelected(f, false);
+												}
+												aux.addAll(result);
+												dataProvider = new ListDataProvider<FileInfo>(aux);
+												dataProvider.addDataDisplay(dataGrid); 
+												updateDatagridColumns();
+												dataGrid.redraw();
+											}
+										}
+										else{
+											aux= new Vector<FileInfo>();
+											for (FileInfo f : docs.getFilter()) {
+												aux.add(f);
+											}
+											aux.addAll(result);
+											docs.setFilter(aux);
+											aux= new Vector<FileInfo>();
+											for (FileInfo f : dataProvider.getList()) {
+												aux.add(f);
+												dataGrid.getSelectionModel().setSelected(f, false);
+											}
+											aux.addAll(result);
+											dataProvider = new ListDataProvider<FileInfo>(aux);
+											dataProvider.addDataDisplay(dataGrid); 
+											updateDatagridColumns();
+											dataGrid.redraw();
+										}
+									}
+								}
 							});
+							vertical = new VerticalPanel();		
 						}
 						else{
 							TextBox tb =(TextBox) grid.getWidget(0, 1);
@@ -2381,43 +2310,29 @@ public class Documents extends Composite implements EntryPoint {
 		delFile.setVisible(false);
 		optionFile.setVisible(false);
 		
- 		idoc.checkDomain(getDomain(), docs, "searchFile",new AsyncCallback<Boolean>(){
-			
-			@Override
-			public void onSuccess(Boolean result) {
-				if(!result){
-					reload();
-				}
-				else{
-					String searchStr = searchBox.getText();
-					Vector<FileInfo> vaux = new Vector<FileInfo>();
-					if(isServiconvenios) vaux = docs.getServiconvenios();
-					else if(isLote) vaux = lote;
-					else vaux = docs.getFilter();
-					//dataProvider.getList().stream().forEach(f-> vaux.add(f));
-					idoc.searchFile(searchStr, vaux,
-						new AsyncCallback<Vector<FileInfo>>() {
-
-							@Override
-							public void onSuccess(Vector<FileInfo> result) {
-								searchs = result;
-								dataProvider = new ListDataProvider<FileInfo>(result);
-								dataProvider.addDataDisplay(dataGrid);
-								updateDatagridColumns();
-								dataGrid.redraw();
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-
-							}
-					});
-				}
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
+ 		String searchStr = searchBox.getText();
+ 		Vector<FileInfo> vaux = new Vector<FileInfo>();
+ 		if(isServiconvenios) vaux = docs.getServiconvenios();
+ 		else if(isLote) vaux = lote;
+ 		else vaux = docs.getFilter();
+ 		//dataProvider.getList().stream().forEach(f-> vaux.add(f));
+ 		idoc.searchFile(searchStr, vaux,
+ 				new AsyncCallback<Vector<FileInfo>>() {
+ 			
+ 			@Override
+ 			public void onSuccess(Vector<FileInfo> result) {
+ 				searchs = result;
+ 				dataProvider = new ListDataProvider<FileInfo>(result);
+ 				dataProvider.addDataDisplay(dataGrid);
+ 				updateDatagridColumns();
+ 				dataGrid.redraw();
+ 			}
+ 			
+ 			@Override
+ 			public void onFailure(Throwable caught) {
+ 				
+ 			}
+ 		});
 	}
 	
 	Boolean son = false;
@@ -2426,48 +2341,33 @@ public class Documents extends Composite implements EntryPoint {
 		removeFilterCat();
 		removeFilterTag();
 		removeFilterItems();
-		idoc.checkDomain(getDomain(), docs,"esearchFile", new AsyncCallback<Boolean>() {
-			
+		
+		String searchStr = Utils.getOracleString(enterpriseSearchBox.getText());
+		son = !searchStr.equals(docs.getDomain());
+		newFilterCat(searchStr);
+		newFilterTag(searchStr);
+		searchDomain = searchStr;
+		idoc.eSearchFile(docs.getFiles(),searchStr,new AsyncCallback<Vector<FileInfo>>() {
 			@Override
-			public void onSuccess(Boolean result) {
-				if(!result){
-					reload();
+			public void onSuccess(Vector<FileInfo> result) {
+				gestionLote.setVisible(false);
+				gestionDocs.setVisible(true);
+				docs.setEfiles(result);
+				docs.setFilter(result);
+				isServiconvenios =false;
+				isLote = false;
+				searchs = result;
+				for(FileInfo f : dataProvider.getList()){
+					dataGrid.getSelectionModel().setSelected(f, false);
 				}
-				else{
-					String searchStr = Utils.getOracleString(enterpriseSearchBox.getText());
-					son = !searchStr.equals(docs.getDomain());
-					newFilterCat(searchStr);
-					newFilterTag(searchStr);
-					searchDomain = searchStr;
-					idoc.eSearchFile(docs.getFiles(),searchStr,new AsyncCallback<Vector<FileInfo>>() {
-							@Override
-							public void onSuccess(Vector<FileInfo> result) {
-								gestionLote.setVisible(false);
-								gestionDocs.setVisible(true);
-								docs.setEfiles(result);
-								docs.setFilter(result);
-								isServiconvenios =false;
-								isLote = false;
-								searchs = result;
-								for(FileInfo f : dataProvider.getList()){
-									dataGrid.getSelectionModel().setSelected(f, false);
-								}
-								dataProvider = new ListDataProvider<FileInfo>(result);
-								dataProvider.addDataDisplay(dataGrid);
-								updateDatagridColumns();
-								dataGrid.redraw();
-							}
-							@Override
-							public void onFailure(Throwable caught) {}
-					});
-				}
+				dataProvider = new ListDataProvider<FileInfo>(result);
+				dataProvider.addDataDisplay(dataGrid);
+				updateDatagridColumns();
+				dataGrid.redraw();
 			}
-			
 			@Override
 			public void onFailure(Throwable caught) {}
-		});
-		
-		
+		});	
 	}
 	
 	private void newFilterCat(String domain){
@@ -2491,7 +2391,7 @@ public class Documents extends Composite implements EntryPoint {
 						ccm.show();
 					}
 				}, ContextMenuEvent.getType());
-				b.addClickHandler(categoryClickHandler(c));
+				b.addClickHandler(categoryClickHandler(b, c));
 				v.add(b);
 			}
 		}
@@ -2516,7 +2416,7 @@ public class Documents extends Composite implements EntryPoint {
 						tcm.show();
 					}
 				}, ContextMenuEvent.getType());
-				b.addClickHandler(tagClickHandler(t));
+				b.addClickHandler(tagClickHandler(b, t));
 				v.add(b);
 			}}
 		
@@ -2548,60 +2448,42 @@ public class Documents extends Composite implements EntryPoint {
 		delFile.setVisible(false);
 		optionFile.setVisible(false);
 		removeFilterItems();
-		
-		idoc.checkDomain(getDomain(),docs,"allFiles", new AsyncCallback<Boolean>() {
+		if(docs.getEfiles()==null ){
+					
+			idoc.getAllFiles(getDomain(), new AsyncCallback<Document>() {
+				
+				@Override
+				public void onSuccess(Document result) {
+					docs = result;
+					for(FileInfo f : dataProvider.getList()){
+						dataGrid.getSelectionModel().setSelected(f, false);
+					}
+					addDataDisplay(dataGrid);
+					isServiconvenios=false;
+					isLote = false;
+					updateDatagridColumns();
+					dataGrid.redraw();
+				}	
+
+
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}
+		else{
+			addDataDisplay(dataGrid);
 			
-			@Override
-			public void onSuccess(Boolean result) {
-				if(!result){
-					reload();
-				}
-				else{
-					if(docs.getEfiles()==null ){
-					
-						idoc.getAllFiles(getDomain(), new AsyncCallback<Document>() {
-					
-							@Override
-							public void onSuccess(Document result) {
-								docs = result;
-								for(FileInfo f : dataProvider.getList()){
-									dataGrid.getSelectionModel().setSelected(f, false);
-								}
-								addDataDisplay(dataGrid);
-								isServiconvenios=false;
-								isLote = false;
-								updateDatagridColumns();
-								dataGrid.redraw();
-							}
-
-
-							@Override
-							public void onFailure(Throwable caught) {}
-						});
-					}
-					else{
-
-
-						addDataDisplay(dataGrid);
-
-						Integer rowCount = showMorePager.getDisplay().getRowCount();
-						if(dataProvider.getList().size() == rowCount){
-							showMorePager.setRangeLimited(false);
-						
-						}
-						isServiconvenios=false;
-						isLote = false;
-						updateDatagridColumns();
-						dataGrid.redraw();
-					}
-					docs.setFilter(docs.getEfiles());		
-				}
+			Integer rowCount = showMorePager.getDisplay().getRowCount();
+			if(dataProvider.getList().size() == rowCount){
+				showMorePager.setRangeLimited(false);
+				
 			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
-	
+			isServiconvenios=false;
+			isLote = false;
+			updateDatagridColumns();
+			dataGrid.redraw();
+		}
+		docs.setFilter(docs.getEfiles());		
 	}
 
 	Boolean isServiconvenios=false;
@@ -2837,30 +2719,6 @@ public class Documents extends Composite implements EntryPoint {
 					return sh;
 				}
 			};
-			/*Column<FileInfo, Boolean> confColumn = new Column<FileInfo, Boolean>(new CheckboxCell(){
-				@Override
-				public void onBrowserEvent(
-						com.google.gwt.cell.client.Cell.Context context,
-						Element parent, Boolean value, NativeEvent event,
-						ValueUpdater<Boolean> valueUpdater) {
-
-				}
-			
-				@Override
-				public boolean isEditing(
-						com.google.gwt.cell.client.Cell.Context context,
-						Element parent, Boolean value) {
-					return false;
-				}
-				
-			}){
-				@Override
-				public Boolean getValue(FileInfo object) {
-					return object.getConfidential();
-				}
-				
-			};*/
-		
 		
 			SafeHtml sh = new SafeHtml() {
 		
@@ -2954,8 +2812,6 @@ public class Documents extends Composite implements EntryPoint {
 		d.setConfidentialUser(confidentialUser);
 		d.setIsServiconvenios(isServiconvenios);
 		popup2 = new DocumentsDialog(d) {
-			SearchInfo siAux;
-			Vector<FileInfo> vAux;
 			@Override
 			protected void onCancel() {
 				hide();
@@ -2963,9 +2819,8 @@ public class Documents extends Composite implements EntryPoint {
 			}
 			
 			@Override
-			protected void onAccept() {
+			protected void onAccept() {	
 				removeFilterItems();
-				
 				SearchInfo si = new SearchInfo();
 				if(getSons().size()!=1 && !isServiconvenios){
 					SuggestBox tb0 = (SuggestBox) grid.getWidget(0, 1);
@@ -3004,19 +2859,19 @@ public class Documents extends Composite implements EntryPoint {
 				else
 					si.setDate(tb2.getTextBox().getText());
 
-				ListBox lb1 = (ListBox) grid.getWidget(4, 1);
-				String s1 = null;
-				for (int i = 0; i < lb1.getItemCount(); i++) {
-					if (lb1.isItemSelected(i)) {
-						s1 = lb1.getValue(i);
+				VerticalPanel categoryVerticalPanel = (VerticalPanel) grid.getWidget(4, 1);
+				LinkedList<String> categorySearchList = new LinkedList<String>();
+				for(Integer i = 0; i < categoryVerticalPanel.getWidgetCount(); i++){
+					HorizontalPanel categoryHorizontalPanel= (HorizontalPanel) categoryVerticalPanel.getWidget(i);
+					ListBox lb1 = (ListBox) categoryHorizontalPanel.getWidget(0);
+					if(!lb1.getSelectedItemText().equals("-")){
+						String s1 = lb1.getSelectedItemText();
 						if(s1.substring(0, 1).equals(Character.toString((char)9660)) || s1.substring(0, 1).equals(Character.toString((char)9650)))
 							s1= s1.substring(1);
+						categorySearchList.add(s1);
 					}
 				}
-				if ("-".equals(s1) || s1 == null)
-					si.setCategory(null);
-				else
-					si.setCategory(s1);
+				si.setCategoryList(categorySearchList);
 
 				VerticalPanel vp = (VerticalPanel) grid.getWidget(5, 1);
 
@@ -3091,64 +2946,45 @@ public class Documents extends Composite implements EntryPoint {
 					vaux = lote;
 				else
 					vaux = docs.getEfiles();
-				siAux = si;
-				vAux = vaux;
-				idoc.checkDomain(getDomain(), docs,"searchFile", new AsyncCallback<Boolean>() {
-					SearchInfo si = siAux;
-					Vector<FileInfo> vaux = vAux;
+				idoc.searchFile(si, vaux,docs.getFiles(), new AsyncCallback<Vector<FileInfo>>() {
+
 					@Override
-					public void onSuccess(Boolean result) {
-						if(!result){
-							reload();
+					public void onSuccess(Vector<FileInfo> result) {
+						if(!isServiconvenios && !result.isEmpty() && !docs.getEfiles().get(0).getDomain().equals(result.get(0).getDomain())){
+							idoc.eSearchFile(docs.getFiles(), result.get(0).getDomain(), new AsyncCallback<Vector<FileInfo>>() {
+								
+								@Override
+								public void onSuccess(Vector<FileInfo> result) {
+									docs.setEfiles(result);
+									docs.setFilter(result);
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									
+								}
+							});
 						}
-						else{
-							idoc.searchFile(si, vaux,docs.getFiles(),
-									new AsyncCallback<Vector<FileInfo>>() {
-
-									@Override
-									public void onSuccess(Vector<FileInfo> result) {
-										if(!isServiconvenios && !result.isEmpty() && !docs.getEfiles().get(0).getDomain().equals(result.get(0).getDomain())){
-											idoc.eSearchFile(docs.getFiles(), result.get(0).getDomain(), new AsyncCallback<Vector<FileInfo>>() {
-												
-												@Override
-												public void onSuccess(Vector<FileInfo> result) {
-													docs.setEfiles(result);
-													docs.setFilter(result);
-												}
-												
-												@Override
-												public void onFailure(Throwable caught) {
-												
-												}
-											});
-										}
-										searchs = result;
-										for(FileInfo f : dataProvider.getList()){
-											dataGrid.getSelectionModel().setSelected(f, false);
-										}
-										dataProvider = null;
-										dataProvider = new ListDataProvider<FileInfo>(
-												searchs);
-										dataProvider.addDataDisplay(dataGrid);
-										updateDatagridColumns();
-										dataGrid.redraw();
-
-									}
-
-									@Override
-									public void onFailure(Throwable caught) {
-
-									}
-								});
-						hide();
-						vertical = new VerticalPanel();
+						searchs = result;
+						for(FileInfo f : dataProvider.getList()){
+							dataGrid.getSelectionModel().setSelected(f, false);
 						}
+						dataProvider = null;
+						dataProvider = new ListDataProvider<FileInfo>(
+								searchs);
+						dataProvider.addDataDisplay(dataGrid);
+						updateDatagridColumns();
+						dataGrid.redraw();
+						
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						
+					}
 				});
-				
+				hide();
+				vertical = new VerticalPanel();
 			}
 
 			@Override
@@ -3157,7 +2993,6 @@ public class Documents extends Composite implements EntryPoint {
 		popup2.addStyleName("gwt-PopupPanel-document");
 		popup2.setGlassEnabled(true);
 		popup2.show();
-
 	}
 	
 	String dId;
@@ -3450,67 +3285,54 @@ public class Documents extends Composite implements EntryPoint {
 	void reset(ClickEvent event){
 		reset();
 	}
+	
 	private void reset() {
-		idoc.checkDomain(getDomain(), docs,"reset", new AsyncCallback<Boolean>() {
-			
-			@Override
-			public void onSuccess(Boolean result) {
-				if(!result){
-					reload();
-				}
-				else{
-					lateralMenuPaper.setSelected("0");
-					removeFilterCat();
-					removeFilterTag();
-					searchDomain = docs.getDomain();
-					newFile.setVisible(true); sConvenios.setVisible(false);
-					gestionLote.setVisible(false);
-					gestionDocs.setVisible(true);
-					editFile.setVisible(false);
-					delFile.setVisible(false);
-					optionFile.setVisible(false);
-					removeFilterItems();
-				
-					if(getSons().size()==1){
-						for(FileInfo f : dataProvider.getList()){
-							dataGrid.getSelectionModel().setSelected(f, false);
-						}
-						dataProvider = new ListDataProvider<FileInfo>(docs.getEfiles());
-						dataProvider.addDataDisplay(dataGrid);
-						updateDatagridColumns();
-						dataGrid.redraw();
-					}
-					else{
-						String searchStr = docs.getDomain();
-						son =false;
-						enterpriseSearchBox.setText("");
-						idoc.eSearchFile(docs.getFiles(),searchStr,new AsyncCallback<Vector<FileInfo>>() {
-							@Override
-							public void onSuccess(Vector<FileInfo> result) {
-								docs.setEfiles(result);
-								docs.setFilter(result);
-								searchs = result;
-								for(FileInfo f : dataProvider.getList()){
-									dataGrid.getSelectionModel().setSelected(f, false);
-								}
-								dataProvider = new ListDataProvider<FileInfo>(result);
-								dataProvider.addDataDisplay(dataGrid);
-								updateDatagridColumns();
-								dataGrid.redraw();
-							}
-							@Override
-							public void onFailure(Throwable caught) {}
-						});
-					}
-								
-				}
-				
+		searchBox.setText("");
+		lateralMenuPaper.setSelected("0");
+		removeFilterCat();
+		removeFilterTag();
+		searchDomain = docs.getDomain();
+		newFile.setVisible(true); sConvenios.setVisible(false);
+		gestionLote.setVisible(false);
+		gestionDocs.setVisible(true);
+		editFile.setVisible(false);
+		delFile.setVisible(false);
+		optionFile.setVisible(false);
+		removeFilterItems();
+
+		if(getSons().size()==1){
+			for(FileInfo f : dataProvider.getList()){
+				dataGrid.getSelectionModel().setSelected(f, false);
 			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
+			dataProvider = new ListDataProvider<FileInfo>(docs.getEfiles());
+			dataProvider.addDataDisplay(dataGrid);
+			updateDatagridColumns();
+			dataGrid.redraw();
+		}
+		else{
+			String searchStr = docs.getDomain();
+			son =false;
+			enterpriseSearchBox.setText("");
+			idoc.eSearchFile(docs.getFiles(),searchStr,new AsyncCallback<Vector<FileInfo>>() {
+				@Override
+				public void onSuccess(Vector<FileInfo> result) {
+					docs.setEfiles(result);
+					docs.setFilter(result);
+					searchs = result;
+					for(FileInfo f : dataProvider.getList()){
+						dataGrid.getSelectionModel().setSelected(f, false);
+					}
+					dataProvider = new ListDataProvider<FileInfo>(result);
+					dataProvider.addDataDisplay(dataGrid);
+					updateDatagridColumns();
+					dataGrid.redraw();
+				}
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}						
 	}
+				
 	@UiHandler("upDrive")
 	void upDrive(ClickEvent event){
 		Dialog d = new Dialog("upload", "Subir Archivo", "Cancelar", true,
@@ -3732,7 +3554,7 @@ public class Documents extends Composite implements EntryPoint {
 									tcm.show();
 								}
 							}, ContextMenuEvent.getType());
-							b.addClickHandler(tagClickHandler(tagAux));
+							b.addClickHandler(tagClickHandler(b, tagAux));
 							v.remove(v.getWidgetCount() - 1);
 							v.add(b);
 						}
@@ -3792,7 +3614,7 @@ public class Documents extends Composite implements EntryPoint {
 									ccm.show();
 								}
 							}, ContextMenuEvent.getType());
-							b.addClickHandler(categoryClickHandler(catAux));
+							b.addClickHandler(categoryClickHandler(b,catAux));
 							v.remove(v.getWidgetCount() - 1);
 							v.add(b);
 						}
@@ -3830,123 +3652,86 @@ public class Documents extends Composite implements EntryPoint {
 				TextBox tb = (TextBox)grid.getWidget(0, 1);
 				tag.setName(tb.getText());
 				newName= tb.getText();
-				idoc.checkDomain(getDomain(), docs,"editTag", new AsyncCallback<Boolean>() {
-					
+				idoc.editTag(getDomain(), tag.getName(),tag.getId(), new AsyncCallback<Void>() {
 					@Override
-					public void onSuccess(Boolean result) {
-						if(!result){
-							reload();
+					public void onSuccess(Void result) {		
+						VerticalPanel v = (VerticalPanel) epanel.getContent();
+						for (int i = 0; i<v.getWidgetCount() ; i++) {
+							Button b = (Button) v.getWidget(i);
+							if(b.getText().equals(oldName)){
+								b.setText(newName);
+							}
 						}
-						else{
-							idoc.editTag(getDomain(), tag.getName(),tag.getId(), new AsyncCallback<Void>() {
-								@Override
-								public void onSuccess(Void result) {
-						
-									VerticalPanel v = (VerticalPanel) epanel.getContent();
-									for (int i = 0; i<v.getWidgetCount() ; i++) {
-										Button b = (Button) v.getWidget(i);
-										if(b.getText().equals(oldName)){
-											b.setText(newName);
-										}
-									}
-									for (FileInfo f : docs.getEfiles()) {
-										String s="";
-										Integer size = f.getTags().size();
-										for(Tag t : f.getTags()){
-											if(size<=1 && t.getName().equals(oldName)){
-												t.setName(newName);
-												f.setTagsStr(newName);
-											}
-											else if(!t.getName().equals(oldName)){
-												s = s+t.getName()+", ";
-											}
-											else{
-												t.setName(newName);
-												s = s + newName+", ";
-											}
-										}
-										if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));
-									}
-									for (FileInfo f : docs.getFiles()) {
-										String s="";
-										Integer size = f.getTags().size();
-										for(Tag t : f.getTags()){
-											if(size<=1 && t.getName().equals(oldName)){
-												t.setName(newName);
-												f.setTagsStr(newName);
-											}
-											else if(!t.getName().equals(oldName)){
-												s = s+t.getName()+", ";
-											}
-											else{
-												t.setName(newName);
-												f.getTags().add(tag);										s = s + newName+", ";
-											}
-										}
-										if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));
-									}
-									for (FileInfo f : docs.getFilter()) {
-										String s="";
-										Integer size = f.getTags().size();
-										for(Tag t : f.getTags()){
-											if(size<=1 && t.getName().equals(oldName)){
-												t.setName(newName);
-												f.setTagsStr(newName);
-											}
-											else if(!t.getName().equals(oldName)){
-												s = s+t.getName()+", ";
-											}
-											else{
-												t.setName(newName);
-												s = s + newName+", ";
-											}
-										}
-										if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));
-									}
-									for(FileInfo f : dataProvider.getList()){
-										dataGrid.getSelectionModel().setSelected(f, false);
-									}
-									dataProvider = new ListDataProvider<FileInfo>(docs.getFilter());
-									dataProvider.addDataDisplay(dataGrid);
-									/*for (FileInfo f : dataProvider.getList()) {
-										String s="";
-										for(Tag t : f.getTags()){
-											if(f.getTags().size()<=1 && t.getName().equals(oldName))
-												f.setTagsStr(newName);
-											else if(!t.getName().equals(oldName)){
-												s = s+t.getName()+", ";
-											}
-											else{
-												t.setName(newName);
-												s = s + newName+", ";
-											}
-										}
-										if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));							
-									}*/
-									dataGrid.redraw();
+						for (FileInfo f : docs.getEfiles()) {
+							String s="";
+							Integer size = f.getTags().size();
+							for(Tag t : f.getTags()){
+								if(size<=1 && t.getName().equals(oldName)){
+									t.setName(newName);
+									f.setTagsStr(newName);
 								}
-							
-							
-								@Override
-								public void onFailure(Throwable caught) {
-									String head = "com.esferalia.aon.gwt.document.client.Documents"
-											+ " - editTag(Tag tag) - editTag";
-									print(head, caught.getMessage());
+								else if(!t.getName().equals(oldName)){
+									s = s+t.getName()+", ";
 								}
-							});
+								else{
+									t.setName(newName);
+									s = s + newName+", ";
+								}
+							}
+							if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));
 						}
+						for (FileInfo f : docs.getFiles()) {
+							String s="";
+							Integer size = f.getTags().size();
+							for(Tag t : f.getTags()){
+								if(size<=1 && t.getName().equals(oldName)){
+									t.setName(newName);
+									f.setTagsStr(newName);
+								}
+								else if(!t.getName().equals(oldName)){
+									s = s+t.getName()+", ";
+								}
+								else{
+									t.setName(newName);
+									f.getTags().add(tag);										s = s + newName+", ";
+								}
+							}
+							if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));
+						}
+						for (FileInfo f : docs.getFilter()) {
+							String s="";
+							Integer size = f.getTags().size();
+							for(Tag t : f.getTags()){
+								if(size<=1 && t.getName().equals(oldName)){
+									t.setName(newName);
+									f.setTagsStr(newName);
+								}
+								else if(!t.getName().equals(oldName)){
+									s = s+t.getName()+", ";
+								}
+								else{
+									t.setName(newName);
+									s = s + newName+", ";
+								}
+							}
+							if(!s.equals("")) f.setTagsStr(s.substring(0,s.length()-2 ));
+						}
+						for(FileInfo f : dataProvider.getList()){
+							dataGrid.getSelectionModel().setSelected(f, false);
+						}
+						dataProvider = new ListDataProvider<FileInfo>(docs.getFilter());
+						dataProvider.addDataDisplay(dataGrid);
+						dataGrid.redraw();
 					}
-					
+							
 					@Override
 					public void onFailure(Throwable caught) {
 						String head = "com.esferalia.aon.gwt.document.client.Documents"
-								+ " - editTag(Tag tag) - checkDomain";
+								+ " - editTag(Tag tag) - editTag";
 						print(head, caught.getMessage());
 					}
 				});
-				
 			}
-
 			@Override
 			protected void onNext() {}
 		};
@@ -4082,55 +3867,37 @@ public class Documents extends Composite implements EntryPoint {
 				TextBox tb = (TextBox)grid.getWidget(0, 1);
 				cat.setName(tb.getText());
 				newName= tb.getText();
-				idoc.checkDomain(getDomain(), docs,"editCategory", new AsyncCallback<Boolean>() {
-					
+				
+				idoc.editCategory(getDomain(), cat.getName(),cat.getId(), new AsyncCallback<Void>() {
 					@Override
-					public void onSuccess(Boolean result) {
-						if(!result){
-							reload();
+					public void onSuccess(Void result) {
+						VerticalPanel v = (VerticalPanel) dpanel.getContent();
+						for (int i = 0; i<v.getWidgetCount() ; i++) {
+							Button b = (Button) v.getWidget(i);
+							if(b.getText().equals(oldName)){
+								b.setText(newName);
+							}
 						}
-						else{
-							idoc.editCategory(getDomain(), cat.getName(),cat.getId(), new AsyncCallback<Void>() {
-								@Override
-								public void onSuccess(Void result) {
-									VerticalPanel v = (VerticalPanel) dpanel.getContent();
-									for (int i = 0; i<v.getWidgetCount() ; i++) {
-										Button b = (Button) v.getWidget(i);
-										if(b.getText().equals(oldName)){
-											b.setText(newName);
-										}
-									}
-									for (FileInfo f : docs.getFiles()) {
-										if(f.getCategoryStr().equals(oldName))
-											f.setCategoryStr(newName);
-										}
-										for (FileInfo f : dataProvider.getList()) {
-											if(f.getCategoryStr().equals(oldName))
-												f.setCategoryStr(newName);
-											dataGrid.getSelectionModel().setSelected(f, false);
-									
-										}
-									dataGrid.redraw();
-								}
+						for (FileInfo f : docs.getFiles()) {
+							if(f.getCategoryStr().equals(oldName))
+								f.setCategoryStr(newName);
+						}
+						for (FileInfo f : dataProvider.getList()) {
+							if(f.getCategoryStr().equals(oldName))
+								f.setCategoryStr(newName);
+							dataGrid.getSelectionModel().setSelected(f, false);
 							
-								@Override
-								public void onFailure(Throwable caught) {
-									String head = "com.esferalia.aon.gwt.document.client.Documents"
-											+ " - editCategory(Category category) - editCategory";
-									print(head, caught.getMessage());
-								}
-							});
 						}
+						dataGrid.redraw();
 					}
 					
 					@Override
 					public void onFailure(Throwable caught) {
 						String head = "com.esferalia.aon.gwt.document.client.Documents"
-								+ " - editCategory(Category category) - checkDomain";
+								+ " - editCategory(Category category) - editCategory";
 						print(head, caught.getMessage());
 					}
-				});
-			
+				});			
 			}
 
 			@Override
@@ -4175,58 +3942,39 @@ public class Documents extends Composite implements EntryPoint {
 				categoryList = new CategoryList();
 				categoryList.setList(v);
 				lists.setCategoryListSon(categoryList);
-				idoc.checkDomain(getDomain(), docs,"deleteCategory", new AsyncCallback<Boolean>() {
-					
+
+				idoc.deleteCategory(getDomain(), cat.getId(),new AsyncCallback<Void>() {
+							
 					@Override
-					public void onSuccess(Boolean result) {
+					public void onSuccess(Void result) {
 						
-						if(!result){
-							reload();
+						VerticalPanel v = (VerticalPanel) dpanel.getContent();
+						for (int i = 0; i<v.getWidgetCount() ; i++) {
+							Button b = (Button) v.getWidget(i);
+							if(b.getText().equals(oldName)){
+								v.remove(i);
+							}
 						}
-						else{
-							idoc.deleteCategory(getDomain(), cat.getId(),new AsyncCallback<Void>() {
-							
-								@Override
-								public void onSuccess(Void result) {
-								
-									VerticalPanel v = (VerticalPanel) dpanel.getContent();
-									for (int i = 0; i<v.getWidgetCount() ; i++) {
-										Button b = (Button) v.getWidget(i);
-										if(b.getText().equals(oldName)){
-											v.remove(i);
-										}
-									}
-									for (FileInfo f : docs.getFiles()) {
-										if(f.getCategoryStr().equals(oldName))
-											f.setCategoryStr("-");
-									}
-									for (FileInfo f : dataProvider.getList()) {
-										if(f.getCategoryStr().equals(oldName))
-											f.setCategoryStr("-");
-										dataGrid.getSelectionModel().setSelected(f, false);
-									}
-								
-									dataGrid.redraw();
-								}
-							
-								@Override
-								public void onFailure(Throwable caught) {
-									String head = "com.esferalia.aon.gwt.document.client.Documents"
-											+ " - removeCategory(Category category) - deleteCategory";
-									print(head, caught.getMessage());
-								}
-							});
+						for (FileInfo f : docs.getFiles()) {
+							if(f.getCategoryStr().equals(oldName))
+								f.setCategoryStr("-");
 						}
+						for (FileInfo f : dataProvider.getList()) {
+							if(f.getCategoryStr().equals(oldName))
+								f.setCategoryStr("-");
+							dataGrid.getSelectionModel().setSelected(f, false);
+						}
+						
+						dataGrid.redraw();
 					}
 					
 					@Override
 					public void onFailure(Throwable caught) {
 						String head = "com.esferalia.aon.gwt.document.client.Documents"
-								+ " - removeCategory(Category category) - checkDomain";
+								+ " - removeCategory(Category category) - deleteCategory";
 						print(head, caught.getMessage());
-					} 
-				});
-				 
+					}
+				});			
 			}
 
 			@Override
@@ -4248,42 +3996,23 @@ public class Documents extends Composite implements EntryPoint {
 	Vector<FileInfo> lote = new Vector<FileInfo>();
 
 	private void loteClickAction() {
-		idoc.checkDomain(getDomain(), docs,"loteButton", new AsyncCallback<Boolean>() {
-			
-			@Override
-			public void onSuccess(Boolean result) {
-				if(!result){
-					reload();
-				}
-				else{
-					gestionLote.setVisible(true);
-					gestionDocs.setVisible(false);
-					clean.setVisible(true);
-					send.setVisible(true);
-					editFile.setVisible(false);
-					delFile.setVisible(false);
-					optionFile.setVisible(false);
-					isLote= true;
-					isServiconvenios = false;
-					removeFilterItems();
-										
-					for(FileInfo f : dataProvider.getList()){
-						dataGrid.getSelectionModel().setSelected(f, false);
-					}
-					dataProvider = new ListDataProvider<FileInfo>(lote);
-					dataProvider.addDataDisplay(dataGrid);
-					updateDatagridColumns();
-					dataGrid.redraw();
-				}
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				String head = "com.esferalia.aon.gwt.document.client.Documents"
-						+ " - lote(ClickEvent event) - checkDomain";
-				print(head, caught.getMessage());
-			}
-		});	
+		gestionLote.setVisible(true);
+		gestionDocs.setVisible(false);
+		clean.setVisible(true);
+		send.setVisible(true);
+		editFile.setVisible(false);
+		delFile.setVisible(false);
+		optionFile.setVisible(false);
+		isLote= true;
+		isServiconvenios = false;
+		removeFilterItems();
+		for(FileInfo f : dataProvider.getList()){
+			dataGrid.getSelectionModel().setSelected(f, false);
+		}
+		dataProvider = new ListDataProvider<FileInfo>(lote);
+		dataProvider.addDataDisplay(dataGrid);
+		updateDatagridColumns();
+		dataGrid.redraw();
 	}
 	
 	public Boolean estaLote(FileInfo fi){
@@ -4298,34 +4027,16 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiHandler("clean")
 	void cleanLote(ClickEvent event) {
-		idoc.checkDomain(getDomain(), docs, "clean", new AsyncCallback<Boolean>() {
-			
-			@Override
-			public void onSuccess(Boolean result) {
-				if(!result){
-					reload();
-				}
-				else{
-					lote = new Vector<FileInfo>();
-					for(FileInfo f : dataProvider.getList()){
-						dataGrid.getSelectionModel().setSelected(f, false);
-					}
-					dataProvider = new ListDataProvider<FileInfo>(lote);
-					dataProvider.addDataDisplay(dataGrid);
-					updateDatagridColumns();
-					dataGrid.redraw();	
-				}
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				String head = "com.esferalia.aon.gwt.document.client.Documents"
-						+ " - cleanLote(ClickEvent event) - checkDomain";
-				print(head, caught.getMessage());
-			}
-		});	
+		lote = new Vector<FileInfo>();
+		for(FileInfo f : dataProvider.getList()){
+			dataGrid.getSelectionModel().setSelected(f, false);
+		}
+		dataProvider = new ListDataProvider<FileInfo>(lote);
+		dataProvider.addDataDisplay(dataGrid);
+		updateDatagridColumns();
+		dataGrid.redraw();	
 	}
-	
+
 	@UiHandler("send")
 	void sendLote(ClickEvent event) {
 		
@@ -4503,8 +4214,12 @@ public class Documents extends Composite implements EntryPoint {
 
 	LinkedList<String> categoryFilterList;
 	LinkedList<String> tagFilterList;
-	private ClickHandler categoryClickHandler(final Category category){
+	
+	Button categoryButtonAuxiliar;
+	private ClickHandler categoryClickHandler(Button button, final Category category){
+		categoryButtonAuxiliar = button;
 		return new ClickHandler() {
+			Button button = categoryButtonAuxiliar;
 			@Override 
 			public void onClick(ClickEvent event) {
 				newFile.setVisible(true); sConvenios.setVisible(false);
@@ -4514,42 +4229,54 @@ public class Documents extends Composite implements EntryPoint {
 				delFile.setVisible(false);
 				optionFile.setVisible(false);
 				if(categoryFilterList == null) categoryFilterList = new LinkedList<String>();
-				if(!contains(category.getName(), categoryFilterList)){
-					categoryFilterList.add(category.getName());	
-					SearchInfo si = new SearchInfo()
-						.setCategoryList(categoryFilterList)
-						.setTagList(tagFilterList);
-					idoc.searchFile2(si, docs.getEfiles(), new AsyncCallback<FilterUtil>() {
-						@Override 
-						public void onSuccess(FilterUtil result) {
-							searchs = result.getFiles();
-							docs.setFilter(result.getFiles());
-							for(FileInfo f : dataProvider.getList()){
-								dataGrid.getSelectionModel().setSelected(f, false);
-							}
-							dataProvider = new ListDataProvider<FileInfo>(searchs);
-							dataProvider.addDataDisplay(dataGrid);
-							isServiconvenios=false;
-							isLote = false;
-							addCategoryFilterItem(category);
-							updateDatagridColumns();
-							dataGrid.redraw();
-						}
-		
-						@Override
-						public void onFailure(Throwable caught) {
-							String head = "com.esferalia.aon.gwt.document.client.Documents"
-								+ " - Load() - searchFile2";
-							print(head, caught.getMessage());
-						}
-					});
+				if(!categoryFilterList.contains(category.getName())){
+					button.removeStyleName("aon-icon-category");
+					button.addStyleName("aon-icon-check-black");
+					button.addStyleName(AON.AON_BOLD);
+					categoryFilterList.add(category.getName());
+				} else {
+					button.removeStyleName("aon-icon-check-black");
+					button.removeStyleName(AON.AON_BOLD);
+					button.addStyleName("aon-icon-category");
+					categoryFilterList.remove(category.getName());
 				}
+				
+				SearchInfo si = new SearchInfo()
+					.setCategoryList(categoryFilterList)
+					.setTagList(tagFilterList);
+				
+				idoc.searchFile2(si, docs.getEfiles(), new AsyncCallback<FilterUtil>() {
+					@Override 
+					public void onSuccess(FilterUtil result) {
+						searchs = result.getFiles();
+						docs.setFilter(result.getFiles());
+						for(FileInfo f : dataProvider.getList()){
+							dataGrid.getSelectionModel().setSelected(f, false);
+						}
+						dataProvider = new ListDataProvider<FileInfo>(searchs);
+						dataProvider.addDataDisplay(dataGrid);
+						isServiconvenios=false;
+						isLote = false;
+						updateDatagridColumns();
+						dataGrid.redraw();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						String head = "com.esferalia.aon.gwt.document.client.Documents"
+							+ " - Load() - searchFile2";
+						print(head, caught.getMessage());
+					}
+				});		
 			}		
 		};
 	}
 	
-	private ClickHandler tagClickHandler(final Tag tag){
+	Button tagButtonAuxiliar;
+	private ClickHandler tagClickHandler(Button button, final Tag tag){
+		tagButtonAuxiliar = button;
 		return new ClickHandler() {
+			Button button = tagButtonAuxiliar;
 			@Override
 			public void onClick(ClickEvent event) {
 				newFile.setVisible(true); sConvenios.setVisible(false);
@@ -4559,37 +4286,45 @@ public class Documents extends Composite implements EntryPoint {
 				delFile.setVisible(false);
 				optionFile.setVisible(false);
 				if(tagFilterList == null) tagFilterList = new LinkedList<String>();
-				if(!contains(tag.getName(), tagFilterList)){
-					tagFilterList.add(tag.getName());	
-					SearchInfo si = new SearchInfo()
-						.setCategoryList(categoryFilterList)
-						.setTagList(tagFilterList);
-			
-					idoc.searchFile2(si, docs.getEfiles(), new AsyncCallback<FilterUtil>() {
-						@Override
-						public void onSuccess(FilterUtil result) {
-							searchs = result.getFiles();
-							docs.setFilter(result.getFiles());
-							for(FileInfo f : dataProvider.getList()){
-								dataGrid.getSelectionModel().setSelected(f, false);
-							}
-							dataProvider = new ListDataProvider<FileInfo>(searchs);
-							dataProvider.addDataDisplay(dataGrid);
-							isServiconvenios=false;
-							isLote = false;
-							addTagFilterItem(tag);		
-							updateDatagridColumns();
-							dataGrid.redraw();
-						}
-					
-						@Override
-						public void onFailure(Throwable caught) {
-							String head = "com.esferalia.aon.gwt.document.client.Documents"
-									+ " - Load() - searchFile2";
-							print(head, caught.getMessage());
-						}
-					});
+				if(!tagFilterList.contains(tag.getName())){
+					button.removeStyleName("aon-icon-tag");
+					button.addStyleName("aon-icon-check-black");
+					button.addStyleName(AON.AON_BOLD);
+					tagFilterList.add(tag.getName());
+				} else{
+					button.removeStyleName("aon-icon-check-black");
+					button.removeStyleName(AON.AON_BOLD);
+					button.addStyleName("aon-icon-tag");
+					tagFilterList.remove(tag.getName());
 				}
+	
+				SearchInfo si = new SearchInfo()
+					.setCategoryList(categoryFilterList)
+					.setTagList(tagFilterList);
+			
+				idoc.searchFile2(si, docs.getEfiles(), new AsyncCallback<FilterUtil>() {
+					@Override
+					public void onSuccess(FilterUtil result) {
+						searchs = result.getFiles();
+						docs.setFilter(result.getFiles());
+						for(FileInfo f : dataProvider.getList()){
+							dataGrid.getSelectionModel().setSelected(f, false);
+						}
+						dataProvider = new ListDataProvider<FileInfo>(searchs);
+						dataProvider.addDataDisplay(dataGrid);
+						isServiconvenios=false;
+						isLote = false;
+						updateDatagridColumns();
+						dataGrid.redraw();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						String head = "com.esferalia.aon.gwt.document.client.Documents"
+								+ " - Load() - searchFile2";
+						print(head, caught.getMessage());
+					}
+				});
 			}						
 		};
 	}
@@ -4601,124 +4336,32 @@ public class Documents extends Composite implements EntryPoint {
 		return false;
 	}
 	
-	
-	private void addTagFilterItem(final Tag tag){
-		PaperItem filterItem = new PaperItem();
-		filterItem.setTitle(tag.getName());
-		Label label = new Label(tag.getName());
-		label.addStyleName("aon-icon-tag");
-		label.addStyleName("filter-label-document");
-		filterItem.add(label);
-		filterItem.addStyleName("filter-item-document");
-		filterItem.addClickHandler(new ClickHandler() {
-			@Override public void onClick(ClickEvent event) {
-				for(Integer i = 1; i < filterPanel.getWidgetCount(); i++){
-					PaperItem filterItem = (PaperItem) filterPanel.getWidget(i);
-					if(filterItem.getTitle().equals(tag.getName()))
-						filterPanel.remove(i);
-				}
-				LinkedList<String> auxiliarList = new LinkedList<String>();
-				for(Integer i = 0; i< tagFilterList.size(); i++){
-					if(!tagFilterList.get(i).equals(tag.getName()))
-						auxiliarList.add(tagFilterList.get(i));
-				}
-				tagFilterList = auxiliarList;
-				SearchInfo si = new SearchInfo()
-						.setCategoryList(categoryFilterList)
-						.setTagList(tagFilterList);
-			
-				idoc.searchFile2(si, docs.getEfiles(), new AsyncCallback<FilterUtil>() {
-					@Override
-					public void onSuccess(FilterUtil result) {
-						searchs = result.getFiles();
-						docs.setFilter(result.getFiles());
-						for(FileInfo f : dataProvider.getList()){
-							dataGrid.getSelectionModel().setSelected(f, false);
-						}
-						dataProvider = new ListDataProvider<FileInfo>(searchs);
-						dataProvider.addDataDisplay(dataGrid);
-						isServiconvenios=false;
-						isLote = false;
-						updateDatagridColumns();
-						dataGrid.redraw();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						String head = "com.esferalia.aon.gwt.document.client.Documents"
-								+ " - Load() - searchFile2";
-						print(head, caught.getMessage());
-					}
-				});
-			}
-		});
-		filterPanel.add(filterItem);
-	}
-	
-	private void addCategoryFilterItem(final Category category){			
-		PaperItem filterItem = new PaperItem();
-		filterItem.setTitle(category.getName());
-		Label label = new Label(category.getName());
-		label.addStyleName("aon-icon-category");
-		label.addStyleName("filter-label-document");
-		filterItem.add(label);
-		filterItem.addStyleName("filter-item-document");
-		filterItem.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				for(Integer i = 1; i < filterPanel.getWidgetCount(); i++){
-					PaperItem filterItem = (PaperItem) filterPanel.getWidget(i);
-					if(filterItem.getTitle().equals(category.getName()))
-						filterPanel.remove(i);
-				}
-				LinkedList<String> auxiliarList = new LinkedList<String>();
-				for(Integer i = 0; i< categoryFilterList.size(); i++){
-					if(!categoryFilterList.get(i).equals(category.getName()))
-						auxiliarList.add(categoryFilterList.get(i));
-				}
-				categoryFilterList = auxiliarList;
-				SearchInfo si = new SearchInfo()
-						.setCategoryList(categoryFilterList)
-						.setTagList(tagFilterList);
-			
-				idoc.searchFile2(si, docs.getEfiles(), new AsyncCallback<FilterUtil>() {
-					@Override
-					public void onSuccess(FilterUtil result) {
-						searchs = result.getFiles();
-						docs.setFilter(result.getFiles());
-						for(FileInfo f : dataProvider.getList()){
-							dataGrid.getSelectionModel().setSelected(f, false);
-						}
-						dataProvider = new ListDataProvider<FileInfo>(searchs);
-						dataProvider.addDataDisplay(dataGrid);
-						isServiconvenios=false;
-						isLote = false;
-						updateDatagridColumns();
-						dataGrid.redraw();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						String head = "com.esferalia.aon.gwt.document.client.Documents"
-								+ " - Load() - searchFile2";
-						print(head, caught.getMessage());
-					}
-				});
-			}
-		});
-		filterPanel.insert(filterItem, 1);
-	}
-	
-	private void removeFilterItems(){
-		categoryFilterList = new LinkedList<String>();
-		tagFilterList = new LinkedList<String>();
-		for(Integer i = filterPanel.getWidgetCount(); i > 1; i--){
-			filterPanel.remove(i-1);
-		}
-	}
-	
 	private Boolean hasFilter(){
 		return (categoryFilterList != null && categoryFilterList.size()>1) || (tagFilterList != null && tagFilterList.size() >1);
+	}
+	
+	@UiHandler("cleanFilterButton")
+	void cleanFilterButtonClickAction(ClickEvent event){
+		reset();
+	}
+	
+	private void removeFilterItems() {
+		tagFilterList = new LinkedList<String>();
+		categoryFilterList = new LinkedList<String>();
+		VerticalPanel tagPanel = (VerticalPanel) epanel.getContent();
+		for(Integer i = 0; i < tagPanel.getWidgetCount(); i++){
+			Button button = (Button) tagPanel.getWidget(i);
+			button.removeStyleName("aon-icon-check-black");
+			button.removeStyleName(AON.AON_BOLD);
+			button.addStyleName("aon-icon-tag");
+		}
+		
+		VerticalPanel categoryPanel = (VerticalPanel) dpanel.getContent();
+		for(Integer i = 0; i < categoryPanel.getWidgetCount(); i++){
+			Button button = (Button) categoryPanel.getWidget(i);
+			button.removeStyleName("aon-icon-check-black");
+			button.removeStyleName(AON.AON_BOLD);
+			button.addStyleName("aon-icon-category");
+		}
 	}
 }
