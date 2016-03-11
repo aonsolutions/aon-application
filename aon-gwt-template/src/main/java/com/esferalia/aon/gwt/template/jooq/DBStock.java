@@ -231,6 +231,8 @@ public class DBStock {
 		Vector<String> v = new Vector<String>();
 		AONContext ctx = null;
 		try{
+			System.out.println("GWT TEMPLATES - (Solicitud de compra) - dentro de la funcion de insertar!!");
+
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			InsertValuesStep13<ProposalDetailRecord, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> proposalInsertQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
 			InsertValuesStep12<ProposalDetailRecord, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp> proposalUpdateQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
@@ -290,6 +292,8 @@ public class DBStock {
 				*/
 					// TODO update
 					if(!data.isEmpty()){
+						System.out.println("GWT TEMPLATES - (Solicitud de compra) - entre media de la f insertar");
+
 						Integer productId = data.get(0).getValue(ITEM.PRODUCT);
 						Byte lotable = sctx.getDslContext().select(PRODUCT.LOTABLE).from(PRODUCT)
 								.where(PRODUCT.ID.eq(productId)).limit(1).fetch().get(0).getValue(PRODUCT.LOTABLE); 
@@ -322,25 +326,31 @@ public class DBStock {
 								}
 								else{
 									v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
+									System.out.println("GWT TEMPLATES - (Solicitud de compra) - "+ "*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
+
 									error.setError(false);
 									error.setTextError(v);
 								}
 							}
 							else{
 								v.add("*Fila " +(s.getRow()+1) + " : El producto no dispone de un proveedor asignable.");
+								System.out.println("GWT TEMPLATES - (Solicitud de compra) - "+ "*Fila " +(s.getRow()+1) + " : El producto no dispone de un proveedor asignable.");
+
 								error.setError(false);
 								error.setTextError(v);
 							}
 						}
 					}else{
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
+						System.out.println("GWT TEMPLATES - (Solicitud de compra) - "+ "*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");
+
 						error.setError(false);
 						error.setTextError(v);
 					}
 				}
 			});
 			if(error.getError()){
-
+				System.out.println("GWT TEMPLATES - (Solicitud de compra) - EERRRROORRR");
 				if(updateIds.size()>0){
 					ctx.getDslContext().delete(PROPOSAL_DETAIL).where(PROPOSAL_DETAIL.ID.in(updateIds)).execute();
 					proposalUpdateQuery.execute();
