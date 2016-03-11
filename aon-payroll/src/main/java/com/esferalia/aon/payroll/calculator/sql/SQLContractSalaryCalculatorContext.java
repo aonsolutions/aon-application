@@ -189,6 +189,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IConstantVariable;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedObject;
@@ -855,6 +856,16 @@ public class SQLContractSalaryCalculatorContext
 		// ---------------------------------------------------------------------
 		protected String getName() {
 			return expression.getName();
+		}
+	}
+
+	protected abstract class LazyTimedConstant<V> extends LazyTimedVariable<V> implements IConstantVariable{
+
+	}
+	
+	protected abstract class LazyTimedExpressionConstant<V> extends LazyTimedExpressionVariable<V> implements IConstantVariable{
+		public LazyTimedExpressionConstant(String name, ExpressionScope scope) {
+			super(name, scope);
 		}
 	}
 
@@ -3253,7 +3264,7 @@ public class SQLContractSalaryCalculatorContext
 		this.implicitExpressionContext.putVariable(BONUS_DAYS, bonusDays);
 
 		this.implicitExpressionContext.putVariable(INDEFINITE,
-				new LazyTimedVariable<Boolean>() {
+				new LazyTimedConstant<Boolean>() {
 					@Override
 					public Boolean create() {
 						return isIndefinite();
@@ -3261,7 +3272,7 @@ public class SQLContractSalaryCalculatorContext
 				});
 
 		this.implicitExpressionContext.putVariable(FULL_TIME,
-				new LazyTimedVariable<Boolean>() {
+				new LazyTimedConstant<Boolean>() {
 					@Override
 					public Boolean create() {
 						return isFullTime();
@@ -3269,7 +3280,7 @@ public class SQLContractSalaryCalculatorContext
 				});
 
 		this.implicitExpressionContext.putVariable(ASSIMILATED,
-				new LazyTimedVariable<Boolean>() {
+				new LazyTimedConstant<Boolean>() {
 					@Override
 					public Boolean create() {
 						return isAssimilatted();
@@ -3277,7 +3288,7 @@ public class SQLContractSalaryCalculatorContext
 				});
 
 		this.implicitExpressionContext.putVariable(MORE_THAN_65,
-				new LazyTimedVariable<Boolean>() {
+				new LazyTimedConstant<Boolean>() {
 					@Override
 					public Boolean create() {
 						return false;
@@ -3285,7 +3296,7 @@ public class SQLContractSalaryCalculatorContext
 				});
 
 		this.implicitExpressionContext.putVariable(SHORT_CONTRACT,
-				new LazyTimedVariable<Boolean>() {
+				new LazyTimedConstant<Boolean>() {
 					@Override
 					public Boolean create() {
 						return isShortContract();
@@ -3293,7 +3304,7 @@ public class SQLContractSalaryCalculatorContext
 				});
 
 		this.implicitExpressionContext.putVariable(IT_RATE,
-				new LazyTimedVariable<Double>() {
+				new LazyTimedConstant<Double>() {
 					@Override
 					public Double create() {
 						return getItRate();
@@ -3301,7 +3312,7 @@ public class SQLContractSalaryCalculatorContext
 				});
 
 		this.implicitExpressionContext.putVariable(IMS_RATE,
-				new LazyTimedVariable<Double>() {
+				new LazyTimedConstant<Double>() {
 					@Override
 					public Double create() {
 						return getImsRate();
@@ -3349,7 +3360,7 @@ public class SQLContractSalaryCalculatorContext
 				});
 
 		this.implicitExpressionContext.putVariable("SALARIO_VARIABLE_DIA",
-				new LazyTimedExpressionVariable<Double>("SALARIO_VARIABLE_DIA",
+				new LazyTimedExpressionConstant<Double>("SALARIO_VARIABLE_DIA",
 						ExpressionScope.CONTRACT) {
 					@Override
 					public Double create() {
@@ -3360,7 +3371,7 @@ public class SQLContractSalaryCalculatorContext
 		// TODO: Sure ???
 		if (getSalaryType() == SalaryType.SETTLE)
 			this.implicitExpressionContext.putVariable("SALARIO_DIA",
-					new LazyTimedExpressionVariable<Double>("SALARIO_DIA",
+					new LazyTimedExpressionConstant<Double>("SALARIO_DIA",
 							ExpressionScope.CONTRACT) {
 						@Override
 						public Double create() {

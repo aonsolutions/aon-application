@@ -236,6 +236,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		return redefined;
 	}
 
+	
 	public List<ITimedVariable<?>> put(String name, ITimedVariable<?> var) {
 		List<ITimedVariable<?>> values = vars.get(name);
 		if (values == null) {
@@ -268,7 +269,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 							values.remove(position + 1);
 						}else {
 							start = Variables.add(start, 1);
-							ITimedVariable<?> wrapNext = new WrapTimedVariable<Object>(
+							ITimedVariable<?> wrapNext = newWrapTimedVariable(
 									start, end, next);
 							values.set(position + 1, wrapNext);
 						}
@@ -293,14 +294,14 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 							values.remove(position - 1);
 						} else {
 							end = Variables.add(end, -1);
-							ITimedVariable<?> wrapPrev = new WrapTimedVariable<Object>(
+							ITimedVariable<?> wrapPrev = newWrapTimedVariable(
 									start, end, prev);
 							values.set(position - 1, wrapPrev);
 						}
 
 						end = var.getPeriod().getEnd();
 						if (Period.compare(prev.getPeriod().getEnd(), end) > 0) {
-							ITimedVariable<?> wrapPrev = new WrapTimedVariable<Object>(
+							ITimedVariable<?> wrapPrev = newWrapTimedVariable(
 									Variables.add(end, +1), prev.getPeriod()
 											.getEnd(), prev);
 							values.add(position + 1, wrapPrev);
@@ -441,6 +442,8 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 				continue;
 			if ( var.getPeriod().equals(intersect) )
 				ret = var;
+			else if ( var instanceof IConstantVariable)
+				ret = var;
 			else 
 				ret = wrapVariable(intersect,var);//new WrapTimedVariable(intersect,var);
 		}
@@ -556,6 +559,10 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 				new WrapTimedVariable<>(period, timedVariable);
 	}
 	
+	private static <T> WrapTimedVariable<T> newWrapTimedVariable(Date start, Date end, ITimedVariable<T> var){
+		return ( var instanceof IConstantVariable ) ? new WrapTimedConstant<T>(start, end, var): new WrapTimedVariable<T>(start, end, var);
+	}
+	
 	
 	private static class WrapTimedVariable<T> implements ITimedVariable<T> {
 
@@ -584,7 +591,20 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		}
 
 	}
+	private static class WrapTimedConstant<T> extends WrapTimedVariable<T> implements IConstantVariable {
 
+		public WrapTimedConstant(Date start, Date end,
+				ITimedVariable<? extends T> timedVariable) {
+			super(start, end, timedVariable);
+		}
+
+		public WrapTimedConstant(Period period,
+				ITimedVariable<? extends T> timedVariable) {
+			super(period, timedVariable);
+		}
+		
+	}
+	
 	private static class WrapExpressionVariable<T> implements IExpressionVariable<T> {
 
 		private Period period;

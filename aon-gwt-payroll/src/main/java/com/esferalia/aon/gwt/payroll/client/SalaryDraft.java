@@ -92,6 +92,7 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.thirdparty.javascript.jscomp.Scope.Var;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -256,7 +257,7 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
-	static class TextDateBox implements IsWidget, HasValue<String>, HasAllFocusHandlers, Focusable {
+	static class TextDateBox implements IsWidget, HasValue<String>, HasAllFocusHandlers, Focusable, HasEnabled {
 
 		private DateBox datebox;
 
@@ -335,6 +336,18 @@ public class SalaryDraft extends ResizeComposite
 			return datebox.addDomHandler(handler, FocusEvent.getType());
 		}
 
+		// --------------------------------------------------------- HasEnabled
+		
+		@Override
+		public boolean isEnabled() {
+			return datebox.isEnabled();
+		}
+		
+		@Override
+		public void setEnabled(boolean enabled) {
+			datebox.setEnabled(enabled);
+		}
+
 		// ------------------------------------------------------------ Private
 		private static Date parse(String str) {
 
@@ -398,7 +411,7 @@ public class SalaryDraft extends ResizeComposite
 		boolean accept(Variable variable);
 	}
 
-	static interface VariableEditorFactory<T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable>
+	static interface VariableEditorFactory<T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled>
 			extends VariableFactory<T> {
 	}
 
@@ -2650,7 +2663,7 @@ public class SalaryDraft extends ResizeComposite
 		insertBlankPaymentRow();
 		insertBlankPaymentRow();
 
-		List<Variable> context = new ArrayList<Variable>(salaryDraftObject.getContext());
+		List<Variable> context = getContext(salaryDraftObject);//new ArrayList<Variable>(salaryDraftObject.getContext());
 
 		Scope nextScope = null;
 		boolean show = scope.compareTo(Scope.CONTRACT) >= 0;
@@ -3725,7 +3738,7 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
-	private <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable> Widget getVariableWidget(
+	private <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled> Widget getVariableWidget(
 			final Variable variable, Scope scope, boolean show) {
 		HTMLPanel htmlPanel = new HTMLPanel("");
 
@@ -3753,7 +3766,7 @@ public class SalaryDraft extends ResizeComposite
 		valuePanel.add(new InlineHTML("&nbsp;"));
 
 		if (!(variable instanceof UndefinedVariable)) {
-
+			editor.setEnabled(agreeWithDraftPeriod(variable));
 			if (scope.compareTo(Scope.AGREEMENT) > 0 && variable.isDefinedAt(Scope.AGREEMENT)) {
 				Button agreementVarButton = getAgreementVarButton(variable);
 				agreementVarButton.setTabIndex(Short.MAX_VALUE);
@@ -3960,10 +3973,9 @@ public class SalaryDraft extends ResizeComposite
 		StringBuffer text = new StringBuffer(variable.getName());
 
 		try {
-			Date startDate = variable.getStartDate();
-			Date endDate = variable.getEndDate();
-			if (!startDate.equals(salaryDraftObject.getStartDate())
-					|| !endDate.equals(salaryDraftObject.getEndDate())) {
+			if (!agreeWithDraftPeriod(variable) && !(variable instanceof UndefinedVariable) ) {
+				Date startDate = variable.getStartDate();
+				Date endDate = variable.getEndDate();
 				DateTimeFormat format = DateTimeFormat.getFormat("dd/MM");
 				text.append(" ( " + format.format(startDate) + " - " + format.format(endDate) + " )");
 			}
@@ -3982,6 +3994,13 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		return label;
+	}
+	
+	private boolean agreeWithDraftPeriod(Variable variable) {
+		Date startDate = variable.getStartDate();
+		Date endDate = variable.getEndDate();
+		return (startDate.equals(salaryDraftObject.getStartDate())
+				&& endDate.equals(salaryDraftObject.getEndDate()));
 	}
 
 	private Button getSystemVarButton(Variable variable) {
@@ -4642,7 +4661,7 @@ public class SalaryDraft extends ResizeComposite
 		return false;
 	}
 
-	static <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable> T createEditor(Variable variable) {
+	static <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled> T createEditor(Variable variable) {
 		for (VariableEditorFactory<T> factory : VARIABLE_EDITOR_FACTORIES) {
 			if (factory.accept(variable))
 				return factory.create(variable);
@@ -4857,5 +4876,20 @@ public class SalaryDraft extends ResizeComposite
 
 	private static <T extends Item<?>> boolean isCgpBaseDeduction(T item) {
 		return StringUtils.equalsIgnoreCase("BASE_CGP", item.getDescription());
+	}
+	
+	private static List<Variable> getContext(SalaryDraftObject salaryDraftObject) {
+		List<Variable> context = new ArrayList();
+		for ( Variable var: salaryDraftObject.getContext() ) {
+			
+			if ( var instanceof UndefinedVariable )
+				for ( Variable v : context )
+					if ( v.getName().equals(var.getName()))
+						continue; // Already at context
+			
+			context.add(var);
+		
+		}
+		return context;
 	}
 }

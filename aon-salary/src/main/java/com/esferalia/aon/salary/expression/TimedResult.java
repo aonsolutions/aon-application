@@ -2,7 +2,7 @@ package com.esferalia.aon.salary.expression;
 
 import java.util.Map;
 
-public class TimedResult<V> extends TimedObject<V> implements ITimedResult<V> {
+public class TimedResult<V> extends TimedObject<V> implements ITimedResult<V> , IConstantVariable{
 	
 	private Map<String, ITimedVariable<?>> context;
 	

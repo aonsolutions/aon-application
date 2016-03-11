@@ -110,7 +110,7 @@ public class ExpressionContext {
 			return var;
 		}
 	}
-
+	
 	public static class DeferredExpressionException extends DeferredException {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
@@ -234,6 +234,31 @@ public class ExpressionContext {
 			return Collections.emptyMap();
 		}
 
+	}
+	
+	public static class TimedConstant<V> extends TimedObject<V> implements IConstantVariable {
+
+		public TimedConstant(V value, Date start, Date end) {
+			super(value, start, end);
+		}
+
+		public TimedConstant(V value, Period period) {
+			super(value, period);
+		}
+		
+	}
+
+	public static class ExpressionConstant<V> extends ExpressionVariable<V> implements IConstantVariable{
+
+		public ExpressionConstant(V value, Period p, IExpression expression,
+				Map<String, ITimedVariable<?>> context) {
+			super(value, p, expression, context);
+		}
+
+		public ExpressionConstant(V value, Period p, IExpression expression) {
+			super(value, p, expression);
+		}
+		
 	}
 
 	public static Set<String> getVarNames(String script) {
@@ -370,7 +395,7 @@ public class ExpressionContext {
 	}
 
 	public List<ITimedVariable<?>>  setVariable(Object name, Object value, Date start, Date end) {
-		ITimedVariable<Object> timedObject = new TimedObject<Object>(value,
+		ITimedVariable<Object> timedObject = new TimedConstant<Object>(value,
 				start, end);
 		return this.putVariable(name.toString(), timedObject);
 	}
@@ -436,7 +461,7 @@ public class ExpressionContext {
 			if (name != null) {
 
 				for (ITimedResult<T> obj : values) {
-					IExpressionVariable<T> var = new ExpressionVariable<T>(
+					IExpressionVariable<T> var = new ExpressionConstant<T>(
 							obj.getValue(), obj.getPeriod(), expression,
 							obj.getContext());
 					this.putVariable(name, var);
