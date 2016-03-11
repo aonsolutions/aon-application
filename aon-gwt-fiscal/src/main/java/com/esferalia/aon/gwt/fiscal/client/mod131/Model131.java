@@ -67,8 +67,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 public class Model131 extends MainEntryPoint {
 
 	final static int IDENTIFICATION_TAB = 0;
-	final static int ACTIVITIES_TAB = 1;
-	final static int LIQUIDATION_TAB = 2;
+	final static int LIQUIDATION_TAB = 1;
 	
 	final static int NOTIFICATIONS_TAB = 0;
 	final static int INFORMATION_TAB = 1;
@@ -175,8 +174,6 @@ public class Model131 extends MainEntryPoint {
 	@UiField
 	ScrollPanel identificationContainer;
 	@UiField
-	ScrollPanel activitiesContainer;
-	@UiField
 	ScrollPanel declarationContainer;
 	
 	private IMod131Declaration declaration;
@@ -257,6 +254,7 @@ public class Model131 extends MainEntryPoint {
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 
 		table = new FiscalModelTable<Mod131>(new Mod131SelectionHandler(), new FiscalModelProvidesKey<Mod131>());
+		
 
 		Widget ui = MODEL_131_BINDER.createAndBindUi(this);
 
@@ -392,7 +390,7 @@ public class Model131 extends MainEntryPoint {
 		documentLabel.setText(currentMod131.getDocument());
 		nameLabel.setText(currentMod131.getName());
 		surnameLabel.setText(currentMod131.getSurname());
-		
+	
 		styleDirtyLabel();
 		styleStatusLabel();
 		if (currentMod131.isReplacementDeclarationAvailable()) {
@@ -451,7 +449,6 @@ public class Model131 extends MainEntryPoint {
 		if (declaration != null) {
 			declarationContainer.setWidget( declaration );
 			infoContainer.setWidget(declaration.getInfoPanel(currentMod131));
-			activitiesContainer.setWidget( new Model131Activities(callback) );
 		} else {
 			showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
 			hideToolbarButtons();

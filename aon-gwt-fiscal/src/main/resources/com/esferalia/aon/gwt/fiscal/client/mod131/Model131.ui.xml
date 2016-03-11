@@ -133,15 +133,6 @@
 										<g:tab>
 											<g:customHeader>
 												<g:Label
-													styleName="{aonResources.css.aonIconRoot} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
-													text="{msg.activities}" />
-											</g:customHeader>
-											<g:ScrollPanel ui:field="activitiesContainer" styleName="{aonResources.css.aonScrollArea}"/>
-										</g:tab>
-
-										<g:tab>
-											<g:customHeader>
-												<g:Label
 													styleName="{aonResources.css.aonIconModel} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
 													text="{msg.liquidacion}" />
 											</g:customHeader>

@@ -4,6 +4,7 @@ import java.util.EnumMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
@@ -31,8 +32,10 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.RangeChangeEvent.Handler;
 
 public class Model131AEAT extends SimplePanel implements IMod131Declaration {
@@ -338,7 +341,8 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 
 	private void paintActivityRow(final IFiscalModelCallback<Mod131> callback) {
 		int row = getTable().getRowCount();
-		final Mod131ActivityTable table = new Mod131ActivityTable(null, new Mod131ActivityProvidesKey());
+		final Mod131ActivityProvidesKey providesKey = new Mod131ActivityProvidesKey();
+		final Mod131ActivityTable table = new Mod131ActivityTable(providesKey);
 		table.addRangeChangeHandler(new Handler() {
 			
 			@Override
@@ -346,7 +350,25 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 				table.setRowData(callback.getFiscalModel().getActivities());
 			}
 		});
-		
+		final NoSelectionModel<Mod131Activity> model = new NoSelectionModel<Mod131Activity>(providesKey);
+		table.setSelectionModel(model);
+		model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				Mod131Activity act = model.getLastSelectedObject();
+				Model131Activity actPanel = new Model131Activity(act);
+				CustomDialog dialog = new CustomDialog();
+				dialog.setCaption(act.getFullDescription());
+				dialog.setGlassEnabled(true);
+				dialog.setAnimationEnabled(true);
+				dialog.add(actPanel);
+				dialog.setWidth("700px");
+				dialog.setHeight("500px");
+				dialog.show();
+				dialog.center();
+			}
+		});
 		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 		FlowPanel tableContainer = new FlowPanel();
 		tableContainer.add( table ) ;

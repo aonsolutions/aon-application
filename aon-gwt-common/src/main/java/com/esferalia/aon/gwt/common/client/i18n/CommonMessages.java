@@ -18,7 +18,7 @@ public interface CommonMessages extends Messages {
 	// Ú --> \u00DA ú --> \u00FA ... acento
 	// Ü --> \u00DC ü --> \u00fc ... diéresis
 	// Ñ --> \u00D1 ñ --> \u00F1
-	// º --> \u00AA ª --> \u00BA
+	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
 	
 	// ----------------------------------------------------------------- Format
@@ -151,28 +151,6 @@ public interface CommonMessages extends Messages {
 		,"M202"		,"Impuesto sobre sociedades. Pago fraccionado."
 		})	
 	String fiscalModelDescriptionlong(@Select FiscalModelType f);
-
-//	@DefaultMessage("-----")
-//	@AlternateMessage(
-//		{"M01"		,"Enero"
-//		,"M02"		,"Febrero"
-//		,"M03"		,"Marzo"
-//		,"M04"		,"Abril"
-//		,"M05"		,"Mayo"
-//		,"M06"		,"Junio"
-//		,"M07"		,"Julio"
-//		,"M08"		,"Agosto"
-//		,"M09"		,"Septiembre"
-//		,"M10"		,"Octubre"
-//		,"M11"		,"Noviembre"
-//		,"M12"		,"Diciembre"
-//		,"T1"		,"1\u00AA Trimestre"
-//		,"T2"		,"2\u00AA Trimestre"
-//		,"T3"		,"3\u00AA Trimestre"
-//		,"T4"		,"4\u00AA Trimestre"
-//		,"YEAR"		,"Anual"
-//		})	
-//	String fiscalPeriod(@Select Period f);
 
 	@DefaultMessage("ESP")
 	String currencyCode();
@@ -2842,5 +2820,88 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Acreedor no encontrado")
 	String creditorNotFound();
 
+	@DefaultMessage("Si el contribuyente es discapacitado en grado igual o superior al 33 por 100, marque X")
+	String irpfActivityDis();
+
+	@DefaultMessage("Comunidad, Sociedad civil o similar: porcentaje de participaci\u00F3n")
+	String irpfActivityCom();
+
+	@DefaultMessage("Actividad de temporada: n\u00BA de d\u00EDas de ejercicio en el a\u00F1o anterior")
+	String irpfActivityTem();
+
+	@DefaultMessage("Nuevas actividades iniciadas a partir del 1-1-2014: A\u00F1o de inicio")
+	String irpfActivityNue();
+
+	@DefaultMessage("\u00BFDeducci\u00F3n por rentas obtenidas en Ceuta y Melilla?")
+	String irpfActivityCeu();
+
+	@DefaultMessage("\u00BFEjerce la actividad en un solo local o sin \u00E9l?")
+	String irpfActivityLoc();
+
+	@DefaultMessage("Indique el n\u00FAmero de veh\u00EDculos afectos a la actividad")
+	String irpfActivityVeh();
+
+	@DefaultMessage("\u00BFLa capacidad de carga del veh\u00EDculo es superior a 1000 Kg.?")
+	String irpfActivityCap();
+
+	@DefaultMessage("Municipio donde se ejerce la actividad:")
+	String irpfActivityMun();
+
+	@DefaultMessage("N\u00BA de empleados a 1-01-2015 (o en la fecha de inicio de la actividad)")
+	String irpfActivityEmp();
+
+	@DefaultMessage("Si en 2015 realiza la actividad en LORCA, seleccione lo que proceda")
+	String irpfActivityLor();
+
+	@DefaultMessage("Si para el c\u00E1lculo del pago fraccionado desea aplicar un porcentaje superior al que establece la normativa, indique el porcentaje que desea aplicar")
+	String irpfActivityPrc();
+
+	@DefaultMessage("Rendimiento neto previo")
+	String irpfActivityRnp();
+
+	@DefaultMessage("Incentivos al empleo")
+	String irpfActivityIem();
+
+	@DefaultMessage("Incentivos a la inversi\u00F3n")
+	String irpfActivityIin();
+
+	@DefaultMessage("Rendimiento neto minorado")
+	String irpfActivityRnm();
+
+	@DefaultMessage("\u00CDNDICES CORRECTORES: 1. Especiales")
+	String irpfActivityIc1();
+
+	@DefaultMessage("\u00CDNDICES CORRECTORES: 2. Empresas de peque\u00F1a dimensi\u00F3n")
+	String irpfActivityIc2();
+
+	@DefaultMessage("\u00CDNDICES CORRECTORES: 3. De temporada")
+	String irpfActivityIc3();
+
+	@DefaultMessage("\u00CDNDICES CORRECTORES: 4. De exceso")
+	String irpfActivityIc4();
+
+	@DefaultMessage("\u00CDNDICES CORRECTORES: 5. De inicio de nueva actividad")
+	String irpfActivityIc5();
+
+	@DefaultMessage("Rendimiento a efectos de pagos fraccionados")
+	String irpfActivityRpf();
+
+	@DefaultMessage("Reducci\u00F3n para actividades econ\u00F3micas realizadas en el t\u00E9rmino municipal de Lorca")
+	String irpfActivityRlo();
+
+	@DefaultMessage("Rendimiento a efectos de pagos fraccionados despu\u00E9s de la reducci\u00F3n")
+	String irpfActivityRdr();
+
+	@DefaultMessage("D\u00EDas de ejercicio en 2015")
+	String irpfActivityDia();
+
+	@DefaultMessage("Rendimiento neto de la actividad a efectos del pago fraccionado")
+	String irpfActivityNet();
+
+	@DefaultMessage("Porcentaje aplicable")
+	String irpfActivityPor();
+
+	@DefaultMessage("Resultado de aplicar el porcentaje correspondiente a cada actividad")
+	String irpfActivityRes();
 	
 }

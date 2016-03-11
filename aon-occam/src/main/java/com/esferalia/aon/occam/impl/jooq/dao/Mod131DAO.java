@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import java.text.MessageFormat;
 import java.util.LinkedList;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -10,6 +11,10 @@ import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfo;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKey;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -23,6 +28,7 @@ import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -552,9 +558,16 @@ public class Mod131DAO extends FiscalModelDAO {
 				detail.setExpression(key.getExpression());
 			}
 		}
-//		for (Mod131KeyDAO key : Mod131KeyDAO.values()) {
-//			key.initialize(ctx, mod);
-//		}
+		mod.setActivities(
+				FiscalActivityDAO.getActivities(ctx, mod.getDomain())
+				.filter( fa -> fa.getYear() == mod.getYear() )
+				.map( new Mod131ActivityFiller() )
+				.peek( act -> act.setDia((int) AonDateUtils.getDaysBetweenDates(
+						 FiscalUtils.getPeriodStart(mod)
+						,FiscalUtils.getPeriodEnd(mod))))
+				.collect(Collectors.toCollection(LinkedList::new))
+			);
+		
 		return calculateMod131(ctx, mod);
 	}
 
@@ -626,6 +639,59 @@ public class Mod131DAO extends FiscalModelDAO {
 		}
 		return mod;
 	}
+	
+	
+	private static class Mod131ActivityFiller implements Function<FiscalActivity, Mod131Activity> {
+		@Override
+		public Mod131Activity apply(FiscalActivity fa) {
+			if (!fa.hasIRPFModules()) return null;
+			
+			Mod131Activity act = new Mod131Activity()
+					.setEpigraph(fa.getEpigraph())
+					.setDescription(fa.getDescription())
+					.setDis( fa.getDoubleValue(FiscalActivityInfoKey.A13) == 1)
+					.setCom( fa.getDoubleValue(FiscalActivityInfoKey.A02))
+					.setTem( (int) fa.getDoubleValue(FiscalActivityInfoKey.A03))
+					.setNue( (int) fa.getDoubleValue(FiscalActivityInfoKey.A04))
+					.setCeu( fa.getDoubleValue(FiscalActivityInfoKey.A05) == 1)
+					.setLoc( fa.getDoubleValue(FiscalActivityInfoKey.A06) == 1)
+					.setVeh( (int) fa.getDoubleValue(FiscalActivityInfoKey.A07))
+					.setCap( fa.getDoubleValue(FiscalActivityInfoKey.A08) == 1)
+					.setMun( (int) fa.getDoubleValue(FiscalActivityInfoKey.A09))
+					.setEmp( (int) fa.getDoubleValue(FiscalActivityInfoKey.A10))
+					.setLor( (int) fa.getDoubleValue(FiscalActivityInfoKey.A11))
+					.setRnp( fa.getDoubleValue(FiscalActivityInfoKey.I01))
+					.setIem( fa.getDoubleValue(FiscalActivityInfoKey.I02))
+					.setIin( fa.getDoubleValue(FiscalActivityInfoKey.I03))
+					.setRnm( fa.getDoubleValue(FiscalActivityInfoKey.I04))
+					.setIc1( fa.getDoubleValue(FiscalActivityInfoKey.I06))
+					.setIc2( fa.getDoubleValue(FiscalActivityInfoKey.I07))
+					.setIc3( fa.getDoubleValue(FiscalActivityInfoKey.I08))
+					.setIc4( fa.getDoubleValue(FiscalActivityInfoKey.I09))
+					.setIc5( fa.getDoubleValue(FiscalActivityInfoKey.I10))
+					.setRpf( fa.getDoubleValue(FiscalActivityInfoKey.I11))
+					.setRlo( fa.getDoubleValue(FiscalActivityInfoKey.I12))
+					.setRdr( fa.getDoubleValue(FiscalActivityInfoKey.I13))
+					.setPor( fa.getDoubleValue(FiscalActivityInfoKey.I14))
+					.setRes( fa.getDoubleValue(FiscalActivityInfoKey.I15))
+					.setPrc( fa.getDoubleValue(FiscalActivityInfoKey.I14))
+					.setNet( fa.getDoubleValue(FiscalActivityInfoKey.I15))
+			;
+			act.setModules(new LinkedList<Mod131ActivityModule>());
+			for (FiscalActivityInfo info : fa.getMap().get(FiscalActivityInfoKeyType.IRPF_MODULE.ordinal()).values()) {
+				act.getModules().add(
+						new Mod131ActivityModule()
+							.setDescription(info.getInfoKey().getDescription())
+							.setValue( info.getBase() )
+							.setUnit( info.getUnit() ) 
+							.setFactor( info.getFactor() )
+							.setResult( AonNumberUtils.todouble( info.getValue()) )
+					);
+			}
+			return act;
+		}
+	}
+	
 
 	// --------------------------------------------------- KEY INTITIALIZATION
 }

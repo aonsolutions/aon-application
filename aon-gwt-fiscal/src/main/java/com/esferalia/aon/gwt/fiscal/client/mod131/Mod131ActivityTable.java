@@ -11,32 +11,23 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Mod131ActivityTable extends CellTable<Mod131Activity> {
 	private static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
 	
 
-	private NoSelectionModel<Mod131Activity> model;
 	
-	public Mod131ActivityTable(SelectionChangeEvent.Handler handler, ProvidesKey<Mod131Activity> providesKey) {
+	
+	public Mod131ActivityTable(ProvidesKey<Mod131Activity> providesKey) {
 		super(1,TABLE_STYLE, providesKey);
 		this.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
 		this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-		
 		addSelectorColumn();
 		addEpigraphColumn();
 		addNetYieldColumn();
 		addPercentColumn();
 		addResultColumn();
-		
-		model = new NoSelectionModel<Mod131Activity>(providesKey);
-		if (handler != null) {
-			model.addSelectionChangeHandler( handler );
-		}
-		this.setSelectionModel(model);
 		this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 	}
 
@@ -99,7 +90,4 @@ public class Mod131ActivityTable extends CellTable<Mod131Activity> {
 		this.setColumnWidth(amountColumn, 120, Unit.PCT);
 	}	
 
-	public Mod131Activity getSelected() {
-		return model.getLastSelectedObject();
-	}
 }

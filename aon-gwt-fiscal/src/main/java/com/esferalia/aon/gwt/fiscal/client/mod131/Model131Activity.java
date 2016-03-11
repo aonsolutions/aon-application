@@ -9,10 +9,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model131Activity extends SimplePanel {
+public class Model131Activity extends ScrollPanel {
 	
 //	@UiField TextBox epigraph;
 //	@UiField TextBox description;
@@ -92,6 +92,8 @@ public class Model131Activity extends SimplePanel {
 			GWT.create(Model131ActivityBinder.class);
 
 	public Model131Activity(final Mod131Activity act) {
+		setWidth("700px");
+		setHeight("498px");
 		Widget ui = BINDER.createAndBindUi(this);
 		populate(act);
 		setWidget(ui);
@@ -109,49 +111,57 @@ public class Model131Activity extends SimplePanel {
 		emp.setValue(act.getEmp());
 		lor.setValue(act.getLor());
 		prc.setValue(act.getPrc());
-		Mod131ActivityModule mod = act.getModules().get(0);
+		int i = 0;
+		Mod131ActivityModule mod = (act.getModules().size() > i)?act.getModules().get(i):new Mod131ActivityModule();
+		i++;
 		description0.setText(mod.getDescription());
 		value0.setValue(mod.getValue());
 		unit0.setText(mod.getUnit());
 		factor0.setValue(mod.getFactor());
 		result0.setValue(mod.getResult());
 
-		mod = act.getModules().get(1);
+		mod = (act.getModules().size() > i)?act.getModules().get(i):new Mod131ActivityModule();
+		i++;
 		description1.setText(mod.getDescription());
 		value1.setValue(mod.getValue());
 		unit1.setText(mod.getUnit());
 		factor1.setValue(mod.getFactor());
 		result1.setValue(mod.getResult());
 		
-		mod = act.getModules().get(2);
+		mod = (act.getModules().size() > i)?act.getModules().get(i):new Mod131ActivityModule();
+		i++;
 		description2.setText(mod.getDescription());
 		value2.setValue(mod.getValue());
 		unit2.setText(mod.getUnit());
 		factor2.setValue(mod.getFactor());
 		result2.setValue(mod.getResult());		
 		
-		mod = act.getModules().get(3);
+		mod = (act.getModules().size() > i)?act.getModules().get(i):new Mod131ActivityModule();
+		i++;
 		description3.setText(mod.getDescription());
 		value3.setValue(mod.getValue());
 		unit3.setText(mod.getUnit());
 		factor3.setValue(mod.getFactor());
 		result3.setValue(mod.getResult());
 		
-		mod = act.getModules().get(4);
+		mod = (act.getModules().size() > i)?act.getModules().get(i):new Mod131ActivityModule();
+		i++;
 		description4.setText(mod.getDescription());
 		value4.setValue(mod.getValue());
 		unit4.setText(mod.getUnit());
 		factor4.setValue(mod.getFactor());
 		result4.setValue(mod.getResult());		
 		
-		mod = act.getModules().get(5);
+		mod = (act.getModules().size() > i)?act.getModules().get(i):new Mod131ActivityModule();
+		i++;
 		description5.setText(mod.getDescription());
 		value5.setValue(mod.getValue());
 		unit5.setText(mod.getUnit());
 		factor5.setValue(mod.getFactor());
 		result5.setValue(mod.getResult());		
 
-		mod = act.getModules().get(6);
+		mod = (act.getModules().size() > i)?act.getModules().get(i):new Mod131ActivityModule();
+		i++;
 		description6.setText(mod.getDescription());
 		value6.setValue(mod.getValue());
 		unit6.setText(mod.getUnit());

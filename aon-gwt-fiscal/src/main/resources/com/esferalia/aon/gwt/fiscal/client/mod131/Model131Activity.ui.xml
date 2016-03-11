@@ -1,193 +1,403 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
-	xmlns:aon="urn:import:com.esferalia.aon.gwt.common.client.widget"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:aon="urn:import:com.esferalia.aon.gwt.common.client.widget"
 	xmlns:fiscal="urn:import:com.esferalia.aon.gwt.fiscal.client.widget"
 	xmlns:model="urn:import:com.esferalia.aon.gwt.fiscal.client.model">
 
-	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
-	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
 
-	<g:HTMLPanel styleName="{aonResources.css.aonWidthAll}">
-		<table class="{aonResources.css.aonWidthAll}">
-			<colgropup>
-				<col width="auto"/>
-				<col width="140px"/>
-				<col width="250px"/>
-				<col width="100px"/>
-				<col width="140px"/>
-			</colgropup>
-			<tbody>
-				<tr>
-					<td colspan="4"><g:Label text="Si el contribuyente es discapacitado en grado igual o superior al 33 por 100, marque X"/></td>
-					<td><aon:DoubleBox ui:field="com"/></td>
-				</tr>			
-				<tr>
-					<td colspan="4"><g:Label text="Comunidad, Sociedad civil o similar: porcentaje de participaci\u00F3n"/></td>
-					<td><g:CheckBox ui:field="dis"/></td>
-				</tr>			
-				
-				<tr>
-					<td colspan="4"><g:Label text="Actividad de temporada: n\u00AA de d\u00EDas de ejercicio en el a\u00F1o anterior"/></td>
-					<td><aon:IntegerBox ui:field="tem"/></td>
-				</tr>			
-				<tr>
-					<td colspan="4"><g:Label text="Nuevas actividades iniciadas a partir del 1-1-2014: A\u00F1o de inicio"/></td>
-					<td><aon:IntegerBox ui:field="nue"/></td>
-				</tr>			
-				<tr>
-					<td colspan="4"><g:Label text="\u00BFDeducci\u00F3n por rentas obtenidas en Ceuta y Melilla?"/></td>
-					<td><g:CheckBox ui:field="ceu"/></td>
-				</tr>			
-				<tr>
-					<td colspan="4"><g:Label text="\u00BFEjerce la actividad en un solo local o sin \u00E9l?"/></td>
-					<td><g:CheckBox ui:field="loc"/></td>
-				</tr>			
-				<tr>
-					<td colspan="4"><g:Label text="Indique el n\u00FAmero de veh\u00EDculos afectos a la actividad"/></td>
-					<td><aon:IntegerBox ui:field="veh"/></td>
-				</tr>			
-				<tr>
-					<td colspan="4"><g:Label text="\u00BFLa capacidad de carga del veh\u00EDculo es superior a 1000 Kg.?"/></td>
-					<td><g:CheckBox ui:field="cap"/></td>
-				</tr>			
-				<tr>
-					<td colspan="4"><g:Label text="Municipio donde se ejerce la actividad:"/></td>
-					<td><aon:IntegerBox ui:field="mun"/></td>
-				</tr>			
-				<tr>
-					<td colspan="4"><g:Label text="N\u00AA de empleados a 1-01-2015 (o en la fecha de inicio de la actividad)"/></td>
-					<td><aon:IntegerBox ui:field="emp"/></td>
-				</tr>			
-				<tr>
-					<td colspan="4"><g:Label text="Si en 2015 realiza la actividad en LORCA, seleccione lo que proceda"/></td>
-					<td><aon:IntegerBox ui:field="lor"/></td>
-				</tr>			
-				<tr>
-					<td colspan="4"><g:Label text="Si para el c\u00E1lculo del pago fraccionado desea aplicar un porcentaje superior al que establece la normativa, indique el porcentaje que desea aplicar"/></td>
-					<td><aon:DoubleBox ui:field="prc"/></td>
-				</tr>			
-				<tr>
-					<td><g:Label text="{msg.description}"/></td>
-					<td><g:Label text="{msg.amount}"/></td>
-					<td><g:Label text="{msg.unit}"/></td>
-					<td><g:Label text="{msg.factor}"/></td>
-					<td><g:Label text="{msg.result}"/></td>
-				</tr>			
-				<tr>
-					<td><g:Label ui:field="description0"/></td>
-					<td><aon:DoubleBox ui:field="value0"/></td>
-					<td><g:Label ui:field="unit0"/></td>
-					<td><aon:DoubleBox ui:field="factor0"/></td>
-					<td><aon:DoubleBox ui:field="result0"/></td>
-				</tr>
-				<tr>
-					<td><g:Label ui:field="description1"/></td>
-					<td><aon:DoubleBox ui:field="value1"/></td>
-					<td><g:Label ui:field="unit1"/></td>
-					<td><aon:DoubleBox ui:field="factor1"/></td>
-					<td><aon:DoubleBox ui:field="result1"/></td>
-				</tr>
-				<tr>
-					<td><g:Label ui:field="description2"/></td>
-					<td><aon:DoubleBox ui:field="value2"/></td>
-					<td><g:Label ui:field="unit2"/></td>
-					<td><aon:DoubleBox ui:field="factor2"/></td>
-					<td><aon:DoubleBox ui:field="result2"/></td>
-				</tr>
-				<tr>
-					<td><g:Label ui:field="description3"/></td>
-					<td><aon:DoubleBox ui:field="value3"/></td>
-					<td><g:Label ui:field="unit3"/></td>
-					<td><aon:DoubleBox ui:field="factor3"/></td>
-					<td><aon:DoubleBox ui:field="result3"/></td>
-				</tr>
-				<tr>
-					<td><g:Label ui:field="description4"/></td>
-					<td><aon:DoubleBox ui:field="value4"/></td>
-					<td><g:Label ui:field="unit4"/></td>
-					<td><aon:DoubleBox ui:field="factor4"/></td>
-					<td><aon:DoubleBox ui:field="result4"/></td>
-				</tr>
-				<tr>
-					<td><g:Label ui:field="description5"/></td>
-					<td><aon:DoubleBox ui:field="value5"/></td>
-					<td><g:Label ui:field="unit5"/></td>
-					<td><aon:DoubleBox ui:field="factor5"/></td>
-					<td><aon:DoubleBox ui:field="result5"/></td>
-				</tr>
-				<tr>
-					<td><g:Label ui:field="description6"/></td>
-					<td><aon:DoubleBox ui:field="value6"/></td>
-					<td><g:Label ui:field="unit6"/></td>
-					<td><aon:DoubleBox ui:field="factor6"/></td>
-					<td><aon:DoubleBox ui:field="result6"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="Rendimiento neto previo"/></td>
-					<td><aon:DoubleBox ui:field="rnp"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="Incentivos al empleo"/></td>
-					<td><aon:DoubleBox ui:field="iem"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="Incentivos a la inversi\u00F3n"/></td>
-					<td><aon:DoubleBox ui:field="iin"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="Rendimiento neto minorado"/></td>
-					<td><aon:DoubleBox ui:field="rnm"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="\u00CDNDICES CORRECTORES: 1. Especiales"/></td>
-					<td><aon:DoubleBox ui:field="ic1"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="\u00CDNDICES CORRECTORES: 2. Empresas de peque\u00F1a dimensi\u00F3n"/></td>
-					<td><aon:DoubleBox ui:field="ic2"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="\u00CDNDICES CORRECTORES: 3. De temporada"/></td>
-					<td><aon:DoubleBox ui:field="ic3"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="\u00CDNDICES CORRECTORES: 4. De exceso"/></td>
-					<td><aon:DoubleBox ui:field="ic4"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="\u00CDNDICES CORRECTORES: 5. De inicio de nueva actividad"/></td>
-					<td><aon:DoubleBox ui:field="ic5"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="Rendimiento a efectos de pagos fraccionados"/></td>
-					<td><aon:DoubleBox ui:field="rpf"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="Reducci\u00F3n para actividades econ\u00F3micas realizadas en el t\u00E9rmino municipal de Lorca"/></td>
-					<td><aon:DoubleBox ui:field="rlo"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="Rendimiento a efectos de pagos fraccionados despu\u00E9s de la reducci\u00F3n"/></td>
-					<td><aon:DoubleBox ui:field="rdr"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="D\u00EDas de ejercicio en 2015"/></td>
-					<td><aon:IntegerBox ui:field="dia"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="Rendimiento neto de la actividad a efectos del pago fraccionado"/></td>
-					<td><aon:DoubleBox ui:field="net"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="Porcentaje aplicable"/></td>
-					<td><aon:DoubleBox ui:field="por"/></td>
-				</tr>
-				<tr>
-					<td colspan="4"><g:Label text="Resultado de aplicar el porcentaje correspondiente a cada actividad"/></td>
-					<td><aon:DoubleBox ui:field="res"/></td>
-				</tr>
-			</tbody>
-		</table>
-	</g:HTMLPanel>
+	<g:ScrollPanel>
+		<g:HTMLPanel styleName="{aonResources.css.aonWidthAll}">
+			<table class="{aonResources.css.aonFiscalModelDataTable} {aonResources.css.aonMarginTop}">
+				<colgropup>
+					<col width="auto" />
+					<col width="100px" />
+				</colgropup>
+				<tbody>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityDis}" />
+						</td>
+						<td>
+							<g:CheckBox ui:field="dis" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityCom}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="com" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityTem}" />
+						</td>
+						<td>
+							<aon:IntegerBox ui:field="tem" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityNue}" />
+						</td>
+						<td>
+							<aon:IntegerBox ui:field="nue" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityCeu}" />
+						</td>
+						<td>
+							<g:CheckBox ui:field="ceu" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityLoc}" />
+						</td>
+						<td>
+							<g:CheckBox ui:field="loc" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityVeh}" />
+						</td>
+						<td>
+							<aon:IntegerBox ui:field="veh" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityCap}" />
+						</td>
+						<td>
+							<g:CheckBox ui:field="cap"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityMun}" />
+						</td>
+						<td>
+							<aon:IntegerBox ui:field="mun" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityEmp}" />
+						</td>
+						<td>
+							<aon:IntegerBox ui:field="emp" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityLor}" />
+						</td>
+						<td>
+							<aon:IntegerBox ui:field="lor" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityPrc}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="prc" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="{aonResources.css.aonFiscalModelDataTable}">
+				<colgropup>
+					<col width="auto" />
+					<col width="100px" />
+					<col width="150px" />
+					<col width="100px" />
+					<col width="100px" />
+				</colgropup>
+				<tbody>
+					<tr>
+						<td class="{aonResources.css.aonFiscalModelDataTableHeader}">
+							<g:Label text="{msg.description}" />
+						</td>
+						<td class="{aonResources.css.aonFiscalModelDataTableHeader} {aonResources.css.aonTextRight}">
+							<g:Label text="{msg.amount}" />
+						</td>
+						<td class="{aonResources.css.aonFiscalModelDataTableHeader}">
+							<g:Label text="{msg.unit}" />
+						</td>
+						<td class="{aonResources.css.aonFiscalModelDataTableHeader} {aonResources.css.aonTextRight}">
+							<g:Label text="{msg.factor}" />
+						</td>
+						<td class="{aonResources.css.aonFiscalModelDataTableHeader} {aonResources.css.aonTextRight}">
+							<g:Label text="{msg.result}" />
+						</td>
+					</tr>
+					<tr>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="description0" />
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="value0" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="unit0" />
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="factor0" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="result0" maxLength="10" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="description1" />
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="value1" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="unit1"/>
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="factor1" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="result1" maxLength="10" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="description2" />
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="value2" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="unit2" />
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="factor2" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="result2" maxLength="10" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="description3" />
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="value3" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="unit3" />
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="factor3" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="result3" maxLength="10" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="description4" />
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="value4" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="unit4" />
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="factor4" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="result4" maxLength="10" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="description5" />
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="value5" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="unit5" />
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="factor5" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="result5" maxLength="10" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="description6" />
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="value6" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonFontSmall}">
+							<g:Label ui:field="unit6" />
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="factor6" maxLength="10" visibleLength="6"/>
+						</td>
+						<td class="{aonResources.css.aonTextRight}">
+							<aon:DoubleBox ui:field="result6" maxLength="10" visibleLength="6"/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="{aonResources.css.aonFiscalModelDataTable}">
+				<colgropup>
+					<col width="auto" />
+					<col width="100px" />
+				</colgropup>
+				<tbody>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityRnp}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="rnp" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityIem}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="iem" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityIin}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="iin" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityRnm}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="rnm" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityIc1}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="ic1" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityIc2}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="ic2" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityIc3}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="ic3" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityIc4}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="ic4" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityIc5}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="ic5" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityRpf}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="rpf" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityRlo}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="rlo" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityRdr}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="rdr" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityDia}" />
+						</td>
+						<td>
+							<aon:IntegerBox ui:field="dia" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityNet}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="net" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityPor}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="por" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityRes}" />
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="res" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
 </ui:UiBinder>
