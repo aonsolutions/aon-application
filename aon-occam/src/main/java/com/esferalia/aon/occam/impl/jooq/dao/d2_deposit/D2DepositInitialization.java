@@ -20,17 +20,17 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA111500.toString(), "ABREVIADO?sdb({2405,2415,2425,250,251,252,253,254,255,257,258,26})-sab({2495,2935,259,2945,2955,297,298})"
 																				+ ":sdb({2405,2415,2425,250,251,252,253,254,255,258,26})-sab({2495,259,2935,2945,2955,296,297,298})");//Inversiones financieras a largo plazo
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA111600.toString(), "sdb({474})");//Activos por impuesto diferido
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA111700.toString(), "ABREVIADO?sdb({458})" // TODO NECA 6º .8 (abreviado)//Deudores comerciales no corrientes
-																				+ ":0.0"); // TODO NECA 5.ª 5 (pymes)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA111700.toString(), "sdb({45})"); // TODO NECA 6º .8 (abreviado)//Deudores comerciales no corrientes
+																				//+ ":0.0"); // TODO NECA 5.ª 5 (pymes)
 
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112100.toString(), "ABREVIADO?sdb({580,581,582,583,584})-sab({599})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112200.toString(), "sdb({30,31,32,33,34,35,36,407})-sab({39})");
 	
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112380.toString(), "sdb({430,431,432,433,434,435,436})-sab({437,490,493})");		
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112381.toString(), "sdb({430,431,432,435,436})-sab({437,490,4935})");
-			//***** la formula la he cogido de Mod2002014Initialization *****//"0.0");	// TODO NECA 6.ª 8 (abreviado)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112381.toString(), "sdb({43001})");	// TODO NECA 6.ª 8 (abreviado)
 																						// TODO NECA 5.ª 5 (pymes)
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112382.toString(), "0.0");	// TODO NECA 6.ª 8 (abreviado)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112382.toString(), "sdb({430,431,432,435,436})-sab({437,490,4935})");	
+																						// TODO NECA 6.ª 8 (abreviado)
 																						// TODO NECA 5.ª 5 (pymes)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112370.toString(), "sdb({5580})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA112390.toString(), "sdb({44,460,470,471,472,544})");
@@ -65,9 +65,9 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2131300.toString(),"sab({1603,1604,1613,1614,1623,1624,1633,1634})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2131400.toString(),"sab({479})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2131500.toString(),"sab({181})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2131600.toString(),"0.0");	// TODO NECA 6.ª 16 (ABREVIADO)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2131600.toString(),"sab({42})");	// TODO NECA 6.ª 16 (ABREVIADO)
 																						// TODO NECA 5.ª 11 (PYMES)
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2131700.toString(),"sab({15})"); 
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2131700.toString(),"sab({150,153,154})"); 
 			//***** la formula la he cogido de Mod2002014Initialization *****//"0.0"); 	// TODO 15; (NECA 6.ª 17) (ABREVIADO)
 																						// TODO 15;NECA 5.ª 12 (PYMES)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232100.toString(),"ABREVIADO?sab({585,586,587,588,589})");
@@ -77,17 +77,17 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232390.toString(),"ABREVIADO?sab({194,500,501,505,506,509,5115,5135,5145,521,522,523,525,526,528,551,5525,555,5565,5566,5595,5598,560,561,569})-sdb({1034,1044,190,192})"
 																				+ ":sab({194,500,501,505,506,509,5115,5135,5145,521,522,523,525,526,528,551,5525,555,5565,5566,5595,560,561})-sdb({1034,1044,190,192})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232400.toString(),"sab({5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5523,5524,5563,5564})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232580.toString(),"ABREVIADO?sab({400,401,403,404,405})-sdb({406})"); // TODO ¿¿??
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232581.toString(),"0.0"); 	// TODO NECA 6.ª 16 (ABREVIADO)
-																						// TODO NECA 5.ª 11 (PYMES)
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232582.toString(),"sab({400,401,405})-sdb({406})"); 
-			//***** la formula la he cogido de Mod2002014Initialization *****//"0.0"); 	// TODO NECA 6.ª 16 (ABREVIADO)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232580.toString(),"sab({400,401,403,404,405})-sdb({406})"); // TODO ¿¿??
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232581.toString(),"sab({40001})"); 	// TODO NECA 6.ª 16 (ABREVIADO)
+																								// TODO NECA 5.ª 11 (PYMES)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232582.toString(),"sab({400,401,405})-sdb({406,40001})"); 
+																						// TODO NECA 6.ª 16 (ABREVIADO)
 																						// TODO NECA 5.ª 11 (PYMES)
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232590.toString(),"ABREVIADO?sab({41,438,465,466,475,476,477})"
 																				+ ":sab({41,438,465,475,476,477})");
 		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232600.toString(),"sab({485,568})");
-		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232700.toString(),"sab({502,507})"); 	
-			//***** la formula la he cogido de Mod2002014Initialization *****//"0.0"); 	//TODO 502,507; NECA 6.ª 17 (ABREVIADO)
+		INITIALIZE_EXPRESSION_MAP.put(D2DepositHeaderKey.BA2232700.toString(),"sab({502,507,558})"); 	
+																						//TODO 502,507; NECA 6.ª 17 (ABREVIADO)
 																						// TODO 502,507;NECA 5.ª 12 (PYMES)
 	}
 	static { // CUENTA DE PERDIDAS Y GANANCIAS 
@@ -138,7 +138,7 @@ public class D2DepositInitialization {
 	}
 
 
-	static { // APLICACION DE RESULTADOS
+	static { //AP3 APLICACION DE RESULTADOS
 		// BASE DE REPARTO
 		INITIALIZE_EXPRESSION_MAP_D2.put(D2DepositKey.MA391000.toString(),"sab({129})");
 		INITIALIZE_EXPRESSION_MAP_D2.put(D2DepositKey.MA391001.toString(),"sab({120})");
@@ -156,6 +156,41 @@ public class D2DepositInitialization {
 		INITIALIZE_EXPRESSION_MAP_D2.put(D2DepositKey.MA391011.toString(),"sab({121})");
 		INITIALIZE_EXPRESSION_MAP_D2.put(D2DepositKey.MA391012.toString(),"sab({112,114,113,121,120})");
 	}
+
+	static { //AP5 INMOVILIZADO MATERIAL, INTANGIBLE E INVERSIONES INMOBILIARIAS
 	
+	}
+
+	static { //AP6 ACTIVOS FINANCIEROS
+		
+	}
+	
+	static { //AP7 PASIVOS FINANCIEROS
+		
+	}
+
+	static { //AP10 INGRESOS Y GASTOS
+		
+	}
+	
+	static { //AP11 SUBVENCIONES, DONACIONES Y LEGADOS
+		
+	}
+	
+	static { //AP12 OPERACIONES CON PARTES VINCULANTES
+		
+	}
+	
+	static { //AP13 OTRA INFORMACIÓN
+		
+	}
+
+	static { //AP14 INFORMACIÓN SOBRE MEDIOAMBIENTE
+		
+	}
+	
+	static { //AP15 INFORMACIÓN SOBRE APLAZAMIENTOS DE PAGOS EFECTUADOS
+		
+	}
 }
 

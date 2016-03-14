@@ -111,13 +111,14 @@ public class D2PDepositConstants {
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.PA41600,D2DepositHeaderKey.PA416009,D2DepositHeaderKey.PA4160098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.PA41700,D2DepositHeaderKey.PA417009,D2DepositHeaderKey.PA4170098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.PA41800,D2DepositHeaderKey.PA418009,D2DepositHeaderKey.PA4180098}
-		,new D2DepositHeaderKey[]{D2DepositHeaderKey.PA41900,D2DepositHeaderKey.PA419009,D2DepositHeaderKey.PA4190098}
+		
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.PA42100,D2DepositHeaderKey.PA421009,D2DepositHeaderKey.PA4210098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.PA42110,D2DepositHeaderKey.PA421109,D2DepositHeaderKey.PA4211098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.PA42120,D2DepositHeaderKey.PA421209,D2DepositHeaderKey.PA4212098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.PA42130,D2DepositHeaderKey.PA421309,D2DepositHeaderKey.PA4213098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.PA49200,D2DepositHeaderKey.PA492009,D2DepositHeaderKey.PA4920098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.PA49300,D2DepositHeaderKey.PA493009,D2DepositHeaderKey.PA4930098}
+		,new D2DepositHeaderKey[]{D2DepositHeaderKey.PA41900,D2DepositHeaderKey.PA419009,D2DepositHeaderKey.PA4190098}
 		,new D2DepositHeaderKey[]{D2DepositHeaderKey.PA49500,D2DepositHeaderKey.PA495009,D2DepositHeaderKey.PA4950098}
 	};
 	
