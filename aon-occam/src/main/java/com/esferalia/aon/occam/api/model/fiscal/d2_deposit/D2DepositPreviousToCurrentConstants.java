@@ -55,6 +55,22 @@ public class D2DepositPreviousToCurrentConstants {
 		,D2DepositHeaderKey.PA42130
 	};
 
+	public static D2DepositKey[] FREE_TEXT = new D2DepositKey[]{
+		D2DepositKey.MAT19019001
+		,D2DepositKey.MAT29029001
+		,D2DepositKey.MAT39039001
+		,D2DepositKey.MAT49049001
+		,D2DepositKey.MAT59059001
+		,D2DepositKey.MAT69069001
+		,D2DepositKey.MAT79079001
+		,D2DepositKey.MAT89089001
+		,D2DepositKey.MAT99099001
+		,D2DepositKey.MAT119119001
+		,D2DepositKey.MAT129129001
+		,D2DepositKey.MAT139139001
+		,D2DepositKey.MAT149149001
+	};
+	
 	public static D2DepositKey[] MEM_AP3 = new D2DepositKey[]{
 		D2DepositKey.MA391000	,D2DepositKey.MA391001
 		,D2DepositKey.MA391002	,D2DepositKey.MA391003

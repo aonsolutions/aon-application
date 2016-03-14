@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Vector;
@@ -9,6 +10,7 @@ import com.esferalia.aon.gwt.fiscal.deposit.shared.D2Deposit2014;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryFiles;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface INormalizedMemoryAsync {
@@ -29,10 +31,9 @@ public interface INormalizedMemoryAsync {
 
 	void getDigitalDepositTemplates(Integer domainId, Integer year, AsyncCallback<Vector<MemoryTemplate>> callback);
 
-	void createTextMemory(Integer domainId, String name,
-			AsyncCallback<MemoryTemplate> callback);
+	void createTextMemory(Integer domainId, String name, Integer year, AsyncCallback<MemoryTemplate> callback);
 
-	void updateTexts(MemoryTemplate mt, Integer domainId, String cif,
+	void updateTexts(MemoryTemplate mt, HashMap<D2DepositKey, Boolean> freeTextMap, Integer domainId, String cif,
 			Map<String, String> map, AsyncCallback<Map<String, String>> callback);
 
 	void getParentDomain(Integer domainId, AsyncCallback<Integer> callback);

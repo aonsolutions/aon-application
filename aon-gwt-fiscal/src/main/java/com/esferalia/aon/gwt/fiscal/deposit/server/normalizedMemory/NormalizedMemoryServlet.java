@@ -250,23 +250,18 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		return null;
 	}
 
-	public MemoryTemplate createTextMemory(Integer domainId, String name) {
+	public MemoryTemplate createTextMemory(Integer domainId, String name, Integer year) {
 		HttpServletRequest request = getThreadLocalRequest();
 		String domain  = AonServletUtils.getRequestDomainName(request);
-
-		MemoryTemplate mt = new MemoryTemplate();
 
 		byte[] data = Utils.CreateXml("", name);
 		Integer id = DBConsults.insertDepositText(domain, name, data, domainId, this.getUserLogin());
 
-		mt.setId(id);
-		mt.setName(name);
-
-		return mt;
-
+		return new MemoryTemplate().setId(id).setName(name)
+				.setD2Deposit2014(getD2DepositTreeObject(id, year, data));
 	}
 	
-	public Map<String, String> updateTexts(MemoryTemplate mt, Integer domainId, String cif, Map<String, String> map) {
+	public Map<String, String> updateTexts(MemoryTemplate mt, HashMap<D2DepositKey, Boolean> freeTextMap, Integer domainId, String cif, Map<String, String> map) {
 		HttpServletRequest request = getThreadLocalRequest();
 		String domain = AonServletUtils.getRequestDomainName(request);
 
@@ -274,73 +269,73 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 				.toString());
 		
 		for (Integer i = 0; i < schema.getClaves().getClave().size(); i++) {
-			if (schema.getClaves().getClave().get(i).getCodigo().toString()
+			if (freeTextMap.get(D2DepositKey.MAT19019001) && schema.getClaves().getClave().get(i).getCodigo().toString()
 					.equals(D2DepositKey.MAT19019001.getCode())) { 
 				
 				map.put(D2DepositKey.MAT19019001.getCode(),  schema.getClaves().getClave().get(i).getValor());
 			} 
-			else if (schema.getClaves().getClave().get(i).getCodigo()
+			else if (freeTextMap.get(D2DepositKey.MAT29029001) && schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT29029001.getCode())) { 
 				
 				map.put(D2DepositKey.MAT29029001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} 
-			else if (schema.getClaves().getClave().get(i).getCodigo()
+			else if (freeTextMap.get(D2DepositKey.MAT39039001) && schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT39039001.getCode())) { 
 				
 				map.put(D2DepositKey.MAT39039001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} 
-			else if (schema.getClaves().getClave().get(i).getCodigo()
+			else if (freeTextMap.get(D2DepositKey.MAT49049001) && schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT49049001.getCode())) { 
 				
 				map.put(D2DepositKey.MAT49049001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} 
-			else if (schema.getClaves().getClave().get(i).getCodigo()
+			else if (freeTextMap.get(D2DepositKey.MAT59059001) && schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT59059001.getCode())) { 
  				
 				map.put(D2DepositKey.MAT59059001.getCode(), schema.getClaves().getClave().get(i).getValor());
 			} 
-			else if (schema.getClaves().getClave().get(i).getCodigo()
+			else if (freeTextMap.get(D2DepositKey.MAT69069001) && schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT69069001.getCode())) {
 				
 				map.put(D2DepositKey.MAT69069001.getCode(), schema.getClaves().getClave().get(i).getValor());
 			} 
-			else if (schema.getClaves().getClave().get(i).getCodigo()
+			else if (freeTextMap.get(D2DepositKey.MAT79079001) && schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT79079001.getCode())) {
 				
 				map.put(D2DepositKey.MAT79079001.getCode(), schema.getClaves().getClave().get(i).getValor());
 			} 
-			else if (schema.getClaves().getClave().get(i).getCodigo()
+			else if (freeTextMap.get(D2DepositKey.MAT89089001) && schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT89089001.getCode())) { 
 				
 				map.put(D2DepositKey.MAT89089001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} 
-			else if (schema.getClaves().getClave().get(i).getCodigo()
+			else if (freeTextMap.get(D2DepositKey.MAT99099001) && schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT99099001.getCode())) { 
 				
 				map.put(D2DepositKey.MAT99099001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} 
-			else if (schema.getClaves().getClave().get(i).getCodigo()
+			else if (freeTextMap.get(D2DepositKey.MAT119119001) && schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT119119001.getCode())) { 
 				
 				map.put(D2DepositKey.MAT119119001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
 			} 
-			else if (schema.getClaves().getClave().get(i).getCodigo()
+			else if (freeTextMap.get(D2DepositKey.MAT129129001) && schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT129129001.getCode())) { 
 				
 				map.put(D2DepositKey.MAT129129001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
+			} else if (freeTextMap.get(D2DepositKey.MAT139139001) && schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT139139001.getCode())) { 
 				
 				map.put(D2DepositKey.MAT139139001.getCode(), schema.getClaves().getClave().get(i).getValor());
 
-			} else if (schema.getClaves().getClave().get(i).getCodigo()
+			} else if (freeTextMap.get(D2DepositKey.MAT149149001) && schema.getClaves().getClave().get(i).getCodigo()
 					.toString().equals(D2DepositKey.MAT149149001.getCode())) { 
 				
 				map.put(D2DepositKey.MAT149149001.getCode(), schema.getClaves().getClave().get(i).getValor());
@@ -455,8 +450,6 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 							.toString());
 				}
 			}
-		} else if (type.equals("Memoria predefinida")) {
-			map = updateTexts(mt, domainId, cif, map);
 		} else if (type.equals("Memoria (Deposito.xml)")) {
 			byte[] b = getFile(domainId);
 
@@ -529,7 +522,9 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		Map<D2DepositKey, Double> ctxMem = new LinkedHashMap<D2DepositKey, Double>();
 		D2PrevioustoD2Current.fill2(ctxMem, mapPreviousMem);
 		
-		byte[] b = Utils.CreateXml(ctx, ctxMem, enterprise, name, type, domainName, year);
+		Map<D2DepositKey,String> mapFreeText = getFreeTextKeySchema(previousSchema);
+		
+		byte[] b = Utils.CreateXml(ctx, ctxMem, mapFreeText, enterprise, name, type, domainName, year);
 		
 		DBConsults.insertDeposit(domainName, b, domainId, year, this.getUserLogin());
 		return getSchema(enterprise.getDocument(), domainId, false, year);
@@ -753,7 +748,19 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		return map;
 	}
 
-	
+	public Map<D2DepositKey, String> getFreeTextKeySchema(Esquema schema){
+		Map<D2DepositKey, String> map = new HashMap<D2DepositKey, String>();
+		for(Integer i = 0; i < D2DepositPreviousToCurrentConstants.FREE_TEXT.length; i++){
+			D2DepositKey key = D2DepositPreviousToCurrentConstants.FREE_TEXT[i];
+			for(Clave clave :schema.getClaves().getClave()){
+				if(clave.getCodigo().toString().equals(key.getCode())){
+					map.put(key, clave.getValor());
+				}
+			}
+		}
+		return map;
+	}
+ 	
 	public Map<D2DepositKey, Double> getKeySchema(Esquema schema) {
 		Map<D2DepositKey, Double> map = new HashMap<D2DepositKey, Double>();
 		

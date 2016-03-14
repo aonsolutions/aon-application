@@ -1,10 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.deposit.client.normalizedMemory;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -13,6 +15,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
@@ -322,6 +325,7 @@ public abstract class DepositDialog extends CustomDialogB {
 					for (MemoryTemplate memoryTemplate : mts) {
 						lb1.addItem(memoryTemplate.getName());
 					}
+					lb1.addChangeHandler(freeTextImport());
 					flex_table.setWidget(1, 0, new Label("Memoria Predefinida"));
 					flex_table.setWidget(1, 1, lb1);
 					flexTableCss();
@@ -468,5 +472,42 @@ public abstract class DepositDialog extends CustomDialogB {
 				}
 			}
 		}
+	}
+	
+	private HashMap<D2DepositKey, Boolean> freeTextMap;
+	
+	public HashMap<D2DepositKey, Boolean> getFreeTextMap() {
+		return freeTextMap;
+	}
+
+	public void setFreeTextMap(HashMap<D2DepositKey, Boolean> freeTextMap) {
+		this.freeTextMap = freeTextMap;
+	}
+
+	private ChangeHandler freeTextImport(){
+		return new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				FreeTextImportDialog dialog = new FreeTextImportDialog() {
+					
+					@Override protected void onCancel() {
+						hide();
+					}
+					
+					@Override protected void onAccept() {
+						setFreeTextMap(new HashMap<D2DepositKey, Boolean>());
+						for(Integer i = 0; i <= 12; i++){
+							CheckBox cb = (CheckBox)flex_table.getWidget(i, 1);
+							getFreeTextMap().put(getD2DepositKey(i), cb.getValue());
+						}
+						hide();
+					}
+				};
+				dialog.addStyleName("gwt-PopupPanel-template");
+				dialog.setGlassEnabled(true);
+				dialog.show();
+			}
+		};
 	}
 }

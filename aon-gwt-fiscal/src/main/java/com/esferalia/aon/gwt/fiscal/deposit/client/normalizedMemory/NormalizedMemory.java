@@ -277,11 +277,11 @@ public class NormalizedMemory extends ResizeComposite {
 					hide();
 					TextBox tb = (TextBox) flex_table.getWidget(0, 1);
 					
-					inma.createTextMemory(enterprise.getDomain(),tb.getValue(),new AsyncCallback<MemoryTemplate>() {
+					inma.createTextMemory(enterprise.getDomain(),tb.getValue(),year, new AsyncCallback<MemoryTemplate>() {
 						
 						@Override
 						public void onSuccess(MemoryTemplate result) {
-							D2DepositTreeObject ddto = new D2DepositTreeObject(enterprise, 2014);
+							D2DepositTreeObject ddto = new D2DepositTreeObject(enterprise, year);
 							result.setD2Deposit2014(ddto);
 							digitalDepositFreeTextTreeNode.items(result);							
 						}
@@ -561,7 +561,8 @@ public class NormalizedMemory extends ResizeComposite {
 													m = mt;
 											}
 											
-											inma.updateTexts(m, enterprise.getDomain(),
+											
+											inma.updateTexts(m, getFreeTextMap(), enterprise.getDomain(),
 													enterprise.getDocument(), d2Deposit2014.getMapDraft(), 
 													new AsyncCallback<Map<String, String>>() {
 
@@ -663,7 +664,7 @@ public class NormalizedMemory extends ResizeComposite {
 											if (mt.getName().equals(t))
 												m = mt;
 										}
-										inma.updateTexts(m, enterprise.getDomain(),
+										inma.updateTexts(m, getFreeTextMap(), enterprise.getDomain(),
 												enterprise.getDocument(), d2Deposit2014.getMapDraft(),
 												new AsyncCallback<Map<String, String>>() {
 
