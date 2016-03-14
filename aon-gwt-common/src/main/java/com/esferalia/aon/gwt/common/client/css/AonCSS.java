@@ -78,6 +78,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-width-half-minus")
 	String aonWidthHalfMinus();
+	
+	@ClassName("aon-width-90-percent")
+	String aonWidth90Percent();
 
 	@ClassName("aon-width-auto")
 	String aonWidthAuto();

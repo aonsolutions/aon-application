@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
+import com.esferalia.aon.occam.api.model.fiscal.mod131.Model131AEATScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod131.Model131ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
@@ -87,9 +88,11 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 		for (IModelScript<Mod131Key> ms : Model131ScriptProvider.obtainScript(callback.getFiscalModel())) {
 			if (ms.paintHeaderBefore()) {
 				paintHeader();
+			}
+			paintRow(callback,ms);
+			if (ms == Model131AEATScript.R00) {
 				paintActivityRow(callback);
 			}
-			paintRow(callback,ms);	
 		}
 	}
 
@@ -113,45 +116,13 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 	protected void paintHeader() {
 		int row = getTable().getRowCount();
 		getTable().setWidget(row, 0, new Label());
-		getTable().getFlexCellFormatter().setStyleName(row, 0,AON.AON_CSS.aonBold() );
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextCenter() );
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottom() );
-
 		getTable().setWidget(row, 1, new Label());
-		getTable().getFlexCellFormatter().setStyleName(row, 1,AON.AON_CSS.aonBold() );
-		getTable().getFlexCellFormatter().addStyleName(row, 1,AON.AON_CSS.aonTextCenter() );
-		getTable().getFlexCellFormatter().addStyleName(row, 1,AON.AON_CSS.aonBorderBottom() );
-
 		getTable().setWidget(row, 2, new Label());
-		getTable().getFlexCellFormatter().setStyleName(row, 2,AON.AON_CSS.aonBold() );
-		getTable().getFlexCellFormatter().addStyleName(row, 2,AON.AON_CSS.aonTextCenter() );
-		getTable().getFlexCellFormatter().addStyleName(row, 2,AON.AON_CSS.aonBorderBottom() );
-
 		getTable().setWidget(row, 3, new Label());
-		getTable().getFlexCellFormatter().setStyleName(row, 3,AON.AON_CSS.aonBold() );
-		getTable().getFlexCellFormatter().addStyleName(row, 3,AON.AON_CSS.aonTextCenter() );
-		getTable().getFlexCellFormatter().addStyleName(row, 3,AON.AON_CSS.aonBorderBottom() );
-
 		getTable().setWidget(row, 4, new Label());
-		getTable().getFlexCellFormatter().setStyleName(row, 4,AON.AON_CSS.aonBold() );
-		getTable().getFlexCellFormatter().addStyleName(row, 4,AON.AON_CSS.aonTextCenter() );
-		getTable().getFlexCellFormatter().addStyleName(row, 4,AON.AON_CSS.aonBorderBottom() );
-
 		getTable().setWidget(row, 5, new Label());
-		getTable().getFlexCellFormatter().setStyleName(row, 5,AON.AON_CSS.aonBold() );
-		getTable().getFlexCellFormatter().addStyleName(row, 5,AON.AON_CSS.aonTextCenter() );
-		getTable().getFlexCellFormatter().addStyleName(row, 5,AON.AON_CSS.aonBorderBottom() );
-
 		getTable().setWidget(row, 6, new Label());
-		getTable().getFlexCellFormatter().setStyleName(row, 6,AON.AON_CSS.aonBold() );
-		getTable().getFlexCellFormatter().addStyleName(row, 6,AON.AON_CSS.aonTextCenter() );
-		getTable().getFlexCellFormatter().addStyleName(row, 6,AON.AON_CSS.aonBorderBottom() );
-
 		getTable().setWidget(row, 6, new Label());
-		getTable().getFlexCellFormatter().setStyleName(row, 7,AON.AON_CSS.aonBold() );
-		getTable().getFlexCellFormatter().addStyleName(row, 7,AON.AON_CSS.aonTextCenter() );
-		getTable().getFlexCellFormatter().addStyleName(row, 7,AON.AON_CSS.aonBorderBottom() );
-
 	}
 		
 	protected void paintEmptyRow() {
@@ -343,6 +314,10 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 		int row = getTable().getRowCount();
 		final Mod131ActivityProvidesKey providesKey = new Mod131ActivityProvidesKey();
 		final Mod131ActivityTable table = new Mod131ActivityTable(providesKey);
+		table.setStyleName( AON.AON_CSS.aonWidth90Percent());
+		table.addStyleName( AON.AON_CSS.aonFiscalMatrix());
+		table.addStyleName( AON.AON_CSS.aonMarginTop());
+		table.addStyleName( AON.AON_CSS.aonMarginBottom());
 		table.addRangeChangeHandler(new Handler() {
 			
 			@Override

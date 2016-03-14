@@ -58,6 +58,10 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	width: 40%;
 }
 
+.aon-width-90-percent {
+	width: 90%;
+}
+
 .aon-width-auto {
 	width: auto;
 }

@@ -5,7 +5,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalActivity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfo;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKey;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Aeat2015ModuleCalculator  {

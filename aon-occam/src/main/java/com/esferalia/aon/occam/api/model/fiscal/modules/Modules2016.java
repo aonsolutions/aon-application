@@ -3,8 +3,9 @@ package com.esferalia.aon.occam.api.model.fiscal.modules;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKey;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Modules2015 {
+public class Modules2016 {
 	
 	public enum FarmerIRPF {
 		 A01 (0.13,0.23,"Agr\u00EDcola dedicada a la obtenci\u00F3n de remolacha azucarera y ganadera de explotaci\u00F3n de ganado porcino de carne, de ganado bovino de carne, de ganado ovino de carne, de ganado caprino de carne, avicultura y cunicultura.")
@@ -1398,5 +1399,19 @@ public class Modules2015 {
 		public boolean hasIRPFModules() {
 			return irpfModules != null;
 		}
+		
+		public static Epigraph getEpigraph(String code) {
+			for (Epigraph epi: Epigraph.values()) {
+				if (AonStringUtils.equals(epi.getEpigraph(), code)) {
+					return epi;
+				}
+			}
+			return null;
+		}
+		public String getFullDescription() {
+			return epigraph  + " - " + description;
+		}
 	}
+	
+	
 }

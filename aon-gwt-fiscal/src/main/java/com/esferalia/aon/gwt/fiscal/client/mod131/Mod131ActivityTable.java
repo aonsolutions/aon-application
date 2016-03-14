@@ -29,6 +29,8 @@ public class Mod131ActivityTable extends CellTable<Mod131Activity> {
 		addPercentColumn();
 		addResultColumn();
 		this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
+		
+		
 	}
 
 	private void addSelectorColumn() {
@@ -44,38 +46,38 @@ public class Mod131ActivityTable extends CellTable<Mod131Activity> {
 	}
 
 	private void addEpigraphColumn() {
-		final TextColumn<Mod131Activity> documentColumn = new TextColumn<Mod131Activity>() {
+		final TextColumn<Mod131Activity> epigraphColumn = new TextColumn<Mod131Activity>() {
 			@Override
 			public String getValue(Mod131Activity model) {
 				return model.getFullDescription();
 			}
 		};
-		this.addColumn(documentColumn, AON.MSG.epigraph());
-		this.setColumnWidth(documentColumn, 100, Unit.PCT);
+		this.addColumn(epigraphColumn, AON.MSG.epigraph());
+		this.setColumnWidth(epigraphColumn, 100, Unit.PX);
 	}
 
 	private void addNetYieldColumn() {
-		final TextColumn<Mod131Activity> amountColumn = new TextColumn<Mod131Activity>() {
+		final TextColumn<Mod131Activity> netYieldColumn = new TextColumn<Mod131Activity>() {
 			@Override
 			public String getValue(Mod131Activity model) {
 				return AON.FMT.format(model.getNet());
 			}
 		};
-		this.addColumn(amountColumn, AON.MSG.netYield());
-		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 120, Unit.PCT);
+		this.addColumn(netYieldColumn, AON.MSG.netYield());
+		netYieldColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
+		this.setColumnWidth(netYieldColumn, 140, Unit.PX);
 	}	
 
 	private void addPercentColumn() {
-		final TextColumn<Mod131Activity> amountColumn = new TextColumn<Mod131Activity>() {
+		final TextColumn<Mod131Activity> percentColumn = new TextColumn<Mod131Activity>() {
 			@Override
 			public String getValue(Mod131Activity model) {
 				return AON.FMT.format(model.getPor());
 			}
 		};
-		this.addColumn(amountColumn, AON.MSG.percent());
-		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 120, Unit.PCT);
+		this.addColumn(percentColumn, AON.MSG.percent());
+		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
+		this.setColumnWidth(percentColumn, 120, Unit.PX);
 	}	
 
 	private void addResultColumn() {
@@ -87,7 +89,7 @@ public class Mod131ActivityTable extends CellTable<Mod131Activity> {
 		};
 		this.addColumn(amountColumn, AON.MSG.result());
 		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 120, Unit.PCT);
+		this.setColumnWidth(amountColumn, 140, Unit.PX);
 	}	
 
 }

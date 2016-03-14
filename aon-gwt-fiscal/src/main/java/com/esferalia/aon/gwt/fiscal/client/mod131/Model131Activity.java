@@ -1,21 +1,32 @@
 package com.esferalia.aon.gwt.fiscal.client.mod131;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.Epigraph2016Panel;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model131Activity extends ScrollPanel {
+public class Model131Activity extends DockLayoutPanel {
 	
-//	@UiField TextBox epigraph;
-//	@UiField TextBox description;
+	final Label epigraph = new Label();
+	final Label epigraphLabel = new Label();
+	
 	@UiField DoubleBox com;
 	@UiField IntegerBox tem;
 	@UiField IntegerBox nue;
@@ -92,14 +103,66 @@ public class Model131Activity extends ScrollPanel {
 			GWT.create(Model131ActivityBinder.class);
 
 	public Model131Activity(final Mod131Activity act) {
+		super(Unit.PX);
 		setWidth("700px");
-		setHeight("498px");
+		setHeight("490px");
 		Widget ui = BINDER.createAndBindUi(this);
 		populate(act);
-		setWidget(ui);
+		addNorth(getHeaderPanel(), 50);
+		add(ui);
+		onResize();		
+	}
+
+	private Widget getHeaderPanel() {
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.setStyleName(AON.AON_CSS.aonPadding());
+		FlexTable tab = new FlexTable();
+		tab.setStyleName(AON.AON_CSS.aonWidthAll());
+		tab.addStyleName(AON.AON_CSS.aonDataTable());
+		tab.addStyleName(AON.AON_CSS.aonBorderBottom());
+		epigraph.setStyleName(AON.AON_CSS.aonBold());
+		epigraph.setStyleName(AON.AON_CSS.aonFontBig());
+		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonWidth80());
+		tab.setWidget(0, 0, epigraph);
+		Button showEpigraphs = new Button();
+		showEpigraphs.setStyleName(AON.AON_CSS.aonIconLoupe());
+		showEpigraphs.addStyleName(AON.AON_CSS.aonBorderNone());
+		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonWidth20());
+		tab.setWidget(0, 1, showEpigraphs);
+		epigraphLabel.setStyleName(AON.AON_CSS.aonFontBig());
+		epigraphLabel.setStyleName(AON.AON_CSS.aonNowrap());
+		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonWidthAuto());
+		tab.setWidget(0, 2, epigraphLabel);
+		
+		final Epigraph2016Panel epigraphPanel = new Epigraph2016Panel( new Epigraph2016Panel.SelectionCallBack() {
+			@Override
+			public void onSelect(Epigraph selected) {
+				epigraph.setText(selected.getEpigraph());
+				epigraphLabel.setText(AonStringUtils.abbreviate(selected.getDescription(),100));
+				epigraphLabel.setTitle(selected.getDescription());
+			}
+			@Override
+			public void onClose() {
+				// Nothing
+			}
+		});
+
+		showEpigraphs.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				epigraphPanel.onShow();
+				
+			}
+		});
+		flowPanel.add(tab);
+		return flowPanel;
 	}
 
 	private void populate(Mod131Activity act) {
+		epigraph.setText(act.getEpigraph());
+		epigraphLabel.setText(AonStringUtils.abbreviate(act.getDescription(),100));
+		epigraphLabel.setTitle(act.getDescription());
 		com.setValue(act.getCom());
 		tem.setValue(act.getTem());
 		nue.setValue(act.getNue());

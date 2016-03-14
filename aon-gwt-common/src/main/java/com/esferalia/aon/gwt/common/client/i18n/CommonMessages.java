@@ -2868,19 +2868,19 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Rendimiento neto minorado")
 	String irpfActivityRnm();
 
-	@DefaultMessage("\u00CDNDICES CORRECTORES: 1. Especiales")
+	@DefaultMessage("1. \u00CDndice Corrector. Especiales")
 	String irpfActivityIc1();
 
-	@DefaultMessage("\u00CDNDICES CORRECTORES: 2. Empresas de peque\u00F1a dimensi\u00F3n")
+	@DefaultMessage("2. \u00CDndice Corrector. Empresas de peque\u00F1a dimensi\u00F3n")
 	String irpfActivityIc2();
 
-	@DefaultMessage("\u00CDNDICES CORRECTORES: 3. De temporada")
+	@DefaultMessage("3. \u00CDndice Corrector. De temporada")
 	String irpfActivityIc3();
 
-	@DefaultMessage("\u00CDNDICES CORRECTORES: 4. De exceso")
+	@DefaultMessage("4. \u00CDndice Corrector. De exceso")
 	String irpfActivityIc4();
 
-	@DefaultMessage("\u00CDNDICES CORRECTORES: 5. De inicio de nueva actividad")
+	@DefaultMessage("5. \u00CDndice Corrector. De inicio de nueva actividad")
 	String irpfActivityIc5();
 
 	@DefaultMessage("Rendimiento a efectos de pagos fraccionados")

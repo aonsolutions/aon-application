@@ -682,10 +682,10 @@ public class Mod131DAO extends FiscalModelDAO {
 				act.getModules().add(
 						new Mod131ActivityModule()
 							.setDescription(info.getInfoKey().getDescription())
-							.setValue( info.getBase() )
+							.setValue( AonNumberUtils.todouble( info.getValue()) )
 							.setUnit( info.getUnit() ) 
 							.setFactor( info.getFactor() )
-							.setResult( AonNumberUtils.todouble( info.getValue()) )
+							.setResult( info.getBase() )
 					);
 			}
 			return act;

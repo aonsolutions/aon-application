@@ -7,7 +7,7 @@ import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType
 
 import java.io.Serializable;
 
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2015.Epigraph;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.IntegerStringPair;
 
