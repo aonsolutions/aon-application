@@ -19,6 +19,7 @@
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>2.7.0</version>
 				<configuration>
+					<jsInteropMode>JS</jsInteropMode>
 					<module>com.esferalia.aon.gwt.document.Document</module>
 					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
 					<compileSourcesArtifacts>
