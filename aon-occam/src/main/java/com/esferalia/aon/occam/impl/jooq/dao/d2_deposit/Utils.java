@@ -358,7 +358,7 @@ public class Utils {
 	}
 	
 	
-	public static byte[] CreateXml(Map<D2DepositHeaderKey, Double> ctx, Map<D2DepositKey, Double> ctxMem, Enterprise enterprise, String name, String type , String domain, Integer year) {
+	public static byte[] CreateXml(Map<D2DepositHeaderKey, Double> ctx, Map<D2DepositKey, Double> ctxMem, Map<D2DepositKey, String> ctxFreeText, Enterprise enterprise, String name, String type , String domain, Integer year) {
 		Esquema  schema = createXml(enterprise, name, type, domain, year);
 		
 		for (D2DepositHeaderKey key : ctx.keySet()) {
@@ -372,6 +372,13 @@ public class Utils {
 			Clave clave = new Clave();
 			clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key.getCode())));
 			clave.setValor(ctxMem.get(key).toString());
+			schema.getClaves().getClave().add(clave);
+		}
+		
+		for (D2DepositKey key : ctxFreeText.keySet()) {
+			Clave clave = new Clave();
+			clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key.getCode())));
+			clave.setValor(ctxFreeText.get(key));
 			schema.getClaves().getClave().add(clave);
 		}
 		
