@@ -30,6 +30,8 @@ public class HttpServletRequestValve extends ValveBase {
 			
 			// Perform the request
 			getNext().invoke(request, response);
+			
+			serializeGenericPrincipal(request);
 		} finally {
 			// Unset the ThreadLocal
 			setHttpServletRequest(null);
@@ -54,6 +56,16 @@ public class HttpServletRequestValve extends ValveBase {
             	}
             }
         }		
+	}
+	
+	private void serializeGenericPrincipal(Request request) {
+        Session session = request.getSessionInternal(false);
+        if ( session == null )
+        	return;
+        Principal principal = request.getPrincipal();
+        if ( principal == null )
+        	return;
+		session.getSession().setAttribute(SESSION_PROPERTY, principal);
 	}
 
 	public static HttpServletRequest getHttpServletRequest() {
