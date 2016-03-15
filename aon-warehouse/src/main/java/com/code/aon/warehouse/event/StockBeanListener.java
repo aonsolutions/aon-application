@@ -17,6 +17,14 @@ public class StockBeanListener extends ManagerBeanListenerAdapter {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	@Override
+	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
+		Stock stock = (Stock)evt.getTo();
+		if (stock.getItem().getProduct().isSerializable()) {
+			updateSerializableItemStatus(stock.getItem());
+		}
+	}
+
+	@Override
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		Stock stock = (Stock)evt.getTo();
 		if (stock.getItem().getProduct().isSerializable()) {

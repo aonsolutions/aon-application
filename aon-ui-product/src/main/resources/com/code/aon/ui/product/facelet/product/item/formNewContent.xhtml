@@ -8,18 +8,22 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
+	<aon:valueParam name="fieldDisabled" default="#{lookup != null and itemTo.id != null}" />
+
 	<aon:if test="#{itemTo.product.id != null and itemTo.product.serializable and !itemTo.wildCard}">
 		<aon:outputLabel for="#{controller.pojoShortName}_serial_number"
 			value="#{itemTo.product.lotable ? bundle.aon_lot_number : bundle.aon_serial_number}" />
 		<aon:inputText id="#{controller.pojoShortName}_serial_number" 
 			value="#{itemTo.serialNumber}" size="32" maxlength="32"
 			required="true" onblur="toUpperCase(this);"
+			disabled="#{fieldDisabled}"
 			converter="aon.TrimStringConverter" />
 
 		<aon:outputLabel for="#{controller.pojoShortName}_serial_date"
 			value="#{itemTo.product.lotable ? bundle.aon_lot_date : bundle.aon_serial_date}" />
 		<aon:selectInputDate id="#{controller.pojoShortName}_serial_date"
 			value="#{itemTo.serialDate}"
+			disabled="#{fieldDisabled}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 	</aon:if>
@@ -29,6 +33,7 @@
 			value="#{itemTo.product.category.detail}" />
 		<aon:inputText id="#{controller.pojoShortName}_product_detail" 
 			value="#{itemTo.detail}" size="32" maxlength="15"
+			disabled="#{fieldDisabled}"
 			required="#{itemTo.product.id != null}" 
 			converter="aon.TrimStringConverter" />
 	</aon:if>
@@ -38,6 +43,7 @@
 			value="#{itemTo.product.category.detail2}" />
 		<aon:inputText id="#{controller.pojoShortName}_product_detail2" 
 			value="#{itemTo.detail2}" size="32" maxlength="15"
+			disabled="#{fieldDisabled}"
 			required="#{itemTo.product.id != null}" 
 			converter="aon.TrimStringConverter" />
 	</aon:if>
@@ -47,6 +53,7 @@
 			value="#{itemTo.product.category.detail3}" />
 		<aon:inputText id="#{controller.pojoShortName}_product_detail3" 
 			value="#{itemTo.detail3}" size="32" maxlength="15"
+			disabled="#{fieldDisabled}"
 			required="#{itemTo.product.id != null}" 
 			converter="aon.TrimStringConverter" />
 	</aon:if>
@@ -56,6 +63,7 @@
 			value="#{bundle.product_barcode}" />
 		<aon:inputText id="#{controller.pojoShortName}_barcode" 
 			value="#{itemTo.barcode}" size="32" maxlength="32"
+			disabled="#{fieldDisabled}"
 			converter="aon.TrimStringConverter" />
 	</aon:if>
 

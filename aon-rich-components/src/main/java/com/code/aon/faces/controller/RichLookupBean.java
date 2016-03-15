@@ -38,7 +38,6 @@ import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.ITemplateController;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
@@ -65,7 +64,7 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	private final static Logger LOGGER = LoggerFactory.getLogger(RichLookupBean.class);
 
 	/** The foreign controller. */
-	private BasicController controller;
+	private RichLookupController controller;
 
 	/** The list page path. */
 	private String listPagePath;
@@ -120,7 +119,7 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	 * The Constructor.
 	 */
 	public RichLookupBean() {
-		this.controller = new BasicController();
+		this.controller = new RichLookupController();
 		this.controller.setLookup(true);
 		setPageLimit(DEFAULT_PAGE_LIMIT);
 	}
@@ -201,7 +200,7 @@ public class RichLookupBean implements ITemplateController, Serializable {
 	 * 
 	 * @return the controller
 	 */
-	public BasicController getController() {
+	public RichLookupController getController() {
 		return controller;
 	}
 

@@ -32,7 +32,7 @@
 			<aon:if test="#{!skipNewButtonEx and lookupTo.product.id != null and (lookupTo.product.serializable or !empty lookupTo.product.category.detail)}">
 				<aon:lookupButton 
 					windowTitle="#{newButtonTitle}"
-					styleClass="aon-icon-plus aon-noborder"
+					styleClass="aon-icon-plus aon-noborder aon-vertical-align-top"
 					disabled="#{lookupDisabled}" actionType="new"
 					minHeight="#{newButtonHeight}" minWidth="#{newButtonWidth}"
 					property="#{lookupTo}" lookup="#{lookupBean}"

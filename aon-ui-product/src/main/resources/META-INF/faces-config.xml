@@ -1021,6 +1021,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{itemSearch}</value>
+				<value>#{itemLookupControllerListener}</value>			
 				<value>#{itemControllerListener}</value>			
 			</list-entries>
 		</managed-property>		
@@ -1076,6 +1077,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{itemSearch}</value>
+				<value>#{itemLookupControllerListener}</value>			
 				<value>#{itemControllerListener}</value>			
 			</list-entries>
 		</managed-property>		
@@ -1131,11 +1133,20 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{itemSearch}</value>
+				<value>#{itemLookupControllerListener}</value>			
 				<value>#{itemControllerListener}</value>			
 			</list-entries>
 		</managed-property>		
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>itemLookupControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.event.ItemLookupControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	<!--  **** EXPENSE ITEM ****	-->
 	<managed-bean>
 		<managed-bean-name>expenseItem</managed-bean-name>

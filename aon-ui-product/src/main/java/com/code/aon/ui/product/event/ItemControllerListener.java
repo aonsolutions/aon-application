@@ -41,9 +41,8 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 
     @Override
     public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		Item item = (Item)event.getController().getTo();
 		try {
-			Item item = (Item)event.getController().getTo();
-
 			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 			productBean.initializePOJO(item.getProduct());
 		} catch (ManagerBeanException e) {
@@ -53,8 +52,8 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 
     @Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		Item item = (Item)event.getController().getTo();
 		try {
-			Item item = (Item)event.getController().getTo();
 			if (item.getStatus() == null) {
 				item.setStatus(ProductStatus.ACTIVE);
 			}
@@ -70,8 +69,8 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		Item item = (Item)event.getController().getTo();
 		try {
-			Item item = (Item)event.getController().getTo();
 			if (item.getStatus() == null) {
 				item.setStatus(ProductStatus.ACTIVE);
 			}
@@ -97,8 +96,8 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		Item item = (Item)event.getController().getTo();
 		try {
-			Item item = (Item)event.getController().getTo();
 			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), item.getProduct().getId());
