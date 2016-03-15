@@ -83,6 +83,22 @@
 					</tr>
 					<tr>
 						<td>
+							<g:Label text="{msg.irpfActivityTns}" />
+						</td>
+						<td>
+							<g:CheckBox ui:field="tns"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityTss}" />
+						</td>
+						<td>
+							<g:CheckBox ui:field="tss"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
 							<g:Label text="{msg.irpfActivityMun}" />
 						</td>
 						<td>
@@ -103,6 +119,14 @@
 						</td>
 						<td>
 							<aon:IntegerBox ui:field="lor" maxLength="6" visibleLength="6"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityBat}" />
+						</td>
+						<td>
+							<aon:IntegerBox ui:field="bat" maxLength="6" visibleLength="6"/>
 						</td>
 					</tr>
 					<tr>
@@ -152,10 +176,10 @@
 							<g:Label ui:field="unit0" />
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor0" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="factor0" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result0" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="result0" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
@@ -169,10 +193,10 @@
 							<g:Label ui:field="unit1"/>
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor1" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="factor1" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result1" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="result1" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
@@ -186,10 +210,10 @@
 							<g:Label ui:field="unit2" />
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor2" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="factor2" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result2" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="result2" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
@@ -203,10 +227,10 @@
 							<g:Label ui:field="unit3" />
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor3" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="factor3" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result3" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="result3" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
@@ -220,10 +244,10 @@
 							<g:Label ui:field="unit4" />
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor4" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="factor4" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result4" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="result4" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
@@ -237,10 +261,10 @@
 							<g:Label ui:field="unit5" />
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor5" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="factor5" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result5" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="result5" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
@@ -254,10 +278,10 @@
 							<g:Label ui:field="unit6" />
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor6" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="factor6" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result6" maxLength="10" visibleLength="6"/>
+							<aon:DoubleBox ui:field="result6" maxLength="10" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 				</tbody>
@@ -270,18 +294,18 @@
 				<tbody>
 					<tr>
 						<td>
-							<g:Label text="{msg.irpfActivityRnp}" />
+							<g:Label text="{msg.irpfActivityRnp}"/>
 						</td>
 						<td>
-							<aon:DoubleBox ui:field="rnp" maxLength="6" visibleLength="6"/>
+							<aon:DoubleBox ui:field="rnp" maxLength="6" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="{msg.irpfActivityIem}" />
+							<g:Label text="{msg.irpfActivityIem}"/>
 						</td>
 						<td>
-							<aon:DoubleBox ui:field="iem" maxLength="6" visibleLength="6"/>
+							<aon:DoubleBox ui:field="iem" maxLength="6" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
@@ -294,50 +318,50 @@
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="{msg.irpfActivityRnm}" />
+							<g:Label text="{msg.irpfActivityRnm}"/>
 						</td>
 						<td>
-							<aon:DoubleBox ui:field="rnm" maxLength="6" visibleLength="6"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityIc1}" />
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="ic1" maxLength="6" visibleLength="6"/>
+							<aon:DoubleBox ui:field="rnm" maxLength="6" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="{msg.irpfActivityIc2}" />
+							<g:Label text="{msg.irpfActivityIc1}"/>
 						</td>
 						<td>
-							<aon:DoubleBox ui:field="ic2" maxLength="6" visibleLength="6"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityIc3}" />
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="ic3" maxLength="6" visibleLength="6"/>
+							<aon:DoubleBox ui:field="ic1" maxLength="6" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="{msg.irpfActivityIc4}" />
+							<g:Label text="{msg.irpfActivityIc2}"/>
 						</td>
 						<td>
-							<aon:DoubleBox ui:field="ic4" maxLength="6" visibleLength="6"/>
+							<aon:DoubleBox ui:field="ic2" maxLength="6" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<g:Label text="{msg.irpfActivityIc5}" />
+							<g:Label text="{msg.irpfActivityIc3}"/>
 						</td>
 						<td>
-							<aon:DoubleBox ui:field="ic5" maxLength="6" visibleLength="6"/>
+							<aon:DoubleBox ui:field="ic3" maxLength="6" visibleLength="6" enabled="false"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityIc4}"/>
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="ic4" maxLength="6" visibleLength="6" enabled="false"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<g:Label text="{msg.irpfActivityIc5}"/>
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="ic5" maxLength="6" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
@@ -345,7 +369,7 @@
 							<g:Label text="{msg.irpfActivityRpf}" />
 						</td>
 						<td>
-							<aon:DoubleBox ui:field="rpf" maxLength="6" visibleLength="6"/>
+							<aon:DoubleBox ui:field="rpf" maxLength="6" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
@@ -353,7 +377,7 @@
 							<g:Label text="{msg.irpfActivityRlo}" />
 						</td>
 						<td>
-							<aon:DoubleBox ui:field="rlo" maxLength="6" visibleLength="6"/>
+							<aon:DoubleBox ui:field="rlo" maxLength="6" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
@@ -361,7 +385,7 @@
 							<g:Label text="{msg.irpfActivityRdr}" />
 						</td>
 						<td>
-							<aon:DoubleBox ui:field="rdr" maxLength="6" visibleLength="6"/>
+							<aon:DoubleBox ui:field="rdr" maxLength="6" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
@@ -377,7 +401,7 @@
 							<g:Label text="{msg.irpfActivityNet}" />
 						</td>
 						<td>
-							<aon:DoubleBox ui:field="net" maxLength="6" visibleLength="6"/>
+							<aon:DoubleBox ui:field="net" maxLength="6" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
@@ -385,7 +409,7 @@
 							<g:Label text="{msg.irpfActivityPor}" />
 						</td>
 						<td>
-							<aon:DoubleBox ui:field="por" maxLength="6" visibleLength="6"/>
+							<aon:DoubleBox ui:field="por" maxLength="6" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 					<tr>
@@ -393,7 +417,7 @@
 							<g:Label text="{msg.irpfActivityRes}" />
 						</td>
 						<td>
-							<aon:DoubleBox ui:field="res" maxLength="6" visibleLength="6"/>
+							<aon:DoubleBox ui:field="res" maxLength="6" visibleLength="6" enabled="false"/>
 						</td>
 					</tr>
 				</tbody>

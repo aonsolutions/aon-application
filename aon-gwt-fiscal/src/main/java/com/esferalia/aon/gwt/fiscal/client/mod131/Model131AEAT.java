@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod131.Model131.IMod131Declaration;
+import com.esferalia.aon.gwt.fiscal.client.mod131.Model131Activity.IMod131ActivityCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -331,8 +332,27 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 			
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				Mod131Activity act = model.getLastSelectedObject();
-				Model131Activity actPanel = new Model131Activity(act);
+				final Mod131Activity act = model.getLastSelectedObject();
+				IMod131ActivityCallback callback = new IMod131ActivityCallback() {
+					
+					@Override
+					public void onCancel() {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onAccept() {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public Mod131Activity getActivity() {
+						return act;
+					}
+				};
+				Model131Activity actPanel = new Model131Activity(callback);
 				CustomDialog dialog = new CustomDialog();
 				dialog.setCaption(act.getFullDescription());
 				dialog.setGlassEnabled(true);

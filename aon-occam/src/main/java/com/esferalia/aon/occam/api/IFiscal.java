@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -146,6 +147,7 @@ public interface IFiscal {
 	public Mod131 getMod131(AONContext ctx, int id);
 	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain);
 	public Mod131 calculateMod131(AONContext ctx, Mod131 mod131);
+	public Mod131Activity calculateMod131Activity(AONContext ctx, Mod131Activity activity);
 	public Mod131 saveMod131(AONContext ctx, Mod131 mod131);
 	public Mod131 saveCommentsMod131(AONContext ctx, Mod131 mod131);
 	public Mod131 initializeForFinishMod131(AONContext ctx, Mod131 mod131);

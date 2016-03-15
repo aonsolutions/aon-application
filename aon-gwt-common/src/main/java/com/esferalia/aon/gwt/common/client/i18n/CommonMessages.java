@@ -2843,6 +2843,12 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("\u00BFLa capacidad de carga del veh\u00EDculo es superior a 1000 Kg.?")
 	String irpfActivityCap();
+	
+	@DefaultMessage("\u00BFLa actividad se realiza con tractocamiones y el titular carece de semirremolques?")
+	String irpfActivityTns();
+	
+	@DefaultMessage("\u00BFLa actividad se realiza con un \u00FAnico tractocami\u00F3n y sin semirremolques?")
+	String irpfActivityTss();
 
 	@DefaultMessage("Municipio donde se ejerce la actividad:")
 	String irpfActivityMun();
@@ -2852,6 +2858,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Si en 2015 realiza la actividad en LORCA, seleccione lo que proceda")
 	String irpfActivityLor();
+
+	@DefaultMessage("N\u00BA de bateas y de barcos auxiliares de la empresa")
+	String irpfActivityBat();
 
 	@DefaultMessage("Si para el c\u00E1lculo del pago fraccionado desea aplicar un porcentaje superior al que establece la normativa, indique el porcentaje que desea aplicar")
 	String irpfActivityPrc();

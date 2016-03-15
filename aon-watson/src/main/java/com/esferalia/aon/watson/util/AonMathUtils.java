@@ -159,6 +159,18 @@ public class AonMathUtils {
 	}
 	
 	/**
+	 * Devuelve verdadero si el valor esta comprendido en el rango indicado.
+	 * @param valor a evaluar.
+	 * @param gte Rango inferior
+	 * @param lte Rango superior
+	 * @return
+	 */
+	public static boolean between(double value,double gte,double lte) {
+		return round(value) >= round(gte) && 
+			   round(value) <= round(lte) ;
+	}
+
+	/**
 	 * Devuelve el tipo primitivo, y cero si el objeto es null. 
 	 * 
 	 * @param value

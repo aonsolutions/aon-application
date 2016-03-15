@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -549,6 +550,11 @@ public class FiscalImpl implements IFiscal {
 	public Mod131 calculateMod131(AONContext ctx, Mod131 mod131) {
 		return Mod131DAO.calculateMod131(ctx, mod131);
 	}
+	@Override
+	public Mod131Activity calculateMod131Activity(AONContext ctx, Mod131Activity activity) {
+		return Mod131DAO.calculateMod131Activity(ctx, activity);
+	}
+	
 	@Override
 	public Mod131 saveMod131(AONContext ctx, Mod131 mod131) {
 		return ctx.getDslContext().transactionResult(

@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
@@ -78,6 +79,9 @@ public class Mod131DAO extends FiscalModelDAO {
 		,AC1_LOC	(Mod131Key.AC1_LOC	, (mod -> mod.isAEAT())	, null	, null)
 		,AC1_VEH	(Mod131Key.AC1_VEH	, (mod -> mod.isAEAT())	, null	, null)
 		,AC1_CAP	(Mod131Key.AC1_CAP	, (mod -> mod.isAEAT())	, null	, null)
+		,AC1_TNS	(Mod131Key.AC1_TNS	, (mod -> mod.isAEAT())	, null	, null)
+		,AC1_TSS	(Mod131Key.AC1_TSS	, (mod -> mod.isAEAT())	, null	, null)
+		,AC1_BAT	(Mod131Key.AC1_BAT	, (mod -> mod.isAEAT())	, null	, null)
 		,AC1_MUN	(Mod131Key.AC1_MUN	, (mod -> mod.isAEAT())	, null	, null)
 		,AC1_EMP	(Mod131Key.AC1_EMP	, (mod -> mod.isAEAT())	, null	, null)
 		,AC1_LOR	(Mod131Key.AC1_LOR	, (mod -> mod.isAEAT())	, null	, null)
@@ -135,6 +139,9 @@ public class Mod131DAO extends FiscalModelDAO {
 		,AC2_LOC	(Mod131Key.AC2_LOC	, (mod -> mod.isAEAT())	, null	, null)
 		,AC2_VEH	(Mod131Key.AC2_VEH	, (mod -> mod.isAEAT())	, null	, null)
 		,AC2_CAP	(Mod131Key.AC2_CAP	, (mod -> mod.isAEAT())	, null	, null)
+		,AC2_TNS	(Mod131Key.AC2_TNS	, (mod -> mod.isAEAT())	, null	, null)
+		,AC2_TSS	(Mod131Key.AC2_TSS	, (mod -> mod.isAEAT())	, null	, null)
+		,AC2_BAT	(Mod131Key.AC2_BAT	, (mod -> mod.isAEAT())	, null	, null)
 		,AC2_MUN	(Mod131Key.AC2_MUN	, (mod -> mod.isAEAT())	, null	, null)
 		,AC2_EMP	(Mod131Key.AC2_EMP	, (mod -> mod.isAEAT())	, null	, null)
 		,AC2_LOR	(Mod131Key.AC2_LOR	, (mod -> mod.isAEAT())	, null	, null)
@@ -192,6 +199,9 @@ public class Mod131DAO extends FiscalModelDAO {
 		,AC3_LOC	(Mod131Key.AC3_LOC	, (mod -> mod.isAEAT())	, null	, null)
 		,AC3_VEH	(Mod131Key.AC3_VEH	, (mod -> mod.isAEAT())	, null	, null)
 		,AC3_CAP	(Mod131Key.AC3_CAP	, (mod -> mod.isAEAT())	, null	, null)
+		,AC3_TNS	(Mod131Key.AC3_TNS	, (mod -> mod.isAEAT())	, null	, null)
+		,AC3_TSS	(Mod131Key.AC3_TSS	, (mod -> mod.isAEAT())	, null	, null)
+		,AC3_BAT	(Mod131Key.AC3_BAT	, (mod -> mod.isAEAT())	, null	, null)
 		,AC3_MUN	(Mod131Key.AC3_MUN	, (mod -> mod.isAEAT())	, null	, null)
 		,AC3_EMP	(Mod131Key.AC3_EMP	, (mod -> mod.isAEAT())	, null	, null)
 		,AC3_LOR	(Mod131Key.AC3_LOR	, (mod -> mod.isAEAT())	, null	, null)
@@ -249,6 +259,9 @@ public class Mod131DAO extends FiscalModelDAO {
 		,AC4_LOC	(Mod131Key.AC4_LOC	, (mod -> mod.isAEAT())	, null	, null)
 		,AC4_VEH	(Mod131Key.AC4_VEH	, (mod -> mod.isAEAT())	, null	, null)
 		,AC4_CAP	(Mod131Key.AC4_CAP	, (mod -> mod.isAEAT())	, null	, null)
+		,AC4_TNS	(Mod131Key.AC4_TNS	, (mod -> mod.isAEAT())	, null	, null)
+		,AC4_TSS	(Mod131Key.AC4_TSS	, (mod -> mod.isAEAT())	, null	, null)
+		,AC4_BAT	(Mod131Key.AC4_BAT	, (mod -> mod.isAEAT())	, null	, null)
 		,AC4_MUN	(Mod131Key.AC4_MUN	, (mod -> mod.isAEAT())	, null	, null)
 		,AC4_EMP	(Mod131Key.AC4_EMP	, (mod -> mod.isAEAT())	, null	, null)
 		,AC4_LOR	(Mod131Key.AC4_LOR	, (mod -> mod.isAEAT())	, null	, null)
@@ -306,6 +319,9 @@ public class Mod131DAO extends FiscalModelDAO {
 		,AC5_LOC	(Mod131Key.AC5_LOC	, (mod -> mod.isAEAT())	, null	, null)
 		,AC5_VEH	(Mod131Key.AC5_VEH	, (mod -> mod.isAEAT())	, null	, null)
 		,AC5_CAP	(Mod131Key.AC5_CAP	, (mod -> mod.isAEAT())	, null	, null)
+		,AC5_TNS	(Mod131Key.AC5_TNS	, (mod -> mod.isAEAT())	, null	, null)
+		,AC5_TSS	(Mod131Key.AC5_TSS	, (mod -> mod.isAEAT())	, null	, null)
+		,AC5_BAT	(Mod131Key.AC5_BAT	, (mod -> mod.isAEAT())	, null	, null)
 		,AC5_MUN	(Mod131Key.AC5_MUN	, (mod -> mod.isAEAT())	, null	, null)
 		,AC5_EMP	(Mod131Key.AC5_EMP	, (mod -> mod.isAEAT())	, null	, null)
 		,AC5_LOR	(Mod131Key.AC5_LOR	, (mod -> mod.isAEAT())	, null	, null)
@@ -355,10 +371,10 @@ public class Mod131DAO extends FiscalModelDAO {
 		,AC5_POR	(Mod131Key.AC5_POR	, (mod -> mod.isAEAT())	, null	, null)
 		,AC5_RES	(Mod131Key.AC5_RES	, (mod -> mod.isAEAT())	, null	, null)
 		,C01		(Mod131Key.C01		, (mod -> mod.isAEAT())	
-			, "AC1_NET+AC2_NET+AC3_NET+AC4_NET+AC5_NET"	
+			, "computeC01()"	
 			, null)
 		,C02		(Mod131Key.C02		, (mod -> mod.isAEAT())	
-			, "AC1_RES+AC2_RES+AC3_RES+AC4_RES+AC5_RES"	
+			, "computeC02()"	
 			, null)
 		,C03		(Mod131Key.C03		, (mod -> mod.isAEAT())	, null	, null)
 		,C04		(Mod131Key.C04		, (mod -> mod.isAEAT())	
@@ -539,6 +555,12 @@ public class Mod131DAO extends FiscalModelDAO {
 		return mod; 
 	}
 	
+	public static Mod131Activity calculateMod131Activity(AONContext ctx, Mod131Activity activity) {
+		return Mod131Aeat2016Calculator.calculate(ctx, activity);
+	}
+	
+	
+	
 	public static Mod131 initializeMod131(AONContext ctx,Mod131 mod) {
 		if (mod == null) {
 			mod = new Mod131();
@@ -562,9 +584,13 @@ public class Mod131DAO extends FiscalModelDAO {
 				FiscalActivityDAO.getActivities(ctx, mod.getDomain())
 				.filter( fa -> fa.getYear() == mod.getYear() )
 				.map( new Mod131ActivityFiller() )
-				.peek( act -> act.setDia((int) AonDateUtils.getDaysBetweenDates(
-						 FiscalUtils.getPeriodStart(mod)
-						,FiscalUtils.getPeriodEnd(mod))))
+				.peek( act -> act
+						.setYear(mod.getYear())
+						.setPeriod(mod.getPeriod())
+						.setDia((int) AonDateUtils.getDaysBetweenDates(
+								 FiscalUtils.getPeriodStart(mod)
+								,FiscalUtils.getPeriodEnd(mod)))
+					)
 				.collect(Collectors.toCollection(LinkedList::new))
 			);
 		
@@ -645,10 +671,14 @@ public class Mod131DAO extends FiscalModelDAO {
 		@Override
 		public Mod131Activity apply(FiscalActivity fa) {
 			if (!fa.hasIRPFModules()) return null;
-			
+			Epigraph epigraph = Epigraph.getEpigraph(AonStringUtils.trim(AonStringUtils.substringBefore(
+							 AonStringUtils.remove(fa.getEpigraph(), AonStringUtils.DOT)
+							,AonStringUtils.HYPHEN))); 
 			Mod131Activity act = new Mod131Activity()
-					.setEpigraph(fa.getEpigraph())
-					.setDescription(fa.getDescription())
+					.setEpi( epigraph )
+					.setEpigraph( epigraph == null?fa.getEpigraph():epigraph.getEpigraph())
+					.setDescription(epigraph == null?fa.getDescription():epigraph.getEpigraph())
+					.setMaxImport(epigraph == null?Double.MAX_VALUE:epigraph.getLimExceso())
 					.setDis( fa.getDoubleValue(FiscalActivityInfoKey.A13) == 1)
 					.setCom( fa.getDoubleValue(FiscalActivityInfoKey.A02))
 					.setTem( (int) fa.getDoubleValue(FiscalActivityInfoKey.A03))
@@ -657,6 +687,9 @@ public class Mod131DAO extends FiscalModelDAO {
 					.setLoc( fa.getDoubleValue(FiscalActivityInfoKey.A06) == 1)
 					.setVeh( (int) fa.getDoubleValue(FiscalActivityInfoKey.A07))
 					.setCap( fa.getDoubleValue(FiscalActivityInfoKey.A08) == 1)
+					.setBat( (int) fa.getDoubleValue(FiscalActivityInfoKey.B06))
+					.setTns( fa.getDoubleValue(FiscalActivityInfoKey.C10) == 1)
+					.setTss( fa.getDoubleValue(FiscalActivityInfoKey.C11) == 1)
 					.setMun( (int) fa.getDoubleValue(FiscalActivityInfoKey.A09))
 					.setEmp( (int) fa.getDoubleValue(FiscalActivityInfoKey.A10))
 					.setLor( (int) fa.getDoubleValue(FiscalActivityInfoKey.A11))
@@ -679,19 +712,39 @@ public class Mod131DAO extends FiscalModelDAO {
 			;
 			act.setModules(new LinkedList<Mod131ActivityModule>());
 			for (FiscalActivityInfo info : fa.getMap().get(FiscalActivityInfoKeyType.IRPF_MODULE.ordinal()).values()) {
-				act.getModules().add(
-						new Mod131ActivityModule()
-							.setDescription(info.getInfoKey().getDescription())
-							.setValue( AonNumberUtils.todouble( info.getValue()) )
-							.setUnit( info.getUnit() ) 
-							.setFactor( info.getFactor() )
-							.setResult( info.getBase() )
-					);
+				Mod131ActivityModule module = new Mod131ActivityModule()
+						.setDescription(info.getInfoKey().getDescription())
+						.setValue( AonNumberUtils.todouble( info.getValue()) )
+						.setUnit( info.getUnit() ) 
+						.setFactor( info.getFactor() )
+						.setResult( info.getBase() )
+						.setSalariedStaff(false)
+						.setNoSalariedStaff(false);
+				// PERSONAL Asalariado.
+				if (info.getInfoKey() == FiscalActivityInfoKey.M01) {
+					module.setSalariedStaff(true);
+					module.setMay19Hours(fa.getDoubleValue(FiscalActivityInfoKey.M011));
+					module.setMen19Hours(fa.getDoubleValue(FiscalActivityInfoKey.M012)); 	
+					module.setDisHours(fa.getDoubleValue(FiscalActivityInfoKey.M013)); 		
+					module.setYearHours(fa.getDoubleValue(FiscalActivityInfoKey.M014));
+				} else if (info.getInfoKey() == FiscalActivityInfoKey.M02) {
+					module.setNoSalariedStaff(true);
+					module.setOwnerHours(fa.getDoubleValue(FiscalActivityInfoKey.M021)); 		
+					module.setSpouseHours(fa.getDoubleValue(FiscalActivityInfoKey.M022));
+					module.setSpouseDis(AonMathUtils.isNotZero(fa.getDoubleValue(FiscalActivityInfoKey.M023)));
+					module.setChildMen18Hours(fa.getDoubleValue(FiscalActivityInfoKey.M024)); 
+					module.setChildDisHours(fa.getDoubleValue(FiscalActivityInfoKey.M025)); 	
+				} else if (info.getInfoKey() == FiscalActivityInfoKey.M15) {
+					module.setSalariedStaff(true);
+				} else if (info.getInfoKey() == FiscalActivityInfoKey.M16) {
+					module.setSalariedStaff(true);
+				}
+				act.getModules().add( module );
 			}
 			return act;
 		}
 	}
-	
+
 
 	// --------------------------------------------------- KEY INTITIALIZATION
 }

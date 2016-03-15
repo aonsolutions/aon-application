@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -573,6 +574,10 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	@Override
 	public Mod131 calculateMod131(String domainName, Mod131 mod131) {
 		return FISCAL.calculate(domainName, this.getUserLogin(), mod131);
+	}
+	@Override
+	public Mod131Activity calculateMod131Activity(String domainName,int domain, Mod131Activity activity) throws AonCoreException {
+		return FISCAL.calculate(domainName, domain, this.getUserLogin(), activity);
 	}
 
 	@Override

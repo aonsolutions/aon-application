@@ -10,10 +10,14 @@ import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -27,6 +31,7 @@ public class Model131Activity extends DockLayoutPanel {
 	final Label epigraph = new Label();
 	final Label epigraphLabel = new Label();
 	
+	@UiField CheckBox dis;
 	@UiField DoubleBox com;
 	@UiField IntegerBox tem;
 	@UiField IntegerBox nue;
@@ -34,9 +39,12 @@ public class Model131Activity extends DockLayoutPanel {
 	@UiField CheckBox loc;
 	@UiField IntegerBox veh;
 	@UiField CheckBox cap;
+	@UiField CheckBox tns;
+	@UiField CheckBox tss;
 	@UiField IntegerBox mun;
 	@UiField IntegerBox emp;
 	@UiField IntegerBox lor;
+	@UiField IntegerBox bat;
 	@UiField DoubleBox prc;
 
 	@UiField Label description0;
@@ -98,16 +106,26 @@ public class Model131Activity extends DockLayoutPanel {
 	@UiField DoubleBox por;
 	@UiField DoubleBox res;
 
+	public static interface IMod131ActivityCallback {
+		Mod131Activity getActivity();
+		void onAccept();
+		void onCancel();
+	}
+	
+	
+	private IMod131ActivityCallback callback;
+	
 	interface Model131ActivityBinder extends UiBinder<Widget, Model131Activity> {}
 	private static final Model131ActivityBinder BINDER = 
 			GWT.create(Model131ActivityBinder.class);
 
-	public Model131Activity(final Mod131Activity act) {
+	public Model131Activity(final IMod131ActivityCallback callback) {
 		super(Unit.PX);
 		setWidth("700px");
 		setHeight("490px");
 		Widget ui = BINDER.createAndBindUi(this);
-		populate(act);
+		this.callback = callback;
+		populateActivity(this.callback.getActivity());
 		addNorth(getHeaderPanel(), 50);
 		add(ui);
 		onResize();		
@@ -158,11 +176,13 @@ public class Model131Activity extends DockLayoutPanel {
 		flowPanel.add(tab);
 		return flowPanel;
 	}
-
-	private void populate(Mod131Activity act) {
+	
+	private void populateActivity(Mod131Activity act) {
 		epigraph.setText(act.getEpigraph());
 		epigraphLabel.setText(AonStringUtils.abbreviate(act.getDescription(),100));
 		epigraphLabel.setTitle(act.getDescription());
+		
+		dis.setValue(act.isDis());
 		com.setValue(act.getCom());
 		tem.setValue(act.getTem());
 		nue.setValue(act.getNue());
@@ -170,9 +190,13 @@ public class Model131Activity extends DockLayoutPanel {
 		loc.setValue(act.isLoc());
 		veh.setValue(act.getVeh());
 		cap.setValue(act.isCap());
+		tns.setValue(act.isTns());
+		tss.setValue(act.isTss());
+		
 		mun.setValue(act.getMun());
 		emp.setValue(act.getEmp());
 		lor.setValue(act.getLor());
+		bat.setValue(act.getBat());
 		prc.setValue(act.getPrc());
 		int i = 0;
 		Mod131ActivityModule mod = (act.getModules().size() > i)?act.getModules().get(i):new Mod131ActivityModule();
@@ -249,5 +273,66 @@ public class Model131Activity extends DockLayoutPanel {
 		res.setValue(act.getRes());
 		
 	}
+	
+	@UiHandler({"dis","ceu","loc","cap","tns","tss"})
+	void onFieldClick(ClickEvent event) {
+		this.callback.getActivity().setDis(dis.getValue());
+		this.callback.getActivity().setCeu(ceu.getValue());
+		this.callback.getActivity().setLoc(loc.getValue());
+		this.callback.getActivity().setCap(cap.getValue());
+		this.callback.getActivity().setTns(tns.getValue());
+		this.callback.getActivity().setTss(tss.getValue());
+		calculate();
+	}
+	
+	@UiHandler({"com","tem","nue","veh","mun","emp","lor","bat","prc"
+		,"value0","value1","value2","value3","value4","value5","value6"
+		,"iin","dia"})
+
+	void onFieldChange(ChangeEvent event) {
+		this.callback.getActivity().setCom(com.getValue());
+		this.callback.getActivity().setTem(tem.getValue());
+		this.callback.getActivity().setNue(nue.getValue());
+		this.callback.getActivity().setVeh(veh.getValue());
+		this.callback.getActivity().setMun(mun.getValue());
+		this.callback.getActivity().setEmp(emp.getValue());
+		this.callback.getActivity().setLor(lor.getValue());
+		this.callback.getActivity().setBat(bat.getValue());
+		this.callback.getActivity().setPrc(prc.getValue());
+		if  (this.callback.getActivity().getModules().size() > 0)
+			this.callback.getActivity().getModules().get(0).setValue(value0.getValue());
+		if  (this.callback.getActivity().getModules().size() > 1)
+			this.callback.getActivity().getModules().get(1).setValue(value1.getValue());
+		if  (this.callback.getActivity().getModules().size() > 2)
+			this.callback.getActivity().getModules().get(2).setValue(value2.getValue());
+		if  (this.callback.getActivity().getModules().size() > 3)
+			this.callback.getActivity().getModules().get(3).setValue(value3.getValue());
+		if  (this.callback.getActivity().getModules().size() > 4)
+			this.callback.getActivity().getModules().get(4).setValue(value4.getValue());
+		if  (this.callback.getActivity().getModules().size() > 5)
+			this.callback.getActivity().getModules().get(5).setValue(value5.getValue());
+		if  (this.callback.getActivity().getModules().size() > 6)
+			this.callback.getActivity().getModules().get(6).setValue(value6.getValue());
+		this.callback.getActivity().setIin(iin.getValue());
+		this.callback.getActivity().setDia(dia.getValue());
+		calculate();
+	}
+
+	private void calculate() {
+		Model131.fiscalService.calculateMod131Activity(Model131.getCurrentDomainName(), Model131.getCurrentDomain()
+				, this.callback.getActivity(), new AsyncCallback<Mod131Activity>() {
+					
+					@Override
+					public void onSuccess(Mod131Activity result) {
+						populateActivity(result);						
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+				});
+	}
+	
 
 }

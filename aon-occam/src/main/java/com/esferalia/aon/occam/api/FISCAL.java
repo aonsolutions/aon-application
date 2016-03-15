@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -512,6 +513,17 @@ public class FISCAL {
 		try {
 			ctx = AONContext.getAONContext(domainName, mod131.getDomain(),user);
 			return getFiscal().calculateMod131(ctx, mod131);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod131Activity calculate(String domainName, int domain, String userLogin, Mod131Activity activity) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,userLogin);
+			return getFiscal().calculateMod131Activity(ctx, activity);
 		} finally {
 			if (ctx != null)
 				ctx.close();

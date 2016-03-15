@@ -17,7 +17,10 @@ public enum Mod131Key implements IFiscalModelKey {
 	,AC1_CEU	("131-AC1CEU"	, 0)	//	¿DEDUCCIÓN POR RENTAS OBTENIDAS EN CEUTA Y MELILLA? (S/N)	
 	,AC1_LOC	("131-AC1LOC"	, 0)	//	¿Ejerce la actividad en un solo local o sin él? (S/N).	
 	,AC1_VEH	("131-AC1VEH"	, 0)	//	Indique el número de vehículos afectos a la actividad
-	,AC1_CAP	("131-AC1CAP"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)	
+	,AC1_CAP	("131-AC1CAP"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)
+	,AC1_TNS	("131-AC1TNS"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)
+	,AC1_TSS	("131-AC1TSS"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)
+	,AC1_BAT	("131-AC1BAT"	, 0)
 	,AC1_MUN	("131-AC1MUN"	, 0)	//	Municipio donde se ejerce la actividad:
 	,AC1_EMP	("131-AC1EMP"	, 0)	//	Nº de empleados a 1-01-2015 (o en la fecha de inicio de la actividad)
 	,AC1_LOR	("131-AC1LOR"	, 0)	//	Si en 2015 realiza la actividad en LORCA, seleccione lo que proceda
@@ -76,7 +79,10 @@ public enum Mod131Key implements IFiscalModelKey {
 	,AC2_CEU	("131-AC2CEU"	, 0)	//	¿DEDUCCIÓN POR RENTAS OBTENIDAS EN CEUTA Y MELILLA? (S/N)	
 	,AC2_LOC	("131-AC2LOC"	, 0)	//	¿Ejerce la actividad en un solo local o sin él? (S/N).	
 	,AC2_VEH	("131-AC2VEH"	, 0)	//	Indique el número de vehículos afectos a la actividad
-	,AC2_CAP	("131-AC2CAP"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)	
+	,AC2_CAP	("131-AC2CAP"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)
+	,AC2_TNS	("131-AC2TNS"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)
+	,AC2_TSS	("131-AC2TSS"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)
+	,AC2_BAT	("131-AC2BAT"	, 0)
 	,AC2_MUN	("131-AC2MUN"	, 0)	//	Municipio donde se ejerce la actividad:
 	,AC2_EMP	("131-AC2EMP"	, 0)	//	Nº de empleados a 1-01-2015 (o en la fecha de inicio de la actividad)
 	,AC2_LOR	("131-AC2LOR"	, 0)	//	Si en 2015 realiza la actividad en LORCA, seleccione lo que proceda
@@ -136,6 +142,9 @@ public enum Mod131Key implements IFiscalModelKey {
 	,AC3_LOC	("131-AC3LOC"	, 0)	//	¿Ejerce la actividad en un solo local o sin él? (S/N).	
 	,AC3_VEH	("131-AC3VEH"	, 0)	//	Indique el número de vehículos afectos a la actividad
 	,AC3_CAP	("131-AC3CAP"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)	
+	,AC3_TNS	("131-AC3TNS"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)
+	,AC3_TSS	("131-AC3TSS"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)
+	,AC3_BAT	("131-AC3BAT"	, 0)
 	,AC3_MUN	("131-AC3MUN"	, 0)	//	Municipio donde se ejerce la actividad:
 	,AC3_EMP	("131-AC3EMP"	, 0)	//	Nº de empleados a 1-01-2015 (o en la fecha de inicio de la actividad)
 	,AC3_LOR	("131-AC3LOR"	, 0)	//	Si en 2015 realiza la actividad en LORCA, seleccione lo que proceda
@@ -195,6 +204,9 @@ public enum Mod131Key implements IFiscalModelKey {
 	,AC4_LOC	("131-AC5LOC"	, 0)	//	¿Ejerce la actividad en un solo local o sin él? (S/N).	
 	,AC4_VEH	("131-AC5VEH"	, 0)	//	Indique el número de vehículos afectos a la actividad
 	,AC4_CAP	("131-AC5CAP"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)	
+	,AC4_TNS	("131-AC4TNS"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)
+	,AC4_TSS	("131-AC4TSS"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)
+	,AC4_BAT	("131-AC4BAT"	, 0)
 	,AC4_MUN	("131-AC5MUN"	, 0)	//	Municipio donde se ejerce la actividad:
 	,AC4_EMP	("131-AC5EMP"	, 0)	//	Nº de empleados a 1-01-2015 (o en la fecha de inicio de la actividad)
 	,AC4_LOR	("131-AC5LOR"	, 0)	//	Si en 2015 realiza la actividad en LORCA, seleccione lo que proceda
@@ -245,63 +257,66 @@ public enum Mod131Key implements IFiscalModelKey {
 	,AC4_RES	("131-AC54"		, 0)
 	
 	// 	Actividad 5	
-	,AC5_EPI	("131-AC41"		, 0)
-	,AC5_EPD	("131-AC411"	, 0)
-	,AC5_COM	("131-AC4COM"	, 0)	//	COMUNIDAD, SOCIEDAD CIVIL O SIMILAR: porcentaje de participación
-	,AC5_TEM	("131-AC4TEM"	, 0)	//	ACTIVIDAD DE TEMPORADA: nº de días de ejercicio en el año anterior	
-	,AC5_NUE	("131-AC4NUE"	, 0)	//	NUEVAS ACTIVIDADES iniciadas a partir del 1-1-2014: Año de inicio
-	,AC5_CEU	("131-AC4CEU"	, 0)	//	¿DEDUCCIÓN POR RENTAS OBTENIDAS EN CEUTA Y MELILLA? (S/N)	
-	,AC5_LOC	("131-AC4LOC"	, 0)	//	¿Ejerce la actividad en un solo local o sin él? (S/N).	
-	,AC5_VEH	("131-AC4VEH"	, 0)	//	Indique el número de vehículos afectos a la actividad
-	,AC5_CAP	("131-AC4CAP"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)	
-	,AC5_MUN	("131-AC4MUN"	, 0)	//	Municipio donde se ejerce la actividad:
-	,AC5_EMP	("131-AC4EMP"	, 0)	//	Nº de empleados a 1-01-2015 (o en la fecha de inicio de la actividad)
-	,AC5_LOR	("131-AC4LOR"	, 0)	//	Si en 2015 realiza la actividad en LORCA, seleccione lo que proceda
-	,AC5_PRC	("131-AC4PRC"	, 0)	//	Si para el cálculo del pago fraccionado desea aplicar un porcentaje superior al que establece la normativa, indique el porcentaje que desea aplicar %
-	,AC5_M1D	("131-AC4M01"	, 0)
-	,AC5_M1U	("131-AC4M01"	, 0)
-	,AC5_M1F	("131-AC4M01"	, 0)
-	,AC5_M1R	("131-AC4M01"	, 0)
-	,AC5_M2D	("131-AC4M02"	, 0)
-	,AC5_M2U	("131-AC4M02"	, 0)
-	,AC5_M2F	("131-AC4M02"	, 0)
-	,AC5_M2R	("131-AC4M02"	, 0)
-	,AC5_M3D	("131-AC4M03"	, 0)
-	,AC5_M3U	("131-AC4M03"	, 0)
-	,AC5_M3F	("131-AC4M03"	, 0)
-	,AC5_M3R	("131-AC4M03"	, 0)
-	,AC5_M4D	("131-AC4M04"	, 0)
-	,AC5_M4U	("131-AC4M04"	, 0)
-	,AC5_M4F	("131-AC4M04"	, 0)
-	,AC5_M4R	("131-AC4M04"	, 0)
-	,AC5_M5D	("131-AC4M05"	, 0)
-	,AC5_M5U	("131-AC4M05"	, 0)
-	,AC5_M5F	("131-AC4M05"	, 0)
-	,AC5_M5R	("131-AC4M05"	, 0)
-	,AC5_M6D	("131-AC4M06"	, 0)
-	,AC5_M6U	("131-AC4M06"	, 0)
-	,AC5_M6F	("131-AC4M06"	, 0)
-	,AC5_M6R	("131-AC4M06"	, 0)
-	,AC5_M7D	("131-AC4M07"	, 0)
-	,AC5_M7U	("131-AC4M07"	, 0)
-	,AC5_M7F	("131-AC4M07"	, 0)
-	,AC5_M7R	("131-AC4M07"	, 0)
-	,AC5_RNP	("131-AC4RNP"	, 0)	//	RENDIMIENTO NETO PREVIO
-	,AC5_IEM	("131-AC4IEM"	, 0)	//	Incentivos al empleo
-	,AC5_IIN	("131-AC4IIN"	, 0)	//	Incentivos a la inversión
-	,AC5_RNM	("131-AC4RNM"	, 0)	//	RENDIMIENTO NETO MINORADO
-	,AC5_IC1	("131-AC4IC1"	, 0)	//	1. Índice Corrector. Especiales
-	,AC5_IC2	("131-AC4IC2"	, 0)	//	2. Índice Corrector. Empresas de pequeña dimensión
-	,AC5_IC3	("131-AC4IC3"	, 0)	//	3. Índice Corrector. De temporada
-	,AC5_IC4	("131-AC4IC4"	, 0)	//	4. Índice Corrector. De exceso
-	,AC5_IC5	("131-AC4IC5"	, 0)	//	5. Índice Corrector. De inicio de nueva actividad
-	,AC5_RPF	("131-AC4RPF"	, 0)	//	RENDIMIENTO A EFECTOS DE PAGOS FRACCIONADOS (*)
-	,AC5_RLO	("131-AC4RLO"	, 0)	//	Reducción para actividades económicas realizadas en el término municipal de Lorca
-	,AC5_RDR	("131-AC4RDR"	, 0)	//	Rendimiento a efectos de pagos fraccionados después de la reducción
-	,AC5_DIA	("131-AC4DIA"	, 0)	//	Días de ejercicio en 2015.
-	,AC5_NET	("131-AC42"		, 0)
-	,AC5_POR	("131-AC43"		, 0)
-	,AC5_RES	("131-AC44"		, 0)
+	,AC5_EPI	("131-AC51"		, 0)
+	,AC5_EPD	("131-AC511"	, 0)
+	,AC5_COM	("131-AC5COM"	, 0)	//	COMUNIDAD, SOCIEDAD CIVIL O SIMILAR: porcentaje de participación
+	,AC5_TEM	("131-AC5TEM"	, 0)	//	ACTIVIDAD DE TEMPORADA: nº de días de ejercicio en el año anterior	
+	,AC5_NUE	("131-AC5NUE"	, 0)	//	NUEVAS ACTIVIDADES iniciadas a partir del 1-1-2014: Año de inicio
+	,AC5_CEU	("131-AC5CEU"	, 0)	//	¿DEDUCCIÓN POR RENTAS OBTENIDAS EN CEUTA Y MELILLA? (S/N)	
+	,AC5_LOC	("131-AC5LOC"	, 0)	//	¿Ejerce la actividad en un solo local o sin él? (S/N).	
+	,AC5_VEH	("131-AC5VEH"	, 0)	//	Indique el número de vehículos afectos a la actividad
+	,AC5_CAP	("131-AC5CAP"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)	
+	,AC5_TNS	("131-AC5TNS"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)
+	,AC5_TSS	("131-AC5TSS"	, 0)	//	¿La capacidad de carga del vehículo es superior a 1000 Kg.? (S/N)
+	,AC5_BAT	("131-AC5BAT"	, 0)
+	,AC5_MUN	("131-AC5MUN"	, 0)	//	Municipio donde se ejerce la actividad:
+	,AC5_EMP	("131-AC5EMP"	, 0)	//	Nº de empleados a 1-01-2015 (o en la fecha de inicio de la actividad)
+	,AC5_LOR	("131-AC5LOR"	, 0)	//	Si en 2015 realiza la actividad en LORCA, seleccione lo que proceda
+	,AC5_PRC	("131-AC5PRC"	, 0)	//	Si para el cálculo del pago fraccionado desea aplicar un porcentaje superior al que establece la normativa, indique el porcentaje que desea aplicar %
+	,AC5_M1D	("131-AC5M01"	, 0)
+	,AC5_M1U	("131-AC5M01"	, 0)
+	,AC5_M1F	("131-AC5M01"	, 0)
+	,AC5_M1R	("131-AC5M01"	, 0)
+	,AC5_M2D	("131-AC5M02"	, 0)
+	,AC5_M2U	("131-AC5M02"	, 0)
+	,AC5_M2F	("131-AC5M02"	, 0)
+	,AC5_M2R	("131-AC5M02"	, 0)
+	,AC5_M3D	("131-AC5M03"	, 0)
+	,AC5_M3U	("131-AC5M03"	, 0)
+	,AC5_M3F	("131-AC5M03"	, 0)
+	,AC5_M3R	("131-AC5M03"	, 0)
+	,AC5_M4D	("131-AC5M04"	, 0)
+	,AC5_M4U	("131-AC5M04"	, 0)
+	,AC5_M4F	("131-AC5M04"	, 0)
+	,AC5_M4R	("131-AC5M04"	, 0)
+	,AC5_M5D	("131-AC5M05"	, 0)
+	,AC5_M5U	("131-AC5M05"	, 0)
+	,AC5_M5F	("131-AC5M05"	, 0)
+	,AC5_M5R	("131-AC5M05"	, 0)
+	,AC5_M6D	("131-AC5M06"	, 0)
+	,AC5_M6U	("131-AC5M06"	, 0)
+	,AC5_M6F	("131-AC5M06"	, 0)
+	,AC5_M6R	("131-AC5M06"	, 0)
+	,AC5_M7D	("131-AC5M07"	, 0)
+	,AC5_M7U	("131-AC5M07"	, 0)
+	,AC5_M7F	("131-AC5M07"	, 0)
+	,AC5_M7R	("131-AC5M07"	, 0)
+	,AC5_RNP	("131-AC5RNP"	, 0)	//	RENDIMIENTO NETO PREVIO
+	,AC5_IEM	("131-AC5IEM"	, 0)	//	Incentivos al empleo
+	,AC5_IIN	("131-AC5IIN"	, 0)	//	Incentivos a la inversión
+	,AC5_RNM	("131-AC5RNM"	, 0)	//	RENDIMIENTO NETO MINORADO
+	,AC5_IC1	("131-AC5IC1"	, 0)	//	1. Índice Corrector. Especiales
+	,AC5_IC2	("131-AC5IC2"	, 0)	//	2. Índice Corrector. Empresas de pequeña dimensión
+	,AC5_IC3	("131-AC5IC3"	, 0)	//	3. Índice Corrector. De temporada
+	,AC5_IC4	("131-AC5IC4"	, 0)	//	4. Índice Corrector. De exceso
+	,AC5_IC5	("131-AC5IC5"	, 0)	//	5. Índice Corrector. De inicio de nueva actividad
+	,AC5_RPF	("131-AC5RPF"	, 0)	//	RENDIMIENTO A EFECTOS DE PAGOS FRACCIONADOS (*)
+	,AC5_RLO	("131-AC5RLO"	, 0)	//	Reducción para actividades económicas realizadas en el término municipal de Lorca
+	,AC5_RDR	("131-AC5RDR"	, 0)	//	Rendimiento a efectos de pagos fraccionados después de la reducción
+	,AC5_DIA	("131-AC5DIA"	, 0)	//	Días de ejercicio en 2015.
+	,AC5_NET	("131-AC52"		, 0)
+	,AC5_POR	("131-AC53"		, 0)
+	,AC5_RES	("131-AC54"		, 0)
 	
 	,C01		("131-AC01"		, 1)
 	,C02		("131-AC02"		, 2)

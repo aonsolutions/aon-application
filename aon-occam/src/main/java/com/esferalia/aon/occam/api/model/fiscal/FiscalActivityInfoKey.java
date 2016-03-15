@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.INFO;
 import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.IRPF_INFO;
 import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.MODULE;
+import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.MODULE_DETAIL;
 import static com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType.VAT_INFO;
 
 import java.io.Serializable;
@@ -394,7 +395,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
-			return MODULE;
+			return MODULE_DETAIL;
 		}
 	}
 	, M012 {
@@ -404,7 +405,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
-			return MODULE;
+			return MODULE_DETAIL;
 		}
 	}
 	, M013 {
@@ -414,7 +415,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
-			return MODULE;
+			return MODULE_DETAIL;
 		}
 	}
 	, M014 {
@@ -424,7 +425,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
-			return MODULE;
+			return MODULE_DETAIL;
 		}
 		@Override
 		public String getDefaultValue() {
@@ -455,7 +456,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
-			return MODULE;
+			return MODULE_DETAIL;
 		}
 	}
 	, M022 {
@@ -465,7 +466,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
-			return MODULE;
+			return MODULE_DETAIL;
 		}
 	}
 	, M023 {
@@ -475,7 +476,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
-			return MODULE;
+			return MODULE_DETAIL;
 		}
 	}
 	, M024 {
@@ -485,7 +486,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
-			return MODULE;
+			return MODULE_DETAIL;
 		}
 	}
 	, M025 {
@@ -495,7 +496,7 @@ public enum FiscalActivityInfoKey implements Serializable {
 		}
 		@Override
 		public FiscalActivityInfoKeyType getType() {
-			return MODULE;
+			return MODULE_DETAIL;
 		}
 	}
 	, M03 {

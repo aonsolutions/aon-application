@@ -271,6 +271,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-text-center")
 	String aonTextCenter();
 
+	@ClassName("aon-block-center")
+	String aonBlockCenter();
+	
 	@ClassName("aon-text-underline")
 	String aonTextUnderline();
 

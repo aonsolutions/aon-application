@@ -353,6 +353,11 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	text-align: center;
 }
 
+.aon-block-center {
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .aon-text-underline {
 	text-decoration: underline;
 }
