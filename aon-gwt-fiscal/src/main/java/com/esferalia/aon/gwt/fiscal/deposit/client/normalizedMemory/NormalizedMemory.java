@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.fiscal.deposit.client.DigitalDepositTreeNode;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.D2Deposit2014;
 import com.esferalia.aon.gwt.fiscal.deposit.shared.MemoryTemplate;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -26,6 +27,7 @@ import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -47,6 +49,7 @@ public class NormalizedMemory extends ResizeComposite {
 
 	private NormalizedMemory normalizedMemory;
 	private D2Deposit2014 d2Deposit2014;
+	private D2Deposit d2Deposit;
 	
 	@UiField Label depositType;
 	@UiField Button newButton;
@@ -58,6 +61,7 @@ public class NormalizedMemory extends ResizeComposite {
 	@UiField Button importTextButton;
 	@UiField SimplePanel headerPanel;
 	@UiField Button importAllButton;
+	@UiField Button downloadButton;
 	@UiField Anchor download;							
 	@UiField FlowPanel pagesPanel;
 	
@@ -85,6 +89,7 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param ft
 	 */
 	public NormalizedMemory(DigitalDepositTreeNode ddtn, Deposit deposit) {
+		initialize();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		depositType = new Label();
@@ -133,6 +138,7 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param mt
 	 */
 	public NormalizedMemory(Enterprise enterprise,MemoryTemplate mt, DigitalDepositFreeTextTreeNode ddtn) {
+		initialize();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		depositType = new Label();
@@ -183,6 +189,7 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param e
 	 */
 	public NormalizedMemory(Boolean type, DigitalDepositTreeNode ddtn, Deposit deposit) {
+		initialize();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		depositType = new Label();
@@ -223,6 +230,7 @@ public class NormalizedMemory extends ResizeComposite {
 	 * @param e
 	 */
 	public NormalizedMemory(Boolean type, DigitalDepositFreeTextTreeNode ddtn, Enterprise e) {
+		initialize();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 		depositType = new Label();
@@ -967,6 +975,53 @@ public class NormalizedMemory extends ResizeComposite {
 
 	public Button getGenerateFileButton() {
 		return generateFileButton;
+	}
+	
+	
+	// SERVLETS GWT FISCAL
+	private static final String CCAA_PRINT = "/aon_gwt_deposit/CCAAPrint";
+
+	private FormPanel diskForm;
+	private Hidden schemaIdHidden;
+	private Hidden domainNameHidden;	
+	private Hidden domainIdHidden;
+	private Hidden cifHidden;
+	private Hidden razonSocialHidden;
+	private Hidden yearHidden;
+	private Hidden typeHidden;
+	
+	private void initialize() {
+		diskForm = new FormPanel("_blank");
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		schemaIdHidden = new Hidden("schemaId");
+		formFlowPanel.add(schemaIdHidden);
+		domainIdHidden = new Hidden("domainId");
+		formFlowPanel.add(domainIdHidden);
+		domainNameHidden = new Hidden("domainName");
+		formFlowPanel.add(domainNameHidden);
+		cifHidden = new Hidden("cif");
+		formFlowPanel.add(cifHidden);
+		razonSocialHidden = new Hidden("razonSocial");
+		formFlowPanel.add(razonSocialHidden);
+		yearHidden = new Hidden("year");
+		formFlowPanel.add(yearHidden);
+		typeHidden = new Hidden("type");
+		formFlowPanel.add(typeHidden);
+	}
+	
+	@UiHandler("downloadButton")
+	void down(ClickEvent event) {
+		diskForm.setAction(GWT.getHostPageBaseURL() + CCAA_PRINT);
+		schemaIdHidden.setValue(String.valueOf(1));
+		domainIdHidden.setValue(Integer.toString(enterprise.getDomain()));
+		domainNameHidden.setValue("novus.aibanez.net");
+		cifHidden.setValue(enterprise.getDocument());
+		razonSocialHidden.setValue(enterprise.getName());
+		yearHidden.setValue(String.valueOf(year));
+		typeHidden.setValue(depositType.getText());
+		diskForm.submit();
 	}
 	
 }

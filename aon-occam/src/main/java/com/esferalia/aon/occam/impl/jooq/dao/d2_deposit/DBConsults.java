@@ -23,8 +23,12 @@ import org.jooq.Record7;
 import org.jooq.Result;
 
 import com.esferalia.aon.jooq.tables.records.RattachRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
@@ -223,10 +227,26 @@ public class DBConsults {
 		return schema;
 	}
 	
+	public static Esquema getSchema(D2Deposit d2Deposit, String user){
+		// return getSchema(d2Deposit.getDomain().getName(), d2Deposit.getDomain().getId(), user, d2Deposit.getId());
+		return getDeposit(d2Deposit.getDomain().getName(), d2Deposit.getDomain().getId(),d2Deposit.getYear(),user);
+	}
+
+	public static Esquema getSchema(String domainName, Integer domainId, String user, 
+			Integer id){
+		Attach attach = AON.getAttach(domainName, domainId, user, f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
+		Esquema schema = new Esquema(); 
+		try {
+			schema = Utils.readXml(attach.getData());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return schema;
+	}
 	public static Esquema getDeposit(String domain, Integer domainId, Integer year, String login) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId);
+			ctx = AONContext.getAONContext(domain, domainId, login);
 
 			// DOMAIN + DOMAIN SON
 			Record7<Integer, String, Byte, String, byte[], String, String> record = ctx

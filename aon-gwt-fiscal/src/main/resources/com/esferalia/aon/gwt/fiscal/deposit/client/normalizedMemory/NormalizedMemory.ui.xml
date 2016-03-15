@@ -100,7 +100,8 @@
 							
 							<g:Button ui:field='importAllButton'
 								styleName='aon-finding-toolbar-item aon-icon-file-upload' text="Importar" visible="true"/>
-							
+							<g:Button ui:field='downloadButton'
+								styleName='aon-finding-toolbar-item aon-icon-excel' text="DESCARGAR EXCEL" visible="false"/>
 							<g:Anchor ui:field="download" visible="false"/>							
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
