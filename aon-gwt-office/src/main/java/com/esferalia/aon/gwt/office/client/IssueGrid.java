@@ -392,8 +392,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		selectionModel.addSelectionChangeHandler(new Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-//				for (Listener listener : listeners)
-//					listener.onSelectionChangeHandler(event);
 				SelectionEvent.fire(IssueGrid.this, getIssueSelected());
 			}
 		});
@@ -514,7 +512,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 					return "Ayer (" + DateTimeFormat.getFormat("HH:mm")
 							.format(object.getCreateAt()) + ")";
 				default:
-					return DateTimeFormat.getFormat("E dd MMMM HH:mm")
+					return DateTimeFormat.getFormat("E dd MMMM")
 							.format(object.getCreateAt());
 				}
 			}

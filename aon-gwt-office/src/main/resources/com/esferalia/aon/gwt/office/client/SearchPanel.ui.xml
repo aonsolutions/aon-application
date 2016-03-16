@@ -1,6 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:c="urn:import:com.google.gwt.user.cellview.client">
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.AonHubMessages"
 		field="msg"></ui:with>
@@ -10,93 +10,73 @@
 	<ui:style>
 	
 	</ui:style>
-	<g:HTMLPanel>
-		<g:Grid styleName="{aonResources.css.aonGroupBody}">
-			<g:row>
-				<g:customCell>
-					<g:Label text="{msg.showFrom}" styleName="{aonResources.css.aonBold}" />
-				</g:customCell>
-				<g:customCell>
-					<g:ListBox ui:field="fromListBox" />
-				</g:customCell>
-				<g:customCell>
-					<g:RadioButton ui:field="openIssuesRb" name="showIssuesRb"
-						value="true" styleName="{aonResources.css.aonBold}" text="{msg.openIssues}" />
-				</g:customCell>
-				<g:customCell>
-					<g:RadioButton ui:field="closedIssuesRb" name="showIssuesRb"
-						value="false" text="{msg.closedIssues}" />
-				</g:customCell>
-				<g:customCell>
-					<g:RadioButton ui:field="allIssuesRb" name="showIssuesRb"
-						value="false" text="{msg.allIssues}" />
-				</g:customCell>
-				<g:customCell>
-					<g:HTMLPanel styleName="{aonResources.css.aonGroupBody}">
-						<table>
-							<row>
-								<td>
-									<g:Label styleName="{aonResources.css.aonIconCompany}" />
-								</td>
-								<td>
-									<g:SuggestBox styleName="{aonResources.css.aonInputText}"
-										width="300px" ui:field="registrySuggest" />
-								</td>
-							</row>
-						</table>
-					</g:HTMLPanel>
-				</g:customCell>
-			</g:row>
-		</g:Grid>
 
-		<g:HTMLPanel styleName="{aonResources.css.aonGroupBody}">
-			<div>
-				<g:Button ui:field="advanceSearch" text="Búsqueda avanzada"
-					styleName="aon-editDataTable-button aon-icon-search" />
-				<g:Button ui:field="hideSearchPanel" text="Ocultar búsqueda avanzada"
-					styleName="aon-editDataTable-button {aonResources.css.aonIconCancel}"
-					visible="false" />
-			</div>
+	<g:VerticalPanel spacing="5">
 
-			<g:VerticalPanel spacing="0" ui:field="filterHPanel" visible="false">
-				<g:HorizontalPanel
-					styleName="{aonResources.css.aonGroupBody}" spacing="10">
-
-					<g:HorizontalPanel spacing="5">
-						<g:Label styleName="{aonResources.css.aonBold}" text="Filtrar por: " />
-					</g:HorizontalPanel>
-
-					<g:HorizontalPanel spacing="5">
-						<g:Label text="Tipo" />
-						<g:Button ui:field="typeButton" text="Tipo"
-							styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
-					</g:HorizontalPanel>
-
-					<g:HorizontalPanel spacing="5">
-						<g:Label text="Prioridad" />
-						<g:Button ui:field="priorityButton" text="Prioridad"
-							styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
-					</g:HorizontalPanel>
-
-					<g:HorizontalPanel spacing="5">
-						<g:Label text="Texto " />
-						<g:TextBox ui:field="textTextBox" styleName="{aonResources.css.aonInputText}" />
-					</g:HorizontalPanel>
-
-					<g:HorizontalPanel spacing="5">
-						<g:Button ui:field="searchButton"
-							styleName="{aonResources.css.aonIconSearch} {aonResources.css.aonIconCommandButton}"
-							text="Buscar" />
-						<g:Button ui:field="clearSearchButton"
-							styleName="{aonResources.css.aonIconDelete} {aonResources.css.aonIconCommandButton}"
-							text="Limpiar" />
-					</g:HorizontalPanel>
-				</g:HorizontalPanel>
-				
-					<g:HorizontalPanel ui:field="labelsHP"
-					styleName="{aonResources.css.aonGroupBody}" spacing="0"/>
-
-			</g:VerticalPanel>
+		<g:HTMLPanel>
+			<table class="{aonResources.css.aonGroupBody}">
+				<tr>
+					<td>
+						<g:Label styleName="{aonResources.css.aonIconCompany}" />
+					</td>
+					<td>
+						<g:SuggestBox styleName="{aonResources.css.aonInputText}"
+							width="300px" ui:field="registrySuggest" />
+					</td>
+					<td></td>
+					<td></td>
+					<td>
+						<g:Label styleName="{aonResources.css.aonBold}" text="Asunto" />
+					</td>
+					<td>
+						<g:TextBox
+							styleName="{aonResources.css.aonInputText} {aonResources.css.aonWidth300}"
+							ui:field="subjectTextBox" />
+					</td>
+				</tr>
+			</table>
 		</g:HTMLPanel>
-	</g:HTMLPanel>
+		<g:HTMLPanel>
+			<table class="{aonResources.css.aonGroupBody}">
+				<tr>
+					<td></td>
+
+					<td>
+						<g:HorizontalPanel spacing="5">
+							<g:Label text="Tipo" styleName="{aonResources.css.aonItalic}" />
+							<g:Button ui:field="typeButton" text="Tipo"
+								styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
+						</g:HorizontalPanel>
+					</td>
+					<td>
+						<g:HorizontalPanel spacing="5">
+							<g:Label text="Prioridad" styleName="{aonResources.css.aonItalic}" />
+							<g:Button ui:field="priorityButton" text="Prioridad"
+								styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
+						</g:HorizontalPanel>
+					</td>
+					<td>
+						<g:HorizontalPanel spacing="5">
+							<g:Label text="Etiquetas" styleName="{aonResources.css.aonItalic}" />
+							<g:Button ui:field="noticeTagButton" text="Etiqueta"
+								styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
+						</g:HorizontalPanel>
+					</td>
+					<td>
+						<g:HorizontalPanel spacing="5">
+							<g:Label text="Usuario" styleName="{aonResources.css.aonItalic}" />
+							<g:Button ui:field="ownerButton" text="Usuario"
+								styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
+						</g:HorizontalPanel>
+					</td>
+					<td>
+						<g:HorizontalPanel spacing="5">
+							<g:Label text="a partir de " styleName="{aonResources.css.aonItalic}" />
+							<g:ListBox ui:field="fromListBox" />
+						</g:HorizontalPanel>
+					</td>
+				</tr>
+			</table>
+		</g:HTMLPanel>
+	</g:VerticalPanel>
 </ui:UiBinder> 

@@ -33,7 +33,7 @@ public interface AonHubMessages extends Messages {
  	@DefaultMessage("Cerradas")
 	String closedIssues();
 
- 	@DefaultMessage("Mostrar Todas")
+ 	@DefaultMessage("Todas")
 	String allIssues();
 
  	@DefaultMessage("T\u00EDtulo")

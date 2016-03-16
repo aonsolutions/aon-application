@@ -54,8 +54,6 @@
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:north size="25">
-
-
 			<g:FlowPanel styleName="aon-finding-title-toolbar">
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName="aon-finding-title">
@@ -88,11 +86,40 @@
 
 				<g:DockLayoutPanel ui:field="dockOfficePanel"
 					unit="PX">
-					<g:north size="120">
-						<g:HTMLPanel ui:field="htmlOfficePanel" styleName="aon-panelGrid-search {style.searchPanel}">
+					<g:north size="140">
+						<g:HTMLPanel styleName="aon-panelGrid-search {style.searchPanel}">
 							<div class="aon-panelGrid-search-info">
-								<g:Label styleName="aon-panelGrid-search-info-internal"
-									text="{msg.searchCriteria}" />
+								<g:HorizontalPanel styleName="{aonResources.css.aonWidthAll}">
+									<g:HTMLPanel styleName="position: relative;top: 2px;">
+										<span class="aon-panelGrid-search-info-internal">Criterio de búsqueda:</span>
+										<g:RadioButton ui:field="openIssuesRb" name="showIssuesRb"
+											value="true" styleName="{aonResources.css.aonBold}" text="{msg.openIssues}" />
+										<g:RadioButton ui:field="closedIssuesRb" name="showIssuesRb"
+											value="false" text="{msg.closedIssues}" />
+										<g:RadioButton ui:field="allIssuesRb" name="showIssuesRb"
+											value="false" text="{msg.allIssues}" />
+									</g:HTMLPanel>
+
+									<g:HTMLPanel>
+										<a
+											style="font-size:10px;font-weight:bold;float:right; position: relative; top: 2px;">
+											<span class="aon-outputText">
+												<g:Button ui:field="searchButton" text="Buscar"
+													styleName="aon-editDataTable-button {aonResources.css.aonIconSearch}">
+
+												</g:Button>
+											</span>
+										</a>
+										<a
+											style="font-size:10px;font-weight:bold;float:right; position: relative; top: 2px;">
+											<span class="aon-outputText">
+												<g:Button ui:field="clearButton" text="Limpiar"
+													styleName="aon-editDataTable-button {aonResources.css.aonIconDelete}" />
+											</span>
+										</a>
+
+									</g:HTMLPanel>
+								</g:HorizontalPanel>
 							</div>
 							<office:SearchPanel ui:field="searchPanel" />
 						</g:HTMLPanel>

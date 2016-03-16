@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -893,6 +894,49 @@ public class AonHubDAO {
 
 			return rmedias;
 
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+	}
+	
+	public static List<User> getUserFromNotices(AONContext ctx, Integer parentDomain) {
+		
+		Cursor<Record> cursor = null;
+		List<User> users = new LinkedList<User>();
+	
+		try {
+			
+			SelectConditionStep<Record1<Integer>> noticeSelect = ctx.getDslContext()
+					.select(NOTICE.SENDER)
+					.from(NOTICE)
+					.where(NOTICE.DOMAIN.eq(ctx.getDomainId()));
+			
+			if (parentDomain != null) 
+				noticeSelect = noticeSelect.or(NOTICE.DOMAIN.eq(parentDomain));
+					
+			
+			cursor = ctx.getDslContext()
+					.select(USER.fields())
+					.from(USER)
+					.where(USER.ID.in(noticeSelect)
+							.and(USER.ACTIVE.eq( (byte) 1)))
+					.orderBy(USER.NAME.asc())
+					.fetchLazy();
+			
+			for (Record record : cursor) {
+				User user = new User();
+				user.setId(record.getValue(USER.ID));
+				user.setDomain(record.getValue(USER.DOMAIN));
+				user.setLogin(record.getValue(USER.LOGIN));
+				user.setName(record.getValue(USER.NAME));
+				user.setActive(record.getValue(USER.ACTIVE) != 0);
+				users.add(user);
+			}
+			
+			return users;
+
+			
 		} finally {
 			if (cursor != null)
 				cursor.close();

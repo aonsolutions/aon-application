@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
@@ -48,8 +49,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
@@ -58,12 +59,19 @@ import com.google.gwt.view.client.ListDataProvider;
 
 public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		IssuePanel.Listener, IssueReadPanel.Listener, TagTree.Listener,
-		SearchPanel.Listener, ScrollHandler {
+		ScrollHandler {
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
 	interface OfficeUiBinder extends UiBinder<Widget, Office> {
 	}
+	
+	@UiField
+	RadioButton openIssuesRb;
+	@UiField
+	RadioButton closedIssuesRb;
+	@UiField
+	RadioButton allIssuesRb;
 
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
@@ -73,6 +81,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	Button tagButton;
 	@UiField
 	Button returnButton;
+	@UiField
+	Button searchButton;
+	@UiField
+	Button clearButton;
+	
 	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
@@ -84,9 +97,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiField
 	IssueGrid dataGrid;
-	
-	@UiField
-	HTMLPanel htmlOfficePanel;
 
 	@UiField
 	StackLayoutPanel stackLayoutPanel;
@@ -114,10 +124,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	private List<IssueSelected> issues;
 	private ListDataProvider<IssueSelected> issuesProvider;
 
-	private List<DefaultAonTagIssueSelected> tagList;
-	private Map<Integer, Registry> registryMap;
+	private List<DefaultAonTagIssueSelected> tagList;	
 	private List<RegistryMedia> rmedias;
 
+	private Map<Integer, Registry> registryMap;
 	private Map<Integer, JsIssue> issuesMap;
 	private Map<Integer, JsRepo> repositories;
 
@@ -139,14 +149,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.tagList = new LinkedList<DefaultAonTagIssueSelected>();
 		this.registryMap = new HashMap<Integer, Registry>();
 		this.rmedias = new LinkedList<RegistryMedia>();
-		this.searchPanel.addListener(this);
 		this.dataGrid.addListener(this);
 		this.dataGrid.getScrollPanel().addScrollHandler(this);
 		this.dataGrid.setEmptyTableWidget(new Label("No hay registros"));
 		this.tagTree.addListener(this);
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
 
-		gitHub.getUser(String.valueOf(getCurrentDomain()),
+		gitHub.getUser(String.valueOf(getCurrentDomain()), getCurrentDomainName(),
 				new AsyncCallback<AJSON<JsUser>>() {
 
 					@Override
@@ -164,10 +173,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		loadRMedias();
 		loadLabels();
 		initIssuesList();
-		loadOpenIssues();		
+		loadOpenIssues();
 	}
 
-	private void loadRegistries() {
+	void loadRegistries() {
 		gitHub.getRegistries(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsRegistry>>() {
 
@@ -185,7 +194,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 				});
 	}
 
-	private void loadRMedias() {
+	void loadRMedias() {
 		gitHub.getRMedias(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsRMedia>>() {
 
@@ -203,7 +212,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 				});
 	}
 
-	private void loadLabels() {
+	void loadLabels() {
 
 		gitHub.getLabels(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsLabel>>() {
@@ -218,13 +227,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						JsArray<JsLabel> labels = result.getData();
 
 						for (int x = 0; x < labels.length(); x++)
-							addLabels2List(labels.get(x));						
+							addLabels2List(labels.get(x));
 						Office.this.searchPanel.addTagList(tagList);
 					}
 				});
 	}
 
-	private void loadOpenIssues() {
+	void loadOpenIssues() {
 		gitHub.getOpenIssues(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
 
@@ -244,7 +253,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		showDockOfficePanel();
 	}
 
-	private void loadClosedIssues() {
+	void loadClosedIssues() {
 		gitHub.getClosedIssues(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
 
@@ -264,7 +273,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		showDockOfficePanel();
 	}
 
-	private void loadAllIssues() {
+	void loadAllIssues() {
 		gitHub.getAllIssues(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
 
@@ -337,6 +346,95 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		evalRadioButtons();
 		returnButton.setEnabled(false);
 	}
+	
+	@UiHandler("openIssuesRb")
+	void onOpenIssuesRbSelected(ValueChangeEvent<Boolean> event) {
+		if (event.getValue()) {
+			closedIssuesRb.removeStyleName(AON.AON_BOLD);
+			allIssuesRb.removeStyleName(AON.AON_BOLD);
+			openIssuesRb.addStyleName(AON.AON_BOLD);
+			this.incrementSize = 0;
+			this.gitHub.setOffset(incrementSize);
+			initIssuesList();
+			loadOpenIssues();
+		}
+	}
+
+	@UiHandler("closedIssuesRb")
+	void onClosedIssuesRbSelected(ValueChangeEvent<Boolean> event) {
+		if (event.getValue()) {
+			openIssuesRb.removeStyleName(AON.AON_BOLD);
+			allIssuesRb.removeStyleName(AON.AON_BOLD);
+			closedIssuesRb.addStyleName(AON.AON_BOLD);
+			this.incrementSize = 0;
+			this.gitHub.setOffset(incrementSize);
+			initIssuesList();
+			loadClosedIssues();
+		}
+	}
+
+	@UiHandler("allIssuesRb")
+	void onAllIssuesRbSelected(ValueChangeEvent<Boolean> event) {
+		if (event.getValue()) {
+			openIssuesRb.removeStyleName(AON.AON_BOLD);
+			closedIssuesRb.removeStyleName(AON.AON_BOLD);
+			allIssuesRb.addStyleName(AON.AON_BOLD);
+			this.incrementSize = 0;
+			this.gitHub.setOffset(incrementSize);
+			initIssuesList();
+			loadAllIssues();
+		}
+	}
+	
+	@UiHandler("searchButton")
+	void onSearchButtonClickEvent(ClickEvent event) {
+
+		List<Tag> tags = searchPanel.getDrashTagList();
+		String subject = searchPanel.getSubject();
+		String company = searchPanel.getCompany();
+		Date criteria = searchPanel.getCriteria();
+		
+		if (tags.size() == 0)
+			this.gitHub.setFilterTagList(null);
+		else {
+			String[] tagArr = new String[tags.size()];
+			for (int x = 0; x < tags.size(); x++)
+				tagArr[x] = String.valueOf(tags.get(x).getName());
+
+			this.gitHub.setFilterTagList(tagArr);
+		}
+		
+		this.gitHub.setSinceCriteria(criteria);
+
+		if (subject.trim().isEmpty())
+			this.gitHub.setText(null);
+		else
+			this.gitHub.setText(subject);
+		
+		if (company.trim().isEmpty())
+			this.gitHub.setSender(null);
+		else
+			this.gitHub.setSender(company);
+
+		this.incrementSize = 0;
+		this.gitHub.setOffset(incrementSize);
+
+		initIssuesList();
+		evalRadioButtons();
+		
+	}
+	
+	@UiHandler("clearButton")
+	void onClearButtonClickEvent(ClickEvent event) {
+		searchPanel.cleanFilterPanels();
+		this.incrementSize = 0;
+		this.gitHub.setOffset(incrementSize);
+		this.gitHub.setFilterTagList(null);
+		this.gitHub.setText(null);
+		this.gitHub.setSender(null);
+		initIssuesList();
+		evalRadioButtons();
+	}
 
 	// ******************************************************************
 	// ********************** PRIVATE METHODS ***************************
@@ -344,11 +442,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	void evalRadioButtons() {
 
-		if (searchPanel.openIsSelected())
+		if (openIssuesRb.getValue())
 			loadOpenIssues();
-		else if (searchPanel.closedIsSelected())
+		else if (closedIssuesRb.getValue())
 			loadClosedIssues();
-		else if (searchPanel.allIsSelected())
+		else if (allIssuesRb.getValue())
 			loadAllIssues();
 	}
 
@@ -404,7 +502,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		tag.setType(defaultTag.getType());
 
 		if (defaultTag.getDomain() != 0)
-			tagTree.insertTag(tag);	
+			tagTree.insertTag(tag);
 	}
 
 	private void addRegistry2List(JsRegistry jsRegistry) {
@@ -499,95 +597,41 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	// ************************* SEARCH PANEL ***************************
 	// ******************************************************************
 
-	@Override
-	public void onOpenIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		this.incrementSize = 0;
-		this.gitHub.setOffset(incrementSize);
-		initIssuesList();
-		loadOpenIssues();
-	}
-
-	@Override
-	public void onClosedIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		this.incrementSize = 0;
-		this.gitHub.setOffset(incrementSize);
-		initIssuesList();
-		loadClosedIssues();
-	}
-
-	@Override
-	public void onAllIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		this.incrementSize = 0;
-		this.gitHub.setOffset(incrementSize);
-		initIssuesList();
-		loadAllIssues();
-	}
-
-	@Override
-	public void onChangeEventListBox(Date criteria) {
-		this.incrementSize = 0;
-		this.gitHub.setOffset(incrementSize);
-		gitHub.setSinceCriteria(criteria);
-		initIssuesList();
-		evalRadioButtons();
-	}
-
-	@Override
-	public void onSuggestBoxChangeValue(String sender) {
-		this.incrementSize = 0;
-		this.gitHub.setOffset(incrementSize);
-		this.registrySelected = sender;
-		this.gitHub.setSender(sender);
-		this.gitHub.setOffset(0);
-		initIssuesList();
-		evalRadioButtons();
-	}
-	
-	@Override
-	public void onAdvancedSearchClick(ClickEvent event) {
-		this.dockOfficePanel.setWidgetSize(htmlOfficePanel, 170);
-	}
-	
-	@Override
-	public void onHideSearchPanel(ClickEvent event) {
-		this.dockOfficePanel.setWidgetSize(htmlOfficePanel, 120);
-	}
-	
-	@Override
-	public void onSearchButtonClick(List<Tag> tags, String text) {
-		
-		if (tags.size() == 0)
-			this.gitHub.setFilterTagList(null);
-		else {
-			String[] tagArr = new String[tags.size()];
-			for (int x = 0; x < tags.size() ; x++)
-				tagArr[x] = String.valueOf(tags.get(x).getName());
-			
-			this.gitHub.setFilterTagList(tagArr);
-		}
-		
-		if (text.trim().isEmpty())
-			this.gitHub.setText(null);
-		else
-			this.gitHub.setText(text);
-		
-		this.incrementSize = 0;
-		this.gitHub.setOffset(incrementSize);
-		
-		initIssuesList();
-		evalRadioButtons();
-	}
-	
-	@Override
-	public void onClearSearchClickEvent(ClickEvent event) {
-		this.gitHub.setFilterTagList(null);
-		this.gitHub.setText(null);
-		this.incrementSize = 0;
-		this.gitHub.setOffset(incrementSize);
-		
-		initIssuesList();
-		evalRadioButtons();
-	}
+//	@Override
+//	public void onSearchButtonClick(List<Tag> tags, String text) {
+//
+//		if (tags.size() == 0)
+//			this.gitHub.setFilterTagList(null);
+//		else {
+//			String[] tagArr = new String[tags.size()];
+//			for (int x = 0; x < tags.size(); x++)
+//				tagArr[x] = String.valueOf(tags.get(x).getName());
+//
+//			this.gitHub.setFilterTagList(tagArr);
+//		}
+//
+//		if (text.trim().isEmpty())
+//			this.gitHub.setText(null);
+//		else
+//			this.gitHub.setText(text);
+//
+//		this.incrementSize = 0;
+//		this.gitHub.setOffset(incrementSize);
+//
+//		initIssuesList();
+//		evalRadioButtons();
+//	}
+//
+//	@Override
+//	public void onClearSearchClickEvent(ClickEvent event) {
+//		this.gitHub.setFilterTagList(null);
+//		this.gitHub.setText(null);
+//		this.incrementSize = 0;
+//		this.gitHub.setOffset(incrementSize);
+//
+//		initIssuesList();
+//		evalRadioButtons();
+//	}
 
 	// ******************************************************************
 	// ********************** ISSUES DATA GRID **************************

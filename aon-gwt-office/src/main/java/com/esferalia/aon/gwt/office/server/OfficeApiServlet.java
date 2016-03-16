@@ -51,11 +51,55 @@ public class OfficeApiServlet extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private static class GetAllUsers extends RegExpRequestHandler {
+		
+		public GetAllUsers() {
+			super("/users/(\\d+)");
+		}
+		
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {			
+
+			Integer domainId = null;
+
+			try {
+				domainId = getDomainId();
+
+			} catch (Exception ex) {
+				String aux = getRequestAction(req);
+				String[] auxArr = aux.split("/");
+				domainId = Integer.parseInt(auxArr[2]);
+
+			} finally {
+				getUsers(req, resp, domainId);
+			}
+		}
+		
+		private void getUsers(HttpServletRequest req, HttpServletResponse resp, int domainId) {
+			PrintWriter pw = null;
+			
+			try {
+				
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+			}
+			
+//			pw.append('{');
+//			pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
+//			pw.printf("\"data\":%s", buildNotices(notices.listIterator()));
+//			pw.append('}');
+//			pw.flush();
+
+		}
+		
+	}
 
 	private static class GetUser extends RegExpRequestHandler {
 
 		public GetUser() {
-			super("/users/(\\d+)");
+			super("/users/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))");
 		}
 
 		@Override
@@ -1227,6 +1271,22 @@ public class OfficeApiServlet extends HttpServlet {
 			if (pw != null)
 				pw.close();
 		}
+	}
+	
+	private static String buildUsers(ListIterator<User> iterator) 
+			throws Exception {
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append('[');
+		
+		while (iterator.hasNext()) {
+			User user = iterator.next();
+			buffer.append(buildUserSender(user));
+			if(iterator.hasNext())
+				buffer.append(',');
+		}
+		buffer.append(']');
+		return buffer.toString();
 	}
 
 	private static String buildNotices(ListIterator<Notice> iterator)

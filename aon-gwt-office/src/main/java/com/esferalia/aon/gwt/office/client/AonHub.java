@@ -42,7 +42,7 @@ public class AonHub {
 	private static String text;
 	
 	private static int offset = 0;
-	private static boolean authorized = false;
+	private static boolean authorized = false; 
 
 	public AonHub(String url) {
 		this.baseUrl = url;
@@ -92,7 +92,11 @@ public class AonHub {
 
 	// ************** USERS *************** //
 
-	public void getUser(String login, AsyncCallback<AJSON<JsUser>> callback) {
+	public void getUser(String login, String userName, AsyncCallback<AJSON<JsUser>> callback) {
+		get(baseUrl + "users/" + URL.encode(login) + "/" + URL.encode(userName), callback);
+	}
+	
+	public void getUsers(String login, AsyncCallback<JSON<JsUser>> callback) {
 		get(baseUrl + "users/" + URL.encode(login), callback);
 	}
 

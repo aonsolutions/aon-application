@@ -102,12 +102,20 @@ public class Notice implements Serializable, HasId {
 		this.tags.add(tag);
 	}
 	
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
+	
 	public void clearTagList() {
 		this.tags = new LinkedList<Tag>();
 	}
 	
 	public void addNotice(Notice comment) {
 		this.comments.add(comment);
+	}
+	
+	public void addComments(List<Notice> comments) {
+		this.comments = comments;
 	}
 	
 	// ===============GETTERS=================== //
