@@ -2,6 +2,7 @@ package com.code.aon.ui.fiscal.controller.activity;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,15 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 
+import org.jooq.tools.StringUtils;
+
 import com.code.aon.common.AonException;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.Company;
+import com.code.aon.config.IAE;
 import com.code.aon.AonVersion;
 import com.code.aon.fiscal.FiscalActivity;
 import com.code.aon.fiscal.FiscalActivityInfo;
@@ -26,9 +35,12 @@ import com.code.aon.fiscal.activity.Sector;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoKey;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoKeyEntry;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoType;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.EnterpriseActivity;
 
 public class FiscalActivityController extends BasicController implements IFiscalActivityContainer {
 
@@ -369,6 +381,35 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		if (fa.getYear() < 2014) {
 			fillM311( fa );
 		}
+		if (fa.getActivity() == null || fa.getActivity().getId() == null) {
+			try {
+				IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+		    	Iterator<?> iterator = companyBean.getList(null).iterator();
+		    	if (iterator.hasNext()) {
+		    		Company company = (Company)iterator.next();
+
+					IManagerBean bean = BeanManager.getManagerBean(EnterpriseActivity.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), company.getId());
+					criteria.addNullExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_END_DATE));
+					criteria.addOrder(bean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_PRINCIPAL), Boolean.FALSE);
+					criteria.addOrder(bean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_DESCRIPTION));
+					for (ITransferObject ito : bean.getList(criteria)) {
+						EnterpriseActivity activity = (EnterpriseActivity)ito;
+						IAE iae = activity.getIae();
+						if (iae != null) {
+							if (StringUtils.equals(epigrafe.getCode(),iae.getEpigraph())) {
+								fa.setActivity(activity);
+								break;
+							}
+						}
+					}
+				}
+			} catch (ManagerBeanException e) {
+				// Nothing
+			}
+		}
+		
 	}
 
 	private void fillInfo(FiscalActivity fa) {

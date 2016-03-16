@@ -112,7 +112,23 @@
 						<aon:outputText value="#{bundle.fiscal_epigraph}" />
 						<aon:outputText value="#{fiscalActivity.to.epigraph} - #{fiscalActivity.to.description}"
 							styleClass="aon-bold" style="font-size: 1.2em;"/>
+					
+					
+						<aon:outputLabel for="FiscalActivity_activity"
+							value="#{bundle.aon_activity}" />
+						<aon:div>
+							<aon:selectOneMenu id="FiscalActivity_activity"
+								value="#{fiscalActivity.to.activity}" ajaxSingle="true">
+								<f:selectItem itemLabel="- -" value="#{null}" />
+								<f:selectItems value="#{companyCollections.companyActivities}" />
+							</aon:selectOneMenu>
+							<aon:outputLabel styleClass="aon-italic aon-margin-left" 
+								value="Actividad definida en configuraci&#243;n global de la empresa, la que se vincula a facturas, apuntes, etc ..."/>	
+							<aon:outputLabel styleClass="aon-italic aon-margin-left" 
+								value="Si tiene m&#225;s de una actividad, importante para discriminar los ingresos/gastos por actividad."/>	
+						</aon:div>
 					</aon:if>
+					
 				</aon:panelGrid>
 				
 				<aon:panelTabSet id="activityTab" selectedTab="#{fiscalActivity.selectedTab}" >
