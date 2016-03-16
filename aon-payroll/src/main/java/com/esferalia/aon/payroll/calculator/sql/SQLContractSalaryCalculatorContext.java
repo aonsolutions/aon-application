@@ -1275,6 +1275,11 @@ public class SQLContractSalaryCalculatorContext
 
 	@Override
 	public String getCategory() {
+		String category = getString(SQLConstants.CONTRACT,
+				ContractColumns.CATEGORY_DESCRIPTION);
+		if ( AonStringUtils.isNotBlank(category))
+			return category;
+		
 		return getString(SQLConstants.AGREEMENT_LEVEL_CATEGORY,
 				AgreementLevelCategoryColumns.DESCRIPTION);
 	}
