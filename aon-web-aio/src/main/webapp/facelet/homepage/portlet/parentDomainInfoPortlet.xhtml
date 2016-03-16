@@ -16,13 +16,17 @@
 			action="home" actionListener="#{domains.onParentDomain}"
 			reRender="aonHeader,aonContent" 
 			disabled="#{!domainSwitcher.enabledGoToParent}">
-			<a4j:mediaOutput
+			<!--  a4j:mediaOutput
 				mimeType="#{parentDomain.mimeTypeName}"
 				cacheable="false" element="img" 
 				value="aon-parent-logo" 
 				style="height:60px;"
 				createContent="#{parentDomain.createLogoContent}">
-			</a4j:mediaOutput>
+			</a4j:mediaOutput-->
+			<img
+				style="height:60px;"
+				src="aonDocuments/company.logo"/>
+			
 		</aon:commandLink>
 		
 		<h:panelGrid styleClass="aon-padding-left aon-width-all">

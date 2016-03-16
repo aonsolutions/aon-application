@@ -9,14 +9,19 @@
 
 	<aon:if test="#{company.withLogo}">	
 		<aon:div styleClass="aon-text-center aon-margin-bottom">
-			<a4j:mediaOutput
+			<!--  a4j:mediaOutput
 				mimeType="#{company.logoMimeType}" 
 				cacheable="false" element="img" 
 				value="#{company.logoFile.key}" 
 				style="max-width:201px;"
 				onload="setMaxWidth(this, 200);"
-				createContent="#{company.createLogoContent}">
-			</a4j:mediaOutput>
+				createContent="#{company.createLogoContent}"
+				>
+			</a4j:mediaOutput-->
+			<img
+				style="max-width: 201px;"
+				src="aonDocuments/company.logo"
+				onload="setMaxWidth(this, 200);"/>
 		</aon:div>
 		<script type="text/javascript">
 			function setMaxWidth(img, width) {
