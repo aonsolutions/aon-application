@@ -153,20 +153,17 @@ public class ReservationManager implements IReservationConstants {
 		if (reservation != null) {
 			if (reservation.isActive() || reservation.isBlocked()) {
 				try {
-					boolean skipModification = (reservation.isSourceRequest() && reservation.isActive());
-					if (!skipModification) {
-						if (isInvalidCheckInDate(reservationType.getResGlobalInfo().getTimeSpan().getStart().getTime())) {
-							throw new ReservationException("Invalid Check-in Date", reservation.getCrsCode(), 381);
-						}
-						delayForConcurrence(reservation);
-						if (isReservationRoomAssigned(reservation)) {
-							removeReservationRoomDetail(reservation, true);
-						}
-						removeReservationService(reservation);
-						removeReservationRoom(reservation);
-						removeReservationGuest(reservation);
-						createReservation(reservationType, posType, reservation);
+					if (isInvalidCheckInDate(reservationType.getResGlobalInfo().getTimeSpan().getStart().getTime())) {
+						throw new ReservationException("Invalid Check-in Date", reservation.getCrsCode(), 381);
 					}
+					delayForConcurrence(reservation);
+					if (isReservationRoomAssigned(reservation)) {
+						removeReservationRoomDetail(reservation, true);
+					}
+					removeReservationService(reservation);
+					removeReservationRoom(reservation);
+					removeReservationGuest(reservation);
+					createReservation(reservationType, posType, reservation);
 				} catch (ManagerBeanException ex) {
 					throw new ReservationException("Unknown error: " + ex.getMessage(), reservation.getCrsCode(), 1);
 				}
@@ -280,7 +277,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setOtherTaxQuota(otherTaxQuota);
 			reservation.setTotal(calculateCommission ? CommonUtil.round(total - agencyCommissionAmount) : total);
 			reservation.setRemarks(remarks);
-			reservation.setSource(ReservationSource.CRS);
+			reservation.setSource(isNewReservation ? ReservationSource.CRS : reservation.getSource());
 			reservation.setCrsCode(reservationCrsCode);
 			reservation.setAdvance((NumberUtils.isNumber(prepayPayment)) ? Double.parseDouble(prepayPayment) : 0);
 			reservation.setPrepay(prepayTransaction!=null);
