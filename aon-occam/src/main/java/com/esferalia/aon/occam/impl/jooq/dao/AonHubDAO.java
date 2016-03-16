@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.poi.ss.formula.functions.Count;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -27,6 +28,7 @@ import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
+import com.esferalia.aon.occam.api.model.office.NoticeContainer;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -463,7 +465,7 @@ public class AonHubDAO {
 		return notice;
 	}
 
-	public static List<Notice> getOpenNotices(AONContext ctx, String pSince,
+	public static NoticeContainer getOpenNotices(AONContext ctx, String pSince,
 			String sender, int offset, List<String> tags, String text) {
 
 		changeMessageType2CommentType(ctx);
@@ -477,8 +479,22 @@ public class AonHubDAO {
 				ctx.getDslContext());
 		SelectConditionStep<Record1<Integer>> reopenId = getReOpenNoticesId(
 				ctx.getDslContext());
-
-		SelectConditionStep<Record> select = ctx.getDslContext().select()
+		
+		int count = ctx.getDslContext()
+				.selectCount()
+				.from(NOTICE)
+				.join(NOTICE_TAG)
+				.on(NOTICE.ID.eq(NOTICE_TAG.NOTICE))
+				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
+						.and(NOTICE.NOTICE_.isNull())
+						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
+						.and(NOTICE_TAG.TAG.eq(openId)
+								.or(NOTICE_TAG.TAG.eq(reopenId)))
+						.and(NOTICE_TAG.END_DATE.isNull()))
+				.fetchOne(0, int.class);
+		
+		SelectConditionStep<Record> select = ctx.getDslContext()
+				.select()				
 				.from(NOTICE).rightOuterJoin(NOTICE_TAG)
 				.on(NOTICE.ID.eq(NOTICE_TAG.NOTICE)).rightOuterJoin(TAG)
 				.on(NOTICE_TAG.TAG.eq(TAG.ID))
@@ -526,11 +542,15 @@ public class AonHubDAO {
 				}
 			});
 		}
+		
+		NoticeContainer container = new NoticeContainer();
+		container.setCount(count);
+		container.setNotices(notices);
 
-		return notices;
+		return container;
 	}
 
-	public static List<Notice> getClosedIsues(AONContext ctx, String pSince,
+	public static NoticeContainer getClosedIsues(AONContext ctx, String pSince,
 			String sender, int offset, List<String> tags, String text) {
 
 		List<Notice> notices = new LinkedList<Notice>();
@@ -540,6 +560,18 @@ public class AonHubDAO {
 
 		SelectConditionStep<Record1<Integer>> closedId = getClosedNoticesId(
 				ctx.getDslContext());
+		
+		int count = ctx.getDslContext()
+				.selectCount()
+				.from(NOTICE)
+				.join(NOTICE_TAG)
+				.on(NOTICE.ID.eq(NOTICE_TAG.NOTICE))
+				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
+						.and(NOTICE.NOTICE_.isNull())
+						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
+						.and(NOTICE_TAG.TAG.eq(closedId))
+						.and(NOTICE_TAG.END_DATE.isNull()))
+				.fetchOne(0, int.class);				
 
 		SelectConditionStep<Record> select = ctx.getDslContext().select()
 				.from(NOTICE).rightOuterJoin(NOTICE_TAG)
@@ -591,10 +623,14 @@ public class AonHubDAO {
 				}
 			});
 
-		return notices;
+		NoticeContainer container = new NoticeContainer();
+		container.setCount(count);
+		container.setNotices(notices);
+
+		return container;
 	}
 
-	public static List<Notice> getAllNotices(AONContext ctx, String pSince,
+	public static NoticeContainer getAllNotices(AONContext ctx, String pSince,
 			String sender, int offset, List<String> tags, String text) {
 
 		List<Notice> notices = new LinkedList<Notice>();
@@ -608,6 +644,23 @@ public class AonHubDAO {
 				ctx.getDslContext());
 		SelectConditionStep<Record1<Integer>> closedId = getClosedNoticesId(
 				ctx.getDslContext());
+		
+		int count = ctx.getDslContext()
+				.selectCount()
+				.from(NOTICE)
+				.join(NOTICE_TAG)
+				.on(NOTICE.ID.eq(NOTICE_TAG.NOTICE))
+				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
+						.and(NOTICE.NOTICE_.isNull())
+						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
+						.and(NOTICE_TAG.TAG.eq(openId)
+								.or(NOTICE_TAG.TAG.eq(reopenId))
+								.or(NOTICE_TAG.TAG.eq(closedId)))
+						.and(NOTICE_TAG.END_DATE.isNull()))
+				.fetchOne(0, int.class);
+				
+				
+
 
 		SelectConditionStep<Record> select = ctx.getDslContext().select()
 				.from(NOTICE.rightOuterJoin(NOTICE_TAG)
@@ -659,7 +712,12 @@ public class AonHubDAO {
 				}
 			});
 		}
-		return notices;
+	
+		NoticeContainer container = new NoticeContainer();
+		container.setCount(count);
+		container.setNotices(notices);
+
+		return container;
 	}
 
 	/**

@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.css.AonCalendarResources;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.i18n.AonHubMessages;
 import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -26,6 +27,7 @@ public class AON {
 
 	// ------------------------------------------------------------------------
 	public static final CommonMessages MSG = GWT.create(CommonMessages.class);
+	public static final AonHubMessages AONHUB = GWT.create(AonHubMessages.class);
 	public static final AonResources AON_RESOURCES = GWT.create(AonResources.class);
 	public static final AonCSS AON_CSS = GWT.<AonResources> create(AonResources.class).css();
 	public static final GWTResources GWT_RESOURCES = GWT.create(GWTResources.class);

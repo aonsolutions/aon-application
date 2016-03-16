@@ -10,6 +10,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.i18n.AonHubMessages;
+import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.office.client.IssueReadPanel.Callback;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
@@ -228,6 +230,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 						for (int x = 0; x < labels.length(); x++)
 							addLabels2List(labels.get(x));
+						
 						Office.this.searchPanel.addTagList(tagList);
 					}
 				});
@@ -248,6 +251,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 						for (int x = 0; x < result.getData().length(); x++)
 							addOpenIssue(result.getData().get(x));
+						
+						openIssuesRb.setText(AON.AONHUB.openIssues() + " (" + (result.getCount()) + ")");
+						allIssuesRb.setText(AON.AONHUB.allIssues());						
+						closedIssuesRb.setText(AON.AONHUB.closedIssues());
+
 					}
 				});
 		showDockOfficePanel();
@@ -267,7 +275,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 						for (int x = 0; x < result.getData().length(); x++)
 							addClosedIssue(result.getData().get(x));
-						// addCloseIssue(result.getData().get(x));
+
+						closedIssuesRb.setText(AON.AONHUB.closedIssues() + " (" + result.getCount() + ")");	
+						allIssuesRb.setText(AON.AONHUB.allIssues() + " (" + result.getCount() + ")");
+						openIssuesRb.setText(AON.AONHUB.openIssues());
 					}
 				});
 		showDockOfficePanel();
@@ -286,6 +297,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					public void onSuccess(JSON<JsIssue> result) {
 						for (int x = 0; x < result.getData().length(); x++)
 							addAllIssue(result.getData().get(x));
+						
+						allIssuesRb.setText(AON.AONHUB.allIssues() + " (" + result.getCount() + ")");
+						openIssuesRb.setText(AON.AONHUB.openIssues());
+						closedIssuesRb.setText(AON.AONHUB.closedIssues());
 					}
 				});
 		showDockOfficePanel();

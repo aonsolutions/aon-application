@@ -5,6 +5,7 @@ import java.util.List;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IOffice;
 import com.esferalia.aon.occam.api.model.office.Notice;
+import com.esferalia.aon.occam.api.model.office.NoticeContainer;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -19,23 +20,29 @@ public class OfficeImpl implements IOffice {
 	public User getUser(AONContext ctx, Integer id) {
 		return UserDAO.getUser(ctx, id);
 	}
+	
+	@Override
+	public List<User> getUsers(AONContext ctx) {		
+		Integer parentID = DomainDAO.getParentDomain(ctx);
+		return AonHubDAO.getUserFromNotices(ctx, parentID);
+	}
 
 	@Override
-	public List<Notice> getOpenNotices(AONContext ctx, String since,
+	public NoticeContainer getOpenNotices(AONContext ctx, String since,
 			String sender, int offset, List<String> tags, String text)
 					throws IllegalArgumentException {
 		return AonHubDAO.getOpenNotices(ctx, since, sender, offset, tags, text);
 	}
 
 	@Override
-	public List<Notice> getClosedNotices(AONContext ctx, String since,
+	public NoticeContainer getClosedNotices(AONContext ctx, String since,
 			String sender, int offset, List<String> tags, String text)
 					throws IllegalArgumentException {
 		return AonHubDAO.getClosedIsues(ctx, since, sender, offset, tags, text);
 	}
 
 	@Override
-	public List<Notice> getAllIssues(AONContext ctx, String since,
+	public NoticeContainer getAllIssues(AONContext ctx, String since,
 			String sender, int offset, List<String> tags, String text)
 					throws IllegalArgumentException {
 		return AonHubDAO.getAllNotices(ctx, since, sender, offset, tags, text);

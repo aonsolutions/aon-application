@@ -62,6 +62,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.office.Notice;
+import com.esferalia.aon.occam.api.model.office.NoticeContainer;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -1099,8 +1100,19 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static List<User> getUsers(Integer domainId, String domainName, String userName) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().getUsers(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
-	public static List<Notice> getAllNotices(Integer domainId,
+	public static NoticeContainer getAllNotices(Integer domainId,
 			String domainName, String userName, String since, String sender,
 			int offset, List<String> tagList, String text) {
 
@@ -1115,7 +1127,7 @@ public class AON {
 		}
 	}
 
-	public static List<Notice> getOpenNotices(Integer domainId,
+	public static NoticeContainer getOpenNotices(Integer domainId,
 			String domainName, String userName, String since, String sender,
 			int offset, List<String> tagList, String text) {
 
@@ -1130,7 +1142,7 @@ public class AON {
 		}
 	}
 
-	public static List<Notice> getClosedNotices(Integer domainId,
+	public static NoticeContainer getClosedNotices(Integer domainId,
 			String domainName, String userName, String since, String sender,
 			int offset, List<String> tagList, String text) {
 		AONContext ctx = null;

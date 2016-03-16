@@ -9,6 +9,8 @@ public class JSON<T extends JavaScriptObject> extends JavaScriptObject {
 	
 	public final native boolean isNotFound() /*-{ return this.message == "Not Found"; }-*/;
 	
+	public final native int getCount() /*-{ return this.count; }-*/;
+	
 	public final native JsArray<T> getData() /*-{ return this.data; }-*/;
 
 }

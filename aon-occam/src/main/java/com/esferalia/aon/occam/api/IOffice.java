@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.office.Notice;
+import com.esferalia.aon.occam.api.model.office.NoticeContainer;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -11,6 +12,8 @@ import com.esferalia.aon.occam.api.model.security.User;
 public interface IOffice {
 
 	public User getUser(AONContext ctx, Integer id);
+	
+	public List<User> getUsers(AONContext ctx);
 
 	public Notice addNewNotice(AONContext ctx, Notice notice) throws Exception;
 
@@ -18,15 +21,15 @@ public interface IOffice {
 
 	public Notice changeNoticeStatus(AONContext ctx, Notice notice);
 
-	public List<Notice> getOpenNotices(AONContext ctx, String since,
+	public NoticeContainer getOpenNotices(AONContext ctx, String since,
 			String sender, int offset, List<String> tags, 
 			String text) throws IllegalArgumentException;
 
-	public List<Notice> getClosedNotices(AONContext ctx, String since,
+	public NoticeContainer getClosedNotices(AONContext ctx, String since,
 			String sender, int offset, List<String> tags,
 			String text) throws IllegalArgumentException;
 
-	public List<Notice> getAllIssues(AONContext ctx, String since,
+	public NoticeContainer getAllIssues(AONContext ctx, String since,
 			String sender, int offset, List<String> tags,
 			String text) throws IllegalArgumentException;
 

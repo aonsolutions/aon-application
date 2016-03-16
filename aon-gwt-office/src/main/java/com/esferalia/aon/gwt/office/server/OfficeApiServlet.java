@@ -25,6 +25,7 @@ import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.office.exceptions.LabelNotDeletedException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.office.Notice;
+import com.esferalia.aon.occam.api.model.office.NoticeContainer;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -81,17 +82,19 @@ public class OfficeApiServlet extends HttpServlet {
 			PrintWriter pw = null;
 			
 			try {
+				String domainName = AonServletUtils.getRequestDomainName(req);				
+				List<User> users = AON.getUsers(domainId, domainName, AonServletUtils.getLoggedUser());
+				
+				pw = resp.getWriter();
+				pw.append('{');
+				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
+				pw.printf("\"data\":%s", buildUsers(users.listIterator()));
+				pw.append('}');
+				pw.flush();
 				
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
 			}
-			
-//			pw.append('{');
-//			pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
-//			pw.printf("\"data\":%s", buildNotices(notices.listIterator()));
-//			pw.append('}');
-//			pw.flush();
-
 		}
 		
 	}
@@ -329,7 +332,7 @@ public class OfficeApiServlet extends HttpServlet {
 			try {
 
 				String userName = AonServletUtils.getLoggedUser();
-				List<Notice> notices = new LinkedList<Notice>();
+				NoticeContainer container = new NoticeContainer();
 
 				pw = resp.getWriter();
 
@@ -359,28 +362,29 @@ public class OfficeApiServlet extends HttpServlet {
 				
 				switch (state) {
 				case "open":
-					notices = AON.getOpenNotices(domainId, domainName, userName,
+					container = AON.getOpenNotices(domainId, domainName, userName,
 							since, sender, offset, tagsList, text);
 					break;
 				case "closed":
-					notices = AON.getClosedNotices(domainId, domainName,
+					container = AON.getClosedNotices(domainId, domainName,
 							userName, since, sender, offset, tagsList, text);
 					break;
 
 				case "all":
-					notices = AON.getAllNotices(domainId, domainName, userName,
+					container = AON.getAllNotices(domainId, domainName, userName,
 							since, sender, offset, tagsList, text);
 					break;
 
 				default:
-					notices = AON.getAllNotices(domainId, domainName, userName,
+					container = AON.getAllNotices(domainId, domainName, userName,
 							since, sender, offset, tagsList, text);
 					break;
 				}
 
 				pw.append('{');
 				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
-				pw.printf("\"data\":%s", buildNotices(notices.listIterator()));
+				pw.printf(String.format("\"count\":\"%s\",\r\n", String.valueOf(container.getCount())));
+				pw.printf("\"data\":%s", buildNotices(container.getNotices().listIterator()));
 				pw.append('}');
 				pw.flush();
 
