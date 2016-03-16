@@ -319,7 +319,8 @@ public class Mod131Aeat2016Calculator  {
 	private static void calcIndiceCorrectorExceso(AONContext ctx, Mod131Activity act) {
 		double ic4 = 0.0;
 		if (AonMathUtils.isZero(act.getIc2())) {
-			double tope = act.getMaxImport();
+			double tope = AonMathUtils.round(act.getMaxImport());
+			int topeInt =  (int) tope;
 			double baseIndice = act.getRnm();
 			if (AonMathUtils.round(act.getIc1()) != 0.0) {
 				baseIndice = AonMathUtils.round(baseIndice * act.getIc1());	

@@ -671,13 +671,13 @@ public class Mod131DAO extends FiscalModelDAO {
 		@Override
 		public Mod131Activity apply(FiscalActivity fa) {
 			if (!fa.hasIRPFModules()) return null;
-			Epigraph epigraph = Epigraph.getEpigraph(AonStringUtils.trim(AonStringUtils.substringBefore(
-							 AonStringUtils.remove(fa.getEpigraph(), AonStringUtils.DOT)
-							,AonStringUtils.HYPHEN))); 
+			String epi1 = AonStringUtils.trim(AonStringUtils.substringBefore(
+					 fa.getEpigraph(),AonStringUtils.HYPHEN));
+			Epigraph epigraph = Epigraph.getEpigraph(epi1); 
 			Mod131Activity act = new Mod131Activity()
 					.setEpi( epigraph )
 					.setEpigraph( epigraph == null?fa.getEpigraph():epigraph.getEpigraph())
-					.setDescription(epigraph == null?fa.getDescription():epigraph.getEpigraph())
+					.setDescription(epigraph == null?fa.getDescription():epigraph.getDescription())
 					.setMaxImport(epigraph == null?Double.MAX_VALUE:epigraph.getLimExceso())
 					.setDis( fa.getDoubleValue(FiscalActivityInfoKey.A13) == 1)
 					.setCom( fa.getDoubleValue(FiscalActivityInfoKey.A02))

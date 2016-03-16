@@ -11,6 +11,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.FiscalActivity;
 import com.code.aon.fiscal.FiscalActivityInfo;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoKey;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 
 public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable {
@@ -228,7 +229,7 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 		if (CommonUtil.round(m021) != 0) {
 			m02 = m021 / 1800;
 			if (CommonUtil.round(a13) != 0) {
-				m02 = CommonUtil.round(m02 * 0.75);
+				m02 = m02 * 0.75;
 			}
 		}
 		
@@ -239,18 +240,18 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 		if (CommonUtil.round(m022) != 0) {
 			double d = (m022 / 1800);
 			if (m023 == 1) {
-				d = CommonUtil.round(d * 0.75);
+				d = d * 0.75;
 			}
 			if (titularFullTime && !moreThanOne) {
-				d = CommonUtil.round(d / 2);
+				d = d / 2;
 			}
 			m02 = m02 + d;	
 		}
 		
 		if (CommonUtil.round(m024) != 0) {
-			double d = CommonUtil.round(m024 / 1800);
+			double d = m024 / 1800;
 			if (titularFullTime && !moreThanOne) {
-				d = CommonUtil.round(d/ 2);
+				d = d/ 2;
 			}
 			m02 = m02 + d;	
 		}
@@ -258,11 +259,11 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 		if (CommonUtil.round(m025) != 0) {
 			double d = ((m025 / 1800) * 0.75);
 			if (titularFullTime && !moreThanOne) {
-				d = CommonUtil.round(d / 2);
+				d = d / 2;
 			}
 			m02 = m02 + d;	
 		}
-		return CommonUtil.round(m02);
+		return CommonUtil.floor(m02,2);
 	}
 
 	private Double calculateDetailM01(List<FiscalActivityInfo> modulesDetailList) {
@@ -435,30 +436,28 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 		double as = personalAsalariado;
 		FiscalActivityInfo infoA10 = getActivityInfoKey(FiscalActivityInfoKey.A10);
 		double previousAsalariados = infoA10 == null? 0 : infoA10.getDoubleValue();
-		if (previousAsalariados != 0 && personalAsalariado >= previousAsalariados ) {
-			if( CommonUtil.round((personalAsalariado - previousAsalariados)) > 0 ) {
-				coef = 0.40;
-			} else {
-				if (CommonUtil.round(as) > 0.0) {
-					coef = coef + 0.10; 
-					as = CommonUtil.round(as - 1);
-				}
-				if (CommonUtil.round(as) > 0.0) {
-					coef = coef + 0.15;
-					as = CommonUtil.round(as - 2);
-				}
-				if (CommonUtil.round(as) > 0.0) {
-					coef = coef + 0.20;
-					as = CommonUtil.round(as - 2);
-				}
-				if (CommonUtil.round(as) > 0.0) {
-					coef = coef + 0.25;
-					as = CommonUtil.round(as - 3);
-				}
-				if (CommonUtil.round(as) > 0.0) {
-					coef = coef + 0.30;
-				}
-			}
+		if( CommonUtil.round(previousAsalariados) > 0 && CommonUtil.round((personalAsalariado - previousAsalariados)) > 0 ) {
+			as = CommonUtil.round(personalAsalariado - previousAsalariados);
+			coef = CommonUtil.round( as * 0.40 );
+		}
+		if (CommonUtil.round(as) > 0.0) {
+			coef = coef + AonMathUtils.round( (as>1?1:as) * 0.10 );
+			as = CommonUtil.round(as - 1);
+		}
+		if (CommonUtil.round(as) > 0.0) {
+			coef = coef + AonMathUtils.round( (as>2?2:as) * 0.15 );
+			as = CommonUtil.round(as - 2);
+		}
+		if (CommonUtil.round(as) > 0.0) {
+			coef = coef + AonMathUtils.round( (as>2?2:as) * 0.20 );
+			as = CommonUtil.round(as - 2);
+		}
+		if (CommonUtil.round(as) > 0.0) {
+			coef = coef + AonMathUtils.round( (as>3?3:as) * 0.25 );
+			as = CommonUtil.round(as - 3);
+		}
+		if (CommonUtil.round(as) > 0.0) {
+			coef = coef + AonMathUtils.round( as * 0.30 );
 		}
 		if (coef != 0 ) {
 			for (FiscalActivityInfoKey key : persoKeys ){
