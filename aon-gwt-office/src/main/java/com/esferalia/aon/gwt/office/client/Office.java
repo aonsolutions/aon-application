@@ -10,8 +10,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.i18n.AonHubMessages;
-import com.esferalia.aon.gwt.common.client.i18n.CommonMessages;
 import com.esferalia.aon.gwt.office.client.IssueReadPanel.Callback;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
@@ -128,6 +126,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private List<DefaultAonTagIssueSelected> tagList;	
 	private List<RegistryMedia> rmedias;
+	private List<User> users;
 
 	private Map<Integer, Registry> registryMap;
 	private Map<Integer, JsIssue> issuesMap;
@@ -148,6 +147,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 
+		this.users = new LinkedList<User>();
 		this.tagList = new LinkedList<DefaultAonTagIssueSelected>();
 		this.registryMap = new HashMap<Integer, Registry>();
 		this.rmedias = new LinkedList<RegistryMedia>();
@@ -171,11 +171,30 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					}
 				});
 
+//		loadUsers();
 		loadRegistries();
 		loadRMedias();
 		loadLabels();
 		initIssuesList();
 		loadOpenIssues();
+	}
+	
+	void loadUsers() {
+		gitHub.getUsers(String.valueOf(getCurrentDomain()), new AsyncCallback<JSON<JsUser>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("getUsers() " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(JSON<JsUser> result) {
+				JsArray<JsUser> users = result.getData();
+				for (int x = 0; x < users.length(); x++)
+					addUser2List(users.get(x));
+				
+			}
+		});
 	}
 
 	void loadRegistries() {
@@ -209,7 +228,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					public void onSuccess(JSON<JsRMedia> result) {
 						JsArray<JsRMedia> rmedias = result.getData();
 						for (int x = 0; x < rmedias.length(); x++)
-							addRMedia2List(rmedias.get(x));
+							addRMedia2List(rmedias.get(x));	
 					}
 				});
 	}
@@ -519,6 +538,15 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		if (defaultTag.getDomain() != 0)
 			tagTree.insertTag(tag);
 	}
+	
+	private void addUser2List(JsUser jsUser) {
+		this.user = new User();
+		this.user.setId(jsUser.getId());
+		this.user.setName(URL.decode(jsUser.getName()));
+		this.user.setLogin(URL.decode(jsUser.getLogin()));
+		this.users.add(user);
+
+	}
 
 	private void addRegistry2List(JsRegistry jsRegistry) {
 		Registry registry = new Registry();
@@ -607,46 +635,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	public void onHideTagsPanel() {
 		dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 0);
 	}
-
-	// ******************************************************************
-	// ************************* SEARCH PANEL ***************************
-	// ******************************************************************
-
-//	@Override
-//	public void onSearchButtonClick(List<Tag> tags, String text) {
-//
-//		if (tags.size() == 0)
-//			this.gitHub.setFilterTagList(null);
-//		else {
-//			String[] tagArr = new String[tags.size()];
-//			for (int x = 0; x < tags.size(); x++)
-//				tagArr[x] = String.valueOf(tags.get(x).getName());
-//
-//			this.gitHub.setFilterTagList(tagArr);
-//		}
-//
-//		if (text.trim().isEmpty())
-//			this.gitHub.setText(null);
-//		else
-//			this.gitHub.setText(text);
-//
-//		this.incrementSize = 0;
-//		this.gitHub.setOffset(incrementSize);
-//
-//		initIssuesList();
-//		evalRadioButtons();
-//	}
-//
-//	@Override
-//	public void onClearSearchClickEvent(ClickEvent event) {
-//		this.gitHub.setFilterTagList(null);
-//		this.gitHub.setText(null);
-//		this.incrementSize = 0;
-//		this.gitHub.setOffset(incrementSize);
-//
-//		initIssuesList();
-//		evalRadioButtons();
-//	}
 
 	// ******************************************************************
 	// ********************** ISSUES DATA GRID **************************

@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -73,6 +74,7 @@ public class SearchPanel extends Composite {
 	private Date criteria;
 	private String sender;
 	
+	private List<User> users;
 	private List<DefaultAonTagIssueSelected> typeTagList;
 	private List<DefaultAonTagIssueSelected> priorityTagList;
 	private List<DefaultAonTagIssueSelected> noticeTagList;
@@ -94,7 +96,6 @@ public class SearchPanel extends Composite {
 		this.priorityTagList = new LinkedList<DefaultAonTagIssueSelected>();
 		this.noticeTagList = new LinkedList<DefaultAonTagIssueSelected>();
 		this.drashTagList = new LinkedList<Tag>();
-//		this.registrySuggest.getValueBox().addKeyUpHandler(this);
 
 		fromListBox.addItem(" ", DateRange.ALL.name());
 		fromListBox.addItem("Hoy", DateRange.TODAY.name());
@@ -109,6 +110,10 @@ public class SearchPanel extends Composite {
 
 	public void addRegistry(Registry registry) {
 		registries.add(registry.getName());
+	}
+	
+	public void addUserList(List<User> users) {
+		this.users = users;
 	}
 
 	public void addTagList(List<DefaultAonTagIssueSelected> list) {
@@ -200,6 +205,10 @@ public class SearchPanel extends Composite {
 	@UiHandler("registrySuggest")
 	void onRegistrySelectionValue(
 			SelectionEvent<SuggestOracle.Suggestion> event) {
+		
+	}
+	
+	private void initUserButton(final List<User> users) {
 		
 	}
 

@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.poi.ss.formula.functions.Count;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
