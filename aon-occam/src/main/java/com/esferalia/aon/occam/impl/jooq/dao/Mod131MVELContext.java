@@ -10,9 +10,6 @@ import java.util.Stack;
 
 import org.mvel2.MVEL;
 
-import com.esferalia.aon.occam.api.model.type.Mod131Key;
-import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod131MVELContext implements Map<String, Object> {
@@ -130,6 +127,7 @@ public class Mod131MVELContext implements Map<String, Object> {
 	@Override
 	public Collection<Object> values() {
 		throw new UnsupportedOperationException();
+		
 	}
 
 	@Override
@@ -151,24 +149,5 @@ public class Mod131MVELContext implements Map<String, Object> {
 	public boolean isNotZero(double value) {
 		return !isZero(value);
 	}
-
-	public double computeC01() throws AonCoreException {
-		double net1 = containsKey(Mod131Key.AC1_NET.toString())?(Double) get(Mod131Key.AC1_NET.toString()):0.0;
-		double net2 = containsKey(Mod131Key.AC2_NET.toString())?(Double) get(Mod131Key.AC2_NET.toString()):0.0;
-		double net3 = containsKey(Mod131Key.AC3_NET.toString())?(Double) get(Mod131Key.AC3_NET.toString()):0.0;
-		double net4 = containsKey(Mod131Key.AC4_NET.toString())?(Double) get(Mod131Key.AC4_NET.toString()):0.0;
-		double net5 = containsKey(Mod131Key.AC5_NET.toString())?(Double) get(Mod131Key.AC5_NET.toString()):0.0;
-		return AonMathUtils.round(net1+net2+net3+net4+net5);
-	}
-
-	public double computeC02() throws AonCoreException {
-		double res1 = containsKey(Mod131Key.AC1_RES.toString())?(Double) get(Mod131Key.AC1_RES.toString()):0.0;
-		double res2 = containsKey(Mod131Key.AC2_RES.toString())?(Double) get(Mod131Key.AC2_RES.toString()):0.0;
-		double res3 = containsKey(Mod131Key.AC3_RES.toString())?(Double) get(Mod131Key.AC3_RES.toString()):0.0;
-		double res4 = containsKey(Mod131Key.AC4_RES.toString())?(Double) get(Mod131Key.AC4_RES.toString()):0.0;
-		double res5 = containsKey(Mod131Key.AC5_RES.toString())?(Double) get(Mod131Key.AC5_RES.toString()):0.0;
-		return AonMathUtils.round(res1+res2+res3+res4+res5);
-	}
-
 	
 }

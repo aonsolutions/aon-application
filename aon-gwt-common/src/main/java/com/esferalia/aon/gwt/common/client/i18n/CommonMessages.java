@@ -1975,6 +1975,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Informaci\u00F3n adicional del ep\u00EDgrafe")
 	String epigraphAdditionalInfo();
 
+	@DefaultMessage("M\u00F3dulos.")
+	String modules();
+
 	@DefaultMessage("IRPF. M\u00F3dulos. Estimaci\u00F3n objetiva.")
 	String irpfModules();
 

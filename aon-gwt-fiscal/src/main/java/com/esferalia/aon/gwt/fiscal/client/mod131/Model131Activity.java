@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.mod131;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.Epigraph2016Panel;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
@@ -24,6 +23,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Model131Activity extends DockLayoutPanel {
@@ -41,10 +41,10 @@ public class Model131Activity extends DockLayoutPanel {
 	@UiField CheckBox cap;
 	@UiField CheckBox tns;
 	@UiField CheckBox tss;
-	@UiField IntegerBox mun;
+	@UiField ListBox mun;
 	@UiField IntegerBox emp;
-	@UiField IntegerBox lor;
-	@UiField IntegerBox bat;
+	@UiField ListBox lor;
+	@UiField ListBox bat;
 	@UiField DoubleBox prc;
 
 	@UiField Label description0;
@@ -121,17 +121,88 @@ public class Model131Activity extends DockLayoutPanel {
 
 	public Model131Activity(final IMod131ActivityCallback callback) {
 		super(Unit.PX);
+		setStyleName(AON.AON_CSS.aonSelector());
 		setWidth("700px");
-		setHeight("490px");
+		setHeight("590px");
 		Widget ui = BINDER.createAndBindUi(this);
+		
+		mun.addItem("Hasta 2.000 habitantes.");
+		mun.addItem("Desde 2.001 hasta 5.000 habitantes.");
+		mun.addItem("Desde 5.001 hasta 10.000 habitantes.");
+		mun.addItem("Desde 10.001 hasta 50.000 habitantes.");
+		mun.addItem("Desde 50.001 hasta 100.000 habitantes.");
+		mun.addItem("M\u00E1s de 100.000 habitantes.");
+		mun.addItem("Madrid o Barcelona.");
+		mun.setWidth("150px");
+		
+		lor.addItem("-");
+		lor.addItem("Actividad realizada exclusivamente en Lorca.");
+		lor.addItem("Actividad realizada en Lorca y otros municipios.");
+		lor.setWidth("150px");
+		
+		bat.addItem("-");
+		bat.addItem("Una batea y ningún barco");
+		bat.addItem("Una batea y un barco de menos de 15 TRB");
+		bat.addItem("Una batea y un barco de 15 a 30 TRB");
+		bat.addItem("Una batea y un barco de más de 30 TRB");
+		bat.addItem("Dos bateas y ningún barco");
+		bat.addItem("Dos bateas y un barco de menos de 15 TRB");
+		bat.addItem("Otros: número de bateas, barcos o TRB distintos de los anteriores");
+		bat.setWidth("150px");
+				
 		this.callback = callback;
 		populateActivity(this.callback.getActivity());
-		addNorth(getHeaderPanel(), 50);
+		addNorth(getHeaderPanel(), 80);
 		add(ui);
 		onResize();		
 	}
 
 	private Widget getHeaderPanel() {
+		FlowPanel headerPanel = new FlowPanel();
+		FlowPanel toolbarPanel = new FlowPanel();
+		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
+		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
+		FlexTable toolbar = new FlexTable();
+		toolbar.setCellPadding(0);
+		toolbar.setCellSpacing(0);
+		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
+		FlowPanel titlePanel = new FlowPanel();
+		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
+		toolbar.setWidget(0, 0, titlePanel);
+		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
+		toolbar.setWidget(0, 1, new Label());
+		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
+		FlowPanel buttonContainer = new FlowPanel();
+		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
+		toolbar.setWidget(0, 2, buttonContainer);
+		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
+		final Button accept = new Button();
+		accept.setText(AON.MSG.saveAction());
+		accept.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		accept.addStyleName(AON.AON_CSS.aonIconSave());
+		accept.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.onAccept();
+			}
+		});
+		buttonContainer.add(accept);
+		final Button cancel = new Button();
+		cancel.setText(AON.MSG.saveAction());
+		cancel.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		cancel.addStyleName(AON.AON_CSS.aonIconCancel());
+		cancel.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.onCancel();
+			}
+		});
+		buttonContainer.add(cancel);
+		toolbarPanel.add(toolbar);
+		headerPanel.add(toolbarPanel);
+		
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.setStyleName(AON.AON_CSS.aonPadding());
 		FlexTable tab = new FlexTable();
@@ -142,39 +213,41 @@ public class Model131Activity extends DockLayoutPanel {
 		epigraph.setStyleName(AON.AON_CSS.aonFontBig());
 		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonWidth80());
 		tab.setWidget(0, 0, epigraph);
-		Button showEpigraphs = new Button();
-		showEpigraphs.setStyleName(AON.AON_CSS.aonIconLoupe());
-		showEpigraphs.addStyleName(AON.AON_CSS.aonBorderNone());
-		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonWidth20());
-		tab.setWidget(0, 1, showEpigraphs);
+//		Button showEpigraphs = new Button();
+//		showEpigraphs.setStyleName(AON.AON_CSS.aonIconLoupe());
+//		showEpigraphs.addStyleName(AON.AON_CSS.aonBorderNone());
+//		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonWidth20());
+//		tab.setWidget(0, 1, showEpigraphs);
+		
 		epigraphLabel.setStyleName(AON.AON_CSS.aonFontBig());
 		epigraphLabel.setStyleName(AON.AON_CSS.aonNowrap());
-		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonWidthAuto());
-		tab.setWidget(0, 2, epigraphLabel);
+		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonWidthAuto());
+		tab.setWidget(0, 1, epigraphLabel);
 		
-		final Epigraph2016Panel epigraphPanel = new Epigraph2016Panel( new Epigraph2016Panel.SelectionCallBack() {
-			@Override
-			public void onSelect(Epigraph selected) {
-				epigraph.setText(selected.getEpigraph());
-				epigraphLabel.setText(AonStringUtils.abbreviate(selected.getDescription(),100));
-				epigraphLabel.setTitle(selected.getDescription());
-			}
-			@Override
-			public void onClose() {
-				// Nothing
-			}
-		});
-
-		showEpigraphs.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				epigraphPanel.onShow();
-				
-			}
-		});
+//		final Epigraph2016Panel epigraphPanel = new Epigraph2016Panel( new Epigraph2016Panel.SelectionCallBack() {
+//			@Override
+//			public void onSelect(Epigraph selected) {
+//				epigraph.setText(selected.getEpigraph());
+//				epigraphLabel.setText(AonStringUtils.abbreviate(selected.getDescription(),100));
+//				epigraphLabel.setTitle(selected.getDescription());
+//			}
+//			@Override
+//			public void onClose() {
+//				// Nothing
+//			}
+//		});
+//
+//		showEpigraphs.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				epigraphPanel.onShow();
+//				
+//			}
+//		});
 		flowPanel.add(tab);
-		return flowPanel;
+		headerPanel.add(flowPanel);
+		return headerPanel;
 	}
 	
 	private void populateActivity(Mod131Activity act) {
@@ -193,10 +266,10 @@ public class Model131Activity extends DockLayoutPanel {
 		tns.setValue(act.isTns());
 		tss.setValue(act.isTss());
 		
-		mun.setValue(act.getMun());
+		mun.setSelectedIndex(act.getMun());
 		emp.setValue(act.getEmp());
-		lor.setValue(act.getLor());
-		bat.setValue(act.getBat());
+		lor.setSelectedIndex(act.getLor());
+		bat.setSelectedIndex(act.getBat());
 		prc.setValue(act.getPrc());
 		int i = 0;
 		Mod131ActivityModule mod = (act.getModules().size() > i)?act.getModules().get(i):new Mod131ActivityModule();
@@ -272,6 +345,7 @@ public class Model131Activity extends DockLayoutPanel {
 		por.setValue(act.getPor());
 		res.setValue(act.getRes());
 		
+		enableFields();	
 	}
 	
 	@UiHandler({"dis","ceu","loc","cap","tns","tss"})
@@ -284,7 +358,8 @@ public class Model131Activity extends DockLayoutPanel {
 		this.callback.getActivity().setTss(tss.getValue());
 		calculate();
 	}
-	
+
+		
 	@UiHandler({"com","tem","nue","veh","mun","emp","lor","bat","prc"
 		,"value0","value1","value2","value3","value4","value5","value6"
 		,"iin","dia"})
@@ -294,10 +369,10 @@ public class Model131Activity extends DockLayoutPanel {
 		this.callback.getActivity().setTem(tem.getValue());
 		this.callback.getActivity().setNue(nue.getValue());
 		this.callback.getActivity().setVeh(veh.getValue());
-		this.callback.getActivity().setMun(mun.getValue());
 		this.callback.getActivity().setEmp(emp.getValue());
-		this.callback.getActivity().setLor(lor.getValue());
-		this.callback.getActivity().setBat(bat.getValue());
+		this.callback.getActivity().setMun(mun.getSelectedIndex());
+		this.callback.getActivity().setLor(lor.getSelectedIndex());
+		this.callback.getActivity().setBat(bat.getSelectedIndex());
 		this.callback.getActivity().setPrc(prc.getValue());
 		if  (this.callback.getActivity().getModules().size() > 0)
 			this.callback.getActivity().getModules().get(0).setValue(value0.getValue());
@@ -318,13 +393,54 @@ public class Model131Activity extends DockLayoutPanel {
 		calculate();
 	}
 
+	private void enableFields() {
+		if (this.callback.getActivity().getEpi() == Epigraph.E____) {
+			bat.setEnabled(true);
+			loc.setEnabled(false);
+			veh.setEnabled(false);
+			cap.setEnabled(false);
+			tns.setEnabled(false);
+			tss.setEnabled(false);
+			mun.setEnabled(false);
+			tns.setEnabled(false);
+			tns.setEnabled(false);
+		} else if (this.callback.getActivity().getEpi() == Epigraph.E_722A 
+			|| this.callback.getActivity().getEpi() == Epigraph.E_722B
+			|| this.callback.getActivity().getEpi() == Epigraph.E_757
+			) {
+			bat.setEnabled(false);
+			tns.setEnabled(true);
+			tns.setEnabled(true);
+		} else {
+			bat.setEnabled(false);
+			tns.setEnabled(false);
+			tns.setEnabled(false);
+		}
+		cap.setEnabled( this.callback.getActivity().getVeh() > 0 );
+	}
+	
 	private void calculate() {
 		Model131.fiscalService.calculateMod131Activity(Model131.getCurrentDomainName(), Model131.getCurrentDomain()
 				, this.callback.getActivity(), new AsyncCallback<Mod131Activity>() {
 					
 					@Override
 					public void onSuccess(Mod131Activity result) {
-						populateActivity(result);						
+						callback.getActivity().setPrc(result.getPrc());
+						callback.getActivity().setRnp(result.getRnp());
+						callback.getActivity().setIem(result.getIem());
+						callback.getActivity().setRnm(result.getRnm());
+						callback.getActivity().setIc1(result.getIc1());
+						callback.getActivity().setIc2(result.getIc2());
+						callback.getActivity().setIc3(result.getIc3());
+						callback.getActivity().setIc4(result.getIc4());
+						callback.getActivity().setIc5(result.getIc5());
+						callback.getActivity().setRpf(result.getRpf());
+						callback.getActivity().setRlo(result.getRlo());
+						callback.getActivity().setRdr(result.getRdr());
+						callback.getActivity().setNet(result.getNet());
+						callback.getActivity().setPor(result.getPor());
+						callback.getActivity().setRes(result.getRes());
+						populateActivity(callback.getActivity());						
 					}
 					
 					@Override

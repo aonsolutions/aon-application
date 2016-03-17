@@ -8,420 +8,454 @@
 		field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
-
-	<g:ScrollPanel>
-		<g:HTMLPanel styleName="{aonResources.css.aonWidthAll}">
-			<table class="{aonResources.css.aonFiscalModelDataTable} {aonResources.css.aonMarginTop}">
-				<colgropup>
-					<col width="auto" />
-					<col width="100px" />
-				</colgropup>
-				<tbody>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityDis}" />
-						</td>
-						<td>
-							<g:CheckBox ui:field="dis" />
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityCom}" />
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="com" maxLength="6" visibleLength="6"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityTem}" />
-						</td>
-						<td>
-							<aon:IntegerBox ui:field="tem" maxLength="6" visibleLength="6"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityNue}" />
-						</td>
-						<td>
-							<aon:IntegerBox ui:field="nue" maxLength="6" visibleLength="6"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityCeu}" />
-						</td>
-						<td>
-							<g:CheckBox ui:field="ceu" />
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityLoc}" />
-						</td>
-						<td>
-							<g:CheckBox ui:field="loc" />
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityVeh}" />
-						</td>
-						<td>
-							<aon:IntegerBox ui:field="veh" maxLength="6" visibleLength="6"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityCap}" />
-						</td>
-						<td>
-							<g:CheckBox ui:field="cap"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityTns}" />
-						</td>
-						<td>
-							<g:CheckBox ui:field="tns"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityTss}" />
-						</td>
-						<td>
-							<g:CheckBox ui:field="tss"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityMun}" />
-						</td>
-						<td>
-							<aon:IntegerBox ui:field="mun" maxLength="6" visibleLength="6"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityEmp}" />
-						</td>
-						<td>
-							<aon:IntegerBox ui:field="emp" maxLength="6" visibleLength="6"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityLor}" />
-						</td>
-						<td>
-							<aon:IntegerBox ui:field="lor" maxLength="6" visibleLength="6"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityBat}" />
-						</td>
-						<td>
-							<aon:IntegerBox ui:field="bat" maxLength="6" visibleLength="6"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityPrc}" />
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="prc" maxLength="6" visibleLength="6"/>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<table class="{aonResources.css.aonFiscalModelDataTable}">
-				<colgropup>
-					<col width="auto" />
-					<col width="100px" />
-					<col width="150px" />
-					<col width="100px" />
-					<col width="100px" />
-				</colgropup>
-				<tbody>
-					<tr>
-						<td class="{aonResources.css.aonFiscalModelDataTableHeader}">
-							<g:Label text="{msg.description}" />
-						</td>
-						<td class="{aonResources.css.aonFiscalModelDataTableHeader} {aonResources.css.aonTextRight}">
-							<g:Label text="{msg.amount}" />
-						</td>
-						<td class="{aonResources.css.aonFiscalModelDataTableHeader}">
-							<g:Label text="{msg.unit}" />
-						</td>
-						<td class="{aonResources.css.aonFiscalModelDataTableHeader} {aonResources.css.aonTextRight}">
-							<g:Label text="{msg.factor}" />
-						</td>
-						<td class="{aonResources.css.aonFiscalModelDataTableHeader} {aonResources.css.aonTextRight}">
-							<g:Label text="{msg.result}" />
-						</td>
-					</tr>
-					<tr>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="description0" />
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="value0" maxLength="10" visibleLength="6"/>
-						</td>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="unit0" />
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor0" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result0" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="description1" />
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="value1" maxLength="10" visibleLength="6"/>
-						</td>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="unit1"/>
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor1" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result1" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="description2" />
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="value2" maxLength="10" visibleLength="6"/>
-						</td>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="unit2" />
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor2" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result2" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="description3" />
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="value3" maxLength="10" visibleLength="6"/>
-						</td>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="unit3" />
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor3" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result3" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="description4" />
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="value4" maxLength="10" visibleLength="6"/>
-						</td>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="unit4" />
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor4" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result4" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="description5" />
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="value5" maxLength="10" visibleLength="6"/>
-						</td>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="unit5" />
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor5" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result5" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="description6" />
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="value6" maxLength="10" visibleLength="6"/>
-						</td>
-						<td class="{aonResources.css.aonFontSmall}">
-							<g:Label ui:field="unit6" />
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="factor6" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-						<td class="{aonResources.css.aonTextRight}">
-							<aon:DoubleBox ui:field="result6" maxLength="10" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<table class="{aonResources.css.aonFiscalModelDataTable}">
-				<colgropup>
-					<col width="auto" />
-					<col width="100px" />
-				</colgropup>
-				<tbody>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityRnp}"/>
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="rnp" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityIem}"/>
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="iem" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityIin}" />
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="iin" maxLength="6" visibleLength="6"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityRnm}"/>
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="rnm" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityIc1}"/>
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="ic1" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityIc2}"/>
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="ic2" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityIc3}"/>
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="ic3" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityIc4}"/>
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="ic4" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityIc5}"/>
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="ic5" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityRpf}" />
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="rpf" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityRlo}" />
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="rlo" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityRdr}" />
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="rdr" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityDia}" />
-						</td>
-						<td>
-							<aon:IntegerBox ui:field="dia" maxLength="6" visibleLength="6"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityNet}" />
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="net" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityPor}" />
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="por" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<g:Label text="{msg.irpfActivityRes}" />
-						</td>
-						<td>
-							<aon:DoubleBox ui:field="res" maxLength="6" visibleLength="6" enabled="false"/>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</g:HTMLPanel>
-	</g:ScrollPanel>
+		
+	<g:TabLayoutPanel barHeight="26" barUnit="PX" width="100%">
+		<g:tab>
+			<g:customHeader>
+				<g:Label
+					styleName="{aonResources.css.aonIconStatement} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
+					text="{msg.additionalData}" />
+			</g:customHeader>
+			<g:ScrollPanel>
+				<g:HTMLPanel styleName="{aonResources.css.aonWidthAll}">
+					<table class="{aonResources.css.aonFiscalModelDataTable} {aonResources.css.aonMarginTop}">
+						<colgropup>
+							<col width="auto" />
+							<col width="100px" />
+						</colgropup>
+						<tbody>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityDis}" />
+								</td>
+								<td>
+									<g:CheckBox ui:field="dis" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityCom}" />
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="com" maxLength="6" visibleLength="6"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityTem}" />
+								</td>
+								<td>
+									<aon:IntegerBox ui:field="tem" maxLength="6" visibleLength="6"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityNue}" />
+								</td>
+								<td>
+									<aon:IntegerBox ui:field="nue" maxLength="6" visibleLength="6"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityCeu}" />
+								</td>
+								<td>
+									<g:CheckBox ui:field="ceu" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityLoc}" />
+								</td>
+								<td>
+									<g:CheckBox ui:field="loc" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityVeh}" />
+								</td>
+								<td>
+									<aon:IntegerBox ui:field="veh" maxLength="6" visibleLength="6"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityCap}" />
+								</td>
+								<td>
+									<g:CheckBox ui:field="cap"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityTns}" />
+								</td>
+								<td>
+									<g:CheckBox ui:field="tns"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityTss}" />
+								</td>
+								<td>
+									<g:CheckBox ui:field="tss"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityMun}" />
+								</td>
+								<td>
+									<g:ListBox ui:field="mun"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityEmp}" />
+								</td>
+								<td>
+									<aon:IntegerBox ui:field="emp" maxLength="6" visibleLength="6"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityLor}" />
+								</td>
+								<td>
+									<g:ListBox ui:field="lor"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityBat}" />
+								</td>
+								<td>
+									<g:ListBox ui:field="bat"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityPrc}" />
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="prc" maxLength="6" visibleLength="6"/>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</g:HTMLPanel>			
+			</g:ScrollPanel>									
+		</g:tab>
+		
+		<g:tab>
+			<g:customHeader>
+				<g:Label
+					styleName="{aonResources.css.aonIconModel} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
+					text="{msg.modules}" />
+			</g:customHeader>
+			<g:ScrollPanel>
+				<g:HTMLPanel styleName="{aonResources.css.aonWidthAll}">
+					<table class="{aonResources.css.aonFiscalModelDataTable}">
+						<colgropup>
+							<col width="auto" />
+							<col width="100px" />
+							<col width="150px" />
+							<col width="100px" />
+							<col width="100px" />
+						</colgropup>
+						<tbody>
+							<tr>
+								<td class="{aonResources.css.aonFiscalModelDataTableHeader}">
+									<g:Label text="{msg.description}" />
+								</td>
+								<td class="{aonResources.css.aonFiscalModelDataTableHeader} {aonResources.css.aonTextRight}">
+									<g:Label text="{msg.amount}" />
+								</td>
+								<td class="{aonResources.css.aonFiscalModelDataTableHeader}">
+									<g:Label text="{msg.unit}" />
+								</td>
+								<td class="{aonResources.css.aonFiscalModelDataTableHeader} {aonResources.css.aonTextRight}">
+									<g:Label text="{msg.factor}" />
+								</td>
+								<td class="{aonResources.css.aonFiscalModelDataTableHeader} {aonResources.css.aonTextRight}">
+									<g:Label text="{msg.result}" />
+								</td>
+							</tr>
+							<tr>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="description0" />
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="value0" maxLength="10" visibleLength="6"/>
+								</td>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="unit0" />
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="factor0" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="result0" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="description1" />
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="value1" maxLength="10" visibleLength="6"/>
+								</td>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="unit1"/>
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="factor1" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="result1" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="description2" />
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="value2" maxLength="10" visibleLength="6"/>
+								</td>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="unit2" />
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="factor2" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="result2" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="description3" />
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="value3" maxLength="10" visibleLength="6"/>
+								</td>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="unit3" />
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="factor3" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="result3" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="description4" />
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="value4" maxLength="10" visibleLength="6"/>
+								</td>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="unit4" />
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="factor4" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="result4" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="description5" />
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="value5" maxLength="10" visibleLength="6"/>
+								</td>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="unit5" />
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="factor5" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="result5" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="description6" />
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="value6" maxLength="10" visibleLength="6"/>
+								</td>
+								<td class="{aonResources.css.aonFontSmall}">
+									<g:Label ui:field="unit6" />
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="factor6" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="result6" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</g:HTMLPanel>			
+			</g:ScrollPanel>									
+		</g:tab>
+		
+		<g:tab>
+			<g:customHeader>
+				<g:Label
+					styleName="{aonResources.css.aonIconEuro} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
+					text="{msg.irpfActivityRpf}" />
+			</g:customHeader>
+			<g:ScrollPanel>
+				<g:HTMLPanel styleName="{aonResources.css.aonWidthAll}">
+					<table class="{aonResources.css.aonFiscalModelDataTable}">
+						<colgropup>
+							<col width="auto" />
+							<col width="100px" />
+						</colgropup>
+						<tbody>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityRnp}"/>
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="rnp" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityIem}"/>
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="iem" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityIin}" />
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="iin" maxLength="6" visibleLength="6"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityRnm}"/>
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="rnm" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityIc1}"/>
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="ic1" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityIc2}"/>
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="ic2" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityIc3}"/>
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="ic3" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityIc4}"/>
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="ic4" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityIc5}"/>
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="ic5" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityRpf}" />
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="rpf" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityRlo}" />
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="rlo" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityRdr}" />
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="rdr" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityDia}" />
+								</td>
+								<td>
+									<aon:IntegerBox ui:field="dia" maxLength="6" visibleLength="6"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityNet}" />
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="net" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Label text="{msg.irpfActivityPor}" />
+								</td>
+								<td>
+									<aon:DoubleBox ui:field="por" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td class="aon-bold">
+									<g:Label text="{msg.irpfActivityRes}" />
+								</td>
+								<td class="aon-bold" style="font-size: 1.2em;">
+									<aon:DoubleBox ui:field="res" maxLength="6" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</g:HTMLPanel>			
+			</g:ScrollPanel>									
+		</g:tab>
+		
+	</g:TabLayoutPanel>
 </ui:UiBinder>

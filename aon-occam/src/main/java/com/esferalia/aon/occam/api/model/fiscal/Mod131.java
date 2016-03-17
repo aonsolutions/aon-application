@@ -39,6 +39,7 @@ public class Mod131 extends FiscalModel implements Serializable {
 		if (getAdministration() == null) return false;
 		else if (isAEAT()) return true;
 		return false;
+		
 	}
 
 	@Override

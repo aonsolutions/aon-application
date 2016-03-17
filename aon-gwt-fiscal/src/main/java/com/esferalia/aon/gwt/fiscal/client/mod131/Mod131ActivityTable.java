@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod131;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -32,6 +33,7 @@ public class Mod131ActivityTable extends CellTable<Mod131Activity> {
 		
 		
 	}
+	
 
 	private void addSelectorColumn() {
 		final Column<Mod131Activity, ImageResource> selectorColumn = new Column<Mod131Activity, ImageResource>(
@@ -49,11 +51,11 @@ public class Mod131ActivityTable extends CellTable<Mod131Activity> {
 		final TextColumn<Mod131Activity> epigraphColumn = new TextColumn<Mod131Activity>() {
 			@Override
 			public String getValue(Mod131Activity model) {
-				return model.getFullDescription();
+				return AonStringUtils.abbreviate(model.getFullDescription(), 100);
 			}
 		};
 		this.addColumn(epigraphColumn, AON.MSG.epigraph());
-		this.setColumnWidth(epigraphColumn, 100, Unit.PX);
+		this.setColumnWidth(epigraphColumn, "auto");
 	}
 
 	private void addNetYieldColumn() {
@@ -65,7 +67,7 @@ public class Mod131ActivityTable extends CellTable<Mod131Activity> {
 		};
 		this.addColumn(netYieldColumn, AON.MSG.netYield());
 		netYieldColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(netYieldColumn, 140, Unit.PX);
+		this.setColumnWidth(netYieldColumn, 125, Unit.PX);
 	}	
 
 	private void addPercentColumn() {
@@ -77,7 +79,7 @@ public class Mod131ActivityTable extends CellTable<Mod131Activity> {
 		};
 		this.addColumn(percentColumn, AON.MSG.percent());
 		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(percentColumn, 120, Unit.PX);
+		this.setColumnWidth(percentColumn, 100, Unit.PX);
 	}	
 
 	private void addResultColumn() {
@@ -89,7 +91,7 @@ public class Mod131ActivityTable extends CellTable<Mod131Activity> {
 		};
 		this.addColumn(amountColumn, AON.MSG.result());
 		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 140, Unit.PX);
+		this.setColumnWidth(amountColumn, 120, Unit.PX);
 	}	
 
 }

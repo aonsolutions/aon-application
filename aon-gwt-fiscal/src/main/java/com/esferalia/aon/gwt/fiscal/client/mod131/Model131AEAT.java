@@ -102,7 +102,7 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 		getTable().setWidth("100%");
 		getTable().addStyleName(AON.AON_CSS.aonMarginBottom());
 		getTable().addStyleName(AON.AON_CSS.aonBorderCollapse());
-		getTable().addStyleName(AON.AON_CSS.aonFiscalModelDataTable());
+		getTable().addStyleName(AON.AON_CSS.aonBlockCenter());
 		
 		getTable().getColumnFormatter().setWidth(0, "20px");
 		getTable().getColumnFormatter().setWidth(1, "140px");
@@ -316,7 +316,7 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 		final Mod131ActivityProvidesKey providesKey = new Mod131ActivityProvidesKey();
 		final Mod131ActivityTable table = new Mod131ActivityTable(providesKey);
 		table.setStyleName( AON.AON_CSS.aonWidth90Percent());
-		table.addStyleName( AON.AON_CSS.aonFiscalMatrix());
+		table.addStyleName( AON.AON_CSS.aonBlockCenter());
 		table.addStyleName( AON.AON_CSS.aonMarginTop());
 		table.addStyleName( AON.AON_CSS.aonMarginBottom());
 		table.addRangeChangeHandler(new Handler() {
@@ -332,34 +332,35 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 			
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				final Mod131Activity act = model.getLastSelectedObject();
-				IMod131ActivityCallback callback = new IMod131ActivityCallback() {
+				final CustomDialog dialog = new CustomDialog();
+				IMod131ActivityCallback activityCallback = new IMod131ActivityCallback() {
 					
 					@Override
 					public void onCancel() {
-						// TODO Auto-generated method stub
-						
+						dialog.hide();
+						table.redraw();
+						calculateAndRefresh(callback);
 					}
 					
 					@Override
 					public void onAccept() {
-						// TODO Auto-generated method stub
-						
+						dialog.hide();
+						table.redraw();
+						calculateAndRefresh(callback);
 					}
 					
 					@Override
 					public Mod131Activity getActivity() {
-						return act;
+						return model.getLastSelectedObject();
 					}
 				};
-				Model131Activity actPanel = new Model131Activity(callback);
-				CustomDialog dialog = new CustomDialog();
-				dialog.setCaption(act.getFullDescription());
+				Model131Activity actPanel = new Model131Activity(activityCallback);
+				dialog.setCaption(model.getLastSelectedObject().getFullDescription());
 				dialog.setGlassEnabled(true);
 				dialog.setAnimationEnabled(true);
 				dialog.add(actPanel);
 				dialog.setWidth("700px");
-				dialog.setHeight("500px");
+				dialog.setHeight("600px");
 				dialog.show();
 				dialog.center();
 			}
