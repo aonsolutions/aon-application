@@ -31,6 +31,7 @@ public class HttpServletRequestValve extends ValveBase {
 			// Perform the request
 			getNext().invoke(request, response);
 			
+			fixMsmSessionId(request);
 			serializeGenericPrincipal(request);
 		} finally {
 			// Unset the ThreadLocal
@@ -66,6 +67,13 @@ public class HttpServletRequestValve extends ValveBase {
         if ( principal == null )
         	return;
 		session.getSession().setAttribute(SESSION_PROPERTY, principal);
+	}
+
+	private void fixMsmSessionId(Request request) {
+        Session session = request.getSessionInternal(false);
+        if ( session == null )
+        	return;
+        request.setNote("msm.session.id", session.getId());
 	}
 
 	public static HttpServletRequest getHttpServletRequest() {
