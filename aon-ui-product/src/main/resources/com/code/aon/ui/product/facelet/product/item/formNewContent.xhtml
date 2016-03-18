@@ -58,6 +58,63 @@
 			converter="aon.TrimStringConverter" />
 	</aon:if>
 
+	<aon:if test="#{configCollections.packingTypeTagsCount > 0}">
+		<aon:outputLabel for="#{controller.pojoShortName}_packFormatTag"
+			value="#{bundle.aon_format}" />
+		<aon:div>
+			<aon:selectOneMenu id="#{controller.pojoShortName}_packFormatTag" 
+				value="#{itemTo.packFormatTag}" 
+				required="#{itemTo.product.packaged}"
+				ajaxSingle="true">
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{configCollections.packingTypeTags}" />
+			</aon:selectOneMenu>
+
+			<aon:if test="#{itemTo.product.packaged}">
+				<aon:outputLabel for="#{controller.pojoShortName}_packUnits"
+					styleClass="aon-margin-left aon-margin-right aon-italic"
+					value="#{bundle.aon_units}" />
+				<aon:inputText id="#{controller.pojoShortName}_packUnits" 
+					value="#{itemTo.packUnits}" size="1" maxlength="3"
+					disabled="#{fieldDisabled}"
+					required="#{true}" />
+
+				<aon:outputLabel for="#{controller.pojoShortName}_packUnitsTag"
+					styleClass="aon-margin-left aon-margin-right aon-italic"
+					value="#{bundle.product_package}" />
+				<aon:selectOneMenu id="#{controller.pojoShortName}_packUnitsTag" 
+					value="#{itemTo.packUnitsTag}" 
+					required="true"
+					ajaxSingle="true">
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{configCollections.packingTypeTags}" />
+				</aon:selectOneMenu>
+			</aon:if>
+		</aon:div>
+
+		<aon:if test="#{itemTo.product.packaged}">
+			<aon:outputLabel for="#{controller.pojoShortName}_packMeasurement"
+				value="#{bundle.aon_measurement}" />
+			<aon:div>
+				<aon:inputText id="#{controller.pojoShortName}_packMeasurement" 
+					value="#{itemTo.packMeasurement}" size="2" maxlength="3"
+					disabled="#{fieldDisabled}"
+					required="#{true}" />
+
+				<aon:outputLabel for="#{controller.pojoShortName}_packMeasurementTag"
+					styleClass="aon-margin-left aon-margin-right aon-italic"
+					value="#{bundle.aon_measurement_unit}" />
+				<aon:selectOneMenu id="#{controller.pojoShortName}_packMeasurementTag" 
+					value="#{itemTo.packMeasurementTag}" 
+					required="true"
+					ajaxSingle="true">
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{configCollections.packingTypeTags}" />
+				</aon:selectOneMenu>
+			</aon:div>
+		</aon:if>
+	</aon:if>
+
 	<aon:if test="#{aonConfiguration.bean.product.showBarcode}">
 		<aon:outputLabel for="#{controller.pojoShortName}_barcode"
 			value="#{bundle.product_barcode}" />

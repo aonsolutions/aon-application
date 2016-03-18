@@ -43,6 +43,7 @@ public class ProductExportGwtController extends AuditableSearchController {
 	private Boolean serializable;
 	private Boolean manufactured;
 	private Boolean composition;
+	private Boolean packaged;
 	private Brand brand;
 
 	//-------------------- ITEM FILTER
@@ -77,6 +78,7 @@ public class ProductExportGwtController extends AuditableSearchController {
 		serializable = null;
 		manufactured = null;
 		composition = null;
+		packaged = null;
 		brand = new Brand();
 
 		itemSerialDate1 ="";
@@ -283,6 +285,13 @@ public class ProductExportGwtController extends AuditableSearchController {
 	}
 	public void setComposition(Boolean composition) {
 		this.composition = composition;
+	}
+
+	public Boolean getPackaged() {
+		return packaged;
+	}
+	public void setPackaged(Boolean packaged) {
+		this.packaged = packaged;
 	}
 
 	public Brand getBrand() {

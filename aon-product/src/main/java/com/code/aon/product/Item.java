@@ -88,6 +88,15 @@ public class Item extends ItemDB implements IPriceable, IAuditable {
 		if (StringUtils.isNotEmpty(getProduct().getName())) {
 			sb.append(getProduct().getName());
 		}
+		if (getPackFormatTag() != null && getPackFormatTag().getId() != null) {
+			sb.append(" " + getPackFormatTag().getName());
+		}
+		if (getProduct().isPackaged()) {
+			sb.append(" " + getPackUnits());
+			sb.append(" " + getPackUnitsTag().getName());
+			sb.append(" (" + getPackMeasurement());
+			sb.append(" " + getPackMeasurementTag().getName() + ")");
+		}
 		if (StringUtils.isNotEmpty(details)) {
 			sb.append(" [" + details + "]");
 		}

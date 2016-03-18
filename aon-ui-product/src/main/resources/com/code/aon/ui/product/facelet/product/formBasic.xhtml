@@ -191,6 +191,17 @@
 						rendered="#{productTo.composition}" />
 				</aon:panelGroup>
 			</aon:if>
+
+			<aon:if test="#{configCollections.packingTypeTagsCount > 0}">
+				<aon:selectBooleanCheckbox id="#{controller.pojoShortName}_packaged"
+					value="#{productTo.packaged}"
+					disabled="#{fieldDisabled or (!controller.nevv and itemCount > 1)}"
+					rendered="#{!productTo.composition}"
+					ajaxSingle="true" reRender="#{categoryChangeReRender}"  />
+				<aon:outputLabel for="#{controller.pojoShortName}_packaged" styleClass="aon-margin-right aon-italic"
+					value="#{bundle.product_packaged}"
+					rendered="#{!productTo.composition}" />
+			</aon:if>
 		</aon:div>
 	</aon:if>
 

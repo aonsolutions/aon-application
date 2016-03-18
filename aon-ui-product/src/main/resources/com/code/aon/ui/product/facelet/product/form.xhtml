@@ -112,7 +112,7 @@
 					</ui:include>
 
 					<aon:panelTabSet selectedTab="#{item.selectedTab}" styleClass="aon-nomargin">
-						<aon:if test="#{product.to.serializable or !empty product.to.category.detail}">
+						<aon:if test="#{product.to.serializable or product.to.packaged or !empty product.to.category.detail}">
 							<aon:panelTab id="itemPanelTab"
 								label="#{bundle.aon_detail}">
 								<ui:include	src="/com/code/aon/ui/product/facelet/product/item/tab_grid.xhtml">

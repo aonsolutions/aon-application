@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.44.0
+# Version: 8.46.0
 # Created by: girazu
-# Creation Date: 03/03/2016 18:00
+# Creation Date: 16/03/2016 17:45
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -762,6 +762,21 @@ CREATE TABLE `department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos';
 
 #
+# Structure for the `tag` table : 
+#
+
+CREATE TABLE `tag` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Etiqueta',
+  `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Etiqueta',
+  `color` varchar(24) collate latin1_spanish_ci default NULL COMMENT 'Color de la Etiqueta',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_TAG_DOMAIN` (`domain`),
+  CONSTRAINT `FK_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Etiquetas';
+
+#
 # Structure for the `brand` table : 
 #
 
@@ -841,6 +856,7 @@ CREATE TABLE `product` (
   `manufactured` tinyint(1) default '0' COMMENT 'Indica si el Producto es elaborado',
   `composition` tinyint(1) default '0' COMMENT 'Indica si el Producto es una Composicion',
   `composition_price` tinyint(1) default '0' COMMENT 'Indica si el Precio lo determina la Composicion',
+  `packaged` tinyint(1) default '0' COMMENT 'Indica si el Producto es envasado',
   `sales_account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable de Ventas',
   `purchase_account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable de Compras',
   `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
@@ -888,6 +904,11 @@ CREATE TABLE `item` (
   `purchase_price` double default '0' COMMENT 'Precio de compra del Articulo',
   `internet` tinyint(1) default '0' COMMENT 'Visible en internet',
   `barcode` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Codigo de barras del Articulo',
+  `pack_format_tag` int(4) default NULL COMMENT 'Identificador de la Etiqueta de formato',
+  `pack_units` int(4) default '0' COMMENT 'Numero de unidades por formato',
+  `pack_units_tag` int(4) default NULL COMMENT 'Identificador de la Etiqueta de unidad de envase',
+  `pack_measurement` double default '0' COMMENT 'Medida envasada',
+  `pack_measurement_tag` int(4) default NULL COMMENT 'Identificador de la Etiqueta de unidad de medida',
   `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
@@ -896,8 +917,14 @@ CREATE TABLE `item` (
   UNIQUE KEY `IDX_ITEM_DOMAIN_BARCODE` (`domain`,`barcode`),
   KEY `IDX_ITEM_PRODUCT` (`product`),
   KEY `IDX_ITEM_DOMAIN` (`domain`),
+  KEY `IDX_ITEM_TAG_PACK_FORMAT` (`pack_format_tag`),
+  KEY `IDX_ITEM_TAG_PACK_MEASUREMENT` (`pack_measurement_tag`),
+  KEY `IDX_ITEM_TAG_PACK_UNITS` (`pack_units_tag`),
   CONSTRAINT `FK_ITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_ITEM_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`)
+  CONSTRAINT `FK_ITEM_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`),
+  CONSTRAINT `FK_ITEM_TAG_PACK_FORMAT` FOREIGN KEY (`pack_format_tag`) REFERENCES `tag` (`id`),
+  CONSTRAINT `FK_ITEM_TAG_PACK_MEASUREMENT` FOREIGN KEY (`pack_measurement_tag`) REFERENCES `tag` (`id`),
+  CONSTRAINT `FK_ITEM_TAG_PACK_UNITS` FOREIGN KEY (`pack_units_tag`) REFERENCES `tag` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos';
 
 #
@@ -6213,21 +6240,6 @@ CREATE TABLE `notice` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Avisos';
 
 #
-# Structure for the `tag` table : 
-#
-
-CREATE TABLE `tag` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Etiqueta',
-  `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Etiqueta',
-  `color` varchar(24) collate latin1_spanish_ci default NULL COMMENT 'Color de la Etiqueta',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_TAG_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Etiquetas';
-
-#
 # Structure for the `notice_tag` table : 
 #
 
@@ -8094,9 +8106,10 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.44.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.46.0');
 
 COMMIT;
 
 
 SET FOREIGN_KEY_CHECKS=1;
+

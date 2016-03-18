@@ -259,6 +259,44 @@
 		</managed-property>						
 	</managed-bean>
 	
+	<!-- ************ PACKING TAG ************** -->
+	<managed-bean>
+		<managed-bean-name>packingTag</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.TagController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Tag</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>packingTag</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Tag_name</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>type</property-name>
+			<value>#{configCollections.tagTypes[8].value}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Tag_type</key>
+					<value>#{configCollections.tagTypes[8].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>						
+	</managed-bean>
+	
 	<!--  **** ITEM TAG PRINT **** -->
 	<managed-bean>
 		<managed-bean-name>itemTagPrint</managed-bean-name>
@@ -1560,6 +1598,10 @@
 	    <navigation-case>
 	      <from-outcome>productTag_form</from-outcome>
 	      <to-view-id>/com/code/aon/ui/product/facelet/productTag/form.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>packingTag_form</from-outcome>
+	      <to-view-id>/com/code/aon/ui/product/facelet/packingTag/form.xhtml</to-view-id>
 	    </navigation-case>
    </navigation-rule>
    

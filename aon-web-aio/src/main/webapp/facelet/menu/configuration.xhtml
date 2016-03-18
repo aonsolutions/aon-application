@@ -244,6 +244,11 @@
 											value="#{bundle.product_tag_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="packingTag" action="packingTag_form"
+											actionListener="#{packingTag.onCancel}"
+											value="#{bundle.product_packing_tag_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="productCategory-configuration"
 											action="productCategory-configuration"
 											value="#{bundle.aon_categories}" />

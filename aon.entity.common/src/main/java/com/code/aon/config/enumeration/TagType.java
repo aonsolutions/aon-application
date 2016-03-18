@@ -44,7 +44,12 @@ public enum TagType implements IResourceable {
 	
 	OFFICE_STATUS,
 	
-	OFFICE_TYPE;
+	OFFICE_TYPE,
+
+	/**
+	 * PACKING
+	 */
+	PACKING;
 
 	/**
 	 * Message key prefix.

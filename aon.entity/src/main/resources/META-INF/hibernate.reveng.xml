@@ -903,6 +903,16 @@
 	<table name="item">
 		<column name="status" type="com.code.aon.product.enumeration.ProductStatus" />
 		<column name="description" type="text"/>
+		<column name="pack_units" type="int"/>
+		<foreign-key constraint-name="FK_ITEM_TAG_PACK_FORMAT">
+			<many-to-one property="packFormatTag" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_ITEM_TAG_PACK_UNITS">
+			<many-to-one property="packUnitsTag" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_ITEM_TAG_PACK_MEASUREMENT">
+			<many-to-one property="packMeasurementTag" />
+		</foreign-key>
 	</table>
 		
 	<table name="item_addinfo" class="com.esferalia.aon.entity.master.ItemAddInfo" />
@@ -1095,18 +1105,6 @@
 		<column name="data" exclude="true" />
 	</table>
 	
-	<table name="question">
-		<column name="question_text" property="text" />
-		<column name="type" type="com.code.aon.registry.enumeration.QuestionType"/>
-		<column name="argument" type="text"/>
-	</table>
-	
-	<table name="question_value">
-		<column name="value_text" property="text" />
-		<column name="value_date" property="date" />
-		<column name="value_number" property="number" type="java.lang.Double"/>
-	</table>
-    
 	<table name="pay_method">
 		<column name="type" type="com.code.aon.config.enumeration.PayMethodType" /> 
 	</table>
@@ -1324,6 +1322,18 @@
 		<column name="line" type="java.lang.Integer" />
 	</table>
 	
+	<table name="question">
+		<column name="question_text" property="text" />
+		<column name="type" type="com.code.aon.registry.enumeration.QuestionType"/>
+		<column name="argument" type="text"/>
+	</table>
+	
+	<table name="question_value">
+		<column name="value_text" property="text" />
+		<column name="value_date" property="date" />
+		<column name="value_number" property="number" type="java.lang.Double"/>
+	</table>
+    
 	<table name="raddress" class="com.esferalia.aon.entity.master.RegistryAddress">
 		<column name="type" property="addressType" type="com.code.aon.registry.enumeration.AddressType"/>
 		<column name="street_type" type="com.code.aon.registry.enumeration.StreetType"/>

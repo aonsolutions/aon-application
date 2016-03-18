@@ -90,6 +90,17 @@
 		</aon:selectOneRadio>
 	</aon:if>
 
+	<aon:if test="#{configCollections.packingTypeTagsCount > 0}">
+		<aon:outputLabel for="Product_packaged"
+			value="#{bundle.product_packaged}" />
+		<aon:selectOneRadio id="Product_packaged"
+			value="#{productExport.packaged}"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		</aon:selectOneRadio>
+	</aon:if>
+
 	<aon:outputText for="Product_status"
 		value="#{bundle.aon_status}"/>
 	<aon:selectManyCheckbox id="Product_status"
