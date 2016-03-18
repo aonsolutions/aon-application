@@ -26,7 +26,6 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -57,30 +56,18 @@ public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 	public static final int CURRENT_YEAR = 1900 + new Date().getYear();
 	
 	Enterprise enterprise;
-	
 	TreeNode<Enterprise> rootNode;
 	TreeNode<Enterprise> enterpriseDataNode;
 	NewContextMenu newContextMenu;
 	
-	@UiField
-	DockLayoutPanel dockLayoutPanel;
-	@UiField
-	SplitLayoutPanel splitLayoutPanel;
-	@UiField
-	ScrollPanel sidebar;
-	@UiField
-	OptionsToolbar toolbar;
-	@UiField
-	Tree tree;
-	
-	@UiField 
-	Label subtitle;
-	
-	@UiField(provided = true)
-	SuggestBox enterpriseSuggest;
-	
-	@UiField
-	SimpleLayoutPanel content;
+	@UiField DockLayoutPanel dockLayoutPanel;
+	@UiField SplitLayoutPanel splitLayoutPanel;
+	@UiField ScrollPanel sidebar;
+	@UiField OptionsToolbar toolbar;
+	@UiField Tree tree;
+	@UiField Label subtitle;
+	@UiField(provided = true) SuggestBox enterpriseSuggest;
+	@UiField SimpleLayoutPanel content;
 	
 	public static native String getCurrentDomainName()
 	/*-{
@@ -91,7 +78,6 @@ public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 	/*-{
 		return $wnd.getCurrentDomain();
 	}-*/;
-
 
 	@Override
 	public void onModuleLoad() {
@@ -207,8 +193,6 @@ public class Deposit implements EntryPoint , OptionsToolbar.Listener{
 				return yearTreeNode;
 			}
 		}
-		// Nunca deberia llegar aqui.
-		Window.alert("Nodo Modelos Fiscales no agregado");
 		return null;
 	}
 	

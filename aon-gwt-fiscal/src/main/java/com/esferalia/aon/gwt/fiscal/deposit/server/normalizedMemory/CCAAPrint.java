@@ -24,14 +24,14 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 @SuppressWarnings("serial")
 @WebServlet(name = "CCAAPrint", urlPatterns = { "/aon_gwt_deposit/CCAAPrint" })
 public class CCAAPrint extends HttpServlet {
-	
+
 	private static final String D2_DEPOSIT_SCHEMA = "d2DepositSchema";
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doPost(req, resp);
 	}
-	
+
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -49,20 +49,40 @@ public class CCAAPrint extends HttpServlet {
 			Domain domain = new Domain().setName(domainName).setId(domainId);
 			D2Deposit d2Deposit = new D2Deposit(domain, cif, razonSocial).setId(id).setYear(year).setType(type);
 			d2Deposit.setMap(getSchema(req, d2Deposit, user));
-			
+
 			CCAAExcelAction action = new CCAAExcelAction(d2Deposit) {
 				@Override protected String getTitle() {
 					return "Depósito de cuentas anuales";
 				}
 			};
-			action.initialize("CCAAname");
-			action.BA1();
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			action.initialize();
+			//action.IDA();
+			action.BA();
+			action.PYG();
+			action.ECPN();
+			action.DM();
+			action.AP1();
+			action.AP2();
+			action.AP3();
+			action.AP4();
+			action.AP5();
+			action.AP6();
+			action.AP7();
+			action.AP8();
+			action.AP9();
+			action.AP10();
+			action.AP11();
+			action.AP12();
+			action.AP13();
+			action.AP14();
+			action.AP15();
 			
-		
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+
 			action.finalize(output);
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
-			
+
 			String fileName = "CCAA";
 			resp.setContentType(MimeType.MS_EXCEL.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "."+ MimeType.MS_EXCEL.getExtension()+ "\";");
@@ -73,8 +93,8 @@ public class CCAAPrint extends HttpServlet {
 			throw new ServletException(e);
 		}
 	}
-	
-	
+
+
 	public Map<String, String> getSchema(HttpServletRequest req, D2Deposit d2Deposit, String user) {
 		Esquema schema = (Esquema) req.getSession().getAttribute(D2_DEPOSIT_SCHEMA + d2Deposit.getCif() + d2Deposit.getYear());
 		if(schema == null){
