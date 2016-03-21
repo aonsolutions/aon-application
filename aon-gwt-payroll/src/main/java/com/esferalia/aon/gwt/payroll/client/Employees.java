@@ -328,10 +328,11 @@ public class Employees extends ResizeComposite implements
 							new ITDataObject(workplace.getId(),
 									employeesService));
 			if (extended) {
-				//final TreeItem eventsItem = addImageItem(workplaceItem,
-				//		"Incidencias", images.data());
-				final TreeItem eventsItem = new TreeItem();
 
+				final TreeItem eventsItem = addImageItem(workplaceItem,
+						"Incidencias", images.data());
+				//final TreeItem eventsItem = new TreeItem();
+				
 				// --------------------------------------------------------------
 				//
 
