@@ -56,7 +56,7 @@ public class CCAAPrint extends HttpServlet {
 				}
 			};
 			action.initialize();
-			//action.IDA();
+			action.IDA();
 			action.BA();
 			action.PYG();
 			action.ECPN();
