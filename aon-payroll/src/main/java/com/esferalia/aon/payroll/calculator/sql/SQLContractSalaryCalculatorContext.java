@@ -1751,6 +1751,7 @@ public class SQLContractSalaryCalculatorContext
 	protected Date getStart() {
 		return this.startDate;
 	}
+	
 
 	protected Criteria getCriteria() {
 		return criteria;
@@ -3814,7 +3815,7 @@ public class SQLContractSalaryCalculatorContext
 	 * Ejecuta porque al valor de una variable no tiene porque ser un literal,
 	 * puede ser una expresi\F3n ej : '15 / 100' o 'DIAS_TRABAJADOS * 0.01'
 	 */
-	private void loadContractData(ExpressionContext ctx) throws SQLException {
+	protected void loadContractData(ExpressionContext ctx) throws SQLException {
 		loadContractData(ctx, contractStartDate, contractEndDate);
 		Date irpfDate = getIrpfDate();
 		if (irpfDate != null && irpfDate.after(contractEndDate)) {
@@ -3822,7 +3823,7 @@ public class SQLContractSalaryCalculatorContext
 		}
 	}
 
-	private void loadExpression(ExpressionContext ctx, String name,
+	protected void loadExpression(ExpressionContext ctx, String name,
 			String script, Date start, Date end) throws SQLException {
 		ExpressionImpl expr = new ExpressionImpl();
 		expr.setName(name);
@@ -3841,7 +3842,7 @@ public class SQLContractSalaryCalculatorContext
 	 * Ejecuta porque al valor de una variable no tiene porque ser un literal,
 	 * puede ser una expresi\F3n ej : '15 / 100' o 'DIAS_TRABAJADOS * 0.01'
 	 */
-	private void loadContractData(ExpressionContext ctx, Date startDate,
+	protected void loadContractData(ExpressionContext ctx, Date startDate,
 			Date endDate) throws SQLException {
 		ResultSet rs = null;
 		try {

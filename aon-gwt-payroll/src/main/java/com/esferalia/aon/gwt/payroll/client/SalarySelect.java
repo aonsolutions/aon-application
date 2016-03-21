@@ -120,7 +120,7 @@ public class SalarySelect extends Composite {
 		syncTypeListBox();
 		syncDateListBox(getSelectedType());
 		//reset start, end & issue dates
-		syncSalarySelectDates();
+		//syncSalarySelectDates();
 		
 	}
 
@@ -382,11 +382,11 @@ public class SalarySelect extends Composite {
 				if (!settleDatesProvider.hasDataDisplay(dateListBox))
 					settleDatesProvider.addDataDisplay(dateListBox);
 
-				final Date endDate = SalarySelect.this.salaryPreview
+				final Date issueDate = SalarySelect.this.salaryPreview
 						//.getEndDate();
 						.getIssueDate();
-
-				int index = getIndexOfSettle(endDate);
+				
+				int index = getIndexOfSettle(issueDate);
 
 				int length = dateListBox.getPageSize();
 				int start = Math.max(0, index - length / 2);
@@ -397,7 +397,7 @@ public class SalarySelect extends Composite {
 				Scheduler.get().scheduleFinally(new ScheduledCommand() {
 					@Override
 					public void execute() {
-						dateListBox.setSelected(endDate, true);
+						dateListBox.setSelected(issueDate, true);
 					}
 				});
 

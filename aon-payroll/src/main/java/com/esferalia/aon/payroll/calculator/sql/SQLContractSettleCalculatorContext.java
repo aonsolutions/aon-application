@@ -24,11 +24,15 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
 public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalculatorContext {
@@ -56,7 +60,7 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 
 	public SQLContractSettleCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate,
 			Criteria criteria, Criteria paymentsCriteria) throws SQLException, ExpressionException {
-		this(connection, startDate, endDate, issueDate, null, criteria, paymentsCriteria);
+		this(connection, startDate, endDate, issueDate, issueDate, criteria, paymentsCriteria);
 	}
 
 	public SQLContractSettleCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate,
@@ -185,6 +189,7 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		return this.noHolidaysEndDate != null ? this.noHolidaysEndDate : super.getEndDate();
 	}
 	
+	
 	@Override
 	public void close() throws SQLException {
 		super.close();
@@ -203,8 +208,12 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 		
 	}
 	
+	@Override
+	protected void loadContractData(ExpressionContext ctx, Date startDate, Date endDate) throws SQLException {
+		super.loadContractData(ctx, startDate, noHolidaysEndDate == null ? endDate: Period.max(endDate, noHolidaysEndDate) );
+	}
 	
-
+	
 	// ------------------------------------------------------------------------
 	private void initNoHolidays(ExpressionContext ctx) throws UndefinedVariablesException, ExpressionException, SQLException {
 		ResultSet rs = null;
@@ -230,6 +239,7 @@ public class SQLContractSettleCalculatorContext extends SQLContractSalaryCalcula
 				rs.close();
 		}
 	}
+
 
 	private void initNoHolidaysStmt() throws SQLException {
 		this.noHolidaysStmt = getConnection().prepareStatement(NO_HOLIDAY_SQL);

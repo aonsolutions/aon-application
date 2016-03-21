@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.mvel2.util.MethodStub;
 
@@ -32,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableComparator;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
@@ -59,6 +62,7 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class SalaryDraftBuilder
 		implements ISalaryBuilder<ISalary>, ContractSalaryCalculator.IListener,
@@ -789,12 +793,13 @@ public class SalaryDraftBuilder
 			IExpressionVariable<?> exprVar = (IExpressionVariable<?>) var;
 			IExpression expr = exprVar.getExpression();
 			Scope scope = getScope(expr.getScope());
-			salaryDraft.addVariable(name, value, period.getStart(),
+			/*salaryDraft.*/addVariable(name, value, period.getStart(),
 					period.getEnd(), scope, expr.getExpression(),
 					defined.get(name));
 			addContext(exprVar.getContext());
 		} else {
-			salaryDraft.addVariable(name, value, period.getStart(),
+			
+			/*salaryDraft.*/addVariable(name, value, period.getStart(),
 					period.getEnd());
 		}
 
@@ -935,6 +940,66 @@ public class SalaryDraftBuilder
 		return false;
 	}
 
+	private Stream<Variable> findVariable(String name, Object value, Date startDate, Date endDate){
+		Date _startDate = AonDateUtils.addDays(startDate, -1);
+		Date _endDate = AonDateUtils.addDays(endDate, 1);
+		return
+		salaryDraft
+		.getContext()
+		.stream()
+		.filter(v -> v.getName().equals(name))
+		.filter(v -> v.getValue().equals(value))
+		.filter(v -> v.getEndDate().compareTo(_startDate) >= 0)
+		.filter(v -> v.getStartDate().compareTo(_endDate) <= 0);
+	}
+
+
+	private void addVariable(String name, Object value, Date startDate, Date endDate ) {
+		
+		
+		Variable vars [] = findVariable(name, value, startDate, endDate).toArray(Variable[]::new);
+		for ( Variable var : vars ){ 
+			salaryDraft.getContext().remove(var);
+			endDate = Period.max(endDate,var.getEndDate());
+			startDate = Period.min(startDate,var.getStartDate());
+		}
+		
+		salaryDraft.addVariable(
+				name, 
+				value, 
+				startDate, 
+				endDate);
+	}
+	
+	private void addVariable(String name, Object value, Date startDate, Date endDate,Scope scope, String expression, boolean defined[] ) {
+		class Dates {
+			Date start, end; 
+		}
+		Dates dates = new Dates();
+		dates.start = startDate;
+		dates.end = endDate;
+		
+		Variable vars [] = findVariable(name, value, startDate, endDate)
+		.filter(var->var.getScope().equals(scope))
+		.filter(var->var.getExpression().equals(expression))
+		.toArray(Variable[]::new);
+		for ( Variable var : vars ){ 
+			salaryDraft.getContext().remove(var);
+			endDate = Period.max(endDate,var.getEndDate());
+			startDate = Period.min(startDate,var.getStartDate());
+		}
+
+		salaryDraft.addVariable(
+				name, 
+				value, 
+				dates.start, 
+				dates.end,
+				scope, 
+				expression,
+				defined);
+	}
+	
+
 	private static Payment.Type getPaymentType(PaymentType type) {
 		return type != null ? Payment.Type.values()[type.ordinal()] : null;
 	}
@@ -1012,5 +1077,7 @@ public class SalaryDraftBuilder
 						ContextVariable.OCCUPATIONAL_DISEASE_DAYS));
 
 	}
+	
+	
 
 }

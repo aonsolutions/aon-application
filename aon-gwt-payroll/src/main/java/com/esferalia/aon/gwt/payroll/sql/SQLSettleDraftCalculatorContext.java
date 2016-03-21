@@ -63,11 +63,8 @@ public class SQLSettleDraftCalculatorContext extends SQLSalaryDraftCalculatorCon
 
 			private Date getNoHolidaysEndDate() {
 				
-//				fixNoHolidays();
-				
 				Variable noHolidays [] =
 				draft.getDraftContext().stream()
-				.peek(v->System.out.println(v.getName() + " = " + v.getExpression() ))
 				.filter(v->v.getName().equals(ContextVariable.NO_HOLIDAYS.getName()))
 				.sorted((v1,v2)->v2.getStartDate().compareTo(v1.getStartDate())) // DESC
 				.toArray( size -> new Variable[size])
@@ -87,51 +84,6 @@ public class SQLSettleDraftCalculatorContext extends SQLSalaryDraftCalculatorCon
 				}
 				
 				return null;
-			}
-			
-			private void fixNoHolidays() {
-				Variable noHolidaysArr [] =
-				
-				draft.getDraftContext().stream()
-				.peek(v->System.out.println(v.getName() + " = " + v.getExpression() ))
-				.filter(v->v.getName().equals(ContextVariable.NO_HOLIDAYS.getName()))
-				.filter(v-> v.getStartDate().equals(draft.getStartDate()))
-				.toArray(size -> new Variable[size]);
-				
-				for ( Variable noHolidays: noHolidaysArr ){
-					try {
-						double value = Double.parseDouble(noHolidays.getExpression());
-						
-						draft.getDraftContext().remove(draft.getDraftContext().indexOf(noHolidays));
-
-						Date startDate = AonDateUtils.add(draft.getChargeDate(), Calendar.DAY_OF_MONTH, 1);
-						
-						while ( value > 0 ) {
-							
-							int days = AonDateUtils.getMax(startDate, Calendar.DAY_OF_MONTH) - AonDateUtils.get(startDate, Calendar.DAY_OF_MONTH);
-							
-							
-							Date endDate = AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, Math.min(days,(int)Math.ceil(value) -1));
-							
-							draft.getDraftContext().add(
-								new StringVariable.Builder()
-								.setEndDate(endDate)
-								.setStartDate(startDate)
-								.setName(noHolidays.getName())
-								.setScope(noHolidays.getScope())
-								.setDomain(noHolidays.getDomain())
-								.setValue(Math.min((double)days+1,value))
-								.setExpression(Double.toString(Math.min((double)days+1,value)))
-								.create()
-							);
-							value -= days +1;
-							startDate = AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1);
-						}
-					} catch ( NumberFormatException | NullPointerException e){
-						
-					}
-					
-				}
 			}
 
 
