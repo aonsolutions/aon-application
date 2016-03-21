@@ -426,7 +426,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 			}
 			match = matcher.group(1) + match;
 		}
-		if(match.length()>4){
+		if(match!=null && match.length()>4){
 			match = match.substring(4, match.length());
 		}
 		return match!=null?match:value;
