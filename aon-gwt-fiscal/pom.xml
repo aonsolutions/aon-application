@@ -30,6 +30,7 @@
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.viewer</compileSourcesArtifact>  
 					  <compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
 					</compileSourcesArtifacts>
+					<extraJvmArgs>-Xmx2048M</extraJvmArgs>
 				</configuration>
 				<executions>
 					<execution>
