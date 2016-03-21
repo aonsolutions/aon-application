@@ -200,6 +200,8 @@
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field="fxButton"
 									styleName='aon-finding-toolbar-item {res.css.aonIconFx}' enabled="false" />
+								<g:Button ui:field="undoAllButton"
+									styleName='aon-finding-toolbar-item {res.css.aonIconUndoAll}' />
 								<g:Button ui:field="undoButton"
 									styleName='aon-finding-toolbar-item {res.css.aonIconUndo}' />
 								<g:Button ui:field='redoButton'

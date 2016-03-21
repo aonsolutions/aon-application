@@ -43,17 +43,17 @@ public class Tooltip extends DecoratedPopupPanel {
 	private static Binder binder = GWT.create(Binder.class);
 
 	@UiField
-	InlineLabel nameLabel;
+	protected InlineLabel nameLabel;
 	@UiField
-	DateBox endDateBox;
+	protected DateBox endDateBox;
 	@UiField
-	DateBox startDateBox;
+	protected DateBox startDateBox;
 	@UiField
-	Button acceptButton;
+	protected Button acceptButton;
 	@UiField
-	SimplePanel valuePanel;
+	protected SimplePanel valuePanel;
 	@UiField
-	SimplePanel titlePanel;
+	protected SimplePanel titlePanel;
 
 	private List<Listener> listeners;
 

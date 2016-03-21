@@ -129,6 +129,9 @@ public interface Images extends ClientBundle, Tree.Resources {
 	
 	ImageResource undo();
 
+	@Source("undo-all.png")
+	ImageResource undo_all();
+
 	ImageResource aon_icon_row_s();
 
 	ImageResource aon_icon_row_parent();

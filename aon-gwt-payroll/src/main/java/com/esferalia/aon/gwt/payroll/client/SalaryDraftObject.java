@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -390,6 +391,7 @@ public class SalaryDraftObject implements IContextProvider {
 		undoManager.undo();
 	}
 
+
 	public void add(UndoableEdit<?> undoable) {
 		undoManager.add(undoable);
 	}
@@ -447,6 +449,11 @@ public class SalaryDraftObject implements IContextProvider {
 	// -------------------------------------------
 	// SalaryDraft Delegated
 	// -------------------------------------------
+
+	public void clearDrafts() {
+		salaryDraft.clearDrafts();
+		undoManager.discardAll();
+	}
 
 	public Type getType() {
 		return salaryDraft.getType();

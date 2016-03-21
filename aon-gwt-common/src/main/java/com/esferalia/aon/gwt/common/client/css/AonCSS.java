@@ -559,6 +559,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-undo")
 	String aonIconUndo();
 
+	@ClassName("aon-icon-undo-all")
+	String aonIconUndoAll();
+
 	@ClassName("aon-icon-redo")
 	String aonIconRedo();
 

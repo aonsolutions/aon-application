@@ -937,6 +937,11 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	background-position: left center;
 }
 
+@sprite .aon-icon-undo-all {
+	gwt-image: 'undo_all';
+	background-position: left center;
+}
+
 @sprite .aon-icon-cleartrash {
 	gwt-image: 'aonIconClearTrash';
 	background-position: left center;

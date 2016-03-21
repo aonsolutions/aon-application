@@ -773,11 +773,6 @@ public class SalaryDraft extends ResizeComposite
 
 			}
 
-			// TODO: REMOVE
-			// var.setExpression(StringUtils.isEmpty(value) ?
-			// "REMOVE_VARIABLE()" : value);
-
-			// salaryDraftObject.asSalaryPreview().setEndDate(var.getEndDate());
 			salaryDraftObject.setDraftPeriod(salaryDraftObject.getDraftStartDate(), noHolidaysVar.getEndDate());
 
 			SalaryDraft.this.calculate(getNextVariableFocusCallback());
@@ -1728,7 +1723,7 @@ public class SalaryDraft extends ResizeComposite
 			var.setEndDate(variable.getEndDate());
 			var.setStartDate(variable.getStartDate());
 			var.setExpression("REMOVE_VARIABLE()");
-
+			
 			salaryDraftObject.addDraftVariable(var);
 
 			salaryDraftObject.calculate(SalaryDraft.this);
@@ -1954,6 +1949,8 @@ public class SalaryDraft extends ResizeComposite
 	Button undoButton;
 	@UiField
 	Button redoButton;
+	@UiField
+	Button undoAllButton;
 
 	@UiField
 	ListBox datesListBox;
@@ -2038,6 +2035,7 @@ public class SalaryDraft extends ResizeComposite
 		undoButton.setEnabled(salaryDraftObject.canUndo());
 
 		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
+		undoAllButton.setEnabled(salaryDraftObject.hasDrafts());
 	}
 
 	@Override
@@ -2389,7 +2387,13 @@ public class SalaryDraft extends ResizeComposite
 
 					private int clientX = -1;
 					private int clientY = -1;
-					private Tooltip tooltip = new Tooltip();
+					private Tooltip tooltip = new Tooltip(){
+						Tooltip setup(){
+							
+							titlePanel.setVisible(false);
+							return this;
+						}
+					}.setup(); 
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -2470,7 +2474,6 @@ public class SalaryDraft extends ResizeComposite
 										tooltip.setName(variable.getName());
 										tooltip.setStartDate(variable.getStartDate());
 										tooltip.setEndDate(variable.getEndDate());
-										tooltip.setTitle(getLabel(variable));
 
 										IsWidget isWidget = newVariableEditor(variable);
 										tooltip.setValueEditor(isWidget.asWidget());
@@ -2556,6 +2559,7 @@ public class SalaryDraft extends ResizeComposite
 		redoButton.setEnabled(salaryDraftObject.canRedo());
 		undoButton.setEnabled(salaryDraftObject.canUndo());
 		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
+		undoAllButton.setEnabled(salaryDraftObject.hasDrafts());
 
 	}
 
@@ -2968,6 +2972,12 @@ public class SalaryDraft extends ResizeComposite
 	@UiHandler("undoButton")
 	void onUndoButtonClick(ClickEvent event) {
 		salaryDraftObject.undo();
+		salaryDraftObject.calculate(SalaryDraft.this);
+	}
+
+	@UiHandler("undoAllButton")
+	void onUndoAllButtonClick(ClickEvent event) {
+		salaryDraftObject.clearDrafts();
 		salaryDraftObject.calculate(SalaryDraft.this);
 	}
 
