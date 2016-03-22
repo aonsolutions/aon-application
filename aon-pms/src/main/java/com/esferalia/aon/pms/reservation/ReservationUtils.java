@@ -600,7 +600,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			return BookingHolder.GUEST;
 		} else if (bookingHolder.equals(AGENCY_HOLDER)) {
 			return BookingHolder.AGENCY;
-		} else if (bookingHolder.equals(BOOKING_HOLDER)) {
+		} else if (bookingHolder.equals(COMPANY_HOLDER)) {
 			return BookingHolder.COMPANY;
 		}
 		return BookingHolder.GUEST;
