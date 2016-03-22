@@ -76,6 +76,9 @@ public class CCAAPrint extends HttpServlet {
 			action.AP13();
 			action.AP14();
 			action.AP15();
+			action.MA();
+			action.IP();
+			action.CHD();
 			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 
