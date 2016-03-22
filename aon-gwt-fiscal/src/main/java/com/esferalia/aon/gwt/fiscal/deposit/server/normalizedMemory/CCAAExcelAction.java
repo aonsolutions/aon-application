@@ -25,12 +25,14 @@ import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositDescription;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
 
 public abstract class CCAAExcelAction extends AbsExcelAction {
 
@@ -45,6 +47,8 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		"/com/esferalia/aon/gwt/common/client/css/images/aon-registro-mercantil-image.png"
 	};
 
+	protected static final String TIC = "✔";
+	
 	protected Font idFont;
 	protected XSSFCellStyle rowStyle;
 	protected XSSFCellStyle idCellStyle;
@@ -76,7 +80,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 
 		defaulFont= workbook.createFont();
 		defaulFont.setFontHeightInPoints((short) 9);
-
+		
 		smallFont = workbook.createFont();
 		smallFont.setFontHeightInPoints((short) 8);
 
@@ -225,7 +229,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				if(c == null) c = "";
 				int l = AonStringUtils.length(description);
 				if (l != 0) {
-					int r = (int) (l / 70) + 1;
+					int r = (int) (l / 50) + 1;
 					int h = (r * 250);
 					row.setHeight((h > Short.MAX_VALUE?Short.MAX_VALUE:(short) h));
 				}
@@ -234,8 +238,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				Cell cell = row.createCell(cellCount++);
 				CellStyle style = workbook.createCellStyle();
 				style.setWrapText(true);
-				//Boolean[] isTitle = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(innerKeys[0]);
-				style.setFont(/*isTitle[0] ? boldFont : */defaulFont );
+				style.setFont(defaulFont );
 				style.setBorderBottom(CellStyle.BORDER_THIN);
 				style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 				cell.setCellStyle(style);
@@ -243,15 +246,12 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				cell.setCellType(Cell.CELL_TYPE_STRING);
 				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 
-				/*Cell boxCell = addCell(AonStringUtils.leftPad(innerKeys[0].getCode(), 3, "0"));
-				boxCell.setCellType(Cell.CELL_TYPE_STRING);
-				boxCell.setCellStyle(boxCellStyle);
-				 */
+				
 				cell = row.createCell(cellCount++);
 				cell = row.createCell(cellCount++);
 				style = workbook.createCellStyle();
-				style.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
-				style.setFont(defaulFont);
+				style.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
+				style.setFont(boxFont);
 				style.setBorderBottom(CellStyle.BORDER_THIN);
 				style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 				cell.setCellStyle(style);
@@ -373,7 +373,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			String description = getDescription(D2DepositDescription.DESCRIPTION_MAP_HEADER.get(innerKeys[0]));
 			int l = AonStringUtils.length(description);
 			if (l != 0) {
-				int r = (int) (l / 70) + 1;
+				int r = (int) (l / 50) + 1;
 				int h = (r * 250);
 				row.setHeight((h > Short.MAX_VALUE?Short.MAX_VALUE:(short) h));
 			}	
@@ -382,8 +382,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			Cell cell = row.createCell(cellCount++);
 			CellStyle style = workbook.createCellStyle();
 			style.setWrapText(true);
-			//Boolean[] isTitle = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(innerKeys[0]);
-			style.setFont(/*isTitle[0] ? boldFont : */defaulFont );
+			style.setFont(defaulFont );
 			style.setBorderBottom(CellStyle.BORDER_THIN);
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 			cell.setCellStyle(style);
@@ -395,12 +394,12 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				cell = row.createCell(cellCount++);
 			
 			style = workbook.createCellStyle();
-			style.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
-			style.setFont(defaulFont);
+			style.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
+			style.setFont(boxFont);
 			style.setBorderBottom(CellStyle.BORDER_THIN);
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
+
 			cell.setCellStyle(style);
-//			String code = innerKeys[0].getCode().substring(0,4);
 			String code = innerKeys[0].getCode();
 			if(codelength != 0)
 				code = code.substring(0, codelength);
@@ -432,6 +431,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			}
 		}
 	}
+	
 	
 	public void general(Integer pageMaxNumber, Integer number, String[] strings, D2DepositKey[][] keys
 			,Integer headerHeight, Integer codeLength){
@@ -474,7 +474,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			String description = getDescription(D2DepositDescription.DESCRIPTION_MAP.get(innerKeys[0]));
 			int l = AonStringUtils.length(description);
 			if (l != 0) {
-				int r = (int) (l / 70) + 1;
+				int r = (int) (l / 50) + 1;
 				int h = (r * 250);
 				row.setHeight((h > Short.MAX_VALUE?Short.MAX_VALUE:(short) h));
 			}	
@@ -483,8 +483,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			Cell cell = row.createCell(cellCount++);
 			CellStyle style = workbook.createCellStyle();
 			style.setWrapText(true);
-			//Boolean[] isTitle = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(innerKeys[0]);
-			style.setFont(/*isTitle[0] ? boldFont : */defaulFont );
+			style.setFont(defaulFont );
 			style.setBorderBottom(CellStyle.BORDER_THIN);
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 			cell.setCellStyle(style);
@@ -496,15 +495,14 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				cell = row.createCell(cellCount++);
 			
 			style = workbook.createCellStyle();
-			style.setVerticalAlignment(HSSFCellStyle.VERTICAL_BOTTOM);
-			style.setFont(defaulFont);
+			style.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
+			style.setFont(boxFont);
 			style.setBorderBottom(CellStyle.BORDER_THIN);
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 			cell.setCellStyle(style);
 			String code = innerKeys[0].getCode();
 			if(codeLength != 0)
 				code = code.substring(0,codeLength);
-			
 			cell.setCellValue(code);
 			cell.setCellType(Cell.CELL_TYPE_STRING);
 			
@@ -614,8 +612,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		Cell cell = row.createCell(cellCount++);
 		CellStyle style = workbook.createCellStyle();
 		style.setWrapText(true);
-		//Boolean[] isTitle = D2DepositBehaviour.BEHAVIOUR_KEYS_MAP.get(innerKeys[0]);
-		style.setFont(/*isTitle[0] ? boldFont : */defaulFont );
+		style.setFont(defaulFont );
 		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
@@ -640,6 +637,30 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		for(Integer i = 0 ; i < 8; i++)
 			sheet.setColumnWidth(cellCount++, 11 * 256);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+	}
+	
+	private void ssHeader(String[] strings, Integer number, Integer height){
+		//pre - number tiene que ser par!!
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		if(height > 1){
+			Double x = (row.getHeight() * height) / 1.5;
+			row.setHeight(x.shortValue());
+		}
+		for (int i = 0; i < row.getLastCellNum(); i++) {
+			sheet.autoSizeColumn(i);
+		}
+		
+		XSSFCellStyle headerStyle = calculateHeaderFontSize(3);
+		
+		if((number % 2) == 0){
+			for(Integer i = 0; i < 8; i = i+(8/number)){
+				CellUtil.createCell(row, cellCount, strings[i/(8/number)], headerStyle);	
+				for(Integer j = 0; j< (8/number); j++)
+					sheet.setColumnWidth(cellCount++, 11 * 256);
+				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), i, i+(8/number)-1));
+			}
+		}
 	}
 	
 	private void idaRow(Integer n, String[] strings) {
@@ -674,6 +695,24 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			row.createCell(cellCount++);
 		}
 	}
+	
+	private void macell(String value, Integer start, Integer end) {
+		Cell cell = row.createCell(cellCount++);
+		CellStyle style = workbook.createCellStyle();
+		style.setWrapText(true);
+		style.setFont(defaulFont );
+		style.setBorderBottom(CellStyle.BORDER_THIN);
+		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
+		style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+		cell.setCellStyle(style);
+		cell.setCellStyle(style);
+		cell.setCellValue(value);
+		cell.setCellType(Cell.CELL_TYPE_STRING);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), start, end));
+		for(Integer j = 0; j < end - start; j++){
+			row.createCell(cellCount++);
+		}
+	}
 
 	
 	public void IDA() {
@@ -684,10 +723,10 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	
 		String sa = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01011.getCode());
 		Boolean a = sa != null && sa.equals("1");
-		if(a) sa = "✔"; else sa = "-";
+		if(a) sa = TIC; else sa = "-";
 		String sl = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01012.getCode());
 		Boolean b = sl != null && sl.equals("1");
-		if(b) sl = "✔"; else sa = "-";
+		if(b) sl = TIC; else sa = "-";
 		String other = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01013.getCode());
 		idaRow(2, new String[]{"N.I.F. " + getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01010.getCode()),
 				"SA " + sa + " SL " + sl + " Otras " + other});
@@ -799,13 +838,13 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		ssHeader("Unidades", pageMaxNumber);
 		String euros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09001.getCode());
 		Boolean a1 = sa != null && sa.equals("1");
-		if(a1) euros = "✔"; else sa = "-";
+		if(a1) euros = TIC; else sa = "-";
 		String milesEuros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09002.getCode());
 		Boolean b1 = sa != null && sa.equals("1");
-		if(b1) milesEuros = "✔"; else sa = "-";
+		if(b1) milesEuros = TIC; else sa = "-";
 		String millonesEuros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09003.getCode());
 		Boolean c1 = sa != null && sa.equals("1");
-		if(c1) millonesEuros = "✔"; else sa = "-";
+		if(c1) millonesEuros = TIC; else sa = "-";
 		
 		idaRow(1, new String[]{"Euros " + euros + " Miles de euros " + milesEuros
 				+" Millones de euros " + millonesEuros});	
@@ -924,7 +963,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				+ " en su punto 5, de la tercera parte del Plan General de Contabilidad "
 				+ "(Real Decreto 1514/2007 de 16 de Noviembre).";
 		//String tic = "&#10004;";
-		String tic = "✔";
+		String tic = TIC;
 		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
@@ -953,7 +992,8 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		style.setFont(defaulFont);
 		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
-		style.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
+		style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
 		cell.setCellStyle(style);
 		cell.setCellValue(text1);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
@@ -984,6 +1024,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		style.setFont(defaulFont );
 		style.setBorderBottom(CellStyle.BORDER_THIN);
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
 		cell.setCellStyle(style);
 		cell.setCellValue(text2);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
@@ -1431,15 +1472,580 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	}
 	
 	public void MA(){
-		// TODO ****************************************************************
+		addSheet("Modelo de autocartera");
+		header(5);
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		
+		for (int i = 0; i < row.getLastCellNum(); i++) {
+			sheet.autoSizeColumn(i);
+		}
+
+		CellUtil.createCell(row, cellCount, "Modelo de autocartera", headerCellStyle);
+		sheet.setColumnWidth(cellCount++, 8 * 256);
+		sheet.setColumnWidth(cellCount++, 40 * 256);
+		sheet.setColumnWidth(cellCount++, 4 * 256);
+		sheet.setColumnWidth(cellCount++, 10 * 256);
+		sheet.setColumnWidth(cellCount++, 4 * 256);
+		sheet.setColumnWidth(cellCount++, 10 * 256);
+		sheet.setColumnWidth(cellCount++, 4 * 256);
+		sheet.setColumnWidth(cellCount++, 10 * 256);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		
+		row = sheet.createRow(rowCount++);
+		String text = "La sociedad no ha realizado durante el presente ejercicio operación alguna sobre acciones / participaciones propias";		
+
+		row.setRowStyle(rowStyle);
+		cellCount = 0;
+		Cell cell = row.createCell(cellCount++);
+		CellStyle style = workbook.createCellStyle();
+		style.setWrapText(true);
+		style.setFont(defaulFont);
+		style.setBorderBottom(CellStyle.BORDER_THIN);
+		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
+		style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+		style.setAlignment(CellStyle.ALIGN_CENTER);
+		cell.setCellStyle(style);
+		cell.setCellValue(text);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		
+		
+		String a = getD2Deposit().getMap().get(D2DepositFooterKey.A18009050.getCode());
+		Boolean a2 = a != null && a.equals(1);
+		String value = "-";
+		if(a2) value = TIC;
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		cell = row.createCell(cellCount++);
+		cell.setCellStyle(style);
+		cell.setCellValue(value);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		
+		if(!a2){
+			MA1();
+			MA11();
+			MA2();
+			MA3();
+			MA4();
+			MA5();
+			MA6();
+			MA7();
+		}
+	}
+	
+	
+	private void MA1() {
+		addSheet("Página A1");
+		header(5);
+		ssHeader("Modelo de autocartera", 5);
+		
+		String t1 = getD2Deposit().getMap().get(D2DepositFooterKey.A18009010.getCode());
+		String t2 = getD2Deposit().getMap().get(D2DepositFooterKey.A18009020.getCode());
+		String t3 = getD2Deposit().getMap().get(D2DepositFooterKey.A18009030.getCode());
+		String t4 = getD2Deposit().getMap().get(D2DepositFooterKey.A18009040.getCode());
+	
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		Double x = (row.getHeight() * 2) / 1.5;
+		row.setHeight(x.shortValue());
+		idacell("Saldo al cierre del ejercicio precedente", 0, 1);
+		idacell(t1, 2, 3);
+		idacell("Acciones / participaciones", 4, 5);
+		idacell(t2, 6, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		idacell("Saldo al cierre del ejercicio", 0, 1);
+		idacell(t3, 2, 3);
+		idacell("Acciones / participaciones", 4, 5);
+		idacell(t4, 6, 7);
+		
+		row = sheet.createRow(rowCount++);
+		ssHeader(new String[]{"Fecha", "Concepto", "Fecha de acuerdo de junta general", "Nº Acciones / participaciones",
+				"Nominal", "Capital social %", "Precio o contraprestación", "Saldo después de operación"}, 8, 3);
+		
+		for(Integer i = 0; i< D2DepositConstants.A1_ABREVIATE_KEYS_1.length; i+=8){
+			D2DepositFooterKey[] d2 = new D2DepositFooterKey[]{
+					D2DepositConstants.A1_ABREVIATE_KEYS_1[i],
+					D2DepositConstants.A1_ABREVIATE_KEYS_1[i+1],
+					D2DepositConstants.A1_ABREVIATE_KEYS_1[i+2],
+					D2DepositConstants.A1_ABREVIATE_KEYS_1[i+3],
+					D2DepositConstants.A1_ABREVIATE_KEYS_1[i+4],
+					D2DepositConstants.A1_ABREVIATE_KEYS_1[i+5],
+					D2DepositConstants.A1_ABREVIATE_KEYS_1[i+6],
+					D2DepositConstants.A1_ABREVIATE_KEYS_1[i+7],
+			};
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			for (Integer j = 0; j < d2.length ;j++) {
+				String text = getD2Deposit().getMap().get(d2[j].getCode());
+				macell(text, j, j);
+			}
+		}
+		
+	
+
+	}
+	
+	private void MA11() {
+		addSheet("Página A1.1");
+		header(5);
+		ssHeader(new String[]{"Fecha", "Concepto", "Fecha de acuerdo de junta general", "Nº Acciones / participaciones",
+				"Nominal", "Capital social %", "Precio o contraprestación", "Saldo después de operación"}, 8, 3);
+
+		for(Integer i = 0; i< D2DepositConstants.A11_ABREVIATE_KEYS.length; i+=8){
+			D2DepositFooterKey[] d2 = new D2DepositFooterKey[]{
+					D2DepositConstants.A11_ABREVIATE_KEYS[i],
+					D2DepositConstants.A11_ABREVIATE_KEYS[i+1],
+					D2DepositConstants.A11_ABREVIATE_KEYS[i+2],
+					D2DepositConstants.A11_ABREVIATE_KEYS[i+3],
+					D2DepositConstants.A11_ABREVIATE_KEYS[i+4],
+					D2DepositConstants.A11_ABREVIATE_KEYS[i+5],
+					D2DepositConstants.A11_ABREVIATE_KEYS[i+6],
+					D2DepositConstants.A11_ABREVIATE_KEYS[i+7]
+			};
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			for (Integer j = 0; j < d2.length ;j++) {
+				String text = getD2Deposit().getMap().get(d2[j].getCode());
+				macell(text, j, j);
+			}
+		}
+	}
+	
+	private void MA2() {
+		addSheet("Página A2");
+		header(5);
+		
+		ssHeader("Modelo de autocartera", 5);
+		row = sheet.createRow(rowCount++); cellCount = 0;
+		idacell("Transcripción de acuerdos de Juntas generales, del último o anteriores ejercicios, autorizando negocios sobre acciones o participaciones propias realizados en el último ejercicio cerrado.", 0, 7);
+		Double x = (row.getHeight() * 2) / 1.5;
+		row.setHeight(x.shortValue());
+		row = sheet.createRow(rowCount++); cellCount = 0;
+		
+		ssHeader(new String[]{"Fecha acuerdo", "Transcripción literal del acuerdo"}, 2, 1);
+		
+		for(Integer i = 0; i< D2DepositConstants.A2_ABREVIATE_KEYS.length; i+=2){
+			D2DepositFooterKey[] d2 = new D2DepositFooterKey[]{
+					D2DepositConstants.A2_ABREVIATE_KEYS[i],
+					D2DepositConstants.A2_ABREVIATE_KEYS[i+1]
+			};
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			for (Integer j = 0; j < d2.length ;j++) {
+				String text = getD2Deposit().getMap().get(d2[j].getCode());
+				macell(text, j*4, (j*4)+3);
+			}
+		}
+	}
+	
+	private void MA3() {
+		addSheet("Página A3");
+		header(5);
+		
+		ssHeader("Modelo de autocartera", 5);
+		row = sheet.createRow(rowCount++); cellCount = 0;
+		idacell("Relación de acciones o participaciones adquiridas al amparo de los artículos 140, 144 y 146 de la Ley de SOciedades de Capital, durante el ejercicio.", 0, 7);
+		Double x = (row.getHeight() * 2) / 1.5;
+		row.setHeight(x.shortValue());
+		row = sheet.createRow(rowCount++); cellCount = 0;
+		
+		ssHeader(new String[]{"Fecha", "Relación numerada de las acciones / participaciones", "Título de adquisición", "% sobre capital"}, 4, 2);
+
+		for(Integer i = 0; i< D2DepositConstants.A3_ABREVIATE_KEYS.length; i+=4){
+			D2DepositFooterKey[] d2 = new D2DepositFooterKey[]{
+					D2DepositConstants.A3_ABREVIATE_KEYS[i],
+					D2DepositConstants.A3_ABREVIATE_KEYS[i+1],
+					D2DepositConstants.A3_ABREVIATE_KEYS[i+2],
+					D2DepositConstants.A3_ABREVIATE_KEYS[i+3]
+			};
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			for (Integer j = 0; j < d2.length ;j++) {
+				String text = getD2Deposit().getMap().get(d2[j].getCode());
+				macell(text, j*2, (j*2)+1);
+			}
+		}
+	}
+	
+	private void MA4() {
+		addSheet("Página A4");
+		header(5);
+		
+		ssHeader("Modelo de autocartera", 5);
+		row = sheet.createRow(rowCount++); cellCount = 0;
+		idacell("Relación de acciones o participaciones adquiridas por los mismo títulos, enajenadas o amortizadas durante el presente ejercicio.", 0, 7);
+		Double x = (row.getHeight() * 2) / 1.5;
+		row.setHeight(x.shortValue());
+		row = sheet.createRow(rowCount++); cellCount = 0;
+		
+		ssHeader(new String[]{"Fecha", "Relación numerada de las acciones / participaciones", "Título de adquisición", "% sobre capital"}, 4, 2);
+
+		for(Integer i = 0; i< D2DepositConstants.A3_ABREVIATE_KEYS.length; i+=4){
+			D2DepositFooterKey[] d2 = new D2DepositFooterKey[]{
+					D2DepositConstants.A3_ABREVIATE_KEYS[i],
+					D2DepositConstants.A3_ABREVIATE_KEYS[i+1],
+					D2DepositConstants.A3_ABREVIATE_KEYS[i+2],
+					D2DepositConstants.A3_ABREVIATE_KEYS[i+3]
+			};
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			for (Integer j = 0; j < d2.length ;j++) {
+				String text = getD2Deposit().getMap().get(d2[j].getCode());
+				macell(text, j*2, (j*2)+1);
+			}
+		}
+	}
+	
+	private void MA5() {
+		addSheet("Página A5");
+		header(6);
+		
+		row = sheet.createRow(rowCount++);cellCount = 0;
+		for (int i = 0; i < row.getLastCellNum(); i++) 
+			sheet.autoSizeColumn(i);
+		XSSFCellStyle headerStyle = calculateHeaderFontSize(3);
+		CellUtil.createCell(row, cellCount, "Modelo de autocartera", headerStyle);
+		for(Integer i = 0 ; i < 9; i++)
+			sheet.setColumnWidth(cellCount++, 10 * 256);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
+		
+		row = sheet.createRow(rowCount++); cellCount = 0;
+		idacell("Negocios que han implicado la aceptación en garantía de acciones propias, con las excepciones legales (artículo 149 de la Ley de Sociedades de Capital).", 0, 8);
+		Double x = (row.getHeight() * 2) / 1.5;
+		row.setHeight(x.shortValue());
+		row = sheet.createRow(rowCount++); cellCount = 0;
+		
+		String[] strings = new String[]{"Fecha", "Descripción del negocio", "Número de acciones dadas en garantía"};
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		row.setHeight(x.shortValue());
+		
+		for (int i = 0; i < row.getLastCellNum(); i++) {
+			sheet.autoSizeColumn(i);
+		}
+		
+		headerStyle = calculateHeaderFontSize(3);
+		
+		for(Integer i = 0; i < 9; i = i+3){
+			CellUtil.createCell(row, cellCount, strings[i/3], headerStyle);	
+			for(Integer j = 0; j< 3; j++)
+				sheet.setColumnWidth(cellCount++, 10 * 256);
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), i, i+2));
+		}	
+		
+		for(Integer i = 0; i< D2DepositConstants.A5_ABREVIATE_KEYS.length; i+=3){
+			D2DepositFooterKey[] d2 = new D2DepositFooterKey[]{
+					D2DepositConstants.A5_ABREVIATE_KEYS[i],
+					D2DepositConstants.A5_ABREVIATE_KEYS[i+1],
+					D2DepositConstants.A5_ABREVIATE_KEYS[i+2],
+			};
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			for (Integer j = 0; j < d2.length ;j++) {
+				String text = getD2Deposit().getMap().get(d2[j].getCode());
+				macell(text, j*3, (j*3)+2);
+			}
+		}	
+	}
+	
+	private void MA6() {
+		addSheet("Página A6");
+		header(6);
+		
+		row = sheet.createRow(rowCount++);cellCount = 0;
+		for (int i = 0; i < row.getLastCellNum(); i++) 
+			sheet.autoSizeColumn(i);
+		XSSFCellStyle headerStyle = calculateHeaderFontSize(3);
+		CellUtil.createCell(row, cellCount, "Modelo de autocartera", headerStyle);
+		for(Integer i = 0 ; i < 9; i++)
+			sheet.setColumnWidth(cellCount++, 10 * 256);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
+		
+		row = sheet.createRow(rowCount++); cellCount = 0;
+		idacell("Negocios que han implicado la asistencia finanaciera para la adquisicin de acciones propias salvo las excepciones legales (artículo 150 de la Ley de Sociedades de Capital).", 0, 8);
+		Double x = (row.getHeight() * 2) / 1.5;
+		row.setHeight(x.shortValue());
+		row = sheet.createRow(rowCount++); cellCount = 0;
+		
+		String[] strings = new String[]{"Fecha", "Descripción del negocio", "Número de acciones dadas en garantía"};
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		row.setHeight(x.shortValue());
+		
+		for (int i = 0; i < row.getLastCellNum(); i++) {
+			sheet.autoSizeColumn(i);
+		}
+		
+		headerStyle = calculateHeaderFontSize(3);
+		
+		for(Integer i = 0; i < 9; i = i+3){
+			CellUtil.createCell(row, cellCount, strings[i/3], headerStyle);	
+			for(Integer j = 0; j< 3; j++)
+				sheet.setColumnWidth(cellCount++, 10 * 256);
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), i, i+2));
+		}	
+		
+		for(Integer i = 0; i< D2DepositConstants.A6_ABREVIATE_KEYS.length; i+=3){
+			D2DepositFooterKey[] d2 = new D2DepositFooterKey[]{
+					D2DepositConstants.A6_ABREVIATE_KEYS[i],
+					D2DepositConstants.A6_ABREVIATE_KEYS[i+1],
+					D2DepositConstants.A6_ABREVIATE_KEYS[i+2],
+			};
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			for (Integer j = 0; j < d2.length ;j++) {
+				String text = getD2Deposit().getMap().get(d2[j].getCode());
+				macell(text, j*3, (j*3)+2);
+			}
+		}	
+	}
+	
+	private void MA7() {
+		addSheet("Página A7");
+		header(7);
+		
+		row = sheet.createRow(rowCount++);cellCount = 0;
+		for (int i = 0; i < row.getLastCellNum(); i++) 
+			sheet.autoSizeColumn(i);
+		XSSFCellStyle headerStyle = calculateHeaderFontSize(3);
+		CellUtil.createCell(row, cellCount, "Modelo de autocartera", headerStyle);
+		for(Integer i = 0 ; i < 10; i++)
+			sheet.setColumnWidth(cellCount++, 9 * 256);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 9));
+		
+		row = sheet.createRow(rowCount++); cellCount = 0;
+		idacell("Supuestos de infracción de las normas sobre participaciones recíprocas de capital (artículo 151 y siguiente de la Ley de Sociedades de Capital).", 0, 9);
+		Double x1 = (row.getHeight() * 2) / 1.5;
+		row.setHeight(x1.shortValue());
+		row = sheet.createRow(rowCount++); cellCount = 0;
+		
+		String[] strings = new String[]{"Sociedad Comunicante", "Fecha Comunicación", "Porcentaje de participación en su capital a esa fecha", "Fecha Reducción", "Porcentaje Posterior"};
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		Double x = (row.getHeight() * 3) / 1.5;
+		row.setHeight(x.shortValue());
+		
+		for (int i = 0; i < row.getLastCellNum(); i++) {
+			sheet.autoSizeColumn(i);
+		}
+		
+		headerStyle = calculateHeaderFontSize(3);
+		
+		for(Integer i = 0; i < 10; i = i+2){
+			CellUtil.createCell(row, cellCount, strings[i/2], headerStyle);	
+			for(Integer j = 0; j< 2; j++)
+				sheet.setColumnWidth(cellCount++, 9 * 256);
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), i, i+1));
+		}	
+		
+		for(Integer i = 0; i< D2DepositConstants.A7_ABREVIATE_KEYS.length; i+=5){
+			D2DepositFooterKey[] d2 = new D2DepositFooterKey[]{
+					D2DepositConstants.A7_ABREVIATE_KEYS[i],
+					D2DepositConstants.A7_ABREVIATE_KEYS[i+1],
+					D2DepositConstants.A7_ABREVIATE_KEYS[i+2],
+					D2DepositConstants.A7_ABREVIATE_KEYS[i+3],
+					D2DepositConstants.A7_ABREVIATE_KEYS[i+4]
+			};
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			for (Integer j = 0; j < d2.length ;j++) {
+				String text = getD2Deposit().getMap().get(d2[j].getCode());
+				macell(text, j*2, (j*2)+1);
+			}
+		}
 	}
 	
 	public void IP(){
-		// TODO ****************************************************************
+		addSheet("Instancia de Presentación");
+		header(5);
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		idacell("SOLICITUD DE PRESENTACIÓN EN EL REGISTRO MERCANTIL DE " + getD2Deposit().getMap().get(D2DepositFooterKey.PR8081001.getCode()), 0, 7);
+		
+		row = sheet.createRow(rowCount++);
+		ssHeader("IDENTIFICACIÓN DE LA ENTIDAD QUE PRESENTA LAS CUENTAS A DEPÓSITO", 5);
+		row = sheet.createRow(rowCount++);
+		
+		cellCount = 0;
+		idacell("Denominación de la entidad", 0, 2);
+		idacell("", 3, 4);
+		idacell("N.I.F.", 5, 5);
+		idacell("", 6, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		idacell("Datos Registrales", 0, 2);
+		idacell("", 3, 4);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		idacell("Tomo", 0, 1);
+		idacell("", 2, 3);
+		idacell("Folio", 4, 5);
+		idacell("", 6, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;		
+		idacell("Nº Hoja registral", 0, 1);
+		idacell("", 2, 3);
+		idacell("Fecha de cierre ejercicio social", 4, 5);
+		idacell("", 6, 7);
+
+		row = sheet.createRow(rowCount++);
+		ssHeader("IDENTIFICACIÓN DE LOS DOCUMENTOS CONTABLES CUYO DEPÓSITO SE SOLICITA", 5);
+
+		row = sheet.createRow(rowCount++);
+		Double x = (row.getHeight() * 2) / 1.5;
+		row.setHeight(x.shortValue());
+		cellCount = 0;
+		idacell("Balance", 0, 0);
+		idacell("Pérdidas y Ganancias", 1, 2);
+		idacell("Memoria", 3, 3);
+		idacell("Estado cambios patrimonio neto", 4, 5);
+		idacell("Estado de Flujos de efectivo", 6, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		idacell("- Normal", 0, 0);
+		idacell("- Normal", 1, 2);
+		idacell("- Normal", 3, 3);
+		idacell("- Normal", 4, 5);
+		idacell("- Normal", 6, 7);
+
+		Boolean b = d2Deposit.getType().equalsIgnoreCase("PYMES");
+
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		String s = "-";
+		if(!b) s = TIC;
+		idacell(s + " Abreviado", 0, 0);
+		idacell(s + " Abreviado", 1, 2);
+		idacell(s + " Abreviado", 3, 3);
+		idacell(s + " Abreviado", 4, 5);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		if(b) s = TIC;
+		idacell(s + " PYME", 0, 0);
+		idacell(s + " PYME", 1, 2);
+		idacell(s + " PYME", 3, 3);
+		idacell(s + " PYME", 4, 5);
+		
+		row = sheet.createRow(rowCount++);
+		row.setHeight(x.shortValue());
+		cellCount = 0;
+		String a1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080800.getCode());
+		String b1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080819.getCode());
+		String c1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080807.getCode());
+		String d1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080817.getCode());
+		idacell(getBoolText(a1) + " Hoja de Identificación de la sociedad", 0, 1);
+		idacell(getBoolText(b1) + " Declaración medioambiental", 2, 3);
+		idacell(getBoolText(c1) + " Informe de gestion", 4, 5);
+		idacell(getBoolText(d1) + " Informe de Auditoría", 6, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		a1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080809.getCode());
+		b1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080823.getCode());
+		c1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080821.getCode());
+		d1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8080811.getCode());
+		idacell(getBoolText(a1) + " Modelo de autocartera", 0, 1);
+		idacell(getBoolText(b1) + " Anuncios de convocatoria", 2, 3);
+		idacell(getBoolText(c1) + " Certificado SICAV", 4, 5);
+		idacell(getBoolText(d1) + " Certificación acuerdo", 6, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		idacell("- Otros Documentos", 0, 1);
+		idacell("Nº ", 2, 3);
+	
+		row = sheet.createRow(rowCount++);
+		ssHeader("IDENTIFICACIÓN DEL PRESENTANTE QUE HACE LA SOLICITUD", 5);
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		a1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081201.getCode());
+		b1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081202.getCode());
+		idacell("Nombre y Apellidos", 0, 1);
+		idacell(a1, 2, 3);
+		idacell("DNI", 4, 5);
+		idacell(b1, 6, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		a1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081203.getCode());
+		b1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081205.getCode());
+		idacell("Domicilio", 0, 1);
+		idacell(a1, 2, 3);
+		idacell("Cod. Postal", 4, 5);
+		idacell(b1, 6, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		a1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081204.getCode());
+		b1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081206.getCode());
+		idacell("Ciudad", 0, 1);
+		idacell(a1, 2, 3);
+		idacell("Provincia", 4, 5);
+		idacell(b1, 6, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		a1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081208.getCode());
+		b1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081209.getCode());
+		idacell("Teléfono", 0, 1);
+		idacell(a1, 2, 3);
+		idacell("Correo electronico", 4, 5);
+		idacell(b1, 6, 7);
+		
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		a1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081207.getCode());
+		idacell("Fax", 0, 1);
+		idacell(a1, 2, 3);
 	}
 	
 	public void CHD(){
-		// TODO ****************************************************************
+		addSheet("Certificación de la huella digital");
+		header(5);
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		
+		for (int i = 0; i < row.getLastCellNum(); i++) {
+			sheet.autoSizeColumn(i);
+		}
+
+		CellUtil.createCell(row, cellCount, "Nombre de las personas que expiden la certificación", headerCellStyle);
+		sheet.setColumnWidth(cellCount++, 8 * 256);
+		sheet.setColumnWidth(cellCount++, 40 * 256);
+		sheet.setColumnWidth(cellCount++, 4 * 256);
+		sheet.setColumnWidth(cellCount++, 10 * 256);
+		sheet.setColumnWidth(cellCount++, 4 * 256);
+		sheet.setColumnWidth(cellCount++, 10 * 256);
+		sheet.setColumnWidth(cellCount++, 4 * 256);
+		sheet.setColumnWidth(cellCount++, 10 * 256);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		
+
+		D2DepositFooterKey[] keys = D2DepositConstants.H_ABREVIATE_KEYS;
+		for (D2DepositFooterKey d2DepositFooterKey : keys) {
+			String text = getD2Deposit().getMap().get(d2DepositFooterKey.getCode());
+			row = sheet.createRow(rowCount++);
+			row.setRowStyle(rowStyle);
+			cellCount = 0;
+			Cell cell = row.createCell(cellCount++);
+			CellStyle style = workbook.createCellStyle();
+			style.setWrapText(true);
+			style.setFont(defaulFont );
+			style.setBorderBottom(CellStyle.BORDER_THIN);
+			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
+			style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+			cell.setCellStyle(style);
+			cell.setCellValue(text != null ? text : "");
+			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+
+		}
 	}
 	
 	protected abstract String getTitle();
@@ -1452,7 +2058,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		this.d2Deposit = d2Deposit;
 	}
 
-	
 	private String getDescription(String desc) {
 		if(desc.contains("@")){
 			Integer pos = desc.indexOf("@");
@@ -1464,7 +2069,12 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			Integer pos = desc.indexOf("#");
 			return desc.substring(0, pos) + (getD2Deposit().getYear()-1) + desc.substring(pos+1);
 
-		}else return desc;
-		
+		}else return desc;	
+	}
+	
+	private String getBoolText(String a) {
+		if(a != null && a.equals("1"))
+			return TIC;
+		else return "-";
 	}
 }
