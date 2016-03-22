@@ -1259,11 +1259,11 @@ public class FANWriter implements Serializable {
 		SalaryData workedHoursData = SEPEUtils.getInstance().getSalaryDataMap(salary, salary.getStartDate(), salary.getEndDate()).get(ContextVariable.WORKED_HOURS.getName());
 		String workedHours = workedHoursData!=null && NumberUtils.isNumber(workedHoursData.getExpression())?workedHoursData.getExpression():null;
 		Double dayHours = null;
-		if(workedHours!=null){
+		if(workedHours!=null && NumberUtils.isNumber(workedHours)){
 			dayHours = Double.parseDouble(workedHours)/salary.getTimeUnits();
 		} else {
 			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
-			dayHours = (Double.parseDouble(weekHours)/5);
+			dayHours = (weekHours!=null && NumberUtils.isNumber(weekHours))?(Double.parseDouble(weekHours)/5):0;
 		}
 		return dayHours;
 	}
