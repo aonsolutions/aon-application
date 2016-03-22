@@ -783,11 +783,25 @@ public class CretaServlet extends HttpServlet
 		private static String getDescription(Dato dato) {
 			switch (dato.getCodigo()) {
 			case "02":
-				return "El Número de Horas Complementarias";
+				return "El Número de Horas Complementarias (horas 02) ";
+			case "03":
+				return "Número de horas de formación teórica presencial (horas 03)";
+			case "04":
+				return "Número de horas de formación teórica a distancia (horas 04)";
+			case "06":
+				return "Número de horas tutoría (horas 06)";
 			case "501":
-				return "La Base de Horas Extras Fuerza Mayor";
+				return "La Base de Horas Extras Fuerza Mayor (concepto 501)";
 			case "502":
-				return "La Base de Otras Horas Extras";
+				return "La Base de Otras Horas Extras  (concepto 502)";
+			case "737":
+				return "Bonificación tutoría (concepto 737)";
+			case "563":
+				return "Compensación IT contingencias comunes (concepto 563)";
+			case "663":
+				return "Compensación IT AT y EP (concepto 663)";
+			case "763":
+				return "Bonificaciones de formación continua IT AT y EP (concepto 763)";
 			}
 
 			switch (dato.getTipoDato()) {

@@ -399,7 +399,9 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			cretaResults.addMessages(new JsEvent[]{});
 			resultsPanel.setWidget(cretaResults);
 
-			if (result.getErrors().length > 0 || result.getWarnings().length > 0)
+			if (result.getErrors().length > 0 || 
+				result.getWarnings().length > 0 || 
+				result.getUnknown().length > 0)
 				showResultsPanel();
 
 			mergeEditor.autoRefresh();
