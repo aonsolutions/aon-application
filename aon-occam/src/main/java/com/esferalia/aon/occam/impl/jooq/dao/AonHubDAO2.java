@@ -27,7 +27,6 @@ import com.esferalia.aon.jooq.tables.records.NoticeTagRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
-import com.esferalia.aon.occam.api.model.office.NoticeComment;
 import com.esferalia.aon.occam.api.model.office.NoticeFilter;
 import com.esferalia.aon.occam.api.model.office.NoticeFilterImpl;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -197,14 +196,18 @@ public class AonHubDAO2 {
 		return notice;
 	}
 	
-	public static long getSelectedCount(AONContext ctx, NoticeFilter filter) {
+	public static int getSelectedCount(AONContext ctx, NoticeFilter filter) {
 		// @formatter:off
 		return ctx.getDslContext()
-				.selectCount()
+				.select(NOTICE.fields())
+				.select(USER.fields())
 				.from(NOTICE)
-				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
-						.and(NOTICE.NOTICE_.isNull())
-						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value())))
+				.join(USER)
+				.on(NOTICE.SENDER.eq(USER.ID))
+				.where(NOTICE.DOMAIN.eq(ctx.getDomainId()))
+				.and(NOTICE.NOTICE_.isNull())
+				.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
+				.orderBy(NOTICE.DATE.desc())
 				.fetch()
 				.stream()
 				.map(new FullNoticeFiller())
@@ -213,9 +216,8 @@ public class AonHubDAO2 {
 				.filter(notice -> new NoticeFilterImpl().evalHeadParams(filter,
 						notice))
 				.filter(notice -> new NoticeFilterImpl().test(filter, notice))
-				.skip(filter.getOffset())
-				.peek(notice -> fillOfficeTags(ctx, notice))
-				.count();
+				.collect(Collectors.toCollection(LinkedList::new))
+				.size();
 		// @formatter:on
 	}
 

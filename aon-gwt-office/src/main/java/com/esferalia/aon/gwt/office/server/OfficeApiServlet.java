@@ -359,10 +359,11 @@ public class OfficeApiServlet extends HttpServlet {
 				
 				filter.setOffset(Integer.parseInt(req.getParameter("offset")));
 				
+				int count = AON.getSelectedCount(domainId, domainName, AonServletUtils.getLoggedUser(), filter);
 				List<Notice> notices = AON.getNotices(domainId, domainName, AonServletUtils.getLoggedUser(), filter);
-				
+
 				NoticeContainer container = new NoticeContainer();
-				container.setCount(notices.size());
+				container.setCount(count);
 				container.setNotices(notices);
 				
 				pw.append('{');

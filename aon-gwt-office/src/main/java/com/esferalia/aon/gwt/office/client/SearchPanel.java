@@ -89,9 +89,7 @@ public class SearchPanel extends Composite {
 	private List<Listener> listeners;
 	
 	private Date criteria;
-	private String sender;
 	
-	private List<User> users;
 	private List<DefaultAonTagIssueSelected> typeTagList;
 	private List<DefaultAonTagIssueSelected> priorityTagList;
 	private List<DefaultAonTagIssueSelected> noticeTagList;
@@ -156,8 +154,7 @@ public class SearchPanel extends Composite {
 		registries.add(registry.getName());
 	}
 	
-	public void addUserList(List<User> users) {
-		this.users = users;
+	public void addUserList(List<User> users) {		
 		initUserButton(users);
 	}
 

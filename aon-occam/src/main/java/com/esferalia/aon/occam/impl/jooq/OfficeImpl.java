@@ -5,7 +5,6 @@ import java.util.List;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IOffice;
 import com.esferalia.aon.occam.api.model.office.Notice;
-import com.esferalia.aon.occam.api.model.office.NoticeContainer;
 import com.esferalia.aon.occam.api.model.office.NoticeFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -27,13 +26,11 @@ public class OfficeImpl implements IOffice {
 	public List<User> getUsers(AONContext ctx) {		
 		Integer parentID = DomainDAO.getParentDomain(ctx);
 		return AonHubDAO2.fillUsersFromNotices(ctx, parentID);
-//		return AonHubDAO.getUserFromNotices(ctx, parentID);
 	}
 	
 	@Override
 	public int getSelectedCount(AONContext ctx, NoticeFilter filter) {
-		
-		return 0;
+		return AonHubDAO2.getSelectedCount(ctx, filter);
 	}
 	
 	@Override
@@ -76,7 +73,7 @@ public class OfficeImpl implements IOffice {
 
 	@Override
 	public Notice addNewNotice(AONContext ctx, Notice notice) throws Exception {
-		return AonHubDAO.addNewNotice(ctx, notice);
+		return AonHubDAO2.insertNotice(ctx, notice);
 	}
 
 	@Override
