@@ -503,11 +503,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 	
 	private void addUser2List(JsUser jsUser) {
-		this.user = new User();
-		this.user.setId(jsUser.getId());
-		this.user.setName(URL.decode(jsUser.getName()));
-		this.user.setLogin(URL.decode(jsUser.getLogin()));
-		this.users.add(user);
+		User user = new User();
+		user.setId(jsUser.getId());
+		user.setName(URL.decode(jsUser.getName()));
+		user.setLogin(URL.decode(jsUser.getLogin()));
+		users.add(user);
 
 	}
 
