@@ -122,6 +122,11 @@ public class CCAAPrintPdf extends HttpServlet {
 
 		} catch (Throwable e) {
 			throw new ServletException(e);
+		} finally {
+			// TODO REMOVE AND CLOSE EVERYTHING
+			if (inputFile != null && inputFile.canWrite()) inputFile.delete();
+			if (outputFile != null && outputFile.canWrite()) outputFile.delete();
+			if (officeManager != null) officeManager.stop();
 		}
 	}
 
