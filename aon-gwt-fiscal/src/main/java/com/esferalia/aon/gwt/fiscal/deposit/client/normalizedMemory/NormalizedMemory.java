@@ -62,6 +62,7 @@ public class NormalizedMemory extends ResizeComposite {
 	@UiField SimplePanel headerPanel;
 	@UiField Button importAllButton;
 	@UiField Button downloadButton;
+	@UiField Button downloadButtonPdf;
 	@UiField Anchor download;							
 	@UiField FlowPanel pagesPanel;
 	
@@ -100,6 +101,8 @@ public class NormalizedMemory extends ResizeComposite {
 		cancelButton = new Button();
 		importAllButton = new Button();
 		downloadButton = new Button();
+		downloadButtonPdf = new Button();
+		
 		enterprise = ddtn.getD2Deposit2014().getEnterprise();
 		year = ddtn.getD2Deposit2014().getYear();
 		this.textMode = false;
@@ -115,7 +118,7 @@ public class NormalizedMemory extends ResizeComposite {
 		deleteButton.setVisible(true);
 		importAllButton.setVisible(true);
 		downloadButton.setVisible(true);
-		downloadButton.setVisible(true);
+		downloadButtonPdf.setVisible(true);
 		importButton.setVisible(false);
 		importTextButton.setVisible(false);
 		d2Deposit2014 = D2DepositTreeObjectToD2Deposit2014(ddtn.getD2Deposit2014());
@@ -154,7 +157,8 @@ public class NormalizedMemory extends ResizeComposite {
 		cancelButton = new Button();
 		importAllButton = new Button();
 		downloadButton = new Button();
-
+		downloadButtonPdf = new Button();
+		
 		this.enterprise = enterprise;
 		this.digitalDepositFreeTextTreeNode = ddtn;
 		//this.page = page;
@@ -173,6 +177,7 @@ public class NormalizedMemory extends ResizeComposite {
 		generateFileButton.setVisible(false);
 		importAllButton.setVisible(false);
 		downloadButton.setVisible(false);
+		downloadButtonPdf.setVisible(false);
 		deleteButton.setVisible(true);
 		inma.isModify(mt.getId().toString(), year, new AsyncCallback<Boolean>() {
 			
@@ -206,6 +211,7 @@ public class NormalizedMemory extends ResizeComposite {
 		generateFileButton = new Button();
 		importAllButton = new Button();
 		downloadButton = new Button();
+		downloadButtonPdf = new Button();
 		digitalDepositTreeNode = ddtn;
 		this.textMode = false;
 		pagesPanel = new FlowPanel();
@@ -219,6 +225,7 @@ public class NormalizedMemory extends ResizeComposite {
 		importTextButton.setVisible(false);
 		importAllButton.setVisible(false);
 		downloadButton.setVisible(false);
+		downloadButtonPdf.setVisible(false);
 		if(type){
 			newButton.setVisible(true);
 			saveButton.setVisible(false);
@@ -250,6 +257,7 @@ public class NormalizedMemory extends ResizeComposite {
 		digitalDepositFreeTextTreeNode = ddtn;
 		importAllButton = new Button();
 		downloadButton = new Button();
+		downloadButtonPdf = new Button();
 		this.textMode = true;
 		
 		enterprise = e;
@@ -262,6 +270,7 @@ public class NormalizedMemory extends ResizeComposite {
 		importTextButton.setVisible(false);
 		importAllButton.setVisible(false);
 		downloadButton.setVisible(false);
+		downloadButtonPdf.setVisible(false);
 		if(type){
 			importButton.setVisible(false);
 			importTextButton.setVisible(false);
@@ -349,6 +358,7 @@ public class NormalizedMemory extends ResizeComposite {
 									generateFileButton.setVisible(true);		
 									importAllButton.setVisible(true);
 									downloadButton.setVisible(true);
+									downloadButtonPdf.setVisible(true);
 									deposit.getNewContextMenu().removeDeposit(year);
 								}
 					});
@@ -991,6 +1001,7 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	// SERVLETS GWT FISCAL
 	private static final String CCAA_PRINT = "/aon_gwt_deposit/CCAAPrint";
+	private static final String CCAA_PRINT_PDF = "/aon_gwt_deposit/CCAAPrintPdf";
 
 	private FormPanel diskForm;
 	private Hidden schemaIdHidden;
@@ -1023,8 +1034,21 @@ public class NormalizedMemory extends ResizeComposite {
 	}
 	
 	@UiHandler("downloadButton")
-	void down(ClickEvent event) {
+	void downExcel(ClickEvent event) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + CCAA_PRINT);
+		schemaIdHidden.setValue(String.valueOf(1));
+		domainIdHidden.setValue(Integer.toString(enterprise.getDomain()));
+		domainNameHidden.setValue("novus.aibanez.net");
+		cifHidden.setValue(enterprise.getDocument());
+		razonSocialHidden.setValue(enterprise.getName());
+		yearHidden.setValue(String.valueOf(year));
+		typeHidden.setValue(depositType.getText());
+		diskForm.submit();
+	}
+	
+	@UiHandler("downloadButtonPdf")
+	void downPdf(ClickEvent event) {
+		diskForm.setAction(GWT.getHostPageBaseURL() + CCAA_PRINT_PDF);
 		schemaIdHidden.setValue(String.valueOf(1));
 		domainIdHidden.setValue(Integer.toString(enterprise.getDomain()));
 		domainNameHidden.setValue("novus.aibanez.net");

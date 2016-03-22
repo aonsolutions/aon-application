@@ -938,8 +938,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		generalHeader(pageMaxNumber, 6, new String[]{"","Resultados del ejercicio", "Dividendo a cuenta",
 				"Otros instrumentos de patrmonio neto", "Ajustes por cambios de valor", "Subvenciones, donaciones y legados recibidos",
 				"Total"}, keys, 7, true, 3);
-
-		// TODO ****************************************************************
 	}
 	
 	public void DM() {
@@ -962,7 +960,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				+ " acuerdo a la norma de elaboración '4º Cuentas anuales abreviadas'"
 				+ " en su punto 5, de la tercera parte del Plan General de Contabilidad "
 				+ "(Real Decreto 1514/2007 de 16 de Noviembre).";
-		//String tic = "&#10004;";
 		String tic = TIC;
 		
 		row = sheet.createRow(rowCount++);
