@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.model.product;
+package com.esferalia.aon.occam.server.product;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.esferalia.aon.occam.api.model.product.EcommerceProduct;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 public class XMLUtils {

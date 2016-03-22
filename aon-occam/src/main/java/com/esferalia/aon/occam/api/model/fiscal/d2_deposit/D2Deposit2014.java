@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api.model.fiscal.d2_deposit;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Enterprise;
-import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
 
 public class D2Deposit2014 {
 	
@@ -22,11 +21,11 @@ public class D2Deposit2014 {
 	
 	}
 	
-	public D2Deposit2014(Esquema schema, Enterprise enterprise) {
+	public D2Deposit2014(Enterprise enterprise) {
 		this.enterprise = enterprise;
 	}
 	
-	public D2Deposit2014(Esquema schema, String domainName, Enterprise enterprise) {
+	public D2Deposit2014(String domainName, Enterprise enterprise) {
 		this.domain = domainName;
 		this.enterprise = enterprise;
 	}
