@@ -1,10 +1,14 @@
 package com.esferalia.aon.gwt.fiscal.client.mod131;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.Epigraph2016Panel;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -24,12 +28,15 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Model131Activity extends DockLayoutPanel {
 	
 	final Label epigraph = new Label();
 	final Label epigraphLabel = new Label();
+	
+	@UiField TabLayoutPanel tab;
 	
 	@UiField CheckBox dis;
 	@UiField DoubleBox com;
@@ -89,6 +96,7 @@ public class Model131Activity extends DockLayoutPanel {
 	@UiField DoubleBox factor6;
 	@UiField DoubleBox result6;
 
+	@UiField DoubleBox rnp0;
 	@UiField DoubleBox rnp;
 	@UiField DoubleBox iem;
 	@UiField DoubleBox iin;
@@ -105,11 +113,14 @@ public class Model131Activity extends DockLayoutPanel {
 	@UiField DoubleBox net;
 	@UiField DoubleBox por;
 	@UiField DoubleBox res;
+	
+	final Epigraph2016Panel epigraphPanel = new Epigraph2016Panel(new Epigraph2016PanelCallback());
 
 	public static interface IMod131ActivityCallback {
 		Mod131Activity getActivity();
 		void onAccept();
 		void onCancel();
+		void onRemove();
 	}
 	
 	
@@ -154,7 +165,10 @@ public class Model131Activity extends DockLayoutPanel {
 		populateActivity(this.callback.getActivity());
 		addNorth(getHeaderPanel(), 80);
 		add(ui);
-		onResize();		
+		
+		tab.selectTab(2);
+		
+		onResize();
 	}
 
 	private Widget getHeaderPanel() {
@@ -169,8 +183,9 @@ public class Model131Activity extends DockLayoutPanel {
 		FlowPanel titlePanel = new FlowPanel();
 		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
 		toolbar.setWidget(0, 0, titlePanel);
+		toolbar.setWidget(0, 0, new Label(AON.MSG.activity()));
 		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.setWidget(0, 1, new Label());
+		toolbar.setWidget(0, 1, new Label(AON.MSG.additionalData()));
 		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
@@ -189,7 +204,7 @@ public class Model131Activity extends DockLayoutPanel {
 		});
 		buttonContainer.add(accept);
 		final Button cancel = new Button();
-		cancel.setText(AON.MSG.saveAction());
+		cancel.setText(AON.MSG.cancelAction());
 		cancel.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		cancel.addStyleName(AON.AON_CSS.aonIconCancel());
 		cancel.addClickHandler(new ClickHandler() {
@@ -200,6 +215,30 @@ public class Model131Activity extends DockLayoutPanel {
 			}
 		});
 		buttonContainer.add(cancel);
+		
+		final Button remove = new Button();
+		remove.setText(AON.MSG.deleteAction());
+		remove.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		remove.addStyleName(AON.AON_CSS.aonIconDelete());
+		remove.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				ConfirmDialog dialog = new ConfirmDialog();
+				dialog.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
+					@Override
+					public void onCancel() {
+					}
+					
+					@Override
+					public void onAccept() {
+						callback.onRemove();
+					}
+				});
+			}
+		});
+		buttonContainer.add(remove);
+		
 		toolbarPanel.add(toolbar);
 		headerPanel.add(toolbarPanel);
 		
@@ -213,47 +252,81 @@ public class Model131Activity extends DockLayoutPanel {
 		epigraph.setStyleName(AON.AON_CSS.aonFontBig());
 		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonWidth80());
 		tab.setWidget(0, 0, epigraph);
-//		Button showEpigraphs = new Button();
-//		showEpigraphs.setStyleName(AON.AON_CSS.aonIconLoupe());
-//		showEpigraphs.addStyleName(AON.AON_CSS.aonBorderNone());
-//		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonWidth20());
-//		tab.setWidget(0, 1, showEpigraphs);
+		Button showEpigraphs = new Button();
+		showEpigraphs.setStyleName(AON.AON_CSS.aonIconLoupe());
+		showEpigraphs.addStyleName(AON.AON_CSS.aonBorderNone());
+		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonWidth20());
+		tab.setWidget(0, 1, showEpigraphs);
 		
 		epigraphLabel.setStyleName(AON.AON_CSS.aonFontBig());
 		epigraphLabel.setStyleName(AON.AON_CSS.aonNowrap());
-		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonWidthAuto());
-		tab.setWidget(0, 1, epigraphLabel);
+		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonWidthAuto());
+		tab.setWidget(0, 2, epigraphLabel);
 		
-//		final Epigraph2016Panel epigraphPanel = new Epigraph2016Panel( new Epigraph2016Panel.SelectionCallBack() {
-//			@Override
-//			public void onSelect(Epigraph selected) {
-//				epigraph.setText(selected.getEpigraph());
-//				epigraphLabel.setText(AonStringUtils.abbreviate(selected.getDescription(),100));
-//				epigraphLabel.setTitle(selected.getDescription());
-//			}
-//			@Override
-//			public void onClose() {
-//				// Nothing
-//			}
-//		});
-//
-//		showEpigraphs.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				epigraphPanel.onShow();
-//				
-//			}
-//		});
+		showEpigraphs.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				epigraphPanel.onShow();
+				
+			}
+		});
 		flowPanel.add(tab);
 		headerPanel.add(flowPanel);
 		return headerPanel;
+	}
+	
+	private class Epigraph2016PanelCallback implements Epigraph2016Panel.SelectionCallBack {
+		@Override
+		public void onSelect(final Epigraph selected) {
+			if (AonStringUtils.isNotBlank( callback.getActivity().getEpigraph())) {
+				ConfirmDialog dialog = new ConfirmDialog();
+				dialog.confirm(AON.MSG.newEpigrapSelected(), new ConfirmDialogCallback() {
+					
+					@Override
+					public void onCancel() {}
+					
+					@Override
+					public void onAccept() {
+						accept(selected);
+					}
+				});
+			} else {
+				accept(selected);
+			}
+		}
+		
+		@Override
+		public void onClose() {}
+		
+		private void accept(final Epigraph selected) {
+			Model131Activity.this.tab.setVisible(true);
+			callback.getActivity().initialize();
+			callback.getActivity().setEpi(selected);
+			callback.getActivity().setEpigraph(selected.getEpigraph());
+			callback.getActivity().setDescription(selected.getDescription());
+			callback.getActivity().setMaxImport(selected.getLimExceso());
+			for (Module mod : selected.getIRPFModules()) {
+				Mod131ActivityModule m = new Mod131ActivityModule();
+				m.setDescription(mod.getKey().getDescription());
+				m.setValue(0.0);
+				m.setUnit(mod.getUnit());
+				m.setFactor(mod.getAmount());
+				m.setResult(0.0);
+				m.setSalariedStaff(mod.isSalariedStaff());
+				m.setNoSalariedStaff(mod.isNoSalariedStaff());
+				callback.getActivity().getModules().add(m);
+			}
+			calculate();
+		}
 	}
 	
 	private void populateActivity(Mod131Activity act) {
 		epigraph.setText(act.getEpigraph());
 		epigraphLabel.setText(AonStringUtils.abbreviate(act.getDescription(),100));
 		epigraphLabel.setTitle(act.getDescription());
+		
+		Model131Activity.this.tab.setVisible(AonStringUtils.isNotBlank( act.getEpigraph()) );
 		
 		dis.setValue(act.isDis());
 		com.setValue(act.getCom());
@@ -328,6 +401,7 @@ public class Model131Activity extends DockLayoutPanel {
 		factor6.setValue(mod.getFactor());
 		result6.setValue(mod.getResult());
 		
+		rnp0.setValue(act.getRnp());
 		rnp.setValue(act.getRnp());
 		iem.setValue(act.getIem());
 		iin.setValue(act.getIin());
@@ -345,7 +419,7 @@ public class Model131Activity extends DockLayoutPanel {
 		por.setValue(act.getPor());
 		res.setValue(act.getRes());
 		
-		enableFields();	
+		enableFields();
 	}
 	
 	@UiHandler({"dis","ceu","loc","cap","tns","tss"})
@@ -402,18 +476,16 @@ public class Model131Activity extends DockLayoutPanel {
 			tns.setEnabled(false);
 			tss.setEnabled(false);
 			mun.setEnabled(false);
-			tns.setEnabled(false);
-			tns.setEnabled(false);
 		} else if (this.callback.getActivity().getEpi() == Epigraph.E_722A 
 			|| this.callback.getActivity().getEpi() == Epigraph.E_722B
 			|| this.callback.getActivity().getEpi() == Epigraph.E_757
 			) {
 			bat.setEnabled(false);
-			tns.setEnabled(true);
+			tss.setEnabled(true);
 			tns.setEnabled(true);
 		} else {
 			bat.setEnabled(false);
-			tns.setEnabled(false);
+			tss.setEnabled(false);
 			tns.setEnabled(false);
 		}
 		cap.setEnabled( this.callback.getActivity().getVeh() > 0 );
@@ -425,6 +497,9 @@ public class Model131Activity extends DockLayoutPanel {
 					
 					@Override
 					public void onSuccess(Mod131Activity result) {
+						for (int i = 0 ; i < callback.getActivity().getModules().size(); i++) {
+							callback.getActivity().getModules().get(i).setResult(result.getModules().get(i).getResult());	
+						}
 						callback.getActivity().setPrc(result.getPrc());
 						callback.getActivity().setRnp(result.getRnp());
 						callback.getActivity().setIem(result.getIem());

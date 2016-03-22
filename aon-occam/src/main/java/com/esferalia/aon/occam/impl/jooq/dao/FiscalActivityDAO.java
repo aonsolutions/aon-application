@@ -15,14 +15,13 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKey;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalActivityInfoKeyType;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
-import com.esferalia.aon.occam.server.fiscal.calc.Aeat2015ModuleCalculator;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 
 public class FiscalActivityDAO {
 	
 	public static FiscalActivity calculate(AONContext ctx,FiscalActivity fa) {
-		return Aeat2015ModuleCalculator.calculate(ctx, fa);
+		return fa;
 	}
 	
 	private static void fillFiscalActivityInfo(AONContext ctx,FiscalActivity fa) {

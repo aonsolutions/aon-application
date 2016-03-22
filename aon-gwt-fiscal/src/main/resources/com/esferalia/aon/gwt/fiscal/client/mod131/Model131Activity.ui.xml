@@ -9,7 +9,7 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
 		
-	<g:TabLayoutPanel barHeight="26" barUnit="PX" width="100%">
+	<g:TabLayoutPanel ui:field="tab" barHeight="26" barUnit="PX" width="100%">
 		<g:tab>
 			<g:customHeader>
 				<g:Label
@@ -301,6 +301,14 @@
 								</td>
 								<td class="{aonResources.css.aonTextRight}">
 									<aon:DoubleBox ui:field="result6" maxLength="10" visibleLength="6" enabled="false"/>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="4">
+									<g:Label text="{msg.irpfActivityRnp}"/>
+								</td>
+								<td class="{aonResources.css.aonTextRight}">
+									<aon:DoubleBox ui:field="rnp0" maxLength="6" visibleLength="6" enabled="false"/>
 								</td>
 							</tr>
 						</tbody>

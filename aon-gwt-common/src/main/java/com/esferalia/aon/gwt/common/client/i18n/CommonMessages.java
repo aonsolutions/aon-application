@@ -355,6 +355,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Si continua se borrar\u00E1 la declaraci\u00F3n completa.\n \u00BFContinuar con el borrado?")
 	String confirmDeclarationDeleteAction();
 
+	@DefaultMessage("Si continua se borrar\u00E1n los todos los datos de la actividad.\n \u00BFContinuar con el borrado?")
+	String newEpigrapSelected();
+
 	@DefaultMessage("Confirme si desea cancelar la confecci\u00F3n de la declaraci\u00F3n.")
 	String confirmDeclarationCancelAction();
 

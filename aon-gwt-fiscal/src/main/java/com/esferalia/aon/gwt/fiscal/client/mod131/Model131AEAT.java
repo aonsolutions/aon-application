@@ -298,15 +298,7 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 	
 	protected void paintParticularyRow(final IFiscalModelCallback<Mod131> callback, IModelScript<Mod131Key> script) {
 		if (script.getKeys() == null) return;
-		if (script.getKeys()[0] == Mod131Key.AC1_EPI
-		 || script.getKeys()[0] == Mod131Key.AC2_EPI
-		 || script.getKeys()[0] == Mod131Key.AC3_EPI
-		 || script.getKeys()[0] == Mod131Key.AC4_EPI
-		 || script.getKeys()[0] == Mod131Key.AC5_EPI) {
-			
-		} else if (script.getKeys()[0] == Mod131Key.P1) {
-			paintRowP01(callback,script);
-		} else if (script.getKeys()[0] == Mod131Key.P2) {
+		if (script.getKeys()[0] == Mod131Key.P2) {
 			paintRowP02(callback,script);
 		}
 	}
@@ -338,20 +330,32 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 					@Override
 					public void onCancel() {
 						dialog.hide();
-						table.redraw();
 						calculateAndRefresh(callback);
+						table.redraw();
 					}
 					
 					@Override
 					public void onAccept() {
 						dialog.hide();
-						table.redraw();
 						calculateAndRefresh(callback);
+						table.redraw();
 					}
 					
 					@Override
 					public Mod131Activity getActivity() {
 						return model.getLastSelectedObject();
+					}
+
+					@Override
+					public void onRemove() {
+						dialog.hide();
+						for (int i = 0; i < callback.getFiscalModel().getActivities().size() ; i++ ) {
+							if (callback.getFiscalModel().getActivities().get(i) == model.getLastSelectedObject()) {
+								callback.getFiscalModel().getActivities().get(i).initialize();
+							}
+						}
+						calculateAndRefresh(callback);
+						table.redraw();
 					}
 				};
 				Model131Activity actPanel = new Model131Activity(activityCallback);
@@ -370,18 +374,6 @@ public class Model131AEAT extends SimplePanel implements IMod131Declaration {
 		tableContainer.add( table ) ;
 		getTable().setWidget(row, 0, tableContainer );
 		getTable().getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);
-	}
-
-	private void paintRowP01(final IFiscalModelCallback<Mod131> callback, IModelScript<Mod131Key> script) {
-		int row = getTable().getRowCount();
-		getTable().setWidget(row, 0, new Label(script.getLabel()));
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextRight() );
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingRight() );
-		getTable().getFlexCellFormatter().setColSpan(row, 0, 6);
-		
-		final FiscalModelDetail p1 = callback.getFiscalModel().ensureDetail(Mod131Key.P1);
-		getTable().setWidget(row, 1, new Label( AON.FMT.format(p1.getAmount()) + "%"));
-		getTable().getFlexCellFormatter().setColSpan(row, 1, 2);
 	}
 
 	private void paintRowP02(final IFiscalModelCallback<Mod131> callback, IModelScript<Mod131Key> script) {

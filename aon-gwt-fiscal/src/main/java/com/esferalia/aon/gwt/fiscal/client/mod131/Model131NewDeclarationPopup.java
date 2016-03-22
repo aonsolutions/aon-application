@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client.mod131;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
@@ -46,7 +45,6 @@ public class Model131NewDeclarationPopup extends NewDeclarationPopup<Mod131>{
 		final Label surnameLabel = new Label( AON.MSG.surname());
 		final TextBox surnameBox = new TextBox();
 		surnameBox.setStyleName(AON.AON_CSS.aonInputText());
-		final DoubleBox percentBox = new DoubleBox();
 		final CheckBox regularHome = new CheckBox();
 		
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
@@ -89,25 +87,6 @@ public class Model131NewDeclarationPopup extends NewDeclarationPopup<Mod131>{
 			}
 		});
 		tab.setWidget(row, 1, surnameBox);
-		row++;
-		
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(row, 0, new Label(AON.MSG.partPercent()));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		percentBox.setValue( callback.getFiscalModel().getAmount(Mod131Key.P1));
-		percentBox.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				if (percentBox.getValue() > 100) {
-					percentBox.setValue(100.0);
-				}
-				if (percentBox.getValue() < 0) {
-					percentBox.setValue(0.0);
-				}
-				callback.getFiscalModel().putAmount(Mod131Key.P1,percentBox.getValue());
-			}
-		});
-		tab.setWidget(row, 1, percentBox);
 		row++;
 		
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());

@@ -437,5 +437,28 @@ public class Mod131Activity implements Serializable {
 	public void setIndiceEmpresasPequenaDimensionAplicable(boolean indiceEmpresasPequenaDimensionAplicable) {
 		this.indiceEmpresasPequenaDimensionAplicable = indiceEmpresasPequenaDimensionAplicable;
 	}
+	public void initialize() {
+		this.setEpi(null);
+		this.setEpigraph(null);
+		this.setDescription(null);
+		this.setMaxImport(Double.MAX_VALUE);
+		this.setDis(false);
+		this.setCom(0);			
+		this.setTem(0);
+		this.setNue(0);
+		this.setCeu(false);
+		this.setLoc(false);
+		this.setVeh(0);
+		this.setCap(false);
+		this.setTns(false);
+		this.setTss(false);
+		this.setMun(0);
+		this.setEmp(0);
+		this.setLor(0);
+		this.setBat(0);
+		this.setPrc(0);
+		this.setIin(0);
+		this.setModules(new LinkedList<Mod131ActivityModule>());
+	}
 
 }

@@ -273,7 +273,7 @@ public class FiscalModelDAO {
 				.set(FS_MODEL_DETAIL.DOMAIN, fm.getDomain())
 				.set(FS_MODEL_DETAIL.FS_MODEL, fm.getId())
 				.set(FS_MODEL_DETAIL.TYPE, detail.getType() )
-				.set(FS_MODEL_DETAIL.DESCRIPTION, detail.getDescription() )
+				.set(FS_MODEL_DETAIL.DESCRIPTION, AonStringUtils.abbreviate(detail.getDescription(), FS_MODEL_DETAIL.DESCRIPTION.getDataType().length()))
 				.set(FS_MODEL_DETAIL.ACU_AMOUNT, detail.getAccumulatedAmount()  )
 				.set(FS_MODEL_DETAIL.DEC_AMOUNT, detail.getDeclaredAmount() )
 				.set(FS_MODEL_DETAIL.RES_AMOUNT, detail.getResultAmount() )

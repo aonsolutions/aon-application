@@ -35,4 +35,13 @@ public class Module implements Serializable {
 	public double getAmount() {
 		return amount;
 	}
+	
+	public boolean isSalariedStaff() {
+		return getKey() == FiscalActivityInfoKey.M01
+			|| getKey() == FiscalActivityInfoKey.M15
+			|| getKey() == FiscalActivityInfoKey.M16;
+	}
+	public boolean isNoSalariedStaff() {
+		return getKey() == FiscalActivityInfoKey.M02;
+	}
 }
