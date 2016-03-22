@@ -23,6 +23,12 @@ public enum NoticeStatus implements Serializable {
 	public static boolean isReopen( String name ) {
 		return name != null && name.equals(REOPEN.getValue());
 	}
+	
+	/**
+	 * 
+	 * @param name Nombre de la etiqueta que se desea evaluar
+	 * @return boolan isOpen || isReopen
+	 */
 
 	public static boolean isOpened( String name ) {
 		return name != null && ( isOpen(name) || isReopen(name) );
@@ -31,5 +37,4 @@ public enum NoticeStatus implements Serializable {
 	public static boolean isClosed( String name ) {
 		return name != null && name.equals(CLOSED.getValue());
 	}
-
 }

@@ -43,6 +43,10 @@ public interface IssueSelected {
 	
 	void deleteTag(String name);
 	
+	void setType(String name);
+	
+	void setPriority(String priority);
+	
 	List<DefaultAonTagIssueSelected> getTags();
 	
 	List<DefaultAonIssueComments> getComments();

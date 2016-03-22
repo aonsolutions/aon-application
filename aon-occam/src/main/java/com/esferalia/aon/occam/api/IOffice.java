@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeContainer;
+import com.esferalia.aon.occam.api.model.office.NoticeFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -20,18 +21,10 @@ public interface IOffice {
 	public Notice editNotice(AONContext ctx, Notice notice);
 
 	public Notice changeNoticeStatus(AONContext ctx, Notice notice);
-
-	public NoticeContainer getOpenNotices(AONContext ctx, String since,
-			String sender, int offset, List<String> tags, 
-			String text) throws IllegalArgumentException;
-
-	public NoticeContainer getClosedNotices(AONContext ctx, String since,
-			String sender, int offset, List<String> tags,
-			String text) throws IllegalArgumentException;
-
-	public NoticeContainer getAllIssues(AONContext ctx, String since,
-			String sender, int offset, List<String> tags,
-			String text) throws IllegalArgumentException;
+	
+	public int getSelectedCount(AONContext ctx, NoticeFilter filter);
+	
+	public List<Notice> getNotices(AONContext ctx, NoticeFilter filter);
 
 	public Notice createComment(AONContext ctx, Integer headId, Notice comment)
 			throws IllegalArgumentException;

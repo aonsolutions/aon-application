@@ -38,7 +38,8 @@ public class AonHub {
 	private static String since = null;
 	private static String sender = null;
 	
-	private static String filterTagList = null;	
+	private static String filterTagList = null;
+	private static String filterUserList = null;
 	private static String text;
 	
 	private static int offset = 0;
@@ -81,8 +82,17 @@ public class AonHub {
 		if (filterTag == null) 
 			this.filterTagList = null;
 		else {
-			String aux = makeLabelsString(filterTag);
+			String aux = makeNamesString(filterTag);
 			this.filterTagList = aux;
+		}
+	}
+	
+	public void setFilterUserList(String[] filterUser) {
+		if (filterUser == null)
+			this.filterUserList = null;
+		else {
+			String aux = makeNamesString(filterUser);
+			this.filterUserList = aux;
 		}
 	}
 	
@@ -144,7 +154,8 @@ public class AonHub {
 				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
 				+ "&offset=" + offset
 				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				
-				+ (text != null ? "&text=" + URL.encode(text) : ""), callback);
+				+ (text != null ? "&text=" + URL.encode(text) : "")
+				+ (filterUserList != null ? "&users=" + URL.encode(filterUserList) : ""), callback);
 	}
 
 	public void getClosedIssues(String user, String repo,
@@ -154,7 +165,8 @@ public class AonHub {
 				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
 				+ "&offset=" + offset
 				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				
-				+ (text != null ? "&text=" + URL.encode(text) : ""), callback);
+				+ (text != null ? "&text=" + URL.encode(text) : "")
+				+ (filterUserList != null ? "&users=" + URL.encode(filterUserList) : ""), callback);
 	}
 
 	public void getAllIssues(String user, String repo,
@@ -164,7 +176,8 @@ public class AonHub {
 				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
 				+ "&offset=" + offset
 				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				
-				+ (text != null ? "&text=" + URL.encode(text) : ""), callback);
+				+ (text != null ? "&text=" + URL.encode(text) : "")
+				+ (filterUserList != null ? "&users=" + URL.encode(filterUserList) : ""), callback);
 	}
 
 	public void createIssue(String user, String repo, IssueValue prop,
@@ -447,10 +460,10 @@ public class AonHub {
 		return url;
 	}
 	
-	private static String makeLabelsString(String[] labels) {
+	private static String makeNamesString(String[] names) {
 		StringBuilder sb = new StringBuilder();
-		for (int x = 0; x < labels.length; x++) {
-			sb.append(labels[x]);
+		for (int x = 0; x < names.length; x++) {
+			sb.append(names[x]);
 			sb.append(',');
 		}
 		return sb.toString().substring(0, sb.length() - 1);

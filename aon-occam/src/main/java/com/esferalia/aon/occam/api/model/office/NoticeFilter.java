@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.api.model.office;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class NoticeFilter implements Serializable {
@@ -9,19 +11,47 @@ public class NoticeFilter implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private static SimpleDateFormat sdf = new SimpleDateFormat(
+			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 	
 	private boolean opened;
 	private boolean closed;
 	private boolean all;
 	
 	private Date since;
-	private String sender;
+	private String sinceAsString;
+	private String company;
 	private String[] tags;
-	private String text;
+	private String subject;
+	private String[] users;
 	
 	private int offset;
 	
-	public void setOpened(boolean opened) {
+	/**
+	 * 
+	 * @param state open || closed || all
+	 */
+	
+	public void setState(String state) {
+		
+		switch (state) {
+		case "open":
+			setOpened(true);
+			break;
+		case "closed":
+			setClosed(true);
+			break;
+		case "all":
+			setAll(true);
+			break;
+		default:
+			setAll(true);
+			break;
+		}
+	}
+	
+	private void setOpened(boolean opened) {
 		this.opened = opened;
 	}
 	
@@ -29,7 +59,7 @@ public class NoticeFilter implements Serializable {
 		return this.opened;
 	}
 	
-	public void setClosed(boolean closed) {
+	private void setClosed(boolean closed) {
 		this.closed = closed;
 	}
 	
@@ -37,7 +67,7 @@ public class NoticeFilter implements Serializable {
 		return this.closed;
 	}
 	
-	public void setAll(boolean all) {
+	private void setAll(boolean all) {
 		this.all = all;
 	}
 	
@@ -53,12 +83,32 @@ public class NoticeFilter implements Serializable {
 		return since;
 	}
 	
-	public void setSender(String sender) {
-		this.sender = sender;
+	public void setSinceAsString(String since) {
+		
+		Date sinceAux = null;
+		
+		try {
+			sinceAux = sdf.parse(since);
+		} catch (Exception ex) {
+			sinceAux = new Date();
+		}
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(sinceAux);	
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		
+		this.since = cal.getTime();
 	}
 	
-	public String getSender() {
-		return sender;
+	public void setCompany(String sender) {
+		this.company = sender;
+	}
+	
+	public String getComany() {
+		return company;
 	}
 	
 	public void setTags(String[] tags) {
@@ -66,15 +116,17 @@ public class NoticeFilter implements Serializable {
 	}
 	
 	public String[] getTags() {
+		if (tags == null)
+			return new String[0];
 		return tags;
 	}
 	
 	public void setText(String text) {
-		this.text = text;
+		this.subject = text;
 	}
 	
 	public String getText() {
-		return text;
+		return subject;
 	}
 	
 	public void setOffset(int offset) {
@@ -83,5 +135,16 @@ public class NoticeFilter implements Serializable {
 	
 	public int getOffset() {
 		return offset;
+	}
+	
+	public void setUsers(String[] users) {
+		this.users = users;
+	}
+	
+	public String[] getUsers() {
+		if (users == null)
+			return new String[0];
+
+		return users;
 	}
 }

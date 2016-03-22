@@ -467,8 +467,6 @@ public class AonHubDAO {
 	public static NoticeContainer getOpenNotices(AONContext ctx, String pSince,
 			String sender, int offset, List<String> tags, String text) {
 
-		changeMessageType2CommentType(ctx);
-
 		List<Notice> notices = new LinkedList<Notice>();		
 
 		Date since = getSince(pSince);
@@ -478,19 +476,6 @@ public class AonHubDAO {
 				ctx.getDslContext());
 		SelectConditionStep<Record1<Integer>> reopenId = getReOpenNoticesId(
 				ctx.getDslContext());
-		
-		int count = ctx.getDslContext()
-				.selectCount()
-				.from(NOTICE)
-				.join(NOTICE_TAG)
-				.on(NOTICE.ID.eq(NOTICE_TAG.NOTICE))
-				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
-						.and(NOTICE.NOTICE_.isNull())
-						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
-						.and(NOTICE_TAG.TAG.eq(openId)
-								.or(NOTICE_TAG.TAG.eq(reopenId)))
-						.and(NOTICE_TAG.END_DATE.isNull()))
-				.fetchOne(0, int.class);
 		
 		SelectConditionStep<Record> select = ctx.getDslContext()
 				.select()				
@@ -512,9 +497,11 @@ public class AonHubDAO {
 			select = select.and(NOTICE.SUBJECT.like("%" + text + "%"));
 		}
 
-		if (sender != null) {
+		if (sender != null) {			
 			select = select.and(NOTICE.COMPANY.eq(sender));
 		}
+		
+		int countAux = select.fetch().size();
 
 		Result<Record> record = select.groupBy(NOTICE.ID)
 				.orderBy(NOTICE.DATE.desc()).limit(offset, 50).fetch();
@@ -543,7 +530,7 @@ public class AonHubDAO {
 		}
 		
 		NoticeContainer container = new NoticeContainer();
-		container.setCount(count);
+		container.setCount(countAux);
 		container.setNotices(notices);
 
 		return container;
@@ -559,18 +546,6 @@ public class AonHubDAO {
 
 		SelectConditionStep<Record1<Integer>> closedId = getClosedNoticesId(
 				ctx.getDslContext());
-		
-		int count = ctx.getDslContext()
-				.selectCount()
-				.from(NOTICE)
-				.join(NOTICE_TAG)
-				.on(NOTICE.ID.eq(NOTICE_TAG.NOTICE))
-				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
-						.and(NOTICE.NOTICE_.isNull())
-						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
-						.and(NOTICE_TAG.TAG.eq(closedId))
-						.and(NOTICE_TAG.END_DATE.isNull()))
-				.fetchOne(0, int.class);				
 
 		SelectConditionStep<Record> select = ctx.getDslContext().select()
 				.from(NOTICE).rightOuterJoin(NOTICE_TAG)
@@ -595,10 +570,13 @@ public class AonHubDAO {
 		if (text != null) {
 			select = select.and(NOTICE.SUBJECT.like("%" + text + "%"));
 		}
+		
+		int countAux = select.fetch().size();
 
 		Result<Record> record = select.orderBy(NOTICE.DATE.desc())
 				.limit(offset, 50)
 				.fetch();
+		
 
 		if (record != null)
 
@@ -623,7 +601,7 @@ public class AonHubDAO {
 			});
 
 		NoticeContainer container = new NoticeContainer();
-		container.setCount(count);
+		container.setCount(countAux);
 		container.setNotices(notices);
 
 		return container;
@@ -643,23 +621,6 @@ public class AonHubDAO {
 				ctx.getDslContext());
 		SelectConditionStep<Record1<Integer>> closedId = getClosedNoticesId(
 				ctx.getDslContext());
-		
-		int count = ctx.getDslContext()
-				.selectCount()
-				.from(NOTICE)
-				.join(NOTICE_TAG)
-				.on(NOTICE.ID.eq(NOTICE_TAG.NOTICE))
-				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
-						.and(NOTICE.NOTICE_.isNull())
-						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
-						.and(NOTICE_TAG.TAG.eq(openId)
-								.or(NOTICE_TAG.TAG.eq(reopenId))
-								.or(NOTICE_TAG.TAG.eq(closedId)))
-						.and(NOTICE_TAG.END_DATE.isNull()))
-				.fetchOne(0, int.class);
-				
-				
-
 
 		SelectConditionStep<Record> select = ctx.getDslContext().select()
 				.from(NOTICE.rightOuterJoin(NOTICE_TAG)
@@ -686,6 +647,8 @@ public class AonHubDAO {
 		if (text != null) {
 			select = select.and(NOTICE.SUBJECT.like("%" + text + "%"));
 		}
+		
+		int countAux = select.fetch().size();
 
 		Result<Record> record = select.orderBy(NOTICE.DATE.desc())
 				.limit(offset, 50).fetch();
@@ -713,42 +676,10 @@ public class AonHubDAO {
 		}
 	
 		NoticeContainer container = new NoticeContainer();
-		container.setCount(count);
+		container.setCount(countAux);
 		container.setNotices(notices);
 
 		return container;
-	}
-
-	/**
-	 * Se ejecuta antes de buscar para cambiar el Notice Type de Body a Comment
-	 * 
-	 * @param ctx
-	 */
-
-	private static void changeMessageType2CommentType(AONContext ctx) {
-
-		try {
-			Result<NoticeRecord> result = ctx.getDslContext().selectFrom(NOTICE)
-					.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
-							.and(NOTICE.TYPE.eq(NoticeType.MESSAGE.value()))
-							.and(NOTICE.NOTICE_.isNotNull()))
-					.fetch();
-
-			if (result != null && result.size() > 0) {
-				int results = ctx.getDslContext().update(NOTICE)
-						.set(NOTICE.TYPE, NoticeType.COMMENT.value())
-						.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
-								.and(NOTICE.NOTICE_.isNotNull())
-								.and(NOTICE.TYPE
-										.eq(NoticeType.MESSAGE.value())))
-						.execute();
-				System.out.println("Se han modificado " + results
-						+ " tipos de message a comments");
-			}
-		} catch (Exception ex) {
-			System.out.println(
-					"Se ha producido un Error al cambiar el typo Message a Comment");
-		}
 	}
 
 	public static Notice createComment(AONContext ctx, Integer headId,

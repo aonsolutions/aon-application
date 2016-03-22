@@ -6,11 +6,13 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IOffice;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeContainer;
+import com.esferalia.aon.occam.api.model.office.NoticeFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO2;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 
@@ -24,28 +26,19 @@ public class OfficeImpl implements IOffice {
 	@Override
 	public List<User> getUsers(AONContext ctx) {		
 		Integer parentID = DomainDAO.getParentDomain(ctx);
-		return AonHubDAO.getUserFromNotices(ctx, parentID);
+		return AonHubDAO2.fillUsersFromNotices(ctx, parentID);
+//		return AonHubDAO.getUserFromNotices(ctx, parentID);
 	}
-
+	
 	@Override
-	public NoticeContainer getOpenNotices(AONContext ctx, String since,
-			String sender, int offset, List<String> tags, String text)
-					throws IllegalArgumentException {
-		return AonHubDAO.getOpenNotices(ctx, since, sender, offset, tags, text);
+	public int getSelectedCount(AONContext ctx, NoticeFilter filter) {
+		
+		return 0;
 	}
-
+	
 	@Override
-	public NoticeContainer getClosedNotices(AONContext ctx, String since,
-			String sender, int offset, List<String> tags, String text)
-					throws IllegalArgumentException {
-		return AonHubDAO.getClosedIsues(ctx, since, sender, offset, tags, text);
-	}
-
-	@Override
-	public NoticeContainer getAllIssues(AONContext ctx, String since,
-			String sender, int offset, List<String> tags, String text)
-					throws IllegalArgumentException {
-		return AonHubDAO.getAllNotices(ctx, since, sender, offset, tags, text);
+	public List<Notice> getNotices(AONContext ctx, NoticeFilter filter) {
+		return AonHubDAO2.getTicketNotices(ctx, filter);
 	}
 
 	@Override

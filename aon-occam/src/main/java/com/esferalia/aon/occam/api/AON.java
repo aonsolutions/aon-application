@@ -63,6 +63,7 @@ import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeContainer;
+import com.esferalia.aon.occam.api.model.office.NoticeFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -1104,52 +1105,30 @@ public class AON {
 	public static List<User> getUsers(Integer domainId, String domainName, String userName) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			ctx = AONContext.getAONContext(domainName, domainId, userName);			
 			return getOffice().getUsers(ctx);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-
-	public static NoticeContainer getAllNotices(Integer domainId,
-			String domainName, String userName, String since, String sender,
-			int offset, List<String> tagList, String text) {
-
+	
+	public static List<Notice> getNotices(Integer domainId, String domainName, String userName, NoticeFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getAllIssues(ctx, since, sender, offset, tagList,
-					text);
+			return getOffice().getNotices(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-
-	public static NoticeContainer getOpenNotices(Integer domainId,
-			String domainName, String userName, String since, String sender,
-			int offset, List<String> tagList, String text) {
-
+	
+	public static int getSelectedCount(Integer domainId, String domainName, String userName, NoticeFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getOpenNotices(ctx, since, sender, offset,
-					tagList, text);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static NoticeContainer getClosedNotices(Integer domainId,
-			String domainName, String userName, String since, String sender,
-			int offset, List<String> tagList, String text) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getClosedNotices(ctx, since, sender, offset,
-					tagList, text);
+			return getOffice().getSelectedCount(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();

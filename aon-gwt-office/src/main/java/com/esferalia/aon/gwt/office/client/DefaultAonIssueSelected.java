@@ -87,6 +87,7 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 		return URL.decode(issue.getCompany());
 	}	
 	
+	@Override
 	public void setPriority(String priority) {
 		this.priority = priority;
 	}
@@ -96,6 +97,7 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 		return this.priority;
 	}
 	
+	@Override
 	public void setType(String type) {
 		this.type = type;
 	}

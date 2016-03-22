@@ -135,10 +135,7 @@ public class IssueReadPanel extends Composite {
 		this.infoHeaderContent.setSpacing(5);
 		this.addTagsMap = new LinkedList<DefaultAonTagIssueSelected>();
 		this.deletedTagsMap = new LinkedList<DefaultAonTagIssueSelected>();
-		this.assignTags = new LinkedList<DefaultAonTagIssueSelected>();
-
-		for (DefaultAonTagIssueSelected tag : issue.getTags())
-			assignTags.add(tag);
+		this.assignTags = issue.getTags();
 
 		initHeaderAux(issue);
 
@@ -167,11 +164,15 @@ public class IssueReadPanel extends Composite {
 		List<DefaultAonTagIssueSelected> priorityList = new LinkedList<DefaultAonTagIssueSelected>();
 		List<DefaultAonTagIssueSelected> officeList = new LinkedList<DefaultAonTagIssueSelected>();
 
-		for (DefaultAonTagIssueSelected tag : tags) {
-			if (tag.getType() == TagType.OFFICE_TYPE.value())
+		for (DefaultAonTagIssueSelected tag : tags) {			
+			if (tag.getType() == TagType.OFFICE_TYPE.value()) {
 				typesList.add(tag);
-			else if (tag.getType() == TagType.OFFICE_PRIORITY.value())
+			}
+				
+			else if (tag.getType() == TagType.OFFICE_PRIORITY.value()) {
 				priorityList.add(tag);
+			}
+			
 			else if (tag.getType() == TagType.OFFICE_NOTICE.value())
 				officeList.add(tag);
 		}

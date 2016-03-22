@@ -26,6 +26,7 @@ import com.esferalia.aon.gwt.office.exceptions.LabelNotDeletedException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeContainer;
+import com.esferalia.aon.occam.api.model.office.NoticeFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -330,63 +331,47 @@ public class OfficeApiServlet extends HttpServlet {
 				HttpServletResponse resp, Integer domainId, String domainName) {
 			PrintWriter pw = null;
 			try {
-
-				String userName = AonServletUtils.getLoggedUser();
-				NoticeContainer container = new NoticeContainer();
-
-				pw = resp.getWriter();
-
-				String state = req.getParameter("state");
-				String since = req.getParameter("since");				
-				String sender = null;				
 				
-				if (req.getParameter("sender") != null)
-					sender = URLDecoder.decode(req.getParameter("sender"), "UTF-8");
+				pw = resp.getWriter();
+				
+				NoticeFilter filter = new NoticeFilter();
+				filter.setState(req.getParameter("state"));
+				
+				if (req.getParameter("since") != null)					
+					filter.setSinceAsString(req.getParameter("since"));
+
+				if (req.getParameter("sender") != null)					
+					filter.setCompany(URLDecoder.decode(req.getParameter("sender"), "UTF-8"));
 				
 				List<String> tagsList = new LinkedList<String>();
 				if (req.getParameter("labels") != null) {					
 					String aux = URLDecoder.decode(req.getParameter("labels"), "UTF-8");
 					String[] auxArr = aux.split(",");
-					
 					for (int z = 0; z < auxArr.length; z++) {
 						String name = auxArr[z];
 						tagsList.add(name);
 					}
-				}
-				
-				String text = null;
-				if (req.getParameter("text") != null)
-					text = URLDecoder.decode(req.getParameter("text"), "UTF-8");
-
-				int offset = Integer.parseInt(req.getParameter("offset"));
-				
-				switch (state) {
-				case "open":
-					container = AON.getOpenNotices(domainId, domainName, userName,
-							since, sender, offset, tagsList, text);
-					break;
-				case "closed":
-					container = AON.getClosedNotices(domainId, domainName,
-							userName, since, sender, offset, tagsList, text);
-					break;
-
-				case "all":
-					container = AON.getAllNotices(domainId, domainName, userName,
-							since, sender, offset, tagsList, text);
-					break;
-
-				default:
-					container = AON.getAllNotices(domainId, domainName, userName,
-							since, sender, offset, tagsList, text);
-					break;
+					filter.setTags(auxArr);
 				}
 
+				if (req.getParameter("text") != null)					
+					filter.setText(URLDecoder.decode(req.getParameter("text"), "UTF-8"));
+				
+				filter.setOffset(Integer.parseInt(req.getParameter("offset")));
+				
+				List<Notice> notices = AON.getNotices(domainId, domainName, AonServletUtils.getLoggedUser(), filter);
+				
+				NoticeContainer container = new NoticeContainer();
+				container.setCount(notices.size());
+				container.setNotices(notices);
+				
 				pw.append('{');
 				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
 				pw.printf(String.format("\"count\":\"%s\",\r\n", String.valueOf(container.getCount())));
 				pw.printf("\"data\":%s", buildNotices(container.getNotices().listIterator()));
 				pw.append('}');
 				pw.flush();
+				
 
 			} catch (Exception ex) {
 				System.out.println("Exception ex: " + ex.getMessage() + " "
@@ -1080,6 +1065,7 @@ public class OfficeApiServlet extends HttpServlet {
 
 	// @formatter:off
 	private static final HttpRequestHandler GET_HANDLERS[] = {
+			new GetAllUsers(),
 			new GetUser(),
 			new GetRegistries(),
 			new GetRMedias(),

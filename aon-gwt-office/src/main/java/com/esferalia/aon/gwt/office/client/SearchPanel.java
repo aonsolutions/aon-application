@@ -27,7 +27,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
@@ -49,6 +48,20 @@ public class SearchPanel extends Composite {
 		private DateRange(String range) {
 		}
 	}
+	
+	public interface Listener {
+	
+		void onSelectCompany(String company);
+		
+		void onSelectSubject(String subject);
+		
+		void onCloseTagPanel(List<Tag> drashTagList);
+		
+		void onSelectOwner(List<User> drashUserList);
+		
+		void onSelectFrom(Date from);
+
+	}
 
 	private static SearchPanelUiBinder uiBinder = GWT
 			.create(SearchPanelUiBinder.class);
@@ -67,9 +80,13 @@ public class SearchPanel extends Composite {
 	Button priorityButton;
 	@UiField
 	Button noticeTagButton;
-
+	@UiField
+	Button ownerButton;
+	
 	@UiField
 	TextBox subjectTextBox;
+	
+	private List<Listener> listeners;
 	
 	private Date criteria;
 	private String sender;
@@ -78,24 +95,28 @@ public class SearchPanel extends Composite {
 	private List<DefaultAonTagIssueSelected> typeTagList;
 	private List<DefaultAonTagIssueSelected> priorityTagList;
 	private List<DefaultAonTagIssueSelected> noticeTagList;
-
+	
 	private List<Tag> drashTagList;
+	private List<User> drashUserList;
 
 	private MultiWordSuggestOracle registries = new MultiWordSuggestOracle();
 
 	private VerticalPanel typeVPanel;
 	private VerticalPanel priorityVPanel;
 	private VerticalPanel noticesVPanel;
+	private VerticalPanel ownerVPanel;
 
 	public SearchPanel() {
 		this.registrySuggest = new SuggestBox(registries);
 
 		initWidget(uiBinder.createAndBindUi(this));
-
+		
+		this.listeners = new LinkedList<Listener>();
 		this.typeTagList = new LinkedList<DefaultAonTagIssueSelected>();
 		this.priorityTagList = new LinkedList<DefaultAonTagIssueSelected>();
 		this.noticeTagList = new LinkedList<DefaultAonTagIssueSelected>();
 		this.drashTagList = new LinkedList<Tag>();
+		this.drashUserList = new LinkedList<User>();
 
 		fromListBox.addItem(" ", DateRange.ALL.name());
 		fromListBox.addItem("Hoy", DateRange.TODAY.name());
@@ -107,13 +128,37 @@ public class SearchPanel extends Composite {
 		fromListBox.addItem("Este a\u00F1o", DateRange.THIS_YEAR.name());
 		fromListBox.setSelectedIndex(0);
 	}
+	
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeListener(Listener listener) {
+		listeners.remove(listener);
+	}
+	
+	// ---------------------------------------------------------
+	// ------------------------------------------- UiHandlers --
+	// ---------------------------------------------------------
 
+	@UiHandler("registrySuggest")
+	void onRegistrySelectionValue(
+			SelectionEvent<SuggestOracle.Suggestion> event) {
+		String company = event.getSelectedItem().getReplacementString();
+		
+		for (Listener listener : listeners)
+			listener.onSelectCompany(company);
+	}
+	
+	// ---------------------------------------------------------
+	
 	public void addRegistry(Registry registry) {
 		registries.add(registry.getName());
 	}
 	
 	public void addUserList(List<User> users) {
 		this.users = users;
+		initUserButton(users);
 	}
 
 	public void addTagList(List<DefaultAonTagIssueSelected> list) {
@@ -136,22 +181,29 @@ public class SearchPanel extends Composite {
 	public void cleanFilterPanels() {
 		
 		for (int x = 0; x < typeVPanel.getWidgetCount(); x++) {
-			RadioButton rb = (RadioButton) typeVPanel.getWidget(x);
-			rb.setValue(false);
-			rb.removeStyleName(AON.AON_BOLD);
+			CheckBox cb = (CheckBox) typeVPanel.getWidget(x);
+			cb.setValue(false);
+			cb.removeStyleName(AON.AON_BOLD);
 		}
 
 		for (int x = 0; x < priorityVPanel.getWidgetCount(); x++) {
-			RadioButton rb = (RadioButton) priorityVPanel.getWidget(x);
-			rb.setValue(false);
-			rb.removeStyleName(AON.AON_BOLD);
+			CheckBox cb = (CheckBox) priorityVPanel.getWidget(x);
+			cb.setValue(false);
+			cb.removeStyleName(AON.AON_BOLD);
 		}
 
 		for (int x = 0; x < noticesVPanel.getWidgetCount(); x++) {
-			RadioButton rb = (RadioButton) noticesVPanel.getWidget(x);
-			rb.setValue(false);
-			rb.removeStyleName(AON.AON_BOLD);
+			CheckBox cb = (CheckBox) noticesVPanel.getWidget(x);
+			cb.setValue(false);
+			cb.removeStyleName(AON.AON_BOLD);
 		}
+		
+		for (int x = 0; x < ownerVPanel.getWidgetCount(); x++) {
+			CheckBox cb = (CheckBox) ownerVPanel.getWidget(x);
+			cb.setValue(false);
+			cb.removeStyleName(AON.AON_BOLD);
+		}
+		
 		
 		fromListBox.setSelectedIndex(0);
 	}
@@ -192,24 +244,57 @@ public class SearchPanel extends Composite {
 			this.criteria = DateUtils.deleteDays2Date(new Date(), 30);
 		else if (name.compareTo(DateRange.THIS_YEAR.name()) == 0)
 			this.criteria = DateUtils.getFirstDayOfYear();
-	}
-
-//	@Override
-//	public void onKeyUp(KeyUpEvent event) {
-//		if (registrySuggest.getValueBox().getValue().trim().length() == 0) {
-//			for (Listener listener : listeners)
-//				listener.onSuggestBoxChangeValue(null);
-//		}
-//	}
-
-	@UiHandler("registrySuggest")
-	void onRegistrySelectionValue(
-			SelectionEvent<SuggestOracle.Suggestion> event) {
 		
+		for (Listener listener : listeners) {
+			listener.onSelectFrom(criteria);
+		}
 	}
 	
 	private void initUserButton(final List<User> users) {
 		
+		this.ownerButton.addClickHandler(new ClickHandler() {
+			
+			private PopupPanel popup = new PopupPanel(true);
+			
+			{
+				SearchPanel.this.ownerVPanel = new VerticalPanel();
+				for (final User user : users ) {
+					
+					final CheckBox cb = new CheckBox(user.getName());
+					cb.setName(String.valueOf(user.getId()));
+					cb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+						
+						@Override
+						public void onValueChange(ValueChangeEvent<Boolean> event) {
+							if (event.getValue()) {
+								cb.addStyleName(AON.AON_BOLD);
+								insertDrastUserList(user);
+							}
+							else {
+								cb.removeStyleName(AON.AON_BOLD);
+								removeDrashUser(user);
+							}
+							
+							for (Listener listener : listeners)
+								listener.onSelectOwner(drashUserList);
+						}
+					});
+					SearchPanel.this.ownerVPanel.add(cb);
+				}
+
+				popup.add(SearchPanel.this.ownerVPanel);				
+			}
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				int left = ownerButton.getAbsoluteLeft();
+				int top = ownerButton.getAbsoluteTop()
+						+ ownerButton.getOffsetHeight();
+
+				popup.setPopupPosition(left, top);
+				popup.show();
+			}
+		});
 	}
 
 	private void initTypeButton(
@@ -239,6 +324,8 @@ public class SearchPanel extends Composite {
 								cb.removeStyleName(AON.AON_BOLD);
 								removeDrashTag(tag);
 							}
+							for (Listener listener : listeners) 
+								listener.onCloseTagPanel(drashTagList);
 						}
 					});
 					SearchPanel.this.typeVPanel.add(cb);
@@ -284,6 +371,8 @@ public class SearchPanel extends Composite {
 								cb.removeStyleName(AON.AON_BOLD);
 								removeDrashTag(tag);
 							}
+							for (Listener listener : listeners) 
+								listener.onCloseTagPanel(drashTagList);
 						}
 					});
 					SearchPanel.this.priorityVPanel.add(cb);
@@ -329,6 +418,9 @@ public class SearchPanel extends Composite {
 								cb.removeStyleName(AON.AON_BOLD);
 								removeDrashTag(tag);
 							}
+							
+							for(Listener listener : listeners)
+								listener.onCloseTagPanel(drashTagList);
 						}
 					});
 					SearchPanel.this.noticesVPanel.add(cb);
@@ -362,6 +454,20 @@ public class SearchPanel extends Composite {
 		for (Tag tag : drashTagList) {
 			if (tag.getId() == pTag.getId()) {
 				drashTagList.remove(tag);
+				break;
+			}
+		}
+	}
+	
+	private void insertDrastUserList(User user) {
+		this.drashUserList.add(user);
+	}
+	
+	private void removeDrashUser(User pUser) {
+		
+		for (User user : drashUserList) {
+			if (user.getId() == pUser.getId()) {
+				drashUserList.remove(user);
 				break;
 			}
 		}
