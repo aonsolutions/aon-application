@@ -33,7 +33,6 @@ import com.esferalia.aon.watson.server.io.AonIOUtils;
 @WebServlet(name = "CCAAPrintPdf", urlPatterns = { "/aon_gwt_deposit/CCAAPrintPdf" })
 public class CCAAPrintPdf extends HttpServlet {
 
-	private static final String D2_DEPOSIT_SCHEMA = "d2DepositSchema";
 	private static final int DEFAULT_OFFICE_PORT = 2002;
 
 	@Override
@@ -56,6 +55,7 @@ public class CCAAPrintPdf extends HttpServlet {
 			String razonSocial = req.getParameter("razonSocial");
 			Integer year = Integer.parseInt(req.getParameter("year"));
 			String type = req.getParameter("type");
+			String options = req.getParameter("options");
 			String user = AonServletUtils.getLoggedUser();
 
 			Domain domain = new Domain().setName(domainName).setId(domainId);
@@ -68,29 +68,29 @@ public class CCAAPrintPdf extends HttpServlet {
 				}
 			};
 			action.initialize();
-			action.IDA();
-			action.BA();
-			action.PYG();
-			action.ECPN();
-			action.DM();
-			action.AP1();
-			action.AP2();
-			action.AP3();
-			action.AP4();
-			action.AP5();
-			action.AP6();
-			action.AP7();
-			action.AP8();
-			action.AP9();
-			action.AP10();
-			action.AP11();
-			action.AP12();
-			action.AP13();
-			action.AP14();
-			action.AP15();
-			action.MA();
-			action.IP();
-			action.CHD();
+			if(options.substring(0, 1).equals("T")) action.IDA();
+			if(options.substring(1, 2).equals("T")) action.BA();
+			if(options.substring(2, 3).equals("T"))	action.PYG();
+			if(options.substring(3, 4).equals("T")) action.ECPN();
+			if(options.substring(4, 5).equals("T")) action.DM();
+			if(options.substring(5, 6).equals("T")) action.AP1();
+			if(options.substring(6, 7).equals("T")) action.AP2();
+			if(options.substring(7, 8).equals("T")) action.AP3();
+			if(options.substring(8, 9).equals("T"))	action.AP4();
+			if(options.substring(9, 10).equals("T")) action.AP5();
+			if(options.substring(10, 11).equals("T")) action.AP6();
+			if(options.substring(11, 12).equals("T")) action.AP7();
+			if(options.substring(12, 13).equals("T")) action.AP8();
+			if(options.substring(13, 14).equals("T")) action.AP9();
+			if(options.substring(14, 15).equals("T")) action.AP10();
+			if(options.substring(15, 16).equals("T")) action.AP11();
+			if(options.substring(16, 17).equals("T")) action.AP12();
+			if(options.substring(17, 18).equals("T")) action.AP13();
+			if(options.substring(18, 19).equals("T")) action.AP14();
+			if(options.substring(19, 20).equals("T")) action.AP15();
+			if(options.substring(20, 21).equals("T")) action.MA(); 
+			if(options.substring(21, 22).equals("T")) action.IP();
+			if(options.substring(22, 23).equals("T")) action.CHD();
 			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 
@@ -132,12 +132,9 @@ public class CCAAPrintPdf extends HttpServlet {
 
 
 	public Map<String, String> getSchema(HttpServletRequest req, D2Deposit d2Deposit, String user) {
-		Esquema schema = (Esquema) req.getSession().getAttribute(D2_DEPOSIT_SCHEMA + d2Deposit.getCif() + d2Deposit.getYear());
-		if(schema == null){
-			schema = DBConsults.getSchema(d2Deposit, user);
-		}
+		Esquema schema = DBConsults.getSchema(d2Deposit, user);
 		Map<String, String> map = new HashMap<String, String>();
-		map.put(D2DepositConstants.DEPOSIT_TYPE, d2Deposit.getType());
+		map.put(D2DepositConstants.DEPOSIT_TYPE, schema.getCabecera().getTipoCuestionario());
 		schema.getClaves().getClave().stream().forEach(clave ->{
 			map.put(clave.getCodigo().toString(), clave.getValor());
 		});

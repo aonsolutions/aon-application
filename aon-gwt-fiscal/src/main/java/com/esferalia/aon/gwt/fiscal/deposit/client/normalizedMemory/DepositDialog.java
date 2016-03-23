@@ -497,7 +497,7 @@ public abstract class DepositDialog extends CustomDialogB {
 					
 					@Override protected void onAccept() {
 						setFreeTextMap(new HashMap<D2DepositKey, Boolean>());
-						for(Integer i = 0; i <= 12; i++){
+						for(Integer i = 1; i <= 13; i++){
 							CheckBox cb = (CheckBox)flex_table.getWidget(i, 1);
 							getFreeTextMap().put(getD2DepositKey(i), cb.getValue());
 						}

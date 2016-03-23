@@ -25,6 +25,8 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -34,6 +36,12 @@ import com.google.gwt.user.datepicker.client.DateBox;
 
 public class Header1 extends PageAbs {
 
+	@UiField HTMLPanel micropymePanel;
+	@UiField HTMLPanel unityPanel;
+	@UiField HTMLPanel societyPanel;
+	@UiField HorizontalPanel LEIPanel;
+	@UiField Label LEILabel;
+	@UiField TextBox IDA01009; // LEI
 	@UiField DocumentTextBox IDA01010; // document 
 	@UiField CheckBox IDA01011; // SA
 	@UiField CheckBox IDA01012; // SL
@@ -71,6 +79,7 @@ public class Header1 extends PageAbs {
 	@UiField DateBox IDA011019; // PreviousDateClose
 	@UiField DoubleBox IDA01901; //numPages
 	@UiField TextBox IDA01903; // causa
+	@UiField CheckBox IDA01902; // MICROEMPRESAS
 	@UiField CheckBox IDA09001; // euros
 	@UiField CheckBox IDA09002; // miles de euros
 	@UiField CheckBox IDA09003; // millones de euros
@@ -108,7 +117,7 @@ public class Header1 extends PageAbs {
 		RESOURCES.css().ensureInjected();
 		this.normalizedMemory = nm;
 		this.enterprise = enterprise;
-		
+		IDA01009 = new TextBox();
 		IDA01010 = new DocumentTextBox();
 		IDA01011 = new CheckBox(); 
 		IDA01012 = new CheckBox(); 
@@ -128,10 +137,8 @@ public class Header1 extends PageAbs {
 		IDA01060 = new TextBox(); 
 		IDA02009 = new InlineLabel(); 
 		
-		
 		IDA02001 = new TextBox(); //TODO CNAE
 
-		
 		IDA04001 = new DoubleBox();
 		IDA040019 = new DoubleBox(); 
 		IDA04002 = new DoubleBox(); 
@@ -152,6 +159,7 @@ public class Header1 extends PageAbs {
 		IDA011019 = new DateBox(); 
 		IDA01901 = new DoubleBox(); 
 		IDA01903 = new TextBox(); 
+		IDA01902 = new CheckBox();
 		IDA09001 = new CheckBox(); 
 		IDA09002 = new CheckBox(); 
 		IDA09003 = new CheckBox(); 
@@ -183,127 +191,102 @@ public class Header1 extends PageAbs {
 	}
 	
 	private void init(){
-			//map = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMap();
-			//mapDraft = normalizedMemory.getDigitalDepositTreeNode().getD2Deposit2014().getMapDraft();
-			
-			cnaePanel = new Cnae2009Panel( new Cnae2009Panel.SelectionCallBack() {
-				@Override
-				public void onSelect(CNAE2009 selected) {
-					IDA02001.setEnabled(false);
-					IDA02001.setText(selected.getCode());
-					normalizedMemory.saveButton.setEnabled(true);
-					normalizedMemory.cancelButton.setVisible(true);
-					onEdit("2001", selected.getCode());
-					
-					IDA02009.setText(selected.getDescription());
-					onEdit("2009", selected.getDescription());
-					
-					
-				}
-				@Override
-				public void onClose() {
-					// Nothing
-				}
-			});
-				
-			current1.setText("Ejercicio " + year);
-			ant1.setText("Ejercicio " + (year-1));
-			current2.setText("Ejercicio " + year);
-			ant2.setText("Ejercicio " + (year-1));
-			current3.setText("Ejercicio " + year);
-			ant3.setText("Ejercicio" + (year-1));
-			
-			keyExe("1010", IDA01010, "text", false);
-				
-			keyExe("1011", IDA01011, "check", true);
-				
-			keyExe("1012", IDA01012, "check", true);
-			
-			keyExe("1013", IDA01013, "text", true);
-				
-			keyExe("1020", IDA01020, "text", true);
-				
-			keyExe("1022", IDA01022, "text", true);
-				
-			keyExe("1023", IDA01023, "text", true);
-				
-			listBoxItemAdd(IDA01025);
-			keyExe("1025", IDA01025, "list", true);
-				
-			keyExe("1024", IDA01024, "text", true);
-				
-			keyExe("1031", IDA01031, "text", true);
-				
-			keyExe("1037", IDA01037, "text", true);
-				
-			keyExe("1041", IDA01041, "text", true);
-				
-			keyExe("1040", IDA01040, "text", true);
-				
-			keyExe("1061", IDA01061, "text", true);
-				
-			keyExe("1060", IDA01060, "text", true);
-				
-			keyExe("2009", IDA02009, "label", true);
-				
-			IDA02001.setEnabled(false);
-			keyExe("2001", IDA02001, "text", false);
-			
-			keyExe("4001", IDA04001, "double", true);
+		cnaePanel = new Cnae2009Panel( new Cnae2009Panel.SelectionCallBack() {
+			@Override
+			public void onSelect(CNAE2009 selected) {
+				IDA02001.setEnabled(false);
+				IDA02001.setText(selected.getCode());
+				normalizedMemory.saveButton.setEnabled(true);
+				normalizedMemory.cancelButton.setVisible(true);
+				onEdit("2001", selected.getCode());
 
-			keyExe("40019", IDA040019, "double", true);
-
-			keyExe("4002", IDA04002, "double", true);
-
-			keyExe("40029", IDA040029, "double", true);
-
-			keyExe("4010", IDA04010, "double", true);
-
-			keyExe("40109", IDA040109, "double", true);
-			
-			keyExe("4120", IDA04120, "double", true);
-
-			keyExe("4121", IDA04121, "double", true);
-
-			keyExe("41209", IDA041209, "double", true);
-
-			keyExe("41219", IDA041219, "double", true);
-
-			keyExe("4122", IDA04122, "double", true);
-			
-			keyExe("4123", IDA04123, "double", true);
-
-			keyExe("41229", IDA041229, "double", true);
-
-			keyExe("41239", IDA041239, "double", true);
-
-			keyExe("1102", IDA01102, "date", true);
-
-			keyExe("11029", IDA011029, "date", true);
-
-			keyExe("1101", IDA01101, "date", true);
-
-			keyExe("11019", IDA011019, "date", true);
-
-			keyExe("1901", IDA01901, "double", true);
-
-			keyExe("1903", IDA01903, "text", true);
-			
-			keyExe("9001", IDA09001, "check", true);
+				IDA02009.setText(selected.getDescription());
+				onEdit("2009", selected.getDescription());				
+			}
+			@Override
+			public void onClose() {
+				// Nothing
+			}
+		});
 				
-			keyExe("9002", IDA09002, "check", true);
+		current1.setText("Ejercicio " + year);
+		ant1.setText("Ejercicio " + (year-1));
+		current2.setText("Ejercicio " + year);
+		ant2.setText("Ejercicio " + (year-1));
+		current3.setText("Ejercicio " + year);
+		ant3.setText("Ejercicio" + (year-1));
+		
+		if(year >= 2015){
+			keyExe("1009", IDA01009, "text", true);	
+		} else{
+			IDA01009.setVisible(false);
+			LEILabel.setVisible(false);
+			LEIPanel.setVisible(false);
+		}	
+		
+		keyExe("1010", IDA01010, "text", false);	
+		keyExe("1011", IDA01011, "check", true);
+		keyExe("1012", IDA01012, "check", true);
+		keyExe("1013", IDA01013, "text", true);
+		keyExe("1020", IDA01020, "text", true);
+		keyExe("1022", IDA01022, "text", true);
+		keyExe("1023", IDA01023, "text", true);
 				
-			keyExe("9003", IDA09003, "check", true);
+		listBoxItemAdd(IDA01025);
+		keyExe("1025", IDA01025, "list", true);
+		keyExe("1024", IDA01024, "text", true);
+		keyExe("1031", IDA01031, "text", true);
+		keyExe("1037", IDA01037, "text", true);
+		keyExe("1041", IDA01041, "text", true);
+		keyExe("1040", IDA01040, "text", true);
+		keyExe("1061", IDA01061, "text", true);
+		keyExe("1060", IDA01060, "text", true);
+		keyExe("2009", IDA02009, "label", true);
+		
+		IDA02001.setEnabled(false);
+		keyExe("2001", IDA02001, "text", false);
+		keyExe("4001", IDA04001, "double", true);
+		keyExe("40019", IDA040019, "double", true);
+		keyExe("4002", IDA04002, "double", true);
+		keyExe("40029", IDA040029, "double", true);
+		keyExe("4010", IDA04010, "double", true);
+		keyExe("40109", IDA040109, "double", true);
+		keyExe("4120", IDA04120, "double", true);
+		keyExe("4121", IDA04121, "double", true);
+		keyExe("41209", IDA041209, "double", true);
+		keyExe("41219", IDA041219, "double", true);
+		keyExe("4122", IDA04122, "double", true);
+		keyExe("4123", IDA04123, "double", true);
+		keyExe("41229", IDA041229, "double", true);
+		keyExe("41239", IDA041239, "double", true);
+		keyExe("1102", IDA01102, "date", true);
+		keyExe("11029", IDA011029, "date", true);
+		keyExe("1101", IDA01101, "date", true);
+		keyExe("11019", IDA011019, "date", true);
+		keyExe("1901", IDA01901, "double", true);
+		keyExe("1903", IDA01903, "text", true);
+		keyExe("1902", IDA01902, "check", true);
+		keyExe("9001", IDA09001, "check", true);	
+		keyExe("9002", IDA09002, "check", true);		
+		keyExe("9003", IDA09003, "check", true);
+		
+		if(isPymes()){
+			societyPanel.setVisible(false);
+			micropymePanel.setVisible(true);
+			unityPanel.setVisible(false);
+		}
+		
+		if(!isPymes()){
+			societyPanel.setVisible(true);
+			micropymePanel.setVisible(false);
+			unityPanel.setVisible(true);
+		}
 			
 	}
 	
 	@Override
 	protected void initializeTable() {
-				
-				
 		init();		
-			
-			
 	}
 	
 	String key2Aux;

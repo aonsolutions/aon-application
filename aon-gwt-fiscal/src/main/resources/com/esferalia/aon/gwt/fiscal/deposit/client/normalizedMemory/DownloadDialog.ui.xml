@@ -4,7 +4,6 @@
 	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
 	
 	<g:HTMLPanel styleName="form-template">
-
 		<div>
 		<g:FlexTable ui:field="flex_table">
 			

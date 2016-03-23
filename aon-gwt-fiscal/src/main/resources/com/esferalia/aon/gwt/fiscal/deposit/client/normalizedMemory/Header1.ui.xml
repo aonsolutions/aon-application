@@ -39,6 +39,17 @@
 										</tr>
 										<tr>
 											<td>
+												<g:HorizontalPanel ui:field="LEIPanel">
+													<g:Label text="LEI" styleName="{aonResources.css.aonInnerLabel}" />
+													<g:TextBox ui:field="IDA01009" styleName="{aonResources.css.aonInputText}"/>
+												</g:HorizontalPanel>
+											</td>
+											<td>
+												<g:Label ui:field="LEILabel" text="Solo para las empresas que dispongan de código LEI (Legal Entity Identifier)"/>
+											</td>
+										</tr>
+										<tr>
+											<td>
 												<g:Label text="{msg.companyName}" styleName="{aonResources.css.aonInnerLabel}" />
 												<g:TextBox ui:field="IDA01020"
 													styleName="{aonResources.css.aonInputText}" />
@@ -88,50 +99,50 @@
 											</td>
 										</tr>
 									</table>
-
-									<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
-										<tr>
-											<td>
-												<g:Label text="Pertenencia a un grupo de sociedades"
-													styleName="{aonResources.css.aonInnerLabel}" />
-											</td>
-											<td>
-												<g:Label text="Denominación social" styleName="{aonResources.css.aonInnerLabel}" />
-											</td>
-											<td>
-												<g:Label text="NIF" styleName="{aonResources.css.aonInnerLabel}" />
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<g:Label text="Sociedad dominante directa"
-													styleName="{aonResources.css.aonInnerLabel}" />
-											</td>
-											<td>
-												<g:TextBox ui:field="IDA01041"
-													styleName="{aonResources.css.aonInputText}" />
-											</td>
-											<td>
-												<g:TextBox ui:field="IDA01040"
-													styleName="{aonResources.css.aonInputText}" />
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<g:Label text="Sociedad dominante última del grupo"
-													styleName="{aonResources.css.aonInnerLabel}" />
-											</td>
-											<td>
-												<g:TextBox ui:field="IDA01061"
-													styleName="{aonResources.css.aonInputText}" />
-											</td>
-											<td>
-												<g:TextBox ui:field="IDA01060"
-													styleName="{aonResources.css.aonInputText}" />
-											</td>
-										</tr>
-									</table>
-
+									<g:HTMLPanel ui:field="societyPanel">
+										<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+											<tr>
+												<td>
+													<g:Label text="Pertenencia a un grupo de sociedades"
+														styleName="{aonResources.css.aonInnerLabel}" />
+												</td>
+												<td>
+													<g:Label text="Denominación social" styleName="{aonResources.css.aonInnerLabel}" />
+												</td>
+												<td>
+													<g:Label text="NIF" styleName="{aonResources.css.aonInnerLabel}" />
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<g:Label text="Sociedad dominante directa"
+														styleName="{aonResources.css.aonInnerLabel}" />
+												</td>
+												<td>
+													<g:TextBox ui:field="IDA01041"
+														styleName="{aonResources.css.aonInputText}" />
+												</td>
+												<td>
+													<g:TextBox ui:field="IDA01040"
+														styleName="{aonResources.css.aonInputText}" />
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<g:Label text="Sociedad dominante última del grupo"
+														styleName="{aonResources.css.aonInnerLabel}" />
+												</td>
+												<td>
+													<g:TextBox ui:field="IDA01061"
+														styleName="{aonResources.css.aonInputText}" />
+												</td>
+												<td>
+													<g:TextBox ui:field="IDA01060"
+														styleName="{aonResources.css.aonInputText}" />
+												</td>
+											</tr>
+										</table>
+									</g:HTMLPanel>
 									<div class="{aonResources.css.aonGroup}">
 										<div class="{aonResources.css.aonGroupTitle}">
 											<g:InlineLabel text="Actividad" />
@@ -358,6 +369,8 @@
 									</div>
 
 									<div class="{aonResources.css.aonGroup}">
+									<g:HTMLPanel>
+									<g:HTMLPanel ui:field="unityPanel"> 
 										<div class="{aonResources.css.aonGroupTitle}">
 											<g:InlineLabel text="Unidades" />
 										</div>
@@ -377,6 +390,25 @@
 												</tr>
 											</table>
 										</div>
+									</g:HTMLPanel>
+									<g:HTMLPanel ui:field="micropymePanel"> 
+										<div class="{aonResources.css.aonGroupTitle}">
+											<g:InlineLabel text="Microempresas" />
+										</div>
+										<div class="{aonResources.css.aonGroupBody}">
+											<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+												<tr>
+													<td>
+														<g:Label text="Marque con una X si la empresa ha optado por la adopción conjunta de los criterios específicos,
+																	aplicables por microempresas, previstos en el Plan General de Contabilidad de PYMES (6)"/>
+
+														<g:CheckBox ui:field="IDA01902" value="false" />
+													</td>
+												</tr>
+											</table>
+										</div>
+									</g:HTMLPanel>
+									</g:HTMLPanel>
 									</div>
 								</div>
 							</div>

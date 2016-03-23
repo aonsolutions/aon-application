@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositFooterKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2PDepositConstants;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -301,22 +302,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		}
 		Integer calc2 = 23040 - calc;
 		return calc2 / (5 + dif + number); 
-	}
-	
-	private short calculateHeight(String[] strings, Integer number, Integer div, short height) {		
-		Integer coeficiente1 = (150 * div)/number;
-		Double n1 = ((strings[0].length() / coeficiente1) * (height / 1.5));
-		
-		Integer max = 0;
-		for (Integer i = 1; i < strings.length; i++) {
-			if(strings[i].length() > max)
-				max = strings[i].length();
-		}
-	
-		Integer coeficiente2 = (36 * div)/number;
-		Double n2 = ((max / coeficiente2) * (height / 1.5));
-		
-		return n1 > n2 ? n1.shortValue() : n2.shortValue();
 	}
 	
 	private XSSFCellStyle calculateHeaderFontSize(Integer pageMaxNumber) {
@@ -722,20 +707,29 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		ssHeader("Identificación", pageMaxNumber);
 	
 		String sa = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01011.getCode());
-		Boolean a = sa != null && sa.equals("1");
-		if(a) sa = TIC; else sa = "-";
 		String sl = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01012.getCode());
-		Boolean b = sl != null && sl.equals("1");
-		if(b) sl = TIC; else sa = "-";
 		String other = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01013.getCode());
+		if(other == null || other.equalsIgnoreCase("null")) other = "";
 		idaRow(2, new String[]{"N.I.F. " + getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01010.getCode()),
-				"SA " + sa + " SL " + sl + " Otras " + other});
+				"SA " + getBoolText(sa) + " SL " + getBoolText(sl) + " Otras " + other});
+		
+		if(getD2Deposit().getYear() >= 2015){
+			row = sheet.createRow(rowCount++);cellCount=0;
+			idacell("LEI", 0, 0);
+			idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01009.getCode()), 1, 1);
+			idacell("Solo para las empresas que dispongan de código LEI (Legal Entity Identifier)", 2, 7);
+		}
 		
 		idaRow(2, new String[]{"Razón social " + getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01020.getCode()),
 				"Domicilio social "+ getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01022.getCode())});
 		
+		String province = "";
+		for(Provinces p : Provinces.values()){
+			if(p.getId().equals(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01025.getCode())))
+				province = p.getName();
+		}
 		idaRow(2, new String[]{"Municipio " + getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01023.getCode()),
-				"Provincia "+ getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01025.getCode())});
+				"Provincia "+ province});
 		
 		idaRow(2, new String[]{"Código postal " + getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01024.getCode()),
 				"Teléfono " + getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01031.getCode())});
@@ -744,30 +738,32 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01037.getCode())});
 		
 		row = sheet.createRow(rowCount++);
+		if(!isPymes()){
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			idacell("Pertenencia a un grupo de sociedades", 0, 2);
+			idacell("Denominación social",3,4);
+			idacell("NIF",5,6);
 		
-		row = sheet.createRow(rowCount++);
-		cellCount = 0;
-		idacell("Pertenencia a un grupo de sociedades", 0, 2);
-		idacell("Denominación social",3,4);
-		idacell("NIF",5,6);
-		
-		row = sheet.createRow(rowCount++);
-		cellCount = 0;
-		idacell("Sociedad dominante directa", 0, 2);
-		idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01041.getCode()),3,4);
-		idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01040.getCode()),5,6);
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			idacell("Sociedad dominante directa", 0, 2);
+			idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01041.getCode()),3,4);
+			idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01040.getCode()),5,6);
 
-		row = sheet.createRow(rowCount++);
-		cellCount = 0;
-		idacell("Sociedad dominante última del grupo", 0, 2);
-		idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01061.getCode()),3,4);
-		idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01060.getCode()),5,6);
-
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			idacell("Sociedad dominante última del grupo", 0, 2);
+			idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01061.getCode()),3,4);
+			idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01060.getCode()),5,6);
+		}
 		row = sheet.createRow(rowCount++);
 		ssHeader("Actividad", pageMaxNumber);
+		row = sheet.createRow(rowCount++);cellCount=0;
+		idacell("Código CNAE", 0, 0);
+		idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA02001.getCode()) +"-"+
+				getD2Deposit().getMap().get(D2DepositHeaderKey.IDA02009.getCode()), 1, 7);
 		
-		idaRow(2, new String[]{"Código CNAE",getD2Deposit().getMap().get(D2DepositHeaderKey.IDA02001.getCode()) +"-"+
-				getD2Deposit().getMap().get(D2DepositHeaderKey.IDA02009.getCode())});
 		row = sheet.createRow(rowCount++);
 		ssHeader("Personal asalariado", pageMaxNumber);
 		
@@ -834,20 +830,25 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		idacell("En caso de no figurar consignadas cifras en alguno de los ejercicios, indique la causa", 0, 3);
 		idacell(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01903.getCode()),4,5);
 
-		row = sheet.createRow(rowCount++);
-		ssHeader("Unidades", pageMaxNumber);
-		String euros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09001.getCode());
-		Boolean a1 = sa != null && sa.equals("1");
-		if(a1) euros = TIC; else sa = "-";
-		String milesEuros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09002.getCode());
-		Boolean b1 = sa != null && sa.equals("1");
-		if(b1) milesEuros = TIC; else sa = "-";
-		String millonesEuros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09003.getCode());
-		Boolean c1 = sa != null && sa.equals("1");
-		if(c1) millonesEuros = TIC; else sa = "-";
-		
-		idaRow(1, new String[]{"Euros " + euros + " Miles de euros " + milesEuros
-				+" Millones de euros " + millonesEuros});	
+		row = sheet.createRow(rowCount++);cellCount = 0;
+		if(!isPymes()){
+			ssHeader("Unidades", pageMaxNumber);
+			
+			String euros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09001.getCode());
+			String milesEuros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09002.getCode());
+			String millonesEuros = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA09003.getCode());
+			
+			idaRow(1, new String[]{"Euros " + getBoolText(euros) + " Miles de euros " + getBoolText(milesEuros)
+				+" Millones de euros " + getBoolText(millonesEuros)});	
+		}else{
+			ssHeader("Microempresas", pageMaxNumber);
+			row = sheet.createRow(rowCount++);cellCount = 0;
+			String a = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01902.getCode());
+			row.setHeight(x.shortValue());
+			idacell("Marque con una X si la empresa ha optado por la adopción conjunta de los criterios específicos, aplicables por microempresas, previstos en el Plan General de Contabilidad de PYMES (6)", 0, 7);
+			row = sheet.createRow(rowCount++);cellCount = 0;
+			idacell(getBoolText(a), 0, 7);
+		}
 	}
 	
 	public void BA(){
@@ -1508,9 +1509,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		
 		
 		String a = getD2Deposit().getMap().get(D2DepositFooterKey.A18009050.getCode());
-		Boolean a2 = a != null && a.equals(1);
-		String value = "-";
-		if(a2) value = TIC;
+		String value = getBoolText(a);
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		cell = row.createCell(cellCount++);
@@ -1518,7 +1517,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		cell.setCellValue(value);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
 		
-		if(!a2){
+		if(value.equals("-")){
 			MA1();
 			MA11();
 			MA2();
@@ -1865,30 +1864,37 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		ssHeader("IDENTIFICACIÓN DE LA ENTIDAD QUE PRESENTA LAS CUENTAS A DEPÓSITO", 5);
 		row = sheet.createRow(rowCount++);
 		
+		String name = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01020.getCode());
+		String nif = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01010.getCode());
+		String date = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01101.getCode());
+		String tomo = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081002.getCode());
+		String folio = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081003.getCode());
+		String hojasReg = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081004.getCode());
+		
 		cellCount = 0;
-		idacell("Denominación de la entidad", 0, 2);
-		idacell("", 3, 4);
+		idacell("Denominación de la entidad", 0, 1);
+		idacell(name, 2, 4);
 		idacell("N.I.F.", 5, 5);
-		idacell("", 6, 7);
+		idacell(nif, 6, 7);
 		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-		idacell("Datos Registrales", 0, 2);
-		idacell("", 3, 4);
+		idacell("Datos Registrales", 0, 1);
+		idacell("", 2, 4);
 		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		idacell("Tomo", 0, 1);
-		idacell("", 2, 3);
+		idacell(tomo, 2, 3);
 		idacell("Folio", 4, 5);
-		idacell("", 6, 7);
+		idacell(folio, 6, 7);
 		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;		
 		idacell("Nº Hoja registral", 0, 1);
-		idacell("", 2, 3);
+		idacell(hojasReg, 2, 3);
 		idacell("Fecha de cierre ejercicio social", 4, 5);
-		idacell("", 6, 7);
+		idacell(date, 6, 7);
 
 		row = sheet.createRow(rowCount++);
 		ssHeader("IDENTIFICACIÓN DE LOS DOCUMENTOS CONTABLES CUYO DEPÓSITO SE SOLICITA", 5);
@@ -1981,11 +1987,15 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		a1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081204.getCode());
-		b1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081206.getCode());
+		String province = "";
+		for(Provinces p : Provinces.values()){
+			if(p.getId().equals(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01025.getCode())))
+				province = p.getName();
+		}
 		idacell("Ciudad", 0, 1);
 		idacell(a1, 2, 3);
 		idacell("Provincia", 4, 5);
-		idacell(b1, 6, 7);
+		idacell(province, 6, 7);
 		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
@@ -2070,8 +2080,15 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	}
 	
 	private String getBoolText(String a) {
-		if(a != null && a.equals("1"))
+		if(a != null && !a.equalsIgnoreCase("null")
+				&& (a.equals("1") || a.equalsIgnoreCase("true")))
 			return TIC;
 		else return "-";
 	}
+	private Boolean isPymes() {
+		return getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE).equalsIgnoreCase("Pymes");
+		
+
+	}
+	
 }

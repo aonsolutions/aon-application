@@ -23,6 +23,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -1011,6 +1012,7 @@ public class NormalizedMemory extends ResizeComposite {
 	private Hidden razonSocialHidden;
 	private Hidden yearHidden;
 	private Hidden typeHidden;
+	private Hidden optionsHidden;
 	
 	private void initialize() {
 		diskForm = new FormPanel("_blank");
@@ -1031,32 +1033,76 @@ public class NormalizedMemory extends ResizeComposite {
 		formFlowPanel.add(yearHidden);
 		typeHidden = new Hidden("type");
 		formFlowPanel.add(typeHidden);
+		optionsHidden = new Hidden("options");
+		formFlowPanel.add(optionsHidden);
 	}
 	
 	@UiHandler("downloadButton")
 	void downExcel(ClickEvent event) {
-		diskForm.setAction(GWT.getHostPageBaseURL() + CCAA_PRINT);
-		schemaIdHidden.setValue(String.valueOf(1));
-		domainIdHidden.setValue(Integer.toString(enterprise.getDomain()));
-		domainNameHidden.setValue("novus.aibanez.net");
-		cifHidden.setValue(enterprise.getDocument());
-		razonSocialHidden.setValue(enterprise.getName());
-		yearHidden.setValue(String.valueOf(year));
-		typeHidden.setValue(depositType.getText());
-		diskForm.submit();
+		DownloadDialog dd = new DownloadDialog() {
+		
+			@Override 
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				hide();
+				String options = "";
+				for(Integer i = 1; i < 24; i++){
+					CheckBox  cb = (CheckBox) flex_table.getWidget(i, 1);
+					options = options + (cb.getValue() ? "T":"F");
+				}
+				diskForm.setAction(GWT.getHostPageBaseURL() + CCAA_PRINT);
+				schemaIdHidden.setValue(String.valueOf(1));
+				domainIdHidden.setValue(Integer.toString(enterprise.getDomain()));
+				domainNameHidden.setValue("novus.aibanez.net");
+				cifHidden.setValue(enterprise.getDocument());
+				razonSocialHidden.setValue(enterprise.getName());
+				yearHidden.setValue(String.valueOf(year));
+				typeHidden.setValue(depositType.getText());
+				optionsHidden.setValue(options);
+				diskForm.submit();
+			}
+		};
+		dd.addStyleName("gwt-PopupPanel-template");
+		dd.setGlassEnabled(true);
+		dd.show();
 	}
 	
 	@UiHandler("downloadButtonPdf")
 	void downPdf(ClickEvent event) {
-		diskForm.setAction(GWT.getHostPageBaseURL() + CCAA_PRINT_PDF);
-		schemaIdHidden.setValue(String.valueOf(1));
-		domainIdHidden.setValue(Integer.toString(enterprise.getDomain()));
-		domainNameHidden.setValue("novus.aibanez.net");
-		cifHidden.setValue(enterprise.getDocument());
-		razonSocialHidden.setValue(enterprise.getName());
-		yearHidden.setValue(String.valueOf(year));
-		typeHidden.setValue(depositType.getText());
-		diskForm.submit();
+		DownloadDialog dd = new DownloadDialog() {
+			
+			@Override 
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				hide();
+				String options = "";
+				for(Integer i = 1; i < 24; i++){
+					CheckBox  cb = (CheckBox) flex_table.getWidget(i, 1);
+					options = options + (cb.getValue() ? "T":"F");
+				}
+				diskForm.setAction(GWT.getHostPageBaseURL() + CCAA_PRINT_PDF);
+				schemaIdHidden.setValue(String.valueOf(1));
+				domainIdHidden.setValue(Integer.toString(enterprise.getDomain()));
+				domainNameHidden.setValue("novus.aibanez.net");
+				cifHidden.setValue(enterprise.getDocument());
+				razonSocialHidden.setValue(enterprise.getName());
+				yearHidden.setValue(String.valueOf(year));
+				typeHidden.setValue(depositType.getText());
+				optionsHidden.setValue(options);
+				diskForm.submit();
+			}
+		};
+		dd.addStyleName("gwt-PopupPanel-template");
+		dd.setGlassEnabled(true);
+		dd.show();
 	}
 	
 }

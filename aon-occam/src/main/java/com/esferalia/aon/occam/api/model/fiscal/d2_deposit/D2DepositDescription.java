@@ -300,16 +300,10 @@ public class D2DepositDescription {
 	
 	static{
 		DESCRIPTION_MAP.put(D2DepositKey.MA15947001,"Dentro del plazo m\u00E1ximo legal");
-
-	
 		DESCRIPTION_MAP.put(D2DepositKey.MA15947011,"Resto excedido");
-
-	
 		DESCRIPTION_MAP.put(D2DepositKey.MA15947021,"TOTAL (1+2)");
-
-	
 		DESCRIPTION_MAP.put(D2DepositKey.MA15947041,"Aplazamientos que a la fecha de cierre sobrepasan el plazo m\u00E1ximo legal");
-
+		DESCRIPTION_MAP.put(D2DepositKey.MA1594705,"Per\u00EDodo medio de pago a proveedores");		
 	}
 	
 	static{ // Apartado 12
@@ -545,6 +539,8 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA2121120,"2. (Capital no exigido)");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA2121200,"II. Prima de emisi\u00F3n");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA2121300,"III. Reservas");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA2121350,"1. Reserva de capitalizaci\u00F3n");
+		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA2121360,"2. Otras reservas");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA2121400,"IV. (Acciones y participaciones en patrimonio propias)");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA2121500,"V. Resultados de ejercicios anteriores");
 		DESCRIPTION_MAP_HEADER.put(D2DepositHeaderKey.BA2121600,"VI. Otras aportaciones de socios");
