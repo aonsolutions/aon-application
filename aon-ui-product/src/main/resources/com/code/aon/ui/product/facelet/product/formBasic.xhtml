@@ -14,13 +14,15 @@
 	<aon:inputText id="#{controller.pojoShortName}_code" 
 		value="#{productTo.code}" size="20" maxlength="15" 
 		onblur="toUpperCase(this);" required="true"
-		disabled="#{fieldDisabled}" />
+		disabled="#{fieldDisabled}"
+		ajaxSingle="true" />
 
 	<aon:outputLabel for="#{controller.pojoShortName}_name" value="#{bundle.aon_name}" />
 	<aon:inputText id="#{controller.pojoShortName}_name" 
 		value="#{productTo.name}" required="true"
 		size="64" maxlength="64"
-		disabled="#{fieldDisabled}" />
+		disabled="#{fieldDisabled}"
+		ajaxSingle="true" />
 
 	<aon:if test="#{aonConfiguration.bean.product.showType}">
 		<aon:outputLabel for="#{controller.pojoShortName}_type"
@@ -58,7 +60,8 @@
 	<aon:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
 		<aon:outputLabel for="#{controller.pojoShortName}_brand" value="#{bundle.tas_make}" />
 		<aon:selectOneMenu id="#{controller.pojoShortName}_brand" value="#{productTo.brand}"
-			disabled="#{fieldDisabled}">
+			disabled="#{fieldDisabled}"
+			ajaxSingle="true">
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{productCollections.brands}" />
 		</aon:selectOneMenu>
