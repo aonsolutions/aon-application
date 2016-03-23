@@ -34,7 +34,8 @@
 		<aon:inputText id="#{controller.pojoShortName}_product_detail" 
 			value="#{itemTo.detail}" size="32" maxlength="15"
 			disabled="#{fieldDisabled}"
-			required="#{itemTo.product.id != null}" 
+			required="#{itemTo.product.id != null}"
+			ajaxSingle="true"
 			converter="aon.TrimStringConverter" />
 	</aon:if>
 
@@ -44,7 +45,8 @@
 		<aon:inputText id="#{controller.pojoShortName}_product_detail2" 
 			value="#{itemTo.detail2}" size="32" maxlength="15"
 			disabled="#{fieldDisabled}"
-			required="#{itemTo.product.id != null}" 
+			required="#{itemTo.product.id != null}"
+			ajaxSingle="true" 
 			converter="aon.TrimStringConverter" />
 	</aon:if>
 
@@ -54,7 +56,8 @@
 		<aon:inputText id="#{controller.pojoShortName}_product_detail3" 
 			value="#{itemTo.detail3}" size="32" maxlength="15"
 			disabled="#{fieldDisabled}"
-			required="#{itemTo.product.id != null}" 
+			required="#{itemTo.product.id != null}"
+			ajaxSingle="true" 
 			converter="aon.TrimStringConverter" />
 	</aon:if>
 
@@ -77,7 +80,8 @@
 				<aon:inputText id="#{controller.pojoShortName}_packUnits" 
 					value="#{itemTo.packUnits}" size="1" maxlength="3"
 					disabled="#{fieldDisabled}"
-					required="#{true}" />
+					required="#{true}"
+					ajaxSingle="true" />
 
 				<aon:outputLabel for="#{controller.pojoShortName}_packUnitsTag"
 					styleClass="aon-margin-left aon-margin-right aon-italic"
@@ -99,7 +103,8 @@
 				<aon:inputText id="#{controller.pojoShortName}_packMeasurement" 
 					value="#{itemTo.packMeasurement}" size="2" maxlength="3"
 					disabled="#{fieldDisabled}"
-					required="#{true}" />
+					required="#{true}"
+					ajaxSingle="true" />
 
 				<aon:outputLabel for="#{controller.pojoShortName}_packMeasurementTag"
 					styleClass="aon-margin-left aon-margin-right aon-italic"
@@ -121,11 +126,13 @@
 		<aon:inputText id="#{controller.pojoShortName}_barcode" 
 			value="#{itemTo.barcode}" size="32" maxlength="32"
 			disabled="#{fieldDisabled}"
+			ajaxSingle="true"
 			converter="aon.TrimStringConverter" />
 	</aon:if>
 
 	<aon:outputLabel for="#{controller.pojoShortName}_description" value="#{bundle.aon_description}" />
 	<aon:inputTextarea id="#{controller.pojoShortName}_description"
-		value="#{itemTo.description}" cols="50" rows="4" />
+		value="#{itemTo.description}" cols="50" rows="4"
+		ajaxSingle="true" />
 
 </ui:composition>

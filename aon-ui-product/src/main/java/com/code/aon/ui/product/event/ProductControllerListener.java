@@ -78,6 +78,7 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
 			Product product = (Product)controller.getTo();
 			controller.getItem().setStatus(product.getStatus());
 			ItemController.clearBarcode(controller.getItem());
+			BeanManager.getManagerBean(Item.class).restoreNullSubPOJOs(controller.getItem());
 			BeanManager.getManagerBean(Item.class).insert(controller.getItem());
 			controller.onSearchItem(null);
 
