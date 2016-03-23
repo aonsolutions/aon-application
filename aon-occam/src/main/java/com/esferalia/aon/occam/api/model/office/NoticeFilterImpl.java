@@ -39,24 +39,25 @@ public class NoticeFilterImpl implements BiPredicate<NoticeFilter, Notice> {
 
 	@Override
 	public boolean test(NoticeFilter filter, Notice notice) {
-		boolean accepted = true;
+		
+		boolean accepted = !(filter.getTags().length > 0);
 
 		for (int x = 0; x < filter.getTags().length; x++)
 			for (Tag tag : notice.getTags()) {
-				accepted = false;
-				if (AonStringUtils.equals(filter.getTags()[x], tag.getName())) {
-					accepted = true;
-					break;
+				if (AonStringUtils.equals(filter.getTags()[x], tag.getName())
+						&& tag.getEndDate() == null) {
+					accepted = true;				
 				}
+				
 			}
+		
+		accepted = accepted && !(filter.getUsers().length > 0);
 
-		for (int x = 0; x < filter.getUsers().length; x++) {
-			accepted = false;
+		for (int x = 0; x < filter.getUsers().length; x++) {			
 			if (AonStringUtils.equals(filter.getUsers()[x],
 					notice.getSender().getName())) {
-				accepted = true;
-				break;
-			}
+				accepted = true;				
+			}			
 		}
 
 		return accepted;

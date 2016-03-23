@@ -15,6 +15,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -33,7 +36,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SearchPanel extends Composite {
+public class SearchPanel extends Composite implements KeyDownHandler {
 
 	enum DateRange {
 		ALL("all"), 
@@ -115,6 +118,8 @@ public class SearchPanel extends Composite {
 		this.noticeTagList = new LinkedList<DefaultAonTagIssueSelected>();
 		this.drashTagList = new LinkedList<Tag>();
 		this.drashUserList = new LinkedList<User>();
+		
+		this.subjectTextBox.addKeyDownHandler(this);
 
 		fromListBox.addItem(" ", DateRange.ALL.name());
 		fromListBox.addItem("Hoy", DateRange.TODAY.name());
@@ -146,6 +151,21 @@ public class SearchPanel extends Composite {
 		
 		for (Listener listener : listeners)
 			listener.onSelectCompany(company);
+	}
+	
+	@Override
+	public void onKeyDown(KeyDownEvent event) {
+		int keyCode = event.getNativeKeyCode();
+		String subject = subjectTextBox.getValue();
+		
+		if (keyCode == KeyCodes.KEY_ENTER && !subject.trim().isEmpty()) {
+			onSubjectKeyDown(subject);
+		}
+	}
+	
+	private void onSubjectKeyDown(String subject) {
+		for (Listener listener : listeners)
+			listener.onSelectSubject(subject);
 	}
 	
 	// ---------------------------------------------------------
