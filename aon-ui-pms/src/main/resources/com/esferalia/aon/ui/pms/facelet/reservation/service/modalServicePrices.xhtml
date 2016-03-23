@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showServicePricesWindow">
+		<aon:if test="#{controller.showServicePricesWindow}">
+			<rich:modalPanel id="servicePricesModalPanel" minHeight="460" minWidth="340" 
+				showWhenRendered="#{controller.showServicePricesWindow}"
+				zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.admin_product_price_change}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="aonContent" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{controller.showServicePricesWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="servicePricesForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="servicePrices-accept"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										value="#{bundle.aon_save}"
+										rendered="#{reservation.reservationPermission.acceptReservationServiceAllowed}"
+										actionListener="#{controller.onAcceptServicePrices}">
+										<rich:componentControl for="servicePricesModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{controller.showServicePricesWindow}"
+											value="#{false}" />
+									</aon:commandButton>	
+									<aon:commandButton id="servicePrices-back"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										value="#{bundle.aon_back}">
+										<f:setPropertyActionListener
+											target="#{controller.showServicePricesWindow}"
+											value="#{false}" />
+									</aon:commandButton>	
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;">
+									<aon:dataTable id="servicePricesDataList" value="#{controller.reservationServiceDetails}" 
+										rows="100" var="to">
+
+										<aon:column styleClass="aon-editDataTable-textColumn">
+											<f:facet name="header">
+												<aon:outputText value="#{bundle.aon_date}" />
+											</f:facet>
+											<aon:outputText value="#{to.effectiveDate}">
+												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+											</aon:outputText>
+										</aon:column>
+
+										<aon:column styleClass="aon-editDataTable-numberColumn">
+											<f:facet name="header">
+												<aon:outputText for="ReservationPrice_price" value="#{bundle.aon_price}" />
+											</f:facet>
+											<aon:inputText id="ReservationPrice_date" 
+												value="#{to.editableSalesPrice}" size="5" />
+										</aon:column>
+
+									</aon:dataTable>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

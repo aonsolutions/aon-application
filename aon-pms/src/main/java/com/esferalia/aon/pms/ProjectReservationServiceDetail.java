@@ -19,7 +19,22 @@ public class ProjectReservationServiceDetail extends ProjectReservationServiceDe
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-    @Transient
+	private double editableSalesPrice;
+
+	@Transient
+	public double getEditableSalesPrice() {
+		return editableSalesPrice;
+	}
+	public void setEditableSalesPrice(double editableSalesPrice) {
+		this.editableSalesPrice = editableSalesPrice;
+	}
+
+	@Transient
+    public ProjectReservation getProjectReservation() {
+    	return getProjectReservationService().getProjectReservation();
+    }
+
+	@Transient
     public Item getItem() {
     	return getProjectReservationService().getItem();
     }

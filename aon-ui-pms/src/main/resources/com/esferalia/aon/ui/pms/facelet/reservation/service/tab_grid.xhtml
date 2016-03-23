@@ -81,7 +81,7 @@
 		<ui:define name="endFormListContent">
 			<aon:div>
 				<aon:commandButton id="showServiceDetailTable"
-					value="&#160;" styleClass="aon-icon-tree-root aon-noborder"
+					value="&#160;" styleClass="aon-icon-tree-root aon-noborder aon-padding-left"
 					title="#{bundle.finance_tobreakdown}"
 					rendered="#{!to.showServiceDetail}" 
 					actionListener="#{controller.onShowServiceDetails}"
@@ -92,6 +92,17 @@
 					rendered="#{to.showServiceDetail}" 
 					actionListener="#{controller.onHideServiceDetails}"
 					reRender="#{dataTableId}" />
+				<aon:if test="#{!to.extra}">
+					<aon:commandButton id="showServicePrices"
+						value="&#160;" styleClass="aon-icon-tariff aon-noborder aon-padding-left"
+						title="#{bundle.admin_product_price_change}"
+						rendered="#{reservation.reservationPermission.acceptReservationServiceAllowed}"
+						actionListener="#{controller.onShowServicePrices}"
+						reRender="showServicePricesWindow">
+						<f:setPropertyActionListener target="#{controller.showServicePricesWindow}"
+							value="#{true}" />
+					</aon:commandButton>
+				</aon:if>
 				<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
 					<ui:param name="auditableTO" value="#{to}" />
 				</ui:include>

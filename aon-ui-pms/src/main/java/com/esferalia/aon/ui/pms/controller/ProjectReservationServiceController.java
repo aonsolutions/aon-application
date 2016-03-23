@@ -16,10 +16,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.AonVersion;
-
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -53,6 +52,8 @@ public class ProjectReservationServiceController extends LinesController {
 	private Date serviceToDate;
 	private double serviceQuantity;
 	private double servicePrice;
+	private boolean showServicePricesWindow;
+	private List<ITransferObject> reservationServiceDetails;
 
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
@@ -116,6 +117,22 @@ public class ProjectReservationServiceController extends LinesController {
 		this.servicePrice = CommonUtil.round(servicePrice, 4);
 	}
 
+	public boolean isShowServicePricesWindow() {
+		return showServicePricesWindow;
+	}
+
+	public void setShowServicePricesWindow(boolean showServicePricesWindow) {
+		this.showServicePricesWindow = showServicePricesWindow;
+	}
+
+	public List<ITransferObject> getReservationServiceDetails() {
+		return reservationServiceDetails;
+	}
+
+	public void setReservationServiceDetails(List<ITransferObject> reservationServiceDetails) {
+		this.reservationServiceDetails = reservationServiceDetails;
+	}
+
 	@Override
 	public void onReset(ActionEvent event) {
 		ProjectReservationController masterController = (ProjectReservationController)getMasterController();
@@ -170,8 +187,8 @@ public class ProjectReservationServiceController extends LinesController {
 			Criteria criteria = new Criteria();
 			String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);
 			criteria.addEqualExpression(alias, reservationService.getId());
-			criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
-			for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
+			criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE), false);
+			for (ITransferObject ito : reservationServiceDetailBean.getList(criteria, 0, 1)) {
 				ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
 				setServiceQuantity(reservationServiceDetail.getQuantity());
 				setServicePrice(reservationServiceDetail.getSalesPrice());
@@ -375,6 +392,31 @@ public class ProjectReservationServiceController extends LinesController {
 		criteria.addEqualExpression(serviceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID), service.getId());
 		criteria.addOrder(serviceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
 		return serviceDetailBean.getList(criteria);
+	}
+
+	public void onShowServicePrices(ActionEvent event) throws ManagerBeanException {
+		List<ITransferObject> serviceDetailList = getServiceDetailList();
+		for (ITransferObject ito : serviceDetailList) {
+			ProjectReservationServiceDetail serviceDetail = (ProjectReservationServiceDetail)ito;
+			serviceDetail.setEditableSalesPrice(serviceDetail.getSalesPrice());
+		}
+		setReservationServiceDetails(serviceDetailList);
+	}
+
+	public void onAcceptServicePrices(ActionEvent event) throws ManagerBeanException {
+		IManagerBean serviceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		for (ITransferObject ito : getReservationServiceDetails()) {
+			ProjectReservationServiceDetail serviceDetail = (ProjectReservationServiceDetail)ito;
+			double vatPercent = serviceDetail.getItem().getProduct().getVat().getDatedPercentage(serviceDetail.getProjectReservation().getDate());
+			double price = getPricesManager().getPrice(vatPercent, 0, serviceDetail.getEditableSalesPrice(), 4);
+			if (price != serviceDetail.getPrice()) {
+				serviceDetail.setPrice(price);
+				serviceDetail.setTaxableBase(getPriceStrategy().getBasePrice(serviceDetail));
+				serviceDetailBean.update(serviceDetail);
+			}
+		}
+
+		refreshReservationTotals();
 	}
 
 }
