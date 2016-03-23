@@ -15,7 +15,6 @@ import com.esferalia.aon.gwt.fiscal.client.mod184.Model184;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
-import com.esferalia.aon.gwt.fiscal.client.stats.StatControlPanel;
 import com.esferalia.aon.gwt.fiscal.client.tree.FiscalTree;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -54,11 +53,6 @@ public class MainEntryPoint implements EntryPoint {
 	//
 	private static final String ACC_ACCOUNT_ENTRY_ENTRY_POINT = "AccountEntryModule";
 	private static final String ACC_SALARY_ENTRY_ENTRY_POINT = "SalaryEntryModule";
-
-	//	
-	//    ================================================================== STATS
-	//
-	private static final String ST_STATS_ENTRY_POINT = "InvoiceStats";
 	
 	@Override
 	public void onModuleLoad() {
@@ -303,20 +297,6 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-		} else if ( entryPoint.equalsIgnoreCase(ST_STATS_ENTRY_POINT)) {
-//			GWT.runAsync(InvoiceStats.class, new RunAsyncCallback() {
-//
-//				@Override
-//				public void onFailure(Throwable reason) {
-//					Window.alert("Error al cargar");
-//				}
-//
-//				@Override
-//				public void onSuccess() {
-					new StatControlPanel().onModuleLoad();
-//				}
-//				
-//			});
 		}
 
 	}

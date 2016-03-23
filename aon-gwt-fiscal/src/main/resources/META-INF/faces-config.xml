@@ -10,14 +10,6 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!-- =================== STATS ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_invoiceStats</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/stats/gwt.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
 	<!-- =================== INVOICE ========================== -->
 	<navigation-rule>
 		<navigation-case>
