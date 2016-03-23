@@ -48,6 +48,10 @@
 								<td style="width:70px">
 									<common:DateBoxEx ui:field="endDate" />
 								</td>
+								<td> <span class="aon-panelGrid-search-info-internal2-template"> </span> </td>
+								<td style="width:70px">
+									<g:Button ui:field="searchButton" />
+								</td>
 							</tr>
 						</table>
 						

@@ -87,6 +87,9 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 						if(dataMap.get(key).getSalaryExtraCount()!=null){
 							obj.setSalaryExtraCount(dataMap.get(key).getSalaryExtraCount());
 						}
+						if(dataMap.get(key).getSalarySettleCount()!=null){
+							obj.setSalarySettleCount(dataMap.get(key).getSalarySettleCount());
+						}
 						if(dataMap.get(key).getSalaryOtherCount()!=null){
 							obj.setSalaryOtherCount(dataMap.get(key).getSalaryOtherCount());
 						}
@@ -189,11 +192,12 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
-			Result<Record4<Integer, BigDecimal, BigDecimal, BigDecimal>> result = ctx.getDslContext()
+			Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = ctx.getDslContext()
 					.select(CONTRACT.ID, 
 							DSL.sum( DSL.field(SALARY.TYPE.eq((byte) SalaryType.SALARY.ordinal())).coerce(Integer.class)),
 							DSL.sum( DSL.field(SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal())).coerce(Integer.class)),
-							DSL.sum( DSL.field(SALARY.TYPE.gt((byte) SalaryType.EXTRA.ordinal())).coerce(Integer.class)))
+							DSL.sum( DSL.field(SALARY.TYPE.eq((byte) SalaryType.SETTLE.ordinal())).coerce(Integer.class)),
+							DSL.sum( DSL.field(SALARY.TYPE.gt((byte) SalaryType.SETTLE.ordinal())).coerce(Integer.class)))
 					.from(CONTRACT
 							.leftOuterJoin(SALARY).on(SALARY.CONTRACT.eq(CONTRACT.ID)))
 					.where(CONTRACT.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
@@ -209,7 +213,8 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 				ActivitySummaryObject obj = new ActivitySummaryObject();
 				obj.setSalaryCount(record.value2()!=null?record.value2().intValue():0);
 				obj.setSalaryExtraCount(record.value3()!=null?record.value3().intValue():0);
-				obj.setSalaryOtherCount(record.value4()!=null?record.value4().intValue():0);
+				obj.setSalarySettleCount(record.value4()!=null?record.value4().intValue():0);
+				obj.setSalaryOtherCount(record.value5()!=null?record.value5().intValue():0);
 				map.put(record.value1(), obj);
 			});
 			return map;
@@ -225,11 +230,12 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
-			Result<Record4<Integer, BigDecimal, BigDecimal, BigDecimal>> result = ctx.getDslContext()
+			Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = ctx.getDslContext()
 					.select(DOMAIN.ID, 
 							DSL.sum( DSL.field(SALARY.TYPE.eq((byte) SalaryType.SALARY.ordinal())).coerce(Integer.class)),
 							DSL.sum( DSL.field(SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal())).coerce(Integer.class)),
-							DSL.sum( DSL.field(SALARY.TYPE.gt((byte) SalaryType.EXTRA.ordinal())).coerce(Integer.class)))
+							DSL.sum( DSL.field(SALARY.TYPE.eq((byte) SalaryType.SETTLE.ordinal())).coerce(Integer.class)),
+							DSL.sum( DSL.field(SALARY.TYPE.gt((byte) SalaryType.SETTLE.ordinal())).coerce(Integer.class)))
 					.from(DOMAIN
 							.leftOuterJoin(SALARY).on(SALARY.DOMAIN.eq(DOMAIN.ID)))
 					.where(SALARY.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
@@ -244,7 +250,8 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 				ActivitySummaryObject obj = new ActivitySummaryObject();
 				obj.setSalaryCount(record.value2()!=null?record.value2().intValue():0);
 				obj.setSalaryExtraCount(record.value3()!=null?record.value3().intValue():0);
-				obj.setSalaryOtherCount(record.value4()!=null?record.value4().intValue():0);
+				obj.setSalarySettleCount(record.value4()!=null?record.value4().intValue():0);
+				obj.setSalaryOtherCount(record.value5()!=null?record.value5().intValue():0);
 				map.put(record.value1(), obj);
 			});
 			return map;

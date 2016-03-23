@@ -22,6 +22,7 @@ public class ActivitySummaryObject implements Serializable {
 	
 	private Integer salaryCount;
 	private Integer salaryExtraCount;
+	private Integer salarySettleCount;
 	private Integer salaryOtherCount;
 
 	private Integer itCommonDiseaseCount;
@@ -88,6 +89,12 @@ public class ActivitySummaryObject implements Serializable {
 	}
 	public void setSalaryOtherCount(Integer salaryOtherCount) {
 		this.salaryOtherCount = salaryOtherCount;
+	}
+	public Integer getSalarySettleCount() {
+		return salarySettleCount;
+	}
+	public void setSalarySettleCount(Integer salarySettleCount) {
+		this.salarySettleCount = salarySettleCount;
 	}
 	public String getFullname() {
 		StringBuffer sb = new StringBuffer();

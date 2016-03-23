@@ -16,10 +16,8 @@ import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -34,6 +32,7 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
@@ -63,6 +62,7 @@ public class ActivitySummary extends MainEntryPoint {
 	
 	@UiField(provided = true) DateBoxEx startDate;
 	@UiField(provided = true) DateBoxEx endDate;
+	@UiField(provided = true) Button searchButton;
 	@UiField(provided = true) DataGrid<ActivitySummaryObject> dataGrid;
 	
 	
@@ -81,6 +81,7 @@ public class ActivitySummary extends MainEntryPoint {
 
 		startDate = new DateBoxEx();
 		endDate = new DateBoxEx();
+		searchButton = new Button("Buscar");
 		dataGrid = new DataGrid<ActivitySummaryObject>(Integer.MAX_VALUE, resources); 
 		
 		Widget ui = binder.createAndBindUi(this);
@@ -122,31 +123,12 @@ public class ActivitySummary extends MainEntryPoint {
 		CalendarUtil.addDaysToDate(end, -1);
 		endDate.setValue(end);
 		
-		startDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+		searchButton.addDomHandler(new ClickHandler() {
 			@Override
-			public void onValueChange(ValueChangeEvent<Date> arg0) {
+			public void onClick(ClickEvent arg0) {
 				loadData();
 			}
-		});
-		startDate.addDomHandler(new BlurHandler() {
-			@Override
-			public void onBlur(BlurEvent event) {
-				loadData();
-			}
-		}, BlurEvent.getType());
-		
-		endDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> arg0) {
-				loadData();
-			}
-		});
-		endDate.addDomHandler(new BlurHandler() {
-			@Override
-			public void onBlur(BlurEvent event) {
-				loadData();
-			}
-		}, BlurEvent.getType());
+		}, ClickEvent.getType());
 	}
 	
 	private void loadData() {
@@ -255,7 +237,7 @@ public class ActivitySummary extends MainEntryPoint {
 					return o1.getStartDate().compareTo(o2.getStartDate());
 				}
 			});
-			SafeHtmlHeader startDateHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Alta"));
+			SafeHtmlHeader startDateHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Inicio contr."));
 			startDateHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
 			dataGrid.addColumn(startDateColumn, startDateHeader, null);
 			dataGrid.setColumnWidth(startDateColumn, 15, Unit.EM);
@@ -278,7 +260,7 @@ public class ActivitySummary extends MainEntryPoint {
 					return o1.getEndDate().compareTo(o2.getEndDate());
 				}
 			});
-			SafeHtmlHeader endDateHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Baja"));
+			SafeHtmlHeader endDateHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Fin contr."));
 			endDateHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
 			dataGrid.addColumn(endDateColumn, endDateHeader, null);
 			dataGrid.setColumnWidth(endDateColumn, 15, Unit.EM);
@@ -303,7 +285,7 @@ public class ActivitySummary extends MainEntryPoint {
 					return o1.getStartDate().compareTo(o2.getStartDate());
 				}
 			});
-			SafeHtmlHeader startHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Altas"));
+			SafeHtmlHeader startHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Inicio contr."));
 			startHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
 			Header<String> startFooter = new Header<String>(new TextCell()) {
 				@Override
@@ -332,7 +314,7 @@ public class ActivitySummary extends MainEntryPoint {
 					return o1.getEndDate().compareTo(o2.getEndDate());
 				}
 			});
-			SafeHtmlHeader endHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Bajas"));
+			SafeHtmlHeader endHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Fin contr."));
 			endHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
 			Header<String> endFooter = new Header<String>(new TextCell()) {
 				@Override
@@ -401,6 +383,35 @@ public class ActivitySummary extends MainEntryPoint {
 		};
 		dataGrid.addColumn(salaryExtraCountColumn, salaryExtraCountHeader, salaryExtraCountFooter);
 		dataGrid.setColumnWidth(salaryExtraCountColumn, 7, Unit.EM);
+		
+		/**
+		 * SalarySettleCount Column
+		 */
+		Column<ActivitySummaryObject, String> salarySettleCountColumn = new Column<ActivitySummaryObject, String>(
+				new TextCell()) {
+			@Override
+			public String getValue(ActivitySummaryObject object) {
+				return object.getSalarySettleCount()!=null?object.getSalarySettleCount().toString():"0";
+			}
+		};
+		salarySettleCountColumn.setSortable(true);
+		sortHandler.setComparator(salarySettleCountColumn,
+				new Comparator<ActivitySummaryObject>() {
+			@Override
+			public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
+				return o1.getSalarySettleCount().compareTo(o2.getSalarySettleCount());
+			}
+		});
+		SafeHtmlHeader salarySettleCountHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Fqt."));
+		salarySettleCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
+		Header<String> salarySettleCountFooter = new Header<String>(new TextCell()) {
+			@Override
+			public String getValue() {
+				return String.valueOf(getTotalCountSettleSalary());
+			}
+		};
+		dataGrid.addColumn(salarySettleCountColumn, salarySettleCountHeader, salarySettleCountFooter);
+		dataGrid.setColumnWidth(salarySettleCountColumn, 7, Unit.EM);
 		
 		/**
 		 * SalaryOtherCount Column
@@ -590,6 +601,16 @@ public class ActivitySummary extends MainEntryPoint {
 		for (Integer i = 0; i < getSummaryList().size(); i++) {
 			if(getSummaryList().get(i).getSalaryExtraCount()!=null){
 				count += getSummaryList().get(i).getSalaryExtraCount();
+			}
+		}
+		return count;
+	}
+	
+	private Integer getTotalCountSettleSalary(){
+		int count=0;
+		for (Integer i = 0; i < getSummaryList().size(); i++) {
+			if(getSummaryList().get(i).getSalarySettleCount()!=null){
+				count += getSummaryList().get(i).getSalarySettleCount();
 			}
 		}
 		return count;
