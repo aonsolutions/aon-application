@@ -1,0 +1,54 @@
+
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
+
+	<g:DockLayoutPanel ui:field="dockLayoutPanel">
+		<g:north size="26">
+			<g:FlowPanel height="100%"
+				styleName="{aonResources.css.aonFindingTitleToolbar} {aonResources.css.aonWidthAll}">
+				<g:HorizontalPanel>
+					<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
+						<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">
+							<g:Label text="{msg.invoiceReport}" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel>
+						<g:HTMLPanel styleName="{aonResources.css.aonFindingSubtitleIternal}">
+							<g:Label></g:Label>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel ui:field="toolbarPanel" styleName="{aonResources.css.aonFindingToolbar}">
+						<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
+							<g:Button ui:field='back'
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconCancel}" 
+								text="Volver" />
+							<g:Button ui:field='excel'
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" 
+								text="{msg.export}" />
+							<g:SimplePanel ui:field="excelFormContainer"/>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+				</g:HorizontalPanel>
+			</g:FlowPanel>
+		</g:north>
+		<g:center>
+			<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+				<g:west size="200">
+					<g:ScrollPanel ui:field="west" 
+						styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonHeightAll}"/>
+				</g:west>
+				<g:center>
+					<g:SimpleLayoutPanel ui:field="content" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonHeightAll}"/>
+				</g:center>
+				<g:south size="250">
+					<g:ScrollPanel ui:field="south" styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonHeightAll}"/>
+				</g:south>
+				
+			</g:SplitLayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder>

@@ -1,0 +1,14 @@
+<faces-config version="1.2" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<!-- =================== STATS ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_stat</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/stat/facelet/gwt.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+</faces-config>
+		

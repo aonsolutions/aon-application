@@ -4,7 +4,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IStats;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.StatsDAO;
 
 public class StatsImpl implements IStats {
@@ -15,15 +14,21 @@ public class StatsImpl implements IStats {
 	}
 
 	@Override
-	public StatData<Integer,InvoiceType,Double> getYearInvoiceTypeData(
+	public StatData<Integer, String, Double> getYearInvoiceTypeData(
 			AONContext ctx,StatParams params) {
 		return StatsDAO.getYearInvoiceTypeData(ctx, params);
 	}
 
 	@Override
-	public StatData<Integer,InvoiceType,Double> getMonthInvoiceTypeData(
+	public StatData<Integer, String, Double> getMonthInvoiceTypeData(
 			AONContext ctx, StatParams params) {
 		return StatsDAO.getMonthInvoiceTypeData(ctx, params);
+	}
+	
+	@Override
+	public StatData<Integer, String, Double> getDayInvoiceTypeData(
+			AONContext ctx, StatParams params) {
+		return StatsDAO.getDayInvoiceTypeData(ctx, params);
 	}
 
 

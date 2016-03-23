@@ -2500,3 +2500,103 @@ right
 	color: #a30c51;
 	border: 0.5px solid #a30c51;
 }
+.aon-stat-popup-panel {
+	background-color: #ffffff;
+    border: 1px none;
+    border-radius: 5px;
+    border-style: solid;
+    line-height: 18px;
+    white-space: nowrap;
+    z-index: 100;
+    
+}
+
+.aon-stat-item-panel{
+    background-color: #ffffff;
+    color: #555753;
+}
+
+.aon-stat-item-panel:hover{
+    color: #000000;
+}
+
+@sprite .aon-list-stat {
+	gwt-image: "aonListData";
+	background-position: left 6px;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-color: transparent;
+	cursor: pointer;
+	padding-left: 20px;
+	white-space: nowrap;
+	height: auto;
+    width: auto;
+    padding-top: 5px;
+    margin-right: 10px;
+}
+
+
+@sprite .aon-icon-checkyes {
+	gwt-image: "aonStatCheckyes";
+	background-position: left 6px;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-color: transparent;
+	cursor: pointer;
+	padding-left: 20px;
+	white-space: nowrap;
+	height: auto;
+    width: auto;
+    padding-top: 5px;
+    margin-right: 10px;
+}
+.gwt-Button {
+	-moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: rgba(0, 0, 0, 0) url("images/hborder.png") repeat-x scroll 0 -2077px;
+    border-color: #bbb #bbb #a0a0a0;
+    border-image: none;
+    border: none;
+    cursor: pointer;
+    font-size: small;
+    margin: 0;
+    padding: 5px 7px;
+    text-decoration: none;
+    margin: 5px;
+}
+
+@sprite .aon-drop-button {
+	gwt-image: "aonStatView";
+	background-position: right center;
+	width: auto;
+	height: auto;
+    /*border: 1px solid #ddd;*/
+    border: none;
+    cursor: pointer;
+    padding: 3px 15px 3px 5px;
+    color: #555753;
+    margin-top: 10px;
+    margin-left: 15px;
+}
+
+.aon-drop-button:hover {
+	color: #000000;
+}
+
+.aon-padding2-top {
+	padding-top: 5px;
+}
+
+.aon-padding2-bottom {
+	padding-bottom: 5px;
+}
+
+.aon-padding2-left {
+	padding-left: 5px;
+}
+
+.aon-stat-menu-style{
+	max-height: 300px;
+}

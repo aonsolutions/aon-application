@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.resources.client.CssResource.ClassName;
 
 public interface AonResources extends ClientBundle, Images {
 
@@ -266,6 +267,17 @@ public interface AonResources extends ClientBundle, Images {
 	ImageResource aonIconRoot();
 
 // ------------------------------------------------------------------------
+
+//	@Source("images/checkyes.png")
+//	ImageResource aonStatCheckyes();
+	@Source("images/view.png")
+	ImageResource aonStatView();
+	
+	@Source("images/checkyes.png")
+	ImageResource aonStatCheckyes();
+	
+	@Source("images/aon-icon-list-data.png")
+	ImageResource aonListStat();
 
 }
 

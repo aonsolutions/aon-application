@@ -1843,28 +1843,38 @@ public class AON {
 		}
 	}
 
-	public static StatData<Integer, InvoiceType, Double> getYearInvoiceTypeData(
-			StatParams params, String user) {
+	public static StatData<Integer, String, Double> getYearInvoiceTypeData(String domainName,
+			Integer domainId, String user, StatParams params) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(params.getDomainName(),
-					params.getDomain(), user);
+			ctx = AONContext.getAONContext(domainName,domainId,user);
 			return getStats().getYearInvoiceTypeData(ctx, params);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
-
-	public static StatData<Integer, InvoiceType, Double> getMonthInvoiceTypeData(
-			StatParams params, String user) {
+	
+	public static StatData<Integer, String, Double> getMonthInvoiceTypeData(String domainName,
+			Integer domainId, String user, StatParams params) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(params.getDomainName(),
-					params.getDomain(), user);
+			ctx = AONContext.getAONContext(domainName,domainId,user);
 			return getStats().getMonthInvoiceTypeData(ctx, params);
 		} finally {
 			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static StatData<Integer, String, Double> getDayInvoiceTypeData(String domainName,
+			Integer domainId, String user, StatParams params) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName,domainId,user);
+			return getStats().getDayInvoiceTypeData(ctx, params);
+		} finally {
+			if (ctx != null) 
 				ctx.close();
 		}
 	}

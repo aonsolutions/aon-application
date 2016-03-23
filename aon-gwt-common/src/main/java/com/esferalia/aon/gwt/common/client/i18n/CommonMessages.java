@@ -2919,4 +2919,6 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Resultado de aplicar el porcentaje correspondiente a cada actividad")
 	String irpfActivityRes();
 	
+	@DefaultMessage("Borrar todos los filtros")
+	String statFilterDelete();
 }

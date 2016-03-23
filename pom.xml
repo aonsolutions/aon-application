@@ -156,6 +156,7 @@
 		<module>aon-gwt-document</module>
 		<module>aon-gwt-template</module>
 		<module>aon-gwt-office</module>
+		<module>aon-gwt-stat</module>
 
 		<!-- GENERATED -->
 		<module>aon-audabridge-api</module>

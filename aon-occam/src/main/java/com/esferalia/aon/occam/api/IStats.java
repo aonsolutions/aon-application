@@ -8,10 +8,14 @@ public interface IStats {
 
 	StatParams createStatParams(AONContext ctx);
 
-	StatData<Integer, InvoiceType, Double> getYearInvoiceTypeData(
+	StatData<Integer, String, Double> getYearInvoiceTypeData(
 			AONContext ctx, StatParams params);
 
-	StatData<Integer, InvoiceType, Double> getMonthInvoiceTypeData(
+	StatData<Integer, String, Double> getMonthInvoiceTypeData(
 			AONContext ctx, StatParams params);
+
+	StatData<Integer, String, Double> getDayInvoiceTypeData(
+			AONContext ctx, StatParams params);
+
 
 }

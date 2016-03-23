@@ -924,6 +924,33 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-title")
 	String aonIconTitle();
 
+	@ClassName("aon-stat-popup-panel")
+	String aonStatPopUpPanel();
+	
+	@ClassName("aon-stat-item-panel")
+	String aonStatItemPanel();
+	
+	@ClassName("aon-icon-checkyes")
+	String aonStatCheckyes();
+	
+	@ClassName("aon-list-stat")
+	String aonListStat();
+	
+	@ClassName("aon-drop-button")
+	String aonDropButton();
+	
+	@ClassName("aon-padding2-top")
+	String aonPadding2Top();
+	
+	@ClassName("aon-padding2-bottom")
+	String aonPadding2Bottom();
+	
+	@ClassName("aon-padding2-left")
+	String aonPadding2Left();
+	
+	@ClassName("aon-stat-menu-style")
+	String aonStatMenuStyle();	
+
 	@ClassName("aon-icon-invoice")
 	String aonIconInvoice();
 
