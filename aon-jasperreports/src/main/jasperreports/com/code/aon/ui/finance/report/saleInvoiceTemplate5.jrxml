@@ -71,6 +71,9 @@
 			<variableExpression><![CDATA[($F{taxType}.ordinal() == 2?new Double($F{taxQuota}.doubleValue()*(-1)):$F{taxQuota})]]></variableExpression>
 			<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
 		</variable>
+		<variable name="DoubleFormatter" class="java.text.DecimalFormat">
+			<variableExpression><![CDATA[new DecimalFormat( "#,###,###,##0.00" )]]></variableExpression>
+		</variable>
 	</subDataset>
 	<subDataset name="finances" uuid="84bcae26-63d0-42df-a112-33c14c716da8">
 		<parameter name="rowCount" class="java.lang.Integer">
@@ -125,6 +128,7 @@
 	<field name="referenceCode" class="java.lang.String"/>
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="registryDocument" class="java.lang.String"/>
+	<field name="registryDocumentCountry" class="com.code.aon.common.enumeration.Country"/>
 	<field name="registryName" class="java.lang.String"/>
 	<field name="address" class="com.code.aon.registry.IAddress"/>
 	<field name="comments" class="java.lang.String"/>
@@ -420,7 +424,8 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registryDocument}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{registryDocumentCountry}.getValue() + "-"
++$F{registryDocument}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="4ca237cf-ec5f-4d2a-9590-410a8a4223aa" key="textField-52" x="392" y="32" width="48" height="13">
@@ -1430,7 +1435,8 @@ new Boolean($F{taxQuota}.doubleValue()!=0)]]></printWhenExpression>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="SansSerif" size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{taxType}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{taxType}.getName($P{REPORT_LOCALE})
++ ($F{surchargePercent}.doubleValue() > 0?" + " + $R{aon_surcharge}:"")]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -1468,7 +1474,8 @@ new Boolean($F{taxQuota}.doubleValue()!=0)]]></printWhenExpression>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="SansSerif" size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[new Double($F{taxQuota}.doubleValue() + $F{surchargeQuota}.doubleValue())]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$V{DoubleFormatter}.format($F{taxQuota}.doubleValue())
++ ($F{surchargePercent}.doubleValue() > 0?" + " + $V{DoubleFormatter}.format($F{surchargeQuota}.doubleValue()):"")]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

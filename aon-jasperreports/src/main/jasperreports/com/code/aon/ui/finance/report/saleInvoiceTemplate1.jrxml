@@ -49,6 +49,9 @@
 			<variableExpression><![CDATA[($F{taxType}.ordinal() == 2?new Double($F{taxQuota}.doubleValue()*(-1)):$F{taxQuota})]]></variableExpression>
 			<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
 		</variable>
+		<variable name="DoubleFormatter" class="java.text.DecimalFormat">
+			<variableExpression><![CDATA[new DecimalFormat( "#,###,###,##0.00" )]]></variableExpression>
+		</variable>
 	</subDataset>
 	<subDataset name="finances" uuid="c544eb79-4684-48c5-98db-81b05207a044">
 		<field name="payMethod" class="com.code.aon.config.PayMethod"/>
@@ -101,11 +104,12 @@
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
 	<field name="registryName" class="java.lang.String"/>
+	<field name="registryDocument" class="java.lang.String"/>
+	<field name="registryDocumentCountry" class="com.code.aon.common.enumeration.Country"/>
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="detailList" class="java.util.ArrayList"/>
 	<field name="id" class="java.lang.Integer"/>
 	<field name="registry" class="com.code.aon.registry.Registry"/>
-	<field name="registryDocument" class="java.lang.String"/>
 	<field name="lines" class="java.util.Set"/>
 	<field name="finances" class="java.util.Set"/>
 	<field name="comments" class="java.lang.String"/>
@@ -354,7 +358,8 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registryDocument}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{registryDocumentCountry}.getValue() + "-"
++$F{registryDocument}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="ce00c68d-78c6-459b-bc28-76bbbfa600aa" key="textField-52" x="21" y="54" width="48" height="13"/>
@@ -480,6 +485,7 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 + ($F{surchargePercent}.doubleValue() > 0?" + " + $F{surchargePercent}:"")
 + " % " +
 $F{taxType}.getName($P{REPORT_LOCALE})
++ ($F{surchargePercent}.doubleValue() > 0?" + " + $R{aon_surcharge}:"")
 + " " + $R{aon_over} + " "]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0.00##" isBlankWhenNull="true">
@@ -510,7 +516,8 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="SansSerif" size="10"/>
 								</textElement>
-								<textFieldExpression><![CDATA[new Double($F{taxQuota}.doubleValue() + $F{surchargeQuota}.doubleValue())]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$V{DoubleFormatter}.format($F{taxQuota}.doubleValue())
++ ($F{surchargePercent}.doubleValue() > 0?" + " + $V{DoubleFormatter}.format($F{surchargeQuota}.doubleValue()):"")]]></textFieldExpression>
 							</textField>
 							<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
 								<reportElement uuid="0369333b-2f4b-440a-9d95-49b7ca14664e" key="textField-44" positionType="Float" x="102" y="1" width="15" height="16"/>

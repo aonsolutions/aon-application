@@ -27,6 +27,7 @@
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="registry" class="com.code.aon.registry.Registry"/>
 	<field name="registryDocument" class="java.lang.String"/>
+	<field name="registryDocumentCountry" class="com.code.aon.common.enumeration.Country"/>
 	<field name="registryName" class="java.lang.String"/>
 	<field name="address" class="com.code.aon.registry.IAddress"/>
 	<field name="comments" class="java.lang.String"/>
@@ -198,7 +199,8 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registryDocument}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{registryDocumentCountry}.getValue() + "-"
++$F{registryDocument}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="c6d504f2-fe62-4464-8a4c-fbde4158d0f8" key="textField-52" x="397" y="32" width="48" height="13"/>

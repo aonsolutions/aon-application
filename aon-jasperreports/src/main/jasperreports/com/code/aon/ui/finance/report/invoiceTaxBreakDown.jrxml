@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="taxBreakDown" pageWidth="245" pageHeight="842" columnWidth="245" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="taxBreakDown" pageWidth="245" pageHeight="842" columnWidth="245" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="445a946a-39a3-4537-a204-d8d94e646f5d">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
@@ -18,6 +18,9 @@
 		<variableExpression><![CDATA[($F{taxType}.ordinal() == 2?new Double($F{taxQuota}.doubleValue()*(-1)):$F{taxQuota})]]></variableExpression>
 		<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
 	</variable>
+	<variable name="DoubleFormatter" class="java.text.DecimalFormat">
+		<variableExpression><![CDATA[new DecimalFormat( "#,###,###,##0.00" )]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -30,7 +33,7 @@
 	<columnHeader>
 		<band height="14" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-15" mode="Opaque" x="0" y="0" width="70" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement uuid="1361c1de-dae4-440b-9d5f-32060fe48eb9" key="textField-15" mode="Opaque" x="0" y="0" width="70" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -43,7 +46,7 @@
 				<textFieldExpression><![CDATA[$R{aon_taxable_base}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-17" mode="Opaque" x="70" y="0" width="50" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement uuid="8ec6a52f-bec8-4d4d-8dc1-99a6aa552a65" key="textField-17" mode="Opaque" x="70" y="0" width="50" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -56,7 +59,7 @@
 				<textFieldExpression><![CDATA["%"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-19" mode="Opaque" x="120" y="0" width="60" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement uuid="3d537ab2-7b19-492c-9b65-943b7ecb4851" key="textField-19" mode="Opaque" x="120" y="0" width="60" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -69,7 +72,7 @@
 				<textFieldExpression><![CDATA[$R{aon_type}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-20" mode="Opaque" x="180" y="0" width="65" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement uuid="b2ba688f-2b3a-4c45-a252-5d099895b618" key="textField-20" mode="Opaque" x="180" y="0" width="65" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -86,7 +89,7 @@
 	<detail>
 		<band height="14" splitType="Stretch">
 			<textField pattern="#,##0.00##" isBlankWhenNull="true">
-				<reportElement key="textField-16" x="0" y="0" width="70" height="14">
+				<reportElement uuid="e8b7ce2e-d157-4bf9-8efd-8b749c382ae0" key="textField-16" x="0" y="0" width="70" height="14">
 					<printWhenExpression><![CDATA[new Boolean($F{base}.doubleValue()!=0) ||
 new Boolean($F{taxQuota}.doubleValue()!=0)]]></printWhenExpression>
 				</reportElement>
@@ -102,7 +105,7 @@ new Boolean($F{taxQuota}.doubleValue()!=0)]]></printWhenExpression>
 				<textFieldExpression><![CDATA[$F{base}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-18" x="70" y="0" width="50" height="14">
+				<reportElement uuid="757ad215-524b-4c55-b1ab-980d333a529c" key="textField-18" x="70" y="0" width="50" height="14">
 					<printWhenExpression><![CDATA[new Boolean($F{base}.doubleValue()!=0) ||
 new Boolean($F{taxQuota}.doubleValue()!=0)]]></printWhenExpression>
 				</reportElement>
@@ -118,7 +121,7 @@ new Boolean($F{taxQuota}.doubleValue()!=0)]]></printWhenExpression>
 				<textFieldExpression><![CDATA[$F{taxPercent} + ($F{surchargePercent}.doubleValue() > 0?" + " + $F{surchargePercent}:"")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-21" x="120" y="0" width="60" height="14">
+				<reportElement uuid="aba53660-9f2b-457c-ba2a-cc5eba73d053" key="textField-21" x="120" y="0" width="60" height="14">
 					<printWhenExpression><![CDATA[new Boolean($F{base}.doubleValue()!=0) ||
 new Boolean($F{taxQuota}.doubleValue()!=0)]]></printWhenExpression>
 				</reportElement>
@@ -131,10 +134,12 @@ new Boolean($F{taxQuota}.doubleValue()!=0)]]></printWhenExpression>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{taxType}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{taxType}.getName($P{REPORT_LOCALE})
++ ($F{surchargePercent}.doubleValue() > 0?" + " + $R{aon_surcharge}:"")
+]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-22" x="180" y="0" width="65" height="14">
+				<reportElement uuid="cc04bf5c-3c48-437f-ab6b-7b06e4876830" key="textField-22" x="180" y="0" width="65" height="14">
 					<printWhenExpression><![CDATA[new Boolean($F{base}.doubleValue()!=0) ||
 new Boolean($F{taxQuota}.doubleValue()!=0)]]></printWhenExpression>
 				</reportElement>
@@ -147,7 +152,8 @@ new Boolean($F{taxQuota}.doubleValue()!=0)]]></printWhenExpression>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new Double($F{taxQuota}.doubleValue() + $F{surchargeQuota}.doubleValue())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{DoubleFormatter}.format($F{taxQuota}.doubleValue())
++ ($F{surchargePercent}.doubleValue() > 0?" + " + $V{DoubleFormatter}.format($F{surchargeQuota}.doubleValue()):"")]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

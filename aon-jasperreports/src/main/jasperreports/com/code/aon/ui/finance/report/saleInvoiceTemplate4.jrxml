@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="144"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -51,6 +51,9 @@
 		<variable name="taxTotal" class="java.lang.Double" calculation="Sum">
 			<variableExpression><![CDATA[($F{taxType}.ordinal() == 2?new Double($F{taxQuota}.doubleValue()*(-1)):$F{taxQuota})]]></variableExpression>
 			<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
+		</variable>
+		<variable name="DoubleFormatter" class="java.text.DecimalFormat">
+			<variableExpression><![CDATA[new DecimalFormat( "#,###,###,##0.00" )]]></variableExpression>
 		</variable>
 	</subDataset>
 	<subDataset name="finances" uuid="aee2d040-d98f-4319-ad2f-6418bffac672">
@@ -104,11 +107,12 @@
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
 	<field name="registryName" class="java.lang.String"/>
+	<field name="registryDocument" class="java.lang.String"/>
+	<field name="registryDocumentCountry" class="com.code.aon.common.enumeration.Country"/>
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="detailList" class="java.util.ArrayList"/>
 	<field name="id" class="java.lang.Integer"/>
 	<field name="registry" class="com.code.aon.registry.Registry"/>
-	<field name="registryDocument" class="java.lang.String"/>
 	<field name="lines" class="java.util.Set"/>
 	<field name="finances" class="java.util.Set"/>
 	<field name="comments" class="java.lang.String"/>
@@ -451,7 +455,8 @@
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registryDocument}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{registryDocumentCountry}.getValue() + "-"
++$F{registryDocument}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="4858716c-0b02-4952-899d-d443fd4480b0" key="textField-52" x="21" y="89" width="48" height="15"/>
@@ -841,6 +846,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 + ($F{surchargePercent}.doubleValue() > 0?" + " + $F{surchargePercent}:"")
 + " % " +
 $F{taxType}.getName($P{REPORT_LOCALE})
++ ($F{surchargePercent}.doubleValue() > 0?" + " + $R{aon_surcharge}:"")
 + " " + $R{aon_over} + " "]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -878,7 +884,8 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="SansSerif" size="10"/>
 								</textElement>
-								<textFieldExpression><![CDATA[new Double($F{taxQuota}.doubleValue() + $F{surchargeQuota}.doubleValue())]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$V{DoubleFormatter}.format($F{taxQuota}.doubleValue())
++ ($F{surchargePercent}.doubleValue() > 0?" + " + $V{DoubleFormatter}.format($F{surchargeQuota}.doubleValue()):"")]]></textFieldExpression>
 							</textField>
 							<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
 								<reportElement uuid="1ca522f2-a100-4612-9f71-26a14fdf9478" key="textField-44" positionType="Float" mode="Opaque" x="102" y="0" width="15" height="15" backcolor="#F0F0F0"/>
