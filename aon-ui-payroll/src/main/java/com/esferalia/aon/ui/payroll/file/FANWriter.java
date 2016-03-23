@@ -650,11 +650,12 @@ public class FANWriter implements Serializable {
 		if(liquidationType==LiquidationType.L00){
 		
 			salary = getSalary(contract, SalaryType.SALARY);
-			baseCgc = salary.getCommonBase();
-			baseCgp = getProfessionalBase(salary, salaryDataList);
 			
 			if(salary!=null){
 					
+				baseCgc = salary.getCommonBase();
+				baseCgp = getProfessionalBase(salary, salaryDataList);
+				
 				if(dat.getIndicadoresPerfil()==null 
 						|| (!dat.getIndicadoresPerfil().contains("I")
 								&& !dat.getIndicadoresPerfil().contains("D") 
@@ -728,7 +729,9 @@ public class FANWriter implements Serializable {
 		} else if(liquidationType==LiquidationType.L13){
 			salary = getSalary(contract, SalaryType.SETTLE);
 			if(salary!=null){
-				fanFactory.createEDLBa01Segment(baseCgc, dat);
+				baseCgc = salary.getCommonBase();
+				baseCgp = getProfessionalBase(salary, salaryDataList);
+				fanFactory.createEDLBa01Segment(salary.getCommonBase(), dat);
 				fanFactory.createEDLBa02Segment(baseCgp, dat);
 			}
 		}
