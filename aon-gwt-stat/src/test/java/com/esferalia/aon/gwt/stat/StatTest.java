@@ -2,17 +2,13 @@ package com.esferalia.aon.gwt.stat;
 
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.esferalia.aon.jooq.tables.Invoice;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -85,6 +81,7 @@ public class StatTest {
 	
 	
 	@Test
+	@Ignore	
 	//Test para sacar los datos del gráfico, ventas, compras...por mes, en el 2014.
 	//No sale imprimible al HTML...
 	public void testGrafico3() throws ClassNotFoundException, SQLException{

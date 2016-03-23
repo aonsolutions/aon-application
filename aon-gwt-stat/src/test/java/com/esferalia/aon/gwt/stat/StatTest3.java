@@ -1,8 +1,5 @@
 package com.esferalia.aon.gwt.stat;
 
-import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-
 import java.sql.SQLException;
 
 import org.junit.AfterClass;
@@ -11,7 +8,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class StatTest3 {
 	
@@ -30,6 +26,7 @@ public class StatTest3 {
 	}
 	
 	@Test
+	@Ignore	
 	//segunda forma, la más eficaz
 	//en vez de hacer la sql aquí, la llama de StatDAO
 	public void testInvoices3() throws ClassNotFoundException, SQLException {

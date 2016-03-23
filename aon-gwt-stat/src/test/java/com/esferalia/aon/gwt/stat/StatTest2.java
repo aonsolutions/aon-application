@@ -2,14 +2,13 @@ package com.esferalia.aon.gwt.stat;
 
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import com.esferalia.aon.jooq.tables.Invoice;
 import com.esferalia.aon.occam.api.AONContext;
 
 public class StatTest2 {
@@ -29,6 +28,7 @@ public class StatTest2 {
 	}
 	
 	@Test
+	@Ignore
 	public void testEmptyDomain() throws ClassNotFoundException, SQLException {
 		System.out.println( 
 		ctx.getDslContext()
