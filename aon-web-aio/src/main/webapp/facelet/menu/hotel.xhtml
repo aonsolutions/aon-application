@@ -350,6 +350,12 @@
 											value="#{bundle.report_room_persons}" />
 									</aon:div>
 								</aon:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="webpolUserList" 
+										action="webpolExporter_list"
+										actionListener="#{webpolExporter.onInit}"
+										value="#{bundle.pms_webpolExporter_module}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 

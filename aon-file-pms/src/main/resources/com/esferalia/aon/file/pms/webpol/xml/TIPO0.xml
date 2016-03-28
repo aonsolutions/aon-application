@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="TIPO0">
+	<field name="tipo_de_registro" value="0" format="Numeric" pattern="9(1)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="codigo_agrupacion_hotelera" value="bean" bean="TIPO0" property="codigoAgrupacionHotelera" format="AlphaNumeric" pattern="X(10)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" /> 
+	<field name="nombre_agrupacion" value="bean" bean="TIPO0" property="nombreAgrupacion" format="AlphaNumeric" pattern="X(40)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="fecha_confeccion_fichero" value="bean" bean="TIPO0" property="fechaConfeccionFichero" format="Numeric" pattern="9(8)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="hora_confeccion_fichero" value="bean" bean="TIPO0" property="horaConfeccionFichero" format="Numeric" pattern="9(4)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="numero_registros_tipo1" value="bean" bean="TIPO0" property="numeroRegistrosTipo1" format="Numeric" pattern="9(5)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+</register>

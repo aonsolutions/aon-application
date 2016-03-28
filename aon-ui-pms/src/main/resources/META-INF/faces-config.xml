@@ -1343,6 +1343,25 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ************* WEBPOL EXPORTER ********************* -->
+	<managed-bean>
+		<managed-bean-name>webpolExporter</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.WebpolExporterController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.pms.ProjectReservationGuest</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>webpolExporter</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ProjectReservationGuest_document desc</value>
+		</managed-property>				
+	</managed-bean>
+	
 	<!-- **************************************************** -->
 	<!-- ************* LOOKUP ******************************* -->
 	<!-- **************************************************** -->
@@ -1731,6 +1750,14 @@
 		<navigation-case>
 			<from-outcome>regenerateBooking</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/util/regenerateBooking.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- ============= Webpol Exporter =================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>webpolExporter_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/webpol/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

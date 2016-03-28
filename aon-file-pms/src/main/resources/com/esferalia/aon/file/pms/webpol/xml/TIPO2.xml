@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="TIPO2">
+	<field name="tipo_de_registro" value="2" format="Numeric" pattern="9(1)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="numero_documento_esp" value="bean" bean="TIPO2" property="numeroDocumentoEsp" format="AlphaNumeric" pattern="X(11)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="numero_pasaporte_extranjeros" value="bean" bean="TIPO2" property="numeroPasaporteExtranjeros" format="AlphaNumeric" pattern="X(14)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="tipo_documento" value="bean" bean="TIPO2" property="tipoDocumento" format="AlphaNumeric" pattern="X(1)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="fecha_expedicion_documento" value="bean" bean="TIPO2" property="fechaExpedicionDocumento" format="Numeric" pattern="9(8)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="primer_apellido" value="bean" bean="TIPO2" property="primerApellido" format="AlphaNumeric" pattern="X(30)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="segundo_apellido" value="bean" bean="TIPO2" property="segundoApellido" format="AlphaNumeric" pattern="X(30)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="nombre" value="bean" bean="TIPO2" property="nombre" format="AlphaNumeric" pattern="X(30)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="sexo" value="bean" bean="TIPO2" property="sexo" format="AlphaNumeric" pattern="X(1)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="fecha_nacimiento" value="bean" bean="TIPO2" property="fechaNacimiento" format="Numeric" pattern="9(8)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="pais_nacionalidad" value="bean" bean="TIPO2" property="paisNacionalidad" format="AlphaNumeric" pattern="X(21)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+	<field name="fecha_entrada" value="bean" bean="TIPO2" property="fechaEntrada" format="Numeric" pattern="9(8)" />
+	<field name="separador" value="|" format="AlphaNumeric" pattern="X(1)" />
+</register>

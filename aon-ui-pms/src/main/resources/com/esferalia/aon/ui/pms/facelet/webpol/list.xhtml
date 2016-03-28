@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="webpolExporterList">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="aonToolbar" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_webpolExporter_module}" />
+				<ui:param name="controller" value="#{webpolExporter}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="export" 
+						value="#{bundle.aon_generate}"
+						rendered="#{empty webpolExporter.data}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						actionListener="#{webpolExporter.onCreateDisk}"
+						reRender="aonStatus, aonToolbar"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')">
+						<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+					</aon:commandButton>
+					<h:panelGrid columns="3" rendered="#{not empty webpolExporter.data}">
+						<aon:outputLabel for="webpolExporter_fileCount"
+							value="Contador:" />
+						<rich:inputNumberSpinner id="webpolExporter_fileCount"
+							minValue="1" maxValue="999"
+							value="#{webpolExporter.fileCount}"
+							label="Contador:" required="true"
+							cycled="true" enableManualInput="true" />
+						<aon:htmlCommandLink id="download" target="_blank"
+							value="#{bundle.aon_fileupload_download}"
+							actionListener="#{webpolExporter.onDownloadFile}"
+							styleClass="aon-icon-commandButton aon-icon-mail-save aon-margin-left" />
+					</h:panelGrid>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:div styleClass="aon-panelGrid-search">
+					<aon:div styleClass="aon-panelGrid-search-info">
+						<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+					</aon:div>	
+					<aon:panelGrid columns="2" 
+						columnClasses="aon-panelGrid-odd aon-width-80, aon-panelGrid-even aon-width-auto">
+	
+						<aon:outputLabel for="webpolExporter_hotel"
+							value="#{bundle.aon_module_hotel}" />
+						<aon:selectManyListbox id="webpolExporter_hotels"
+							style="width:250px;"
+							value="#{webpolExporter.hotels}" size="10"
+							required="true">
+							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+						</aon:selectManyListbox>
+	
+						<aon:outputLabel value="#{bundle.aon_period}" />
+						<aon:div>
+							<aon:outputLabel for="webpolExporter_fromDate"
+								styleClass="aon-italic aon-margin-right" 
+								value="#{bundle.aon_date_from}" />
+							<aon:selectInputDate id="webpolExporter_fromDate"
+								value="#{webpolExporter.fromDate}" required="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+	
+							<aon:outputLabel for="webpolExporter_toDate"
+								styleClass="aon-italic aon-margin-right" 
+								value="#{bundle.aon_date_to}" />
+							<aon:selectInputDate id="webpolExporter_toDate"
+								value="#{webpolExporter.toDate}" required="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+						</aon:div>
+						
+						<aon:outputText value="&#160;" />
+						<aon:commandButton id="search" ignoreDupResponses="true"
+							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
+							action="webpolExporter_list"
+							actionListener="#{webpolExporter.onSearch}"
+							accesskey="#{bundle.aon_key_search}"
+							onclick="Richfaces.showModalPanel('waitProccess')"
+							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+	
+					</aon:panelGrid>
+				</aon:div>
+			
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+					<ui:param name="controller" value="#{webpolExporter}" />
+					<ui:param name="skipSelectRow" value="#{true}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:param name="skipLineEdition" value="#{true}" />
+					
+					<ui:define name="columns">
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							
+							<f:facet name="footer">
+						
+							</f:facet>
+						</aon:column>
+			
+						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_document}" />
+							</f:facet>
+							<aon:div style="display:inline;">
+								<aon:outputText value="#{to.documentCountry.value}" styleClass="aon-margin-right" 
+									rendered="#{!empty to.document}" />
+								<aon:outputText value="#{to.document}" styleClass="aon-margin-right" />
+								<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact"
+									title="#{bundle.pms_reservation_guest_type_newInHotel}"
+									rendered="#{to.person.id != null and to.guestNewInHotel}" />
+								<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact-new"
+									title="#{bundle.pms_reservation_guest_type_newInChain}"
+									rendered="#{to.person.id != null and to.guestNewInChain}" />
+								<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact-error"
+									title="#{bundle.pms_reservation_guest_type_previouslyStayedInHotel}"
+									rendered="#{to.person.id != null and to.guestPreviouslyStayedInHotel}" />
+							</aon:div>
+							
+						</aon:column>
+			
+						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.report_guest}" />
+							</f:facet>
+							<aon:div>
+								<aon:outputText value="#{to.fullName}"  />
+								<aon:div rendered="#{!empty to.barcode}" style="display:inline;">
+									<aon:outputText value="(" styleClass="aon-margin-left" />
+									<aon:outputText value="#{bundle.pms_barcode}:" styleClass="aon-italic" />
+									<aon:outputText value="#{to.barcode}" styleClass="aon-bold aon-margin-left" />
+									<aon:outputText value=")" />
+								</aon:div>
+							</aon:div>
+						</aon:column>
+			
+						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-200 aon-nowrap">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_contact_data}" />
+							</f:facet>
+							<aon:outputText value="&#160;" styleClass="aon-icon-call-error aon-padding-left aon-margin-right" rendered="#{empty to.phone}" />
+							<aon:outputText value="&#160;" styleClass="aon-icon-call aon-padding-left" rendered="#{!empty to.phone}" />
+							<aon:outputText styleClass="aon-margin-right" value="#{to.phone}" rendered="#{!empty to.phone}" />
+							<aon:outputText value="&#160;" styleClass="aon-icon-mailInbox-error aon-padding-left aon-margin-left" rendered="#{empty to.email}" />
+							<aon:outputText value="&#160;" styleClass="aon-icon-mailInbox aon-padding-left" rendered="#{!empty to.email}" />
+							<aon:outputText value="#{to.email}">
+								<aon:abbreviateConverter maxWidth="15" />
+							</aon:outputText>
+							<rich:toolTip rendered="#{!empty to.email}">
+								<aon:outputText value="#{to.email}" />
+							</rich:toolTip>
+						</aon:column>
+			
+						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-300 aon-nowrap">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_address}" />
+							</f:facet>
+							<aon:outputText value="#{to.fullAddress}" >
+								<aon:abbreviateConverter maxWidth="50" />
+							</aon:outputText>
+							<rich:toolTip rendered="#{!empty to.fullAddress}">
+								<aon:outputText value="#{to.fullAddress}" />
+							</rich:toolTip>
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:commandButton id="person-edit"
+								value="&#160;" title="#{bundle.aon_edit}"
+								action="person_form"
+								styleClass="aon-icon-commandButton aon-button-goto aon-bold aon-italic"
+								actionListener="#{webpolExporter.onGotoPerson}" />
+						</aon:column>
+					</ui:define>
+			
+					<ui:define name="endFormListContent">
+						<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
+							<ui:param name="auditableTO" value="#{to}" />
+						</ui:include>
+					</ui:define>
+			
+				</ui:decorate>
+			</aon:div>
+
+		</aon:form>
+		
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+				
+	</ui:define>
+
+</ui:composition>
