@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.fiscal.deposit.server.normalizedMemory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -168,7 +170,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 0));
 		CellUtil.createCell(row, 1, getTitle(), headerCellStyle);
 
-		CellUtil.createCell(row, n+2, getD2Deposit().getType(), headerCellStyle);
+		CellUtil.createCell(row, n+2, getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE), headerCellStyle);
 		row = sheet.createRow(rowCount++);
 		CellUtil.createCell(row, n+2, "", headerCellStyle);
 		row = sheet.createRow(rowCount++);
@@ -186,7 +188,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	}
 	
 	public void three(String column1, String column2, String column3, String column4,
-				D2DepositHeaderKey[][] keys, D2DepositHeaderKey[][] keys2){
+				D2DepositHeaderKey[][] keys, D2DepositHeaderKey[][] keys2, Map<Integer, String> rows){
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 
@@ -221,6 +223,27 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			if(i.equals(1)) keys = keys2;
 			for (D2DepositHeaderKey[] innerKeys : keys) {
 				row = sheet.createRow(rowCount++);
+				if(rows != null && rows.containsKey(rowCount)){
+					while(rows.containsKey(rowCount)){
+						int l = AonStringUtils.length(rows.get(rowCount));
+						if (l != 0) {
+							int r = (int) (l / 50) + 1;
+							int h = (r * 250);
+							row.setHeight((h > Short.MAX_VALUE?Short.MAX_VALUE:(short) h));
+						}
+						row.setRowStyle(rowStyle);
+						cellCount = 0;
+						Cell cell = row.createCell(cellCount++);
+						CellStyle style = workbook.createCellStyle();
+						style.setWrapText(true);
+						style.setFont(defaulFont );
+						cell.setCellStyle(style);
+						cell.setCellValue(rows.get(rowCount));
+						cell.setCellType(Cell.CELL_TYPE_STRING);
+						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
+						row = sheet.createRow(rowCount++);cellCount=0;
+					}
+				}
 				String description = getDescription(D2DepositDescription.DESCRIPTION_MAP_HEADER.get(innerKeys[0]));
 				String a = getD2Deposit().getMap().get(innerKeys[0].getCode());
 				if(a == null) a = "0.0";
@@ -419,7 +442,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	
 	
 	public void general(Integer pageMaxNumber, Integer number, String[] strings, D2DepositKey[][] keys
-			,Integer headerHeight, Integer codeLength){
+			,Integer headerHeight, Integer codeLength, Map<Integer, String> rows){
 		double coeficiente = 82 / (4 + pageMaxNumber +1); 
 		Integer sumcoef = calculate(pageMaxNumber, number, coeficiente);
 		
@@ -455,7 +478,29 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		}
 		
 		for (D2DepositKey[] innerKeys : keys) {
-			row = sheet.createRow(rowCount++);
+			row = sheet.createRow(rowCount++);cellCount=0;
+			if(rows != null && rows.containsKey(rowCount)){
+				while(rows.containsKey(rowCount)){
+					int l = AonStringUtils.length(rows.get(rowCount));
+					if (l != 0) {
+						int r = (int) (l / 50) + 1;
+						int h = (r * 250);
+						row.setHeight((h > Short.MAX_VALUE?Short.MAX_VALUE:(short) h));
+					}	
+					row.setRowStyle(rowStyle);
+					cellCount = 0;
+					Cell cell = row.createCell(cellCount++);
+					CellStyle style = workbook.createCellStyle();
+					style.setWrapText(true);
+					style.setFont(defaulFont );
+					cell.setCellStyle(style);
+					cell.setCellValue(rows.get(rowCount));
+					cell.setCellType(Cell.CELL_TYPE_STRING);
+					sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, dif+1));
+					row = sheet.createRow(rowCount++);cellCount=0;
+				}
+			}
+			
 			String description = getDescription(D2DepositDescription.DESCRIPTION_MAP.get(innerKeys[0]));
 			int l = AonStringUtils.length(description);
 			if (l != 0) {
@@ -539,7 +584,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			row.setHeight(x.shortValue());
 		}
 		
-		general(pageMaxNumber, number, strings, keys, headerHeight2, codeLength);
+		general(pageMaxNumber, number, strings, keys, headerHeight2, codeLength,null);
 	}
 	
 	public void special2(Integer pageMaxNumber, Integer number, String title, String[] strings,	D2DepositKey[][] keys,
@@ -565,7 +610,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			row.setHeight(x.shortValue());
 		}
 	
-		general(pageMaxNumber, number, strings, keys, headerHeight2, codeLength);
+		general(pageMaxNumber, number, strings, keys, headerHeight2, codeLength,null);
 	}
 	
 	private void freeText(String title, D2DepositKey key) {
@@ -866,7 +911,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 
 		three("Balance: Activo", "Notas de la memoria", "Ejercicio "
 				+getD2Deposit().getYear(), "Ejercicio "+(getD2Deposit().getYear()-1)
-				, keys, new D2DepositHeaderKey[][]{});
+				, keys, new D2DepositHeaderKey[][]{}, null);
 	}
 
 	public void BA2() {
@@ -875,17 +920,21 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		D2DepositHeaderKey[][] keys;
 		D2DepositHeaderKey[][] keys2;
 		if (d2Deposit.getType().equalsIgnoreCase("PYMES")){
-			keys = D2PDepositConstants.BALANCE_PASIVE_PYMES_KEYS_1;
+			if(getD2Deposit().getYear().equals(2014))
+				keys = D2PDepositConstants.BALANCE_PASIVE_PYMES_KEYS_1;
+			else keys = D2PDepositConstants.BALANCE_PASIVE_PYMES_KEYS_1_2015;
 			keys2 = D2PDepositConstants.BALANCE_PASIVE_PYMES_KEYS_2;
 		}
 		else{
-			keys = D2DepositConstants.BA_ABREVIATE_KEYS_2;
+			if(getD2Deposit().getYear().equals(2014))
+				keys = D2DepositConstants.BA_ABREVIATE_KEYS_2;
+			else keys = D2DepositConstants.BA_ABREVIATE_KEYS_2_2015;
 			keys2 = D2DepositConstants.BA_ABREVIATE_KEYS_3;
 		}
 
 		three("Balance: Patrimonio Neto y Pasivo", "Notas de la memoria", "Ejercicio "
 				+getD2Deposit().getYear(), "Ejercicio "+(getD2Deposit().getYear()-1)
-				, keys, keys2);
+				, keys, keys2, null);
 	}
 	
 	public void PYG() {
@@ -898,7 +947,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 
 		three("(Debe)/ Haber", "Notas de la memoria", "Ejercicio "
 				+getD2Deposit().getYear(), "Ejercicio "+(getD2Deposit().getYear()-1)
-				, keys, new D2DepositHeaderKey[][]{});
+				, keys, new D2DepositHeaderKey[][]{}, null);
 	}
 	
 	public void ECPN(){
@@ -912,9 +961,12 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			header(5);
 			D2DepositHeaderKey[][] keys = D2DepositConstants.ECPN_INCOMES_KEYS;
 
+			HashMap< Integer, String> map = new HashMap<Integer, String>();
+			map.put(9, "INGRESOS Y GASTOS IMPUTADOS DIRECTAMENTE AL PATRIMONIO NETO");
+			map.put(18, "TRANSFERENCIAS A LA CUENTA DE P\u00c9RDIDAS Y GANANCIAS");
 			three("ECPN. Estado de ingresos y gastos reconocidos en el ejercicio", "Notas de la memoria", "Ejercicio "
 				+getD2Deposit().getYear(), "Ejercicio "+(getD2Deposit().getYear()-1)
-				, keys, new D2DepositHeaderKey[][]{});
+				, keys, new D2DepositHeaderKey[][]{}, map);
 		}
 	}
 	
@@ -1080,11 +1132,11 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		}
 		// 1
 		general(pageMaxNumber, 2, new String[]{"BASES DE REPARTO", "Ejercicio " + getD2Deposit().getYear(), 
-				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 1, 0);
+				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 1, 0, null);
 		sheet.createRow(rowCount++);
 		// 1
 		general(pageMaxNumber, 2, new String[]{"APLICACIÓN A", "Ejercicio " + getD2Deposit().getYear(), 
-				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys2, 1, 0);
+				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys2, 1, 0, null);
 	}
 	
 	public void AP4(){
@@ -1112,15 +1164,15 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		
 		// 2
 		general(pageMaxNumber, 3, new String[]{"Estado de movimientos del inmovilizado material, intangible e inversiones inmobiliarias del ejercicio actual",
-			"Inmovilizado Intangible", "Inmovilizado Material", "Inversiones Inmobiliarias"}, keys, 2, 4);
+			"Inmovilizado Intangible", "Inmovilizado Material", "Inversiones Inmobiliarias"}, keys, 2, 4, null);
 		sheet.createRow(rowCount++);
 		// 2
 		general(pageMaxNumber, 3, new String[]{"Estado de movimientos del inmovilizado material, intangible e inversiones inmobiliarias del ejercicio anterior",
-				"Inmovilizado Intangible", "Inmovilizado Material", "Inversiones Inmobiliarias"}, keys2, 2, 4);
+				"Inmovilizado Intangible", "Inmovilizado Material", "Inversiones Inmobiliarias"}, keys2, 2, 4, null);
 		sheet.createRow(rowCount++);
 		// 1
 		general(pageMaxNumber, 1, new String[]{"Arrendamientos financieros y otras operaciones de naturaleza similar sobre activos no corrientes","Total Contratos"},
-				keys3, 1, 0);
+				keys3, 1, 0, null);
 	}
 	
 	public void AP6(){
@@ -1198,13 +1250,13 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		// 8
 		general(pageMaxNumber, 4, new String[]{"Correcciones por deterioro del valor originadas por el riesgo de crédito"
 				, "Activos a valor razonable con cambios en pérdidas y ganancias", "Activos mantenidos para negociar"
-				, "Activos disponibles para la venta", "TOTAL"}, keys2, 8, 4);
+				, "Activos disponibles para la venta", "TOTAL"}, keys2, 8, 4, null);
 		sheet.createRow(rowCount++);
 		// 9
 		general(pageMaxNumber, 6, new String[]{"Correcciones valorativas por deterioro registradas en las distintas participaciones",
 				"Pérdidas por deteriodo al final del ejercicio X", "(+/-) Variación deteriodo a pérdidas y ganancias",
 				"(+) Variación contra patrimonio neto", "(-) Salidas y reducciones", "(+/-) Traspasos y otras variaciones (combinaciones de negocio, etc.)",
-				"Pérdida por deteriodo al final del ejercicio Y"}, keys3, 9, 4);
+				"Pérdida por deteriodo al final del ejercicio Y"}, keys3, 9, 4, null);
 	}
 	
 	public void AP7(){
@@ -1249,11 +1301,11 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		sheet.createRow(rowCount++);
 		// 1
 		general(pageMaxNumber, 7, new String[]{"Vencimiento de las deudas al cierre del ejercicio"+getD2Deposit().getYear(),
-				"Uno", "Dos", "Tres", "Cuatro", "Cinco", "Más de 5", "TOTAL"}, keys3, 1, 4);
+				"Uno", "Dos", "Tres", "Cuatro", "Cinco", "Más de 5", "TOTAL"}, keys3, 1, 4, null);
 		sheet.createRow(rowCount++);
 		// 3
 		general(pageMaxNumber, 3, new String[]{"Lineas de descuento y pólizas al cierre del ejercicio"+ getD2Deposit().getYear(),
-				"Límite concedido", "Dispuesto", "Disponible"},keys4, 3, 4);
+				"Límite concedido", "Dispuesto", "Disponible"},keys4, 3, 4, null);
 	}
 	
 	public void AP8(){
@@ -1273,7 +1325,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		D2DepositKey[][] keys = D2DepositConstants.MRN10_ABREVIATE_KEYS;
 		// 1
 		general(pageMaxNumber, 2, new String[]{"Detalle de la cuenta de pérdidas y ganancias", "Ejercicio " + getD2Deposit().getYear(), 
-				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 1, 0);
+				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 1, 0, null);
 	}
 	
 	public void AP11(){
@@ -1302,11 +1354,11 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		}
 		// 1
 		general(pageMaxNumber, 2, new String[]{"Subvenciones, donaciones y legados recibidos, otorgados por terceros distintos de los socios", "Ejercicio " + getD2Deposit().getYear(), 
-				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 1, 0);
+				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 1, 0, null);
 		sheet.createRow(rowCount++);
 		// 2
 		general(pageMaxNumber, 2, new String[]{"Subvenciones, donaciones y legados recogidos en el patrimonio neto del balance, otorgados por terceros distintos a los socios: análisis del movimiento", "Ejercicio " + getD2Deposit().getYear(), 
-				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys2, 2, 0);
+				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys2, 2, 0, null);
 	}
 	
 	public void AP12(){
@@ -1333,7 +1385,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		general(pageMaxNumber, 7, new String[]{"Operaciones con partes vinculadas en el ejercicio "+getD2Deposit().getYear(),
 				"Entidad Dominante", "Otras empresas del grupo", "Negocios conjuntos en los que la empresa sea uno de los participantes",
 				"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
-				"Personal clave de la direcció de la empresa o de la entidad dominante", "Otras partes vinculadas"}, keys, 11, 4);
+				"Personal clave de la direcció de la empresa o de la entidad dominante", "Otras partes vinculadas"}, keys, 11, 4, null);
 	}
 	
 	public void AP12C(){
@@ -1346,7 +1398,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		general(pageMaxNumber, 7, new String[]{"Operaciones con partes vinculadas en el ejercicio "+(getD2Deposit().getYear()-1),
 				"Entidad Dominante", "Otras empresas del grupo", "Negocios conjuntos en los que la empresa sea uno de los participantes",
 				"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
-				"Personal clave de la direcció de la empresa o de la entidad dominante", "Otras partes vinculadas"}, keys, 11, 4);
+				"Personal clave de la direcció de la empresa o de la entidad dominante", "Otras partes vinculadas"}, keys, 11, 4, null);
 	}
 	
 	public void AP12D(){
@@ -1361,7 +1413,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		general(pageMaxNumber, 7, new String[]{"Saldos pendientes con partes vinculadas en el ejercicio "+getD2Deposit().getYear(),
 				"Entidad Dominante", "Otras empresas del grupo", "Negocios conjuntos en los que la empresa sea uno de los participantes",
 				"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
-				"Personal clave de la direcció de la empresa o de la entidad dominante", "Otras partes vinculadas"}, keys, 11, 4);
+				"Personal clave de la direcció de la empresa o de la entidad dominante", "Otras partes vinculadas"}, keys, 11, 4, null);
 	}
 	
 	public void AP12E(){
@@ -1376,7 +1428,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		general(pageMaxNumber, 7, new String[]{"Saldos pendientes con partes vinculadas en el ejercicio "+(getD2Deposit().getYear()-1),
 				"Entidad Dominante", "Otras empresas del grupo", "Negocios conjuntos en los que la empresa sea uno de los participantes",
 				"Empresas Asociadas", "Empresas con control conjunto o influencia significativa sobre la empresa",
-				"Personal clave de la direcció de la empresa o de la entidad dominante", "Otras partes vinculadas"}, keys, 11, 4);
+				"Personal clave de la direcció de la empresa o de la entidad dominante", "Otras partes vinculadas"}, keys, 11, 4, null);
 	}
 	
 	public void AP12F(){
@@ -1395,11 +1447,11 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		}
 		// 2
 		general(pageMaxNumber, 2, new String[]{"Importes recibidos por el personal de alta dirección",
-				"Ejercicio "+ getD2Deposit().getYear(), "Ejercicio "+ (getD2Deposit().getYear()-1)}, keys, 2, 0);
+				"Ejercicio "+ getD2Deposit().getYear(), "Ejercicio "+ (getD2Deposit().getYear()-1)}, keys, 2, 0, null);
 		sheet.createRow(rowCount++);
 		// 2
 		general(pageMaxNumber, 2, new String[]{"Importes recibidos por los miembros de los órganos de administración",
-				"Ejercicio "+ getD2Deposit().getYear(), "Ejercicio "+ (getD2Deposit().getYear()-1)}, keys2, 2, 0);
+				"Ejercicio "+ getD2Deposit().getYear(), "Ejercicio "+ (getD2Deposit().getYear()-1)}, keys2, 2, 0, null);
 	}
 	
 	public void AP13(){
@@ -1420,7 +1472,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		
 		// 2
 		general(pageMaxNumber, 2, new String[]{"Número medio de personas empleadas en el curso del ejercicio, por categorías (adaptadas a la CNO-11)", "Ejercicio " + getD2Deposit().getYear(), 
-				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 2, 0);
+				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 2, 0, null);
 	}
 	
 	public void AP14(){
@@ -1439,8 +1491,13 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		header(pageMaxNumber);
 		D2DepositKey[][] keys = D2DepositConstants.MRN14_ABREVIATE_PYMES_KEYS_1;
 		//  1
+		HashMap<Integer, String> map = new HashMap<Integer, String>();
+		map.put(new Integer(8), new String("A) ACTIVOS DE NATURALEZA MEDIOAMBIENTAL"));
+		map.put(new Integer(11), new String("3.Correcciones valorativas por deterioro"));
+		map.put(new Integer(15), new String("C)Riesgos cubiertos por las provisiones para actuaciones medioambientales"));
+		map.put(new Integer(16), new String("1.Provisi\u00F3n para actuaciones medioambientales, inclu\u00EDdas en provisiones"));
 		general(pageMaxNumber, 2, new String[]{"DESCRIPCIÓN DEL CONCEPTO", "Ejercicio " + getD2Deposit().getYear(), 
-				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 1, 0);
+				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 1, 0, map);
 	}
 	
 	public void AP14C(){
@@ -1459,14 +1516,19 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	
 	public void AP15(){
 		addSheet("Apartado 15 - Información sobre los aplazamientos de pago efectuados a proveedores");
-		Integer pageMaxNumber = 4;
-		header(pageMaxNumber);
-		
-		D2DepositKey[][] keys = D2DepositConstants.MRN15_ABREVIATE_PYMES_KEYS;
-		// 1 1 
-		special(2, pageMaxNumber, 4, new String[]{"Pagos realizados y pendientes de pago en la fecha de cierre del Balance",
+		if(getD2Deposit().getYear().equals(2014)){
+			header(4);
+			D2DepositKey[][] keys = D2DepositConstants.MRN15_ABREVIATE_PYMES_KEYS;
+			special(2, 4, 4, new String[]{"Pagos realizados y pendientes de pago en la fecha de cierre del Balance",
 				"Ejercicio "+ getD2Deposit().getYear(), "Ejercicio " + (getD2Deposit().getYear()-1)}, 
 				new String[]{"PAGOS DEL EJERCICIO", "Importe", "%", "Importe",  "%"}, keys, 1, 1, 0);		
+		}
+		else{
+			header(2);
+			D2DepositKey[][] keys = D2DepositConstants.MRN15_ABREVIATE_PYMES_KEYS_2015;
+			general(2, 2, new String[]{"Pagos realizados y pendientes de pago en la fecha de cierre del Balance",
+					"Ejercicio "+ getD2Deposit().getYear(), "Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 1, 0, null);	
+		}
 	}
 	
 	public void MA(){
@@ -1526,6 +1588,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			MA5();
 			MA6();
 			MA7();
+			MA8();
 		}
 	}
 	
@@ -1853,6 +1916,48 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		}
 	}
 	
+	private void MA8() {
+		addSheet("Página A8");
+		header(5);
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		
+		for (int i = 0; i < row.getLastCellNum(); i++) {
+			sheet.autoSizeColumn(i);
+		}
+
+		CellUtil.createCell(row, cellCount,
+				"Espacio destinado para las firmas con identificación de los administradores, número de hojas, y fecha de comunicación.",
+				headerCellStyle);
+		sheet.setColumnWidth(cellCount++, 8 * 256);
+		sheet.setColumnWidth(cellCount++, 40 * 256);
+		sheet.setColumnWidth(cellCount++, 4 * 256);
+		sheet.setColumnWidth(cellCount++, 10 * 256);
+		sheet.setColumnWidth(cellCount++, 4 * 256);
+		sheet.setColumnWidth(cellCount++, 10 * 256);
+		sheet.setColumnWidth(cellCount++, 4 * 256);
+		sheet.setColumnWidth(cellCount++, 10 * 256);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		
+		row = sheet.createRow(rowCount++);
+		String text = "";
+		
+		row.setRowStyle(rowStyle);
+		cellCount = 0;
+		Cell cell = row.createCell(cellCount++);
+		CellStyle style = workbook.createCellStyle();
+		style.setWrapText(true);
+		style.setFont(defaulFont );
+		style.setBorderBottom(CellStyle.BORDER_THIN);
+		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
+		style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+		cell.setCellStyle(style);
+		cell.setCellValue(text);
+		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
+		
+		Integer height = row.getHeight() * 20;
+		row.setHeight(height.shortValue());	}
+	
 	public void IP(){
 		addSheet("Instancia de Presentación");
 		header(5);
@@ -1917,12 +2022,10 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		idacell("- Normal", 4, 5);
 		idacell("- Normal", 6, 7);
 
-		Boolean b = d2Deposit.getType().equalsIgnoreCase("PYMES");
-
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		String s = "-";
-		if(!b) s = TIC;
+		if(!isPymes()) s = TIC;
 		idacell(s + " Abreviado", 0, 0);
 		idacell(s + " Abreviado", 1, 2);
 		idacell(s + " Abreviado", 3, 3);
@@ -1930,7 +2033,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-		if(b) s = TIC;
+		if(isPymes()) s = TIC;
 		idacell(s + " PYME", 0, 0);
 		idacell(s + " PYME", 1, 2);
 		idacell(s + " PYME", 3, 3);
@@ -1964,6 +2067,11 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		idacell("- Otros Documentos", 0, 1);
 		idacell("Nº ", 2, 3);
 	
+		row = sheet.createRow(rowCount++);
+		cellCount = 0;
+		idacell("Codigo ROAC del Auditor firmante ",0, 2);
+		idacell("",3, 4);
+		
 		row = sheet.createRow(rowCount++);
 		ssHeader("IDENTIFICACIÓN DEL PRESENTANTE QUE HACE LA SOLICITUD", 5);
 		row = sheet.createRow(rowCount++);
@@ -2087,8 +2195,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	}
 	private Boolean isPymes() {
 		return getD2Deposit().getMap().get(D2DepositConstants.DEPOSIT_TYPE).equalsIgnoreCase("Pymes");
-		
-
 	}
 	
 }

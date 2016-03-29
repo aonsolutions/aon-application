@@ -40,11 +40,15 @@ public class PageH2 extends PageAbs {
 	protected void initializeTable() {
 		if (isPymes()) {
 			defineBalanceTable(table,AON.MSG.balanceActivo(),D2PDepositConstants.BALANCE_ACTIVE_PYMES_KEYS);
-			defineBalanceTable(table1,AON.MSG.balancePasivo(),D2PDepositConstants.BALANCE_PASIVE_PYMES_KEYS_1);
+			if(year >= 2015)
+				defineBalanceTable(table1,AON.MSG.balancePasivo(),D2PDepositConstants.BALANCE_PASIVE_PYMES_KEYS_1_2015);
+			else defineBalanceTable(table1,AON.MSG.balancePasivo(),D2PDepositConstants.BALANCE_PASIVE_PYMES_KEYS_1);
 			defineBalanceTable(table2,AON.MSG.balancePasivo(),D2PDepositConstants.BALANCE_PASIVE_PYMES_KEYS_2);
 		} else {
 			defineBalanceTable(table,AON.MSG.balanceActivo(),D2DepositConstants.BA_ABREVIATE_KEYS_1);
-			defineBalanceTable(table1,AON.MSG.balanceActivo(),D2DepositConstants.BA_ABREVIATE_KEYS_2);
+			if(year >= 2015)
+				defineBalanceTable(table1,AON.MSG.balancePasivo(),D2DepositConstants.BA_ABREVIATE_KEYS_2_2015);
+			else defineBalanceTable(table1,AON.MSG.balanceActivo(),D2DepositConstants.BA_ABREVIATE_KEYS_2);
 			defineBalanceTable(table2,AON.MSG.balanceActivo(),D2DepositConstants.BA_ABREVIATE_KEYS_3);
 		}
 	}

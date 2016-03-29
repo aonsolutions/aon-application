@@ -113,4 +113,61 @@ public class PageH4 extends PageAbs {
 			++row;
 		}
 	}
+	@Override
+	protected void defineBalanceTable( FlexTable tab, String title, D2DepositHeaderKey[][] keys){
+		String current_ej, ant_ej;
+		switch (year) {
+		case 2014:
+			current_ej = AON.MSG.year2014();
+			ant_ej = AON.MSG.year2013();
+			break;
+		case 2015:
+			current_ej = AON.MSG.year2015();
+			ant_ej = AON.MSG.year2014();
+			break;
+		default:
+			current_ej = AON.MSG.year2014();
+			ant_ej = AON.MSG.year2013();
+			break;
+		}
+		
+		tab.setWidth("100%");
+		tab.setCellSpacing(0);
+		tab.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonWidthAuto());
+		tab.getColumnFormatter().addStyleName(1, AON.AON_CSS.aonWidth130());
+		tab.getColumnFormatter().addStyleName(2, AON.AON_CSS.aonWidth140());
+		tab.getColumnFormatter().addStyleName(3, AON.AON_CSS.aonWidth140());
+		int row = 0;
+		tab.setWidget(row, 0, new Label(title));
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBorderBottom());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+		tab.setWidget(row, 1, new Label(AON.MSG.memoryNotes()));
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonBorderBottom());
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonTextLeft());
+		tab.setWidget(row, 2, new Label(current_ej));
+		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonBorderBottom());
+		tab.getFlexCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonTextRight());
+		tab.setWidget(row, 3, new Label(ant_ej));
+		tab.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
+		tab.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextRight());
+		++row;
+		
+		for (D2DepositHeaderKey[] innerKeys : keys) {
+			if(row == 2){
+				tab.setWidget(row, 0, new Label("INGRESOS Y GASTOS IMPUTADOS DIRECTAMENTE AL PATRIMONIO NETO"));
+				tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+				++row;
+			} 
+			if (row == 11){
+				tab.setWidget(row, 0, new Label("TRANSFERENCIAS A LA CUENTA DE P\u00c9RDIDAS Y GANANCIAS"));
+				tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonBold());
+				++row;
+			}
+			row = paintKey(tab, innerKeys , row);
+		}
+	}
 }

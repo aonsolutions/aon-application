@@ -185,11 +185,10 @@ public class PageM6_2 extends PageAbs {
 		col++;
 		
 		for (String primary : headers) {
-			
 			tab.getFlexCellFormatter().setColSpan(row, col, colSpan);
 			
 			tab.getColumnFormatter().addStyleName(col, AON.AON_CSS.aonWidth140());
-			tab.setWidget(row, col, new Label(primary));	
+			tab.setWidget(row, col, new Label(getDescription(primary)));	
 			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
 			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 			tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());

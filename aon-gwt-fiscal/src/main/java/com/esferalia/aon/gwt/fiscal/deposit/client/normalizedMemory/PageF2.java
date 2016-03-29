@@ -71,6 +71,8 @@ public class PageF2 extends PageAbs {
 	@UiField TextBox PR8081207 ; // fax
 	@UiField TextBox PR8081208 ; // telefono
 	@UiField TextBox PR8081209 ; // email
+	
+	@UiField TextBox ROAC; // ROAC
 
 	public PageF2() {
 		super();
@@ -112,6 +114,7 @@ public class PageF2 extends PageAbs {
 		PR8081207 = new TextBox(); // fax
 		PR8081208 = new TextBox(); // telefono
 		PR8081209 = new TextBox(); // email
+		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 	}
@@ -158,6 +161,8 @@ public class PageF2 extends PageAbs {
 		PR8081207 = new TextBox(); // fax
 		PR8081208 = new TextBox(); // telefono
 		PR8081209 = new TextBox(); // email
+		
+		ROAC = new TextBox();
 		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);

@@ -179,6 +179,17 @@
 										<g:Label ui:field="NUM" />									</td>
 								</tr>
 							</table>
+							
+							<table> 
+								<tr> 
+									<td>
+										<g:Label text="Codigo ROAC del Auditor firmante"></g:Label>
+									</td>
+									<td>
+										<g:TextBox ui:field="ROAC" styleName="{aonResources.css.aonInputText}"></g:TextBox>
+									</td>
+								</tr>
+							</table>
 						</div>
 					</div>
 					

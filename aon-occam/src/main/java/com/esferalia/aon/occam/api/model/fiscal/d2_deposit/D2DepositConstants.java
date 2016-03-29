@@ -261,7 +261,6 @@ public class D2DepositConstants {
 		,new D2DepositKey[] {D2DepositKey.MA592031, D2DepositKey.MA592032, D2DepositKey.MA592033}
 		,new D2DepositKey[] {D2DepositKey.MA592041, D2DepositKey.MA592042, D2DepositKey.MA592043}
 		,new D2DepositKey[] {D2DepositKey.MA592051, D2DepositKey.MA592052, D2DepositKey.MA592053}
-		,new D2DepositKey[] {D2DepositKey.MA592051, D2DepositKey.MA592052, D2DepositKey.MA592053}
 		,new D2DepositKey[] {D2DepositKey.MA592151, D2DepositKey.MA592152, D2DepositKey.MA592153}
 		,new D2DepositKey[] {D2DepositKey.MA592061, D2DepositKey.MA592062, D2DepositKey.MA592063}
 		,new D2DepositKey[] {D2DepositKey.MA592071, D2DepositKey.MA592072, D2DepositKey.MA592073}

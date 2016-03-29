@@ -40,6 +40,11 @@ public class D2Compute {
 				.put(D2DepositHeaderKey.BA2121100.getCode(), "Q21110+Q21120");
 		COMPUTE_MAP_PREVIOUS.put(D2DepositHeaderKey.BA21211009.getCode(),
 				"Q211109+Q211209");
+		
+		COMPUTE_MAP_CURRENT
+				.put(D2DepositHeaderKey.BA2121300.getCode(), "Q21350+Q21360");
+		COMPUTE_MAP_PREVIOUS.put(D2DepositHeaderKey.BA21213009.getCode(),
+				"Q213509+Q213609");
 
 		COMPUTE_MAP_CURRENT
 				.put(D2DepositHeaderKey.BA2121000.getCode(),

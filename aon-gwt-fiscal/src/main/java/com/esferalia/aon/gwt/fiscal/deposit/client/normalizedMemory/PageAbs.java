@@ -683,5 +683,19 @@ public abstract class PageAbs extends ResizeComposite {
 		return  ++row;
 	}
 
+	protected String getDescription(String desc) {
+		if(desc.contains("@")){
+			Integer pos = desc.indexOf("@");
+			return desc.substring(0, pos) + year + desc.substring(pos+1);
+		} else if(desc.contains("¬")){
+			Integer pos = desc.indexOf("¬");
+			return desc.substring(0, pos) + (year-2) + desc.substring(pos+1);
+		} else if(desc.contains("#")){
+			Integer pos = desc.indexOf("#");
+			return desc.substring(0, pos) + (year-1) + desc.substring(pos+1);
+
+		}else return desc;	
+	}
+	
 	protected abstract void initializeTable();
 }

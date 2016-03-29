@@ -114,7 +114,7 @@ public class PageM14_2 extends PageAbs {
 			col = 0;
 			
 			if (rows != null) {
-				if (rows.containsKey(row)) {
+				while(rows.containsKey(row)){
 					tab.setWidget(row, col, new Label(rows.get(row)));
 					tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
 					++row;
