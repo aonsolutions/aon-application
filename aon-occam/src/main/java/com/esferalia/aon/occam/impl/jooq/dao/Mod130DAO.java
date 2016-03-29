@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import java.text.MessageFormat;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -357,15 +358,28 @@ public class Mod130DAO extends FiscalModelDAO {
 		if (mod130 == null) {
 			mod130 = new Mod130();
 		}
-		if (mod130.getDeponents() == null || mod130.getDeponents().size() == 0) {
-			initializeFiscalModel(ctx, mod130);
-			mod130.putAmount(Mod130Key.P1, 100.0);
-			mod130.setRegime(AppParamDAO.getDefaultIRPFRegime(ctx));
-			mod130.putAmount(Mod130Key.P2, (AppParamDAO.isPermAddressChanges(ctx)?1:0) );
-		}
+		initializeFiscalModel(ctx, mod130);
+		mod130.putAmount(Mod130Key.P1, 100.0);
+		mod130.setRegime(AppParamDAO.getDefaultIRPFRegime(ctx));
+		mod130.putAmount(Mod130Key.P2, (AppParamDAO.isPermAddressChanges(ctx)?1:0) );
+		initializeDeponents(ctx, mod130);
 		return mod130;
 	}
-	
+
+	private static void initializeDeponents(AONContext ctx,final Mod130 mod130) {
+		
+		getMod130s(ctx, mod130.getDomain())
+			.forEach(fm -> {
+				if (mod130.getDeponents() == null || !mod130.getDeponents().containsKey(fm.getDocument())) {
+					if (mod130.getDeponents() == null) mod130.setDeponents(new LinkedHashMap<String,Mod130>());
+					mod130.getDeponents().put(fm.getDocument(), fm);
+				}
+			});
+			;
+		
+		
+	}
+
 	public static Mod130 createMod130(AONContext ctx,Mod130 mod130) {
 		for (Mod130KeyDAO key : Mod130KeyDAO.values()) {
 			if (key.acceptModel(mod130)) {

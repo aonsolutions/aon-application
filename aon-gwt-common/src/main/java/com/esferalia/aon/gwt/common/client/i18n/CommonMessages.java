@@ -735,6 +735,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Datos del declarante")
 	String deponentData();
 
+	@DefaultMessage("Declarantes")
+	String deponents();
+
 	@DefaultMessage("Datos de la declaraci\u00F3n")
 	String declarationData();
 

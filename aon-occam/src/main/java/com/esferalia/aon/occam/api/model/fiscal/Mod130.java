@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
 
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
@@ -13,7 +13,7 @@ public class Mod130 extends FiscalModel implements Serializable {
 	
 	private static final long serialVersionUID = -6579562925389189514L;
 
-	private LinkedList<FiscalModel> deponents;
+	private LinkedHashMap<String,Mod130> deponents;
 	
 	public Mod130() {
 		super();
@@ -27,10 +27,10 @@ public class Mod130 extends FiscalModel implements Serializable {
 		putAmount(Mod130Key.P0,regime==IRPFRegime.SIMPLIFIED?1:0);
 	}
 
-	public LinkedList<FiscalModel> getDeponents() {
+	public LinkedHashMap<String,Mod130> getDeponents() {
 		return deponents;
 	}
-	public void setDeponents(LinkedList<FiscalModel> deponents) {
+	public void setDeponents(LinkedHashMap<String,Mod130> deponents) {
 		this.deponents = deponents;
 	}
 

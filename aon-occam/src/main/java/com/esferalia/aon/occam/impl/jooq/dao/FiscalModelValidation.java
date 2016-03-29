@@ -8,6 +8,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -57,6 +58,9 @@ public class FiscalModelValidation {
 					.and(FS_MODEL.MODEL.eq( fm.getModel().getValue()))
 					.and(FS_MODEL.YEAR.equal(fm.getYear()))
 					.and(FS_MODEL.PERIOD.eq( fm.getPeriod().getValue() ))
+					.and( fm.getModel() == FiscalModelType.M130
+							?FS_MODEL.DOCUMENT.eq( fm.getDocument() )
+							:DSL.trueCondition() )
 					.and(FS_MODEL.ADMINISTRATION.eq( fm.getAdministration().getValue() ))
 					.and(FS_MODEL.REPLACEMENT.equal( ZERO ))
 					.and(FS_MODEL.COMPLEMENTARY.equal( ZERO ))
