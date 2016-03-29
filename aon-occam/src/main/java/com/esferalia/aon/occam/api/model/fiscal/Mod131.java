@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
@@ -12,7 +13,7 @@ public class Mod131 extends FiscalModel implements Serializable {
 	
 	private static final long serialVersionUID = -6579562925389189514L;
 
-	private LinkedList<FiscalModel> deponents;
+	private LinkedHashMap<String,Mod131> deponents;
 	private LinkedList<Mod131Activity> activities;
 	
 	public Mod131() {
@@ -20,10 +21,10 @@ public class Mod131 extends FiscalModel implements Serializable {
 		setModel(FiscalModelType.M131);
 	}
 	
-	public LinkedList<FiscalModel> getDeponents() {
+	public LinkedHashMap<String,Mod131> getDeponents() {
 		return deponents;
 	}
-	public void setDeponents(LinkedList<FiscalModel> deponents) {
+	public void setDeponents(LinkedHashMap<String,Mod131> deponents) {
 		this.deponents = deponents;
 	}
 

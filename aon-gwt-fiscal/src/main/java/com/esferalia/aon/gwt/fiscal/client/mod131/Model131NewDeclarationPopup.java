@@ -4,16 +4,20 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
 public class Model131NewDeclarationPopup extends NewDeclarationPopup<Mod131>{
@@ -38,6 +42,7 @@ public class Model131NewDeclarationPopup extends NewDeclarationPopup<Mod131>{
 	
 	@Override
 	protected void paintModelSpecificPanel() {
+		final ListBox deponentBox = new ListBox();
 		final DocumentTextBox documentBox = new DocumentTextBox();
 		final Label nameLabel = new Label( AON.MSG.nameCompanyName());
 		final TextBox nameBox = new TextBox();
@@ -47,6 +52,58 @@ public class Model131NewDeclarationPopup extends NewDeclarationPopup<Mod131>{
 		surnameBox.setStyleName(AON.AON_CSS.aonInputText());
 		final CheckBox regularHome = new CheckBox();
 		
+		if (callback.getFiscalModel().getDeponents() != null && callback.getFiscalModel().getDeponents().size() > 1) {
+			tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+			tab.setWidget(row, 0, new Label(AON.MSG.deponents()));
+			tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+			tab.setWidget(row, 1, deponentBox);
+			row++;
+			int d = 0;
+			for ( FiscalModel fm : callback.getFiscalModel().getDeponents().values() ) {
+				deponentBox.addItem(fm.getFullName(), fm.getDocument());
+				if (AonStringUtils.equals(fm.getDocument(), callback.getFiscalModel().getDocument())) {
+					deponentBox.setSelectedIndex( d );
+				}
+				d++;
+			}
+			deponentBox.addChangeHandler( new ChangeHandler() {
+
+				@Override
+				public void onChange(ChangeEvent event) {
+					Mod131 fm = callback.getFiscalModel().getDeponents().get(deponentBox.getSelectedValue());
+					if (fm != null) {
+						callback.getFiscalModel().setDocument(fm.getDocument());
+						callback.getFiscalModel().setSurname(fm.getSurname());
+						callback.getFiscalModel().setName(fm.getName());
+						callback.getFiscalModel().setStreetInitial(fm.getStreetInitial());
+						callback.getFiscalModel().setStreetName(fm.getStreetName());
+						callback.getFiscalModel().setStreetNumber(fm.getStreetNumber());
+						callback.getFiscalModel().setStreetStair(fm.getStreetStair());
+						callback.getFiscalModel().setStreetFloor(fm.getStreetFloor());
+						callback.getFiscalModel().setStreetDoor(fm.getStreetDoor());
+						callback.getFiscalModel().setPhone(fm.getPhone());
+						callback.getFiscalModel().setTown(fm.getTown());
+						callback.getFiscalModel().setProvince(fm.getProvince());
+						callback.getFiscalModel().setZip(fm.getZip());
+						callback.getFiscalModel().setAdmonAeat(fm.getAdmonAeat());
+						callback.getFiscalModel().setContactPerson(fm.getContactPerson());
+						callback.getFiscalModel().setContactPhone(fm.getContactPhone());
+						callback.getFiscalModel().setContactCellular(fm.getContactCellular());
+						callback.getFiscalModel().setContactEmail(fm.getContactEmail());
+						callback.getFiscalModel().putAmount(Mod131Key.P2, fm.getAmount(Mod130Key.P2) );
+						
+						documentBox.setValue(callback.getFiscalModel().getDocument());				
+						nameLabel.setText((AonDocumentUtil.isEntity( documentBox.getValue() ))
+								?AON.MSG.nameCompanyName()
+								:AON.MSG.name());
+						nameBox.setValue(callback.getFiscalModel().getName());
+						surnameBox.setValue(callback.getFiscalModel().getSurname());
+						regularHome.setValue( callback.getFiscalModel().getAmount(Mod130Key.P2)==1?true:false );
+					}
+				}
+			});	
+		}
+
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.document()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import java.text.MessageFormat;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -1762,13 +1763,26 @@ public class Mod131DAO extends FiscalModelDAO {
 		if (mod == null) {
 			mod = new Mod131();
 		}
-		if (mod.getDeponents() == null || mod.getDeponents().size() == 0) {
-			initializeFiscalModel(ctx, mod);
-			mod.putAmount(Mod131Key.P2, (AppParamDAO.isPermAddressChanges(ctx)?1:0) );
-		}
+		initializeFiscalModel(ctx, mod);
+		mod.putAmount(Mod131Key.P2, (AppParamDAO.isPermAddressChanges(ctx)?1:0) );
+		initializeDeponents(ctx, mod);
 		return mod;
 	}
 	
+	private static void initializeDeponents(AONContext ctx,final Mod131 mod) {
+		
+		getMod131s(ctx, mod.getDomain())
+			.forEach(fm -> {
+				if (mod.getDeponents() == null || !mod.getDeponents().containsKey(fm.getDocument())) {
+					if (mod.getDeponents() == null) mod.setDeponents(new LinkedHashMap<String,Mod131>());
+					mod.getDeponents().put(fm.getDocument(), fm);
+				}
+			});
+			;
+		
+		
+	}
+
 	public static Mod131 createMod131(AONContext ctx,Mod131 mod) {
 		for (Mod131KeyDAO key : Mod131KeyDAO.values()) {
 			if (key.acceptModel(mod)) {
