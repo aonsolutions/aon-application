@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
@@ -106,8 +105,8 @@ public class WebpolExporterController extends BasicController {
 		data = null;
 		hotels = null;
 		fromDate = new Date();
+		toDate = new Date();
 		fileCount = 0;
-		toDate = DateUtils.addDays(new Date(), 1);
 	}
 	
 	public void onGotoPerson(ActionEvent event) throws ManagerBeanException {
@@ -144,8 +143,9 @@ public class WebpolExporterController extends BasicController {
 			this.data = null;
 			this.clearCriteria();
 			this.getCriteria().addInExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_HOTEL_ID), getHotelIds());
-			this.getCriteria().addGreaterThanOrEqualExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_START_DATE), fromDate);
-			this.getCriteria().addLessThanOrEqualExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_END_DATE), toDate);
+			Date insideDateTo = (getToDate() != null) ? getToDate() : getFromDate();
+			this.getCriteria().addLessThanOrEqualExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_START_DATE), insideDateTo);
+			this.getCriteria().addGreaterThanOrEqualExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_END_DATE), fromDate);
 			this.getCriteria().addOrder(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_HOTEL_ID));
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException("No se ha podido obtener la lista de huespedes.");
@@ -153,10 +153,10 @@ public class WebpolExporterController extends BasicController {
 		super.onSearch(event);
 	}
 	
-	public void onCreateDisk( ActionEvent event ) {
+	public void onCreateDisk( ActionEvent event ) throws ManagerBeanException {
 		try {
 			WebpolGuestsWriter writer = new WebpolGuestsWriter();
-			FileOutput output = writer.createFile(getHotels(), getWrappedList(), Calendar.getInstance().getTime());
+			FileOutput output = writer.createFile(getHotels(), getManagerBean().getList(getCriteria()), Calendar.getInstance().getTime());
 			if (output != null && output.getContent() != null) {
 				setData(output.getContent());
 				fileCount++;
