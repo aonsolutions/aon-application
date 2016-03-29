@@ -63,12 +63,13 @@ public class DefaultAonTagIssueSelected implements LabelSelected {
 	
 	@Override
 	public Date getDeletedAt() {
-		if (label.getDeletedAt() != null) {
-			Date date = timeFormat.parse(label.getDeletedAt());
-			String dateAsString = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm")
-					.format(date);
-			return DateTimeFormat.getFormat("dd-MM-yyyy HH:mm").parse(dateAsString);
-		}
-		return null;
+		
+		if (label.getDeletedAt() == null)
+			return null;
+
+		Date date = timeFormat.parse(label.getDeletedAt());
+		String dateAsString = DateTimeFormat.getFormat("dd-MM-yyyy HH:mm")
+				.format(date);
+		return DateTimeFormat.getFormat("dd-MM-yyyy HH:mm").parse(dateAsString);
 	}
 }

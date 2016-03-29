@@ -1,28 +1,26 @@
 package com.esferalia.aon.occam.jooq.test;
 
 import java.sql.SQLException;
-import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeFilter;
-import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO2;
+import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 
 public class OfficeTest {
 
 
 	private static AONContext ctx;
-//	private static String DOMAIN_NAME = "agroback-mac.amtzdelagos.dev";
-	private static String DOMAIN_NAME = "macayc-mac.amtzdelagos.dev";
-//	private static int DOMAIN_ID = 228;
-	private static int DOMAIN_ID = 536;
-	private static String USER_NAME = "mac";
+	private static String DOMAIN_NAME = "agroback-mac.amtzdelagos.dev";
+//	private static String DOMAIN_NAME = "macayc-mac.amtzdelagos.dev";
+	private static int DOMAIN_ID = 228;
+//	private static int DOMAIN_ID = 536;
+//	private static String USER_NAME = "mac";
+	private static String USER_NAME = "patri";
 	
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException,
@@ -35,12 +33,18 @@ public class OfficeTest {
 	public void testCreateNotices() {		
 		
 		NoticeFilter filter = new NoticeFilter();
-		filter.setState("all");
+		filter.setState("closed");
 		filter.setTags(new String[] {			
 			
-		});		
-		filter.setOffset(0);
-
+		});
+		
+		User user = UserDAO.getUser(ctx, 1654);
+		System.out.println("Name: " + user.getName());
+		
+		
+//		long count = AonHubDAO2.getSelectedCount(ctx, filter);
+//		System.out.println("Contaje: " + count);
+/*
 		List<Notice> notices = AonHubDAO2.getTicketNotices(ctx, filter);
 		
 		for (Notice notice : notices) {			
@@ -61,7 +65,7 @@ public class OfficeTest {
 		for (User user: users) {
 			System.out.println(user.getName());
 		}
-	
+	*/
 	}
 	
 }

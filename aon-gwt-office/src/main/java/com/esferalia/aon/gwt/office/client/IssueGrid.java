@@ -52,9 +52,14 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 	public enum Columns {
 
-		STATE(""), TYPE("TIPO"), PRIORITY("PRIORIDAD"), COMPANY(
-				"EMPRESA"), TITLE("ASUNTO"), LABELS("ETIQUETAS"), OWNER(
-						"CREADO POR"), CREATED_AT("FECHA");
+		STATE(""), 
+		TYPE("TIPO"), 
+		PRIORITY("PRIORIDAD"), 
+		COMPANY("EMPRESA"), 
+		TITLE("ASUNTO"), 
+		LABELS("ETIQUETAS"), 
+		OWNER("CREADO POR"), 
+		CREATED_AT("FECHA");
 
 		private String mensaje;
 
@@ -474,14 +479,16 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 						.getTags().listIterator();
 				while (iterator.hasNext()) {
 					DefaultAonTagIssueSelected tag = iterator.next();
-					if (tag.getType() == TagType.OFFICE_NOTICE.value()) {
+					if (tag.getType() == TagType.OFFICE_NOTICE.value() && tag.getDeletedAt() == null) {
 						buffer.append(tag.getName().toUpperCase());
 						if (iterator.hasNext())
 							buffer.append(" - ");
 					}
 				}
 
-				return buffer.toString();
+				return (buffer.toString().endsWith(" - ")) ? 
+						buffer.toString().substring(0, buffer.toString().length() - 2)
+						: buffer.toString();
 			}
 		};
 		setColumnWidth(col++, 40, Unit.PX);

@@ -16,7 +16,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 
 public class OfficeImpl implements IOffice {
-
+	
+	// ----------------------------------------------------- SELECTS
 	@Override
 	public User getUser(AONContext ctx, Integer id) {
 		return UserDAO.getUser(ctx, id);
@@ -37,22 +38,35 @@ public class OfficeImpl implements IOffice {
 	public List<Notice> getNotices(AONContext ctx, NoticeFilter filter) {
 		return AonHubDAO2.getTicketNotices(ctx, filter);
 	}
+	
+	
+	// ----------------------------------------------------- INSERTS
+
+	@Override
+	public Notice addNewNotice(AONContext ctx, Notice notice) throws Exception {
+		return ctx.getDslContext().transactionResult( 
+				conf -> AonHubDAO2.insertNotice(ctx, notice));
+	}
 
 	@Override
 	public Notice createComment(AONContext ctx, Integer headId, Notice comment)
 			throws IllegalArgumentException {
-		return AonHubDAO.createComment(ctx, headId, comment);
-	}
-
-	@Override
-	public Notice editComment(AONContext ctx, Integer commentId, String body) {
-		return AonHubDAO.editComment(ctx, commentId, body);
+		return ctx.getDslContext().transactionResult( 
+				conf -> AonHubDAO2.createComment(ctx, headId, comment));
 	}
 
 	@Override
 	public Tag addNewTag(AONContext ctx, Tag tag)
 			throws IllegalArgumentException {
 		return AonHubDAO.addNewTag(ctx, tag);
+	}
+
+	// ----------------------------------------------------- DELETES
+
+
+	@Override
+	public Notice editComment(AONContext ctx, Integer commentId, String body) {
+		return AonHubDAO.editComment(ctx, commentId, body);
 	}
 
 	@Override
@@ -69,11 +83,6 @@ public class OfficeImpl implements IOffice {
 	@Override
 	public List<Tag> getTags(AONContext ctx) throws IllegalArgumentException {
 		return AonHubDAO.getTags(ctx);
-	}
-
-	@Override
-	public Notice addNewNotice(AONContext ctx, Notice notice) throws Exception {
-		return AonHubDAO2.insertNotice(ctx, notice);
 	}
 
 	@Override

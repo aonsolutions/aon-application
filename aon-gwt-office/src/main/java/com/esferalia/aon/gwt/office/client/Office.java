@@ -169,16 +169,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						userIdentificated(result.getData());
 					}
 				});
-
-		loadUsers();
-		loadRegistries();
-		loadRMedias();
-		loadLabels();
-		initIssuesList();
-		loadOpenIssues();
-	}
-	
-	void loadUsers() {
+		
 		gitHub.getUsers(String.valueOf(getCurrentDomain()), new AsyncCallback<JSON<JsUser>>() {
 
 			@Override
@@ -196,9 +187,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 				
 			}
 		});
-	}
-
-	void loadRegistries() {
+		
 		gitHub.getRegistries(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsRegistry>>() {
 
@@ -213,10 +202,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						for (int x = 0; x < registries.length(); x++)
 							addRegistry2List(registries.get(x));
 					}
-				});
-	}
+				});		
 
-	void loadRMedias() {
 		gitHub.getRMedias(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsRMedia>>() {
 
@@ -232,9 +219,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 							addRMedia2List(rmedias.get(x));	
 					}
 				});
-	}
-
-	void loadLabels() {
 
 		gitHub.getLabels(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsLabel>>() {
@@ -254,6 +238,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						Office.this.searchPanel.addTagList(tagList);
 					}
 				});
+
+		initIssuesList();
+		loadOpenIssues();
 	}
 
 	void loadOpenIssues() {

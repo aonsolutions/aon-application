@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -46,44 +47,31 @@ public class AonHubDAO2 {
 
 	public static Notice insertNotice(AONContext ctx, Notice notice) {
 		// @formatter:off
-		NoticeRecord record = ctx.getDslContext()
+		Timestamp date = getTime(notice.getStartDate());
+		int id = ctx.getDslContext()
 				.insertInto(NOTICE)
 				.set(NOTICE.DOMAIN, ctx.getDomainId())
-				.set(NOTICE.DATE, getTime(notice.getStartDate()))						
+				.set(NOTICE.DATE, date)						
 				.set(NOTICE.SENDER, notice.getSender().getId())
 				.set(NOTICE.SUBJECT, notice.getTitle())
 				.set(NOTICE.STATUS, NoticeStatus.OPEN.value())
 				.set(NOTICE.TYPE, NoticeType.TICKET.value())
-				.set(NOTICE.COMPANY,
-						(notice.getCompany() != null) ? notice.getCompany()
-								: null)
-				.set(NOTICE.SOURCE,
-						(notice.getSource() != null)
-								? String.valueOf(notice.getSource()) : null)
-				.set(NOTICE.PRIORITY, (byte) 0).returning().fetchOne();
+				.set(NOTICE.COMPANY, (notice.getCompany() != null) ? notice.getCompany(): null)
+				.set(NOTICE.SOURCE, (notice.getSource() != null) ? String.valueOf(notice.getSource()) : null)
+				.set(NOTICE.PRIORITY, (byte) 0)
+				.returning( NOTICE.ID )
+				.fetchOne()
+				.getValue(NOTICE.ID);				
 
-		NoticeTagRecord tagRecord = ctx.getDslContext().insertInto(NOTICE_TAG)
-				.set(NOTICE_TAG.NOTICE, record.getValue(NOTICE.ID))
-				.set(NOTICE_TAG.START_DATE, record.getValue(NOTICE.DATE))
+		ctx.getDslContext().insertInto(NOTICE_TAG)
+				.set(NOTICE_TAG.NOTICE, id)
+				.set(NOTICE_TAG.START_DATE, date)
 				.set(NOTICE_TAG.TAG, getOpenNoticesId(ctx.getDslContext()))
-				.set(NOTICE_TAG.USER, record.getValue(NOTICE.SENDER))
+				.set(NOTICE_TAG.USER, notice.getSender().getId())
 				.returning().fetchOne();
 		// @formatter:on
-
-		Tag tag = new Tag();
-		tag.setId(tagRecord.getValue(NOTICE_TAG.TAG));
-		tag.setDomain(ctx.getDomainId());
-		tag.setName(NoticeStatus.OPEN.getValue());
-		tag.setStartDate(tagRecord.getValue(NOTICE_TAG.START_DATE));
-		tag.setEndDate(tagRecord.getValue(NOTICE_TAG.END_DATE));
-		tag.setUser(UserDAO.getUser(ctx, record.getValue(NOTICE.SENDER)));
-		tag.setType(TagType.OFFICE_STATUS.value());
-
-		notice.setId(record.getValue(NOTICE.ID));
-		notice.setDomain(ctx.getDomainId());
-		notice.addTag(tag);
-
-		return notice;
+		
+		return getTicketNotice(ctx, id);
 	}
 
 	public static Notice changeNoticeState(AONContext ctx, Notice notice) {
@@ -360,8 +348,7 @@ public class AonHubDAO2 {
 				.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())
 						.or(TAG.TYPE.eq(TagType.OFFICE_TYPE.value()))
 						.or(TAG.TYPE.eq(TagType.OFFICE_PRIORITY.value()))
-						.or(TAG.TYPE.eq(TagType.OFFICE_NOTICE.value())
-								.and(NOTICE_TAG.END_DATE.isNull())))				
+						.or(TAG.TYPE.eq(TagType.OFFICE_NOTICE.value())))				
 				.orderBy(NOTICE_TAG.START_DATE.desc())
 				.fetch()
 				.stream()

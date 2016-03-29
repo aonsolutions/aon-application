@@ -164,15 +164,15 @@ public class IssueReadPanel extends Composite {
 		List<DefaultAonTagIssueSelected> priorityList = new LinkedList<DefaultAonTagIssueSelected>();
 		List<DefaultAonTagIssueSelected> officeList = new LinkedList<DefaultAonTagIssueSelected>();
 
-		for (DefaultAonTagIssueSelected tag : tags) {			
+		for (DefaultAonTagIssueSelected tag : tags) {
 			if (tag.getType() == TagType.OFFICE_TYPE.value()) {
 				typesList.add(tag);
 			}
-				
+
 			else if (tag.getType() == TagType.OFFICE_PRIORITY.value()) {
 				priorityList.add(tag);
 			}
-			
+
 			else if (tag.getType() == TagType.OFFICE_NOTICE.value())
 				officeList.add(tag);
 		}
@@ -213,7 +213,7 @@ public class IssueReadPanel extends Composite {
 	}
 
 	private void initHeaderAux(IssueSelected issue) {
-		
+
 		HorizontalPanel hPanel = null;
 
 		Label titleLabel = new Label(issue.getTitle().toUpperCase());
@@ -226,11 +226,14 @@ public class IssueReadPanel extends Composite {
 
 		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
 
-			if (tag.getType() != TagType.OFFICE_STATUS.value())
+			if (tag.getType() != TagType.OFFICE_STATUS.value()
+					&& tag.getDeletedAt() != null) {
+				setInfoTag(tag);
 				continue;
+			}
 
 			if (tag.getDeletedAt() == null)
-				hPanel = setHistorialHeader(tag);				
+				hPanel = setHistorialHeader(tag);
 			else
 				setContent(tag);
 		}
@@ -242,14 +245,13 @@ public class IssueReadPanel extends Composite {
 			disclosurePanel.setHeader(hPanel);
 			disclosurePanel.setContent(infoHeaderContent);
 			headerVPanel.add(disclosurePanel);
-		}
-		else
+		} else
 			headerVPanel.add(hPanel);
-		
+
 		if (issue.getCompany().trim().isEmpty() == false) {
 			HorizontalPanel companyPanel = new HorizontalPanel();
 			companyPanel.setSpacing(5);
-			
+
 			Label notified = new Label("Notificada por: ");
 			notified.setStyleName(AON.AON_BOLD);
 			companyPanel.add(notified);
@@ -274,10 +276,31 @@ public class IssueReadPanel extends Composite {
 		ownLabel.setStyleName(AON.AON_BOLD);
 		hPanel.add(ownLabel);
 
-		Label dateLabel = new Label(" el " + date.format(tag.getCreateAt()) + " a las " + hour.format(tag.getCreateAt()));
+		Label dateLabel = new Label(" el " + date.format(tag.getCreateAt())
+				+ " a las " + hour.format(tag.getCreateAt()));
 		hPanel.add(dateLabel);
 
 		return hPanel;
+	}
+
+	private void setInfoTag(DefaultAonTagIssueSelected tag) {
+		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.setSpacing(5);
+
+		Label headerIconLabel = new Label();
+		headerIconLabel.setStyleName(AON.AON_CSS.aonIconDelete());
+		hPanel.add(headerIconLabel);
+
+		Label ownLabel = new Label(tag.getUser().getName());
+		ownLabel.setStyleName(AON.AON_BOLD);
+		hPanel.add(ownLabel);
+	
+		hPanel.add(new Label(" cerr\u00F3 la etiqueta "));
+		hPanel.add(setTagStyle(tag));
+		hPanel.add(new Label(" el " + date.format(tag.getCreateAt()) + " a las "
+				+ hour.format(tag.getCreateAt())));
+
+		infoHeaderContent.add(hPanel);
 	}
 
 	private void setContent(DefaultAonTagIssueSelected tag) {
@@ -296,7 +319,8 @@ public class IssueReadPanel extends Composite {
 		ownLabel.setStyleName(AON.AON_BOLD);
 		hPanel.add(ownLabel);
 
-		Label dateLabel = new Label(" el " + date.format(tag.getCreateAt()) + " a las " + hour.format(tag.getCreateAt()));
+		Label dateLabel = new Label(" el " + date.format(tag.getCreateAt())
+				+ " a las " + hour.format(tag.getCreateAt()));
 		hPanel.add(dateLabel);
 		infoHeaderContent.add(hPanel);
 	}
@@ -494,7 +518,7 @@ public class IssueReadPanel extends Composite {
 
 					@Override
 					public void onClose(CloseEvent<PopupPanel> event) {
-						if(issue instanceof IssueGrid.IssueOpenLoadSelected)
+						if (issue instanceof IssueGrid.IssueOpenLoadSelected)
 							onReplaceNoticeTag();
 					}
 				});
@@ -540,7 +564,8 @@ public class IssueReadPanel extends Composite {
 
 	private boolean containsOfficeTag(String name) {
 		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
-			if (tag.getName().compareTo(name) == 0) {
+			if (tag.getName().compareTo(name) == 0
+					&& tag.getDeletedAt() == null) {
 				Label label = new Label(name);
 				label.setStyleName(AON.AON_CSS.tagStyle());
 				label.addStyleName(AON.AON_CSS.tagNotice());
@@ -752,5 +777,19 @@ public class IssueReadPanel extends Composite {
 		textArea.setStylePrimaryName(AON.AON_CSS.textAreaStyle());
 		textArea.setValue(text);
 		return textArea;
+	}
+	
+	private Label setTagStyle(DefaultAonTagIssueSelected tag) {
+		
+		Label label = new Label(tag.getName());
+		label.setStyleName(AON.AON_RESOURCES.css().tagStyle());
+		if (tag.getType() == TagType.OFFICE_TYPE.value())
+			label.addStyleName(AON.AON_RESOURCES.css().tagType());
+		if (tag.getType() == TagType.OFFICE_PRIORITY.value())
+			label.addStyleName(AON.AON_RESOURCES.css().tagPriority());
+		if (tag.getType() == TagType.OFFICE_NOTICE.value())
+			label.addStyleName(AON.AON_RESOURCES.css().tagNotice());
+		
+		return label;
 	}
 }
