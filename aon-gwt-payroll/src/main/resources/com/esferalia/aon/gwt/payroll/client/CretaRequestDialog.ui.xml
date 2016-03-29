@@ -99,6 +99,8 @@
 					<g:ListBox styleName="aon-selectOneMenu" ui:field="typeListBox" >
 						<g:item value="L00">L00 Liquidaci&oacute;n normal en per&iacute;odo reglamentario de ingreso</g:item>	
 						<g:item value="L13">L13 Liquidaciones complementarias por vacaciones retribuidas y no disfrutadas</g:item>	
+						<g:item value="L90">L90 Liquidaciones complementarias por incremento de bases</g:item>	
+						<g:item value="L91">L91 Liquidaciones complementarias por nuevos tramos y/o trabajadores</g:item>	
 					</g:ListBox>
 				</td>
 			</tr>
