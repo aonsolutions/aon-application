@@ -239,6 +239,7 @@ public class D2DepositConstants {
 		,new D2DepositKey[]{D2DepositKey.MA391001, D2DepositKey.MA3910019}
 		,new D2DepositKey[]{D2DepositKey.MA391002, D2DepositKey.MA3910029}
 		,new D2DepositKey[]{D2DepositKey.MA391003, D2DepositKey.MA3910039}
+		,new D2DepositKey[]{D2DepositKey.MA391004, D2DepositKey.MA3910049}
 	};
 
 	public static D2DepositKey[][] MRN_ABREVIATE_KEYS_2 = new D2DepositKey[][]{

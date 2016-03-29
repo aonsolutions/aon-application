@@ -109,12 +109,12 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP.put(D2DepositKey.MA6193201,"Inversiones mantenidas hasta el vencimiento");
 		DESCRIPTION_MAP.put(D2DepositKey.MA6193211,"Activos financieros mantenidos para negociar");
 		DESCRIPTION_MAP.put(D2DepositKey.MA6193221,"Otros activos financieros a valor razonable con cambios en la cuenta de p\u00E9rdidas y ganancias");
-		DESCRIPTION_MAP.put(D2DepositKey.MA6193231,"InversiOn en el patrimonio de empresas del grupo, multigrupo y asociados");
+		DESCRIPTION_MAP.put(D2DepositKey.MA6193231,"Inversi\u00F3n en el patrimonio de empresas del grupo, multigrupo y asociados");
 		DESCRIPTION_MAP.put(D2DepositKey.MA6193241,"Activos financieros disponibles para la venta");
 		
 		
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933019,"P\u00E9rdida por deterioro al inicio del ejercicio # ");
-		DESCRIPTION_MAP.put(D2DepositKey.MA62933119,"(+)Correci\u00F3n valorativo por deterior");
+		DESCRIPTION_MAP.put(D2DepositKey.MA62933119,"(+)Correci\u00F3n valorativo por deterioro");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933219,"(-) Reversi\u00F3n del deterioro");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933319,"(-) Salidas y reducciones");
 		DESCRIPTION_MAP.put(D2DepositKey.MA62933419,"(+/-) Traspasos y otras variaciones (combinaciones de negocio,etc.)");
@@ -279,20 +279,20 @@ public class D2DepositDescription {
 	}
 	
 	static{
-		DESCRIPTION_MAP.put(D2DepositKey.MA1398000,"Directores generales y presidentes ejecutivos");
+		DESCRIPTION_MAP.put(D2DepositKey.MA1398000,"Directores generales y presidentes ejecutivos");// 2015 Altos directivos
 
-		DESCRIPTION_MAP.put(D2DepositKey.MA1398001,"Resto de directores y gerentes");
+		DESCRIPTION_MAP.put(D2DepositKey.MA1398001,"Resto de directores y gerentes"); // 2015 Resto de personal directivo
 
 		DESCRIPTION_MAP.put(D2DepositKey.MA1398002,"T\u00E9cnicos y profesionales cient\u00EDficos e intelectuales y profesionales de apoyo");
-
+				// 2015 T\u00E9cnicos y profesionales cient\u00EDficos e intelectuales y de apoyo
 		DESCRIPTION_MAP.put(D2DepositKey.MA1398003,"Empleados contables, administrativos y otros empleados de oficina");
-
+				// 2015 Empleados de tipo administrativo
 		DESCRIPTION_MAP.put(D2DepositKey.MA1398004,"Comerciales, vendedores y similares");
-
+		
 		DESCRIPTION_MAP.put(D2DepositKey.MA1398005,"Resto de personal cualificado");
 
 		DESCRIPTION_MAP.put(D2DepositKey.MA1398006,"Ocupaciones elementales");
-
+				// 2015 Trabajadores no cualificados
 		DESCRIPTION_MAP.put(D2DepositKey.MA1398007,"Total empleado medio");
 
 	}
@@ -359,7 +359,7 @@ public class D2DepositDescription {
 		DESCRIPTION_MAP.put(D2DepositKey.MA12B97341,"1.Deudores comerciales y otras deudas a cobrar");
 		DESCRIPTION_MAP.put(D2DepositKey.MA12B97351,"a)Clientes por ventas y prestaci\u00F3n de servicios a largo plazo, de las cuales:");
 		DESCRIPTION_MAP.put(D2DepositKey.MA12B97361,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro a largo plazo");
-		DESCRIPTION_MAP.put(D2DepositKey.MA12B97371,"b)CLientes por ventas y prestaci\u00F3n de servicios a corto plazo. de las cuales:");
+		DESCRIPTION_MAP.put(D2DepositKey.MA12B97371,"b)Clientes por ventas y prestaci\u00F3n de servicios a corto plazo. de las cuales:");
 		DESCRIPTION_MAP.put(D2DepositKey.MA12B97381,"-Correcciones valorativas por cr\u00E9ditos de dudoso cobro a corto plazo");
 		DESCRIPTION_MAP.put(D2DepositKey.MA12B97391,"Accionistas (socios) por desembolsos exigidos");
 		DESCRIPTION_MAP.put(D2DepositKey.MA12B97401,"d)Otros deudores, de los cuales:");
