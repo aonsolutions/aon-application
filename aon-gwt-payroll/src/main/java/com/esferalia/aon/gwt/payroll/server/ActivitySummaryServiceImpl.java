@@ -199,9 +199,10 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 							DSL.sum( DSL.field(SALARY.TYPE.eq((byte) SalaryType.SETTLE.ordinal())).coerce(Integer.class)),
 							DSL.sum( DSL.field(SALARY.TYPE.gt((byte) SalaryType.SETTLE.ordinal())).coerce(Integer.class)))
 					.from(CONTRACT
-							.leftOuterJoin(SALARY).on(SALARY.CONTRACT.eq(CONTRACT.ID)))
-					.where(CONTRACT.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
-					.and(SALARY.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+							.leftOuterJoin(SALARY).on(CONTRACT.ID.eq(SALARY.CONTRACT)))
+					.where(CONTRACT.START_DATE.lt(new java.sql.Date(endDate.getTime()))
+							.or(CONTRACT.START_DATE.gt(new java.sql.Date(endDate.getTime()))))
+					.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 					.and(CONTRACT.DOMAIN.eq(domainId))
 					.groupBy(CONTRACT.ID)
 					.orderBy(CONTRACT.ID.desc(), 
@@ -238,7 +239,7 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 							DSL.sum( DSL.field(SALARY.TYPE.gt((byte) SalaryType.SETTLE.ordinal())).coerce(Integer.class)))
 					.from(DOMAIN
 							.leftOuterJoin(SALARY).on(SALARY.DOMAIN.eq(DOMAIN.ID)))
-					.where(SALARY.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+					.where(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 					.and(DOMAIN.ID.in(childDomainIds))
 					.and(DOMAIN.ACTIVE.eq((byte)1))
 					.groupBy(DOMAIN.ID)
