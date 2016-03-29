@@ -88,8 +88,11 @@ public class CustomerFACeController implements Serializable {
 
 	public void onUpdate( Customer customer ) throws ManagerBeanException {
 		if ( customer.isEInvoice() ) {
-			getNote(FACeUtil.FACE_ENABLED).setComments(String.valueOf(isEnabled()));
-			save();
+			RegistryNote note = getNote(FACeUtil.FACE_ENABLED);
+			if (note != null) {
+				note.setComments(String.valueOf(isEnabled()));
+				save();
+			}
 		} else {
 			onRemove(customer);
 		}
