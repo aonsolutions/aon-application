@@ -1583,7 +1583,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 		}
 	}
 
-	public void createEDTCa51Segment(EMP emp) {
+	public void createEDTCa51Segment(Double desmplEnterpriseTotal, EMP emp) {
 		// TODO 51 Otras cotizaciones (Desempleo) (Tc1/16) - Régimen Especial
 		// del Mar
 		// Otra cotizaciones (Desempleo y Formación Profesional cuota obrera)
@@ -1599,7 +1599,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 		// y Empaquetado de Tomate Fresco
 	}
 
-	public void createEDTCa53Segment(EMP emp) {
+	public void createEDTCa53Segment(Double fogasaEnterpriseTotal, Double fpEnterpriseTotal, EMP emp) {
 		// TODO 53 Total Otras Cotizaciones (Desempleo, FOGASA y Formación
 		// Profesional) (TC1/16) - Régimen Especial del Mar
 		// Total Otras Cotizaciones (Desempleo, FOGASA y Formación Profesional

@@ -169,13 +169,13 @@ public interface IFanFactory {
 //	public void createEDTCa50Segment(Double otherEnterpriseTotal, Double otherEmployeeTotal, EMP emp);
 	public void createEDTCa50Segment(
 			Double desmplEnterpriseTotal, Double fogasaEnterpriseTotal, Double fpEnterpriseTotal, 
-			Double desmplEmployeeTotal, Double fpEmployeeTotal, EMP emp);
-	public void createEDTCa51Segment(EMP emp);
+			Double desmplEmployeeTotal, Double fpEmployeeTotal, EMP emp);	
+	public void createEDTCa51Segment(Double desmplEnterpriseTotal, EMP emp);	
 //	public void createEDTCa52Segment(EMP emp);
 	public void createEDTCa52Segment(
 			Double desmplEnterpriseTotal, Double fogasaEnterpriseTotal, Double fpEnterpriseTotal, 
 			Double desmplEmployeeTotal, Double fpEmployeeTotal, EMP emp);
-	public void createEDTCa53Segment(EMP emp);
+	public void createEDTCa53Segment(Double fogasaEnterpriseTotal, Double fpEnterpriseTotal, EMP emp);
 	public void createEDTCa54Segment(EMP emp);
 	public void createEDTCa55Segment(EMP emp);
 	public void createEDTCa56Segment(EMP emp);

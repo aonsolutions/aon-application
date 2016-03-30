@@ -842,16 +842,16 @@ public class FANWriter implements Serializable {
 	
 	private Double getProfessionalBase(Salary salary, List<ITransferObject> salaryDataList) {
 		Double profBase = 0.0;
-		String _profBase = null;
 		for(ITransferObject to: salaryDataList){
 			SalaryData sd = (SalaryData) to;
 			if(sd.getName().equals(ContextVariable.CGP_BASE.getName())){
-				_profBase = sd.getExpression();
+				String _profBase = sd.getExpression();
+				if(_profBase!=null && NumberUtils.isNumber(_profBase)){
+					profBase += Double.parseDouble(_profBase);
+				}
 			}
 		}
-		if(_profBase!=null && NumberUtils.isNumber(_profBase)){
-			profBase = Double.parseDouble(_profBase);
-		} else {
+		if(profBase==0.0){
 			profBase = salary.getProfessionalBase();
 		}
 		return profBase;
@@ -1561,7 +1561,7 @@ public class FANWriter implements Serializable {
 					otherEmployeeTotalUnemployment - otherOnlyEmployeeTotalUnemployment,
 					otherEmployeeTotalJobTraining - otherOnlyEmployeeTotalJobTraining,
 					emp);
-			fanFactory.createEDTCa51Segment(emp);
+			fanFactory.createEDTCa51Segment(otherOnlyEnterpriseTotalUnemployment, emp);
 			fanFactory.createEDTCa52Segment(
 					otherEnterpriseTotalUnemployment,
 					otherEnterpriseTotalFogasa,
@@ -1569,7 +1569,7 @@ public class FANWriter implements Serializable {
 					otherEmployeeTotalUnemployment,
 					otherEmployeeTotalJobTraining, 
 					emp);
-			fanFactory.createEDTCa53Segment(emp);
+			fanFactory.createEDTCa53Segment(otherOnlyEnterpriseTotalFogasa, otherOnlyEnterpriseTotalJobTraining, emp);
 			fanFactory.createEDTCa54Segment(emp);
 			fanFactory.createEDTCa55Segment(emp);
 			fanFactory.createEDTCa56Segment(emp);

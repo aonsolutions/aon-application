@@ -111,19 +111,27 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	 */
 	@Override
 	public void createEDLCd29Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, DAT dat, List<ITransferObject> salaryDataList) {
-		
-		String _cgcBase = obtainCgcBase(salaryDataList);
-		String _reductionPercent = obtainSeaReduction(salaryDataList);
-		
-		// la cuota de la reduccion se obtiene a aplicando 
-		// el porcentaje de reduccion a la base de contingencias comunes 
-		
-		Double cgcBase = NumberUtils.isNumber(_cgcBase)?Double.parseDouble(_cgcBase):0.0;
-		Double reductionPercent = NumberUtils.isNumber(_reductionPercent)?Double.parseDouble(_reductionPercent):0.0;
-		
-		EDL edl = dat.getEdlSegment("CD29");
-		super.createEDLRecord(edl, "CD", 29, new Double(CommonUtil.round(cgcBase*reductionPercent/100)*100).intValue());
-		
+		if(isITPeriod(dat)){
+			Integer base = dat.getEdl().containsKey("BA21")?dat.getEdlSegment("BA21").getImporte():null;
+			if(base!=null){
+				Double TGSS_PERCENT_SEA = 15.0;
+				Double amount = (base/100) * TGSS_PERCENT_SEA / 100;
+				EDL edl = dat.getEdlSegment("CD29");
+				super.createEDLRecord(edl, "CD", 29, new Double(CommonUtil.round(amount)*100).intValue());
+			}
+		} else {
+			String _cgcBase = obtainCgcBase(salaryDataList);
+			String _reductionPercent = obtainSeaReduction(salaryDataList);
+			
+			// la cuota de la reduccion se obtiene a aplicando 
+			// el porcentaje de reduccion a la base de contingencias comunes 
+			
+			Double cgcBase = NumberUtils.isNumber(_cgcBase)?Double.parseDouble(_cgcBase):0.0;
+			Double reductionPercent = NumberUtils.isNumber(_reductionPercent)?Double.parseDouble(_reductionPercent):0.0;
+			
+			EDL edl = dat.getEdlSegment("CD29");
+			super.createEDLRecord(edl, "CD", 29, new Double(CommonUtil.round(cgcBase*reductionPercent/100)*100).intValue());
+		}
 	}
 	
 	private String obtainCgcBase(List<ITransferObject> salaryDataList){
@@ -163,11 +171,19 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	 * @param dat
 	 */
 	public void createEDLCd30Segment(DAT dat) {
-		// TODO
-//		if(bonus.getSalary().getContract().getRegimeType()==SSRegimeType.AGRICULTURAL){
-//			EDL edl = dat.getEdlSegment("CD30");
-//			createEDLRecord(edl, "CD", 30, new Double(CommonUtil.round((bonus).getAmount())*100).intValue());
-//		}
+		if(isITPeriod(dat)){
+			Integer base = dat.getEdl().containsKey("BA21")?dat.getEdlSegment("BA21").getImporte():null;
+			if(base!=null){
+				Double SPEE_PERCENT_SEA_IT = 2.75;
+				Double amount = (base/100) * SPEE_PERCENT_SEA_IT / 100;
+				EDL edl = dat.getEdlSegment("CD30");
+				createEDLRecord(edl, "CD", 30, new Double(CommonUtil.round(amount)*100).intValue());
+			}
+		}
+	}
+	
+	private boolean isITPeriod(DAT dat){
+		return dat.getIndicadoresPerfil().contains("I");
 	}
 	
 	/**
@@ -287,8 +303,25 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	b*t (desempleo, tipo exclusivamente empresarial)
 	*/
 	@Override
-	public void createEDTCa51Segment(EMP emp) {
+	public void createEDTCa51Segment(Double desmplEnterpriseTotal, EMP emp) {
 		// TODO 
+		Integer base = emp.getEdt().containsKey("EDTBA22") ? emp.getEdtSegment("EDTBA22").getBase() : 0;
+		
+		Double amount = 0.0;
+		amount += desmplEnterpriseTotal;
+//		amount += desmplEmployeeTotal;
+		amount = CommonUtil.round(amount, 2);
+		
+		if (base != 0) {
+			EDT edt = emp.getEdtSegment("EDTCA52");
+			edt.setTipoElemento("CA");
+			edt.setClave(52);
+			edt.setBase(base);
+			edt.setIndicadorFactorTipo(" ");
+			// edt.setParteEnteraTipo(28);
+			// edt.setParteDecimalFactorTipo(30000);
+			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
+		}
 	}
 	
 	/**
@@ -315,8 +348,8 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 			edt.setClave(52);
 			edt.setBase(base);
 			edt.setIndicadorFactorTipo(" ");
-			// edt.setParteEnteraTipo(28);
-			// edt.setParteDecimalFactorTipo(30000);
+			edt.setParteEnteraTipo(null);
+			edt.setParteDecimalFactorTipo(null);
 			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
 		}
 	}
@@ -327,8 +360,37 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	b*t (fogasa) + b*t (formación profesional exclusivamente empresarial)
 	*/
 	@Override
-	public void createEDTCa53Segment(EMP emp) {
+	public void createEDTCa53Segment(Double fogasaEnterpriseTotal, Double fpEnterpriseTotal, EMP emp) {
 		// TODO
+		
+		Integer base = emp.getEdt().containsKey("EDTBA22") ? emp.getEdtSegment("EDTBA22").getBase() : 0;
+		
+		Double amount = 0.0;
+		amount += fogasaEnterpriseTotal;
+		amount += fpEnterpriseTotal;
+//		amount += fpEmployeeTotal;
+		amount = CommonUtil.round(amount, 2);
+		
+		if (base != 0) {
+			EDT edt = emp.getEdtSegment("EDTCA52");
+			edt.setTipoElemento("CA");
+			edt.setClave(52);
+			edt.setBase(base);
+			edt.setIndicadorFactorTipo(" ");
+			edt.setParteEnteraTipo(null);
+			edt.setParteDecimalFactorTipo(null);
+			edt.setImporte((new Double(CommonUtil.round(amount * 100))).intValue());
+		}
+	}
+	
+	/**
+	 * 57 Cuota empresarial por Otras Cotizaciones
+	 * 
+	 */
+	@Override
+	public void createEDTCa57Segment(Double desmplOnlyEnterpriseTotal, Double fogasaOnlyEnterpriseTotal,
+			Double fpOnlyEnterpriseTotal, EMP emp) {
+		// No procede para regimen agrario
 	}
 	
 	
