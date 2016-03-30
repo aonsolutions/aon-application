@@ -56,6 +56,7 @@ import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -1464,29 +1465,34 @@ public class ContractUtils implements Serializable {
 			date.setTime(salary.getEndDate());
 			date.set(Calendar.DAY_OF_MONTH, date.getActualMinimum(Calendar.DAY_OF_MONTH));
 			
-			Map<String, String> map = SEPEUtils.getInstance().getContractDataMap(salary.getContract());
-			Double monday = NumberUtils.toDouble(map.get(ContextVariable.MONDAY_HOURS.getName()));
-			Double tuesday = NumberUtils.toDouble(map.get(ContextVariable.TUESDAY_HOURS.getName()));
-			Double wednesday = NumberUtils.toDouble(map.get(ContextVariable.WEDNESDAY_HOURS.getName()));
-			Double thursday = NumberUtils.toDouble(map.get(ContextVariable.THURSDAY_HOURS.getName()));
-			Double friday = NumberUtils.toDouble(map.get(ContextVariable.FRIDAY_HOURS.getName()));
-			Double saturday = NumberUtils.toDouble(map.get(ContextVariable.SATURDAY_HOURS.getName()));
-			Double sunday = NumberUtils.toDouble(map.get(ContextVariable.SUNDAY_HOURS.getName()));
-			
+			List<SalaryData> mondayHoursList = SEPEUtils.getInstance().getSalaryDataList(salary, salary.getStartDate(), salary.getEndDate(), ContextVariable.MONDAY_HOURS.getName());
+			List<SalaryData> tuesdayHoursList = SEPEUtils.getInstance().getSalaryDataList(salary, salary.getStartDate(), salary.getEndDate(), ContextVariable.TUESDAY_HOURS.getName());
+			List<SalaryData> wednesdayHoursList = SEPEUtils.getInstance().getSalaryDataList(salary, salary.getStartDate(), salary.getEndDate(), ContextVariable.WEDNESDAY_HOURS.getName());
+			List<SalaryData> thursdayHoursList = SEPEUtils.getInstance().getSalaryDataList(salary, salary.getStartDate(), salary.getEndDate(), ContextVariable.THURSDAY_HOURS.getName());
+			List<SalaryData> fridayHoursList = SEPEUtils.getInstance().getSalaryDataList(salary, salary.getStartDate(), salary.getEndDate(), ContextVariable.FRIDAY_HOURS.getName());
+			List<SalaryData> saturdayHoursList = SEPEUtils.getInstance().getSalaryDataList(salary, salary.getStartDate(), salary.getEndDate(), ContextVariable.SATURDAY_HOURS.getName());
+			List<SalaryData> sundayHoursList = SEPEUtils.getInstance().getSalaryDataList(salary, salary.getStartDate(), salary.getEndDate(), ContextVariable.SUNDAY_HOURS.getName());
 			while(!date.after(endDate)){
 				if(date.get(Calendar.DAY_OF_WEEK)==Calendar.MONDAY){
+					Double monday = obtainHours(mondayHoursList, date.getTime());
 					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?monday:0, null));
 				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.TUESDAY){
+					Double tuesday = obtainHours(tuesdayHoursList, date.getTime());
 					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?tuesday:0, null));
 				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.WEDNESDAY){
+					Double wednesday = obtainHours(wednesdayHoursList, date.getTime());
 					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?wednesday:0, null));
 				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.THURSDAY){
+					Double thursday = obtainHours(thursdayHoursList, date.getTime());
 					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?thursday:0, null));
 				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.FRIDAY){
+					Double friday = obtainHours(fridayHoursList, date.getTime());
 					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?friday:0, null));
 				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY){
+					Double saturday = obtainHours(saturdayHoursList, date.getTime());
 					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?saturday:0, null));
 				} else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
+					Double sunday = obtainHours(sundayHoursList, date.getTime());
 					list.add(new MonthHours(isContractEffectiveDate(salary.getContract(), date.getTime())?sunday:0, null));
 				}
 				date.add(Calendar.DAY_OF_MONTH, 1);
@@ -1497,6 +1503,15 @@ public class ContractUtils implements Serializable {
 		return list;
 	}
 	
+	private static Double obtainHours(List<SalaryData> hoursList, Date date) {
+		Double hours = 0.0;
+		hours = hoursList.stream()
+				.filter(sd -> (sd.getStartDate().before(date) || sd.getStartDate().equals(date))
+						&& (sd.getEndDate() == null || sd.getEndDate().after(date) || sd.getEndDate().equals(date)))
+						.map(o -> o.getExpression()).mapToDouble(NumberUtils::toDouble).sum();
+		return hours;
+	}
+
 	private static boolean isContractEffectiveDate(Contract contract, Date date){
 		return (date.after(contract.getStartDate()) || date.equals(contract.getStartDate())) 
 				&& (contract.getEndDate()==null || date.before(contract.getEndDate()) || date.equals(contract.getEndDate())) ;
