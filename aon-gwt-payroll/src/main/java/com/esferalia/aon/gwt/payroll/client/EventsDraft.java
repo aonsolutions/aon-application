@@ -91,8 +91,11 @@ public class EventsDraft extends ResizeComposite {
 	private static final Binder binder = GWT.create(Binder.class);
 	private static final Template template = GWT.create(Template.class);
 
-	private static final DateRange[] DATE_RANGES = { new WeekDateRange(),
-			new MonthDateRange(), new YearDateRange() };
+	private static final DateRange[] DATE_RANGES = { 
+			new WeekDateRange(),
+//			new MonthDateRange(), 
+//			new YearDateRange() 
+			};
 
 	public static final int WEEK_DATE_RANGE = 0;
 	public static final int MONTH_DATE_RANGE = 1;

@@ -349,32 +349,24 @@ public class Employees extends ResizeComposite implements
 							new AbstractEventsDraftObject.EnumEventMetaData("DESEMPE\u00D1O",
 									"DESEMPE\u00D1O",
 									"Desempe\u00F1o por Trabajador y Jornada",
-									"", new String[] { "4", "8", "10", "12",
-											"L", "LT", "LR", "F", "FT", "FR",
-											"V", "B", "P", "AI", "M" }, DateField.DAY),
+									"", new String[] { 
+											"4", 
+											"8", 
+											"10", 
+											"12",
+											"L", 
+											"LT", 
+											"LR", 
+											"F", 
+											"FT", 
+											"FR",
+											"V", 
+											"B", 
+											"P", 
+											"AI", 
+											"M" }, DateField.DAY)
 							// @formatter:on
-							new DecimalEventMetaData("INCENTIVOS", DateField.MONTH),
-							new DecimalEventMetaData("ATRASOS", DateField.MONTH),
-							new DecimalEventMetaData("ANTICIPOS", DateField.MONTH),
-							new DecimalEventMetaData("EMBARGOS", DateField.MONTH),
-							new DecimalEventMetaData(
-									"LTA",
-									"D\u00EDas Libres Trabajados canjeados por Alojamiento",
-									DateField.MONTH),
-							new DecimalEventMetaData("CLT",
-									"Coste d\u00EDa Libre Trabajado", DateField.MONTH),
-							new DecimalEventMetaData(
-									"CD",
-									"Coste Diario del trabajador (jornada 8 horas)",
-									DateField.MONTH),
-							new BooleanEventMetaData("LTR",
-									"D\u00EDas Libres Trabajados Recuperables",
-									DateField.MONTH),
-							new DecimalEventMetaData(
-									"HFD",
-									"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo",
-									DateField.MONTH), new EventMetaData("OBSERVACIONES",
-											DateField.MONTH));
+							);
 				else
 					eventsDraftObject = new EventsDraftObject(
 							workplace.getId(),

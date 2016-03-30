@@ -638,13 +638,15 @@ public class AbstractEventsDraftObject {
 						: nullOption);
 				sb.appendHtmlConstant("<select tabindex=\"-1\">");
 				int index = 0;
-				for (String option : indexForOption.keySet()) {
+				
+				for (String option : options) {
 					if (index++ == selectedIndex) {
 						sb.append(template.selected(option));
 					} else {
 						sb.append(template.deselected(option));
 					}
 				}
+				
 				sb.appendHtmlConstant("</select>");
 	
 			}
