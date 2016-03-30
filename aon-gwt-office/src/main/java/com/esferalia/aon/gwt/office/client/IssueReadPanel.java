@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -401,6 +402,7 @@ public class IssueReadPanel extends Composite {
 
 				popup.add(vPanel);
 				typeLabel.setText(issue.getType());
+				typeLabel.setTitle(setTitle2Label(issue.getType()));
 				popup.addCloseHandler(new CloseHandler<PopupPanel>() {
 
 					@Override
@@ -458,6 +460,7 @@ public class IssueReadPanel extends Composite {
 
 				popup.add(vPanel);
 				priorityLabel.setText(issue.getPriority());
+				priorityLabel.setTitle(setTitle2Label(issue.getPriority()));
 				popup.addCloseHandler(new CloseHandler<PopupPanel>() {
 
 					@Override
@@ -569,6 +572,7 @@ public class IssueReadPanel extends Composite {
 				Label label = new Label(name);
 				label.setStyleName(AON.AON_CSS.tagStyle());
 				label.addStyleName(AON.AON_CSS.tagNotice());
+				label.setTitle(setTitle2Label(name));
 				labelsVPanel.add(label);
 				return true;
 			}
@@ -791,5 +795,26 @@ public class IssueReadPanel extends Composite {
 			label.addStyleName(AON.AON_RESOURCES.css().tagNotice());
 		
 		return label;
+	}
+	
+	private String setTitle2Label (String tagName) {
+		
+		StringBuilder sb = new StringBuilder();
+		DefaultAonTagIssueSelected aux = null;
+		
+		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
+			if (AonStringUtils.equals(tagName, tag.getName())) {
+				aux = tag;
+				break;
+			}
+		}
+			
+		if (aux != null) {
+			sb.append("Etiqueta asignada por ");
+			sb.append(aux.getUser().getName());
+			sb.append(" el ");
+			sb.append( date.format(aux.getCreateAt()) + " a las " + hour.format(aux.getCreateAt()));
+		}
+		return sb.toString();
 	}
 }
