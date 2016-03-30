@@ -972,10 +972,6 @@ public class Documents extends Composite implements EntryPoint {
  		dataGrid = new CustomDataGrid<FileInfo>(30,
 				FileInfo.PROVIDES_KEY);
  	
- 		
- 		Element a = (Element) dataGrid.getElement().getLastChild();
- 		a.getStyle().setProperty("min-height", "100%");
- 	
  		dataGrid.addHandler(selHandler, CellPreviewEvent.getType());
 		dataGrid.setWidth("100%");
 		dataGrid.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
@@ -1013,7 +1009,10 @@ public class Documents extends Composite implements EntryPoint {
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
 				Element element = (Element) dataGrid.getElement().getLastChild();
-				element.getStyle().setProperty("top", "21px");
+				String top = element.getStyle().getTop();
+				if(top.equals("0px")){
+					dataGrid.redraw();
+				}
 			}
 			
 		}, MouseOverEvent.getType());
@@ -1706,7 +1705,8 @@ public class Documents extends Composite implements EntryPoint {
             		else fi.setDomain(Utils.getOracleString(sb.getText()));
             	}
             	else fi.setDomain("");
-            	
+            	MultiUploader mupload = (MultiUploader) grid.getWidget(2, 1);
+				mupload.reset();
             	finsert= fi;
                 idoc.newFile(dialogCode, fi,new AsyncCallback<Boolean>() {
 					
@@ -1861,6 +1861,8 @@ public class Documents extends Composite implements EntryPoint {
 			
 			@Override
 			protected void onCancel() {
+				MultiUploader mupload = (MultiUploader) grid.getWidget(2, 1);
+				mupload.reset();
 				final String dialogCode = getWindowCode();
 				hide();
 				idoc.clearOuts(dialogCode, new AsyncCallback<Void>() {
@@ -1986,7 +1988,8 @@ public class Documents extends Composite implements EntryPoint {
             		else fi.setDomain(Utils.getOracleString(sb.getText()));
 				}
             	else fi.setDomain("");
-            	            	
+            	MultiUploader mupload1 = (MultiUploader) grid.getWidget(2, 1);
+				mupload1.reset();
             	finsert= fi;
                 idoc.newFile(dialogCode, fi,new AsyncCallback<Boolean>() {
 					
@@ -2170,15 +2173,15 @@ public class Documents extends Composite implements EntryPoint {
         			
         			@Override
         			public void onFinish(IUploader uploader) {
-        				
         				num ++;
-        				if(num > 1){
-        					//grid.getWidget(1, 0).setVisible(false);
-        					//grid.getWidget(1, 1).setVisible(false);
-        					grid.removeRow(1);
-
-        				}
-        				
+        				if(num == 1){
+        					String s = uploader.getFileInput().getFilenames().get(0);
+        					Integer pos = s.lastIndexOf(".");
+        					TextBox tb = (TextBox) grid.getWidget(1, 1);
+        					if(tb.getText().equals("")){
+        						tb.setText(s.substring(0, pos));
+        					}
+        				} else if(num == 2) grid.removeRow(1);
         			}
         		});
         		

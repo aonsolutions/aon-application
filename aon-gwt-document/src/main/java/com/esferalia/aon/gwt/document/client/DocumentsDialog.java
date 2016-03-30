@@ -248,22 +248,16 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			@Override
 			public void onFinish(IUploader uploader) {
 				num ++;
-				if(num > 1){
-					//grid.getWidget(1, 0).setVisible(false);
-					//grid.getWidget(1, 1).setVisible(false);
-					grid.removeRow(1);
-				}
-				else{
+				if(num == 1){
 					String s = uploader.getFileInput().getFilenames().get(0);
 					Integer pos = s.lastIndexOf(".");
 					TextBox tb = (TextBox) grid.getWidget(1, 1);
 					if(tb.getText().equals("")){
 						tb.setText(s.substring(0, pos));
 					}
-				}
+				} else if(num == 2) grid.removeRow(1);
 			}
 		});
-		
 		mupload.addOnCancelUploadHandler(new OnCancelUploaderHandler() {
 			
 			@Override
