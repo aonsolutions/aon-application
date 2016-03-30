@@ -8,9 +8,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class NoticeFilterImpl implements BiPredicate<NoticeFilter, Notice> {
 
-	public boolean evalHeadParams(NoticeFilter filter, Notice notice) {
-		boolean accepted = false;
+	@Override
+	public boolean test(NoticeFilter filter, Notice notice) {
 
+		boolean accepted = false;
+		
 		if (filter.isOpened())
 			accepted = evalOpened(filter, notice);
 
@@ -32,32 +34,25 @@ public class NoticeFilterImpl implements BiPredicate<NoticeFilter, Notice> {
 		if (filter.getSince() != null)
 			accepted = accepted
 					&& !filter.getSince().after(notice.getStartDate());
-
-		return accepted;
-
-	}
-
-	@Override
-	public boolean test(NoticeFilter filter, Notice notice) {
 		
-		boolean accepted = !(filter.getTags().length > 0);
-
-		for (int x = 0; x < filter.getTags().length; x++)
-			for (Tag tag : notice.getTags()) {
-				if (AonStringUtils.equals(filter.getTags()[x], tag.getName())
-						&& tag.getEndDate() == null) {
-					accepted = true;				
-				}
-				
+		
+		//accepted tiene que llegar true con la lista de tags filtrada
+		
+		if (filter.getTags().length > 0) {
+			
+			for (int x = 0; x < filter.getTags().length ; x++) {
+				final String name = filter.getTags()[x];
+				accepted = accepted && notice.getTags().stream()
+						.filter(tag -> AonStringUtils.equals(tag.getName(), name)
+								&& tag.getEndDate() == null)
+						.findFirst()
+						.isPresent();
 			}
+		}
 		
-		accepted = accepted && !(filter.getUsers().length > 0);
-
-		for (int x = 0; x < filter.getUsers().length; x++) {			
-			if (AonStringUtils.equals(filter.getUsers()[x],
-					notice.getSender().getName())) {
-				accepted = true;				
-			}			
+		if (filter.getUsers().length > 0) {
+			for (int x = 0; x < filter.getUsers().length; x++)				
+				accepted = accepted && AonStringUtils.equals(notice.getSender().getName(), filter.getUsers()[x]);
 		}
 
 		return accepted;
@@ -68,7 +63,8 @@ public class NoticeFilterImpl implements BiPredicate<NoticeFilter, Notice> {
 				.filter(tag -> (tag.getType() == TagType.OFFICE_STATUS.value()))
 				.filter(tag -> (NoticeStatus.isOpened(tag.getName())
 						&& tag.getEndDate() == null))
-				.findFirst().isPresent();
+				.findFirst()
+				.isPresent();
 	}
 
 	private boolean evalClosed(NoticeFilter filter, Notice notice) {
@@ -76,7 +72,8 @@ public class NoticeFilterImpl implements BiPredicate<NoticeFilter, Notice> {
 				.filter(tag -> (tag.getType() == TagType.OFFICE_STATUS.value()))
 				.filter(tag -> (NoticeStatus.isClosed(tag.getName())
 						&& tag.getEndDate() == null))
-				.findFirst().isPresent();
+				.findFirst()
+				.isPresent();
 	}
 
 	private boolean evalAll(NoticeFilter filter, Notice notice) {

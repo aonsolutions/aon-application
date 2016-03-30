@@ -201,8 +201,6 @@ public class AonHubDAO2 {
 				.map(new FullNoticeFiller())
 				.peek(notice -> notice.setTags(fillOfficeTags(ctx, notice)
 						.collect(Collectors.toCollection(LinkedList::new))))
-				.filter(notice -> new NoticeFilterImpl().evalHeadParams(filter,
-						notice))
 				.filter(notice -> new NoticeFilterImpl().test(filter, notice))
 				.collect(Collectors.toCollection(LinkedList::new))
 				.size();
@@ -238,8 +236,6 @@ public class AonHubDAO2 {
 				.peek(notice -> notice.setStatus(setTag(notice.getTags().stream()
 						.filter(tag -> tag.getType() == TagType.OFFICE_STATUS.value())
 						.collect(Collectors.toCollection(LinkedList::new)))))				
-				.filter(notice -> new NoticeFilterImpl().evalHeadParams(filter,
-						notice))
 				.filter(notice -> new NoticeFilterImpl().test(filter, notice))
 				.skip(filter.getOffset())
 				.limit(50)

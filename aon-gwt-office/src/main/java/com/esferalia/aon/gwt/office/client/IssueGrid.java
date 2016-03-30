@@ -289,13 +289,17 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
 			td.style().cursor(Cursor.POINTER);
-			td.className(AON.AON_CSS.aonDataTableTextColumn());
+			td.className(AON.AON_CSS.aonDataTableTextColumn() 
+					+ " " + AON.AON_RESOURCES.css().tagStyle()
+					+ " " + AON.AON_RESOURCES.css().tagType());
 			renderCell(td, createContext(col++), typeColumn, rowValue);
 			td.endTD();
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
-			td.className(AON.AON_CSS.aonDataTableTextColumn());
+			td.className(AON.AON_CSS.aonDataTableTextColumn() 
+					+ " " + AON.AON_RESOURCES.css().tagStyle()
+					+ " " + AON.AON_RESOURCES.css().tagPriority());
 			renderCell(td, createContext(col++), priorityColumn, rowValue);
 			td.endTD();
 
@@ -313,6 +317,9 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString());
+			td.className(AON.AON_CSS.aonDataTableTextColumn() 
+					+ " " + AON.AON_RESOURCES.css().tagStyle()
+					+ " " + AON.AON_RESOURCES.css().tagNotice());
 			renderCell(td, createContext(col++), labelsColumn, rowValue);
 			td.endTD();
 

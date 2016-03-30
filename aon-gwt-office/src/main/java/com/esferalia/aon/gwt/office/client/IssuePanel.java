@@ -72,10 +72,10 @@ public class IssuePanel extends CustomDialog {
 	private MultiWordSuggestOracle registries = new MultiWordSuggestOracle();	
 	private MultiWordSuggestOracle rmedias = new MultiWordSuggestOracle();
 	
-	// *******************************
+	// ******************************* Mapas de apoyo **
 	private Map<String, Integer> registryDrashMap = new HashMap<String, Integer>();
 	private Map<String, Integer> rmediaDrashMap = new HashMap<String, Integer>();	
-	// *******************************
+	// *************************************************
 	
 	private DateTimeFormat format = DateTimeFormat
 			.getFormat("dd-MM-yyyy HH:mm");
@@ -220,6 +220,8 @@ public class IssuePanel extends CustomDialog {
 		}
 		else
 			Window.alert("Registro no encontrado");
+		
+		titleTextBox.setFocus(true);
 		
 	}
 

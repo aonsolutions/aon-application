@@ -18,6 +18,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -221,6 +223,8 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 			cb.removeStyleName(AON.AON_BOLD);
 		}
 		
+		this.drashTagList.clear();
+		this.drashUserList.clear();
 		
 		fromListBox.setSelectedIndex(0);
 	}
@@ -272,6 +276,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		this.ownerButton.addClickHandler(new ClickHandler() {
 			
 			private PopupPanel popup = new PopupPanel(true);
+			private boolean changes = false;
 			
 			{
 				SearchPanel.this.ownerVPanel = new VerticalPanel();
@@ -291,14 +296,22 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 								cb.removeStyleName(AON.AON_BOLD);
 								removeDrashUser(user);
 							}
-							
-							for (Listener listener : listeners)
-								listener.onSelectOwner(drashUserList);
+							changes = true;
 						}
 					});
 					SearchPanel.this.ownerVPanel.add(cb);
 				}
-
+				popup.addCloseHandler(new CloseHandler<PopupPanel>() {
+					
+					@Override
+					public void onClose(CloseEvent<PopupPanel> event) {
+						if (changes) {
+							for (Listener listener : listeners)
+								listener.onSelectOwner(drashUserList);
+							changes = false;
+						}
+					}
+				});
 				popup.add(SearchPanel.this.ownerVPanel);				
 			}
 			
@@ -320,6 +333,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		this.typeButton.addClickHandler(new ClickHandler() {
 
 			private PopupPanel popup = new PopupPanel(true);
+			private boolean changes = false;
 
 			{
 				SearchPanel.this.typeVPanel = new VerticalPanel();
@@ -341,12 +355,24 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 								cb.removeStyleName(AON.AON_BOLD);
 								removeDrashTag(tag);
 							}
-							for (Listener listener : listeners) 
-								listener.onCloseTagPanel(drashTagList);
+							changes = true;
 						}
 					});
 					SearchPanel.this.typeVPanel.add(cb);
 				}
+
+				popup.addCloseHandler(new CloseHandler<PopupPanel>() {
+
+					@Override
+					public void onClose(CloseEvent<PopupPanel> event) {
+						if (changes) {
+							for (Listener listener : listeners) 
+								listener.onCloseTagPanel(drashTagList);
+							changes = false;
+						}
+					}
+				});
+
 				popup.add(SearchPanel.this.typeVPanel);
 			}
 
@@ -368,6 +394,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		this.priorityButton.addClickHandler(new ClickHandler() {
 
 			private PopupPanel popup = new PopupPanel(true);
+			boolean changes = false;
 
 			{
 				SearchPanel.this.priorityVPanel = new VerticalPanel();
@@ -388,12 +415,25 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 								cb.removeStyleName(AON.AON_BOLD);
 								removeDrashTag(tag);
 							}
-							for (Listener listener : listeners) 
-								listener.onCloseTagPanel(drashTagList);
+							changes = true;
 						}
 					});
+					
 					SearchPanel.this.priorityVPanel.add(cb);
 				}
+
+				popup.addCloseHandler(new CloseHandler<PopupPanel>() {
+					
+					@Override
+					public void onClose(CloseEvent<PopupPanel> event) {
+						if (changes) {
+							for (Listener listener : listeners) 
+								listener.onCloseTagPanel(drashTagList);
+							changes = false;
+						}
+					}
+				});
+
 				popup.add(SearchPanel.this.priorityVPanel);
 			}
 
@@ -414,6 +454,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		this.noticeTagButton.addClickHandler(new ClickHandler() {
 
 			private PopupPanel popup = new PopupPanel(true);
+			private boolean changes = false;
 
 			{
 				SearchPanel.this.noticesVPanel = new VerticalPanel();
@@ -435,13 +476,25 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 								cb.removeStyleName(AON.AON_BOLD);
 								removeDrashTag(tag);
 							}
-							
-							for(Listener listener : listeners)
-								listener.onCloseTagPanel(drashTagList);
+							changes = true;
 						}
 					});
+					
 					SearchPanel.this.noticesVPanel.add(cb);
 				}
+				
+				popup.addCloseHandler(new CloseHandler<PopupPanel>() {
+
+					@Override
+					public void onClose(CloseEvent<PopupPanel> event) {
+						if (changes) {
+							for(Listener listener : listeners)
+								listener.onCloseTagPanel(drashTagList);
+							changes = false;
+						}
+					}
+				});
+
 				popup.add(SearchPanel.this.noticesVPanel);
 			}
 
