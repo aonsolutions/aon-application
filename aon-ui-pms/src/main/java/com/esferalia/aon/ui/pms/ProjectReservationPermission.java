@@ -406,4 +406,10 @@ public class ProjectReservationPermission implements Serializable {
 		return roleAllowed && !reservationService.isExtra() && reservation.getAdvancedAmount() == 0;
 	}
 
+	public boolean isReservationServicePricesEditable() {
+		Date now = new Date();
+		boolean roleAllowed = isRoleCommercial() || (isRoleFinance() && isAfterCheckOut(now));
+		return roleAllowed && reservation.isActive() && isMyScope() && reservation.getAdvancedAmount() == 0;
+	}
+
 }

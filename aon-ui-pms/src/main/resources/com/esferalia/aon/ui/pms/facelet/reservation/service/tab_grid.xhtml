@@ -96,7 +96,7 @@
 					<aon:commandButton id="showServicePrices"
 						value="&#160;" styleClass="aon-icon-tariff aon-noborder aon-padding-left"
 						title="#{bundle.admin_product_price_change}"
-						rendered="#{reservation.reservationPermission.acceptReservationServiceAllowed}"
+						rendered="#{reservation.reservationPermission.reservationServicePricesEditable}"
 						actionListener="#{controller.onShowServicePrices}"
 						reRender="showServicePricesWindow">
 						<f:setPropertyActionListener target="#{controller.showServicePricesWindow}"
