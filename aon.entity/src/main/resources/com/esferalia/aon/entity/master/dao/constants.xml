@@ -510,8 +510,8 @@
 	</bean>
 
 	<bean class="com.code.aon.warehouse.Inventory">
-		<alias names="description,domain,id,inventoryDate,warehouse_id,warehouse_workPlace_scope_id"/>
-		<hibernate names="description,domain,id,inventoryDate,warehouse.id,warehouse.workPlace.scope.id"/>
+		<alias names="description,domain,id,inventoryDate,warehouse_id,warehouse_workPlace_scope_id,status"/>
+		<hibernate names="description,domain,id,inventoryDate,warehouse.id,warehouse.workPlace.scope.id,status"/>
 	</bean>
 
 	<bean class="com.code.aon.warehouse.InventoryDetail">

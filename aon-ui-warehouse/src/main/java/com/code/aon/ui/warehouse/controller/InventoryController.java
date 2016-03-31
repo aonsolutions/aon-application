@@ -108,7 +108,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		this.text = text;
 	}
 	public void onClosing(ActionEvent event) {
-		dateValidation();
+		closeValidation();
 		try {
 			closeInventary();
 		} catch (Exception e) {
@@ -198,14 +198,23 @@ public class InventoryController extends BasicController implements IAuditableCo
 		}
 	}
 
-	private void dateValidation() {
+	private void closeValidation() {
 		Date date = ((Inventory)this.getTo()).getInventoryDate();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Inventory.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVENTORY_WAREHOUSE_ID), getWarehouse().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVENTORY_STATUS), InventoryStatus.OPEN);
+			if (bean.getCount(criteria) > 0) {
+				String message = AonUtil.getMessage(ICommonMessages.WAREHOUSE_INVENTORY_CLOSE_ERROR);
+				AonUtil.addErrorMessage(message);
+				throw new AbortProcessingException(message);					
+			}
+
+			criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVENTORY_WAREHOUSE_ID), getWarehouse().getId());
 			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.INVENTORY_INVENTORY_DATE), date);
-			if ( bean.getCount(criteria) > 0 ) {
+			if (bean.getCount(criteria) > 0) {
 				String message = AonUtil.getMessage(ICommonMessages.WAREHOUSE_INVENTORY_DATE_ERROR);
 				AonUtil.addErrorMessage(message);
 				throw new AbortProcessingException(message);					
