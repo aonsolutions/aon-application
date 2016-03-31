@@ -10,6 +10,8 @@ public class StatParams implements Serializable, Cloneable {
 
 	private Date from;
 	private Date to;
+	private StatChartType chartType;
+	
 	private LinkedList<StatFilterItem> filterItems; 
 	
 	public Date getFrom() {
@@ -30,6 +32,15 @@ public class StatParams implements Serializable, Cloneable {
 		return this;
 	}
 
+	public StatChartType getChartType() {
+		return chartType;
+	}
+
+	public StatParams setChartType(StatChartType chartType) {
+		this.chartType = chartType;
+		return this;
+	}
+
 	public LinkedList<StatFilterItem> getFilterItems() {
 		if (filterItems == null) {
 			setFilterItems( new LinkedList<StatFilterItem>() );
@@ -37,8 +48,9 @@ public class StatParams implements Serializable, Cloneable {
 		return filterItems;
 	}
 
-	public void setFilterItems(LinkedList<StatFilterItem> map) {
+	public StatParams setFilterItems(LinkedList<StatFilterItem> map) {
 		this.filterItems = map;
+		return this;
 	}
 	
 	public StatParams clone(){

@@ -1,37 +1,49 @@
 package com.esferalia.aon.gwt.stat.client.panel;
 
+import java.util.LinkedHashMap;
 import java.util.Stack;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
+import com.esferalia.aon.gwt.stat.client.StatService;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsync;
-import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
+import com.esferalia.aon.gwt.stat.client.StatServiceAsyncDecorator;
+import com.esferalia.aon.gwt.stat.client.util.StatUtils;
+import com.esferalia.aon.occam.api.model.stat.IStatChartTypeVisitor;
+import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.Selection;
-import com.google.gwt.visualization.client.events.SelectHandler;
-import com.google.gwt.visualization.client.visualizations.Table.Options;
+import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
+import com.google.gwt.visualization.client.DataTable;
+import com.google.gwt.visualization.client.visualizations.Table;
+import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
+import com.google.gwt.visualization.client.visualizations.corechart.ComboChart;
+import com.google.gwt.visualization.client.visualizations.corechart.ComboChart.Options;
+import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
+import com.google.gwt.visualization.client.visualizations.corechart.PieChart;
+import com.google.gwt.visualization.client.visualizations.corechart.PieChart.PieOptions;
+import com.google.gwt.visualization.client.visualizations.corechart.Series;
 
 public class StatControlPanel extends MainEntryPoint {
 
@@ -42,107 +54,78 @@ public class StatControlPanel extends MainEntryPoint {
 
 	private static final StatControlPanelBinder INVOICE_STAT_BINDER = GWT.create(StatControlPanelBinder.class);
 
-	private int domain;
-	private int enterprise;
-	private int cont = 0;
-
-	// Crea el diseño del panel, con los widgtes(Norte, Sur...) y los métodos de
-	// cada hijo: addSouth... getWidgetDirection, insertEast...
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
-	// Un panel que contiene HTML y que puede colocar widgets hijos para
-	// identificar elementos dentro de ese HTML.
 	@UiField
 	HTMLPanel toolbarPanel;
-	// Clase base para los paneles que contienen sólo un widget.
 	@UiField
 	SimplePanel excelFormContainer;
-	// Este panel se utiliza en la misma forma que DockLayoutPanel, excepto que
-	// los tamaños para sus hijos siempre se especifican en {Unidadlink # PX} y
-	// cada par de widgets hijos tiene un divisor entre los que el usuario puede
-	// arrastrar.
+	@UiField
 	SplitLayoutPanel splitLayoutPanel;
-
 	@UiField
 	Button back;
 	@UiField
 	Button excel;
-
 	@UiField
-	ScrollPanel west;
+	ScrollPanel north;
+	@UiField
+	StatFilter filter;
 	@UiField
 	SimpleLayoutPanel content;
 	@UiField
-	ScrollPanel south;
-
+	SimpleLayoutPanel south;
 	@UiField
-	Button pruebaButton;
+	MinimizePanel footPanel;
+	@UiField
+	TabLayoutPanel tabLayout;
+	
+	private StatChartTypeVisitor statChartTypeVisitor;	
 
-	StatFilter filter;
-	StatFilter filterList;
+	private Stack<Widget> stack = new Stack<Widget>();
+	
+	final private AsyncCallback<CoreChart> resizableComboChartCallback = new AsyncCallback<CoreChart>() {
+		
+		@Override
+		public void onSuccess(final CoreChart chart) {
+			content.setWidget(chart);
+			stack.push(chart);
+		}
 
-	Stack<Widget> stack = new Stack<Widget>();
+		@Override
+		public void onFailure(Throwable caught) {
+			ErrorPanel errors = new ErrorPanel();
+			errors.showError("Error inesperado");
+			content.setWidget(errors);
+		}
+	};
 
 	@Override
 	public void onModuleLoad() {
+		StatServiceAsync serviceRaw = GWT.create(StatService.class);
+		statService = new StatServiceAsyncDecorator(serviceRaw);
+		
 		AON.ensureInjected();
-
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		Widget ui = INVOICE_STAT_BINDER.createAndBindUi(this);
 		root.add(ui);
-
-		filter = new StatFilter();
-		// filter.addStyleName(AON.AON_CSS.aonStatView());
+		statChartTypeVisitor = new StatChartTypeVisitor();
+		
 		filter.paintFilter(new AsyncCallback<StatParams>() {
 
+			@Override
+			public void onSuccess(StatParams result) {
+				north.setWidget(filter);
+				paintChart();
+			}
+			
 			@Override
 			public void onFailure(Throwable caught) {
 				Window.alert(caught.getMessage());
 			}
 
-			@Override
-			public void onSuccess(StatParams result) {
-				west.setWidget(filter);
 
-				drawYearsByTypeComboChart(result);
-				back.setEnabled(false);
-				excel.setEnabled(false);
-			}
-
-		}, new SelectionHandler<StatFilterItem>() {
-
-			@Override
-			public void onSelection(SelectionEvent<StatFilterItem> event) {
-				drawYearsByTypeComboChart(filter.getParams());
-			}
 		});
-
-		// DisclosurePanel disclosurePanel = new DisclosurePanel();
-		// disclosurePanel.setOpen(true);
-		//
-		// filterList = new StatFilter();
-		// filterList.paintList(new AsyncCallback<StatParams>() {
-		//
-		// @Override
-		// public void onFailure(Throwable caught) {
-		// Window.alert(caught.getMessage());
-		// }
-		//
-		// @Override
-		// public void onSuccess(StatParams result) {
-		//
-		// south.setWidget(filterList);
-		//
-		// drawYearsByTypeComboChart(result);
-		// back.setEnabled(false);
-		// excel.setEnabled(false);
-		// }
-		// }, new SelectionHandler<ListBox>() {
-		// public void onSelection(SelectionEvent<ListBox> event) {
-		// drawYearsByTypeComboChart(filterList.getParams());
-		// }
-		// });
-		//
+		
 	}
 
 	public static native String getCurrentDomainName()
@@ -157,24 +140,8 @@ public class StatControlPanel extends MainEntryPoint {
 
 	@UiHandler("back")
 	void onBackButtonClick(ClickEvent event) {
-//		Se añade un gráfico de más a la pila, el primero, pero es necesario si no se tocan los filtros. 
-//		Si se clicka en un filtro no debería volver hasta el primero...
-		if (stack.size() > 0 && cont > 0) {
-			stack.pop();
-			cont--;
-		} else {
-			back.setEnabled(false);
-			cont = 0;
-		}
-		if (stack.size() > 0 && cont > 0) {
-			Widget w = stack.pop();
-			cont--;
-			content.setWidget(w);
-			stack.push(w);
-			cont++;
-		} else {
-			back.setEnabled(false);
-			cont = 0;
+		if (stack.size() > 0 ) {
+			content.setWidget(stack.pop());
 		}
 	}
 
@@ -184,181 +151,225 @@ public class StatControlPanel extends MainEntryPoint {
 		excelFormContainer.setWidget(ttec.getExportFormWidget());
 		ttec.getExportFormWidget().submit();
 	}
-
-	// Pintamos el gráfico del medio y la tabla, con los datos recogidos de la
-	// BD en StatDao pasándole un dominio
-	public void drawYearsByTypeComboChart(StatParams params) {
-		YearInvoiceTypeComboChart.getChart(getCurrentDomainName(), getCurrentDomain(), params, content.getOffsetWidth(),
-				content.getOffsetHeight(), new AsyncCallback<YearInvoiceTypeComboChart>() {
-					@Override
-					public void onSuccess(final YearInvoiceTypeComboChart chart) {
-
-						content.setWidget(chart);
-
-						stack.push(chart);
-						cont++;
-
-						Options options = Options.create();
-						setMeasures(options);
-
-						final ResizableTable table = new ResizableTable(chart.data, options);
-						table.setStyleName(AON.AON_CSS.aonWidthAll());
-						table.setStyleName(AON.AON_CSS.aonHeightAll());
-
-						south.setWidget(table);
-
-						excel.setEnabled(true);
-
-						chart.addSelectHandler(new SelectHandler() {
-							// PARA QUE SE PUEDA "CLIKAR" SOBRE EL GRÁFICO
-							@Override
-							public void onSelect(SelectEvent event) {
-
-								Selection s = chart.getSelections().get(0);
-								int row = s.getRow();
-
-								String y = table.data.getValueString(row, 0);
-								Integer year = (int) AON.FMT_INT.parse(y);
-
-								drawMonthsByTypeComboChart(year);
-
-							}
-						});
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						ErrorPanel errors = new ErrorPanel();
-						errors.showError("Error inesperado");
-						content.setWidget(errors);
-					}
-				});
+	
+	@UiHandler("filter")
+	void onFilterChanged( ValueChangeEvent<StatParams> event) {
+		paintChart();
+	}
+	
+	protected void paintChart() {
+		excel.setEnabled(false);
+		filter.getParams().getChartType().visit( statChartTypeVisitor );
+		back.setEnabled(stack.size() > 0);
 	}
 
-	// Month
-	private void drawMonthsByTypeComboChart(Integer year) {
-		MonthInvoiceTypeComboChart.getChart(getCurrentDomainName(), getCurrentDomain(), filter.getParams(),
-				content.getOffsetWidth(), content.getOffsetHeight(), new AsyncCallback<MonthInvoiceTypeComboChart>() {
-
-					@Override
-					public void onSuccess(final MonthInvoiceTypeComboChart chart) {
-
-						// content.add(getDateFromTo());
-
-						content.setWidget(chart);
-
-						stack.push(chart);
-						cont++;
-
-						Options options = Options.create();
-						setMeasures(options);
-
-						final ResizableTable table = new ResizableTable(chart.data, options);
-						table.setStyleName(AON.AON_CSS.aonWidthAll());
-						table.setStyleName(AON.AON_CSS.aonHeightAll());
-
-						south.setWidget(table);
-
-						excel.setEnabled(true);
-
-						back.setEnabled(true);
-
-						chart.addSelectHandler(new SelectHandler() {
-							// PARA QUE SE PUEDA "CLIKAR" SOBRE EL GRÁFICO
-							@Override
-							public void onSelect(SelectEvent event) {
-
-								Selection s = chart.getSelections().get(0);
-								int row = s.getRow();
-
-								String month = table.data.getValueString(row, 0);
-
-								drawDaysByTypeComboChart(month);
-
-							}
-
-						});
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						ErrorPanel errors = new ErrorPanel();
-						errors.showError("Error inesperado");
-						content.setWidget(errors);
-					}
-				});
+	@UiHandler("footPanel")
+	void onFootMinimize(MinimizeEvent event) {
+		closeFootPanel();
 	}
 
-	private void drawDaysByTypeComboChart(String month) {
-		DayInvoiceTypeComboChart.getChart(getCurrentDomainName(), getCurrentDomain(), filter.getParams(),
-				content.getOffsetWidth(), content.getOffsetHeight(), new AsyncCallback<DayInvoiceTypeComboChart>() {
-
-					@Override
-					public void onSuccess(final DayInvoiceTypeComboChart chart) {
-
-						// content.add(getDateFromTo());
-
-						content.setWidget(chart);
-
-						stack.push(chart);
-						cont++;
-
-						Options options = Options.create();
-						setMeasures(options);
-
-						final ResizableTable table = new ResizableTable(chart.data, options);
-
-						table.setStyleName(AON.AON_CSS.aonWidthAll());
-						table.setStyleName(AON.AON_CSS.aonHeightAll());
-
-						south.setWidget(table);
-
-						excel.setEnabled(true);
-
-						back.setEnabled(true);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						ErrorPanel errors = new ErrorPanel();
-						errors.showError("Error inesperado");
-						content.setWidget(errors);
-					}
-				});
-
+	@UiHandler("footPanel")
+	void onFootMaximize(MaximizeEvent event) {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
+		splitLayoutPanel.animate(500);
 	}
 
-	private void setMeasures(Options options) {
-		// estas options se pueden meter en una clase
-		// "setMeasures"
-		options.setAlternatingRowStyle(true);
-		options.setWidth(south.getOffsetWidth() + "px");
-		options.setHeight(south.getOffsetHeight() + "px");
-
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 30);
+		splitLayoutPanel.animate(500);
 	}
 
-	/**
-	 * private void drawYearsByTypePieChart() {
-	 * YearInvoiceTypePieChart.getChart(params, content.getOffsetWidth(),
-	 * content.getOffsetHeight(), new AsyncCallback<ResizablePieChart>() {
-	 * 
-	 * @Override public void onSuccess(final ResizablePieChart result) {
-	 *           content.setWidget(result); Options options = Options.create();
-	 * 
-	 *           // po.setAlternatingRowStyle(true);
-	 *           options.setWidth(south.getOffsetWidth() + "px");
-	 *           options.setHeight(south.getOffsetHeight() + "px");
-	 * 
-	 *           final ResizableTable table = new ResizableTable(result.data,
-	 *           options); table.setStyleName(AON.AON_CSS.aonWidthAll());
-	 *           table.setStyleName(AON.AON_CSS.aonHeightAll());
-	 *           south.setWidget(table);
-	 * 
-	 *           excel.setEnabled(true); }
-	 * 
-	 * @Override public void onFailure(Throwable caught) { ErrorPanel errors =
-	 *           new ErrorPanel(); errors.showError("Error inesperado");
-	 *           content.setWidget(errors); } }); }
-	 **/
+	private void openFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+		splitLayoutPanel.animate(500);
+	}
 
+	private class StatChartTypeVisitor implements IStatChartTypeVisitor {
+		
+		protected DataTable getDataTable(Table.Options options, StatData<String, String, Double> result, String columnLabel) {
+			DataTable dataTable = DataTable.create();
+			dataTable.addColumn(ColumnType.STRING, columnLabel);
+			LinkedHashMap<String, Integer> colMap = new LinkedHashMap<String, Integer>();
+			int rowIndex = 0;
+			int colIndex = 0;
+			for (String rowKey : result.getMap().keySet()) {
+				rowIndex = dataTable.addRow();
+				dataTable.setValue(rowIndex, 0, rowKey);
+				LinkedHashMap<String, Double> map = result.getMap().get(rowKey);
+				for (String col : map.keySet()) {
+					if (!colMap.containsKey(col)) {
+						colMap.put(col, colMap.size() + 1);
+						dataTable.addColumn(ColumnType.NUMBER, col);
+					}
+					colIndex = colMap.get(col);
+					double d = AonMathUtils.round(map.get(col));
+					dataTable.setValue(rowIndex, colIndex, d);
+					dataTable.setFormattedValue(rowIndex, colIndex, AON.FMT.format(d));
+				}
+			}
+			return dataTable;
+		}
+
+		@Override
+		public void visitInvoiceTypeByYearComboChart() {
+			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(),
+					new AsyncCallback<StatData<String, String, Double>>() {
+
+				@Override
+				public void onSuccess(final StatData<String, String, Double> result) {
+					final Options options = ComboChart.createComboOptions();
+					options.set("animation", StatUtils.ANIMATION);
+					options.setWidth(content.getOffsetWidth());
+					options.setHeight(content.getOffsetHeight());
+					options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);
+					options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS);
+					AxisOptions vaxis = AxisOptions.create();
+					vaxis.setTitle(AON.MSG.amount());
+					options.setVAxisOptions(vaxis);
+					AxisOptions haxis = AxisOptions.create();
+					haxis.setTitle(AON.MSG.year());
+					options.setHAxisOptions(haxis);
+					Series media = Series.create();
+					media.setType(Series.Type.LINE);
+					options.setSeries(0, media);
+					Table.Options tableOptions = Table.Options.create();
+					tableOptions.setAlternatingRowStyle(true);
+					tableOptions.setWidth(south.getOffsetWidth() + "px");
+					tableOptions.setHeight(south.getOffsetHeight() + "px");
+					final DataTable dataTable = getDataTable(tableOptions, result,AON.MSG.year());
+					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+					south.setWidget(table);
+					excel.setEnabled(true);
+					ResizableComboChart chart = new ResizableComboChart(dataTable, options);
+					resizableComboChartCallback.onSuccess(chart);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					resizableComboChartCallback.onFailure(caught);
+				}
+			});
+		}
+		
+		@Override
+		public void visitInvoiceTypeByMonthsComboChart() {
+			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(),
+					new AsyncCallback<StatData<String, String, Double>>() {
+
+				@Override
+				public void onSuccess(final StatData<String, String, Double> result) {
+					final Options options = ComboChart.createComboOptions();
+					options.set("animation", StatUtils.ANIMATION);
+					options.setWidth(content.getOffsetWidth());
+					options.setHeight(content.getOffsetHeight());
+					options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);
+					options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS);
+					AxisOptions vaxis = AxisOptions.create();
+					vaxis.setTitle(AON.MSG.amount());
+					options.setVAxisOptions(vaxis);
+					AxisOptions haxis = AxisOptions.create();
+					haxis.setTitle(AON.MSG.months());
+					options.setHAxisOptions(haxis);
+					Series media = Series.create();
+					media.setType(Series.Type.LINE);
+					options.setSeries(0, media);
+					Table.Options tableOptions = Table.Options.create();
+					tableOptions.setAlternatingRowStyle(true);
+					tableOptions.setWidth(south.getOffsetWidth() + "px");
+					tableOptions.setHeight(south.getOffsetHeight() + "px");
+					final DataTable dataTable = getDataTable(tableOptions, result,AON.MSG.months());
+					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+					south.setWidget(table);
+					excel.setEnabled(true);
+					ResizableComboChart chart = new ResizableComboChart(dataTable, options);
+					resizableComboChartCallback.onSuccess(chart);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					resizableComboChartCallback.onFailure(caught);
+				}
+			});
+		}
+		
+		@Override
+		public void visitInvoiceTypeByDaysComboChart() {
+			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(),
+					new AsyncCallback<StatData<String, String, Double>>() {
+
+				@Override
+				public void onSuccess(final StatData<String, String, Double> result) {
+					final ComboChart.Options options = ComboChart.createComboOptions();
+					options.set("animation", StatUtils.ANIMATION);
+					options.setWidth(content.getOffsetWidth());
+					options.setHeight(content.getOffsetHeight());
+					options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.LINE);
+					options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS);
+					AxisOptions vaxis = AxisOptions.create();
+					vaxis.setTitle(AON.MSG.amount());
+					options.setVAxisOptions(vaxis);
+					AxisOptions haxis = AxisOptions.create();
+					haxis.setTitle(AON.MSG.months());
+					options.setHAxisOptions(haxis);
+					Series media = Series.create();
+					media.setType(Series.Type.LINE);
+					options.setSeries(0, media);
+					Table.Options tableOptions = Table.Options.create();
+					tableOptions.setAlternatingRowStyle(true);
+					tableOptions.setWidth(south.getOffsetWidth() + "px");
+					tableOptions.setHeight(south.getOffsetHeight() + "px");
+					final DataTable dataTable = getDataTable(tableOptions, result, AON.MSG.days());
+					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+					south.setWidget(table);
+					excel.setEnabled(true);
+					ResizableComboChart chart = new ResizableComboChart(dataTable, options);
+					resizableComboChartCallback.onSuccess(chart);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					resizableComboChartCallback.onFailure(caught);
+				}
+			});
+		}
+
+		@Override
+		public void visitAbcInvoiceTitular() {
+			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+					new AsyncCallback<StatData<String, String, Double>>() {
+
+				@Override
+				public void onSuccess(final StatData<String, String, Double> result) {
+					final PieOptions options = PieChart.createPieOptions();
+					options.set("animation", StatUtils.ANIMATION);
+					options.setWidth(content.getOffsetWidth());
+					options.setHeight(content.getOffsetHeight());
+					options.set3D(true);
+					AxisOptions vaxis = AxisOptions.create();
+					vaxis.setTitle(AON.MSG.amount());
+					options.setVAxisOptions(vaxis);
+					AxisOptions haxis = AxisOptions.create();
+					haxis.setTitle(AON.MSG.months());
+					options.setHAxisOptions(haxis);
+					Table.Options tableOptions = Table.Options.create();
+					tableOptions.setAlternatingRowStyle(true);
+					tableOptions.setWidth(south.getOffsetWidth() + "px");
+					tableOptions.setHeight(south.getOffsetHeight() + "px");
+					final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
+					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+					south.setWidget(table);
+					excel.setEnabled(true);
+					final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
+					resizableComboChartCallback.onSuccess(chart);
+				}
+
+
+				@Override
+				public void onFailure(Throwable caught) {
+					resizableComboChartCallback.onFailure(caught);
+				}
+			});
+	
+		}
+	}
 }

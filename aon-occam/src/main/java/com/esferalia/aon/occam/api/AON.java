@@ -62,7 +62,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.office.Notice;
-import com.esferalia.aon.occam.api.model.office.NoticeContainer;
 import com.esferalia.aon.occam.api.model.office.NoticeFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
@@ -84,7 +83,6 @@ import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
@@ -1842,37 +1840,13 @@ public class AON {
 				ctx.close();
 		}
 	}
-
-	public static StatData<Integer, String, Double> getYearInvoiceTypeData(String domainName,
-			Integer domainId, String user, StatParams params) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName,domainId,user);
-			return getStats().getYearInvoiceTypeData(ctx, params);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
 	
-	public static StatData<Integer, String, Double> getMonthInvoiceTypeData(String domainName,
+	public static StatData<String, String, Double> getStatData(String domainName,
 			Integer domainId, String user, StatParams params) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName,domainId,user);
-			return getStats().getMonthInvoiceTypeData(ctx, params);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static StatData<Integer, String, Double> getDayInvoiceTypeData(String domainName,
-			Integer domainId, String user, StatParams params) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName,domainId,user);
-			return getStats().getDayInvoiceTypeData(ctx, params);
+			return getStats().getStatData(ctx, params);
 		} finally {
 			if (ctx != null) 
 				ctx.close();

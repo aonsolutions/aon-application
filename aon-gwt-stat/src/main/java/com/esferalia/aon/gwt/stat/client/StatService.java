@@ -13,8 +13,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface StatService extends RemoteService {
 	
 	StatParams createStatParams(String domainName, int domain) throws AonCoreException;
-	StatData<Integer, String, Double> getYearInvoiceTypeData(String domainName,Integer domainId, StatParams params);
-	StatData<Integer, String, Double> getMonthInvoiceTypeData(String domainName,Integer domainId, StatParams params);
-	StatData<Integer, String, Double> getDayInvoiceTypeData(String domainName,Integer domainId, StatParams params);
+	StatData<String, String, Double> getStatData(String domainName,Integer domainId, StatParams params);
 	
 }

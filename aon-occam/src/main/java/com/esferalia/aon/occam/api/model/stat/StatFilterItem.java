@@ -6,22 +6,48 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class StatFilterItem implements Serializable {
 
+	public static interface IFilterItemVisitor {
+		void visit(IStatFilterItemVisitor statFilterItemVisitor,StatFilterItem item);
+	}
+
 	public static enum StatFilterType {
-		 INVOICE_TYPE("Tipo Factura")
-		,PRODUCT_CATEGORY("Categor\u00EDa")
-		,WORKPLACE("Centro de trabajo")
+		 INVOICE_TYPE("Tipo Factura",new IFilterItemVisitor() {
+
+			@Override
+			public void visit(IStatFilterItemVisitor statFilterItemVisitor,StatFilterItem item) {
+				statFilterItemVisitor.visitInvoiceTypeCondition(item);
+			}
+		 })
+		,PRODUCT_CATEGORY("Categor\u00EDa",new IFilterItemVisitor() {
+
+			@Override
+			public void visit(IStatFilterItemVisitor statFilterItemVisitor,StatFilterItem item) {
+				statFilterItemVisitor.visitProductCategoryCondition(item);
+			}
+		 })
+		,WORKPLACE("Centro de trabajo",new IFilterItemVisitor() {
+
+			@Override
+			public void visit(IStatFilterItemVisitor statFilterItemVisitor,StatFilterItem item) {
+				statFilterItemVisitor.visitWorkplaceCondition(item);
+			}
+		 })
 		;
 
 		private String name;
+		private IFilterItemVisitor filterItemVisitor;  
 
-		private StatFilterType(String name) {
+		private StatFilterType(String name,IFilterItemVisitor filterItemVisitor) {
 			this.name = name;
+			this.filterItemVisitor = filterItemVisitor;
 		}
 
 		public String getName() {
 			return name;
 		}
-
+		public void visit(IStatFilterItemVisitor statFilterItemVisitor,StatFilterItem item) {
+			filterItemVisitor.visit(statFilterItemVisitor,item);
+		}
 	}
 
 	private static final long serialVersionUID = 8321751053437854437L;
@@ -30,6 +56,7 @@ public class StatFilterItem implements Serializable {
 	private String id;
 	private String label;
 	private boolean selected = false;
+	
 	
 	public boolean isSelected() {
 		return selected;

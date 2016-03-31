@@ -1,37 +1,39 @@
 package com.esferalia.aon.gwt.stat.client.panel;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.stat.client.StatService;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsync;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsyncDecorator;
+import com.esferalia.aon.occam.api.model.stat.StatChartType;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
 import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.HasSelectionHandlers;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.Table;
 import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 
-public class StatFilter extends FlowPanel {
+public class StatFilter extends FlowPanel implements HasValueChangeHandlers<StatParams> {
 
 	static StatServiceAsync statService;
 
@@ -45,7 +47,7 @@ public class StatFilter extends FlowPanel {
 		return params;
 	}
 
-	public void paintFilter(final AsyncCallback<StatParams> callback, final SelectionHandler<StatFilterItem> next) {
+	public void paintFilter(final AsyncCallback<StatParams> callback) {
 		AON.ensureInjected();
 		StatServiceAsync serviceRaw = GWT.create(StatService.class);
 		statService = new StatServiceAsyncDecorator(serviceRaw);
@@ -61,10 +63,40 @@ public class StatFilter extends FlowPanel {
 							
 							params = result;
 							
-							final HashMap<StatFilterType,FilterMenu> menus = new HashMap<StatFilterType,FilterMenu>();					
+							InlineLabel fromLabel = new InlineLabel( AON.MSG.from());
+							fromLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+							add(fromLabel);
+							
+							final DateBoxEx from = new DateBoxEx();
+							from.setValue(params.getFrom());
+							from.addValueChangeHandler(new ValueChangeHandler<Date>() {
+								@Override
+								public void onValueChange(ValueChangeEvent<Date> event) {
+									params.setFrom(from.getValue());
+									ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+								}
+							});
+							add(from);
+							
+							InlineLabel toLabel = new InlineLabel( AON.MSG.to());
+							toLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+							add(toLabel);
+							
+							final DateBoxEx to = new DateBoxEx();
+							to.setValue(params.getTo());
+							to.addValueChangeHandler(new ValueChangeHandler<Date>() {
+								@Override
+								public void onValueChange(ValueChangeEvent<Date> event) {
+									params.setTo(to.getValue());
+									ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+								}
+							});
+							add(to);
+
+							final HashMap<StatFilterType,StatFilterMenu> menus = new HashMap<StatFilterType,StatFilterMenu>();					
 							for (final StatFilterItem item : result.getFilterItems()) {
 								if (!menus.containsKey( item.getType())) {
-									final FilterMenu menu = new FilterMenu();
+									final StatFilterMenu menu = new StatFilterMenu();
 									menus.put(item.getType(), menu);								
 									
 									final Button button = new Button(item.getType().getName() );
@@ -81,27 +113,37 @@ public class StatFilter extends FlowPanel {
 										}
 									});
 									
-									
-//									Añadir una X y Borrar todos los filtros. Recorrer los item activos y 
-//									ponerlos a false. No tengo muy claro si va aquí esto...
-//									Table x = new Table();
-//									x.setTitle(AON.MSG.statFilterDelete());
-//									x.addStyleName(AON.AON_CSS.aonIconDeleteTrash());
-//									menu.add(x);
-									
 									add(button);
 									menu.addSelectionHandler(new SelectionHandler<StatFilterItem>() {
 										
 										@Override
 										public void onSelection(SelectionEvent<StatFilterItem> event) {
-											next.onSelection(event);
+											ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
 										}
 									});
 								}
-								FilterMenu parent = menus.get( item.getType());								
-								parent.addItem( item , next);						
+								StatFilterMenu parent = menus.get( item.getType());								
+								parent.addItem( item );						
 								
 							}
+							
+							final ListBox chartType = new ListBox();
+							chartType.setStyleName(AON.AON_CSS.aonMarginRight());
+							for (StatChartType type : StatChartType.values()) {
+								chartType.addItem(type.getDescription());
+							}
+							chartType.setSelectedIndex(StatChartType.INVOICE_TYPE_BY_YEAR_COMBO_CHART.ordinal());
+							chartType.addChangeHandler( new ChangeHandler() {
+								
+								@Override
+								public void onChange(ChangeEvent event) {
+									params.setChartType(StatChartType.values()[chartType.getSelectedIndex()]);
+									ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+								}
+							});
+							
+							add(chartType);
+							
 							callback.onSuccess(result);
 						}
 		
@@ -126,71 +168,9 @@ public class StatFilter extends FlowPanel {
 		return $wnd.getCurrentDomain();
 	}-*/;
 
-	public class FilterMenu extends PopupPanel implements HasSelectionHandlers<StatFilterItem>{
-		private FlowPanel container;
-		
-		public FilterMenu() {
-			super();
-
-//			DockPanel dockPanel = new DockPanel();	
-//			dockPanel.add(new );
-//			dockPanel.onResize();
-//			
-//			ScrollPanel scroll = new ScrollPanel();
-//		    dockPanel.add(scroll , DockPanel.CENTER);
-				
-			ScrollPanel scroll = new ScrollPanel();			
-			container = new FlowPanel();
-			scroll.add(container);
-			add(scroll);
-			setStyleName( AON.AON_CSS.aonStatPopUpPanel());
-			setAutoHideEnabled(true);
-			
-			scroll.addStyleName(AON.AON_CSS.aonPadding2Left());
-			scroll.addStyleName(AON.AON_CSS.aonPadding2Top());
-			scroll.addStyleName(AON.AON_CSS.aonPadding2Bottom());
-			scroll.addStyleName(AON.AON_CSS.aonStatMenuStyle());
-			// cuando añadas el dock, hacer onResize
-			// doc.onResize();
-		}
-
-		public void addItem(final StatFilterItem item, SelectionHandler<StatFilterItem> next) {
-			final FocusPanel itemPanel = new FocusPanel();
-			itemPanel.setStyleName(AON.AON_CSS.aonStatItemPanel());
-			if(item.isSelected()){
-				itemPanel.addStyleName(AON.AON_CSS.aonStatCheckyes());
-			}else{
-				itemPanel.addStyleName(AON.AON_CSS.aonListStat());	
-			}
-			String description = item.getLabel();
-			description = AonStringUtils.abbreviate(description, 35);
-			Label label = new Label(description);
-			label.setTitle(item.getLabel());
-			itemPanel.setWidget(label);
-			itemPanel.addClickHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					item.setSelected( !item.isSelected() );
-					if(item.isSelected()){
-						itemPanel.addStyleName(AON.AON_CSS.aonStatCheckyes());
-						itemPanel.removeStyleName(AON.AON_CSS.aonListStat());
-					}else{
-						itemPanel.removeStyleName(AON.AON_CSS.aonStatCheckyes());
-						itemPanel.addStyleName(AON.AON_CSS.aonListStat());
-					}
-					SelectionEvent.<StatFilterItem>fire(FilterMenu.this, item);
-				}
-			});
-			container.add(itemPanel);
-			
-		}
-		
-		@Override
-	    public HandlerRegistration addSelectionHandler(SelectionHandler<StatFilterItem> handler) {
-	            return super.addHandler(handler, SelectionEvent.getType());
-	    }       
-		
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<StatParams> handler) {
+		return super.addHandler(handler, ValueChangeEvent.getType()); 
 	}
 	
 }

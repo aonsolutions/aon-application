@@ -19,21 +19,9 @@ public class StatServiceImpl extends AonRemoteServiceServlet implements StatServ
 	}
 
 	@Override
-	public StatData<Integer, String, Double> getYearInvoiceTypeData(
+	public StatData<String, String, Double> getStatData(
 			String domainName,Integer domainId,StatParams params) throws AonCoreException {
-		return AON.getYearInvoiceTypeData(domainName,domainId,this.getUserLogin(),params);
-	}
-
-	@Override
-	public StatData<Integer, String, Double> getMonthInvoiceTypeData(
-			String domainName,Integer domainId,StatParams params) throws AonCoreException {
-		return AON.getMonthInvoiceTypeData(domainName,domainId,this.getUserLogin(),params);
-	}
-	
-	@Override
-	public StatData<Integer, String, Double> getDayInvoiceTypeData(
-			String domainName,Integer domainId,StatParams params) throws AonCoreException {
-		return AON.getDayInvoiceTypeData(domainName,domainId,this.getUserLogin(),params);
+		return AON.getStatData(domainName,domainId,this.getUserLogin(),params);
 	}
 
 

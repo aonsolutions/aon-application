@@ -22,27 +22,11 @@ public class StatServiceAsyncDecorator implements StatServiceAsync {
 	}
 
 	@Override
-	public void getYearInvoiceTypeData(String domainName,Integer domainId,StatParams params,
-			AsyncCallback<StatData<Integer, String, Double>> callback) {
+	public void getStatData(String domainName,Integer domainId,StatParams params,
+			AsyncCallback<StatData<String, String, Double>> callback) {
 		AON.start();
-		fsa.getYearInvoiceTypeData(domainName,domainId,params
-			, new AsyncCallbackWrapper<StatData<Integer, String, Double>>(callback));
-	}
-
-	@Override
-	public void getMonthInvoiceTypeData(String domainName,Integer domainId, StatParams params,
-			AsyncCallback<StatData<Integer, String, Double>> callback) {
-		AON.start();
-		fsa.getMonthInvoiceTypeData(domainName,domainId,params
-			, new AsyncCallbackWrapper<StatData<Integer, String, Double>>(callback));
-	}
-	
-	@Override
-	public void getDayInvoiceTypeData(String domainName,Integer domainId, StatParams params,
-			AsyncCallback<StatData<Integer, String, Double>> callback) {
-		AON.start();
-		fsa.getDayInvoiceTypeData(domainName,domainId,params
-			, new AsyncCallbackWrapper<StatData<Integer, String, Double>>(callback));
+		fsa.getStatData(domainName,domainId,params
+			, new AsyncCallbackWrapper<StatData<String, String, Double>>(callback));
 	}
 
 }

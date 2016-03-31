@@ -1950,6 +1950,12 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Facturas")
 	String invoices();
+
+	@DefaultMessage("Factura")
+	String invoice();
+	
+	@DefaultMessage("Titular")
+	String titular();
 	
 	@DefaultMessage("Presupuestos")
 	String offers();
@@ -2924,4 +2930,7 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Borrar todos los filtros")
 	String statFilterDelete();
+
+	@DefaultMessage("D\u00EDas")
+	String days();
 }

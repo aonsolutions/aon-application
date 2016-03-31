@@ -10,13 +10,7 @@ public interface StatServiceAsync {
 	void createStatParams(String domainName, int domain,
 			AsyncCallback<StatParams> callback);
 
-	void getYearInvoiceTypeData(String domainName, Integer domainId, StatParams params,
-			AsyncCallback<StatData<Integer, String, Double>> callback);
-
-	void getMonthInvoiceTypeData(String domainName, Integer domainId,StatParams params,
-			AsyncCallback<StatData<Integer, String, Double>> callback);
-
-	void getDayInvoiceTypeData(String domainName, Integer domainId, StatParams params,
-			AsyncCallback<StatData<Integer, String, Double>> asyncCallback);
+	void getStatData(String domainName, Integer domainId, StatParams params,
+			AsyncCallback<StatData<String, String, Double>> callback);
 
 }
