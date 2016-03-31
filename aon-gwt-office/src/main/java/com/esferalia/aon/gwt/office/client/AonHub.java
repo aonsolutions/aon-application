@@ -39,7 +39,7 @@ public class AonHub {
 	private static String sender = null;
 	
 	private static String filterTagList = null;
-	private static String filterUserList = null;
+	private static String filterUser = null;
 	private static String text;
 	
 	private static int offset = 0;
@@ -87,12 +87,11 @@ public class AonHub {
 		}
 	}
 	
-	public void setFilterUserList(String[] filterUser) {
+	public void setFilterUserList(String filterUser) {
 		if (filterUser == null)
-			this.filterUserList = null;
-		else {
-			String aux = makeNamesString(filterUser);
-			this.filterUserList = aux;
+			this.filterUser = null;
+		else {			
+			this.filterUser = filterUser;
 		}
 	}
 	
@@ -155,7 +154,7 @@ public class AonHub {
 				+ "&offset=" + offset
 				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				
 				+ (text != null ? "&text=" + URL.encode(text) : "")
-				+ (filterUserList != null ? "&users=" + URL.encode(filterUserList) : ""), callback);
+				+ (filterUser != null ? "&user=" + URL.encode(filterUser) : ""), callback);
 	}
 
 	public void getClosedIssues(String user, String repo,
@@ -166,7 +165,7 @@ public class AonHub {
 				+ "&offset=" + offset
 				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				
 				+ (text != null ? "&text=" + URL.encode(text) : "")
-				+ (filterUserList != null ? "&users=" + URL.encode(filterUserList) : ""), callback);
+				+ (filterUser != null ? "&users=" + URL.encode(filterUser) : ""), callback);
 	}
 
 	public void getAllIssues(String user, String repo,
@@ -177,7 +176,7 @@ public class AonHub {
 				+ "&offset=" + offset
 				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				
 				+ (text != null ? "&text=" + URL.encode(text) : "")
-				+ (filterUserList != null ? "&users=" + URL.encode(filterUserList) : ""), callback);
+				+ (filterUser != null ? "&users=" + URL.encode(filterUser) : ""), callback);
 	}
 
 	public void createIssue(String user, String repo, IssueValue prop,

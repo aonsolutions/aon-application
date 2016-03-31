@@ -50,10 +50,8 @@ public class NoticeFilterImpl implements BiPredicate<NoticeFilter, Notice> {
 			}
 		}
 		
-		if (filter.getUsers().length > 0) {
-			for (int x = 0; x < filter.getUsers().length; x++)				
-				accepted = accepted && AonStringUtils.equals(notice.getSender().getName(), filter.getUsers()[x]);
-		}
+		if (AonStringUtils.isNotBlank(filter.getUser()))
+			accepted = accepted && AonStringUtils.equals(notice.getSender().getName(), filter.getUser());
 
 		return accepted;
 	}

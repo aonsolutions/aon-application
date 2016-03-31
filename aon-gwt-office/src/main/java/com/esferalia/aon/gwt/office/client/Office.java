@@ -585,23 +585,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 	
 	@Override
-	public void onSelectOwner(List<User> drashUserList) {
-		if (drashUserList.size() == 0)
-			this.gitHub.setFilterUserList(null);
-		else {
-			String[] userArr = new String[drashUserList.size()];
-			for (int x = 0; x < drashUserList.size(); x++)
-				userArr[x] = String.valueOf(drashUserList.get(x).getName());
-
-			this.gitHub.setFilterUserList(userArr);			
-		}
-
+	public void onSelectOwner(String userSelected) {
+		this.gitHub.setFilterUserList(userSelected);	
 		this.incrementSize = 0;
 		this.gitHub.setOffset(incrementSize);
 		initIssuesList();
 		evalRadioButtons();
-
-		
 	}
 	
 	// ******************************************************************

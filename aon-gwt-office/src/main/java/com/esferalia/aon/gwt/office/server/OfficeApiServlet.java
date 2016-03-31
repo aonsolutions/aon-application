@@ -357,6 +357,9 @@ public class OfficeApiServlet extends HttpServlet {
 				if (req.getParameter("text") != null)					
 					filter.setText(URLDecoder.decode(req.getParameter("text"), "UTF-8"));
 				
+				if (req.getParameter("user") != null)
+					filter.setUser(URLDecoder.decode(req.getParameter("user"), "UTF-8"));					
+				
 				filter.setOffset(Integer.parseInt(req.getParameter("offset")));
 				
 				int count = AON.getSelectedCount(domainId, domainName, AonServletUtils.getLoggedUser(), filter);

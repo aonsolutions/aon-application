@@ -298,8 +298,8 @@ public class IssueReadPanel extends Composite {
 	
 		hPanel.add(new Label(" cerr\u00F3 la etiqueta "));
 		hPanel.add(setTagStyle(tag));
-		hPanel.add(new Label(" el " + date.format(tag.getCreateAt()) + " a las "
-				+ hour.format(tag.getCreateAt())));
+		hPanel.add(new Label(" el " + date.format(tag.getDeletedAt()) + " a las "
+				+ hour.format(tag.getDeletedAt())));
 
 		infoHeaderContent.add(hPanel);
 	}

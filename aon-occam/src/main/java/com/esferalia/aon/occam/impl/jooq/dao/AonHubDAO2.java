@@ -68,7 +68,7 @@ public class AonHubDAO2 {
 				.set(NOTICE_TAG.START_DATE, date)
 				.set(NOTICE_TAG.TAG, getOpenNoticesId(ctx.getDslContext()))
 				.set(NOTICE_TAG.USER, notice.getSender().getId())
-				.returning().fetchOne();
+				.execute();
 		// @formatter:on
 		
 		return getTicketNotice(ctx, id);
@@ -97,6 +97,27 @@ public class AonHubDAO2 {
 
 		return getTicketNotice(ctx, notice.getId());
 
+	}
+	
+	public static boolean removeLabelFromIssue(AONContext ctx, int issueId, Tag tag) {
+		
+		Timestamp date = getTime(new Date());
+		
+		try {
+			
+			ctx.getDslContext().update(NOTICE_TAG)
+			.set(NOTICE_TAG.END_DATE, date)
+			.set(NOTICE_TAG.USER, tag.getUser().getId())
+			.where(NOTICE_TAG.TAG.eq(tag.getId())
+					.and(NOTICE_TAG.END_DATE.isNull())
+					.and(NOTICE_TAG.NOTICE.eq(issueId)))
+			.execute();
+			
+			return true;
+			
+		} catch (Exception ex) {
+			return false;
+		}
 	}
 
 	public static Notice editNotice(AONContext ctx, Notice notice) {

@@ -24,7 +24,7 @@ public class NoticeFilter implements Serializable {
 	private String company;
 	private String[] tags;
 	private String subject;
-	private String[] users;
+	private String user;
 	
 	private int offset;
 	
@@ -137,14 +137,13 @@ public class NoticeFilter implements Serializable {
 		return offset;
 	}
 	
-	public void setUsers(String[] users) {
-		this.users = users;
+	public void setUser(String user) {
+		this.user = user;
 	}
 	
-	public String[] getUsers() {
-		if (users == null)
-			return new String[0];
-
-		return users;
+	public String getUser() {
+		if (user == null)
+			return "";
+		return user;
 	}
 }

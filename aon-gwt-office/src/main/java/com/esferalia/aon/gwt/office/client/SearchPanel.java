@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,6 +33,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
@@ -49,8 +51,15 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		FIVETEEN_DAYS_AGO("fiveteenDaysAgo"), 
 		THIRTY_DAYS_AGO("fiveteenDaysAgo"), 
 		THIS_YEAR("thisYear");
+		
+		String description ;
 
 		private DateRange(String range) {
+			this.description = range;
+		}
+		
+		public String getValue() {
+			return this.description;
 		}
 	}
 	
@@ -62,7 +71,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		
 		void onCloseTagPanel(List<Tag> drashTagList);
 		
-		void onSelectOwner(List<User> drashUserList);
+		void onSelectOwner(String userName);
 		
 		void onSelectFrom(Date from);
 
@@ -94,13 +103,13 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 	private List<Listener> listeners;
 	
 	private Date criteria;
+	private String userSelected;
 	
 	private List<DefaultAonTagIssueSelected> typeTagList;
 	private List<DefaultAonTagIssueSelected> priorityTagList;
 	private List<DefaultAonTagIssueSelected> noticeTagList;
 	
 	private List<Tag> drashTagList;
-	private List<User> drashUserList;
 
 	private MultiWordSuggestOracle registries = new MultiWordSuggestOracle();
 
@@ -119,15 +128,14 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		this.priorityTagList = new LinkedList<DefaultAonTagIssueSelected>();
 		this.noticeTagList = new LinkedList<DefaultAonTagIssueSelected>();
 		this.drashTagList = new LinkedList<Tag>();
-		this.drashUserList = new LinkedList<User>();
 		
 		this.subjectTextBox.addKeyDownHandler(this);
 
-		fromListBox.addItem(" ", DateRange.ALL.name());
-		fromListBox.addItem("Hoy", DateRange.TODAY.name());
-		fromListBox.addItem("Ayer", DateRange.YESTERDAY.name());
-		fromListBox.addItem("Esta semana", DateRange.THIS_WEEK.name());
-		fromListBox.addItem("Este mes", DateRange.THIS_MONTH.name());
+		fromListBox.addItem(" ", DateRange.ALL.getValue());
+		fromListBox.addItem("Hoy", DateRange.TODAY.getValue());
+		fromListBox.addItem("Ayer", DateRange.YESTERDAY.getValue());
+		fromListBox.addItem("Esta semana", DateRange.THIS_WEEK.getValue());
+		fromListBox.addItem("Este mes", DateRange.THIS_MONTH.getValue());
 		fromListBox.addItem("15 d\u00EDas", DateRange.FIVETEEN_DAYS_AGO.name());
 		fromListBox.addItem("30 d\u00EDas", DateRange.THIRTY_DAYS_AGO.name());
 		fromListBox.addItem("Este a\u00F1o", DateRange.THIS_YEAR.name());
@@ -223,10 +231,9 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 			cb.removeStyleName(AON.AON_BOLD);
 		}
 		
-		this.drashTagList.clear();
-		this.drashUserList.clear();
-		
-		fromListBox.setSelectedIndex(0);
+		this.userSelected = null;
+		this.drashTagList.clear();		
+		this.fromListBox.setSelectedIndex(0);
 	}
 	
 	public Date getCriteria() {
@@ -276,7 +283,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		this.ownerButton.addClickHandler(new ClickHandler() {
 			
 			private PopupPanel popup = new PopupPanel(true);
-			private boolean changes = false;
+			private boolean changes = false;			
 			
 			{
 				SearchPanel.this.ownerVPanel = new VerticalPanel();
@@ -288,13 +295,15 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 						
 						@Override
 						public void onValueChange(ValueChangeEvent<Boolean> event) {
+							
 							if (event.getValue()) {
 								cb.addStyleName(AON.AON_BOLD);
-								insertDrastUserList(user);
+								unSelectPanel(cb.getText());
+								SearchPanel.this.userSelected = cb.getText();
 							}
 							else {
 								cb.removeStyleName(AON.AON_BOLD);
-								removeDrashUser(user);
+								SearchPanel.this.userSelected = null;
 							}
 							changes = true;
 						}
@@ -305,14 +314,24 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 					
 					@Override
 					public void onClose(CloseEvent<PopupPanel> event) {
-						if (changes) {
+						if (changes && userSelected != null) {
 							for (Listener listener : listeners)
-								listener.onSelectOwner(drashUserList);
+								listener.onSelectOwner(SearchPanel.this.userSelected);
 							changes = false;
 						}
 					}
 				});
 				popup.add(SearchPanel.this.ownerVPanel);				
+			}
+			
+			private void unSelectPanel(String userName) {
+				for (int x = 0; x < ownerVPanel.getWidgetCount(); x++) {
+					CheckBox cb = (CheckBox) ownerVPanel.getWidget(x);
+					if (AonStringUtils.equals(cb.getText(), userName) == false && cb.getValue()) {
+						cb.setValue(false);
+						cb.removeStyleName(AON.AON_BOLD);
+					}
+				}
 			}
 			
 			@Override
@@ -524,20 +543,6 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		for (Tag tag : drashTagList) {
 			if (tag.getId() == pTag.getId()) {
 				drashTagList.remove(tag);
-				break;
-			}
-		}
-	}
-	
-	private void insertDrastUserList(User user) {
-		this.drashUserList.add(user);
-	}
-	
-	private void removeDrashUser(User pUser) {
-		
-		for (User user : drashUserList) {
-			if (user.getId() == pUser.getId()) {
-				drashUserList.remove(user);
 				break;
 			}
 		}
