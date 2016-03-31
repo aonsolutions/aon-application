@@ -20,7 +20,8 @@ public class OfficeImpl implements IOffice {
 	// ----------------------------------------------------- SELECTS
 	@Override
 	public User getUser(AONContext ctx, Integer id) {
-		return UserDAO.getUser(ctx, id);
+		return ctx.getDslContext().transactionResult(
+				conf -> UserDAO.getUser(ctx, id));		
 	}
 	
 	@Override
@@ -42,7 +43,6 @@ public class OfficeImpl implements IOffice {
 				conf -> AonHubDAO2.getTicketNotices(ctx, filter));		
 	}
 	
-	
 	// ----------------------------------------------------- INSERTS
 
 	@Override
@@ -61,7 +61,8 @@ public class OfficeImpl implements IOffice {
 	@Override
 	public Tag addNewTag(AONContext ctx, Tag tag)
 			throws IllegalArgumentException {
-		return AonHubDAO.addNewTag(ctx, tag);
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.insertTag(ctx, tag));
 	}
 
 	// ----------------------------------------------------- DELETES
@@ -69,7 +70,9 @@ public class OfficeImpl implements IOffice {
 
 	@Override
 	public Notice editComment(AONContext ctx, Integer commentId, String body) {
-		return AonHubDAO.editComment(ctx, commentId, body);
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.editComment(ctx, commentId, body));
+//		return AonHubDAO.editComment(ctx, commentId, body);
 	}
 
 	@Override

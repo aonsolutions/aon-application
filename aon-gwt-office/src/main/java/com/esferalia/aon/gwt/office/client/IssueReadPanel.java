@@ -125,7 +125,7 @@ public class IssueReadPanel extends Composite {
 
 	private VerticalPanel infoHeaderContent;
 
-	public IssueReadPanel(IssueSelected issue) {
+	public IssueReadPanel(User currentUser, IssueSelected issue) {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		this.listeners = new LinkedList<Listener>();
@@ -137,6 +137,8 @@ public class IssueReadPanel extends Composite {
 		this.addTagsMap = new LinkedList<DefaultAonTagIssueSelected>();
 		this.deletedTagsMap = new LinkedList<DefaultAonTagIssueSelected>();
 		this.assignTags = issue.getTags();
+		
+		this.userLogged.setText(currentUser.getName());
 
 		initHeaderAux(issue);
 
@@ -153,10 +155,6 @@ public class IssueReadPanel extends Composite {
 			commentTextArea.setVisible(false);
 			createReopenButton();
 		}
-	}
-
-	public void setUser(User user) {
-		userLogged.setText(user.getName());
 	}
 
 	public void setTags(List<DefaultAonTagIssueSelected> tags) {
@@ -233,7 +231,7 @@ public class IssueReadPanel extends Composite {
 				continue;
 			}
 
-			if (tag.getType() == TagType.OFFICE_STATUS.value() 
+			if (tag.getType() == TagType.OFFICE_STATUS.value()
 					&& tag.getDeletedAt() == null)
 				hPanel = setHistorialHeader(tag);
 			else if (tag.getDeletedAt() != null)
@@ -296,11 +294,11 @@ public class IssueReadPanel extends Composite {
 		Label ownLabel = new Label(tag.getUser().getName());
 		ownLabel.setStyleName(AON.AON_BOLD);
 		hPanel.add(ownLabel);
-	
+
 		hPanel.add(new Label(" cerr\u00F3 la etiqueta "));
 		hPanel.add(setTagStyle(tag));
-		hPanel.add(new Label(" el " + date.format(tag.getDeletedAt()) + " a las "
-				+ hour.format(tag.getDeletedAt())));
+		hPanel.add(new Label(" el " + date.format(tag.getDeletedAt())
+				+ " a las " + hour.format(tag.getDeletedAt())));
 
 		infoHeaderContent.add(hPanel);
 	}
@@ -344,6 +342,8 @@ public class IssueReadPanel extends Composite {
 		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		editButton.addStyleName(AON.AON_CSS.editButton());
 		editButton.setTitle("Editar comentario");
+		editButton.setVisible(AonStringUtils.equals(userLogged.getText(),
+				issueComment.getUser().getName()));
 
 		final TextArea textArea = getTextArea(issueComment.getBody());
 
@@ -362,6 +362,7 @@ public class IssueReadPanel extends Composite {
 		});
 
 		editButton.setVisible(editVisible);
+		editButton.setEnabled(AonStringUtils.equals(userLogged.getText(), issueComment.getUser().getName()));
 
 		FlexTable flexTable = new FlexTable();
 		flexTable.setWidget(0, 0, label);
@@ -783,9 +784,9 @@ public class IssueReadPanel extends Composite {
 		textArea.setValue(text);
 		return textArea;
 	}
-	
+
 	private Label setTagStyle(DefaultAonTagIssueSelected tag) {
-		
+
 		Label label = new Label(tag.getName());
 		label.setStyleName(AON.AON_RESOURCES.css().tagStyle());
 		if (tag.getType() == TagType.OFFICE_TYPE.value())
@@ -794,27 +795,28 @@ public class IssueReadPanel extends Composite {
 			label.addStyleName(AON.AON_RESOURCES.css().tagPriority());
 		if (tag.getType() == TagType.OFFICE_NOTICE.value())
 			label.addStyleName(AON.AON_RESOURCES.css().tagNotice());
-		
+
 		return label;
 	}
-	
-	private String setTitle2Label (String tagName) {
-		
+
+	private String setTitle2Label(String tagName) {
+
 		StringBuilder sb = new StringBuilder();
 		DefaultAonTagIssueSelected aux = null;
-		
+
 		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
 			if (AonStringUtils.equals(tagName, tag.getName())) {
 				aux = tag;
 				break;
 			}
 		}
-			
+
 		if (aux != null) {
 			sb.append("Etiqueta asignada por ");
 			sb.append(aux.getUser().getName());
 			sb.append(" el ");
-			sb.append( date.format(aux.getCreateAt()) + " a las " + hour.format(aux.getCreateAt()));
+			sb.append(date.format(aux.getCreateAt()) + " a las "
+					+ hour.format(aux.getCreateAt()));
 		}
 		return sb.toString();
 	}

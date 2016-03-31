@@ -651,8 +651,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
 		this.issueSelected = issue;
-		IssueReadPanel issueReadPanel = new IssueReadPanel(issue);
-		issueReadPanel.setUser(this.user);
+		IssueReadPanel issueReadPanel = new IssueReadPanel(this.user, issue);		
 		issueReadPanel.setTags(this.tagList);
 		issueReadPanel.addListener(this);
 		readIssueLayoutPanel.clear();

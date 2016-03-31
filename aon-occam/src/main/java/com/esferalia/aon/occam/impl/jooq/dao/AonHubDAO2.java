@@ -23,7 +23,6 @@ import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
-import com.esferalia.aon.jooq.tables.records.NoticeTagRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
@@ -204,10 +203,12 @@ public class AonHubDAO2 {
 	public static Notice editComment(AONContext ctx, int commentId,
 			String body) {
 
-		ctx.getDslContext().update(NOTICE).set(NOTICE.SUBJECT, body)
-				.where(NOTICE.ID.eq(commentId)).execute();
-
 		// @formatter:off
+		ctx.getDslContext()
+		.update(NOTICE)
+		.set(NOTICE.SUBJECT, body)
+		.where(NOTICE.ID.eq(commentId)).execute();
+
 		Record record = ctx.getDslContext()
 				.select(NOTICE.fields())
 				.select(USER.fields())
@@ -376,7 +377,6 @@ public class AonHubDAO2 {
 			tag.setType(record.getValue(TAG.TYPE));
 			tag.setColor(record.getValue(TAG.COLOR));
 			return tag;
-
 		}
 	}
 
