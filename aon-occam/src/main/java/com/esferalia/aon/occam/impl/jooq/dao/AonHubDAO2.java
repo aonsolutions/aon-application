@@ -10,7 +10,6 @@ import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,9 +40,6 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class AonHubDAO2 {
-
-	private static SimpleDateFormat sdf = new SimpleDateFormat(
-			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 	public static Notice insertNotice(AONContext ctx, Notice notice) {
 		// @formatter:off
@@ -76,27 +72,59 @@ public class AonHubDAO2 {
 
 	public static Notice changeNoticeState(AONContext ctx, Notice notice) {
 
-		NoticeTagRecord updateTag = ctx.getDslContext().update(NOTICE_TAG)
-				.set(NOTICE_TAG.END_DATE, getTime(notice.getStartDate()))
+		Timestamp endDate = getTime(new Date());
+		
+		// @formatter:off		
+		int id = ctx.getDslContext()
+				.select(NOTICE_TAG.ID)
+				.from(NOTICE_TAG)
+				.join(TAG)
+				.on(NOTICE_TAG.TAG.eq(TAG.ID))
+				.where(NOTICE_TAG.END_DATE.isNull()
+						.and(NOTICE_TAG.NOTICE.eq(notice.getId()))
+						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())))
+				.fetchOne(NOTICE_TAG.ID);
+				
+		ctx.getDslContext()
+				.update(NOTICE_TAG)
+				.set(NOTICE_TAG.END_DATE, endDate)
 				.set(NOTICE_TAG.USER, notice.getSender().getId())
-				.where(NOTICE_TAG.ID.eq(ctx.getDslContext()
-						.select(NOTICE_TAG.ID).from(NOTICE_TAG).join(TAG)
-						.on(NOTICE_TAG.TAG.eq(TAG.ID))
-						.where(NOTICE_TAG.END_DATE.isNull()
-								.and(NOTICE_TAG.NOTICE.eq(notice.getId()))
-								.and(TAG.TYPE
-										.eq(TagType.OFFICE_STATUS.value())))))
-				.returning().fetchOne();
-
-		ctx.getDslContext().insertInto(NOTICE_TAG)
-				.set(NOTICE_TAG.NOTICE, notice.getId())
-				.set(NOTICE_TAG.TAG, updateTag.getValue(NOTICE_TAG.TAG))
-				.set(NOTICE_TAG.START_DATE,
-						updateTag.getValue(NOTICE_TAG.END_DATE))
-				.set(NOTICE_TAG.USER, notice.getSender().getId()).execute();
-
+				.where(NOTICE_TAG.ID.eq(id))
+				.execute();
+		
+		ctx.getDslContext()
+		.insertInto(NOTICE_TAG)
+		.set(NOTICE_TAG.NOTICE, notice.getId())
+		.set(NOTICE_TAG.TAG, 
+				ctx.getDslContext()
+				.select(TAG.ID)
+				.from(TAG)
+				.where(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())
+						.and(TAG.NAME.eq(notice.getStatus()))))		
+		.set(NOTICE_TAG.START_DATE, endDate)
+		.set(NOTICE_TAG.USER, notice.getSender().getId())
+		.execute();
+		// @formatter:on
+		
 		return getTicketNotice(ctx, notice.getId());
 
+	}
+	
+	public static Notice addLabelsToAnIssue(AONContext ctx, int noticeId, List<Tag> tags) {
+		
+		Timestamp date = getTime(new Date());
+		
+		for (Tag tag : tags) {
+			removeLabelFromIssue(ctx, noticeId, tag);
+			
+			ctx.getDslContext().insertInto(NOTICE_TAG)
+			.set(NOTICE_TAG.NOTICE, noticeId)
+			.set(NOTICE_TAG.TAG, tag.getId())
+			.set(NOTICE_TAG.START_DATE, date)
+			.set(NOTICE_TAG.USER, tag.getUser().getId())
+			.execute();
+		}
+		return getTicketNotice(ctx, noticeId);
 	}
 	
 	public static boolean removeLabelFromIssue(AONContext ctx, int issueId, Tag tag) {
@@ -118,6 +146,27 @@ public class AonHubDAO2 {
 		} catch (Exception ex) {
 			return false;
 		}
+	}
+	
+	public static Notice replaceLabelsForIssue(AONContext ctx, int noticeId, List<Tag> addLabels, List<Tag> deletedLabels) {
+		
+		Timestamp date = getTime(new Date());
+		
+		for (Tag tag : deletedLabels)
+			removeLabelFromIssue(ctx, noticeId, tag);
+		
+		for (Tag tag : addLabels) {
+			removeLabelFromIssue(ctx, noticeId, tag);
+			
+			ctx.getDslContext().insertInto(NOTICE_TAG)
+			.set(NOTICE_TAG.NOTICE, noticeId)
+			.set(NOTICE_TAG.TAG, tag.getId())
+			.set(NOTICE_TAG.START_DATE, date)
+			.set(NOTICE_TAG.USER, tag.getUser().getId())
+			.execute();
+		}
+		
+		return getTicketNotice(ctx, noticeId);
 	}
 
 	public static Notice editNotice(AONContext ctx, Notice notice) {
@@ -201,6 +250,17 @@ public class AonHubDAO2 {
 		
 		Notice notice = new FullNoticeFiller().apply(record);
 		notice.setTags(fillOfficeTags(ctx, notice)
+				.collect(Collectors.toCollection(LinkedList::new)));
+		notice.setStatus(setTag(notice.getTags().stream().filter(
+				tag -> tag.getType() == TagType.OFFICE_STATUS.value())
+				.collect(Collectors.toCollection(LinkedList::new))));
+		notice.setType(setTag(notice.getTags().stream().filter(
+				tag -> tag.getType() == TagType.OFFICE_TYPE.value())
+				.collect(Collectors.toCollection(LinkedList::new))));
+		notice.setPriority(setTag(notice.getTags().stream().filter(
+				tag -> tag.getType() == TagType.OFFICE_PRIORITY.value())
+				.collect(Collectors.toCollection(LinkedList::new))));
+		notice.addComments(fillNoticeComments(ctx, notice)
 				.collect(Collectors.toCollection(LinkedList::new)));
 		return notice;
 	}

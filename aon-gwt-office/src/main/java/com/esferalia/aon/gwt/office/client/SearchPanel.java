@@ -314,7 +314,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 					
 					@Override
 					public void onClose(CloseEvent<PopupPanel> event) {
-						if (changes && userSelected != null) {
+						if (changes) {
 							for (Listener listener : listeners)
 								listener.onSelectOwner(SearchPanel.this.userSelected);
 							changes = false;

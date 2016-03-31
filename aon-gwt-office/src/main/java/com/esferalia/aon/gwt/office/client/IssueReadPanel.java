@@ -233,9 +233,10 @@ public class IssueReadPanel extends Composite {
 				continue;
 			}
 
-			if (tag.getDeletedAt() == null)
+			if (tag.getType() == TagType.OFFICE_STATUS.value() 
+					&& tag.getDeletedAt() == null)
 				hPanel = setHistorialHeader(tag);
-			else
+			else if (tag.getDeletedAt() != null)
 				setContent(tag);
 		}
 

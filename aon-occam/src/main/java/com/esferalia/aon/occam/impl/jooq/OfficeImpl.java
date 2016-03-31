@@ -26,17 +26,20 @@ public class OfficeImpl implements IOffice {
 	@Override
 	public List<User> getUsers(AONContext ctx) {		
 		Integer parentID = DomainDAO.getParentDomain(ctx);
-		return AonHubDAO2.fillUsersFromNotices(ctx, parentID);
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.fillUsersFromNotices(ctx, parentID));
 	}
 	
 	@Override
 	public int getSelectedCount(AONContext ctx, NoticeFilter filter) {
-		return AonHubDAO2.getSelectedCount(ctx, filter);
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.getSelectedCount(ctx, filter));
 	}
 	
 	@Override
 	public List<Notice> getNotices(AONContext ctx, NoticeFilter filter) {
-		return AonHubDAO2.getTicketNotices(ctx, filter);
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.getTicketNotices(ctx, filter));		
 	}
 	
 	
@@ -92,7 +95,9 @@ public class OfficeImpl implements IOffice {
 
 	@Override
 	public Notice changeNoticeStatus(AONContext ctx, Notice notice) {
-		return AonHubDAO.changeNoticeState(ctx, notice);
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.changeNoticeState(ctx, notice));
+//		return AonHubDAO.changeNoticeState(ctx, notice);
 	}
 
 	@Override
@@ -103,13 +108,17 @@ public class OfficeImpl implements IOffice {
 	@Override
 	public boolean removeLabelFromIssue(AONContext ctx, Integer issueId,
 			Tag tag) {
-		return AonHubDAO.removeLabelFromIssue(ctx, issueId, tag);
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.removeLabelFromIssue(ctx, issueId, tag));
+//		return AonHubDAO.removeLabelFromIssue(ctx, issueId, tag);
 	}
 
 	@Override
 	public Notice replaceLabelsForIssue(AONContext ctx, Integer noticeId,
 			List<Tag> add, List<Tag> deleted) {
-		return AonHubDAO.replaceLabelsForIssue(ctx, noticeId, add, deleted);
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.replaceLabelsForIssue(ctx, noticeId, add, deleted));
+//		return AonHubDAO.replaceLabelsForIssue(ctx, noticeId, add, deleted);
 	}
 
 	@Override
