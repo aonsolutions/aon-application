@@ -1372,7 +1372,7 @@ public class Employees extends ResizeComposite implements
 				Enterprise enterprise = (Enterprise) enterpriseItem
 						.getUserObject();
 
-				TreeItem categoryItem = addImageItem(employeeItem,
+				final TreeItem categoryItem = addImageItem(employeeItem,
 						category.getLevel() + ". " + category.getDescription(),
 						images.agreement());
 
@@ -1382,10 +1382,30 @@ public class Employees extends ResizeComposite implements
 				categoryDraft.setDescription(agreement.getDescription());
 				categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
 				categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
-				CategoryDraftObject categoryDraftObject = new CategoryDraftObject(
+				final CategoryDraftObject categoryDraftObject = new CategoryDraftObject(
 						enterprise.getDomain(), categoryDraft, employeesService);
-				categoryItem.setUserObject(categoryDraftObject);
+				//categoryItem.setUserObject(categoryDraftObject);
 
+				employeesService.getChanges(agreement,
+						new AsyncCallback<SortedSet<Date>>() {
+							@Override
+							public void onFailure(Throwable caught) {
+								categoryItem
+										.setUserObject(categoryDraftObject);
+							}
+
+							public void onSuccess(SortedSet<Date> result) {
+								if (!CollectionUtils.isEmpty(result)) {
+									Date lastChange = result.last();
+									categoryDraftObject.setStartDate(DateUtils
+											.getFirstDayOfMonth(lastChange));
+									categoryDraftObject.setEndDate(DateUtils
+											.getLastDayOfMonth(lastChange));
+								}
+								categoryItem
+										.setUserObject(categoryDraftObject);
+							};
+						});
 			}
 
 		}
