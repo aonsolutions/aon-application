@@ -230,7 +230,7 @@ public class DiamaconWriter extends BasicExporter {
 				this.exporter.addCell();
 			}
 //			Nº FRA.
-			addStringCell( aed.getDocumentNumber() );
+			addStringCell( getReferenceCode() );
 //			COMENTARIO
 			if(aed.getBalancingAccount()!=null){
 				addStringCell( aed.getBalancingAccount().getDescription() );
