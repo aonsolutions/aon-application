@@ -15,6 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
@@ -188,7 +189,7 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			series.setInvoice(true);
 			series.setActive(true);
 			series.setScope( params.getScope() );
-			series.setSecurityLevel( params.getSecurityLevel() );
+			series.setSecurityLevel(params.getSecurityLevel() == null ? SecurityLevel.OFFICIAL : params.getSecurityLevel());
 			series = (Series) bean.insert(series);
 			return series;
 		}

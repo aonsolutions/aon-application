@@ -17,6 +17,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
@@ -177,7 +178,7 @@ public class CompanyLoaderFactory extends RegistryLoaderFactory implements ILoad
 		company.setAlias(loaded.getAlias());
 		company.setNationality(loaded.getNationality());
 		company.setName(loaded.getRazonSocial());
-		company.setSecurityLevel(params.getSecurityLevel());		
+		company.setSecurityLevel(params.getSecurityLevel() == null ? SecurityLevel.OFFICIAL : params.getSecurityLevel());
 		company.setSurcharge(loaded.isSurcharge());                  // Aplica Recargo de equivalencia
 		company.setWithholding(loaded.isWithholding());              // Aplica retencion IRPF
 		company.setVatAccrualPayment(loaded.isVatAccrualPayment());  // Aplica RECC

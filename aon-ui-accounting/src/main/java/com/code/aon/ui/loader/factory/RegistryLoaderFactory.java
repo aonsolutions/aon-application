@@ -11,6 +11,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.BankUtil;
@@ -60,7 +61,7 @@ public class RegistryLoaderFactory {
 		registry.setAlias(loaded.getAlias());
 		registry.setNationality(loaded.getNationality());
 		registry.setName(loaded.getRazonSocial());
-		registry.setSecurityLevel(params.getSecurityLevel());
+		registry.setSecurityLevel(params.getSecurityLevel() == null ? SecurityLevel.OFFICIAL : params.getSecurityLevel());
 		return registry;
 	}
 	

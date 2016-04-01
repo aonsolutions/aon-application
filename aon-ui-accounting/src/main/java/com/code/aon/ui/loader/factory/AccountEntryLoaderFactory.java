@@ -15,6 +15,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -110,7 +111,7 @@ public class AccountEntryLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		entry.setEntryDate(loaded.getFecha());
 		entry.setAccountPeriod( params.getAccountPeriod() );
 		entry.setComments(loaded.getComentario());
-		entry.setSecurityLevel(params.getSecurityLevel());
+		entry.setSecurityLevel(params.getSecurityLevel() == null ? SecurityLevel.OFFICIAL : params.getSecurityLevel());
 		Invoice invoice = null;
 		if (loaded.getEnlaceFactura() != null && loaded.getEnlaceFactura() == 1) {
 			if (loaded.getEnlaceNumero() == null || loaded.getEnlaceTipoFactura() == null) {
