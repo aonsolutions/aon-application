@@ -92,16 +92,14 @@ public class AonLoaderController implements Serializable {
 	}
 	
 	public void onLoad(ActionEvent event ) {
-		if(isCustomLoaderEnabled()){
-			if(isOppidumLoaderEnabled()){
-				ICustomLoaderFactory loader = CustomLoaderFactoryManager.getFactory(getAonFile());
-				if(loader != null){
-					loader.load(new ByteArrayInputStream(getAonFile().getData()));
-				} else {
-					LogPanelController logPanel = LogPanelController.getInstance();
-		        	logPanel.error("No se reconoce el fichero.");
-		        	logPanel.error("Proceso abortado.");
-				}
+		if(isCustomLoaderEnabled() && isOppidumLoaderEnabled()){
+			ICustomLoaderFactory loader = CustomLoaderFactoryManager.getFactory(getAonFile());
+			if(loader != null){
+				loader.load(new ByteArrayInputStream(getAonFile().getData()));
+			} else {
+				LogPanelController logPanel = LogPanelController.getInstance();
+	        	logPanel.error("No se reconoce el fichero.");
+	        	logPanel.error("Proceso abortado.");
 			}
 		} else {
 			LogPanelController logger = LogPanelController.getInstance();
@@ -208,8 +206,9 @@ public class AonLoaderController implements Serializable {
 	}
 	
 	public boolean isOppidumLoaderEnabled(){
-		ApplicationParameter param = AppParamUtil.getParameter("CUSTOM_LOADER");
-		return param != null && param.getValue().equals(CustomLoadType.OPPIDUM.name());
+		return getSelectedCustomLoader()==CustomLoadType.OPPIDUM;
+//		ApplicationParameter param = AppParamUtil.getParameter("CUSTOM_LOADER");
+//		return param != null && param.getValue().equals(CustomLoadType.OPPIDUM.name());
 	}
 	
 	public void onEnableOppidum(ActionEvent event) {
