@@ -1356,10 +1356,6 @@
 			<property-name>beanName</property-name>
 			<value>webpolExporter</value>
 		</managed-property>		
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ProjectReservationGuest_document desc</value>
-		</managed-property>				
 	</managed-bean>
 	
 	<!-- **************************************************** -->

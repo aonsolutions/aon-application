@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:div id="GuestDocumentDiv#{suffix}" styleClass="aon-width-all">
@@ -36,7 +37,18 @@
 					title="#{bundle.pms_reservation_guest_type_previouslyStayedInHotel}"
 					rendered="#{controller.to.person.id != null and controller.to.guestPreviouslyStayedInHotel}" />
 			</aon:div>
-
+			
+			<aon:outputLabel for="ProjectReservationGuest_documentExpDate" value="#{bundle.aon_expeditionDate}" />
+			<aon:selectInputDate id="ProjectReservationGuest_documentExpDate#{suffix}" inputClass="aon-form-input-text"
+				value="#{controller.to.documentExpDate}" 
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}">
+				<a4j:support event="oninputchange"
+					reRender="ProjectReservationGuest_documentExpDate#{suffix}" ajaxSingle="true" />
+				<a4j:support event="onchanged"
+					reRender="ProjectReservationGuest_documentExpDate#{suffix}" ajaxSingle="true" />
+			</aon:selectInputDate>
+			
 			<aon:outputLabel for="ProjectReservationGuest_document" value="#{bundle.aon_number}" />
 			<aon:inputText id="ProjectReservationGuest_document#{suffix}" styleClass="aon-form-input-text"
 				value="#{controller.to.document}" size="15" maxlength="16"

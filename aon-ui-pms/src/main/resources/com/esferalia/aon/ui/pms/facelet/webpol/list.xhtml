@@ -28,13 +28,6 @@
 						<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
 					</aon:commandButton>
 					<h:panelGrid columns="3" rendered="#{not empty webpolExporter.data}">
-						<aon:outputLabel for="webpolExporter_fileCount"
-							value="Contador:" />
-						<rich:inputNumberSpinner id="webpolExporter_fileCount"
-							minValue="1" maxValue="999"
-							value="#{webpolExporter.fileCount}"
-							label="Contador:" required="true"
-							cycled="true" enableManualInput="true" />
 						<aon:htmlCommandLink id="download" target="_blank"
 							value="#{bundle.aon_fileupload_download}"
 							actionListener="#{webpolExporter.onDownloadFile}"
@@ -146,23 +139,6 @@
 							</aon:div>
 						</aon:column>
 			
-						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-200 aon-nowrap">
-							<f:facet name="header">
-								<aon:outputLabel value="#{bundle.aon_contact_data}" />
-							</f:facet>
-							<aon:outputText value="&#160;" styleClass="aon-icon-call-error aon-padding-left aon-margin-right" rendered="#{empty to.phone}" />
-							<aon:outputText value="&#160;" styleClass="aon-icon-call aon-padding-left" rendered="#{!empty to.phone}" />
-							<aon:outputText styleClass="aon-margin-right" value="#{to.phone}" rendered="#{!empty to.phone}" />
-							<aon:outputText value="&#160;" styleClass="aon-icon-mailInbox-error aon-padding-left aon-margin-left" rendered="#{empty to.email}" />
-							<aon:outputText value="&#160;" styleClass="aon-icon-mailInbox aon-padding-left" rendered="#{!empty to.email}" />
-							<aon:outputText value="#{to.email}">
-								<aon:abbreviateConverter maxWidth="15" />
-							</aon:outputText>
-							<rich:toolTip rendered="#{!empty to.email}">
-								<aon:outputText value="#{to.email}" />
-							</rich:toolTip>
-						</aon:column>
-			
 						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-300 aon-nowrap">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_address}" />
@@ -180,10 +156,10 @@
 								<aon:outputText value="&#160;" />
 							</f:facet>
 							<aon:commandButton id="person-edit"
-								value="&#160;" title="#{bundle.aon_edit}"
-								action="person_form"
+								value="&#160;" title="#{bundle.aon_reservation}"
+								action="reservation_form"
 								styleClass="aon-icon-commandButton aon-button-goto aon-bold aon-italic"
-								actionListener="#{webpolExporter.onGotoPerson}" />
+								actionListener="#{webpolExporter.onGotoReservation}" />
 						</aon:column>
 					</ui:define>
 			
