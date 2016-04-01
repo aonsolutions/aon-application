@@ -719,6 +719,7 @@
 
 	<table name="hotel">
 		<column name="sheet_changing" property="sheetChanging" type="java.lang.Integer"/>
+		<column name="police_counter" type="int"/>
 		<foreign-key constraint-name="FK_HOTEL_SERVICE_CATALOGUE">
 			<many-to-one property="serviceCatalogue" />
 		</foreign-key>

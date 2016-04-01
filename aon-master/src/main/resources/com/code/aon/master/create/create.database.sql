@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.46.0
+# Version: 8.47.1
 # Created by: girazu
-# Creation Date: 16/03/2016 17:45
+# Creation Date: 01/04/2016 14:25
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -762,21 +762,6 @@ CREATE TABLE `department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos';
 
 #
-# Structure for the `tag` table : 
-#
-
-CREATE TABLE `tag` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Etiqueta',
-  `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Etiqueta',
-  `color` varchar(24) collate latin1_spanish_ci default NULL COMMENT 'Color de la Etiqueta',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_TAG_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Etiquetas';
-
-#
 # Structure for the `brand` table : 
 #
 
@@ -881,6 +866,21 @@ CREATE TABLE `product` (
   CONSTRAINT `FK_PRODUCT_TAX_RETENTION` FOREIGN KEY (`retention`) REFERENCES `tax` (`id`),
   CONSTRAINT `FK_PRODUCT_TAX_VAT` FOREIGN KEY (`vat`) REFERENCES `tax` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Productos';
+
+#
+# Structure for the `tag` table : 
+#
+
+CREATE TABLE `tag` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Etiqueta',
+  `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Etiqueta',
+  `color` varchar(24) collate latin1_spanish_ci default NULL COMMENT 'Color de la Etiqueta',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_TAG_DOMAIN` (`domain`),
+  CONSTRAINT `FK_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Etiquetas';
 
 #
 # Structure for the `item` table : 
@@ -1670,6 +1670,8 @@ CREATE TABLE `hotel` (
   `web` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Web del Hotel',
   `service_catalogue` int(4) default NULL COMMENT 'Identificador del Catalogo de Servicios',
   `sheet_changing` tinyint(2) default NULL COMMENT 'Dias entre cambio de sabanas',
+  `police_code` varchar(10) collate latin1_spanish_ci default NULL COMMENT 'Codigo del Hotel para la policia',
+  `police_counter` int(4) default '0' COMMENT 'Contador para envio de ficheros a la policia',
   `active` tinyint(1) default '1' COMMENT 'Indica si el Hotel esta activo o no',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_HOTEL_CODE` (`code`),
@@ -6673,6 +6675,7 @@ CREATE TABLE `project_reservation_guest` (
   `document` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de documento de identificacion',
   `document_type` tinyint(2) default '0' COMMENT 'Tipo de documento',
   `document_country` varchar(2) collate latin1_spanish_ci default 'ES' COMMENT 'Pais del documento',
+  `document_exp_date` date default NULL COMMENT 'Fecha de expiracion del documento',
   `birth_date` date default NULL COMMENT 'Fecha de nacimiento',
   `email` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Email',
   `phone` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Telefono',
@@ -8106,7 +8109,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.46.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.47.1');
 
 COMMIT;
 
