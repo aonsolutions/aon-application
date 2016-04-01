@@ -76,7 +76,7 @@
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<ui:param name="lookupDisabled" value="#{!controller.editable}" />
 					<ui:param name="lookupReRender" 
-						value="incomeDetailItemEdit,IncomeDetail_quantity,IncomeDetail_price,IncomeDetail_amount" />
+						value="incomeDetailItemEdit,IncomeDetail_quantity,IncomeDetail_price,IncomeDetail_discount,IncomeDetail_amount" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{incomeDetail.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
@@ -117,7 +117,8 @@
 							<ui:param name="lookupSuffix" value="-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
 							<ui:param name="lookupReRender" 
-								value="incomeDetailItemNew,IncomeDetail_quantity-New,IncomeDetail_price-New,IncomeDetail_amount-New" />
+								value="incomeDetailItemNew,IncomeDetail_quantity-New,IncomeDetail_price-New,IncomeDetail_discount-New,
+										IncomeDetail_amount-New" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{incomeDetail.onItemChanged}" type="lookupChangeListener" />
 						</ui:include>

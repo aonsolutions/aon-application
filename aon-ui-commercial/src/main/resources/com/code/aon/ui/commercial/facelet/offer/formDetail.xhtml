@@ -74,7 +74,7 @@
 					<ui:param name="lookupInputOnFocus" value="OfferDetail_description" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<ui:param name="lookupReRender" 
-						value="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount" />
+						value="offerDetailItemEdit,OfferDetail_quantity,OfferDetail_price,OfferDetail_discount,OfferDetail_amount" />
 				</ui:include>						
 				<aon:panelGroup id="offerDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<aon:if test="#{aonConfiguration.bean.product.showAlternatives}">
@@ -120,7 +120,8 @@
 							<ui:param name="lookupInputOnFocus" value="OfferDetail_description-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
 							<ui:param name="lookupReRender" 
-								value="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New" />
+								value="offerDetailItemNew,OfferDetail_quantity-New,OfferDetail_price-New,OfferDetail_discount-New,
+										OfferDetail_amount-New" />
 						</ui:include>						
 						<aon:panelGroup id="offerDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 							<aon:if test="#{aonConfiguration.bean.product.showAlternatives}">

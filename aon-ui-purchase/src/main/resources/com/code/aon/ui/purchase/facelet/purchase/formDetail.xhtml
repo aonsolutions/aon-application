@@ -90,7 +90,7 @@
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<ui:param name="lookupDisabled" value="#{(itemLookupDisabled)?(itemLookupDisabled):(!controller.to.pending)}" />
 					<ui:param name="lookupReRender" 
-						value="purchaseDetailItemEdit,PurchaseDetail_quantity,PurchaseDetail_price,PurchaseDetail_amount" />
+						value="purchaseDetailItemEdit,PurchaseDetail_quantity,PurchaseDetail_price,PurchaseDetail_discount,PurchaseDetail_amount" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{controller.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
@@ -129,7 +129,8 @@
 							<ui:param name="lookupSuffix" value="-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
 							<ui:param name="lookupReRender" 
-								value="purchaseDetailItemNew,PurchaseDetail_quantity-New,PurchaseDetail_price-New,PurchaseDetail_amount-New" />
+								value="purchaseDetailItemNew,PurchaseDetail_quantity-New,PurchaseDetail_price-New,PurchaseDetail_discount-New,
+										PurchaseDetail_amount-New" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{controller.onItemChanged}" type="lookupChangeListener" />
 						</ui:include>

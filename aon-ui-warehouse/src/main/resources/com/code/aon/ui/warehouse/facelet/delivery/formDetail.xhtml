@@ -82,8 +82,7 @@
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<ui:param name="lookupDisabled" value="#{!controller.editable}" />
 					<ui:param name="lookupReRender" 
-						value="deliveryDetailItemEdit,DeliveryDetail_quantity,DeliveryDetail_price,DeliveryDetail_discount,
-								DeliveryDetail_amount" />
+						value="deliveryDetailItemEdit,DeliveryDetail_quantity,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{deliveryDetail.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
@@ -138,8 +137,8 @@
 							<ui:param name="lookupSuffix" value="-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
 							<ui:param name="lookupReRender" 
-								value="deliveryDetailItemNew,DeliveryDetail_quantity-New,DeliveryDetail_price-New,
-										DeliveryDetail_discount-New,DeliveryDetail_amount-New" />
+								value="deliveryDetailItemNew,DeliveryDetail_quantity-New,DeliveryDetail_price-New,DeliveryDetail_discount-New,
+										DeliveryDetail_amount-New" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{deliveryDetail.onItemChanged}" type="lookupChangeListener" />
 						</ui:include>
