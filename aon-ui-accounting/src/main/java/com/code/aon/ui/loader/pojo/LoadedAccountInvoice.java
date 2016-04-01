@@ -718,7 +718,7 @@ public class LoadedAccountInvoice implements ILoadedPojo, ILoadedDocumentHolder{
 		finance.setPaisDocumento(getPaisDocumento());
 		finance.setRazonSocial(getRazonSocial());
 		finance.setConcepto(getConcepto());
-		finance.setFechaVto(getFechaFactura());
+		finance.setFechaVto(getFechaVto()!=null?getFechaVto():getFechaFactura());
 		finance.setPago(getInvoiceType()==InvoiceType.SALES?0:1);
 		finance.setFormaPago(getFormaPago());
 		finance.setCuentaBanco(getCuentaBanco());
