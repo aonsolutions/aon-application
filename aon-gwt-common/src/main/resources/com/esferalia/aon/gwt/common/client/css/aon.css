@@ -2550,6 +2550,9 @@ right
     padding-top: 5px;
     margin-right: 10px;
 }
+/* SE SUPERPONE CON EL CSS DE GWT Y NO SE MUESTRAN LOS BOTONES EN LOS DEMÁS MÓDULOS,
+ADEMÁS NO ENCUENTRA LA IMAGEN 'hborder.png'.
+
 .gwt-Button {
 	-moz-border-bottom-colors: none;
     -moz-border-left-colors: none;
@@ -2566,7 +2569,7 @@ right
     text-decoration: none;
     margin: 5px;
 }
-
+*/
 @sprite .aon-drop-button {
 	gwt-image: "aonStatView";
 	background-position: right center;
