@@ -115,6 +115,11 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.solvers.BisectionSolver;
+import org.apache.commons.math3.analysis.solvers.BrentSolver;
+import org.apache.commons.math3.analysis.solvers.IllinoisSolver;
+import org.apache.commons.math3.analysis.solvers.MullerSolver;
+import org.apache.commons.math3.analysis.solvers.MullerSolver2;
 import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 import org.mvel2.util.MethodStub;
@@ -186,6 +191,7 @@ import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
+import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -198,6 +204,7 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
@@ -1003,6 +1010,9 @@ public class SQLContractSalaryCalculatorContext
 	private OrderByList order;
 
 	private IListener listener;
+	
+	private Map<Double,Double> liquids ;
+	private Map<Double,Double> payments ;
 
 	/*
 	 * public SQLContractSalaryCalculatorContext(Connection connection, Date
@@ -1132,6 +1142,9 @@ public class SQLContractSalaryCalculatorContext
 				CACHE_SIZE, agreementContextFactory);
 		this.leaveLoader = new SQLContractLeaveLoader(this.startDate,
 				this.getEnd());
+		
+		this.liquids = new HashMap<Double, Double>();
+		this.payments = new HashMap<Double, Double>();
 
 	}
 
@@ -2087,6 +2100,7 @@ public class SQLContractSalaryCalculatorContext
 	public Object liquidImpl(double liquid, double accuracy, Date start,
 			Date end)
 					throws ExpressionException, SQLException, SalaryException {
+		
 		try {
 			return solveLiquid(new PegasusSolver(accuracy), liquid, start, end);
 		} catch (Throwable t) {
@@ -2183,16 +2197,21 @@ public class SQLContractSalaryCalculatorContext
 
 	protected double solveLiquid(UnivariateSolver solver, final double liquid,
 			Date start, Date end) {
-
+		
+		Double result = SQLContractSalaryCalculatorContext.this.liquids.get(liquid);
+		if ( result != null ) 
+			return result;
+		
 		final Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(
 				SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
-
-		double result = solver.solve(Byte.MAX_VALUE, new UnivariateFunction() {
-
+		
+		result = solver.solve(Byte.MAX_VALUE, new UnivariateFunction() {
+			
 			@Override
 			public double value(double solve) {
+
 				try {
 					ISalaryCalculatorContext ctx = getLiquidCalculatorContext(
 							connection, start, end, issueDate, contractCriteria,
@@ -2203,36 +2222,58 @@ public class SQLContractSalaryCalculatorContext
 					// TODO: Warning a bit tricky.
 					ExpressionContext expressionCtx = SQLContractSalaryCalculatorContext.this
 							.getExpressionContext();
+					
 					((ISQLContractSalaryCalculatorContext) ctx)
-							.setListener(irpf -> expressionCtx.setVariable(
-									ContextVariable.IRPF_PERCENT,
-									irpf.getIrpfResult().getIrpf(), start,
-									end));
+							.setListener(irpf -> 
+							{ 
+								if ( irpf != null )
+									expressionCtx.setVariable(
+										ContextVariable.IRPF_PERCENT,
+										irpf.getIrpfResult().getIrpf(), 
+										start,
+										end);
+								else 
+									expressionCtx.setVariable(
+											ContextVariable.IRPF_PERCENT,
+											0.00, 
+											start,
+											end);
+							});
 
 					ISalary salary = calculator.calculate(ctx);
 
 					return liquid - salary.getTotalLiquid();
+				
 				} catch (SalaryException e) {
 					throw new RuntimeException(e);
 				}
 			}
 
-		}, -20 * liquid, 20 * liquid, 0);
-
+		}, -0.00 * liquid, 2.00 * liquid, liquid);
+		
+		SQLContractSalaryCalculatorContext.this.liquids.put(liquid,result);
+		
 		return result;
 	}
 
 	protected double solvePayment(UnivariateSolver solver, final double payment,
 			Date start, Date end) {
+		Double result = SQLContractSalaryCalculatorContext.this.payments.get(payment);
+		if ( result != null )
+			return result;
+
 		final Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(
 				SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
+		
 
-		double result = solver.solve(Byte.MAX_VALUE, new UnivariateFunction() {
+		result = solver.solve(Byte.MAX_VALUE, new UnivariateFunction() {
 
 			@Override
 			public double value(double x) {
+				
+
 				try {
 					ISalaryCalculatorContext ctx = getPaymentCalculatorContext(
 							connection, start, end, end, contractCriteria, x);
@@ -2246,7 +2287,10 @@ public class SQLContractSalaryCalculatorContext
 				}
 			}
 
-		}, -20 * payment, 20 * payment, 0);
+		}, -0.00 * payment, 2.0 * payment, payment);
+		
+		SQLContractSalaryCalculatorContext.this.payments.put(payment,result);
+		
 		return result;
 	}
 
@@ -2273,6 +2317,16 @@ public class SQLContractSalaryCalculatorContext
 		try {
 			ctx = new SQLContractSalaryCalculatorContext(connection, startDate,
 					endDate, issueDate, criteria) {
+				
+				@Override
+				public double getIrpf() {
+					try { 
+						return  super.getIrpf();
+					} catch ( Exception e ){
+						onIrpf(null);
+						throw e;
+					}
+				}
 
 				@Override
 				public Object liquid(double liquid, Date start, Date end)
@@ -2552,7 +2606,7 @@ public class SQLContractSalaryCalculatorContext
 				.calculateIrpf(irpfCalculatorContext);
 
 		onIrpf(irpfOutcome);
-
+		
 		return irpfOutcome.getIrpfResult().getIrpf();
 	}
 

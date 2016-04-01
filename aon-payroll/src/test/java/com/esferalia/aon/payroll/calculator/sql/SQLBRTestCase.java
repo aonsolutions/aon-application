@@ -475,9 +475,13 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
 				new String[] {
-				format("NETO(2000 * %s / %s)", ContextVariable.WORKED_DAYS , ContextVariable.MONTH_DAYS )}, 
+				
+				format("NETO(2000 * %s / %s)", ContextVariable.WORKED_DAYS , ContextVariable.MONTH_DAYS ),
+				//"TRACE('NETO( %f )\r\n', P_0)"
+				
+				}, 
 				new String[] {
-				"(I=PORCENTAJE_IRPF);TRACE('IRPF=%f\r\n',I); BASE_IRPF*I/100" });
+				"BASE_IRPF > 0.00 ? BASE_IRPF * PORCENTAJE_IRPF/100 : 0.00" });
 		//@formatter:on
 
 		Date startDate = getFirstDayOfMonth(getToday());

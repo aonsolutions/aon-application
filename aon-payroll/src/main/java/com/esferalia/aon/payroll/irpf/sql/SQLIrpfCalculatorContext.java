@@ -1081,6 +1081,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	// Thread local variable containing each thread's IRPFs
 	private static final ThreadLocal<Stack<ISalary>> SALARIES = new ThreadLocal<Stack<ISalary>>();
+	
 
 	protected void nextSalary() throws SalaryException, ExpressionException,
 			SQLException {
@@ -1093,8 +1094,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		SalaryBuilder builder = new SalaryBuilder();
 		calculator.setSalaryBuilder(builder);
 
-		for (IrpfContractSalaryCalculatorContext irpfCtx : IrpfContractSalaryCalculatorContext
-				.getContexts(ctx)) {
+		Collection<IrpfContractSalaryCalculatorContext> contexts = IrpfContractSalaryCalculatorContext
+				.getContexts(ctx);
+		
+		for (IrpfContractSalaryCalculatorContext irpfCtx : contexts) {
 			irpfCtx.getExpressionContext().setVariable(ContextVariable.START,
 					irpfCtx.getStartDate(), irpfCtx.getStartDate(),
 					irpfCtx.getEndDate());
@@ -1113,9 +1116,11 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 						* salary.getIrpfBase());
 			}
 
-			nextIrpfBase += salary.getIrpfBase();
+			nextIrpfBase += salary.getIrpfBase() * contexts.size();
 			nextSocialSecurityContributons += salary
-					.getSocialSecurityContributions();
+					.getSocialSecurityContributions() * contexts.size();
+			
+			break;
 
 		}
 

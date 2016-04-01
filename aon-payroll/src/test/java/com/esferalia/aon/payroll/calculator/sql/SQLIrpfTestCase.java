@@ -86,22 +86,30 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	// ------------------------------------------------------------------------
 
 	@Test
-	public void testSimple() throws ExpressionException, SQLException {
+	public void testSimpleI() throws ExpressionException, SQLException {
 
 		Consumer<IrpfResult> asserts = result -> assertAnnualRemuneration(
 				CommonUtil.round((1500.00 + 250.00) * 1.10
-						* (12 - result.getEffectiveDate().getMonth()), 3),
+						* (12 -result.getEffectiveDate().getMonth() ), 3),
 				result.getAnnualRemuneration());
 		asserts = asserts.andThen(result -> assertEquals(
 				CommonUtil.round(result.getAnnualRemuneration() * 0.15, 3),
 				result.getDeducciblesExpenses()));
 
-		test(asserts, new String[] { "( P_1 + P_2 ) * 0.10 ",
+		test(asserts, new String[] { 
+				"( P_1 + P_2 ) * 0.10 ",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
-				"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, new String[] {
-				"BASE_CGC * 0.10", "BASE_CGP * 0.05", "BASE_ESTR * 0.10",
-				"BASE_NESTR * 0.20", "BASE_IRPF * PORCENTAJE_IRPF" });
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				}, 
+				new String[] {
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05", 
+				"BASE_ESTR * 0.10",
+				"BASE_NESTR * 0.20", 
+				"BASE_IRPF * PORCENTAJE_IRPF" 
+				});
 	}
+
 
 	@Test
 	public void testShortWithExtras() throws ExpressionException, SQLException, SalaryException {
@@ -176,12 +184,19 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				CommonUtil.round(result.getAnnualRemuneration() * 0.15, 3),
 				result.getDeducciblesExpenses()));
 
-		test(asserts, new String[] { "BRUTO(2500.00) ",
+		test(asserts, new String[] { 
+				"BRUTO(2500.00) ",
 				"( P_2 + P_3 ) * 0.10 ",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
-				"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, new String[] {
-				"BASE_CGC * 0.10", "BASE_CGP * 0.05", "BASE_ESTR * 0.10",
-				"BASE_NESTR * 0.20", "BASE_IRPF * PORCENTAJE_IRPF" });
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES", 
+				"TRACE('BRUTO %f\r\n', P_0); 0.00"
+				}, 
+				new String[] {
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05", 
+				"BASE_ESTR * 0.10",
+				"BASE_NESTR * 0.20", 
+				"BASE_IRPF * PORCENTAJE_IRPF" });
 
 	}
 
@@ -199,12 +214,22 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				CommonUtil.round(result.getAnnualRemuneration() * 0.15, 3),
 				result.getDeducciblesExpenses(),
 				result.getDeducciblesExpenses() * 0.0001));
-
-		test(asserts, new String[] { "NETO(2500.00) ", "( P_2 + P_3 ) * 0.10 ",
+		//@formatter:off
+		test(asserts, new String[] 
+				{ "NETO(2500.00) ", 
+				"( P_2 + P_3 ) * 0.10 ",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
-				"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, new String[] {
-				"BASE_CGC * 0.10", "BASE_CGP * 0.05", "BASE_ESTR * 0.10",
-				"BASE_NESTR * 0.20", "BASE_IRPF * PORCENTAJE_IRPF/100" });
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES",
+				//"TRACE('NETO %f\r\n', P_0); 0.00"
+				}
+				, new String[] {
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05", 
+				"BASE_ESTR * 0.10",
+				"BASE_NESTR * 0.20", 
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				});
+		//@formatter:on
 
 	}
 
@@ -311,9 +336,13 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		try {
 			test(asserts,
 					new String[] { "NETO(1000.00 * DIAS_TRABAJADOS / DIAS_MES )", },
-					new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
-							"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
-							"BASE_IRPF * PORCENTAJE_IRPF/100" }, new Extra[] {
+					new String[] { 
+							"BASE_CGC * 0.10", 
+							"BASE_CGP * 0.05",
+							"BASE_ESTR * 0.10", 
+							"BASE_NESTR * 0.20",
+							"BASE_IRPF * PORCENTAJE_IRPF/100" 
+							}, new Extra[] {
 							new Extra() {
 								{
 									this.expression = "P_0";
@@ -420,8 +449,25 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		test(c, payments, deductions, new Extra[] {});
 	}
 
-	private void test(Consumer<IrpfResult> c, String[] payments,
-			String[] deductions, Extra extras[]) throws ExpressionException,
+	private void test(Consumer<IrpfResult> c, 
+			String[] payments,
+			String[] deductions, 
+			Extra extras[]) throws ExpressionException,
+			SQLException {
+		test(c, 
+				getFirstDayOfYear(getToday()),
+				null,
+				payments, 
+				deductions, 
+				extras);
+	}
+	
+	private void test(Consumer<IrpfResult> c, 
+			Date contractStart,
+			Date contractEnd,
+			String[] payments,
+			String[] deductions, 
+			Extra extras[]) throws ExpressionException,
 			SQLException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -430,7 +476,12 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		if (extras != null && extras.length > 0)
 			category = newAgreement(aonContext, extras);
 
-		ContractRecord contract = newContract(aonContext, payments, deductions,
+		ContractRecord contract = newContract(aonContext, 
+				contractStart, 
+				contractEnd, 
+				Collections.emptyMap(), 
+				payments, 
+				deductions,
 				category);
 
 		Calendar calendar = Calendar.getInstance();

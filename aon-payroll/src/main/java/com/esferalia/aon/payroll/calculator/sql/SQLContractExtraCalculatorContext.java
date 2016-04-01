@@ -101,7 +101,6 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 					throw e;
 				}
 				catch (ExpressionException e) {
-					e.printStackTrace();
 					System.err.println(String.format("ERROR [%s]: %s", p.getName(), e.getLocalizedMessage()));
 				}
 			}
