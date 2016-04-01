@@ -1,8 +1,12 @@
 package com.esferalia.aon.gwt.payroll.sql;
 
+import static com.esferalia.aon.watson.util.AonDateUtils.get;
+import static java.util.Calendar.MONTH;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Calendar;
 
 import org.junit.Test;
 
@@ -18,6 +22,7 @@ import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.ILi
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLIrpfTestCase;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 	
@@ -34,6 +39,8 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 
 		Employee employee = new Employee();
 		employee.setId(contract.getId());
+		
+		int months  = 12 - get(startDate,Calendar.MONTH);
 
 		SalaryDraft draft = new SalaryDraft();
 		draft.setEmployee(employee);
@@ -46,7 +53,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 			com.esferalia.aon.gwt.payroll.shared.Payment draftPayment = new com.esferalia.aon.gwt.payroll.shared.Payment();
 			draftPayment.setStartDate(startDate);
 			draftPayment.setEndDate(endDate);
-			draftPayment.setExpression("66666/6");
+			draftPayment.setExpression("66666.00/(6.00 * " + months + ")");
 			draftPayment.setIrpfExpression("_P");
 			draftPayment.setQuoteExpression("_P");
 			draftPayment.setSalaryType(Salary.Type.SALARY);
