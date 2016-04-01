@@ -14,12 +14,12 @@
 				</f:facet>
 				<aon:outputText value="#{to.name}" rendered="#{formList}" />
 				<aon:inputText id="Tag_name" required="true"
-					rendered="#{formEdit}" size="64"
-					value="#{controller.to.name}" maxlength="64" />
+					rendered="#{formEdit}" size="#{controller.to.packing ? '10' : '64'}"
+					value="#{controller.to.name}" maxlength="#{controller.to.packing ? '10' : '64'}" />
 				<f:facet name="footer">
 					<aon:inputText id="Tag_name-New" required="true"
-						rendered="#{formNew}" size="64"
-						value="#{controller.to.name}" maxlength="64" />
+						rendered="#{formNew}" size="#{controller.to.packing ? '10' : '64'}"
+						value="#{controller.to.name}" maxlength="#{controller.to.packing ? '10' : '64'}" />
 				</f:facet>
 			</aon:column>
 		</ui:define>

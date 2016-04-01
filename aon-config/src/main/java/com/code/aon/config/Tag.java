@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.annotations.Heritable;
+import com.code.aon.config.enumeration.TagType;
 import com.esferalia.aon.entity.master.TagDB;
 
 @Entity
@@ -20,6 +21,11 @@ public class Tag extends TagDB {
 	@Transient
 	public String getShortName() {
 		return (getName().length() > 16) ? StringUtils.substring(getName(), 0, 16) : getName();
+	}
+
+	@Transient
+	public boolean isPacking() {
+		return getType() == TagType.PACKING;
 	}
 
 }
