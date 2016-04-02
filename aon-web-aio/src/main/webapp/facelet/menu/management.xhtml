@@ -78,18 +78,15 @@
 											action="increaseItem-management" 
 											value="#{bundle.aon_increases}" />
 									</aon:div>
-									<aon:if test="#{domainSwitcher.betaDomain}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="gwt_invoiceStats"
-												action="gwt_stat"
-												title="Estadisticas">
-												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
-													style="margin-left: 5px; padding-left: 20px;" 
-													value="Estadisticas" />												
-											</aon:commandLink>
-										</aon:div>
-									</aon:if>							
-
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_invoiceStats"
+											action="gwt_stat"
+											title="Estadisticas">
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+												style="margin-left: 5px; padding-left: 20px;" 
+												value="Estadisticas" />												
+										</aon:commandLink>
+									</aon:div>
 								</aon:div>
 								
 							</aon:panelGrid>
