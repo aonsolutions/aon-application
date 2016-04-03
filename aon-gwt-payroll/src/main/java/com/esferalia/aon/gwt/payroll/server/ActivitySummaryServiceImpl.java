@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jooq.Condition;
 import org.jooq.Record4;
 import org.jooq.Record5;
 import org.jooq.Record6;
@@ -46,28 +47,32 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public List<ActivitySummaryObject> getActivitySummary(Date startDate, Date endDate) {
+	public List<ActivitySummaryObject> getActivitySummary(Integer domainId,
+			Date startDate, Date endDate, Boolean onlyStarts, Boolean onlyEnds) {
 		
 		initFacesContext();
-		
+
 		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
 		String domainName = domainSwitcher.getDomainNameURL();
-		Integer domainId = domainSwitcher.getDomainId();
 		
 		Map<Integer, ActivitySummaryObject> summaryMap = null;
 		Map<Integer, ActivitySummaryObject> salaryMap = null;
 		Map<Integer, ActivitySummaryObject> itMap = null;
-		if(domainSwitcher.isParentDomain()){
+		if(domainSwitcher.isParentDomain() && domainId==null){
+			domainId = domainSwitcher.getDomainId();
 			try {
 				Integer[] childDomains = getChildDomainIDs(domainId);
-				summaryMap = getSummaryEnterprise(childDomains, domainId, domainName, startDate, endDate);
+				summaryMap = getSummaryEnterprise(childDomains, domainId, domainName, startDate, endDate, onlyStarts, onlyEnds);
 				salaryMap = getSummaryEnterpriseSalary(childDomains, domainId, domainName, startDate, endDate);
 				itMap = getSummaryEnterpriseIT(childDomains, domainId, domainName, startDate, endDate);
 			} catch (ManagerBeanException e) {
 				throw new RuntimeException(e.getMessage());
 			}
 		} else {
-			summaryMap = getSummaryEmployee(domainId, domainName, startDate, endDate);
+			if(domainId==null){
+				domainId = domainSwitcher.getDomainId();
+			}
+			summaryMap = getSummaryEmployee(domainId, domainName, startDate, endDate, onlyStarts, onlyEnds);
 			salaryMap = getSummaryEmployeeSalary(domainId, domainName, startDate, endDate);
 			itMap = getSummaryEmployeeIT(domainId, domainName, startDate, endDate);
 		}
@@ -109,9 +114,20 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 				});
 	}
 	
-	private Map<Integer, ActivitySummaryObject> getSummaryEmployee(Integer domainId, String domainName, Date startDate, Date endDate) {
+	private Map<Integer, ActivitySummaryObject> getSummaryEmployee(Integer domainId, String domainName, Date startDate, Date endDate, Boolean onlyStarts, Boolean onlyEnds) {
 		AONContext ctx = null;
-		try {
+		try {			
+			Condition startCond = onlyStarts?
+					CONTRACT.START_DATE.ge(new java.sql.Date(startDate.getTime())).and(CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime())))
+					:
+					CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime()));
+			Condition endCond = onlyEnds?
+					CONTRACT.END_DATE.isNotNull()
+						.and(CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime()))
+								.and(CONTRACT.END_DATE.le(new java.sql.Date(endDate.getTime()))))
+					:
+					CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime())).or(CONTRACT.END_DATE.isNull());
+			
 			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
 			Result<Record6<String, String, String, java.sql.Date, java.sql.Date, Integer>> result = ctx.getDslContext()
 					.select(PERSON.NAME, 
@@ -124,8 +140,8 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 					.from(CONTRACT.leftOuterJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 							.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(PERSON.REGISTRY)))
 					.where(CONTRACT.DOMAIN.eq(domainId))
-					.and(CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime())))
-					.and((CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime())).or(CONTRACT.END_DATE.isNull())))
+					.and(startCond)
+					.and(endCond)
 					.groupBy(CONTRACT.ID)
 					.orderBy(PERSON.FIRST_SURNAME.asc(), 
 							PERSON.SECOND_SURNAME.asc(), 
@@ -141,6 +157,7 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 				obj.setSecondSurname(record.value3());
 				obj.setStartDate(record.value4()!=null?new Date(record.value4().getTime()):null);
 				obj.setEndDate(record.value5()!=null?new Date(record.value5().getTime()):null);
+				obj.setId(record.value6());
 				map.put(record.value6(), obj);
 			});
 			return map;
@@ -151,9 +168,20 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 		}
 		
 	}
-	private Map<Integer, ActivitySummaryObject> getSummaryEnterprise(Integer[] childDomainIds, Integer domainId, String domainName, Date startDate, Date endDate) {
+	private Map<Integer, ActivitySummaryObject> getSummaryEnterprise(Integer[] childDomainIds, Integer domainId, String domainName, Date startDate, Date endDate, Boolean onlyStarts, Boolean onlyEnds) {
 		AONContext ctx = null;
-		try {
+		try {			
+			Condition startCond = onlyStarts?
+					CONTRACT.START_DATE.ge(new java.sql.Date(startDate.getTime())).and(CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime())))
+					:
+					CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime()));
+			Condition endCond = onlyEnds?
+					CONTRACT.END_DATE.isNotNull()
+						.and(CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime()))
+								.and(CONTRACT.END_DATE.le(new java.sql.Date(endDate.getTime()))))
+					:
+					CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime())).or(CONTRACT.END_DATE.isNull());
+			
 			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
 			Result<Record4<Integer, String, BigDecimal, BigDecimal>> result = ctx.getDslContext()
 					.select(DOMAIN.ID, 
@@ -165,8 +193,8 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 							.leftOuterJoin(CONTRACT).on(CONTRACT.DOMAIN.eq(DOMAIN.ID)))
 					.where(DOMAIN.ID.in(childDomainIds))
 					.and(DOMAIN.ACTIVE.eq((byte)1))
-					.and(CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime())))
-					.and((CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime())).or(CONTRACT.END_DATE.isNull())))
+					.and(startCond)
+					.and(endCond)
 					.groupBy(DOMAIN.ID)
 					.orderBy(DOMAIN.ID.asc(),
 							CONTRACT.START_DATE.desc())
@@ -175,6 +203,7 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 			Map<Integer, ActivitySummaryObject> map = new HashMap<>();
 			result.stream().forEach(record ->{
 				ActivitySummaryObject obj = new ActivitySummaryObject();
+				obj.setId(record.value1());
 				obj.setName(record.value2());
 				obj.setStartCount(record.value3()!=null?record.value3().intValue():0);
 				obj.setEndCount(record.value4()!=null?record.value4().intValue():0);

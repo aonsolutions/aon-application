@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 public class ActivitySummaryObject implements Serializable {
@@ -11,6 +12,7 @@ public class ActivitySummaryObject implements Serializable {
 	 */
 	private static final long serialVersionUID = 8329371157680338499L;
 
+	private Integer id;
 	private String name;
 	private String firstSurname;
 	private String secondSurname;
@@ -30,6 +32,14 @@ public class ActivitySummaryObject implements Serializable {
 	private Integer itMaternityCount;
 	private Integer itOtherCount;
 	
+	private List<ActivitySummaryObject> childs;
+	
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	public String getName() {
 		return name;
 	}
@@ -138,6 +148,12 @@ public class ActivitySummaryObject implements Serializable {
 	}
 	public void setItOtherCount(Integer itOtherCount) {
 		this.itOtherCount = itOtherCount;
+	}
+	public List<ActivitySummaryObject> getChilds() {
+		return childs;
+	}
+	public void setChilds(List<ActivitySummaryObject> childs) {
+		this.childs = childs;
 	}
 	
 	

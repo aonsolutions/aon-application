@@ -10,8 +10,9 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("activity_summary")
 public interface ActivitySummaryService extends RemoteService {
-	
-	List<ActivitySummaryObject> getActivitySummary(Date startDate, Date endDate);
+
+	List<ActivitySummaryObject> getActivitySummary(Integer domainId,
+			Date startDate, Date endDate, Boolean onlyStarts, Boolean onlyEnds);
 	
 	Integer getParentDomain();
 	

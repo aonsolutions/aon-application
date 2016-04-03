@@ -2,41 +2,56 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.DateCell;
+import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.builder.shared.TableCellBuilder;
+import com.google.gwt.dom.builder.shared.TableRowBuilder;
+import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.text.shared.AbstractSafeHtmlRenderer;
+import com.google.gwt.text.shared.SafeHtmlRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.AbstractCellTable;
+import com.google.gwt.user.cellview.client.AbstractCellTableBuilder;
+import com.google.gwt.user.cellview.client.AbstractHeaderOrFooterBuilder;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.user.cellview.client.ColumnSortList;
+import com.google.gwt.user.cellview.client.ColumnSortList.ColumnSortInfo;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.Header;
-import com.google.gwt.user.cellview.client.SafeHtmlHeader;
+import com.google.gwt.user.cellview.client.TextHeader;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 
@@ -62,12 +77,33 @@ public class ActivitySummary extends MainEntryPoint {
 	
 	@UiField(provided = true) DateBoxEx startDate;
 	@UiField(provided = true) DateBoxEx endDate;
+	@UiField(provided = true) CheckBox onlyStartContracts;
+	@UiField(provided = true) CheckBox onlyEndContracts;
+	
 	@UiField(provided = true) Button searchButton;
 	@UiField(provided = true) DataGrid<ActivitySummaryObject> dataGrid;
 	
 	
 	private List<ActivitySummaryObject> summaryList;
 	private ListDataProvider<ActivitySummaryObject> dataProvider;
+	private final Set<Integer> showingContracts = new HashSet<Integer>();
+	private List<ActivitySummaryObject> contractSummaryList;
+	private int selectedIndex;
+	
+	private Column<ActivitySummaryObject, String> selectColumn;
+	private Column<ActivitySummaryObject, String> nameColumn;
+	private Column<ActivitySummaryObject, String> startCountColumn;
+	private Column<ActivitySummaryObject, String> endCountColumn;
+	
+	private Column<ActivitySummaryObject, String> salaryCountColumn;
+	private Column<ActivitySummaryObject, String> salaryExtraCountColumn;
+	private Column<ActivitySummaryObject, String> salarySettleCountColumn;
+	private Column<ActivitySummaryObject, String> salaryOtherCountColumn;
+
+	private Column<ActivitySummaryObject, String> itCommonDiseaseCountColumn;
+	private Column<ActivitySummaryObject, String> itOccupationalDiseaseCountColumn;
+	private Column<ActivitySummaryObject, String> itMaternityCountColumn;
+	private Column<ActivitySummaryObject, String> itOtherCountColumn;
 
 	@Override
 	public void onModuleLoad() {
@@ -81,8 +117,14 @@ public class ActivitySummary extends MainEntryPoint {
 
 		startDate = new DateBoxEx();
 		endDate = new DateBoxEx();
+		onlyStartContracts = new CheckBox();
+		onlyEndContracts = new CheckBox();
 		searchButton = new Button("Buscar");
 		dataGrid = new DataGrid<ActivitySummaryObject>(Integer.MAX_VALUE, resources); 
+		
+		dataGrid.setHeaderBuilder(new CustomHeaderBuilder());
+		dataGrid.setTableBuilder(new CustomTableBuilder());
+		dataGrid.setFooterBuilder(new CustomFooterBuilder());
 		
 		Widget ui = binder.createAndBindUi(this);
 		
@@ -113,6 +155,12 @@ public class ActivitySummary extends MainEntryPoint {
 	}
 	
 	private void initSearchBox(){
+		selectedIndex=-1;
+		showingContracts.clear();
+		if(contractSummaryList != null){
+			contractSummaryList.clear();
+		}
+		
 		Date start = new Date();
 		CalendarUtil.setToFirstDayOfMonth(start);
 		startDate.setValue(start);
@@ -122,6 +170,9 @@ public class ActivitySummary extends MainEntryPoint {
 		CalendarUtil.addMonthsToDate(end, 1);
 		CalendarUtil.addDaysToDate(end, -1);
 		endDate.setValue(end);
+		
+		onlyStartContracts.setValue(false);
+		onlyEndContracts.setValue(false);
 		
 		searchButton.addDomHandler(new ClickHandler() {
 			@Override
@@ -136,18 +187,23 @@ public class ActivitySummary extends MainEntryPoint {
 		summaryList = new LinkedList<>();
 		dataProvider = new ListDataProvider<>();
 		
-		impl.getActivitySummary(startDate.getValue(), endDate.getValue(), new AsyncCallback<List<ActivitySummaryObject>>() {
-			@Override
-			public void onSuccess(List<ActivitySummaryObject> result) {
-				summaryList = result;
-				dataProvider = new ListDataProvider<ActivitySummaryObject>(result);
-				dataProvider.addDataDisplay(dataGrid);
-				dataGrid.redraw();
-				dataGrid.redrawFooters();
-			}
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
+		impl.getActivitySummary(null, startDate.getValue(), endDate.getValue(),
+				onlyStartContracts.getValue(), onlyEndContracts.getValue(),
+				new AsyncCallback<List<ActivitySummaryObject>>() {
+					@Override
+					public void onSuccess(List<ActivitySummaryObject> result) {
+						summaryList = result;
+						dataProvider = new ListDataProvider<ActivitySummaryObject>(
+								result);
+						dataProvider.addDataDisplay(dataGrid);
+						dataGrid.redraw();
+						dataGrid.redrawFooters();
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+				});
 		
 	}
 	
@@ -157,7 +213,7 @@ public class ActivitySummary extends MainEntryPoint {
 		dataGrid.setSelectionModel(selectionModel);
 		dataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		dataGrid.setAutoHeaderRefreshDisabled(true);
-		dataGrid.setEmptyTableWidget(new Label("No hay datos."));
+		dataGrid.setEmptyTableWidget(new Label("No se encontraron datos."));
 		dataProvider = new ListDataProvider<ActivitySummaryObject>(getSummaryList());
 		dataProvider.addDataDisplay(dataGrid);
 		ListHandler<ActivitySummaryObject> sortHandler = getSortHandler();
@@ -181,13 +237,73 @@ public class ActivitySummary extends MainEntryPoint {
 			}
 		};
 	}
-
+	
+	private void redrawSelectedRow(Integer id){
+		impl.getActivitySummary(id, startDate.getValue(), endDate.getValue(),
+				onlyStartContracts.getValue(), onlyEndContracts.getValue(),
+				new AsyncCallback<List<ActivitySummaryObject>>() {
+			@Override
+			public void onSuccess(List<ActivitySummaryObject> result) {
+				contractSummaryList = result;						
+				dataGrid.redrawRow(selectedIndex);
+			}
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+	
 	private void initTableColumns(boolean isParent, ListHandler<ActivitySummaryObject> sortHandler) {
+		
+		/**
+		 * Selected Column
+		 */
+		if(isParent) {
+			SafeHtmlRenderer<String> anchorRenderer = new AbstractSafeHtmlRenderer<String>() {
+				@Override
+				public SafeHtml render(String object) {
+					SafeHtmlBuilder sb = new SafeHtmlBuilder();
+					sb.appendHtmlConstant("(<a href=\"javascript:;\">")
+						.appendEscaped(object).appendHtmlConstant("</a>)");
+					return sb.toSafeHtml();
+				}
+			};
+			selectColumn = new Column<ActivitySummaryObject, String>(
+					new ClickableTextCell(anchorRenderer)) {
+				@Override
+				public String getValue(ActivitySummaryObject object) {
+					return showingContracts.contains(object.getId()) ? " - " : " + ";
+				}
+			};
+			selectColumn.setFieldUpdater(new FieldUpdater<ActivitySummaryObject, String>() {
+				@Override
+				public void update(int index, ActivitySummaryObject object, String value) {
+					selectedIndex = index;
+					if (showingContracts.contains(object.getId())) {
+						showingContracts.remove(object.getId());
+					} else {
+						showingContracts.add(object.getId());
+					}
+//					dataGrid.redrawRow(index);
+					
+					redrawSelectedRow(object.getId());
+				}
+			});
+		} else {
+			selectColumn = new Column<ActivitySummaryObject, String>(
+					new TextCell()) {
+				@Override
+				public String getValue(ActivitySummaryObject object) {
+					return "";
+				}
+			};
+		}
+		dataGrid.addColumn(selectColumn);
+		dataGrid.setColumnWidth(selectColumn, 5, Unit.EM);
 		
 		/**
 		 * Name Column
 		 */
-		Column<ActivitySummaryObject, String> nameColumn = new Column<ActivitySummaryObject, String>(
+		nameColumn = new Column<ActivitySummaryObject, String>(
 				new TextCell()) {
 			@Override
 			public void render(Context context, ActivitySummaryObject object, SafeHtmlBuilder sb) {
@@ -206,464 +322,550 @@ public class ActivitySummary extends MainEntryPoint {
 						return o1.getFullname().compareTo(o2.getFullname());
 					}
 				});
-		SafeHtmlHeader nameHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(isParent?"Empresa":"Trabajador"));
-		nameHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
-		Header<String> nameFooter = new Header<String>(new TextCell()) {
-			@Override
-			public String getValue() {
-				return String.valueOf(getTotalCountEmployee());
-			}
-		};
-		dataGrid.addColumn(nameColumn, nameHeader, nameFooter);
+		dataGrid.addColumn(nameColumn);
 		dataGrid.setColumnWidth(nameColumn, 80, Unit.PCT);
 		dataGrid.getColumnSortList().push(nameColumn);
 		
-		if(!isParent) {
-			/**
-			 * Start Column
-			 */
-			Column<ActivitySummaryObject, Date> startDateColumn = new Column<ActivitySummaryObject, Date>(
-					new DateCell(DateTimeFormat.getFormat(DATE_FORMAT))) {
-				@Override
-				public Date getValue(ActivitySummaryObject object) {
-					return object.getStartDate();
-				}
-			};
-			startDateColumn.setSortable(true);
-			sortHandler.setComparator(startDateColumn,
-					new Comparator<ActivitySummaryObject>() {
-				@Override
-				public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
-					return o1.getStartDate().compareTo(o2.getStartDate());
-				}
-			});
-			SafeHtmlHeader startDateHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Inicio contr."));
-			startDateHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
-			dataGrid.addColumn(startDateColumn, startDateHeader, null);
-			dataGrid.setColumnWidth(startDateColumn, 15, Unit.EM);
-			
-			/**
-			 * End Column
-			 */
-			Column<ActivitySummaryObject, Date> endDateColumn = new Column<ActivitySummaryObject, Date>(
-					new DateCell(DateTimeFormat.getFormat(DATE_FORMAT))) {
-				@Override
-				public Date getValue(ActivitySummaryObject object) {
-					return object.getEndDate();
-				}
-			};
-			endDateColumn.setSortable(true);
-			sortHandler.setComparator(endDateColumn,
-					new Comparator<ActivitySummaryObject>() {
-				@Override
-				public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
-					return o1.getEndDate().compareTo(o2.getEndDate());
-				}
-			});
-			SafeHtmlHeader endDateHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Fin contr."));
-			endDateHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
-			dataGrid.addColumn(endDateColumn, endDateHeader, null);
-			dataGrid.setColumnWidth(endDateColumn, 15, Unit.EM);
-		
-		} else {
-			
-			/**
-			 * Start Column
-			 */
-			Column<ActivitySummaryObject, String> startDateColumn = new Column<ActivitySummaryObject, String>(
+		/**
+		 * Start Column
+		 */
+		if(isParent) {
+			startCountColumn = new Column<ActivitySummaryObject, String>(
 					new TextCell()) {
 				@Override
 				public String getValue(ActivitySummaryObject object) {
 					return String.valueOf(object.getStartCount());
 				}
 			};
-			startDateColumn.setSortable(true);
-			sortHandler.setComparator(startDateColumn,
-					new Comparator<ActivitySummaryObject>() {
+		} else {
+			startCountColumn = new Column<ActivitySummaryObject, String>(
+					new TextCell()) {
 				@Override
-				public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
-					return o1.getStartDate().compareTo(o2.getStartDate());
-				}
-			});
-			SafeHtmlHeader startHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Inicio contr."));
-			startHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
-			Header<String> startFooter = new Header<String>(new TextCell()) {
-				@Override
-				public String getValue() {
-					return String.valueOf(getTotalCountStartEmployee());
+				public String getValue(ActivitySummaryObject object) {
+					if(object!=null && object.getStartDate()!=null){
+						return DateTimeFormat.getFormat("dd/MM/yyyy").format(object.getStartDate());
+					}
+					return "-";
 				}
 			};
-			dataGrid.addColumn(startDateColumn, startHeader, startFooter);
-			dataGrid.setColumnWidth(startDateColumn, 15, Unit.EM);
-			
-			/**
-			 * End Column
-			 */
-			Column<ActivitySummaryObject, String> endDateColumn = new Column<ActivitySummaryObject, String>(
+		}
+		dataGrid.addColumn(startCountColumn);
+		dataGrid.setColumnWidth(startCountColumn, 15, Unit.EM);
+		
+		/**
+		 * End Column
+		 */
+		if(isParent) {
+			endCountColumn = new Column<ActivitySummaryObject, String>(
 					new TextCell()) {
 				@Override
 				public String getValue(ActivitySummaryObject object) {
 					return String.valueOf(object.getEndCount());
 				}
 			};
-			endDateColumn.setSortable(true);
-			sortHandler.setComparator(endDateColumn,
-					new Comparator<ActivitySummaryObject>() {
+		} else {
+			endCountColumn = new Column<ActivitySummaryObject, String>(
+					new TextCell()) {
 				@Override
-				public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
-					return o1.getEndDate().compareTo(o2.getEndDate());
-				}
-			});
-			SafeHtmlHeader endHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Fin contr."));
-			endHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
-			Header<String> endFooter = new Header<String>(new TextCell()) {
-				@Override
-				public String getValue() {
-					return String.valueOf(getTotalCountEndEmployee());
+				public String getValue(ActivitySummaryObject object) {
+					if(object!=null && object.getEndDate()!=null){
+						return DateTimeFormat.getFormat("dd/MM/yyyy").format(object.getEndDate());
+					}
+					return "-";
 				}
 			};
-			dataGrid.addColumn(endDateColumn, endHeader, endFooter);
-			dataGrid.setColumnWidth(endDateColumn, 15, Unit.EM);
 		}
+		dataGrid.addColumn(endCountColumn);
+		dataGrid.setColumnWidth(endCountColumn, 15, Unit.EM);
 		
 		/**
 		 * SalaryCount Column
 		 */
-		Column<ActivitySummaryObject, String> salaryCountColumn = new Column<ActivitySummaryObject, String>(
+		salaryCountColumn = new Column<ActivitySummaryObject, String>(
 				new TextCell()) {
 			@Override
 			public String getValue(ActivitySummaryObject object) {
 				return object.getSalaryCount()!=null?object.getSalaryCount().toString():"0";
 			}
 		};
-		salaryCountColumn.setSortable(true);
-		sortHandler.setComparator(salaryCountColumn,
-				new Comparator<ActivitySummaryObject>() {
-			@Override
-			public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
-				return o1.getSalaryCount().compareTo(o2.getSalaryCount());
-			}
-		});
-		SafeHtmlHeader salaryCountHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Nom."));
-		salaryCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
-		Header<String> salaryCountFooter = new Header<String>(new TextCell()) {
-			@Override
-			public String getValue() {
-				return String.valueOf(getTotalCountSalary());
-			}
-		};
-		dataGrid.addColumn(salaryCountColumn, salaryCountHeader, salaryCountFooter);
+		dataGrid.addColumn(salaryCountColumn);
 		dataGrid.setColumnWidth(salaryCountColumn, 7, Unit.EM);
 		
 		/**
 		 * SalaryExtraCount Column
 		 */
-		Column<ActivitySummaryObject, String> salaryExtraCountColumn = new Column<ActivitySummaryObject, String>(
+		salaryExtraCountColumn = new Column<ActivitySummaryObject, String>(
 				new TextCell()) {
 			@Override
 			public String getValue(ActivitySummaryObject object) {
 				return object.getSalaryExtraCount()!=null?object.getSalaryExtraCount().toString():"0";
 			}
 		};
-		salaryExtraCountColumn.setSortable(true);
-		sortHandler.setComparator(salaryExtraCountColumn,
-				new Comparator<ActivitySummaryObject>() {
-			@Override
-			public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
-				return o1.getSalaryExtraCount().compareTo(o2.getSalaryExtraCount());
-			}
-		});
-		SafeHtmlHeader salaryExtraCountHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Ext."));
-		salaryExtraCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
-		Header<String> salaryExtraCountFooter = new Header<String>(new TextCell()) {
-			@Override
-			public String getValue() {
-				return String.valueOf(getTotalCountExtraSalary());
-			}
-		};
-		dataGrid.addColumn(salaryExtraCountColumn, salaryExtraCountHeader, salaryExtraCountFooter);
+		dataGrid.addColumn(salaryExtraCountColumn);
 		dataGrid.setColumnWidth(salaryExtraCountColumn, 7, Unit.EM);
 		
-		/**
+		/** 
 		 * SalarySettleCount Column
 		 */
-		Column<ActivitySummaryObject, String> salarySettleCountColumn = new Column<ActivitySummaryObject, String>(
+		salarySettleCountColumn = new Column<ActivitySummaryObject, String>(
 				new TextCell()) {
 			@Override
 			public String getValue(ActivitySummaryObject object) {
 				return object.getSalarySettleCount()!=null?object.getSalarySettleCount().toString():"0";
 			}
 		};
-		salarySettleCountColumn.setSortable(true);
-		sortHandler.setComparator(salarySettleCountColumn,
-				new Comparator<ActivitySummaryObject>() {
-			@Override
-			public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
-				return o1.getSalarySettleCount().compareTo(o2.getSalarySettleCount());
-			}
-		});
-		SafeHtmlHeader salarySettleCountHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Fqt."));
-		salarySettleCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
-		Header<String> salarySettleCountFooter = new Header<String>(new TextCell()) {
-			@Override
-			public String getValue() {
-				return String.valueOf(getTotalCountSettleSalary());
-			}
-		};
-		dataGrid.addColumn(salarySettleCountColumn, salarySettleCountHeader, salarySettleCountFooter);
+		dataGrid.addColumn(salarySettleCountColumn);
 		dataGrid.setColumnWidth(salarySettleCountColumn, 7, Unit.EM);
 		
 		/**
 		 * SalaryOtherCount Column
 		 */
-		Column<ActivitySummaryObject, String> salaryOtherCountColumn = new Column<ActivitySummaryObject, String>(
+		salaryOtherCountColumn = new Column<ActivitySummaryObject, String>(
 				new TextCell()) {
 			@Override
 			public String getValue(ActivitySummaryObject object) {
 				return object.getSalaryOtherCount()!=null?object.getSalaryOtherCount().toString():"0";
 			}
 		};
-		salaryOtherCountColumn.setSortable(true);
-		sortHandler.setComparator(salaryOtherCountColumn,
-				new Comparator<ActivitySummaryObject>() {
-			@Override
-			public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
-				return o1.getSalaryOtherCount().compareTo(o2.getSalaryOtherCount());
-			}
-		});
-		SafeHtmlHeader salaryOtherCountHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("Otros"));
-		salaryOtherCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
-		Header<String> salaryOtherCountFooter = new Header<String>(new TextCell()) {
-			@Override
-			public String getValue() {
-				return String.valueOf(getTotalCountOtherSalary());
-			}
-		};
-		dataGrid.addColumn(salaryOtherCountColumn, salaryOtherCountHeader, salaryOtherCountFooter);
+		dataGrid.addColumn(salaryOtherCountColumn);
 		dataGrid.setColumnWidth(salaryOtherCountColumn, 7, Unit.EM);
 		
-		/**
-		 * IT Common Disease Column
+		/** 
+		 * IT Common Disease Column 
 		 */
-		Column<ActivitySummaryObject, String> itCommonDiseaseCountColumn = new Column<ActivitySummaryObject, String>(
+		itCommonDiseaseCountColumn = new Column<ActivitySummaryObject, String>(
 				new TextCell()) {
 			@Override
 			public String getValue(ActivitySummaryObject object) {
 				return object.getItCommonDiseaseCount()!=null?object.getItCommonDiseaseCount().toString():"0";
 			}
 		};
-		itCommonDiseaseCountColumn.setSortable(true);
-		sortHandler.setComparator(itCommonDiseaseCountColumn,
-				new Comparator<ActivitySummaryObject>() {
-			@Override
-			public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
-				return o1.getItCommonDiseaseCount().compareTo(o2.getItCommonDiseaseCount());
-			}
-		});
-		SafeHtmlHeader itCommonDiseaseCountHeader = new SafeHtmlHeader(
-				SafeHtmlUtils.fromTrustedString("<span title=\"Enfermedad comun - Accidente no laboral\">IT EC/AN</span>"));
-		itCommonDiseaseCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
-		Header<String> itCommonDiseaseCountFooter = new Header<String>(new TextCell()) {
-			@Override
-			public String getValue() {
-				return String.valueOf(getTotalCountITCommonDiseaseSalary());
-			}
-		};
-		dataGrid.addColumn(itCommonDiseaseCountColumn, itCommonDiseaseCountHeader, itCommonDiseaseCountFooter);
+		dataGrid.addColumn(itCommonDiseaseCountColumn);
 		dataGrid.setColumnWidth(itCommonDiseaseCountColumn, 7, Unit.EM);
 		
 		/**
 		 * IT Occupational Disease Column
 		 */
-		Column<ActivitySummaryObject, String> itOccupationalDiseaseCountColumn = new Column<ActivitySummaryObject, String>(
+		itOccupationalDiseaseCountColumn = new Column<ActivitySummaryObject, String>(
 				new TextCell()) {
 			@Override
 			public String getValue(ActivitySummaryObject object) {
 				return object.getItOccupationalDiseaseCount()!=null?object.getItOccupationalDiseaseCount().toString():"0";
 			}
 		};
-		itOccupationalDiseaseCountColumn.setSortable(true);
-		sortHandler.setComparator(itOccupationalDiseaseCountColumn,
-				new Comparator<ActivitySummaryObject>() {
-			@Override
-			public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
-				return o1.getItOccupationalDiseaseCount().compareTo(o2.getItOccupationalDiseaseCount());
-			}
-		});
-		SafeHtmlHeader itOccupationalDiseaseCountHeader = new SafeHtmlHeader(
-				SafeHtmlUtils.fromTrustedString("<span title=\"Accidente de trabajo - Enfermedad profesional\">IT AT/EP</span>"));
-		itOccupationalDiseaseCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
-		Header<String> itOccupationalDiseaseCountFooter = new Header<String>(new TextCell()) {
-			@Override
-			public String getValue() {
-				return String.valueOf(getTotalCountITOccupationalDiseaseSalary());
-			}
-		};
-		dataGrid.addColumn(itOccupationalDiseaseCountColumn, itOccupationalDiseaseCountHeader, itOccupationalDiseaseCountFooter);
+		dataGrid.addColumn(itOccupationalDiseaseCountColumn);
 		dataGrid.setColumnWidth(itOccupationalDiseaseCountColumn, 7, Unit.EM);
 		
 		/**
 		 * IT Maternity Column
 		 */
-		Column<ActivitySummaryObject, String> itMaternityCountColumn = new Column<ActivitySummaryObject, String>(
+		itMaternityCountColumn = new Column<ActivitySummaryObject, String>(
 				new TextCell()) {
 			@Override
 			public String getValue(ActivitySummaryObject object) {
 				return object.getItMaternityCount()!=null?object.getItMaternityCount().toString():"0";
 			}
 		};
-		itMaternityCountColumn.setSortable(true);
-		sortHandler.setComparator(itMaternityCountColumn,
-				new Comparator<ActivitySummaryObject>() {
-			@Override
-			public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
-				return o1.getItMaternityCount().compareTo(o2.getItMaternityCount());
-			}
-		});
-		SafeHtmlHeader itMaternityCountHeader = new SafeHtmlHeader(
-				SafeHtmlUtils.fromTrustedString("<span title=\"Maternidad - Paternidad\">IT M/P</span>"));
-		itMaternityCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
-		Header<String> itMaternityCountFooter = new Header<String>(new TextCell()) {
-			@Override
-			public String getValue() {
-				return String.valueOf(getTotalCountITMaternitySalary());
-			}
-		};
-		dataGrid.addColumn(itMaternityCountColumn, itMaternityCountHeader, itMaternityCountFooter);
+		dataGrid.addColumn(itMaternityCountColumn);
 		dataGrid.setColumnWidth(itMaternityCountColumn, 7, Unit.EM);
 
 		/**
 		 * IT Other Column
 		 */
-		Column<ActivitySummaryObject, String> itOtherCountColumn = new Column<ActivitySummaryObject, String>(
+		itOtherCountColumn = new Column<ActivitySummaryObject, String>(
 				new TextCell()) {
 			@Override
 			public String getValue(ActivitySummaryObject object) {
 				return object.getItOtherCount()!=null?object.getItOtherCount().toString():"0";
 			}
 		};
-		itOtherCountColumn.setSortable(true);
-		sortHandler.setComparator(itOtherCountColumn,
-				new Comparator<ActivitySummaryObject>() {
-			@Override
-			public int compare(ActivitySummaryObject o1, ActivitySummaryObject o2) {
-				return o1.getItOtherCount().compareTo(o2.getItOtherCount());
-			}
-		});
-		SafeHtmlHeader itOtherCountHeader = new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant("IT Otros"));
-		itOtherCountHeader.setHeaderStyleNames(AON.AON_TEXT_LEFT);
-		Header<String> itOtherCountFooter = new Header<String>(new TextCell()) {
-			@Override
-			public String getValue() {
-				return String.valueOf(getTotalCountITOtherSalary());
-			}
-		};
-		dataGrid.addColumn(itOtherCountColumn, itOtherCountHeader, itOtherCountFooter);
+		dataGrid.addColumn(itOtherCountColumn);
 		dataGrid.setColumnWidth(itOtherCountColumn, 7, Unit.EM);
 	}
 	
-	private Integer getTotalCountEmployee(){
-		return getSummaryList().size();
+	
+	
+	
+	/**
+	 * CUSTOM HEADER
+	 */
+	private class CustomHeaderBuilder extends AbstractHeaderOrFooterBuilder<ActivitySummaryObject> {
+
+		private Header<String> nameHeader = new TextHeader("Nombre");
+		private Header<String> startHeader = new TextHeader("Inicio contr.");
+		private Header<String> endHeader = new TextHeader("Fin contr.");
+		private Header<String> salaryHeader = new TextHeader("Nominas");
+		private Header<String> salaryExtraHeader = new TextHeader("Extras");
+		private Header<String> salarySettleHeader = new TextHeader("Finiquitos");
+		private Header<String> salaryOtherHeader = new TextHeader("Otros");
+//		private Header<String> itCommonDiseaseHeader = new TextHeader("<span title=\"Enfermedad comun - Accidente no laboral\">IT EC/AN</span>");
+		private Header<String> itCommonDiseaseHeader = new TextHeader("IT EC/AN");
+//		private Header<String> itOccupationalDiseaseHeader = new TextHeader("<span title=\"Accidente de trabajo - Enfermedad profesional\">IT AT/EP</span>");
+		private Header<String> itOccupationalDiseaseHeader = new TextHeader("IT AT/EP");
+//		private Header<String> itMaternityHeader = new TextHeader("<span title=\"Maternidad - Paternidad\">IT M/P</span>");
+		private Header<String> itMaternityHeader = new TextHeader("IT M/P");
+		private Header<String> itOtherHeader = new TextHeader("IT Otros");
+		
+		public CustomHeaderBuilder() {
+			super(dataGrid, false);
+			setSortIconStartOfLine(false);
+		}
+
+		@Override
+		protected boolean buildHeaderOrFooterImpl() {
+
+			TableRowBuilder tr = startRow();
+			tr.style().trustedBorderColor("#BDBDBD").endStyle();
+			tr.startTH().colSpan(1).rowSpan(2);
+			tr.endTH();
+
+			TableCellBuilder th = tr.startTH().colSpan(1);
+			th.endTH();
+
+			// Contract group header.
+			th = tr.startTH().colSpan(2);
+			th.text("Altas/Bajas").endTH();
+			
+			// Salary group header.
+			th = tr.startTH().colSpan(4);
+			th.text("Recibos").endTH();
+			
+			// IT group header.
+			th = tr.startTH().colSpan(4);
+			th.text("IT").endTH();
+
+			// Get information about the sorted column.
+			ColumnSortList sortList = dataGrid.getColumnSortList();
+			ColumnSortInfo sortedInfo = (sortList.size() == 0) ? null : sortList.get(0);
+			Column<?, ?> sortedColumn = (sortedInfo == null) ? null : sortedInfo.getColumn();
+			boolean isSortAscending = (sortedInfo == null) ? false : sortedInfo.isAscending();
+
+			// Add column headers.
+			tr = startRow();
+			tr.style().trustedBackgroundColor("#BDBDBD").endStyle();
+			buildHeader(tr, nameHeader, nameColumn, sortedColumn, isSortAscending, false, false);
+			buildHeader(tr, startHeader, startCountColumn, sortedColumn, isSortAscending, false, false);
+			buildHeader(tr, endHeader, endCountColumn, sortedColumn, isSortAscending, false, false);
+			buildHeader(tr, salaryHeader, salaryCountColumn, sortedColumn, isSortAscending, false, false);
+			buildHeader(tr, salaryExtraHeader, salaryExtraCountColumn, sortedColumn, isSortAscending, false, false);
+			buildHeader(tr, salarySettleHeader, salarySettleCountColumn, sortedColumn, isSortAscending, false, false);
+			buildHeader(tr, salaryOtherHeader, salaryOtherCountColumn, sortedColumn, isSortAscending, false, false);
+			buildHeader(tr, itCommonDiseaseHeader, itCommonDiseaseCountColumn, sortedColumn, isSortAscending, false, false);
+			buildHeader(tr, itOccupationalDiseaseHeader, itOccupationalDiseaseCountColumn, sortedColumn, isSortAscending, false, false);
+			buildHeader(tr, itMaternityHeader, itMaternityCountColumn, sortedColumn, isSortAscending, false, false);
+			buildHeader(tr, itOtherHeader, itOtherCountColumn, sortedColumn, isSortAscending, false, true);
+			tr.endTR();
+
+			return true;
+		}
+
+		private void buildHeader(TableRowBuilder out, Header<?> header,
+				Column<ActivitySummaryObject, ?> column, Column<?, ?> sortedColumn,
+				boolean isSortAscending, boolean isFirst, boolean isLast) {
+			boolean isSorted = (sortedColumn == column);
+
+			// Create the table cell.
+			TableCellBuilder th = out.startTH();
+
+			// Associate the cell with the column to enable sorting of the column.
+			enableColumnHandlers(th, column);
+
+			// Render the header.
+			Context context = new Context(0, 2, header.getKey());
+			renderSortableHeader(th, context, header, isSorted, isSortAscending);
+
+			// End the table cell.
+			th.endTH();
+		}
 	}
 	
-	private Integer getTotalCountStartEmployee(){
-		int count=0;
-		for (Integer i = 0; i < getSummaryList().size(); i++) {
-			if(getSummaryList().get(i).getStartCount()!=null){
-				count += getSummaryList().get(i).getStartCount();
-			}
+	/**
+	 * CUSTOM FOOTER
+	 */
+	private class CustomFooterBuilder extends
+			AbstractHeaderOrFooterBuilder<ActivitySummaryObject> {
+
+		public CustomFooterBuilder() {
+			super(dataGrid, true);
 		}
-		return count;
+
+		@Override
+		protected boolean buildHeaderOrFooterImpl() {
+			String footerStyle = dataGrid.getResources().style().footer();
+
+			List<ActivitySummaryObject> items = dataGrid.getVisibleItems();
+
+			TableRowBuilder tr = startRow();
+			tr.style().trustedBackgroundColor("#BDBDBD").endStyle();
+			tr.startTH().colSpan(1).className(footerStyle).endTH();
+			
+			/** name */
+			renderCell(tr, footerStyle, String.valueOf(getTotalCountEmployee(items)));
+			/** start */
+			renderCell(tr, footerStyle, String.valueOf(getTotalCountStartEmployee(items)));
+			/** end */
+			renderCell(tr, footerStyle, String.valueOf(getTotalCountEndEmployee(items)));
+			
+			/** salary */
+			renderCell(tr, footerStyle, String.valueOf(getTotalCountSalary(items)));
+			/** salary extra */
+			renderCell(tr, footerStyle, String.valueOf(getTotalCountExtraSalary(items)));
+			/** salary settle */
+			renderCell(tr, footerStyle, String.valueOf(getTotalCountSettleSalary(items)));
+			/** salary other */
+			renderCell(tr, footerStyle, String.valueOf(getTotalCountOtherSalary(items)));
+			
+			/** IT EC-AN */
+			renderCell(tr, footerStyle, String.valueOf(getTotalCountITCommonDiseaseSalary(items)));
+			/** IT AT-EP */
+			renderCell(tr, footerStyle, String.valueOf(getTotalCountITOccupationalDiseaseSalary(items)));
+			/** IT M-P */
+			renderCell(tr, footerStyle, String.valueOf(getTotalCountITMaternitySalary(items)));
+			/** IT other */
+			renderCell(tr, footerStyle, String.valueOf(getTotalCountITOtherSalary(items)));
+
+			tr.endTR();
+
+			return true;
+		}
+		
+		private void renderCell(TableRowBuilder tr, String footerStyle, String rowValue){
+			TableCellBuilder th = tr.startTH().className(footerStyle).align(HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
+			th.text(rowValue);
+			th.endTH();
+		}
+		
+		private Integer getTotalCountEmployee(List<ActivitySummaryObject> items){
+			return items.size();
+		}
+		
+		private Integer getTotalCountStartEmployee(List<ActivitySummaryObject> items){
+			int count=0;
+			for (Integer i = 0; i < items.size(); i++) {
+				if(items.get(i).getStartCount()!=null){
+					count += items.get(i).getStartCount();
+				}
+			}
+			return count;
+		}
+		
+		private Integer getTotalCountEndEmployee(List<ActivitySummaryObject> items){
+			int count=0;
+			for (Integer i = 0; i < items.size(); i++) {
+				if(items.get(i).getEndCount()!=null){
+					count += items.get(i).getEndCount();
+				}
+			}
+			return count;
+		}
+		
+		private Integer getTotalCountSalary(List<ActivitySummaryObject> items){
+			int count=0;
+			for (Integer i = 0; i < items.size(); i++) {
+				if(items.get(i).getSalaryCount()!=null){
+					count += items.get(i).getSalaryCount();
+				}
+			}
+			return count;
+		}
+		
+		private Integer getTotalCountExtraSalary(List<ActivitySummaryObject> items){
+			int count=0;
+			for (Integer i = 0; i < items.size(); i++) {
+				if(items.get(i).getSalaryExtraCount()!=null){
+					count += items.get(i).getSalaryExtraCount();
+				}
+			}
+			return count;
+		}
+		
+		private Integer getTotalCountSettleSalary(List<ActivitySummaryObject> items){
+			int count=0;
+			for (Integer i = 0; i < items.size(); i++) {
+				if(items.get(i).getSalarySettleCount()!=null){
+					count += items.get(i).getSalarySettleCount();
+				}
+			}
+			return count;
+		}
+		
+		private Integer getTotalCountOtherSalary(List<ActivitySummaryObject> items){
+			int count=0;
+			for (Integer i = 0; i < items.size(); i++) {
+				if(items.get(i).getSalaryOtherCount()!=null){
+					count += items.get(i).getSalaryOtherCount();
+				}
+			}
+			return count;
+		}
+		
+		private Integer getTotalCountITCommonDiseaseSalary(List<ActivitySummaryObject> items){
+			int count=0;
+			for (Integer i = 0; i < items.size(); i++) {
+				if(items.get(i).getItCommonDiseaseCount()!=null){
+					count += items.get(i).getItCommonDiseaseCount();
+				}
+			}
+			return count;
+		}
+		
+		private Integer getTotalCountITOccupationalDiseaseSalary(List<ActivitySummaryObject> items){
+			int count=0;
+			for (Integer i = 0; i < items.size(); i++) {
+				if(items.get(i).getItOccupationalDiseaseCount()!=null){
+					count += items.get(i).getItOccupationalDiseaseCount();
+				}
+			}
+			return count;
+		}
+		
+		private Integer getTotalCountITMaternitySalary(List<ActivitySummaryObject> items){
+			int count=0;
+			for (Integer i = 0; i < items.size(); i++) {
+				if(items.get(i).getItMaternityCount()!=null){
+					count += items.get(i).getItMaternityCount();
+				}
+			}
+			return count;
+		}
+		
+		private Integer getTotalCountITOtherSalary(List<ActivitySummaryObject> items){
+			int count=0;
+			for (Integer i = 0; i < items.size(); i++) {
+				if(items.get(i).getItOtherCount()!=null){
+					count += items.get(i).getItOtherCount();
+				}
+			}
+			return count;
+		}
+		
 	}
 	
-	private Integer getTotalCountEndEmployee(){
-		int count=0;
-		for (Integer i = 0; i < getSummaryList().size(); i++) {
-			if(getSummaryList().get(i).getEndCount()!=null){
-				count += getSummaryList().get(i).getEndCount();
+	/**
+	 * CUSTOM CELLTABLE
+	 */
+	private class CustomTableBuilder extends AbstractCellTableBuilder<ActivitySummaryObject> {
+
+//		private final String childCell = " " + resources.styles().childCell();
+		private final String childCell = " ";
+		private final String rowStyle;
+		private final String selectedRowStyle;
+		private final String oddRowStyle;
+		private final String cellStyle;
+		private final String selectedCellStyle;
+
+		public CustomTableBuilder() {
+			super(dataGrid);
+
+			// Cache styles for faster access.
+			AbstractCellTable.Style style = dataGrid.getResources().style();
+			rowStyle = style.evenRow();
+			selectedRowStyle = " " + style.selectedRow();
+			cellStyle = style.cell() + " " + style.evenRowCell();
+			selectedCellStyle = " " + style.selectedRowCell();
+			oddRowStyle = style.oddRow();
+		}
+
+		@Override
+		public void buildRowImpl(ActivitySummaryObject rowValue, int absRowIndex) {
+			buildContractRow(rowValue, absRowIndex, false);
+
+//			int pendingSettle = (rowValue.getEndCount()!=null && rowValue.getSalarySettleCount()!=null)?(rowValue.getEndCount() - rowValue.getSalarySettleCount()):0;
+//			if (pendingSettle > 0) {
+//				TableRowBuilder row = startRow();
+//				TableCellBuilder td = row.startTD().colSpan(12).className(cellStyle);
+//				td.style().trustedBackgroundColor("#FBEFEF").endStyle();
+//				td.text("Finiquitos pendientes de generar.").endTD();
+//				row.endTR();
+//			}
+
+			if (showingContracts.contains(rowValue.getId())) {				
+				for (ActivitySummaryObject contract : contractSummaryList) {
+					buildContractRow(contract, 0, true);
+				}
 			}
 		}
-		return count;
-	}
-	
-	private Integer getTotalCountSalary(){
-		int count=0;
-		for (Integer i = 0; i < getSummaryList().size(); i++) {
-			if(getSummaryList().get(i).getSalaryCount()!=null){
-				count += getSummaryList().get(i).getSalaryCount();
+
+		private void buildContractRow(ActivitySummaryObject rowValue, int absRowIndex, boolean isInnerRow) {
+			// Calculate the row styles.
+			SelectionModel<? super ActivitySummaryObject> selectionModel = dataGrid.getSelectionModel();
+			boolean isSelected = (selectionModel == null || rowValue == null) ? false : selectionModel.isSelected(rowValue);
+			boolean isEven = absRowIndex % 2 == 0;
+			StringBuilder trClasses = new StringBuilder(rowStyle);
+			if (isSelected) {
+				trClasses.append(selectedRowStyle);
+			} else if(!isInnerRow && !isEven){
+				trClasses.append(oddRowStyle);
 			}
-		}
-		return count;
-	}
-	
-	private Integer getTotalCountExtraSalary(){
-		int count=0;
-		for (Integer i = 0; i < getSummaryList().size(); i++) {
-			if(getSummaryList().get(i).getSalaryExtraCount()!=null){
-				count += getSummaryList().get(i).getSalaryExtraCount();
+
+			// Calculate the cell styles.
+			String cellStyles = cellStyle;
+			if (isSelected) {
+				cellStyles += selectedCellStyle;
 			}
-		}
-		return count;
-	}
-	
-	private Integer getTotalCountSettleSalary(){
-		int count=0;
-		for (Integer i = 0; i < getSummaryList().size(); i++) {
-			if(getSummaryList().get(i).getSalarySettleCount()!=null){
-				count += getSummaryList().get(i).getSalarySettleCount();
+			if (isInnerRow) {
+				cellStyles += childCell;
 			}
-		}
-		return count;
-	}
-	
-	private Integer getTotalCountOtherSalary(){
-		int count=0;
-		for (Integer i = 0; i < getSummaryList().size(); i++) {
-			if(getSummaryList().get(i).getSalaryOtherCount()!=null){
-				count += getSummaryList().get(i).getSalaryOtherCount();
+
+			TableRowBuilder tr = startRow();
+			tr.className(trClasses.toString());
+			if(isInnerRow){
+				tr.style().fontStyle(FontStyle.ITALIC).trustedBackgroundColor("#EFF5FB").endStyle();
 			}
+
+			String innerRowValue = null;
+			
+			/** select column */
+			innerRowValue = "";
+			renderCell(tr, cellStyles, isInnerRow, 0, selectColumn, innerRowValue, rowValue);
+			/** name */
+			innerRowValue = rowValue.getFullname();
+			renderCell(tr, cellStyles, isInnerRow, 1, nameColumn, innerRowValue, rowValue);
+			/** start */
+			innerRowValue = rowValue.getStartDate()!=null?DateTimeFormat.getFormat("dd/MM/yyyy").format(rowValue.getStartDate()):"-";
+			renderCell(tr, cellStyles, isInnerRow, 2, startCountColumn, innerRowValue, rowValue);
+			/** end */
+			innerRowValue = rowValue.getEndDate()!=null?DateTimeFormat.getFormat("dd/MM/yyyy").format(rowValue.getEndDate()):"-";
+			renderCell(tr, cellStyles, isInnerRow, 3, endCountColumn, innerRowValue, rowValue);
+			
+			/** salary */
+			innerRowValue = String.valueOf(rowValue.getSalaryCount()!=null?rowValue.getSalaryCount():0);
+			renderCell(tr, cellStyles, isInnerRow, 4, salaryCountColumn, innerRowValue, rowValue);
+			/** salary extra */
+			innerRowValue = String.valueOf(rowValue.getSalaryExtraCount()!=null?rowValue.getSalaryExtraCount():0);
+			renderCell(tr, cellStyles, isInnerRow, 5, salaryExtraCountColumn, innerRowValue, rowValue);
+			/** salary settle */
+			innerRowValue = String.valueOf(rowValue.getSalarySettleCount()!=null?rowValue.getSalarySettleCount():0);
+			renderCell(tr, cellStyles, isInnerRow, 6, salarySettleCountColumn, innerRowValue, rowValue);
+			/** salary other */
+			innerRowValue = String.valueOf(rowValue.getSalaryOtherCount()!=null?rowValue.getSalaryOtherCount():0);
+			renderCell(tr, cellStyles, isInnerRow, 7, salaryOtherCountColumn, innerRowValue, rowValue);
+			
+			/** it EC-AN */
+			innerRowValue = String.valueOf(rowValue.getItCommonDiseaseCount()!=null?rowValue.getItCommonDiseaseCount():0);
+			renderCell(tr, cellStyles, isInnerRow, 8, itCommonDiseaseCountColumn, innerRowValue, rowValue);
+			/** it AT-EP */
+			innerRowValue = String.valueOf(rowValue.getItOccupationalDiseaseCount()!=null?rowValue.getItOccupationalDiseaseCount():0);
+			renderCell(tr, cellStyles, isInnerRow, 9, itOccupationalDiseaseCountColumn, innerRowValue, rowValue);
+			/** it M-P */
+			innerRowValue = String.valueOf(rowValue.getItMaternityCount()!=null?rowValue.getItMaternityCount():0);
+			renderCell(tr, cellStyles, isInnerRow, 10, itMaternityCountColumn, innerRowValue, rowValue);
+			/** it other */
+			innerRowValue = String.valueOf(rowValue.getItOtherCount()!=null?rowValue.getItOtherCount():0);
+			renderCell(tr, cellStyles, isInnerRow, 11, itOtherCountColumn, innerRowValue, rowValue);
+
+			tr.endTR();
 		}
-		return count;
-	}
-	
-	private Integer getTotalCountITCommonDiseaseSalary() {
-		int count=0;
-		for (Integer i = 0; i < getSummaryList().size(); i++) {
-			if(getSummaryList().get(i).getItCommonDiseaseCount()!=null){
-				count += getSummaryList().get(i).getItCommonDiseaseCount();
+		
+		private void renderCell(TableRowBuilder row, String cellStyles, boolean isInnerRow, int colNum, Column<ActivitySummaryObject, String> col, String innerValue, ActivitySummaryObject rowValue){
+			TableCellBuilder td = row.startTD().className(cellStyles);
+			if (isInnerRow) {
+				td.text(innerValue!=null?innerValue:"-");
+			} else {
+				renderCell(td, createContext(colNum), col, rowValue);
 			}
+			td.endTD();
 		}
-		return count;
-	}
-	
-	private Integer getTotalCountITOccupationalDiseaseSalary() {
-		int count=0;
-		for (Integer i = 0; i < getSummaryList().size(); i++) {
-			if(getSummaryList().get(i).getItOccupationalDiseaseCount()!=null){
-				count += getSummaryList().get(i).getItOccupationalDiseaseCount();
-			}
-		}
-		return count;
-	}
-	
-	private Integer getTotalCountITMaternitySalary() {
-		int count=0;
-		for (Integer i = 0; i < getSummaryList().size(); i++) {
-			if(getSummaryList().get(i).getItMaternityCount()!=null){
-				count += getSummaryList().get(i).getItMaternityCount();
-			}
-		}
-		return count;
-	}
-	
-	private Integer getTotalCountITOtherSalary() {
-		int count=0;
-		for (Integer i = 0; i < getSummaryList().size(); i++) {
-			if(getSummaryList().get(i).getItOtherCount()!=null){
-				count += getSummaryList().get(i).getItOtherCount();
-			}
-		}
-		return count;
 	}
 
 }

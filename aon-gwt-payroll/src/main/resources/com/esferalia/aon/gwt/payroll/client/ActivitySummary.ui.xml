@@ -31,7 +31,7 @@
 		<g:center>
 					
 			<g:DockLayoutPanel unit="EM" styleName="aondockLayoutPanel-template">
-				<g:north size="6">
+				<g:north size="10">
 					<g:HTMLPanel  styleName="aon-panelGrid-search searchPanel-template">
 						
 						<div class="aon-panelGrid-search-info">
@@ -41,13 +41,23 @@
 						<table class="aon-panelGrid">
 							<tr>
 								<td> <span class="aon-panelGrid-search-info-internal2-template">Desde:</span> </td>
-								<td style="width:70px">
-									<common:DateBoxEx ui:field="startDate" />
-								</td>
+								<td style="width:70px"> <common:DateBoxEx ui:field="startDate" /> </td>
+
+								<td> <span class="aon-panelGrid-search-info-internal2-template"> </span> </td>
+								
+								<td> <span class="aon-panelGrid-search-info-internal2-template">Solo Altas</span> </td>
+								<td style="width:70px"> <g:CheckBox ui:field="onlyStartContracts" /> </td>
+							</tr>
+							<tr>
 								<td> <span class="aon-panelGrid-search-info-internal2-template">Hasta:</span> </td>
-								<td style="width:70px">
-									<common:DateBoxEx ui:field="endDate" />
-								</td>
+								<td style="width:70px"> <common:DateBoxEx ui:field="endDate" /> </td>
+
+								<td> <span class="aon-panelGrid-search-info-internal2-template"> </span> </td>
+								
+								<td> <span class="aon-panelGrid-search-info-internal2-template">Solo Bajas</span> </td>
+								<td style="width:70px"> <g:CheckBox ui:field="onlyEndContracts" /> </td>
+							</tr>
+							<tr>
 								<td> <span class="aon-panelGrid-search-info-internal2-template"> </span> </td>
 								<td style="width:70px">
 									<g:Button ui:field="searchButton" />

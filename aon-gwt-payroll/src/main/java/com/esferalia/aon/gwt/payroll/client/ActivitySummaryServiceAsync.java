@@ -8,7 +8,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface ActivitySummaryServiceAsync {
 
-	void getActivitySummary(Date startDate, Date endDate, AsyncCallback<List<ActivitySummaryObject>> callback);
+	void getActivitySummary(Integer domainId, Date startDate, Date endDate,
+			Boolean onlyStarts, Boolean onlyEnds,
+			AsyncCallback<List<ActivitySummaryObject>> callback);
 	
 	void getParentDomain(AsyncCallback<Integer> callback);
 
