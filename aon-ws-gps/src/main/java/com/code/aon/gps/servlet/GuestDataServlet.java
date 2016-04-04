@@ -61,11 +61,12 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 			"SELECT PRG.id AS " + ID + " FROM project_reservation_guest AS PRG WHERE PRG.project_reservation = ? AND guest_index = ? AND person = ?";
 	private static String INSERT_RESERVATION_GUEST_DATA =
 			"INSERT INTO project_reservation_guest (domain, project_reservation, guest_index, name, surname, surname2, document, document_type, document_country" +
-			"	, birth_date, address, city, province, country, barcode, person, creation_user, creation_date)" +
+			"	, document_exp_date, birth_date, address, city, province, country, barcode, person, creation_user, creation_date)" +
 			" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private static String UPDATE_RESERVATION_GUEST_DATA =
 			"UPDATE project_reservation_guest SET name = ?, surname = ?, surname2 = ?, document = ?, document_type = ?, document_country = ?" +
-			"	, birth_date = ?, address = ?, city = ?, province = ?, country = ?, barcode = ?, person = ?, modification_user = ?, modification_date = ?" + 
+			"	, document_exp_date = ?, birth_date = ?, address = ?, city = ?, province = ?, country = ?, barcode = ?, person = ?" +
+			"	, modification_user = ?, modification_date = ?" + 
 			" WHERE id = ?";
 
 	private static String SELECT_GUEST_DATA =
@@ -206,7 +207,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 					insertPersonStmt = connection.prepareStatement(INSERT_PERSON_DATA);
 					SQLUtils.setInt(insertPersonStmt, 1, registryId);
 					SQLUtils.setInt(insertPersonStmt, 2, domainId);
-					SQLUtils.setDate(insertPersonStmt, 3, obtainBirthDate(request.getParameter(GUEST_BIRTH_DATE)));
+					SQLUtils.setDate(insertPersonStmt, 3, obtainDate(request.getParameter(GUEST_BIRTH_DATE)));
 					SQLUtils.setInt(insertPersonStmt, 4, obtainGender(request.getParameter(PERSON_GENDER)));
 					SQLUtils.setString(insertPersonStmt, 5, request.getParameter(GUEST_NAME));
 					SQLUtils.setString(insertPersonStmt, 6, request.getParameter(GUEST_SURNAME));
@@ -229,7 +230,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 				updateRegistryStmt.execute();
 
 				updatePersonStmt = connection.prepareStatement(UPDATE_PERSON_DATA);
-				SQLUtils.setDate(updatePersonStmt, 1, obtainBirthDate(request.getParameter(GUEST_BIRTH_DATE)));
+				SQLUtils.setDate(updatePersonStmt, 1, obtainDate(request.getParameter(GUEST_BIRTH_DATE)));
 				SQLUtils.setInt(updatePersonStmt, 2, obtainGender(request.getParameter(PERSON_GENDER)));
 				SQLUtils.setString(updatePersonStmt, 3, request.getParameter(GUEST_NAME));
 				SQLUtils.setString(updatePersonStmt, 4, request.getParameter(GUEST_SURNAME));
@@ -266,15 +267,16 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 				SQLUtils.setString(insertReservationGuestStmt, 7, request.getParameter(GUEST_DOCUMENT));
 				SQLUtils.setInt(insertReservationGuestStmt, 8, obtainDocumentType(request.getParameter(GUEST_DOCUMENT_TYPE)));
 				SQLUtils.setString(insertReservationGuestStmt, 9, obtainCountry(request.getParameter(GUEST_DOCUMENT_COUNTRY)));
-				SQLUtils.setDate(insertReservationGuestStmt, 10, obtainBirthDate(request.getParameter(GUEST_BIRTH_DATE)));
-				SQLUtils.setString(insertReservationGuestStmt, 11, request.getParameter(GUEST_ADDRESS));
-				SQLUtils.setString(insertReservationGuestStmt, 12, request.getParameter(GUEST_CITY));
-				SQLUtils.setString(insertReservationGuestStmt, 13, request.getParameter(GUEST_PROVINCE));
-				SQLUtils.setString(insertReservationGuestStmt, 14, obtainCountry(request.getParameter(GUEST_COUNTRY)));
-				SQLUtils.setString(insertReservationGuestStmt, 15, request.getParameter(GUEST_BARCODE));
-				SQLUtils.setInt(insertReservationGuestStmt, 16, registryId);
-				SQLUtils.setString(insertReservationGuestStmt, 17, SERVLET_SCANNER);
-				SQLUtils.set(insertReservationGuestStmt, 18, new Date(), Types.TIMESTAMP);
+				SQLUtils.setDate(insertReservationGuestStmt, 10, obtainDate(request.getParameter(GUEST_DOCUMENT_EXP_DATE)));
+				SQLUtils.setDate(insertReservationGuestStmt, 11, obtainDate(request.getParameter(GUEST_BIRTH_DATE)));
+				SQLUtils.setString(insertReservationGuestStmt, 12, request.getParameter(GUEST_ADDRESS));
+				SQLUtils.setString(insertReservationGuestStmt, 13, request.getParameter(GUEST_CITY));
+				SQLUtils.setString(insertReservationGuestStmt, 14, request.getParameter(GUEST_PROVINCE));
+				SQLUtils.setString(insertReservationGuestStmt, 15, obtainCountry(request.getParameter(GUEST_COUNTRY)));
+				SQLUtils.setString(insertReservationGuestStmt, 16, request.getParameter(GUEST_BARCODE));
+				SQLUtils.setInt(insertReservationGuestStmt, 17, registryId);
+				SQLUtils.setString(insertReservationGuestStmt, 18, SERVLET_SCANNER);
+				SQLUtils.set(insertReservationGuestStmt, 19, new Date(), Types.TIMESTAMP);
 				insertReservationGuestStmt.execute();
 
 				selectGuestIdStmt = connection.prepareStatement(SELECT_RESERVATION_GUEST_ID, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -302,16 +304,17 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 				SQLUtils.setString(updateReservationGuestStmt, 4, request.getParameter(GUEST_DOCUMENT));
 				SQLUtils.setInt(updateReservationGuestStmt, 5, obtainDocumentType(request.getParameter(GUEST_DOCUMENT_TYPE)));
 				SQLUtils.setString(updateReservationGuestStmt, 6, obtainCountry(request.getParameter(GUEST_DOCUMENT_COUNTRY)));
-				SQLUtils.setDate(updateReservationGuestStmt, 7, obtainBirthDate(request.getParameter(GUEST_BIRTH_DATE)));
-				SQLUtils.setString(updateReservationGuestStmt, 8, request.getParameter(GUEST_ADDRESS));
-				SQLUtils.setString(updateReservationGuestStmt, 9, request.getParameter(GUEST_CITY));
-				SQLUtils.setString(updateReservationGuestStmt, 10, request.getParameter(GUEST_PROVINCE));
-				SQLUtils.setString(updateReservationGuestStmt, 11, obtainCountry(request.getParameter(GUEST_COUNTRY)));
-				SQLUtils.setString(updateReservationGuestStmt, 12, request.getParameter(GUEST_BARCODE));
-				SQLUtils.setInt(updateReservationGuestStmt, 13, registryId);
-				SQLUtils.setString(updateReservationGuestStmt, 14, SERVLET_SCANNER);
-				SQLUtils.set(updateReservationGuestStmt, 15, new Date(), Types.TIMESTAMP);
-				SQLUtils.setInt(updateReservationGuestStmt, 16, guestId);
+				SQLUtils.setDate(updateReservationGuestStmt, 7, obtainDate(request.getParameter(GUEST_DOCUMENT_EXP_DATE)));
+				SQLUtils.setDate(updateReservationGuestStmt, 8, obtainDate(request.getParameter(GUEST_BIRTH_DATE)));
+				SQLUtils.setString(updateReservationGuestStmt, 9, request.getParameter(GUEST_ADDRESS));
+				SQLUtils.setString(updateReservationGuestStmt, 10, request.getParameter(GUEST_CITY));
+				SQLUtils.setString(updateReservationGuestStmt, 11, request.getParameter(GUEST_PROVINCE));
+				SQLUtils.setString(updateReservationGuestStmt, 12, obtainCountry(request.getParameter(GUEST_COUNTRY)));
+				SQLUtils.setString(updateReservationGuestStmt, 13, request.getParameter(GUEST_BARCODE));
+				SQLUtils.setInt(updateReservationGuestStmt, 14, registryId);
+				SQLUtils.setString(updateReservationGuestStmt, 15, SERVLET_SCANNER);
+				SQLUtils.set(updateReservationGuestStmt, 16, new Date(), Types.TIMESTAMP);
+				SQLUtils.setInt(updateReservationGuestStmt, 17, guestId);
 				updateReservationGuestStmt.execute();
 			} catch (Exception ex) {
 				throw ex;
@@ -573,14 +576,14 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 		return (country!=null) ? country.getValue() : StringUtils.EMPTY;
 	}
 
-	private Date obtainBirthDate(String value) {
-		Date birthDate = null;
+	private Date obtainDate(String value) {
+		Date date = null;
 		if (StringUtils.isNotBlank(value)) {
 			try {
-				birthDate = new SimpleDateFormat(DATE_PATTERN).parse(value);
+				date = new SimpleDateFormat(DATE_PATTERN).parse(value);
 			} catch (ParseException ex) {}
 		}
-		return birthDate;
+		return date;
 	}
 
 	private Integer obtainGender(String gender) {

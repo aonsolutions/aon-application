@@ -84,6 +84,7 @@ public interface ISQLConstants {
 	String GUEST_DOCUMENT = "guestDocument";
 	String GUEST_DOCUMENT_TYPE = "guestDocument_type";
 	String GUEST_DOCUMENT_COUNTRY = "guestDocument_country";
+	String GUEST_DOCUMENT_EXP_DATE = "guestDocument_expDate";
 	String GUEST_BIRTH_DATE = "guestBirth_date";
 	String GUEST_ADDRESS = "guestAddress";
 	String GUEST_CITY = "guestCity";

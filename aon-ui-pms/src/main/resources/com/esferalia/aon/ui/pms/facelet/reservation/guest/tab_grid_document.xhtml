@@ -37,8 +37,17 @@
 					title="#{bundle.pms_reservation_guest_type_previouslyStayedInHotel}"
 					rendered="#{controller.to.person.id != null and controller.to.guestPreviouslyStayedInHotel}" />
 			</aon:div>
-			
-			<aon:outputLabel for="ProjectReservationGuest_documentExpDate" value="#{bundle.aon_expeditionDate}" />
+
+			<aon:outputLabel for="ProjectReservationGuest_document" value="#{bundle.aon_number}" />
+			<aon:inputText id="ProjectReservationGuest_document#{suffix}" styleClass="aon-form-input-text"
+				value="#{controller.to.document}" size="15" maxlength="16"
+				valueChangeListener="#{controller.onDocumentChanged}"
+				reRender="GuestDocumentDiv#{suffix},GuestNameDiv#{suffix},GuestContactDiv#{suffix},GuestAddressDiv#{suffix}"
+				onblur="toUpperCase(this);" ajaxSingle="true"
+				converter="aon.TrimStringConverter"
+				focus="ProjectReservationGuest_name#{suffix}" />
+
+			<aon:outputLabel for="ProjectReservationGuest_documentExpDate" value="#{bundle.aon_expedition_date}" />
 			<aon:selectInputDate id="ProjectReservationGuest_documentExpDate#{suffix}" inputClass="aon-form-input-text"
 				value="#{controller.to.documentExpDate}" 
 				timeZone="#{timeZoneController.timeZone}"
@@ -48,15 +57,6 @@
 				<a4j:support event="onchanged"
 					reRender="ProjectReservationGuest_documentExpDate#{suffix}" ajaxSingle="true" />
 			</aon:selectInputDate>
-			
-			<aon:outputLabel for="ProjectReservationGuest_document" value="#{bundle.aon_number}" />
-			<aon:inputText id="ProjectReservationGuest_document#{suffix}" styleClass="aon-form-input-text"
-				value="#{controller.to.document}" size="15" maxlength="16"
-				valueChangeListener="#{controller.onDocumentChanged}"
-				reRender="GuestDocumentDiv#{suffix},GuestNameDiv#{suffix},GuestContactDiv#{suffix},GuestAddressDiv#{suffix}"
-				onblur="toUpperCase(this);" ajaxSingle="true"
-				converter="aon.TrimStringConverter"
-				focus="ProjectReservationGuest_name#{suffix}" />
 		</aon:panelGrid>
 
 		<aon:outputText value="#{bundle.registry_document_incorrect}" styleClass="aon-label-error aon-margin-left"
