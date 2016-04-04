@@ -13,7 +13,7 @@
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName="{aonResources.css.aonFindingTitle}">
 						<g:HTMLPanel styleName="{aonResources.css.aonFindingTitleInternal}">
-							<g:Label text="{msg.invoiceReport}" />
+							<g:Label text="{msg.statistics}" />
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel>
@@ -37,7 +37,7 @@
 		</g:north>
 		<g:center>
 			<g:SplitLayoutPanel ui:field="splitLayoutPanel">
-				<g:north size="50">
+				<g:north size="62">
 					<g:ScrollPanel ui:field="north" styleName="{aonResources.css.aonNoPrint}">
 						<stat:StatFilter ui:field="filter"/>
 					</g:ScrollPanel>

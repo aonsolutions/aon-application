@@ -30,6 +30,36 @@ public enum StatChartType implements Serializable {
 			chartVisitor. visitAbcInvoiceTitular();
 		}
 	})
+	,ABC_INVOICE_CATEGORY("ABC Categor\u00EDa", new ITypeVisitor() {
+		@Override
+		public void visit(IStatChartTypeVisitor chartVisitor) {
+			chartVisitor. visitAbcInvoiceCategory();
+		}
+	})
+	,ABC_INVOICE_PRODUCT("ABC Productos", new ITypeVisitor() {
+		@Override
+		public void visit(IStatChartTypeVisitor chartVisitor) {
+			chartVisitor. visitAbcInvoiceProduct();
+		}
+	})
+	,ABC_INVOICE_WORKPLACE("ABC Centro de trabajo", new ITypeVisitor() {
+		@Override
+		public void visit(IStatChartTypeVisitor chartVisitor) {
+			chartVisitor. visitAbcInvoiceWorkplace();
+		}
+	})
+	,ABC_INVOICE_SELLER("ABC Agente Comercial", new ITypeVisitor() {
+		@Override
+		public void visit(IStatChartTypeVisitor chartVisitor) {
+			chartVisitor. visitAbcInvoiceSeller();
+		}
+	})
+	,INVOICE_GEO_PROVINCE("Zona geogr\u00E1fica", new ITypeVisitor() {
+		@Override
+		public void visit(IStatChartTypeVisitor chartVisitor) {
+			chartVisitor. visitGeoProvince();
+		}
+	})
 	;
 	
 	public static interface ITypeVisitor {

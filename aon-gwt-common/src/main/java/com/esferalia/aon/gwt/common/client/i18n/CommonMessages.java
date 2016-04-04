@@ -648,6 +648,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cod.Postal")
 	String zip();
 
+	@DefaultMessage("Tipo de gr\u00E1fico")
+	String graphicType();
 	
 	@DefaultMessage("Base imponible")
 	String taxableBase();
@@ -720,6 +722,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("DECLARACI\u00D3N DE SUJETO PASIVO INCLU\u00CDDO "
 			+ "EN AUTOLIQUIDACIONES CONJUNTAS")
 	String mergedDeclarationLabel();
+	
+ 	@DefaultMessage("Estad\u00EDsticas")
+	String statistics();
+
 
 	// -------------------------------------------------------------- Model 190
 

@@ -41,6 +41,7 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 
 	public StatFilter() {
 		super();
+		addStyleName(AON.AON_CSS.aonPanelGridSearch());
 	}
 
 	public StatParams getParams() {
@@ -127,8 +128,17 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 								
 							}
 							
+							FlowPanel chartTypePanel = new FlowPanel(); 
+							chartTypePanel.addStyleName(AON.AON_CSS.aonFloatRight());
+							chartTypePanel.addStyleName(AON.AON_CSS.aonMarginTop());
+							
+							InlineLabel chartTypeLabel = new InlineLabel( AON.MSG.graphicType());
+							chartTypeLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+							chartTypePanel.add(chartTypeLabel);
+							
 							final ListBox chartType = new ListBox();
 							chartType.setStyleName(AON.AON_CSS.aonMarginRight());
+							chartType.addStyleName(AON.AON_CSS.aonWidth300());
 							for (StatChartType type : StatChartType.values()) {
 								chartType.addItem(type.getDescription());
 							}
@@ -142,7 +152,9 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 								}
 							});
 							
-							add(chartType);
+							chartTypePanel.add(chartType);
+							
+							add(chartTypePanel);
 							
 							callback.onSuccess(result);
 						}

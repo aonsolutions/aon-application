@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
 import com.esferalia.aon.gwt.stat.client.StatService;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsync;
 import com.esferalia.aon.gwt.stat.client.StatServiceAsyncDecorator;
+import com.esferalia.aon.gwt.stat.client.panel.GeoChartWrapper.DisplayMode;
 import com.esferalia.aon.gwt.stat.client.util.StatUtils;
 import com.esferalia.aon.occam.api.model.stat.IStatChartTypeVisitor;
 import com.esferalia.aon.occam.api.model.stat.StatData;
@@ -83,7 +84,7 @@ public class StatControlPanel extends MainEntryPoint {
 
 	private Stack<Widget> stack = new Stack<Widget>();
 	
-	final private AsyncCallback<CoreChart> resizableComboChartCallback = new AsyncCallback<CoreChart>() {
+	final private AsyncCallback<CoreChart> coreChartCallback = new AsyncCallback<CoreChart>() {
 		
 		@Override
 		public void onSuccess(final CoreChart chart) {
@@ -210,6 +211,22 @@ public class StatControlPanel extends MainEntryPoint {
 			return dataTable;
 		}
 
+		protected DataTable getGeoDataTable(Table.Options options, StatData<String, String, Double> result, String columnLabel) {
+			DataTable dataTable = DataTable.create();
+			dataTable.addColumn(ColumnType.STRING, columnLabel);
+			dataTable.addColumn(ColumnType.NUMBER, "Importe");
+			int rowIndex = 0;
+			LinkedHashMap<String, Double> map = result.getMap().get("CHART");
+			for (String col : map.keySet()) {
+				rowIndex = dataTable.addRow();
+				double d = AonMathUtils.round(map.get(col));
+				dataTable.setValue(rowIndex, 0, col);
+				dataTable.setValue(rowIndex, 1, d);
+				dataTable.setFormattedValue(rowIndex, 1, AON.FMT.format(d));
+			}
+			return dataTable;
+		}
+
 		@Override
 		public void visitInvoiceTypeByYearComboChart() {
 			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(),
@@ -241,12 +258,12 @@ public class StatControlPanel extends MainEntryPoint {
 					south.setWidget(table);
 					excel.setEnabled(true);
 					ResizableComboChart chart = new ResizableComboChart(dataTable, options);
-					resizableComboChartCallback.onSuccess(chart);
+					coreChartCallback.onSuccess(chart);
 				}
 
 				@Override
 				public void onFailure(Throwable caught) {
-					resizableComboChartCallback.onFailure(caught);
+					coreChartCallback.onFailure(caught);
 				}
 			});
 		}
@@ -282,12 +299,12 @@ public class StatControlPanel extends MainEntryPoint {
 					south.setWidget(table);
 					excel.setEnabled(true);
 					ResizableComboChart chart = new ResizableComboChart(dataTable, options);
-					resizableComboChartCallback.onSuccess(chart);
+					coreChartCallback.onSuccess(chart);
 				}
 
 				@Override
 				public void onFailure(Throwable caught) {
-					resizableComboChartCallback.onFailure(caught);
+					coreChartCallback.onFailure(caught);
 				}
 			});
 		}
@@ -323,12 +340,12 @@ public class StatControlPanel extends MainEntryPoint {
 					south.setWidget(table);
 					excel.setEnabled(true);
 					ResizableComboChart chart = new ResizableComboChart(dataTable, options);
-					resizableComboChartCallback.onSuccess(chart);
+					coreChartCallback.onSuccess(chart);
 				}
 
 				@Override
 				public void onFailure(Throwable caught) {
-					resizableComboChartCallback.onFailure(caught);
+					coreChartCallback.onFailure(caught);
 				}
 			});
 		}
@@ -360,16 +377,202 @@ public class StatControlPanel extends MainEntryPoint {
 					south.setWidget(table);
 					excel.setEnabled(true);
 					final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
-					resizableComboChartCallback.onSuccess(chart);
+					coreChartCallback.onSuccess(chart);
 				}
 
 
 				@Override
 				public void onFailure(Throwable caught) {
-					resizableComboChartCallback.onFailure(caught);
+					coreChartCallback.onFailure(caught);
 				}
 			});
 	
+		}
+
+		@Override
+		public void visitAbcInvoiceCategory() {
+			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+					new AsyncCallback<StatData<String, String, Double>>() {
+
+				@Override
+				public void onSuccess(final StatData<String, String, Double> result) {
+					final PieOptions options = PieChart.createPieOptions();
+					options.set("animation", StatUtils.ANIMATION);
+					options.setWidth(content.getOffsetWidth());
+					options.setHeight(content.getOffsetHeight());
+					options.set3D(true);
+					AxisOptions vaxis = AxisOptions.create();
+					vaxis.setTitle(AON.MSG.amount());
+					options.setVAxisOptions(vaxis);
+					AxisOptions haxis = AxisOptions.create();
+					haxis.setTitle(AON.MSG.months());
+					options.setHAxisOptions(haxis);
+					Table.Options tableOptions = Table.Options.create();
+					tableOptions.setAlternatingRowStyle(true);
+					tableOptions.setWidth(south.getOffsetWidth() + "px");
+					tableOptions.setHeight(south.getOffsetHeight() + "px");
+					final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
+					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+					south.setWidget(table);
+					excel.setEnabled(true);
+					final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
+					coreChartCallback.onSuccess(chart);
+				}
+
+
+				@Override
+				public void onFailure(Throwable caught) {
+					coreChartCallback.onFailure(caught);
+				}
+			});
+		}
+
+		@Override
+		public void visitAbcInvoiceProduct() {
+			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+					new AsyncCallback<StatData<String, String, Double>>() {
+
+				@Override
+				public void onSuccess(final StatData<String, String, Double> result) {
+					final PieOptions options = PieChart.createPieOptions();
+					options.set("animation", StatUtils.ANIMATION);
+					options.setWidth(content.getOffsetWidth());
+					options.setHeight(content.getOffsetHeight());
+					options.set3D(true);
+					AxisOptions vaxis = AxisOptions.create();
+					vaxis.setTitle(AON.MSG.amount());
+					options.setVAxisOptions(vaxis);
+					AxisOptions haxis = AxisOptions.create();
+					haxis.setTitle(AON.MSG.months());
+					options.setHAxisOptions(haxis);
+					Table.Options tableOptions = Table.Options.create();
+					tableOptions.setAlternatingRowStyle(true);
+					tableOptions.setWidth(south.getOffsetWidth() + "px");
+					tableOptions.setHeight(south.getOffsetHeight() + "px");
+					final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
+					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+					south.setWidget(table);
+					excel.setEnabled(true);
+					final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
+					coreChartCallback.onSuccess(chart);
+				}
+
+
+				@Override
+				public void onFailure(Throwable caught) {
+					coreChartCallback.onFailure(caught);
+				}
+			});
+		}
+
+		@Override
+		public void visitAbcInvoiceWorkplace() {
+			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+					new AsyncCallback<StatData<String, String, Double>>() {
+
+				@Override
+				public void onSuccess(final StatData<String, String, Double> result) {
+					final PieOptions options = PieChart.createPieOptions();
+					options.set("animation", StatUtils.ANIMATION);
+					options.setWidth(content.getOffsetWidth());
+					options.setHeight(content.getOffsetHeight());
+					options.set3D(true);
+					AxisOptions vaxis = AxisOptions.create();
+					vaxis.setTitle(AON.MSG.amount());
+					options.setVAxisOptions(vaxis);
+					AxisOptions haxis = AxisOptions.create();
+					haxis.setTitle(AON.MSG.months());
+					options.setHAxisOptions(haxis);
+					Table.Options tableOptions = Table.Options.create();
+					tableOptions.setAlternatingRowStyle(true);
+					tableOptions.setWidth(south.getOffsetWidth() + "px");
+					tableOptions.setHeight(south.getOffsetHeight() + "px");
+					final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
+					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+					south.setWidget(table);
+					excel.setEnabled(true);
+					final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
+					coreChartCallback.onSuccess(chart);
+				}
+
+
+				@Override
+				public void onFailure(Throwable caught) {
+					coreChartCallback.onFailure(caught);
+				}
+			});
+		}
+
+		@Override
+		public void visitAbcInvoiceSeller() {
+			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+					new AsyncCallback<StatData<String, String, Double>>() {
+
+				@Override
+				public void onSuccess(final StatData<String, String, Double> result) {
+					final PieOptions options = PieChart.createPieOptions();
+					options.set("animation", StatUtils.ANIMATION);
+					options.setWidth(content.getOffsetWidth());
+					options.setHeight(content.getOffsetHeight());
+					options.set3D(true);
+					AxisOptions vaxis = AxisOptions.create();
+					vaxis.setTitle(AON.MSG.amount());
+					options.setVAxisOptions(vaxis);
+					AxisOptions haxis = AxisOptions.create();
+					haxis.setTitle(AON.MSG.months());
+					options.setHAxisOptions(haxis);
+					Table.Options tableOptions = Table.Options.create();
+					tableOptions.setAlternatingRowStyle(true);
+					tableOptions.setWidth(south.getOffsetWidth() + "px");
+					tableOptions.setHeight(south.getOffsetHeight() + "px");
+					final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
+					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+					south.setWidget(table);
+					excel.setEnabled(true);
+					final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
+					coreChartCallback.onSuccess(chart);
+				}
+
+
+				@Override
+				public void onFailure(Throwable caught) {
+					coreChartCallback.onFailure(caught);
+				}
+			});
+		}
+
+		@Override
+		public void visitGeoProvince() {
+			statService.getStatData(getCurrentDomainName(), getCurrentDomain(), filter.getParams(), 
+					new AsyncCallback<StatData<String, String, Double>>() {
+
+				@Override
+				public void onSuccess(final StatData<String, String, Double> result) {
+					final  GeoChartWrapper.Options options = GeoChartWrapper.Options.create();
+					options.set("animation", StatUtils.ANIMATION);
+					options.setWidth(content.getOffsetWidth());
+					options.setHeight(content.getOffsetHeight());
+					options.setRegion("ES");
+					options.setDisplayMode(DisplayMode.MARKERS);
+					
+					Table.Options tableOptions = Table.Options.create();
+					tableOptions.setAlternatingRowStyle(true);
+					tableOptions.setWidth(south.getOffsetWidth() + "px");
+					tableOptions.setHeight(south.getOffsetHeight() + "px");
+					final DataTable dataTable = getGeoDataTable(tableOptions, result, "Provincias");
+					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+					south.setWidget(table);
+					excel.setEnabled(true);
+					final ResizableGeoChart chart = new ResizableGeoChart(dataTable,options);
+					coreChartCallback.onSuccess(chart);
+				}
+
+
+				@Override
+				public void onFailure(Throwable caught) {
+					coreChartCallback.onFailure(caught);
+				}
+			});
 		}
 	}
 }

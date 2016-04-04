@@ -9,4 +9,14 @@ public interface IStatChartTypeVisitor {
 	void visitInvoiceTypeByDaysComboChart();
 
 	void visitAbcInvoiceTitular();
+
+	void visitAbcInvoiceCategory();
+
+	void visitAbcInvoiceProduct();
+
+	void visitAbcInvoiceWorkplace();
+
+	void visitAbcInvoiceSeller();
+
+	void visitGeoProvince();
 }

@@ -64,6 +64,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-scroll-area")
 	String aonScrollArea();
 
+	@ClassName("aon-float-right")
+	String aonFloatRight();
+
 	@ClassName("aon-height-all")
 	String aonHeightAll();
 

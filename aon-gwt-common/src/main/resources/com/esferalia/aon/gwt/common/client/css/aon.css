@@ -38,6 +38,10 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	padding: 8px 1.5em 1.5em 1.5em;
 }
 
+.aon-float-right {
+	float: right;
+}
+
 .aon-height-all {
 	height: 100%;
 }
