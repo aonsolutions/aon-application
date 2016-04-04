@@ -47,7 +47,7 @@
 				converter="aon.TrimStringConverter"
 				focus="ProjectReservationGuest_name#{suffix}" />
 
-			<aon:outputLabel for="ProjectReservationGuest_documentExpDate" value="#{bundle.aon_expedition_date}" />
+			<aon:outputLabel for="ProjectReservationGuest_documentExpDate" value="#{bundle.aon_expedition_date_abbrv}" />
 			<aon:selectInputDate id="ProjectReservationGuest_documentExpDate#{suffix}" inputClass="aon-form-input-text"
 				value="#{controller.to.documentExpDate}" 
 				timeZone="#{timeZoneController.timeZone}"
