@@ -43,7 +43,10 @@ public class WebpolGuestsWriter implements Serializable {
 		PrintWriter writer = new PrintWriter(outputStream);
 		FileFiller filler;
 		
-		int hotelCount = (int) list.stream().map(o -> (ProjectReservationGuest)o).map(ProjectReservationGuest::getProjectReservation).map(ProjectReservation::getHotel).distinct().count();
+		int hotelCount = (int) list.stream()
+				.map(o -> (ProjectReservationGuest) o)
+				.map(ProjectReservationGuest::getProjectReservation)
+				.map(ProjectReservation::getHotel).distinct().count();
 		
 		if(hotelCount>1){
 			TIPO0 tipo0 = createTIPO0Record(list, date); 

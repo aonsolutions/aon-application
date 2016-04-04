@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -19,6 +20,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
@@ -29,6 +33,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.pms.writer.WebpolGuestsWriter;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 
 public class WebpolExporterController extends BasicController {
@@ -47,6 +52,10 @@ public class WebpolExporterController extends BasicController {
 	private byte[] data;
 	
 	private int fileCount;
+	
+	private String issueEntityCode;
+	
+	private Hotel generationHotel;
 	
 	private boolean newFile; 
 	
@@ -89,6 +98,18 @@ public class WebpolExporterController extends BasicController {
 	public void setData(byte[] data) {
 		this.data = data;
 	}
+	
+	private List<Hotel> getGenerationHotels(List<ITransferObject> list) {
+		List<Hotel> hotels = list.stream()
+				.map(o -> (ProjectReservationGuest) o)
+				.map(ProjectReservationGuest::getProjectReservation)
+				.map(ProjectReservation::getHotel).distinct().collect(Collectors.toList());
+		return hotels;
+	}
+	
+	private boolean isMultipleGenerationHotel(List<ITransferObject> list) {
+		return getGenerationHotels(list).size() > 1;
+	}
 
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException {
@@ -97,6 +118,9 @@ public class WebpolExporterController extends BasicController {
 		hotels = null;
 		fromDate = new Date();
 		toDate = new Date();
+		fileCount = -1;
+		issueEntityCode = null;
+		generationHotel = null;
 	}
 	
 	public void onGotoReservation(ActionEvent event) throws ManagerBeanException {
@@ -128,8 +152,15 @@ public class WebpolExporterController extends BasicController {
 	
 	public void onCreateDisk( ActionEvent event ) throws ManagerBeanException {
 		try {
+			List<ITransferObject> list = getManagerBean().getList(getCriteria());
+			if(!isMultipleGenerationHotel(list)){
+				List<Hotel> hotels = getGenerationHotels(list);
+				generationHotel = hotels!=null && hotels.size()==1?hotels.get(0):null;
+			} else {
+				generationHotel = null;
+			}
 			WebpolGuestsWriter writer = new WebpolGuestsWriter();
-			FileOutput output = writer.createFile(getHotels(), getManagerBean().getList(getCriteria()), Calendar.getInstance().getTime());
+			FileOutput output = writer.createFile(getHotels(), list, Calendar.getInstance().getTime());
 			if (output != null && output.getContent() != null) {
 				setData(output.getContent());
 			}
@@ -146,13 +177,20 @@ public class WebpolExporterController extends BasicController {
 		if(getData()!=null){
 			HttpServletResponse response = null;
 			OutputStream out = null;
-			if(this.newFile){
-				fileCount = obtainFileCount();
-				updateFileCount(++fileCount);
-				this.newFile = false;
-			}
 			try {
-				String name = obtainIssueEntityCode() + "." + StringUtils.leftPad(String.valueOf(fileCount), 3, "0");
+				if(this.newFile){
+					if(generationHotel==null){
+						issueEntityCode = obtainIssueEntityCode();
+						fileCount = obtainFileCount();
+						updateFileCount(++fileCount);
+					} else {
+						issueEntityCode = obtainIssueEntityCode(generationHotel);
+						fileCount = obtainFileCount(generationHotel);
+						updateFileCount(++fileCount, generationHotel);
+					}
+					this.newFile = false;
+				}
+				String name = issueEntityCode + "." + StringUtils.leftPad(String.valueOf(fileCount), 3, "0");
 				int size = data.length;
 				response = DownloadUtil.getResponse();
 				out = DownloadUtil.initDownload(response, name, null, size);
@@ -170,8 +208,13 @@ public class WebpolExporterController extends BasicController {
 
 	private String obtainIssueEntityCode() {
 		ApplicationParameter ap = AppParamUtil.getParameter(WebpolGuestsWriter.APP_PMS_POLICE_CODE);
-		String value = ap==null?"":ap.getValue();
-		value = value.length()>10?value.substring(0, 10):value;
+		String value = null;
+		if(ap!=null && !StringUtils.isBlank(ap.getValue())){
+			value = ap.getValue();
+			value = value.length()>10?value.substring(0, 10):value;
+		} else {
+			value = "group_cod_no_def";
+		}
 		return value;
 	}
 
@@ -190,6 +233,26 @@ public class WebpolExporterController extends BasicController {
 		}
 		ap.setValue(String.valueOf(fileCount));
 		AppParamUtil.insertParameter(ap);
+	}
+
+	private String obtainIssueEntityCode(Hotel hotel) {
+		String value = null;
+		if(!StringUtils.isBlank(hotel.getPoliceCode())){
+			value = hotel.getPoliceCode();
+		} else {
+			value = "hotel_cod_no_def";
+		}
+		return value;
+	}
+
+	private int obtainFileCount(Hotel hotel) throws ManagerBeanException {
+		return hotel.getPoliceCounter();
+	}
+	
+	private void updateFileCount(int fileCount, Hotel hotel) throws ManagerBeanException {
+		hotel.setPoliceCounter(fileCount);
+		IManagerBean bean = BeanManager.getManagerBean(Hotel.class);
+		bean.update(hotel);
 	}
 	
 
