@@ -1,30 +1,30 @@
 package com.esferalia.aon.gwt.template.server;
 
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class StockInfo implements IsSerializable{
 	
 	String product;
 	Integer productId;
-	//Series series;
-	//Warehouse sourceWarehouse;
-	//Warehouse targetWarehouse;
-	String detail;
-	String detail2;
-	String detail3;
-	//String comments;
 	Double quantity;
 	Integer row;
-	Integer itemId;
 	Integer domainId;
 	Integer transferId;
 	Double quantityDifference;
 	String productName;
 	String workplaceStr;
 	String departmentStr;
-	String serialNumber;
 	
+	Item item;
 	
+	public Item getItem() {
+		return item;
+	}
+	public StockInfo setItem(Item item) {
+		this.item = item;
+		return this;
+	}
 	public String getWorkplaceStr() {
 		return workplaceStr;
 	}
@@ -46,27 +46,6 @@ public class StockInfo implements IsSerializable{
 		this.product = product;
 		return this;
 	}
-	public String getDetail() {
-		return detail;
-	}
-	public StockInfo setDetail(String detail) {
-		this.detail = detail;
-		return this;
-	}
-	public String getDetail2() {
-		return detail2;
-	}
-	public StockInfo setDetail2(String detail2) {
-		this.detail2 = detail2;
-		return this;
-	}
-	public String getDetail3() {
-		return detail3;
-	}
-	public StockInfo setDetail3(String detail3) {
-		this.detail3 = detail3;
-		return this;
-	}
 	public Double getQuantity() {
 		return quantity;
 	}
@@ -86,13 +65,6 @@ public class StockInfo implements IsSerializable{
 	}
 	public StockInfo setRow(Integer row) {
 		this.row = row;
-		return this;
-	}
-	public Integer getItemId() {
-		return itemId;
-	}
-	public StockInfo setItemId(Integer itemId) {
-		this.itemId = itemId;
 		return this;
 	}
 	public Integer getDomainId() {
@@ -123,14 +95,5 @@ public class StockInfo implements IsSerializable{
 		this.productName = productName;
 		return this;
 	}
-	public String getSerialNumber() {
-		return serialNumber;
-	}
-	public StockInfo setSerialNumber(String serialNumber) {
-		this.serialNumber = serialNumber;
-		return this;
-	}
-	
-	
-	
+
 }

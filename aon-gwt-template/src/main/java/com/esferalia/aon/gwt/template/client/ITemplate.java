@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.template.client;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
@@ -74,7 +75,10 @@ public interface ITemplate extends RemoteService{
 			Tag tag);
 	
 	public String generateConsumptionExcel(Domain domain,Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
-			Integer size, Integer fileId);
+			Integer size, Boolean packaged);
+	
+	public String generateConsumptionExcel(Domain domain,Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
+			Integer size, Date startDate, Date endDate, Boolean packaged);
 	
 	public Integer excelRowNumber();
 	

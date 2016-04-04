@@ -9,7 +9,8 @@ public enum TagType {
     OFFICE_NOTICE,
     OFFICE_PRIORITY,
     OFFICE_STATUS,
-    OFFICE_TYPE; // Tipo de Aviso
+    OFFICE_TYPE,
+	PACKING; // Tipo de Aviso
 
 	
 	

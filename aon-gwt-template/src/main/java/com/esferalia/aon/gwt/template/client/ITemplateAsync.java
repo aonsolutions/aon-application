@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.template.client;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
@@ -75,7 +76,7 @@ public interface ITemplateAsync {
 	void getProductCategories(Domain domain, AsyncCallback<List<ProductCategory>> callback);
 
 	void generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative,
-			Boolean detail, Integer size, Integer fileId, AsyncCallback<String> callback);
+			Boolean detail, Integer size, Boolean packaged, AsyncCallback<String> callback);
 
 	void excelRowNumber(AsyncCallback<Integer> callback);
 
@@ -89,5 +90,9 @@ public interface ITemplateAsync {
 	void getTypeList(Domain domain, AsyncCallback<LinkedList<String>> callback);
 
 	void print(String text, AsyncCallback<Void> callback);
+
+	void generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative,
+			Boolean detail, Integer size, Date startDate, Date endDate, Boolean packaged,
+			AsyncCallback<String> callback);
 
 }

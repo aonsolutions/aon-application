@@ -170,7 +170,13 @@ public class ProductDAO {
 	}
 	
 	// ------------------------------------- PRODUCT
+	
 	public static Product getProduct(AONContext ctx, Integer id){
+		return ctx.getDslContext().select().from(PRODUCT).where(PRODUCT.ID.eq(id)).limit(1).fetchInto(PRODUCT)
+			.stream().map(new FullProductFiller()).findFirst().orElse(new Product());
+	}
+	
+	public static Product getProduct2(AONContext ctx, Integer id){
 		ctx.checkRead();
 		Record21<Integer, String, String, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, String, Timestamp, String, Timestamp> record = ctx.getDslContext()
 				.select(PRODUCT.DOMAIN, PRODUCT.NAME, PRODUCT.CODE, PRODUCT.BRAND,
@@ -419,8 +425,13 @@ public class ProductDAO {
 	}
 	
 	// ------------------------------------- ITEM
-
-	public static Item getItem(AONContext ctx, Integer id){
+	public static Item getItem(AONContext ctx, Integer itemId){
+		return ctx.getDslContext().select().from(ITEM).where(ITEM.ID.eq(itemId)).limit(1).fetchInto(ITEM)
+				.stream().map(new FullItemFiller(ctx)).findFirst().orElse(new Item());
+	}
+	
+	@Deprecated
+	public static Item getItemOld(AONContext ctx, Integer id){
 		ctx.checkRead();
 		
 		Record20<Integer, Integer, String, String, String, String, String, Date, Double, Byte, Double, Double, Double, Double, Byte, String, String, Timestamp, String, Timestamp> record = ctx.getDslContext()
@@ -614,6 +625,78 @@ public class ProductDAO {
 					.setDetail(r.getDetail())
 					.setDetail2(r.getDetail2())
 					.setDetail3(r.getDetail3());		
+		}
+	}
+	
+	private static class FullProductFiller implements Function<ProductRecord, Product> {
+		@Override
+		public Product apply(ProductRecord r) {
+			return new Product().setId(r.getId())
+					.setName(r.getName())
+					.setDomain(r.getDomain())
+					.setBrand(r.getBrand())
+					.setCategory(r.getCategory())
+					.setCode(r.getCode())
+					.setComposition(r.getComposition() == 1)
+					.setComposition(r.getComposition())
+					.setCompositionPrice(r.getCompositionPrice() == 1)
+					.setCompositionPrice(r.getCompositionPrice())
+					.setCreationDate(r.getCreationDate())
+					.setCreationUser(r.getCreationUser())
+					.setInventoriable(r.getInventoriable() == 1)
+					.setInventoriable(r.getInventoriable())
+					.setKind(r.getKind())
+					.setLotable(r.getLotable() == 1)
+					.setLotable(r.getLotable())
+					.setManufactured(r.getManufactured())
+					.setModificationDate(r.getModificationDate())
+					.setModificationUser(r.getModificationUser())
+					.setPackaged(r.getPackaged() == 1)
+					.setPurchaseAccount(r.getPurchaseAccount())
+					.setRetention(r.getRetention())
+					.setSalesAccount(r.getSalesAccount())
+					.setSerializable(r.getSerializable() == 1)
+					.setSerializable(r.getSerializable())
+					.setStatus(r.getStatus())
+					.setType(r.getType())
+					.setVat(r.getVat());					
+		}
+	}
+	
+	private static class FullItemFiller implements Function<ItemRecord, Item> {
+		AONContext ctx;
+		public FullItemFiller(AONContext ctx) {
+			this.ctx = ctx;
+		}
+		
+		@Override
+		public Item apply(ItemRecord r) {
+			return new Item().setId(r.getId())
+					.setBarcode(r.getBarcode())
+					.setCreationDate(r.getCreationDate())
+					.setCreationUser(r.getCreationUser())
+					.setDescription(r.getDescription())
+					.setDetail(r.getDetail())
+					.setDetail2(r.getDetail2())
+					.setDetail3(r.getDetail3())
+					.setDomain(r.getDomain())
+					.setExpensesFixed(r.getExpensesFixed())
+					.setExpensesPercent(r.getExpensesPercent())
+					.setInternet(r.getInternet() == 1)
+					.setModificationDate(r.getModificationDate())
+					.setModificationUser(r.getModificationUser())
+					.setPackFormatTag(TagDAO.getTag(ctx, r.getPackFormatTag()))
+					.setPackMeasurement(r.getPackMeasurement())
+					.setPackMeasurementTag(TagDAO.getTag(ctx, r.getPackMeasurementTag()))
+					.setPackUnits(r.getPackUnits().doubleValue())
+					.setPackUnitsTag(TagDAO.getTag(ctx, r.getPackUnitsTag()))
+					.setPrice(r.getPrice())
+					.setProduct(getProduct(ctx, r.getProduct()))
+					.setProductId(r.getProduct())
+					.setProfitPercent(r.getProfitPercent())
+					.setPurchasePrice(r.getPurchasePrice())
+					.setSerialNumber(r.getSerialNumber())
+					.setStatus(r.getStatus());
 		}
 	}
 }

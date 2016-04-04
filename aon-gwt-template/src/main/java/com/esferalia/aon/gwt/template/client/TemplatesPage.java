@@ -7,6 +7,7 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.template.client.i18n.TemplatesMessages;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.TemplateList;
@@ -146,6 +147,7 @@ public class TemplatesPage extends Composite{
 	}
 	
 	final ITemplateAsync item = GWT.create(ITemplate.class);
+	private static final TemplatesMessages MSG = GWT.create(TemplatesMessages.class);
 
 	interface PageBinder extends UiBinder<Widget, TemplatesPage> {
 	}
@@ -281,7 +283,7 @@ public class TemplatesPage extends Composite{
  		dataGrid.addHandler(selHandler, CellPreviewEvent.getType());
 		dataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		dataGrid.setAutoHeaderRefreshDisabled(true);
-		dataGrid.setEmptyTableWidget(new Label("No hay ning\u00fan archivo."));
+		dataGrid.setEmptyTableWidget(new Label(MSG.notFiles()));
 		addDataDisplay(dataGrid);
 		ListHandler<TemplateInfo> sortHandler = getSortHandler();
 		dataGrid.addColumnSortHandler(sortHandler);
@@ -443,7 +445,7 @@ public class TemplatesPage extends Composite{
 			}
 		});
 		dataGrid.getColumnSortList().push(nameColumn);
-		dataGrid.addColumn(nameColumn, "Nombre");
+		dataGrid.addColumn(nameColumn, MSG.name());
 		dataGrid.setColumnWidth(nameColumn, 30, Unit.PCT);
 		
 		/** Type Column **/
@@ -465,7 +467,7 @@ public class TemplatesPage extends Composite{
 			}
 		});
 		dataGrid.getColumnSortList().push(typeColumn);
-		dataGrid.addColumn(typeColumn, "Tipo");
+		dataGrid.addColumn(typeColumn, MSG.type());
 		dataGrid.setColumnWidth(typeColumn, 20, Unit.PCT);
 
 		/** Download Column **/
@@ -477,7 +479,7 @@ public class TemplatesPage extends Composite{
 			}
 		};
 		downloadColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-		dataGrid.addColumn(downloadColumn, "Acciones");
+		dataGrid.addColumn(downloadColumn, MSG.actions());
 		dataGrid.setColumnWidth(downloadColumn, 10, Unit.PCT);
 	}
 	
@@ -526,7 +528,7 @@ public class TemplatesPage extends Composite{
 					ListBox lbn = (ListBox) flex_table.getWidget(i, 1);
 					if(lbn.getItemText(lbn.getSelectedIndex()) != "-")
 						v.add(lbn.getItemText(lbn.getSelectedIndex()));
-					if(lbn.getItemText(lbn.getSelectedIndex()).equals("Almac\u00e9n Destino"))
+					if(lbn.getItemText(lbn.getSelectedIndex()).equals(MSG.targetWarehouse()))
 						ti2.sethasWarehouse(true);
 					i++;
 				}
@@ -588,16 +590,13 @@ public class TemplatesPage extends Composite{
 	}
 
 	private Integer mandatoryIndex(String type) {
-		switch (type) {
-		case TemplatesDialog.PRODUCT: return 7;
-		case TemplatesDialog.STOCK: return 5;
-		case TemplatesDialog.FEE: return 10;
-		case TemplatesDialog.CONSUMPTION: return 12;
-		case TemplatesDialog.CLOSED_INVENTORY: return 7;
-		case TemplatesDialog.VALUED_INVENTORY: return 8;
-		default:
-			return 2;
-		}
+		if(type.equalsIgnoreCase(MSG.product())) return 7;
+		else if(type.equalsIgnoreCase(MSG.stock())) return 5;
+		else if(type.equalsIgnoreCase(MSG.fee())) return 10;
+		else if(type.equalsIgnoreCase(MSG.consumption())) return 12;
+		else if(type.equalsIgnoreCase(MSG.closedInventory())) return 7;
+		else if(type.equalsIgnoreCase(MSG.valuedInventory())) return 8;
+		else return 2;
 	}
 //------------------------------ UI Handlers
 	
@@ -680,7 +679,7 @@ public class TemplatesPage extends Composite{
 					ListBox lbn = (ListBox) flex_table.getWidget(i, 1);
 					if(lbn.getItemText(lbn.getSelectedIndex()) != "-")
 						v.add(lbn.getSelectedItemText());
-					if(lbn.getSelectedItemText().equals("Almac\u00e9n Destino"))
+					if(lbn.getSelectedItemText().equals(MSG.targetWarehouse()))
 						ti.sethasWarehouse(true);
 					
 					i++;

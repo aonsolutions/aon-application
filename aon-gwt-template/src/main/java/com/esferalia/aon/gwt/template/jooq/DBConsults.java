@@ -215,55 +215,38 @@ public class DBConsults {
 						feeTemplate.setId(id);
 						v.add(feeTemplate);
 						
-						TemplateInfo consumptionTemplate = new TemplateInfo();
-						v2 = new Vector<String>();
-						v2.add("Producto");v2.add("Nombre");v2.add("Inicial");v2.add("Compras");v2.add("Ventas");
-						v2.add("Traspaso");v2.add("Final");v2.add("Consumo");/*v2.add("Precio");*/v2.add("Valor Consumo");
-						consumptionTemplate.setColumns(v2);
-						consumptionTemplate.setDomain(domain.getName());
-						consumptionTemplate.setDomainId(0);
-						consumptionTemplate.setName("Est\u00e1ndar-Consumo");
-						consumptionTemplate.setType("Consumo");
-						consumptionTemplate.sethasWarehouse(false);
-						consumptionTemplate.setIsParent(true);
-						consumptionTemplate.setVersion(AonVersion.VERSION);
-						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), user.getLogin());
-						consumptionTemplate.setId(id);
-						v.add(consumptionTemplate);
-						
 						TemplateInfo inventoryTemplate1 = new TemplateInfo();
 						v2 = new Vector<String>();
 						v2.add("Producto");v2.add("Nombre");v2.add("Categor\u00eda");v2.add("Recuento");
 						v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
-						consumptionTemplate.setColumns(v2);
-						consumptionTemplate.setDomain(domain.getName());
-						consumptionTemplate.setDomainId(0);
-						consumptionTemplate.setName("Est\u00e1ndar-Inventario-Cerrado");
-						consumptionTemplate.setType("Inventario Cerrado");
-						consumptionTemplate.sethasWarehouse(false);
-						consumptionTemplate.setIsParent(true);
-						consumptionTemplate.setVersion(AonVersion.VERSION);
+						inventoryTemplate1.setColumns(v2);
+						inventoryTemplate1.setDomain(domain.getName());
+						inventoryTemplate1.setDomainId(0);
+						inventoryTemplate1.setName("Est\u00e1ndar-Inventario-Cerrado");
+						inventoryTemplate1.setType("Inventario Cerrado");
+						inventoryTemplate1.sethasWarehouse(false);
+						inventoryTemplate1.setIsParent(true);
+						inventoryTemplate1.setVersion(AonVersion.VERSION);
 						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), user.getLogin());
-						consumptionTemplate.setId(id);
+								inventoryTemplate1,Utils.newXmlFileWithVersion(inventoryTemplate1), user.getLogin());
+						inventoryTemplate1.setId(id);
 						v.add(inventoryTemplate1);
 						
 						TemplateInfo inventoryTemplate2 = new TemplateInfo();
 						v2 = new Vector<String>();
 						v2.add("Producto");v2.add("Nombre");v2.add("Categor\u00eda");v2.add("Inventario");v2.add("Coste");
 						v2.add("Total");v2.add("Detalle 1");v2.add("Detalle 2");v2.add("Detalle 3");
-						consumptionTemplate.setColumns(v2);
-						consumptionTemplate.setDomain(domain.getName());
-						consumptionTemplate.setDomainId(0);
-						consumptionTemplate.setName("Est\u00e1ndar-Inventario-Valorado");
-						consumptionTemplate.setType("Inventario Valorado");
-						consumptionTemplate.sethasWarehouse(false);
-						consumptionTemplate.setIsParent(true);
-						consumptionTemplate.setVersion(AonVersion.VERSION);
+						inventoryTemplate2.setColumns(v2);
+						inventoryTemplate2.setDomain(domain.getName());
+						inventoryTemplate2.setDomainId(0);
+						inventoryTemplate2.setName("Est\u00e1ndar-Inventario-Valorado");
+						inventoryTemplate2.setType("Inventario Valorado");
+						inventoryTemplate2.sethasWarehouse(false);
+						inventoryTemplate2.setIsParent(true);
+						inventoryTemplate2.setVersion(AonVersion.VERSION);
 						id = insertTemplate(new Domain().setId(0).setName(domain.getName()),
-								consumptionTemplate,Utils.newXmlFileWithVersion(consumptionTemplate), user.getLogin());
-						consumptionTemplate.setId(id);
+								inventoryTemplate2,Utils.newXmlFileWithVersion(inventoryTemplate2), user.getLogin());
+						inventoryTemplate2.setId(id);
 						v.add(inventoryTemplate2);
 					}
 				}

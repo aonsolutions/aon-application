@@ -2639,9 +2639,16 @@ public interface CommonMessages extends Messages {
  	
  	@DefaultMessage("Informe Agregado de Control de Consumos")
 	String aggregateConsumptionTemplates();
+	
+ 	@DefaultMessage("Control de Consumos")
+	String consumptionTemplates();
+ 	
  	
  	@DefaultMessage("Informe Agregado de Control de Errores en Recuentos")
 	String aggregateCountErrorTemplates();
+ 	
+ 	@DefaultMessage("Control de Errores en Recuentos")
+	String countErrorTemplates();
  	
  	@DefaultMessage("B\u00FAsqueda")
 	String searchTemplates();

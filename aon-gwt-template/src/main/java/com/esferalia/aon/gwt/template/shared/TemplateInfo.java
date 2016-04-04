@@ -29,69 +29,80 @@ public class TemplateInfo implements IsSerializable{
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public TemplateInfo setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public String getType() {
 		return type;
 	}
-	public void setType(String type) {
+	public TemplateInfo setType(String type) {
 		this.type = type;
+		return this;
 	}
 	public Vector<String> getColumns() {
 		return columns;
 	}
-	public void setColumns(Vector<String> columns) {
+	public TemplateInfo setColumns(Vector<String> columns) {
 		this.columns = columns;
+		return this;
 	}
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public TemplateInfo setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	public Integer getDomainId() {
 		return domainId;
 	}
-	public void setDomainId(Integer domainId) {
+	public TemplateInfo setDomainId(Integer domainId) {
 		this.domainId = domainId;
+		return this;
 	}
 	public String getDomain() {
 		return domain;
 	}
-	public void setDomain(String domain) {
+	public TemplateInfo setDomain(String domain) {
 		this.domain = domain;
+		return this;
 	}
 	public Integer getMimetype() {
 		return mimetype;
 	}
-	public void setMimetype(Integer mimetype) {
+	public TemplateInfo setMimetype(Integer mimetype) {
 		this.mimetype = mimetype;
+		return this;
 	}
 	
 	public String getDriveId() {
 		return driveId;
 	}
-	public void setDriveId(String driveId) {
+	public TemplateInfo setDriveId(String driveId) {
 		this.driveId = driveId;
+		return this;
 	}
 	public Boolean getIsParent() {
 		return isParent;
 	}
-	public void setIsParent(Boolean isParent) {
+	public TemplateInfo setIsParent(Boolean isParent) {
 		this.isParent = isParent;
+		return this;
 	}
 	public Boolean gethasWarehouse() {
 		return hasWarehouse;
 	}
-	public void sethasWarehouse(Boolean hasWarehouse) {
+	public TemplateInfo sethasWarehouse(Boolean hasWarehouse) {
 		this.hasWarehouse = hasWarehouse;
+		return this;
 	}
 	public String getVersion() {
 		return version;
 	}
-	public void setVersion(String version) {
+	public TemplateInfo setVersion(String version) {
 		this.version = version;
+		return this;
 	}
 	
 	

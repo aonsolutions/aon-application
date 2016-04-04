@@ -47,7 +47,6 @@ public class Templates extends Composite implements EntryPoint {
 	private static final String SILENT = "silent";
 	private static final String MARKETPLACE = "marketplace";
 	private static final String CONSUMPTION = "consumption";
-	private static final String CONSUMPTION_ERROR = "consumption_error";
 	private static final String TEMPLATES = "templates";
 	private static final String DOWNLOAD_AMAZON_DELIVERY = "download_amazon_delivery";
 	
@@ -96,10 +95,6 @@ public class Templates extends Composite implements EntryPoint {
 							ConsumptionPage cp = new ConsumptionPage(template_list);		
 					 		pagesPanel.add(cp);
 						}
-						else if(entryPoint.equals(CONSUMPTION_ERROR)){
-							ConsumptionErrorPage cep = new ConsumptionErrorPage(template_list);
-							pagesPanel.add(cep);
-						}
 						else if(entryPoint.equals(DOWNLOAD_AMAZON_DELIVERY)){
 							deliveryx();
 						}
@@ -142,7 +137,6 @@ public class Templates extends Composite implements EntryPoint {
 			exportCataloguex(this);
 			exportProposal(this);
 			exportProposalx(this);	
-			exportConsumptionx(this);
 			exportInventoryx(this);
 			exportIncomex(this);
 			exportDeliveryx(this);
@@ -692,6 +686,9 @@ public class Templates extends Composite implements EntryPoint {
 				CheckBox cb = (CheckBox) flex_table.getWidget(2, 0);
 				int onlyNonCero = cb.getValue() ? 1 : 0;
 				
+				CheckBox cb2 = (CheckBox) flex_table.getWidget(3, 0);
+				int addPackagedInfo = cb2.getValue() ? 1 : 0;
+				
 				String driveId="";
 				if(ti.getDriveId()!=null)driveId= ti.getDriveId();
 				
@@ -715,7 +712,8 @@ public class Templates extends Composite implements EntryPoint {
 						+ "&close="+closeInventory
 						+ "&inventory="+ ei.getInventory()
 						+ "&only_non_cero="+ onlyNonCero
-						+ "&username="+ template_list.getLogin();
+						+ "&username="+ template_list.getLogin()
+						+ "&packaged_info=" + addPackagedInfo;
 				
 				Window.open( fileDownloadURL, "_blank",null);
 				hide();
@@ -994,92 +992,6 @@ public class Templates extends Composite implements EntryPoint {
 		popup.addStyleName("gwt-PopupPanel-template");
 		popup.setGlassEnabled(true);
 		popup.show();
-	}
-	
-	private void exportConsumption(String warehouseId, String initialDate, String finalDate, String initialId, String finalId, String onlyNegative
-					,String detail){
-		warehouseAux = warehouseId;
-		initialDateAux = initialDate;
-		finalDateAux = finalDate;
-		initialIdAux = initialId;
-		finalIdAux = finalId;
-		onlyNegativeAux = onlyNegative;
-		detailAux = detail;
-		
-		Integer size = 0;
-		TemplateInfo templateInfo = null;
-		for (TemplateInfo ti : template_list.getList()) {
-			if(ti.getType().equals("Consumo")){
-				templateInfo = ti;
-				size++;
-			}
-		}
-		if(size != 1){
-			Dialog d = new Dialog("Exportar Consumo","Descargar",true,"Cancelar",true,"exportConsumption");
-			d.setUrl(GWT.getModuleBaseURL());
-			d.setTemplateList(template_list);
-			TemplatesDialog popup = new TemplatesDialog(d) {
-				String warehouseId = warehouseAux;
-				String initialDate = initialDateAux;
-				String finalDate = finalDateAux;
-				String initialId = initialIdAux;
-				String finalId = finalIdAux;
-				String onlyNegative = onlyNegativeAux;
-				String detail = detailAux;
-				@Override
-				protected void onCancel() {
-					hide();
-				}
-			
-				@Override
-				protected void onAccept() {
-				
-					ListBox lb = (ListBox) flex_table.getWidget(0, 1);
-					String template = lb.getItemText(lb.getSelectedIndex());
-					TemplateInfo ti = new TemplateInfo();
-				
-					for(TemplateInfo t : tlist.getList()) {
-						if(t.getName().equals(template) && t.getType().equals("Consumo")){
-							ti = t;
-						}
-					}
-				
-					String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_consumption/"
-		            	+ "?id=" + Integer.toString(ti.getId())
-		            	+ "&domain_id=" + getDomain().getId()
-		            	+ "&warehouse=" + warehouseId
-		            	+ "&initial_date=" + initialDate
-		            	+ "&final_date="+ finalDate
-		            	+ "&initial_id="+ initialId
-		            	+ "&final_id="+ finalId
-	            		+ "&only_negative="+ onlyNegative
-	            		+ "&detail="+detail
-	            		+ "&username="+ template_list.getLogin();					
-				
-				
-					Window.open( fileDownloadURL, "_blank",null);
-					hide();
-				}
-			};	
-			popup.addStyleName("gwt-PopupPanel-template");
-			popup.setGlassEnabled(true);
-			popup.show();
-		}
-		else{
-			String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_consumption/"
-	            	+ "?id=" + Integer.toString(templateInfo.getId())
-	            	+ "&domain_id=" + getDomain().getId()
-	            	+ "&warehouse=" + warehouseId
-	            	+ "&initial_date=" + initialDate
-	            	+ "&final_date="+ finalDate
-	            	+ "&initial_id="+ initialId
-	            	+ "&final_id="+ finalId
-            		+ "&only_negative="+ onlyNegative
-            		+ "&detail="+detail
-            		+ "&username="+ template_list.getLogin();
-			
-			Window.open( fileDownloadURL, "_blank",null);
-		}
 	}
 
 	private void exportInventory(String closed, String inventoryId){
@@ -1495,15 +1407,8 @@ public class Templates extends Composite implements EntryPoint {
 		}
 	}-*/;
 	
-	public void consumptionx(String warehouse, String initialDate, String finalDate, String initialId, String finalId, String onlyNegative, String detail){
-		exportConsumption(warehouse,initialDate,finalDate, initialId, finalId, onlyNegative, detail);
-	}
 	
-	public static native void exportConsumptionx(Templates thiz) /*-{	
-		$wnd.consumptionx = function(warehouse, initialDate, finalDate, initialId, finalId, onlyNegative, detail) {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::consumptionx(*)(warehouse, initialDate, finalDate, initialId, finalId, onlyNegative, detail);
-		}
-	}-*/;
+
 	
 	public void inventoryx(String closed, String inventoryId){
 		exportInventory(closed, inventoryId);

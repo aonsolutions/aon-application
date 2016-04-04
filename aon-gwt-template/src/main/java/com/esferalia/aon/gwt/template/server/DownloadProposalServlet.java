@@ -139,12 +139,12 @@ public class DownloadProposalServlet extends HttpServlet {
         		//case "Series": celda.setCellValue(si.getSeries().getCode());break;
         		//case "Almac\u00e9n Destino": celda.setCellValue(si.getTargetWarehouse().getName());break;
         		case "Cantidad": celda.setCellValue(si.getQuantity());celda.setCellStyle(style2);break;
-        		case "Detalle 1":  celda.setCellValue(si.getDetail());celda.setCellStyle(style2);break;
-        		case "Detalle 2":  celda.setCellValue(si.getDetail2());celda.setCellStyle(style2);break;
-        		case "Detalle 3":  celda.setCellValue(si.getDetail3());celda.setCellStyle(style2);break;
+        		case "Detalle 1":  celda.setCellValue(si.getItem().getDetail());celda.setCellStyle(style2);break;
+        		case "Detalle 2":  celda.setCellValue(si.getItem().getDetail2());celda.setCellStyle(style2);break;
+        		case "Detalle 3":  celda.setCellValue(si.getItem().getDetail3());celda.setCellStyle(style2);break;
         		case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         		case "Nombre": celda.setCellValue(si.getProductName());celda.setCellStyle(style3);break;
-        		case "Numero Serie": celda.setCellValue(si.getSerialNumber());celda.setCellStyle(style3);break;
+        		case "Numero Serie": celda.setCellValue(si.getItem().getSerialNumber());celda.setCellStyle(style3);break;
            		//case "Comentarios": celda.setCellValue(si.getComments());break;
         		default:
         			break;

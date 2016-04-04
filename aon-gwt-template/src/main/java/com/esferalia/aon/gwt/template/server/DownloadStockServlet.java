@@ -66,6 +66,8 @@ public class DownloadStockServlet extends HttpServlet {
         String close_inventory = p_request.getParameter("close");
         String only_non_cero = p_request.getParameter("only_non_cero");
         String login = p_request.getParameter("username");
+        String packagedInfo = p_request.getParameter("packaged_info");
+        Boolean packaged = packagedInfo.equals("1");
         
         Boolean closeInventory = close_inventory.equals("true");
         Integer domainId = Integer.parseInt(domain_id);
@@ -100,8 +102,8 @@ public class DownloadStockServlet extends HttpServlet {
         HSSFSheet hoja = libro.createSheet("Plantilla 1");
 
         Integer columns = aux.getColumns().size();
-
-        hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
+        if(packaged) hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()+2));
+        else hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
         
         Row rowInfo = hoja.createRow(0);
         Row fila = hoja.createRow(1);
@@ -149,6 +151,12 @@ public class DownloadStockServlet extends HttpServlet {
         }
         Cell celdaf = fila.createCell(columns);
         celdaf.setCellStyle(style);
+        if(packaged){
+        	 Cell cell1 = fila.createCell(columns+1);
+        	 cell1.setCellStyle(style);
+        	 Cell cell2 = fila.createCell(columns+2);
+        	 cell2.setCellStyle(style);
+        }
         /*for(Integer i = 0; i<= columns; i++){
         	if(aux.getColumns().size()!=i && ( aux.getColumns().get(i).equals("Producto") || aux.getColumns().get(i).equals("Nombre")))
             	hoja.setDefaultColumnStyle(i, style3);
@@ -306,28 +314,36 @@ public class DownloadStockServlet extends HttpServlet {
 
         for(Integer j = 0; j< v.size();j++){
         	Row row = hoja.createRow(j+2);
+        	StockInfo si = v.get(j);
         	for(Integer k = 0; k< columns; k++){
 				Cell celda = row.createCell(k);
 				String type = aux.getColumns().get(k);
-				StockInfo si = v.get(j);
         		switch (type) {
         		case "Producto": celda.setCellValue(si.getProduct());celda.setCellStyle(style3);break;
-        		//case "Series": celda.setCellValue(si.getSeries().getCode());break;
-        		//case "Almac\u00e9n Destino": celda.setCellValue(si.getTargetWarehouse().getName());break;
         		case "Cantidad": celda.setCellValue(si.getQuantity());celda.setCellStyle(style2);break;
-        		case "Detalle 1":  celda.setCellValue(si.getDetail());celda.setCellStyle(style2);break;
-        		case "Detalle 2":  celda.setCellValue(si.getDetail2());celda.setCellStyle(style2);break;
-        		case "Detalle 3":  celda.setCellValue(si.getDetail3());celda.setCellStyle(style2);break;
+        		case "Detalle 1":  celda.setCellValue(si.getItem().getDetail());celda.setCellStyle(style2);break;
+        		case "Detalle 2":  celda.setCellValue(si.getItem().getDetail2());celda.setCellStyle(style2);break;
+        		case "Detalle 3":  celda.setCellValue(si.getItem().getDetail3());celda.setCellStyle(style2);break;
         		case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         		case "Nombre": celda.setCellValue(si.getProductName());celda.setCellStyle(style3);break;
-        		case "Numero Serie": celda.setCellValue(si.getSerialNumber());celda.setCellStyle(style3);break;
-        		//case "Comentarios": celda.setCellValue(si.getComments());break;
+        		case "N\u00FAmero Serie": celda.setCellValue(si.getItem().getSerialNumber());celda.setCellStyle(style3);break;
         		default:
         			break;
         		}
         	}
         	Cell lastCell = row.createCell(columns);
         	lastCell.setCellStyle(style2);
+        	
+        	if(packaged){
+        		Cell valueCell = row.createCell(columns+1);
+        		Double value = si.getQuantity() * si.getItem().getPackMeasurement() * si.getItem().getPackUnits();
+        		if(value != 0) valueCell.setCellValue(value);
+        		valueCell.setCellStyle(style2);
+        		Cell unityCell = row.createCell(columns+2);
+        		unityCell.setCellValue(si.getItem().getPackMeasurementTag().getName());
+        		unityCell.setCellStyle(style2);
+        	}
+        	
         	row.setHeightInPoints(20);
         }
         for(Integer h = 0; h< columns;h++){

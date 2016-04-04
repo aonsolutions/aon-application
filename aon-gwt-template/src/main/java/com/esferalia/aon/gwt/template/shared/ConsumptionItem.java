@@ -59,252 +59,293 @@ public class ConsumptionItem implements IsSerializable{
 	String detail3;
 	
 	String hotel;
-	
+		
 	public Double getValuePAlb() {
 		return valuePAlb;
 	}
-	public void setValuePAlb(Double value) {
+	public ConsumptionItem setValuePAlb(Double value) {
 		this.valuePAlb = value;
+		return this;
 	}
 	public Double getValuePFac() {
 		return valuePFac;
 	}
-	public void setValuePFac(Double value) {
+	public ConsumptionItem setValuePFac(Double value) {
 		this.valuePFac = value;
+		return this;
 	}
 	public Double getValueSAlb() {
 		return valueSAlb;
 	}
-	public void setValueSAlb(Double value) {
+	public ConsumptionItem setValueSAlb(Double value) {
 		this.valueSAlb = value;
+		return this;
 	}
 	public Double getValueSFac() {
 		return valueSFac;
 	}
-	public void setValueSFac(Double value) {
+	public ConsumptionItem setValueSFac(Double value) {
 		this.valueSFac = value;
+		return this;
 	}
 	public Integer getItemId() {
 		return itemId;
 	}
-	public void setItemId(Integer itemId) {
+	public ConsumptionItem setItemId(Integer itemId) {
 		this.itemId = itemId;
+		return this;
 	}
 	public String getProductCode() {
 		return productCode;
 	}
-	public void setProductCode(String productCode) {
+	public ConsumptionItem setProductCode(String productCode) {
 		this.productCode = productCode;
+		return this;
 	}
 	public String getProductName() {
 		return productName;
 	}
-	public void setProductName(String productName) {
+	public ConsumptionItem setProductName(String productName) {
 		this.productName = productName;
+		return this;
 	}
 	public Double getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(Double quantity) {
+	public ConsumptionItem setQuantity(Double quantity) {
 		this.quantity = quantity;
+		return this;
 	}
 	public String getDiscount() {
 		return discount;
 	}
-	public void setDiscount(String discount) {
+	public ConsumptionItem setDiscount(String discount) {
 		this.discount = discount;
+		return this;
 	}
 	public Double getPrice() {
 		return price;
 	}
-	public void setPrice(Double price) {
+	public ConsumptionItem setPrice(Double price) {
 		this.price = price;
+		return this;
 	}
 	public Double getSalesAlb() {
 		return salesAlb;
 	}
-	public void setSalesAlb(Double sales) {
+	public ConsumptionItem setSalesAlb(Double sales) {
 		this.salesAlb = sales;
+		return this;
 	}
 	public Double getSalesFac() {
 		return salesFac;
 	}
-	public void setSalesFac(Double sales) {
+	public ConsumptionItem setSalesFac(Double sales) {
 		this.salesFac = sales;
+		return this;
 	}
 	public Double getPurchasesAlb() {
 		return purchasesAlb;
 	}
-	public void setPurchasesAlb(Double purchases) {
+	public ConsumptionItem setPurchasesAlb(Double purchases) {
 		this.purchasesAlb = purchases;
+		return this;
 	}
 	public Double getPurchasesFac() {
 		return purchasesFac;
 	}
-	public void setPurchasesFac(Double purchases) {
+	public ConsumptionItem setPurchasesFac(Double purchases) {
 		this.purchasesFac = purchases;
+		return this;
 	}
 	public Double getTransfersPlus() {
 		return transfersPlus;
 	}
-	public void setTransfersPlus(Double transfersPlus) {
+	public ConsumptionItem setTransfersPlus(Double transfersPlus) {
 		this.transfersPlus = transfersPlus;
+		return this;
 	}
 	public Double getTransfersMinus() {
 		return transfersMinus;
 	}
-	public void setTransfersMinus(Double transfersMinus) {
+	public ConsumptionItem setTransfersMinus(Double transfersMinus) {
 		this.transfersMinus = transfersMinus;
+		return this;
 	}
 	public Double getConsumption() {
 		return consumption;
 	}
-	public void setConsumption(Double consumption) {
+	public ConsumptionItem setConsumption(Double consumption) {
 		this.consumption = consumption;
+		return this;
 	}
 	public Double getItemPrice() {
 		return itemPrice;
 	}
-	public void setItemPrice(Double itemPrice) {
+	public ConsumptionItem setItemPrice(Double itemPrice) {
 		this.itemPrice = itemPrice;
+		return this;
 	}
 	public Double getTotalPrice() {
 		return totalPrice;
 	}
-	public void setTotalPrice(Double totalPrice) {
+	public ConsumptionItem setTotalPrice(Double totalPrice) {
 		this.totalPrice = totalPrice;
+		return this;
 	}
 	public String getDetail() {
 		return detail;
 	}
-	public void setDetail(String detail) {
+	public ConsumptionItem setDetail(String detail) {
 		this.detail = detail;
+		return this;
 	}
 	public String getDetail2() {
 		return detail2;
 	}
-	public void setDetail2(String detail2) {
+	public ConsumptionItem setDetail2(String detail2) {
 		this.detail2 = detail2;
+		return this;
 	}
 	public String getDetail3() {
 		return detail3;
 	}
-	public void setDetail3(String detail3) {
+	public ConsumptionItem setDetail3(String detail3) {
 		this.detail3 = detail3;
+		return this;
 	}
 	public Double getInitialQuantity() {
 		return initialQuantity;
 	}
-	public void setInitialQuantity(Double initialQuantity) {
+	public ConsumptionItem setInitialQuantity(Double initialQuantity) {
 		this.initialQuantity = initialQuantity;
+		return this;
 	}
 	public Double getFinalQuantity() {
 		return finalQuantity;
 	}
-	public void setFinalQuantity(Double finalQuantity) {
+	public ConsumptionItem setFinalQuantity(Double finalQuantity) {
 		this.finalQuantity = finalQuantity;
+		return this;
 	}
 	public Double getInitialValue() {
 		return initialValue;
 	}
-	public void setInitialValue(Double initialValue) {
+	public ConsumptionItem setInitialValue(Double initialValue) {
 		this.initialValue = initialValue;
+		return this;
 	}
 	public Double getFinalValue() {
 		return finalValue;
 	}
-	public void setFinalValue(Double finalValue) {
+	public ConsumptionItem setFinalValue(Double finalValue) {
 		this.finalValue = finalValue;
+		return this;
 	}
 	public Double getSalesValueAlb() {
 		return salesValueAlb;
 	}
-	public void setSalesValueAlb(Double salesValue) {
+	public ConsumptionItem setSalesValueAlb(Double salesValue) {
 		this.salesValueAlb = salesValue;
+		return this;
 	}
 	public Double getSalesValueFac() {
 		return salesValueFac;
 	}
-	public void setSalesValueFac(Double salesValue) {
+	public ConsumptionItem setSalesValueFac(Double salesValue) {
 		this.salesValueFac = salesValue;
+		return this;
 	}
 	public Double getPurchasesValueAlb() {
 		return purchasesValueAlb;
 	}
-	public void setPurchasesValueAlb(Double purchasesValue) {
+	public ConsumptionItem setPurchasesValueAlb(Double purchasesValue) {
 		this.purchasesValueAlb = purchasesValue;
+		return this;
 	}
 	public Double getPurchasesValueFac() {
 		return purchasesValueFac;
 	}
-	public void setPurchasesValueFac(Double purchasesValue) {
+	public ConsumptionItem setPurchasesValueFac(Double purchasesValue) {
 		this.purchasesValueFac = purchasesValue;
+		return this;
 	}
 	public Double getTransfersPlusValue() {
 		return transfersPlusValue;
 	}
-	public void setTransfersPlusValue(Double transfersPlusValue) {
+	public ConsumptionItem setTransfersPlusValue(Double transfersPlusValue) {
 		this.transfersPlusValue = transfersPlusValue;
+		return this;
 	}
 	public Double getTransfersMinusValue() {
 		return transfersMinusValue;
 	}
-	public void setTransfersMinusValue(Double transfersMinusValue) {
+	public ConsumptionItem setTransfersMinusValue(Double transfersMinusValue) {
 		this.transfersMinusValue = transfersMinusValue;
+		return this;
 	}
 	public Integer getInitialId() {
 		return initialId;
 	}
-	public void setInitialId(Integer initialId) {
+	public ConsumptionItem setInitialId(Integer initialId) {
 		this.initialId = initialId;
+		return this;
 	}
 	public Date getInitialDate() {
 		return initialDate;
 	}
-	public void setInitialDate(Date initialDate) {
+	public ConsumptionItem setInitialDate(Date initialDate) {
 		this.initialDate = initialDate;
+		return this;
 	}
 	public Integer getFinalId() {
 		return finalId;
 	}
-	public void setFinalId(Integer finalId) {
+	public ConsumptionItem setFinalId(Integer finalId) {
 		this.finalId = finalId;
+		return this;
 	}
 	public Date getFinalDate() {
 		return finalDate;
 	}
-	public void setFinalDate(Date finalDate) {
+	public ConsumptionItem setFinalDate(Date finalDate) {
 		this.finalDate = finalDate;
+		return this;
 	}
 	public Integer getWarehouseId() {
 		return warehouseId;
 	}
-	public void setWarehouseId(Integer warehouseId) {
+	public ConsumptionItem setWarehouseId(Integer warehouseId) {
 		this.warehouseId = warehouseId;
+		return this;
 	}
 	public String getWarehouseName() {
 		return warehouseName;
 	}
-	public void setWarehouseName(String warehouseName) {
+	public ConsumptionItem setWarehouseName(String warehouseName) {
 		this.warehouseName = warehouseName;
+		return this;
 	}
 	public String getInitialInventoryName() {
 		return initialInventoryName;
 	}
-	public void setInitialInventoryName(String initialInventoryName) {
+	public ConsumptionItem setInitialInventoryName(String initialInventoryName) {
 		this.initialInventoryName = initialInventoryName;
+		return this;
 	}
 	public String getFinalInventoryName() {
 		return finalInventoryName;
 	}
-	public void setFinalInventoryName(String finalInventoryName) {
+	public ConsumptionItem setFinalInventoryName(String finalInventoryName) {
 		this.finalInventoryName = finalInventoryName;
+		return this;
 	}
 	public String getHotel() {
 		return hotel;
 	}
-	public void setHotel(String hotel) {
+	public ConsumptionItem setHotel(String hotel) {
 		this.hotel = hotel;
+		return this;
 	}
 	
 	

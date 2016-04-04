@@ -1,84 +1,93 @@
 package com.esferalia.aon.gwt.template.client;
 
+import java.util.LinkedList;
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.template.client.i18n.TemplatesMessages;
 import com.esferalia.aon.gwt.template.shared.Dialog;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class ProductUtils {
 	
-	public static final String PRODUCT_NAME = "Nombre";
-	public static final String PRODUCT_CODE = "C\u00f3digo";
-	public static final String PRODUCT_PRICE_COST = "Precio Coste";
-	public static final String PRODUCT_SALE_BASE = "Precio Venta Base";
-	public static final String PRODUCT_CATEGORY = "Categor\u00eda";
-	public static final String PRODUCT_BRAND = "Marca";
-	public static final String PRODUCT_TAG = "Etiqueta";
-	public static final String PRODUCT_TYPE = "Tipo";
-	public static final String PRODUCT_VAT = "IVA";
-	public static final String PRODUCT_IRPF = "IRPF";
-	public static final String PRODUCT_INVENTORIABLE = "Inventoriable";
-	public static final String PRODUCT_COMPOSED_PRODUCT = "Producto Compuesto";
-	public static final String PRODUCT_COMPOSITION_PRICE = "Precio Composici\u00f3n";
-	public static final String PRODUCT_STATUS = "Estado";
-	public static final String PRODUCT_BARCODE = "C\u00f3digo de Barras";
-	public static final String PRODUCT_DESCRIPTION = "Descripci\u00f3n";
-	public static final String PRODUCT_DETAIL1 = "Detalle 1";
-	public static final String PRODUCT_DETAIL2 = "Detalle 2";
-	public static final String PRODUCT_DETAIL3 = "Detalle 3";
-	public static final String PRODUCT_SERIALIZABLE = "Serializable";
-	public static final String PRODUCT_LOTEABLE = "Loteable";
-	public static final String PRODUCT_SERIAL_NUMBER = "Numero Serie";
+	private static final TemplatesMessages MSG = GWT.create(TemplatesMessages.class);
 	
 	public static Vector<String> productList(){
 		Vector<String> v = new Vector<String>();
-		v.add(PRODUCT_NAME);
-		v.add(PRODUCT_CODE);
-		v.add(PRODUCT_PRICE_COST);
-		v.add(PRODUCT_SALE_BASE);
-		v.add(PRODUCT_CATEGORY);
-		v.add(PRODUCT_BRAND);
-		v.add(PRODUCT_TAG);
-		v.add(PRODUCT_TYPE);
-		v.add(PRODUCT_VAT);
-		v.add(PRODUCT_IRPF);
-		v.add(PRODUCT_INVENTORIABLE);
-		v.add(PRODUCT_COMPOSED_PRODUCT);
-		v.add(PRODUCT_COMPOSITION_PRICE);
-		v.add(PRODUCT_STATUS);
-		v.add(PRODUCT_BARCODE);
-		v.add(PRODUCT_DESCRIPTION);
-		v.add(PRODUCT_DETAIL1);
-		v.add(PRODUCT_DETAIL2);
-		v.add(PRODUCT_DETAIL3);
-		v.add(PRODUCT_SERIALIZABLE);
-		v.add(PRODUCT_LOTEABLE);
-		v.add(PRODUCT_SERIAL_NUMBER);
+		v.add(MSG.name());
+		v.add(MSG.code());
+		v.add(MSG.priceCost());
+		v.add(MSG.priceSaleBase());
+		v.add(MSG.category());
+		v.add(MSG.brand());
+		v.add(MSG.tag());
+		v.add(MSG.type());
+		v.add(MSG.vat());
+		v.add(MSG.irpf());
+		v.add(MSG.inventoriable());
+		v.add(MSG.composedProduct());
+		v.add(MSG.compositionPrice());
+		v.add(MSG.status());
+		v.add(MSG.barcode());
+		v.add(MSG.description());
+		v.add(MSG.detail1());
+		v.add(MSG.detail2());
+		v.add(MSG.detail3());
+		v.add(MSG.serializable());
+		v.add(MSG.lotable());
+		v.add(MSG.serialNumber());
+		
+		// Características de envasado
+
+		v.add(MSG.packaged());
+		v.add(MSG.format());
+		v.add(MSG.units());
+		v.add(MSG.unitsFormat());
+		v.add(MSG.measurement());
+		v.add(MSG.measurementFormat());
 		return v;
 	}
 	
 	public static Vector<String> productOptionalList(){
 		Vector<String> v = new Vector<String>();
-		v.add(PRODUCT_CATEGORY);
-		v.add(PRODUCT_BRAND);
-		v.add(PRODUCT_TAG);
-		v.add(PRODUCT_TYPE);
-		v.add(PRODUCT_VAT);
-		v.add(PRODUCT_IRPF);
-		v.add(PRODUCT_INVENTORIABLE);
-		v.add(PRODUCT_COMPOSED_PRODUCT);
-		v.add(PRODUCT_COMPOSITION_PRICE);
-		v.add(PRODUCT_STATUS);
-		v.add(PRODUCT_BARCODE);
-		v.add(PRODUCT_DESCRIPTION);
-		v.add(PRODUCT_DETAIL1);
-		v.add(PRODUCT_DETAIL2);
-		v.add(PRODUCT_DETAIL3);
-		v.add(PRODUCT_SERIALIZABLE);
-		v.add(PRODUCT_LOTEABLE);
-		v.add(PRODUCT_SERIAL_NUMBER);
+		v.add(MSG.category());
+		v.add(MSG.brand());
+		v.add(MSG.tag());
+		v.add(MSG.type());
+		v.add(MSG.vat());
+		v.add(MSG.irpf());
+		v.add(MSG.inventoriable());
+		v.add(MSG.composedProduct());
+		v.add(MSG.compositionPrice());
+		v.add(MSG.status());
+		v.add(MSG.barcode());
+		v.add(MSG.description());
+		v.add(MSG.detail1());
+		v.add(MSG.detail2());
+		v.add(MSG.detail3());
+		v.add(MSG.serializable());
+		v.add(MSG.lotable());
+		v.add(MSG.serialNumber());
+		
+		// Características de envasado
+
+		v.add(MSG.packaged());
+		v.add(MSG.format());
+		v.add(MSG.units());
+		v.add(MSG.unitsFormat());
+		v.add(MSG.measurement());
+		v.add(MSG.measurementFormat());
 		return v;
+	}
+	
+	public static LinkedList<String> requiredList(){
+		LinkedList<String> list = new LinkedList<String>();
+		list.add(MSG.name());
+		list.add(MSG.code());
+		list.add(MSG.priceCost());
+		list.add(MSG.priceSaleBase());
+		return list;
 	}
 	
 	public static Boolean productCheck(Dialog dialog, FlexTable flex_table) {
@@ -96,13 +105,10 @@ public class ProductUtils {
 	}
 	
 	public static Boolean estaProduct(String s) {
-		switch (s) {
-		case PRODUCT_NAME: return true;
-		case PRODUCT_CODE: return true;
-		case PRODUCT_PRICE_COST: return true;
-		case PRODUCT_SALE_BASE: return true;
-		}
-		return false;
+		return s.equalsIgnoreCase(MSG.name())
+				|| s.equalsIgnoreCase(MSG.code())
+				|| s.equalsIgnoreCase(MSG.priceCost())
+				|| s.equalsIgnoreCase(MSG.priceSaleBase());
 	}
 	
 }

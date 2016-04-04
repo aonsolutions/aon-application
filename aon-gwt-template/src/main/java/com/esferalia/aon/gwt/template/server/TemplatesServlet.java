@@ -67,6 +67,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -392,7 +393,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	public Boolean isRequiredFee(String s){
 		return s.equals("Cliente") || s.equals("Producto") || s.equals("Cantidad") || s.equals("Precio")
 				|| s.equals("Descuento") || s.equals("Fecha Inicio") || s.equals("Fecha Facturaci\u00f3n" )
-				|| s.equals("Centro Trabajo");
+				|| s.equals("Centro de Trabajo");
 	}
 	
 	public Error insertFee(Domain domain) {
@@ -550,7 +551,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			else return null;
 			break;
-		case "Centro Trabajo": case "Workplace": //bd
+		case "Centro de Trabajo": case "Workplace": //bd
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
 				Boolean b = true;
 				for(Workplace s : workplaces){
@@ -633,7 +634,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
 				fee.setDescription(toString(value));
 			break;
-		case "Linea": case "Line":
+		case "L\u00EDnea": case "Line":
 			if(type.equals(Cell.CELL_TYPE_NUMERIC))
 				fee.setLine(cell.getNumericCellValue());
 			else {
@@ -1073,19 +1074,19 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			break;
 		case "Detalle 1": case "Detail 1":
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
-				stock.setDetail(toString(value));
+				stock.getItem().setDetail(toString(value));
 			break;
 		case "Detalle 2": case "Detail 2":
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
-				stock.setDetail2(toString(value));
+				stock.getItem().setDetail2(toString(value));
 			break;
 		case "Detalle 3": case "Detail 3":
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
-				stock.setDetail3(toString(value));
+				stock.getItem().setDetail3(toString(value));
 			break;
-		case "Numero Serie": case "Serial Number":
+		case "N\u00FAmero Serie": case "Serial Number":
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
-				stock.setSerialNumber(toString(value));
+				stock.getItem().setSerialNumber(toString(value));
 			break;
 		default:
 			break;
@@ -1095,9 +1096,9 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	
 	private StockInfo newStock(){
 		StockInfo stock = new StockInfo();
-		stock.setDetail("");
-		stock.setDetail2("");
-		stock.setDetail3("");
+		stock.setItem(new Item().setDetail("")
+				.setDetail2("")
+				.setDetail3(""));
 		stock.setQuantity(null);
 		return stock;
 	}
@@ -1630,7 +1631,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
 			break;
-		case "Numero Serie":
+		case "N\u00FAmero Serie":
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
 				product.getItem().get(0).setSerialNumber(toString(value));
 			}
@@ -2358,10 +2359,25 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	}
 	
 	public String generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
-								 Integer size, Integer fileId) {
+								 Integer size, Boolean packaged) {
 		File file = null;
 		try {
-			file = ConsumptionUtil.generateConsumption(domain, warehouses, type, onlyNegative, detail, size, fileId, getUser().getLogin());
+			file = ConsumptionUtil.generateConsumption(domain, warehouses, type, onlyNegative, detail, size, getUser().getLogin(), packaged);
+		} catch (ServletException | IOException e) {
+			e.printStackTrace();
+		}
+		String key = PasswordGenerator.getPassword(10);
+		HttpServletRequest request = getThreadLocalRequest();
+		request.getSession().setAttribute(key, file);
+		return key;
+	}
+	
+	public String generateConsumptionExcel(Domain domain, Vector<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
+			 Integer size, Date startDate, Date endDate, Boolean packaged) {
+		File file = null;
+		try {
+			file = ConsumptionUtil.generateConsumption(domain, warehouses, type, onlyNegative, detail, size, getUser().getLogin()
+					, startDate, endDate, packaged);
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
 		}

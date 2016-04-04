@@ -20,6 +20,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.Record1;
@@ -29,8 +30,10 @@ import org.jooq.Record8;
 import org.jooq.Result;
 
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
+import com.esferalia.aon.jooq.tables.records.InventoryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 
 public class DBConsumption {
 	
@@ -401,6 +404,67 @@ public class DBConsumption {
 			return ci;
 		} finally{
 			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Inventory getInitialInventory(Domain domain, String login, Integer warehouseId, Date startDate, Date endDate){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
+		
+			return ctx.getDslContext().select().from(INVENTORY)
+				.where(INVENTORY.DOMAIN.eq(domain.getId()))
+				.and(INVENTORY.WAREHOUSE.eq(warehouseId))
+				.and(INVENTORY.INVENTORY_DATE.greaterOrEqual(startDate))
+				.and(INVENTORY.INVENTORY_DATE.lessThan(endDate))
+				.orderBy(INVENTORY.INVENTORY_DATE.asc()).limit(1).fetchInto(INVENTORY)
+				.stream().map(new InventoryFiller()).findFirst().orElse(new Inventory());
+		} finally{
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	private static class InventoryFiller implements Function<InventoryRecord, Inventory> {
+		
+		@Override
+		public Inventory apply(InventoryRecord r) {
+			return new Inventory().setId(r.getId())
+					.setInventoryDate(r.getInventoryDate())
+					.setDescription(r.getDescription());		
+		}
+	}
+	
+	public static Inventory getFinalInventory(Domain domain, String login, Integer warehouseId, Date startDate, Date endDate){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
+		
+			return ctx.getDslContext().select().from(INVENTORY)
+				.where(INVENTORY.DOMAIN.eq(domain.getId()))
+				.and(INVENTORY.WAREHOUSE.eq(warehouseId))
+				.and(INVENTORY.INVENTORY_DATE.lessOrEqual(endDate))
+				.and(INVENTORY.INVENTORY_DATE.greaterThan(startDate))
+				.orderBy(INVENTORY.INVENTORY_DATE.desc()).limit(1).fetchInto(INVENTORY)
+				.stream().map(new InventoryFiller()).findFirst().orElse(new Inventory());
+		} finally{
+			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static String getHotelName(String domainName, Integer domainId, String login, Integer warehouseId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			
+			Record1<String> result = ctx.getDslContext().select(WORKPLACE.DESCRIPTION)
+			.from(WORKPLACE).join(WAREHOUSE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
+			.where(WAREHOUSE.ID.eq(warehouseId))
+			.limit(1)
+			.fetchOne();
+			 
+			return result.value1();
+		} finally{
+			if(ctx != null) ctx.close();
 		}
 	}
 	

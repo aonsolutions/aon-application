@@ -23,6 +23,7 @@ public class Product implements Serializable{
 	Byte manufactured = 0;
 	Byte composition = 0;
 	Byte compositionPrice = 0;
+	Boolean packaged;
 	Integer salesAccount;
 	Integer purchaseAccount;
 	String creationUser;
@@ -231,6 +232,15 @@ public class Product implements Serializable{
 	}
 	public Product setKind(Byte kind) {
 		this.kind = kind;
+		return this;
+	}
+	
+	public Boolean getPackaged() {
+		return packaged;
+	}
+
+	public Product setPackaged(Boolean packaged) {
+		this.packaged = packaged;
 		return this;
 	}
 	

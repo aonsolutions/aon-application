@@ -1,7 +1,10 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:doc='urn:import:com.esferalia.aon.gwt.template.client' xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:doc='urn:import:com.esferalia.aon.gwt.template.client' 
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core">
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client"
+	xmlns:d="urn:import:com.google.gwt.user.datepicker.client"
+	 xmlns:b="http://java.sun.com/jstl/core">
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages"
 		field="msg"></ui:with>
@@ -106,16 +109,64 @@
 								<td></td>
 								<td></td>
 							</tr>
+						</table>
+						<g:HTMLPanel ui:field="datePanel">
+							<table>	
+								<tr>
+									<td>
+										<span class="aon-panelGrid-search-info-internal2-template">
+											<g:InlineLabel styleName="aon-outputLabel" text="Fecha Inicio" />
+										</span>
+									</td>
+									<td>
+										<d:DateBox ui:field="startDate" styleName="aon-inputText"></d:DateBox>
+									</td>
+									<td>
+										<span class="aon-panelGrid-search-info-internal2-template">
+											<g:InlineLabel styleName="aon-outputLabel" text="Fecha Fin" />
+										</span>
+									</td>
+									<td>
+										<d:DateBox ui:field="endDate" styleName="aon-inputText"></d:DateBox>
+									</td>
+									<td>
+									<g:HorizontalPanel>
+										<g:CheckBox ui:field="twoLastCheckBox"></g:CheckBox>
+										<g:InlineLabel text="Últimos inventarios"></g:InlineLabel>
+									</g:HorizontalPanel>
+								</td>
+								</tr>
+							</table>
+						</g:HTMLPanel>
+						<table>	
 							<tr>
 								<td>
 									<span class="aon-panelGrid-search-info-internal2-template">
 										<g:InlineLabel styleName="aon-outputLabel" text="Detallado" />
 									</span>
 								</td>
-								<td colspan="2">
+								<td >
 									<g:CheckBox ui:field="detailCheckBox"></g:CheckBox> 
 								</td>
+								<td>
+									<span class="aon-panelGrid-search-info-internal2-template">
+										<g:InlineLabel styleName="aon-outputLabel" text="Añadir Información del envasado" />
+									</span>
+								</td>
+								<td>
+									<g:CheckBox ui:field="packagedCheckBox"></g:CheckBox> 
+								</td>
+								<td>
+									<span class="aon-panelGrid-search-info-internal2-template">
+										<g:InlineLabel styleName="aon-outputLabel" text="Recuento de errores" />
+									</span>
+								</td>
+								<td>
+									<g:CheckBox ui:field="errorCheckBox"></g:CheckBox> 
+								</td>
 							</tr>
+						</table>
+						<table>
 							<tr>
 								<td></td>
 								<td>
@@ -124,6 +175,8 @@
 											styleName="aon-icon-commandButton aon-icon-pdf">
 										</g:Button>
 									</div>
+								</td>
+								<td>
 									<div class="aon-search-lookup-button" style="display: inline-block;">
 										<g:Button ui:field="excelButton" text="{msg.listTemplates}" enabled="false"
 											styleName="aon-icon-commandButton aon-icon-excel">

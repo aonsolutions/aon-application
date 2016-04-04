@@ -74,6 +74,7 @@ public interface ICommon {
 	public Integer[] getSonsDomains(AONContext ctx);
 	
 	// TAG
+	public Tag getTag(AONContext ctx, Integer tagId);
 	public void updateTag(AONContext ctx, Tag tag);
 	public void deleteTag(AONContext ctx, Tag tag);
 }

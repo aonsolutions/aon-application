@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.template.server;
 
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,13 +22,14 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBConsumption;
 import com.esferalia.aon.gwt.template.shared.ConsumptionItem;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.gwt.template.shared.Warehouse;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -46,45 +46,11 @@ public class ConsumptionUtil {
 	private static final String PDF = "pdf";
 	
     public static File generateConsumption(Domain domain, Vector<Warehouse> warehouses, String fileType, Boolean onlyNegative,
-    		Boolean detail, Integer size, Integer fileId, String login) throws ServletException, IOException{
+    		Boolean detail, Integer size, String login, Boolean packaged) throws ServletException, IOException{
     
     	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));        
-        byte[] b = null ;
-        User user = new User().setLogin(login);
-        b = DBConsults.getTemplate(domain, user, fileId);
        
-        TemplateInfo aux = null;
-		try {
-			aux = com.esferalia.aon.gwt.template.server.Utils.readxml(new ByteArrayInputStream(b));
-			Vector<String> v = new Vector<String>();
-			Integer i = 0;
-			if(detail){
-				for (String s : aux.getColumns()) {
-					if(!s.contains("Detalle"))
-						v.add(s);
-					i++;
-					switch (s) {
-					case "Inicial": v.add("Valor Inicial"); i++; break;
-        			case "Compras": v.add("Valor Compras"); i++; break;
-        			case "Ventas": v.add("Valor Ventas"); i++; break;
-        			case "Final": v.add("Valor Final"); i++; break;
-        			case "Traspaso": v.add("Valor Traspaso"); i++; break;
-        			default:
-        				break;
-        			}
-				}
-			}
-			else{
-				for (String s : aux.getColumns()) {
-					if(!s.contains("Detalle"))
-						v.add(s);
-					i++;
-				}
-			}
-			aux.setColumns(v);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        TemplateInfo aux = getTemplateInfo(detail);
 		
         File archivoXLS = new File("consumo" + ".xls");
         File archivoPDF = new File("consumo" + ".pdf");
@@ -116,9 +82,9 @@ public class ConsumptionUtil {
         	
         	allMap.put(w.getName(), v);
         }
-        libro2(domain.getName(), domain.getId(), warehouses, libro, onlyNegative, allMap, getTemplateInfoC(),0);
-        libro(domain.getName(), domain.getId(), warehouses, libro, onlyNegative, allMap, getTemplateInfoA(),1);
-        libro(domain.getName(), domain.getId(), warehouses, libro, onlyNegative, allMap, getTemplateInfoB(),2);
+        libro2(domain.getName(), domain.getId(),login, warehouses, libro, onlyNegative, allMap, getTemplateInfoC(),0);
+        libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoA(), 1, packaged);
+        libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoB(), 2, packaged);
         
         for (int index = 0; index < size; index++) {
        
@@ -126,8 +92,8 @@ public class ConsumptionUtil {
             String initialInventoryName = consumptionItem.getInitialInventoryName();
             String finalInventoryName = consumptionItem.getFinalInventoryName();
         	HSSFSheet hoja = libro.createSheet("Plantilla "+ (index+3));
-        
-        	hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
+        	if(packaged) hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()+2));
+            else hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
         	Row rowInfo = hoja.createRow(0);
         	Row fila = hoja.createRow(1);
         
@@ -175,6 +141,352 @@ public class ConsumptionUtil {
         	}
         	Cell celdaf = fila.createCell(columns);
         	celdaf.setCellStyle(style);
+        	if(packaged){
+        		Cell cell1 = fila.createCell(columns+1);
+        		cell1.setCellStyle(style);
+        		Cell cell2 = fila.createCell(columns+2);
+        		cell2.setCellStyle(style);
+        	}
+         	Vector<ConsumptionItem> v =  allMap.get(warehouses.get(index).getName());
+        	
+        	Integer num = 0;
+        	for(Integer j = 0; j< v.size();j++){
+        		ConsumptionItem ci = v.get(j);
+        		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
+
+        		Double consumValue = (ci.getInitialValue() * ci.getInitialQuantity()) 
+    					+  	(ci.getPurchasesAlb() * ci.getPurchasesValueAlb())
+    					+  	(ci.getPurchasesFac() * ci.getPurchasesValueFac())
+    					+	((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()))
+    					-	(ci.getSalesAlb() * ci.getSalesValueAlb())
+    					-	(ci.getSalesFac() * ci.getSalesValueFac())
+    					-	(ci.getFinalQuantity() * ci.getFinalValue());
+            	
+        		
+        		if(!(ci.getInitialQuantity() == 0 && 
+        			ci.getPurchasesAlb() == 0 &&
+   					ci.getPurchasesFac() == 0 &&
+        			ci.getSalesAlb() == 0 &&
+    				ci.getSalesFac() == 0 &&
+        			ci.getFinalQuantity() == 0 &&
+        			(ci.getTransfersPlus()-ci.getTransfersMinus()) == 0 &&
+        			ci.getConsumption() == 0) && 
+        			(!onlyNegative || ci.getConsumption() < 0 )){
+        			Row row = hoja.createRow((j-num)+2);
+        			for(Integer k = 0; k< columns; k++){
+        	    		Cell celda = row.createCell(k);
+        	    		String type = aux.getColumns().get(k); 
+     
+        				switch (type) {
+        				case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style3);break;
+        				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
+        				case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style3);break;
+        				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
+        				case "Valor Inicial": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
+        				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style2);break;
+        				case "Valor Compras": celda.setCellValue(round((ci.getPurchasesAlb() * ci.getPurchasesValueAlb())+(ci.getPurchasesFac() * ci.getPurchasesValueFac()),2));celda.setCellStyle(style2);break;
+        				case "Ventas": celda.setCellValue(round(ci.getSalesAlb()+ ci.getSalesFac(),2));celda.setCellStyle(style2);break;
+        				case "Valor Ventas": celda.setCellValue(round((ci.getSalesAlb() * ci.getSalesValueAlb())+(ci.getSalesFac() * ci.getSalesValueFac()),2));celda.setCellStyle(style2);break;
+        				case "Final": celda.setCellValue(round(ci.getFinalQuantity(),2));celda.setCellStyle(style2);break;
+        				case "Valor Final": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
+        				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style2);break;
+        				case "Valor Traspaso": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style2);break;
+        				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
+        				//case "Valor Consumo": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
+        				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
+        							else celda.setCellValue(0);	
+        							celda.setCellStyle(style2);break; 
+        				case "Valor Consumo": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
+        				case "Importe": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
+
+        				case "Consumo": celda.setCellValue(round(ci.getConsumption(),2));celda.setCellStyle(style2);break;
+        				default:
+        					break;
+        			}
+        			}
+        			Cell lastCell = row.createCell(columns);
+        			lastCell.setCellStyle(style2);
+        			if(packaged){
+            			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
+                		Cell valueCell = row.createCell(columns+1);
+                		Double value = ci.getConsumption() * item.getPackMeasurement() * item.getPackUnits();
+                		if(value != 0) valueCell.setCellValue(value);
+                		valueCell.setCellStyle(style2);
+                		Cell unityCell = row.createCell(columns+2);
+                		unityCell.setCellValue(item.getPackMeasurementTag().getName());
+                		unityCell.setCellStyle(style2);
+            		}
+        			row.setHeightInPoints(20);
+        		}
+        		else{
+        			num++;
+        		}
+        	
+        	}
+        	for(Integer h = 0; h< columns;h++){
+        		hoja.autoSizeColumn(h);
+        	}
+        }
+        
+        libro.write(archivo);    
+        
+        if(fileType.equals(PDF)){
+        	
+        	 Document iText_xls_2_pdf = new Document(PageSize.A4.rotate());
+    		 try {
+    			 PdfWriter.getInstance(iText_xls_2_pdf, new FileOutputStream(archivoPDF));
+    		 } catch (DocumentException e) {
+    			 e.printStackTrace();
+    		 }
+    		 iText_xls_2_pdf.open();
+    		 
+			 com.itextpdf.text.Font fontTitle = new com.itextpdf.text.Font();
+			 fontTitle.setSize(16);
+			 fontTitle.setStyle(com.itextpdf.text.Font.BOLD);
+			 
+			 Paragraph title = new Paragraph("Informe Agregado de Control de Consumo",fontTitle);
+			 try {
+				iText_xls_2_pdf.add(title);
+			} catch (DocumentException e1) {
+				e1.printStackTrace();
+			}
+			 
+        	 for (Integer index = 0; index < size+3; index++){ 
+        		 HSSFSheet my_worksheet = libro.getSheetAt(index);
+        		 Iterator<Row> rowIterator = my_worksheet.iterator();             
+        		 Integer columnNum = getColumnNum(index, columns, packaged);
+        		 PdfPTable my_table = new PdfPTable(columnNum);
+        		 PdfPCell table_cell;
+        		 Integer i = 0;
+        		 
+        		 while(rowIterator.hasNext()) {
+                    Row row = rowIterator.next(); 
+                    Iterator<Cell> cellIterator = row.cellIterator();
+                    		
+                            while(cellIterator.hasNext()) {
+                            		if(i == 0){
+                            			cellIterator.next();
+                            		}
+                            		else{
+                            		com.itextpdf.text.Font font1 = new com.itextpdf.text.Font();
+                            		font1.setSize(8);
+                            		font1.setStyle(com.itextpdf.text.Font.BOLD);
+                            		
+                            		com.itextpdf.text.Font font2 = new com.itextpdf.text.Font();
+                            		font2.setSize(8);
+                            		
+                                    Cell cell = cellIterator.next(); //Fetch CELL
+                                    switch(cell.getCellType()) { //Identify CELL type
+                                            //you need to add more code here based on
+                                            //your requirement / transformations
+                                    case Cell.CELL_TYPE_STRING:
+                                    	if(row.getRowNum() == 1)
+                                    		table_cell=new PdfPCell(new Phrase(cell.getStringCellValue(), font1));
+                                    	else table_cell=new PdfPCell(new Phrase(cell.getStringCellValue(), font2));
+                                    	if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
+                                    	break;
+                                    case Cell.CELL_TYPE_BLANK:
+                                    	//Push the data from Excel to PDF Cell
+                                        table_cell=new PdfPCell();
+                                        //feel free to move the code below to suit to your needs
+                                        
+                                        if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
+                                       break;
+                                    
+                            		case Cell.CELL_TYPE_BOOLEAN:
+                            			//Push the data from Excel to PDF Cell
+                            			String text ="";
+                            			if(cell.getBooleanCellValue())text = "true";
+                            			else text = "false";
+                                		table_cell=new PdfPCell(new Phrase(text, font2));
+                                		//feel free to move the code below to suit to your needs
+                                		 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
+                                		break;
+                            		case Cell.CELL_TYPE_FORMULA:
+                            			//Push the data from Excel to PDF Cell
+                            			table_cell=new PdfPCell(new Phrase(cell.getCellFormula(), font2));
+                                		//feel free to move the code below to suit to your needs
+                            			 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
+                                		break;
+                            		case Cell.CELL_TYPE_NUMERIC:
+                            			//Push the data from Excel to PDF Cell
+                            			Double d = cell.getNumericCellValue();
+                            			table_cell=new PdfPCell(new Phrase(d.toString(), font2));
+                                		//feel free to move the code below to suit to your needs
+                            			 if(cell.getColumnIndex() != columnNum) my_table.addCell(table_cell);
+                                		break;
+                            		}	
+                            		}
+                            		i++;
+                                    //next line
+                            }
+            
+        		 }
+        		 try {
+        			 
+
+        			 com.itextpdf.text.Font fontPhrase = new com.itextpdf.text.Font();
+        			 fontPhrase.setSize(12);
+        			 fontPhrase.setStyle(com.itextpdf.text.Font.BOLD);
+            	
+        			 com.itextpdf.text.Font fontPhrase2 = new com.itextpdf.text.Font();
+        			 fontPhrase.setSize(12);
+        			 
+        			 if(index<3){
+        				 iText_xls_2_pdf.add(new Paragraph(" "));
+        				 iText_xls_2_pdf.add(new Paragraph("Resumen " + index, fontPhrase));
+        				 iText_xls_2_pdf.add(new Paragraph(" "));
+        			 }
+        			 else{
+        				iText_xls_2_pdf.add(new Paragraph(" "));
+        			 	iText_xls_2_pdf.add(new Paragraph("Almacén: " + warehouses.get(index-3).getName(), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Inventario Inicial: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getInitialInventoryName(), fontPhrase2), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Inventario Final: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getFinalInventoryName(), fontPhrase2), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph(" "));
+        			 }
+        			 iText_xls_2_pdf.add(my_table);
+        			 
+        			 iText_xls_2_pdf.add(new Paragraph(" "));
+        		 } catch (DocumentException e) {
+        			 e.printStackTrace();
+        		 }                       
+        	 }
+        	 iText_xls_2_pdf.close();
+        }
+        archivo.close();
+        
+        //long length;
+        //FileInputStream fis;
+        if(fileType.equals(PDF)){
+        	return archivoPDF;
+        }
+        else{// if(fileType.equals(EXCEL)){
+        	return archivoXLS;
+        }
+    }
+    
+    
+    public static File generateConsumption(Domain domain, Vector<Warehouse> warehouses, String fileType, Boolean onlyNegative,
+    		Boolean detail, Integer size, String login, Date startDate, Date endDate, Boolean packaged) throws ServletException, IOException{
+    	Collections.sort(warehouses, (Warehouse s1, Warehouse s2) -> s1.getName().compareTo(s2.getName()));        
+        
+        TemplateInfo aux = getTemplateInfo(detail);
+		
+        File archivoXLS = new File("consumo" + ".xls");
+        File archivoPDF = new File("consumo" + ".pdf");
+        if(archivoXLS.exists()) archivoXLS.delete();
+        if(archivoPDF.exists()) archivoPDF.delete();
+        archivoXLS.createNewFile();     
+        archivoPDF.createNewFile();
+        
+        Map<Integer, ConsumptionItem> cisMap = new HashMap<Integer, ConsumptionItem>();
+        HSSFWorkbook libro = new HSSFWorkbook();
+        FileOutputStream archivo = new FileOutputStream(archivoXLS);
+        Integer columns = aux.getColumns().size();
+    	
+        Map<String, Vector<ConsumptionItem>> allMap = new HashMap<String, Vector<ConsumptionItem>>();
+        for(Warehouse w : warehouses){
+        
+        	Inventory initialInventory = DBConsumption.getInitialInventory(domain, login, w.getId(), AonDateUtils.toSql(startDate), AonDateUtils.toSql(endDate));
+        	Inventory finalInventory = DBConsumption.getFinalInventory(domain, login, w.getId(), AonDateUtils.toSql(startDate), AonDateUtils.toSql(endDate));
+        	ConsumptionItem consumptionItem = new ConsumptionItem()
+        			.setInitialId(initialInventory.getId())
+        			.setInitialDate(initialInventory.getInventoryDate())
+        			.setInitialInventoryName(initialInventory.getDescription())
+        			.setFinalId(finalInventory.getId())
+        			.setFinalDate(finalInventory.getInventoryDate())
+        			.setFinalInventoryName(finalInventory.getDescription());
+        
+        	if(initialInventory.getId() != null && finalInventory.getId() != null
+        			&& initialInventory.getId() != finalInventory.getId()){
+        		Integer initialId = consumptionItem.getInitialId(), finalId = consumptionItem.getFinalId();
+        		Date initialDate = AonDateUtils.addDays(consumptionItem.getInitialDate(), 1), finalDate = consumptionItem.getFinalDate();
+            	String initialInventoryName = DBConsumption.getInventoryName(domain, initialId, login);
+            	String finalInventoryName = DBConsumption.getInventoryName(domain, finalId, login);
+            	consumptionItem.setWarehouseId(w.getId());
+            	consumptionItem.setWarehouseName(w.getName());
+            	consumptionItem.setInitialInventoryName(initialInventoryName);
+            	consumptionItem.setFinalInventoryName(finalInventoryName);
+        		cisMap.put(w.getId(), consumptionItem);
+        		Map<Integer, ConsumptionItem> map = DBConsumption.getConsumption(domain, login, initialId, finalId, w.getId(), new java.sql.Date(initialDate.getTime()), new java.sql.Date(finalDate.getTime()), consumptionItem.getWarehouseName());
+
+        		Vector<ConsumptionItem> v =  new Vector<ConsumptionItem>(map.values());
+        	
+        		allMap.put(w.getName(), v);
+        	} else{
+        		cisMap.put(w.getId(), new ConsumptionItem());
+        		allMap.put(w.getName(), new Vector<ConsumptionItem>());
+        	}
+        }
+        libro2(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoC(), 0);
+        libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoA(), 1, packaged);
+        libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoB(), 2, packaged);
+        
+        for (int index = 0; index < size; index++) {
+       
+        	ConsumptionItem consumptionItem = cisMap.get(warehouses.get(index).getId());
+            String initialInventoryName = consumptionItem.getInitialInventoryName() != null 
+            		? consumptionItem.getInitialInventoryName() : " ";
+            String finalInventoryName = consumptionItem.getFinalInventoryName() != null 
+            		? consumptionItem.getFinalInventoryName() : " ";
+        	HSSFSheet hoja = libro.createSheet("Plantilla "+ (index+3));
+        
+        	if(packaged) hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()+2));
+            else hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
+        	
+        	Row rowInfo = hoja.createRow(0);
+        	Row fila = hoja.createRow(1);
+        
+        
+        
+        	String info = "Control de Consumo ## " + warehouses.get(index).getName()+" ## "
+        			+ initialInventoryName +" ## " + finalInventoryName;
+        
+        	rowInfo.setHeightInPoints(16);
+        	fila.setHeightInPoints(16);
+        	CellStyle style = libro.createCellStyle();CellStyle styleInfo = libro.createCellStyle();
+        	Font font = libro.createFont();
+        	font.setFontHeightInPoints((short)12);
+        	font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        	style.setFont(font);styleInfo.setFont(font);
+        	style.setAlignment(CellStyle.ALIGN_CENTER);styleInfo.setAlignment(CellStyle.ALIGN_CENTER);
+        	style.setBorderBottom(CellStyle.BORDER_MEDIUM); styleInfo.setBorderBottom(CellStyle.BORDER_MEDIUM);
+        	styleInfo.setFillBackgroundColor(HSSFColor.LIGHT_YELLOW.index);
+
+        	Cell cellInfo = rowInfo.createCell(0);
+        	cellInfo.setCellValue(info);
+        	cellInfo.setCellStyle(styleInfo);
+       
+        
+       		CellStyle style2 = libro.createCellStyle();
+       		Font font2 = libro.createFont();
+        	font.setFontHeightInPoints((short)12);
+			style2.setFont(font2);
+			style2.setAlignment(CellStyle.ALIGN_RIGHT);
+			style2.setBorderBottom(CellStyle.BORDER_THIN);
+			style2.setBorderRight(CellStyle.BORDER_THIN);
+			style2.setBorderLeft(CellStyle.BORDER_THIN);
+		
+			CellStyle style3 = libro.createCellStyle();
+			style3.setFont(font2);
+			style3.setAlignment(CellStyle.ALIGN_LEFT);
+			style3.setBorderBottom(CellStyle.BORDER_THIN);
+			style3.setBorderRight(CellStyle.BORDER_THIN);
+			style3.setBorderLeft(CellStyle.BORDER_THIN);
+		
+			for(Integer i = 0; i< columns; i++){
+        	Cell celda = fila.createCell(i);
+            celda.setCellValue(aux.getColumns().get(i));
+            celda.setCellStyle(style);  	
+        	}
+        	Cell celdaf = fila.createCell(columns);
+        	celdaf.setCellStyle(style);
+        	if(packaged){
+        		Cell cell1 = fila.createCell(columns+1);
+        		cell1.setCellStyle(style);
+        		Cell cell2 = fila.createCell(columns+2);
+        		cell2.setCellStyle(style);
+        	}
  
          	Vector<ConsumptionItem> v =  allMap.get(warehouses.get(index).getName());
         	
@@ -235,6 +547,16 @@ public class ConsumptionUtil {
         			}
         			Cell lastCell = row.createCell(columns);
         			lastCell.setCellStyle(style2);
+        			if(packaged){
+            			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
+                		Cell valueCell = row.createCell(columns+1);
+                		Double value = ci.getConsumption() * item.getPackMeasurement() * item.getPackUnits();
+                		if(value != 0) valueCell.setCellValue(value);
+                		valueCell.setCellStyle(style2);
+                		Cell unityCell = row.createCell(columns+2);
+                		unityCell.setCellValue(item.getPackMeasurementTag().getName());
+                		unityCell.setCellStyle(style2);
+            		}
         			row.setHeightInPoints(20);
         		}
         		else{
@@ -263,7 +585,7 @@ public class ConsumptionUtil {
 			 fontTitle.setSize(16);
 			 fontTitle.setStyle(com.itextpdf.text.Font.BOLD);
 			 
-			 Paragraph title = new Paragraph("Informe Agregado de Control de Consumo",fontTitle);
+			 Paragraph title = new Paragraph("Control de Consumo",fontTitle);
 			 try {
 				iText_xls_2_pdf.add(title);
 			} catch (DocumentException e1) {
@@ -273,24 +595,8 @@ public class ConsumptionUtil {
         	 for (int index = 0; index < size+3; index++){ 
         		 HSSFSheet my_worksheet = libro.getSheetAt(index);
         		 Iterator<Row> rowIterator = my_worksheet.iterator();             
-        		 PdfPTable my_table;
-        		 Integer columnNum;
-        		 if(index == 0){
-        			 my_table = new PdfPTable(8);
-        			 columnNum = 8;
-        		 }
-        		 else if(index == 1){
-        			 my_table = new PdfPTable(9);
-        			 columnNum = 9;
-        		 }
-        		 else if(index == 2){
-        			 my_table = new PdfPTable(16);
-        			 columnNum = 16;
-        		 }
-        		 else{
-        			 my_table = new PdfPTable(columns);
-        			 columnNum = columns;
-        		 }
+        		 Integer columnNum = getColumnNum(index, columns, packaged);
+        		 PdfPTable my_table = new PdfPTable(columnNum);
         		 PdfPCell table_cell;
         		 Integer i = 0;
         		 
@@ -410,67 +716,81 @@ public class ConsumptionUtil {
 	}
 	
 	private static TemplateInfo getTemplateInfoA() {
-		Vector<String> v1 = new Vector<String>();
-		v1.add("Hotel");
-		v1.add("Almacén");
-		v1.add("Producto");
-		v1.add("Valor Inicial"); 
-		v1.add("Valor Compras"); 
-		v1.add("Valor Ventas");
-		v1.add("Valor Final");
-		v1.add("Valor Traspaso"); 
-		v1.add("Valor Consumo");
-		TemplateInfo special1 = new TemplateInfo();
-		special1.setColumns(v1);
-		return special1;
+		Vector<String> v = new Vector<String>();
+		v.add("Hotel");
+		v.add("Almacén");
+		v.add("Producto");
+		v.add("Valor Inicial"); 
+		v.add("Valor Compras"); 
+		v.add("Valor Ventas");
+		v.add("Valor Final");
+		v.add("Valor Traspaso"); 
+		v.add("Valor Consumo");
+		return new TemplateInfo().setColumns(v);
 	}
 
 	private static  TemplateInfo getTemplateInfoB() {
-		Vector<String> v2 = new Vector<String>();
-		v2.add("Hotel");
-		v2.add("Almacén");
-		v2.add("Producto");
-		v2.add("Nombre");
-		v2.add("Inicial");
-		v2.add("Valor Inicial");
-		v2.add("Compras");
-		v2.add("Valor Compras");
-		v2.add("Ventas");
-		v2.add("Valor Ventas");
-		v2.add("Traspaso");
-		v2.add("Valor Traspaso");
-		v2.add("Final");
-		v2.add("Valor Final");
-		v2.add("Consumo");
-		v2.add("Valor Consumo");
-		TemplateInfo special2 = new TemplateInfo();
-		special2.setColumns(v2);
-		return special2;
+		Vector<String> v = new Vector<String>();
+		v.add("Hotel");
+		v.add("Almacén");
+		v.add("Producto");
+		v.add("Nombre");
+		v.add("Inicial");
+		v.add("Valor Inicial");
+		v.add("Compras");
+		v.add("Valor Compras");
+		v.add("Ventas");
+		v.add("Valor Ventas");
+		v.add("Traspaso");
+		v.add("Valor Traspaso");
+		v.add("Final");
+		v.add("Valor Final");
+		v.add("Consumo");
+		v.add("Valor Consumo");
+		return new TemplateInfo().setColumns(v);
 	}
 	
 	private static TemplateInfo getTemplateInfoC() {
-		Vector<String> v1 = new Vector<String>();
-		v1.add("Hotel");
-		v1.add("Almacén");
-		v1.add("Valor Inicial"); 
-		v1.add("Valor Compras"); 
-		v1.add("Valor Ventas");
-		v1.add("Valor Final");
-		v1.add("Valor Traspaso"); 
-		v1.add("Valor Consumo");
-		TemplateInfo special1 = new TemplateInfo();
-		special1.setColumns(v1);
-		return special1;
+		Vector<String> v = new Vector<String>();
+		v.add("Hotel");
+		v.add("Almacén");
+		v.add("Valor Inicial"); 
+		v.add("Valor Compras"); 
+		v.add("Valor Ventas");
+		v.add("Valor Final");
+		v.add("Valor Traspaso"); 
+		v.add("Valor Consumo");
+		return new TemplateInfo().setColumns(v);
 	}
 	
-	private static  void libro(String domain, Integer domainId, Vector<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, Vector<ConsumptionItem>> map, TemplateInfo special1, Integer hoja){
+	private static TemplateInfo getTemplateInfo(Boolean detail) {
+		Vector<String> v = new Vector<String>();
+		v.add("Producto");
+		v.add("Nombre");
+		v.add("Inicial");
+		if(detail) v.add("Valor Inicial");
+		v.add("Compras");
+		if(detail) v.add("Valor Compras");
+		v.add("Ventas");
+		if(detail) v.add("Valor Ventas");
+		v.add("Traspaso");
+		if(detail) v.add("Valor Traspaso");
+		v.add("Final");
+		if(detail) v.add("Valor Final");
+		v.add("Consumo");
+		v.add("Valor Consumo");
+		return new TemplateInfo().setColumns(v);
+	}
+	
+	private static  void libro(String domain, Integer domainId, String login, Vector<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, Vector<ConsumptionItem>> map, TemplateInfo special1, Integer hoja, Boolean packaged){
 		
 		Integer columns = special1.getColumns().size(); 
 	
     	HSSFSheet hoja0 = libro.createSheet("Plantilla "+ hoja);
         
-    	hoja0.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
-
+    	if(packaged)hoja0.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()+2));
+    	else hoja0.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
+    	
     	Row rowInfo0 = hoja0.createRow(0);
     	Row fila0 = hoja0.createRow(1);
     	
@@ -515,7 +835,12 @@ public class ConsumptionUtil {
     	}
     	Cell celdaf0 = fila0.createCell(columns);
     	celdaf0.setCellStyle(style0);    	
-
+    	if(packaged){
+    		Cell cell1 = fila0.createCell(columns+1);
+    		cell1.setCellStyle(style0);
+    		Cell cell2 = fila0.createCell(columns+2);
+    		cell2.setCellStyle(style0);
+    	}
     	Integer num0 = 0;
     	Integer l = 0;
     	for (Warehouse w : warehouses) {
@@ -578,6 +903,16 @@ public class ConsumptionUtil {
         			}
         			Cell lastCell = row.createCell(columns);
         			lastCell.setCellStyle(style20);
+        			if(packaged){
+            			Item item = AON.getItem(domain, domainId, login, ci.getItemId());
+                		Cell valueCell = row.createCell(columns+1);
+                		Double value = ci.getConsumption() * item.getPackMeasurement() * item.getPackUnits();
+                		if(value != 0) valueCell.setCellValue(value);
+                		valueCell.setCellStyle(style20);
+                		Cell unityCell = row.createCell(columns+2);
+                		unityCell.setCellValue(item.getPackMeasurementTag().getName());
+                		unityCell.setCellStyle(style20);
+            		}
         			row.setHeightInPoints(20);
         		}
         		else{
@@ -591,7 +926,7 @@ public class ConsumptionUtil {
     	}
 	}
 	
-	private static  void libro2(String domain, Integer domainId, Vector<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, Vector<ConsumptionItem>> map, TemplateInfo special1, Integer hoja){
+	private static  void libro2(String domain, Integer domainId, String login, Vector<Warehouse>  warehouses, HSSFWorkbook libro,  boolean onlyNegative, Map<String, Vector<ConsumptionItem>> map, TemplateInfo special1, Integer hoja){
 		
 		Integer columns = special1.getColumns().size(); 
 	
@@ -653,7 +988,7 @@ public class ConsumptionUtil {
         	Double ventas = 0.0;
         	Double compras = 0.0;
         	Double inicial = 0.0;
-        	String hotel = "";
+        	String hotel = DBConsumption.getHotelName(domain, domainId, login, w.getId());
         	for(ConsumptionItem ci : v2){
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
 
@@ -665,24 +1000,26 @@ public class ConsumptionUtil {
     					-	(ci.getSalesFac() * ci.getSalesValueFac())
     					-	(ci.getFinalQuantity() * ci.getFinalValue());
             	
-        		if(consumValue != null) consumo = consumo + consumValue;
+        		if((onlyNegative && consumValue < 0) || !onlyNegative){
         		
-        		Double transferValue = (ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice());
-        		if(transferValue != null) traspaso = traspaso + transferValue;
+        			if(consumValue != null) consumo = consumo + consumValue;
         		
-        		Double finalValue = ci.getFinalQuantity() * ci.getFinalValue();
-        		if(finalValue != null) fin = fin + finalValue;
+        			Double transferValue = (ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice());
+        			if(transferValue != null) traspaso = traspaso + transferValue;
         		
-        		Double salesValue = (ci.getSalesAlb() * ci.getSalesValueAlb())+(ci.getSalesFac() * ci.getSalesValueFac());
-        		if(salesValue != null) ventas = ventas +salesValue;
+        			Double finalValue = ci.getFinalQuantity() * ci.getFinalValue();
+        			if(finalValue != null) fin = fin + finalValue;
         		
-        		Double purchasesValue = (ci.getPurchasesAlb() * ci.getPurchasesValueAlb())+(ci.getPurchasesFac() * ci.getPurchasesValueFac());
-        		if(purchasesValue != null) compras = compras +purchasesValue;
+        			Double salesValue = (ci.getSalesAlb() * ci.getSalesValueAlb())+(ci.getSalesFac() * ci.getSalesValueFac());
+        			if(salesValue != null) ventas = ventas +salesValue;
+        			
+        			Double purchasesValue = (ci.getPurchasesAlb() * ci.getPurchasesValueAlb())+(ci.getPurchasesFac() * ci.getPurchasesValueFac());
+        			if(purchasesValue != null) compras = compras +purchasesValue;
         		
-        		Double initialValue = ci.getInitialValue() * ci.getInitialQuantity();
-        		if(initialValue != null) inicial = inicial + initialValue;
+        			Double initialValue = ci.getInitialValue() * ci.getInitialQuantity();
+        			if(initialValue != null) inicial = inicial + initialValue;
         		
-        		hotel = ci.getHotel();
+        		}
         	}
         		
         	Row row = hoja0.createRow(l+2);
@@ -711,5 +1048,16 @@ public class ConsumptionUtil {
     	for(Integer h = 0; h< columns;h++){
     		hoja0.autoSizeColumn(h);
     	}      	
+	}
+	
+	private static Integer getColumnNum(Integer index, Integer columns, Boolean packaged) {
+		 if(index == 0)
+			 return 8;
+		 else if(index == 1)
+			 return packaged ? 12 : 9;
+		 else if(index == 2)
+			 return packaged ? 19 : 16;
+		 else
+			return packaged ? columns + 3 : columns;
 	}
 }

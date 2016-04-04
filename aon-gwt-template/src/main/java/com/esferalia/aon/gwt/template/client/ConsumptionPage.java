@@ -27,15 +27,17 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.DateBox;
 
 public class ConsumptionPage extends Composite{
 
-	private static final String PDF = "pdf";
-	private static final String EXCEL = "excel";
+	public static final String PDF = "pdf";
+	public static final String EXCEL = "excel";
 
 	final ITemplateAsync item = GWT.create(ITemplate.class);
 	
@@ -56,6 +58,14 @@ public class ConsumptionPage extends Composite{
 	@UiField Button cleanButton;
 	@UiField Label titleLabel;
 	
+	@UiField HTMLPanel datePanel;
+	@UiField DateBox startDate;
+	@UiField DateBox endDate;
+	@UiField CheckBox packagedCheckBox;
+	@UiField CheckBox errorCheckBox;
+	@UiField CheckBox twoLastCheckBox;
+	
+	
 	ListBox hotelBox;
 	ListBox warehouseBox;
 	ListBox selectedBox;
@@ -73,7 +83,6 @@ public class ConsumptionPage extends Composite{
 		hotelBoxPanel = new VerticalPanel();hotelBoxPanel.setSpacing(4);
 		warehouseBoxPanel = new VerticalPanel();warehouseBoxPanel.setSpacing(4);
 		selectedBoxPanel = new VerticalPanel();selectedBoxPanel.setSpacing(4);
-		
 		warehouseCheckBox = new CheckBox();
 		detailCheckBox = new CheckBox();
 		pdfButton = new Button();
@@ -89,7 +98,7 @@ public class ConsumptionPage extends Composite{
 	}
 
 	private void init() {
-		titleLabel.setText(AON.MSG.aggregateConsumptionTemplates());
+		titleLabel.setText(AON.MSG.consumptionTemplates());
 		map = new HashMap<String, Boolean>();
 		hwMap = new HashMap<String, String>();
 
@@ -108,6 +117,18 @@ public class ConsumptionPage extends Composite{
 		selectedBox.setVisibleItemCount(10);
 		selectedBoxPanel.add(selectedBox);
 		excelButton.setEnabled(true);
+		
+		twoLastCheckBox.setValue(false);
+		twoLastCheckBox.addClickHandler(new ClickHandler() {			
+			@Override
+			public void onClick(ClickEvent event) {
+				startDate.setValue(null);
+				startDate.setEnabled(!twoLastCheckBox.getValue());
+				endDate.setValue(null);
+				endDate.setEnabled(!twoLastCheckBox.getValue());
+			}
+		});
+		
 		item.getHotelsToConsumption(getDomain(), new AsyncCallback<List<Hotel>>() {
 			
 			@Override
@@ -294,24 +315,46 @@ public class ConsumptionPage extends Composite{
 		pbd.addStyleName("gwt-PopupPanel-template");
 		pbd.setGlassEnabled(true);
 		pbd.show();
-		item.generateConsumptionExcel(getDomain(), warehouses, type, false, detail,  selectedBox.getItemCount(), templateInfo.getId(),new AsyncCallback<String>() {
+		
+		if(!twoLastCheckBox.getValue()){
+			item.generateConsumptionExcel(getDomain(), warehouses, type, errorCheckBox.getValue(), detail,  selectedBox.getItemCount(),
+					startDate.getValue(), endDate.getValue(), packagedCheckBox.getValue(),new AsyncCallback<String>() {
 	
-			@Override
-			public void onSuccess(String result) {
-				
-				final String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_aggregate_consumption/"
+				@Override
+				public void onSuccess(String result) {
+					final String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_aggregate_consumption/"
 								+ "?tmpkey="+result
 								+ "&username="+ templateList.getLogin();
 				
-				pbd.completed();
-				pbd.hide();
+					pbd.completed();
+					pbd.hide();
 				
-				Window.open( fileDownloadURL, "_blank",null);
-			}
+					Window.open( fileDownloadURL, "_blank",null);
+				}
 			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		} else {
+			item.generateConsumptionExcel(getDomain(), warehouses, type, errorCheckBox.getValue(), detail,  selectedBox.getItemCount(), packagedCheckBox.getValue(),new AsyncCallback<String>() {
+				
+				@Override
+				public void onSuccess(String result) {
+					final String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download_aggregate_consumption/"
+								+ "?tmpkey="+result
+								+ "&username="+ templateList.getLogin();
+				
+					pbd.completed();
+					pbd.hide();
+				
+					Window.open( fileDownloadURL, "_blank",null);
+				}
+			
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+
+		}
 		
 	}
 	
