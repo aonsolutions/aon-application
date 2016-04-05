@@ -99,8 +99,10 @@ public class SQLAgreementContextFactory implements
 	public ExpressionContext create(AgreementKey agreementKey) {
 		try {
 
-			ExpressionContext expressionCtx = new ExpressionContext(
-					systemExpressionContextSupplier.get());
+			ExpressionContext expressionCtx = 
+					isAgreementDomain(agreementKey) ? 
+					new ExpressionContext(systemExpressionContextSupplier.get()):
+					new ExpressionContext()	;
 
 			agreementDataStmt.setInt(1, agreementKey.getDomain());
 			agreementDataStmt.setInt(2, agreementKey.getId());
