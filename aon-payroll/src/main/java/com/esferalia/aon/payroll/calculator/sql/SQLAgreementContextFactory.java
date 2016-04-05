@@ -126,10 +126,11 @@ public class SQLAgreementContextFactory implements
 		try {
 			//@formatter:off
 			AgreementKey agreementKey = new AgreementKey(key.getAgreementId(), key.getDomain());
-			ExpressionContext levelCtx = 
-					isAgreementDomain(agreementKey) ? 
-					new ExpressionContext(agreementDataCache.get(agreementKey)) : 
-					new ExpressionContext(); 
+//			ExpressionContext levelCtx = 
+//					isAgreementDomain(agreementKey) ? 
+//					new ExpressionContext(agreementDataCache.get(agreementKey)) : 
+//					new ExpressionContext(); 
+			ExpressionContext levelCtx =  new ExpressionContext(agreementDataCache.get(agreementKey)) ; 
 			//@formatter:on
 
 			agreementLevelDataStmt.setInt(1, key.getDomain());

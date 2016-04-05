@@ -932,7 +932,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			return getWorkplaceEventsVariables(workplaceId, agreementId,
-					startDate, endDate);
+					startDate, endDate, getDomainID(), getParentDomainID());
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -3102,7 +3102,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	private static Map<String, String> getWorkplaceEventsVariables(
 			Integer workplaceId, Integer agreementId, Date startDate,
-			Date endDate) throws SQLException {
+			Date endDate, Integer domainId, Integer parentDomainId) throws SQLException {
 		Connection connection = null;
 		try {
 			connection = getConnection();
@@ -3147,10 +3147,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				variables.remove(var);
 
 			Set<Level> levels = SQLAgreementDraft.getLevels(connection,
-					agreementId);
-
+					agreementId, domainId, parentDomainId);
+			
 			SalaryTable salaryTable = SQLAgreementDraft.getSalaryTable(
-					connection, agreementId, startDate, endDate);
+					connection, agreementId, startDate, endDate,domainId, parentDomainId);
 
 			Set<String> names = variables.keySet();
 			for (Level level : levels) {

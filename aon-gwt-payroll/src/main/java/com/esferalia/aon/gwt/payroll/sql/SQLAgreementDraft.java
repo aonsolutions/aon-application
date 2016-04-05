@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -43,6 +44,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.jooq.tables.AgreementData;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementDataColumns;
@@ -261,10 +263,16 @@ public class SQLAgreementDraft {
 	}
 
 	public static SalaryTable getSalaryTable(Connection connection,
-			int agreementId, Date startDate, Date endDate) throws SQLException {
+			int agreementId, Date startDate, Date endDate, Integer... domains) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
+			
+			String domainsParams = Arrays.asList(domains)
+					.stream()
+					.filter(domain-> domain != null)
+					.map(domain->"?")
+					.collect(Collectors.joining(","));
 
 			java.sql.Date sqlEndDate = SQLUtils.date2sql(endDate);
 			java.sql.Date sqlStartDate = SQLUtils.date2sql(startDate);
@@ -275,11 +283,17 @@ public class SQLAgreementDraft {
 					+ AgreementDataColumns.AGREEMENT + " = ? " + " AND ( "
 					+ AgreementDataColumns.END_DATE + " IS NULL " + " OR "
 					+ AgreementDataColumns.END_DATE + " >= ?  ) " + " AND "
-					+ AgreementDataColumns.START_DATE + " <= ? ");
+					+ AgreementDataColumns.START_DATE + " <= ? " + " AND " 
+					+ AgreementDataColumns.DOMAIN + " IN (" + domainsParams + ")"
+					);
 
 			stmt.setInt(1, agreementId);
 			stmt.setDate(2, sqlStartDate);
 			stmt.setDate(3, sqlEndDate);
+			for ( int i = 0; i < domains.length; i++)
+				if ( domains[i] != null )
+					stmt.setInt(4+i, domains[i]);
+				
 
 			rs = stmt.executeQuery();
 
@@ -314,11 +328,17 @@ public class SQLAgreementDraft {
 					+ SQLConstants.AGREEMENT_LEVEL_DATA + "."
 					+ AgreementLevelDataColumns.END_DATE + " >= ?  ) " + " AND "
 					+ SQLConstants.AGREEMENT_LEVEL_DATA + "."
-					+ AgreementLevelDataColumns.START_DATE + " <= ? ");
+					+ AgreementLevelDataColumns.START_DATE + " <= ? "  + " AND "
+					+ SQLConstants.AGREEMENT_LEVEL_DATA + "."
+					+ AgreementLevelDataColumns.DOMAIN + " IN (" + domainsParams + ")"
+					);
 
 			stmt.setInt(1, agreementId);
 			stmt.setDate(2, sqlStartDate);
 			stmt.setDate(3, sqlEndDate);
+			for ( int i = 0; i < domains.length; i++)
+				if ( domains[i] != null )
+					stmt.setInt(4+i, domains[i]);
 
 			rs = stmt.executeQuery();
 
@@ -346,17 +366,31 @@ public class SQLAgreementDraft {
 
 	}
 
-	public static Set<Level> getLevels(Connection connection, int agreementId)
+	public static Set<Level> getLevels(Connection connection, int agreementId, Integer ...domains)
 			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
 
-			stmt = connection.prepareStatement("SELECT * " + " FROM "
-					+ SQLConstants.AGREEMENT_LEVEL + " WHERE "
-					+ AgreementLevelColumns.AGREEMENT + " = ? ");
+			String domainsParams = Arrays.asList(domains)
+					.stream()
+					.filter(domain-> domain != null)
+					.map(domain->"?")
+					.collect(Collectors.joining(","));
+			// @formatter:off
+			stmt = connection.prepareStatement(
+					"SELECT * " 
+					+ " FROM " + SQLConstants.AGREEMENT_LEVEL 
+					+ " WHERE " + AgreementLevelColumns.AGREEMENT + " = ?  AND "
+					+ SQLConstants.AGREEMENT_LEVEL + "."
+					+ AgreementLevelColumns.DOMAIN + " IN ( " + domainsParams + " )"
+					);
+			// @formatter:on
 
 			stmt.setInt(1, agreementId);
+			for ( int i = 0; i < domains.length; i++ )
+				if ( domains[i] != null )
+					stmt.setInt(2 + i, domains[i]);
 
 			rs = stmt.executeQuery();
 
@@ -386,10 +420,16 @@ public class SQLAgreementDraft {
 	 * which categories were inserted into the Database.
 	 */
 	public static Map<Integer, Set<String>> getCategories(Connection connection,
-			int agreementId) throws SQLException {
+			int agreementId, Integer ...domains) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
+			String domainsParams = Arrays.asList(domains)
+					.stream()
+					.filter(domain-> domain != null)
+					.map(domain->"?")
+					.collect(Collectors.joining(","));
+
 			// @formatter:off
 			stmt = connection.prepareStatement("SELECT * " + " FROM "
 					+ SQLConstants.AGREEMENT_LEVEL + " ,"
@@ -399,12 +439,17 @@ public class SQLAgreementDraft {
 					+ SQLConstants.AGREEMENT_LEVEL + "."
 					+ AgreementLevelColumns.ID + " =  "
 					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
-					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL + ")"
+					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL + ") " + " AND "
+					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
+					+ AgreementLevelCategoryColumns.DOMAIN + " IN ( " + domainsParams + " )"
 					+ " ORDER BY " + SQLConstants.AGREEMENT_LEVEL_CATEGORY
 					+ "." + AgreementLevelCategoryColumns.ID);
 			// @formatter:on
 
 			stmt.setInt(1, agreementId);
+			for ( int i = 0; i < domains.length; i++ )
+				if ( domains[i] != null )
+					stmt.setInt(2 + i, domains[i]);
 
 			rs = stmt.executeQuery();
 
@@ -616,7 +661,7 @@ public class SQLAgreementDraft {
 		Map<Integer, Set<String>> draftCategoriesMap = draft
 				.getDraftCategories();
 
-		Map<Integer, Set<String>> dbCategoriesMap = getCategories(conn, draft.getId());
+		Map<Integer, Set<String>> dbCategoriesMap = getCategories(conn, draft.getId(), domainId, parentDomain);
 
 		for (Level level : draftLevels) {
 
