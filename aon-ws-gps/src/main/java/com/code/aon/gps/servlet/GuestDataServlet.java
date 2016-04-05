@@ -62,7 +62,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 	private static String INSERT_RESERVATION_GUEST_DATA =
 			"INSERT INTO project_reservation_guest (domain, project_reservation, guest_index, name, surname, surname2, document, document_type, document_country" +
 			"	, document_exp_date, birth_date, address, city, province, country, barcode, person, creation_user, creation_date)" +
-			" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private static String UPDATE_RESERVATION_GUEST_DATA =
 			"UPDATE project_reservation_guest SET name = ?, surname = ?, surname2 = ?, document = ?, document_type = ?, document_country = ?" +
 			"	, document_exp_date = ?, birth_date = ?, address = ?, city = ?, province = ?, country = ?, barcode = ?, person = ?" +
