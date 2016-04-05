@@ -453,6 +453,9 @@ public class FiscalModelDAO {
 	public static <T extends FiscalModel> T finish(AONContext ctx,T fm) {
 		fm.setStatus(FiscalStatus.FINISHED);
 		if (fm.getDeclarationType() != null && fm.getDeclarationType().mustCreateFinance()) {
+			if (fm.getFinance().getRegistry() == null || fm.getFinance().getRegistry().getId() == null) {
+				throw new AonCoreException("Acreedor no v\u00E1lido.");
+			}
 			fm.getFinance().setFinanceStatus(FinanceStatus.PENDING);
 			fm.getFinance().setDomain(fm.getDomain());
 			Integer financeId = FinanceDAO.save(ctx, fm.getFinance());

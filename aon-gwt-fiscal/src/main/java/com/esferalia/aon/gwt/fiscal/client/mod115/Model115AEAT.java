@@ -20,13 +20,13 @@ public class Model115AEAT extends Model115Base {
 		panel.setStyleName(AON.AON_CSS.aonScrollArea());
 		panel.add(getAnchorPanel( mod115
 				,"Tr\u00E1mites."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/GH01.shtml"));
+				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/GH02.shtml"));
 		panel.add(getAnchorPanel( mod115
 				,"Informaci\u00F3n general." 
-				,"http://www.agenciatributaria.es/AEAT.internet/GH01/informacion.shtml"));
+				,"http://www.agenciatributaria.es/AEAT.internet/GH02/informacion.shtml"));
 		panel.add(getAnchorPanel(mod115
 				,"Ficha."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/GH01.shtml"));
+				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/GH02.shtml"));
 		return panel;
 	}
 
