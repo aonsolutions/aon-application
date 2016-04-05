@@ -76,6 +76,8 @@ public class StatDAO {
 	//SelectLimitStep para ir creando la condicion de la where, primero con los InvoiceType y luego con ProductCategory...
 	private static  Condition getCondition(AONContext ctx, StatParams params) {
 		Condition c = INVOICE.DOMAIN.eq(ctx.getDomainId());
+		c = c.and(SecurityDAO.getUserScopesCondition(ctx, INVOICE.SCOPE));
+		c = c.and(SecurityDAO.getSecurityLevelCondition(ctx, ctx.getUser(), INVOICE.SECURITY_LEVEL));		
 		if (params.getFrom() != null) {
 			c = c.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toSql(params.getFrom())));
 		}
@@ -201,7 +203,6 @@ public class StatDAO {
 					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 					.join(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
 					.where( getCondition(ctx, params))
-//					.and( SecurityDAO.getUserScopesCondition(ctx, ctx.getUser(), INVOICE.SCOPE))
 					.groupBy(PCATEGORY.ID, INVOICE.TYPE)
 					.orderBy(sum.desc())
 					.fetch().stream().forEach(rec -> {
