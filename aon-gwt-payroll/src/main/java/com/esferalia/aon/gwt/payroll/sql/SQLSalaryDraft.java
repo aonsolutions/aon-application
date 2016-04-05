@@ -9,6 +9,8 @@ import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -56,7 +58,7 @@ public class SQLSalaryDraft {
 			makeRoomPayment(conn, payment, contract);
 			String expression = payment.getExpression();
 			
-			if ("CONVENIO()".equals(expression)){
+			if ( StringUtils.containsIgnoreCase(expression, "CONVENIO()" )){
 				continue;
 			}
 			

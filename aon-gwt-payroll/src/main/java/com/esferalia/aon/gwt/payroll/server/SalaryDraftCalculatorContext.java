@@ -475,7 +475,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	}
 
 	private IContractPayment getDraftPayment(Payment payment) {
-		if (StringUtils.equals("CONVENIO()", payment.getExpression()))
+		if (StringUtils.containsIgnoreCase(payment.getExpression(),"CONVENIO()")){
 			for (IContractPayment agreementPayment : getAgreementPayments()) {
 				if (payment.getId().equals(agreementPayment.getId())
 						|| StringUtils.equals(payment.getName(),
@@ -485,6 +485,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 					return draftPayment;
 				}
 			}
+		}
 
 		return newDraftPayment(payment);
 	}
