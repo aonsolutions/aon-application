@@ -27,6 +27,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CompanyDocumentServlet extends HttpServlet {
 
@@ -49,6 +50,19 @@ public class CompanyDocumentServlet extends HttpServlet {
 		}		
 		return null;			
 	}
+	
+	private Integer getCompanyId( HttpServletRequest req) {
+		String queryString = req.getQueryString();
+		if ( AonStringUtils.isBlank(queryString))
+			return null;
+		try {
+			return Integer.parseInt(queryString);
+		} catch ( NumberFormatException e){
+			return null;
+		}
+		
+	}
+	
 	public String generateMD5(byte[] b) {
 		return DigestUtils.md5Hex(b);
 	}
@@ -73,7 +87,9 @@ public class CompanyDocumentServlet extends HttpServlet {
 				String domainName = AonUtil.getServerName(req);
 				connection = DatabaseUtil.getConnection(domainName);
 				if ( connection != null ) {
-					Integer domainId = DatabaseUtil.getDomain(connection, domainName);
+					Integer reqDomainId = getCompanyId(req);
+					Integer domainId = reqDomainId != null ? reqDomainId : DatabaseUtil.getDomain(connection, domainName);
+					
 					if (companyLogo) {
 						Integer companyId = getCompanyId(connection, domainId);
 						attach = AON.getAttach(domainName, domainId, "",
