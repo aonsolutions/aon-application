@@ -198,6 +198,9 @@ public class SecurityDAO {
 		}
 		
 	}
+	public static Condition getUserScopesCondition (AONContext ctx, Field<Integer> field) {
+		return getUserScopesCondition(ctx,ctx.getUser(), field);
+	}
 	
 	public static Condition getUserScopesCondition (AONContext ctx, String userLogin, Field<Integer> field) {
 		Integer[] scopes = getUserScopes(ctx,userLogin);

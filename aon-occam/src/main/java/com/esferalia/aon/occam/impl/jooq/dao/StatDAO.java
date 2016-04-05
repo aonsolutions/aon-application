@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
@@ -8,7 +9,6 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -61,7 +61,14 @@ public class StatDAO {
 				.setLabel(wp.getDescription())
 				.setType(StatFilterType.WORKPLACE));
 		}
-			
+		
+		CommercialDAO.getSellers(ctx).forEach(
+				seller -> params.getFilterItems().add(new StatFilterItem()
+							.setId(seller.getId())
+							.setLabel(seller.getRegistryName())
+							.setType(StatFilterType.SELLER))
+						);
+	
 		return params;
 	}
 	
@@ -194,16 +201,14 @@ public class StatDAO {
 					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 					.join(PCATEGORY).on(PRODUCT.CATEGORY.eq(PCATEGORY.ID))
 					.where( getCondition(ctx, params))
+//					.and( SecurityDAO.getUserScopesCondition(ctx, ctx.getUser(), INVOICE.SCOPE))
 					.groupBy(PCATEGORY.ID, INVOICE.TYPE)
 					.orderBy(sum.desc())
 					.fetch().stream().forEach(rec -> {
-						double d = rec.getValue(sum).doubleValue();
-						if (d >= 0) {
-							InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
-							table.put(AonStringUtils.defaultIfBlank(rec.getValue(PCATEGORY.NAME), UNKNOWN)
-									, type.getDescription()
-									, d);
-						}
+						InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
+						table.put(AonStringUtils.defaultIfBlank(rec.getValue(PCATEGORY.NAME), UNKNOWN)
+								, type.getDescription()
+								, rec.getValue(sum).doubleValue());
 					});
 			}
 
@@ -239,7 +244,7 @@ public class StatDAO {
 					.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
 					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 					.where( getCondition(ctx, params))
-					.groupBy(INVOICE_DETAIL.SELLER, INVOICE.TYPE)
+					.groupBy(INVOICE_DETAIL.WORKPLACE, INVOICE.TYPE)
 					.orderBy(sum.desc())
 					.fetch().stream().forEach(rec -> {
 						double d = rec.getValue(sum).doubleValue();
@@ -306,6 +311,7 @@ public class StatDAO {
 		private Condition productCategoriesCondition = null;
 		private Condition invoiceTypeCondition = null;
 		private Condition workplaceCondition = null;
+		private Condition sellerCondition = null;
 
 		@Override
 		public void visitWorkplaceCondition(StatFilterItem item) {
@@ -346,6 +352,21 @@ public class StatDAO {
 				}
 			}
 		}
+		
+		@Override
+		public void visitSellerCondition(StatFilterItem item) {
+			if (item.isSelected() ) {
+				if (item.getType() == StatFilterType.SELLER) {
+					int sellerId = AonNumberUtils.toInteger( item.getId());
+					if (sellerCondition == null) {
+						sellerCondition = INVOICE_DETAIL.SELLER.eq( sellerId );
+					} else {
+						sellerCondition = sellerCondition.or(INVOICE_DETAIL.SELLER.eq(sellerId));
+					}
+				}
+			}
+		}
+		
 		public Condition appendCondition(Condition condition) {
 			if (invoiceTypeCondition != null) {
 				condition = condition.and(invoiceTypeCondition);
@@ -356,8 +377,12 @@ public class StatDAO {
 			if (workplaceCondition != null) {
 				condition = condition.and(workplaceCondition);
 			}
+			if (sellerCondition != null) {
+				condition = condition.and(sellerCondition);
+			}
 			return condition;
 		}
+
 	}; 
 	
 }

@@ -35,4 +35,7 @@ public class StatData<R,C,D> implements Serializable {
 		return this;
 	}
 	
+	public boolean isEmpty() {
+		return map.size() == 0;
+	}
 }

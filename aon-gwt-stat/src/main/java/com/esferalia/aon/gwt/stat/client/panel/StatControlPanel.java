@@ -28,7 +28,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -41,7 +43,6 @@ import com.google.gwt.visualization.client.visualizations.Table;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
 import com.google.gwt.visualization.client.visualizations.corechart.ComboChart;
 import com.google.gwt.visualization.client.visualizations.corechart.ComboChart.Options;
-import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 import com.google.gwt.visualization.client.visualizations.corechart.PieChart;
 import com.google.gwt.visualization.client.visualizations.corechart.PieChart.PieOptions;
 import com.google.gwt.visualization.client.visualizations.corechart.Series;
@@ -80,14 +81,30 @@ public class StatControlPanel extends MainEntryPoint {
 	@UiField
 	TabLayoutPanel tabLayout;
 	
-	private StatChartTypeVisitor statChartTypeVisitor;	
+	private StatChartTypeVisitor statChartTypeVisitor;
+	private static final FlowPanel ERROR_PANEL = new FlowPanel();
+	static {
+		ERROR_PANEL.setWidth("100%");	
+		ERROR_PANEL.setHeight("100%");
+		ERROR_PANEL.setStyleName(AON.AON_CSS.aonPadding());
+		ERROR_PANEL.addStyleName(AON.AON_CSS.aonMarginTop());
+		ERROR_PANEL.addStyleName(AON.AON_CSS.aonVerticalAlignMiddle());
+		ERROR_PANEL.addStyleName(AON.AON_CSS.aonFontBig());
+		ERROR_PANEL.addStyleName(AON.AON_CSS.aonColorRed());
+		ERROR_PANEL.addStyleName(AON.AON_CSS.aonColorRed());
+		Label label = new Label(AON.MSG.noData());
+		label.setStyleName(AON.AON_CSS.aonMarginTop());
+		label.addStyleName(AON.AON_CSS.aonIconError());
+		label.addStyleName(AON.AON_CSS.aonPaddingLeft());
+		ERROR_PANEL.add( label ); 
+	}
 
 	private Stack<Widget> stack = new Stack<Widget>();
 	
-	final private AsyncCallback<CoreChart> coreChartCallback = new AsyncCallback<CoreChart>() {
+	final private AsyncCallback<Widget> coreChartCallback = new AsyncCallback<Widget>() {
 		
 		@Override
-		public void onSuccess(final CoreChart chart) {
+		public void onSuccess(final Widget chart) {
 			content.setWidget(chart);
 			stack.push(chart);
 		}
@@ -187,6 +204,18 @@ public class StatControlPanel extends MainEntryPoint {
 
 	private class StatChartTypeVisitor implements IStatChartTypeVisitor {
 		
+		protected boolean hasNegativeValues(StatData<String, String, Double> result) {
+			for (String rowKey : result.getMap().keySet()) {
+				for (String col : result.getMap().get(rowKey).keySet()) {
+					if (AonMathUtils.isNegative( result.get(rowKey, col))) {
+						return true;
+					}
+						
+				}
+			}
+			return false;
+		}
+
 		protected DataTable getDataTable(Table.Options options, StatData<String, String, Double> result, String columnLabel) {
 			DataTable dataTable = DataTable.create();
 			dataTable.addColumn(ColumnType.STRING, columnLabel);
@@ -234,31 +263,34 @@ public class StatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					final Options options = ComboChart.createComboOptions();
-					options.set("animation", StatUtils.ANIMATION);
-					options.setWidth(content.getOffsetWidth());
-					options.setHeight(content.getOffsetHeight());
-					options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);
-					options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS);
-					AxisOptions vaxis = AxisOptions.create();
-					vaxis.setTitle(AON.MSG.amount());
-					options.setVAxisOptions(vaxis);
-					AxisOptions haxis = AxisOptions.create();
-					haxis.setTitle(AON.MSG.year());
-					options.setHAxisOptions(haxis);
-					Series media = Series.create();
-					media.setType(Series.Type.LINE);
-					options.setSeries(0, media);
-					Table.Options tableOptions = Table.Options.create();
-					tableOptions.setAlternatingRowStyle(true);
-					tableOptions.setWidth(south.getOffsetWidth() + "px");
-					tableOptions.setHeight(south.getOffsetHeight() + "px");
-					final DataTable dataTable = getDataTable(tableOptions, result,AON.MSG.year());
-					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
-					south.setWidget(table);
-					excel.setEnabled(true);
-					ResizableComboChart chart = new ResizableComboChart(dataTable, options);
-					coreChartCallback.onSuccess(chart);
+					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					else {
+						final Options options = ComboChart.createComboOptions();
+						options.set("animation", StatUtils.ANIMATION);
+						options.setWidth(content.getOffsetWidth());
+						options.setHeight(content.getOffsetHeight());
+						options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);
+						options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS);
+						AxisOptions vaxis = AxisOptions.create();
+						vaxis.setTitle(AON.MSG.amount());
+						options.setVAxisOptions(vaxis);
+						AxisOptions haxis = AxisOptions.create();
+						haxis.setTitle(AON.MSG.year());
+						options.setHAxisOptions(haxis);
+						Series media = Series.create();
+						media.setType(Series.Type.LINE);
+						options.setSeries(0, media);
+						Table.Options tableOptions = Table.Options.create();
+						tableOptions.setAlternatingRowStyle(true);
+						tableOptions.setWidth(south.getOffsetWidth() + "px");
+						tableOptions.setHeight(south.getOffsetHeight() + "px");
+						final DataTable dataTable = getDataTable(tableOptions, result,AON.MSG.year());
+						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						south.setWidget(table);
+						excel.setEnabled(true);
+						ResizableComboChart chart = new ResizableComboChart(dataTable, options);
+						coreChartCallback.onSuccess(chart);
+					}
 				}
 
 				@Override
@@ -275,31 +307,34 @@ public class StatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					final Options options = ComboChart.createComboOptions();
-					options.set("animation", StatUtils.ANIMATION);
-					options.setWidth(content.getOffsetWidth());
-					options.setHeight(content.getOffsetHeight());
-					options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);
-					options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS);
-					AxisOptions vaxis = AxisOptions.create();
-					vaxis.setTitle(AON.MSG.amount());
-					options.setVAxisOptions(vaxis);
-					AxisOptions haxis = AxisOptions.create();
-					haxis.setTitle(AON.MSG.months());
-					options.setHAxisOptions(haxis);
-					Series media = Series.create();
-					media.setType(Series.Type.LINE);
-					options.setSeries(0, media);
-					Table.Options tableOptions = Table.Options.create();
-					tableOptions.setAlternatingRowStyle(true);
-					tableOptions.setWidth(south.getOffsetWidth() + "px");
-					tableOptions.setHeight(south.getOffsetHeight() + "px");
-					final DataTable dataTable = getDataTable(tableOptions, result,AON.MSG.months());
-					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
-					south.setWidget(table);
-					excel.setEnabled(true);
-					ResizableComboChart chart = new ResizableComboChart(dataTable, options);
-					coreChartCallback.onSuccess(chart);
+					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					else {
+						final Options options = ComboChart.createComboOptions();
+						options.set("animation", StatUtils.ANIMATION);
+						options.setWidth(content.getOffsetWidth());
+						options.setHeight(content.getOffsetHeight());
+						options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);
+						options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS);
+						AxisOptions vaxis = AxisOptions.create();
+						vaxis.setTitle(AON.MSG.amount());
+						options.setVAxisOptions(vaxis);
+						AxisOptions haxis = AxisOptions.create();
+						haxis.setTitle(AON.MSG.months());
+						options.setHAxisOptions(haxis);
+						Series media = Series.create();
+						media.setType(Series.Type.LINE);
+						options.setSeries(0, media);
+						Table.Options tableOptions = Table.Options.create();
+						tableOptions.setAlternatingRowStyle(true);
+						tableOptions.setWidth(south.getOffsetWidth() + "px");
+						tableOptions.setHeight(south.getOffsetHeight() + "px");
+						final DataTable dataTable = getDataTable(tableOptions, result,AON.MSG.months());
+						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						south.setWidget(table);
+						excel.setEnabled(true);
+						ResizableComboChart chart = new ResizableComboChart(dataTable, options);
+						coreChartCallback.onSuccess(chart);
+					}
 				}
 
 				@Override
@@ -316,31 +351,34 @@ public class StatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					final ComboChart.Options options = ComboChart.createComboOptions();
-					options.set("animation", StatUtils.ANIMATION);
-					options.setWidth(content.getOffsetWidth());
-					options.setHeight(content.getOffsetHeight());
-					options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.LINE);
-					options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS);
-					AxisOptions vaxis = AxisOptions.create();
-					vaxis.setTitle(AON.MSG.amount());
-					options.setVAxisOptions(vaxis);
-					AxisOptions haxis = AxisOptions.create();
-					haxis.setTitle(AON.MSG.months());
-					options.setHAxisOptions(haxis);
-					Series media = Series.create();
-					media.setType(Series.Type.LINE);
-					options.setSeries(0, media);
-					Table.Options tableOptions = Table.Options.create();
-					tableOptions.setAlternatingRowStyle(true);
-					tableOptions.setWidth(south.getOffsetWidth() + "px");
-					tableOptions.setHeight(south.getOffsetHeight() + "px");
-					final DataTable dataTable = getDataTable(tableOptions, result, AON.MSG.days());
-					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
-					south.setWidget(table);
-					excel.setEnabled(true);
-					ResizableComboChart chart = new ResizableComboChart(dataTable, options);
-					coreChartCallback.onSuccess(chart);
+					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					else {
+						final ComboChart.Options options = ComboChart.createComboOptions();
+						options.set("animation", StatUtils.ANIMATION);
+						options.setWidth(content.getOffsetWidth());
+						options.setHeight(content.getOffsetHeight());
+						options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.LINE);
+						options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS);
+						AxisOptions vaxis = AxisOptions.create();
+						vaxis.setTitle(AON.MSG.amount());
+						options.setVAxisOptions(vaxis);
+						AxisOptions haxis = AxisOptions.create();
+						haxis.setTitle(AON.MSG.months());
+						options.setHAxisOptions(haxis);
+						Series media = Series.create();
+						media.setType(Series.Type.LINE);
+						options.setSeries(0, media);
+						Table.Options tableOptions = Table.Options.create();
+						tableOptions.setAlternatingRowStyle(true);
+						tableOptions.setWidth(south.getOffsetWidth() + "px");
+						tableOptions.setHeight(south.getOffsetHeight() + "px");
+						final DataTable dataTable = getDataTable(tableOptions, result, AON.MSG.days());
+						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						south.setWidget(table);
+						excel.setEnabled(true);
+						ResizableComboChart chart = new ResizableComboChart(dataTable, options);
+						coreChartCallback.onSuccess(chart);
+					}
 				}
 
 				@Override
@@ -357,27 +395,30 @@ public class StatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					final PieOptions options = PieChart.createPieOptions();
-					options.set("animation", StatUtils.ANIMATION);
-					options.setWidth(content.getOffsetWidth());
-					options.setHeight(content.getOffsetHeight());
-					options.set3D(true);
-					AxisOptions vaxis = AxisOptions.create();
-					vaxis.setTitle(AON.MSG.amount());
-					options.setVAxisOptions(vaxis);
-					AxisOptions haxis = AxisOptions.create();
-					haxis.setTitle(AON.MSG.months());
-					options.setHAxisOptions(haxis);
-					Table.Options tableOptions = Table.Options.create();
-					tableOptions.setAlternatingRowStyle(true);
-					tableOptions.setWidth(south.getOffsetWidth() + "px");
-					tableOptions.setHeight(south.getOffsetHeight() + "px");
-					final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
-					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
-					south.setWidget(table);
-					excel.setEnabled(true);
-					final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
-					coreChartCallback.onSuccess(chart);
+					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					else {
+						final PieOptions options = PieChart.createPieOptions();
+						options.set("animation", StatUtils.ANIMATION);
+						options.setWidth(content.getOffsetWidth());
+						options.setHeight(content.getOffsetHeight());
+						options.set3D(true);
+						AxisOptions vaxis = AxisOptions.create();
+						vaxis.setTitle(AON.MSG.amount());
+						options.setVAxisOptions(vaxis);
+						AxisOptions haxis = AxisOptions.create();
+						haxis.setTitle(AON.MSG.months());
+						options.setHAxisOptions(haxis);
+						Table.Options tableOptions = Table.Options.create();
+						tableOptions.setAlternatingRowStyle(true);
+						tableOptions.setWidth(south.getOffsetWidth() + "px");
+						tableOptions.setHeight(south.getOffsetHeight() + "px");
+						final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
+						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						south.setWidget(table);
+						excel.setEnabled(true);
+						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
+						coreChartCallback.onSuccess(chart);
+					}
 				}
 
 
@@ -396,27 +437,53 @@ public class StatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					final PieOptions options = PieChart.createPieOptions();
-					options.set("animation", StatUtils.ANIMATION);
-					options.setWidth(content.getOffsetWidth());
-					options.setHeight(content.getOffsetHeight());
-					options.set3D(true);
-					AxisOptions vaxis = AxisOptions.create();
-					vaxis.setTitle(AON.MSG.amount());
-					options.setVAxisOptions(vaxis);
-					AxisOptions haxis = AxisOptions.create();
-					haxis.setTitle(AON.MSG.months());
-					options.setHAxisOptions(haxis);
-					Table.Options tableOptions = Table.Options.create();
-					tableOptions.setAlternatingRowStyle(true);
-					tableOptions.setWidth(south.getOffsetWidth() + "px");
-					tableOptions.setHeight(south.getOffsetHeight() + "px");
-					final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
-					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
-					south.setWidget(table);
-					excel.setEnabled(true);
-					final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
-					coreChartCallback.onSuccess(chart);
+					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					else {
+						if (hasNegativeValues(result)) {
+							final ComboChart.Options options = ComboChart.createComboOptions();
+							options.set("animation", StatUtils.ANIMATION);
+							options.setWidth(content.getOffsetWidth());
+							options.setHeight(content.getOffsetHeight());
+							options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);						AxisOptions vaxis = AxisOptions.create();
+							vaxis.setTitle(AON.MSG.amount());
+							options.setVAxisOptions(vaxis);
+							AxisOptions haxis = AxisOptions.create();
+							haxis.setTitle(AON.MSG.productCategories());
+							options.setHAxisOptions(haxis);
+							Table.Options tableOptions = Table.Options.create();
+							tableOptions.setAlternatingRowStyle(true);
+							tableOptions.setWidth(south.getOffsetWidth() + "px");
+							tableOptions.setHeight(south.getOffsetHeight() + "px");
+							final DataTable dataTable = getDataTable(tableOptions, result, AON.MSG.productCategories());
+							ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+							south.setWidget(table);
+							excel.setEnabled(true);
+							ResizableComboChart chart = new ResizableComboChart(dataTable, options);
+							coreChartCallback.onSuccess(chart);
+						} else {
+							final PieOptions options = PieChart.createPieOptions();
+							options.set("animation", StatUtils.ANIMATION);
+							options.setWidth(content.getOffsetWidth());
+							options.setHeight(content.getOffsetHeight());
+							options.set3D(true);
+							AxisOptions vaxis = AxisOptions.create();
+							vaxis.setTitle(AON.MSG.amount());
+							options.setVAxisOptions(vaxis);
+							AxisOptions haxis = AxisOptions.create();
+							haxis.setTitle(AON.MSG.months());
+							options.setHAxisOptions(haxis);
+							Table.Options tableOptions = Table.Options.create();
+							tableOptions.setAlternatingRowStyle(true);
+							tableOptions.setWidth(south.getOffsetWidth() + "px");
+							tableOptions.setHeight(south.getOffsetHeight() + "px");
+							final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
+							ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+							south.setWidget(table);
+							excel.setEnabled(true);
+							final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
+							coreChartCallback.onSuccess(chart);
+						}
+					}
 				}
 
 
@@ -434,27 +501,30 @@ public class StatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					final PieOptions options = PieChart.createPieOptions();
-					options.set("animation", StatUtils.ANIMATION);
-					options.setWidth(content.getOffsetWidth());
-					options.setHeight(content.getOffsetHeight());
-					options.set3D(true);
-					AxisOptions vaxis = AxisOptions.create();
-					vaxis.setTitle(AON.MSG.amount());
-					options.setVAxisOptions(vaxis);
-					AxisOptions haxis = AxisOptions.create();
-					haxis.setTitle(AON.MSG.months());
-					options.setHAxisOptions(haxis);
-					Table.Options tableOptions = Table.Options.create();
-					tableOptions.setAlternatingRowStyle(true);
-					tableOptions.setWidth(south.getOffsetWidth() + "px");
-					tableOptions.setHeight(south.getOffsetHeight() + "px");
-					final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
-					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
-					south.setWidget(table);
-					excel.setEnabled(true);
-					final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
-					coreChartCallback.onSuccess(chart);
+					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					else {
+						final PieOptions options = PieChart.createPieOptions();
+						options.set("animation", StatUtils.ANIMATION);
+						options.setWidth(content.getOffsetWidth());
+						options.setHeight(content.getOffsetHeight());
+						options.set3D(true);
+						AxisOptions vaxis = AxisOptions.create();
+						vaxis.setTitle(AON.MSG.amount());
+						options.setVAxisOptions(vaxis);
+						AxisOptions haxis = AxisOptions.create();
+						haxis.setTitle(AON.MSG.months());
+						options.setHAxisOptions(haxis);
+						Table.Options tableOptions = Table.Options.create();
+						tableOptions.setAlternatingRowStyle(true);
+						tableOptions.setWidth(south.getOffsetWidth() + "px");
+						tableOptions.setHeight(south.getOffsetHeight() + "px");
+						final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
+						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						south.setWidget(table);
+						excel.setEnabled(true);
+						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
+						coreChartCallback.onSuccess(chart);
+					}
 				}
 
 
@@ -472,29 +542,31 @@ public class StatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					final PieOptions options = PieChart.createPieOptions();
-					options.set("animation", StatUtils.ANIMATION);
-					options.setWidth(content.getOffsetWidth());
-					options.setHeight(content.getOffsetHeight());
-					options.set3D(true);
-					AxisOptions vaxis = AxisOptions.create();
-					vaxis.setTitle(AON.MSG.amount());
-					options.setVAxisOptions(vaxis);
-					AxisOptions haxis = AxisOptions.create();
-					haxis.setTitle(AON.MSG.months());
-					options.setHAxisOptions(haxis);
-					Table.Options tableOptions = Table.Options.create();
-					tableOptions.setAlternatingRowStyle(true);
-					tableOptions.setWidth(south.getOffsetWidth() + "px");
-					tableOptions.setHeight(south.getOffsetHeight() + "px");
-					final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
-					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
-					south.setWidget(table);
-					excel.setEnabled(true);
-					final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
-					coreChartCallback.onSuccess(chart);
+					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					else {
+						final PieOptions options = PieChart.createPieOptions();
+						options.set("animation", StatUtils.ANIMATION);
+						options.setWidth(content.getOffsetWidth());
+						options.setHeight(content.getOffsetHeight());
+						options.set3D(true);
+						AxisOptions vaxis = AxisOptions.create();
+						vaxis.setTitle(AON.MSG.amount());
+						options.setVAxisOptions(vaxis);
+						AxisOptions haxis = AxisOptions.create();
+						haxis.setTitle(AON.MSG.months());
+						options.setHAxisOptions(haxis);
+						Table.Options tableOptions = Table.Options.create();
+						tableOptions.setAlternatingRowStyle(true);
+						tableOptions.setWidth(south.getOffsetWidth() + "px");
+						tableOptions.setHeight(south.getOffsetHeight() + "px");
+						final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
+						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						south.setWidget(table);
+						excel.setEnabled(true);
+						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
+						coreChartCallback.onSuccess(chart);
+					}
 				}
-
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -510,27 +582,30 @@ public class StatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					final PieOptions options = PieChart.createPieOptions();
-					options.set("animation", StatUtils.ANIMATION);
-					options.setWidth(content.getOffsetWidth());
-					options.setHeight(content.getOffsetHeight());
-					options.set3D(true);
-					AxisOptions vaxis = AxisOptions.create();
-					vaxis.setTitle(AON.MSG.amount());
-					options.setVAxisOptions(vaxis);
-					AxisOptions haxis = AxisOptions.create();
-					haxis.setTitle(AON.MSG.months());
-					options.setHAxisOptions(haxis);
-					Table.Options tableOptions = Table.Options.create();
-					tableOptions.setAlternatingRowStyle(true);
-					tableOptions.setWidth(south.getOffsetWidth() + "px");
-					tableOptions.setHeight(south.getOffsetHeight() + "px");
-					final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
-					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
-					south.setWidget(table);
-					excel.setEnabled(true);
-					final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
-					coreChartCallback.onSuccess(chart);
+					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					else {
+						final PieOptions options = PieChart.createPieOptions();
+						options.set("animation", StatUtils.ANIMATION);
+						options.setWidth(content.getOffsetWidth());
+						options.setHeight(content.getOffsetHeight());
+						options.set3D(true);
+						AxisOptions vaxis = AxisOptions.create();
+						vaxis.setTitle(AON.MSG.amount());
+						options.setVAxisOptions(vaxis);
+						AxisOptions haxis = AxisOptions.create();
+						haxis.setTitle(AON.MSG.months());
+						options.setHAxisOptions(haxis);
+						Table.Options tableOptions = Table.Options.create();
+						tableOptions.setAlternatingRowStyle(true);
+						tableOptions.setWidth(south.getOffsetWidth() + "px");
+						tableOptions.setHeight(south.getOffsetHeight() + "px");
+						final DataTable dataTable = getDataTable(tableOptions, result, "ABC");
+						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						south.setWidget(table);
+						excel.setEnabled(true);
+						final ResizablePieChart chart = new ResizablePieChart(dataTable, options);
+						coreChartCallback.onSuccess(chart);
+					}
 				}
 
 
@@ -548,23 +623,26 @@ public class StatControlPanel extends MainEntryPoint {
 
 				@Override
 				public void onSuccess(final StatData<String, String, Double> result) {
-					final  GeoChartWrapper.Options options = GeoChartWrapper.Options.create();
-					options.set("animation", StatUtils.ANIMATION);
-					options.setWidth(content.getOffsetWidth());
-					options.setHeight(content.getOffsetHeight());
-					options.setRegion("ES");
-					options.setDisplayMode(DisplayMode.MARKERS);
-					
-					Table.Options tableOptions = Table.Options.create();
-					tableOptions.setAlternatingRowStyle(true);
-					tableOptions.setWidth(south.getOffsetWidth() + "px");
-					tableOptions.setHeight(south.getOffsetHeight() + "px");
-					final DataTable dataTable = getGeoDataTable(tableOptions, result, "Provincias");
-					ResizableTable table = new ResizableTable(dataTable, tableOptions); 
-					south.setWidget(table);
-					excel.setEnabled(true);
-					final ResizableGeoChart chart = new ResizableGeoChart(dataTable,options);
-					coreChartCallback.onSuccess(chart);
+					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
+					else {
+						final  GeoChartWrapper.Options options = GeoChartWrapper.Options.create();
+						options.set("animation", StatUtils.ANIMATION);
+						options.setWidth(content.getOffsetWidth());
+						options.setHeight(content.getOffsetHeight());
+						options.setRegion("ES");
+						options.setDisplayMode(DisplayMode.MARKERS);
+						
+						Table.Options tableOptions = Table.Options.create();
+						tableOptions.setAlternatingRowStyle(true);
+						tableOptions.setWidth(south.getOffsetWidth() + "px");
+						tableOptions.setHeight(south.getOffsetHeight() + "px");
+						final DataTable dataTable = getGeoDataTable(tableOptions, result, "Provincias");
+						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
+						south.setWidget(table);
+						excel.setEnabled(true);
+						final ResizableGeoChart chart = new ResizableGeoChart(dataTable,options);
+						coreChartCallback.onSuccess(chart);
+					}
 				}
 
 

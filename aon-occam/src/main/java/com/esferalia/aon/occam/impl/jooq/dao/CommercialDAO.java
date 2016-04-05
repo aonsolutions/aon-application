@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record13;
@@ -105,6 +106,19 @@ public class CommercialDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	public static Stream<Seller> getSellers(AONContext ctx){
+		return ctx.getDslContext().select(SELLER.REGISTRY, SELLER.DOMAIN, SELLER.COMMISSION_TYPE, SELLER.SCOPE, SELLER.STATUS,
+				SCOPE.DESCRIPTION, REGISTRY.DOCUMENT, REGISTRY.NAME, REGISTRY.ALIAS, REGISTRY.DOCUMENT_COUNTRY, REGISTRY.DOCUMENT_TYPE,
+				REGISTRY.NATIONALITY, REGISTRY.SECURITY_LEVEL)
+				.from(SELLER).join(SCOPE).on(SELLER.SCOPE.eq(SCOPE.ID))
+				.join(REGISTRY).on(REGISTRY.ID.eq(SELLER.REGISTRY))
+				.where(SELLER.DOMAIN.eq(ctx.getDomainId()))
+				.and(SecurityDAO.getUserScopesCondition(ctx, SELLER.SCOPE))
+				.fetch()
+				.stream()
+				.map(new FullSellerFiller());
+	}
+
 	public static Seller getSeller(AONContext ctx, Integer sellerId){
 		return ctx.getDslContext().select(SELLER.REGISTRY, SELLER.DOMAIN, SELLER.COMMISSION_TYPE, SELLER.SCOPE, SELLER.STATUS,
 				SCOPE.DESCRIPTION, REGISTRY.DOCUMENT, REGISTRY.NAME, REGISTRY.ALIAS, REGISTRY.DOCUMENT_COUNTRY, REGISTRY.DOCUMENT_TYPE,

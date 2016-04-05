@@ -32,6 +32,13 @@ public class StatFilterItem implements Serializable {
 				statFilterItemVisitor.visitWorkplaceCondition(item);
 			}
 		 })
+		,SELLER("Agente comercial",new IFilterItemVisitor() {
+
+			@Override
+			public void visit(IStatFilterItemVisitor statFilterItemVisitor,StatFilterItem item) {
+				statFilterItemVisitor.visitSellerCondition(item);
+			}
+		 })
 		;
 
 		private String name;
