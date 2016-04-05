@@ -93,6 +93,9 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 
 			Date paymentStart = Period.max(p.getStartDate(), getStart());
 			Date paymentEnd = Period.min(p.getEndDate(), getEnd());
+			
+			if ( Period.compare(paymentStart, paymentEnd)> 0)
+				continue;
 
 			if (StringUtils.isNotBlank(p.getName()) && p.getSalaryType() == SalaryType.SALARY) {
 				try {

@@ -146,7 +146,7 @@ public class EmployeesServiceHelper {
 		 */
 
 		Set<Level> dbLevels = SQLAgreementDraft.getLevels(connection,
-				draft.getId());
+				draft.getId(),domainId, parentDomainId);
 
 		Set<Level> allLevels = new HashSet<Level>(dbLevels);
 
@@ -168,7 +168,7 @@ public class EmployeesServiceHelper {
 		}
 
 		Map<Integer, Set<String>> dbCategories = SQLAgreementDraft
-				.getCategories(connection, draft.getId());
+				.getCategories(connection, draft.getId(), domainId, parentDomainId);
 
 		Map<Integer, Set<String>> allCategories = new HashMap<Integer, Set<String>>(
 				dbCategories);
@@ -181,7 +181,7 @@ public class EmployeesServiceHelper {
 		allLevels.add(agreementData);
 
 		SalaryTable dbSalaryTable = SQLAgreementDraft.getSalaryTable(connection,
-				draft.getId(), draft.getStartDate(), draft.getEndDate());
+				draft.getId(), draft.getStartDate(), draft.getEndDate(), domainId, parentDomainId);
 		SalaryTable allSalaryTable = new SalaryTable(dbSalaryTable);
 		allSalaryTable.putAll(draft.getDraftSalaryTable());
 
