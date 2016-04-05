@@ -1457,7 +1457,7 @@ public class Mod131DAO extends FiscalModelDAO {
 			+"@code{c02Sum = 0.0;}"
 			+"@foreach{act : activities}"
 				+"@if{ act.getEpigraph() != null}"
-					+"@code{c01Sum=com.esferalia.aon.watson.util.AonMathUtils.round(c01Sum + act.getRes())}"					
+					+"@code{c02Sum=com.esferalia.aon.watson.util.AonMathUtils.round(c02Sum + act.getRes())}"					
 					+"<li>@{act.getEpigraph()}			Rendimiento neto --> 	@{act.getRes()}</li>"
 				+"@end{}"		
 			+"@end{}"
@@ -1483,9 +1483,7 @@ public class Mod131DAO extends FiscalModelDAO {
 			,null
 			,(ctx,mod) -> mod.putAmount(Mod131Key.C05, getInitialC05(ctx,mod))
 			,null
-			,"<li>Desde contabilidad, saldo acreedor de las cuentas del grupo 70,71,72,73,75,76,77,78,79 desde el @{periodStartDate} al @{periodEndDate}"
-			+ " de aquellas actividades marcadas como agrícolas</li>"
-			+"<li>Resultado: @{RAW_C01}</li>"
+			,null
 		)
 		,C06 ( Mod131Key.C06.getValue(),(mod -> mod.isAEAT()),null,null
 			,"C05 * 2 / 100"
@@ -1540,12 +1538,43 @@ public class Mod131DAO extends FiscalModelDAO {
 			+ "}"
 			+ "ret = ret > (C10 - C11)?(C10 - C11):ret;"
 			+ "return round(ret);"
-			,null)
+			
+			, "@code{ret=0.0;}"
+			+ "@if{P2 > 0}"
+				+ "<li>SI se han destinado cantidades al pago de pr\u00E9stamos por adquisici\u00F3n o rehabilitaci\u00F3n de vivienda habitual.</li>"
+				+ "@if{C05 != 0}"
+					+ "<li>Casilla [005] mayor diferente de cero.</li>"
+					+ "@code{ret = C05 * 2 / 100;}"
+					+ "<li>2% de @{C05} igual <b>@{ret}</b></li>"
+				+ "@end{}"
+				+ "@if{C01 != 0 || C03 != 0}"
+					+ "<li>Casilla [001] \u00F3 [003] diferente de cero.</li>"
+					+ "@code{ret = (C01 * 0.5 / 100) + (C03 * 2 / 100);}"
+					+ "<li>0.5% de [001] m\u00E1s  2% de [003] igual <b>@{ret}</b></li>"
+					+ "<li>0.5% de @{C01} m\u00E1s  2% de @{C03} igual <b>@{ret}</b></li>"
+				+"@end{}"
+			+"@else{}"
+				+ "<li>NO Se han destinado cantidades al pago de pr\u00E9stamos por adquisici\u00F3n o rehabilitaci\u00F3n de vivienda habitual.</li>"
+			+"@end{}"
+			)
 		,C13 ( Mod131Key.C13.getValue(),(mod -> mod.isAEAT()),null,null
 			,"C10 - C11 - C12"
 			,"<li>@{C10} menos @{C11} menos @{C12} igual <b>@{C13}</b></li>"
 		)
-		,C14 ( Mod131Key.C14.getValue(),(mod -> mod.isAEAT()),null,null,null,null)
+		,C14 ( Mod131Key.C14.getValue(),(mod -> mod.isAEAT()),null,null
+			,(ctx,mod) -> mod.putAmount(Mod131Key.C14,
+					mod.isComplementary()
+						?getSamePeriodModels(ctx, mod).mapToDouble(fm -> fm.getResult()).sum()
+						:0.0)
+			,null
+			,"<li>Declarciones en el mismo periodo/ejercicio:<ul style=\"padding-left: 20px;\">" 
+					+"@foreach{fm : periodModels}" 
+						+"<li>Resultado:	Casilla [015] --> @{fm.getResult()}</li>"
+					+"@end{}"
+					+"</ul></li>"
+					+"<li>Resultado: <b>@{C14}</b></li>"
+
+		)
 		,C15 ( Mod131Key.C15.getValue(),(mod -> mod.isAEAT()),null,null
 			,"C13 - C14"
 			,"<li>@{C13} menos @{C14} igual <b>@{C15}</b></li>"
@@ -1930,7 +1959,7 @@ public class Mod131DAO extends FiscalModelDAO {
 			if (!fa.hasIRPFModules()) return null;
 			String epi1 = AonStringUtils.trim(AonStringUtils.substringBefore(
 					 fa.getEpigraph(),AonStringUtils.HYPHEN));
-			Epigraph epigraph = Epigraph.getEpigraph(epi1); 
+			Epigraph epigraph = Epigraph.getEpigraph(epi1);
 			Mod131Activity act = new Mod131Activity()
 					.setEpi( epigraph )
 					.setEpigraph( epigraph == null?fa.getEpigraph():epigraph.getEpigraph())
@@ -1963,9 +1992,9 @@ public class Mod131DAO extends FiscalModelDAO {
 					.setRlo( fa.getDoubleValue(FiscalActivityInfoKey.I12))
 					.setRdr( fa.getDoubleValue(FiscalActivityInfoKey.I13))
 					.setPor( fa.getDoubleValue(FiscalActivityInfoKey.I14))
-					.setRes( fa.getDoubleValue(FiscalActivityInfoKey.I15))
+					.setNet( fa.getDoubleValue(FiscalActivityInfoKey.I13))
 					.setPrc( fa.getDoubleValue(FiscalActivityInfoKey.I14))
-					.setNet( fa.getDoubleValue(FiscalActivityInfoKey.I15))
+					.setRes( fa.getDoubleValue(FiscalActivityInfoKey.I15))
 			;
 			act.setModules(new LinkedList<Mod131ActivityModule>());
 			for (FiscalActivityInfo info : fa.getMap().get(FiscalActivityInfoKeyType.IRPF_MODULE.ordinal()).values()) {

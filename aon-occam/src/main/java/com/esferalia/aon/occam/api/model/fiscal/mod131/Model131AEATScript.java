@@ -27,7 +27,7 @@ public enum Model131AEATScript implements IModelScript<Mod131Key> {
 		,new Mod131Key[]{Mod131Key.C04},COMPUTE)
 	,R02	("III. Actividades agr\u00EDcolas, ganaderas y forestales, en estimaci\u00F3n objetiva.",null,TITLE)		
 	,C05	("Volumen de ingresos del trimestre (excluidas las subvenciones de capital y las indemnizaciones)"
-		,new Mod131Key[]{Mod131Key.C05},COMPUTE)
+		,new Mod131Key[]{Mod131Key.C05},NONE)
 	,C06	("Pago fraccionado previo del trimestre. 2 por 100 del importe de la casilla 05."
 		,new Mod131Key[]{Mod131Key.C06},COMPUTE)
 	,R03	("IV. Total liquidaci\u00F3n.",null,TITLE)

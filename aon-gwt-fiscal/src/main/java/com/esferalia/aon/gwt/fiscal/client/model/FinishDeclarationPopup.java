@@ -30,6 +30,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -143,7 +144,14 @@ public class FinishDeclarationPopup<T extends FiscalModel> extends CustomDialog 
 					callback.getFiscalModel().getFinance().setRegistryName(registry.getName());
 				}
 			});
-			tab.setWidget(row, 1, creditorBox);
+			
+			FlowPanel creditorPanel = new FlowPanel();
+			creditorPanel.add(creditorBox);
+			InlineLabel label = new InlineLabel("Comience a escribir para recuperar alg\u00FAn acreedor v\u00E1lido");
+			label.addStyleName(AON.AON_CSS.aonFontSmall());
+			label.addStyleName(AON.AON_CSS.aonItalic());
+			creditorPanel.add(label);
+			tab.setWidget(row, 1, creditorPanel);
 			row++;
 	
 			tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
