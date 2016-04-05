@@ -291,11 +291,6 @@ public class StatDAO {
 					.fetch().stream().forEach(rec -> {
 						double d = rec.getValue(sum).doubleValue();
 						if (d >= 0) {
-							System.out.println( 
-									"CHART - " +
-											AonStringUtils.defaultIfBlank(rec.getValue(GEOZONE.NAME), UNKNOWN)
-									+ " - " +d
-							);
 							table.put( "CHART"
 									, AonStringUtils.defaultIfBlank(rec.getValue(GEOZONE.NAME), UNKNOWN)
 									, d);
