@@ -21,6 +21,9 @@ public class NoticeFilterImpl implements BiPredicate<NoticeFilter, Notice> {
 
 		else if (filter.isAll())
 			accepted = evalAll(filter, notice);
+		
+		if (filter.isDuplicated())
+			accepted = accepted && notice.getNotice() != null;
 
 		if (AonStringUtils.isNotBlank(filter.getComany())) {
 			accepted = accepted && AonStringUtils.equals(notice.getCompany(),

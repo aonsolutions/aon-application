@@ -18,6 +18,7 @@ public class NoticeFilter implements Serializable {
 	private boolean opened;
 	private boolean closed;
 	private boolean all;
+	private boolean duplicated;
 	
 	private Date since;
 	private String sinceAsString;
@@ -73,6 +74,14 @@ public class NoticeFilter implements Serializable {
 	
 	public boolean isAll() {
 		return this.all;
+	}
+	
+	public void setDuplicated(boolean duplicated) {
+		this.duplicated = duplicated;
+	}
+	
+	public boolean isDuplicated() {
+		return this.duplicated;
 	}
 	
 	public void setSince(Date since) {

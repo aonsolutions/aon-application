@@ -296,6 +296,76 @@ public class OfficeApiServlet extends HttpServlet {
 			}
 		}
 	}
+	
+	private static class AddDuplicateNotice extends RegExpRequestHandler {
+		
+		private HttpServletRequest req; 
+		private HttpServletResponse resp; 
+		
+		public AddDuplicateNotice() {
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))"
+					+ "/issues/duplicated/(\\d+)");
+		}
+		
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			
+			this.req = req;
+			this.resp = resp;
+			
+			Integer domainId = null;			
+			Integer parentId = null;
+			String domainName = "";			
+			
+			try {
+			
+				domainId = getDomainId();
+				domainName = getDomainName();
+				parentId = Integer.parseInt(group(3));
+			
+			} catch (Exception ex) {
+				String aux = getRequestAction(req);
+				String[] auxArr = aux.split("/");
+				domainId = Integer.parseInt(auxArr[2]);
+				domainName = auxArr[3];				
+				parentId = Integer.parseInt(auxArr[6]);
+
+			} finally {
+				addDuplicateNotice(domainId, domainName, parentId);
+			}
+		}
+		
+		private void addDuplicateNotice(int domainId, String domainName, int parentId) {
+			
+			PrintWriter pw = null;
+			
+			try {
+				String object = getJsonObject(req);
+				JSONObject json = new JSONObject(object);
+				
+				String userName = AonServletUtils.getLoggedUser();
+				
+				Notice childNotice = new Notice();
+				childNotice.setId(Integer.parseInt(json.getString("id")));
+				
+				User user = AON.getUser(domainId, domainName,
+						userName,
+						AonServletUtils.getRequestUserId(req));
+				childNotice.setSender(user);
+				
+				pw = resp.getWriter();
+				Notice duplicated = AON.addDuplicateNotice(domainId, domainName, userName, childNotice, parentId);
+				pw.append(getNotice(duplicated));
+				pw.flush();
+				
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());				
+			} finally {
+				pw.flush();
+			}
+		}
+	}
 
 	private static class GetAllIssuesRequestHandler
 			extends RegExpRequestHandler {
@@ -1080,6 +1150,7 @@ public class OfficeApiServlet extends HttpServlet {
 	private static final HttpRequestHandler POST_HANDLERS[] = {
 			new CreateIssue(),
 			new EditIssue(),
+			new AddDuplicateNotice(),
 			new CreateLabel(),
 			new UpdateLabel(),
 			new CreateComment(),

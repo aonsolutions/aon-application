@@ -18,7 +18,6 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRMedia;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRegistry;
-import com.esferalia.aon.gwt.office.client.models.repos.JsRepo;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.LabelControlValue;
@@ -59,7 +58,7 @@ import com.google.gwt.view.client.ListDataProvider;
 
 public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		IssuePanel.Listener, IssueReadPanel.Listener, TagTree.Listener, 
-		SearchPanel.Listener, ScrollHandler {
+		SearchPanel.Listener, DataGridDialog.Listener, ScrollHandler {
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
@@ -128,7 +127,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private Map<Integer, Registry> registryMap;
 	private Map<Integer, JsIssue> issuesMap;
-	private Map<Integer, JsRepo> repositories;
 
 	private DateTimeFormat fmt = DateTimeFormat
 			.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -738,6 +736,14 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 				});
 
 	}
+	
+	@Override
+	public void onDuplicateClickEvent() {
+		DataGridDialog dataGridDialog = new DataGridDialog(issueSelected.getId());
+		dataGridDialog.addListener(this);
+		dataGridDialog.insertIssues(issues);
+		dataGridDialog.showPopupPanel();
+	}
 
 	@Override
 	public void onUpdateIssueBody(String title, String body,
@@ -899,7 +905,39 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						onSelectionTitle(issue);
 					}
 				});
+	}
 
+	// ******************************************************************
+	// ******************** DATA GRID DIALOG LISTENER *******************
+	// ******************************************************************
+	
+	@Override
+	public void onAcceptButtonClick(IssueSelected issue) {		
+		/*
+		 * issue: Incidencia seleccionada del data grid.
+		 * 
+		 */
+		
+		IssueValue prop = new IssueValue();
+		prop.setId(String.valueOf(issueSelected.getId()));
+		
+		this.gitHub.addDuplicateNotice(String.valueOf(getCurrentDomain()), getCurrentDomainName(), 
+				issue.getId(), prop, new AsyncCallback<JsIssue>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Error al duplicar la incidencia: " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JsIssue result) {
+						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(
+								result);
+						issues.add(0, issue);
+						onSelectionTitle(issue);
+					}
+		});
+		
 	}
 
 	private static native <T extends JavaScriptObject> T eval(String javascript)

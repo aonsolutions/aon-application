@@ -55,6 +55,8 @@ public class IssueReadPanel extends Composite {
 
 		void onUpdateIssueBody(String title, String body,
 				Callback<IssueSelected> callback);
+		
+		void onDuplicateClickEvent();
 
 		void onUpdateIssueState(String state);
 
@@ -94,6 +96,8 @@ public class IssueReadPanel extends Composite {
 	@UiField
 	FlowPanel historialVPanel;
 
+	@UiField
+	Button duplicatedButton;
 	@UiField
 	Button closedButton;
 	@UiField
@@ -148,11 +152,22 @@ public class IssueReadPanel extends Composite {
 		}
 
 		if (issue instanceof IssueGrid.IssueOpenLoadSelected) {
+			createDuplicatedButton();
 			createClosedButton();
 			createCommentButton();
-		} else if (issue instanceof IssueGrid.IssueClosedLoadSelected) {
+		}
+		
+		else if ( issue instanceof IssueGrid.IssueDuplicatedLoadSelected) {
+			duplicatedButton.setVisible(false);
+			createClosedButton();
+			createCommentButton();
+		}
+		
+		else if (issue instanceof IssueGrid.IssueClosedLoadSelected) {
 			commentButton.setVisible(false);
 			commentTextArea.setVisible(false);
+			duplicatedButton.setVisible(false);
+			
 			createReopenButton();
 		}
 	}
@@ -214,8 +229,13 @@ public class IssueReadPanel extends Composite {
 	private void initHeaderAux(IssueSelected issue) {
 
 		HorizontalPanel hPanel = null;
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(issue.getTitle().toUpperCase());
+		sb.append(" #");
+		sb.append(issue.getId());
 
-		Label titleLabel = new Label(issue.getTitle().toUpperCase());
+		Label titleLabel = new Label(sb.toString());
 		titleLabel.setStyleName(AON.AON_BOLD);
 		titleLabel.addStyleName(AON.AON_CSS.headerTitle());
 		headerVPanel.add(titleLabel);
@@ -361,8 +381,8 @@ public class IssueReadPanel extends Composite {
 			}
 		});
 
-		editButton.setVisible(editVisible);
-		editButton.setEnabled(AonStringUtils.equals(userLogged.getText(), issueComment.getUser().getName()));
+		editButton.setVisible(editVisible &&
+				AonStringUtils.equals(userLogged.getText(), issueComment.getUser().getName()));		
 
 		FlexTable flexTable = new FlexTable();
 		flexTable.setWidget(0, 0, label);
@@ -591,6 +611,16 @@ public class IssueReadPanel extends Composite {
 			}
 		});
 	}
+	
+	private void createDuplicatedButton() {
+		duplicatedButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {		
+				onDuplicatedButtonClick();
+			}
+		});
+	}
 
 	private void createClosedButton() {
 		closedButton.addClickHandler(new ClickHandler() {
@@ -632,6 +662,11 @@ public class IssueReadPanel extends Composite {
 							commentButton.setEnabled(false);
 						}
 					});
+	}
+	
+	private void onDuplicatedButtonClick() {
+		for (Listener listener : listeners)
+			listener.onDuplicateClickEvent();
 	}
 
 	private void onClosedButtonClick() {

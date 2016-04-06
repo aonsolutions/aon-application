@@ -120,6 +120,18 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			return new DefaultAonIssueComments(comment);
 		}
 	}
+	
+	public static class IssueDuplicatedLoadSelected extends IssueOpenLoadSelected {
+		
+		public IssueDuplicatedLoadSelected(JsIssue issue) {
+			super(issue);
+		}
+		
+		@Override
+		public String getStateIconStyle() {
+			return super.getStateIconStyle();
+		}
+	}
 
 	public static class IssueClosedLoadSelected
 			extends DefaultAonIssueSelected {
@@ -369,7 +381,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 		setStyleName(AON.AON_CSS.aonGwtOfficeDataTable());		
 		setAutoHeaderRefreshDisabled(false);
-		initializeSelectionModel();
 		setSkipRowHoverCheck(true);
 		initializeColumns();
 		setHeaderBuilder(new HeaderBuilder());
@@ -389,24 +400,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 	public HandlerRegistration addSelectionHandler(
 			SelectionHandler<IssueSelected> handler) {
 		return addHandler(handler, SelectionEvent.getType());
-	}
-
-	@SuppressWarnings("unchecked")
-	private IssueSelected getIssueSelected() {
-		return ((SingleSelectionModel<IssueSelected>) getSelectionModel())
-				.getSelectedObject();
-	}
-
-	private void initializeSelectionModel() {
-
-		setSelectionModel(selectionModel, DefaultSelectionEventManager
-				.<IssueSelected> createCheckboxManager(0));
-		selectionModel.addSelectionChangeHandler(new Handler() {
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				SelectionEvent.fire(IssueGrid.this, getIssueSelected());
-			}
-		});
 	}
 
 	private void initializeColumns() {

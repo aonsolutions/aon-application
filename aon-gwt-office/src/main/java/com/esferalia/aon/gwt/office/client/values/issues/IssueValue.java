@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.office.client.values.ValueProp;
 public class IssueValue extends Value<IssueValue.Prop> {
 	
 	public static enum Prop implements ValueProp {
+		Id("id"),
 		Title("title"),
 		Priority("priority"),
 		Sender("sender"),
@@ -30,6 +31,10 @@ public class IssueValue extends Value<IssueValue.Prop> {
 		public String value() {
 			return value;
 		}
+	}
+	
+	public void setId (String id) {
+		prop.put(Prop.Id, id);
 	}
 	
 	public void setTitle (String title) {

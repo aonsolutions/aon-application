@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.RepoValue;
 import com.esferalia.aon.gwt.office.client.values.Value;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
+import com.esferalia.aon.occam.api.model.office.Notice;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
@@ -183,6 +184,12 @@ public class AonHub {
 			AsyncCallback<JsIssue> callback) {
 		post(baseUrl + "repos/" + user + "/" + repo + "/issues", prop,
 				callback);
+	}
+	
+	public void addDuplicateNotice(String user, String repo, int parentId, 
+			IssueValue prop, AsyncCallback<JsIssue> callback) {
+		post(baseUrl + "repos/" + user + "/" + repo + "/issues/duplicated"
+				+ "/" + parentId, prop, callback);
 	}
 
 	public void editIssue(String user, String repo, JsIssue issue,
