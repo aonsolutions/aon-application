@@ -37,7 +37,7 @@
 								styleName='aon-finding-toolbar-item aon-icon-lock' text="{msg.finish}" />
 							<g:Button ui:field='reopenButton'
 								styleName='aon-finding-toolbar-item aon-icon-unlock' text="{msg.reopen}" />
-<!-- 								
+<!-- 
 							<g:Button ui:field='printButton'
 								styleName='aon-finding-toolbar-item aon-icon-printer' text="{msg.printViaAeat}" />
  -->

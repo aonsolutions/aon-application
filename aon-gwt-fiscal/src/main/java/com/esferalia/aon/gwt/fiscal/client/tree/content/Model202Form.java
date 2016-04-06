@@ -71,10 +71,14 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 	interface Model202FormBinder extends
 			UiBinder<Widget, Model202Form> {
 	}
-	private static Mod202Key[] additionalDataKeys = new Mod202Key[]{
-		Mod202Key.X01,Mod202Key.X02,Mod202Key.X03,Mod202Key.X04,Mod202Key.X05,
-		Mod202Key.X06,Mod202Key.X07,Mod202Key.X10,Mod202Key.X08,Mod202Key.X09,
-		Mod202Key.X00};
+	private static Mod202Key[] additionalDataKeys2015 = new Mod202Key[]{
+			Mod202Key.X01,Mod202Key.X02,Mod202Key.X03,Mod202Key.X04,Mod202Key.X05,
+			Mod202Key.X06,Mod202Key.X07,Mod202Key.X10,Mod202Key.X08,Mod202Key.X09,
+			Mod202Key.X00};
+	private static Mod202Key[] additionalDataKeys2016 = new Mod202Key[]{
+			Mod202Key.X01,Mod202Key.X02,Mod202Key.X03,Mod202Key.X04,Mod202Key.X05,
+			Mod202Key.X06,Mod202Key.X07,Mod202Key.X08,Mod202Key.X09,Mod202Key.X00};
+	
 	private static Mod202Key[] computeADataKeys = new Mod202Key[]{
 		Mod202Key.C01,Mod202Key.C02,Mod202Key.C03};
 	private static CorrectionRow[] correctionsKeys = new CorrectionRow[]{
@@ -82,16 +86,22 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		new CorrectionRow(AON.MSG.mod202Correction2(),Mod202Key.C36,Mod202Key.C37),
 		new CorrectionRow(AON.MSG.mod202Correction3(),Mod202Key.C07,Mod202Key.C08),
 		new CorrectionRow(AON.MSG.mod202Correction4(),Mod202Key.C38,Mod202Key.C39)};
-	private static Mod202Key[] computeBDataKeys = new Mod202Key[]{
-		Mod202Key.C09,Mod202Key.C43,Mod202Key.C13,Mod202Key.C44,Mod202Key.C14
-	};
+	private static Mod202Key[] computeBDataKeys2015 = new Mod202Key[]{
+			Mod202Key.C09,Mod202Key.C43,Mod202Key.C13,Mod202Key.C44,Mod202Key.C14
+		};
+	private static Mod202Key[] computeBDataKeys2016 = new Mod202Key[]{
+			Mod202Key.C13,Mod202Key.C44,Mod202Key.C14
+		};
 	private static Mod202Key[] computeB1DataKeys = new Mod202Key[]{
 		Mod202Key.C16,Mod202Key.C17,Mod202Key.C47,Mod202Key.C40};
 	private static Mod202Key[] computeB2DataKeys = new Mod202Key[]{
 		Mod202Key.C50,Mod202Key.C42};
-	private static Mod202Key[] computeB21DataKeys = new Mod202Key[]{
-		Mod202Key.C26,Mod202Key.C27,Mod202Key.C28,Mod202Key.C29,Mod202Key.C30 
-		,Mod202Key.C31,Mod202Key.C32,Mod202Key.C33,Mod202Key.C34};
+	private static Mod202Key[] computeB21DataKeys2015 = new Mod202Key[]{
+			Mod202Key.C26,Mod202Key.C27,Mod202Key.C28,Mod202Key.C29,Mod202Key.C30 
+			,Mod202Key.C31,Mod202Key.C32,Mod202Key.C33,Mod202Key.C34};
+	private static Mod202Key[] computeB21DataKeys2016 = new Mod202Key[]{
+			Mod202Key.C26,Mod202Key.C27,Mod202Key.C28,Mod202Key.C29,Mod202Key.C30 
+			,Mod202Key.C31,Mod202Key.C32,Mod202Key.C34};
 
 	private EnumMap<Mod202Key, CheckBox> checks = new EnumMap<Mod202Key, CheckBox>(Mod202Key.class);
 	private EnumMap<Mod202Key, DoubleBox> inputs = new EnumMap<Mod202Key, DoubleBox>(Mod202Key.class);	
@@ -291,30 +301,30 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		int i = calculationBox.getSelectedIndex();
 		if (i == 0 ) {
 			for (Mod202Key key : Mod202Key.MOD_B_KEYS) {
-				inputs.get(key).setEnabled(false);	
+				if (inputs.containsKey(key)) inputs.get(key).setEnabled(false);	
 			}
 			for (Mod202Key key : Mod202Key.MOD_B1_KEYS) {
-				inputs.get(key).setEnabled(false);
+				if (inputs.containsKey(key)) inputs.get(key).setEnabled(false);
 			}
 			for (Mod202Key key : Mod202Key.MOD_B2_KEYS) {
-				inputs.get(key).setEnabled(false);
+				if (inputs.containsKey(key)) inputs.get(key).setEnabled(false);
 			}
 		}
 
 		if (i == 1) {
 			for (Mod202Key key : Mod202Key.MOD_A_KEYS) {
-				inputs.get(key).setEnabled(false);
+				if (inputs.containsKey(key)) inputs.get(key).setEnabled(false);
 			}
 			for (Mod202Key key : Mod202Key.MOD_B2_KEYS) {
-				inputs.get(key).setEnabled(false);
+				if (inputs.containsKey(key)) inputs.get(key).setEnabled(false);
 			}
 		}
 		if (i == 2) {
 			for (Mod202Key key : Mod202Key.MOD_A_KEYS) {
-				inputs.get(key).setEnabled(false);
+				if (inputs.containsKey(key)) inputs.get(key).setEnabled(false);
 			}
 			for (Mod202Key key : Mod202Key.MOD_B1_KEYS) {
-				inputs.get(key).setEnabled(false);
+				if (inputs.containsKey(key)) inputs.get(key).setEnabled(false);
 			}
 		}
 	}
@@ -327,7 +337,8 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		table.setWidget(row, 0, new Label( AON.MSG.additionalData() ));
 		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
 		table.getFlexCellFormatter().setColSpan(row, 0, 4);
-		for (Mod202Key key : additionalDataKeys) {
+		Mod202Key[] keys = mod202.getYear()<2016?additionalDataKeys2015:additionalDataKeys2016;
+		for (Mod202Key key : keys) {
 			row++;
 			if (key == Mod202Key.X08) {
 				FlowPanel p = new FlowPanel();
@@ -482,7 +493,8 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 			table.setWidget(row, 2, getInputPanel(cr.decrease));
 			table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonFiscalModelDataTableData());
 		}
-		for (Mod202Key key : computeBDataKeys) {
+		Mod202Key[] keys = mod202.getYear()<2016?computeBDataKeys2015:computeBDataKeys2016;
+		for (Mod202Key key : keys) {
 			row++;
 			table.setWidget(row, 0, new Label( key.getDescription()));
 			table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());
@@ -633,7 +645,8 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
 		table.setWidget(row, 2, getInputPanel(Mod202Key.C52));
 		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonFiscalModelDataTableData());
-		for (Mod202Key key : computeB21DataKeys) {
+		Mod202Key[] keys = mod202.getYear()<2016?computeB21DataKeys2015:computeB21DataKeys2016;
+		for (Mod202Key key : keys) {
 			row++;
 			table.setWidget(row, 0, new Label( key.getDescription()));
 			table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableDesc());

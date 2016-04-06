@@ -68,7 +68,7 @@ public enum Mod202Key implements IFiscalModelKey{
 	,C31("202-C31",31,"Resultado de la declaraci\u00F3n anterior (exclusivamente si \u00E9sta es complementaria)") 
 	,C32("202-C32",32,"Resultado")
 	,C33("202-C33",33,"M\u00EDnimo a ingresar (s\u00F3lo para empresas con CN igual o superior a 20 millones euros)") 
-	,C34("202-C34",34,"Cantidad a ingresar (mayor de claves [32] y [33] )")
+	,C34("202-C34",34,"Cantidad a ingresar")
 	
 	,A01("202-A01",0,"Comunicaci\u00F3n de datos adicionales a la declaraci\u00F3n")
 	,A02("202-A02",0,"Numero de Referencia de Sociedades (NRS)")

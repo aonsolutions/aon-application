@@ -404,27 +404,23 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 	}
 
 	public class NewContextMenu extends ContextMenu {
-//		private boolean[] models = new boolean[FiscalModelType.values().length];
 		
 		public NewContextMenu() {
-//			addNewMod131();
-			addNewMod2002013();
+			addNewMod2022016();
 			addSeparator();
 			addNewMod202();
 			addNewMod2002014();
+			addNewMod2002013();
 			addStyleName(AON.AON_CSS.aonSelector());
 		}
 		
 		public void addItem(FiscalModelType model, String text, ScheduledCommand cmd) {
-//			if ( !models[model.ordinal()] ) {
-				super.addItem(model.getValue(), text, cmd);
-//				models[model.ordinal()] = true;
-//			}
+			super.addItem(model.getValue(), text, cmd);
 		}
 
 		protected NewContextMenu addNewMod202() {
 			addItem(FiscalModelType.M202 
-					,AON.MSG.newSomething( AON.MSG.fiscalModelType( FiscalModelType.M202 ) )  
+					,AON.MSG.newSomething( AON.MSG.fiscalModelType( FiscalModelType.M202 ) + " - 2015" )  
 					, new ScheduledCommand() {
 						
 						@Override
@@ -457,6 +453,41 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 			return this; 
 		}
 		
+		protected NewContextMenu addNewMod2022016() {
+			addItem(FiscalModelType.M202 
+					,AON.MSG.newSomething( AON.MSG.fiscalModelType( FiscalModelType.M202 ) + " - 2016" )  
+					, new ScheduledCommand() {
+						
+						@Override
+						public void execute() {
+							Mod202 mod202 = new Mod202();
+							mod202.setDomain(getEnterprise().getDomain());
+							mod202.setYear(2016);
+							mod202.setModel(FiscalModelType.M202);
+							mod202.setPeriod(Period.T1);
+							FiscalTree.FISCAL_SERVICE.initializeMod202(FiscalTree.getCurrentDomainName()
+			        		, getEnterprise().getDomain(), mod202
+			        		, new AsyncCallback<Mod202>() {
+			
+								@Override
+								public void onSuccess(Mod202 mod202) {
+									TreeNode<Mod202> node = TreeNodeFiscalModelTypes.MODEL_202.getInstance().render(
+										getFiscalModelsNode(mod202.getYear()).getModelNode(mod202.getYear(),mod202.getModel())
+										, mod202);
+									getFiscalModelsNode(mod202.getYear()).setState(true);
+									tree.setSelectedItem(node);
+								}
+			
+								@Override
+								public void onFailure(Throwable caught) {
+									Window.alert(caught.getMessage());
+								}
+							});
+						}
+					});
+			return this; 
+		}
+
 		protected NewContextMenu addNewMod2002013() {
 			addItem(FiscalModelType.M200 
 					,AON.MSG.newSomething( AON.MSG.fiscalModelType( FiscalModelType.M200 ) + " - 2013" )  
@@ -544,49 +575,8 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 					});
 			return this; 
 		}
-
-		//		protected NewContextMenu addNewMod131() {
-//			addItem(
-//    			FiscalModelType.M131
-//    			,AON.MSG.newSomething( AON.MSG.fiscalModelType( FiscalModelType.M131 ) )  
-//    			, new ScheduledCommand() {
-//					
-//					@Override
-//					public void execute() {
-//						Mod131 mod131 = new Mod131();
-//						mod131.setDomain(getEnterprise().getDomain());
-//						mod131.setModel(FiscalModelType.M131);
-//						mod131.setYear(2015);
-//						mod131.setPeriod(Period.T1);
-//						FiscalTree.FISCAL_SERVICE.initializeMod131(FiscalTree.getCurrentDomainName()
-//		        		, getEnterprise().getDomain(), mod131
-//		        		, new AsyncCallback<Mod131>() {
-//		
-//							@Override
-//							public void onSuccess(Mod131 mod131) {
-//								TreeNode<Mod131> node = TreeNodeFiscalModelTypes.MODEL_131.getInstance().render(
-//									getFiscalModelsNode().getModelNode(mod131.getYear(),mod131.getModel())
-//									, mod131);
-//								getFiscalModelsNode().setState(true);
-//								tree.setSelectedItem(node);
-//							}
-//		
-//							@Override
-//							public void onFailure(Throwable caught) {
-//							}
-//						});
-//					}
-//				});
-//			return this;
-//		}
-		
 	}
 
-	
-	
-
-	
-	
 	@Override
 	public void onNewButtonClick(ClickEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
