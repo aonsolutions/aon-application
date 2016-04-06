@@ -42,8 +42,13 @@ public class WorkplaceDAO {
 	}
 	
 	public static LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter){
-		return ctx.getDslContext().select().from(WORKPLACE).where(WORKPLACE_PROPERTIES.getConditions(filter))
-				.fetchInto(WORKPLACE).stream().map(new FullWorkplaceFiller())
+		return ctx.getDslContext().select().from(WORKPLACE)
+				.where(WORKPLACE_PROPERTIES.getConditions(filter))
+				.and(SecurityDAO.getUserScopesCondition(ctx, WORKPLACE.SCOPE))
+				.orderBy(WORKPLACE.DESCRIPTION)
+				.fetchInto(WORKPLACE)
+				.stream()
+				.map(new FullWorkplaceFiller())
 				.collect(Collectors.toCollection(LinkedList::new));	
 	}
 	

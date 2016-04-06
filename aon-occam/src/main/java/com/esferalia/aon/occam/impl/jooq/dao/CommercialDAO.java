@@ -114,6 +114,8 @@ public class CommercialDAO {
 				.join(REGISTRY).on(REGISTRY.ID.eq(SELLER.REGISTRY))
 				.where(SELLER.DOMAIN.eq(ctx.getDomainId()))
 				.and(SecurityDAO.getUserScopesCondition(ctx, SELLER.SCOPE))
+				.and(SecurityDAO.getSecurityLevelCondition(ctx, REGISTRY.SECURITY_LEVEL))
+				.orderBy( REGISTRY.NAME )
 				.fetch()
 				.stream()
 				.map(new FullSellerFiller());

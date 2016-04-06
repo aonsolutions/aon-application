@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SecurityDAO {
 	
@@ -183,6 +184,11 @@ public class SecurityDAO {
 		return roles;
 	}
 	
+	public static Condition getSecurityLevelCondition(AONContext ctx, Field<Byte> field) {
+		if (AonStringUtils.isBlank(ctx.getUser())) return DSL.trueCondition();
+		return getSecurityLevelCondition(ctx,ctx.getUser(), field);
+	}
+
 	public static Condition getSecurityLevelCondition (AONContext ctx, String userLogin, Field<Byte> field) {
 		ctx.checkRead();
 		User user = getUser(ctx, userLogin);
@@ -199,20 +205,17 @@ public class SecurityDAO {
 		
 	}
 	public static Condition getUserScopesCondition (AONContext ctx, Field<Integer> field) {
+		if (AonStringUtils.isBlank(ctx.getUser())) return DSL.trueCondition();
 		return getUserScopesCondition(ctx,ctx.getUser(), field);
 	}
 	
 	public static Condition getUserScopesCondition (AONContext ctx, String userLogin, Field<Integer> field) {
 		Integer[] scopes = getUserScopes(ctx,userLogin);
-
 		// No tiene scopes o tiene acceso a todo.
 		if (scopes == null) return DSL.trueCondition();
-		
 		Condition c = null;
 		for (Integer scope : scopes) {
-			c = c == null 
-				?field.eq(scope)
-				:c.or(field.eq(scope));
+			c = c == null?field.eq(scope):c.or(field.eq(scope));
 		}
 		return c;
 	}

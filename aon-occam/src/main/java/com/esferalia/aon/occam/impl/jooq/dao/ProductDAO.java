@@ -117,6 +117,7 @@ public class ProductDAO {
 			.select(PCATEGORY.ID,PCATEGORY.DOMAIN,PCATEGORY.NAME)
 			.from(PCATEGORY)
 			.where(DAOUtilities.getHeritableDomainCondition(ctx, PCATEGORY.DOMAIN,ctx.getDomainId()))
+			.orderBy(PCATEGORY.NAME)
 			.fetch()
 			.stream()
 			.map( record -> new ProductCategory()

@@ -52,16 +52,17 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 		AON.ensureInjected();
 		StatServiceAsync serviceRaw = GWT.create(StatService.class);
 		statService = new StatServiceAsyncDecorator(serviceRaw);
-		
+		Window.alert("1");
 		VisualizationUtils.loadVisualizationApi(new Runnable() {
 			@Override
 			public void run() {
+				Window.alert("2");
 				statService.createStatParams(getCurrentDomainName(), getCurrentDomain(),
 					new AsyncCallback<StatParams>() {
 		
 						@Override
 						public void onSuccess(StatParams result) {
-							
+							Window.alert("3");
 							params = result;
 							
 							InlineLabel fromLabel = new InlineLabel( AON.MSG.from());
@@ -165,8 +166,8 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 							callback.onFailure(caught);
 						}
 				});
-			}}, CoreChart.PACKAGE, Table.PACKAGE);
-			
+			}}, CoreChart.PACKAGE, Table.PACKAGE, GeoChartWrapper.PACKAGE);
+		Window.alert("4");			
 	}
 	
 
