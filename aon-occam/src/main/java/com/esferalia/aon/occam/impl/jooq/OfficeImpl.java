@@ -64,6 +64,12 @@ public class OfficeImpl implements IOffice {
 		return ctx.getDslContext().transactionResult(
 				conf -> AonHubDAO2.insertTag(ctx, tag));
 	}
+	
+	@Override
+	public Notice addDuplicateNotice(AONContext ctx, Notice childNotice,
+			int noticeParentId) {		
+		return AonHubDAO2.addDuplicateNotice(ctx, childNotice, noticeParentId);
+	}
 
 	// ----------------------------------------------------- DELETES
 

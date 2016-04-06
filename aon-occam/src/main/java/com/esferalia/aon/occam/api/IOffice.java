@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.office.Notice;
-import com.esferalia.aon.occam.api.model.office.NoticeContainer;
 import com.esferalia.aon.occam.api.model.office.NoticeFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -19,6 +18,8 @@ public interface IOffice {
 	public Notice addNewNotice(AONContext ctx, Notice notice) throws Exception;
 
 	public Notice editNotice(AONContext ctx, Notice notice);
+	
+	public Notice addDuplicateNotice(AONContext ctx, Notice childNotice, int noticeParentId);
 
 	public Notice changeNoticeStatus(AONContext ctx, Notice notice);
 	

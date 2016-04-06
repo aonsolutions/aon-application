@@ -222,6 +222,28 @@ public class AonHubDAO2 {
 		return new FullNoticeCommentFiller().apply(record);
 	}
 	
+	public static Notice addDuplicateNotice(AONContext ctx, Notice childNotice, int parentId) {
+		
+		// @formatter:off
+		ctx.getDslContext()
+		.update(NOTICE)
+		.set(NOTICE.NOTICE_, parentId)
+		.where(NOTICE.ID.eq(childNotice.getId()))
+		.returning()
+		.fetchOne();
+		
+		ctx.getDslContext()
+		.insertInto(NOTICE_TAG)
+		.set(NOTICE_TAG.NOTICE, parentId)
+		.set(NOTICE_TAG.TAG, getDuplicatedNoticesId(ctx.getDslContext()))
+		.set(NOTICE_TAG.START_DATE, getTime(new Date()))
+		.set(NOTICE_TAG.USER, childNotice.getSender().getId())
+		.execute();
+		// @formatter:on
+		
+		return getTicketNotice(ctx, parentId);
+	}
+	
 	public static Tag insertTag(AONContext ctx, Tag tag) {
 		
 		TagRecord tagRecord = ctx.getDslContext()
@@ -554,15 +576,31 @@ public class AonHubDAO2 {
 	// --------------------------------------------------------------------------------------
 	private static SelectConditionStep<Record1<Integer>> getOpenNoticesId(
 			DSLContext dsl) {
-
-		return dsl.select(TAG.ID).from(TAG).where(TAG.DOMAIN.eq(0))
-				.and(TAG.NAME.eq(NoticeStatus.OPEN.getValue())
-						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())));
+		// @formatter:off
+		return dsl.select(TAG.ID)
+				.from(TAG)
+				.where(TAG.DOMAIN.eq(0))
+				.and(TAG.NAME.eq(
+						NoticeStatus.OPEN.getValue())
+						.and(TAG.TYPE.eq(
+								TagType.OFFICE_STATUS.value())));
+		// @formatter:on
 	}
-	/**
-	 * 				.set(NOTICE_TAG.END_DATE,
-						new java.sql.Timestamp(notice.getStartDate().getTime()))
-	 */
+	
+
+	private static SelectConditionStep<Record1<Integer>> getDuplicatedNoticesId(
+			DSLContext dsl) {
+		// @formatter:off
+		return dsl.select(TAG.ID)
+				.from(TAG)
+				.where(TAG.DOMAIN.eq(0))
+				.and(TAG.NAME.eq(
+						NoticeStatus.DUPLICATED.getValue())
+						.and(TAG.TYPE.eq(
+								TagType.OFFICE_STATUS.value())));
+		// @formatter:on
+	}
+
 	
 	private static java.sql.Timestamp getTime(Date date) {
 		return new java.sql.Timestamp(date.getTime());

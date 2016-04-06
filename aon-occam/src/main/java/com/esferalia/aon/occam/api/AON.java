@@ -1181,6 +1181,18 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Notice addDuplicateNotice(Integer domainId, String domainName, 
+			String userName, Notice childNotice, int noticeParentId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().addDuplicateNotice(ctx, childNotice, noticeParentId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static Notice changeNoticeStatus(Integer domainId, String domainName,
 			String userName, Notice notice) {
