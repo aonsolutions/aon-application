@@ -21,9 +21,11 @@ body {
 
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
 	<ui:include src="/facelet/homepage/menu.xhtml" />
-
 	<script type="text/javascript">
             <![CDATA[
+			google.load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table"], 'language': 'es'});
+			function drawChartsCallback(){
+			}
             var search = "/aon_gwt_stat.nocache.js";
             var scripts = document.getElementsByTagName("script");
             for (var i = 0; i < scripts.length; ++i) {

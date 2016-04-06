@@ -29,9 +29,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.visualization.client.VisualizationUtils;
-import com.google.gwt.visualization.client.visualizations.Table;
-import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
 
 public class StatFilter extends FlowPanel implements HasValueChangeHandlers<StatParams> {
 
@@ -52,118 +49,115 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 		AON.ensureInjected();
 		StatServiceAsync serviceRaw = GWT.create(StatService.class);
 		statService = new StatServiceAsyncDecorator(serviceRaw);
-		VisualizationUtils.loadVisualizationApi(new Runnable() {
-			@Override
-			public void run() {
-				statService.createStatParams(getCurrentDomainName(), getCurrentDomain(),
-					new AsyncCallback<StatParams>() {
-		
-						@Override
-						public void onSuccess(StatParams result) {
-							params = result;
-							
-							InlineLabel fromLabel = new InlineLabel( AON.MSG.from());
-							fromLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-							add(fromLabel);
-							
-							final DateBoxEx from = new DateBoxEx();
-							from.setValue(params.getFrom());
-							from.addValueChangeHandler(new ValueChangeHandler<Date>() {
-								@Override
-								public void onValueChange(ValueChangeEvent<Date> event) {
-									params.setFrom(from.getValue());
-									ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
-								}
-							});
-							add(from);
-							
-							InlineLabel toLabel = new InlineLabel( AON.MSG.to());
-							toLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-							add(toLabel);
-							
-							final DateBoxEx to = new DateBoxEx();
-							to.setValue(params.getTo());
-							to.addValueChangeHandler(new ValueChangeHandler<Date>() {
-								@Override
-								public void onValueChange(ValueChangeEvent<Date> event) {
-									params.setTo(to.getValue());
-									ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
-								}
-							});
-							add(to);
 
-							final HashMap<StatFilterType,StatFilterMenu> menus = new HashMap<StatFilterType,StatFilterMenu>();					
-							for (final StatFilterItem item : result.getFilterItems()) {
-								if (!menus.containsKey( item.getType())) {
-									final StatFilterMenu menu = new StatFilterMenu();
-									menus.put(item.getType(), menu);								
-									
-									final Button button = new Button(item.getType().getName() );
-									button.setStyleName(AON.AON_CSS.aonDropButton());
-									
-									button.addClickHandler(new ClickHandler() {
-										
-										@Override
-										public void onClick(ClickEvent event) {
-											int x =  button.getAbsoluteLeft();
-											int y = button.getAbsoluteTop() + button.getOffsetHeight() + 2;
-											menu.setPopupPosition(x,y);
-											menu.show();
-										}
-									});
-									
-									add(button);
-									menu.addSelectionHandler(new SelectionHandler<StatFilterItem>() {
-										
-										@Override
-										public void onSelection(SelectionEvent<StatFilterItem> event) {
-											ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
-										}
-									});
-								}
-								StatFilterMenu parent = menus.get( item.getType());								
-								parent.addItem( item );						
-								
-							}
+		statService.createStatParams(getCurrentDomainName(), getCurrentDomain(),
+			new AsyncCallback<StatParams>() {
+
+				@Override
+				public void onSuccess(StatParams result) {
+					params = result;
+					
+					InlineLabel fromLabel = new InlineLabel( AON.MSG.from());
+					fromLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+					add(fromLabel);
+					
+					final DateBoxEx from = new DateBoxEx();
+					from.setValue(params.getFrom());
+					from.addValueChangeHandler(new ValueChangeHandler<Date>() {
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							params.setFrom(from.getValue());
+							ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+						}
+					});
+					add(from);
+					
+					InlineLabel toLabel = new InlineLabel( AON.MSG.to());
+					toLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+					add(toLabel);
+					
+					final DateBoxEx to = new DateBoxEx();
+					to.setValue(params.getTo());
+					to.addValueChangeHandler(new ValueChangeHandler<Date>() {
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							params.setTo(to.getValue());
+							ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+						}
+					});
+					add(to);
+
+					final HashMap<StatFilterType,StatFilterMenu> menus = new HashMap<StatFilterType,StatFilterMenu>();					
+					for (final StatFilterItem item : result.getFilterItems()) {
+						if (!menus.containsKey( item.getType())) {
+							final StatFilterMenu menu = new StatFilterMenu();
+							menus.put(item.getType(), menu);								
 							
-							FlowPanel chartTypePanel = new FlowPanel(); 
-							chartTypePanel.addStyleName(AON.AON_CSS.aonFloatRight());
-							chartTypePanel.addStyleName(AON.AON_CSS.aonMarginTop());
+							final Button button = new Button(item.getType().getName() );
+							button.setStyleName(AON.AON_CSS.aonDropButton());
 							
-							InlineLabel chartTypeLabel = new InlineLabel( AON.MSG.graphicType());
-							chartTypeLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-							chartTypePanel.add(chartTypeLabel);
-							
-							final ListBox chartType = new ListBox();
-							chartType.setStyleName(AON.AON_CSS.aonMarginRight());
-							chartType.addStyleName(AON.AON_CSS.aonWidth300());
-							for (StatChartType type : StatChartType.values()) {
-								chartType.addItem(type.getDescription());
-							}
-							chartType.setSelectedIndex(StatChartType.INVOICE_TYPE_BY_YEAR_COMBO_CHART.ordinal());
-							chartType.addChangeHandler( new ChangeHandler() {
+							button.addClickHandler(new ClickHandler() {
 								
 								@Override
-								public void onChange(ChangeEvent event) {
-									params.setChartType(StatChartType.values()[chartType.getSelectedIndex()]);
-									ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+								public void onClick(ClickEvent event) {
+									int x =  button.getAbsoluteLeft();
+									int y = button.getAbsoluteTop() + button.getOffsetHeight() + 2;
+									menu.setPopupPosition(x,y);
+									menu.show();
 								}
 							});
 							
-							chartTypePanel.add(chartType);
-							
-							add(chartTypePanel);
-							
-							callback.onSuccess(result);
+							add(button);
+							menu.addSelectionHandler(new SelectionHandler<StatFilterItem>() {
+								
+								@Override
+								public void onSelection(SelectionEvent<StatFilterItem> event) {
+									ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+								}
+							});
 						}
-		
+						StatFilterMenu parent = menus.get( item.getType());								
+						parent.addItem( item );						
+						
+					}
+					
+					FlowPanel chartTypePanel = new FlowPanel(); 
+					chartTypePanel.addStyleName(AON.AON_CSS.aonFloatRight());
+					chartTypePanel.addStyleName(AON.AON_CSS.aonMarginTop());
+					
+					InlineLabel chartTypeLabel = new InlineLabel( AON.MSG.graphicType());
+					chartTypeLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+					chartTypePanel.add(chartTypeLabel);
+					
+					final ListBox chartType = new ListBox();
+					chartType.setStyleName(AON.AON_CSS.aonMarginRight());
+					chartType.addStyleName(AON.AON_CSS.aonWidth300());
+					for (StatChartType type : StatChartType.values()) {
+						chartType.addItem(type.getDescription());
+					}
+					chartType.setSelectedIndex(StatChartType.INVOICE_TYPE_BY_YEAR_COMBO_CHART.ordinal());
+					chartType.addChangeHandler( new ChangeHandler() {
+						
 						@Override
-						public void onFailure(Throwable caught) {
-							Window.alert(caught.getMessage());
-							callback.onFailure(caught);
+						public void onChange(ChangeEvent event) {
+							params.setChartType(StatChartType.values()[chartType.getSelectedIndex()]);
+							ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
 						}
-				});
-			}}, CoreChart.PACKAGE, Table.PACKAGE, GeoChartWrapper.PACKAGE);
+					});
+					
+					chartTypePanel.add(chartType);
+					
+					add(chartTypePanel);
+					
+					callback.onSuccess(result);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert(caught.getMessage());
+					callback.onFailure(caught);
+				}
+		});
 	}
 	
 
