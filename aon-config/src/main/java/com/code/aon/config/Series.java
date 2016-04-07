@@ -14,4 +14,8 @@ public class Series extends SeriesDB implements IScopable{
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	public Series() {
+		setActive(true);
+	}
+
 } 
