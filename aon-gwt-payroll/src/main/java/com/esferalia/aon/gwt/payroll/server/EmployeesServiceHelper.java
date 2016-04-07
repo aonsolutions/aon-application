@@ -108,17 +108,37 @@ public class EmployeesServiceHelper {
 			if (hide(payment, dbPayments))
 				continue;
 
-			try {
-				variables.addAll(ExpressionContext.getVariableSet(
-						payment.getExpression(), payment.getIrpfExpression(),
-						payment.getQuoteExpression()));
-			} catch (Exception e) {
-				// TODO:
+			
+			String paymentName = payment.getName();
 
+			try {
+				Set<String> exprVariables =
+				ExpressionContext.getVariableSet(
+						payment.getExpression());				
+				variables.addAll(exprVariables);
+				if ( !exprVariables.contains(paymentName) )
+					paymentsNames.add(paymentName);
+
+			} catch (Exception e) {
+				paymentsNames.add(paymentName);
 			}
 
-			paymentsNames.add(payment.getName());
+			try {
+				Set<String> irpfVariables =
+				ExpressionContext.getVariableSet(
+						payment.getIrpfExpression());				
+				variables.addAll(irpfVariables);
+			} catch (Exception e) {
+			}
 
+			try {
+				Set<String> quoteVariables =
+				ExpressionContext.getVariableSet(
+						payment.getQuoteExpression());				
+				variables.addAll(quoteVariables);
+			} catch (Exception e) {
+			}
+			
 			allPayments.add(payment);
 		}
 
