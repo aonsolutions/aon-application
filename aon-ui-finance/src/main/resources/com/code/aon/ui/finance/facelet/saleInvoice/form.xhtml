@@ -138,6 +138,15 @@
 							<f:setPropertyActionListener target="#{saleInvoice.showDetailProjectWindow}"
 								value="#{false}" />
 						</aon:menuItem>
+						<aon:menuItem id="sellers"
+							value="#{bundle.aon_module_commercial}"
+							iconClass="aon-icon-commercial"
+							reRender="showSellerWindow">
+							<f:setPropertyActionListener target="#{saleInvoice.showSellerWindow}" 
+								value="#{true}" />							
+							<f:setPropertyActionListener target="#{saleInvoice.showDetailSellerWindow}"
+								value="#{false}" />
+						</aon:menuItem>
 						<aon:menuItem id="documents"
 							value="#{bundle.aon_documents}"
 							iconClass="aon-icon-payroll"
@@ -259,7 +268,7 @@
 			<aon:methodParam name="parentActionListener" value="#{saleInvoice.addInvoiceProject}" type="actionListener" />
 			<ui:param name="parentValue" value="#{saleInvoice.to.project}" />
 			<ui:param name="detailReRender" value="invoiceDetails" />
-			<aon:methodParam name="detailActionListener" value="#{saleInvoiceDetail.addInvoiceDetailProject}" type="actionListener" />
+			<aon:methodParam name="detailActionListener" value="#{saleInvoiceDetail.onInvoiceDetailSave}" type="actionListener" />
 			<ui:param name="detailValue" value="#{saleInvoiceDetail.invoiceDetail.project}" />
 			<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
 				<ui:param name="projectLabel" value="#{bundle.aon_project}" />
@@ -267,6 +276,16 @@
 			<aon:if test="#{aonConfiguration.bean.invoice.showTasData}">
 				<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
 			</aon:if>
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/seller/facelet/seller/modalSeller.xhtml">
+			<ui:param name="controller" value="#{saleInvoice}" />
+			<ui:param name="parentReRender" value="saleInvoiceForm" />
+			<aon:methodParam name="parentActionListener" value="#{saleInvoice.addInvoiceSeller}" type="actionListener" />
+			<ui:param name="parentValue" value="#{saleInvoice.to.seller}" />
+			<ui:param name="detailReRender" value="invoiceDetails" />
+			<aon:methodParam name="detailActionListener" value="#{saleInvoiceDetail.onInvoiceDetailSave}" type="actionListener" />
+			<ui:param name="detailValue" value="#{saleInvoiceDetail.invoiceDetail.seller}" />
+			<ui:param name="sellerLabel" value="#{bundle.aon_module_commercial}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRectification.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />

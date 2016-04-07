@@ -590,6 +590,12 @@ color:#000;
  .aon-icon-project-warn{
 	background:transparent url(images/aon-icon/aon-icon-project-warn.png) scroll left center no-repeat;	
  }
+.aon-icon-commercial-ok{
+	background:transparent url(images/aon-icon/aon-icon-commercial-ok.png) scroll left center no-repeat;	
+ }
+ .aon-icon-commercial-warn{
+	background:transparent url(images/aon-icon/aon-icon-commercial-warn.png) scroll left center no-repeat;	
+ }
  .aon-icon-check-in{
 	background:transparent url(images/aon-icon/aon-icon-check-in.png) scroll left center no-repeat;	
  }

@@ -122,7 +122,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private boolean showProjectWindow;
 	private boolean showDetailProjectWindow;
 	private Seller savedSeller;
-	private boolean showSellerDataWindow;
+	private boolean showSellerWindow;
+	private boolean showDetailSellerWindow;
 	private boolean showDocumentWindow;
 	private boolean showCommentsWindow;
 	private boolean showRemarksWindow;
@@ -361,26 +362,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		this.showDetailProjectWindow = value;
 	}
 
-	public Seller getSavedSeller() {
-		return savedSeller;
-	}
-
-	public void setSavedSeller(Seller savedSeller) {
-		this.savedSeller = null;
-		if (savedSeller != null && savedSeller.getId() != null) {
-			this.savedSeller = new Seller();
-			this.savedSeller.setId(savedSeller.getId());
-		}
-	}
-
-	public boolean isShowSellerDataWindow() {
-		return showSellerDataWindow;
-	}
-
-	public void setShowSellerDataWindow(boolean value) {
-		this.showSellerDataWindow = value;
-	}
-
 	public void addInvoiceProject(ActionEvent event) throws ManagerBeanException {
 		linkProject(getInvoice(), false);
 	}
@@ -418,6 +399,78 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			}
 		}
 		setSavedProject(invoice.getProject());
+
+		if (!onlyDetails && detailsChanged) {
+			IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
+			invoiceDetailController.onSearch(null);
+		}
+	}
+
+	public Seller getSavedSeller() {
+		return savedSeller;
+	}
+
+	public void setSavedSeller(Seller savedSeller) {
+		this.savedSeller = null;
+		if (savedSeller != null && savedSeller.getId() != null) {
+			this.savedSeller = new Seller();
+			this.savedSeller.setId(savedSeller.getId());
+		}
+	}
+
+	public boolean isShowSellerWindow() {
+		return showSellerWindow;
+	}
+
+	public void setShowSellerWindow(boolean value) {
+		this.showSellerWindow = value;
+	}
+
+	public boolean isShowDetailSellerWindow() {
+		return showDetailSellerWindow;
+	}
+
+	public void setShowDetailSellerWindow(boolean value) {
+		this.showDetailSellerWindow = value;
+	}
+
+	public void addInvoiceSeller(ActionEvent event) throws ManagerBeanException {
+		linkSeller(getInvoice(), false);
+	}
+
+	public void linkSeller(Invoice invoice, boolean onlyDetails) throws ManagerBeanException {
+		boolean detailsChanged = false;
+		Seller seller = (invoice.getSeller() != null && invoice.getSeller().getId() != null) ? invoice.getSeller() : null;
+		setSavedSeller((getSavedSeller() != null && getSavedSeller().getId() != null) ? getSavedSeller() : null);
+		if ((seller == null && getSavedSeller() != null) || (seller != null && !seller.equals(getSavedSeller()))) {
+			if (!onlyDetails) {
+				invoice.setUpdateEnabled(!invoice.isRecorded());
+				getManagerBean().restoreNullSubPOJOs(invoice);
+				getManagerBean().update(invoice);
+				getManagerBean().initializePOJO(invoice);
+			}
+
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			if (seller == null) {
+				criteria.addNotNullExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SELLER));
+			} else {
+				if (getSavedSeller() == null) {
+					criteria.addNullExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SELLER));
+				} else {
+					criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SELLER_ID), getSavedSeller().getId());
+				}
+			}
+			for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+				InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+				invoiceDetail.setSeller(seller);
+				invoiceDetail.setUpdateEnabled(false);
+				invoiceDetailBean.update(invoiceDetail);
+				detailsChanged = true;
+			}
+		}
+		setSavedSeller(invoice.getSeller());
 
 		if (!onlyDetails && detailsChanged) {
 			IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);

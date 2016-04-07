@@ -305,7 +305,7 @@
 							</f:facet>
 							<aon:div styleClass="aon-nowrap">
 								<aon:commandLink id="invoiceDetailSourceLink" immediate="true"
-									styleClass="aon-button-goto" style="padding-right: 20px;"
+									styleClass="aon-button-goto" style="padding-right: 12px;"
 									value="&#160;" title="#{bundle.aon_go}" 
 									rendered="#{!controller.editable}" 
 									actionListener="#{controller.onLoadSource}"
@@ -316,8 +316,8 @@
 								<aon:commandButton id="invoiceDetailProject" value="&#160;"
 									styleClass="#{(to.project != null and to.project.id == invoiceController.to.project.id) ? 
 													('aon-icon-commandButton aon-icon-project-ok') : ('aon-icon-commandButton aon-icon-project-warn')}"
-									rendered="#{to.project != null and to.project.id != null}"
-									actionListener="#{controller.onInvoiceDetailProjectShow}" 
+									rendered="#{to.project.id != null}"
+									actionListener="#{controller.onInvoiceDetailSelect}" 
 									reRender="showProjectWindow">
 									<rich:toolTip value="#{projectLabel} #{to.project.name}" />
 									<f:setPropertyActionListener target="#{invoiceController.showProjectWindow}"
@@ -325,6 +325,20 @@
 									<f:setPropertyActionListener target="#{invoiceController.showDetailProjectWindow}"
 										value="#{true}" />								
 								</aon:commandButton>
+								<aon:if test="#{invoiceController.to.sales}">
+									<aon:commandButton id="invoiceDetailSeller" value="&#160;"
+										styleClass="#{(to.seller != null and to.seller.id == invoiceController.to.seller.id) ? 
+														('aon-icon-commandButton aon-icon-commercial-ok') : ('aon-icon-commandButton aon-icon-commercial-warn')}"
+										rendered="#{to.seller.id != null}"
+										actionListener="#{controller.onInvoiceDetailSelect}" 
+										reRender="showSellerWindow">
+										<rich:toolTip value="#{bundle.aon_module_commercial} #{to.seller.registry.fullName}" />
+										<f:setPropertyActionListener target="#{invoiceController.showSellerWindow}"
+											value="#{true}" />								
+										<f:setPropertyActionListener target="#{invoiceController.showDetailSellerWindow}"
+											value="#{true}" />								
+									</aon:commandButton>
+								</aon:if>
 							</aon:div>
  						</aon:column>
 

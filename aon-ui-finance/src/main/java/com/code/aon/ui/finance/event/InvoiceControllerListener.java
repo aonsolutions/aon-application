@@ -43,6 +43,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoiceController.setProjects(null);
 			invoiceController.setSavedProject(null);
 			invoiceController.setShowProjectLookup(false);
+			invoiceController.setSavedSeller(null);
 			invoiceController.setFinanceGenerationMode(0);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
@@ -60,6 +61,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoiceController.setProjects(null);
 			invoiceController.setSavedProject(invoice.getProject());
 			invoiceController.setShowProjectLookup(true);
+			invoiceController.setSavedSeller(invoice.getSeller());
 			invoiceController.setFinanceGenerationMode(0);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
@@ -73,6 +75,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 
 		invoiceController.setSavedProject(invoice.getProject());
 		invoiceController.setShowProjectLookup(true);
+		invoiceController.setSavedSeller(invoice.getSeller());
 	}
 
 	@Override
@@ -90,6 +93,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 		InvoiceController invoiceController = (InvoiceController)this.getController();
 		try {
 			invoiceController.linkProject(invoiceController.getInvoice(), true);
+			invoiceController.linkSeller(invoiceController.getInvoice(), true);
 			invoiceController.autoGenerateIncreases();
 			invoiceController.autoGenerateFinances();
 			invoiceController.resetListTotals();

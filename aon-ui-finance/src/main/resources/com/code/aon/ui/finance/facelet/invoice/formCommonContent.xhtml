@@ -87,14 +87,14 @@
 		</aon:div>
 	</aon:if>
 
-	<aon:if test="#{invoiceController.to.sales and ((invoiceController.nevv and sellerCollections.sellerCount > 0) or invoiceController.to.seller.id != null)}">
+	<aon:if test="#{invoiceController.to.sales and ((invoiceController.nevv and sellerCollections.sellerCount > 0) or invoiceController.savedSeller.id != null)}">
 		<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{invoiceController.to.seller}" />
 			<ui:param name="lookupRendered" value="#{!invoiceController.readOnly}" />
 			<aon:methodParam name="lookupChangeListener"
 				value="#{invoiceController.onSellerChanged}" type="lookupChangeListener" />
 		</ui:include>
-		<aon:outputLabel value="#{bundle.seller_stat_name}" 
+		<aon:outputLabel value="#{bundle.aon_module_commercial}" 
 			rendered="#{invoiceController.readOnly}" />
 		<aon:outputText styleClass="aon-bold"
 			value="#{invoiceController.to.seller.registry.fullName}" 

@@ -205,7 +205,7 @@
 								styleClass="#{(to.project != null and to.project.id == invoiceController.to.project.id) ? 
 												('aon-icon-commandButton aon-icon-project-ok') : ('aon-icon-commandButton aon-icon-project-warn')}"
 								rendered="#{to.project != null and to.project.id != null}"
-								actionListener="#{controller.onInvoiceDetailProjectShow}" 
+								actionListener="#{controller.onInvoiceDetailSelect}" 
 								reRender="showProjectWindow">
 								<rich:toolTip value="#{projectLabel} #{to.project.name}" />
 								<f:setPropertyActionListener target="#{invoiceController.showProjectWindow}"

@@ -93,13 +93,13 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		this.invoiceDetail = invoiceDetail;
 	}
 
-	public void onInvoiceDetailProjectShow(ActionEvent event) throws ManagerBeanException {
+	public void onInvoiceDetailSelect(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			setInvoiceDetail((InvoiceDetail)this.getModel().getRowData());
 		}
 	}
 
-	public void addInvoiceDetailProject(ActionEvent event) throws ManagerBeanException {
+	public void onInvoiceDetailSave(ActionEvent event) throws ManagerBeanException {
 		invoiceDetail.setUpdateEnabled(false);
 		getManagerBean().restoreNullSubPOJOs(invoiceDetail);
 		getManagerBean().update(invoiceDetail);

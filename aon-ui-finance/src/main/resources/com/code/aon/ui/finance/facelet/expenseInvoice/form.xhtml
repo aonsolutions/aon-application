@@ -208,7 +208,7 @@
 			<aon:methodParam name="parentActionListener" value="#{expenseInvoice.addInvoiceProject}" type="actionListener" />
 			<ui:param name="parentValue" value="#{expenseInvoice.to.project}" />
 			<ui:param name="detailReRender" value="invoiceDetails" />
-			<aon:methodParam name="detailActionListener" value="#{expenseInvoiceDetail.addInvoiceDetailProject}" type="actionListener" />
+			<aon:methodParam name="detailActionListener" value="#{expenseInvoiceDetail.onInvoiceDetailSave}" type="actionListener" />
 			<ui:param name="detailValue" value="#{expenseInvoiceDetail.invoiceDetail.project}" />
 			<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
 				<ui:param name="projectLabel" value="#{bundle.aon_project}" />

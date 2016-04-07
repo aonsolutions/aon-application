@@ -8,83 +8,84 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="showProjectWindow">
-		<aon:if test="#{controller.showProjectWindow}">
-			<rich:modalPanel id="projectModalPanel" minHeight="150"
-				minWidth="650" rendered="#{controller.showProjectWindow}"
+	<aon:panelGroup id="showSellerWindow">
+		<aon:if test="#{controller.showSellerWindow}">
+			<rich:modalPanel id="sellerModalPanel" minHeight="200"
+				minWidth="590" rendered="#{controller.showSellerWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{projectLabel}" />
+						<aon:outputText value="#{sellerLabel}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							reRender="showProjectWindow" immediate="true">
+							reRender="showSellerWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{controller.showProjectWindow}"
+								target="#{controller.showSellerWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="projectForm">
+				<aon:form id="sellerForm">
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
-									<aon:if test="#{!controller.showDetailProjectWindow}">
-										<aon:commandButton id="project-save"
+									<aon:if test="#{!controller.showDetailSellerWindow}">
+										<aon:commandButton id="seller-save"
 											styleClass="aon-finding-toolbar-item aon-icon-accept"
 											value="#{bundle.aon_save}"
 											actionListener="#{parentActionListener}"
-											reRender="showProjectWindow,#{parentReRender}"
+											reRender="showSellerWindow,#{parentReRender}"
 											accesskey="#{bundle.aon_key_save}">
-											<rich:componentControl for="projectModalPanel"
+											<rich:componentControl for="sellerModalPanel"
 												event="onclick" operation="hide"/>																					
 											<f:setPropertyActionListener
-												target="#{controller.showProjectWindow}"
+												target="#{controller.showSellerWindow}"
 												value="#{false}" />
 										</aon:commandButton>
 									</aon:if>
-									<aon:if test="#{controller.showDetailProjectWindow}">
-										<aon:commandButton id="project-save"
+									<aon:if test="#{controller.showDetailSellerWindow}">
+										<aon:commandButton id="seller-save"
 											styleClass="aon-finding-toolbar-item aon-icon-accept"
 											value="#{bundle.aon_save}"
 											actionListener="#{detailActionListener}"
-											reRender="showProjectWindow,#{detailReRender}"
+											reRender="showSellerWindow,#{detailReRender}"
 											accesskey="#{bundle.aon_key_save}">
-											<rich:componentControl for="projectModalPanel"
+											<rich:componentControl for="sellerModalPanel"
 												event="onclick" operation="hide"/>																					
 											<f:setPropertyActionListener
-												target="#{controller.showProjectWindow}"
+												target="#{controller.showSellerWindow}"
 												value="#{false}" />
 										</aon:commandButton>
 									</aon:if>
-									<aon:commandButton id="project-cancel" immediate="true"
+									<aon:commandButton id="seller-cancel" immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
 										value="#{bundle.aon_cancel}"
-										reRender="showProjectWindow">
+										reRender="showSellerWindow">
 										<f:setPropertyActionListener
-											target="#{controller.showProjectWindow}"
+											target="#{controller.showSellerWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
-								<aon:div styleClass="aon-scroll-area">
-									<aon:panelGrid id="menuGrid" columns="2" dir="true">
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
 
-										<aon:outputLabel for="Project_id"
-											value="#{projectLabel}" />
-										<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
-											<aon:if test="#{!controller.showDetailProjectWindow}">
+										<aon:outputLabel for="Seller_id"
+											value="#{sellerLabel}" />
+										<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+											<aon:if test="#{!controller.showDetailSellerWindow}">
 												<ui:param name="lookupTo" value="#{parentValue}" />
 											</aon:if>
-											<aon:if test="#{controller.showDetailProjectWindow}">
+											<aon:if test="#{controller.showDetailSellerWindow}">
 												<ui:param name="lookupTo" value="#{detailValue}" />
 											</aon:if>
+											<ui:param name="lookupInputSuggestSize" value="40" />
 											<ui:param name="lookupSuffix" value="-Modal" />
 											<ui:param name="skipLabel" value="#{true}" />
 											<ui:param name="skipGoToButton" value="#{true}" />
