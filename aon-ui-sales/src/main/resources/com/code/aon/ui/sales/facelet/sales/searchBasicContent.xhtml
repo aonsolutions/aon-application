@@ -6,6 +6,8 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<aon:valueParam name="currentUserScopes" default="#{configCollections.currentUserScopes}" />
+
 	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
 
 	<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
@@ -74,6 +76,17 @@
 		<f:selectItem itemLabel="-" value="#{null}" />		
 		<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 	</aon:selectOneMenu>					
+
+	<aon:if test="#{currentUserScopes[1] != null}">
+		<aon:outputLabel for="Sales_scope_id"
+			value="#{bundle.aon_scope}" />
+		<aon:selectOneMenu id="Sales_scope_id"
+			value="#{configCollections.scope}"
+			valueChangeListener="#{controller.addIdEqualExpression}">
+			<f:selectItem itemLabel="-" value="#{null}" />		
+			<f:selectItems value="#{currentUserScopes}" />
+		</aon:selectOneMenu>
+	</aon:if>					
 
 	<aon:if test="#{aonRole.confidentiality}">
 		<aon:outputLabel for="Sales_securityLevel"

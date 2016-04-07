@@ -10,6 +10,8 @@
 
 		<aon:form id="hotelSearch">
 
+			<aon:valueParam name="currentUserScopes" default="#{configCollections.currentUserScopes}" />
+
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.pms_hotel_module}" />
 				<ui:param name="controller" value="#{hotel}" />
@@ -49,14 +51,16 @@
 							<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}"/>
 						</aon:selectOneMenu>
 					
-						<aon:outputLabel for="Hotel_scope_id"
-							value="#{bundle.aon_scope}" />
-						<aon:selectOneMenu id="Hotel_scope_id"
-							value="#{configCollections.scope}"
-							valueChangeListener="#{controller.addIdEqualExpression}">
-							<f:selectItem itemLabel="-" value="#{null}"/> 
-							<f:selectItems value="#{configCollections.currentUserScopes}" />
-						</aon:selectOneMenu>
+						<aon:if test="#{currentUserScopes[1] != null}">
+							<aon:outputLabel for="Hotel_scope_id"
+								value="#{bundle.aon_scope}" />
+							<aon:selectOneMenu id="Hotel_scope_id"
+								value="#{configCollections.scope}"
+								valueChangeListener="#{controller.addIdEqualExpression}">
+								<f:selectItem itemLabel="-" value="#{null}"/> 
+								<f:selectItems value="#{currentUserScopes}" />
+							</aon:selectOneMenu>
+						</aon:if>
 
 						<aon:outputLabel for="Hotel_workPlace_address_address"
 							value="#{bundle.aon_address}" />

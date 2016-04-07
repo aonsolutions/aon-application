@@ -9,27 +9,29 @@
 
 	<aon:valueParam name="scopeList" default="#{configCollections.currentUserScopes}"/>
 
-	<aon:outputLabel for="#{controller.pojoShortName}_scope_id"
-		value="#{bundle.aon_scope}" />
-	<aon:div id="scopeDiv">
-		<a4j:repeat value="#{searchController.scopes}" rowKeyVar="index" var="scopeTo">
-			<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
-				<aon:selectOneMenu id="#{controller.pojoShortName}_scope_id"
-					value="#{searchController.scopes[index]}">
-					<f:selectItem itemLabel="-" value="#{null}"/>
-					<f:selectItems value="#{scopeList}" />
-					<a4j:support event="onchange" reRender="scopeDiv"/>
-				</aon:selectOneMenu>
-				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
-					actionListener="#{searchController.onRemoveScope}" reRender="scopeDiv" value="&#160;"
-					rendered="#{scopeTo.id != null}">
-					<f:param name="index" value="#{index}" />
-				</aon:commandButton>
-				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="scopeDiv"
-					actionListener="#{searchController.onAddScope}" value="&#160;" immediate="true"
-					rendered="#{(scopeTo.id != null) and (index == (searchController.scopesSize-1))}"/>
-			</aon:div>						
-		</a4j:repeat>
-	</aon:div>				
+	<aon:if test="#{scopeList[1] != null}">
+		<aon:outputLabel for="#{controller.pojoShortName}_scope_id"
+			value="#{bundle.aon_scope}" />
+		<aon:div id="scopeDiv">
+			<a4j:repeat value="#{searchController.scopes}" rowKeyVar="index" var="scopeTo">
+				<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+					<aon:selectOneMenu id="#{controller.pojoShortName}_scope_id"
+						value="#{searchController.scopes[index]}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{scopeList}" />
+						<a4j:support event="onchange" reRender="scopeDiv"/>
+					</aon:selectOneMenu>
+					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+						actionListener="#{searchController.onRemoveScope}" reRender="scopeDiv" value="&#160;"
+						rendered="#{scopeTo.id != null}">
+						<f:param name="index" value="#{index}" />
+					</aon:commandButton>
+					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="scopeDiv"
+						actionListener="#{searchController.onAddScope}" value="&#160;" immediate="true"
+						rendered="#{(scopeTo.id != null) and (index == (searchController.scopesSize-1))}"/>
+				</aon:div>
+			</a4j:repeat>
+		</aon:div>
+	</aon:if>
 
 </ui:composition>

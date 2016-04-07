@@ -6,6 +6,8 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<aon:valueParam name="currentUserScopes" default="#{configCollections.currentUserScopes}" />
+
 	<aon:outputLabel for="Income_referenceCode"
 		value="#{bundle.aon_number}" />
 	<aon:inputText id="Income_referenceCode"
@@ -43,12 +45,22 @@
 		value="#{bundle.purchase_workplace}" />
 	<aon:selectOneMenu id="Income_workPlace_id"
 		value="#{searchController.workPlace}"
-		reRender="aonContent:incomeSearch:Income_lines_warehouse_id"
-		>
+		reRender="aonContent:incomeSearch:Income_lines_warehouse_id">
 		<f:selectItem itemLabel="-" value="#{null}" />		
 		<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 	</aon:selectOneMenu>
 	
+	<aon:if test="#{currentUserScopes[1] != null}">
+		<aon:outputLabel for="Income_scope_id"
+			value="#{bundle.aon_scope}" />
+		<aon:selectOneMenu id="Income_scope_id"
+			value="#{configCollections.scope}"
+			valueChangeListener="#{controller.addIdEqualExpression}">
+			<f:selectItem itemLabel="-" value="#{null}" />		
+			<f:selectItems value="#{currentUserScopes}" />
+		</aon:selectOneMenu>
+	</aon:if>					
+
 	<aon:if test="#{aonRole.confidentiality}">
 		<aon:outputLabel for="Income_securityLevel"
 			value="#{bundle.aon_confidential}" />

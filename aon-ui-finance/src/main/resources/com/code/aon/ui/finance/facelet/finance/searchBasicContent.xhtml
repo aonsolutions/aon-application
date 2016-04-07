@@ -7,6 +7,8 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
+	<aon:valueParam name="currentUserScopes" default="#{configCollections.currentUserScopes}" />
+
 	<ui:insert name="additionalFinanceSearchContent"/>
 
 	<aon:outputLabel for="Finance_amount"
@@ -140,6 +142,17 @@
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 	</aon:selectOneMenu>
+
+	<aon:if test="#{currentUserScopes[1] != null}">
+		<aon:outputLabel for="Finance_scope_id"
+			value="#{bundle.aon_scope}" />
+		<aon:selectOneMenu id="Finance_scope_id"
+			value="#{configCollections.scope}"
+			valueChangeListener="#{controller.addIdEqualExpression}">
+			<f:selectItem itemLabel="-" value="#{null}" />		
+			<f:selectItems value="#{currentUserScopes}" />
+		</aon:selectOneMenu>					
+	</aon:if>
 
 	<aon:outputLabel for="Finance_advance"
 		value="#{bundle.finance_advance}" />

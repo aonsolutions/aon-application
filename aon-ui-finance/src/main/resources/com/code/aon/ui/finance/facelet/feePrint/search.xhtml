@@ -7,6 +7,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
+	<aon:valueParam name="currentUserScopes" default="#{configCollections.currentUserScopes}" />
+
 	<ui:define name="content">
 		<aon:form id="feePrintSearch">
 
@@ -50,14 +52,16 @@
 						<f:selectItems value="#{customerCollections.customerStatuses}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="CustomerFee_customer_scope_id"
-						value="#{bundle.aon_scope}" />
-					<aon:selectOneMenu id="CustomerFee_customer_scope_id"
-						value="#{configCollections.scope}"
-						valueChangeListener="#{finance.addIdEqualExpression}">
-						<f:selectItem itemLabel="-" value="#{null}"/> 
-						<f:selectItems value="#{configCollections.currentUserScopes}" />
-					</aon:selectOneMenu>
+					<aon:if test="#{currentUserScopes[1] != null}">
+						<aon:outputLabel for="CustomerFee_customer_scope_id"
+							value="#{bundle.aon_scope}" />
+						<aon:selectOneMenu id="CustomerFee_customer_scope_id"
+							value="#{configCollections.scope}"
+							valueChangeListener="#{finance.addIdEqualExpression}">
+							<f:selectItem itemLabel="-" value="#{null}"/> 
+							<f:selectItems value="#{currentUserScopes}" />
+						</aon:selectOneMenu>
+					</aon:if>
 				
 				</ui:define>
 			</ui:decorate>

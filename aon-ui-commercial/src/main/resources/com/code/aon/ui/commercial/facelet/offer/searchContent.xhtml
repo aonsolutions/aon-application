@@ -6,6 +6,8 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+	<aon:valueParam name="currentUserScopes" default="#{configCollections.currentUserScopes}" />
+
 	<aon:outputText value="" />
 	<aon:div styleClass="aon-search-content-width">
 		<aon:panelCollapsible expanded="true" label="#{bundle.commercial_offer_module}">
@@ -79,7 +81,18 @@
 					<f:selectItem itemLabel="-" value="#{null}" />		
 					<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 				</aon:selectOneMenu>					
-			
+
+				<aon:if test="#{currentUserScopes[1] != null}">
+					<aon:outputLabel for="Offer_scope_id"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Offer_scope_id"
+						value="#{configCollections.scope}"
+						valueChangeListener="#{controller.addIdEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}" />		
+						<f:selectItems value="#{currentUserScopes}" />
+					</aon:selectOneMenu>
+				</aon:if>					
+
 				<aon:if test="#{aonRole.confidentiality}">
 					<aon:outputLabel for="Offer_securityLevel"
 						value="#{bundle.aon_confidential}" />
