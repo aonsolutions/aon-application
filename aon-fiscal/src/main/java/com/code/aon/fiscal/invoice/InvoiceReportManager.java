@@ -29,6 +29,8 @@ public class InvoiceReportManager {
 	
 	private static final String ID = "id";
 	private static final String TYPE = "tipo";
+	private static final String ACTIVITY = "activity";
+	private static final String INVEST_ASSET = "invest_asset";
 	private static final String TRANSACTION = "transaccion";
 	private static final String INVESTMENT = "investment";
 	private static final String TAX_DATE = "tax_date";
@@ -48,6 +50,7 @@ public class InvoiceReportManager {
 	private static final String SURCHARGE = "surcharge";
 	private static final String VAT_DEDUCTION_TYPE = "vat_deduction_type";
 	private static final String WITHHOLDING_TYPE = "withholding_type";
+	private static final String DEDUCTIBLE_PERCENT = "deductible_percent";
 	private static final String DEDUCTIBLE_QUOTA = "deductible_quota";
 	private static final String TAXABLE_BASE = "taxable_base";
 	private static final String TAX = "tax";
@@ -85,6 +88,8 @@ public class InvoiceReportManager {
 		,new ReportColumnMetadata(RECTIFICATION_INVOICE,Types.INTEGER,"ID Fra. Rectificada",15)
 		,new ReportColumnMetadata(ISSUE_DATE,Types.DATE,"Fecha",10)
 		,new ReportColumnMetadata(TAX_DATE,Types.DATE,"F.IVA",10)
+		,new ReportColumnMetadata(ACTIVITY,Types.VARCHAR,"Actividad",40)
+		,new ReportColumnMetadata(INVEST_ASSET,Types.VARCHAR,"Bien afecto",40)
 		,new ReportColumnMetadata(NUMBER,Types.VARCHAR,"Nº Factura",15)
 		,new ReportColumnMetadata("document_number",Types.VARCHAR,"Nº Docum.",15)
 		,new ReportColumnMetadata(RDOCUMENT,Types.VARCHAR,"NIF",15)
@@ -95,6 +100,7 @@ public class InvoiceReportManager {
 		,new ReportColumnMetadata(TAXABLE_BASE,Types.DOUBLE,"B.Imp.",10)
 		,new ReportColumnMetadata(PERCENTAGE,Types.DOUBLE,"Porc.",5)
 		,new ReportColumnMetadata(TAX,Types.DOUBLE,"Cuota",10)
+		,new ReportColumnMetadata(DEDUCTIBLE_PERCENT,Types.DOUBLE,"Porc. Ded.",10)
 		,new ReportColumnMetadata(DEDUCTIBLE_QUOTA,Types.DOUBLE,"Cuota Ded.",10)
 		,new ReportColumnMetadata(WITHHOLDING_FARMER,Types.VARCHAR,"Reg.Agric.",7)
 		,new ReportColumnMetadata(VAT_ACCRUAL_PAYMENT,Types.VARCHAR,"Reg. Caja.",10)
@@ -123,6 +129,8 @@ public class InvoiceReportManager {
 		stmt.append(" ,i.service " + SERVICE);
 		stmt.append(" ,i.rectification_type " + RECTIFICATION_TYPE);
 		stmt.append(" ,i.rectification_invoice " + RECTIFICATION_INVOICE);
+		stmt.append(" ,ea.description " + ACTIVITY);
+		stmt.append(" ,ia.description " + INVEST_ASSET);
 		stmt.append(" ,i.vat_accrual_payment " + VAT_ACCRUAL_PAYMENT);
 		stmt.append(" ,i.total " + INVOICE_TOTAL);
 		stmt.append(" ,i.taxable_base " + INVOICE_BASE);
@@ -133,7 +141,8 @@ public class InvoiceReportManager {
 		stmt.append(" ,it.surcharge " + SURCHARGE);
 		stmt.append(" ,it.vat_deduction_type " + VAT_DEDUCTION_TYPE);
 		stmt.append(" ,it.withholding_type " + WITHHOLDING_TYPE);
-		stmt.append("  ,SUM( IF(it.deductible_quota!=0,it.deductible_quota,IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ))) " + DEDUCTIBLE_QUOTA);
+		stmt.append(" ,it.deductible_percent " + DEDUCTIBLE_PERCENT);		
+		stmt.append("  ,SUM( (IF(it.deductible_quota!=0,it.deductible_quota,IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2)))) * it.deductible_percent / 100 ) " + DEDUCTIBLE_QUOTA);
 	    stmt.append("  ,SUM(it.base) " + TAXABLE_BASE);
 		stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ) ) " + TAX);
 		stmt.append("  ,SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(it.base * it.surcharge / 100, 2) ) ) " + SURCHARGE_QUOTA);
@@ -141,6 +150,8 @@ public class InvoiceReportManager {
 			stmt.append(" FROM invoice_tax it ");
 			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id) ");
+			stmt.append(" LEFT OUTER JOIN enterprise_activity ea ON (i.activity = ea.id) ");
+			stmt.append(" LEFT OUTER JOIN invest_asset ia ON (i.invest_asset = ia.id) ");
 			stmt.append(" WHERE it.domain = ?");
 			stmt.append(" AND (i.vat_accrual_payment = 0 OR (vat_accrual_payment = 1 AND it.tax_type != 1)) " );  
 			if (params.getFromTaxDate() != null) {
@@ -163,6 +174,8 @@ public class InvoiceReportManager {
 			stmt.append("  INNER JOIN invoice i ON (f.invoice = i.id) ");
 			stmt.append("  INNER JOIN invoice_detail id ON (id.invoice = i.id) ");
 			stmt.append("  INNER JOIN invoice_tax it ON (it.invoice_detail = id.id) ");
+			stmt.append("  LEFT OUTER JOIN enterprise_activity ea ON (i.activity = ea.id) ");
+			stmt.append("  LEFT OUTER JOIN invest_asset ia ON (i.invest_asset = ia.id) ");
 			stmt.append(" WHERE ft.domain = ?");
 			stmt.append("  AND ft.type IN (1,2) ");
 			stmt.append(" AND (vat_accrual_payment = 1 AND it.tax_type = 1) " );
@@ -360,6 +373,8 @@ public class InvoiceReportManager {
 		exporter.exportColumn(metadata.getColumns().get((i++)), rs.getInt(RECTIFICATION_INVOICE));
 		exporter.exportColumn(metadata.getColumns().get((i++)), rs.getDate(ISSUE_DATE));
 		exporter.exportColumn(metadata.getColumns().get((i++)), rs.getDate(TAX_DATE));
+		exporter.exportColumn(metadata.getColumns().get((i++)), rs.getString(ACTIVITY));
+		exporter.exportColumn(metadata.getColumns().get((i++)), rs.getString(INVEST_ASSET));
 		exporter.exportColumn(metadata.getColumns().get((i++)), rs.getString(REFERENCE_CODE));
 		
 		String documentNumber = ((InvoiceType.SALES == type) ? "E" : (InvoiceType.UNDEDUCTIBLE == type) ? "G" : "R") + "-";
@@ -396,6 +411,7 @@ public class InvoiceReportManager {
 		double invoicePercent = rs.getDouble(surcharge?SURCHARGE:PERCENTAGE);
 		exporter.exportColumn(metadata.getColumns().get((i++)), invoicePercent);
 		exporter.exportColumn(metadata.getColumns().get((i++)), rs.getDouble(surcharge?SURCHARGE_QUOTA:TAX));
+		exporter.exportColumn(metadata.getColumns().get((i++)), surcharge?0.0:rs.getDouble(DEDUCTIBLE_PERCENT));
 		exporter.exportColumn(metadata.getColumns().get((i++)), rs.getDouble(surcharge?SURCHARGE_QUOTA:DEDUCTIBLE_QUOTA));
 		
 		boolean farmer = rs.getInt(WITHHOLDING_FARMER) == 1;
