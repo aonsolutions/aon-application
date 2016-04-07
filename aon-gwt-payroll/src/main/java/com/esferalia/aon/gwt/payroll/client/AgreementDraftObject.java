@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,10 +27,11 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
-import com.esferalia.aon.payroll.enumeration.VariableType;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
+import com.esferalia.aon.occam.api.model.type.PaymentType;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -188,6 +190,28 @@ public class AgreementDraftObject {
 		@Override
 		void removeDraft(Set<String> categories) {
 			agreementDraft.addDraftCategories(level, categories);
+		}
+
+	}
+
+	private class CompositeUndoable<T extends Undoable > implements Undoable {
+
+		private Collection<T> undos;
+
+		public CompositeUndoable(Collection<T> undos) {
+			this.undos = undos;
+		}
+
+		@Override
+		public void redo() {
+			for (T undo : undos)
+				undo.redo();
+		}
+
+		@Override
+		public void undo() {
+			for (T undo : undos)
+				undo.undo();
 		}
 
 	}
@@ -421,9 +445,9 @@ public class AgreementDraftObject {
 	}
 
 	public void addDraftPayment(Payment payment) {
-		payment.setDomain(draftDomain); // TODO: Here???
-		Payment oldPayment = agreementDraft.addDraftPayment(payment);
-		undoManager.add(new UndoablePaymentEdit(oldPayment, payment));
+		List<Payment> payments = new LinkedList<Payment>();
+		payments.addAll(getTopPayments(payment));
+		addDraftPayments(payments);
 	}
 
 	public void addDraftLevel(Level level) {
@@ -596,6 +620,18 @@ public class AgreementDraftObject {
 
 	// ------------------------------------------------------------------------
 
+	public void addDraftPayments(Collection<Payment> payments) {
+		
+		List<UndoableEdit<?>> edits = new LinkedList<UndoableEdit<?>>();
+		for (Payment payment : payments) {
+			payment.setDomain(draftDomain); // TODO: Here???
+			Payment oldPayment = agreementDraft.addDraftPayment(payment);
+			edits.add(new UndoablePaymentEdit(oldPayment, payment));
+		}
+		undoManager.add(new CompositeUndoable(edits));
+
+	}
+
 	public void getSystemContext(final CalculateCallback callback,
 			final AgreementDraft agreementDraft) {
 
@@ -667,6 +703,37 @@ public class AgreementDraftObject {
 			draft.addDraftVariable(0, var);
 
 		return draft;
+	}
+
+	private List<Payment> getTopPayments(Payment payment) {
+
+		List<Payment> twins = new LinkedList<Payment>();
+		twins.add(payment);
+
+		if ( payment.getConceptId() == null ) 
+			return twins;
+		
+		for (Payment p : agreementDraft.getPayments()) {
+			if (NumberUtils.equals(p.getDomain(),draftDomain) )
+				continue;
+			if (StringUtils.equals(payment.getName(), p.getName())
+				|| NumberUtils.equals(payment.getConceptId(), p.getConceptId())) {
+				Payment draftPayment = newDraftPayment();
+				draftPayment.setType(p.getType());
+				draftPayment.setDomain(draftDomain);
+				draftPayment.setMonth(p.getMonth());
+				draftPayment.setSalaryType(p.getSalaryType());
+				draftPayment.setConceptId(p.getConceptId());
+				draftPayment.setDescription(p.getDescription());
+				draftPayment.setExpression(p.getExpression());
+				draftPayment.setIrpfExpression(p.getIrpfExpression());
+				draftPayment.setQuoteExpression(p.getQuoteExpression());
+				twins.add(draftPayment);
+			}
+		}
+
+
+		return twins;
 	}
 
 	// -------------------------------------------------- TODO: Common factor ?

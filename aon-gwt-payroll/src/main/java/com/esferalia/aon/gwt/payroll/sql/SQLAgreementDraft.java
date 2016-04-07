@@ -191,7 +191,11 @@ public class SQLAgreementDraft {
 					+ AgreementPaymentColumns.START_DATE + " <= ? " + " AND "
 					+ SQLConstants.AGREEMENT_PAYMENT + "."
 					+ AgreementColumns.DOMAIN + " IN ("
-					+ StringUtils.repeat("?", ",", domainList.size()) + ")");
+					+ StringUtils.repeat("?", ",", domainList.size()) + ")"
+					+ " ORDER BY "+ 
+					SQLConstants.AGREEMENT_PAYMENT + "." 
+					+AgreementPaymentColumns.DOMAIN
+					+ " DESC ");
 
 			int i = 1;
 			stmt.setInt(i++, agreementId);
@@ -202,7 +206,10 @@ public class SQLAgreementDraft {
 
 			rs = stmt.executeQuery();
 
-			Set<Payment> payments = new HashSet<Payment>();
+			Set<Payment> payments = new TreeSet<Payment>((p1,p2)-> { 
+				int compare = p2.getDomain().compareTo(p1.getDomain());
+				return compare != 0 ? compare : p1.getId().compareTo(p2.getId());
+				});
 
 			while (rs.next()) {
 				Payment payment = new Payment();
