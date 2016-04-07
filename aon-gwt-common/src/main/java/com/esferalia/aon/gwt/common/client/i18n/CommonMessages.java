@@ -663,6 +663,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Porcentaje")
 	String percent();
 
+	@DefaultMessage("Cantidad")
+	String quantity();
+
+	@DefaultMessage("Cantidades")
+	String quantities();
+
 	@DefaultMessage("Importe")
 	String amount();
 

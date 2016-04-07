@@ -29,6 +29,9 @@
 							<g:Button ui:field='excel'
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconExcel}" 
 								text="{msg.export}" />
+							<g:Button ui:field='invoices'
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconInvoice}" 
+								text="{msg.invoiceReport}" />
 							<g:SimplePanel ui:field="excelFormContainer"/>
 						</g:HTMLPanel>
 					</g:HTMLPanel>
@@ -57,6 +60,14 @@
 								</g:customHeader>
 								<g:SimpleLayoutPanel ui:field="south" styleName="{aonResources.css.aonScrollArea}">
 								</g:SimpleLayoutPanel>
+							</g:tab>
+							<g:tab>
+								<g:customHeader>
+									<g:Label
+										styleName="{aonResources.css.aonIconInvoice} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"  
+										text="{msg.invoices}" />
+								</g:customHeader>
+								<g:ScrollPanel ui:field="informationPanel" styleName="{aonResources.css.aonTextCenter}"/>
 							</g:tab>
 						</g:TabLayoutPanel>
 					</aon:MinimizePanel>

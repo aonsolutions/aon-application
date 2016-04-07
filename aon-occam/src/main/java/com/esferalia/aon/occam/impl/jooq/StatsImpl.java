@@ -18,5 +18,10 @@ public class StatsImpl implements IStats {
 		return StatDAO.getStatData(ctx, params);
 	}
 
+	@Override
+	public String getInvoicesReport(AONContext ctx, StatParams params) {
+		return StatDAO.getInvoicesReport(ctx, params);
+	}
+
 
 }

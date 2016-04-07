@@ -3909,6 +3909,15 @@ public class AonStringUtils {
 		return replace(str, remove, EMPTY, -1);
 	}
 
+	public static String removeTabsAndNewLine(final String str) {
+		if (isEmpty(str)) {
+			return str;
+		}
+		String s = replace(str, "\t", EMPTY, -1);
+		s = replace(str, "\n", EMPTY, -1);
+		return s; 
+	}
+
 	/**
 	 * <p>
 	 * Removes all occurrences of a character from within the source string.

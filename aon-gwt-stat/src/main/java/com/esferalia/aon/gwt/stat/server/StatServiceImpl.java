@@ -24,5 +24,10 @@ public class StatServiceImpl extends AonRemoteServiceServlet implements StatServ
 		return AON.getStatData(domainName,domainId,this.getUserLogin(),params);
 	}
 
+	@Override
+	public String getInvoicesReport(String domainName, int domain, StatParams params) throws AonCoreException {
+		return AON.getInvoicesReport(domainName,domain,this.getUserLogin(),params);
+	}
+
 
 }

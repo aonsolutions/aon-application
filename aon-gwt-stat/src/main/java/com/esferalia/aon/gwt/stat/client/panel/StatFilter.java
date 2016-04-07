@@ -26,6 +26,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
@@ -72,7 +73,7 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 					});
 					add(from);
 					
-					InlineLabel toLabel = new InlineLabel( AON.MSG.to());
+					InlineLabel toLabel = new InlineLabel( AON.MSG.until());
 					toLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 					add(toLabel);
 					
@@ -120,6 +121,17 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 						parent.addItem( item );						
 						
 					}
+					final CheckBox quantities = new CheckBox( AON.MSG.quantities());
+					quantities.addStyleName(AON.AON_CSS.aonMarginLeft());
+					quantities.addClickHandler(new ClickHandler() {
+						
+						@Override
+						public void onClick(ClickEvent event) {
+							params.setViewAmounts(quantities.getValue());
+							ValueChangeEvent.<StatParams>fire(StatFilter.this, params);
+						}
+					});
+					add( quantities );
 					
 					FlowPanel chartTypePanel = new FlowPanel(); 
 					chartTypePanel.addStyleName(AON.AON_CSS.aonFloatRight());

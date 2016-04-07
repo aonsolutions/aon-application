@@ -72,6 +72,12 @@ public class InvoiceDAO {
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TYPE);}
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.SCOPE);}
 		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.SECURITY_LEVEL);}
+		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.WORKPLACE);}
+		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.SELLER);}
+		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PRODUCT);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.ITEM);}
+		@Override public Property<Integer> getProductCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PCATEGORY.ID);}
+			
 	}
 	
 	private static final InvoicingGroupPropertiesDAO INVOICING_GROUP_PROPERTIES = new InvoicingGroupPropertiesDAO();
@@ -175,6 +181,12 @@ public class InvoiceDAO {
 	}
 	
 	
+	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx,InvoiceFilter filter) {
+		return getFullInvoices(ctx, filter)
+			.stream()
+			.map(new MinimalInvoiceFiller());
+	}
+
 	public static void getInvoicesFormatCSV(AONContext ctx,
 			InvoiceFilter filter, OutputStream out) {
 		getFullInvoices(ctx, filter).formatCSV(out,'\t',"");
@@ -215,6 +227,9 @@ public class InvoiceDAO {
 		}
 		
 	}
+	
+	
+	
 	
 	
 	private static class FullInvoiceDetailFiller  implements Function<Record,InvoiceDetail> {

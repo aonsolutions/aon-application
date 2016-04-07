@@ -29,4 +29,12 @@ public class StatServiceAsyncDecorator implements StatServiceAsync {
 			, new AsyncCallbackWrapper<StatData<String, String, Double>>(callback));
 	}
 
+	@Override
+	public void getInvoicesReport(String domainName, int domain, StatParams params, AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getInvoicesReport(domainName,domain,params
+			, new AsyncCallbackWrapper<String>(callback));
+		
+	}
+
 }

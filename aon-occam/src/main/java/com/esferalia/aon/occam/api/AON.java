@@ -1965,6 +1965,17 @@ public class AON {
 		}
 	}
 
+	public static String getInvoicesReport(String domainName, int domain, String userLogin, StatParams params) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName,domain,userLogin);
+			return getStats().getInvoicesReport(ctx, params);
+		} finally {
+			if (ctx != null) 
+				ctx.close();
+		}
+	}
+
 	// ********************************************
 	// ********************************* Project **
 	// ********************************************

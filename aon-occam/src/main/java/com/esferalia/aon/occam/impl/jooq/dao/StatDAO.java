@@ -12,6 +12,8 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
@@ -91,6 +93,12 @@ public class StatDAO {
 		c = visitor.appendCondition(c);
 		return c;
 	}
+	private static AggregateFunction<BigDecimal> getSelectField(final StatParams params) {
+		return params.mustViewAmounts()
+				?DSL.sum(INVOICE_DETAIL.QUANTITY)
+				:DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
+	}
+	
 	
 	public static StatData<String, String, Double> getStatData(final AONContext ctx, final StatParams params) {
 		
@@ -101,7 +109,7 @@ public class StatDAO {
 			@Override
 			public void visitInvoiceTypeByYearComboChart() {
 				final Field<Integer> year = DSL.year(INVOICE.ISSUE_DATE);
-				final AggregateFunction<BigDecimal> sum = DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
+				final AggregateFunction<BigDecimal> sum = getSelectField(params);
 				ctx.getDslContext().select(year, INVOICE.TYPE, sum)
 					.from(INVOICE)
 					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
@@ -109,16 +117,22 @@ public class StatDAO {
 					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 					.where( getCondition(ctx, params))
 					.groupBy(year, INVOICE.TYPE)
-					.orderBy(year, INVOICE.TYPE)				
+					.orderBy(year, DSL.decode()
+							   .when(INVOICE.TYPE.equal((byte) 1), 0)
+							   .when(INVOICE.TYPE.equal((byte) 0), 1)
+							   .when(INVOICE.TYPE.equal((byte) 2), 2)
+							   .when(INVOICE.TYPE.equal((byte) 3), 3))				
 					.fetch()
 					.stream()
 					.forEach(rec -> {
 						InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
 						double amount = rec.getValue(sum).doubleValue();
 						String y = AonNumberUtils.toString( rec.getValue(year));
-						Double d = table.get(y, RESULT);
-						d = AonMathUtils.round((d == null ? 0.0 : d) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
-						table.put(y, RESULT, d);
+						if (params.isResultVisible()) {
+							Double d = table.get(y, RESULT);
+							d = AonMathUtils.round((d == null ? 0.0 : d) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
+							table.put(y, RESULT, d);
+						}
 						table.put(y, type.getDescription(), amount);
 					});
 			}
@@ -127,7 +141,7 @@ public class StatDAO {
 			public void visitInvoiceTypeByMonthsComboChart() {
 				final Field<Integer> year = DSL.year(INVOICE.ISSUE_DATE);
 				final Field<Integer> month = DSL.month(INVOICE.ISSUE_DATE);
-				final AggregateFunction<BigDecimal> sum = DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
+				final AggregateFunction<BigDecimal> sum = getSelectField(params);
 				ctx.getDslContext().select(year,month, INVOICE.TYPE, sum)
 					.from(INVOICE)
 					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
@@ -135,23 +149,29 @@ public class StatDAO {
 					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 					.where( getCondition(ctx, params))
 					.groupBy(year,month, INVOICE.TYPE)
-					.orderBy(year,month, INVOICE.TYPE)				
+					.orderBy(year,month, DSL.decode()
+							   .when(INVOICE.TYPE.equal((byte) 1), 0)
+							   .when(INVOICE.TYPE.equal((byte) 0), 1)
+							   .when(INVOICE.TYPE.equal((byte) 2), 2)
+							   .when(INVOICE.TYPE.equal((byte) 3), 3))				
 					.fetch()
 					.stream()
 					.forEach(rec -> {
 						InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
+						String monthKey = rec.getValue(month)+"/"+rec.getValue(year);
 						double amount = rec.getValue(sum).doubleValue();
-						String m = rec.getValue(month)+"/"+rec.getValue(year);
-						Double d = table.get(m, RESULT);
-						d = AonMathUtils.round((d == null ? 0.0 : d) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
-						table.put(m, RESULT, d);
-						table.put(m, type.getDescription(), amount);
+						if (params.isResultVisible()) {
+							Double d = table.get(monthKey, RESULT);
+							d = AonMathUtils.round((d == null ? 0.0 : d) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
+							table.put(monthKey, RESULT, d);
+						}
+						table.put(monthKey, type.getDescription(), amount);
 					});
 			}
 
 			@Override
 			public void visitInvoiceTypeByDaysComboChart() {
-				final AggregateFunction<BigDecimal> sum = DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
+				final AggregateFunction<BigDecimal> sum = getSelectField(params);
 				ctx.getDslContext().select(INVOICE.ISSUE_DATE , INVOICE.TYPE, sum)
 					.from(INVOICE)
 					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
@@ -159,21 +179,27 @@ public class StatDAO {
 					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 					.where( getCondition(ctx, params))
 					.groupBy(INVOICE.ISSUE_DATE, INVOICE.TYPE)
-					.orderBy(INVOICE.ISSUE_DATE, INVOICE.TYPE)				
+					.orderBy(INVOICE.ISSUE_DATE, DSL.decode()
+							   .when(INVOICE.TYPE.equal((byte) 1), 0)
+							   .when(INVOICE.TYPE.equal((byte) 0), 1)
+							   .when(INVOICE.TYPE.equal((byte) 2), 2)
+							   .when(INVOICE.TYPE.equal((byte) 3), 3))				
 					.fetch().stream().forEach(rec -> {
 						InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
+						String date = FMT.format( rec.getValue(INVOICE.ISSUE_DATE));
 						double amount = rec.getValue(sum).doubleValue();
-						String d = FMT.format( rec.getValue(INVOICE.ISSUE_DATE));
-						Double dou = table.get(d, RESULT);
-						dou = AonMathUtils.round((dou == null ? 0.0 : dou) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
-						table.put(d, RESULT, dou);
-						table.put(d, type.getDescription(), amount);
+						if (params.isResultVisible()) {
+							Double dou = table.get(date, RESULT);
+							dou = AonMathUtils.round((dou == null ? 0.0 : dou) + (amount * (type == InvoiceType.SALES ? 1 : -1)));
+							table.put(date, RESULT, dou);
+						}
+						table.put(date, type.getDescription(), amount);
 					});
 			}
 
 			@Override
 			public void visitAbcInvoiceTitular() {
-				final AggregateFunction<BigDecimal> sum = DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
+				final AggregateFunction<BigDecimal> sum = getSelectField(params);
 				ctx.getDslContext().select(INVOICE.REGISTRY, INVOICE.RNAME , INVOICE.TYPE, sum)
 					.from(INVOICE)
 					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
@@ -195,7 +221,7 @@ public class StatDAO {
 
 			@Override
 			public void visitAbcInvoiceCategory() {
-				final AggregateFunction<BigDecimal> sum = DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
+				final AggregateFunction<BigDecimal> sum = getSelectField(params);
 				ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME, INVOICE.TYPE, sum)
 					.from(INVOICE)
 					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
@@ -215,7 +241,7 @@ public class StatDAO {
 
 			@Override
 			public void visitAbcInvoiceProduct() {
-				final AggregateFunction<BigDecimal> sum = DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
+				final AggregateFunction<BigDecimal> sum = getSelectField(params);
 				ctx.getDslContext().select(PRODUCT.ID,PRODUCT.NAME, INVOICE.TYPE, sum)
 					.from(INVOICE)
 					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
@@ -237,7 +263,7 @@ public class StatDAO {
 
 			@Override
 			public void visitAbcInvoiceWorkplace() {
-				final AggregateFunction<BigDecimal> sum = DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
+				final AggregateFunction<BigDecimal> sum = getSelectField(params);
 				ctx.getDslContext().select(INVOICE_DETAIL.WORKPLACE,WORKPLACE.DESCRIPTION, INVOICE.TYPE, sum)
 					.from(INVOICE)
 					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
@@ -260,8 +286,10 @@ public class StatDAO {
 
 			@Override
 			public void visitAbcInvoiceSeller() {
-				final AggregateFunction<BigDecimal> sum = DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
-				ctx.getDslContext().select(INVOICE_DETAIL.SELLER,REGISTRY.NAME, INVOICE.TYPE, sum)
+				final AggregateFunction<BigDecimal> sum = getSelectField(params);
+				ctx.getDslContext().select(INVOICE_DETAIL.SELLER,
+						DSL.nvl(REGISTRY.NAME, UNKNOWN)
+						, INVOICE.TYPE, sum)
 					.from(INVOICE)
 					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 					.leftOuterJoin(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
@@ -274,7 +302,7 @@ public class StatDAO {
 						double d = rec.getValue(sum).doubleValue();
 						if (d >= 0) {
 							InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
-							table.put(AonStringUtils.defaultIfBlank(rec.getValue(REGISTRY.NAME), UNKNOWN)
+							table.put(rec.getValue(DSL.nvl(REGISTRY.NAME, UNKNOWN))
 									, type.getDescription()
 									, d);
 						}
@@ -283,7 +311,7 @@ public class StatDAO {
 
 			@Override
 			public void visitGeoProvince() {
-				final AggregateFunction<BigDecimal> sum = DSL.sum(INVOICE_DETAIL.TAXABLE_BASE);
+				final AggregateFunction<BigDecimal> sum = getSelectField(params);
 				ctx.getDslContext().select(GEOZONE.NAME, sum)
 					.from(INVOICE)
 					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
@@ -384,6 +412,53 @@ public class StatDAO {
 			return condition;
 		}
 
+	}
+	public static String getInvoicesReport(AONContext ctx, StatParams params) {
+		final Integer[] scopes = SecurityDAO.getUserScopes(ctx);
+		final LinkedList<Byte> types = new LinkedList<Byte>();
+		final LinkedList<Integer> categories = new LinkedList<Integer>();
+		final LinkedList<Integer> workplaces = new LinkedList<Integer>();
+		final LinkedList<Integer> sellers = new LinkedList<Integer>();
+		IStatFilterItemVisitor visitor = new IStatFilterItemVisitor() {
+
+			@Override
+			public void visitInvoiceTypeCondition(StatFilterItem item) {
+				if (item.isSelected() ) types.add( (byte) InvoiceType.valueOf(item.getId()).ordinal() );
+			}
+
+			@Override
+			public void visitProductCategoryCondition(StatFilterItem item) {
+				if (item.isSelected() ) categories.add( AonNumberUtils.toInteger( item.getId() ));
+			}
+
+			@Override
+			public void visitWorkplaceCondition(StatFilterItem item) {
+				if (item.isSelected() ) workplaces.add( AonNumberUtils.toInteger( item.getId() ));
+			}
+
+			@Override
+			public void visitSellerCondition(StatFilterItem item) {
+				if (item.isSelected() ) sellers.add( AonNumberUtils.toInteger( item.getId() ));
+			}
+		};
+		
+		for (StatFilterItem item : params.getFilterItems() ) {
+			item.getType().visit(visitor,item);
+		}
+		
+		return InvoiceFormatter.formatInvoices("LISTADO DE FACTURAS", 
+				params.toString(),
+				InvoiceDAO.getInvoiceDetails(ctx, 
+						p -> p.getDomainProperty().eq(ctx.getDomainId())
+							.and(scopes==null?null:p.getScopeProperty().in(scopes))							
+							.and(params.getFrom()==null?null:p.getStartIssueDateProperty().ge(params.getFrom()))
+							.and(params.getTo()==null?null:p.getEndIssueDateProperty().le(params.getTo()))
+							.and((types==null||types.size()==0)?null:p.getTypeProperty().in(types.toArray(new Byte[types.size()])))
+							.and((categories==null||categories.size()==0)?null:p.getProductCategoryProperty().in(categories.toArray(new Integer[categories.size()])))
+							.and((workplaces==null||workplaces.size()==0)?null:p.getWorkplaceProperty().in(workplaces.toArray(new Integer[workplaces.size()])))
+							.and((sellers==null||sellers.size()==0)?null:p.getSellerProperty().in(sellers.toArray(new Integer[sellers.size()])))
+					).collect(Collectors.toCollection(LinkedList::new))
+				);
 	}; 
 	
 }

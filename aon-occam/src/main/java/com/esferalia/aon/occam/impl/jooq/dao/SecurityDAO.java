@@ -220,6 +220,9 @@ public class SecurityDAO {
 		return c;
 	}
 
+	public static Integer[] getUserScopes (AONContext ctx) {
+		return getUserScopes(ctx, ctx.getUser());
+	}
 	public static Integer[] getUserScopes (AONContext ctx, String userLogin) {
 		ctx.checkRead();
 		User user = getUser(ctx, userLogin);

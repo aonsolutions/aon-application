@@ -286,17 +286,17 @@ public class FilterDAO implements Filter {
 
 	@Override
 	public Filter or(Filter filter) {
-		return new FilterDAO(condition.or(((FilterDAO)filter).condition));
+		return (filter == null)?this:new FilterDAO(condition.or(((FilterDAO)filter).condition));	
 	}
 
 	@Override
 	public Filter and(Filter filter) {
-		return new FilterDAO(condition.and(((FilterDAO)filter).condition));
+		return (filter == null)?this:new FilterDAO(condition.and(((FilterDAO)filter).condition));
 	}
 	
 	@Override
 	public Filter not(Filter filter) {
-		return new FilterDAO(condition.not());
+		return (filter == null)?this:new FilterDAO(condition.not());
 	}
 	
 	

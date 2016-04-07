@@ -35,6 +35,13 @@ public class AonNumberUtils {
 		return Double.compare(n1.doubleValue(), n2.doubleValue());
 	}
 
+	public static Byte toByte(String value) {
+		if (!AonStringUtils.isBlank(value)) {
+			return Byte.parseByte(value);
+		}
+		return null;
+	}
+
 	public static byte toByte(Integer i) {
 		if (i != null) {
 			return i.byteValue();
@@ -75,5 +82,6 @@ public class AonNumberUtils {
 		if (value == null) return null;
 		return value.toString();
 	}
+
 
 }

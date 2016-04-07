@@ -1,4 +1,3 @@
-
 package com.esferalia.aon.gwt.stat.client;
 
 import com.esferalia.aon.occam.api.model.stat.StatData;
@@ -12,5 +11,7 @@ public interface StatServiceAsync {
 
 	void getStatData(String domainName, Integer domainId, StatParams params,
 			AsyncCallback<StatData<String, String, Double>> callback);
+
+	void getInvoicesReport(String domainName, int domain, StatParams params, AsyncCallback<String> callback);
 
 }

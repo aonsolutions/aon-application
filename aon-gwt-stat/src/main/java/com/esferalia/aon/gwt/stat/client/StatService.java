@@ -14,5 +14,6 @@ public interface StatService extends RemoteService {
 	
 	StatParams createStatParams(String domainName, int domain) throws AonCoreException;
 	StatData<String, String, Double> getStatData(String domainName,Integer domainId, StatParams params);
+	String getInvoicesReport(String domainName, int domain, StatParams params) throws AonCoreException;
 	
 }
