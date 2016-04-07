@@ -934,6 +934,9 @@ public class AgreementDraft extends ResizeComposite implements
 	Button redoButton;
 
 	@UiField
+	Button undoAllButton;
+
+	@UiField
 	Button acceptButton;
 
 	@UiField
@@ -1138,6 +1141,12 @@ public class AgreementDraft extends ResizeComposite implements
 		fxDialog.setExpression(fxhasValue.getValue());
 		fxDialog.center();
 		fxDialog.show();
+	}
+
+	@UiHandler("undoAllButton")
+	void onUndoAllClicked(MouseDownEvent event) {
+		agreementDraftObject.clearDrafts();
+		agreementDraftObject.calculate(AgreementDraft.this);
 	}
 
 	@UiHandler("descriptionTextBox")

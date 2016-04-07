@@ -401,6 +401,11 @@ public class AgreementDraftObject {
 		return agreementDraft.getDraftCategories().containsKey(level.getId());
 	}
 
+	public void clearDrafts() {
+		agreementDraft.clearDrafts();
+		undoManager.discardAll();
+	}
+
 	// ------------------------------------------
 	// Undo & Redo Support
 
