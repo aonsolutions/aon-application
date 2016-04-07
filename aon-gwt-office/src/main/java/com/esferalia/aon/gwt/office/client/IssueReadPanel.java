@@ -55,7 +55,7 @@ public class IssueReadPanel extends Composite {
 
 		void onUpdateIssueBody(String title, String body,
 				Callback<IssueSelected> callback);
-		
+
 		void onDuplicateClickEvent();
 
 		void onUpdateIssueState(String state);
@@ -119,7 +119,8 @@ public class IssueReadPanel extends Composite {
 	private String type;
 	private String priority;
 
-	private DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");
+	// private DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy
+	// HH:mm");
 	private DateTimeFormat date = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private DateTimeFormat hour = DateTimeFormat.getFormat("HH:mm");
 
@@ -128,6 +129,7 @@ public class IssueReadPanel extends Composite {
 	private List<DefaultAonTagIssueSelected> deletedTagsMap;
 
 	private VerticalPanel infoHeaderContent;
+	private VerticalPanel companyContainer;
 
 	public IssueReadPanel(User currentUser, IssueSelected issue) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -138,10 +140,14 @@ public class IssueReadPanel extends Composite {
 		this.priority = issue.getPriority();
 		this.infoHeaderContent = new VerticalPanel();
 		this.infoHeaderContent.setSpacing(5);
+
+		this.companyContainer = new VerticalPanel();
+		this.companyContainer.setSpacing(5);
+
 		this.addTagsMap = new LinkedList<DefaultAonTagIssueSelected>();
 		this.deletedTagsMap = new LinkedList<DefaultAonTagIssueSelected>();
 		this.assignTags = issue.getTags();
-		
+
 		this.userLogged.setText(currentUser.getName());
 
 		initHeaderAux(issue);
@@ -156,18 +162,12 @@ public class IssueReadPanel extends Composite {
 			createClosedButton();
 			createCommentButton();
 		}
-		
-		else if ( issue instanceof IssueGrid.IssueDuplicatedLoadSelected) {
-			duplicatedButton.setVisible(false);
-			createClosedButton();
-			createCommentButton();
-		}
-		
+
 		else if (issue instanceof IssueGrid.IssueClosedLoadSelected) {
 			commentButton.setVisible(false);
 			commentTextArea.setVisible(false);
 			duplicatedButton.setVisible(false);
-			
+
 			createReopenButton();
 		}
 	}
@@ -228,20 +228,27 @@ public class IssueReadPanel extends Composite {
 
 	private void initHeaderAux(IssueSelected issue) {
 
-		HorizontalPanel hPanel = null;
+		headerVPanel.add(getTitleLabel());
 		
-		StringBuilder sb = new StringBuilder();
-		sb.append(issue.getTitle().toUpperCase());
-		sb.append(" #");
-		sb.append(issue.getId());
-
-		Label titleLabel = new Label(sb.toString());
-		titleLabel.setStyleName(AON.AON_BOLD);
-		titleLabel.addStyleName(AON.AON_CSS.headerTitle());
-		headerVPanel.add(titleLabel);
-
-		DisclosurePanel disclosurePanel = new DisclosurePanel();
-		disclosurePanel.setAnimationEnabled(true);
+		DisclosurePanel logPanel = new DisclosurePanel();
+		logPanel.setAnimationEnabled(true);
+		
+		DisclosurePanel companyPanel = new DisclosurePanel();
+		companyPanel.setAnimationEnabled(true);
+		
+		HorizontalPanel hLogPanel = null;	
+		
+		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
+			if( !tag.isOfficeStatus() && !tag.endDateIsNull()) {
+				setInfoTag(tag);
+				continue;
+			}
+			
+			if (tag.isOfficeStatus() && !tag.endDateIsNull())
+				hLogPanel = setHistorialLogHeader(tag);
+			else if (!tag.endDateIsNull())
+				setContent(tag);
+		}
 
 		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
 
@@ -253,7 +260,7 @@ public class IssueReadPanel extends Composite {
 
 			if (tag.getType() == TagType.OFFICE_STATUS.value()
 					&& tag.getDeletedAt() == null)
-				hPanel = setHistorialHeader(tag);
+				hLogPanel = setHistorialLogHeader(tag);
 			else if (tag.getDeletedAt() != null)
 				setContent(tag);
 		}
@@ -261,26 +268,59 @@ public class IssueReadPanel extends Composite {
 		if (infoHeaderContent.getWidgetCount() > 0) {
 			Label icon = new Label();
 			icon.setStyleName(AON.AON_CSS.aonIconView());
-			hPanel.insert(icon, 0);
-			disclosurePanel.setHeader(hPanel);
-			disclosurePanel.setContent(infoHeaderContent);
-			headerVPanel.add(disclosurePanel);
+			hLogPanel.insert(icon, 0);
+			logPanel.setHeader(hLogPanel);
+			logPanel.setContent(infoHeaderContent);
+			headerVPanel.add(logPanel);
 		} else
-			headerVPanel.add(hPanel);
-
-		if (issue.getCompany().trim().isEmpty() == false) {
-			HorizontalPanel companyPanel = new HorizontalPanel();
-			companyPanel.setSpacing(5);
-
+			headerVPanel.add(hLogPanel);
+		
+		for (DefaultAonIssueComments comment : issue.getComments()) {
+			if (AonStringUtils.isNotBlank(comment.getCompany()) &&
+					!AonStringUtils.equals(issue.getCompany(), comment.getCompany())) {
+				addCompany(comment.getCompany(), comment.getCreatedAt()); 
+			}
+		}
+		
+		HorizontalPanel hCompanyPanel = new HorizontalPanel();
+		hCompanyPanel.setSpacing(5);
+		
+		if (companyContainer.getWidgetCount() > 0) {
+			if (AonStringUtils.isNotEmpty(issue.getCompany()))
+					addCompany(issue.getCompany(), issue.getCreateAt());
+			
+			Label icon = new Label();
+			icon.setStyleName(AON.AON_CSS.aonIconView());
+			hCompanyPanel.add(icon);
+			hCompanyPanel.add(new Label("N\u00FAmero de veces que se ha notificado la incidencia: " + companyContainer.getWidgetCount()));
+			companyPanel.setHeader(hCompanyPanel);
+			companyPanel.setContent(companyContainer);
+			headerVPanel.add(companyPanel);
+		}
+		else {
+			
 			Label notified = new Label("Notificada por: ");
 			notified.setStyleName(AON.AON_BOLD);
-			companyPanel.add(notified);
-			companyPanel.add(new Label(issue.getCompany()));
-			headerVPanel.add(companyPanel);
+			hCompanyPanel.add(notified);
+			hCompanyPanel.add(new Label(issue.getCompany()));
+	
+			Label dateLabel = new Label(date.format(issue.getCreateAt()));
+			dateLabel.setStyleName(AON.AON_BOLD);
+
+			Label hourLabel = new Label(hour.format(issue.getCreateAt()));
+			hourLabel.setStyleName(AON.AON_BOLD);
+			
+			hCompanyPanel.add(dateLabel);
+			hCompanyPanel.add(new Label(" a las "));
+			hCompanyPanel.add(hourLabel);
+
+			headerVPanel.add(hCompanyPanel);
+
 		}
 	}
 
-	private HorizontalPanel setHistorialHeader(DefaultAonTagIssueSelected tag) {
+	private HorizontalPanel setHistorialLogHeader(
+			DefaultAonTagIssueSelected tag) {
 
 		HorizontalPanel hPanel = new HorizontalPanel();
 		hPanel.setSpacing(5);
@@ -345,25 +385,33 @@ public class IssueReadPanel extends Composite {
 		infoHeaderContent.add(hPanel);
 	}
 
-	public void printComment(DefaultAonIssueComments issueComment,
+	private void addCompany(String name, Date createdAt) {
+		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.setSpacing(5);
+
+		Label company = new Label(name);
+		company.setStyleName(AON.AON_BOLD);
+		Label dateLabel = new Label(" el " + date.format(createdAt)
+				+ " a las " + hour.format(createdAt));
+		
+		hPanel.add(company);
+		hPanel.add(dateLabel);
+		
+		companyContainer.add(hPanel);
+	}
+
+	private void printComment(DefaultAonIssueComments issueComment,
 			boolean editVisible) {
 
-		int days = CalendarUtil.getDaysBetween(issueComment.getCreatedAt(),
-				new Date());
-		Label label = new Label();
-		label.setText("COMENTADO por " + issueComment.getUser().getName()
-				+ " el " + fmt.format(issueComment.getCreatedAt()) + " (hace "
-				+ days + ((days == 1) ? " d\u00EDas)" : " d\u00EDas)"));
-		label.setStyleName(AON.AON_BOLD);
-		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+		int days = getDaysBefore(issueComment.getCreatedAt());
 
 		final Button editButton = new Button();
 		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
 		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		editButton.addStyleName(AON.AON_CSS.editButton());
 		editButton.setTitle("Editar comentario");
-		editButton.setVisible(AonStringUtils.equals(userLogged.getText(),
-				issueComment.getUser().getName()));
+		editButton.setVisible(editVisible && AonStringUtils.equals(
+				userLogged.getText(), issueComment.getUser().getName()));
 
 		final TextArea textArea = getTextArea(issueComment.getBody());
 
@@ -381,11 +429,11 @@ public class IssueReadPanel extends Composite {
 			}
 		});
 
-		editButton.setVisible(editVisible &&
-				AonStringUtils.equals(userLogged.getText(), issueComment.getUser().getName()));		
+		editButton.setVisible(editVisible && AonStringUtils.equals(
+				userLogged.getText(), issueComment.getUser().getName()));
 
 		FlexTable flexTable = new FlexTable();
-		flexTable.setWidget(0, 0, label);
+		flexTable.setWidget(0, 0, getHeadCommentLabel(issueComment, days));
 		flexTable.setWidget(0, 1, editButton);
 		flexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
 		flexTable.setWidget(1, 0, textArea);
@@ -611,12 +659,12 @@ public class IssueReadPanel extends Composite {
 			}
 		});
 	}
-	
+
 	private void createDuplicatedButton() {
 		duplicatedButton.addClickHandler(new ClickHandler() {
-			
+
 			@Override
-			public void onClick(ClickEvent event) {		
+			public void onClick(ClickEvent event) {
 				onDuplicatedButtonClick();
 			}
 		});
@@ -663,7 +711,7 @@ public class IssueReadPanel extends Composite {
 						}
 					});
 	}
-	
+
 	private void onDuplicatedButtonClick() {
 		for (Listener listener : listeners)
 			listener.onDuplicateClickEvent();
@@ -854,5 +902,42 @@ public class IssueReadPanel extends Composite {
 					+ hour.format(aux.getCreateAt()));
 		}
 		return sb.toString();
+	}
+
+	private Label getTitleLabel() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(issue.getTitle().toUpperCase());
+		sb.append(" #");
+		sb.append(issue.getId());
+
+		Label titleLabel = new Label(sb.toString());
+		titleLabel.setStyleName(AON.AON_BOLD);
+		titleLabel.addStyleName(AON.AON_CSS.headerTitle());
+
+		return titleLabel;
+	}
+
+	private int getDaysBefore(Date date) {
+		return CalendarUtil.getDaysBetween(date, new Date());
+	}
+
+	private Label getHeadCommentLabel(DefaultAonIssueComments comment,
+			int days) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("COMENTANDO por: ");
+		sb.append(comment.getUser().getName());
+		sb.append(" el ");
+		sb.append(date.format(comment.getCreatedAt()));
+		sb.append(" ");
+		sb.append(hour.format(comment.getCreatedAt()));
+		sb.append(" (hace " + days
+				+ ((days == 1) ? " d\u00EDa)" : " d\u00EDas)"));
+
+		Label label = new Label();
+		label.setText(sb.toString());
+		label.setStyleName(AON.AON_BOLD);
+		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+		return label;
 	}
 }

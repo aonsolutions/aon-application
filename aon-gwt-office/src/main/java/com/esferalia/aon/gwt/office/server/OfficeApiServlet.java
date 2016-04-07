@@ -1411,6 +1411,12 @@ public class OfficeApiServlet extends HttpServlet {
 				buildUserSender(comment.getSender())));
 		buffer.append(String.format("\"created_at\":\"%s\",\r\n",
 				comment.getStartDate()));
+		buffer.append(String.format("\"company\":\"%s\",\r\n",
+				comment.getCompany() != null
+						? UriUtils.encode(comment.getCompany()) : ""));
+		buffer.append(String.format("\"source\":\"%s\",\r\n",
+				comment.getSource() != null ? UriUtils.encode(comment.getSource())
+						: ""));
 		buffer.append(
 				String.format("\"body\":\"%s\"\r\n", (comment.getBody() != null)
 						? UriUtils.encode(comment.getBody()) : ""));

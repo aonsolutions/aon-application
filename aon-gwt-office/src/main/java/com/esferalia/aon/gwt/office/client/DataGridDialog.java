@@ -101,7 +101,7 @@ public class DataGridDialog extends CustomDialog implements DuplicatedDataGrid.L
 	
 	@Override
 	public void onEnabledAcceptButton(boolean enable) {	
-		acceptButton.setEnabled(false);
+		acceptButton.setEnabled(enable);
 	}
 	
 	@Override

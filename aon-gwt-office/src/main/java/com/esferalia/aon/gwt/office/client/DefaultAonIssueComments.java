@@ -13,12 +13,9 @@ public class DefaultAonIssueComments implements IssueCommentSelected {
 	
 	private DateTimeFormat timeFormat;
 	
-	private String body;
-	
 	public DefaultAonIssueComments(JsIssueComment comment) {
 		this.issueComment = comment;
-		this.timeFormat = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");
-		this.body = URL.decode(comment.getBody());
+		this.timeFormat = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");		
 		this.user = new DefaultAonUserIssueSelected(comment.getUser());
 	}
 	
@@ -42,9 +39,13 @@ public class DefaultAonIssueComments implements IssueCommentSelected {
 	}
 	
 	@Override
+	public String getCompany() {	
+		return URL.decode(issueComment.getCompany());
+	}
+	
+	@Override
 	public String getBody() {
-		return this.body;
-//		return issueComment.getBody();
+		return URL.decode(issueComment.getBody());
 	}
 	
 	@Override

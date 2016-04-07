@@ -19,4 +19,14 @@ public interface LabelSelected {
 	Date getDeletedAt();
 	
 	DefaultAonUserIssueSelected getUser();
+	
+	boolean endDateIsNull();
+	
+	boolean isOfficeStatus();
+	
+	boolean isOfficeType();
+	
+	boolean isOfficePriority();
+	
+	boolean isOfficeNotice();
 }

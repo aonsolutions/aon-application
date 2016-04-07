@@ -20,6 +20,10 @@ public class JsIssueComment extends JavaScriptObject {
 		return this.body;
 	}-*/;
 
+	public final native String getCompany() /*-{
+		return this.company;
+	}-*/;
+
 	public final native JsUser getUser() /*-{
 		return this.user;
 	}-*/;

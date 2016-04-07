@@ -49,6 +49,7 @@ public class DuplicatedDataGrid extends CustomDataGrid<IssueSelected>
 		TYPE("TIPO"),
 		PRIORITY("PRIORIDAD"),
 		SUBJECT("ASUNTO"),
+		COMPANY("EMPRESA"),
 		CREATED_AT("FECHA");
 		
 		private final String mensaje;
@@ -98,6 +99,7 @@ public class DuplicatedDataGrid extends CustomDataGrid<IssueSelected>
 		private Header<String> typeHeader = new TextHeader(Columns.TYPE.getName());
 		private Header<String> priorityHeader = new TextHeader(Columns.PRIORITY.getName());
 		private Header<String> subjectHeader = new TextHeader(Columns.SUBJECT.getName());
+		private Header<String> companyHeader = new TextHeader(Columns.COMPANY.getName());
 		private Header<String> dateHeader = new TextHeader(Columns.CREATED_AT.getName());
 		
 		public HeaderBuilder() {
@@ -128,6 +130,8 @@ public class DuplicatedDataGrid extends CustomDataGrid<IssueSelected>
 			buildHeader(tr, priorityHeader, priorityColumn, sortedColumn,
 					isSortAscending, false, false);
 			buildHeader(tr, subjectHeader, subjectColumn, sortedColumn,
+					isSortAscending, false, false);
+			buildHeader(tr, companyHeader, companyColumn, sortedColumn,
 					isSortAscending, false, false);
 			buildHeader(tr, dateHeader, dateColumn, sortedColumn,
 					isSortAscending, false, false);
@@ -215,7 +219,16 @@ public class DuplicatedDataGrid extends CustomDataGrid<IssueSelected>
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
+			td.className(AON.AON_CSS.aonDataTableTextColumn()
+					+ " " + AON.AON_BOLD);
+			td.title(rowValue.getCompany());
+			renderCell(td, createContext(col++), companyColumn, rowValue);
+			td.endTD();
+
+			td = row.startTD().align(
+					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
 			td.className(AON.AON_BOLD);
+			td.title("Incidencia creada por " + rowValue.getUser().getName());
 			renderCell(td, createContext(col++), dateColumn, rowValue);
 			td.endTD();
 
@@ -234,6 +247,7 @@ public class DuplicatedDataGrid extends CustomDataGrid<IssueSelected>
 	private Column<IssueSelected, String> typeColumn;
 	private Column<IssueSelected, String> priorityColumn;
 	private Column<IssueSelected, String> subjectColumn;
+	private Column<IssueSelected, String> companyColumn;
 	private Column<IssueSelected, String> dateColumn;
 	
 	public DuplicatedDataGrid() {
@@ -317,6 +331,15 @@ public class DuplicatedDataGrid extends CustomDataGrid<IssueSelected>
 			}
 		};
 		setColumnWidth(col++, 65, Unit.PX);
+		
+		companyColumn = new Column<IssueSelected, String>(new TextCell()) {
+
+			@Override
+			public String getValue(IssueSelected object) {
+				return object.getCompany();
+			}
+		};
+		setColumnWidth(col++, 40, Unit.PX);
 		
 		dateColumn = new Column<IssueSelected, String>(new TextCell()) {
 

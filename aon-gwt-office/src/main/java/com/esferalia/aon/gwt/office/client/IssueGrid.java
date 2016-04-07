@@ -120,18 +120,6 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			return new DefaultAonIssueComments(comment);
 		}
 	}
-	
-	public static class IssueDuplicatedLoadSelected extends IssueOpenLoadSelected {
-		
-		public IssueDuplicatedLoadSelected(JsIssue issue) {
-			super(issue);
-		}
-		
-		@Override
-		public String getStateIconStyle() {
-			return super.getStateIconStyle();
-		}
-	}
 
 	public static class IssueClosedLoadSelected
 			extends DefaultAonIssueSelected {

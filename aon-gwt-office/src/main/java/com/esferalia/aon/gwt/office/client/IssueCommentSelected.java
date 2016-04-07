@@ -12,5 +12,7 @@ public interface IssueCommentSelected {
 	
 	String getBody();
 	
+	String getCompany();
+	
 	DefaultAonUserIssueSelected getUser();
 }

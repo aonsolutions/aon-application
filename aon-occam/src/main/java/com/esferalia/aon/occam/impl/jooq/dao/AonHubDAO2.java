@@ -384,6 +384,8 @@ public class AonHubDAO2 {
 			comment.setStartDate(record.getValue(NOTICE.DATE));
 			comment.setSender(new MinimalUserFiller().apply(record));
 			comment.setBody(record.getValue(NOTICE.SUBJECT));
+			comment.setCompany(record.getValue(NOTICE.COMPANY));
+			comment.setSource(record.getValue(NOTICE.SOURCE));
 			return comment;
 		}
 	}
@@ -418,6 +420,7 @@ public class AonHubDAO2 {
 	
 	private static Stream<Notice> fillNoticeComments(AONContext ctx, Notice notice) {
 		// @formatter:off
+		
 		return ctx.getDslContext()
 				.select(NOTICE.fields())
 				.select(USER.fields())
@@ -425,12 +428,28 @@ public class AonHubDAO2 {
 				.join(USER)
 				.on(NOTICE.SENDER.eq(USER.ID))
 				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
-						.and(NOTICE.TYPE.eq(NoticeType.COMMENT.value()))
-						.and(NOTICE.NOTICE_.eq(notice.getId())))
+						.and((NOTICE.TYPE.eq(NoticeType.COMMENT.value()))
+								.or(NOTICE.TYPE.eq(NoticeType.TICKET.value())))
+						.and(NOTICE.NOTICE_.eq(notice.getId()))
+					  )
 				.orderBy(NOTICE.DATE.desc())
 				.fetch()
 				.stream()
 				.map(new FullNoticeCommentFiller());
+		
+//		return ctx.getDslContext()
+//				.select(NOTICE.fields())
+//				.select(USER.fields())
+//				.from(NOTICE)
+//				.join(USER)
+//				.on(NOTICE.SENDER.eq(USER.ID))
+//				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
+//						.and(NOTICE.TYPE.eq(NoticeType.COMMENT.value())
+//								.and(NOTICE.NOTICE_.eq(notice.getId()))))
+//				.orderBy(NOTICE.DATE.desc())
+//				.fetch()
+//				.stream()
+//				.map(new FullNoticeCommentFiller());
 		// @formatter:on
 	}
 
