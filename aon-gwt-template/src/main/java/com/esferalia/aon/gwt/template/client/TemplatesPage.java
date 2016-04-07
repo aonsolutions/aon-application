@@ -153,7 +153,6 @@ public class TemplatesPage extends Composite{
 	}
 
 	private static final PageBinder pageBinder = GWT.create(PageBinder.class);
-
 	DataGridResources resources = GWT.create(DataGridResources.class);
 
 	public interface DataGridResources extends DataGrid.Resources {
@@ -192,6 +191,7 @@ public class TemplatesPage extends Composite{
 				TemplateInfo.PROVIDES_KEY);
 		
 		Widget ui = pageBinder.createAndBindUi(this);
+	
 		RootLayoutPanel.get("rootPanel").add(ui);
 		Load();
 	}

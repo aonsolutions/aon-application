@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ICommon;
@@ -15,16 +16,20 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
+import com.esferalia.aon.occam.api.model.Filter.TagFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TagDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 
 public class CommonImpl implements ICommon {
@@ -178,6 +183,24 @@ public class CommonImpl implements ICommon {
 	}
 	
 	@Override
+	public Tag getTag(AONContext ctx, TagFilter filter){
+		return ctx.getDslContext().transactionResult(
+				configuration -> TagDAO.getTag(ctx, filter));
+	}
+	
+	@Override
+	public LinkedList<Tag> getTagList(AONContext ctx, TagFilter filter){
+		return ctx.getDslContext().transactionResult(
+				configuration -> TagDAO.getTagList(ctx, filter));
+	}
+	
+	@Override
+	public Stream<Tag> getTagStream(AONContext ctx, TagFilter filter){
+		return ctx.getDslContext().transactionResult(
+				configuration -> TagDAO.getTagStream(ctx, filter));
+	}
+	
+	@Override
 	public void updateTag(AONContext ctx, Tag tag){
 		 ctx.getDslContext().transaction(configuration -> 
 		 	TagDAO.updateTag(ctx, tag));
@@ -188,5 +211,14 @@ public class CommonImpl implements ICommon {
 		 ctx.getDslContext().transaction(configuration -> 
 		 	TagDAO.deleteTag(ctx, tag));
 	}
+
+	// ------------------ TAX
+	
+	@Override
+	public Tax getTax(AONContext ctx, TaxFilter filter){
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaxDAO.getTax(ctx, filter));
+	}
+	
 
 }

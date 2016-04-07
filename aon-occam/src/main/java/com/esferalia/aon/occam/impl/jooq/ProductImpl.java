@@ -5,6 +5,10 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IProduct;
+import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -18,8 +22,28 @@ public class ProductImpl implements IProduct{
 	
 	@Override
 	public Product getProduct(AONContext ctx, Integer productId) {
-		return ProductDAO.getProduct(ctx, productId);
+		return ctx.getDslContext().transactionResult( configuration ->
+			ProductDAO.getProduct(ctx, productId));
 	}
+	
+	@Override
+	public Product getProduct(AONContext ctx, ProductFilter filter) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ProductDAO.getProduct(ctx, filter));
+	}
+	
+	@Override
+	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ProductDAO.getProductList(ctx, filter));
+	}
+	
+	@Override
+	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ProductDAO.getProductStream(ctx, filter));
+	}
+	
 	
 	@Override
 	public void insert(AONContext ctx, Product p) {
@@ -116,6 +140,18 @@ public class ProductImpl implements IProduct{
 	}
 	
 	@Override
+	public Item getItem(AONContext ctx, ItemFilter filter){
+		return ctx.getDslContext().transactionResult(configuration -> 
+				ProductDAO.getItem(ctx, filter));			
+	}
+	
+	@Override
+	public LinkedList<Item> getItemList(AONContext ctx, ItemFilter filter){
+		return ctx.getDslContext().transactionResult(configuration -> 
+				ProductDAO.getItemList(ctx, filter));			
+	}
+	
+	@Override
 	public void insertItem(AONContext ctx, Item i) {
 		ctx.getDslContext().transaction(configuration -> {
 			ProductDAO.insertItem(ctx, i);
@@ -165,14 +201,25 @@ public class ProductImpl implements IProduct{
 	}
 	
 	// ------------------------------------- BRAND
-
+	@Override
+	public Brand getBrand(AONContext ctx, BrandFilter filter){
+		return ctx.getDslContext().transactionResult(configuration -> 
+			ProductDAO.getBrand(ctx, filter));
+	}
+	
 	@Override
 	public Brand insertBrand(AONContext ctx, Brand brand){
 		return ctx.getDslContext().transactionResult(configuration -> 
 			ProductDAO.insertBrand(ctx, brand));
 	}
 
-	// ------------------------------------- BRAND
+	// ------------------------------------- PRODUCT CATEGORY
+	
+	@Override
+	public ProductCategory getProductCategory(AONContext ctx, ProductCategoryFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+			ProductDAO.getProductCategory(ctx, filter));
+	}
 	
 	@Override
 	public ProductCategory insertProductCategory(AONContext ctx, ProductCategory productCategory){

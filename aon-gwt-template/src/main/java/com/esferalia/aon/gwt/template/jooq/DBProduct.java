@@ -23,15 +23,12 @@ import org.jooq.Record2;
 import org.jooq.Record22;
 import org.jooq.Record3;
 import org.jooq.Record5;
-import org.jooq.Record7;
 import org.jooq.Result;
 
 import com.esferalia.aon.gwt.template.server.AuditInfo;
 import com.esferalia.aon.gwt.template.server.ProductInfo;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
-import com.esferalia.aon.jooq.tables.records.DomainRecord;
-import com.esferalia.aon.jooq.tables.records.ProductRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -45,94 +42,73 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 
 public class DBProduct {
-
-	private static Item getItem(Item i,Integer productId, Integer domainId, AONContext ctx){
-		Condition serialNumber = ITEM.SERIAL_NUMBER.eq(i.getSerialNumber());
-		if(i.getSerialNumber() == null)
-			serialNumber = ITEM.SERIAL_NUMBER.isNull();
-		Result<Record7<Integer, String, String, String, String, String, Timestamp>> data = ctx.getDslContext().select(ITEM.ID,ITEM.BARCODE,ITEM.DETAIL,ITEM.DETAIL2,ITEM.DETAIL3,ITEM.CREATION_USER,ITEM.CREATION_DATE)
-				.from(ITEM)
-				.where(ITEM.PRODUCT.eq(productId))
-				.and(serialNumber).fetch();
-		
-		String barcode = null;
-		Integer itemId = null;
-		String details = null;
+	
+	private static Item getItem(Domain domain, String login, Item item, Product product){
+		LinkedList<Item> itemList = new LinkedList<Item>();
+		if(item.getSerialNumber() != null)
+			itemList = AON.getItemList(domain.getName(), domain.getId(), login, 
+					f -> f.getProductProperty().eq(product.getId()).and(f.getSerialNumberProperty().eq(item.getSerialNumber())));
+		else itemList = AON.getItemList(domain.getName(), domain.getId(), login, 
+				f -> f.getProductProperty().eq(product.getId()).and(f.getSerialNumberProperty().isNull()));
 		String details2 = "";
-		if(i.getDetail()!= null) details2 =  details2 + i.getDetail();
-		if(i.getDetail2()!= null) details2 =  details2 + i.getDetail2();
-		if(i.getDetail3()!= null) details2 =  details2 + i.getDetail3();
-		for(Record7<Integer, String, String, String, String, String, Timestamp> i2 : data){
-			itemId =  i2.value1();
-			if(i2.value2()!= null) barcode = i2.value2();
-			details = "";
-			if(i2.value3()!= null) details =  details + i2.value3();
-			if(i2.value4()!= null) details =  details + i2.value4();
-			if(i2.value5()!= null) details =  details + i2.value5();
-				
-			if((barcode != null && barcode.equals(i.getBarcode())) || (details!= null && details.equals(details2))){
-				i.setId(itemId);
-				i.setProductId(productId);
-				i.setCreationDate(i2.value7());
-				i.setCreationUser(i2.value6());
-				return i;
+		String pack2 = "";
+		
+		if(item.getDetail()!= null) details2 =  details2 + item.getDetail();
+		if(item.getDetail2()!= null) details2 =  details2 + item.getDetail2();
+		if(item.getDetail3()!= null) details2 =  details2 + item.getDetail3();
+		
+		if(product.getPackaged()){
+			if(item.getPackFormatTag().getId() != null) pack2 = pack2 + item.getPackFormatTag().getId();
+			if(item.getPackUnits() != null) pack2 = pack2 + item.getPackUnits();
+			if(item.getPackUnitsTag().getId() != null) pack2 = pack2 + item.getPackUnitsTag().getId();
+			if(item.getPackMeasurement() != null) pack2 = pack2 + item.getPackMeasurement();
+			if(item.getPackUnitsTag().getId() != null) pack2 = pack2 + item.getPackMeasurementTag().getId();
+		}
+		
+		for (Item item2 : itemList) {
+			String details = "";
+			String pack = "";
+			
+			if(item2.getDetail()!= null) details =  details + item2.getDetail();
+			if(item2.getDetail2()!= null) details =  details + item2.getDetail2();
+			if(item2.getDetail3()!= null) details =  details + item2.getDetail3();
+			
+			if(product.getPackaged()){
+				if(item2.getPackFormatTag().getId() != null) pack = pack + item2.getPackFormatTag().getId();
+				if(item2.getPackUnits() != null) pack = pack + item2.getPackUnits();
+				if(item2.getPackUnitsTag().getId() != null) pack = pack + item2.getPackUnitsTag().getId();
+				if(item2.getPackMeasurement() != null) pack = pack + item2.getPackMeasurement();
+				if(item2.getPackUnitsTag().getId() != null) pack = pack + item2.getPackMeasurementTag().getId();
+			}
+			if((item2.getBarcode() != null && item2.getBarcode().equals(item.getBarcode()))
+					|| details.equals(details2) && pack.equals(pack2)){
+				return item2;
 			}
 		}
-		return null;
+		return new Item();
 	}
 	
-	private static Product getProduct(Product p, TemplateInfo ti, Integer domainId, AONContext ctx){
-		ProductRecord pr = ctx.getDslContext().select()
-				.from(PRODUCT)
-				.where(PRODUCT.CODE.eq(p.getCode()).and(PRODUCT.DOMAIN.eq(domainId)))
-				.fetchInto(PRODUCT).stream().findFirst().orElse(null);
-		if(pr != null){
-			Product product = new Product();
-			
-			product.setId(pr.getId());
-			product.setDomain(domainId);
-			product.setName(p.getName());
-			product.setCode(p.getCode());
+	private static Product getProduct(Domain domain, String login, Product p, TemplateInfo ti){
+		Product product = AON.getProduct(domain.getName(), domain.getId(), login, 
+				f -> f.getCodeProperty().eq(p.getCode()).and(f.getDomainProperty().eq(domain.getId())));		
 		
-			if(ti.getColumns().contains("Marca")) product.setBrand(p.getBrand());
-			else product.setBrand(pr.getBrand());
-			
-			if(ti.getColumns().contains("Categor\u00eda")) product.setCategory(p.getCategory());
-			else product.setCategory(pr.getCategory());
+		if(product.getId() == null) return null;
 		
-			if(ti.getColumns().contains("Inventoriable")) product.setInventoriable(p.isInventoriable());
-			else product.setInventoriable(pr.getInventoriable());
-	
-			if(ti.getColumns().contains("Estado")) product.setStatus(p.getStatus());
-			else product.setStatus(pr.getStatus());
-		
-			if(ti.getColumns().contains("IVA")) product.setVat(p.getVat());
-			else product.setVat(pr.getVat());
-		
-			if(ti.getColumns().contains("IRPF")) product.setRetention(p.getRetention());
-			else product.setRetention(pr.getRetention()); 
-			
-			if(ti.getColumns().contains("Tipo")) product.setType(p.getType());
-			else product.setType(pr.getType());
-
-			if(ti.getColumns().contains("Producto Compuesto")) product.setComposition(p.isComposition());
-			else product.setComposition(pr.getComposition());
-		
-			if(ti.getColumns().contains("Precio Composici\u00f3n")) product.setCompositionPrice(p.isCompositionPrice());
-			else product.setCompositionPrice(pr.getCompositionPrice());		 
-		
-			if(ti.getColumns().contains("Serializable")) product.setSerializable(p.isSerializable());
-			else product.setSerializable(pr.getSerializable());
-			
-			if(ti.getColumns().contains("Loteable")) product.setLotable(p.isLotable());
-			else product.setLotable(pr.getLotable());
-			
-			product.setCreationUser(pr.getCreationUser());
-			product.setCreationDate(pr.getCreationDate());
-			product.setKind(pr.getKind());
-			return product;	
-		}
-		return null;
+		product.setName(p.getName());
+		product.setCode(p.getCode());
+		if(ti.getColumns().contains("Marca")) product.setBrand(p.getBrand());
+		if(ti.getColumns().contains("Categor\u00eda")) product.setCategory(p.getCategory());
+		if(ti.getColumns().contains("Inventoriable")) product.setInventoriable(p.isInventoriable());
+		if(ti.getColumns().contains("Estado")) product.setStatus(p.getStatus());
+		if(ti.getColumns().contains("IVA")) product.setVat(p.getVat());
+		if(ti.getColumns().contains("IRPF")) product.setRetention(p.getRetention());
+		if(ti.getColumns().contains("Tipo")) product.setType(p.getType());
+		if(ti.getColumns().contains("Producto Compuesto")) product.setComposition(p.isComposition());
+		if(ti.getColumns().contains("Precio Composici\u00f3n")) product.setCompositionPrice(p.isCompositionPrice());
+		if(ti.getColumns().contains("Serializable")) product.setSerializable(p.isSerializable());
+		if(ti.getColumns().contains("Loteable")) product.setLotable(p.isLotable());
+		if(ti.getColumns().contains("Envasado")) product.setPackaged(p.getPackaged());
+		return product;	
 	}
 	
 	private static Boolean hasProductParent(AONContext ctx, String code, Integer domain){
@@ -174,7 +150,7 @@ public class DBProduct {
 			
 			products.stream().forEach(r->{	
 				
-				com.esferalia.aon.occam.api.model.product.Product product  = getProduct(r.getProduct(), templateInfo, domain.getId(), sctx);	
+				com.esferalia.aon.occam.api.model.product.Product product  = getProduct(domain, login, r.getProduct(), templateInfo);	
 				if(product != null){
 					
 					if(hasProductParent(sctx, product.getCode(), domain.getId())){
@@ -202,8 +178,11 @@ public class DBProduct {
 						}
 						if(r.getItem() != null){	
 							r.getItem().stream().forEach(i ->{
-								com.esferalia.aon.occam.api.model.product.Item item = getItem(i, product.getId(), domain.getId(), sctx);
-								if(item != null){
+								
+								
+								com.esferalia.aon.occam.api.model.product.Item item = getItem(domain, login, i, product);
+										//getItem(i, product.getId(), domain.getId(), sctx);
+								if(item != null && item.getId() != null){
 									if(item.getSerialNumber() != null &&  !product.isSerializable()){
 										error.setError(false);
 										verror.add("*Fila " + (r.getRow()+1)+": El producto no es serializable.");
@@ -315,25 +294,8 @@ public class DBProduct {
 		return false;
 	}
 	
-	public static ProductCategory getCategory(String domain,Integer domainId, Integer id, String login) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
-			
-			Result<Record5<Integer, String, String, String, String>> data = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME,PCATEGORY.DETAIL,PCATEGORY.DETAIL2,PCATEGORY.DETAIL3)
-				.from(PCATEGORY)
-				.where(PCATEGORY.ID.eq(id)).fetch();
-			
-			ProductCategory c = new ProductCategory();
-			c.setId(data.get(0).value1());
-			c.setName(data.get(0).value2());
-			if(data.get(0).value3() != null) c.setDetail(data.get(0).value3());
-			if(data.get(0).value4() != null) c.setDetail2(data.get(0).value4());
-			if(data.get(0).value5() != null) c.setDetail3(data.get(0).value5());
-			return c;
-		} finally {
-			if (ctx != null) ctx.close();
-		}	
+	public static ProductCategory getCategory(String domainName,Integer domainId, Integer id, String login) {
+		return AON.getProductCategory(domainName, domainId, login, id);
 	}
 	public static ProductCategory getCategory(String domain,Integer domainId, String name, String login) {
 		AONContext ctx = null;
@@ -413,7 +375,6 @@ public class DBProduct {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId, login);
-			
 			Result<Record2<Integer, String>> data = ctx.getDslContext().select(PCATEGORY.ID,PCATEGORY.NAME)
 				.from(PCATEGORY)
 				.where(PCATEGORY.DOMAIN.eq(domainId)).fetch();
@@ -452,7 +413,7 @@ public class DBProduct {
 			if (ctx != null) ctx.close();
 		}
 	}
-	
+		
 	public static Vector<ProductInfo> getProducts(String domain,Integer domainId, Condition condition, String login) {
 		AONContext ctx = null;
 		try {
@@ -555,7 +516,6 @@ public class DBProduct {
 	}
 	
 	public static Set<ProductTag> getTags(DSLContext dslContext, Integer id ){
-		
 		Result<Record1<String>> data = dslContext.select(TAG.NAME)
 			.from(TAG).join(PRODUCT_TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 			.where(PRODUCT_TAG.PRODUCT.eq(id)).fetch();
@@ -674,69 +634,23 @@ public class DBProduct {
 		}
 	}
 	
-	public static Brand getBrand(String domain,Integer domainId, Integer id, String login) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
-			
-			Result<Record2<Integer, String>> data = ctx.getDslContext().select(BRAND.ID,BRAND.NAME)
-				.from(BRAND)
-				.where(BRAND.ID.eq(id)).fetch();
-			
-			Brand brand = new Brand();
-			brand.setId(data.get(0).value1());
-			brand.setName(data.get(0).value2());
-			
-			return brand;
-		} finally {
-			if (ctx != null) ctx.close();
-		}	
+	public static Brand getBrand(String domainName,Integer domainId, Integer id, String login) {
+		return AON.getBrand(domainName, domainId, login, id);
 	}
 	
-	public static Brand getBrand(String domain,Integer domainId, String name, String login) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
-			
-			Result<Record2<Integer, String>> data = ctx.getDslContext().select(BRAND.ID,BRAND.NAME)
-				.from(BRAND)
-				.where(BRAND.NAME.eq(name)).fetch();
-			
-			Brand brand = new Brand();
-			brand.setId(data.get(0).value1());
-			brand.setName(data.get(0).value2());
-			
-			return brand;
-		} finally {
-			if (ctx != null) ctx.close();
-		}	
+	public static Brand getBrand(String domainName,Integer domainId, String name, String login) {
+		return AON.getBrand(domainName, domainId, login, name);	
 	}
 	
-	public static com.esferalia.aon.occam.api.model.product.Tax getTax(String domain, Integer domainId, Integer id, String login) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
-			
-			Result<Record3<Integer,String,Double>>  data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
-				.from(TAX)
-				.where(TAX.ID.eq(id)).fetch();
-			
-			com.esferalia.aon.occam.api.model.product.Tax t = new com.esferalia.aon.occam.api.model.product.Tax();
-			t.setId(id);
-			if(data.get(0).value2()!=null)t.setName(data.get(0).value2());
-			else t.setName("");
-			if(data.get(0).value3()!=null)t.setPercentage(data.get(0).value3());
-			return t;
-		} finally {
-			if (ctx != null) ctx.close();
-		}	
+	public static Tax getTax(String domainName, Integer domainId, Integer id, String login) {
+		return AON.getTax(domainName, domainId, login, id);
 	}
 	
-	public static Vector<Tax> getRetentions(String domain, Integer domainId, String login)  {
+	public static Vector<Tax> getRetentions(String domainName, Integer domainId, String login)  {
 		Vector<Tax> v = new Vector<Tax>();
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain, domainId, login);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			
 			Result<Record3<Integer,String,Double>> data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
 					.from(TAX)
@@ -826,41 +740,13 @@ public class DBProduct {
 		}
 	}
 	
-	public static Tax getIVAName(String domain, Integer domainId, String name, String login) {
-		AONContext ctx = null;
-		try {
-			
-			ctx = AONContext.getAONContext(domain, domainId, login);
-			
-			Result<DomainRecord> result = ctx.getDslContext().select().from(DOMAIN).where(DOMAIN.ID.eq(domainId)).limit(1).fetchInto(DOMAIN); 
-			DomainRecord dr = result.get(0);
-			
-			 Result<Record3<Integer, String, Double>> data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
-					.from(TAX)
-					.where(TAX.DOMAIN.eq(domainId))
-					.and(TAX.TAX_TYPE.eq((byte)1))
-					.and(TAX.NAME.eq(name))
-					.limit(1)
-					.fetch();
-
-			if(data.isEmpty() && dr.getEnableheredity() != 0){
-				data = ctx.getDslContext().select(TAX.ID,TAX.NAME,TAX.PERCENTAGE)
-						.from(TAX)
-						.where(TAX.DOMAIN.eq(dr.getParent()))
-						.and(TAX.TAX_TYPE.eq((byte)1))
-						.and(TAX.NAME.eq(name))
-						.limit(1)
-						.fetch();	
-			}
-			Tax tax = new Tax();
-			if(data.isNotEmpty()){
-				tax.setId(data.get(0).value1());
-				tax.setName(data.get(0).value2());
-				tax.setPercentage(data.get(0).value3());
-			}
-			return tax;			
-		}finally {
-			if (ctx != null) ctx.close();
-		}
+	public static Tax getIVAName(String domainName, Integer domainId, String name, String login) {
+		Domain domain = AON.getDomain(domainName, domainId, login);
+		Tax tax = AON.getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId)
+				.and(f.getTaxTypeProperty().eq((byte)1)).and(f.getNameProperty().eq(name)));
+		if(tax.getId() == null && domain.isEnableHeredity())
+			return AON.getTax(domainName, domainId, login, f -> f.getDomainProperty().eq(domain.getParentId())
+				.and(f.getTaxTypeProperty().eq((byte)1)).and(f.getNameProperty().eq(name)));
+		return tax;
 	}
 }

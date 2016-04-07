@@ -64,7 +64,9 @@ public class DBConsumption {
 					 if(!map.containsKey(record.value1())){
 						 if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
-						 	ci.setInitialQuantity(record.value2());
+							ci.setInitialDate(initialDate);
+							ci.setFinalDate(finalDate);
+							ci.setInitialQuantity(record.value2());
 						 	ci.setInitialValue(record.value3());
 						 	map.put(ci.getItemId(), ci);
 						 }
@@ -86,6 +88,8 @@ public class DBConsumption {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
+							ci.setInitialDate(initialDate);
+							ci.setFinalDate(finalDate);
 							ci.setFinalQuantity(record.value2());
 							ci.setFinalValue(record.value3());
 							map.put(ci.getItemId(), ci);
@@ -115,6 +119,8 @@ public class DBConsumption {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
+							ci.setInitialDate(initialDate);
+							ci.setFinalDate(finalDate);
 							ci.setValuePAlb(record.value2() * record.value3());
 							ci.setPurchasesAlb(record.value2());
 							//ci.setPurchasesValueAlb(record.value3());
@@ -149,6 +155,8 @@ public class DBConsumption {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
+							ci.setInitialDate(initialDate);
+							ci.setFinalDate(finalDate);
 							ci.setValuePFac(record.value2() * record.value3());
 							ci.setPurchasesFac(record.value2());
 							//ci.setPurchasesValueFac(record.value3());
@@ -181,6 +189,8 @@ public class DBConsumption {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
+							ci.setInitialDate(initialDate);
+							ci.setFinalDate(finalDate);
 							ci.setValueSAlb(record.value2() * record.value3());
 							ci.setSalesAlb(record.value2());
 							//ci.setSalesValueAlb(record.value3());
@@ -215,6 +225,8 @@ public class DBConsumption {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(),  warehouseName, hotel);
+							ci.setInitialDate(initialDate);
+							ci.setFinalDate(finalDate);
 							ci.setValueSFac(record.value2() * record.value3());
 							ci.setSalesFac(record.value2());
 							//ci.setSalesValueFac(record.value3());
@@ -248,6 +260,8 @@ public class DBConsumption {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
+							ci.setInitialDate(initialDate);
+							ci.setFinalDate(finalDate);
 							ci.setTransfersMinus(record.value2());
 							map.put(ci.getItemId(), ci);
 						}
@@ -276,6 +290,8 @@ public class DBConsumption {
 					if(!map.containsKey(record.value1())) {
 						if(record.value2() != 0){
 							ConsumptionItem ci = getConsumptionItem(ctx ,record.value1(), warehouseName, hotel);
+							ci.setInitialDate(initialDate);
+							ci.setFinalDate(finalDate);
 							ci.setTransfersPlus(record.value2());
 							map.put(ci.getItemId(), ci);
 						}

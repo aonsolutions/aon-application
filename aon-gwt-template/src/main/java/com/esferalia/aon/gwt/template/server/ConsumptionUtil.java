@@ -4,6 +4,7 @@ package com.esferalia.aon.gwt.template.server;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -410,7 +411,7 @@ public class ConsumptionUtil {
         	}
         }
         libro2(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoC(), 0);
-        libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoA(), 1, packaged);
+        //libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoA(), 1, packaged);
         libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoB(), 2, packaged);
         
         for (int index = 0; index < size; index++) {
@@ -716,6 +717,8 @@ public class ConsumptionUtil {
 	private static  TemplateInfo getTemplateInfoB() {
 		Vector<String> v = new Vector<String>();
 		v.add("Hotel");
+		v.add("Desde");
+		v.add("Hasta");
 		v.add("Almacén");
 		v.add("Producto");
 		v.add("Nombre");
@@ -737,6 +740,8 @@ public class ConsumptionUtil {
 	private static TemplateInfo getTemplateInfoC() {
 		Vector<String> v = new Vector<String>();
 		v.add("Hotel");
+		v.add("Desde");
+		v.add("Hasta");
 		v.add("Almacén");
 		v.add("Valor Inicial"); 
 		v.add("Valor Compras"); 
@@ -827,6 +832,9 @@ public class ConsumptionUtil {
     	}
     	Integer num0 = 0;
     	Integer l = 0;
+
+    	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
     	for (Warehouse w : warehouses) {
         	Vector<ConsumptionItem> v2 = map.get(w.getName());
             Collections.sort(v2, (ConsumptionItem c1, ConsumptionItem c2) -> c1.getConsumValue().compareTo(c2.getConsumValue()));        
@@ -852,6 +860,8 @@ public class ConsumptionUtil {
      
         				switch (type) {
         				case "Hotel": celda.setCellValue(ci.getHotel());celda.setCellStyle(style30);break;
+        				case "Desde": celda.setCellValue(format.format(ci.getInitialDate()));celda.setCellStyle(style30);break;
+           				case "Hasta": celda.setCellValue(format.format(ci.getFinalDate()));celda.setCellStyle(style30);break;
         				case "Almacén": celda.setCellValue(ci.getWarehouseName());celda.setCellStyle(style30);break;
         				case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style30);break;
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style20);break;
@@ -967,7 +977,12 @@ public class ConsumptionUtil {
         	Double compras = 0.0;
         	Double inicial = 0.0;
         	String hotel = DBConsumption.getHotelName(domain, domainId, login, w.getId());
+        	Date startDate = new Date();
+        	Date endDate = new Date();
+        	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         	for(ConsumptionItem ci : v2){
+        		startDate = ci.getInitialDate();
+        		endDate = ci.getFinalDate();
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
         		Double consumValue = ci.getConsumValue();
             	
@@ -992,13 +1007,14 @@ public class ConsumptionUtil {
         		
         		}
         	}
-        		
         	Row row = hoja0.createRow(l+2);
         	for(Integer k = 0; k< columns; k++){
         	   	Cell celda = row.createCell(k);
         	   	String type = special1.getColumns().get(k); 
            		switch (type) {
         				case "Hotel": celda.setCellValue(hotel);celda.setCellStyle(style30);break;
+           				case "Desde": celda.setCellValue(format.format(startDate));celda.setCellStyle(style30);break;
+           				case "Hasta": celda.setCellValue(format.format(endDate));celda.setCellStyle(style30);break;
         				case "Almacén": celda.setCellValue(w.getName());celda.setCellStyle(style30);break;
         				case "Valor Inicial": celda.setCellValue(round(inicial,2));celda.setCellStyle(style20);break;
         				case "Valor Compras": celda.setCellValue(round(compras,2));celda.setCellStyle(style20);break;

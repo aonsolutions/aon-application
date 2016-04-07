@@ -238,6 +238,10 @@ public class Product implements Serializable{
 	public Boolean getPackaged() {
 		return packaged;
 	}
+	
+	public Byte getPackagedValue(){
+		return packaged ? (byte) 1 : 0;
+	}
 
 	public Product setPackaged(Boolean packaged) {
 		this.packaged = packaged;

@@ -2,17 +2,53 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
+import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.jooq.Condition;
 
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.TagFilter;
+import com.esferalia.aon.occam.api.model.Properties.TagProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
 
 public class TagDAO {
+	private static final TagPropertiesDAO TAG_PROPERTIES = new TagPropertiesDAO();
+
+	protected static class TagPropertiesDAO implements TagProperties {
+		protected Condition[] getConditions(TagFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TAG.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TAG.DOMAIN);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(TAG.TYPE);}
+		@Override public Property<String> getColorProperty(){return new FilterDAO.PropertyDAO<String>(TAG.COLOR);}
+		@Override public Property<String> getNameProperty(){return new FilterDAO.PropertyDAO<String>(TAG.NAME);}
+	}
 	
 	public static Tag getTag(AONContext ctx, Integer tagId){
 		return ctx.getDslContext().select().from(TAG).where(TAG.ID.eq(tagId)).fetchInto(TAG)
 				.stream().map(new FullTagFiller()).findFirst().orElse(new Tag());
+	}
+	
+	public static Tag getTag(AONContext ctx, TagFilter filter){
+		return ctx.getDslContext().select().from(TAG).where(TAG_PROPERTIES.getConditions(filter)).limit(1)
+				.fetchInto(TAG).stream().map(new FullTagFiller()).findFirst().orElse(new Tag());
+	}
+	
+	public static Stream<Tag> getTagStream(AONContext ctx, TagFilter filter){
+		return ctx.getDslContext().select().from(TAG).where(TAG_PROPERTIES.getConditions(filter))
+				.fetchInto(TAG).stream().map(new FullTagFiller());
+	}
+	
+	public static LinkedList<Tag> getTagList(AONContext ctx, TagFilter filter){
+		return getTagStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static void updateTag(AONContext ctx, Tag tag){

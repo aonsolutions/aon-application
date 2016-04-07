@@ -30,12 +30,11 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
-
-
-
+import com.esferalia.aon.occam.api.model.type.TagType;
 
 public class DBConsults {
 	
@@ -43,8 +42,7 @@ public class DBConsults {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
-				
-				
+
 				// DOMAIN + DOMAIN SON
 				Result<Record4<Integer, String, Byte, String>> record = ctx.getDslContext()
 						.select(RATTACH.ID, RATTACH.DESCRIPTION,
@@ -411,4 +409,16 @@ public class DBConsults {
 			if (ctx != null) ctx.close();
 		}
 	}
-}
+	
+	public static Tag getTag(Domain domain, String login, String name, TagType tagType){
+		return AON.getTag(domain.getName(), domain.getId(), login,
+				f -> f.getNameProperty().eq(name).and(f.getTypeProperty().eq(tagType.value()))
+				.and(f.getDomainProperty().eq(domain.getId())));
+	}
+	
+	public static Tag getTag(Domain domain, String login, Integer id){
+		return AON.getTag(domain.getName(), domain.getId(), login,
+				f -> f.getIdProperty().eq(id));
+	}
+
+}	

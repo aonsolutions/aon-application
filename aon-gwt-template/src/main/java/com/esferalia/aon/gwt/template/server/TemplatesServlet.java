@@ -240,7 +240,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			else if(importType.equals(ImportType.FEE))
 				executeExcelFee(domain, rowIterator, error, ignoreInactiveClient);
 			else if(importType.equals(ImportType.PROPOSAL))
-				executeExcelProposal(rowIterator, error);
+				executeExcelProposal(domain, rowIterator, error);
 			else if(importType.equals(ImportType.STOCK))
 				executeExcelStock(domain, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
 			
@@ -269,7 +269,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				else if(importType.equals(ImportType.FEE))
 					executeExcelFee(domain, rowIterator, error, ignoreInactiveClient);
 				else if(importType.equals(ImportType.PROPOSAL))
-					executeExcelProposal(rowIterator, error);
+					executeExcelProposal(domain, rowIterator, error);
 				else if(importType.equals(ImportType.STOCK))
 					executeExcelStock(domain, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
 
@@ -657,7 +657,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	TemplateInfo ti;
 	Row rowAux ;
 	Boolean proposalBool;
-	public Integer executeExcelProposal(Iterator<Row> rowIterator, Error error){
+	public Integer executeExcelProposal(Domain domain, Iterator<Row> rowIterator, Error error){
 		System.out.println("GWT TEMPLATES - (Solicitud de compra) empieza a procesar el excel.");
 		Vector<StockInfo> stock = new Vector<StockInfo>();
 		proposalBool = true;
@@ -728,7 +728,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 							if(ti.getColumns().get(cell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(cell.getColumnIndex()).equals("Producto") 
 									|| ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 1") || ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 2") 
 									|| ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 3")){
-								si = check(cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
+								si = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
 								if(si == null){
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n");
@@ -922,7 +922,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 								}
 							}
 							if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre") && !ti.getColumns().get(cell.getColumnIndex()).equals("Nombre")){
-								si = check(cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
+								si = check(domain, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
 								if(si == null){
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n");
@@ -1052,7 +1052,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		return error;
 	}
 
-	private StockInfo check(Integer row, String column, String template, Object value,StockInfo stock, Integer type) {
+	private StockInfo check(Domain domain, Integer row, String column, String template, Object value,StockInfo stock, Integer type) {
 		
 		switch (template) {
 		case "Producto": case "Product":
@@ -1087,6 +1087,52 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		case "N\u00FAmero Serie": case "Serial Number":
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC))
 				stock.getItem().setSerialNumber(toString(value));
+			break;
+		case "Formato":
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
+				if(tag.getId() != null) stock.getItem().setPackFormatTag(tag);
+				else{
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAG_NOT_EXIST.getMessage() +"\n";
+				}
+			}
+			break;
+		case "Unidades":
+			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+				stock.getItem().setPackUnits((Double)value);
+			}else {
+				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
+				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
+			}
+			break; 
+		case "Formato Unidades":
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
+				if(tag.getId() != null)stock.getItem().setPackUnitsTag(tag);
+				else{
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAG_NOT_EXIST.getMessage() +"\n";
+				}
+			}
+			break;
+		case "Medida":
+			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+				stock.getItem().setPackMeasurement((Double)value);
+			}else {
+				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
+				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
+			}
+			break; 
+		case "Formato Medida":
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
+				if(tag.getId() != null) stock.getItem().setPackMeasurementTag(tag);
+				else{
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAG_NOT_EXIST.getMessage() +"\n";
+				}
+			}
 			break;
 		default:
 			break;
@@ -1691,6 +1737,73 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			product.getProduct().setLotable(bool5);
 			break;  
+		case "Envasado" : 
+			switch (type) {
+			case Cell.CELL_TYPE_STRING:
+				String string = (String) value;
+				product.getProduct().setPackaged(string.equalsIgnoreCase("si") ||
+						string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"));
+				break;
+			case Cell.CELL_TYPE_NUMERIC:
+				Double num = (Double) value;
+				product.getProduct().setPackaged(num.equals(1.0));
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				product.getProduct().setPackaged((Boolean) value);
+				break;
+			case Cell.CELL_TYPE_BLANK:
+				return product;
+			default:
+				return null;
+			}
+			break;
+		case "Formato":
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
+				if(tag.getId() != null)product.getItem().get(0).setPackFormatTag(tag);
+				else{
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAG_NOT_EXIST.getMessage() +"\n";
+				}
+			}
+			break;
+		case "Unidades":
+			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+				product.getItem().get(0).setPackUnits((Double)value);
+			}else {
+				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
+				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
+			}
+			break; 
+
+		case "Formato Unidades":
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
+				if(tag.getId() != null)product.getItem().get(0).setPackUnitsTag(tag);
+				else{
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAG_NOT_EXIST.getMessage() +"\n";
+				}
+			}
+			break;
+		case "Medida":
+			if(type.equals(Cell.CELL_TYPE_NUMERIC)){
+				product.getItem().get(0).setPackMeasurement((Double)value);
+			}else {
+				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
+				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
+			}
+			break; 
+		case "Formato Medida":
+			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
+				Tag tag = DBConsults.getTag(domain, getUser().getLogin(), toString(value), TagType.PACKING);
+				if(tag.getId() != null) product.getItem().get(0).setPackMeasurementTag(tag);
+				else{
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TAG_NOT_EXIST.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TAG_NOT_EXIST.getMessage() +"\n";
+				}
+			}
+			break;
 		default:
 			break;
 		}
@@ -1720,15 +1833,16 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		
 		// Inventoriable (product)
 		 p2.setInventoriable(false);
-		
-		 // producto compuesto (product)
+		// producto compuesto (product)
 		p2.setComposition(false);
 		// precio composicion
 		p2.setCompositionPrice(false);
+		// Envasado
+		p2.setPackaged(false);
 		
 		// estado (product)
 		p2.setStatus((byte)ProductStatus.ACTIVE.ordinal());
-		
+
 		// detail
 		i2.setDetail("");
 		

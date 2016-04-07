@@ -9,6 +9,7 @@ public enum ErrorMessage {
 	NOT_NUMERIC("El valor no es de tipo numérico."),
 	CATEGORY_NOT_EXIST("La categoría no existe."),
 	BRAND_NOT_EXIST("La marca no existe."),
+	TAG_NOT_EXIST("La etiqueta no existe."),
 	TAX_NOT_EXIST("El impuesto no existe.");
 	
 	String message;

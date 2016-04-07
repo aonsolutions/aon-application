@@ -347,7 +347,6 @@ public class ConsumptionItem implements IsSerializable{
 		this.hotel = hotel;
 		return this;
 	}
-
 	public Double getConsumValue(){
 		Double consumValue = (getInitialValue() * getInitialQuantity()) 
 			//	+  	(getPurchasesAlb() * getPurchasesValueAlb())

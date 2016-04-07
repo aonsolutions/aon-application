@@ -173,6 +173,11 @@ public interface Properties {
 		Property<Timestamp> getCreationDateProperty();
 		Property<String> getModificationUserProperty();
 		Property<Timestamp> getModificationDateProperty();
+		Property<Integer> getPackFormatTagProperty();
+		Property<Integer> getPackUnitsProperty();
+		Property<Integer> getPackUnitsTagProperty();
+		Property<Double> getPackMeasurementProperty();
+		Property<Integer> getPackMeasurementTagProperty();
 	}
 	
 	public interface DomainProperties {
@@ -232,5 +237,46 @@ public interface Properties {
 		Property<Integer> getUserIdProperty();
 		Property<String> getDisplayNameProperty();
 		Property<Integer> getContactDataProperty();
+	}
+	
+	public interface TagProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getColorProperty();
+		Property<String> getNameProperty();
+		Property<Byte> getTypeProperty();
+	}
+	
+	public interface BrandProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+	}
+	
+	public interface TaxProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Double> getPercentageProperty();
+		Property<Integer> getPurchaseAccountProperty();
+		Property<Integer> getSalesAccountProperty();
+		Property<Date> getStartDateProperty();
+		Property<Double> getSurchargeProperty();
+		Property<Byte> getTaxTypeProperty();
+		Property<Byte> getVatDeductionTypeProperty();
+		Property<Byte> getWithholdingTypeProperty();
+	}
+	
+	public interface ProductCategoryProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<String> getDetailProperty();
+		Property<String> getDetail2Property();
+		Property<String> getDetail3Property();
 	}
 }

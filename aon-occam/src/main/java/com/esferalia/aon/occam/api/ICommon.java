@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -13,10 +14,13 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
+import com.esferalia.aon.occam.api.model.Filter.TagFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 
 public interface ICommon {
@@ -75,6 +79,12 @@ public interface ICommon {
 	
 	// TAG
 	public Tag getTag(AONContext ctx, Integer tagId);
+	public Tag getTag(AONContext ctx, TagFilter filter);
+	public LinkedList<Tag> getTagList(AONContext ctx, TagFilter filter);
+	public Stream<Tag> getTagStream(AONContext ctx, TagFilter filter);
 	public void updateTag(AONContext ctx, Tag tag);
 	public void deleteTag(AONContext ctx, Tag tag);
+	
+	//TAX
+	public Tax getTax(AONContext ctx, TaxFilter filter);
 }

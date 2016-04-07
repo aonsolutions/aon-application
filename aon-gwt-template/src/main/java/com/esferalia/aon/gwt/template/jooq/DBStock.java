@@ -26,10 +26,7 @@ import java.util.Vector;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.DeleteConditionStep;
-import org.jooq.InsertValuesStep12;
-import org.jooq.InsertValuesStep13;
-import org.jooq.InsertValuesStep4;
-import org.jooq.InsertValuesStep5;
+import org.jooq.InsertValuesStepN;
 import org.jooq.Record1;
 import org.jooq.Record16;
 import org.jooq.Record2;
@@ -64,9 +61,9 @@ import com.esferalia.aon.occam.api.model.warehouse.Series;
 
 public class DBStock {
 	
-	static String stockquery ;
-	static String inventoryquery ;
-	static String inventoryCostquery ;
+	static String stockquery;
+	static String inventoryquery;
+	static String inventoryCostquery;
 	
 	Vector<String> v = new Vector<String>();
 	static String itemIds;
@@ -99,7 +96,6 @@ public class DBStock {
 						.where(ITEM.BARCODE.eq(s.getProduct())).and(ITEM.DOMAIN.eq(domainId))
 						.and(serialNumber).fetch();
 					if(data.isEmpty()){
-
 						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID, PRODUCT.LOTABLE)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
@@ -118,15 +114,28 @@ public class DBStock {
 						Condition detail3 = ITEM.DETAIL3.eq(s.getItem().getDetail3());
 						if(s.getItem().getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
-						
-										
+												
+						Condition formatTag = ITEM.PACK_FORMAT_TAG.isNull();
+						if(s.getItem().getPackFormatTag().getId() != null)
+							formatTag = ITEM.PACK_FORMAT_TAG.eq(s.getItem().getPackFormatTag().getId());
+																
+						Condition units = ITEM.PACK_UNITS.eq(s.getItem().getPackUnits().intValue());
+												
+						Condition unitsTag = ITEM.PACK_UNITS_TAG.isNull();
+						if(s.getItem().getPackUnitsTag().getId() != null)
+							unitsTag = ITEM.PACK_UNITS_TAG.eq(s.getItem().getPackUnitsTag().getId());
+																
+						Condition measurement = ITEM.PACK_MEASUREMENT.eq(s.getItem().getPackMeasurement());
+																
+						Condition measurementTag = ITEM.PACK_MEASUREMENT_TAG.isNull();
+						if(s.getItem().getPackMeasurementTag().getId() != null)
+							measurementTag = ITEM.PACK_MEASUREMENT_TAG.eq(s.getItem().getPackMeasurementTag().getId());
+																
 						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PURCHASE_PRICE, PRODUCT.MANUFACTURED, PRODUCT.INVENTORIABLE, PRODUCT.ID, PRODUCT.LOTABLE)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
-									.and(detail)
-									.and(detail2)
-									.and(detail3)
-									.and(serialNumber)
+									.and(detail).and(detail2).and(detail3).and(serialNumber)
+									.and(formatTag).and(unitsTag).and(units).and(measurementTag).and(measurement)
 									.and(PRODUCT.DOMAIN.eq(domainId)).fetch();
 					}
 					if(!data.isEmpty()){
@@ -136,7 +145,6 @@ public class DBStock {
 							error.setError(false);
 							error.setTextError(v);
 						} else {
-
 							Integer itemId = data.get(0).value1();
 							System.out.println(itemId);
 							s.setDomainId(domainId);
@@ -168,13 +176,11 @@ public class DBStock {
 								itemIds = itemIds + ","+itemId;
 								inventoryquery = inventoryquery + " when item = " + itemId + " then " + s.getQuantity();
 								inventoryCostquery = inventoryCostquery + " when item = " + itemId + " then " + cost;
-							}
-							else{
+							}else{
 								sctx.getDslContext().insertInto(INVENTORY_DETAIL, INVENTORY_DETAIL.ACTUAL_QUANTITY, INVENTORY_DETAIL.COST, INVENTORY_DETAIL.REAL_QUANTITY, INVENTORY_DETAIL.DOMAIN, INVENTORY_DETAIL.INVENTORY, INVENTORY_DETAIL.ITEM)
 									.values(0.0, cost, s.getQuantity(), s.getDomainId(), inventoryId, itemId).execute() ;
 							}
 						}
-			
 					}
 					else{
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coinciden.");
@@ -193,7 +199,6 @@ public class DBStock {
 				}
 			}
 			return error;
-			
 		}finally {
 			if (ctx != null) ctx.close();
 		}
@@ -217,11 +222,9 @@ public class DBStock {
 					.fetchOne();
 			if(b == null)
 				return new Double[]{-1.0,-1.0};
-				
 			return new Double[]{b.value1().doubleValue(), b.value2()};
 		}
-		return new Double[]{a.value1().doubleValue(), a.value2()};
-		
+		return new Double[]{a.value1().doubleValue(), a.value2()};	
 	}
 	
 	public static Error insertProposal(Domain domain,Vector<StockInfo> stock,Integer proposal, AuditInfo ai, Integer workplace, String login){
@@ -236,8 +239,8 @@ public class DBStock {
 			System.out.println("GWT TEMPLATES - (Solicitud de compra) - dentro de la funcion de insertar!!");
 
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			InsertValuesStep13<ProposalDetailRecord, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> proposalInsertQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
-			InsertValuesStep12<ProposalDetailRecord, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp> proposalUpdateQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
+			InsertValuesStepN<ProposalDetailRecord> proposalInsertQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
+			InsertValuesStepN<ProposalDetailRecord> proposalUpdateQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
 			
 			AONContext sctx = ctx;
 			Vector<Integer> updateIds = new Vector<Integer>();
@@ -274,13 +277,27 @@ public class DBStock {
 						if(s.getItem().getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 						
+						Condition formatTag = ITEM.PACK_FORMAT_TAG.isNull();
+						if(s.getItem().getPackFormatTag().getId() != null)
+							formatTag = ITEM.PACK_FORMAT_TAG.eq(s.getItem().getPackFormatTag().getId());
+																
+						Condition units = ITEM.PACK_UNITS.eq(s.getItem().getPackUnits().intValue());
+												
+						Condition unitsTag = ITEM.PACK_UNITS_TAG.isNull();
+						if(s.getItem().getPackUnitsTag().getId() != null)
+							unitsTag = ITEM.PACK_UNITS_TAG.eq(s.getItem().getPackUnitsTag().getId());
+																
+						Condition measurement = ITEM.PACK_MEASUREMENT.eq(s.getItem().getPackMeasurement());
+																
+						Condition measurementTag = ITEM.PACK_MEASUREMENT_TAG.isNull();
+						if(s.getItem().getPackMeasurementTag().getId() != null)
+							measurementTag = ITEM.PACK_MEASUREMENT_TAG.eq(s.getItem().getPackMeasurementTag().getId());
+						
 						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRICE, ITEM.PRODUCT)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
-									.and(detail)
-									.and(detail2)
-									.and(detail3)
-									.and(serialNumber)
+									.and(detail).and(detail2).and(detail3).and(serialNumber)
+									.and(formatTag).and(unitsTag).and(units).and(measurementTag).and(measurement)
 									.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
 					}
 				/*	Record1<Integer> data = sctx.getDslContext().select(PRODUCT.ID)
@@ -426,10 +443,10 @@ public class DBStock {
 
 			DeleteConditionStep<StockRecord> stockDeleteQuery;
 			DeleteConditionStep<WarehouseTransferDetailRecord> transferDeleteQuery;
-			InsertValuesStep4<StockRecord, Integer, Integer, Double, Integer> stockInsertQuery = ctx.getDslContext().insertInto(STOCK, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
-			InsertValuesStep5<StockRecord, Integer, Integer, Integer, Double, Integer> stockUpdateQuery = ctx.getDslContext().insertInto(STOCK, STOCK.ID, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
-			InsertValuesStep4<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double> transferInsert = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
-			InsertValuesStep5<WarehouseTransferDetailRecord, Integer, Integer, Integer, Integer, Double> transferUpdate = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL,WAREHOUSE_TRANSFER_DETAIL.ID, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
+			InsertValuesStepN<StockRecord> stockInsertQuery = ctx.getDslContext().insertInto(STOCK, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
+			InsertValuesStepN<StockRecord> stockUpdateQuery = ctx.getDslContext().insertInto(STOCK, STOCK.ID, STOCK.DOMAIN, STOCK.ITEM, STOCK.QUANTITY, STOCK.WAREHOUSE);
+			InsertValuesStepN<WarehouseTransferDetailRecord> transferInsert = ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
+			InsertValuesStepN<WarehouseTransferDetailRecord> transferUpdate =ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL,WAREHOUSE_TRANSFER_DETAIL.ID, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, WAREHOUSE_TRANSFER_DETAIL.QUANTITY);
 			
 			Vector<Integer> stockDeleteIds = new Vector<Integer>();
 			Vector<Integer> transferDeleteIds = new Vector<Integer>();
@@ -483,13 +500,27 @@ public class DBStock {
 						if(s.getItem().getDetail3() == "") 
 							detail3 = ITEM.DETAIL3.eq("").or(ITEM.DETAIL3.isNull());
 
+						Condition formatTag = ITEM.PACK_FORMAT_TAG.isNull();
+						if(s.getItem().getPackFormatTag().getId() != null)
+							formatTag = ITEM.PACK_FORMAT_TAG.eq(s.getItem().getPackFormatTag().getId());
+																
+						Condition units = ITEM.PACK_UNITS.eq(s.getItem().getPackUnits().intValue());
+												
+						Condition unitsTag = ITEM.PACK_UNITS_TAG.isNull();
+						if(s.getItem().getPackUnitsTag().getId() != null)
+							unitsTag = ITEM.PACK_UNITS_TAG.eq(s.getItem().getPackUnitsTag().getId());
+																
+						Condition measurement = ITEM.PACK_MEASUREMENT.eq(s.getItem().getPackMeasurement());
+																
+						Condition measurementTag = ITEM.PACK_MEASUREMENT_TAG.isNull();
+						if(s.getItem().getPackMeasurementTag().getId() != null)
+							measurementTag = ITEM.PACK_MEASUREMENT_TAG.eq(s.getItem().getPackMeasurementTag().getId());
+						
 						data = sctx.getDslContext().select(ITEM.ID, ITEM.PRODUCT)
 								.from(ITEM).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PRODUCT.CODE.eq(s.getProduct()))
-									.and(detail)
-									.and(detail2)
-									.and(detail3)
-									.and(serialNumber)
+									.and(detail).and(detail2).and(detail3).and(serialNumber)
+									.and(formatTag).and(unitsTag).and(units).and(measurementTag).and(measurement)
 									.and(PRODUCT.DOMAIN.eq(domain.getId())).fetch();
 					}
 					if(!data.isEmpty()){
@@ -754,22 +785,7 @@ public class DBStock {
 	public static Item getItem(Domain domain, String login, Integer id ){
 		return AON.getItem(domain.getName(), domain.getId(), login, id);
 	}
-	
 
-	public static Product getProduct(AONContext ctx, Integer id ){		
-		Result<Record3<String,String,Byte>> data = ctx.getDslContext().select(PRODUCT.CODE,PRODUCT.NAME,PRODUCT.INVENTORIABLE)
-			.from(PRODUCT)
-			.where(PRODUCT.ID.eq(id)).fetch();
-		
-		Product p = new Product();
-		p.setId(id);
-		p.setCode(data.get(0).value1());
-		p.setName(data.get(0).value2());
-		p.setInventoriable(data.get(0).value3()==1);
-		return p;
-		
-	}
-	
 	public static Boolean checkSeries(Domain domain, Series s, Warehouse w, Warehouse w2, String login){
 		AONContext ctx = null;
 		try {

@@ -3,6 +3,10 @@ package com.esferalia.aon.occam.api;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -13,6 +17,9 @@ public interface IProduct {
 
 	// PRODUCT
 	public Product getProduct(AONContext ctx, Integer productId);
+	public Product getProduct(AONContext ctx, ProductFilter filter);
+	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter);
+	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter);
 	public void insert(AONContext ctx,Product p);
 	public void insertWithId(AONContext ctx,Product p);
 	public LinkedList<Product> insert(AONContext ctx,Stream<Product> ps);
@@ -27,9 +34,11 @@ public interface IProduct {
 	public void updateProductTag(AONContext ctx,ProductTag pt);
 	public void deleteProductTag(AONContext ctx,ProductTag pt);
 	public void deleteProductTag(AONContext ctx,Stream<ProductTag> pts);	
-	
+		
 	// ITEM
 	public Item getItem(AONContext ctx, Integer itemId);
+	public Item getItem(AONContext ctx, ItemFilter filter);
+	public LinkedList<Item> getItemList(AONContext ctx, ItemFilter filter);
 	public void insertItem(AONContext ctx, Item i);
 	public void insertItemWithId(AONContext ctx,Item i);
 	public void insertItem(AONContext ctx, Stream<Item> is);
@@ -39,8 +48,10 @@ public interface IProduct {
 	public void deleteItem(AONContext ctx, Stream<Item> is);
 	
 	// BRAND
+	public Brand getBrand(AONContext ctx, BrandFilter filter);
 	public Brand insertBrand(AONContext ctx, Brand brand); 
 	
 	// PRODUCT CATEGORY
+	public ProductCategory getProductCategory(AONContext ctx, ProductCategoryFilter filter);
 	public ProductCategory insertProductCategory(AONContext ctx, ProductCategory productCategory); 
 }

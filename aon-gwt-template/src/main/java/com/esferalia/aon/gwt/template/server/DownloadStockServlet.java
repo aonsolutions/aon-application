@@ -327,6 +327,11 @@ public class DownloadStockServlet extends HttpServlet {
         		case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         		case "Nombre": celda.setCellValue(si.getProductName());celda.setCellStyle(style3);break;
         		case "N\u00FAmero Serie": celda.setCellValue(si.getItem().getSerialNumber());celda.setCellStyle(style3);break;
+        		case "Formato": celda.setCellValue(si.getItem().getPackFormatTag().getName());celda.setCellStyle(style3);break; 
+        		case "Unidades": celda.setCellValue(si.getItem().getPackUnits());celda.setCellStyle(style3);break; 
+        		case "Formato Unidades": celda.setCellValue(si.getItem().getPackUnitsTag().getName());celda.setCellStyle(style3);break; 
+        		case "Medida": celda.setCellValue(si.getItem().getPackMeasurement());celda.setCellStyle(style3);break; 
+        		case "Formato Medida": celda.setCellValue(si.getItem().getPackMeasurementTag().getName());celda.setCellStyle(style3);break; 
         		default:
         			break;
         		}

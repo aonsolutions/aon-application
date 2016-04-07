@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.sun.istack.NotNull;
 
 public class Item implements Serializable {
 
@@ -46,7 +47,7 @@ public class Item implements Serializable {
 	private String modificationUser;
 	private Timestamp modificationDate;
 	private Product product;
-	
+
 	private Tag packFormatTag;
 	private Double packUnits;
 	private Tag packUnitsTag;
@@ -297,37 +298,37 @@ public class Item implements Serializable {
 		this.modificationDate = modificationDate;
 		return this;
 	}
-	
-	public Tag getPackFormatTag() {
-		return packFormatTag;
+		
+	public @NotNull Tag getPackFormatTag() {
+		return packFormatTag != null ? packFormatTag : new Tag();
 	}
 	public Item setPackFormatTag(Tag packFormatTag) {
 		this.packFormatTag = packFormatTag;
 		return this;
 	}
 	public Double getPackUnits() {
-		return packUnits;
+		return packUnits != null ? packUnits : 0;
 	}
 	public Item setPackUnits(Double packUnits) {
 		this.packUnits = packUnits;
 		return this;
 	}
-	public Tag getPackUnitsTag() {
-		return packUnitsTag;
+	public @NotNull Tag getPackUnitsTag() {
+		return packUnitsTag != null ? packUnitsTag : new Tag();
 	}
 	public Item setPackUnitsTag(Tag packUnitsTag) {
 		this.packUnitsTag = packUnitsTag;
 		return this;
 	}
 	public Double getPackMeasurement() {
-		return packMeasurement;
+		return packMeasurement != null ? packMeasurement : 0;
 	}
 	public Item setPackMeasurement(Double packMeasurement) {
 		this.packMeasurement = packMeasurement;
 		return this;
 	}
-	public Tag getPackMeasurementTag() {
-		return packMeasurementTag;
+	public @NotNull Tag getPackMeasurementTag() {
+		return packMeasurementTag != null ? packMeasurementTag : new Tag();
 	}
 	public Item setPackMeasurementTag(Tag packMeasurementTag) {
 		this.packMeasurementTag = packMeasurementTag;

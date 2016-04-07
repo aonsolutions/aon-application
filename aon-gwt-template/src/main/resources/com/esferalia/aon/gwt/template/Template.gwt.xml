@@ -29,6 +29,8 @@
 	<extend-property name="user.agent" values="ie8" />
 	<extend-property name="user.agent" values="ie9" />
 	<extend-property name="user.agent" values="ie10" />
+	
+	<extend-property name="locale" values="en"/>
 
 	<set-configuration-property name="locale.useragent" value="Y" />
 

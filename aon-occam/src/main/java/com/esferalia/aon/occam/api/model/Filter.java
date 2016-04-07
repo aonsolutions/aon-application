@@ -1,11 +1,15 @@
 package com.esferalia.aon.occam.api.model;
 
+import com.esferalia.aon.occam.api.model.Properties.BrandProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
+import com.esferalia.aon.occam.api.model.Properties.ProductCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
+import com.esferalia.aon.occam.api.model.Properties.TagProperties;
+import com.esferalia.aon.occam.api.model.Properties.TaxProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 
 public interface Filter {
@@ -64,6 +68,24 @@ public interface Filter {
 		Filter filter(ContactProperties properties);
 	}
 	
+	@FunctionalInterface
+	public interface TagFilter{
+		Filter filter(TagProperties properties);
+	}
 	
-
+	@FunctionalInterface
+	public interface BrandFilter{
+		Filter filter(BrandProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface TaxFilter{
+		Filter filter(TaxProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface ProductCategoryFilter{
+		Filter filter(ProductCategoryProperties properties);
+	}
+	
 }
