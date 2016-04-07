@@ -117,7 +117,7 @@ public class DBConsumption {
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
 							ci.setValuePAlb(record.value2() * record.value3());
 							ci.setPurchasesAlb(record.value2());
-							ci.setPurchasesValueAlb(record.value3());
+							//ci.setPurchasesValueAlb(record.value3());
 							map.put(ci.getItemId(), ci);
 						}
 					}
@@ -125,7 +125,7 @@ public class DBConsumption {
 						ConsumptionItem ci = map.get(record.value1());
 						ci.setValuePAlb(ci.getValuePAlb() + (record.value2() * record.value3()));
 						ci.setPurchasesAlb(ci.getPurchasesAlb()+record.value2());
-						ci.setPurchasesValueAlb(ci.getValuePAlb() / ci.getPurchasesAlb());
+						//ci.setPurchasesValueAlb(ci.getValuePAlb() / ci.getPurchasesAlb());
 						//ci.setPurchasesValueAlb(ci.getPurchasesValueAlb()+record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
@@ -151,7 +151,7 @@ public class DBConsumption {
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
 							ci.setValuePFac(record.value2() * record.value3());
 							ci.setPurchasesFac(record.value2());
-							ci.setPurchasesValueFac(record.value3());
+							//ci.setPurchasesValueFac(record.value3());
 							map.put(ci.getItemId(), ci);
 						}
 					}
@@ -159,7 +159,7 @@ public class DBConsumption {
 						ConsumptionItem ci = map.get(record.value1());
 						ci.setValuePFac(ci.getValuePFac() + (record.value2() * record.value3()));
 						ci.setPurchasesFac(ci.getPurchasesFac()+record.value2());
-						ci.setPurchasesValueFac(ci.getValuePFac() / ci.getPurchasesFac());
+						//ci.setPurchasesValueFac(ci.getValuePFac() / ci.getPurchasesFac());
 						//ci.setPurchasesValueFac(ci.getPurchasesValueFac()+record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
@@ -183,7 +183,7 @@ public class DBConsumption {
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(), warehouseName, hotel);
 							ci.setValueSAlb(record.value2() * record.value3());
 							ci.setSalesAlb(record.value2());
-							ci.setSalesValueAlb(record.value3());
+							//ci.setSalesValueAlb(record.value3());
 							map.put(ci.getItemId(), ci);
 						}
 					}
@@ -191,7 +191,7 @@ public class DBConsumption {
 						ConsumptionItem ci = map.get(record.value1());
 						ci.setValueSAlb(ci.getValueSAlb() + (record.value2() * record.value3()));
 						ci.setSalesAlb(ci.getSalesAlb()+record.value2());
-						ci.setSalesValueAlb(ci.getValueSAlb() / ci.getSalesAlb());
+						//ci.setSalesValueAlb(ci.getValueSAlb() / ci.getSalesAlb());
 						//ci.setSalesValueAlb(ci.getSalesValueAlb()+ record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
@@ -217,7 +217,7 @@ public class DBConsumption {
 							ConsumptionItem ci = getConsumptionItem(ctx, record.value1(),  warehouseName, hotel);
 							ci.setValueSFac(record.value2() * record.value3());
 							ci.setSalesFac(record.value2());
-							ci.setSalesValueFac(record.value3());
+							//ci.setSalesValueFac(record.value3());
 							map.put(ci.getItemId(), ci);
 						}
 					}
@@ -225,7 +225,7 @@ public class DBConsumption {
 						ConsumptionItem ci = map.get(record.value1());
 						ci.setValueSFac(ci.getValueSFac() + (record.value2() * record.value3()));
 						ci.setSalesFac(ci.getSalesFac()+record.value2());
-						ci.setSalesValueFac(ci.getValueSFac() / ci.getSalesFac());
+						//ci.setSalesValueFac(ci.getValueSFac() / ci.getSalesFac());
 						//ci.setSalesValueFac(ci.getSalesValueFac()+ record.value3());
 						map.replace(ci.getItemId(), ci);
 					}
@@ -327,10 +327,10 @@ public class DBConsumption {
 		ci.setFinalQuantity(0.0);
 		
 		ci.setInitialValue(0.0);
-		ci.setPurchasesValueAlb(0.0);
-		ci.setPurchasesValueFac(0.0);
-		ci.setSalesValueAlb(0.0);
-		ci.setSalesValueFac(0.0);
+		//ci.setPurchasesValueAlb(0.0);
+		//ci.setPurchasesValueFac(0.0);
+		//ci.setSalesValueAlb(0.0);
+		//ci.setSalesValueFac(0.0);
 		ci.setTransfersMinusValue(0.0);
 		ci.setTransfersPlusValue(0.0);
 		ci.setFinalValue(0.0);

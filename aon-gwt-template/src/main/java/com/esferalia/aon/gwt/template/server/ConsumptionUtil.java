@@ -154,13 +154,7 @@ public class ConsumptionUtil {
         		ConsumptionItem ci = v.get(j);
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
 
-        		Double consumValue = (ci.getInitialValue() * ci.getInitialQuantity()) 
-    					+  	(ci.getPurchasesAlb() * ci.getPurchasesValueAlb())
-    					+  	(ci.getPurchasesFac() * ci.getPurchasesValueFac())
-    					+	((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()))
-    					-	(ci.getSalesAlb() * ci.getSalesValueAlb())
-    					-	(ci.getSalesFac() * ci.getSalesValueFac())
-    					-	(ci.getFinalQuantity() * ci.getFinalValue());
+        		Double consumValue = ci.getConsumValue();
             	
         		
         		if(!(ci.getInitialQuantity() == 0 && 
@@ -184,9 +178,9 @@ public class ConsumptionUtil {
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Valor Inicial": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style2);break;
-        				case "Valor Compras": celda.setCellValue(round((ci.getPurchasesAlb() * ci.getPurchasesValueAlb())+(ci.getPurchasesFac() * ci.getPurchasesValueFac()),2));celda.setCellStyle(style2);break;
+        				case "Valor Compras": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style2);break;
         				case "Ventas": celda.setCellValue(round(ci.getSalesAlb()+ ci.getSalesFac(),2));celda.setCellStyle(style2);break;
-        				case "Valor Ventas": celda.setCellValue(round((ci.getSalesAlb() * ci.getSalesValueAlb())+(ci.getSalesFac() * ci.getSalesValueFac()),2));celda.setCellStyle(style2);break;
+        				case "Valor Ventas": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style2);break;
         				case "Final": celda.setCellValue(round(ci.getFinalQuantity(),2));celda.setCellStyle(style2);break;
         				case "Valor Final": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
         				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style2);break;
@@ -320,11 +314,8 @@ public class ConsumptionUtil {
                             		i++;
                                     //next line
                             }
-            
         		 }
         		 try {
-        			 
-
         			 com.itextpdf.text.Font fontPhrase = new com.itextpdf.text.Font();
         			 fontPhrase.setSize(12);
         			 fontPhrase.setStyle(com.itextpdf.text.Font.BOLD);
@@ -495,14 +486,7 @@ public class ConsumptionUtil {
         		ConsumptionItem ci = v.get(j);
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
 
-        		Double consumValue = (ci.getInitialValue() * ci.getInitialQuantity()) 
-    					+  	(ci.getPurchasesAlb() * ci.getPurchasesValueAlb())
-    					+  	(ci.getPurchasesFac() * ci.getPurchasesValueFac())
-    					+	((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()))
-    					-	(ci.getSalesAlb() * ci.getSalesValueAlb())
-    					-	(ci.getSalesFac() * ci.getSalesValueFac())
-    					-	(ci.getFinalQuantity() * ci.getFinalValue());
-            	
+        		Double consumValue = ci.getConsumValue();
         		
         		if(!(ci.getInitialQuantity() == 0 && 
         			ci.getPurchasesAlb() == 0 &&
@@ -525,9 +509,9 @@ public class ConsumptionUtil {
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Valor Inicial": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style2);break;
-        				case "Valor Compras": celda.setCellValue(round((ci.getPurchasesAlb() * ci.getPurchasesValueAlb())+(ci.getPurchasesFac() * ci.getPurchasesValueFac()),2));celda.setCellStyle(style2);break;
+        				case "Valor Compras": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style2);break;
         				case "Ventas": celda.setCellValue(round(ci.getSalesAlb()+ ci.getSalesFac(),2));celda.setCellStyle(style2);break;
-        				case "Valor Ventas": celda.setCellValue(round((ci.getSalesAlb() * ci.getSalesValueAlb())+(ci.getSalesFac() * ci.getSalesValueFac()),2));celda.setCellStyle(style2);break;
+        				case "Valor Ventas": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style2);break;
         				case "Final": celda.setCellValue(round(ci.getFinalQuantity(),2));celda.setCellStyle(style2);break;
         				case "Valor Final": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
         				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style2);break;
@@ -551,7 +535,7 @@ public class ConsumptionUtil {
             			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
                 		Cell valueCell = row.createCell(columns+1);
                 		Double value = ci.getConsumption() * item.getPackMeasurement() * item.getPackUnits();
-                		if(value != 0) valueCell.setCellValue(value);
+                		valueCell.setCellValue(value);
                 		valueCell.setCellStyle(style2);
                 		Cell unityCell = row.createCell(columns+2);
                 		unityCell.setCellValue(item.getPackMeasurementTag().getName());
@@ -849,13 +833,7 @@ public class ConsumptionUtil {
         	for(ConsumptionItem ci : v2){
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
 
-        		Double consumValue = (ci.getInitialValue() * ci.getInitialQuantity()) 
-    					+  	(ci.getPurchasesAlb() * ci.getPurchasesValueAlb())
-    					+  	(ci.getPurchasesFac() * ci.getPurchasesValueFac())
-    					+	((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()))
-    					-	(ci.getSalesAlb() * ci.getSalesValueAlb())
-    					-	(ci.getSalesFac() * ci.getSalesValueFac())
-    					-	(ci.getFinalQuantity() * ci.getFinalValue());
+        		Double consumValue = ci.getConsumValue();
             	
         		
         		if(!(ci.getInitialQuantity() == 0 && 
@@ -881,9 +859,9 @@ public class ConsumptionUtil {
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style20);break;
         				case "Valor Inicial": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style20);break;
         				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style20);break;
-        				case "Valor Compras": celda.setCellValue(round((ci.getPurchasesAlb() * ci.getPurchasesValueAlb())+(ci.getPurchasesFac() * ci.getPurchasesValueFac()),2));celda.setCellStyle(style20);break;
+        				case "Valor Compras": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style20);break;
         				case "Ventas": celda.setCellValue(round(ci.getSalesAlb()+ ci.getSalesFac(),2));celda.setCellStyle(style20);break;
-        				case "Valor Ventas": celda.setCellValue(round((ci.getSalesAlb() * ci.getSalesValueAlb())+(ci.getSalesFac() * ci.getSalesValueFac()),2));celda.setCellStyle(style20);break;
+        				case "Valor Ventas": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style20);break;
         				case "Final": celda.setCellValue(round(ci.getFinalQuantity(),2));celda.setCellStyle(style20);break;
         				case "Valor Final": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style20);break;
         				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style20);break;
@@ -991,14 +969,7 @@ public class ConsumptionUtil {
         	String hotel = DBConsumption.getHotelName(domain, domainId, login, w.getId());
         	for(ConsumptionItem ci : v2){
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
-
-        		Double consumValue = (ci.getInitialValue() * ci.getInitialQuantity()) 
-    					+  	(ci.getPurchasesAlb() * ci.getPurchasesValueAlb())
-    					+  	(ci.getPurchasesFac() * ci.getPurchasesValueFac())
-    					+	((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()))
-    					-	(ci.getSalesAlb() * ci.getSalesValueAlb())
-    					-	(ci.getSalesFac() * ci.getSalesValueFac())
-    					-	(ci.getFinalQuantity() * ci.getFinalValue());
+        		Double consumValue = ci.getConsumValue();
             	
         		if((onlyNegative && consumValue < 0) || !onlyNegative){
         		
@@ -1010,10 +981,10 @@ public class ConsumptionUtil {
         			Double finalValue = ci.getFinalQuantity() * ci.getFinalValue();
         			if(finalValue != null) fin = fin + finalValue;
         		
-        			Double salesValue = (ci.getSalesAlb() * ci.getSalesValueAlb())+(ci.getSalesFac() * ci.getSalesValueFac());
+        			Double salesValue = (ci.getValueSAlb())+(ci.getValueSFac());
         			if(salesValue != null) ventas = ventas +salesValue;
         			
-        			Double purchasesValue = (ci.getPurchasesAlb() * ci.getPurchasesValueAlb())+(ci.getPurchasesFac() * ci.getPurchasesValueFac());
+        			Double purchasesValue = (ci.getValuePAlb())+(ci.getValuePFac());
         			if(purchasesValue != null) compras = compras +purchasesValue;
         		
         			Double initialValue = ci.getInitialValue() * ci.getInitialQuantity();

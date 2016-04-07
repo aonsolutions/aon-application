@@ -30,14 +30,14 @@ public class ConsumptionItem implements IsSerializable{
 	String warehouseName;
 	
 	Double salesAlb;
-	Double salesValueAlb;
+//	Double salesValueAlb;
 	Double salesFac;
-	Double salesValueFac;
+//	Double salesValueFac;
 	
 	Double purchasesAlb;
-	Double purchasesValueAlb;
+//	Double purchasesValueAlb;
 	Double purchasesFac;
-	Double purchasesValueFac;
+//	Double purchasesValueFac;
 	
 	Double valuePAlb;
 	Double valuePFac;
@@ -242,7 +242,7 @@ public class ConsumptionItem implements IsSerializable{
 		this.finalValue = finalValue;
 		return this;
 	}
-	public Double getSalesValueAlb() {
+	/*public Double getSalesValueAlb() {
 		return salesValueAlb;
 	}
 	public ConsumptionItem setSalesValueAlb(Double salesValue) {
@@ -269,7 +269,7 @@ public class ConsumptionItem implements IsSerializable{
 	public ConsumptionItem setPurchasesValueFac(Double purchasesValue) {
 		this.purchasesValueFac = purchasesValue;
 		return this;
-	}
+	}*/
 	public Double getTransfersPlusValue() {
 		return transfersPlusValue;
 	}
@@ -347,15 +347,18 @@ public class ConsumptionItem implements IsSerializable{
 		this.hotel = hotel;
 		return this;
 	}
-	
-	
+
 	public Double getConsumValue(){
 		Double consumValue = (getInitialValue() * getInitialQuantity()) 
-				+  	(getPurchasesAlb() * getPurchasesValueAlb())
-				+  	(getPurchasesFac() * getPurchasesValueFac())
+			//	+  	(getPurchasesAlb() * getPurchasesValueAlb())
+				+ 	getValuePAlb()
+			//	+  	(getPurchasesFac() * getPurchasesValueFac())
+				+	getValuePFac()
 				+	((getTransfersPlus() * getPrice()) - (getTransfersMinus() * getPrice()))
-				-	(getSalesAlb() * getSalesValueAlb())
-				-	(getSalesFac() * getSalesValueFac())
+			//	-	(getSalesAlb() * getSalesValueAlb())
+				- 	getValueSAlb()
+			//	-	(getSalesFac() * getSalesValueFac())
+				-	getValueSFac()
 				-	(getFinalQuantity() * getFinalValue());
 		
 		if(consumValue != null) return consumValue;
