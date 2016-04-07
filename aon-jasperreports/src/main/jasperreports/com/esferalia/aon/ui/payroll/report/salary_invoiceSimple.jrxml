@@ -1145,7 +1145,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getUnemployment()==null
 || $F{salary}.getEnterpriseCosts().getUnemployment().getAmount()==0.00)?0.00:
 ($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getUnemployment().getAmount()
-    / ($F{salary}.getProfessionalBase()) * 100))
+    / ($F{salary}.getTotalProfessionalBase()) * 100))
 + " % | "
 + $V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getUnemployment().getAmount())))]]></textFieldExpression>
 			</textField>
@@ -1220,7 +1220,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getFogasa()==null
 || $F{salary}.getEnterpriseCosts().getFogasa().getAmount()==0.00)?0.00:
 ($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getFogasa().getAmount()
-    / ($F{salary}.getProfessionalBase()) * 100))
+    / ($F{salary}.getTotalProfessionalBase()) * 100))
 + " % | "
 + $V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getFogasa().getAmount())))]]></textFieldExpression>
 			</textField>
@@ -1299,7 +1299,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 					<rightPen lineWidth="0.25" lineColor="#000000"/>
 				</box>
 				<textElement/>
-				<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{salary}.getTotalProfessionalBase()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="4f2500f7-65d1-4e9e-8401-f662b9058aea" style="title" x="98" y="156" width="86" height="10"/>
@@ -1394,7 +1394,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 					<rightPen lineWidth="0.5" lineColor="#000000"/>
 				</box>
 				<textElement/>
-				<textFieldExpression><![CDATA[$F{salary}.getCommonBase()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{salary}.getTotalCommonBase()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="04134bcd-391e-448d-a3d8-f23040161986" style="text" x="98" y="122" width="86" height="12" forecolor="#000000"/>
@@ -1407,7 +1407,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getJobTraining()==null
 || $F{salary}.getEnterpriseCosts().getJobTraining().getAmount()==0.00)?0.00:
 ($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getJobTraining().getAmount()
-    / ($F{salary}.getProfessionalBase()) * 100))
+    / ($F{salary}.getTotalProfessionalBase()) * 100))
 + " % | "
 + $V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getJobTraining().getAmount())))]]></textFieldExpression>
 			</textField>
@@ -1433,7 +1433,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 || $F{salary}.getEnterpriseCosts().getAtepIt().getAmount()==0.00)?0.00:
 (($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getAtepIt().getAmount()
     + $F{salary}.getEnterpriseCosts().getAtepIms().getAmount())
-    / ($F{salary}.getProfessionalBase()) * 100))
+    / ($F{salary}.getTotalProfessionalBase()) * 100))
 + " % | "
 + $V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getAtepIt().getAmount()
     + $F{salary}.getEnterpriseCosts().getAtepIms().getAmount())))]]></textFieldExpression>
@@ -1461,7 +1461,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 || $F{salary}.getEnterpriseCosts().getCommonContingency().getAmount()==0.00)?0.00:
 ($V{DoubleFormater}.format(
     CommonUtil.round($F{salary}.getEnterpriseCosts().getCommonContingency().getAmount()
-    / ($F{salary}.getCommonBase()) * 100))
+    / ($F{salary}.getTotalCommonBase()) * 100))
 + " % | "
 + $V{DoubleFormater}.format(
     CommonUtil.round($F{salary}.getEnterpriseCosts().getCommonContingency().getAmount())))]]></textFieldExpression>

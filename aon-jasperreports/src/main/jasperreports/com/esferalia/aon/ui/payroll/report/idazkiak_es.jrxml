@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6db98469-9803-48fe-b770-69ab2a604fe2">
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
@@ -614,7 +614,7 @@
 					<textField pattern="#,##0.00">
 						<reportElement uuid="b65c5a12-79d6-4975-aaf3-bff5d993e8dc" style="text" x="0" y="13" width="88" height="13"/>
 						<textElement/>
-						<textFieldExpression><![CDATA[$F{salary}.getCommonBase()]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{salary}.getTotalCommonBase()]]></textFieldExpression>
 					</textField>
 				</frame>
 				<frame>
@@ -637,7 +637,7 @@
 					<textField pattern="#,##0.00">
 						<reportElement uuid="a12b8285-7ff4-4008-afe9-4879304f9833" style="text" x="14" y="13" width="60" height="13"/>
 						<textElement/>
-						<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase()]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{salary}.getTotalProfessionalBase()]]></textFieldExpression>
 					</textField>
 				</frame>
 				<frame>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f297c6a1-ad1e-4d4f-b01e-7dc2c4e4149b">
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="22"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.esferalia.aon.salary.enumeration.PaymentType"/>
 	<import value="com.code.aon.registry.enumeration.AddressType"/>
@@ -104,13 +104,13 @@
 		<variableExpression><![CDATA[$F{salary}.getDeductions().getCommonContingency().getAmount()]]></variableExpression>
 	</variable>
 	<variable name="prcCg" class="java.lang.Double">
-		<variableExpression><![CDATA[$V{importeCg} / $F{salary}.getCommonBase() * 100]]></variableExpression>
+		<variableExpression><![CDATA[$V{importeCg} / $F{salary}.getTotalCommonBase() * 100]]></variableExpression>
 	</variable>
 	<variable name="importeAcc" class="java.lang.Double">
 		<variableExpression><![CDATA[$F{salary}.getDeductions().getUnemployment().getAmount() + $F{salary}.getDeductions().getJobTraining().getAmount()]]></variableExpression>
 	</variable>
 	<variable name="prcAcc" class="java.lang.Double">
-		<variableExpression><![CDATA[$V{importeAcc} / $F{salary}.getProfessionalBase() * 100]]></variableExpression>
+		<variableExpression><![CDATA[$V{importeAcc} / $F{salary}.getTotalProfessionalBase() * 100]]></variableExpression>
 	</variable>
 	<variable name="importeHex" class="java.lang.Double">
 		<variableExpression><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getAmount()]]></variableExpression>
@@ -616,7 +616,7 @@
 							<printWhenExpression><![CDATA[$F{salary}.getCommonBase() != 0.00]]></printWhenExpression>
 						</reportElement>
 						<textElement/>
-						<textFieldExpression><![CDATA[$F{salary}.getCommonBase()]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{salary}.getTotalCommonBase()]]></textFieldExpression>
 					</textField>
 				</frame>
 				<frame>
@@ -656,7 +656,7 @@
 							<printWhenExpression><![CDATA[$F{salary}.getProfessionalBase() != 0.00]]></printWhenExpression>
 						</reportElement>
 						<textElement/>
-						<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase()]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{salary}.getTotalProfessionalBase()]]></textFieldExpression>
 					</textField>
 				</frame>
 				<frame>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7705eda3-9c23-4304-ad87-aeb921515614">
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="284"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.code.aon.common.util.CommonUtil"/>
 	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
@@ -914,8 +914,10 @@
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="997fee8c-3a23-4ff9-a1c7-d6fff97ae283" style="total1" x="301" y="49" width="97" height="13"/>
-					<textElement/>
-					<textFieldExpression><![CDATA[$F{salary}.getCommonBase() == 0.00 ? "" : $F{salary}.getCommonBase()]]></textFieldExpression>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{salary}.getTotalCommonBase() == 0.00 ? "" : $F{salary}.getTotalCommonBase()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="92e88936-28dd-41f5-9333-e782bcae9da8" style="title2_dotts" x="24" y="68" width="127" height="52"/>
@@ -927,8 +929,10 @@
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="66708b1e-2b43-4d37-8030-126274b84e60" style="total1" x="301" y="87" width="97" height="13"/>
-					<textElement/>
-					<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase()]]></textFieldExpression>
+					<textElement>
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{salary}.getTotalProfessionalBase()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="cad397fe-d6f3-44f2-a2e7-4930284948ee" style="title2_dotts" x="24" y="120" width="277" height="13"/>
@@ -940,7 +944,9 @@
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="3d802654-cdd3-4ab3-bb1d-d91ba4a598b6" style="total1" x="301" y="133" width="97" height="13"/>
-					<textElement/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{salary}.getOvertimeBase() != 0.00?$F{salary}.getOvertimeBase():0.00]]></textFieldExpression>
 				</textField>
 				<staticText>
@@ -950,7 +956,9 @@
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="3de695d2-cb7d-4993-b3bc-ed9c95c87b60" style="total1" x="301" y="159" width="97" height="13"/>
-					<textElement/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{salary}.getIrpfBase() == 0.00 ? "": $F{salary}.getIrpfBase()]]></textFieldExpression>
 				</textField>
 				<staticText>
@@ -999,7 +1007,7 @@
 || $F{salary}.getEnterpriseCosts().getCommonContingency().getAmount()==0.00)?null:
 ($V{DoubleFormater}.format(
     CommonUtil.round($F{salary}.getEnterpriseCosts().getCommonContingency().getAmount()
-    / ($F{salary}.getCommonBase()) * 100))
+    / ($F{salary}.getTotalCommonBase()) * 100))
 + " %")]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1014,7 +1022,7 @@
 || $F{salary}.getEnterpriseCosts().getAtepIt().getAmount()==0.00)?null:
 (($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getAtepIt().getAmount()
     + $F{salary}.getEnterpriseCosts().getAtepIms().getAmount())
-    / ($F{salary}.getProfessionalBase()) * 100))
+    / ($F{salary}.getTotalProfessionalBase()) * 100))
 + " %")]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1028,7 +1036,7 @@
 					<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getFogasa()==null
 || $F{salary}.getEnterpriseCosts().getFogasa().getAmount()==0.00)?null:
 ($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getFogasa().getAmount()
-    / ($F{salary}.getProfessionalBase()) * 100))
+    / ($F{salary}.getTotalProfessionalBase()) * 100))
 + " %")]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1042,7 +1050,7 @@
 					<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getUnemployment()==null
 || $F{salary}.getEnterpriseCosts().getUnemployment().getAmount()==0.00)?null:
 ($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getUnemployment().getAmount()
-    / ($F{salary}.getProfessionalBase()) * 100))
+    / ($F{salary}.getTotalProfessionalBase()) * 100))
 + " %")]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1056,7 +1064,7 @@
 					<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getJobTraining()==null
 || $F{salary}.getEnterpriseCosts().getJobTraining().getAmount()==0.00)?null:
 ($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getJobTraining().getAmount()
-    / ($F{salary}.getProfessionalBase()) * 100))
+    / ($F{salary}.getTotalProfessionalBase()) * 100))
 + " %")]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1139,7 +1147,9 @@
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="6e5d9d11-887b-4937-ba6a-8ac3e3700987" style="total1" x="301" y="146" width="97" height="13"/>
-					<textElement/>
+					<textElement>
+						<font size="9"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{salary}.getNonEstructuralOvertimeBase() != 0.00?$F{salary}.getNonEstructuralOvertimeBase():0.00]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">

@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary_dualColumn" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2219f940-1d11-45db-a72b-ad1a7427b049">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="384"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.code.aon.common.util.CommonUtil"/>
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
@@ -1233,7 +1233,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 || $F{salary}.getEnterpriseCosts().getCommonContingency().getAmount()==0.00)?null:
 ($V{DoubleFormater}.format(
     CommonUtil.round($F{salary}.getEnterpriseCosts().getCommonContingency().getAmount()
-    / ($F{salary}.getCommonBase()) * 100))
+    / ($F{salary}.getTotalCommonBase()) * 100))
 + " %")]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1305,7 +1305,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 || $F{salary}.getEnterpriseCosts().getAtepIt().getAmount()==0.00)?null:
 (($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getAtepIt().getAmount()
     + $F{salary}.getEnterpriseCosts().getAtepIms().getAmount())
-    / ($F{salary}.getProfessionalBase()) * 100))
+    / ($F{salary}.getTotalProfessionalBase()) * 100))
 + " %")]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1319,7 +1319,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getUnemployment()==null
 || $F{salary}.getEnterpriseCosts().getUnemployment().getAmount()==0.00)?null:
 ($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getUnemployment().getAmount()
-    / ($F{salary}.getProfessionalBase()) * 100))
+    / ($F{salary}.getTotalProfessionalBase()) * 100))
 + " %")]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1333,7 +1333,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getJobTraining()==null
 || $F{salary}.getEnterpriseCosts().getJobTraining().getAmount()==0.00)?null:
 ($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getJobTraining().getAmount()
-    / ($F{salary}.getProfessionalBase()) * 100))
+    / ($F{salary}.getTotalProfessionalBase()) * 100))
 + " %")]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1347,7 +1347,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getFogasa()==null
 || $F{salary}.getEnterpriseCosts().getFogasa().getAmount()==0.00)?null:
 ($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getFogasa().getAmount()
-    / ($F{salary}.getProfessionalBase()) * 100))
+    / ($F{salary}.getTotalProfessionalBase()) * 100))
 + " %")]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
