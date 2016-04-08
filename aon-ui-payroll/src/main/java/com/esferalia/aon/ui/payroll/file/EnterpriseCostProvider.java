@@ -462,9 +462,9 @@ public class EnterpriseCostProvider implements Serializable {
 		SelectQuery<Record> query = ctx.selectQuery();
 		query.addFrom(SALARY);
 		query.addJoin(CONTRACT, JoinType.LEFT_OUTER_JOIN, SALARY.CONTRACT.equal(CONTRACT.ID));
-		query.addConditions(SALARY.END_DATE.greaterOrEqual(new java.sql.Date(startDate.getTime())));
-		query.addConditions(SALARY.END_DATE.lessOrEqual(new java.sql.Date(endDate.getTime())));
-		query.addOrderBy(SALARY.END_DATE.desc(), SALARY.CCC.asc(), SALARY.EMPLOYEE_NAME.asc());
+		query.addConditions(SALARY.ISSUE_DATE.greaterOrEqual(new java.sql.Date(startDate.getTime())));
+		query.addConditions(SALARY.ISSUE_DATE.lessOrEqual(new java.sql.Date(endDate.getTime())));
+		query.addOrderBy(SALARY.ISSUE_DATE.desc(), SALARY.CCC.asc(), SALARY.EMPLOYEE_NAME.asc());
 		if (domainId != null) {
 			query.addConditions(SALARY.DOMAIN.equal(domainId));
 		}
@@ -521,8 +521,8 @@ public class EnterpriseCostProvider implements Serializable {
 		SelectQuery<Record> query = ctx.selectQuery();
 		query.addFrom(salaryLines);
 		query.addJoinOnKey(SALARY, JoinType.LEFT_OUTER_JOIN);
-		query.addConditions(SALARY.END_DATE.greaterOrEqual(new java.sql.Date(startDate.getTime())));
-		query.addConditions(SALARY.END_DATE.lessOrEqual(new java.sql.Date(endDate.getTime())));
+		query.addConditions(SALARY.ISSUE_DATE.greaterOrEqual(new java.sql.Date(startDate.getTime())));
+		query.addConditions(SALARY.ISSUE_DATE.lessOrEqual(new java.sql.Date(endDate.getTime())));
 		query.addOrderBy(orderBy);
 		if (domainId != null) {
 			query.addConditions(SALARY.DOMAIN.equal(domainId));

@@ -243,16 +243,16 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 				alias = bean.getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID);
 				criteria.addEqualExpression(alias, getPerson().getId());
 			}
-			alias = bean.getFieldName(IEntityAlias.SALARY_END_DATE);
+			alias = bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE);
 			criteria.addGreaterThanOrEqualExpression(alias, getStartDate());
-			alias = bean.getFieldName(IEntityAlias.SALARY_END_DATE);
+			alias = bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE);
 			criteria.addLessThanOrEqualExpression(alias, getEndDate());
 			if(isGroupByPerson()){
 				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
 				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
-				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE));
 			} else {
-				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE));
 				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
 				criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
 			}
@@ -294,8 +294,8 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID), enterprise.getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
-		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), getStartDate());
-		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), getEndDate());
+		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), getStartDate());
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), getEndDate());
 		return bean.getList(criteria);
 	}
 	private void countCalculatedSalary() throws ManagerBeanException {
