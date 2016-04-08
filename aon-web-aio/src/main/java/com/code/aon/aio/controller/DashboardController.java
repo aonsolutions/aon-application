@@ -316,15 +316,15 @@ public class DashboardController implements Serializable {
 		boolean missing = Boolean.valueOf(params.get("status"));
 		String beanName = null;
 		if ( mod == Model.M111) {
-			beanName = "mod111";
+			return "gwt_mod111";
 		} else if ( mod == Model.M115) {
-			beanName = "mod115";
+			return "gwt_mod115";
 		} else if ( mod == Model.M123) {
-			beanName = "mod123";
+			return "gwt_mod123";
 		} else if ( mod == Model.M130) {
-			beanName = "mod130";
+			return "gwt_mod130";
 		} else if ( mod == Model.M131) {
-			beanName = "mod131";
+			return "gwt_mod131";
 		} else if ( mod == Model.M303_RG) {
 			beanName = "vatTax";
 		} else if ( mod == Model.M303_RS) {
