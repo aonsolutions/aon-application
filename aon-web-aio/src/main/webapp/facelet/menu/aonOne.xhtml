@@ -459,7 +459,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-utilities aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_module_configuration}" />
+								<aon:outputText value="#{bundle.aon_utilities}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:if test="#{aonRole.admin or aonRole.config}">
@@ -470,28 +470,15 @@
 											value="#{bundle.admin_global_configuration}" />
 									</aon:div>
 								</aon:if>
-								<aon:if test="#{domainSwitcher.betaDomain}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_invoiceStats-aonOne"
-											action="gwt_invoiceStats-aonOne"
-											title="Estadisticas">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="Estadisticas" />												
-										</aon:commandLink>
-									</aon:div>
-								</aon:if>							
-<!-- 								
-								<aon:if test="#{aonRole.admin}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="dump-aonOne"
-											action="backup_form-aonOne"
-											actionListener="#{backup.onInit}"
-											value="#{bundle.admin_backup}" />
-									</aon:div>
-								</aon:if>
- -->
- 
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_invoiceStats-aonOne"
+										action="gwt_stat-aonOne"
+										title="Estadisticas">
+										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+											style="margin-left: 5px; padding-left: 20px;" 
+											value="Estadisticas" />												
+									</aon:commandLink>
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
