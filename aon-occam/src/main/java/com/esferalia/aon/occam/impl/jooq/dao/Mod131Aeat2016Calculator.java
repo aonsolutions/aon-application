@@ -131,10 +131,10 @@ public class Mod131Aeat2016Calculator  {
 		double coef = 0.0;
 		double iem = 0;
 		double as = salariedStaff;
-		if (act.getEmp() != 0 && salariedStaff >= act.getEmp() ) {
-			as = AonMathUtils.round(as - act.getEmp());
-			coef = AonMathUtils.round( as * 0.40 );
-		} 
+//		if (act.getEmp() != 0 && salariedStaff >= act.getEmp() ) {
+//			as = AonMathUtils.round(as - act.getEmp());
+//			coef = AonMathUtils.round( as * 0.40 );
+//		} 
 		if (AonMathUtils.round(as) > 0 ) {
 			coef = coef + AonMathUtils.round( (as>1?1:as) * 0.10 );	
 			as = AonMathUtils.round(as - 1);	
