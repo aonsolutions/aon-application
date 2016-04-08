@@ -640,7 +640,7 @@ public class MOD303Writer {
 		declaration.setQuota(mod303.getEnsuredAmount(Mod303Key.C66));
 		declaration.setPreviousYearCompensateQuota(mod303.getEnsuredAmount(Mod303Key.C67));
 		declaration.setRegularizationResult(mod303.getEnsuredAmount(Mod303Key.C68));
-		declaration.setResult(mod303.getEnsuredAmount(Mod303Key.C69));
+		declaration.setResult0(mod303.getEnsuredAmount(Mod303Key.C69));
 		declaration.setToDeduct(mod303.getEnsuredAmount(Mod303Key.C70));
 		declaration.setResult(mod303.getEnsuredAmount(Mod303Key.C71));
 		declaration.setExtraCharge(0.0);

@@ -32,6 +32,7 @@ public class Declaration {
 	private String document;
 	private Integer startPeriod;
 	private Integer endPeriod;
+	private Double result0;
 	private Double result;
 	private String name;
 	private String surname;
@@ -336,6 +337,12 @@ public class Declaration {
 	}
 	public void setResult(Double result) {
 		this.result = result;
+	}
+	public Double getResult0() {
+		return result0;
+	}
+	public void setResult0(Double result0) {
+		this.result0 = result0;
 	}
 	public Double getResultSum() {
 		return CommonUtil.round(

@@ -11,7 +11,7 @@
 	<field name="quota" value="bean" bean="dec" property="quota" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="previousYearCompensateQuota" value="bean" bean="dec" property="previousYearCompensateQuota" format="DefNumeric" pattern="9(15)V99" />
 	<field name="regularizationResult" value="bean" bean="dec" property="regularizationResult" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="afterCompensateQuotaResult" value="bean" bean="dec" property="result" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="afterCompensateQuotaResult" value="bean" bean="dec" property="result0" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="toDeduct" value="bean" bean="dec" property="toDeduct" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="result" value="bean" bean="dec" property="result" format="DefNumeric" pattern="S9(14)V99" />
 
