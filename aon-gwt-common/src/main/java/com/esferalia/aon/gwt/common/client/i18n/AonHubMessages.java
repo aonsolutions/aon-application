@@ -89,5 +89,7 @@ public interface AonHubMessages extends Messages {
 	
 	@DefaultMessage("VOLVER")
 	String back();
- 
+	
+	@DefaultMessage("FAQ")
+	String FAQ();
 }
