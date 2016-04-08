@@ -9,6 +9,8 @@ import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.RectificationType;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -30,6 +32,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		try {
+			CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 			InvoiceController invoiceController = (InvoiceController)this.getController(); 
 			Invoice invoice = (Invoice)invoiceController.getTo();
 			invoice.setStatus(InvoiceStatus.PENDING);
@@ -37,6 +40,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
 			invoice.setTaxDate(invoice.getIssueDate());
 			invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+			invoice.setSkipCalculateMainActivity(companyColls.getActiveCompanyActivitiesCount() > 1);
 
 			invoiceController.initSeries();
 			invoiceController.loadAddresses(null);

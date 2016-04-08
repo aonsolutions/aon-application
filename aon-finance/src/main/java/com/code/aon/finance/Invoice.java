@@ -59,6 +59,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	private int issueMonth;
 	private int issueDay;
 	private boolean defaultTaxInfo;
+	private boolean skipCalculateMainActivity;
 	private boolean updateEnabled;
 	private boolean updateDetails;
 	private boolean attachmentAvailable;
@@ -72,6 +73,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		setIssueDate(new Date());
 		setSecurityLevel(SecurityLevel.OFFICIAL);
 		setDefaultTaxInfo(true);
+		setSkipCalculateMainActivity(false);
 		setUpdateEnabled(true);
 		setUpdateDetails(false);
 	}
@@ -106,6 +108,14 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	}
 	public void setDefaultTaxInfo(boolean defaultTaxInfo) {
 		this.defaultTaxInfo = defaultTaxInfo;
+	}
+
+	@Transient
+	public boolean isSkipCalculateMainActivity() {
+		return skipCalculateMainActivity;
+	}
+	public void setSkipCalculateMainActivity(boolean skipCalculateMainActivity) {
+		this.skipCalculateMainActivity = skipCalculateMainActivity;
 	}
 
 	@Transient

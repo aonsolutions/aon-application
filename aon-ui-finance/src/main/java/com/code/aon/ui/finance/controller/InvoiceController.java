@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.AON_ALL;
 import static com.code.aon.ui.common.ICommonMessages.CALCULATE_FINANCES_AMOUNT_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.CALCULATE_INVOICE_QUANTITY_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING;
@@ -53,6 +52,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.InvestAsset;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
@@ -77,6 +77,7 @@ import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.ITaxInfo;
@@ -100,7 +101,6 @@ import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.payroll.EnterpriseActivity;
 
 public class InvoiceController extends HeaderObjectController implements ISignatureController, IFinanceConstants, IAuditableController {
 
@@ -759,18 +759,28 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return true;
 	}
 
-	public List<SelectItem> getActivities() throws ManagerBeanException {
-		List<SelectItem> activities = new LinkedList<SelectItem>();
-		EnterpriseActivity activity = new EnterpriseActivity();
-		activity.setId(0);
-		activity.setDescription(AonUtil.getMessage(AON_ALL));
-		SelectItem item = new SelectItem(activity, activity.getDescription());
-		activities.add(item);
-
-		CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-		activities.addAll(companyCollections.getActiveCompanyActivities());
-		return activities;
-	}
+	/*public List<SelectItem> getInvestAssets() throws ManagerBeanException {
+		List<SelectItem> investAssets = new LinkedList<SelectItem>();
+		if (getInvoice().getActivity() == null || getInvoice().getActivity().getId() == null || getInvoice().getActivity().getId() == 0) {
+			CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+			investAssets.addAll(companyCollections.getActiveCompanyInvestAssets());
+		} else {
+			IManagerBean investAssetBean = BeanManager.getManagerBean(InvestAsset.class);
+			Criteria criteria = new Criteria();
+			String alias = investAssetBean.getFieldName(IEntityAlias.INVEST_ASSET_ACTIVITY_ID);
+			Expression activityValueExpr = ExpressionUtilities.getEqualExpression(alias, getInvoice().getActivity().getId());
+			Expression activityNullExpr = ExpressionUtilities.getNullExpression(alias);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(activityValueExpr, activityNullExpr));
+			criteria.addNullExpression(investAssetBean.getFieldName(IEntityAlias.INVEST_ASSET_END_DATE));
+			criteria.addOrder(investAssetBean.getFieldName(IEntityAlias.INVEST_ASSET_DESCRIPTION));
+			for (ITransferObject ito : investAssetBean.getList(criteria)) {
+				InvestAsset investAsset = (InvestAsset)ito;
+				SelectItem item = new SelectItem(investAsset, investAsset.getDescription());
+				investAssets.add(item);
+			}
+		}
+		return investAssets;
+	}*/
 
 	protected boolean validateInvoice() {
 		Invoice invoice = getInvoice();

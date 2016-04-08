@@ -75,10 +75,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				invoice.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Invoice", criteria));
 			}
 		}
-		if (invoice.getActivity() == null || invoice.getActivity().getId() == null) {
+		if ((invoice.getActivity() == null || invoice.getActivity().getId() == null) && !invoice.isSkipCalculateMainActivity()) {
 			invoice.setActivity(obtainPrincipalActivity(company));
-		} else if (invoice.getActivity().getId() == 0) {
-			invoice.setActivity(null);
 		}
 		if (invoice.getSecurityLevel() == null) {
 			invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
@@ -116,9 +114,6 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			}
 			if (changeTaxDate(invoice)) {
 				invoice.setTaxDate(invoice.getIssueDate());
-			}
-			if (invoice.getActivity() != null && invoice.getActivity().getId() == 0) {
-				invoice.setActivity(null);
 			}
 			invoice.setUpdateDetails(updateDetailsNeeded(invoice));
 		}
