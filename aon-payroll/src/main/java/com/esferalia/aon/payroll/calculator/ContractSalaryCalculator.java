@@ -61,6 +61,9 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalculator<T> {
 
+	private static final String DESCRIPTION_UNDEF_ERROR = "Error en la descripic\u00F3n, variable '%s' desconocida.";
+	private static final String DESCRIPTION_UNKNOWN_ERROR = "Error desconocido en la descripic\u00F3n.";
+	private static final String DESCRIPTION_SYNTAX_ERROR = "Error sint\u00E1ctico en la descripic\u00F3n.";
 	private static final String BUILDER_VARIABLE = "BUILDER";
 
 
@@ -748,8 +751,12 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 								description = expressionContext.evalTemplate(
 										contractCost.getDescription(),
 										period.getStart(), period.getEnd());
+							} catch (CompileException e) {
+								onCompileError(contractCost, DESCRIPTION_SYNTAX_ERROR);
+							} catch (UndefinedVariablesException e) {
+								onCheckError(contractCost, String.format(DESCRIPTION_UNDEF_ERROR, e.getVariableNames()[0] ));
 							} catch (Exception e) {
-								// TODO : Log ???
+								onCheckError(contractCost, DESCRIPTION_UNKNOWN_ERROR);
 							}
 							salaryBuilder.addCost(value, description,
 									contractCost, amount.getContext());
@@ -813,8 +820,12 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 								description = expressionContext.evalTemplate(
 										contractBonus.getDescription(),
 										period.getStart(), period.getEnd());
+							} catch (CompileException e) {
+								onCompileError(contractBonus, DESCRIPTION_SYNTAX_ERROR);
+							} catch (UndefinedVariablesException e) {
+								onCheckError(contractBonus, String.format(DESCRIPTION_UNDEF_ERROR, e.getVariableNames()[0] ));
 							} catch (Exception e) {
-								// TODO : Log ???
+								onCheckError(contractBonus, DESCRIPTION_UNKNOWN_ERROR);
 							}
 							salaryBuilder.addBonus(value, description,
 									contractBonus, amount.getContext());
@@ -933,8 +944,12 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 						// description = getDescriptionPeriod(description,
 						// paymentStart, paymentEnd, amountStart,
 						// amountEnd);
+					} catch (CompileException e) {
+						onCompileError(contractPayment, DESCRIPTION_SYNTAX_ERROR);
+					} catch (UndefinedVariablesException e) {
+						onCheckError(contractPayment, String.format(DESCRIPTION_UNDEF_ERROR, e.getVariableNames()[0] ));
 					} catch (Exception e) {
-						// TODO : Log ???
+						onCheckError(contractPayment, DESCRIPTION_UNKNOWN_ERROR);
 					}
 					salaryBuilder.addPayment(resultValue, quote, tax,
 							description, resultStart, resultEnd,
@@ -953,26 +968,20 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		} catch (RemoveException e) {
 			onRemove(contractPayment);
 		} catch (InvalidVariables e) {
-//			System.out.println(e.getMessage());
 			onInvalidData(contractPayment, e.getMessage(), e.getVariables());
 		} catch (InterruptedException e) {
-//			System.out.println(e.getMessage());
 			throw e; // Not catch
 		} catch (CheckException e) {
-//			System.out.println(e.getMessage());
 			onCheckError(contractPayment, e.getMessage());
 		} catch (RemoveVariableError e) {
-//			System.out.println(e.getMessage());
 			onUndefinedData(contractPayment, e.getVariable());
 		} catch (UndefinedTotalPaymentException e) {
 			throw e;
 		} catch (UndefinedVariablesException e) {
-//			System.out.println(e.getMessage());
 			UndefinedContextVariablesException.throvv(e);
 			// onUndefinedData(contractPayment, e.getMessage(),
 			// e.getVariableNames());
 		} catch (CompileException e) {
-//			System.out.println(e.getMessage());
 			onCompileError(contractPayment, e.getMessage());
 		}
 
@@ -1008,8 +1017,12 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			try {
 				description = ctx.evalTemplate(d.getDescription(),
 						period.getStart(), period.getEnd());
+			} catch (CompileException e) {
+				onCompileError(d, DESCRIPTION_SYNTAX_ERROR);
+			} catch (UndefinedVariablesException e) {
+				onCheckError(d, String.format(DESCRIPTION_UNDEF_ERROR, e.getVariableNames()[0] ));
 			} catch (Exception e) {
-				// TODO : Log ???
+				onCheckError(d, DESCRIPTION_UNKNOWN_ERROR);
 			}
 			salaryBuilder.addDeduction(value, description, 
 					period.getStart(),
@@ -1047,8 +1060,12 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				Period period = result.getPeriod();
 				description = ctx.evalTemplate(embargo.getDescription(),
 						period.getStart(), period.getEnd());
-			} catch (Exception ex) {
-				// TODO : Log ???
+			} catch (CompileException e) {
+				onCompileError(embargo, DESCRIPTION_SYNTAX_ERROR);
+			} catch (UndefinedVariablesException e) {
+				onCheckError(embargo, String.format(DESCRIPTION_UNDEF_ERROR, e.getVariableNames()[0] ));
+			} catch (Exception e) {
+				onCheckError(embargo, DESCRIPTION_UNKNOWN_ERROR);
 			}
 			salaryBuilder.addEmbargo(embargo.getId(), value, description,
 					embargo, result.getContext());

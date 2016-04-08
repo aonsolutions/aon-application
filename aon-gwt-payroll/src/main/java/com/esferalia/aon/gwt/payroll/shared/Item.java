@@ -24,6 +24,7 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 	Salary.Type salaryType;
 	Double dbAmount;
 	Integer conceptId;
+	String descriptionTemplate;
 
 	Integer domain;
 	
@@ -150,7 +151,15 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 	public void setDefined(boolean defined[]) {
 		this.defined = defined;
 	}
+	
+	public String getDescriptionTemplate() {
+		return descriptionTemplate;
+	}
 
+	public void setDescriptionTemplate(String descriptionTemplate) {
+		this.descriptionTemplate = descriptionTemplate;
+	}
+	
 	@Override
 	public int hashCode() {
 		return id != null ? id : 0;

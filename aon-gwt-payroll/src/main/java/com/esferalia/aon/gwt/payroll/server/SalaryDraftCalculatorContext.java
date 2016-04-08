@@ -427,8 +427,9 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			draftDeduction.setStartDate(resetTime(deduction.getStartDate()));
 			draftDeduction.setMonth(getMonth(deduction.getMonth()));
 			draftDeduction.setExpression(deduction.getExpression());
-			draftDeduction.setDescription(deduction.getDescription());
+			//draftDeduction.setDescription(deduction.getDescription());
 			draftDeduction.setType(getDeductionType(deduction.getType()));
+			draftDeduction.setDescription(deduction.getDescriptionTemplate());
 
 			deductions.add(draftDeduction);
 		}
@@ -447,7 +448,8 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			draftEmbargo.setEndDate(resetTime(embargo.getEndDate()));
 			draftEmbargo.setStartDate(resetTime(embargo.getStartDate()));
 			draftEmbargo.setExpression(embargo.getExpression());
-			draftEmbargo.setDescription(embargo.getDescription());
+			//draftEmbargo.setDescription(embargo.getDescription());
+			draftEmbargo.setDescription(embargo.getDescriptionTemplate());
 
 			embargos.add(draftEmbargo);
 		}
@@ -466,7 +468,8 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			draftBonus.setEndDate(resetTime(bonus.getEndDate()));
 			draftBonus.setStartDate(resetTime(bonus.getStartDate()));
 			draftBonus.setExpression(bonus.getExpression());
-			draftBonus.setDescription(bonus.getDescription());
+			//draftBonus.setDescription(bonus.getDescription());
+			draftBonus.setDescription(bonus.getDescriptionTemplate());
 
 			bonuses.add(draftBonus);
 		}
@@ -556,7 +559,9 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		if (month != null) {
 			draftPayment.setMonth(Month.getMonthByValue(month));
 		}
-		draftPayment.setDescription(payment.getDescription());
+
+		//draftPayment.setDescription(payment.getDescription());
+		draftPayment.setDescription(payment.getDescriptionTemplate());
 
 		draftPayment.setExpression(payment.getExpression());
 		draftPayment.setIrpfExpression(payment.getIrpfExpression());

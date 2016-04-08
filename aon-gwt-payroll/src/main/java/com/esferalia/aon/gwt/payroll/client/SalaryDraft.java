@@ -908,14 +908,19 @@ public class SalaryDraft extends ResizeComposite
 			descriptionWidget.addFocusHandler(new FocusHandler() {
 				@Override
 				public void onFocus(FocusEvent event) {
+					widget.setValue(item.getDescriptionTemplate());
 					// TODO :
 				}
 			});
 			descriptionWidget.addBlurHandler(new BlurHandler() {
 				@Override
 				public void onBlur(BlurEvent event) {
-					if (!StringUtils.equals(widget.getValue(), item.getDescription()))
+					if (!StringUtils.equals(widget.getValue(), item.getDescriptionTemplate()))
 						onDescriptionChange(item, widget.getValue());
+					else {
+						String text = item.getDescription();
+						widget.setValue(StringUtils.isEmpty(text)? item.getDescriptionTemplate(): text);
+					}
 				}
 			});
 		}
@@ -1028,7 +1033,7 @@ public class SalaryDraft extends ResizeComposite
 			item.setScope(Scope.SALARY);
 			item.setType(dialog.getType());
 			item.setMonth(dialog.getMonth());
-			item.setDescription(dialog.getDescription());
+			//item.setDescription(dialog.getDescription());
 			item.setExpression(dialog.getPaymentExpression());
 			item.setIrpfExpression(dialog.getIrpfExpression());
 			item.setQuoteExpression(dialog.getQuoteExpression());
@@ -1036,6 +1041,7 @@ public class SalaryDraft extends ResizeComposite
 				item.setSalaryType(Salary.Type.SALARY);
 			salaryDraftObject.addDraftPayment(item);
 			salaryDraftObject.calculate(SalaryDraft.this);
+			item.setDescriptionTemplate(dialog.getDescription());
 
 		}
 
@@ -1048,6 +1054,7 @@ public class SalaryDraft extends ResizeComposite
 			paymentDialog.setMonth(item.getMonth());
 			paymentDialog.setType(item.getType());
 			paymentDialog.setReceiptType(item.getSalaryType());
+			// TODO : description template ?
 			paymentDialog.setDescription(item.getDescription());
 			paymentDialog.setPaymentExpression(item.getExpression()); //
 			paymentDialog.setIrpfExpression(item.getIrpfExpression());
@@ -1078,7 +1085,7 @@ public class SalaryDraft extends ResizeComposite
 		@Override
 		void onDescriptionChange(Payment payment, String description) {
 			payment.setScope(Scope.SALARY);
-			payment.setDescription(description);
+			payment.setDescriptionTemplate(description);
 			salaryDraftObject.addDraftPayment(payment);
 			SalaryDraft.this.calculate(getExpressionFocusCallback());
 		}
@@ -1161,8 +1168,9 @@ public class SalaryDraft extends ResizeComposite
 
 			item.setScope(Scope.SALARY);
 			item.setType(dialog.getType());
-			item.setDescription(dialog.getDescription());
+			//item.setDescription(dialog.getDescription());
 			item.setExpression(dialog.getDeductionExpression());
+			item.setDescriptionTemplate(dialog.getDescription());
 
 			if (item.getType() == Deduction.Type.EMBARGO)
 				salaryDraftObject.addDraftEmbargo(item);
@@ -1178,6 +1186,7 @@ public class SalaryDraft extends ResizeComposite
 			DeductionDialog deductionDialog = new DeductionDialog();
 			deductionDialog.setType(item.getType());
 			deductionDialog.setContextProvider(salaryDraftObject);
+			// TODO: description template ?
 			deductionDialog.setDescription(item.getDescription());
 			deductionDialog.setDeductionExpression(item.getExpression());
 
@@ -1210,7 +1219,7 @@ public class SalaryDraft extends ResizeComposite
 		@Override
 		void onDescriptionChange(Deduction item, String description) {
 			item.setScope(Scope.SALARY);
-			item.setDescription(description);
+			item.setDescriptionTemplate(description);
 
 			if (item.getType() == Deduction.Type.EMBARGO)
 				salaryDraftObject.addDraftEmbargo(item);
@@ -1248,8 +1257,9 @@ public class SalaryDraft extends ResizeComposite
 
 			item.setScope(Scope.SALARY);
 			item.setType(dialog.getType());
-			item.setDescription(dialog.getDescription());
+			//item.setDescription(dialog.getDescription());
 			item.setExpression(dialog.getDeductionExpression());
+			item.setDescriptionTemplate(dialog.getDescription());
 
 			salaryDraftObject.addDraftBonus(item);
 			salaryDraftObject.calculate(SalaryDraft.this);
@@ -1261,6 +1271,7 @@ public class SalaryDraft extends ResizeComposite
 			BonusDialog bonusDialog = new BonusDialog();
 			bonusDialog.setType(item.getType());
 			bonusDialog.setContextProvider(salaryDraftObject);
+			//TODO:  description template ?
 			bonusDialog.setDescription(item.getDescription());
 			bonusDialog.setDeductionExpression(item.getExpression());
 
@@ -1287,7 +1298,7 @@ public class SalaryDraft extends ResizeComposite
 		@Override
 		void onDescriptionChange(Bonus item, String description) {
 			item.setScope(Scope.SALARY);
-			item.setDescription(description);
+			item.setDescriptionTemplate(description);
 
 			salaryDraftObject.addDraftBonus(item);
 			salaryDraftObject.calculate(SalaryDraft.this);
@@ -1454,10 +1465,11 @@ public class SalaryDraft extends ResizeComposite
 				deduction.setType(Deduction.Type.OTHER);
 			}
 			deduction.setScope(Scope.SALARY);
-			deduction.setDescription(descriptionBox.getValue());
+			//deduction.setDescription(descriptionBox.getValue());
 			deduction.setSalaryType(salaryDraftObject.getType());
 			deduction.setStartDate(salaryDraftObject.getEndDate());
 			deduction.setStartDate(salaryDraftObject.getStartDate());
+			deduction.setDescriptionTemplate(descriptionBox.getValue());
 
 			if (deduction.getType() == Deduction.Type.EMBARGO)
 				salaryDraftObject.addDraftEmbargo(deduction);
@@ -1473,11 +1485,12 @@ public class SalaryDraft extends ResizeComposite
 
 			deduction.setScope(Scope.SALARY);
 			deduction.setType(dialog.getType());
-			deduction.setDescription(dialog.getDescription());
+			//deduction.setDescription(dialog.getDescription());
 			deduction.setSalaryType(salaryDraftObject.getType());
 			deduction.setStartDate(salaryDraftObject.getEndDate());
 			deduction.setStartDate(salaryDraftObject.getStartDate());
 			deduction.setExpression(dialog.getDeductionExpression());
+			deduction.setDescriptionTemplate(dialog.getDescription());
 
 			Item<Deduction.Type> concept = dialog.getConcept();
 			deduction.setConceptId(concept != null ? concept.getId() : null);
@@ -1527,14 +1540,16 @@ public class SalaryDraft extends ResizeComposite
 				draftPayment.setName(payment.getName());
 				draftPayment.setType(payment.getType());
 				draftPayment.setConceptId(payment.getId());
-				draftPayment.setDescription(payment.getDescription());
+				//draftPayment.setDescription(payment.getDescription());
 				draftPayment.setIrpfExpression(payment.getIrpfExpression());
 				draftPayment.setQuoteExpression(payment.getQuoteExpression());
+				draftPayment.setDescriptionTemplate(payment.getDescription());
 			} else {
 				draftPayment.setIrpfExpression("_P");
 				draftPayment.setQuoteExpression("_P");
 				draftPayment.setType(Payment.Type.DEFAULT);
-				draftPayment.setDescription(descriptionBox.getText());
+				//draftPayment.setDescription(descriptionBox.getText());
+				draftPayment.setDescriptionTemplate(descriptionBox.getText());
 			}
 			draftPayment.setScope(Scope.SALARY);
 			draftPayment.setEndDate(salaryDraftObject.getEndDate());
@@ -1588,7 +1603,8 @@ public class SalaryDraft extends ResizeComposite
 			draftPayment.setMonth(dialog.getMonth());
 			draftPayment.setEndDate(SalaryDraft.this.salaryDraftObject.getEndDate());
 			draftPayment.setStartDate(SalaryDraft.this.salaryDraftObject.getStartDate());
-			draftPayment.setDescription(dialog.getDescription());
+			//draftPayment.setDescription(dialog.getDescription());
+			draftPayment.setDescriptionTemplate(dialog.getDescription());
 			draftPayment.setExpression(dialog.getPaymentExpression());
 			draftPayment.setIrpfExpression(dialog.getIrpfExpression());
 			draftPayment.setQuoteExpression(dialog.getQuoteExpression());
@@ -1649,7 +1665,8 @@ public class SalaryDraft extends ResizeComposite
 				bonus.setType(Bonus.Type.SOCIAL_SECURITY); // TODO: Sure?
 			}
 			bonus.setScope(Scope.SALARY);
-			bonus.setDescription(descriptionBox.getValue());
+			//bonus.setDescription(descriptionBox.getValue());
+			bonus.setDescriptionTemplate(descriptionBox.getValue());
 			bonus.setSalaryType(salaryDraftObject.getType());
 			bonus.setStartDate(salaryDraftObject.getEndDate());
 			bonus.setStartDate(salaryDraftObject.getStartDate());
@@ -1665,11 +1682,12 @@ public class SalaryDraft extends ResizeComposite
 
 			bonus.setScope(Scope.SALARY);
 			bonus.setType(dialog.getType());
-			bonus.setDescription(dialog.getDescription());
+			//bonus.setDescription(dialog.getDescription());
 			bonus.setSalaryType(salaryDraftObject.getType());
 			bonus.setStartDate(salaryDraftObject.getEndDate());
 			bonus.setStartDate(salaryDraftObject.getStartDate());
 			bonus.setExpression(dialog.getDeductionExpression());
+			bonus.setDescriptionTemplate(dialog.getDescription());
 
 			Item<Bonus.Type> concept = dialog.getConcept();
 			bonus.setConceptId(concept != null ? concept.getId() : null);
@@ -1994,11 +2012,14 @@ public class SalaryDraft extends ResizeComposite
 	private List<PaymentChangeHandler<?>> paymentChangeHandlers;
 	private List<VariableChangeHandler<?>> variableChangeHandlers;
 
+	
+	
 	private final ContentAsistManager contentAssistManager = new ContentAsistManager();
 
 	private PopupPanel morePopup;
 	private boolean autoSave = true;
 	private MenuItem autoSaveMenuItem;
+
 
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
@@ -2124,10 +2145,12 @@ public class SalaryDraft extends ResizeComposite
 		draftPayment.setType(Payment.Type.DEFAULT);
 		if (totalLiquidPayment != null) {
 			draftPayment.setId(totalLiquidPayment.getId());
-			draftPayment.setDescription(totalLiquidPayment.getDescription());
+			//draftPayment.setDescription(totalLiquidPayment.getDescription());
+			draftPayment.setDescriptionTemplate(totalLiquidPayment.getDescription());
 
 		} else {
-			draftPayment.setDescription("Suplemento Neto");
+			//draftPayment.setDescription("Suplemento Neto");
+			draftPayment.setDescriptionTemplate("Suplemento Neto");
 		}
 
 		draftPayment.setEndDate(salaryDraftObject.getEndDate());
@@ -2166,7 +2189,8 @@ public class SalaryDraft extends ResizeComposite
 		if (cgcBaseDeduction == null) {
 			cgcBaseDeduction = new Deduction();
 			cgcBaseDeduction.setScope(Scope.SALARY);
-			cgcBaseDeduction.setDescription("BASE_CGC");
+			//cgcBaseDeduction.setDescription("BASE_CGC");
+			cgcBaseDeduction.setDescriptionTemplate("BASE_CGC");
 			cgcBaseDeduction.setType(Deduction.Type.OTHER);
 			cgcBaseDeduction.setSalaryType(salaryDraftObject.getType());
 		}
@@ -2205,8 +2229,9 @@ public class SalaryDraft extends ResizeComposite
 		if (cgpBaseDeduction == null) {
 			cgpBaseDeduction = new Deduction();
 			cgpBaseDeduction.setScope(Scope.SALARY);
-			cgpBaseDeduction.setDescription("BASE_CGP");
+			//cgpBaseDeduction.setDescription("BASE_CGP");
 			cgpBaseDeduction.setType(Deduction.Type.OTHER);
+			cgpBaseDeduction.setDescriptionTemplate("BASE_CGP");
 			cgpBaseDeduction.setSalaryType(salaryDraftObject.getType());
 		}
 		// @formatter:off
@@ -2251,10 +2276,12 @@ public class SalaryDraft extends ResizeComposite
 		draftPayment.setType(Payment.Type.DEFAULT);
 		if (totalPayments != null) {
 			draftPayment.setId(totalPayments.getId());
-			draftPayment.setDescription(totalPayments.getDescription());
+			//draftPayment.setDescription(totalPayments.getDescription());
+			draftPayment.setDescriptionTemplate(totalPayments.getDescription());
 
 		} else {
-			draftPayment.setDescription("Suplemento Bruto");
+			//draftPayment.setDescription("Suplemento Bruto");
+			draftPayment.setDescriptionTemplate("Suplemento Bruto");
 		}
 
 		draftPayment.setEndDate(salaryDraftObject.getEndDate());
@@ -2544,7 +2571,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private void onChangedSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
-
+		
 		salaryDraftObject.calculate(this);
 
 		syncDatesListBox();
@@ -2638,7 +2665,7 @@ public class SalaryDraft extends ResizeComposite
 		clearEventsTable();
 		clearContextTable();
 		clearPaymentsTable();
-
+		
 		initAvailablePayments();
 		initAvailableDeductions();
 		initAvailableBonus();
@@ -3063,74 +3090,77 @@ public class SalaryDraft extends ResizeComposite
 
 		int row = eventsTable.getRowCount();
 		for (Event event : events) {
-
-			Button headButton = new Button();
-			headButton.setStyleName(AON.AON_ICON_EXCEPTION);
-			headButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-
-			eventsTable.setWidget(row, 0, headButton);
-
-			eventsTable.setText(row, 1, event.getMessage());
-			eventsTable.getCellFormatter().getElement(row, 1).getStyle().setWhiteSpace(WhiteSpace.NORMAL);
-			eventsTable.getCellFormatter().getElement(row, 1).getStyle().setProperty("maxWidth", 55, Unit.EM);
-
-			String styles[] = eventStyles.get(event.getType());
-
-			StyleToggleButton itemButton = null;
-			if (event instanceof HasPayment)
-				itemButton = getPaymentButton((HasPayment) event, styles[0], styles[1]);
-			else if (event instanceof HasDeduction)
-				itemButton = getDeductionButton((HasDeduction) event, styles[0], styles[1]);
-			else if (event instanceof HasBonus)
-				itemButton = getBonusButton((HasBonus) event, styles[0], styles[1]);
-
-			if (itemButton != null) {
-				eventsTable.setWidget(row, 2, itemButton);
-				itemButton.setValue(true, true); // down
-			} else {
-				eventsTable.setHTML(row, 2, "&nbsp;");
-			}
-
-			eventsTable.getCellFormatter().getElement(row, 0).getStyle().setPropertyPx("borderRightWidth", 0);
-			eventsTable.getCellFormatter().getElement(row, 1).getStyle().setPropertyPx("borderLeftWidth", 0);
-			eventsTable.getCellFormatter().getElement(row, 1).getStyle().setPropertyPx("borderRightWidth", 0);
-			eventsTable.getCellFormatter().getElement(row, 2).getStyle().setPropertyPx("borderLeftWidth", 0);
-
-			for (int col = 0; col < eventsTable.getCellCount(row); col++)
-				eventsTable.getCellFormatter().addStyleName(row, col, "aon-panelGrid-odd");
-
-			row++;
+			dumpEvent(row++, event);
 		}
 
 	}
 
-	private List<PaymentChangeHandler<?>> dumpPayments(List<Payment> payments) {
+	private void dumpEvent(int row, Event event) {
+		Button headButton = new Button();
+		headButton.setStyleName(AON.AON_ICON_EXCEPTION);
+		headButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 
+		eventsTable.setWidget(row, 0, headButton);
+
+		eventsTable.setText(row, 1, event.getMessage());
+		eventsTable.getCellFormatter().getElement(row, 1).getStyle().setWhiteSpace(WhiteSpace.NORMAL);
+		eventsTable.getCellFormatter().getElement(row, 1).getStyle().setProperty("maxWidth", 55, Unit.EM);
+
+		String styles[] = eventStyles.get(event.getType());
+
+		StyleToggleButton itemButton = null;
+		if (event instanceof HasPayment)
+			itemButton = getPaymentButton((HasPayment) event, styles[0], styles[1]);
+		else if (event instanceof HasDeduction)
+			itemButton = getDeductionButton((HasDeduction) event, styles[0], styles[1]);
+		else if (event instanceof HasBonus)
+			itemButton = getBonusButton((HasBonus) event, styles[0], styles[1]);
+
+		if (itemButton != null) {
+			eventsTable.setWidget(row, 2, itemButton);
+			itemButton.setValue(true, true); // down
+		} else {
+			eventsTable.setHTML(row, 2, "&nbsp;");
+		}
+
+		eventsTable.getCellFormatter().getElement(row, 0).getStyle().setPropertyPx("borderRightWidth", 0);
+		eventsTable.getCellFormatter().getElement(row, 1).getStyle().setPropertyPx("borderLeftWidth", 0);
+		eventsTable.getCellFormatter().getElement(row, 1).getStyle().setPropertyPx("borderRightWidth", 0);
+		eventsTable.getCellFormatter().getElement(row, 2).getStyle().setPropertyPx("borderLeftWidth", 0);
+
+		for (int col = 0; col < eventsTable.getCellCount(row); col++)
+			eventsTable.getCellFormatter().addStyleName(row, col, "aon-panelGrid-odd");
+	}
+
+	private List<PaymentChangeHandler<?>> dumpPayments(List<Payment> payments) {
+		
 		List<PaymentChangeHandler<?>> handlers = new ArrayList<PaymentChangeHandler<?>>(payments.size());
 
 		for (Payment payment : payments) {
 
+			int row = paymentsTable.getRowCount();
+
 			// if (!displayNow(payment))
 			// continue;
-
-			if (payment.getAmount() != null) {
+			Event event = getEvent4(payment);
+			
+			if (payment.getAmount() != null && event == null) {
 
 				PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(payment);
-				dumpPayment(payment, paymentsTable.getRowCount(), getIconRowStyle(payment), handler);
+				dumpPayment(payment, row, getIconRowStyle(payment), handler);
 
 				handlers.add(handler);
 
-			} else if (payment.getId() != null) {
-				int row = paymentsTable.getRowCount();
+			} else if (payment.getId() != null ) {
 				PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(payment);
-				String styles[] = eventStyles.get(Event.Type.WARNING);
+				String styles[] = eventStyles.get(event == null ? Event.Type.WARNING : event.getType());
 				dumpPayment(payment, row, styles[0], handler);
 				handlers.add(handler);
 				addStyle(paymentsTable, row, styles[1]);
 
 			} else {
-				String styles[] = eventStyles.get(Event.Type.ERROR);
-				dumpDbItem(payment, paymentsTable.getRowCount(), styles[0], styles[1],
+				String styles[] = eventStyles.get(event == null ? Event.Type.ERROR : event.getType());
+				dumpDbItem(payment, row, styles[0], styles[1],
 						new RecoverPaymentHandler(payment), false);
 			}
 		}
@@ -3374,6 +3404,7 @@ public class SalaryDraft extends ResizeComposite
 				paymentsTable.getRowFormatter().getElement(row).getStyle().setDisplay(Display.NONE);
 			}
 		}
+		
 	}
 
 	private <I extends Item> void dumpItem(I item, int row, String iconStyleName, ItemChangeHandler<TextBox, I> handler,
@@ -3419,7 +3450,8 @@ public class SalaryDraft extends ResizeComposite
 
 		TextBox descriptionBox = new TextBox();
 		enable(descriptionBox, isEditable);
-		descriptionBox.setText(item.getDescription());
+		String description = item.getDescription();
+		descriptionBox.setText(description != null ? description : item.getDescriptionTemplate());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		paymentsTable.setWidget(row, 2, descriptionBox);
@@ -3491,6 +3523,7 @@ public class SalaryDraft extends ResizeComposite
 			paymentsTable.getRowFormatter().addStyleName(row, AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
 			paymentsTable.getRowFormatter().addStyleName(row - 1, AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
 		} // highlight dirty, not saved items.
+		
 	}
 
 	private <I extends Item> void dumpDbItem(I item, int row, String iconStyleName, String textStyleName,
@@ -4049,8 +4082,12 @@ public class SalaryDraft extends ResizeComposite
 
 	private StyleToggleButton getPaymentButton(final HasPayment hasPayment, final String iconStyleName,
 			final String textStyleName) {
+		
+		if ( calculated(hasPayment))
+			return null;
+		
 		StyleToggleButton paymentButton = new StyleToggleButton("aon-icon-file-entrance", "aon-icon-file-exit-cancel");
-
+		
 		paymentButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		paymentButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
@@ -4069,7 +4106,9 @@ public class SalaryDraft extends ResizeComposite
 
 			}
 		});
-
+		
+		
+		
 		return paymentButton;
 	}
 
@@ -4635,6 +4674,21 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		salaryDraftObject.getContext(new ProposalsLoader());
+	}
+	
+	private Event getEvent4(Payment p) {
+		for ( Event event: salaryDraftObject.getEvents() )
+			if ( event instanceof HasPayment )
+				if ( ((HasPayment) event).getPayment().equals(p))
+					return event;
+		return null;
+	}
+	
+	private boolean calculated(HasPayment payment) {
+		for ( Payment p: salaryDraftObject.getPayments() )
+				if ( payment.getPayment().equals(p))
+					return true;
+		return false;
 	}
 
 	// ------------------------------------------------------- Static 'Library'

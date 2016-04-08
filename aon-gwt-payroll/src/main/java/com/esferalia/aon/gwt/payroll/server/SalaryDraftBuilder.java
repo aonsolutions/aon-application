@@ -404,6 +404,7 @@ public class SalaryDraftBuilder
 		Bonus myBonus = newBonus(contractBonus);
 		myBonus.setAmount(amount);
 		myBonus.setDescription(description);
+		myBonus.setDescriptionTemplate(myBonus.getDescription());
 
 		salaryDraft.addBonus(myBonus);
 
@@ -422,6 +423,7 @@ public class SalaryDraftBuilder
 		embargo.setAmount(amount);
 		embargo.setDescription(description);
 		embargo.setType(Deduction.Type.EMBARGO);
+		embargo.setDescriptionTemplate(embargo.getDescription());
 
 		salaryDraft.addEmbargo(embargo);
 	}
@@ -437,8 +439,8 @@ public class SalaryDraftBuilder
 		myCost.setName(cost.getName());
 		myCost.setDescription(description);
 		myCost.setExpression(cost.getExpression());
-		myCost.setDescription(cost.getDescription());
 		myCost.setType(getDeductionType(cost.getType()));
+		myCost.setDescriptionTemplate(cost.getDescription());
 
 		salaryDraft.addCost(myCost);
 
@@ -461,6 +463,7 @@ public class SalaryDraftBuilder
 		draftPayment.setType(getPaymentType(payment.getType()));
 		draftPayment.setStartDate(startDate);
 		draftPayment.setEndDate(endDate);
+		draftPayment.setDescriptionTemplate(payment.getDescription());
 
 		CompositePayment compositePayment = getPayment(draftPayment.getId());
 
@@ -495,6 +498,7 @@ public class SalaryDraftBuilder
 		deduction.setType(getDeductionType(ideduction.getType()));
 		deduction.setStartDate(start);
 		deduction.setEndDate(end);
+		deduction.setDescriptionTemplate(deduction.getDescriptionTemplate());
 
 		CompositeDeduction compositeDeduction = getDeduction(deduction.getId());
 
@@ -815,8 +819,8 @@ public class SalaryDraftBuilder
 		deduction.setStartDate(contractDeduction.getStartDate());
 		deduction.setExpression(contractDeduction.getExpression());
 		deduction.setScope(getScope(contractDeduction.getScope()));
-		deduction.setDescription(contractDeduction.getDescription());
 		deduction.setType(getDeductionType(contractDeduction.getType()));
+		deduction.setDescriptionTemplate(contractDeduction.getDescription());
 
 		return deduction;
 	}
@@ -830,8 +834,8 @@ public class SalaryDraftBuilder
 		embargo.setStartDate(contractEmbargo.getStartDate());
 		embargo.setExpression(contractEmbargo.getExpression());
 		embargo.setScope(getScope(contractEmbargo.getScope()));
-		embargo.setDescription(contractEmbargo.getDescription());
 		embargo.setType(getDeductionType(contractEmbargo.getType()));
+		embargo.setDescriptionTemplate(contractEmbargo.getDescription());
 
 		return embargo;
 	}
@@ -850,9 +854,9 @@ public class SalaryDraftBuilder
 		payment.setEndDate(contractPayment.getEndDate());
 		payment.setExpression(contractPayment.getExpression());
 		payment.setScope(getScope(contractPayment.getScope()));
-		payment.setDescription(contractPayment.getDescription());
 		payment.setIrpfExpression(contractPayment.getIrpfExpression());
 		payment.setQuoteExpression(contractPayment.getQuoteExpression());
+		payment.setDescriptionTemplate(contractPayment.getDescription());
 
 		if (!StringUtils.isBlank(contractPayment.getName())
 				&& defined.containsKey(contractPayment.getName()))
@@ -867,8 +871,8 @@ public class SalaryDraftBuilder
 		bonus.setScope(Scope.CONTRACT);
 		bonus.setName(bonus.getName());
 		bonus.setExpression(contractBonus.getExpression());
-		bonus.setDescription(contractBonus.getDescription());
 		bonus.setType(getBonusType(contractBonus.getType()));
+		bonus.setDescriptionTemplate(contractBonus.getDescription());
 		return bonus;
 	}
 
