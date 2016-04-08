@@ -568,10 +568,22 @@ public class ExpressionContext {
 
 	}
 
-	public String evalTemplate(String template, Date start, Date end) {
+	public String evalTemplate(String template, Date start, Date end)  throws ExpressionException{
+		try {
 		Map<String, Object> vars = variables.getPeriodMap(start, end);
 		Object result = TemplateRuntime.eval(template, vars);
 		return result != null ? result.toString() : null;
+		} catch (PropertyAccessException e) {
+			throwExpressionException(e);
+			throw new UndefinedVariablesException(getUndefinedProperty(e,
+					(PeriodMap)null));
+		} catch (UnresolveablePropertyException e) {
+			throw new UndefinedVariablesException(e.getName());
+		} catch (ExpressionExceptionWrapper e) {
+			throw e.getExpressionException();
+		} catch (CompileException e) {
+			throw e;
+		}
 	}
 
 	public List<IExpression> getExpressionVariables() {
@@ -640,7 +652,6 @@ public class ExpressionContext {
 			} catch (ExpressionExceptionWrapper e) {
 				throw e.getExpressionException();
 			} catch (CompileException e) {
-				e.printStackTrace();
 				throw e;
 			}
 		}
