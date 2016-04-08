@@ -58,7 +58,7 @@ public class Mod130 extends FiscalModel implements Serializable {
 	public boolean isToDeduceAvailable() {
 		if (getAdministration() == null) return false;
 		return isAEAT()
-			&& !AonMathUtils.isGreatherThanZero(getResult())
+			&& AonMathUtils.isLessThanZero(getResult())
 			&& (getPeriod() == Period.T1
 			 || getPeriod() == Period.T2
 			 || getPeriod() == Period.T3)
@@ -69,8 +69,8 @@ public class Mod130 extends FiscalModel implements Serializable {
 	public boolean isNegativeAvailable() {
 		if (getAdministration() == null) return false;
 		return isAEAT() 
-			&& !AonMathUtils.isGreatherThanZero(getResult()) 
-			&& getPeriod() == Period.T4; 
+			&& ((AonMathUtils.isZero(getResult()))
+			 || (AonMathUtils.isLessThanZero(getResult()) && getPeriod() == Period.T4));
 	}
 
 	@Override
@@ -95,7 +95,11 @@ public class Mod130 extends FiscalModel implements Serializable {
 			if (getPeriod() == Period.T4) {
 				setDeclarationType(FiscalModelDeclarationType.NEGATIVE);	
 			} else {
-				setDeclarationType(FiscalModelDeclarationType.TO_DEDUCE);
+				if (AonMathUtils.isZero(getResult() )) {
+					setDeclarationType(FiscalModelDeclarationType.NEGATIVE);	
+				} else {
+					setDeclarationType(FiscalModelDeclarationType.TO_DEDUCE);
+				}
 			}
 		}
 	}
