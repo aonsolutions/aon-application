@@ -6,7 +6,8 @@ public enum NoticeStatus implements Serializable {
 	CLOSED,
 	REOPEN,
 	OPEN,
-	DUPLICATED;
+	DUPLICATED,
+	FAQ;
 	
 	public byte value() {
 		return (byte) this.ordinal();
