@@ -57,10 +57,20 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130>{
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.regime()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		ListBox regimeList = new ListBox();
+		final ListBox regimeList = new ListBox();
 		regimeList.addItem(IRPFRegime.NORMAL.getName());
 		regimeList.addItem(IRPFRegime.SIMPLIFIED.getName());
 		regimeList.setSelectedIndex((callback.getFiscalModel().getRegime() == IRPFRegime.SIMPLIFIED)?1:0);
+		regimeList.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				callback.getFiscalModel().setRegime(
+						regimeList.getSelectedIndex() == 1?
+								IRPFRegime.SIMPLIFIED:IRPFRegime.NORMAL
+						);
+			}
+		});
 		tab.setWidget(row, 1, regimeList);
 		row++;
 		
