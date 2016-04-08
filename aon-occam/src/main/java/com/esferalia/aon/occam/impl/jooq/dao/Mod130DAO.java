@@ -155,7 +155,7 @@ public class Mod130DAO extends FiscalModelDAO {
 			,"C08 * 2 / 100"
 			,"<li>2% de @{C08} igual <b>@{C09}</b></li>")
 		,C10 (Mod130Key.C10 , (mod -> mod.isAEAT())
-			,(ctx,mod) -> mod.putAmount(Mod130Key.C06, 
+			,(ctx,mod) -> mod.putAmount(Mod130Key.C10, 
 					IRPFDAO.getSalesInvoiceDiffIrpfBreakdown(ctx, mod)
 						.filter( i -> i.isFarmer())
 						.mapToDouble(br -> br.getQuota())
