@@ -215,7 +215,7 @@
 						<ui:param name="lookupTo" value="#{sales.to.customer}" />
 						<ui:param name="lookupDisabled" value="#{!sales.pending or sales.customerReadOnly}" />
 						<ui:param name="lookupReRender" 
-							value="Customer_registry_document,SalesAddress,SalesProject,Sales_scope,Sales_defaultPayMethod,payMethodDiv" />
+							value="Customer_registry_document,SalesAddress,SalesProject,Sales_scope,SalesSellerDiv,Sales_defaultPayMethod,payMethodDiv" />
 						<ui:param name="idRequired" value="#{true}" />						
 						<aon:methodParam name="lookupChangeListener"
 							value="#{sales.customerData}" type="lookupChangeListener" />
@@ -248,12 +248,17 @@
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
-					<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{sales.to.seller}" />
-						<ui:param name="lookupDisabled" value="#{!sales.pending}" />
-						<aon:methodParam name="lookupChangeListener"
-							value="#{sales.sellerData}" type="lookupChangeListener" />
-					</ui:include>
+					<aon:outputLabel for="Seller_id" 
+						value="#{bundle.aon_module_commercial}" />
+					<aon:div id="SalesSellerDiv">
+						<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+							<ui:param name="lookupTo" value="#{sales.to.seller}" />
+							<ui:param name="lookupDisabled" value="#{!sales.pending}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{sales.sellerData}" type="lookupChangeListener" />
+						</ui:include>
+					</aon:div>
 
 					<aon:outputLabel for="Sales_workPlace" 
 						value="#{bundle.purchase_workplace}" />

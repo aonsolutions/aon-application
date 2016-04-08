@@ -28,7 +28,12 @@ import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryPayMethod;
+import com.code.aon.registry.RegistrySeller;
+import com.code.aon.registry.enumeration.RegistrySellerStatus;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
@@ -133,9 +138,10 @@ public class SaleInvoiceController extends InvoiceController {
 			Invoice invoice = getInvoice();
 			invoice.setRegistryAddress(null);
 			invoice.setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
+			invoice.setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
 
 			setAddresses(null);
-			setProjects(null);	
+			setProjects(null);
 		}
 	}
 
@@ -153,10 +159,10 @@ public class SaleInvoiceController extends InvoiceController {
 		invoice.setWithholdingFarmer(customer.isWithholding() && getCompanyController().isWithholdingFarmer());
 		invoice.setScope(customer.getScope());
 		loadAddresses(customer.getId());
+		loadProjects(customer.getId());
+		loadCommercial(customer.getId());
 
 		if (isNevv()) {
-			loadProjects(customer.getId());
-
 			InvoiceFinanceController financeController = (InvoiceFinanceController)FormUtil.getController(getInvoiceFinanceControllerName());
 			Finance finance = (Finance)financeController.getTo();
 			if (finance != null) {
@@ -174,6 +180,28 @@ public class SaleInvoiceController extends InvoiceController {
 
 	private boolean isBlocked(Customer customer) {
 		return getRegistryValidationManager().isBlocked(customer);
+	}
+
+	public void loadCommercial(Integer id) throws ManagerBeanException {
+		if (id != null) {
+			Invoice invoice = getInvoice();
+			IManagerBean registrySellerBean = BeanManager.getManagerBean(RegistrySeller.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_REGISTRY_ID), id);
+			criteria.addEqualExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_STATUS), RegistrySellerStatus.ACTIVE);
+			criteria.addLessThanOrEqualExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_START_DATE), invoice.getIssueDate());
+			Expression endDateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_END_DATE), invoice.getIssueDate());
+			Expression endNullExpr = ExpressionUtilities.getNullExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_END_DATE));
+			criteria.addExpression(ExpressionUtilities.getOrExpression(endDateExpr, endNullExpr));
+			criteria.addOrder(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_START_DATE));
+			Iterator<ITransferObject> iter = registrySellerBean.getList(criteria).iterator();
+			if (iter.hasNext()) {
+				invoice.setSeller(((RegistrySeller)iter.next()).getSeller());
+			} else {
+				invoice.setSeller(new Seller());
+				invoice.getSeller().setRegistry(new Registry());
+			}
+		}
 	}
 
 	public void onSellerChanged(LookupChangeEvent event) {

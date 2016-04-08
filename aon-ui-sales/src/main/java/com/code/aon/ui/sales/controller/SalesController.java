@@ -44,6 +44,8 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistrySeller;
+import com.code.aon.registry.enumeration.RegistrySellerStatus;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.bridge.DeliveryManager;
@@ -376,6 +378,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			((Sales)this.getTo()).setScope(customer.getScope());
 			loadAddresses(customer.getId());
 			loadProjects(customer.getId());
+			loadCommercial(customer.getId());
 			loadDefaultPayMethod(customer.getRegistry(), true);
 		} else {
 			setAddresses(null);
@@ -457,6 +460,28 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		getManagerBean().restoreNullSubPOJOs(to);
 		getManagerBean().update(to);
 		getManagerBean().initializePOJO(to);
+	}
+
+	public void loadCommercial(Integer id) throws ManagerBeanException {
+		if (id != null) {
+			Sales sales = (Sales)this.getTo();
+			IManagerBean registrySellerBean = BeanManager.getManagerBean(RegistrySeller.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_REGISTRY_ID), id);
+			criteria.addEqualExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_STATUS), RegistrySellerStatus.ACTIVE);
+			criteria.addLessThanOrEqualExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_START_DATE), sales.getIssueDate());
+			Expression endDateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_END_DATE), sales.getIssueDate());
+			Expression endNullExpr = ExpressionUtilities.getNullExpression(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_END_DATE));
+			criteria.addExpression(ExpressionUtilities.getOrExpression(endDateExpr, endNullExpr));
+			criteria.addOrder(registrySellerBean.getFieldName(IEntityAlias.REGISTRY_SELLER_START_DATE));
+			Iterator<ITransferObject> iter = registrySellerBean.getList(criteria).iterator();
+			if (iter.hasNext()) {
+				sales.setSeller(((RegistrySeller)iter.next()).getSeller());
+			} else {
+				sales.setSeller(new Seller());
+				sales.getSeller().setRegistry(new Registry());
+			}
+		}
 	}
 
 	public void loadDefaultPayMethod(Registry registry, boolean forceReset) throws ManagerBeanException {
