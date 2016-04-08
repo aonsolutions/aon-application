@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.AON_ALL;
 import static com.code.aon.ui.common.ICommonMessages.CALCULATE_FINANCES_AMOUNT_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.CALCULATE_INVOICE_QUANTITY_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING;
@@ -82,6 +83,7 @@ import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.controller.IAuditableController;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
@@ -98,6 +100,7 @@ import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.EnterpriseActivity;
 
 public class InvoiceController extends HeaderObjectController implements ISignatureController, IFinanceConstants, IAuditableController {
 
@@ -754,6 +757,19 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			return ObjectUtils.equals(invoice.getIssueDate(), invoice.getTaxDate());
 		}
 		return true;
+	}
+
+	public List<SelectItem> getActivities() throws ManagerBeanException {
+		List<SelectItem> activities = new LinkedList<SelectItem>();
+		EnterpriseActivity activity = new EnterpriseActivity();
+		activity.setId(0);
+		activity.setDescription(AonUtil.getMessage(AON_ALL));
+		SelectItem item = new SelectItem(activity, activity.getDescription());
+		activities.add(item);
+
+		CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+		activities.addAll(companyCollections.getActiveCompanyActivities());
+		return activities;
 	}
 
 	protected boolean validateInvoice() {

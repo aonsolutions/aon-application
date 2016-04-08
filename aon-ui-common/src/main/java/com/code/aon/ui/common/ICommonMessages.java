@@ -11,6 +11,7 @@ public interface ICommonMessages {
 	String ADD_INFO = "aon_addInfo";
 	String ADDRESS = "aon_address";
 	String ALIAS = "aon_alias";
+	String AON_ALL = "aon_common_all";
 	String AON_DESCRIPTION = "aon_description";
 	String APPLICATION_TITLE = "aon_application_title";
 	String BANK = "aon_bank";

@@ -23,22 +23,21 @@
 		</aon:selectInputDate>
 	</aon:if>
 
-	<aon:if test="#{companyCollections.companyActivitiesCount > 1}">
+	<aon:if test="#{companyCollections.activeCompanyActivitiesCount > 1 or invoiceController.to.activity.endDate != null}">
 		<aon:outputLabel for="Invoice_activity"
 			value="#{bundle.aon_activity}" />
 		<aon:div>
 			<aon:selectOneMenu id="Invoice_activity"
 				value="#{invoiceController.to.activity}" ajaxSingle="true"
-				rendered="#{!invoiceController.readOnly}">
-				<f:selectItem itemLabel="- #{bundle.aon_common_all} -" value="#{null}" />
-				<f:selectItems value="#{companyCollections.companyActivities}" />
+				rendered="#{!invoiceController.readOnly and invoiceController.to.activity.endDate == null}">
+				<f:selectItems value="#{invoiceController.activities}" />
 			</aon:selectOneMenu>
 			<aon:outputText styleClass="aon-bold"
 				value="#{invoiceController.to.activity.description}" 
-				rendered="#{invoiceController.readOnly and invoiceController.to.activity.id != null}" />
+				rendered="#{(invoiceController.readOnly or invoiceController.to.activity.endDate != null) and invoiceController.to.activity.id != null}" />
 			<aon:outputText styleClass="aon-bold"
 				value="#{bundle.aon_common_all}" 
-				rendered="#{invoiceController.readOnly and invoiceController.to.activity.id == null}" />
+				rendered="#{(invoiceController.readOnly or invoiceController.to.activity.endDate != null) and invoiceController.to.activity.id == null}" />
 		</aon:div>
 	</aon:if>
 

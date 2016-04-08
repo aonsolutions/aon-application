@@ -63,8 +63,7 @@
 										<aon:outputLabel for="Activity_id" value="#{bundle.aon_activity}" />
 										<aon:selectOneMenu id="Activity_id"
 											value="#{invoiceController.to.activity}">
-											<f:selectItem itemLabel="- #{bundle.aon_common_all} -" value="#{null}" />
-											<f:selectItems value="#{companyCollections.companyActivities}" />
+											<f:selectItems value="#{invoiceController.activities}" />
 										</aon:selectOneMenu>
 
 									</aon:panelGrid>
