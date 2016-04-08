@@ -447,7 +447,7 @@ public class StatDAO {
 		}
 		
 		return InvoiceFormatter.formatInvoices("LISTADO DE FACTURAS", 
-				params.toString(),
+				"(M\u00E1x. 1000 Facturas)",
 				InvoiceDAO.getInvoiceDetails(ctx, 
 						p -> p.getDomainProperty().eq(ctx.getDomainId())
 							.and(scopes==null?null:p.getScopeProperty().in(scopes))							
@@ -457,7 +457,11 @@ public class StatDAO {
 							.and((categories==null||categories.size()==0)?null:p.getProductCategoryProperty().in(categories.toArray(new Integer[categories.size()])))
 							.and((workplaces==null||workplaces.size()==0)?null:p.getWorkplaceProperty().in(workplaces.toArray(new Integer[workplaces.size()])))
 							.and((sellers==null||sellers.size()==0)?null:p.getSellerProperty().in(sellers.toArray(new Integer[sellers.size()])))
-					).collect(Collectors.toCollection(LinkedList::new))
+					)
+					// TODO Implementar mecanismo offset limit. Se capa seguridad de memoria en el servidor.
+					.limit(1000)	// Modificar subtitulo 
+					// ---------------
+					.collect(Collectors.toCollection(LinkedList::new))
 				);
 	}; 
 	
