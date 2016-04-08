@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
-import com.esferalia.aon.occam.api.model.type.CNAE;
+import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.server.fiscal.calc.Aeat2015Mod202Calculator;
 import com.esferalia.aon.occam.server.fiscal.calc.Aeat2016Mod202Calculator;
@@ -40,6 +40,7 @@ public class Mod202DAO extends FiscalModelDAO {
 		if (mod202 != null) {
 			getModelDetails(ctx,mod202).forEach( detail -> mod202.put( detail));	
 		}
+		onFillFiscalModel(mod202);
 		return mod202;
 		
 	}
@@ -79,7 +80,7 @@ public class Mod202DAO extends FiscalModelDAO {
 			} else if (key == Mod202Key.P03) {
 				String c = mod202.getDescription(Mod202Key.P03);
 				if (AonStringUtils.isNotEmpty( c )) {
-					CNAE cnae = CNAE.valueOfCode(c); 
+					CNAE2009 cnae = CNAE2009.valueOfCode(c); 
 					mod202.setCnae(cnae==null?null:cnae.getCode());
 					mod202.setCnaeDescription(cnae==null?null:cnae.getDescription());
 				} else {

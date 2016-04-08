@@ -100,7 +100,7 @@
 						</tr>
 					</table>
 					<g:FlowPanel ui:field="tablePanel"/>
-					<aon:CnaePanel ui:field="cnaePanel" />
+					<aon:Cnae2009Panel ui:field="cnaePanel" />
 				</g:HTMLPanel>
 			</g:ScrollPanel>
 		</g:center>

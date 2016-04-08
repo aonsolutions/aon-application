@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.i18n.DialogMessages;
-import com.esferalia.aon.gwt.common.client.widget.CnaePanel;
+import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
@@ -19,7 +19,7 @@ import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
-import com.esferalia.aon.occam.api.model.type.CNAE;
+import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -160,7 +160,7 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 	FlowPanel tablePanel;
 	
 	@UiField
-	CnaePanel cnaePanel;
+	Cnae2009Panel cnaePanel;
 	
 	TextBox typeX08; 
 	ListBox listBox;
@@ -180,9 +180,9 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		Widget ui = panelBinder.createAndBindUi(this);
 		initWidget(ui);
 		
-		cnaePanel = new CnaePanel( new CnaePanel.SelectionCallBack() {
+		cnaePanel = new Cnae2009Panel( new Cnae2009Panel.SelectionCallBack() {
 			@Override
-			public void onSelect(CNAE selected) {
+			public void onSelect(CNAE2009 selected) {
 				cnae.setValue( selected.getCode());
 				cnaeDescription.setText( selected.getDescription() );
 			}
@@ -260,7 +260,7 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		status.addStyleName(mod202.isFinished()?AON.AON_CSS.aonIconLock():AON.AON_CSS.aonIconUnlock()) ;
 		
 		this.cnae.setValue( mod202.getCnae() );
-		CNAE cnae = CNAE.valueOfCode(mod202.getCnae());
+		CNAE2009 cnae = CNAE2009.valueOfCode(mod202.getCnae());
 		this.cnae.setEnabled(isEnabled(mod202));
 		this.cnaeDescription.setText( cnae==null?null:cnae.getDescription() );
 		
@@ -758,7 +758,7 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		enableToolbarItems();		
 
 		this.cnae.setValue( mod202.getCnae() );
-		CNAE cn = CNAE.valueOfCode(mod202.getCnae());
+		CNAE2009 cn = CNAE2009.valueOfCode(mod202.getCnae());
 		this.cnaeDescription.setText( cn==null?null:cn.getDescription() );
 		this.initialDate.setValue(mod202.getInitialDate());
 		
