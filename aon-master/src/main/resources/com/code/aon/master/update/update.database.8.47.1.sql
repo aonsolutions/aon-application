@@ -3,6 +3,8 @@
 # Created by: girazu
 # Creation Date: 08/04/2016 17:45
 
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+
 BEGIN;
 
 INSERT INTO `tag` (`domain`, `name`, `type`) VALUES (0, "FAQ", 6);
@@ -11,3 +13,5 @@ INSERT INTO `tag` (`domain`, `name`, `type`) VALUES (0, "FAQ", 6);
 UPDATE `db_version` SET `version_number` = '8.48.0';
 
 COMMIT;
+
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
