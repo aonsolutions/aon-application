@@ -126,7 +126,7 @@ public class SQLSalaryDraftCalculatorContextTestCase extends
 			continousBonusI.setStartDate(startDate);
 			continousBonusI.setStartDate(endDate);
 			continousBonusI.setSalaryType(draft.getType());
-			continousBonusI.setDescription("REDEFINED");
+			continousBonusI.setDescriptionTemplate("REDEFINED");
 			continousBonusI.setExpression(bonus.getExpression());
 			draft.addDraftBonus(continousBonusI);
 			});

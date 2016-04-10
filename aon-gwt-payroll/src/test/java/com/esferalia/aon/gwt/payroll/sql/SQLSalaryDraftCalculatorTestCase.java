@@ -145,6 +145,7 @@ public class SQLSalaryDraftCalculatorTestCase extends AbstractSQLTestCase {
 		draftEmbargo.setId(event.getDeduction().getId());
 		draftEmbargo.setStartDate(startDate);
 		draftEmbargo.setExpression("100.00");
+		draftEmbargo.setDescriptionTemplate("EMBARGO");
 
 		draft.addDraftEmbargo(draftEmbargo);
 
@@ -267,6 +268,7 @@ public class SQLSalaryDraftCalculatorTestCase extends AbstractSQLTestCase {
 		draftBonus.setId(event.getBonus().getId());
 		draftBonus.setStartDate(startDate);
 		draftBonus.setExpression("100.00");
+		draftBonus.setDescriptionTemplate("BONUS");
 		draft.addDraftBonus(draftBonus);
 
 		builder = new SalaryDraftBuilder(draft);
