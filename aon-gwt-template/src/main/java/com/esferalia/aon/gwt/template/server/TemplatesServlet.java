@@ -393,7 +393,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	public Boolean isRequiredFee(String s){
 		return s.equals("Cliente") || s.equals("Producto") || s.equals("Cantidad") || s.equals("Precio")
 				|| s.equals("Descuento") || s.equals("Fecha Inicio") || s.equals("Fecha Facturaci\u00f3n" )
-				|| s.equals("Centro de Trabajo");
+				|| s.equals("Centro de Trabajo") ||  s.equals("Centro Trabajo") ;
 	}
 	
 	public Error insertFee(Domain domain) {
@@ -551,7 +551,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 			}
 			else return null;
 			break;
-		case "Centro de Trabajo": case "Workplace": //bd
+		case "Centro de Trabajo": case "Workplace": case "Centro Trabajo": //bd
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
 				Boolean b = true;
 				for(Workplace s : workplaces){
