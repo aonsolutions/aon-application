@@ -1282,7 +1282,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		Vector<String> v = new Vector<String>();
 		if(type.equals(MSG.product()))
 			v = ProductUtils.productList();
-		else if(type.equals(MSG.fee()))
+		else if(type.equals(MSG.stock()))
 			v = StockUtils.stockList();
 		else if(type.equals(MSG.fee()))
 			v = FeeUtils.feeList();
