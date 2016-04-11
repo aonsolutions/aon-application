@@ -332,8 +332,12 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRegistryData.xhtml">
 			<ui:param name="invoiceController" value="#{posInvoice}" />
 		</ui:include>
-		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalSellerData.xhtml">
-			<ui:param name="invoiceController" value="#{posInvoice}" />
+		<ui:include src="/com/code/aon/ui/seller/facelet/seller/modalSeller.xhtml">
+			<ui:param name="controller" value="#{posInvoice}" />
+			<ui:param name="parentReRender" value="posInvoiceForm" />
+			<aon:methodParam name="parentActionListener" value="#{posInvoice.addInvoiceSeller}" type="actionListener" />
+			<ui:param name="parentValue" value="#{posInvoice.to.seller}" />
+			<ui:param name="sellerLabel" value="#{bundle.aon_module_commercial}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAddress.xhtml">
 			<ui:param name="invoiceController" value="#{posInvoice}" />
