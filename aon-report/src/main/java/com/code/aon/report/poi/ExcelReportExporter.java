@@ -42,7 +42,10 @@ public class ExcelReportExporter implements IReportExporter {
 	    headerCellStyle = createHeaderStyle();
 	}
 	
-	public ExcelSheet createSheet( String name ) {
+	public ExcelSheet createSheet( String name ) throws ReportException {
+		if(workbook==null){
+			throw new ReportException(" The workbook is not created. Start it first!");
+		}
 		if(sheetMap==null){
 			sheetMap = new HashMap<String, ExcelSheet>();
 		}

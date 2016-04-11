@@ -1357,6 +1357,13 @@
 			<value>webpolExporter</value>
 		</managed-property>		
 	</managed-bean>
+
+	<!-- ************* PRODUCTION REPORT ********************* -->
+	<managed-bean>
+		<managed-bean-name>productionReport</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ProductionReportController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- **************************************************** -->
 	<!-- ************* LOOKUP ******************************* -->
@@ -1754,6 +1761,14 @@
 		<navigation-case>
 			<from-outcome>webpolExporter_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/webpol/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- ============= Production report =================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>productionReport_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/productionReport/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

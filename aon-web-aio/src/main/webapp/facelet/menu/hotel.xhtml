@@ -356,6 +356,12 @@
 										actionListener="#{webpolExporter.onInit}"
 										value="#{bundle.pms_webpolExporter_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="productionReportList" 
+										action="productionReport_list"
+										actionListener="#{productionReport.onInit}"
+										value="#{bundle.pms_productionReport_module}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 
