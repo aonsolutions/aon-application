@@ -50,11 +50,19 @@
 		font-weight: bold;
 		float: right;
 	}
+	
+	.configuration-button{
+		right: 0px;
+   		position: absolute;
+    	padding-top: 4px;
+	}
+	
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:north size="25">
 			<g:FlowPanel styleName="aon-finding-title-toolbar">
+				<g:HorizontalPanel>
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName="aon-finding-title">
 						<g:HTMLPanel styleName="aon-finding-title-internal">
@@ -76,6 +84,11 @@
 						<g:Button ui:field='returnButton'
 							styleName='aon-finding-toolbar-item {aonResources.css.aonIconCancel}'
 							text="{msg.back}" enabled="false" />
+					</g:HTMLPanel>
+				</g:HorizontalPanel>
+					<g:HTMLPanel styleName="{style.configuration-button}">
+						<g:Button ui:field="configurationButton" styleName="aon-finding-toolbar-item aon-icon-settings" 
+							text="{msg.configuration}"/>
 					</g:HTMLPanel>
 				</g:HorizontalPanel>
 			</g:FlowPanel>

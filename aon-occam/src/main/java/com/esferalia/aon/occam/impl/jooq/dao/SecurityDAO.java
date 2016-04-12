@@ -43,9 +43,11 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
+import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -55,7 +57,20 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SecurityDAO {
-	
+	private static final SignaturePropertiesDAO SIGNATURE_PROPERTIES = new SignaturePropertiesDAO();
+	protected static class SignaturePropertiesDAO implements SignatureProperties {
+		protected Condition[] getConditions(SignatureFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(SIGNATURE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(SIGNATURE.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(SIGNATURE.NAME);}
+		@Override public Property<String> getSignatureProperty() {return new FilterDAO.PropertyDAO<String>(SIGNATURE.SIGNATURE_);}
+		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<Integer>(SIGNATURE.USER_ID);}
+	}
 	public static Domain getDomain(AONContext ctx, int domain) {
 		final Domain dom = new Domain();
 		ctx.getDslContext()
@@ -292,6 +307,14 @@ public class SecurityDAO {
 				.where(SIGNATURE.ID.eq(signatureId)).limit(1).fetchInto(SIGNATURE)
 				.stream().map(new FullSignatureFiller()).findFirst().orElse(new Signature());
 	}
+	
+	public static LinkedList<Signature> getSignatureList(AONContext ctx, SignatureFilter filter){
+		return ctx.getDslContext()
+				.select(SIGNATURE.SIGNATURE_).from(SIGNATURE)
+				.where(SIGNATURE_PROPERTIES.getConditions(filter)).fetchInto(SIGNATURE)
+				.stream().map(new FullSignatureFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	
 	private static class FullSignatureFiller implements Function<SignatureRecord, Signature> {
 		@Override

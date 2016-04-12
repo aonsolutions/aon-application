@@ -4,7 +4,6 @@ import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.resources.client.CssResource.ClassName;
 
 public interface AonResources extends ClientBundle, Images {
 
@@ -278,6 +277,18 @@ public interface AonResources extends ClientBundle, Images {
 	
 	@Source("images/aon-icon-list-data.png")
 	ImageResource aonListStat();
+	
+	//-------------------- CUSTOM DIALOG BAR 
+	
+	@Source("images/close.gif")
+	ImageResource close();
+	
+	@Source("images/header.png")
+	ImageResource header();
+	
+	@Source("images/headerBack.png")
+	ImageResource headerBack();
+	
 
 }
 

@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
@@ -69,6 +70,7 @@ import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeFilter;
+import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -574,6 +576,18 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getSignature(ctx, signatureId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<Signature> getSignatureList(String domainName, Integer domainId,
+			String login, SignatureFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getSignatureList(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1425,6 +1439,27 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static NotificationInfo getNotificationInfo(String domainName, Integer domainId, String login){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getOffice().getNotificationInfo(ctx);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static void insertNotificationInfo(String domainName, Integer domainId, String login,
+			NotificationInfo notificationInfo){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getOffice().insertNotificationInfo(ctx, notificationInfo);
+		} finally{
+			if(ctx != null) ctx.close();
 		}
 	}
 

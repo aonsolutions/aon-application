@@ -41,19 +41,21 @@ public class SendEmailServlet extends HttpServlet{
 			String recipientsTo = jsonRequest.getString("recipientsTo");
 			String content = jsonRequest.getString("content");
 			String subject = jsonRequest.getString("subject");
-			String attachName = jsonRequest.getString("attachName");
-			Integer mimetype = jsonRequest.getInt("mimetype");
-			String login = jsonRequest.getString("login");
 			String md5 = jsonRequest.getString("md5");
+			String login = jsonRequest.getString("login");
 			String domainName = jsonRequest.getString("domainName");
 			Integer domainId = jsonRequest.getInt("domainId");
-			
+
 			Domain domain = AON.getDomain(domainName, domainId, login);
-			MimeType mimeType = MimeType.values()[mimetype];
 			MailAccount ma = getMailAccount(domain, login, mailAccountId);		
-			System.out.println(md5);
-			byte[] data = Base64.getDecoder().decode(md5.getBytes());//(byte[]) req.getSession().getAttribute(md5);
-			sendEmail(domain, ma, recipientsTo, content, subject, attachName, mimeType, md5, data);
+			
+			if(md5 != null && !md5.equals("")){
+				String attachName = jsonRequest.getString("attachName");
+				Integer mimetype = jsonRequest.getInt("mimetype");
+				MimeType mimeType = MimeType.values()[mimetype];
+				byte[] data = Base64.getDecoder().decode(md5.getBytes());//(byte[]) req.getSession().getAttribute(md5);		
+				sendEmail(domain, ma, recipientsTo, content, subject, attachName, mimeType, md5, data);
+			} else sendEmail(domain, ma,recipientsTo, content, subject); 
 			resp.setContentType("application/json");
 			JSONObject json = new JSONObject();
 			json.put("response", "200. ok");
@@ -116,6 +118,32 @@ public class SendEmailServlet extends HttpServlet{
 
 		try {
 			AonMessage sentMessage = mc.compoundMessage(server);// Utils.getAonMessage(server,ma);
+			server.sendMessage(sentMessage);
+		} catch (WebmailException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void sendEmail(Domain domain, MailAccount ma, String recipientsTo,String content, String subject) {
+		IMailAccount ima2 = (IMailAccount) getMa2(ma);
+		ima2.getEmail();
+		System.out.println(ima2.getDisplayName());
+		AonServer server = new AonServer(ima2);
+		
+		MessageController mc = new MessageController();
+		mc.setRecipientsTo(recipientsTo);
+		mc.setContent(content);
+		mc.setSenderMailAccount(ima2);
+		mc.setSubject(subject);
+				
+		mc.initNewMsgFileList();
+
+		try {
+			AonMessage sentMessage = mc.compoundMessage(server);
 			server.sendMessage(sentMessage);
 		} catch (WebmailException e) {
 			e.printStackTrace();

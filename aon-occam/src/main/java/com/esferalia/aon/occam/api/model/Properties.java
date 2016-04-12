@@ -279,4 +279,12 @@ public interface Properties {
 		Property<String> getDetail2Property();
 		Property<String> getDetail3Property();
 	}
+	
+	public interface SignatureProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<String> getSignatureProperty();
+		Property<Integer> getUserIdProperty();
+	}
 }

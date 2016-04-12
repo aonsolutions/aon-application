@@ -3272,6 +3272,14 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
  	.aon-icon-marketplace-generic{
  		background:transparent url(images/aon-icon/aon-icon-marketplace-generic.png) scroll left center no-repeat;
  	}
+ 	
+ 	.aon-icon-settings{
+		background:transparent url(images/aon-icon/aon-icon-settings.png) scroll left center no-repeat;
+ 	}
+ 	
+ 	.aon-icon-notification{
+		background:transparent url(images/aon-icon/aon-icon-notification.png) scroll left center no-repeat;
+ 	}
 
 .aon-fiscal-link-box-small{
 	border: 1px dotted #000000;

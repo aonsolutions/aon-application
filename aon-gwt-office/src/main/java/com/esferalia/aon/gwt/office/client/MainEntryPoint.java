@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.office.client;
 
+import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 
@@ -10,6 +11,7 @@ public class MainEntryPoint implements EntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
+		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);
 		

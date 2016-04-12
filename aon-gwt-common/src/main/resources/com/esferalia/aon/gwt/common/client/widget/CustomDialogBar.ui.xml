@@ -5,62 +5,14 @@
 	<ui:image field='header' src='header.png' />
 	<ui:image field='headerBack' src='headerBack.png' />
 
-	<ui:style>
-		.panel {
-			margin: 0px;
-			padding: 0px;
-		}
-		
-		@sprite .header {
-			gwt-image: 'headerBack';
-			background-color: #D4CFC7;
-			background-repeat: repeat-x;
-			background-position: left top;
-			background-attachment: scroll;
-			margin: 0px;
-			padding: 1px;
-			height: auto;
-			width: auto;
-		}
-		
-		@sprite .title {
-			gwt-image: 'header';
-			background-repeat: repeat-x;
-			background-attachment: scroll;
-			background-position: left top;
-			background-color: transparent;
-			border: 1px solid #FFFFFF;
-			color: #FFFFFF;
-			font-weight: bold;
-			padding: 5px 1em;
-			text-transform: uppercase;
-			height: 13px;
-			width: auto;
-			font-size: 11px;
-		}
-		
-		@sprite .close {
-			gwt-image: 'close';
-			background-repeat: no-repeat;
-			background-attachment: scroll;
-			background-position: center center;
-			background-color: #F2F2F2;
-			border: 1px solid #FFFFFF;
-			cursor: pointer;
-			height: 16px;
-			margin: 5px 5px 3px 0;
-			width: 16px;
-			position: absolute;
-			right: 3px;
-			top: 3px;
-		}
-	</ui:style>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 	
-	<g:HTMLPanel styleName='{style.panel}' >
-		<div class="{style.header}">
-			<div class="{style.title}">
+	<g:HTMLPanel styleName="{aonResources.css.customDialogPanel}" >
+		<div class="{aonResources.css.customDialogHeader}">
+			<div class="{aonResources.css.customDialogTitle}">
 				<g:Label ui:field="captionLabel" />
-				<g:Button styleName="{style.close}" ui:field="closeButton" />
+				<g:Button styleName="{aonResources.css.customDialogClose}"
+					 ui:field="closeButton" />
 			</div>
 		</div>
 	</g:HTMLPanel>

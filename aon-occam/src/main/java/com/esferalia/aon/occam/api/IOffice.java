@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeFilter;
+import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -58,5 +59,8 @@ public interface IOffice {
 
 	public List<RegistryMedia> getRMedias(AONContext ctx)
 			throws IllegalArgumentException;
+	
+	public NotificationInfo getNotificationInfo(AONContext ctx);
+	public void insertNotificationInfo(AONContext ctx, NotificationInfo notificationInfo);
 
 }

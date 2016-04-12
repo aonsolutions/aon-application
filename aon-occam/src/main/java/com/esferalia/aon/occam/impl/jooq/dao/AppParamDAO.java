@@ -145,5 +145,5 @@ public class AppParamDAO {
 		if (ap == null || AonStringUtils.isBlank(ap.getValue())) return false;
 		return (AonNumberUtils.toInteger( ap.getValue() )==1);
 	}
-
+	
 }

@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
@@ -23,15 +24,18 @@ import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 import org.jooq.exception.DataAccessException;
 
+import com.esferalia.aon.jooq.tables.records.AppParamRecord;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeContainer;
+import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.NoticeType;
@@ -1002,5 +1006,73 @@ public class AonHubDAO {
 			cal.set(Calendar.MILLISECOND, 0);
 			return cal.getTime();
 		}
+	}
+	
+	public static NotificationInfo getNotificationInfo(AONContext ctx){
+		Result<AppParamRecord> mail = ctx.getDslContext().select(APP_PARAM.VALUE).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+			.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_MAIL.getValue())).limit(1).fetchInto(APP_PARAM);
+		Result<AppParamRecord> auto = ctx.getDslContext().select(APP_PARAM.VALUE).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+			.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_AUTO.getValue())).limit(1).fetchInto(APP_PARAM);
+		Result<AppParamRecord> bcc = ctx.getDslContext().select(APP_PARAM.VALUE).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+			.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_BCC.getValue())).limit(1).fetchInto(APP_PARAM);
+		Result<AppParamRecord> history = ctx.getDslContext().select(APP_PARAM.VALUE).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+			.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_HISTORY.getValue())).limit(1).fetchInto(APP_PARAM);
+		Result<AppParamRecord> signature = ctx.getDslContext().select(APP_PARAM.VALUE).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+			.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_SIGNATURE.getValue())).limit(1).fetchInto(APP_PARAM);
+		
+		return new NotificationInfo().setHistory(history.isNotEmpty() ? history.get(0).getValue().equals("1") : false)
+				.setMailAccount(mail.isNotEmpty() && mail.get(0).getValue() != null ? SecurityDAO.getMailAccount(ctx, f-> f.getIdProperty().eq(Integer.parseInt(mail.get(0).getValue()))) : null)
+				.setNotify(auto.isNotEmpty() ? auto.get(0).getValue().equals("1") : false)
+				.setSignature(signature.isNotEmpty() && signature.get(0).getValue()!= null ? SecurityDAO.getSignature(ctx, Integer.parseInt(signature.get(0).getValue())) : null)
+				.setBcc(bcc.isNotEmpty() ? bcc.get(0).getValue() : "");
+	}
+	
+	public static void insertNotificationInfo(AONContext ctx, NotificationInfo notificationInfo){
+		Result<Record1<Integer>> auto = ctx.getDslContext().select(APP_PARAM.ID).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+		.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_AUTO.getValue())).limit(1).fetch();
+		if(auto.isEmpty())
+			ctx.getDslContext().insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
+			.values(ctx.getDomainId(), AppParam.NOTICE_NOTIFICATION_AUTO.getValue(), notificationInfo.getNotify() ? "1" : "0").execute();
+		else ctx.getDslContext().update(APP_PARAM).set(APP_PARAM.VALUE, notificationInfo.getNotify() ? "1" : "0")
+			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())).and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_AUTO.getValue())).execute();
+
+		
+		Result<Record1<Integer>> bcc = ctx.getDslContext().select(APP_PARAM.ID).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+				.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_BCC.getValue())).limit(1).fetch();
+		if(bcc.isEmpty())
+			ctx.getDslContext().insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
+			.values(ctx.getDomainId(), AppParam.NOTICE_NOTIFICATION_BCC.getValue(), notificationInfo.getBcc()).execute();
+		else ctx.getDslContext().update(APP_PARAM).set(APP_PARAM.VALUE, notificationInfo.getBcc())
+			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())).and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_BCC.getValue())).execute();
+
+			
+		Result<Record1<Integer>> history = ctx.getDslContext().select(APP_PARAM.ID).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+				.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_HISTORY.getValue())).limit(1).fetch();
+		if(history.isEmpty())
+			ctx.getDslContext().insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
+			.values(ctx.getDomainId(), AppParam.NOTICE_NOTIFICATION_HISTORY.getValue(), notificationInfo.getHistory() ? "1" : "0").execute();
+		else ctx.getDslContext().update(APP_PARAM).set(APP_PARAM.VALUE, notificationInfo.getHistory() ? "1" : "0")
+			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())).and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_HISTORY.getValue())).execute();
+		
+		Result<Record1<Integer>> mail = ctx.getDslContext().select(APP_PARAM.ID).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+				.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_MAIL.getValue())).limit(1).fetch();
+		if(mail.isEmpty())
+			ctx.getDslContext().insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
+			.values(ctx.getDomainId(), AppParam.NOTICE_NOTIFICATION_MAIL.getValue(), notificationInfo.getMailAccount().getId() != null ?
+					notificationInfo.getMailAccount().getId().toString(): null).execute();
+		else ctx.getDslContext().update(APP_PARAM).set(APP_PARAM.VALUE,  notificationInfo.getMailAccount().getId() != null ?
+				notificationInfo.getMailAccount().getId().toString(): null)
+			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())).and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_MAIL.getValue())).execute();	
+		
+		Result<Record1<Integer>> sign = ctx.getDslContext().select(APP_PARAM.ID).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+				.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_SIGNATURE.getValue())).limit(1).fetch();
+		if(sign.isEmpty())
+			ctx.getDslContext().insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
+			.values(ctx.getDomainId(), AppParam.NOTICE_NOTIFICATION_SIGNATURE.getValue(), notificationInfo.getSignature().getId() != null ? 
+					notificationInfo.getSignature().getId().toString(): null).execute();
+		else ctx.getDslContext().update(APP_PARAM).set(APP_PARAM.VALUE, notificationInfo.getSignature().getId() != null ?
+				notificationInfo.getSignature().getId().toString(): null)
+			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())).and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_SIGNATURE.getValue())).execute();
+
 	}
 }

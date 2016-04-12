@@ -996,4 +996,22 @@ public interface AonCSS extends CssResource {
 	@ClassName("tag-notice")
 	String tagNotice();
 
+	/*
+	 *********************************************
+	 *************************** CUSTOM DIALOG BAR
+	 ********************************************* 
+	 */
+	
+	@ClassName("custom-dialog-panel")
+	String customDialogPanel();
+	
+	@ClassName("custom-dialog-header")
+	String customDialogHeader();
+	
+	@ClassName("custom-dialog-title")
+	String customDialogTitle();
+		
+	@ClassName("custom-dialog-close")
+	String customDialogClose();
+
 }

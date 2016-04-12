@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
+import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -18,6 +19,7 @@ public interface ISecurity {
 	
 	// SIGNATURE
 	public Signature getSignature(AONContext ctx, Integer signatureId);
+	public LinkedList<Signature> getSignatureList(AONContext ctx, SignatureFilter filter);
 
 	// MAIL ACCOUNT
 	public MailAccount getMailAccount(AONContext ctx, MailAccountFilter filter);

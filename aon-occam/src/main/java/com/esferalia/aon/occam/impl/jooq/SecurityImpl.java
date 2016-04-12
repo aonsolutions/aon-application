@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
+import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
@@ -41,6 +42,12 @@ public class SecurityImpl implements ISecurity {
 		public Signature getSignature(AONContext ctx, Integer signatureId) {
 			return ctx.getDslContext().transactionResult(
 					Configuration -> SecurityDAO.getSignature(ctx, signatureId));
+		}
+		
+		@Override
+		public LinkedList<Signature> getSignatureList(AONContext ctx, SignatureFilter filter) {
+			return ctx.getDslContext().transactionResult(
+					Configuration -> SecurityDAO.getSignatureList(ctx, filter));
 		}
 		
 	// ------------------ MAIL ACCOUNT

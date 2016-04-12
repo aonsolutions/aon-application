@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IOffice;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeFilter;
+import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -151,4 +152,20 @@ public class OfficeImpl implements IOffice {
 		return AonHubDAO.getRMedias(ctx, parentID);
 	}
 
+	//-------------------- NOTIFICATIONS
+	
+	@Override
+	public NotificationInfo getNotificationInfo(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AonHubDAO.getNotificationInfo(ctx));
+	}
+	
+	@Override
+	public void insertNotificationInfo(AONContext ctx, NotificationInfo notificationInfo) {
+		ctx.getDslContext().transaction(configuration -> 
+				AonHubDAO.insertNotificationInfo(ctx, notificationInfo));	
+	}
+	
+
+	
 }

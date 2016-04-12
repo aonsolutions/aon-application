@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
 import com.esferalia.aon.gwt.office.client.IssueReadPanel.Callback;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
 import com.esferalia.aon.gwt.office.client.models.JSON;
@@ -19,11 +20,18 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRMedia;
 import com.esferalia.aon.gwt.office.client.models.repos.JsRegistry;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
+import com.esferalia.aon.gwt.office.client.notification.INotification;
+import com.esferalia.aon.gwt.office.client.notification.INotificationAsync;
+import com.esferalia.aon.gwt.office.client.notification.JsNotification;
+import com.esferalia.aon.gwt.office.client.notification.NotificationDialog;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.LabelControlValue;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
+import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.office.Notice;
+import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -33,6 +41,9 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style.BorderStyle;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
@@ -45,14 +56,18 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 
@@ -62,6 +77,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
+	final INotificationAsync impl = GWT.create(INotification.class);
+	
 	interface OfficeUiBinder extends UiBinder<Widget, Office> {
 	}
 	
@@ -82,6 +99,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	Button returnButton;
 	@UiField
 	Button clearButton;
+	@UiField Button configurationButton;
 	
 	@UiField
 	DeckLayoutPanel deckPanel;
@@ -418,6 +436,17 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		evalRadioButtons();
 	}
 
+	@UiHandler("configurationButton")
+	void onConfigurationButtonClickEvent(ClickEvent event){
+		ConfigurationContextMenu contextMenu = new ConfigurationContextMenu();
+    	Integer width = contextMenu.getWidth();
+    	contextMenu.setPopupPosition(Window.getClientWidth()-width , 130);
+    	contextMenu.getElement().getStyle().setBorderWidth(1, Unit.PX);
+    	contextMenu.getElement().getStyle().setBorderColor("#ccc");
+    	contextMenu.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+    	contextMenu.show();
+	}
+	
 	// ******************************************************************
 	// ********************** PRIVATE METHODS ***************************
 	// ******************************************************************
@@ -955,4 +984,133 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		return $wnd.getCurrentDomain();
 	}-*/;
 
+	
+	// ******************************************************************
+	// ******************* CONFIGURATION CONTEXT MENU *******************
+	// ******************************************************************
+	
+	class ConfigurationContextMenu extends ContextMenu {
+
+		ScheduledCommand NotificationCommand = new ScheduledCommand() {
+			public void execute() {
+				NotificationDialog dialog = new NotificationDialog() {
+					
+					@Override
+					protected void onCancel() {
+						hide();
+					}
+					
+					@Override
+					protected void onAccept() {
+						ListBox lb1 = (ListBox) flex_table.getWidget(0, 1);
+						ListBox lb2 = (ListBox) flex_table.getWidget(1, 1);
+						CheckBox cb1 = (CheckBox) flex_table.getWidget(2, 0);
+						CheckBox cb2 = (CheckBox) flex_table.getWidget(3, 0);
+						TextBox tb = (TextBox) flex_table.getWidget(4, 1);
+						Window.alert("11" + tb.getValue());
+						Window.alert("22"+ cb2.getValue());
+						Window.alert("33"+ cb1.getValue());
+						Window.alert("44"+ lb2.getValue(lb2.getSelectedIndex()));
+						Window.alert("55" + lb1.getValue(lb1.getSelectedIndex()));
+						
+						tb.getValue();
+						Window.alert("A");
+						cb2.getValue();
+						Window.alert("B");
+						new MailAccount().setId(lb1.getValue(lb1.getSelectedIndex()) != "-" ? 
+								Integer.parseInt(lb1.getValue(lb1.getSelectedIndex())): null);
+						Window.alert("C");
+						new Signature().setId(lb2.getValue(lb2.getSelectedIndex()) != "-" ?
+								Integer.parseInt(lb2.getValue(lb2.getSelectedIndex())): null);
+						Window.alert("D");
+						cb1.getValue();
+						Window.alert("H");
+						NotificationInfo notificationInfo = new NotificationInfo()
+								.setBcc(tb.getValue())
+								.setHistory(cb2.getValue())
+								.setMailAccount(new MailAccount().setId(lb1.getValue(lb1.getSelectedIndex()) != "-" ? 
+										Integer.parseInt(lb1.getValue(lb1.getSelectedIndex())): null))
+								.setSignature(new Signature().setId(lb2.getValue(lb2.getSelectedIndex()) != "-" ?
+										Integer.parseInt(lb2.getValue(lb2.getSelectedIndex())): null))
+								.setNotify(cb1.getValue());
+						Window.alert("212312");
+						impl.insertNotificationInfo(JsNotification.getDomain(), notificationInfo, new AsyncCallback<Void>() {
+							
+							@Override
+							public void onSuccess(Void result) {
+								hide();
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {}
+						});
+						
+					}
+				};
+				dialog.addStyleName("gwt-PopupPanel-template");
+				dialog.setGlassEnabled(true);
+				dialog.show();
+			};
+		};
+		
+		ScheduledCommand TagCommand = new ScheduledCommand() {
+			public void execute() {
+				dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 220);
+			};
+		};
+		
+		ScheduledCommand FAQsCommand = new ScheduledCommand() {
+			public void execute() {
+				// SHOW Notification configuration popup!!!
+			};
+		};
+
+		private MenuItem tagItem;
+		private MenuItem notificationItem;
+		private MenuItem faqsItem;
+
+		private Integer heigth;
+		private Integer width;
+
+		public Integer getHeigth() {
+			heigth = 74;
+			return heigth;
+		}
+
+		public void setHeigth(Integer heigth) {
+			this.heigth = heigth;
+		}
+
+		public Integer getWidth() {
+			width = 117;
+			return width;
+		}
+
+		public void setWidth(Integer width) {
+			this.width = width;
+		}
+		
+		public ConfigurationContextMenu(){
+			tagItem = addItem("Etiquetas", TagCommand
+					,"aon-icon-tag", AON.AON_ICON_CMD_BUTTON);
+			tagItem.setEnabled(true);
+			
+			notificationItem = addItem("Notificaciones", NotificationCommand 
+					,"aon-icon-notification", AON.AON_ICON_CMD_BUTTON);
+			notificationItem.setEnabled(true);
+			
+			addSeparator();
+			
+			faqsItem = addItem("FAQs", FAQsCommand
+					,"aon-icon-menu-help", AON.AON_ICON_CMD_BUTTON);
+			faqsItem.setEnabled(true);
+		}
+
+		@Override
+		public void show() {
+			super.show();
+		}
+	
 }
+}
+
