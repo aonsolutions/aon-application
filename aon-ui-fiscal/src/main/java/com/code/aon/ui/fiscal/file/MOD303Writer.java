@@ -63,6 +63,15 @@ public class MOD303Writer {
 		if (mod303s != null) {
 			for (IMod303Declaration generalRegimeDeclaration : mod303s) {
 				Declaration declaration = getDeclaration(generalRegimeDeclaration, additionalInfo);
+			// EL VALOR DEL RESULTADO (CLAVE 69) ERA SIEMPRE 0 Y AL GENERAR EL FICHERA DABA ERROR EN AEAT
+				if(declaration.getDeposit() > 0){
+					declaration.setResult0(declaration.getDeposit());
+				} else if(declaration.getCompensate() > 0){
+					declaration.setResult0(-declaration.getCompensate());
+				} else if(declaration.getPayBack() > 0){
+					declaration.setResult0(-declaration.getPayBack());
+				}
+			// ----------------------------------------------------------------------------------------- //
 				declarations.add(declaration);
 			}
 		}
