@@ -78,7 +78,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
@@ -88,7 +87,6 @@ import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
-import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -787,6 +785,7 @@ public class AgreementDraft extends ResizeComposite implements
 		}
 
 		void setDescriptionSuggestBox(final SuggestBox suggestBox) {
+			
 			suggestBox
 					.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 
@@ -798,7 +797,7 @@ public class AgreementDraft extends ResizeComposite implements
 									.getReplacementString());
 							if (concept == null)
 								return;
-
+							
 							payment.setType(concept.getType());
 							payment.setName(concept.getName());
 							payment.setConceptId(concept.getId());
@@ -823,21 +822,26 @@ public class AgreementDraft extends ResizeComposite implements
 					});
 			this.descriptionBox = suggestBox.getValueBox();
 			this.descriptionBox
-					.addValueChangeHandler(new ValueChangeHandler<String>() {
-						@Override
-						public void onValueChange(ValueChangeEvent<String> event) {
-							if (((DefaultSuggestionDisplay) suggestBox
-									.getSuggestionDisplay())
-									.isSuggestionListShowing())
-								return;
-							payment.setDescription(event.getValue());
-							AgreementDraft.this.agreementDraftObject
-									.addDraftPayment(payment);
-							AgreementDraft.this
-									.calculate(getExpressionFocusCallback());
+			.addBlurHandler(new BlurHandler() {
+				
+				@Override
+				public void onBlur(BlurEvent event) {
+					if (((DefaultSuggestionDisplay) suggestBox
+							.getSuggestionDisplay())
+							.isSuggestionListShowing())
+						return;
+					String description = PaymentEditor.this.descriptionBox.getValue();
+					if ( StringUtils.isBlank(description))
+						return;
+					
+					payment.setDescription(description);
+					AgreementDraft.this.agreementDraftObject
+							.addDraftPayment(payment);
+					AgreementDraft.this
+							.calculate(getExpressionFocusCallback());
 
-						}
-					});
+				}
+			});	
 		}
 
 		CalculateCallback getSalaryTypeFocusCallback() {
