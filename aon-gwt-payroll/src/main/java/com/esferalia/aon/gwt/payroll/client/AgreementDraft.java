@@ -84,6 +84,7 @@ import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FocusWidget;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
@@ -1141,10 +1142,19 @@ public class AgreementDraft extends ResizeComposite implements
 
 	@UiHandler("fxButton")
 	void onFxClicked(MouseDownEvent event) {
-		FxDialog fxDialog = new FxDialog(contextProvider);
+		FxDialog fxDialog = new FxDialog(contextProvider){
+			@Override
+			void onAcceptButtonClick(ClickEvent event) {
+				super.onAcceptButtonClick(event);
+				fxhasValue.setValue(getExpression(),true);
+				((Focusable)fxhasValue).setFocus(true);
+			}
+		};
+		
 		fxDialog.setExpression(fxhasValue.getValue());
 		fxDialog.center();
 		fxDialog.show();
+		
 	}
 
 	@UiHandler("undoAllButton")

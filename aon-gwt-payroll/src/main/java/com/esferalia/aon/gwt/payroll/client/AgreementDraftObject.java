@@ -714,6 +714,8 @@ public class AgreementDraftObject {
 			return twins;
 		
 		for (Payment p : agreementDraft.getPayments()) {
+			if (NumberUtils.equals(p.getId(),payment.getId()) )
+				continue;
 			if (NumberUtils.equals(p.getDomain(),draftDomain) )
 				continue;
 			if (StringUtils.equals(payment.getName(), p.getName())

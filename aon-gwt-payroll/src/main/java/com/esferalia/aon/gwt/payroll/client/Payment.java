@@ -607,7 +607,8 @@ public class Payment extends ResizeComposite {
 			public void onClose(CloseEvent<PopupPanel> event) {
 				textBox.setFocus(true);
 				if (fxDialog.isAccepted()) {
-					textBox.setValue(fxDialog.getExpression());
+					//textBox.setValue(fxDialog.getExpression());
+					textBox.setExpression(fxDialog.getExpression(), true);
 				}
 			}
 		});
