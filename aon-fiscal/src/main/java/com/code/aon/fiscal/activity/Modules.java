@@ -271,7 +271,7 @@ public class Modules implements Serializable {
 	}
 	
 	public double getFarmerQuota(int year, int activity) {
-		if (year == 2015) {
+		if (year >= 2015) {
 			if (activity == 1) {
 				//01	Ganaderia intensiva porcino carne y avicultura carne.
 				return 0.10;
@@ -326,7 +326,7 @@ public class Modules implements Serializable {
 			}
 			throw new IllegalArgumentException("Actividad agrícola no soportada");
 		}
-		throw new IllegalArgumentException("Ejericio no soportado");
+		throw new IllegalArgumentException("Ejercicio no soportado");
 	}
 	
 }
