@@ -10,13 +10,17 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,6 +40,7 @@ import com.code.aon.report.ReportException;
 import com.code.aon.report.poi.ExcelReportExporter;
 import com.code.aon.report.poi.ReportColumnMetadata;
 import com.code.aon.report.poi.ReportMetadata;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.sql.SQLUtils;
@@ -55,6 +60,13 @@ public class ProductionReportController implements Serializable {
 	private Map<String, ReportObject> advancePaymethodMap = new HashMap<>();
 	private Map<String, ReportObject> paymethodMap = new HashMap<>();
 	
+	private DataModel productionModel;
+	private DataModel paxModel;
+	private DataModel ratioModel;
+	private DataModel taxModel;
+	private DataModel advancePaymethodModel;
+	private DataModel paymethodModel;
+	
 	
 	public Hotel getHotel() {
 		return hotel;
@@ -70,18 +82,57 @@ public class ProductionReportController implements Serializable {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	
-	public boolean isEmpty(){
-		return paxMap==null && advancePaymethodMap.isEmpty() && paymethodMap.isEmpty();
+
+	public Integer getPreviousYear() {
+		Calendar cal = Calendar.getInstance();
+	    cal.setTime(date);
+		return cal.get(Calendar.YEAR)-1;
 	}
+	
+	public boolean isNevv() {
+		return productionMap.isEmpty() && paxMap.isEmpty() && advancePaymethodMap.isEmpty() && paymethodMap.isEmpty();
+	}
+
+	public DataModel getProductionModel() {
+		return productionModel;
+	}
+
+	public DataModel getPaxModel() {
+		return paxModel;
+	}
+
+	public DataModel getRatioModel() {
+		return ratioModel;
+	}
+
+	public DataModel getTaxModel() {
+		return taxModel;
+	}
+
+	public DataModel getAdvancePaymethodModel() {
+		return advancePaymethodModel;
+	}
+
+	public DataModel getPaymethodModel() {
+		return paymethodModel;
+	}
+	
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException {
 		hotel = null;
 		date = new Date();
+		
 		productionMap.clear();
 		paxMap.clear();
 		advancePaymethodMap.clear();
 		paymethodMap.clear();
+		
+		productionModel = null;
+		paxModel = null;
+		ratioModel = null;
+		taxModel = null;
+		advancePaymethodModel = null;
+		paymethodModel = null;
 	}
 	
 	public void onSearch(ActionEvent event) {
@@ -90,7 +141,42 @@ public class ProductionReportController implements Serializable {
 		} catch (AonSQLException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-//		setModel(new SerializableListDataModel(getBoardList()));
+		
+		productionModel = new SerializableListDataModel( productionMap.entrySet().stream()
+		        .sorted(Comparator.comparing(Map.Entry::getKey))
+		        .map(Map.Entry::getValue)
+		        .collect(Collectors.toList())
+				);
+		paxModel = new SerializableListDataModel( paxMap.entrySet().stream()
+				.sorted(Comparator.comparing(Map.Entry::getKey))
+				.map(Map.Entry::getValue)
+				.collect(Collectors.toList())
+				);
+		
+		Map<String, ReportObject> productionRatioMap = getProductionRatioMap();
+		ratioModel = new SerializableListDataModel( productionRatioMap.entrySet().stream()
+				.sorted(Comparator.comparing(Map.Entry::getKey))
+				.map(Map.Entry::getValue)
+				.collect(Collectors.toList())
+				);
+		
+		Map<String, ReportObject> taxMap = getTaxMap();
+		taxModel = new SerializableListDataModel( taxMap.entrySet().stream()
+				.sorted(Comparator.comparing(Map.Entry::getKey))
+				.map(Map.Entry::getValue)
+				.collect(Collectors.toList())
+				);
+		
+		advancePaymethodModel = new SerializableListDataModel( advancePaymethodMap.entrySet().stream()
+				.sorted(Comparator.comparing(Map.Entry::getKey))
+				.map(Map.Entry::getValue)
+				.collect(Collectors.toList())
+				);
+		paymethodModel = new SerializableListDataModel( paymethodMap.entrySet().stream()
+				.sorted(Comparator.comparing(Map.Entry::getKey))
+				.map(Map.Entry::getValue)
+				.collect(Collectors.toList())
+				);
 	}
 	
 	
@@ -124,7 +210,6 @@ public class ProductionReportController implements Serializable {
 	
 	private void buildProductionReport() throws AonSQLException {
 		SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
-//		timeFormatter.applyPattern("yyyy/MM/dd_HH:mm:ss");
 		
 	    Calendar cal = Calendar.getInstance();
 	    cal.setTime(date);
@@ -154,9 +239,12 @@ public class ProductionReportController implements Serializable {
 			paxStmt = connection.prepareStatement(getPaxSQL(date, previousDate, year, previousYear, month, previousMonth, hotel, wp));
 			paymethodStmt = connection.prepareStatement(getInvoicePayMethodsSQL(date, previousDate, year, previousYear, month, previousMonth, hotel, wp));
 			
-			LOGGER.info("****** Inicio de la busqueda de produccion  -> " + timeFormatter.format(new Date()));
+			LOGGER.info("****** Inicio de la busqueda de produccion       -> " + timeFormatter.format(new Date()));
 			productionRs = productionStmt.executeQuery();
-			LOGGER.info("****** Fin de la busqueda de produccion     -> " + timeFormatter.format(new Date()));
+			long diff = (new Date()).getTime() - logDate.getTime();
+			LOGGER.info("****** Fin de la busqueda de produccion          -> " + timeFormatter.format(new Date()) 
+					+ " TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
+			
 			while (productionRs.next()) {
 				String description = productionRs.getString(1);
 				String period = productionRs.getString(2);
@@ -184,9 +272,11 @@ public class ProductionReportController implements Serializable {
 			
 //			printData(productionMap, "PRODUCTION");
 			
-			LOGGER.info("****** Inicio de la busqueda de pax         -> " + timeFormatter.format(new Date()));
+			LOGGER.info("****** Inicio de la busqueda de pax              -> " + timeFormatter.format(new Date()));
 			paxRs = paxStmt.executeQuery();
-			LOGGER.info("****** Fin de la busqueda de pax            -> " + timeFormatter.format(new Date()));
+			diff = (new Date()).getTime() - logDate.getTime();
+			LOGGER.info("****** Fin de la busqueda de pax                 -> " + timeFormatter.format(new Date()) 
+					+ " TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
 			while (paxRs.next()) {
 				String period = paxRs.getString(1);
 				Double amount = paxRs.getDouble(2);
@@ -212,9 +302,11 @@ public class ProductionReportController implements Serializable {
 			
 //			printData(paxMap, "PAX");
 			
-			LOGGER.info("****** Inicio de la busqueda de facturas    -> " + timeFormatter.format(new Date()));
+			LOGGER.info("****** Inicio de la busqueda de facturas         -> " + timeFormatter.format(new Date()));
 			paymethodRs = paymethodStmt.executeQuery();
-			LOGGER.info("****** Fin de la busqueda de facturas       -> " + timeFormatter.format(new Date()));
+			diff = (new Date()).getTime() - logDate.getTime();
+			LOGGER.info("****** Fin de la busqueda de facturas            -> " + timeFormatter.format(new Date()) 
+					+ " TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
 			while (paymethodRs.next()) {
 				String description = paymethodRs.getString(1);
 				String type = paymethodRs.getString(2);
@@ -250,10 +342,10 @@ public class ProductionReportController implements Serializable {
 				
 //			printData(paymethodMap, "PAYMETHOD");
 //			printData(advancePaymethodMap, "ADVANCE");
-			LOGGER.info("****** Fin de la ejecucion                  -> " + timeFormatter.format(logDate));
-			long diff = (new Date()).getTime() - logDate.getTime();
-	        LOGGER.info("****** Tiempo total                         -> " + diff + "seg. (" 
-	        		+ (diff / (60 * 1000) % 60) + "min. " + (diff / 1000 % 60) + " seg.)" );
+			
+			diff = (new Date()).getTime() - logDate.getTime();
+	        LOGGER.info("****** Tiempo TOTAL                              -> " + diff + " seg. (" 
+	        		+ (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg.)" );
 		} catch (Throwable e) {
 			try {
 				connection.rollback();
