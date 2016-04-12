@@ -119,8 +119,6 @@ public class IssueReadPanel extends Composite {
 	private String type;
 	private String priority;
 
-	// private DateTimeFormat fmt = DateTimeFormat.getFormat("dd/MM/yyyy
-	// HH:mm");
 	private DateTimeFormat date = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private DateTimeFormat hour = DateTimeFormat.getFormat("HH:mm");
 
@@ -150,7 +148,7 @@ public class IssueReadPanel extends Composite {
 
 		this.userLogged.setText(currentUser.getName());
 
-		initHeaderAux(issue);
+		initHeader(issue);
 
 		for (DefaultAonIssueComments comment : issue.getComments()) {
 			printComment(comment,
@@ -170,6 +168,11 @@ public class IssueReadPanel extends Composite {
 
 			createReopenButton();
 		}
+		
+		else if (issue instanceof IssueGrid.IssueFAQLoadSelected) {
+			duplicatedButton.setVisible(false);
+			closedButton.setVisible(false);			
+		}
 	}
 
 	public void setTags(List<DefaultAonTagIssueSelected> tags) {
@@ -179,15 +182,16 @@ public class IssueReadPanel extends Composite {
 		List<DefaultAonTagIssueSelected> officeList = new LinkedList<DefaultAonTagIssueSelected>();
 
 		for (DefaultAonTagIssueSelected tag : tags) {
-			if (tag.getType() == TagType.OFFICE_TYPE.value()) {
+			
+			if (tag.isOfficeType()) {
 				typesList.add(tag);
 			}
 
-			else if (tag.getType() == TagType.OFFICE_PRIORITY.value()) {
+			else if (tag.isOfficePriority()) {
 				priorityList.add(tag);
 			}
 
-			else if (tag.getType() == TagType.OFFICE_NOTICE.value())
+			else if (tag.isOfficeNotice())
 				officeList.add(tag);
 		}
 
@@ -211,22 +215,7 @@ public class IssueReadPanel extends Composite {
 				commentTextArea.getValue().trim().isEmpty() == false);
 	}
 
-	private String getStateIcon(String state) {
-
-		String value = "";
-
-		if (state.compareTo(NoticeStatus.OPEN.getValue()) == 0) {
-			value = AON.AON_CSS.aonIconIssueOpenedGreen();
-		} else if (state.compareTo(NoticeStatus.REOPEN.getValue()) == 0) {
-			value = AON.AON_CSS.aonIconIssueReOpenedBlue();
-		} else {
-			value = AON.AON_CSS.aonIconIssueClosed();
-		}
-
-		return value;
-	}
-
-	private void initHeaderAux(IssueSelected issue) {
+	private void initHeader(IssueSelected issue) {
 
 		headerVPanel.add(getTitleLabel());
 		
@@ -326,8 +315,7 @@ public class IssueReadPanel extends Composite {
 		hPanel.setSpacing(5);
 
 		Label headerIconLabel = new Label();
-		String iconState = getStateIcon(tag.getName());
-		headerIconLabel.setStyleName(iconState);
+		headerIconLabel.setStyleName(issue.getStateIconStyle());
 		hPanel.add(headerIconLabel);
 
 		hPanel.add(new Label(tag.getName() + " por "));
@@ -368,9 +356,8 @@ public class IssueReadPanel extends Composite {
 		HorizontalPanel hPanel = new HorizontalPanel();
 		hPanel.setSpacing(5);
 
-		Label headerIconLabel = new Label();
-		String iconState = getStateIcon(tag.getName());
-		headerIconLabel.setStyleName(iconState);
+		Label headerIconLabel = new Label();		
+		headerIconLabel.setStyleName(issue.getStateIconStyle());
 		hPanel.add(headerIconLabel);
 
 		hPanel.add(new Label(tag.getName() + " por "));
@@ -933,6 +920,9 @@ public class IssueReadPanel extends Composite {
 		sb.append(hour.format(comment.getCreatedAt()));
 		sb.append(" (hace " + days
 				+ ((days == 1) ? " d\u00EDa)" : " d\u00EDas)"));
+		
+		if (AonStringUtils.isNotBlank(comment.getCompany()))
+			sb.append( " ( " + comment.getCompany() + " )");
 
 		Label label = new Label();
 		label.setText(sb.toString());

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.jooq.test;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -11,20 +12,18 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeFilter;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO2;
-import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 
 public class OfficeTest {
 
 	private static AONContext ctx;
-	private static String DOMAIN_NAME = "macayc-mac.amtzdelagos.dev";
-	private static int DOMAIN_ID = 536;
-	private static String USER_NAME = "mac";
+//	private static String DOMAIN_NAME = "macayc-mac.amtzdelagos.dev";
+//	private static int DOMAIN_ID = 536;
+//	private static String USER_NAME = "mac";
 
-	// private static String DOMAIN_NAME = "agroback-mac.amtzdelagos.dev";
-	// private static int DOMAIN_ID = 228;
-	// private static String USER_NAME = "patri";
+	 private static String DOMAIN_NAME = "agroback-mac.amtzdelagos.dev";
+	 private static int DOMAIN_ID = 228;
+	 private static String USER_NAME = "patri";
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException,
@@ -34,24 +33,25 @@ public class OfficeTest {
 	}
 
 	@Test
-	public void testCreateNotices() {
+	public void testGetTicketNotices() {
 
 		NoticeFilter filter = new NoticeFilter();
-		filter.setState("open");
+		filter.setState("open");		
 		filter.setTags(new String[] {
-				"Error",
-				"Consulta",
-				"Alta"
 		});
 
-		User user = UserDAO.getUser(ctx, 1654);
-		System.out.println("Name: " + user.getName());
-
-		List<Notice> notices = AonHubDAO2.getTicketNotices(ctx, filter);
-
+//		User user = UserDAO.getUser(ctx, 1654);
+//		System.out.println("Name: " + user.getName());
+		
+		Date now = new Date();
+		List<Notice> notices = AonHubDAO2.getTicketNoticesForTest(ctx, filter);
+		String segundos = (new Date().getTime() - now.getTime()) / 1000 + " sec." ;		
+		
 		for (Notice notice : notices) {
 			System.out.println("\nIncidencia: " + notice.getTitle());
 			System.out.println("Company: " + notice.getCompany());
+			System.out.println("Status: " + notice.getStatus());
+			
 			for (Tag tag : notice.getTags()) {
 				System.out.println("\t Etiqueta: " + tag.getName());
 				System.out.println("\t StartDate: " + tag.getStartDate());
@@ -61,6 +61,7 @@ public class OfficeTest {
 		}
 		System.out.println("==============================");
 		System.out.println("Numero de incidencias: " + notices.size());
+		System.out.println(segundos + " segundos");
 
 	}
 

@@ -33,7 +33,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
@@ -192,11 +191,11 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 
 		for (DefaultAonTagIssueSelected tag : list) {
 
-			if (tag.getType() == TagType.OFFICE_TYPE.value())
+			if (tag.isOfficeType())
 				typeTagList.add(tag);
-			else if (tag.getType() == TagType.OFFICE_PRIORITY.value())
+			else if (tag.isOfficePriority())
 				priorityTagList.add(tag);
-			else if (tag.getType() == TagType.OFFICE_NOTICE.value())
+			else if (tag.isOfficeNotice())
 				noticeTagList.add(tag);
 		}
 

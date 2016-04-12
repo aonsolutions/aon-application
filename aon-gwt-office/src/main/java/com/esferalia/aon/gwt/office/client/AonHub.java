@@ -180,9 +180,26 @@ public class AonHub {
 				+ (filterUser != null ? "&users=" + URL.encode(filterUser) : ""), callback);
 	}
 
+	public void getFaqIssues(String user, String repo,
+			AsyncCallback<JSON<JsIssue>> callback) {
+		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=faq"
+				+ (since != null ? "&since=" + this.since : "")
+				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
+				+ "&offset=" + offset
+				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				
+				+ (text != null ? "&text=" + URL.encode(text) : "")
+				+ (filterUser != null ? "&users=" + URL.encode(filterUser) : ""), callback);
+	}
+	
 	public void createIssue(String user, String repo, IssueValue prop,
 			AsyncCallback<JsIssue> callback) {
 		post(baseUrl + "repos/" + user + "/" + repo + "/issues", prop,
+				callback);
+	}
+	
+	public void createFAQ(String user, String repo, IssueValue prop, 
+			AsyncCallback<JsIssue> callback) {
+		post(baseUrl + "repos/" + user + "/" + repo + "/faqs", prop,
 				callback);
 	}
 	

@@ -6,14 +6,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -28,10 +33,12 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class IssuePanel extends CustomDialog {
+public class IssuePanel extends CustomDialog implements KeyUpHandler {
 
 	interface Listener {
 
+		void onCreateNewFAQ (Notice notice);
+		
 		void onCreateNewIssue(Notice notice);
 	}
 
@@ -45,6 +52,8 @@ public class IssuePanel extends CustomDialog {
 	Label dateLabel;
 	@UiField
 	Label loggedLabel;
+	@UiField
+	Label statusLabel;
 
 	@UiField
 	TextBox titleTextBox;
@@ -93,6 +102,8 @@ public class IssuePanel extends CustomDialog {
 		this.user = user;
 		this.listeners = new LinkedList<Listener>();		
 		this.date = new Date();
+		this.titleTextBox.addKeyUpHandler(this);
+		
 		dateLabel.setText(format.format(date));
 		loggedLabel.setText(user.getName());
 	}
@@ -103,6 +114,40 @@ public class IssuePanel extends CustomDialog {
 
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
+	}
+	
+	public void showFAQPanel() {
+		registrySuggest.setEnabled(false);
+		rmediaSuggest.setEnabled(false);
+		
+		statusLabel.setText("Estado: FAQ");
+		statusLabel.addStyleName(AON.AON_BOLD);
+		statusLabel.addStyleName(AON.AON_RED);
+
+		titleTextBox.setFocus(true);
+		titleTextBox.selectAll();
+		
+		acceptButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {				
+				addNewFAQClickHandler(event);
+			}
+		});
+		center();
+	}
+	
+	public void showNoticePanel() {
+		statusLabel.setText("Estado: OPEN");
+		statusLabel.addStyleName(AON.AON_BOLD);
+		
+		acceptButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				addNewNoticeClickHander(event);
+			}
+		});
+		center();
 	}
 
 	public void showPopupPanel() {
@@ -171,31 +216,6 @@ public class IssuePanel extends CustomDialog {
 	// ------------------------------------------- Handlers
 	// ----------------------------------------------------
 
-	@UiHandler("acceptButton")
-	void onAcceptButtonClick(ClickEvent event) {
-
-		if (titleTextBox.getText().trim().isEmpty())
-			return;
-
-		Notice notice = new Notice();
-		notice.setTitle((titleTextBox.getValue().isEmpty()) ? ""
-				: titleTextBox.getValue());
-		notice.setStatus(NoticeStatus.OPEN.getValue());
-		notice.setSender(user);
-		notice.setStartDate(date);
-
-		if (registry != null) {
-			int id = registryDrashMap.get(registry);
-			Registry aux = registryMap.get(id);
-			notice.setCompany(aux.getName());
-			notice.setSource(String.valueOf(aux.getId()));
-		}
-
-		onCreateNewIssue(notice);
-		hide();
-
-	}
-
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
 		hide();
@@ -222,12 +242,51 @@ public class IssuePanel extends CustomDialog {
 			Window.alert("Registro no encontrado");
 		
 		titleTextBox.setFocus(true);
-		
+	}
+	
+	@Override
+	public void onKeyUp(KeyUpEvent event) {
+		acceptButton.setEnabled(!AonStringUtils.isEmpty(titleTextBox.getText()));		
+	}
+	
+	private void addNewNoticeClickHander(ClickEvent event) {
+
+		Notice notice = new Notice();
+		notice.setTitle(titleTextBox.getValue());		
+		notice.setStatus(NoticeStatus.OPEN.getValue());
+		notice.setSender(user);
+		notice.setStartDate(date);
+
+		if (registry != null) {
+			int id = registryDrashMap.get(registry);
+			Registry aux = registryMap.get(id);
+			notice.setCompany(aux.getName());
+			notice.setSource(String.valueOf(aux.getId()));
+		}
+
+		onCreateNewIssue(notice);
+		hide();
+	}
+	
+	private void addNewFAQClickHandler(ClickEvent event) {
+
+		Notice notice = new Notice();
+		notice.setTitle(titleTextBox.getValue());
+		notice.setStatus(NoticeStatus.OPEN.getValue());
+		notice.setSender(user);
+		notice.setStartDate(date);
+
+		onCreateNewFAQ(notice);
+		hide();
+	}
+	
+	private void onCreateNewFAQ(Notice notice) {
+		for (Listener listener : listeners) 
+			listener.onCreateNewFAQ(notice);
 	}
 
 	private void onCreateNewIssue(Notice notice) {
 		for (Listener listener : listeners)
 			listener.onCreateNewIssue(notice);
 	}
-	
 }

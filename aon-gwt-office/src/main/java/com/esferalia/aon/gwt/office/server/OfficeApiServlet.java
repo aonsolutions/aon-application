@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.google.gwt.safehtml.shared.UriUtils;
 
 /**
@@ -147,7 +148,6 @@ public class OfficeApiServlet extends HttpServlet {
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
 			}
-
 		}
 	}
 
@@ -197,7 +197,7 @@ public class OfficeApiServlet extends HttpServlet {
 
 				Notice notice = new Notice();
 				notice.setTitle(json.getString("title"));
-				
+				notice.setStatus(NoticeStatus.OPEN.getValue());
 				String dateString = json.getString("startDate");
 				Date startDate = null;
 				try {
@@ -235,6 +235,73 @@ public class OfficeApiServlet extends HttpServlet {
 		}
 	}
 
+	private static class CreateFAQ extends RegExpRequestHandler {
+
+		private HttpServletRequest req;
+		private HttpServletResponse resp;
+
+		private Integer domain;
+		private String domainName;
+		private static SimpleDateFormat sdf = new SimpleDateFormat(
+				"yyyy-MM-dd'T'HH:mm:ss'Z'");
+		public CreateFAQ() {
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/faqs");
+		}
+
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+
+			this.req = req;
+			this.resp = resp;
+
+			try {
+				this.domain = getDomainId();
+				this.domainName = getDomainName();
+
+			} catch (Exception ex) {
+				String aux = getRequestAction(req);
+				String[] auxArr = aux.split("/");
+				this.domain = Integer.parseInt(auxArr[2]);
+				this.domainName = auxArr[3];
+
+			} finally {
+				createFAQ();
+			}
+		}
+
+		private void createFAQ() {
+
+			try {
+
+				String object = getJsonObject(req);
+				JSONObject json = new JSONObject(object);
+
+				String userName = AonServletUtils.getLoggedUser();
+
+				Notice notice = new Notice();
+				notice.setTitle(json.getString("title"));
+				notice.setStatus(NoticeStatus.FAQ.getValue());
+				String dateString = json.getString("startDate");
+				Date startDate = null;
+				try {
+					startDate = sdf.parse(dateString);
+				} catch (Exception ex) {
+					startDate = new Date();
+				}
+				notice.setStartDate(startDate);
+				Integer userId = Integer.parseInt(json.getString("sender"));
+				User user = AON.getUser(domain, domainName, userName, userId);
+				notice.setSender(user);
+
+				getCreateNotice(resp, domain, domainName, notice);						
+
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+			}
+		}
+	}
+
 	private static class EditIssue extends RegExpRequestHandler {
 
 		public EditIssue() {
@@ -265,7 +332,6 @@ public class OfficeApiServlet extends HttpServlet {
 			} finally {
 				editIssue(req, resp, domain, domainName, noticeId);
 			}
-
 		}
 
 		private void editIssue(HttpServletRequest req, HttpServletResponse resp,
@@ -1149,6 +1215,7 @@ public class OfficeApiServlet extends HttpServlet {
 	
 	private static final HttpRequestHandler POST_HANDLERS[] = {
 			new CreateIssue(),
+			new CreateFAQ(),
 			new EditIssue(),
 			new AddDuplicateNotice(),
 			new CreateLabel(),
@@ -1179,7 +1246,6 @@ public class OfficeApiServlet extends HttpServlet {
 				break;
 			}
 		}
-
 	}
 
 	@Override

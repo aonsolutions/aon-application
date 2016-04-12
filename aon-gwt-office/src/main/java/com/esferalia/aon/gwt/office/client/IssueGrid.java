@@ -36,11 +36,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.cellview.client.TextHeader;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
-import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 public class IssueGrid extends CustomDataGrid<IssueSelected>
 		implements HasSelectionHandlers<IssueSelected> {
@@ -52,14 +48,9 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 	public enum Columns {
 
-		STATE(""), 
-		TYPE("TIPO"), 
-		PRIORITY("PRIORIDAD"), 
-		COMPANY("EMPRESA"), 
-		TITLE("ASUNTO"), 
-		LABELS("ETIQUETAS"), 
-		OWNER("CREADO POR"), 
-		CREATED_AT("FECHA");
+		STATE(""), TYPE("TIPO"), PRIORITY("PRIORIDAD"), COMPANY(
+				"EMPRESA"), TITLE("ASUNTO"), LABELS(
+						"ETIQUETAS"), OWNER("CREADO POR"), CREATED_AT("FECHA");
 
 		private String mensaje;
 
@@ -101,7 +92,8 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		public String getStateIconStyle() {
 			if (issue.getState().compareTo(NoticeStatus.OPEN.getValue()) == 0)
 				return AON.AON_CSS.aonIconIssueOpen();
-			else if(issue.getState().compareTo(NoticeStatus.REOPEN.getValue()) == 0)
+			else if (issue.getState()
+					.compareTo(NoticeStatus.REOPEN.getValue()) == 0)
 				return AON.AON_CSS.aonIconIssueReOpenedBlue();
 			else
 				return AON.AON_CSS.aonIconIssueOpen();
@@ -136,6 +128,29 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		@Override
 		public String getStateIconStyle() {
 			return AON.AON_CSS.aonIconIssueClosed();
+		}
+
+		@Override
+		public DefaultAonIssueComments editComment(JsIssueComment comment) {
+			return null;
+		}
+	}
+
+	public static class IssueFAQLoadSelected
+			extends DefaultAonIssueSelected {
+
+		public IssueFAQLoadSelected(JsIssue issue) {
+			super(issue);
+		}
+
+		@Override
+		public DefaultAonTagIssueSelected editTag(JsLabel label) {
+			return null;
+		}
+
+		@Override
+		public String getStateIconStyle() {
+			return AON.AON_CSS.aonIconQuestion() + " " + AON.AON_ICON_CMD_BUTTON;
 		}
 
 		@Override
@@ -181,7 +196,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		private Header<String> createdAtHeader = new TextHeader(
 				Columns.CREATED_AT.getColumnName());
 
-		public HeaderBuilder() {			
+		public HeaderBuilder() {
 			super(IssueGrid.this, false);
 			setSortIconStartOfLine(false);
 		}
@@ -289,17 +304,17 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
 			td.style().cursor(Cursor.POINTER);
-			td.className(AON.AON_CSS.aonDataTableTextColumn() 
-					+ " " + AON.AON_RESOURCES.css().tagStyle()
-					+ " " + AON.AON_RESOURCES.css().tagType());
+			td.className(AON.AON_CSS.aonDataTableTextColumn() + " "
+					+ AON.AON_RESOURCES.css().tagStyle() + " "
+					+ AON.AON_RESOURCES.css().tagType());
 			renderCell(td, createContext(col++), typeColumn, rowValue);
 			td.endTD();
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
-			td.className(AON.AON_CSS.aonDataTableTextColumn() 
-					+ " " + AON.AON_RESOURCES.css().tagStyle()
-					+ " " + AON.AON_RESOURCES.css().tagPriority());
+			td.className(AON.AON_CSS.aonDataTableTextColumn() + " "
+					+ AON.AON_RESOURCES.css().tagStyle() + " "
+					+ AON.AON_RESOURCES.css().tagPriority());
 			renderCell(td, createContext(col++), priorityColumn, rowValue);
 			td.endTD();
 
@@ -317,9 +332,9 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 			td = row.startTD().align(
 					HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString());
-			td.className(AON.AON_CSS.aonDataTableTextColumn() 
-					+ " " + AON.AON_RESOURCES.css().tagStyle()
-					+ " " + AON.AON_RESOURCES.css().tagNotice());
+			td.className(AON.AON_CSS.aonDataTableTextColumn() + " "
+					+ AON.AON_RESOURCES.css().tagStyle() + " "
+					+ AON.AON_RESOURCES.css().tagNotice());
 			renderCell(td, createContext(col++), labelsColumn, rowValue);
 			td.endTD();
 
@@ -367,7 +382,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 		selectionModel = new MultiSelectionModel<IssueSelected>();
 
-		setStyleName(AON.AON_CSS.aonGwtOfficeDataTable());		
+		setStyleName(AON.AON_CSS.aonGwtOfficeDataTable());
 		setAutoHeaderRefreshDisabled(false);
 		setSkipRowHoverCheck(true);
 		initializeColumns();
@@ -467,15 +482,17 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 						.getTags().listIterator();
 				while (iterator.hasNext()) {
 					DefaultAonTagIssueSelected tag = iterator.next();
-					if (tag.getType() == TagType.OFFICE_NOTICE.value() && tag.getDeletedAt() == null) {
+					if (tag.getType() == TagType.OFFICE_NOTICE.value()
+							&& tag.getDeletedAt() == null) {
 						buffer.append(tag.getName().toUpperCase());
 						if (iterator.hasNext())
 							buffer.append(" - ");
 					}
 				}
 
-				return (buffer.toString().endsWith(" - ")) ? 
-						buffer.toString().substring(0, buffer.toString().length() - 2)
+				return (buffer.toString().endsWith(" - "))
+						? buffer.toString().substring(0,
+								buffer.toString().length() - 2)
 						: buffer.toString();
 			}
 		};

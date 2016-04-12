@@ -43,13 +43,22 @@ public class AonHubDAO2 {
 	public static Notice insertNotice(AONContext ctx, Notice notice) {
 		// @formatter:off
 		Timestamp date = getTime(notice.getStartDate());
+		
+		int statusValue = ctx.getDslContext()
+				.select(TAG.ID)
+				.from(TAG)
+				.where(TAG.DOMAIN.eq(0)
+						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value()))
+						.and(TAG.NAME.eq(notice.getStatus())))
+				.fetchOne(TAG.ID);				
+		
 		int id = ctx.getDslContext()
 				.insertInto(NOTICE)
 				.set(NOTICE.DOMAIN, ctx.getDomainId())
 				.set(NOTICE.DATE, date)						
 				.set(NOTICE.SENDER, notice.getSender().getId())
 				.set(NOTICE.SUBJECT, notice.getTitle())
-				.set(NOTICE.STATUS, NoticeStatus.OPEN.value())
+				.set(NOTICE.STATUS, (byte) NoticeStatus.valueOf(notice.getStatus()).ordinal())				
 				.set(NOTICE.TYPE, NoticeType.TICKET.value())
 				.set(NOTICE.COMPANY, (notice.getCompany() != null) ? notice.getCompany(): null)
 				.set(NOTICE.SOURCE, (notice.getSource() != null) ? String.valueOf(notice.getSource()) : null)
@@ -61,7 +70,7 @@ public class AonHubDAO2 {
 		ctx.getDslContext().insertInto(NOTICE_TAG)
 				.set(NOTICE_TAG.NOTICE, id)
 				.set(NOTICE_TAG.START_DATE, date)
-				.set(NOTICE_TAG.TAG, getOpenNoticesId(ctx.getDslContext()))
+				.set(NOTICE_TAG.TAG, statusValue)
 				.set(NOTICE_TAG.USER, notice.getSender().getId())
 				.execute();
 		// @formatter:on
@@ -234,7 +243,7 @@ public class AonHubDAO2 {
 		
 		ctx.getDslContext()
 		.insertInto(NOTICE_TAG)
-		.set(NOTICE_TAG.NOTICE, parentId)
+		.set(NOTICE_TAG.NOTICE, childNotice.getId())
 		.set(NOTICE_TAG.TAG, getDuplicatedNoticesId(ctx.getDslContext()))
 		.set(NOTICE_TAG.START_DATE, getTime(new Date()))
 		.set(NOTICE_TAG.USER, childNotice.getSender().getId())
@@ -274,6 +283,7 @@ public class AonHubDAO2 {
 		Notice notice = new FullNoticeFiller().apply(record);
 		notice.setTags(fillOfficeTags(ctx, notice)
 				.collect(Collectors.toCollection(LinkedList::new)));
+		
 		notice.setStatus(setTag(notice.getTags().stream().filter(
 				tag -> tag.getType() == TagType.OFFICE_STATUS.value())
 				.collect(Collectors.toCollection(LinkedList::new))));
@@ -330,7 +340,45 @@ public class AonHubDAO2 {
 				.peek(notice -> notice.setTags(fillOfficeTags(ctx, notice)
 						.collect(Collectors.toCollection(LinkedList::new))))
 				.peek(notice -> notice.addComments(fillNoticeComments(ctx, notice)
-						.collect(Collectors.toCollection(LinkedList::new))))				
+						.collect(Collectors.toCollection(LinkedList::new))))
+				
+				.peek(notice -> notice.setType(setTag(notice.getTags().stream()
+						.filter(tag -> tag.getType() == TagType.OFFICE_TYPE.value())
+						.collect(Collectors.toCollection(LinkedList::new)))))
+				.peek(notice -> notice.setPriority(setTag(notice.getTags().stream()
+						.filter(tag -> tag.getType() == TagType.OFFICE_PRIORITY.value())
+						.collect(Collectors.toCollection(LinkedList::new)))))				
+				.peek(notice -> notice.setStatus(setTag(notice.getTags().stream()
+						.filter(tag -> tag.getType() == TagType.OFFICE_STATUS.value())
+						.collect(Collectors.toCollection(LinkedList::new)))))				
+				.filter(notice -> new NoticeFilterImpl().test(filter, notice))
+				.skip(filter.getOffset())
+				.limit(50)
+				.collect(Collectors.toCollection(LinkedList::new));
+		// @formatter:on
+	}
+	
+	public static List<Notice> getTicketNoticesForTest(AONContext ctx,
+			NoticeFilter filter) {
+		// @formatter:off
+		return ctx.getDslContext()
+				.select(NOTICE.fields())
+				.select(USER.fields())
+				.from(NOTICE)
+				.join(USER)
+				.on(NOTICE.SENDER.eq(USER.ID))
+				.where(NOTICE.DOMAIN.eq(ctx.getDomainId()))
+				.and(NOTICE.NOTICE_.isNull())
+				.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
+				.orderBy(NOTICE.DATE.desc())
+				.fetch()
+				.stream()
+				.map(new FullNoticeFiller())
+				.peek(notice -> notice.setTags(fillOfficeTags(ctx, notice)
+						.collect(Collectors.toCollection(LinkedList::new))))
+				.peek(notice -> notice.addComments(fillNoticeComments(ctx, notice)
+						.collect(Collectors.toCollection(LinkedList::new))))	
+				
 				.peek(notice -> notice.setType(setTag(notice.getTags().stream()
 						.filter(tag -> tag.getType() == TagType.OFFICE_TYPE.value())
 						.collect(Collectors.toCollection(LinkedList::new)))))
@@ -341,8 +389,6 @@ public class AonHubDAO2 {
 						.filter(tag -> tag.getType() == TagType.OFFICE_STATUS.value())
 						.collect(Collectors.toCollection(LinkedList::new)))))				
 				.filter(notice -> new NoticeFilterImpl().test(filter, notice))
-				.skip(filter.getOffset())
-				.limit(50)
 				.collect(Collectors.toCollection(LinkedList::new));
 		// @formatter:on
 	}
@@ -593,6 +639,7 @@ public class AonHubDAO2 {
 	}
 
 	// --------------------------------------------------------------------------------------
+	
 	private static SelectConditionStep<Record1<Integer>> getOpenNoticesId(
 			DSLContext dsl) {
 		// @formatter:off

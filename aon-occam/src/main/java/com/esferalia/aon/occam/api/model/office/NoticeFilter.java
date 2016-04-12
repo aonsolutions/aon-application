@@ -19,9 +19,10 @@ public class NoticeFilter implements Serializable {
 	private boolean closed;
 	private boolean all;
 	private boolean duplicated;
+	private boolean faq;
 	
 	private Date since;
-	private String sinceAsString;
+//	private String sinceAsString;
 	private String company;
 	private String[] tags;
 	private String subject;
@@ -31,7 +32,7 @@ public class NoticeFilter implements Serializable {
 	
 	/**
 	 * 
-	 * @param state open || closed || all
+	 * @param state open || closed || all || faq
 	 */
 	
 	public void setState(String state) {
@@ -45,6 +46,9 @@ public class NoticeFilter implements Serializable {
 			break;
 		case "all":
 			setAll(true);
+			break;
+		case "faq":
+			setFaq(true);
 			break;
 		default:
 			setAll(true);
@@ -72,8 +76,16 @@ public class NoticeFilter implements Serializable {
 		this.all = all;
 	}
 	
+	private void setFaq(boolean faq) {
+		this.faq = faq;
+	}
+	
 	public boolean isAll() {
 		return this.all;
+	}
+	
+	public boolean isFaq() {
+		return this.faq;
 	}
 	
 	public void setDuplicated(boolean duplicated) {

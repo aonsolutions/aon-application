@@ -51,44 +51,43 @@
 		float: right;
 	}
 	
-	.configuration-button{
+	.configuration-button {
 		right: 0px;
-   		position: absolute;
-    	padding-top: 4px;
+		position: absolute;
+		padding-top: 4px;
 	}
-	
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:north size="25">
 			<g:FlowPanel styleName="aon-finding-title-toolbar">
 				<g:HorizontalPanel>
-				<g:HorizontalPanel>
-					<g:HTMLPanel styleName="aon-finding-title">
-						<g:HTMLPanel styleName="aon-finding-title-internal">
-							<g:Label styleName="aon-outputText" text="{msg.issues}" />
+					<g:HorizontalPanel>
+						<g:HTMLPanel styleName="aon-finding-title">
+							<g:HTMLPanel styleName="aon-finding-title-internal">
+								<g:Label styleName="aon-outputText" text="{msg.issues}" />
+							</g:HTMLPanel>
 						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-subtitle">
-						<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-							<g:Label styleName="aon-outputText" />
+						<g:HTMLPanel styleName="aon-finding-subtitle">
+							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+								<g:Label styleName="aon-outputText" />
+							</g:HTMLPanel>
 						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-						<g:Button ui:field='newIssueButton'
-							styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
-							text="{msg.newIssue}" />
-						<g:Button ui:field='tagButton'
-							styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
-							text="{msg.labels}" />
-						<g:Button ui:field='returnButton'
-							styleName='aon-finding-toolbar-item {aonResources.css.aonIconCancel}'
-							text="{msg.back}" enabled="false" />
-					</g:HTMLPanel>
-				</g:HorizontalPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+							<g:Button ui:field='newIssueButton'
+								styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
+								text="{msg.newIssue}" />
+							<g:Button ui:field='tagButton'
+								styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
+								text="{msg.labels}" />
+							<g:Button ui:field='returnButton'
+								styleName='aon-finding-toolbar-item {aonResources.css.aonIconCancel}'
+								text="{msg.back}" enabled="false" />
+						</g:HTMLPanel>
+					</g:HorizontalPanel>
 					<g:HTMLPanel styleName="{style.configuration-button}">
-						<g:Button ui:field="configurationButton" styleName="aon-finding-toolbar-item aon-icon-settings" 
-							text="{msg.configuration}"/>
+						<g:Button ui:field="configurationButton"
+							styleName="aon-finding-toolbar-item aon-icon-settings" text="{msg.configuration}" />
 					</g:HTMLPanel>
 				</g:HorizontalPanel>
 			</g:FlowPanel>
@@ -111,6 +110,7 @@
 											value="false" text="{msg.closedIssues}" />
 										<g:RadioButton ui:field="allIssuesRb" name="showIssuesRb"
 											value="false" text="{msg.allIssues}" />
+										<g:RadioButton ui:field="faqIssuesRb" name="showIssuesRb" text="{msg.FAQ}"/>
 									</g:HTMLPanel>
 
 									<g:HTMLPanel>

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -52,6 +53,7 @@ public class DataGridDialog extends CustomDialog implements DuplicatedDataGrid.L
 		this.setHeight("520px");
 		this.setWidth("750px");
 		this.setWidget(principalPanel);
+		this.getElement().getStyle().setProperty("resize", "none");
 		
 		this.issueId = issueId;
 		this.listeners = new LinkedList<Listener>();

@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.HasId;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.TagType;
 
 public class Tag implements Serializable, HasId {
 
@@ -95,5 +96,15 @@ public class Tag implements Serializable, HasId {
 		return user;
 	}
 	
+	public boolean isTagType() {
+		return this.type == TagType.OFFICE_TYPE.value();
+	}
 	
+	public boolean isTagPriority() {
+		return this.type == TagType.OFFICE_PRIORITY.value();
+	}
+	
+	public boolean isTagStatus() {
+		return this.type == TagType.OFFICE_STATUS.value();
+	}	
 }

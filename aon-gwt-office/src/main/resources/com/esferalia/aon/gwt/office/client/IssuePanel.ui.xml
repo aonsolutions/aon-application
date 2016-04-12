@@ -42,8 +42,7 @@
 							text="dd/mm/AAAA - HH:MM" ui:field="dateLabel" />
 					</td>
 					<td>
-						<g:InlineLabel styleName="{aonResources.css.aonBold}"
-							text="Estado: OPEN" />
+						<g:InlineLabel ui:field="statusLabel" />
 					</td>
 				</tr>
 
@@ -87,7 +86,7 @@
 
 				<tr>
 					<td class="{aonResources.css.aonPanelGridOdd}">
-						<g:InlineLabel text="{msg.title}" />
+						<g:InlineLabel text="{msg.title}" styleName="aon-outputLabel aon-input-required" />
 					</td>
 					<td class="{aonResources.css.aonPanelGridEven}">
 						<g:TextBox ui:field="titleTextBox" styleName="{aonResources.css.aonInputText}"
@@ -96,18 +95,6 @@
 					<td>
 					</td>
 				</tr>
-				<!-- <tr> <td class="{aonResources.css.aonPanelGridOdd}"> <g:InlineLabel 
-					styleName="{aonResources.css.aonBold}" text="{msg.priority}" /> </td> <td 
-					class="{aonResources.css.aonPanelGridEven}"> <g:HorizontalPanel ui:field="priorityHPanel"> 
-					</g:HorizontalPanel> </td> </tr> <tr> <td class="{aonResources.css.aonPanelGridOdd}"> 
-					<g:InlineLabel styleName="{aonResources.css.aonBold}" text="Tipo de aviso" 
-					/> </td> <td class="{aonResources.css.aonPanelGridEven}"> <g:HorizontalPanel 
-					ui:field="typeHPanel"> </g:HorizontalPanel> </td> </tr> <tr> <td class="{aonResources.css.aonPanelGridOdd}"> 
-					<g:InlineLabel styleName="{aonResources.css.aonBold}" text="Etiquetas" /> 
-					</td> <td class="{aonResources.css.aonPanelGridEven}"> <g:VerticalPanel ui:field="vPanelTagsContainer" 
-					/> </td> </tr> <tr> <td colspan="3" class="{aonResources.css.aonPanelGridEven}"> 
-					<g:TextArea ui:field="commentTextArea" characterWidth="10" visibleLines="9" 
-					width="97%" styleName="{style.options-text-area}" /> </td> </tr> -->
 				<tr>
 					<td colspan="2">
 						<g:InlineLabel styleName="{aonResources.css.aonBold}"
@@ -119,7 +106,7 @@
 					<td>
 						<div class="{style.buttons}">
 							<g:Button ui:field="cancelButton" text="Cancelar" />
-							<g:Button ui:field="acceptButton" text="Aceptar" />
+							<g:Button ui:field="acceptButton" text="Aceptar" enabled="false" />
 						</div>
 
 					</td>

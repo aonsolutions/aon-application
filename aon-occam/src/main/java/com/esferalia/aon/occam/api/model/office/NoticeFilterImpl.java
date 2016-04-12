@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api.model.office;
 import java.util.function.BiPredicate;
 
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
-import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class NoticeFilterImpl implements BiPredicate<NoticeFilter, Notice> {
@@ -21,6 +20,9 @@ public class NoticeFilterImpl implements BiPredicate<NoticeFilter, Notice> {
 
 		else if (filter.isAll())
 			accepted = evalAll(filter, notice);
+		
+		else if (filter.isFaq())
+			accepted = evalFaq(filter, notice);
 		
 		if (filter.isDuplicated())
 			accepted = accepted && notice.getNotice() != null;
@@ -61,23 +63,36 @@ public class NoticeFilterImpl implements BiPredicate<NoticeFilter, Notice> {
 
 	private boolean evalOpened(NoticeFilter filter, Notice notice) {
 		return notice.getTags().stream()
-				.filter(tag -> (tag.getType() == TagType.OFFICE_STATUS.value()))
-				.filter(tag -> (NoticeStatus.isOpened(tag.getName())
+				.filter(tag -> (tag.isTagStatus()
+						&& NoticeStatus.isOpened(tag.getName())
 						&& tag.getEndDate() == null))
 				.findFirst()
 				.isPresent();
 	}
 
 	private boolean evalClosed(NoticeFilter filter, Notice notice) {
-		return notice.getTags().stream()
-				.filter(tag -> (tag.getType() == TagType.OFFICE_STATUS.value()))
-				.filter(tag -> (NoticeStatus.isClosed(tag.getName())
+		return notice.getTags()
+				.stream()				
+				.filter(tag -> (tag.isTagStatus()
+						&& NoticeStatus.isClosed(tag.getName())
 						&& tag.getEndDate() == null))
 				.findFirst()
 				.isPresent();
 	}
 
 	private boolean evalAll(NoticeFilter filter, Notice notice) {
-		return notice.getTags().stream().findFirst().isPresent();
+		return notice.getTags().stream()
+				.findFirst()
+				.isPresent();
+	}
+	
+	private boolean evalFaq(NoticeFilter filter, Notice notice) {
+		return notice.getTags()
+				.stream()
+				.filter(tag -> (tag.isTagStatus() 
+						&& NoticeStatus.isFAQ(tag.getName()) 
+						&& tag.getEndDate() == null))
+				.findFirst()
+				.isPresent();
 	}
 }
