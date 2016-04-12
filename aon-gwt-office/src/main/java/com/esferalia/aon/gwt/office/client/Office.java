@@ -1007,24 +1007,15 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						CheckBox cb1 = (CheckBox) flex_table.getWidget(2, 0);
 						CheckBox cb2 = (CheckBox) flex_table.getWidget(3, 0);
 						TextBox tb = (TextBox) flex_table.getWidget(4, 1);
-						Window.alert("11" + tb.getValue());
-						Window.alert("22"+ cb2.getValue());
-						Window.alert("33"+ cb1.getValue());
-						Window.alert("44"+ lb2.getValue(lb2.getSelectedIndex()));
-						Window.alert("55" + lb1.getValue(lb1.getSelectedIndex()));
+						
 						
 						tb.getValue();
-						Window.alert("A");
 						cb2.getValue();
-						Window.alert("B");
 						new MailAccount().setId(lb1.getValue(lb1.getSelectedIndex()) != "-" ? 
 								Integer.parseInt(lb1.getValue(lb1.getSelectedIndex())): null);
-						Window.alert("C");
 						new Signature().setId(lb2.getValue(lb2.getSelectedIndex()) != "-" ?
 								Integer.parseInt(lb2.getValue(lb2.getSelectedIndex())): null);
-						Window.alert("D");
 						cb1.getValue();
-						Window.alert("H");
 						NotificationInfo notificationInfo = new NotificationInfo()
 								.setBcc(tb.getValue())
 								.setHistory(cb2.getValue())
@@ -1033,7 +1024,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 								.setSignature(new Signature().setId(lb2.getValue(lb2.getSelectedIndex()) != "-" ?
 										Integer.parseInt(lb2.getValue(lb2.getSelectedIndex())): null))
 								.setNotify(cb1.getValue());
-						Window.alert("212312");
 						impl.insertNotificationInfo(JsNotification.getDomain(), notificationInfo, new AsyncCallback<Void>() {
 							
 							@Override
