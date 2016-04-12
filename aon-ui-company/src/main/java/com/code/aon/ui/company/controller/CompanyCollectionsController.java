@@ -18,6 +18,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.company.Department;
 import com.code.aon.company.Enterprise;
+import com.code.aon.company.InvestAsset;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.enumeration.EnterpriseSalaryTemplate;
 import com.code.aon.company.enumeration.FinancePaymentTemplate;
@@ -411,6 +412,45 @@ public class CompanyCollectionsController implements Serializable {
 			return activityBean.getCount(criteria);
     	}
 		return 0;
+	}
+
+	public List<SelectItem> getCompanyInvestAssets() throws ManagerBeanException {
+		List<SelectItem> investAssets = new LinkedList<SelectItem>();
+		IManagerBean investAssetBean = BeanManager.getManagerBean(InvestAsset.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(investAssetBean.getFieldName(IEntityAlias.INVEST_ASSET_DESCRIPTION));
+		for (ITransferObject ito : investAssetBean.getList(criteria)) {
+			InvestAsset investAsset = (InvestAsset)ito;
+			SelectItem item = new SelectItem(investAsset, investAsset.getDescription());
+			investAssets.add(item);
+		}
+		return investAssets;
+	}
+
+	public int getCompanyInvestAssetsCount() throws ManagerBeanException {
+		IManagerBean investAssetBean = BeanManager.getManagerBean(InvestAsset.class);
+		return investAssetBean.getCount(null);
+	}
+
+	public List<SelectItem> getActiveCompanyInvestAssets() throws ManagerBeanException {
+		List<SelectItem> investAssets = new LinkedList<SelectItem>();
+		IManagerBean investAssetBean = BeanManager.getManagerBean(InvestAsset.class);
+		Criteria criteria = new Criteria();
+		criteria.addNullExpression(investAssetBean.getFieldName(IEntityAlias.INVEST_ASSET_END_DATE));
+		criteria.addOrder(investAssetBean.getFieldName(IEntityAlias.INVEST_ASSET_DESCRIPTION));
+		for (ITransferObject ito : investAssetBean.getList(criteria)) {
+			InvestAsset investAsset = (InvestAsset)ito;
+			SelectItem item = new SelectItem(investAsset, investAsset.getDescription());
+			investAssets.add(item);
+		}
+		return investAssets;
+	}
+
+	public int getActiveCompanyInvestAssetsCount() throws ManagerBeanException {
+		IManagerBean investAssetBean = BeanManager.getManagerBean(InvestAsset.class);
+		Criteria criteria = new Criteria();
+		criteria.addNullExpression(investAssetBean.getFieldName(IEntityAlias.INVEST_ASSET_END_DATE));
+		return investAssetBean.getCount(criteria);
 	}
 
 	public List<SelectItem> getInvestAssetTypes() {

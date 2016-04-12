@@ -584,6 +584,15 @@ color:#000;
  .aon-icon-activity{
 	background:transparent url(images/aon-icon/aon-icon-activity.png) scroll left center no-repeat;	
  }
+ .aon-icon-invest-asset{
+	background:transparent url(images/aon-icon/aon-icon-invest-asset.png) scroll left center no-repeat;	
+ }
+ .aon-icon-invest-asset-ok{
+	background:transparent url(images/aon-icon/aon-icon-invest-asset-ok.png) scroll left center no-repeat;	
+ }
+ .aon-icon-invest-asset-warn{
+	background:transparent url(images/aon-icon/aon-icon-invest-asset-warn.png) scroll left center no-repeat;	
+ }
  .aon-icon-project-ok{
 	background:transparent url(images/aon-icon/aon-icon-project-ok.png) scroll left center no-repeat;	
  }

@@ -82,6 +82,17 @@
 									value="#{true}" />							
 							</aon:menuItem>
 						</aon:if>
+						<aon:if test="#{expenseInvoice.investAssets[0] != null}">
+							<aon:menuItem id="investAssets"
+								value="#{bundle.accounting_invest_asset}"
+								iconClass="aon-icon-invest-asset"
+								reRender="showInvestAssetWindow">
+								<f:setPropertyActionListener target="#{expenseInvoice.showInvestAssetWindow}" 
+									value="#{true}" />							
+								<f:setPropertyActionListener target="#{expenseInvoice.showDetailInvestAssetWindow}"
+									value="#{false}" />
+							</aon:menuItem>
+						</aon:if>
 						<aon:menuItem id="projects"
 							value="#{bundle.aon_project}"
 							iconClass="aon-icon-statistics"
@@ -201,6 +212,16 @@
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalActivity.xhtml">
 			<ui:param name="invoiceController" value="#{expenseInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/company/facelet/investAsset/modalInvestAsset.xhtml">
+			<ui:param name="controller" value="#{expenseInvoice}" />
+			<ui:param name="parentReRender" value="expenseInvoiceForm" />
+			<aon:methodParam name="parentActionListener" value="#{expenseInvoice.addInvoiceInvestAsset}" type="actionListener" />
+			<ui:param name="parentValue" value="#{expenseInvoice.to.investAsset}" />
+			<ui:param name="detailReRender" value="invoiceDetails" />
+			<aon:methodParam name="detailActionListener" value="#{expenseInvoiceDetail.onInvoiceDetailSave}" type="actionListener" />
+			<ui:param name="detailValue" value="#{expenseInvoiceDetail.invoiceDetail.investAsset}" />
+			<ui:param name="investAssetLabel" value="#{bundle.accounting_invest_asset}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/project/facelet/project/modalProject.xhtml">
 			<ui:param name="controller" value="#{expenseInvoice}" />

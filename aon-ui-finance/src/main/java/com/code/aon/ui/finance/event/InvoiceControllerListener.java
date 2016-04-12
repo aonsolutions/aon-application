@@ -48,6 +48,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoiceController.setSavedProject(null);
 			invoiceController.setShowProjectLookup(false);
 			invoiceController.setSavedSeller(null);
+			invoiceController.setSavedInvestAsset(null);
 			invoiceController.setFinanceGenerationMode(0);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
@@ -66,6 +67,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoiceController.setSavedProject(invoice.getProject());
 			invoiceController.setShowProjectLookup(true);
 			invoiceController.setSavedSeller(invoice.getSeller());
+			invoiceController.setSavedInvestAsset(invoice.getInvestAsset());
 			invoiceController.setFinanceGenerationMode(0);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
@@ -80,6 +82,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 		invoiceController.setSavedProject(invoice.getProject());
 		invoiceController.setShowProjectLookup(true);
 		invoiceController.setSavedSeller(invoice.getSeller());
+		invoiceController.setSavedInvestAsset(invoice.getInvestAsset());
 	}
 
 	@Override
@@ -98,6 +101,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 		try {
 			invoiceController.linkProject(invoiceController.getInvoice(), true);
 			invoiceController.linkSeller(invoiceController.getInvoice(), true);
+			invoiceController.linkInvestAsset(invoiceController.getInvoice(), true);
 			invoiceController.autoGenerateIncreases();
 			invoiceController.autoGenerateFinances();
 			invoiceController.resetListTotals();

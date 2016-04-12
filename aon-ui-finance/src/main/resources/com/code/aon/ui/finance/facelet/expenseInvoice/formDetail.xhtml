@@ -359,6 +359,18 @@
 								<f:setPropertyActionListener target="#{invoiceController.showDetailProjectWindow}"
 									value="#{true}" />
 							</aon:commandButton>
+							<aon:commandButton id="invoiceDetailInvestAsset" value="&#160;"
+								styleClass="#{(to.investAsset != null and to.investAsset.id == invoiceController.to.investAsset.id) ? 
+												('aon-icon-commandButton aon-icon-invest-asset-ok') : ('aon-icon-commandButton aon-icon-invest-asset-warn')}"
+								rendered="#{to.investAsset.id != null}"
+								actionListener="#{controller.onInvoiceDetailSelect}" 
+								reRender="showInvestAssetWindow">
+								<rich:toolTip value="#{bundle.accounting_invest_asset} #{to.investAsset.description}" />
+								<f:setPropertyActionListener target="#{invoiceController.showInvestAssetWindow}"
+									value="#{true}" />								
+								<f:setPropertyActionListener target="#{invoiceController.showDetailInvestAssetWindow}"
+									value="#{true}" />								
+							</aon:commandButton>
  						</aon:column>
 
 					</ui:define>

@@ -101,6 +101,7 @@ import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.EnterpriseActivity;
 
 public class InvoiceController extends HeaderObjectController implements ISignatureController, IFinanceConstants, IAuditableController {
 
@@ -127,6 +128,9 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private Seller savedSeller;
 	private boolean showSellerWindow;
 	private boolean showDetailSellerWindow;
+	private InvestAsset savedInvestAsset;
+	private boolean showInvestAssetWindow;
+	private boolean showDetailInvestAssetWindow;
 	private boolean showDocumentWindow;
 	private boolean showCommentsWindow;
 	private boolean showRemarksWindow;
@@ -481,6 +485,78 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		}
 	}
 
+	public InvestAsset getSavedInvestAsset() {
+		return savedInvestAsset;
+	}
+
+	public void setSavedInvestAsset(InvestAsset savedInvestAsset) {
+		this.savedInvestAsset = null;
+		if (savedInvestAsset != null && savedInvestAsset.getId() != null) {
+			this.savedInvestAsset = new InvestAsset();
+			this.savedInvestAsset.setId(savedInvestAsset.getId());
+		}
+	}
+
+	public boolean isShowInvestAssetWindow() {
+		return showInvestAssetWindow;
+	}
+
+	public void setShowInvestAssetWindow(boolean value) {
+		this.showInvestAssetWindow = value;
+	}
+
+	public boolean isShowDetailInvestAssetWindow() {
+		return showDetailInvestAssetWindow;
+	}
+
+	public void setShowDetailInvestAssetWindow(boolean value) {
+		this.showDetailInvestAssetWindow = value;
+	}
+
+	public void addInvoiceInvestAsset(ActionEvent event) throws ManagerBeanException {
+		linkInvestAsset(getInvoice(), false);
+	}
+
+	public void linkInvestAsset(Invoice invoice, boolean onlyDetails) throws ManagerBeanException {
+		boolean detailsChanged = false;
+		InvestAsset investAsset = (invoice.getInvestAsset() != null && invoice.getInvestAsset().getId() != null) ? invoice.getInvestAsset() : null;
+		setSavedInvestAsset((getSavedInvestAsset() != null && getSavedInvestAsset().getId() != null) ? getSavedInvestAsset() : null);
+		if ((investAsset == null && getSavedInvestAsset() != null) || (investAsset != null && !investAsset.equals(getSavedInvestAsset()))) {
+			if (!onlyDetails) {
+				invoice.setUpdateEnabled(!invoice.isRecorded());
+				getManagerBean().restoreNullSubPOJOs(invoice);
+				getManagerBean().update(invoice);
+				getManagerBean().initializePOJO(invoice);
+			}
+
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			if (investAsset == null) {
+				criteria.addNotNullExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVEST_ASSET));
+			} else {
+				if (getSavedInvestAsset() == null) {
+					criteria.addNullExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVEST_ASSET));
+				} else {
+					criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVEST_ASSET_ID), getSavedInvestAsset().getId());
+				}
+			}
+			for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+				InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+				invoiceDetail.setInvestAsset(investAsset);
+				invoiceDetail.setUpdateEnabled(false);
+				invoiceDetailBean.update(invoiceDetail);
+				detailsChanged = true;
+			}
+		}
+		setSavedInvestAsset(invoice.getInvestAsset());
+
+		if (!onlyDetails && detailsChanged) {
+			IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
+			invoiceDetailController.onSearch(null);
+		}
+	}
+
 	public boolean isShowDocumentWindow() {
 		return showDocumentWindow;
 	}
@@ -759,9 +835,18 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return true;
 	}
 
-	/*public List<SelectItem> getInvestAssets() throws ManagerBeanException {
+	public void onActivityChanged(ActionEvent event) {
+		EnterpriseActivity activity = getInvoice().getActivity();
+		InvestAsset asset = getInvoice().getInvestAsset();
+		
+		if (activity != null && activity.getId() != null && asset != null && asset.getActivity() != null && !activity.equals(asset.getActivity())) {
+			getInvoice().setInvestAsset(null);
+		}
+	}
+
+	public List<SelectItem> getInvestAssets() throws ManagerBeanException {
 		List<SelectItem> investAssets = new LinkedList<SelectItem>();
-		if (getInvoice().getActivity() == null || getInvoice().getActivity().getId() == null || getInvoice().getActivity().getId() == 0) {
+		if (getInvoice().getActivity() == null || getInvoice().getActivity().getId() == null) {
 			CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 			investAssets.addAll(companyCollections.getActiveCompanyInvestAssets());
 		} else {
@@ -769,6 +854,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			Criteria criteria = new Criteria();
 			String alias = investAssetBean.getFieldName(IEntityAlias.INVEST_ASSET_ACTIVITY_ID);
 			Expression activityValueExpr = ExpressionUtilities.getEqualExpression(alias, getInvoice().getActivity().getId());
+			alias = investAssetBean.getFieldName(IEntityAlias.INVEST_ASSET_ACTIVITY);
 			Expression activityNullExpr = ExpressionUtilities.getNullExpression(alias);
 			criteria.addExpression(ExpressionUtilities.getOrExpression(activityValueExpr, activityNullExpr));
 			criteria.addNullExpression(investAssetBean.getFieldName(IEntityAlias.INVEST_ASSET_END_DATE));
@@ -780,7 +866,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			}
 		}
 		return investAssets;
-	}*/
+	}
 
 	protected boolean validateInvoice() {
 		Invoice invoice = getInvoice();

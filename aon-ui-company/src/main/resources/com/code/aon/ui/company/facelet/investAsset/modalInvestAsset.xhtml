@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:if test="#{!controller.showDetailInvestAssetWindow}">
+		<aon:valueParam name="investAssetValue" default="#{parentValue}" />
+	</aon:if>
+	<aon:if test="#{controller.showDetailInvestAssetWindow}">
+		<aon:valueParam name="investAssetValue" default="#{detailValue}" />
+	</aon:if>
+
+	<aon:panelGroup id="showInvestAssetWindow">
+		<aon:if test="#{controller.showInvestAssetWindow}">
+			<rich:modalPanel id="investAssetModalPanel" minHeight="200"
+				minWidth="590" rendered="#{controller.showInvestAssetWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{investAssetLabel}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showInvestAssetWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{controller.showInvestAssetWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="investAssetForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:if test="#{!controller.showDetailInvestAssetWindow}">
+										<aon:commandButton id="investAsset-save"
+											styleClass="aon-finding-toolbar-item aon-icon-accept"
+											value="#{bundle.aon_save}"
+											actionListener="#{parentActionListener}"
+											reRender="showInvestAssetWindow,#{parentReRender}"
+											accesskey="#{bundle.aon_key_save}">
+											<rich:componentControl for="investAssetModalPanel"
+												event="onclick" operation="hide"/>																					
+											<f:setPropertyActionListener
+												target="#{controller.showInvestAssetWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+									</aon:if>
+									<aon:if test="#{controller.showDetailInvestAssetWindow}">
+										<aon:commandButton id="investAsset-save"
+											styleClass="aon-finding-toolbar-item aon-icon-accept"
+											value="#{bundle.aon_save}"
+											actionListener="#{detailActionListener}"
+											reRender="showInvestAssetWindow,#{detailReRender}"
+											accesskey="#{bundle.aon_key_save}">
+											<rich:componentControl for="investAssetModalPanel"
+												event="onclick" operation="hide"/>																					
+											<f:setPropertyActionListener
+												target="#{controller.showInvestAssetWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+									</aon:if>
+									<aon:commandButton id="investAsset-cancel" immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showInvestAssetWindow">
+										<f:setPropertyActionListener
+											target="#{controller.showInvestAssetWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
+
+										<aon:outputLabel for="InvestAsset_id"
+											value="#{investAssetLabel}" />
+										<aon:selectOneMenu id="InvestAsset_id-Modal"
+											value="#{investAssetValue}" ajaxSingle="true">
+											<f:selectItem itemLabel=" - " itemValue="#{null}" />
+											<f:selectItems value="#{controller.investAssets}" />
+										</aon:selectOneMenu>
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

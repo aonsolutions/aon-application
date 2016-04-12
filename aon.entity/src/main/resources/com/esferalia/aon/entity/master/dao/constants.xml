@@ -111,6 +111,11 @@
 		<hibernate names="domain,id,registry.id,scope.id,registry.name,registry.document,registry.documentCountry,registry.documentType"/>
 	</bean>
 	
+	<bean class="com.code.aon.company.InvestAsset" sqlName="invest_asset">
+		<alias names="activity,activity_id,description,domain,endDate,id,regime,retentionPercent,startDate,type,vatPercent"/>
+		<hibernate names="activity,activity&lt;id,description,domain,endDate,id,regime,retentionPercent,startDate,type,vatPercent"/>
+	</bean>
+	
 	<bean class="com.code.aon.company.WorkplaceDepartment" sqlName="workplace_department">
 		<alias names="id,domain,workPlace_id,department_id,department_name,catalogue_id,active,warehouse_id"/>
 		<hibernate names="id,domain,workPlace.id,department.id,department.name,catalogue.id,active,,warehouse.id"/>
@@ -175,8 +180,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceDetail" sqlName="invoice_detail">
-		<alias names="description,discountExpression,id,invoice_id,invoice_project_id,invoice_registry_id,invoice_issueDate,invoice_type,invoice_advance,invoice_rectificationType,item_id,item_product_type,item_product_code,line,prepayment,price,project,project_id,quantity,seller,seller_id,source,sourceId,taxableBase,taxes,warehouse_id,workPlace_id" />
-		<hibernate names="description,discountExpression,id,invoice.id,invoice.project.id,invoice.registry.id,invoice.issueDate,invoice.type,invoice.advance,invoice.rectificationType,item.id,item.product.type,item.product.code,line,prepayment,price,project,project.id,quantity,seller,seller.id,source,sourceId,taxableBase,taxes,warehouse.id,workPlace.id" />
+		<alias names="description,discountExpression,id,investAsset,investAsset_id,invoice_id,invoice_project_id,invoice_registry_id,invoice_issueDate,invoice_type,invoice_advance,invoice_rectificationType,item_id,item_product_type,item_product_code,line,prepayment,price,project,project_id,quantity,seller,seller_id,source,sourceId,taxableBase,taxes,warehouse_id,workPlace_id" />
+		<hibernate names="description,discountExpression,id,investAsset,investAsset&lt;id,invoice.id,invoice.project.id,invoice.registry.id,invoice.issueDate,invoice.type,invoice.advance,invoice.rectificationType,item.id,item.product.type,item.product.code,line,prepayment,price,project,project.id,quantity,seller,seller.id,source,sourceId,taxableBase,taxes,warehouse.id,workPlace.id" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceTax" sqlName="invoice_tax">

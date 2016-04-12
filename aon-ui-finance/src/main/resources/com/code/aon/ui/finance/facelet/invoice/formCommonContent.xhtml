@@ -29,7 +29,9 @@
 		<aon:div>
 			<aon:selectOneMenu id="Invoice_activity"
 				value="#{invoiceController.to.activity}" ajaxSingle="true"
-				rendered="#{!invoiceController.readOnly and invoiceController.to.activity.endDate == null}">
+				rendered="#{!invoiceController.readOnly and invoiceController.to.activity.endDate == null}"
+				actionListener="#{invoiceController.onActivityChanged}"
+				reRender="#{formName}">
 				<f:selectItem itemLabel="- #{bundle.aon_common_all} -" value="#{null}" />
 				<f:selectItems value="#{companyCollections.companyActivities}" />
 			</aon:selectOneMenu>
@@ -42,8 +44,8 @@
 		</aon:div>
 	</aon:if>
 
-<!--
-	<aon:if test="#{!invoiceController.to.sales and (invoiceController.investAssets[0] != null or invoiceController.to.investAsset.id != null)}">
+	<aon:if test="#{!invoiceController.to.sales and ((invoiceController.nevv and invoiceController.investAssets[0] != null) 
+					 or invoiceController.to.investAsset.id != null)}">
 		<aon:outputLabel for="Invoice_investAsset"
 			value="#{bundle.accounting_invest_asset}" />
 		<aon:div>
@@ -58,7 +60,6 @@
 				rendered="#{invoiceController.readOnly or invoiceController.to.investAsset.endDate != null}" />
 		</aon:div>
 	</aon:if>
--->
 
 	<aon:if test="#{(invoiceController.nevv and projectCollections.activeProjects) or invoiceController.savedProject.id != null}">
 		<aon:if test="#{!aonConfiguration.bean.invoice.showTasData}">
