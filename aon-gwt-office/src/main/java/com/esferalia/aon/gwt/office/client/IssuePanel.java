@@ -150,10 +150,6 @@ public class IssuePanel extends CustomDialog implements KeyUpHandler {
 		center();
 	}
 
-	public void showPopupPanel() {
-		center();
-	}
-
 	// ----------------------------------------------------
 
 	public void setSender(String sender) {

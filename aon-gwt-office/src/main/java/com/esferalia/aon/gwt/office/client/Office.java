@@ -397,7 +397,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		if (registrySelected != null)
 			issuePanel.setSender(this.registrySelected);
 
-		issuePanel.showPopupPanel();
+		issuePanel.showNoticePanel();
 	}
 
 	@UiHandler("tagButton")
