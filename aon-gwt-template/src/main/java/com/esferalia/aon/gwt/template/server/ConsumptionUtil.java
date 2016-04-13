@@ -84,7 +84,7 @@ public class ConsumptionUtil {
         	allMap.put(w.getName(), v);
         }
         libro2(domain.getName(), domain.getId(),login, warehouses, libro, onlyNegative, allMap, getTemplateInfoC(),0);
-        libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoA(), 1, packaged);
+        //libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoA(), 1, packaged);
         libro(domain.getName(), domain.getId(), login, warehouses, libro, onlyNegative, allMap, getTemplateInfoB(), 2, packaged);
         
         for (int index = 0; index < size; index++) {
@@ -93,8 +93,8 @@ public class ConsumptionUtil {
             String initialInventoryName = consumptionItem.getInitialInventoryName();
             String finalInventoryName = consumptionItem.getFinalInventoryName();
         	HSSFSheet hoja = libro.createSheet("Plantilla "+ (index+3));
-        	if(packaged) hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()+2));
-            else hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
+        	if(packaged) hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()+1));
+            else hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()-1));
         	Row rowInfo = hoja.createRow(0);
         	Row fila = hoja.createRow(1);
         
@@ -136,16 +136,17 @@ public class ConsumptionUtil {
 			style3.setBorderLeft(CellStyle.BORDER_THIN);
 		
 			for(Integer i = 0; i< columns; i++){
-        	Cell celda = fila.createCell(i);
-            celda.setCellValue(aux.getColumns().get(i));
-            celda.setCellStyle(style);  	
+				Cell celda = fila.createCell(i);
+				celda.setCellValue(aux.getColumns().get(i));
+				celda.setCellStyle(style);  	
         	}
-        	Cell celdaf = fila.createCell(columns);
-        	celdaf.setCellStyle(style);
+       
         	if(packaged){
-        		Cell cell1 = fila.createCell(columns+1);
+        		Cell cell1 = fila.createCell(columns);
+        		cell1.setCellValue("Stock");
         		cell1.setCellStyle(style);
-        		Cell cell2 = fila.createCell(columns+2);
+        		Cell cell2 = fila.createCell(columns+1);
+        		cell2.setCellValue("Etiqueta");
         		cell2.setCellStyle(style);
         	}
          	Vector<ConsumptionItem> v =  allMap.get(warehouses.get(index).getName());
@@ -177,21 +178,21 @@ public class ConsumptionUtil {
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         				case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style3);break;
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
-        				case "Valor Inicial": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
+        				case "Inicial €": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style2);break;
-        				case "Valor Compras": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style2);break;
+        				case "Compras €": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style2);break;
         				case "Ventas": celda.setCellValue(round(ci.getSalesAlb()+ ci.getSalesFac(),2));celda.setCellStyle(style2);break;
-        				case "Valor Ventas": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style2);break;
+        				case "Ventas €": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style2);break;
         				case "Final": celda.setCellValue(round(ci.getFinalQuantity(),2));celda.setCellStyle(style2);break;
-        				case "Valor Final": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
+        				case "Final €": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
         				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style2);break;
-        				case "Valor Traspaso": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style2);break;
+        				case "Traspaso €": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style2);break;
         				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
         				//case "Valor Consumo": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
         				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
         							else celda.setCellValue(0);	
         							celda.setCellStyle(style2);break; 
-        				case "Valor Consumo": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
+        				case "Consumo €": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
         				case "Importe": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
 
         				case "Consumo": celda.setCellValue(round(ci.getConsumption(),2));celda.setCellStyle(style2);break;
@@ -199,15 +200,14 @@ public class ConsumptionUtil {
         					break;
         			}
         			}
-        			Cell lastCell = row.createCell(columns);
-        			lastCell.setCellStyle(style2);
+      
         			if(packaged){
             			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
-                		Cell valueCell = row.createCell(columns+1);
+                		Cell valueCell = row.createCell(columns);
                 		Double value = ci.getConsumption() * item.getPackMeasurement() * item.getPackUnits();
-                		if(value != 0) valueCell.setCellValue(value);
+                		valueCell.setCellValue(value);
                 		valueCell.setCellStyle(style2);
-                		Cell unityCell = row.createCell(columns+2);
+                		Cell unityCell = row.createCell(columns+1);
                 		unityCell.setCellValue(item.getPackMeasurementTag().getName());
                 		unityCell.setCellStyle(style2);
             		}
@@ -331,7 +331,7 @@ public class ConsumptionUtil {
         			 }
         			 else{
         				iText_xls_2_pdf.add(new Paragraph(" "));
-        			 	iText_xls_2_pdf.add(new Paragraph("Almac�n: " + warehouses.get(index-3).getName(), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Almacén: " + warehouses.get(index-3).getName(), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph("Inventario Inicial: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getInitialInventoryName(), fontPhrase2), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph("Inventario Final: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getFinalInventoryName(), fontPhrase2), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph(" "));
@@ -423,8 +423,8 @@ public class ConsumptionUtil {
             		? consumptionItem.getFinalInventoryName() : " ";
         	HSSFSheet hoja = libro.createSheet("Plantilla "+ (index+3));
         
-        	if(packaged) hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()+2));
-            else hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
+        	if(packaged) hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()+1));
+            else hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()-1));
         	
         	Row rowInfo = hoja.createRow(0);
         	Row fila = hoja.createRow(1);
@@ -467,19 +467,20 @@ public class ConsumptionUtil {
 			style3.setBorderLeft(CellStyle.BORDER_THIN);
 		
 			for(Integer i = 0; i< columns; i++){
-        	Cell celda = fila.createCell(i);
-            celda.setCellValue(aux.getColumns().get(i));
-            celda.setCellStyle(style);  	
+				Cell celda = fila.createCell(i);
+				celda.setCellValue(aux.getColumns().get(i));
+				celda.setCellStyle(style);  	
         	}
-        	Cell celdaf = fila.createCell(columns);
-        	celdaf.setCellStyle(style);
+
         	if(packaged){
-        		Cell cell1 = fila.createCell(columns+1);
+        		Cell cell1 = fila.createCell(columns);
+        		cell1.setCellValue("Stock");
         		cell1.setCellStyle(style);
-        		Cell cell2 = fila.createCell(columns+2);
+        		Cell cell2 = fila.createCell(columns+1);
+        		cell2.setCellValue("Etiqueta");
         		cell2.setCellStyle(style);
         	}
- 
+        	
          	Vector<ConsumptionItem> v =  allMap.get(warehouses.get(index).getName());
         	
         	Integer num = 0;
@@ -508,21 +509,21 @@ public class ConsumptionUtil {
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         				case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style3);break;
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
-        				case "Valor Inicial": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
+        				case "Inicial €": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style2);break;
-        				case "Valor Compras": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style2);break;
+        				case "Compras €": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style2);break;
         				case "Ventas": celda.setCellValue(round(ci.getSalesAlb()+ ci.getSalesFac(),2));celda.setCellStyle(style2);break;
-        				case "Valor Ventas": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style2);break;
+        				case "Ventas €": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style2);break;
         				case "Final": celda.setCellValue(round(ci.getFinalQuantity(),2));celda.setCellStyle(style2);break;
-        				case "Valor Final": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
+        				case "Final €": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
         				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style2);break;
-        				case "Valor Traspaso": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style2);break;
+        				case "Traspaso €": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style2);break;
         				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
         				//case "Valor Consumo": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
         				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
         							else celda.setCellValue(0);	
         							celda.setCellStyle(style2);break; 
-        				case "Valor Consumo": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
+        				case "Consumo €": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
         				case "Importe": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
 
         				case "Consumo": celda.setCellValue(round(ci.getConsumption(),2));celda.setCellStyle(style2);break;
@@ -530,18 +531,18 @@ public class ConsumptionUtil {
         					break;
         			}
         			}
-        			Cell lastCell = row.createCell(columns);
-        			lastCell.setCellStyle(style2);
+        			
         			if(packaged){
             			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
-                		Cell valueCell = row.createCell(columns+1);
+                		Cell valueCell = row.createCell(columns);
                 		Double value = ci.getConsumption() * item.getPackMeasurement() * item.getPackUnits();
                 		valueCell.setCellValue(value);
                 		valueCell.setCellStyle(style2);
-                		Cell unityCell = row.createCell(columns+2);
+                		Cell unityCell = row.createCell(columns+1);
                 		unityCell.setCellValue(item.getPackMeasurementTag().getName());
                 		unityCell.setCellStyle(style2);
             		}
+
         			row.setHeightInPoints(20);
         		}
         		else{
@@ -665,7 +666,7 @@ public class ConsumptionUtil {
         			 }
         			 else{
         				iText_xls_2_pdf.add(new Paragraph(" "));
-        			 	iText_xls_2_pdf.add(new Paragraph("Almac�n: " + warehouses.get(index-3).getName(), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Almacén: " + warehouses.get(index-3).getName(), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph("Inventario Inicial: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getInitialInventoryName(), fontPhrase2), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph("Inventario Final: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getFinalInventoryName(), fontPhrase2), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph(" "));
@@ -703,14 +704,14 @@ public class ConsumptionUtil {
 	private static TemplateInfo getTemplateInfoA() {
 		Vector<String> v = new Vector<String>();
 		v.add("Hotel");
-		v.add("Almac�n");
+		v.add("Almacén");
 		v.add("Producto");
-		v.add("Valor Inicial"); 
-		v.add("Valor Compras"); 
-		v.add("Valor Ventas");
-		v.add("Valor Final");
-		v.add("Valor Traspaso"); 
-		v.add("Valor Consumo");
+		v.add("Inicial €"); 
+		v.add("Compras €"); 
+		v.add("Ventas €");
+		v.add("Final €");
+		v.add("Traspaso €"); 
+		v.add("Consumo €");
 		return new TemplateInfo().setColumns(v);
 	}
 
@@ -719,21 +720,21 @@ public class ConsumptionUtil {
 		v.add("Hotel");
 		v.add("Desde");
 		v.add("Hasta");
-		v.add("Almac�n");
+		v.add("Almacén");
 		v.add("Producto");
 		v.add("Nombre");
 		v.add("Inicial");
-		v.add("Valor Inicial");
+		v.add("Inicial €");
 		v.add("Compras");
-		v.add("Valor Compras");
+		v.add("Compras €");
 		v.add("Ventas");
-		v.add("Valor Ventas");
+		v.add("Ventas €");
 		v.add("Traspaso");
-		v.add("Valor Traspaso");
+		v.add("Traspaso €");
 		v.add("Final");
-		v.add("Valor Final");
+		v.add("Final €");
 		v.add("Consumo");
-		v.add("Valor Consumo");
+		v.add("Consumo €");
 		return new TemplateInfo().setColumns(v);
 	}
 	
@@ -742,13 +743,13 @@ public class ConsumptionUtil {
 		v.add("Hotel");
 		v.add("Desde");
 		v.add("Hasta");
-		v.add("Almac�n");
-		v.add("Valor Inicial"); 
-		v.add("Valor Compras"); 
-		v.add("Valor Ventas");
-		v.add("Valor Final");
-		v.add("Valor Traspaso"); 
-		v.add("Valor Consumo");
+		v.add("Almacén");
+		v.add("Inicial €"); 
+		v.add("Compras €"); 
+		v.add("Ventas €");
+		v.add("Final €");
+		v.add("Traspaso €"); 
+		v.add("Consumo €");
 		return new TemplateInfo().setColumns(v);
 	}
 	
@@ -757,17 +758,17 @@ public class ConsumptionUtil {
 		v.add("Producto");
 		v.add("Nombre");
 		v.add("Inicial");
-		if(detail) v.add("Valor Inicial");
+		if(detail) v.add("Inicial €");
 		v.add("Compras");
-		if(detail) v.add("Valor Compras");
+		if(detail) v.add("Compras €");
 		v.add("Ventas");
-		if(detail) v.add("Valor Ventas");
+		if(detail) v.add("Ventas €");
 		v.add("Traspaso");
-		if(detail) v.add("Valor Traspaso");
+		if(detail) v.add("Traspaso €");
 		v.add("Final");
-		if(detail) v.add("Valor Final");
+		if(detail) v.add("Final €");
 		v.add("Consumo");
-		v.add("Valor Consumo");
+		v.add("Consumo €");
 		return new TemplateInfo().setColumns(v);
 	}
 	
@@ -777,8 +778,8 @@ public class ConsumptionUtil {
 	
     	HSSFSheet hoja0 = libro.createSheet("Plantilla "+ hoja);
         
-    	if(packaged)hoja0.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()+2));
-    	else hoja0.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
+    	if(packaged)hoja0.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()+1));
+    	else hoja0.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()-1));
     	
     	Row rowInfo0 = hoja0.createRow(0);
     	Row fila0 = hoja0.createRow(1);
@@ -818,18 +819,20 @@ public class ConsumptionUtil {
 		style30.setBorderLeft(CellStyle.BORDER_THIN);
 	
 		for(Integer i = 0; i< columns; i++){
-    	Cell celda0 = fila0.createCell(i);
-        celda0.setCellValue(special1.getColumns().get(i));
-        celda0.setCellStyle(style0);  	
+			Cell celda0 = fila0.createCell(i);
+			celda0.setCellValue(special1.getColumns().get(i));
+			celda0.setCellStyle(style0);  	
     	}
-    	Cell celdaf0 = fila0.createCell(columns);
-    	celdaf0.setCellStyle(style0);    	
+    		
     	if(packaged){
-    		Cell cell1 = fila0.createCell(columns+1);
+    		Cell cell1 = fila0.createCell(columns);
+            cell1.setCellValue("Stock");
     		cell1.setCellStyle(style0);
-    		Cell cell2 = fila0.createCell(columns+2);
+    		Cell cell2 = fila0.createCell(columns+1);
+            cell2.setCellValue("Etiqueta");
     		cell2.setCellStyle(style0);
     	}
+    	
     	Integer num0 = 0;
     	Integer l = 0;
 
@@ -862,26 +865,26 @@ public class ConsumptionUtil {
         				case "Hotel": celda.setCellValue(ci.getHotel());celda.setCellStyle(style30);break;
         				case "Desde": celda.setCellValue(format.format(ci.getInitialDate()));celda.setCellStyle(style30);break;
            				case "Hasta": celda.setCellValue(format.format(ci.getFinalDate()));celda.setCellStyle(style30);break;
-        				case "Almac�n": celda.setCellValue(ci.getWarehouseName());celda.setCellStyle(style30);break;
+        				case "Almacén": celda.setCellValue(ci.getWarehouseName());celda.setCellStyle(style30);break;
         				case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style30);break;
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style20);break;
         				case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style30);break;
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style20);break;
-        				case "Valor Inicial": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style20);break;
+        				case "Inicial €": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style20);break;
         				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style20);break;
-        				case "Valor Compras": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style20);break;
+        				case "Compras €": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style20);break;
         				case "Ventas": celda.setCellValue(round(ci.getSalesAlb()+ ci.getSalesFac(),2));celda.setCellStyle(style20);break;
-        				case "Valor Ventas": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style20);break;
+        				case "Ventas €": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style20);break;
         				case "Final": celda.setCellValue(round(ci.getFinalQuantity(),2));celda.setCellStyle(style20);break;
-        				case "Valor Final": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style20);break;
+        				case "Final €": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style20);break;
         				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style20);break;
-        				case "Valor Traspaso": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style20);break;
+        				case "Traspaso €": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style20);break;
         				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
         				//case "Valor Consumo": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
         				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
         							else celda.setCellValue(0);	
         							celda.setCellStyle(style20);break; 
-        				case "Valor Consumo": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style20);break;
+        				case "Consumo €": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style20);break;
         				case "Importe": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style20);break;
 
         				case "Consumo": celda.setCellValue(round(ci.getConsumption(),2));celda.setCellStyle(style20);break;
@@ -889,19 +892,18 @@ public class ConsumptionUtil {
         					break;
         			}
         			}
-        			Cell lastCell = row.createCell(columns);
-        			lastCell.setCellStyle(style20);
+        			
         			if(packaged){
             			Item item = AON.getItem(domain, domainId, login, ci.getItemId());
-                		Cell valueCell = row.createCell(columns+1);
+                		Cell valueCell = row.createCell(columns);
                 		Double value = ci.getConsumption() * item.getPackMeasurement() * item.getPackUnits();
-                		if(value != 0) valueCell.setCellValue(value);
+                		valueCell.setCellValue(value);
                 		valueCell.setCellStyle(style20);
-                		Cell unityCell = row.createCell(columns+2);
+                		Cell unityCell = row.createCell(columns+1);
                 		unityCell.setCellValue(item.getPackMeasurementTag().getName());
                 		unityCell.setCellStyle(style20);
             		}
-        			row.setHeightInPoints(20);
+        	    	row.setHeightInPoints(20);
         		}
         		else{
         			num0++;
@@ -920,7 +922,7 @@ public class ConsumptionUtil {
 	
     	HSSFSheet hoja0 = libro.createSheet("Plantilla "+ hoja);
         
-    	hoja0.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()));
+    	hoja0.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.shortValue()-1));
 
     	Row rowInfo0 = hoja0.createRow(0);
     	Row fila0 = hoja0.createRow(1);
@@ -963,9 +965,7 @@ public class ConsumptionUtil {
     	Cell celda0 = fila0.createCell(i);
         celda0.setCellValue(special1.getColumns().get(i));
         celda0.setCellStyle(style0);  	
-    	}
-    	Cell celdaf0 = fila0.createCell(columns);
-    	celdaf0.setCellStyle(style0);    	
+    	} 	
 
     	Integer l = 0;
     	for (Warehouse w : warehouses) {
@@ -1015,19 +1015,17 @@ public class ConsumptionUtil {
         				case "Hotel": celda.setCellValue(hotel);celda.setCellStyle(style30);break;
            				case "Desde": celda.setCellValue(format.format(startDate));celda.setCellStyle(style30);break;
            				case "Hasta": celda.setCellValue(format.format(endDate));celda.setCellStyle(style30);break;
-        				case "Almac�n": celda.setCellValue(w.getName());celda.setCellStyle(style30);break;
-        				case "Valor Inicial": celda.setCellValue(round(inicial,2));celda.setCellStyle(style20);break;
-        				case "Valor Compras": celda.setCellValue(round(compras,2));celda.setCellStyle(style20);break;
-        				case "Valor Ventas": celda.setCellValue(round(ventas,2));celda.setCellStyle(style20);break;
-        				case "Valor Final": celda.setCellValue(round(fin,2));celda.setCellStyle(style20);break;
-        				case "Valor Traspaso": celda.setCellValue(round(traspaso,2));celda.setCellStyle(style20);break;
-        				case "Valor Consumo": celda.setCellValue(round(consumo,2));celda.setCellStyle(style20);break;
+        				case "Almacén": celda.setCellValue(w.getName());celda.setCellStyle(style30);break;
+        				case "Inicial €": celda.setCellValue(round(inicial,2));celda.setCellStyle(style20);break;
+        				case "Compras €": celda.setCellValue(round(compras,2));celda.setCellStyle(style20);break;
+        				case "Ventas €": celda.setCellValue(round(ventas,2));celda.setCellStyle(style20);break;
+        				case "Final €": celda.setCellValue(round(fin,2));celda.setCellStyle(style20);break;
+        				case "Traspaso €": celda.setCellValue(round(traspaso,2));celda.setCellStyle(style20);break;
+        				case "Consumo €": celda.setCellValue(round(consumo,2));celda.setCellStyle(style20);break;
         				default:
         					break;
         		}
         	}
-        	Cell lastCell = row.createCell(columns);
-        	lastCell.setCellStyle(style20);
         	row.setHeightInPoints(20);
         	l++;
         }

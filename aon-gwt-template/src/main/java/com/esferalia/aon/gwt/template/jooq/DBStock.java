@@ -38,6 +38,7 @@ import org.jooq.Record5;
 import org.jooq.Record6;
 import org.jooq.Record7;
 import org.jooq.Record8;
+import org.jooq.Record9;
 import org.jooq.Result;
 
 import com.esferalia.aon.gwt.template.server.AuditInfo;
@@ -735,9 +736,9 @@ public class DBStock {
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
-			Result<Record8<Double, String, String, String, String, String, String, Integer>> data = 
+			Result<Record9<Double, String, String, String, String, String, String, Integer, Integer>> data = 
 				ctx.getDslContext().select(INVENTORY_DETAIL.REAL_QUANTITY,ITEM.DETAIL,
-						ITEM.DETAIL2, ITEM.DETAIL3, PRODUCT.CODE, PRODUCT.NAME, ITEM.SERIAL_NUMBER, ITEM.ID)
+						ITEM.DETAIL2, ITEM.DETAIL3, PRODUCT.CODE, PRODUCT.NAME, ITEM.SERIAL_NUMBER, ITEM.ID, PRODUCT.ID)
 					.from(INVENTORY_DETAIL).join(ITEM).on(ITEM.ID.eq(INVENTORY_DETAIL.ITEM))
 					.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 					.where(INVENTORY_DETAIL.DOMAIN.eq(domain.getId()))
@@ -748,15 +749,13 @@ public class DBStock {
 			
 				
 			Vector<StockInfo> v = new Vector<StockInfo>();
-			for (Record8<Double, String, String, String, String, String, String, Integer> d : data) {
+			for (Record9<Double, String, String, String, String, String, String, Integer, Integer> d : data) {
 				StockInfo si = new StockInfo();
-				si.setItem(new Item().setId(d.getValue(ITEM.ID))
-						.setDetail(d.getValue(ITEM.DETAIL))
-						.setDetail2(d.getValue(ITEM.DETAIL2))
-						.setDetail3(d.getValue(ITEM.DETAIL3))
-						.setSerialNumber(d.getValue(ITEM.SERIAL_NUMBER)));
+				Item i = getItem(domain, login, d.getValue(ITEM.ID));
+				si.setItem(i.setSerialNumber(d.getValue(ITEM.SERIAL_NUMBER)));
 				si.setProduct(d.getValue(PRODUCT.CODE));
 				si.setQuantity(d.getValue(INVENTORY_DETAIL.REAL_QUANTITY));
+				si.setProductId(d.getValue(PRODUCT.ID));
 				si.setProductName(d.getValue(PRODUCT.NAME));
 				v.add(si);
 			}

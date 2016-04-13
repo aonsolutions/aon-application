@@ -19,6 +19,7 @@ import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -98,6 +99,17 @@ public class ConsumptionPage extends Composite{
 	}
 
 	private void init() {
+		
+	    DateTimeFormat dateFormat = DateTimeFormat.getMediumDateFormat();
+
+		startDate.setStyleName("aon-inputText");
+		startDate.setFormat(new DateBox.DefaultFormat(dateFormat));
+	    startDate.getDatePicker().setYearArrowsVisible(true);
+	    
+	    endDate.setStyleName("aon-inputText");
+	    endDate.setFormat(new DateBox.DefaultFormat(dateFormat));
+	    endDate.getDatePicker().setYearArrowsVisible(true);
+
 		titleLabel.setText(AON.MSG.consumptionTemplates());
 		map = new HashMap<String, Boolean>();
 		hwMap = new HashMap<String, String>();

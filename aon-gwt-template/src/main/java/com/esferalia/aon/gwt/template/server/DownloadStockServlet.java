@@ -149,14 +149,19 @@ public class DownloadStockServlet extends HttpServlet {
         	celda.setCellValue(aux.getColumns().get(i));
         	celda.setCellStyle(style);  	
         }
-        Cell celdaf = fila.createCell(columns);
-        celdaf.setCellStyle(style);
+
+        Integer columnsAux = columns;
         if(packaged){
-        	 Cell cell1 = fila.createCell(columns+1);
+        	 Cell cell1 = fila.createCell(columns);
+        	 cell1.setCellValue("Stock");
         	 cell1.setCellStyle(style);
-        	 Cell cell2 = fila.createCell(columns+2);
+        	 Cell cell2 = fila.createCell(columns+1);
+        	 cell2.setCellValue("Etiqueta");
         	 cell2.setCellStyle(style);
+        	 columnsAux = columns + 2;
         }
+        Cell celdaf = fila.createCell(columnsAux);
+        celdaf.setCellStyle(style);
         /*for(Integer i = 0; i<= columns; i++){
         	if(aux.getColumns().size()!=i && ( aux.getColumns().get(i).equals("Producto") || aux.getColumns().get(i).equals("Nombre")))
             	hoja.setDefaultColumnStyle(i, style3);
@@ -336,18 +341,20 @@ public class DownloadStockServlet extends HttpServlet {
         			break;
         		}
         	}
-        	Cell lastCell = row.createCell(columns);
-        	lastCell.setCellStyle(style2);
-        	
+        	columnsAux = columns;
         	if(packaged){
-        		Cell valueCell = row.createCell(columns+1);
+        		Cell valueCell = row.createCell(columns);
         		Double value = si.getQuantity() * si.getItem().getPackMeasurement() * si.getItem().getPackUnits();
-        		if(value != 0) valueCell.setCellValue(value);
+        		valueCell.setCellValue(value);
         		valueCell.setCellStyle(style2);
-        		Cell unityCell = row.createCell(columns+2);
+        		Cell unityCell = row.createCell(columns+1);
         		unityCell.setCellValue(si.getItem().getPackMeasurementTag().getName());
         		unityCell.setCellStyle(style2);
+        		columnsAux = columns+2;
         	}
+        	
+        	Cell lastCell = row.createCell(columnsAux);
+        	lastCell.setCellStyle(style2);
         	
         	row.setHeightInPoints(20);
         }
