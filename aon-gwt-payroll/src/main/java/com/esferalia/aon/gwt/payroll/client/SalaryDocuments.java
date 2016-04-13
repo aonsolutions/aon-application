@@ -74,7 +74,8 @@ class SalaryDocuments extends AbstractSpinnable<IDocument> implements IDocument 
 					@Override
 					public void onSuccess(Void v) {
 						salaries.remove(index);
-						setCurrentIndex(Math.min(salaries.size() - 1, index));
+						if ( salaries.size() > 0 )
+							setCurrentIndex(Math.min(salaries.size() - 1, index));
 						callback.onSuccess(v);
 					}
 
