@@ -18,7 +18,7 @@ public interface LabelSelected {
 	
 	Date getDeletedAt();
 	
-	DefaultAonUserIssueSelected getUser();
+	AonUserIssueSelected getUser();
 	
 	boolean endDateIsNull();
 	

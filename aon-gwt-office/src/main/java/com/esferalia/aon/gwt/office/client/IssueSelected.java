@@ -31,15 +31,15 @@ public interface IssueSelected {
 
 	Date getUpdatedAt();
 	
-	DefaultAonUserIssueSelected getUser();
+	AonUserIssueSelected getUser();
 	
-	DefaultAonIssueComments addComment(JsIssueComment comment);
+	AonIssueComments addComment(JsIssueComment comment);
 	
-	DefaultAonIssueComments editComment(JsIssueComment comment);
+	AonIssueComments editComment(JsIssueComment comment);
 	
-	DefaultAonTagIssueSelected editTag(JsLabel label);
+	AonTagIssueSelected editTag(JsLabel label);
 	
-	void addTag (DefaultAonTagIssueSelected tag);
+	void addTag (AonTagIssueSelected tag);
 	
 	void deleteTag(String name);
 	
@@ -47,9 +47,9 @@ public interface IssueSelected {
 	
 	void setPriority(String priority);
 	
-	List<DefaultAonTagIssueSelected> getTags();
+	List<AonTagIssueSelected> getTags();
 	
-	List<DefaultAonIssueComments> getComments();
+	List<AonIssueComments> getComments();
 
 	JsIssue getJsIssue();
 

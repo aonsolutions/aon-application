@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
 import com.esferalia.aon.gwt.office.client.IssueReadPanel.Callback;
 import com.esferalia.aon.gwt.office.client.models.AJSON;
+import com.esferalia.aon.gwt.office.client.models.AonJsData;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
@@ -54,6 +55,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.WindowScrollListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -142,7 +144,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	private List<IssueSelected> issues;
 	private ListDataProvider<IssueSelected> issuesProvider;
 
-	private List<DefaultAonTagIssueSelected> tagList;	
+	private List<AonTagIssueSelected> tagList;	
 	private List<RegistryMedia> rmedias;
 	private List<User> users;
 
@@ -165,7 +167,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 
 		this.users = new LinkedList<User>();
-		this.tagList = new LinkedList<DefaultAonTagIssueSelected>();
+		this.tagList = new LinkedList<AonTagIssueSelected>();
 		this.registryMap = new HashMap<Integer, Registry>();
 		this.rmedias = new LinkedList<RegistryMedia>();
 		this.searchPanel.addListener(this);
@@ -174,70 +176,35 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.dataGrid.setEmptyTableWidget(new Label("No hay registros"));
 		this.tagTree.addListener(this);
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
-
-		gitHub.getUser(String.valueOf(getCurrentDomain()), getCurrentDomainName(),
-				new AsyncCallback<AJSON<JsUser>>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(AJSON<JsUser> result) {
-						userIdentificated(result.getData());
-					}
-				});
 		
-		gitHub.getUsers(String.valueOf(getCurrentDomain()), new AsyncCallback<JSON<JsUser>>() {
-
+		gitHub.loadRepositoryData(String.valueOf(getCurrentDomain()), getCurrentDomainName(), new AsyncCallback<AJSON<AonJsData>>() {
+			
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert("getUsers() " + caught.getMessage());
+				Window.alert("Datos iniciales no cargados");
 			}
-
+			
 			@Override
-			public void onSuccess(JSON<JsUser> result) {
-				JsArray<JsUser> users = result.getData();
-				for (int x = 0; x < users.length(); x++)
+			public void onSuccess(AJSON<AonJsData> result) {
+				JsUser current = result.getData().getCurrentUser();
+				JsArray<JsUser> users = result.getData().getUsers();
+				JsArray<JsRMedia> rmedias = result.getData().getRMedias();
+				JsArray<JsRegistry> registries = result.getData().getRegistries();
+				
+				userIdentificated(current);
+				
+				for ( int x = 0; x < users.length(); x++)
 					addUser2List(users.get(x));
 				
-				Office.this.searchPanel.addUserList(Office.this.users);
+				for ( int x = 0 ; x < rmedias.length(); x++)
+					addRMedia2List(rmedias.get(x));
 				
-			}
+				for (int x = 0 ; x < registries.length(); x++)
+					addRegistry2List(registries.get(x));
+				
+				Office.this.searchPanel.addUserList(Office.this.users);
+			}			
 		});
-		
-		gitHub.getRegistries(String.valueOf(getCurrentDomain()),
-				getCurrentDomainName(), new AsyncCallback<JSON<JsRegistry>>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert("getRegistries()" + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(JSON<JsRegistry> result) {
-						JsArray<JsRegistry> registries = result.getData();
-						for (int x = 0; x < registries.length(); x++)
-							addRegistry2List(registries.get(x));
-					}
-				});		
-
-		gitHub.getRMedias(String.valueOf(getCurrentDomain()),
-				getCurrentDomainName(), new AsyncCallback<JSON<JsRMedia>>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert("getRMedia() " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(JSON<JsRMedia> result) {
-						JsArray<JsRMedia> rmedias = result.getData();
-						for (int x = 0; x < rmedias.length(); x++)
-							addRMedia2List(rmedias.get(x));	
-					}
-				});
 
 		gitHub.getLabels(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsLabel>>() {
@@ -555,7 +522,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private void addLabels2List(JsLabel jsLabel) {
 
-		DefaultAonTagIssueSelected defaultTag = new DefaultAonTagIssueSelected(
+		AonTagIssueSelected defaultTag = new AonTagIssueSelected(
 				jsLabel);
 		tagList.add(defaultTag);
 
@@ -878,7 +845,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@Override
 	public void onIssueCommentButtonClick(String body,
-			final Callback<DefaultAonIssueComments> callback) {
+			final Callback<AonIssueComments> callback) {
 		IssueCommentValue value = new IssueCommentValue();
 		value.setBody(body);
 		value.setStartDate(fmt.format(new Date()));
@@ -894,7 +861,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsIssueComment result) {
-						DefaultAonIssueComments comment = new DefaultAonIssueComments(
+						AonIssueComments comment = new AonIssueComments(
 								result);
 						issueSelected.addComment(result);
 						callback.onSucess(comment);
@@ -904,7 +871,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@Override
 	public void onUpdateIssueComment(final Integer id, final String body,
-			final Callback<DefaultAonIssueComments> callback) {
+			final Callback<AonIssueComments> callback) {
 		IssueCommentValue value = new IssueCommentValue();
 		value.setBody(body);
 		gitHub.editIssueComment(String.valueOf(getCurrentDomain()),
@@ -918,7 +885,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsIssueComment result) {
-						DefaultAonIssueComments comment = issueSelected
+						AonIssueComments comment = issueSelected
 								.editComment(result);
 						callback.onSucess(comment);
 					}
@@ -928,7 +895,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	@Override
 	public void onRemoveLabelFromIssue(final String oldName,
 			final String newName,
-			final Callback<DefaultAonTagIssueSelected> callback) {
+			final Callback<AonTagIssueSelected> callback) {
 
 		gitHub.removeLabelFromIssue(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), issueSelected.getId(), oldName,
@@ -978,8 +945,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@Override
 	public void onReplaceLabelsForIssue(
-			List<DefaultAonTagIssueSelected> addLabels,
-			List<DefaultAonTagIssueSelected> deletedLabels) {
+			List<AonTagIssueSelected> addLabels,
+			List<AonTagIssueSelected> deletedLabels) {
 
 		String[] addLabelsArr = new String[addLabels.size()];
 		String[] delLabelsArr = new String[deletedLabels.size()];

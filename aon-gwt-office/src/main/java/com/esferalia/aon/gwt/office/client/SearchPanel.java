@@ -104,9 +104,9 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 	private Date criteria;
 	private String userSelected;
 	
-	private List<DefaultAonTagIssueSelected> typeTagList;
-	private List<DefaultAonTagIssueSelected> priorityTagList;
-	private List<DefaultAonTagIssueSelected> noticeTagList;
+	private List<AonTagIssueSelected> typeTagList;
+	private List<AonTagIssueSelected> priorityTagList;
+	private List<AonTagIssueSelected> noticeTagList;
 	
 	private List<Tag> drashTagList;
 
@@ -123,9 +123,9 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.listeners = new LinkedList<Listener>();
-		this.typeTagList = new LinkedList<DefaultAonTagIssueSelected>();
-		this.priorityTagList = new LinkedList<DefaultAonTagIssueSelected>();
-		this.noticeTagList = new LinkedList<DefaultAonTagIssueSelected>();
+		this.typeTagList = new LinkedList<AonTagIssueSelected>();
+		this.priorityTagList = new LinkedList<AonTagIssueSelected>();
+		this.noticeTagList = new LinkedList<AonTagIssueSelected>();
 		this.drashTagList = new LinkedList<Tag>();
 		
 		this.subjectTextBox.addKeyDownHandler(this);
@@ -187,9 +187,9 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		initUserButton(users);
 	}
 
-	public void addTagList(List<DefaultAonTagIssueSelected> list) {
+	public void addTagList(List<AonTagIssueSelected> list) {
 
-		for (DefaultAonTagIssueSelected tag : list) {
+		for (AonTagIssueSelected tag : list) {
 
 			if (tag.isOfficeType())
 				typeTagList.add(tag);
@@ -346,7 +346,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 	}
 
 	private void initTypeButton(
-			final List<DefaultAonTagIssueSelected> typeTags) {
+			final List<AonTagIssueSelected> typeTags) {
 
 		this.typeButton.addClickHandler(new ClickHandler() {
 
@@ -356,7 +356,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 			{
 				SearchPanel.this.typeVPanel = new VerticalPanel();
 
-				for (final DefaultAonTagIssueSelected tag : typeTags) {
+				for (final AonTagIssueSelected tag : typeTags) {
 
 					final CheckBox cb = new CheckBox(tag.getName());
 					cb.setName(String.valueOf(tag.getId()));
@@ -407,7 +407,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 	}
 
 	private void initPriorityButton(
-			final List<DefaultAonTagIssueSelected> priorityTags) {
+			final List<AonTagIssueSelected> priorityTags) {
 
 		this.priorityButton.addClickHandler(new ClickHandler() {
 
@@ -417,7 +417,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 			{
 				SearchPanel.this.priorityVPanel = new VerticalPanel();
 
-				for (final DefaultAonTagIssueSelected tag : priorityTags) {
+				for (final AonTagIssueSelected tag : priorityTags) {
 
 					final CheckBox cb = new CheckBox(tag.getName());
 					cb.setName(String.valueOf(tag.getId()));
@@ -467,7 +467,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		});
 	}
 
-	private void initNoticeButton(final List<DefaultAonTagIssueSelected> tags) {
+	private void initNoticeButton(final List<AonTagIssueSelected> tags) {
 
 		this.noticeTagButton.addClickHandler(new ClickHandler() {
 
@@ -477,7 +477,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 			{
 				SearchPanel.this.noticesVPanel = new VerticalPanel();
 
-				for (final DefaultAonTagIssueSelected tag : tags) {
+				for (final AonTagIssueSelected tag : tags) {
 
 					final CheckBox cb = new CheckBox(tag.getName());
 					cb.setName(String.valueOf(tag.getId()));
@@ -528,7 +528,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		});
 	}
 	
-	private void insertDrashTag(DefaultAonTagIssueSelected pTag) {
+	private void insertDrashTag(AonTagIssueSelected pTag) {
 		Tag tag = new Tag();
 		tag.setId(pTag.getId());
 		tag.setDomain(pTag.getDomain());
@@ -537,7 +537,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		this.drashTagList.add(tag);
 	}
 	
-	private void removeDrashTag(DefaultAonTagIssueSelected pTag) {
+	private void removeDrashTag(AonTagIssueSelected pTag) {
 		
 		for (Tag tag : drashTagList) {
 			if (tag.getId() == pTag.getId()) {

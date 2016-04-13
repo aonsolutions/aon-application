@@ -65,9 +65,9 @@ public class DuplicatedDataGrid extends CustomDataGrid<IssueSelected>
 	
 	public static class DefaultIssueSelected {
 		
-		DefaultAonIssueSelected issue;
+		AonIssueSelected issue;
 		
-		public DefaultIssueSelected(DefaultAonIssueSelected issue) {
+		public DefaultIssueSelected(AonIssueSelected issue) {
 			this.issue = issue;
 		}
 		

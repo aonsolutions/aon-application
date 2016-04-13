@@ -61,16 +61,16 @@ public class IssueReadPanel extends Composite {
 		void onUpdateIssueState(String state);
 
 		void onUpdateIssueComment(Integer id, String body,
-				Callback<DefaultAonIssueComments> callback);
+				Callback<AonIssueComments> callback);
 
 		void onIssueCommentButtonClick(String body,
-				Callback<DefaultAonIssueComments> callback);
+				Callback<AonIssueComments> callback);
 
 		void onRemoveLabelFromIssue(String oldName, String newName,
-				Callback<DefaultAonTagIssueSelected> callback);
+				Callback<AonTagIssueSelected> callback);
 
-		void onReplaceLabelsForIssue(List<DefaultAonTagIssueSelected> addLabels,
-				List<DefaultAonTagIssueSelected> deletedLabels);
+		void onReplaceLabelsForIssue(List<AonTagIssueSelected> addLabels,
+				List<AonTagIssueSelected> deletedLabels);
 
 		void addLabelToAnIssue(List<String> labels);
 	}
@@ -122,9 +122,9 @@ public class IssueReadPanel extends Composite {
 	private DateTimeFormat date = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private DateTimeFormat hour = DateTimeFormat.getFormat("HH:mm");
 
-	private List<DefaultAonTagIssueSelected> assignTags;
-	private List<DefaultAonTagIssueSelected> addTagsMap;
-	private List<DefaultAonTagIssueSelected> deletedTagsMap;
+	private List<AonTagIssueSelected> assignTags;
+	private List<AonTagIssueSelected> addTagsMap;
+	private List<AonTagIssueSelected> deletedTagsMap;
 
 	private VerticalPanel infoHeaderContent;
 	private VerticalPanel companyContainer;
@@ -142,15 +142,15 @@ public class IssueReadPanel extends Composite {
 		this.companyContainer = new VerticalPanel();
 		this.companyContainer.setSpacing(5);
 
-		this.addTagsMap = new LinkedList<DefaultAonTagIssueSelected>();
-		this.deletedTagsMap = new LinkedList<DefaultAonTagIssueSelected>();
+		this.addTagsMap = new LinkedList<AonTagIssueSelected>();
+		this.deletedTagsMap = new LinkedList<AonTagIssueSelected>();
 		this.assignTags = issue.getTags();
 
 		this.userLogged.setText(currentUser.getName());
 
 		initHeader(issue);
 
-		for (DefaultAonIssueComments comment : issue.getComments()) {
+		for (AonIssueComments comment : issue.getComments()) {
 			printComment(comment,
 					(issue instanceof IssueGrid.IssueOpenLoadSelected));
 		}
@@ -175,13 +175,13 @@ public class IssueReadPanel extends Composite {
 		}
 	}
 
-	public void setTags(List<DefaultAonTagIssueSelected> tags) {
+	public void setTags(List<AonTagIssueSelected> tags) {
 
-		List<DefaultAonTagIssueSelected> typesList = new LinkedList<DefaultAonTagIssueSelected>();
-		List<DefaultAonTagIssueSelected> priorityList = new LinkedList<DefaultAonTagIssueSelected>();
-		List<DefaultAonTagIssueSelected> officeList = new LinkedList<DefaultAonTagIssueSelected>();
+		List<AonTagIssueSelected> typesList = new LinkedList<AonTagIssueSelected>();
+		List<AonTagIssueSelected> priorityList = new LinkedList<AonTagIssueSelected>();
+		List<AonTagIssueSelected> officeList = new LinkedList<AonTagIssueSelected>();
 
-		for (DefaultAonTagIssueSelected tag : tags) {
+		for (AonTagIssueSelected tag : tags) {
 			
 			if (tag.isOfficeType()) {
 				typesList.add(tag);
@@ -227,7 +227,7 @@ public class IssueReadPanel extends Composite {
 		
 		HorizontalPanel hLogPanel = null;	
 		
-		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
+		for (AonTagIssueSelected tag : issue.getTags()) {
 			if( !tag.isOfficeStatus() && !tag.endDateIsNull()) {
 				setInfoTag(tag);
 				continue;
@@ -239,7 +239,7 @@ public class IssueReadPanel extends Composite {
 				setContent(tag);
 		}
 
-		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
+		for (AonTagIssueSelected tag : issue.getTags()) {
 
 			if (tag.getType() != TagType.OFFICE_STATUS.value()
 					&& tag.getDeletedAt() != null) {
@@ -264,7 +264,7 @@ public class IssueReadPanel extends Composite {
 		} else
 			headerVPanel.add(hLogPanel);
 		
-		for (DefaultAonIssueComments comment : issue.getComments()) {
+		for (AonIssueComments comment : issue.getComments()) {
 			if (AonStringUtils.isNotBlank(comment.getCompany()) &&
 					!AonStringUtils.equals(issue.getCompany(), comment.getCompany())) {
 				addCompany(comment.getCompany(), comment.getCreatedAt()); 
@@ -309,7 +309,7 @@ public class IssueReadPanel extends Composite {
 	}
 
 	private HorizontalPanel setHistorialLogHeader(
-			DefaultAonTagIssueSelected tag) {
+			AonTagIssueSelected tag) {
 
 		HorizontalPanel hPanel = new HorizontalPanel();
 		hPanel.setSpacing(5);
@@ -331,7 +331,7 @@ public class IssueReadPanel extends Composite {
 		return hPanel;
 	}
 
-	private void setInfoTag(DefaultAonTagIssueSelected tag) {
+	private void setInfoTag(AonTagIssueSelected tag) {
 		HorizontalPanel hPanel = new HorizontalPanel();
 		hPanel.setSpacing(5);
 
@@ -351,7 +351,7 @@ public class IssueReadPanel extends Composite {
 		infoHeaderContent.add(hPanel);
 	}
 
-	private void setContent(DefaultAonTagIssueSelected tag) {
+	private void setContent(AonTagIssueSelected tag) {
 
 		HorizontalPanel hPanel = new HorizontalPanel();
 		hPanel.setSpacing(5);
@@ -387,7 +387,7 @@ public class IssueReadPanel extends Composite {
 		companyContainer.add(hPanel);
 	}
 
-	private void printComment(DefaultAonIssueComments issueComment,
+	private void printComment(AonIssueComments issueComment,
 			boolean editVisible) {
 
 		int days = getDaysBefore(issueComment.getCreatedAt());
@@ -430,7 +430,7 @@ public class IssueReadPanel extends Composite {
 	}
 
 	private void initTypeButton(
-			final List<DefaultAonTagIssueSelected> typeTags) {
+			final List<AonTagIssueSelected> typeTags) {
 		typeButton.addClickHandler(new ClickHandler() {
 
 			private PopupPanel popup = new PopupPanel(true);
@@ -438,7 +438,7 @@ public class IssueReadPanel extends Composite {
 			{
 				VerticalPanel vPanel = new VerticalPanel();
 
-				for (DefaultAonTagIssueSelected tag : typeTags) {
+				for (AonTagIssueSelected tag : typeTags) {
 
 					RadioButton rb = new RadioButton("TYPE", tag.getName());
 					rb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -486,7 +486,7 @@ public class IssueReadPanel extends Composite {
 	}
 
 	private void initPriorityButton(
-			final List<DefaultAonTagIssueSelected> priorityTags) {
+			final List<AonTagIssueSelected> priorityTags) {
 		priorityButton.addClickHandler(new ClickHandler() {
 
 			private PopupPanel popup = new PopupPanel(true);
@@ -494,7 +494,7 @@ public class IssueReadPanel extends Composite {
 			{
 				VerticalPanel vPanel = new VerticalPanel();
 
-				for (DefaultAonTagIssueSelected tag : priorityTags) {
+				for (AonTagIssueSelected tag : priorityTags) {
 
 					RadioButton rb = new RadioButton("PRIORITY", tag.getName());
 					rb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -543,7 +543,7 @@ public class IssueReadPanel extends Composite {
 	}
 
 	private void initTagButton(
-			final List<DefaultAonTagIssueSelected> noticeTags) {
+			final List<AonTagIssueSelected> noticeTags) {
 		tagButton.addClickHandler(new ClickHandler() {
 
 			private PopupPanel popup = new PopupPanel(true);
@@ -551,7 +551,7 @@ public class IssueReadPanel extends Composite {
 			{
 				VerticalPanel vPanel = new VerticalPanel();
 
-				for (final DefaultAonTagIssueSelected tag : noticeTags) {
+				for (final AonTagIssueSelected tag : noticeTags) {
 
 					CheckBox cb = new CheckBox(tag.getName());
 					cb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -597,9 +597,9 @@ public class IssueReadPanel extends Composite {
 		});
 	}
 
-	private void evalAssignTag(DefaultAonTagIssueSelected tag) {
+	private void evalAssignTag(AonTagIssueSelected tag) {
 
-		for (DefaultAonTagIssueSelected tagAux : assignTags) {
+		for (AonTagIssueSelected tagAux : assignTags) {
 			if (tagAux.getName().compareTo(tag.getName()) == 0
 					&& tagAux.getType() == tag.getType()) {
 				deletedTagsMap.remove(tag);
@@ -609,9 +609,9 @@ public class IssueReadPanel extends Composite {
 		addTagsMap.add(tag);
 	}
 
-	private void evalUnAssingTag(DefaultAonTagIssueSelected tag) {
+	private void evalUnAssingTag(AonTagIssueSelected tag) {
 
-		for (DefaultAonTagIssueSelected tagAux : assignTags) {
+		for (AonTagIssueSelected tagAux : assignTags) {
 			if (tagAux.getName().compareTo(tag.getName()) == 0
 					&& tagAux.getType() == tag.getType()) {
 				deletedTagsMap.add(tag);
@@ -623,7 +623,7 @@ public class IssueReadPanel extends Composite {
 	}
 
 	private boolean containsOfficeTag(String name) {
-		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
+		for (AonTagIssueSelected tag : issue.getTags()) {
 			if (tag.getName().compareTo(name) == 0
 					&& tag.getDeletedAt() == null) {
 				Label label = new Label(name);
@@ -682,7 +682,7 @@ public class IssueReadPanel extends Composite {
 		for (Listener listener : listeners)
 
 			listener.onIssueCommentButtonClick(commentTextArea.getValue(),
-					new Callback<DefaultAonIssueComments>() {
+					new Callback<AonIssueComments>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -691,7 +691,7 @@ public class IssueReadPanel extends Composite {
 						}
 
 						@Override
-						public void onSucess(DefaultAonIssueComments comment) {
+						public void onSucess(AonIssueComments comment) {
 							printComment(comment, true);
 							commentTextArea.setValue("");
 							commentButton.setEnabled(false);
@@ -749,7 +749,7 @@ public class IssueReadPanel extends Composite {
 		else {
 			for (Listener listener : listeners)
 				listener.onRemoveLabelFromIssue(oldName, newName,
-						new Callback<DefaultAonTagIssueSelected>() {
+						new Callback<AonTagIssueSelected>() {
 
 							@Override
 							public void onFailure(Throwable caught) {
@@ -758,7 +758,7 @@ public class IssueReadPanel extends Composite {
 
 							@Override
 							public void onSucess(
-									DefaultAonTagIssueSelected comment) {
+									AonTagIssueSelected comment) {
 								onAddTypeLabelFromAnIssue(newName);
 							}
 						});
@@ -789,7 +789,7 @@ public class IssueReadPanel extends Composite {
 		else {
 			for (Listener listener : listeners)
 				listener.onRemoveLabelFromIssue(oldName, newName,
-						new Callback<DefaultAonTagIssueSelected>() {
+						new Callback<AonTagIssueSelected>() {
 
 							@Override
 							public void onFailure(Throwable caught) {
@@ -799,7 +799,7 @@ public class IssueReadPanel extends Composite {
 
 							@Override
 							public void onSucess(
-									DefaultAonTagIssueSelected comment) {
+									AonTagIssueSelected comment) {
 								onAddPriorityLabelFromAnIssue(newName);
 							}
 						});
@@ -819,7 +819,7 @@ public class IssueReadPanel extends Composite {
 		for (Listener listener : listeners)
 			listener.onUpdateIssueComment(Integer.parseInt(textArea.getName()),
 					textArea.getValue(),
-					new Callback<DefaultAonIssueComments>() {
+					new Callback<AonIssueComments>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -829,7 +829,7 @@ public class IssueReadPanel extends Composite {
 						}
 
 						@Override
-						public void onSucess(DefaultAonIssueComments comment) {
+						public void onSucess(AonIssueComments comment) {
 							button.removeStyleName(AON.AON_ICON_ACCEPT);
 							button.addStyleName(AON.AON_ICON_EDIT_ADD);
 							textArea.setValue(comment.getBody());
@@ -855,7 +855,7 @@ public class IssueReadPanel extends Composite {
 		return textArea;
 	}
 
-	private Label setTagStyle(DefaultAonTagIssueSelected tag) {
+	private Label setTagStyle(AonTagIssueSelected tag) {
 
 		Label label = new Label(tag.getName());
 		label.setStyleName(AON.AON_RESOURCES.css().tagStyle());
@@ -872,9 +872,9 @@ public class IssueReadPanel extends Composite {
 	private String setTitle2Label(String tagName) {
 
 		StringBuilder sb = new StringBuilder();
-		DefaultAonTagIssueSelected aux = null;
+		AonTagIssueSelected aux = null;
 
-		for (DefaultAonTagIssueSelected tag : issue.getTags()) {
+		for (AonTagIssueSelected tag : issue.getTags()) {
 			if (AonStringUtils.equals(tagName, tag.getName())) {
 				aux = tag;
 				break;
@@ -908,7 +908,7 @@ public class IssueReadPanel extends Composite {
 		return CalendarUtil.getDaysBetween(date, new Date());
 	}
 
-	private Label getHeadCommentLabel(DefaultAonIssueComments comment,
+	private Label getHeadCommentLabel(AonIssueComments comment,
 			int days) {
 
 		StringBuilder sb = new StringBuilder();

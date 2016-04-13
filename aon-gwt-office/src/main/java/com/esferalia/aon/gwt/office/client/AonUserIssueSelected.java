@@ -3,13 +3,13 @@ package com.esferalia.aon.gwt.office.client;
 import com.esferalia.aon.gwt.office.client.models.users.JsUser;
 import com.google.gwt.http.client.URL;
 
-public class DefaultAonUserIssueSelected implements UserSelected {
+public class AonUserIssueSelected implements UserSelected {
 	
 	protected JsUser user;
 	private String login;
 	private String name;
 	
-	public DefaultAonUserIssueSelected(JsUser user) {
+	public AonUserIssueSelected(JsUser user) {
 		this.user = user;
 		this.login = URL.decode(user.getLogin());
 		this.name = URL.decode(user.getName());

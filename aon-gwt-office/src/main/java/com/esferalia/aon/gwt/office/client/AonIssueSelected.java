@@ -11,29 +11,29 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-public abstract class DefaultAonIssueSelected implements IssueSelected {
+public abstract class AonIssueSelected implements IssueSelected {
 
 	protected JsIssue issue;
 
 	private DateTimeFormat timeFormat;
 
-	private DefaultAonUserIssueSelected user;
-	private List<DefaultAonTagIssueSelected> tags;
-	private List<DefaultAonIssueComments> comments;
+	private AonUserIssueSelected user;
+	private List<AonTagIssueSelected> tags;
+	private List<AonIssueComments> comments;
 	
 	private String title;
 //	private String body;
 	private String type;
 	private String priority;
 	
-	public DefaultAonIssueSelected(JsIssue issue) {
+	public AonIssueSelected(JsIssue issue) {
 		this.issue = issue;
 		this.timeFormat = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");
 
-		this.user = new DefaultAonUserIssueSelected(issue.getUser());
+		this.user = new AonUserIssueSelected(issue.getUser());
 		
-		this.tags = new LinkedList<DefaultAonTagIssueSelected>();
-		this.comments = new LinkedList<DefaultAonIssueComments>();
+		this.tags = new LinkedList<AonTagIssueSelected>();
+		this.comments = new LinkedList<AonIssueComments>();
 		
 		this.title = URL.decode(issue.getTitle());
 //		this.body = URL.decode(issue.getBody());
@@ -48,7 +48,7 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 	private void initTagList(JsArray<JsLabel> label) {
 
 		for (int x = 0; x < label.length(); x++) {
-			DefaultAonTagIssueSelected defaultTag = new DefaultAonTagIssueSelected(
+			AonTagIssueSelected defaultTag = new AonTagIssueSelected(
 					label.get(x));
 			tags.add(defaultTag);
 		}
@@ -57,7 +57,7 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 	private void initCommentList(JsArray<JsIssueComment> comments) {
 		
 		for ( int x = 0; x < comments.length(); x++) {
-			DefaultAonIssueComments defaultComment = new DefaultAonIssueComments(comments.get(x));
+			AonIssueComments defaultComment = new AonIssueComments(comments.get(x));
 			this.comments.add(defaultComment);
 		}
 	}
@@ -135,24 +135,24 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 	}
 
 	@Override
-	public DefaultAonUserIssueSelected getUser() {
+	public AonUserIssueSelected getUser() {
 		return this.user;
 	}
 	
 	@Override
-	public List<DefaultAonTagIssueSelected> getTags() {		
+	public List<AonTagIssueSelected> getTags() {		
 		return tags;
 	}
 	
 	@Override
-	public void addTag(DefaultAonTagIssueSelected tag) {
+	public void addTag(AonTagIssueSelected tag) {
 		getTags().add(tag);
 	}
 	
 	@Override
 	public void deleteTag(String name) {
 		
-		for (DefaultAonTagIssueSelected tag : getTags()) {
+		for (AonTagIssueSelected tag : getTags()) {
 			if (tag.getName().compareTo(name) == 0) {
 				getTags().remove(tag);
 				break;
@@ -161,15 +161,15 @@ public abstract class DefaultAonIssueSelected implements IssueSelected {
 	}
 	
 	@Override
-	public DefaultAonIssueComments addComment(JsIssueComment comment) {
-		DefaultAonIssueComments newComment = new DefaultAonIssueComments(comment);
+	public AonIssueComments addComment(JsIssueComment comment) {
+		AonIssueComments newComment = new AonIssueComments(comment);
 		this.comments.add(newComment);
 		return newComment;
 		
 	}	
 	
 	@Override
-	public List<DefaultAonIssueComments> getComments() {
+	public List<AonIssueComments> getComments() {
 		return comments;
 	}
 	

@@ -7,20 +7,20 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-public class DefaultAonTagIssueSelected implements LabelSelected {
+public class AonTagIssueSelected implements LabelSelected {
 	
 	protected JsLabel label;
 	private String name;
 
 	private DateTimeFormat timeFormat;
-	private DefaultAonUserIssueSelected user;
+	private AonUserIssueSelected user;
 	
-	public DefaultAonTagIssueSelected(JsLabel label) {
+	public AonTagIssueSelected(JsLabel label) {
 		this.label = label;
 		this.name = URL.decode(label.getName());
 		this.timeFormat = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");
 		if (label.getUser() != null)
-			this.user = new DefaultAonUserIssueSelected(label.getUser());
+			this.user = new AonUserIssueSelected(label.getUser());
 	}
 	
 	@Override
@@ -49,7 +49,7 @@ public class DefaultAonTagIssueSelected implements LabelSelected {
 	}
 	
 	@Override
-	public DefaultAonUserIssueSelected getUser() {
+	public AonUserIssueSelected getUser() {
 		return this.user;
 	}
 	

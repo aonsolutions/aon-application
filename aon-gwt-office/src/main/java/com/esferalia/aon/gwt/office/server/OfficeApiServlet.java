@@ -55,99 +55,82 @@ public class OfficeApiServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static class GetAllUsers extends RegExpRequestHandler {
+	private static class GetAonJsData extends RegExpRequestHandler {
 		
-		public GetAllUsers() {
-			super("/users/(\\d+)");
-		}
+		private HttpServletRequest req; 
+		private HttpServletResponse resp;
 		
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {			
+		private Integer domain;
+		private String domainName;
 
-			Integer domainId = null;
-
-			try {
-				domainId = getDomainId();
-
-			} catch (Exception ex) {
-				String aux = getRequestAction(req);
-				String[] auxArr = aux.split("/");
-				domainId = Integer.parseInt(auxArr[2]);
-
-			} finally {
-				getUsers(req, resp, domainId);
-			}
-		}
-		
-		private void getUsers(HttpServletRequest req, HttpServletResponse resp, int domainId) {
-			PrintWriter pw = null;
-			
-			try {
-				String domainName = AonServletUtils.getRequestDomainName(req);				
-				List<User> users = AON.getUsers(domainId, domainName, AonServletUtils.getLoggedUser());
-				
-				pw = resp.getWriter();
-				pw.append('{');
-				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
-				pw.printf("\"data\":%s", buildUsers(users.listIterator()));
-				pw.append('}');
-				pw.flush();
-				
-			} catch (Exception ex) {
-				System.out.println(ex.getMessage());
-			}
-		}
-		
-	}
-
-	private static class GetUser extends RegExpRequestHandler {
-
-		public GetUser() {
-			super("/users/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))");
+		public GetAonJsData() {
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/jsaondata");
 		}
 
 		@Override
 		public void handler(HttpServletRequest req, HttpServletResponse resp)
 				throws ServletException, IOException {
 
-			Integer domainId = null;
-
+			this.req = req;
+			this.resp = resp;
+			
 			try {
-				domainId = getDomainId();
+				this.domain = getDomainId();
+				this.domainName = getDomainName();
 
 			} catch (Exception ex) {
-				String aux = getRequestAction(req);
-				String[] auxArr = aux.split("/");
-				domainId = Integer.parseInt(auxArr[2]);
+				String ver = getRequestAction(req);
+				String[] actionArr = ver.split("/");
+				this.domain = Integer.parseInt(actionArr[2]);
+				this.domainName = actionArr[3];
+			}
 
-			} finally {
-				getJsonUser(req, resp, domainId);
+			finally {
+				getAonJsData();
 			}
 		}
 
-		private void getJsonUser(HttpServletRequest req,
-				HttpServletResponse resp, Integer domainId) {
-
+		private void getAonJsData() {
 			PrintWriter pw = null;
 			try {
-
-				String domainName = AonServletUtils.getRequestDomainName(req);
-				String userName = AonServletUtils.getLoggedUser();
-				Integer userId = AonServletUtils.getRequestUserId(req);
-
-				User user = AON.getUser(domainId, domainName, userName, userId);
-
+				
 				pw = resp.getWriter();
-				pw.append('{');
-				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
-				pw.printf("\"data\":%s", buildUserSender(user));
+				pw.append('{');				
+				pw.printf("\"data\":%s", fillAonJsData());
 				pw.append('}');
 				pw.flush();
 
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
 			}
+		}
+		
+		private String fillAonJsData() throws Exception {
+			
+			List<User> users = AON.getUsers(domain, domainName, 
+					AonServletUtils.getLoggedUser());
+			List<Registry> registries = AON.getRegistries(domain, domainName, 
+					AonServletUtils.getLoggedUser());			
+
+			User user = AON.getUser(domain, domainName, 
+					AonServletUtils.getLoggedUser(), 
+					AonServletUtils.getRequestUserId(req));
+
+			List<RegistryMedia> rmedias = AON.getRMedias(domain, domainName, AonServletUtils.getLoggedUser());
+			
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("{\n");
+			buffer.append(String.format("\"user\":%s,\r\n",
+					buildUserSender(user)));
+			buffer.append(String.format("\"users\":%s,\r\n",
+					buildUsers(users.listIterator())));
+			buffer.append(String.format("\"registries\":%s,\r\n",
+					buildRegistries(registries.listIterator())));
+			buffer.append(String.format("\"rmedias\":%s\r\n",
+					buildRMedia(rmedias.listIterator())));
+			buffer.append("}");
+			
+			return buffer.toString();
 		}
 	}
 
@@ -693,110 +676,6 @@ public class OfficeApiServlet extends HttpServlet {
 		}
 	}
 
-	private static class GetRegistries extends RegExpRequestHandler {
-
-		public GetRegistries() {
-			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/registries");
-		}
-
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-
-			Integer domain = null;
-			String domainName = "";
-
-			try {
-				domain = getDomainId();
-				domainName = getDomainName();
-
-			} catch (Exception ex) {
-				String ver = getRequestAction(req);
-				String[] actionArr = ver.split("/");
-				domain = Integer.parseInt(actionArr[2]);
-				domainName = actionArr[3];
-			}
-
-			finally {
-				getRegistries(resp, domain, domainName);
-			}
-		}
-
-		private void getRegistries(HttpServletResponse resp, Integer domainId,
-				String domainName) {
-			PrintWriter pw = null;
-			try {
-				String userName = AonServletUtils.getLoggedUser();
-				List<Registry> registries = AON.getRegistries(domainId,
-						domainName, userName);
-				pw = resp.getWriter();
-				pw.append('{');
-				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
-				pw.printf("\"data\":%s",
-						buildRegistries(registries.listIterator()));
-				pw.append('}');
-				pw.flush();
-
-			} catch (Exception ex) {
-				System.out.println(ex.getMessage());
-			}
-		}
-	}
-	
-	private static class GetRMedias extends RegExpRequestHandler {
-
-		private HttpServletRequest req;
-		private HttpServletResponse resp;
-		
-		private Integer domain;
-		private String domainName;
-		
-		public GetRMedias() {
-			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/rmedia");
-		}
-		
-		@Override
-		public void handler(HttpServletRequest req, HttpServletResponse resp)
-				throws ServletException, IOException {
-
-			try {
-				this.req = req;
-				this.resp = resp;
-				this.domain = getDomainId();
-				this.domainName = getDomainName();
-
-			} catch (Exception ex) {
-				String ver = getRequestAction(req);
-				String[] actionArr = ver.split("/");
-				this.domain = Integer.parseInt(actionArr[2]);
-				this.domainName = actionArr[3];
-			}
-
-			finally {
-				getRMedias();
-			}
-		}
-		
-		private void getRMedias() {
-
-			PrintWriter pw = null;
-			try {
-				String userName = AonServletUtils.getLoggedUser();
-				List<RegistryMedia> rmedias = AON.getRMedias(domain, domainName, userName);				
-				pw = resp.getWriter();
-				pw.append('{');
-				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
-				pw.printf("\"data\":%s",
-						buildRMedia(rmedias.listIterator()));
-				pw.append('}');
-				pw.flush();
-
-			} catch (Exception ex) {
-				System.out.println(ex.getMessage());
-			}
-		}
-	}
-
 	private static class CreateLabel extends RegExpRequestHandler {
 
 		public CreateLabel() {
@@ -1205,10 +1084,7 @@ public class OfficeApiServlet extends HttpServlet {
 
 	// @formatter:off
 	private static final HttpRequestHandler GET_HANDLERS[] = {
-			new GetAllUsers(),
-			new GetUser(),
-			new GetRegistries(),
-			new GetRMedias(),
+			new GetAonJsData(),
 			new GetAllIssuesRequestHandler(),
 			new ListAllLabels(),			
 	};

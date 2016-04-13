@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.office.client;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.office.client.models.AJSON;
+import com.esferalia.aon.gwt.office.client.models.AonJsData;
 import com.esferalia.aon.gwt.office.client.models.JSON;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssue;
 import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
@@ -17,7 +18,6 @@ import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.RepoValue;
 import com.esferalia.aon.gwt.office.client.values.Value;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
-import com.esferalia.aon.occam.api.model.office.Notice;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
@@ -307,6 +307,13 @@ public class AonHub {
 	}
 
 	// *************** REGISTRIES ****************** //
+	
+	
+	public void loadRepositoryData(String user, String repo, 
+			AsyncCallback<AJSON<AonJsData>> callback) {
+		get(baseUrl + "repos/" + user + "/" + repo + "/jsaondata", callback);
+	}
+
 	/**
 	 * 
 	 * @param domain

@@ -14,5 +14,5 @@ public interface IssueCommentSelected {
 	
 	String getCompany();
 	
-	DefaultAonUserIssueSelected getUser();
+	AonUserIssueSelected getUser();
 }

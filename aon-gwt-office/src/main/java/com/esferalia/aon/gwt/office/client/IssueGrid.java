@@ -63,20 +63,20 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		}
 	}
 
-	public static class IssueOpenLoadSelected extends DefaultAonIssueSelected {
+	public static class IssueOpenLoadSelected extends AonIssueSelected {
 
 		public IssueOpenLoadSelected(JsIssue issue) {
 			super(issue);
 		}
 
 		@Override
-		public DefaultAonTagIssueSelected editTag(JsLabel label) {
-			for (DefaultAonTagIssueSelected tag : getTags()) {
+		public AonTagIssueSelected editTag(JsLabel label) {
+			for (AonTagIssueSelected tag : getTags()) {
 				if (tag.getType() == label.getType())
 					getTags().remove(tag);
 			}
 
-			DefaultAonTagIssueSelected defaultTag = new DefaultAonTagIssueSelected(
+			AonTagIssueSelected defaultTag = new AonTagIssueSelected(
 					label);
 			getTags().add(defaultTag);
 
@@ -100,28 +100,28 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		}
 
 		@Override
-		public DefaultAonIssueComments editComment(JsIssueComment comment) {
+		public AonIssueComments editComment(JsIssueComment comment) {
 
-			for (DefaultAonIssueComments aux : getComments()) {
+			for (AonIssueComments aux : getComments()) {
 
 				if (aux.getId() == comment.getId()) {
 					getComments().remove(aux);
 				}
 			}
 
-			return new DefaultAonIssueComments(comment);
+			return new AonIssueComments(comment);
 		}
 	}
 
 	public static class IssueClosedLoadSelected
-			extends DefaultAonIssueSelected {
+			extends AonIssueSelected {
 
 		public IssueClosedLoadSelected(JsIssue issue) {
 			super(issue);
 		}
 
 		@Override
-		public DefaultAonTagIssueSelected editTag(JsLabel label) {
+		public AonTagIssueSelected editTag(JsLabel label) {
 			return null;
 		}
 
@@ -131,20 +131,20 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		}
 
 		@Override
-		public DefaultAonIssueComments editComment(JsIssueComment comment) {
+		public AonIssueComments editComment(JsIssueComment comment) {
 			return null;
 		}
 	}
 
 	public static class IssueFAQLoadSelected
-			extends DefaultAonIssueSelected {
+			extends AonIssueSelected {
 
 		public IssueFAQLoadSelected(JsIssue issue) {
 			super(issue);
 		}
 
 		@Override
-		public DefaultAonTagIssueSelected editTag(JsLabel label) {
+		public AonTagIssueSelected editTag(JsLabel label) {
 			return null;
 		}
 
@@ -154,7 +154,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 		}
 
 		@Override
-		public DefaultAonIssueComments editComment(JsIssueComment comment) {
+		public AonIssueComments editComment(JsIssueComment comment) {
 			return null;
 		}
 	}
@@ -478,10 +478,10 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 					return labels;
 
 				StringBuffer buffer = new StringBuffer();
-				ListIterator<DefaultAonTagIssueSelected> iterator = object
+				ListIterator<AonTagIssueSelected> iterator = object
 						.getTags().listIterator();
 				while (iterator.hasNext()) {
-					DefaultAonTagIssueSelected tag = iterator.next();
+					AonTagIssueSelected tag = iterator.next();
 					if (tag.getType() == TagType.OFFICE_NOTICE.value()
 							&& tag.getDeletedAt() == null) {
 						buffer.append(tag.getName().toUpperCase());
