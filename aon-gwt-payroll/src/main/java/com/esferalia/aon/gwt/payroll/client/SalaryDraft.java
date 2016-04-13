@@ -2864,8 +2864,7 @@ public class SalaryDraft extends ResizeComposite
 			salaryDraftObject.saveITData(new CalculateCallback() {
 				@Override
 				public void onCalculateSucces(SalaryDraftObject object) {
-					SalaryDraft.this.onCalculateSucces(object); // TODO: It's
-																// necessary ?
+					
 					salaryDraftObject.save(new CalculateCallback() {
 
 						@Override
