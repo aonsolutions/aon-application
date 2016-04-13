@@ -38,12 +38,14 @@
 						<aon:outputLabel value="#{bundle.aon_day}" />
 					</f:facet>
 				</c:if>
-				<aon:outputText value="#{to.dayAmount}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				<aon:outputText value="#{to.dayAmount}" styleClass="#{(to.dayAmount >= 0 ? '':'aon-label-error')}" >
+					<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
 				</aon:outputText>
 				<c:if test="#{!skipFooters}">
 					<f:facet name="footer">
-				
+						<aon:outputText value="#{totalTo.dayAmount}" >
+							<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
+						</aon:outputText>
 					</f:facet>
 				</c:if>
 			</aon:column>
@@ -54,12 +56,14 @@
 						<aon:outputLabel value="#{bundle.aon_day} (#{productionReport.previousYear})" />
 					</f:facet>
 				</c:if>
-				<aon:outputText value="#{to.previousDayAmount}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				<aon:outputText value="#{to.previousDayAmount}" styleClass="#{(to.previousDayAmount >= 0 ? '':'aon-label-error')}" >
+					<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
 				</aon:outputText>
 				<c:if test="#{!skipFooters}">
 					<f:facet name="footer">
-				
+						<aon:outputText value="#{totalTo.previousDayAmount}" >
+							<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
+						</aon:outputText>
 					</f:facet>
 				</c:if>
 			</aon:column>
@@ -70,12 +74,14 @@
 						<aon:outputLabel value="#{bundle.aon_month}" />
 					</f:facet>
 				</c:if>
-				<aon:outputText value="#{to.monthAmount}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				<aon:outputText value="#{to.monthAmount}" styleClass="#{(to.monthAmount >= 0 ? '':'aon-label-error')}" >
+					<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
 				</aon:outputText>
 				<c:if test="#{!skipFooters}">
 					<f:facet name="footer">
-				
+						<aon:outputText value="#{totalTo.monthAmount}" >
+							<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
+						</aon:outputText>
 					</f:facet>
 				</c:if>
 			</aon:column>
@@ -86,12 +92,14 @@
 						<aon:outputLabel value="#{bundle.aon_month} (#{productionReport.previousYear})" />
 					</f:facet>
 				</c:if>
-				<aon:outputText value="#{to.previousMonthAmount}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				<aon:outputText value="#{to.previousMonthAmount}" styleClass="#{(to.previousMonthAmount >= 0 ? '':'aon-label-error')}" >
+					<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
 				</aon:outputText>
 				<c:if test="#{!skipFooters}">
 					<f:facet name="footer">
-				
+						<aon:outputText value="#{totalTo.previousMonthAmount}" >
+							<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
+						</aon:outputText>
 					</f:facet>
 				</c:if>
 			</aon:column>
@@ -102,12 +110,14 @@
 						<aon:outputLabel value="#{bundle.aon_year}" />
 					</f:facet>
 				</c:if>
-				<aon:outputText value="#{to.yearAmount}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				<aon:outputText value="#{to.yearAmount}" styleClass="#{(to.yearAmount >= 0 ? '':'aon-label-error')}" >
+					<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
 				</aon:outputText>
 				<c:if test="#{!skipFooters}">
 					<f:facet name="footer">
-				
+						<aon:outputText value="#{totalTo.yearAmount}" >
+							<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
+						</aon:outputText>
 					</f:facet>
 				</c:if>
 			</aon:column>
@@ -118,12 +128,14 @@
 						<aon:outputLabel value="#{bundle.aon_year} (#{productionReport.previousYear})" />
 					</f:facet>
 				</c:if>
-				<aon:outputText value="#{to.previousYearAmount}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				<aon:outputText value="#{to.previousYearAmount}" styleClass="#{(to.previousYearAmount >= 0 ? '':'aon-label-error')}" >
+					<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
 				</aon:outputText>
 				<c:if test="#{!skipFooters}">
 					<f:facet name="footer">
-				
+						<aon:outputText value="#{totalTo.previousYearAmount}" >
+							<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
+						</aon:outputText>
 					</f:facet>
 				</c:if>
 			</aon:column>
@@ -131,94 +143,4 @@
 		</aon:dataTable>
 	</aon:panel>
 	
-			<!--  
-	<ui:decorate
-		template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
-		<ui:param name="controller" value="#{webpolExporter}" />
-		<ui:param name="skipSelectRow" value="#{true}" />
-		<ui:param name="skipSelectButton" value="#{true}" />
-		<ui:param name="skipLineEdition" value="#{true}" />
-		
-		<ui:define name="columns">
-			
-			<aon:column styleClass="aon-editDataTable-iconColumn">
-				<f:facet name="header">
-					<aon:outputText value="&#160;" />
-				</f:facet>
-				
-				<f:facet name="footer">
-			
-				</f:facet>
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
-				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_document}" />
-				</f:facet>
-				<aon:div style="display:inline;">
-					<aon:outputText value="#{to.documentCountry.value}" styleClass="aon-margin-right" 
-						rendered="#{!empty to.document}" />
-					<aon:outputText value="#{to.document}" styleClass="aon-margin-right" />
-					<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact"
-						title="#{bundle.pms_reservation_guest_type_newInHotel}"
-						rendered="#{to.person.id != null and to.guestNewInHotel}" />
-					<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact-new"
-						title="#{bundle.pms_reservation_guest_type_newInChain}"
-						rendered="#{to.person.id != null and to.guestNewInChain}" />
-					<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact-error"
-						title="#{bundle.pms_reservation_guest_type_previouslyStayedInHotel}"
-						rendered="#{to.person.id != null and to.guestPreviouslyStayedInHotel}" />
-				</aon:div>
-				
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top">
-				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.report_guest}" />
-				</f:facet>
-				<aon:div>
-					<aon:outputText value="#{to.fullName}"  />
-					<aon:div rendered="#{!empty to.barcode}" style="display:inline;">
-						<aon:outputText value="(" styleClass="aon-margin-left" />
-						<aon:outputText value="#{bundle.pms_barcode}:" styleClass="aon-italic" />
-						<aon:outputText value="#{to.barcode}" styleClass="aon-bold aon-margin-left" />
-						<aon:outputText value=")" />
-					</aon:div>
-				</aon:div>
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-300 aon-nowrap">
-				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_address}" />
-				</f:facet>
-				<aon:outputText value="#{to.fullAddress}" >
-					<aon:abbreviateConverter maxWidth="50" />
-				</aon:outputText>
-				<rich:toolTip rendered="#{!empty to.fullAddress}">
-					<aon:outputText value="#{to.fullAddress}" />
-				</rich:toolTip>
-			</aon:column>
-			
-			<aon:column styleClass="aon-editDataTable-iconColumn">
-				<f:facet name="header">
-					<aon:outputText value="&#160;" />
-				</f:facet>
-				<aon:commandButton id="person-edit"
-					value="&#160;" title="#{bundle.aon_reservation}"
-					action="reservation_form"
-					styleClass="aon-icon-commandButton aon-button-goto aon-bold aon-italic"
-					actionListener="#{webpolExporter.onGotoReservation}" />
-			</aon:column>
-		</ui:define>
-
-		<ui:define name="endFormListContent">
-			<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
-				<ui:param name="auditableTO" value="#{to}" />
-			</ui:include>
-		</ui:define>
-	
-	</ui:decorate>
-	-->
-
-
 </ui:composition>

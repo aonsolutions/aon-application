@@ -13,7 +13,6 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -26,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +66,11 @@ public class ProductionReportController implements Serializable {
 	private DataModel taxModel;
 	private DataModel advancePaymethodModel;
 	private DataModel paymethodModel;
+	
+	private ReportObject productionTotal;
+	private ReportObject ratioTotal;
+	private ReportObject advancePaymethodTotal;
+	private ReportObject paymethodTotal;
 	
 	
 	public Hotel getHotel() {
@@ -117,11 +122,26 @@ public class ProductionReportController implements Serializable {
 		return paymethodModel;
 	}
 	
+	public ReportObject getProductionTotal() {
+		return productionTotal;
+	}
+	public ReportObject getRatioTotal() {
+		return ratioTotal;
+	}
+	public ReportObject getAdvancePaymethodTotal() {
+		return advancePaymethodTotal;
+	}
+	public ReportObject getPaymethodTotal() {
+		return paymethodTotal;
+	}
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException {
 		hotel = null;
 		date = new Date();
-		
+		init();
+	}
+	
+	private void init(){
 		productionMap.clear();
 		paxMap.clear();
 		advancePaymethodMap.clear();
@@ -133,50 +153,66 @@ public class ProductionReportController implements Serializable {
 		taxModel = null;
 		advancePaymethodModel = null;
 		paymethodModel = null;
+		
+		productionTotal = null;
+		ratioTotal = null;
+		advancePaymethodTotal = null;
+		paymethodTotal = null;
 	}
 	
 	public void onSearch(ActionEvent event) {
+		
+		init();
+		
 		try {
 			buildProductionReport();
 		} catch (AonSQLException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		
-		productionModel = new SerializableListDataModel( productionMap.entrySet().stream()
-		        .sorted(Comparator.comparing(Map.Entry::getKey))
-		        .map(Map.Entry::getValue)
-		        .collect(Collectors.toList())
-				);
-		paxModel = new SerializableListDataModel( paxMap.entrySet().stream()
+		productionModel = buildModel(productionMap);
+		paxModel = buildModel(paxMap);
+		ratioModel = buildModel(getProductionRatioMap());
+		taxModel = buildModel(getTaxMap());
+		advancePaymethodModel = buildModel(advancePaymethodMap);
+		paymethodModel = buildModel(paymethodMap);
+
+		productionTotal = buildTotalizeTo(productionMap);
+		ratioTotal = buildTotalizeTo(getProductionRatioMap());
+		advancePaymethodTotal = buildTotalizeTo(advancePaymethodMap);
+		paymethodTotal = buildTotalizeTo(paymethodMap);
+	}
+	
+	private SerializableListDataModel buildModel(Map<String, ReportObject> map){
+		return new SerializableListDataModel( map.entrySet().stream()
 				.sorted(Comparator.comparing(Map.Entry::getKey))
 				.map(Map.Entry::getValue)
 				.collect(Collectors.toList())
 				);
-		
-		Map<String, ReportObject> productionRatioMap = getProductionRatioMap();
-		ratioModel = new SerializableListDataModel( productionRatioMap.entrySet().stream()
-				.sorted(Comparator.comparing(Map.Entry::getKey))
-				.map(Map.Entry::getValue)
-				.collect(Collectors.toList())
-				);
-		
-		Map<String, ReportObject> taxMap = getTaxMap();
-		taxModel = new SerializableListDataModel( taxMap.entrySet().stream()
-				.sorted(Comparator.comparing(Map.Entry::getKey))
-				.map(Map.Entry::getValue)
-				.collect(Collectors.toList())
-				);
-		
-		advancePaymethodModel = new SerializableListDataModel( advancePaymethodMap.entrySet().stream()
-				.sorted(Comparator.comparing(Map.Entry::getKey))
-				.map(Map.Entry::getValue)
-				.collect(Collectors.toList())
-				);
-		paymethodModel = new SerializableListDataModel( paymethodMap.entrySet().stream()
-				.sorted(Comparator.comparing(Map.Entry::getKey))
-				.map(Map.Entry::getValue)
-				.collect(Collectors.toList())
-				);
+	}
+	
+	private ReportObject buildTotalizeTo(Map<String, ReportObject> map) {
+		ReportObject to = new ReportObject();
+		to.setDescription("TOTAL");
+		to.setDayAmount(map.values().stream()
+				.map(o -> (ReportObject) o)
+				.mapToDouble(ReportObject::getDayAmount).sum());
+		to.setPreviousDayAmount(map.values().stream()
+				.map(o -> (ReportObject) o)
+				.mapToDouble(ReportObject::getPreviousDayAmount).sum());
+		to.setMonthAmount(map.values().stream()
+				.map(o -> (ReportObject) o)
+				.mapToDouble(ReportObject::getMonthAmount).sum());
+		to.setPreviousMonthAmount(map.values().stream()
+				.map(o -> (ReportObject) o)
+				.mapToDouble(ReportObject::getPreviousMonthAmount).sum());
+		to.setYearAmount(map.values().stream()
+				.map(o -> (ReportObject) o)
+				.mapToDouble(ReportObject::getYearAmount).sum());
+		to.setPreviousYearAmount(map.values().stream()
+				.map(o -> (ReportObject) o)
+				.mapToDouble(ReportObject::getPreviousYearAmount).sum());
+		return to;
 	}
 	
 	
@@ -240,10 +276,11 @@ public class ProductionReportController implements Serializable {
 			paymethodStmt = connection.prepareStatement(getInvoicePayMethodsSQL(date, previousDate, year, previousYear, month, previousMonth, hotel, wp));
 			
 			LOGGER.info("****** Inicio de la busqueda de produccion       -> " + timeFormatter.format(new Date()));
+			Date tmpDate = new Date();
 			productionRs = productionStmt.executeQuery();
-			long diff = (new Date()).getTime() - logDate.getTime();
+			long diff = (new Date()).getTime() - tmpDate.getTime();
 			LOGGER.info("****** Fin de la busqueda de produccion          -> " + timeFormatter.format(new Date()) 
-					+ " TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
+					+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
 			
 			while (productionRs.next()) {
 				String description = productionRs.getString(1);
@@ -270,13 +307,12 @@ public class ProductionReportController implements Serializable {
 				}
 			}
 			
-//			printData(productionMap, "PRODUCTION");
-			
 			LOGGER.info("****** Inicio de la busqueda de pax              -> " + timeFormatter.format(new Date()));
+			tmpDate = new Date();
 			paxRs = paxStmt.executeQuery();
-			diff = (new Date()).getTime() - logDate.getTime();
+			diff = (new Date()).getTime() - tmpDate.getTime();
 			LOGGER.info("****** Fin de la busqueda de pax                 -> " + timeFormatter.format(new Date()) 
-					+ " TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
+					+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
 			while (paxRs.next()) {
 				String period = paxRs.getString(1);
 				Double amount = paxRs.getDouble(2);
@@ -300,13 +336,12 @@ public class ProductionReportController implements Serializable {
 				}
 			}
 			
-//			printData(paxMap, "PAX");
-			
 			LOGGER.info("****** Inicio de la busqueda de facturas         -> " + timeFormatter.format(new Date()));
+			tmpDate = new Date();
 			paymethodRs = paymethodStmt.executeQuery();
-			diff = (new Date()).getTime() - logDate.getTime();
+			diff = (new Date()).getTime() - tmpDate.getTime();
 			LOGGER.info("****** Fin de la busqueda de facturas            -> " + timeFormatter.format(new Date()) 
-					+ " TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
+					+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
 			while (paymethodRs.next()) {
 				String description = paymethodRs.getString(1);
 				String type = paymethodRs.getString(2);
@@ -339,9 +374,6 @@ public class ProductionReportController implements Serializable {
 					map.get(description).setPreviousDayAmount(amount);
 				}
 			}
-				
-//			printData(paymethodMap, "PAYMETHOD");
-//			printData(advancePaymethodMap, "ADVANCE");
 			
 			diff = (new Date()).getTime() - logDate.getTime();
 	        LOGGER.info("****** Tiempo TOTAL                              -> " + diff + " seg. (" 
@@ -364,34 +396,23 @@ public class ProductionReportController implements Serializable {
 		
 	}
 	
-	@SuppressWarnings("unused")
-	private void printData(Map<String, ReportObject> map, String description){
-		System.out.println("");
-		System.out.println(" ******************************************* ");
-		System.out.println(" ***************  "+description+"  *************** ");
-		System.out.println(" ******************************************* ");
-		map.keySet().stream().sorted().forEach(key -> {
-			System.out.print(map.get(key).getDescription() + " | ");
-			System.out.print(map.get(key).getDayAmount() + " | ");
-			System.out.print(map.get(key).getPreviousDayAmount() + " | ");
-			System.out.print(map.get(key).getMonthAmount() + " | ");
-			System.out.print(map.get(key).getPreviousMonthAmount() + " | ");
-			System.out.print(map.get(key).getYearAmount() + " | ");
-			System.out.print(map.get(key).getPreviousYearAmount());
-		});
-	}
-	
 	private Map<String, ReportObject> getProductionRatioMap() {
 		Map<String, ReportObject> productionRatioMap = new HashMap<>();
 		productionMap.keySet().stream().sorted().forEach(key -> {
 			ReportObject ro = new ReportObject();
 			ro.setDescription(productionMap.get(key).getDescription()+"/Pax");
-			ro.setDayAmount(productionMap.get(key).getDayAmount()/paxMap.values().stream().mapToDouble(ReportObject::getDayAmount).sum());
-			ro.setPreviousDayAmount(productionMap.get(key).getPreviousDayAmount()/paxMap.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum());
-			ro.setMonthAmount(productionMap.get(key).getMonthAmount()/paxMap.values().stream().mapToDouble(ReportObject::getMonthAmount).sum());
-			ro.setPreviousMonthAmount(productionMap.get(key).getPreviousMonthAmount()/paxMap.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum());
-			ro.setYearAmount(productionMap.get(key).getYearAmount()/paxMap.values().stream().mapToDouble(ReportObject::getYearAmount).sum());
-			ro.setPreviousYearAmount(productionMap.get(key).getPreviousYearAmount()/paxMap.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum());
+			ro.setDayAmount(productionMap.get(key).getDayAmount() / 
+					paxMap.values().stream().mapToDouble(ReportObject::getDayAmount).sum());
+			ro.setPreviousDayAmount(productionMap.get(key).getPreviousDayAmount() / 
+					paxMap.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum());
+			ro.setMonthAmount(productionMap.get(key).getMonthAmount() / 
+					paxMap.values().stream().mapToDouble(ReportObject::getMonthAmount).sum());
+			ro.setPreviousMonthAmount(productionMap.get(key).getPreviousMonthAmount() / 
+					paxMap.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum());
+			ro.setYearAmount(productionMap.get(key).getYearAmount() / 
+					paxMap.values().stream().mapToDouble(ReportObject::getYearAmount).sum());
+			ro.setPreviousYearAmount(productionMap.get(key).getPreviousYearAmount() / 
+					paxMap.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum());
 			productionRatioMap.put(key, ro);
 		});
 		return productionRatioMap;
@@ -479,31 +500,43 @@ public class ProductionReportController implements Serializable {
 		return metadata;
 	}
 
-	private void exportInnerHeader(ExcelReportExporter exporter, ReportMetadata metadata, String description) throws ReportException {
+	private void exportInnerHeader(ExcelReportExporter exporter,
+			ReportMetadata metadata, String description) throws ReportException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		Integer previousYear = cal.get(Calendar.YEAR)-1;
 		int column = 0;
 		exporter.startLine();
 		try {
-			exporter.exportColumn(metadata.getColumns().get(column++), description);
-			exporter.exportColumn(metadata.getColumns().get(column++), "Dia");
-			exporter.exportColumn(metadata.getColumns().get(column++), "Dia (" +previousYear+ ")");
-			exporter.exportColumn(metadata.getColumns().get(column++), "Mes");
-			exporter.exportColumn(metadata.getColumns().get(column++), "Mes (" +previousYear+ ")");
-			exporter.exportColumn(metadata.getColumns().get(column++), "Año");
-			exporter.exportColumn(metadata.getColumns().get(column++), "Año (" +previousYear+ ")");
+			HSSFCellStyle cellStyle = exporter.createHeaderStyle();
+			exporter.exportColumn(metadata.getColumns().get(column++), description, cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), "Dia", cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), "Dia (" +previousYear+ ")", cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), "Mes", cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), "Mes (" +previousYear+ ")", cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), "Año", cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), "Año (" +previousYear+ ")", cellStyle);
 		} catch (ReportException e) {
 			LOGGER.error("No se ha podido completar la fila del informe de produccion.");
 		} finally {
 			exporter.endLine();
 		}
 	}
-	private void exportData(ExcelReportExporter exporter, ReportMetadata metadata,String description, Map<String, ReportObject> map, boolean totalize) throws ReportException {
+	
+	private void exportData(ExcelReportExporter exporter,
+			ReportMetadata metadata, String description,
+			Map<String, ReportObject> map, boolean totalize)
+			throws ReportException {
 		
 		if(StringUtils.isNotBlank(description)){
+			HSSFCellStyle cellStyle = exporter.createHeaderStyle();
 			exporter.startLine();
-			exporter.exportColumn(metadata.getColumns().get(0), description);
+			for(int i = 1; i<7; i++){
+				if(i==1){
+					exporter.exportColumn(metadata.getColumns().get(i), description, cellStyle);
+				}
+				exporter.exportColumn(metadata.getColumns().get(i), "", cellStyle);
+			}
 			exporter.endLine();
 		}
 		
@@ -527,15 +560,16 @@ public class ProductionReportController implements Serializable {
 		
 		if(totalize){
 			int column = 0;
+			HSSFCellStyle cellStyle = exporter.createFooterStyle();
 			exporter.startLine();
 			try {
-				exporter.exportColumn(metadata.getColumns().get(column++), "");
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getDayAmount).sum()));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum()));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getMonthAmount).sum()));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum()));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getYearAmount).sum()));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum()));
+				exporter.exportColumn(metadata.getColumns().get(column++), "", cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getDayAmount).sum()), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum()), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getMonthAmount).sum()), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum()), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getYearAmount).sum()), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum()), cellStyle);
 			} catch (ReportException e) {
 				LOGGER.error("No se ha podido completar la fila del informe de produccion.");
 			} finally {
@@ -561,13 +595,14 @@ public class ProductionReportController implements Serializable {
 				yearAmount+=map.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getYearAmount).sum();
 				previousYearAmount+=map.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getPreviousYearAmount).sum();
 			}
-			exporter.exportColumn(metadata.getColumns().get(column++), "TOTAL");
-			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(dayAmount));
-			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(previousDayAmount));
-			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(monthAmount));
-			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(previousMonthAmount));
-			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(yearAmount));
-			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(previousYearAmount));
+			HSSFCellStyle cellStyle = exporter.createFooterStyle();
+			exporter.exportColumn(metadata.getColumns().get(column++), "TOTAL", cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(dayAmount), cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(previousDayAmount), cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(monthAmount), cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(previousMonthAmount), cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(yearAmount), cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(previousYearAmount), cellStyle);
 		} catch (ReportException e) {
 			LOGGER.error("No se ha podido completar la fila del informe de produccion.");
 		} finally {

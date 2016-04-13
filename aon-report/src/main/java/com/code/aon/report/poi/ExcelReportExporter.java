@@ -16,6 +16,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Font;
 
 import com.code.aon.report.ReportException;
 
@@ -44,7 +45,7 @@ public class ExcelReportExporter implements IReportExporter {
 	
 	public ExcelSheet createSheet( String name ) throws ReportException {
 		if(workbook==null){
-			throw new ReportException(" The workbook is not created. Start it first!");
+			throw new ReportException(" The workbook is not created. Start export first!");
 		}
 		if(sheetMap==null){
 			sheetMap = new HashMap<String, ExcelSheet>();
@@ -75,6 +76,15 @@ public class ExcelReportExporter implements IReportExporter {
 	    headerCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);  
 	    headerCellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
 		return headerCellStyle;
+	}
+	
+	public HSSFCellStyle createFooterStyle() {
+		HSSFCellStyle cellStyle = createCellStyle();
+	    Font font = workbook.createFont();
+	    font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+	    cellStyle.setFont(font);
+	    cellStyle.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
+		return cellStyle;
 	}
 
 	public void exportHeader(ReportMetadata metadata) throws ReportException {
@@ -232,8 +242,12 @@ public class ExcelReportExporter implements IReportExporter {
 	public void startLine() {
 		this.sheet.startLine();
 	}
-
+	
 	public Object exportColumn(ReportColumnMetadata column, Object data) throws ReportException {
+		return exportColumn(column, data, null);
+	}
+
+	public Object exportColumn(ReportColumnMetadata column, Object data, HSSFCellStyle cellStyle) throws ReportException {
 		HSSFCell cell = null;
 		if (column.getType() == Types.VARCHAR || column.getType() == Types.CHAR || column.getType() == Types.LONGVARCHAR) {
 			cell = addStringCell((String)data); 
@@ -268,6 +282,9 @@ public class ExcelReportExporter implements IReportExporter {
 			cell.setCellValue("BLOB");
 		} else {
 			throw new ReportException(" Tipo no soportado para " + column.getName() + " (" +  column.getType() + ")");	
+		}
+		if(cellStyle!=null){
+			cell.setCellStyle(cellStyle);
 		}
 		return cell;
 	}

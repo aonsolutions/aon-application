@@ -3,12 +3,19 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
+	
+		<a4j:region>
+			<h:form>
+				<a4j:poll status="aonStatus" interval="30000" limitToList="true" bypassUpdates="true"
+					reRender="productionReportList" />
+			</h:form>
+		</a4j:region>
+	
 		<aon:form id="productionReportList">
 
 			<ui:decorate
@@ -67,8 +74,9 @@
 				<aon:div rendered="#{!productionReport.nevv}">
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
 						<ui:param name="model" value="#{productionReport.productionModel}" />
-						<ui:param name="name" value="'PRODUCCION'" />
 						<ui:param name="tableHeader" value="PRODUCCION" />
+						<ui:param name="name" value="PRODUCCION" />
+						<ui:param name="totalTo" value="#{productionReport.productionTotal}" />
 					</ui:decorate>
 	
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
@@ -76,28 +84,35 @@
 						<ui:param name="skipHeaders" value="#{true}" />
 						<ui:param name="skipFooters" value="#{true}" />
 						<ui:param name="skipTableHeader" value="#{true}" />
+						<ui:param name="amountPattern" value="#{bundle.aon_integer_pattern}" />
 					</ui:decorate>
 					
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
 						<ui:param name="model" value="#{productionReport.ratioModel}" />
-						<ui:param name="skipHeaders" value="#{true}" />
 						<ui:param name="tableHeader" value="RATIOS" />
+						<ui:param name="skipHeaders" value="#{true}" />
+						<ui:param name="totalTo" value="#{productionReport.ratioTotal}" />
 					</ui:decorate>
 					
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
 						<ui:param name="model" value="#{productionReport.taxModel}" />
-						<ui:param name="skipHeaders" value="#{true}" />
 						<ui:param name="tableHeader" value="% IVA" />
+						<ui:param name="skipHeaders" value="#{true}" />
+						<ui:param name="skipFooters" value="#{true}" />
+						<ui:param name="name" value="Forma de pago" />
 					</ui:decorate>
 					
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
 						<ui:param name="model" value="#{productionReport.advancePaymethodModel}" />
 						<ui:param name="tableHeader" value="FACTURAS ACTICIPO" />
+						<ui:param name="totalTo" value="#{productionReport.advancePaymethodTotal}" />
 					</ui:decorate>
 					
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
 						<ui:param name="model" value="#{productionReport.paymethodModel}" />
 						<ui:param name="tableHeader" value="FACTURAS" />
+						<ui:param name="name" value="Forma de pago" />
+						<ui:param name="totalTo" value="#{productionReport.paymethodTotal}" />
 					</ui:decorate>
 				</aon:div>
 				
