@@ -236,7 +236,10 @@ public class UserUtils implements Serializable {
 	}	
 
 	public Expression getNullableScopeExpression(String resolvedAlias, boolean forceHeredity) {
-		String nullAlias = StringUtils.substringBeforeLast(resolvedAlias, ".");
+		String nullAlias = StringUtils.substringBeforeLast(resolvedAlias, "<");
+		if (nullAlias.equals(resolvedAlias)) {
+			nullAlias = StringUtils.substringBeforeLast(resolvedAlias, ".");
+		}
 		Expression exp = ExpressionUtilities.getNullExpression(nullAlias);
 		List<Integer> list = getCurrentUserScopeIds(forceHeredity);
 		if (list!= null && !list.isEmpty()) {
@@ -268,9 +271,11 @@ public class UserUtils implements Serializable {
 	
 	private String getLeftJoinAlias(String alias) {
 		String ljAlias = alias;
-		int index = StringUtils.lastIndexOf(alias, '.');
-		if (index != -1) {
-			ljAlias = StringUtils.substring(alias, 0, index) + "<" + StringUtils.substring(alias, index+1); 
+		if (!StringUtils.contains(ljAlias, "<")) {
+			int index = StringUtils.lastIndexOf(alias, ".");
+			if (index != -1) {
+				ljAlias = StringUtils.substring(alias, 0, index) + "<" + StringUtils.substring(alias, index+1); 
+			}
 		}
 		return ljAlias;
 	}
