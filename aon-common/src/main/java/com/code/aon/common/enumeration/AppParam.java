@@ -238,6 +238,8 @@ public enum AppParam {
 	PAY_ss_payment_bankAccount_PAY,
 	
 	PMS_ROOM_CATEGORY,
+
+	PMS_ROOM_CLEAN_MAX_DAYS,
 	
 	PMS_BOARD_CATEGORY,
 	

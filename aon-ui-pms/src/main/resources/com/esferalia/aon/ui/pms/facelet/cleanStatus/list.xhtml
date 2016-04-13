@@ -129,6 +129,7 @@
 								<!-- CLEAN -->
 								<aon:commandButton value="#{roomTo.asset.name}"
 									rendered="#{roomTo.status=='CLEAN' 
+										and not roomTo.cleaningDateExpired
 										and (roomTo.todayLastCleaningDate 
 											or (empty cleanStatus.busyRooms[roomTo.asset.id] and empty cleanStatus.checkoutRooms[roomTo.asset.id]))}"
 									styleClass="aon-commandButton" 
@@ -166,7 +167,7 @@
 									<!-- DIRTY -->
 									<aon:commandButton value="#{roomTo.asset.name}"
 										title="#{bundle.pms_room} sucia"
-										rendered="#{(not empty cleanStatus.busyRooms[roomTo.asset.id] or roomTo.status!='CLEAN')
+										rendered="#{(not empty cleanStatus.busyRooms[roomTo.asset.id] or roomTo.status!='CLEAN' or roomTo.cleaningDateExpired)
 											and empty cleanStatus.checkoutRooms[roomTo.asset.id]}"
 										styleClass="aon-commandButton" 
 										style="margin:2px; width:70px; height:70px; background:Salmon;"

@@ -11,6 +11,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.math.NumberUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.AssetFeature;
@@ -18,6 +20,8 @@ import com.code.aon.asset.IAsset;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.RoomDB;
@@ -54,6 +58,13 @@ public class Room extends RoomDB implements IAsset{
 	@Transient
 	public boolean isTodayLastCleaningDate() throws ManagerBeanException {
 		return AonDateUtils.isSameDay(getLastCleaningDate(), new Date());
+	}
+	
+	@Transient
+	public boolean isCleaningDateExpired() throws ManagerBeanException {
+		String value = AppParamUtil.getParameter(AppParam.PMS_ROOM_CLEAN_MAX_DAYS).getValue();
+		Date expirationDate = AonDateUtils.addDays(getLastCleaningDate(), NumberUtils.isDigits(value)?Integer.valueOf(value):0);
+		return expirationDate.before(new Date());
 	}
 	
 	@Transient
