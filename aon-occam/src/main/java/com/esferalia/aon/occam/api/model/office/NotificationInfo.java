@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.office;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -15,6 +16,16 @@ public class NotificationInfo implements Serializable{
 	private Boolean notify = false;
 	private Boolean history = false;
 	private String bcc;
+	
+	
+	// Notice
+	private Integer noticeId;
+	private String body;
+	private String title;
+	private Date date;
+	private String userName;
+	private NotificationType notificationType;
+	private String companyName;
 	
 	public LinkedList<MailAccount> getMailAccountList() {
 		return mailAccountList;
@@ -64,6 +75,57 @@ public class NotificationInfo implements Serializable{
 	public NotificationInfo setBcc(String bcc) {
 		this.bcc = bcc;
 		return this;
-	}	
+	}
+	public Integer getNoticeId() {
+		return noticeId;
+	}
+	public NotificationInfo setNoticeId(Integer id) {
+		this.noticeId = id;
+		return this;
+	}
+	public String getBody() {
+		return body;
+	}
+	public NotificationInfo setBody(String body) {
+		this.body = body;
+		return this;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public NotificationInfo setTitle(String title) {
+		this.title = title;
+		return this;
+	}
+	public Date getDate() {
+		return date;
+	}
+	public NotificationInfo setDate(Date date) {
+		this.date = date;
+		return this;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public NotificationInfo setUserName(String userName) {
+		this.userName = userName;
+		return this;
+	}
+	public NotificationType getNotificationType() {
+		return notificationType;
+	}
+	public NotificationInfo setNotificationType(NotificationType notificationType) {
+		this.notificationType = notificationType;
+		return this;
+	}
+	public String getCompanyName() {
+		return companyName;
+	}
+	public NotificationInfo setCompanyName(String companyName) {
+		this.companyName = companyName;
+		return this;
+	}
+	
+	
 	
 }

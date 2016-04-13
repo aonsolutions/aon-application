@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
@@ -1392,6 +1393,29 @@ public class AON {
 		}
 	}
 
+	public static LinkedList<RegistryMedia> getRMediaList(String domainName, Integer domainId, String login,
+			RegistryMediaFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getOffice().getRMediaList(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Registry getRegistry(String domainName, Integer domainId, String login, String name){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRegistry(ctx, name);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static List<RegistryMedia> getRMedias(Integer domainId,
 			String domainName, String userName) {
 		AONContext ctx = null;

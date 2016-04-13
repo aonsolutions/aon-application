@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.IRegistry;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 
@@ -34,5 +35,16 @@ public class RegistryImpl implements IRegistry{
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> CreditorDAO.getBasicCreditors(ctx, filter));
 	}
+	
+	
+	
+
+	@Override
+	public Registry getRegistry(AONContext ctx, String name) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getRegistry(ctx, name));
+	}
+	
+	
 	
 }

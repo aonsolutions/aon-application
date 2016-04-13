@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.api.model.type;
 
-public enum TagType {
+import java.io.Serializable;
+
+public enum TagType implements Serializable{
 
 	RATTACH,
     PRODUCT,    

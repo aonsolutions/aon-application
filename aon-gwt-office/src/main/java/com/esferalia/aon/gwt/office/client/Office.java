@@ -29,10 +29,12 @@ import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.LabelControlValue;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
+import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -733,7 +735,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 			value.setLabels(labels);
 		}
-
+	
 		gitHub.createIssue(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), value, new AsyncCallback<JsIssue>() {
 
@@ -748,6 +750,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 								result);
 						issues.add(0, issue);
 						onSelectionTitle(issue);
+						sendNotification(null, issue, NotificationType.OPEN);
 					}
 				});
 	}
@@ -806,6 +809,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						onSelectionTitle(issue);
 					}
 				});
+			
+		sendNotification(null, issueSelected, getNotificationType(state));
 
 	}
 	
@@ -848,7 +853,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		IssueCommentValue value = new IssueCommentValue();
 		value.setBody(body);
 		value.setStartDate(fmt.format(new Date()));
-
 		gitHub.createIssueComment(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), issueSelected.getJsIssue(), value,
 				new AsyncCallback<JsIssueComment>() {
@@ -866,6 +870,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						callback.onSucess(comment);
 					}
 				});
+
+		sendNotification(body, issueSelected, NotificationType.NEW_INFO);
 	}
 
 	@Override
@@ -976,7 +982,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						issues.add(0, issue);
 						onSelectionTitle(issue);
 					}
-				});
+				});		
 	}
 
 	// ******************************************************************
@@ -1027,7 +1033,58 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		return $wnd.getCurrentDomain();
 	}-*/;
 
+	private void sendNotification(String body, IssueSelected issueSelected, NotificationType notificationType) {
+		LinkedList<NotificationInfo> list = new LinkedList<NotificationInfo>();
+		if(!notificationType.equals(NotificationType.OPEN)){
+			for(AonTagIssueSelected tag : issueSelected.getTags()){
+				if(getNotificationType(tag.getName()) != null ){
+					list.add(new NotificationInfo().setNoticeId(issueSelected.getId())
+						.setTitle(issueSelected.getTitle())
+						.setDate(tag.getCreateAt())
+						.setUserName(tag.getUser().getName())
+						.setNotificationType(getNotificationType(tag.getName())));
+				}
+			}
+			for(AonIssueComments comments :issueSelected.getComments()){
+				list.add(new NotificationInfo().setBody(comments.getBody())
+					.setNoticeId(issueSelected.getId()) 
+					.setTitle(issueSelected.getTitle())
+					.setDate(comments.getCreatedAt())
+					.setUserName(comments.getUser().getName())
+					.setNotificationType(NotificationType.NEW_INFO));
+			}
+		}
+		NotificationInfo n = new NotificationInfo().setNoticeId(issueSelected.getId())
+				.setTitle(issueSelected.getTitle())
+				.setBody(body)
+				.setDate(new Date())
+				.setUserName(issueSelected.getUser().getName())
+				.setCompanyName(issueSelected.getCompany());
+		
+		Domain domain  = new Domain().setName(getCurrentDomainName()).setId(getCurrentDomain());
 	
+		impl.sendNotification(domain, n, list, notificationType,  new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {}
+			
+			@Override
+			public void onSuccess(Void result) {}
+			
+		});
+	}
+	
+	private NotificationType getNotificationType(String state) {
+		if(state.equalsIgnoreCase("open") ||state.equalsIgnoreCase("abierto")){
+			return NotificationType.OPEN;
+		}else 	if(state.equalsIgnoreCase("reopen") ||state.equalsIgnoreCase("reabierto")){
+			return NotificationType.REOPEN;
+		}else 	if(state.equalsIgnoreCase("closed") ||state.equalsIgnoreCase("cerrado")){
+			return NotificationType.CLOSE;
+		}
+		return null;
+
+	}
 	// ******************************************************************
 	// ******************* CONFIGURATION CONTEXT MENU *******************
 	// ******************************************************************

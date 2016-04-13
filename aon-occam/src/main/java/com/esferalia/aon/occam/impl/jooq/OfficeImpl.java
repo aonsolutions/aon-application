@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IOffice;
+import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeFilter;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
@@ -152,6 +154,13 @@ public class OfficeImpl implements IOffice {
 		return AonHubDAO.getRMedias(ctx, parentID);
 	}
 
+	@Override
+	public LinkedList<RegistryMedia> getRMediaList(AONContext ctx, RegistryMediaFilter filter)
+			throws IllegalArgumentException {
+		return AonHubDAO.getRMediaList(ctx, filter);
+	}
+
+	
 	//-------------------- NOTIFICATIONS
 	
 	@Override

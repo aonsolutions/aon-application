@@ -32,6 +32,11 @@ public class RegistryDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	public static Registry getRegistry(AONContext ctx, String name){
+		return ctx.getDslContext().select().from(REGISTRY).where(REGISTRY.NAME.eq(name)).fetchInto(REGISTRY)
+			.stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
+	}
+	
 	private static class FullCategoryFiller implements Function<CategoryRecord, Category> {
 		@Override
 		public Category apply(CategoryRecord r) {

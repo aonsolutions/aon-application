@@ -341,7 +341,8 @@ public class ViewerImpl extends AonRemoteServiceServlet implements IViewer {
 				.put("md5", encode)
 				.put("login", getUser().getLogin())
 				.put("domainName", domain.getName())
-				.put("domainId", domain.getId());
+				.put("domainId", domain.getId())
+				.put("bcc", "");
 			
 			sendPostHttpClient(domain.getName(),json);			
 		} catch (JSONException e) {

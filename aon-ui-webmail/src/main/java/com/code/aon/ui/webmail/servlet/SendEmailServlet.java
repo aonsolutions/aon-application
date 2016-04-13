@@ -44,6 +44,7 @@ public class SendEmailServlet extends HttpServlet{
 			String md5 = jsonRequest.getString("md5");
 			String login = jsonRequest.getString("login");
 			String domainName = jsonRequest.getString("domainName");
+			String bcc = jsonRequest.getString("bcc");
 			Integer domainId = jsonRequest.getInt("domainId");
 
 			Domain domain = AON.getDomain(domainName, domainId, login);
@@ -54,8 +55,8 @@ public class SendEmailServlet extends HttpServlet{
 				Integer mimetype = jsonRequest.getInt("mimetype");
 				MimeType mimeType = MimeType.values()[mimetype];
 				byte[] data = Base64.getDecoder().decode(md5.getBytes());//(byte[]) req.getSession().getAttribute(md5);		
-				sendEmail(domain, ma, recipientsTo, content, subject, attachName, mimeType, md5, data);
-			} else sendEmail(domain, ma,recipientsTo, content, subject); 
+				sendEmail(domain, ma, recipientsTo, bcc, content, subject, attachName, mimeType, md5, data);
+			} else sendEmail(domain, ma,recipientsTo, bcc, content, subject); 
 			resp.setContentType("application/json");
 			JSONObject json = new JSONObject();
 			json.put("response", "200. ok");
@@ -73,7 +74,7 @@ public class SendEmailServlet extends HttpServlet{
 	}
 	
 	public void sendEmail(Domain domain, MailAccount ma,
-			String recipientsTo,String content, String subject , String attachName,
+			String recipientsTo,String bcc, String content, String subject , String attachName,
 			MimeType mimetype, String md5, byte[] data) {
 		//MailConfigController mcg = new MailConfigController();
 		
@@ -93,6 +94,7 @@ public class SendEmailServlet extends HttpServlet{
 		
 		MessageController mc = new MessageController();
 		mc.setRecipientsTo(recipientsTo);
+		mc.setRecipientsBcc(bcc);
 		mc.setContent(content);
 		mc.setSenderMailAccount(ima2);
 		mc.setSubject(subject);
@@ -128,7 +130,7 @@ public class SendEmailServlet extends HttpServlet{
 		}
 	}
 
-	public void sendEmail(Domain domain, MailAccount ma, String recipientsTo,String content, String subject) {
+	public void sendEmail(Domain domain, MailAccount ma, String recipientsTo, String bcc,String content, String subject) {
 		IMailAccount ima2 = (IMailAccount) getMa2(ma);
 		ima2.getEmail();
 		System.out.println(ima2.getDisplayName());
@@ -136,6 +138,7 @@ public class SendEmailServlet extends HttpServlet{
 		
 		MessageController mc = new MessageController();
 		mc.setRecipientsTo(recipientsTo);
+		mc.setRecipientsBcc(bcc);
 		mc.setContent(content);
 		mc.setSenderMailAccount(ima2);
 		mc.setSubject(subject);

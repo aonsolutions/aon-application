@@ -44,22 +44,14 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Viewer extends PopupPanel {
 
-	@UiField
-	HTML html;
-	@UiField
-	Label title;
-	@UiField
-	Button prev;
-	@UiField
-	Button next;
-	@UiField
-	Grid menu;
-	@UiField
-	FocusPanel focusPanel;
-	@UiField
-	ScrollPanel scrollPanel;
-	@UiField
-	Label load;
+	@UiField HTML html;
+	@UiField Label title;
+	@UiField Button prev;
+	@UiField Button next;
+	@UiField Grid menu;
+	@UiField FocusPanel focusPanel;
+	@UiField ScrollPanel scrollPanel;
+	@UiField Label load;
 
 	private Timer eraser;
 

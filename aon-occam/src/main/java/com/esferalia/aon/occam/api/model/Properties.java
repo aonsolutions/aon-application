@@ -287,4 +287,17 @@ public interface Properties {
 		Property<String> getSignatureProperty();
 		Property<Integer> getUserIdProperty();
 	}
+	
+	public interface RegistryMediaProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<Byte> getMediaProperty();
+		Property<String> getValueProperty();
+		Property<String> getCommentProperty();
+		Property<Byte> getAdministrativeProperty();
+		Property<Byte> getCommercialProperty();
+		Property<Byte> getTechnicalProperty();
+		Property<Integer> getRaddressProperty();
+	}
 }

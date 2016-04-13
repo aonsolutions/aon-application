@@ -1,7 +1,9 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeFilter;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
@@ -25,7 +27,7 @@ public interface IOffice {
 	public Notice changeNoticeStatus(AONContext ctx, Notice notice);
 	
 	public int getSelectedCount(AONContext ctx, NoticeFilter filter);
-	
+		
 	public List<Notice> getNotices(AONContext ctx, NoticeFilter filter);
 
 	public Notice createComment(AONContext ctx, Integer headId, Notice comment)
@@ -59,6 +61,8 @@ public interface IOffice {
 
 	public List<RegistryMedia> getRMedias(AONContext ctx)
 			throws IllegalArgumentException;
+	
+	public LinkedList<RegistryMedia> getRMediaList(AONContext ctx, RegistryMediaFilter filter);
 	
 	public NotificationInfo getNotificationInfo(AONContext ctx);
 	public void insertNotificationInfo(AONContext ctx, NotificationInfo notificationInfo);

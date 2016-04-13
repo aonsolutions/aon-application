@@ -42,80 +42,99 @@ public class Notice implements Serializable, HasId {
 	
 	// ===============SETTERS=================== //
 	
-	public void setId(Integer id) {
+	public Notice setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	
-	public void setDomain(Integer domain) {
+	public Notice setDomain(Integer domain) {
 		this.domain = domain;
+		return this;
 	}
 	
-	public void setStartDate(Date startDate) {
+	public Notice setStartDate(Date startDate) {
 		this.startDate = startDate;
+		return this;
 	}
 	
-	public void setEndDate(Date endDate) {
+	public Notice setEndDate(Date endDate) {
 		this.endDate = endDate;
+		return this;
 	}
 	
-	public void setSender(User sender) {
+	public Notice setSender(User sender) {
 		this.sender = sender;
+		return this;
 	}
 	
-	public void setTitle(String title) {		
+	public Notice setTitle(String title) {		
 		this.title = title;
+		return this;
 	}
 	
-	public void setBody(String body) {
+	public Notice setBody(String body) {
 		this.body = body;
+		return this;
 	}
 	
-	public void setRecipient(Integer recipient) {
+	public Notice setRecipient(Integer recipient) {
 		this.recipient = recipient;
+		return this;
 	}
 	
-	public void setSource(String source) {
+	public Notice setSource(String source) {
 		this.source = source;
+		return this;
 	}
 	
-	public void setStatus(String status) {
+	public Notice setStatus(String status) {
 		this.status = status;
+		return this;
 	}
 	
-	public void setType(String type) {
+	public Notice setType(String type) {
 		this.type = type;
+		return this;
 	}
 	
-	public void setPriority(String priority) {
+	public Notice setPriority(String priority) {
 		this.priority = priority;
+		return this;
 	}
 	
-	public void setCompany(String company) {
+	public Notice setCompany(String company) {
 		this.company = company;
+		return this;
 	}
 	
-	public void setNotice(Integer notice) {
+	public Notice setNotice(Integer notice) {
 		this.notice = notice;
+		return this;
 	}
 	
-	public void addTag (Tag tag) {
+	public Notice addTag (Tag tag) {
 		this.tags.add(tag);
+		return this;
 	}
 	
-	public void setTags(List<Tag> tags) {
+	public Notice setTags(List<Tag> tags) {
 		this.tags = tags;
+		return this;
 	}
 	
-	public void clearTagList() {
+	public Notice clearTagList() {
 		this.tags = new LinkedList<Tag>();
+		return this;
 	}
 	
-	public void addNotice(Notice comment) {
+	public Notice addNotice(Notice comment) {
 		this.comments.add(comment);
+		return this;
 	}
 	
-	public void addComments(List<Notice> comments) {
+	public Notice addComments(List<Notice> comments) {
 		this.comments = comments;
+		return this;
 	}
 	
 	// ===============GETTERS=================== //

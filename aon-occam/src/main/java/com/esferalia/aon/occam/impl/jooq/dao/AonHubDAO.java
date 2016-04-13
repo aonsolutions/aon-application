@@ -15,7 +15,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.jooq.Condition;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -26,8 +29,12 @@ import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.jooq.tables.records.AppParamRecord;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
+import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
+import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
 import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NoticeContainer;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
@@ -890,6 +897,42 @@ public class AonHubDAO {
 			if (cursor != null)
 				cursor.close();
 		}
+	}
+	
+	private static final RegistryMediaPropertiesDAO RMEDIA_PROPERTIES = new RegistryMediaPropertiesDAO();
+	protected static class RegistryMediaPropertiesDAO implements RegistryMediaProperties {
+		protected Condition[] getConditions(RegistryMediaFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RMEDIA.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RMEDIA.DOMAIN);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(RMEDIA.REGISTRY);}
+		@Override public Property<Byte> getMediaProperty() {return new FilterDAO.PropertyDAO<Byte>(RMEDIA.MEDIA);}
+		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<String>(RMEDIA.VALUE);}
+		@Override public Property<String> getCommentProperty() {return new FilterDAO.PropertyDAO<String>(RMEDIA.COMMENT);}
+		@Override public Property<Byte> getAdministrativeProperty() {return new FilterDAO.PropertyDAO<Byte>(RMEDIA.ADMINISTRATIVE);}
+		@Override public Property<Byte> getCommercialProperty() {return new FilterDAO.PropertyDAO<Byte>(RMEDIA.COMMERCIAL);}
+		@Override public Property<Byte> getTechnicalProperty() {return new FilterDAO.PropertyDAO<Byte>(RMEDIA.TECHNICAL);}
+		@Override public Property<Integer> getRaddressProperty() {return new FilterDAO.PropertyDAO<Integer>(RMEDIA.RADDRESS);}
+	}
+	private static class FullRegistryMediaFiller implements Function<RmediaRecord, RegistryMedia> {
+
+		@Override
+		public RegistryMedia apply(RmediaRecord r) {
+			return new RegistryMedia().setComment(r.getComment())
+					.setDomain(r.getDomain())
+					.setId(r.getId())
+					.setMedia(r.getMedia())
+					.setRegistry(new Registry().setId(r.getRegistry()))
+					.setValue(r.getValue());
+		}
+	}
+	
+	public static LinkedList<RegistryMedia> getRMediaList(AONContext ctx, RegistryMediaFilter filter) {
+		return ctx.getDslContext().select().from(RMEDIA).where(RMEDIA_PROPERTIES.getConditions(filter)).fetchInto(RMEDIA)
+				.stream().map(new FullRegistryMediaFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static List<User> getUserFromNotices(AONContext ctx, Integer parentDomain) {

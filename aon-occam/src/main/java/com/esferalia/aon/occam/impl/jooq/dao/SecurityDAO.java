@@ -302,19 +302,17 @@ public class SecurityDAO {
 	}
 
 	public static Signature getSignature(AONContext ctx, Integer signatureId){
-		return ctx.getDslContext()
-				.select(SIGNATURE.SIGNATURE_).from(SIGNATURE)
+		return ctx.getDslContext().select().from(SIGNATURE)
 				.where(SIGNATURE.ID.eq(signatureId)).limit(1).fetchInto(SIGNATURE)
 				.stream().map(new FullSignatureFiller()).findFirst().orElse(new Signature());
 	}
 	
 	public static LinkedList<Signature> getSignatureList(AONContext ctx, SignatureFilter filter){
-		return ctx.getDslContext()
-				.select(SIGNATURE.SIGNATURE_).from(SIGNATURE)
+		return ctx.getDslContext().select().from(SIGNATURE)
 				.where(SIGNATURE_PROPERTIES.getConditions(filter)).fetchInto(SIGNATURE)
 				.stream().map(new FullSignatureFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
-	
+
 	
 	private static class FullSignatureFiller implements Function<SignatureRecord, Signature> {
 		@Override

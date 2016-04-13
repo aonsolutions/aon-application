@@ -4,14 +4,14 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
-import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface INotificationAsync {
 	
-	void sendNotification(Domain domain, Notice notice,NotificationType type, String to, AsyncCallback<Void> callback);
+	void sendNotification(Domain domain, NotificationInfo notificationInfo, LinkedList<NotificationInfo> list,
+			NotificationType type, AsyncCallback<Void> callback);
 
 	void getMailAccountList(Domain domain, AsyncCallback<LinkedList<MailAccount>> callback);
 

@@ -20,28 +20,34 @@ public class RegistryMedia implements Serializable {
 	
 	}
 	
-	public void setId(int id) {
+	public RegistryMedia setId(int id) {
 		this.id = id;
+		return this;
 	}
 	
-	public void setDomain(int domain) {
+	public RegistryMedia setDomain(int domain) {
 		this.domain = domain;
+		return this;
 	}
 	
-	public void setRegistry(Registry registry) {
+	public RegistryMedia setRegistry(Registry registry) {
 		this.registry = registry;
+		return this;
 	}
 	
-	public void setMedia(byte media) {
+	public RegistryMedia setMedia(byte media) {
 		this.media = media;
+		return this;
 	}
 	
-	public void setValue(String value) {
+	public RegistryMedia setValue(String value) {
 		this.value = value;
+		return this;
 	}
 	
-	public void setComment(String comment) {
+	public RegistryMedia setComment(String comment) {
 		this.comment = comment;
+		return this;
 	}
 	
 	public int getId() {
