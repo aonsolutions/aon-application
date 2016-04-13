@@ -28,13 +28,13 @@ public class NoticeFilterImpl implements BiPredicate<NoticeFilter, Notice> {
 			accepted = accepted && notice.getNotice() != null;
 
 		if (AonStringUtils.isNotBlank(filter.getComany())) {
-			accepted = accepted && AonStringUtils.equals(notice.getCompany(),
-					filter.getComany());
+			accepted = accepted && AonStringUtils.equals(notice.getCompany().toUpperCase(),
+					filter.getComany().toUpperCase());
 		}
 
 		if (AonStringUtils.isNotBlank(filter.getText()))
-			accepted = accepted && AonStringUtils.contains(notice.getTitle(),
-					filter.getText());
+			accepted = accepted && AonStringUtils.contains(notice.getTitle().toUpperCase(),
+					filter.getText().toUpperCase());
 
 		if (filter.getSince() != null)
 			accepted = accepted

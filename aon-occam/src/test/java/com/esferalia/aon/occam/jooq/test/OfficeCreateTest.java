@@ -89,9 +89,13 @@ public class OfficeCreateTest {
 //	private static int DOMAIN_ID = 400;
 //	private static String USER_NAME = "mac";
 
-	private static String DOMAIN_NAME = "agroback-mac.amtzdelagos.dev";
-	 private static int DOMAIN_ID = 228;
-	 private static String USER_NAME = "patri";
+//	private static String DOMAIN_NAME = "agroback-mac.amtzdelagos.dev";
+//	private static int DOMAIN_ID = 228;
+//	private static String USER_NAME = "patri";
+
+	private static String DOMAIN_NAME = "macayc-mac.amtzdelagos.dev";
+	private static int DOMAIN_ID = 536;
+	private static String USER_NAME = "mac";
 
 
 	@BeforeClass
@@ -157,7 +161,7 @@ public class OfficeCreateTest {
 		com.esferalia.aon.occam.api.model.security.User user = null;
 		Notice notice;
 		Notice create;
-		for (int i = 0; i < 100; i ++) {
+		for (int i = 0; i < 10000; i ++) {
 			int c = (int) Math.floor( (Math.random() * customers.size() - 1 ) + 1);
 			notice = new Notice();
 			notice.setDomain(DOMAIN_ID);

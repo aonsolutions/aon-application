@@ -21,9 +21,14 @@ public class OfficeTest {
 //	private static int DOMAIN_ID = 536;
 //	private static String USER_NAME = "mac";
 
-	 private static String DOMAIN_NAME = "agroback-mac.amtzdelagos.dev";
-	 private static int DOMAIN_ID = 228;
-	 private static String USER_NAME = "patri";
+//	private static String DOMAIN_NAME = "agroback-mac.amtzdelagos.dev";
+//	private static int DOMAIN_ID = 228;
+//	private static String USER_NAME = "patri";
+	
+	private static String DOMAIN_NAME = "macayc-mac.amtzdelagos.dev";
+	private static int DOMAIN_ID = 536;
+	private static String USER_NAME = "mac";
+
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException,
@@ -39,9 +44,6 @@ public class OfficeTest {
 		filter.setState("open");		
 		filter.setTags(new String[] {
 		});
-
-//		User user = UserDAO.getUser(ctx, 1654);
-//		System.out.println("Name: " + user.getName());
 		
 		Date now = new Date();
 		List<Notice> notices = AonHubDAO2.getTicketNoticesForTest(ctx, filter);

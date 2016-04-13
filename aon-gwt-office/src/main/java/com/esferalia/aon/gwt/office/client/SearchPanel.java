@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -167,7 +166,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		int keyCode = event.getNativeKeyCode();
 		String subject = subjectTextBox.getValue();
 		
-		if (keyCode == KeyCodes.KEY_ENTER && !subject.trim().isEmpty()) {
+		if (keyCode == KeyCodes.KEY_ENTER) {
 			onSubjectKeyDown(subject);
 		}
 	}

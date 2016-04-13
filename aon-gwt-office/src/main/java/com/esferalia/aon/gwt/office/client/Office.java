@@ -55,7 +55,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.WindowScrollListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -595,8 +594,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 	
 	@Override
-	public void onSelectSubject(String subject) {
-		this.gitHub.setText(subject);
+	public void onSelectSubject(String subject) {	
+		this.gitHub.setText( (subject.trim().isEmpty()) ? null : subject );
 		this.incrementSize = 0;
 		this.gitHub.setOffset(incrementSize);
 		initIssuesList();
