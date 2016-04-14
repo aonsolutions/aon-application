@@ -535,7 +535,7 @@
 	
 	<bean class="com.code.aon.warehouse.Warehouse">
 		<alias names="domain,id,name,workPlace,workPlace_active,workPlace_id,workPlace_scope_id,active"/>
-		<hibernate names="domain,id,name,workPlace,workPlace.active,workPlace&lt;id,workPlace.scope.id,active"/>
+		<hibernate names="domain,id,name,workPlace,workPlace.active,workPlace&lt;id,workPlace&lt;scope&lt;id,active"/>
 	</bean>
 	
 	<bean class="com.code.aon.warehouse.WarehouseTransfer">
