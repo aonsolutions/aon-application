@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -570,8 +571,34 @@ public class Mod130DAO extends FiscalModelDAO {
 	}
 	
 	private static double getInitialC13(AONContext ctx, final Mod130 mod) {
-		return 0.0;
+		double c03 = 0.0;
+		double c08 = 0.0;
+		double rn = 0.0;
+		double c13 = 0.0;
+		Mod130 previous = getMod130s(ctx, mod.getDomain())
+		 .filter(model -> model.getYear() == (mod.getYear() - 1))
+		 .filter(model -> model.getPeriod() == Period.T4)
+		 .findFirst()
+		 .orElse(null);
+		
+		if (previous != null) {
+			c03 = previous.getAmount(Mod130Key.C03);
+			c08 = (previous.getAmount(Mod130Key.C08) * 25 / 100);
+			rn = AonMathUtils.round(c03 + c08);
+			if (rn <= 9000) {
+				c13 = 100;
+			} else if (rn > 9000 && rn <= 10000) {
+				c13 = 75;
+			} else if (rn > 10000 && rn <= 11000) {
+				c13 = 50;
+			} else if (rn > 11000 && rn <= 12000) {
+				c13 = 25;
+			}
+		}
+		
+		return c13;
 	}
+	
 	private static double getInitialC15(AONContext ctx, final Mod130 mod) {
 		double c14 = mod.getAmount(Mod130Key.C14);
 		double c15 = 0.0; 
