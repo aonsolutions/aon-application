@@ -35,6 +35,7 @@ public class InvoicingParameters implements Serializable {
 	private Date toDate;
 	private boolean confidential;
 	private WorkPlace workPlace;
+	private Scope scope;
 	private List<Scope> scopes;
 
 	private Series invoiceSeries;
@@ -147,6 +148,14 @@ public class InvoicingParameters implements Serializable {
 		this.workPlace = workPlace;
 	}
 
+	public Scope getScope() {
+		return scope;
+	}
+
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+
 	public List<Scope> getScopes() {
 		return scopes;
 	}
@@ -205,6 +214,8 @@ public class InvoicingParameters implements Serializable {
 		setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
 		setYear(calendar.get(Calendar.YEAR));
 		setConfidential(false);
+		setWorkPlace(new WorkPlace());
+		setScope(new Scope());
 	}
 
 	public List<Integer> getScopeIds() {

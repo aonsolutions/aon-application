@@ -11,6 +11,9 @@
 
 	<ui:define name="content">
 		<aon:form id="preInvoicingForm">
+
+			<aon:valueParam name="currentUserScopes" default="#{configCollections.currentUserScopes}" />
+
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="preInvoicingToolbar" />
@@ -92,6 +95,16 @@
 						<f:selectItem itemLabel="-" itemValue="#{null}" />
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
+
+					<aon:if test="#{currentUserScopes[1] != null}">
+						<aon:outputLabel for="CustomerFee_Customer_Scope"
+							value="#{bundle.aon_scope}" />
+						<aon:selectOneMenu id="CustomerFee_Customer_Scope"
+							value="#{preInvoicing.invoicingParams.scope}">
+							<f:selectItem itemLabel="-" itemValue="#{null}" />
+							<f:selectItems value="#{currentUserScopes}" />
+						</aon:selectOneMenu>
+					</aon:if>
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>

@@ -87,6 +87,8 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine, Serializabl
 		}
 		if (params.getCustomer() != null && params.getCustomer().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_ID), params.getCustomer().getId());
+		} else if (params.getScope() != null && params.getScope().getId() != null) {
+			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_SCOPE_ID), params.getScope().getId());
 		} else {
 			criteria.addInExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_SCOPE_ID), params.getScopeIds());
 		}

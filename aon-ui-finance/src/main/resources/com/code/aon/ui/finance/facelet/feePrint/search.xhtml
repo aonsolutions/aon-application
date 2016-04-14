@@ -7,10 +7,10 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
-	<aon:valueParam name="currentUserScopes" default="#{configCollections.currentUserScopes}" />
-
 	<ui:define name="content">
 		<aon:form id="feePrintSearch">
+
+			<aon:valueParam name="currentUserScopes" default="#{configCollections.currentUserScopes}" />
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
@@ -57,7 +57,7 @@
 							value="#{bundle.aon_scope}" />
 						<aon:selectOneMenu id="CustomerFee_customer_scope_id"
 							value="#{configCollections.scope}"
-							valueChangeListener="#{finance.addIdEqualExpression}">
+							valueChangeListener="#{feePrint.addIdEqualExpression}">
 							<f:selectItem itemLabel="-" value="#{null}"/> 
 							<f:selectItems value="#{currentUserScopes}" />
 						</aon:selectOneMenu>

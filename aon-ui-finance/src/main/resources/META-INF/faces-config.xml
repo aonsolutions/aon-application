@@ -1251,6 +1251,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{customerSearch}</value>
+				<value>#{customerScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>	
@@ -1281,6 +1282,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{feePrintSearch}</value>
+				<value>#{feePrintScopeListener}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>
@@ -1293,6 +1295,16 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>feePrintScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>CustomerFee_customer_scope_id</value>
+		</managed-property>
+	</managed-bean>
+	
 	<!-- ************ FEE PRE-INVOICING ************* -->
 	<managed-bean>
 		<managed-bean-name>preInvoicing</managed-bean-name>
