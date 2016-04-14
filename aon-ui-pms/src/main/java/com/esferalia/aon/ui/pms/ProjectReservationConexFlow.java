@@ -11,6 +11,7 @@ import com.code.aon.conexflow.ConexFlow;
 import com.code.aon.conexflow.ConexFlowConstant;
 import com.code.aon.conexflow.XMLUtils;
 import com.code.aon.conexflow.jooq.DBConsults;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
@@ -79,15 +80,15 @@ public class ProjectReservationConexFlow implements Serializable {
 	public Double getAmount() {
 		if(amount != null) return amount;
 		if(isPreauthorization()){
-			ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+			ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
 			String amountStr = preauthorization.getRespuesta().getImporte();
 			return Double.parseDouble(amountStr);
 		}else if(isCharge()){
-			ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.SALE_OP);
+			ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.SALE_OP);
 			String amountStr = charge.getRespuesta().getImporte();
 			return Double.parseDouble(amountStr);
 		}else if(isConfirmPreauthorization()){
-			ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+			ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
 			String amountStr = confirmPreauthorization.getRespuesta().getImporte();
 			return Double.parseDouble(amountStr);
 		}else{
@@ -136,25 +137,25 @@ public class ProjectReservationConexFlow implements Serializable {
 	
 	public boolean isConfirmPreauthorization() {
 		ProjectReservation reservation = getReservation();
-		ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+		ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
 		return (confirmPreauthorization != null && confirmPreauthorization.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
 	}
 
 	public boolean isPreauthorization() {
 		ProjectReservation reservation = getReservation();
-		ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+		ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
 		return preauthorization !=null && preauthorization.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 	}
 
 	public boolean isCharge() {
 		ProjectReservation reservation = getReservation();
-		ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.SALE_OP);
+		ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.SALE_OP);
 		return (charge != null && charge.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK));
 	}
 	
 	public boolean isRefund() {
 		ProjectReservation reservation = getReservation();
-		ConexFlow refund = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.REFUND_OP);
+		ConexFlow refund = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.REFUND_OP);
 		return refund != null && refund.getRespuesta().getResultado().equals(CONEXFLOW_RESULT_OK);
 	}
 
@@ -184,9 +185,9 @@ public class ProjectReservationConexFlow implements Serializable {
 	
 	public void onRefund(){
 		ProjectReservation reservation = getReservation();
-		ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
-		ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.SALE_OP);
-		ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+		ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+		ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.SALE_OP);
+		ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
 		if(preauthorization != null && preauthorization.getRespuesta().getResultado().equals("000")){
 			preauthorization.getRespuesta().setResultado("XXX");
 			try {
@@ -220,9 +221,9 @@ public class ProjectReservationConexFlow implements Serializable {
 	
 	public void onRefundCancel(){
 		ProjectReservation reservation = getReservation();
-		ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
-		ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.SALE_OP);
-		ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+		ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+		ConexFlow charge = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.SALE_OP);
+		ConexFlow confirmPreauthorization = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
 		if(preauthorization != null && preauthorization.getRespuesta().getResultado().equals("XXX")){
 			preauthorization.getRespuesta().setResultado("000");
 			try {
@@ -254,7 +255,7 @@ public class ProjectReservationConexFlow implements Serializable {
 	
 	public void onCollect(){
 		ProjectReservation reservation = getReservation();
-		ConexFlow refund = DBConsults.getConexFlowLastOperation(getDomain(), reservation.getId(), ConexFlowConstant.REFUND_OP);
+		ConexFlow refund = DBConsults.getConexFlowLastOperation(getDomain(),AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.REFUND_OP);
 		if(refund != null){
 			DBConsults.delete(getDomain(), reservation.getProject().getId(), ConexFlowConstant.REFUND_OP);
 		}

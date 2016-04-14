@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang.StringUtils;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record3;
@@ -32,6 +33,7 @@ import com.code.aon.conexflow.ConexFlowConstant;
 import com.code.aon.conexflow.XMLUtils;
 import com.code.aon.customer.Customer;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.util.AonUtil;
@@ -49,7 +51,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
-import org.apache.commons.lang.StringUtils;
 
 public class DBConsults {
 
@@ -93,22 +94,30 @@ public class DBConsults {
 		}
 	}
 	
-	public static ConexFlow getConexFlowLastOperation(Domain domain, Integer project, String op){
+	public static ConexFlow getConexFlowLastOperation(Domain domain, String login, Integer project, String op){
 		//TODO COGER LA ULTIMA OPERACION CONEXFLOW (POR FECHA) DE PROJECT_ATTACH
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId());
-			
-			Record1<byte[]> data = ctx.getDslContext().select(PROJECT_ATTACH.DATA)
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
+			Record3<Integer, byte[], String> data = ctx.getDslContext().select(PROJECT_ATTACH.ID, PROJECT_ATTACH.DATA, PROJECT_ATTACH.DRIVEID)
 				.from(PROJECT_ATTACH)
 				.where(PROJECT_ATTACH.PROJECT.eq(project))
 				.and(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-"+op))
 				.orderBy(PROJECT_ATTACH.ATTACH_DATE.desc())
 				.limit(1).fetchOne();
 
-			if(data != null && data.value1() != null){
+			if(data != null && data.getValue(PROJECT_ATTACH.DATA) != null){
 				try {
-					return  XMLUtils.readXml(data.value1(), new Query());
+					return  XMLUtils.readXml(data.getValue(PROJECT_ATTACH.DATA), new Query());
+				} catch (JAXBException e) {
+					e.printStackTrace();
+				}
+			} else{
+				Integer attachId = data.getValue(PROJECT_ATTACH.ID);
+				String driveId = data.getValue(PROJECT_ATTACH.DRIVEID);
+				byte[] b = DriveUtils.getByteFile(domain.getName(), domain.getId(), login, driveId, attachId);
+				try {
+					return  XMLUtils.readXml(b, new Query());
 				} catch (JAXBException e) {
 					e.printStackTrace();
 				}

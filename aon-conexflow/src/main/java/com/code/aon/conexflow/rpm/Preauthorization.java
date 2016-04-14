@@ -70,10 +70,10 @@ public class Preauthorization {
 				pr.getCompany();
 			}
 			
-			ConexFlow cf2 = DBConsults.getConexFlowLastOperation(domain, pr.getProject(), ConexFlowConstant.PREAUTHORIZATION_OP);
+			ConexFlow cf2 = DBConsults.getConexFlowLastOperation(domain, "admin", pr.getProject(), ConexFlowConstant.PREAUTHORIZATION_OP);
 			if(cf2 == null || !cf2.getRespuesta().getResultado().equals("000")){
 				
-				ConexFlow cf = DBConsults.getConexFlowLastOperation(domain, pr.getProject(), ConexFlowConstant.CREATE_TOKEN_OP);
+				ConexFlow cf = DBConsults.getConexFlowLastOperation(domain, "admin", pr.getProject(), ConexFlowConstant.CREATE_TOKEN_OP);
 				if(cf != null && cf.getRespuesta().getResultado().equals("000"))	{
 					String errorMsg = "";
 					ReservationUtils reservationUtils = new ReservationUtils(domain.getId());

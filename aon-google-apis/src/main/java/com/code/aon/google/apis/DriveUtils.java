@@ -895,7 +895,9 @@ public class DriveUtils implements IBlobManager {
 					if(type.equals("registry")){
 						if(file.getType() == RegistryAttachmentType.LOGO.value()
 							|| file.getType() == RegistryAttachmentType.AON_TEMPLATES.value() 
-							|| file.getType() == RegistryAttachmentType.D2_DEPOSIT.value() 
+							|| file.getType() == RegistryAttachmentType.D2_DEPOSIT.value()
+							
+							|| file.getType() == RegistryAttachmentType.DOMAIN_BOOK_HISTORY.value() // Historial en configuración
 							
 							|| file.getType() == RegistryAttachmentType.CRETA_RESPUESTA.value() 
 							|| file.getType() == RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS.value() 
@@ -1201,7 +1203,7 @@ public class DriveUtils implements IBlobManager {
 	/************************* DESCARGAR ARCHIVO DE DRIVE *********************/
 	
 	
-	public static byte[] getByteFile(String domainName, Integer domainId, String login, String driveId, Integer attachId) throws KeyStoreException, IOException, GeneralSecurityException{
+	public static byte[] getByteFile(String domainName, Integer domainId, String login, String driveId, Integer attachId) {
 		Domain domain = AON.getDomain(domainName, domainId, login);
 		User user = new User().setLogin(login);
 		return getByteFile(domain, user, driveId, attachId);

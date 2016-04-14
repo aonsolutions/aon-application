@@ -72,8 +72,8 @@ public class Operation {
 			}else if(cancelation){
 				//TODO 
 			}else if(confirmPreauthorization){
-				ConexFlow createToken = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getProject().getId(), ConexFlowConstant.CREATE_TOKEN_OP);
-				ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getProject().getId(),ConexFlowConstant.PREAUTHORIZATION_OP);
+				ConexFlow createToken = DBConsults.getConexFlowLastOperation(getDomain(reservation), "admin", reservation.getProject().getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+				ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(reservation), "admin", reservation.getProject().getId(),ConexFlowConstant.PREAUTHORIZATION_OP);
 				query = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection.getEmpresa().toString(), connection.getCentro().toString(), 
 						connection.getTpv().toString(), reservation.getCustomer().getId().toString(), createToken.getRespuesta().getToken(),
 						Double.parseDouble(preauthorization.getRespuesta().getImporte()), Double.parseDouble(preauthorization.getRespuesta().getImporte()), 

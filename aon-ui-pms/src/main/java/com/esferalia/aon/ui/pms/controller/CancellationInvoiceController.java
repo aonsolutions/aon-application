@@ -368,13 +368,13 @@ public class CancellationInvoiceController extends BasicController implements IP
 		reservationUtils.decryptReservationCreditCardData(reservation);
 		setReservation(reservation);
 		Domain domain = getDomain(reservation);
-		ConexFlow cf = DBConsults.getConexFlowLastOperation(domain, reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+		ConexFlow cf = DBConsults.getConexFlowLastOperation(domain,AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
 		setPreauthorization(cf != null);
-		ConexFlow cf2 = DBConsults.getConexFlowLastOperation(domain, reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+		ConexFlow cf2 = DBConsults.getConexFlowLastOperation(domain,AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
 		setConfirmPreauthorization(cf2 != null);
-		ConexFlow cf3 = DBConsults.getConexFlowLastOperation(domain, reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+		ConexFlow cf3 = DBConsults.getConexFlowLastOperation(domain,AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
 		setCreditCardToken(cf3 != null);
-		ConexFlow cf4 = DBConsults.getConexFlowLastOperation(domain, reservation.getId(), ConexFlowConstant.SALE_OP);
+		ConexFlow cf4 = DBConsults.getConexFlowLastOperation(domain,AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.SALE_OP);
 		setSale(cf4 != null);
 		if(isPreauthorization() && cf.getRespuesta().getImporte() !=  null) setPreauthorizationAmount(Double.parseDouble(cf.getRespuesta().getImporte()));
 		if(isConfirmPreauthorization() && cf.getRespuesta().getImporte() != null) setConfirmPreauthorizationAmount(Double.parseDouble(cf2.getRespuesta().getImporte()));
@@ -391,9 +391,9 @@ public class CancellationInvoiceController extends BasicController implements IP
 		if(connection.getActive()){
 			String errorMsg = null;
 			if(getPreauthorizationAmount() <= reservation.getTotal()){
-				ConexFlow cf1 = DBConsults.getConexFlowLastOperation(domain, reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+				ConexFlow cf1 = DBConsults.getConexFlowLastOperation(domain,AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
 				if(cf1 != null){
-					ConexFlow cf2 = DBConsults.getConexFlowLastOperation(domain, reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+					ConexFlow cf2 = DBConsults.getConexFlowLastOperation(domain,AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
 					if(cf2 != null){
 						Double importeOriginal = Double.parseDouble(cf2.getRespuesta().getImporte());
 						Query confirmPreauthorizationQuery = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(

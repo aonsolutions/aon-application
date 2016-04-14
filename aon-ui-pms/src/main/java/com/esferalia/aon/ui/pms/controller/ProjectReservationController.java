@@ -1535,7 +1535,11 @@ public class ProjectReservationController extends BasicController implements IPm
 			String errorMsg = null;
 			Query query = null;
 			
-			ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+			ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+			if(cf == null || cf.getRespuesta() == null){
+				AonUtil.addErrorMessage("Error al realizar la operación");
+				throw new AbortProcessingException("Error al realizar la operación");
+			}
 			String token = cf.getRespuesta().getToken();
 			
 			switch (getReservationConexFlow().getConexflowOperation()) {
@@ -1564,13 +1568,13 @@ public class ProjectReservationController extends BasicController implements IPm
 			case ConexFlowConstant.CANCELATION_OP: 
 				ConexFlow cf2 = null;
 				if(getReservationConexFlow().getConexflowOperationCancelation().equals(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP))
-					cf2 = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
+					cf2 = DBConsults.getConexFlowLastOperation(getDomain(reservation), AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
 				if(getReservationConexFlow().getConexflowOperationCancelation().equals(ConexFlowConstant.PREAUTHORIZATION_OP))
-					cf2 =  DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+					cf2 =  DBConsults.getConexFlowLastOperation(getDomain(reservation), AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
 				if(getReservationConexFlow().getConexflowOperationCancelation().equals(ConexFlowConstant.SALE_OP))
-					cf2 =  DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.SALE_OP);
+					cf2 =  DBConsults.getConexFlowLastOperation(getDomain(reservation), AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.SALE_OP);
 				if(getReservationConexFlow().getConexflowOperationCancelation().equals(ConexFlowConstant.REFUND_OP))
-					cf2 =  DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.REFUND_OP);
+					cf2 =  DBConsults.getConexFlowLastOperation(getDomain(reservation), AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.REFUND_OP);
 				
 				query = ConexFlowUtils.getConexFlowCancelationQuery(connection.getEmpresa().toString()
 						, connection.getCentro().toString(), connection.getTpv().toString()
@@ -1590,7 +1594,7 @@ public class ProjectReservationController extends BasicController implements IPm
 					getReservationConexFlow().onCancel();
 				break;
 			case ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP: 
-				ConexFlow cf3 =  DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+				ConexFlow cf3 =  DBConsults.getConexFlowLastOperation(getDomain(reservation), AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
 				query = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection.getEmpresa().toString()
 						, connection.getCentro().toString(), connection.getTpv().toString()
 						, reservation.getCustomer().getId().toString(), token, getReservationConexFlow().getAmount()
@@ -1739,8 +1743,8 @@ public class ProjectReservationController extends BasicController implements IPm
 	
 	public void onCreditCardPreauthorizationShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
-		ConexFlow cf2 = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+		ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
+		ConexFlow cf2 = DBConsults.getConexFlowLastOperation(getDomain(reservation), AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
 		setCardOperationTo(new CardOperationTo());
 		getCardOperationTo().setCardNumber(cf.getRespuesta().getCF_PAN());
 		if (cf2 != null) {
@@ -1765,7 +1769,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		if(connection.getActive()){
 			String errorMsg = null;
 			if (reservation.getTotal() >= getCardOperationTo().getOperationAmount()) {
-				ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), 
+				ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation),  AonUtil.getRemoteUser(),
 						reservation.getId(), ConexFlowConstant.CREATE_TOKEN_OP);
 				Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(
 					connection.getEmpresa().toString(), connection.getCentro().toString(), connection.getTpv().toString()
@@ -1792,7 +1796,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
 		if(connection.getActive()){
 			String errorMsg = null;
-			ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+			ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation), AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
 			DBConsults.deletePreuthorization(getDomain(reservation), reservation.getId());
 			
 			Double importe = Double.parseDouble(cf.getRespuesta().getImporte());
