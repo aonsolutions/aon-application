@@ -16,7 +16,7 @@ public class NotificationInfo implements Serializable{
 	private Boolean notify = false;
 	private Boolean history = false;
 	private String bcc;
-	
+	private Integer mode;
 	
 	// Notice
 	private Integer noticeId;
@@ -123,6 +123,13 @@ public class NotificationInfo implements Serializable{
 	}
 	public NotificationInfo setCompanyName(String companyName) {
 		this.companyName = companyName;
+		return this;
+	}
+	public Integer getMode() {
+		return mode;
+	}
+	public NotificationInfo setMode(Integer mode) {
+		this.mode = mode;
 		return this;
 	}
 	

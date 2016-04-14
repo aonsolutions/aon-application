@@ -35,15 +35,15 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 
 	private static final long serialVersionUID = 7426471939221433842L;
 	
-	private static final String[] OPEN = new String[]{"NUEVA INCIDENCIA ","creada con la referencia "};
-	private static final String[] NEW_INFO = new String[]{"INFORMACION ADICIONAL ","incluida en la referencia "};
-	private static final String[] CLOSE = new String[]{"INCIDENCIA CERRADA ","con referencia "};
-	private static final String[] REOPEN = new String[]{"INCIDENCIA REABIERTA ","con la referencia "};
+	private static final String[] OPEN = new String[]{"NUEVA INCIDENCIA ","creada "};
+	private static final String[] NEW_INFO = new String[]{"INFORMACION ADICIONAL ","incluida "};
+	private static final String[] CLOSE = new String[]{"INCIDENCIA CERRADA ",""};
+	private static final String[] REOPEN = new String[]{"INCIDENCIA REABIERTA ",""};
 
 	
 	private String msg; 
 	public void sendNotification(Domain domain,NotificationInfo notificationInfo,
-			LinkedList<NotificationInfo> list, NotificationType type){
+			LinkedList<NotificationInfo> list, NotificationType type, Boolean isManual){
 
 		String typeTitle = "";
 		String typeDescription = "";
@@ -62,7 +62,7 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 		}
 			
 		NotificationInfo ni = getNotificationInfo(domain);
-		if(ni.getNotify()){
+		if((ni.getNotify() && !ni.getMode().equals(0)) || isManual){
 			String title = notificationInfo.getTitle();		
 		
 			msg = 	"<div style='margin-left: -30px;'>"
@@ -73,9 +73,10 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 			
 				// title
 				+"<p></p><table style='border: 1px solid #E5E5E5;table-layout: fixed;width: 100%;min-width: 625px;border-collapse: collapse;' cellpadding='0'><tbody>"
-					+"<tr><td style=\"background-color: #F6F6F6;color: #222;border: 1px solid #CCC;font-family: Arial,sans-serif; padding: 5px 21px 5px 21px;vertical-align: top;font-weight: bold; \">"
-						+ "<div style='color: #222;font-size: 140%;margin-bottom: 2px;'>"+title+"</div>"
-					+ "</tr></tbody></table>";
+					+"<tr><td style=\"background-color: #F6F6F6;color: #222;border: 1px solid #CCC;font-family: Arial,sans-serif; padding: 5px 21px 5px 21px;vertical-align: top;\">"
+						+ "<span style='color: #222;font-size: 140%;margin-bottom: 2px;font-weight: bold;'>"+title+"</span>"
+						+ "<span> con referencia <b>#" + notificationInfo.getNoticeId() + "</b></span>"
+						+ "</tr></tbody></table>";
 			
 			msg = msg + getMessage(notificationInfo, typeTitle, typeDescription);	
 		
@@ -111,7 +112,8 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 				+ "</td></tr></tbody></table>"			
 				+ "</div></div>";
 		
-			sendEmail(domain, ni.getMailAccount().getId(), getToEmails(domain, notificationInfo.getCompanyName()),ni.getBcc(), title, msg);
+			Boolean bool = ni.getMode().equals(1);
+			sendEmail(domain, ni.getMailAccount().getId(), getToEmails(domain, notificationInfo.getCompanyName(),bool), ni.getBcc(), title, msg);
 		}
 	}
 	
@@ -153,7 +155,7 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 	
 	private String getMessage(NotificationInfo n, String action, String typeDescription) {
 		SimpleDateFormat format= new SimpleDateFormat("dd/MM/yyyy");
-		String desc = typeDescription+ "<b>#"+ n.getNoticeId() +"</b> el <b>" + format.format(n.getDate()) +"</b> por <b>"+ n.getUserName() +"</b>"; 
+		String desc = typeDescription+ " el <b>" + format.format(n.getDate()) +"</b> por <b>"+ n.getUserName() +"</b>"; 
 
 		String msg = "<p></p><table style='border: 1px solid #E5E5E5;table-layout: fixed;width: 100%;min-width: 625px;border-collapse: collapse;' cellpadding='0'>"
 				+"<tbody><tr>"
@@ -212,7 +214,8 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 		return AON.getCompanyForDomain(domain.getName(), domain.getId(), getUserLogin()).getName();
 	}
 	
-	private String getToEmails(Domain domain, String name){
+	private String getToEmails(Domain domain, String name, Boolean send){
+		if(send) return ""; 
 		Registry r = AON.getRegistry(domain.getName(), domain.getId(), getUserLogin(), name);
 
 		LinkedList<RegistryMedia> l = AON.getRMediaList(domain.getName(), domain.getId(), getUserLogin(),
@@ -224,7 +227,7 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 		}
 		
 		System.out.println(emails);
-		return "ander.ibz@gmail.com," ;//emails;
+		return emails;
 	}
 	
 	public User getUser(){

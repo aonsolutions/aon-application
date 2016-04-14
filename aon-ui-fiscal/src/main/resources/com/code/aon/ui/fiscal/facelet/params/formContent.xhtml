@@ -50,7 +50,8 @@
 
 			<aon:outputLabel for="default_period"
 				value="#{bundle.fiscal_parameters_year}" />
-			<aon:selectOneMenu id="default_period" value="#{fiscalParams.defaultYear}">
+			<aon:selectOneMenu id="default_period" value="#{fiscalParams.defaultYear}"
+				ajaxSingle="true">
 				<f:selectItem itemValue="#{null}" itemLabel="-"  />
 				<f:selectItem itemValue="2009" itemLabel="2009" />
 				<f:selectItem itemValue="2010" itemLabel="2010" />

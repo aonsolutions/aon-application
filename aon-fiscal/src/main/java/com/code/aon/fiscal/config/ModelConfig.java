@@ -83,10 +83,15 @@ public class ModelConfig implements Serializable {
 		if (isMonthly()) {
 			return 12;
 		} else if (isQuaterly()) {
-			return 4;
+			if (getModel() == Model.M202) {
+				return 3;	
+			} else {
+				return 4;
+			}
 		} 
 		return 1;
 	}
+
 	public String getAdministrationStyle() {
 		if (getAdministration() == Administration.COMMON_TERRITORY) {
 			return "aon-icon-aeat";

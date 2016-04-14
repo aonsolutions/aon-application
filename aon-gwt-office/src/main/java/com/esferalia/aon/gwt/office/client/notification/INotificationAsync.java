@@ -11,7 +11,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface INotificationAsync {
 	
 	void sendNotification(Domain domain, NotificationInfo notificationInfo, LinkedList<NotificationInfo> list,
-			NotificationType type, AsyncCallback<Void> callback);
+			NotificationType type, Boolean isManual, AsyncCallback<Void> callback);
 
 	void getMailAccountList(Domain domain, AsyncCallback<LinkedList<MailAccount>> callback);
 

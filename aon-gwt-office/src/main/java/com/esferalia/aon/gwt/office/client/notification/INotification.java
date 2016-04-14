@@ -13,7 +13,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface INotification extends RemoteService{
 	
 	void sendNotification(Domain domain, NotificationInfo notificationInfo, 
-			LinkedList<NotificationInfo> list, NotificationType type);
+			LinkedList<NotificationInfo> list, NotificationType type, Boolean isManual);
 
 	LinkedList<MailAccount> getMailAccountList(Domain domain);
 	

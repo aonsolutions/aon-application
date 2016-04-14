@@ -126,6 +126,15 @@ public abstract class NotificationDialog extends CustomDialogB
 		flex_table.setWidget(4, 0, new Label("incluir en BCC"));
 		flex_table.setWidget(4, 1, tb);
 		
+		ListBox lb3 = new ListBox();
+		lb3.addItem("No enviar ninguna notificaci\u00f3n", "0");
+		lb3.addItem("Estado de pruebas", "1");
+		lb3.addItem("Entorno de producci\u00f3n REAL", "2");
+		lb3.setSelectedIndex(ni.getMode() != null ? ni.getMode() : 1);
+		lb3.setStyleName("aon-inputText");
+		flex_table.setWidget(5, 0, new Label("Modo"));
+		flex_table.setWidget(5, 1, lb3);
+		
 		flexTableCss();
 	}
 	
