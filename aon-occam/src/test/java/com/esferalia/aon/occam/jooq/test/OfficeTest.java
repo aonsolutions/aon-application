@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import org.jooq.Condition;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -41,12 +42,14 @@ public class OfficeTest {
 	public void testGetTicketNotices() {
 
 		NoticeFilter filter = new NoticeFilter();
-		filter.setState("open");		
+		filter.setState("open");
+		filter.setOffset(0);
+		
 		filter.setTags(new String[] {
 		});
 		
 		Date now = new Date();
-		List<Notice> notices = AonHubDAO2.getTicketNoticesForTest(ctx, filter);
+		List<Notice> notices = getNotices(filter);
 		String segundos = (new Date().getTime() - now.getTime()) / 1000 + " sec." ;		
 		
 		for (Notice notice : notices) {
@@ -64,7 +67,16 @@ public class OfficeTest {
 		System.out.println("==============================");
 		System.out.println("Numero de incidencias: " + notices.size());
 		System.out.println(segundos + " segundos");
+		
+		
+		int size = AonHubDAO2.getSelectedCount(ctx, filter);		
+		System.out.println("Numero de incidencias: " + size);
 
+		
+	}	
+	
+	private List<Notice> getNotices (NoticeFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.getTicketNoticesForTest(ctx, filter));
 	}
-
 }

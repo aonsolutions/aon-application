@@ -474,14 +474,14 @@ public class OfficeApiServlet extends HttpServlet {
 				}
 
 				if (req.getParameter("text") != null)					
-					filter.setText(URLDecoder.decode(req.getParameter("text"), "UTF-8"));
+					filter.setSubject(URLDecoder.decode(req.getParameter("text"), "UTF-8"));
 				
 				if (req.getParameter("user") != null)
-					filter.setUser(URLDecoder.decode(req.getParameter("user"), "UTF-8"));					
+					filter.setUser(Integer.parseInt(URLDecoder.decode(req.getParameter("user"), "UTF-8"))); 					
 				
 				filter.setOffset(Integer.parseInt(req.getParameter("offset")));
 				
-			//	int count = AON.getSelectedCount(domainId, domainName, AonServletUtils.getLoggedUser(), filter);
+				int count = AON.getSelectedCount(domainId, domainName, AonServletUtils.getLoggedUser(), filter);
 				List<Notice> notices = AON.getNotices(domainId, domainName, AonServletUtils.getLoggedUser(), filter);
 
 				NoticeContainer container = new NoticeContainer();
@@ -490,7 +490,7 @@ public class OfficeApiServlet extends HttpServlet {
 				
 				pw.append('{');
 				pw.printf(String.format("\"message\":\"%s\",\r\n", "FOUNDED"));
-				pw.printf(String.format("\"count\":\"%s\",\r\n", String.valueOf(container.getCount())));
+				pw.printf(String.format("\"count\":\"%s\",\r\n", String.valueOf(count)));
 				pw.printf("\"data\":%s", buildNotices(container.getNotices().listIterator()));
 				pw.append('}');
 				pw.flush();

@@ -300,23 +300,14 @@ public class AonHubDAO2 {
 	
 	public static int getSelectedCount(AONContext ctx, NoticeFilter filter) {
 		// @formatter:off
-		return ctx.getDslContext()
+		return ctx.getDslContext()				
 				.select(NOTICE.fields())
 				.select(USER.fields())
 				.from(NOTICE)
 				.join(USER)
 				.on(NOTICE.SENDER.eq(USER.ID))
-				.where(NOTICE.DOMAIN.eq(ctx.getDomainId()))
-				.and(NOTICE.NOTICE_.isNull())
-				.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
-				.orderBy(NOTICE.DATE.desc())
+				.where(NoticeFilterImpl.getNoticeConditions(ctx, filter))
 				.fetch()
-				.stream()
-				.map(new FullNoticeFiller())
-				.peek(notice -> notice.setTags(fillOfficeTags(ctx, notice)
-						.collect(Collectors.toCollection(LinkedList::new))))
-				.filter(notice -> new NoticeFilterImpl().test(filter, notice))
-				.collect(Collectors.toCollection(LinkedList::new))
 				.size();
 		// @formatter:on
 	}
@@ -330,9 +321,7 @@ public class AonHubDAO2 {
 				.from(NOTICE)
 				.join(USER)
 				.on(NOTICE.SENDER.eq(USER.ID))
-				.where(NOTICE.DOMAIN.eq(ctx.getDomainId()))
-				.and(NOTICE.NOTICE_.isNull())
-				.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
+				.where(NoticeFilterImpl.getNoticeConditions(ctx, filter))
 				.orderBy(NOTICE.DATE.desc())				
 				.fetch()
 				.stream()				
@@ -352,10 +341,7 @@ public class AonHubDAO2 {
 						.collect(Collectors.toCollection(LinkedList::new)))))				
 				.peek(notice -> notice.setStatus(setTag(notice.getTags().stream()
 						.filter(tag -> tag.getType() == TagType.OFFICE_STATUS.value())
-						.collect(Collectors.toCollection(LinkedList::new)))))				
-				.filter(notice -> new NoticeFilterImpl().test(filter, notice))
-//				.skip(filter.getOffset())
-//				.limit(50)
+						.collect(Collectors.toCollection(LinkedList::new)))))			
 				.collect(Collectors.toCollection(LinkedList::new));
 		// @formatter:on
 	}
@@ -369,17 +355,14 @@ public class AonHubDAO2 {
 				.from(NOTICE)
 				.join(USER)
 				.on(NOTICE.SENDER.eq(USER.ID))
-				.where(NOTICE.DOMAIN.eq(ctx.getDomainId()))
-				.and(NOTICE.NOTICE_.isNull())
-				.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
+				.where( NoticeFilterImpl.getNoticeConditions(ctx,filter) )
 				.orderBy(NOTICE.DATE.desc())
-				.fetch()
-				.stream()
-				.map(new FullNoticeFiller())
-				.skip(filter.getOffset())
 				.limit(50)
+				.fetch()
+				.stream()				
+				.map(new FullNoticeFiller())				
 				.peek(notice -> notice.setTags(fillOfficeTags(ctx, notice)
-						.collect(Collectors.toCollection(LinkedList::new))))
+						.collect(Collectors.toCollection(LinkedList::new))))				
 				.peek(notice -> notice.addComments(fillNoticeComments(ctx, notice)
 						.collect(Collectors.toCollection(LinkedList::new))))	
 				
@@ -392,8 +375,7 @@ public class AonHubDAO2 {
 				.peek(notice -> notice.setStatus(setTag(notice.getTags().stream()
 						.filter(tag -> tag.getType() == TagType.OFFICE_STATUS.value())
 						.collect(Collectors.toCollection(LinkedList::new)))))				
-				.filter(notice -> new NoticeFilterImpl().test(filter, notice))
-				.collect(Collectors.toCollection(LinkedList::new));
+				.collect(Collectors.toCollection(LinkedList::new));			
 		// @formatter:on
 	}
 	
@@ -419,6 +401,7 @@ public class AonHubDAO2 {
 			notice.setSender(new MinimalUserFiller().apply(record));
 			notice.setTitle(record.getValue(NOTICE.SUBJECT));
 			notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
+
 			return notice;
 		}
 	}

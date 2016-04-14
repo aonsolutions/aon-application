@@ -22,11 +22,11 @@ public class NoticeFilter implements Serializable {
 	private boolean faq;
 	
 	private Date since;
-//	private String sinceAsString;
 	private String company;
 	private String[] tags;
 	private String subject;
-	private String user;
+	
+	private Integer userId;
 	
 	private int offset;
 	
@@ -142,11 +142,11 @@ public class NoticeFilter implements Serializable {
 		return tags;
 	}
 	
-	public void setText(String text) {
+	public void setSubject(String text) {
 		this.subject = text;
 	}
 	
-	public String getText() {
+	public String getSubject() {
 		return subject;
 	}
 	
@@ -158,13 +158,13 @@ public class NoticeFilter implements Serializable {
 		return offset;
 	}
 	
-	public void setUser(String user) {
-		this.user = user;
+	public void setUser(int userId) {
+		this.userId = userId;
 	}
 	
-	public String getUser() {
-		if (user == null)
-			return "";
-		return user;
+	public int getUser() {
+		if (userId == null)
+			return -1;
+		return userId;
 	}
 }

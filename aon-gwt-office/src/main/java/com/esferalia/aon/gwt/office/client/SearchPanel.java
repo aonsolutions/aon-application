@@ -297,7 +297,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 							if (event.getValue()) {
 								cb.addStyleName(AON.AON_BOLD);
 								unSelectPanel(cb.getText());
-								SearchPanel.this.userSelected = cb.getText();
+								SearchPanel.this.userSelected = cb.getName();
 							}
 							else {
 								cb.removeStyleName(AON.AON_BOLD);
