@@ -142,6 +142,10 @@ public class StatControlPanel extends MainEntryPoint {
 			@Override
 			public void onSelection(SelectionEvent<Integer> event) {
 				openFootPanelIfNeeded();
+				if  (tabLayout.getSelectedIndex() == INVOICES_TAB) {
+					onInvoicesButtonClick(null);
+				}
+				
 			}
 		});
 		
