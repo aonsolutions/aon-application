@@ -332,7 +332,7 @@ public class StatControlPanel extends MainEntryPoint {
 			vaxis.setTitle(AON.MSG.amount());
 			options.setVAxisOptions(vaxis);
 			AxisOptions haxis = AxisOptions.create();
-			haxis.setTitle(AON.MSG.months());
+			haxis.setTitle(label);
 			options.setHAxisOptions(haxis);
 			if (filter.getParams().isResultVisible()) {
 				options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS_RESULT);
