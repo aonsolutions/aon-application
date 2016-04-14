@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -17,6 +18,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.asset.enumeration.ActivityStatus;
@@ -137,6 +139,7 @@ public class WorkPlanningController extends DataScrollerState implements ICollec
 	}
 	
 	private void buildRoomPlanningList() throws AonSQLException {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		Connection connection = null;
 		PreparedStatement planningStmt = null;
 		ResultSet planningRs = null;
@@ -155,6 +158,7 @@ public class WorkPlanningController extends DataScrollerState implements ICollec
 				String roomNumber = planningRs.getString(ROOM_NUMBER);
 				Date startDate = planningRs.getDate(START_DATE);
 				int guests = planningRs.getObject(GUESTS) != null ? planningRs.getInt(GUESTS) : 0;
+				Date endDate = planningRs.getDate(END_DATE);
 
 				if (date != null) {
 					RoomPlanning roomPlanning = new RoomPlanning();
@@ -179,6 +183,9 @@ public class WorkPlanningController extends DataScrollerState implements ICollec
 								roomPlanning.setAction(RoomWorkAction.SHEET_CHANGE);
 							} else {
 								roomPlanning.setAction(RoomWorkAction.CLEANING);
+							}
+							if (CommonUtil.getDaysBetweenDates(getDate(), endDate, false)==1) {
+								roomPlanning.setRemarks("Fin estancia: "+formatter.format(endDate));
 							}
 						} else {
 							roomPlanning.setPax(guests);
@@ -226,7 +233,7 @@ public class WorkPlanningController extends DataScrollerState implements ICollec
 
 	private String getRoomPlanningSQL() throws ManagerBeanException {
 		StringBuffer stmt = new StringBuffer();
-		stmt.append("SELECT B.stay_type AS " + STAY_TYPE + ", A.name AS " + ROOM_NUMBER + ", PR.start_date AS " + START_DATE + ", B.guests AS " + GUESTS);
+		stmt.append("SELECT B.stay_type AS " + STAY_TYPE + ", A.name AS " + ROOM_NUMBER + ", PR.start_date AS " + START_DATE + ", PR.end_date AS " + END_DATE + ", B.guests AS " + GUESTS);
 		stmt.append(" FROM booking AS B, project_reservation_room AS PRR, project_reservation AS PR, project_reservation_room_detail AS PRRD");
 		stmt.append(", asset_activity AS AA, asset AS A");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("B.domain"));
@@ -246,7 +253,7 @@ public class WorkPlanningController extends DataScrollerState implements ICollec
 			stmt.append(" AND A.name LIKE '" + getRoomFilter().replace("*", "%") + "'");
 		}
 		stmt.append(" UNION ");
-		stmt.append("SELECT 3 AS " + STAY_TYPE + ", A.name AS " + ROOM_NUMBER + ", AA.date AS " + START_DATE + ", 0 AS " + GUESTS);
+		stmt.append("SELECT 3 AS " + STAY_TYPE + ", A.name AS " + ROOM_NUMBER + ", AA.date AS " + START_DATE + ", null AS " + END_DATE + ", 0 AS " + GUESTS);
 		stmt.append(" FROM room AS R, asset AS A, asset_activity AS AA");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("R.domain"));
 		stmt.append(" AND R.hotel = ?");
@@ -292,6 +299,7 @@ public class WorkPlanningController extends DataScrollerState implements ICollec
 		private String roomNumber;
 		private Integer pax;
 		private RoomWorkAction action;
+		private String remarks;
 
 		public RoomPlanning() {
 			pax = 0;
@@ -317,6 +325,14 @@ public class WorkPlanningController extends DataScrollerState implements ICollec
 		}
 		public void setAction(RoomWorkAction action) {
 			this.action = action;
+		}
+
+		public String getRemarks() {
+			return remarks;
+		}
+
+		public void setRemarks(String remarks) {
+			this.remarks = remarks;
 		}
 
 		@Override
