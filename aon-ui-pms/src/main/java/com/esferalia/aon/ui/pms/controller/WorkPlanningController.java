@@ -18,7 +18,6 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.asset.enumeration.ActivityStatus;
@@ -139,7 +138,7 @@ public class WorkPlanningController extends DataScrollerState implements ICollec
 	}
 	
 	private void buildRoomPlanningList() throws AonSQLException {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 		Connection connection = null;
 		PreparedStatement planningStmt = null;
 		ResultSet planningRs = null;
@@ -185,7 +184,7 @@ public class WorkPlanningController extends DataScrollerState implements ICollec
 								roomPlanning.setAction(RoomWorkAction.CLEANING);
 							}
 							if (CommonUtil.getDaysBetweenDates(getDate(), endDate, false)==1) {
-								roomPlanning.setRemarks("Fin estancia: "+formatter.format(endDate));
+								roomPlanning.setRemarks("Salida: " + dateFormatter.format(endDate));
 							}
 						} else {
 							roomPlanning.setPax(guests);
