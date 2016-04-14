@@ -1063,7 +1063,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		
 		Domain domain  = new Domain().setName(getCurrentDomainName()).setId(getCurrentDomain());
 	
-		impl.sendNotification(domain, n, list, notificationType,  new AsyncCallback<Void>() {
+		impl.sendNotification(domain, n, list, notificationType, false, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {}
@@ -1107,15 +1107,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						CheckBox cb1 = (CheckBox) flex_table.getWidget(2, 0);
 						CheckBox cb2 = (CheckBox) flex_table.getWidget(3, 0);
 						TextBox tb = (TextBox) flex_table.getWidget(4, 1);
+						ListBox lb3 = (ListBox) flex_table.getWidget(5, 1);
 						
-						
-						tb.getValue();
-						cb2.getValue();
-						new MailAccount().setId(lb1.getValue(lb1.getSelectedIndex()) != "-" ? 
-								Integer.parseInt(lb1.getValue(lb1.getSelectedIndex())): null);
-						new Signature().setId(lb2.getValue(lb2.getSelectedIndex()) != "-" ?
-								Integer.parseInt(lb2.getValue(lb2.getSelectedIndex())): null);
-						cb1.getValue();
 						NotificationInfo notificationInfo = new NotificationInfo()
 								.setBcc(tb.getValue())
 								.setHistory(cb2.getValue())
@@ -1123,7 +1116,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 										Integer.parseInt(lb1.getValue(lb1.getSelectedIndex())): null))
 								.setSignature(new Signature().setId(lb2.getValue(lb2.getSelectedIndex()) != "-" ?
 										Integer.parseInt(lb2.getValue(lb2.getSelectedIndex())): null))
-								.setNotify(cb1.getValue());
+								.setNotify(cb1.getValue())
+								.setMode(Integer.parseInt(lb3.getValue(lb3.getSelectedIndex())));
 						impl.insertNotificationInfo(JsNotification.getDomain(), notificationInfo, new AsyncCallback<Void>() {
 							
 							@Override
