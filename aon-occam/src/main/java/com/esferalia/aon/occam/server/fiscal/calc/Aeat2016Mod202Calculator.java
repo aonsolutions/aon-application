@@ -67,7 +67,7 @@ public class Aeat2016Mod202Calculator {
 				double c17 = 0.0;
 				if ( year == 2016 ) {
 					if (!x06) {
-						c17 = AonMathUtils.round(5.0/7.0 * x08,0);
+						c17 = AonMathUtils.floor(5.0/7.0 * x08,0);
 					} else {
 						if (x09 == 1) {
 							c17 = AonMathUtils.round(15.0/20.0 * x08,0);
