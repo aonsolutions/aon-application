@@ -12,6 +12,8 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
@@ -43,7 +45,16 @@ public class StatDAO {
 
 	public static StatParams createStatParams(AONContext ctx) {
 		StatParams params = new StatParams();
-		params.setChartType(StatChartType.INVOICE_TYPE_BY_YEAR_COMBO_CHART);
+		params.setChartType(StatChartType.INVOICE_TYPE_BY_MONTHS_COMBO_CHART);
+		
+		// Se entra con fecha hasta igual a hoy y fecha desde trece meses menos.
+		Date today = new Date();
+		params.setTo(new Date());
+		Calendar c = Calendar.getInstance();
+		c.setTime(today);
+		c.add(Calendar.MONTH, -13);
+		params.setFrom(c.getTime());
+		
 		for (InvoiceType type : InvoiceType.values()) {
 			params.getFilterItems().add(
 					new StatFilterItem().setId(type.toString())

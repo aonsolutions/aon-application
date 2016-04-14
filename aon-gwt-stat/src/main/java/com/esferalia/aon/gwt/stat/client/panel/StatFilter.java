@@ -147,7 +147,8 @@ public class StatFilter extends FlowPanel implements HasValueChangeHandlers<Stat
 					for (StatChartType type : StatChartType.values()) {
 						chartType.addItem(type.getDescription());
 					}
-					chartType.setSelectedIndex(StatChartType.INVOICE_TYPE_BY_YEAR_COMBO_CHART.ordinal());
+					
+					chartType.setSelectedIndex(result.getChartType().ordinal());
 					chartType.addChangeHandler( new ChangeHandler() {
 						
 						@Override
