@@ -165,7 +165,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 	public void onKeyDown(KeyDownEvent event) {
 		int keyCode = event.getNativeKeyCode();
 		String subject = subjectTextBox.getValue();
-		
+
 		if (keyCode == KeyCodes.KEY_ENTER) {
 			onSubjectKeyDown(subject);
 		}
@@ -228,8 +228,9 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 			cb.setValue(false);
 			cb.removeStyleName(AON.AON_BOLD);
 		}
-		
+	
 		this.userSelected = null;
+		this.subjectTextBox.setValue("");
 		this.drashTagList.clear();		
 		this.fromListBox.setSelectedIndex(0);
 	}

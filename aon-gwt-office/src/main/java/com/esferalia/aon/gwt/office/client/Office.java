@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -180,7 +181,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.tagTree.addListener(this);
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
 		
-		gitHub.loadRepositoryData(String.valueOf(getCurrentDomain()), getCurrentDomainName(), new AsyncCallback<AJSON<AonJsData>>() {
+		this.loadRepositoryData();
+		this.loadLabels();
+	}
+	
+	void loadRepositoryData() {
+		gitHub.loadRepositoryData(String.valueOf(getCurrentDomain()), 
+				getCurrentDomainName(), new AsyncCallback<AJSON<AonJsData>>() {
 			
 			@Override
 			public void onFailure(Throwable caught) {
@@ -208,7 +215,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 				Office.this.searchPanel.addUserList(Office.this.users);
 			}			
 		});
-
+	}
+	
+	void loadLabels() {
 		gitHub.getLabels(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsLabel>>() {
 
@@ -456,6 +465,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	void onRefreshButtonClickEvent(ClickEvent event) {
 		this.incrementSize = 0;
 		this.gitHub.setOffset(incrementSize);
+		loadRepositoryData();
+		loadLabels();
 		initIssuesList();
 		evalRadioButtons();
 	}
@@ -607,7 +618,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	
 	@Override
 	public void onSelectSubject(String subject) {	
-		this.gitHub.setText( (subject.trim().isEmpty()) ? null : subject );
+		this.gitHub.setText( (AonStringUtils.isEmpty(subject)) ? null : subject);
 		this.incrementSize = 0;
 		this.gitHub.setOffset(incrementSize);
 		initIssuesList();

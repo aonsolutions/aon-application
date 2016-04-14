@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.office.client.models.issues.JsIssueComment;
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -90,8 +91,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 		@Override
 		public String getStateIconStyle() {
-			if (issue.getState().compareTo(NoticeStatus.OPEN.getValue()) == 0)
-				return AON.AON_CSS.aonIconIssueOpen();
+			
+			if (AonStringUtils.equals(NoticeStatus.DUPLICATED.getValue(), issue.getState()))				
+				return AON.AON_CSS.aonIconIssueDuplicated();
+			else if (AonStringUtils.equals(NoticeStatus.OPEN.getValue(), issue.getState()))
+				return AON.AON_CSS.aonIconIssueOpenedGreen();
 			else if (issue.getState()
 					.compareTo(NoticeStatus.REOPEN.getValue()) == 0)
 				return AON.AON_CSS.aonIconIssueReOpenedBlue();

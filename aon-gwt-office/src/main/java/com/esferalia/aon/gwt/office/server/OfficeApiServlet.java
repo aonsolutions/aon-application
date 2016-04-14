@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
+import com.esferalia.aon.occam.api.model.type.NoticeType;
 import com.google.gwt.safehtml.shared.UriUtils;
 
 /**
@@ -1191,9 +1192,11 @@ public class OfficeApiServlet extends HttpServlet {
 		buffer.append(String.format("\"number\":%s,\r\n",
 				String.valueOf(notice.getId())));
 		buffer.append(String.format("\"title\":\"%s\",\r\n",
-				UriUtils.encode(notice.getTitle())));
+				UriUtils.encode(notice.getTitle())));		
 		buffer.append(
-				String.format("\"state\":\"%s\",\r\n", notice.getStatus()));
+				String.format("\"state\":\"%s\",\r\n", 
+						(notice.getDuplicated() > 0) ? NoticeStatus.DUPLICATED.getValue() 
+								:notice.getStatus()));
 		buffer.append(String.format("\"company\":\"%s\",\r\n",
 				notice.getCompany() != null
 						? UriUtils.encode(notice.getCompany()) : ""));

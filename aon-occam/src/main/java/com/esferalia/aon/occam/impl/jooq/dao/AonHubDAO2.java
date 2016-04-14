@@ -332,7 +332,7 @@ public class AonHubDAO2 {
 						.collect(Collectors.toCollection(LinkedList::new))))
 				.peek(notice -> notice.addComments(fillNoticeComments(ctx, notice)
 						.collect(Collectors.toCollection(LinkedList::new))))
-				
+				.peek(notice -> notice.setDuplicated(evalNoticeIsDuplicated(ctx, notice.getId())))
 				.peek(notice -> notice.setType(setTag(notice.getTags().stream()
 						.filter(tag -> tag.getType() == TagType.OFFICE_TYPE.value())
 						.collect(Collectors.toCollection(LinkedList::new)))))
@@ -356,16 +356,17 @@ public class AonHubDAO2 {
 				.join(USER)
 				.on(NOTICE.SENDER.eq(USER.ID))
 				.where( NoticeFilterImpl.getNoticeConditions(ctx,filter) )
-				.orderBy(NOTICE.DATE.desc())
-				.limit(50)
+				.orderBy(NOTICE.DATE.desc())				
 				.fetch()
 				.stream()				
-				.map(new FullNoticeFiller())				
+				.map(new FullNoticeFiller())
+				.limit(50)
+				.skip(filter.getOffset())
 				.peek(notice -> notice.setTags(fillOfficeTags(ctx, notice)
 						.collect(Collectors.toCollection(LinkedList::new))))				
 				.peek(notice -> notice.addComments(fillNoticeComments(ctx, notice)
-						.collect(Collectors.toCollection(LinkedList::new))))	
-				
+						.collect(Collectors.toCollection(LinkedList::new))))
+				.peek(notice -> notice.setDuplicated(evalNoticeIsDuplicated(ctx, notice.getId())))
 				.peek(notice -> notice.setType(setTag(notice.getTags().stream()
 						.filter(tag -> tag.getType() == TagType.OFFICE_TYPE.value())
 						.collect(Collectors.toCollection(LinkedList::new)))))
@@ -469,21 +470,18 @@ public class AonHubDAO2 {
 				.fetch()
 				.stream()
 				.map(new FullNoticeCommentFiller());
-		
-//		return ctx.getDslContext()
-//				.select(NOTICE.fields())
-//				.select(USER.fields())
-//				.from(NOTICE)
-//				.join(USER)
-//				.on(NOTICE.SENDER.eq(USER.ID))
-//				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
-//						.and(NOTICE.TYPE.eq(NoticeType.COMMENT.value())
-//								.and(NOTICE.NOTICE_.eq(notice.getId()))))
-//				.orderBy(NOTICE.DATE.desc())
-//				.fetch()
-//				.stream()
-//				.map(new FullNoticeCommentFiller());
-		// @formatter:on
+	}
+	
+	private static int evalNoticeIsDuplicated(AONContext ctx, int id) {
+		// @formatter:off
+		return ctx.getDslContext()
+				.selectCount()
+				.from(NOTICE)
+				.where(NOTICE.DOMAIN.eq(ctx.getDomainId())
+						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
+						.and(NOTICE.NOTICE_.eq(id)))
+				.fetchOne(0, int.class);
+		// @formatter:off
 	}
 
 	private static Stream<Tag> fillOfficeTags(AONContext ctx, Notice notice) {

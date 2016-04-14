@@ -1604,6 +1604,10 @@ input:disabled+label {
 	gwt-image: "aonIconIssueOpenedGreen";
 }
 
+@sprite .aon-icon-issue-duplicated {
+	gwt-image: "aonIconIssueDuplicated";
+}
+
 .aon-tree-icon-node {
 	height: auto !important;
 	overflow: hidden !important;

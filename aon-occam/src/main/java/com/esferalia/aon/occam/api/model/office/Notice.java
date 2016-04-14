@@ -32,12 +32,15 @@ public class Notice implements Serializable, HasId {
 	private Date endDate;
 	private User sender; //Remitente del aviso
 	
+	private int duplicated;
+	
 	private List<Tag> tags;
 	private List<Notice> comments;
 
 	public Notice() {
-		tags = new LinkedList<Tag>();
-		comments = new LinkedList<Notice>();
+		this.duplicated = 0;
+		this.tags = new LinkedList<Tag>();
+		this.comments = new LinkedList<Notice>();
 	}
 	
 	// ===============SETTERS=================== //
@@ -137,6 +140,10 @@ public class Notice implements Serializable, HasId {
 		return this;
 	}
 	
+	public Notice setDuplicated(int duplicated) {
+		this.duplicated = duplicated;
+		return this;
+	}
 	// ===============GETTERS=================== //
 	
 	@Override
@@ -194,6 +201,10 @@ public class Notice implements Serializable, HasId {
 	
 	public Integer getNotice() {
 		return notice;
+	}
+	
+	public int getDuplicated() {
+		return duplicated;
 	}
 	
 	public List<Tag> getTags() {

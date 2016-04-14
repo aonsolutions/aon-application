@@ -102,7 +102,9 @@ public interface AonResources extends ClientBundle, Images {
 	
 	@Source("images/aon-icon-issue-opened-green.png")
 	ImageResource aonIconIssueOpenedGreen();
-
+	
+	@Source("images/aon-icon-issue-duplicated.png")
+	ImageResource aonIconIssueDuplicated();
 
 	@Source("images/aon-icon-check.png")
 	ImageResource aonIconCheck();
