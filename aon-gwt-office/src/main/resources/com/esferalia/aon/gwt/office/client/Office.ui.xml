@@ -110,13 +110,17 @@
 											value="false" text="{msg.closedIssues}" />
 										<g:RadioButton ui:field="allIssuesRb" name="showIssuesRb"
 											value="false" text="{msg.allIssues}" />
-										<g:RadioButton ui:field="faqIssuesRb" name="showIssuesRb" text="{msg.FAQ}"/>
+										<g:RadioButton ui:field="faqIssuesRb" name="showIssuesRb"
+											text="{msg.FAQ}" />
 									</g:HTMLPanel>
 
 									<g:HTMLPanel>
 										<a
 											style="font-size:10px;font-weight:bold;float:right; position: relative; top: 2px;">
 											<span class="aon-outputText">
+												<g:Button ui:field="refreshButton" text="Refresh"
+													styleName="aon-editDataTable-button aon-lookupButton-clear 
+													{aonResources.css.aonIconCommandButton}" />
 												<g:Button ui:field="clearButton" text="Limpiar"
 													styleName="aon-editDataTable-button {aonResources.css.aonIconDelete}" />
 											</span>

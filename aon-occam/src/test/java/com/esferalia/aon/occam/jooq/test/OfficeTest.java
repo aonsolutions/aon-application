@@ -1,10 +1,10 @@
 package com.esferalia.aon.occam.jooq.test;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.jooq.Condition;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -29,7 +29,8 @@ public class OfficeTest {
 	private static String DOMAIN_NAME = "macayc-mac.amtzdelagos.dev";
 	private static int DOMAIN_ID = 536;
 	private static String USER_NAME = "mac";
-
+	
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException,

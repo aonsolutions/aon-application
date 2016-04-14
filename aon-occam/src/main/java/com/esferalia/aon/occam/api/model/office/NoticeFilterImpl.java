@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jooq.Condition;
-import org.jooq.DSLContext;
 
 import com.esferalia.aon.jooq.tables.Notice;
 import com.esferalia.aon.occam.api.AONContext;

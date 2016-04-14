@@ -102,6 +102,7 @@ public class OfficeApiServlet extends HttpServlet {
 
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
+				pw.flush();
 			}
 		}
 		

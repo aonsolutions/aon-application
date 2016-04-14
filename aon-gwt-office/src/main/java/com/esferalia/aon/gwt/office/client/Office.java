@@ -106,6 +106,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	Button clearButton;
 	@UiField 
 	Button configurationButton;
+	@UiField
+	Button refreshButton;
 	
 	@UiField
 	DeckLayoutPanel deckPanel;
@@ -446,6 +448,14 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.gitHub.setFilterTagList(null);
 		this.gitHub.setText(null);
 		this.gitHub.setSender(null);
+		initIssuesList();
+		evalRadioButtons();
+	}
+	
+	@UiHandler("refreshButton")
+	void onRefreshButtonClickEvent(ClickEvent event) {
+		this.incrementSize = 0;
+		this.gitHub.setOffset(incrementSize);
 		initIssuesList();
 		evalRadioButtons();
 	}

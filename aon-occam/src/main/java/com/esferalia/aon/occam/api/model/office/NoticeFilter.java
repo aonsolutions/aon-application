@@ -96,10 +96,6 @@ public class NoticeFilter implements Serializable {
 		return this.duplicated;
 	}
 	
-	public void setSince(Date since) {
-		this.since = since;
-	}
-	
 	public Date getSince() {
 		return since;
 	}
