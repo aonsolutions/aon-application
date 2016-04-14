@@ -149,7 +149,7 @@ public enum BankConfig implements IResourceable, IStringEnum {
 	FK("FK",4,34),
 	IM("IM",4,34),
 	MP("MP",4,34),
-	MA("MA",4,34),
+	MA("MA",3,28),
 	MH("MH",4,34),
 	MQ("MQ",5,27),
 	MU("MU",6,30),
