@@ -1051,23 +1051,19 @@ public class CretaServlet extends HttpServlet
 	private static boolean checkData(Attach attach, String login){
 		if ( attach.getDriveId() != null  ){
 			Domain domain = attach.getDomain() ;
-			try {
-				byte data [] =	
-				DriveUtils.getByteFile(
-						domain.getName(), 
-						domain.getId(), 
-						login, 
-						attach.getDriveId(), 
-						attach.getId());
-				attach.setData(data);
-				DriveUtils.deleteFile(domain.getName(), domain.getId(), login, attach.getDriveId());
-				attach.setDriveId(null);
+		
+			byte data [] =	
+			DriveUtils.getByteFile(
+					domain.getName(), 
+					domain.getId(), 
+					login, 
+					attach.getDriveId(), 
+					attach.getId());
+			attach.setData(data);
+			DriveUtils.deleteFile(domain.getName(), domain.getId(), login, attach.getDriveId());
+			attach.setDriveId(null);
 
-				AON.update(domain.getName(), domain.getId(), login, attach);
-			
-			} catch ( IOException | GeneralSecurityException e){
-				e.printStackTrace();
-			} 
+			AON.update(domain.getName(), domain.getId(), login, attach);
 		}
 		return attach.getData() != null && attach.getData().length > 0;
 		
