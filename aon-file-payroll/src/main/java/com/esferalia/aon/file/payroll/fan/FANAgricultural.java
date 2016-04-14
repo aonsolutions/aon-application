@@ -183,7 +183,7 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	}
 	
 	private boolean isITPeriod(DAT dat){
-		return dat.getIndicadoresPerfil().contains("I");
+		return dat.getIndicadoresPerfil()!=null && dat.getIndicadoresPerfil().contains("I");
 	}
 	
 	/**
