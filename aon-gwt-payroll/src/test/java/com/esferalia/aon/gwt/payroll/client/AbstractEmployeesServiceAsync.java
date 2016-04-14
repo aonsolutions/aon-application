@@ -372,6 +372,11 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 		failure(callback);
 		
 	}
+	
+	@Override
+	public void getEmployee(int employeeId, AsyncCallback<Employee> callback) throws IllegalArgumentException {
+		failure(callback);
+	}
 
 	@Override
 	public void getEmployees(int workplaceId, Date endDate, String pattern,

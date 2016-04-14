@@ -379,7 +379,27 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
-
+	
+	@Override
+	public Employee getEmployee(int employeeId) throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			return JooqEmployees.getEmployee(conn, employeeId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+	
 	@Override
 	public List<Employee> getEmployees(int workplaceId, Date fromDate,
 			String pattern, int offset, int limit)

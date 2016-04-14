@@ -368,9 +368,33 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 	}
+	
+	interface EmployeeCommand extends ScheduledCommand {
+		void setEmployee(Employee employee);
+	}
+	
+	
+	class RefreshEmployeeCommand implements EmployeeCommand{
+		
+		private Employee employee;
+		
+		@Override
+		public void execute() {
+			EmployeeTree.this.employees.refresh(employee);
+		}
+		
+		
+		// --------------------------------------------------------------------
+		
+		@Override
+		public void setEmployee(Employee employee) {
+			this.employee = employee;
+		}
+	}
+	
 
 	class CalcEmployeeCommand
-			implements ScheduledCommand, AcceptHandler, CalculateService,
+			implements EmployeeCommand, AcceptHandler, CalculateService,
 			SelectionHandler<JsSalaryResult>, AsyncCallback<JsSalaryResult> {
 
 		private SalaryResults results;
@@ -987,6 +1011,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 
+	class RefreshWorkplaceCommand implements WorkplaceCommand{
+		
+		private Workplace workplace;
+		
+		@Override
+		public void execute() {
+			EmployeeTree.this.employees.refresh(workplace);
+		}
+		
+		
+		// --------------------------------------------------------------------
+		
+		@Override
+		public void setWorkplace(Workplace workplace) {
+			this.workplace = workplace;
+		}
+	}
+
 	class CalcWorkplaceCommand
 			implements ScheduledCommand, AcceptHandler, CalculateService,
 			AsyncCallback<JsSalaryResult>, SelectionHandler<JsSalaryResult> {
@@ -1097,7 +1139,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		CalcWorkplaceCommand calcCmd;
 		PasteEmployeeCommand pasteCmd;
 
-		WorkplaceCommand workplaceCmds[] = new WorkplaceCommand[6];
+		WorkplaceCommand workplaceCmds[] = new WorkplaceCommand[7];
 		WorkplaceCreateResponseCommand cretaResponseCmds[] = new WorkplaceCreateResponseCommand[1];
 
 		public WorkplaceContextMenu() {
@@ -1161,6 +1203,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			
+			addSeparator();
+			addItem("Refrescar",
+					workplaceCmds[6] = new RefreshWorkplaceCommand(),
+					AON.AON_ICON_REFRESH, AON.AON_ICON_CMD_BUTTON);
 		}
 
 		public void setWorkplace(Workplace workplace) {
@@ -1247,12 +1293,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 	}
-
+	
+	
 	class EmployeeContextMenu extends ContextMenu {
 
 		private CalcEmployeeCommand calcCmd;
 		private CopyEmployeeCommand copyCmd;
 		private DeleteEmployeeCommand deleteCmd;
+		private RefreshEmployeeCommand refreshCmd;
 
 		public EmployeeContextMenu() {
 
@@ -1270,10 +1318,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					AON.AON_ICON_TASK_START, AON.AON_ICON_CMD_BUTTON);
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
 					AON.AON_ICON_CMD_BUTTON);
+			addSeparator();
+			addItem("Refrescar", refreshCmd = new RefreshEmployeeCommand(), AON.AON_ICON_REFRESH,
+					AON.AON_ICON_CMD_BUTTON);
 		}
 
 		public void setEmployee(Employee employee) {
 			calcCmd.setEmployee(employee);
+			refreshCmd.setEmployee(employee);
 		}
 
 		public void setCopyEmployee(Employee employee) {
@@ -1729,6 +1781,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	// --------------------------------------------------------- Private methods
 
+
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 0);
 	}
@@ -2000,6 +2053,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 
+
 	private static void viewResults() {
 		singlenton.showResultsPanel();
 	}
@@ -2020,11 +2074,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		singlenton.getEmployeeContextMenu().calcCmd.execute();
 	}
 
+	private static void refreshEmployee() {
+		singlenton.employees.refresh(singlenton.employee);
+	}
+
+	private static void refreshWorkplace() {
+		singlenton.employees.refresh(singlenton.workplace);
+	}
+	
 	private static native void export2JS() /*-{
 		$wnd.viewResults = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::viewResults());
 		$wnd.employeeCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::employeeCalc());
 		$wnd.workplaceCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::workplaceCalc());
 		$wnd.enterpriseCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::enterpriseCalc());
+		$wnd.refreshEmployee = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::refreshEmployee());
+		$wnd.refreshWorkplace = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::refreshWorkplace());
 	}-*/;
 
 	private static String employee2Json(Employee employee) {

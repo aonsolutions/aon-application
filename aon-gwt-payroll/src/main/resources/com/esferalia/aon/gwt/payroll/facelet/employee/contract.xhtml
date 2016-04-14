@@ -22,8 +22,10 @@
 
 
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="Contract-Save" value="#{bundle.aon_accept}"
+					<aon:commandButton id="Contract-Save" 
 						reRender="contractMainGrid"
+						value="#{bundle.aon_accept}"
+						oncomplete="refreshEmployee();" 
 						styleClass="aon-finding-toolbar-item aon-icon-accept">
 						<aon:actionListener method="#{person.accept}" />
 						<aon:actionListener method="#{contract.accept}" />
@@ -101,7 +103,6 @@
 							</aon:div>
 						</aon:div>
 					</aon:div>
-
 
 
 				</aon:panelGrid>

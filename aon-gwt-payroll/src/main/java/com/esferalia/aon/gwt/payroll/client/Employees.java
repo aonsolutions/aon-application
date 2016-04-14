@@ -307,146 +307,9 @@ public class Employees extends ResizeComposite implements
 		TreeItem workplaceItem = null;
 
 		for (Workplace workplace : workplaces) {
-
-			String description = workplace.getDescription();
-
-			workplaceItem = addImageItem(enterpriseItem, description,
-					images.workplace());
-			workplaceItem.setUserObject(workplace);
-			workplaceItem.setVisible(isWorkPlaceVisible(workplace));
-
-			addImageItem(workplaceItem, "Costes", images.costs());
-			addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
-			addImageItem(workplaceItem, "Calendario", images.laboralCalendar())
-					.setUserObject(
-							new CalendarDraftObjectData(workplace.getId(),
-									employeesService));
-			addImageItem(workplaceItem, "Estad\u00EDsticas",
-					images.statistics());
-			addImageItem(workplaceItem, "Partes IT", images.itDatas())
-					.setUserObject(
-							new ITDataObject(workplace.getId(),
-									employeesService));
-			if (extended) {
-
-				final TreeItem eventsItem = addImageItem(workplaceItem,
-						"Incidencias", images.data());
-				//final TreeItem eventsItem = new TreeItem();
-				
-				// --------------------------------------------------------------
-				//
-
-				Agreement agreement = workplace.getAgreement();
-
-				final EventsDraftObject eventsDraftObject;
-
-				if (Enterprise.isGPS(enterprise))
-					eventsDraftObject = new EventsDraftObject(
-							workplace.getId(),
-							agreement != null ? agreement.getId() : null,
-							employeesService,
-							// @formatter:off
-							new AbstractEventsDraftObject.EnumEventMetaData("DESEMPE\u00D1O",
-									"DESEMPE\u00D1O",
-									"Desempe\u00F1o por Trabajador y Jornada",
-									"", new String[] { 
-											"4", 
-											"8", 
-											"10", 
-											"12",
-											"L", 
-											"LT", 
-											"LR", 
-											"F", 
-											"FT", 
-											"FR",
-											"V", 
-											"B", 
-											"P", 
-											"AI", 
-											"M" }, DateField.DAY)
-							// @formatter:on
-							);
-				else
-					eventsDraftObject = new EventsDraftObject(
-							workplace.getId(),
-							agreement != null ? agreement.getId() : null,
-							employeesService, new BooleanEventMetaData(
-									"DIAS_EFECTIVOS", DateField.DAY),
-							new BooleanEventMetaData("DIAS_VACACIONES", DateField.DAY),
-							// new BooleanEventMetaData("HUELGA", DAY),
-							new DecimalEventMetaData("COEFICIENTE_ERE", DateField.DAY),
-							new EventMetaData("OBSERVACIONES", DateField.MONTH));
-
-				Date date = new Date();
-
-				eventsDraftObject.setPeriod(
-						DateUtils.getFirstDayOfWorkWeek(date),
-						DateUtils.getLastDayOfWorkWeek(date),
-						new EventsDraftObject.Callback() {
-
-							@Override
-							public void onSucces() {
-								eventsItem.setUserObject(eventsDraftObject);
-							}
-
-							@Override
-							public void onFailure(Throwable throwable) {
-								eventsItem.setUserObject(eventsDraftObject);
-							}
-
-						});
-			}
-
-			Agreement agreement = workplace.getAgreement();
-
-			if (extended && (agreement != null)) {
-
-				final TreeItem agreementItem = addImageItem(workplaceItem,
-						agreement.getDescription(), images.agreement());
-
-				AgreementDraft agreementDraft = new AgreementDraft();
-				agreementDraft.setId(agreement.getId());
-				agreementDraft.setDomain(agreement.getDomain());
-				agreementDraft.setDescription(agreement.getDescription());
-				agreementDraft.setStartDate(DateUtils.getFirstDayOfMonth());
-				agreementDraft.setEndDate(DateUtils.getLastDayOfMonth());
-				final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
-						enterprise.getDomain(), agreementDraft,
-						employeesService);
-
-				employeesService.getChanges(agreement,
-						new AsyncCallback<SortedSet<Date>>() {
-							@Override
-							public void onFailure(Throwable caught) {
-								agreementItem
-										.setUserObject(agreementDraftObject);
-							}
-
-							public void onSuccess(SortedSet<Date> result) {
-								if (!CollectionUtils.isEmpty(result)) {
-									Date lastChange = result.last();
-									agreementDraftObject.setStartDate(DateUtils
-											.getFirstDayOfMonth(lastChange));
-									agreementDraftObject.setEndDate(DateUtils
-											.getLastDayOfMonth(lastChange));
-								}
-								agreementItem
-										.setUserObject(agreementDraftObject);
-							};
-						});
-
-				agreementDraftObject.addListener(new UndoManager.Listener() {
-					@Override
-					public void onChange(UndoManager undoManager) {
-						ImageResource resource = agreementDraftObject.canUndo() ? images
-								.agreement_changed() : images.agreement();
-						agreementItem.setHTML(imageItemHTML(resource,
-								agreementDraftObject.getDescription()));
-					}
-				});
-
-			} // TODO: extended ? Yes I'm know , it's awful.
+			workplaceItem = new TreeItem();
+			enterpriseItem.addItem(workplaceItem);
+			workplaceItem = loadWorkplace(enterprise, workplaceItem, workplace);
 		}
 
 		enterpriseItem.setState(true, true);
@@ -460,6 +323,7 @@ public class Employees extends ResizeComposite implements
 		initViewButton(toolbar.getViewButton());
 
 	}
+
 
 	public void clearEnterprise(Enterprise enterprise) {
 		for (int i = 0; i < tree.getItemCount(); i++) {
@@ -636,6 +500,56 @@ public class Employees extends ResizeComposite implements
 		return null;
 	}
 
+	public void refresh(Employee employee) {
+		final TreeItem employeeItem = getEmployeeItem(employee.getId());
+		final TreeItem workplaceItem = employeeItem.getParentItem();
+		employeesService.getEmployee(employee.getId(), new AsyncCallback<Employee>(){
+			@Override
+			public void onSuccess(Employee result) {
+				employeeItem.removeItems();
+				loadEmployee(workplaceItem, employeeItem, result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
+	}
+	
+	public void refresh(final Workplace workplace) {
+		
+		final TreeItem workplaceItem = getWorkplacetItem(workplace.getId());
+		final Integer enterpriseId = ((Enterprise)workplaceItem.getParentItem().getUserObject()).getId();
+		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getLocalizedMessage());
+			}
+
+			@Override
+			public void onSuccess(Enterprise[] enterprises) {
+				for (Enterprise newEnterprise : enterprises) {
+					if ( newEnterprise.getId().equals(enterpriseId)) {
+						for ( Workplace newWorkplace : newEnterprise.getWorkplaces() ){
+							if ( workplace.getId().equals(newWorkplace.getId())){
+								boolean open = workplaceItem.getState();
+								workplaceItem.removeItems();
+								loadWorkplace(newEnterprise, workplaceItem, newWorkplace);
+								if ( open ) 
+									onWorkplaceOpen(workplaceItem);
+								
+							}
+						}
+					
+					}
+				} // TODO: Only this workplace...
+					
+			}
+
+		});
+	}
+
 	public void selectEmployee(int employeeId, boolean fireEvents) {
 
 		TreeItem treeItem = getEmployeeItem(employeeId);
@@ -691,6 +605,149 @@ public class Employees extends ResizeComposite implements
 	}
 
 	// ------------------------------------------------------------------------
+
+
+	private TreeItem loadWorkplace( Enterprise enterprise, final TreeItem workplaceItem, Workplace workplace) {
+		String description = workplace.getDescription();
+
+		workplaceItem.setHTML(imageItemHTML(images.workplace(), description));
+		workplaceItem.setUserObject(workplace);
+		workplaceItem.setVisible(isWorkPlaceVisible(workplace));
+
+		addImageItem(workplaceItem, "Costes", images.costs());
+		addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
+		addImageItem(workplaceItem, "Calendario", images.laboralCalendar())
+				.setUserObject(
+						new CalendarDraftObjectData(workplace.getId(),
+								employeesService));
+		addImageItem(workplaceItem, "Estad\u00EDsticas",
+				images.statistics());
+		addImageItem(workplaceItem, "Partes IT", images.itDatas())
+				.setUserObject(
+						new ITDataObject(workplace.getId(),
+								employeesService));
+		if (extended) {
+
+			final TreeItem eventsItem = addImageItem(workplaceItem,
+					"Incidencias", images.data());
+			//final TreeItem eventsItem = new TreeItem();
+			
+			// --------------------------------------------------------------
+			//
+
+			Agreement agreement = workplace.getAgreement();
+
+			final EventsDraftObject eventsDraftObject;
+
+			if (Enterprise.isGPS(enterprise))
+				eventsDraftObject = new EventsDraftObject(
+						workplace.getId(),
+						agreement != null ? agreement.getId() : null,
+						employeesService,
+						// @formatter:off
+						new AbstractEventsDraftObject.EnumEventMetaData("DESEMPE\u00D1O",
+								"DESEMPE\u00D1O",
+								"Desempe\u00F1o por Trabajador y Jornada",
+								"", new String[] { 
+										"4", 
+										"8", 
+										"10", 
+										"12",
+										"L", 
+										"LT", 
+										"LR", 
+										"F", 
+										"FT", 
+										"FR",
+										"V", 
+										"B", 
+										"P", 
+										"AI", 
+										"M" }, DateField.DAY)
+						// @formatter:on
+						);
+			else
+				eventsDraftObject = new EventsDraftObject(
+						workplace.getId(),
+						agreement != null ? agreement.getId() : null,
+						employeesService, new BooleanEventMetaData(
+								"DIAS_EFECTIVOS", DateField.DAY),
+						new BooleanEventMetaData("DIAS_VACACIONES", DateField.DAY),
+						// new BooleanEventMetaData("HUELGA", DAY),
+						new DecimalEventMetaData("COEFICIENTE_ERE", DateField.DAY),
+						new EventMetaData("OBSERVACIONES", DateField.MONTH));
+
+			Date date = new Date();
+
+			eventsDraftObject.setPeriod(
+					DateUtils.getFirstDayOfWorkWeek(date),
+					DateUtils.getLastDayOfWorkWeek(date),
+					new EventsDraftObject.Callback() {
+
+						@Override
+						public void onSucces() {
+							eventsItem.setUserObject(eventsDraftObject);
+						}
+
+						@Override
+						public void onFailure(Throwable throwable) {
+							eventsItem.setUserObject(eventsDraftObject);
+						}
+
+					});
+		}
+
+		Agreement agreement = workplace.getAgreement();
+
+		if (extended && (agreement != null)) {
+
+			final TreeItem agreementItem = addImageItem(workplaceItem,
+					agreement.getDescription(), images.agreement());
+
+			AgreementDraft agreementDraft = new AgreementDraft();
+			agreementDraft.setId(agreement.getId());
+			agreementDraft.setDomain(agreement.getDomain());
+			agreementDraft.setDescription(agreement.getDescription());
+			agreementDraft.setStartDate(DateUtils.getFirstDayOfMonth());
+			agreementDraft.setEndDate(DateUtils.getLastDayOfMonth());
+			final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
+					enterprise.getDomain(), agreementDraft,
+					employeesService);
+
+			employeesService.getChanges(agreement,
+					new AsyncCallback<SortedSet<Date>>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							agreementItem
+									.setUserObject(agreementDraftObject);
+						}
+
+						public void onSuccess(SortedSet<Date> result) {
+							if (!CollectionUtils.isEmpty(result)) {
+								Date lastChange = result.last();
+								agreementDraftObject.setStartDate(DateUtils
+										.getFirstDayOfMonth(lastChange));
+								agreementDraftObject.setEndDate(DateUtils
+										.getLastDayOfMonth(lastChange));
+							}
+							agreementItem
+									.setUserObject(agreementDraftObject);
+						};
+					});
+
+			agreementDraftObject.addListener(new UndoManager.Listener() {
+				@Override
+				public void onChange(UndoManager undoManager) {
+					ImageResource resource = agreementDraftObject.canUndo() ? images
+							.agreement_changed() : images.agreement();
+					agreementItem.setHTML(imageItemHTML(resource,
+							agreementDraftObject.getDescription()));
+				}
+			});
+
+		} // TODO: extended ? Yes I'm know , it's awful.
+		return workplaceItem;
+	}
 
 	private void loadEmployees(final TreeItem workplaceItem, final int limit) {
 		loadEmployees(workplaceItem, limit, null);
@@ -1242,173 +1299,12 @@ public class Employees extends ResizeComposite implements
 		int added = 0;
 
 		for (Employee employee : employees) {
-
 			if (employee.getId() < 0)
 				continue;
-
-			boolean current = isActive(employee);
-
-			String fullName = employee.getFullname();
-
-			StringBuffer text = new StringBuffer(fullName);
-			if (endDate && (employee.getEndDate() != null)) {
-				text.append(" (");
-				text.append(END_DATE_FORMAT.format(employee.getEndDate()));
-				text.append(")");
-			}
-
-			TreeItem employeeItem = addImageItem(workplaceItem,
-					text.toString(),
-					current ? images.employee() : images.oldemployee());
+			loadEmployee(workplaceItem, workplaceItem.getChildCount(), employee);
 			added++;
-
-			employeeItem.setUserObject(employee);
-
-			addImageItem(employeeItem, "N\u00F3minas", images.salaries());
-
-			// addImageItem(employeeItem, "Calendario",
-			// images.laboralCalendar());
-
-			if (extended) {
-
-				ITDataObject dataObject = getITDataObject(workplaceItem);
-
-				Date salaryDate = DateUtils.before(
-						DateUtils.after(new Date(), employee.getStartDate()),
-						employee.getEndDate());
-				Date startDate = DateUtils.getFirstDayOfMonth(salaryDate);
-				Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
-				Date issueDate = endDate;
-
-				TreeItem salaryDraftItem = addImageItem(employeeItem,
-						"Borrador", images.draft());
-
-				SalaryDraft salaryDraft = new SalaryDraft();
-				salaryDraft.setEmployee(employee);
-				salaryDraft.setStartDate(startDate);
-				salaryDraft.setEndDate(endDate);
-				salaryDraft.setIssueDate(issueDate);
-				salaryDraft.setType(Type.SALARY);
-				SalaryDraftObject draftObject = new SalaryDraftObject(
-						salaryDraft, dataObject, employeesService);
-				salaryDraftItem.setUserObject(draftObject);
-
-				//final TreeItem employeeEventsItem = addImageItem(employeeItem,
-				//		"Incidencias", images.data());
-				final TreeItem employeeEventsItem = new TreeItem();
-
-				final EmployeeEventsDraftObject employeeEventsDraftObject;
-
-				employeeEventsDraftObject = new EmployeeEventsDraftObject(
-						employee, employeesService,
-						new AbstractEventsDraftObject.BooleanEventMetaData(
-								"DIAS_TRABAJADOS", DateField.DAY),
-						new AbstractEventsDraftObject.BooleanEventMetaData(
-								"DIAS_EFECTIVOS", DateField.DAY),
-						new AbstractEventsDraftObject.BooleanEventMetaData(
-								"DIAS_ERE", DateField.DAY),
-						new AbstractEventsDraftObject.BooleanEventMetaData(
-								"DIAS_HUELGA", DateField.DAY),
-						new AbstractEventsDraftObject.BooleanEventMetaData(
-								"DIAS_AUSENCIA", DateField.DAY),
-						new AbstractEventsDraftObject.DecimalEventMetaData(
-								"HORAS_TRABAJADAS", DateField.DAY),
-						new AbstractEventsDraftObject.DecimalEventMetaData(
-								"HORAS_COMPLEMENTARIAS", DateField.DAY),
-						new AbstractEventsDraftObject.BooleanEventMetaData(
-								"DIAS_PECNORTA", DateField.DAY),
-						new AbstractEventsDraftObject.BooleanEventMetaData(
-								"DIAS_MANUTENCION", DateField.DAY),
-						new AbstractEventsDraftObject.BooleanEventMetaData(
-								"DIAS_PECNORTA_EXTRANJERO", DateField.DAY),
-						new AbstractEventsDraftObject.BooleanEventMetaData(
-								"DIAS_MANUTENCION_EXTRANJERO", DateField.DAY),
-						new AbstractEventsDraftObject.DecimalEventMetaData(
-								"KMS", DateField.DAY),
-						new AbstractEventsDraftObject.BooleanEventMetaData(
-								"DIAS_VACACIONES", DateField.DAY),
-						new AbstractEventsDraftObject.DecimalEventMetaData(
-								"JORNADAS_REALES", DateField.DAY),
-						new AbstractEventsDraftObject.DecimalEventMetaData(
-								"HORAS_EXTRAS", DateField.DAY),
-						new AbstractEventsDraftObject.DecimalEventMetaData(
-								"HORAS_EXTRAS_FZA", DateField.DAY));
-				
-				Date date = new Date();
-				
-				employeeEventsDraftObject.setPeriod(DateUtils.getFirstDayOfWorkWeek(date), 
-						DateUtils.getLastDayOfWorkWeek(date), new EmployeeEventsDraftObject.Callback() {
-							
-							@Override
-							public void onSucces() {								
-								employeeEventsItem.setUserObject(employeeEventsDraftObject);
-							}
-							
-							@Override
-							public void onFailure(Throwable throwable) {								
-								employeeEventsItem.setUserObject(employeeEventsDraftObject);
-							}
-						});
-
-				// A.E.T
-				// addImageItem(employeeItem, "Regularizaciones", images.aet());
-
-				Category category = employee.getCategory();
-
-				// Agreement Category
-				if (category == null)
-					continue;
-
-				Agreement agreement = category.getAgreement();
-				Agreement workplaceAgreement = ((Workplace) workplaceItem
-						.getUserObject()).getAgreement();
-
-				if (workplaceAgreement != null
-						&& NumberUtils.equals(workplaceAgreement.getId(),
-								agreement.getId()))
-					continue;
-
-				TreeItem enterpriseItem = workplaceItem.getParentItem();
-				Enterprise enterprise = (Enterprise) enterpriseItem
-						.getUserObject();
-
-				final TreeItem categoryItem = addImageItem(employeeItem,
-						category.getLevel() + ". " + category.getDescription(),
-						images.agreement());
-
-				CategoryDraft categoryDraft = new CategoryDraft();
-				categoryDraft.setId(agreement.getId());
-				categoryDraft.setLevelId(category.getLevelId());
-				categoryDraft.setDescription(agreement.getDescription());
-				categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
-				categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
-				final CategoryDraftObject categoryDraftObject = new CategoryDraftObject(
-						enterprise.getDomain(), categoryDraft, employeesService);
-				//categoryItem.setUserObject(categoryDraftObject);
-
-				employeesService.getChanges(agreement,
-						new AsyncCallback<SortedSet<Date>>() {
-							@Override
-							public void onFailure(Throwable caught) {
-								categoryItem
-										.setUserObject(categoryDraftObject);
-							}
-
-							public void onSuccess(SortedSet<Date> result) {
-								if (!CollectionUtils.isEmpty(result)) {
-									Date lastChange = result.last();
-									categoryDraftObject.setStartDate(DateUtils
-											.getFirstDayOfMonth(lastChange));
-									categoryDraftObject.setEndDate(DateUtils
-											.getLastDayOfMonth(lastChange));
-								}
-								categoryItem
-										.setUserObject(categoryDraftObject);
-							};
-						});
-			}
-
 		}
+		
 		if (added == limit) {
 			int last = workplaceItem.getChildCount() - 1;
 			TreeItem employeeCentinel = workplaceItem.getChild(last
@@ -1417,7 +1313,175 @@ public class Employees extends ResizeComposite implements
 		} // end-if : If's very likely that exists more employees.
 
 	}
+	
 
+	private void loadEmployee(TreeItem workplaceItem, int beforeIndex, Employee employee){
+		TreeItem employeeItem = new TreeItem();
+		workplaceItem.insertItem(beforeIndex, employeeItem);
+		loadEmployee(workplaceItem, employeeItem, employee);
+	}
+
+	private void loadEmployee(TreeItem workplaceItem, TreeItem employeeItem, Employee employee){
+
+		boolean current = isActive(employee);
+
+		String fullName = employee.getFullname();
+
+		StringBuffer text = new StringBuffer(fullName);
+		if (endDate && (employee.getEndDate() != null)) {
+			text.append(" (");
+			text.append(END_DATE_FORMAT.format(employee.getEndDate()));
+			text.append(")");
+		}
+
+		employeeItem.setHTML(imageItemHTML(current ? images.employee() : images.oldemployee(), text.toString()));
+		employeeItem.setUserObject(employee);
+
+		addImageItem(employeeItem, "N\u00F3minas", images.salaries());
+
+		// addImageItem(employeeItem, "Calendario",
+		// images.laboralCalendar());
+
+		if (extended) {
+
+			ITDataObject dataObject = getITDataObject(workplaceItem);
+
+			Date salaryDate = DateUtils.before(
+					DateUtils.after(new Date(), employee.getStartDate()),
+					employee.getEndDate());
+			Date startDate = DateUtils.getFirstDayOfMonth(salaryDate);
+			Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
+			Date issueDate = endDate;
+
+			TreeItem salaryDraftItem = addImageItem(employeeItem,
+					"Borrador", images.draft());
+
+			SalaryDraft salaryDraft = new SalaryDraft();
+			salaryDraft.setEmployee(employee);
+			salaryDraft.setStartDate(startDate);
+			salaryDraft.setEndDate(endDate);
+			salaryDraft.setIssueDate(issueDate);
+			salaryDraft.setType(Type.SALARY);
+			SalaryDraftObject draftObject = new SalaryDraftObject(
+					salaryDraft, dataObject, employeesService);
+			salaryDraftItem.setUserObject(draftObject);
+
+			//final TreeItem employeeEventsItem = addImageItem(employeeItem,
+			//		"Incidencias", images.data());
+			final TreeItem employeeEventsItem = new TreeItem();
+
+			final EmployeeEventsDraftObject employeeEventsDraftObject;
+
+			employeeEventsDraftObject = new EmployeeEventsDraftObject(
+					employee, employeesService,
+					new AbstractEventsDraftObject.BooleanEventMetaData(
+							"DIAS_TRABAJADOS", DateField.DAY),
+					new AbstractEventsDraftObject.BooleanEventMetaData(
+							"DIAS_EFECTIVOS", DateField.DAY),
+					new AbstractEventsDraftObject.BooleanEventMetaData(
+							"DIAS_ERE", DateField.DAY),
+					new AbstractEventsDraftObject.BooleanEventMetaData(
+							"DIAS_HUELGA", DateField.DAY),
+					new AbstractEventsDraftObject.BooleanEventMetaData(
+							"DIAS_AUSENCIA", DateField.DAY),
+					new AbstractEventsDraftObject.DecimalEventMetaData(
+							"HORAS_TRABAJADAS", DateField.DAY),
+					new AbstractEventsDraftObject.DecimalEventMetaData(
+							"HORAS_COMPLEMENTARIAS", DateField.DAY),
+					new AbstractEventsDraftObject.BooleanEventMetaData(
+							"DIAS_PECNORTA", DateField.DAY),
+					new AbstractEventsDraftObject.BooleanEventMetaData(
+							"DIAS_MANUTENCION", DateField.DAY),
+					new AbstractEventsDraftObject.BooleanEventMetaData(
+							"DIAS_PECNORTA_EXTRANJERO", DateField.DAY),
+					new AbstractEventsDraftObject.BooleanEventMetaData(
+							"DIAS_MANUTENCION_EXTRANJERO", DateField.DAY),
+					new AbstractEventsDraftObject.DecimalEventMetaData(
+							"KMS", DateField.DAY),
+					new AbstractEventsDraftObject.BooleanEventMetaData(
+							"DIAS_VACACIONES", DateField.DAY),
+					new AbstractEventsDraftObject.DecimalEventMetaData(
+							"JORNADAS_REALES", DateField.DAY),
+					new AbstractEventsDraftObject.DecimalEventMetaData(
+							"HORAS_EXTRAS", DateField.DAY),
+					new AbstractEventsDraftObject.DecimalEventMetaData(
+							"HORAS_EXTRAS_FZA", DateField.DAY));
+			
+			Date date = new Date();
+			
+			employeeEventsDraftObject.setPeriod(DateUtils.getFirstDayOfWorkWeek(date), 
+					DateUtils.getLastDayOfWorkWeek(date), new EmployeeEventsDraftObject.Callback() {
+						
+						@Override
+						public void onSucces() {								
+							employeeEventsItem.setUserObject(employeeEventsDraftObject);
+						}
+						
+						@Override
+						public void onFailure(Throwable throwable) {								
+							employeeEventsItem.setUserObject(employeeEventsDraftObject);
+						}
+					});
+
+			// A.E.T
+			// addImageItem(employeeItem, "Regularizaciones", images.aet());
+
+			Category category = employee.getCategory();
+
+			// Agreement Category
+			if (category == null)
+				return;
+
+			Agreement agreement = category.getAgreement();
+			Agreement workplaceAgreement = ((Workplace) workplaceItem
+					.getUserObject()).getAgreement();
+
+			if (workplaceAgreement != null
+					&& NumberUtils.equals(workplaceAgreement.getId(),
+							agreement.getId()))
+				return;
+
+			TreeItem enterpriseItem = workplaceItem.getParentItem();
+			Enterprise enterprise = (Enterprise) enterpriseItem
+					.getUserObject();
+
+			final TreeItem categoryItem = addImageItem(employeeItem,
+					category.getLevel() + ". " + category.getDescription(),
+					images.agreement());
+
+			CategoryDraft categoryDraft = new CategoryDraft();
+			categoryDraft.setId(agreement.getId());
+			categoryDraft.setLevelId(category.getLevelId());
+			categoryDraft.setDescription(agreement.getDescription());
+			categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
+			categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
+			final CategoryDraftObject categoryDraftObject = new CategoryDraftObject(
+					enterprise.getDomain(), categoryDraft, employeesService);
+			//categoryItem.setUserObject(categoryDraftObject);
+
+			employeesService.getChanges(agreement,
+					new AsyncCallback<SortedSet<Date>>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							categoryItem
+									.setUserObject(categoryDraftObject);
+						}
+
+						public void onSuccess(SortedSet<Date> result) {
+							if (!CollectionUtils.isEmpty(result)) {
+								Date lastChange = result.last();
+								categoryDraftObject.setStartDate(DateUtils
+										.getFirstDayOfMonth(lastChange));
+								categoryDraftObject.setEndDate(DateUtils
+										.getLastDayOfMonth(lastChange));
+							}
+							categoryItem
+									.setUserObject(categoryDraftObject);
+						};
+					});
+		}
+		
+	}
 	/**
 	 * A helper method to simplify adding tree items that have attached images.
 	 * {@link #addImageItem(TreeItem, String, childs, ImageResource) code}
@@ -1427,6 +1491,13 @@ public class Employees extends ResizeComposite implements
 			ImageResource imageProto) {
 		TreeItem item = new TreeItem(imageItemHTML(imageProto, title));
 		root.addItem(item);
+		return item;
+	}
+
+	private TreeItem insertImageItem(TreeItem root, int beforeIndex, String title,
+			ImageResource imageProto) {
+		TreeItem item = new TreeItem(imageItemHTML(imageProto, title));
+		root.insertItem(beforeIndex, item);
 		return item;
 	}
 

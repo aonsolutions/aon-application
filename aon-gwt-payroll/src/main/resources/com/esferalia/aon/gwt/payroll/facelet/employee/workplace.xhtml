@@ -15,8 +15,10 @@
 
 
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="Workplace-Save" value="#{bundle.aon_accept}"
+					<aon:commandButton id="Workplace-Save" 
+						value="#{bundle.aon_accept}"
 						reRender="workPlaceMainGrid"
+						oncomplete="refreshWorkplace()"
 						styleClass="aon-finding-toolbar-item aon-icon-accept">
 						<aon:actionListener method="#{payrollWorkPlace.accept}" />
 					</aon:commandButton>

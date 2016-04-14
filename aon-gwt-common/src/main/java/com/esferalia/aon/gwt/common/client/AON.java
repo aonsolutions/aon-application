@@ -122,6 +122,7 @@ public class AON {
 	public static final String AON_ICON_TASK_START = "aon-icon-task-start";
 	public static final String AON_ICON_CMD_BUTTON = "aon-icon-commandButton";
 	public static final String AON_ICON_TIME = "aon-icon-time";
+	public static final String AON_ICON_REFRESH = "aon-icon-refresh";
 	public static final String AON_ICON_EXCEL = "aon-icon-excel";
 	public static final String AON_ICON_AGREEMENT = "aon-icon-agreement";
 	public static final String AON_ICON_PAYMENT = "aon-icon-payment";

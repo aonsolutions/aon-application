@@ -381,6 +381,13 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		System.out.println("Auto-generated method stub");
 		
 	}
+	
+	@Override
+	public Employee getEmployee(int employeeId) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
+		return null;
+	}
 
 	@Override
 	public List<Employee> getEmployees(int workplaceId, Date endDate,

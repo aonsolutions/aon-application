@@ -206,6 +206,13 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 		employeesServiceAsync.insertPerson(employee,
 				new AsyncCallbackWrapper<Void>(callback));
 	}
+	
+	@Override
+	public void getEmployee(int employeeId, AsyncCallback<Employee> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getEmployee(employeeId, new AsyncCallbackWrapper<Employee>(
+						callback));
+	}
 
 	public void getEmployees(int workplaceId, Date endDate, String pattern,
 			int offset, int limit, AsyncCallback<List<Employee>> callback)

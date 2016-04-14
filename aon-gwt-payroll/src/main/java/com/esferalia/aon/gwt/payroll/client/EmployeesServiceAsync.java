@@ -132,6 +132,9 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 	void getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
+	void getEmployee(int employeeId, AsyncCallback<Employee> callback) 
+			throws IllegalArgumentException;
+
 	void getEmployees(int workplaceId, Date endDate, String pattern,
 			int offset, int limit, AsyncCallback<List<Employee>> callback)
 			throws IllegalArgumentException;

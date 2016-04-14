@@ -121,6 +121,8 @@ public interface EmployeesService extends RemoteService, CalendarService,
 
 	void insertPerson(Employee employee) throws IllegalArgumentException;
 
+	Employee getEmployee(int employeeId) throws IllegalArgumentException;
+
 	List<Employee> getEmployees(int workplaceId, Date endDate, String pattern,
 			int offset, int limit) throws IllegalArgumentException;
 

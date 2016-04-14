@@ -60,6 +60,7 @@ import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
@@ -264,12 +265,47 @@ public class JooqEmployees {
 		}
 	}
 
+	public static Employee getEmployee(Connection connection,
+			Integer employeeId ) throws SQLException {
+		return getEmployee(DSL.using(connection, getDefaultSettings()),
+				employeeId);
+	}
+
 	public static List<Employee> getEmployees(Connection connection,
 			Integer workplaceId, Date endDate, String pattern, int offset,
 			int limit) throws SQLException {
 		return getEmployees(DSL.using(connection, getDefaultSettings()),
 				workplaceId, endDate, pattern, offset, limit);
 	}
+
+	private static Employee getEmployee(DSLContext context,
+			Integer employeeId) throws SQLException {
+		Cursor<Record> cursor = null;
+
+		try {
+			// @formatter:off
+			SelectConditionStep<Record> select = 
+					getEmployeeSelect(context)
+					.where(CONTRACT.ID.eq(employeeId))
+					
+					;
+
+
+			cursor = select
+					.fetchLazy();
+			// @formatter:on
+
+			for (Record record : cursor) 
+				return newEmployee(record);
+
+			return null;
+
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+	}
+
 
 	private static List<Employee> getEmployees(DSLContext context,
 			Integer workplaceId, Date endDate, String pattern, int offset,
@@ -278,21 +314,8 @@ public class JooqEmployees {
 
 		try {
 			// @formatter:off
-			SelectConditionStep<Record> select = context
-					.select()
-					.from(CONTRACT.join(PERSON).on(
-							CONTRACT.PERSON.eq(PERSON.REGISTRY)))
-					.leftOuterJoin(REGISTRY)
-					.on(REGISTRY.ID.eq(PERSON.REGISTRY))
-					.leftOuterJoin(
-							AGREEMENT_LEVEL_CATEGORY.join(
-									AGREEMENT_LEVEL.join(AGREEMENT).on(
-											AGREEMENT_LEVEL.AGREEMENT
-													.eq(AGREEMENT.ID))).on(
-									AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
-											.eq(AGREEMENT_LEVEL.ID)))
-					.on(CONTRACT.AGREEMENT_LEVEL_CATEGORY
-							.eq(AGREEMENT_LEVEL_CATEGORY.ID))
+			SelectConditionStep<Record> select = 
+					getEmployeeSelect(context)
 					.where(CONTRACT.ID.ge(0))
 					.and(CONTRACT.WORKPLACE.eq(workplaceId))
 					.and(CONTRACT.END_DATE.isNull().or(
@@ -314,40 +337,7 @@ public class JooqEmployees {
 			List<Employee> employees = new LinkedList<Employee>();
 
 			for (Record record : cursor) {
-				Employee employee = new Employee();
-
-				employee.setId(record.getValue(CONTRACT.ID));
-				employee.setStartDate(record.getValue(CONTRACT.START_DATE));
-				employee.setEndDate(record.getValue(CONTRACT.END_DATE));
-
-				employee.setPerson(record.getValue(PERSON.REGISTRY));
-				employee.setName(record.getValue(PERSON.NAME));
-				employee.setFirstSurname(record.getValue(PERSON.FIRST_SURNAME));
-				employee.setSecondSurName(record
-						.getValue(PERSON.SECOND_SURNAME));
-				employee.setDocument(record.getValue(REGISTRY.DOCUMENT));
-				Integer categoryId = record
-						.getValue(AGREEMENT_LEVEL_CATEGORY.ID);
-				if (categoryId != null) {
-					Category category = new Category();
-					category.setId(categoryId);
-					category.setLevelId(record.getValue(AGREEMENT_LEVEL.ID));
-					category.setLevel(record
-							.getValue(AGREEMENT_LEVEL.DESCRIPTION));
-					category.setDescription(record
-							.getValue(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION));
-
-					Agreement agreement = new Agreement();
-					agreement.setId(record.getValue(AGREEMENT.ID));
-					agreement.setDescription(record
-							.getValue(AGREEMENT.DESCRIPTION));
-
-					category.setAgreement(agreement);
-					employee.setCategory(category);
-				}
-
-				employees.add(employee);
-
+				employees.add(newEmployee(record));
 			}
 
 			return employees;
@@ -356,6 +346,58 @@ public class JooqEmployees {
 			if (cursor != null)
 				cursor.close();
 		}
+	}
+	private static SelectOnConditionStep<Record> getEmployeeSelect(DSLContext context) {
+		return context
+				.select()
+				.from(CONTRACT.join(PERSON).on(
+				CONTRACT.PERSON.eq(PERSON.REGISTRY)))
+				.leftOuterJoin(REGISTRY)
+				.on(REGISTRY.ID.eq(PERSON.REGISTRY))
+				.leftOuterJoin(
+						AGREEMENT_LEVEL_CATEGORY.join(
+								AGREEMENT_LEVEL.join(AGREEMENT).on(
+										AGREEMENT_LEVEL.AGREEMENT
+												.eq(AGREEMENT.ID))).on(
+								AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
+										.eq(AGREEMENT_LEVEL.ID)))
+				.on(CONTRACT.AGREEMENT_LEVEL_CATEGORY
+						.eq(AGREEMENT_LEVEL_CATEGORY.ID));
+	}
+
+	private static Employee newEmployee(Record record) {
+		Employee employee = new Employee();
+
+		employee.setId(record.getValue(CONTRACT.ID));
+		employee.setStartDate(record.getValue(CONTRACT.START_DATE));
+		employee.setEndDate(record.getValue(CONTRACT.END_DATE));
+
+		employee.setPerson(record.getValue(PERSON.REGISTRY));
+		employee.setName(record.getValue(PERSON.NAME));
+		employee.setFirstSurname(record.getValue(PERSON.FIRST_SURNAME));
+		employee.setSecondSurName(record
+				.getValue(PERSON.SECOND_SURNAME));
+		employee.setDocument(record.getValue(REGISTRY.DOCUMENT));
+		Integer categoryId = record
+				.getValue(AGREEMENT_LEVEL_CATEGORY.ID);
+		if (categoryId != null) {
+			Category category = new Category();
+			category.setId(categoryId);
+			category.setLevelId(record.getValue(AGREEMENT_LEVEL.ID));
+			category.setLevel(record
+					.getValue(AGREEMENT_LEVEL.DESCRIPTION));
+			category.setDescription(record
+					.getValue(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION));
+
+			Agreement agreement = new Agreement();
+			agreement.setId(record.getValue(AGREEMENT.ID));
+			agreement.setDescription(record
+					.getValue(AGREEMENT.DESCRIPTION));
+
+			category.setAgreement(agreement);
+			employee.setCategory(category);
+		}
+		return employee;
 	}
 
 	public static List<Employee> getTrashEmployees(Connection conn,
