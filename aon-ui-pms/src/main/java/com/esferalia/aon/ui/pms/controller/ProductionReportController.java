@@ -401,18 +401,18 @@ public class ProductionReportController implements Serializable {
 		productionMap.keySet().stream().sorted().forEach(key -> {
 			ReportObject ro = new ReportObject();
 			ro.setDescription(productionMap.get(key).getDescription()+"/Pax");
-			ro.setDayAmount(productionMap.get(key).getDayAmount() / 
-					paxMap.values().stream().mapToDouble(ReportObject::getDayAmount).sum());
-			ro.setPreviousDayAmount(productionMap.get(key).getPreviousDayAmount() / 
-					paxMap.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum());
-			ro.setMonthAmount(productionMap.get(key).getMonthAmount() / 
-					paxMap.values().stream().mapToDouble(ReportObject::getMonthAmount).sum());
-			ro.setPreviousMonthAmount(productionMap.get(key).getPreviousMonthAmount() / 
-					paxMap.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum());
-			ro.setYearAmount(productionMap.get(key).getYearAmount() / 
-					paxMap.values().stream().mapToDouble(ReportObject::getYearAmount).sum());
-			ro.setPreviousYearAmount(productionMap.get(key).getPreviousYearAmount() / 
-					paxMap.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum());
+			double paxDayAmount = paxMap.values().stream().mapToDouble(ReportObject::getDayAmount).sum();
+			ro.setDayAmount(paxDayAmount > 0.0f ? (productionMap.get(key).getDayAmount() / paxDayAmount) : 0.0);
+			double paxPreviousDayAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum();
+			ro.setPreviousDayAmount(paxPreviousDayAmount > 0.0f ? (productionMap.get(key).getPreviousDayAmount() / paxPreviousDayAmount) : 0.0);
+			double paxMonthAmount = paxMap.values().stream().mapToDouble(ReportObject::getMonthAmount).sum();
+			ro.setMonthAmount(paxMonthAmount > 0.0f ? (productionMap.get(key).getMonthAmount() / paxMonthAmount) : 0.0);			 
+			double paxPreviousMonthAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum();
+			ro.setPreviousMonthAmount(paxPreviousMonthAmount > 0.0f ? (productionMap.get(key).getPreviousMonthAmount() / paxPreviousMonthAmount) : 0.0);
+			double paxYearAmount = paxMap.values().stream().mapToDouble(ReportObject::getYearAmount).sum();
+			ro.setYearAmount(paxYearAmount > 0.0f ? (productionMap.get(key).getYearAmount() / paxYearAmount) : 0.0);
+			double paxPreviousYearAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum();
+			ro.setPreviousYearAmount(paxPreviousYearAmount > 0.0f ? (productionMap.get(key).getPreviousYearAmount() / paxPreviousYearAmount) : 0.0);
 			productionRatioMap.put(key, ro);
 		});
 		return productionRatioMap;
