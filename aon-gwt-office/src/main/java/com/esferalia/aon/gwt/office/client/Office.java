@@ -186,6 +186,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 	
 	void loadRepositoryData() {
+		
+		this.users.clear();
+		this.registryMap.clear();
+		this.rmedias.clear();
+		this.tagList.clear();
+		
 		gitHub.loadRepositoryData(String.valueOf(getCurrentDomain()), 
 				getCurrentDomainName(), new AsyncCallback<AJSON<AonJsData>>() {
 			
@@ -331,6 +337,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						faqIssuesRb.setText(AON.AONHUB.allIssues() + " (" + result.getCount() + ")");
 						openIssuesRb.setText(AON.AONHUB.openIssues());
 						closedIssuesRb.setText(AON.AONHUB.closedIssues());
+						allIssuesRb.setText(AON.AONHUB.allIssues());
 					}
 				});
 		showDockOfficePanel();
@@ -463,9 +470,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	
 	@UiHandler("refreshButton")
 	void onRefreshButtonClickEvent(ClickEvent event) {
+		this.issueSelected = null;
 		this.incrementSize = 0;
 		this.gitHub.setOffset(incrementSize);
-		loadRepositoryData();
+		loadRepositoryData();		
 		loadLabels();
 		initIssuesList();
 		evalRadioButtons();
