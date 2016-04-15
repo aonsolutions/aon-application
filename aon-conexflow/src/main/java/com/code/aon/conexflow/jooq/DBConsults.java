@@ -106,20 +106,22 @@ public class DBConsults {
 				.orderBy(PROJECT_ATTACH.ATTACH_DATE.desc())
 				.limit(1).fetchOne();
 
-			if(data != null && data.getValue(PROJECT_ATTACH.DATA) != null){
-				try {
-					return  XMLUtils.readXml(data.getValue(PROJECT_ATTACH.DATA), new Query());
-				} catch (JAXBException e) {
-					e.printStackTrace();
-				}
-			} else{
-				Integer attachId = data.getValue(PROJECT_ATTACH.ID);
-				String driveId = data.getValue(PROJECT_ATTACH.DRIVEID);
-				byte[] b = DriveUtils.getByteFile(domain.getName(), domain.getId(), login, driveId, attachId);
-				try {
-					return  XMLUtils.readXml(b, new Query());
-				} catch (JAXBException e) {
-					e.printStackTrace();
+			if(data != null){ 
+				if(data.getValue(PROJECT_ATTACH.DATA) != null){
+					try {
+						return  XMLUtils.readXml(data.getValue(PROJECT_ATTACH.DATA), new Query());
+					} catch (JAXBException e) {
+						e.printStackTrace();
+					}
+				} else {
+					Integer attachId = data.getValue(PROJECT_ATTACH.ID);
+					String driveId = data.getValue(PROJECT_ATTACH.DRIVEID);
+					byte[] b = DriveUtils.getByteFile(domain.getName(), domain.getId(), login, driveId, attachId);
+					try {
+						return  XMLUtils.readXml(b, new Query());
+					} catch (JAXBException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 			return null;
