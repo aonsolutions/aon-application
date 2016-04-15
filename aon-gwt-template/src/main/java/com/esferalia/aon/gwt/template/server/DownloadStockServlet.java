@@ -330,7 +330,12 @@ public class DownloadStockServlet extends HttpServlet {
         		case "Detalle 2":  celda.setCellValue(si.getItem().getDetail2());celda.setCellStyle(style2);break;
         		case "Detalle 3":  celda.setCellValue(si.getItem().getDetail3());celda.setCellStyle(style2);break;
         		case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
-        		case "Nombre": celda.setCellValue(si.getProductName());celda.setCellStyle(style3);break;
+        		case "Nombre": String str  = si.getProductName();
+        			if(si.getItem().getPackFormatTag().getName() != null)
+        				str = str + " "+si.getItem().getPackFormatTag().getName()+" "
+        				+ si.getItem().getPackUnits() + " " + si.getItem().getPackUnitsTag().getName() + " "
+        				+ si.getItem().getPackMeasurement() + " " + si.getItem().getPackMeasurementTag().getName();
+       				celda.setCellValue(str);celda.setCellStyle(style3);break;
         		case "N\u00FAmero Serie": celda.setCellValue(si.getItem().getSerialNumber());celda.setCellStyle(style3);break;
         		case "Formato": celda.setCellValue(si.getItem().getPackFormatTag().getName());celda.setCellStyle(style3);break; 
         		case "Unidades": celda.setCellValue(si.getItem().getPackUnits());celda.setCellStyle(style3);break; 

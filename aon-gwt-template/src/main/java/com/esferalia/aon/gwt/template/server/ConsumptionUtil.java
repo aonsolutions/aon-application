@@ -169,6 +169,7 @@ public class ConsumptionUtil {
         			ci.getConsumption() == 0) && 
         			(!onlyNegative || ci.getConsumption() < 0 )){
         			Row row = hoja.createRow((j-num)+2);
+        			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
         			for(Integer k = 0; k< columns; k++){
         	    		Cell celda = row.createCell(k);
         	    		String type = aux.getColumns().get(k); 
@@ -176,7 +177,13 @@ public class ConsumptionUtil {
         				switch (type) {
         				case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style3);break;
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
-        				case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style3);break;
+        				case "Nombre": 
+        					String str  = ci.getProductName();
+                			if(item.getPackFormatTag().getName() != null)
+                				str = str + " "+item.getPackFormatTag().getName()+" "
+                				+ item.getPackUnits() + " " + item.getPackUnitsTag().getName() + " "
+                				+ item.getPackMeasurement() + " " + item.getPackMeasurementTag().getName();
+        					celda.setCellValue(str);celda.setCellStyle(style3);break;
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Inicial \u20AC": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style2);break;
@@ -202,7 +209,6 @@ public class ConsumptionUtil {
         			}
       
         			if(packaged){
-            			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
                 		Cell valueCell = row.createCell(columns);
                 		Double value = ci.getConsumption() * item.getPackMeasurement() * item.getPackUnits();
                 		valueCell.setCellValue(value);
@@ -500,6 +506,8 @@ public class ConsumptionUtil {
         			ci.getConsumption() == 0) && 
         			(!onlyNegative || ci.getConsumption() < 0 )){
         			Row row = hoja.createRow((j-num)+2);
+        			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
+
         			for(Integer k = 0; k< columns; k++){
         	    		Cell celda = row.createCell(k);
         	    		String type = aux.getColumns().get(k); 
@@ -507,7 +515,13 @@ public class ConsumptionUtil {
         				switch (type) {
         				case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style3);break;
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
-        				case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style3);break;
+        				case "Nombre": 
+        					String str  = ci.getProductName();
+                			if(item.getPackFormatTag().getName() != null)
+                				str = str + " "+item.getPackFormatTag().getName()+" "
+                				+ item.getPackUnits() + " " + item.getPackUnitsTag().getName() + " "
+                				+ item.getPackMeasurement() + " " + item.getPackMeasurementTag().getName();
+        					celda.setCellValue(str);celda.setCellStyle(style3);break;
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Inicial \u20AC": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style2);break;
@@ -533,7 +547,6 @@ public class ConsumptionUtil {
         			}
         			
         			if(packaged){
-            			Item item = AON.getItem(domain.getName(), domain.getId(), login, ci.getItemId());
                 		Cell valueCell = row.createCell(columns);
                 		Double value = ci.getConsumption() * item.getPackMeasurement() * item.getPackUnits();
                 		valueCell.setCellValue(value);
@@ -647,7 +660,6 @@ public class ConsumptionUtil {
                             		i++;
                                     //next line
                             }
-            
         		 }
         		 try {
         			 
@@ -857,6 +869,7 @@ public class ConsumptionUtil {
         			ci.getConsumption() == 0) && 
         			(!onlyNegative || ci.getConsumption() < 0 )){
         			Row row = hoja0.createRow((l-num0)+2);
+        			Item item = AON.getItem(domain, domainId, login, ci.getItemId());
         			for(Integer k = 0; k< columns; k++){
         	    		Cell celda = row.createCell(k);
         	    		String type = special1.getColumns().get(k); 
@@ -868,7 +881,13 @@ public class ConsumptionUtil {
         				case "Almac\u00e9n": celda.setCellValue(ci.getWarehouseName());celda.setCellStyle(style30);break;
         				case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style30);break;
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style20);break;
-        				case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style30);break;
+        				case "Nombre": 
+        					String str  = ci.getProductName();
+                			if(item.getPackFormatTag().getName() != null)
+                				str = str + " "+item.getPackFormatTag().getName()+" "
+                				+ item.getPackUnits() + " " + item.getPackUnitsTag().getName() + " "
+                				+ item.getPackMeasurement() + " " + item.getPackMeasurementTag().getName();
+        					celda.setCellValue(str);celda.setCellStyle(style30);break;
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style20);break;
         				case "Inicial \u20AC": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style20);break;
         				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style20);break;
@@ -894,7 +913,6 @@ public class ConsumptionUtil {
         			}
         			
         			if(packaged){
-            			Item item = AON.getItem(domain, domainId, login, ci.getItemId());
                 		Cell valueCell = row.createCell(columns);
                 		Double value = ci.getConsumption() * item.getPackMeasurement() * item.getPackUnits();
                 		valueCell.setCellValue(value);
