@@ -178,21 +178,21 @@ public class ConsumptionUtil {
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         				case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style3);break;
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
-        				case "Inicial €": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
+        				case "Inicial \u20AC": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style2);break;
-        				case "Compras €": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style2);break;
+        				case "Compras \u20AC": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style2);break;
         				case "Ventas": celda.setCellValue(round(ci.getSalesAlb()+ ci.getSalesFac(),2));celda.setCellStyle(style2);break;
-        				case "Ventas €": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style2);break;
+        				case "Ventas \u20AC": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style2);break;
         				case "Final": celda.setCellValue(round(ci.getFinalQuantity(),2));celda.setCellStyle(style2);break;
-        				case "Final €": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
+        				case "Final \u20AC": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
         				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style2);break;
-        				case "Traspaso €": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style2);break;
+        				case "Traspaso \u20AC": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style2);break;
         				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
         				//case "Valor Consumo": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
         				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
         							else celda.setCellValue(0);	
         							celda.setCellStyle(style2);break; 
-        				case "Consumo €": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
+        				case "Consumo \u20AC": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
         				case "Importe": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
 
         				case "Consumo": celda.setCellValue(round(ci.getConsumption(),2));celda.setCellStyle(style2);break;
@@ -331,7 +331,7 @@ public class ConsumptionUtil {
         			 }
         			 else{
         				iText_xls_2_pdf.add(new Paragraph(" "));
-        			 	iText_xls_2_pdf.add(new Paragraph("Almacén: " + warehouses.get(index-3).getName(), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Almac\u00e9n: " + warehouses.get(index-3).getName(), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph("Inventario Inicial: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getInitialInventoryName(), fontPhrase2), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph("Inventario Final: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getFinalInventoryName(), fontPhrase2), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph(" "));
@@ -509,21 +509,21 @@ public class ConsumptionUtil {
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         				case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style3);break;
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
-        				case "Inicial €": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
+        				case "Inicial \u20AC": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style2);break;
-        				case "Compras €": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style2);break;
+        				case "Compras \u20AC": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style2);break;
         				case "Ventas": celda.setCellValue(round(ci.getSalesAlb()+ ci.getSalesFac(),2));celda.setCellStyle(style2);break;
-        				case "Ventas €": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style2);break;
+        				case "Ventas \u20AC": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style2);break;
         				case "Final": celda.setCellValue(round(ci.getFinalQuantity(),2));celda.setCellStyle(style2);break;
-        				case "Final €": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
+        				case "Final \u20AC": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style2);break;
         				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style2);break;
-        				case "Traspaso €": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style2);break;
+        				case "Traspaso \u20AC": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style2);break;
         				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
         				//case "Valor Consumo": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
         				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
         							else celda.setCellValue(0);	
         							celda.setCellStyle(style2);break; 
-        				case "Consumo €": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
+        				case "Consumo \u20AC": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
         				case "Importe": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
 
         				case "Consumo": celda.setCellValue(round(ci.getConsumption(),2));celda.setCellStyle(style2);break;
@@ -666,7 +666,7 @@ public class ConsumptionUtil {
         			 }
         			 else{
         				iText_xls_2_pdf.add(new Paragraph(" "));
-        			 	iText_xls_2_pdf.add(new Paragraph("Almacén: " + warehouses.get(index-3).getName(), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Almac\u00e9n: " + warehouses.get(index-3).getName(), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph("Inventario Inicial: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getInitialInventoryName(), fontPhrase2), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph("Inventario Final: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getFinalInventoryName(), fontPhrase2), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph(" "));
@@ -704,14 +704,14 @@ public class ConsumptionUtil {
 	private static TemplateInfo getTemplateInfoA() {
 		Vector<String> v = new Vector<String>();
 		v.add("Hotel");
-		v.add("Almacén");
+		v.add("Almac\u00e9n");
 		v.add("Producto");
-		v.add("Inicial €"); 
-		v.add("Compras €"); 
-		v.add("Ventas €");
-		v.add("Final €");
-		v.add("Traspaso €"); 
-		v.add("Consumo €");
+		v.add("Inicial \u20AC"); 
+		v.add("Compras \u20AC"); 
+		v.add("Ventas \u20AC");
+		v.add("Final \u20AC");
+		v.add("Traspaso \u20AC"); 
+		v.add("Consumo \u20AC");
 		return new TemplateInfo().setColumns(v);
 	}
 
@@ -720,21 +720,21 @@ public class ConsumptionUtil {
 		v.add("Hotel");
 		v.add("Desde");
 		v.add("Hasta");
-		v.add("Almacén");
+		v.add("Almac\u00e9n");
 		v.add("Producto");
 		v.add("Nombre");
 		v.add("Inicial");
-		v.add("Inicial €");
+		v.add("Inicial \u20AC");
 		v.add("Compras");
-		v.add("Compras €");
+		v.add("Compras \u20AC");
 		v.add("Ventas");
-		v.add("Ventas €");
+		v.add("Ventas \u20AC");
 		v.add("Traspaso");
-		v.add("Traspaso €");
+		v.add("Traspaso \u20AC");
 		v.add("Final");
-		v.add("Final €");
+		v.add("Final \u20AC");
 		v.add("Consumo");
-		v.add("Consumo €");
+		v.add("Consumo \u20AC");
 		return new TemplateInfo().setColumns(v);
 	}
 	
@@ -743,13 +743,13 @@ public class ConsumptionUtil {
 		v.add("Hotel");
 		v.add("Desde");
 		v.add("Hasta");
-		v.add("Almacén");
-		v.add("Inicial €"); 
-		v.add("Compras €"); 
-		v.add("Ventas €");
-		v.add("Final €");
-		v.add("Traspaso €"); 
-		v.add("Consumo €");
+		v.add("Almac\u00e9n");
+		v.add("Inicial \u20AC"); 
+		v.add("Compras \u20AC"); 
+		v.add("Ventas \u20AC");
+		v.add("Final \u20AC");
+		v.add("Traspaso \u20AC"); 
+		v.add("Consumo \u20AC");
 		return new TemplateInfo().setColumns(v);
 	}
 	
@@ -758,17 +758,17 @@ public class ConsumptionUtil {
 		v.add("Producto");
 		v.add("Nombre");
 		v.add("Inicial");
-		if(detail) v.add("Inicial €");
+		if(detail) v.add("Inicial \u20AC");
 		v.add("Compras");
-		if(detail) v.add("Compras €");
+		if(detail) v.add("Compras \u20AC");
 		v.add("Ventas");
-		if(detail) v.add("Ventas €");
+		if(detail) v.add("Ventas \u20AC");
 		v.add("Traspaso");
-		if(detail) v.add("Traspaso €");
+		if(detail) v.add("Traspaso \u20AC");
 		v.add("Final");
-		if(detail) v.add("Final €");
+		if(detail) v.add("Final \u20AC");
 		v.add("Consumo");
-		v.add("Consumo €");
+		v.add("Consumo \u20AC");
 		return new TemplateInfo().setColumns(v);
 	}
 	
@@ -865,26 +865,26 @@ public class ConsumptionUtil {
         				case "Hotel": celda.setCellValue(ci.getHotel());celda.setCellStyle(style30);break;
         				case "Desde": celda.setCellValue(format.format(ci.getInitialDate()));celda.setCellStyle(style30);break;
            				case "Hasta": celda.setCellValue(format.format(ci.getFinalDate()));celda.setCellStyle(style30);break;
-        				case "Almacén": celda.setCellValue(ci.getWarehouseName());celda.setCellStyle(style30);break;
+        				case "Almac\u00e9n": celda.setCellValue(ci.getWarehouseName());celda.setCellStyle(style30);break;
         				case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style30);break;
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style20);break;
         				case "Nombre": celda.setCellValue(ci.getProductName());celda.setCellStyle(style30);break;
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style20);break;
-        				case "Inicial €": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style20);break;
+        				case "Inicial \u20AC": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style20);break;
         				case "Compras": celda.setCellValue(round(ci.getPurchasesAlb()+ci.getPurchasesFac(),2));celda.setCellStyle(style20);break;
-        				case "Compras €": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style20);break;
+        				case "Compras \u20AC": celda.setCellValue(round((ci.getValuePAlb())+(ci.getValuePFac()),2));celda.setCellStyle(style20);break;
         				case "Ventas": celda.setCellValue(round(ci.getSalesAlb()+ ci.getSalesFac(),2));celda.setCellStyle(style20);break;
-        				case "Ventas €": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style20);break;
+        				case "Ventas \u20AC": celda.setCellValue(round((ci.getValueSAlb())+(ci.getValueSFac()),2));celda.setCellStyle(style20);break;
         				case "Final": celda.setCellValue(round(ci.getFinalQuantity(),2));celda.setCellStyle(style20);break;
-        				case "Final €": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style20);break;
+        				case "Final \u20AC": celda.setCellValue(round(ci.getFinalQuantity() * ci.getFinalValue(),2));celda.setCellStyle(style20);break;
         				case "Traspaso": celda.setCellValue(round(ci.getTransfersPlus()-ci.getTransfersMinus(),2));celda.setCellStyle(style20);break;
-        				case "Traspaso €": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style20);break;
+        				case "Traspaso \u20AC": celda.setCellValue(round((ci.getTransfersPlus() * ci.getPrice()) - (ci.getTransfersMinus() * ci.getPrice()),2));celda.setCellStyle(style20);break;
         				//case "Precio": celda.setCellValue(round(ci.getPrice(),2));celda.setCellStyle(style2);break; 
         				//case "Valor Consumo": celda.setCellValue(round(ci.getPrice()*ci.getConsumption(),2));celda.setCellStyle(style2);break;
         				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
         							else celda.setCellValue(0);	
         							celda.setCellStyle(style20);break; 
-        				case "Consumo €": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style20);break;
+        				case "Consumo \u20AC": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style20);break;
         				case "Importe": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style20);break;
 
         				case "Consumo": celda.setCellValue(round(ci.getConsumption(),2));celda.setCellStyle(style20);break;
@@ -1015,13 +1015,13 @@ public class ConsumptionUtil {
         				case "Hotel": celda.setCellValue(hotel);celda.setCellStyle(style30);break;
            				case "Desde": celda.setCellValue(format.format(startDate));celda.setCellStyle(style30);break;
            				case "Hasta": celda.setCellValue(format.format(endDate));celda.setCellStyle(style30);break;
-        				case "Almacén": celda.setCellValue(w.getName());celda.setCellStyle(style30);break;
-        				case "Inicial €": celda.setCellValue(round(inicial,2));celda.setCellStyle(style20);break;
-        				case "Compras €": celda.setCellValue(round(compras,2));celda.setCellStyle(style20);break;
-        				case "Ventas €": celda.setCellValue(round(ventas,2));celda.setCellStyle(style20);break;
-        				case "Final €": celda.setCellValue(round(fin,2));celda.setCellStyle(style20);break;
-        				case "Traspaso €": celda.setCellValue(round(traspaso,2));celda.setCellStyle(style20);break;
-        				case "Consumo €": celda.setCellValue(round(consumo,2));celda.setCellStyle(style20);break;
+        				case "Almac\u00e9n": celda.setCellValue(w.getName());celda.setCellStyle(style30);break;
+        				case "Inicial \u20AC": celda.setCellValue(round(inicial,2));celda.setCellStyle(style20);break;
+        				case "Compras \u20AC": celda.setCellValue(round(compras,2));celda.setCellStyle(style20);break;
+        				case "Ventas \u20AC": celda.setCellValue(round(ventas,2));celda.setCellStyle(style20);break;
+        				case "Final \u20AC": celda.setCellValue(round(fin,2));celda.setCellStyle(style20);break;
+        				case "Traspaso \u20AC": celda.setCellValue(round(traspaso,2));celda.setCellStyle(style20);break;
+        				case "Consumo \u20AC": celda.setCellValue(round(consumo,2));celda.setCellStyle(style20);break;
         				default:
         					break;
         		}
