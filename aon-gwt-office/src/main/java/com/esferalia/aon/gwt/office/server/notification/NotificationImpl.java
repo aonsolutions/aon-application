@@ -64,12 +64,13 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 		NotificationInfo ni = getNotificationInfo(domain);
 		if((ni.getNotify() && !ni.getMode().equals(0)) || isManual){
 			String title = notificationInfo.getTitle();		
-		
+			Domain dom =  AON.getDomain(domain.getName(), domain.getId(), getUserLogin());
+			
 			msg = 	"<div style='margin-left: -30px;'>"
 					+"<div style='margin: 7px 15px 14px 30px;line-height: 18px;font-size: 13px;box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);'>"
 		
 				//logo cabecera
-				+"<div><img src=\"http://"+domain.getName() + "/aonDocuments/company.logo\" width=\"25%\"></div>"
+				+"<div><img src=\"http://"+dom.getName() + "/aonDocuments/company.logo\" height=\"50px\"></div>"
 			
 				// title
 				+"<p></p><table style='border: 1px solid #E5E5E5;table-layout: fixed;width: 100%;min-width: 625px;border-collapse: collapse;' cellpadding='0'><tbody>"
@@ -113,7 +114,7 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 				+ "</div></div>";
 		
 			Boolean bool = ni.getMode().equals(1);
-			sendEmail(domain, ni.getMailAccount().getId(), getToEmails(domain, notificationInfo.getCompanyName(),bool), ni.getBcc(), title, msg);
+			sendEmail(domain, ni.getMailAccount().getId(), getToEmails(domain, notificationInfo.getCompanyName(),bool), ni.getBcc(), title + " #" + notificationInfo.getNoticeId(), msg);
 		}
 	}
 	
@@ -155,7 +156,8 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 	
 	private String getMessage(NotificationInfo n, String action, String typeDescription) {
 		SimpleDateFormat format= new SimpleDateFormat("dd/MM/yyyy");
-		String desc = typeDescription+ " el <b>" + format.format(n.getDate()) +"</b> por <b>"+ n.getUserName() +"</b>"; 
+		SimpleDateFormat timeFomat = new SimpleDateFormat("HH:mm");
+		String desc = typeDescription+ " el <b>" + format.format(n.getDate()) +"</b> a las <b>"+timeFomat.format(n.getDate())+"</b>";// por <b>"+ n.getUserName() +"</b>"; 
 
 		String msg = "<p></p><table style='border: 1px solid #E5E5E5;table-layout: fixed;width: 100%;min-width: 625px;border-collapse: collapse;' cellpadding='0'>"
 				+"<tbody><tr>"
