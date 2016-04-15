@@ -346,40 +346,6 @@ public class AonHubDAO2 {
 		// @formatter:on
 	}
 	
-	public static List<Notice> getTicketNoticesForTest(AONContext ctx,
-			NoticeFilter filter) {
-		// @formatter:off
-		return ctx.getDslContext()
-				.select(NOTICE.fields())
-				.select(USER.fields())
-				.from(NOTICE)
-				.join(USER)
-				.on(NOTICE.SENDER.eq(USER.ID))
-				.where( NoticeFilterImpl.getNoticeConditions(ctx,filter) )
-				.orderBy(NOTICE.DATE.desc())				
-				.fetch()
-				.stream()				
-				.map(new FullNoticeFiller())
-				.limit(50)
-				.skip(filter.getOffset())
-				.peek(notice -> notice.setTags(fillOfficeTags(ctx, notice)
-						.collect(Collectors.toCollection(LinkedList::new))))				
-				.peek(notice -> notice.addComments(fillNoticeComments(ctx, notice)
-						.collect(Collectors.toCollection(LinkedList::new))))
-				.peek(notice -> notice.setDuplicated(evalNoticeIsDuplicated(ctx, notice.getId())))
-				.peek(notice -> notice.setType(setTag(notice.getTags().stream()
-						.filter(tag -> tag.getType() == TagType.OFFICE_TYPE.value())
-						.collect(Collectors.toCollection(LinkedList::new)))))
-				.peek(notice -> notice.setPriority(setTag(notice.getTags().stream()
-						.filter(tag -> tag.getType() == TagType.OFFICE_PRIORITY.value())
-						.collect(Collectors.toCollection(LinkedList::new)))))
-				.peek(notice -> notice.setStatus(setTag(notice.getTags().stream()
-						.filter(tag -> tag.getType() == TagType.OFFICE_STATUS.value())
-						.collect(Collectors.toCollection(LinkedList::new)))))				
-				.collect(Collectors.toCollection(LinkedList::new));			
-		// @formatter:on
-	}
-	
 	private static String setTag(List<Tag> tags) {
 		
 		for (Tag tag : tags) {

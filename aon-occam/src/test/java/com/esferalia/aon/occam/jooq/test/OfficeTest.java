@@ -45,8 +45,6 @@ public class OfficeTest {
 
 		NoticeFilter filter = new NoticeFilter();
 		filter.setState("open");
-		filter.setSubject("FHAOHCCQIJDAMBQVPDGNB");
-		filter.setCompany("Quasar Education SL");
 		filter.setOffset(0);
 
 		filter.setTags(new String[] {});
@@ -81,6 +79,6 @@ public class OfficeTest {
 
 	private List<Notice> getNotices(NoticeFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				conf -> AonHubDAO2.getTicketNoticesForTest(ctx, filter));
+				conf -> AonHubDAO2.getTicketNotices(ctx, filter));
 	}
 }
