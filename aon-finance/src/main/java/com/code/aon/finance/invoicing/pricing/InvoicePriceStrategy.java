@@ -55,6 +55,7 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 					TaxBreakDown mapBreakDown;
 					if (map.containsKey(key)) {
 						mapBreakDown = map.get(key);
+						double accumulatedDeductibleQuota = obtainDeductibleQuota(mapBreakDown);
 						mapBreakDown.setBase(CommonUtil.round(mapBreakDown.getBase() + breakDown.getBase(), 4));
 						mapBreakDown.setTaxQuota(CommonUtil.round(mapBreakDown.getTaxQuota() + breakDown.getTaxQuota()));
 						mapBreakDown.setSurchargeQuota(CommonUtil.round(mapBreakDown.getSurchargeQuota() + breakDown.getSurchargeQuota()));
@@ -67,7 +68,7 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 									mapBreakDown.setDeductibleQuota(CommonUtil.round(mapBreakDown.getDeductibleQuota() + breakDown.getDeductibleQuota()));
 								} else {
 									if (mapBreakDown.getDeductiblePercent() != breakDown.getDeductiblePercent()) {
-										mapBreakDown.setDeductibleQuota(CommonUtil.round(obtainDeductibleQuota(mapBreakDown) + breakDown.getDeductibleQuota()));
+										mapBreakDown.setDeductibleQuota(CommonUtil.round(accumulatedDeductibleQuota + breakDown.getDeductibleQuota()));
 										if (breakDown.getDeductiblePercent() != 100) {
 											mapBreakDown.setDeductiblePercent(breakDown.getDeductiblePercent());
 										}
