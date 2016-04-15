@@ -138,7 +138,7 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 	
 	protected void sendPostHttpClient(String domainName, JSONObject json) {
 		try{
-			String url = "http://"+domainName+"/aon-aio/send_email/";
+			String url = "http://"+domainName+"/send_email/";
 			System.out.println(url);
 			HttpClientBuilder base = HttpClientBuilder.create();
 			HttpClient client = base.build();
