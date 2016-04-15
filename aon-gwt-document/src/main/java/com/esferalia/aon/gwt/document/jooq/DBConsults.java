@@ -118,6 +118,7 @@ public class DBConsults {
 		return new Document().setFiles(filesGwt).setEfiles(vaux).setFilter(vaux);
 	}
 	
+	@Deprecated
 	public static Document getAllRattach(Domain domain,User user, String domain2, Boolean confidential){
 		AONContext ctx = null;
 		try {				
@@ -787,6 +788,21 @@ public class DBConsults {
 		}
 	}
 	
+	public static LinkedList<Attach> getServiConvenios(Domain domain, User user, String a){
+		long start = System.currentTimeMillis();
+
+		LinkedList<Attach> list = AON.getAttachList(domain.getName(), domain.getId(), user.getLogin(),
+				f -> f.getDomainProperty().eq(0).and(f.getIdProperty().lt(0)),
+				AttachType.REGISTRY);
+		
+		System.out.println(list.size());
+		
+		long time = System.currentTimeMillis() - start;
+		System.out.println("time: " + (time/1000d));
+		return new LinkedList<Attach>();
+		
+	}
+	
 	public static Vector<FileInfo> getServiConvenios(Domain domain, User user){
 		AONContext ctx = null;
 		try {
@@ -1086,6 +1102,7 @@ public class DBConsults {
 									.set(RATTACH.ATTACH_DATE,fi.getDateSql())
 									.set(RATTACH.MODIFICATION_USER, user.getLogin())
 									.set(RATTACH.MODIFICATION_DATE, new Timestamp(currentDate))
+									.set(RATTACH.DPARENT_ID, fi.getSize().toString())
 							.where(RATTACH.ID.eq(fi.getFileId())).execute();
 		} finally {
 			if (ctx != null)

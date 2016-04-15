@@ -198,6 +198,7 @@
 .gwt-PopupPanel-document{
 	top:20% !important;
 	left:35% !important;
+	border:1px solid #ccc !important;
 	padding:0 !important;
 }
 

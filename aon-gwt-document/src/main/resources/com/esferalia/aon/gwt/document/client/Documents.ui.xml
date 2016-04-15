@@ -136,12 +136,14 @@
                						<div>Todos los Archivos</div>
                						<p:PaperRipple/>
             					</p:PaperItem>
-            					<p:PaperItem ui:field="serviConveniosPaper">
+		      				<!--	SERVICONVENIOS
+		      					<p:PaperItem ui:field="serviConveniosPaper">
                						<div class="aon-icon-big-serviconvenios" style="padding-left:24px;">
                							ServiConvenios
                						</div>
                						<p:PaperRipple/>
             					</p:PaperItem>
+            				-->	
             					<p:PaperItem ui:field="lotePaper">
               						<i:IronIcon icon="mail"/>
                						<div>Lote</div>

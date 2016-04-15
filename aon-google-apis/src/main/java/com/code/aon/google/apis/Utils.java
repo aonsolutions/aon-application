@@ -158,39 +158,26 @@ public class Utils{
 	  }
 	  
 	  
-	  public static String toDay(Integer i){
-			String day="";
-			switch (i) {
-			case 1: day = "Lun.";break;
-			case 2: day = "Mar.";break;
-			case 3: day = "Mie.";break;
-			case 4: day = "Jue.";break;
-			case 5: day = "Vie.";break;
-			case 6: day = "Sab.";break;
-			case 7: day = "Dom.";break;
-			default: break;
+	  	public static String toDay(Integer i){
+	  		switch (i) {
+			case 1: return "Lun."; case 2: return "Mar.";
+			case 3: return "Mie."; case 4: return "Jue.";
+			case 5: return "Vie."; case 6: return "Sab.";
+			case 7: return "Dom.";
+			default: return "";
 			}
-			return day;
-		}
+	  	}
 		
 		public static String toMonth(String month){
-			String month2="";
 			switch (month) {
-			case "01": month2 = "Ene.";break;
-			case "02": month2 = "Feb.";break;
-			case "03": month2 = "Mar.";break;
-			case "04": month2 = "Abr.";break;
-			case "05": month2 = "May.";break;
-			case "06": month2 = "Jun.";break;
-			case "07": month2 = "Jul.";break;
-			case "08": month2 = "Ago.";break;
-			case "09": month2 = "Sep.";break;
-			case "10": month2 = "Oct.";break;
-			case "11": month2 = "Nov.";break;
-			case "12": month2 = "Dic.";break;
-			default: break;
+			case "01": return "Ene."; case "02": return "Feb.";
+			case "03": return "Mar."; case "04": return "Abr.";
+			case "05": return "May."; case "06": return "Jun.";
+			case "07": return "Jul."; case "08": return "Ago.";
+			case "09": return "Sep."; case "10": return "Oct.";
+			case "11": return "Nov."; case "12": return "Dic.";
+			default: return "";
 			}
-			return month2;
 		}
 		
 		public static void sendNotification(Domain domain, User user, Event event, CommercialTracking ct) throws IOException, GeneralSecurityException, MessagingException, NamingException{

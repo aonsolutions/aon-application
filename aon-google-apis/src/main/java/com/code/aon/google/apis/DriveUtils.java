@@ -813,6 +813,10 @@ public class DriveUtils implements IBlobManager {
 	
 	public static File updateFile(FileInfo fileInfo) throws IOException, KeyStoreException, GeneralSecurityException {
 		Domain domain = getDomain();
+		return updateFile(domain, fileInfo);
+	}
+	
+	public static File updateFile(Domain domain, FileInfo fileInfo) throws IOException, KeyStoreException, GeneralSecurityException {
 		File file = null;
 		try {
 			file = getFile(client, domain, new User().setLogin(""), fileInfo.getDriveId(), fileInfo.getFileId());
@@ -1016,7 +1020,7 @@ public class DriveUtils implements IBlobManager {
 								fileInfo.getTitle());
 						return true;
 					}
-					File file = updateFile(fileInfo);
+					File file = updateFile(domain, fileInfo);
 					if (file != null) {
 						fileInfo.setDriveId(file.getId());
 						setDriveId(fileInfo, domain, file.getFileSize()

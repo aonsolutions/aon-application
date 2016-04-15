@@ -549,9 +549,7 @@ public class Documents extends Composite implements EntryPoint {
 			super.show();
 		}
 	}
-	
-	//DocumentContextMenu contextMenu = new DocumentContextMenu();
-	
+		
 	private void initContextMenu() {
 		ContextMenuHandler contextMenuHandler = new ContextMenuHandler() {
 			@Override
@@ -584,14 +582,9 @@ public class Documents extends Composite implements EntryPoint {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
-	/*
-	 * @UiField ShowMorePagerPanel pagerPanel;
-	 * 
-	 * @UiField RangeLabelPager rangeLabelPager;
-	 */
 	
 	@UiField PaperItem allFilesPaper;
-	@UiField PaperItem serviConveniosPaper;
+	// @UiField PaperItem serviConveniosPaper;
 	@UiField PaperItem lotePaper;
 	@UiField PaperMenu lateralMenuPaper;
 	
@@ -607,12 +600,7 @@ public class Documents extends Composite implements EntryPoint {
 
 	@UiField(provided=true) DisclosurePanel epanel;
 
-	
-	//@UiField(provided=true)
-	//ScrollPanel treepanel;
-
 	@UiField(provided=true) DisclosurePanel dpanel;
-	
 	
 	@UiField SplitLayoutPanel splitLayoutPanel;
 
@@ -1024,12 +1012,13 @@ public class Documents extends Composite implements EntryPoint {
 			}
 		});
 
+		/* SERVICONVENIOS
 		serviConveniosPaper.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				serviconveniosClickAction();
 			}
 		});
-
+		*/
 		lotePaper.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				loteClickAction();
@@ -1285,6 +1274,7 @@ public class Documents extends Composite implements EntryPoint {
 						
 						@Override
 						public void onFailure(Throwable caught) {
+							cargando.hide();
 							String head = "com.esferalia.aon.gwt.document.client.Documents"
 									+ " - editFile(SingleUploader up,Boolean multiple) - editFile";
 							print(head, caught.getMessage());

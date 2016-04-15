@@ -133,8 +133,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	}
 	
 	public User getUser(){
-		return new User()
-				.setId(getUserID())
+		return new User().setId(getUserID())
 				.setLogin(getUserLogin())
 				.setDomain(getUserDomainID());
 	}
@@ -165,7 +164,9 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			v.add(confidential);
 			init.setVector(v);
 			return init;
-		}finally{releaseFacesContext();}
+		}finally{
+			releaseFacesContext();
+		}
 	}
 	
 	public Document getAllFiles(Domain domain){
@@ -186,7 +187,6 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		return DBConsults.getServiConvenios(domain, getUser());
 	}
 	
-	Vector<String> types;
 	public Vector<String> getTypes(){
 		Locale locale = AonUtil.getCurrentLocale();
 		Vector<String> vector = new Vector<String>();
@@ -495,7 +495,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	}
 	
 	public Boolean check(){
-		return getMimetype()==null;//.equals("application/octet-stream");
+		return getMimetype()==null;
 	}
 	
 	public Vector<FileInfo> editFile(Domain domain, String dialogCode, FileInfo fi,Vector<FileInfo> fvector){
@@ -574,6 +574,9 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 				fileInfo.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
 				fi.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
 				fi.setIcon(Utils.icon(getMimetype()));
+				fileInfo.setSize(getSize());
+				fi.setSize(getSize());
+				fi.setSizeStr(FileUtils.byteCountToDisplaySize(fi.getSize()));
 			}
 		
 			else fileInfo.setMimetype(fi.getMimetype());
