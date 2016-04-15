@@ -49,7 +49,9 @@
 											value="#{bundle.aon_save}"
 											actionListener="#{parentActionListener}"
 											reRender="showInvestAssetWindow,#{parentReRender}"
-											accesskey="#{bundle.aon_key_save}">
+											accesskey="#{bundle.aon_key_save}"
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+								     		oncomplete="Richfaces.hideModalPanel('waitProccess')">
 											<rich:componentControl for="investAssetModalPanel"
 												event="onclick" operation="hide"/>																					
 											<f:setPropertyActionListener

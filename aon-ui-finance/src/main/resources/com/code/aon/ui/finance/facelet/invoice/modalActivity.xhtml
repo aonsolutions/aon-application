@@ -40,7 +40,9 @@
 									<aon:commandButton id="activity-accept"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										value="#{bundle.aon_accept}"
-										actionListener="#{invoiceController.acceptInvoice}">
+										actionListener="#{invoiceController.addInvoiceActivity}"
+										onclick="Richfaces.showModalPanel('waitProccess')" 
+							     		oncomplete="Richfaces.hideModalPanel('waitProccess')">
 										<aon:actionHotKey key="return" />
 										<rich:componentControl for="activityModalPanel"
 											event="onclick" operation="hide"/>																					
@@ -62,7 +64,8 @@
 
 										<aon:outputLabel for="Activity_id" value="#{bundle.aon_activity}" />
 										<aon:selectOneMenu id="Activity_id"
-											value="#{invoiceController.to.activity}">
+											value="#{invoiceController.to.activity}"
+											actionListener="#{invoiceController.onActivityChanged}">
 											<f:selectItem itemLabel="- #{bundle.aon_common_all} -" value="#{null}" />
 											<f:selectItems value="#{companyCollections.companyActivities}" />
 										</aon:selectOneMenu>

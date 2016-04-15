@@ -121,6 +121,9 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private boolean showRegistryDataWindow;
 	private boolean showInvoiceAddressWindow;
 	private boolean showActivityWindow;
+	private InvestAsset savedInvestAsset;
+	private boolean showInvestAssetWindow;
+	private boolean showDetailInvestAssetWindow;
 	private Project savedProject;
 	private boolean showProjectLookup;
 	private boolean showProjectWindow;
@@ -128,9 +131,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private Seller savedSeller;
 	private boolean showSellerWindow;
 	private boolean showDetailSellerWindow;
-	private InvestAsset savedInvestAsset;
-	private boolean showInvestAssetWindow;
-	private boolean showDetailInvestAssetWindow;
 	private boolean showDocumentWindow;
 	private boolean showCommentsWindow;
 	private boolean showRemarksWindow;
@@ -333,6 +333,83 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		this.showActivityWindow = value;
 	}
 
+	public void addInvoiceActivity(ActionEvent event) throws ManagerBeanException {
+		acceptInvoice(event);
+		linkInvestAsset(getInvoice(), false);
+	}
+
+	public InvestAsset getSavedInvestAsset() {
+		return savedInvestAsset;
+	}
+
+	public void setSavedInvestAsset(InvestAsset savedInvestAsset) {
+		this.savedInvestAsset = null;
+		if (savedInvestAsset != null && savedInvestAsset.getId() != null) {
+			this.savedInvestAsset = new InvestAsset();
+			this.savedInvestAsset.setId(savedInvestAsset.getId());
+		}
+	}
+
+	public boolean isShowInvestAssetWindow() {
+		return showInvestAssetWindow;
+	}
+
+	public void setShowInvestAssetWindow(boolean value) {
+		this.showInvestAssetWindow = value;
+	}
+
+	public boolean isShowDetailInvestAssetWindow() {
+		return showDetailInvestAssetWindow;
+	}
+
+	public void setShowDetailInvestAssetWindow(boolean value) {
+		this.showDetailInvestAssetWindow = value;
+	}
+
+	public void addInvoiceInvestAsset(ActionEvent event) throws ManagerBeanException {
+		linkInvestAsset(getInvoice(), false);
+	}
+
+	public void linkInvestAsset(Invoice invoice, boolean onlyDetails) throws ManagerBeanException {
+		boolean detailsChanged = false;
+		InvestAsset investAsset = (invoice.getInvestAsset() != null && invoice.getInvestAsset().getId() != null) ? invoice.getInvestAsset() : null;
+		setSavedInvestAsset((getSavedInvestAsset() != null && getSavedInvestAsset().getId() != null) ? getSavedInvestAsset() : null);
+		if ((investAsset == null && getSavedInvestAsset() != null) || (investAsset != null && !investAsset.equals(getSavedInvestAsset()))) {
+			if (!onlyDetails) {
+				invoice.setUpdateEnabled(!invoice.isRecorded());
+				getManagerBean().restoreNullSubPOJOs(invoice);
+				getManagerBean().update(invoice);
+				getManagerBean().initializePOJO(invoice);
+			}
+
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			if (investAsset == null) {
+				criteria.addNotNullExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVEST_ASSET));
+			} else {
+				if (getSavedInvestAsset() == null) {
+					criteria.addNullExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVEST_ASSET));
+				} else {
+					criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVEST_ASSET_ID), getSavedInvestAsset().getId());
+				}
+			}
+			for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+				InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+				invoiceDetail.setInvestAsset(investAsset);
+				invoiceDetail.setUpdateEnabled(true);
+				invoiceDetailBean.update(invoiceDetail);
+				detailsChanged = true;
+			}
+		}
+		setSavedInvestAsset(invoice.getInvestAsset());
+
+		if (!onlyDetails && detailsChanged) {
+			IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
+			invoiceDetailController.onSearch(null);
+		}
+	}
+
 	public Project getSavedProject() {
 		return savedProject;
 	}
@@ -478,78 +555,6 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			}
 		}
 		setSavedSeller(invoice.getSeller());
-
-		if (!onlyDetails && detailsChanged) {
-			IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
-			invoiceDetailController.onSearch(null);
-		}
-	}
-
-	public InvestAsset getSavedInvestAsset() {
-		return savedInvestAsset;
-	}
-
-	public void setSavedInvestAsset(InvestAsset savedInvestAsset) {
-		this.savedInvestAsset = null;
-		if (savedInvestAsset != null && savedInvestAsset.getId() != null) {
-			this.savedInvestAsset = new InvestAsset();
-			this.savedInvestAsset.setId(savedInvestAsset.getId());
-		}
-	}
-
-	public boolean isShowInvestAssetWindow() {
-		return showInvestAssetWindow;
-	}
-
-	public void setShowInvestAssetWindow(boolean value) {
-		this.showInvestAssetWindow = value;
-	}
-
-	public boolean isShowDetailInvestAssetWindow() {
-		return showDetailInvestAssetWindow;
-	}
-
-	public void setShowDetailInvestAssetWindow(boolean value) {
-		this.showDetailInvestAssetWindow = value;
-	}
-
-	public void addInvoiceInvestAsset(ActionEvent event) throws ManagerBeanException {
-		linkInvestAsset(getInvoice(), false);
-	}
-
-	public void linkInvestAsset(Invoice invoice, boolean onlyDetails) throws ManagerBeanException {
-		boolean detailsChanged = false;
-		InvestAsset investAsset = (invoice.getInvestAsset() != null && invoice.getInvestAsset().getId() != null) ? invoice.getInvestAsset() : null;
-		setSavedInvestAsset((getSavedInvestAsset() != null && getSavedInvestAsset().getId() != null) ? getSavedInvestAsset() : null);
-		if ((investAsset == null && getSavedInvestAsset() != null) || (investAsset != null && !investAsset.equals(getSavedInvestAsset()))) {
-			if (!onlyDetails) {
-				invoice.setUpdateEnabled(!invoice.isRecorded());
-				getManagerBean().restoreNullSubPOJOs(invoice);
-				getManagerBean().update(invoice);
-				getManagerBean().initializePOJO(invoice);
-			}
-
-			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-			if (investAsset == null) {
-				criteria.addNotNullExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVEST_ASSET));
-			} else {
-				if (getSavedInvestAsset() == null) {
-					criteria.addNullExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVEST_ASSET));
-				} else {
-					criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVEST_ASSET_ID), getSavedInvestAsset().getId());
-				}
-			}
-			for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
-				InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
-				invoiceDetail.setInvestAsset(investAsset);
-				invoiceDetail.setUpdateEnabled(true);
-				invoiceDetailBean.update(invoiceDetail);
-				detailsChanged = true;
-			}
-		}
-		setSavedInvestAsset(invoice.getInvestAsset());
 
 		if (!onlyDetails && detailsChanged) {
 			IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
