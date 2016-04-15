@@ -127,6 +127,7 @@
 							<aon:menuItem id="investAssets"
 								value="#{bundle.accounting_invest_asset}"
 								iconClass="aon-icon-invest-asset"
+								rendered="#{!purchaseInvoice.readOnly}"
 								reRender="showInvestAssetWindow">
 								<f:setPropertyActionListener target="#{purchaseInvoice.showInvestAssetWindow}" 
 									value="#{true}" />							
@@ -260,7 +261,7 @@
 			<aon:methodParam name="parentActionListener" value="#{purchaseInvoice.addInvoiceInvestAsset}" type="actionListener" />
 			<ui:param name="parentValue" value="#{purchaseInvoice.to.investAsset}" />
 			<ui:param name="detailReRender" value="invoiceDetails" />
-			<aon:methodParam name="detailActionListener" value="#{purchaseInvoiceDetail.onInvoiceDetailSave}" type="actionListener" />
+			<aon:methodParam name="detailActionListener" value="#{purchaseInvoiceDetail.onInvoiceDetailSaveAndUpdate}" type="actionListener" />
 			<ui:param name="detailValue" value="#{purchaseInvoiceDetail.invoiceDetail.investAsset}" />
 			<ui:param name="investAssetLabel" value="#{bundle.accounting_invest_asset}" />
 		</ui:include>

@@ -367,9 +367,9 @@
 								reRender="showInvestAssetWindow">
 								<rich:toolTip value="#{bundle.accounting_invest_asset} #{to.investAsset.description}" />
 								<f:setPropertyActionListener target="#{invoiceController.showInvestAssetWindow}"
-									value="#{true}" />								
+									value="#{!invoiceController.readOnly}" />
 								<f:setPropertyActionListener target="#{invoiceController.showDetailInvestAssetWindow}"
-									value="#{true}" />								
+									value="#{!invoiceController.readOnly}" />
 							</aon:commandButton>
  						</aon:column>
 

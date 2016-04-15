@@ -544,7 +544,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
 				InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 				invoiceDetail.setInvestAsset(investAsset);
-				invoiceDetail.setUpdateEnabled(false);
+				invoiceDetail.setUpdateEnabled(true);
 				invoiceDetailBean.update(invoiceDetail);
 				detailsChanged = true;
 			}

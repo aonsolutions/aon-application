@@ -105,6 +105,12 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		getManagerBean().update(invoiceDetail);
 	}
 
+	public void onInvoiceDetailSaveAndUpdate(ActionEvent event) throws ManagerBeanException {
+		invoiceDetail.setUpdateEnabled(true);
+		getManagerBean().restoreNullSubPOJOs(invoiceDetail);
+		getManagerBean().update(invoiceDetail);
+	}
+
 	public String getSourceViewer() {
 		return sourceViewer;
 	}
