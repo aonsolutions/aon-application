@@ -144,6 +144,14 @@
 					</aon:div>			
 				</aon:if>												
 					
+				<aon:if test="#{exporter.configuration.type == 'DIAMACON'}">
+					<aon:outputLabel for="Diamacon_invoiceNumberMaxLength"
+						value="#{bundle.finance_exporter_invoice_number_max_length}" />
+					<aon:inputText id="Diamacon_invoiceNumberMaxLength"
+						size="2" maxlength="2" required="false"
+						value="#{exporter.configuration.invoiceNumberMaxLength}" />
+				</aon:if>
+					
 			</aon:panelGrid>
 	
 		</aon:div>

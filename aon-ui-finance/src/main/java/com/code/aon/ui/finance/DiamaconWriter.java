@@ -19,9 +19,13 @@ import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.report.ReportException;
@@ -43,9 +47,14 @@ public class DiamaconWriter extends BasicExporter {
 	
 	private ExcelReportExporter exporter;
 	
+	private String defaultSalesAccount;
+	private String defaultPurchaseAccount;
 	
 	public DiamaconWriter(InvoiceExportConfiguration configuration) {
 		super(configuration);
+		
+		initDefaultAccounts();
+		
 		initExcel();
 	}	
 
@@ -57,7 +66,26 @@ public class DiamaconWriter extends BasicExporter {
 	@Override
 	protected boolean isSkipAccount(Account account) {
 		return false;
-	}	
+	}
+		
+	private void initDefaultAccounts() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Account.class);
+			String accountId = null;
+			Account account = null;
+
+			accountId = AppParamUtil.getParameter(AppParam.ACC_DEFAULT_SALES_ACC).getValue();
+			account = (Account) bean.get(Integer.valueOf(accountId));
+			defaultSalesAccount = account !=null?account.getCode():"700000000";
+			
+			accountId = AppParamUtil.getParameter(AppParam.ACC_DEFAULT_PURCHASE_ACC).getValue();
+			account = (Account) bean.get(Integer.valueOf(accountId));
+			defaultPurchaseAccount = account !=null?account.getCode():"600000000";
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
+	
 	private void initExcel() {
 		this.exporter = new ExcelReportExporter();
 		try {
@@ -174,7 +202,17 @@ public class DiamaconWriter extends BasicExporter {
 				this.exporter.addCell();
 			}
 //			Nº FRA.
-			addStringCell( aed.getDocumentNumber() );
+			if( getConfiguration().getInvoiceNumberMaxLength()!=null ){
+				addStringCell(getInvoiceSeries()
+						+ StringUtils
+								.leftPad(
+										getInvoiceNumber().toString(),
+										(getConfiguration()
+												.getInvoiceNumberMaxLength() - getInvoiceSeries()
+												.length()), "0"));
+			} else {
+				addStringCell( aed.getDocumentNumber() );
+			}
 //			COMENTARIO
 			if(aed.getBalancingAccount()!=null){
 				addStringCell( aed.getBalancingAccount().getDescription() );
@@ -184,7 +222,7 @@ public class DiamaconWriter extends BasicExporter {
 //			TOTAL FRA.
 			this.exporter.addDecimalCell( getTotal() );
 //			TODO COD. VENTAS
-			this.exporter.addCell();
+			this.exporter.addStringCell( defaultSalesAccount );
 			
 			double base = 0.0;
 			double taxPercent = -0.0;
@@ -204,8 +242,12 @@ public class DiamaconWriter extends BasicExporter {
 			this.exporter.addDecimalCell( CommonUtil.round(taxPercent) );
 //			REC. EQ.
 			this.exporter.addDecimalCell( CommonUtil.round(surchargePercent) );
-//			TODO SECCION
-			this.exporter.addCell();
+//			SECCION
+			if(getInvoice().getProject()!=null){
+				this.exporter.addStringCell(getInvoice().getProject().getName());
+			} else {
+				this.exporter.addCell();
+			}
 //			BASE IMP.
 			this.exporter.addDecimalCell( CommonUtil.round(base) );
 //			CUOTA IVA
@@ -230,7 +272,11 @@ public class DiamaconWriter extends BasicExporter {
 				this.exporter.addCell();
 			}
 //			Nº FRA.
-			addStringCell( getReferenceCode() );
+			if(getConfiguration().getInvoiceNumberMaxLength()!=null){
+				addStringCell( StringUtils.right(getReferenceCode(), getConfiguration().getInvoiceNumberMaxLength()) );
+			} else {
+				addStringCell( getReferenceCode() );
+			}
 //			COMENTARIO
 			if(aed.getBalancingAccount()!=null){
 				addStringCell( aed.getBalancingAccount().getDescription() );
@@ -239,8 +285,8 @@ public class DiamaconWriter extends BasicExporter {
 			}
 //			TOTAL FRA.
 			this.exporter.addDecimalCell( getTotal() );
-//			COD. GASTOS
-			this.exporter.addCell();
+//			TODO COD. GASTOS
+			this.exporter.addStringCell( defaultPurchaseAccount );
 			
 			double base = 0.0;
 			double taxPercent = -0.0;
@@ -253,8 +299,12 @@ public class DiamaconWriter extends BasicExporter {
 			}
 //			TIPO IVA
 			this.exporter.addDecimalCell( taxPercent );
-//			TODO SECCION
-			this.exporter.addCell();
+//			SECCION
+			if(getInvoice().getProject()!=null){
+				this.exporter.addStringCell(getInvoice().getProject().getName());
+			} else {
+				this.exporter.addCell();
+			}
 //			BASE IMP.
 			this.exporter.addDecimalCell( base );
 //			CUOTA IVA
@@ -294,12 +344,16 @@ public class DiamaconWriter extends BasicExporter {
 		}
 //		Nº FRA.
 		addStringCell( aed.getDocumentNumber() );
-//		TODO SECCION
-		this.exporter.addCell();
+//		SECCION
+		if(getInvoice().getProject()!=null){
+			this.exporter.addStringCell(getInvoice().getProject().getName());
+		} else {
+			this.exporter.addCell();
+		}
 //		TODO SALDO
 		this.exporter.addCell();
 	}
-
+	
 	private void forwardNextInvoice(String documentNumber) {
 		if(!getDetails().isEmpty()){
 			AccountEntryDetail aed = getNextDetail();

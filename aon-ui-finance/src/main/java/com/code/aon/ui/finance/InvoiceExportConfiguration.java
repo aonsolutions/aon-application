@@ -45,6 +45,8 @@ public class InvoiceExportConfiguration implements Serializable {
 	
 	private Integer accountSize;
 	
+	private Integer invoiceNumberMaxLength;
+	
 	private Integer[] vats;
 	
 	private Tax[] taxs;
@@ -58,6 +60,7 @@ public class InvoiceExportConfiguration implements Serializable {
 			this.purchaseJournal = AppParamUtil.getValue(AppParam.AON_EXPORT_JOURNAL_PURCHASE);
 			this.expensesJournal = AppParamUtil.getValue(AppParam.AON_EXPORT_JOURNAL_EXPENSES);
 			this.accountSize = AppParamUtil.getValueAsInteger(AppParam.AON_EXPORT_ACCOUNT_SIZE);
+			this.invoiceNumberMaxLength = AppParamUtil.getValueAsInteger(AppParam.AON_EXPORT_INVOICE_MAX_LENGTH);
 			initAccountSize();
 			initVats();
 		}
@@ -182,6 +185,11 @@ public class InvoiceExportConfiguration implements Serializable {
 		} else {
 			AppParamUtil.removeParameter(AppParam.AON_EXPORT_VATS);
 		}
+		if ( this.type == InvoiceExportType.DIAMACON ) {
+			AppParamUtil.insertParameter(AppParam.AON_EXPORT_INVOICE_MAX_LENGTH, this.invoiceNumberMaxLength);
+		} else {
+			AppParamUtil.removeParameter(AppParam.AON_EXPORT_INVOICE_MAX_LENGTH);
+		}
 	}
 	
 	public boolean isConfigured() {
@@ -249,6 +257,14 @@ public class InvoiceExportConfiguration implements Serializable {
 
 	public void setAccountSize(Integer accountSize) {
 		this.accountSize = accountSize;
+	}
+	
+	public Integer getInvoiceNumberMaxLength() {
+		return invoiceNumberMaxLength;
+	}
+
+	public void setInvoiceNumberMaxLength(Integer invoiceNumberMaxLength) {
+		this.invoiceNumberMaxLength = invoiceNumberMaxLength;
 	}
 
 	public String getJournal( InvoiceType type ) {
