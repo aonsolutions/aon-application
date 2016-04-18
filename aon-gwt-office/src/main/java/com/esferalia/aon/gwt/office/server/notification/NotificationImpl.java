@@ -68,15 +68,24 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 			
 			msg = 	"<div style='margin-left: -30px;'>"
 					+"<div style='margin: 7px 15px 14px 30px;line-height: 18px;font-size: 13px;box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);'>"
-		
+					;
 				//logo cabecera
-				+"<div><img src=\"http://"+dom.getName() + "/aonDocuments/company.logo\" height=\"50px\"></div>"
-			
+			if(ni.getIsLogo())	msg = msg +"<div><img src=\"http://"+dom.getName() + "/aonDocuments/company.logo\" width=\""+ni.getLogoPercentage()+"%\"></div>";
+
+			SimpleDateFormat format= new SimpleDateFormat("dd/MM/yyyy");
+
 				// title
-				+"<p></p><table style='border: 1px solid #E5E5E5;table-layout: fixed;width: 100%;min-width: 625px;border-collapse: collapse;' cellpadding='0'><tbody>"
+			msg = msg +"<p></p><table style='border: 1px solid #E5E5E5;table-layout: fixed;width: 100%;min-width: 625px;border-collapse: collapse;' cellpadding='0'><tbody>"
 					+"<tr><td style=\"background-color: #F6F6F6;color: #222;border: 1px solid #CCC;font-family: Arial,sans-serif; padding: 5px 21px 5px 21px;vertical-align: top;\">"
 						+ "<span style='color: #222;font-size: 140%;margin-bottom: 2px;font-weight: bold;'>"+title+"</span>"
 						+ "<span> con referencia <b>#" + notificationInfo.getNoticeId() + "</b></span>"
+						+ "<div>"
+							+ "Remitida el <b>" + format.format(notificationInfo.getCreateDate()) +"</b>"//+ "por XXX"
+						+ "</div>"
+							
+						+ "<div>"
+							+ "Empresa: <b>" + notificationInfo.getCompanyName() +"</b>"
+						+ "</div>"
 						+ "</tr></tbody></table>";
 			
 			msg = msg + getMessage(notificationInfo, typeTitle, typeDescription);	
@@ -97,7 +106,8 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 						t = CLOSE[0];
 						d = CLOSE[1];
 					}
-					msg = msg + getMessage(n, t, d);
+					if(!n.getNotificationType().equals(NotificationType.OPEN))
+						msg = msg + getMessage(n, t, d);
 				});
 			}
 

@@ -1123,6 +1123,14 @@ color:#000;
 	background:transparent url(images/aon-icon/aon-icon-update.png) scroll left center no-repeat;
 }
 
+.aon-icon-up-arrow{
+	background:transparent url(images/aon-icon/aon-icon-up-arrow.png) scroll left center no-repeat;
+}
+
+.aon-icon-down-arrow{
+	background:transparent url(images/aon-icon/aon-icon-down-arrow.png) scroll left center no-repeat;
+}
+
 /******* GROUP  **********/
 .aon-form-group{
 	margin:1em 0;

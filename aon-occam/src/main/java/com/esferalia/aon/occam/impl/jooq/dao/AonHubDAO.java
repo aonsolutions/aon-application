@@ -1064,13 +1064,20 @@ public class AonHubDAO {
 			.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_SIGNATURE.getValue())).limit(1).fetchInto(APP_PARAM);
 		Result<AppParamRecord> mode = ctx.getDslContext().select(APP_PARAM.VALUE).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
 				.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_MODE.getValue())).limit(1).fetchInto(APP_PARAM);
+
+		Result<AppParamRecord> logo = ctx.getDslContext().select(APP_PARAM.VALUE).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+				.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_LOGO.getValue())).limit(1).fetchInto(APP_PARAM);
 		
+		
+
 		return new NotificationInfo().setHistory(history.isNotEmpty() ? history.get(0).getValue().equals("1") : false)
 				.setMailAccount(mail.isNotEmpty() && mail.get(0).getValue() != null ? SecurityDAO.getMailAccount(ctx, f-> f.getIdProperty().eq(Integer.parseInt(mail.get(0).getValue()))) : null)
 				.setNotify(auto.isNotEmpty() ? auto.get(0).getValue().equals("1") : false)
 				.setSignature(signature.isNotEmpty() && signature.get(0).getValue()!= null ? SecurityDAO.getSignature(ctx, Integer.parseInt(signature.get(0).getValue())) : null)
 				.setBcc(bcc.isNotEmpty() ? bcc.get(0).getValue() : "")
-				.setMode(mode.isNotEmpty() ?  Integer.parseInt(mode.get(0).getValue()): 1);
+				.setMode(mode.isNotEmpty() ?  Integer.parseInt(mode.get(0).getValue()): 1)
+				.setIsLogo(logo.isNotEmpty() ? logo.get(0).getValue().substring(0,1).equals("1"): true)
+				.setLogoPercentage(logo.isNotEmpty() ? Integer.parseInt(logo.get(0).getValue().substring(1)): 20);
 	}
 	
 	public static void insertNotificationInfo(AONContext ctx, NotificationInfo notificationInfo){
@@ -1123,6 +1130,16 @@ public class AonHubDAO {
 		else ctx.getDslContext().update(APP_PARAM).set(APP_PARAM.VALUE, notificationInfo.getMode() != null ?
 				notificationInfo.getMode().toString(): "1")
 			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())).and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_MODE.getValue())).execute();
+
+		Result<Record1<Integer>> logo = ctx.getDslContext().select(APP_PARAM.ID).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+				.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_LOGO.getValue())).limit(1).fetch();
+		String val ="0";
+		if(notificationInfo.getIsLogo()) val = "1"; 
+		
+		if(logo.isEmpty()) ctx.getDslContext().insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
+			.values(ctx.getDomainId(), AppParam.NOTICE_NOTIFICATION_LOGO.getValue(), val + notificationInfo.getLogoPercentage().toString()).execute();
+		else ctx.getDslContext().update(APP_PARAM).set(APP_PARAM.VALUE, val + notificationInfo.getLogoPercentage().toString())
+			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())).and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_LOGO.getValue())).execute();
 
 	}
 }

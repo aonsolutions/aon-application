@@ -17,11 +17,14 @@ public class NotificationInfo implements Serializable{
 	private Boolean history = false;
 	private String bcc;
 	private Integer mode;
+	private Integer logoPercentage;
+	private Boolean isLogo = false;
 	
 	// Notice
 	private Integer noticeId;
 	private String body;
 	private String title;
+	private Date createDate;
 	private Date date;
 	private String userName;
 	private NotificationType notificationType;
@@ -130,6 +133,27 @@ public class NotificationInfo implements Serializable{
 	}
 	public NotificationInfo setMode(Integer mode) {
 		this.mode = mode;
+		return this;
+	}
+	public Integer getLogoPercentage() {
+		return logoPercentage;
+	}
+	public NotificationInfo setLogoPercentage(Integer logoPercentage) {
+		this.logoPercentage = logoPercentage;
+		return this;
+	}
+	public Boolean getIsLogo() {
+		return isLogo;
+	}
+	public NotificationInfo setIsLogo(Boolean isLogo) {
+		this.isLogo = isLogo;
+		return this;
+	}
+	public Date getCreateDate() {
+		return createDate;
+	}
+	public NotificationInfo setCreateDate(Date createDate) {
+		this.createDate = createDate;
 		return this;
 	}
 	

@@ -66,6 +66,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -818,7 +819,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 								result);
 						issues.add(0, issue);
 						onSelectionTitle(issue);
-						sendNotification(null, issue, NotificationType.OPEN);
+						//sendNotification(null, issue, NotificationType.OPEN);
 					}
 				});
 	}
@@ -1126,6 +1127,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 				.setTitle(issueSelected.getTitle())
 				.setBody(body)
 				.setDate(new Date())
+				.setCreateDate(issueSelected.getCreateAt())
 				.setUserName(issueSelected.getUser().getName())
 				.setCompanyName(issueSelected.getCompany());
 		
@@ -1172,11 +1174,18 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					@Override
 					protected void onAccept() {
 						ListBox lb1 = (ListBox) flex_table.getWidget(0, 1);
-						ListBox lb2 = (ListBox) flex_table.getWidget(1, 1);
-						CheckBox cb1 = (CheckBox) flex_table.getWidget(2, 0);
-						CheckBox cb2 = (CheckBox) flex_table.getWidget(3, 0);
-						TextBox tb = (TextBox) flex_table.getWidget(4, 1);
-						ListBox lb3 = (ListBox) flex_table.getWidget(5, 1);
+						CheckBox cb0 = (CheckBox) flex_table.getWidget(1, 0);
+						HorizontalPanel hp = (HorizontalPanel) flex_table.getWidget(1, 1);
+						Integer value = 20;
+						if(hp.getWidgetCount() > 1){
+							NumberSpinner s = (NumberSpinner) hp.getWidget(1);
+							value = s.getValue();
+						}
+						ListBox lb2 = (ListBox) flex_table.getWidget(2, 1);
+						CheckBox cb1 = (CheckBox) flex_table.getWidget(3, 0);
+						CheckBox cb2 = (CheckBox) flex_table.getWidget(4, 0);
+						TextBox tb = (TextBox) flex_table.getWidget(5, 1);
+						ListBox lb3 = (ListBox) flex_table.getWidget(6, 1);
 						
 						NotificationInfo notificationInfo = new NotificationInfo()
 								.setBcc(tb.getValue())
@@ -1186,7 +1195,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 								.setSignature(new Signature().setId(lb2.getValue(lb2.getSelectedIndex()) != "-" ?
 										Integer.parseInt(lb2.getValue(lb2.getSelectedIndex())): null))
 								.setNotify(cb1.getValue())
-								.setMode(Integer.parseInt(lb3.getValue(lb3.getSelectedIndex())));
+								.setMode(Integer.parseInt(lb3.getValue(lb3.getSelectedIndex())))
+								.setIsLogo(cb0.getValue())
+								.setLogoPercentage(value);
 						impl.insertNotificationInfo(JsNotification.getDomain(), notificationInfo, new AsyncCallback<Void>() {
 							
 							@Override

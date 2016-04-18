@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.office.client.notification;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialogB;
+import com.esferalia.aon.gwt.office.client.NumberSpinner;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
@@ -14,6 +15,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -75,6 +77,7 @@ public abstract class NotificationDialog extends CustomDialogB
 	
 	protected abstract void onCancel();
 	
+	CheckBox cb0;
 	private void buildTable(NotificationInfo ni) {
 		flex_table.setStyleName("aon-panelGrid");
 		flex_table.setWidth("400px");
@@ -96,6 +99,39 @@ public abstract class NotificationDialog extends CustomDialogB
 		flex_table.setWidget(0, 0, new Label("Cuenta de correo"));
 		flex_table.setWidget(0, 1, lb1);
 
+		cb0 = new CheckBox();
+		cb0.setValue(ni.getIsLogo());
+		
+		cb0.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				HorizontalPanel hp = new HorizontalPanel();
+				if(cb0.getValue()){
+					NumberSpinner sp = new NumberSpinner(20);
+					sp.setStyleName("aon-inputText");
+					sp.setWidth("45px");
+					hp.add(new Label("Incluir logo en la cabecera"));
+					hp.add(sp);
+					hp.add(new Label("Vista Previa"));
+					hp.setSpacing(5);
+				}else hp.add(new Label("Incluir logo en la cabecera"));
+				flex_table.setWidget(1, 1, hp);	
+			}
+		});
+		
+		flex_table.setWidget(1, 0, cb0);
+		HorizontalPanel hp = new HorizontalPanel();
+		if(cb0.getValue()){
+			NumberSpinner sp = new NumberSpinner(ni.getLogoPercentage());
+			sp.setStyleName("aon-inputText");
+			sp.setWidth("45px");
+			hp.add(new Label("Incluir logo en la cabecera"));
+			hp.add(sp);
+			hp.add(new Label("Vista Previa"));
+			hp.setSpacing(5);
+		} else hp.add(new Label("Incluir logo en la cabecera"));
+		flex_table.setWidget(1, 1, hp);	
+		
 		ListBox lb2 = new ListBox();
 		lb2.addItem("-");
 		for(Signature signature : ni.getSignatureList()){
@@ -107,24 +143,24 @@ public abstract class NotificationDialog extends CustomDialogB
 			}
 		}
 		lb2.setStyleName("aon-inputText");
-		flex_table.setWidget(1, 0, new Label("Firma de Correo"));
-		flex_table.setWidget(1, 1, lb2);
+		flex_table.setWidget(2, 0, new Label("Firma de Correo"));
+		flex_table.setWidget(2, 1, lb2);
 
 		CheckBox cb1 = new CheckBox();
 		cb1.setValue(ni.getNotify());
-		flex_table.setWidget(2, 0, cb1);
-		flex_table.setWidget(2, 1, new Label("Notificar autom\u00e1ticamente por correo electr\u00f3nico"));
+		flex_table.setWidget(3, 0, cb1);
+		flex_table.setWidget(3, 1, new Label("Notificar autom\u00e1ticamente por correo electr\u00f3nico"));
 
 		CheckBox cb2 = new CheckBox();
 		cb2.setValue(ni.getHistory());
-		flex_table.setWidget(3, 0, cb2);
-		flex_table.setWidget(3, 1, new Label("Incluir historial completo en respuesta"));
+		flex_table.setWidget(4, 0, cb2);
+		flex_table.setWidget(4, 1, new Label("Incluir historial completo en respuesta"));
 		
 		TextBox tb = new TextBox();
 		tb.setStyleName("aon-inputText");
 		tb.setValue(ni.getBcc() != null ? ni.getBcc() : "");
-		flex_table.setWidget(4, 0, new Label("incluir en BCC"));
-		flex_table.setWidget(4, 1, tb);
+		flex_table.setWidget(5, 0, new Label("incluir en BCC"));
+		flex_table.setWidget(5, 1, tb);
 		
 		ListBox lb3 = new ListBox();
 		lb3.addItem("No enviar ninguna notificaci\u00f3n", "0");
@@ -132,8 +168,8 @@ public abstract class NotificationDialog extends CustomDialogB
 		lb3.addItem("Entorno de producci\u00f3n REAL", "2");
 		lb3.setSelectedIndex(ni.getMode() != null ? ni.getMode() : 1);
 		lb3.setStyleName("aon-inputText");
-		flex_table.setWidget(5, 0, new Label("Modo"));
-		flex_table.setWidget(5, 1, lb3);
+		flex_table.setWidget(6, 0, new Label("Modo"));
+		flex_table.setWidget(6, 1, lb3);
 		
 		flexTableCss();
 	}
