@@ -2,12 +2,20 @@ package com.esferalia.aon.occam.api.model.attachment;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 @SuppressWarnings("serial")
 public class Attach implements Serializable {
+
+    public static final long ONE_KB = 1024;
+    public static final long ONE_MB = ONE_KB * ONE_KB;
+    public static final long ONE_GB = ONE_KB * ONE_MB;
 	
 	AttachType attachType;
 	private Integer attachModule;
@@ -42,6 +50,12 @@ public class Attach implements Serializable {
 	private String icon;
 	private String md5;
 	private Boolean isDrive;
+	
+	//---------- DOCUMENTAL
+
+	private Scope fullScope;
+	private Category fullCategory;
+	private LinkedList<Tag> tagList;
 	
 	//--------------------- Constructors
 	
@@ -257,6 +271,27 @@ public class Attach implements Serializable {
 	}
 	
 	
+	
+	
+	public Scope getFullScope() {
+		return fullScope;
+	}
+	public void setFullScope(Scope fullScope) {
+		this.fullScope = fullScope;
+	}
+	public Category getFullCategory() {
+		return fullCategory;
+	}
+	public void setFullCategory(Category fullCategory) {
+		this.fullCategory = fullCategory;
+	}
+	public LinkedList<Tag> getTagList() {
+		return tagList;
+	}
+	public void setTagList(LinkedList<Tag> tagList) {
+		this.tagList = tagList;
+	}
+	
 	public static Attach projectAttach(Integer project, Domain domain, com.esferalia.aon.occam.api.model.type.MimeType mimetype, String description,
 			byte[] data, Boolean confidential, Date date, String driveId){
 		Attach attach = new Attach(AttachType.PROJECT);
@@ -270,5 +305,37 @@ public class Attach implements Serializable {
 		attach.setDriveId(driveId);
 
 		return attach;
+	}
+	
+	public String getTagListString(){
+		String str = "";
+		for(Tag t : getTagList()){
+			if(!str.equals("")) str = str+", ";
+			str = str + t.getName();
+		}
+		return str;
+	}
+	
+	public Integer getSize(){
+		return Integer.parseInt(getDparentId() != null ? getDparentId() : "0");
+	}
+	
+	public String getSizeString(){
+		return byteCountToDisplaySize(getSize());
+	}
+	
+	public static String byteCountToDisplaySize(long size) {
+	        String displaySize;
+
+	        if (size / ONE_GB > 0) {
+	            displaySize = String.valueOf(size / ONE_GB) + " GB";
+	        } else if (size / ONE_MB > 0) {
+	            displaySize = String.valueOf(size / ONE_MB) + " MB";
+	        } else if (size / ONE_KB > 0) {
+	            displaySize = String.valueOf(size / ONE_KB) + " KB";
+	        } else {
+	            displaySize = String.valueOf(size) + " bytes";
+	        }
+	        return displaySize;
 	}
 }

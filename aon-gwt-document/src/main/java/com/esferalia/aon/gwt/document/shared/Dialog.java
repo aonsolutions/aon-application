@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.document.shared;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 
 import gwtupload.client.SingleUploader;
 
@@ -21,7 +22,10 @@ public class Dialog {
 	SingleUploader upload;
 	LinkedList<Domain> sons;
 	Boolean son;
+	
 	FileInfo fileInfo;
+	Attach attach;
+	
 	Tag tag;
 	Category cat;
 	String searchDomain;
@@ -205,6 +209,14 @@ public class Dialog {
 
 	public void setIsServiconvenios(Boolean isServiconvenios) {
 		this.isServiconvenios = isServiconvenios;
+	}
+
+	public Attach getAttach() {
+		return attach;
+	}
+
+	public void setAttach(Attach attach) {
+		this.attach = attach;
 	}
 
 

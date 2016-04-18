@@ -1705,8 +1705,8 @@ public class Documents extends Composite implements EntryPoint {
 						if(result){
 							hide();
 							cargando.show();
-							
-							idoc.insertFile(getDomain(), dialogCode, finsert, new AsyncCallback<Vector<FileInfo>>() {
+							// lo inserta en bd, y luego el proceso lo sube a drive.
+							idoc.insertFileBD(getDomain(), dialogCode, finsert, new AsyncCallback<Vector<FileInfo>>() {
 
 								@Override
 								public void onFailure(Throwable caught) {
@@ -1842,6 +1842,7 @@ public class Documents extends Composite implements EntryPoint {
 					
 					@Override
 					public void onFailure(Throwable caught) {
+						cargando.hide();
 						String head = "com.esferalia.aon.gwt.document.client.Documents"
 								+ " - newFile(SingleUploader up) - newFile";
 						print(head, caught.getMessage());
@@ -1987,7 +1988,8 @@ public class Documents extends Composite implements EntryPoint {
 					public void onSuccess(Boolean result) {
 						if(result){
 							cargando.show();
-							idoc.insertFile(getDomain(), dialogCode, finsert, new AsyncCallback<Vector<FileInfo>>() {
+							// LO INSERTA EN BD, Y LUEGO EL PROCESO LO SUBE A DRIVE!!!
+							idoc.insertFileBD(getDomain(), dialogCode, finsert, new AsyncCallback<Vector<FileInfo>>() {
 
 								@Override
 								public void onFailure(Throwable caught) {}
@@ -2107,7 +2109,7 @@ public class Documents extends Composite implements EntryPoint {
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						
+						cargando.hide();
 					}
 				});
                 

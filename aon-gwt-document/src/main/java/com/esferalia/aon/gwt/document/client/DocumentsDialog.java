@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.document.shared.Lists;
 import com.esferalia.aon.gwt.document.shared.PasswordGenerator;
 import com.esferalia.aon.gwt.document.shared.Scope;
 import com.esferalia.aon.gwt.document.shared.Tag;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -1108,6 +1109,16 @@ public abstract class DocumentsDialog extends CustomDialogB {
 	
 	public void setFileInfo(FileInfo fileInfo) {
 		this.fileInfo = fileInfo;
+	}
+	
+	Attach attach;
+	public Attach getAttach() {
+		return attach;
+	}
+
+	
+	public void setFileInfo(Attach attacj) {
+		this.attach = attach;
 	}
 	
 	

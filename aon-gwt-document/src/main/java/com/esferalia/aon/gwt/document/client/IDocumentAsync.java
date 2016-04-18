@@ -114,4 +114,6 @@ public interface IDocumentAsync {
 
 	void getLink(Domain domain, FileInfo fileInfo, String l, AsyncCallback<String> callback);
 
+	void insertFileBD(Domain domain, String dialogCode, FileInfo fi, AsyncCallback<Vector<FileInfo>> callback);
+
 }

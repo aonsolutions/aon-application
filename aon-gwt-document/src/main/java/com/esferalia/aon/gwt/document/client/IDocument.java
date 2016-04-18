@@ -52,6 +52,8 @@ public interface IDocument extends RemoteService{
 	
 	public Vector<FileInfo> insertFile(Domain domain, String dialogCode, FileInfo fi);
 	
+	public Vector<FileInfo> insertFileBD(Domain domain, String dialogCode, FileInfo fi);
+	
 	public void share(Domain domain, String email,Vector<FileInfo> fvector); 
 	
 	public Vector<FileInfo> eSearchFile(Vector<FileInfo> v,String s);
