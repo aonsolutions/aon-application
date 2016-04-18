@@ -175,16 +175,10 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 	@UiHandler("searchIdButton")
 	void onSearchIdButtonClick(ClickEvent event) {
 		
-		int id;
-		
 		try {
-			id = Integer.parseInt(idNoticeTb.getText());
-			
-			for (Listener listener : listeners)
-				listener.onSearchIdButton(id);
-			
+			onIdNoticeKeyDown(Integer.parseInt(idNoticeTb.getText()));
 		} catch (NumberFormatException ex) {
-			
+			idNoticeTb.selectAll();
 		}
 	}
 	
