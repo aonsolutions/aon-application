@@ -95,5 +95,19 @@ public interface AonHubMessages extends Messages {
 
 	@DefaultMessage("Configuraci\u00F3n")
 	String configuration();
+
+	@DefaultMessage("Refresh")
+	String refresh();
+
+	@DefaultMessage("Limpiar")
+	String clear();
+
+	@DefaultMessage("Mostrar avanzado")
+	String showAdvanced();
+
+	@DefaultMessage("Ocultar avanzado")
+	String hideAdvanced();
+	
+	
  
 }

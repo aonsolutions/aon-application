@@ -32,7 +32,6 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
-import com.esferalia.aon.occam.api.model.type.NoticeType;
 import com.google.gwt.safehtml.shared.UriUtils;
 
 /**
@@ -1083,14 +1082,62 @@ public class OfficeApiServlet extends HttpServlet {
 			}
 		}
 	}
-
-	// @formatter:off
-	private static final HttpRequestHandler GET_HANDLERS[] = {
-			new GetAonJsData(),
-			new GetAllIssuesRequestHandler(),
-			new ListAllLabels(),			
-	};
 	
+	private static class GetIssueById extends RegExpRequestHandler {
+
+		private HttpServletRequest req; 
+		private HttpServletResponse resp;
+		
+		private int domainId;		
+		private String domainName;
+		
+		public GetIssueById() {
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues/(\\d+)");
+		}
+
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			
+			this.req = req;
+			this.resp = resp;
+			
+			int number = 0;
+
+			try {
+				this.domainId = getDomainId();
+				this.domainName = getDomainName();
+				number = Integer.parseInt(group(3));
+
+			} catch (Exception ex) {
+				String aux = getRequestAction(req);
+				String[] auxArr = aux.split("/");
+				this.domainId = Integer.parseInt(auxArr[2]);
+				this.domainName = auxArr[3];
+				number = Integer.parseInt(auxArr[5]);
+
+			} finally {
+				getIssueById(number);
+			}
+		}
+
+		private void getIssueById(int number) {
+
+			try {
+				
+				Notice notice = AON.getIssueById(domainId, domainName, AonServletUtils.getLoggedUser(), number);				
+
+				PrintWriter pw = resp.getWriter();
+				pw.append(getNotice(notice));
+				pw.flush();
+
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+			}
+		}
+	}
+	
+	// @formatter:off
 	private static final HttpRequestHandler POST_HANDLERS[] = {
 			new CreateIssue(),
 			new CreateFAQ(),
@@ -1109,6 +1156,14 @@ public class OfficeApiServlet extends HttpServlet {
 			new RemoveLabelFromIssue(),
 	};
 	// @formatter:on
+
+	private static final HttpRequestHandler GET_HANDLERS[] = {
+			new GetAonJsData(),
+			new GetAllIssuesRequestHandler(),
+			new ListAllLabels(),
+			new GetIssueById()
+	};
+
 
 	// ------------------------------------------------------------------------
 

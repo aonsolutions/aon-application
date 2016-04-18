@@ -98,6 +98,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 	@UiField
+	ResizeLayoutPanel northResizePanel;
+	@UiField
 	Button newIssueButton;
 	@UiField
 	Button tagButton;
@@ -109,6 +111,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	Button configurationButton;
 	@UiField
 	Button refreshButton;
+	@UiField
+	Button hidePanelButton;
 	
 	@UiField
 	DeckLayoutPanel deckPanel;
@@ -183,6 +187,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		
 		this.loadRepositoryData();
 		this.loadLabels();
+		this.initIssuesList();
+		this.loadOpenIssues();
 	}
 	
 	void loadRepositoryData() {
@@ -242,9 +248,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						Office.this.searchPanel.addTagList(tagList);
 					}
 				});
-
-		initIssuesList();
-		loadOpenIssues();
 	}
 
 	void loadOpenIssues() {
@@ -264,10 +267,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 							addOpenIssue(result.getData().get(x));
 						
 						openIssuesRb.setText(AON.AONHUB.openIssues() + " (" + (result.getCount()) + ")");
-						allIssuesRb.setText(AON.AONHUB.allIssues());						
 						closedIssuesRb.setText(AON.AONHUB.closedIssues());
+						allIssuesRb.setText(AON.AONHUB.allIssues());						
 						faqIssuesRb.setText(AON.AONHUB.FAQ());
-
 					}
 				});
 		showDockOfficePanel();
@@ -288,9 +290,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						for (int x = 0; x < result.getData().length(); x++)
 							addClosedIssue(result.getData().get(x));
 
+						openIssuesRb.setText(AON.AONHUB.openIssues());
 						closedIssuesRb.setText(AON.AONHUB.closedIssues() + " (" + result.getCount() + ")");	
 						allIssuesRb.setText(AON.AONHUB.allIssues());
-						openIssuesRb.setText(AON.AONHUB.openIssues());
 						faqIssuesRb.setText(AON.AONHUB.FAQ());
 					}
 				});
@@ -311,9 +313,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						for (int x = 0; x < result.getData().length(); x++)
 							addAllIssue(result.getData().get(x));
 						
-						allIssuesRb.setText(AON.AONHUB.allIssues() + " (" + result.getCount() + ")");
 						openIssuesRb.setText(AON.AONHUB.openIssues());
 						closedIssuesRb.setText(AON.AONHUB.closedIssues());
+						allIssuesRb.setText(AON.AONHUB.allIssues() + " (" + result.getCount() + ")");
 						faqIssuesRb.setText(AON.AONHUB.FAQ());
 					}
 				});
@@ -334,10 +336,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						for (int x = 0; x < result.getData().length(); x++)
 							addFAQIssue(result.getData().get(x));
 						
-						faqIssuesRb.setText(AON.AONHUB.allIssues() + " (" + result.getCount() + ")");
 						openIssuesRb.setText(AON.AONHUB.openIssues());
 						closedIssuesRb.setText(AON.AONHUB.closedIssues());
 						allIssuesRb.setText(AON.AONHUB.allIssues());
+						faqIssuesRb.setText(AON.AONHUB.allIssues() + " (" + result.getCount() + ")");
 					}
 				});
 		showDockOfficePanel();
@@ -402,7 +404,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	
 	@UiHandler("openIssuesRb")
 	void onOpenIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		if (event.getValue()) {
+		if (event.getValue()) {			
 			closedIssuesRb.removeStyleName(AON.AON_BOLD);
 			allIssuesRb.removeStyleName(AON.AON_BOLD);
 			faqIssuesRb.removeStyleName(AON.AON_BOLD);
@@ -416,7 +418,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("closedIssuesRb")
 	void onClosedIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		if (event.getValue()) {
+		if (event.getValue()) {			
 			openIssuesRb.removeStyleName(AON.AON_BOLD);
 			allIssuesRb.removeStyleName(AON.AON_BOLD);
 			faqIssuesRb.removeStyleName(AON.AON_BOLD);
@@ -430,7 +432,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("allIssuesRb")
 	void onAllIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		if (event.getValue()) {
+		if (event.getValue()) {			
 			openIssuesRb.removeStyleName(AON.AON_BOLD);
 			closedIssuesRb.removeStyleName(AON.AON_BOLD);
 			faqIssuesRb.removeStyleName(AON.AON_BOLD);
@@ -444,7 +446,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	
 	@UiHandler("faqIssuesRb")
 	void onFaqIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		if (event.getValue()) {
+		if (event.getValue()) {			
 			openIssuesRb.removeStyleName(AON.AON_BOLD);
 			closedIssuesRb.removeStyleName(AON.AON_BOLD);
 			allIssuesRb.removeStyleName(AON.AON_BOLD);
@@ -470,13 +472,26 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	
 	@UiHandler("refreshButton")
 	void onRefreshButtonClickEvent(ClickEvent event) {
-		this.issueSelected = null;
 		this.incrementSize = 0;
-		this.gitHub.setOffset(incrementSize);
+		this.gitHub.setOffset(incrementSize);		
 		loadRepositoryData();		
 		loadLabels();
 		initIssuesList();
 		evalRadioButtons();
+	}
+	
+	@UiHandler("hidePanelButton")
+	void onHidePanelButtonClickEvent(ClickEvent event) {
+		
+		String text = hidePanelButton.getText();
+		if (AonStringUtils.equals(AON.AONHUB.showAdvanced(), text)) {
+			dockOfficePanel.setWidgetSize(Office.this.northResizePanel, 155);
+			hidePanelButton.setText(AON.AONHUB.hideAdvanced());
+		}
+		else {
+			dockOfficePanel.setWidgetSize(Office.this.northResizePanel, 45);
+			hidePanelButton.setText(AON.AONHUB.showAdvanced());
+		}
 	}
 
 	@UiHandler("configurationButton")
@@ -668,6 +683,25 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.gitHub.setOffset(incrementSize);
 		initIssuesList();
 		evalRadioButtons();
+	}
+	
+	@Override
+	public void onSearchIdButton(int id) {
+		this.incrementSize = 0;
+		this.gitHub.setOffset(incrementSize);
+		initIssuesList();
+		this.gitHub.getIssueById(String.valueOf(getCurrentDomain()), getCurrentDomainName(), id, new AsyncCallback<JsIssue>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
+			
+			@Override
+			public void onSuccess(JsIssue result) {					
+				addAllIssue(result);
+			}
+		});
 	}
 	
 	// ******************************************************************

@@ -12,8 +12,26 @@
 	</ui:style>
 
 	<g:VerticalPanel spacing="5">
-
 		<g:HTMLPanel>
+			<table class="{aonResources.css.aonGroupBody}">
+				<tr>
+					<td>
+						<g:Label text="ID:" styleName="{aonResources.css.aonBold}" />
+					</td>
+					<td>
+						<td>
+							<g:TextBox ui:field="idNoticeTb"
+								styleName="{aonResources.css.aonWidth70} {aonResources.css.aonInputText}" />
+						</td>
+					</td>
+					<td>
+						<g:Button ui:field="searchIdButton"
+							styleName="{aonResources.css.aonIconSearch} {aonResources.css.aonIconCommandButton}"
+							enabled="false" />
+					</td>
+				</tr>
+
+			</table>
 			<table class="{aonResources.css.aonGroupBody}">
 				<tr>
 					<td>

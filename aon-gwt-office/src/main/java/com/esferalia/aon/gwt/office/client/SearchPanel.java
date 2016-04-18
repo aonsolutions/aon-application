@@ -18,11 +18,14 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.text.client.IntegerParser;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -72,6 +75,8 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		void onSelectOwner(String userName);
 		
 		void onSelectFrom(Date from);
+		
+		void onSearchIdButton(int id);
 
 	}
 
@@ -94,9 +99,13 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 	Button noticeTagButton;
 	@UiField
 	Button ownerButton;
+	@UiField
+	Button searchIdButton;
 	
 	@UiField
 	TextBox subjectTextBox;
+	@UiField
+	TextBox idNoticeTb;
 	
 	private List<Listener> listeners;
 	
@@ -138,6 +147,24 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		fromListBox.addItem("30 d\u00EDas", DateRange.THIRTY_DAYS_AGO.name());
 		fromListBox.addItem("Este a\u00F1o", DateRange.THIS_YEAR.name());
 		fromListBox.setSelectedIndex(0);
+		
+		idNoticeTb.addKeyPressHandler(new KeyPressHandler() {
+			
+			@Override
+			public void onKeyPress(KeyPressEvent event) {
+				String input = idNoticeTb.getText();
+				if (!input.matches("[0-9]*"))
+					idNoticeTb.setText("");
+			}
+		});
+		
+		idNoticeTb.addKeyDownHandler(new KeyDownHandler() {
+			
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				searchIdButton.setEnabled(AonStringUtils.isNotEmpty(idNoticeTb.getText()));
+			}
+		});
 	}
 	
 	public void addListener(Listener listener) {
@@ -159,6 +186,22 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		
 		for (Listener listener : listeners)
 			listener.onSelectCompany(company);
+	}
+	
+	@UiHandler("searchIdButton")
+	void onSearchIdButtonClick(ClickEvent event) {
+		
+		int id;
+		
+		try {
+			id = Integer.parseInt(idNoticeTb.getText());
+			
+			for (Listener listener : listeners)
+				listener.onSearchIdButton(id);
+			
+		} catch (NumberFormatException ex) {
+			
+		}
 	}
 	
 	@Override

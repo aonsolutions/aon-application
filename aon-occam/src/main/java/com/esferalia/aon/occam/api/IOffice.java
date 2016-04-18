@@ -19,6 +19,8 @@ public interface IOffice {
 	public List<User> getUsers(AONContext ctx);
 
 	public Notice addNewNotice(AONContext ctx, Notice notice) throws Exception;
+	
+	public Notice getIssueById(AONContext ctx, int number);
 
 	public Notice editNotice(AONContext ctx, Notice notice);
 	

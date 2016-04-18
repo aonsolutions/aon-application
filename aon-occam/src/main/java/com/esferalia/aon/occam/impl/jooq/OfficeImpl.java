@@ -46,6 +46,12 @@ public class OfficeImpl implements IOffice {
 				conf -> AonHubDAO2.getTicketNotices(ctx, filter));		
 	}
 	
+	@Override
+	public Notice getIssueById(AONContext ctx, int number) {
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.getTicketNotice(ctx, number));
+	}
+	
 	// ----------------------------------------------------- INSERTS
 
 	@Override

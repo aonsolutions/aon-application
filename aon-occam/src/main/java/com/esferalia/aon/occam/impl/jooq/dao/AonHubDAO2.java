@@ -267,7 +267,7 @@ public class AonHubDAO2 {
 		return new FullTagFiller().apply(tagRecord);
 	}
 
-	private static Notice getTicketNotice(AONContext ctx, int noticeId) {
+	public static Notice getTicketNotice(AONContext ctx, int noticeId) {
 
 		// @formatter:off 
 		Record record = ctx.getDslContext()

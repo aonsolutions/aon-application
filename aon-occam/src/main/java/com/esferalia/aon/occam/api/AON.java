@@ -1284,6 +1284,17 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Notice getIssueById(Integer domainId, String domainName, String userName, int number) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().getIssueById(ctx, number);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static Notice editNotice(Integer domainId, String domainName,
 			String userName, Notice notice) {

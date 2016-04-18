@@ -191,6 +191,10 @@ public class AonHub {
 				+ (filterUser != null ? "&users=" + URL.encode(filterUser) : ""), callback);
 	}
 	
+	public void getIssueById(String user, String repo, int number, AsyncCallback<JsIssue> callback) {
+		get(baseUrl + "repos/" + user + "/" + repo + "/issues/" + number, callback);
+	}
+	
 	public void createIssue(String user, String repo, IssueValue prop,
 			AsyncCallback<JsIssue> callback) {
 		post(baseUrl + "repos/" + user + "/" + repo + "/issues", prop,
