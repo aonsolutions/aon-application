@@ -25,7 +25,6 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.text.client.IntegerParser;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -77,7 +76,8 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		void onSelectFrom(Date from);
 		
 		void onSearchIdButton(int id);
-
+		
+		void onReloadDataGrid();
 	}
 
 	private static SearchPanelUiBinder uiBinder = GWT
@@ -148,23 +148,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		fromListBox.addItem("Este a\u00F1o", DateRange.THIS_YEAR.name());
 		fromListBox.setSelectedIndex(0);
 		
-		idNoticeTb.addKeyPressHandler(new KeyPressHandler() {
-			
-			@Override
-			public void onKeyPress(KeyPressEvent event) {
-				String input = idNoticeTb.getText();
-				if (!input.matches("[0-9]*"))
-					idNoticeTb.setText("");
-			}
-		});
-		
-		idNoticeTb.addKeyDownHandler(new KeyDownHandler() {
-			
-			@Override
-			public void onKeyDown(KeyDownEvent event) {
-				searchIdButton.setEnabled(AonStringUtils.isNotEmpty(idNoticeTb.getText()));
-			}
-		});
+		initIdNoticeTbKeyDow();
 	}
 	
 	public void addListener(Listener listener) {
@@ -214,9 +198,46 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		}
 	}
 	
+	
+	private void initIdNoticeTbKeyDow() {
+		idNoticeTb.addKeyDownHandler(new KeyDownHandler() {
+			
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				int keyCode = event.getNativeKeyCode();
+				searchIdButton.setEnabled(!isNoticeTbEmpty());
+				
+				try {
+					
+					if (keyCode == KeyCodes.KEY_ENTER)
+						onIdNoticeKeyDown(Integer.parseInt(idNoticeTb.getText()));
+					else if (keyCode == KeyCodes.KEY_BACKSPACE && isNoticeTbEmpty())
+						onDeleteNoticeTbKeyDow();
+					
+				} catch (NumberFormatException ex) {
+					idNoticeTb.selectAll();
+				}
+			}
+		});
+	}
+	
 	private void onSubjectKeyDown(String subject) {
 		for (Listener listener : listeners)
 			listener.onSelectSubject(subject);
+	}
+	
+	private void onIdNoticeKeyDown(int id) {
+		for (Listener listener : listeners)
+			listener.onSearchIdButton(id);
+	}
+	
+	private void onDeleteNoticeTbKeyDow() {
+		for (Listener listener : listeners)
+			listener.onReloadDataGrid();
+	}
+	
+	private boolean isNoticeTbEmpty() {
+		return AonStringUtils.isNotEmpty(idNoticeTb.getText());
 	}
 	
 	// ---------------------------------------------------------

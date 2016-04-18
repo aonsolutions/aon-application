@@ -686,6 +686,14 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 	
 	@Override
+	public void onReloadDataGrid() {
+		this.incrementSize = 0;
+		this.gitHub.setOffset(incrementSize);
+		initIssuesList();
+		evalRadioButtons();
+	}
+	
+	@Override
 	public void onSearchIdButton(int id) {
 		this.incrementSize = 0;
 		this.gitHub.setOffset(incrementSize);
