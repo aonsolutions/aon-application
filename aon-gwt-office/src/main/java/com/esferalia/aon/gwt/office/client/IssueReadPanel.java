@@ -233,24 +233,9 @@ public class IssueReadPanel extends Composite {
 				continue;
 			}
 			
-			if (tag.isOfficeStatus() && !tag.endDateIsNull())
+			if (tag.isOfficeStatus() && tag.endDateIsNull())
 				hLogPanel = setHistorialLogHeader(tag);
 			else if (!tag.endDateIsNull())
-				setContent(tag);
-		}
-
-		for (AonTagIssueSelected tag : issue.getTags()) {
-
-			if (tag.getType() != TagType.OFFICE_STATUS.value()
-					&& tag.getDeletedAt() != null) {
-				setInfoTag(tag);
-				continue;
-			}
-
-			if (tag.getType() == TagType.OFFICE_STATUS.value()
-					&& tag.getDeletedAt() == null)
-				hLogPanel = setHistorialLogHeader(tag);
-			else if (tag.getDeletedAt() != null)
 				setContent(tag);
 		}
 
@@ -560,7 +545,7 @@ public class IssueReadPanel extends Composite {
 						public void onValueChange(
 								ValueChangeEvent<Boolean> event) {
 
-							if (event.getValue() == true)
+							if (event.getValue())
 								evalAssignTag(tag);
 							else
 								evalUnAssingTag(tag);
@@ -602,8 +587,7 @@ public class IssueReadPanel extends Composite {
 		for (AonTagIssueSelected tagAux : assignTags) {
 			if (tagAux.getName().compareTo(tag.getName()) == 0
 					&& tagAux.getType() == tag.getType()) {
-				deletedTagsMap.remove(tag);
-				return;
+				deletedTagsMap.remove(tag);				
 			}
 		}
 		addTagsMap.add(tag);
@@ -614,8 +598,7 @@ public class IssueReadPanel extends Composite {
 		for (AonTagIssueSelected tagAux : assignTags) {
 			if (tagAux.getName().compareTo(tag.getName()) == 0
 					&& tagAux.getType() == tag.getType()) {
-				deletedTagsMap.add(tag);
-				return;
+				deletedTagsMap.add(tag);				
 			}
 		}
 
