@@ -279,6 +279,10 @@ public class Mod131Aeat2016Calculator  {
 	
 	private static void calcIndiceCorrectorEmpresaPequenaDimension(AONContext ctx, Mod131Activity act) {
 		double ic2 = 0.0;
+		if (act.isIndiceEmpresasPequenaDimensionAplicable() 
+			&& AonMathUtils.round(act.getCom()) > 0) {
+			act.setIndiceEmpresasPequenaDimensionAplicable(false);
+		}
 		if (act.isIndiceEmpresasPequenaDimensionAplicable()) {
 			// En ning?n caso ser? aplicable el ?ndice corrector para empresas de peque?a 
 			// dimensi?n (b.1) a las actividades para las que est?n previstos los ?ndices 

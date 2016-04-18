@@ -630,6 +630,10 @@ public class Aeat2015ModuleCalculator implements IModuleCalculator, Serializable
 		// desarrolla la actividad.
 		
 		double i07 = 0.0;
+		if (indiceEmpresasPequeñaDimensionAplicable 
+			&& CommonUtil.round(a02) > 0) {
+			indiceEmpresasPequeñaDimensionAplicable = false;
+		}
 		if (indiceEmpresasPequeñaDimensionAplicable) {
 			// En ningún caso será aplicable el índice corrector para empresas de pequeña 
 			// dimensión (b.1) a las actividades para las que están previstos los índices 
