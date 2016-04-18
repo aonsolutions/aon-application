@@ -2516,7 +2516,16 @@ right
     line-height: 18px;
     white-space: nowrap;
     z-index: 100;
-    
+}
+
+@sprite .aonhub-expand-all {	
+	gwt-image: 'expand';
+	width: auto;
+}
+
+@sprite .aonhub-collapse-all {	
+	gwt-image: 'collapseall';
+	width: auto;
 }
 
 .aon-stat-item-panel{

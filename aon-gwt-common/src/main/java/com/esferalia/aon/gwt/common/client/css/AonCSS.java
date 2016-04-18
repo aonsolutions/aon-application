@@ -998,6 +998,12 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("tag-notice")
 	String tagNotice();
+	
+	@ClassName("aonhub-expand-all")
+	String aonhubExpandAll();
+	
+	@ClassName("aonhub-collapse-all")
+	String aonhubCollapseAll();
 
 	/*
 	 *********************************************

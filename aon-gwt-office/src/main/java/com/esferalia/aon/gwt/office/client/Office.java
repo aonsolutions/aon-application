@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.office.client;
 
+import static com.esferalia.aon.gwt.common.client.AON.AONHUB;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -102,8 +104,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	@UiField
 	Button newIssueButton;
 	@UiField
-	Button tagButton;
-	@UiField
 	Button returnButton;
 	@UiField
 	Button clearButton;
@@ -111,6 +111,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	Button configurationButton;
 	@UiField
 	Button refreshButton;
+	@UiField
+	Button showPanelButton;
 	@UiField
 	Button hidePanelButton;
 	
@@ -388,11 +390,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		issuePanel.showNoticePanel();
 	}
 
-	@UiHandler("tagButton")
-	void onTagButtonClick(ClickEvent event) {
-		dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 220);
-	}
-
 	@UiHandler("returnButton")
 	void onReturnButtonClick(ClickEvent event) {
 		initIssuesList();
@@ -480,18 +477,18 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		evalRadioButtons();
 	}
 	
+	@UiHandler("showPanelButton") 
+	void onShowPanelButtonClickEvent(ClickEvent event) {
+		dockOfficePanel.setWidgetSize(Office.this.northResizePanel, 155);
+		showPanelButton.setVisible(false);
+		hidePanelButton.setVisible(true);
+	}
+	
 	@UiHandler("hidePanelButton")
 	void onHidePanelButtonClickEvent(ClickEvent event) {
-		
-		String text = hidePanelButton.getText();
-		if (AonStringUtils.equals(AON.AONHUB.showAdvanced(), text)) {
-			dockOfficePanel.setWidgetSize(Office.this.northResizePanel, 155);
-			hidePanelButton.setText(AON.AONHUB.hideAdvanced());
-		}
-		else {
-			dockOfficePanel.setWidgetSize(Office.this.northResizePanel, 45);
-			hidePanelButton.setText(AON.AONHUB.showAdvanced());
-		}
+		dockOfficePanel.setWidgetSize(Office.this.northResizePanel, 45);
+		showPanelButton.setVisible(true);
+		hidePanelButton.setVisible(false);
 	}
 
 	@UiHandler("configurationButton")
@@ -1145,12 +1142,13 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		});
 	}
 	
-	private NotificationType getNotificationType(String state) {
-		if(state.equalsIgnoreCase("open") ||state.equalsIgnoreCase("abierto")){
+	private NotificationType getNotificationType(String state) {	
+		
+		if(state.equalsIgnoreCase(NoticeStatus.OPEN.getValue())){
 			return NotificationType.OPEN;
-		}else 	if(state.equalsIgnoreCase("reopen") ||state.equalsIgnoreCase("reabierto")){
+		}else 	if(state.equalsIgnoreCase(NoticeStatus.REOPEN.getValue())){
 			return NotificationType.REOPEN;
-		}else 	if(state.equalsIgnoreCase("closed") ||state.equalsIgnoreCase("cerrado")){
+		}else 	if(state.equalsIgnoreCase(NoticeStatus.CLOSED.getValue())){
 			return NotificationType.CLOSE;
 		}
 		return null;
@@ -1248,17 +1246,17 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		}
 		
 		public ConfigurationContextMenu(){
-			tagItem = addItem("Etiquetas", TagCommand
-					,"aon-icon-tag", AON.AON_ICON_CMD_BUTTON);
+			tagItem = addItem(AONHUB.labels(), TagCommand
+					, "aon-icon-tag", AON.AON_ICON_CMD_BUTTON);
 			tagItem.setEnabled(true);
 			
-			notificationItem = addItem("Notificaciones", NotificationCommand 
+			notificationItem = addItem(AONHUB.notifications(), NotificationCommand 
 					,"aon-icon-notification", AON.AON_ICON_CMD_BUTTON);
 			notificationItem.setEnabled(true);
 			
 			addSeparator();
 			
-			faqsItem = addItem("FAQs", FAQsCommand
+			faqsItem = addItem(AONHUB.FAQs(), FAQsCommand
 					,"aon-icon-menu-help", AON.AON_ICON_CMD_BUTTON);
 			faqsItem.setEnabled(true);
 		}

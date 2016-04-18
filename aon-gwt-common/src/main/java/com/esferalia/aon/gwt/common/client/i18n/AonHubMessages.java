@@ -18,7 +18,7 @@ public interface AonHubMessages extends Messages {
 	@DefaultMessage("AVISO")
 	String newIssue();
 	
-	@DefaultMessage("ETIQUETAS")
+	@DefaultMessage("Etiquetas")
 	String labels();
   	
  	@DefaultMessage("Criterio de b\u00FAsqueda")
@@ -93,6 +93,9 @@ public interface AonHubMessages extends Messages {
 	@DefaultMessage("FAQ")
 	String FAQ();
 
+	@DefaultMessage("FAQs")
+	String FAQs();
+
 	@DefaultMessage("Configuraci\u00F3n")
 	String configuration();
 
@@ -107,7 +110,32 @@ public interface AonHubMessages extends Messages {
 
 	@DefaultMessage("Ocultar avanzado")
 	String hideAdvanced();
-	
-	
+
+	@DefaultMessage("Notificaciones")
+	String notifications();
+
+	@DefaultMessage(" ")
+	String whiteSpace();
+
+	@DefaultMessage("Hoy")
+	String today();
+
+	@DefaultMessage("Ayer")
+	String yesterday();
+
+	@DefaultMessage("Esta semana")
+	String thisWeek();
+
+	@DefaultMessage("Este mes")
+	String thisMonth();
+
+	@DefaultMessage("15 d\u00EDas")
+	String fortnightly();
+
+	@DefaultMessage("30 d\u00EDas")
+	String monthly();
+
+	@DefaultMessage("Este a\u00F1o")
+	String thisYear();
  
 }

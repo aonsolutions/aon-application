@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.office.client;
 
+import static com.esferalia.aon.gwt.common.client.AON.AONHUB;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -138,14 +140,14 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		
 		this.subjectTextBox.addKeyDownHandler(this);
 
-		fromListBox.addItem(" ", DateRange.ALL.getValue());
-		fromListBox.addItem("Hoy", DateRange.TODAY.getValue());
-		fromListBox.addItem("Ayer", DateRange.YESTERDAY.getValue());
-		fromListBox.addItem("Esta semana", DateRange.THIS_WEEK.getValue());
-		fromListBox.addItem("Este mes", DateRange.THIS_MONTH.getValue());
-		fromListBox.addItem("15 d\u00EDas", DateRange.FIVETEEN_DAYS_AGO.name());
-		fromListBox.addItem("30 d\u00EDas", DateRange.THIRTY_DAYS_AGO.name());
-		fromListBox.addItem("Este a\u00F1o", DateRange.THIS_YEAR.name());
+		fromListBox.addItem(AONHUB.whiteSpace(), DateRange.ALL.getValue());
+		fromListBox.addItem(AONHUB.today(), DateRange.TODAY.getValue());
+		fromListBox.addItem(AONHUB.yesterday(), DateRange.YESTERDAY.getValue());
+		fromListBox.addItem(AONHUB.thisWeek(), DateRange.THIS_WEEK.getValue());
+		fromListBox.addItem(AONHUB.thisMonth(), DateRange.THIS_MONTH.getValue());
+		fromListBox.addItem(AONHUB.fortnightly(), DateRange.FIVETEEN_DAYS_AGO.name());
+		fromListBox.addItem(AONHUB.monthly(), DateRange.THIRTY_DAYS_AGO.name());
+		fromListBox.addItem(AONHUB.thisYear(), DateRange.THIS_YEAR.name());
 		fromListBox.setSelectedIndex(0);
 		
 		initIdNoticeTbKeyDow();

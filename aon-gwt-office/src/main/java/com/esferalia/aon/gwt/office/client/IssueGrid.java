@@ -49,9 +49,16 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 	public enum Columns {
 
-		STATE(""), TYPE("TIPO"), PRIORITY("PRIORIDAD"), COMPANY(
-				"EMPRESA"), TITLE("ASUNTO"), LABELS(
-						"ETIQUETAS"), OWNER("CREADO POR"), CREATED_AT("FECHA");
+		// @formatter:off
+		STATE(""), 
+		TYPE("TIPO"), 
+		PRIORITY("PRIORIDAD"), 
+		COMPANY("EMPRESA"), 
+		TITLE("ASUNTO"), 
+		LABELS("ETIQUETAS"), 
+		OWNER("CREADO POR"), 
+		CREATED_AT("FECHA");
+		// @formatter:on
 
 		private String mensaje;
 
@@ -419,7 +426,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 				return object.getStateIconStyle();
 			}
 		};
-		setColumnWidth(col++, 5, Unit.PX);
+		setColumnWidth(col++, 2, Unit.PCT);
 
 		typeColumn = new Column<IssueSelected, String>(
 				new ClickableTextCell()) {

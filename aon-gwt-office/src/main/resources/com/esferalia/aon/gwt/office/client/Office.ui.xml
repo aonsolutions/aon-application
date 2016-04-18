@@ -8,6 +8,8 @@
 		field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.images.Images"
+		field="images"></ui:with>
 
 	<ui:style>
 	.stackHeader {
@@ -78,9 +80,6 @@
 							<g:Button ui:field='newIssueButton'
 								styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
 								text="{msg.newIssue}" />
-							<g:Button ui:field='tagButton'
-								styleName='aon-finding-toolbar-item {aonResources.css.aonIconReset}'
-								text="{msg.labels}" />
 							<g:Button ui:field='returnButton'
 								styleName='aon-finding-toolbar-item {aonResources.css.aonIconCancel}'
 								text="{msg.back}" enabled="false" />
@@ -120,8 +119,12 @@
 											<a
 												style="font-size:10px;font-weight:bold;float:right; position: relative; top: 2px;">
 												<span class="aon-outputText">
-													<g:Button ui:field="hidePanelButton" text="{msg.showAdvanced}"
-														styleName="aon-editDataTable-button" />
+													<g:Button ui:field="showPanelButton" text="{msg.showAdvanced}"
+														styleName="aon-editDataTable-button {aonResources.css.aonhubExpandAll}" 
+														visible="true" />
+													<g:Button ui:field="hidePanelButton" text="{msg.hideAdvanced}"
+														styleName="aon-editDataTable-button {aonResources.css.aonhubCollapseAll}" 
+														visible="false" />
 													<g:Button ui:field="refreshButton" text="{msg.refresh}"
 														styleName="aon-editDataTable-button aon-lookupButton-clear 
 													{aonResources.css.aonIconCommandButton}" />
