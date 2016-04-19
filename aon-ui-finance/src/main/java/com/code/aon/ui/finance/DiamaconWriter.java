@@ -27,7 +27,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.faces.controller.LogPanelController;
-import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.poi.ExcelReportExporter;
@@ -71,24 +70,20 @@ public class DiamaconWriter extends BasicExporter {
 		
 	private void initDefaultAccounts() {
 		try {
+			IManagerBean bean = BeanManager.getManagerBean(Account.class);
 			String accountId = null;
 			Account account = null;
 
 			accountId = AppParamUtil.getParameter(AppParam.ACC_DEFAULT_SALES_ACC).getValue();
-			account = getAccount(Integer.valueOf(accountId));
+			account = (Account) bean.get(Integer.valueOf(accountId));
 			defaultSalesAccount = account !=null?account.getCode():"700000000";
 			
 			accountId = AppParamUtil.getParameter(AppParam.ACC_DEFAULT_PURCHASE_ACC).getValue();
-			account = getAccount(Integer.valueOf(accountId));
+			account = (Account) bean.get(Integer.valueOf(accountId));
 			defaultPurchaseAccount = account !=null?account.getCode():"600000000";
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
-	}
-	
-	private Account getAccount(Integer id) throws ManagerBeanException{
-		IManagerBean bean = BeanManager.getManagerBean(Account.class);
-		return (Account) bean.get(Integer.valueOf(id));
 	}
 	
 	private void initExcel() {
@@ -195,59 +190,63 @@ public class DiamaconWriter extends BasicExporter {
 		}
 	}
 	
-	private void addSaleInvoiceDetail( AccountEntry accountEntry, AccountEntryDetail aed ) {
-		
+	private void addSaleInvoiceDetail( AccountEntry accountEntry, Account account ) {
 		if ( isInvoiceExport() ) {
-//			FECHA
-			addDateCell(accountEntry.getEntryDate());
-//			COD.CLIENTE
-			if(aed.getBalancingAccount()!=null){
-				addStringCell( getAccountCode(aed.getBalancingAccount().getCode()) );
-			} else {
-				this.exporter.addCell();
+			String codCliente = "";
+			String comentario = "";
+			if(getDetails().get(0).getBalancingAccount()!=null){
+				codCliente = getDetails().get(0).getBalancingAccount().getCode();
+				comentario = getDetails().get(0).getBalancingAccount().getDescription();
 			}
-//			Nº FRA.
-			if( getConfiguration().getInvoiceNumberMaxLength()!=null ){
-				addStringCell(getInvoiceSeries()
-						+ StringUtils
-								.leftPad(
-										getInvoiceNumber().toString(),
-										(getConfiguration()
-												.getInvoiceNumberMaxLength() - getInvoiceSeries()
-												.length()), "0"));
-			} else {
-				addStringCell( aed.getDocumentNumber() );
-			}
-//			COMENTARIO
-			if(aed.getBalancingAccount()!=null){
-				addStringCell( aed.getBalancingAccount().getDescription() );
-			} else {
-				this.exporter.addCell();
-			}
-//			TOTAL FRA.
-			this.exporter.addDecimalCell( getTotal() );
-//			TODO COD. VENTAS
-			InvoiceDetail invoiceDetail = (InvoiceDetail) getInvoice().getDetailList().get(0);
-			if(invoiceDetail!=null && invoiceDetail.getItem()!=null && invoiceDetail.getItem().getProduct().getSalesAccount()!=null){
-				this.exporter.addStringCell(invoiceDetail.getItem().getProduct().getSalesAccount().getCode());
-			} else {
-				this.exporter.addStringCell( defaultSalesAccount );
-			}
-			
-			double base = 0.0;
+			Double credit = getDetails().stream()
+				.filter(a -> a.getAccount().getId().equals(account.getId()) )
+				.mapToDouble(AccountEntryDetail::getCredit).sum();
+			Double debit = getDetails().stream()
+				.filter(a -> a.getAccount().getId().equals(account.getId()) )
+				.mapToDouble(AccountEntryDetail::getDebit).sum();
+			double base = credit - debit; 
 			double taxPercent = -0.0;
 			double surchargePercent = -0.0;
 			double taxQuota = 0.0;
-			double surchargeQuota= 0.0;
+			double surchargeQuota = 0.0;
+			double total = 0.0;
 			List<TaxBreakDown> vats = getTaxes(TaxType.VAT);
 			for( TaxBreakDown tbd : vats ) {
-				base += tbd.getBase();
 				taxPercent = Double.compare(taxPercent, 0.0)<0?tbd.getTaxPercent():((taxPercent+tbd.getTaxPercent())/2);
 				surchargePercent = Double.compare(surchargePercent,0.0)<0?tbd.getSurchargePercent():((surchargePercent+tbd.getSurchargePercent())/2);
-				taxQuota += tbd.getTaxQuota();
-				surchargeQuota += tbd.getSurchargeQuota();
 			}
+			taxQuota = base * taxPercent / 100;
+			surchargeQuota = base * surchargePercent / 100;
+			total = base + taxQuota + surchargeQuota;
 			
+			
+			this.exporter.startLine();		
+//			FECHA
+			addDateCell(accountEntry.getEntryDate());
+//			COD.CLIENTE
+			addStringCell( getAccountCode(codCliente) );
+//			Nº FRA.
+			if( getConfiguration().getInvoiceNumberMaxLength() != null 
+				&& getConfiguration().getInvoiceNumberMaxLength() > 0 ){
+				addStringCell(getInvoiceSeries()
+						+ StringUtils.leftPad(
+								getInvoiceNumber().toString(),
+								(getConfiguration()
+										.getInvoiceNumberMaxLength() - getInvoiceSeries()
+										.length()), "0"));
+			} else {
+				addStringCell( getInvoice().getDocumentNumber() );
+			}
+//			COMENTARIO
+			addStringCell( comentario );
+//			TOTAL FRA.
+			this.exporter.addDecimalCell( total );
+//			COD. VENTAS
+			if(account!=null){
+				this.exporter.addStringCell( account.getCode() );
+			} else {
+				this.exporter.addStringCell( defaultSalesAccount );
+			}
 //			TIPO IVA
 			this.exporter.addDecimalCell( CommonUtil.round(taxPercent) );
 //			REC. EQ.
@@ -265,22 +264,42 @@ public class DiamaconWriter extends BasicExporter {
 //			CUOTA REC.
 			this.exporter.addDecimalCell( CommonUtil.round(surchargeQuota) );
 			
+			this.exporter.endLine();
 		}
-		
-		forwardNextInvoice(aed.getDocumentNumber());
-		
 	}
 	
-	private void addPurchaseInvoiceDetail( AccountEntry accountEntry, AccountEntryDetail aed ) {
+	private void addPurchaseInvoiceDetail( AccountEntry accountEntry, Account account ) {
 		if ( isInvoiceExport() ) {			
+			String codProveed = "";
+			String comentario = "";
+			if(getDetails().get(0).getBalancingAccount()!=null){
+				codProveed = getDetails().get(0).getBalancingAccount().getCode();
+				comentario = getDetails().get(0).getBalancingAccount().getDescription();
+			}
+			Double credit = getDetails().stream()
+				.filter(a -> a.getAccount().getId().equals(account.getId()) )
+				.mapToDouble(AccountEntryDetail::getCredit).sum();
+			Double debit = getDetails().stream()
+				.filter(a -> a.getAccount().getId().equals(account.getId()) )
+				.mapToDouble(AccountEntryDetail::getDebit).sum();
+			double base = - credit + debit; 
+			double taxPercent = -0.0;
+			double taxQuota = 0.0;
+			double total = 0.0;
+			List<TaxBreakDown> vats = getTaxes(TaxType.VAT);
+			for( TaxBreakDown tbd : vats ) {
+				taxPercent = Double.compare(taxPercent, 0.0)<0?tbd.getTaxPercent():((taxPercent+tbd.getTaxPercent())/2);
+			}
+			taxQuota = base * taxPercent / 100;
+			total = base + taxQuota;
+			
+			
+			
+			this.exporter.startLine();
 //			FECHA
 			addDateCell(accountEntry.getEntryDate());
 //			COD.PROVEED
-			if(aed.getBalancingAccount()!=null){
-				addStringCell( getAccountCode(aed.getBalancingAccount().getCode()) );
-			} else {
-				this.exporter.addCell();
-			}
+			addStringCell( getAccountCode(codProveed) );
 //			Nº FRA.
 			if(getConfiguration().getInvoiceNumberMaxLength()!=null){
 				addStringCell( StringUtils.right(getReferenceCode(), getConfiguration().getInvoiceNumberMaxLength()) );
@@ -288,29 +307,14 @@ public class DiamaconWriter extends BasicExporter {
 				addStringCell( getReferenceCode() );
 			}
 //			COMENTARIO
-			if(aed.getBalancingAccount()!=null){
-				addStringCell( aed.getBalancingAccount().getDescription() );
-			} else {
-				this.exporter.addCell();
-			}
+			addStringCell( comentario );
 //			TOTAL FRA.
-			this.exporter.addDecimalCell( getTotal() );
-//			TODO COD. GASTOS
-			InvoiceDetail invoiceDetail = (InvoiceDetail) getInvoice().getDetailList().get(0);
-			if(invoiceDetail!=null && invoiceDetail.getItem()!=null && invoiceDetail.getItem().getProduct().getPurchaseAccount()!=null){
-				this.exporter.addStringCell(invoiceDetail.getItem().getProduct().getPurchaseAccount().getCode());
+			this.exporter.addDecimalCell( total );
+//			COD. GASTOS
+			if(account!=null){
+				this.exporter.addStringCell( account.getCode() );
 			} else {
 				this.exporter.addStringCell( defaultPurchaseAccount );
-			}
-			
-			double base = 0.0;
-			double taxPercent = -0.0;
-			double taxQuota = 0.0;
-			List<TaxBreakDown> vats = getTaxes(TaxType.VAT);
-			for( TaxBreakDown tbd : vats ) {
-				base += tbd.getBase();
-				taxPercent = Double.compare(taxPercent, 0.0)<0?tbd.getTaxPercent():((taxPercent+tbd.getTaxPercent())/2);
-				taxQuota += tbd.getTaxQuota();
 			}
 //			TIPO IVA
 			this.exporter.addDecimalCell( taxPercent );
@@ -324,13 +328,17 @@ public class DiamaconWriter extends BasicExporter {
 			this.exporter.addDecimalCell( base );
 //			CUOTA IVA
 			this.exporter.addDecimalCell( taxQuota );			
+			
+			this.exporter.endLine();
 		}
-		
-		forwardNextInvoice(aed.getDocumentNumber());
-		
 	}
 	
 	private void addBankDetail( AccountEntry accountEntry, AccountEntryDetail aed ) {
+		
+		aed = getNextDetail();
+		
+		this.exporter.startLine();
+		
 //		FECHA
 		addDateCell(accountEntry.getEntryDate());
 //		COD.BANCO
@@ -367,6 +375,9 @@ public class DiamaconWriter extends BasicExporter {
 		}
 //		TODO SALDO
 		this.exporter.addCell();
+		
+		this.exporter.endLine();
+		
 	}
 	
 	private void forwardNextInvoice(String documentNumber) {
@@ -394,30 +405,49 @@ public class DiamaconWriter extends BasicExporter {
 		while (! getDetails().isEmpty() ) {
 			
 			try {
+				
 				if(accountEntry.getType()==AccountEntryType.SALES_INVOICE){
+					
 					this.exporter.restoreSheet(SHEET_SALES);
-					this.exporter.startLine();
-					addSaleInvoiceDetail(accountEntry, getNextDetail());
-					this.exporter.endLine();
+					getDetails().stream()
+						.map(AccountEntryDetail::getAccount)
+						.filter(account -> (!account.getCode().startsWith("4")))
+						.distinct()
+						.forEach(account -> {
+							addSaleInvoiceDetail(accountEntry, account);
+						});
+					forwardNextInvoice(getInvoice().getDocumentNumber());
+					
 				} else if(accountEntry.getType()==AccountEntryType.PURCHASE_INVOICE || accountEntry.getType()==AccountEntryType.EXPENSE_INVOICE){
+					
 					this.exporter.restoreSheet(SHEET_PURCHASE);
-					this.exporter.startLine();
-					addPurchaseInvoiceDetail(accountEntry, getNextDetail());
-					this.exporter.endLine();
+					getDetails().stream()
+						.map(AccountEntryDetail::getAccount)
+						.filter(account -> (!account.getCode().startsWith("4")))
+						.distinct()
+						.forEach(account -> {
+							addPurchaseInvoiceDetail(accountEntry, account);
+						});
+					forwardNextInvoice(getInvoice().getDocumentNumber());
+					
 				} else if(accountEntry.getType()==AccountEntryType.PAYMENT || accountEntry.getType()==AccountEntryType.EXPENSES){
+					
 					this.exporter.restoreSheet(SHEET_BANK);
-					this.exporter.startLine();
 					addBankDetail(accountEntry, getNextDetail());
-					this.exporter.endLine();
+					
 				} else {
+					
 					LogPanelController.getInstance().error("Linea omitida. La entrada no se reconoce."
 							+ " (" + accountEntry.getType().getName(AonUtil.getCurrentLocale()) + ". " 
 							+ getDetails().get(0).getDocumentNumber() + ")");
 					getNextDetail();
+					
 				}
+				
 			} catch (ReportException e) {
 				LOGGER.error(e.getMessage());
 			}
+			
 		}
 			
 	}
