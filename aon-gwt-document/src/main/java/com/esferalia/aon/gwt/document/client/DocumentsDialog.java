@@ -563,10 +563,13 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			grid.setWidget(1, 0, new Label("Archivo"));
 			grid.setWidget(1, 1, upload);
 		}
-		CheckBox checkBox = new CheckBox();
-		grid.setWidget(2, 0, new Label("Confidencial"));
-		if(!dialog.getMultiple()) checkBox.setValue(fi.getConfidential());
-		grid.setWidget(2, 1, checkBox);
+		
+		if(confidentialUserDialog){
+			CheckBox checkBox = new CheckBox();
+			grid.setWidget(2, 0, new Label("Confidencial"));
+			if(!dialog.getMultiple()) checkBox.setValue(fi.getConfidential());
+			grid.setWidget(2, 1, checkBox);
+		}
 		
 	    DateTimeFormat dateFormat = DateTimeFormat.getMediumDateFormat();
 	    DateBox dateBox = new DateBox();
@@ -1001,10 +1004,10 @@ public abstract class DocumentsDialog extends CustomDialogB {
 
 			grid.setWidget(0, 0, new Label("Descripci\u00f3n"));
 			grid.setWidget(0, 1, new Label(object.getTitle()));
-
-			grid.setWidget(1, 0, new Label("Confidencial"));
-			grid.setWidget(1, 1, new Label(object.getConfidential() ? "Si" : "No"));
-
+			if(confidentialUserDialog){
+				grid.setWidget(1, 0, new Label("Confidencial"));
+				grid.setWidget(1, 1, new Label(object.getConfidential() ? "Si" : "No"));
+			}
 			grid.setWidget(2, 0, new Label("Fecha"));
 			grid.setWidget(2, 1, new Label(object.getDateStr()));
 

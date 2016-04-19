@@ -1117,6 +1117,7 @@ public class Documents extends Composite implements EntryPoint {
 			d.setBaseUrl(GWT.getModuleBaseURL());
 			d.setIsNextButton(false);
 			d.setMultiple(multiple);
+			d.setConfidentialUser(confidentialUser);
 			mult = multiple;
 			popup2 = new DocumentsDialog(d){
 				Boolean multiple = mult;
@@ -3044,6 +3045,7 @@ public class Documents extends Composite implements EntryPoint {
 		d.setFileInfo(object);
 		d.setIsNextButton(false);
 		d.setBaseUrl(GWT.getModuleBaseURL());
+		d.setConfidentialUser(confidentialUser);
 		popup2 = new DocumentsDialog(d) {
 
 			@Override
