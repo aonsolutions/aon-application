@@ -141,21 +141,39 @@ public abstract class NotificationDialog extends CustomDialogB
 		flex_table.setWidget(2, 0, new Label(MSG.emailSign()));
 		flex_table.setWidget(2, 1, lb2);
 
-		CheckBox cb1 = new CheckBox();
-		cb1.setValue(ni.getNotify());
-		flex_table.setWidget(3, 0, cb1);
-		flex_table.setWidget(3, 1, new Label(MSG.autoNotify()));
+		CheckBox cba = new CheckBox();
+		cba.setValue(ni.getNotifyOpen());
+		CheckBox cbb = new CheckBox();
+		cbb.setValue(ni.getNotifyClose());
+		CheckBox cbc = new CheckBox();
+		cbc.setValue(ni.getNotifyReopen());
+		CheckBox cbd = new CheckBox();
+		cbd.setValue(ni.getNotifyComment());
+		
+		HorizontalPanel hp2 = new HorizontalPanel();
+		hp2.add(cba);hp2.add(new Label("Abrir"));
+		hp2.add(cbb);hp2.add(new Label("Cerrar"));
+		hp2.add(cbc);hp2.add(new Label("ReAbrir"));
+		hp2.add(cbd);hp2.add(new Label("Comentar"));
+		
+		flex_table.setWidget(3, 0,  new Label(MSG.Notify()));
+		flex_table.setWidget(3, 1, hp2);
 
 		CheckBox cb2 = new CheckBox();
-		cb2.setValue(ni.getHistory());
+		cb2.setValue(ni.getCommentsHistory());
 		flex_table.setWidget(4, 0, cb2);
-		flex_table.setWidget(4, 1, new Label(MSG.historyInclude()));
+		flex_table.setWidget(4, 1, new Label(MSG.commentsHistoryInclude()));
+		
+		CheckBox cb3 = new CheckBox();
+		cb3.setValue(ni.getStatusHistory());
+		flex_table.setWidget(5, 0, cb3);
+		flex_table.setWidget(5, 1, new Label(MSG.statusHistoryInclude()));
 		
 		TextBox tb = new TextBox();
 		tb.setStyleName(AON.AON_CSS.aonInputText());
 		tb.setValue(ni.getBcc() != null ? ni.getBcc() : "");
-		flex_table.setWidget(5, 0, new Label(MSG.bccInclude()));
-		flex_table.setWidget(5, 1, tb);
+		flex_table.setWidget(6, 0, new Label(MSG.bccInclude()));
+		flex_table.setWidget(6, 1, tb);
 		
 		ListBox lb3 = new ListBox();
 		lb3.addItem(MSG.notSendNotify(), "0");
@@ -163,8 +181,8 @@ public abstract class NotificationDialog extends CustomDialogB
 		lb3.addItem(MSG.realStatus(), "2");
 		lb3.setSelectedIndex(ni.getMode() != null ? ni.getMode() : 1);
 		lb3.setStyleName(AON.AON_CSS.aonInputText());
-		flex_table.setWidget(6, 0, new Label(MSG.mode()));
-		flex_table.setWidget(6, 1, lb3);
+		flex_table.setWidget(7, 0, new Label(MSG.mode()));
+		flex_table.setWidget(7, 1, lb3);
 		
 		flexTableCss();
 	}

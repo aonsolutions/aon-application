@@ -819,7 +819,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 								result);
 						issues.add(0, issue);
 						onSelectionTitle(issue);
-						//sendNotification(null, issue, NotificationType.OPEN);
+						sendNotification(null, issue, NotificationType.OPEN);
 					}
 				});
 	}
@@ -1178,7 +1178,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 				.setCompanyName(issueSelected.getCompany());
 		Domain domain  = new Domain().setName(getCurrentDomainName()).setId(getCurrentDomain());
 	
-		impl.sendNotification(domain, n, list, null, false, new AsyncCallback<Void>() {
+		impl.sendNotification(domain, n, list, NotificationType.MANUAL, true, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {}
@@ -1227,19 +1227,29 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 							value = s.getValue();
 						}
 						ListBox lb2 = (ListBox) flex_table.getWidget(2, 1);
-						CheckBox cb1 = (CheckBox) flex_table.getWidget(3, 0);
-						CheckBox cb2 = (CheckBox) flex_table.getWidget(4, 0);
-						TextBox tb = (TextBox) flex_table.getWidget(5, 1);
-						ListBox lb3 = (ListBox) flex_table.getWidget(6, 1);
+						HorizontalPanel hp2 = (HorizontalPanel) flex_table.getWidget(3, 1);
+						CheckBox open = (CheckBox) hp2.getWidget(0);
+						CheckBox close = (CheckBox) hp2.getWidget(2);
+						CheckBox reopen = (CheckBox) hp2.getWidget(4);
+						CheckBox comment = (CheckBox) hp2.getWidget(6);
+
+						CheckBox cb1 = (CheckBox) flex_table.getWidget(4, 0);
+						CheckBox cb2 = (CheckBox) flex_table.getWidget(5, 0);
+						TextBox tb = (TextBox) flex_table.getWidget(6, 1);
+						ListBox lb3 = (ListBox) flex_table.getWidget(7, 1);
 						
 						NotificationInfo notificationInfo = new NotificationInfo()
 								.setBcc(tb.getValue())
-								.setHistory(cb2.getValue())
+								.setCommentsHistory(cb1.getValue())
+								.setStatusHistory(cb2.getValue())
 								.setMailAccount(new MailAccount().setId(lb1.getValue(lb1.getSelectedIndex()) != "-" ? 
 										Integer.parseInt(lb1.getValue(lb1.getSelectedIndex())): null))
 								.setSignature(new Signature().setId(lb2.getValue(lb2.getSelectedIndex()) != "-" ?
 										Integer.parseInt(lb2.getValue(lb2.getSelectedIndex())): null))
-								.setNotify(cb1.getValue())
+								.setNotifyOpen(open.getValue())
+								.setNotifyClose(close.getValue())
+								.setNotifyReopen(reopen.getValue())
+								.setNotifyComment(comment.getValue())
 								.setMode(Integer.parseInt(lb3.getValue(lb3.getSelectedIndex())))
 								.setIsLogo(cb0.getValue())
 								.setLogoPercentage(value);

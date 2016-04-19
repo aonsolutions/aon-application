@@ -13,8 +13,15 @@ public class NotificationInfo implements Serializable{
 	private LinkedList<Signature> signatureList;
 	private MailAccount mailAccount;
 	private Signature signature;
-	private Boolean notify = false;
-	private Boolean history = false;
+	
+	private Boolean notifyOpen = false;
+	private Boolean notifyClose = false;
+	private Boolean notifyReopen = false;
+	private Boolean notifyComment = false;
+
+	private Boolean commentsHistory = false;
+	private Boolean statusHistory = false;
+	
 	private String bcc;
 	private Integer mode;
 	private Integer logoPercentage;
@@ -29,6 +36,7 @@ public class NotificationInfo implements Serializable{
 	private String userName;
 	private NotificationType notificationType;
 	private String companyName;
+	private String state;
 	
 	public LinkedList<MailAccount> getMailAccountList() {
 		return mailAccountList;
@@ -58,20 +66,7 @@ public class NotificationInfo implements Serializable{
 		this.signature = signature;
 		return this;
 	}
-	public Boolean getNotify() {
-		return notify;
-	}
-	public NotificationInfo setNotify(Boolean notify) {
-		this.notify = notify;
-		return this;
-	}
-	public Boolean getHistory() {
-		return history;
-	}
-	public NotificationInfo setHistory(Boolean history) {
-		this.history = history;
-		return this;
-	}
+	
 	public String getBcc() {
 		return bcc;
 	}
@@ -156,6 +151,57 @@ public class NotificationInfo implements Serializable{
 		this.createDate = createDate;
 		return this;
 	}
+	public Boolean getNotifyOpen() {
+		return notifyOpen;
+	}
+	public NotificationInfo setNotifyOpen(Boolean notifyOpen) {
+		this.notifyOpen = notifyOpen;
+		return this;
+	}
+	public Boolean getNotifyClose() {
+		return notifyClose;
+	}
+	public NotificationInfo setNotifyClose(Boolean notifyClose) {
+		this.notifyClose = notifyClose;
+		return this;
+	}
+	public Boolean getNotifyReopen() {
+		return notifyReopen;
+	}
+	public NotificationInfo setNotifyReopen(Boolean notifyReopen) {
+		this.notifyReopen = notifyReopen;
+		return this;
+	}
+	public Boolean getNotifyComment() {
+		return notifyComment;
+	}
+	public NotificationInfo setNotifyComment(Boolean notifyComment) {
+		this.notifyComment = notifyComment;
+		return this;
+	}
+	public Boolean getCommentsHistory() {
+		return commentsHistory;
+	}
+	public NotificationInfo setCommentsHistory(Boolean commentsHistory) {
+		this.commentsHistory = commentsHistory;
+		return this;
+	}
+	public Boolean getStatusHistory() {
+		return statusHistory;
+	}
+	public NotificationInfo setStatusHistory(Boolean statusHistory) {
+		this.statusHistory = statusHistory;
+		return this;
+	}
+	public String getState() {
+		return state;
+	}
+	public NotificationInfo setState(String state) {
+		this.state = state;
+		return this;
+	}
+	
+	
 	
 	
 	

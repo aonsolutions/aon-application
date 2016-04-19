@@ -25,11 +25,14 @@ public interface NotificationMessages extends Messages {
 	@DefaultMessage("Incluir logo en la cabecera")
 	String logoInclude();
 
-	@DefaultMessage("Notificar autom\u00e1ticamente por correo electr\u00f3nico")
-	String autoNotify();
+	@DefaultMessage("Notificar Al")
+	String Notify();
 	
-	@DefaultMessage("Incluir historial completo en respuesta")
-	String historyInclude();
+	@DefaultMessage("Incluir historial completo de comentarios")
+	String commentsHistoryInclude();
+	
+	@DefaultMessage("Incluir historial completo de estados")
+	String statusHistoryInclude();
 	
 	@DefaultMessage("Incluir en BCC")
 	String bccInclude();

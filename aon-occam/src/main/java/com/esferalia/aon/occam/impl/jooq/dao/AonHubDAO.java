@@ -1067,12 +1067,23 @@ public class AonHubDAO {
 
 		Result<AppParamRecord> logo = ctx.getDslContext().select(APP_PARAM.VALUE).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
 				.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_LOGO.getValue())).limit(1).fetchInto(APP_PARAM);
-		
-		
-
-		return new NotificationInfo().setHistory(history.isNotEmpty() ? history.get(0).getValue().equals("1") : false)
+					
+		return new NotificationInfo()
+				.setCommentsHistory(history.isNotEmpty() && history.get(0).getValue().length() == 2 
+						? history.get(0).getValue().substring(0, 1).equals("1") : false)
+				.setStatusHistory(history.isNotEmpty() && history.get(0).getValue().length() == 2
+						? history.get(0).getValue().substring(1).equals("1") : false)
 				.setMailAccount(mail.isNotEmpty() && mail.get(0).getValue() != null ? SecurityDAO.getMailAccount(ctx, f-> f.getIdProperty().eq(Integer.parseInt(mail.get(0).getValue()))) : null)
-				.setNotify(auto.isNotEmpty() ? auto.get(0).getValue().equals("1") : false)
+				
+				.setNotifyOpen(auto.isNotEmpty() && auto.get(0).getValue().length() == 4 
+						? auto.get(0).getValue().substring(0, 1).equals("1") : false)
+				.setNotifyClose(auto.isNotEmpty() && auto.get(0).getValue().length() == 4
+						? auto.get(0).getValue().substring(1, 2).equals("1") : false)
+				.setNotifyReopen(auto.isNotEmpty() && auto.get(0).getValue().length() == 4
+						? auto.get(0).getValue().substring(2, 3).equals("1") : false)
+				.setNotifyComment(auto.isNotEmpty() && auto.get(0).getValue().length() == 4
+						? auto.get(0).getValue().substring(3).equals("1") : false)
+				
 				.setSignature(signature.isNotEmpty() && signature.get(0).getValue()!= null ? SecurityDAO.getSignature(ctx, Integer.parseInt(signature.get(0).getValue())) : null)
 				.setBcc(bcc.isNotEmpty() ? bcc.get(0).getValue() : "")
 				.setMode(mode.isNotEmpty() ?  Integer.parseInt(mode.get(0).getValue()): 1)
@@ -1083,9 +1094,13 @@ public class AonHubDAO {
 	public static void insertNotificationInfo(AONContext ctx, NotificationInfo notificationInfo){
 		Result<Record1<Integer>> auto = ctx.getDslContext().select(APP_PARAM.ID).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
 		.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_AUTO.getValue())).limit(1).fetch();
+		String open = notificationInfo.getNotifyOpen() ? "1" : "0";
+		String close = notificationInfo.getNotifyClose() ? "1" : "0";
+		String reopen = notificationInfo.getNotifyReopen() ? "1" : "0";
+		String comment = notificationInfo.getNotifyComment() ? "1" : "0";
 		if(auto.isEmpty()) ctx.getDslContext().insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
-			.values(ctx.getDomainId(), AppParam.NOTICE_NOTIFICATION_AUTO.getValue(), notificationInfo.getNotify() ? "1" : "0").execute();
-		else ctx.getDslContext().update(APP_PARAM).set(APP_PARAM.VALUE, notificationInfo.getNotify() ? "1" : "0")
+			.values(ctx.getDomainId(), AppParam.NOTICE_NOTIFICATION_AUTO.getValue(), open+close+reopen+comment).execute();
+		else ctx.getDslContext().update(APP_PARAM).set(APP_PARAM.VALUE, open+close+reopen+comment)
 			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())).and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_AUTO.getValue())).execute();
 
 		
@@ -1099,9 +1114,11 @@ public class AonHubDAO {
 			
 		Result<Record1<Integer>> history = ctx.getDslContext().select(APP_PARAM.ID).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
 				.and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_HISTORY.getValue())).limit(1).fetch();
+		String commentsHistory = notificationInfo.getCommentsHistory() ? "1" : "0";
+		String statusHistory = notificationInfo.getStatusHistory() ? "1" : "0";
 		if(history.isEmpty()) ctx.getDslContext().insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
-			.values(ctx.getDomainId(), AppParam.NOTICE_NOTIFICATION_HISTORY.getValue(), notificationInfo.getHistory() ? "1" : "0").execute();
-		else ctx.getDslContext().update(APP_PARAM).set(APP_PARAM.VALUE, notificationInfo.getHistory() ? "1" : "0")
+			.values(ctx.getDomainId(), AppParam.NOTICE_NOTIFICATION_HISTORY.getValue(), commentsHistory + statusHistory).execute();
+		else ctx.getDslContext().update(APP_PARAM).set(APP_PARAM.VALUE, commentsHistory + statusHistory)
 			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId())).and(APP_PARAM.NAME.eq(AppParam.NOTICE_NOTIFICATION_HISTORY.getValue())).execute();
 		
 		Result<Record1<Integer>> mail = ctx.getDslContext().select(APP_PARAM.ID).from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))

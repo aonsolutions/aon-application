@@ -44,26 +44,29 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 	private String msg; 
 	public void sendNotification(Domain domain,NotificationInfo notificationInfo,
 			LinkedList<NotificationInfo> list, NotificationType type, Boolean isManual){
+		NotificationInfo ni = getNotificationInfo(domain);
 
 		String typeTitle = "";
 		String typeDescription = "";
-		if(type != null){ 	
-			if(type.equals(NotificationType.OPEN)){
-				typeTitle = OPEN[0];
-				typeDescription = OPEN[1];
-			} else if(type.equals(NotificationType.NEW_INFO)){
-				typeTitle = NEW_INFO[0];
-				typeDescription = NEW_INFO[1];
-			} else if(type.equals(NotificationType.REOPEN)){
-				typeTitle = REOPEN[0];
-				typeDescription = REOPEN[1];
-			} else if(type.equals(NotificationType.CLOSE)){
-				typeTitle = CLOSE[0];
-				typeDescription = CLOSE[1];
-			}
+		if(type.equals(NotificationType.OPEN)){
+			if(!ni.getNotifyOpen()) return;
+			typeTitle = OPEN[0];
+			typeDescription = OPEN[1];
+		} else if(type.equals(NotificationType.NEW_INFO)){
+			if(!ni.getNotifyComment()) return;
+			typeTitle = NEW_INFO[0];
+			typeDescription = NEW_INFO[1];
+		} else if(type.equals(NotificationType.REOPEN)){
+			if(!ni.getNotifyReopen()) return;
+			typeTitle = REOPEN[0];
+			typeDescription = REOPEN[1];
+		} else if(type.equals(NotificationType.CLOSE)){
+			if(!ni.getNotifyClose()) return;
+			typeTitle = CLOSE[0];
+			typeDescription = CLOSE[1];
 		}
-		NotificationInfo ni = getNotificationInfo(domain);
-		if((ni.getNotify() && !ni.getMode().equals(0)) || isManual){
+
+		if((!ni.getMode().equals(0)) || isManual){
 			String title = notificationInfo.getTitle();		
 			Domain dom =  AON.getDomain(domain.getName(), domain.getId(), getUserLogin());
 			
@@ -74,14 +77,26 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 			if(ni.getIsLogo())	msg = msg +"<div><img src=\"http://"+dom.getName() + "/aonDocuments/company.logo\" width=\""+ni.getLogoPercentage()+"%\"></div>";
 
 			SimpleDateFormat format= new SimpleDateFormat("dd/MM/yyyy");
+			
+			NotificationInfo st = list.stream().sorted((n1,n2)-> n2.getDate().compareTo(n1.getDate()))
+			.filter(n -> !n.getNotificationType().equals(NotificationType.NEW_INFO))
+			.findFirst().orElse(new NotificationInfo());
 
+			
+			String status = "<b>ABIERTA</b>";
+			if((st.getNotificationType() != null && st.getNotificationType().equals(NotificationType.CLOSE))
+					|| type.equals(NotificationType.CLOSE)) 
+				status = "<b>CERRADA</b> el <b>"+ format.format(st.getDate()) +"</b>" ;
+			if((st.getNotificationType() != null && st.getNotificationType().equals(NotificationType.REOPEN)) 
+					|| type.equals(NotificationType.REOPEN))
+				status = "<b>REABIERTA</b> el <b>"+ format.format(st.getDate()) +"</b>" ;
 				// title
 			msg = msg +"<p></p><table style='border: 1px solid #E5E5E5;table-layout: fixed;width: 100%;min-width: 625px;border-collapse: collapse;' cellpadding='0'><tbody>"
 					+"<tr><td style=\"background-color: #F6F6F6;color: #222;border: 1px solid #CCC;font-family: Arial,sans-serif; padding: 5px 21px 5px 21px;vertical-align: top;\">"
 						+ "<span style='color: #222;font-size: 140%;margin-bottom: 2px;font-weight: bold;'>"+title+"</span>"
 						+ "<span> con referencia <b>#" + notificationInfo.getNoticeId() + "</b></span>"
 						+ "<div>"
-							+ "Remitida el <b>" + format.format(notificationInfo.getCreateDate()) +"</b>"//+ "por XXX"
+							+ status + " , registrada el <b>" + format.format(notificationInfo.getCreateDate()) +"</b>"//+ "por XXX"
 						+ "</div>"
 							
 						+ "<div>"
@@ -89,10 +104,10 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 						+ "</div>"
 						+ "</tr></tbody></table>";
 			
-			if(type != null)
+			if(!isManual)
 				msg = msg + getMessage(notificationInfo, typeTitle, typeDescription);	
-		
-			if(ni.getHistory()){
+			
+			if(ni.getCommentsHistory() || ni.getStatusHistory()){
 				list.stream().sorted((n1,n2)-> n2.getDate().compareTo(n1.getDate())).forEach(n ->{
 					String t ="";String d = "";
 					if(n.getNotificationType().equals(NotificationType.OPEN)){
@@ -108,10 +123,33 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 						t = CLOSE[0];
 						d = CLOSE[1];
 					}
-					if(!n.getNotificationType().equals(NotificationType.OPEN))
-						msg = msg + getMessage(n, t, d);
+					if(!n.getNotificationType().equals(NotificationType.OPEN)){
+						if(ni.getStatusHistory() && (n.getNotificationType().equals(NotificationType.CLOSE) 
+								||n.getNotificationType().equals(NotificationType.REOPEN)))
+							msg = msg + getMessage(n, t, d);
+						if(ni.getCommentsHistory() && n.getNotificationType().equals(NotificationType.NEW_INFO))
+							msg = msg + getMessage(n, t, d);
+					}
 				});
+			}else if(isManual){
+				NotificationInfo n = list.stream().sorted((n1,n2) -> n2.getDate().compareTo(n1.getDate())).findFirst().orElse(new NotificationInfo());
+				String t ="";String d = "";
+				if(n.getNotificationType().equals(NotificationType.OPEN)){
+					t = OPEN[0];
+					d = OPEN[1];
+				} else if(n.getNotificationType().equals(NotificationType.NEW_INFO)){
+					t = NEW_INFO[0];
+					d = NEW_INFO[1];
+				} else if(n.getNotificationType().equals(NotificationType.REOPEN)){
+					t = REOPEN[0];
+					d = REOPEN[1];
+				} else if(n.getNotificationType().equals(NotificationType.CLOSE)){
+					t = CLOSE[0];
+					d = CLOSE[1];
+				}
+				msg = msg + getMessage(n, t, d);
 			}
+			
 
 			if(ni.getSignature() != null && ni.getSignature().getSignature() != null
 					&& ni.getSignature().getSignature() != "")
