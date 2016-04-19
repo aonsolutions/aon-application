@@ -78,6 +78,10 @@
 										<g:InlineLabel ui:field="userLogged"
 											styleName="{aonResources.css.aonColorGreen}" />
 									</div>
+									<div>
+										<g:Button ui:field="sendButton" styleName="aon-icon-mailForward aon-icon-commandButton edit-button"
+											title="Enviar Notificacion"/>
+									</div>
 								</g:HTMLPanel>
 							</g:customCell>
 							<g:customCell>

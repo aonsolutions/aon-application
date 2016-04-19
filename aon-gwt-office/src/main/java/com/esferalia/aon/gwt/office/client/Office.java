@@ -1053,6 +1053,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					}
 				});		
 	}
+	
+	@Override
+	public void onSendNotificationButtonClick() {
+		sendNotificationHistory(issueSelected);
+	}
 
 	// ******************************************************************
 	// ******************** DATA GRID DIALOG LISTENER *******************
@@ -1134,6 +1139,46 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		Domain domain  = new Domain().setName(getCurrentDomainName()).setId(getCurrentDomain());
 	
 		impl.sendNotification(domain, n, list, notificationType, false, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {}
+			
+			@Override
+			public void onSuccess(Void result) {}
+			
+		});
+	}
+	
+	private void sendNotificationHistory(IssueSelected issueSelected) {
+		LinkedList<NotificationInfo> list = new LinkedList<NotificationInfo>();
+		for(AonTagIssueSelected tag : issueSelected.getTags()){
+			if(getNotificationType(tag.getName()) != null ){
+				list.add(new NotificationInfo().setNoticeId(issueSelected.getId())
+					.setTitle(issueSelected.getTitle())
+					.setDate(tag.getCreateAt())
+					.setUserName(tag.getUser().getName())
+					.setNotificationType(getNotificationType(tag.getName())));
+			}
+		}
+		for(AonIssueComments comments :issueSelected.getComments()){
+			list.add(new NotificationInfo().setBody(comments.getBody())
+				.setNoticeId(issueSelected.getId()) 
+				.setTitle(issueSelected.getTitle())
+				.setDate(comments.getCreatedAt())
+				.setUserName(comments.getUser().getName())
+				.setNotificationType(NotificationType.NEW_INFO));
+		}
+		
+		NotificationInfo n = new NotificationInfo().setNoticeId(issueSelected.getId())
+				.setTitle(issueSelected.getTitle())
+				.setBody("")
+				.setDate(new Date())
+				.setCreateDate(issueSelected.getCreateAt())
+				.setUserName(issueSelected.getUser().getName())
+				.setCompanyName(issueSelected.getCompany());
+		Domain domain  = new Domain().setName(getCurrentDomainName()).setId(getCurrentDomain());
+	
+		impl.sendNotification(domain, n, list, null, false, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {}

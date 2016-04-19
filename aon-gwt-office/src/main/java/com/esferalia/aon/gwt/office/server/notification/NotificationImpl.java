@@ -47,20 +47,21 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 
 		String typeTitle = "";
 		String typeDescription = "";
-		if(type.equals(NotificationType.OPEN)){
-			typeTitle = OPEN[0];
-			typeDescription = OPEN[1];
-		} else if(type.equals(NotificationType.NEW_INFO)){
-			typeTitle = NEW_INFO[0];
-			typeDescription = NEW_INFO[1];
-		} else if(type.equals(NotificationType.REOPEN)){
-			typeTitle = REOPEN[0];
-			typeDescription = REOPEN[1];
-		} else if(type.equals(NotificationType.CLOSE)){
-			typeTitle = CLOSE[0];
-			typeDescription = CLOSE[1];
+		if(type != null){ 	
+			if(type.equals(NotificationType.OPEN)){
+				typeTitle = OPEN[0];
+				typeDescription = OPEN[1];
+			} else if(type.equals(NotificationType.NEW_INFO)){
+				typeTitle = NEW_INFO[0];
+				typeDescription = NEW_INFO[1];
+			} else if(type.equals(NotificationType.REOPEN)){
+				typeTitle = REOPEN[0];
+				typeDescription = REOPEN[1];
+			} else if(type.equals(NotificationType.CLOSE)){
+				typeTitle = CLOSE[0];
+				typeDescription = CLOSE[1];
+			}
 		}
-			
 		NotificationInfo ni = getNotificationInfo(domain);
 		if((ni.getNotify() && !ni.getMode().equals(0)) || isManual){
 			String title = notificationInfo.getTitle();		
@@ -88,7 +89,8 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 						+ "</div>"
 						+ "</tr></tbody></table>";
 			
-			msg = msg + getMessage(notificationInfo, typeTitle, typeDescription);	
+			if(type != null)
+				msg = msg + getMessage(notificationInfo, typeTitle, typeDescription);	
 		
 			if(ni.getHistory()){
 				list.stream().sorted((n1,n2)-> n2.getDate().compareTo(n1.getDate())).forEach(n ->{

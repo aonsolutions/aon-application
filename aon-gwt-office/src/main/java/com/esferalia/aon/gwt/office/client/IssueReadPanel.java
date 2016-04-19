@@ -73,6 +73,8 @@ public class IssueReadPanel extends Composite {
 				List<AonTagIssueSelected> deletedLabels);
 
 		void addLabelToAnIssue(List<String> labels);
+		
+		void onSendNotificationButtonClick();
 	}
 
 	private static IssueReadPanelUiBinder uiBinder = GWT
@@ -96,6 +98,8 @@ public class IssueReadPanel extends Composite {
 	@UiField
 	FlowPanel historialVPanel;
 
+	@UiField Button sendButton;
+	
 	@UiField
 	Button duplicatedButton;
 	@UiField
@@ -156,6 +160,7 @@ public class IssueReadPanel extends Composite {
 		}
 
 		if (issue instanceof IssueGrid.IssueOpenLoadSelected) {
+			createSendButton();
 			createDuplicatedButton();
 			createClosedButton();
 			createCommentButton();
@@ -620,6 +625,16 @@ public class IssueReadPanel extends Composite {
 		return false;
 	}
 
+	private void createSendButton(){
+		sendButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				onSendNotificationButtonClick();
+			}
+		});
+	}
+	
 	private void createCommentButton() {
 		commentButton.addClickHandler(new ClickHandler() {
 
@@ -659,6 +674,12 @@ public class IssueReadPanel extends Composite {
 				onReopenButtonClick();
 			}
 		});
+	}
+	
+	private void onSendNotificationButtonClick(){
+		for (Listener listener : listeners){
+			listener.onSendNotificationButtonClick();
+		}
 	}
 
 	private void onCommentButtonClick() {
