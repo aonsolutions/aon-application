@@ -207,13 +207,14 @@ public class NotificationImpl extends AonRemoteServiceServlet implements INotifi
 	private String getMessage(NotificationInfo n, String action, String typeDescription) {
 		SimpleDateFormat format= new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat timeFomat = new SimpleDateFormat("HH:mm");
-		String desc = typeDescription+ " el <b>" + format.format(n.getDate()) +"</b> a las <b>"+timeFomat.format(n.getDate())+"</b>";// por <b>"+ n.getUserName() +"</b>"; 
+		String desc = typeDescription+ " el <b>" + format.format(n.getDate()) +"</b> a las <b>"+timeFomat.format(n.getDate())+"</b> ";	
 
 		String msg = "<p></p><table style='border: 1px solid #E5E5E5;table-layout: fixed;width: 100%;min-width: 625px;border-collapse: collapse;' cellpadding='0'>"
 				+"<tbody><tr>"
 				+"<td style='padding: 10px;vertical-align: top;'>"
 					+"<span style='color: #222;;margin-bottom: 2px;font-weight: bold;'>"+action+"</span>"
 					+"<span style='color: #222;margin-bottom: 14px;'> "+desc+"</span>"
+					+"<span style='color: #999;margin-bottom: 14px;'> por "+ n.getUserName()+ "</span>"
 					+ "<table style='table-layout: fixed;border-collapse: collapse;'><tbody>";
 		
 		if(n.getBody() != null && !n.getBody().equals("")) // comentario.
