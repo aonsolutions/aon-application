@@ -109,6 +109,7 @@
 		<module>aon-tas</module>
 		<module>aon-pms</module>
 		<module>aon-academy</module>
+		<module>aon-dex</module>
 
 		<!-- UI MODULES -->
 		<module>aon-ui-academy</module>
