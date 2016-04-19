@@ -30,9 +30,9 @@ WHERE `payment_concept`=@PAGA_EXTRA_ID AND `expression` IS NULL;
 
 ALTER TABLE `payment_concept` MODIFY `expression` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe';
 
+DELIMITER $$
 UPDATE `payment_concept` 
-SET `expression`=
-'INPUT("/*user*//**/","Por favor, introduzca la cuant&iacute;a del complemento personal de antig&uuml;edad, ejemplos:
+SET `expression`='INPUT("/*user*//**/","Por favor, introduzca la cuant&iacute;a del complemento personal de antig&uuml;edad, ejemplos:
 <ul style=\'margin-left:1em;\'>
 <li>	
 	<a style=\'color:orange;\' >ANTIGÜEDAD(SALARIO_BASE * 0.04, CUATRIENIO)</a>&nbsp;
@@ -50,7 +50,8 @@ m&aacute;s del 40%</span>
 </ul>")'
 ,
 `description`='COMPLEMENTO PERSONAL DE ANTIGÜEDAD'
-WHERE `id`=@ANTIGUEDAD_ID ;
+WHERE `id`=@ANTIGUEDAD_ID 
+$$
 
 UPDATE `payment_concept` 
 SET `expression`='INPUT("/*user*//**/","Por favor, introduzca la cuant&iacute;a de la paga (bono), ejemplos:
@@ -68,8 +69,10 @@ SET `expression`='INPUT("/*user*//**/","Por favor, introduzca la cuant&iacute;a 
 	<span style=\'font-weight: lighter;\'>2000&euro;</sppan>
 </li>
 </ul>")'
-WHERE `id`=@PAGA_EXTRA_ID ;
+WHERE `id`=@PAGA_EXTRA_ID
+$$
 
+DELIMITER ;
 UPDATE `db_version` SET `version_number` = '8.50.0';
 
 
