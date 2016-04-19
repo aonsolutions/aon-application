@@ -30,8 +30,11 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 /**
@@ -468,6 +471,256 @@ public class SQLFunctionsTestCase extends
 	}
 
 	
-	// ------------------------------------------------------------------------
+	@Test
+	public void testInputFunctionI() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		try {
+			ctx.getExpressionContext().eval("INPUT('','Hello World!!!');", 
+					startDate
+					,endDate, 
+					Object.class);
+		
+		} catch ( CheckException e ) {
+				System.out.println(e.getMessage());
+				Assert.assertEquals("Hello World!!!", e.getMessage());
+				return;
+		} 
+		Assert.fail();
+	}
+
+	@Test
+	public void testInputFunctionII() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		try {
+			ctx.getExpressionContext().eval("INPUT('NO_DEFINIDA * DIAS_TRABAJADOS / DIAS_MES','Hello World!!!');", 
+					startDate
+					,endDate, 
+					Object.class);
+		
+		} catch ( UndefinedVariablesException e ) {
+				System.out.println(e.getVariableNames()[0]);
+				Assert.assertEquals("NO_DEFINIDA", e.getVariableNames()[0]);
+				return;
+		} 
+		Assert.fail();
+	}
+
+	@Test
+	public void testInputFunctionIII() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, startDate, Collections.emptyMap()));
+		//@formatter:on
+		
+			List<ITimedResult<Double>> result = ctx.getExpressionContext().eval("INPUT('100.00 * DIAS_TRABAJADOS / DIAS_MES','Hello World!!!');", 
+					startDate
+					,endDate, 
+					Double.class);
+		
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(100.00, result.get(0).getValue());
+	}
+
+	@Test
+	public void testInputFunctionIV() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		ContractRecord contract = newContract(aonContext, startDate, Collections.emptyMap());
+
+		Date _10date = add(startDate, DAY_OF_MONTH, 9);
+		Date _11date = add(startDate, DAY_OF_MONTH, 10);
+		addData(aonContext, contract, startDate, _10date, new HashMap<String,String>(){
+			{
+				put("X", "100");
+			}
+		});
+		addData(aonContext, contract, _11date, endDate, new HashMap<String,String>(){
+			{
+				put("X", "200");
+			}
+		});
+
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		//@formatter:on
+		
+		
+		List<ITimedResult<Double>> result = ctx.getExpressionContext().eval("INPUT('X * DIAS_TRABAJADOS / DIAS_MES','Hello World!!!');", 
+					startDate
+					,endDate, 
+					Double.class);
+		
+		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(100.00 * 10 / get(endDate, DAY_OF_MONTH) , result.get(0).getValue());
+		Assert.assertEquals(200.00 * (get(endDate, DAY_OF_MONTH) -10)/ get(endDate, DAY_OF_MONTH) , result.get(1).getValue());
+		
+	}
+	
+	@Test
+	public void testInputFunctionVI() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		try {
+			ctx.getExpressionContext().eval("INPUT('/*user*//**/','Hello World!!!');", 
+					startDate
+					,endDate, 
+					Object.class);
+		
+		} catch ( CheckException e ) {
+				System.out.println(e.getMessage());
+				Assert.assertEquals("Hello World!!!", e.getMessage());
+				return;
+		} 
+		Assert.fail();
+	}
+	
+	@Test
+	public void testInputFunctionVII() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		try {
+			ctx.getExpressionContext().eval("INPUT('/*user*/    /**/','Hello World!!!');", 
+					startDate
+					,endDate, 
+					Object.class);
+		
+		} catch ( CheckException e ) {
+				System.out.println(e.getMessage());
+				Assert.assertEquals("Hello World!!!", e.getMessage());
+				return;
+		} 
+		Assert.fail();
+	}
+
+	@Test
+	public void testInputFunctionVIII() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT('/*user*/ 100.00/**/','Hello World!!!');", 
+				startDate
+				,endDate, 
+				Double.class);
+	
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(100.00, result.get(0).getValue());
+	}
+
+	@Test
+	public void testInputFunctionIX() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		try {
+			ctx.getExpressionContext().eval("INPUT('/*user*/ANTIGÜEDAD(,)/**/','Hello World!!!');", 
+					startDate
+					,endDate, 
+					Object.class);
+		
+		} catch ( CheckException e ) {
+				System.out.println(e.getMessage());
+				Assert.assertEquals("Hello World!!!", e.getMessage());
+				return;
+		} 
+		Assert.fail();
+	}
+	//------------------------------------------------------------------------
 	
 }

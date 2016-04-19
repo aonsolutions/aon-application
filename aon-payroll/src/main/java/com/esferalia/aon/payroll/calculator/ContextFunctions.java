@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.calculator;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CHECK;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.INPUT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WARNING;
@@ -12,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.mvel2.MVEL;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
@@ -24,6 +26,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext.DeferredException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -131,6 +134,29 @@ public class ContextFunctions {
 		}
 
 		return months;
+	}
+
+	public static void input(String script, String msg) throws CheckException, MacroException{
+		
+		if (AonStringUtils.isBlank(script))
+			throw new CheckException(msg);
+		
+		try {
+			if ( AonStringUtils.isBlank(MVEL.eval(script, String.class)))
+				throw new CheckException(msg);
+		} catch ( CheckException e){
+			throw e;
+		}
+		catch ( Throwable t ) {
+			
+		}
+		
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return script;
+			}
+		};
 	}
 
 	// ------------------------------------------------------------------------
@@ -393,6 +419,21 @@ public class ContextFunctions {
 		}
 	}
 
+	private static void loadInputFunction(ExpressionContext context, Date startDate, Date endDate)
+			throws ExpressionException {
+
+		// WARNING function
+		try {
+			Method input = ContextFunctions.class.getMethod("input", String.class, String.class);
+
+			MethodStub inputStub = new MethodStub(input);
+
+			context.setVariable(INPUT, inputStub, startDate, endDate);
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		}
+	}
+
 	private static void loadCheckVarFunction(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
 
@@ -469,6 +510,7 @@ public class ContextFunctions {
 
 	public static void loadFunctions(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
+		loadInputFunction(context, startDate, endDate);
 		loadCheckFunction(context, startDate, endDate);
 		loadCheckVarFunction(context, startDate, endDate);
 		loadWarnFunction(context, startDate, endDate);
