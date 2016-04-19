@@ -289,6 +289,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 			cb.removeStyleName(AON.AON_BOLD);
 		}
 	
+		this.idNoticeTb.setText("");
 		this.userSelected = null;
 		this.subjectTextBox.setValue("");
 		this.drashTagList.clear();		

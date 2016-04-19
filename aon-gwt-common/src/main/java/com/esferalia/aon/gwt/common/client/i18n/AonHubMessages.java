@@ -12,6 +12,18 @@ public interface AonHubMessages extends Messages {
 	// º --> \u00AA ª --> \u00BA
 	// ¿ --> \u00BF ! --> \u0021 ¡ --> \u00A1
 	
+	@DefaultMessage("dd/mm/AAAA - HH:MM")
+	String aonHubDateFormat();	
+	
+	@DefaultMessage("Aceptar")
+	String accept();
+	
+	@DefaultMessage("Cancelar")
+	String cancel();	
+	
+	@DefaultMessage("Fecha")
+	String date();	
+	
 	@DefaultMessage("Incidencias")
 	String issues();
 	
@@ -51,7 +63,7 @@ public interface AonHubMessages extends Messages {
  	@DefaultMessage("Prioridad")
 	String priority();
 
- 	@DefaultMessage("Usuario")
+ 	@DefaultMessage("Usuario: ")
  	String userSender();
  	
  	@DefaultMessage("Compa\u00F1\u00EDa")
@@ -137,5 +149,25 @@ public interface AonHubMessages extends Messages {
 
 	@DefaultMessage("Este a\u00F1o")
 	String thisYear();
+
+	@DefaultMessage("Duplicada")
+	String duplicated();
+
+	@DefaultMessage("Cerrar")
+	String close();
+
+	@DefaultMessage("Comentar")
+	String comment();
+
+	@DefaultMessage("Enviar notificaci\u00F3n")
+	String sendNotificacion();
+
+	@DefaultMessage("Tipo Incidencia")
+	String typeOfIssue();
+
+
+
+	
+	
  
 }

@@ -108,8 +108,8 @@ public class NoticeFilterImpl  {
 		
 		Condition condition = null;
 	
-		for ( int x = 0; x < filter.getTags().length; x++) {
-			String labelName = filter.getTags()[x];
+		for ( int x = 0; x < filter.getTags().length; x++) {			
+			String labelName = filter.getTags()[x];			
 			if ( condition == null ) {
 				condition = builLabelCondition(ctx, labelName);			
 				continue;

@@ -26,8 +26,8 @@
 					<g:AbsolutePanel width="150px">
 						<g:VerticalPanel spacing="10">
 							<g:HorizontalPanel>
-								<g:Label text="Tipo Incidencia" styleName="{aonResources.css.aonBold}" />
-								<g:Button ui:field="typeButton" text="Tipo incidencia"
+								<g:Label text="{msg.typeOfIssue}" styleName="{aonResources.css.aonBold}" />
+								<g:Button ui:field="typeButton" text="{msg.typeOfIssue}"
 									styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
 							</g:HorizontalPanel>
 							<g:Label ui:field="typeLabel"
@@ -51,7 +51,7 @@
 						<g:VerticalPanel ui:field="labelsVPanel" spacing="10">
 							<g:HorizontalPanel>
 								<g:Label text="Etiquetas" styleName="{aonResources.css.aonBold}" />
-								<g:Button ui:field="tagButton" text="Etiquetas"
+								<g:Button ui:field="tagButton" text="{msg.labels}"
 									styleName="{aonResources.css.aonIconView} {aonResources.css.aonIconCommandButton}" />
 							</g:HorizontalPanel>
 						</g:VerticalPanel>
@@ -74,22 +74,22 @@
 								<g:HTMLPanel height="100%" width="100%">
 									<div>
 										<g:InlineLabel styleName="{aonResources.css.aonBold}"
-											text="Usuario: " />
+											text="{msg.userSender} " />
 										<g:InlineLabel ui:field="userLogged"
 											styleName="{aonResources.css.aonColorGreen}" />
 									</div>
 									<div>
 										<g:Button ui:field="sendButton" styleName="aon-icon-mailForward aon-icon-commandButton edit-button"
-											title="Enviar Notificacion"/>
+											title="{msg.sendNotificacion}"/>
 									</div>
 								</g:HTMLPanel>
 							</g:customCell>
 							<g:customCell>
 								<g:HTMLPanel height="100%" width="100%">
 									<div class="{style.buttons}">										
-										<g:Button ui:field="duplicatedButton" text="Duplicada" />
-										<g:Button ui:field="closedButton" text="Cerrar" />
-										<g:Button ui:field="commentButton" text="Comentar"
+										<g:Button ui:field="duplicatedButton" text="{msg.duplicated}" />
+										<g:Button ui:field="closedButton" text="{msg.close}" />
+										<g:Button ui:field="commentButton" text="{msg.comment}"
 											enabled="false" />
 									</div>
 								</g:HTMLPanel>

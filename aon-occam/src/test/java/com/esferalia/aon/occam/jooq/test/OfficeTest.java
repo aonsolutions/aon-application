@@ -45,7 +45,7 @@ public class OfficeTest {
 
 		NoticeFilter filter = new NoticeFilter();
 		filter.setState("open");
-		filter.setOffset(0);
+		filter.setOffset(0);		
 
 		filter.setTags(new String[] {});
 

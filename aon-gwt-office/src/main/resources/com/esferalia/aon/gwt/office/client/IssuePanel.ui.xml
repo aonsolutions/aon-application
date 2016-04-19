@@ -35,11 +35,11 @@
 				<tr>
 					<td class="{aonResources.css.aonPanelGridOdd}">
 						<g:InlineLabel styleName="{aonResources.css.aonBold}"
-							text="Fecha" />
+							text="{msg.date}" />
 					</td>
 					<td>
 						<g:InlineLabel styleName="{aonResources.css.aonBold}"
-							text="dd/mm/AAAA - HH:MM" ui:field="dateLabel" />
+							text="{msg.aonHubDateFormat}" ui:field="dateLabel" />
 					</td>
 					<td>
 						<g:InlineLabel ui:field="statusLabel" />
@@ -49,7 +49,7 @@
 				<tr>
 					<td class="{aonResources.css.aonPanelGridOdd}">
 						<g:InlineLabel styleName="{aonResources.css.aonBold}"
-							text="Remitente" />
+							text="{msg.sender}" />
 					</td>
 					<td class="{aonResources.css.aonPanelGridEven}">
 						<g:SuggestBox styleName="{aonResources.css.aonInputText}"
@@ -69,7 +69,7 @@
 						<table>
 							<tr>
 								<td class="{aonResources.css.aonPanelGridOdd}">
-									<g:InlineLabel text="Empresa" />
+									<g:InlineLabel text="{msg.company}" />
 								</td>
 								<td class="{aonResources.css.aonPanelGridEven}">
 									<g:SuggestBox styleName="{aonResources.css.aonInputText}"
@@ -98,15 +98,15 @@
 				<tr>
 					<td colspan="2">
 						<g:InlineLabel styleName="{aonResources.css.aonBold}"
-							text="Usuario: " />
+							text="{msg.userSender}" />
 						<g:InlineLabel ui:field="loggedLabel"
 							styleName="{aonResources.css.aonColorGreen}" />
 
 					</td>
 					<td>
 						<div class="{style.buttons}">
-							<g:Button ui:field="cancelButton" text="Cancelar" />
-							<g:Button ui:field="acceptButton" text="Aceptar" enabled="false" />
+							<g:Button ui:field="cancelButton" text="{msg.cancel}" />
+							<g:Button ui:field="acceptButton" text="{msg.accept}" enabled="false" />
 						</div>
 
 					</td>

@@ -426,7 +426,7 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 				return object.getStateIconStyle();
 			}
 		};
-		setColumnWidth(col++, 2, Unit.PCT);
+		setColumnWidth(col++, 5, Unit.PX);
 
 		typeColumn = new Column<IssueSelected, String>(
 				new ClickableTextCell()) {

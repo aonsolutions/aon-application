@@ -362,9 +362,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		int maxScrollPos = dataGrid.getScrollPanel()
 				.getMaximumVerticalScrollPosition();
 		if ((lastScrollPos + (maxScrollPos / 10)) >= maxScrollPos) {
-			gitHub.setOffset(incrementSize + DEFAULT_INCREMENT);
-			evalRadioButtons();
 			incrementSize += 50;
+			gitHub.setOffset(incrementSize);
+			evalRadioButtons();			
 			dataGrid.setVisibleRange(0,
 					dataGrid.getVisibleRange().getLength() + incrementSize);
 		}
