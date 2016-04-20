@@ -237,7 +237,11 @@ public class IndefiniteModel extends AbstractContractModel {
 			if(contrata!=null){
 				setPdfFieldValue(PdfFieldIndefinite.PROFESSION.getValue(), contrata.getCno().getTitle());
 			}
-			setPdfFieldValue(PdfFieldIndefinite.CATEGORY.getValue(), contract.getCategoryDescription());
+			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+				setPdfFieldValue(PdfFieldIndefinite.CATEGORY.getValue(), contract.getAgreementLevelCategory().getDescription());
+			} else {
+				setPdfFieldValue(PdfFieldIndefinite.CATEGORY.getValue(), contract.getCategoryDescription());
+			}
 			
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FUNCTIONS.toString()))){
 				setPdfFieldValue(PdfFieldIndefinite.FUNCTIONS.getValue(), getContractInfoMap(contract).get(PdfFieldIndefinite.FUNCTIONS.toString()));

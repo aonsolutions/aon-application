@@ -262,7 +262,12 @@ public class PracticeModel extends AbstractContractModel {
 			if(contrata!=null){
 				setPdfFieldValue(PdfFieldPractice.PROFESSION.getValue(), contrata.getCno().getTitle());
 			}
-			setPdfFieldValue(PdfFieldPractice.CATEGORY.getValue(), contract.getCategoryDescription());
+			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+				setPdfFieldValue(PdfFieldPractice.CATEGORY.getValue(), contract.getAgreementLevelCategory().getDescription());
+			} else {
+				setPdfFieldValue(PdfFieldPractice.CATEGORY.getValue(), contract.getCategoryDescription());
+			}
+			
 			setPdfFieldValue(PdfFieldPractice.WORKPLACE_FULL_ADDRESS.getValue(), null);
 			setPdfFieldValue(PdfFieldPractice.WORKPLACE_FULL_ADDRESS_MORE.getValue(), contract.getWorkPlace().getAddress().getFullAddress()+", "+contract.getWorkPlace().getAddress().getLocation());
 

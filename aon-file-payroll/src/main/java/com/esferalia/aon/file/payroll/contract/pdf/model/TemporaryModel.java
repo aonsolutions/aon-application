@@ -238,7 +238,12 @@ public class TemporaryModel extends AbstractContractModel {
 			if(contrata!=null){
 				setPdfFieldValue(PdfFieldTemporary.PROFESSION.getValue(), contrata.getCno().getTitle());
 			}
-			setPdfFieldValue(PdfFieldTemporary.CATEGORY.getValue(), contract.getCategoryDescription());
+			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+				setPdfFieldValue(PdfFieldTemporary.CATEGORY.getValue(), contract.getAgreementLevelCategory().getDescription());
+			} else {
+				setPdfFieldValue(PdfFieldTemporary.CATEGORY.getValue(), contract.getCategoryDescription());
+			}
+			
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldTemporary.FUNCTIONS.toString()))){
 				setPdfFieldValue(PdfFieldTemporary.FUNCTIONS.getValue(), getContractInfoMap(contract).get(PdfFieldTemporary.FUNCTIONS.toString()));
 			}
