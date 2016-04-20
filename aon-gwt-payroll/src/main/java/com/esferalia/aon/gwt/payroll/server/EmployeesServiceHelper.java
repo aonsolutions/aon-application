@@ -222,19 +222,29 @@ public class EmployeesServiceHelper {
 			domainIds.add(parentDomainId);
 		domainIds.add(domainId);
 		SQLAgreementContextFactory  agreementCtxFactory = null;
+		
 		try {
 			agreementCtxFactory = 
 					newSQLAgreementContextFactory(connection, draft.getStartDate(), draft.getEndDate());
-		} catch (ExpressionException e) {
+		} catch (Throwable e) {
 			return;
+			// TODO: 
 		}
 		
-		eval(agreementCtxFactory, draft.getId(), allLevels, allSalaryTable,
-				draft.getStartDate(), draft.getEndDate(),
-				domainIds.toArray(new Integer[] {}));
+		try {
+			eval(agreementCtxFactory, draft.getId(), allLevels, allSalaryTable,
+					draft.getStartDate(), draft.getEndDate(),
+					domainIds.toArray(new Integer[] {}));
+		} catch ( Throwable t) {
+			// TODO: 
+		}
 		
-		Set<Event> allEvents = eval(agreementCtxFactory, draft.getId(), allPayments, draft.getStartDate(), draft.getEndDate());
-		draft.setEvents(allEvents);
+		try {
+			Set<Event> allEvents = eval(agreementCtxFactory, draft.getId(), allPayments, draft.getStartDate(), draft.getEndDate());
+			draft.setEvents(allEvents);
+		} catch ( Throwable t) {
+			// TODO: 
+		}
 		
 	}
 
