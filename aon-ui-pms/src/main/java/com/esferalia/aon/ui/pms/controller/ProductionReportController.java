@@ -22,6 +22,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -161,13 +162,19 @@ public class ProductionReportController implements Serializable {
 	}
 	
 	public void onSearch(ActionEvent event) {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+		int defaultInactiveInterval = session.getMaxInactiveInterval();
 		
 		init();
 		
 		try {
+			session.setMaxInactiveInterval(2*60);
 			buildProductionReport();
 		} catch (AonSQLException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			session.setMaxInactiveInterval(defaultInactiveInterval);
 		}
 		
 		productionModel = buildModel(productionMap);
