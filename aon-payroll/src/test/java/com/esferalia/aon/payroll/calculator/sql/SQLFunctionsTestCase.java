@@ -691,36 +691,6 @@ public class SQLFunctionsTestCase extends
 		Assert.assertEquals(100.00, result.get(0).getValue());
 	}
 
-	@Test
-	public void testInputFunctionIX() throws ExpressionException, SQLException {
-
-		Connection connection = getConnection();
-		AONContext aonContext = new AONContext(connection);
-		
-		Date startDate = getFirstDayOfMonth(getToday());
-		Date endDate = getLastDayOfMonth(getToday());
-		//@formatter:off
-		ISQLContractSalaryCalculatorContext ctx = 
-				getContractSalaryCalculatorContext(connection, 
-				startDate, 
-				endDate, 
-				endDate, 
-				newContract(aonContext, getToday(), Collections.emptyMap()));
-		//@formatter:on
-		
-		try {
-			ctx.getExpressionContext().eval("INPUT('/*user*/ANTIGÜEDAD(,)/**/','Hello World!!!');", 
-					startDate
-					,endDate, 
-					Object.class);
-		
-		} catch ( CheckException e ) {
-				System.out.println(e.getMessage());
-				Assert.assertEquals("Hello World!!!", e.getMessage());
-				return;
-		} 
-		Assert.fail();
-	}
 	//------------------------------------------------------------------------
 	
 }
