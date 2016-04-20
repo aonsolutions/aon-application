@@ -66,7 +66,7 @@ public interface AonHubMessages extends Messages {
  	@DefaultMessage("Usuario: ")
  	String userSender();
  	
- 	@DefaultMessage("Compa\u00F1\u00EDa")
+ 	@DefaultMessage("Empresa")
  	String company();
  	
  	@DefaultMessage("Contacto")
@@ -164,6 +164,10 @@ public interface AonHubMessages extends Messages {
 
 	@DefaultMessage("Tipo Incidencia")
 	String typeOfIssue();
+
+	@DefaultMessage("\u00A1Ey\u0021. Parece que estabas escribiendo un comentario. "
+			+ "\n\u00BFQuieres guardarlo?")
+	String commentSaveConfirm();
 
 
 

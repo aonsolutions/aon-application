@@ -62,7 +62,6 @@
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:north size="25">
-
 			<g:FlowPanel styleName="aon-finding-title-toolbar">
 				<g:HorizontalPanel>
 					<g:HorizontalPanel>
@@ -120,10 +119,10 @@
 												style="font-size:10px;font-weight:bold;float:right; position: relative; top: 2px;">
 												<span class="aon-outputText">
 													<g:Button ui:field="showPanelButton" text="{msg.showAdvanced}"
-														styleName="aon-editDataTable-button {aonResources.css.aonhubExpandAll}" 
+														styleName="aon-editDataTable-button {aonResources.css.aonhubExpandAll}"
 														visible="true" />
 													<g:Button ui:field="hidePanelButton" text="{msg.hideAdvanced}"
-														styleName="aon-editDataTable-button {aonResources.css.aonhubCollapseAll}" 
+														styleName="aon-editDataTable-button {aonResources.css.aonhubCollapseAll}"
 														visible="false" />
 													<g:Button ui:field="refreshButton" text="{msg.refresh}"
 														styleName="aon-editDataTable-button aon-lookupButton-clear 
@@ -143,16 +142,14 @@
 					<g:center>
 						<g:HTMLPanel styleName="aon-scroll-area">
 							<g:SimpleLayoutPanel height="100%">
-								<office:IssueGrid ui:field="dataGrid" />
+								<office:IssueGrid ui:field="dataGrid" height="100%" />
 							</g:SimpleLayoutPanel>
 						</g:HTMLPanel>
 					</g:center>
 				</g:DockLayoutPanel>
 				<g:ResizeLayoutPanel ui:field="readIssuePanel">
-					<g:HTMLPanel styleName="aon-scroll-area">
-						<g:SimpleLayoutPanel ui:field="readIssueLayoutPanel"
-							height="100%" />
-					</g:HTMLPanel>
+					<g:SimpleLayoutPanel ui:field="readIssueLayoutPanel"
+						height="100%" />
 				</g:ResizeLayoutPanel>
 
 			</g:DeckLayoutPanel>

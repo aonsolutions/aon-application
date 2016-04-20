@@ -1,16 +1,22 @@
 package com.esferalia.aon.gwt.office.client;
 
+import static com.esferalia.aon.gwt.common.client.AON.AONHUB;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -31,6 +37,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -42,7 +49,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
-public class IssueReadPanel extends Composite {
+public class IssueReadPanel extends Composite implements ClickHandler {
 
 	interface Callback<T> {
 
@@ -75,8 +82,10 @@ public class IssueReadPanel extends Composite {
 		void addLabelToAnIssue(List<String> labels);
 		
 		void onSendNotificationButtonClick();
+		
+//		void onCompanyShowInfoClick(String name, Callback<RegistryMedia> callback);
 	}
-
+	
 	private static IssueReadPanelUiBinder uiBinder = GWT
 			.create(IssueReadPanelUiBinder.class);
 
@@ -116,6 +125,14 @@ public class IssueReadPanel extends Composite {
 	Button priorityButton;
 	@UiField
 	Button tagButton;
+	
+	@UiField
+	DockLayoutPanel dockLayoutPanel;
+
+	@UiField
+	MinimizePanel footPanel;
+	
+	private boolean canEdit;
 
 	private List<Listener> listeners;
 	private IssueSelected issue;
@@ -134,16 +151,16 @@ public class IssueReadPanel extends Composite {
 	private VerticalPanel companyContainer;
 
 	public IssueReadPanel(User currentUser, IssueSelected issue) {
-		initWidget(uiBinder.createAndBindUi(this));
-
+		initWidget(uiBinder.createAndBindUi(this));		
+		
 		this.listeners = new LinkedList<Listener>();
 		this.issue = issue;
 		this.type = issue.getType();
 		this.priority = issue.getPriority();
-		this.infoHeaderContent = new VerticalPanel();
+		this.infoHeaderContent = new VerticalPanel();		
 		this.infoHeaderContent.setSpacing(5);
 
-		this.companyContainer = new VerticalPanel();
+		this.companyContainer = new VerticalPanel();		
 		this.companyContainer.setSpacing(5);
 
 		this.addTagsMap = new LinkedList<AonTagIssueSelected>();
@@ -151,12 +168,12 @@ public class IssueReadPanel extends Composite {
 		this.assignTags = issue.getTags();
 
 		this.userLogged.setText(currentUser.getName());
-
+		this.canEdit = issue instanceof IssueGrid.IssueOpenLoadSelected;
+		
 		initHeader(issue);
-
+		
 		for (AonIssueComments comment : issue.getComments()) {
-			printComment(comment,
-					(issue instanceof IssueGrid.IssueOpenLoadSelected));
+			printComment(comment);
 		}
 
 		if (issue instanceof IssueGrid.IssueOpenLoadSelected) {
@@ -216,169 +233,26 @@ public class IssueReadPanel extends Composite {
 
 	@UiHandler("commentTextArea")
 	void onKeyUpEvent(KeyUpEvent event) {
-		commentButton.setEnabled(
-				commentTextArea.getValue().trim().isEmpty() == false);
+		String value = commentTextArea.getValue().trim();
+		commentButton.setEnabled(value.isEmpty() == false);
 	}
-
-	private void initHeader(IssueSelected issue) {
-
-		headerVPanel.add(getTitleLabel());
-		
-		DisclosurePanel logPanel = new DisclosurePanel();
-		logPanel.setAnimationEnabled(true);
-		
-		DisclosurePanel companyPanel = new DisclosurePanel();
-		companyPanel.setAnimationEnabled(true);
-		
-		HorizontalPanel hLogPanel = null;	
-		
-		for (AonTagIssueSelected tag : issue.getTags()) {
-			if( !tag.isOfficeStatus() && !tag.endDateIsNull()) {
-				setInfoTag(tag);
-				continue;
-			}
-			
-			if (tag.isOfficeStatus() && tag.endDateIsNull())
-				hLogPanel = setHistorialLogHeader(tag);
-			else if (!tag.endDateIsNull())
-				setContent(tag);
-		}
-
-		if (infoHeaderContent.getWidgetCount() > 0) {
-			Label icon = new Label();
-			icon.setStyleName(AON.AON_CSS.aonIconView());
-			hLogPanel.insert(icon, 0);
-			logPanel.setHeader(hLogPanel);
-			logPanel.setContent(infoHeaderContent);
-			headerVPanel.add(logPanel);
-		} else
-			headerVPanel.add(hLogPanel);
-		
-		for (AonIssueComments comment : issue.getComments()) {
-			if (AonStringUtils.isNotBlank(comment.getCompany()) &&
-					!AonStringUtils.equals(issue.getCompany(), comment.getCompany())) {
-				addCompany(comment.getCompany(), comment.getCreatedAt()); 
-			}
-		}
-		
-		HorizontalPanel hCompanyPanel = new HorizontalPanel();
-		hCompanyPanel.setSpacing(5);
-		
-		if (companyContainer.getWidgetCount() > 0) {
-			if (AonStringUtils.isNotEmpty(issue.getCompany()))
-					addCompany(issue.getCompany(), issue.getCreateAt());
-			
-			Label icon = new Label();
-			icon.setStyleName(AON.AON_CSS.aonIconView());
-			hCompanyPanel.add(icon);
-			hCompanyPanel.add(new Label("N\u00FAmero de veces que se ha notificado la incidencia: " + companyContainer.getWidgetCount()));
-			companyPanel.setHeader(hCompanyPanel);
-			companyPanel.setContent(companyContainer);
-			headerVPanel.add(companyPanel);
-		}
-		else {
-			
-			Label notified = new Label("Notificada por: ");
-			notified.setStyleName(AON.AON_BOLD);
-			hCompanyPanel.add(notified);
-			hCompanyPanel.add(new Label(issue.getCompany()));
 	
-			Label dateLabel = new Label(date.format(issue.getCreateAt()));
-			dateLabel.setStyleName(AON.AON_BOLD);
-
-			Label hourLabel = new Label(hour.format(issue.getCreateAt()));
-			hourLabel.setStyleName(AON.AON_BOLD);
-			
-			hCompanyPanel.add(dateLabel);
-			hCompanyPanel.add(new Label(" a las "));
-			hCompanyPanel.add(hourLabel);
-
-			headerVPanel.add(hCompanyPanel);
-
-		}
+	@UiHandler("footPanel")
+	void onFootMinimize(MinimizeEvent event) {
+		closeFootPanel();
 	}
-
-	private HorizontalPanel setHistorialLogHeader(
-			AonTagIssueSelected tag) {
-
-		HorizontalPanel hPanel = new HorizontalPanel();
-		hPanel.setSpacing(5);
-
-		Label headerIconLabel = new Label();
-		headerIconLabel.setStyleName(issue.getStateIconStyle());
-		hPanel.add(headerIconLabel);
-
-		hPanel.add(new Label(tag.getName() + " por "));
-
-		Label ownLabel = new Label(tag.getUser().getName());
-		ownLabel.setStyleName(AON.AON_BOLD);
-		hPanel.add(ownLabel);
-
-		Label dateLabel = new Label(" el " + date.format(tag.getCreateAt())
-				+ " a las " + hour.format(tag.getCreateAt()));
-		hPanel.add(dateLabel);
-
-		return hPanel;
+	
+	@UiHandler("footPanel")
+	void onFootMaximize(MaximizeEvent event) {
+		dockLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
+		dockLayoutPanel.animate(500);
 	}
-
-	private void setInfoTag(AonTagIssueSelected tag) {
-		HorizontalPanel hPanel = new HorizontalPanel();
-		hPanel.setSpacing(5);
-
-		Label headerIconLabel = new Label();
-		headerIconLabel.setStyleName(AON.AON_CSS.aonIconDelete());
-		hPanel.add(headerIconLabel);
-
-		Label ownLabel = new Label(tag.getUser().getName());
-		ownLabel.setStyleName(AON.AON_BOLD);
-		hPanel.add(ownLabel);
-
-		hPanel.add(new Label(" cerr\u00F3 la etiqueta "));
-		hPanel.add(setTagStyle(tag));
-		hPanel.add(new Label(" el " + date.format(tag.getDeletedAt())
-				+ " a las " + hour.format(tag.getDeletedAt())));
-
-		infoHeaderContent.add(hPanel);
+	
+	private void closeFootPanel() {
+		dockLayoutPanel.setWidgetSize(footPanel, 30);
+		dockLayoutPanel.animate(500);
 	}
-
-	private void setContent(AonTagIssueSelected tag) {
-
-		HorizontalPanel hPanel = new HorizontalPanel();
-		hPanel.setSpacing(5);
-
-		Label headerIconLabel = new Label();		
-		headerIconLabel.setStyleName(issue.getStateIconStyle());
-		hPanel.add(headerIconLabel);
-
-		hPanel.add(new Label(tag.getName() + " por "));
-
-		Label ownLabel = new Label(tag.getUser().getName());
-		ownLabel.setStyleName(AON.AON_BOLD);
-		hPanel.add(ownLabel);
-
-		Label dateLabel = new Label(" el " + date.format(tag.getCreateAt())
-				+ " a las " + hour.format(tag.getCreateAt()));
-		hPanel.add(dateLabel);
-		infoHeaderContent.add(hPanel);
-	}
-
-	private void addCompany(String name, Date createdAt) {
-		HorizontalPanel hPanel = new HorizontalPanel();
-		hPanel.setSpacing(5);
-
-		Label company = new Label(name);
-		company.setStyleName(AON.AON_BOLD);
-		Label dateLabel = new Label(" el " + date.format(createdAt)
-				+ " a las " + hour.format(createdAt));
-		
-		hPanel.add(company);
-		hPanel.add(dateLabel);
-		
-		companyContainer.add(hPanel);
-	}
-
-	private void printComment(AonIssueComments issueComment,
-			boolean editVisible) {
+	private void printComment(AonIssueComments issueComment) {
 
 		int days = getDaysBefore(issueComment.getCreatedAt());
 
@@ -387,7 +261,7 @@ public class IssueReadPanel extends Composite {
 		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		editButton.addStyleName(AON.AON_CSS.editButton());
 		editButton.setTitle("Editar comentario");
-		editButton.setVisible(editVisible && AonStringUtils.equals(
+		editButton.setVisible(canEdit && AonStringUtils.equals(
 				userLogged.getText(), issueComment.getUser().getName()));
 
 		final TextArea textArea = getTextArea(issueComment.getBody());
@@ -406,7 +280,7 @@ public class IssueReadPanel extends Composite {
 			}
 		});
 
-		editButton.setVisible(editVisible && AonStringUtils.equals(
+		editButton.setVisible(canEdit && AonStringUtils.equals(
 				userLogged.getText(), issueComment.getUser().getName()));
 
 		FlexTable flexTable = new FlexTable();
@@ -442,8 +316,7 @@ public class IssueReadPanel extends Composite {
 					});
 
 					rb.setValue(tag.getName().compareTo(issue.getType()) == 0);
-					rb.setEnabled(
-							issue instanceof IssueGrid.IssueOpenLoadSelected);
+					rb.setEnabled(canEdit);
 					vPanel.add(rb);
 				}
 
@@ -499,8 +372,7 @@ public class IssueReadPanel extends Composite {
 
 					rb.setValue(
 							tag.getName().compareTo(issue.getPriority()) == 0);
-					rb.setEnabled(
-							issue instanceof IssueGrid.IssueOpenLoadSelected);
+					rb.setEnabled(canEdit);
 
 					vPanel.add(rb);
 				}
@@ -558,8 +430,7 @@ public class IssueReadPanel extends Composite {
 					});
 
 					cb.setValue(containsOfficeTag(tag.getName()));
-					cb.setEnabled(
-							issue instanceof IssueGrid.IssueOpenLoadSelected);
+					cb.setEnabled(canEdit);
 					vPanel.add(cb);
 				}
 
@@ -568,7 +439,7 @@ public class IssueReadPanel extends Composite {
 
 					@Override
 					public void onClose(CloseEvent<PopupPanel> event) {
-						if (issue instanceof IssueGrid.IssueOpenLoadSelected)
+						if (canEdit)
 							onReplaceNoticeTag();
 					}
 				});
@@ -696,7 +567,8 @@ public class IssueReadPanel extends Composite {
 
 						@Override
 						public void onSucess(AonIssueComments comment) {
-							printComment(comment, true);
+							IssueReadPanel.this.canEdit = true;
+							printComment(comment);
 							commentTextArea.setValue("");
 							commentButton.setEnabled(false);
 						}
@@ -709,11 +581,8 @@ public class IssueReadPanel extends Composite {
 	}
 
 	private void onClosedButtonClick() {
-
-		if (commentTextArea.getValue().trim().isEmpty() == false
-				&& Window.confirm(
-						"\u00A1Ey\u0021. Parece que estabas escribiendo un comentario. "
-								+ "\n\u00BFQuieres guardarlo?")) {
+		String value = commentTextArea.getValue().trim();
+		if (!value.isEmpty() && Window.confirm(AONHUB.commentSaveConfirm())) {
 			onCommentButtonClick();
 		}
 
@@ -916,7 +785,7 @@ public class IssueReadPanel extends Composite {
 			int days) {
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("COMENTANDO por: ");
+		sb.append("COMENTADO por: ");
 		sb.append(comment.getUser().getName());
 		sb.append(" el ");
 		sb.append(date.format(comment.getCreatedAt()));
@@ -934,4 +803,179 @@ public class IssueReadPanel extends Composite {
 		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
 		return label;
 	}
+	
+	// ---------------------------------------------------------------------
+	
+	@Override
+	public void onClick(ClickEvent event) {
+		
+	}
+	// -------------------------------------------------------------------
+	// -------------------------------------------------------------------
+	// --------------------------- DIRTY DIRTY AREA, PLEASE NOT ENTER HERE
+	// -------------------------------------------------------------------
+	// -------------------------------------------------------------------
+
+	private void initHeader(IssueSelected issue) {
+
+		headerVPanel.add(getTitleLabel());
+		
+		DisclosurePanel logPanel = new DisclosurePanel();
+		logPanel.setAnimationEnabled(true);
+		
+		DisclosurePanel companyPanel = new DisclosurePanel();
+		companyPanel.setAnimationEnabled(true);
+		
+		HorizontalPanel hLogPanel = null;	
+		
+		for (AonTagIssueSelected tag : issue.getTags()) {
+			if( !tag.isOfficeStatus() && !tag.endDateIsNull()) {
+				setInfoTag(tag);
+				continue;
+			}
+			
+			if (tag.isOfficeStatus() && tag.endDateIsNull())
+				hLogPanel = setHistorialLogHeader(tag);
+			else if (!tag.endDateIsNull())
+				setContent(tag);
+		}
+
+		if (infoHeaderContent.getWidgetCount() > 0) {
+			Label icon = new Label();
+			icon.setStyleName(AON.AON_CSS.aonIconView());
+			hLogPanel.insert(icon, 0);
+			logPanel.setHeader(hLogPanel);
+			logPanel.setContent(infoHeaderContent);
+			headerVPanel.add(logPanel);
+		} else
+			headerVPanel.add(hLogPanel);
+		
+		for (AonIssueComments comment : issue.getComments()) {
+			if (AonStringUtils.isNotBlank(comment.getCompany()) &&
+					!AonStringUtils.equals(issue.getCompany(), comment.getCompany())) {
+				addCompany(comment.getCompany(), comment.getCreatedAt()); 
+			}
+		}
+		
+		HorizontalPanel hCompanyPanel = new HorizontalPanel();
+		hCompanyPanel.setSpacing(5);
+		
+		if (companyContainer.getWidgetCount() > 0) {
+			if (AonStringUtils.isNotEmpty(issue.getCompany()))
+					addCompany(issue.getCompany(), issue.getCreateAt());
+			
+			Label icon = new Label();
+			icon.setStyleName(AON.AON_CSS.aonIconView());
+			hCompanyPanel.add(icon);
+			hCompanyPanel.add(new Label("N\u00FAmero de veces que se ha notificado la incidencia: " + companyContainer.getWidgetCount()));
+			companyPanel.setHeader(hCompanyPanel);
+			companyPanel.setContent(companyContainer);
+			headerVPanel.add(companyPanel);
+		}
+		else {
+			
+			Label notified = new Label("Notificada por: ");
+			notified.setStyleName(AON.AON_BOLD);
+			hCompanyPanel.add(notified);
+			
+			Label company = new Label(issue.getCompany());
+			company.getElement().getStyle().setCursor(Cursor.POINTER);
+			company.addClickHandler(this);
+			hCompanyPanel.add(company);
+	
+			Label dateLabel = new Label(date.format(issue.getCreateAt()));
+			dateLabel.setStyleName(AON.AON_BOLD);
+
+			Label hourLabel = new Label(hour.format(issue.getCreateAt()));
+			hourLabel.setStyleName(AON.AON_BOLD);
+			
+			hCompanyPanel.add(dateLabel);
+			hCompanyPanel.add(new Label(" a las "));
+			hCompanyPanel.add(hourLabel);
+
+			headerVPanel.add(hCompanyPanel);
+
+		}
+	}
+
+	private HorizontalPanel setHistorialLogHeader(
+			AonTagIssueSelected tag) {
+
+		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.setSpacing(5);
+
+		Label headerIconLabel = new Label();
+		headerIconLabel.setStyleName(issue.getStateIconStyle());
+		hPanel.add(headerIconLabel);
+
+		hPanel.add(new Label(tag.getName() + " por "));
+
+		Label ownLabel = new Label(tag.getUser().getName());
+		ownLabel.setStyleName(AON.AON_BOLD);
+		hPanel.add(ownLabel);
+
+		Label dateLabel = new Label(" el " + date.format(tag.getCreateAt())
+				+ " a las " + hour.format(tag.getCreateAt()));
+		hPanel.add(dateLabel);
+
+		return hPanel;
+	}
+
+	private void setInfoTag(AonTagIssueSelected tag) {
+		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.setSpacing(5);
+
+		Label headerIconLabel = new Label();
+		headerIconLabel.setStyleName(AON.AON_CSS.aonIconDelete());
+		hPanel.add(headerIconLabel);
+
+		Label ownLabel = new Label(tag.getUser().getName());
+		ownLabel.setStyleName(AON.AON_BOLD);
+		hPanel.add(ownLabel);
+
+		hPanel.add(new Label(" cerr\u00F3 la etiqueta "));
+		hPanel.add(setTagStyle(tag));
+		hPanel.add(new Label(" el " + date.format(tag.getDeletedAt())
+				+ " a las " + hour.format(tag.getDeletedAt())));
+
+		infoHeaderContent.add(hPanel);
+	}
+
+	private void setContent(AonTagIssueSelected tag) {
+
+		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.setSpacing(5);
+
+		Label headerIconLabel = new Label();		
+		headerIconLabel.setStyleName(issue.getStateIconStyle());
+		hPanel.add(headerIconLabel);
+
+		hPanel.add(new Label(tag.getName() + " por "));
+
+		Label ownLabel = new Label(tag.getUser().getName());
+		ownLabel.setStyleName(AON.AON_BOLD);
+		hPanel.add(ownLabel);
+
+		Label dateLabel = new Label(" el " + date.format(tag.getCreateAt())
+				+ " a las " + hour.format(tag.getCreateAt()));
+		hPanel.add(dateLabel);
+		infoHeaderContent.add(hPanel);
+	}
+
+	private void addCompany(String name, Date createdAt) {
+		HorizontalPanel hPanel = new HorizontalPanel();
+		hPanel.setSpacing(5);
+
+		Label company = new Label(name);
+		company.setStyleName(AON.AON_BOLD);
+		Label dateLabel = new Label(" el " + date.format(createdAt)
+				+ " a las " + hour.format(createdAt));
+		
+		hPanel.add(company);
+		hPanel.add(dateLabel);
+		
+		companyContainer.add(hPanel);
+	}
+
+	
 }
