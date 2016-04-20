@@ -3309,62 +3309,69 @@ public class SalaryDraft extends ResizeComposite
 
 		int row = paymentsTable.getRowCount();
 		for (Deduction deduction : deductions) {
-
-			Button expandButton = null;
-
-			if (isSystemDeduction(deduction)) {
-
-				if (deduction instanceof CompositeDeduction) {
-					expandButton = new Button();
-					expandButton.setTabIndex(Short.MAX_VALUE);
-					expandButton.setStyleName(AON.AON_ICON_EXPAND);
-					expandButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-				}
-
-				String description = DEDUCTION_DESCRIPTIONS.get(deduction.getType());
-				if (description == null)
-					description = deduction.getDescription();
-
-				if (deduction.getAmount() != null) {
-					Double percent = getPercent(deduction, salaryDraftObject);
-					dumpSystemDeduction(deduction, percent, description, row++, expandButton);
-
-					if (deduction instanceof CompositeDeduction) {
-						for (Deduction child : ((CompositeDeduction) deduction).getChilds()) {
-
-							dumpSystemItem(child,
-									"  " + description + " " + formatChildDescriptionSuffix(child, salaryDraftObject),
-									row, null, null);
-
-							paymentsTable.getRowFormatter().getElement(row++).getStyle().setDisplay(Display.NONE);
-						}
-					}
-
-				} else {
-					Double dbPercent = getDbPercent(deduction, salaryDraftObject);
-					String styles[] = eventStyles.get(Event.Type.ERROR);
-					dumpDbSystemDeduction(deduction, dbPercent, description, row++, styles[0], styles[1]);
-				}
-
-			} else {
-				if (deduction.getAmount() != null)
-					dumpItem(deduction, row++, getIconRowStyle(deduction),
-							new DeductionChangeHandler<TextBox>(deduction), true, expandButton);
-				else if (deduction.getId() == null) {
-					String styles[] = eventStyles.get(Event.Type.ERROR);
-					dumpDbItem(deduction, row++, styles[0], styles[1], new RecoverDeductionHandler(deduction), false);
-
-				} else {
-					// REMOVE() deductions
-					if (isCgcBaseDeduction(deduction))
-						cgcBaseDeduction = deduction;
-					else if (isCgpBaseDeduction(deduction))
-						cgpBaseDeduction = deduction;
-				}
-
-			}
+			row = dumpDeduction(row, deduction);
 		}
 
+	}
+
+	private int dumpDeduction(int row, Deduction deduction) {
+		Button expandButton = null;
+
+		if (isSystemDeduction(deduction)) {
+			row = dumpSystemDeduction(row, deduction, expandButton);
+		} else {
+			if (deduction.getAmount() != null)
+				dumpItem(deduction, row++, getIconRowStyle(deduction),
+						new DeductionChangeHandler<TextBox>(deduction), true, expandButton);
+			else if (deduction.getId() == null) {
+				String styles[] = eventStyles.get(Event.Type.ERROR);
+				dumpDbItem(deduction, row++, styles[0], styles[1], new RecoverDeductionHandler(deduction), false);
+
+			} else {
+				// REMOVE() deductions
+				if (isCgcBaseDeduction(deduction))
+					cgcBaseDeduction = deduction;
+				else if (isCgpBaseDeduction(deduction))
+					cgpBaseDeduction = deduction;
+			}
+
+		}
+		return row;
+	}
+
+	private int dumpSystemDeduction(int row, Deduction deduction, Button expandButton) {
+		if (deduction instanceof CompositeDeduction) {
+			expandButton = new Button();
+			expandButton.setTabIndex(Short.MAX_VALUE);
+			expandButton.setStyleName(AON.AON_ICON_EXPAND);
+			expandButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		}
+
+		String description = DEDUCTION_DESCRIPTIONS.get(deduction.getType());
+		if (description == null)
+			description = deduction.getDescription();
+
+		if (deduction.getAmount() != null) {
+			Double percent = getPercent(deduction, salaryDraftObject);
+			dumpSystemDeduction(deduction, percent, description, row++, expandButton);
+
+			if (deduction instanceof CompositeDeduction) {
+				for (Deduction child : ((CompositeDeduction) deduction).getChilds()) {
+
+					dumpSystemItem(child,
+							"  " + description + " " + formatChildDescriptionSuffix(child, salaryDraftObject),
+							row, null, null);
+
+					paymentsTable.getRowFormatter().getElement(row++).getStyle().setDisplay(Display.NONE);
+				}
+			}
+
+		} else {
+			Double dbPercent = getDbPercent(deduction, salaryDraftObject);
+			String styles[] = eventStyles.get(Event.Type.ERROR);
+			dumpDbSystemDeduction(deduction, dbPercent, description, row++, styles[0], styles[1]);
+		}
+		return row;
 	}
 
 	private void dumpPayment(Payment payment, int row, String iconStyleName,
@@ -4256,8 +4263,13 @@ public class SalaryDraft extends ResizeComposite
 		idx += salaryDraftObject.getPayments().size() + 3; // We add one due to
 															// header
 		paymentsTable.insertRow(idx);
-
-		dumpItem(deduction, idx, iconStyleName, new DeductionChangeHandler<TextBox>(deduction), true);
+		if (isSystemDeduction(deduction)) {
+			dumpSystemDeduction(idx, deduction, null /*expandButton*/);
+		} else {
+			dumpItem(deduction, idx, iconStyleName, new DeductionChangeHandler<TextBox>(deduction), true);
+		}
+		
+		//dumpDeduction(idx, deduction);
 
 		CellFormatter fomatter = paymentsTable.getCellFormatter();
 		for (int col = 0; col < paymentsTable.getCellCount(idx); col++) {
