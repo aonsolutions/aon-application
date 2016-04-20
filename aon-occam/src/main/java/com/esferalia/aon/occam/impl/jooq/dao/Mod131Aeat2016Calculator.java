@@ -392,7 +392,7 @@ public class Mod131Aeat2016Calculator  {
 		
 		// Comunidad, Sociedad Civil o Similar. Porcentaje de participaci?n.
 		if (AonMathUtils.isNotZero(act.getCom())) {
-			rpf = rpf - (rpf * act.getCom() / 100);
+			rpf = (rpf * act.getCom() / 100);
 			
 		}
 		rpf = AonMathUtils.round(rpf);
