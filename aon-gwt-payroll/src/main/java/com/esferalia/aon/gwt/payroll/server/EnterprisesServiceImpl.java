@@ -40,6 +40,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.CompanyColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractBonusColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
@@ -916,6 +917,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 						+ " )"
 						+ " OR " + SQLConstants.DOMAIN + "." + DomainColumns.SCOPE + " IS NULL"
 						+ " )"     
+					
+					+ " AND " + SQLConstants.DOMAIN + "." + DomainColumns.ACTIVE + " = 1 " 
 					
 					+ " ORDER BY " + SQLConstants.REGISTRY + "." + RegistryColumns.ID
 					+ ", " + SQLConstants.ENTERPRISE_ACTIVITY + "." + EnterpriseActivityColumns.ID
