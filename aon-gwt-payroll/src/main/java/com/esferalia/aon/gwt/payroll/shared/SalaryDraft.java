@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,78 +14,6 @@ public class SalaryDraft extends SalaryPreview {
 		SYSTEM, APPLICATION, AGREEMENT, CONTRACT, SALARY;
 
 		public static final int NUM_VALUES = Scope.values().length;
-
-	}
-
-	public static class Event implements Serializable {
-		public static enum Type {
-			ERROR, WARNING, INFO, DEBUG
-		};
-
-		Type type;
-		String message;
-
-		public Type getType() {
-			return type;
-		}
-
-		public Event setType(Type type) {
-			this.type = type;
-			return this;
-		}
-
-		public String getMessage() {
-			return message;
-		}
-
-		public Event setMessage(String message) {
-			this.message = message;
-			return this;
-		}
-
-	}
-
-	public static class PaymentEvent extends Event implements HasPayment {
-		Payment payment;
-
-		@Override
-		public Payment getPayment() {
-			return payment;
-		}
-
-		public PaymentEvent setPayment(Payment payment) {
-			this.payment = payment;
-			return this;
-		}
-
-	}
-
-	public static class DeductionEvent extends Event implements HasDeduction {
-		Deduction deduction;
-
-		@Override
-		public Deduction getDeduction() {
-			return deduction;
-		}
-
-		public DeductionEvent setDeduction(Deduction deduction) {
-			this.deduction = deduction;
-			return this;
-		}
-	}
-
-	public static class BonusEvent extends Event implements HasBonus {
-		Bonus bonus;
-
-		@Override
-		public Bonus getBonus() {
-			return bonus;
-		}
-
-		public BonusEvent setBonus(Bonus bonus) {
-			this.bonus = bonus;
-			return this;
-		}
 
 	}
 
@@ -883,5 +810,7 @@ public class SalaryDraft extends SalaryPreview {
 		this.dbId = dbId;
 		return this;
 	}
+	
+	// ------------------------------------------------------------------------
 
 }
