@@ -178,6 +178,7 @@
 
 		<!-- WS MODULES -->
 		<module>aon-ws-gps</module>
+	    <module>aon-ws-dex</module>
 
 		<!-- OTHER -->
 		<module>aon.python</module>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:tns="http://ws.apache.org/axis2" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://ws.apache.org/axis2">
+	<wsdl:types>
+		<s:schema elementFormDefault="qualified" targetNamespace="http://ws.apache.org/axis2">
+			<s:element name="GetDocument">
+				<s:complexType>
+					<s:sequence>
+						<s:element maxOccurs="1" minOccurs="0" name="Document" type="s:string"/>
+					</s:sequence>
+				</s:complexType>
+			</s:element>
+			<s:element name="GetDocumentResponse">
+				<s:complexType>
+					<s:sequence>
+						<s:element maxOccurs="1" minOccurs="0" name="GetDocumentResult" type="s:string"/>
+					</s:sequence>
+				</s:complexType>
+			</s:element>
+		</s:schema>
+	</wsdl:types>
+	<wsdl:message name="GetDocumentIn">
+		<wsdl:part name="parameters" element="tns:GetDocument"/>
+	</wsdl:message>
+	<wsdl:message name="GetDocumentOut">
+		<wsdl:part name="parameters" element="tns:GetDocumentResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="AonDataLoad">
+		<wsdl:operation name="GetDocument">
+			<wsdl:input message="tns:GetDocumentIn"/>
+			<wsdl:output message="tns:GetDocumentOut"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="AonDataLoad" type="tns:AonDataLoad">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="GetDocument">
+			<soap:operation soapAction="GetDocument" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="AonDataLoadService">
+		<wsdl:port name="AonDataLoadPort" binding="tns:AonDataLoad">
+			<soap:address location="http://localhost:80/aon-ws-dex/DataLoadService"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
