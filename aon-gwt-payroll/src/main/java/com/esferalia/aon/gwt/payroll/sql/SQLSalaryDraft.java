@@ -530,7 +530,7 @@ public class SQLSalaryDraft {
 			SQLUtils.setShort(insertStmt, 4, payment.getMonth());
 			SQLUtils.setShort(insertStmt, 5, SQLUtils.enum2Short(payment.getSalaryType()));
 
-			SQLUtils.setString(insertStmt, 6, payment.getDescription());
+			SQLUtils.setString(insertStmt, 6, payment.getDescriptionTemplate());
 			SQLUtils.setString(insertStmt, 7, payment.getExpression());
 			SQLUtils.setString(insertStmt, 8, payment.getIrpfExpression());
 			SQLUtils.setString(insertStmt, 9, payment.getQuoteExpression());
