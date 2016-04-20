@@ -36,13 +36,13 @@
 										<aon:commandButton id="#{controller.beanName}Save"
 											value="#{bundle.aon_accept}"
 											reRender="#{controller.beanName}ModalContainer,enterpriseTreeForm,#{container}"
-											actionListener="#{controller.onAccept}"
+											actionListener="#{controller.accept}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept">
 										</aon:commandButton>
 										<aon:commandButton id="#{controller.beanName}Cancel"
 											value="#{bundle.aon_cancel}"
 											reRender="#{controller.beanName}ModalContainer,#{container}"
-											actionListener="#{controller.onCancel}"
+											actionListener="#{controller.cancel}"
 											immediate="true"
 											styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										</aon:commandButton>
