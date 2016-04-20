@@ -15,8 +15,10 @@
 	
 	
 					<ui:define name="toolbarContent">
-						<aon:commandButton id="Activity-Save" value="#{bundle.aon_accept}"
+						<aon:commandButton id="Activity-Save" 
 							reRender="ActivityMainGrid"
+							value="#{bundle.aon_accept}"
+							oncomplete="refreshActivity();" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<aon:actionListener method="#{enterpriseActivity.accept}" />
 						</aon:commandButton>

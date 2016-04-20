@@ -1434,6 +1434,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private EnterpriseContextMenu enterpriseContextMenu;
 
 	private Employee employee;
+	private Activity activity;
 	private Workplace workplace;
 	private Enterprise enterprise;
 
@@ -1587,6 +1588,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public void onActivitySelected(Activity activity) {
 		employeeDetail.setWidget(jsf);
 		jsf.activitySelected(activity.getId());
+		this.activity = activity;
 	}
 
 	@Override
@@ -2082,13 +2084,23 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		singlenton.employees.refresh(singlenton.workplace);
 	}
 	
+	private static void refreshActivity() {
+		singlenton.employees.refresh(singlenton.activity);
+	}
+
+	private static void refreshEnterprise() {
+		singlenton.employees.refresh(singlenton.enterprise);
+	}
+
 	private static native void export2JS() /*-{
 		$wnd.viewResults = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::viewResults());
 		$wnd.employeeCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::employeeCalc());
 		$wnd.workplaceCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::workplaceCalc());
 		$wnd.enterpriseCalc = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::enterpriseCalc());
 		$wnd.refreshEmployee = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::refreshEmployee());
+		$wnd.refreshActivity = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::refreshActivity());
 		$wnd.refreshWorkplace = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::refreshWorkplace());
+		$wnd.refreshEnterprise = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::refreshEnterprise());
 	}-*/;
 
 	private static String employee2Json(Employee employee) {

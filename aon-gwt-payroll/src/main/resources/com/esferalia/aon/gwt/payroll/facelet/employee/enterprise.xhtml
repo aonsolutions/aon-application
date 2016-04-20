@@ -16,7 +16,9 @@
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="Enterprise-Save"
-						value="#{bundle.aon_accept}" reRender="enterpriseMainGrid"
+						value="#{bundle.aon_accept}" 
+						reRender="enterpriseMainGrid"
+						oncomplete="refreshEnterprise();" 
 						styleClass="aon-finding-toolbar-item aon-icon-accept">
 						<aon:actionListener method="#{enterprise.accept}" />
 					</aon:commandButton>
@@ -26,6 +28,8 @@
 						value="#{bundle.enterprise_activity_new}"
 						reRender="#{contract.beanName}ModalContainer"
 						styleClass="aon-finding-toolbar-item aon-icon-reset">
+						<aon:actionListener
+							method="#{employeeTree.onShowNewWorkplaceModal}" />
 					</aon:commandButton>
 
 					<aon:commandButton id="Activity-reset" ajaxSingle="true"
@@ -34,6 +38,8 @@
 						reRender="#{contract.beanName}ModalContainer"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
 						limitToList="true">
+						<aon:actionListener
+							method="#{employeeTree.onShowNewActivityModal}" />
 					</aon:commandButton>
 
 

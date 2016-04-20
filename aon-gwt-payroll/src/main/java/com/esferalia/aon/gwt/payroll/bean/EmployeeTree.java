@@ -13,6 +13,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.PayrollWorkPlaceController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 
 public class EmployeeTree implements Serializable {
@@ -170,13 +171,24 @@ public class EmployeeTree implements Serializable {
 	}
 
 	public void onShowNewContractModal(ActionEvent event) {
-		EnterpriseController ec = (EnterpriseController) AonUtil
+		EnterpriseController enterpriseController = (EnterpriseController) AonUtil
 				.getRegisteredBean(IPayrollConstants.ENTERPRISE_CONTROLLER);
-		ContractController controller = (ContractController) AonUtil
+		ContractController contractController = (ContractController) AonUtil
 				.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
-		controller.onReset(event);
-		controller.setEnterprise((Enterprise) ec.getTo());
-		controller.onShowNewContractModal(event);
+
+		contractController.onReset(event);
+		contractController.setEnterprise((Enterprise) enterpriseController.getTo());
+		contractController.onShowNewContractModal(event);
+
+	}
+
+	public void onShowNewWorkplaceModal(ActionEvent event) {
+		PayrollWorkPlaceController payrollWorkPlaceController = (PayrollWorkPlaceController) AonUtil
+				.getRegisteredBean(IPayrollConstants.PAYROLL_WORK_PLACE_CONTROLLER);
+		payrollWorkPlaceController.onReset(event);
+	}
+
+	public void onShowNewActivityModal(ActionEvent event) {
 
 	}
 
