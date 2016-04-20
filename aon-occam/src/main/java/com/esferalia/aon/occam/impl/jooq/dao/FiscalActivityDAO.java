@@ -44,22 +44,26 @@ public class FiscalActivityDAO {
 		.orderBy(FS_ACTIVITY_INFO.LINE)
 		.fetch()
 		.stream()
-		.forEach(record ->   
-			fa.add(new FiscalActivityInfo()
-				.setId(record.getValue(FS_ACTIVITY_INFO.ID))
-				.setFiscalActivity(record.getValue(FS_ACTIVITY_INFO.FS_ACTIVITY))
-				.setInfoKey(FiscalActivityInfoKey.safeValueOf(record.getValue(FS_ACTIVITY_INFO.INFO_KEY)) )
-				.setInfoType(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(
-						FiscalActivityInfoKeyType.class
-						, record.getValue(FS_ACTIVITY_INFO.TYPE)))
-				.setLine(record.getValue(FS_ACTIVITY_INFO.LINE))
-				.setValue(record.getValue(FS_ACTIVITY_INFO.VALUE))
-				.setFactor(record.getValue(FS_ACTIVITY_INFO.FACTOR))
-				.setBase(record.getValue(FS_ACTIVITY_INFO.BASE))
-				.setUnit(record.getValue(FS_ACTIVITY_INFO.UNIT))
-				.setMinValue(record.getValue(FS_ACTIVITY_INFO.MIN_VALUE))
-				.setMaxValue(record.getValue(FS_ACTIVITY_INFO.MAX_VALUE))
-		));
+		.forEach(record -> {
+			FiscalActivityInfoKey key = FiscalActivityInfoKey.safeValueOf(record.getValue(FS_ACTIVITY_INFO.INFO_KEY));
+			if (key != null) {
+				fa.add(new FiscalActivityInfo()
+						.setId(record.getValue(FS_ACTIVITY_INFO.ID))
+						.setFiscalActivity(record.getValue(FS_ACTIVITY_INFO.FS_ACTIVITY))
+						.setInfoKey(key)
+						.setInfoType(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(
+								FiscalActivityInfoKeyType.class
+								, record.getValue(FS_ACTIVITY_INFO.TYPE)))
+						.setLine(record.getValue(FS_ACTIVITY_INFO.LINE))
+						.setValue(record.getValue(FS_ACTIVITY_INFO.VALUE))
+						.setFactor(record.getValue(FS_ACTIVITY_INFO.FACTOR))
+						.setBase(record.getValue(FS_ACTIVITY_INFO.BASE))
+						.setUnit(record.getValue(FS_ACTIVITY_INFO.UNIT))
+						.setMinValue(record.getValue(FS_ACTIVITY_INFO.MIN_VALUE))
+						.setMaxValue(record.getValue(FS_ACTIVITY_INFO.MAX_VALUE))
+						);
+			}
+		});
 	}
 
 	public static Stream<FiscalActivity> getActivities(AONContext ctx,int domain) {
