@@ -1689,7 +1689,7 @@ public class Mod131DAO extends FiscalModelDAO {
 		 .orElse(null);
 		
 		if (previous != null) {
-			c03 = previous.getAmount(Mod130Key.C01);
+			c03 = previous.getAmount(Mod131Key.C01);
 			rn = AonMathUtils.round(c03 + c08);
 			if (rn <= 9000) {
 				c09 = 100;
