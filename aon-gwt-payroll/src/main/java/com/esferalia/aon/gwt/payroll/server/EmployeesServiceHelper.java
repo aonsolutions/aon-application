@@ -25,8 +25,11 @@ import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.Event;
+import com.esferalia.aon.gwt.payroll.shared.Event.Type;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.PaymentEvent;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
@@ -60,6 +63,7 @@ import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -217,10 +221,21 @@ public class EmployeesServiceHelper {
 		if (parentDomainId != null)
 			domainIds.add(parentDomainId);
 		domainIds.add(domainId);
-
-		eval(connection, draft.getId(), allLevels, allSalaryTable,
+		SQLAgreementContextFactory  agreementCtxFactory = null;
+		try {
+			agreementCtxFactory = 
+					newSQLAgreementContextFactory(connection, draft.getStartDate(), draft.getEndDate());
+		} catch (ExpressionException e) {
+			return;
+		}
+		
+		eval(agreementCtxFactory, draft.getId(), allLevels, allSalaryTable,
 				draft.getStartDate(), draft.getEndDate(),
 				domainIds.toArray(new Integer[] {}));
+		
+		Set<Event> allEvents = eval(agreementCtxFactory, draft.getId(), allPayments, draft.getStartDate(), draft.getEndDate());
+		draft.setEvents(allEvents);
+		
 	}
 
 	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(
@@ -354,21 +369,10 @@ public class EmployeesServiceHelper {
 				.findAny().isPresent();
 	}
 
-	private static void eval(Connection conn, int agreementId,
+	private static void eval(SQLAgreementContextFactory agreementCtxFactory, int agreementId,
 			Set<Level> levels, SalaryTable salaryTable, Date start, Date end,
 			Integer... domainIds) {
-		try {
 			// try to resolve some variables. Here we go.
-			SQLSystemExpressionContextFactory systemCtxFactory = new SQLSystemExpressionContextFactory(
-					conn, start, end,
-					ISQLContractSalaryCalculatorContext.NEWER);
-
-			Supplier<ExpressionContext> systemCtxSupplier = () -> systemCtxFactory
-					.create(new CCCContextKey(null, null));
-
-			SQLAgreementContextFactory agreementCtxFactory = new SQLAgreementContextFactory(
-					conn, systemCtxSupplier, start, end,
-					ISQLContractSalaryCalculatorContext.NEWER);
 
 			LinkedList<Variable> defVars = new LinkedList<Variable>(
 					salaryTable.getVariables(0));
@@ -391,9 +395,51 @@ public class EmployeesServiceHelper {
 
 				eval(levelCtx, levelVars, start, end);
 			}
-		} catch (Throwable e) {
-			// e.printStackTrace();
+	}
+
+	private static Set<Event> eval(SQLAgreementContextFactory agreementCtxFactory, int agreementId,
+			Collection<Payment> payments, Date start, Date end) {
+		
+		Set<Event> events = new HashSet<Event>();
+		
+		ExpressionContext agreementDataCtx = agreementCtxFactory.getSystemExpressionContext();
+		for ( Payment payment: payments ) {
+			try {
+				agreementDataCtx.eval(payment.getExpression(), start, end);
+			} catch ( CheckException e ) {
+				events.add(
+				new PaymentEvent()
+				.setPayment(payment)
+				.setType(Type.WARNING)
+				.setMessage(e.getMessage()));
+			}catch (CompileException e){
+				events.add(
+				new PaymentEvent()
+				.setPayment(payment)
+				.setType(Type.ERROR)
+				.setMessage(e.getMessage()));
+			}
+			catch (ExpressionException e) {
+			}
 		}
+		
+		return events;
+	}
+	
+
+	private static SQLAgreementContextFactory newSQLAgreementContextFactory(Connection conn, Date start, Date end)
+			throws SQLException, ExpressionException {
+		SQLSystemExpressionContextFactory systemCtxFactory = new SQLSystemExpressionContextFactory(
+				conn, start, end,
+				ISQLContractSalaryCalculatorContext.NEWER);
+
+		Supplier<ExpressionContext> systemCtxSupplier = () -> systemCtxFactory
+				.create(new CCCContextKey(null, null));
+
+		SQLAgreementContextFactory agreementCtxFactory = new SQLAgreementContextFactory(
+				conn, systemCtxSupplier, start, end,
+				ISQLContractSalaryCalculatorContext.NEWER);
+		return agreementCtxFactory;
 	}
 
 	private static void eval(ExpressionContext ctx, LinkedList<Variable> vars,
@@ -425,6 +471,7 @@ public class EmployeesServiceHelper {
 		}
 	}
 
+	
 	private static String generateErrorMessage(CompileException e) {
 		char expr[] = e.getExpr();
 		int cursor = e.getCursor();

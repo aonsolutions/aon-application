@@ -224,6 +224,8 @@ public class AgreementDraft extends Agreement {
 
 	private SortedSet<Date> datesWithChanges;
 
+	private Set<Event> events;
+
 	private Set<Extra> extras;
 	private Map<Integer, Extra> draftExtras;
 
@@ -265,6 +267,14 @@ public class AgreementDraft extends Agreement {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+	
+	public Set<Event> getEvents() {
+		return events;
+	}
+	
+	public void setEvents(Set<Event> events) {
+		this.events = events;
 	}
 
 	public Set<Extra> getExtras() {

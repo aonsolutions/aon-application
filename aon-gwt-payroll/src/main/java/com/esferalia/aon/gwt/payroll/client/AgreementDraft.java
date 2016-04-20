@@ -7,14 +7,18 @@ import static com.esferalia.aon.gwt.payroll.client.Constants.MAX_ZOOM;
 import static com.esferalia.aon.gwt.payroll.client.Constants.MIN_ZOOM;
 import static com.esferalia.aon.gwt.payroll.client.Constants.PERCENT_FORMAT;
 import static com.esferalia.aon.gwt.payroll.client.Constants.ZOOM_STEP;
+import static com.esferalia.aon.gwt.payroll.shared.Event.Type.ERROR;
+import static com.esferalia.aon.gwt.payroll.shared.Event.Type.WARNING;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -28,13 +32,19 @@ import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
+import com.esferalia.aon.gwt.payroll.client.SalaryDraft.MyStyle;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.HasBonus;
+import com.esferalia.aon.gwt.payroll.shared.HasDeduction;
+import com.esferalia.aon.gwt.payroll.shared.HasPayment;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.LevelComparator;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.PaymentEvent;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
@@ -48,6 +58,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
+import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -186,6 +197,9 @@ public class AgreementDraft extends ResizeComposite implements
 
 		@ClassName("text-warn")
 		String textWarn();
+
+		@ClassName("text-error")
+		String textError();
 	}
 
 	interface Binder extends UiBinder<Widget, AgreementDraft> {
@@ -948,6 +962,12 @@ public class AgreementDraft extends ResizeComposite implements
 	ListBox datesListBox;
 
 	@UiField
+	FlexTable eventsTable;
+
+	@UiField
+	Widget eventsTableSpace;
+
+	@UiField
 	FlexTable salaryTable;
 
 	@UiField
@@ -1013,12 +1033,15 @@ public class AgreementDraft extends ResizeComposite implements
 
 	private ContextProvider contextProvider;
 
+	private Map<Event.Type, String[]> eventStyles;
+
 	private ContentAsistManager contentAssistManager;
 
 	public AgreementDraft() {
 		initWidget(binder.createAndBindUi(this));
 		initPaymentsTable();
 		initExtrasTable();
+		initEventsStyles(style);
 		undoListener = new UndoListener();
 		availablePaymens = new ArrayList<Payment>();
 		changedLevelsRows = new LinkedList<Integer>();
@@ -1095,6 +1118,8 @@ public class AgreementDraft extends ResizeComposite implements
 		extraEditors.add(insertNewExtraRow(extrasTable.getRowCount(),
 				extraPayments));
 
+		clearEventsTable();
+		dumpEvents();
 		loadContentAssistManager();
 	}
 
@@ -1291,6 +1316,15 @@ public class AgreementDraft extends ResizeComposite implements
 		descriptionTextBox.setEnabled(isMine());
 
 	}
+
+	private void dumpEvents() {
+
+		int row = eventsTable.getRowCount();
+		for (Event event : agreementDraftObject.getEvents()) {
+			dumpEvent(row++, event);
+		}
+		eventsTableSpace.setVisible(eventsTable.getRowCount() > 0);
+	}	
 
 	private List<ExtraEditor> dumpExtras(SortedSet<Payment> payments) {
 
@@ -1635,6 +1669,11 @@ public class AgreementDraft extends ResizeComposite implements
 
 	}
 
+	private void clearEventsTable() {
+		for (int i = eventsTable.getRowCount() - 1; i >= 0; i--)
+			eventsTable.removeRow(i);
+	}
+
 	private void clearExtrasTable() {
 		for (int i = extrasTable.getRowCount() - 1; i > 0; i--)
 			extrasTable.removeRow(i);
@@ -1768,6 +1807,30 @@ public class AgreementDraft extends ResizeComposite implements
 		editor.setDescriptionTextBox(descriptionTextBox);
 
 		return editor;
+	}
+
+	private void dumpEvent(int row, Event event) {
+		Button headButton = new Button();
+		headButton.setStyleName(AON.AON_ICON_EXCEPTION);
+		headButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+
+		eventsTable.setWidget(row, 0, headButton);
+
+		eventsTable.setHTML(row, 1, event.getMessage());
+		eventsTable.getCellFormatter().getElement(row, 1).getStyle().setWhiteSpace(WhiteSpace.NORMAL);
+		eventsTable.getCellFormatter().getElement(row, 1).getStyle().setProperty("maxWidth", 55, Unit.EM);
+
+		String styles[] = eventStyles.get(event.getType());
+
+		eventsTable.setHTML(row, 2, "&nbsp;");
+
+		eventsTable.getCellFormatter().getElement(row, 0).getStyle().setPropertyPx("borderRightWidth", 0);
+		eventsTable.getCellFormatter().getElement(row, 1).getStyle().setPropertyPx("borderLeftWidth", 0);
+		eventsTable.getCellFormatter().getElement(row, 1).getStyle().setPropertyPx("borderRightWidth", 0);
+		eventsTable.getCellFormatter().getElement(row, 2).getStyle().setPropertyPx("borderLeftWidth", 0);
+
+		for (int col = 0; col < eventsTable.getCellCount(row); col++)
+			eventsTable.getCellFormatter().addStyleName(row, col, "aon-panelGrid-odd");
 	}
 
 	private ExtraEditor dumpExtra(Extra extra, int row,
@@ -1936,7 +1999,11 @@ public class AgreementDraft extends ResizeComposite implements
 					AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
 		}
 
-		if ( isRemove(payment))
+		if ( isError(payment))
+			addStyle(paymentsTable, row, style.textError());
+		else if ( isWarn(payment))
+			addStyle(paymentsTable, row, style.textWarn());
+		else if ( isRemove(payment))
 			addStyle(paymentsTable, row, style.textWarn());
 
 		return paymentEditor;
@@ -2140,6 +2207,15 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.getColumnFormatter().setWidth(4, "12%"); // RECIBO
 		paymentsTable.getColumnFormatter().setWidth(5, "2%");
 
+	}
+
+
+	private void initEventsStyles(MyStyle myStyle) {
+		eventStyles = new HashMap<Event.Type, String[]>();
+		eventStyles.put(Event.Type.INFO, new String[] { "", "" });
+		eventStyles.put(Event.Type.DEBUG, new String[] { "", "" });
+		eventStyles.put(Event.Type.ERROR, new String[] { "aon-icon-exception", myStyle.textError() });
+		eventStyles.put(Event.Type.WARNING, new String[] { AON.AON_ICON_WARN, myStyle.textWarn() });
 	}
 
 	//@formatter:off
@@ -2364,6 +2440,14 @@ public class AgreementDraft extends ResizeComposite implements
 		return !agreementDraftObject.isMine(payment);
 	}
 
+	private boolean isWarn(Payment payment) {
+		return getEventType(payment) == WARNING;
+	}
+
+	private boolean isError(Payment payment) {
+		return getEventType(payment) == ERROR;
+	}
+
 	private boolean isDraftPayment(Payment payment) {
 		return agreementDraftObject.isDraftPayment(payment);
 	}
@@ -2376,12 +2460,25 @@ public class AgreementDraft extends ResizeComposite implements
 		return agreementDraftObject.isDraftCategories(level);
 	}
 
+	private com.esferalia.aon.gwt.payroll.shared.Event.Type getEventType(Payment payment) {
+		for(Event event : agreementDraftObject.getEvents() )
+			if ( event instanceof PaymentEvent ) 
+				if (((PaymentEvent) event).getPayment().equals(payment)) 
+					return ((PaymentEvent)event).getType();
+		return null;
+	}
+
+
 	private String getIconRowStyle(Extra extra) {
 		return isDraftExtra(extra) ? AON.AON_ICON_ROW_SELECTOR_CHANGED
 				: AON.AON_ICON_ROW_SELECTOR;
 	}
 
 	private String getIconRowStyle(Payment payment) {
+		if ( isWarn(payment))
+			return AON.AON_ICON_WARN ;
+		if ( isError(payment))
+			return AON.AON_ICON_ERROR ;
 		if ( isRemove(payment))
 			return AON.AON_ICON_WARN ;
 		if ( isDraftPayment(payment) )
