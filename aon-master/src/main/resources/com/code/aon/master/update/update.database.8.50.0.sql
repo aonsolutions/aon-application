@@ -7,7 +7,7 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 BEGIN;
 
 UPDATE `system_cost` 
-SET `description` = IFNULL((SELECT `description` FROM `deduction_concept` WHERE `code` = REPLACE(`system_cost`.`code`, '_E', '')), REPLACE(`system_cost`.`code`, '_E', ' '))
+SET `description` = IFNULL((SELECT `description` FROM `deduction_concept` WHERE `code` = REPLACE(`system_cost`.`code`, '_E', '') LIMIT 1), REPLACE(`system_cost`.`code`, '_E', ' '))
 WHERE `description` IS NULL OR `description` = '';
 
 UPDATE `db_version` SET `version_number` = '8.50.1';
