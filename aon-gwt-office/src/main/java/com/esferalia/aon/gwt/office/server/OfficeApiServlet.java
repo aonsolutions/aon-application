@@ -339,8 +339,12 @@ public class OfficeApiServlet extends HttpServlet {
 					notice.setStatus(json.getString("state"));
 					getChangeStatusNotice(resp, domain, domainName, notice);
 				} else {
-					notice.setTitle(json.getString("title"));
-					notice.setBody(json.getString("body"));
+					
+					if (json.isNull("title") == false)
+						notice.setTitle(json.getString("title"));
+					if (json.isNull("body") == false)
+						notice.setBody(json.getString("body"));
+					
 					getEditNotice(resp, domain, domainName, notice);
 				}
 

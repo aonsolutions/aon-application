@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.FilterDialog;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -20,6 +21,8 @@ import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -60,15 +63,17 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 
 	interface Listener {
 
-		void onUpdateIssueBody(String title, String body,
+		void onUpdateBody(String title, String body,
 				Callback<IssueSelected> callback);
 
 		void onDuplicateClickEvent();
 
-		void onUpdateIssueState(String state);
+		void onUpdateState(String state);
 
-		void onUpdateIssueComment(Integer id, String body,
+		void onUpdateComment(Integer id, String body,
 				Callback<AonIssueComments> callback);
+
+		void onUpdateTitle(String title, Callback<IssueSelected> callback);
 
 		void onIssueCommentButtonClick(String body,
 				Callback<AonIssueComments> callback);
@@ -131,6 +136,8 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 
 	@UiField
 	MinimizePanel footPanel;
+	
+	private Label titleLabel;
 	
 	private boolean canEdit;
 
@@ -588,12 +595,12 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 		}
 
 		for (Listener listener : listeners)
-			listener.onUpdateIssueState(NoticeStatus.CLOSED.getValue());
+			listener.onUpdateState(NoticeStatus.CLOSED.getValue());
 	}
 
 	private void onReopenButtonClick() {
 		for (Listener listener : listeners)
-			listener.onUpdateIssueState(NoticeStatus.REOPEN.getValue());
+			listener.onUpdateState(NoticeStatus.REOPEN.getValue());
 	}
 
 	private void onEditCommentButtonClick(final TextArea textArea,
@@ -691,7 +698,7 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 			final Button button) {
 
 		for (Listener listener : listeners)
-			listener.onUpdateIssueComment(Integer.parseInt(textArea.getName()),
+			listener.onUpdateComment(Integer.parseInt(textArea.getName()),
 					textArea.getValue(),
 					new Callback<AonIssueComments>() {
 
@@ -771,11 +778,60 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 		sb.append(" #");
 		sb.append(issue.getId());
 
-		Label titleLabel = new Label(sb.toString());
+		titleLabel = new Label(sb.toString());
+		titleLabel.getElement().getStyle().setCursor(Cursor.POINTER);
 		titleLabel.setStyleName(AON.AON_BOLD);
 		titleLabel.addStyleName(AON.AON_CSS.headerTitle());
+		
+		titleLabel.addDoubleClickHandler(new DoubleClickHandler() {
+			
+			@Override
+			public void onDoubleClick(DoubleClickEvent event) {
+				onShowTitleFilterDialog();
+			}
+		});
 
 		return titleLabel;
+	}
+	
+	private void onShowTitleFilterDialog() {
+		FilterDialog filterDialog = new FilterDialog() {
+			
+			{
+				setCaption(AON.AONHUB.newTitle());
+				setNameLabel(AON.AONHUB.title());
+				setVisibleFilterLabel(false);
+				setVisibleDateLabel(false);
+				setVisibleDateBox(false);
+				
+				setName(issue.getTitle());
+			}
+			
+			@Override
+			protected void onAccept() {
+				if (!getName().trim().isEmpty()) {
+					onUpdateTitle(getName());
+				}
+			}
+		};
+
+		filterDialog.center();
+	}
+	
+	private void onUpdateTitle(String title) {
+		for (Listener listener : listeners)
+			listener.onUpdateTitle(title, new Callback<IssueSelected>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("Error al modificar el title");
+				}
+
+				@Override
+				public void onSucess(IssueSelected comment) {
+					IssueReadPanel.this.titleLabel.setText(comment.getTitle());
+				}
+			});
 	}
 
 	private int getDaysBefore(Date date) {

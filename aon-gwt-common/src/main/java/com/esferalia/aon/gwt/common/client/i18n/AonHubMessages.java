@@ -15,6 +15,9 @@ public interface AonHubMessages extends Messages {
 	@DefaultMessage("dd/mm/AAAA - HH:MM")
 	String aonHubDateFormat();	
 	
+	@DefaultMessage("Nuevo t\u00EDtulo")
+	String newTitle();	
+	
 	@DefaultMessage("Aceptar")
 	String accept();
 	

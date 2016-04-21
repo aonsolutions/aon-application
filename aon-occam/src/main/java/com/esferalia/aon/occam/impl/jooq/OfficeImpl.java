@@ -109,7 +109,8 @@ public class OfficeImpl implements IOffice {
 
 	@Override
 	public Notice editNotice(AONContext ctx, Notice notice) {
-		return AonHubDAO.editNotice(ctx, notice);
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.editNotice(ctx, notice));		
 	}
 
 	@Override

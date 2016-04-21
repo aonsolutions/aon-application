@@ -92,6 +92,10 @@ public abstract class FilterDialog extends CustomDialog {
 		fromDatePatternLabel.setText(dateTimeFormat.getPattern());
 	}
 	
+	public void setVisibleFilterLabel(boolean bool) {
+		filterLabel.setVisible(bool);
+	}
+	
 	public void setVisibleDateLabel(boolean bool) {
 		dateLabel.setVisible(bool);
 	}

@@ -859,7 +859,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	// ******************************************************************
 
 	@Override
-	public void onUpdateIssueState(String state) {
+	public void onUpdateState(String state) {
 		IssueValue value = new IssueValue();
 		value.setState(state);
 
@@ -899,9 +899,34 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		dataGridDialog.setCreateNewButtonVisible(!isDuplicated);
 		dataGridDialog.showPopupPanel();
 	}
+	
+	@Override
+	public void onUpdateTitle(String title, final Callback<IssueSelected> callback) {
+		final IssueValue value = new IssueValue();		
+		value.setTitle(title);	
+		
+		gitHub.editIssue(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), issueSelected.getJsIssue(), value,
+				new AsyncCallback<JsIssue>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(JsIssue result) {
+						IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(
+								result);
+						callback.onSucess(issue);
+					}
+				});
+
+		
+	}
 
 	@Override
-	public void onUpdateIssueBody(String title, String body,
+	public void onUpdateBody(String title, String body,
 			final Callback<IssueSelected> callback) {
 		final IssueValue value = new IssueValue();
 		value.setBody(body);
@@ -952,7 +977,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	@Override
-	public void onUpdateIssueComment(final Integer id, final String body,
+	public void onUpdateComment(final Integer id, final String body,
 			final Callback<AonIssueComments> callback) {
 		IssueCommentValue value = new IssueCommentValue();
 		value.setBody(body);

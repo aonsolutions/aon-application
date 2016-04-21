@@ -179,15 +179,25 @@ public class AonHubDAO2 {
 
 	public static Notice editNotice(AONContext ctx, Notice notice) {
 
-		ctx.getDslContext().update(NOTICE)
-				.set(NOTICE.SUBJECT, notice.getTitle())
-				.where(NOTICE.ID.eq(notice.getId())).execute();
-
-		ctx.getDslContext().update(NOTICE).set(NOTICE.SUBJECT, notice.getBody())
-				.where(NOTICE.NOTICE_.eq(notice.getId())
-						.and(NOTICE.TYPE.eq(NoticeType.MESSAGE.value())))
-				.execute();
-
+		// @formatter:off
+		ctx.getDslContext()
+		.update(NOTICE)
+		.set(NOTICE.SUBJECT, notice.getTitle())
+		.where(NOTICE.ID.eq(notice.getId()))
+		.execute();
+		// @formatter:on
+		
+		if (notice.getBody() != null) {
+			// @formatter:off
+			ctx.getDslContext()
+			.update(NOTICE)
+			.set(NOTICE.SUBJECT, notice.getBody())
+			.where(NOTICE.NOTICE_.eq(notice.getId())
+					.and(NOTICE.TYPE.eq(NoticeType.MESSAGE.value())))
+			.execute();
+			// @formatter:on
+		}
+		
 		return getTicketNotice(ctx, notice.getId());
 	}
 
