@@ -37,13 +37,13 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -127,7 +127,7 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 	Button tagButton;
 	
 	@UiField
-	DockLayoutPanel dockLayoutPanel;
+	SplitLayoutPanel dockLayoutPanel;
 
 	@UiField
 	MinimizePanel footPanel;
@@ -193,7 +193,8 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 		
 		else if (issue instanceof IssueGrid.IssueFAQLoadSelected) {
 			duplicatedButton.setVisible(false);
-			closedButton.setVisible(false);			
+			closedButton.setVisible(false);
+			createCommentButton();
 		}
 	}
 
@@ -234,7 +235,7 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 	@UiHandler("commentTextArea")
 	void onKeyUpEvent(KeyUpEvent event) {
 		String value = commentTextArea.getValue().trim();
-		commentButton.setEnabled(value.isEmpty() == false);
+		commentButton.setEnabled(!value.isEmpty());
 	}
 	
 	@UiHandler("footPanel")

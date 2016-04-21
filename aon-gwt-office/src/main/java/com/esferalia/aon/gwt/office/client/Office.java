@@ -79,16 +79,16 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 
 public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
-		IssuePanel.Listener, IssueReadPanel.Listener, TagTree.Listener, 
+		IssuePanel.Listener, IssueReadPanel.Listener, TagTree.Listener,
 		SearchPanel.Listener, DataGridDialog.Listener, ScrollHandler {
 
 	private static OfficeUiBinder uiBinder = GWT.create(OfficeUiBinder.class);
 
 	final INotificationAsync impl = GWT.create(INotification.class);
-	
+
 	interface OfficeUiBinder extends UiBinder<Widget, Office> {
 	}
-	
+
 	@UiField
 	RadioButton openIssuesRb;
 	@UiField
@@ -108,7 +108,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	Button returnButton;
 	@UiField
 	Button clearButton;
-	@UiField 
+	@UiField
 	Button configurationButton;
 	@UiField
 	Button refreshButton;
@@ -116,7 +116,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	Button showPanelButton;
 	@UiField
 	Button hidePanelButton;
-	
+
 	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
@@ -155,7 +155,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	private List<IssueSelected> issues;
 	private ListDataProvider<IssueSelected> issuesProvider;
 
-	private List<AonTagIssueSelected> tagList;	
+	private List<AonTagIssueSelected> tagList;
 	private List<RegistryMedia> rmedias;
 	private List<User> users;
 
@@ -187,51 +187,53 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.dataGrid.setEmptyTableWidget(new Label("No hay registros"));
 		this.tagTree.addListener(this);
 		this.gitHub.setRepositoryUrl(GWT.getModuleBaseURL() + "api");
-		
+
 		this.loadRepositoryData();
 		this.loadLabels();
 		this.initIssuesList();
 		this.loadOpenIssues();
 	}
-	
+
 	void loadRepositoryData() {
-		
+
 		this.users.clear();
 		this.registryMap.clear();
 		this.rmedias.clear();
 		this.tagList.clear();
-		
-		gitHub.loadRepositoryData(String.valueOf(getCurrentDomain()), 
+
+		gitHub.loadRepositoryData(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<AJSON<AonJsData>>() {
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Datos iniciales no cargados");
-			}
-			
-			@Override
-			public void onSuccess(AJSON<AonJsData> result) {
-				JsUser current = result.getData().getCurrentUser();
-				JsArray<JsUser> users = result.getData().getUsers();
-				JsArray<JsRMedia> rmedias = result.getData().getRMedias();
-				JsArray<JsRegistry> registries = result.getData().getRegistries();
-				
-				userIdentificated(current);
-				
-				for ( int x = 0; x < users.length(); x++)
-					addUser2List(users.get(x));
-				
-				for ( int x = 0 ; x < rmedias.length(); x++)
-					addRMedia2List(rmedias.get(x));
-				
-				for (int x = 0 ; x < registries.length(); x++)
-					addRegistry2List(registries.get(x));
-				
-				Office.this.searchPanel.addUserList(Office.this.users);
-			}			
-		});
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Datos iniciales no cargados");
+					}
+
+					@Override
+					public void onSuccess(AJSON<AonJsData> result) {
+						JsUser current = result.getData().getCurrentUser();
+						JsArray<JsUser> users = result.getData().getUsers();
+						JsArray<JsRMedia> rmedias = result.getData()
+								.getRMedias();
+						JsArray<JsRegistry> registries = result.getData()
+								.getRegistries();
+
+						userIdentificated(current);
+
+						for (int x = 0; x < users.length(); x++)
+							addUser2List(users.get(x));
+
+						for (int x = 0; x < rmedias.length(); x++)
+							addRMedia2List(rmedias.get(x));
+
+						for (int x = 0; x < registries.length(); x++)
+							addRegistry2List(registries.get(x));
+
+						Office.this.searchPanel.addUserList(Office.this.users);
+					}
+				});
 	}
-	
+
 	void loadLabels() {
 		gitHub.getLabels(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsLabel>>() {
@@ -247,7 +249,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 						for (int x = 0; x < labels.length(); x++)
 							addLabels2List(labels.get(x));
-						
+
 						Office.this.searchPanel.addTagList(tagList);
 					}
 				});
@@ -268,10 +270,11 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 						for (int x = 0; x < result.getData().length(); x++)
 							addOpenIssue(result.getData().get(x));
-						
-						openIssuesRb.setText(AON.AONHUB.openIssues() + " (" + (result.getCount()) + ")");
+
+						openIssuesRb.setText(AON.AONHUB.openIssues() + " ("
+								+ (result.getCount()) + ")");
 						closedIssuesRb.setText(AON.AONHUB.closedIssues());
-						allIssuesRb.setText(AON.AONHUB.allIssues());						
+						allIssuesRb.setText(AON.AONHUB.allIssues());
 						faqIssuesRb.setText(AON.AONHUB.FAQ());
 					}
 				});
@@ -294,7 +297,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 							addClosedIssue(result.getData().get(x));
 
 						openIssuesRb.setText(AON.AONHUB.openIssues());
-						closedIssuesRb.setText(AON.AONHUB.closedIssues() + " (" + result.getCount() + ")");	
+						closedIssuesRb.setText(AON.AONHUB.closedIssues() + " ("
+								+ result.getCount() + ")");
 						allIssuesRb.setText(AON.AONHUB.allIssues());
 						faqIssuesRb.setText(AON.AONHUB.FAQ());
 					}
@@ -315,16 +319,17 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					public void onSuccess(JSON<JsIssue> result) {
 						for (int x = 0; x < result.getData().length(); x++)
 							addAllIssue(result.getData().get(x));
-						
+
 						openIssuesRb.setText(AON.AONHUB.openIssues());
 						closedIssuesRb.setText(AON.AONHUB.closedIssues());
-						allIssuesRb.setText(AON.AONHUB.allIssues() + " (" + result.getCount() + ")");
+						allIssuesRb.setText(AON.AONHUB.allIssues() + " ("
+								+ result.getCount() + ")");
 						faqIssuesRb.setText(AON.AONHUB.FAQ());
 					}
 				});
 		showDockOfficePanel();
 	}
-	
+
 	void loadFaqIssues() {
 		gitHub.getFaqIssues(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
@@ -338,16 +343,16 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					public void onSuccess(JSON<JsIssue> result) {
 						for (int x = 0; x < result.getData().length(); x++)
 							addFAQIssue(result.getData().get(x));
-						
+
 						openIssuesRb.setText(AON.AONHUB.openIssues());
 						closedIssuesRb.setText(AON.AONHUB.closedIssues());
 						allIssuesRb.setText(AON.AONHUB.allIssues());
-						faqIssuesRb.setText(AON.AONHUB.allIssues() + " (" + result.getCount() + ")");
+						faqIssuesRb.setText(AON.AONHUB.allIssues() + " ("
+								+ result.getCount() + ")");
 					}
 				});
 		showDockOfficePanel();
 	}
-
 
 	@Override
 	public void onScroll(ScrollEvent event) {
@@ -364,7 +369,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		if ((lastScrollPos + (maxScrollPos / 10)) >= maxScrollPos) {
 			incrementSize += 50;
 			gitHub.setOffset(incrementSize);
-			evalRadioButtons();			
+			evalRadioButtons();
 			dataGrid.setVisibleRange(0,
 					dataGrid.getVisibleRange().getLength() + incrementSize);
 		}
@@ -399,10 +404,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		evalRadioButtons();
 		returnButton.setEnabled(false);
 	}
-	
+
 	@UiHandler("openIssuesRb")
 	void onOpenIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		if (event.getValue()) {			
+		if (event.getValue()) {
 			closedIssuesRb.removeStyleName(AON.AON_BOLD);
 			allIssuesRb.removeStyleName(AON.AON_BOLD);
 			faqIssuesRb.removeStyleName(AON.AON_BOLD);
@@ -416,7 +421,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("closedIssuesRb")
 	void onClosedIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		if (event.getValue()) {			
+		if (event.getValue()) {
 			openIssuesRb.removeStyleName(AON.AON_BOLD);
 			allIssuesRb.removeStyleName(AON.AON_BOLD);
 			faqIssuesRb.removeStyleName(AON.AON_BOLD);
@@ -430,7 +435,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("allIssuesRb")
 	void onAllIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		if (event.getValue()) {			
+		if (event.getValue()) {
 			openIssuesRb.removeStyleName(AON.AON_BOLD);
 			closedIssuesRb.removeStyleName(AON.AON_BOLD);
 			faqIssuesRb.removeStyleName(AON.AON_BOLD);
@@ -441,10 +446,10 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 			loadAllIssues();
 		}
 	}
-	
+
 	@UiHandler("faqIssuesRb")
 	void onFaqIssuesRbSelected(ValueChangeEvent<Boolean> event) {
-		if (event.getValue()) {			
+		if (event.getValue()) {
 			openIssuesRb.removeStyleName(AON.AON_BOLD);
 			closedIssuesRb.removeStyleName(AON.AON_BOLD);
 			allIssuesRb.removeStyleName(AON.AON_BOLD);
@@ -467,24 +472,24 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		initIssuesList();
 		evalRadioButtons();
 	}
-	
+
 	@UiHandler("refreshButton")
 	void onRefreshButtonClickEvent(ClickEvent event) {
 		this.incrementSize = 0;
-		this.gitHub.setOffset(incrementSize);		
-		loadRepositoryData();		
+		this.gitHub.setOffset(incrementSize);
+		loadRepositoryData();
 		loadLabels();
 		initIssuesList();
 		evalRadioButtons();
 	}
-	
-	@UiHandler("showPanelButton") 
+
+	@UiHandler("showPanelButton")
 	void onShowPanelButtonClickEvent(ClickEvent event) {
 		dockOfficePanel.setWidgetSize(Office.this.northResizePanel, 155);
 		showPanelButton.setVisible(false);
 		hidePanelButton.setVisible(true);
 	}
-	
+
 	@UiHandler("hidePanelButton")
 	void onHidePanelButtonClickEvent(ClickEvent event) {
 		dockOfficePanel.setWidgetSize(Office.this.northResizePanel, 45);
@@ -493,16 +498,16 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	@UiHandler("configurationButton")
-	void onConfigurationButtonClickEvent(ClickEvent event){
+	void onConfigurationButtonClickEvent(ClickEvent event) {
 		ConfigurationContextMenu contextMenu = new ConfigurationContextMenu();
-    	Integer width = contextMenu.getWidth();
-    	contextMenu.setPopupPosition(Window.getClientWidth()-width , 130);
-    	contextMenu.getElement().getStyle().setBorderWidth(1, Unit.PX);
-    	contextMenu.getElement().getStyle().setBorderColor("#ccc");
-    	contextMenu.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
-    	contextMenu.show();
+		Integer width = contextMenu.getWidth();
+		contextMenu.setPopupPosition(Window.getClientWidth() - width, 130);
+		contextMenu.getElement().getStyle().setBorderWidth(1, Unit.PX);
+		contextMenu.getElement().getStyle().setBorderColor("#ccc");
+		contextMenu.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+		contextMenu.show();
 	}
-	
+
 	// ******************************************************************
 	// ********************** PRIVATE METHODS ***************************
 	// ******************************************************************
@@ -535,7 +540,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		IssueSelected selected = new IssueGrid.IssueClosedLoadSelected(issue);
 		issues.add(selected);
 	}
-	
+
 	void addFAQIssue(JsIssue issue) {
 		IssueSelected selected = new IssueGrid.IssueFAQLoadSelected(issue);
 		issues.add(selected);
@@ -565,8 +570,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	private void addLabels2List(JsLabel jsLabel) {
 
-		AonTagIssueSelected defaultTag = new AonTagIssueSelected(
-				jsLabel);
+		AonTagIssueSelected defaultTag = new AonTagIssueSelected(jsLabel);
 		tagList.add(defaultTag);
 
 		Tag tag = new Tag();
@@ -578,7 +582,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		if (defaultTag.getDomain() != 0)
 			tagTree.insertTag(tag);
 	}
-	
+
 	private void addUser2List(JsUser jsUser) {
 		User user = new User();
 		user.setId(jsUser.getId());
@@ -636,18 +640,18 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		initIssuesList();
 		evalRadioButtons();
 	}
-	
+
 	@Override
-	public void onSelectSubject(String subject) {	
-		this.gitHub.setText( (AonStringUtils.isEmpty(subject)) ? null : subject);
+	public void onSelectSubject(String subject) {
+		this.gitHub.setText((AonStringUtils.isEmpty(subject)) ? null : subject);
 		this.incrementSize = 0;
 		this.gitHub.setOffset(incrementSize);
 		initIssuesList();
 		evalRadioButtons();
 	}
-	
+
 	@Override
-	public void onCloseTagPanel(List<Tag> tags) {		
+	public void onCloseTagPanel(List<Tag> tags) {
 
 		if (tags.size() == 0)
 			this.gitHub.setFilterTagList(null);
@@ -664,25 +668,25 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		initIssuesList();
 		evalRadioButtons();
 	}
-	
+
 	@Override
-	public void onSelectFrom(Date from) {		
+	public void onSelectFrom(Date from) {
 		this.incrementSize = 0;
 		this.gitHub.setOffset(incrementSize);
 		this.gitHub.setSinceCriteria(from);
 		initIssuesList();
 		evalRadioButtons();
 	}
-	
+
 	@Override
 	public void onSelectOwner(String userSelected) {
-		this.gitHub.setFilterUserList(userSelected);	
+		this.gitHub.setFilterUserList(userSelected);
 		this.incrementSize = 0;
 		this.gitHub.setOffset(incrementSize);
 		initIssuesList();
 		evalRadioButtons();
 	}
-	
+
 	@Override
 	public void onReloadDataGrid() {
 		this.incrementSize = 0;
@@ -690,26 +694,27 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		initIssuesList();
 		evalRadioButtons();
 	}
-	
+
 	@Override
 	public void onSearchIdButton(int id) {
 		this.incrementSize = 0;
 		this.gitHub.setOffset(incrementSize);
 		initIssuesList();
-		this.gitHub.getIssueById(String.valueOf(getCurrentDomain()), getCurrentDomainName(), id, new AsyncCallback<JsIssue>() {
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-			}
-			
-			@Override
-			public void onSuccess(JsIssue result) {					
-				addAllIssue(result);
-			}
-		});
+		this.gitHub.getIssueById(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), id, new AsyncCallback<JsIssue>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JsIssue result) {
+						addAllIssue(result);
+					}
+				});
 	}
-	
+
 	// ******************************************************************
 	// *************************** TAG TREE *****************************
 	// ******************************************************************
@@ -768,7 +773,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	@Override
 	public void onSelectionTitle(IssueSelected issue) {
 		this.issueSelected = issue;
-		IssueReadPanel issueReadPanel = new IssueReadPanel(this.user, issue);		
+		IssueReadPanel issueReadPanel = new IssueReadPanel(this.user, issue);
 		issueReadPanel.setTags(this.tagList);
 		issueReadPanel.addListener(this);
 		readIssueLayoutPanel.clear();
@@ -804,7 +809,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 			value.setLabels(labels);
 		}
-	
+
 		gitHub.createIssue(String.valueOf(getCurrentDomain()),
 				getCurrentDomainName(), value, new AsyncCallback<JsIssue>() {
 
@@ -823,29 +828,30 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					}
 				});
 	}
-	
+
 	@Override
 	public void onCreateNewFAQ(Notice notice) {
 		IssueValue value = new IssueValue();
 		value.setTitle(notice.getTitle());
 		value.setSender(String.valueOf(notice.getSender().getId()));
 		value.setStartDate(fmt.format(notice.getStartDate()));
-		
-		gitHub.createFAQ(String.valueOf(getCurrentDomain()), getCurrentDomainName(), value, 
-				new AsyncCallback<JsIssue>() {
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());
-			}
-			
-			@Override
-			public void onSuccess(JsIssue result) {
-				IssueSelected issue = new IssueGrid.IssueFAQLoadSelected(result);
-				issues.add(0, issue);
-				onSelectionTitle(issue);
-			}
-		});
+
+		gitHub.createFAQ(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), value, new AsyncCallback<JsIssue>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(JsIssue result) {
+						IssueSelected issue = new IssueGrid.IssueFAQLoadSelected(
+								result);
+						issues.add(0, issue);
+						onSelectionTitle(issue);
+					}
+				});
 	}
 
 	// ******************************************************************
@@ -878,14 +884,15 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						onSelectionTitle(issue);
 					}
 				});
-			
+
 		sendNotification(null, issueSelected, getNotificationType(state));
 
 	}
-	
+
 	@Override
 	public void onDuplicateClickEvent() {
-		DataGridDialog dataGridDialog = new DataGridDialog(issueSelected.getId());
+		DataGridDialog dataGridDialog = new DataGridDialog(
+				issueSelected.getId());
 		dataGridDialog.addListener(this);
 		dataGridDialog.insertIssues(issues);
 		dataGridDialog.showPopupPanel();
@@ -933,8 +940,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 					@Override
 					public void onSuccess(JsIssueComment result) {
-						AonIssueComments comment = new AonIssueComments(
-								result);
+						AonIssueComments comment = new AonIssueComments(result);
 						issueSelected.addComment(result);
 						callback.onSucess(comment);
 					}
@@ -1018,8 +1024,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	}
 
 	@Override
-	public void onReplaceLabelsForIssue(
-			List<AonTagIssueSelected> addLabels,
+	public void onReplaceLabelsForIssue(List<AonTagIssueSelected> addLabels,
 			List<AonTagIssueSelected> deletedLabels) {
 
 		String[] addLabelsArr = new String[addLabels.size()];
@@ -1051,9 +1056,9 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						issues.add(0, issue);
 						onSelectionTitle(issue);
 					}
-				});		
+				});
 	}
-	
+
 	@Override
 	public void onSendNotificationButtonClick() {
 		sendNotificationHistory(issueSelected);
@@ -1062,23 +1067,20 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	// ******************************************************************
 	// ******************** DATA GRID DIALOG LISTENER *******************
 	// ******************************************************************
-	
+
 	@Override
-	public void onAcceptButtonClick(IssueSelected issue) {		
-		/*
-		 * issue: Incidencia seleccionada del data grid.
-		 * 
-		 */
-		
+	public void onAcceptButtonClick(IssueSelected issue) {
 		IssueValue prop = new IssueValue();
 		prop.setId(String.valueOf(issueSelected.getId()));
-		
-		this.gitHub.addDuplicateNotice(String.valueOf(getCurrentDomain()), getCurrentDomainName(), 
-				issue.getId(), prop, new AsyncCallback<JsIssue>() {
+
+		this.gitHub.addDuplicateNotice(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), issue.getId(), prop,
+				new AsyncCallback<JsIssue>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert("Error al duplicar la incidencia: " + caught.getMessage());
+						Window.alert("Error al duplicar la incidencia: "
+								+ caught.getMessage());
 					}
 
 					@Override
@@ -1088,8 +1090,52 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						issues.add(0, issue);
 						onSelectionTitle(issue);
 					}
-		});
-		
+				});
+	}
+
+	@Override
+	public void onLoadIssuesClick(final AsyncCallback<List<IssueSelected>> callback) {
+		final List<IssueSelected> list = new LinkedList<IssueSelected>();
+
+		this.gitHub.getOpenIssues(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(JSON<JsIssue> result) {
+						JsArray<JsIssue> array = result.getData();
+						for (int x = 0; x < array.length(); x++)
+							list.add(new IssueGrid.IssueOpenLoadSelected(
+									array.get(x)));
+						callback.onSuccess(list);
+					}
+				});
+	}
+
+	@Override
+	public void onLoadFaqsClick(final AsyncCallback<List<IssueSelected>> callback) {
+		final List<IssueSelected> list = new LinkedList<IssueSelected>();
+		this.gitHub.getFaqIssues(String.valueOf(getCurrentDomain()),
+				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(JSON<JsIssue> result) {
+						JsArray<JsIssue> array = result.getData();
+						for (int x = 0; x < array.length(); x++)
+							list.add(new IssueGrid.IssueOpenLoadSelected(
+									array.get(x)));
+						callback.onSuccess(list);
+					}
+				});
 	}
 
 	private static native <T extends JavaScriptObject> T eval(String javascript)
@@ -1107,95 +1153,106 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		return $wnd.getCurrentDomain();
 	}-*/;
 
-	private void sendNotification(String body, IssueSelected issueSelected, NotificationType notificationType) {
+	private void sendNotification(String body, IssueSelected issueSelected,
+			NotificationType notificationType) {
 		LinkedList<NotificationInfo> list = new LinkedList<NotificationInfo>();
-		if(!notificationType.equals(NotificationType.OPEN)){
-			for(AonTagIssueSelected tag : issueSelected.getTags()){
-				if(getNotificationType(tag.getName()) != null ){
-					list.add(new NotificationInfo().setNoticeId(issueSelected.getId())
+		if (!notificationType.equals(NotificationType.OPEN)) {
+			for (AonTagIssueSelected tag : issueSelected.getTags()) {
+				if (getNotificationType(tag.getName()) != null) {
+					list.add(new NotificationInfo()
+							.setNoticeId(issueSelected.getId())
+							.setTitle(issueSelected.getTitle())
+							.setDate(tag.getCreateAt())
+							.setUserName(tag.getUser().getName())
+							.setNotificationType(
+									getNotificationType(tag.getName())));
+				}
+			}
+			for (AonIssueComments comments : issueSelected.getComments()) {
+				list.add(new NotificationInfo().setBody(comments.getBody())
+						.setNoticeId(issueSelected.getId())
+						.setTitle(issueSelected.getTitle())
+						.setDate(comments.getCreatedAt())
+						.setUserName(comments.getUser().getName())
+						.setNotificationType(NotificationType.NEW_INFO));
+			}
+		}
+		NotificationInfo n = new NotificationInfo()
+				.setNoticeId(issueSelected.getId())
+				.setTitle(issueSelected.getTitle()).setBody(body)
+				.setDate(new Date()).setCreateDate(issueSelected.getCreateAt())
+				.setUserName(issueSelected.getUser().getName())
+				.setCompanyName(issueSelected.getCompany());
+
+		Domain domain = new Domain().setName(getCurrentDomainName())
+				.setId(getCurrentDomain());
+
+		impl.sendNotification(domain, n, list, notificationType, false,
+				new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+					}
+
+				});
+	}
+
+	private void sendNotificationHistory(IssueSelected issueSelected) {
+		LinkedList<NotificationInfo> list = new LinkedList<NotificationInfo>();
+		for (AonTagIssueSelected tag : issueSelected.getTags()) {
+			if (getNotificationType(tag.getName()) != null) {
+				list.add(new NotificationInfo()
+						.setNoticeId(issueSelected.getId())
 						.setTitle(issueSelected.getTitle())
 						.setDate(tag.getCreateAt())
 						.setUserName(tag.getUser().getName())
-						.setNotificationType(getNotificationType(tag.getName())));
-				}
+						.setNotificationType(
+								getNotificationType(tag.getName())));
 			}
-			for(AonIssueComments comments :issueSelected.getComments()){
-				list.add(new NotificationInfo().setBody(comments.getBody())
-					.setNoticeId(issueSelected.getId()) 
+		}
+		for (AonIssueComments comments : issueSelected.getComments()) {
+			list.add(new NotificationInfo().setBody(comments.getBody())
+					.setNoticeId(issueSelected.getId())
 					.setTitle(issueSelected.getTitle())
 					.setDate(comments.getCreatedAt())
 					.setUserName(comments.getUser().getName())
 					.setNotificationType(NotificationType.NEW_INFO));
-			}
 		}
-		NotificationInfo n = new NotificationInfo().setNoticeId(issueSelected.getId())
-				.setTitle(issueSelected.getTitle())
-				.setBody(body)
-				.setDate(new Date())
-				.setCreateDate(issueSelected.getCreateAt())
+
+		NotificationInfo n = new NotificationInfo()
+				.setNoticeId(issueSelected.getId())
+				.setTitle(issueSelected.getTitle()).setBody("")
+				.setDate(new Date()).setCreateDate(issueSelected.getCreateAt())
 				.setUserName(issueSelected.getUser().getName())
 				.setCompanyName(issueSelected.getCompany());
-		
-		Domain domain  = new Domain().setName(getCurrentDomainName()).setId(getCurrentDomain());
-	
-		impl.sendNotification(domain, n, list, notificationType, false, new AsyncCallback<Void>() {
+		Domain domain = new Domain().setName(getCurrentDomainName())
+				.setId(getCurrentDomain());
 
-			@Override
-			public void onFailure(Throwable caught) {}
-			
-			@Override
-			public void onSuccess(Void result) {}
-			
-		});
-	}
-	
-	private void sendNotificationHistory(IssueSelected issueSelected) {
-		LinkedList<NotificationInfo> list = new LinkedList<NotificationInfo>();
-		for(AonTagIssueSelected tag : issueSelected.getTags()){
-			if(getNotificationType(tag.getName()) != null ){
-				list.add(new NotificationInfo().setNoticeId(issueSelected.getId())
-					.setTitle(issueSelected.getTitle())
-					.setDate(tag.getCreateAt())
-					.setUserName(tag.getUser().getName())
-					.setNotificationType(getNotificationType(tag.getName())));
-			}
-		}
-		for(AonIssueComments comments :issueSelected.getComments()){
-			list.add(new NotificationInfo().setBody(comments.getBody())
-				.setNoticeId(issueSelected.getId()) 
-				.setTitle(issueSelected.getTitle())
-				.setDate(comments.getCreatedAt())
-				.setUserName(comments.getUser().getName())
-				.setNotificationType(NotificationType.NEW_INFO));
-		}
-		
-		NotificationInfo n = new NotificationInfo().setNoticeId(issueSelected.getId())
-				.setTitle(issueSelected.getTitle())
-				.setBody("")
-				.setDate(new Date())
-				.setCreateDate(issueSelected.getCreateAt())
-				.setUserName(issueSelected.getUser().getName())
-				.setCompanyName(issueSelected.getCompany());
-		Domain domain  = new Domain().setName(getCurrentDomainName()).setId(getCurrentDomain());
-	
-		impl.sendNotification(domain, n, list, NotificationType.MANUAL, true, new AsyncCallback<Void>() {
+		impl.sendNotification(domain, n, list, NotificationType.MANUAL, true,
+				new AsyncCallback<Void>() {
 
-			@Override
-			public void onFailure(Throwable caught) {}
-			
-			@Override
-			public void onSuccess(Void result) {}
-			
-		});
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+					}
+
+				});
 	}
-	
-	private NotificationType getNotificationType(String state) {	
-		
-		if(state.equalsIgnoreCase(NoticeStatus.OPEN.getValue())){
+
+	private NotificationType getNotificationType(String state) {
+
+		if (state.equalsIgnoreCase(NoticeStatus.OPEN.getValue())) {
 			return NotificationType.OPEN;
-		}else 	if(state.equalsIgnoreCase(NoticeStatus.REOPEN.getValue())){
+		} else if (state.equalsIgnoreCase(NoticeStatus.REOPEN.getValue())) {
 			return NotificationType.REOPEN;
-		}else 	if(state.equalsIgnoreCase(NoticeStatus.CLOSED.getValue())){
+		} else if (state.equalsIgnoreCase(NoticeStatus.CLOSED.getValue())) {
 			return NotificationType.CLOSE;
 		}
 		return null;
@@ -1204,30 +1261,32 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	// ******************************************************************
 	// ******************* CONFIGURATION CONTEXT MENU *******************
 	// ******************************************************************
-	
+
 	class ConfigurationContextMenu extends ContextMenu {
 
 		ScheduledCommand NotificationCommand = new ScheduledCommand() {
 			public void execute() {
 				NotificationDialog dialog = new NotificationDialog() {
-					
+
 					@Override
 					protected void onCancel() {
 						hide();
 					}
-					
+
 					@Override
 					protected void onAccept() {
 						ListBox lb1 = (ListBox) flex_table.getWidget(0, 1);
 						CheckBox cb0 = (CheckBox) flex_table.getWidget(1, 0);
-						HorizontalPanel hp = (HorizontalPanel) flex_table.getWidget(1, 1);
+						HorizontalPanel hp = (HorizontalPanel) flex_table
+								.getWidget(1, 1);
 						Integer value = 20;
-						if(hp.getWidgetCount() > 1){
+						if (hp.getWidgetCount() > 1) {
 							NumberSpinner s = (NumberSpinner) hp.getWidget(1);
 							value = s.getValue();
 						}
 						ListBox lb2 = (ListBox) flex_table.getWidget(2, 1);
-						HorizontalPanel hp2 = (HorizontalPanel) flex_table.getWidget(3, 1);
+						HorizontalPanel hp2 = (HorizontalPanel) flex_table
+								.getWidget(3, 1);
 						CheckBox open = (CheckBox) hp2.getWidget(0);
 						CheckBox close = (CheckBox) hp2.getWidget(2);
 						CheckBox reopen = (CheckBox) hp2.getWidget(4);
@@ -1237,33 +1296,42 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						CheckBox cb2 = (CheckBox) flex_table.getWidget(5, 0);
 						TextBox tb = (TextBox) flex_table.getWidget(6, 1);
 						ListBox lb3 = (ListBox) flex_table.getWidget(7, 1);
-						
+
 						NotificationInfo notificationInfo = new NotificationInfo()
 								.setBcc(tb.getValue())
 								.setCommentsHistory(cb1.getValue())
 								.setStatusHistory(cb2.getValue())
-								.setMailAccount(new MailAccount().setId(lb1.getValue(lb1.getSelectedIndex()) != "-" ? 
-										Integer.parseInt(lb1.getValue(lb1.getSelectedIndex())): null))
-								.setSignature(new Signature().setId(lb2.getValue(lb2.getSelectedIndex()) != "-" ?
-										Integer.parseInt(lb2.getValue(lb2.getSelectedIndex())): null))
+								.setMailAccount(new MailAccount().setId(lb1
+										.getValue(lb1.getSelectedIndex()) != "-"
+												? Integer.parseInt(lb1.getValue(
+														lb1.getSelectedIndex()))
+												: null))
+								.setSignature(new Signature().setId(lb2
+										.getValue(lb2.getSelectedIndex()) != "-"
+												? Integer.parseInt(lb2.getValue(
+														lb2.getSelectedIndex()))
+												: null))
 								.setNotifyOpen(open.getValue())
 								.setNotifyClose(close.getValue())
 								.setNotifyReopen(reopen.getValue())
 								.setNotifyComment(comment.getValue())
-								.setMode(Integer.parseInt(lb3.getValue(lb3.getSelectedIndex())))
+								.setMode(Integer.parseInt(
+										lb3.getValue(lb3.getSelectedIndex())))
 								.setIsLogo(cb0.getValue())
 								.setLogoPercentage(value);
-						impl.insertNotificationInfo(JsNotification.getDomain(), notificationInfo, new AsyncCallback<Void>() {
-							
-							@Override
-							public void onSuccess(Void result) {
-								hide();
-							}
-							
-							@Override
-							public void onFailure(Throwable caught) {}
-						});
-						
+						impl.insertNotificationInfo(JsNotification.getDomain(),
+								notificationInfo, new AsyncCallback<Void>() {
+
+									@Override
+									public void onSuccess(Void result) {
+										hide();
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+									}
+								});
+
 					}
 				};
 				dialog.addStyleName("gwt-PopupPanel-template");
@@ -1271,16 +1339,17 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 				dialog.show();
 			};
 		};
-		
+
 		ScheduledCommand TagCommand = new ScheduledCommand() {
 			public void execute() {
-				dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel, 220);
+				dockLayoutPanel.setWidgetSize(Office.this.stackLayoutPanel,
+						220);
 			};
 		};
-		
+
 		ScheduledCommand FAQsCommand = new ScheduledCommand() {
 			public void execute() {
-				Office.this.issuePanel = new IssuePanel(Office.this.user);				
+				Office.this.issuePanel = new IssuePanel(Office.this.user);
 				Office.this.issuePanel.addListener(Office.this);
 				Office.this.issuePanel.showFAQPanel();
 			};
@@ -1310,20 +1379,21 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		public void setWidth(Integer width) {
 			this.width = width;
 		}
-		
-		public ConfigurationContextMenu(){
-			tagItem = addItem(AONHUB.labels(), TagCommand
-					, "aon-icon-tag", AON.AON_ICON_CMD_BUTTON);
+
+		public ConfigurationContextMenu() {
+			tagItem = addItem(AONHUB.labels(), TagCommand, "aon-icon-tag",
+					AON.AON_ICON_CMD_BUTTON);
 			tagItem.setEnabled(true);
-			
-			notificationItem = addItem(AONHUB.notifications(), NotificationCommand 
-					,"aon-icon-notification", AON.AON_ICON_CMD_BUTTON);
+
+			notificationItem = addItem(AONHUB.notifications(),
+					NotificationCommand, "aon-icon-notification",
+					AON.AON_ICON_CMD_BUTTON);
 			notificationItem.setEnabled(true);
-			
+
 			addSeparator();
-			
-			faqsItem = addItem(AONHUB.FAQs(), FAQsCommand
-					,"aon-icon-menu-help", AON.AON_ICON_CMD_BUTTON);
+
+			faqsItem = addItem(AONHUB.FAQs(), FAQsCommand, "aon-icon-menu-help",
+					AON.AON_ICON_CMD_BUTTON);
 			faqsItem.setEnabled(true);
 		}
 
@@ -1331,7 +1401,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		public void show() {
 			super.show();
 		}
-	
-}
-}
 
+	}
+}

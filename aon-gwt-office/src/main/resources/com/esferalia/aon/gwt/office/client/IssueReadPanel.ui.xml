@@ -25,7 +25,7 @@
 	</ui:style>
 
 
-	<g:DockLayoutPanel ui:field="dockLayoutPanel">
+	<g:SplitLayoutPanel ui:field="dockLayoutPanel">
 		<g:center>
 			<g:ScrollPanel>
 			<g:HTMLPanel height="100%" width="100%">
@@ -137,6 +137,6 @@
 				</g:TabLayoutPanel>
 			</aon:MinimizePanel>
 		</g:south>
-	</g:DockLayoutPanel>
+	</g:SplitLayoutPanel>
 
 </ui:UiBinder> 
