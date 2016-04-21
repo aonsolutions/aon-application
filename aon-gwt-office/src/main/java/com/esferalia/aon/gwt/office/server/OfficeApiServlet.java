@@ -336,7 +336,7 @@ public class OfficeApiServlet extends HttpServlet {
 				notice.setSender(user);
 
 				if (json.isNull("state") == false) {
-					notice.setStatus(json.getString("state"));
+					notice.setStatus(json.getString("state"));					
 					getChangeStatusNotice(resp, domain, domainName, notice);
 				} else {
 					

@@ -829,7 +829,13 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 
 				@Override
 				public void onSucess(IssueSelected comment) {
-					IssueReadPanel.this.titleLabel.setText(comment.getTitle());
+
+					final StringBuilder sb = new StringBuilder();
+					sb.append(comment.getTitle().toUpperCase());
+					sb.append(" #");
+					sb.append(comment.getId());
+
+					IssueReadPanel.this.titleLabel.setText(sb.toString());
 				}
 			});
 	}
