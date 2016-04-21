@@ -15,24 +15,22 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
 				<ui:param name="toolbarTitle" value="#{bundle.pms_webpolExporter_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
 				<ui:param name="controller" value="#{webpolExporter}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="export" 
 						value="#{bundle.aon_generate}"
-						rendered="#{empty webpolExporter.data}"
+						rendered="#{webpolExporter.model.rowCount>0 and empty webpolExporter.data}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{webpolExporter.onCreateDisk}"
 						reRender="aonStatus, aonToolbar"
 						onclick="Richfaces.showModalPanel('waitProccess')"
-						oncomplete="Richfaces.hideModalPanel('waitProccess')">
-						<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
-					</aon:commandButton>
-					<h:panelGrid columns="3" rendered="#{not empty webpolExporter.data}">
-						<aon:htmlCommandLink id="download" target="_blank"
-							value="#{bundle.aon_fileupload_download}"
-							actionListener="#{webpolExporter.onDownloadFile}"
-							styleClass="aon-icon-commandButton aon-icon-mail-save aon-margin-left" />
-					</h:panelGrid>
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:htmlCommandLink id="download" target="_blank"
+						rendered="#{not empty webpolExporter.data}"
+						value="#{bundle.aon_fileupload_download}"
+						actionListener="#{webpolExporter.onDownloadFile}"
+						styleClass="aon-icon-commandButton aon-icon-mail-save aon-margin-left" />
 				</ui:define>
 			</ui:decorate>
 
@@ -47,7 +45,7 @@
 	
 						<aon:outputLabel for="webpolExporter_hotel"
 							value="#{bundle.aon_module_hotel}" />
-						<aon:selectManyListbox id="webpolExporter_hotels"
+						<aon:selectManyListbox id="webpolExporter_hotel"
 							style="width:250px;"
 							value="#{webpolExporter.hotels}" size="10"
 							required="true">

@@ -33,6 +33,7 @@ public class WebpolGuestsWriter implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	public static final String APP_PMS_POLICE_CODE = "PMS_POLICE_CODE";
+	public static final String CHARSET_ENCODING = "ISO-8859-1";
 
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
 	private SimpleDateFormat timeFormatter = new SimpleDateFormat("HHmm");
@@ -59,6 +60,7 @@ public class WebpolGuestsWriter implements Serializable {
 		FileOutput output = new FileOutput();
 		output.setErrors(filler.create());
 		output.setContent(outputStream.toByteArray());
+		output.setContent(outputStream.toString().getBytes(CHARSET_ENCODING));
 		return output;
 	}
 
@@ -119,26 +121,21 @@ public class WebpolGuestsWriter implements Serializable {
 				tipo2.setNumeroPasaporteExtranjeros(guest.getDocument());
 			}
 		}
-			
-//		D para el DNI
-//		P para el  Pasaporte
-//		C para el Permiso de Conducir
-//		I para   la   carta   o   documento   de identidad
-//		N para permiso de residencia español
-//		X para  permiso  de  residencia  de  otro Estado    Miembro    de    la    Unión Europea
 		
 		if(guest.getDocumentType()==null || guest.getDocumentType()==DocumentType.NIF){
 			tipo2.setTipoDocumento("D");
+		} else if(guest.getDocumentType()==DocumentType.CIF){
+			tipo2.setTipoDocumento("Y");
+		} else if(guest.getDocumentType()==DocumentType.NIE){
+			tipo2.setTipoDocumento("N");
 		} else if(guest.getDocumentType()==DocumentType.PASSPORT){
 			tipo2.setTipoDocumento("P");
-//		} else if(guest.getDocumentType()==DocumentType.DRIVING_PERMIT){
-//			tipo2.setTipoDocumento("C");
-		} else if(guest.getDocumentType()==DocumentType.COMMUNITY_CARD){
-			tipo2.setTipoDocumento("I");
 		} else if(guest.getDocumentType()==DocumentType.WORK_PERMIT){
 			tipo2.setTipoDocumento("N");
-//		} else if(guest.getDocumentType()==DocumentType.WORK_PERMIT_IN_UE){
-//			tipo2.setTipoDocumento("X");
+		} else if(guest.getDocumentType()==DocumentType.COMMUNITY_CARD){
+			tipo2.setTipoDocumento("X");
+		} else if(guest.getDocumentType()==DocumentType.OTHER){
+			tipo2.setTipoDocumento("Z");
 		}
 		
 		tipo2.setFechaExpedicionDocumento(guest.getDocumentExpDate()!=null?dateFormatter.format(guest.getDocumentExpDate()):null);

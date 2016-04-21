@@ -35,6 +35,8 @@ import com.esferalia.aon.file.pms.writer.WebpolGuestsWriter;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
+import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
+import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class WebpolExporterController extends BasicController {
 	
@@ -137,12 +139,12 @@ public class WebpolExporterController extends BasicController {
 			this.fileCount = 0;
 			this.clearCriteria();
 			this.setOrderList(null);
-			this.getCriteria().addInExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_HOTEL_ID), getHotelIds());
+			this.getCriteria().addInExpression("ProjectReservationGuest.projectReservation.hotelReservation.id", getHotelIds());
 			this.getCriteria().addNotNullExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_DOCUMENT));
 			this.getCriteria().addNotEqualExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_DOCUMENT), "");
-			Date insideDateTo = (getToDate() != null) ? getToDate() : getFromDate();
-			this.getCriteria().addLessThanOrEqualExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_START_DATE), insideDateTo);
-			this.getCriteria().addGreaterThanOrEqualExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_END_DATE), fromDate);
+			this.getCriteria().addNotEqualExpression("ProjectReservationGuest.projectReservation.status", ReservationStatus.CANCELLED);
+			this.getCriteria().addEqualExpression("ProjectReservationGuest.projectReservation.checkStatus", ReservationCheckStatus.CHECK_IN);
+			this.getCriteria().addBetweenExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_START_DATE), getFromDate(), getToDate());
 			this.getCriteria().addOrder(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_HOTEL_ID));
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException("No se ha podido obtener la lista de huespedes.");
@@ -193,6 +195,7 @@ public class WebpolExporterController extends BasicController {
 				String name = issueEntityCode + "." + StringUtils.leftPad(String.valueOf(fileCount), 3, "0");
 				int size = data.length;
 				response = DownloadUtil.getResponse();
+				response.setCharacterEncoding(WebpolGuestsWriter.CHARSET_ENCODING);
 				out = DownloadUtil.initDownload(response, name, null, size);
 				InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
 				IOUtils.copy( fileIn, out );
