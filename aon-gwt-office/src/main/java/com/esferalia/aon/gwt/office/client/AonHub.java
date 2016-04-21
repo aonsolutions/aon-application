@@ -191,6 +191,18 @@ public class AonHub {
 				+ (filterUser != null ? "&users=" + URL.encode(filterUser) : ""), callback);
 	}
 	
+	public void getDuplicatedIssues(String user, String repo,
+			AsyncCallback<JSON<JsIssue>> callback) {
+		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=duplicated"
+				+ (since != null ? "&since=" + this.since : "")
+				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
+				+ "&offset=" + offset
+				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				
+				+ (text != null ? "&text=" + URL.encode(text) : "")
+				+ (filterUser != null ? "&users=" + URL.encode(filterUser) : ""), callback);
+	}
+
+	
 	public void getIssueById(String user, String repo, int number, AsyncCallback<JsIssue> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues/" + number, callback);
 	}

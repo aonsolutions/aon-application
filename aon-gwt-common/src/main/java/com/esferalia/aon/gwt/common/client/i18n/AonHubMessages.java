@@ -169,9 +169,10 @@ public interface AonHubMessages extends Messages {
 			+ "\n\u00BFQuieres guardarlo?")
 	String commentSaveConfirm();
 
+	@DefaultMessage("Asignar")
+	String toAssign();
 
+	@DefaultMessage("Nueva")
+	String createNew();
 
-	
-	
- 
 }

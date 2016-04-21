@@ -50,6 +50,9 @@ public class NoticeFilter implements Serializable {
 		case "faq":
 			setFaq(true);
 			break;
+		case "duplicated":
+			setDuplicated(true);
+			break;
 		default:
 			setAll(true);
 			break;

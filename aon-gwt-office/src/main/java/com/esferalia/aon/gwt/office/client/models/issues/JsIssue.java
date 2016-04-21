@@ -64,6 +64,10 @@ public class JsIssue extends JavaScriptObject {
 		return this.comments;
 	}-*/;
 
+	public final native int getDuplicates() /*-{
+		return this.duplicates;
+	}-*/;
+
 	public final native String getCommentsUrl() /*-{
 		return this.comments_url;
 	}-*/;

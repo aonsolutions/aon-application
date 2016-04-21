@@ -76,6 +76,11 @@ public abstract class AonIssueSelected implements IssueSelected {
 	public String getState() {
 		return issue.getState();
 	}
+	
+	@Override
+	public int getDuplicates() {		
+		return issue.getDuplicates();
+	}
 
 	@Override
 	public String getStateIconStyle() {

@@ -26,6 +26,8 @@ public interface IssueSelected {
 	String getBody();
 
 	String getCompany();	
+	
+	int getDuplicates();
 
 	Date getCreateAt();
 

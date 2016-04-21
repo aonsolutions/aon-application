@@ -25,18 +25,22 @@
 					<tr>
 						<td>
 							<div class="aon-scroll-area">
-								<g:Button ui:field="issuesButton" text=""
-									title="Cargar las incidencias abiertas"
-									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconIssueOpenedGreen}" />
+
+								<g:Label styleName="{aonResources.css.aonBold}" text="Mostrar: " />
 								<g:Button ui:field="faqsButton" text="" title="Cargar las FAQs"
 									styleName="{aonResources.css.aonFindingToolbarItem} aon-icon-menu-help" />
+
+								<g:Button ui:field="duplicatedButton" text=""
+									title="Cargar las incidencias duplicadas"
+									styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconIssueDuplicated}" />
 							</div>
 						</td>
 						<td>
 							<div class="{style.buttons} aon-scroll-area">
-								<g:Button ui:field="cancelButton" text="Cancelar" />
-								<g:Button ui:field="acceptButton" text="Asignar"
-									enabled="false" />
+								<g:Button ui:field="cancelButton" text="{msg.cancel}" />
+								<g:Button ui:field="newButton" text="{msg.createNew}" />								
+								<g:Button ui:field="acceptButton" text="{msg.toAssign}"
+									enabled="false" />								
 							</div>
 						</td>
 					</tr>

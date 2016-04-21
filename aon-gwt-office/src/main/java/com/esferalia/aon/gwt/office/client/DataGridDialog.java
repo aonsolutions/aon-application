@@ -24,9 +24,12 @@ public class DataGridDialog extends CustomDialog
 
 		void onAcceptButtonClick(IssueSelected issue);
 
-		void onLoadIssuesClick(AsyncCallback<List<IssueSelected>> callback);
+		void onLoadDuplicatedIssues(AsyncCallback<List<IssueSelected>> callback);
 
 		void onLoadFaqsClick(AsyncCallback<List<IssueSelected>> callback);
+		
+		void onCreateNewDuplicated();
+		
 	}
 
 	private static DataGridDialogUiBinder uiBinder = GWT
@@ -41,13 +44,15 @@ public class DataGridDialog extends CustomDialog
 	DuplicatedDataGrid dataGrid;
 
 	@UiField
-	Button issuesButton;
+	Button duplicatedButton;
 	@UiField
 	Button faqsButton;
 	@UiField
 	Button cancelButton;
 	@UiField
 	Button acceptButton;
+	@UiField
+	Button newButton;
 
 	private int issueId;
 	private IssueSelected issueSelected;
@@ -80,7 +85,7 @@ public class DataGridDialog extends CustomDialog
 		this.issues = issuesProvider.getList();
 	}
 
-	public void insertIssues(List<IssueSelected> list) {
+	private void insertIssues(List<IssueSelected> list) {
 		for (IssueSelected issue : list) {
 			if (this.issueId != issue.getId())
 				this.issues.add(issue);
@@ -96,26 +101,41 @@ public class DataGridDialog extends CustomDialog
 	}
 
 	public void showPopupPanel() {
+
+		for (Listener listener : listeners)
+			listener.onLoadFaqsClick(new AsyncCallback<List<IssueSelected>>() {
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("Error al cargar las FAQs");
+				}
+				
+				@Override
+				public void onSuccess(List<IssueSelected> result) {
+					insertIssues(result);
+				}
+			});
+
 		center();
 	}
-
-	@UiHandler("issuesButton")
-	void onIssuesButtonClick(ClickEvent event) {
+	
+	@UiHandler("duplicatedButton")
+	void onDuplicatedButtonClick(ClickEvent event) {
 		initDataGridList();
-		for (Listener listener : listeners)
-			listener.onLoadIssuesClick(
-					new AsyncCallback<List<IssueSelected>>() {
+		for (Listener listener : listeners) {
+			listener.onLoadDuplicatedIssues(new AsyncCallback<List<IssueSelected>>() {
 
-						@Override
-						public void onSuccess(List<IssueSelected> result) {
-							insertIssues(result);
-						}
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("Error al cargar las Duplicadas");
+				}
 
-						@Override
-						public void onFailure(Throwable caught) {
-							Window.alert("Error al cargar las incidencias");
-						}
-					});
+				@Override
+				public void onSuccess(List<IssueSelected> result) {
+					insertIssues(result);
+				}
+			});
+		}
 	}
 
 	@UiHandler("faqsButton")
@@ -148,6 +168,11 @@ public class DataGridDialog extends CustomDialog
 				listener.onAcceptButtonClick(this.issueSelected);
 		hide();
 	}
+	
+	@UiHandler("newButton")
+	void onCreateNewDuplicatedClick(ClickEvent event) {
+		
+	}
 
 	// ******************************************************************
 	// ***************************** DATA GRID **************************
@@ -155,11 +180,16 @@ public class DataGridDialog extends CustomDialog
 
 	@Override
 	public void onEnabledAcceptButton(boolean enable) {
+		newButton.setEnabled(!enable);
 		acceptButton.setEnabled(enable);
 	}
 
 	@Override
 	public void onIssueSelection(IssueSelected issue) {
 		this.issueSelected = issue;
+	}
+	
+	public void setCreateNewButtonVisible(boolean visible) {
+		newButton.setVisible(visible);
 	}
 }

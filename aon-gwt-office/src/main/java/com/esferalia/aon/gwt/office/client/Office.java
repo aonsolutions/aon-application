@@ -891,10 +891,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@Override
 	public void onDuplicateClickEvent() {
+		boolean isDuplicated = AonStringUtils.equals(issueSelected.getState(), 
+				NoticeStatus.DUPLICATED.getValue());
 		DataGridDialog dataGridDialog = new DataGridDialog(
 				issueSelected.getId());
-		dataGridDialog.addListener(this);
-		dataGridDialog.insertIssues(issues);
+		dataGridDialog.addListener(this);				
+		dataGridDialog.setCreateNewButtonVisible(!isDuplicated);
 		dataGridDialog.showPopupPanel();
 	}
 
@@ -1092,28 +1094,29 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 					}
 				});
 	}
-
+	
 	@Override
-	public void onLoadIssuesClick(final AsyncCallback<List<IssueSelected>> callback) {
+	public void onLoadDuplicatedIssues(
+			final AsyncCallback<List<IssueSelected>> callback) {		
+		
 		final List<IssueSelected> list = new LinkedList<IssueSelected>();
-
-		this.gitHub.getOpenIssues(String.valueOf(getCurrentDomain()),
-				getCurrentDomainName(), new AsyncCallback<JSON<JsIssue>>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						callback.onFailure(caught);
-					}
-
-					@Override
-					public void onSuccess(JSON<JsIssue> result) {
-						JsArray<JsIssue> array = result.getData();
-						for (int x = 0; x < array.length(); x++)
-							list.add(new IssueGrid.IssueOpenLoadSelected(
-									array.get(x)));
-						callback.onSuccess(list);
-					}
-				});
+		
+		this.gitHub.getDuplicatedIssues(String.valueOf(getCurrentDomain()), getCurrentDomainName(), 
+				new AsyncCallback<JSON<JsIssue>>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onFailure(caught);
+			}
+			
+			@Override
+			public void onSuccess(JSON<JsIssue> result) {
+				JsArray<JsIssue> array = result.getData();
+				for (int x = 0; x < array.length(); x++)
+					list.add(new IssueGrid.IssueOpenLoadSelected(array.get(x)));
+				callback.onSuccess(list);
+			}
+		});
 	}
 
 	@Override
@@ -1136,6 +1139,12 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						callback.onSuccess(list);
 					}
 				});
+	}
+	
+	@Override
+	public void onCreateNewDuplicated() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private static native <T extends JavaScriptObject> T eval(String javascript)

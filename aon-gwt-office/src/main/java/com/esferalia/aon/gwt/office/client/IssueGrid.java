@@ -458,7 +458,21 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 
 			@Override
 			public String getValue(IssueSelected object) {
-				return object.getCompany();
+				
+				StringBuilder sb = new StringBuilder();
+				switch (object.getDuplicates()) {
+				case 0:
+					sb.append(object.getCompany());
+					break;
+				case 1:
+					sb.append(1);					
+					sb.append(" DUPLICADO ");
+					break;
+				default:
+					sb.append(object.getDuplicates());
+					sb.append(" DUPLICADOS ");
+				}
+				return sb.toString();
 			}
 		};
 		setColumnWidth(col++, 40, Unit.PX);

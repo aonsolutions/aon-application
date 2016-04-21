@@ -25,7 +25,6 @@ public class NoticeFilterImpl  {
 		conditions.add(NOTICE.NOTICE_.isNull());
 		conditions.add(NOTICE.TYPE.eq(NoticeType.TICKET.value()));
 		
-		//id IN (select notice from notice_tag join tag on (notice_tag.tag = tag.id) where tag.name = "Tfiscal"  )
 		if ( filter.isOpened() ) {
 			conditions.add(
 			// @formatted:off
@@ -42,7 +41,7 @@ public class NoticeFilterImpl  {
 			);
 		}
 		
-		else if ( filter.isClosed()) {
+		else if ( filter.isClosed() ) {
 			conditions.add(
 			// @formatted:off
 			NOTICE.ID.in(ctx.getDslContext()
@@ -89,8 +88,19 @@ public class NoticeFilterImpl  {
 			);
 		}
 		
-		else if (filter.isDuplicated()) {
-			conditions.add( NOTICE.NOTICE_.isNull() );
+		else if ( filter.isDuplicated()) {
+			conditions.add(
+			// @formatted:off
+			NOTICE.ID.in(ctx.getDslContext()
+					.select(NOTICE_TAG.NOTICE)
+					.from(NOTICE_TAG)
+					.join(TAG)
+					.on(NOTICE_TAG.TAG.eq(TAG.ID))
+					.where(TAG.NAME.eq(NoticeStatus.DUPLICATED.getValue())							
+							.and(NOTICE_TAG.END_DATE.isNull())
+						  ))			
+			// @formatted:on
+			);
 		}
 		
 		if (AonStringUtils.isNotEmpty(filter.getComany())){

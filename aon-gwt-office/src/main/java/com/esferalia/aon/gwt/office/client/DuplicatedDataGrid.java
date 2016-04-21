@@ -304,7 +304,7 @@ public class DuplicatedDataGrid extends CustomDataGrid<IssueSelected>
 	private void initializeColumns() {
 		int col = 0;
 		addColumn(checkBoxColumn);
-		setColumnWidth(col++, 5, Unit.PCT);
+		setColumnWidth(col++, 9, Unit.PX);
 		
 		typeColumn = new Column<IssueSelected, String>(new TextCell()) {
 			@Override
