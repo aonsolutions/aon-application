@@ -65,7 +65,7 @@ public class ReportUtils {
 
 		public String getDescription() {
 			String description = salaryItem.getDescription();
-			Matcher matcher = StringComparator.ORDER.matcher(description);
+			Matcher matcher = StringComparator.ORDER.matcher(StringUtils.defaultIfEmpty(description, ""));
 			if ( matcher.matches() )
 				return matcher.group(2);
 			return description;
