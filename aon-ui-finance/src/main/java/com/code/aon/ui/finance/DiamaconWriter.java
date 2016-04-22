@@ -253,7 +253,7 @@ public class DiamaconWriter extends BasicExporter {
 			this.exporter.addDecimalCell( CommonUtil.round(surchargePercent) );
 //			SECCION
 			if(getInvoice().getProject()!=null){
-				this.exporter.addStringCell(getInvoice().getProject().getName());
+				this.exporter.addStringCell(getInvoice().getProject().getAlias());
 			} else {
 				this.exporter.addCell();
 			}
@@ -320,7 +320,7 @@ public class DiamaconWriter extends BasicExporter {
 			this.exporter.addDecimalCell( taxPercent );
 //			SECCION
 			if(getInvoice().getProject()!=null){
-				this.exporter.addStringCell(getInvoice().getProject().getName());
+				this.exporter.addStringCell(getInvoice().getProject().getAlias());
 			} else {
 				this.exporter.addCell();
 			}
@@ -369,7 +369,7 @@ public class DiamaconWriter extends BasicExporter {
 		addStringCell( aed.getDocumentNumber() );
 //		SECCION
 		if(getInvoice().getProject()!=null){
-			this.exporter.addStringCell(getInvoice().getProject().getName());
+			this.exporter.addStringCell(getInvoice().getProject().getAlias());
 		} else {
 			this.exporter.addCell();
 		}
