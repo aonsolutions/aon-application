@@ -59,8 +59,6 @@ public class WebpolExporterController extends BasicController {
 	
 	private Hotel generationHotel;
 	
-	private boolean newFile; 
-	
 	
 	public Hotel[] getHotels() {
 		return hotels;
@@ -91,6 +89,14 @@ public class WebpolExporterController extends BasicController {
 
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
+	}
+
+	public int getFileCount() {
+		return fileCount;
+	}
+	
+	public void setFileCount(int fileCount) {
+		this.fileCount = fileCount;
 	}
 
 	public byte[] getData() {
@@ -135,7 +141,6 @@ public class WebpolExporterController extends BasicController {
 	public void onSearch(ActionEvent event) {
 		try {
 			this.data = null;
-			this.newFile = true;
 			this.fileCount = 0;
 			this.clearCriteria();
 			this.setOrderList(null);
@@ -146,21 +151,31 @@ public class WebpolExporterController extends BasicController {
 			this.getCriteria().addEqualExpression("ProjectReservationGuest.projectReservation.checkStatus", ReservationCheckStatus.CHECK_IN);
 			this.getCriteria().addBetweenExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_START_DATE), getFromDate(), getToDate());
 			this.getCriteria().addOrder(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_HOTEL_ID));
+			super.onSearch(event);
+			loadParams();
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException("No se ha podido obtener la lista de huespedes.");
 		}
-		super.onSearch(event);
 	}
 	
+	private void loadParams() throws ManagerBeanException {
+		generationHotel = null;
+
+		List<ITransferObject> list = getManagerBean().getList(getCriteria());
+		if(!isMultipleGenerationHotel(list)){
+			List<Hotel> hotels = getGenerationHotels(list);
+			generationHotel = hotels!=null && hotels.size()==1?hotels.get(0):null;
+		}
+		
+		issueEntityCode = obtainIssueEntityCode(generationHotel);
+		fileCount = obtainFileCount(generationHotel);
+		fileCount++;
+	}
+		
 	public void onCreateDisk( ActionEvent event ) throws ManagerBeanException {
+		updateFileCount(fileCount, generationHotel);
 		try {
 			List<ITransferObject> list = getManagerBean().getList(getCriteria());
-			if(!isMultipleGenerationHotel(list)){
-				List<Hotel> hotels = getGenerationHotels(list);
-				generationHotel = hotels!=null && hotels.size()==1?hotels.get(0):null;
-			} else {
-				generationHotel = null;
-			}
 			WebpolGuestsWriter writer = new WebpolGuestsWriter();
 			FileOutput output = writer.createFile(getHotels(), list, Calendar.getInstance().getTime());
 			if (output != null && output.getContent() != null) {
@@ -180,18 +195,6 @@ public class WebpolExporterController extends BasicController {
 			HttpServletResponse response = null;
 			OutputStream out = null;
 			try {
-				if(this.newFile){
-					if(generationHotel==null){
-						issueEntityCode = obtainIssueEntityCode();
-						fileCount = obtainFileCount();
-						updateFileCount(++fileCount);
-					} else {
-						issueEntityCode = obtainIssueEntityCode(generationHotel);
-						fileCount = obtainFileCount(generationHotel);
-						updateFileCount(++fileCount, generationHotel);
-					}
-					this.newFile = false;
-				}
 				String name = issueEntityCode + "." + StringUtils.leftPad(String.valueOf(fileCount), 3, "0");
 				int size = data.length;
 				response = DownloadUtil.getResponse();
@@ -209,53 +212,53 @@ public class WebpolExporterController extends BasicController {
 		}
 	}
 
-	private String obtainIssueEntityCode() {
-		ApplicationParameter ap = AppParamUtil.getParameter(WebpolGuestsWriter.APP_PMS_POLICE_CODE);
-		String value = null;
-		if(ap!=null && !StringUtils.isBlank(ap.getValue())){
-			value = ap.getValue();
-			value = value.length()>10?value.substring(0, 10):value;
-		} else {
-			value = "group_cod_no_def";
-		}
-		return value;
-	}
-
-	private int obtainFileCount() {
-		ApplicationParameter ap = AppParamUtil.getParameter(APP_PMS_POLICE_COUNT);
-		int value = ap==null?1:Integer.parseInt(ap.getValue());
-		value = value==999?1:value;
-		return value;
-	}
-	
-	private void updateFileCount(int fileCount) {
-		ApplicationParameter ap = AppParamUtil.getParameter(APP_PMS_POLICE_COUNT);
-		if(ap==null){
-			ap = new ApplicationParameter();
-			ap.setName(APP_PMS_POLICE_COUNT);
-		}
-		ap.setValue(String.valueOf(fileCount));
-		AppParamUtil.insertParameter(ap);
-	}
-
 	private String obtainIssueEntityCode(Hotel hotel) {
-		String value = null;
-		if(!StringUtils.isBlank(hotel.getPoliceCode())){
-			value = hotel.getPoliceCode();
+		if(hotel!=null){
+			String value = null;
+			if(!StringUtils.isBlank(hotel.getPoliceCode())){
+				value = hotel.getPoliceCode();
+			} else {
+				value = "HOTEL_CODE_NO_DEF";
+			}
+			return value;
 		} else {
-			value = "hotel_cod_no_def";
+			ApplicationParameter ap = AppParamUtil.getParameter(WebpolGuestsWriter.APP_PMS_POLICE_CODE);
+			String value = null;
+			if(ap!=null && !StringUtils.isBlank(ap.getValue())){
+				value = ap.getValue();
+				value = value.length()>10?value.substring(0, 10):value;
+			} else {
+				value = "GROUP_CODE_NO_DEF";
+			}
+			return value;
 		}
-		return value;
 	}
 
 	private int obtainFileCount(Hotel hotel) throws ManagerBeanException {
-		return hotel.getPoliceCounter();
+		if(hotel!=null){
+			return hotel.getPoliceCounter();
+		} else {
+			ApplicationParameter ap = AppParamUtil.getParameter(APP_PMS_POLICE_COUNT);
+			int value = ap==null?1:Integer.parseInt(ap.getValue());
+			value = value==999?1:value;
+			return value;
+		}
 	}
 	
 	private void updateFileCount(int fileCount, Hotel hotel) throws ManagerBeanException {
-		hotel.setPoliceCounter(fileCount);
-		IManagerBean bean = BeanManager.getManagerBean(Hotel.class);
-		bean.update(hotel);
+		if(hotel!=null){
+			hotel.setPoliceCounter(fileCount);
+			IManagerBean bean = BeanManager.getManagerBean(Hotel.class);
+			bean.update(hotel);
+		} else {
+			ApplicationParameter ap = AppParamUtil.getParameter(APP_PMS_POLICE_COUNT);
+			if(ap==null){
+				ap = new ApplicationParameter();
+				ap.setName(APP_PMS_POLICE_COUNT);
+			}
+			ap.setValue(String.valueOf(fileCount));
+			AppParamUtil.insertParameter(ap);
+		}
 	}
 	
 

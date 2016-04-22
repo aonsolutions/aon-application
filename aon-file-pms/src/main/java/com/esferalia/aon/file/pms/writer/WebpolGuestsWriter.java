@@ -63,11 +63,9 @@ public class WebpolGuestsWriter implements Serializable {
 		output.setContent(outputStream.toString().getBytes(CHARSET_ENCODING));
 		return output;
 	}
-
-
+	
 	private TIPO0 createTIPO0Record(List<ITransferObject> list, Date dateTime) {
-		TIPO0 tipo0 = new TIPO0();
-		
+		TIPO0 tipo0 = new TIPO0();		
 		tipo0.setCodigoAgrupacionHotelera(obtainIssueEntityCode());
 		tipo0.setNombreAgrupacion(AonUtil.getDomainName());
 		tipo0.setFechaConfeccionFichero(dateFormatter.format(dateTime));
@@ -85,19 +83,22 @@ public class WebpolGuestsWriter implements Serializable {
 				tipo0.getTipo1List().add(tipo1);
 			}
 			tipo1.getTipo2List().add(createTIPO2Record(guest));
-			
 		}
+			
 		tipo0.setNumeroRegistrosTipo1(String.valueOf(tipo0.getTipo1List().size()));
+		tipo0.getTipo1List().forEach(o -> {
+			o.setNumeroRegistrosTipo2(String.valueOf(o.getTipo2List().size()));
+		});
 		return tipo0;
 	}
-
-
+	
 	private TIPO1 createTIPO1Record(Hotel hotel, List<ITransferObject> list, Date dateTime) {
 		TIPO1 tipo1 = createTIPO1Record(hotel, dateTime);
 		tipo1.setTipo2List(new LinkedList<TIPO2>());
 		list.forEach(to -> {
 			tipo1.getTipo2List().add(createTIPO2Record((ProjectReservationGuest)to));
 		});
+		tipo1.setNumeroRegistrosTipo2(String.valueOf(tipo1.getTipo2List().size()));
 		return tipo1;
 	}
 	
@@ -109,8 +110,7 @@ public class WebpolGuestsWriter implements Serializable {
 		tipo1.setHoraConfeccionFichero(timeFormatter.format(dateTime));
 		return tipo1;
 	}
-
-		
+	
 	private TIPO2 createTIPO2Record(ProjectReservationGuest guest) {
 		TIPO2 tipo2 = new TIPO2();
 		
@@ -142,12 +142,12 @@ public class WebpolGuestsWriter implements Serializable {
 		tipo2.setPrimerApellido(guest.getSurname()!=null?guest.getSurname():"");
 		tipo2.setSegundoApellido(guest.getSurname2()!=null?guest.getSurname2():"");
 		tipo2.setNombre(guest.getName()!=null?guest.getName():"");
-		if(guest.getPerson()!=null){
-			if(guest.getPerson().getGender()==Gender.MALE){
-				tipo2.setSexo("M");
-			} else if(guest.getPerson().getGender()==Gender.FEMALE){
-				tipo2.setSexo("F");
-			}
+		if(guest.getPerson().getGender()==Gender.MALE){
+			tipo2.setSexo("M");
+		} else if(guest.getPerson().getGender()==Gender.FEMALE){
+			tipo2.setSexo("F");
+		} else {
+			tipo2.setSexo("M");
 		}
 		tipo2.setFechaNacimiento(guest.getBirthDate()!=null?dateFormatter.format(guest.getBirthDate()):null);
 		tipo2.setPaisNacionalidad(guest.getDocumentCountry()!=null?guest.getDocumentCountry().getName(AonUtil.getCurrentLocale()).toUpperCase():"");

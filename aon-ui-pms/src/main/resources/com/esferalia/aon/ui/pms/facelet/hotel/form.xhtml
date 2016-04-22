@@ -2,7 +2,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -145,10 +147,18 @@
 						
 					<aon:outputLabel for="Hotel_policeCode"
 						value="#{bundle.pms_policeCode}" />
-					<aon:inputText id="Hotel_policeCode"
-						value="#{hotel.to.policeCode}"
-						size="10" maxlength="10" />
-
+					<h:panelGrid columns="3">
+						<aon:inputText id="Hotel_policeCode"
+							value="#{hotel.to.policeCode}"
+							size="10" maxlength="10" />
+						<aon:outputLabel for="Hotel_policeCounter" styleClass="aon-italic aon-margin-left"
+							value="#{bundle.aon_counter}" />
+						<rich:inputNumberSpinner id="Hotel_policeCounter" 
+							value="#{hotel.to.policeCounter}"
+							inputSize="3" minValue="001" maxValue="999">
+			   			</rich:inputNumberSpinner>
+					</h:panelGrid>
+					
 					<aon:outputLabel for="Hotel_active" 
 						value="#{bundle.aon_active}" />
 					<aon:selectOneRadio id="Hotel_active"

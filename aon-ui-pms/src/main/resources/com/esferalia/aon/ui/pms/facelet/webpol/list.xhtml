@@ -18,19 +18,28 @@
 				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
 				<ui:param name="controller" value="#{webpolExporter}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="export" 
-						value="#{bundle.aon_generate}"
-						rendered="#{webpolExporter.model.rowCount>0 and empty webpolExporter.data}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						actionListener="#{webpolExporter.onCreateDisk}"
-						reRender="aonStatus, aonToolbar"
-						onclick="Richfaces.showModalPanel('waitProccess')"
-						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-					<aon:htmlCommandLink id="download" target="_blank"
-						rendered="#{not empty webpolExporter.data}"
-						value="#{bundle.aon_fileupload_download}"
-						actionListener="#{webpolExporter.onDownloadFile}"
-						styleClass="aon-icon-commandButton aon-icon-mail-save aon-margin-left" />
+					<h:panelGrid columns="4">
+						<aon:outputLabel value="#{bundle.aon_counter}:"
+							rendered="#{webpolExporter.model.rowCount>0}" />
+						<rich:inputNumberSpinner value="#{webpolExporter.fileCount}"
+							rendered="#{webpolExporter.model.rowCount>0}"
+							disabled="#{not empty webpolExporter.data}"
+			   				inputSize="3" minValue="001" maxValue="999">
+			   			</rich:inputNumberSpinner>
+						<aon:commandButton id="export" 
+							value="#{bundle.aon_generate}"
+							rendered="#{webpolExporter.model.rowCount>0 and empty webpolExporter.data}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{webpolExporter.onCreateDisk}"
+							reRender="aonStatus, aonToolbar"
+							onclick="Richfaces.showModalPanel('waitProccess')"
+							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+						<aon:htmlCommandLink id="download" target="_blank"
+							rendered="#{not empty webpolExporter.data}"
+							value="#{bundle.aon_fileupload_download}"
+							actionListener="#{webpolExporter.onDownloadFile}"
+							styleClass="aon-icon-commandButton aon-icon-mail-save aon-margin-left" />
+					</h:panelGrid>
 				</ui:define>
 			</ui:decorate>
 
@@ -47,7 +56,7 @@
 							value="#{bundle.aon_module_hotel}" />
 						<aon:selectManyListbox id="webpolExporter_hotel"
 							style="width:250px;"
-							value="#{webpolExporter.hotels}" size="10"
+							value="#{webpolExporter.hotels}" size="6"
 							required="true">
 							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 						</aon:selectManyListbox>
@@ -82,7 +91,9 @@
 	
 					</aon:panelGrid>
 				</aon:div>
-			
+				
+				<rich:spacer/>
+				
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 					<ui:param name="controller" value="#{webpolExporter}" />
