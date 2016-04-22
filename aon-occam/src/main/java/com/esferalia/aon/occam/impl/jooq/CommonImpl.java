@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ICommon;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
@@ -26,6 +28,7 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TagDAO;
@@ -34,6 +37,12 @@ import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 
 public class CommonImpl implements ICommon {
 
+	// --------------------------- CONFIGURATION
+	@Override
+	public AonConfiguration getConfiguration(AONContext ctx, Date atDate) {
+		return ConfigurationDAO.getConfiguration(ctx, atDate);
+	}
+	
 	// ------------------ APPLICATION PARAMETERS
 	@Override
 	public ApplicationParameter fetchOne(AONContext ctx, AppParam param) {
@@ -219,6 +228,4 @@ public class CommonImpl implements ICommon {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaxDAO.getTax(ctx, filter));
 	}
-	
-
 }

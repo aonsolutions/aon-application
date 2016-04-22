@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
@@ -11,13 +12,13 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
+import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
-import org.jooq.Record3;
-import org.jooq.Record6;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.occam.api.AONContext;
@@ -25,6 +26,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.EnterpriseProperties;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -33,6 +35,7 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class CompanyDAO {
@@ -183,40 +186,43 @@ public class CompanyDAO {
 	}
 
 	public static Company getCompany(AONContext ctx,int domain) {
-		Record3<Integer,String,String> record = 
-			ctx.getDslContext().select(COMPANY.REGISTRY,REGISTRY.DOCUMENT,REGISTRY.NAME)
-				.from(COMPANY)
-				.join(REGISTRY).onKey()
-				.where(COMPANY.DOMAIN.equal(domain))
-				.fetchOne();
-		Company company = new Company();
-		if (record != null) {
-			company.setId(record.getValue(COMPANY.REGISTRY));
-			company.setDocument(record.getValue(REGISTRY.DOCUMENT));
-			company.setName(record.getValue(REGISTRY.NAME));
-		}
-		return company;
+		return ctx.getDslContext()
+			.select(COMPANY.REGISTRY,REGISTRY.DOCUMENT,REGISTRY.NAME
+				,COMPANY.SURCHARGE,COMPANY.WITHHOLDING,COMPANY.VAT_ACCRUAL_PAYMENT)
+			.from(COMPANY)
+			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
+			.where(COMPANY.DOMAIN.equal(domain))
+			.fetch()
+			.stream()
+			.map(rec -> new Company()
+					.setId(rec.getValue(COMPANY.REGISTRY))
+					.setDocument(rec.getValue(REGISTRY.DOCUMENT))
+					.setName(rec.getValue(REGISTRY.NAME))
+					.setSurcharge(rec.getValue(COMPANY.SURCHARGE)==1)
+					.setWithholding(rec.getValue(COMPANY.WITHHOLDING)==1)
+					.setVatAccrualPayment(rec.getValue(COMPANY.VAT_ACCRUAL_PAYMENT)==1)
+					)
+			.findFirst()
+			.orElse(null);
 	}
 	
-	public static List<CompanyAdministrator> getDirStaff(AONContext ctx,int domain) {
-		List<Record6<String,String,Byte,Byte,Double,Double>> record = 
-			ctx.getDslContext().select(RDIR_STAFF.DOCUMENT,RDIR_STAFF.NAME,RDIR_STAFF.DIRECTOR,RDIR_STAFF.SHAREHOLDER,RDIR_STAFF.PERCENT_SHARE,RDIR_STAFF.NOMINAL_VALUE)
+	public static LinkedList<CompanyAdministrator> getDirStaff(AONContext ctx,int domain) {
+		return ctx.getDslContext()
+				.select(RDIR_STAFF.DOCUMENT,RDIR_STAFF.NAME,RDIR_STAFF.DIRECTOR,RDIR_STAFF.SHAREHOLDER,RDIR_STAFF.PERCENT_SHARE,RDIR_STAFF.NOMINAL_VALUE)
 				.from(COMPANY)
 				.join(RDIR_STAFF).on( COMPANY.REGISTRY.equal(RDIR_STAFF.REGISTRY) )
 				.where(COMPANY.DOMAIN.equal(domain))
-				.fetch();
-		List<CompanyAdministrator> list = new LinkedList<CompanyAdministrator>(); 
-		for (Record6<String,String,Byte,Byte,Double,Double> rec : record) {
-			CompanyAdministrator ca = new CompanyAdministrator();
-			ca.setDocument(rec.getValue(RDIR_STAFF.DOCUMENT) );
-			ca.setName(rec.getValue(RDIR_STAFF.NAME) );
-			ca.setShareholder( rec.getValue(RDIR_STAFF.SHAREHOLDER) == 1 );
-			ca.setAdministrator( rec.getValue(RDIR_STAFF.DIRECTOR) == 1 );
-			ca.setPercent(rec.getValue(RDIR_STAFF.PERCENT_SHARE) );
-			ca.setNominalValue(rec.getValue(RDIR_STAFF.NOMINAL_VALUE) );
-			list.add(ca);
-		}
-		return list;
+				.fetch()
+				.stream()
+				.map( rec -> new CompanyAdministrator()
+						.setDocument(rec.getValue(RDIR_STAFF.DOCUMENT) )
+						.setName(rec.getValue(RDIR_STAFF.NAME) )
+						.setShareholder( rec.getValue(RDIR_STAFF.SHAREHOLDER) == 1 )
+						.setAdministrator( rec.getValue(RDIR_STAFF.DIRECTOR) == 1 )
+						.setPercent(rec.getValue(RDIR_STAFF.PERCENT_SHARE) )
+						.setNominalValue(rec.getValue(RDIR_STAFF.NOMINAL_VALUE) )
+					)
+				.collect(Collectors.toCollection(LinkedList::new ));
 	}
 		
 	public static LinkedList<CompanyBank> getBanks(AONContext ctx,int enterprise) {
@@ -233,11 +239,37 @@ public class CompanyDAO {
 				.setId(record.getValue(RBANK.ID) )
 				.setBankAccount(record.getValue(RBANK.BANK_ACCOUNT) )
 				.setBic(record.getValue(RBANK.BIC) )
-				.setBic(record.getValue(RBANK.BIC) )
 				.setAlias(record.getValue(RBANK.ALIAS) ) 
 				)
 			.collect(Collectors.toList()));
 		return list;
 	}
 
+	public static Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx,int domain, Date atDate) {
+		return ctx.getDslContext()
+				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL)
+				.from(ENTERPRISE_ACTIVITY)
+				.where(ENTERPRISE_ACTIVITY.DOMAIN.equal(domain)
+					.and(atDate == null
+						?DSL.trueCondition()
+						:(
+								(
+								ENTERPRISE_ACTIVITY.START_DATE.isNull()
+								.or(ENTERPRISE_ACTIVITY.START_DATE.ge(AonDateUtils.toSql(atDate)))
+								)
+							.and(
+								ENTERPRISE_ACTIVITY.END_DATE.isNull()
+								.or(ENTERPRISE_ACTIVITY.END_DATE.le(AonDateUtils.toSql(atDate)))
+								)
+						 )
+						)
+					)
+				.fetch()
+				.stream()
+				.map( rec -> new EnterpriseActivity()
+						.setId(rec.getValue(ENTERPRISE_ACTIVITY.ID) )
+						.setDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION) )
+						.setPrincipal( rec.getValue(ENTERPRISE_ACTIVITY.PRINCIPAL) == 1)
+					);
+	}
 }

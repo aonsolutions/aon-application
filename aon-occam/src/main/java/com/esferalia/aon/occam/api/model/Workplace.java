@@ -2,17 +2,18 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class Workplace implements Serializable {
 	
+	private static final long serialVersionUID = -6673378118872331822L;
+	
+	private Integer id;
+	private Integer domain;
+	private String description;
 	private Byte active;
 	private Integer address;
 	private Integer customer;
-	private String description;
-	private Integer domain;
 	private Byte economicagreement;
 	private Integer enterprise;
-	private Integer id;
 	private Integer scope;
 	
 	public Byte getActive() {

@@ -31,6 +31,15 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-finding-toolbar-item-no-border")
 	String aonFindingToolbarItemNoBorder();
 
+	@ClassName("aon-flex")
+	String aonFlex();
+	
+	@ClassName("aon-flex-container")
+	String aonFlexContainer();
+
+	@ClassName("aon-margin-auto")
+	String aonMarginAuto();
+
 	@ClassName("aon-no-print")
 	String aonNoPrint();
 
@@ -307,8 +316,14 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-margin-left")
 	String aonMarginLeft();
 
+	@ClassName("aon-margin-left5")
+	String aonMarginLeft5();
+
 	@ClassName("aon-margin-right")
 	String aonMarginRight();
+
+	@ClassName("aon-margin-right5")
+	String aonMarginRight5();
 
 	@ClassName("aon-margin-bottom")
 	String aonMarginBottom();
@@ -762,6 +777,21 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-fiscal-enterprise-suggest")
 	String aonFiscalEnterpriseSuggest();
 
+	@ClassName("aon-wizard-panel")
+	String aonWizardPanel();
+
+	@ClassName("aon-wizard-panel-inner")
+	String aonWizardPanelInner();
+	
+	@ClassName("aon-wizard-panel-border-bottom")
+	String aonWizardPanelBorderBottom();
+
+	@ClassName("aon-wizard-panel-east")
+	String aonWizardPanelEast();
+	
+	@ClassName("aon-wizard-label")
+	String aonWizardLabel();
+
 	@ClassName("aon-panelGrid-search")
 	String aonPanelGridSearch();
 
@@ -968,6 +998,15 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-icon-calculator")
 	String aonIconCalculator();
+
+	@ClassName("aon-letter-a-orange-icon")
+	String aonLetterAOrangeIcon();
+	
+	@ClassName("aon-letter-c-green-icon")
+	String aonLetterCGreenIcon();
+
+	@ClassName("aon-letter-p-blue-icon")
+	String aonLetterPBlueIcon();
 
 	/*
 	 *********************************************

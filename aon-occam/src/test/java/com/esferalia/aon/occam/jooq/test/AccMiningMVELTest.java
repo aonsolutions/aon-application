@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
@@ -613,7 +613,7 @@ public class AccMiningMVELTest  {
 				}
 			}
 		});
-		ctx.setAccounts( AON.getAccountBalances(context, params) );
+		ctx.setAccounts( ACCOUNTING.getAccountBalances(context, params) );
 		ctx.setExpressionMap(INITIALIZE_EXPRESSION_MAP);
 		
 		ctx.put("NORMAL",false);

@@ -29,7 +29,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
@@ -221,7 +221,7 @@ public class DashboardFiscalPortal implements Serializable {
 			try {
 				aonctx = AONContext.getAONContext(getDomainName(), getDomainId());  
 				AccMiningMVELContext ctx = getAccMiningContext();
-				Map<String,AccountBalance> map = AON.getAccountBalances(aonctx, getParams(expensesPeriod)); 
+				Map<String,AccountBalance> map = ACCOUNTING.getAccountBalances(aonctx, getParams(expensesPeriod)); 
 				ctx.setAccounts( map );
 				for (String key : map.keySet()) {
 					if ( StringUtils.startsWith(key, "6") && !StringUtils.startsWith(key, "60") ) {
@@ -229,7 +229,7 @@ public class DashboardFiscalPortal implements Serializable {
 							Double value = (Double) ctx.evaluateExpression("expense","sdp({"+key+"})");
 							if (value > 0.0) {
 								DashboardEntry entry = new DashboardEntry();
-								Account account = AON.getAccount(aonctx,key) ;
+								Account account = ACCOUNTING.getAccount(aonctx,key) ;
 								entry.setName(account==null?key:account.getDescription());
 								entry.setValue(value);
 								list.add(entry);

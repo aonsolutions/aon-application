@@ -1,10 +1,13 @@
 package com.esferalia.aon.gwt.common.client;
 
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -16,6 +19,22 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 
 	public CommonServiceAsyncDecorator(CommonServiceAsync serviceAsync) {
 		this.serviceAsync = serviceAsync;
+	}
+
+	// --------------------------------------------------------- CONFIGURATION
+	@Override
+	public void getAonConfiguration(String currentDomainName, int currentDomain, Date atDate,
+			AsyncCallback<AonConfiguration> callback) {
+		AON.start();
+		serviceAsync.getAonConfiguration(currentDomainName, currentDomain, atDate,   
+				new AsyncCallbackWrapper<AonConfiguration>(callback));
+	}
+	@Override
+	public void getAonConfiguration(String currentDomainName, int currentDomain,
+			AsyncCallback<AonConfiguration> callback) {
+		AON.start();
+		serviceAsync.getAonConfiguration(currentDomainName, currentDomain,   
+				new AsyncCallbackWrapper<AonConfiguration>(callback));
 	}
 
 	// -------------------------------------------------------------- SECURITY
@@ -85,5 +104,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 				new AsyncCallbackWrapper<LinkedList<Creditor>>(callback));
 	}
 
+	@Override
+	public void getAccountingRegistries(String domainName, int domain, String query,
+			AsyncCallback<LinkedList<AccountingRegistry>> callback) {
+		AON.start();
+		serviceAsync.getAccountingRegistries(domainName, domain, query,   
+				new AsyncCallbackWrapper<LinkedList<AccountingRegistry>>(callback));
+	}
 
 }

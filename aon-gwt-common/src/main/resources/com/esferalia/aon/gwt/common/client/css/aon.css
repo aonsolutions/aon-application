@@ -316,9 +316,23 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-inline {
 	display: inline;
 }
+.aon-flex {
+	display: flex;
+}
+.aon-flex-container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-items: flex-start;
+	align-content: flex-start;
+}
 
 .aon-margin {
 	margin: 1em;
+}
+.aon-margin-auto {
+	margin: auto;
 }
 
 .aon-no-margin {
@@ -332,6 +346,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-margin-left {
 	margin-left: 1em;
 }
+.aon-margin-left5 {
+	margin-left: 5px;
+}
 
 .aon-margin-bottom {
 	margin-bottom: 1em;
@@ -339,6 +356,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 
 .aon-margin-right {
 	margin-right: 1em;
+}
+.aon-margin-right5 {
+	margin-right: 5px;
 }
 
 .aon-bold {
@@ -811,6 +831,18 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 
 @sprite .aon-icon-calculator {
 	gwt-image: "aonIconCalculator";
+	width: auto;
+}
+@sprite .aon-letter-a-orange-icon{ 
+	gwt-image: "aonLetterAOrangeIcon";
+	width: auto;
+}
+@sprite .aon-letter-c-green-icon{ 
+	gwt-image: "aonLetterCGreenIcon";
+	width: auto;
+}
+@sprite .aon-letter-p-blue-icon{ 
+	gwt-image: "aonLetterPBlueIcon";
 	width: auto;
 }
 
@@ -1752,6 +1784,43 @@ input:disabled+label {
 	font-weight: bold;
 	padding: 2px 5px;
 	width: 400px;
+}
+.aon-wizard-panel{
+    background-color: #FADFAD;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+    margin-left: 1.5em;
+    margin-bottom: 5px;
+}
+
+.aon-wizard-panel-inner{
+	display: flex;
+	align-items: flex-start;
+	width: 100%;
+    margin-top: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.aon-wizard-panel-border-bottom {
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: white;
+}
+
+.aon-wizard-label{
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+.aon-wizard-panel-east{
+    background-color: #FADFAD;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    border-top: 1px solid black;
+    margin-right: 1em;	
+    margin-bottom: 5px;
 }
 
 .aon-panelGrid-search {

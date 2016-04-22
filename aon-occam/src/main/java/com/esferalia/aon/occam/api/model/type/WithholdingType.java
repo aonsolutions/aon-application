@@ -23,4 +23,18 @@ public enum WithholdingType implements Serializable {
 		return (byte) ordinal();
 	}	
 
+	public static WithholdingType safeValueOf(Byte i) {
+		if (i == null)
+			return null;
+		return safeValueOf(i.intValue());
+	}
+
+	public static WithholdingType safeValueOf(Integer i) {
+		if (i == null)
+			return null;
+		if (i < 0 || i >= WithholdingType.values().length)
+			return null;
+		return WithholdingType.values()[i];
+	}
 }
+

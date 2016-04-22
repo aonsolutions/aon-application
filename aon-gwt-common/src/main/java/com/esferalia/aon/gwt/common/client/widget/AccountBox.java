@@ -295,12 +295,20 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	public String getValue() {
 		return account.getValue();
 	}
-
+	public void setAccount(Account account) {
+		setAccount(account, false);
+	}
+	public void setAccount(Account account,boolean fire) {
+		setValue(account.getId(),account.getCode(),account.getDescription(),fire);	
+	}
 	public void setValue(Integer id, String code,String description) {
+		setValue(id,code,description,false);
+	}
+	public void setValue(Integer id, String code,String description, boolean fire) {
 		this.id = id;
 		this.description = description;
 		this.descriptionLabel.setText(description);
-		setValue(code,false);
+		setValue(code,fire);
 	}
 
 	@Override

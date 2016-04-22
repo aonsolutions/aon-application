@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Enterprise;
@@ -711,7 +711,7 @@ public class Utils {
 		AccMiningMVELContext mvlCtx = new AccMiningMVELContext(ACCEPTER);
 		AccMiningParameters params =  getParams(ctx, ctx.getDomainId(), year); //getParams(ctx,mod200);
 		if (params != null) {
-			mvlCtx.setAccounts(AON.getAccountBalances(ctx, params) );
+			mvlCtx.setAccounts(ACCOUNTING.getAccountBalances(ctx, params) );
 		} else {
 			mvlCtx.setAccounts( new HashMap<String,AccountBalance>() );
 		}
@@ -731,7 +731,7 @@ public class Utils {
 		AccMiningMVELContext mvlCtx = new AccMiningMVELContext(ACCEPTER);
 		AccMiningParameters params =  getParams(ctx, ctx.getDomainId(), year); //getParams(ctx,mod200);
 		if (params != null) {
-			mvlCtx.setAccounts(AON.getAccountBalances(ctx, params) );
+			mvlCtx.setAccounts(ACCOUNTING.getAccountBalances(ctx, params) );
 		} else {
 			mvlCtx.setAccounts( new HashMap<String,AccountBalance>() );
 		}

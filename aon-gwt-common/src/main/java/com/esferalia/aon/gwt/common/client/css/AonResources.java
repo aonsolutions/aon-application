@@ -292,5 +292,13 @@ public interface AonResources extends ClientBundle, Images {
 	ImageResource headerBack();
 	
 
+	@Source("images/aon-letter-a-orange-icon.png")
+	ImageResource aonLetterAOrangeIcon();
+
+	@Source("images/aon-letter-c-green-icon.png")
+	ImageResource aonLetterCGreenIcon();
+	
+	@Source("images/aon-letter-p-blue-icon.png")
+	ImageResource aonLetterPBlueIcon();
 }
 

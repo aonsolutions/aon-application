@@ -4,9 +4,10 @@ import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.Administration;
 
-@SuppressWarnings("serial")
 public class FiscalParameters implements Serializable {
 
+	private static final long serialVersionUID = -7278132410437800009L;
+	
 	private Integer company;
 	private String document;
 	private String name;

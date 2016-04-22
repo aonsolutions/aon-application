@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -30,7 +30,7 @@ public class AccountStatementTest {
 				.setAccount(604530)
 				.setFromDate( AonDateUtils.getDate(2015, 0, 1))
 				.setToDate( AonDateUtils.getDate(2015, 10, 25)); 
-		AccountStatementReport report = AON.getAccountStatement(DOMAIN_NAME, DOMAIN_ID, USER, params);
+		AccountStatementReport report = ACCOUNTING.getAccountStatement(DOMAIN_NAME, DOMAIN_ID, USER, params);
 		
 		System.out.println( AonStringUtils.repeat('=', 145));
 		System.out.println( AonStringUtils.center(report.getAccount().getFullName(), 145));
@@ -84,7 +84,7 @@ public class AccountStatementTest {
 				.setAccount(603888)
 				.setFromDate( AonDateUtils.getDate(2015, 0, 1))
 				.setToDate( AonDateUtils.getDate(2015, 5, 31)); 
-		AON.getAccountBalance(DOMAIN_NAME, DOMAIN_ID, USER, params )
+		ACCOUNTING.getAccountBalance(DOMAIN_NAME, DOMAIN_ID, USER, params )
 		.forEach( st -> {
 		System.out.println(
 			 AonStringUtils.repeat(AonStringUtils.SPACE, 8)

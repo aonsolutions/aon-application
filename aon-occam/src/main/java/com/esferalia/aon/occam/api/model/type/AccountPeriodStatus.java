@@ -13,4 +13,8 @@ public enum AccountPeriodStatus implements Serializable {
 	 public boolean isActive() {
 		 return (this == ACTIVE || this == OPENING); 
 	 }
+	 
+	 public byte getValue() {
+		 return (byte) this.ordinal();
+	 }
 }

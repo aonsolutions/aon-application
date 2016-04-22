@@ -1,16 +1,25 @@
 package com.esferalia.aon.gwt.common.client;
 
 
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CommonServiceAsync {
+
+	// --------------------------------------------------------- CONFIGURATION
+	void getAonConfiguration(String currentDomainName, int currentDomain,
+			AsyncCallback<AonConfiguration> asyncCallback);
+	void getAonConfiguration(String currentDomainName, int currentDomain, Date atDate,
+			AsyncCallback<AonConfiguration> callback);
 
 	// -------------------------------------------------------------- SECURITY
 	void getCurrentUser(String domainName, int domain,
@@ -39,6 +48,10 @@ public interface CommonServiceAsync {
 	// -------------------------------------------------------------- CREDITOR
 	void getBasicCreditors(String domainName, int domain, String query, 
 			AsyncCallback<LinkedList<Creditor>> callback);
+
+	void getAccountingRegistries(String domainName, int domain, String query,
+			AsyncCallback<LinkedList<AccountingRegistry>> asyncCallback);
+
 
 
 	

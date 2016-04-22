@@ -135,6 +135,10 @@ public class SecurityDAO {
 		return user;
 	}
 
+	public static User getUser(AONContext ctx) {
+		return getUser(ctx,ctx.getUser());
+	}
+
 	public static User getUser(AONContext ctx, String login) {
 		ctx.checkRead();
 		Record5<Integer, Integer, String, String, Byte> record = 
@@ -548,5 +552,30 @@ public class SecurityDAO {
 					.setDescription(record.getValue(SCOPE.DESCRIPTION));
 		
 	}
+
+	public static Condition getDomainInheritanceCondition(AONContext ctx, Field<Integer> field) {
+		return (field.in(getInheritanceDomainIds(ctx))); 
+	}
+	
+	public static Integer[] getInheritanceDomainIds(AONContext ctx) {
+		return getInheritanceDomainIds(ctx, ctx.getDomainId());
+	}
+	
+	public static Integer[] getInheritanceDomainIds(AONContext ctx, int domain) {
+		Integer parentDomain = ctx.getDslContext()
+				.select(DOMAIN.PARENT)
+				.from(DOMAIN)
+				.where(DOMAIN.ID.eq(domain))
+				.and(DOMAIN.ENABLEHEREDITY.eq((byte) 1))
+				.fetch()
+				.stream()
+				.map( rec -> rec.getValue(DOMAIN.PARENT))
+				.findFirst()
+				.orElse( null );
+		return parentDomain == null 
+				? new Integer[]{domain}
+				: new Integer[]{domain,parentDomain};
+	}
+	
 }
 

@@ -1361,7 +1361,12 @@ public enum FiscalActivityInfoKey implements Serializable {
 	
 	public static FiscalActivityInfoKey safeValueOf(String value) {
 		if (value == null) return null;
-		return FiscalActivityInfoKey.valueOf(value);
+		try {
+			return FiscalActivityInfoKey.valueOf(value);	
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+		
 	}
 	
 }

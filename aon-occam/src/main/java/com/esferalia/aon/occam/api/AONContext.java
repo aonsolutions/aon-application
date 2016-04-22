@@ -165,7 +165,10 @@ public class AONContext {
 	}
 	
 	
-	// TODO here?
+	/**
+	 * @deprecated USE SecurityDAO.getDomainInheritanceCondition
+	 */
+	@Deprecated 
 	public Condition getDomainInheritanceCondition(Integer domainId,
 			TableField<? extends Record, java.lang.Integer> field) {
 		DomainRecord record = dslContext.fetchOne(DOMAIN,

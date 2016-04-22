@@ -11,7 +11,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
@@ -40,7 +40,7 @@ public class AccountEntryTest {
 	@Ignore
 	public void testEmptyDomain() {
 		AccountEntry accountEntry = new AccountEntry();
-		AON.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
+		ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
 	}
 	
 	@Test(expected=AonCoreException.class)
@@ -48,7 +48,7 @@ public class AccountEntryTest {
 	public void testEmptyDate() {
 		AccountEntry accountEntry = new AccountEntry();
 		accountEntry.setDomain(ctx.getDomainId());
-		AON.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
+		ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
 	}
 	
 	@Test(expected=AonCoreException.class)
@@ -57,13 +57,13 @@ public class AccountEntryTest {
 		AccountEntry accountEntry = new AccountEntry();
 		accountEntry.setDomain(ctx.getDomainId());
 		accountEntry.setEntryDate( AonDateUtils.getDate(1974, 5, 4) );
-		AON.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
+		ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
 	}
 	
 	@Test(expected=AonCoreException.class)
 	@Ignore
 	public void testWrongDomain() {
-		AccountPeriod period = AON.fetchPeriodByYear(ctx,1974);
+		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,1974);
 		if (period == null) {
 			period = new AccountPeriod();
 			period.setName("1974");
@@ -71,19 +71,19 @@ public class AccountEntryTest {
 			period.setDeadline( AonDateUtils.getDate(1974, 11, 31));
 			period.setStatus( AccountPeriodStatus.ACTIVE );
 			period.setDomain(ctx.getDomainId());
-			AON.insert(ctx, period);
+			ACCOUNTING.insert(ctx, period);
 		}
 		AccountEntry accountEntry = new AccountEntry();
 		accountEntry.setDomain(100); // Other
 		accountEntry.setEntryDate( AonDateUtils.getDate(1974, 5, 4) );
 		accountEntry.setPeriod(period.getId());
-		AON.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
+		ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
 	}
 	
 	@Test(expected=AonCoreException.class)
 	@Ignore
 	public void testEmptyTypeInsert() {
-		AccountPeriod period = AON.fetchPeriodByYear(ctx,1974);
+		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,1974);
 		if (period == null) {
 			period = new AccountPeriod();
 			period.setName("1974");
@@ -91,19 +91,19 @@ public class AccountEntryTest {
 			period.setDeadline( AonDateUtils.getDate(1974, 11, 31));
 			period.setStatus( AccountPeriodStatus.ACTIVE );
 			period.setDomain(ctx.getDomainId());
-			AON.insert(ctx, period);
+			ACCOUNTING.insert(ctx, period);
 		}
 		AccountEntry accountEntry = new AccountEntry();
 		accountEntry.setDomain(ctx.getDomainId());
 		accountEntry.setEntryDate( AonDateUtils.getDate(1974, 5, 4) );
 		accountEntry.setPeriod(period.getId());
-		AON.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
+		ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, accountEntry);
 	}
 	
 	@Test
 	@Ignore
 	public void testInsert() {
-		AccountPeriod period = AON.fetchPeriodByYear(ctx,1974);
+		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,1974);
 		if (period == null) {
 			period = new AccountPeriod();
 			period.setName("1974");
@@ -111,7 +111,7 @@ public class AccountEntryTest {
 			period.setDeadline( AonDateUtils.getDate(1974, 11, 31));
 			period.setStatus( AccountPeriodStatus.ACTIVE );
 			period.setDomain(ctx.getDomainId());
-			AON.insert(ctx, period);
+			ACCOUNTING.insert(ctx, period);
 		}
 		Date now = new Date();
 		AccountEntry ae = new AccountEntry();
@@ -127,7 +127,7 @@ public class AccountEntryTest {
 		ae.addDetail( getAccountEntryDetail(622581,"475100000","Hacienda Pública, acreedora por retenciones practicadas.","Nominas febrero",0,79.51,null,null,null,null) );
 		ae.addDetail( getAccountEntryDetail(622558,"465000000","Remuneraciones pendientes de pago.","Nominas febrero",0,2648.7,null,null,null,null) );
 		for (int i = 0; i < 1000 ; i++) {
-			AON.save(DOMAIN_NAME, DOMAIN_ID, USER, ae);
+			ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, ae);
 		}
 		System.out.println( (((new Date()).getTime() - now.getTime() )) + " Ms. ");
 		
@@ -135,7 +135,7 @@ public class AccountEntryTest {
 	
 //	@Test
 //	public void testUpdate() {
-//		AccountPeriod period = AON.fetchPeriod(ctx,
+//		AccountPeriod period = ACCOUNTING.fetchPeriod(ctx,
 //				ACCOUNT_PERIOD.NAME.equal("1974")
 //				.and(ACCOUNT_PERIOD.DOMAIN.equal(ctx.getDomainId()))
 //				);
@@ -149,16 +149,16 @@ public class AccountEntryTest {
 //				.fetchOne();
 //			if (record != null) {
 //				Integer maxValue = record.getValue(maxFunc);
-//				AccountEntry ae = AON.fetchOneAccountEntry(ctx,ACCOUNT_ENTRY.ID.equal(maxValue));	
+//				AccountEntry ae = ACCOUNTING.fetchOneAccountEntry(ctx,ACCOUNT_ENTRY.ID.equal(maxValue));	
 //				ae.setEntryDate( AonDateUtils.getSqlDate(1974, 4, 8) );
-//				AON.update(ctx, ae);
+//				ACCOUNTING.update(ctx, ae);
 //			}
 //		}
 //	}
 
 //	@Test
 //	public void testDelete() {
-//		AccountPeriod period = AON.fetchPeriod(ctx,
+//		AccountPeriod period = ACCOUNTING.fetchPeriod(ctx,
 //				ACCOUNT_PERIOD.NAME.equal("1974")
 //				.and(ACCOUNT_PERIOD.DOMAIN.equal(ctx.getDomainId()))
 //				);
@@ -172,9 +172,9 @@ public class AccountEntryTest {
 //				.fetchOne();
 //			if (record != null) {
 //				Integer maxValue = record.getValue(maxFunc);
-//				AccountEntry ae = AON.fetchOneAccountEntry(ctx,ACCOUNT_ENTRY.ID.equal(maxValue));	
+//				AccountEntry ae = ACCOUNTING.fetchOneAccountEntry(ctx,ACCOUNT_ENTRY.ID.equal(maxValue));	
 //				ae.setEntryDate( AonDateUtils.getSqlDate(1974, 4, 8) );
-//				AON.delete(ctx, ae);
+//				ACCOUNTING.delete(ctx, ae);
 //			}
 //		}
 //	}
@@ -182,7 +182,7 @@ public class AccountEntryTest {
 	@Test
 	public void testFetch() {
 		System.out.println(" ------- testFetch" );
-		Stream<AccountEntry> list = AON.getAccountEntries(ctx
+		Stream<AccountEntry> list = ACCOUNTING.getAccountEntries(ctx
 				,p -> p.getDomainProperty().eq(ctx.getDomainId())
 				,0,10);
 		list.forEach(accountEntry -> System.out.println(accountEntry) );

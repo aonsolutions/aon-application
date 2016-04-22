@@ -74,6 +74,17 @@ public class AonNumberUtils {
 		return 0;		
 	}
 
+	public static int toint(String value) {
+		if (!AonStringUtils.isBlank(value)) {
+			try {
+				return Integer.parseInt(value);
+			} catch (NumberFormatException e) {
+				// Nothing. returns 0.
+			}
+		}
+		return 0;		
+	}
+
 	public static String toString(Integer value) {
 		if (value == null) return null;
 		return value.toString();

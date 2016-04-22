@@ -78,6 +78,18 @@ public class AppParamDAO {
 			}
 		}
 	}
+	public static String fetchValue(AONContext ctx, AppParam param) {
+		ApplicationParameter ap = fetchOne(ctx, param);
+		return ap == null ? null : ap.getValue(); 
+	}
+	public static double fetchDoubleValue(AONContext ctx, AppParam param) {
+		ApplicationParameter ap = fetchOne(ctx, param);
+		return ap == null ? 0.0 : AonNumberUtils.todouble( ap.getValue()); 
+	}
+	public static int fetchIntValue(AONContext ctx, AppParam param) {
+		ApplicationParameter ap = fetchOne(ctx, param);
+		return ap == null ? 0 : AonNumberUtils.toint( ap.getValue()); 
+	}
 	
 	public static ApplicationParameter fetchOne(AONContext ctx, AppParam param) {
 		ctx.checkRead();

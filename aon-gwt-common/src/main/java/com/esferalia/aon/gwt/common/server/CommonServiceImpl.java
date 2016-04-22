@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.common.server;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
@@ -7,10 +8,13 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.shared.AonSQLException;
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.CreditorStatus;
@@ -19,6 +23,16 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @SuppressWarnings("serial")
 @WebServlet(name = "Common Servlet", urlPatterns = { "/aon_gwt_fiscal/Common " })
 public class CommonServiceImpl extends AonRemoteServiceServlet implements CommonService {
+
+	// --------------------------------------------------------- CONFIGURATION
+	@Override
+	public AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain) {
+		return AON.getConfiguration(currentDomainName, currentDomain,AonServletUtils.getLoggedUser(), null);
+	}
+	@Override
+	public AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain, Date atDate) {
+		return AON.getConfiguration(currentDomainName, currentDomain,AonServletUtils.getLoggedUser(), atDate);
+	}
 
 	// -------------------------------------------------------------- SECURITY
 	@Override
@@ -57,7 +71,7 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
 		 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
 			:(query);
-		return AON.getAccounts(domainName, domain,AonServletUtils.getLoggedUser(),
+		return ACCOUNTING.getAccounts(domainName, domain,AonServletUtils.getLoggedUser(),
 				p ->  p.getActiveProperty().eq((byte) 1)
 					.and(p.getCodeProperty().like(q)
 					 .or(p.getDescriptionProperty().like(q))
@@ -67,7 +81,7 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 
 	@Override
 	public Account getAccount(String domainName, int domain,String code) throws AonSQLException {
-		return AON.getAccount(domainName, domain,AonServletUtils.getLoggedUser(), code);
+		return ACCOUNTING.getAccount(domainName, domain,AonServletUtils.getLoggedUser(), code);
 	}
 	
 	// -------------------------------------------------------------- CREDITOR
@@ -81,6 +95,20 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 					.and(p.getDocumentProperty().like(q)
 					 .or(p.getNameProperty().like(q))
 					 .or(p.getAliasProperty().like(q)))
+				).collect(Collectors.toCollection(LinkedList::new));
+	}
+	@Override
+	public LinkedList<AccountingRegistry> getAccountingRegistries(String domainName, int domain, String query)
+			throws AonSQLException {
+		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
+			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
+				:(query);
+		return ACCOUNTING.getAccountingRegistries(domainName, domain,AonServletUtils.getLoggedUser(),
+				p ->     p.getDocumentProperty().like(q)
+					 .or(p.getNameProperty().like(q))
+					 .or(p.getAliasProperty().like(q))
+					 .or(p.getAccountCodeProperty().like(q))
+					 .or(p.getAccountDescriptionProperty().like(q))
 				).collect(Collectors.toCollection(LinkedList::new));
 	}
 

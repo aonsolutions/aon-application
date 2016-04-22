@@ -257,18 +257,18 @@ public interface Properties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<String> getNameProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getModificationDateProperty();
-		Property<String> getModificationUserProperty();
 		Property<Double> getPercentageProperty();
 		Property<Integer> getPurchaseAccountProperty();
 		Property<Integer> getSalesAccountProperty();
-		Property<Date> getStartDateProperty();
 		Property<Double> getSurchargeProperty();
 		Property<Byte> getTaxTypeProperty();
 		Property<Byte> getVatDeductionTypeProperty();
 		Property<Byte> getWithholdingTypeProperty();
+		
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
+		Property<String> getModificationUserProperty();
 	}
 	
 	public interface ProductCategoryProperties{

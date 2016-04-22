@@ -60,7 +60,7 @@ public class AccountBalancePanel extends DockLayoutPanel implements HasSelection
 				+ "             DEBE"
 				+ "            HABER"
 				+ "     SALDO DEUDOR"
-				+ "    SALDO ACREDOR");
+				+ "   SALDO ACREEDOR");
 		header.setStyleName(AON.AON_CSS.aonBold());
 		header.addStyleName(AON.AON_CSS.aonMarginTop());
 		header.addStyleName(AON.AON_CSS.aonBorderTop());

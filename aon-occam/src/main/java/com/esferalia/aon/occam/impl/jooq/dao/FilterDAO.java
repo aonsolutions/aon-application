@@ -78,6 +78,78 @@ public class FilterDAO implements Filter {
 		}
 		
 	}
+	public static class DateBetweenPropertyDAO implements Property<Date> {
+
+		private Field<java.sql.Date> fromDate;
+		private Field<java.sql.Date> toDate;
+
+		@Override
+		public Filter eq(Date t) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter ne(Date t) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter le(Date t) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter lt(Date t) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter gt(Date t) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter ge(Date t) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter in(Date[] t) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter isNull() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter isNotNull() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter like(Date t) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Filter between(Date min, Date max) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	}
 
 	public static class DatePropertyDAO implements Property<Date> {
 

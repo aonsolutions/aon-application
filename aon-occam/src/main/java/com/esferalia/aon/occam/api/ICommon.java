@@ -1,11 +1,13 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
@@ -24,6 +26,11 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 
 public interface ICommon {
+
+	// --------------------------------------------
+	// CONFIGURATION
+	// --------------------------------------------
+	public AonConfiguration getConfiguration(AONContext ctx, Date atDate);
 
 	// --------------------------------------------
 	// APPLICATION PARATEMER
@@ -87,4 +94,5 @@ public interface ICommon {
 	
 	//TAX
 	public Tax getTax(AONContext ctx, TaxFilter filter);
+
 }

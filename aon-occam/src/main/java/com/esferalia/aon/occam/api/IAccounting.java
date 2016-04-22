@@ -17,17 +17,20 @@ import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public interface IAccounting {
-
-	// 				   		  ACCOUNT
+	//		  	REGISTRY
+	public Stream<AccountingRegistry> getAccountingRegistries(AONContext ctx, AccountingRegistryFilter filter);
+	// 			ACCOUNT
 	public Account getAccount(AONContext ctx,Integer accountId);		
 	public Account getAccount(AONContext ctx,String code);
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter);
 
-	// 				   ACCOUNT PERIOD
+	// 			ACCOUNT PERIOD
 	public LinkedList<AccountPeriod> getDomainPeriods(AONContext ctx);
 	public AccountPeriod fetchPeriod(AONContext ctx,Date date);
 	public AccountPeriod fetchPeriod(AONContext ctx,Integer id);
@@ -36,7 +39,7 @@ public interface IAccounting {
 	public void update(AONContext ctx,AccountPeriod ap);
 	public void delete(AONContext ctx,AccountPeriod ap);
 
-	// 					ACCOUNT ENTRY
+	// 			ACCOUNT ENTRY
 	public AccountEntry getAccountEntry(AONContext ctx,Integer id);
 	public Stream<AccountEntry> getAccountEntries(AONContext ctx,AccountEntryParams params
 			, int offset, int numberOfRows);
@@ -49,11 +52,11 @@ public interface IAccounting {
 	public List<Integer> insertSalaryEntries(String domainName, int domain,String user,
 			Date from, Date to, String concept, Integer registryBank);
 
-	// 					      BALANCE
+	// 			BALANCE
 	public LinkedHashMap<String, AccountBalance> 
 		getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException;
 
-	// 					      STATEMENT
+	// 			STATEMENT
 	public Stream<AccountStatement> getAccountBalance(AONContext ctx, AccountStatementParams params) 
 			throws AonCoreException;
 	public Stream<AccountStatement> getAccountStatement(AONContext ctx, AccountStatementParams params)

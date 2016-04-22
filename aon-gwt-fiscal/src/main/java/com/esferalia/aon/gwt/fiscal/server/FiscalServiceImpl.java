@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.server.util.AONMVELUtils;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -823,20 +824,20 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	@Override
 	public LinkedList<AccountPeriod> getDomainPeriods(String domainName,
 			int domain) throws AonCoreException {
-		return AON.getDomainPeriods(domainName, domain, this.getUserLogin());
+		return ACCOUNTING.getDomainPeriods(domainName, domain, this.getUserLogin());
 	}
 	// --------------------------------------------------------------- ACCOUNT ENTRIES
 	@Override
 	public LinkedList<AccountEntry> getAccountEntries(String domainName,
 			int domain, final AccountEntryParams params,int offset, int limit) throws AonCoreException {
-		return AON.getAccountEntries(domainName, domain, this.getUserLogin(),
+		return ACCOUNTING.getAccountEntries(domainName, domain, this.getUserLogin(),
 				params, offset, limit);
 	}
 
 	@Override
 	public AccountEntry getAccountEntry(String domainName, int domain, int id)
 			throws AonCoreException {
-		LinkedList<AccountEntry> list = AON.getAccountEntries(
+		LinkedList<AccountEntry> list = ACCOUNTING.getAccountEntries(
 				domainName, domain, this.getUserLogin(), 
 				p -> p.getIdProperty().eq(id)
 				, 0, 1)
@@ -850,12 +851,12 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	@Override
 	public AccountEntry save(String domainName, int domain, AccountEntry ae)
 			throws AonCoreException {
-		return AON.save(domainName, domain, this.getUserLogin(), ae);
+		return ACCOUNTING.save(domainName, domain, this.getUserLogin(), ae);
 	}
 	@Override
 	public LinkedList<AccountEntry> getSalaryAccountEntries(String domainName,
 			int domain, Date from, Date to ) {
-		return AON.getAccountEntries(domainName, domain, this.getUserLogin(), 
+		return ACCOUNTING.getAccountEntries(domainName, domain, this.getUserLogin(), 
 				p -> p.getDomainProperty().eq(domain)
 					.and(p.getEntryDateProperty().between(from, to))
 					.and(p.getEntryTypeProperty().eq((byte) AccountEntryType.SALARY.ordinal()))
@@ -864,17 +865,17 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 
 	@Override
 	public void deleteAccountEntry(String domainName, int domain, Integer id) {
-		AON.deleteAccountEntry(domainName, domain, this.getUserLogin(), id);
+		ACCOUNTING.deleteAccountEntry(domainName, domain, this.getUserLogin(), id);
 	}
 
 	@Override
 	public LinkedList<AccountEntry> insertSalaryAccountEntries(
 			String domainName, int domain, Date from, Date to, String concept,
 			Integer registryBank) {
-		List<Integer> ids = AON.insertSalaryEntries(domainName, domain,
+		List<Integer> ids = ACCOUNTING.insertSalaryEntries(domainName, domain,
 				this.getUserLogin() , from, to, concept, registryBank);
 		final Integer[] arr = ids.toArray(new Integer[ids.size()]);  
-		return AON.getAccountEntries(domainName, domain, this.getUserLogin()
+		return ACCOUNTING.getAccountEntries(domainName, domain, this.getUserLogin()
 				, p -> p.getIdProperty().in(arr)
 						.and(p.getDomainProperty().eq(domain) )
 				, 0, 100);
@@ -882,12 +883,12 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	@Override
 	public AccountStatementReport getAccountStatement(String domainName,
 			int domain, AccountStatementParams params) throws AonCoreException {
-		return AON.getAccountStatement(domainName,domain,this.getUserLogin(),params);
+		return ACCOUNTING.getAccountStatement(domainName,domain,this.getUserLogin(),params);
 	}
 	@Override
 	public LinkedList<AccountStatement> getAccountBalance(String domainName,
 			int domain, AccountStatementParams params) throws AonCoreException {
-		return AON.getAccountBalance(domainName,domain,this.getUserLogin(),params)
+		return ACCOUNTING.getAccountBalance(domainName,domain,this.getUserLogin(),params)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	

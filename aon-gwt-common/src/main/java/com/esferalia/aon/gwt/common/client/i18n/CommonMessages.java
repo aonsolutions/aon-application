@@ -480,6 +480,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fecha")
 	String date();
 
+	@DefaultMessage("Fecha IVA")
+	String taxDate();
+
 	@DefaultMessage("No se han encontrado datos")
 	String noData();
 
@@ -1939,9 +1942,33 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fecha de emisi\u00F3n")
 	String issueDate();
 	
+	@DefaultMessage("Recargo equivalencia")
+	String surcharge();
+	
+	@DefaultMessage("Aplicar retenci\u00F3n")
+	String witholding();
+	
+	@DefaultMessage("R\u00E9gimen agricultura, ganader\u00EDa y pesca.")
+	String withholdingFarmer();
+	
+	@DefaultMessage("R\u00E9gimen de criterio de caja")
+	String vatAccrualPayment();
+
+	@DefaultMessage("Tipo de transacci\u00F3n")
+	String transactionType();
+
+	@DefaultMessage("Transacci\u00F3n")
+	String transaction();
+
+	@DefaultMessage("Servicio")
+	String service();
+
 	@DefaultMessage("Tipo de factura")
 	String invoiceType();
-	
+
+	@DefaultMessage("N\u00BA de factura")
+	String invoiceNumber();
+
 	@DefaultMessage("Ventas")
 	String sales();
 	

@@ -21,7 +21,7 @@ import org.jooq.Result;
 import com.esferalia.aon.jooq.tables.records.FsModel200DetailRecord;
 import com.esferalia.aon.jooq.tables.records.FsModel200Record;
 import com.esferalia.aon.jooq.tables.records.FsModel200RegistryRecord;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
@@ -492,7 +492,7 @@ public class Mod2002013DAO  {
 		}
 
 		Mod2002013MVELContext mvelCtx = new Mod2002013MVELContext( mod200, ACCEPTER );
-		mvelCtx.setAccounts( AON.getAccountBalances(ctx, getParams(ctx,mod200)) );
+		mvelCtx.setAccounts( ACCOUNTING.getAccountBalances(ctx, getParams(ctx,mod200)) );
 		mvelCtx.setExpressionMap(INITIALIZE_EXPRESSION_MAP);
 		addCharacters(mvelCtx,mod200);
 		addBalanceCharacters(mvelCtx,mod200);

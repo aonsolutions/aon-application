@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
 import java.util.Date;
-import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -24,9 +23,9 @@ import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
-import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
-import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -55,6 +54,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -79,7 +79,35 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	private static final AccountEntryModuleBinder BINDER = GWT
 			.create(AccountEntryModuleBinder.class);
+	
+	public static interface IAccountEntryModuleCallback {
+		AccountEntryObject getAccountEntry();
+		void onShowBalance(Account account);
+		AonConfiguration getConfiguration();
+	}
+	
+	private final IAccountEntryModuleCallback callback = new IAccountEntryModuleCallback() {
+		
+		@Override
+		public void onShowBalance(Account account) {
+			openFootPanelIfNeeded();
+			Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
+			balancePanel.add(account, from, entryDate.getValue());			
+		}
 
+		@Override
+		public AccountEntryObject getAccountEntry() {
+			return current;
+		}
+
+		@Override
+		public AonConfiguration getConfiguration() {
+			return configuration;
+		}
+	};
+
+	AonConfiguration configuration;
+	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 	@UiField
@@ -107,11 +135,13 @@ public class AccountEntryModule extends MainEntryPoint {
 	@UiField
 	DateBoxEx entryDate;
 	@UiField
+	ListBox activity;
+	@UiField
 	InlineLabel journal;
 	@UiField
 	CheckBox confidential;
 	@UiField
-	InlineLabel type;
+	CheckBox invoice;
 	@UiField
 	Button commentsButton;
 	@UiField
@@ -138,7 +168,6 @@ public class AccountEntryModule extends MainEntryPoint {
 	
 	
 	private boolean periodErrorShown;
-	private User user;
 	private AccountEntryObject current;
 
 	@Override
@@ -163,40 +192,18 @@ public class AccountEntryModule extends MainEntryPoint {
 			
 			@Override
 			public void onSelection(SelectionEvent<Integer> event) {
-				if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
-					splitLayoutPanel.setWidgetSize(footPanel,
-							Window.getClientHeight() / 4);
-					splitLayoutPanel.animate(500);
-				}
+				openFootPanelIfNeeded();
 			}
 		});
 		accept.setAccessKey('G');
 		reset.setAccessKey('N');
-		fiscalService.getDomainPeriods(getCurrentDomainName(),
+		commonService.getAonConfiguration(getCurrentDomainName(),
 				getCurrentDomain(),
-				new AsyncCallback<LinkedList<AccountPeriod>>() {
+				new AsyncCallback<AonConfiguration>() {
 					@Override
-					public void onSuccess(LinkedList<AccountPeriod> result) {
-						if (result != null && !result.isEmpty()) {
-							period.fill(result);
-							commonService.getCurrentUser(getCurrentDomainName(),
-									getCurrentDomain(), new AsyncCallback<User>() {
-
-										@Override
-										public void onSuccess(User result) {
-											setUser(result);
-											journalPanel.setUser(result);
-											reset();
-										}
-
-										@Override
-										public void onFailure(Throwable caught) {
-											invalidateModule("Imposible determinar el usuario conectado");
-										}
-									});
-						} else {
-							invalidateModule(AON.MSG.noActiveAccountPeriod());
-						}
+					public void onSuccess(AonConfiguration result) {
+						configuration = result;
+						reset();
 					}
 
 					@Override
@@ -216,15 +223,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		accept.setVisible(false);
 		remove.setVisible(false);
 		audit.setVisible(false);
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-		confidential.setVisible(user.hasConfidentialityRole());
 	}
 
 	public static native String getCurrentDomainName()
@@ -255,6 +253,12 @@ public class AccountEntryModule extends MainEntryPoint {
 		splitLayoutPanel.animate(500);
 	}
 
+	private void openFootPanelIfNeeded() {
+		if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
+			openFootPanel();
+		}
+	}
+	
 	private void openFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
 		splitLayoutPanel.animate(500);
@@ -330,7 +334,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		journal.setText(AonMathUtils.toInt(current.getAccountEntry()
 				.getJournal()) == 0 ? AonStringUtils.EMPTY : AON.MSG.journal()
 				+ AonStringUtils.SPACE + current.getAccountEntry().getJournal());
-		type.setText(AON.MSG.accountEntryType(current.getAccountEntry().getEntryType()));
 		statusMsg.setText(AonStringUtils.EMPTY);
 		statusMsg.removeStyleName(AON.AON_CSS.aonInfoMessage());
 		
@@ -369,11 +372,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		tab.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
-				if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
-					splitLayoutPanel.setWidgetSize(footPanel,
-							Window.getClientHeight() / 4);
-					splitLayoutPanel.animate(500);
-				}
+				openFootPanelIfNeeded();
 				tabLayout.selectTab(BALANCES_TAB);
 				Account account = event.getSelectedItem();
 				Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
@@ -611,22 +610,41 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	// ---------------------------------------------------------------- ACTION
 	private void reset() {
-		this.current = AccountEntryObject.newInstance(getCurrentDomainName(),
-				getCurrentDomain());
-		if (entryDate.getValue() != null) {
-			this.current.getAccountEntry().setEntryDate(entryDate.getValue());
-		}
-		this.current.getAccountEntry().setPeriod(
-				AonNumberUtils.toInteger(period.getSelectedValue()));
-		this.current.getAccountEntry().setDirty(false);
-		syncCurrent();
-		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			public void execute() {
-				entryDate.setFocus(true);
-				entryDate.hideDatePicker();
-				entryDate.getTextBox().selectAll();
+		confidential.setVisible(configuration.getUser().hasConfidentialityRole());
+		journalPanel.setUser(configuration.getUser());
+		if (configuration.getPeriods() != null && !configuration.getPeriods().isEmpty()) {
+			period.fill(configuration.getPeriods());
+			this.current = AccountEntryObject.newInstance(getCurrentDomainName(),getCurrentDomain());
+			if (entryDate.getValue() != null) {
+				this.current.getAccountEntry().setEntryDate(entryDate.getValue());
 			}
-		});
+			if (configuration.getActivities() != null && !configuration.getActivities().isEmpty()) {
+				activity.setVisible(true);
+				activity.addItem("-- Todas --", (String) null);
+				activity.setSelectedIndex(0);
+				int i = 1;
+				for (EnterpriseActivity ea : configuration.getActivities()) {
+					activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
+					if (ea.isPrincipal()) activity.setSelectedIndex(i);
+					i++;
+				}
+			} else {
+				activity.setVisible(false);
+			}
+			
+			this.current.getAccountEntry().setPeriod(AonNumberUtils.toInteger(period.getSelectedValue()));
+			this.current.getAccountEntry().setDirty(false);
+			syncCurrent();
+			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+				public void execute() {
+					entryDate.setFocus(true);
+					entryDate.hideDatePicker();
+					entryDate.getTextBox().selectAll();
+				}
+			});
+		} else {
+			invalidateModule(AON.MSG.noActiveAccountPeriod());
+		}
 	}
 
 	private void addToSessionLog(AccountEntry entry) {
@@ -643,14 +661,36 @@ public class AccountEntryModule extends MainEntryPoint {
 				.setToDate(entryDate.getValue()));
 	}
 
+	@UiHandler("invoice")
+	public void onClickInvoice(ClickEvent event) {
+		if (invoice.getValue()) {
+			editInvoice();
+		} else {
+			closeWizard();
+		}
+	}
+
+	private void editInvoice() {
+		InvoicePanel invoicePanel = new InvoicePanel(callback);
+		wizardPanel.setWidget(invoicePanel);
+		openWizard();	
+		invoicePanel.registryBox.setFocus(true);
+	}
+	
+	private void openWizard() {
+		splitLayoutPanel.setWidgetSize(wizardPanel, 250);
+		splitLayoutPanel.animate(500);
+	}
+
+	private void closeWizard() {
+		splitLayoutPanel.setWidgetSize(wizardPanel, 0);
+		splitLayoutPanel.animate(500);
+	}
+
+	private Widget getInvoicePanel() {
+		ScrollPanel invoicePanel = new ScrollPanel();
+		invoicePanel.setStyleName(AON.AON_CSS.aonPadding());
+		invoicePanel.add(new Label("Factura"));
+		return invoicePanel;
+	}
 }
-
-
-//if (splitLayoutPanel.getWidgetSize(wizardPanel) == 0) {
-//splitLayoutPanel.setWidgetSize(wizardPanel, 105);
-//splitLayoutPanel.animate(500);
-//} else {
-//splitLayoutPanel.setWidgetSize(wizardPanel, 0);
-//splitLayoutPanel.animate(500);
-//}
-//wizardPanel.setWidget(root);

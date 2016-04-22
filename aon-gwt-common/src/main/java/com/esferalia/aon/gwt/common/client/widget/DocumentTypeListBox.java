@@ -10,10 +10,10 @@ public class DocumentTypeListBox extends ListBox {
 	private static final CommonMessages MSG = GWT.create(CommonMessages.class);
 
 	public DocumentTypeListBox() {
-		setWidth("120px");
+		setWidth("50px");
 		addItem("","------");
 		for (DocumentType d : DocumentType.values()) {
-			addItem(d.toString(),MSG.documentType( d ));	
+			addItem(d.getDescription(),MSG.documentType( d ));	
 		}
 	}
 

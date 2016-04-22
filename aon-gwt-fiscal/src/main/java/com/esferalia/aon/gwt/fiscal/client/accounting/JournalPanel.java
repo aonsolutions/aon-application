@@ -70,7 +70,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	private TextBox document;
 	private Button filter;
 	
-	private MutableInt searchEnabled = new MutableInt( 0 ); 
+	final private MutableInt searchEnabled = new MutableInt( 0 ); 
 	
 	private int lastScrollPos = 0;
 	

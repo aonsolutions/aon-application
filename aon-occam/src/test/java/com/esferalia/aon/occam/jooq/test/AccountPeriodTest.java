@@ -8,7 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.code.aon.pool.AonConnectionException;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
@@ -32,19 +32,19 @@ public class AccountPeriodTest {
 	@Test(expected=AonCoreException.class)
 	public void testPeriodEmptyInitiaionDate() {
 		AccountPeriod period = new AccountPeriod();
-		AON.insert(ctx, period);
+		ACCOUNTING.insert(ctx, period);
 	}
 
 	@Test(expected=AonCoreException.class)
 	public void testPeriodEmptyDeadline() {
 		AccountPeriod period = new AccountPeriod();
 		period.setInitiationDate( AonDateUtils.getDate(2014, 0, 1));
-		AON.insert(ctx, period);
+		ACCOUNTING.insert(ctx, period);
 	}
 
 	@Test(expected=AonCoreException.class)
 	public void testPeriodInitialDateOverlap() {
-		AccountPeriod period = AON.fetchPeriodByYear(ctx,1974);
+		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,1974);
 		if (period == null) {
 			period = new AccountPeriod();
 			period.setName("1974");
@@ -52,7 +52,7 @@ public class AccountPeriodTest {
 			period.setDeadline( AonDateUtils.getDate(1974, 11, 31));
 			period.setDomain(ctx.getDomainId());
 			period.setStatus( AccountPeriodStatus.ACTIVE );
-			AON.insert( ctx , period);
+			ACCOUNTING.insert( ctx , period);
 		}
 		period = new AccountPeriod();
 		period.setName("1975");
@@ -60,12 +60,12 @@ public class AccountPeriodTest {
 		period.setDeadline( AonDateUtils.getDate(1975, 4, 31));
 		period.setStatus( AccountPeriodStatus.ACTIVE );
 		period.setDomain(ctx.getDomainId());
-		AON.insert(ctx, period);
+		ACCOUNTING.insert(ctx, period);
 	}
 
 	@Test(expected=AonCoreException.class)
 	public void testPeriodDeadlineOverlap() {
-		AccountPeriod period = AON.fetchPeriodByYear(ctx,1974);
+		AccountPeriod period = ACCOUNTING.fetchPeriodByYear(ctx,1974);
 		if (period == null) {
 			period = new AccountPeriod();
 			period.setName("1974");
@@ -73,14 +73,14 @@ public class AccountPeriodTest {
 			period.setDeadline( AonDateUtils.getDate(1974, 11, 31));
 			period.setStatus( AccountPeriodStatus.ACTIVE );
 			period.setDomain(ctx.getDomainId());
-			AON.insert(ctx, period);
+			ACCOUNTING.insert(ctx, period);
 		}
 		period = new AccountPeriod();
 		period.setName("1973");
 		period.setInitiationDate( AonDateUtils.getDate(1973, 5, 1));
 		period.setDeadline( AonDateUtils.getDate(1974, 4, 31));
 		period.setDomain(ctx.getDomainId());
-		AON.insert(ctx, period);
+		ACCOUNTING.insert(ctx, period);
 	}
 
 	@AfterClass
