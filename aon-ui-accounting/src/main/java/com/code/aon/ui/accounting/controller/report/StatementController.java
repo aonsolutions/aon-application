@@ -24,7 +24,7 @@ import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
@@ -138,7 +138,7 @@ public class StatementController extends BasicController {
 		if (getParams().isNotEmptyDocumentNumber()) {
 			params.setDocumentNumber(getParams().getDocumentNumber() );
 		}
-		AccountStatementReport asr = AON.getAccountStatement(domainName, domainId, user, params);
+		AccountStatementReport asr = ACCOUNTING.getAccountStatement(domainName, domainId, user, params);
 		for (AccountStatement as : asr.getSummary()) {
 			if (as.getType() == 0) {
 				Balance balance = new Balance();
