@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7705eda3-9c23-4304-ad87-aeb921515614">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="284"/>
+	<property name="ireport.y" value="282"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.code.aon.common.util.CommonUtil"/>
 	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
@@ -60,6 +60,7 @@
 		<field name="amount" class="java.lang.Double"/>
 	</subDataset>
 	<subDataset name="fills" uuid="50fe4606-92e3-421a-8239-17a2559423fa"/>
+	<scriptlet name="salaryScriptlet" class="com.esferalia.aon.ui.payroll.utils.SalaryReportScriptlet"/>
 	<queryString language="hql">
 		<![CDATA[FROM Salary WHERE Id=9]]>
 	</queryString>
@@ -98,9 +99,6 @@
 		<variableExpression><![CDATA[new java.text.DecimalFormat("#,##0.00")]]></variableExpression>
 		<initialValueExpression><![CDATA[new java.text.DecimalFormat("#,##0.00")]]></initialValueExpression>
 	</variable>
-	<background>
-		<band splitType="Stretch"/>
-	</background>
 	<title>
 		<band height="16">
 			<staticText>
@@ -914,10 +912,8 @@
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="997fee8c-3a23-4ff9-a1c7-d6fff97ae283" style="total1" x="301" y="49" width="97" height="13"/>
-					<textElement>
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getTotalCommonBase() == 0.00 ? "" : $F{salary}.getTotalCommonBase()]]></textFieldExpression>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getCgcBaseEnterprise()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="92e88936-28dd-41f5-9333-e782bcae9da8" style="title2_dotts" x="24" y="68" width="127" height="52"/>
@@ -929,10 +925,8 @@
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="66708b1e-2b43-4d37-8030-126274b84e60" style="total1" x="301" y="87" width="97" height="13"/>
-					<textElement>
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getTotalProfessionalBase()]]></textFieldExpression>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getCgpBaseEnterprise()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="cad397fe-d6f3-44f2-a2e7-4930284948ee" style="title2_dotts" x="24" y="120" width="277" height="13"/>
@@ -944,10 +938,8 @@
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="3d802654-cdd3-4ab3-bb1d-d91ba4a598b6" style="total1" x="301" y="133" width="97" height="13"/>
-					<textElement>
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getOvertimeBase() != 0.00?$F{salary}.getOvertimeBase():0.00]]></textFieldExpression>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getOvertimeBase()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="33a49ae7-d5a3-4bf6-b30e-d486dc0d6c7f" style="title2_dotts" x="24" y="159" width="277" height="13"/>
@@ -956,10 +948,8 @@
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="3de695d2-cb7d-4993-b3bc-ed9c95c87b60" style="total1" x="301" y="159" width="97" height="13"/>
-					<textElement>
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getIrpfBase() == 0.00 ? "": $F{salary}.getIrpfBase()]]></textFieldExpression>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getIrpfBase()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="0f102d00-044a-49fd-b79f-675568e8fc89" style="title2_dotts" x="151" y="68" width="150" height="13"/>
@@ -993,9 +983,9 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getEnterpriseCosts().getCommonContingency().getAmount() == 0.00 ? null : new Double($F{salary}.getEnterpriseCosts().getCommonContingency().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getCgcEnterprise()]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
 					<reportElement uuid="528c9dd8-e389-4d2a-aa86-887ac4562226" style="total1" mode="Transparent" x="403" y="49" width="45" height="13"/>
 					<box>
 						<bottomPen lineWidth="0.75"/>
@@ -1003,14 +993,9 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getCommonContingency()==null
-|| $F{salary}.getEnterpriseCosts().getCommonContingency().getAmount()==0.00)?null:
-($V{DoubleFormater}.format(
-    CommonUtil.round($F{salary}.getEnterpriseCosts().getCommonContingency().getAmount()
-    / ($F{salary}.getTotalCommonBase()) * 100))
-+ " %")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getCgcPercentEnterprise()]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
 					<reportElement uuid="4f9ef68c-73ab-4ee1-8c98-e6aa3bafc8d7" style="total1" mode="Transparent" x="403" y="68" width="45" height="13"/>
 					<box>
 						<bottomPen lineWidth="0.75"/>
@@ -1018,14 +1003,9 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getAtepIt()==null
-|| $F{salary}.getEnterpriseCosts().getAtepIt().getAmount()==0.00)?null:
-(($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getAtepIt().getAmount()
-    + $F{salary}.getEnterpriseCosts().getAtepIms().getAmount())
-    / ($F{salary}.getTotalProfessionalBase()) * 100))
-+ " %")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getAtEpPercentEnterprise()]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
 					<reportElement uuid="f9d5017e-c52c-4510-935c-87456a6482c5" style="total1" mode="Transparent" x="403" y="107" width="45" height="13"/>
 					<box>
 						<bottomPen lineWidth="0.75"/>
@@ -1033,13 +1013,9 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getFogasa()==null
-|| $F{salary}.getEnterpriseCosts().getFogasa().getAmount()==0.00)?null:
-($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getFogasa().getAmount()
-    / ($F{salary}.getTotalProfessionalBase()) * 100))
-+ " %")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getFogasaPercent()]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
 					<reportElement uuid="89dee653-a05b-46f4-be1c-d093b2c33e78" style="total1" mode="Transparent" x="403" y="81" width="45" height="13"/>
 					<box>
 						<bottomPen lineWidth="0.75"/>
@@ -1047,13 +1023,9 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getUnemployment()==null
-|| $F{salary}.getEnterpriseCosts().getUnemployment().getAmount()==0.00)?null:
-($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getUnemployment().getAmount()
-    / ($F{salary}.getTotalProfessionalBase()) * 100))
-+ " %")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getUnemploymentPercentEnterprise()]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
 					<reportElement uuid="b12eb411-d57e-4203-a00f-4c36930788f3" style="total1" mode="Transparent" x="403" y="94" width="45" height="13"/>
 					<box>
 						<bottomPen lineWidth="0.75"/>
@@ -1061,13 +1033,9 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getJobTraining()==null
-|| $F{salary}.getEnterpriseCosts().getJobTraining().getAmount()==0.00)?null:
-($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getJobTraining().getAmount()
-    / ($F{salary}.getTotalProfessionalBase()) * 100))
-+ " %")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getFpPercentEnterprise()]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
 					<reportElement uuid="afaee53d-9218-4f0d-ba35-12951111b4d3" style="total1" mode="Transparent" x="403" y="133" width="45" height="13"/>
 					<box>
 						<bottomPen lineWidth="0.75"/>
@@ -1075,11 +1043,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getStructuralOvertime()==null
-|| $F{salary}.getEnterpriseCosts().getStructuralOvertime().getAmount()==0.00)?(null):
-($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getStructuralOvertime().getAmount()
-/($F{salary}.getOvertimeBase()==0.00?1:$F{salary}.getOvertimeBase()) * 100))
-+ " %")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getOvertimePercent()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="f8ad3038-88c7-4826-8f1f-93cfea63518f" style="total1" x="448" y="133" width="97" height="13"/>
@@ -1089,8 +1053,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getEnterpriseCosts().getStructuralOvertime().getAmount() == 0.00 ? 0.00 :
-    new Double($F{salary}.getEnterpriseCosts().getStructuralOvertime().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getOvertime()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="bc5ed11b-7789-4280-a757-ca267fffd722" style="total1" x="448" y="68" width="97" height="13"/>
@@ -1100,8 +1063,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getAtepIt().getAmount() == 0.00 ? 0.00 : new Double($F{salary}.getEnterpriseCosts().getAtepIt().getAmount()))
-+ ($F{salary}.getEnterpriseCosts().getAtepIms().getAmount() == 0.00 ? 0.00 : new Double($F{salary}.getEnterpriseCosts().getAtepIms().getAmount()))]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getAtEpEnterprise()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="83a43d42-eff9-4b7a-a2b1-cdcc93012ec1" style="total1" x="448" y="94" width="97" height="13"/>
@@ -1111,7 +1073,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getEnterpriseCosts().getJobTraining().getAmount() == 0.00 ? null : new Double($F{salary}.getEnterpriseCosts().getJobTraining().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getFpEnterprise()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="441a7674-74fa-4d9b-8eb0-3f9e8ea3b86f" style="total1" x="448" y="107" width="97" height="13"/>
@@ -1121,7 +1083,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getEnterpriseCosts().getFogasa().getAmount() == 0.00 ? null : new Double($F{salary}.getEnterpriseCosts().getFogasa().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getFogasa()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="114b1779-fbbb-483b-af32-1f46b0b2b909" style="total1" x="448" y="81" width="97" height="13"/>
@@ -1131,7 +1093,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getEnterpriseCosts().getUnemployment().getAmount() == 0.00 ? null : new Double($F{salary}.getEnterpriseCosts().getUnemployment().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getUnemploymentEnterprise()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="1ef50360-f6dc-4d53-b885-dfb7118a821f" style="title2_dotts" x="151" y="133" width="150" height="13"/>
@@ -1147,12 +1109,10 @@
 				</staticText>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="6e5d9d11-887b-4937-ba6a-8ac3e3700987" style="total1" x="301" y="146" width="97" height="13"/>
-					<textElement>
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getNonEstructuralOvertimeBase() != 0.00?$F{salary}.getNonEstructuralOvertimeBase():0.00]]></textFieldExpression>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonEstructuralOvertimeBase()]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
 					<reportElement uuid="247cf075-9ba1-46f1-a36b-c5cd39c3eb68" style="total1" mode="Transparent" x="403" y="146" width="45" height="13"/>
 					<box>
 						<bottomPen lineWidth="0.75"/>
@@ -1160,11 +1120,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[($F{salary}.getEnterpriseCosts().getNonStructuralOvertime()==null
-|| $F{salary}.getEnterpriseCosts().getNonStructuralOvertime().getAmount()==0.00)?(null):
-($V{DoubleFormater}.format(CommonUtil.round($F{salary}.getEnterpriseCosts().getNonStructuralOvertime().getAmount()
-/($F{salary}.getNonEstructuralOvertimeBase()==0.00?1:$F{salary}.getNonEstructuralOvertimeBase()) * 100))
-+ " %")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonEstructuralOvertimePercent()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="8ca26f73-985c-436c-8fe1-e0541744275b" style="total1" x="448" y="146" width="97" height="13"/>
@@ -1174,8 +1130,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getEnterpriseCosts().getNonStructuralOvertime().getAmount() == 0.00 ? 0.00 :
-    new Double($F{salary}.getEnterpriseCosts().getNonStructuralOvertime().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonEstructuralOvertime()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="3aaf2544-b97f-44e5-9a61-74d5ccf5d719" style="title2" x="14" y="29" width="10" height="13"/>
