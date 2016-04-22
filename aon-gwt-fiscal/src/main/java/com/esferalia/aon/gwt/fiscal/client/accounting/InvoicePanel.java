@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
@@ -13,12 +15,15 @@ import com.esferalia.aon.gwt.common.client.widget.VatDeductionTypeListBox;
 import com.esferalia.aon.gwt.common.client.widget.WithholdingTypeListBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -32,6 +37,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RequiresResize;
@@ -68,7 +74,7 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	AccountBox expAccount;
 
 	@UiField
-	FlowPanel withholdingPanel;
+	Label withholdingLabel;
 	@UiField
 	ListBox withholdingTaxs;
 	@UiField
@@ -81,7 +87,7 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	AccountBox withholdingAccount;
 	
 	@UiField
-	FlowPanel vatPanel;
+	HTMLPanel vatPanel;
 	@UiField
 	ListBox vatTaxs;
 	@UiField
@@ -91,14 +97,16 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	@UiField
 	DoubleBox vatQuota;
 	@UiField
-	DoubleBox surchargePercent;
-	@UiField
-	DoubleBox surchargeQuota;
-	@UiField
 	VatDeductionTypeListBox vatDeductionType;
 	@UiField(provided=true)
 	AccountBox vatAccount;
 	
+	@UiField
+	Label surchargeLabel;
+	@UiField
+	DoubleBox surchargePercent;
+	@UiField
+	DoubleBox surchargeQuota;
 	
 	@UiField
 	Label invoiceTypeLabel;
@@ -154,7 +162,7 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 		invoice = new AccountingInvoice();
 		invoiceDataPanel.setVisible(false);
 		expAccountPanel.setVisible(false);
-		withholdingPanel.setVisible(false);
+		enableWithholdingIfNeeded();
 		vatPanel.setVisible(false);
 		eastPanelInner.setVisible(false);
 
@@ -165,6 +173,21 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 		invoicePanelVisitor = new InvoicePanelVisitor();
 	}
 	
+	private void enableWithholdingIfNeeded() {
+		withholdingLabel.setVisible(withholding.getValue());
+		withholdingTaxs.setVisible(withholding.getValue());
+		withholdingPercent.setVisible(withholding.getValue());
+		withholdingQuota.setVisible(withholding.getValue());
+		withholdingAccount.setVisible(withholding.getValue());
+		withholdingType.setVisible(withholding.getValue());
+	}
+	
+	private void enableSurchargeIfNeeded() {
+		surchargeLabel.setVisible(surcharge.getValue());
+		surchargePercent.setVisible(surcharge.getValue());
+		surchargeQuota.setVisible(surcharge.getValue());
+	}
+
 	private void fillSalesSeries() {
 		if (callback.getConfiguration().getInvoiceSalesSeries() != null && callback.getConfiguration().getInvoiceSalesSeries().size() > 0) {
 			series.addItem(" --- ", (String) null);
@@ -247,9 +270,10 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 						:tax.getPurchaseAccount();
 				if (taxAccount == null) {
 					taxAccount = invoice.getInvoiceType() == InvoiceType.SALES
-									?callback.getConfiguration().getDefaultPaidRetAccount()
-									:callback.getConfiguration().getDefaultChargedRetAccount();
+						?callback.getConfiguration().getDefaultChargedRetAccount()
+						:callback.getConfiguration().getDefaultPaidRetAccount();
 				}
+				withholdingType.setValue(tax.getWithholdingType());
 				withholdingAccount.setAccount(taxAccount);
 			}
 		}
@@ -266,9 +290,10 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 							:tax.getPurchaseAccount();
 					if (taxAccount == null) {
 						taxAccount = invoice.getInvoiceType() == InvoiceType.SALES
-										?callback.getConfiguration().getDefaultPaidVatAccount()
-										:callback.getConfiguration().getDefaultChargedVatAccount();
+							?callback.getConfiguration().getDefaultChargedVatAccount()
+							:callback.getConfiguration().getDefaultPaidVatAccount();
 					}
+				vatDeductionType.setValue(tax.getVatDeductionType());
 				vatAccount.setAccount(taxAccount);
 			}
 		}
@@ -276,22 +301,34 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 
 	@UiHandler("withholding")
 	public void onValueChangeWithholding(ValueChangeEvent<Boolean> event) {
-		withholdingPanel.setVisible(withholding.getValue());
+		enableWithholdingIfNeeded();
 		withholdingType.setValue(withholding.getValue()?WithholdingType.PROFESSIONAL:null);
 	}
 	@UiHandler("surcharge")
 	public void onValueChangeSurcharge(ValueChangeEvent<Boolean> event) {
-		surchargePercent.setVisible(surcharge.getValue());
-		surchargeQuota.setVisible(surcharge.getValue());
+		enableSurchargeIfNeeded();
 	}
-	
+
 	@UiHandler("expAccount")
 	public void onSelectExpAccount(SelectionEvent<Account> event) {
 		callback.onShowBalance(event.getSelectedItem());
 	}
 	@UiHandler("invoiceTotal")
 	public void onValueChangeInvoiceTotal(ValueChangeEvent<Double> event) {
-		calculate();
+		if (invoiceTotal.getValue() == null) invoiceTotal.setValue(0.0, false); 
+		if (vatPercent.getValue() == null) vatPercent.setValue(0.0, false);  
+		double total = invoiceTotal.getValue();
+		double coef = (1 + (vatPercent.getValue() /100));
+		if (surcharge.getValue()) {
+			if (surchargePercent.getValue() == null) surchargePercent.setValue(0.0, false);
+			coef = coef + (surchargePercent.getValue()/100);
+		}
+		if (withholding.getValue()) {
+			if (withholdingPercent.getValue() == null) withholdingPercent.setValue(0.0, false);
+			coef = coef - (withholdingPercent.getValue() / 100);	
+		}
+		double tb = total / coef; 
+		taxableBase.setValue(tb,true);
 	}
 	@UiHandler("taxableBase")
 	public void onValueChangeTaxableBase(ValueChangeEvent<Double> event) {
@@ -299,7 +336,27 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	}
 	
 	private void calculate() {
+		if (taxableBase.getValue() == null) taxableBase.setValue(0.0, false);
+		if (vatPercent.getValue() == null) vatPercent.setValue(0.0, false);
+		vatQuota.setValue( AonMathUtils.round(taxableBase.getValue() * vatPercent.getValue() / 100 ) );
+		if (surcharge.getValue()) {
+			if (surchargePercent.getValue() == null) surchargePercent.setValue(0.0, false);
+			surchargeQuota.setValue( AonMathUtils.round(taxableBase.getValue() * surchargePercent.getValue() / 100 ) );
+		} else {
+			surchargeQuota.setValue( 0.0 );
+		}
 		
+		if (withholding.getValue()) {
+			if (withholdingPercent.getValue() == null) withholdingPercent.setValue(0.0, false);
+			withholdingQuota.setValue( AonMathUtils.round(taxableBase.getValue() * withholdingPercent.getValue() / 100 ) );	
+		} else {
+			withholdingQuota.setValue( 0.0 );
+		}
+		invoiceTotal.setValue( AonMathUtils.round(taxableBase.getValue()
+				+ vatQuota.getValue() 
+				+ surchargeQuota.getValue() 
+				- withholdingQuota.getValue() ));
+		paintEntry();
 	}
 	
 	private class InvoicePanelVisitor implements IAccountingRegistryTypeVisitor {
@@ -317,11 +374,12 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 			series.setFocus(true);
 			onValueChangeSurcharge(null);
 			onValueChangeWithholding(null);
+			onChangeVatTaxs(null);
+			onChangeWithholdingTaxs(null);
 			Account a = callback.getConfiguration().getDefaultSalesAccount();
 			if (a != null) {
 				expAccount.setValue(a.getId(), a.getCode(), a.getDescription());
 			}
-			number.setFocus(true);
 		}
 
 		@Override
@@ -337,7 +395,8 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 			withholdingType.setVisible(withholding.getValue());
 			onValueChangeSurcharge(null);
 			onValueChangeWithholding(null);
-			referenceCode.setFocus(true);
+			onChangeVatTaxs(null);
+			onChangeWithholdingTaxs(null);
 		}
 
 		@Override
@@ -352,13 +411,66 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 			referenceCode.setFocus(true);
 			onValueChangeSurcharge(null);
 			onValueChangeWithholding(null);
+			onChangeVatTaxs(null);
+			onChangeWithholdingTaxs(null);
 			Account a = callback.getConfiguration().getDefaultPurchaseAccount();
 			if (a != null) {
 				expAccount.setValue(a.getId(), a.getCode(), a.getDescription());	
 			}
-			referenceCode.setFocus(true);
 		}
 		
 	}
 	
+	private void paintEntry() {
+		AccountEntry ae = callback.getAccountEntry().getAccountEntry();
+		LinkedList<AccountEntryDetail> details = new LinkedList<AccountEntryDetail>();
+		double total = AonMathUtils.round(invoiceTotal.getValue());
+		details.add( new AccountEntryDetail()
+				.setAccount(invoice.getRegistryAccountId())
+				.setAccountCode(invoice.getRegistryAccountCode())
+				.setAccountDescription(invoice.getRegistryAccountDescription())
+				.setDebit(invoice.getInvoiceType() == InvoiceType.SALES?total:0.0)
+				.setCredit(invoice.getInvoiceType() != InvoiceType.SALES?total:0.0)
+				.setConcept(invoice.getInvoiceType() == InvoiceType.SALES?"<N/Fra: #>":"<S/Fra: #>")
+				.setDocumentNumber("<N. Factura>")
+				);
+		double vat = AonMathUtils.round(vatQuota.getValue() + surchargeQuota.getValue());
+		if (AonMathUtils.isNotZero(vat)) {
+			details.add( new AccountEntryDetail()
+					.setAccount(vatAccount.getId())
+					.setAccountCode(vatAccount.getValue())
+					.setAccountDescription(vatAccount.getDescription())
+					.setCredit(invoice.getInvoiceType() == InvoiceType.SALES?vat:0.0)
+					.setDebit(invoice.getInvoiceType() != InvoiceType.SALES?vat:0.0)
+					.setConcept(invoice.getInvoiceType() == InvoiceType.SALES?"<N/Fra: #>":"<S/Fra: #>")
+					.setDocumentNumber("<N. Factura>")
+					);
+		}
+		double wh = AonMathUtils.round(withholdingQuota.getValue());
+		if (withholding.getValue() && AonMathUtils.isNotZero(wh)) {
+			details.add( new AccountEntryDetail()
+					.setAccount(withholdingAccount.getId())
+					.setAccountCode(withholdingAccount.getValue())
+					.setAccountDescription(withholdingAccount.getDescription())
+					.setDebit(invoice.getInvoiceType() == InvoiceType.SALES?wh:0.0)
+					.setCredit(invoice.getInvoiceType() != InvoiceType.SALES?wh:0.0)
+					.setConcept(invoice.getInvoiceType() == InvoiceType.SALES?"<N/Fra: #>":"<S/Fra: #>")
+					.setDocumentNumber("<N. Factura>")
+					);
+		}
+		double tb = AonMathUtils.round(taxableBase.getValue());
+		if (AonMathUtils.isNotZero(vat)) {
+			details.add( new AccountEntryDetail()
+					.setAccount(expAccount.getId())
+					.setAccountCode(expAccount.getValue())
+					.setAccountDescription(expAccount.getDescription())
+					.setCredit(invoice.getInvoiceType() == InvoiceType.SALES?tb:0.0)
+					.setDebit(invoice.getInvoiceType() != InvoiceType.SALES?tb:0.0)
+					.setConcept(invoice.getInvoiceType() == InvoiceType.SALES?"<N/Fra: #>":"<S/Fra: #>")
+					.setDocumentNumber("<N. Factura>")
+					);
+		}
+		ae.setDetails(details);
+		callback.showWorkingLog(ae);
+	}
 }

@@ -36,6 +36,8 @@ public interface AonCSS extends CssResource {
 	
 	@ClassName("aon-flex-container")
 	String aonFlexContainer();
+	@ClassName("aon-justify-content-space-between")
+	String aonJustifyContentSpaceBetween();
 
 	@ClassName("aon-margin-auto")
 	String aonMarginAuto();

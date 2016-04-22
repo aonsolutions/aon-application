@@ -84,6 +84,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		AccountEntryObject getAccountEntry();
 		void onShowBalance(Account account);
 		AonConfiguration getConfiguration();
+		void showWorkingLog( AccountEntry  entry );
 	}
 	
 	private final IAccountEntryModuleCallback callback = new IAccountEntryModuleCallback() {
@@ -103,6 +104,12 @@ public class AccountEntryModule extends MainEntryPoint {
 		@Override
 		public AonConfiguration getConfiguration() {
 			return configuration;
+		}
+
+		@Override
+		public void showWorkingLog(AccountEntry entry) {
+			workingLog.clear();
+			workingLog.add(entry);			
 		}
 	};
 
@@ -164,6 +171,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	VerticalPanel tableInnerContainer;
 	ErrorPanel errors;
+	SessionLog workingLog;
 	AccountEntryTable tab;
 	
 	
@@ -364,10 +372,9 @@ public class AccountEntryModule extends MainEntryPoint {
 
 			@Override
 			public void onError(ErrorEvent event) {
-				errors.showWarning(event.getRelativeElement().getAttribute(
-						"ERROR"));
-
+				errors.showWarning(event.getRelativeElement().getAttribute("ERROR"));
 			}
+			
 		});
 		tab.addSelectionHandler(new SelectionHandler<Account>() {
 			@Override
@@ -389,6 +396,8 @@ public class AccountEntryModule extends MainEntryPoint {
 		
 		tab.paintTable();
 		tableInnerContainer.add(tab);
+		workingLog = new SessionLog();
+		tableInnerContainer.add(workingLog);
 		tableContainer.setWidget(tableInnerContainer);
 	}
 
@@ -665,8 +674,12 @@ public class AccountEntryModule extends MainEntryPoint {
 	public void onClickInvoice(ClickEvent event) {
 		if (invoice.getValue()) {
 			editInvoice();
+			tab.setVisible(false);
+			workingLog.setVisible(true);
 		} else {
 			closeWizard();
+			tab.setVisible(true);
+			workingLog.setVisible(false);
 		}
 	}
 

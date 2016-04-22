@@ -1944,7 +1944,13 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Recargo equivalencia")
 	String surcharge();
-	
+
+	@DefaultMessage("% R.E.")
+	String surchargePercent();
+
+	@DefaultMessage("Cuota R.E.")
+	String surchargeQuota();
+
 	@DefaultMessage("Aplicar retenci\u00F3n")
 	String witholding();
 	
@@ -1968,6 +1974,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("N\u00BA de factura")
 	String invoiceNumber();
+
+	@DefaultMessage("Total factura")
+	String invoiceTotal();
 
 	@DefaultMessage("Ventas")
 	String sales();
@@ -2023,6 +2032,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Porc. IVA")
 	String vatPercent();
 	
+	@DefaultMessage("Cuota IVA")
+	String vatQuota();
+
+	@DefaultMessage("Cuenta IVA")
+	String vatAccount();
+
 	@DefaultMessage("Informaci\u00F3n adicional del ep\u00EDgrafe")
 	String epigraphAdditionalInfo();
 

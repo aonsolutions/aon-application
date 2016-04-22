@@ -319,6 +319,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-flex {
 	display: flex;
 }
+.aon-justify-content-space-between {
+	justify-content: space-between;	
+}
 .aon-flex-container {
 	display: flex;
 	flex-direction: row;
@@ -1786,10 +1789,8 @@ input:disabled+label {
 	width: 400px;
 }
 .aon-wizard-panel{
-    background-color: #FADFAD;
-    border-bottom: 1px solid black;
-    border-left: 1px solid black;
-    border-top: 1px solid black;
+    background-color: #fff2d2;
+    border: 1px solid black;
     margin-left: 1.5em;
     margin-bottom: 5px;
 }
@@ -1815,10 +1816,8 @@ input:disabled+label {
     font-weight: bold;
 }
 .aon-wizard-panel-east{
-    background-color: #FADFAD;
-    border-bottom: 1px solid black;
-    border-right: 1px solid black;
-    border-top: 1px solid black;
+    background-color: #fff2d2;
+    border: 1px solid black;
     margin-right: 1em;	
     margin-bottom: 5px;
 }

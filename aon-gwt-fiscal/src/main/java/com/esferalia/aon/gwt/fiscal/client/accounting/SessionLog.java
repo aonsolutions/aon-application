@@ -27,7 +27,9 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 		root = new FlowPanel();
 		setWidget(root);
 	}
-	
+	public void clear( ) {
+		root.clear();
+	}
 	public void add( final AccountEntry entry) {
 		final AccountEntry cloned = AccountEntry.clone(entry);
 		final FocusPanel entryPanel = new FocusPanel();

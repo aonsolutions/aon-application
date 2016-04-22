@@ -164,7 +164,7 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 		accountingRegistryTextBox.setMaxLength(9);
 		descriptionLabel = new InlineLabel();
 		descriptionLabel.addStyleName(AON.AON_CSS.aonMarginLeft() );
-		descriptionLabel.addStyleName(AON.AON_CSS.aonFontSmall());
+		descriptionLabel.addStyleName(AON.AON_CSS.aonBold());
 		descriptionLabel.setVisible(showDescription);
 		
 		accountingRegistry.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
