@@ -16,7 +16,7 @@ public class HotelController extends BasicController {
 
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
 		Hotel hotel = (Hotel) getTo();
-		return WarehouseCollectionsController.getWarehouses(hotel.getWorkPlace());
+		return WarehouseCollectionsController.getWarehouses(hotel.getWorkPlace(), true);
 	}
 		
 }
