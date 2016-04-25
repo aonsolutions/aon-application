@@ -180,7 +180,8 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 		initHeader(issue);
 		
 		for (AonIssueComments comment : issue.getComments()) {
-			printComment(comment);
+			if (!comment.getCompany().trim().isEmpty() && comment.getCompany().equals(issue.getCompany()))
+				printComment(comment);
 		}
 
 		if (issue instanceof IssueGrid.IssueOpenLoadSelected) {
@@ -202,6 +203,14 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 			duplicatedButton.setVisible(false);
 			closedButton.setVisible(false);
 			createCommentButton();
+		}
+		
+		else if (issue instanceof IssueGrid.IssueDuplicatedLoadSelected) {
+			createClosedButton();
+			createSendButton();
+			commentTextArea.setVisible(false);
+			duplicatedButton.setVisible(false);
+			commentButton.setVisible(false);
 		}
 	}
 

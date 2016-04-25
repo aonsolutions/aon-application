@@ -24,6 +24,8 @@ public interface IOffice {
 
 	public Notice editNotice(AONContext ctx, Notice notice);
 	
+	public Notice createNewDuplicated(AONContext ctx, int id);
+	
 	public Notice addDuplicateNotice(AONContext ctx, Notice childNotice, int noticeParentId);
 
 	public Notice changeNoticeStatus(AONContext ctx, Notice notice);

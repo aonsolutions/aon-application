@@ -218,6 +218,11 @@ public class AonHub {
 		post(baseUrl + "repos/" + user + "/" + repo + "/faqs", prop,
 				callback);
 	}
+
+	public void createDuplicateNotice(String user, String repo, IssueValue prop, 
+			AsyncCallback<JsIssue> callback) {
+		post(baseUrl + "repos/" + user + "/" + repo + "/duplicated", prop, callback);
+	}
 	
 	public void addDuplicateNotice(String user, String repo, int parentId, 
 			IssueValue prop, AsyncCallback<JsIssue> callback) {

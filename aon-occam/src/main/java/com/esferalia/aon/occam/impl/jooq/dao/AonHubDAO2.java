@@ -241,6 +241,76 @@ public class AonHubDAO2 {
 		return new FullNoticeCommentFiller().apply(record);
 	}
 	
+	public static Notice createNewDuplicated(AONContext ctx, int id) {
+		
+		Timestamp now = getTime(new Date());
+		// @formatter:off
+		int duplicated = ctx
+				.getDslContext()
+				.select(TAG.ID)
+				.from(TAG)
+				.where(TAG.DOMAIN.eq(0)
+						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value()))
+						.and(TAG.NAME.eq(NoticeStatus.DUPLICATED.getValue())))
+				.fetchOne(TAG.ID);
+		int openValue = ctx
+				.getDslContext()
+				.select(TAG.ID)
+				.from(TAG)
+				.where(TAG.DOMAIN.eq(0)
+						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value()))
+						.and(TAG.NAME.eq(NoticeStatus.OPEN.getValue())))
+				.fetchOne(TAG.ID);				
+		// @formatter:on
+		
+		// @fomatter:off
+		NoticeRecord record = ctx
+				.getDslContext()
+				.selectFrom(NOTICE)
+				.where(NOTICE.ID.eq(id))
+				.fetchOne();
+		// @fomatter:on
+		
+		// @formatter:off
+		int headNoticeId = ctx.getDslContext()
+		.insertInto(NOTICE)
+		.set(NOTICE.DOMAIN, ctx.getDomainId())
+		.set(NOTICE.DATE, now)						
+		.set(NOTICE.SENDER, record.getValue(NOTICE.SENDER))
+		.set(NOTICE.SUBJECT, record.getValue(NOTICE.SUBJECT))
+		.set(NOTICE.STATUS, (byte) NoticeStatus.valueOf(NoticeStatus.OPEN.getValue()).ordinal())				
+		.set(NOTICE.TYPE, NoticeType.TICKET.value())
+		.set(NOTICE.COMPANY, record.getValue(NOTICE.COMPANY))
+		.set(NOTICE.SOURCE, record.getValue(NOTICE.SOURCE))
+		.set(NOTICE.PRIORITY, (byte) 0)
+		.returning( NOTICE.ID )
+		.fetchOne()
+		.getValue(NOTICE.ID);
+		
+		ctx.getDslContext()
+		.update(NOTICE)
+		.set(NOTICE.NOTICE_, headNoticeId)
+		.where(NOTICE.ID.eq(record.getValue(NOTICE.ID)))
+		.execute();
+		// @formatter:off
+		
+		ctx.getDslContext()
+		.insertInto(NOTICE_TAG)
+		.set(NOTICE_TAG.NOTICE, headNoticeId)
+		.set(NOTICE_TAG.TAG, openValue)
+		.set(NOTICE_TAG.USER, record.getValue(NOTICE.SENDER))
+		.set(NOTICE_TAG.START_DATE, record.getValue(NOTICE.DATE))
+		.newRecord()
+		.set(NOTICE_TAG.NOTICE, headNoticeId)		
+		.set(NOTICE_TAG.TAG, duplicated)
+		.set(NOTICE_TAG.USER, record.getValue(NOTICE.SENDER))
+		.set(NOTICE_TAG.START_DATE, record.getValue(NOTICE.DATE))
+		.execute();
+		// @formatter:on
+		
+		return getTicketNotice(ctx, headNoticeId);
+	}
+	
 	public static Notice addDuplicateNotice(AONContext ctx, Notice childNotice, int parentId) {
 		
 		// @formatter:off

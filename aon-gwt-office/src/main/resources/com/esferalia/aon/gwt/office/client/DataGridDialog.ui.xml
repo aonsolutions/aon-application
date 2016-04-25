@@ -37,10 +37,12 @@
 						</td>
 						<td>
 							<div class="{style.buttons} aon-scroll-area">
-								<g:Button ui:field="cancelButton" text="{msg.cancel}" />
-								<g:Button ui:field="newButton" text="{msg.createNew}" />								
-								<g:Button ui:field="acceptButton" text="{msg.toAssign}"
-									enabled="false" />								
+								<g:Button ui:field="cancelButton" styleName="{aonResources.css.aonBold}"
+									text="{msg.cancel}" />
+								<g:Button ui:field="newButton" styleName="{aonResources.css.aonBold}"
+									text="{msg.createNew}" />
+								<g:Button ui:field="acceptButton" styleName="{aonResources.css.aonBold}"
+									text="{msg.toAssign}" enabled="false" />
 							</div>
 						</td>
 					</tr>

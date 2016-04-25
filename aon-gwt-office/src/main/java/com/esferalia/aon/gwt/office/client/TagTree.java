@@ -68,6 +68,13 @@ public class TagTree extends Composite
 		tree.addSelectionHandler(this);
 		tree.addKeyDownHandler(this);
 	}
+	
+	public void clearTagTree() {
+		this.statusTreeItem.removeItems();
+		this.typeTreeItem.removeItems();
+		this.priorityTreeItem.removeItems();
+		this.issueTreeItem.removeItems();
+	}
 
 	public void insertTag(Tag tag) {
 		TreeItem treeItem = new TreeItem();

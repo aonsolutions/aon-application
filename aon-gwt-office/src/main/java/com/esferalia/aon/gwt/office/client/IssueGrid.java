@@ -169,6 +169,31 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 			return null;
 		}
 	}
+	
+
+	public static class IssueDuplicatedLoadSelected
+			extends AonIssueSelected {
+
+		public IssueDuplicatedLoadSelected(JsIssue issue) {
+			super(issue);
+		}
+
+		@Override
+		public AonTagIssueSelected editTag(JsLabel label) {
+			return null;
+		}
+
+		@Override
+		public String getStateIconStyle() {
+			return AON.AON_CSS.aonIconIssueDuplicated();
+		}
+
+		@Override
+		public AonIssueComments editComment(JsIssueComment comment) {
+			return null;
+		}
+	}
+
 
 	private static abstract class IconStyleColumn<T extends IssueSelected>
 			extends TextColumn<T> {
@@ -466,11 +491,11 @@ public class IssueGrid extends CustomDataGrid<IssueSelected>
 					break;
 				case 1:
 					sb.append(1);					
-					sb.append(" DUPLICADO ");
+					sb.append(" NOTIFICACI\u00D3N ");
 					break;
 				default:
 					sb.append(object.getDuplicates());
-					sb.append(" DUPLICADOS ");
+					sb.append(" NOTIFICACIONES ");
 				}
 				return sb.toString();
 			}

@@ -44,7 +44,7 @@ public class OfficeTest {
 	public void testGetTicketNotices() {
 
 		NoticeFilter filter = new NoticeFilter();
-		filter.setState("open");
+		filter.setState("duplicated");
 		filter.setOffset(0);		
 
 		filter.setTags(new String[] {});

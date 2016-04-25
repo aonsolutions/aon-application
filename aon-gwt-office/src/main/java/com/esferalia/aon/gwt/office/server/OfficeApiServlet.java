@@ -353,6 +353,62 @@ public class OfficeApiServlet extends HttpServlet {
 			}
 		}
 	}
+	
+	private static class CreateNewDuplicated extends RegExpRequestHandler {
+		
+		private HttpServletRequest req;
+		private HttpServletResponse resp;
+		
+		public CreateNewDuplicated() {
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/duplicated");
+		}
+		
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+			
+			this.req = req;
+			this.resp = resp;
+			
+			Integer domainId = null;
+			String domainName = "";
+			try {
+				domainId = getDomainId();
+				domainName = getDomainName();
+			
+			} catch (Exception ex) {
+				String aux = getRequestAction(req);
+				String[] auxArr = aux.split("/");
+				domainId = Integer.parseInt(auxArr[2]);
+				domainName = auxArr[3];				
+			
+			} finally {
+				createNewDuplicated(domainId, domainName);
+			}
+			
+		}
+		
+		private void createNewDuplicated(Integer domainId, String domainName) {
+			
+			PrintWriter pw = null;
+			
+			try {
+				String object = getJsonObject(req);
+				JSONObject json = new JSONObject(object);
+				
+				String userName = AonServletUtils.getLoggedUser();
+				
+				int noticeId = Integer.parseInt(json.getString("id"));
+				Notice notice = AON.createDuplicatedNotice(domainId, domainName, userName, noticeId);
+				pw = resp.getWriter();
+				pw.append(getNotice(notice));
+				pw.flush();
+				
+			} catch (Exception ex) {
+				pw.flush();
+			}
+		}
+	}
 
 	private static class AddDuplicateNotice extends RegExpRequestHandler {
 
@@ -1167,6 +1223,7 @@ public class OfficeApiServlet extends HttpServlet {
 			new EditIssue(),
 			new AddDuplicateNotice(),
 			new CreateLabel(),
+			new CreateNewDuplicated(),
 			new UpdateLabel(),
 			new CreateComment(),
 			new EditComment(),

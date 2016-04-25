@@ -75,6 +75,12 @@ public class OfficeImpl implements IOffice {
 	}
 	
 	@Override
+	public Notice createNewDuplicated(AONContext ctx, int id) {
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.createNewDuplicated(ctx, id));
+	}
+	
+	@Override
 	public Notice addDuplicateNotice(AONContext ctx, Notice childNotice,
 			int noticeParentId) {
 		return ctx.getDslContext().transactionResult(

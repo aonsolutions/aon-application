@@ -88,6 +88,9 @@ public class NoticeFilterImpl  {
 			);
 		}
 		
+		//como sacar las incidencs que son duplicadas
+		
+		
 		else if ( filter.isDuplicated()) {
 			conditions.add(
 			// @formatted:off
@@ -96,11 +99,9 @@ public class NoticeFilterImpl  {
 					.from(NOTICE_TAG)
 					.join(TAG)
 					.on(NOTICE_TAG.TAG.eq(TAG.ID))
-					.where(TAG.NAME.eq(NoticeStatus.DUPLICATED.getValue())							
-							.and(NOTICE_TAG.END_DATE.isNull())
-						  ))			
-			// @formatted:on
-			);
+					.where(TAG.NAME.eq(NoticeStatus.DUPLICATED.getValue())
+							.and(NOTICE_TAG.END_DATE.isNull())))
+					);
 		}
 		
 		if (AonStringUtils.isNotEmpty(filter.getComany())){

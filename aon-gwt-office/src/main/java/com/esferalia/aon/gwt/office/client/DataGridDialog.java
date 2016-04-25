@@ -28,8 +28,7 @@ public class DataGridDialog extends CustomDialog
 
 		void onLoadFaqsClick(AsyncCallback<List<IssueSelected>> callback);
 		
-		void onCreateNewDuplicated();
-		
+		void onCreateNewDuplicated();		
 	}
 
 	private static DataGridDialogUiBinder uiBinder = GWT
@@ -171,7 +170,9 @@ public class DataGridDialog extends CustomDialog
 	
 	@UiHandler("newButton")
 	void onCreateNewDuplicatedClick(ClickEvent event) {
-		
+		for (Listener listener : listeners)
+			listener.onCreateNewDuplicated();
+		hide();
 	}
 
 	// ******************************************************************

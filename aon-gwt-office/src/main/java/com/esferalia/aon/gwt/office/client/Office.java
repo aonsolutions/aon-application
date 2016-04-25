@@ -477,6 +477,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	void onRefreshButtonClickEvent(ClickEvent event) {
 		this.incrementSize = 0;
 		this.gitHub.setOffset(incrementSize);
+		this.tagTree.clearTagTree();
 		loadRepositoryData();
 		loadLabels();
 		initIssuesList();
@@ -921,8 +922,6 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						callback.onSucess(issue);
 					}
 				});
-
-		
 	}
 
 	@Override
@@ -1168,7 +1167,23 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 	
 	@Override
 	public void onCreateNewDuplicated() {
-		// TODO Auto-generated method stub
+		IssueValue value = new IssueValue();
+		value.setId(String.valueOf(issueSelected.getId()));
+		
+		this.gitHub.createDuplicateNotice(String.valueOf(getCurrentDomain()), getCurrentDomainName(), value, new AsyncCallback<JsIssue>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Error al crear un nuevo duplicado");
+			}
+
+			@Override
+			public void onSuccess(JsIssue result) {
+				IssueSelected issue = new IssueGrid.IssueDuplicatedLoadSelected(result);
+				issues.add(0, issue);
+				onSelectionTitle(issue);
+			}
+		});
 		
 	}
 
