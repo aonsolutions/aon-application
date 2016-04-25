@@ -20,8 +20,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -194,7 +192,6 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		}
 	}
 	
-	
 	private void initIdNoticeTbKeyDow() {
 		idNoticeTb.addKeyDownHandler(new KeyDownHandler() {
 			
@@ -314,25 +311,39 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 
 	@UiHandler("fromListBox")
 	void onChangeEventListBox(ChangeEvent event) {
-
-		String name = fromListBox.getSelectedValue();		
-		if (name.compareTo(DateRange.ALL.name()) == 0)
-			this.criteria = null;
-		else if (name.compareTo(DateRange.TODAY.name()) == 0)
-			this.criteria = new Date();
-		else if (name.compareTo(DateRange.YESTERDAY.name()) == 0)
-			this.criteria = DateUtils.getPrevDay(new Date());
-		else if (name.compareTo(DateRange.THIS_WEEK.name()) == 0)
-			this.criteria = DateUtils.getFirstDayOfWorkWeek(new Date());
-		else if (name.compareTo(DateRange.THIS_MONTH.name()) == 0)
-			this.criteria = DateUtils.getFirstDayOfMonth();
-		else if (name.compareTo(DateRange.FIVETEEN_DAYS_AGO.name()) == 0)
-			this.criteria = DateUtils.deleteDays2Date(new Date(), 15);
-		else if (name.compareTo(DateRange.THIRTY_DAYS_AGO.name()) == 0)
-			this.criteria = DateUtils.deleteDays2Date(new Date(), 30);
-		else if (name.compareTo(DateRange.THIS_YEAR.name()) == 0)
-			this.criteria = DateUtils.getFirstDayOfYear();
 		
+		Date today = new Date();
+		int index = fromListBox.getSelectedIndex();
+		
+		switch (index) {
+		case 0: //ALL DAYS
+			this.criteria = null;
+			break;
+		case 1: // TODAY
+			this.criteria = today;
+			break;
+		case 2: // YESTERDAY
+			this.criteria = DateUtils.getPrevDay(today);
+			break;
+		case 3: // THIS WEEK
+			this.criteria = DateUtils.getFirstDayOfWorkWeek(today);
+			break;
+		case 4: // THIS MONTH
+			this.criteria = DateUtils.getFirstDayOfMonth();
+			break;
+		case 5: // 15 DAYS AGO
+			this.criteria = DateUtils.deleteDays2Date(today, 15);
+			break;
+		case 6: // 30 DAYS AGO
+			this.criteria = DateUtils.deleteDays2Date(today, 30);
+			break;
+		case 7: // THIS YEAR
+			this.criteria = DateUtils.getFirstDayOfYear();
+			break;
+		default:
+			this.criteria = null;
+		}
+
 		for (Listener listener : listeners) {
 			listener.onSelectFrom(criteria);
 		}

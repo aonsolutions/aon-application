@@ -467,7 +467,8 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.incrementSize = 0;
 		this.gitHub.setOffset(incrementSize);
 		this.gitHub.setFilterTagList(null);
-		this.gitHub.setText(null);
+		this.gitHub.setSinceCriteria(null);
+		this.gitHub.setText(null);		
 		this.gitHub.setSender(null);
 		initIssuesList();
 		evalRadioButtons();

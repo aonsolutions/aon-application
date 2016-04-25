@@ -4,6 +4,8 @@ import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -67,6 +69,7 @@ public class NoticeFilterImpl  {
 					.where((TAG.NAME.eq(NoticeStatus.OPEN.getValue()))
 								.or(TAG.NAME.eq(NoticeStatus.REOPEN.getValue()))
 								.or(TAG.NAME.eq(NoticeStatus.CLOSED.getValue()))
+								.or(TAG.NAME.eq(NoticeStatus.DUPLICATED.getValue()))
 							.and(NOTICE_TAG.END_DATE.isNull())
 						  ))			
 			// @formatted:on
@@ -111,8 +114,11 @@ public class NoticeFilterImpl  {
 		if (AonStringUtils.isNotEmpty(filter.getSubject()))
 			conditions.add(NOTICE.SUBJECT.like("%" + filter.getSubject() + "%"));		
 		
-		if (filter.getSince() != null) 
-			conditions.add(NOTICE.DATE.ge( new java.sql.Timestamp(filter.getSince().getTime())));
+		if (filter.getSince() != null) {
+			Timestamp today = new java.sql.Timestamp(new Date().getTime());
+			Timestamp since = new java.sql.Timestamp(filter.getSince().getTime());
+			conditions.add(NOTICE.DATE.between(since, today));			
+		}
 		
 		if (filter.getUser() != -1)
 			conditions.add(NOTICE.SENDER.eq(filter.getUser()));

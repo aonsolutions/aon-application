@@ -29,6 +29,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.jsonp.client.JsonpRequestBuilder;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class AonHub {
@@ -64,8 +65,8 @@ public class AonHub {
 
 	public void setSinceCriteria(Date since) {
 		DateTimeFormat fmt = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-		try {
-			this.since = fmt.format(since);	
+		try {			
+			this.since = fmt.format(since);			
 		} catch (Exception ex) {
 			this.since = null;
 		}
@@ -150,7 +151,7 @@ public class AonHub {
 	public void getOpenIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=open"
-				+ (since != null ? "&since=" + this.since : "")
+				+ (since != null ? "&since=" + since : "")
 				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
 				+ "&offset=" + offset
 				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				
@@ -161,7 +162,7 @@ public class AonHub {
 	public void getClosedIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=closed"
-				+ (since != null ? "&since=" + this.since : "")
+				+ (since != null ? "&since=" + since : "")
 				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
 				+ "&offset=" + offset
 				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				
@@ -172,7 +173,7 @@ public class AonHub {
 	public void getAllIssues(String user, String repo,
 			AsyncCallback<JSON<JsIssue>> callback) {
 		get(baseUrl + "repos/" + user + "/" + repo + "/issues?state=all"
-				+ (since != null ? "&since=" + this.since : "")
+				+ (since != null ? "&since=" + since : "")
 				+ (sender != null ? "&sender=" + URL.encode(sender) : "")
 				+ "&offset=" + offset
 				+ (filterTagList != null ? "&labels=" + URL.encode(filterTagList) : "")				

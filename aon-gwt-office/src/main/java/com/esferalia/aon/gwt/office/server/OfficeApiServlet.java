@@ -521,8 +521,10 @@ public class OfficeApiServlet extends HttpServlet {
 				NoticeFilter filter = new NoticeFilter();
 				filter.setState(req.getParameter("state"));
 
-				if (req.getParameter("since") != null)
-					filter.setSinceAsString(req.getParameter("since"));
+				if (req.getParameter("since") != null) {
+					String since = req.getParameter("since");
+					filter.setSinceAsString(since);
+				}					
 
 				if (req.getParameter("sender") != null)
 					filter.setCompany(URLDecoder
