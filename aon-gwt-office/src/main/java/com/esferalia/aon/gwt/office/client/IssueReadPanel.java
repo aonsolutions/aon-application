@@ -180,8 +180,7 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 		initHeader(issue);
 		
 		for (AonIssueComments comment : issue.getComments()) {
-			if (!comment.getCompany().trim().isEmpty() && comment.getCompany().equals(issue.getCompany()))
-				printComment(comment);
+			printComment(comment);
 		}
 
 		if (issue instanceof IssueGrid.IssueOpenLoadSelected) {
