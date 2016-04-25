@@ -1110,7 +1110,7 @@
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="6e5d9d11-887b-4937-ba6a-8ac3e3700987" style="total1" x="301" y="146" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonEstructuralOvertimeBase()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertimeBase()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
 					<reportElement uuid="247cf075-9ba1-46f1-a36b-c5cd39c3eb68" style="total1" mode="Transparent" x="403" y="146" width="45" height="13"/>
@@ -1120,7 +1120,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonEstructuralOvertimePercent()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertimePercent()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="8ca26f73-985c-436c-8fe1-e0541744275b" style="total1" x="448" y="146" width="97" height="13"/>
@@ -1130,7 +1130,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonEstructuralOvertime()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertime()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="3aaf2544-b97f-44e5-9a61-74d5ccf5d719" style="title2" x="14" y="29" width="10" height="13"/>

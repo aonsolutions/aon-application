@@ -104,13 +104,13 @@
 		<variableExpression><![CDATA[$F{salary}.getDeductions().getCommonContingency().getAmount()]]></variableExpression>
 	</variable>
 	<variable name="prcCg" class="java.lang.Double">
-		<variableExpression><![CDATA[$V{importeCg} / $F{salary}.getTotalCommonBase() * 100]]></variableExpression>
+		<variableExpression><![CDATA[$V{importeCg} / $F{salary}.getCommonBase() * 100]]></variableExpression>
 	</variable>
 	<variable name="importeAcc" class="java.lang.Double">
 		<variableExpression><![CDATA[$F{salary}.getDeductions().getUnemployment().getAmount() + $F{salary}.getDeductions().getJobTraining().getAmount()]]></variableExpression>
 	</variable>
 	<variable name="prcAcc" class="java.lang.Double">
-		<variableExpression><![CDATA[$V{importeAcc} / $F{salary}.getTotalProfessionalBase() * 100]]></variableExpression>
+		<variableExpression><![CDATA[$V{importeAcc} / $F{salary}.getProfessionalBase() * 100]]></variableExpression>
 	</variable>
 	<variable name="importeHex" class="java.lang.Double">
 		<variableExpression><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getAmount()]]></variableExpression>
@@ -616,7 +616,7 @@
 							<printWhenExpression><![CDATA[$F{salary}.getCommonBase() != 0.00]]></printWhenExpression>
 						</reportElement>
 						<textElement/>
-						<textFieldExpression><![CDATA[$F{salary}.getTotalCommonBase()]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{salary}.getCommonBase()]]></textFieldExpression>
 					</textField>
 				</frame>
 				<frame>
@@ -656,7 +656,7 @@
 							<printWhenExpression><![CDATA[$F{salary}.getProfessionalBase() != 0.00]]></printWhenExpression>
 						</reportElement>
 						<textElement/>
-						<textFieldExpression><![CDATA[$F{salary}.getTotalProfessionalBase()]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase()]]></textFieldExpression>
 					</textField>
 				</frame>
 				<frame>

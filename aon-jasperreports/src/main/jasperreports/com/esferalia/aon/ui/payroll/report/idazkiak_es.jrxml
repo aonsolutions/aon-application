@@ -614,7 +614,7 @@
 					<textField pattern="#,##0.00">
 						<reportElement uuid="b65c5a12-79d6-4975-aaf3-bff5d993e8dc" style="text" x="0" y="13" width="88" height="13"/>
 						<textElement/>
-						<textFieldExpression><![CDATA[$F{salary}.getTotalCommonBase()]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{salary}.getCommonBase()]]></textFieldExpression>
 					</textField>
 				</frame>
 				<frame>
@@ -637,7 +637,7 @@
 					<textField pattern="#,##0.00">
 						<reportElement uuid="a12b8285-7ff4-4008-afe9-4879304f9833" style="text" x="14" y="13" width="60" height="13"/>
 						<textElement/>
-						<textFieldExpression><![CDATA[$F{salary}.getTotalProfessionalBase()]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase()]]></textFieldExpression>
 					</textField>
 				</frame>
 				<frame>

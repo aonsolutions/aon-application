@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary_dualColumn" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2219f940-1d11-45db-a72b-ad1a7427b049">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="297"/>
+	<property name="ireport.y" value="265"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.code.aon.common.util.CommonUtil"/>
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
@@ -1087,7 +1087,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getOvertimeBase()
-+ $P{salaryScriptlet_SCRIPTLET}.getNonEstructuralOvertimeBase()]]></textFieldExpression>
++ $P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertimeBase()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="f0141e95-49c0-47c7-8d5e-842a539c90c0" style="title2_dotts" x="92" y="295" width="336" height="13"/>
@@ -1359,7 +1359,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonEstructuralOvertimePercent()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertimePercent()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="12aef905-3920-4ec9-a1f0-49f4c7c2e86b" style="total1" x="478" y="282" width="70" height="13"/>
@@ -1369,7 +1369,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<textElement>
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonEstructuralOvertime()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertime()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="2c3b0e45-739d-4b3c-be8e-e197ca1ffd1e" style="amount" x="310" y="269" width="118" height="13"/>
@@ -1389,7 +1389,7 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				<textElement>
 					<font size="9" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonEstructuralOvertimeBase()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertimeBase()]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

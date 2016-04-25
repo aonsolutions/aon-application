@@ -12,7 +12,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.Session;
 import org.hibernate.annotations.Formula;
 
@@ -25,7 +24,6 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.SalaryDB;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
@@ -152,35 +150,6 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 		return super.getInkindIrpfBase();
 	}
 	
-	@Transient
-	public Double getTotalCommonBase(){
-		Double base = 0.0;
-		try {
-			base = salaryDatas
-					.stream()
-					.filter(o -> (o.getName().equals(ContextVariable.CGC_BASE.getName())))
-					.map(SalaryData::getExpression)
-					.mapToDouble(o -> (NumberUtils.isNumber(o)?Double.valueOf(o):0.0)).sum();
-		} catch (Exception e) {
-			// nada
-		}
-		return base;
-	}
-	
-	@Transient
-	public Double getTotalProfessionalBase(){
-		Double base = 0.0;
-		try {
-			base = salaryDatas
-					.stream()
-					.filter(o -> (o.getName().equals(ContextVariable.CGP_BASE.getName())))
-					.map(SalaryData::getExpression)
-					.mapToDouble(o -> (NumberUtils.isNumber(o)?Double.valueOf(o):0.0)).sum();
-		} catch (Exception e) {
-			// nada
-		}
-		return base;
-	}
 	
 	// *******************************************************
 	// ********************** DATA ***************************

@@ -60,7 +60,7 @@ public class SalaryReportScriptlet extends JRDefaultScriptlet implements Seriali
 	public Double getOvertimeBase() throws JRScriptletException{
 		return salary.getOvertimeBase() == 0.0 ? null : salary.getOvertimeBase();
 	}
-	public Double getNonEstructuralOvertimeBase() throws JRScriptletException{
+	public Double getNonStructuralOvertimeBase() throws JRScriptletException{
 		return salary.getNonEstructuralOvertimeBase() == 0.00 ? null : salary.getNonEstructuralOvertimeBase();
 	}
 	public Double getIrpfBase() throws JRScriptletException{
@@ -109,7 +109,7 @@ public class SalaryReportScriptlet extends JRDefaultScriptlet implements Seriali
 						.getAmount());
 	}
 	
-	public Double getNonEstructuralOvertime() throws SalaryException,
+	public Double getNonStructuralOvertime() throws SalaryException,
 			JRScriptletException {
 		return salary.getEnterpriseCosts().getNonStructuralOvertime() == null ? 0.0
 				: (salary.getEnterpriseCosts().getNonStructuralOvertime()
@@ -158,10 +158,10 @@ public class SalaryReportScriptlet extends JRDefaultScriptlet implements Seriali
 		return base != null && base > 0  && amount > 0 ? CommonUtil.round((amount / base) * 100) / 100 : null;
 	}
 
-	public Double getNonEstructuralOvertimePercent() throws SalaryException,
+	public Double getNonStructuralOvertimePercent() throws SalaryException,
 			JRScriptletException {
 		Double base = getCgpBaseEnterprise();
-		Double amount = getNonEstructuralOvertime();
+		Double amount = getNonStructuralOvertime();
 		return base != null && base > 0  && amount > 0 ? CommonUtil.round((amount / base) * 100) / 100 : null;
 	}
 	
