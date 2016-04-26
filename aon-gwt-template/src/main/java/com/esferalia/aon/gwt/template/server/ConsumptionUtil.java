@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -179,10 +180,11 @@ public class ConsumptionUtil {
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         				case "Nombre": 
         					String str  = ci.getProductName();
-                			if(item.getPackFormatTag().getName() != null)
+                			/*if(item.getPackFormatTag().getName() != null)
                 				str = str + " "+item.getPackFormatTag().getName()+" "
                 				+ item.getPackUnits() + " " + item.getPackUnitsTag().getName() + " "
                 				+ item.getPackMeasurement() + " " + item.getPackMeasurementTag().getName();
+                				*/
         					celda.setCellValue(str);celda.setCellStyle(style3);break;
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Inicial \u20AC": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
@@ -517,10 +519,11 @@ public class ConsumptionUtil {
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style2);break;
         				case "Nombre": 
         					String str  = ci.getProductName();
-                			if(item.getPackFormatTag().getName() != null)
+                			/*if(item.getPackFormatTag().getName() != null)
                 				str = str + " "+item.getPackFormatTag().getName()+" "
                 				+ item.getPackUnits() + " " + item.getPackUnitsTag().getName() + " "
                 				+ item.getPackMeasurement() + " " + item.getPackMeasurementTag().getName();
+        					*/
         					celda.setCellValue(str);celda.setCellStyle(style3);break;
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
         				case "Inicial \u20AC": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style2);break;
@@ -876,17 +879,18 @@ public class ConsumptionUtil {
      
         				switch (type) {
         				case "Hotel": celda.setCellValue(ci.getHotel());celda.setCellStyle(style30);break;
-        				case "Desde": celda.setCellValue(format.format(ci.getInitialDate()));celda.setCellStyle(style30);break;
+        				case "Desde": celda.setCellValue(format.format( sumarRestarDiasFecha(ci.getInitialDate(), -1)));celda.setCellStyle(style30);break;
            				case "Hasta": celda.setCellValue(format.format(ci.getFinalDate()));celda.setCellStyle(style30);break;
         				case "Almac\u00e9n": celda.setCellValue(ci.getWarehouseName());celda.setCellStyle(style30);break;
         				case "Producto": celda.setCellValue(ci.getProductCode());celda.setCellStyle(style30);break;
         				case "Texto Libre": celda.setCellValue("");celda.setCellStyle(style20);break;
         				case "Nombre": 
         					String str  = ci.getProductName();
-                			if(item.getPackFormatTag().getName() != null)
+                			/*if(item.getPackFormatTag().getName() != null)
                 				str = str + " "+item.getPackFormatTag().getName()+" "
                 				+ item.getPackUnits() + " " + item.getPackUnitsTag().getName() + " "
                 				+ item.getPackMeasurement() + " " + item.getPackMeasurementTag().getName();
+                				*/
         					celda.setCellValue(str);celda.setCellStyle(style30);break;
         				case "Inicial": celda.setCellValue(round(ci.getInitialQuantity(),2));celda.setCellStyle(style20);break;
         				case "Inicial \u20AC": celda.setCellValue(round(ci.getInitialValue() * ci.getInitialQuantity(),2));celda.setCellStyle(style20);break;
@@ -999,7 +1003,7 @@ public class ConsumptionUtil {
         	Date endDate = new Date();
         	SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         	for(ConsumptionItem ci : v2){
-        		startDate = ci.getInitialDate();
+        		startDate = sumarRestarDiasFecha(ci.getInitialDate(), -1);
         		endDate = ci.getFinalDate();
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
         		Double consumValue = ci.getConsumValue();
@@ -1052,6 +1056,13 @@ public class ConsumptionUtil {
     		hoja0.autoSizeColumn(h);
     	}      	
 	}
+	
+	 public static Date sumarRestarDiasFecha(Date fecha, int dias){
+		 Calendar calendar = Calendar.getInstance();
+		 calendar.setTime(fecha); // Configuramos la fecha que se recibe
+		 calendar.add(Calendar.DAY_OF_YEAR, dias);  // numero de días a añadir, o restar en caso de días<0
+		 return calendar.getTime(); // Devuelve el objeto Date con los nuevos días añadidos
+	 }
 	
 	private static Integer getColumnNum(Integer index, Integer columns, Boolean packaged) {
 		 if(index == 0)
