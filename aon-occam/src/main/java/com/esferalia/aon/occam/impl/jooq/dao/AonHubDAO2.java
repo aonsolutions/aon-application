@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Result;
 import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
@@ -82,7 +83,16 @@ public class AonHubDAO2 {
 
 		Timestamp endDate = getTime(new Date());
 		
-		// @formatter:off		
+		//ID DEL ESTADO:
+		int statusId = ctx.getDslContext()
+				.select(TAG.ID)
+				.from(TAG)
+				.where(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())
+						.and(TAG.NAME.eq(notice.getStatus())))
+				.fetchOne(TAG.ID);
+		
+		// @formatter:off	
+		// ID DEL NOTICE PADRE
 		int id = ctx.getDslContext()
 				.select(NOTICE_TAG.ID)
 				.from(NOTICE_TAG)
@@ -90,7 +100,10 @@ public class AonHubDAO2 {
 				.on(NOTICE_TAG.TAG.eq(TAG.ID))
 				.where(NOTICE_TAG.END_DATE.isNull()
 						.and(NOTICE_TAG.NOTICE.eq(notice.getId()))
-						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())))
+						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value()))
+						.and(TAG.NAME.eq(NoticeStatus.OPEN.getValue())
+								.or(TAG.NAME.eq(NoticeStatus.REOPEN.getValue()))
+								.or(TAG.NAME.eq(NoticeStatus.CLOSED.getValue()))))
 				.fetchOne(NOTICE_TAG.ID);
 				
 		ctx.getDslContext()
@@ -103,16 +116,49 @@ public class AonHubDAO2 {
 		ctx.getDslContext()
 		.insertInto(NOTICE_TAG)
 		.set(NOTICE_TAG.NOTICE, notice.getId())
-		.set(NOTICE_TAG.TAG, 
-				ctx.getDslContext()
-				.select(TAG.ID)
-				.from(TAG)
-				.where(TAG.TYPE.eq(TagType.OFFICE_STATUS.value())
-						.and(TAG.NAME.eq(notice.getStatus()))))		
+		.set(NOTICE_TAG.TAG, statusId)		
 		.set(NOTICE_TAG.START_DATE, endDate)
 		.set(NOTICE_TAG.USER, notice.getSender().getId())
 		.execute();
 		// @formatter:on
+		
+		Result<Record> result = ctx.getDslContext()
+				.select()
+				.from(NOTICE)
+				.join(NOTICE_TAG)
+				.on(NOTICE_TAG.NOTICE.eq(NOTICE.ID))
+				.join(TAG)
+				.on(NOTICE_TAG.TAG.eq(TAG.ID))
+				.where(NOTICE.NOTICE_.eq(notice.getId())
+						.and(NOTICE.TYPE.eq(NoticeType.TICKET.value()))
+						.and(TAG.TYPE.eq(TagType.OFFICE_STATUS.value()))
+						.and(TAG.NAME.eq(NoticeStatus.OPEN.getValue())
+								.or(TAG.NAME.eq(NoticeStatus.REOPEN.getValue()))
+								.or(TAG.NAME.eq(NoticeStatus.CLOSED.getValue()))))
+				.fetch();
+		
+		if (result != null) {
+			
+			for (Record record : result) {
+				
+					ctx.getDslContext()
+					.update(NOTICE_TAG)
+					.set(NOTICE_TAG.END_DATE, endDate)
+					.set(NOTICE_TAG.USER, notice.getSender().getId())
+					.where(NOTICE_TAG.ID.eq(record.getValue(NOTICE_TAG.ID)))				
+					.execute();
+					
+					ctx.getDslContext()
+					.insertInto(NOTICE_TAG)
+					.set(NOTICE_TAG.NOTICE, record.getValue(NOTICE.ID))
+					.set(NOTICE_TAG.TAG, statusId)		
+					.set(NOTICE_TAG.START_DATE, endDate)
+					.set(NOTICE_TAG.USER, notice.getSender().getId())
+					.execute();
+					// @formatter:on
+			}
+		}
+		
 		
 		return getTicketNotice(ctx, notice.getId());
 
