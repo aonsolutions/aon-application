@@ -339,7 +339,7 @@ public class AonHubDAO {
 
 			notice.setSender(user);
 			notice.setTitle(record.getValue(NOTICE.SUBJECT));
-			notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
+			//notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
 
 			Result<Record> statusListRecord = ctx.getDslContext()
 					.selectFrom(NOTICE_TAG.rightOuterJoin(TAG)

@@ -86,6 +86,12 @@ public class OfficeImpl implements IOffice {
 		return ctx.getDslContext().transactionResult(
 				conf -> AonHubDAO2.addDuplicateNotice(ctx, childNotice, noticeParentId));
 	}
+	
+	@Override
+	public Notice assigneeTo(AONContext ctx, int noticeId, int userId) {		
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.assigneeTo(ctx, noticeId, userId));
+	}
 
 	// ----------------------------------------------------- DELETES
 

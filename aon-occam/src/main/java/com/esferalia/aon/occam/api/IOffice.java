@@ -36,6 +36,8 @@ public interface IOffice {
 
 	public Notice createComment(AONContext ctx, Integer headId, Notice comment)
 			throws IllegalArgumentException;
+	
+	public Notice assigneeTo(AONContext ctx, int noticeId, int userId);
 
 	public Notice editComment(AONContext ctx, Integer commentId, String body);
 

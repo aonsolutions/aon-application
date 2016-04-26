@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.LabelControlValue;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
 import com.esferalia.aon.gwt.office.client.values.RepoValue;
+import com.esferalia.aon.gwt.office.client.values.UserValue;
 import com.esferalia.aon.gwt.office.client.values.Value;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.google.gwt.core.client.GWT;
@@ -244,7 +245,11 @@ public class AonHub {
 	public void saveNotice(String url, IssueValue prop,
 			AsyncCallback<JsIssue> callback) {
 		post(url, prop, callback);
-
+	}
+	
+	public void assigneeTo(String user, String repo,  
+			UserValue prop, int noticeId, AsyncCallback<JsIssue> callback) {
+		post(baseUrl + "repos/" + user + "/" + repo + "/issues/" + noticeId + "/assignees/", prop, callback);
 	}
 
 	// *************** COMMENTS ****************** //

@@ -17,9 +17,9 @@ public class Notice implements Serializable, HasId {
 
 	private Integer id;
 	private Integer domain;
-	private Integer recipient; // Destinatario del aviso
+	private User recipient; // Destinatario del aviso
 	private Integer notice; //Notice al que referencia **null si es cabecera = titulo
-	
+	private Integer recipientId; // ID del destinatario asignado
 	private String source; //ID del registry	
 	private String status;
 	private String title; // Asunto del aviso
@@ -80,13 +80,21 @@ public class Notice implements Serializable, HasId {
 		return this;
 	}
 	
-	public Notice setRecipient(Integer recipient) {
+	/*
+	 * Usuario asignado a la incidencia
+	 */	
+	public Notice setRecipient(User recipient) {
 		this.recipient = recipient;
 		return this;
 	}
 	
 	public Notice setSource(String source) {
 		this.source = source;
+		return this;
+	}
+	
+	public Notice setRecipientId(Integer recipientId) {
+		this.recipientId = recipientId;
 		return this;
 	}
 	
@@ -179,7 +187,11 @@ public class Notice implements Serializable, HasId {
 		return source;
 	}
 	
-	public Integer getRecipient() {
+	public Integer getRecipientId() {
+		return recipientId;
+	}
+	
+	public User getRecipient() {
 		return recipient;
 	}
 	

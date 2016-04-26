@@ -24,6 +24,8 @@ public interface IssueSelected {
 	String getState();
 
 	String getBody();
+	
+	AonUserIssueSelected getUserAssignee();
 
 	String getCompany();	
 	

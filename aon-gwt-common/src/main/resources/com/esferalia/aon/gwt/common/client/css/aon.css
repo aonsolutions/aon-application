@@ -2576,6 +2576,11 @@ right
 	color: #a30c51;
 	border: 0.5px solid #a30c51;
 }
+
+.tag-user {
+	color: #339966;
+	border: 0.5px solid ##339966;
+}
 .aon-stat-popup-panel {
 	background-color: #ffffff;
     border: 1px none;
@@ -2635,26 +2640,7 @@ right
     padding-top: 5px;
     margin-right: 10px;
 }
-/* SE SUPERPONE CON EL CSS DE GWT Y NO SE MUESTRAN LOS BOTONES EN LOS DEMÁS MÓDULOS,
-ADEMÁS NO ENCUENTRA LA IMAGEN 'hborder.png'.
 
-.gwt-Button {
-	-moz-border-bottom-colors: none;
-    -moz-border-left-colors: none;
-    -moz-border-right-colors: none;
-    -moz-border-top-colors: none;
-    background: rgba(0, 0, 0, 0) url("images/hborder.png") repeat-x scroll 0 -2077px;
-    border-color: #bbb #bbb #a0a0a0;
-    border-image: none;
-    border: none;
-    cursor: pointer;
-    font-size: small;
-    margin: 0;
-    padding: 5px 7px;
-    text-decoration: none;
-    margin: 5px;
-}
-*/
 @sprite .aon-drop-button {
 	gwt-image: "aonStatView";
 	background-position: right center;

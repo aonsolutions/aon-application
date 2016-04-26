@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.office.client.notification.NotificationDialog;
 import com.esferalia.aon.gwt.office.client.values.IssueCommentValue;
 import com.esferalia.aon.gwt.office.client.values.LabelControlValue;
 import com.esferalia.aon.gwt.office.client.values.LabelValue;
+import com.esferalia.aon.gwt.office.client.values.UserValue;
 import com.esferalia.aon.gwt.office.client.values.issues.IssueValue;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -777,6 +778,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 		this.issueSelected = issue;
 		IssueReadPanel issueReadPanel = new IssueReadPanel(this.user, issue);
 		issueReadPanel.setTags(this.tagList);
+		issueReadPanel.setUsersToAssigneed(users);
 		issueReadPanel.addListener(this);
 		readIssueLayoutPanel.clear();
 		readIssueLayoutPanel.add(issueReadPanel);
@@ -1084,6 +1086,30 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 						onSelectionTitle(issue);
 					}
 				});
+	}
+	
+	@Override
+	public void onAssigneedTo(int id) {	
+		
+		UserValue value = new UserValue();
+		value.setId(String.valueOf(id));
+		
+		this.gitHub.assigneeTo(String.valueOf(getCurrentDomain()), getCurrentDomainName(), value, issueSelected.getId(), new AsyncCallback<JsIssue>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Usuario no asignado");
+			}
+
+			@Override
+			public void onSuccess(JsIssue result) {
+				IssueSelected issue = new IssueGrid.IssueOpenLoadSelected(
+						result);
+				issues.add(0, issue);
+				onSelectionTitle(issue);
+			}
+		});
+		
 	}
 
 	@Override

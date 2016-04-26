@@ -69,6 +69,9 @@ public interface AonHubMessages extends Messages {
  	@DefaultMessage("Usuario: ")
  	String userSender();
  	
+ 	@DefaultMessage("Asignar a")
+ 	String assignedTo();
+ 	
  	@DefaultMessage("Empresa")
  	String company();
  	

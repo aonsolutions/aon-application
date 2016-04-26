@@ -1040,6 +1040,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("tag-notice")
 	String tagNotice();
 	
+	@ClassName("tag-user")
+	String tagUser();
+	
 	@ClassName("aonhub-expand-all")
 	String aonhubExpandAll();
 	

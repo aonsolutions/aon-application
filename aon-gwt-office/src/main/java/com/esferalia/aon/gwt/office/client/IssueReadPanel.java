@@ -88,7 +88,7 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 		
 		void onSendNotificationButtonClick();
 		
-//		void onCompanyShowInfoClick(String name, Callback<RegistryMedia> callback);
+		void onAssigneedTo(int id);
 	}
 	
 	private static IssueReadPanelUiBinder uiBinder = GWT
@@ -108,7 +108,9 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 
 	@UiField
 	VerticalPanel labelsVPanel;
-
+	@UiField
+	VerticalPanel usersVPanel;
+	
 	@UiField
 	FlowPanel historialVPanel;
 
@@ -130,6 +132,8 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 	Button priorityButton;
 	@UiField
 	Button tagButton;
+	@UiField
+	Button userButton;
 	
 	@UiField
 	SplitLayoutPanel dockLayoutPanel;
@@ -153,9 +157,12 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 	private List<AonTagIssueSelected> assignTags;
 	private List<AonTagIssueSelected> addTagsMap;
 	private List<AonTagIssueSelected> deletedTagsMap;
-
+	
+	private VerticalPanel usersPopupPanel;
 	private VerticalPanel infoHeaderContent;
 	private VerticalPanel companyContainer;
+	
+	private Integer userId;
 
 	public IssueReadPanel(User currentUser, IssueSelected issue) {
 		initWidget(uiBinder.createAndBindUi(this));		
@@ -237,6 +244,10 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 		initPriorityButton(priorityList);
 		initTagButton(officeList);
 
+	}
+	
+	public void setUsersToAssigneed(List<User> users) {
+		initUserButton(users);
 	}
 
 	public void addListener(Listener listener) {
@@ -473,6 +484,80 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 
 		});
 	}
+	
+	private void initUserButton(final List<User> users) {
+		
+		this.userButton.addClickHandler(new ClickHandler() {
+			
+			private PopupPanel popup = new PopupPanel(true);			
+			private boolean changes = false;			
+			
+			{
+				IssueReadPanel.this.usersPopupPanel = new VerticalPanel();
+				
+				for (final User user : users ) {
+					
+					final CheckBox cb = new CheckBox(user.getName());
+					cb.setName(String.valueOf(user.getId()));
+					cb.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+						
+						@Override
+						public void onValueChange(ValueChangeEvent<Boolean> event) {
+							
+							if (event.getValue()) {
+								cb.addStyleName(AON.AON_BOLD);
+								unSelectPanel(cb.getText());
+								IssueReadPanel.this.userId = Integer.parseInt(cb.getName());
+								changes = true;
+							}
+							else {
+								cb.removeStyleName(AON.AON_BOLD);
+								IssueReadPanel.this.userId = null;
+								changes = false;
+							}
+						}
+					});
+					cb.setValue(isUserAssignee(user));
+					cb.setEnabled(canEdit);
+					usersPopupPanel.add(cb);
+				}
+				popup.addCloseHandler(new CloseHandler<PopupPanel>() {
+					
+					@Override
+					public void onClose(CloseEvent<PopupPanel> event) {
+						if (changes) {
+							for (Listener listener : listeners)
+								listener.onAssigneedTo(userId);
+							changes = false;
+						}
+					}
+				});
+				popup.add(usersPopupPanel);				
+			}
+			
+			private void unSelectPanel(String userName) {
+				for (int x = 0; x < usersPopupPanel.getWidgetCount(); x++) {
+					CheckBox cb = (CheckBox) usersPopupPanel.getWidget(x);
+					if (AonStringUtils.equals(cb.getText(), userName) == false && cb.getValue()) {
+						cb.setValue(false);
+						cb.removeStyleName(AON.AON_BOLD);
+					}
+				}
+			}
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				int left = userButton.getAbsoluteLeft();
+				int top = userButton.getAbsoluteTop()
+						+ userButton.getOffsetHeight();
+
+				popup.setPopupPosition(left, top);
+				popup.show();
+			}
+		});
+	}
+	
+
 
 	private void evalAssignTag(AonTagIssueSelected tag) {
 
@@ -508,6 +593,19 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 				labelsVPanel.add(label);
 				return true;
 			}
+		}
+		return false;
+	}
+	
+	private boolean isUserAssignee(User assignee) {
+		
+		if (issue.getUserAssignee() != null && issue.getUserAssignee().getUserId() == assignee.getId()) {
+			Label label = new Label(assignee.getName());
+			label.setStyleName(AON.AON_CSS.tagStyle());
+			label.addStyleName(AON.AON_CSS.tagUser());
+			label.setTitle(setTitle2Label(assignee.getName()));
+			usersVPanel.add(label);
+			return true;
 		}
 		return false;
 	}

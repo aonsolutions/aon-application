@@ -19,8 +19,7 @@
 	}
 	
 	.table {
-	vertical-align: top;
-
+		vertical-align: top;
 	}
 	</ui:style>
 
@@ -28,87 +27,102 @@
 	<g:SplitLayoutPanel ui:field="dockLayoutPanel">
 		<g:center>
 			<g:ScrollPanel>
-			<g:HTMLPanel height="100%" width="100%">
-				<table width="100%" class="{style.table}">
-				<tr>
-					<td width="70%" class="{style.table}">
-			<g:VerticalPanel styleName="{style.scrollpanel-options}">
-				<g:VerticalPanel ui:field="headerVPanel" spacing="10" />
-				<g:FlowPanel ui:field="historialVPanel" />
-				<g:TextArea visibleLines="5" characterWidth="10"
-					styleName="{aonResources.css.textAreaStyle}" ui:field="commentTextArea" />
-				<g:Grid width="100%" height="100%">
-					<g:row>
-						<g:customCell>
-							<g:HTMLPanel height="100%" width="100%">
-								<div>
-									<g:InlineLabel styleName="{aonResources.css.aonBold}"
-										text="{msg.userSender} " />
-									<g:InlineLabel ui:field="userLogged"
-										styleName="{aonResources.css.aonColorGreen}" />
-								</div>
-								<div>
-									<g:Button ui:field="sendButton"
-										styleName="aon-icon-mailForward aon-icon-commandButton edit-button"
-										title="{msg.sendNotificacion}" />
-								</div>
-							</g:HTMLPanel>
-						</g:customCell>
-						<g:customCell>
-							<g:HTMLPanel height="100%" width="100%">
-								<div class="{style.buttons}">
-									<g:Button ui:field="duplicatedButton" text="{msg.duplicated}" />
-									<g:Button ui:field="closedButton" text="{msg.close}" />
-									<g:Button ui:field="commentButton" text="{msg.comment}"
-										enabled="false" />
-								</div>
-							</g:HTMLPanel>
-						</g:customCell>
-					</g:row>
-				</g:Grid>
-			</g:VerticalPanel>
-					</td>
-					<td width="30%" class="{style.table}">
-			<g:VerticalPanel spacing="10">
-				<g:FlowPanel>
-					<g:VerticalPanel spacing="10">
-						<g:HorizontalPanel>
-							<g:Label text="{msg.typeOfIssue}" styleName="{aonResources.css.aonBold}" />
-							<g:Button ui:field="typeButton" text="{msg.typeOfIssue}"
-								styleName="{aonResources.css.aonIconView} 
+				<g:HTMLPanel height="100%" width="100%">
+					<table width="100%" class="{style.table}">
+						<tr>
+							<td width="70%" class="{style.table}">
+								<g:VerticalPanel styleName="{style.scrollpanel-options}">
+									<g:VerticalPanel ui:field="headerVPanel"
+										spacing="10" />
+									<g:FlowPanel ui:field="historialVPanel" />
+									<g:TextArea visibleLines="5" characterWidth="10"
+										styleName="{aonResources.css.textAreaStyle}" ui:field="commentTextArea" />
+									<g:Grid width="100%" height="100%">
+										<g:row>
+											<g:customCell>
+												<g:HTMLPanel height="100%" width="100%">
+													<div>
+														<g:InlineLabel styleName="{aonResources.css.aonBold}"
+															text="{msg.userSender} " />
+														<g:InlineLabel ui:field="userLogged"
+															styleName="{aonResources.css.aonColorGreen}" />
+													</div>
+													<div>
+														<g:Button ui:field="sendButton"
+															styleName="aon-icon-mailForward aon-icon-commandButton edit-button"
+															title="{msg.sendNotificacion}" />
+													</div>
+												</g:HTMLPanel>
+											</g:customCell>
+											<g:customCell>
+												<g:HTMLPanel height="100%" width="100%">
+													<div class="{style.buttons}">
+														<g:Button ui:field="duplicatedButton" text="{msg.duplicated}" />
+														<g:Button ui:field="closedButton" text="{msg.close}" />
+														<g:Button ui:field="commentButton" text="{msg.comment}"
+															enabled="false" />
+													</div>
+												</g:HTMLPanel>
+											</g:customCell>
+										</g:row>
+									</g:Grid>
+								</g:VerticalPanel>
+							</td>
+							<td width="30%" class="{style.table}">
+								<g:VerticalPanel spacing="10">
+									<g:FlowPanel>
+										<g:VerticalPanel spacing="10">
+											<g:HorizontalPanel>
+												<g:Label text="{msg.typeOfIssue}" styleName="{aonResources.css.aonBold}" />
+												<g:Button ui:field="typeButton" text="{msg.typeOfIssue}"
+													styleName="{aonResources.css.aonIconView} 
 				{aonResources.css.aonIconCommandButton}" />
-						</g:HorizontalPanel>
-						<g:Label ui:field="typeLabel"
-							styleName="{aonResources.css.tagStyle} {aonResources.css.tagType}" />
-					</g:VerticalPanel>
-				</g:FlowPanel>
-				<g:FlowPanel>
-					<g:VerticalPanel spacing="10">
-						<g:HorizontalPanel>
-							<g:Label text="Prioridad" styleName="{aonResources.css.aonBold}" />
-							<g:Button ui:field="priorityButton" text="Prioridad"
-								styleName="{aonResources.css.aonIconView} 
+											</g:HorizontalPanel>
+											<g:Label ui:field="typeLabel"
+												styleName="{aonResources.css.tagStyle} {aonResources.css.tagType}" />
+										</g:VerticalPanel>
+									</g:FlowPanel>
+									<g:FlowPanel>
+										<g:VerticalPanel spacing="10">
+											<g:HorizontalPanel>
+												<g:Label text="{msg.priority}" styleName="{aonResources.css.aonBold}" />
+												<g:Button ui:field="priorityButton" text="Prioridad"
+													styleName="{aonResources.css.aonIconView} 
 				{aonResources.css.aonIconCommandButton}" />
-						</g:HorizontalPanel>
-						<g:Label ui:field="priorityLabel"
-							styleName="{aonResources.css.tagStyle} {aonResources.css.tagPriority}" />
-					</g:VerticalPanel>
-				</g:FlowPanel>
-				<g:FlowPanel>
-					<g:VerticalPanel ui:field="labelsVPanel" spacing="10">
-						<g:HorizontalPanel>
-							<g:Label text="Etiquetas" styleName="{aonResources.css.aonBold}" />
-							<g:Button ui:field="tagButton" text="{msg.labels}"
-								styleName="{aonResources.css.aonIconView} 
+											</g:HorizontalPanel>
+											<g:Label ui:field="priorityLabel"
+												styleName="{aonResources.css.tagStyle} {aonResources.css.tagPriority}" />
+										</g:VerticalPanel>
+									</g:FlowPanel>
+									<g:FlowPanel>
+										<g:VerticalPanel ui:field="labelsVPanel"
+											spacing="10">
+											<g:HorizontalPanel>
+												<g:Label text="{msg.labels}" styleName="{aonResources.css.aonBold}" />
+												<g:Button ui:field="tagButton" text="{msg.labels}"
+													styleName="{aonResources.css.aonIconView} 
 				{aonResources.css.aonIconCommandButton}" />
-						</g:HorizontalPanel>
-					</g:VerticalPanel>
-				</g:FlowPanel>
-			</g:VerticalPanel>
-					</td>
-				</tr>
-				</table>
-			</g:HTMLPanel>
+											</g:HorizontalPanel>
+										</g:VerticalPanel>
+									</g:FlowPanel>
+
+									<g:FlowPanel>
+										<g:VerticalPanel ui:field="usersVPanel"
+											spacing="10">
+											<g:HorizontalPanel>
+												<g:Label text="{msg.assignedTo}" styleName="{aonResources.css.aonBold}" />
+												<g:Button ui:field="userButton" text="{msg.assignedTo}"
+													styleName="{aonResources.css.aonIconView} 
+				{aonResources.css.aonIconCommandButton}" />
+											</g:HorizontalPanel>
+										</g:VerticalPanel>
+									</g:FlowPanel>
+
+								</g:VerticalPanel>
+							</td>
+						</tr>
+					</table>
+				</g:HTMLPanel>
 			</g:ScrollPanel>
 		</g:center>
 

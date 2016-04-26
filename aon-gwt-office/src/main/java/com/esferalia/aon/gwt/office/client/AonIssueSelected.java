@@ -18,6 +18,7 @@ public abstract class AonIssueSelected implements IssueSelected {
 	private DateTimeFormat timeFormat;
 
 	private AonUserIssueSelected user;
+	private AonUserIssueSelected assignee;
 	private List<AonTagIssueSelected> tags;
 	private List<AonIssueComments> comments;
 	
@@ -31,6 +32,9 @@ public abstract class AonIssueSelected implements IssueSelected {
 		this.timeFormat = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss.S");
 
 		this.user = new AonUserIssueSelected(issue.getUser());
+		
+		if (issue.getAssignee() != null)
+			this.assignee = new AonUserIssueSelected(issue.getAssignee());
 		
 		this.tags = new LinkedList<AonTagIssueSelected>();
 		this.comments = new LinkedList<AonIssueComments>();
@@ -142,6 +146,11 @@ public abstract class AonIssueSelected implements IssueSelected {
 	@Override
 	public AonUserIssueSelected getUser() {
 		return this.user;
+	}
+	
+	@Override
+	public AonUserIssueSelected getUserAssignee() {		
+		return this.assignee;
 	}
 	
 	@Override

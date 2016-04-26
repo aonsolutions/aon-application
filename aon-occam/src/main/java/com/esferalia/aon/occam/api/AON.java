@@ -1225,6 +1225,18 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Notice assigneeTo(Integer domainId,
+			String domainName, String userName, int noticeId, int userId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getOffice().assigneeTo(ctx, noticeId, userId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static Notice addLabelsToAnIssue(Integer domainId, String domainName,
 			String userName, Integer issueId, List<Tag> tagList) {

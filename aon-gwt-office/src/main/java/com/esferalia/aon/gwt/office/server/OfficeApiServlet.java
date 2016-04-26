@@ -925,6 +925,68 @@ public class OfficeApiServlet extends HttpServlet {
 		}
 	}
 
+	private static class AssigneeTo extends RegExpRequestHandler {
+
+		private HttpServletRequest req;
+		private HttpServletResponse resp;
+
+		private Integer domain;
+		private String domainName;
+		private int noticeId;
+
+		public AssigneeTo() {
+			super("/repos/(\\d+)/([\\w-]+(\\.[\\w-]+)*\\.[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,}))/issues/(\\d+)/assignees/");
+		}
+
+		@Override
+		public void handler(HttpServletRequest req, HttpServletResponse resp)
+				throws ServletException, IOException {
+
+			try {
+				this.req = req;
+				this.resp = resp;
+
+				this.domain = getDomainId();
+				this.domainName = getDomainName();
+				this.noticeId = Integer.parseInt(group(3));
+
+			} catch (Exception ex) {
+				String ver = getRequestAction(req);
+				String[] actionArr = ver.split("/");
+				this.domain = Integer.parseInt(actionArr[2]);
+				this.domainName = actionArr[3];
+				this.noticeId = Integer.parseInt(actionArr[5]);
+
+			} finally {
+				assigneeTo();
+			}
+		}
+
+		private void assigneeTo() {
+
+			PrintWriter pw = null;
+
+			try {
+				
+				pw = resp.getWriter();
+
+				String object = getJsonObject(this.req);
+				JSONObject json = new JSONObject(object);
+				
+				int userId = Integer.parseInt(json.getString("id"));
+				
+				Notice notice = AON.assigneeTo(domain, domainName, AonServletUtils.getLoggedUser(), noticeId, userId);
+				pw.append(getNotice(notice));
+				pw.flush();
+
+			} catch (Exception ex) {
+				System.out.println("Error al conseguir etiquetas guardadas");
+				pw.flush();
+			}
+		}
+	}
+
+	
 	private static class ReplaceLabelsForIssue extends RegExpRequestHandler {
 
 		private HttpServletRequest req;
@@ -1230,6 +1292,7 @@ public class OfficeApiServlet extends HttpServlet {
 			new CreateComment(),
 			new EditComment(),
 			new AddLabelToAnIssue(),
+			new AssigneeTo(),
 			new ReplaceLabelsForIssue(),
 	};
 
@@ -1316,12 +1379,9 @@ public class OfficeApiServlet extends HttpServlet {
 		StringBuffer buffer = new StringBuffer();
 
 		buffer.append("{\n");
-		buffer.append(String.format("\"id\":%s,\r\n",
-				String.valueOf(notice.getId())));
-		buffer.append(String.format("\"number\":%s,\r\n",
-				String.valueOf(notice.getId())));
-		buffer.append(String.format("\"title\":\"%s\",\r\n",
-				UriUtils.encode(notice.getTitle())));
+		buffer.append(String.format("\"id\":%s,\r\n", String.valueOf(notice.getId())));
+		buffer.append(String.format("\"number\":%s,\r\n", String.valueOf(notice.getId())));
+		buffer.append(String.format("\"title\":\"%s\",\r\n", UriUtils.encode(notice.getTitle())));
 		buffer.append(String.format("\"state\":\"%s\",\r\n",
 				(notice.getDuplicated() > 0)
 						? NoticeStatus.DUPLICATED.getValue()
@@ -1334,6 +1394,8 @@ public class OfficeApiServlet extends HttpServlet {
 						: ""));
 		buffer.append(String.format("\"duplicates\":%s,\r\n",
 				String.valueOf(notice.getDuplicated())));
+		buffer.append(String.format("\"assignee\":%s,\r\n",
+				(notice.getRecipient() != null) ? buildUserSender(notice.getRecipient()) : null));
 		buffer.append(String.format("\"user\":%s,\r\n",
 				buildUserSender(notice.getSender())));
 		buffer.append(

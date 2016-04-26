@@ -333,6 +333,16 @@ public class AonHubDAO2 {
 		return getTicketNotice(ctx, parentId);
 	}
 	
+	public static Notice assigneeTo(AONContext ctx, int noticeId, int userId) {
+		
+		ctx.getDslContext()
+		.update(NOTICE)
+		.set(NOTICE.RECIPIENT, userId)
+		.execute();
+		
+		return getTicketNotice(ctx, noticeId);
+	}
+	
 	public static Tag insertTag(AONContext ctx, Tag tag) {
 		
 		TagRecord tagRecord = ctx.getDslContext()
@@ -375,6 +385,8 @@ public class AonHubDAO2 {
 				.collect(Collectors.toCollection(LinkedList::new))));
 		notice.addComments(fillNoticeComments(ctx, notice)
 				.collect(Collectors.toCollection(LinkedList::new)));
+		notice.setRecipient(getRecipient(ctx, notice));
+		
 		return notice;
 	}
 	
@@ -421,9 +433,16 @@ public class AonHubDAO2 {
 						.collect(Collectors.toCollection(LinkedList::new)))))				
 				.peek(notice -> notice.setStatus(setTag(notice.getTags().stream()
 						.filter(tag -> tag.getType() == TagType.OFFICE_STATUS.value())
-						.collect(Collectors.toCollection(LinkedList::new)))))			
+						.collect(Collectors.toCollection(LinkedList::new)))))
+				.peek(notice -> notice.setRecipient(getRecipient(ctx, notice)))
 				.collect(Collectors.toCollection(LinkedList::new));
 		// @formatter:on
+	}
+	
+	private static User getRecipient(AONContext ctx, Notice notice) {
+		
+		return (notice.getRecipientId() != null) ?
+				UserDAO.getUser(ctx, notice.getRecipientId()) : null;
 	}
 	
 	private static String setTag(List<Tag> tags) {
@@ -447,7 +466,7 @@ public class AonHubDAO2 {
 			notice.setSource(record.getValue(NOTICE.SOURCE));
 			notice.setSender(new MinimalUserFiller().apply(record));
 			notice.setTitle(record.getValue(NOTICE.SUBJECT));
-			notice.setRecipient(record.getValue(NOTICE.RECIPIENT));
+			notice.setRecipientId(record.getValue(NOTICE.RECIPIENT));
 
 			return notice;
 		}
@@ -628,27 +647,44 @@ public class AonHubDAO2 {
 	}
 	
 	public static List<User> fillUsersFromNotices(AONContext ctx, Integer parentDomain) {
-		// @formatter:off
-		SelectConditionStep<Record1<Integer>> select = 
+		
+		SelectConditionStep<Record> users =
 				ctx.getDslContext()
-				.select(NOTICE.SENDER)
-				.from(NOTICE)
-				.where(NOTICE.DOMAIN.eq(ctx.getDomainId()));
-		// @formatter:off
-		
-		if (parentDomain != null)
-			select = select.or(NOTICE.DOMAIN.eq(parentDomain));
-		
-		// @formatter:off
-		return ctx.getDslContext()
 				.select(USER.fields())
 				.from(USER)
-				.where(USER.ID.in(select))
-				.orderBy(USER.NAME.asc())
+				.where(USER.DOMAIN.eq(ctx.getDomainId()));
+		
+		if (parentDomain != null)
+			users = users.or(USER.DOMAIN.eq(parentDomain));
+
+		return users.orderBy(USER.NAME.asc())
 				.fetch()
 				.stream()
 				.map(new MinimalUserFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
+			
+		
+		// @formatter:off
+//		SelectConditionStep<Record1<Integer>> select = 
+//				ctx.getDslContext()
+//				.select(NOTICE.SENDER)
+//				.from(NOTICE)
+//				.where(NOTICE.DOMAIN.eq(ctx.getDomainId()));
+		// @formatter:off
+		
+//		if (parentDomain != null)
+//			select = select.or(NOTICE.DOMAIN.eq(parentDomain));
+		
+		// @formatter:off
+//		return ctx.getDslContext()
+//				.select(USER.fields())
+//				.from(USER)
+//				.where(USER.ID.in(select))
+//				.orderBy(USER.NAME.asc())
+//				.fetch()
+//				.stream()
+//				.map(new MinimalUserFiller())
+//				.collect(Collectors.toCollection(LinkedList::new));
 		// @formatter:on
 	}
 
