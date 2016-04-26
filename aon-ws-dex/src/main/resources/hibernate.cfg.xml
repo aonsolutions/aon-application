@@ -8,7 +8,7 @@
 		<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
  		<property name="connection.url">jdbc:mysql://dbgps.cdhc46h3yjvt.eu-west-1.rds.amazonaws.com:3306/grupoplayasol-com?autoReconnect=true</property>
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>
-		<property name="connection.username">root</property>
+		<property name="connection.username">dbuser</property>
 		<property name="connection.password">dbpassword</property>
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 		<property name="show_sql">false</property>
@@ -23,32 +23,30 @@
 		<property name="hibernate.c3p0.preferredTestQuery">select 1;</property>
 
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
-<!-- 
+
     	<mapping class="com.code.aon.account.Account"/>
-    	<mapping class="com.code.aon.asset.Asset"/>
-    	<mapping class="com.code.aon.asset.AssetActivity"/>
-    	<mapping class="com.code.aon.asset.AssetFeature"/>
-    	<mapping class="com.code.aon.asset.Feature"/>
-    	<mapping class="com.code.aon.company.Company"/>
+    	<mapping class="com.code.aon.account.bridge.InvoiceDetailAccount"/>
+    	<mapping class="com.code.aon.account.bridge.InvoiceTaxAccount"/>
+    	<mapping class="com.code.aon.accounting.AccountEntry"/>
+    	<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
+    	<mapping class="com.code.aon.accounting.Period"/>
     	<mapping class="com.code.aon.company.Department"/>
     	<mapping class="com.code.aon.company.Enterprise"/>
     	<mapping class="com.code.aon.company.InvestAsset"/>
     	<mapping class="com.code.aon.company.WorkPlace"/>
-    	<mapping class="com.code.aon.config.ApplicationParameter"/>
     	<mapping class="com.code.aon.config.Catalogue"/>
     	<mapping class="com.code.aon.config.CNAE"/>
     	<mapping class="com.code.aon.config.CNAE2009"/>
     	<mapping class="com.code.aon.config.CommissionType"/>
-    	<mapping class="com.code.aon.config.Domain"/>
     	<mapping class="com.code.aon.config.IAE"/>
     	<mapping class="com.code.aon.config.PayMethod"/>
     	<mapping class="com.code.aon.config.Scope"/>
+    	<mapping class="com.code.aon.config.Series"/>
         <mapping class="com.code.aon.config.Tag"/>
     	<mapping class="com.code.aon.config.Tariff"/>
 		<mapping class="com.code.aon.config.TariffAddInfo"/>
 		<mapping class="com.code.aon.config.TariffCatalogue"/>
     	<mapping class="com.code.aon.config.Tax"/>
-    	<mapping class="com.code.aon.config.TaxDetail"/>
     	<mapping class="com.code.aon.customer.Customer"/>
     	<mapping class="com.code.aon.customer.InvoicingGroup"/>
     	<mapping class="com.code.aon.finance.Finance"/>
@@ -56,15 +54,12 @@
     	<mapping class="com.code.aon.finance.InvoiceAddress"/>
     	<mapping class="com.code.aon.finance.InvoiceAttachment"/>
     	<mapping class="com.code.aon.finance.InvoiceDetail"/>
+    	<mapping class="com.code.aon.finance.InvoiceTax"/>
     	<mapping class="com.code.aon.finance.Pos"/>
-    	<mapping class="com.code.aon.finance.PosCatalogue"/>
     	<mapping class="com.code.aon.finance.PosShift"/>
     	<mapping class="com.code.aon.finance.PosShiftCount"/>
     	<mapping class="com.code.aon.geozone.GeoZone"/>
-    	<mapping class="com.code.aon.person.Person"/>
     	<mapping class="com.code.aon.product.Brand"/>
-    	<mapping class="com.code.aon.product.CatalogueCategory"/>
-    	<mapping class="com.code.aon.product.CatalogueItem"/>
     	<mapping class="com.code.aon.product.Item"/>
     	<mapping class="com.code.aon.product.ItemAddInfo"/>
     	<mapping class="com.code.aon.product.ItemComposition"/>
@@ -80,8 +75,8 @@
     	<mapping class="com.code.aon.registry.Question"/>
     	<mapping class="com.code.aon.registry.QuestionValue"/>
     	<mapping class="com.code.aon.registry.Registry"/>
-    	<mapping class="com.code.aon.registry.RegistryAddInfo"/>
     	<mapping class="com.code.aon.registry.RegistryAddress"/>
+    	<mapping class="com.code.aon.registry.RegistryAddInfo"/>
     	<mapping class="com.code.aon.registry.RegistryAttachment"/>
 		<mapping class="com.code.aon.registry.RegistryAttachmentTag"/>
     	<mapping class="com.code.aon.registry.RegistryBank"/>
@@ -91,29 +86,15 @@
     	<mapping class="com.code.aon.registry.RegistryProfile"/>
     	<mapping class="com.code.aon.registry.RegistrySegment"/>
     	<mapping class="com.code.aon.registry.RegistrySeller"/>
-    	<mapping class="com.code.aon.registry.RegistrySupplier"/>
-    	<mapping class="com.code.aon.registry.RegistryTax"/>
     	<mapping class="com.code.aon.registry.Segment"/>	
     	<mapping class="com.code.aon.seller.Seller"/>
-    	<mapping class="com.code.aon.supplier.Supplier"/>
     	<mapping class="com.code.aon.warehouse.Warehouse"/>
 
     	<mapping class="com.esferalia.aon.calendar.Calendar"/>
     	<mapping class="com.esferalia.aon.calendar.Holiday"/>
     	<mapping class="com.esferalia.aon.payroll.EnterpriseActivity"/>
     	<mapping class="com.esferalia.aon.payroll.EnterpriseCCC"/>
-    	<mapping class="com.esferalia.aon.pms.Hotel"/>
-    	<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
-    	<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
-    	<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
-    	<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
-    	<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
-    	<mapping class="com.esferalia.aon.pms.ProjectReservationServiceDetail"/>
-    	<mapping class="com.esferalia.aon.pms.ReservationRequest"/>
-    	<mapping class="com.esferalia.aon.pms.ReservationRequestGuest"/>
-    	<mapping class="com.esferalia.aon.pms.ReservationRequestRoom"/>
-    	<mapping class="com.esferalia.aon.pms.Room"/>
-		 -->
+
 	</session-factory>
 
 </hibernate-configuration>

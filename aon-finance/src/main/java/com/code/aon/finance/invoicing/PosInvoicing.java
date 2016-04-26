@@ -52,7 +52,7 @@ public class PosInvoicing {
 
 			HibernateUtil.beginTransaction(sessionName);
 
-			Invoice invoice = createInvoice(posShift, posShift.getPos().getWorkPlace(), posShift.getStartTime(), posShift.getPos().getName(), shiftName);
+			Invoice invoice = createInvoice(posShift, posShift.getStartTime(), shiftName, shiftName);
 			createInvoiceDetail(invoice, posShift.getPos().getWorkPlace(), posShift.getPos().getItemInvoice());
 
 			HibernateUtil.getSession(sessionName).flush();
@@ -75,10 +75,10 @@ public class PosInvoicing {
 		}
 	}
 
-	public Invoice completeInvoice(PosShift posShift, String ticketInfo) throws ManagerBeanException {
+	public Invoice completeInvoice(PosShift posShift, String shiftName, String ticketInfo) throws ManagerBeanException {
 		Invoice invoice = obtainPosShiftInvoice(posShift);
 		if (invoice == null) {
-			invoice = createInvoice(posShift, posShift.getPos().getWorkPlace(), posShift.getEndTime(), posShift.getPos().getName(), "GENERADA EN EL ARQUEO");
+			invoice = createInvoice(posShift, posShift.getEndTime(), shiftName, "GENERADA EN EL ARQUEO");
 		}
 		if (invoice.isRecorded()) {
 			throw new ManagerBeanException("No se puede modificar la Factura asociada por estar Contabilizada.");
@@ -117,8 +117,9 @@ public class PosInvoicing {
 		}
 	}
 
-	private Invoice createInvoice(PosShift posShift, WorkPlace workPlace, Date issueDate, String posName, String shiftName) throws ManagerBeanException {
+	private Invoice createInvoice(PosShift posShift, Date issueDate, String shiftName, String comments) throws ManagerBeanException {
 		Customer customer = obtainPosCustomer(posShift.getPos());
+		Pos pos = posShift.getPos();
 
 		Invoice invoice = new Invoice();
 		invoice.setProject(null);
@@ -130,15 +131,15 @@ public class PosInvoicing {
 		invoice.setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry());
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     	String date = StringUtils.rightPad(formatter.format(issueDate), 11);
-		invoice.setRegistryName(workPlace.getDescription().concat(" - ").concat(posName).concat(" - ").concat(date).concat(" - ").concat(shiftName));
+		invoice.setRegistryName(pos.getWorkPlace().getDescription().concat(" - ").concat(pos.getName()).concat(" - ").concat(date).concat(" - ").concat(shiftName));
 		invoice.setRegistryAddress(null);
 		invoice.setIssueDate(issueDate);
 		invoice.setSecurityLevel(SecurityLevel.CONFIDENTIAL);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setType(InvoiceType.SALES);
-		invoice.setScope(workPlace.getScope());
+		invoice.setScope(pos.getWorkPlace().getScope());
 		invoice.setService(false);
-		invoice.setComments(shiftName);
+		invoice.setComments(comments);
 		invoice.setPosShift(posShift);
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
