@@ -55,6 +55,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		try {
 			invoiceDetail.setProject((invoice.getProject() != null && invoice.getProject().getId() != null) ? invoice.getProject() : null);
 			invoiceDetail.setSeller((invoice.getSeller() != null && invoice.getSeller().getId() != null) ? invoice.getSeller() : null);
+			invoiceDetail.setInvestAsset((invoice.getInvestAsset() != null && invoice.getInvestAsset().getId() != null) ? invoice.getInvestAsset() : null);
 			invoiceDetail.setLine(calculateNextLine(invoice));
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 			fillWorkPlace(event, invoiceDetail);
@@ -86,9 +87,13 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+		Invoice invoice = controller.getInvoice();
 		try {
 			checkSerializable(invoiceDetail);
 
+			invoiceDetail.setProject((invoice.getProject() != null && invoice.getProject().getId() != null) ? invoice.getProject() : null);
+			invoiceDetail.setSeller((invoice.getSeller() != null && invoice.getSeller().getId() != null) ? invoice.getSeller() : null);
+			invoiceDetail.setInvestAsset((invoice.getInvestAsset() != null && invoice.getInvestAsset().getId() != null) ? invoice.getInvestAsset() : null);
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 			if (invoiceDetail.getInvoice().isSales() || invoiceDetail.getInvoice().isPurchase()) {
 				invoiceDetail.setTaxableBase(controller.getTaxableBase());
