@@ -16,6 +16,9 @@ public class Extra implements Serializable, HasId<Integer>, HasDomain<Integer> {
 	private String startDate;
 	private String endDate;
 	private String issueDate;
+	
+	private String paymentDescription;
+	private String agreementDescription;
 
 	public Integer getId() {
 		return id;
@@ -65,7 +68,23 @@ public class Extra implements Serializable, HasId<Integer>, HasDomain<Integer> {
 	public void setIssueDate(String issueDate) {
 		this.issueDate = issueDate;
 	}
-
+	
+	public String getPaymentDescription() {
+		return paymentDescription;
+	}
+	
+	public void setPaymentDescription(String paymentDescription) {
+		this.paymentDescription = paymentDescription;
+	}
+	
+	public String getAgreementDescription() {
+		return agreementDescription;
+	}
+	
+	public void setAgreementDescription(String agreementDescription) {
+		this.agreementDescription = agreementDescription;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof Extra && this.hashCode() == obj.hashCode();

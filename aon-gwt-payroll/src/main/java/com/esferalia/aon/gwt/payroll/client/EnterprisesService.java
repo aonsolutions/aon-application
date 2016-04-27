@@ -8,8 +8,8 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -60,6 +60,8 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<Cost> getEnterprisesCosts(List<Integer> enterpriseIds); 
 	
+	List<Extra> getWorkplacesExtras(List<Integer> workplaceIds) ;
+
 	Integer getParentDomain();
 	
 	

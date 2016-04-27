@@ -24,6 +24,8 @@ import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.jooq.tables.AgreementExtra;
+import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
@@ -34,6 +36,7 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.event.AgreementLevelVetoableBeanListener;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
@@ -49,7 +52,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 		// @formatter:on
 		AgreementLevelCategoryRecord category = newAgreement(aonContext,
-				new Extra[] { new Extra() {
+				new Extra[] { 
+				new Extra() {
 					{
 						this.expression = "P";
 						this.month = Month.DECEMBER;
@@ -57,7 +61,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 						this.end = "31/12";
 						this.issue = "15/12";
 					}
-				}, new Extra() {
+				}, 
+				new Extra() {
 					{
 						this.expression = "P";
 						this.month = Month.JULY;
@@ -65,13 +70,18 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 						this.end = "30/06";
 						this.issue = "01/07";
 					}
-				}, });
+				}, 
+				});
 
 		PaymentConceptRecord concept = addConcept(aonContext, "P");
 
 		ContractRecord contract = newContract(aonContext,
-				getFirstDayOfMonth(getToday()), new HashMap<String, String>() {
-				}, new String[] {}, new String[] {}, category);
+				getFirstDayOfMonth(getToday()) 
+				,new HashMap<String, String>() {
+				} 
+				,new String[] {} 
+				,new String[] {} 
+				,category);
 		//@formatter:off
 		
 		addPayment(aonContext, contract, concept, String.format("SIN_DEFINIR * %s / %s", WORKED_DAYS , MONTH_DAYS ));
@@ -90,6 +100,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, criteria);
 		ctx.next();
+		
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
@@ -261,7 +272,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				});
 		
 		
-		addExtra(aonContext, payment, startYear,
+		AgreementExtraRecord agreementExtra = addExtra(aonContext, payment, startYear,
 		new Extra() {
 			{
 				this.expression = "P";
@@ -293,8 +304,10 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(MONTH, 5);
 		calendar.set(DAY_OF_MONTH, 30);
 		Date endDate = new Date(calendar.getTimeInMillis());
+		
+		int year = calendar.get(Calendar.YEAR);
 
-		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, agreementExtra, year, issueDate);
 
 		Salary extra = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
@@ -349,7 +362,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				});
 		
 		
-		addExtra(aonContext, payment, startYear,
+		AgreementExtraRecord agreementExtra = addExtra(aonContext, payment, startYear,
 		new Extra() {
 			{
 				this.expression = "P";
@@ -383,7 +396,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 31);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		int year = calendar.get(Calendar.YEAR);
+
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, agreementExtra, year, issueDate);
 
 		Salary extra = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
@@ -436,7 +451,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				});
 		
 		
-		addExtra(aonContext, payment, startYear,
+		AgreementExtraRecord agreementExtra = addExtra(aonContext, payment, startYear,
 		new Extra() {
 			{
 				this.expression = "P";
@@ -473,8 +488,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 30);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext ctx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		int year = calendar.get(Calendar.YEAR);
 
+		ISQLContractSalaryCalculatorContext ctx = getExtraSalaryCalculatorContext(connection, contract, agreementExtra, year, issueDate);
 
 		
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
@@ -524,7 +540,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				});
 		
 		
-		addExtra(aonContext, payment, startYear,
+		AgreementExtraRecord agreementExtra = addExtra(aonContext, payment, startYear,
 		new Extra() {
 			{
 				this.expression = "P";
@@ -559,7 +575,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 31);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext ctx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		int year = calendar.get(Calendar.YEAR);
+
+		ISQLContractSalaryCalculatorContext ctx = getExtraSalaryCalculatorContext(connection, contract, agreementExtra, year, issueDate);
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
@@ -606,7 +624,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				});
 		
 		
-		addExtra(aonContext, payment, startYear,
+		AgreementExtraRecord agreementExtra = addExtra(aonContext, payment, startYear,
 		new Extra() {
 			{
 				this.expression = "P";
@@ -641,7 +659,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 30);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext ctx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		int year = calendar.get(Calendar.YEAR);
+
+		ISQLContractSalaryCalculatorContext ctx = getExtraSalaryCalculatorContext(connection, contract, agreementExtra, year, issueDate);
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
@@ -690,7 +710,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				});
 		
 		
-		addExtra(aonContext, payment, startYear,
+		AgreementExtraRecord agreementExtra = addExtra(aonContext, payment, startYear,
 		new Extra() {
 			{
 				this.expression = "P";
@@ -725,7 +745,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 31);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext ctx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		int year = calendar.get(Calendar.YEAR);
+
+		ISQLContractSalaryCalculatorContext ctx = getExtraSalaryCalculatorContext(connection, contract, agreementExtra, year, issueDate);
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
@@ -776,7 +798,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				});
 		
 		
-		addExtra(aonContext, payment, startYear,
+		AgreementExtraRecord agreementExtra = addExtra(aonContext, payment, startYear,
 		new Extra() {
 			{
 				this.expression = "P";
@@ -814,7 +836,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(DAY_OF_MONTH, 30);
 		Date endDate = new Date(calendar.getTimeInMillis());
 
-		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		int year = calendar.get(Calendar.YEAR);
+
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, agreementExtra, year, issueDate);
 
 		Salary extra = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
@@ -871,7 +895,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				});
 		
 		
-		addExtra(aonContext, payment, startYear,
+		AgreementExtraRecord agreementExtra = addExtra(aonContext, payment, startYear,
 		new Extra() {
 			{
 				this.expression = "P";
@@ -912,9 +936,11 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(MONTH, 5);
 		calendar.set(DAY_OF_MONTH, 30);
 		Date endDate = new Date(calendar.getTimeInMillis());
+		
+		int year = calendar.get(Calendar.YEAR);
 
-		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
-
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, agreementExtra, year, issueDate);
+		
 		Salary extra = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
 		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1100.00 * (16/40.00), extra.getTotalPayment(), DELTA );
@@ -984,8 +1010,13 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		calendar.set(MONTH, 5);
 		calendar.set(DAY_OF_MONTH, 30);
 		Date endDate = new Date(calendar.getTimeInMillis());
+		
+		int year = calendar.get(Calendar.YEAR);
 
-		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, startDate, issueDate, endDate);
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
+
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate);
 
 		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
 		
@@ -993,6 +1024,76 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 
 	}
+
+	//@Test
+	public void testDuplicatePaymentsX() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P + S";
+						this.month = Month.DECEMBER;
+						this.start = "01/12";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P + S";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+
+		PaymentConceptRecord concept = addConcept(aonContext, "P");
+
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String, String>() {
+				
+				}, new String[] {}, new String[] {}, category);
+		//@formatter:off
+		
+		addPayment(aonContext, contract, concept, String.format("1000 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		addPayment(aonContext, contract, concept, String.format("500 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		addPayment(aonContext, contract, concept, String.format("250 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		addPayment(aonContext, contract, concept, String.format("125 * %s / %s", WORKED_DAYS , MONTH_DAYS ));
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, 6);
+		calendar.set(DAY_OF_MONTH, 1);
+		Date startDate = new Date(calendar.getTimeInMillis());
+		
+		calendar.add(YEAR, 1);
+		calendar.set(MONTH, 6);
+		calendar.set(DAY_OF_MONTH, 30);
+		Date issueDate = new Date(calendar.getTimeInMillis());
+		
+		calendar.set(MONTH, 5);
+		calendar.set(DAY_OF_MONTH, 30);
+		Date endDate = new Date(calendar.getTimeInMillis());
+
+		int year = calendar.get(Calendar.YEAR);
+		
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
+
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, issueDate);
+
+		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
+		
+		Assert.assertEquals(String.format("%s",TOTAL_PAYMENT), 1875.00, salary.getTotalPayment(), DELTA);
+		
+
+	}
+
 	// ------------------------------------------------------------------------
 	
 	protected ContextVariable getPeriodVariable() {

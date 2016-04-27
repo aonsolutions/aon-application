@@ -155,10 +155,10 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 	}
 
 	@Override
-	public void getExtras(Employee employee, AsyncCallback<List<Extra>> callback)
+	public void getExtras(List<Employee> employees, AsyncCallback<List<Extra>> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getExtras(employee,
+		employeesServiceAsync.getExtras(employees,
 				new AsyncCallbackWrapper<List<Extra>>(callback));
 	}
 

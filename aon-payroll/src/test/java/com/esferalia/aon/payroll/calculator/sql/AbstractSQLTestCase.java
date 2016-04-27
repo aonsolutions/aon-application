@@ -66,6 +66,7 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.esferalia.aon.jooq.tables.AgreementData;
+import com.esferalia.aon.jooq.tables.AgreementExtra;
 import com.esferalia.aon.jooq.tables.AgreementLevelData;
 import com.esferalia.aon.jooq.tables.AgreementPayment;
 import com.esferalia.aon.jooq.tables.BonusConcept;
@@ -102,6 +103,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public abstract class AbstractSQLTestCase {
 
@@ -461,6 +463,17 @@ public abstract class AbstractSQLTestCase {
 				.set(AGREEMENT.DESCRIPTION, "").returning().fetchOne();
 	}
 
+	public static AgreementRecord getAgreement(AONContext aonContext, int agreementLevel) {
+		return aonContext.getDslContext()
+				.select()
+				.from(AGREEMENT)
+				.join(AGREEMENT_LEVEL).on(AGREEMENT.ID.eq(AGREEMENT_LEVEL.AGREEMENT))
+				.where(AGREEMENT_LEVEL.ID.eq(agreementLevel))
+				.fetchOneInto(AGREEMENT)
+				;
+				
+	}
+
 	public static final AgreementLevelCategoryRecord newAgreementCategory(
 			AONContext aonContext, AgreementRecord agreement, String levelDescription, String categoryDescription) {
 		AgreementLevelRecord level = aonContext.getDslContext()
@@ -581,6 +594,18 @@ public abstract class AbstractSQLTestCase {
 				.set(AGREEMENT_EXTRA.ISSUE_DATE, extra.issue).returning()
 				.fetchOne();
 	}
+	
+
+	public static AgreementExtraRecord getExtra(AONContext aonContext,int agreement, String issueDate) {
+
+		return aonContext.getDslContext()
+				.select()
+				.from(AGREEMENT_EXTRA)
+				.where(AGREEMENT_EXTRA.AGREEMENT.eq(agreement))
+				.and(AGREEMENT_EXTRA.ISSUE_DATE.eq(issueDate))
+				.fetchOneInto(AGREEMENT_EXTRA);
+	}
+	
 
 	public static void addPayments(AONContext aonContext,
 			AgreementRecord agreement, Date startDate, Payment payments[]) {
@@ -639,15 +664,13 @@ public abstract class AbstractSQLTestCase {
 		}
 	}
 
-	public ISQLContractSalaryCalculatorContext getExtraSalaryCalculatorContext(Connection connection, ContractRecord contract, Date startDate, Date issueDate,
-			Date endDate) throws SQLException, ExpressionException {
+	public ISQLContractSalaryCalculatorContext getExtraSalaryCalculatorContext(Connection connection, ContractRecord contract, AgreementExtraRecord extra, int year, Date chargeDate) throws SQLException, ExpressionException {
 				
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(
 						CONTRACT.getName() + "." + CONTRACT.ID.getName(),
 						contract.getId());
-				
-				SQLExtraSalaryCalculatorContext ctx = new SQLExtraSalaryCalculatorContext(connection, issueDate, criteria);
+				SQLExtraSalaryCalculatorContext ctx = new SQLExtraSalaryCalculatorContext(connection, extra.getId(), year, chargeDate, criteria);
 				ctx.next();
 				return ctx;
 				
@@ -1146,6 +1169,16 @@ public abstract class AbstractSQLTestCase {
 	public static final void addPayment(AONContext aonContext,
 			ContractRecord contract, PaymentConceptRecord concept,
 			String expression, String quoteExpression, PaymentType type) {
+		addPayment(aonContext, contract, concept, null, expression, "_P", quoteExpression, type);
+	}
+
+	public static final void addPayment(AONContext aonContext,
+			ContractRecord contract, PaymentConceptRecord concept,
+			String description, 
+			String expression, 
+			String irpfExpression,  
+			String quoteExpression, 
+			PaymentType type) {
 		aonContext
 				.getDslContext()
 				.insertInto(CONTRACT_PAYMENT)
@@ -1154,9 +1187,10 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
 				.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
 				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
+				.set(CONTRACT_PAYMENT.DESCRIPTION, description)
 				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
 				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
-				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, "_P")
+				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
 				.set(CONTRACT_PAYMENT.TYPE, (byte) type.ordinal())
 				.set(CONTRACT_PAYMENT.SALARY_TYPE,
 						(byte) SalaryType.SALARY.ordinal()).execute();
@@ -1172,20 +1206,32 @@ public abstract class AbstractSQLTestCase {
 	public static final void addPayment(AONContext aonContext,
 			ContractRecord contract, Date startDate, String expression,
 			SalaryType salaryType) {
+		
+		addPayment(aonContext, contract, null, expression, "_P", "_P",  PaymentType.CRA_0001);
+
+	}
+
+	public static final void addPayment(AONContext aonContext,
+			ContractRecord contract, 
+			String description, 
+			String expression, 
+			String irpfExpression,  
+			String quoteExpression, 
+			PaymentType type) {
 		aonContext
 				.getDslContext()
 				.insertInto(CONTRACT_PAYMENT)
 				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
 				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
-				.set(CONTRACT_PAYMENT.START_DATE, startDate)
+				.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
 				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
+				.set(CONTRACT_PAYMENT.DESCRIPTION, description)
 				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
-				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, "_P")
-				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, "_P")
-				.set(CONTRACT_PAYMENT.TYPE,
-						(byte) PaymentType.CRA_0001.ordinal())
-				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) salaryType.ordinal())
-				.execute();
+				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
+				.set(CONTRACT_PAYMENT.TYPE, (byte) type.ordinal())
+				.set(CONTRACT_PAYMENT.SALARY_TYPE,
+				(byte) SalaryType.SALARY.ordinal()).execute();
 
 	}
 

@@ -202,7 +202,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void getExtras(Employee employee,
+	public void getExtras(List<Employee> employees,
 			AsyncCallback<List<Extra>> callback)
 			throws IllegalArgumentException {
 		failure(callback);

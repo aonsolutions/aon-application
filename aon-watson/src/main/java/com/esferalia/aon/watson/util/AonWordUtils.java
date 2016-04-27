@@ -32,7 +32,7 @@ package com.esferalia.aon.watson.util;
  */
 public class AonWordUtils {
 
-    /**
+	/**
      * <p><code>WordUtils</code> instances should NOT be constructed in
      * standard programming. Instead, the class should be used as
      * <code>WordUtils.wrap("foo bar", 20);</code>.</p>
@@ -223,7 +223,7 @@ public class AonWordUtils {
      * rest of each word to lowercase at the same time, 
      * use {@link #capitalizeFully(String)}.</p>
      *
-     * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.
+     * <p>Whitespace is defined by {@link Character#isSpace(char)}.
      * A <code>null</code> input String returns <code>null</code>.
      * Capitalization uses the unicode title case, normally equivalent to
      * upper case.</p>
@@ -287,7 +287,7 @@ public class AonWordUtils {
                 buffer.append(ch);
                 capitalizeNext = true;
             } else if (capitalizeNext) {
-                buffer.append(Character.toTitleCase(ch));
+                buffer.append(Character.toUpperCase(ch));
                 capitalizeNext = false;
             } else {
                 buffer.append(ch);
@@ -302,7 +302,7 @@ public class AonWordUtils {
      * that is each word is made up of a titlecase character and then a series of 
      * lowercase characters.  </p>
      *
-     * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.
+     * <p>Whitespace is defined by {@link Character#isSpace(char)}.
      * A <code>null</code> input String returns <code>null</code>.
      * Capitalization uses the unicode title case, normally equivalent to
      * upper case.</p>
@@ -322,7 +322,7 @@ public class AonWordUtils {
 
     /**
      * <p>Converts all the delimiter separated words in a String into capitalized words, 
-     * that is each word is made up of a titlecase character and then a series of 
+     * that is each word is made up of a uppercase character and then a series of 
      * lowercase characters. </p>
      *
      * <p>The delimiters represent a set of characters understood to separate words.
@@ -360,7 +360,7 @@ public class AonWordUtils {
      * <p>Uncapitalizes all the whitespace separated words in a String.
      * Only the first letter of each word is changed.</p>
      *
-     * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.
+     * <p>Whitespace is defined by {@link Character#isSpace(char)}.
      * A <code>null</code> input String returns <code>null</code>.</p>
      *
      * <pre>
@@ -385,7 +385,7 @@ public class AonWordUtils {
      * The first string character and the first non-delimiter character after a
      * delimiter will be uncapitalized. </p>
      *
-     * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.
+     * <p>Whitespace is defined by {@link Character#isSpace(char)}.
      * A <code>null</code> input String returns <code>null</code>.</p>
      *
      * <pre>
@@ -432,12 +432,10 @@ public class AonWordUtils {
      * 
      * <ul>
      *  <li>Upper case character converts to Lower case</li>
-     *  <li>Title case character converts to Lower case</li>
-     *  <li>Lower case character after Whitespace or at start converts to Title case</li>
      *  <li>Other Lower case character converts to Upper case</li>
      * </ul>
      * 
-     * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.
+     * <p>Whitespace is defined by {@link Character#isSpace(char)}.
      * A <code>null</code> input String returns <code>null</code>.</p>
      * 
      * <pre>
@@ -464,19 +462,13 @@ public class AonWordUtils {
             ch = str.charAt(i);
             if (Character.isUpperCase(ch)) {
                 tmp = Character.toLowerCase(ch);
-            } else if (Character.isTitleCase(ch)) {
-                tmp = Character.toLowerCase(ch);
             } else if (Character.isLowerCase(ch)) {
-                if (whitespace) {
-                    tmp = Character.toTitleCase(ch);
-                } else {
-                    tmp = Character.toUpperCase(ch);
-                }
+                tmp = Character.toUpperCase(ch);
             } else {
                 tmp = ch;
             }
             buffer.append(tmp);
-            whitespace = Character.isWhitespace(ch);
+            whitespace = Character.isSpace(ch);
         }
         return buffer.toString();
     }
@@ -489,7 +481,7 @@ public class AonWordUtils {
      * whitespace are returned as a new string.
      * Their case is not changed.</p>
      *
-     * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.
+     * <p>Whitespace is defined by {@link Character#isSpace(char)}.
      * A <code>null</code> input String returns <code>null</code>.</p>
      *
      * <pre>
@@ -516,7 +508,7 @@ public class AonWordUtils {
      * Their case is not changed.</p>
      *
      * <p>If the delimiters array is null, then Whitespace is used.
-     * Whitespace is defined by {@link Character#isWhitespace(char)}.
+     * Whitespace is defined by {@link Character#isSpace(char)}.
      * A <code>null</code> input String returns <code>null</code>.
      * An empty delimiter array returns an empty String.</p>
      *
@@ -571,7 +563,7 @@ public class AonWordUtils {
      */
     private static boolean isDelimiter(char ch, char[] delimiters) {
         if (delimiters == null) {
-            return Character.isWhitespace(ch);
+            return Character.isSpace(ch);
         }
         for (int i = 0, isize = delimiters.length; i < isize; i++) {
             if (ch == delimiters[i]) {
@@ -625,6 +617,7 @@ public class AonWordUtils {
         if (upper < lower) {
             upper = lower;
         }
+        
 
         StringBuffer result = new StringBuffer();
         int index = AonStringUtils.indexOf(str, " ", lower);
@@ -643,5 +636,6 @@ public class AonWordUtils {
         }
         return result.toString();
     }
-
+    
+    
 }

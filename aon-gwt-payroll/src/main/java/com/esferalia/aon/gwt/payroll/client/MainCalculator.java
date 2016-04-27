@@ -83,25 +83,33 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 	public static final byte SAVE_OPTION = 0x01;
 
-	public static <T extends HasId<?>> void calculate(Date startDate,
-			Date endDate, String itemClass, Set<T> items, int optionsBits,
+	public static <T extends HasId<?>> void calculate(Salary.Type salaryType, Date startDate,
+			Date endDate, Date issueDate, String itemClass, Set<T> items, int optionsBits, Integer extra,
 			final AsyncCallback<JsSalaryResult> callback) {
-		calculate(startDate, endDate, startDate, endDate, itemClass, items, optionsBits, callback);
+		calculate(salaryType, startDate, endDate, issueDate, startDate, endDate, itemClass, items, optionsBits, extra, callback);
 	}
 
-	public static <T extends HasId<?>> void calculate(Date startDate,
-			Date endDate, Date startCheckDate, Date endCheckDate, 
-			String itemClass, Set<T> items, int optionsBits,
+	public static <T extends HasId<?>> void calculate(Salary.Type salaryType, Date startDate,
+			Date endDate, Date issueDate, Date startCheckDate, Date endCheckDate, 
+			String itemClass, Set<T> items, Integer extra, int optionsBits, 
 			final AsyncCallback<JsSalaryResult> callback) {
 	
 		StringBuffer requestDataBuffer = new StringBuffer();
 	
 		requestDataBuffer
+			.append("&" + SALARY_TYPE + "=" + salaryType.name() );
+		
+		if ( extra != null ) 
+			requestDataBuffer
+			.append("&" + EXTRA + "=" + Integer.toString(extra) );
+			
+
+		requestDataBuffer
 				.append("&" + START_DATE + "=" + DATE_FORMAT.format(startDate));
 		requestDataBuffer
 				.append("&" + END_DATE + "=" + DATE_FORMAT.format(endDate));
 		requestDataBuffer
-				.append("&" + ISSUE_DATE + "=" + DATE_FORMAT.format(endDate));
+				.append("&" + ISSUE_DATE + "=" + DATE_FORMAT.format(issueDate));
 		requestDataBuffer
 				.append("&" + START_CHECK_DATE + "=" + DATE_FORMAT.format(startCheckDate));
 		requestDataBuffer
@@ -317,6 +325,7 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		Date month = monthListBox.getSelectedMonth();
 		Date startDate = DateUtils.getFirstDayOfMonth(month);
 		Date endDate = DateUtils.getLastDayOfMonth(month);
+		Date issueDate = DateUtils.getLastDayOfMonth(month);
 		
 		Date checkMonth = getCheckMonth();
 		Date startCheckDate = checkMonth == null ? startDate : DateUtils.getFirstDayOfMonth(checkMonth);
@@ -324,7 +333,7 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 		Set<Enterprise> enterprises = enterprisesSelectionModel.getSelectedSet();
 		
-		calculate(startDate, endDate, startCheckDate, endCheckDate, ENPERPRISES, enterprises, optionsBits, new AsyncCallback<JsSalaryResult>(){
+		calculate(Salary.Type.SALARY, startDate, endDate, issueDate, startCheckDate, endCheckDate, ENPERPRISES, enterprises, null,optionsBits,  new AsyncCallback<JsSalaryResult>(){
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub

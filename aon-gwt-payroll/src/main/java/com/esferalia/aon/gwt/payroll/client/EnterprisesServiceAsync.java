@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -26,6 +27,7 @@ public interface EnterprisesServiceAsync {
 	void deleteAgreement(Agreement agreement, AsyncCallback<Void> callback);
 	void updateAgreementId(Agreement agreement, AsyncCallback<Void> callback);
 	void copyAgreement(Agreement agreement, AsyncCallback<Agreement> callback);
+	void getWorkplacesExtras(List<Integer> workplaceIds, AsyncCallback<List<Extra>> callback);
 	void getAgreements(int offset , int limit, AsyncCallback<List<Agreement>> callback);
 	void getEnterprises(int offset , int limit, AsyncCallback<List<Enterprise>> callback);
 	void getEnterprisesCosts(List<Integer> enterpriseIds, AsyncCallback<List<Cost>> callback);

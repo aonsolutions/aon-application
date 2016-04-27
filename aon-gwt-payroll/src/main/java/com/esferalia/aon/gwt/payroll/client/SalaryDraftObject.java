@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -269,7 +270,7 @@ public class SalaryDraftObject implements IContextProvider {
 
 	public void getExtras(AsyncCallback<List<Extra>> callback)
 			throws IllegalArgumentException {
-		employeesServiceAsync.getExtras(getEmployee(), callback);
+		employeesServiceAsync.getExtras(Collections.singletonList(getEmployee()), callback);
 	}
 
 	public void save(final CalculateCallback callback) {

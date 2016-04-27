@@ -325,17 +325,22 @@ public class ContractSalaryCalculatorContext extends
 				SalaryType salaryType) {
 			Connection connection = getConnection();
 			Criteria criteria = getCriteria();
-			Date issueDate = endDate; // By default isuue date is equal to end
-										// date
+			Date chargeDate = endDate; // By default issue date is equal to end date
 
 			ISQLContractSalaryCalculatorContext sqlCtx = null;
 
-			int year = CommonUtil.getYear(issueDate);
-			Month month = Month.getMonthByValue(CommonUtil.getMonth(issueDate));
-
+			int year = CommonUtil.getYear(chargeDate);
+			Month month = Month.getMonthByValue(CommonUtil.getMonth(chargeDate));
+			
+			// TODO: Get Extra for this month & contract.
+			
 			try {
-				sqlCtx = new SQLExtraSalaryCalculatorContext(connection, year,
-						month, issueDate, null, criteria);
+				sqlCtx = new SQLExtraSalaryCalculatorContext(
+						connection, 
+						year,
+						-1, 
+						chargeDate, 
+						criteria);
 			} catch (SQLException e) {
 				throw new RuntimeException(e);
 			}

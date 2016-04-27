@@ -29,6 +29,7 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -40,44 +41,35 @@ public class SQLExtraSalaryCalculatorContext implements
 
 	private static final String EXTRAS_SQL_FORMAT = "SELECT * "
 		+ " FROM " + AGREEMENT_EXTRA 
-		+ " WHERE " + ISSUE_DATE + " LIKE '%%/%02d'"
+		+ " WHERE " + AgreementExtraColumns.ID + " = %d"
 		;
 	
 	private ResultSet rs;
 	private Statement stmt;
 
 	private int year;
-	private Month month;
-	private Date issueDate;
+	private int extra;
 	private Date chargeDate;
 	private Criteria criteria;
 	private Connection connection ;
 	private ISQLContractSalaryCalculatorContext ctx;
 	
 	public SQLExtraSalaryCalculatorContext(Connection connection,
+			int extra,
 			int year,
-			Month month,
-			Date issueDate, 
 			Date chargeDate, 
 			Criteria criteria) 
 	throws SQLException {
-		
-		this.connection = connection;
-		this.month = month;
+
+		this.extra = extra;
 		this.year = year;
-		this.issueDate = issueDate;
-		this.chargeDate = chargeDate;
 		this.criteria = criteria;
+		this.connection = connection;
+		this.chargeDate = chargeDate;
 
 		initExtrasResultSet();
 	}
 	
-	public SQLExtraSalaryCalculatorContext(Connection connection,
-			Date issueDate, 
-			Criteria criteria) 
-	throws SQLException {
-		this(connection, getYear(issueDate), getMonth(issueDate), issueDate, issueDate, criteria);
-	}
 
 	@Override
 	public void close() throws SQLException {
@@ -100,9 +92,8 @@ public class SQLExtraSalaryCalculatorContext implements
 	}
 
 	private void initExtrasResultSet() throws SQLException{
-		int monthIndex = this.month.getValue() +1 ;
 		String sql = 
-			String.format(EXTRAS_SQL_FORMAT, monthIndex);
+			String.format(EXTRAS_SQL_FORMAT, extra);
 		this.stmt = connection.createStatement();
 		this.rs = stmt.executeQuery(sql);
 	}
@@ -138,7 +129,7 @@ public class SQLExtraSalaryCalculatorContext implements
 				startDate, 
 				endDate, 
 				issueDate, 
-				issueDate, 
+				chargeDate, 
 				agreementCriteria); 
 		
 		return true;

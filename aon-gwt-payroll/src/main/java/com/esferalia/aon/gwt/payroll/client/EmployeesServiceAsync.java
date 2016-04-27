@@ -61,7 +61,7 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 	void getIrpfs(Employee employee, AsyncCallback<List<Irpf>> callback)
 			throws IllegalArgumentException;
 
-	void getExtras(Employee employee, AsyncCallback<List<Extra>> callback)
+	void getExtras(List<Employee> employees, AsyncCallback<List<Extra>> callback)
 			throws IllegalArgumentException;
 
 	void getCostReceiptHTML(Cost cost, Salary.Type types[], int zoom,

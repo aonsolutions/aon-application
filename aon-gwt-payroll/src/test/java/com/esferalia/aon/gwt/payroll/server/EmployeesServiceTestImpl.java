@@ -208,7 +208,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Extra> getExtras(Employee employee)
+	public List<Extra> getExtras(List<Employee> employee)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");

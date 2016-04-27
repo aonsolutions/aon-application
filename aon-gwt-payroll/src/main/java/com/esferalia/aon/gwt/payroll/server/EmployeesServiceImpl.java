@@ -86,6 +86,7 @@ import com.esferalia.aon.gwt.common.shared.UnknownVariablesWarning;
 import com.esferalia.aon.gwt.payroll.client.CalendarService;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
+import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
@@ -338,13 +339,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Extra> getExtras(Employee employee)
+	public List<Extra> getExtras(List<Employee> employees)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
 			initFacesContext();
 			conn = getConnection();
-			return getExtras(conn, employee.getId());
+			Integer ids [] = employees.stream()
+					.map(e->e.getId())
+					.toArray(Integer[]::new);
+			return JooqAgreement.getEmployeesExtras(conn, ids );
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -2509,65 +2513,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				rs.close();
 			}
 		}
-	}
-
-	private static List<Extra> getExtras(Connection connection,
-			Integer contractId) throws SQLException {
-		ResultSet rs = null;
-		PreparedStatement stmt = null;
-
-		try {
-			// @formatter:off
-			String sql = "SELECT * " + " FROM " + CONTRACT + " INNER JOIN "
-					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + " ON ("
-					+ CONTRACT + "." + ContractColumns.AGREEMENT_LEVEL_CATEGORY
-					+ " = " + SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
-					+ AgreementLevelCategoryColumns.ID + ")" + " INNER JOIN "
-					+ SQLConstants.AGREEMENT_LEVEL + " ON ("
-					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
-					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " = "
-					+ SQLConstants.AGREEMENT_LEVEL + "."
-					+ AgreementLevelColumns.ID + ")" + " INNER JOIN "
-					+ SQLConstants.AGREEMENT_EXTRA + " ON ("
-					+ SQLConstants.AGREEMENT_LEVEL + "."
-					+ AgreementLevelColumns.AGREEMENT + " = "
-					+ SQLConstants.AGREEMENT_EXTRA + "."
-					+ AgreementExtraColumns.AGREEMENT + ")" + " WHERE "
-					+ CONTRACT + "." + ContractColumns.ID + " = ? ";
-			// @formatter:on
-
-			stmt = connection.prepareStatement(sql);
-
-			stmt.setInt(1, contractId);
-
-			rs = stmt.executeQuery();
-			List<Extra> extras = new LinkedList<Extra>();
-			while (rs.next()) {
-				Extra extra = new Extra();
-				extra.setId(rs.getInt(SQLConstants.AGREEMENT_EXTRA + "."
-						+ AgreementExtraColumns.ID));
-				extra.setPaymentId(rs.getInt(SQLConstants.AGREEMENT_EXTRA + "."
-						+ AgreementExtraColumns.AGREEMENT_PAYMENT));
-				extra.setStartDate(rs.getString(SQLConstants.AGREEMENT_EXTRA
-						+ "." + AgreementExtraColumns.START_DATE));
-				extra.setEndDate(rs.getString(SQLConstants.AGREEMENT_EXTRA
-						+ "." + AgreementExtraColumns.END_DATE));
-				extra.setIssueDate(rs.getString(SQLConstants.AGREEMENT_EXTRA
-						+ "." + AgreementExtraColumns.ISSUE_DATE));
-				extras.add(extra);
-			}
-
-			return extras;
-
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (stmt != null) {
-				rs.close();
-			}
-		}
-
 	}
 
 	private static List<Cost> getEnterpriseCosts(Connection connection,

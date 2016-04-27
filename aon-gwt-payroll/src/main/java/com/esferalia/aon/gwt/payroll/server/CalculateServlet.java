@@ -10,7 +10,6 @@ import static com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculat
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,10 +49,13 @@ import com.esferalia.aon.gwt.payroll.shared.CalculateService;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
@@ -64,6 +67,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class CalculateServlet extends HttpServlet implements CalculateService {
@@ -72,6 +76,26 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	private static class SkipSalaryException extends SalaryException {
 
+	}
+
+	private static class CalculatorListener extends ContractSalaryCalculator.Listener{
+		
+		List<String> errors = new ArrayList<String>();
+		
+		@Override
+		public void onCheckError(String message) {
+			errors.add(message);
+		}
+		
+		@Override
+		public void onCheckError(IContractBonus bonus, String message) {
+			errors.add(message);
+		}
+
+		@Override
+		public void onCheckError(IContractPayment payment, String message) {
+			errors.add(message);
+		}
 	}
 
 	private static class SalaryBBuilder {
@@ -466,13 +490,12 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 	private void doJson(HttpServletRequest req, HttpServletResponse resp)
 			throws ParseException, SQLException, IOException {
 		PrintStream os = null;
-		Connection conn = null;
 		Salaries salaries = null;
+		Connection conn = AonServletUtils.getConnection();
 		try {
 
 			resp.setContentType("application/json;charset=UTF-8");
 
-			conn = AonServletUtils.getConnection();
 
 			SalaryBBuilder.ISalaryBuilderExtended salaryBuilder = new SalaryBBuilder().setSave(save(req))
 					.setOverwrite(overwrite(req)).setDuplicate(duplicate(req)).setConnection(conn).build();
@@ -487,8 +510,58 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			criteria.addOrder(SQLConstants.WORKPLACE + "." + SQLConstants.WorkplaceColumns.ID);
 			criteria.addOrder(SQLConstants.CONTRACT + "." + SQLConstants.ContractColumns.ID);
 
-			SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(conn, startDate, endDate,
-					issueDate, criteria);
+			SalaryType salaryType = getSalaryType(req);
+			ISQLContractSalaryCalculatorContext ctx =  
+			salaryType.accept(new SalaryTypeVisitor<ISQLContractSalaryCalculatorContext>() {
+
+				@Override
+				public ISQLContractSalaryCalculatorContext visitSalary(SalaryType salaryType) {
+					try {
+						return new SQLContractSalaryCalculatorContext(conn, startDate, endDate,
+								issueDate, criteria);
+					} catch (ExpressionException | SQLException e) {
+						throw new RuntimeException(e);
+					}
+				}
+
+				@Override
+				public ISQLContractSalaryCalculatorContext visitExtra(SalaryType salaryType) {
+					try {
+						int extra = getExtra(req);
+						Calendar issueCalendar = Calendar.getInstance();
+						issueCalendar.setTime(issueDate);
+						int year = issueCalendar.get(Calendar.YEAR);
+						return new SQLExtraSalaryCalculatorContext(conn,
+								extra,
+								year,
+								issueDate, 
+								criteria);
+					} catch (ParseException | SQLException e) {
+						throw new RuntimeException(e);
+					}
+				}
+
+				@Override
+				public ISQLContractSalaryCalculatorContext visitSettle(SalaryType salaryType) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public ISQLContractSalaryCalculatorContext visitDelay(SalaryType salaryType) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public ISQLContractSalaryCalculatorContext visitNotEnjoyedVacations(SalaryType salaryType) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+			});
+			
+//			ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(conn, startDate, endDate,
+//					issueDate, criteria);
 
 			Date endCheckDate = getEndCheckDate(req);
 			Date startCheckDate = getStartCheckDate(req);
@@ -497,12 +570,10 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 			doJson(ctx, salaries, salaryBuilder, os, criteria.getOrderByList());
 
-		} catch (ExpressionException e) {
 		} finally {
+			conn.close();
 			if (os != null)
 				os.flush();
-			if (conn != null)
-				conn.close();
 			if (salaries != null)
 				salaries.close();
 
@@ -521,6 +592,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
 
 			calculator.setSalaryBuilder(salaryBuilder);
+//			calculator.setListener();
 
 			salaryBuilder.start();
 			ISQLSalary other = null;
@@ -560,6 +632,11 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 						os.printf(",\"counterTotalPayment\":\"%s\"", Double.toString(other.getTotalPayment()));
 						os.printf(",\"counterTotalDeduction\":\"%s\"", Double.toString(other.getTotalDeduction()));
 					}
+					
+					os.printf(",\"errors\":[");
+					
+					os.printf("]");
+					
 
 				} catch (Throwable e) {
 					e.printStackTrace();
@@ -602,6 +679,11 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 		return getBoolean(request, SAVE);
 	}
 
+	private static Integer getExtra(HttpServletRequest request) throws ParseException {
+		String extra = request.getParameter(EXTRA);
+		return StringUtils.isBlank(extra) ? null : Integer.parseInt(extra);
+	}
+
 	private static Date getEndDate(HttpServletRequest request) throws ParseException {
 		return getDate(request, END_DATE);
 	}
@@ -620,6 +702,11 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	private static Date getStartCheckDate(HttpServletRequest request) throws ParseException {
 		return getDate(request, START_CHECK_DATE);
+	}
+
+	private static SalaryType getSalaryType(HttpServletRequest request) throws ParseException {
+		String value = request.getParameter(SALARY_TYPE);
+		return StringUtils.isBlank(value) ? SalaryType.SALARY : SalaryType.valueOf(value);
 	}
 
 	private static Date getDate(HttpServletRequest request, String name) throws ParseException {

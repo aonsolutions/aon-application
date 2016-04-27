@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -296,6 +297,28 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			connection = AonServletUtils.getConnection();
 			return getEnterprises(connection, getUserID(), getDomainID(), offset, limit);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+	
+	@Override
+	public List<Extra> getWorkplacesExtras(List<Integer> workplaceIds) {
+		Connection connection = null;
+		try {
+			initFacesContext();
+			connection = AonServletUtils.getConnection();
+
+			return JooqAgreement.getWorkplacesExtras(connection, workplaceIds.toArray(new Integer[workplaceIds.size()]));
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

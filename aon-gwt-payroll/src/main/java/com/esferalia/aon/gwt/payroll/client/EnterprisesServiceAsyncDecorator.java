@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -105,6 +106,13 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getEnterprises(offset, limit,
 				new AsyncCallbackWrapper<List<Enterprise>>(callback));
+	}
+	
+	@Override
+	public void getWorkplacesExtras(List<Integer> workplaceIds, AsyncCallback<List<Extra>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getWorkplacesExtras(workplaceIds,
+				new AsyncCallbackWrapper<List<Extra>>(callback));
 	}
 
 	@Override

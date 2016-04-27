@@ -23,12 +23,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jooq.AggregateFunction;
+import org.jooq.Condition;
 import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Identity;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Record4;
+import org.jooq.Record7;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.SelectConditionStep;
@@ -38,6 +41,8 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.jooq.tables.AgreementExtra;
+import com.esferalia.aon.jooq.tables.Contract;
 import com.esferalia.aon.jooq.tables.records.AgreementDataRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -266,6 +271,21 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		// @formatter:on
 	}
 
+	public static List<Extra> getDomainsExtras(Connection conn, Integer... domains) throws SQLException {
+		return getExtras(DSL.using(conn, getDefaultSettings()), CONTRACT.DOMAIN.in(domains));
+	
+	}
+
+	public static List<Extra> getEmployeesExtras(Connection conn, Integer... employees) throws SQLException {
+		return getExtras(DSL.using(conn, getDefaultSettings()), CONTRACT.ID.in(employees));
+	
+	}
+
+	public static List<Extra> getWorkplacesExtras(Connection conn, Integer... workplaces) throws SQLException {
+		return getExtras(DSL.using(conn, getDefaultSettings()), CONTRACT.WORKPLACE.in(workplaces));
+	
+	}
+
 	public static List<Agreement> getAgreements(Connection conn, int offset,
 			int limit, Integer... domains) throws SQLException {
 		return getAgreements(DSL.using(conn, getDefaultSettings()), offset,
@@ -298,6 +318,50 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 		}
 		return agreements;
+	}
+
+	public static List<Extra> getExtras(DSLContext dslContext, Condition ...conditions) throws SQLException {
+		
+		// @formatter:off
+		Cursor<Record7<Integer,Integer,String,String,String,String,String>> result =		
+			dslContext
+				.selectDistinct(
+				AGREEMENT_EXTRA.ID,
+				AGREEMENT_EXTRA.DOMAIN,
+				AGREEMENT_EXTRA.END_DATE,
+				AGREEMENT_EXTRA.START_DATE,
+				AGREEMENT_EXTRA.ISSUE_DATE,
+				AGREEMENT_PAYMENT.DESCRIPTION,
+				AGREEMENT.DESCRIPTION
+				)
+				.from(CONTRACT)
+				.join(AGREEMENT_LEVEL_CATEGORY).on(CONTRACT.AGREEMENT_LEVEL_CATEGORY.eq(AGREEMENT_LEVEL_CATEGORY.ID))
+				.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
+				.join(AGREEMENT_EXTRA).on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT_EXTRA.AGREEMENT))
+				.join(AGREEMENT_PAYMENT).on(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(AGREEMENT_PAYMENT.ID))
+				.join(AGREEMENT).on(AGREEMENT_PAYMENT.AGREEMENT.eq(AGREEMENT.ID))
+				.where(conditions)
+				.fetchLazy()
+				;
+		// @formatter:on
+
+		List<Extra> extras = new LinkedList<Extra>();
+		for (Record7<Integer,Integer,String,String,String,String,String> record : result) {
+
+			Extra extra = new Extra();
+			extra.setId(record.getValue(AGREEMENT_EXTRA.ID)); 
+			extra.setDomain(record.getValue(AGREEMENT_EXTRA.DOMAIN)); 
+			extra.setEndDate(record.getValue(AGREEMENT_EXTRA.END_DATE)); 
+			extra.setStartDate(record.getValue(AGREEMENT_EXTRA.START_DATE)); 
+			extra.setIssueDate(record.getValue(AGREEMENT_EXTRA.ISSUE_DATE)); 
+
+			extra.setAgreementDescription(record.getValue(AGREEMENT.DESCRIPTION)); 
+			extra.setPaymentDescription(record.getValue(AGREEMENT_PAYMENT.DESCRIPTION)); 
+
+			extras.add(extra);
+
+		}
+		return extras;
 	}
 
 	private static boolean hasContract(DSLContext dslContext,

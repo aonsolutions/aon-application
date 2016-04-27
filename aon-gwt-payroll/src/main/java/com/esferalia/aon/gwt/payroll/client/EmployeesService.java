@@ -56,7 +56,7 @@ public interface EmployeesService extends RemoteService, CalendarService,
 
 	List<Irpf> getIrpfs(Employee employee) throws IllegalArgumentException;
 
-	List<Extra> getExtras(Employee employee) throws IllegalArgumentException;
+	List<Extra> getExtras(List<Employee> employees) throws IllegalArgumentException;
 
 	String getCostReceiptHTML(Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException;

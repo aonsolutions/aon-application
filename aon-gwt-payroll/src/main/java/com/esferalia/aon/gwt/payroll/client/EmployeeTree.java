@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.shared.CalculateService.WORKPLACES;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -32,6 +33,7 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
@@ -81,8 +83,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	public static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	static class EmployeeCalcDialog extends CalcDialog<Employee> {
-
+		
+		EmployeesServiceAsync employeesService ;
+		
 		public EmployeeCalcDialog() {
+
+
+			EmployeesServiceAsync employeesServiceRaw = GWT
+					.create(EmployeesService.class);
+			employeesService = new EmployeesServiceAsyncDecorator(
+					employeesServiceRaw);
 
 			// Full name.
 			Column<Employee, String> fullNameColumn = new Column<Employee, String>(
@@ -95,12 +105,25 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			addColumn(fullNameColumn, "Empleado");
 		}
-
+		
+		@Override
+		protected void getExtras(Set<Employee> employeesSet, AsyncCallback<List<Extra>> callback) {
+			List<Employee> employeesList = new ArrayList<Employee>(employeesSet);
+			employeesService.getExtras(employeesList, callback);
+		}
+		
 	}
 
 	static class WorkPlaceCalcDialog extends CalcDialog<Workplace> {
 
+		EnterprisesServiceAsync enterpriseService;
+
 		public WorkPlaceCalcDialog() {
+
+			EnterprisesServiceAsync enterpriseServiceRaw = GWT
+					.create(EnterprisesService.class);
+			enterpriseService = new EnterprisesServiceAsyncDecorator(
+					enterpriseServiceRaw);
 
 			// Full name.
 			Column<Workplace, String> descriptionColumn = new Column<Workplace, String>(
@@ -113,7 +136,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			addColumn(descriptionColumn, "Centro");
 		}
-
+		
+		@Override
+		protected void getExtras(Set<Workplace> workplaces, AsyncCallback<List<Extra>> callback) {
+			List<Integer> workplaceIds = new ArrayList<Integer>(workplaces.size());
+			for ( Workplace workplace: workplaces )
+				workplaceIds.add(workplace.getId());
+			enterpriseService.getWorkplacesExtras(workplaceIds, callback);
+		}
 	}
 
 	class ShowResultsCommand implements ScheduledCommand {
@@ -312,9 +342,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		// ------------------------------------------------------ AcceptHandler
 		@Override
 		public void onAccept(AcceptEvent event) {
-			Date month = calcDialog.getMonth();
-			Date startDate = DateUtils.getFirstDayOfMonth(month);
-			Date endDate = DateUtils.getLastDayOfMonth(month);
+			Date startDate = calcDialog.getStartDate();
+			Date endDate = calcDialog.getEndDate(); 
+			Date issueDate = calcDialog.getIssueDate(); 
 
 			Set<Workplace> workplaces = calcDialog.getSelectedData();
 
@@ -328,8 +358,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			if (calcDialog.isDuplicateSelected())
 				optionsBits |= MainCalculator.DUPLICATE_OPTION;
 
-			MainCalculator.calculate(startDate, endDate, WORKPLACES, workplaces,
-					optionsBits, this);
+			Integer extra = calcDialog.getExtra();
+			com.esferalia.aon.gwt.payroll.shared.Salary.Type salaryType = calcDialog.getType();
+
+			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, WORKPLACES, workplaces,
+					extra, optionsBits, this);
 
 			clear();
 
@@ -436,10 +469,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		// ------------------------------------------------------ AcceptHandler
 		@Override
 		public void onAccept(AcceptEvent event) {
-			Date month = calcDialog.getMonth();
 
-			Date startDate = DateUtils.getFirstDayOfMonth(month);
-			Date endDate = DateUtils.getLastDayOfMonth(month);
+			Date startDate = calcDialog.getStartDate(); 
+			Date endDate = calcDialog.getEndDate();
+			Date issueDate = calcDialog.getIssueDate();
 
 			Set<Employee> employees = calcDialog.getSelectedData();
 
@@ -453,8 +486,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			if (calcDialog.isDuplicateSelected())
 				optionsBits |= MainCalculator.DUPLICATE_OPTION;
 			
-			MainCalculator.calculate(startDate, endDate, EMPLOYEES, employees,
-					optionsBits, this);
+			Integer extra = calcDialog.getExtra();
+			com.esferalia.aon.gwt.payroll.shared.Salary.Type salaryType = calcDialog.getType();
+			
+			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, EMPLOYEES, employees,
+					extra, optionsBits, this);
 			clear();
 
 			showResultsPanel(); // TODO: Here or at below 'onReadyStateChange'
@@ -1063,7 +1099,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 				@Override
 				Date getEndDate() {
-					return calcDialog.getMonth();
+					return calcDialog.getEndDate();
 				}
 
 				@Override
@@ -1079,9 +1115,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		// ------------------------------------------------------ AcceptHandler
 		@Override
 		public void onAccept(AcceptEvent event) {
-			Date month = calcDialog.getMonth();
-			Date startDate = DateUtils.getFirstDayOfMonth(month);
-			Date endDate = DateUtils.getLastDayOfMonth(month);
+			Date startDate = calcDialog.getStartDate();
+			Date endDate = calcDialog.getEndDate(); 
+			Date issueDate = calcDialog.getIssueDate();
 
 			Set<Employee> employees = calcDialog.getSelectedData();
 
@@ -1094,9 +1130,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				optionsBits |= MainCalculator.OVERWRITE_OPTION;
 			if (calcDialog.isDuplicateSelected())
 				optionsBits |= MainCalculator.DUPLICATE_OPTION;
+			
+			Integer extra = calcDialog.getExtra();
+			com.esferalia.aon.gwt.payroll.shared.Salary.Type salaryType = calcDialog.getType();
 
-			MainCalculator.calculate(startDate, endDate, EMPLOYEES, employees,
-					optionsBits, this);
+			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, EMPLOYEES, employees,
+					extra, optionsBits, this);
 			clear();
 			showResultsPanel(); // TODO: Here or at below 'onReadyStateChange'
 		}

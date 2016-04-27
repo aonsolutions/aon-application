@@ -2,7 +2,8 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
+	xmlns:cell="urn:import:com.google.gwt.user.cellview.client"
+	xmlns:payroll='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
 	<ui:Style>
 	.form {
@@ -74,12 +75,28 @@
 		<table class="aon-width-all {style.form} ">
 			<tr>
 				<td class="{style.label}">
+						<g:Label text="Tipo" />
+				</td>
+				<td class="{style.field}">
+						<g:ListBox ui:field="typeListBox"/>
+				</td>
+			</tr>
+			<tr ui:field="monthTR">
+				<td class="{style.label}">
 					<g:Label text="Mes" />
 				</td>
 				<td class="{style.field}">
 					<aon:MonthListBox styleName="aon-selectOneMenu"
 						ui:field="monthListBox" monthStyles="{style.monthListBox-item}"
 						highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}"/>
+				</td>
+			</tr>
+			<tr ui:field="extraTR"  >
+				<td class="{style.label}">
+					<g:Label text="Extra" />
+				</td>
+				<td class="{style.field}">
+					<payroll:ActualExtraListBox ui:field="extraListBox"/>
 				</td>
 			</tr>
 			<tr>

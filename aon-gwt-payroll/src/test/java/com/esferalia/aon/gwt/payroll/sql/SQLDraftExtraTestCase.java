@@ -8,7 +8,9 @@ import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLExtraTestCase;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -16,12 +18,16 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 public class SQLDraftExtraTestCase extends SQLExtraTestCase {
 	
 	@Override
-	public ISQLContractSalaryCalculatorContext getExtraSalaryCalculatorContext(
-			Connection connection, ContractRecord contract, Date startDate, Date issueDate, Date endDate)
+	public ISQLContractSalaryCalculatorContext getExtraSalaryCalculatorContext(Connection connection,
+			ContractRecord contract, AgreementExtraRecord extra, int year, Date chargeDate)
 			throws SQLException, ExpressionException {
 		Employee employee = new Employee();
 		employee.setId(contract.getId());
-
+		
+		java.util.Date endDate = AgreementExtra.parseAgreementDate(extra.getEndDate(), year);
+		java.util.Date  startDate = AgreementExtra.parseAgreementDate(extra.getStartDate(), year);
+		java.util.Date  issueDate = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
+		
 		SalaryDraft draft = new SalaryDraft();
 		draft.setEmployee(employee);
 		draft.setStartDate(startDate);
@@ -31,7 +37,7 @@ public class SQLDraftExtraTestCase extends SQLExtraTestCase {
 		
 		
 		return EmployeesServiceHelper.getExtraCalculatorContextImpl(connection, draft, null);
-
 	}
+	
 
 }

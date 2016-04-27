@@ -10,25 +10,30 @@ import java.sql.SQLException;
 import org.junit.Test;
 
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class SQLContractExtraTestCase extends SQLExtraTestCase {
 	
 	
 	@Override
-	public ISQLContractSalaryCalculatorContext getExtraSalaryCalculatorContext(
-			Connection connection, ContractRecord contract, Date startDate,
-			Date issueDate, Date endDate) throws SQLException,
-			ExpressionException {
+	public ISQLContractSalaryCalculatorContext getExtraSalaryCalculatorContext(Connection connection,
+			ContractRecord contract, AgreementExtraRecord extra, int year, Date chargeDate)
+			throws SQLException, ExpressionException {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
 				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
 				contract.getId());
+		java.util.Date endDate = AgreementExtra.parseAgreementDate(extra.getEndDate(), year);
+		java.util.Date  startDate = AgreementExtra.parseAgreementDate(extra.getStartDate(), year);
+		java.util.Date  issueDate = AgreementExtra.parseAgreementDate(extra.getIssueDate(), year);
 		
 		SQLContractExtraCalculatorContext ctx = new SQLContractExtraCalculatorContext(connection, startDate, endDate,issueDate,  criteria);
 		ctx.next();
 		return ctx;
 	}
+	
 
 }
