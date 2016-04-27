@@ -10,7 +10,11 @@ public class AonDataLoad implements IDataLoad {
 	@Override
 	public String getDocument(String document) {
 		DataLoadManager dataLoadManager = new DataLoadManager();
-		return dataLoadManager.processDocument(document);
+System.out.println("WS DEX REQUEST: " + document);
+		String documentResult = dataLoadManager.processDocument(document);
+System.out.println("WS DEX RESPONSE: " + documentResult);
+		return documentResult;
+		//return dataLoadManager.processDocument(document);
 	}
 
 }
