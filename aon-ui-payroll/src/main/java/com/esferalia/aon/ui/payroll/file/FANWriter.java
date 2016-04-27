@@ -2266,8 +2266,8 @@ public class FANWriter implements Serializable {
 			criteria.setSkipDomainFilter(true);
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), c.getId());
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), salaryType);
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), startCal.getTime());
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endCal.getTime());
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), startCal.getTime());
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), endCal.getTime());
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				salary = (Salary) list.get(0);

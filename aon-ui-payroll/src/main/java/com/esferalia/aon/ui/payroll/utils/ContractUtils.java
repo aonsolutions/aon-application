@@ -233,7 +233,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( "TIPO_COTIZACION" );
 				if(params.getContractQuoteType()==ContractQuoteType.COOPERATIVE_PARTNER){
 					data.setExpression("\"01\"");
@@ -253,7 +253,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.QUOTE_GROUP.getName() );
 				data.setExpression("\"" + params.getQuoteGroup().getValue() + "\"");
 				bean.insert(data);
@@ -267,7 +267,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.OCCUPATION.getName() );
 				data.setExpression("\"" + params.getOccupationType().getValue() + "\"");
 				bean.insert(data);
@@ -281,7 +281,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.CNO.getName() );
 				data.setExpression("\"" + params.getCno().getCode() + "\"");
 				bean.insert(data);
@@ -295,7 +295,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( "SALARIO_BRUTO"  );
 				data.setExpression( String.valueOf(CommonUtil.round(params.getGrossSalary())) );
 				bean.insert(data);
@@ -323,7 +323,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.TC2.getName() );
 				data.setExpression("\"" + params.getContractCode() + "\"");
 				bean.insert(data);
@@ -337,7 +337,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName() );
 				data.setExpression("\"" + params.getCollectivePeculiarityQuote().getCode() + "\"");
 				bean.insert(data);
@@ -351,7 +351,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.CONTRACT_END_CODE.getName() );
 				data.setExpression("\"" + params.getSuspensionCause().getCode() + "\"");
 				bean.insert(data);
@@ -404,7 +404,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.MONDAY_HOURS.getName() );
 				data.setExpression(params.getWeekDayHours()[0].toString());
 				bean.insert(data);
@@ -413,7 +413,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.TUESDAY_HOURS.getName() );
 				data.setExpression(params.getWeekDayHours()[1].toString());
 				bean.insert(data);
@@ -422,7 +422,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.WEDNESDAY_HOURS.getName() );
 				data.setExpression(params.getWeekDayHours()[2].toString());
 				bean.insert(data);
@@ -431,7 +431,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.THURSDAY_HOURS.getName() );
 				data.setExpression(params.getWeekDayHours()[3].toString());
 				bean.insert(data);
@@ -440,7 +440,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.FRIDAY_HOURS.getName() );
 				data.setExpression(params.getWeekDayHours()[4].toString());
 				bean.insert(data);
@@ -449,7 +449,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.SATURDAY_HOURS.getName() );
 				data.setExpression(params.getWeekDayHours()[5].toString());
 				bean.insert(data);
@@ -458,7 +458,7 @@ public class ContractUtils implements Serializable {
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.SUNDAY_HOURS.getName() );
 				data.setExpression(params.getWeekDayHours()[6].toString());
 				bean.insert(data);
@@ -690,7 +690,7 @@ public class ContractUtils implements Serializable {
 				data = contractQuoteTypeData!=null?contractQuoteTypeData:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( "TIPO_COTIZACION" );
 				if(params.getContractQuoteType()==ContractQuoteType.COOPERATIVE_PARTNER){
 					data.setExpression("\"01\"");
@@ -715,7 +715,7 @@ public class ContractUtils implements Serializable {
 				data = quoteGroupData!=null?quoteGroupData:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.QUOTE_GROUP.getName() );
 				data.setExpression("\"" + params.getQuoteGroup().getValue() + "\"");
 				bean.insertOrUpdate(data);
@@ -734,7 +734,7 @@ public class ContractUtils implements Serializable {
 				data = occupationData!=null?occupationData:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.OCCUPATION.getName() );
 				data.setExpression("\"" + params.getOccupationType().getValue() + "\"");
 				bean.insertOrUpdate(data);
@@ -753,7 +753,7 @@ public class ContractUtils implements Serializable {
 				data = cnoData!=null?cnoData:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.CNO.getName() );
 				data.setExpression("\"" + params.getCno().getCode() + "\"");
 				bean.insertOrUpdate(data);
@@ -791,7 +791,7 @@ public class ContractUtils implements Serializable {
 				data = tc2Data!=null?tc2Data:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.TC2.getName() );
 				data.setExpression("\"" + params.getContractCode() + "\"");
 				bean.insertOrUpdate(data);
@@ -830,7 +830,7 @@ public class ContractUtils implements Serializable {
 				data = collectivePeculiarityQuote!=null?collectivePeculiarityQuote:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.QUOTE_PECULIARITY_COLLECTIVE.getName() );
 				data.setExpression("\"" + params.getCollectivePeculiarityQuote().getCode() + "\"");
 				bean.insertOrUpdate(data);
@@ -849,7 +849,7 @@ public class ContractUtils implements Serializable {
 				data = contractEndCode!=null?contractEndCode:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
+				data.setEndDate(null);
 				data.setName( ContextVariable.CONTRACT_END_CODE.getName() );
 				data.setExpression("\"" + params.getSuspensionCause().getCode() + "\"");
 				bean.insertOrUpdate(data);
