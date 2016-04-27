@@ -246,6 +246,7 @@ public class WsPosInvoicing {
 			invoiceTax.setTaxType(TaxType.VAT);
 			invoiceTax.setBase(invoiceDetail.getTaxableBase());
 			invoiceTax.setPercentage(invoiceDetail.getVatPercent());
+			invoiceTax.setDeductiblePercent(100);
 			invoiceTax.setVatDeductionType(VatDeductionType.WITH_RIGHT);
 			invoiceTax.setWithholdingType(WithholdingType.PROFESSIONAL);
 			taxes.add(invoiceTax);
