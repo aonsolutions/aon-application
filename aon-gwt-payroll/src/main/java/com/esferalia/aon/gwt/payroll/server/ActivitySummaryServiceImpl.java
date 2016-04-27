@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.Record4;
@@ -48,8 +49,10 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 	
 	@Override
 	public List<ActivitySummaryObject> getActivitySummary(Integer domainId,
-			Date startDate, Date endDate, Boolean onlyStarts, Boolean onlyEnds) {
-		
+			Date startDate, Date endDate, Boolean starts, Boolean ends,
+			Boolean salary, Boolean salaryExtra, Boolean salarySettle, Boolean salaryOther, 
+			Boolean itCommonDisease, Boolean itOccupationalDisease, Boolean itMaternity, Boolean itOther) {
+
 		initFacesContext();
 
 		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
@@ -62,23 +65,36 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 			domainId = domainSwitcher.getDomainId();
 			try {
 				Integer[] childDomains = getChildDomainIDs(domainId);
-				summaryMap = getSummaryEnterprise(childDomains, domainId, domainName, startDate, endDate, onlyStarts, onlyEnds);
-				salaryMap = getSummaryEnterpriseSalary(childDomains, domainId, domainName, startDate, endDate);
-				itMap = getSummaryEnterpriseIT(childDomains, domainId, domainName, startDate, endDate);
+				summaryMap = getSummaryEnterprise(childDomains, domainId,
+						domainName, startDate, endDate, starts, ends);
+				salaryMap = getSummaryEnterpriseSalary(childDomains, domainId,
+						domainName, startDate, endDate, salary, salaryExtra,
+						salarySettle, salaryOther);
+				itMap = getSummaryEnterpriseIT(childDomains, domainId,
+						domainName, startDate, endDate, itCommonDisease,
+						itOccupationalDisease, itMaternity, itOther);
 			} catch (ManagerBeanException e) {
 				throw new RuntimeException(e.getMessage());
 			}
 		} else {
-			if(domainId==null){
+			if (domainId == null) {
 				domainId = domainSwitcher.getDomainId();
 			}
-			summaryMap = getSummaryEmployee(domainId, domainName, startDate, endDate, onlyStarts, onlyEnds);
-			salaryMap = getSummaryEmployeeSalary(domainId, domainName, startDate, endDate);
-			itMap = getSummaryEmployeeIT(domainId, domainName, startDate, endDate);
+			summaryMap = getSummaryEmployee(domainId, domainName, startDate,
+					endDate, starts, ends);
+			salaryMap = getSummaryEmployeeSalary(domainId, domainName,
+					startDate, endDate, salary, salaryExtra, salarySettle,
+					salaryOther);
+			itMap = getSummaryEmployeeIT(domainId, domainName, startDate,
+					endDate, itCommonDisease, itOccupationalDisease,
+					itMaternity, itOther);
 		}
 		fillMapData(summaryMap, salaryMap);
 		fillMapData(summaryMap, itMap);
-		return new ArrayList<>(summaryMap.values());
+		
+		return new ArrayList<>(summaryMap.values().stream()
+				.sorted((o1, o2) -> o1.getFullname().compareTo(o2.getFullname()))
+				.collect(Collectors.toList()));
 	}
 	
 	private void fillMapData(Map<Integer, ActivitySummaryObject> summaryMap, Map<Integer, ActivitySummaryObject> dataMap){
@@ -114,20 +130,12 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 				});
 	}
 	
-	private Map<Integer, ActivitySummaryObject> getSummaryEmployee(Integer domainId, String domainName, Date startDate, Date endDate, Boolean onlyStarts, Boolean onlyEnds) {
+	private Map<Integer, ActivitySummaryObject> getSummaryEmployee(
+			Integer domainId, String domainName, Date startDate, Date endDate,
+			Boolean starts, Boolean ends) {
+		
 		AONContext ctx = null;
 		try {			
-			Condition startCond = onlyStarts?
-					CONTRACT.START_DATE.ge(new java.sql.Date(startDate.getTime())).and(CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime())))
-					:
-					CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime()));
-			Condition endCond = onlyEnds?
-					CONTRACT.END_DATE.isNotNull()
-						.and(CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime()))
-								.and(CONTRACT.END_DATE.le(new java.sql.Date(endDate.getTime()))))
-					:
-					CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime())).or(CONTRACT.END_DATE.isNull());
-			
 			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
 			Result<Record6<String, String, String, java.sql.Date, java.sql.Date, Integer>> result = ctx.getDslContext()
 					.select(PERSON.NAME, 
@@ -140,8 +148,8 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 					.from(CONTRACT.leftOuterJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 							.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(PERSON.REGISTRY)))
 					.where(CONTRACT.DOMAIN.eq(domainId))
-					.and(startCond)
-					.and(endCond)
+					.and(getStartCondition(startDate, endDate, starts))
+					.and(getEndCondition(startDate, endDate, ends))
 					.groupBy(CONTRACT.ID)
 					.orderBy(PERSON.FIRST_SURNAME.asc(), 
 							PERSON.SECOND_SURNAME.asc(), 
@@ -168,20 +176,13 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 		}
 		
 	}
-	private Map<Integer, ActivitySummaryObject> getSummaryEnterprise(Integer[] childDomainIds, Integer domainId, String domainName, Date startDate, Date endDate, Boolean onlyStarts, Boolean onlyEnds) {
+	
+	private Map<Integer, ActivitySummaryObject> getSummaryEnterprise(
+			Integer[] childDomainIds, Integer domainId, String domainName,
+			Date startDate, Date endDate, Boolean starts, Boolean ends) {
+		
 		AONContext ctx = null;
-		try {			
-			Condition startCond = onlyStarts?
-					CONTRACT.START_DATE.ge(new java.sql.Date(startDate.getTime())).and(CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime())))
-					:
-					CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime()));
-			Condition endCond = onlyEnds?
-					CONTRACT.END_DATE.isNotNull()
-						.and(CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime()))
-								.and(CONTRACT.END_DATE.le(new java.sql.Date(endDate.getTime()))))
-					:
-					CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime())).or(CONTRACT.END_DATE.isNull());
-			
+		try {						
 			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
 			Result<Record4<Integer, String, BigDecimal, BigDecimal>> result = ctx.getDslContext()
 					.select(DOMAIN.ID, 
@@ -193,11 +194,10 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 							.leftOuterJoin(CONTRACT).on(CONTRACT.DOMAIN.eq(DOMAIN.ID)))
 					.where(DOMAIN.ID.in(childDomainIds))
 					.and(DOMAIN.ACTIVE.eq((byte)1))
-					.and(startCond)
-					.and(endCond)
+					.and(getStartCondition(startDate, endDate, starts))
+					.and(getEndCondition(startDate, endDate, ends))
 					.groupBy(DOMAIN.ID)
-					.orderBy(DOMAIN.ID.asc(),
-							CONTRACT.START_DATE.desc())
+					.orderBy(DOMAIN.DESCRIPTION.asc())
 					.fetch();
 			
 			Map<Integer, ActivitySummaryObject> map = new HashMap<>();
@@ -217,7 +217,11 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 		}
 		
 	}
-	private Map<Integer, ActivitySummaryObject> getSummaryEmployeeSalary(Integer domainId, String domainName, Date startDate, Date endDate) {
+		
+	private Map<Integer, ActivitySummaryObject> getSummaryEmployeeSalary(
+			Integer domainId, String domainName, Date startDate, Date endDate,
+			boolean salary, boolean salaryExtra, boolean salarySettle, boolean salaryOther ) {
+		
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
@@ -233,6 +237,7 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 							.or(CONTRACT.START_DATE.gt(new java.sql.Date(endDate.getTime()))))
 					.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 					.and(CONTRACT.DOMAIN.eq(domainId))
+					.and(getSalaryCondition(salary, salaryExtra, salarySettle, salaryOther))
 					.groupBy(CONTRACT.ID)
 					.orderBy(CONTRACT.ID.desc(), 
 							CONTRACT.START_DATE.desc())
@@ -256,7 +261,11 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 		
 	}
 	
-	private Map<Integer, ActivitySummaryObject> getSummaryEnterpriseSalary(Integer[] childDomainIds, Integer domainId, String domainName, Date startDate, Date endDate) {
+	private Map<Integer, ActivitySummaryObject> getSummaryEnterpriseSalary(
+			Integer[] childDomainIds, Integer domainId, String domainName,
+			Date startDate, Date endDate,
+			boolean salary, boolean salaryExtra, boolean salarySettle, boolean salaryOther ) {
+			
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
@@ -271,6 +280,7 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 					.where(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 					.and(DOMAIN.ID.in(childDomainIds))
 					.and(DOMAIN.ACTIVE.eq((byte)1))
+					.and(getSalaryCondition(salary, salaryExtra, salarySettle, salaryOther))
 					.groupBy(DOMAIN.ID)
 					.orderBy(DOMAIN.ID.asc())
 					.fetch();
@@ -292,7 +302,11 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 		}
 		
 	}
-	private Map<Integer, ActivitySummaryObject> getSummaryEmployeeIT(Integer domainId, String domainName, Date startDate, Date endDate) {
+		
+	private Map<Integer, ActivitySummaryObject> getSummaryEmployeeIT(
+			Integer domainId, String domainName, Date startDate, Date endDate,
+			boolean itCommonDisease, boolean itOccupationalDisease, boolean itMaternity, boolean itOther) {
+		
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
@@ -307,6 +321,7 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 					.where(CONTRACT.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 					.and(CONTRACT_LEAVE.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 					.and(CONTRACT.DOMAIN.eq(domainId))
+					.and(getItCondition(itCommonDisease, itOccupationalDisease, itMaternity, itOther))
 					.groupBy(CONTRACT.ID)
 					.orderBy(CONTRACT.ID.desc(), CONTRACT.START_DATE.desc())
 					.fetch();
@@ -328,10 +343,14 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 		}
 		
 	}
-	
-	private Map<Integer, ActivitySummaryObject> getSummaryEnterpriseIT(Integer[] childDomainIds, Integer domainId, String domainName, Date startDate, Date endDate) {
+
+	private Map<Integer, ActivitySummaryObject> getSummaryEnterpriseIT(
+			Integer[] childDomainIds, Integer domainId, String domainName,
+			Date startDate, Date endDate,
+			boolean itCommonDisease, boolean itOccupationalDisease, boolean itMaternity, boolean itOther) {
+		
 		AONContext ctx = null;
-		try {
+		try {			
 			ctx = AONContext.getAONContext(domainName, domainId, AonServletUtils.getLoggedUser());
 			Result<Record5<Integer, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> result = ctx.getDslContext()
 					.select(DOMAIN.ID,
@@ -344,6 +363,7 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 					.where(CONTRACT_LEAVE.START_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
 					.and(DOMAIN.ID.in(childDomainIds))
 					.and(DOMAIN.ACTIVE.eq((byte)1))
+					.and(getItCondition(itCommonDisease, itOccupationalDisease, itMaternity, itOther))
 					.groupBy(DOMAIN.ID)
 					.orderBy(DOMAIN.ID.asc())
 					.fetch();
@@ -364,6 +384,59 @@ public class ActivitySummaryServiceImpl extends AonRemoteServiceServlet implemen
 				ctx.close();
 		}
 		
+	}
+	
+	/*
+	 * CONTRACT CONDITIONS
+	 */
+	private Condition getStartCondition(Date startDate, Date endDate, boolean starts){
+		return starts ? CONTRACT.START_DATE.ge(new java.sql.Date(startDate.getTime()))
+					.and(CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime())))
+				: CONTRACT.START_DATE.le(new java.sql.Date(endDate.getTime()));
+	}
+	
+	private Condition getEndCondition(Date startDate, Date endDate, boolean ends){
+		return ends ? CONTRACT.END_DATE.isNotNull()
+					.and(CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime()))
+					.and(CONTRACT.END_DATE.le(new java.sql.Date(endDate.getTime()))))
+				: CONTRACT.END_DATE.ge(new java.sql.Date(startDate.getTime())).or(CONTRACT.END_DATE.isNull());					
+	}
+	
+	/*
+	 * SALARY CONDITIONS
+	 */
+	private Condition getSalaryCondition(boolean salary, boolean extra, boolean settle, boolean other) {
+		byte salaryType = (byte) SalaryType.SALARY.ordinal();
+		byte extraType = (byte) SalaryType.EXTRA.ordinal();
+		byte settleType = (byte) SalaryType.SETTLE.ordinal();
+		
+		Condition cond = null;
+		cond = salary ? SALARY.TYPE.eq(salaryType) : SALARY.TYPE.ne(salaryType);
+		cond = extra ? cond.or(SALARY.TYPE.eq(extraType)) : cond.and(SALARY.TYPE.ne(extraType));
+		cond = settle ? cond.or(SALARY.TYPE.eq(settleType)) : cond.and(SALARY.TYPE.ne(settleType));
+		cond = other ? cond.or(SALARY.TYPE.gt(settleType)) : cond.and(SALARY.TYPE.le(settleType));
+		return cond;
+	}
+	
+	/*
+	 * IT CONDITIONS
+	 */
+	private Condition getItCondition(boolean itCommonDisease, boolean itOccupationalDisease, boolean itMaternity, boolean itOther) {
+		byte itCommonDiseaseType = (byte) LeaveType.COMMON_DISEASE.ordinal();
+		byte itOccupationalDiseaseType = (byte) LeaveType.OCCUPATIONAL_DISEASE.ordinal();
+		byte itMaternityType = (byte) LeaveType.MATERNITY.ordinal();
+		byte itPaternityType = (byte) LeaveType.PATERNITY.ordinal();
+		
+		Condition cond = null;
+		cond = itCommonDisease ? CONTRACT_LEAVE.TYPE.eq(itCommonDiseaseType) 
+				: CONTRACT_LEAVE.TYPE.ne(itCommonDiseaseType);
+		cond = itOccupationalDisease ? cond.or(CONTRACT_LEAVE.TYPE.eq(itOccupationalDiseaseType)) 
+				: cond.and(CONTRACT_LEAVE.TYPE.ne(itOccupationalDiseaseType));
+		cond = itMaternity ? cond.or(CONTRACT_LEAVE.TYPE.eq(itMaternityType)).or(CONTRACT_LEAVE.TYPE.eq(itPaternityType)) 
+				: cond.and(CONTRACT_LEAVE.TYPE.ne(itMaternityType)).and(CONTRACT_LEAVE.TYPE.ne(itPaternityType));
+		cond = itOther ? cond.or(CONTRACT_LEAVE.TYPE.gt(itPaternityType)) 
+				: cond.and(CONTRACT_LEAVE.TYPE.le(itPaternityType));
+		return cond;
 	}
 		
 

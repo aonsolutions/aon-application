@@ -31,39 +31,109 @@
 		<g:center>
 					
 			<g:DockLayoutPanel unit="EM" styleName="aondockLayoutPanel-template">
-				<g:north size="10">
-					<g:HTMLPanel  styleName="aon-panelGrid-search searchPanel-template">
+				<g:north size="16">
+					<g:HTMLPanel styleName="aon-panelGrid-search searchPanel-template">
 						
 						<div class="aon-panelGrid-search-info">
 							<span class="aon-panelGrid-search-info-internal">Filtrar:</span>
 						</div>
 						
-						<table class="aon-panelGrid">
-							<tr>
-								<td> <span class="aon-panelGrid-search-info-internal2-template">Desde:</span> </td>
-								<td style="width:70px"> <common:DateBoxEx ui:field="startDate" /> </td>
-
-								<td> <span class="aon-panelGrid-search-info-internal2-template"> </span> </td>
-								
-								<td> <span class="aon-panelGrid-search-info-internal2-template">Solo Altas</span> </td>
-								<td style="width:70px"> <g:CheckBox ui:field="onlyStartContracts" /> </td>
-							</tr>
-							<tr>
-								<td> <span class="aon-panelGrid-search-info-internal2-template">Hasta:</span> </td>
-								<td style="width:70px"> <common:DateBoxEx ui:field="endDate" /> </td>
-
-								<td> <span class="aon-panelGrid-search-info-internal2-template"> </span> </td>
-								
-								<td> <span class="aon-panelGrid-search-info-internal2-template">Solo Bajas</span> </td>
-								<td style="width:70px"> <g:CheckBox ui:field="onlyEndContracts" /> </td>
-							</tr>
-							<tr>
-								<td> <span class="aon-panelGrid-search-info-internal2-template"> </span> </td>
-								<td style="width:70px">
+						<g:Grid>
+							<g:row>
+								<g:customCell>
+									<g:HTMLPanel>
+										<span class="aon-panelGrid-search-info-internal2-template">Desde:</span>
+										<common:DateBoxEx ui:field="startDate" />
+									</g:HTMLPanel>
+								</g:customCell>
+								<g:customCell>
+									<g:HTMLPanel>
+										<span class="aon-panelGrid-search-info-internal2-template">Hasta:</span>
+										<common:DateBoxEx ui:field="endDate" />
+									</g:HTMLPanel>
+								</g:customCell>
+							</g:row>
+						</g:Grid>
+						
+						<g:Grid>
+							<g:row>
+								<g:customCell>
+									<g:HTMLPanel>
+										<span class="aon-panelGrid-search-info-internal2-template">Contratos</span>
+									</g:HTMLPanel>
+								</g:customCell>
+								<g:customCell>
+									<g:HTMLPanel>
+										<g:CheckBox text="Altas" ui:field="startChk" />
+									</g:HTMLPanel>
+								</g:customCell>
+								<g:customCell>
+									<g:HTMLPanel>
+										<g:CheckBox text="Bajas" ui:field="endChk" />
+									</g:HTMLPanel>
+								</g:customCell>
+							</g:row>
+							<g:row>
+								<g:customCell>
+									<g:HTMLPanel>
+										<span class="aon-panelGrid-search-info-internal2-template">Recibos</span>
+									</g:HTMLPanel>
+								</g:customCell>
+								<g:customCell>
+									<g:HTMLPanel>
+										<g:CheckBox text="Nomina" ui:field="salaryChk" />
+									</g:HTMLPanel>
+								</g:customCell>
+								<g:customCell>
+									<g:HTMLPanel>
+										<g:CheckBox text="Extra" ui:field="salaryExtraChk" />
+									</g:HTMLPanel>
+								</g:customCell>
+								<g:customCell>
+									<g:HTMLPanel>
+										<g:CheckBox text="Finquito" ui:field="salarySettleChk" />
+									</g:HTMLPanel>
+								</g:customCell>
+								<g:customCell>
+									<g:HTMLPanel>
+										<g:CheckBox text="Otros" ui:field="salaryOtherChk" />
+									</g:HTMLPanel>
+								</g:customCell>
+							</g:row>								
+							<g:row>
+								<g:customCell>
+									<g:HTMLPanel>
+										<span class="aon-panelGrid-search-info-internal2-template">IT</span>
+									</g:HTMLPanel>
+								</g:customCell>
+								<g:customCell>
+									<g:HTMLPanel>
+										<g:CheckBox text="IT EC/AN" ui:field="itCommonDiseaseChk" />
+									</g:HTMLPanel>
+								</g:customCell>
+								<g:customCell>
+									<g:HTMLPanel>
+										<g:CheckBox text="IT AT/EP" ui:field="itOccupationalDiseaseChk" />
+									</g:HTMLPanel>
+								</g:customCell>
+								<g:customCell>
+									<g:HTMLPanel>
+										<g:CheckBox text="IT M/P" ui:field="itMaternityChk" />
+									</g:HTMLPanel>
+								</g:customCell>
+								<g:customCell>
+									<g:HTMLPanel>
+										<g:CheckBox text="IT Otros" ui:field="itOtherChk" />
+									</g:HTMLPanel>
+								</g:customCell>
+							</g:row>
+							
+							<g:row>
+								<g:customCell>
 									<g:Button ui:field="searchButton" />
-								</td>
-							</tr>
-						</table>
+								</g:customCell>
+							</g:row>
+						</g:Grid>	
 						
 					</g:HTMLPanel>
 					

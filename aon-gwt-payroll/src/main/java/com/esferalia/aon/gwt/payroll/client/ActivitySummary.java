@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
 import com.google.gwt.cell.client.Cell.Context;
@@ -77,8 +77,18 @@ public class ActivitySummary extends MainEntryPoint {
 	
 	@UiField(provided = true) DateBoxEx startDate;
 	@UiField(provided = true) DateBoxEx endDate;
-	@UiField(provided = true) CheckBox onlyStartContracts;
-	@UiField(provided = true) CheckBox onlyEndContracts;
+	@UiField(provided = true) CheckBox startChk;
+	@UiField(provided = true) CheckBox endChk;
+	
+	@UiField(provided = true) CheckBox salaryChk;
+	@UiField(provided = true) CheckBox salaryExtraChk;
+	@UiField(provided = true) CheckBox salarySettleChk;
+	@UiField(provided = true) CheckBox salaryOtherChk;
+	
+	@UiField(provided = true) CheckBox itCommonDiseaseChk;
+	@UiField(provided = true) CheckBox itOccupationalDiseaseChk;
+	@UiField(provided = true) CheckBox itMaternityChk;
+	@UiField(provided = true) CheckBox itOtherChk;
 	
 	@UiField(provided = true) Button searchButton;
 	@UiField(provided = true) DataGrid<ActivitySummaryObject> dataGrid;
@@ -108,17 +118,25 @@ public class ActivitySummary extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 
-		// Inject rich styles.
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
-		GWT.<MainEntryPoint.CodeMirrorResources> create(
-				MainEntryPoint.CodeMirrorResources.class).css()
-				.ensureInjected();
+		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
+		AON.ensureInjected();
 
 		startDate = new DateBoxEx();
 		endDate = new DateBoxEx();
-		onlyStartContracts = new CheckBox();
-		onlyEndContracts = new CheckBox();
+		
+		startChk = new CheckBox();
+		endChk = new CheckBox();
+		
+		salaryChk = new CheckBox();
+		salaryExtraChk = new CheckBox();
+		salarySettleChk = new CheckBox();
+		salaryOtherChk = new CheckBox();
+		
+		itCommonDiseaseChk = new CheckBox();
+		itOccupationalDiseaseChk = new CheckBox();
+		itMaternityChk = new CheckBox();
+		itOtherChk = new CheckBox();
+		
 		searchButton = new Button("Buscar");
 		dataGrid = new DataGrid<ActivitySummaryObject>(Integer.MAX_VALUE, resources); 
 		
@@ -171,8 +189,16 @@ public class ActivitySummary extends MainEntryPoint {
 		CalendarUtil.addDaysToDate(end, -1);
 		endDate.setValue(end);
 		
-		onlyStartContracts.setValue(false);
-		onlyEndContracts.setValue(false);
+		startChk.setValue(false);
+		endChk.setValue(false);
+		salaryChk.setValue(true);
+		salaryExtraChk.setValue(true);
+		salarySettleChk.setValue(true);
+		salaryOtherChk.setValue(true);
+		itCommonDiseaseChk.setValue(true);
+		itOccupationalDiseaseChk.setValue(true);
+		itMaternityChk.setValue(true);
+		itOtherChk.setValue(true);
 		
 		searchButton.addDomHandler(new ClickHandler() {
 			@Override
@@ -188,7 +214,9 @@ public class ActivitySummary extends MainEntryPoint {
 		dataProvider = new ListDataProvider<>();
 		
 		impl.getActivitySummary(null, startDate.getValue(), endDate.getValue(),
-				onlyStartContracts.getValue(), onlyEndContracts.getValue(),
+				startChk.getValue(), endChk.getValue(),
+				salaryChk.getValue(), salaryExtraChk.getValue(), salarySettleChk.getValue(), salaryOtherChk.getValue(), 
+				itCommonDiseaseChk.getValue(), itOccupationalDiseaseChk.getValue(), itMaternityChk.getValue(), itOtherChk.getValue(),
 				new AsyncCallback<List<ActivitySummaryObject>>() {
 					@Override
 					public void onSuccess(List<ActivitySummaryObject> result) {
@@ -240,7 +268,9 @@ public class ActivitySummary extends MainEntryPoint {
 	
 	private void redrawSelectedRow(Integer id){
 		impl.getActivitySummary(id, startDate.getValue(), endDate.getValue(),
-				onlyStartContracts.getValue(), onlyEndContracts.getValue(),
+				startChk.getValue(), endChk.getValue(),
+				salaryChk.getValue(), salaryExtraChk.getValue(), salarySettleChk.getValue(), salaryOtherChk.getValue(), 
+				itCommonDiseaseChk.getValue(), itOccupationalDiseaseChk.getValue(), itMaternityChk.getValue(), itOtherChk.getValue(),
 				new AsyncCallback<List<ActivitySummaryObject>>() {
 			@Override
 			public void onSuccess(List<ActivitySummaryObject> result) {
@@ -350,7 +380,7 @@ public class ActivitySummary extends MainEntryPoint {
 			};
 		}
 		dataGrid.addColumn(startCountColumn);
-		dataGrid.setColumnWidth(startCountColumn, 15, Unit.EM);
+		dataGrid.setColumnWidth(startCountColumn, 10, Unit.EM);
 		
 		/**
 		 * End Column
@@ -376,7 +406,7 @@ public class ActivitySummary extends MainEntryPoint {
 			};
 		}
 		dataGrid.addColumn(endCountColumn);
-		dataGrid.setColumnWidth(endCountColumn, 15, Unit.EM);
+		dataGrid.setColumnWidth(endCountColumn, 10, Unit.EM);
 		
 		/**
 		 * SalaryCount Column
