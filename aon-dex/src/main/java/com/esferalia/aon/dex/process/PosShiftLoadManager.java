@@ -46,7 +46,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
 
-			HibernateUtil.startSession(sessionName); 
+			HibernateUtil.startSession(sessionName);
 
 			for (PosShift ps: posShiftDex.getPosShift()) {
 				if (validatePosShift(ps, domain)) {
@@ -80,7 +80,12 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
 				if (posShiftBD != null && posShiftBD.getId() != null) {
+					HibernateUtil.beginTransaction(sessionName);
+
 					removeCurrentPosShift();
+
+					HibernateUtil.getSession(sessionName).flush();
+					HibernateUtil.commitTransaction(sessionName);
 				}
 			} catch (Exception e) {
 			}
