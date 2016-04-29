@@ -288,6 +288,11 @@ public class NormalizedMemory extends ResizeComposite {
 		return $wnd.getCurrentDomain();
 	}-*/;
 	
+	public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
+	
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		String url = GWT.getModuleBaseURL()+"gwt_deposit_upload";
@@ -1057,7 +1062,7 @@ public class NormalizedMemory extends ResizeComposite {
 				diskForm.setAction(GWT.getHostPageBaseURL() + CCAA_PRINT);
 				schemaIdHidden.setValue(String.valueOf(1));
 				domainIdHidden.setValue(Integer.toString(enterprise.getDomain()));
-				domainNameHidden.setValue("novus.aibanez.net");
+				domainNameHidden.setValue(getCurrentDomainName());
 				cifHidden.setValue(enterprise.getDocument());
 				razonSocialHidden.setValue(enterprise.getName());
 				yearHidden.setValue(String.valueOf(year));
@@ -1091,7 +1096,7 @@ public class NormalizedMemory extends ResizeComposite {
 				diskForm.setAction(GWT.getHostPageBaseURL() + CCAA_PRINT_PDF);
 				schemaIdHidden.setValue(String.valueOf(1));
 				domainIdHidden.setValue(Integer.toString(enterprise.getDomain()));
-				domainNameHidden.setValue("novus.aibanez.net");
+				domainNameHidden.setValue(getCurrentDomainName());
 				cifHidden.setValue(enterprise.getDocument());
 				razonSocialHidden.setValue(enterprise.getName());
 				yearHidden.setValue(String.valueOf(year));
