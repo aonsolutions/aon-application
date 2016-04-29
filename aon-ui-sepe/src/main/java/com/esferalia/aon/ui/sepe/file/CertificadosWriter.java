@@ -20,6 +20,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -596,28 +597,32 @@ public class CertificadosWriter implements Serializable {
 		TRABAJADORTYPE.DatosVacacionesCotizadas o = null;
 		SEPEUtils utils = SEPEUtils.getInstance();
 		try {
-// TODO: search holidays using an appropiate ContextVariable field  
-			String noHolidaysData = utils.getContractDataMap(contract, Boolean.TRUE, Boolean.TRUE).get("DIAS_VACACIONES_NO_DISFRUTADOS");
-			Double noHolidays = 0.0;
-			if(noHolidaysData!=null){
-				noHolidays = Double.valueOf(noHolidaysData);
-				noHolidays = CommonUtil.ceil(noHolidays, 0);
-			}
 			List<ISalary> settleList = getSalaries(contract, null, null, SalaryType.SETTLE);
 			for(ISalary settle: settleList){
-				if(settle!=null && noHolidays!=null){
-					o = new TRABAJADORTYPE.DatosVacacionesCotizadas();
-					Double baseCg = settle.getCommonBase();
-					Double baseAcc = settle.getProfessionalBase();
-					
-					// TODO: obtener las bases de los atrasos de finiquitos 
+				if(settle!=null){
+					List<SalaryData> noHolidaysData = utils.getSalaryDataList(settle, settle.getStartDate(), settle.getEndDate(), ContextVariable.NO_HOLIDAYS.getName());
+					Double noHolidays = 0.0;
+					if(noHolidaysData!=null && noHolidaysData.size()>0){
+						for(SalaryData data: noHolidaysData){
+							if(data.getExpression()!=null && NumberUtils.isNumber(data.getExpression())){
+								noHolidays += CommonUtil.ceil(Double.valueOf(data.getExpression()), 0);
+							}
+						}
+					}
+					if(noHolidays!=null){
+						o = new TRABAJADORTYPE.DatosVacacionesCotizadas();
+						Double baseCg = getCommonBase(settle, utils.getSalaryDataList(settle, settle.getStartDate(), settle.getEndDate()));
+						Double baseAcc = getProfessionalBase(settle, utils.getSalaryDataList(settle, settle.getStartDate(), settle.getEndDate()));
+						
+						// TODO: obtener las bases de los atrasos de finiquitos 
 //					baseCg += getDelayBaseAmount(settleList, null, null, ContextVariable.CGC_BASE);
 //					baseAcc += getDelayBaseAmount(settleList, null, null, ContextVariable.CGP_BASE);
-					
-					o.setNumDiasCotizados(completeLength(noHolidays.intValue(),3,false));
-					o.setBaseCotizacionContingenciasComunes(completeLength(baseCg, 9,false));
-					o.setBaseCotizacionDesempleo(completeLength(baseAcc, 9,false));
-					o.setObservaciones(null);
+						
+						o.setNumDiasCotizados(completeLength(noHolidays.intValue(),3,false));
+						o.setBaseCotizacionContingenciasComunes(completeLength(baseCg, 9,false));
+						o.setBaseCotizacionDesempleo(completeLength(baseAcc, 9,false));
+						o.setObservaciones(null);
+					}
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -625,6 +630,38 @@ public class CertificadosWriter implements Serializable {
 			AonUtil.addErrorMessage(msg);
 		}
 		return o;
+	}
+	
+	private Double getCommonBase(ISalary salary, List<SalaryData> list) {
+		Double commonBase = 0.0;
+		for(SalaryData sd: list){
+			if(sd.getName().equals(ContextVariable.CGC_BASE_ENTERPRISE.getName())){
+				String _commonBase = sd.getExpression();
+				if(_commonBase!=null && NumberUtils.isNumber(_commonBase)){
+					commonBase += Double.parseDouble(_commonBase);
+				}
+			}
+		}
+		if(commonBase==0.0){
+			commonBase = salary.getCommonBase();
+		}
+		return commonBase;
+	}
+	
+	private Double getProfessionalBase(ISalary salary, List<SalaryData> list) {
+		Double profBase = 0.0;
+		for(SalaryData sd: list){
+			if(sd.getName().equals(ContextVariable.CGP_BASE_ENTERPRISE.getName())){
+				String _profBase = sd.getExpression();
+				if(_profBase!=null && NumberUtils.isNumber(_profBase)){
+					profBase += Double.parseDouble(_profBase);
+				}
+			}
+		}
+		if(profBase==0.0){
+			profBase = salary.getProfessionalBase();
+		}
+		return profBase;
 	}
 	
 	/**

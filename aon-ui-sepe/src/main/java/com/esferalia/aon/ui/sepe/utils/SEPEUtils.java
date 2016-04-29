@@ -28,6 +28,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.salary.ISalary;
 
 public class SEPEUtils {
 	
@@ -160,7 +161,7 @@ public class SEPEUtils {
 		return bean.getList(criteria);
 	}
 	
-	public List<SalaryData> getSalaryDataList(Salary salary, Date startDate, Date endDate, String name) throws ManagerBeanException {
+	public List<SalaryData> getSalaryDataList(ISalary salary, Date startDate, Date endDate, String name) throws ManagerBeanException {
 		List<SalaryData> list = new LinkedList<SalaryData>();
 		if( salary!=null && salary.getId()!=null ){
 			IManagerBean bean = BeanManager.getManagerBean(SalaryData.class);
@@ -186,7 +187,7 @@ public class SEPEUtils {
 		return list;
 	}
 	
-	public List<SalaryData> getSalaryDataList(Salary salary, Date startDate, Date endDate) throws ManagerBeanException {
+	public List<SalaryData> getSalaryDataList(ISalary salary, Date startDate, Date endDate) throws ManagerBeanException {
 		return getSalaryDataList(salary, startDate, endDate, null);
 	}
 	
