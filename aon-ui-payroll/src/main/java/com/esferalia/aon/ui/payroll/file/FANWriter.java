@@ -653,7 +653,7 @@ public class FANWriter implements Serializable {
 			
 			if(salary!=null){
 					
-				baseCgc = salary.getCommonBase();
+				baseCgc = getCommonBase(salary, salaryDataList);
 				baseCgp = getProfessionalBase(salary, salaryDataList);
 				
 				if(dat.getIndicadoresPerfil()==null 
@@ -729,7 +729,7 @@ public class FANWriter implements Serializable {
 		} else if(liquidationType==LiquidationType.L13){
 			salary = getSalary(contract, SalaryType.SETTLE);
 			if(salary!=null){
-				baseCgc = salary.getCommonBase();
+				baseCgc = getCommonBase(salary, salaryDataList);
 				baseCgp = getProfessionalBase(salary, salaryDataList);
 				fanFactory.createEDLBa01Segment(salary.getCommonBase(), dat);
 				fanFactory.createEDLBa02Segment(baseCgp, dat);
@@ -840,11 +840,28 @@ public class FANWriter implements Serializable {
 		}
 	}
 	
+	private Double getCommonBase(Salary salary, List<ITransferObject> salaryDataList) {
+		Double commonBase = 0.0;
+		for(ITransferObject to: salaryDataList){
+			SalaryData sd = (SalaryData) to;
+			if(sd.getName().equals(ContextVariable.CGC_BASE_ENTERPRISE.getName())){
+				String _commonBase = sd.getExpression();
+				if(_commonBase!=null && NumberUtils.isNumber(_commonBase)){
+					commonBase += Double.parseDouble(_commonBase);
+				}
+			}
+		}
+		if(commonBase==0.0){
+			commonBase = salary.getCommonBase();
+		}
+		return commonBase;
+	}
+	
 	private Double getProfessionalBase(Salary salary, List<ITransferObject> salaryDataList) {
 		Double profBase = 0.0;
 		for(ITransferObject to: salaryDataList){
 			SalaryData sd = (SalaryData) to;
-			if(sd.getName().equals(ContextVariable.CGP_BASE.getName())){
+			if(sd.getName().equals(ContextVariable.CGP_BASE_ENTERPRISE.getName())){
 				String _profBase = sd.getExpression();
 				if(_profBase!=null && NumberUtils.isNumber(_profBase)){
 					profBase += Double.parseDouble(_profBase);
