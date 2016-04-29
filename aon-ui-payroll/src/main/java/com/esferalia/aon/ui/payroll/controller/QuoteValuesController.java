@@ -460,7 +460,7 @@ public class QuoteValuesController implements Serializable {
 		
 		private Map<String, Double> obtainBaseCgpMin(String expression) {
 			Map<String, Double> values = new HashMap<String, Double>();
-			String BASE_CGP_MIN_REGEX = ".*TIEMPO_COMPLETO.*(\\d{3}.\\d{2}).*\\(DIAS_NOMINA.*DIAS_MES.*1.*DIAS_NOMINA.*30\\).*(\\d{1}.\\d{2}).*HORAS_NOMINA.*"; 
+			String BASE_CGP_MIN_REGEX = ".*TIEMPO_COMPLETO.*(\\d{3}.\\d{2}).*\\([DIAS_NOMINA|DIAS_COTIZADOS].*DIAS_MES.*1.*[DIAS_NOMINA|DIAS_COTIZADOS].*30\\).*(\\d{1}.\\d{2}).*HORAS_NOMINA.*"; 
 			putValue(values, expression, BASE_CGP_MIN_REGEX, "BASE_CGP_MIN_FULL", "BASE_CGP_MIN_PARTIAL");
 			return  values;
 		}

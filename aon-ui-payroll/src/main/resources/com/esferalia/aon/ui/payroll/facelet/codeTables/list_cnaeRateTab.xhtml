@@ -29,7 +29,7 @@
 				
 				<aon:outputText value="#{bundle.aon_year}" />
 				<rich:inputNumberSpinner value="#{cnaeRate.year}"
-	   				inputSize="4" minValue="2009" maxValue="2020">
+	   				inputSize="4" minValue="2010" maxValue="#{cnaeRate.currentYear}" cycled="false">
 					<a4j:support 
 						event="onchange"
 						actionListener="#{cnaeRate.onReloadModel}"

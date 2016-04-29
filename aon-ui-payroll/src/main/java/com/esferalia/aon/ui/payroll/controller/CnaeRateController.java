@@ -34,6 +34,7 @@ import com.code.aon.config.CNAE2009Rate;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
@@ -66,6 +67,9 @@ public class CnaeRateController implements Serializable {
 	public void setYear(Integer year) {
 		this.year = year;
 	}
+	public Integer getCurrentYear(){
+		return CommonUtil.getYear(new Date());
+	}
 	public boolean isNevv(){
 		return false;
 	}
@@ -94,21 +98,46 @@ public class CnaeRateController implements Serializable {
 	}
 	
 	private void initializeModel() throws ManagerBeanException {
+		Object value = obtainMaxYear();
+		Integer year = value!=null?CommonUtil.getYear((Date) value):2010;
+		
 		IManagerBean bean = BeanManager.getManagerBean(CNAE2009Rate.class);
 		Criteria criteria = new Criteria();
-		if(StringUtils.isNotBlank(filter)){
-			Expression expr1 = ExpressionUtilities.getLikeExpression("CNAE2009Rate.cnae2009.title", "%"+getFilter()+"%");
-			Expression expr2 = ExpressionUtilities.getLikeExpression("CNAE2009Rate.cnae2009.code", "%"+getFilter()+"%");
-			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		if (StringUtils.isNotBlank(filter)) {
+			Expression expr1 = ExpressionUtilities.getLikeExpression(
+					"CNAE2009Rate.cnae2009.title", "%" + getFilter() + "%");
+			Expression expr2 = ExpressionUtilities.getLikeExpression(
+					"CNAE2009Rate.cnae2009.code", "%" + getFilter() + "%");
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1,
+					expr2));
 		}
-		Expression startLessPeriod = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CNAE2009RATE_START_DATE), getPeriodStartDate(getYear()));
-		Expression endGreaterPeriod = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CNAE2009RATE_END_DATE), getPeriodEndDate(getYear()));
-		Expression endNull = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CNAE2009RATE_END_DATE));
-		criteria.addExpression(ExpressionUtilities.getAndExpression(
-				startLessPeriod, ExpressionUtilities.getOrExpression(endGreaterPeriod, endNull)));
+		criteria.addEqualExpression(
+				bean.getFieldName(IEntityAlias.CNAE2009RATE_START_DATE),
+				getPeriodStartDate(year));
 		criteria.addOrder("CNAE2009Rate.cnae2009.code");
 		List<ITransferObject> list = bean.getList(criteria);
 		setModel(new SerializableListDataModel(list));
+	}
+	
+	private Object obtainMaxYear() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(CNAE2009Rate.class);
+		Criteria criteria = new Criteria();
+		Expression startLessPeriod = ExpressionUtilities
+				.getLessThanOrEqualExpression(
+						bean.getFieldName(IEntityAlias.CNAE2009RATE_START_DATE),
+						getPeriodStartDate(getYear()));
+		Expression endGreaterPeriod = ExpressionUtilities
+				.getGreaterThanOrEqualExpression(
+						bean.getFieldName(IEntityAlias.CNAE2009RATE_END_DATE),
+						getPeriodEndDate(getYear()));
+		Expression endNull = ExpressionUtilities.getNullExpression(bean
+				.getFieldName(IEntityAlias.CNAE2009RATE_END_DATE));
+		criteria.addExpression(ExpressionUtilities.getAndExpression(
+				startLessPeriod,
+				ExpressionUtilities.getOrExpression(endGreaterPeriod, endNull)));
+		Projection projection = Projection.max(bean.getFieldName(IEntityAlias.CNAE2009RATE_START_DATE));
+		Object value = bean.getUniqueResult(projection, criteria);
+		return value;
 	}
 	
 	
