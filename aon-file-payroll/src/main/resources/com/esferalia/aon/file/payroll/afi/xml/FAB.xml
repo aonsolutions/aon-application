@@ -6,7 +6,8 @@
 	<field name="situacion" value="bean" bean="FAB" property="situacion" format="Numeric" pattern="9(2)" />
 	<field name="fecha_real" value="bean" bean="FAB" property="fechaReal" format="Numeric" pattern="9(8)" />
 	<field name="grupo_cotizacion" value="bean" bean="FAB" property="grupoCotizacion" format="Numeric" pattern="9(2)" />
-	<field name="reservado1" value=" " format="AlphaNumeric" pattern="X(3)" />
+	<field name="grado_discapacidad" value="bean" bean="FAB" property="gradoDiscapacidad" format="Numeric" pattern="9(2)" />
+	<field name="reservado1" value=" " format="AlphaNumeric" pattern="X(1)" />
 	<field name="clave_contrato" value="bean" bean="FAB" property="claveContrato" format="Numeric" pattern="9(3)" />
 	<field name="condicion_desempleado" value="bean" bean="FAB" property="condicionDesempleado" format="AlphaNumeric" pattern="X(1)" />
 	<field name="mujer_subrepresentada" value="bean" bean="FAB" property="mujerSubrepresentada" format="AlphaNumeric" pattern="X(1)" />
@@ -18,14 +19,14 @@
 	<field name="sexo" value="bean" bean="FAB" property="sexo" format="Numeric" pattern="9(1)" />
 	<field name="tipo_inactividad" value="bean" bean="FAB" property="tipoInactividad" format="AlphaNumeric" pattern="X(1)" />
 	<field name="exclusion_desempleo" value="bean" bean="FAB" property="exclusionDesempleo" format="Numeric" pattern="9(1)" />
-	<field name="coef_act_huelga_parcial" value="bean" bean="FAB" property="coeficienteActividadHuelgaParcial" format="Numeric" pattern="9(3)" />
+	<field name="coef_act_huelga_parcial_ere" value="bean" bean="FAB" property="coeficienteActividadHuelgaParcialEre" format="Numeric" pattern="9(3)" />
 	<field name="mujer_reincorporada" value="bean" bean="FAB" property="mujerReincorporada" format="AlphaNumeric" pattern="X(1)" />
 	<field name="incapacitado_readmitido" value="bean" bean="FAB" property="incapacitadoReadmitido" format="AlphaNumeric" pattern="X(1)" />
 	<field name="trabajador_de_autonomo" value="bean" bean="FAB" property="trabajadorDeAutonomo" format="AlphaNumeric" pattern="X(1)" />
 	<field name="semama_segun_convenio_5jr" value="bean" bean="FAB" property="semamaSegunConvenio5jr" format="AlphaNumeric" pattern="X(1)" />
 	<field name="ind_num_trab_empresa" value="bean" bean="FAB" property="indNumTrabajadoresEmpresa" format="AlphaNumeric" pattern="X(1)" />
 	<field name="fecha_control" value="0" format="Numeric" pattern="9(8)" />
-	<field name="exclusion_social" value="bean" bean="FAB" property="exclusionSocial" format="Numeric" pattern="9(1)" />
+	<field name="exclusion_social_victimas" value="bean" bean="FAB" property="exclusionSocialVictimas" format="Numeric" pattern="9(1)" />
 	<field name="renta_activa_insercion" value="bean" bean="FAB" property="rentaActivaInsercion" format="AlphaNumeric" pattern="X(1)" />
 	<field name="costratadas_post_alumbramiento" value="bean" bean="FAB" property="costratadasPostAlumbramiento" format="AlphaNumeric" pattern="X(1)" />
 

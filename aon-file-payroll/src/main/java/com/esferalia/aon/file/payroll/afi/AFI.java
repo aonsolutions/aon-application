@@ -187,8 +187,7 @@ public class AFI extends AbstractFileFiller{
 				}
 			}
 			eti.getEtf().setContadorEmpresas(numEmp);
-			numTotal++; // segmento ETI 
-			numTotal++; // segmento ETF
+			numTotal += 2; // por segmento ETI y ETF
 			eti.getEtf().setContadorSegmentos(numTotal);
 			properties.put(ETF, eti.getEtf());
 			createLine(ETF,properties);

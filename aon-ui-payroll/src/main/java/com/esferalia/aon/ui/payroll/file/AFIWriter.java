@@ -228,7 +228,23 @@ public class AFIWriter implements Serializable {
 		FAB fab = new FAB();
 		
 		// TODO Actions  
+//		MA  - Alta sucesiva
 		fab.setAccion(autoComplete(T7.T7_MA.getCode(), 3, " ", false));
+//		MB  - Baja
+//		fab.setAccion(autoComplete(T7.T7_MB.getCode(), 3, " ", false));
+//		MG  - Cambio de grupo de cotización
+//		fab.setAccion(autoComplete(T7.T7_MG.getCode(), 3, " ", false));
+//		MC  - Cambio de contrato (tipo/coeficiente)
+//		fab.setAccion(autoComplete(T7.T7_MC.getCode(), 3, " ", false));
+//		MT  - Cambio de ocupación
+//		fab.setAccion(autoComplete(T7.T7_MT.getCode(), 3, " ", false));
+//		CCP - Cambio de Categoría Profesional
+//		fab.setAccion(autoComplete(T7.T7_CCP.getCode(), 3, " ", false));
+//		CIT - Cierre de Períodos de Incapacidad Temporal
+//		fab.setAccion(autoComplete(T7.T7_CIT.getCode(), 3, " ", false));
+//		MHU - Mecanización de HUelga
+//		fab.setAccion(autoComplete(T7.T7_MHU.getCode(), 3, " ", false));
+		
 		
 		// TODO
 		// Clave obligatoria para altas y bajas que indica el motivo de alta o baja. Ver capítulo Tablas.
@@ -240,6 +256,8 @@ public class AFIWriter implements Serializable {
 		if(quoteGroup!=null){
 			fab.setGrupoCotizacion(quoteGroup);
 		}
+		// TODO 
+		fab.setGradoDiscapacidad(null);
 		fab.setClaveContrato(Integer.parseInt(getContractCode(contract).getValue()));
 		fab.setCondicionDesempleado(null);	// TODO
 		fab.setMujerSubrepresentada(null);	// TODO
@@ -272,16 +290,18 @@ public class AFIWriter implements Serializable {
 			fab.setSexo(1);
 		} else if(contract.getPerson().getGender()==Gender.FEMALE){
 			fab.setSexo(2);
+		} else {
+			fab.setSexo(1);
 		}
 		fab.setTipoInactividad(null);	// TODO
 		fab.setExclusionDesempleo(null);	// TODO
-		fab.setCoeficienteActividadHuelgaParcial(null);	// TODO
+		fab.setCoeficienteActividadHuelgaParcialEre(null);	// TODO
 		fab.setMujerReincorporada(null);	// TODO
 		fab.setIncapacitadoReadmitido(null);	// TODO
 		fab.setTrabajadorDeAutonomo(null);	// TODO
 		fab.setSemamaSegunConvenio5jr(null);	// TODO
 		fab.setIndNumTrabajadoresEmpresa(null);	// TODO
-		fab.setExclusionSocial(null);	// TODO
+		fab.setExclusionSocialVictimas(null);	// TODO
 		fab.setRentaActivaInsercion(null);	// TODO
 		fab.setCostratadasPostAlumbramiento(null);	// TODO
 		

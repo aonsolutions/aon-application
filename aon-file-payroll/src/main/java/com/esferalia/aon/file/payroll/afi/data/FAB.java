@@ -9,6 +9,7 @@ public class FAB {
 	private String situacion;
 	private Integer fechaReal;
 	private Integer grupoCotizacion;
+	private Integer gradoDiscapacidad;
 	private Integer claveContrato;
 	private String condicionDesempleado;
 	private String mujerSubrepresentada;
@@ -20,13 +21,13 @@ public class FAB {
 	private Integer sexo;
 	private String tipoInactividad;
 	private Integer exclusionDesempleo;
-	private Integer coeficienteActividadHuelgaParcial;
+	private Integer coeficienteActividadHuelgaParcialEre;
 	private String mujerReincorporada;
 	private String incapacitadoReadmitido;
 	private String trabajadorDeAutonomo;
 	private String semamaSegunConvenio5jr;
 	private String indNumTrabajadoresEmpresa;
-	private Integer exclusionSocial;
+	private Integer exclusionSocialVictimas;
 	private String rentaActivaInsercion;
 	private String costratadasPostAlumbramiento;
 	public String getAccion() {
@@ -52,6 +53,12 @@ public class FAB {
 	}
 	public void setGrupoCotizacion(Integer grupoCotizacion) {
 		this.grupoCotizacion = grupoCotizacion;
+	}
+	public Integer getGradoDiscapacidad() {
+		return gradoDiscapacidad;
+	}
+	public void setGradoDiscapacidad(Integer gradoDiscapacidad) {
+		this.gradoDiscapacidad = gradoDiscapacidad;
 	}
 	public Integer getClaveContrato() {
 		return claveContrato;
@@ -119,12 +126,12 @@ public class FAB {
 	public void setExclusionDesempleo(Integer exclusionDesempleo) {
 		this.exclusionDesempleo = exclusionDesempleo;
 	}
-	public Integer getCoeficienteActividadHuelgaParcial() {
-		return coeficienteActividadHuelgaParcial;
+	public Integer getCoeficienteActividadHuelgaParcialEre() {
+		return coeficienteActividadHuelgaParcialEre;
 	}
-	public void setCoeficienteActividadHuelgaParcial(
-			Integer coeficienteActividadHuelgaParcial) {
-		this.coeficienteActividadHuelgaParcial = coeficienteActividadHuelgaParcial;
+	public void setCoeficienteActividadHuelgaParcialEre(
+			Integer coeficienteActividadHuelgaParcialEre) {
+		this.coeficienteActividadHuelgaParcialEre = coeficienteActividadHuelgaParcialEre;
 	}
 	public String getMujerReincorporada() {
 		return mujerReincorporada;
@@ -156,11 +163,11 @@ public class FAB {
 	public void setIndNumTrabajadoresEmpresa(String indNumTrabajadoresEmpresa) {
 		this.indNumTrabajadoresEmpresa = indNumTrabajadoresEmpresa;
 	}
-	public Integer getExclusionSocial() {
-		return exclusionSocial;
+	public Integer getExclusionSocialVictimas() {
+		return exclusionSocialVictimas;
 	}
-	public void setExclusionSocial(Integer exclusionSocial) {
-		this.exclusionSocial = exclusionSocial;
+	public void setExclusionSocialVictimas(Integer exclusionSocialVictimas) {
+		this.exclusionSocialVictimas = exclusionSocialVictimas;
 	}
 	public String getRentaActivaInsercion() {
 		return rentaActivaInsercion;

@@ -134,13 +134,13 @@ public class AFIReader {
 					fab.setSexo(Integer.parseInt(currentLine.substring(48, 49)));
 					fab.setTipoInactividad(currentLine.substring(49, 50));
 					fab.setExclusionDesempleo(Integer.parseInt(currentLine.substring(50, 51)));
-					fab.setCoeficienteActividadHuelgaParcial(Integer.parseInt(currentLine.substring(51, 54)));
+					fab.setCoeficienteActividadHuelgaParcialEre(Integer.parseInt(currentLine.substring(51, 54)));
 					fab.setMujerReincorporada(currentLine.substring(54, 55));
 					fab.setIncapacitadoReadmitido(currentLine.substring(55, 56));
 					fab.setTrabajadorDeAutonomo(currentLine.substring(56, 57));
 					fab.setSemamaSegunConvenio5jr(currentLine.substring(57, 58));
 					fab.setIndNumTrabajadoresEmpresa(currentLine.substring(58, 59));
-					fab.setExclusionSocial(Integer.parseInt(currentLine.substring(67, 68)));
+					fab.setExclusionSocialVictimas(Integer.parseInt(currentLine.substring(67, 68)));
 					fab.setRentaActivaInsercion(currentLine.substring(68, 69));
 					fab.setCostratadasPostAlumbramiento(currentLine.substring(69, 70));
 					
