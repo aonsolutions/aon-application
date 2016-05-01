@@ -374,7 +374,8 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		ContractRecord contract = newContract(aonContext,
 				add(getToday(), Calendar.YEAR, -10), Collections.emptyMap(),
 				new String[] {},
-				new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				new String[] { 
+						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
 						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
 						"BASE_IRPF * PORCENTAJE_IRPF/100" }, null);
 
@@ -391,7 +392,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
 				contract.getId());
 
-		addPayment(aonContext, contract, getFirstDayOfYear(getToday()),
+		addPayment(aonContext, contract, getFirstDayOfMonth(getToday()),
 				"99999.00", SalaryType.SETTLE);
 		ISQLContractSalaryCalculatorContext ctx = getContractSettleCalculatorContext(
 				connection, start, end, issue, criteria);

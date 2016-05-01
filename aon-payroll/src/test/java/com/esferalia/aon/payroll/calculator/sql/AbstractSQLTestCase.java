@@ -151,34 +151,28 @@ public abstract class AbstractSQLTestCase {
 			SQLException {
 		ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, criteria);
-		if ( listener != null )
+		if ( listener != null)
 			ctx.setListener(listener);
 		ctx.next();
 		return ctx;
 	}
 
-	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
-			Connection connection, Date startDate, Date endDate,
-			Date issueDate, Criteria criteria) throws ExpressionException,
-			SQLException {
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, Criteria criteria) throws ExpressionException, SQLException {
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria, null);
 	}
 
-	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
-			Connection connection, Date startDate, Date endDate,
-			Date issueDate, ContractRecord contract , IContractSalaryCalculatorContext.IListener listener)
-			throws ExpressionException, SQLException {
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, ContractRecord contract,
+			IContractSalaryCalculatorContext.IListener listener) throws ExpressionException, SQLException {
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-				contract.getId());
-		return getContractSalaryCalculatorContext(connection, startDate,
-				endDate, issueDate, criteria, listener);
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria, listener);
 	}
 
-	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
-			Connection connection, Date startDate, Date endDate,
-			Date issueDate, ContractRecord contract )throws ExpressionException, SQLException{
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, ContractRecord contract)
+			throws ExpressionException, SQLException {
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract, null);
 	}
 	// ------------------------------------------------------- static 'library'
@@ -191,51 +185,39 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSystemData(AONContext aonContext, Date startDate,
-			Date endDate, Map<String, String> datas) {
+	protected final void addSystemData(AONContext aonContext, Date startDate, Date endDate, Map<String, String> datas) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
 		for (Map.Entry<String, String> data : datas.entrySet()) {
-			aonContext.getDslContext().insertInto(SYSTEM_DATA)
-					.set(SYSTEM_DATA.DOMAIN, 0)
-					.set(SYSTEM_DATA.START_DATE, startDate)
-					.set(SYSTEM_DATA.END_DATE, endDate)
-					.set(SYSTEM_DATA.NAME, data.getKey())
-					.set(SYSTEM_DATA.EXPRESSION, data.getValue()).execute();
+			aonContext.getDslContext().insertInto(SYSTEM_DATA).set(SYSTEM_DATA.DOMAIN, 0)
+					.set(SYSTEM_DATA.START_DATE, startDate).set(SYSTEM_DATA.END_DATE, endDate)
+					.set(SYSTEM_DATA.NAME, data.getKey()).set(SYSTEM_DATA.EXPRESSION, data.getValue()).execute();
 
 		}
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSSRegimeData(AONContext aonContext,
-			SSRegimeType ssRegimetype, Date startDate, Date endDate,
+	protected final void addSSRegimeData(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate, Date endDate,
 			Map<String, String> datas) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
 		for (Map.Entry<String, String> data : datas.entrySet()) {
-			aonContext.getDslContext().insertInto(SYSTEM_DATA)
-					.set(SYSTEM_DATA.DOMAIN, (-1) * ssRegimetype.ordinal())
-					.set(SYSTEM_DATA.START_DATE, startDate)
-					.set(SYSTEM_DATA.END_DATE, endDate)
-					.set(SYSTEM_DATA.NAME, data.getKey())
-					.set(SYSTEM_DATA.EXPRESSION, data.getValue()).execute();
+			aonContext.getDslContext().insertInto(SYSTEM_DATA).set(SYSTEM_DATA.DOMAIN, (-1) * ssRegimetype.ordinal())
+					.set(SYSTEM_DATA.START_DATE, startDate).set(SYSTEM_DATA.END_DATE, endDate)
+					.set(SYSTEM_DATA.NAME, data.getKey()).set(SYSTEM_DATA.EXPRESSION, data.getValue()).execute();
 
 		}
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addCCCData(AONContext aonContext,
-			CCCType cccType, Date startDate, Date endDate,
+	protected final void addCCCData(AONContext aonContext, CCCType cccType, Date startDate, Date endDate,
 			Map<String, String> datas) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
 		for (Map.Entry<String, String> data : datas.entrySet()) {
-			aonContext.getDslContext().insertInto(SYSTEM_DATA)
-					.set(SYSTEM_DATA.DOMAIN,  (-1) * ( 100 + cccType.ordinal()))
-					.set(SYSTEM_DATA.START_DATE, startDate)
-					.set(SYSTEM_DATA.END_DATE, endDate)
-					.set(SYSTEM_DATA.NAME, data.getKey())
-					.set(SYSTEM_DATA.EXPRESSION, data.getValue()).execute();
+			aonContext.getDslContext().insertInto(SYSTEM_DATA).set(SYSTEM_DATA.DOMAIN, (-1) * (100 + cccType.ordinal()))
+					.set(SYSTEM_DATA.START_DATE, startDate).set(SYSTEM_DATA.END_DATE, endDate)
+					.set(SYSTEM_DATA.NAME, data.getKey()).set(SYSTEM_DATA.EXPRESSION, data.getValue()).execute();
 
 		}
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
@@ -265,104 +247,80 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addCCCCost(AONContext aonContext, CCCType cccType,
-			Date startDate, String code, DeductionType type, String expression) {
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
-
-		aonContext
-				.getDslContext()
-				.insertInto(SYSTEM_COST)
-				.set(SYSTEM_COST.CODE, code)
-				.set(SYSTEM_COST.START_DATE, startDate)
-				.set(SYSTEM_COST.TYPE,
-						(byte) (type != null ? type.ordinal()
-								: DeductionType.OTHER.ordinal()))
-				.set(SYSTEM_COST.DOMAIN, (-1) * (100 + cccType.ordinal()))
-				.set(SYSTEM_COST.EXPRESSION, expression).execute();
-
-		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
-	}
-
-	protected final void addSSRegimeCost(AONContext aonContext,
-			SSRegimeType ssRegimetype, Date startDate, String code,
+	protected final void addCCCCost(AONContext aonContext, CCCType cccType, Date startDate, String code,
 			DeductionType type, String expression) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
-		aonContext
-				.getDslContext()
-				.insertInto(SYSTEM_COST)
-				.set(SYSTEM_COST.CODE, code)
+		aonContext.getDslContext().insertInto(SYSTEM_COST).set(SYSTEM_COST.CODE, code)
 				.set(SYSTEM_COST.START_DATE, startDate)
-				.set(SYSTEM_COST.TYPE,
-						(byte) (type != null ? type.ordinal()
-								: DeductionType.OTHER.ordinal()))
-				.set(SYSTEM_COST.DOMAIN, (-1) * ssRegimetype.ordinal())
-				.set(SYSTEM_COST.EXPRESSION, expression).execute();
+				.set(SYSTEM_COST.TYPE, (byte) (type != null ? type.ordinal() : DeductionType.OTHER.ordinal()))
+				.set(SYSTEM_COST.DOMAIN, (-1) * (100 + cccType.ordinal())).set(SYSTEM_COST.EXPRESSION, expression)
+				.execute();
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSSRegimePayment(AONContext aonContext,
-			SSRegimeType ssRegimetype, Date startDate, PaymentType paymentType,
-			String expression, String quoteExpression, String irpfExpression,
+	protected final void addSSRegimeCost(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate, String code,
+			DeductionType type, String expression) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		aonContext.getDslContext().insertInto(SYSTEM_COST).set(SYSTEM_COST.CODE, code)
+				.set(SYSTEM_COST.START_DATE, startDate)
+				.set(SYSTEM_COST.TYPE, (byte) (type != null ? type.ordinal() : DeductionType.OTHER.ordinal()))
+				.set(SYSTEM_COST.DOMAIN, (-1) * ssRegimetype.ordinal()).set(SYSTEM_COST.EXPRESSION, expression)
+				.execute();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
+	protected final void addSSRegimePayment(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
+			PaymentType paymentType, String expression, String quoteExpression, String irpfExpression,
 			SalaryType salaryType) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
-		aonContext
-				.getDslContext()
-				.insertInto(SYSTEM_PAYMENT)
+		aonContext.getDslContext().insertInto(SYSTEM_PAYMENT)
 
-				.set(SYSTEM_PAYMENT.START_DATE, startDate)
-				.set(SYSTEM_PAYMENT.EXPRESSION, expression)
+				.set(SYSTEM_PAYMENT.START_DATE, startDate).set(SYSTEM_PAYMENT.EXPRESSION, expression)
 				.set(SYSTEM_PAYMENT.IRPF_EXPRESSION, irpfExpression)
 				.set(SYSTEM_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
 				.set(SYSTEM_PAYMENT.DOMAIN, (-1) * ssRegimetype.ordinal())
 				.set(SYSTEM_PAYMENT.TYPE,
-						(byte) (paymentType != null ? paymentType.ordinal()
-								: PaymentType.CRA_0001.ordinal()))
+						(byte) (paymentType != null ? paymentType.ordinal() : PaymentType.CRA_0001.ordinal()))
 				.set(SYSTEM_PAYMENT.SALARY_TYPE,
-						(byte) (salaryType != null ? salaryType.ordinal()
-								: SalaryType.SALARY.ordinal()))
+						(byte) (salaryType != null ? salaryType.ordinal() : SalaryType.SALARY.ordinal()))
 
 				.execute();
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSSRegimePayment(AONContext aonContext,
-			SSRegimeType ssRegimetype, Date startDate, PaymentType paymentType,
-			String expression, String quoteExpression, String irpfExpression) {
-		addSSRegimePayment(aonContext, ssRegimetype, startDate, paymentType,
-				expression, quoteExpression, irpfExpression, null);
+	protected final void addSSRegimePayment(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
+			PaymentType paymentType, String expression, String quoteExpression, String irpfExpression) {
+		addSSRegimePayment(aonContext, ssRegimetype, startDate, paymentType, expression, quoteExpression,
+				irpfExpression, null);
 	}
 
-	protected final void addSSRegimePayment(AONContext aonContext,
-			SSRegimeType ssRegimetype, Date startDate, PaymentType type,
-			String expression) {
-		addSSRegimePayment(aonContext, ssRegimetype, startDate, type,
-				expression, ContextVariable.ALL, ContextVariable.ALL);
+	protected final void addSSRegimePayment(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
+			PaymentType type, String expression) {
+		addSSRegimePayment(aonContext, ssRegimetype, startDate, type, expression, ContextVariable.ALL,
+				ContextVariable.ALL);
 	}
 
-	protected final void addSSRegimeDeduction(AONContext aonContext,
-			SSRegimeType ssRegimetype, Date startDate, DeductionType deductionType,
-			String expression ) {
+	protected final void addSSRegimeDeduction(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
+			DeductionType deductionType, String expression) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
-		aonContext
-				.getDslContext()
-				.insertInto(SYSTEM_DEDUCTION)
+		aonContext.getDslContext().insertInto(SYSTEM_DEDUCTION)
 
-				.set(SYSTEM_DEDUCTION.START_DATE, startDate)
-				.set(SYSTEM_DEDUCTION.EXPRESSION, expression)
+				.set(SYSTEM_DEDUCTION.START_DATE, startDate).set(SYSTEM_DEDUCTION.EXPRESSION, expression)
 				.set(SYSTEM_DEDUCTION.DOMAIN, (-1) * ssRegimetype.ordinal())
 				.set(SYSTEM_DEDUCTION.TYPE,
-						(byte) (deductionType != null ? deductionType.ordinal()
-								: DeductionType.OTHER.ordinal()))
+						(byte) (deductionType != null ? deductionType.ordinal() : DeductionType.OTHER.ordinal()))
 				.execute();
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
-	
+
 	public static String getDbPort() {
 		return System.getProperty("dbPort", "3306");
 	}
@@ -406,8 +364,7 @@ public abstract class AbstractSQLTestCase {
 		// calendar.get(DAY_OF_MONTH));
 	}
 
-	public static Connection connect() throws ClassNotFoundException,
-			SQLException, AonSQLException {
+	public static Connection connect() throws ClassNotFoundException, SQLException, AonSQLException {
 		// first of all load JDBC driver
 		Class.forName("org.gjt.mm.mysql.Driver");
 
@@ -417,13 +374,10 @@ public abstract class AbstractSQLTestCase {
 		String dbUser = getDbUser();
 		String dbPasswd = getDbPasswd();
 
-		String url = String
-				.format("jdbc:mysql://%s:%s", dbHost, dbPort, dbName);
-		Connection connection = DriverManager.getConnection(url, dbUser,
-				dbPasswd);
+		String url = String.format("jdbc:mysql://%s:%s", dbHost, dbPort, dbName);
+		Connection connection = DriverManager.getConnection(url, dbUser, dbPasswd);
 
-		ResultSet rs = connection.createStatement().executeQuery(
-				"SHOW DATABASES");
+		ResultSet rs = connection.createStatement().executeQuery("SHOW DATABASES");
 		while (rs.next()) {
 			if (rs.getString(1).startsWith(dbName)) {
 				connection.createStatement().execute("use " + rs.getString(1));
@@ -442,372 +396,275 @@ public abstract class AbstractSQLTestCase {
 
 	public static final DomainRecord newDomain(AONContext aonContext) {
 		return aonContext.getDslContext().insertInto(DOMAIN)
-				.set(DOMAIN.NAME, String.valueOf(System.currentTimeMillis()))
-				.set(DOMAIN.OWNER, "").set(DOMAIN.DESCRIPTION, "").returning()
-				.fetchOne();
+				.set(DOMAIN.NAME, String.valueOf(System.currentTimeMillis())).set(DOMAIN.OWNER, "")
+				.set(DOMAIN.DESCRIPTION, "").returning().fetchOne();
 	}
 
 	public static final DomainRecord newDomain(AONContext aonContext, int parent) {
 		return aonContext.getDslContext().insertInto(DOMAIN)
-				.set(DOMAIN.NAME, String.valueOf(System.currentTimeMillis()))
-				.set(DOMAIN.OWNER, "").set(DOMAIN.PARENT, parent)
-				.set(DOMAIN.DESCRIPTION, "").returning().fetchOne();
+				.set(DOMAIN.NAME, String.valueOf(System.currentTimeMillis())).set(DOMAIN.OWNER, "")
+				.set(DOMAIN.PARENT, parent).set(DOMAIN.DESCRIPTION, "").returning().fetchOne();
 	}
 
 	public static final AgreementRecord newAgreement(AONContext aonContext) {
 		// Add a domain, with a generated ID
 		DomainRecord domain = newDomain(aonContext);
 
-		return aonContext.getDslContext().insertInto(AGREEMENT)
-				.set(AGREEMENT.DOMAIN, domain.getId())
+		return aonContext.getDslContext().insertInto(AGREEMENT).set(AGREEMENT.DOMAIN, domain.getId())
 				.set(AGREEMENT.DESCRIPTION, "").returning().fetchOne();
 	}
 
 	public static AgreementRecord getAgreement(AONContext aonContext, int agreementLevel) {
-		return aonContext.getDslContext()
-				.select()
-				.from(AGREEMENT)
-				.join(AGREEMENT_LEVEL).on(AGREEMENT.ID.eq(AGREEMENT_LEVEL.AGREEMENT))
-				.where(AGREEMENT_LEVEL.ID.eq(agreementLevel))
-				.fetchOneInto(AGREEMENT)
-				;
-				
+		return aonContext.getDslContext().select().from(AGREEMENT).join(AGREEMENT_LEVEL)
+				.on(AGREEMENT.ID.eq(AGREEMENT_LEVEL.AGREEMENT)).where(AGREEMENT_LEVEL.ID.eq(agreementLevel))
+				.fetchOneInto(AGREEMENT);
+
 	}
 
-	public static final AgreementLevelCategoryRecord newAgreementCategory(
-			AONContext aonContext, AgreementRecord agreement, String levelDescription, String categoryDescription) {
-		AgreementLevelRecord level = aonContext.getDslContext()
-				.insertInto(AGREEMENT_LEVEL)
-				.set(AGREEMENT_LEVEL.DOMAIN, agreement.getDomain())
-				.set(AGREEMENT_LEVEL.AGREEMENT, agreement.getId())
+	public static final AgreementLevelCategoryRecord newAgreementCategory(AONContext aonContext,
+			AgreementRecord agreement, String levelDescription, String categoryDescription) {
+		AgreementLevelRecord level = aonContext.getDslContext().insertInto(AGREEMENT_LEVEL)
+				.set(AGREEMENT_LEVEL.DOMAIN, agreement.getDomain()).set(AGREEMENT_LEVEL.AGREEMENT, agreement.getId())
 				.set(AGREEMENT_LEVEL.DESCRIPTION, levelDescription).returning().fetchOne();
 
 		return aonContext.getDslContext().insertInto(AGREEMENT_LEVEL_CATEGORY)
 				.set(AGREEMENT_LEVEL_CATEGORY.DOMAIN, agreement.getDomain())
 				.set(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION, categoryDescription)
-				.set(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL, level.getId())
-				.returning().fetchOne();
-		
+				.set(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL, level.getId()).returning().fetchOne();
+
 	}
 
-	public static final AgreementLevelCategoryRecord newAgreementCategory(
-			AONContext aonContext, AgreementRecord agreement) {
+	public static final AgreementLevelCategoryRecord newAgreementCategory(AONContext aonContext,
+			AgreementRecord agreement) {
 		return newAgreementCategory(aonContext, agreement, "", "");
 	}
 
-	public static final AgreementLevelCategoryRecord newAgreement(
-			AONContext aonContext, Extra extras[]) {
+	public static final AgreementLevelCategoryRecord newAgreement(AONContext aonContext, Extra extras[]) {
 		return newAgreement(aonContext, extras, Collections.emptyMap());
 	}
 
-	public static final AgreementLevelCategoryRecord newAgreement(
-			AONContext aonContext, Extra extras[], Map<String, String> datas) {
+	public static final AgreementLevelCategoryRecord newAgreement(AONContext aonContext, Extra extras[],
+			Map<String, String> datas) {
 		return newAgreement(aonContext, extras, new Payment[] {}, datas);
 	}
 
-	public static final AgreementLevelCategoryRecord newAgreement(
-			AONContext aonContext, Extra extras[], Payment payments[]) {
-		return newAgreement(aonContext, extras, payments,
-				Collections.emptyMap());
+	public static final AgreementLevelCategoryRecord newAgreement(AONContext aonContext, Extra extras[],
+			Payment payments[]) {
+		return newAgreement(aonContext, extras, payments, Collections.emptyMap());
 	}
 
-	public static final AgreementLevelCategoryRecord newAgreement(
-			AONContext aonContext, Extra extras[], Payment payments[],
-			Map<String, String> datas) {
-		return aonContext.getDslContext().transactionResult(
-				new TransactionalCallable<AgreementLevelCategoryRecord>() {
-					@Override
-					public AgreementLevelCategoryRecord run(Configuration arg0)
-							throws Exception {
-						// Add a domain, with a generated ID
+	public static final AgreementLevelCategoryRecord newAgreement(AONContext aonContext, Extra extras[],
+			Payment payments[], Map<String, String> datas) {
+		return aonContext.getDslContext().transactionResult(new TransactionalCallable<AgreementLevelCategoryRecord>() {
+			@Override
+			public AgreementLevelCategoryRecord run(Configuration arg0) throws Exception {
+				// Add a domain, with a generated ID
 
-						AgreementRecord agreement = newAgreement(aonContext);
+				AgreementRecord agreement = newAgreement(aonContext);
 
-						AgreementLevelCategoryRecord category = newAgreementCategory(
-								aonContext, agreement);
+				AgreementLevelCategoryRecord category = newAgreementCategory(aonContext, agreement);
 
-						Calendar calendar = Calendar.getInstance();
-						// Be care that the first day of the year has value 1.
-						calendar.set(DAY_OF_YEAR, 1);
-						calendar.add(YEAR, -2);
-						Date startDate = new Date(calendar.getTimeInMillis());
+				Calendar calendar = Calendar.getInstance();
+				// Be care that the first day of the year has value 1.
+				calendar.set(DAY_OF_YEAR, 1);
+				calendar.add(YEAR, -2);
+				Date startDate = new Date(calendar.getTimeInMillis());
 
-						addExtras(aonContext, agreement, startDate, extras);
+				addExtras(aonContext, agreement, startDate, extras);
 
-						addPayments(aonContext, agreement, startDate, payments);
+				addPayments(aonContext, agreement, startDate, payments);
 
-						addData(aonContext, agreement, startDate, datas);
+				addData(aonContext, agreement, startDate, datas);
 
-						return category;
-					}
+				return category;
+			}
 
-				});
+		});
 	}
 
-	public static void addExtras(AONContext aonContext,
-			AgreementRecord agreement, Date startDate, Extra extras[]) {
+	public static void addExtras(AONContext aonContext, AgreementRecord agreement, Date startDate, Extra extras[]) {
 		for (Extra extra : extras) {
-			AgreementPaymentRecord payment = aonContext
-					.getDslContext()
-					.insertInto(AGREEMENT_PAYMENT)
+			AgreementPaymentRecord payment = aonContext.getDslContext().insertInto(AGREEMENT_PAYMENT)
 					.set(AGREEMENT_PAYMENT.DOMAIN, agreement.getDomain())
 					.set(AGREEMENT_PAYMENT.AGREEMENT, agreement.getId())
 					.set(AGREEMENT_PAYMENT.MONTH, (byte) extra.month.ordinal())
-					.set(AGREEMENT_PAYMENT.TYPE,
-							(byte) PaymentType.CRA_0004.ordinal())
-					.set(AGREEMENT_PAYMENT.START_DATE, startDate)
-					.set(AGREEMENT_PAYMENT.EXPRESSION, extra.expression)
+					.set(AGREEMENT_PAYMENT.TYPE, (byte) PaymentType.CRA_0004.ordinal())
+					.set(AGREEMENT_PAYMENT.START_DATE, startDate).set(AGREEMENT_PAYMENT.EXPRESSION, extra.expression)
 					.set(AGREEMENT_PAYMENT.DESCRIPTION, extra.expression)
 					.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, PAYMENT.getName())
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) EXTRA.ordinal())
-					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION,
-							String.format("%s/12", PAYMENT.getName()))
-					.returning().fetchOne();
+					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, String.format("%s/12", PAYMENT.getName())).returning()
+					.fetchOne();
 
-			aonContext.getDslContext().insertInto(AGREEMENT_EXTRA)
-					.set(AGREEMENT_EXTRA.DOMAIN, agreement.getDomain())
+			aonContext.getDslContext().insertInto(AGREEMENT_EXTRA).set(AGREEMENT_EXTRA.DOMAIN, agreement.getDomain())
 					.set(AGREEMENT_EXTRA.AGREEMENT, agreement.getId())
 					.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, payment.getId())
-					.set(AGREEMENT_EXTRA.START_DATE, extra.start)
-					.set(AGREEMENT_EXTRA.END_DATE, extra.end)
-					.set(AGREEMENT_EXTRA.ISSUE_DATE, extra.issue).returning()
-					.fetchOne();
+					.set(AGREEMENT_EXTRA.START_DATE, extra.start).set(AGREEMENT_EXTRA.END_DATE, extra.end)
+					.set(AGREEMENT_EXTRA.ISSUE_DATE, extra.issue).returning().fetchOne();
 		}
 
 	}
 
-	public static AgreementExtraRecord addExtra(AONContext aonContext,
-			AgreementPaymentRecord payment, Date startDate, Extra extra) {
+	public static AgreementExtraRecord addExtra(AONContext aonContext, AgreementPaymentRecord payment, Date startDate,
+			Extra extra) {
 
-		aonContext.getDslContext().update(AGREEMENT_PAYMENT)
-				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P/12")
+		aonContext.getDslContext().update(AGREEMENT_PAYMENT).set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P/12")
 				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) EXTRA.ordinal())
 				.set(AGREEMENT_PAYMENT.MONTH, (byte) extra.month.ordinal())
 				.where(AGREEMENT_PAYMENT.ID.eq(payment.getId())).execute();
 
-		return aonContext.getDslContext().insertInto(AGREEMENT_EXTRA)
-				.set(AGREEMENT_EXTRA.DOMAIN, payment.getDomain())
+		return aonContext.getDslContext().insertInto(AGREEMENT_EXTRA).set(AGREEMENT_EXTRA.DOMAIN, payment.getDomain())
 				.set(AGREEMENT_EXTRA.AGREEMENT, payment.getAgreement())
-				.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, payment.getId())
-				.set(AGREEMENT_EXTRA.START_DATE, extra.start)
-				.set(AGREEMENT_EXTRA.END_DATE, extra.end)
-				.set(AGREEMENT_EXTRA.ISSUE_DATE, extra.issue).returning()
+				.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, payment.getId()).set(AGREEMENT_EXTRA.START_DATE, extra.start)
+				.set(AGREEMENT_EXTRA.END_DATE, extra.end).set(AGREEMENT_EXTRA.ISSUE_DATE, extra.issue).returning()
 				.fetchOne();
 	}
-	
 
-	public static AgreementExtraRecord getExtra(AONContext aonContext,int agreement, String issueDate) {
+	public static AgreementExtraRecord getExtra(AONContext aonContext, int agreement, String issueDate) {
 
-		return aonContext.getDslContext()
-				.select()
-				.from(AGREEMENT_EXTRA)
-				.where(AGREEMENT_EXTRA.AGREEMENT.eq(agreement))
-				.and(AGREEMENT_EXTRA.ISSUE_DATE.eq(issueDate))
-				.fetchOneInto(AGREEMENT_EXTRA);
-	}
-	
-
-	public static void addPayments(AONContext aonContext,
-			AgreementRecord agreement, Date startDate, Payment payments[]) {
-		addPayments(aonContext, agreement.getDomain(), agreement, startDate,
-				payments);
+		return aonContext.getDslContext().select().from(AGREEMENT_EXTRA).where(AGREEMENT_EXTRA.AGREEMENT.eq(agreement))
+				.and(AGREEMENT_EXTRA.ISSUE_DATE.eq(issueDate)).fetchOneInto(AGREEMENT_EXTRA);
 	}
 
-	public static void addPayments(AONContext aonContext, int domainId,
-			AgreementRecord agreement, Date startDate, Payment payments[]) {
+	public static void addPayments(AONContext aonContext, AgreementRecord agreement, Date startDate,
+			Payment payments[]) {
+		addPayments(aonContext, agreement.getDomain(), agreement, startDate, payments);
+	}
+
+	public static void addPayments(AONContext aonContext, int domainId, AgreementRecord agreement, Date startDate,
+			Payment payments[]) {
 		for (Payment payment : payments) {
-			aonContext
-					.getDslContext()
-					.insertInto(AGREEMENT_PAYMENT)
-					.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
+			aonContext.getDslContext().insertInto(AGREEMENT_PAYMENT).set(AGREEMENT_PAYMENT.DOMAIN, domainId)
 					.set(AGREEMENT_PAYMENT.AGREEMENT, agreement.getId())
 					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, payment.concept)
-					.set(AGREEMENT_PAYMENT.EXPRESSION, payment.expression)
-					.set(AGREEMENT_PAYMENT.START_DATE, startDate)
-					.set(AGREEMENT_PAYMENT.SALARY_TYPE,
-							(byte) payment.salary.ordinal()).returning()
-					.fetchOne();
+					.set(AGREEMENT_PAYMENT.EXPRESSION, payment.expression).set(AGREEMENT_PAYMENT.START_DATE, startDate)
+					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) payment.salary.ordinal()).returning().fetchOne();
 		}
 	}
 
-	public static AgreementPaymentRecord addPayment(AONContext aonContext,
-			AgreementRecord agreement, Date startDate, Payment payment) {
-		return addPayment(aonContext, agreement.getDomain(), agreement,
-				startDate, payment);
+	public static AgreementPaymentRecord addPayment(AONContext aonContext, AgreementRecord agreement, Date startDate,
+			Payment payment) {
+		return addPayment(aonContext, agreement.getDomain(), agreement, startDate, payment);
 	}
 
-	public static AgreementPaymentRecord addPayment(AONContext aonContext,
-			int domainId, AgreementRecord agreement, Date startDate,
-			Payment payment) {
-		return aonContext
-				.getDslContext()
-				.insertInto(AGREEMENT_PAYMENT)
-				.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
+	public static AgreementPaymentRecord addPayment(AONContext aonContext, int domainId, AgreementRecord agreement,
+			Date startDate, Payment payment) {
+		return aonContext.getDslContext().insertInto(AGREEMENT_PAYMENT).set(AGREEMENT_PAYMENT.DOMAIN, domainId)
 				.set(AGREEMENT_PAYMENT.AGREEMENT, agreement.getId())
 				.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, payment.concept)
-				.set(AGREEMENT_PAYMENT.EXPRESSION, payment.expression)
-				.set(AGREEMENT_PAYMENT.START_DATE, startDate)
-				.set(AGREEMENT_PAYMENT.SALARY_TYPE,
-						(byte) payment.salary.ordinal()).returning().fetchOne();
+				.set(AGREEMENT_PAYMENT.EXPRESSION, payment.expression).set(AGREEMENT_PAYMENT.START_DATE, startDate)
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) payment.salary.ordinal()).returning().fetchOne();
 	}
 
-	public static void addData(AONContext aonContext,
-			AgreementRecord agreement, Date startDate, Map<String, String> datas) {
+	public static void addData(AONContext aonContext, AgreementRecord agreement, Date startDate,
+			Map<String, String> datas) {
 		for (Map.Entry<String, String> data : datas.entrySet()) {
-			aonContext.getDslContext().insertInto(AGREEMENT_DATA)
-					.set(AGREEMENT_DATA.DOMAIN, agreement.getDomain())
-					.set(AGREEMENT_DATA.AGREEMENT, agreement.getId())
-					.set(AGREEMENT_DATA.START_DATE, startDate)
-					.set(AGREEMENT_DATA.NAME, data.getKey())
-					.set(AGREEMENT_DATA.EXPRESSION, data.getValue()).execute();
+			aonContext.getDslContext().insertInto(AGREEMENT_DATA).set(AGREEMENT_DATA.DOMAIN, agreement.getDomain())
+					.set(AGREEMENT_DATA.AGREEMENT, agreement.getId()).set(AGREEMENT_DATA.START_DATE, startDate)
+					.set(AGREEMENT_DATA.NAME, data.getKey()).set(AGREEMENT_DATA.EXPRESSION, data.getValue()).execute();
 
 		}
 	}
 
-	public ISQLContractSalaryCalculatorContext getExtraSalaryCalculatorContext(Connection connection, ContractRecord contract, AgreementExtraRecord extra, int year, Date chargeDate) throws SQLException, ExpressionException {
-				
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(
-						CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-						contract.getId());
-				SQLExtraSalaryCalculatorContext ctx = new SQLExtraSalaryCalculatorContext(connection, extra.getId(), year, chargeDate, criteria);
-				ctx.next();
-				return ctx;
-				
-			}
-
-
-	protected ISQLContractSalaryCalculatorContext getSQLContractSettleContext(Connection connection, Date contractStart, Date contractEnd,  ContractRecord contract)
+	public ISQLContractSalaryCalculatorContext getExtraSalaryCalculatorContext(Connection connection,
+			ContractRecord contract, AgreementExtraRecord extra, int year, Date chargeDate)
 			throws SQLException, ExpressionException {
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(
-						CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-						contract.getId());
-				ISQLContractSalaryCalculatorContext ctx = new SQLContractSettleCalculatorContext(
-						connection, contractStart, contractEnd, contractEnd, criteria);
-				ctx.next();
-				return ctx;
-			}
 
-	protected ISQLContractSalaryCalculatorContext getSQLContractSettleContext(Connection connection, Date contractStart, ContractRecord contract)
-			throws SQLException, ExpressionException {
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(
-						CONTRACT.getName() + "." + CONTRACT.ID.getName(),
-						contract.getId());
-				ISQLContractSalaryCalculatorContext ctx = new SQLContractSettleCalculatorContext(
-						connection, contractStart, getToday(), getToday(), criteria);
-				ctx.next();
-				return ctx;
-			}
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLExtraSalaryCalculatorContext ctx = new SQLExtraSalaryCalculatorContext(connection, extra.getId(), year,
+				chargeDate, criteria);
+		ctx.next();
+		return ctx;
 
-	public static final ContractRecord newContract(AONContext aonContext,
-			Date startDate, Map<String, String> data,
+	}
+
+	protected ISQLContractSalaryCalculatorContext getSQLContractSettleContext(Connection connection, Date contractStart,
+			Date contractEnd, ContractRecord contract) throws SQLException, ExpressionException {
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		ISQLContractSalaryCalculatorContext ctx = new SQLContractSettleCalculatorContext(connection, contractStart,
+				contractEnd, contractEnd, criteria);
+		ctx.next();
+		return ctx;
+	}
+
+	protected ISQLContractSalaryCalculatorContext getSQLContractSettleContext(Connection connection, Date contractStart,
+			ContractRecord contract) throws SQLException, ExpressionException {
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		ISQLContractSalaryCalculatorContext ctx = new SQLContractSettleCalculatorContext(connection, contractStart,
+				getToday(), getToday(), criteria);
+		ctx.next();
+		return ctx;
+	}
+
+	public static final ContractRecord newContract(AONContext aonContext, Date startDate, Map<String, String> data,
 			AgreementLevelCategoryRecord category) {
-		return newContract(aonContext, startDate, data, new String[0],
-				new String[0], category);
+		return newContract(aonContext, startDate, data, new String[0], new String[0], category);
 	}
 
-	public static final ContractRecord newContract(AONContext aonContext,
-			Date startDate, Map<String, String> data) {
-		return newContract(aonContext, startDate, data, new String[0],
-				new String[0], null);
+	public static final ContractRecord newContract(AONContext aonContext, Date startDate, Map<String, String> data) {
+		return newContract(aonContext, startDate, data, new String[0], new String[0], null);
 	}
 
-	public static final ContractRecord newContract(AONContext aonContext,
-			String[] payments, String[] deductions) {
+	public static final ContractRecord newContract(AONContext aonContext, String[] payments, String[] deductions) {
 		return newContract(aonContext, payments, deductions, null);
 	}
 
-	public static final ContractRecord newContract(AONContext aonContext,
-			String[] payments, String[] deductions,
+	public static final ContractRecord newContract(AONContext aonContext, String[] payments, String[] deductions,
 			AgreementLevelCategoryRecord category) {
 		Calendar calendar = Calendar.getInstance();
 		// Be care that the first day of the year has value 1.
 		calendar.set(DAY_OF_YEAR, 1);
 		Date startDate = new Date(calendar.getTimeInMillis());
-		return newContract(aonContext, startDate, Collections.emptyMap(),
-				payments, deductions, category);
+		return newContract(aonContext, startDate, Collections.emptyMap(), payments, deductions, category);
 	}
 
-	public static final ContractRecord newContract(AONContext aonContext,
-			Date startDate, Map<String, String> data, String[] payments,
-			String[] deductions, AgreementLevelCategoryRecord category) {
-		return newContract(aonContext, SSRegimeType.GENERAL, CCCType.PRINCIPAL,
-				startDate, null, data, payments, deductions, category);
+	public static final ContractRecord newContract(AONContext aonContext, Date startDate, Map<String, String> data,
+			String[] payments, String[] deductions, AgreementLevelCategoryRecord category) {
+		return newContract(aonContext, SSRegimeType.GENERAL, CCCType.PRINCIPAL, startDate, null, data, payments,
+				deductions, category);
 	}
 
-	public static final ContractRecord newContract(AONContext aonContext,
-			Date startDate, Date endDate, Map<String, String> data, String[] payments,
-			String[] deductions, AgreementLevelCategoryRecord category) {
-		return newContract(aonContext, SSRegimeType.GENERAL, CCCType.PRINCIPAL,
-				startDate, endDate, data, payments, deductions, category);
+	public static final ContractRecord newContract(AONContext aonContext, Date startDate, Date endDate,
+			Map<String, String> data, String[] payments, String[] deductions, AgreementLevelCategoryRecord category) {
+		return newContract(aonContext, SSRegimeType.GENERAL, CCCType.PRINCIPAL, startDate, endDate, data, payments,
+				deductions, category);
 	}
 
-	public static final ContractRecord newContract(AONContext aonContext,
-			SSRegimeType ssRegimeType, CCCType cccType, Date startDate,
-			Map<String, String> data, String[] payments, String[] deductions,
+	public static final ContractRecord newContract(AONContext aonContext, SSRegimeType ssRegimeType, CCCType cccType,
+			Date startDate, Map<String, String> data, String[] payments, String[] deductions,
 			AgreementLevelCategoryRecord category) {
-		return newContract(aonContext, ssRegimeType, cccType, startDate, null,
-				data, payments, deductions, category);
+		return newContract(aonContext, ssRegimeType, cccType, startDate, null, data, payments, deductions, category);
 	}
 
-	public static final ContractRecord newContract(AONContext aonContext,
-			SSRegimeType ssRegimeType, CCCType cccType, Date startDate,
-			Date endDate, Map<String, String> data, String[] payments,
-			String[] deductions, AgreementLevelCategoryRecord category, 
-			int domainId, int personId, int workplaceId,  int enterpriseCccId, int  enterpriseActivityId ) {
-		ContractRecord contract = aonContext
-				.getDslContext()
-				.insertInto(CONTRACT)
-				.set(CONTRACT.DOMAIN, domainId )
-				.set(CONTRACT.PERSON, personId)
-				.set(CONTRACT.WORKPLACE, workplaceId)
-				.set(CONTRACT.START_DATE, startDate)
-				.set(CONTRACT.SENIORITY_DATE, startDate)
-				.set(CONTRACT.END_DATE, endDate)
-				.set(CONTRACT.ENTERPRISE_CCC,
-						enterpriseCccId)
-				.set(CONTRACT.ENTERPRISE_ACTIVITY,
-						enterpriseActivityId)
-				.set(CONTRACT.AGREEMENT_LEVEL_CATEGORY,
-						category != null ? category.getId()
-								: null).returning().fetchOne();
-	
+	public static final ContractRecord newContract(AONContext aonContext, SSRegimeType ssRegimeType, CCCType cccType,
+			Date startDate, Date endDate, Map<String, String> data, String[] payments, String[] deductions,
+			AgreementLevelCategoryRecord category, int domainId, int personId, int workplaceId, int enterpriseCccId,
+			int enterpriseActivityId) {
+		ContractRecord contract = aonContext.getDslContext().insertInto(CONTRACT).set(CONTRACT.DOMAIN, domainId)
+				.set(CONTRACT.PERSON, personId).set(CONTRACT.WORKPLACE, workplaceId).set(CONTRACT.START_DATE, startDate)
+				.set(CONTRACT.SENIORITY_DATE, startDate).set(CONTRACT.END_DATE, endDate)
+				.set(CONTRACT.ENTERPRISE_CCC, enterpriseCccId).set(CONTRACT.ENTERPRISE_ACTIVITY, enterpriseActivityId)
+				.set(CONTRACT.AGREEMENT_LEVEL_CATEGORY, category != null ? category.getId() : null).returning()
+				.fetchOne();
+
 		for (int i = 0; i < payments.length; i++) {
 			String payment = payments[i];
-			PaymentConceptRecord concept = aonContext
-					.getDslContext()
-					.insertInto(PAYMENT_CONCEPT)
-					.set(PAYMENT_CONCEPT.DOMAIN, domainId)
-					.set(PAYMENT_CONCEPT.CODE,
-							String.format("P_%d", i))
-					.set(PAYMENT_CONCEPT.TYPE,
-							(byte) PaymentType.CRA_0000
-									.ordinal())
-					.set(PAYMENT_CONCEPT.DESCRIPTION, payment)
-					.set(PAYMENT_CONCEPT.EXPRESSION, payment)
-					.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION,
-							PAYMENT.getName())
-					.set(PAYMENT_CONCEPT.IRPF_EXPRESSION,
-							PAYMENT.getName()).returning()
-					.fetchOne();
-	
-			aonContext
-					.getDslContext()
-					.insertInto(CONTRACT_PAYMENT)
-					.set(CONTRACT_PAYMENT.DOMAIN,
-							domainId)
-					.set(CONTRACT_PAYMENT.CONTRACT,
-							contract.getId())
-					.set(CONTRACT_PAYMENT.START_DATE, startDate)
-					.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT,
-							concept.getId())
-					.set(CONTRACT_PAYMENT.SALARY_TYPE,
-							(byte) SalaryType.SALARY.ordinal())
-					.execute();
+			PaymentConceptRecord concept = aonContext.getDslContext().insertInto(PAYMENT_CONCEPT)
+					.set(PAYMENT_CONCEPT.DOMAIN, domainId).set(PAYMENT_CONCEPT.CODE, String.format("P_%d", i))
+					.set(PAYMENT_CONCEPT.TYPE, (byte) PaymentType.CRA_0000.ordinal())
+					.set(PAYMENT_CONCEPT.DESCRIPTION, payment).set(PAYMENT_CONCEPT.EXPRESSION, payment)
+					.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, PAYMENT.getName())
+					.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, PAYMENT.getName()).returning().fetchOne();
+
+			aonContext.getDslContext().insertInto(CONTRACT_PAYMENT).set(CONTRACT_PAYMENT.DOMAIN, domainId)
+					.set(CONTRACT_PAYMENT.CONTRACT, contract.getId()).set(CONTRACT_PAYMENT.START_DATE, startDate)
+					.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, concept.getId())
+					.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal()).execute();
 		}
-	
+
 		for (String deduction : deductions) {
 			DeductionType type = DeductionType.COMMON_CONTINGENCY;
 			if (deduction.contains("BASE_IRPF"))
@@ -816,510 +673,298 @@ public abstract class AbstractSQLTestCase {
 				type = DeductionType.STRUCTURAL_OVERTIME;
 			else if (deduction.contains("BASE_NESTR"))
 				type = DeductionType.NON_STRUCTURAL_OVERTIME;
-	
-			aonContext
-					.getDslContext()
-					.insertInto(CONTRACT_DEDUCTION)
-					.set(CONTRACT_DEDUCTION.DOMAIN,
-							domainId)
-					.set(CONTRACT_DEDUCTION.CONTRACT,
-							contract.getId())
-					.set(CONTRACT_DEDUCTION.START_DATE,
-							startDate)
-					.set(CONTRACT_DEDUCTION.DESCRIPTION,
-							deduction)
-					.set(CONTRACT_DEDUCTION.EXPRESSION,
-							deduction)
-					.set(CONTRACT_DEDUCTION.TYPE,
-							(byte) type.ordinal()).execute();
+
+			aonContext.getDslContext().insertInto(CONTRACT_DEDUCTION).set(CONTRACT_DEDUCTION.DOMAIN, domainId)
+					.set(CONTRACT_DEDUCTION.CONTRACT, contract.getId()).set(CONTRACT_DEDUCTION.START_DATE, startDate)
+					.set(CONTRACT_DEDUCTION.DESCRIPTION, deduction).set(CONTRACT_DEDUCTION.EXPRESSION, deduction)
+					.set(CONTRACT_DEDUCTION.TYPE, (byte) type.ordinal()).execute();
 		}
-	
-		addData(aonContext, contract, contract.getStartDate(),
-				contract.getEndDate(), data);
-	
+
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), data);
+
 		return contract;
 	}
 
-	public static final EnterpriseActivityRecord newEnterpriseActivity(AONContext aonContext, 
-			int domainId, 
-			int scopeId, 
+	public static final EnterpriseActivityRecord newEnterpriseActivity(AONContext aonContext, int domainId, int scopeId,
 			SSRegimeType ssRegimeType) {
 
-		RegistryRecord enterprise = aonContext
-				.getDslContext()
-				.insertInto(REGISTRY)
-				.set(REGISTRY.DOMAIN, domainId)
-				.set(REGISTRY.NAME, "")
-				.set(REGISTRY.ALIAS, "")
-				.set(REGISTRY.DOCUMENT, "")
-				.set(REGISTRY.DOCUMENT_COUNTRY, "")
-				.set(REGISTRY.DOCUMENT_TYPE,
-						(byte) DocumentType.OTHER.ordinal())
-				.set(REGISTRY.NATIONALITY, "")
-				.set(REGISTRY.TYPE,
-						(byte) RegistryType.LEGAL.ordinal())
-				.returning().fetchOne();
+		RegistryRecord enterprise = aonContext.getDslContext().insertInto(REGISTRY).set(REGISTRY.DOMAIN, domainId)
+				.set(REGISTRY.NAME, "").set(REGISTRY.ALIAS, "").set(REGISTRY.DOCUMENT, "")
+				.set(REGISTRY.DOCUMENT_COUNTRY, "").set(REGISTRY.DOCUMENT_TYPE, (byte) DocumentType.OTHER.ordinal())
+				.set(REGISTRY.NATIONALITY, "").set(REGISTRY.TYPE, (byte) RegistryType.LEGAL.ordinal()).returning()
+				.fetchOne();
 
-		aonContext.getDslContext().insertInto(ENTERPRISE)
-				.set(ENTERPRISE.DOMAIN, domainId)
-				.set(ENTERPRISE.REGISTRY, enterprise.getId())
-				.set(ENTERPRISE.SCOPE, scopeId)
-				.execute();
+		aonContext.getDslContext().insertInto(ENTERPRISE).set(ENTERPRISE.DOMAIN, domainId)
+				.set(ENTERPRISE.REGISTRY, enterprise.getId()).set(ENTERPRISE.SCOPE, scopeId).execute();
 
-		EnterpriseActivityRecord enterpriseActivity = aonContext
-				.getDslContext()
-				.insertInto(ENTERPRISE_ACTIVITY)
-				.set(ENTERPRISE_ACTIVITY.DOMAIN, domainId)
-				.set(ENTERPRISE_ACTIVITY.ENTERPRISE,
-						enterprise.getId())
-				.set(ENTERPRISE_ACTIVITY.DESCRIPTION, "")
-				.set(ENTERPRISE_ACTIVITY.TYPE,
-						(byte) ssRegimeType.ordinal())
+		EnterpriseActivityRecord enterpriseActivity = aonContext.getDslContext().insertInto(ENTERPRISE_ACTIVITY)
+				.set(ENTERPRISE_ACTIVITY.DOMAIN, domainId).set(ENTERPRISE_ACTIVITY.ENTERPRISE, enterprise.getId())
+				.set(ENTERPRISE_ACTIVITY.DESCRIPTION, "").set(ENTERPRISE_ACTIVITY.TYPE, (byte) ssRegimeType.ordinal())
 				.returning().fetchOne();
 
 		return enterpriseActivity;
 
 	}
-	
-	
-	public static final EnterpriseCccRecord newEnterpriseCcc(AONContext aonContext, 
-			int domainId, 
-			int scopeId,
-			int enterpriseActivityId,
-			CCCType cccType,
-			String ccc) {
-		EnterpriseCccRecord enterpriseCcc = aonContext
-			.getDslContext()
-			.insertInto(ENTERPRISE_CCC)
-			.set(ENTERPRISE_CCC.DOMAIN, domainId)
-			.set(ENTERPRISE_CCC.TYPE,
-					(byte) cccType.ordinal())
-			.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY,
-					enterpriseActivityId)
-			.set(ENTERPRISE_CCC.CCC, ccc)
-			.returning()
-			.fetchOne();
-		
+
+	public static final EnterpriseCccRecord newEnterpriseCcc(AONContext aonContext, int domainId, int scopeId,
+			int enterpriseActivityId, CCCType cccType, String ccc) {
+		EnterpriseCccRecord enterpriseCcc = aonContext.getDslContext().insertInto(ENTERPRISE_CCC)
+				.set(ENTERPRISE_CCC.DOMAIN, domainId).set(ENTERPRISE_CCC.TYPE, (byte) cccType.ordinal())
+				.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, enterpriseActivityId).set(ENTERPRISE_CCC.CCC, ccc).returning()
+				.fetchOne();
+
 		return enterpriseCcc;
-	}	
-	
-	public static final WorkplaceRecord newWorkplace(AONContext aonContext, 
-			int domainId, 
-			int scopeId,
+	}
+
+	public static final WorkplaceRecord newWorkplace(AONContext aonContext, int domainId, int scopeId,
 			int enterpriseId) {
-		
 
-		RaddressRecord raddress = aonContext
-				.getDslContext()
-				.insertInto(RADDRESS)
-				.set(RADDRESS.DOMAIN, domainId)
-				.set(RADDRESS.REGISTRY, enterpriseId)
-				.set(RADDRESS.TYPE,
-						(byte) AddressType.MAIN.ordinal())
+		RaddressRecord raddress = aonContext.getDslContext().insertInto(RADDRESS).set(RADDRESS.DOMAIN, domainId)
+				.set(RADDRESS.REGISTRY, enterpriseId).set(RADDRESS.TYPE, (byte) AddressType.MAIN.ordinal()).returning()
+				.fetchOne();
+
+		WorkplaceRecord workplace = aonContext.getDslContext().insertInto(WORKPLACE).set(WORKPLACE.DOMAIN, domainId)
+				.set(WORKPLACE.ENTERPRISE, enterpriseId).set(WORKPLACE.ACTIVE, (byte) 1)
+				.set(WORKPLACE.ECONOMICAGREEMENT, (byte) Administration.COMMON_TERRITORY.ordinal())
+				.set(WORKPLACE.DESCRIPTION, "").set(WORKPLACE.ADDRESS, raddress.getId()).set(WORKPLACE.SCOPE, scopeId)
 				.returning().fetchOne();
 
-		WorkplaceRecord workplace = aonContext
-				.getDslContext()
-				.insertInto(WORKPLACE)
-				.set(WORKPLACE.DOMAIN, domainId)
-				.set(WORKPLACE.ENTERPRISE, enterpriseId)
-				.set(WORKPLACE.ACTIVE, (byte) 1)
-				.set(WORKPLACE.ECONOMICAGREEMENT,
-						(byte) Administration.COMMON_TERRITORY
-								.ordinal())
-				.set(WORKPLACE.DESCRIPTION, "")
-				.set(WORKPLACE.ADDRESS, raddress.getId())
-				.set(WORKPLACE.SCOPE, scopeId)
-				.returning().fetchOne();
-
-		aonContext
-				.getDslContext()
-				.insertInto(PAYROLL_WORKPLACE)
-				.set(PAYROLL_WORKPLACE.DOMAIN, domainId)
-				.set(PAYROLL_WORKPLACE.WORKPLACE,
-						workplace.getId()).execute();
+		aonContext.getDslContext().insertInto(PAYROLL_WORKPLACE).set(PAYROLL_WORKPLACE.DOMAIN, domainId)
+				.set(PAYROLL_WORKPLACE.WORKPLACE, workplace.getId()).execute();
 		return workplace;
-	}	
+	}
 
-	public static final RegistryRecord newPerson(AONContext aonContext, 
-			int domainId,
-			String document) {
-		RegistryRecord person = aonContext
-				.getDslContext()
-				.insertInto(REGISTRY)
-				.set(REGISTRY.DOMAIN, domainId)
-				.set(REGISTRY.NAME, "")
-				.set(REGISTRY.ALIAS, "")
-				.set(REGISTRY.DOCUMENT, document)
-				.set(REGISTRY.DOCUMENT_COUNTRY, "")
-				.set(REGISTRY.DOCUMENT_TYPE,
-						(byte) DocumentType.OTHER.ordinal())
-				.set(REGISTRY.NATIONALITY, "")
-				.set(REGISTRY.TYPE,
-						(byte) RegistryType.NATURAL.ordinal())
-				.returning().fetchOne();
+	public static final RegistryRecord newPerson(AONContext aonContext, int domainId, String document) {
+		RegistryRecord person = aonContext.getDslContext().insertInto(REGISTRY).set(REGISTRY.DOMAIN, domainId)
+				.set(REGISTRY.NAME, "").set(REGISTRY.ALIAS, "").set(REGISTRY.DOCUMENT, document)
+				.set(REGISTRY.DOCUMENT_COUNTRY, "").set(REGISTRY.DOCUMENT_TYPE, (byte) DocumentType.OTHER.ordinal())
+				.set(REGISTRY.NATIONALITY, "").set(REGISTRY.TYPE, (byte) RegistryType.NATURAL.ordinal()).returning()
+				.fetchOne();
 
-		aonContext
-				.getDslContext()
-				.insertInto(PERSON)
-				.set(PERSON.DOMAIN, domainId)
-				.set(PERSON.REGISTRY, person.getId())
-				.set(PERSON.NAME, "")
-				.set(PERSON.FIRST_SURNAME, "")
-				.set(PERSON.SECOND_SURNAME, "")
+		aonContext.getDslContext().insertInto(PERSON).set(PERSON.DOMAIN, domainId).set(PERSON.REGISTRY, person.getId())
+				.set(PERSON.NAME, "").set(PERSON.FIRST_SURNAME, "").set(PERSON.SECOND_SURNAME, "")
 				// .set(PERSON.BIRTH_DATE, null)
-				.set(PERSON.SOCIAL_SECURITY_NUM, "")
-				.set(PERSON.GENDER,
-						(byte) Gender.UNKNOWN.ordinal())
-				.set(PERSON.MARITAL_STATUS,
-						(byte) MaritalStatus.UNKNOWN.ordinal())
-				.execute();
+				.set(PERSON.SOCIAL_SECURITY_NUM, "").set(PERSON.GENDER, (byte) Gender.UNKNOWN.ordinal())
+				.set(PERSON.MARITAL_STATUS, (byte) MaritalStatus.UNKNOWN.ordinal()).execute();
 		return person;
 	}
-	
+
 	public static ScopeRecord newScope(AONContext aonContext, int domainId) {
-		ScopeRecord scope = aonContext.getDslContext()
-				.insertInto(SCOPE)
-				.set(SCOPE.DOMAIN, domainId)
-				.set(SCOPE.DESCRIPTION, "")
-				.returning()
-				.fetchOne();
+		ScopeRecord scope = aonContext.getDslContext().insertInto(SCOPE).set(SCOPE.DOMAIN, domainId)
+				.set(SCOPE.DESCRIPTION, "").returning().fetchOne();
 		return scope;
 	}
-	
-	public static final ContractRecord newContract(AONContext aonContext,
-			SSRegimeType ssRegimeType, CCCType cccType, Date startDate,
-			Date endDate, Map<String, String> data, String[] payments,
-			String[] deductions, AgreementLevelCategoryRecord category) {
-		return aonContext.getDslContext().transactionResult(
-				new TransactionalCallable<ContractRecord>() {
-					@Override
-					public ContractRecord run(Configuration configuration)
-							throws Exception {
-						// Add a domain, with a generated ID
-						DomainRecord domain = aonContext
-								.getDslContext()
-								.insertInto(DOMAIN)
-								.set(DOMAIN.NAME,
-										String.valueOf(System
-												.currentTimeMillis()))
-								.set(DOMAIN.OWNER, "")
-								.set(DOMAIN.DESCRIPTION, "").returning()
-								.fetchOne();
 
-						ScopeRecord scope = newScope(aonContext, domain.getId());
+	public static final ContractRecord newContract(AONContext aonContext, SSRegimeType ssRegimeType, CCCType cccType,
+			Date startDate, Date endDate, Map<String, String> data, String[] payments, String[] deductions,
+			AgreementLevelCategoryRecord category) {
+		return aonContext.getDslContext().transactionResult(new TransactionalCallable<ContractRecord>() {
+			@Override
+			public ContractRecord run(Configuration configuration) throws Exception {
+				// Add a domain, with a generated ID
+				DomainRecord domain = aonContext.getDslContext().insertInto(DOMAIN)
+						.set(DOMAIN.NAME, String.valueOf(System.currentTimeMillis())).set(DOMAIN.OWNER, "")
+						.set(DOMAIN.DESCRIPTION, "").returning().fetchOne();
 
-						EnterpriseActivityRecord enterpriseActivity = newEnterpriseActivity(
-								aonContext, 
-								domain.getId(), 
-								scope.getId(), 
-								ssRegimeType);
+				ScopeRecord scope = newScope(aonContext, domain.getId());
 
-						EnterpriseCccRecord enterpriseCcc = newEnterpriseCcc(aonContext, 
-								domain.getId(), 
-								scope.getId(), 
-								enterpriseActivity.getId(), 
-								cccType,
-								null );
+				EnterpriseActivityRecord enterpriseActivity = newEnterpriseActivity(aonContext, domain.getId(),
+						scope.getId(), ssRegimeType);
 
-						WorkplaceRecord workplace = newWorkplace(aonContext, 
-								domain.getId(), 
-								scope.getId(), 
-								enterpriseActivity.getEnterprise());
+				EnterpriseCccRecord enterpriseCcc = newEnterpriseCcc(aonContext, domain.getId(), scope.getId(),
+						enterpriseActivity.getId(), cccType, null);
 
-						RegistryRecord person = newPerson(
-								aonContext, 
-								domain.getId(),
-								"");
+				WorkplaceRecord workplace = newWorkplace(aonContext, domain.getId(), scope.getId(),
+						enterpriseActivity.getEnterprise());
 
-						return newContract(aonContext, 
-								ssRegimeType, 
-								cccType, 
-								startDate, 
-								endDate, 
-								data, 
-								payments, 
-								deductions,
-								category, 
-								domain.getId(), 
-								person.getId(), 
-								workplace.getId(), 
-								enterpriseCcc.getId(), 
-								enterpriseActivity.getId());
-					}
-				});
+				RegistryRecord person = newPerson(aonContext, domain.getId(), "");
+
+				return newContract(aonContext, ssRegimeType, cccType, startDate, endDate, data, payments, deductions,
+						category, domain.getId(), person.getId(), workplace.getId(), enterpriseCcc.getId(),
+						enterpriseActivity.getId());
+			}
+		});
 
 	}
 
-	public static final void addData(AONContext aonContext,
-			ContractRecord contract, Date startDate, Date endDate,
+	public static final void addData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate,
 			Map<String, String> datas) {
 		for (Map.Entry<String, String> data : datas.entrySet()) {
-			
-			aonContext.getDslContext().delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.CONTRACT.eq(contract.getId()))
-			.and(CONTRACT_DATA.NAME.eq(data.getKey()))
-			.and(CONTRACT_DATA.START_DATE.eq(startDate))
-			.execute();
 
-			aonContext.getDslContext().insertInto(CONTRACT_DATA)
-					.set(CONTRACT_DATA.DOMAIN, contract.getDomain())
-					.set(CONTRACT_DATA.CONTRACT, contract.getId())
-					.set(CONTRACT_DATA.START_DATE, startDate)
-					.set(CONTRACT_DATA.END_DATE, endDate)
-					.set(CONTRACT_DATA.NAME, data.getKey())
+			aonContext.getDslContext().delete(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contract.getId()))
+					.and(CONTRACT_DATA.NAME.eq(data.getKey())).and(CONTRACT_DATA.START_DATE.eq(startDate)).execute();
+
+			aonContext.getDslContext().insertInto(CONTRACT_DATA).set(CONTRACT_DATA.DOMAIN, contract.getDomain())
+					.set(CONTRACT_DATA.CONTRACT, contract.getId()).set(CONTRACT_DATA.START_DATE, startDate)
+					.set(CONTRACT_DATA.END_DATE, endDate).set(CONTRACT_DATA.NAME, data.getKey())
 					.set(CONTRACT_DATA.EXPRESSION, data.getValue()).execute();
 
 		}
 	}
 
-	public static final void addData(AONContext aonContext,
-			ContractRecord contract, Date startDate, Date endDate, String name,
-			String expression) {
-		aonContext.getDslContext().insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, contract.getDomain())
-				.set(CONTRACT_DATA.CONTRACT, contract.getId())
-				.set(CONTRACT_DATA.START_DATE, startDate)
-				.set(CONTRACT_DATA.END_DATE, endDate)
-				.set(CONTRACT_DATA.NAME, name)
+	public static final void addData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate,
+			String name, String expression) {
+		aonContext.getDslContext().insertInto(CONTRACT_DATA).set(CONTRACT_DATA.DOMAIN, contract.getDomain())
+				.set(CONTRACT_DATA.CONTRACT, contract.getId()).set(CONTRACT_DATA.START_DATE, startDate)
+				.set(CONTRACT_DATA.END_DATE, endDate).set(CONTRACT_DATA.NAME, name)
 				.set(CONTRACT_DATA.EXPRESSION, expression).execute();
 	}
 
-	public static final void addData(AONContext aonContext,
-			ContractRecord contract, Date startDate, Date endDate,
+	public static final void addData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate,
 			ContextVariable variable, String expression) {
-		addData(aonContext, contract, startDate, endDate, variable.getName(),
-				expression);
+		addData(aonContext, contract, startDate, endDate, variable.getName(), expression);
 	}
 
-	public static final void addData(AONContext aonContext,
-			ContractRecord contract, Date startDate, Date endDate,
+	public static final void addData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate,
 			ContextVariable variable, Double value) {
-		addData(aonContext, contract, startDate, endDate, variable.getName(),
-				String.format("%f", value));
+		addData(aonContext, contract, startDate, endDate, variable.getName(), String.format("%f", value));
 	}
 
-	public static final void addData(AONContext aonContext,
-			AgreementLevelCategoryRecord category, Date startDate,
+	public static final void addData(AONContext aonContext, AgreementLevelCategoryRecord category, Date startDate,
 			Date endDate, Map<String, String> datas) {
 		for (Map.Entry<String, String> data : datas.entrySet()) {
-			aonContext
-					.getDslContext()
-					.insertInto(AGREEMENT_LEVEL_DATA)
+			aonContext.getDslContext().insertInto(AGREEMENT_LEVEL_DATA)
 					.set(AGREEMENT_LEVEL_DATA.DOMAIN, category.getDomain())
-					.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL,
-							category.getAgreementLevel())
-					.set(AGREEMENT_LEVEL_DATA.START_DATE, startDate)
-					.set(AGREEMENT_LEVEL_DATA.END_DATE, endDate)
-					.set(AGREEMENT_LEVEL_DATA.NAME, data.getKey())
-					.set(AGREEMENT_LEVEL_DATA.EXPRESSION, data.getValue())
+					.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, category.getAgreementLevel())
+					.set(AGREEMENT_LEVEL_DATA.START_DATE, startDate).set(AGREEMENT_LEVEL_DATA.END_DATE, endDate)
+					.set(AGREEMENT_LEVEL_DATA.NAME, data.getKey()).set(AGREEMENT_LEVEL_DATA.EXPRESSION, data.getValue())
 					.execute();
 
 		}
 	}
 
-	public static final void addData(AONContext aonContext, Integer domain,
-			AgreementLevelCategoryRecord category, Date startDate,
-			Date endDate, Map<String, String> datas) {
+	public static final void addData(AONContext aonContext, Integer domain, AgreementLevelCategoryRecord category,
+			Date startDate, Date endDate, Map<String, String> datas) {
 		for (Map.Entry<String, String> data : datas.entrySet()) {
-			aonContext
-					.getDslContext()
-					.insertInto(AGREEMENT_LEVEL_DATA)
-					.set(AGREEMENT_LEVEL_DATA.DOMAIN, domain)
-					.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL,
-							category.getAgreementLevel())
-					.set(AGREEMENT_LEVEL_DATA.START_DATE, startDate)
-					.set(AGREEMENT_LEVEL_DATA.END_DATE, endDate)
-					.set(AGREEMENT_LEVEL_DATA.NAME, data.getKey())
-					.set(AGREEMENT_LEVEL_DATA.EXPRESSION, data.getValue())
+			aonContext.getDslContext().insertInto(AGREEMENT_LEVEL_DATA).set(AGREEMENT_LEVEL_DATA.DOMAIN, domain)
+					.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, category.getAgreementLevel())
+					.set(AGREEMENT_LEVEL_DATA.START_DATE, startDate).set(AGREEMENT_LEVEL_DATA.END_DATE, endDate)
+					.set(AGREEMENT_LEVEL_DATA.NAME, data.getKey()).set(AGREEMENT_LEVEL_DATA.EXPRESSION, data.getValue())
 					.execute();
 
 		}
 	}
 
-	public static final PaymentConceptRecord addConcept(AONContext aonContext,
-			String code) {
+	public static final PaymentConceptRecord addConcept(AONContext aonContext, String code) {
 		DomainRecord domain = newDomain(aonContext);
-		return aonContext
-				.getDslContext()
-				.insertInto(PAYMENT_CONCEPT)
-				.set(PAYMENT_CONCEPT.DOMAIN, domain.getId())
-				.set(PAYMENT_CONCEPT.CODE, code)
-				.set(PAYMENT_CONCEPT.TYPE,
-						(byte) PaymentType.CRA_0001.ordinal())
-				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
-				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P").returning()
+		return aonContext.getDslContext().insertInto(PAYMENT_CONCEPT).set(PAYMENT_CONCEPT.DOMAIN, domain.getId())
+				.set(PAYMENT_CONCEPT.CODE, code).set(PAYMENT_CONCEPT.TYPE, (byte) PaymentType.CRA_0001.ordinal())
+				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P").set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P").returning()
 				.fetchOne();
 
 	}
 
-	public static final void addPayment(AONContext aonContext,
-			ContractRecord contract, PaymentConceptRecord concept,
+	public static final void addPayment(AONContext aonContext, ContractRecord contract, PaymentConceptRecord concept,
 			String expression) {
 		addPayment(aonContext, contract, concept, expression, "_P");
 	}
 
-	public static final void addPayment(AONContext aonContext,
-			ContractRecord contract, PaymentConceptRecord concept,
+	public static final void addPayment(AONContext aonContext, ContractRecord contract, PaymentConceptRecord concept,
 			String expression, String quoteExpression) {
-		addPayment(aonContext, contract, concept, expression, quoteExpression,
-				PaymentType.CRA_0001);
+		addPayment(aonContext, contract, concept, expression, quoteExpression, PaymentType.CRA_0001);
 	}
 
-	public static final void addPayment(AONContext aonContext,
-			ContractRecord contract, PaymentConceptRecord concept,
+	public static final void addPayment(AONContext aonContext, ContractRecord contract, PaymentConceptRecord concept,
 			String expression, String quoteExpression, PaymentType type) {
 		addPayment(aonContext, contract, concept, null, expression, "_P", quoteExpression, type);
 	}
 
-	public static final void addPayment(AONContext aonContext,
-			ContractRecord contract, PaymentConceptRecord concept,
-			String description, 
-			String expression, 
-			String irpfExpression,  
-			String quoteExpression, 
-			PaymentType type) {
-		aonContext
-				.getDslContext()
-				.insertInto(CONTRACT_PAYMENT)
-				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
-				.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, concept.getId())
+	public static final void addPayment(AONContext aonContext, ContractRecord contract, PaymentConceptRecord concept,
+			String description, String expression, String irpfExpression, String quoteExpression, PaymentType type) {
+		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT).set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+				.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, concept.getId()).set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
+				.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
+				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate()).set(CONTRACT_PAYMENT.DESCRIPTION, description)
+				.set(CONTRACT_PAYMENT.EXPRESSION, expression).set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression).set(CONTRACT_PAYMENT.TYPE, (byte) type.ordinal())
+				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal()).execute();
+
+	}
+
+	public static final void addPayment(AONContext aonContext, ContractRecord contract, Date startDate,
+			String expression) {
+		addPayment(aonContext, contract, startDate, expression, SalaryType.SALARY);
+	}
+
+	public static final void addPayment(AONContext aonContext, ContractRecord contract, Date startDate,
+			String expression, SalaryType salaryType) {
+
+		addPayment(aonContext, contract, null, expression, "_P", "_P", PaymentType.CRA_0001, salaryType);
+
+	}
+
+	public static final void addPayment(AONContext aonContext, ContractRecord contract, String description,
+			String expression, String irpfExpression, String quoteExpression, PaymentType type) {
+		addPayment(aonContext, contract, description, expression, irpfExpression, quoteExpression, type, SalaryType.SALARY);
+	}
+
+	public static final void addPayment(AONContext aonContext, ContractRecord contract, String description,
+			String expression, String irpfExpression, String quoteExpression, PaymentType type, SalaryType salaryType) {
+		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT).set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
 				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
 				.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
-				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
-				.set(CONTRACT_PAYMENT.DESCRIPTION, description)
-				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
-				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
-				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
-				.set(CONTRACT_PAYMENT.TYPE, (byte) type.ordinal())
-				.set(CONTRACT_PAYMENT.SALARY_TYPE,
-						(byte) SalaryType.SALARY.ordinal()).execute();
+				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate()).set(CONTRACT_PAYMENT.DESCRIPTION, description)
+				.set(CONTRACT_PAYMENT.EXPRESSION, expression).set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression).set(CONTRACT_PAYMENT.TYPE, (byte) type.ordinal())
+				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) salaryType.ordinal()).execute();
 
 	}
 
-	public static final void addPayment(AONContext aonContext,
-			ContractRecord contract, Date startDate, String expression) {
-		addPayment(aonContext, contract, startDate, expression,
-				SalaryType.SALARY);
-	}
-
-	public static final void addPayment(AONContext aonContext,
-			ContractRecord contract, Date startDate, String expression,
-			SalaryType salaryType) {
-		
-		addPayment(aonContext, contract, null, expression, "_P", "_P",  PaymentType.CRA_0001);
-
-	}
-
-	public static final void addPayment(AONContext aonContext,
-			ContractRecord contract, 
-			String description, 
-			String expression, 
-			String irpfExpression,  
-			String quoteExpression, 
-			PaymentType type) {
-		aonContext
-				.getDslContext()
-				.insertInto(CONTRACT_PAYMENT)
-				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
-				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
-				.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
-				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
-				.set(CONTRACT_PAYMENT.DESCRIPTION, description)
-				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
-				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
-				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
-				.set(CONTRACT_PAYMENT.TYPE, (byte) type.ordinal())
-				.set(CONTRACT_PAYMENT.SALARY_TYPE,
-				(byte) SalaryType.SALARY.ordinal()).execute();
-
-	}
-
-	public static final void addIT(AONContext aonContext,
-			ContractRecord contract, LeaveType type, Date startDate,
+	public static final void addIT(AONContext aonContext, ContractRecord contract, LeaveType type, Date startDate,
 			Date endDate, Double regulatoryBase) {
-		aonContext
-				.getDslContext()
-				.insertInto(CONTRACT_LEAVE)
-				.set(CONTRACT_LEAVE.DOMAIN, contract.getDomain())
-				.set(CONTRACT_LEAVE.CONTRACT, contract.getId())
-				.set(CONTRACT_LEAVE.START_DATE, startDate)
-				.set(CONTRACT_LEAVE.END_DATE, endDate)
-				.set(CONTRACT_LEAVE.DAILY_REG_BASE, regulatoryBase)
+		aonContext.getDslContext().insertInto(CONTRACT_LEAVE).set(CONTRACT_LEAVE.DOMAIN, contract.getDomain())
+				.set(CONTRACT_LEAVE.CONTRACT, contract.getId()).set(CONTRACT_LEAVE.START_DATE, startDate)
+				.set(CONTRACT_LEAVE.END_DATE, endDate).set(CONTRACT_LEAVE.DAILY_REG_BASE, regulatoryBase)
 				// .set(CONTRACT_LEAVE.DAILY_CGC_BASE, regulatoryBase)
 				// .set(CONTRACT_LEAVE.DAILY_CGP_BASE, regulatoryBase)
 				.set(CONTRACT_LEAVE.TYPE, (byte) type.ordinal())
-				.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) type.ordinal())
-				.execute();
+				.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, (byte) type.ordinal()).execute();
 
 	}
 
-	public static void addPayment(AONContext aonContext,
-			ContractRecord contract, String expression, String quoteExpression) {
-		aonContext
-				.getDslContext()
-				.insertInto(CONTRACT_PAYMENT)
-				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
+	public static void addPayment(AONContext aonContext, ContractRecord contract, String expression,
+			String quoteExpression) {
+		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT).set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
 				.set(CONTRACT_PAYMENT.CONTRACT, contract.getId())
 				.set(CONTRACT_PAYMENT.START_DATE, contract.getStartDate())
-				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate())
-				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
+				.set(CONTRACT_PAYMENT.END_DATE, contract.getEndDate()).set(CONTRACT_PAYMENT.EXPRESSION, expression)
 				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
-				.set(CONTRACT_PAYMENT.TYPE,
-						(byte) PaymentType.CRA_0001.ordinal())
-				.set(CONTRACT_PAYMENT.SALARY_TYPE,
-						(byte) SalaryType.SALARY.ordinal()).execute();
+				.set(CONTRACT_PAYMENT.TYPE, (byte) PaymentType.CRA_0001.ordinal())
+				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal()).execute();
 
 	}
 
-	public static ContractEmbargoRecord addEmbargo(AONContext aonContext,
-			ContractRecord contract, String expression ) {
-		return aonContext
-				.getDslContext()
-				.insertInto(CONTRACT_EMBARGO)
-				.set(CONTRACT_EMBARGO.DOMAIN, contract.getDomain())
-				.set(CONTRACT_EMBARGO.CONTRACT, contract.getId())
+	public static ContractEmbargoRecord addEmbargo(AONContext aonContext, ContractRecord contract, String expression) {
+		return aonContext.getDslContext().insertInto(CONTRACT_EMBARGO)
+				.set(CONTRACT_EMBARGO.DOMAIN, contract.getDomain()).set(CONTRACT_EMBARGO.CONTRACT, contract.getId())
 				.set(CONTRACT_EMBARGO.START_DATE, contract.getStartDate())
-				.set(CONTRACT_EMBARGO.END_DATE, contract.getEndDate())
-				.set(CONTRACT_EMBARGO.EXPRESSION, expression)
-				.returning()
-				.fetchOne();
+				.set(CONTRACT_EMBARGO.END_DATE, contract.getEndDate()).set(CONTRACT_EMBARGO.EXPRESSION, expression)
+				.returning().fetchOne();
 
 	}
 
-	public static final BonusConceptRecord addBonusConcept(
-			AONContext aonContext, BonusType type, String expression) {
+	public static final BonusConceptRecord addBonusConcept(AONContext aonContext, BonusType type, String expression) {
 		DomainRecord domain = newDomain(aonContext);
 		return addBonusConcept(aonContext, domain.getId(), type, expression);
 
 	}
 
-	public static final BonusConceptRecord addBonusConcept(
-			AONContext aonContext, int domain, BonusType type, String expression) {
-		return aonContext
-				.getDslContext()
-				.insertInto(BONUS_CONCEPT)
-				.set(BONUS_CONCEPT.DOMAIN, domain)
-				.set(BONUS_CONCEPT.TYPE,
-						type != null ? (byte) type.ordinal() : null)
+	public static final BonusConceptRecord addBonusConcept(AONContext aonContext, int domain, BonusType type,
+			String expression) {
+		return aonContext.getDslContext().insertInto(BONUS_CONCEPT).set(BONUS_CONCEPT.DOMAIN, domain)
+				.set(BONUS_CONCEPT.TYPE, type != null ? (byte) type.ordinal() : null)
 				.set(BONUS_CONCEPT.EXPRESSION, expression)
-				.set(BONUS_CONCEPT.DESCRIPTION,
-						type != null ? type.getName(new Locale("es", "ES"))
-								: expression).returning().fetchOne();
+				.set(BONUS_CONCEPT.DESCRIPTION, type != null ? type.getName(new Locale("es", "ES")) : expression)
+				.returning().fetchOne();
 	}
 
-	public static final ContractBonusRecord addBonus(AONContext aonContext,
-			ContractRecord contract, BonusConceptRecord concept,
-			String expression) {
-		return aonContext.getDslContext().insertInto(CONTRACT_BONUS)
-				.set(CONTRACT_BONUS.DOMAIN, contract.getDomain())
-				.set(CONTRACT_BONUS.BONUS_CONCEPT, concept.getId())
-				.set(CONTRACT_BONUS.CONTRACT, contract.getId())
+	public static final ContractBonusRecord addBonus(AONContext aonContext, ContractRecord contract,
+			BonusConceptRecord concept, String expression) {
+		return aonContext.getDslContext().insertInto(CONTRACT_BONUS).set(CONTRACT_BONUS.DOMAIN, contract.getDomain())
+				.set(CONTRACT_BONUS.BONUS_CONCEPT, concept.getId()).set(CONTRACT_BONUS.CONTRACT, contract.getId())
 				.set(CONTRACT_BONUS.START_DATE, contract.getStartDate())
-				.set(CONTRACT_BONUS.END_DATE, contract.getEndDate())
-				.set(CONTRACT_BONUS.EXPRESSION, expression)
-				.returning()
-				.fetchOne();
+				.set(CONTRACT_BONUS.END_DATE, contract.getEndDate()).set(CONTRACT_BONUS.EXPRESSION, expression)
+				.returning().fetchOne();
 
 	}
 
