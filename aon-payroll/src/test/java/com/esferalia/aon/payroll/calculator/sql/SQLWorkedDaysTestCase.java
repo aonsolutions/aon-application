@@ -96,6 +96,7 @@ import com.esferalia.aon.salary.expression.UndefinedVariablesException;
  * @author rtrepiana
  *
  */
+
 public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 
 	private static final double DELTA = 0.000000001;
@@ -795,7 +796,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, start, end, end, criteria);
 		ctx.next();
-		if ( monthdays == null || contractStartDayOfMonth > 0)
+		if ( monthdays == null || contractStartDayOfMonth > 1)
 			assertEquals(ctx,(((double) get(end, DAY_OF_MONTH)
 					- contractStartDayOfMonth + 1) * coefficient), contractStart,
 					end, monthdays);
