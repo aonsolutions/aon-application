@@ -621,14 +621,6 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		System.out.println("------------------------------------------------------------" );
 		
-		addIT(aonContext, 
-				contract, 
-				LeaveType.COMMON_DISEASE, 
-				startIt,
-				endIt, 
-				null);
-		
-
 		startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH,1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(
@@ -647,13 +639,6 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		
-		addIT(aonContext, 
-				contract, 
-				LeaveType.COMMON_DISEASE, 
-				startIt,
-				endIt, 
-				null);
-
 	}
 
 	@Test
@@ -729,16 +714,6 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				salary.getTotalPayment() 
 				, DELTA);
 		//@formatter:on
-		
-		
-		System.out.println("------------------------------------------------------------" );
-		
-		addIT(aonContext, 
-				contract, 
-				LeaveType.COMMON_DISEASE, 
-				startIt,
-				endIt, 
-				null);
 		
 
 		startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH,1);
@@ -836,14 +811,6 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		System.out.println("------------------------------------------------------------" );
 		
-		addIT(aonContext, 
-				contract, 
-				LeaveType.OCCUPATIONAL_DISEASE, 
-				startIt,
-				endIt, 
-				null);
-		
-
 		startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH,1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(
@@ -938,13 +905,6 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		
 		System.out.println("------------------------------------------------------------" );
-		
-		addIT(aonContext, 
-				contract, 
-				LeaveType.MATERNITY, 
-				startIt,
-				endIt, 
-				null);
 		
 
 		startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH,1);
@@ -1719,7 +1679,238 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testGtzdoMultipleI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				Collections.emptyMap()
+				, new String[] { 
+						"GTZDO(P_1)" ,
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+//						"BASE_CGC * 0.10", 
+//						"BASE_CGP * 0.05",
+//						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, 
+				null);
+		//@formatter:on
+		
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
+		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
+		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startItI = getFirstDayOfMonth(getToday());
+		Date endItI = AonDateUtils.add(startItI, Calendar.DATE, 10);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startItI,
+				endItI, 
+				null);
+		
+		Date startItII = AonDateUtils.add(endItI, Calendar.DATE, 5);
+		Date endItII = AonDateUtils.add(startItII, Calendar.DATE, 10);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startItII,
+				endItII, 
+				null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount());
+				
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00, 
+				salary.getTotalPayment() 
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
 	// ------------------------------------------------------------------------
 
+	@Test
+	public void testGtzdoMultipleII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
 
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				Collections.emptyMap()
+				, new String[] { 
+						"GTZDO(P_1)" ,
+						"3000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+//						"BASE_CGC * 0.10", 
+//						"BASE_CGP * 0.05",
+//						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, 
+				null);
+		//@formatter:on
+		
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
+		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
+		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startItI = getFirstDayOfMonth(getToday());
+		Date endItI = AonDateUtils.add(startItI, Calendar.DATE, 10);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startItI,
+				endItI, 
+				null);
+		
+		Date startItII = AonDateUtils.add(endItI, Calendar.DATE, 5);
+		Date endItII = AonDateUtils.add(startItII, Calendar.DATE, 1);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startItII,
+				endItII, 
+				null);
+
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount());
+				
+		//@formatter:off
+		Assert.assertEquals(
+				3000.00, 
+				salary.getTotalPayment() 
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
+
+	@Test
+	public void testGtzdoMultipleIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				Collections.emptyMap()
+				, new String[] { 
+						"GTZDO(P_1)" ,
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+//						"BASE_CGC * 0.10", 
+//						"BASE_CGP * 0.05",
+//						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, 
+				null);
+		//@formatter:on
+		
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
+		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
+		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startItI = getFirstDayOfMonth(getToday());
+		Date endItI = AonDateUtils.add(startItI, Calendar.DATE, 10);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startItI,
+				endItI, 
+				null);
+		
+		Date startItII = AonDateUtils.add(endItI, Calendar.DATE, 5);
+		Date endItII = AonDateUtils.add(startItII, Calendar.DATE, 5);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startItII,
+				endItII, 
+				null);
+
+		Date startItIII = AonDateUtils.add(endItII, Calendar.DATE, 3);
+		Date endItIII = AonDateUtils.add(startItIII, Calendar.DATE, 3);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startItIII,
+				endItIII, 
+				null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount());
+				
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00, 
+				salary.getTotalPayment() 
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
+	// ------------------------------------------------------------------------
 }

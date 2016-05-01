@@ -569,6 +569,8 @@ public class SQLContractSalaryCalculatorContext
 
 		protected int end;
 		protected int start;
+		protected int guaranteed;
+		protected double totalGuarentee;
 		protected List<Period> guarantees = new ArrayList<Period>();
 
 		public SQLNoItContractSalaryCalculatorContext(Connection connection,
@@ -581,7 +583,8 @@ public class SQLContractSalaryCalculatorContext
 			this.end = end + 1;
 			// with this, we assure no leave I.T.
 			super.leaveLoader = new SQLContractLeaveLoader(startDate, endDate) {
-
+				
+				
 				@Override
 				public void loadContractLeave(Integer id, Date leaveStart,
 						Date leaveEnd, long parentDays, LeaveType type,
@@ -602,11 +605,9 @@ public class SQLContractSalaryCalculatorContext
 
 					SQLNoItContractSalaryCalculatorContext.this.guarantees
 							.add(guarenteePeriod);
-
-					SQLNoItContractSalaryCalculatorContext.this.guarantees
-							.add(guarenteePeriod);
-
-					exprCtx.removeVariable(GUARANTEE);
+					SQLNoItContractSalaryCalculatorContext.this.guaranteed++;
+					if ( SQLNoItContractSalaryCalculatorContext.this.guaranteed == 1)
+						exprCtx.removeVariable(GUARANTEE);
 
 					try {
 						Method guarantee = SQLContractSalaryCalculatorContext.class
@@ -697,9 +698,14 @@ public class SQLContractSalaryCalculatorContext
 		public Object guarantee(double guarentee, int start, int end)
 				throws ExpressionException {
 			if (this.start == start && this.end == end) {
-				throw new SalaryExpressionException(
-						new GuarenteeException(guarentee));
-			}
+				totalGuarentee += guarentee;
+				if ( --guaranteed == 0 )
+					throw new SalaryExpressionException(
+							new GuarenteeException(totalGuarentee));
+				else 
+					return guarentee;
+
+			} 
 			return super.guarantee(guarentee);
 
 		}
@@ -796,6 +802,7 @@ public class SQLContractSalaryCalculatorContext
 
 			return periods;
 		}
+		
 	}
 
 	/**
