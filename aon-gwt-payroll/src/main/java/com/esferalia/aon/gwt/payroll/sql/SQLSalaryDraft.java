@@ -972,7 +972,7 @@ public class SQLSalaryDraft {
 			SQLUtils.setInt(insertStmt, 2, contract);
 			SQLUtils.setShort(insertStmt, 3, SQLUtils.enum2Short(deduction.getType()));
 			SQLUtils.setShort(insertStmt, 4, deduction.getMonth());
-			SQLUtils.setString(insertStmt, 5, deduction.getDescription());
+			SQLUtils.setString(insertStmt, 5, deduction.getDescriptionTemplate());
 			SQLUtils.setString(insertStmt, 6, deduction.getExpression());
 			SQLUtils.setDate(insertStmt, 7, SQLUtils.date2sql(deduction.getStartDate()));
 			SQLUtils.setDate(insertStmt, 8, SQLUtils.date2sql(deduction.getEndDate()));

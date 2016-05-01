@@ -101,6 +101,11 @@ public class CompositeDeduction extends Deduction {
 	public String getDescription() {
 		return childs.isEmpty() ? null : childs.peek().description;
 	}
+	
+	@Override
+	public String getDescriptionTemplate() {
+		return childs.isEmpty() ? null : childs.peek().descriptionTemplate;
+	}
 
 	@Override
 	public String getExpression() {

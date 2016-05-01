@@ -21,8 +21,10 @@ public class CompositePayment extends Payment {
 		startDate = UNSET_DATE;
 		conceptId = UNSET_INTEGER;
 		expression = UNSET_STRING;
+		description = UNSET_STRING;
 		irpfExpression = UNSET_STRING;
 		quoteExpression = UNSET_STRING;
+		descriptionTemplate = UNSET_STRING;
 		
 		childs = new LinkedList<Payment>();
 	}
@@ -146,7 +148,15 @@ public class CompositePayment extends Payment {
 		
 		return childs.isEmpty() ? null : childs.peek().description;
 	}
-
+	
+	@Override
+	public String getDescriptionTemplate() {
+		if ( descriptionTemplate != UNSET_STRING )
+			return descriptionTemplate;
+		
+		return childs.isEmpty() ? null : childs.peek().descriptionTemplate;
+	}
+	
 	@Override
 	public String getExpression() {
 		if ( expression != UNSET_STRING )
