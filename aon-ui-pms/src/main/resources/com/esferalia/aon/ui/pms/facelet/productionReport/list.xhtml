@@ -94,16 +94,8 @@
 					</ui:decorate>
 					
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
-						<ui:param name="model" value="#{productionReport.taxModel}" />
-						<ui:param name="tableHeader" value="% IVA" />
-						<ui:param name="skipHeaders" value="#{true}" />
-						<ui:param name="skipFooters" value="#{true}" />
-						<ui:param name="name" value="Forma de pago" />
-					</ui:decorate>
-					
-					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
 						<ui:param name="model" value="#{productionReport.advancePaymethodModel}" />
-						<ui:param name="tableHeader" value="FACTURAS ACTICIPO" />
+						<ui:param name="tableHeader" value="FACTURAS ANTICIPO" />
 						<ui:param name="totalTo" value="#{productionReport.advancePaymethodTotal}" />
 					</ui:decorate>
 					
@@ -113,6 +105,14 @@
 						<ui:param name="name" value="Forma de pago" />
 						<ui:param name="totalTo" value="#{productionReport.paymethodTotal}" />
 					</ui:decorate>
+					
+					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+						<ui:param name="model" value="#{productionReport.pendingProductionModel}" />
+						<ui:param name="tableHeader" value="PRODUCCION PENDIENTE DE PRESTAR" />
+						<ui:param name="skipHeaders" value="#{true}" />
+						<ui:param name="skipFooters" value="#{true}" />
+					</ui:decorate>
+					
 				</aon:div>
 				
 			</aon:div>

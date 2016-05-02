@@ -60,13 +60,14 @@ public class ProductionReportController implements Serializable {
 	private Map<String, ReportObject> paxMap = new HashMap<>();
 	private Map<String, ReportObject> advancePaymethodMap = new HashMap<>();
 	private Map<String, ReportObject> paymethodMap = new HashMap<>();
+	private Map<String, ReportObject> pendingProductionMap = new HashMap<>();
 	
 	private DataModel productionModel;
 	private DataModel paxModel;
 	private DataModel ratioModel;
-	private DataModel taxModel;
 	private DataModel advancePaymethodModel;
 	private DataModel paymethodModel;
+	private DataModel pendingProductionModel;
 	
 	private ReportObject productionTotal;
 	private ReportObject ratioTotal;
@@ -96,11 +97,17 @@ public class ProductionReportController implements Serializable {
 	}
 	
 	public boolean isNevv() {
-		return productionMap.isEmpty() && paxMap.isEmpty() && advancePaymethodMap.isEmpty() && paymethodMap.isEmpty();
+		return productionMap.isEmpty() && paxMap.isEmpty()
+				&& advancePaymethodMap.isEmpty() && paymethodMap.isEmpty()
+				&& pendingProductionMap.isEmpty();
 	}
 
 	public DataModel getProductionModel() {
 		return productionModel;
+	}
+	
+	public DataModel getPendingProductionModel() {
+		return pendingProductionModel;
 	}
 
 	public DataModel getPaxModel() {
@@ -109,10 +116,6 @@ public class ProductionReportController implements Serializable {
 
 	public DataModel getRatioModel() {
 		return ratioModel;
-	}
-
-	public DataModel getTaxModel() {
-		return taxModel;
 	}
 
 	public DataModel getAdvancePaymethodModel() {
@@ -147,13 +150,14 @@ public class ProductionReportController implements Serializable {
 		paxMap.clear();
 		advancePaymethodMap.clear();
 		paymethodMap.clear();
+		pendingProductionMap.clear();
 		
 		productionModel = null;
 		paxModel = null;
 		ratioModel = null;
-		taxModel = null;
 		advancePaymethodModel = null;
 		paymethodModel = null;
+		pendingProductionModel = null;
 		
 		productionTotal = null;
 		ratioTotal = null;
@@ -180,9 +184,9 @@ public class ProductionReportController implements Serializable {
 		productionModel = buildModel(productionMap);
 		paxModel = buildModel(paxMap);
 		ratioModel = buildModel(getProductionRatioMap());
-		taxModel = buildModel(getTaxMap());
 		advancePaymethodModel = buildModel(advancePaymethodMap);
 		paymethodModel = buildModel(paymethodMap);
+		pendingProductionModel = buildModel(pendingProductionMap);
 
 		productionTotal = buildTotalizeTo(productionMap);
 		ratioTotal = buildTotalizeTo(getProductionRatioMap());
@@ -262,7 +266,6 @@ public class ProductionReportController implements Serializable {
 		Integer year = cal.get(Calendar.YEAR);
 		Integer previousYear = year-1;
 		Integer month = cal.get(Calendar.MONTH)+1;
-		Integer previousMonth = month-1;
 		Integer hotel = getHotel().getId();
 		Integer wp = getHotel().getWorkPlace().getId();
 		
@@ -270,17 +273,20 @@ public class ProductionReportController implements Serializable {
 		PreparedStatement productionStmt = null;
 		PreparedStatement paxStmt = null;
 		PreparedStatement paymethodStmt = null;
+		PreparedStatement pendingProductionStmt = null;
 		ResultSet productionRs = null;
 		ResultSet paxRs = null;
 		ResultSet paymethodRs = null;
+		ResultSet pendingProductionRs = null;
 		try {
 			Date logDate = new Date();
 			LOGGER.info("****** INFORME DE PRODUCCION **************");
 			
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			productionStmt = connection.prepareStatement(getHotelProductionSQL(date, previousDate, year, previousYear, month, previousMonth, hotel, wp));
-			paxStmt = connection.prepareStatement(getPaxSQL(date, previousDate, year, previousYear, month, previousMonth, hotel, wp));
-			paymethodStmt = connection.prepareStatement(getInvoicePayMethodsSQL(date, previousDate, year, previousYear, month, previousMonth, hotel, wp));
+			productionStmt = connection.prepareStatement(getHotelProductionSQL(date, previousDate, year, previousYear, month, hotel, wp));
+			paxStmt = connection.prepareStatement(getPaxSQL(date, previousDate, year, previousYear, month, hotel));
+			paymethodStmt = connection.prepareStatement(getInvoicePayMethodsSQL(date, previousDate, year, previousYear, month, wp));
+			pendingProductionStmt = connection.prepareStatement(getPendingHotelProductionSQL(date, previousDate, hotel));
 			
 			LOGGER.info("****** Inicio de la busqueda de produccion       -> " + timeFormatter.format(new Date()));
 			Date tmpDate = new Date();
@@ -293,7 +299,7 @@ public class ProductionReportController implements Serializable {
 				String description = productionRs.getString(1);
 				String period = productionRs.getString(2);
 				Double amount = productionRs.getDouble(3);
-				Double tax = productionRs.getDouble(4);
+				
 				if(!productionMap.containsKey(description)){
 					ReportObject ro = new ReportObject();
 					ro.setDescription(description);
@@ -382,6 +388,44 @@ public class ProductionReportController implements Serializable {
 				}
 			}
 			
+			LOGGER.info("****** Inicio de la busqueda de prod. pendiente  -> " + timeFormatter.format(new Date()));
+			tmpDate = new Date();
+			pendingProductionRs = pendingProductionStmt.executeQuery();
+			diff = (new Date()).getTime() - tmpDate.getTime();
+			LOGGER.info("****** Fin de la busqueda de prod. pendiente     -> " + timeFormatter.format(new Date()) 
+					+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
+			while (pendingProductionRs.next()) {
+				String description = pendingProductionRs.getString(1);
+				String period = pendingProductionRs.getString(2);
+				Double amount = pendingProductionRs.getDouble(3);
+				
+				description = "ALOJAMIENTO";
+				if(!pendingProductionMap.containsKey(description)){
+					ReportObject ro = new ReportObject();
+					ro.setDescription(description);
+					pendingProductionMap.put(description, ro);
+				}
+				if(period.equals("ANIO")){
+					double _amount = pendingProductionMap.get(description).getYearAmount();
+					pendingProductionMap.get(description).setYearAmount(_amount+amount);
+				} else if(period.equals("ANIO_ANTERIOR")){
+					double _amount = pendingProductionMap.get(description).getPreviousYearAmount();
+					pendingProductionMap.get(description).setPreviousYearAmount(_amount+amount);
+				} else if(period.equals("MES")){
+					double _amount = pendingProductionMap.get(description).getMonthAmount();
+					pendingProductionMap.get(description).setMonthAmount(_amount+amount);
+				} else if(period.equals("MES_ANIO_ANTERIOR")){
+					double _amount = pendingProductionMap.get(description).getPreviousMonthAmount();
+					pendingProductionMap.get(description).setPreviousMonthAmount(_amount+amount);
+				} else if(period.equals("DIA")){
+					double _amount = pendingProductionMap.get(description).getDayAmount();
+					pendingProductionMap.get(description).setDayAmount(_amount+amount);
+				} else if(period.equals("DIA_ANIO_ANTERIOR")){
+					double _amount = pendingProductionMap.get(description).getPreviousDayAmount();
+					pendingProductionMap.get(description).setPreviousDayAmount(_amount+amount);
+				}
+			}
+			
 			diff = (new Date()).getTime() - logDate.getTime();
 	        LOGGER.info("****** Tiempo TOTAL                              -> " + diff + " seg. (" 
 	        		+ (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg.)" );
@@ -425,28 +469,10 @@ public class ProductionReportController implements Serializable {
 		return productionRatioMap;
 	}
 	
-	private Map<String, ReportObject> getTaxMap() {
-		Map<String, ReportObject> taxMap = new HashMap<>();
-		ReportObject ro = new ReportObject();
-		ro.setDescription("10%");
-		ro.setDayAmount(productionMap.values().stream()
-				.mapToDouble(ReportObject::getDayAmount).sum() * 0.1);
-		ro.setPreviousDayAmount(productionMap.values().stream()
-				.mapToDouble(ReportObject::getPreviousDayAmount).sum() * 0.1);
-		ro.setMonthAmount(productionMap.values().stream()
-				.mapToDouble(ReportObject::getMonthAmount).sum() * 0.1);
-		ro.setPreviousMonthAmount(productionMap.values().stream()
-				.mapToDouble(ReportObject::getPreviousMonthAmount).sum() * 0.1);
-		ro.setYearAmount(productionMap.values().stream()
-				.mapToDouble(ReportObject::getYearAmount).sum() * 0.1);
-		ro.setPreviousYearAmount(productionMap.values().stream()
-				.mapToDouble(ReportObject::getPreviousYearAmount).sum() * 0.1);
-		taxMap.put("10%", ro);
-		return taxMap;
-	}
-	
+	// *********************************************
+	// EXCEL REPORT
+	// *********************************************
 	private boolean excelReport(OutputStream output) throws IOException, ReportException, AonConnectionException {
-		Map<String, ReportObject> taxMap = getTaxMap();
 		Map<String, ReportObject> productionRatioMap = getProductionRatioMap();
 		
 		ExcelReportExporter exporter = new ExcelReportExporter();
@@ -467,14 +493,6 @@ public class ProductionReportController implements Serializable {
 		
 		exporter.startLine();
 		exporter.endLine();
-		exportData(exporter, columnMetadata, "% IVA", taxMap, false);
-		
-		exporter.startLine();
-		exporter.endLine();
-		exportTotalizeRow(exporter, columnMetadata, productionMap, taxMap);
-		
-		exporter.startLine();
-		exporter.endLine();
 		exportInnerHeader(exporter, columnMetadata, "FRAS. ANTICIPO");
 		exportData(exporter, columnMetadata, "Forma de pago", advancePaymethodMap, true);
 		
@@ -486,6 +504,11 @@ public class ProductionReportController implements Serializable {
 		exporter.startLine();
 		exporter.endLine();
 		exportTotalizeRow(exporter, columnMetadata, advancePaymethodMap, paymethodMap);
+		
+		exporter.startLine();
+		exporter.endLine();
+		exportInnerHeader(exporter, columnMetadata, "PRODUCCION PENDIENTE");
+		exportData(exporter, columnMetadata, null, pendingProductionMap, false);
 		
 		exporter.endExport(output);
 		output.flush();
@@ -681,12 +704,12 @@ public class ProductionReportController implements Serializable {
 	
 	private String getHotelProductionSQL(java.sql.Date date,
 			java.sql.Date previousDate, Integer year, Integer previousYear,
-			Integer month, Integer previousMonth, Integer hotel, Integer wp) {
-	
+			Integer month, Integer hotel, Integer wp) {
+		
 		StringBuffer stmt = new StringBuffer();
 		stmt.append("(SELECT IF(PRS.extra=0,'ALOJAMIENTO','OTROS INGRESOS') as Concepto,"); 
 		stmt.append("        IF(PRSD.effective_date='"+date+"', 'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
-		stmt.append("        SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
+		stmt.append("        SUM(PRSD.taxable_base*1.1) as Importe,   '10' as IVA");
 		stmt.append(" FROM project_reservation_service PRS");
 		stmt.append(" INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
 		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
@@ -702,7 +725,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" UNION");
 		stmt.append(" (SELECT IF(PRS.extra=0,'ALOJAMIENTO','OTROS INGRESOS') as Concepto, ");
 		stmt.append("        IF(YEAR(PRSD.effective_date)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
-		stmt.append("        SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
+		stmt.append("        SUM(PRSD.taxable_base*1.1) as Importe,   '10' as IVA");
 		stmt.append(" FROM project_reservation_service PRS");
 		stmt.append(" INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
 		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
@@ -721,7 +744,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" UNION");
 		stmt.append(" (SELECT IF(PRS.extra=0,'ALOJAMIENTO','OTROS INGRESOS') as Concepto, ");
 		stmt.append("        IF(YEAR(PRSD.effective_date)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
-		stmt.append("        SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
+		stmt.append("        SUM(PRSD.taxable_base*1.1) as Importe,   '10' as IVA");
 		stmt.append(" FROM project_reservation_service PRS");
 		stmt.append(" INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
 		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
@@ -739,7 +762,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" UNION");
 		stmt.append(" (SELECT P.name as Concepto, ");
 		stmt.append("	    IF(INV.issue_date='"+date+"', 'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
-		stmt.append("        SUM(INVD.taxable_base), INVT.percentage as IVA");
+		stmt.append("        SUM(INVD.taxable_base*INVT.percentage), INVT.percentage as IVA");
 		stmt.append(" FROM invoice INV");
 		stmt.append(" INNER JOIN invoice_detail INVD ON INVD.invoice=INV.id");
 		stmt.append(" INNER JOIN invoice_tax INVT    ON INVT.invoice_detail=INVD.id");
@@ -753,7 +776,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" UNION");
 		stmt.append(" (SELECT P.name as Concepto, ");
 		stmt.append("        IF(YEAR(INV.issue_date)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
-		stmt.append("        SUM(INVD.taxable_base), INVT.percentage as IVA");
+		stmt.append("        SUM(INVD.taxable_base*INVT.percentage), INVT.percentage as IVA");
 		stmt.append(" FROM invoice INV");
 		stmt.append(" INNER JOIN invoice_detail INVD ON INVD.invoice=INV.id");
 		stmt.append(" INNER JOIN invoice_tax INVT    ON INVT.invoice_detail=INVD.id");
@@ -770,7 +793,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" UNION");
 		stmt.append(" (SELECT P.name as Concepto, ");
 		stmt.append("        IF(YEAR(INV.issue_date)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
-		stmt.append("        SUM(INVD.taxable_base), INVT.percentage as IVA");
+		stmt.append("        SUM(INVD.taxable_base*INVT.percentage), INVT.percentage as IVA");
 		stmt.append(" FROM invoice INV");
 		stmt.append(" INNER JOIN invoice_detail INVD ON INVD.invoice=INV.id");
 		stmt.append(" INNER JOIN invoice_tax INVT    ON INVT.invoice_detail=INVD.id");
@@ -788,8 +811,8 @@ public class ProductionReportController implements Serializable {
 	}
 	
 	private String getInvoicePayMethodsSQL(java.sql.Date date,
-				java.sql.Date previousDate, Integer year, Integer previousYear,
-				Integer month, Integer previousMonth, Integer hotel, Integer wp) {
+			java.sql.Date previousDate, Integer year, Integer previousYear,
+			Integer month, Integer wp) {
 				
 		StringBuffer stmt = new StringBuffer();
 		stmt.append("(SELECT PM.name as FormaPago,"); 
@@ -798,12 +821,12 @@ public class ProductionReportController implements Serializable {
 		stmt.append("	          AND INV.type=1 ");
 		stmt.append("	          AND INV.id IN (SELECT INVD.invoice FROM invoice_detail INVD");
 		stmt.append("							  WHERE INVD.workplace="+wp+" AND INVD.invoice=INV.id))=1,'Anticipo','Normal') as Tipo,"); 
-		stmt.append("		   IF(F.due_date='"+date+"','DIA','DIA_ANIO_ANTERIOR') as Periodo,");
+		stmt.append("		   IF(INV.issue_date='"+date+"','DIA','DIA_ANIO_ANTERIOR') as Periodo,");
 		stmt.append("	       SUM(F.amount)"); 
 		stmt.append("	FROM finance F");
 		stmt.append("	INNER JOIN pay_method PM       ON PM.id=F.pay_method");
 		stmt.append("	INNER JOIN invoice INV         ON INV.id=F.invoice");
-		stmt.append("	WHERE F.due_date in ('"+date+"', date_sub('"+date+"', interval 1 year))");
+		stmt.append("	WHERE INV.issue_date in ('"+date+"', date_sub('"+date+"', interval 1 year))");
 		stmt.append("	 AND INV.type=1"); 
 		stmt.append("	 AND INV.id IN (SELECT INVD.invoice FROM invoice_detail INVD");
 		stmt.append("	   			     WHERE INVD.workplace="+wp+" AND INVD.invoice=INV.id)"); 
@@ -817,14 +840,15 @@ public class ProductionReportController implements Serializable {
 		stmt.append("	          AND (INV.issue_date<='"+date+"' OR  INV.issue_date<='"+previousDate+"')"); 
 		stmt.append("	          AND INV.id IN (SELECT INVD.invoice FROM invoice_detail INVD");
 		stmt.append("							  WHERE INVD.workplace="+wp+" AND INVD.invoice=INV.id))=1,'Anticipo','Normal') as Tipo,"); 
-		stmt.append("		   IF(YEAR(F.due_date)="+year+",'MES','MES_ANIO_ANTERIOR') as Periodo,");
+		stmt.append("		   IF(YEAR(INV.issue_date)="+year+",'MES','MES_ANIO_ANTERIOR') as Periodo,");
 		stmt.append("	       SUM(F.amount)"); 
 		stmt.append("	FROM finance F");
 		stmt.append("	INNER JOIN pay_method PM       ON PM.id=F.pay_method");
-		stmt.append("	WHERE ((F.due_date <='"+date+"'           AND YEAR(F.due_date)="+year+")"); 
+		stmt.append("	INNER JOIN invoice INV         ON INV.id=F.invoice");
+		stmt.append("	WHERE ((INV.issue_date <='"+date+"'           AND YEAR(INV.issue_date)="+year+")"); 
 		stmt.append("	      OR"); 
-		stmt.append("	       (F.due_date <='"+previousDate+"'  AND YEAR(F.due_date)="+previousYear+") )");
-		stmt.append("	  AND MONTH(F.due_date)="+month+"");
+		stmt.append("	       (INV.issue_date <='"+previousDate+"'  AND YEAR(INV.issue_date)="+previousYear+") )");
+		stmt.append("	  AND MONTH(INV.issue_date)="+month+"");
 		stmt.append("	  AND F.invoice in"); 
 		stmt.append("	      (SELECT INV.id FROM invoice INV"); 
 		stmt.append("			WHERE INV.id=F.invoice"); 
@@ -842,13 +866,14 @@ public class ProductionReportController implements Serializable {
 		stmt.append("	          AND (INV.issue_date<='"+date+"' OR  INV.issue_date<='"+previousDate+"')"); 
 		stmt.append("	          AND INV.id IN (SELECT INVD.invoice FROM invoice_detail INVD");
 		stmt.append("							  WHERE INVD.workplace="+wp+" AND INVD.invoice=INV.id))=1,'Anticipo','Normal') as Tipo,"); 
-		stmt.append("		   IF(YEAR(F.due_date)="+year+",'ANIO','ANIO_ANTERIOR') as Periodo,");
+		stmt.append("		   IF(YEAR(INV.issue_date)="+year+",'ANIO','ANIO_ANTERIOR') as Periodo,");
 		stmt.append("	       SUM(F.amount)"); 
 		stmt.append("	FROM finance F");
 		stmt.append("	INNER JOIN pay_method PM       ON PM.id=F.pay_method");
-		stmt.append("	WHERE ((F.due_date <='"+date+"'           AND YEAR(F.due_date)="+year+")"); 
+		stmt.append("	INNER JOIN invoice INV         ON INV.id=F.invoice");
+		stmt.append("	WHERE ((INV.issue_date <='"+date+"'           AND YEAR(INV.issue_date)="+year+")"); 
 		stmt.append("	      OR"); 
-		stmt.append("	       (F.due_date <='"+previousDate+"'  AND YEAR(F.due_date)="+previousYear+") )");
+		stmt.append("	       (INV.issue_date <='"+previousDate+"'  AND YEAR(INV.issue_date)="+previousYear+") )");
 		stmt.append("	  AND F.invoice in"); 
 		stmt.append("	      (SELECT INV.id FROM invoice INV"); 
 		stmt.append("			WHERE INV.id=F.invoice"); 
@@ -861,9 +886,9 @@ public class ProductionReportController implements Serializable {
 		return stmt.toString();
 	}
 	
-	private String getPaxSQL(java.sql.Date date,
-					java.sql.Date previousDate, Integer year, Integer previousYear,
-					Integer month, Integer previousMonth, Integer hotel, Integer wp) {
+	private String getPaxSQL(java.sql.Date date, java.sql.Date previousDate,
+			Integer year, Integer previousYear, Integer month, Integer hotel) {
+		
 		StringBuffer stmt = new StringBuffer();
 		stmt.append("(SELECT IF(B.stay_date='"+date+"', 'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
 		stmt.append("	       IFNULL(SUM(B.guests),0) as Pax");
@@ -890,6 +915,44 @@ public class ProductionReportController implements Serializable {
 		stmt.append("	   OR"); 
 		stmt.append("	   (B.stay_date<='"+previousDate+"' AND YEAR(B.stay_date)="+previousYear+"))");
 		stmt.append(" GROUP BY 1);");
+		return stmt.toString();
+	}
+
+	private String getPendingHotelProductionSQL(java.sql.Date date, java.sql.Date previousDate, Integer hotel) {
+		
+		StringBuffer stmt = new StringBuffer();
+		stmt.append("(SELECT IF(PRS.extra=0,'ALOJAMIENTO PEND. PRODUCIR','OTROS INGRESOS PEND. PRODUCIR') as Concepto,");
+		stmt.append("     'DIA' as Periodo,");
+		stmt.append("     SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
+		stmt.append(" FROM project_reservation_service PRS");
+		stmt.append(" INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
+		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
+		stmt.append(" INNER JOIN hotel H                                    ON H.id=PR.hotel_reservation AND H.id="+hotel);
+		stmt.append(" INNER JOIN workplace W                             ON W.id=H.workplace");
+		stmt.append(" INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
+		stmt.append(" INNER JOIN asset_activity AA                       ON PRRD.asset_activity=AA.id");
+		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);
+		stmt.append(" WHERE PRSD.effective_date>'"+date+"'");
+		stmt.append("     AND PR.start_date<='"+date+"'");
+		stmt.append("     AND PR.status=3 AND PR.check_status<3");
+		stmt.append(" GROUP BY 1,2)");
+		stmt.append(" UNION");
+		stmt.append(" (SELECT IF(PRS.extra=0,'ALOJAMIENTO PEND. PRODUCIR','OTROS INGRESOS PEND. PRODUCIR') as Concepto,");
+		stmt.append("     'DIA_ANIO_ANTERIOR' as Periodo,");
+		stmt.append("     SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
+		stmt.append(" FROM project_reservation_service PRS");
+		stmt.append(" INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
+		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
+		stmt.append(" INNER JOIN hotel H                                    ON H.id=PR.hotel_reservation AND H.id="+hotel);
+		stmt.append(" INNER JOIN workplace W                             ON W.id=H.workplace");
+		stmt.append(" INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
+		stmt.append(" INNER JOIN asset_activity AA                       ON PRRD.asset_activity=AA.id");
+		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);
+		stmt.append(" WHERE PRSD.effective_date>'"+previousDate+"'");
+		stmt.append("     AND PR.start_date<='"+previousDate+"'");
+		stmt.append("     AND PR.status=3 AND PR.check_status<3");
+		stmt.append(" GROUP BY 1,2 )");
+		stmt.append(" ORDER BY 1,2;");
 		return stmt.toString();
 	}
 
