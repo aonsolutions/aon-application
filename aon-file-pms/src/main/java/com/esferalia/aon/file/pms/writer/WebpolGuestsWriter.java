@@ -13,6 +13,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.file.format.model.FileFiller;
@@ -123,7 +124,11 @@ public class WebpolGuestsWriter implements Serializable {
 		}
 		
 		if(guest.getDocumentType()==null || guest.getDocumentType()==DocumentType.NIF){
-			tipo2.setTipoDocumento("D");
+			if(guest.getDocumentCountry()==Country.IT){
+				tipo2.setTipoDocumento("I");
+			} else {
+				tipo2.setTipoDocumento("D");
+			}
 		} else if(guest.getDocumentType()==DocumentType.CIF){
 			tipo2.setTipoDocumento("Y");
 		} else if(guest.getDocumentType()==DocumentType.NIE){
