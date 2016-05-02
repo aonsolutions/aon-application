@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.mvel2.CompileException;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
@@ -102,8 +103,9 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 					addSalaryPayment(expressionContext, p, paymentStart, paymentEnd);
 				} catch (com.esferalia.aon.salary.expression.InterruptedException e) {
 					throw e;
-				}
-				catch (ExpressionException e) {
+				}catch (ExpressionException e) {
+					System.err.println(String.format("ERROR [%s]: %s", p.getName(), e.getLocalizedMessage()));
+				}catch (CompileException e) {
 					System.err.println(String.format("ERROR [%s]: %s", p.getName(), e.getLocalizedMessage()));
 				}
 			}

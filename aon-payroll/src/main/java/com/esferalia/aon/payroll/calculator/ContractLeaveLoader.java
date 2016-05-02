@@ -345,7 +345,7 @@ public class ContractLeaveLoader {
 		add(new Leave(id, start, end, type, (int)parentDays));
 	}
 
-	protected void clear() {
+	public void clear() {
 		leaves.clear();
 	}
 
@@ -389,12 +389,17 @@ public class ContractLeaveLoader {
 
 	// ---------------------------------------------------------------- Private
 	
-	private double getQuoteDays(ExpressionContext ctx, Period p) {
+	protected double getQuoteDays(ExpressionContext ctx, Period p) {
 
 		Long days = getDaysBetweenDates(p.getStart(), p.getEnd())+1;
 
 		if ( !leaves.last().getEnd().equals(p.getEnd()))
 			return days;
+		
+		return getAdjustDays(ctx, p, days);	
+	}
+	
+	protected double getAdjustDays(ExpressionContext ctx, Period p, long days) {
 		
 		try {
 			;
@@ -402,8 +407,7 @@ public class ContractLeaveLoader {
 				return days;
 		} catch ( Exception e ){
 		}
-		
-		// Last I.T adjust...? 		
+
 		double naturalMonthDays = getMax(p.getStart(), DAY_OF_MONTH);
 		
 		double quoteMonthDays = 0.00;

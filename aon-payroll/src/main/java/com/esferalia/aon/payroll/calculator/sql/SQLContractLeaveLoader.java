@@ -33,28 +33,25 @@ public class SQLContractLeaveLoader extends ContractLeaveLoader{
 
 	public void loadContractLeave(ResultSet rs, final ExpressionContext exprCtx)
 			throws SQLException, ExpressionException {
-		clear();
 
-		while (rs.next()) {
-			Date leaveStart = rs.getDate(ContractLeaveColumns.START_DATE);
-			final Date start = Period.max(leaveStart, startDate);
-			Date leaveEnd = rs.getDate(ContractLeaveColumns.END_DATE);
-			final Date end = Period.min(leaveEnd, endDate);
+		Date leaveStart = rs.getDate(ContractLeaveColumns.START_DATE);
+		final Date start = Period.max(leaveStart, startDate);
+		Date leaveEnd = rs.getDate(ContractLeaveColumns.END_DATE);
+		final Date end = Period.min(leaveEnd, endDate);
 
-			final long parentDays = rs
-					.getLong(SQLContractSalaryCalculatorContext.CLEAVE_SQL_PARENT_DAYS)
-					+ (leaveStart.before(startDate) ? CommonUtil
-							.getDaysBetweenDates(leaveStart, startDate) : 0);
-			LeaveType type = LeaveType.values()[rs
-					.getInt(ContractLeaveColumns.TYPE)];
+		final long parentDays = rs
+				.getLong(SQLContractSalaryCalculatorContext.CLEAVE_SQL_PARENT_DAYS)
+				+ (leaveStart.before(startDate) ? CommonUtil
+						.getDaysBetweenDates(leaveStart, startDate) : 0);
+		LeaveType type = LeaveType.values()[rs
+				.getInt(ContractLeaveColumns.TYPE)];
 
-			Object dailyRegBase = rs
-					.getObject(ContractLeaveColumns.DAILY_REG_BASE);
+		Object dailyRegBase = rs
+				.getObject(ContractLeaveColumns.DAILY_REG_BASE);
 
-			Integer id = rs.getInt(ContractLeaveColumns.ID);
-			loadContractLeave(id, start, end, parentDays, type,
-					(Double) dailyRegBase, exprCtx);
-		}
+		Integer id = rs.getInt(ContractLeaveColumns.ID);
+		loadContractLeave(id, start, end, parentDays, type,
+				(Double) dailyRegBase, exprCtx);
 	}
 
 	public void loadContractLeave(final Integer id, final Date leaveStart,
@@ -65,5 +62,14 @@ public class SQLContractLeaveLoader extends ContractLeaveLoader{
 				dailyRegBase != null ? dailyRegBase.toString() : null, exprCtx);
 	}	
 	
+	@Override
+	protected double getQuoteDays(ExpressionContext ctx, Period p) {
+		return super.getQuoteDays(ctx, p);
+	}
+	
+	@Override
+	protected double getAdjustDays(ExpressionContext ctx, Period p, long days) {
+		return super.getAdjustDays(ctx, p, days);
+	}
 
 }

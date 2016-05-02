@@ -44,8 +44,10 @@ import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionException
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+//import com.esferalia.aon.salary.expression.CompileException;
 import com.esferalia.aon.watson.util.AonDateUtils;
+
+import org.mvel2.CompileException;
 
 public class SQLContractSalaryCalculatorContextTestCase extends
 		AbstractSQLTestCase {
@@ -518,86 +520,65 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		try {
 			ctx.getExpressionContext().eval("GTZDO(P1+P2)", start, end);
 			Assert.fail();
-		} catch ( UndefinedVariablesException e ) {
-			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
-			Assert.assertEquals("SELF.guarantee(0)",e.getExpression());
+		} catch ( CompileException e ) {
+		
 		}
 	
 		try {
 			ctx.getExpressionContext().eval("GTZDO((P1)+P2)", start, end);
 			Assert.fail();
-		} catch ( UndefinedVariablesException e ) {
-			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
-			Assert.assertEquals("SELF.guarantee(0)",e.getExpression());
+		} catch ( CompileException e ) {
 		}
 
 		try {
 			ctx.getExpressionContext().eval("GTZDO((P1+P2))", start, end);
 			Assert.fail();
-		} catch ( UndefinedVariablesException e ) {
-			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
-			Assert.assertEquals("SELF.guarantee(0)",e.getExpression());
+		} catch ( CompileException e ) {
 		}
 
 		try {
 			ctx.getExpressionContext().eval("GTZDO(P1+(P2))", start, end);
 			Assert.fail();
-		} catch ( UndefinedVariablesException e ) {
-			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
-			Assert.assertEquals("SELF.guarantee(0)",e.getExpression());
+		} catch ( CompileException e ) {
 		}
 
 		try {
 			ctx.getExpressionContext().eval("GTZDO( P1 + P2 ,1)", start, end);
 			Assert.fail();
-		} catch ( UndefinedVariablesException e ) {
-			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
-			Assert.assertEquals("SELF.guarantee(0,1)",e.getExpression());
+		} catch ( CompileException e ) {
 		}
 
 		try {
 			ctx.getExpressionContext().eval("GTZDO( P1 + P2 ,1, 360)", start, end);
 			Assert.fail();
-		} catch ( UndefinedVariablesException e ) {
-			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
-			Assert.assertEquals("SELF.guarantee(0,1, 360)",e.getExpression());
+		} catch ( CompileException e ) {
 		}
 		try {
 			ctx.getExpressionContext().eval("GTZDO( P1 + (P2 * 100) ,1, 360)", start, end);
 			Assert.fail();
-		} catch ( UndefinedVariablesException e ) {
-			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
-			Assert.assertEquals("SELF.guarantee(0,1, 360)",e.getExpression());
+		} catch ( CompileException e ) {
 		}
 
 		try {
 			ctx.getExpressionContext().eval("GTZDO( (P1) + (P2 * 100) ,1, 360)", start, end);
 			Assert.fail();
-		} catch ( UndefinedVariablesException e ) {
-			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
-			Assert.assertEquals("SELF.guarantee(0,1, 360)",e.getExpression());
+		} catch ( CompileException e ) {
 		}
 		try {
 			ctx.getExpressionContext().eval("GTZDO( (P1) + (P2 * 100) ,1, 360)", start, end);
 			Assert.fail();
-		} catch ( UndefinedVariablesException e ) {
-			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
-			Assert.assertEquals("SELF.guarantee(0,1, 360)",e.getExpression());
+		} catch ( CompileException e ) {
 		}
 		try {
 			ctx.getExpressionContext().eval("GTZDO()", start, end);
 			Assert.fail();
-		} catch ( UndefinedVariablesException e ) {
-			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
-			Assert.assertEquals("SELF.guarantee(0)",e.getExpression());
+		} catch ( CompileException e ) {
 		}
 
 		try {
 			ctx.getExpressionContext().eval("GTZDO(P,4) + GTZDO(P,1,3)", start, end);
 			Assert.fail();
-		} catch ( UndefinedVariablesException e ) {
-			Assert.assertEquals(ContextVariable.LEAVE_DAYS.getName(),e.getVariableNames()[0]);
-			Assert.assertEquals("SELF.guarantee(0,4) + SELF.guarantee(0,1,3)",e.getExpression());
+		} catch ( CompileException e ) {
 		}
 	}
 

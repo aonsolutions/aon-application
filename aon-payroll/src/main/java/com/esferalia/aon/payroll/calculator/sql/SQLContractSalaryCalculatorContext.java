@@ -122,6 +122,7 @@ import org.apache.commons.math3.analysis.solvers.MullerSolver;
 import org.apache.commons.math3.analysis.solvers.MullerSolver2;
 import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
+import org.hibernate.event.def.OnLockVisitor;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
@@ -174,6 +175,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseActivityColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
@@ -206,6 +208,7 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.TimedObject;
+import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.watson.util.AonDateUtils;
@@ -411,9 +414,9 @@ public class SQLContractSalaryCalculatorContext
 		protected String zeroGuarantee(String script) {
 			if ( script == null )
 				return null;
-			return script.replaceAll(String.format(
-					"%s\\w*\\(([^(),]|\\(([^\\)]*)\\))*",
-					GUARANTEE), "SELF.guarantee(0");
+			return script.replaceAll(
+					String.format("%s\\w*\\(([^(),]|\\(([^\\)]*)\\))*",GUARANTEE), 
+					String.format("%s(0", GUARANTEE));
 			
 		}
 
@@ -501,16 +504,24 @@ public class SQLContractSalaryCalculatorContext
 	protected static class GuarenteeException extends SalaryException {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
-		private double guarentee;
-
-		public GuarenteeException(double guarentee) {
-			this.guarentee = guarentee;
+		
+		List<ITimedResult<Double>> guarentees; 
+		
+		public GuarenteeException(List<ITimedResult<Double>> guarentees) {
+			this.guarentees = guarentees;
+		}
+		
+		public ITimedResult<Double> getGuarentee(Period p) {
+			return guarentees.stream()
+			.filter(result->p.contains(result.getPeriod()))
+			.findFirst()
+			.get();
 		}
 
-		public double getGuarentee() {
-			return guarentee;
+		public ITimedResult<Double> getGuarentee(Date start, Date end) {
+			return getGuarentee(new Period(start, end));
 		}
+		
 	}
 
 	private static class ExtraDays implements ITimedVariable<Number> {
@@ -570,8 +581,8 @@ public class SQLContractSalaryCalculatorContext
 		protected int end;
 		protected int start;
 		protected int guaranteed;
-		protected double totalGuarentee;
-		protected List<Period> guarantees = new ArrayList<Period>();
+		protected List<Period> guaranteePeriods = new ArrayList<Period>();
+		protected List<ITimedResult<Double>> guarentees = new ArrayList<ITimedResult<Double>>();
 
 		public SQLNoItContractSalaryCalculatorContext(Connection connection,
 				final Date startDate, final Date endDate, Date issueDate,
@@ -603,11 +614,9 @@ public class SQLContractSalaryCalculatorContext
 					Period guarenteePeriod = new Period(guarenteeStart,
 							guarenteeEnd);
 
-					SQLNoItContractSalaryCalculatorContext.this.guarantees
+					SQLNoItContractSalaryCalculatorContext.this.guaranteePeriods
 							.add(guarenteePeriod);
 					SQLNoItContractSalaryCalculatorContext.this.guaranteed++;
-					if ( SQLNoItContractSalaryCalculatorContext.this.guaranteed == 1)
-						exprCtx.removeVariable(GUARANTEE);
 
 					try {
 						Method guarantee = SQLContractSalaryCalculatorContext.class
@@ -698,10 +707,10 @@ public class SQLContractSalaryCalculatorContext
 		public Object guarantee(double guarentee, int start, int end)
 				throws ExpressionException {
 			if (this.start == start && this.end == end) {
-				totalGuarentee += guarentee;
+				guarentees.add(new TimedResult<Double>(guarentee, getCurrentBindings().getPeriod() , Collections.emptyMap()));
 				if ( --guaranteed == 0 )
 					throw new SalaryExpressionException(
-							new GuarenteeException(totalGuarentee));
+							new GuarenteeException(guarentees));
 				else 
 					return guarentee;
 
@@ -725,7 +734,7 @@ public class SQLContractSalaryCalculatorContext
 		@Override
 		protected List<Period> splitWorkedDays(List<Period> worked) {
 
-			List<Period> leaves = guarantees;
+			List<Period> leaves = guaranteePeriods;
 
 			Collections.sort(leaves);
 			Collections.sort(worked);
@@ -803,6 +812,19 @@ public class SQLContractSalaryCalculatorContext
 			return periods;
 		}
 		
+		@Override
+		protected double getWorkDays(ExpressionContext ctx, Period p) {
+			Double workDays = super.getWorkDays(ctx, p);
+			if ( guaranteePeriods.size() == 0 
+					|| !guaranteePeriods.get(guaranteePeriods.size()-1).getEnd().equals(p.getEnd()))
+				return workDays;
+			return super.leaveLoader.getAdjustDays(ctx, p, workDays.longValue());
+		}
+		
+		@Override
+		protected void onContractLeaveLoaded(ResultSet rs, ExpressionContext ctx) {
+			// Skip load GUARANTEE, that is already loaded
+		}
 	}
 
 	/**
@@ -2136,6 +2158,11 @@ public class SQLContractSalaryCalculatorContext
 	public Object guarantee(double guarentee, int start, int end)
 			throws ExpressionException {
 
+		Period guaranteePeriod = new Period(
+				getCurrentBindings().getPeriod().getStart(),
+				getCurrentBindings().getPeriod().getEnd()
+				);
+
 		if (leaveLoader.isEmpty())
 			throw new UndefinedContextVariablesException(
 					ContextVariable.LEAVE_DAYS);
@@ -2160,39 +2187,42 @@ public class SQLContractSalaryCalculatorContext
 
 		ContractSalaryCalculator<Salary> calculator = new OnlyPaymentContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
-
+		
+		
 		try {
 			calculator.calculate(ctx);
 		} catch (GuarenteeException e) {
 
-			// if (e.guarentee == guarentee)
-			// throw new ContextFunctions.UselessGuaranteeException(guarentee);
-			//
-			// if (e.guarentee < guarentee)
-			// throw new ContextFunctions.UselessGuaranteeException(
-			// e.guarentee, guarentee);
-
+			ITimedResult<Double> guarenteeResult =
+					e.getGuarentee(guaranteePeriod);
+			
 			// Gets PREST. IT for GTZDO periods.
-			double prestIt = 0.00;
-			List<ITimedVariable<Object>> leaves = ctx.getExpressionContext()
-					.getVariables(LEAVE_DAYS.getName(), ctx.getStartDate(),
-							ctx.getEndDate());
-			Date guaranteeStart = ctx.getStartDate();
+//			double prestIt = 0.00;
+//			List<ITimedVariable<Object>> leaves = ctx.getExpressionContext()
+//					.getVariables(LEAVE_DAYS.getName(), ctx.getStartDate(),
+//							ctx.getEndDate());
+//			Date guaranteeStart = ctx.getStartDate();
+//
+//			for (ITimedVariable<Object> leave : leaves) {
+//				Period leavePeriod = leave.getPeriod();
+//				Date leaveStart = leavePeriod.getStart();
+//				if (leaveStart.compareTo(guaranteeStart) > 0)
+//					prestIt += getDayDoubleVariable(PREST_IT.getName(),
+//							guaranteeStart, prev(leaveStart));
+//
+//				guaranteeStart = next(leavePeriod.getEnd());
+//			}
+//			
+//			if (guaranteeStart.compareTo(ctx.getEndDate()) <= 0)
+//				prestIt += getDayDoubleVariable(PREST_IT.getName(),
+//						guaranteeStart, ctx.getEndDate());
 
-			for (ITimedVariable<Object> leave : leaves) {
-				Period leavePeriod = leave.getPeriod();
-				Date leaveStart = leavePeriod.getStart();
-				if (leaveStart.compareTo(guaranteeStart) > 0)
-					prestIt += getDayDoubleVariable(PREST_IT.getName(),
-							guaranteeStart, prev(leaveStart));
+			double prestIt = getDayDoubleVariable(
+				PREST_IT.getName(),
+				guarenteeResult.getPeriod().getStart(), 
+				guarenteeResult.getPeriod().getEnd());
 
-				guaranteeStart = next(leavePeriod.getEnd());
-			}
-			if (guaranteeStart.compareTo(ctx.getEndDate()) <= 0)
-				prestIt += getDayDoubleVariable(PREST_IT.getName(),
-						guaranteeStart, ctx.getEndDate());
-
-			return e.guarentee - /* guarentee - */prestIt;
+			return guarenteeResult.getValue() - /* guarentee - */prestIt;
 
 		} catch (SalaryException e) {
 			throw new RuntimeException(e);
@@ -3482,14 +3512,6 @@ public class SQLContractSalaryCalculatorContext
 		loadExpression(this.contractExpressionContext, AGREEMENT,
 				"def(x){ SELF.agreement(x)};", this.startDate, this.getEnd());
 
-		try {
-			Method guarantee = SQLContractSalaryCalculatorContext.class
-					.getMethod("guaranteee", double.class);
-			this.contractExpressionContext.setVariable(GUARANTEE,
-					new MethodStub(guarantee), this.startDate, this.getEnd());
-		} catch (SecurityException e) {
-		} catch (NoSuchMethodException e) {
-		}
 
 		loadContractLeave(this.contractExpressionContext);
 		loadContractData(this.contractExpressionContext);
@@ -4019,7 +4041,25 @@ public class SQLContractSalaryCalculatorContext
 		
 		listener.onRedefinedImplicit(name, redefined, implicit);
 	}
+	
+	protected void onContractLeaveLoaded(ResultSet rs, ExpressionContext ctx) throws SQLException  {
+		Date leaveStart = rs.getDate(ContractLeaveColumns.START_DATE);
+		final Date start = Period.max(leaveStart, getStart());
+		Date leaveEnd = rs.getDate(ContractLeaveColumns.END_DATE);
+		final Date end = Period.min(leaveEnd, getEnd());
+		
+		try {
+			Method guarantee = SQLContractSalaryCalculatorContext.class
+					.getMethod("guaranteee", double.class);
+			ctx.setVariable(GUARANTEE,
+					new MethodStub(guarantee), start, end);
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		}
 
+		
+	}
+	
 	private void loadPersonData(ExpressionContext ctx) throws SQLException {
 
 		ctx.setVariable(MALE, Gender.MALE.ordinal(), contractStartDate,
@@ -4044,7 +4084,12 @@ public class SQLContractSalaryCalculatorContext
 		try {
 			cleaveStmt.setInt(1, getId());
 			rs = cleaveStmt.executeQuery();
-			leaveLoader.loadContractLeave(rs, ctx);
+			leaveLoader.clear();
+			while ( rs.next()){
+				leaveLoader.loadContractLeave(rs, ctx);
+				onContractLeaveLoaded(rs, ctx);
+			}
+			
 		} finally {
 			if (rs != null) {
 				rs.close();
