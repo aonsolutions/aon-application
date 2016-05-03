@@ -716,12 +716,13 @@ public class ReservationManager implements IReservationConstants {
 	private void delayForConcurrence(ProjectReservation reservation) throws ManagerBeanException {
 		try {
 			if (reservation.isSourceRequest()) {
+				int rooms = reservation.getRoomCount();
 				IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 				Criteria criteria = new Criteria();
 				String alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID;
 				criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), reservation.getId());
 				for (int i=0; i<30; i++) {
-					if (reservationServiceDetailBean.getCount(criteria) >= reservation.getNights()) {
+					if (reservationServiceDetailBean.getCount(criteria) >= (rooms * reservation.getNights())) {
 						break;
 					}
 					Thread.sleep(1000);
