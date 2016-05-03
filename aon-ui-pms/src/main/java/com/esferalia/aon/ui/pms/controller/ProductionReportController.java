@@ -68,6 +68,7 @@ public class ProductionReportController implements Serializable {
 	private DataModel advancePaymethodModel;
 	private DataModel paymethodModel;
 	private DataModel pendingProductionModel;
+	private DataModel totalProductionModel;
 	
 	private ReportObject productionTotal;
 	private ReportObject ratioTotal;
@@ -97,9 +98,9 @@ public class ProductionReportController implements Serializable {
 	}
 	
 	public boolean isNevv() {
-		return productionMap.isEmpty() && paxMap.isEmpty()
-				&& advancePaymethodMap.isEmpty() && paymethodMap.isEmpty()
-				&& pendingProductionMap.isEmpty();
+		return productionModel == null && paxModel == null
+				&& advancePaymethodModel == null && paymethodModel == null
+				&& pendingProductionModel == null;
 	}
 
 	public DataModel getProductionModel() {
@@ -108,6 +109,10 @@ public class ProductionReportController implements Serializable {
 	
 	public DataModel getPendingProductionModel() {
 		return pendingProductionModel;
+	}
+	
+	public DataModel getTotalProductionModel() {
+		return totalProductionModel;
 	}
 
 	public DataModel getPaxModel() {
@@ -158,6 +163,7 @@ public class ProductionReportController implements Serializable {
 		advancePaymethodModel = null;
 		paymethodModel = null;
 		pendingProductionModel = null;
+		totalProductionModel = null;
 		
 		productionTotal = null;
 		ratioTotal = null;
@@ -187,6 +193,7 @@ public class ProductionReportController implements Serializable {
 		advancePaymethodModel = buildModel(advancePaymethodMap);
 		paymethodModel = buildModel(paymethodMap);
 		pendingProductionModel = buildModel(pendingProductionMap);
+		totalProductionModel = buildModel(getProductionTotalMap());
 
 		productionTotal = buildTotalizeTo(productionMap);
 		ratioTotal = buildTotalizeTo(getProductionRatioMap());
@@ -469,11 +476,57 @@ public class ProductionReportController implements Serializable {
 		return productionRatioMap;
 	}
 	
+	private Map<String, ReportObject> getProductionTotalMap() {
+		String key = "ALOJAMIENTO";
+		Double dayAmount=0.0, previousDayAmount=0.0, monthAmount=0.0, previousMonthAmount=0.0, yearAmount=0.0, previousYearAmount=0.0;
+		
+//		advancePaymethodMap
+		dayAmount += advancePaymethodMap.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getDayAmount).sum();
+		previousDayAmount += advancePaymethodMap.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getPreviousDayAmount).sum();
+		monthAmount += advancePaymethodMap.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getMonthAmount).sum();
+		previousMonthAmount += advancePaymethodMap.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getPreviousMonthAmount).sum();
+		yearAmount += advancePaymethodMap.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getYearAmount).sum();
+		previousYearAmount += advancePaymethodMap.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getPreviousYearAmount).sum();
+
+//		paymethodMap
+		dayAmount += paymethodMap.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getDayAmount).sum();
+		previousDayAmount += paymethodMap.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getPreviousDayAmount).sum();
+		monthAmount += paymethodMap.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getMonthAmount).sum();
+		previousMonthAmount += paymethodMap.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getPreviousMonthAmount).sum();
+		yearAmount += paymethodMap.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getYearAmount).sum();
+		previousYearAmount += paymethodMap.values().stream().map(o -> (ReportObject) o).mapToDouble(ReportObject::getPreviousYearAmount).sum();
+
+//		pending production
+		dayAmount -= (productionMap.containsKey(key)?productionMap.get(key).getDayAmount():0.0);
+		dayAmount -= (productionMap.containsKey(key)?pendingProductionMap.get(key).getDayAmount():0.0);
+		previousDayAmount -= (productionMap.containsKey(key)?productionMap.get(key).getPreviousDayAmount():0.0);
+		previousDayAmount -= (productionMap.containsKey(key)?pendingProductionMap.get(key).getPreviousDayAmount():0.0);
+		monthAmount -= (productionMap.containsKey(key)?productionMap.get(key).getMonthAmount():0.0);
+		monthAmount -= (productionMap.containsKey(key)?pendingProductionMap.get(key).getMonthAmount():0.0);
+		previousMonthAmount -= (productionMap.containsKey(key)?productionMap.get(key).getPreviousMonthAmount():0.0);
+		previousMonthAmount -= (productionMap.containsKey(key)?pendingProductionMap.get(key).getPreviousMonthAmount():0.0);
+		yearAmount -= (productionMap.containsKey(key)?productionMap.get(key).getYearAmount():0.0);
+		yearAmount -= (productionMap.containsKey(key)?pendingProductionMap.get(key).getYearAmount():0.0);
+		previousYearAmount -= (productionMap.containsKey(key)?productionMap.get(key).getPreviousYearAmount():0.0);
+		previousYearAmount -= (productionMap.containsKey(key)?pendingProductionMap.get(key).getPreviousYearAmount():0.0);
+		
+		Map<String, ReportObject> productionTotalMap = new HashMap<>();
+		productionTotalMap.put(key, new ReportObject());
+		productionTotalMap.get(key).setYearAmount(yearAmount);
+		productionTotalMap.get(key).setPreviousYearAmount(previousYearAmount);
+		productionTotalMap.get(key).setMonthAmount(monthAmount);
+		productionTotalMap.get(key).setPreviousMonthAmount(previousMonthAmount);
+		productionTotalMap.get(key).setDayAmount(dayAmount);
+		productionTotalMap.get(key).setPreviousDayAmount(previousDayAmount);
+		return productionTotalMap;
+	}
+	
 	// *********************************************
 	// EXCEL REPORT
 	// *********************************************
 	private boolean excelReport(OutputStream output) throws IOException, ReportException, AonConnectionException {
 		Map<String, ReportObject> productionRatioMap = getProductionRatioMap();
+		Map<String, ReportObject> productionTotalMap = getProductionTotalMap();
 		
 		ExcelReportExporter exporter = new ExcelReportExporter();
 
@@ -485,7 +538,7 @@ public class ProductionReportController implements Serializable {
 		
 		exporter.startLine();
 		exporter.endLine();
-		exportData(exporter, columnMetadata, null, paxMap, false);
+		exportData(exporter, columnMetadata, "PAX", paxMap, false);
 
 		exporter.startLine();
 		exporter.endLine();
@@ -509,6 +562,10 @@ public class ProductionReportController implements Serializable {
 		exporter.endLine();
 		exportInnerHeader(exporter, columnMetadata, "PRODUCCION PENDIENTE");
 		exportData(exporter, columnMetadata, null, pendingProductionMap, false);
+		
+		exporter.startLine();
+		exporter.endLine();
+		exportData(exporter, columnMetadata, "FACTURACION - PRODUCCION", productionTotalMap, false);
 		
 		exporter.endExport(output);
 		output.flush();
