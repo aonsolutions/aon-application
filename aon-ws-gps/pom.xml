@@ -187,10 +187,10 @@
   </dependencies>
   <profiles>
     <profile>
-      <id>tomcat8-rpm-release</id>
+      <id>rpm-release</id>
       <activation>
         <property>
-          <name>tomcat8.rpm.release</name>
+          <name>rpm.release</name>
           <value>true</value>
         </property>
       </activation>
