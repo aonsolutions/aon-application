@@ -16,13 +16,18 @@ import com.esferalia.aon.gwt.stat.client.panel.GeoChartWrapper.DisplayMode;
 import com.esferalia.aon.gwt.stat.client.util.StatUtils;
 import com.esferalia.aon.occam.api.model.stat.IStatChartTypeVisitor;
 import com.esferalia.aon.occam.api.model.stat.StatData;
+import com.esferalia.aon.occam.api.model.stat.StatFilterItem;
+import com.esferalia.aon.occam.api.model.stat.StatFilterItem.StatFilterType;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -31,7 +36,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -90,6 +97,16 @@ public class StatControlPanel extends MainEntryPoint {
 	@UiField
 	ScrollPanel informationPanel;
 	
+	FormPanel diskForm;
+	Hidden typeSales;
+	Hidden typePurchases;
+	Hidden typeExpenses;
+	Hidden typeUndeductible;
+	Hidden fromDate;
+	Hidden toDate;
+	Hidden domainId;
+	Hidden domainName;
+	
 	private StatChartTypeVisitor statChartTypeVisitor;
 	private static final FlowPanel ERROR_PANEL = new FlowPanel();
 	static {
@@ -134,7 +151,35 @@ public class StatControlPanel extends MainEntryPoint {
 		AON.ensureInjected();
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		Widget ui = INVOICE_STAT_BINDER.createAndBindUi(this);
+
+		diskForm = new FormPanel("_blank");
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		diskForm.setEncoding(FormPanel.ENCODING_URLENCODED);
+		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/InvoiceReport");
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		typeSales = new Hidden("invoiceTypeSales");
+		formFlowPanel.add(typeSales);
+		typePurchases = new Hidden("invoiceTypePurchases");
+		formFlowPanel.add(typePurchases);
+		typeExpenses = new Hidden("invoiceTypeExpenses");
+		formFlowPanel.add(typeExpenses);
+		typeUndeductible = new Hidden("invoiceTypeUndeductible");
+		formFlowPanel.add(typeUndeductible);
+		fromDate = new Hidden("fromDate");
+		formFlowPanel.add(fromDate);
+		toDate = new Hidden("toDate");
+		formFlowPanel.add(toDate);
+		domainId = new Hidden("domainId");
+		formFlowPanel.add(domainId);
+		domainName = new Hidden("domainName");
+		formFlowPanel.add(domainName);
+		toolbarPanel.add(diskForm);
+
 		root.add(ui);
+		
+		
+		
 		
 		tabLayout.setAnimationDuration(300);
 		tabLayout.selectTab(INFORMATION_TAB);
@@ -191,9 +236,53 @@ public class StatControlPanel extends MainEntryPoint {
 
 	@UiHandler("excel")
 	void onExcelButtonClick(ClickEvent event) {
-		TableToExcelClient ttec = new TableToExcelClient(south.getWidget().getElement(), "table.xls");
-		excelFormContainer.setWidget(ttec.getExportFormWidget());
-		ttec.getExportFormWidget().submit();
+		typeSales.setValue("off");
+		typePurchases.setValue("off");
+		typeExpenses.setValue("off");
+		typeUndeductible.setValue("off");
+		fromDate.setValue("");
+		toDate.setValue("");
+		domainId.setValue("");
+		domainName.setValue("");
+		
+		final String ON = "on";
+		DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("dd/MM/yyyy");
+		if ( filter.getParams().getFrom() != null) {
+			fromDate.setValue(DATE_FORMAT.format(filter.getParams().getFrom()));
+		}
+		if ( filter.getParams().getTo() != null) {
+			toDate.setValue(DATE_FORMAT.format(filter.getParams().getTo()));
+		}
+		boolean something = false;
+		for (StatFilterItem item : filter.getParams().getFilterItems()) {
+			if (item.isSelected() && item.getType() == StatFilterType.INVOICE_TYPE) {
+				InvoiceType type = InvoiceType.values()[AonNumberUtils.toint( item.getId())];
+				if (type == InvoiceType.SALES) {
+					something = true;
+					typeSales.setValue(ON);			
+				} else if (type == InvoiceType.PURCHASE) {
+					something = true;
+					typePurchases.setValue(ON);
+				} else if (type == InvoiceType.EXPENSES) {
+					something = true;
+					typeExpenses.setValue(ON);
+				} else if (type == InvoiceType.UNDEDUCTIBLE) {
+					something = true;
+					typeUndeductible.setValue(ON);
+				}
+			}
+		}
+		if (something == false) {
+			typeSales.setValue(ON);			
+			typePurchases.setValue(ON);
+			typeExpenses.setValue(ON);
+			typeUndeductible.setValue(ON);
+		}
+		 
+		domainName.setValue(getCurrentDomainName());
+		domainId.setValue(String.valueOf(getCurrentDomain()));
+		
+		diskForm.submit();
 	}
 	
 	@UiHandler("invoices")
@@ -355,18 +444,6 @@ public class StatControlPanel extends MainEntryPoint {
 			south.setWidget(table);
 			excel.setEnabled(true);
 			final ResizableComboChart chart = new ResizableComboChart(dataTable, options);
-/*			
-			chart.addSelectHandler(new SelectHandler() {
-
-				@Override
-				public void onSelect(SelectEvent event) {
-					Selection selection = chart.getSelections().get(0);
-					int row = selection.getRow();
-					int col = selection.getColumn();
-				}
-				
-			});
-*/			
 			return chart;
 		}
 
@@ -380,32 +457,6 @@ public class StatControlPanel extends MainEntryPoint {
 					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
 					else {
 						ResizableComboChart chart = getGenericComboChart(result,AON.MSG.year());
-//						final Options options = ComboChart.createComboOptions();
-//						options.set("animation", StatUtils.ANIMATION);
-//						options.setWidth(content.getOffsetWidth());
-//						options.setHeight(content.getOffsetHeight());
-//						options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);
-//						options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS);
-//						AxisOptions vaxis = AxisOptions.create();
-//						vaxis.setTitle(AON.MSG.amount());
-//						options.setVAxisOptions(vaxis);
-//						AxisOptions haxis = AxisOptions.create();
-//						haxis.setTitle(AON.MSG.year());
-//						options.setHAxisOptions(haxis);
-//						if (filter.getParams().isResultVisible()) {
-//							Series media = Series.create();
-//							media.setType(Series.Type.LINE);
-//							options.setSeries(0, media);
-//						}
-//						Table.Options tableOptions = Table.Options.create();
-//						tableOptions.setAlternatingRowStyle(true);
-//						tableOptions.setWidth(south.getOffsetWidth() + "px");
-//						tableOptions.setHeight(south.getOffsetHeight() + "px");
-//						final DataTable dataTable = getDataTable(tableOptions, result,AON.MSG.year());
-//						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
-//						south.setWidget(table);
-//						excel.setEnabled(true);
-//						ResizableComboChart chart = new ResizableComboChart(dataTable, options);
 						coreChartCallback.onSuccess(chart);
 					}
 				}
@@ -427,32 +478,6 @@ public class StatControlPanel extends MainEntryPoint {
 					if (result.isEmpty()) coreChartCallback.onSuccess(ERROR_PANEL);
 					else {
 						ResizableComboChart chart = getGenericComboChart(result,AON.MSG.months());
-//						final Options options = ComboChart.createComboOptions();
-//						options.set("animation", StatUtils.ANIMATION);
-//						options.setWidth(content.getOffsetWidth());
-//						options.setHeight(content.getOffsetHeight());
-//						options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.BARS);
-//						options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS);
-//						AxisOptions vaxis = AxisOptions.create();
-//						vaxis.setTitle(AON.MSG.amount());
-//						options.setVAxisOptions(vaxis);
-//						AxisOptions haxis = AxisOptions.create();
-//						haxis.setTitle(AON.MSG.months());
-//						options.setHAxisOptions(haxis);
-//						if (filter.getParams().isResultVisible()) {
-//							Series media = Series.create();
-//							media.setType(Series.Type.LINE);
-//							options.setSeries(0, media);
-//						}
-//						Table.Options tableOptions = Table.Options.create();
-//						tableOptions.setAlternatingRowStyle(true);
-//						tableOptions.setWidth(south.getOffsetWidth() + "px");
-//						tableOptions.setHeight(south.getOffsetHeight() + "px");
-//						final DataTable dataTable = getDataTable(tableOptions, result,AON.MSG.months());
-//						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
-//						south.setWidget(table);
-//						excel.setEnabled(true);
-//						ResizableComboChart chart = new ResizableComboChart(dataTable, options);
 						coreChartCallback.onSuccess(chart);
 					}
 				}
@@ -475,32 +500,6 @@ public class StatControlPanel extends MainEntryPoint {
 					else {
 						ResizableComboChart chart = getGenericComboChart(result,AON.MSG.days());
 						chart.options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.LINE);
-//						final ComboChart.Options options = ComboChart.createComboOptions();
-//						options.set("animation", StatUtils.ANIMATION);
-//						options.setWidth(content.getOffsetWidth());
-//						options.setHeight(content.getOffsetHeight());
-//						options.setSeriesType(com.google.gwt.visualization.client.visualizations.corechart.Series.Type.LINE);
-//						options.setColors(StatUtils.COMBO_CHART_SERIES_COLORS);
-//						AxisOptions vaxis = AxisOptions.create();
-//						vaxis.setTitle(AON.MSG.amount());
-//						options.setVAxisOptions(vaxis);
-//						AxisOptions haxis = AxisOptions.create();
-//						haxis.setTitle(AON.MSG.months());
-//						options.setHAxisOptions(haxis);
-//						if (filter.getParams().isResultVisible()) {
-//							Series media = Series.create();
-//							media.setType(Series.Type.LINE);
-//							options.setSeries(0, media);
-//						}
-//						Table.Options tableOptions = Table.Options.create();
-//						tableOptions.setAlternatingRowStyle(true);
-//						tableOptions.setWidth(south.getOffsetWidth() + "px");
-//						tableOptions.setHeight(south.getOffsetHeight() + "px");
-//						final DataTable dataTable = getDataTable(tableOptions, result, AON.MSG.days());
-//						ResizableTable table = new ResizableTable(dataTable, tableOptions); 
-//						south.setWidget(table);
-//						excel.setEnabled(true);
-//						ResizableComboChart chart = new ResizableComboChart(dataTable, options);
 						coreChartCallback.onSuccess(chart);
 					}
 				}
