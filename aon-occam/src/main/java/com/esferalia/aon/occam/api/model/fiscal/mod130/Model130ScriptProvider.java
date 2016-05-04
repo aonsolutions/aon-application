@@ -11,6 +11,9 @@ public class Model130ScriptProvider {
 		IModelScript<Mod130Key>[] ms = null;
 		if (mod130.getAdministration() == Administration.COMMON_TERRITORY) {
 			ms = Model130AEATScript.values();
+		} else if (mod130.getAdministration() == Administration.BIZKAIA) {
+			ms = Model130BizkaiaScript.values();
+			
 		}
 		if (ms == null) {
 			throw new IllegalStateException(

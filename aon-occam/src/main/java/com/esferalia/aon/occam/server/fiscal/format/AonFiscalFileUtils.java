@@ -83,6 +83,13 @@ public class AonFiscalFileUtils {
 		return signed(value, '0', '-', size,precision);
 	}
 
+	public static String signedStandard(Double value, int size) {
+		return signed(value, '+', '-', size);	
+	}
+	public static String signedStandard(Double value, int size, int precision) {
+		return signed(value, '+', '-', size,precision);
+	}
+
 	public static String signed(Double value, char positive, char negative, int size) {
 		return signed(value, positive, negative, size,2);
 	}

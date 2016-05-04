@@ -8,6 +8,7 @@ public enum Mod130Key implements IFiscalModelKey {
 	 P0  	("130-P0"  , 0)
 	,P1  	("130-P1"  , 0)
 	,P2  	("130-P2"  , 0)
+	,P3  	("130-P3"  , 0)
 	,C01 	("130-01"  , 1)
 	,C02 	("130-02"  , 2)
 	,C03 	("130-03"  , 3)
@@ -28,6 +29,8 @@ public enum Mod130Key implements IFiscalModelKey {
 	,C17 	("130-17"  ,17)
 	,C18 	("130-18"  ,18)
 	,C19 	("130-19"  ,19)
+	,C20 	("130-20"  ,20)
+	,C28 	("130-28"  ,28)
 	,CT_TIP	("130-DT"  ,0)
 	;
 
