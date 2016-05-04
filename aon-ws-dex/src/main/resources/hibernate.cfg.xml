@@ -25,6 +25,7 @@
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
     	<mapping class="com.code.aon.account.Account"/>
+    	<mapping class="com.code.aon.account.bridge.AccountEntryInvoice"/>
     	<mapping class="com.code.aon.account.bridge.InvoiceDetailAccount"/>
     	<mapping class="com.code.aon.account.bridge.InvoiceTaxAccount"/>
     	<mapping class="com.code.aon.accounting.AccountEntry"/>
@@ -34,6 +35,7 @@
     	<mapping class="com.code.aon.company.Enterprise"/>
     	<mapping class="com.code.aon.company.InvestAsset"/>
     	<mapping class="com.code.aon.company.WorkPlace"/>
+    	<mapping class="com.code.aon.config.ApplicationParameter"/>
     	<mapping class="com.code.aon.config.Catalogue"/>
     	<mapping class="com.code.aon.config.CNAE"/>
     	<mapping class="com.code.aon.config.CNAE2009"/>

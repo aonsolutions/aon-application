@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -65,9 +66,15 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 
 		            if (posShiftBD.getPos().isInvoiceable()) {
 		            	Invoice invoice = generateInvoice(ps, domain);
+		            	if (invoice.getTotal() != 0 && invoice.getTotal() == obtainFinanceAmount(ps.getPosShiftCount())) {
+							HibernateUtil.beginTransaction(sessionName);
 
-		        		/*AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
-		        		entryWriter.recordAndUpdateInvoice(invoice);*/
+							AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
+			        		entryWriter.recordAndUpdateInvoice(invoice);
+
+							HibernateUtil.getSession(sessionName).flush();
+							HibernateUtil.commitTransaction(sessionName);
+		            	}
 		            }
 
 		            ++numRegsOk;
@@ -206,6 +213,16 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 			}
 		}
 		return finances;
+	}
+
+	private double obtainFinanceAmount(PosShiftCount psCount) throws Exception {
+		double financeAmount = 0;
+		for (PosShiftCountDetail psCountDetail : psCount.getPosShiftCountDetail()) {
+			if (psCountDetail.getAmount() != 0) {
+				financeAmount = CommonUtil.round(financeAmount + psCountDetail.getAmount());
+			}
+		}
+		return financeAmount;
 	}
 
 	private void removeCurrentPosShift() throws ManagerBeanException {
