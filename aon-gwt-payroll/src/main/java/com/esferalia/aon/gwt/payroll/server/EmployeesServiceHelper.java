@@ -57,7 +57,9 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorConte
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.CCCContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
@@ -444,7 +446,7 @@ public class EmployeesServiceHelper {
 				ISQLContractSalaryCalculatorContext.NEWER);
 
 		Supplier<ExpressionContext> systemCtxSupplier = () -> systemCtxFactory
-				.create(new CCCContextKey(null, null));
+				.create(new CCCContextKey(CCCType.PRINCIPAL, SSRegimeType.GENERAL));
 
 		SQLAgreementContextFactory agreementCtxFactory = new SQLAgreementContextFactory(
 				conn, systemCtxSupplier, start, end,
@@ -869,12 +871,14 @@ public class EmployeesServiceHelper {
 				conn, draft.getStartDate(), draft.getEndDate(),
 				draft.getIssueDate(), draft.getIssueDate(), criteria);
 
-		ctx.setListener(listener);
-		ctx.next();
 
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
 				draft, ctx);
+		
+
 		draftCtx.setListener(listener);
+		draftCtx.next();
+		
 		return draftCtx;
 	}
 

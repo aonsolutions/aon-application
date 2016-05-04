@@ -257,9 +257,11 @@ public class SalarySelect extends Composite {
 					issueDate = SalarySelect.this.salaryPreview.getIssueDate();
 					extra = SalarySelect.this.getExtraByIssueDate(issueDate);
 				} // TODO: syncDateListBox & scheduleFinally
-
-				Date startDate = SalarySelect.getStartDate(extra, issueDate);
-				Date endDate = SalarySelect.getEndDate(extra, issueDate);
+				
+				Date refDate = SalarySelect.getRefrenceDate(extra, issueDate);
+				
+				Date startDate = SalarySelect.getStartDate(extra, refDate);
+				Date endDate = SalarySelect.getEndDate(extra, refDate);
 
 				SalarySelect.this.salaryPreview.setStartDate(startDate);
 				SalarySelect.this.salaryPreview.setEndDate(endDate);
@@ -565,10 +567,9 @@ public class SalarySelect extends Composite {
 	}
 
 	private Extra getExtraByIssueDate(Date date) {
-		Date issueDate = CalendarUtil.copyDate(date);
 		for (Extra extra : extras) {
-			parseExtraDate(extra.getIssueDate(), issueDate);
-			if (issueDate.equals(date))
+			Date extraDate = parseExtraDate(extra.getIssueDate(), CalendarUtil.copyDate(date));
+			if (extraDate.getDate() == date.getDate() && extraDate.getMonth() == date.getMonth() )
 				return extra;
 		}
 		return null;
@@ -583,6 +584,11 @@ public class SalarySelect extends Composite {
 
 	private static Date getStartDate(Extra extra, Date date) {
 		return parseExtraDate(extra.getStartDate(),
+				DateUtils.copyDateOnly(date));
+	}
+
+	private static Date getRefrenceDate(Extra extra, Date date) {
+		return AgreementDraft.getReferenceDate(extra.getIssueDate(),
 				DateUtils.copyDateOnly(date));
 	}
 

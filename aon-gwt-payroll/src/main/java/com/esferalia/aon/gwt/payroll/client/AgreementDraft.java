@@ -2424,6 +2424,34 @@ public class AgreementDraft extends ResizeComposite implements
 		}
 	}
 	
+	protected static Date getReferenceDate(String text, Date date) {
+		if (text == null)
+			throw new EmptyStringException();
+		
+		text = text.trim();
+		
+		int start = -1;
+		
+		// Skip d/M
+		while (++start < text.length() && !Character.isSpace(text.charAt(start)))
+			;
+		while (Character.isSpace(text.charAt(start)) && ++start < text.length() )
+			;
+		
+		if ( start == text.length() )
+			return date;
+		
+		try {
+			int years = Integer.valueOf(text.substring(start));
+			return DateUtils.addYears2Date(date, -1 * years);
+		} catch (Throwable t) {
+			throw new DateTimeFormatException("'" + text + "/" + start
+					+ "' it's not a valid extra date");
+		}
+		
+		
+	}
+
 	private boolean isMine() {
 		return agreementDraftObject.isMine();
 	}
