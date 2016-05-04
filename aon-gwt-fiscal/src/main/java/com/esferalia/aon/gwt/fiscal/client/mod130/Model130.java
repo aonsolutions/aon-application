@@ -444,6 +444,8 @@ public class Model130 extends MainEntryPoint {
 		identificationContainer.setWidget( identificationData);
 		if (currentMod130.getAdministration() == Administration.COMMON_TERRITORY) {
 			declaration = new Model130AEAT(callback);
+		} else if (currentMod130.getAdministration() == Administration.BIZKAIA) {
+			declaration = new Model130Bizkaia(callback);
 		}
 		if (declaration != null) {
 			declarationContainer.setWidget( declaration );

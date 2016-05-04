@@ -77,6 +77,7 @@ public class Mod130 extends FiscalModel implements Serializable {
 	public double getResult() {
 		if (getAdministration() == null) return 0;
 		else if (isAEAT()) return getAmount(Mod130Key.C19);
+		else if (isBizkaia()) return getAmount(Mod130Key.C28);
 		return 0;
 	}
 	
@@ -84,6 +85,7 @@ public class Mod130 extends FiscalModel implements Serializable {
 	public Mod130Key getDeclarationTypeKey() {
 		if (getAdministration() == null) return null;
 		else if (isAEAT()) return Mod130Key.CT_TIP;
+		else if (isBizkaia()) return Mod130Key.CT_TIP;
 		return null;
 	}
 

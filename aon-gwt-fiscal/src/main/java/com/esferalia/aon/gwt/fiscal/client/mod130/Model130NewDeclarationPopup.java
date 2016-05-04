@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -32,12 +31,19 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130>{
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		callback.getFiscalModel().setAdministration( Administration.COMMON_TERRITORY );
-		replacement.setVisible(callback.getFiscalModel().isReplacementDeclarationAvailable());
-		complementary.setVisible(callback.getFiscalModel().isComplementaryDeclarationAvailable());
-		previousLabel.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
-		previous.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
-		tab.setWidget(row, 1, new Label(Administration.COMMON_TERRITORY.getDescription()));
+
+		admonList.setSelectedIndex( callback.getFiscalModel().getAdministration().ordinal());
+		admonList.addChangeHandler( new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				callback.getFiscalModel().setAdministration( admonList.getValue() );
+				replacement.setVisible(callback.getFiscalModel().isReplacementDeclarationAvailable());
+				complementary.setVisible(callback.getFiscalModel().isComplementaryDeclarationAvailable());
+				previousLabel.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
+				previous.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
+			}
+		});
+		tab.setWidget(row, 1, admonList);
 		row++;
 	}
 	
@@ -51,13 +57,32 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130>{
 		final Label surnameLabel = new Label( AON.MSG.surname());
 		final TextBox surnameBox = new TextBox();
 		surnameBox.setStyleName(AON.AON_CSS.aonInputText());
+		final Label percentLabel = new Label(AON.MSG.partPercent());
 		final DoubleBox percentBox = new DoubleBox();
 		final CheckBox regularHome = new CheckBox();
-		
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(row, 0, new Label(AON.MSG.regime()));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		final Label regimeLabel = new Label(AON.MSG.regime());
 		final ListBox regimeList = new ListBox();
+		
+		admonList.addChangeHandler( new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				regimeLabel.setVisible(callback.getFiscalModel().isAEAT());
+				regimeList.setVisible(callback.getFiscalModel().isAEAT());
+				percentLabel.setVisible(callback.getFiscalModel().isAEAT());
+				percentBox.setVisible(callback.getFiscalModel().isAEAT());
+				regularHome.setVisible(callback.getFiscalModel().isAEAT());
+			}
+		});
+	
+		regimeLabel.setVisible(callback.getFiscalModel().isAEAT());
+		regimeList.setVisible(callback.getFiscalModel().isAEAT());
+		percentLabel.setVisible(callback.getFiscalModel().isAEAT());
+		percentBox.setVisible(callback.getFiscalModel().isAEAT());
+		regularHome.setVisible(callback.getFiscalModel().isAEAT());
+
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(row, 0, regimeLabel);
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		regimeList.addItem(IRPFRegime.NORMAL.getName());
 		regimeList.addItem(IRPFRegime.SIMPLIFIED.getName());
 		regimeList.setSelectedIndex((callback.getFiscalModel().getRegime() == IRPFRegime.SIMPLIFIED)?1:0);
@@ -122,8 +147,10 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130>{
 								:AON.MSG.name());
 						nameBox.setValue(callback.getFiscalModel().getName());
 						surnameBox.setValue(callback.getFiscalModel().getSurname());
-						percentBox.setValue( callback.getFiscalModel().getAmount(Mod130Key.P1));
-						regularHome.setValue( callback.getFiscalModel().getAmount(Mod130Key.P2)==1?true:false );
+						if (callback.getFiscalModel().isAEAT()) {
+							percentBox.setValue( callback.getFiscalModel().getAmount(Mod130Key.P1));
+							regularHome.setValue( callback.getFiscalModel().getAmount(Mod130Key.P2)==1?true:false );
+						}
 					}
 				}
 			});	
@@ -172,7 +199,7 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130>{
 		row++;
 		
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(row, 0, new Label(AON.MSG.partPercent()));
+		tab.setWidget(row, 0, percentLabel );
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		percentBox.setValue( callback.getFiscalModel().getAmount(Mod130Key.P1));
 		percentBox.addChangeHandler( new ChangeHandler() {

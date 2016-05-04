@@ -252,8 +252,49 @@ public class Mod130DAO extends FiscalModelDAO {
 		,C19 (Mod130Key.C19 , (mod -> mod.isAEAT()),null
 			,"C17 - C18"
 			,"<li>@{C17} menos @{C18} igual <b>@{C19}</b></li>")
-		,TIP (Mod130Key.CT_TIP , (mod -> mod.isAEAT()), null,null,null)
 		
+		
+		,P3  (Mod130Key.P3  , (mod -> mod.isBizkaia()),null,null,null)
+		,B01 (Mod130Key.C01 , (mod -> mod.isBizkaia()),null,null,null)
+		,B02 (Mod130Key.C02 , (mod -> mod.isBizkaia()),null
+			,"C01*5/100"
+			,"<li>5% de la casilla @{C01} igual <b>@{C02}</b></li>")
+		,B03 (Mod130Key.C03 , (mod -> mod.isBizkaia()),null,null,null)
+		,B04 (Mod130Key.C04 , (mod -> mod.isBizkaia()),null
+			,"C02-C03"
+			,"<li>@{C02} menos @{C03} igual <b>@{C04}</b></li>")
+		,B05 (Mod130Key.C05 , (mod -> mod.isBizkaia()),null,null,null)
+		,B06 (Mod130Key.C06 , (mod -> mod.isBizkaia()),null
+			,"C05*2/100"
+			,"<li>2% de la casilla @{C05} igual <b>@{C06}</b></li>")
+		,B07 (Mod130Key.C07 , (mod -> mod.isBizkaia()),null,null,null)
+		,B08 (Mod130Key.C08 , (mod -> mod.isBizkaia()),null
+			,"C06-C07"
+			,"<li>@{C06} menos @{C07} igual <b>@{C08}</b></li>")
+		,B09 (Mod130Key.C09 , (mod -> mod.isBizkaia()),null,null,null)
+		,B10 (Mod130Key.C10 , (mod -> mod.isBizkaia()),null
+			,"C09*20/100"
+			,"<li>20% de la casilla @{C09} igual <b>@{C10}</b></li>")
+		,B11 (Mod130Key.C11 , (mod -> mod.isBizkaia()),null,null,null)
+		,B12 (Mod130Key.C12 , (mod -> mod.isBizkaia()),null
+			,"C10-C11"
+			,"<li>@{C10} menos @{C11} igual <b>@{C12}</b></li>")
+		,B15 (Mod130Key.C15 , (mod -> mod.isBizkaia()),null,null,null)
+		,B16 (Mod130Key.C16 , (mod -> mod.isBizkaia()),null
+			,"C15*0.5/100"
+			,"<li>0,5% de la casilla @{C15} igual <b>@{C16}</b></li>")
+		,B17 (Mod130Key.C17 , (mod -> mod.isBizkaia()),null,null,null)
+		,B18 (Mod130Key.C18 , (mod -> mod.isBizkaia()),null
+			,"C16-C17"
+			,"<li>@{C16} menos @{C17} igual <b>@{C18}</b></li>")
+		,B19 (Mod130Key.C19 , (mod -> mod.isBizkaia()),null,null,null)
+		,B20 (Mod130Key.C20 , (mod -> mod.isBizkaia()),null
+			,"C19*0.25/100"
+			,"<li>0,25% de la casilla @{C19} igual <b>@{C20}</b></li>")
+		,B28 (Mod130Key.C28 , (mod -> mod.isBizkaia()),null
+			,"C04+C08+C12+C18+C20"
+			,"<li>@{C04} m\u00E1s @{C08} m\u00E1s @{C12} m\u00E1s @{C18} m\u00E1s @{C20} igual <b>@{C28}</b></li>")
+		,TIP (Mod130Key.CT_TIP , (mod -> mod.isAEAT() || mod.isBizkaia()), null,null,null)
 		;
 		
 		private Mod130Key key;
@@ -360,9 +401,11 @@ public class Mod130DAO extends FiscalModelDAO {
 			mod130 = new Mod130();
 		}
 		initializeFiscalModel(ctx, mod130);
-		mod130.putAmount(Mod130Key.P1, 100.0);
-		mod130.setRegime(AppParamDAO.getDefaultIRPFRegime(ctx));
-		mod130.putAmount(Mod130Key.P2, (AppParamDAO.isPermAddressChanges(ctx)?1:0) );
+		if (mod130.isAEAT()) {
+			mod130.putAmount(Mod130Key.P1, 100.0);
+			mod130.setRegime(AppParamDAO.getDefaultIRPFRegime(ctx));
+			mod130.putAmount(Mod130Key.P2, (AppParamDAO.isPermAddressChanges(ctx)?1:0) );
+		}
 		initializeDeponents(ctx, mod130);
 		return mod130;
 	}

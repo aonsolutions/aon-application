@@ -132,7 +132,7 @@ public interface CommonMessages extends Messages {
 		{"M111"		,"Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades econ\u00F3micas."
 		,"M115" 	,"Retenciones e ingresos a cuenta. Rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos."
 		,"M123"		,"Retenciones e ingresos a cuenta. Determinados rendimientos del capital mobiliario o determinadas rentas."
-		,"M130"		,"IRPF. Empresarios y profesionales en Estimaci\u00F3n Directa. Pago fraccionado."
+		,"M130"		,"IRPF. Empresarios y profesionales. Pago fraccionado."
 		,"M131"		,"IRPF. Empresarios y profesionales en Estimaci\u00F3n Objetiva. Pago fraccionado."
 		,"M303_RG"	,"IVA. Autoliquidaci\u00F3n. R\u00E9gimen General"
 		,"M303_RS"	,"IVA. Autoliquidaci\u00F3n. R\u00E9gimen Simplificado"
