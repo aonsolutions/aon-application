@@ -114,6 +114,12 @@ public class AonHubDAO2 {
 				.execute();
 		
 		ctx.getDslContext()
+		.update(NOTICE)
+		.set(NOTICE.STATUS, (byte) NoticeStatus.valueOf(notice.getStatus()).ordinal())
+		.where(NOTICE.ID.eq(notice.getId()).or(NOTICE.NOTICE_.eq(notice.getId())))
+		.execute();
+		
+		ctx.getDslContext()
 		.insertInto(NOTICE_TAG)
 		.set(NOTICE_TAG.NOTICE, notice.getId())
 		.set(NOTICE_TAG.TAG, statusId)		

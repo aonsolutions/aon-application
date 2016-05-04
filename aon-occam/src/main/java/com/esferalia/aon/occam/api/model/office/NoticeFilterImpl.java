@@ -25,87 +25,8 @@ public class NoticeFilterImpl  {
 		
 		conditions.add(NOTICE.DOMAIN.eq(ctx.getDomainId()));
 		conditions.add(NOTICE.NOTICE_.isNull());
-		conditions.add(NOTICE.TYPE.eq(NoticeType.TICKET.value()));
 		
-		if ( filter.isOpened() ) {
-			conditions.add(
-			// @formatted:off
-			NOTICE.ID.in(ctx.getDslContext()
-					.select(NOTICE_TAG.NOTICE)
-					.from(NOTICE_TAG)
-					.join(TAG)
-					.on(NOTICE_TAG.TAG.eq(TAG.ID))
-					.where((TAG.NAME.eq(NoticeStatus.OPEN.getValue()))
-							.or(TAG.NAME.eq(NoticeStatus.REOPEN.getValue()))
-							.and(NOTICE_TAG.END_DATE.isNull())
-						  ))			
-			// @formatted:on
-			);
-		}
-		
-		else if ( filter.isClosed() ) {
-			conditions.add(
-			// @formatted:off
-			NOTICE.ID.in(ctx.getDslContext()
-					.select(NOTICE_TAG.NOTICE)
-					.from(NOTICE_TAG)
-					.join(TAG)
-					.on(NOTICE_TAG.TAG.eq(TAG.ID))
-					.where(TAG.NAME.eq(NoticeStatus.CLOSED.getValue())							
-							.and(NOTICE_TAG.END_DATE.isNull())
-						  ))			
-			// @formatted:on
-			);
-		}
-		
-		else if ( filter.isAll() ) {
-			conditions.add(
-			// @formatted:off
-			NOTICE.ID.in(ctx.getDslContext()
-					.select(NOTICE_TAG.NOTICE)
-					.from(NOTICE_TAG)
-					.join(TAG)
-					.on(NOTICE_TAG.TAG.eq(TAG.ID))
-					.where((TAG.NAME.eq(NoticeStatus.OPEN.getValue()))
-								.or(TAG.NAME.eq(NoticeStatus.REOPEN.getValue()))
-								.or(TAG.NAME.eq(NoticeStatus.CLOSED.getValue()))
-								.or(TAG.NAME.eq(NoticeStatus.DUPLICATED.getValue()))
-							.and(NOTICE_TAG.END_DATE.isNull())
-						  ))			
-			// @formatted:on
-			);
-		}
-		
-		else if ( filter.isFaq() ) {
-			conditions.add(
-			// @formatted:off
-			NOTICE.ID.in(ctx.getDslContext()
-					.select(NOTICE_TAG.NOTICE)
-					.from(NOTICE_TAG)
-					.join(TAG)
-					.on(NOTICE_TAG.TAG.eq(TAG.ID))
-					.where(TAG.NAME.eq(NoticeStatus.FAQ.getValue())							
-							.and(NOTICE_TAG.END_DATE.isNull())
-						  ))			
-			// @formatted:on
-			);
-		}
-		
-		//como sacar las incidencs que son duplicadas
-		
-		
-		else if ( filter.isDuplicated()) {
-			conditions.add(
-			// @formatted:off
-			NOTICE.ID.in(ctx.getDslContext()
-					.select(NOTICE_TAG.NOTICE)
-					.from(NOTICE_TAG)
-					.join(TAG)
-					.on(NOTICE_TAG.TAG.eq(TAG.ID))
-					.where(TAG.NAME.eq(NoticeStatus.DUPLICATED.getValue())
-							.and(NOTICE_TAG.END_DATE.isNull())))
-					);
-		}
+		evalStatusFilter(conditions, filter);
 		
 		if (AonStringUtils.isNotEmpty(filter.getComany())){
 			conditions.add(Notice.NOTICE.COMPANY.eq(filter.getComany()));
@@ -139,6 +60,34 @@ public class NoticeFilterImpl  {
 			conditions.add(condition);
 		
 		return conditions;
+	}
+	
+	private static void evalStatusFilter(List<Condition> conditions, NoticeFilter filter) {
+		
+		if ( filter.isOpened() ) {
+			conditions.add(NOTICE.TYPE.eq(NoticeType.TICKET.value())
+					.or(NOTICE.TYPE.eq(NoticeType.DUPLICATED.value())));
+			conditions.add(NOTICE.STATUS.eq(NoticeStatus.OPEN.value())
+					.or(NOTICE.STATUS.eq(NoticeStatus.REOPEN.value())));
+		}
+		
+		else if ( filter.isClosed() ) {
+			conditions.add(NOTICE.TYPE.eq(NoticeType.TICKET.value()));
+			conditions.add(NOTICE.STATUS.eq(NoticeStatus.CLOSED.value()));
+		}
+		
+		else if ( filter.isAll() ) {
+			conditions.add(NOTICE.TYPE.eq(NoticeType.TICKET.value())
+					.or(NOTICE.TYPE.eq(NoticeType.DUPLICATED.value())));
+			conditions.add(NOTICE.STATUS.eq(NoticeStatus.OPEN.value())
+					.or(NOTICE.STATUS.eq(NoticeStatus.REOPEN.value()))
+					.or(NOTICE.STATUS.eq(NoticeStatus.CLOSED.value())));
+		}
+		
+		else if ( filter.isFaq() ) {
+			conditions.add(NOTICE.TYPE.eq(NoticeType.FAQ.value()));
+			conditions.add(NOTICE.STATUS.eq(NoticeStatus.OPEN.value()));
+		}
 	}
 	
 	private static Condition builLabelCondition(AONContext ctx, String labelName) {

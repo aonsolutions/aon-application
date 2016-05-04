@@ -11,7 +11,9 @@ public enum NoticeType implements Serializable {
     TICKET,
     WARNING, //warning = aviso
     NOTE,
-    COMMENT
+    COMMENT,
+    DUPLICATED,
+    FAQ
     ;
 
 	public byte value() {
