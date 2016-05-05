@@ -5,9 +5,10 @@ import java.io.Serializable;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@SuppressWarnings("serial")
 public class CompanyParticipation implements Serializable {
 
+	private static final long serialVersionUID = 3400183583793598978L;
+	
 	private String document;
 	private String name;
 	private int province;
@@ -20,6 +21,7 @@ public class CompanyParticipation implements Serializable {
 	private double aValue;
 	private double bValue;
 	private double cValue;
+	private double ccValue;
 	private double dValue;
 	private double capital;
 	private double reserve;
@@ -30,134 +32,160 @@ public class CompanyParticipation implements Serializable {
 		return document;
 	}
 
-	public void setDocument(String document) {
+	public CompanyParticipation setDocument(String document) {
 		this.document = document;
+		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public CompanyParticipation setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public int getProvince() {
 		return province;
 	}
 
-	public void setProvince(int province) {
+	public CompanyParticipation setProvince(int province) {
 		this.province = province;
+		return this;
 	}
 	public String getCountry() {
 		return country;
 	}
 
-	public void setCountry(String country) {
+	public CompanyParticipation setCountry(String country) {
 		this.country = country;
+		return this;
 	}
 
 	public boolean isRepresentative() {
 		return representative;
 	}
-	public void setRepresentative(boolean representative) {
+	public CompanyParticipation setRepresentative(boolean representative) {
 		this.representative = representative;
+		return this;
 	}
 
 	public double getPercent() {
 		return percent;
 	}
 
-	public void setPercent(double percent) {
+	public CompanyParticipation setPercent(double percent) {
 		this.percent = percent;
+		return this;
 	}
 
 	public double getNominalValue() {
 		return nominalValue;
 	}
 
-	public void setNominalValue(double nominalValue) {
+	public CompanyParticipation setNominalValue(double nominalValue) {
 		this.nominalValue = nominalValue;
+		return this;
 	}
 
 	public double getBookValue() {
 		return bookValue;
 	}
 
-	public void setBookValue(double bookValue) {
+	public CompanyParticipation setBookValue(double bookValue) {
 		this.bookValue = bookValue;
+		return this;
 	}
 
 	public double getIncomes() {
 		return incomes;
 	}
 
-	public void setIncomes(double incomes) {
+	public CompanyParticipation setIncomes(double incomes) {
 		this.incomes = incomes;
+		return this;
 	}
 
 	public double getaValue() {
 		return aValue;
 	}
 
-	public void setaValue(double aValue) {
+	public CompanyParticipation setaValue(double aValue) {
 		this.aValue = aValue;
+		return this;
 	}
 
 	public double getbValue() {
 		return bValue;
 	}
 
-	public void setbValue(double bValue) {
+	public CompanyParticipation setbValue(double bValue) {
 		this.bValue = bValue;
+		return this;
 	}
 
 	public double getcValue() {
 		return cValue;
 	}
 
-	public void setcValue(double cValue) {
+	public CompanyParticipation setcValue(double cValue) {
 		this.cValue = cValue;
+		return this;
+	}
+
+	public double getccValue() {
+		return ccValue;
+	}
+
+	public CompanyParticipation setccValue(double ccValue) {
+		this.ccValue = ccValue;
+		return this;
 	}
 
 	public double getdValue() {
 		return dValue;
 	}
 
-	public void setdValue(double dValue) {
+	public CompanyParticipation setdValue(double dValue) {
 		this.dValue = dValue;
+		return this;
 	}
 
 	public double getCapital() {
 		return capital;
 	}
 
-	public void setCapital(double capital) {
+	public CompanyParticipation setCapital(double capital) {
 		this.capital = capital;
+		return this;
 	}
 
 	public double getReserve() {
 		return reserve;
 	}
 
-	public void setReserve(double reserve) {
+	public CompanyParticipation setReserve(double reserve) {
 		this.reserve = reserve;
+		return this;
 	}
 
 	public double getOtherAmounts() {
 		return otherAmounts;
 	}
 
-	public void setOtherAmounts(double otherAmounts) {
+	public CompanyParticipation setOtherAmounts(double otherAmounts) {
 		this.otherAmounts = otherAmounts;
+		return this;
 	}
 
 	public double getResult() {
 		return result;
 	}
 
-	public void setResult(double result) {
+	public CompanyParticipation setResult(double result) {
 		this.result = result;
+		return this;
 	}
 
 	public String getEntity() {

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload.FileItem;
 
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
-import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod200Reader;
+import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002013Reader;
 
 @WebServlet(name = "Mod200 - 2013 BOE Upload ", urlPatterns = { "/aon_gwt_fiscal/Mod2002013BOEUpload" })
 public class Mod2002013BOEUpload extends UploadAction {
@@ -35,7 +35,7 @@ public class Mod2002013BOEUpload extends UploadAction {
 				try {
 					ByteArrayInputStream input = new ByteArrayInputStream(
 							item.get());
-					Mod2002013 mod200 = Mod200Reader.getMod2002013(input);
+					Mod2002013 mod200 = Mod2002013Reader.getMod2002013(input);
 					request.getSession().setAttribute("Mod2002013Import", mod200);
 				} catch (Exception ex) {
 					throw new UploadException(ex);

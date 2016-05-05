@@ -38,7 +38,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod200Reader {
+public class Mod2002013Reader {
 	
 	private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat( );

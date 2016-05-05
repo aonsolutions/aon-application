@@ -1903,7 +1903,7 @@ public class Mod2002014Import2013 {
 				File file = new File(filename);
 				FileInputStream in = new FileInputStream(file);
 				
-				Mod2002013 mod200old = Mod200Reader.getMod2002013(in);
+				Mod2002013 mod200old = Mod2002013Reader.getMod2002013(in);
 				if (mod200old!=null) {
 					
 					// PRUEBA - Inicializamos todas las claves con sus numeros

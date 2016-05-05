@@ -2361,7 +2361,7 @@ public class Mod2002014Writer {
 				
 				// Convertir el fichero a mod200
 				Mod2002014 mod2002014 = new Mod2002014();
-				Mod2002013 mod2002013 = Mod200Reader.getMod2002013(input);
+				Mod2002013 mod2002013 = Mod2002013Reader.getMod2002013(input);
 				Mod2002014Import2013.import2013(mod2002014, mod2002013);
 				input.close();
 
