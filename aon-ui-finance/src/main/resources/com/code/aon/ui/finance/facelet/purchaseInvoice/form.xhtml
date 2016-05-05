@@ -118,7 +118,7 @@
 							<aon:menuItem id="activities"
 								value="#{bundle.aon_activity}"
 								iconClass="aon-icon-activity"
-								rendered="#{!purchaseInvoice.readOnly}"
+								rendered="#{!purchaseInvoice.readOnly or purchaseInvoice.to.investAsset == null or purchaseInvoice.to.investAsset.id == null}"
 								reRender="showActivityWindow">
 								<f:setPropertyActionListener target="#{purchaseInvoice.showActivityWindow}" 
 									value="#{true}" />							
