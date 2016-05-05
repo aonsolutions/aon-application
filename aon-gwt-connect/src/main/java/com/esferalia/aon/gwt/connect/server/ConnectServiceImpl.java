@@ -19,7 +19,7 @@ import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
-import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod200Reader;
+import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002013Reader;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.thirdparty.guava.common.io.Files;
 
@@ -86,7 +86,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements
 			FileInputStream input = new FileInputStream(file);
 
 			try {
-				Mod2002013 mod200 = Mod200Reader.getMod2002013(input);
+				Mod2002013 mod200 = Mod2002013Reader.getMod2002013(input);
 	
 				String enterDocument = mod200.getEnterpriseDocument();
 				String enterName = mod200.getEnterpriseName();
