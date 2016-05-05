@@ -116,11 +116,13 @@ public class EmployeesServiceHelper {
 
 			
 			String paymentName = payment.getName();
-
+			
 			try {
+				String expression = 
+				getUserScript(payment.getExpression());
 				Set<String> exprVariables =
 				ExpressionContext.getVariableSet(
-						payment.getExpression());				
+						expression);				
 				variables.addAll(exprVariables);
 				if ( !exprVariables.contains(paymentName) )
 					paymentsNames.add(paymentName);
@@ -130,17 +132,21 @@ public class EmployeesServiceHelper {
 			}
 
 			try {
+				String irpfExpression = 
+				getUserScript(payment.getIrpfExpression());
 				Set<String> irpfVariables =
 				ExpressionContext.getVariableSet(
-						payment.getIrpfExpression());				
+						irpfExpression);				
 				variables.addAll(irpfVariables);
 			} catch (Exception e) {
 			}
 
 			try {
+				String quoteExpression = 
+				getUserScript(payment.getQuoteExpression());
 				Set<String> quoteVariables =
 				ExpressionContext.getVariableSet(
-						payment.getQuoteExpression());				
+						quoteExpression);				
 				variables.addAll(quoteVariables);
 			} catch (Exception e) {
 			}
@@ -898,4 +904,15 @@ public class EmployeesServiceHelper {
 		draftCtx.setListener(listener);
 		return draftCtx;
 	}
+
+	public static String getUserScript(String script) {
+		
+		if (StringUtils.isBlank(script))
+			return script;
+		
+		return script.replaceAll("\"/\\*user\\*/(.*)/\\*\\*/\"", "$1");
+		
+	}
+
+	
 }
