@@ -16,7 +16,6 @@ import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.Company;
-import com.code.aon.config.BankAccount;
 import com.code.aon.file.bank.model.CSB34.data.Detail;
 import com.code.aon.file.bank.model.CSB34.data.Master;
 import com.code.aon.file.bank.model.CSB34.data.Orderer;
@@ -62,8 +61,7 @@ public class SEPA34_14XmlWriter {
 	
 	private void updateMaster( Master master, Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails ) throws ManagerBeanException {
 		master.setId(createId(company, fBatch, true));
-		String suffix = fBatch.getRegistryBank().getSufix();
-		String companyId = createIdentification(company.getDocumentCountry(), suffix, company.getDocument());
+		String companyId = createIdentification(company.getDocument(), fBatch.getRegistryBank().getSufix());
 		master.setCompanyId(companyId);
 		RegistryBank companyRBank = fBatch.getRegistryBank();		
 		Account account = master.getAccount();
@@ -136,16 +134,12 @@ public class SEPA34_14XmlWriter {
 		return sb.toString();
 	}
 	
-	public static String createIdentification( Country country, String suffix, String document ) {
-		BankAccount ba = new BankAccount();
-		ba.setCountry(country);
-		ba.setBban1(document);
-		String controlDigit = ba.calculateIbanControlDigit();
+	public static String createIdentification( String document, String suffix ) {
 		String _suffix = "000";
 		if (! StringUtils.isEmpty(suffix)) {
 			_suffix = StringUtils.leftPad(suffix, 3 ,'0');
 		}
-		return country.getValue() + controlDigit + _suffix + StringUtils.leftPad(document, 9 ,'0');
+		return StringUtils.leftPad(document, 9 ,'0') + _suffix;
 	}
 
 	public static Address getAddress( IAddress iAddress ) {

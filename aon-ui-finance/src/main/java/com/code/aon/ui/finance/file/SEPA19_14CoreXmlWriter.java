@@ -7,9 +7,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.Company;
+import com.code.aon.config.BankAccount;
 import com.code.aon.file.bank.model.CSB19.data.Individual;
 import com.code.aon.file.bank.model.CSB19.data.Lot;
 import com.code.aon.file.bank.model.CSB19.data.Orderer;
@@ -66,7 +70,7 @@ public class SEPA19_14CoreXmlWriter {
 		presenter.setAccount(account);
 		
 		Orderer orderer = lot.getOrderer();
-		String id = SEPA34_14XmlWriter.createIdentification(company.getDocumentCountry(), presenter.getSufix(), company.getDocument());
+		String id = createIdentification(company.getDocumentCountry(), presenter.getSufix(), company.getDocument());
 		orderer.setId(id);
 		Address address = SEPA34_14XmlWriter.getAddress(company.getDefaultAddress());
 		orderer.setSEPAAddress(address);	
@@ -92,4 +96,16 @@ public class SEPA19_14CoreXmlWriter {
 		}
 	}
 	
+	public static String createIdentification( Country country, String suffix, String document ) {
+		BankAccount ba = new BankAccount();
+		ba.setCountry(country);
+		ba.setBban1(document);
+		String controlDigit = ba.calculateIbanControlDigit();
+		String _suffix = "000";
+		if (! StringUtils.isEmpty(suffix)) {
+			_suffix = StringUtils.leftPad(suffix, 3 ,'0');
+		}
+		return country.getValue() + controlDigit + _suffix + StringUtils.leftPad(document, 9 ,'0');
+	}
+
 }
