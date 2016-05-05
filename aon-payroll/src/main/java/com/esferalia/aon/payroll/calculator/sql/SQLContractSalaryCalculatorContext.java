@@ -818,9 +818,8 @@ public class SQLContractSalaryCalculatorContext
 		@Override
 		protected double getWorkDays(ExpressionContext ctx, Period p) {
 			Double workDays = super.getWorkDays(ctx, p);
-// TODO: Clean this
-//			if ( guaranteePeriods.size() == 0 
-//					|| !guaranteePeriods.get(guaranteePeriods.size()-1).getEnd().equals(p.getEnd()))
+
+//			if ( guaranteePeriods.size() == 0)
 //				return workDays;
 
 			if ( p.getEnd().before(lastLeaveEnd))
@@ -829,6 +828,9 @@ public class SQLContractSalaryCalculatorContext
 			if( p.getStart().equals(getStart()) &&  p.getEnd().equals(getEnd()) )
 				return workDays;
 				
+			if( p.getStart().equals(getStartDate()) &&  p.getEnd().equals(getEndDate()) )
+				return workDays;
+
 			return super.leaveLoader.getAdjustDays(ctx, p, workDays.longValue());
 		}
 		
