@@ -149,8 +149,7 @@ public class AonHubDAO2 {
 				
 					ctx.getDslContext()
 					.update(NOTICE_TAG)
-					.set(NOTICE_TAG.END_DATE, endDate)
-					.set(NOTICE_TAG.USER, notice.getSender().getId())
+					.set(NOTICE_TAG.END_DATE, endDate)					
 					.where(NOTICE_TAG.ID.eq(record.getValue(NOTICE_TAG.ID)))				
 					.execute();
 					
@@ -164,7 +163,6 @@ public class AonHubDAO2 {
 					// @formatter:on
 			}
 		}
-		
 		
 		return getTicketNotice(ctx, notice.getId());
 
@@ -330,8 +328,8 @@ public class AonHubDAO2 {
 		.set(NOTICE.DATE, now)						
 		.set(NOTICE.SENDER, record.getValue(NOTICE.SENDER))
 		.set(NOTICE.SUBJECT, record.getValue(NOTICE.SUBJECT))
-		.set(NOTICE.STATUS, (byte) NoticeStatus.valueOf(NoticeStatus.OPEN.getValue()).ordinal())				
-		.set(NOTICE.TYPE, NoticeType.TICKET.value())
+		.set(NOTICE.STATUS, NoticeStatus.OPEN.value())				
+		.set(NOTICE.TYPE, NoticeType.DUPLICATED.value())
 		.set(NOTICE.COMPANY, record.getValue(NOTICE.COMPANY))
 		.set(NOTICE.SOURCE, record.getValue(NOTICE.SOURCE))
 		.set(NOTICE.PRIORITY, (byte) 0)
@@ -341,6 +339,7 @@ public class AonHubDAO2 {
 		
 		ctx.getDslContext()
 		.update(NOTICE)
+		.set(NOTICE.STATUS, NoticeStatus.DUPLICATED.value())
 		.set(NOTICE.NOTICE_, headNoticeId)
 		.where(NOTICE.ID.eq(record.getValue(NOTICE.ID)))
 		.execute();
