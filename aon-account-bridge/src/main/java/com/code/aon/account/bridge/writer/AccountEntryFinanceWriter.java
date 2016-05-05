@@ -45,10 +45,11 @@ public class AccountEntryFinanceWriter implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	private static final String C_FRA = "Cobro Fra: ";
-	private static final String P_FRA = "Pago Fra: ";
-	private static final String A_FRA = "Abono Fra: ";
-	private static final String D_FRA = "Dev. Fra: ";
+	private static final String CHARGE = "Cobro";
+	private static final String PAYMENT = "Pago";
+	private static final String REFUND = "Abono";
+	private static final String RETURN = "Dev.";
+	private static final String INVOICE_ABRV = "Fra";
 	private static final String ENTRY = "Asiento: ";
 	
 	private AccountBridgeUtil accountBridgeUtil;
@@ -803,14 +804,15 @@ public class AccountEntryFinanceWriter implements Serializable {
 	}
 
 	private String obtainConcept(Finance finance, double total, FinanceBatch fbatch) {
-		String prefix = (total < 0) ? A_FRA : (!finance.isPayment()) ? C_FRA : P_FRA;
+		String prefix = (total < 0) ? REFUND : (!finance.isPayment()) ? CHARGE : PAYMENT;
+		prefix = prefix + " " + (!finance.isPayroll() ? INVOICE_ABRV + ": " : "");
 		String concept = (!finance.isEmptyInvoice()) ? finance.getInvoice().getReferenceCode() : finance.getConcept();
 		String fbatchConcept = (fbatch != null) ? (" (R:" + fbatch.getId() + ")") : "";
 		return StringUtils.abbreviate(prefix + concept + fbatchConcept, 32);
 	}
 
 	private String obtainReturnConcept(Finance finance) {
-		String prefix = D_FRA;
+		String prefix = RETURN + " " + INVOICE_ABRV + ": ";
 		String concept = (!finance.isEmptyInvoice()) ? finance.getInvoice().getReferenceCode() : finance.getConcept();
 		return StringUtils.abbreviate(prefix + concept, 32);
 	}
