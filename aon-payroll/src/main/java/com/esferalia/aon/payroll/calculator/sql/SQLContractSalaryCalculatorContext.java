@@ -581,6 +581,7 @@ public class SQLContractSalaryCalculatorContext
 		protected int end;
 		protected int start;
 		protected int guaranteed;
+		protected Date lastLeaveEnd = new Date(0); 
 		protected List<Period> guaranteePeriods = new ArrayList<Period>();
 		protected List<ITimedResult<Double>> guarentees = new ArrayList<ITimedResult<Double>>();
 
@@ -610,6 +611,8 @@ public class SQLContractSalaryCalculatorContext
 					Date guarenteeStart = leaveCalendar.getTime();
 					leaveCalendar.add(Calendar.DATE, end - start);
 					Date guarenteeEnd = Period.min(leaveEnd, leaveCalendar.getTime());
+					
+					lastLeaveEnd = Period.max(leaveEnd, lastLeaveEnd);
 
 					Period guarenteePeriod = new Period(guarenteeStart,
 							guarenteeEnd);
@@ -815,9 +818,17 @@ public class SQLContractSalaryCalculatorContext
 		@Override
 		protected double getWorkDays(ExpressionContext ctx, Period p) {
 			Double workDays = super.getWorkDays(ctx, p);
-			if ( guaranteePeriods.size() == 0 
-					|| !guaranteePeriods.get(guaranteePeriods.size()-1).getEnd().equals(p.getEnd()))
+// TODO: Clean this
+//			if ( guaranteePeriods.size() == 0 
+//					|| !guaranteePeriods.get(guaranteePeriods.size()-1).getEnd().equals(p.getEnd()))
+//				return workDays;
+
+			if ( p.getEnd().before(lastLeaveEnd))
 				return workDays;
+
+			if( p.getStart().equals(getStart()) &&  p.getEnd().equals(getEnd()) )
+				return workDays;
+				
 			return super.leaveLoader.getAdjustDays(ctx, p, workDays.longValue());
 		}
 		
