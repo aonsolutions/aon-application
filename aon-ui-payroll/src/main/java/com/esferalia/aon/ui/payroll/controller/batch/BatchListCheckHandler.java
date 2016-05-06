@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
 public class BatchListCheckHandler implements Serializable {
@@ -25,17 +24,17 @@ public class BatchListCheckHandler implements Serializable {
 
 	private boolean showListSearchWindow;
 	private ArrayList<Object> checks = new ArrayList<Object>();
-	private IController controller;
+	private BatchListController controller;
 	
-	public BatchListCheckHandler(IController controller) {
+	public BatchListCheckHandler(BatchListController controller) {
 		this.controller = controller;
 	}
 
-	public IController getController() {
+	public BatchListController getController() {
 		return controller;
 	}
 
-	public void setController(IController controller) {
+	public void setController(BatchListController controller) {
 		this.controller = controller;
 	}
 
@@ -97,7 +96,7 @@ public class BatchListCheckHandler implements Serializable {
 	}
 
 	public void checkAll(ActionEvent event) throws ManagerBeanException {
-		Iterator<ITransferObject> iterator = getController().getManagerBean().getList(getController().getCriteria()).iterator();
+		Iterator<ITransferObject> iterator = getController().getAllList().iterator();
 		while (iterator.hasNext()) {
 			Object o = iterator.next();
 			if (!checks.contains(o)) {

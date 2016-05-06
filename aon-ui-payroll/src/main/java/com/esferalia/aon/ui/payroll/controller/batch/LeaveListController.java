@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.payroll.controller.batch;
 
+import java.util.List;
+
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -8,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Enterprise;
@@ -25,7 +28,7 @@ import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
-public class LeaveListController extends BasicController {
+public class LeaveListController extends BasicController implements BatchListController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -136,6 +139,11 @@ public class LeaveListController extends BasicController {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		super.onSearch(event);
+	}
+	
+	@Override
+	public List<ITransferObject> getAllList() throws ManagerBeanException {
+		return this.getManagerBean().getList(this.getCriteria());
 	}
 
 }

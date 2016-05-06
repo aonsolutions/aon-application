@@ -25,6 +25,7 @@ import com.code.aon.company.enumeration.SalaryTemplate;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.enumeration.AfiLeaveType;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
@@ -116,6 +117,7 @@ public class PayrollCollectionsController implements Serializable {
 	private List<SelectItem> liquidationTypes;
 	private List<SelectItem> mutualList;
 	private List<SelectItem> salaryTemplates;
+	private List<SelectItem> afiLeaveTypes;
 	
 	
 	private String getAbbreviatedSelectItemLabel(String name, int lenght) {
@@ -853,6 +855,19 @@ public class PayrollCollectionsController implements Serializable {
 			}
 		}
 		return salaryTemplates;
+	}
+	
+	public List<SelectItem> getAfiLeaveTypes() {
+		if (afiLeaveTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			afiLeaveTypes = new LinkedList<SelectItem>();
+			for( AfiLeaveType type : AfiLeaveType.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				afiLeaveTypes.add(item);			
+			}
+		}
+		return afiLeaveTypes;
 	}
 
 }

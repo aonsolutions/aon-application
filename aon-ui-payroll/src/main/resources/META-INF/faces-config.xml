@@ -911,7 +911,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.Contract</value>
+			<value>com.esferalia.aon.payroll.ContractBatchDetail</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -919,7 +919,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Contract_person_firstSurname</value>
+			<value>ContractBatchDetail_contract_person_firstSurname</value>
 		</managed-property>
 	</managed-bean>
 

@@ -82,9 +82,6 @@ public class AFIReader {
 					tra = new TRA();
 					tra.setNumeroAfiliacion(currentLine.substring(3, 15));
 					tra.setIpf(currentLine.substring(15, 33));
-//				private AYN ayn;
-//				private DOM dom;
-//				private FAB fab;
 					emp.getTrabajadores().add(tra);
 				} 
 				if(currentLine.startsWith(AYN)) {
@@ -116,13 +113,12 @@ public class AFIReader {
 					try {
 						fab.setFechaReal(Integer.parseInt(dateFormatter.format(dateFormatter.parse(currentLine.substring(8, 16)))));
 					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						// nada
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						// nada
 					}
 					fab.setGrupoCotizacion(Integer.parseInt(currentLine.substring(16, 18)));
+					fab.setGradoDiscapacidad(Integer.parseInt(currentLine.substring(18, 20)));
 					fab.setClaveContrato(Integer.parseInt(currentLine.substring(21, 24)));
 					fab.setCondicionDesempleado(currentLine.substring(24, 25));
 					fab.setMujerSubrepresentada(currentLine.substring(25, 26));
@@ -148,10 +144,9 @@ public class AFIReader {
 				} 
 				if(currentLine.startsWith(ETF)) {
 					etf = new ETF();
+					eti.setEtf(etf);
 				}
 			} catch (StringIndexOutOfBoundsException e) {
-				// TODO Auto-generated catch block
-//				e.printStackTrace();
 			}
 		}
 		

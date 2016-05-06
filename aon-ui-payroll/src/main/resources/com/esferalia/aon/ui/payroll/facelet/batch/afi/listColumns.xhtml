@@ -7,6 +7,14 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
+	<aon:column alias="Contract.workPlace.enterprise.registry.name"
+		styleClass="aon-editDataTable-iconColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_action}" />
+		</f:facet>
+		<aon:outputText value="MA"/>
+	</aon:column>
+	
 	<aon:if test="#{showEnterpriseColumn}">		
 		<aon:column alias="Contract.workPlace.enterprise.registry.name"
 			styleClass="aon-editDataTable-textColumn">
@@ -20,22 +28,12 @@
 	</aon:if>
 
 	<aon:column alias="Contract.person.registry.name,Contract.person.firstSurname,Contract.person.secondSurname"
-		styleClass="aon-editDataTable-textColumn aon-width-width">
+		styleClass="aon-editDataTable-textColumn aon-width-auto">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.registry_person}" />
 		</f:facet>
 		<aon:div styleClass="aon-nowrap">
 			<aon:outputText value="#{to.person.registry.fullName}"/>
-		</aon:div>
-	</aon:column>
-
-	<aon:column alias="Contract.ccc.activity.description"
-		styleClass="aon-editDataTable-textColumn aon-width-100">
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_activity}" />
-		</f:facet>
-		<aon:div styleClass="aon-nowrap">
-			<aon:outputText value="#{to.enterpriseCCC.activity.description}"/>
 		</aon:div>
 	</aon:column>
 	
@@ -48,6 +46,41 @@
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>		
+	</aon:column>
+	
+	<aon:column alias="Contract.endDate"
+		styleClass="aon-editDataTable-textColumn aon-width-100">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_end_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.endDate}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>		
+	</aon:column>
+
+	<aon:column alias="Contract.ccc.activity.description"
+		styleClass="aon-editDataTable-textColumn aon-width-100">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_activity}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.enterpriseCCC.activity.description}"/>
+		</aon:div>
+	</aon:column>
+	
+	<aon:column alias="Contract.enterpriseCCC.ccc"
+		styleClass="aon-editDataTable-textColumn aon-width-250">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.company_enterprise_ccc}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.enterpriseCCC.activity.type.code}"/>
+			<aon:outputText value="#{to.enterpriseCCC.ccc}"/>
+			<aon:outputText value="&#160;("/>
+			<aon:outputText value="#{to.enterpriseCCC.type}"/>
+			<aon:outputText value=")"/>
+		</aon:div>
 	</aon:column>
 
 </ui:composition>

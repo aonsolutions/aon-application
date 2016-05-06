@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -69,18 +70,20 @@ public class ContractBatchController extends BasicController {
 	public boolean isRecorded() {
 		return this.getTo()!=null && ((ContractBatch)this.getTo()).getOutcomeFileSize()!=null && ((ContractBatch)this.getTo()).getOutcomeFileSize()>0;
 	}
-
+	
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
         IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
 		IManagerBean contractBatchDetailBean = BeanManager.getManagerBean(ContractBatchDetail.class);
         ContractListController listController = (ContractListController) FormUtil.getController(IPayrollConstants.CONTRACT_LIST_CONTROLLER_NAME);
         Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
         while (iterator.hasNext()) {
-			Contract contract = (Contract) iterator.next();
-            contract.setSsStatus(ContractStatus.PROCESSED);
-            contractBean.update(contract);
+			ContractBatchDetail detail = (ContractBatchDetail) iterator.next();
+            detail.getContract().setSsStatus(ContractStatus.PROCESSED);
+            contractBean.update(detail.getContract());
             ContractBatchDetail contractBatchDetail = new ContractBatchDetail();
-			contractBatchDetail.setContract(contract);
+            contractBatchDetail.setActionType(detail.getActionType());
+            contractBatchDetail.setLeaveType(detail.getLeaveType());
+			contractBatchDetail.setContract(detail.getContract());
 			contractBatchDetail.setContractBatch((ContractBatch) getTo());
 			contractBatchDetail.setStatus(FileStatus.PENDING);
 			contractBatchDetailBean.insert(contractBatchDetail);
@@ -138,7 +141,11 @@ public class ContractBatchController extends BasicController {
 			}
 			ContractBatch batch = (ContractBatch) getTo();
 			AFIWriter afiWriter = new AFIWriter();
-			FileOutput output = afiWriter.createAFI(getContractList());
+			
+			LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.CONTRACT_BATCH_DETAIL_CONTROLLER_NAME);
+			List<ITransferObject> list = controller.getManagerBean().getList(controller.getCriteria());
+			FileOutput output = afiWriter.createAFI(list.stream().map(to -> (ContractBatchDetail)to).collect(Collectors.toList()));
+			
 			if (output != null && output.getContent() != null) {
 				batch.setOutcomeFile(output.getContent());
 				batch.setOutcomeFileDate(new Date());
@@ -321,10 +328,12 @@ public class ContractBatchController extends BasicController {
 	        ContractListController listController = (ContractListController) FormUtil.getController(IPayrollConstants.CONTRACT_LIST_CONTROLLER_NAME);
 			Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
 	        while (iterator.hasNext()) {
-	        	Contract contract = (Contract) iterator.next();
-				ContractBatchDetail detail = new ContractBatchDetail();
-				detail.setContract(contract);
-				selectedList.add(detail);
+	        	ContractBatchDetail detail = (ContractBatchDetail) iterator.next();
+				ContractBatchDetail newDetail = new ContractBatchDetail();
+				newDetail.setActionType(detail.getActionType());
+				newDetail.setLeaveType(detail.getLeaveType());
+				newDetail.setContract(detail.getContract());
+				selectedList.add(newDetail);
 			}
 	        listController.getCheckHandler().clearCheckedList();
 	        setSelectedModel(new SerializableListDataModel(selectedList));

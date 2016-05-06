@@ -13,23 +13,65 @@
 		<ui:param name="skipNewButton" value="#{true}" />
 	</ui:include>
 	
+	<aon:outputLabel for="Contract_workPlace"  
+		value="#{bundle.purchase_workplace}" />
+	<aon:selectOneMenu id="Contract_workPlace"
+		value="#{contractSearch.workPlace}" >
+		<f:selectItem itemLabel=" - " itemValue="#{null}"  />
+		<f:selectItems value="#{contractSearch.workPlaces}"  />
+	</aon:selectOneMenu>
+	
 	<aon:outputLabel value="#{bundle.aon_start_date}" />
 	<aon:div>
 		<aon:outputLabel for="Contract_startDate-From" styleClass="aon-form-date-label"
-			value="#{bundle.aon_date_from}:" />
+			value="#{bundle.aon_date_from}: " />
 		<aon:selectInputDate id="Contract_startDate-From"
 			value="#{controller.startDateFrom}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	
 		<aon:outputLabel for="Contract_startDate-To" styleClass="aon-form-date-label"
-			value="#{bundle.aon_date_to}:" />
+			value="#{bundle.aon_date_to}: " />
 		<aon:selectInputDate id="Contract_startDate-To"
 			value="#{controller.startDateTo}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 	
+	<aon:outputLabel value="#{bundle.aon_end_date}" />
+	<aon:div>
+		<aon:outputLabel for="Contract_endDate-From" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_from}: " />
+		<aon:selectInputDate id="Contract_endDate-From"
+			value="#{controller.endDateFrom}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	
+		<aon:outputLabel for="Contract_endDate-To" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_to}: " />
+		<aon:selectInputDate id="Contract_endDate-To"
+			value="#{controller.endDateTo}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+	
+	<aon:outputLabel value="#{bundle.aon_modification_date}" />
+	<aon:div>
+		<aon:outputLabel for="Contract_modificationDate-From" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_from}: " />
+		<aon:selectInputDate id="Contract_modificationDate-From"
+			value="#{controller.modificationDateFrom}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	
+		<aon:outputLabel for="Contract_modificationDate-To" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_to}: " />
+		<aon:selectInputDate id="Contract_modificationDate-To"
+			value="#{controller.modificationDateTo}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+
 	<aon:outputText value="" />
 	<aon:commandButton id="detailSearch"
 		value="#{bundle.aon_search}" status="aonStatus"

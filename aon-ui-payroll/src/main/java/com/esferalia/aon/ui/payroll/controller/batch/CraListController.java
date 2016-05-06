@@ -33,7 +33,7 @@ import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
-public class CraListController extends BasicController {
+public class CraListController extends BasicController implements BatchListController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -181,6 +181,11 @@ public class CraListController extends BasicController {
 			DatabaseUtil.closeQuietly(conn);
 		}
 		return null;
+	}
+	
+	@Override
+	public List<ITransferObject> getAllList() throws ManagerBeanException {
+		return this.getManagerBean().getList(this.getCriteria());
 	}
 
 }

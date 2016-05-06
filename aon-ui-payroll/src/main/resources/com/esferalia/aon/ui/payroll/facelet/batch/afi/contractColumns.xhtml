@@ -5,7 +5,17 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
+	
+	<aon:column alias="ContractBatchDetail.type"
+		styleClass="aon-editDataTable-iconColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_action}" />
+		</f:facet>
+		<aon:outputText title="#{to.actionType}"
+			value="#{to.actionType}"/>
+	</aon:column>
 	
 	<aon:if test="#{showEnterpriseColumn}">		
 		<aon:column alias="ContractBatchDetail.contract.workPlace.enterprise.registry.name"
@@ -20,22 +30,12 @@
 	</aon:if>
 	
 	<aon:column alias="ContractBatchDetail.contract.person.registry.name,ContractBatchDetail.contract.person.firstSurname,ContractBatchDetail.contract.person.secondSurname"
-		styleClass="aon-editDataTable-textColumn aon-width-width">
+		styleClass="aon-editDataTable-textColumn aon-width-auto">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.registry_person}" />
 		</f:facet>
 		<aon:div styleClass="aon-nowrap">
 			<aon:outputText value="#{to.contract.person.registry.fullName}"/>
-		</aon:div>
-	</aon:column>
-			
-	<aon:column alias="ContractBatchDetail.contract.enterpriseCCC.activity.description"
-		styleClass="aon-editDataTable-textColumn aon-width-100">
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_activity}" />
-		</f:facet>
-		<aon:div styleClass="aon-nowrap">
-			<aon:outputText value="#{to.contract.enterpriseCCC.activity.description}"/>
 		</aon:div>
 	</aon:column>
 	
@@ -50,11 +50,56 @@
 		</aon:outputText>		
 	</aon:column>
 	
-	<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+	<aon:column alias="ContractBatchDetail.contract.endDate"
+		styleClass="aon-editDataTable-textColumn aon-width-100">
 		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_status}" />
+			<aon:outputText value="#{bundle.aon_end_date}" />
 		</f:facet>
-		<aon:outputText value="#{to.status}"  />
+		<aon:outputText value="#{to.contract.endDate}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>		
+	</aon:column>
+			
+	<aon:column alias="ContractBatchDetail.contract.enterpriseCCC.activity.description"
+		styleClass="aon-editDataTable-textColumn aon-width-100">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_activity}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.contract.enterpriseCCC.activity.description}"/>
+		</aon:div>
+	</aon:column>
+	
+	<aon:column alias="ContractBatchDetail.contract.enterpriseCCC.ccc"
+		styleClass="aon-editDataTable-textColumn aon-width-250">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.company_enterprise_ccc}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.contract.enterpriseCCC.activity.type.code}"/>
+			<aon:outputText value="#{to.contract.enterpriseCCC.ccc}"/>
+			<aon:outputText value="&#160;("/>
+			<aon:outputText value="#{to.contract.enterpriseCCC.type}"/>
+			<aon:outputText value=")"/>
+		</aon:div>
+	</aon:column>
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-250">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.certifica2Batch_suspension_cause}" />
+		</f:facet>
+		<aon:outputText value="#{to.leaveType}"
+			rendered="#{to.actionType.value!='MA' and not empty to.id}" /> 
+		<rich:inplaceSelect rendered="#{controllerList.checkHandler.rowChecked and to.actionType.value!='MA' and empty to.id}" 
+		 	id="contract-leaveType"
+		 	value="#{to.leaveType}"
+		 	listHeight="250px" listWidth="250px"
+		 	viewClass="aon-highlight" 
+		 	viewHoverClass="aon-underline"
+		 	style="width:150px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
+	        defaultLabel="#{bundle.aon_check}..." >
+			<f:selectItems value="#{payrollCollections.afiLeaveTypes}" />
+		</rich:inplaceSelect>
 	</aon:column>
 	
 </ui:composition>
