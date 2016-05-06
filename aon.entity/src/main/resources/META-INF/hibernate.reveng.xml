@@ -362,7 +362,7 @@
 	</table>
 	
 	<table name="contract_batch_detail">
-		<column name="action" type="com.esferalia.aon.payroll.enumeration.AfiActionType" />
+		<column name="action_type" type="com.esferalia.aon.payroll.enumeration.AfiActionType" />
 		<column name="leave_type" type="com.esferalia.aon.payroll.enumeration.AfiLeaveType" />
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
