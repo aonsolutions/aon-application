@@ -3139,6 +3139,8 @@ CREATE TABLE `contract_batch_detail` (
   `contract_batch` int(4) NOT NULL COMMENT 'Identificador unico de la remesa de contratos',
   `contract` int(4) NOT NULL COMMENT 'Identificador unico del contrato',
   `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado de la linea de la remesa',
+  `action_type` varchar(2) collate latin1_spanish_ci NOT NULL COMMENT 'Tipo de accion a realizar',
+  `leave_type` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Tipo de baja',
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTRACT_BATCH_DETAIL_CONTRACT_BATCH` (`contract_batch`),
   KEY `IDX_CONTRACT_BATCH_DETAIL_CONTRACT` (`contract`),
@@ -8109,7 +8111,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.47.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.50.5');
 
 COMMIT;
 
