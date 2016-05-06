@@ -100,7 +100,6 @@ public class OfficeImpl implements IOffice {
 	public Notice editComment(AONContext ctx, Integer commentId, String body) {
 		return ctx.getDslContext().transactionResult(
 				conf -> AonHubDAO2.editComment(ctx, commentId, body));
-//		return AonHubDAO.editComment(ctx, commentId, body);
 	}
 
 	@Override
@@ -116,7 +115,8 @@ public class OfficeImpl implements IOffice {
 
 	@Override
 	public List<Tag> getTags(AONContext ctx) throws IllegalArgumentException {
-		return AonHubDAO.getTags(ctx);
+		return ctx.getDslContext().transactionResult(
+				conf -> AonHubDAO2.getTags(ctx));
 	}
 
 	@Override
@@ -129,7 +129,6 @@ public class OfficeImpl implements IOffice {
 	public Notice changeNoticeStatus(AONContext ctx, Notice notice) {
 		return ctx.getDslContext().transactionResult(
 				conf -> AonHubDAO2.changeNoticeState(ctx, notice));
-//		return AonHubDAO.changeNoticeState(ctx, notice);
 	}
 
 	@Override
@@ -142,7 +141,6 @@ public class OfficeImpl implements IOffice {
 			Tag tag) {
 		return ctx.getDslContext().transactionResult(
 				conf -> AonHubDAO2.removeLabelFromIssue(ctx, issueId, tag));
-//		return AonHubDAO.removeLabelFromIssue(ctx, issueId, tag);
 	}
 
 	@Override

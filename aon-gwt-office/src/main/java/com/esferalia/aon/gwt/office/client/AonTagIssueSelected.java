@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.office.client;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.office.client.models.issues.JsLabel;
@@ -7,7 +8,7 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-public class AonTagIssueSelected implements LabelSelected {
+public class AonTagIssueSelected implements LabelSelected, Comparable<AonTagIssueSelected> {
 	
 	protected JsLabel label;
 	private String name;
@@ -97,5 +98,19 @@ public class AonTagIssueSelected implements LabelSelected {
 	@Override
 	public boolean isOfficeType() {		
 		return label.getType() == TagType.OFFICE_TYPE.value();
+	}
+	
+	@Override
+	public int compareTo(AonTagIssueSelected o) {		
+		return Comparators.NAME.compare(this, o);
+	}
+	
+	public static class Comparators {
+		
+		public static Comparator<AonTagIssueSelected> NAME = new Comparator<AonTagIssueSelected>() {
+			public int compare(AonTagIssueSelected o1, AonTagIssueSelected o2) {
+				return o1.getName().compareTo(o2.getName());
+			};
+		};
 	}
 }

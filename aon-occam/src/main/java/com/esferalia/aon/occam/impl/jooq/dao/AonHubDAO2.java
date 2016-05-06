@@ -490,6 +490,25 @@ public class AonHubDAO2 {
 		// @formatter:on
 	}
 	
+	public static List<Tag> getTags(AONContext ctx) {
+		
+		// @formatter:off
+		return ctx.getDslContext()
+				.select(TAG.fields())
+				.from(TAG)
+				.where(TAG.TYPE.eq(TagType.OFFICE_NOTICE.value())
+						.or(TAG.TYPE.eq(TagType.OFFICE_PRIORITY.value()))
+						.or(TAG.TYPE.eq(TagType.OFFICE_STATUS.value()))
+						.or(TAG.TYPE.eq(TagType.OFFICE_TYPE.value()))
+						.and(TAG.DOMAIN.eq(0).or(TAG.DOMAIN.eq(ctx.getDomainId()))))
+				.orderBy(TAG.NAME.asc())
+				.fetch()
+				.stream()
+				.map(new FullTagFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
+		// @formatter:on
+	}
+	
 	private static User getRecipient(AONContext ctx, Notice notice) {
 		
 		return (notice.getRecipientId() != null) ?
@@ -713,30 +732,6 @@ public class AonHubDAO2 {
 				.stream()
 				.map(new MinimalUserFiller())
 				.collect(Collectors.toCollection(LinkedList::new));
-			
-		
-		// @formatter:off
-//		SelectConditionStep<Record1<Integer>> select = 
-//				ctx.getDslContext()
-//				.select(NOTICE.SENDER)
-//				.from(NOTICE)
-//				.where(NOTICE.DOMAIN.eq(ctx.getDomainId()));
-		// @formatter:off
-		
-//		if (parentDomain != null)
-//			select = select.or(NOTICE.DOMAIN.eq(parentDomain));
-		
-		// @formatter:off
-//		return ctx.getDslContext()
-//				.select(USER.fields())
-//				.from(USER)
-//				.where(USER.ID.in(select))
-//				.orderBy(USER.NAME.asc())
-//				.fetch()
-//				.stream()
-//				.map(new MinimalUserFiller())
-//				.collect(Collectors.toCollection(LinkedList::new));
-		// @formatter:on
 	}
 
 	private static class FullRMediaFiller

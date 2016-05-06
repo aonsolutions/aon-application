@@ -112,10 +112,6 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 	private Date criteria;
 	private String userSelected;
 	
-	private List<AonTagIssueSelected> typeTagList;
-	private List<AonTagIssueSelected> priorityTagList;
-	private List<AonTagIssueSelected> noticeTagList;
-	
 	private List<Tag> drashTagList;
 
 	private MultiWordSuggestOracle registries = new MultiWordSuggestOracle();
@@ -131,9 +127,6 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.listeners = new LinkedList<Listener>();
-		this.typeTagList = new LinkedList<AonTagIssueSelected>();
-		this.priorityTagList = new LinkedList<AonTagIssueSelected>();
-		this.noticeTagList = new LinkedList<AonTagIssueSelected>();
 		this.drashTagList = new LinkedList<Tag>();
 		
 		this.subjectTextBox.addKeyDownHandler(this);
@@ -244,6 +237,10 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 	}
 
 	public void addTagList(List<AonTagIssueSelected> list) {
+		
+		List<AonTagIssueSelected> typeTagList = new LinkedList<AonTagIssueSelected>();
+		List<AonTagIssueSelected> priorityTagList = new LinkedList<AonTagIssueSelected>();
+		List<AonTagIssueSelected> noticeTagList = new LinkedList<AonTagIssueSelected>();
 
 		for (AonTagIssueSelected tag : list) {
 
@@ -254,6 +251,10 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 			else if (tag.isOfficeNotice())
 				noticeTagList.add(tag);
 		}
+		
+		Collections.sort(typeTagList, AonTagIssueSelected.Comparators.NAME);
+		Collections.sort(priorityTagList, AonTagIssueSelected.Comparators.NAME);
+		Collections.sort(noticeTagList, AonTagIssueSelected.Comparators.NAME);
 
 		initTypeButton(typeTagList);
 		initPriorityButton(priorityTagList);
@@ -285,7 +286,7 @@ public class SearchPanel extends Composite implements KeyDownHandler {
 			cb.setValue(false);
 			cb.removeStyleName(AON.AON_BOLD);
 		}
-	
+		
 		this.idNoticeTb.setText("");
 		this.userSelected = null;
 		this.subjectTextBox.setValue("");

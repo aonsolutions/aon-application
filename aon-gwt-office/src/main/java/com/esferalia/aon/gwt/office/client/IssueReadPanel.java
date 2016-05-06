@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.office.client;
 
 import static com.esferalia.aon.gwt.common.client.AON.AONHUB;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -239,6 +240,10 @@ public class IssueReadPanel extends Composite implements ClickHandler {
 			else if (tag.isOfficeNotice())
 				officeList.add(tag);
 		}
+		
+		Collections.sort(typesList, AonTagIssueSelected.Comparators.NAME);
+		Collections.sort(priorityList, AonTagIssueSelected.Comparators.NAME);
+		Collections.sort(officeList, AonTagIssueSelected.Comparators.NAME);
 
 		initTypeButton(typesList);
 		initPriorityButton(priorityList);

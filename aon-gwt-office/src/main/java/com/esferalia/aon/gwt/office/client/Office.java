@@ -477,6 +477,7 @@ public class Office extends Composite implements EntryPoint, IssueGrid.Listener,
 
 	@UiHandler("refreshButton")
 	void onRefreshButtonClickEvent(ClickEvent event) {
+		
 		this.incrementSize = 0;
 		this.gitHub.setOffset(incrementSize);
 		this.tagTree.clearTagTree();
