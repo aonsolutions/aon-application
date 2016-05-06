@@ -22,6 +22,36 @@
 
 			<aon:div styleClass="aon-scroll-area">
 			
+				<aon:panelGrid id="dataTable" columns="4" style="width: 60%;"
+					columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
+	
+					<aon:outputLabel for="ContrataBatch_date" 
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate id="ContrataBatch_date" 
+						required="#{true}"
+						disabled="#{!contrataBatch.nevv}"
+						value="#{contrataBatch.to.date}" 
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					
+					<aon:outputText value="#{bundle.aon_status}" />
+					<aon:outputText value="#{contrataBatch.to.status}" />
+					
+					<aon:outputLabel for="ContrataBatch_type" 
+						value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="ContrataBatch_type"
+						required="#{true}"
+						disabled="#{!contrataBatch.nevv}"
+						value="#{contrataBatch.to.type}" >
+						<f:selectItem itemLabel=" - " value="#{null}" />
+						<f:selectItems value="#{sepeCollections.contrataFileTypeList}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputText value="&#160;" />
+					<aon:outputText value="&#160;" />
+					
+				</aon:panelGrid>
+			
 				<aon:panelTabSet id="batchPanelTabSet" rendered="#{!controller.nevv}">
 					<aon:if test="#{contrataBatch.newBatchWizard.selectedModel.rowCount > 0}" >
 						<aon:panelTab id="batchedTab" label="#{bundle.finance_checked}">
