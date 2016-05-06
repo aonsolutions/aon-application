@@ -24,5 +24,11 @@
 	        <listener>com.esferalia.aon.payroll.event.ContractClauseBeanListener</listener>
 		</listeners>
 	</bean>
+	<bean description="">
+		<pojo>com.esferalia.aon.payroll.EnterpriseCCC</pojo>
+		<vetoListeners>
+	        <vetoListener>com.esferalia.aon.payroll.event.EnterpriseCCCVetoableBeanListener</vetoListener>
+		</vetoListeners>
+	</bean>
 
 </bean-config>
