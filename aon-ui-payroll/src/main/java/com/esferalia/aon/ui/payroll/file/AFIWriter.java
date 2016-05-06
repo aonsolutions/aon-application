@@ -233,14 +233,12 @@ public class AFIWriter implements Serializable {
 	private FAB createFABRecord(ContractBatchDetail detail) throws  ManagerBeanException{
 		FAB fab = new FAB();
 		
-		fab.setAccion(autoComplete(detail.getActionType().getValue(), 3, " ", false));
+		fab.setAccion(autoComplete(detail.getActionType()==null?AfiActionType.MA.getValue():detail.getActionType().getValue(), 3, " ", false));
 		
-		// TODO
-		// Clave obligatoria para altas y bajas que indica el motivo de alta o baja. Ver capítulo Tablas.
 		if(detail.getActionType()==AfiActionType.MA){
 			fab.setSituacion(autoComplete(T21.T21_1.getCode(), 2, "0", true));
 		} else if(detail.getActionType()==AfiActionType.MB && detail.getLeaveType()!=null){
-			fab.setSituacion(autoComplete(detail.getLeaveType().getValue(), 2, "0", true));
+			fab.setSituacion(autoComplete(detail.getLeaveType()==null?"":detail.getLeaveType().getValue(), 2, "0", true));
 		}
 		
 		fab.setFechaReal(Integer.parseInt(dateFormatter.format(detail.getContract().getStartDate())));

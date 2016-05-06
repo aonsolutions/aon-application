@@ -8,6 +8,8 @@ ALTER TABLE `contract_batch_detail` ADD `action_type` varchar(2) collate latin1_
 
 ALTER TABLE `contract_batch_detail` ADD `leave_type` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Tipo de baja';
 
+UPDATE `contract_batch_detail` set `action_type` = 'MA';
+
 UPDATE `db_version` SET `version_number` = '8.50.5';
 
 COMMIT;

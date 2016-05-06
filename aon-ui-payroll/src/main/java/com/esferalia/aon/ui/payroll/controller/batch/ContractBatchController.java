@@ -43,7 +43,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBatch;
 import com.esferalia.aon.payroll.ContractBatchDetail;
-import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -211,15 +210,6 @@ public class ContractBatchController extends BasicController {
 		}
 	}
 	
-	private List<Contract> getContractList() {
-		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.CONTRACT_BATCH_DETAIL_CONTROLLER_NAME);
-		List<Contract> list = new LinkedList<Contract>();
-		for(ITransferObject to: controller.getWrappedList()){
-			ContractBatchDetail detail = (ContractBatchDetail) to;
-			list.add(detail.getContract());
-		}
-		return list;
-	}
 	
 	/*
 	 * INNER CLASSES
@@ -286,7 +276,6 @@ public class ContractBatchController extends BasicController {
 				HibernateUtil.beginTransaction(sessionName);
 				
 				IManagerBean detailBean = BeanManager.getManagerBean(ContractBatchDetail.class);
-				IManagerBean infoBean = BeanManager.getManagerBean(ContractInfo.class);
 				for(ITransferObject to: selectedList){
 					ContractBatchDetail detail = (ContractBatchDetail) to;
 					detail.setContractBatch(batch);
