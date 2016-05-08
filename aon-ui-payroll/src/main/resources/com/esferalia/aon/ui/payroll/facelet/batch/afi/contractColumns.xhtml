@@ -89,7 +89,7 @@
 			<aon:outputText value="#{bundle.certifica2Batch_suspension_cause}" />
 		</f:facet>
 		<aon:outputText value="#{to.leaveType}"
-			rendered="#{to.actionType.value!='MA' and not empty to.id}" /> 
+			rendered="#{to.actionType.value!='MA'}" /> 
 		<rich:inplaceSelect rendered="#{controllerList.checkHandler.rowChecked and to.actionType.value!='MA' and empty to.id}" 
 		 	id="contract-leaveType"
 		 	value="#{to.leaveType}"

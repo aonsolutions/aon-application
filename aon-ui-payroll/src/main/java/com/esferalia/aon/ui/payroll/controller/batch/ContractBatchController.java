@@ -43,6 +43,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBatch;
 import com.esferalia.aon.payroll.ContractBatchDetail;
+import com.esferalia.aon.payroll.enumeration.AfiActionType;
+import com.esferalia.aon.payroll.enumeration.AfiLeaveType;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -71,9 +73,18 @@ public class ContractBatchController extends BasicController {
 	}
 	
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
+		ContractListController listController = (ContractListController) FormUtil.getController(IPayrollConstants.CONTRACT_LIST_CONTROLLER_NAME);
+		int missingLeaves = (int)listController.getCheckHandler().getCheckedList()
+				.stream()
+				.map(to -> (ContractBatchDetail) to)
+				.filter(detail -> (detail.getActionType()==AfiActionType.MB && detail.getLeaveType()==null))
+				.count();
+		if(missingLeaves>0){
+			AonUtil.addErrorMessage("Debe seleccionarse la causa para todas las acciones baja.");
+			throw new AbortProcessingException("Debe seleccionarse la causa para todas las acciones baja.");
+		}
         IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
 		IManagerBean contractBatchDetailBean = BeanManager.getManagerBean(ContractBatchDetail.class);
-        ContractListController listController = (ContractListController) FormUtil.getController(IPayrollConstants.CONTRACT_LIST_CONTROLLER_NAME);
         Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
         while (iterator.hasNext()) {
 			ContractBatchDetail detail = (ContractBatchDetail) iterator.next();
@@ -315,7 +326,16 @@ public class ContractBatchController extends BasicController {
 		
 		public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
 	        ContractListController listController = (ContractListController) FormUtil.getController(IPayrollConstants.CONTRACT_LIST_CONTROLLER_NAME);
-			Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
+	        int missingLeaves = (int)listController.getCheckHandler().getCheckedList()
+					.stream()
+					.map(to -> (ContractBatchDetail) to)
+					.filter(detail -> (detail.getActionType()==AfiActionType.MB && detail.getLeaveType()==null))
+					.count();
+			if(missingLeaves>0){
+				AonUtil.addErrorMessage("Debe seleccionarse la causa para todas las acciones baja.");
+				throw new AbortProcessingException("Debe seleccionarse la causa para todas las acciones baja.");
+			}
+	        Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
 	        while (iterator.hasNext()) {
 	        	ContractBatchDetail detail = (ContractBatchDetail) iterator.next();
 				ContractBatchDetail newDetail = new ContractBatchDetail();

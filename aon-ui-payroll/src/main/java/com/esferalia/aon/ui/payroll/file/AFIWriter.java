@@ -237,11 +237,12 @@ public class AFIWriter implements Serializable {
 		
 		if(detail.getActionType()==AfiActionType.MA){
 			fab.setSituacion(autoComplete(T21.T21_1.getCode(), 2, "0", true));
+			fab.setFechaReal(Integer.parseInt(dateFormatter.format(detail.getContract().getStartDate())));
 		} else if(detail.getActionType()==AfiActionType.MB && detail.getLeaveType()!=null){
 			fab.setSituacion(autoComplete(detail.getLeaveType()==null?"":detail.getLeaveType().getValue(), 2, "0", true));
+			fab.setFechaReal(Integer.parseInt(dateFormatter.format(detail.getContract().getEndDate())));
 		}
 		
-		fab.setFechaReal(Integer.parseInt(dateFormatter.format(detail.getContract().getStartDate())));
 		
 		Integer quoteGroup = getQuoteGroup(detail.getContract());
 		if(quoteGroup!=null){
