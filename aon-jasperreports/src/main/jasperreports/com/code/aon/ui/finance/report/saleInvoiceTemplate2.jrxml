@@ -550,7 +550,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 				<textFieldExpression><![CDATA[$R{aon_project} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="e8b77ed2-db2b-4456-8e51-9f35c6be2f70" key="textField-43" positionType="Float" mode="Opaque" x="71" y="44" width="481" height="14" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#FF9966">
+				<reportElement uuid="e8b77ed2-db2b-4456-8e51-9f35c6be2f70" key="textField-43" positionType="Float" mode="Opaque" x="71" y="44" width="483" height="14" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#FF9966">
 					<printWhenExpression><![CDATA[$F{vatAccrualPayment}]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">

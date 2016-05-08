@@ -137,7 +137,7 @@
 				<imageExpression><![CDATA[$P{logoImageFile}]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="e2a5f707-b4e5-46ba-9dc8-591e032ca9ed" key="textField-47" x="445" y="6" width="88" height="13"/>
+				<reportElement uuid="e2a5f707-b4e5-46ba-9dc8-591e032ca9ed" key="textField-47" x="443" y="6" width="92" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -150,7 +150,7 @@
 				<textFieldExpression><![CDATA[($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="36b0e2e2-1335-49bd-b525-812fd2277a99" key="textField-48" x="397" y="6" width="48" height="13"/>
+				<reportElement uuid="36b0e2e2-1335-49bd-b525-812fd2277a99" key="textField-48" x="395" y="6" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -163,7 +163,7 @@
 				<textFieldExpression><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
-				<reportElement uuid="bb0bd1b7-4219-4a16-9d06-85f93070f7e1" key="textField-49" x="445" y="19" width="88" height="13"/>
+				<reportElement uuid="bb0bd1b7-4219-4a16-9d06-85f93070f7e1" key="textField-49" x="443" y="19" width="92" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -176,7 +176,7 @@
 				<textFieldExpression><![CDATA[$F{issueDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="9e05dbc8-bf40-4dd5-b827-52ae80294164" key="textField-50" x="397" y="19" width="48" height="13"/>
+				<reportElement uuid="9e05dbc8-bf40-4dd5-b827-52ae80294164" key="textField-50" x="395" y="19" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -189,7 +189,7 @@
 				<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="7b567db3-6a68-41a3-9a41-42aedb964ca2" key="textField-51" x="445" y="32" width="88" height="13"/>
+				<reportElement uuid="7b567db3-6a68-41a3-9a41-42aedb964ca2" key="textField-51" x="443" y="32" width="92" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -203,7 +203,7 @@
 +$F{registryDocument}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="c6d504f2-fe62-4464-8a4c-fbde4158d0f8" key="textField-52" x="397" y="32" width="48" height="13"/>
+				<reportElement uuid="c6d504f2-fe62-4464-8a4c-fbde4158d0f8" key="textField-52" x="395" y="32" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -529,7 +529,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 				<textFieldExpression><![CDATA[$R{tas_projectTas} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="648137fd-c50e-4272-9d46-b1a8e95c7250" key="textField-43" positionType="Float" mode="Opaque" x="2" y="149" width="531" height="14" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#FF9966">
+				<reportElement uuid="648137fd-c50e-4272-9d46-b1a8e95c7250" key="textField-43" positionType="Float" mode="Opaque" x="0" y="149" width="535" height="14" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#FF9966">
 					<printWhenExpression><![CDATA[$F{vatAccrualPayment}]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
