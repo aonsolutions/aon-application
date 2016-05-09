@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -98,10 +99,10 @@ public class StatControlPanel extends MainEntryPoint {
 	ScrollPanel informationPanel;
 	
 	FormPanel diskForm;
-	Hidden typeSales;
-	Hidden typePurchases;
-	Hidden typeExpenses;
-	Hidden typeUndeductible;
+	Hidden invoiceTypes;
+	Hidden categoryIds;
+	Hidden workplaceIds;
+	Hidden sellerIds;
 	Hidden fromDate;
 	Hidden toDate;
 	Hidden domainId;
@@ -158,14 +159,14 @@ public class StatControlPanel extends MainEntryPoint {
 		diskForm.setAction(GWT.getHostPageBaseURL() + "aon_gwt_fiscal/InvoiceReport");
 		FlowPanel formFlowPanel = new FlowPanel();
 		diskForm.add(formFlowPanel);
-		typeSales = new Hidden("invoiceTypeSales");
-		formFlowPanel.add(typeSales);
-		typePurchases = new Hidden("invoiceTypePurchases");
-		formFlowPanel.add(typePurchases);
-		typeExpenses = new Hidden("invoiceTypeExpenses");
-		formFlowPanel.add(typeExpenses);
-		typeUndeductible = new Hidden("invoiceTypeUndeductible");
-		formFlowPanel.add(typeUndeductible);
+		invoiceTypes = new Hidden("invoiceTypes");
+		formFlowPanel.add(invoiceTypes);
+		categoryIds = new Hidden("categoryIds");
+		formFlowPanel.add(categoryIds);
+		workplaceIds = new Hidden("workplaceIds");
+		formFlowPanel.add(workplaceIds);
+		sellerIds = new Hidden("sellerIds");
+		formFlowPanel.add(sellerIds);
 		fromDate = new Hidden("fromDate");
 		formFlowPanel.add(fromDate);
 		toDate = new Hidden("toDate");
@@ -236,16 +237,14 @@ public class StatControlPanel extends MainEntryPoint {
 
 	@UiHandler("excel")
 	void onExcelButtonClick(ClickEvent event) {
-		typeSales.setValue("off");
-		typePurchases.setValue("off");
-		typeExpenses.setValue("off");
-		typeUndeductible.setValue("off");
+		invoiceTypes.setValue("");
+		categoryIds.setValue("");
+		workplaceIds.setValue("");
+		sellerIds.setValue("");
 		fromDate.setValue("");
 		toDate.setValue("");
 		domainId.setValue("");
 		domainName.setValue("");
-		
-		final String ON = "on";
 		DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("dd/MM/yyyy");
 		if ( filter.getParams().getFrom() != null) {
 			fromDate.setValue(DATE_FORMAT.format(filter.getParams().getFrom()));
@@ -253,35 +252,32 @@ public class StatControlPanel extends MainEntryPoint {
 		if ( filter.getParams().getTo() != null) {
 			toDate.setValue(DATE_FORMAT.format(filter.getParams().getTo()));
 		}
-		boolean something = false;
 		for (StatFilterItem item : filter.getParams().getFilterItems()) {
-			if (item.isSelected() && item.getType() == StatFilterType.INVOICE_TYPE) {
-				InvoiceType type = InvoiceType.values()[AonNumberUtils.toint( item.getId())];
-				if (type == InvoiceType.SALES) {
-					something = true;
-					typeSales.setValue(ON);			
-				} else if (type == InvoiceType.PURCHASE) {
-					something = true;
-					typePurchases.setValue(ON);
-				} else if (type == InvoiceType.EXPENSES) {
-					something = true;
-					typeExpenses.setValue(ON);
-				} else if (type == InvoiceType.UNDEDUCTIBLE) {
-					something = true;
-					typeUndeductible.setValue(ON);
-				}
-			}
+			 if (item.isSelected()) {
+				 Hidden f = null;
+				 Integer id = null;
+				 if (item.getType() == StatFilterType.INVOICE_TYPE) {
+					 f = invoiceTypes;
+					 InvoiceType type = InvoiceType.valueOf(item.getId());
+					 id = type.ordinal();
+				 } else if (item.getType() == StatFilterType.PRODUCT_CATEGORY) {
+					 f = categoryIds;
+					 id = AonNumberUtils.toInteger(item.getId());
+				 } else if (item.getType() == StatFilterType.WORKPLACE) {
+					 f = workplaceIds;
+					 id = AonNumberUtils.toInteger(item.getId());
+				 } else if (item.getType() == StatFilterType.SELLER) {
+					 f = sellerIds;
+					 id = AonNumberUtils.toInteger(item.getId());					 
+				 }
+				 if (AonStringUtils.isNotBlank(f.getValue())) {
+					 f.setValue(f.getValue() + ",");
+				 }
+				 f.setValue(f.getValue() + id);
+			 }
 		}
-		if (something == false) {
-			typeSales.setValue(ON);			
-			typePurchases.setValue(ON);
-			typeExpenses.setValue(ON);
-			typeUndeductible.setValue(ON);
-		}
-		 
 		domainName.setValue(getCurrentDomainName());
 		domainId.setValue(String.valueOf(getCurrentDomain()));
-		
 		diskForm.submit();
 	}
 	

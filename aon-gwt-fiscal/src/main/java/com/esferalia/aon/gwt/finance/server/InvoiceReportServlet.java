@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.finance.server;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
@@ -33,6 +35,13 @@ public class InvoiceReportServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
+			Enumeration<String> names = req.getParameterNames();
+			while (names.hasMoreElements()) {
+				String name = names.nextElement();
+				System.out.println(name + " = " + req.getParameter(name));
+			}
+			
+			
 			String domainName = req.getParameter( IRequestParamsNames.DOMAIN_NAME);
 			int domainId = Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID));
 			
@@ -55,24 +64,62 @@ public class InvoiceReportServlet extends HttpServlet {
 			action.setTags(tags);
 			action.setProductTags(productTags);
 			action.initialize("FACTURAS");
-
+			
+			String invoiceTypes = req.getParameter( IRequestParamsNames.INVOICE_TYPES);
 			List<Byte> typesList = new LinkedList<Byte>();
-			if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.INVOICE_TYPE_SALES))) {
-				typesList.add(InvoiceType.SALES.value());
+			if (AonStringUtils.isBlank(invoiceTypes)) {
+				if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.INVOICE_TYPE_SALES))) {
+					typesList.add(InvoiceType.SALES.value());
+				}
+				if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.INVOICE_TYPE_PURCHASES))) {
+					typesList.add(InvoiceType.PURCHASE.value());
+				}
+				if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.INVOICE_TYPE_EXPENSES))) {
+					typesList.add(InvoiceType.EXPENSES.value());
+				}
+				if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.INVOICE_TYPE_UNDEDUCTIBLE))) {
+					typesList.add(InvoiceType.UNDEDUCTIBLE.value());
+				}
+			} else {
+				String[] ids = AonStringUtils.split(invoiceTypes, ',');
+				for (String id: ids ) {
+					typesList.add(AonNumberUtils.toByte(id));		
+				}
 			}
-			if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.INVOICE_TYPE_PURCHASES))) {
-				typesList.add(InvoiceType.PURCHASE.value());
-			}
-			if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.INVOICE_TYPE_EXPENSES))) {
-				typesList.add(InvoiceType.EXPENSES.value());
-			}
-			if (AonStringUtils.equals("on",req.getParameter(IRequestParamsNames.INVOICE_TYPE_UNDEDUCTIBLE))) {
-				typesList.add(InvoiceType.UNDEDUCTIBLE.value());
-			}
-			Byte[] typ = new Byte[typesList.size()]; 
+			Byte[] typ = new Byte[typesList.size()];
 			final Byte[] types = typesList.toArray(typ);
 			
+			String categoryIds = req.getParameter( IRequestParamsNames.CATEGORY_IDS);
+			List<Integer> categoryList = new LinkedList<Integer>();
+			if (!AonStringUtils.isBlank(categoryIds)) {
+				for (String id: AonStringUtils.split(categoryIds, ',') ) {
+					categoryList.add(AonNumberUtils.toInteger(id));		
+				}
+			}
+			Integer[] ids = new Integer[categoryList.size()];
+			final Integer[] categories = categoryList.toArray(ids);
 			
+			String workplaceIds = req.getParameter( IRequestParamsNames.WORKPLACE_IDS);
+			List<Integer> workplaceList = new LinkedList<Integer>();
+			if (!AonStringUtils.isBlank(workplaceIds)) {
+				for (String id: AonStringUtils.split(workplaceIds, ',') ) {
+					workplaceList.add(AonNumberUtils.toInteger(id));		
+				}
+			}
+			ids = new Integer[workplaceList.size()];
+			final Integer[] workplaces = workplaceList.toArray(ids);
+			
+
+			String sellerIds = req.getParameter( IRequestParamsNames.SELLER_IDS);
+			List<Integer> sellerList = new LinkedList<Integer>();
+			if (!AonStringUtils.isBlank(sellerIds)) {
+				for (String id: AonStringUtils.split(sellerIds, ',') ) {
+					sellerList.add(AonNumberUtils.toInteger(id));		
+				}
+			}
+			ids = new Integer[sellerList.size()];
+			final Integer[] seller = sellerList.toArray(ids);
+
 			User user = AON.getUser(domainName, domainId, login ); 
 			Integer[] scopes = AON.getUserScopes(domainName, domainId,login, user.getId());
 			
@@ -80,9 +127,13 @@ public class InvoiceReportServlet extends HttpServlet {
 			AON.getInvoiceDetails(domainName, domainId, login,
 					p -> {
 						Filter f = p.getDomainProperty().eq(domainId)
-							.and(p.getTypeProperty().in(types))
+							.and(types.length==0?p.getIdProperty().isNotNull():p.getTypeProperty().in(types))
 							.and(p.getStartIssueDateProperty().ge(fromDate))
-							.and(p.getEndIssueDateProperty().le(toDate));
+							.and(p.getEndIssueDateProperty().le(toDate))
+							.and(categories.length==0?p.getIdProperty().isNotNull():p.getProductCategoryProperty().in(categories))
+							.and(seller.length==0?p.getIdProperty().isNotNull():p.getSellerProperty().in(seller))
+							.and(workplaces.length==0?p.getIdProperty().isNotNull():p.getWorkplaceProperty().in(workplaces))
+							;
 						f = scopes == null?f:f.and(p.getScopeProperty().in( scopes ));
 						f = user.hasConfidentialityRole()?f:f.and(p.getConfidentialProperty().eq( SecurityLevel.OFFICIAL.value()));	
 						return f;

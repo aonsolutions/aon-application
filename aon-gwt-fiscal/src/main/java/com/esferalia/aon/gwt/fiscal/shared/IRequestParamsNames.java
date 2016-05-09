@@ -20,5 +20,9 @@ public interface IRequestParamsNames {
 	String OFFER_STATUS_BLOCKED = "offerStatusBlocked";
 	String OFFER_STATUS_INVOICED = "offerStatusInvoiced";
 	
+	String INVOICE_TYPES = "invoiceTypes";
+	String CATEGORY_IDS = "categoryIds";
+	String WORKPLACE_IDS = "workplaceIds";
+	String SELLER_IDS = "sellerIds";
 
 }
