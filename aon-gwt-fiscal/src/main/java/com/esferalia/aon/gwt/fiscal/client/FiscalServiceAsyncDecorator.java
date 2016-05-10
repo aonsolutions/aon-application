@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
@@ -1076,6 +1077,104 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 				new AsyncCallbackWrapper<Mod2002014>(callback));
 	}
 
+	// ---------------------------------------------------------------MODELO 200 - 2015
+
+	@Override
+	public void createMod2002015(String domainName, int domain, int year,
+			AsyncCallback<Mod2002015> callback) {
+		AON.start();
+		fsa.createMod2002015(domainName, domain, year,
+				new AsyncCallbackWrapper<Mod2002015>(callback));
+	}
+
+	@Override
+	public void initializeNewMod2002015(String domainName, int domain,
+			Mod2002015 mod200, AsyncCallback<Mod2002015> callback) {
+		AON.start();
+		fsa.initializeNewMod2002015(domainName, domain, mod200,
+				new AsyncCallbackWrapper<Mod2002015>(callback));
+	}
+
+	@Override
+	public void initializeMod2002015(String domainName, int domain,
+			Mod2002015 mod200, AsyncCallback<Mod2002015> callback) {
+		AON.start();
+		fsa.initializeMod2002015(domainName, domain, mod200,
+				new AsyncCallbackWrapper<Mod2002015>(callback));
+	}
+
+	@Override
+	public void getMod2002015ByYear(String domainName, int domain, int year,
+			AsyncCallback<Mod2002015> callback) {
+		AON.start();
+		fsa.getMod2002015ByYear(domainName, domain, year,
+				new AsyncCallbackWrapper<Mod2002015>(callback));
+	}
+
+	@Override
+	public void calculateMod2002015(Mod2002015 mod200,
+			AsyncCallback<Mod2002015> callback) {
+		AON.start();
+		fsa.calculateMod2002015(mod200, new AsyncCallbackWrapper<Mod2002015>(
+				callback));
+	}
+
+	@Override
+	public void deleteMod2002015(String domainName, int domain, int id,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.deleteMod2002015(domainName, domain, id,
+				new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void dumpAEATMod2002015(Mod2002015 mod200,
+			AsyncCallback<String> callback) {
+		AON.start();
+		fsa.dumpAEATMod2002015(mod200, new AsyncCallbackWrapper<String>(
+				callback));
+	}
+
+	@Override
+	public void getMod2002015ById(String domainName, int domain, int id,
+			AsyncCallback<Mod2002015> callback) {
+		AON.start();
+		fsa.getMod2002015ById(domainName, domain, id,
+				new AsyncCallbackWrapper<Mod2002015>(callback));
+	}
+
+	@Override
+	public void saveMod2002015(String domainName, int domain,
+			Mod2002015 mod200, AsyncCallback<Mod2002015> callback) {
+		AON.start();
+		fsa.saveMod2002015(domainName, domain, mod200,
+				new AsyncCallbackWrapper<Mod2002015>(callback));
+
+	}
+
+	@Override
+	public void validateMod2002015(Mod2002015 mod200,
+			AsyncCallback<Mod2002015> callback) {
+		AON.start();
+		fsa.validateMod2002015(mod200, new AsyncCallbackWrapper<Mod2002015>(
+				callback));
+	}
+
+	@Override
+	public void importMod2002014(String domainName, int domain,
+			Mod2002015 mod200, AsyncCallback<Mod2002015> callback) {
+		AON.start();
+		fsa.importMod2002014(domainName, domain, mod200,
+				new AsyncCallbackWrapper<Mod2002015>(callback));
+	}
+
+	@Override
+	public void fillMod2002015AccountingData(Mod2002015 mod200,
+			AsyncCallback<Mod2002015> callback) {
+		AON.start();
+		fsa.fillMod2002015AccountingData(mod200,
+				new AsyncCallbackWrapper<Mod2002015>(callback));
+	}
 	// ---------------------------------------------------------------
 	// NORMALIZED MEMORY
 	@Override

@@ -612,6 +612,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-printer")
 	String aonIconPrinter();
 
+	@ClassName("aon-icon-validate")
+	String aonIconValidate();
+
 	@ClassName("aon-icon-moveUp")
 	String aonIconMoveUp();
 

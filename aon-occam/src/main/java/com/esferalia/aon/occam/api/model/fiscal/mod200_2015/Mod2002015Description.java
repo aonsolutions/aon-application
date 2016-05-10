@@ -45,7 +45,7 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.C0022,"R\u00E9gimen entid. navieras en funci\u00F3n del tonelaje");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0028,"Tribut. conjunta Estado/Diput. Cdad. Forales");		
 		DESCRIPTION_MAP.put(Mod2002015Key.C0047,"Entidades sometidas a la normativa foral");		
-		DESCRIPTION_MAP.put(Mod2002015Key.C0035,"Aplicaci/u00F3n r/u00E9g. especial fusiones, escisiones, aportaciones y canjes valores (Cap.VII, T/u00EDt.VII)");
+		DESCRIPTION_MAP.put(Mod2002015Key.C0035,"Aplicaci\u00F3n r\u00E9g. especial fusiones, escisiones, aportaciones y canjes valores (Cap.VII, T\u00EDt.VII)");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0049,"Reg\u00EDmenes especiales de normativa foral");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0029,"R\u00E9gimen especial Canarias");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0033,"R\u00E9gimen especial miner\u00EDa");
@@ -67,10 +67,10 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.C0027,"Base imponible negativa o cero");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0030,"Transmisi\u00F3n elementos patrimoniales arts. 27.2.d) y 77.1 LIS");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0039,"Entidad que forma parte de un grupo mercantil (art. 42 del C\u00F3d. Comercio)");
-		DESCRIPTION_MAP.put(Mod2002015Key.C0067,"Obligaci/u00F3n informaci/u00F3n art. 14 RIS");
-		DESCRIPTION_MAP.put(Mod2002015Key.C0068,"Obligaci/u00F3n informaci/u00F3n art. 15 RIS");
-		DESCRIPTION_MAP.put(Mod2002015Key.C0043,"Obligaci/u00F3n informacion art.16 RIS importe CN>=45 mill. euros");
-		DESCRIPTION_MAP.put(Mod2002015Key.C0069,"Obligaci/u00F3n informacion art.16 RIS importe CN<45 mill. euros");		
+		DESCRIPTION_MAP.put(Mod2002015Key.C0067,"Obligaci\u00F3n informaci\u00F3n art. 14 RIS");
+		DESCRIPTION_MAP.put(Mod2002015Key.C0068,"Obligaci\u00F3n informaci\u00F3n art. 15 RIS");
+		DESCRIPTION_MAP.put(Mod2002015Key.C0043,"Obligaci\u00F3n informacion art.16 RIS importe CN>=45 mill. euros");
+		DESCRIPTION_MAP.put(Mod2002015Key.C0069,"Obligaci\u00F3n informacion art.16 RIS importe CN<45 mill. euros");		
 		DESCRIPTION_MAP.put(Mod2002015Key.C0045,"Inversiones anticipadas-reserva inversiones en Canarias (art. 27.11 Ley 19/1994)");		 
 		DESCRIPTION_MAP.put(Mod2002015Key.C0063,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0059,"Opci\u00F3n art. 39.2 LIS");
@@ -185,8 +185,8 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.BP192,"Legal y estatutarias (N)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BP193,"Otras reservas (N)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BP702,"Reserva de revalorizaci\u00F3n (Ley 16/2012 de 27 de diciembre) (N)");		
-		DESCRIPTION_MAP.put(Mod2002015Key.BP1001,"Reserva de capitalizaci/u00F3n (N,A,P)");
-		DESCRIPTION_MAP.put(Mod2002015Key.BP1002,"Reserva de nivelaci/u00F3n (N,A,P)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BP1001,"Reserva de capitalizaci\u00F3n (N,A,P)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BP1002,"Reserva de nivelaci\u00F3n (N,A,P)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BP194,"(Acciones y participaciones en patrimonio propias) (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BP195,"Resultados de ejercicios anteriores (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BP196,"Remanente (N)");
@@ -383,16 +383,16 @@ public class Mod2002015Description {
 		
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ1029,"Base imponible individual a integrar por las entidades que forman parte del grupo");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ1030,"Eliminaciones e incorporaciones correspondientes a la entidad");
-		DESCRIPTION_MAP.put(Mod2002015Key.LQ1031,"Integraci/u00F3n individual de las dotaciones del art. 11.12 LIS");
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ1031,"Integraci\u00F3n individual de las dotaciones del art. 11.12 LIS");
 		
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ550,"Base imponible antes de la compensaci\u00F3n de bases imponibles negativas");
-		DESCRIPTION_MAP.put(Mod2002015Key.LQ1032,"Reserva de capitalizaci/u00F3n");		
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ1032,"Reserva de capitalizaci\u00F3n");		
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ547,"Compensaci\u00F3n de bases imponibles negativas de per\u00EDodos anteriores");
 		
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ552,"Base imponible");
 		
-		DESCRIPTION_MAP.put(Mod2002015Key.LQ1033,"Reserva de nivelaci/u00F3n (Aumentos)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LQ1034,"Reserva de nivelaci/u00F3n (Disminuciones)");		
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ1033,"Reserva de nivelaci\u00F3n (Aumentos)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ1034,"Reserva de nivelaci\u00F3n (Disminuciones)");		
 		
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ553,"Resultados cooperativos");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ554,"Resultados extracooperativos");
@@ -417,7 +417,7 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ1037,"Aplicaci\u00F3n del l\u00EDmite del art. 11.12 LIS a las p\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2 LIS). Disminuciones");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ561,"Compensaci\u00F3n de cuotas por p\u00E9rdidas de cooperativas");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ562,"Cuota \u00EDntegra");
-		DESCRIPTION_MAP.put(Mod2002015Key.LQ1038,"Incremento por incumplimiento reserva de nivelaci/u00F3n (art. 105.6 LIS)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ1038,"Incremento por incumplimiento reserva de nivelaci\u00F3n (art. 105.6 LIS)");
 	}
 	
 	static {
@@ -430,25 +430,25 @@ public class Mod2002015Description {
 		
 		DESCRIPTION_MAP.put(Mod2002015Key.BN570,"D.I. interna de per\u00EDodos anteriores aplicada en el ejercicio (art. 30 RDL 4/2004)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN572,"D.I. internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 RDL 4/2004)");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN571 ,"DI internacional de per/u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 LIS)");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN1265,"DI internacional de per/u00EDodos anteriores a su incorporaci/u00F3n al grupo (art. 31 y 32 LIS)");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN165 ,"DI jur/u00EDdica generada y aplicada en el ejercicio actual (art. 31 LIS)");   // Desglose en Mod2002015BN573Key
-		DESCRIPTION_MAP.put(Mod2002015Key.BN169 ,"DI econ/u00F3mica internacional generada y aplicada en el ejercicio actual (art. 32 LIS)"); // Desglose en Mod2002015BN573Key
+		DESCRIPTION_MAP.put(Mod2002015Key.BN571 ,"DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 LIS)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN1265,"DI internacional de per\u00EDodos anteriores a su incorporaci\u00F3n al grupo (art. 31 y 32 LIS)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN165 ,"DI jur\u00EDdica generada y aplicada en el ejercicio actual (art. 31 LIS)");   // Desglose en Mod2002015BN573Key
+		DESCRIPTION_MAP.put(Mod2002015Key.BN169 ,"DI econ\u00F3mica internacional generada y aplicada en el ejercicio actual (art. 32 LIS)"); // Desglose en Mod2002015BN573Key
 		DESCRIPTION_MAP.put(Mod2002015Key.BN575,"Transparencia fiscal internacional (art. 100.11 LIS)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN577,"D.I. interna intersocietaria al 5/10% (cooperativas)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN581,"Bonificaciones empresas navieras en Canarias (art. 76 Ley 19/1994)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN582,"Cuota \u00EDntegra ajustada positiva");
 		
 		DESCRIPTION_MAP.put(Mod2002015Key.BN583,"Apoyo fiscal a la inversi\u00F3n y otras deducciones");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN585,"Deducci\u00F3n DT 24/u00AA.7 LIS, art. 42 RDL 4/2004 y art. 36 ter Ley 43/95");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN584,"Deducciones DT 24/u00AA.1 LIS y DT 8/u00AA RDL 4/2004");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN585,"Deducci\u00F3n DT 24\u00AA.7 LIS, art. 42 RDL 4/2004 y art. 36 ter Ley 43/95");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN584,"Deducciones DT 24\u00AA.1 LIS y DT 8\u00AA RDL 4/2004");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN588,"Deducciones con l\u00EDmite del Cap\u00EDtulo IV T\u00EDtulo VI RDL 4/2004 y LIS");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN1039,"Deducciones por producciones cinematogr/u00E1fi cas extranjeras (art. 36.2 LIS)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN1039,"Deducciones por producciones cinematogr\u00E1fi cas extranjeras (art. 36.2 LIS)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN565,"Deducci\u00F3n donaciones a entidades sin fines de lucro (Ley 49/2002)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN590,"Deducciones Inversi\u00F3n Canarias (Ley 20/1991)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN399,"Deducciones espec\u00EDficas de las entidades sometidas a normativa foral");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN1040,"Deducci/u00F3n por reversi/u00F3n de medidas temporales DT 37/u00AA.1 LIS");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN1041,"Deducci/u00F3n por reversi/u00F3n de medidas temporales DT 37/u00AA.2 LIS");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN1040,"Deducci\u00F3n por reversi\u00F3n de medidas temporales DT 37\u00AA.1 LIS");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN1041,"Deducci\u00F3n por reversi\u00F3n de medidas temporales DT 37\u00AA.2 LIS");
 				
 		DESCRIPTION_MAP.put(Mod2002015Key.BN082,"Deducciones sin l\u00EDmite I + D + i");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN592,"Cuota l\u00EDquida positiva");
@@ -456,7 +456,7 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.BN595,"Retenciones e ingresos a cuenta / pagos a cuenta participaciones I.I.C.");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN596,"Retenciones e ingresos a cuenta / pagos a cuenta participaciones I.I.C. imputados por agrupaciones de inter\u00E9s econ\u00F3mico y uniones temporales de empresas");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN597,"Retenciones sobre los premios de determinadas loter\u00EDas y apuestas");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN083,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 44.2 RDL 4/2004 y DT 24/u00AA.7 LIS)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN083,"Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 44.2 RDL 4/2004 y DT 24\u00AA.7 LIS)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN1042,"Abono de deducciones por producciones extranjeras (art. 36.2 LIS)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN599,"Cuota del ejercicio a ingresar o a devolver (Estado)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN600,"Cuota del ejercicio a ingresar o a devolver (D. Forales / Navarra)");
@@ -507,27 +507,27 @@ public class Mod2002015Description {
 	}
 	
 	static {
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1240,"a) Gastos financieros del per/u00EDodo impositivo derivados de deudas por adquisici/u00F3n de particip. afectados por el art. 16.5 y/o 83 LIS (sin signo)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1241,"b) L/u00EDmite adicional a la deducci/u00F3n de gastos financieros (art. 16.5 y/o 83 LIS) (sin signo)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1242,"c1) Gastos financieros del per/u00EDodo impositivo deducibles tras aplicaci/u00F3n l/u00EDmite art. 16.5 y/o 83 LIS (<= [b], [a=c1+c2], >= 0)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1243,"c2) Gastos financieros del per/u00EDodo impositivo no deducibles tras aplicaci/u00F3n l/u00EDmite art. 16.5 y/o 83 LIS (=[a- c1], >= 0)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1244,"d) Gastos financieros pendientes de deducir en periodos anteriores afectados por art. 16.5 y/o 83 LIS, deducibles tras este l/u00EDmite ([b>=c1+d], >= 0]");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1240,"a) Gastos financieros del per\u00EDodo impositivo derivados de deudas por adquisici\u00F3n de particip. afectados por el art. 16.5 y/o 83 LIS (sin signo)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1241,"b) L\u00EDmite adicional a la deducci\u00F3n de gastos financieros (art. 16.5 y/o 83 LIS) (sin signo)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1242,"c1) Gastos financieros del per\u00EDodo impositivo deducibles tras aplicaci\u00F3n l\u00EDmite art. 16.5 y/o 83 LIS (<= [b], [a=c1+c2], >= 0)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1243,"c2) Gastos financieros del per\u00EDodo impositivo no deducibles tras aplicaci\u00F3n l\u00EDmite art. 16.5 y/o 83 LIS (=[a- c1], >= 0)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1244,"d) Gastos financieros pendientes de deducir en periodos anteriores afectados por art. 16.5 y/o 83 LIS, deducibles tras este l\u00EDmite ([b>=c1+d], >= 0]");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1245,"e) Gastos financieros del periodo impositivo no afectados por art. 16.5, 67 b) y/o 83 LIS (sin signo)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1246,"f) Gastos financieros del per/u00EDodo impositivo excluidos aquellos a que se refiere el art. 15 g), h) y j) LIS (= [c1+e])");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1247,"g) Ingresos financieros del per/u00EDodo impositivo derivados de la cesi/u00F3n a terceros de capitales propios");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1248,"h) Gastos financieros netos del per/u00EDodo impositivo (= [f-g])");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1249,"i) L/u00EDmite a la deducci/u00F3n de gastos financieros netos (= 30%* [i1-i2-i3-i4+i5], m/u00EDnimo 1 mill/u00F3n de euros si gasto financiero neto >= 1 mill/u00F3n)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1250,"i1) Resultado de explotaci/u00F3n (signo igual a Cuenta de P/u00E9rd. y Gan.)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1251,"i2) Amortizaci/u00F3n del inmovilizado (signo igual a Cuenta de P/u00E9rd. y Gan.)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1252,"i3) Imputaci/u00F3n de subvenciones de inmovilizado no financiero y otras (signo igual a Cuenta de P/u00E9rd. y Gan.)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1253,"i4) Deterioro y resultado por enajenaciones del inmovilizado (signo igual a Cuenta de P/u00E9rd. y Gan.)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1254,"i5) Ingresos financieros de participaciones en instrumentos de patrimonio (signo igual a Cuenta de P/u00E9rd. y Gan.)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1255,"j) Adici/u00F3n por l/u00EDmite beneficio operativo no aplicado en los cinco ejercicios anteriores");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1256,"k1) Gastos financieros netos del per/u00EDodo impositivo deducibles (<= [i+j], [h=k1+k2], >= 0)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1257,"k2) Gastos financieros netos del per/u00EDodo impositivo no deducibles (=[h - k1], <= [h - i], >= 0)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1258,"l) Gastos financieros pendientes de deducir en periodos impositivos anteriores afectados por art. 16.5, y/o 83 LIS deducibles tras aplicar los 2 l/u00EDmites (<= [d], >= 0)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1246,"f) Gastos financieros del per\u00EDodo impositivo excluidos aquellos a que se refiere el art. 15 g), h) y j) LIS (= [c1+e])");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1247,"g) Ingresos financieros del per\u00EDodo impositivo derivados de la cesi\u00F3n a terceros de capitales propios");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1248,"h) Gastos financieros netos del per\u00EDodo impositivo (= [f-g])");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1249,"i) L\u00EDmite a la deducci\u00F3n de gastos financieros netos (= 30%* [i1-i2-i3-i4+i5], m\u00EDnimo 1 mill\u00F3n de euros si gasto financiero neto >= 1 mill\u00F3n)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1250,"i1) Resultado de explotaci\u00F3n (signo igual a Cuenta de P\u00E9rd. y Gan.)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1251,"i2) Amortizaci\u00F3n del inmovilizado (signo igual a Cuenta de P\u00E9rd. y Gan.)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1252,"i3) Imputaci\u00F3n de subvenciones de inmovilizado no financiero y otras (signo igual a Cuenta de P\u00E9rd. y Gan.)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1253,"i4) Deterioro y resultado por enajenaciones del inmovilizado (signo igual a Cuenta de P\u00E9rd. y Gan.)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1254,"i5) Ingresos financieros de participaciones en instrumentos de patrimonio (signo igual a Cuenta de P\u00E9rd. y Gan.)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1255,"j) Adici\u00F3n por l\u00EDmite beneficio operativo no aplicado en los cinco ejercicios anteriores");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1256,"k1) Gastos financieros netos del per\u00EDodo impositivo deducibles (<= [i+j], [h=k1+k2], >= 0)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1257,"k2) Gastos financieros netos del per\u00EDodo impositivo no deducibles (=[h - k1], <= [h - i], >= 0)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1258,"l) Gastos financieros pendientes de deducir en periodos impositivos anteriores afectados por art. 16.5, y/o 83 LIS deducibles tras aplicar los 2 l\u00EDmites (<= [d], >= 0)");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1259,"m) Gastos financieros netos pendientes de deducir de periodos impositivos anteriores no afectados por art. 16.5 y/o 83 LIS aplicados");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1260,"Total gastos financieros del per/u00EDodo impositivo no deducibles (= [c2+k2])");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1260,"Total gastos financieros del per\u00EDodo impositivo no deducibles (= [c2+k2])");
 	}
 	
 	static {
@@ -548,21 +548,21 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.TR426,"Cuota del ejercicio a ingresar o a devolver. BIZKAIA");
 		DESCRIPTION_MAP.put(Mod2002015Key.TR427,"Cuota del ejercicio a ingresar o a devolver. NAVARRA");
 		DESCRIPTION_MAP.put(Mod2002015Key.TR600,"Cuota del ejercicio a ingresar o a devolver. TOTAL");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR402,"1\u00BA Pago fraccionados 1/u00BA. ARABA");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR442,"1\u00BA Pago fraccionados 1/u00BA. GIPUZKOA");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR443,"1\u00BA Pago fraccionados 1/u00BA. BIZKAIA");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR444,"1\u00BA Pago fraccionados 1/u00BA. NAVARRA");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR602,"1\u00BA Pago fraccionados 1/u00BA. TOTAL");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR445,"2\u00BA Pago fraccionados 2/u00BA. ARABA");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR446,"2\u00BA Pago fraccionados 2/u00BA. GIPUZKOA");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR447,"2\u00BA Pago fraccionados 2/u00BA. BIZKAIA");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR448,"2\u00BA Pago fraccionados 2/u00BA. NAVARRA");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR604,"2\u00BA Pago fraccionados 2/u00BA. TOTAL");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR449,"3\u00BA Pago fraccionados 3/u00BA. ARABA");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR451,"3\u00BA Pago fraccionados 3/u00BA. GIPUZKOA");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR450,"3\u00BA Pago fraccionados 3/u00BA. BIZKAIA");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR465,"3\u00BA Pago fraccionados 3/u00BA. NAVARRA");
-		DESCRIPTION_MAP.put(Mod2002015Key.TR606,"3\u00BA Pago fraccionados 3/u00BA. TOTAL");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR402,"1\u00BA Pago fraccionados 1\u00BA. ARABA");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR442,"1\u00BA Pago fraccionados 1\u00BA. GIPUZKOA");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR443,"1\u00BA Pago fraccionados 1\u00BA. BIZKAIA");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR444,"1\u00BA Pago fraccionados 1\u00BA. NAVARRA");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR602,"1\u00BA Pago fraccionados 1\u00BA. TOTAL");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR445,"2\u00BA Pago fraccionados 2\u00BA. ARABA");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR446,"2\u00BA Pago fraccionados 2\u00BA. GIPUZKOA");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR447,"2\u00BA Pago fraccionados 2\u00BA. BIZKAIA");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR448,"2\u00BA Pago fraccionados 2\u00BA. NAVARRA");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR604,"2\u00BA Pago fraccionados 2\u00BA. TOTAL");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR449,"3\u00BA Pago fraccionados 3\u00BA. ARABA");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR451,"3\u00BA Pago fraccionados 3\u00BA. GIPUZKOA");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR450,"3\u00BA Pago fraccionados 3\u00BA. BIZKAIA");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR465,"3\u00BA Pago fraccionados 3\u00BA. NAVARRA");
+		DESCRIPTION_MAP.put(Mod2002015Key.TR606,"3\u00BA Pago fraccionados 3\u00BA. TOTAL");
 		DESCRIPTION_MAP.put(Mod2002015Key.TR474,"Cuota diferencial. ARABA");
 		DESCRIPTION_MAP.put(Mod2002015Key.TR475,"Cuota diferencial. GIPUZKOA");
 		DESCRIPTION_MAP.put(Mod2002015Key.TR476,"Cuota diferencial. BIZKAIA");

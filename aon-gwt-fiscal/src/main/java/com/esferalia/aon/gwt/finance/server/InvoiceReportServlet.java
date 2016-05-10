@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.finance.server;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,13 +34,6 @@ public class InvoiceReportServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
-			Enumeration<String> names = req.getParameterNames();
-			while (names.hasMoreElements()) {
-				String name = names.nextElement();
-				System.out.println(name + " = " + req.getParameter(name));
-			}
-			
-			
 			String domainName = req.getParameter( IRequestParamsNames.DOMAIN_NAME);
 			int domainId = Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID));
 			

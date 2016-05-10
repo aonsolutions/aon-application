@@ -56,6 +56,24 @@ public class FiscalModelsTreeNode extends TreeNode<EnterpriseYear> {
 			}
 		};
 
+		public static TreeNodeFiscalModelTypes<Mod2002015TreeObject> MODEL_200_2015 = new TreeNodeFiscalModelTypes<Mod2002015TreeObject>() {
+			@Override
+			public TreeNode<Mod2002015TreeObject> getInstance() {
+				return new Model2002015TreeNode();
+			}
+			@Override
+			public boolean accept(IFiscalModel fm) {
+				return (fm.getModel() == FiscalModelType.M200 && fm.getYear() == 2015);
+			}
+			@Override
+			public Mod2002015TreeObject getFiscalModel(IFiscalModel fm) {
+				Mod2002015TreeObject treeObj = fm.getId() == null
+					?new Mod2002015TreeObject(FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear())
+					:new Mod2002015TreeObject(FiscalTree.getCurrentDomainName(), fm.getDomain(), fm.getYear(), fm.getId(), fm.isComplementary());
+				return treeObj;
+			}
+		};
+
 		public static TreeNodeFiscalModelTypes<Mod202> MODEL_202 = new TreeNodeFiscalModelTypes<Mod202>() {
 			@Override
 			public TreeNode<Mod202> getInstance() {

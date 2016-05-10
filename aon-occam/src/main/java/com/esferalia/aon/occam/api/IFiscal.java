@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
@@ -190,5 +191,17 @@ public interface IFiscal {
 	public String dumpAEATMod2002014(Mod2002014 mod200);
 	public Mod2002014 importMod2002013(AONContext ctx, Mod2002014 mod200);
 	
+	// 				   		  MOD200 - 2015
+	public Mod2002015 createMod2002015(AONContext ctx, int year);
+	public Mod2002015 initializeNewMod2002015(AONContext ctx, Mod2002015 mod200);
+	public Mod2002015 initializeMod2002015(AONContext ctx, Mod2002015 mod200);
+	public Mod2002015 getMod2002015ByYear(AONContext ctx, int year);
+	public Mod2002015 getMod2002015ById(AONContext ctx, int id);
+	public Mod2002015 calculateMod2002015(Mod2002015 mod200);
+	public Mod2002015 validateMod2002015(Mod2002015 mod200);
+	public Mod2002015 saveMod2002015(AONContext ctx, Mod2002015 mod200);
+	public void deleteMod2002015(AONContext ctx, int id);
+	public String dumpAEATMod2002015(Mod2002015 mod200);
+	public Mod2002015 importMod2002014(AONContext ctx, Mod2002015 mod200);
 
 }

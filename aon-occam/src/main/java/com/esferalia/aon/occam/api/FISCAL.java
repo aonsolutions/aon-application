@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
@@ -1181,6 +1182,114 @@ public class FISCAL {
 
 	public static String dumpAEATMod2002013(Mod2002013 mod200) {
 		return getFiscal().dumpAEATMod2002013(mod200);
+	}
+
+	// ----------------------------------MODELO 200 - 2015
+	public static Mod2002015 createMod2002015(String domainName, int domain,String login,
+			int year) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,login);
+			return getFiscal().createMod2002015(ctx, year);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod2002015 initializeNewMod2002015(String domainName,
+			int domain,String login, Mod2002015 mod200) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,login);
+			return getFiscal().initializeNewMod2002015(ctx, mod200);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod2002015 initializeMod2002015(String domainName, int domain,String login,
+			Mod2002015 mod200) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,login);
+			return getFiscal().initializeMod2002015(ctx, mod200);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod2002015 getMod2002015ByYear(String domainName, int domain,String login,
+			int year) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,login);
+			return getFiscal().getMod2002015ByYear(ctx, year);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod2002015 getMod2002015ById(String domainName, int domain,String login,
+			int id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,login);
+			return getFiscal().getMod2002015ById(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Mod2002015 calculateMod2002015(Mod2002015 mod200) {
+		return getFiscal().calculateMod2002015(mod200);
+	}
+
+	public static Mod2002015 validateMod2002015(Mod2002015 mod200) {
+		return getFiscal().validateMod2002015(mod200);
+	}
+
+	public static Mod2002015 saveMod2002015(String domainName, int domain,String login,
+			Mod2002015 mod200) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,login);
+			return getFiscal().saveMod2002015(ctx, mod200);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static void deleteMod2002015(String domainName, int domain,String login, int id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain,login);
+			getFiscal().deleteMod2002015(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static String dumpAEATMod2002015(Mod2002015 mod200) {
+		return getFiscal().dumpAEATMod2002015(mod200);
+	}
+
+	public static Mod2002015 importMod2002014(String domainName, int domain,String login,
+			Mod2002015 mod200) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, login);
+			return getFiscal().importMod2002014(ctx, mod200);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
 	}
 
 	// ----------------------------------MODELO 200 - 2014

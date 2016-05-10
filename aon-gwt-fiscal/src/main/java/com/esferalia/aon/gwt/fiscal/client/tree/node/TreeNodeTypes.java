@@ -50,6 +50,12 @@ public abstract class TreeNodeTypes<T> {
 			return new Model2002014TreeNode();
 		}
 	};
+	public static TreeNodeTypes<Mod2002015TreeObject> CORPORATE_TAX_2015 = new TreeNodeTypes<Mod2002015TreeObject>() {
+		@Override
+		public TreeNode<Mod2002015TreeObject> getInstance() {
+			return new Model2002015TreeNode();
+		}
+	};
 	
 	public abstract TreeNode<T> getInstance();
 }

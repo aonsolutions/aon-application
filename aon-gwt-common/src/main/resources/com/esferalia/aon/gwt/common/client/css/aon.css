@@ -651,6 +651,11 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	gwt-image: "aonIconPrinter";
 }
 
+@sprite .aon-icon-validate {
+	width: auto;
+	gwt-image: "aonIconValidate";
+}
+
 @sprite .aon-icon-moveUp {
 	width: auto;
 	gwt-image: "aonIconMoveUp";

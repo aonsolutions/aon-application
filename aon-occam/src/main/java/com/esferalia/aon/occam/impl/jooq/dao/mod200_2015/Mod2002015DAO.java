@@ -45,7 +45,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.Mod2002014DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.jaxb.MOD2002014;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.jaxb.MOD2002015;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.jaxb.Mod2002015toMOD2002015;
 import com.esferalia.aon.occam.server.fiscal.format.mod200.Mod2002015Import2014;
@@ -73,8 +72,8 @@ public class Mod2002015DAO  {
 
 	public static Mod2002015 save(AONContext ctx, Mod2002015 mod200) {
 		if (mod200.getPeriodType() == 1) {
-			mod200.setPeriodStart(AonDateUtils.getYearFirstDay(2014));
-			mod200.setPeriodEnd(AonDateUtils.getYearLastDay(2014));
+			mod200.setPeriodStart(AonDateUtils.getYearFirstDay(2015));
+			mod200.setPeriodEnd(AonDateUtils.getYearLastDay(2015));
 		}
 		if (mod200.getId() == null) {
 			return insert(ctx, mod200);
@@ -573,19 +572,14 @@ public class Mod2002015DAO  {
 			DoubleVariable2015 v = null;
 			for (String stringKey : Mod2002015Compute.COMPUTE_EXPRESSION_MAP.keySet()) {
 				Mod2002015Key k = Mod2002015Key.valueOf(stringKey.toString());
-				String expression = Mod2002015Compute.COMPUTE_EXPRESSION_MAP.get(stringKey);
 				DoubleVariable2015 existingVariable = mod200.getVariable(k);
-				if ( existingVariable == null ) {
-					existingVariable = new DoubleVariable2015( k );
-					existingVariable.setValue( 0.0 );
-				}
-				ctx.put(stringKey, existingVariable.getValue());
-				Object ret = ctx.evaluateExpression(stringKey,expression);
-				
+				Double existingValue = ( existingVariable == null )?0.0:existingVariable.getValue();
+				ctx.put(stringKey, existingValue);
+				Object ret = ctx.evaluateExpression(stringKey,Mod2002015Compute.COMPUTE_EXPRESSION_MAP.get(stringKey));
 				if (ret instanceof Double) {
 					Double calculated = (Double) ret;
 					ctx.put(stringKey, calculated);
-					if ( !AonMathUtils.equals( existingVariable.getValue() , calculated ) ) {
+					if ( !AonMathUtils.equals( existingValue , calculated ) ) {
 						v = new DoubleVariable2015( k );
 						v.setValue( calculated );
 						if (addToDraft) {
@@ -616,7 +610,7 @@ public class Mod2002015DAO  {
 			}
 			return mod200;
 		} catch (Throwable e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			throw new AonCoreException(e);
 		}
 	}
@@ -652,6 +646,7 @@ public class Mod2002015DAO  {
 		Mod2002015MVELContext ctx = new Mod2002015MVELContext( mod200, ACCEPTER );
 		ctx.setExpressionMap(Mod2002015Activation.ACTIVE_EXPRESSION_MAP);
 		addCharacters(ctx,mod200);
+		addBalanceCharacters(ctx,mod200);
 		for (Mod2002015Key key : Mod2002015Key.values() ) {
 			if (Mod2002015Activation.ACTIVE_EXPRESSION_MAP.containsKey(key.toString()) ) {
 				Object ret = ctx.get( key.toString() );
@@ -853,7 +848,7 @@ public class Mod2002015DAO  {
 		try {
 			MOD2002015 mod = Mod2002015toMOD2002015.getMOD2002015(mod200);
 			StringWriter writer = new StringWriter();
-			JAXBContext context = JAXBContext.newInstance(MOD2002014.class);
+			JAXBContext context = JAXBContext.newInstance(MOD2002015.class);
 			Marshaller um = context.createMarshaller();
 			um.setProperty("jaxb.encoding", "ISO-8859-1");
 			um.marshal(mod,writer);

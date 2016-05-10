@@ -854,7 +854,6 @@ public enum Mod2002015Key implements IMod200Key {
 	,BN569(569)
 	,BN103(103) // Tipo de gravamen 2015, para desgloses de doble imposicion interna e internacional
 	,BN570(570) // DI interna de periodos anteriores aplicada en el ejercicio (art.30 RDL 4/2004)		
-		//,BN101(101)	    ,BN102(102)		,BN696(696)		,BN697(697)
 		,BN104(104)		,BN105(105)		,BN846(846)		,BN847(847)		//,BN848(848)
 		,BN106(106)		,BN107(107)		,BN282(282)		,BN283(283)		,BN284(284)
 		,BN108(108)		,BN109(109)		,BN702(702)		,BN703(703)		,BN707(707)

@@ -21,7 +21,9 @@ import com.esferalia.aon.gwt.fiscal.client.tree.node.FiscalModelsTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.FiscalModelsTreeNode.TreeNodeFiscalModelTypes;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002013TreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002014TreeObject;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002015TreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Model2002014TreeNode;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.Model2002015TreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.ModelTreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNode;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.TreeNodeTypes;
@@ -32,6 +34,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -406,6 +409,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 	public class NewContextMenu extends ContextMenu {
 		
 		public NewContextMenu() {
+			addNewMod2002015();
 			addNewMod2022016();
 			addSeparator();
 			addNewMod202();
@@ -575,8 +579,59 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 					});
 			return this; 
 		}
-	}
 
+		protected NewContextMenu addNewMod2002015() {
+			addItem(FiscalModelType.M200 
+					,AON.MSG.newSomething( AON.MSG.fiscalModelType( FiscalModelType.M200 ) + " - 2015" )  
+					, new ScheduledCommand() {
+						
+						@Override
+						public void execute() {
+							Mod2002015 mod200 = new Mod2002015();
+							mod200.setDomain(getEnterprise().getDomain());
+							mod200.setYear(2015);
+							FiscalTree.FISCAL_SERVICE.initializeNewMod2002015(FiscalTree.getCurrentDomainName()
+			        		, getEnterprise().getDomain(), mod200
+			        		, new AsyncCallback<Mod2002015>() {
+			
+								@Override
+								public void onSuccess(Mod2002015 mod200) {
+		        					final ModelTreeNode parentNode = getFiscalModelsNode(mod200.getYear()).getModelNode(
+		        							mod200.getYear(),FiscalModelType.M200);
+		        					final Model2002015TreeNode node = (Model2002015TreeNode)  
+		        						TreeNodeFiscalModelTypes.CORPORATE_TAX_2015.getInstance().render(parentNode
+										,TreeNodeFiscalModelTypes.MODEL_200_2015.getFiscalModel(mod200));
+		        					node.getTreeObject().setFiscalTreeCallback(new FiscalTreeCallback<Mod2002015TreeObject>() {
+										
+										@Override
+										public void remove(Mod2002015TreeObject treeObject) {
+											node.remove();
+											parentNode.getTree().setSelectedItem(parentNode);
+										}
+										@Override
+										public void onError(Mod2002015TreeObject treeObject) {}
+										
+										@Override
+										public void changeLabel(Mod2002015TreeObject treeObject) {
+											node.setLabel(treeObject);
+										}
+									});
+	
+		        					getFiscalModelsNode(mod200.getYear()).setState(true);
+		            		    	parentNode.setState(true);
+	            		    		tree.setSelectedItem(node);
+								}
+			
+								@Override
+								public void onFailure(Throwable caught) {
+								}
+							});
+						}
+					});
+			return this; 
+		}
+	}
+	
 	@Override
 	public void onNewButtonClick(ClickEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();

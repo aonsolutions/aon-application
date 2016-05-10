@@ -93,7 +93,7 @@ public class Mod2002015Import2014 {
 			,(mod200old,mod200new) -> mod200new.setEnterpriseName(mod200old.getEnterpriseName())          // Identificación - Apellidos y nombre o Razón Social
 			,(mod200old,mod200new) -> mod200new.setEnterprisePhone1(mod200old.getEnterprisePhone1())      // Identificación - Teléfono 1
 			,(mod200old,mod200new) -> mod200new.setEnterprisePhone2(mod200old.getEnterprisePhone2())      // Identificación - Teléfono 2
-			,(mod200old,mod200new) -> mod200new.setYear( 2014 )                                           // Ejercicio
+			,(mod200old,mod200new) -> mod200new.setYear( 2015 )                                           // Ejercicio
 			,(mod200old,mod200new) -> mod200new.setAdministration( mod200old.getAdministration() )		  // Administracion                                           // Ejercicio
 			
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.C0001, mod200old.getDoubleValue(Mod2002014Key.C0001))  // Entidad sin ánimo de lucro acogida régimen fiscal Título II Ley 49/2002 [001]			                                                    

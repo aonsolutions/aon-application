@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
@@ -49,6 +50,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod3902015DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.Mod2002013DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.Mod2002014DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.Mod2002015DAO;
 
 public class FiscalImpl implements IFiscal {
 
@@ -728,5 +730,58 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public Mod2002014 importMod2002013(AONContext ctx, Mod2002014 mod200) {
 		return Mod2002014DAO.importMod2002013(ctx,mod200);
+	}
+
+	// ----------------------------------------------------------- [MODELO 200 - 2015]
+	@Override
+	public Mod2002015 createMod2002015(AONContext ctx, int year) {
+		return Mod2002015DAO.createNewMod200(ctx,year);
+	}
+	@Override
+	public Mod2002015 initializeNewMod2002015(AONContext ctx, Mod2002015 mod200) {
+		return Mod2002015DAO.initializeNewMod200(ctx,mod200);
+	}
+	
+	@Override
+	public Mod2002015 initializeMod2002015(AONContext ctx, Mod2002015 mod200) {
+		return Mod2002015DAO.initializeMod200(ctx,mod200);
+	}
+
+	@Override
+	public Mod2002015 getMod2002015ByYear(AONContext ctx, int year) {
+		return Mod2002015DAO.getByYear(ctx,year);
+	}
+
+	@Override
+	public Mod2002015 getMod2002015ById(AONContext ctx, int id) {
+		return Mod2002015DAO.getById(ctx,id);
+	}
+	@Override
+	public Mod2002015 calculateMod2002015(Mod2002015 mod200) {
+		return Mod2002015DAO.calculate(mod200);
+	}
+	@Override
+	public Mod2002015 validateMod2002015(Mod2002015 mod200) {
+		return Mod2002015DAO.validate(mod200);
+	}
+	@Override
+	public Mod2002015 saveMod2002015(AONContext ctx, Mod2002015 mod200) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod2002015DAO.save(ctx, mod200));
+	}
+	@Override
+	public void deleteMod2002015(AONContext ctx, int id) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod2002015DAO.delete(ctx, id));
+	}
+
+	@Override
+	public String dumpAEATMod2002015(Mod2002015 mod200) {
+		return Mod2002015DAO.dumpAEAT(mod200);
+	}
+
+	@Override
+	public Mod2002015 importMod2002014(AONContext ctx, Mod2002015 mod200) {
+		return Mod2002015DAO.importMod2002014(ctx,mod200);
 	}
 }

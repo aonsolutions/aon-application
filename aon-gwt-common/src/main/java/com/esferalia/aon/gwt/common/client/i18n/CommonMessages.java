@@ -1667,6 +1667,8 @@ public interface CommonMessages extends Messages {
 	String doubleContributionNational2013();
 	@DefaultMessage("Deducciones doble imposici\u00F3n interna 2014")
 	String doubleContributionNational2014();
+	@DefaultMessage("Deducciones doble imposici\u00F3n interna 2015")
+	String doubleContributionNational2015();
 	
 	@DefaultMessage("Deducci\u00F3n pendiente/generada")
 	String pendingDeduction();
@@ -1676,9 +1678,10 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("2013 deducci\u00F3n pendiente")
 	String pendingDeduction2013();
-	
 	@DefaultMessage("2014 deducci\u00F3n pendiente")
 	String pendingDeduction2014();
+	@DefaultMessage("2015 deducci\u00F3n pendiente")
+	String pendingDeduction2015();
 	
 	@DefaultMessage("Deducci\u00F3n aplicada en esta liquidaci\u00F3n")
 	String appliedDeduction();
@@ -1691,9 +1694,10 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Deducciones doble imposici\u00F3n internacional 2013")
 	String doubleContributionInternational2013();
-
 	@DefaultMessage("Deducciones doble imposici\u00F3n internacional 2014")
 	String doubleContributionInternational2014();
+	@DefaultMessage("Deducciones doble imposici\u00F3n internacional 2015")
+	String doubleContributionInternational2015();
 
 	@DefaultMessage("Deducci\u00F3n generada")
 	String generatedDeduction();
