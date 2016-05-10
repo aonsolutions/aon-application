@@ -116,7 +116,7 @@ public class WebpolGuestsWriter implements Serializable {
 		TIPO2 tipo2 = new TIPO2();
 		
 		if(guest.getDocument()!=null){
-			if(guest.getDocumentType()==DocumentType.NIF || guest.getDocumentType()==DocumentType.CIF){
+			if(guest.getDocumentCountry()==Country.ES){
 				tipo2.setNumeroDocumentoEsp(guest.getDocument());
 			} else {
 				tipo2.setNumeroPasaporteExtranjeros(guest.getDocument());
@@ -124,10 +124,10 @@ public class WebpolGuestsWriter implements Serializable {
 		}
 		
 		if(guest.getDocumentType()==null || guest.getDocumentType()==DocumentType.NIF){
-			if(guest.getDocumentCountry()==Country.IT){
-				tipo2.setTipoDocumento("I");
-			} else {
+			if(guest.getDocumentCountry()==Country.ES){
 				tipo2.setTipoDocumento("D");
+			} else {
+				tipo2.setTipoDocumento("I");
 			}
 		} else if(guest.getDocumentType()==DocumentType.CIF){
 			tipo2.setTipoDocumento("Y");

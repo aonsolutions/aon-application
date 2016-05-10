@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich">
 	
-	<aon:panel>
+	<aon:panel rendered="#{!productionReport.nevv}">
 		<c:if test="#{!skipTableHeader}">
 			<f:facet name="header">
 				<aon:outputLabel value="#{tableHeader}" />

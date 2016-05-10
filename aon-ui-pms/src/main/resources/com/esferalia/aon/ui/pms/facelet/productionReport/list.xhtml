@@ -11,11 +11,11 @@
 	
 		<a4j:region>
 			<h:form>
-				<a4j:poll status="aonStatus" interval="30000" reRender="productionReportList" />
+				<a4j:poll status="aonStatus" interval="15000" reRender="productionReport-listData" />
 			</h:form>
 		</a4j:region>
 	
-		<aon:form id="productionReportList">
+		<aon:form id="productionReport-list">
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
@@ -62,7 +62,7 @@
 							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
 							action="productionReport_list"
 							actionListener="#{productionReport.onSearch}"
-							reRender="productionReportList"
+							reRender="productionReport-list"
 							accesskey="#{bundle.aon_key_search}"
 							onclick="Richfaces.showModalPanel('waitProccess')"
 							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
@@ -70,7 +70,7 @@
 					</aon:panelGrid>
 				</aon:div>
 			
-				<aon:div rendered="#{!productionReport.nevv}">
+				<aon:div id="productionReport-listData">
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
 						<ui:param name="model" value="#{productionReport.productionModel}" />
 						<ui:param name="tableHeader" value="FACTURACION POR AREA" />

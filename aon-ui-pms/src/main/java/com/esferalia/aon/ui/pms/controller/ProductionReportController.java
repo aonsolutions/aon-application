@@ -175,7 +175,7 @@ public class ProductionReportController implements Serializable {
 		init();
 		
 		try {
-			session.setMaxInactiveInterval(2*60);
+			session.setMaxInactiveInterval(6*60);
 			buildProductionReport();
 		} catch (AonSQLException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -183,17 +183,6 @@ public class ProductionReportController implements Serializable {
 			session.setMaxInactiveInterval(defaultInactiveInterval);
 		}
 		
-		productionModel = buildModel(productionMap);
-		paxModel = buildModel(paxMap);
-		ratioModel = buildModel(getProductionRatioMap());
-		advancePaymethodModel = buildModel(advancePaymethodMap);
-		paymethodModel = buildModel(paymethodMap);
-		pendingProductionModel = buildModel(pendingProductionMap);
-
-		productionTotal = buildTotalizeTo(productionMap);
-		ratioTotal = buildTotalizeTo(getProductionRatioMap());
-		advancePaymethodTotal = buildTotalizeTo(advancePaymethodMap);
-		paymethodTotal = buildTotalizeTo(paymethodMap);
 	}
 	
 	private SerializableListDataModel buildModel(Map<String, ReportObject> map){
@@ -235,8 +224,8 @@ public class ProductionReportController implements Serializable {
 			FacesContext faces = FacesContext.getCurrentInstance();
 			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
 			String fileName = "informe_produccion";
-			dateFormatter.applyPattern("yyyy/MM/dd_HH:mm:ss");
-			fileName += "_" + dateFormatter.format(new Date());
+			dateFormatter.applyPattern("yyyy/MM/dd");
+			fileName += "_" + hotel.getWorkPlace().getDescription() + "_" + dateFormatter.format(getDate());
 			response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
 			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xls\";");
 			ServletOutputStream output = response.getOutputStream();
@@ -323,6 +312,9 @@ public class ProductionReportController implements Serializable {
 				}
 			}
 			
+			productionModel = buildModel(productionMap);
+			productionTotal = buildTotalizeTo(productionMap);
+
 			LOGGER.info("****** Inicio de la busqueda de pax              -> " + timeFormatter.format(new Date()));
 			tmpDate = new Date();
 			paxRs = paxStmt.executeQuery();
@@ -351,6 +343,10 @@ public class ProductionReportController implements Serializable {
 					paxMap.get("PAX").setPreviousDayAmount(amount);
 				}
 			}
+			
+			paxModel = buildModel(paxMap);
+			ratioModel = buildModel(getProductionRatioMap());
+			ratioTotal = buildTotalizeTo(getProductionRatioMap());
 			
 			LOGGER.info("****** Inicio de la busqueda de facturas         -> " + timeFormatter.format(new Date()));
 			tmpDate = new Date();
@@ -391,6 +387,12 @@ public class ProductionReportController implements Serializable {
 				}
 			}
 			
+			advancePaymethodModel = buildModel(advancePaymethodMap);
+			advancePaymethodTotal = buildTotalizeTo(advancePaymethodMap);
+
+			paymethodModel = buildModel(paymethodMap);
+			paymethodTotal = buildTotalizeTo(paymethodMap);
+
 			LOGGER.info("****** Inicio de la busqueda de prod. pendiente  -> " + timeFormatter.format(new Date()));
 			tmpDate = new Date();
 			pendingProductionRs = pendingProductionStmt.executeQuery();
@@ -428,6 +430,8 @@ public class ProductionReportController implements Serializable {
 					pendingProductionMap.get(description).setPreviousDayAmount(_amount+amount);
 				}
 			}
+			
+			pendingProductionModel = buildModel(pendingProductionMap);
 			
 			diff = (new Date()).getTime() - logDate.getTime();
 	        LOGGER.info("****** Tiempo TOTAL                              -> " + diff + " seg. (" 
@@ -644,7 +648,7 @@ public class ProductionReportController implements Serializable {
 	}
 	
 	private String getFormattedAmount(Double amount){
-		return String.valueOf(CommonUtil.round(amount));
+		return String.valueOf(CommonUtil.round(amount)).replaceAll("\\.", ",");
 	}
 
 	
@@ -730,7 +734,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 					INNER JOIN item IT             ON INVD.item=IT.id");
 		stmt.append(" 					INNER JOIN product P           ON IT.product=P.id");
 		stmt.append(" 				WHERE INVD.invoice=I.id AND INVD.workplace="+wp+"");
-		stmt.append(" 					AND P.category <> 11)");
+		stmt.append(" 					AND P.category <> "+productCategory+")");
 		stmt.append(" GROUP BY 1,2)");
 		stmt.append(" UNION");
 		
@@ -749,7 +753,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 					INNER JOIN item IT             ON INVD.item=IT.id");
 		stmt.append(" 					INNER JOIN product P           ON IT.product=P.id");
 		stmt.append(" 				WHERE INVD.invoice=I.id AND INVD.workplace="+wp+"");
-		stmt.append(" 					AND P.category <> 11)");
+		stmt.append(" 					AND P.category <> "+productCategory+")");
 		stmt.append(" GROUP BY 1,2)");
 		stmt.append(" UNION");
 		
@@ -767,7 +771,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 					INNER JOIN item IT             ON INVD.item=IT.id");
 		stmt.append(" 					INNER JOIN product P           ON IT.product=P.id");
 		stmt.append(" 				WHERE INVD.invoice=I.id AND INVD.workplace="+wp+"");
-		stmt.append(" 					AND P.category <> 11)");
+		stmt.append(" 					AND P.category <> "+productCategory+")");
 		stmt.append(" GROUP BY 1,2)");
 		stmt.append(" UNION");
 		
@@ -936,67 +940,56 @@ public class ProductionReportController implements Serializable {
 			Integer previousYear, Integer month) {
 		
 		StringBuffer stmt = new StringBuffer();
-		stmt.append("(SELECT IF(PRS.extra=0,'VENTAS','OTROS INGRESOS') as Concepto,"); 
+		stmt.append("(SELECT IF(PRS.extra=0,'1.VENTAS','2.OTROS INGRESOS') as Concepto,"); 
 		stmt.append("        IF(PRSD.effective_date='"+date+"', 'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
-		stmt.append("        SUM(PRSD.taxable_base*1.1) as Importe,   '10' as IVA");
+		stmt.append("        SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
 		stmt.append(" FROM project_reservation_service PRS");
 		stmt.append(" INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
 		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
-		stmt.append(" INNER JOIN hotel H     							 ON H.id=PR.hotel_reservation");
-		stmt.append(" INNER JOIN workplace W                             ON W.id=H.workplace");
 		stmt.append(" INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
 		stmt.append(" INNER JOIN asset_activity AA					     ON PRRD.asset_activity=AA.id");
-		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel=H.id");
+		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);
 		stmt.append(" WHERE (PRSD.effective_date='"+date+"' OR PRSD.effective_date='"+previousDate+"')");
 		stmt.append("  AND PR.status<>2");
-		stmt.append("  AND H.id = "+ hotel);
 		stmt.append(" GROUP BY 1,2)");
 		stmt.append(" UNION");
-		stmt.append(" (SELECT IF(PRS.extra=0,'VENTAS','OTROS INGRESOS') as Concepto, ");
+		stmt.append(" (SELECT IF(PRS.extra=0,'1.VENTAS','2.OTROS INGRESOS') as Concepto, ");
 		stmt.append("        IF(YEAR(PRSD.effective_date)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
-		stmt.append("        SUM(PRSD.taxable_base*1.1) as Importe,   '10' as IVA");
+		stmt.append("        SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
 		stmt.append(" FROM project_reservation_service PRS");
 		stmt.append(" INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
 		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
-		stmt.append(" INNER JOIN hotel H     							 ON H.id=PR.hotel_reservation");
-		stmt.append(" INNER JOIN workplace W                             ON W.id=H.workplace");
 		stmt.append(" INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
 		stmt.append(" INNER JOIN asset_activity AA					     ON PRRD.asset_activity=AA.id");
-		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel=H.id");
+		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);
 		stmt.append(" WHERE ((PRSD.effective_date<='"+date+"' AND YEAR(PRSD.effective_date)="+year+")");
 		stmt.append("        OR");
 		stmt.append("	   (PRSD.effective_date<='"+previousDate+"' AND YEAR(PRSD.effective_date)="+previousYear+"))");
 		stmt.append("  AND MONTH(PRSD.effective_date)="+month+"");
 		stmt.append("  AND PR.status<>2");
-		stmt.append("  AND H.id = " + hotel);
 		stmt.append(" GROUP BY 1,2)");
 		stmt.append(" UNION");
-		stmt.append(" (SELECT IF(PRS.extra=0,'VENTAS','OTROS INGRESOS') as Concepto, ");
+		stmt.append(" (SELECT IF(PRS.extra=0,'1.VENTAS','2.OTROS INGRESOS') as Concepto, ");
 		stmt.append("        IF(YEAR(PRSD.effective_date)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
-		stmt.append("        SUM(PRSD.taxable_base*1.1) as Importe,   '10' as IVA");
+		stmt.append("        SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
 		stmt.append(" FROM project_reservation_service PRS");
 		stmt.append(" INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
 		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
-		stmt.append(" INNER JOIN hotel H     							 ON H.id=PR.hotel_reservation");
-		stmt.append(" INNER JOIN workplace W                             ON W.id=H.workplace");
 		stmt.append(" INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
 		stmt.append(" INNER JOIN asset_activity AA					     ON PRRD.asset_activity=AA.id");
-		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel=H.id");
+		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);
 		stmt.append(" WHERE ((PRSD.effective_date<='"+date+"' AND YEAR(PRSD.effective_date)="+year+")");
 		stmt.append("        OR");
 		stmt.append("	   (PRSD.effective_date<='"+previousDate+"' AND YEAR(PRSD.effective_date)="+previousYear+"))");
 		stmt.append("  AND PR.status<>2");
-		stmt.append("  AND H.id = " + hotel);
 		stmt.append(" GROUP BY 1,2)");
 		stmt.append(" UNION");
-		stmt.append(" (SELECT IF(PRS.extra=0,'SALDO CTA. CLIENTE','OTROS INGRESOS PEND. PRODUCIR') as Concepto,");
+		stmt.append(" (SELECT IF(PRS.extra=0,'3.SALDO CTA. CLIENTE','5.OTROS INGRESOS PEND. PRODUCIR') as Concepto,");
 		stmt.append(" 	'DIA' as Periodo,");
-		stmt.append(" 	SUM(PRSD.taxable_base*1.1) as Importe,   '10' as IVA"); 
+		stmt.append(" 	SUM(PRSD.taxable_base) as Importe,   '10' as IVA"); 
 		stmt.append(" FROM project_reservation_service PRS");
 		stmt.append(" 	INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
 		stmt.append(" 	INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
-		stmt.append(" 	INNER JOIN hotel H                                 ON H.id=PR.hotel_reservation AND H.id="+hotel);
-		stmt.append(" 	INNER JOIN workplace W                             ON W.id=H.workplace");
 		stmt.append(" 	INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
 		stmt.append(" 	INNER JOIN asset_activity AA                       ON PRRD.asset_activity=AA.id");                
 		stmt.append(" 	INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);                       
@@ -1004,26 +997,23 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 	AND PR.status=3 AND PR.check_status<3");
 		stmt.append(" GROUP BY 1,2)");
 		stmt.append(" UNION");
-		stmt.append(" (SELECT 'SALDO CTA. CLIENTE' as Concepto,");
+		stmt.append(" (SELECT '4.SALDO CTA. CLIENTE FRA. ANTICIPO' as Concepto,");
 		stmt.append(" 	'DIA' as Periodo,");
-		stmt.append(" 	SUM(I.total) as Importe,   '10' as IVA"); 
+		stmt.append(" 	SUM(I.taxable_base) as Importe,   '10' as IVA"); 
 		stmt.append(" FROM invoice I");
 		stmt.append(" 	INNER JOIN project_reservation PR                  ON PR.project=I.project");
-		stmt.append(" 	INNER JOIN hotel H                                 ON H.id=PR.hotel_reservation AND H.id="+hotel);
-		stmt.append(" 	INNER JOIN workplace W                             ON W.id=H.workplace");
 		stmt.append(" WHERE I.issue_date<'"+date+"'  AND PR.start_date>='"+date+"'");
+		stmt.append(" 	AND PR.hotel_reservation="+hotel);
 		stmt.append(" 	AND PR.status=0");
 		stmt.append(" 	AND I.advance=1");
 		stmt.append(" GROUP BY 1,2)");
 		stmt.append(" UNION");
-		stmt.append(" (SELECT IF(PRS.extra=0,'SALDO CTA. CLIENTE','OTROS INGRESOS PEND. PRODUCIR') as Concepto,");
+		stmt.append(" (SELECT IF(PRS.extra=0,'3.SALDO CTA. CLIENTE','5.OTROS INGRESOS PEND. PRODUCIR') as Concepto,");
 		stmt.append(" 	'DIA_ANIO_ANTERIOR' as Periodo,");
-		stmt.append(" 	SUM(PRSD.taxable_base*1.1) as Importe,   '10' as IVA");
+		stmt.append(" 	SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
 		stmt.append(" FROM project_reservation_service PRS");
 		stmt.append(" 	INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
 		stmt.append(" 	INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
-		stmt.append(" 	INNER JOIN hotel H                                 ON H.id=PR.hotel_reservation AND H.id="+hotel);
-		stmt.append(" 	INNER JOIN workplace W                             ON W.id=H.workplace");
 		stmt.append(" 	INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
 		stmt.append(" 	INNER JOIN asset_activity AA                       ON PRRD.asset_activity=AA.id");                
 		stmt.append(" 	INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);                          
@@ -1031,14 +1021,13 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 	AND PR.status=3 AND PR.check_status<3");
 		stmt.append(" GROUP BY 1,2 )");
 		stmt.append(" UNION");
-		stmt.append(" (SELECT 'SALDO CTA. CLIENTE' as Concepto,");
+		stmt.append(" (SELECT '4.SALDO CTA. CLIENTE FRA. ANTICIPO' as Concepto,");
 		stmt.append(" 	'DIA_ANIO_ANTERIOR' as Periodo,");
-		stmt.append(" 	SUM(I.total) as Importe,   '10' as IVA"); 
+		stmt.append(" 	SUM(I.taxable_base) as Importe,   '10' as IVA"); 
 		stmt.append(" FROM invoice I");
 		stmt.append(" 	INNER JOIN project_reservation PR                  ON PR.project=I.project");
-		stmt.append(" 	INNER JOIN hotel H                                 ON H.id=PR.hotel_reservation AND H.id="+hotel);
-		stmt.append(" 	INNER JOIN workplace W                             ON W.id=H.workplace");
-		stmt.append(" WHERE I.issue_date<'"+previousDate+"'  AND PR.start_date>='"+previousDate+"'"); 
+		stmt.append(" WHERE I.issue_date<'"+previousDate+"'  AND PR.start_date>='"+previousDate+"'");
+		stmt.append(" 	AND PR.hotel_reservation="+hotel);
 		stmt.append(" 	AND I.advance=1");
 		stmt.append(" GROUP BY 1,2)");
 		stmt.append(" ORDER BY 1,2;");
