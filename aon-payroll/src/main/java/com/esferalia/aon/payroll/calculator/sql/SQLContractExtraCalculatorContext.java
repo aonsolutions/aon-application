@@ -21,6 +21,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -89,7 +90,9 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 
 	private void addSalaryContractPayments() throws ExpressionException, AonException {
 		ExpressionContext expressionContext = super.getExpressionContext();
-
+		
+		List<IContractPayment> undefPayments = new ArrayList<IContractPayment>();
+		
 		for (IContractPayment p : super.getContractPayments()) {
 
 			Date paymentStart = Period.max(p.getStartDate(), getStart());
@@ -101,15 +104,41 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			if (StringUtils.isNotBlank(p.getName()) && p.getSalaryType() == SalaryType.SALARY) {
 				try {
 					addSalaryPayment(expressionContext, p, paymentStart, paymentEnd);
-				} catch (com.esferalia.aon.salary.expression.InterruptedException e) {
+				}catch (com.esferalia.aon.salary.expression.InterruptedException e) {
 					throw e;
+				}catch (UndefinedVariablesException e) {
+					undefPayments.add(new SimpleContractPayment(p));
 				}catch (ExpressionException e) {
-					System.err.println(String.format("ERROR [%s]: %s", p.getName(), e.getLocalizedMessage()));
 				}catch (CompileException e) {
-					System.err.println(String.format("ERROR [%s]: %s", p.getName(), e.getLocalizedMessage()));
 				}
 			}
 		}
+		
+		List<IContractPayment> resolved = new ArrayList<IContractPayment>();
+		do {
+			resolved.clear();
+			for ( IContractPayment p : undefPayments ) {
+				
+				Date paymentStart = Period.max(p.getStartDate(), getStart());
+				Date paymentEnd = Period.min(p.getEndDate(), getEnd());
+				
+				if ( Period.compare(paymentStart, paymentEnd)> 0)
+					continue;
+	
+				if (StringUtils.isNotBlank(p.getName()) && p.getSalaryType() == SalaryType.SALARY) {
+					try {
+						addSalaryPayment(expressionContext, p, paymentStart, paymentEnd);
+						resolved.add(p);
+					}catch (com.esferalia.aon.salary.expression.InterruptedException e) {
+						throw e;
+					}catch (ExpressionException e) {
+					}catch (CompileException e) {
+					}
+				}
+			}
+			undefPayments.removeAll(resolved);
+		}
+		while (resolved.size() > 0 && undefPayments.size() > 0);
 	}
 
 	private void addSalaryPayment(ExpressionContext expressionContext, IContractPayment payment, Date paymentStart,
