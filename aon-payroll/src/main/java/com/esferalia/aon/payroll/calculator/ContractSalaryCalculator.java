@@ -393,7 +393,8 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 							.add(new UndefPayment(contractPayment, e));
 				} catch (UndefinedContextVariablesException e) {
 					onUndefinedData(contractPayment, e.getMessage(),
-							e.getVariableNames());
+							e.getVariableNames());					
+					addResult(expressionContext, contractPayment.getName(), start, end, 0.00);
 				} catch (UndefinedVariablesException e) {
 					UndefPayment undefPayment = new UndefPayment(
 							contractPayment, e);
@@ -454,6 +455,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 					undefTotalPayments.add(undefPayment);
 				} catch (UndefinedContextVariablesException e) {
 					paymentsVars.remove(undefPayment.getName());
+					addResult(expressionContext, undefPayment.getName(), start, end, 0.00);
 				} catch (UndefinedVariablesException e) {
 
 					if (undefPayment.willBeDefined(paymentsVars)) {
@@ -464,7 +466,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 						undefPayment.onUndefinedData(this);
 						paymentsVars.remove(undefPayment.getName());
 					}
-				}
+				} 
 			}
 
 			for (UndefPayment undefPayment : undefPayments)
@@ -881,41 +883,10 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				Double resultDouble = result.getValue();
 				double resultValue = resultDouble != null ? resultDouble : 0.00;
 				
-				
-				if (!StringUtils.isEmpty(name)) {
-					Date valueStart = resultStart;
-					List<ITimedVariable<Number>> prevs = expressionContext
-							.getVariables(name, resultStart, resultEnd);
-					for (ITimedVariable<Number> prev : prevs) {
-						Date prevStart = prev.getPeriod().getStart();
-						Date prevEnd = prev.getPeriod().getEnd();
-						try {
-							Number prevValue = prev.getValue(prev.getPeriod());
-							if (valueStart.compareTo(prevStart) < 0)
-								expressionContext.setVariable(name,
-										resultValue, valueStart,
-										prev(prevStart));
-							expressionContext.setVariable(name, resultValue
-									+ prevValue.doubleValue(), prevStart,
-									prevEnd);
-							valueStart = next(prevEnd);
-						} catch (Exception e) {
-							System.err.println(String.format("ERROR [%s]: %s",
-									name, e.getLocalizedMessage()));
-						}
-					}
-					if (valueStart.compareTo(resultEnd) <= 0) {
-						expressionContext.setVariable(name, resultValue,
-								valueStart, resultEnd);
-					}
-				} // end-if:
+				addResult(expressionContext, name, resultStart, resultEnd, resultValue);
 
 				expressionContext.setVariable(ALL, resultValue, resultStart,
 						resultEnd);
-				
-				
-//				Double quote = quoteCalculator.qu0te(contractPayment,
-//						resultStart, resultEnd, resultValue);
 				
 				// Here we add 'all' variables involved in quote. 
 				double quote = 0.00;
@@ -967,6 +938,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 		} catch (RemoveException e) {
 			onRemove(contractPayment);
+			addResult(expressionContext, name, start, end, 0.00);
 		} catch (InvalidVariables e) {
 			onInvalidData(contractPayment, e.getMessage(), e.getVariables());
 		} catch (InterruptedException e) {
@@ -983,13 +955,42 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			// e.getVariableNames());
 		} catch (CompileException e) {
 			onCompileError(contractPayment, e.getMessage());
-		}
+		} 
 
 	}
 
 	// ---------------------------------------------------------------- Private
 
-
+	private static void addResult(ExpressionContext expressionContext, String name, Date resultStart, Date resultEnd, Double resultValue){
+		if (StringUtils.isEmpty(name))
+			return;
+		Date valueStart = resultStart;
+		List<ITimedVariable<Number>> prevs = expressionContext
+				.getVariables(name, resultStart, resultEnd);
+		for (ITimedVariable<Number> prev : prevs) {
+			Date prevStart = prev.getPeriod().getStart();
+			Date prevEnd = prev.getPeriod().getEnd();
+			try {
+				Number prevValue = prev.getValue(prev.getPeriod());
+				if (valueStart.compareTo(prevStart) < 0)
+					expressionContext.setVariable(name,
+							resultValue, valueStart,
+							prev(prevStart));
+				expressionContext.setVariable(name, resultValue
+						+ prevValue.doubleValue(), prevStart,
+						prevEnd);
+				valueStart = next(prevEnd);
+			} catch (Exception e) {
+				System.err.println(String.format("ERROR [%s]: %s",
+						name, e.getLocalizedMessage()));
+			}
+		}
+		if (valueStart.compareTo(resultEnd) <= 0) {
+			expressionContext.setVariable(name, resultValue,
+					valueStart, resultEnd);
+		}
+	}
+	
 	public static final String DAY_FOMAT = "%s ( %te )";
 	public static final String DAY_PERIOD_FOMAT = "%s ( %te - %te )";
 	public static final String COMPLETE_PERIOD_FOMAT = "%s ( %te/%<tm - %te/%<tm )";

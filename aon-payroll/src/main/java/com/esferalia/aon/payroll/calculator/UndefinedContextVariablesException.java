@@ -27,7 +27,12 @@ public class UndefinedContextVariablesException extends
 			if (variables[i] == null)
 				throw e;
 		}
-		throw new UndefinedContextVariablesException(variables);
+		
+		for ( ContextVariable contextVariable: variables )
+			if ( contextVariable != ContextVariable.TOTAL_PAYMENT)
+				throw new UndefinedContextVariablesException(variables);
+		
+		throw new UndefinedTotalPaymentException();
 	}
 
 	private static String[] names(ContextVariable... variables) {
