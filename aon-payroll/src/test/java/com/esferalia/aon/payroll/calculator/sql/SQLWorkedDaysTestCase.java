@@ -325,6 +325,41 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 
 	}
 
+
+	@Test
+	public void testPartialTimeWorkDaysV() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, getToday(),
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(),
+								format("\"%s\"", random(PARTIAL_TIME)
+										.getValue()));
+						put(AGREEMENT_HOURS.getName(), format("%d", 39));
+						
+						put(MONDAY_HOURS.getName(), format("%f", 0.00));
+						
+						put(TUESDAY_HOURS.getName(), format("%f", 2.50));
+						
+						put(WEDNESDAY_HOURS.getName(), format("%f", 0.00));
+						
+						put(THURSDAY_HOURS.getName(), format("%f", 2.50));
+						
+						put(FRIDAY_HOURS.getName(), format("%f", 0.00));
+						put(SATURDAY_HOURS.getName(), format("%f", 0.00));
+						put(SUNDAY_HOURS.getName(), format("%f", 0.00));
+					}
+				});
+
+		testWorkedDays(contract, 5.00/39.00, null);
+
+	}
+
 	@Test
 	public void testContextWorkDaysI() throws ExpressionException, SQLException {
 
