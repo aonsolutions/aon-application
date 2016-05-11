@@ -422,7 +422,7 @@ public class Mod2002015Description {
 	
 	static {
 		DESCRIPTION_MAP.put(Mod2002015Key.BN567,"Bonificaci\u00F3n por rentas obtenidas en Ceuta y Melilla (art. 33 LIS)");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN568,"Bonificaciones actividades exportadoras y de prestaci\u00F3n de servicios (art. 34 LIS)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN568,"Bonificaciones por prestaci\u00F3n de servicios (art. 34 LIS)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN563,"Bonificaci\u00F3n rendimientos por ventas bienes corporales producidos en Canarias (art. 26 Ley 19/1994)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN566,"Bonificaciones Sociedades Cooperativas (Ley 20/1990)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN576,"Bonificaciones entidades dedicadas al arrendamiento de viviendas (Cap\u00EDtulo III T\u00EDtulo VII LIS)");
