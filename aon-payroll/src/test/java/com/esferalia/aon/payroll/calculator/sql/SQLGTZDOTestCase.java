@@ -2374,7 +2374,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 
 
 	private static void addPrestIts(AONContext aonContext, ContractRecord contract) {
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		PaymentConceptRecord prestIT = addConcept(aonContext, "PREST_IT");
 		addPayment(aonContext, contract, prestIT 
 				,"TRACE('BR = %f\r\n', BASE_REGULADORA);0.00"
 				,String.format("BASE_REGULADORA * 0.60 * %s_1_3",  COMMON_DISEASE_DAYS)
