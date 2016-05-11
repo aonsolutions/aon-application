@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record7;
-import org.jooq.Record8;
+import org.jooq.Record9;
 import org.jooq.Result;
 
 import com.esferalia.aon.gwt.template.server.Utils;
@@ -117,9 +117,10 @@ public class DBMarketplace {
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			Result<Record8<Integer, String, Integer, String, Double, Timestamp, String, Integer>> result = 
+			Result<Record9<Integer, String, Integer, String, Double, Timestamp, String, Integer, Integer>> result = 
 								ctx.getDslContext().select(SALES.ID, SALES.SERIES, SALES.NUMBER, SALES.PURCHASE_REFERENCE,
-												DELIVERY.TOTAL_PACKAGES, DELIVERY.STATUS_MODIFICATION_DATE, DELIVERY.TRACKING_NUMBER, DELIVERY.CARRIER)
+												DELIVERY.TOTAL_PACKAGES, DELIVERY.STATUS_MODIFICATION_DATE, DELIVERY.TRACKING_NUMBER,
+												DELIVERY.CARRIER, DELIVERY.ID)
 								.from(SALES).join(DELIVERY).on(SALES.SERIES.eq(DELIVERY.SERIES).and(SALES.NUMBER.eq(DELIVERY.NUMBER)))
 								.where(SALES.DOMAIN.eq(domain.getId()))
 									.and(SALES.PURCHASE_REFERENCE.isNotNull())
@@ -140,8 +141,8 @@ public class DBMarketplace {
 				ad.setShipDate(record.value6() != null?record.value6():new Date()); 
 				String dateStr = Utils.getDateStr(record.value6() != null?record.value6():new Date());
 				ad.setShipDateStr(dateStr);
+				AONContext sctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 				if(record.value8() != null){
-					AONContext sctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 					Result<RegistryRecord> registryRecord = sctx.getDslContext().select().from(REGISTRY).where(REGISTRY.ID.eq(record.value8())).fetchInto(REGISTRY);
 					CarrierCode cc = CarrierCode.getValue(registryRecord.get(0).getName());
 					ad.setCarrierCode(cc);
@@ -151,6 +152,7 @@ public class DBMarketplace {
 				ad.setShipMethod("Estándar");
 				order.setAmazonDelivery(ad);
 				orderList.add(order);
+				updateConfirmDelivery(sctx, record.getValue(DELIVERY.ID));
 			});
 			return orderList;
 			
@@ -158,6 +160,13 @@ public class DBMarketplace {
 			if(ctx != null)
 				ctx.close();
 		}
+	}
+	
+	public static void updateConfirmDelivery(AONContext ctx, Integer id){
+		ctx.getDslContext().update(DELIVERY)
+			.set(DELIVERY.SHIPPING_STATUS, ShipmentStatus.SHIPPING.value())
+			.set(DELIVERY.STATUS_MODIFICATION_DATE, new Timestamp(new Date().getTime()))
+			.where(DELIVERY.ID.eq(id)).execute();
 	}
 	
 	
