@@ -11,8 +11,10 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -39,6 +41,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
@@ -513,6 +516,68 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 
 		Assert.assertEquals(1500.00, salary.getTotalPayment());
 
+	}
+
+	@Test
+	public void testDescriptionUndefVariable()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				new String[] { 
+				},
+				new String[] { 
+				});
+		
+		addPayment(aonContext, 
+				contract, 
+				"DESCRIPTION WITH UNDEFINED VAR @{CUALESQUIERA}", 
+				"666.66", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0001);
+		addPayment(aonContext, 
+				contract, 
+				"DESCRIPTION WITH UNDEFINED VAR @{CUALESQUIERA ", 
+				"666.66", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0001);
+		
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		final List<String> errors = new ArrayList<String>();
+		
+		calculator.setListener(new ContractSalaryCalculator.Listener() {
+			@Override
+			public void onCheckError(IContractPayment payment, String message) {
+				errors.add(message);
+			}
+			
+			@Override
+			public void onCompileError(IContractPayment payment, String message) {
+				errors.add(message);
+			}
+		});
+		
+		ISalary salary = calculator.calculate(ctx);
+		
+		for ( String message: errors ) 
+			System.out.println(message);
+		
+		
+		Assert.assertEquals(errors.size() , 2 );
+		Assert.assertEquals(666.66 * 2, salary.getTotalPayment());
+		
+		
 	}
 	// ------------------------------------------------------------------------
 
