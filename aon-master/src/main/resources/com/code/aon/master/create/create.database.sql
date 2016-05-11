@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.47.1
+# Version: 8.50.5
 # Created by: girazu
-# Creation Date: 01/04/2016 14:25
+# Creation Date: 11/05/2016 11:35
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1509,7 +1509,7 @@ CREATE TABLE `payment_concept` (
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Percepcion Salarial',
   `description_decorable` tinyint(2) NOT NULL default '0',
-  `expression` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
+  `expression` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Importe',
   `irpf_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe tributable',
   `quote_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe cotizable',
   PRIMARY KEY  (`id`),
@@ -1527,7 +1527,7 @@ CREATE TABLE `agreement_payment` (
   `agreement` int(4) NOT NULL COMMENT 'Convenio',
   `payment_concept` int(4) default NULL COMMENT 'Identificador unico del concepto',
   `type` tinyint(2) default NULL COMMENT 'Tipo de complemento Salarial',
-  `expression` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
+  `expression` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Importe',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
@@ -2653,7 +2653,7 @@ CREATE TABLE `certifica2_batch_detail` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `certifica2_batch` int(4) NOT NULL COMMENT 'Identificador unico del certificado de empresa',
   `contract` int(4) NOT NULL COMMENT 'Identificador unico del contrato de empleado',
-  `suspension_cause_code` varchar(2) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Codigo causa suspension',
+  `suspension_cause_code` varchar(2) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo causa suspension',
   `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado de la linea de la remesa',
   PRIMARY KEY  (`id`),
   KEY `IDX_CERTIFICA2_BATCH_DETAIL_CERTIFICA2_BATCH` (`certifica2_batch`),
@@ -3372,7 +3372,7 @@ CREATE TABLE `contract_payment` (
   `payment_concept` int(4) default NULL COMMENT 'Identificador unico del concepto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `description_decorable` tinyint(2) NOT NULL default '0',
-  `expression` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
+  `expression` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Importe',
   `irpf_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe tributable',
   `quote_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe cotizable',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
