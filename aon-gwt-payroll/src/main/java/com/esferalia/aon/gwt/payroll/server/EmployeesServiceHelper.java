@@ -168,6 +168,8 @@ public class EmployeesServiceHelper {
 		for (String var : variables) {
 			if (var.endsWith("_ACTUAL"))
 				privateVariables.add(var);
+			if (var.endsWith("_HELP"))
+				privateVariables.add(var);
 		}
 		variables.removeAll(privateVariables);
 
