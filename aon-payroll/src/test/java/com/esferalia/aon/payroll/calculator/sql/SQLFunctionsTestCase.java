@@ -691,6 +691,31 @@ public class SQLFunctionsTestCase extends
 		Assert.assertEquals(100.00, result.get(0).getValue());
 	}
 
+	@Test
+	public void testInputFunctionIX() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap()));
+		//@formatter:on
+		
+		List<ITimedResult<Double>> result =  ctx.getExpressionContext().eval("INPUT('/*user*/ANTIGÜEDAD(100.00, TRIENIO)/**/','Hello World!!!');", 
+				startDate
+				,endDate, 
+				Double.class);
+	
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(100.00, result.get(0).getValue());
+	}
 	//------------------------------------------------------------------------
 	
 }
