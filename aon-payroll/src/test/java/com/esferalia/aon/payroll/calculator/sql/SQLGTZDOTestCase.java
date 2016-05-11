@@ -1275,7 +1275,6 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				new Extra[] { new Extra() {
 					{
 						this.expression = "P_0 + P_1 + P_2";
-						this.expression = "0.00";
 						this.month = Month.DECEMBER;
 						this.start = "01/12";
 						this.end = "31/12";
