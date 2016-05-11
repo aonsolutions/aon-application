@@ -59,6 +59,7 @@ public enum ContextVariable implements IResourceable{
 	REAL_DAYS("DIAS_REALES", VariableType.INTEGER, false),
 	STRIKE_DAYS("DIAS_HUELGA", VariableType.INTEGER, false),
 	ERE_DAYS("DIAS_ERE", VariableType.INTEGER, false),
+	GUARANTEED_DAYS("DIAS_GARANTIZADOS", VariableType.INTEGER, false),
 
 	//ADVANCE_NOTICE_DATE("FECHA_PREAVISO", VariableType.DATE, false),
 	//ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),
@@ -226,6 +227,7 @@ public enum ContextVariable implements IResourceable{
 	
 	OLD("ANTIGÜEDAD", VariableType.DOUBLE ),
 	EXCESS("EXCESO", VariableType.DOUBLE ),
+	EVERYTHING("TODO", VariableType.DOUBLE ),
 	
 	IT_START("INICIO_IT", VariableType.DATE),
 

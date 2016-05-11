@@ -19,6 +19,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.DELAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.EVERYTHING;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FEMALE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
@@ -26,11 +27,13 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GENDER;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GROSS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARANTEE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARANTEED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.HOLIDAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMS_RATE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.INDEFINITE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_RATE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MALE;
@@ -603,6 +606,10 @@ public class SQLContractSalaryCalculatorContext
 						Double dailyRegBase, ExpressionContext exprCtx)
 								throws ExpressionException {
 
+					
+					if ( start < 0 ) 
+						return; 
+					
 					Period leavePeriod = new Period(leaveStart, leaveEnd);
 
 					Calendar leaveCalendar = Calendar.getInstance();
@@ -640,6 +647,24 @@ public class SQLContractSalaryCalculatorContext
 								parentDays + leaveParentDays, type,
 								dailyRegBase, exprCtx);
 					}
+					
+					// Adds 'BASE_REGULADORA' variable for guaranteed period
+					exprCtx.setVariable(IT_START, leaveStart, 
+							guarenteeStart, guarenteeEnd);
+					int guaranteedDays = (int) getGuaranteedDays(exprCtx, new Period(Period.max(guarenteeStart, leaveStart), guarenteeEnd));
+					exprCtx.setVariable(GUARANTEED_DAYS, 
+							guaranteedDays, 
+							guarenteeStart, guarenteeEnd);
+
+					ExpressionImpl exp = new ExpressionImpl();
+					exp.setName(EVERYTHING.getName());
+					if (dailyRegBase != null) {
+						exp.setExpression(String.format("%f * %d ", dailyRegBase, guaranteedDays));
+					} else {
+						exp.setExpression(String.format("SELF.br(%s) * %d",
+								IT_START, guaranteedDays));
+					}
+					exprCtx.addLazyExpression(exp, guarenteeStart, guarenteeEnd);
 
 					exprCtx.putVariable(ContextVariable.REGULATORY_BASE,
 							new TimedObject<Double>(0.00, guarenteeStart,
@@ -818,6 +843,20 @@ public class SQLContractSalaryCalculatorContext
 		@Override
 		protected double getWorkDays(ExpressionContext ctx, Period p) {
 			Double workDays = super.getWorkDays(ctx, p);
+			return getDays(workDays, ctx, p);
+		}
+		
+		protected double getGuaranteedDays(ExpressionContext ctx, Period p) {
+
+			Long availableDays = getAvailableDays(p.getStart(),p.getEnd());
+			
+			if ( p.getEnd().before(lastLeaveEnd))
+				return availableDays.doubleValue();
+
+			return super.leaveLoader.getAdjustDays(ctx, p, availableDays);
+		}
+
+		protected double getDays(Double workDays, ExpressionContext ctx, Period p) {
 
 //			if ( guaranteePeriods.size() == 0)
 //				return workDays;
@@ -2835,7 +2874,7 @@ public class SQLContractSalaryCalculatorContext
 
 	}
 
-	private long getAvailableDays(Date start, Date end) {
+	private static long getAvailableDays(Date start, Date end) {
 		long workedDays = CommonUtil.getDaysBetweenDates(start, end);
 		workedDays += 1;
 		return workedDays;
