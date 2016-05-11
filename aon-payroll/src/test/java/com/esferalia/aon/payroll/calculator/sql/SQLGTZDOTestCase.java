@@ -33,8 +33,10 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.sql.AbstractSQL.PaymentConcept;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
@@ -67,10 +69,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -96,7 +95,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
-			System.out.println(p.getExpression() + " = " + p.getAmount());
+			System.out.println(p.getExpression() + " = " + p.getAmount() );
 				
 		//@formatter:off
 		Assert.assertEquals(
@@ -135,10 +134,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -202,10 +198,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -277,10 +270,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -352,10 +342,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -394,12 +381,6 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		
-		addIT(aonContext, 
-				contract, 
-				LeaveType.COMMON_DISEASE, 
-				startIt,
-				endIt, 
-				null);
 
 	}
 
@@ -427,10 +408,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -502,10 +480,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -577,10 +552,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("30 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("30 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("30 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -674,10 +646,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("30 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("30 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("30 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -1019,10 +988,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("30 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("30 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("30 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -1100,10 +1066,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -1139,7 +1102,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(
 				(1000.00 * workedDays/ monthDays)
 				+ (1000.00 * 3/ monthDays)
-				+ (50 * 0.60 * 12), 
+				+ (1000.00/31 * 0.60 * 12), 
 				salary.getTotalPayment() 
 				, DELTA);
 		//@formatter:on
@@ -1171,10 +1134,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -1209,7 +1169,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		//@formatter:off
 		Assert.assertEquals(
 				(1000.00 * workedDays/ monthDays)
-				+ (50 * 0.60 * 3), 
+				+ (1000.00/31 * 0.60 * 3), 
 				salary.getTotalPayment() 
 				, DELTA);
 		//@formatter:on
@@ -1263,10 +1223,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				category);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -1346,16 +1303,14 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 						"GTZDO(P_1 + P_2,1,3)" ,
 						}
 				, new String[] {
-						"BASE_CGC * 0.10", 
-						"BASE_CGP * 0.05",
-						"BASE_IRPF * PORCENTAJE_IRPF/100" }, category);
+//						"BASE_CGC * 0.10", 
+//						"BASE_CGP * 0.05",
+//						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+						}, category);
 		//@formatter:on
 		
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.65 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -1381,17 +1336,24 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() + ", " + p.getQuote()) ;
+
 		double workedDays = get(startIt, DATE) -1 ;
 		double monthDays = AonDateUtils.getMax(getToday(), DATE);
 		double itDays = monthDays - workedDays;
+		
+		double br = ((1750.00 + 1750.00 * 0.10) + (1750.00 + 1750.00 * 0.10)/12 + (1750.00 + 1750.00 * 0.10)/12)/ 31 ;
+		
+		System.out.println("BR = " + br );
 		
 		//@formatter:off
 		Assert.assertEquals(
 				(( 1500.00 + 250.00 ) * 1.10) * workedDays / monthDays 
 				+ (1500.00 + 250.00 ) * Math.min(3,itDays) / monthDays
-				+ (50 * 0.60 * Math.min(12,Math.max(0, itDays-3)))
-				+ (50 * 0.65 * Math.min(5,Math.max(0, itDays-15)))
-				+ (50 * 0.75 * Math.min(monthDays-20,Math.max(0, itDays-20)))
+				+ (br * 0.60 * Math.min(12,Math.max(0, itDays-3)))
+				+ (br * 0.60 * Math.min(5,Math.max(0, itDays-15)))
+				+ (br * 0.75 * Math.min(monthDays-20,Math.max(0, itDays-20)))
 				, 
 				salary.getTotalPayment() 
 				, DELTA);
@@ -1445,10 +1407,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.65 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -1540,10 +1499,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.65 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -1634,10 +1590,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.65 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -1703,11 +1656,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("TRACE('%s_4_15 = %%d\r\n', %s_4_15); 0.00; ",  COMMON_DISEASE_DAYS, COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -1773,10 +1722,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -1848,10 +1794,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -1923,10 +1866,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("50 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -2008,10 +1948,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("33.33 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("33.33 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("33.33 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 
 		
 		Criteria criteria = new Criteria();
@@ -2154,10 +2091,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -2220,10 +2154,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -2290,10 +2221,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
-		addPayment(aonContext, contract, prestIT, String.format("764.40/30 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("764.40/30 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
-		addPayment(aonContext, contract, prestIT, String.format("764.40/30 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
+		addPrestIts(aonContext, contract);
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
@@ -2442,5 +2370,29 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		
 	}
-	// ------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------------
+
+
+	private static void addPrestIts(AONContext aonContext, ContractRecord contract) {
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT 
+				,"TRACE('BR = %f\r\n', BASE_REGULADORA);0.00"
+				,String.format("BASE_REGULADORA * 0.60 * %s_1_3",  COMMON_DISEASE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT 
+				,String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS)
+				,String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT 
+				,String.format("BASE_REGULADORA * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS)
+				,String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT 
+				,String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS)
+				,String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS)
+				);
+	}
+
+	// ----------------------------------------------------------------------------------
+
 }
