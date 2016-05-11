@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
+import org.mvel2.ErrorDetail;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.mvel2.PropertyAccessException;
@@ -37,6 +38,7 @@ public class ExpressionContext {
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	}
+
 
 	public abstract static class MacroException extends ExpressionException {
 
@@ -358,6 +360,7 @@ public class ExpressionContext {
 		return new String(expr, start, end -start);
 	}
 
+
 	private Variables variables;
 
 	public ExpressionContext() {
@@ -556,14 +559,22 @@ public class ExpressionContext {
 		List<PeriodMap> bindingsList = variables
 				.getBindings(inputs, start, end);
 		try {
-			return eval(script, bindingsList, toType);
-		} catch (MacroException e) {
-			return eval(e.doMacro(script), bindingsList, toType);
+			
+			do {
+				try {
+					return eval(script, bindingsList, toType);
+				}catch (MacroException e) {
+					script = e.doMacro(script);
+				} 
+			} while ( true ) ;
+
 		} catch (DeferredException e) {
 			e.eval(this, toType);
 			return eval(script, start, end, toType);
 		} catch (UnknownUndefVarException e) {
 			return evalUnknowUndefVariable(script, inputs, start, end, toType);
+		} catch ( CompileException e ) {
+			throw e;
 		}
 
 	}
@@ -763,5 +774,5 @@ public class ExpressionContext {
 
 	// ------------------------------------------------------------------------
 	
-
+	
 }
