@@ -218,6 +218,8 @@ public class PageF2 extends PageAbs {
 		keyExe("8081208", PR8081208, "text", true);
 		PR8081209.setWidth("99%");
 		keyExe("8081209", PR8081209, "text", true);
+		
+		keyExe("8081320", ROAC, "text", true);
 	}
 	
 	@Override
@@ -404,7 +406,7 @@ public class PageF2 extends PageAbs {
 					if(key2.equals("8081206")){
 						for(Integer i = 0;i< D2DepositConstants.PROVINCES.length; i++){
 							if(D2DepositConstants.PROVINCES[i].getName().equals(lb.getSelectedItemText())){
-								value = D2DepositConstants.CITIES[i].getId(); 
+								value = D2DepositConstants.PROVINCES[i].getId(); 
 							}
 						}
 					}
