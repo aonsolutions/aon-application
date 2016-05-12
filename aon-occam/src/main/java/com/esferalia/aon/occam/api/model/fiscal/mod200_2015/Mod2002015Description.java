@@ -528,6 +528,11 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1258,"l) Gastos financieros pendientes de deducir en periodos impositivos anteriores afectados por art. 16.5, y/o 83 LIS deducibles tras aplicar los 2 l\u00EDmites (<= [d], >= 0)");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1259,"m) Gastos financieros netos pendientes de deducir de periodos impositivos anteriores no afectados por art. 16.5 y/o 83 LIS aplicados");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1260,"Total gastos financieros del per\u00EDodo impositivo no deducibles (= [c2+k2])");
+		
+		DESCRIPTION_MAP.put(Mod2002015Key.LM393,"Importe del cr\u00E9dito exigible");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM150,"Opciones: Abono.");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM506,"Opciones: Compensaci\u00F3n,");
+		
 	}
 	
 	static {

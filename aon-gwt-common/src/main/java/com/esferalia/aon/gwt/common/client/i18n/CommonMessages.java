@@ -2165,6 +2165,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Importe generado. Pendiente de aplicaci\u00F3n a principio del ejercicio")
 	String liquiMsg2();
 	
+	@DefaultMessage("Por l\u00EDmite 16.5 y 83 LIS")
+	String liquiMsg21();
+
 	@DefaultMessage("Aplicado en esta liquidaci\u00F3n")
 	String liquiMsg3();
 	

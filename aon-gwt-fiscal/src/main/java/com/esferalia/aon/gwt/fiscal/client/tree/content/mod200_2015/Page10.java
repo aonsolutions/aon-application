@@ -76,15 +76,12 @@ public class Page10 extends PageAbs {
 			if (mod200Object.isVisible(key)) {
 				row = paintKey(table,key,row);
 				if (key == Mod2002015Key.BN570) {
-//					row = paintKeyBreakdown(table,row,AON.MSG.doubleContributionNationalPrevious()
-//							,Mod2002015BN570Key.values(),HEADERS_1);
 					row = paintKeyBreakdownLink(table,row,AON.MSG.doubleContributionNationalPrevious()
 							,Mod2002015BN570Key.values(),HEADERS_1);
-										
 				} 
 				if (key == Mod2002015Key.BN571) {
 					row = paintKeyBreakdownLink(table,row,AON.MSG.doubleContributionNational2015()
-							,Mod2002015BN571Key.values(),HEADERS_2);
+							,Mod2002015BN571Key.values(),HEADERS_1);
 				} 
 				if (key == Mod2002015Key.BN572) {
 					row = paintKeyBreakdownLink(table,row,AON.MSG.doubleContributionInternationalPrevious()
