@@ -33,10 +33,18 @@
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="record_selected"
 						value="#{bundle.finance_record_selected}"
-						rendered="#{controller.model.rowCount > 0}"
+						rendered="#{controller.model.rowCount > 0 and invoiceRecorderSearch.defaultStatus == 'PENDING'}"
 						reRender="invoiceRecorderDataDiv"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{controller.onRecordSelected}"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandButton id="unrecord_selected"
+						value="#{bundle.finance_unrecord_selected}"
+						rendered="#{controller.model.rowCount > 0 and invoiceRecorderSearch.defaultStatus != 'PENDING'}"
+						reRender="invoiceRecorderDataDiv"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						actionListener="#{controller.onUnrecordSelected}"
 						onclick="Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 				</ui:define>
@@ -355,7 +363,7 @@
 								</aon:div>
 							</aon:column>
 	
-								<rich:subTable id="TaxBreakDownsSubTable"  value="#{to.taxBreakDowns}" rendered="#{to.showTaxBreakDowns}" var="taxBreakDown">
+								<rich:subTable id="TaxBreakDownsSubTable" value="#{to.taxBreakDowns}" var="taxBreakDown" rendered="#{to.showTaxBreakDowns}">
 									<aon:column colspan="12"
 										style="padding: 0px; border: none;background-color: #FBEDB6;">
 										<aon:panelGrid columns="5" style="font-size: 0.9em; width: 100%;"
@@ -415,12 +423,31 @@
 										<aon:outputText value="&#160;" />
 									</aon:column>
 								</rich:subTable>
-								<rich:subTable id="AccountEntryTable"  value="#{to.details}" var="preAccountEntry" rendered="#{to.showAccountEntry}">
+								<rich:subTable id="AccountEntryTable" value="#{to.details}" var="preAccountEntry" rendered="#{to.showAccountEntry}">
 	
-									<aon:column colspan="5"
+									<aon:column
 										style="padding: 0px; border: none;background-color: #F2FDEC;font-size: 0.9em;">
 									</aon:column>
-	
+
+									<aon:column colspan="3"
+										style="padding: 0px; border: none;background-color: #F2FDEC;font-size: 0.9em;">
+										<aon:div rendered="#{preAccountEntry.line == 1}">
+											<aon:outputText value="#{bundle.account_account_entry}: " />
+											<aon:outputText value="#{preAccountEntry.accountEntry.id}" />
+										</aon:div>
+									</aon:column>
+
+									<aon:column
+										style="padding: 0px; border: none;background-color: #F2FDEC;font-size: 0.9em;">
+										<aon:div rendered="#{preAccountEntry.line == 1}">
+											<aon:outputText value="#{bundle.aon_date}: " />
+											<aon:outputText value="#{preAccountEntry.accountEntry.entryDate}">
+												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+											</aon:outputText>
+										</aon:div>
+									</aon:column>
+
 									<aon:column styleClass="aon-editDataTable-textColumn"
 										style="padding: 0px; border: none;background-color: #F2FDEC; font-size: 0.9em;">
 										<aon:outputText value="#{preAccountEntry.account.code}" />

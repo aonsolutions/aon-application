@@ -156,4 +156,14 @@
 		</aon:selectOneRadio>				
 	</aon:if>
 
+	<aon:if test="#{aonRole.accountingOperator and searchController.defaultStatus != null}">
+		<aon:outputLabel for="Invoice_status"
+			value="#{bundle.aon_status}" />
+		<aon:selectOneMenu id="Invoice_status"
+			value="#{searchController.defaultStatus}">
+			<f:selectItem itemLabel="#{bundle.finance_not_recorded}" itemValue="PENDING" />
+			<f:selectItem itemLabel="#{bundle.finance_invoice_recorded}" itemValue="SCORED" />
+		</aon:selectOneMenu>			
+	</aon:if>
+
 </ui:composition>

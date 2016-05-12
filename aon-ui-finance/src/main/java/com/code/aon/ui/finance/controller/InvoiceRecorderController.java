@@ -11,8 +11,12 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
+import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -20,8 +24,10 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceRecorderController extends BasicController {
 	
@@ -189,10 +195,50 @@ public class InvoiceRecorderController extends BasicController {
 					}
 				}
 			}
-			this.onSearch(null);
 		} finally {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			this.onSearch(null);
+		}
+	}
+
+	public void onUnrecordSelected(ActionEvent event) {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			for (InvoiceRecorder invoiceRecorder : getCurrentList()) {
+				if (invoiceRecorder.isChecked()) {
+					Invoice invoice = invoiceRecorder.getInvoice();
+					try {
+						HibernateUtil.beginTransaction(sessionName);
+						getAccountEntryInvoiceWriter().unrecordInvoice(invoice);
+						invoice.setStatus(InvoiceStatus.PENDING);
+						HibernateUtil.getSession(sessionName).merge(invoice);
+						HibernateUtil.getSession(sessionName).flush();
+						HibernateUtil.commitTransaction(sessionName);
+					} catch (Exception e) {
+						try {
+							HibernateUtil.rollbackTransaction(sessionName);
+						} catch (DAOException daoe) {
+							String msg = "Unable to rollback transaction!";
+							LOGGER.error(msg, e);
+						}
+						String msg = "Error al descontabilizar:  " + invoice.getReferenceCode() + " [" + e.getMessage() +"]";
+						LOGGER.error(msg, e);
+						AonUtil.addErrorMessage(msg);
+						throw new AbortProcessingException(msg);
+					} finally {
+						HibernateUtil.closeSession(sessionName);
+					}
+				}
+			}
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			this.onSearch(null);
 		}
 	}
 
@@ -203,7 +249,7 @@ public class InvoiceRecorderController extends BasicController {
 	public void onShowAccountEntry(ActionEvent event) {
 		try {
 			InvoiceRecorder ir = (InvoiceRecorder) getModel().getRowData();
-			ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
+			ir.setDetails(obtaingAccountEntryDetailList(ir.getInvoice()));
 			ir.setShowAccountEntry(true);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible previsualizar el apunte: " + e.getMessage();
@@ -217,8 +263,8 @@ public class InvoiceRecorderController extends BasicController {
 		try {
 			List<InvoiceRecorder> list = getCurrentList();
 			for (InvoiceRecorder ir : list) {
+				ir.setDetails(obtaingAccountEntryDetailList(ir.getInvoice()));
 				ir.setShowAccountEntry(true);
-				ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible previsualizar el apunte: " + e.getMessage();
@@ -228,20 +274,13 @@ public class InvoiceRecorderController extends BasicController {
 		}
 	}
 
-	public void onHideAllAccountEntry(ActionEvent event) {
-		List<InvoiceRecorder> list = getCurrentList();
-		for (InvoiceRecorder ir : list) {
-			ir.setShowAccountEntry(false);
-		}
-	}
-
 	public void onShowCheckedAccountEntry(ActionEvent event) {
 		try {
 			List<InvoiceRecorder> list = getCurrentList();
 			for (InvoiceRecorder ir : list) {
 				ir.setShowAccountEntry(ir.isChecked() ? true : ir.isShowAccountEntry());
 				if (ir.isShowAccountEntry()) {
-					ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
+					ir.setDetails(obtaingAccountEntryDetailList(ir.getInvoice()));
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -258,7 +297,7 @@ public class InvoiceRecorderController extends BasicController {
 			for (InvoiceRecorder ir : list) {
 				ir.setShowAccountEntry(!ir.isChecked() ? true : ir.isShowAccountEntry());
 				if (ir.isShowAccountEntry()) {
-					ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
+					ir.setDetails(obtaingAccountEntryDetailList(ir.getInvoice()));
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -275,7 +314,7 @@ public class InvoiceRecorderController extends BasicController {
 			for (InvoiceRecorder ir : list) {
 				ir.setShowAccountEntry((ir.isRecordable() && !ir.isWarned()) ? true : ir.isShowAccountEntry());
 				if (ir.isShowAccountEntry()) {
-					ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
+					ir.setDetails(obtaingAccountEntryDetailList(ir.getInvoice()));
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -292,7 +331,7 @@ public class InvoiceRecorderController extends BasicController {
 			for (InvoiceRecorder ir : list) {
 				ir.setShowAccountEntry((!ir.isRecordable()) ? true : ir.isShowAccountEntry());
 				if (ir.isShowAccountEntry()) {
-					ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
+					ir.setDetails(obtaingAccountEntryDetailList(ir.getInvoice()));
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -309,7 +348,7 @@ public class InvoiceRecorderController extends BasicController {
 			for (InvoiceRecorder ir : list) {
 				ir.setShowAccountEntry((ir.isRecordable() && ir.isWarned()) ? true : ir.isShowAccountEntry());
 				if (ir.isShowAccountEntry()) {
-					ir.setDetails(getAccountEntryInvoiceWriter().preRecordInvoice(ir.getInvoice()));
+					ir.setDetails(obtaingAccountEntryDetailList(ir.getInvoice()));
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -317,6 +356,31 @@ public class InvoiceRecorderController extends BasicController {
 			LOGGER.warn(msg, e);
 			AonUtil.addWarningMessage(msg);
 			throw new AbortProcessingException(msg);
+		}
+	}
+
+	private List<AccountEntryDetail> obtaingAccountEntryDetailList(Invoice invoice) throws ManagerBeanException {
+		if (invoice.isRecorded()) {
+			List<AccountEntryDetail> entryDetailList = new LinkedList<AccountEntryDetail>();
+			IManagerBean entryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(entryInvoiceBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_INVOICE_INVOICE_ID), invoice.getId());
+			for (ITransferObject ito : entryInvoiceBean.getList(criteria)) {
+				AccountEntryInvoice entryInvoice = (AccountEntryInvoice)ito;
+				IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entryInvoice.getAccountEntry().getId());
+				int line = 0;
+				for (ITransferObject itr : entryDetailBean.getList(criteria)) {
+					AccountEntryDetail entryDetail = (AccountEntryDetail)itr;
+					entryDetail.setLine(++line);
+					entryDetailList.add(entryDetail);
+				}
+				break;
+			}
+			return entryDetailList;
+		} else {
+			return getAccountEntryInvoiceWriter().preRecordInvoice(invoice);
 		}
 	}
 
@@ -329,6 +393,13 @@ public class InvoiceRecorderController extends BasicController {
 			LOGGER.warn(msg, e);
 			AonUtil.addWarningMessage(msg);
 			throw new AbortProcessingException(msg);
+		}
+	}
+
+	public void onHideAllAccountEntry(ActionEvent event) {
+		List<InvoiceRecorder> list = getCurrentList();
+		for (InvoiceRecorder ir : list) {
+			ir.setShowAccountEntry(false);
 		}
 	}
 

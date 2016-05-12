@@ -177,42 +177,44 @@ public class InvoiceRecorder implements ITransferObject {
 	}
 	
 	private void refreshFlags() {
-		try {
-			setMessages(null);
-			setRecordable(true);
-			checkFinanceInaccuracyPresent();
-			checkInvestmentAmortizationFormPresent();
-			InvoiceType type = getInvoice().getType();
-
-			if ( getInvoice().isWithholding()) {
-				addMessage("Factura con retenciones I.R.P.F.");
+		setMessages(null);
+		setRecordable(true);
+		if (InvoiceStatus.PENDING.equals(getInvoice().getStatus())) {
+			try {
+				checkFinanceInaccuracyPresent();
+				checkInvestmentAmortizationFormPresent();
+				InvoiceType type = getInvoice().getType();
+	
+				if ( getInvoice().isWithholding()) {
+					addMessage("Factura con retenciones I.R.P.F.");
+				}
+				if ( getInvoice().isSurcharge()) {
+					addMessage("Factura con Recargo de Equivalencia.");
+				}
+				if ( getInvoice().getTransaction() != InvoiceTransactionType.NATIONAL) {
+					Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+					addMessage("Factura de tipo " + getInvoice().getTransaction().getName(locale));
+				}
+				if ( getInvoice().isInvestment() ) {
+					addMessage("Factura marcada como inversión.");
+				}
+				if (!isDateEquals()) {
+					addMessage("Fecha de IVA diferente a fecha de factura.");
+				}
+				
+				if (type == InvoiceType.SALES) {
+					setAccount( getAccountBridgeUtil().getCustomerAccount(getInvoice().getRegistry()));	
+				} else if (type == InvoiceType.PURCHASE) {
+					setAccount( getAccountBridgeUtil().getSupplierAccount(getInvoice().getRegistry()));	
+				} else if (type == InvoiceType.EXPENSES) {
+					setAccount( getAccountBridgeUtil().getCreditorAccount(getInvoice().getRegistry()));	
+				}
+				if (getAccount() != null &&  (invoice.getType() == InvoiceType.EXPENSES || invoice.getType() == InvoiceType.UNDEDUCTIBLE)) {
+					checkExpenseAccount();
+				}
+			} catch (ManagerBeanException ex) {
+				addMessage("Error en el chequeo. " +  ex.getMessage());
 			}
-			if ( getInvoice().isSurcharge()) {
-				addMessage("Factura con Recargo de Equivalencia.");
-			}
-			if ( getInvoice().getTransaction() != InvoiceTransactionType.NATIONAL) {
-				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-				addMessage("Factura de tipo " + getInvoice().getTransaction().getName(locale));
-			}
-			if ( getInvoice().isInvestment() ) {
-				addMessage("Factura marcada como inversión.");
-			}
-			if (!isDateEquals()) {
-				addMessage("Fecha de IVA diferente a fecha de factura.");
-			}
-			
-			if (type == InvoiceType.SALES) {
-				setAccount( getAccountBridgeUtil().getCustomerAccount(getInvoice().getRegistry()));	
-			} else if (type == InvoiceType.PURCHASE) {
-				setAccount( getAccountBridgeUtil().getSupplierAccount(getInvoice().getRegistry()));	
-			} else if (type == InvoiceType.EXPENSES) {
-				setAccount( getAccountBridgeUtil().getCreditorAccount(getInvoice().getRegistry()));	
-			}
-			if (getAccount() != null &&  (invoice.getType() == InvoiceType.EXPENSES || invoice.getType() == InvoiceType.UNDEDUCTIBLE)) {
-				checkExpenseAccount();
-			}
-		} catch (ManagerBeanException ex) {
-			addMessage("Error en el chequeo. " +  ex.getMessage());
 		}
 		setRefresh(false);
 	}
