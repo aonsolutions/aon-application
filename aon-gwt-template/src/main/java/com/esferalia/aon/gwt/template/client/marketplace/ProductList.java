@@ -4,18 +4,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
-import com.esferalia.aon.gwt.template.client.Utils;
-import com.esferalia.aon.gwt.template.shared.Product;
+import com.esferalia.aon.gwt.template.shared.Item;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -26,6 +23,7 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -52,43 +50,37 @@ public class ProductList extends ResizeComposite{
 		Style dataGridStyle();
 	}
 	
-	@UiField(provided = true) DataGrid<Product> dataGrid;
+	@UiField(provided = true) DataGrid<Item> dataGrid;
 	@UiField(provided = true) TextBox nameSearchBox;
 	
-//	@UiField PushButton moreOptionsButton;
-//	@UiField DecoratedPopupPanel searchOptionsPanel;
+	@UiField(provided = true) Button searchButton;
 	
-	private List<Product> list;
+	private List<Item> list;
 	private String login;
-	private ListDataProvider<Product> dataProvider = new ListDataProvider<Product>();
+	private ListDataProvider<Item> dataProvider = new ListDataProvider<Item>();
 
 	
-	public ProductList(List<Product> list, String login) {
+	public ProductList(List<Item> list, String login) {
 		setList(list);
 		setLogin(login);
 		
-		dataGrid = new DataGrid<Product>(Integer.MAX_VALUE, resources); 
+		dataGrid = new DataGrid<Item>(Integer.MAX_VALUE, resources); 
 		nameSearchBox = new TextBox();
+		
+		searchButton = new Button("Buscar");
 
 		Widget ui = binder.createAndBindUi(this);
 		
 		initWidget(ui);
-//		searchOptionsPanel.setVisible( false );
-//		searchOptionsPanel.getElement().getStyle().setZIndex(10000);
 		initSearchBox();
 		loadDataGrid();
 	}
 	
-//	@UiHandler("moreOptionsButton")
-//	void onMoreOptionsBttnClick(ClickEvent event) {
-//	    searchOptionsPanel.setVisible( true );
-//	}
-	
-	public List<Product> getList(){
+	public List<Item> getList(){
 		return list;
 	}
 	
-	public void setList(List<Product> list){
+	public void setList(List<Item> list){
 		this.list = list;
 	}
 	
@@ -107,32 +99,26 @@ public class ProductList extends ResizeComposite{
 	//------------------------------ DataGrid Utils
 	
 	private void initSearchBox(){
-		nameSearchBox.addBitlessDomHandler(new ChangeHandler() {
+		nameSearchBox.setValue(null);
+		
+		searchButton.addDomHandler(new ClickHandler() {
 			@Override
-			public void onChange(ChangeEvent event) {
+			public void onClick(ClickEvent arg0) {
 				searchByName();
 			}
-		}, ChangeEvent.getType());
-		nameSearchBox.addKeyUpHandler(new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if(!Utils.isNotAlpKey(event.getNativeEvent().getKeyCode())){
-					searchByName();
-				}
-			}
-		});
+		}, ClickEvent.getType());
 
 	}
 	
 	private void searchByName() {
 		String searchStr = nameSearchBox.getText();
-		Vector<Product> vaux = new Vector<Product>();
+		Vector<Item> vaux = new Vector<Item>();
 		vaux.addAll(getList());
  		
-		impl.searchProductByName(searchStr, vaux, new AsyncCallback<Vector<Product>>() {
+		impl.searchItemByProductName(searchStr, vaux, new AsyncCallback<Vector<Item>>() {
 			@Override
-			public void onSuccess(Vector<Product> result) {
-				dataProvider = new ListDataProvider<Product>(result);
+			public void onSuccess(Vector<Item> result) {
+				dataProvider = new ListDataProvider<Item>(result);
 				dataProvider.addDataDisplay(dataGrid);
 				dataGrid.redraw();
 			}
@@ -143,12 +129,12 @@ public class ProductList extends ResizeComposite{
 	}
 	
 	private void loadDataGrid(){
-		final SingleSelectionModel<Product> selectionModel = new SingleSelectionModel<Product>();
+		final SingleSelectionModel<Item> selectionModel = new SingleSelectionModel<Item>();
 		dataGrid.setSelectionModel(selectionModel);
 		dataGrid.addDomHandler(new DoubleClickHandler() {
 			@Override
 			public void onDoubleClick(final DoubleClickEvent event) {
-				Product selected = selectionModel.getSelectedObject();
+				Item selected = selectionModel.getSelectedObject();
 				if (selected != null) {
 				    new ProductValuesDialog(selected, getLogin()).show();
 				}
@@ -157,23 +143,23 @@ public class ProductList extends ResizeComposite{
 		dataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		dataGrid.setAutoHeaderRefreshDisabled(true);
 		dataGrid.setEmptyTableWidget(new Label("No hay ning\u00fan archivo."));
-		dataProvider = new ListDataProvider<Product>(getList());
+		dataProvider = new ListDataProvider<Item>(getList());
 		dataProvider.addDataDisplay(dataGrid);
-		ListHandler<Product> sortHandler = getSortHandler();
+		ListHandler<Item> sortHandler = getSortHandler();
 		dataGrid.addColumnSortHandler(sortHandler);
 		
 		initTableColumns(selectionModel, sortHandler);
 	}
 	
 	
-	private ListHandler<Product> getSortHandler() {
-		return new ListHandler<Product>(dataProvider.getList()) {
+	private ListHandler<Item> getSortHandler() {
+		return new ListHandler<Item>(dataProvider.getList()) {
 			@Override
 			public void onColumnSort(ColumnSortEvent event) {
 				super.setList(dataProvider.getList());
 				super.onColumnSort(event);
-				List<Product> aux = super.getList();
-				List<Product> aux2 = new Vector<Product>();
+				List<Item> aux = super.getList();
+				List<Item> aux2 = new Vector<Item>();
 				for (Integer i = 0; i < aux.size() - 1; i++) {
 					aux2.set(i, aux.get(aux.size() - 1 - i));
 				}
@@ -183,71 +169,68 @@ public class ProductList extends ResizeComposite{
 	}
 
 	private void initTableColumns(
-			final SelectionModel<Product> selectionModel,
-			ListHandler<Product> sortHandler) {
-		
-		/**
-		 * Select Column
-		 */
-//		Column<Product, String> selectColumn = new Column<Product, String>(new ButtonCell()) {
-//			@Override
-//			public String getValue(Product object) {
-//				return "->";
-//			}
-//		};
-//		selectColumn.setFieldUpdater(new FieldUpdater<Product, String>() {
-//			public void update(int index, Product object, String value) {
-//				Window.alert("You clicked: " + value);
-//			}
-//		});
-//		selectColumn.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
-//		dataGrid.addColumn(selectColumn, "", "");
-//		dataGrid.setColumnWidth(selectColumn, 40, Unit.PX);
+			final SelectionModel<Item> selectionModel,
+			ListHandler<Item> sortHandler) {
 		
 		/**
 		 * Code Column
 		 */
-		Column<Product, String> codeColumn = new Column<Product, String>(
+		Column<Item, String> codeColumn = new Column<Item, String>(
 				new TextCell()) {
 			@Override
-			public void render(Context context, Product object, SafeHtmlBuilder sb) {
-				sb.appendHtmlConstant("<span>" + object.getCode() + "</span>");
+			public void render(Context context, Item object, SafeHtmlBuilder sb) {
+				sb.appendHtmlConstant("<span>" + object.getProduct().getCode() + "</span>");
 			}
 			@Override
-			public String getValue(Product object) {
-				return object.getCode();
+			public String getValue(Item object) {
+				return object.getProduct().getCode();
 			}
 		};
 		codeColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		codeColumn.setSortable(true);
-		sortHandler.setComparator(codeColumn,
-				new Comparator<Product>() {
-					@Override
-					public int compare(Product o1, Product o2) {
-						return o1.getCode().compareTo(o2.getCode());
-					}
-				});
-		dataGrid.getColumnSortList().push(codeColumn);
 		dataGrid.addColumn(codeColumn, "C\u00f3digo");
 		dataGrid.setColumnWidth(codeColumn, 15, Unit.PCT);
+		
+		/**
+		 * Detail Column
+		 */
+		Column<Item, String> detailColumn = new Column<Item, String>(
+				new TextCell()) {
+			@Override
+			public void render(Context context, Item object, SafeHtmlBuilder sb) {
+				sb.appendHtmlConstant("<span>" 
+						+ (object.getDetail()!=null?object.getDetail():"")
+						+ (object.getDetail2()!=null?" / " + object.getDetail2():"")
+						+ (object.getDetail3()!=null?" / " + object.getDetail3():"")
+						+ "</span>");
+			}
+			@Override
+			public String getValue(Item object) {
+				return (object.getDetail()!=null?object.getDetail():"")
+						+ (object.getDetail2()!=null?" / " + object.getDetail2():"")
+						+ (object.getDetail3()!=null?" / " + object.getDetail3():"");
+			}
+		};
+		detailColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		dataGrid.addColumn(detailColumn, "Detalle");
+		dataGrid.setColumnWidth(detailColumn, 20, Unit.PCT);
 		
 		/** 
 		 * Name Column 
 		 */
-		Column<Product, String> nameColumn = new Column<Product, String>(
+		Column<Item, String> nameColumn = new Column<Item, String>(
 				new TextCell()) {
 			@Override
-			public String getValue(Product object) {
-				return object.getName();
+			public String getValue(Item object) {
+				return object.getProduct().getName();
 			}
 		};
 		nameColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
 		nameColumn.setSortable(true);
 		sortHandler.setComparator(nameColumn,
-				new Comparator<Product>() {
+				new Comparator<Item>() {
 					@Override
-					public int compare(Product o1, Product o2) {
-						return o1.getName().compareTo(o2.getName());
+					public int compare(Item o1, Item o2) {
+						return o1.getProduct().getName().compareTo(o2.getProduct().getName());
 					}
 				});
 		dataGrid.getColumnSortList().push(nameColumn);

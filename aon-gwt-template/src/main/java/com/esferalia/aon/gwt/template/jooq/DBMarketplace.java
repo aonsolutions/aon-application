@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Sales.SALES;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,12 +26,14 @@ import org.jooq.Result;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
+import com.esferalia.aon.gwt.template.shared.Item;
 import com.esferalia.aon.gwt.template.shared.Product;
 import com.esferalia.aon.gwt.template.shared.RegistryAttachTag;
 import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.gwt.template.shared.marketplace.CarrierCode;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
 import com.esferalia.aon.jooq.tables.records.IattachRecord;
+import com.esferalia.aon.jooq.tables.records.ItemRecord;
 import com.esferalia.aon.jooq.tables.records.ProductRecord;
 import com.esferalia.aon.jooq.tables.records.RattachTagRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
@@ -42,10 +45,12 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.AttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 
@@ -215,21 +220,25 @@ public class DBMarketplace {
 	}
 	
 	public static List<Product> getProductList(Domain domain, String login, Integer category){
-		return getProductList(domain, login, category, null);
+		return getProductList(domain, login, category, null, null, null);
 	}
 
-	public static List<Product> getProductList(Domain domain, String login, Integer category, Boolean active){
+	public static List<Product> getProductList(Domain domain, String login, Integer category, Boolean active, Boolean sales, Boolean serializable){
 		AONContext ctx = null;
 		try {			
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			Result<ProductRecord> result = ctx.getDslContext().select()
 					.from(PRODUCT)
 					.where(PRODUCT.DOMAIN.eq(domain.getId()))
+					.and(PRODUCT.TYPE.in( new Byte[] {ProductType.SERVICE.value(), ProductType.COMMERCIAL_PRODUCT.value()}))
+					.and(serializable!=null?PRODUCT.SERIALIZABLE.equal((byte) (serializable ? 1 : 0 )):PRODUCT.SERIALIZABLE.isNotNull())
+					.and(sales!=null?PRODUCT.KIND.in( new Byte[] {ProductKind.SALE.value(), ProductKind.SALE_PURCHASE.value()}):PRODUCT.KIND.isNotNull())
 					.and(category!=null?PRODUCT.CATEGORY.equal(category):PRODUCT.CATEGORY.isNotNull())
 					.and(active!=null?PRODUCT.STATUS.equal(active?ProductStatus.ACTIVE.value():ProductStatus.DISCONTINUED.value()):PRODUCT.STATUS.isNotNull())
+					.orderBy(PRODUCT.NAME)
 					.fetchInto(PRODUCT);
 			List<Product> list = new ArrayList<Product>();
-			result.stream().forEach(record ->{
+			result.stream().forEachOrdered(record ->{
 				Product product = new Product();
 				product.setId(record.getId());
 				product.setCode(record.getCode());
@@ -242,6 +251,47 @@ public class DBMarketplace {
 			if(ctx != null)
 				ctx.close();
 		}
+	}
+	
+	public static List<Item> getMarketItemList(Domain domain, String login, Integer category, Boolean active, Boolean sales){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
+			List<Item> list = new ArrayList<>();
+			
+			List<Product> serialProducts = getProductList(domain, login, category, active, sales, true);
+			fillItemList(ctx, domain, list, serialProducts, true);
+			
+			List<Product> noSerialProducts = getProductList(domain, login, category, active, sales, false);
+			fillItemList(ctx, domain, list, noSerialProducts, null);
+			
+			Collections.sort(list, (Item o1, Item o2) -> o1.getProduct().getName().compareTo(o2.getProduct().getName()));
+			
+			return list;
+			
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
+	}
+	
+	private static void fillItemList(AONContext ctx, Domain domain, List<Item> list, List<Product> products, Boolean serial){
+		List<Integer> productIds = products.stream().map(Product::getId).collect(Collectors.toList());
+		Result<ItemRecord> result = ctx.getDslContext().select()
+				.from(ITEM)
+				.where(ITEM.DOMAIN.eq(domain.getId()))
+				.and(serial!=null?(serial?ITEM.SERIAL_NUMBER.isNull():ITEM.SERIAL_NUMBER.isNotNull()):ITEM.ID.isNotNull())
+				.and(ITEM.PRODUCT.in(productIds))
+				.fetchInto(ITEM);
+		result.stream().forEachOrdered(record ->{
+			Item item = new Item();
+			item.setId(record.getId());
+			item.setDetail(record.getDetail());
+			item.setDetail2(record.getDetail2());
+			item.setDetail3(record.getDetail3());
+			item.setProduct(products.stream().filter(p -> (p.getId().equals(record.getProduct()))).findFirst().get());
+			list.add(item);
+		});
 	}
 
 	public static List<RegistryAttachTag> getAttachTemplateTagList(Domain domain, String login, List<Integer> pTagList) {
@@ -269,7 +319,7 @@ public class DBMarketplace {
 		}
 	}
 	
-	public static Attach getItemTemplateAttach(Domain domain, String login, String templateName, Product product) {
+	public static Attach getItemTemplateAttach(Domain domain, String login, String templateName, Item item) {
 		AONContext ctx = null;
 		try {			
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
@@ -277,7 +327,7 @@ public class DBMarketplace {
 					.from(IATTACH).leftOuterJoin(ITEM).on(IATTACH.ITEM.equal(ITEM.ID))
 					.where(IATTACH.DOMAIN.eq(domain.getId()))
 					.and(IATTACH.DESCRIPTION.equal(templateName))
-					.and(ITEM.ID.equal(getBaseItemId(domain, login, product.getId())))
+					.and(ITEM.ID.equal(item.getId()))
 					.fetchInto(IATTACH);
 			Attach attach = null;
 			if(result.isNotEmpty()){
@@ -298,12 +348,17 @@ public class DBMarketplace {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			Record1<Integer> record = ctx.getDslContext()
-					.select(ITEM.ID)
+			Result<ItemRecord> result = ctx.getDslContext()
+					.select()
 					.from(ITEM)
 					.where(ITEM.PRODUCT.eq(productId).and(ITEM.SERIAL_NUMBER.isNull()))
-					.fetchOne();
-			itemId = record.value1();
+					.fetchInto(ITEM);
+			if( result.size() == 1 ){
+				ItemRecord record = result.get(0);
+				itemId = record.getId();
+			} else {
+				itemId = null;
+			}
 		} finally {
 			if(ctx != null)
 				ctx.close();
@@ -311,7 +366,7 @@ public class DBMarketplace {
 		return itemId;
 	}
 	
-	public static boolean acceptProductValues(Domain domain, String login, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
+	public static boolean acceptProductValues(Domain domain, String login, Item item, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
 		byte[] data = null;
 		try {
 			data = XMLUtils.writeXml(ecommerceProduct);
@@ -325,17 +380,11 @@ public class DBMarketplace {
 				attach = new Attach();
 			}
 			
-			Integer productId = Integer.parseInt(ecommerceProduct.getProduct().getId());
-			Integer itemId = getBaseItemId(domain, login, productId);
-			
-			if(itemId==null){
-				throw new IllegalArgumentException("No se ha podido recuperar el producto base");
-			}
 			attach.setDomain(domain);
 			attach.setMimeType(MimeType.XML);
 			attach.setDescription(templateName);
 			attach.setAttachType(AttachType.ITEM);
-			attach.setAttachModule(itemId);
+			attach.setAttachModule(item.getId());
 			attach.setType(AttachmentType.ECOMMERCE_PRODUCT.value());
 			attach.setConfidential(false);
 			attach.setData(data);

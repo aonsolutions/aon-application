@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.template.client.marketplace.IMarketplace;
 import com.esferalia.aon.gwt.template.jooq.DBMarketplace;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
+import com.esferalia.aon.gwt.template.shared.Item;
 import com.esferalia.aon.gwt.template.shared.Product;
 import com.esferalia.aon.gwt.template.shared.RegistryAttachTag;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
@@ -96,14 +97,22 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 	}
 	
 	public List<Product> getProductList(Domain domain, String login, Integer category, Boolean active){
-		return DBMarketplace.getProductList(domain, login, category, active);
+		return DBMarketplace.getProductList(domain, login, category, active, null, null);
 	}
+
+	public List<Product> getSalesProductList(Domain domain, String login, Integer category, Boolean active, Boolean sales){
+		return DBMarketplace.getProductList(domain, login, category, active, sales, null);
+	} 
 	
-	public Vector<Product> searchProductByName(String searchStr, Vector<Product> list){
-		Vector<Product> vector = new Vector<Product>();
-		for (Product p : list) {
-			if(containsIgnoreCase2(p.getName(), searchStr)){
-				vector.add(p);
+	public List<Item> getMarketItemList(Domain domain, String login, Integer category, Boolean active, Boolean sales){
+		return DBMarketplace.getMarketItemList(domain, login, category, active, sales);
+	} 
+	
+	public Vector<Item> searchItemByProductName(String searchStr, Vector<Item> list){
+		Vector<Item> vector = new Vector<Item>();
+		for (Item i : list) {
+			if(containsIgnoreCase2(i.getProduct().getName(), searchStr)){
+				vector.add(i);
 			}
 		}
 		return vector;
@@ -124,19 +133,19 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 						AttachType.REGISTRY);
 	}
 	
-	public Attach obtainEcommerceProductAttach(Domain domain, Product product, String templateName){
-		return DBMarketplace.getItemTemplateAttach(domain, getUserLogin(), templateName, product);
+	public Attach obtainEcommerceProductAttach(Domain domain, Item item, String templateName){
+		return DBMarketplace.getItemTemplateAttach(domain, getUserLogin(), templateName, item);
 	}
 
-	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Attach attach, Product product){
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Attach attach, Item item){
 		EcommerceProduct ecommerceProduct = null;
 		if(attach!=null){
 			try {
 				ecommerceProduct = XMLUtils.readXml(attach.getData());
 				ecommerceProduct.setProduct(new EcommerceProduct.Product());
-				ecommerceProduct.getProduct().setId(product.getId().toString());
-				ecommerceProduct.getProduct().setCode(product.getCode());
-				ecommerceProduct.getProduct().setName(product.getName());
+				ecommerceProduct.getProduct().setId(item.getProduct().getId().toString());
+				ecommerceProduct.getProduct().setCode(item.getProduct().getCode());
+				ecommerceProduct.getProduct().setName(item.getProduct().getName());
 			} catch (JAXBException e) {
 				ecommerceProduct = null;
 			}
@@ -144,7 +153,7 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 		return ecommerceProduct;
 	}
 	
-	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Product product, String templateName){
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Item item, String templateName){
 		Attach attach = AON.getAttach(domain.getName()
 				, domain.getId()
 				, getUserLogin()
@@ -152,11 +161,11 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 				.and(filter.getDescriptionProperty().eq(templateName))
 				, AttachType.REGISTRY);
 		
-		return obtainEcommerceProductValues(domain, attach, product);
+		return obtainEcommerceProductValues(domain, attach, item);
 	}
 	
-	public Boolean acceptEcommerceProductValues(Domain domain, String login, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
-		return DBMarketplace.acceptProductValues(domain, login, templateName, ecommerceProduct, attach);
+	public Boolean acceptEcommerceProductValues(Domain domain, String login, Item item, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
+		return DBMarketplace.acceptProductValues(domain, login, item, templateName, ecommerceProduct, attach);
 	}
 	
 	/**

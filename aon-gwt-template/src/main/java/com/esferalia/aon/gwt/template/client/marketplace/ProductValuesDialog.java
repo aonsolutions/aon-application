@@ -11,7 +11,7 @@ import com.esferalia.aon.gwt.template.client.JsTemplates;
 import com.esferalia.aon.gwt.template.client.ProgressBarDialog;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData.Ecommerce;
-import com.esferalia.aon.gwt.template.shared.Product;
+import com.esferalia.aon.gwt.template.shared.Item;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -72,11 +72,11 @@ public class ProductValuesDialog extends CustomDialogB {
 	private Attach ecommerceProductAttach;
 	private EcommerceProduct ecommerceProduct;
 	private EcommerceProduct ecommerceTemplate;
-	private Product product;
+	private Item item;
 	private String login;
 	
-	public ProductValuesDialog(Product product, String login){
-		this.product = product;
+	public ProductValuesDialog(Item item, String login){
+		this.item = item;
 		this.login = login;
 		
 		templatesGrid = new FlexTable();
@@ -88,7 +88,11 @@ public class ProductValuesDialog extends CustomDialogB {
 		
 		this.setWidget(binder.createAndBindUi(this));
 		
-		this.setCaption("("+product.getCode() +") " + product.getName());
+		this.setCaption("("+item.getProduct().getCode() +") "
+				+ (item.getDetail()!=null?item.getDetail():"")
+				+ (item.getDetail2()!=null?" / " + item.getDetail2():"")
+				+ (item.getDetail3()!=null?" / " + item.getDetail3():"")
+				+ ". " + item.getProduct().getName());
 		this.setWidth("900px");
 		this.center();
 	}
@@ -182,7 +186,7 @@ public class ProductValuesDialog extends CustomDialogB {
 	}
 	
 	private void loadEcommerceTemplateValues(){
-		marketImpl.obtainEcommerceProductValues(getDomain(), product, productTemplateList.getSelectedItemText(), new AsyncCallback<EcommerceProduct>(){
+		marketImpl.obtainEcommerceProductValues(getDomain(), item, productTemplateList.getSelectedItemText(), new AsyncCallback<EcommerceProduct>(){
 			@Override
 			public void onSuccess(EcommerceProduct result){
 				ecommerceTemplate = result;
@@ -196,7 +200,7 @@ public class ProductValuesDialog extends CustomDialogB {
 	}
 
 	private void loadEcommerceProductAttach(){
-		marketImpl.obtainEcommerceProductAttach(getDomain(), product, productTemplateList.getSelectedItemText(), new AsyncCallback<Attach>(){
+		marketImpl.obtainEcommerceProductAttach(getDomain(), item, productTemplateList.getSelectedItemText(), new AsyncCallback<Attach>(){
 			@Override
 			public void onSuccess(Attach result){
 				ecommerceProductAttach = result;
@@ -215,7 +219,7 @@ public class ProductValuesDialog extends CustomDialogB {
 	}
 	
 	private void loadEcommerceProductValues(){
-		marketImpl.obtainEcommerceProductValues(getDomain(), ecommerceProductAttach, product, new AsyncCallback<EcommerceProduct>(){
+		marketImpl.obtainEcommerceProductValues(getDomain(), ecommerceProductAttach, item, new AsyncCallback<EcommerceProduct>(){
 			@Override
 			public void onSuccess(EcommerceProduct result){
 				ecommerceProduct = result;
@@ -355,6 +359,7 @@ public class ProductValuesDialog extends CustomDialogB {
 				&& ecommerce.getPresetValues().getPresetValue()!=null
 				&& ecommerce.getPresetValues().getPresetValue().size()>0){
 			ListBox listValue = new ListBox();
+			listValue.addItem("");
 			for (String value : ecommerce.getPresetValues().getPresetValue()){
 				if(listValue!=null && !listValue.equals("")){
 					listValue.addItem(value);
@@ -407,7 +412,7 @@ public class ProductValuesDialog extends CustomDialogB {
 				}
 				ecommerce.setValue(value);
 			}
-			marketImpl.acceptEcommerceProductValues(getDomain(), login, productTemplateList.getSelectedItemText(), ecommerceProduct, ecommerceProductAttach, new AsyncCallback<Boolean>() {
+			marketImpl.acceptEcommerceProductValues(getDomain(), login, item, productTemplateList.getSelectedItemText(), ecommerceProduct, ecommerceProductAttach, new AsyncCallback<Boolean>() {
 				@Override
 				public void onSuccess(Boolean result) {
 					pbd.hide();

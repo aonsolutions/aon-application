@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
+import com.esferalia.aon.gwt.template.shared.Item;
 import com.esferalia.aon.gwt.template.shared.Product;
 import com.esferalia.aon.gwt.template.shared.RegistryAttachTag;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
@@ -40,19 +41,25 @@ public interface IMarketplaceAsync {
 	
 	void getProductList(Domain domain, String login, Integer category, Boolean active, AsyncCallback<List<Product>> callback);
 	
-	void searchProductByName(String searchStr, Vector<Product> list, AsyncCallback<Vector<Product>> callback);
+	void getSalesProductList(Domain domain, String login, Integer category,
+			Boolean active, Boolean sales, AsyncCallback<List<Product>> callback);
+	
+	void getMarketItemList(Domain domain, String login, Integer category,
+			Boolean active, Boolean sales, AsyncCallback<List<Item>> callback);
+	
+	void searchItemByProductName(String searchStr, Vector<Item> list, AsyncCallback<Vector<Item>> callback);
 	
 	void getAttachTemplateTagList(Domain domain, String login, List<Integer> pTagList, AsyncCallback<List<RegistryAttachTag>> callback);
 	
 	void obtainEcommerceProductTemplates(Domain domain, String sellerId, AsyncCallback<List<Attach>> callback);
 	
-	void obtainEcommerceProductAttach(Domain domain, Product product, String templateName, AsyncCallback<Attach> callback);
+	void obtainEcommerceProductAttach(Domain domain, Item item, String templateName, AsyncCallback<Attach> callback);
 
-	void obtainEcommerceProductValues(Domain domain, Attach attach, Product product, AsyncCallback<EcommerceProduct> callback);
+	void obtainEcommerceProductValues(Domain domain, Attach attach, Item item, AsyncCallback<EcommerceProduct> callback);
 	
-	void obtainEcommerceProductValues(Domain domain, Product product, String templateName, AsyncCallback<EcommerceProduct> callback);
+	void obtainEcommerceProductValues(Domain domain, Item item, String templateName, AsyncCallback<EcommerceProduct> callback);
 	
-	void acceptEcommerceProductValues(Domain domain, String login, String templateName, EcommerceProduct eProduct, Attach iattach, AsyncCallback<Boolean> callback);
+	void acceptEcommerceProductValues(Domain domain, String login, Item item, String templateName, EcommerceProduct eProduct, Attach iattach, AsyncCallback<Boolean> callback);
 
 	void addMarketplaceTag(Domain domain, String name, AsyncCallback<Tag> callback);
 

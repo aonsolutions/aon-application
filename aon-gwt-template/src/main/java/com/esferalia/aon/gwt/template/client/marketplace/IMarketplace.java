@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
+import com.esferalia.aon.gwt.template.shared.Item;
 import com.esferalia.aon.gwt.template.shared.Product;
 import com.esferalia.aon.gwt.template.shared.RegistryAttachTag;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
@@ -41,18 +42,22 @@ public interface IMarketplace extends RemoteService{
 	List<Product> getProductList(Domain domain, String login, Integer category);
 
 	List<Product> getProductList(Domain domain, String login, Integer category, Boolean active);
+
+	List<Product> getSalesProductList(Domain domain, String login, Integer category, Boolean active, Boolean sales);
 	
-	public Vector<Product> searchProductByName(String searchStr, Vector<Product> list);
+	public List<Item> getMarketItemList(Domain domain, String login, Integer category, Boolean active, Boolean sales);
+	
+	public Vector<Item> searchItemByProductName(String searchStr, Vector<Item> list);
 	
 	List<RegistryAttachTag> getAttachTemplateTagList(Domain domain, String login, List<Integer> pTagList);
 	
 	public List<Attach> obtainEcommerceProductTemplates(Domain domain, String sellerId);
 	
-	public Attach obtainEcommerceProductAttach(Domain domain, Product product, String templateName);
+	public Attach obtainEcommerceProductAttach(Domain domain, Item item, String templateName);
 
-	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Attach attach, Product product);
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Attach attach, Item item);
 	
-	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Product product, String templateName);
+	public EcommerceProduct obtainEcommerceProductValues(Domain domain, Item item, String templateName);
 	
-	public Boolean acceptEcommerceProductValues(Domain domain, String login, String templateName, EcommerceProduct eProduct, Attach iattach);
+	public Boolean acceptEcommerceProductValues(Domain domain, String login, Item item, String templateName, EcommerceProduct eProduct, Attach iattach);
 }
