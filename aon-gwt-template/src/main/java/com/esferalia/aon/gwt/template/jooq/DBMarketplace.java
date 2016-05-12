@@ -104,9 +104,10 @@ public class DBMarketplace {
 					.where(REGISTRY.ID.eq(SALES.SELLER)).asField();
 			
 			return ctx.getDslContext().select(SALES.ID, SALES.SERIES, SALES.NUMBER, SALES.PURCHASE_REFERENCE, SALES.ISSUE_DATE, customerName, sellerName)
-				.from(SALES)			
+				.from(SALES).join(DELIVERY).on(SALES.SERIES.eq(DELIVERY.SERIES).and(SALES.NUMBER.eq(DELIVERY.NUMBER)))			
 				.where(SALES.DOMAIN.eq(domain.getId()))
-					.and(SALES.STATUS.eq(SalesStatus.SERVED.value()))
+					.and(DELIVERY.SHIPPING_STATUS.eq(ShipmentStatus.IN_AGENCY.value()))
+					//.and(SALES.STATUS.eq(SalesStatus.SERVED.value()))
 					.and(SALES.PURCHASE_REFERENCE.isNotNull())			
 				.fetch()
 				.stream().map(new OrderFiller())
