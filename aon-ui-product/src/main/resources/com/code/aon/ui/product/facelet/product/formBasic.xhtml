@@ -8,6 +8,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:valueParam name="fieldDisabled" default="#{lookup != null and productTo.id != null}" />
+	<aon:valueParam name="productStock" default="#{productTo.stock}" />
 	<aon:valueParam name="itemCount" default="#{productTo.itemCount}" />
 
 	<aon:outputLabel for="#{controller.pojoShortName}_code" value="#{bundle.aon_id}" />
@@ -116,7 +117,7 @@
 				styleClass="aon-vertical-align-middle aon-margin-right" style="display:inline-table;" 
 				value="#{productTo.serializable}"
 				rendered="#{controller.nevv or itemCount == 1}"
-				disabled="#{fieldDisabled or productTo.composition}"
+				disabled="#{fieldDisabled or productTo.composition or (!productTo.serializable and productStock != 0)}"
 				valueChangeListener="#{controller.onSerializableChanged}"
 				ajaxSingle="true" reRender="#{controller.pojoShortName}_serializable_div,#{controller.pojoShortName}_features">
 				<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
@@ -155,7 +156,7 @@
 				<aon:selectBooleanCheckbox id="#{controller.pojoShortName}_inventoriable"
 					value="#{productTo.inventoriable}"
 					rendered="#{!productTo.composition}"
-					disabled="#{fieldDisabled or productTo.serializable or productTo.stock != 0}"
+					disabled="#{fieldDisabled or productTo.serializable or productStock != 0}"
 					ajaxSingle="true" reRender="#{controller.pojoShortName}_features" />
 				<aon:outputLabel for="#{controller.pojoShortName}_inventoriable" styleClass="aon-margin-right aon-italic"
 					value="#{bundle.product_inventoriable}"
@@ -218,7 +219,7 @@
 			<aon:div>
 				<aon:outputLabel styleClass="aon-margin-right aon-bold aon-uppercase"
 					value="#{bundle.product_stock} #{bundle.aon_product}:" />
-				<aon:outputText value="#{productTo.stock}" styleClass="aon-bold">
+				<aon:outputText value="#{productStock}" styleClass="aon-bold">
 					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 				</aon:outputText>
 			</aon:div>
