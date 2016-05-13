@@ -205,47 +205,57 @@ public class CretaServlet extends HttpServlet
 	@Override
 	public void visitSolicitudBorrador(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		resp.setContentType("text/xml;");
-		String mes = req.getParameter(CretaService.Parameter.MES.name());
-		String anho = req.getParameter(CretaService.Parameter.ANHO.name());
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
 		String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
+		String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
+		String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
+		String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
+		String hastaAnho = req.getParameter(CretaService.Parameter.HASTA_ANHO.name());
 		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
 		boolean aceptarBasesAnteriores = AonStringUtils.equalsIgnoreCase("on",
 				req.getParameter(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES.name()));
-		Borrador.generate(autorizado, mes, anho, tipo, aceptarBasesAnteriores, cccs, resp.getOutputStream());
+		Borrador.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, aceptarBasesAnteriores, cccs, resp.getOutputStream());
 	}
 
 	@Override
 	public void visitSolicitudConfirmacion(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		resp.setContentType("text/xml;");
-		String mes = req.getParameter(CretaService.Parameter.MES.name());
-		String anho = req.getParameter(CretaService.Parameter.ANHO.name());
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
 		String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
+		String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
+		String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
+		String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
+		String hastaAnho = req.getParameter(CretaService.Parameter.HASTA_ANHO.name());
 		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
-		Confirmacion.generate(autorizado, mes, anho, tipo, cccs, resp.getOutputStream());
+		Confirmacion.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, cccs, resp.getOutputStream());
 	}
 
 	@Override
 	public void visitSolicitudCalculos(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		resp.setContentType("text/xml;");
-		String mes = req.getParameter(CretaService.Parameter.MES.name());
-		String anho = req.getParameter(CretaService.Parameter.ANHO.name());
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
 		String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
+		String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
+		String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
+		String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
+		String hastaAnho = req.getParameter(CretaService.Parameter.HASTA_ANHO.name());
 		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
-		Calculo.generate(autorizado, mes, anho, tipo, cccs, resp.getOutputStream());
+		Calculo.generate(autorizado,desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, cccs, resp.getOutputStream());
 	}
 
 	@Override
 	public void visitSolicitudTrabajadoresTramos(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		resp.setContentType("text/xml;");
-		String mes = req.getParameter(CretaService.Parameter.MES.name());
-		String anho = req.getParameter(CretaService.Parameter.ANHO.name());
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
 		String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
+		String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
+		String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
+		String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
+		String hastaAnho = req.getParameter(CretaService.Parameter.HASTA_ANHO.name());
+		String ctrlMes = req.getParameter(CretaService.Parameter.CTRL_MES.name());
+		String ctrlAnho = req.getParameter(CretaService.Parameter.CTRL_ANHO.name());
 		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
-		TrabajadoresTramos.generate(autorizado, mes, anho, tipo, cccs, resp.getOutputStream());
+		TrabajadoresTramos.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, ctrlMes, ctrlAnho, tipo, cccs, resp.getOutputStream());
 	}
 
 	@Override

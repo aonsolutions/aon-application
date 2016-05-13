@@ -548,14 +548,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			this.detailPanel = detailPanel;
 		}
 
-		protected void send(long autorizado, final int month, final int year,
+		protected void send(long autorizado, 
+				final int fromMonth, final int fromYear,
+				final int toMonth, final int toYear,
+				final int ctrlMonth, final int ctrlYear,
 				final String tipo, final Collection<CCC> cccs,
 				final boolean basesMesAnterior) {
 			StringBuffer requestDataBuffer = new StringBuffer();
 
 			requestDataBuffer.append("&" + Parameter.TIPO + "=" + tipo);
-			requestDataBuffer.append("&" + Parameter.MES + "=" + month);
-			requestDataBuffer.append("&" + Parameter.ANHO + "=" + year);
+			requestDataBuffer.append("&" + Parameter.DESDE_MES + "=" + fromMonth);
+			requestDataBuffer.append("&" + Parameter.DESDE_ANHO + "=" + fromYear);
+			requestDataBuffer.append("&" + Parameter.HASTA_MES + "=" + toMonth);
+			requestDataBuffer.append("&" + Parameter.HASTA_ANHO + "=" + toYear);
+			requestDataBuffer.append("&" + Parameter.CTRL_MES + "=" + ctrlMonth);
+			requestDataBuffer.append("&" + Parameter.CTRL_ANHO + "=" + ctrlYear);
 			requestDataBuffer
 					.append("&" + Parameter.AUTORIZADO + "=" + autorizado);
 
@@ -584,7 +591,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					if (state != XMLHttpRequest.DONE)
 						return;
 
-					onRequestDone(xhr.getResponseText(), month, year, tipo,
+					onRequestDone(xhr.getResponseText(), fromMonth, fromYear, toMonth, toYear, tipo,
 							cccs);
 				}
 
@@ -596,14 +603,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		// --------------------------------------------------------------------
 
-		private void onRequestDone(String response, int month, int year,
+		private void onRequestDone(String response, int fromMonth, int fromYear, int toMonth, int toYear,
 				String tipo, Collection<CCC> cccs) {
 			fileEditor.setMode("xml");
 			fileEditor.setText(response);
 			fileEditor.setFoldGutter(true);
 			fileEditor.setLineNumbers(true);
 			fileEditor.setTitle(file.getFilename());
-			fileEditor.setFilename(getFileName(month, year, tipo, cccs));
+			// TODO: from ? 
+			fileEditor.setFilename(getFileName(toMonth, toYear, tipo, cccs));
 			detailPanel.setWidget(fileEditor);
 			fileEditor.autoRefresh();
 		}
@@ -803,14 +811,20 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public boolean onAccept(CretaRequestDialog dialog) {
 
 			String tipo = dialog.getType();
-			Date month = dialog.getMonth();
-			int mes = month.getMonth() + 1;
-			int anyo = month.getYear() + 1900;
+			Date fromMonth = dialog.getFromMonth();
+			Date toMonth = dialog.getToMonth();
+			Date ctrlMonth = dialog.getToMonth();
+			int desdeMes = fromMonth.getMonth() + 1;
+			int desdeAnyo = fromMonth.getYear() + 1900;
+			int hastaMes = toMonth.getMonth() + 1;
+			int hastaAnyo = toMonth.getYear() + 1900;
+			int ctrlMes = ctrlMonth.getMonth() + 1;
+			int ctrlAnyo = ctrlMonth.getYear() + 1900;
 			long autorizado = dialog.getAuthorized();
 			Set<CCC> ccs = dialog.getSelectedData();
 			boolean basesMesAnterior = dialog.previousBases();
 
-			send(autorizado, mes, anyo, tipo, ccs, basesMesAnterior);
+			send(autorizado, desdeMes, desdeAnyo, hastaMes, hastaAnyo, ctrlMes, ctrlAnyo, tipo, ccs, basesMesAnterior);
 
 			return true;
 		}

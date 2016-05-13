@@ -56,7 +56,7 @@ public abstract class AbstractLiquidacionBuilder<B extends AbstractLiquidacionBu
 			P periodoControl = newPeriodo();
 			periodoControl.setAnho(String.format("%d",anhoControl));
 			periodoControl.setMes(String.format("%02d",mesControl.getValue()));
-			liquidacion.setPeriodoHasta(periodoControl);
+			liquidacion.setFechaControl(periodoControl);
 		}
 		
 		if ( "C00, C02, C03, C13, C90 y C91".indexOf(tipo) >= 0 ) {

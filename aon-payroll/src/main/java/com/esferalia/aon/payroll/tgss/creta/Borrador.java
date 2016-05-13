@@ -42,17 +42,60 @@ public class Borrador {
 	}
 
 	@SuppressWarnings("static-access")
-	public static Option getYearOption(Object anho) {
-		return OptionBuilder.withArgName("year").hasArg().withLongOpt("year")
-				.withDescription("Year built-in default (" + anho + ")")
-				.create("y");
+	public static Option getFromYearOption(Object anho) {
+		return OptionBuilder
+				.withArgName("year")
+				.hasArg()
+				.withLongOpt("from-year")
+				.withDescription("From Year built-in default (" + anho + ")")
+				.create();
 	}
 
 	@SuppressWarnings("static-access")
-	public static Option getMonthOption(Object mes) {
-		return OptionBuilder.withArgName("month").hasArg().withLongOpt("month")
-				.withDescription("Month built-in default (" + mes + ")")
-				.create("m");
+	public static Option getFromMonthOption(Object mes) {
+		return OptionBuilder
+				.withArgName("month")
+				.hasArg().withLongOpt("from-month")
+				.withDescription("From Month built-in default (" + mes + ")")
+				.create();
+	}
+
+	@SuppressWarnings("static-access")
+	public static Option getToYearOption(Object anho) {
+		return OptionBuilder
+				.withArgName("year")
+				.hasArg()
+				.withLongOpt("to-year")
+				.withDescription("To Year built-in default (" + anho + ")")
+				.create();
+	}
+
+	@SuppressWarnings("static-access")
+	public static Option getToMonthOption(Object mes) {
+		return OptionBuilder
+				.withArgName("month")
+				.hasArg().withLongOpt("to-month")
+				.withDescription("To Month built-in default (" + mes + ")")
+				.create();
+	}
+
+	@SuppressWarnings("static-access")
+	public static Option getCtrlYearOption(Object anho) {
+		return OptionBuilder
+				.withArgName("year")
+				.hasArg()
+				.withLongOpt("ctrl-year")
+				.withDescription("CTRL Year built-in default (" + anho + ")")
+				.create();
+	}
+
+	@SuppressWarnings("static-access")
+	public static Option getCtrlMonthOption(Object mes) {
+		return OptionBuilder
+				.withArgName("month")
+				.hasArg().withLongOpt("ctrl-month")
+				.withDescription("CTRL Month built-in default (" + mes + ")")
+				.create();
 	}
 
 	@SuppressWarnings("static-access")
@@ -71,14 +114,20 @@ public class Borrador {
 	public static void main(String[] args)
 			throws JAXBException, DatatypeConfigurationException {
 		String tipo = "L00";
-		String anho = Integer
+		String desdeAnho = Integer
 				.toString(Calendar.getInstance().get(Calendar.YEAR));
-		String mes = Integer
+		String desdeMes = Integer
+				.toString(Calendar.getInstance().get(Calendar.MONTH) + 1);
+		String hastaAnho = Integer
+				.toString(Calendar.getInstance().get(Calendar.YEAR));
+		String hastaMes = Integer
 				.toString(Calendar.getInstance().get(Calendar.MONTH) + 1);
 
 		//@formatter:off
-		Option year =  getYearOption(anho);
-		Option month =  getMonthOption(mes);
+		Option fromYear =  getFromYearOption(desdeAnho);
+		Option fromMonth =  getFromMonthOption(desdeMes);
+		Option toYear =  getToYearOption(hastaAnho);
+		Option toMonth =  getToMonthOption(hastaMes);
 		Option ccc =  getCCCOption();
 		Option authorized =  getAuthorizedOption();
 		Option type =  getTypeOption(tipo);
@@ -86,8 +135,10 @@ public class Borrador {
 		
 		Options options = new Options()
 		.addOption(authorized)
-		.addOption(year)
-		.addOption(month)
+		.addOption(fromYear)
+		.addOption(fromMonth)
+		.addOption(toYear)
+		.addOption(toMonth)
 		.addOption(ccc)
 		.addOption(type)
 		.addOption(skipPrevBases)
@@ -102,8 +153,10 @@ public class Borrador {
 			// parse the command line arguments
 			CommandLine cmd = parser.parse(options, args);
 
-			mes = cmd.getOptionValue(month.getLongOpt(), mes);
-			anho = cmd.getOptionValue(year.getLongOpt(), anho);
+			desdeMes = cmd.getOptionValue(fromMonth.getLongOpt(), desdeMes);
+			desdeAnho = cmd.getOptionValue(fromYear.getLongOpt(), desdeAnho);
+			hastaMes = cmd.getOptionValue(toMonth.getLongOpt(), hastaMes);
+			hastaAnho = cmd.getOptionValue(toYear.getLongOpt(), hastaAnho);
 			tipo = cmd.getOptionValue(type.getLongOpt(), tipo);
 			String cccs[] = cmd.getOptionValues(ccc.getLongOpt());
 			String autorizado = cmd.getOptionValue(authorized.getLongOpt());
@@ -111,7 +164,7 @@ public class Borrador {
 			boolean aceptarBasesAnteriores = !cmd
 					.hasOption(skipPrevBases.getLongOpt());
 
-			generate(autorizado, mes, anho, tipo, aceptarBasesAnteriores, cccs,
+			generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, aceptarBasesAnteriores, cccs,
 					System.out);
 
 		} catch (ParseException e) {
@@ -125,19 +178,22 @@ public class Borrador {
 
 	}
 
-	public static void generate(String autorizado, String mes, String anho,
+	public static void generate(String autorizado, String desdeMes, String desdeAnho,
+			String hastaMes, String hastaAnho,
 			String tipo, boolean aceptarBasesAnteriores, String cccs[],
 			OutputStream os) throws JAXBException {
 
 		int authorized = Integer.parseInt(autorizado);
-		Month month = Month.of(Integer.parseInt(mes));
-		int year = Integer.parseInt(anho);
+		Month fromMonth = Month.of(Integer.parseInt(desdeMes));
+		int fromYear = Integer.parseInt(desdeAnho);
+		Month toMonth = Month.of(Integer.parseInt(hastaMes));
+		int toYear = Integer.parseInt(hastaAnho);
 
-		generate(authorized, month, year, tipo, aceptarBasesAnteriores, cccs,
+		generate(authorized, fromMonth, fromYear, toMonth, toYear,tipo, aceptarBasesAnteriores, cccs,
 				os);
 	}
 
-	public static void generate(int autorizado, Month mes, int anho,
+	public static void generate(int autorizado, Month desdeMes, int desdeAnho, Month hastaMes, int hastaAnho,
 			String tipo, boolean aceptarBasesAnteriores, String cccs[],
 			OutputStream os) throws JAXBException {
 
@@ -150,10 +206,10 @@ public class Borrador {
 			.setCCC(cCC)
 			.setTipo(tipo)
 			.setAceptarBasesAnteriores(aceptarBasesAnteriores)
-			.setMesDesde(mes)
-			.setAnhoDesde(anho)
-			.setMesHasta(mes)
-			.setAnhoHasta(anho)
+			.setMesDesde(desdeMes)
+			.setAnhoDesde(desdeAnho)
+			.setMesHasta(hastaMes)
+			.setAnhoHasta(hastaAnho)
 			.addLiquidacion()
 			;
 		}

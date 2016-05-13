@@ -49,6 +49,10 @@
 	.messages {
 		padding-left: 20px;
 	}
+
+	.nodisplay {
+		display: none;
+	}
 	
 	.form textarea {
 		resize: none;
@@ -81,7 +85,7 @@
 					<g:LongBox  styleName="gwt-TextBox" ui:field="authLongBox"/>
 				</td>
 			</tr>
-			<tr>
+			<tr ui:field="monthTR" >
 				<td class="{style.label}">
 					<g:Label text="Mes" />
 				</td>
@@ -91,6 +95,37 @@
 						highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}"/>
 				</td>
 			</tr>
+			<tr ui:field="fromMonthTR" >
+				<td class="{style.label}">
+					<g:Label text="Desde" />
+				</td>
+				<td class="{style.field}">
+					<aon:MonthListBox styleName="aon-selectOneMenu"
+						ui:field="fromMonthListBox" monthStyles="{style.monthListBox-item}"
+						highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}"/>
+				</td>
+			</tr>
+			<tr ui:field="toMonthTR" >
+				<td class="{style.label}">
+					<g:Label text="Hasta" />
+				</td>
+				<td class="{style.field}">
+					<aon:MonthListBox styleName="aon-selectOneMenu"
+						ui:field="toMonthListBox" monthStyles="{style.monthListBox-item}"
+						highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}"/>
+				</td>
+			</tr>
+			<tr ui:field="ctrlMonthTR" >
+				<td class="{style.label}">
+					<g:Label text="Control" />
+				</td>
+				<td class="{style.field}">
+					<aon:MonthListBox styleName="aon-selectOneMenu"
+						ui:field="ctrlMonthListBox" monthStyles="{style.monthListBox-item}"
+						highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}"/>
+					<g:InlineLabel text="Fecha de abono de los salarios para liquidaciones L03 y C03." />
+				</td>
+			</tr>
 			<tr>
 				<td class="{style.label}">
 					<g:Label text="Tipo de Liquidaci&oacute;n" />
@@ -98,13 +133,14 @@
 				<td class="{style.field}">
 					<g:ListBox styleName="aon-selectOneMenu" ui:field="typeListBox" >
 						<g:item value="L00">L00 Liquidaci&oacute;n normal en per&iacute;odo reglamentario de ingreso</g:item>	
+						<g:item value="L03">L03 Liquidaciones por incremento de salarios con car&aacute;cter retroactivo</g:item>	
 						<g:item value="L13">L13 Liquidaciones complementarias por vacaciones retribuidas y no disfrutadas</g:item>	
 						<g:item value="L90">L90 Liquidaciones complementarias por incremento de bases</g:item>	
 						<g:item value="L91">L91 Liquidaciones complementarias por nuevos tramos y/o trabajadores</g:item>	
 					</g:ListBox>
 				</td>
 			</tr>
-			<tr ui:field="previousBasesTR" >
+			<tr ui:field="previousBasesTR"  >
 				<td class="{style.label}">
 					<g:Label text="Aceptar Bases Anteriores" />
 				</td>
