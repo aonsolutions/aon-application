@@ -950,11 +950,11 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" INNER JOIN asset_activity AA                       ON PRRD.asset_activity=AA.id");
 		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);
 		stmt.append(" WHERE (PRSD.effective_date='"+date+"' OR PRSD.effective_date='"+previousDate+"')");
-		stmt.append(" 	AND (AA.date='"+date+"' OR AA.date='"+previousDate+"'");
+		stmt.append(" 	AND (AA.date='"+date+"' OR AA.date='"+previousDate+"')");
 		stmt.append(" 	AND PR.status<>2");
 		stmt.append(" 	AND PR.creation_date<curdate()");
-		stmt.append(" GROUP BY 1,2)");
-		stmt.append(" UNION");
+		stmt.append(" GROUP BY 1,2) ");
+		stmt.append(" UNION ");
 		
 		stmt.append(" (SELECT IF(PRS.extra=0,'1.VENTAS','2.OTROS INGRESOS') as Concepto, ");
 		stmt.append("        IF(YEAR(PRSD.effective_date)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
@@ -974,8 +974,8 @@ public class ProductionReportController implements Serializable {
 		stmt.append("       (AA.date<='"+previousDate+"'             AND YEAR(AA.date)="+previousYear+"))");
 		stmt.append(" 	AND PR.status<>2");
 		stmt.append(" 	AND PR.creation_date<curdate()");
-		stmt.append(" GROUP BY 1,2)");
-		stmt.append(" UNION");
+		stmt.append(" GROUP BY 1,2) ");
+		stmt.append(" UNION ");
 
 		stmt.append(" (SELECT IF(PRS.extra=0,'1.VENTAS','2.OTROS INGRESOS') as Concepto, ");
 		stmt.append("        IF(YEAR(PRSD.effective_date)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
@@ -994,8 +994,8 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 		(AA.date<='"+previousDate+"'             AND YEAR(AA.date)="+previousYear+"))");
 		stmt.append(" 	AND PR.status<>2 ");
 		stmt.append(" 	AND PR.creation_date<curdate() ");
-		stmt.append(" GROUP BY 1,2)");
-		stmt.append(" UNION");
+		stmt.append(" GROUP BY 1,2) ");
+		stmt.append(" UNION ");
 
 		stmt.append(" (SELECT IF(PRS.extra=0,IF(PR.check_status<3,'3.SALDO CTA. CLIENTE','6.NOSHOW - CANCELACIONES FACTURABLES'),'5.OTROS INGRESOS PEND. PRODUCIR') as Concepto,");
 		stmt.append(" 	'DIA' as Periodo,");
@@ -1009,8 +1009,8 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" WHERE PRSD.effective_date>'"+date+"'  AND PR.start_date<='"+date+"'");
 		stmt.append(" 	AND PR.status<>2 ");
 		stmt.append(" 	AND PR.creation_date<curdate() ");
-		stmt.append(" GROUP BY 1,2)");
-		stmt.append(" UNION");
+		stmt.append(" GROUP BY 1,2) ");
+		stmt.append(" UNION ");
 
 		stmt.append(" (SELECT '4.SALDO CTA. CLIENTE FRA. ANTICIPO' as Concepto,");
 		stmt.append(" 	'DIA' as Periodo,");
@@ -1021,8 +1021,8 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 	AND PR.hotel_reservation="+hotel);
 		stmt.append(" 	AND PR.status<>2");
 		stmt.append(" 	AND I.advance=1");
-		stmt.append(" GROUP BY 1,2)");
-		stmt.append(" UNION");
+		stmt.append(" GROUP BY 1,2) ");
+		stmt.append(" UNION ");
 
 		stmt.append(" (SELECT IF(PRS.extra=0,IF(PR.check_status<3,'3.SALDO CTA. CLIENTE','6.NOSHOW - CANCELACIONES FACTURABLES'),'5.OTROS INGRESOS PEND. PRODUCIR') as Concepto,");
 		stmt.append(" 	'DIA_ANIO_ANTERIOR' as Periodo,");
@@ -1035,8 +1035,8 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 	INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);                          
 		stmt.append(" WHERE PRSD.effective_date>'"+previousDate+"'  AND PR.start_date<='"+previousDate+"'");
 		stmt.append(" 	AND PR.status<>2 ");
-		stmt.append(" GROUP BY 1,2 )");
-		stmt.append(" UNION");
+		stmt.append(" GROUP BY 1,2 ) ");
+		stmt.append(" UNION ");
 
 		stmt.append(" (SELECT '4.SALDO CTA. CLIENTE FRA. ANTICIPO' as Concepto,");
 		stmt.append(" 	'DIA_ANIO_ANTERIOR' as Periodo,");
@@ -1045,8 +1045,8 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 	INNER JOIN project_reservation PR                  ON PR.project=I.project");
 		stmt.append(" WHERE I.issue_date<'"+previousDate+"'  AND PR.start_date>'"+previousDate+"'");
 		stmt.append(" 	AND PR.hotel_reservation="+hotel);
-		stmt.append(" 	AND I.advance=1");
-		stmt.append(" GROUP BY 1,2)");
+		stmt.append(" 	AND I.advance=1 ");
+		stmt.append(" GROUP BY 1,2) ");
 		stmt.append(" ORDER BY 1,2;");
 		return stmt.toString();
 	}
