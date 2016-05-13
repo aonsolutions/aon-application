@@ -59,18 +59,11 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 									<aon:panelGrid id="menuGrid" columns="2" style="width: 100%;">
 
-										<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
-											<ui:param name="controller" value="#{invoiceController}" />
-											<ui:param name="sfc_label" value="#{bundle.aon_invoice_number}" />
-											<ui:param name="sfc_editable" value="#{true}" />
-											<ui:param name="sfc_seriesRequired" value="#{false}" />
-											<ui:param name="sfc_seriesProperty" value="#{invoiceController.recoverSeries}" />
-											<ui:param name="sfc_numberProperty" value="#{invoiceController.recoverNumber}" />
-											<aon:methodParam name="sfc_onSeriesChanged"
-												value="" type="valueChangeListener" />	
-											<aon:methodParam name="sfc_onNumberEditable"
-												value="" type="actionListener" />
-										</ui:include>
+										<aon:outputLabel for="Invoice_referenceCode"
+											value="#{bundle.aon_invoice_number}" />
+										<aon:inputText id="Invoice_referenceCode" 
+											value="#{invoiceController.recoverReferenceCode}" 
+											required="true" size="25" maxlength="32" />
 
 									</aon:panelGrid>
 								</aon:div>

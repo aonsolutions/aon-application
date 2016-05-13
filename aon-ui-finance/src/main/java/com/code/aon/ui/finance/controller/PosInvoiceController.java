@@ -49,6 +49,8 @@ import com.code.aon.product.Product;
 import com.code.aon.product.ProductTag;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.ReportException;
@@ -82,8 +84,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	private boolean showRecoverTicketWindow;
 	private boolean showPrintTicketWindow;
 	private boolean giftTicket;
-	private String recoverSeries;
-	private int recoverNumber;
+	private String recoverReferenceCode;
 
 	public PosInvoiceController() {
 		setInvoiceAddressControllerName(POS_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -147,24 +148,12 @@ public class PosInvoiceController extends SaleInvoiceController {
 		this.showRecoverTicketWindow = value;
 	}
 
-	public String getRecoverSeries() {
-		return recoverSeries;
+	public String getRecoverReferenceCode() {
+		return recoverReferenceCode;
 	}
 
-	public void setRecoverSeries(String recoverSeries) {
-		this.recoverSeries = recoverSeries;
-	}
-
-	public int getRecoverNumber() {
-		return recoverNumber;
-	}
-
-	public void setRecoverNumber(int recoverNumber) {
-		this.recoverNumber = recoverNumber;
-	}
-
-	public String getRecoverInvoiceCode() {
-		return ((!StringUtils.isBlank(getRecoverSeries())) ? getRecoverSeries() + "/" : "") + StringUtils.leftPad(Integer.toString(getRecoverNumber()), 6, "0");
+	public void setRecoverReferenceCode(String recoverReferenceCode) {
+		this.recoverReferenceCode = recoverReferenceCode;
 	}
 
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
@@ -574,37 +563,32 @@ public class PosInvoiceController extends SaleInvoiceController {
 	}
 
 	public void onShowRecoverTicket(ActionEvent event) {
-		setRecoverSeries(initSeries(false));
-		setRecoverNumber(0);
+		setRecoverReferenceCode(null);
 		setNumberEditable(true);
 	}
 
 	public void onRecoverTicket(ActionEvent event) {
 		try {
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_POS_SHIFT_POS_ID), getPosShift().getPos().getId());
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
-			if ( StringUtils.isBlank(getRecoverSeries()) ) {
-				criteria.addNullExpression(getFieldName(IEntityAlias.INVOICE_SERIES));
-			} else {
-				criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_SERIES), getRecoverSeries());
-			}
-			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_NUMBER), getRecoverNumber());
-			int recoverCount = getManagerBean().getCount(criteria);
-			if (recoverCount == 0) {
-				String msg = "No se ha encontrado la Factura " + getRecoverInvoiceCode() + " para este TPV.";
+			criteria.addNotNullExpression(getFieldName(IEntityAlias.INVOICE_POS_SHIFT_ID));
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_REFERENCE_CODE), getRecoverReferenceCode());
+			Projection prjId = Projection.property(getFieldName(IEntityAlias.INVOICE_ID));
+			List<?> invoiceIdList = getManagerBean().getList(new ProjectionList(prjId), criteria);
+			if (invoiceIdList.size() == 0) {
+				String msg = "No se ha encontrado la Factura " + getRecoverReferenceCode() + ".";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
-			} else if (recoverCount > 1) {
-				String msg = "Error al recuperar la Factura " + getRecoverInvoiceCode() + ".";
+			} else if (invoiceIdList.size() > 1) {
+				String msg = "Error al recuperar la Factura " + getRecoverReferenceCode() + ".";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			} else {
-				Invoice recoverInvoice = (Invoice)getManagerBean().getList(criteria).get(0);
-				recoverTicket(recoverInvoice.getId());
+				Integer recoverInvoiceId = (Integer)invoiceIdList.get(0);
+				recoverTicket(recoverInvoiceId);
 			}
 		} catch (ManagerBeanException ex) {
-			String msg = "Error al recuperar la Factura " + getRecoverInvoiceCode() + ".";
+			String msg = "Error al recuperar la Factura " + getRecoverReferenceCode() + ".";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
