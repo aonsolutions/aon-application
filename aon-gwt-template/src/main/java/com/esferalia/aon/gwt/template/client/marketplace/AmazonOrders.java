@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.template.client.marketplace;
 
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -98,7 +99,9 @@ public class AmazonOrders  extends ResizeComposite{
 	           	+ "?domain_id=" + getDomain().getId()
 	           	+ "&username="+ getLogin();
 		Window.open( fileDownloadURL, "_blank",null);
-		
+		dataProvider = new ListDataProvider<Order>(new LinkedList<Order>());
+		dataProvider.addDataDisplay(dataGrid);
+		dataGrid.redraw();
 	}
 	
 	//------------------------------ DataGrid Utils
@@ -195,7 +198,7 @@ public class AmazonOrders  extends ResizeComposite{
 		dataGrid.addHandler(selHandler, CellPreviewEvent.getType());
 		dataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		dataGrid.setAutoHeaderRefreshDisabled(true);
-		dataGrid.setEmptyTableWidget(new Label("No hay ning\u00fan archivo."));
+		dataGrid.setEmptyTableWidget(new Label("No hay ning\u00fan pedido."));
 		addDataDisplay(dataGrid);
 		ListHandler<Order> sortHandler = getSortHandler();
 		dataGrid.addColumnSortHandler(sortHandler);
