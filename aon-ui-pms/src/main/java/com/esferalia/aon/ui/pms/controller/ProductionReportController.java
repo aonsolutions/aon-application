@@ -59,17 +59,18 @@ public class ProductionReportController implements Serializable {
 
 	
 	private Map<String, ReportObject> productionMap = new HashMap<>();
+	private Map<String, ReportObject> pendingProductionMap = new HashMap<>();
 	private Map<String, ReportObject> paxMap = new HashMap<>();
 	private Map<String, ReportObject> advancePaymethodMap = new HashMap<>();
 	private Map<String, ReportObject> paymethodMap = new HashMap<>();
-	private Map<String, ReportObject> pendingProductionMap = new HashMap<>();
 	
 	private DataModel productionModel;
+	private DataModel pendingProductionModel;
 	private DataModel paxModel;
 	private DataModel ratioModel;
 	private DataModel advancePaymethodModel;
 	private DataModel paymethodModel;
-	private DataModel pendingProductionModel;
+	private DataModel summaryModel;
 	
 	private ReportObject productionTotal;
 	private ReportObject ratioTotal;
@@ -123,6 +124,10 @@ public class ProductionReportController implements Serializable {
 	public DataModel getAdvancePaymethodModel() {
 		return advancePaymethodModel;
 	}
+	
+	public DataModel getSummaryModel() {
+		return summaryModel;
+	}
 
 	public DataModel getPaymethodModel() {
 		return paymethodModel;
@@ -149,17 +154,18 @@ public class ProductionReportController implements Serializable {
 	
 	private void init(){
 		productionMap.clear();
+		pendingProductionMap.clear();
 		paxMap.clear();
 		advancePaymethodMap.clear();
 		paymethodMap.clear();
-		pendingProductionMap.clear();
 		
 		productionModel = null;
+		pendingProductionModel = null;
 		paxModel = null;
 		ratioModel = null;
 		advancePaymethodModel = null;
 		paymethodModel = null;
-		pendingProductionModel = null;
+		summaryModel = null;
 		
 		productionTotal = null;
 		ratioTotal = null;
@@ -262,13 +268,13 @@ public class ProductionReportController implements Serializable {
 		
 		Connection connection = null;
 		PreparedStatement productionStmt = null;
+		PreparedStatement pendingProductionStmt = null;
 		PreparedStatement paxStmt = null;
 		PreparedStatement paymethodStmt = null;
-		PreparedStatement pendingProductionStmt = null;
 		ResultSet productionRs = null;
+		ResultSet pendingProductionRs = null;
 		ResultSet paxRs = null;
 		ResultSet paymethodRs = null;
-		ResultSet pendingProductionRs = null;
 		
 		try {
 			Date logDate = new Date();
@@ -276,9 +282,9 @@ public class ProductionReportController implements Serializable {
 			
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			productionStmt = connection.prepareStatement(getHotelProductionSQL(date, previousDate, year, previousYear, month, hotel, wp));
+			pendingProductionStmt = connection.prepareStatement(getPendingHotelProductionSQL(date, previousDate, hotel, year, previousYear, month));
 			paxStmt = connection.prepareStatement(getPaxSQL(date, previousDate, year, previousYear, month, hotel));
 			paymethodStmt = connection.prepareStatement(getInvoicePayMethodsSQL(date, previousDate, year, previousYear, month, wp));
-			pendingProductionStmt = connection.prepareStatement(getPendingHotelProductionSQL(date, previousDate, hotel, year, previousYear, month));
 			
 			LOGGER.info("****** Inicio de la busqueda de produccion       -> " + timeFormatter.format(new Date()));
 			Date tmpDate = new Date();
@@ -314,7 +320,48 @@ public class ProductionReportController implements Serializable {
 			
 			productionModel = buildModel(productionMap);
 			productionTotal = buildTotalizeTo(productionMap);
-
+			
+			LOGGER.info("****** Inicio de la busqueda de prod. pendiente  -> " + timeFormatter.format(new Date()));
+			tmpDate = new Date();
+			pendingProductionRs = pendingProductionStmt.executeQuery();
+			diff = (new Date()).getTime() - tmpDate.getTime();
+			LOGGER.info("****** Fin de la busqueda de prod. pendiente     -> " + timeFormatter.format(new Date()) 
+					+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
+			while (pendingProductionRs.next()) {
+				String description = pendingProductionRs.getString(1);
+				String period = pendingProductionRs.getString(2);
+				Double amount = pendingProductionRs.getDouble(3);
+				
+				if(!pendingProductionMap.containsKey(description)){
+					ReportObject ro = new ReportObject();
+					ro.setDescription(description);
+					pendingProductionMap.put(description, ro);
+				}
+				
+				if(period.equals("ANIO")){
+					double _amount = pendingProductionMap.get(description).getYearAmount();
+					pendingProductionMap.get(description).setYearAmount(_amount+amount);
+				} else if(period.equals("ANIO_ANTERIOR")){
+					double _amount = pendingProductionMap.get(description).getPreviousYearAmount();
+					pendingProductionMap.get(description).setPreviousYearAmount(_amount+amount);
+				} else if(period.equals("MES")){
+					double _amount = pendingProductionMap.get(description).getMonthAmount();
+					pendingProductionMap.get(description).setMonthAmount(_amount+amount);
+				} else if(period.equals("MES_ANIO_ANTERIOR")){
+					double _amount = pendingProductionMap.get(description).getPreviousMonthAmount();
+					pendingProductionMap.get(description).setPreviousMonthAmount(_amount+amount);
+				} else if(period.equals("DIA")){
+					double _amount = pendingProductionMap.get(description).getDayAmount();
+					pendingProductionMap.get(description).setDayAmount(_amount+amount);
+				} else if(period.equals("DIA_ANIO_ANTERIOR")){
+					double _amount = pendingProductionMap.get(description).getPreviousDayAmount();
+					pendingProductionMap.get(description).setPreviousDayAmount(_amount+amount);
+				}
+			}
+			
+			pendingProductionModel = buildModel(pendingProductionMap);
+			summaryModel = buildModel(getSummaryMap());
+			
 			LOGGER.info("****** Inicio de la busqueda de pax              -> " + timeFormatter.format(new Date()));
 			tmpDate = new Date();
 			paxRs = paxStmt.executeQuery();
@@ -392,46 +439,6 @@ public class ProductionReportController implements Serializable {
 
 			paymethodModel = buildModel(paymethodMap);
 			paymethodTotal = buildTotalizeTo(paymethodMap);
-
-			LOGGER.info("****** Inicio de la busqueda de prod. pendiente  -> " + timeFormatter.format(new Date()));
-			tmpDate = new Date();
-			pendingProductionRs = pendingProductionStmt.executeQuery();
-			diff = (new Date()).getTime() - tmpDate.getTime();
-			LOGGER.info("****** Fin de la busqueda de prod. pendiente     -> " + timeFormatter.format(new Date()) 
-					+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
-			while (pendingProductionRs.next()) {
-				String description = pendingProductionRs.getString(1);
-				String period = pendingProductionRs.getString(2);
-				Double amount = pendingProductionRs.getDouble(3);
-				
-				if(!pendingProductionMap.containsKey(description)){
-					ReportObject ro = new ReportObject();
-					ro.setDescription(description);
-					pendingProductionMap.put(description, ro);
-				}
-				
-				if(period.equals("ANIO")){
-					double _amount = pendingProductionMap.get(description).getYearAmount();
-					pendingProductionMap.get(description).setYearAmount(_amount+amount);
-				} else if(period.equals("ANIO_ANTERIOR")){
-					double _amount = pendingProductionMap.get(description).getPreviousYearAmount();
-					pendingProductionMap.get(description).setPreviousYearAmount(_amount+amount);
-				} else if(period.equals("MES")){
-					double _amount = pendingProductionMap.get(description).getMonthAmount();
-					pendingProductionMap.get(description).setMonthAmount(_amount+amount);
-				} else if(period.equals("MES_ANIO_ANTERIOR")){
-					double _amount = pendingProductionMap.get(description).getPreviousMonthAmount();
-					pendingProductionMap.get(description).setPreviousMonthAmount(_amount+amount);
-				} else if(period.equals("DIA")){
-					double _amount = pendingProductionMap.get(description).getDayAmount();
-					pendingProductionMap.get(description).setDayAmount(_amount+amount);
-				} else if(period.equals("DIA_ANIO_ANTERIOR")){
-					double _amount = pendingProductionMap.get(description).getPreviousDayAmount();
-					pendingProductionMap.get(description).setPreviousDayAmount(_amount+amount);
-				}
-			}
-			
-			pendingProductionModel = buildModel(pendingProductionMap);
 			
 			diff = (new Date()).getTime() - logDate.getTime();
 	        LOGGER.info("****** Tiempo TOTAL                              -> " + diff + " seg. (" 
@@ -457,30 +464,84 @@ public class ProductionReportController implements Serializable {
 	private Map<String, ReportObject> getProductionRatioMap() {
 		Map<String, ReportObject> productionRatioMap = new HashMap<>();
 		productionMap.keySet().stream().sorted().forEach(key -> {
-			ReportObject ro = new ReportObject();
-			ro.setDescription(productionMap.get(key).getDescription()+"/Pax");
-			double paxDayAmount = paxMap.values().stream().mapToDouble(ReportObject::getDayAmount).sum();
-			ro.setDayAmount(paxDayAmount > 0.0f ? (productionMap.get(key).getDayAmount() / paxDayAmount) : 0.0);
-			double paxPreviousDayAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum();
-			ro.setPreviousDayAmount(paxPreviousDayAmount > 0.0f ? (productionMap.get(key).getPreviousDayAmount() / paxPreviousDayAmount) : 0.0);
-			double paxMonthAmount = paxMap.values().stream().mapToDouble(ReportObject::getMonthAmount).sum();
-			ro.setMonthAmount(paxMonthAmount > 0.0f ? (productionMap.get(key).getMonthAmount() / paxMonthAmount) : 0.0);			 
-			double paxPreviousMonthAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum();
-			ro.setPreviousMonthAmount(paxPreviousMonthAmount > 0.0f ? (productionMap.get(key).getPreviousMonthAmount() / paxPreviousMonthAmount) : 0.0);
-			double paxYearAmount = paxMap.values().stream().mapToDouble(ReportObject::getYearAmount).sum();
-			ro.setYearAmount(paxYearAmount > 0.0f ? (productionMap.get(key).getYearAmount() / paxYearAmount) : 0.0);
-			double paxPreviousYearAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum();
-			ro.setPreviousYearAmount(paxPreviousYearAmount > 0.0f ? (productionMap.get(key).getPreviousYearAmount() / paxPreviousYearAmount) : 0.0);
-			productionRatioMap.put(key, ro);
+			fillRatioMapObject(key, productionMap, productionRatioMap);
 		});
+		fillRatioMapObject("1.VENTAS", pendingProductionMap, productionRatioMap);
+		fillRatioMapObject("3.SALDO CTA. CLIENTE", pendingProductionMap, productionRatioMap);
 		return productionRatioMap;
 	}
+	
+	private void fillRatioMapObject(String key, Map<String, ReportObject> productionMap, Map<String, ReportObject> productionRatioMap){
+		ReportObject ro = new ReportObject();
+		ro.setDescription(productionMap.get(key).getDescription()+"/Pax");
+		double paxDayAmount = paxMap.values().stream().mapToDouble(ReportObject::getDayAmount).sum();
+		ro.setDayAmount(paxDayAmount > 0.0f ? (productionMap.get(key).getDayAmount() / paxDayAmount) : 0.0);
+		double paxPreviousDayAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum();
+		ro.setPreviousDayAmount(paxPreviousDayAmount > 0.0f ? (productionMap.get(key).getPreviousDayAmount() / paxPreviousDayAmount) : 0.0);
+		double paxMonthAmount = paxMap.values().stream().mapToDouble(ReportObject::getMonthAmount).sum();
+		ro.setMonthAmount(paxMonthAmount > 0.0f ? (productionMap.get(key).getMonthAmount() / paxMonthAmount) : 0.0);			 
+		double paxPreviousMonthAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum();
+		ro.setPreviousMonthAmount(paxPreviousMonthAmount > 0.0f ? (productionMap.get(key).getPreviousMonthAmount() / paxPreviousMonthAmount) : 0.0);
+		double paxYearAmount = paxMap.values().stream().mapToDouble(ReportObject::getYearAmount).sum();
+		ro.setYearAmount(paxYearAmount > 0.0f ? (productionMap.get(key).getYearAmount() / paxYearAmount) : 0.0);
+		double paxPreviousYearAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum();
+		ro.setPreviousYearAmount(paxPreviousYearAmount > 0.0f ? (productionMap.get(key).getPreviousYearAmount() / paxPreviousYearAmount) : 0.0);
+		productionRatioMap.put(key, ro);
+	}
+	
+	private Map<String, ReportObject> getSummaryMap() {
+		Map<String, ReportObject> summaryMap = new HashMap<>();
+
+		String ALOJAMIENTO = "ALOJAMIENTO";
+		String OTROS_INGRESOS = "OTROS INGRESOS";
+		String VENTAS = "1.VENTAS";
+		String SALDO_CTA_CLIENTE = "3.SALDO CTA. CLIENTE";
+		String SALDO_CTA_CLIENTE_FRA_ANTICIPO = "4.SALDO CTA. CLIENTE FRA. ANTICIPO";
+
+		double ALOJAMIENTO_PreviousYearAmount = productionMap
+				.containsKey(ALOJAMIENTO) ? productionMap.get(ALOJAMIENTO)
+				.getYearAmount() : 0.0;
+		double OTROS_INGRESOS_PreviousYearAmount = productionMap
+				.containsKey(OTROS_INGRESOS) ? productionMap
+				.get(OTROS_INGRESOS).getYearAmount() : 0.0;
+
+		double VENTAS_PreviousYearAmount = pendingProductionMap
+				.containsKey(VENTAS) ? pendingProductionMap.get(VENTAS)
+				.getYearAmount() : 0.0;
+		double SALDO_CTA_CLIENTE_DayAmount = pendingProductionMap
+				.containsKey(SALDO_CTA_CLIENTE) ? pendingProductionMap.get(
+				SALDO_CTA_CLIENTE).getDayAmount() : 0.0;
+		double SALDO_CTA_CLIENTE_FRA_ANTICIPO_DayAmount = pendingProductionMap
+				.containsKey(SALDO_CTA_CLIENTE_FRA_ANTICIPO) ? pendingProductionMap
+				.get(SALDO_CTA_CLIENTE_FRA_ANTICIPO).getDayAmount() : 0.0;
+		
+		ReportObject ro = new ReportObject();
+		ro.setDescription("1.FACTURACION RESERVAS");
+		ro.setDayAmount( ALOJAMIENTO_PreviousYearAmount + OTROS_INGRESOS_PreviousYearAmount);
+		summaryMap.put("1.FACTURACION RESERVAS", ro);
+		
+		ro = new ReportObject();
+		ro.setDescription("2.PRODUCCION");
+		ro.setDayAmount( (VENTAS_PreviousYearAmount + SALDO_CTA_CLIENTE_DayAmount + SALDO_CTA_CLIENTE_FRA_ANTICIPO_DayAmount) * 1.1 );
+		summaryMap.put("2.PRODUCCION", ro);
+		
+		ro = new ReportObject();
+		ro.setDescription("3.DIFERENCIA");
+		ro.setDayAmount(
+				(ALOJAMIENTO_PreviousYearAmount + OTROS_INGRESOS_PreviousYearAmount)
+				- ((VENTAS_PreviousYearAmount + SALDO_CTA_CLIENTE_DayAmount + SALDO_CTA_CLIENTE_FRA_ANTICIPO_DayAmount) * 1.1));
+		summaryMap.put("3.DIFERENCIA", ro);
+		
+		return summaryMap;
+	}
+	
 	
 	// *********************************************
 	// EXCEL REPORT
 	// *********************************************
 	private boolean excelReport(OutputStream output) throws IOException, ReportException, AonConnectionException {
 		Map<String, ReportObject> productionRatioMap = getProductionRatioMap();
+		Map<String, ReportObject> summaryMap = getSummaryMap();
 		
 		ExcelReportExporter exporter = new ExcelReportExporter();
 
@@ -488,7 +549,15 @@ public class ProductionReportController implements Serializable {
 		ReportMetadata columnMetadata = getContractColumnMetadata();
 		exporter.exportHeader(columnMetadata);
 		
+		exporter.startLine();
+		exporter.endLine();
+		exportInnerHeader(exporter, columnMetadata, "");
 		exportData(exporter, columnMetadata, "FACTURACION POR AREA", productionMap, true);
+		
+		exporter.startLine();
+		exporter.endLine();
+		exportInnerHeader(exporter, columnMetadata, "PRODUCCION");
+		exportData(exporter, columnMetadata, null, pendingProductionMap, false);
 		
 		exporter.startLine();
 		exporter.endLine();
@@ -514,8 +583,7 @@ public class ProductionReportController implements Serializable {
 		
 		exporter.startLine();
 		exporter.endLine();
-		exportInnerHeader(exporter, columnMetadata, "PRODUCCION");
-		exportData(exporter, columnMetadata, null, pendingProductionMap, false);
+		exportData(exporter, columnMetadata, "RESUMEN", summaryMap, false, true);
 		
 		exporter.endExport(output);
 		output.flush();
@@ -523,17 +591,18 @@ public class ProductionReportController implements Serializable {
 	}
 	
 	private ReportMetadata getContractColumnMetadata() throws ReportException {
-	    Calendar cal = Calendar.getInstance();
-	    cal.setTime(date);
-		Integer previousYear = cal.get(Calendar.YEAR)-1;
+		SimpleDateFormat dateFormatter = new SimpleDateFormat();
+		dateFormatter.applyPattern("yyyy/MM/dd");
+		String title = hotel.getWorkPlace().getDescription();
+		String date = dateFormatter.format(getDate());
 		ReportMetadata metadata = new ReportMetadata();
-		metadata.getColumns().add(new ReportColumnMetadata("",Types.VARCHAR,"",30));
-		metadata.getColumns().add(new ReportColumnMetadata("DAY",Types.VARCHAR,"Dia",15));
-		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_DAY",Types.VARCHAR,"Dia (" +previousYear+ ")" ,15));
-		metadata.getColumns().add(new ReportColumnMetadata("MONTH",Types.VARCHAR,"Mes",15));
-		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_MONTH",Types.VARCHAR,"Mes (" +previousYear+ ")",15));
-		metadata.getColumns().add(new ReportColumnMetadata("YEAR",Types.VARCHAR,"Año",15));
-		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_YEAR",Types.VARCHAR,"Año (" +previousYear+ ")",15));
+		metadata.getColumns().add(new ReportColumnMetadata("TITLE",Types.VARCHAR,title,30));
+		metadata.getColumns().add(new ReportColumnMetadata("DAY",Types.VARCHAR,date,15));
+		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_DAY",Types.VARCHAR,"",15));
+		metadata.getColumns().add(new ReportColumnMetadata("MONTH",Types.VARCHAR,"",15));
+		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_MONTH",Types.VARCHAR,"",15));
+		metadata.getColumns().add(new ReportColumnMetadata("YEAR",Types.VARCHAR,"",15));
+		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_YEAR",Types.VARCHAR,"",15));
 		return metadata;
 	}
 
@@ -564,6 +633,13 @@ public class ProductionReportController implements Serializable {
 			ReportMetadata metadata, String description,
 			Map<String, ReportObject> map, boolean totalize)
 			throws ReportException {
+		exportData(exporter, metadata, description, map, totalize, false);
+	}
+	
+	private void exportData(ExcelReportExporter exporter,
+			ReportMetadata metadata, String description,
+			Map<String, ReportObject> map, boolean totalize, boolean defaultEmpty)
+			throws ReportException {
 		
 		if(StringUtils.isNotBlank(description)){
 			HSSFCellStyle cellStyle = exporter.createHeaderStyle();
@@ -582,12 +658,12 @@ public class ProductionReportController implements Serializable {
 			exporter.startLine();
 			try {
 				exporter.exportColumn(metadata.getColumns().get(column++), map.get(key).getDescription());
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getDayAmount()));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getPreviousDayAmount()));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getMonthAmount()));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getPreviousMonthAmount()));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getYearAmount()));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getPreviousYearAmount()));
+				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getDayAmount(), defaultEmpty));
+				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getPreviousDayAmount(), defaultEmpty));
+				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getMonthAmount(), defaultEmpty));
+				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getPreviousMonthAmount(), defaultEmpty));
+				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getYearAmount(), defaultEmpty));
+				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getPreviousYearAmount(), defaultEmpty));
 			} catch (ReportException e) {
 				LOGGER.error("No se ha podido completar la fila del informe de produccion.");
 			} finally {
@@ -647,8 +723,14 @@ public class ProductionReportController implements Serializable {
 		}
 	}
 	
+	private String getFormattedAmount(Double amount, boolean defaultEmpty) {
+		return ((amount == null || amount == 0.0) && defaultEmpty) ? ""
+				: String.valueOf(CommonUtil.round(amount)).replaceAll("\\.",
+						",");
+	}
+	
 	private String getFormattedAmount(Double amount){
-		return String.valueOf(CommonUtil.round(amount)).replaceAll("\\.", ",");
+		return getFormattedAmount(amount, false);
 	}
 
 	

@@ -77,6 +77,13 @@
 						<ui:param name="name" value="PRODUCCION" />
 						<ui:param name="totalTo" value="#{productionReport.productionTotal}" />
 					</ui:decorate>
+					
+					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+						<ui:param name="model" value="#{productionReport.pendingProductionModel}" />
+						<ui:param name="tableHeader" value="PRODUCCION" />
+						<ui:param name="skipHeaders" value="#{true}" />
+						<ui:param name="skipFooters" value="#{true}" />
+					</ui:decorate>
 	
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
 						<ui:param name="model" value="#{productionReport.paxModel}" />
@@ -107,10 +114,12 @@
 					</ui:decorate>
 					
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
-						<ui:param name="model" value="#{productionReport.pendingProductionModel}" />
-						<ui:param name="tableHeader" value="PRODUCCION" />
+						<ui:param name="model" value="#{productionReport.summaryModel}" />
+						<ui:param name="tableHeader" value="RESUMEN" />
 						<ui:param name="skipHeaders" value="#{true}" />
 						<ui:param name="skipFooters" value="#{true}" />
+						<ui:param name="defaultEmpty" value="#{true}" />
+						<ui:param name="amountPattern" value="" />
 					</ui:decorate>
 					
 				</aon:div>
