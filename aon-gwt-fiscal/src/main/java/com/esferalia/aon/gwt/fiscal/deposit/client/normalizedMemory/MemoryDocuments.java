@@ -324,7 +324,7 @@ public class MemoryDocuments extends PageAbs {
 										public void onSuccess(Void result) {}
 									});
 								}
-								if(mf.getName().equals(D2_FILE_CONVOC)){
+								if(mf.getName().equals(D2_FILE_SICAV)){
 									onEdit(D2DepositFooterKey.PR8080821.getCode(), "1");		
 									inma.updateSchemaMemory(true, enterprise.getDomain(),D2DepositFooterKey.PR8080821.getCode() , year, new AsyncCallback<Void>() {
 										@Override

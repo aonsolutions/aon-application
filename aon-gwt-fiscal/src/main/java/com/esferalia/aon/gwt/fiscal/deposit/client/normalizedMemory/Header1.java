@@ -339,18 +339,18 @@ public class Header1 extends PageAbs {
 				public void onValueChange(ValueChangeEvent<Boolean> event) {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);		
-					onEdit(key2, event.getValue()?"True":"False");
+					onEdit(key2, event.getValue()?"1":"0");
 									
 					if(key2.equals("1011") || key2.equals("1012")){
 						if(key2.equals("1011")){
 							IDA01012.setValue(false);
-							specialUpdate("1012", "False");
+							specialUpdate("1012", "0");
 							IDA01013.setValue("");
 							specialUpdate("1013", "");
 						}
 						else{
 							IDA01011.setValue(false);
-							specialUpdate("1011", "False");
+							specialUpdate("1011", "0");
 							IDA01013.setValue("");		
 							specialUpdate("1013", "");
 						}

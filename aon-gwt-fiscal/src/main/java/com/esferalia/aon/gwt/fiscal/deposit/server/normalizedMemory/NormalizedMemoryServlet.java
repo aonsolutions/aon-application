@@ -690,14 +690,22 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 			schema.getCabecera().setMemoriaNormalizada(!bool);
 		
 		List<Clave> claves = schema.getClaves().getClave();
+		Boolean esta = false;
 		for (Integer i = 0; i < claves.size(); i++) {
 			if(schema.getClaves().getClave().get(i).getCodigo().toString().equals(key)){
 				if(D2DepositFooterKey.PR8080805.getCode().equals(key))
 					schema.getClaves().getClave().get(i).setValor(bool?"0":"1");
 				else schema.getClaves().getClave().get(i).setValor(bool?"1":"0");
-
-
+				esta = true;
 			}
+		}
+		if(!esta) {
+			Clave clave = new Clave();
+			clave.setCodigo(new BigInteger(key));
+			if(D2DepositFooterKey.PR8080805.getCode().equals(key))
+				clave.setValor(bool?"0":"1");
+			else clave.setValor(bool?"1":"0");
+			schema.getClaves().getClave().add(clave);
 		}
 		
 		try {

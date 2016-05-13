@@ -174,11 +174,11 @@ public class PageF2 extends PageAbs {
 		if(map.containsKey("IDA01101")) IDA01101.setText(map.get("IDA01101"));
 				
 		listBoxItemAddCities(PR8081001);
-		keyExe("80810001", PR8081001, "list", true);
+		keyExe("8081001", PR8081001, "list", true);
 
-		keyExe("80810002", PR8081002, "text", true);
-		keyExe("80810003", PR8081003, "text", true);
-		keyExe("80810004", PR8081004, "text", true);
+		keyExe("8081002", PR8081002, "text", true);
+		keyExe("8081003", PR8081003, "text", true);
+		keyExe("8081004", PR8081004, "text", true);
 
 		keyExe(D2DepositFooterKey.PR8080805.getCode(), PR8080805, "check", false);
 		keyExe(D2DepositFooterKey.PR8080854.getCode(), PR8080854, "check", false);

@@ -444,13 +444,13 @@ public class Utils {
 		if(enterprise.getDocument().contains("A")){
 			Clave c1011 = new Clave();
 			c1011.setCodigo(BigInteger.valueOf(1011));
-			c1011.setValor("True");
+			c1011.setValor("1");
 			keys.getClave().add(c1011);
 		}
 		else if(enterprise.getDocument().contains("B")){
 			Clave c1012 = new Clave();
 			c1012.setCodigo(BigInteger.valueOf(1012));
-			c1012.setValor("True");
+			c1012.setValor("1");
 			keys.getClave().add(c1012);
 		}
 		
@@ -635,12 +635,14 @@ public class Utils {
 			for (String value : acc.keySet()) {
 				if(!value.equalsIgnoreCase(ABREVIATE)){
 					D2DepositHeaderKey k = D2DepositHeaderKey.valueOf(value);
-					Clave clave = new Clave();
-					Integer code = Integer.parseInt(k.getCode());
-					clave.setCodigo(BigInteger.valueOf(code));
-					clave.setValor(acc.get(value).toString());	
-					keys.getClave().add(clave);
-					computeMap.put(k.getCode(),acc.get(value).toString());
+					if(!computeMap.containsKey(k.getCode())){
+						Clave clave = new Clave();
+						Integer code = Integer.parseInt(k.getCode());
+						clave.setCodigo(BigInteger.valueOf(code));
+						clave.setValor(acc.get(value).toString());	
+						keys.getClave().add(clave);
+						computeMap.put(k.getCode(),acc.get(value).toString());
+					} 
 				}
 			}
 			
@@ -649,25 +651,29 @@ public class Utils {
 			for (String value : acc2.keySet()) {
 				if(!value.equalsIgnoreCase(ABREVIATE)){
 					D2DepositKey k = D2DepositKey.valueOf(value);
-					Clave clave = new Clave();
-					Integer code = Integer.parseInt(k.getCode());
-					clave.setCodigo(BigInteger.valueOf(code));
-					clave.setValor(acc2.get(value).toString());	
-					keys.getClave().add(clave);
-					computeMap.put(k.getCode(),acc2.get(value).toString());
+					if(!computeMap.containsKey(k.getCode())){
+						Clave clave = new Clave();
+						Integer code = Integer.parseInt(k.getCode());
+						clave.setCodigo(BigInteger.valueOf(code));
+						clave.setValor(acc2.get(value).toString());	
+						keys.getClave().add(clave);
+						computeMap.put(k.getCode(),acc2.get(value).toString());
+					}
 				}
 			}
-			
+
 			Map<String, String> c = compute(computeMap, type);
+
 			for (String key : c.keySet()) {
-				Clave clave = new Clave();
-				clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key)));
-				clave.setValor(c.get(key));
-				keys.getClave().add(clave);
+				// TODO ARREGLO PROVISIONAL 21300 & 32580 & 12380
+				if(!key.equals("21300") && !key.equals("32580") && !key.equals("12380")){
+					Clave clave = new Clave();
+					clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key)));
+					clave.setValor(c.get(key));
+					keys.getClave().add(clave);
+				}
 			}
-			
-			
-			
+	
 		}finally{
 			if (ctx2 != null) ctx2.close();
 		}
@@ -774,7 +780,6 @@ public class Utils {
 			if (ret instanceof Double) {
 				Double calculated = (Double) ret;
 				ctx.put("Q"+key, calculated);
-				
 				if(map.containsKey(key)) map.remove(key);
 				m.put(key, calculated.toString());
 			}

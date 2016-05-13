@@ -41,6 +41,12 @@ public class DBConsults {
 	private static final String D2_FILE_AUDIT = "Informe de Auditoria";
 	private static final String D2_FILE_CONVOC = "Anuncios de Convocatoria";
 	private static final String D2_FILE_SICAV = "Certificacion SICAV";
+	
+	private static final String D2_FILE_AUTOCARTERA_MODEL_2015 = "Acciones";
+	private static final String D2_FILE_GESTION_2015 = "Gestion";
+	private static final String D2_FILE_AUDIT_2015 = "Auditoria";
+	private static final String D2_FILE_CONVOC_2015 = "Convocatoria";
+	private static final String D2_FILE_SICAV_2015 = "SICAV";
 
 
 	public static Boolean isDigitalDeposit(String domain, Integer domainId,Integer year) {
@@ -101,12 +107,12 @@ public class DBConsults {
 				documents.mkdir();
 				
 				//**************************
-				getFileDocuments2Zip(domain, domainId, D2_FILE_MEMORY, documents);
-				getFileDocuments2Zip(domain, domainId, D2_FILE_AUTOCARTERA_MODEL, documents);	
-				getFileDocuments2Zip(domain, domainId, D2_FILE_GESTION, documents);			
-				getFileDocuments2Zip(domain, domainId, D2_FILE_AUDIT, documents);
-				getFileDocuments2Zip(domain, domainId, D2_FILE_CONVOC, documents);
-				getFileDocuments2Zip(domain, domainId, D2_FILE_SICAV, documents);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_MEMORY, documents, null);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_AUTOCARTERA_MODEL, documents, null);	
+				getFileDocuments2Zip(domain, domainId, D2_FILE_GESTION, documents, null);			
+				getFileDocuments2Zip(domain, domainId, D2_FILE_AUDIT, documents, null);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_CONVOC, documents, null);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_SICAV, documents, null);
 				//**************************
 				
 				File tmpDocuments = File.createTempFile("Documentos TMP%", "", parent);
@@ -178,12 +184,12 @@ public class DBConsults {
 				documents.mkdir();
 				
 				//**************************
-				getFileDocuments2Zip(domain, domainId, D2_FILE_MEMORY, documents);
-				getFileDocuments2Zip(domain, domainId, D2_FILE_AUTOCARTERA_MODEL, documents);	
-				getFileDocuments2Zip(domain, domainId, D2_FILE_GESTION, documents);			
-				getFileDocuments2Zip(domain, domainId, D2_FILE_AUDIT, documents);
-				getFileDocuments2Zip(domain, domainId, D2_FILE_CONVOC, documents);
-				getFileDocuments2Zip(domain, domainId, D2_FILE_SICAV, documents);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_MEMORY, documents, year);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_AUTOCARTERA_MODEL, documents, year);	
+				getFileDocuments2Zip(domain, domainId, D2_FILE_GESTION, documents, year);			
+				getFileDocuments2Zip(domain, domainId, D2_FILE_AUDIT, documents, year);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_CONVOC, documents, year);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_SICAV, documents, year);
 				//**************************
 				
 				File tmpDocuments = File.createTempFile("Documentos TMP%", "", parent);
@@ -527,7 +533,7 @@ public class DBConsults {
 		}
 	}
 	
-	public static File getFileDocuments2Zip(String domain, Integer domainId, String name, File parent) {
+	public static File getFileDocuments2Zip(String domain, Integer domainId, String name, File parent, Integer year) {
 		AONContext ctx = null;
 		try {
 			
@@ -543,7 +549,13 @@ public class DBConsults {
 			byte[] data;
 			
 			if(record != null){
-				
+				if(year != null && year > 2014){
+					if(name.equals(D2_FILE_AUDIT)) name = D2_FILE_AUDIT_2015;
+					if(name.equals(D2_FILE_AUTOCARTERA_MODEL)) name = D2_FILE_AUTOCARTERA_MODEL_2015;
+					if(name.equals(D2_FILE_CONVOC)) name = D2_FILE_CONVOC_2015;
+					if(name.equals(D2_FILE_GESTION)) name = D2_FILE_GESTION_2015;
+					if(name.equals(D2_FILE_SICAV)) name = D2_FILE_SICAV_2015;
+				}
 				String extension = MimeType.values()[record.getValue(RATTACH.MIMETYPE)].getExtension();
 				File tempFile = File.createTempFile(name.toUpperCase() +"%", "."+extension, parent);				
 				data = record.getValue(RATTACH.DATA);
