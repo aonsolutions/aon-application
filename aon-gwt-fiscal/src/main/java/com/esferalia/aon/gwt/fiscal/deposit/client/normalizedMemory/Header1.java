@@ -330,7 +330,7 @@ public class Header1 extends PageAbs {
 		if(type.equals("check")) {
 			CheckBox c = (CheckBox) w;
 			if(mapDraft.containsKey(key2)){
-				c.setValue(mapDraft.get(key2).equals("True")); 
+				c.setValue(mapDraft.get(key2).equals("1")); 
 				c.setEnabled(enable);
 			}
 			c.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -339,8 +339,7 @@ public class Header1 extends PageAbs {
 				public void onValueChange(ValueChangeEvent<Boolean> event) {
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);		
-					onEdit(key2, event.getValue()?"1":"0");
-									
+					onEdit(key2, event.getValue()?"1":"0");				
 					if(key2.equals("1011") || key2.equals("1012")){
 						if(key2.equals("1011")){
 							IDA01012.setValue(false);
@@ -354,22 +353,22 @@ public class Header1 extends PageAbs {
 							IDA01013.setValue("");		
 							specialUpdate("1013", "");
 						}
-					}
+					}		
 					if(key2.equals("9001")){
 						IDA09002.setValue(false);
-						specialUpdate("9002", "False");
+						specialUpdate("9002", "0");
 						IDA09003.setValue(false);
-						specialUpdate("9003", "False");
+						specialUpdate("9003", "0");
 					}else if(key2.equals("9002")){
 						IDA09001.setValue(false);
-						specialUpdate("9001", "False");
+						specialUpdate("9001", "0");
 						IDA09003.setValue(false);
-						specialUpdate("9003", "False");
+						specialUpdate("9003", "0");
 					}else if(key2.equals("9003")){
 						IDA09001.setValue(false);
-						specialUpdate("9001", "False");
+						specialUpdate("9001", "0");
 						IDA09002.setValue(false);		
-						specialUpdate("9002", "False");
+						specialUpdate("9002", "0");
 					}
 				}
 			});
@@ -536,7 +535,6 @@ public class Header1 extends PageAbs {
 	
 	@Override
 	protected void onEdit(String key, String value) {
-		
 			if(mapDraft.containsKey(key))
 				mapDraft.remove(key);
 			mapDraft.put(key, value);

@@ -375,7 +375,7 @@ public class PageF2 extends PageAbs {
 						}
 					}
 				}
-				if(key2.equals("80810001")){
+				if(key2.equals("8081001")){
 					for(Integer i = 0;i< D2DepositConstants.CITIES.length; i++){
 						if(D2DepositConstants.CITIES[i].getId().equals(value)){
 							value2 = D2DepositConstants.CITIES[i].getName();
@@ -410,7 +410,7 @@ public class PageF2 extends PageAbs {
 							}
 						}
 					}
-					if(key2.equals("80810001")){
+					if(key2.equals("8081001")){
 						for(Integer i = 0;i< D2DepositConstants.CITIES.length; i++){
 							if(D2DepositConstants.CITIES[i].getName().equals(lb.getSelectedItemText())){
 								value = D2DepositConstants.CITIES[i].getId(); 
