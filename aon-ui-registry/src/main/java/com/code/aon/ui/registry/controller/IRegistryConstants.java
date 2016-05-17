@@ -20,10 +20,18 @@ public interface IRegistryConstants {
 	
 	String DOCUMENT_MANAGER_CONTROLLER_NAME = "documentManager";
 	
+	String CORPORATE_IDENTITY_CONTROLLER_NAME = "corporateIdentity";
+	
 	String CORPORATE_IDENTITY_ATTACHMENT_CONTROLLER_NAME = "corporateIdentityAttach";
 	
 	String CORPORATE_IDENTITY_SEARCH_CONTROLLER_NAME = "corporateIdentitySearch";
 	
 	String BATCH_DOCUMENT_CONTROLLER_NAME = "batchDocument";
+	
+	// ************************************************************
+	// NAVIGATION
+	// ************************************************************
+	
+	String CORPORATE_IDENTITY_PREDEFINED_NAME = CORPORATE_IDENTITY_CONTROLLER_NAME + "_predefined";
 	
 }

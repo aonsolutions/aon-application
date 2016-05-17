@@ -92,7 +92,12 @@
 							<f:setPropertyActionListener target="#{delivery.showWarehouseChangeWindow}"
 								value="#{true}" />
 						</aon:menuItem>
-
+						<aon:menuItem id="corporateIdentityLabel"
+							value="#{bundle.registry_corporateIdentity_label}"
+							iconClass="aon-icon-pdf"
+							action="corporateIdentity_label"
+							actionListener="#{delivery.onSelectCorporateIdentity}" />
+						
 						<ui:include
 							src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 					</ui:define>

@@ -57,6 +57,8 @@ import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.registry.controller.CorporateIdentity;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.util.WarehouseEmailUtil;
@@ -637,6 +639,56 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		setWarehouse(getNewWarehouse());
 		IController deliveryDetailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
 		deliveryDetailController.onSearch(null);
+	}
+	
+	public void onSelectCorporateIdentity(ActionEvent event) throws ManagerBeanException {
+		Delivery delivery = (Delivery)this.getTo();
+		if(delivery!=null){
+			CorporateIdentity controller = (CorporateIdentity)AonUtil.getRegisteredBean(IRegistryConstants.CORPORATE_IDENTITY_CONTROLLER_NAME);
+			controller.onInit(event);
+			
+			boolean shippingAlternativeAddressDefined = delivery
+					.getShippingAlternativeAddress() != null
+					|| delivery.getShippingAlternativeAddress2() != null
+					|| delivery.getShippingAlternativeZip() != null
+					|| delivery.getShippingAlternativeCity() != null
+					|| delivery.getShippingAlternativePhone() != null
+					|| delivery.getShippingAlternativeRecipient() != null;
+					
+			controller.getIdentityReport().setLabel_to(
+					shippingAlternativeAddressDefined ? delivery
+							.getShippingAlternativeRecipient() : delivery
+							.getCustomer().getRegistry().getFullName());
+			controller.getIdentityReport().setLabel_att(
+					shippingAlternativeAddressDefined ? delivery
+							.getShippingContact() : "");
+			controller.getIdentityReport().setLabel_to_address(
+					shippingAlternativeAddressDefined ? delivery
+							.getShippingAlternativeAddress()
+							+ ", "
+							+ delivery.getShippingAlternativeAddress2()
+							: delivery.getRegistryAddress().getFullAddress());
+			controller.getIdentityReport().setLabel_to_address2(
+					shippingAlternativeAddressDefined ? (delivery
+							.getShippingAlternativeZip() + " " + delivery
+							.getShippingAlternativeCity()) : (delivery
+							.getRegistryAddress().getZip()
+							+ " "
+							+ delivery.getRegistryAddress().getCity()
+							+ "  ("
+							+ delivery.getRegistryAddress().getGeozone()
+									.getName() + ")"));
+			controller.getIdentityReport().setLabel_to_phone(
+					shippingAlternativeAddressDefined ? delivery
+							.getShippingAlternativePhone() : "");
+			controller.getIdentityReport().setLabel_to_fax("");
+			controller.getIdentityReport().setLabel_to_obs(delivery.getComments());
+			controller.getIdentityReport().setLabel_to_bultos(
+					String.valueOf(delivery.getTotalPackages()));
+			
+			controller.setShowBackButton(true);
+			controller.setBackAction(DELIVERY_FORM_NAME);
+		}
 	}
 
 	public void onSendByEmail( ActionEvent event ) {

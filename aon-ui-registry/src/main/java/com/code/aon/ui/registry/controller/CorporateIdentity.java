@@ -17,6 +17,7 @@ import java.util.Locale;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,8 @@ public class CorporateIdentity implements ICollectionProvider, Serializable {
 	private IdentityReport identityReport;
 	
 	private boolean showBackButton;
+	
+	private String backAction;
 
 	public IdentityReport getIdentityReport() {
 		return identityReport;
@@ -62,6 +65,14 @@ public class CorporateIdentity implements ICollectionProvider, Serializable {
 
 	public void setIdentityReport(IdentityReport identityReport) {
 		this.identityReport = identityReport;
+	}
+	
+	public String getBackAction() {
+		return StringUtils.isBlank(backAction)?IRegistryConstants.CORPORATE_IDENTITY_PREDEFINED_NAME:backAction;
+	}
+
+	public void setBackAction(String backAction) {
+		this.backAction = backAction;
 	}
 
 	public CorporateIdentity()  {
@@ -173,6 +184,7 @@ public class CorporateIdentity implements ICollectionProvider, Serializable {
     	identityReport.setLabel_to_bultos("1");
     	
     	setShowBackButton(false);
+    	setBackAction(null);
     }
 
 	private Company recoverCompany() throws ManagerBeanException{
