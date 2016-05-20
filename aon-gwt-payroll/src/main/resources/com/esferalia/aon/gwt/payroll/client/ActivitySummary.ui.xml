@@ -22,6 +22,8 @@
 					<g:HorizontalPanel  styleName="aon-finding-toolbar">
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							<g:Label styleName="aon-outputText" text="" />
+							<g:Button ui:field="exportButton" visible="true" styleName='aon-finding-toolbar-item aon-icon-export-excel-trans'
+								/>
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>

@@ -30,6 +30,7 @@ import com.google.gwt.text.shared.AbstractSafeHtmlRenderer;
 import com.google.gwt.text.shared.SafeHtmlRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.AbstractCellTable;
 import com.google.gwt.user.cellview.client.AbstractCellTableBuilder;
 import com.google.gwt.user.cellview.client.AbstractHeaderOrFooterBuilder;
@@ -43,6 +44,7 @@ import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextHeader;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -93,6 +95,8 @@ public class ActivitySummary extends MainEntryPoint {
 	@UiField(provided = true) Button searchButton;
 	@UiField(provided = true) DataGrid<ActivitySummaryObject> dataGrid;
 	
+	@UiField(provided = true) Button exportButton;
+	
 	
 	private List<ActivitySummaryObject> summaryList;
 	private ListDataProvider<ActivitySummaryObject> dataProvider;
@@ -114,7 +118,11 @@ public class ActivitySummary extends MainEntryPoint {
 	private Column<ActivitySummaryObject, String> itOccupationalDiseaseCountColumn;
 	private Column<ActivitySummaryObject, String> itMaternityCountColumn;
 	private Column<ActivitySummaryObject, String> itOtherCountColumn;
-
+	
+	private Integer domainId = null;
+	private Integer parentDomainId = null;
+	private String domainName = null;
+	
 	@Override
 	public void onModuleLoad() {
 
@@ -138,6 +146,7 @@ public class ActivitySummary extends MainEntryPoint {
 		itOtherChk = new CheckBox();
 		
 		searchButton = new Button("Buscar");
+		exportButton = new Button("Exportar");
 		dataGrid = new DataGrid<ActivitySummaryObject>(Integer.MAX_VALUE, resources); 
 		
 		dataGrid.setHeaderBuilder(new CustomHeaderBuilder());
@@ -150,10 +159,8 @@ public class ActivitySummary extends MainEntryPoint {
 		RootLayoutPanel.get("rootPanel").add(ui);
 		
 		initSearchBox();
-		loadData();
 		
-
-		impl.getParentDomain(new AsyncCallback<Integer>() {
+		impl.getDomainId(new AsyncCallback<Integer>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -161,8 +168,34 @@ public class ActivitySummary extends MainEntryPoint {
 			}
 
 			@Override
-			public void onSuccess(Integer parentDomain) {
-				loadDataGrid(parentDomain==null);
+			public void onSuccess(Integer pDomainId) {
+				domainId = pDomainId;
+			}
+		});
+		impl.getDomainName(new AsyncCallback<String>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+			
+			@Override
+			public void onSuccess(String pDomainName) {
+				domainName = pDomainName;
+			}
+		});
+		impl.getParentDomainId(new AsyncCallback<Integer>() {
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+			
+			@Override
+			public void onSuccess(Integer pParentDomainId) {
+				parentDomainId = pParentDomainId;
+				loadData();
+				loadDataGrid(parentDomainId==null);
 			}
 		});
 		
@@ -213,7 +246,7 @@ public class ActivitySummary extends MainEntryPoint {
 		summaryList = new LinkedList<>();
 		dataProvider = new ListDataProvider<>();
 		
-		impl.getActivitySummary(null, startDate.getValue(), endDate.getValue(),
+		impl.getActivitySummary(domainName, parentDomainId==null, domainId, startDate.getValue(), endDate.getValue(),
 				startChk.getValue(), endChk.getValue(),
 				salaryChk.getValue(), salaryExtraChk.getValue(), salarySettleChk.getValue(), salaryOtherChk.getValue(), 
 				itCommonDiseaseChk.getValue(), itOccupationalDiseaseChk.getValue(), itMaternityChk.getValue(), itOtherChk.getValue(),
@@ -235,7 +268,6 @@ public class ActivitySummary extends MainEntryPoint {
 		
 	}
 	
-	
 	private void loadDataGrid(boolean isParent){
 		final SingleSelectionModel<ActivitySummaryObject> selectionModel = new SingleSelectionModel<ActivitySummaryObject>();
 		dataGrid.setSelectionModel(selectionModel);
@@ -249,6 +281,28 @@ public class ActivitySummary extends MainEntryPoint {
 		
 		initTableColumns(isParent, sortHandler);
 	}
+	
+	@UiHandler("exportButton")
+	void exportButton(ClickEvent event){
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "/download_activitySummary/"
+            + "?domainId=" + domainId
+            + "&parentDomainId=" + parentDomainId
+	        + "&startDate=" + startDate.getValue().getTime()
+	        + "&endDate=" + endDate.getValue().getTime()
+			+ "&starts=" + startChk.getValue()
+	        + "&ends=" + endChk.getValue()
+	        + "&salary=" + salaryChk.getValue()
+	        + "&salaryExtra=" + salaryExtraChk.getValue()
+	        + "&salarySettle=" + salarySettleChk.getValue()
+	        + "&salaryOther=" + salaryOtherChk.getValue()
+	        + "&itCommonDisease=" + itCommonDiseaseChk.getValue()
+	        + "&itOccupationalDisease=" + itOccupationalDiseaseChk.getValue()
+	        + "&itMaternity=" + itMaternityChk.getValue()
+	        + "&itOther=" + itOtherChk.getValue()
+            ;
+		Window.open(fileDownloadURL, "_blank", null);
+	}
+	
 	
 	private ListHandler<ActivitySummaryObject> getSortHandler() {
 		return new ListHandler<ActivitySummaryObject>(dataProvider.getList()) {
@@ -267,7 +321,7 @@ public class ActivitySummary extends MainEntryPoint {
 	}
 	
 	private void redrawSelectedRow(Integer id){
-		impl.getActivitySummary(id, startDate.getValue(), endDate.getValue(),
+		impl.getActivitySummary(domainName, false, id, startDate.getValue(), endDate.getValue(),
 				startChk.getValue(), endChk.getValue(),
 				salaryChk.getValue(), salaryExtraChk.getValue(), salarySettleChk.getValue(), salaryOtherChk.getValue(), 
 				itCommonDiseaseChk.getValue(), itOccupationalDiseaseChk.getValue(), itMaternityChk.getValue(), itOtherChk.getValue(),
@@ -470,6 +524,7 @@ public class ActivitySummary extends MainEntryPoint {
 				return object.getItCommonDiseaseCount()!=null?object.getItCommonDiseaseCount().toString():"0";
 			}
 		};
+		itCommonDiseaseCountColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		dataGrid.addColumn(itCommonDiseaseCountColumn);
 		dataGrid.setColumnWidth(itCommonDiseaseCountColumn, 7, Unit.EM);
 		
@@ -483,6 +538,7 @@ public class ActivitySummary extends MainEntryPoint {
 				return object.getItOccupationalDiseaseCount()!=null?object.getItOccupationalDiseaseCount().toString():"0";
 			}
 		};
+		itOccupationalDiseaseCountColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		dataGrid.addColumn(itOccupationalDiseaseCountColumn);
 		dataGrid.setColumnWidth(itOccupationalDiseaseCountColumn, 7, Unit.EM);
 		
@@ -496,6 +552,7 @@ public class ActivitySummary extends MainEntryPoint {
 				return object.getItMaternityCount()!=null?object.getItMaternityCount().toString():"0";
 			}
 		};
+		itMaternityCountColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		dataGrid.addColumn(itMaternityCountColumn);
 		dataGrid.setColumnWidth(itMaternityCountColumn, 7, Unit.EM);
 
@@ -509,6 +566,7 @@ public class ActivitySummary extends MainEntryPoint {
 				return object.getItOtherCount()!=null?object.getItOtherCount().toString():"0";
 			}
 		};
+		itOtherCountColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		dataGrid.addColumn(itOtherCountColumn);
 		dataGrid.setColumnWidth(itOtherCountColumn, 7, Unit.EM);
 	}
@@ -596,6 +654,7 @@ public class ActivitySummary extends MainEntryPoint {
 
 			// Create the table cell.
 			TableCellBuilder th = out.startTH();
+			th.startTH().align(HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
 
 			// Associate the cell with the column to enable sorting of the column.
 			enableColumnHandlers(th, column);
