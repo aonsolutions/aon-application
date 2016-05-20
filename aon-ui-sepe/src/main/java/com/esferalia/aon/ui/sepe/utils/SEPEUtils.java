@@ -28,6 +28,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 
 public class SEPEUtils {
@@ -200,6 +201,65 @@ public class SEPEUtils {
 			}
 		}
 		return map;
+	}
+	
+	public List<ITransferObject> getContractWorkdayHours(Contract contract) throws ManagerBeanException{
+		String[] varList = {ContextVariable.MONDAY_HOURS.getName(),
+				ContextVariable.TUESDAY_HOURS.getName(), ContextVariable.WEDNESDAY_HOURS.getName(),
+				ContextVariable.THURSDAY_HOURS.getName(), ContextVariable.FRIDAY_HOURS.getName(),
+				ContextVariable.SATURDAY_HOURS.getName(), ContextVariable.SUNDAY_HOURS.getName() };
+		
+		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
+		if(contract.getEndDate()!=null){
+			Expression endNull = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+			Expression endGTstart = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getStartDate());
+			criteria.addExpression(ExpressionUtilities.getOrExpression(endNull, endGTstart));
+		}
+		criteria.addInExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), varList);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), false);
+		return bean.getList(criteria);
+	}
+	
+	public List<ContractData[]> obtainWeekList(Contract contract) {
+		List<ContractData[]> weekList = null;
+		try {
+			List<ITransferObject> hoursList = getContractWorkdayHours(contract);
+			weekList = new LinkedList<ContractData[]>();
+			ContractData[] week = null;
+			ContractData previous = null;
+			for(ITransferObject to: hoursList){
+				ContractData data = (ContractData) to;
+				if(previous==null || data.getStartDate().before(previous.getStartDate())){
+					week = new ContractData[7];
+					weekList.add(week);
+				}
+				
+				if(data.getName().equals(ContextVariable.MONDAY_HOURS.getName())){
+					week[0] = data;
+				} else if(data.getName().equals(ContextVariable.TUESDAY_HOURS.getName())){
+					week[1] = data;
+				} else if(data.getName().equals(ContextVariable.WEDNESDAY_HOURS.getName())){
+					week[2] = data;
+				} else if(data.getName().equals(ContextVariable.THURSDAY_HOURS.getName())){
+					week[3] = data;
+				} else if(data.getName().equals(ContextVariable.FRIDAY_HOURS.getName())){
+					week[4] = data;
+				} else if(data.getName().equals(ContextVariable.SATURDAY_HOURS.getName())){
+					week[5] = data;
+				} else if(data.getName().equals(ContextVariable.SUNDAY_HOURS.getName())){
+					week[6] = data;
+				}
+				
+				previous = data;
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "onSearch contract workday hours. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+		return weekList;
 	}
 	
 	// //////////////////////////////////

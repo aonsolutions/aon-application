@@ -384,16 +384,33 @@ public class CertificadosWriter implements Serializable {
 				}
 			}
 		} else {
-			Map<String, ContractData> map = utils.getContractDataMap(batchDetail.getContract(), batchDetail.getContract().getStartDate(), batchDetail.getContract().getEndDate(), Boolean.TRUE);
-			Integer totalWeekDays = 0;
-			totalWeekDays += map.get(ContextVariable.MONDAY_HOURS.getName())!=null?1:0;
-			totalWeekDays += map.get(ContextVariable.TUESDAY_HOURS.getName())!=null?1:0;
-			totalWeekDays += map.get(ContextVariable.WEDNESDAY_HOURS.getName())!=null?1:0;
-			totalWeekDays += map.get(ContextVariable.THURSDAY_HOURS.getName())!=null?1:0;
-			totalWeekDays += map.get(ContextVariable.FRIDAY_HOURS.getName())!=null?1:0;
-			totalWeekDays += map.get(ContextVariable.SATURDAY_HOURS.getName())!=null?1:0;
-			totalWeekDays += map.get(ContextVariable.SUNDAY_HOURS.getName())!=null?1:0;
-			addPeriod(REGULAR_VALUE, batchDetail.getContract().getStartDate(), batchDetail.getContract().getEndDate(), totalWeekDays.toString(), listaPeriodos, periodo);
+			Date contractStart = batchDetail.getContract().getStartDate();
+			Date contractEnd = batchDetail.getContract().getEndDate();
+			List<ContractData[]> weekList = SEPEUtils.getInstance().obtainWeekList(batchDetail.getContract());
+			if(weekList!=null && weekList.size()>0){
+				Integer totalWeekDays = obtainTotalWeekDays(weekList.get(0));
+				Date start = weekList.get(0)[0].getStartDate();
+				Date end = weekList.get(0)[0].getEndDate();
+				addPeriod(REGULAR_VALUE, start!=null?start:contractStart, end!=null?end:contractEnd, totalWeekDays.toString(), listaPeriodos, periodo);
+			}
+			if(weekList!=null && weekList.size()>1){
+				Integer totalWeekDays = obtainTotalWeekDays(weekList.get(1));
+				Date start = weekList.get(1)[0].getStartDate();
+				Date end = weekList.get(1)[0].getEndDate();
+				addPeriod(REGULAR_VALUE, start!=null?start:contractStart, end!=null?end:contractEnd, totalWeekDays.toString(), listaPeriodos, periodo);
+			}
+			if(weekList!=null && weekList.size()>2){
+				Integer totalWeekDays = obtainTotalWeekDays(weekList.get(2));
+				Date start = weekList.get(2)[0].getStartDate();
+				Date end = weekList.get(2)[0].getEndDate();
+				addPeriod(REGULAR_VALUE, start!=null?start:contractStart, end!=null?end:contractEnd, totalWeekDays.toString(), listaPeriodos, periodo);
+			}
+			if(weekList!=null && weekList.size()>3){
+				Integer totalWeekDays = obtainTotalWeekDays(weekList.get(3));
+				Date start = weekList.get(3)[0].getStartDate();
+				Date end = weekList.get(3)[0].getEndDate();
+				addPeriod(REGULAR_VALUE, start!=null?start:contractStart, end!=null?end:contractEnd, totalWeekDays.toString(), listaPeriodos, periodo);
+			}
 		}
 
 		if(!listaPeriodos.isEmpty()){
@@ -403,6 +420,18 @@ public class CertificadosWriter implements Serializable {
 		return o;
 	}
 	
+	private Integer obtainTotalWeekDays(ContractData[] weekHours) {
+		Integer totalWeekDays = 0;
+		totalWeekDays += (weekHours[0]!=null && NumberUtils.isNumber(weekHours[0].getExpression()) && NumberUtils.toDouble(weekHours[0].getExpression())>0.0)?1:0;
+		totalWeekDays += (weekHours[1]!=null && NumberUtils.isNumber(weekHours[1].getExpression()) && NumberUtils.toDouble(weekHours[1].getExpression())>0.0)?1:0;
+		totalWeekDays += (weekHours[2]!=null && NumberUtils.isNumber(weekHours[2].getExpression()) && NumberUtils.toDouble(weekHours[2].getExpression())>0.0)?1:0;
+		totalWeekDays += (weekHours[3]!=null && NumberUtils.isNumber(weekHours[3].getExpression()) && NumberUtils.toDouble(weekHours[3].getExpression())>0.0)?1:0;
+		totalWeekDays += (weekHours[4]!=null && NumberUtils.isNumber(weekHours[4].getExpression()) && NumberUtils.toDouble(weekHours[4].getExpression())>0.0)?1:0;
+		totalWeekDays += (weekHours[5]!=null && NumberUtils.isNumber(weekHours[5].getExpression()) && NumberUtils.toDouble(weekHours[5].getExpression())>0.0)?1:0;
+		totalWeekDays += (weekHours[6]!=null && NumberUtils.isNumber(weekHours[6].getExpression()) && NumberUtils.toDouble(weekHours[6].getExpression())>0.0)?1:0;
+		return totalWeekDays;
+	}
+
 	private List<Period> getPeriodList(Contract contract) {
 		SEPEUtils utils = SEPEUtils.getInstance();
 		List<Period> list = null;

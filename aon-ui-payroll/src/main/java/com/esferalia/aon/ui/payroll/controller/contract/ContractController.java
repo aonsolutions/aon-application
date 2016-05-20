@@ -2583,40 +2583,7 @@ public class ContractController extends BasicController {
 		}
 		
 		public void loadWeekList(){
-			try {
-				List<ITransferObject> hoursList = ContractUtils.getContractWorkdayHours((Contract) getTo());
-				weekList = new LinkedList<ContractData[]>();
-				ContractData[] week = null;
-				ContractData previous = null;
-				for(ITransferObject to: hoursList){
-					ContractData data = (ContractData) to;
-					if(previous==null || data.getStartDate().before(previous.getStartDate())){
-						week = new ContractData[7];
-						weekList.add(week);
-					}
-					
-					if(data.getName().equals(ContextVariable.MONDAY_HOURS.getName())){
-						week[0] = data;
-					} else if(data.getName().equals(ContextVariable.TUESDAY_HOURS.getName())){
-						week[1] = data;
-					} else if(data.getName().equals(ContextVariable.WEDNESDAY_HOURS.getName())){
-						week[2] = data;
-					} else if(data.getName().equals(ContextVariable.THURSDAY_HOURS.getName())){
-						week[3] = data;
-					} else if(data.getName().equals(ContextVariable.FRIDAY_HOURS.getName())){
-						week[4] = data;
-					} else if(data.getName().equals(ContextVariable.SATURDAY_HOURS.getName())){
-						week[5] = data;
-					} else if(data.getName().equals(ContextVariable.SUNDAY_HOURS.getName())){
-						week[6] = data;
-					}
-					
-					previous = data;
-				}
-			} catch (ManagerBeanException e) {
-				String msg = "onSearch contract workday hours. (" +e.getMessage() + ")"; 
-				LOGGER.error(msg, e);
-			}
+			weekList = SEPEUtils.getInstance().obtainWeekList((Contract) getTo());
 		}
 		
 	}
