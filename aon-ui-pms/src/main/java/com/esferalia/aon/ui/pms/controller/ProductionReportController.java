@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -148,8 +149,21 @@ public class ProductionReportController implements Serializable {
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException {
 		hotel = null;
-		date = new Date();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		date = cal.getTime();
 		init();
+	}
+	
+	public void onChangeDate(ValueChangeEvent event){
+		if(event.getNewValue()!=null){
+			Date date = (Date) event.getNewValue();
+			if(date.after(new Date())){
+				AonUtil.addErrorMessage("La fecha debe ser anterior al dia actual.");
+				throw new AbortProcessingException("La fecha debe ser anterior al dia actual.");
+			}
+		}
 	}
 	
 	private void init(){
@@ -993,6 +1007,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append("	       IFNULL(SUM(B.guests),0) as Pax");
 		stmt.append(" FROM booking B"); 
 		stmt.append(" WHERE B.hotel="+hotel+"");
+		stmt.append(" AND B.stay_type<>2 ");
 		stmt.append(" AND (B.stay_date='"+date+"' OR B.stay_date='"+previousDate+"')");
 		stmt.append(" GROUP BY 1)");
 		stmt.append(" UNION");
@@ -1000,6 +1015,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append("	       IFNULL(SUM(B.guests),0) as Pax");
 		stmt.append(" FROM booking B"); 
 		stmt.append(" WHERE B.hotel="+hotel+"");
+		stmt.append(" AND B.stay_type<>2 ");
 		stmt.append(" AND ((B.stay_date<='"+date+"'          AND YEAR(B.stay_date)="+year+")");
 		stmt.append("   OR"); 
 		stmt.append("   (B.stay_date<='"+previousDate+"' AND YEAR(B.stay_date)="+previousYear+"))");
@@ -1010,6 +1026,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append("       IFNULL(SUM(B.guests),0) as Pax");
 		stmt.append(" FROM booking B"); 
 		stmt.append(" WHERE B.hotel="+hotel+"");
+		stmt.append(" AND B.stay_type<>2 ");
 		stmt.append("  AND ((B.stay_date<='"+date+"'          AND YEAR(B.stay_date)="+year+")");
 		stmt.append("	   OR"); 
 		stmt.append("	   (B.stay_date<='"+previousDate+"' AND YEAR(B.stay_date)="+previousYear+"))");
