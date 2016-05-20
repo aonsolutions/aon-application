@@ -475,7 +475,7 @@ public class FANWriter implements Serializable {
 			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT * FROM salary_payment";
-			select += " WHERE payment_concept IN ('" + ContextVariable.PREST_IT.getName() + "')";
+			select += " WHERE payment_concept IN ('" + ContextVariable.PREST_IT + "')";
 			select += " AND salary in (";
 			select += " SELECT id FROM salary WHERE contract = " + contract.getId()
 					+ " AND end_date >= '" + dateFormatter.format(getStartDate()) + "'" 
@@ -896,7 +896,7 @@ public class FANWriter implements Serializable {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT sum(quote) FROM salary_payment";
 			select += " WHERE salary = " + salary.getId();
-			select += " AND payment_concept IN ('" + ContextVariable.PREST_IT.getName() + "', '" + ContextVariable.MATERNITY.getName() + "')";
+			select += " AND payment_concept IN ('" + ContextVariable.PREST_IT + "', '" + ContextVariable.MATERNITY.getName() + "')";
 			select += " GROUP BY payment_concept;";
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();

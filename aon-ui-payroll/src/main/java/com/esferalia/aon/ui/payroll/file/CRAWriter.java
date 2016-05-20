@@ -259,7 +259,7 @@ public class CRAWriter {
 	}
 	
 	private boolean isSSDelegatePayment(Connection connection, Date startDate, Date endDate, String concept, Double amount, Integer contractId){
-		if(StringUtils.equals(concept,ContextVariable.PREST_IT.getName())){
+		if(StringUtils.equals(concept,ContextVariable.PREST_IT)){
 			boolean isDelegatePayment = false;
 			Result<Record1<Double>> costsRecord = getSSDelegatePaymentSelect(connection, startDate, endDate, contractId);
 			for (Record1<Double> step : costsRecord) {
