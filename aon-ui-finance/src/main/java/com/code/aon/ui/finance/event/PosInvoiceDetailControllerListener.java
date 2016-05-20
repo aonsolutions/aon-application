@@ -32,6 +32,12 @@ public class PosInvoiceDetailControllerListener extends InvoiceDetailControllerL
 	}
 
 	@Override
+	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		// Redefinido para que no salte el de la clase InvoiceDetailControllerListener 
+		// y no se ejecute el refreshEntireInvoice si se recupera un Ticket contabilizado.
+	}
+
+	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		super.afterBeanCreated(event);
 

@@ -61,7 +61,7 @@
 					<aon:commandButton styleClass="aon-big-commandButton aon-width-100"
 						style="font-size:0.8em;"
 						value="#{posInvoiceSelectedProduct.shortName}" immediate="true"
-						disabled="#{invoiceController.nevv}"
+						disabled="#{invoiceController.nevv or invoiceController.recorded}"
 						actionListener="#{invoiceController.onSelectProduct}"
 						ajaxSingle="true">
 						<f:param name="selectedProduct" value="#{posInvoiceSelectedProduct.id}"/>

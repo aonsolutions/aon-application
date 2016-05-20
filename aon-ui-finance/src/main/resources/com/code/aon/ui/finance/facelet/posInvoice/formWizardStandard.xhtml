@@ -29,7 +29,7 @@
 			styleClass="aon-medium-commandButton aon-width-60"
 			value="#{bundle.aon_key_save_description}"
 			title="#{bundle.aon_key_save_accelerator}"
-			disabled="#{invoiceController.nevv or invoiceController.ticketFinished or detailController.to.item.id == null}"
+			disabled="#{invoiceController.nevv or invoiceController.recorded or invoiceController.ticketFinished or detailController.to.item.id == null}"
 			actionListener="#{detailController.onAccept}"
 			accesskey="#{bundle.aon_key_save}" />
 

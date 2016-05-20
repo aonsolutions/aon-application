@@ -23,7 +23,7 @@ public class PosInvoiceDetailController extends SaleInvoiceDetailController {
 
 	public void itemChanged(Item item) {
 		super.itemChanged(item, true, true);
-	}	
+	}
 
 	public void quantityChanged(double quantity) {
 		super.quantityChanged(quantity);
