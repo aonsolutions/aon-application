@@ -27,6 +27,7 @@ import org.junit.Test;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -553,7 +554,8 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract,
 				"GTZDO( P_0 + P_1,1,365)", 
 				"0.00");
-		addPayment(aonContext, contract,
+		PaymentConceptRecord prestIT = addConcept(aonContext, "PREST_IT");
+		addPayment(aonContext, contract, prestIT ,
 				"TRACE('DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA=%f\r\n',BASE_REGULADORA * DIAS_ENFERMEDAD_COMUN); "
 				+"0.00", 
 				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
@@ -642,7 +644,8 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract,
 				"GTZDO( P_0+ P_1,1)", 
 				"0.00");
-		addPayment(aonContext, contract,
+		PaymentConceptRecord prestIT = addConcept(aonContext, "PREST_IT");
+		addPayment(aonContext, contract, prestIT,
 				"TRACE('DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA=%f\r\n',BASE_REGULADORA * DIAS_ENFERMEDAD_COMUN); "
 				+"0.00", 
 				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
@@ -713,7 +716,8 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract,
 				"GTZDO( P_0+ P_1)", 
 				"0.00");
-		addPayment(aonContext, contract,
+		PaymentConceptRecord prestIT = addConcept(aonContext, "PREST_IT");
+		addPayment(aonContext, contract, prestIT,
 				"TRACE('DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA=%f\r\n',BASE_REGULADORA * DIAS_ENFERMEDAD_COMUN); "
 				+"0.00", 
 				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");

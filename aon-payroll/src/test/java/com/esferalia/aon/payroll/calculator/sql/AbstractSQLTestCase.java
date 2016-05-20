@@ -106,13 +106,16 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 public abstract class AbstractSQLTestCase {
-
+	
+	private static final String UNSET = "UNSET";
+	
 	public static class Extra {
 		public Month month;
 		public String start;
 		public String end;
 		public String issue;
 		public String expression;
+		public String quoteExpression = UNSET;
 	}
 
 	public static class Payment {
@@ -493,7 +496,7 @@ public abstract class AbstractSQLTestCase {
 					.set(AGREEMENT_PAYMENT.DESCRIPTION, extra.expression)
 					.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, PAYMENT.getName())
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) EXTRA.ordinal())
-					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, String.format("%s/12", PAYMENT.getName())).returning()
+					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, extra.quoteExpression == UNSET ? String.format("%s/12", PAYMENT.getName()): extra.quoteExpression).returning()
 					.fetchOne();
 
 			aonContext.getDslContext().insertInto(AGREEMENT_EXTRA).set(AGREEMENT_EXTRA.DOMAIN, agreement.getDomain())

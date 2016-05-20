@@ -54,6 +54,9 @@ public enum ContextVariable implements IResourceable{
 	PATERNITY_DAYS("DIAS_PATERNIDAD", VariableType.INTEGER, false),
 	MATERNITY_DAYS("DIAS_MATERNIDAD", VariableType.INTEGER, false),
 	COMMON_DISEASE_DAYS("DIAS_ENFERMEDAD_COMUN", VariableType.INTEGER, false),
+	COMMON_DISEASE_DAYS_4_15("DIAS_ENFERMEDAD_COMUN_4_15", VariableType.INTEGER, false),
+	COMMON_DISEASE_DAYS_16_20("DIAS_ENFERMEDAD_COMUN_16_20", VariableType.INTEGER, false),
+	COMMON_DISEASE_DAYS_21("DIAS_ENFERMEDAD_COMUN_21", VariableType.INTEGER, false),
 	OCCUPATIONAL_DISEASE_DAYS("DIAS_ENFERMEDAD_PROFESIONAL", VariableType.INTEGER, false),
 	PAYMENTS("NUM_PAGAS", VariableType.INTEGER, false),
 	REAL_DAYS("DIAS_REALES", VariableType.INTEGER, false),
@@ -141,7 +144,7 @@ public enum ContextVariable implements IResourceable{
 	CATEGORY("CATEGORIA", VariableType.STRING, false),
 	INDEFINITE("INDEFINIDO", VariableType.BOOLEAN, false),
 	OCCUPATION("OCUPACION", VariableType.OCCUPATION_DROP, false),
-	GUARANTEED("GARANTIZADO", VariableType.DOUBLE, false),
+	//GUARANTEED("GARANTIZADO", VariableType.DOUBLE, false),
 	IRREGULAR("IRREGULAR", VariableType.BOOLEAN, false),
 	FULL_TIME("TIEMPO_COMPLETO", VariableType.BOOLEAN, false),
 	IRPF_PERCENT("PORCENTAJE_IRPF", VariableType.DOUBLE, false),
@@ -244,7 +247,7 @@ public enum ContextVariable implements IResourceable{
 	TEMP_COMPLETE("FIN_TEMPORAL", VariableType.UNKNOWN),
 	CONDITIONS_CHANGE("CAMBIO_CONDICIONES", VariableType.UNKNOWN),
 	
-	PREST_IT("PREST_IT", VariableType.DOUBLE),
+//	PREST_IT("PREST_IT", VariableType.DOUBLE),
 	DIRECT_PAY("PAGO_DIRECTO", VariableType.BOOLEAN),
 	
 	MONTHLY_SALARY("MODALIDAD_MENSUAL", VariableType.BOOLEAN)
@@ -273,6 +276,7 @@ public enum ContextVariable implements IResourceable{
 	public static final String CHECK_VAR = "CHECK_VAR";
 	
 	public static final String OLDD = "ANTIGUEDAD";
+	public static final String PREST_IT = "PREST_IT";
 	public static final String BASE_SALARY = "SALARIO_BASE";
 	public static final String GUARENTEE_IT = "GARANTIZADO_IT";
 	

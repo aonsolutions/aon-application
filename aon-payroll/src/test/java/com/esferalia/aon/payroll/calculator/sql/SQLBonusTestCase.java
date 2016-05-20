@@ -172,7 +172,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				add(getFirstDayOfMonth(add(getToday(), MONTH, 1)),
 						DAY_OF_MONTH, 12), null);
 		PaymentConceptRecord prestIT = addConcept(aonContext,
-				PREST_IT.getName());
+				PREST_IT);
 		addPayment(aonContext, contract, prestIT, String.format(
 				"%s * 0.00 * %s_1_3", REGULATORY_BASE, COMMON_DISEASE_DAYS),
 				String.format(
@@ -525,7 +525,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				add(getFirstDayOfMonth(add(getToday(), MONTH, 1)),
 						DAY_OF_MONTH, 12), null);
 		PaymentConceptRecord prestIT = addConcept(aonContext,
-				PREST_IT.getName());
+				PREST_IT);
 		addPayment(aonContext, contract, prestIT, String.format(
 				"%s * 0.00 * %s_1_3", REGULATORY_BASE, COMMON_DISEASE_DAYS),
 				String.format(

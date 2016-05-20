@@ -330,7 +330,7 @@ public class SQLGrossTestCase extends AbstractSQLTestCase {
 				null, 
 				null);
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, String.format("500 * 0.90 * %s_4_15",  COMMON_DISEASE_DAYS));
 		addPayment(aonContext, contract, prestIT, String.format("500 * 0.90 * %s_16_20",  COMMON_DISEASE_DAYS));
 		addPayment(aonContext, contract, prestIT, String.format("500 * 0.90 * %s_21",  COMMON_DISEASE_DAYS));

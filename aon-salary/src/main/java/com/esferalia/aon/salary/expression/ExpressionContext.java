@@ -8,7 +8,6 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,11 +18,13 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
-import org.mvel2.ErrorDetail;
+import org.mvel2.DataConversion;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
+import org.mvel2.ast.ASTNode;
+import org.mvel2.integration.impl.CachingMapVariableResolverFactory;
 import org.mvel2.templates.TemplateRuntime;
 
 import com.code.aon.AonVersion;
@@ -32,13 +33,11 @@ import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 
 public class ExpressionContext {
 
-	public static class UnknownUndefVarException extends
-			UndefinedVariablesException {
+	public static class UnknownUndefVarException extends UndefinedVariablesException {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	}
-
 
 	public abstract static class MacroException extends ExpressionException {
 
@@ -58,8 +57,7 @@ public class ExpressionContext {
 
 	private static ThreadLocal<PeriodMap> currentBindings = new ThreadLocal<Variables.PeriodMap>();
 
-	private static final Pattern VARIABLE_PATTERN = Pattern
-			.compile("[A-Za-z_\u00F1][A-Za-z0-9_\u00D1]*");
+	private static final Pattern VARIABLE_PATTERN = Pattern.compile("[A-Za-z_\u00F1][A-Za-z0-9_\u00D1]*");
 
 	private static final Set<String> RESERVED_WORDS = new HashSet<String>() {
 		{
@@ -87,8 +85,7 @@ public class ExpressionContext {
 	}
 
 	@ContextMethod(name = MethodName.GET_VARIABLE)
-	public static Object getVariable(ExpressionContext ctx, String variable,
-			Date date) throws RemoveVariableException {
+	public static Object getVariable(ExpressionContext ctx, String variable, Date date) throws RemoveVariableException {
 		return ctx.variables.get(variable, new Period(date, date));
 	}
 
@@ -112,7 +109,7 @@ public class ExpressionContext {
 			return var;
 		}
 	}
-	
+
 	public static class DeferredExpressionException extends DeferredException {
 
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
@@ -125,8 +122,7 @@ public class ExpressionContext {
 			this(expression, p.getStart(), p.getEnd());
 		}
 
-		public DeferredExpressionException(IExpression expression, Date start,
-				Date end) {
+		public DeferredExpressionException(IExpression expression, Date start, Date end) {
 			this.end = end;
 			this.start = start;
 			this.expression = expression;
@@ -134,26 +130,23 @@ public class ExpressionContext {
 
 		@Override
 		public <T> List<ITimedResult<T>> eval(ExpressionContext context, Class<T> toType) throws ExpressionException {
-			
-			List<ITimedResult<T>> results = context.eval(
-					expression.getExpression(), start, end, toType);
-			
+
+			List<ITimedResult<T>> results = context.eval(expression.getExpression(), start, end, toType);
+
 			for (ITimedResult<T> result : results)
 				context.putVariable(expression.getName(), result);
-			
+
 			return results;
 		}
 	}
 
-	public static class DeferredExpressionVariable<T> extends
-			ExpressionVariable<T> implements ITimedResult<T> {
+	public static class DeferredExpressionVariable<T> extends ExpressionVariable<T> implements ITimedResult<T> {
 
 		public DeferredExpressionVariable(Period p, IExpression expression) {
 			super(null, p, expression);
 		}
 
-		public DeferredExpressionVariable(Date start, Date end,
-				IExpression expression) {
+		public DeferredExpressionVariable(Date start, Date end, IExpression expression) {
 			this(new Period(start, end), expression);
 		}
 
@@ -165,8 +158,7 @@ public class ExpressionContext {
 		@Override
 		public T getValue(Period period) {
 			IExpression expression = getExpression();
-			throw new ExpressionExceptionWrapper(
-					new DeferredExpressionException(expression, period));
+			throw new ExpressionExceptionWrapper(new DeferredExpressionException(expression, period));
 		}
 
 		@Override
@@ -176,13 +168,11 @@ public class ExpressionContext {
 
 	}
 
-	public static class RemovedExpressionVariable<T> extends
-			ExpressionVariable<T> implements ITimedResult<T> {
+	public static class RemovedExpressionVariable<T> extends ExpressionVariable<T> implements ITimedResult<T> {
 
 		private String name;
 
-		public RemovedExpressionVariable(String name, Period p,
-				IExpression expression) {
+		public RemovedExpressionVariable(String name, Period p, IExpression expression) {
 			super(null, p, expression);
 			this.name = name;
 		}
@@ -204,18 +194,15 @@ public class ExpressionContext {
 
 	}
 
-	public static class UndefinedExpressionVariable<T> extends
-			ExpressionVariable<T> implements ITimedResult<T> {
+	public static class UndefinedExpressionVariable<T> extends ExpressionVariable<T> implements ITimedResult<T> {
 
 		private String name;
 
-		public UndefinedExpressionVariable(String name, Date start, Date end,
-				IExpression expression) {
+		public UndefinedExpressionVariable(String name, Date start, Date end, IExpression expression) {
 			this(name, new Period(start, end), expression);
 		}
 
-		public UndefinedExpressionVariable(String name, Period p,
-				IExpression expression) {
+		public UndefinedExpressionVariable(String name, Period p, IExpression expression) {
 			super(null, p, expression);
 			this.name = name;
 		}
@@ -226,8 +213,7 @@ public class ExpressionContext {
 
 		@Override
 		public T getValue() {
-			UndefinedVariablesException undefined = new UndefinedVariablesException(
-					name);
+			UndefinedVariablesException undefined = new UndefinedVariablesException(name);
 			throw new ExpressionExceptionWrapper(undefined);
 		}
 
@@ -237,7 +223,7 @@ public class ExpressionContext {
 		}
 
 	}
-	
+
 	public static class TimedConstant<V> extends TimedObject<V> implements IConstantVariable {
 
 		public TimedConstant(V value, Date start, Date end) {
@@ -247,32 +233,44 @@ public class ExpressionContext {
 		public TimedConstant(V value, Period period) {
 			super(value, period);
 		}
-		
+
 	}
 
-	public static class ExpressionConstant<V> extends ExpressionVariable<V> implements IConstantVariable{
+	public static class ExpressionConstant<V> extends ExpressionVariable<V> implements IConstantVariable {
 
-		public ExpressionConstant(V value, Period p, IExpression expression,
-				Map<String, ITimedVariable<?>> context) {
+		public ExpressionConstant(V value, Period p, IExpression expression, Map<String, ITimedVariable<?>> context) {
 			super(value, p, expression, context);
 		}
 
 		public ExpressionConstant(V value, Period p, IExpression expression) {
 			super(value, p, expression);
 		}
-		
+
 	}
 
 	public static Set<String> getVarNames(String script) {
 		Set<String> names = new HashSet<String>();
+		// clean strings literals
+		script = script.replaceAll("'[^']*'", "");
+		script = script.replaceAll("\"[^\"]*\"", "");
+
 		Matcher matcher = VARIABLE_PATTERN.matcher(script);
 		while (matcher.find()) {
 			String var = matcher.group();
 			if (!RESERVED_WORDS.contains(var)) {
 				names.add(var);
 			}
-			
+
 		}
+		return names;
+	}
+
+	public static Set<String> getInputs(String script) {
+		Set<String> names = new HashSet<String>();
+		ParserContext ctx = new ParserContext();
+		MVEL.compileExpression(script, ctx);
+		names.addAll(ctx.getInputs().keySet());
+		names.addAll(ctx.getFunctions().keySet());
 		return names;
 	}
 
@@ -283,7 +281,6 @@ public class ExpressionContext {
 	public static <T> T eval(String script, Class<T> type) {
 		return MVEL.eval(script, type);
 	}
-
 
 	public static class ExpressionExceptionWrapper extends RuntimeException {
 
@@ -298,8 +295,7 @@ public class ExpressionContext {
 		}
 	}
 
-	private static void throwExpressionException(PropertyAccessException child)
-			throws ExpressionException {
+	private static void throwExpressionException(PropertyAccessException child) throws ExpressionException {
 		Throwable parent = child.getCause();
 		while (parent != null) {
 			if (parent instanceof ExpressionException) {
@@ -310,8 +306,7 @@ public class ExpressionContext {
 	}
 
 	private static String getUndefinedProperty(PropertyAccessException e) {
-		for (Throwable parent = e.getCause(); parent != null; parent = parent
-				.getCause()) {
+		for (Throwable parent = e.getCause(); parent != null; parent = parent.getCause()) {
 			if (parent instanceof UnresolveablePropertyException)
 				return ((UnresolveablePropertyException) parent).getName();
 
@@ -319,47 +314,48 @@ public class ExpressionContext {
 		return null;
 	}
 
-	public static String getUndefinedProperty(PropertyAccessException e,
-			PeriodMap bindings) throws UnknownUndefVarException {
+	public static String getUndefinedProperty(PropertyAccessException e, PeriodMap bindings)
+			throws UnknownUndefVarException {
 
 		String property = getUndefinedProperty(e);
 		if (property != null)
 			return property;
 
-//		int end = e.getCursor();
-//		do {
-//			if (end <= 0)
-//				throw new UnknownUndefVarException();
-//			while (end-- > 0)
-//				if (Character.isJavaIdentifierPart(expr[end]))
-//					break;
-//			int start = end;
-//			while (start >= 0) {
-//				if (!Character.isJavaIdentifierPart(expr[start]))
-//					break;
-//				else
-//					start--;
-//			}
-//			int offset = start + 1;
-//			int len = end - offset + 1;
-//			property = new String(expr, offset, len);
-//			end = start;
-//		} while (!isJavaIdentifier(property) || bindings.containsKey(property));
-		
+		// int end = e.getCursor();
+		// do {
+		// if (end <= 0)
+		// throw new UnknownUndefVarException();
+		// while (end-- > 0)
+		// if (Character.isJavaIdentifierPart(expr[end]))
+		// break;
+		// int start = end;
+		// while (start >= 0) {
+		// if (!Character.isJavaIdentifierPart(expr[start]))
+		// break;
+		// else
+		// start--;
+		// }
+		// int offset = start + 1;
+		// int len = end - offset + 1;
+		// property = new String(expr, offset, len);
+		// end = start;
+		// } while (!isJavaIdentifier(property) ||
+		// bindings.containsKey(property));
+
 		char expr[] = e.getExpr();
 		int start = e.getCursor();
-		if ( start >= expr.length )
+		if (start >= expr.length)
 			throw new UnknownUndefVarException();
-		
-		if ( !Character.isJavaIdentifierStart(expr[start]))
-			throw new UnknownUndefVarException();
-		
-		int end = start  + 1;
-		for ( ;end < expr.length && Character.isJavaIdentifierPart(expr[end]); end++ );
-		
-		return new String(expr, start, end -start);
-	}
 
+		if (!Character.isJavaIdentifierStart(expr[start]))
+			throw new UnknownUndefVarException();
+
+		int end = start + 1;
+		for (; end < expr.length && Character.isJavaIdentifierPart(expr[end]); end++)
+			;
+
+		return new String(expr, start, end - start);
+	}
 
 	private Variables variables;
 
@@ -380,8 +376,7 @@ public class ExpressionContext {
 		this(expressionContext, null);
 	}
 
-	public ExpressionContext(ExpressionContext expressionContext,
-			NotFoundHandler notFoundHandler) {
+	public ExpressionContext(ExpressionContext expressionContext, NotFoundHandler notFoundHandler) {
 		this(new Variables(expressionContext.variables, notFoundHandler));
 	}
 
@@ -397,9 +392,8 @@ public class ExpressionContext {
 		return variables.put(name.toString(), timedVariable);
 	}
 
-	public List<ITimedVariable<?>>  setVariable(Object name, Object value, Date start, Date end) {
-		ITimedVariable<Object> timedObject = new TimedConstant<Object>(value,
-				start, end);
+	public List<ITimedVariable<?>> setVariable(Object name, Object value, Date start, Date end) {
+		ITimedVariable<Object> timedObject = new TimedConstant<Object>(value, start, end);
 		return this.putVariable(name.toString(), timedObject);
 	}
 
@@ -432,8 +426,7 @@ public class ExpressionContext {
 		return variables.getVariables(name.toString());
 	}
 
-	public <T> List<ITimedVariable<T>> getVariables(Object name, Date start,
-			Date end) {
+	public <T> List<ITimedVariable<T>> getVariables(Object name, Date start, Date end) {
 		return variables.getVariables(name.toString(), new Period(start, end));
 	}
 
@@ -449,23 +442,21 @@ public class ExpressionContext {
 		variables.putAll(ctx.variables);
 	}
 
-	public List<ITimedResult<Object>> addExpression(IExpression expression,
-			Date start, Date end) throws ExpressionException {
+	public List<ITimedResult<Object>> addExpression(IExpression expression, Date start, Date end)
+			throws ExpressionException {
 		return addExpression(expression, start, end, Object.class);
 	}
 
-	public <T> List<ITimedResult<T>> addExpression(IExpression expression,
-			Date start, Date end, Class<T> toType) throws ExpressionException {
+	public <T> List<ITimedResult<T>> addExpression(IExpression expression, Date start, Date end, Class<T> toType)
+			throws ExpressionException {
 		String name = expression.getName();
 		String script = expression.getExpression();
 		try {
-			List<ITimedResult<T>> values = this
-					.eval(script, start, end, toType);
+			List<ITimedResult<T>> values = this.eval(script, start, end, toType);
 			if (name != null) {
 
 				for (ITimedResult<T> obj : values) {
-					IExpressionVariable<T> var = new ExpressionConstant<T>(
-							obj.getValue(), obj.getPeriod(), expression,
+					IExpressionVariable<T> var = new ExpressionConstant<T>(obj.getValue(), obj.getPeriod(), expression,
 							obj.getContext());
 					this.putVariable(name, var);
 				}
@@ -473,15 +464,13 @@ public class ExpressionContext {
 			return values;
 		} catch (RemoveVariableException e) {
 			Period period = new Period(start, end);
-			RemovedExpressionVariable<T> var = new RemovedExpressionVariable<T>(
-					name, period, expression);
+			RemovedExpressionVariable<T> var = new RemovedExpressionVariable<T>(name, period, expression);
 			this.putVariable(name, var);
 			return Collections.singletonList((ITimedResult<T>) var);
 		}
 	}
 
-	public void addLazyExpression(IExpression expression, Date start, Date end)
-			throws ExpressionException {
+	public void addLazyExpression(IExpression expression, Date start, Date end) throws ExpressionException {
 		String script = expression.getExpression();
 
 		Set<String> inputs = null;
@@ -494,14 +483,14 @@ public class ExpressionContext {
 		List<PeriodMap> bindings = variables.getBindings(inputs, start, end);
 		for (PeriodMap periodMap : bindings) {
 			Period period = periodMap.getPeriod();
-			putVariable(expression.getName(), new LazyExpressionVariable(this,
-					expression, period.getStart(), period.getEnd()));
+			putVariable(expression.getName(),
+					new LazyExpressionVariable(this, expression, period.getStart(), period.getEnd()));
 		}
 
 	}
 
-	public <V> void addPullExpression(IExpression expression, Date start,
-			Date end, Class<V> toType) throws ExpressionException {
+	public <V> void addPullExpression(IExpression expression, Date start, Date end, Class<V> toType)
+			throws ExpressionException {
 		String script = expression.getExpression();
 
 		Set<String> inputs = null;
@@ -513,7 +502,7 @@ public class ExpressionContext {
 
 		List<PeriodMap> bindings = variables.getBindings(inputs, start, end);
 		for (PeriodMap periodMap : bindings) {
-			
+
 			putVariable(expression.getName(), new ITimedVariable<V>() {
 
 				Period period = periodMap.getPeriod();
@@ -527,11 +516,9 @@ public class ExpressionContext {
 				public V getValue(Period period) {
 					List<ITimedResult<V>> results;
 					try {
-						results = ExpressionContext.this.eval(
-								expression.getExpression(), period.getStart(),
+						results = ExpressionContext.this.eval(expression.getExpression(), period.getStart(),
 								period.getEnd(), toType);
-						return results.size() > 0 ? results.get(0).getValue()
-								: null;
+						return results.size() > 0 ? results.get(0).getValue() : null;
 					} catch (ExpressionException e) {
 						throw new ExpressionExceptionWrapper(e);
 					}
@@ -541,53 +528,51 @@ public class ExpressionContext {
 
 	}
 
-	public List<ITimedResult<Object>> eval(String script, Date start, Date end)
-			throws ExpressionException {
+	public List<ITimedResult<Object>> eval(String script, Date start, Date end) throws ExpressionException {
 		return eval(script, start, end, Object.class);
 	}
 
-	public <T> List<ITimedResult<T>> eval(String script, Date start, Date end,
-			Class<T> toType) throws ExpressionException,
-			UndefinedVariablesException {
+	public <T> List<ITimedResult<T>> eval(String script, Date start, Date end, Class<T> toType)
+			throws ExpressionException, UndefinedVariablesException {
 		if (script == null) {
-			ITimedResult<T> result = (new TimedResult<T>((T) null, new Period(
-					start, end),
+			ITimedResult<T> result = (new TimedResult<T>((T) null, new Period(start, end),
 					Collections.<String, ITimedVariable<?>> emptyMap()));
 			return Collections.singletonList(result);
 		}
 		Set<String> inputs = getVarNames(script);
-		List<PeriodMap> bindingsList = variables
-				.getBindings(inputs, start, end);
+		List<PeriodMap> bindingsList = variables.getBindings(inputs, start, end);
 		try {
-			
+
 			do {
 				try {
 					return eval(script, bindingsList, toType);
-				}catch (MacroException e) {
+				} catch (MacroException e) {
 					script = e.doMacro(script);
-				} 
-			} while ( true ) ;
+					inputs.addAll(getVarNames(script));
+					bindingsList = variables.getBindings(inputs, start, end);
+				}
+			} while (true);
 
 		} catch (DeferredException e) {
 			e.eval(this, toType);
 			return eval(script, start, end, toType);
 		} catch (UnknownUndefVarException e) {
 			return evalUnknowUndefVariable(script, inputs, start, end, toType);
-		} catch ( CompileException e ) {
+		} catch (CompileException e) {
 			throw e;
 		}
 
 	}
 
-	public String evalTemplate(String template, Date start, Date end)  throws ExpressionException{
+
+	public String evalTemplate(String template, Date start, Date end) throws ExpressionException {
 		try {
-		Map<String, Object> vars = variables.getPeriodMap(start, end);
-		Object result = TemplateRuntime.eval(template, vars);
-		return result != null ? result.toString() : null;
+			Map<String, Object> vars = variables.getPeriodMap(start, end);
+			Object result = TemplateRuntime.eval(template, vars);
+			return result != null ? result.toString() : null;
 		} catch (PropertyAccessException e) {
 			throwExpressionException(e);
-			throw new UndefinedVariablesException(getUndefinedProperty(e,
-					(PeriodMap)null));
+			throw new UndefinedVariablesException(getUndefinedProperty(e, (PeriodMap) null));
 		} catch (UnresolveablePropertyException e) {
 			throw new UndefinedVariablesException(e.getName());
 		} catch (ExpressionExceptionWrapper e) {
@@ -616,8 +601,7 @@ public class ExpressionContext {
 
 	public ExpressionContext getSnapshot(Set<String> vars) {
 		Variables snapshotVariables = variables.getSnapshot(vars);
-		ExpressionContext snapshotContext = new ExpressionContext(
-				snapshotVariables);
+		ExpressionContext snapshotContext = new ExpressionContext(snapshotVariables);
 		return snapshotContext;
 
 	}
@@ -638,8 +622,7 @@ public class ExpressionContext {
 	// ------------------------------------------------------------------------
 	//
 	// ------------------------------------------------------------------------
-	private <T> List<ITimedResult<T>> eval(String script,
-			List<PeriodMap> bindingsList, Class<T> toType)
+	private <T> List<ITimedResult<T>> eval(String script, List<PeriodMap> bindingsList, Class<T> toType)
 			throws ExpressionException {
 		if (script == null) {
 			return Collections.emptyList();
@@ -649,15 +632,13 @@ public class ExpressionContext {
 			try {
 				bindings.cleanRead();
 				setCurrentBindings(bindings);
-				// Fix MVEL 2.2.4-Final BUG with multiline scripts 
+				// Fix MVEL 2.2.4-Final BUG with multiline scripts
 				String fixedScript = script.replaceAll("\\]\\s+\\[", "][");
 				T value = MVEL.eval(fixedScript, bindings, toType);
-				values.add(new TimedResult<T>(value, bindings.getPeriod(),
-						bindings.getRead()));
+				values.add(new TimedResult<T>(value, bindings.getPeriod(), bindings.getRead()));
 			} catch (PropertyAccessException e) {
 				throwExpressionException(e);
-				throw new UndefinedVariablesException(getUndefinedProperty(e,
-						bindings));
+				throw new UndefinedVariablesException(getUndefinedProperty(e, bindings));
 			} catch (UnresolveablePropertyException e) {
 				throw new UndefinedVariablesException(e.getName());
 			} catch (ExpressionExceptionWrapper e) {
@@ -670,9 +651,27 @@ public class ExpressionContext {
 		return values;
 	}
 
-	private <T> List<ITimedResult<T>> evalUnknowUndefVariable(String script,
-			Collection<String> inputs, Date start, Date end, Class<T> toType)
-			throws ExpressionException {
+	private <T> T eval(ASTNode astNode, PeriodMap bindings, Class<T> toType) throws ExpressionException {
+		try {
+			CachingMapVariableResolverFactory factory = new CachingMapVariableResolverFactory(bindings);
+			return DataConversion.convert(astNode.getReducedValueAccelerated(null, null, factory), toType);
+		} catch (PropertyAccessException e) {
+			throwExpressionException(e);
+			throw new UndefinedVariablesException(getUndefinedProperty(e, bindings));
+		} catch (UnresolveablePropertyException e) {
+			throw new UndefinedVariablesException(e.getName());
+		} catch (ExpressionExceptionWrapper e) {
+			throw e.getExpressionException();
+		} catch (CompileException e) {
+			throw e;
+		} catch ( RuntimeException e ) {
+			throw e;
+		}
+
+	}
+
+	private <T> List<ITimedResult<T>> evalUnknowUndefVariable(String script, Collection<String> inputs, Date start,
+			Date end, Class<T> toType) throws ExpressionException {
 
 		Set<String> vars = new HashSet<String>();
 		for (String input : inputs) {
@@ -684,8 +683,7 @@ public class ExpressionContext {
 				continue;
 			}
 
-			String repl = String.format("%s(%s, '%s', $1)",
-					MethodName.GET_VARIABLE, VariableName.THIS, input);
+			String repl = String.format("%s(%s, '%s', $1)", MethodName.GET_VARIABLE, VariableName.THIS, input);
 			StringBuffer sb = new StringBuffer();
 			do {
 				matcher.appendReplacement(sb, repl);
@@ -731,13 +729,12 @@ public class ExpressionContext {
 	}
 
 	public static Set<String> getVariableSet(String script) {
-		
+
 		if (StringUtils.isBlank(script))
 			return Collections.emptySet();
 
-		
 		ParserContext ctx = new ParserContext();
-		
+
 		MVEL.analysisCompile(script, ctx);
 
 		Set<String> variables = new HashSet<String>();
@@ -746,7 +743,7 @@ public class ExpressionContext {
 			if (isJavaIdentifier(input))
 				variables.add(input);
 		}
-		
+
 		ctx.getVariables();
 
 		return variables;
@@ -762,9 +759,8 @@ public class ExpressionContext {
 	}
 
 	private static boolean isJavaIdentifier(String string) {
-		
-		if (string == null || string.length() == 0 || 
-				!Character.isJavaIdentifierStart(string.charAt(0)))
+
+		if (string == null || string.length() == 0 || !Character.isJavaIdentifierStart(string.charAt(0)))
 			return false;
 		for (int i = 1; i < string.length(); i++)
 			if (!Character.isJavaIdentifierPart(string.charAt(i)))
@@ -772,7 +768,7 @@ public class ExpressionContext {
 		return true;
 	}
 
+
 	// ------------------------------------------------------------------------
-	
-	
+
 }

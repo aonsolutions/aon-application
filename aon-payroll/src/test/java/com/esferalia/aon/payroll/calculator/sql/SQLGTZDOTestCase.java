@@ -10,6 +10,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
 import static java.util.Calendar.DATE;
 
 import java.sql.Connection;
@@ -18,6 +19,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -25,7 +27,9 @@ import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -39,6 +43,8 @@ import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.sql.AbstractSQL.PaymentConcept;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class SQLGTZDOTestCase extends AbstractSQLTestCase {
@@ -738,7 +744,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, String.format("30 * 0.75 * %s",  OCCUPATIONAL_DISEASE_DAYS));
 		
 		Criteria criteria = new Criteria();
@@ -833,7 +839,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, String.format("1000.00/%s * 1.00 * %s", MONTH_DAYS, MATERNITY_DAYS));
 		
 		Criteria criteria = new Criteria();
@@ -930,7 +936,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, String.format("1000.00/%s * 1.00 * %s", MONTH_DAYS, MATERNITY_DAYS));
 		
 		Criteria criteria = new Criteria();
@@ -2321,7 +2327,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				null);
 		//@formatter:on
 		
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS));
 		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS));
 		addPayment(aonContext, contract, prestIT, String.format("1000.00/30 * 0.75 * %s_21",  COMMON_DISEASE_DAYS));
@@ -2432,15 +2438,312 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 	}
 
+
+	@Test
+	public void testGtzdoExtras() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:off
+		
+		addSystemData(aonContext, AonDateUtils.getFirstDayOfYear(getToday()), null, new HashMap<String,String>(){
+			{
+				put("PAGA_EXTRA_HELP", "'   2000.00 * DIAS_TRABAJADOS / DIAS_MES'  ");
+			}
+		});
+
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "INPUT(\"/*user*/ SALARIO_BASE + GARANTIZADO/**/\",PAGA_EXTRA_HELP)";
+						this.quoteExpression = "SALARIO_BASE/12";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "INPUT(\"/*user*/ SALARIO_BASE + GARANTIZADO/**/\",PAGA_EXTRA_HELP)";
+						this.quoteExpression = "SALARIO_BASE/12";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, 
+				});
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				Collections.emptyMap()
+				, new String[] { 
+						}
+				, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, 
+				category);
+		//@formatter:on
+		PaymentConceptRecord gtzdo = addConcept(aonContext, "GARANTIZADO");
+		addPayment(aonContext, contract, gtzdo, "GTZDO(SALARIO_BASE)", "0.00");
+		PaymentConceptRecord sbase = addConcept(aonContext, "SALARIO_BASE");
+		addPayment(aonContext, contract, sbase, "/*user*/SALARIO_MENSUAL/**/ * DIAS_TRABAJADOS / DIAS_MES");
+		addData(aonContext, category, contract.getStartDate(), contract.getEndDate(), new HashMap<String,String>(){
+			{
+				put("SALARIO_MENSUAL", "1000.00");
+			}
+		});
+		
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		
+
+		// Month without ITs 
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		
+		// Extra without ITs
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "15/12");
+		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
+		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder(){
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				// TODO Auto-generated method stub
+				System.out.println(payment.getExpression() +" = " + amount );
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			};
+		}).calculate(ctx);
+		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+
+		Date startIt = add(getToday(), Calendar.MONTH, 1);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				null, 
+				null);
+		
+		// Month full IT
+		startDate = getFirstDayOfMonth(add(getToday(), Calendar.MONTH, 3));
+		endDate = getLastDayOfMonth(startDate);
+		ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+
+		// Month partial IT
+		startDate = getFirstDayOfMonth(add(getToday(), Calendar.MONTH, 1));
+		endDate = getLastDayOfMonth(startDate);
+		ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder(){
+			@Override
+			public void addZeroPayment(Double quote, Double tax, java.util.Date startDate, java.util.Date endDate,
+					IPayment payment, Map<String, ITimedVariable<?>> context) {
+				super.addPayment(0.00, quote, tax, "EXTRA", startDate, endDate, payment, context);
+			}
+		}).calculate(ctx);
+		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		
+		agreement = getAgreement(aonContext, category.getAgreementLevel());
+		extra = getExtra(aonContext, agreement.getId(), "15/12");
+
+		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, 2016, getLastDayOfYear(getToday()));
+		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder(){
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				// TODO Auto-generated method stub
+				System.out.println(payment.getExpression() +" = " + amount );
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			};
+		}).calculate(ctx);
+		
+		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		
 	
+	}
+
+
+
+	@Test
+	public void testGtzdoExtrasII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:off
+		
+
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "GARANTIZADO + SALARIO_BASE";
+						this.quoteExpression = "SALARIO_BASE/12";
+						this.month = Month.DECEMBER;
+						this.start = "01/07";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "GARANTIZADO + SALARIO_BASE ";
+						this.quoteExpression = "SALARIO_BASE/12";
+						this.month = Month.JULY;
+						this.start = "01/01";
+						this.end = "30/06";
+						this.issue = "15/07";
+					}
+				}, 
+				});
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				Collections.emptyMap()
+				, new String[] { 
+						}
+				, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, 
+				category);
+		//@formatter:on
+		PaymentConceptRecord gtzdo = addConcept(aonContext, "GARANTIZADO");
+		addPayment(aonContext, contract, gtzdo, "GTZDO(SALARIO_BASE)", "0.00");
+		PaymentConceptRecord sbase = addConcept(aonContext, "SALARIO_BASE");
+		addPayment(aonContext, contract, sbase, "1000.00 * DIAS_TRABAJADOS / DIAS_MES");
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		
+
+		// Month without ITs 
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		Salary salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		
+		// Extra without ITs
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "15/12");
+		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
+		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+
+		extra = getExtra(aonContext, agreement.getId(), "15/07");
+		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
+		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+
+		Date startIt = add(getToday(), Calendar.MONTH, 1);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				null, 
+				null);
+		
+		// Month full IT
+		startDate = getFirstDayOfMonth(add(getToday(), Calendar.MONTH, 3));
+		endDate = getLastDayOfMonth(startDate);
+		ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+
+		// Month partial IT
+		startDate = getFirstDayOfMonth(add(getToday(), Calendar.MONTH, 1));
+		endDate = getLastDayOfMonth(startDate);
+		ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder(){
+			@Override
+			public void addZeroPayment(Double quote, Double tax, java.util.Date startDate, java.util.Date endDate,
+					IPayment payment, Map<String, ITimedVariable<?>> context) {
+				super.addPayment(0.00, quote, tax, "EXTRA", startDate, endDate, payment, context);
+			}
+		}).calculate(ctx);
+		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		Assert.assertEquals(1000.00 * ( 1.00 + 1.00/12 + 1.00/12 ), salary.getCommonBase() , DELTA);
+		
+		extra = getExtra(aonContext, agreement.getId(), "15/07");
+		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
+		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+
+		extra = getExtra(aonContext, agreement.getId(), "15/12");
+		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, get(getToday(), Calendar.YEAR), getLastDayOfYear(getToday()));
+		salary = new ContractSalaryCalculator<Salary>( new SalaryBuilder(){
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				// TODO Auto-generated method stub
+				System.out.println(payment.getExpression() +" = " + amount );
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			};
+		}).calculate(ctx);
+		Assert.assertEquals(1000.00, salary.getTotalPayment() , DELTA);
+		
+	
+	}
+
+
 	// ----------------------------------------------------------------------------------
 
 
 	private static void addPrestIts(AONContext aonContext, ContractRecord contract) {
 		PaymentConceptRecord prestIT = addConcept(aonContext, "PREST_IT");
 		addPayment(aonContext, contract, prestIT 
-				,"TRACE('BR = %f\r\n', BASE_REGULADORA);0.00"
-				,String.format("BASE_REGULADORA * 0.60 * %s_1_3",  COMMON_DISEASE_DAYS)
+				,"0.00"
+//				,"TRACE('BR = %f\r\n', BASE_REGULADORA);0.00"
+				,String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS)
 				);
 		addPayment(aonContext, contract, prestIT 
 				,String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS)

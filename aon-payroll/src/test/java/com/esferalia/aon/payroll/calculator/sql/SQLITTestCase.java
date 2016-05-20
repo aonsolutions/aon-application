@@ -42,6 +42,7 @@ import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -306,7 +307,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				new Payment []{
 			new Payment(){
 				{
-				this.expression= "P_0 + P_1";
+				this.expression= "P_0 + P_1 ";
 				this.salary = SalaryType.EXTRA;
 				}
 			},
@@ -355,7 +356,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		});
 		Salary salary = calculator.calculate(ctx);
 
-		Assert.assertEquals(8, salary.getSalaryPayments().size());
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() + ", "+ p.getQuote() );
+
+		Assert.assertEquals(10, salary.getSalaryPayments().size());
 
 	}
 
@@ -685,7 +689,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
@@ -799,7 +803,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
@@ -913,7 +917,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
@@ -1075,7 +1079,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
@@ -1238,7 +1242,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
@@ -1357,7 +1361,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("%s * BASE_REGULADORA * 0.75",  OCCUPATIONAL_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
@@ -1452,7 +1456,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("%s * BASE_REGULADORA * 0.75",  OCCUPATIONAL_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
@@ -1568,7 +1572,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("%s * BASE_REGULADORA",  MATERNITY_DAYS),
 				String.format("BASE_REGULADORA *  %s",  QUOTE_DAYS)
@@ -1715,7 +1719,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		PaymentConceptRecord directPay = addConcept(aonContext, DIRECT_PAY.getName());
 		addPayment(aonContext, contract, prestIT, 
 				String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS),
@@ -1803,7 +1807,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 		
 		//@formatter:off
-		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT.getName());
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, 
 				String.format("BASE_REGULADORA * 0.75 * %s",  OCCUPATIONAL_DISEASE_DAYS),
 				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)

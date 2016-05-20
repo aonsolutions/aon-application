@@ -514,15 +514,18 @@ public class SQLContractSalaryCalculatorContext
 			this.guarentees = guarentees;
 		}
 		
-		public ITimedResult<Double> getGuarentee(Period p) {
-			return guarentees.stream()
+		public List<ITimedResult<Double>> getGuarentees(Period p) {
+			List<ITimedResult<Double>> list = new ArrayList<ITimedResult<Double>>();
+			
+			guarentees.stream()
 			.filter(result->p.contains(result.getPeriod()))
-			.findFirst()
-			.get();
+			.forEach(list::add);
+			
+			return list;
 		}
 
-		public ITimedResult<Double> getGuarentee(Date start, Date end) {
-			return getGuarentee(new Period(start, end));
+		public List<ITimedResult<Double>> getGuarentee(Date start, Date end) {
+			return getGuarentees(new Period(start, end));
 		}
 		
 	}
@@ -598,7 +601,7 @@ public class SQLContractSalaryCalculatorContext
 			this.end = end + 1;
 			// with this, we assure no leave I.T.
 			super.leaveLoader = new SQLContractLeaveLoader(startDate, endDate) {
-				
+
 				
 				@Override
 				public void loadContractLeave(Integer id, Date leaveStart,
@@ -735,8 +738,11 @@ public class SQLContractSalaryCalculatorContext
 		public Object guarantee(double guarentee, int start, int end)
 				throws ExpressionException {
 			if (this.start == start && this.end == end) {
-				guarentees.add(new TimedResult<Double>(guarentee, getCurrentBindings().getPeriod() , Collections.emptyMap()));
-				if ( --guaranteed == 0 )
+				Period period = getCurrentBindings().getPeriod();
+				TimedResult<Double> result = new TimedResult<Double>(guarentee, period , Collections.emptyMap());
+				guarentees.add(result);
+				//if ( --guaranteed == 0 )
+				if ( period.getEnd().equals(getGuaranteeEnd()))
 					throw new SalaryExpressionException(
 							new GuarenteeException(guarentees));
 				else 
@@ -872,10 +878,16 @@ public class SQLContractSalaryCalculatorContext
 
 			return super.leaveLoader.getAdjustDays(ctx, p, workDays.longValue());
 		}
-		
+
 		@Override
 		protected void onContractLeaveLoaded(ResultSet rs, ExpressionContext ctx) {
 			// Skip load GUARANTEE, that is already loaded
+		}
+		
+		// --------------------------------------------------------------------
+		
+		private Date getGuaranteeEnd() {
+			return guaranteePeriods.get(guaranteePeriods.size()-1).getEnd();
 		}
 	}
 
@@ -2148,12 +2160,11 @@ public class SQLContractSalaryCalculatorContext
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(
 				SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
-		SQLNoItContractSalaryCalculatorContext ctx;
 
 		Date startDate = getFirstDayOfMonth(date);
 		Date endDate = getLastDayOfMonth(date);
 		return getNoItCalculatorContext(connection, startDate, endDate, endDate,
-				contractCriteria, 0, Integer.MAX_VALUE - 1);
+				contractCriteria, -1, Integer.MAX_VALUE - 1);
 	}
 
 	public Object gross(double gross, Date start, Date end)
@@ -2198,6 +2209,8 @@ public class SQLContractSalaryCalculatorContext
 		throw new CheckException(message);
 	}
 
+
+
 	public Object guarantee(double guarentee) throws ExpressionException {
 		return guarantee(guarentee, 1, Integer.MAX_VALUE);
 	}
@@ -2220,10 +2233,12 @@ public class SQLContractSalaryCalculatorContext
 					ContextVariable.LEAVE_DAYS);
 
 		// Assert all PREST_IT payments have been calculated.
+		Double prestIts = getVariable(PREST_IT,
+				Double.class);
 		Double totalPayment = getVariable(ContextVariable.TOTAL_PAYMENT,
 				Double.class);
-		if (totalPayment == null)
-			throw new UndefinedTotalPaymentException();
+		if (prestIts == null && totalPayment == null)
+			throw new UndefinedVariablesException(PREST_IT);
 
 		final Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());
@@ -2245,36 +2260,10 @@ public class SQLContractSalaryCalculatorContext
 			calculator.calculate(ctx);
 		} catch (GuarenteeException e) {
 
-			ITimedResult<Double> guarenteeResult =
-					e.getGuarentee(guaranteePeriod);
+			List<ITimedResult<Double>> guarenteeResults =
+					e.getGuarentees(guaranteePeriod);
 			
-			// Gets PREST. IT for GTZDO periods.
-//			double prestIt = 0.00;
-//			List<ITimedVariable<Object>> leaves = ctx.getExpressionContext()
-//					.getVariables(LEAVE_DAYS.getName(), ctx.getStartDate(),
-//							ctx.getEndDate());
-//			Date guaranteeStart = ctx.getStartDate();
-//
-//			for (ITimedVariable<Object> leave : leaves) {
-//				Period leavePeriod = leave.getPeriod();
-//				Date leaveStart = leavePeriod.getStart();
-//				if (leaveStart.compareTo(guaranteeStart) > 0)
-//					prestIt += getDayDoubleVariable(PREST_IT.getName(),
-//							guaranteeStart, prev(leaveStart));
-//
-//				guaranteeStart = next(leavePeriod.getEnd());
-//			}
-//			
-//			if (guaranteeStart.compareTo(ctx.getEndDate()) <= 0)
-//				prestIt += getDayDoubleVariable(PREST_IT.getName(),
-//						guaranteeStart, ctx.getEndDate());
-
-			double prestIt = getDayDoubleVariable(
-				PREST_IT.getName(),
-				guarenteeResult.getPeriod().getStart(), 
-				guarenteeResult.getPeriod().getEnd());
-
-			return guarenteeResult.getValue() - /* guarentee - */prestIt;
+			return onGuarantee(guarenteeResults);
 
 		} catch (SalaryException e) {
 			throw new RuntimeException(e);
@@ -2282,6 +2271,19 @@ public class SQLContractSalaryCalculatorContext
 			throw new RuntimeException(e);
 		}
 		return 0.00;
+	}
+
+	protected Object onGuarantee(List<ITimedResult<Double>> guarenteeResults) {
+		double guarantee = 0.00;
+		for( ITimedResult<Double> guarenteeResult: guarenteeResults) {
+			double prestIt = getDayDoubleVariable(
+				PREST_IT,
+				guarenteeResult.getPeriod().getStart(), 
+				guarenteeResult.getPeriod().getEnd());
+			guarantee += guarenteeResult.getValue() - prestIt;
+		}
+
+		return guarantee;
 	}
 
 	protected double solveLiquid(UnivariateSolver solver, final double liquid,
@@ -2398,6 +2400,7 @@ public class SQLContractSalaryCalculatorContext
 			throw new ExpressionExceptionWrapper(new ExpressionException(e));
 		}
 	}
+
 
 	protected ISalaryCalculatorContext getLiquidCalculatorContext(
 			Connection conn, Date startDate, Date endDate, Date issueDate,
@@ -3568,6 +3571,7 @@ public class SQLContractSalaryCalculatorContext
 		loadContractLeave(this.contractExpressionContext);
 		loadContractData(this.contractExpressionContext);
 		loadPersonData(this.contractExpressionContext);
+
 
 		if (!containsVariable(ACTUAL_DAYS)) {
 			// Los 'DIAS_EFECTIVOS' son pesados de calcular ( necesitan de

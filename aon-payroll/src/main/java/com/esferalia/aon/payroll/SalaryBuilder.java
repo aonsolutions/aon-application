@@ -298,6 +298,7 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		SalaryPayment sPayment = new SalaryPayment();
 
 		sPayment.setSalary(salary);
+		sPayment.setQuote(quote);
 		sPayment.setAmount(amount);
 		sPayment.setType(payment.getType());
 		sPayment.setPaymentConcept(payment.getName());

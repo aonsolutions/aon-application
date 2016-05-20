@@ -58,6 +58,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalculator<T> {
 
@@ -254,6 +255,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		
 
 	}
+	
 
 	private IListener listener;
 	private ISalaryBuilder<T> salaryBuilder;
@@ -436,10 +438,9 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				// clean undefined ...
 				listIterator.remove();
 				undefPayment.onUndefinedData(this);
-				// If not already or will be defined, clean it.  
-				if ( !alreadyDefined.contains(undefPayment.getName()) 
-						&& !willBeDefined.contains(undefPayment.getName()))
-					paymentsVars.remove(undefPayment.getName());
+				// will not be calculated, but like it's a payment save it like zero.
+				alreadyDefined.add(undefPayment.getName());
+				addResult(expressionContext, undefPayment.getName(), start, end, 0.00);
 			}
 			// Many payments can share same variable...
 			paymentsVars.addAll(willBeDefined);
@@ -451,6 +452,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				try {
 					resolvePayment(undefPayment, start, end, issueDate,
 							expressionContext, taxCalculator, quoteCalculator);
+					paymentsVars.add(undefPayment.getName());
 				} catch (UndefinedTotalPaymentException e) {
 					undefTotalPayments.add(undefPayment);
 				} catch (UndefinedContextVariablesException e) {
@@ -460,6 +462,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 					if (undefPayment.willBeDefined(paymentsVars)) {
 						undefPayments.add(undefPayment);
+						
 						if (++undefined >= undefPayments.size())
 							break; // we've already eval all undef payments
 					} else {
@@ -933,6 +936,11 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				}
 
 			}
+			
+			if ( AonStringUtils.isNotBlank(name))
+				for ( Period p : Period.sub(new Period(start, end), expressionContext.getPeriods(name) ))
+					addResult(expressionContext, name, p.getStart(), p.getEnd(), 0.00);
+			
 			// quoteCalculator.quote(contractPayment, paymentStart,
 			// paymentEnd, total);
 
@@ -955,6 +963,7 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			// e.getVariableNames());
 		} catch (CompileException e) {
 			onCompileError(contractPayment, e.getMessage());
+			addResult(expressionContext, name, start, end, 0.00);
 		} 
 
 	}
@@ -1246,6 +1255,5 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		calendar.add(Calendar.DATE, days);
 		return calendar.getTime();
 	}
-
 
 }

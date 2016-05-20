@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 
 import java.sql.Connection;
@@ -29,6 +30,7 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculatorContext {
 
@@ -80,7 +82,26 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 	protected ITimedVariable<Number> getExtraDays(ITimedVariable<Number> monthDays) {
 		return monthDays;
 	}
+	
+	@Override
+	protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(Connection conn, Date startDate,
+			Date endDate, Date issueDate, Criteria criteria, int start, int end) {
+		ISQLContractSalaryCalculatorContext ctx =  super.getNoItCalculatorContext(conn, startDate, endDate, issueDate, criteria, start, end);
+		try {
+			initMonthVariables(ctx.getExpressionContext());
+		} catch (ExpressionException  e) {
+		}
+		return ctx;
+	}
 
+	protected Object onGuarantee(List<ITimedResult<Double>> guarenteeResults) {
+		double guarantee = 0.00;
+		for( ITimedResult<Double> guarenteeResult: guarenteeResults) {
+			guarantee += guarenteeResult.getValue() ;
+		}
+
+		return guarantee;
+	}
 	// -------------------------------------------------------------------------
 
 	private int getIssueMonth() {
@@ -94,6 +115,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		List<IContractPayment> undefPayments = new ArrayList<IContractPayment>();
 		
 		for (IContractPayment p : super.getContractPayments()) {
+			
 
 			Date paymentStart = Period.max(p.getStartDate(), getStart());
 			Date paymentEnd = Period.min(p.getEndDate(), getEnd());
@@ -110,6 +132,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 					undefPayments.add(new SimpleContractPayment(p));
 				}catch (ExpressionException e) {
 				}catch (CompileException e) {
+					expressionContext.setVariable(p.getName(), 0.00, paymentStart, paymentEnd);
 				}
 			}
 		}
@@ -119,6 +142,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			resolved.clear();
 			for ( IContractPayment p : undefPayments ) {
 				
+
 				Date paymentStart = Period.max(p.getStartDate(), getStart());
 				Date paymentEnd = Period.min(p.getEndDate(), getEnd());
 				
@@ -139,13 +163,45 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			undefPayments.removeAll(resolved);
 		}
 		while (resolved.size() > 0 && undefPayments.size() > 0);
+		
+		for ( IContractPayment p : undefPayments ) {
+			
+			Date paymentStart = Period.max(p.getStartDate(), getStart());
+			Date paymentEnd = Period.min(p.getEndDate(), getEnd());
+			addResult(expressionContext, p, paymentStart, paymentEnd, 0.00);
+		}		
+		
+	}
+
+	private void addSalaryPaymentByMonth(ExpressionContext expressionContext, IContractPayment payment, Date paymentStart,
+			Date paymentEnd) throws ExpressionException, UndefinedVariablesException {
+
+		List<ITimedVariable<?>> monthDaysList = new ArrayList<ITimedVariable<?>>(
+				expressionContext.getTimedVariables(NATURAL_MONTH_DAYS.getName()));
+		
+		Period paymentPeriod = new Period(paymentStart, paymentEnd);
+		
+		for (ITimedVariable<?> monthDays : monthDaysList) {
+			Period intersect = monthDays.getPeriod().intersect(paymentPeriod);
+			if ( intersect == null )
+				continue;
+			try {
+				addSalaryPayment(expressionContext, payment, intersect.getStart(), intersect.getEnd());
+			} catch ( CompileException e ){
+				expressionContext.setVariable(payment.getName(), 0.00, intersect.getStart(), intersect.getEnd());
+			}
+		}
+	
 	}
 
 	private void addSalaryPayment(ExpressionContext expressionContext, IContractPayment payment, Date paymentStart,
 			Date paymentEnd) throws ExpressionException, UndefinedVariablesException {
 		List<ITimedResult<Double>> results = expressionContext.eval(payment.getExpression(), paymentStart, paymentEnd,
 				Double.class);
-
+		
+		if ( results.isEmpty() )
+			expressionContext.setVariable(payment.getName(), 0.00, paymentStart, paymentEnd);
+		
 		for (ITimedResult<Double> result : results) {
 
 			Date resultStart = result.getPeriod().getStart();
@@ -154,28 +210,45 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			Double resultDouble = result.getValue();
 			double resultValue = resultDouble != null ? resultDouble : 0.00;
 
-			Date valueStart = resultStart;
-			List<ITimedVariable<Number>> prevs = expressionContext.getVariables(payment.getName(), resultStart,
-					resultEnd);
+			addResult(expressionContext, payment, resultStart, resultEnd, resultValue);
+		}
+		Date start = results.get(0).getPeriod().getStart();
+		if ( start.after(paymentStart) ) {
+			expressionContext.setVariable(payment.getName(), 0.00, paymentStart, prev(start));
+		}
+		
+		Date end = results.get(results.size()-1).getPeriod().getEnd();
+		if ( end.before(paymentEnd) )
+			expressionContext.setVariable(payment.getName(), 0.00, next(end), paymentEnd);
+		
+	}
 
-			for (ITimedVariable<Number> prev : prevs) {
-				Date prevStart = prev.getPeriod().getStart();
-				Date prevEnd = prev.getPeriod().getEnd();
-				try {
-					Number prevValue = prev.getValue(prev.getPeriod());
-					if (valueStart.compareTo(prevStart) < 0)
-						expressionContext.setVariable(payment.getName(), resultValue, valueStart, prev(prevStart));
-					expressionContext.setVariable(payment.getName(), resultValue + prevValue.doubleValue(), prevStart,
-							prevEnd);
-					valueStart = next(prevEnd);
-				} catch (Exception e) {
-					System.err.println(String.format("ERROR [%s]: %s", payment.getName(), e.getLocalizedMessage()));
-				}
-			}
-			if (valueStart.compareTo(resultEnd) <= 0) {
-				expressionContext.setVariable(payment.getName(), resultValue, valueStart, resultEnd);
+	protected void addResult(ExpressionContext expressionContext, IContractPayment payment, Date resultStart,
+			Date resultEnd, double resultValue) {
+		Date valueStart = resultStart;
+		List<ITimedVariable<Number>> prevs = expressionContext.getVariables(payment.getName(), resultStart,
+				resultEnd);
+
+		for (ITimedVariable<Number> prev : prevs) {
+			Date prevStart = prev.getPeriod().getStart();
+			Date prevEnd = prev.getPeriod().getEnd();
+			try {
+				Number prevValue = prev.getValue(prev.getPeriod());
+				if (valueStart.compareTo(prevStart) < 0)
+					expressionContext.setVariable(payment.getName(), resultValue, valueStart, prev(prevStart));
+
+				expressionContext.setVariable(payment.getName(), resultValue + prevValue.doubleValue(), prevStart,
+						prevEnd);
+				
+				
+				valueStart = next(prevEnd);
+			} catch (Exception e) {
+				//System.err.println(String.format("ERROR [%s]: %s", payment.getName(), e.getLocalizedMessage()));
 			}
 		}
+		
+		if (valueStart.compareTo(resultEnd) <= 0)
+			expressionContext.setVariable(payment.getName(), resultValue, valueStart, resultEnd);
 	}
 
 	private void initMonthVariables(ExpressionContext ctx) throws UndefinedVariablesException, ExpressionException {
