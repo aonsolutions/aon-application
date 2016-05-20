@@ -995,7 +995,7 @@ public class SQLSalaryDraft {
 
 			SQLUtils.setInt(insertStmt, 1, domain);
 			SQLUtils.setInt(insertStmt, 2, contract);
-			SQLUtils.setString(insertStmt, 3, deduction.getDescription());
+			SQLUtils.setString(insertStmt, 3, deduction.getDescriptionTemplate());
 			SQLUtils.setString(insertStmt, 4, deduction.getExpression());
 			SQLUtils.setDate(insertStmt, 5, SQLUtils.date2sql(deduction.getStartDate()));
 			SQLUtils.setDate(insertStmt, 6, SQLUtils.date2sql(deduction.getEndDate()));
@@ -1019,7 +1019,7 @@ public class SQLSalaryDraft {
 
 			SQLUtils.setInt(insertStmt, 1, domain);
 			SQLUtils.setInt(insertStmt, 2, contract);
-			SQLUtils.setString(insertStmt, 3, bonus.getDescription());
+			SQLUtils.setString(insertStmt, 3, bonus.getDescriptionTemplate());
 			SQLUtils.setString(insertStmt, 4, bonus.getExpression());
 			SQLUtils.setDate(insertStmt, 5,SQLUtils.date2sql(bonus.getStartDate()));
 			SQLUtils.setDate(insertStmt, 6, SQLUtils.date2sql(bonus.getEndDate()));
