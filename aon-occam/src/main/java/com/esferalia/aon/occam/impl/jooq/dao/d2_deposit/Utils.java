@@ -665,8 +665,8 @@ public class Utils {
 			Map<String, String> c = compute(computeMap, type);
 
 			for (String key : c.keySet()) {
-				// TODO ARREGLO PROVISIONAL 21300 & 32580 & 12380
-				if(!key.equals("21300") && !key.equals("32580") && !key.equals("12380")){
+				// TODO ARREGLO PROVISIONAL 32580 & 12380
+				if(!key.equals("32580") && !key.equals("12380")){
 					Clave clave = new Clave();
 					clave.setCodigo(BigInteger.valueOf(Integer.parseInt(key)));
 					clave.setValor(c.get(key));
