@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -26,6 +27,7 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.RequiresResize;
@@ -393,5 +395,65 @@ public class CustomDialog extends PopupPanel
 		
 		
 	}
+	
+	/**
+	 * 
+	 * @param message
+	 * @param title
+	 * @return user's input, or null meaning the user canceled the input
+	 */
+	public static void showInputDialog(String message, String title,  String[] values, String[] texts, String initialValue,  final AsyncCallback<String> cb) {
+		String messageDivId = "messagesDiv";
+		String inputDivId = "inputDiv";
+		String buttonsDivId = "buttonsDiv";
+
+		final CustomDialog inputDialog = new CustomDialog();
+		
+		inputDialog.setCaption(title);
+		
+		final  HTMLPanel htmlPanel = new HTMLPanel(
+				TEMPLATE.inputDialog(messageDivId, inputDivId, buttonsDivId));
+		
+		
+		final Label messageLabel = new Label(message);
+		htmlPanel.add(messageLabel, messageDivId);
+		
+		int initialSelected = 0;
+
+		final ListBox listBox = new ListBox();
+		for (int i = 0; i < texts.length; i++) {
+			listBox.addItem(texts[i], values[i]);
+			if ( AonStringUtils.equals(initialValue, values[i]))
+				initialSelected = i;
+		}
+
+		listBox.setSelectedIndex(initialSelected);
+		
+		htmlPanel.add(listBox, inputDivId);
+		
+		final Button cancelButton = new Button("Cancelar");
+		cancelButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				inputDialog.hide();
+			}
+		});
+		final Button acceptButton = new Button("Aceptar");
+		acceptButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				inputDialog.hide();
+				cb.onSuccess(listBox.getSelectedValue());
+			}
+		});
+
+		htmlPanel.add(cancelButton, buttonsDivId);
+		htmlPanel.add(acceptButton, buttonsDivId);
+		
+		inputDialog.setWidget(htmlPanel);
+
+		inputDialog.center();
+		
+	}	
 
 }
