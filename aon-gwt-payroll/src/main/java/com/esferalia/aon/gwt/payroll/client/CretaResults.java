@@ -331,19 +331,42 @@ public class CretaResults extends Composite implements RequiresResize{
 		contextMenu.addItem("A\u00F1adir", new ScheduledCommand() {
 			@Override
 			public void execute() {
+
+				String code = unknownDato.getCode();
+				AsyncCallback<String> callback = new AsyncCallback<String>() {
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+					@Override
+					public void onSuccess(String result) {
+						cretaResults.fix(unknownDato, result );
+					}
+				};
 				
-				CustomDialog.showInputDialog(
-						"Introduce el concepto econ\u00F3mico de cotizaci\u00f3n " + unknownDato.getCode(), 
-						"A\u00F1adir", new AsyncCallback<String>() {
-							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub
-							}
-							@Override
-							public void onSuccess(String result) {
-								cretaResults.fix(unknownDato, result );
-							}
-						});
+				if ( code.equals("54"))
+					CustomDialog.showInputDialog(
+							"Introduce la causa que da lugar a la obligaci\u00F3n de cotizar, indicador \"" + code +"\" ", 
+							"A\u00F1adir", 
+							new String []{
+									"1",
+									"2",
+									"3",
+									"4",
+									"5"},
+							new String []{
+									"1-Atrasos de convenio",
+									"2-Normativa (disposici\u00F3n legal)",
+									"3-Acta de conciliaci\u00F3n",
+									"4-Sentencia judicial",
+									"5-Cualquier otro t\u00EDtulo leg\u00EDtimo.",
+									},
+							"1",
+							callback);
+				else
+					CustomDialog.showInputDialog(
+							"Introduce el concepto econ\u00F3mico de cotizaci\u00f3n " + code, 
+							"A\u00F1adir", 
+							callback);
 
 			}
 

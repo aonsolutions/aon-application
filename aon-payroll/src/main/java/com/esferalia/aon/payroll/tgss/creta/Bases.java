@@ -1350,7 +1350,9 @@ public class Bases {
 						.and(props.getEndDateProperty().ge(startDate))
 						.and(props.getStartDateProperty().le(endDate))
 						.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L91,L90", tipo)))
-						.and(props.getIsSettlementProperty().eq(AonStringUtils.equalsIgnoreCase("L13", tipo))))
+						.and(props.getIsSettlementProperty().eq(AonStringUtils.equalsIgnoreCase("L13", tipo)))
+						.and(props.getIsDelayProperty().eq(AonStringUtils.equalsIgnoreCase("L03", tipo)))
+						)
 						.forEach(
 				salary -> trabajador(liquidacionMesBuilder, salary,
 						trabajadores, cbs));
