@@ -63,6 +63,7 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class SalaryDraftBuilder
 		implements ISalaryBuilder<ISalary>, ContractSalaryCalculator.IListener,
@@ -455,15 +456,12 @@ public class SalaryDraftBuilder
 
 		Payment draftPayment = newPayment((IContractPayment) payment);
 		// override calculated ...
-		draftPayment.setName(payment.getName());
 		draftPayment.setAmount(amount);
 		draftPayment.setIrpf(tax);
 		draftPayment.setQuote(quote);
 		draftPayment.setDescription(description);
-		draftPayment.setType(getPaymentType(payment.getType()));
 		draftPayment.setStartDate(startDate);
 		draftPayment.setEndDate(endDate);
-		draftPayment.setDescriptionTemplate(payment.getDescription());
 
 		CompositePayment compositePayment = getPayment(draftPayment.getId());
 
@@ -492,13 +490,10 @@ public class SalaryDraftBuilder
 
 		Deduction deduction = newDeduction(contractDeduction);
 		// override by calculated...
-		deduction.setName(ideduction.getName());
 		deduction.setAmount(amount);
-		deduction.setDescription(description);
-		deduction.setType(getDeductionType(ideduction.getType()));
 		deduction.setStartDate(start);
 		deduction.setEndDate(end);
-		deduction.setDescriptionTemplate(deduction.getDescriptionTemplate());
+		deduction.setDescription(description);
 
 		CompositeDeduction compositeDeduction = getDeduction(deduction.getId());
 
@@ -880,7 +875,7 @@ public class SalaryDraftBuilder
 		List<Payment> payments = salaryDraft.getPayments();
 		for (int i = 0; i < payments.size(); i++) {
 			Payment payment = payments.get(i);
-			if (payment.getId().equals(id)) {
+			if (AonNumberUtils.equals(payment.getId(), id)) {
 				if (payment instanceof CompositePayment)
 					return (CompositePayment) payment;
 
