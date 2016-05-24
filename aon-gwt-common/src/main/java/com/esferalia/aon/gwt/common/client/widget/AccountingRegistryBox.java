@@ -357,4 +357,5 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 	public void setEnabled(boolean enabled) {
 		accountingRegistry.setEnabled(enabled);
 	}
+	
 }

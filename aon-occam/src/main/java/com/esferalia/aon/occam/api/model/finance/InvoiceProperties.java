@@ -8,6 +8,7 @@ public interface InvoiceProperties {
 	
 	Property<Integer> getIdProperty();
 	Property<Integer> getDomainProperty();
+	Property<Integer> getRegistryProperty();
 	Property<Byte> getTypeProperty();
 	Property<Date> getStartIssueDateProperty();
 	Property<Date> getEndIssueDateProperty();

@@ -85,6 +85,8 @@ public class AccountEntryModule extends MainEntryPoint {
 		void onShowBalance(Account account);
 		AonConfiguration getConfiguration();
 		void showWorkingLog( AccountEntry  entry );
+		void showWorkingLog( AccountEntry[]  entries );
+		void onError(String msg);
 	}
 	
 	private final IAccountEntryModuleCallback callback = new IAccountEntryModuleCallback() {
@@ -111,6 +113,20 @@ public class AccountEntryModule extends MainEntryPoint {
 			workingLog.clear();
 			workingLog.add(entry);			
 		}
+		
+		@Override
+		public void showWorkingLog(AccountEntry[] entries) {
+			workingLog.clear();
+			for (AccountEntry entry : entries) {
+				workingLog.add(entry,"PREVISUALIAZACI\u00D3N");			
+			}
+		}
+
+		@Override
+		public void onError(String msg) {
+			errors.showError(msg);
+		}
+
 	};
 
 	AonConfiguration configuration;

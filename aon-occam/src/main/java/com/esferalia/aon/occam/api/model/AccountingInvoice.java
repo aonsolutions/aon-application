@@ -1,211 +1,133 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
+import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountingInvoice implements Serializable {
 	
 	private static final long serialVersionUID = -4435280253306756102L;
 	
-	private Integer id;
-	private int domain;
+	private Invoice invoice;
+	private AccountingRegistry registry;
+
+	private InvoiceWithholding withholdingData;
+	private LinkedList<InvoiceVAT> vats;
 	
-	private InvoiceType invoiceType;
-	private Integer registry;
-	private Integer registryAccountId;
-	private String registryAccountCode;
-	private String registryAccountDescription;
-	private String registryDocument;
-	private Country registryDocumentCountry;
-	private DocumentType registryDocumentType;
-	private String registryName;
-	private int scope;
-	private boolean surcharge;
-	private boolean withholding;
-	private boolean withholdingFarmer;
-	private boolean vatAccrualPayment;
-	private InvoiceTransactionType transaction;
-
-
-	
-	public Integer getId() {
-		return id;
+	public Invoice getInvoice() {
+		return invoice;
 	}
-
-	public AccountingInvoice setId(Integer id) {
-		this.id = id;
-		return this;
-	}
-
-	public int getDomain() {
-		return domain;
-	}
-
-	public AccountingInvoice setDomain(int domain) {
-		this.domain = domain;
-		return this;
-	}
-
-	public InvoiceType getInvoiceType() {
-		return invoiceType;
-	}
-
-	public AccountingInvoice setInvoiceType(InvoiceType invoiceType) {
-		this.invoiceType = invoiceType;
+	public AccountingInvoice setInvoice(Invoice invoice) {
+		this.invoice = invoice;
 		return this;
 	}
 	
-	public Integer getRegistry() {
+	public AccountingRegistry getRegistry() {
 		return registry;
 	}
 
-	public AccountingInvoice setRegistry(Integer registry) {
+	public AccountingInvoice setRegistry(AccountingRegistry registry) {
 		this.registry = registry;
 		return this;
 	}
 
-	public Integer getRegistryAccountId() {
-		return registryAccountId;
+	public InvoiceTransactionType getTransaction() {
+		return invoice != null?invoice.getTransaction():null;
 	}
 
-	public AccountingInvoice setRegistryAccountId(Integer registryAccountId) {
-		this.registryAccountId = registryAccountId;
+	public InvoiceWithholding getWithholdingData() {
+		return withholdingData;
+	}
+	public AccountingInvoice setWithholdingData(InvoiceWithholding withholdingData) {
+		this.withholdingData = withholdingData;
 		return this;
 	}
-
-	public String getRegistryAccountCode() {
-		return registryAccountCode;
+	public LinkedList<InvoiceVAT> getVats() {
+		return vats;
 	}
-
-	public AccountingInvoice setRegistryAccountCode(String registryAccountCode) {
-		this.registryAccountCode = registryAccountCode;
+	public LinkedList<InvoiceVAT> addVat(InvoiceVAT vat) {
+		if (getVats() == null) {
+			setVats(new LinkedList<InvoiceVAT>());
+		}
+		getVats().add(vat);
+		return vats;
+	}
+	public AccountingInvoice setVats(LinkedList<InvoiceVAT> vats) {
+		this.vats = vats;
 		return this;
 	}
-
-	public String getRegistryAccountDescription() {
-		return registryAccountDescription;
+	
+	public double getTotalTaxableBase() {
+		if (getVats() == null) return 0.0;
+		double tb = 0.0; 
+		for (InvoiceVAT vat : getVats()) {
+			tb = tb + vat.getBase();
+		}
+		return AonMathUtils.round(tb);
+	}
+	
+	public double getTotalInvoice() {
+		// En el caso de las intracomunitarias o ISP, ambos IVAS están 
+		// habilitados, pero no deben ir al total factura.
+		if (isInputVatEnabled() != isOutputVatEnabled()) {
+			if (getVats() == null) return 0.0;
+			double total = 0.0; 
+			for (InvoiceVAT vat : getVats()) {
+				total = total + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota();
+			}
+			total = total - (getWithholdingData()==null?0.0:getWithholdingData().getQuota());
+			return AonMathUtils.round(total);
+		}
+		return getTotalTaxableBase();
+	}
+	
+	public boolean isNational() {
+		return invoice != null && invoice.isNational();
+	}
+	public boolean isIntracommunity() {
+		return invoice != null && invoice.isIntracommunity();
+	}
+	public boolean isIsp() {
+		return invoice != null && invoice.isIsp();
 	}
 
-	public AccountingInvoice setRegistryAccountDescription(String registryAccountDescription) {
-		this.registryAccountDescription = registryAccountDescription;
-		return this;
-	}
-
-	public String getRegistryDocument() {
-		return registryDocument;
-	}
-
-	public AccountingInvoice setRegistryDocument(String registryDocument) {
-		this.registryDocument = registryDocument;
-		return this;
-	}
-
-	public Country getRegistryDocumentCountry() {
-		return registryDocumentCountry;
-	}
-
-	public AccountingInvoice setRegistryDocumentCountry(Country registryDocumentCountry) {
-		this.registryDocumentCountry = registryDocumentCountry;
-		return this;
-	}
-
-	public DocumentType getRegistryDocumentType() {
-		return registryDocumentType;
-	}
-
-	public AccountingInvoice setRegistryDocumentType(DocumentType registryDocumentType) {
-		this.registryDocumentType = registryDocumentType;
-		return this;
-	}
-
-	public String getRegistryName() {
-		return registryName;
-	}
-
-	public AccountingInvoice setRegistryName(String registryName) {
-		this.registryName = registryName;
-		return this;
-	}
-
-	public int getScope() {
-		return scope;
-	}
-
-	public AccountingInvoice setScope(int scope) {
-		this.scope = scope;
-		return this;
+	public boolean isSales() {
+		return invoice != null && invoice.isSales(); 
 	}
 
 	public boolean isSurcharge() {
-		return surcharge;
-	}
-
-	public AccountingInvoice setSurcharge(boolean surcharge) {
-		this.surcharge = surcharge;
-		return this;
+		return invoice != null && invoice.isSurcharge();
 	}
 
 	public boolean isWithholding() {
-		return withholding;
-	}
-
-	public AccountingInvoice setWithholding(boolean withholding) {
-		this.withholding = withholding;
-		return this;
+		return invoice != null && invoice.isWithholding();
 	}
 
 	public boolean isWithholdingFarmer() {
-		return withholdingFarmer;
-	}
-
-	public AccountingInvoice setWithholdingFarmer(boolean withholdingFarmer) {
-		this.withholdingFarmer = withholdingFarmer;
-		return this;
+		return invoice != null && invoice.isWithholdingFarmer();
 	}
 
 	public boolean isVatAccrualPayment() {
-		return vatAccrualPayment;
+		return invoice != null && invoice.isVatAccrualPayment();
 	}
 
-	public AccountingInvoice setVatAccrualPayment(boolean vatAccrualPayment) {
-		this.vatAccrualPayment = vatAccrualPayment;
-		return this;
+	public boolean isInputVatEnabled() {
+		return invoice != null && invoice.isInputVatEnabled();
 	}
-
-	public InvoiceTransactionType getTransaction() {
-		return transaction;
+	public boolean isOutputVatEnabled() {
+		return invoice != null && invoice.isOutputVatEnabled();
 	}
-
-	public AccountingInvoice setTransaction(InvoiceTransactionType transaction) {
-		this.transaction = transaction;
-		return this;
-	}
-
-	public AccountingInvoice setRegistry(AccountingRegistry registry) {
-		if (registry != null) {
-			this.setInvoiceType(registry.getType().getInvoiceType())
-				.setRegistry(registry.getId())
-				.setRegistryAccountId(registry.getAccountId())
-				.setRegistryAccountCode(registry.getAccountCode())
-				.setRegistryAccountDescription(registry.getAccountDescription())
-				.setRegistryDocument(registry.getDocument())
-				.setRegistryDocumentCountry(registry.getDocumentCountry())
-				.setRegistryDocumentType(registry.getDocumentType())
-				.setRegistryName(registry.getName())
-				.setScope(registry.getScope())
-				.setSurcharge(registry.isSurcharge())
-				.setWithholding(registry.isWithholding())
-				.setWithholdingFarmer(registry.isWithholdingFarmer())
-				.setVatAccrualPayment(registry.isVatAccrualPayment())
-				.setTransaction(registry.getTransaction())
-			;
-		}
-		return this;
-	}
-
+	public static void main(String[] args) {
+		System.out.println( true ^ true);
+		System.out.println( true ^ false);
+		System.out.println( false ^ true);
+		System.out.println( false ^ false);
+		
+	}	
 }

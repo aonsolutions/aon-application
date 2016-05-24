@@ -31,6 +31,10 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 		root.clear();
 	}
 	public void add( final AccountEntry entry) {
+		add(entry,"APARCADO");
+	}
+	
+	public void add( final AccountEntry entry, String status) {
 		final AccountEntry cloned = AccountEntry.clone(entry);
 		final FocusPanel entryPanel = new FocusPanel();
 		entryPanel.setTabIndex(Integer.MAX_VALUE);
@@ -40,7 +44,7 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 		panel.addStyleName(AON.AON_CSS.aonMarginBottom());
 		
 		// ------------------------------------- CABECERA DEL ASIENTO
-		Label header = new Label(AonStringUtils.center( toString(cloned),160));
+		Label header = new Label(AonStringUtils.center( toString(cloned, status),160));
 		header.setStyleName(AON.AON_CSS.aonBold());
 		header.addStyleName(AON.AON_CSS.aonTextUnderline());
 		panel.add(header);
@@ -79,7 +83,7 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 		scrollToTop();
 	}
 	
-	private String toString(AccountEntry entry) {
+	private String toString(AccountEntry entry, String status) {
 		StringBuffer buf = new StringBuffer();
 		buf.append(AON.MSG.date());
 		buf.append(AonStringUtils.COLON);
@@ -96,13 +100,14 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 		buf.append(AonStringUtils.OPEN_BRACKET);
 		if (AonStringUtils.isNotEmpty( entry.getModificationUser())) {
 			buf.append(AON.MSG.auditBy(entry.getModificationUser(),entry.getModificationDate()));
+			buf.append(AonStringUtils.SPACE);
 		} 
 		if (AonStringUtils.isNotEmpty( entry.getModificationUser())) {
 			buf.append(AON.MSG.auditBy(entry.getCreationUser(), entry.getCreationDate()));
+			buf.append(AonStringUtils.SPACE);
 		}
-		buf.append(AonStringUtils.SPACE);
 		if (entry.getId() == null) {
-			buf.append("APARCADO");	
+			buf.append(status);	
 		} else {
 			if (entry.getId() < 0) {
 				buf.append("BORRADO");	

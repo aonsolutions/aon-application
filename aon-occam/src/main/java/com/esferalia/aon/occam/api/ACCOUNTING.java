@@ -15,12 +15,14 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
+import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -254,6 +256,19 @@ public class ACCOUNTING {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getAccountBalance(ctx, params);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+
+	public static AccountingInvoice initializeInvoice(String domainName, int domain, String user,
+		 InvoiceType type, Integer registry, Date issueDate) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().initializeInvoice(ctx, type, registry, issueDate);
 		} finally {
 			if (ctx != null)
 				ctx.close();

@@ -656,6 +656,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Base imponible")
 	String taxableBase();
+	
+	@DefaultMessage("Base Imp.")
+	String taxableBaseAbr();
 
 	@DefaultMessage("Cuota")
 	String quota();
@@ -1956,7 +1959,7 @@ public interface CommonMessages extends Messages {
 	String surchargeQuota();
 
 	@DefaultMessage("Aplicar retenci\u00F3n")
-	String witholding();
+	String withholding();
 	
 	@DefaultMessage("R\u00E9gimen agricultura, ganader\u00EDa y pesca.")
 	String withholdingFarmer();
@@ -2041,6 +2044,12 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Cuenta IVA")
 	String vatAccount();
+
+	@DefaultMessage("IVA Sop.")
+	String inputVatAccount();
+
+	@DefaultMessage("IVA Rep.")
+	String outputVatAccount();
 
 	@DefaultMessage("Informaci\u00F3n adicional del ep\u00EDgrafe")
 	String epigraphAdditionalInfo();
@@ -2734,6 +2743,9 @@ public interface CommonMessages extends Messages {
  	
  	@DefaultMessage("Cuenta contable")
  	String account();
+ 	
+ 	@DefaultMessage("Cta. Ctb.")
+ 	String accountAbr();
  	
  	@DefaultMessage("Cuenta Contable no encontrada")
  	String accountNotFound();

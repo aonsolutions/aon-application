@@ -390,4 +390,8 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
 		return accountTextBox.addKeyPressHandler(handler);
 	}
+	public void setEnabled(boolean enabled) {
+		accountTextBox.setEnabled(enabled);
+	}
+	
 }

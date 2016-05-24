@@ -1,7 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
@@ -33,6 +36,9 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.InvoicingGroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.InvoicingGroupProperties;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -40,20 +46,28 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
+import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceDAO {
+	
+	private static final Date VAT_ACCRUAL_START_DATE = AonDateUtils.getDate(2014, 0, 1);
 	
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 	private static class InvoicePropertiesDAO implements InvoiceProperties {
@@ -67,6 +81,7 @@ public class InvoiceDAO {
 		}
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE.ID);}
 		@Override public Property<Integer> getDomainProperty(){return new FilterDAO.PropertyDAO<Integer>(INVOICE.DOMAIN);}
+		@Override public Property<Integer> getRegistryProperty(){return new FilterDAO.PropertyDAO<Integer>(INVOICE.REGISTRY);}
 		@Override public Property<Date> getStartIssueDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
 		@Override public Property<Date> getEndIssueDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE.TYPE);}
@@ -118,6 +133,9 @@ public class InvoiceDAO {
 				 INVOICE.ID
 				,INVOICE.DOMAIN
 				,orderedType
+				,INVOICE.ACTIVITY
+				,IAE.EPIGRAPH
+				,INVOICE.INVEST_ASSET
 				,INVOICE.TYPE
 				,INVOICE.SERIES
 				,INVOICE.NUMBER
@@ -166,6 +184,9 @@ public class InvoiceDAO {
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 			.join(REGISTRY).on(REGISTRY.ID.equal(INVOICE.REGISTRY))
 			.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
+			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
+			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+			.leftOuterJoin(INVEST_ASSET).on(INVEST_ASSET.ID.equal(INVOICE.INVEST_ASSET))
 			.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.equal(REGISTRY.ID).and(RADDRESS.TYPE.equal((byte) 0)))
 			.leftOuterJoin(GEOZONE).on(RADDRESS.GEOZONE.equal(GEOZONE.ID))
 			.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(INVOICE_DETAIL.PROJECT))
@@ -260,10 +281,10 @@ public class InvoiceDAO {
 							Country.safeValueOf(record
 									.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 					.setRegistryName(record.getValue(INVOICE.RNAME))
-					.setRegistryProvinceCode(record.getValue(GEOZONE.CODE))
-					.setRegistryProvince(record.getValue(GEOZONE.NAME))
-					.setRegistryTown(record.getValue(RADDRESS.CITY))
-					.setRegistryZIP(record.getValue(RADDRESS.ZIP))
+					.setAddressProvinceCode(record.getValue(GEOZONE.CODE))
+					.setAddressProvince(record.getValue(GEOZONE.NAME))
+					.setAddressTown(record.getValue(RADDRESS.CITY))
+					.setAddressZIP(record.getValue(RADDRESS.ZIP))
 					.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
 				)
 				.setProject( record.getValue( PROJECT.NAME ))
@@ -534,5 +555,135 @@ public class InvoiceDAO {
 					.setModificationDate(r.getModificationDate())
 					.setModificationUser(r.getModificationUser());			
 		}
+	}
+
+	public static int getNextNumber(AONContext ctx, InvoiceType type, String series ) {
+		Integer next = ctx.getDslContext()
+			.select( DSL.max(INVOICE.NUMBER))
+			.from(INVOICE)
+			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+			.and(INVOICE.TYPE.eq(type.value()))
+			.and( AonStringUtils.isBlank(series)
+					?INVOICE.SERIES.isNull()
+					:INVOICE.SERIES.eq(series))
+			.fetch()
+			.stream()
+			.mapToInt(rec -> rec.getValue(DSL.max(INVOICE.NUMBER)))
+			.findFirst()
+			.orElse(0);
+		return ++next;
+	}
+
+	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry,
+			final Date issueDate) {
+		AccountingRegistry reg =  RegistryDAO.getAccountingRegistries(ctx
+					, filter -> filter.getIdProperty().eq(registry))
+				.findFirst()
+				.orElse(null);
+		if (reg == null) {
+			throw new AonCoreException("No se pudo encontrar al titular de factura \"" + registry + "\"");
+		}
+		if (reg.getType().getInvoiceType() != type) {
+			throw new AonCoreException("No se puede inicializar una factura de " 
+					+ type.getDescription() + ". El titular suministrado "
+					+ "genera facturas de " 
+					+ reg.getType().getInvoiceType().getDescription() );
+		}
+		final AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, issueDate);
+		AccountingInvoice ai = new AccountingInvoice();
+		ai.setRegistry(reg);
+		final Invoice invoice = new Invoice();
+		ai.setInvoice(invoice);
+		invoice.setRecorded(false);
+		invoice.setRectificationType(RectificationType.NONE);
+		invoice.setConfidential(false);
+		invoice.setIssueDate(issueDate);
+		invoice.setTaxDate(issueDate);
+		invoice.setType(reg.getType().getInvoiceType());
+		invoice.setTransaction(reg.getTransaction());
+		invoice.setSeries(null);
+		invoice.setNumber(0);
+		invoice.setReferenceCode(null);
+		
+		
+		InvoiceVAT vat = new InvoiceVAT();
+		
+		reg.getType().visit( new  IAccountingRegistryTypeVisitor() {
+			@Override
+			public void visitCustomer() {
+				invoice.setSurcharge(reg.isSurcharge());
+				invoice.setWithholding(reg.isWithholding() && config.getCompany().isWithholding());
+				invoice.setWithholdingFarmer(false);
+				invoice.setVatAccrualPayment(invoice.isNational()
+						&& !invoice.getIssueDate().before(VAT_ACCRUAL_START_DATE)
+						&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
+				if (config.getDefaultSalesAccount() != null) {
+					vat.setExpAccountId(config.getDefaultSalesAccount().getId());
+					vat.setExpAccountCode(config.getDefaultSalesAccount().getCode());
+					vat.setExpAccountDescription(config.getDefaultSalesAccount().getDescription());
+				}
+				invoice.setSeries(config.getDefaultInvoiceSeries());
+				invoice.setNumber( getNextNumber(ctx, type, invoice.getSeries()));
+				assignVatAccounts();
+			}
+
+			@Override
+			public void visitSupplier() {
+				invoice.setSurcharge(reg.isSurcharge() && config.getCompany().isSurcharge());
+				invoice.setWithholding(reg.isWithholding());
+				invoice.setWithholdingFarmer(reg.isWithholdingFarmer());
+				invoice.setVatAccrualPayment(invoice.isNational()
+						&& !invoice.getIssueDate().before(VAT_ACCRUAL_START_DATE)
+						&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
+				if (config.getDefaultPurchaseAccount() != null) {
+					vat.setExpAccountId(config.getDefaultPurchaseAccount().getId());
+					vat.setExpAccountCode(config.getDefaultPurchaseAccount().getCode());
+					vat.setExpAccountDescription(config.getDefaultPurchaseAccount().getDescription());
+				}
+				assignVatAccounts();
+			}
+
+			@Override
+			public void visitCreditor() {
+				invoice.setSurcharge(false);
+				invoice.setWithholding(reg.isWithholding());
+				invoice.setWithholdingFarmer(reg.isWithholdingFarmer());
+				invoice.setVatAccrualPayment(invoice.isNational()
+						&& !invoice.getIssueDate().before(VAT_ACCRUAL_START_DATE)
+						&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
+				assignVatAccounts();
+			}
+			
+			private void assignVatAccounts() {
+				Account inputVatAccount = null;
+				Account outputVatAccount = null;
+				if (config.getDefaultVatPercent() != null) {
+					vat.setPercentage(config.getDefaultVatPercent().getPercentage());
+					if (invoice.isSurcharge()) {
+						vat.setSurcharge(config.getDefaultVatPercent().getSurcharge());	
+					}
+					inputVatAccount = config.getDefaultVatPercent().getPurchaseAccount();
+					outputVatAccount = config.getDefaultVatPercent().getSalesAccount();
+				}
+				if (inputVatAccount == null) {
+					inputVatAccount = config.getDefaultPaidVatAccount();
+				}
+				if (inputVatAccount != null) {
+					vat.setInputAccountId(inputVatAccount.getId());
+					vat.setInputAccountCode(inputVatAccount.getCode());
+					vat.setInputAccountDescription(inputVatAccount.getDescription());
+				}
+				if (outputVatAccount == null) {
+					outputVatAccount = config.getDefaultChargedVatAccount();
+				}
+				if (outputVatAccount != null) {
+					vat.setOutputAccountId(outputVatAccount.getId());
+					vat.setOutputAccountCode(outputVatAccount.getCode());
+					vat.setOutputAccountDescription(outputVatAccount.getDescription());
+				}
+			}
+		});
+		ai.addVat(vat);
+		return ai;
 	}
 }

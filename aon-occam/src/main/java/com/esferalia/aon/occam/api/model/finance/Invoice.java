@@ -1,10 +1,9 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
+import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -12,17 +11,20 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 
-public class Invoice implements Serializable {
+public class Invoice implements Serializable, HasAudit {
 	
 	private static final long serialVersionUID = 8897444490096530091L;
 	
 	private Integer id;
 	private int domain;
+	private Integer activity; 				//**
+	private String epigraph;
+	private Integer investAsset;			//**
+	private Integer project;				//**
 	private String series;
 	private int number;
-	private String epigraph;
 	private String referenceCode;
 	private Date issueDate;
 	private Date taxDate;
@@ -34,10 +36,15 @@ public class Invoice implements Serializable {
 	private DocumentType registryDocumentType;
 	private Country registryDocumentCountry;
 	private String registryName;
-	private String registryTown;
-	private String registryZIP;
-	private String registryProvinceCode;
-	private String registryProvince;
+	private Integer registryAddress;		//**
+	private StreetType addressStreetType;	//**
+	private String address;					//**
+	private String addressNumber;			//**
+	private String addressTown;
+	private String addressZIP;
+	private Integer addressGeozone;			//**
+	private String addressProvinceCode;
+	private String addressProvince;
 	private Scope scope;
 	private InvoiceType type;
 	private InvoiceTransactionType transaction;
@@ -53,12 +60,12 @@ public class Invoice implements Serializable {
 	private double vatQuota;
 	private double retentionQuota;
 	private double total;
-	
-	private String accountCode;
-	
-	private InvoiceWithholding withholdingData;
-	private List<InvoiceVAT> invoiceVATs;
-	
+
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;
+
 	
 	public Integer getId() {
 		return id;
@@ -74,6 +81,34 @@ public class Invoice implements Serializable {
 		this.domain = domain;
 		return this;
 	}
+	public Integer getActivity() {
+		return activity;
+	}
+	public Invoice setActivity(Integer activity) {
+		this.activity = activity;
+		return this;
+	}
+	public String getEpigraph() {
+		return epigraph;
+	}
+	public Invoice setEpigraph(String epigraph) {
+		this.epigraph = epigraph;
+		return this;
+	}
+	public Integer getInvestAsset() {
+		return investAsset;
+	}
+	public Invoice setInvestAsset(Integer investAsset) {
+		this.investAsset = investAsset;
+		return this;
+	}
+	public Integer getProject() {
+		return project;
+	}
+	public Invoice setProject(Integer project) {
+		this.project = project;
+		return this;
+	}
 	public String getSeries() {
 		return series;
 	}
@@ -86,13 +121,6 @@ public class Invoice implements Serializable {
 	}
 	public Invoice setNumber(int number) {
 		this.number = number;
-		return this;
-	}
-	public String getEpigraph() {
-		return epigraph;
-	}
-	public Invoice setEpigraph(String epigraph) {
-		this.epigraph = epigraph;
 		return this;
 	}
 	public String getReferenceCode() {
@@ -165,32 +193,67 @@ public class Invoice implements Serializable {
 		this.registryName = registryName;
 		return this;
 	}
-	public String getRegistryTown() {
-		return registryTown;
+	public Integer getRegistryAddress() {
+		return registryAddress;
 	}
-	public Invoice setRegistryTown(String registryTown) {
-		this.registryTown = registryTown;
+	public Invoice setRegistryAddress(Integer registryAddress) {
+		this.registryAddress = registryAddress;
 		return this;
 	}
-	public String getRegistryZIP() {
-		return registryZIP;
+	public StreetType getAddressStreetType() {
+		return addressStreetType;
 	}
-	public Invoice setRegistryZIP(String registryZIP) {
-		this.registryZIP = registryZIP;
+	public Invoice setAddressStreetType(StreetType addressStreetType) {
+		this.addressStreetType = addressStreetType;
 		return this;
 	}
-	public String getRegistryProvinceCode() {
-		return registryProvinceCode;
+	public String getAddress() {
+		return address;
 	}
-	public Invoice setRegistryProvinceCode(String registryProvinceCode) {
-		this.registryProvinceCode = registryProvinceCode;
+	public Invoice setAddress(String address) {
+		this.address = address;
 		return this;
 	}
-	public String getRegistryProvince() {
-		return registryProvince;
+	public String getAddressNumber() {
+		return addressNumber;
 	}
-	public Invoice setRegistryProvince(String registryProvince) {
-		this.registryProvince = registryProvince;
+	public Invoice setAddressNumber(String addressNumber) {
+		this.addressNumber = addressNumber;
+		return this;
+	}
+	public String getAddressTown() {
+		return addressTown;
+	}
+	public Invoice setAddressTown(String addressTown) {
+		this.addressTown = addressTown;
+		return this;
+	}
+	public String getAddressZIP() {
+		return addressZIP;
+	}
+	public Invoice setAddressZIP(String addressZIP) {
+		this.addressZIP = addressZIP;
+		return this;
+	}
+	public Integer getAddressGeozone() {
+		return addressGeozone;
+	}
+	public Invoice setAddressGeozone(Integer addressGeozone) {
+		this.addressGeozone = addressGeozone;
+		return this;
+	}
+	public String getAddressProvinceCode() {
+		return addressProvinceCode;
+	}
+	public Invoice setAddressProvinceCode(String addressProvinceCode) {
+		this.addressProvinceCode = addressProvinceCode;
+		return this;
+	}
+	public String getAddressProvince() {
+		return addressProvince;
+	}
+	public Invoice setAddressProvince(String addressProvince) {
+		this.addressProvince = addressProvince;
 		return this;
 	}
 	public Scope getScope() {
@@ -298,19 +361,6 @@ public class Invoice implements Serializable {
 		this.total = total;
 		return this;
 	}
-	public String getAccountCode() {
-		return accountCode;
-	}
-	public void setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
-	}
-	public InvoiceWithholding getWithholdingData() {
-		return withholdingData;
-	}
-	public Invoice setWithholdingData(InvoiceWithholding withholdingData) {
-		this.withholdingData = withholdingData;
-		return this;
-	}
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
@@ -325,74 +375,73 @@ public class Invoice implements Serializable {
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 		return this;
 	}
-	
-	public List<InvoiceVAT> getInvoiceVATs() {
-		return invoiceVATs;
-	}
-	
-	public Invoice setInvoiceVATs(List<InvoiceVAT> invoiceVATs) {
-		this.invoiceVATs = invoiceVATs;
-		return this;
-	}
-	
 	public String getDocumentNumber() {
-		String documentNumber = ((InvoiceType.SALES == type) ? "E" : (InvoiceType.UNDEDUCTIBLE == type) ? "G" : "R") + "-";
-		if (!AonStringUtils.isEmpty(series)) {
-			documentNumber += series + "/";
-		}
-		documentNumber += AonStringUtils.leftPad(Integer.toString(number), 6, "0");
-		return documentNumber;
+		return FinanceUtil.getDocumentNumber(type, series, number);
 	}
 	
-	public Invoice initialize() {
-		this.id = null;
-		this.domain = 0;
-		this.series = null;
-		this.number = 0;
-		this.referenceCode = null;
-		this.issueDate = null;
-		this.taxDate = null;
-		this.rectificationType = null;
-		this.rectificationInvoice = null;
-		this.registryDocument = null;
-		this.registryDocumentType = null;
-		this.registryDocumentCountry = null;
-		this.registryName = null;
-		this.type = null;
-		this.transaction = null;
-		this.recorded = false;
-		this.surcharge = false;
-		this.withholding = false;
-		this.withholdingFarmer = false;
-		this.vatAccrualPayment = false;
-		this.investment = false;
-		this.service = false;
-		this.advance = false;
-		this.taxableBase = 0.0;
-		this.vatQuota = 0.0;
-		this.retentionQuota = 0.0;
-		this.total = 0.0;
-		this.withholdingData = null;
-		this.invoiceVATs = null;
+	// ---------------------------------------------------------- AUDIT
+	@Override
+	public String getCreationUser() {
+		return creationUser;
+	}
+	public Invoice setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+	@Override
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public Invoice setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	@Override
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public Invoice setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	@Override
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+	public Invoice setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 		return this;
 	}
 	
-	public InvoiceVAT ensureInvoiceVAT(double percentage, double surcharge) {
-		if (invoiceVATs == null) {
-			invoiceVATs = new ArrayList<InvoiceVAT>();
-		}
-		for (InvoiceVAT invoiceVAT : invoiceVATs) {
-			if (invoiceVAT.getPercentage() == percentage && invoiceVAT.getSurcharge() == surcharge) {
-				return invoiceVAT;
-			}
-		}
-		InvoiceVAT invoiceVAT = new InvoiceVAT();
-		invoiceVAT.setPercentage(percentage);
-		invoiceVAT.setSurcharge(surcharge);
-		
-		invoiceVATs.add(invoiceVAT);
-		
-		return invoiceVAT;
-	}
 
+	// ---------------------------------------------------------- UTIL
+	public boolean isNational() {
+		return getTransaction() == InvoiceTransactionType.NATIONAL;
+	}
+	public boolean isIntracommunity() {
+		return getTransaction() == InvoiceTransactionType.INTRACOMMUNITY;
+	}
+	public boolean isIsp() {
+		return getTransaction() == InvoiceTransactionType.OTHER_ISP;
+	}
+	public boolean isSales() {
+		return getType() == InvoiceType.SALES;
+	}
+	public boolean isPurchase() {
+		return getType() == InvoiceType.PURCHASE;
+	}
+	public boolean isExpenses() {
+		return getType() == InvoiceType.EXPENSES;
+	}
+	
+	public boolean isOutputVatEnabled() {
+		return (isSales() && isNational())
+			|| ((isPurchase() || isExpenses()) && (isIntracommunity() || isIsp()));
+	}
+	public boolean isInputVatEnabled() {
+		return ((isPurchase() || isExpenses()) 
+				&& (isNational() || isIntracommunity() || isIsp())) 
+		;
+	}
 }
+

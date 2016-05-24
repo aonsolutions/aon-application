@@ -18,6 +18,8 @@ public class ConfigurationDAO {
 
 	public static AonConfiguration getConfiguration(final AONContext ctx, Date atDate) {
 		ctx.checkRead();
+		int defaultVatPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_VAT_PERCENT);
+		int defaultWithholdingPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_RETENTION_PERCENT);
 		AonConfiguration conf = new AonConfiguration()
 				.setCompany(CompanyDAO.getCompany(ctx, ctx.getDomainId()))
 				.setUser(SecurityDAO.getUser(ctx))
@@ -45,9 +47,13 @@ public class ConfigurationDAO {
 						.and(p.getActiveProperty().eq( (byte) 1 ))
 						.and(p.getScopeProperty().in( SecurityDAO.getUserScopes(ctx) ))))
 				.setVatTaxes( TaxDAO.getVatTaxs(ctx,atDate).collect(Collectors.toCollection(LinkedList::new)))
-				.setDefaultVatPercent(AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_VAT_PERCENT))
+				.setDefaultVatPercent(defaultVatPercent == 0
+					?null
+					:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultVatPercent)))
 				.setWithholdingTaxes( TaxDAO.getWithholdingTaxs(ctx,atDate).collect(Collectors.toCollection(LinkedList::new)))
-				.setDefaultWithholdingPercent(AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_RETENTION_PERCENT))
+				.setDefaultWithholdingPercent(defaultWithholdingPercent== 0
+					?null
+					:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultWithholdingPercent)))
 				.setDefaultInvoiceSeries(AppParamDAO.fetchValue(ctx, AppParam.ACC_DEFAULT_INVOICE_SERIES))
 				.setDefaultSalesAccount( getAccount(ctx, AppParam.ACC_DEFAULT_SALES_ACC) )
 				.setDefaultPurchaseAccount( getAccount(ctx, AppParam.ACC_DEFAULT_PURCHASE_ACC) )

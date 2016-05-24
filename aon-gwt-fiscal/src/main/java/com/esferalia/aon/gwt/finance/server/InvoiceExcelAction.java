@@ -164,9 +164,9 @@ public class InvoiceExcelAction extends AbsExcelAction implements Consumer<Invoi
 		alignCenter( addCell( detail.getInvoice().getRegistryDocumentCountry() ));
 		addCell( detail.getInvoice().getRegistryDocument() );
 		addCell( detail.getInvoice().getRegistryName() );
-		addCell( detail.getInvoice().getRegistryTown() );
-		addCell( detail.getInvoice().getRegistryZIP() );
-		addCell( detail.getInvoice().getRegistryProvince() );
+		addCell( detail.getInvoice().getAddressTown() );
+		addCell( detail.getInvoice().getAddressZIP() );
+		addCell( detail.getInvoice().getAddressProvince() );
 		 
 		addCell( detail.getItem()!= null ? detail.getItem().getCode() : null );
 		addCell( detail.getItem()!= null ? detail.getItem().getCategory()  : null );

@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
 	xmlns:aon="urn:import:com.esferalia.aon.gwt.common.client.widget"
-	xmlns:fiscal="urn:import:com.esferalia.aon.gwt.fiscal.client.widget">
+	xmlns:acc="urn:import:com.esferalia.aon.gwt.fiscal.client.accounting">
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
@@ -20,8 +20,7 @@
 						styleName="{aonResources.css.aonWizardPanelInner} {aonResources.css.aonMarginBottom}">
 						<g:Label text="{msg.invoiceNumber}" styleName="{aonResources.css.aonInnerLabel} {aonResources.css.aonWidth110}"/>
 						<g:ListBox ui:field="series" styleName="{aonResources.css.aonMarginRight5}"/>
-						<g:TextBox ui:field="number" styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5}" 
-							visibleLength="8" maxLength="8"/>
+						<aon:IntegerBox ui:field="number" visibleLength="8" maxLength="8"/>
 						<g:TextBox ui:field="referenceCode" styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5}" 
 							visibleLength="15" maxLength="32"/>
 						<g:FlowPanel styleName="{aonResources.css.aonWidth300}">
@@ -30,69 +29,9 @@
 								styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5}"/>
 						</g:FlowPanel>
 					</g:FlowPanel>
-					
-					<g:FlowPanel ui:field="expAccountPanel" styleName="{aonResources.css.aonWizardPanelInner}">
-						<g:Label text="{msg.taxableBase}" styleName="{aonResources.css.aonInnerLabel} {aonResources.css.aonWidth110}"/>
-						<aon:DoubleBox ui:field="taxableBase" visibleLength="12"/>
-						<g:Label text="{msg.account}" styleName="{aonResources.css.aonInnerLabel} {aonResources.css.aonWidth110}"/>
-						<aon:AccountBox ui:field="expAccount"/>
-					</g:FlowPanel>
-					
-					
-					<g:HTMLPanel ui:field="vatPanel" styleName="{aonResources.css.aonWizardPanelInner}">
+					<acc:InvoiceVATPanel ui:field="vatPanel"/>
+					<g:HTMLPanel ui:field="withholdingPanel" styleName="{aonResources.css.aonWizardPanelInner}">
 						<table>
-							<tr>
-								<td class="{aonResources.css.aonWidth100}"><g:Label text="&#160;" /></td>
-								<td>
-									<g:Label text="{msg.taxType}" styleName="{aonResources.css.aonInnerLabel}"/>
-								</td>
-								<td>
-									<g:Label text="{msg.percent}" styleName="{aonResources.css.aonInnerLabel}"/>
-								</td>
-								<td>
-									<g:Label text="{msg.quota}" styleName="{aonResources.css.aonInnerLabel}"/>
-								</td>
-								<td>
-									<g:Label text="{msg.account}" styleName="{aonResources.css.aonInnerLabel}"/>
-								</td>
-								<td>
-									<g:Label text="{msg.type}" styleName="{aonResources.css.aonInnerLabel}"/>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<g:Label text="I.V.A." styleName="{aonResources.css.aonInnerLabel}"/>
-								</td>
-								<td>
-									<g:ListBox ui:field="vatTaxs"/>
-								</td>
-								<td>
-									<aon:DoubleBox ui:field="vatPercent" visibleLength="6" maxLength="6"/>
-								</td>
-								<td>
-									<aon:DoubleBox ui:field="vatQuota" visibleLength="12"/>
-								</td>
-								<td>
-									<aon:AccountBox ui:field="vatAccount" tabIndex="500000" />
-								</td>
-								<td>
-									<aon:VatDeductionTypeListBox ui:field="vatDeductionType" tabIndex="500000" />
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<g:Label ui:field="surchargeLabel" text="R.E." styleName="{aonResources.css.aonInnerLabel}"/>
-								</td>
-								<td></td>
-								<td>
-									<aon:DoubleBox ui:field="surchargePercent" visibleLength="6" maxLength="6"/>
-								</td>
-								<td>
-									<aon:DoubleBox ui:field="surchargeQuota" visibleLength="12"/>
-								</td>
-								<td></td>
-								<td></td>
-							</tr>
 							<tr>
 								<td>
 									<g:Label ui:field="withholdingLabel" text="I.R.P.F." styleName="{aonResources.css.aonInnerLabel}"/>
@@ -120,48 +59,7 @@
 			</g:ScrollPanel>
 		</g:center>	
 		<g:east size="450">
-			<g:ScrollPanel ui:field="eastPanel" styleName="{aonResources.css.aonWizardPanelEast}">
-				<g:FlowPanel styleName="{aonResources.css.aonFlexContainer}">
-					<g:FlowPanel ui:field="eastPanelInner" styleName="{aonResources.css.aonWizardPanelInner}">
-						<g:InlineLabel ui:field="invoiceTypeLabel" 
-							styleName="{aonResources.css.aonWidthAll} {aonResources.css.aonMarginAuto} {aonResources.css.aonWizardLabel} {aonResources.css.aonTextCenter}"/>
-					</g:FlowPanel>
-					<g:FlowPanel styleName="{aonResources.css.aonWizardPanelInner}">
-						<g:InlineLabel text="{msg.document}" styleName="{aonResources.css.aonInnerLabel} {aonResources.css.aonWidth70}"/>
-						<aon:DocumentTypeListBox ui:field="rDocumenType" tabIndex="500000" 
-							styleName="{aonResources.css.aonMarginRight5}"/>
-						<aon:Country2ListBox ui:field="rDocumenCountry" tabIndex="500001"
-							styleName="{aonResources.css.aonMarginRight5}"/>
-						<aon:DocumentTextBox ui:field="rDocument" tabIndex="500002"
-							styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5}"/>
-					</g:FlowPanel>
-					<g:FlowPanel styleName="{aonResources.css.aonWizardPanelInner}">
-						<g:InlineLabel text="{msg.name}" styleName="{aonResources.css.aonInnerLabel} {aonResources.css.aonWidth70}"/>
-						<g:TextBox ui:field="rName" styleName="{aonResources.css.aonInputText}"
-							tabIndex="500003" visibleLength="40" maxLength="40"/>
-					</g:FlowPanel>		 
-					<g:FlowPanel styleName="{aonResources.css.aonWizardPanelInner}">							
-						<g:InlineLabel text="{msg.taxDate}" styleName="{aonResources.css.aonInnerLabel} {aonResources.css.aonWidth70}"/>
-						<aon:DateBoxEx ui:field="taxDate" tabIndex="500004" />
-					</g:FlowPanel>		 
-					<g:FlowPanel styleName="{aonResources.css.aonWizardPanelInner}">
-						<g:InlineLabel text="{msg.transaction}" styleName="{aonResources.css.aonInnerLabel} {aonResources.css.aonWidth70}"/>
-						<aon:InvoiceTransactionListBox ui:field="transactionBox" tabIndex="500008"/>
-					</g:FlowPanel>		 
-					<g:FlowPanel styleName="{aonResources.css.aonWizardPanelInner}">
-						<g:CheckBox ui:field="service" tabIndex="500004" text="{msg.service}" styleName="{aonResources.css.aonInline} {aonResources.css.aonWidth150}"/>
-						<g:CheckBox ui:field="investment" tabIndex="500004" text="{msg.investAsset}" styleName="{aonResources.css.aonInline} {aonResources.css.aonWidth150}"/>
-					</g:FlowPanel>		 
-					<g:FlowPanel styleName="{aonResources.css.aonWizardPanelInner}">
-						<g:CheckBox ui:field="surcharge" tabIndex="500004" text="{msg.surcharge}" styleName="{aonResources.css.aonInline} {aonResources.css.aonWidth150}"/>
-						<g:CheckBox ui:field="vatAccrualPayment" tabIndex="500007" text="{msg.vatAccrualPayment}" styleName="{aonResources.css.aonInline} {aonResources.css.aonWidthAuto}"/>
-					</g:FlowPanel>		 
-					<g:FlowPanel styleName="{aonResources.css.aonWizardPanelInner}">
-						<g:CheckBox ui:field="withholding" tabIndex="500005" text="{msg.witholding}" styleName="{aonResources.css.aonInline} {aonResources.css.aonWidth150}"/>
-						<g:CheckBox ui:field="withholdingFarmer" tabIndex="500006" text="{msg.withholdingFarmer}" styleName="{aonResources.css.aonInline} {aonResources.css.aonWidthAuto}"/>
-					</g:FlowPanel>		 
-				</g:FlowPanel>
-			</g:ScrollPanel>
+			<acc:InvoiceExtraPanel ui:field="extraPanel"/>
 		</g:east>
 	</g:SplitLayoutPanel>
 </ui:UiBinder>

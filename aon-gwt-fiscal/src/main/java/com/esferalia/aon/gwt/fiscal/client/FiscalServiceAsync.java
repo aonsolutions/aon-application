@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
+import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
@@ -36,6 +37,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
@@ -249,6 +251,8 @@ public interface FiscalServiceAsync {
 			AsyncCallback<LinkedList<AccountEntry>> callback);
 	void deleteAccountEntry(String domainName, int domain, Integer id,
 			AsyncCallback<Void> callback);
+	void initializeInvoice(String domainName, int domain, InvoiceType type, Integer registry,
+			Date issueDate,AsyncCallback<AccountingInvoice> callback);
 
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	void getAccountStatement(String domainName, int domain, 

@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Record;
 
-import com.esferalia.aon.jooq.tables.records.TaxRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -52,15 +51,9 @@ public class TaxDAO {
 	}
 	
 	public static Tax getTax(AONContext ctx, TaxFilter filter){
-		return ctx.getDslContext().select()
-				.from(TAX)
-				.where(TAX_PROPERTIES.getConditions(filter))
-				.limit(1)
-				.fetchInto(TAX)
-				.stream()
-				.map(new EmptyTaxFiller())
-				.findFirst()
-				.orElse(new Tax());
+		return getTaxs(ctx, filter)
+			.findFirst()
+			.orElse(new Tax());
 	}
 	
 	
@@ -88,15 +81,7 @@ public class TaxDAO {
 					p.getDomainProperty().in(SecurityDAO.getInheritanceDomainIds(ctx))
 					.and(p.getTaxTypeProperty().eq(TaxType.RETENTION.value())));
 	}
-	
 
-	private static class EmptyTaxFiller implements Function<TaxRecord, Tax> {
-		@Override
-		public Tax apply(TaxRecord r) {
-			return new Tax();		
-		}
-	}
-	
 	private static class FullTaxFiller implements Function<Record, Tax> {
 		@Override
 		public Tax apply(Record rec) {

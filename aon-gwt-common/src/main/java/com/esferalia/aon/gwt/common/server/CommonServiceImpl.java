@@ -69,7 +69,9 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 	public LinkedList<Account> getAccounts(String domainName, int domain,
 			String query) throws AonSQLException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
-		 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
+		 	?((AonStringUtils.isNumeric(query)? AonStringUtils.EMPTY:AonStringUtils.PERCENT) 
+		 			+ query 
+		 			+ AonStringUtils.PERCENT)
 			:(query);
 		return ACCOUNTING.getAccounts(domainName, domain,AonServletUtils.getLoggedUser(),
 				p ->  p.getActiveProperty().eq((byte) 1)

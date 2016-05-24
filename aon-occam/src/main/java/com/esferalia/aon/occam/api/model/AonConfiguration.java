@@ -17,9 +17,9 @@ public class AonConfiguration implements Serializable {
 	private LinkedList<EnterpriseActivity> enterpriseActivities;
 	private LinkedList<Workplace> workplaces;
 	private LinkedList<Tax> vatTaxes;
-	private int defaultVatPercent;
+	private Tax defaultVatPercent;
 	private LinkedList<Tax> withholdingTaxes;
-	private int defaultWithholdingPercent;
+	private Tax defaultWithholdingPercent;
 	private String defaultInvoiceSeries;
 	private Account defaultSalesAccount;
 	private Account defaultPurchaseAccount;
@@ -88,10 +88,10 @@ public class AonConfiguration implements Serializable {
 		this.vatTaxes = vatTaxes;
 		return this;
 	}
-	public int getDefaultVatPercent() {
+	public Tax getDefaultVatPercent() {
 		return defaultVatPercent;
 	}
-	public AonConfiguration setDefaultVatPercent(int defaultVatPercent) {
+	public AonConfiguration setDefaultVatPercent(Tax defaultVatPercent) {
 		this.defaultVatPercent = defaultVatPercent;
 		return this;
 	}
@@ -103,10 +103,10 @@ public class AonConfiguration implements Serializable {
 		this.withholdingTaxes = withholdingTaxes;
 		return this;
 	}
-	public int getDefaultWithholdingPercent() {
+	public Tax getDefaultWithholdingPercent() {
 		return defaultWithholdingPercent;
 	}
-	public AonConfiguration setDefaultWithholdingPercent(int defaultWithholdingPercent) {
+	public AonConfiguration setDefaultWithholdingPercent(Tax defaultWithholdingPercent) {
 		this.defaultWithholdingPercent = defaultWithholdingPercent;
 		return this;
 	}
