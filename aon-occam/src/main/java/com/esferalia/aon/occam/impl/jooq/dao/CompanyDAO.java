@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
@@ -30,6 +31,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.EnterpriseProperties;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
@@ -271,5 +273,26 @@ public class CompanyDAO {
 						.setDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION) )
 						.setPrincipal( rec.getValue(ENTERPRISE_ACTIVITY.PRINCIPAL) == 1)
 					);
+	}
+
+	public static Stream<InvestAsset> getInvestAssets(AONContext ctx, int domainId, Date atDate) {
+		return ctx.getDslContext()
+				.select(INVEST_ASSET.ID,INVEST_ASSET.DESCRIPTION,INVEST_ASSET.VAT_PERCENT)
+				.from(INVEST_ASSET)
+				.where(INVEST_ASSET.DOMAIN.equal(domainId)
+						.and(atDate == null
+							?DSL.trueCondition()
+							:((INVEST_ASSET.START_DATE.isNull().or(INVEST_ASSET.START_DATE.ge(AonDateUtils.toSql(atDate))))
+							.and(INVEST_ASSET.END_DATE.isNull().or(INVEST_ASSET.END_DATE.le(AonDateUtils.toSql(atDate)))))
+							)
+						)
+				.fetch()
+				.stream()
+				.map( rec -> new InvestAsset()
+						.setId(rec.getValue(INVEST_ASSET.ID) )
+						.setDescription(rec.getValue(INVEST_ASSET.DESCRIPTION) )
+						.setPercent(rec.getValue(INVEST_ASSET.VAT_PERCENT))
+					)
+				;
 	}
 }

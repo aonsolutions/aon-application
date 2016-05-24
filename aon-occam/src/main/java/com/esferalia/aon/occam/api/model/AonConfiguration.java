@@ -15,6 +15,7 @@ public class AonConfiguration implements Serializable {
 	private LinkedList<AccountPeriod> periods;
 	private LinkedList<String> invoiceSalesSeries;
 	private LinkedList<EnterpriseActivity> enterpriseActivities;
+	private LinkedList<InvestAsset> investAsset;
 	private LinkedList<Workplace> workplaces;
 	private LinkedList<Tax> vatTaxes;
 	private Tax defaultVatPercent;
@@ -69,6 +70,14 @@ public class AonConfiguration implements Serializable {
 
 	public AonConfiguration setEnterpriseActivities(LinkedList<EnterpriseActivity> enterpriseActivities) {
 		this.enterpriseActivities = enterpriseActivities;
+		return this;
+	}
+	
+	public LinkedList<InvestAsset> getInvestAsset() {
+		return investAsset;
+	}
+	public AonConfiguration setInvestAsset(LinkedList<InvestAsset> investAsset) {
+		this.investAsset = investAsset;
 		return this;
 	}
 

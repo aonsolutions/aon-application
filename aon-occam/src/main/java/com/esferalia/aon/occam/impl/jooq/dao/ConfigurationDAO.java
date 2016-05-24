@@ -42,6 +42,8 @@ public class ConfigurationDAO {
 						.collect(Collectors.toCollection(LinkedList::new)))
 				.setEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(),atDate)
 						.collect(Collectors.toCollection(LinkedList::new)))
+				.setInvestAsset( CompanyDAO.getInvestAssets(ctx,ctx.getDomainId(),atDate)
+						.collect(Collectors.toCollection(LinkedList::new)))
 				.setWorkplaces( WorkplaceDAO.getWorkplaceList(ctx, 
 						p -> p.getDomainProperty().eq(ctx.getDomainId())
 						.and(p.getActiveProperty().eq( (byte) 1 ))

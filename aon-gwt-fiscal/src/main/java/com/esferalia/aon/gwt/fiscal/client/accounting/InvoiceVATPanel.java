@@ -31,6 +31,11 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	private IInvoicePanelCallback callback;
 	private LinkedList<InvoicePanelRow> rows;
 	
+	private Label reQuotaLabel;
+	private Label reLabel;
+	private Label inputVatLabel;
+	private Label outputVatLabel;
+	
 	public InvoiceVATPanel(IInvoicePanelCallback callback) {
 		setStyleName(AON.AON_CSS.aonScrollArea());
 		addStyleName(AON.AON_CSS.aonWidthAll());
@@ -58,49 +63,47 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		Label label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
-		tab.getCellFormatter().setWidth(row, col, "100px");
+		tab.getCellFormatter().setWidth(row, col, "1%");
 		++col;
 		label = new Label(AON.MSG.taxableBaseAbr());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
-		tab.getCellFormatter().setWidth(row, col, "90px");
+		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
 		++col;
 		label = new Label("% IVA");
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
-		tab.getCellFormatter().setWidth(row, col, "70px");
+		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
 		++col;
 		label = new Label(AON.MSG.vatQuota());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
-		tab.getCellFormatter().setWidth(row, col, "90px");
+		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
 		++col;
-		label = new Label("% RE");
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
-		tab.getCellFormatter().setWidth(row, col, "70px");
+		reLabel = new Label("% RE");
+		reLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		tab.setWidget(row, col, reLabel);
+		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
 		++col;
-		label = new Label(AON.MSG.surchargeQuota());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
-		tab.getCellFormatter().setWidth(row, col, "90px");
+		reQuotaLabel = new Label(AON.MSG.surchargeQuota());
+		reQuotaLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		tab.setWidget(row, col, reQuotaLabel);
+		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
 		++col;
-		
-		label = new Label(AON.MSG.inputVatAccount());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
-		tab.getCellFormatter().setWidth(row, col, "100px");
+		inputVatLabel = new Label(AON.MSG.inputVatAccount());
+		inputVatLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		tab.setWidget(row, col, inputVatLabel);
+		tab.getCellFormatter().setWidth(row, col, "1%");
 		++col;
-
-		label = new Label(AON.MSG.outputVatAccount());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		tab.setWidget(row, col, label);
-		tab.getCellFormatter().setWidth(row, col, "100px");
+		outputVatLabel = new Label(AON.MSG.outputVatAccount());
+		outputVatLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		tab.setWidget(row, col, outputVatLabel);
+		tab.getCellFormatter().setWidth(row, col, "1%");
 		++col;
 
 		label = new Label();
@@ -246,7 +249,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			surchargePercent.setStyleName(AON.AON_CSS.aonInputText());
 			surchargePercent.addStyleName(AON.AON_CSS.aonTextRight());
 			surchargePercent.setValue(vat.getSurcharge());
-			surchargePercent.setEnabled(callback.getInvoice().isSurcharge());
+			surchargePercent.setVisible(callback.getInvoice().isSurcharge());
+			reLabel.setVisible(callback.getInvoice().isSurcharge());
 			surchargePercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
@@ -262,7 +266,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			surchargeQuota.setStyleName(AON.AON_CSS.aonInputText());
 			surchargeQuota.addStyleName(AON.AON_CSS.aonTextRight());
 			surchargeQuota.setValue(vat.getSurchargeQuota());
-			surchargeQuota.setEnabled(callback.getInvoice().isSurcharge());
+			surchargeQuota.setVisible(callback.getInvoice().isSurcharge());
+			reQuotaLabel.setVisible(callback.getInvoice().isSurcharge());
 			surchargeQuota.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
@@ -277,7 +282,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			
 			inputVatAccount.setValue(vat.getInputAccountId(),vat.getInputAccountCode()
 					,vat.getInputAccountDescription(),true);
-			inputVatAccount.setEnabled(callback.getInvoice().isInputVatEnabled());
+			inputVatAccount.setVisible(callback.getInvoice().isInputVatEnabled());
+			inputVatLabel.setVisible(callback.getInvoice().isInputVatEnabled());
 			inputVatAccount.addSelectionHandler( new SelectionHandler<Account>() {
 				
 				@Override
@@ -294,7 +300,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 
 			outputVatAccount.setValue(vat.getOutputAccountId(),vat.getOutputAccountCode()
 					,vat.getOutputAccountDescription(),true);
-			outputVatAccount.setEnabled(callback.getInvoice().isOutputVatEnabled());
+			outputVatAccount.setVisible(callback.getInvoice().isOutputVatEnabled());
+			outputVatLabel.setVisible(callback.getInvoice().isOutputVatEnabled());
 			outputVatAccount.addSelectionHandler( new SelectionHandler<Account>() {
 				
 				@Override
@@ -320,17 +327,20 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 
 		public void enableSurcharge(boolean enabled) {
 			surchargePercent.setValue(0.0,true);
-			surchargePercent.setEnabled(enabled);
-			
+			surchargePercent.setVisible(enabled);
+			reLabel.setVisible(enabled);
 			surchargeQuota.setValue(0.0,true);
-			surchargeQuota.setEnabled(enabled);
+			surchargeQuota.setVisible(enabled);
+			reQuotaLabel.setVisible(enabled);
 		}
 		
 		public void enableInputVat(boolean enabled) {
-			inputVatAccount.setEnabled(enabled);
+			inputVatAccount.setVisible(enabled);
+			inputVatLabel.setVisible(enabled);
 		}
 		public void enableOutputVat(boolean enabled) {
-			outputVatAccount.setEnabled(enabled);
+			outputVatAccount.setVisible(enabled);
+			outputVatLabel.setVisible(enabled);
 		}
 
 		public void invoiceTotalChanged(Double total) {
