@@ -1451,7 +1451,7 @@ public class SQLContractSalaryCalculatorContext
 
 		AgreementKey enterpriseAgreementKey = getEnterpriseAgreementKey();
 		
-		if ( agreementKey.equals(enterpriseAgreementKey)) 
+		if ( AonUtils.equals(agreementKey, enterpriseAgreementKey)) 
 			return new DomainPayments(payments);
 		
 		Collection<ISystemPayment> enterprisePayments = agreementPayments
