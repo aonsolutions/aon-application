@@ -1,8 +1,11 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,14 +30,15 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.Cell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.dbutils.AonSQLException;
@@ -78,6 +82,8 @@ public class ProductionReportController implements Serializable {
 	private ReportObject advancePaymethodTotal;
 	private ReportObject paymethodTotal;
 	
+	private boolean testingProductionSql, testingPendingSql, testingPaxSql, testingPaymethodSql;
+	
 	
 	public Hotel getHotel() {
 		return hotel;
@@ -104,6 +110,22 @@ public class ProductionReportController implements Serializable {
 		return productionModel == null && paxModel == null
 				&& advancePaymethodModel == null && paymethodModel == null
 				&& pendingProductionModel == null;
+	}
+	
+	public boolean isTestingProductionQuery() {
+		return testingProductionSql;
+	}
+	
+	public boolean isTestingPendingQuery() {
+		return testingPendingSql;
+	}
+	
+	public boolean isTestingPaxQuery() {
+		return testingPaxSql;
+	}
+	
+	public boolean isTestingPaymethodQuery() {
+		return testingPaymethodSql;
 	}
 
 	public DataModel getProductionModel() {
@@ -167,6 +189,11 @@ public class ProductionReportController implements Serializable {
 	}
 	
 	private void init(){
+		testingProductionSql = false;
+		testingPendingSql = false;
+		testingPaxSql = false;
+		testingPaymethodSql = false;
+		
 		productionMap.clear();
 		pendingProductionMap.clear();
 		paxMap.clear();
@@ -475,6 +502,101 @@ public class ProductionReportController implements Serializable {
 		
 	}
 	
+	private static final String SQL_FILE = String.format("%1$s/PMS_SQL/", System.getProperty("user.home"));
+	
+	private String getLocalSQL(String fileName) {
+		if (Files.exists(Paths.get(SQL_FILE + fileName))) {
+			LOGGER.info("****** TESTING QUERY DETECTED -> " + SQL_FILE + fileName);
+			try {
+				String query = new String(Files.readAllBytes(Paths.get(SQL_FILE + fileName)));
+				query = query.replaceAll("SET @.*;", "");
+				return query;
+			} catch (FileNotFoundException e) {
+				// nada
+			} catch (IOException e) {
+				// nada
+			}
+		}
+		return null;
+	}
+	
+	private String getHotelProductionSQL(java.sql.Date date,
+			java.sql.Date previousDate, Integer year, Integer previousYear,
+			Integer month, Integer hotel, Integer wp) {
+		String query = getLocalSQL("production.sql");
+		if (query != null) {
+			testingProductionSql = true;
+			query = query.replaceAll("@date", "'"+date.toString()+"'")
+					.replaceAll("@previousDate", "'"+previousDate.toString()+"'")
+					.replaceAll("@year", year.toString())
+					.replaceAll("@previousYear", previousYear.toString())
+					.replaceAll("@month", month.toString())
+					.replaceAll("@hotel", hotel.toString())
+					.replaceAll("@wp", wp.toString());
+		} else {
+			query = hotelProductionSQL(date, previousDate, year, previousYear,
+					month, hotel, wp);
+		}
+		return query;
+	}
+
+	private String getPendingHotelProductionSQL(java.sql.Date date,
+			java.sql.Date previousDate, Integer hotel, Integer year,
+			Integer previousYear, Integer month) {
+		String query = getLocalSQL("pending.sql");
+		if (query != null) {
+			testingPendingSql = true;
+			query = query.replaceAll("@date", "'"+date.toString()+"'")
+					.replaceAll("@previousDate", "'"+previousDate.toString()+"'")
+					.replaceAll("@hotel", hotel.toString())
+					.replaceAll("@year", year.toString())
+					.replaceAll("@previousYear", previousYear.toString())
+					.replaceAll("@month", month.toString());
+		} else {
+			query = pendingHotelProductionSQL(date, previousDate, hotel,
+					year, previousYear, month);
+		}
+		return query;
+	}
+
+	private String getPaxSQL(java.sql.Date date, java.sql.Date previousDate,
+			Integer year, Integer previousYear, Integer month, Integer hotel) {
+		String query = getLocalSQL("pax.sql");
+		if (query != null) {
+			testingPaxSql = true;
+			query = query.replaceAll("@date", "'"+date.toString()+"'")
+					.replaceAll("@previousDate", "'"+previousDate.toString()+"'")
+					.replaceAll("@year", year.toString())
+					.replaceAll("@previousYear", previousYear.toString())
+					.replaceAll("@month", month.toString())
+					.replaceAll("@hotel", hotel.toString());
+		} else {
+			query = paxSQL(date, previousDate, year, previousYear, month,
+					hotel);
+		}
+		return query;
+	}
+
+	private String getInvoicePayMethodsSQL(java.sql.Date date,
+			java.sql.Date previousDate, Integer year, Integer previousYear,
+			Integer month, Integer wp) {
+		String query = getLocalSQL("paymethod.sql");
+		if (query != null) {
+			testingPaymethodSql = true;
+			query = query.replaceAll("@date", "'"+date.toString()+"'")
+					.replaceAll("@previousDate", "'"+previousDate.toString()+"'")
+					.replaceAll("@year", year.toString())
+					.replaceAll("@previousYear", previousYear.toString())
+					.replaceAll("@month", month.toString())
+					.replaceAll("@wp", wp.toString());
+		} else {
+			query = invoicePayMethodsSQL(date, previousDate, year,
+					previousYear, month, wp);
+		}
+		return query;
+	}
+	
+	
 	private Map<String, ReportObject> getProductionRatioMap() {
 		Map<String, ReportObject> productionRatioMap = new HashMap<>();
 		productionMap.keySet().stream().sorted().forEach(key -> {
@@ -510,7 +632,7 @@ public class ProductionReportController implements Serializable {
 		String OTROS_INGRESOS = "OTROS INGRESOS";
 		String VENTAS = "1.VENTAS";
 		String SALDO_CTA_CLIENTE = "3.SALDO CTA. CLIENTE";
-		String SALDO_CTA_CLIENTE_FRA_ANTICIPO = "4.SALDO CTA. CLIENTE FRA. ANTICIPO";
+//		String SALDO_CTA_CLIENTE_FRA_ANTICIPO = "4.SALDO CTA. CLIENTE FRA. ANTICIPO";
 
 		double ALOJAMIENTO_YearAmount = productionMap
 				.containsKey(ALOJAMIENTO) ? productionMap.get(ALOJAMIENTO)
@@ -525,9 +647,9 @@ public class ProductionReportController implements Serializable {
 		double SALDO_CTA_CLIENTE_DayAmount = pendingProductionMap
 				.containsKey(SALDO_CTA_CLIENTE) ? pendingProductionMap.get(
 				SALDO_CTA_CLIENTE).getDayAmount() : 0.0;
-		double SALDO_CTA_CLIENTE_FRA_ANTICIPO_DayAmount = pendingProductionMap
-				.containsKey(SALDO_CTA_CLIENTE_FRA_ANTICIPO) ? pendingProductionMap
-				.get(SALDO_CTA_CLIENTE_FRA_ANTICIPO).getDayAmount() : 0.0;
+//		double SALDO_CTA_CLIENTE_FRA_ANTICIPO_DayAmount = pendingProductionMap
+//				.containsKey(SALDO_CTA_CLIENTE_FRA_ANTICIPO) ? pendingProductionMap
+//				.get(SALDO_CTA_CLIENTE_FRA_ANTICIPO).getDayAmount() : 0.0;
 		
 		ReportObject ro = new ReportObject();
 		ro.setDescription("1.FACTURACION RESERVAS");
@@ -565,7 +687,6 @@ public class ProductionReportController implements Serializable {
 		
 		exporter.startLine();
 		exporter.endLine();
-		exportInnerHeader(exporter, columnMetadata, "");
 		exportData(exporter, columnMetadata, "FACTURACION POR AREA", productionMap, true);
 		
 		exporter.startLine();
@@ -583,13 +704,11 @@ public class ProductionReportController implements Serializable {
 		
 		exporter.startLine();
 		exporter.endLine();
-		exportInnerHeader(exporter, columnMetadata, "FRAS. ANTICIPO");
-		exportData(exporter, columnMetadata, "Forma de pago", advancePaymethodMap, true);
+		exportData(exporter, columnMetadata, "FRAS. ANTICIPO (Forma de pago)", advancePaymethodMap, true);
 		
 		exporter.startLine();
 		exporter.endLine();
-		exportInnerHeader(exporter, columnMetadata, "FACTURAS");
-		exportData(exporter, columnMetadata, "Forma de pago", paymethodMap, true);
+		exportData(exporter, columnMetadata, "FACTURAS (Forma de pago)", paymethodMap, true);
 		
 		exporter.startLine();
 		exporter.endLine();
@@ -607,35 +726,34 @@ public class ProductionReportController implements Serializable {
 	private ReportMetadata getContractColumnMetadata() throws ReportException {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat();
 		dateFormatter.applyPattern("yyyy/MM/dd");
-		String title = hotel.getWorkPlace().getDescription();
-		String date = dateFormatter.format(getDate());
+		String title = dateFormatter.format(getDate()) + " - " + hotel.getWorkPlace().getDescription();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		Integer previousYear = cal.get(Calendar.YEAR)-1;
 		ReportMetadata metadata = new ReportMetadata();
 		metadata.getColumns().add(new ReportColumnMetadata("TITLE",Types.VARCHAR,title,30));
-		metadata.getColumns().add(new ReportColumnMetadata("DAY",Types.VARCHAR,date,15));
-		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_DAY",Types.VARCHAR,"",15));
-		metadata.getColumns().add(new ReportColumnMetadata("MONTH",Types.VARCHAR,"",15));
-		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_MONTH",Types.VARCHAR,"",15));
-		metadata.getColumns().add(new ReportColumnMetadata("YEAR",Types.VARCHAR,"",15));
-		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_YEAR",Types.VARCHAR,"",15));
+		metadata.getColumns().add(new ReportColumnMetadata("DAY",Types.DOUBLE,"Dia",15));
+		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_DAY",Types.DOUBLE,"Dia (" +previousYear+ ")",15));
+		metadata.getColumns().add(new ReportColumnMetadata("MONTH",Types.DOUBLE,"Mes",15));
+		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_MONTH",Types.DOUBLE,"Mes (" +previousYear+ ")",15));
+		metadata.getColumns().add(new ReportColumnMetadata("YEAR",Types.DOUBLE,"Año",15));
+		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_YEAR",Types.DOUBLE,"Año (" +previousYear+ ")",15));
 		return metadata;
 	}
 
 	private void exportInnerHeader(ExcelReportExporter exporter,
 			ReportMetadata metadata, String description) throws ReportException {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		Integer previousYear = cal.get(Calendar.YEAR)-1;
 		int column = 0;
 		exporter.startLine();
 		try {
 			HSSFCellStyle cellStyle = exporter.createHeaderStyle();
 			exporter.exportColumn(metadata.getColumns().get(column++), description, cellStyle);
-			exporter.exportColumn(metadata.getColumns().get(column++), "Dia", cellStyle);
-			exporter.exportColumn(metadata.getColumns().get(column++), "Dia (" +previousYear+ ")", cellStyle);
-			exporter.exportColumn(metadata.getColumns().get(column++), "Mes", cellStyle);
-			exporter.exportColumn(metadata.getColumns().get(column++), "Mes (" +previousYear+ ")", cellStyle);
-			exporter.exportColumn(metadata.getColumns().get(column++), "Año", cellStyle);
-			exporter.exportColumn(metadata.getColumns().get(column++), "Año (" +previousYear+ ")", cellStyle);
+			addEmptyDecimalCell(exporter, cellStyle);
+			addEmptyDecimalCell(exporter, cellStyle);
+			addEmptyDecimalCell(exporter, cellStyle);
+			addEmptyDecimalCell(exporter, cellStyle);
+			addEmptyDecimalCell(exporter, cellStyle);
+			addEmptyDecimalCell(exporter, cellStyle);
 		} catch (ReportException e) {
 			LOGGER.error("No se ha podido completar la fila del informe de produccion.");
 		} finally {
@@ -658,11 +776,9 @@ public class ProductionReportController implements Serializable {
 		if(StringUtils.isNotBlank(description)){
 			HSSFCellStyle cellStyle = exporter.createHeaderStyle();
 			exporter.startLine();
+			exporter.exportColumn(metadata.getColumns().get(0), description, cellStyle);
 			for(int i = 1; i<7; i++){
-				if(i==1){
-					exporter.exportColumn(metadata.getColumns().get(i), description, cellStyle);
-				}
-				exporter.exportColumn(metadata.getColumns().get(i), "", cellStyle);
+				addEmptyDecimalCell(exporter, cellStyle);
 			}
 			exporter.endLine();
 		}
@@ -672,12 +788,12 @@ public class ProductionReportController implements Serializable {
 			exporter.startLine();
 			try {
 				exporter.exportColumn(metadata.getColumns().get(column++), map.get(key).getDescription());
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getDayAmount(), defaultEmpty));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getPreviousDayAmount(), defaultEmpty));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getMonthAmount(), defaultEmpty));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getPreviousMonthAmount(), defaultEmpty));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getYearAmount(), defaultEmpty));
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.get(key).getPreviousYearAmount(), defaultEmpty));
+				exporter.exportColumn(metadata.getColumns().get(column++), map.get(key).getDayAmount());
+				exporter.exportColumn(metadata.getColumns().get(column++), map.get(key).getPreviousDayAmount());
+				exporter.exportColumn(metadata.getColumns().get(column++), map.get(key).getMonthAmount());
+				exporter.exportColumn(metadata.getColumns().get(column++), map.get(key).getPreviousMonthAmount());
+				exporter.exportColumn(metadata.getColumns().get(column++), map.get(key).getYearAmount());
+				exporter.exportColumn(metadata.getColumns().get(column++), map.get(key).getPreviousYearAmount());
 			} catch (ReportException e) {
 				LOGGER.error("No se ha podido completar la fila del informe de produccion.");
 			} finally {
@@ -691,12 +807,12 @@ public class ProductionReportController implements Serializable {
 			exporter.startLine();
 			try {
 				exporter.exportColumn(metadata.getColumns().get(column++), "", cellStyle);
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getDayAmount).sum()), cellStyle);
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum()), cellStyle);
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getMonthAmount).sum()), cellStyle);
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum()), cellStyle);
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getYearAmount).sum()), cellStyle);
-				exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(map.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum()), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), map.values().stream().mapToDouble(ReportObject::getDayAmount).sum(), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), map.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum(), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), map.values().stream().mapToDouble(ReportObject::getMonthAmount).sum(), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), map.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum(), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), map.values().stream().mapToDouble(ReportObject::getYearAmount).sum(), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), map.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum(), cellStyle);
 			} catch (ReportException e) {
 				LOGGER.error("No se ha podido completar la fila del informe de produccion.");
 			} finally {
@@ -704,6 +820,14 @@ public class ProductionReportController implements Serializable {
 			}
 		}
 	}
+	
+	public HSSFCell addEmptyDecimalCell(ExcelReportExporter exporter, HSSFCellStyle cellStyle) {
+		HSSFCell cell = exporter.addCell();
+		cell.setCellStyle(cellStyle);
+		cell.setCellType(Cell.CELL_TYPE_BLANK);
+		return cell;
+	}
+	
 	private void exportTotalizeRow(ExcelReportExporter exporter, ReportMetadata metadata, Map<?, ?>... maps ) throws ReportException {
 		int column = 0;
 		exporter.startLine();
@@ -724,27 +848,17 @@ public class ProductionReportController implements Serializable {
 			}
 			HSSFCellStyle cellStyle = exporter.createFooterStyle();
 			exporter.exportColumn(metadata.getColumns().get(column++), "TOTAL", cellStyle);
-			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(dayAmount), cellStyle);
-			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(previousDayAmount), cellStyle);
-			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(monthAmount), cellStyle);
-			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(previousMonthAmount), cellStyle);
-			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(yearAmount), cellStyle);
-			exporter.exportColumn(metadata.getColumns().get(column++), getFormattedAmount(previousYearAmount), cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), dayAmount, cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), previousDayAmount, cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), monthAmount, cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), previousMonthAmount, cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), yearAmount, cellStyle);
+			exporter.exportColumn(metadata.getColumns().get(column++), previousYearAmount, cellStyle);
 		} catch (ReportException e) {
 			LOGGER.error("No se ha podido completar la fila del informe de produccion.");
 		} finally {
 			exporter.endLine();
 		}
-	}
-	
-	private String getFormattedAmount(Double amount, boolean defaultEmpty) {
-		return ((amount == null || amount == 0.0) && defaultEmpty) ? ""
-				: String.valueOf(CommonUtil.round(amount)).replaceAll("\\.",
-						",");
-	}
-	
-	private String getFormattedAmount(Double amount){
-		return getFormattedAmount(amount, false);
 	}
 
 	
@@ -805,7 +919,7 @@ public class ProductionReportController implements Serializable {
 	// SQL
 	// *****************************************
 	
-	private String getHotelProductionSQL(java.sql.Date date,
+	private String hotelProductionSQL(java.sql.Date date,
 			java.sql.Date previousDate, Integer year, Integer previousYear,
 			Integer month, Integer hotel, Integer wp) {
 		
@@ -997,7 +1111,7 @@ public class ProductionReportController implements Serializable {
 		
 	}
 	
-	private String getInvoicePayMethodsSQL(java.sql.Date date,
+	private String invoicePayMethodsSQL(java.sql.Date date,
 			java.sql.Date previousDate, Integer year, Integer previousYear,
 			Integer month, Integer wp) {
 		
@@ -1120,7 +1234,7 @@ public class ProductionReportController implements Serializable {
 	
 	
 	
-	private String getPaxSQL(java.sql.Date date, java.sql.Date previousDate,
+	private String paxSQL(java.sql.Date date, java.sql.Date previousDate,
 			Integer year, Integer previousYear, Integer month, Integer hotel) {
 		
 		StringBuffer stmt = new StringBuffer();
@@ -1155,7 +1269,7 @@ public class ProductionReportController implements Serializable {
 		return stmt.toString();
 	}
 
-	private String getPendingHotelProductionSQL(java.sql.Date date,
+	private String pendingHotelProductionSQL(java.sql.Date date,
 			java.sql.Date previousDate, Integer hotel, Integer year,
 			Integer previousYear, Integer month) {
 		

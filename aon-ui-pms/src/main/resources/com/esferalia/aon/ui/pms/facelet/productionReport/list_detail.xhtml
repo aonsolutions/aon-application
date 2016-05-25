@@ -10,10 +10,12 @@
 	<aon:panel rendered="#{!productionReport.nevv}">
 		<c:if test="#{!skipTableHeader}">
 			<f:facet name="header">
-				<aon:outputLabel value="#{tableHeader}" />
+				<aon:outputText value="#{tableHeader}"  
+					styleClass="#{(testing ? 'aon-label-error':'')}" />
 			</f:facet>
 		</c:if>
-		<aon:dataTable value="#{model}" var="to"
+		<aon:dataTable id="#{tableHeader}-data"  
+			value="#{model}" var="to"
 			styleClass="aon-width-all aon-margin-top">
 			
 			<aon:rowSelector toggleOnClick="#{false}" />
@@ -159,6 +161,7 @@
 			</aon:column>
 			
 		</aon:dataTable>
+		
 	</aon:panel>
 	
 </ui:composition>

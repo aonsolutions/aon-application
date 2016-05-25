@@ -76,6 +76,7 @@
 						<ui:param name="tableHeader" value="FACTURACION POR AREA" />
 						<ui:param name="name" value="PRODUCCION" />
 						<ui:param name="totalTo" value="#{productionReport.productionTotal}" />
+						<ui:param name="testing" value="#{productionReport.testingProductionQuery}" />
 					</ui:decorate>
 					
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
@@ -83,14 +84,17 @@
 						<ui:param name="tableHeader" value="PRODUCCION" />
 						<ui:param name="skipHeaders" value="#{true}" />
 						<ui:param name="skipFooters" value="#{true}" />
+						<ui:param name="testing" value="#{productionReport.testingPendingQuery}" />
 					</ui:decorate>
 	
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
 						<ui:param name="model" value="#{productionReport.paxModel}" />
+						<ui:param name="tableHeader" value="PAX" />
 						<ui:param name="skipHeaders" value="#{true}" />
 						<ui:param name="skipFooters" value="#{true}" />
 						<ui:param name="skipTableHeader" value="#{true}" />
 						<ui:param name="amountPattern" value="#{bundle.aon_integer_pattern}" />
+						<ui:param name="testing" value="#{productionReport.testingPaxQuery}" />
 					</ui:decorate>
 					
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
@@ -104,6 +108,7 @@
 						<ui:param name="model" value="#{productionReport.advancePaymethodModel}" />
 						<ui:param name="tableHeader" value="FACTURAS ANTICIPO" />
 						<ui:param name="totalTo" value="#{productionReport.advancePaymethodTotal}" />
+						<ui:param name="testing" value="#{productionReport.testingPaymethodQuery}" />
 					</ui:decorate>
 					
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
@@ -111,6 +116,7 @@
 						<ui:param name="tableHeader" value="FACTURAS" />
 						<ui:param name="name" value="Forma de pago" />
 						<ui:param name="totalTo" value="#{productionReport.paymethodTotal}" />
+						<ui:param name="testing" value="#{productionReport.testingPaymethodQuery}" />
 					</ui:decorate>
 					
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
