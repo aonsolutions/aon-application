@@ -121,8 +121,8 @@ public class Mod115DAO extends FiscalModelDAO {
 			, (ctx,mod,docs,br) -> mod.ensureDetail(Mod115Key.BZ_C03).addAmount(br.getQuota())
 			,null)
 		,BZ_C04(Mod115Key.BZ_C04, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C05(Mod115Key.BZ_C04, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C06(Mod115Key.BZ_C04, (mod -> mod.isBizkaia()),null,null,null)
+		,BZ_C05(Mod115Key.BZ_C05, (mod -> mod.isBizkaia()),null,null,null)
+		,BZ_C06(Mod115Key.BZ_C06, (mod -> mod.isBizkaia()),null,null,null)
 		,BZ_C07(Mod115Key.BZ_C07, (mod -> mod.isBizkaia()),null,null,"BZ_C03+BZ_C06")
 		,BZ_TIP (Mod115Key.BZ_TIP , (mod -> mod.isBizkaia()), null,null,null)
 		
