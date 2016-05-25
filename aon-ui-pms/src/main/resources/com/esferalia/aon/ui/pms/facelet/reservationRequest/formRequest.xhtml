@@ -35,16 +35,8 @@
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>
-		<aon:selectOneMenu id="ReservationRequest_startDate-Select" 
-			value="#{reservationRequest.to.startDate}" style="width: 100px;"
-			required="true" converter="aon.DateConverter" 
-			rendered="#{reservationRequest.to.active and !aonRole.commercialOperator}"
-			valueChangeListener="#{reservationRequest.onStartDateChanged}"
-			reRender="ReservationRequest_nights,ReservationRequest_endDate">
-			<f:selectItems value="#{reservationRequest.startDates}" />
-		</aon:selectOneMenu>
 		<aon:selectInputDate id="ReservationRequest_startDate" value="#{reservationRequest.to.startDate}" 
-			required="true" rendered="#{reservationRequest.to.active and aonRole.commercialOperator}"
+			required="true" rendered="#{reservationRequest.to.active}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}">
 			<a4j:support ajaxSingle="true" event="oninputchange"
