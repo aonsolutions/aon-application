@@ -1450,6 +1450,10 @@ public class SQLContractSalaryCalculatorContext
 				.get(agreementKey);
 
 		AgreementKey enterpriseAgreementKey = getEnterpriseAgreementKey();
+		
+		if ( agreementKey.equals(enterpriseAgreementKey)) 
+			return new DomainPayments(payments);
+		
 		Collection<ISystemPayment> enterprisePayments = agreementPayments
 				.get(enterpriseAgreementKey);
 		return new DomainPayments(enterprisePayments, payments);
