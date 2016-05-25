@@ -524,7 +524,6 @@ public class ActivitySummary extends MainEntryPoint {
 				return object.getItCommonDiseaseCount()!=null?object.getItCommonDiseaseCount().toString():"0";
 			}
 		};
-		itCommonDiseaseCountColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		dataGrid.addColumn(itCommonDiseaseCountColumn);
 		dataGrid.setColumnWidth(itCommonDiseaseCountColumn, 7, Unit.EM);
 		
@@ -538,7 +537,6 @@ public class ActivitySummary extends MainEntryPoint {
 				return object.getItOccupationalDiseaseCount()!=null?object.getItOccupationalDiseaseCount().toString():"0";
 			}
 		};
-		itOccupationalDiseaseCountColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		dataGrid.addColumn(itOccupationalDiseaseCountColumn);
 		dataGrid.setColumnWidth(itOccupationalDiseaseCountColumn, 7, Unit.EM);
 		
@@ -552,7 +550,6 @@ public class ActivitySummary extends MainEntryPoint {
 				return object.getItMaternityCount()!=null?object.getItMaternityCount().toString():"0";
 			}
 		};
-		itMaternityCountColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		dataGrid.addColumn(itMaternityCountColumn);
 		dataGrid.setColumnWidth(itMaternityCountColumn, 7, Unit.EM);
 
@@ -566,7 +563,6 @@ public class ActivitySummary extends MainEntryPoint {
 				return object.getItOtherCount()!=null?object.getItOtherCount().toString():"0";
 			}
 		};
-		itOtherCountColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		dataGrid.addColumn(itOtherCountColumn);
 		dataGrid.setColumnWidth(itOtherCountColumn, 7, Unit.EM);
 	}
@@ -654,7 +650,6 @@ public class ActivitySummary extends MainEntryPoint {
 
 			// Create the table cell.
 			TableCellBuilder th = out.startTH();
-			th.startTH().align(HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString());
 
 			// Associate the cell with the column to enable sorting of the column.
 			enableColumnHandlers(th, column);
