@@ -147,43 +147,43 @@ public class DownloadAmazonProductServlet extends HttpServlet{
 		if(ecp.getProduct().getItem() == null) 
 			return val;
 		if(val.contains("{brand}"))
-			return val.replace("{brand}", item.getProduct().getBrandName()!= null? item.getProduct().getBrandName():"");
+			val = val.replace("{brand}", item.getProduct().getBrandName()!= null? item.getProduct().getBrandName():"");
 		if(val.contains("{code}"))
-			return val.replace("{code}", item.getProduct().getCode() != null?item.getProduct().getCode():"");
+			val = val.replace("{code}", item.getProduct().getCode() != null?item.getProduct().getCode():"");
 		if(val.contains("{title}"))
-			return val.replace("{title}", item.getProduct().getName()!= null?item.getProduct().getName():"");
+			val = val.replace("{title}", item.getProduct().getName()!= null?item.getProduct().getName():"");
 		if(val.contains("{barcode}"))
-			return val.replace("{barcode}", item.getBarcode()!= null?item.getBarcode():"");		
+			val = val.replace("{barcode}", item.getBarcode()!= null?item.getBarcode():"");		
 		if(val.contains("{detail}"))
-			return val.replace("{detail}", item.getDetail()!= null?item.getDetail():"");
+			val = val.replace("{detail}", item.getDetail()!= null?item.getDetail():"");
 		if(val.contains("{detail2}"))
-			return val.replace("{detail2}", item.getDetail2()!= null?item.getDetail2():"");
+			val = val.replace("{detail2}", item.getDetail2()!= null?item.getDetail2():"");
 		if(val.contains("{detail3}"))
-			return val.replace("{detail3}", item.getDetail3()!= null?item.getDetail3():"");
+			val = val.replace("{detail3}", item.getDetail3()!= null?item.getDetail3():"");
 		if(val.contains("{sku}")){
 			String code = item.getProduct().getCode()!= null?item.getProduct().getCode():"";
 			String detail = item.getDetail()!= null? item.getDetail():"";
 			String detail2 = item.getDetail2()!= null? item.getDetail2():"";
 			String detail3 = item.getDetail3()!= null? item.getDetail3():"";
-			return val.replace("{sku}", code+detail+detail2+detail3);
+			val = val.replace("{sku}", code+detail+detail2+detail3);
 		}
 		if(val.contains("{description}"))
-			return val.replace("{description}", item.getDescription()!= null? item.getDescription():"");
+			val = val.replace("{description}", item.getDescription()!= null? item.getDescription():"");
 		if(val.contains("{price}"))
-			return val.replace("{price}", String.valueOf(item.getPrice()));
+			val = val.replace("{price}", String.valueOf(item.getPrice()));
 		if(val.contains("{stock}"))
-			return val.replace("{stock}", getItemStock(domainName, domainId, login, item.getId()).toString());
+			val = val.replace("{stock}", getItemStock(domainName, domainId, login, item.getId()).toString());
 		
 		if(val.contains("{image1}"))
-			return val.replace("{image1}", getItemImageUrl(domainName, domainId, login, item.getId(),0));
+			val = val.replace("{image1}", getItemImageUrl(domainName, domainId, login, item.getId(),0));
 		if(val.contains("{image2}"))
-			return val.replace("{image2}", getItemImageUrl(domainName, domainId, login, item.getId(),1));
+			val = val.replace("{image2}", getItemImageUrl(domainName, domainId, login, item.getId(),1));
 		if(val.contains("{image3}"))
-			return val.replace("{image3}", getItemImageUrl(domainName, domainId, login, item.getId(),2));
+			val = val.replace("{image3}", getItemImageUrl(domainName, domainId, login, item.getId(),2));
 		if(val.contains("{image4}"))
-			return val.replace("{image4}", getItemImageUrl(domainName, domainId, login, item.getId(),3));
+			val = val.replace("{image4}", getItemImageUrl(domainName, domainId, login, item.getId(),3));
 		if(val.contains("{image5}"))
-			return val.replace("{image5}", getItemImageUrl(domainName, domainId, login, item.getId(),4));
+			val = val.replace("{image5}", getItemImageUrl(domainName, domainId, login, item.getId(),4));
 		
 		return val;
 	

@@ -11,6 +11,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -129,15 +131,15 @@ public class ProductList extends ResizeComposite{
 	private void loadDataGrid(){
 		final SingleSelectionModel<Item> selectionModel = new SingleSelectionModel<Item>();
 		dataGrid.setSelectionModel(selectionModel);
-		dataGrid.addDomHandler(new ClickHandler() {
+		dataGrid.addDomHandler(new DoubleClickHandler() {
 			@Override
-			public void onClick(final ClickEvent event) {
+			public void onDoubleClick(final DoubleClickEvent event) {
 				Item selected = selectionModel.getSelectedObject();
 				if (selected != null) {
 				    new ProductValuesDialog(selected, getLogin()).show();
 				}
 			}
-		}, ClickEvent.getType());
+		}, DoubleClickEvent.getType());
 		dataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		dataGrid.setAutoHeaderRefreshDisabled(true);
 		dataGrid.setEmptyTableWidget(new Label("No hay ning\u00fan archivo."));
