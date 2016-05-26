@@ -385,6 +385,14 @@ public class DBMarketplace {
 		}
 	}
 	
+	public static String getItemImageUrl(Domain domain, String login, Integer itemId, Integer i) {
+		LinkedList<Attach> attach = AON.getAttachList(domain.getName(), domain.getId(), login,
+				f -> f.getAttachModuleProperty().eq(itemId).and(f.getTypeProperty().eq(AttachmentType.IMAGE.value())), AttachType.ITEM);
+		if(attach != null && i<attach.size())
+			return domain.getName()+"/aonItemImage/"+attach.get(i).getId()+"."+attach.get(i).getMimeType().getExtension();
+		else return "";
+	}
+	
 	public static boolean acceptProductValues(Domain domain, String login, Item item, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
 		ecommerceProduct.getProductData().getEcommerce().stream().forEach(r -> {
 			if(r.getValue().contains("{brand}"))
@@ -414,6 +422,18 @@ public class DBMarketplace {
 				r.setValue(r.getValue().replace("{price}", String.valueOf(item.getPrice())));
 			if(r.getValue().contains("{stock}"))
 				r.setValue(r.getValue().replace("{stock}", getItemStock(domain, login, item.getId()).toString()));
+			
+			if(r.getValue().contains("{image1}"))
+				r.setValue(r.getValue().replace("{image1}", getItemImageUrl(domain, login, item.getId(),0)));
+			if(r.getValue().contains("{image2}"))
+				r.setValue(r.getValue().replace("{image2}", getItemImageUrl(domain, login, item.getId(),1)));
+			if(r.getValue().contains("{image3}"))
+				r.setValue(r.getValue().replace("{image3}", getItemImageUrl(domain, login, item.getId(),2)));
+			if(r.getValue().contains("{image4}"))
+				r.setValue(r.getValue().replace("{image4}", getItemImageUrl(domain, login, item.getId(),3)));
+			if(r.getValue().contains("{image5}"))
+				r.setValue(r.getValue().replace("{image5}", getItemImageUrl(domain, login, item.getId(),4)));
+
 		});
 		byte[] data = null;
 		try {
