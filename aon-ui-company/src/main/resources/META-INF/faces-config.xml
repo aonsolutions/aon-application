@@ -165,15 +165,6 @@
 			</map-entries>
 		</managed-property>		
 		<managed-property>
-			<property-name>defaultExpressions</property-name>
-			<map-entries>
-				<map-entry>
-					<key>RegistryAddress_addressType</key>
-					<value>! #{registryCollections.addressTypes[0].value}</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>		
-		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>

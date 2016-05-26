@@ -8,7 +8,20 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-
+		<ui:param name="skipRemoveButton" value="#{controller.to.mainAddress}" />
+	
+		<ui:define name="beginFormListContent">
+			<aon:outputText value="&#160;&#160;&#160;" title="#{bundle.aon_principal}"
+				rendered="#{to.mainAddress}"
+				styleClass="aon-icon-company" />
+		</ui:define>
+		
+		<ui:define name="beginFormEditContent">
+			<aon:outputText value="&#160;&#160;&#160;" title="#{bundle.aon_principal}"
+				rendered="#{to.mainAddress}"
+				styleClass="aon-icon-company" />
+		</ui:define>
+		
 		<ui:define name="columns">
 			<f:facet name="footer">
 				<rich:columnGroup  rendered="#{formNew}">
