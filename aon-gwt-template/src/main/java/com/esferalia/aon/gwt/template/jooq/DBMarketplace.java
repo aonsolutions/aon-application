@@ -394,6 +394,7 @@ public class DBMarketplace {
 	}
 	
 	public static boolean acceptProductValues(Domain domain, String login, Item item, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
+		/* TODO VARIABLE SISTEMA
 		ecommerceProduct.getProductData().getEcommerce().stream().forEach(r -> {
 			if(r.getValue().contains("{brand}"))
 				r.setValue(r.getValue().replace("{brand}", item.getProduct().getBrandName()!= null? item.getProduct().getBrandName():""));
@@ -435,6 +436,7 @@ public class DBMarketplace {
 				r.setValue(r.getValue().replace("{image5}", getItemImageUrl(domain, login, item.getId(),4)));
 
 		});
+		*/
 		byte[] data = null;
 		try {
 			data = XMLUtils.writeXml(ecommerceProduct);

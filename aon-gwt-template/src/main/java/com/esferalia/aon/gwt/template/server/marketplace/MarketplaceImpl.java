@@ -147,6 +147,7 @@ public class MarketplaceImpl extends AonRemoteServiceServlet implements IMarketp
 				ecommerceProduct.getProduct().setId(item.getProduct().getId().toString());
 				ecommerceProduct.getProduct().setCode(item.getProduct().getCode());
 				ecommerceProduct.getProduct().setName(item.getProduct().getName());
+				ecommerceProduct.getProduct().setItem(item.getId().toString());
 			} catch (JAXBException e) {
 				ecommerceProduct = null;
 			}

@@ -189,6 +189,8 @@ public class EcommerceProduct implements Serializable, IsSerializable{
         protected String code;
         @XmlElement(name = "name", required = true)
         protected String name;
+        @XmlElement(name = "item", required = true)
+        protected String item;
         
 		public String getId() {
 			return id;
@@ -208,6 +210,13 @@ public class EcommerceProduct implements Serializable, IsSerializable{
 		public void setName(String name) {
 			this.name = name;
 		}
+		public String getItem() {
+			return item;
+		}
+		public void setItem(String item) {
+			this.item = item;
+		}
+		
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)

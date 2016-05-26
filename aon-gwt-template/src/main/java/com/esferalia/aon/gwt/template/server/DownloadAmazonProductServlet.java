@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.template.server;
 
+import static com.esferalia.aon.jooq.tables.Stock.STOCK;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,15 +18,19 @@ import javax.xml.bind.JAXBException;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
+import org.jooq.Record1;
+import org.jooq.Result;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.AttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.product.Item;
 
 @WebServlet(name = "DownloadAmazonProduct", urlPatterns = { "/aon_gwt_template/gwt_download_amazon_product/*" })
 public class DownloadAmazonProductServlet extends HttpServlet{
@@ -86,8 +92,18 @@ public class DownloadAmazonProductServlet extends HttpServlet{
 					e.printStackTrace();
 				}
 				Row row = sheet.createRow(i+3);
+
+				Item item = null;
+				if(ecp.getProduct().getItem()!= null){
+					Integer itemId = Integer.parseInt(ecp.getProduct().getItem());
+					item = AON.getItem(domainName, domainId, login, f -> f.getIdProperty().eq(itemId));
+				}
+				
 				for(Integer column = 0; column < ep.getProductData().getEcommerce().size(); column++){
-					row.createCell(column).setCellValue(ecp.getProductData().getEcommerce().get(column).getValue());
+					String value = getValue(domainName, domainId, login, ecp, column, item);
+					row.createCell(column).setCellValue(value);
+					//TODO VARIABLE SISTEMA!!!
+					
 				}
 			}
 
@@ -122,5 +138,77 @@ public class DownloadAmazonProductServlet extends HttpServlet{
         bais.close();
         out.flush();
         out.close();
+	}
+	
+	
+	private String getValue(String domainName, Integer domainId, String login,
+			EcommerceProduct ecp, Integer column, Item item) {
+		String val = ecp.getProductData().getEcommerce().get(column).getValue();
+		if(ecp.getProduct().getItem() == null) 
+			return val;
+		if(val.contains("{brand}"))
+			return val.replace("{brand}", item.getProduct().getBrandName()!= null? item.getProduct().getBrandName():"");
+		if(val.contains("{code}"))
+			return val.replace("{code}", item.getProduct().getCode() != null?item.getProduct().getCode():"");
+		if(val.contains("{title}"))
+			return val.replace("{title}", item.getProduct().getName()!= null?item.getProduct().getName():"");
+		if(val.contains("{barcode}"))
+			return val.replace("{barcode}", item.getBarcode()!= null?item.getBarcode():"");		
+		if(val.contains("{detail}"))
+			return val.replace("{detail}", item.getDetail()!= null?item.getDetail():"");
+		if(val.contains("{detail2}"))
+			return val.replace("{detail2}", item.getDetail2()!= null?item.getDetail2():"");
+		if(val.contains("{detail3}"))
+			return val.replace("{detail3}", item.getDetail3()!= null?item.getDetail3():"");
+		if(val.contains("{sku}")){
+			String code = item.getProduct().getCode()!= null?item.getProduct().getCode():"";
+			String detail = item.getDetail()!= null? item.getDetail():"";
+			String detail2 = item.getDetail2()!= null? item.getDetail2():"";
+			String detail3 = item.getDetail3()!= null? item.getDetail3():"";
+			return val.replace("{sku}", code+detail+detail2+detail3);
+		}
+		if(val.contains("{description}"))
+			return val.replace("{description}", item.getDescription()!= null? item.getDescription():"");
+		if(val.contains("{price}"))
+			return val.replace("{price}", String.valueOf(item.getPrice()));
+		if(val.contains("{stock}"))
+			return val.replace("{stock}", getItemStock(domainName, domainId, login, item.getId()).toString());
+		
+		if(val.contains("{image1}"))
+			return val.replace("{image1}", getItemImageUrl(domainName, domainId, login, item.getId(),0));
+		if(val.contains("{image2}"))
+			return val.replace("{image2}", getItemImageUrl(domainName, domainId, login, item.getId(),1));
+		if(val.contains("{image3}"))
+			return val.replace("{image3}", getItemImageUrl(domainName, domainId, login, item.getId(),2));
+		if(val.contains("{image4}"))
+			return val.replace("{image4}", getItemImageUrl(domainName, domainId, login, item.getId(),3));
+		if(val.contains("{image5}"))
+			return val.replace("{image5}", getItemImageUrl(domainName, domainId, login, item.getId(),4));
+		
+		return val;
+	
+	}
+	
+	public Double getItemStock(String domainName, Integer domainId, String login, Integer itemId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			Result<Record1<Double>> result = ctx.getDslContext().select(STOCK.QUANTITY).from(STOCK).where(STOCK.ITEM.eq(itemId)).fetch();
+			Double d = 0.0;
+			for (Record1<Double> r : result) 
+				d += r.getValue(STOCK.QUANTITY);
+			return d;
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public String getItemImageUrl(String domainName, Integer domainId, String login, Integer itemId, Integer i) {
+		LinkedList<Attach> attach = AON.getAttachList(domainName, domainId, login,
+				f -> f.getAttachModuleProperty().eq(itemId).and(f.getTypeProperty().eq(AttachmentType.IMAGE.value())), AttachType.ITEM);
+		if(attach != null && i<attach.size())
+			return domainName+"/aonItemImage/"+attach.get(i).getId()+"."+attach.get(i).getMimeType().getExtension();
+		else return "";
 	}
 }
