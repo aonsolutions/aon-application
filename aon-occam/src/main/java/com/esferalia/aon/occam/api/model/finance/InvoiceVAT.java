@@ -14,6 +14,8 @@ public class InvoiceVAT implements Serializable {
 	private double quota;
 	private double surcharge;
 	private double surchargeQuota;
+	private Integer investAsset;
+	private double deductiblePercent;
 	private double deductibleQuota;
 	private Integer outputAccountId;
 	private String outputAccountCode;
@@ -21,6 +23,9 @@ public class InvoiceVAT implements Serializable {
 	private Integer inputAccountId;
 	private String inputAccountCode;
 	private String inputAccountDescription;
+	private Integer adjAccountId;
+	private String adjAccountCode;
+	private String adjAccountDescription;
 	
 	private Integer expAccountId;
 	private String expAccountCode;
@@ -86,6 +91,23 @@ public class InvoiceVAT implements Serializable {
 
 	public InvoiceVAT setDeductibleQuota(double deductibleQuota) {
 		this.deductibleQuota = deductibleQuota;
+		return this;
+	}
+	public Integer getInvestAsset() {
+		return investAsset;
+	}
+	
+	public InvoiceVAT setInvestAsset(Integer investAsset) {
+		this.investAsset = investAsset;
+		return this;
+	}
+	
+	public double getDeductiblePercent() {
+		return deductiblePercent;
+	}
+
+	public InvoiceVAT setDeductiblePercent(double deductiblePercent) {
+		this.deductiblePercent = deductiblePercent;
 		return this;
 	}
 
@@ -167,6 +189,33 @@ public class InvoiceVAT implements Serializable {
 
 	public InvoiceVAT setExpAccountDescription(String expAccountDescription) {
 		this.expAccountDescription = expAccountDescription;
+		return this;
+	}
+
+	public Integer getAdjAccountId() {
+		return adjAccountId;
+	}
+
+	public InvoiceVAT setAdjAccountId(Integer adjAccountId) {
+		this.adjAccountId = adjAccountId;
+		return this;
+	}
+
+	public String getAdjAccountCode() {
+		return adjAccountCode;
+	}
+
+	public InvoiceVAT setAdjAccountCode(String adjAccountCode) {
+		this.adjAccountCode = adjAccountCode;
+		return this;
+	}
+
+	public String getAdjAccountDescription() {
+		return adjAccountDescription;
+	}
+
+	public InvoiceVAT setAdjAccountDescription(String adjAccountDescription) {
+		this.adjAccountDescription = adjAccountDescription;
 		return this;
 	}
 }

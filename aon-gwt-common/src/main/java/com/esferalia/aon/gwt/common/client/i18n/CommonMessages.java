@@ -660,9 +660,16 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Base Imp.")
 	String taxableBaseAbr();
 
-	@DefaultMessage("Cuota")
-	String quota();
+	@DefaultMessage("% Ded.")
+	String dedPercent();
 
+	@DefaultMessage("Cuota Deduc.")
+	String dedQuota();
+
+	@DefaultMessage("Cta. Ajustes")
+	String adjAccount();
+
+	
 	@DefaultMessage("Total")
 	String total();
 
@@ -2890,6 +2897,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Bienes de inversi\u00F3n")
 	String investAsset();
+
+	@DefaultMessage("Bien afecto")
+	String actInvestAsset();
 
 	@DefaultMessage("Nueva declaraci\u00F3n")
 	String newDeclaration();

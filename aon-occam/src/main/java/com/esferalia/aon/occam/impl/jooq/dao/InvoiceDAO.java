@@ -681,6 +681,11 @@ public class InvoiceDAO {
 					vat.setOutputAccountCode(outputVatAccount.getCode());
 					vat.setOutputAccountDescription(outputVatAccount.getDescription());
 				}
+				if (config.getVatNegativeAdjustAccount() != null) {
+					vat.setAdjAccountId( config.getVatNegativeAdjustAccount().getId());
+					vat.setAdjAccountCode( config.getVatNegativeAdjustAccount().getCode());
+					vat.setAdjAccountDescription( config.getVatNegativeAdjustAccount().getDescription());
+				}
 			}
 		});
 		ai.addVat(vat);

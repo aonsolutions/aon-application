@@ -40,6 +40,9 @@
 									<g:ListBox ui:field="withholdingTaxs"/>
 								</td>
 								<td>
+									<aon:DoubleBox ui:field="withholdingBase" visibleLength="12"/>
+								</td>
+								<td>
 									<aon:DoubleBox ui:field="withholdingPercent" visibleLength="6" maxLength="6"/>
 								</td>
 								<td>

@@ -63,6 +63,7 @@ public class ConfigurationDAO {
 				.setDefaultPaidVatAccount( getAccount(ctx, AppParam.ACC_DEFAULT_PAID_VAT_ACC) )
 				.setDefaultChargedRetAccount( getAccount(ctx, AppParam.ACC_DEFAULT_CHARGED_RET_ACC) )
 				.setDefaultPaidRetAccount( getAccount(ctx, AppParam.ACC_DEFAULT_PAID_RET_ACC) )
+				.setVatNegativeAdjustAccount( getAccount(ctx, AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC) )
 		;
 		return conf;
 	}

@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountingInvoice implements Serializable {
@@ -123,11 +124,41 @@ public class AccountingInvoice implements Serializable {
 	public boolean isOutputVatEnabled() {
 		return invoice != null && invoice.isOutputVatEnabled();
 	}
-	public static void main(String[] args) {
-		System.out.println( true ^ true);
-		System.out.println( true ^ false);
-		System.out.println( false ^ true);
-		System.out.println( false ^ false);
-		
+	
+	public void setWithholdingAccount(Account acc) {
+		if (getWithholdingData() == null) {
+			setWithholdingData( new InvoiceWithholding() );
+		}
+		getWithholdingData().setAccountId(acc.getId())
+			.setAccountCode(acc.getCode())
+			.setAccountDescription(acc.getDescription());
 	}	
+	public void setWithholdingBase(Double base) {
+		if (getWithholdingData() == null) {
+			setWithholdingData( new InvoiceWithholding() );
+		}
+		getWithholdingData().setBase(base);
+		getWithholdingData().setQuota(AonMathUtils.round(base * getWithholdingData().getPercentage() / 100));
+	}
+	public void setWithholdingPercent(Double percent) {
+		if (getWithholdingData() == null) {
+			setWithholdingData( new InvoiceWithholding() );
+		}
+		getWithholdingData().setPercentage(percent);
+		getWithholdingData().setQuota(AonMathUtils.round(getWithholdingData().getBase() * percent / 100));
+	}
+	public void setWithholdingQuota(Double quota) {
+		if (getWithholdingData() == null) {
+			setWithholdingData( new InvoiceWithholding() );
+		}
+		getWithholdingData().setQuota(quota);
+	}
+	public void setWithholdingType(WithholdingType type) {
+		if (getWithholdingData() == null) {
+			setWithholdingData( new InvoiceWithholding() );
+		}
+		getWithholdingData().setWithholdingType(type);
+	}
+	
+	
 }

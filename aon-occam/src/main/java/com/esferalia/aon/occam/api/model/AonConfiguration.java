@@ -28,6 +28,7 @@ public class AonConfiguration implements Serializable {
 	private Account defaultPaidVatAccount;
 	private Account defaultChargedRetAccount;
 	private Account defaultPaidRetAccount;
+	private Account vatNegativeAdjustAccount;
 
 	public Company getCompany() {
 		return company;
@@ -73,7 +74,7 @@ public class AonConfiguration implements Serializable {
 		return this;
 	}
 	
-	public LinkedList<InvestAsset> getInvestAsset() {
+	public LinkedList<InvestAsset> getInvestAssets() {
 		return investAsset;
 	}
 	public AonConfiguration setInvestAsset(LinkedList<InvestAsset> investAsset) {
@@ -179,6 +180,18 @@ public class AonConfiguration implements Serializable {
 
 	public AonConfiguration setDefaultPaidRetAccount(Account defaultPaidRetAccount) {
 		this.defaultPaidRetAccount = defaultPaidRetAccount;
+		return this;
+	}
+
+	public boolean isInvestAssetsAvailable() {
+		return (getInvestAssets() != null && getInvestAssets().size() > 0);
+	}
+	
+	public Account getVatNegativeAdjustAccount() {
+		return vatNegativeAdjustAccount;
+	}
+	public AonConfiguration setVatNegativeAdjustAccount(Account vatNegativeAdjustAccount) {
+		this.vatNegativeAdjustAccount = vatNegativeAdjustAccount;
 		return this;
 	}
 

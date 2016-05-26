@@ -33,7 +33,6 @@ public class InvoiceRecorder {
 					detail.setDebit(invoice.getTotalInvoice());
 				}
 			}
-			 
 	 	})
 		,SUPPLIER_CREDITOR( new IVisitor() {
 
@@ -53,7 +52,6 @@ public class InvoiceRecorder {
 					detail.setCredit(invoice.getTotalInvoice());
 				}
 			}
-			 
 	 	})
 		,INPUT_VAT( new IVisitor() {
 
@@ -70,12 +68,11 @@ public class InvoiceRecorder {
 									.setAccountDescription(vat.getInputAccountDescription());
 								map.put(vat.getInputAccountId(),detail);
 							}
-							detail.addDebit( vat.getQuota() + vat.getSurchargeQuota() );
+							detail.addDebit( vat.getDeductibleQuota() + vat.getSurchargeQuota() );
 						}
 					}
 				}
 			}
-			 
 	 	})
 		,OUTPUT_VAT( new IVisitor() {
 
@@ -92,15 +89,79 @@ public class InvoiceRecorder {
 										.setAccountDescription(vat.getOutputAccountDescription());
 								map.put(vat.getOutputAccountId(),detail);
 							}
-							detail.addCredit( vat.getQuota() + vat.getSurchargeQuota() );
+							detail.addCredit( vat.getDeductibleQuota() + vat.getSurchargeQuota() );
+						}
+					}
+				}
+			}
+	 	})
+		,VAT_NEGATIVE_ADJUST( new IVisitor() {
+
+			@Override
+			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
+				if (!invoice.isSales() 
+					&& !invoice.isSurcharge() 
+					&& invoice.isOutputVatEnabled() != invoice.isInputVatEnabled()
+					&& invoice.getVats() != null) {
+					for (InvoiceVAT vat : invoice.getVats()) {
+						if (vat.getAdjAccountId() != null && vat.getDeductibleQuota() !=  vat.getQuota()) {
+							AccountEntryDetail detail = map.get(vat.getAdjAccountId());
+							if (detail == null) {
+								detail = new AccountEntryDetail()
+										.setAccount(vat.getAdjAccountId())
+										.setAccountCode(vat.getAdjAccountCode())
+										.setAccountDescription(vat.getAdjAccountDescription());
+								map.put(vat.getAdjAccountId(),detail);
+							}
 						}
 					}
 				}
 			}
 			 
 	 	})
-//		,INPUT_WITHHOLDING(null)
-//		,OUTPUT_WITHHOLDING(null)
+		
+		,SALES_WITHHOLDING(new IVisitor() {
+
+			@Override
+			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
+				if (invoice.isSales() && invoice.isWithholding() && invoice.getWithholdingData() != null) {
+					if (invoice.getWithholdingData().getAccountId() != null 
+						&& invoice.getWithholdingData().getQuota() !=  0.0) {
+						AccountEntryDetail detail = map.get(invoice.getWithholdingData().getAccountId());
+						if (detail == null) {
+							detail = new AccountEntryDetail()
+									.setAccount(invoice.getWithholdingData().getAccountId())
+									.setAccountCode(invoice.getWithholdingData().getAccountCode())
+									.setAccountDescription(invoice.getWithholdingData().getAccountDescription());
+							map.put(invoice.getWithholdingData().getAccountId(),detail);
+						}
+						detail.addDebit( invoice.getWithholdingData().getQuota() );
+					}
+				}
+			}
+			 
+	 	})
+		,NOT_SALES_WITHHOLDING(new IVisitor() {
+
+			@Override
+			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
+				if (!invoice.isSales() && invoice.isWithholding() && invoice.getWithholdingData() != null) {
+					if (invoice.getWithholdingData().getAccountId() != null 
+						&& invoice.getWithholdingData().getQuota() !=  0.0) {
+						AccountEntryDetail detail = map.get(invoice.getWithholdingData().getAccountId());
+						if (detail == null) {
+							detail = new AccountEntryDetail()
+									.setAccount(invoice.getWithholdingData().getAccountId())
+									.setAccountCode(invoice.getWithholdingData().getAccountCode())
+									.setAccountDescription(invoice.getWithholdingData().getAccountDescription());
+							map.put(invoice.getWithholdingData().getAccountId(),detail);
+						}
+						detail.addCredit( invoice.getWithholdingData().getQuota() );
+					}
+				}
+			}
+			 
+	 	})
 		,SALES( new IVisitor() {
 
 			@Override

@@ -46,6 +46,7 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	
 	public static interface IInvoicePanelCallback extends IAccountEntryModuleCallback{
 		AccountingInvoice getInvoice();
+		boolean isInvestAssetsAvailable();
 		void transactionChanged();
 		void withholdingChanged();
 		void surchargeChanged();
@@ -53,6 +54,7 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 		void enableInvoiceTotal(boolean enable);
 		void paintEntry();
 		void setFocusOnRegistry();
+		
 	}
 
 	interface InvoicePanelDataBinder extends UiBinder<Widget, InvoicePanel> {}
@@ -83,6 +85,8 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	HTMLPanel withholdingPanel;
 	@UiField
 	ListBox withholdingTaxs;
+	@UiField
+	DoubleBox withholdingBase;
 	@UiField
 	DoubleBox withholdingPercent;
 	@UiField
@@ -178,6 +182,15 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 			@Override
 			public void paintEntry() {
 				paintEntry();
+			}
+
+			@Override
+			public boolean isInvestAssetsAvailable() {
+				return !invoice.isSales() 
+					&& !invoice.isSurcharge()
+					&& invoice.isOutputVatEnabled() != invoice.isInputVatEnabled()
+					&& callback.getConfiguration().isInvestAssetsAvailable();
+				
 			}
 
 		};
@@ -376,6 +389,32 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 		if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
             extraPanel.setFocus();
         }
+	}
+	
+	@UiHandler("withholdingBase")
+	public void onValueChangeWithholdingBase(ValueChangeEvent<Double> event) {
+		invoice.setWithholdingBase( event.getValue() );
+		withholdingQuota.setValue(invoice.getWithholdingData().getQuota());
+		paintEntry();
+	}
+	@UiHandler("withholdingPercent")
+	public void onValueChangeWithholdingPercent(ValueChangeEvent<Double> event) {
+		invoice.setWithholdingPercent( event.getValue() );
+		withholdingQuota.setValue(invoice.getWithholdingData().getQuota());
+		paintEntry();
+	}
+	
+	@UiHandler("withholdingQuota")
+	public void onValueChangeWithholdingQuota(ValueChangeEvent<Double> event) {
+		invoice.setWithholdingQuota( event.getValue() );
+		paintEntry();
+	}
+	
+	@UiHandler("withholdingAccount")
+	public void onSelectionWithholdingAccount(SelectionEvent<Account> event) {
+		invoice.setWithholdingAccount( event.getSelectedItem() );
+		callback.onShowBalance(event.getSelectedItem());
+		paintEntry();
 	}
 	
 }
