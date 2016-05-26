@@ -4,15 +4,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
-import com.esferalia.aon.gwt.template.shared.Item;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.DoubleClickEvent;
-import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -131,15 +129,15 @@ public class ProductList extends ResizeComposite{
 	private void loadDataGrid(){
 		final SingleSelectionModel<Item> selectionModel = new SingleSelectionModel<Item>();
 		dataGrid.setSelectionModel(selectionModel);
-		dataGrid.addDomHandler(new DoubleClickHandler() {
+		dataGrid.addDomHandler(new ClickHandler() {
 			@Override
-			public void onDoubleClick(final DoubleClickEvent event) {
+			public void onClick(final ClickEvent event) {
 				Item selected = selectionModel.getSelectedObject();
 				if (selected != null) {
 				    new ProductValuesDialog(selected, getLogin()).show();
 				}
 			}
-		}, DoubleClickEvent.getType());
+		}, ClickEvent.getType());
 		dataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		dataGrid.setAutoHeaderRefreshDisabled(true);
 		dataGrid.setEmptyTableWidget(new Label("No hay ning\u00fan archivo."));

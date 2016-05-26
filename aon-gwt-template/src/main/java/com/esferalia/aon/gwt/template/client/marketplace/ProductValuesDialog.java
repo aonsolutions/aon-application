@@ -11,10 +11,10 @@ import com.esferalia.aon.gwt.template.client.JsTemplates;
 import com.esferalia.aon.gwt.template.client.ProgressBarDialog;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData.Ecommerce;
-import com.esferalia.aon.gwt.template.shared.Item;
 import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -371,7 +371,7 @@ public class ProductValuesDialog extends CustomDialogB {
 			valueWidget = listValue;
 		} else {
 			CustomTextArea textAreaValue = new CustomTextArea();
-			textAreaValue.setText(ecommerce.getValue());
+			textAreaValue.setText(obtainValue(ecommerce));//ecommerce.getValue());
 			if(ecommerce.getValue()!=null && ecommerce.getValue().length()>30){
 				textAreaValue.extendLines();
 			} else {
@@ -380,6 +380,15 @@ public class ProductValuesDialog extends CustomDialogB {
 			valueWidget = textAreaValue;
 		}
 		return valueWidget;
+	}
+	
+	private String obtainValue(Ecommerce ecommerce) {
+		/* TODO AL INICIALIZAR INTRODUCIR VALORES DEL ITEM!!!
+		 if(ecommerce.getValue() == null || ecommerce.getValue().equals(""))
+			if(ecommerce.getName().equals("marca")) 
+				return item.getProduct().getBrandName();
+		 */
+		return ecommerce.getValue();
 	}
 	
 	

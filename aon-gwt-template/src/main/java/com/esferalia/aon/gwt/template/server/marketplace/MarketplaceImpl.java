@@ -16,8 +16,7 @@ import com.esferalia.aon.gwt.template.client.marketplace.IMarketplace;
 import com.esferalia.aon.gwt.template.jooq.DBMarketplace;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
-import com.esferalia.aon.gwt.template.shared.Item;
-import com.esferalia.aon.gwt.template.shared.Product;
+
 import com.esferalia.aon.gwt.template.shared.RegistryAttachTag;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
 import com.esferalia.aon.occam.api.AON;
@@ -26,6 +25,8 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.TagType;
 

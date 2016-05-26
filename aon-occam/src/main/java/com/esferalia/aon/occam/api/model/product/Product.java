@@ -12,6 +12,7 @@ public class Product implements Serializable{
 	String name;
 	String code;
 	Integer brand;
+	String brandName;
 	Integer category;
 	Byte inventoriable;
 	Byte serializable = 0;
@@ -248,5 +249,13 @@ public class Product implements Serializable{
 		return this;
 	}
 	
+	public String getBrandName(){
+		return brandName;
+	}
+	
+	public Product setBrandName(String brandName){
+		this.brandName = brandName;
+		return this;
+	}
 	
 }

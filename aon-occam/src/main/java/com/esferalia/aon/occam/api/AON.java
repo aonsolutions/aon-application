@@ -741,7 +741,7 @@ public class AON {
 			BrandFilter filter){
 		AONContext ctx = null;
 		try{
-			AONContext.getAONContext(domainName, domainId, login);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getProduct().getBrand(ctx, filter);
 		} finally {
 			if(ctx != null) ctx.close();

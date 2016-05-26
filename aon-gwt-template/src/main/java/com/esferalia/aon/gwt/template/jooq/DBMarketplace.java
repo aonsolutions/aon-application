@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
+import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -26,8 +27,6 @@ import org.jooq.Result;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
-import com.esferalia.aon.gwt.template.shared.Item;
-import com.esferalia.aon.gwt.template.shared.Product;
 import com.esferalia.aon.gwt.template.shared.RegistryAttachTag;
 import com.esferalia.aon.gwt.template.shared.marketplace.AmazonDelivery;
 import com.esferalia.aon.gwt.template.shared.marketplace.CarrierCode;
@@ -45,13 +44,14 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.AttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
-import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 
 
@@ -244,10 +244,10 @@ public class DBMarketplace {
 				product.setId(record.getId());
 				product.setCode(record.getCode());
 				product.setName(record.getName());
+				product.setBrandName(record.getBrand() != null? AON.getBrand(domain.getName(), domain.getId(), login, record.getBrand()).getName():"");
 				list.add(product);
 			});
 			return list;
-			
 		} finally {
 			if(ctx != null)
 				ctx.close();
@@ -291,6 +291,9 @@ public class DBMarketplace {
 			item.setDetail2(record.getDetail2());
 			item.setDetail3(record.getDetail3());
 			item.setProduct(products.stream().filter(p -> (p.getId().equals(record.getProduct()))).findFirst().get());
+			item.setBarcode(record.getBarcode());
+			item.setDescription(record.getDescription());
+			item.setPrice(record.getPrice());
 			list.add(item);
 		});
 	}
@@ -367,7 +370,51 @@ public class DBMarketplace {
 		return itemId;
 	}
 	
+	public static Double getItemStock(Domain domain, String login, Integer itemId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
+			Result<Record1<Double>> result = ctx.getDslContext().select(STOCK.QUANTITY).from(STOCK).where(STOCK.ITEM.eq(itemId)).fetch();
+			Double d = 0.0;
+			for (Record1<Double> r : result) 
+				d += r.getValue(STOCK.QUANTITY);
+			return d;
+		} finally {
+			if(ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static boolean acceptProductValues(Domain domain, String login, Item item, String templateName, EcommerceProduct ecommerceProduct, Attach attach){
+		ecommerceProduct.getProductData().getEcommerce().stream().forEach(r -> {
+			if(r.getValue().contains("{brand}"))
+				r.setValue(r.getValue().replace("{brand}", item.getProduct().getBrandName()!= null? item.getProduct().getBrandName():""));
+			if(r.getValue().contains("{code}"))
+				r.setValue(r.getValue().replace("{code}", item.getProduct().getCode() != null?item.getProduct().getCode():""));
+			if(r.getValue().contains("{title}"))
+				r.setValue(r.getValue().replace("{title}", item.getProduct().getName()!= null?item.getProduct().getName():""));
+			if(r.getValue().contains("{barcode}"))
+				r.setValue(r.getValue().replace("{barcode}", item.getBarcode()!= null?item.getBarcode():""));		
+			if(r.getValue().contains("{detail}"))
+				r.setValue(r.getValue().replace("{detail}", item.getDetail()!= null?item.getDetail():""));
+			if(r.getValue().contains("{detail2}"))
+				r.setValue(r.getValue().replace("{detail2}", item.getDetail2()!= null?item.getDetail2():""));
+			if(r.getValue().contains("{detail3}"))
+				r.setValue(r.getValue().replace("{detail3}", item.getDetail3()!= null?item.getDetail3():""));
+			if(r.getValue().contains("{sku}")){
+				String code = item.getProduct().getCode()!= null?item.getProduct().getCode():"";
+				String detail = item.getDetail()!= null? item.getDetail():"";
+				String detail2 = item.getDetail2()!= null? item.getDetail2():"";
+				String detail3 = item.getDetail3()!= null? item.getDetail3():"";
+				r.setValue(r.getValue().replace("{sku}", code+detail+detail2+detail3));
+			}
+			if(r.getValue().contains("{description}"))
+				r.setValue(r.getValue().replace("{description}", item.getDescription()!= null? item.getDescription():""));
+			if(r.getValue().contains("{price}"))
+				r.setValue(r.getValue().replace("{price}", String.valueOf(item.getPrice())));
+			if(r.getValue().contains("{stock}"))
+				r.setValue(r.getValue().replace("{stock}", getItemStock(domain, login, item.getId()).toString()));
+		});
 		byte[] data = null;
 		try {
 			data = XMLUtils.writeXml(ecommerceProduct);

@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Vector;
 
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
-import com.esferalia.aon.gwt.template.shared.Item;
-import com.esferalia.aon.gwt.template.shared.Product;
 import com.esferalia.aon.gwt.template.shared.RegistryAttachTag;
 import com.esferalia.aon.gwt.template.shared.marketplace.Order;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
