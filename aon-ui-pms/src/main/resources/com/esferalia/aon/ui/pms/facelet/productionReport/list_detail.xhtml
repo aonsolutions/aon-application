@@ -10,12 +10,10 @@
 	<aon:panel rendered="#{!productionReport.nevv}">
 		<c:if test="#{!skipTableHeader}">
 			<f:facet name="header">
-				<aon:outputText value="#{tableHeader}"  
-					styleClass="#{(testing ? 'aon-label-error':'')}" />
+				<aon:outputText value="#{tableHeader}" />
 			</f:facet>
 		</c:if>
-		<aon:dataTable id="#{tableHeader}-data"  
-			value="#{model}" var="to"
+		<aon:dataTable value="#{model}" var="to"
 			styleClass="aon-width-all aon-margin-top">
 			
 			<aon:rowSelector toggleOnClick="#{false}" />
@@ -23,10 +21,11 @@
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto aon-nowrap">
 				<c:if test="#{!skipHeaders}">
 					<f:facet name="header">
-						<aon:outputLabel value="#{name}" />
+						<aon:outputText value="#{name}" />
 					</f:facet>
 				</c:if>
-				<aon:outputText value="#{to.description}"  />
+				<aon:outputText value="#{to.description}" 
+					styleClass="#{(testing ? 'aon-label-info':'')}" />
 				<c:if test="#{!skipFooters}">
 					<f:facet name="footer">
 						<aon:outputText value="#{bundle.aon_total}"  />
@@ -37,7 +36,7 @@
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
 				<c:if test="#{!skipHeaders}">
 					<f:facet name="header">
-						<aon:outputLabel value="#{bundle.aon_day}" />
+						<aon:outputText value="#{bundle.aon_day}" />
 					</f:facet>
 				</c:if>
 				<aon:outputText value="#{to.dayAmount==0.0 and defaultEmpty ? '' : to.dayAmount}" 
@@ -58,7 +57,7 @@
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
 				<c:if test="#{!skipHeaders}">
 					<f:facet name="header">
-						<aon:outputLabel value="#{bundle.aon_day} (#{productionReport.previousYear})" />
+						<aon:outputText value="#{bundle.aon_day} (#{productionReport.previousYear})" />
 					</f:facet>
 				</c:if>
 				<aon:outputText value="#{to.previousDayAmount==0.0 and defaultEmpty ? '' : to.previousDayAmount}" 
@@ -79,7 +78,7 @@
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
 				<c:if test="#{!skipHeaders}">
 					<f:facet name="header">
-						<aon:outputLabel value="#{bundle.aon_month}" />
+						<aon:outputText value="#{bundle.aon_month}" />
 					</f:facet>
 				</c:if>
 				<aon:outputText value="#{to.monthAmount==0.0 and defaultEmpty ? '' : to.monthAmount}" 
@@ -100,7 +99,7 @@
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
 				<c:if test="#{!skipHeaders}">
 					<f:facet name="header">
-						<aon:outputLabel value="#{bundle.aon_month} (#{productionReport.previousYear})" />
+						<aon:outputText value="#{bundle.aon_month} (#{productionReport.previousYear})" />
 					</f:facet>
 				</c:if>
 				<aon:outputText value="#{to.previousMonthAmount==0.0 and defaultEmpty ? '' : to.previousMonthAmount}" 
@@ -121,7 +120,7 @@
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
 				<c:if test="#{!skipHeaders}">
 					<f:facet name="header">
-						<aon:outputLabel value="#{bundle.aon_year}" />
+						<aon:outputText value="#{bundle.aon_year}" />
 					</f:facet>
 				</c:if>
 				<aon:outputText value="#{to.yearAmount==0.0 and defaultEmpty ? '' : to.yearAmount}" 
@@ -142,7 +141,7 @@
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
 				<c:if test="#{!skipHeaders}">
 					<f:facet name="header">
-						<aon:outputLabel value="#{bundle.aon_year} (#{productionReport.previousYear})" />
+						<aon:outputText value="#{bundle.aon_year} (#{productionReport.previousYear})" />
 					</f:facet>
 				</c:if>
 				<aon:outputText value="#{to.previousYearAmount==0.0 and defaultEmpty ? '' : to.previousYearAmount}" 

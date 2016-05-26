@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -171,23 +170,10 @@ public class ProductionReportController implements Serializable {
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException {
 		hotel = null;
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-		cal.add(Calendar.DAY_OF_MONTH, -1);
-		date = cal.getTime();
+		date = DateUtils.addDays(new Date(), -1);
 		init();
 	}
-	
-	public void onChangeDate(ValueChangeEvent event){
-		if(event.getNewValue()!=null){
-			Date date = (Date) event.getNewValue();
-			if(date.after(new Date())){
-				AonUtil.addErrorMessage("La fecha debe ser anterior al dia actual.");
-				throw new AbortProcessingException("La fecha debe ser anterior al dia actual.");
-			}
-		}
-	}
-	
+		
 	private void init(){
 		testingProductionSql = false;
 		testingPendingSql = false;
@@ -215,15 +201,24 @@ public class ProductionReportController implements Serializable {
 	}
 	
 	public void onSearch(ActionEvent event) {
+		
+		init();
+		
+		if (getDate().after(new Date())
+				|| DateUtils.isSameDay(getDate(), new Date())) {
+			date = DateUtils.addDays(new Date(), -1);
+			AonUtil.addErrorMessage("La fecha debe ser anterior al dia actual.");
+			throw new AbortProcessingException(
+					"La fecha debe ser anterior al dia actual.");
+		}
+		
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
 		int defaultInactiveInterval = session.getMaxInactiveInterval();
 		
-		init();
-		
 		try {
 			session.setMaxInactiveInterval(6*60);
-			buildProductionReport();
+			buildReport();
 		} catch (AonSQLException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
@@ -293,7 +288,8 @@ public class ProductionReportController implements Serializable {
 		}
 	}
 	
-	private void buildProductionReport() throws AonSQLException {
+	private void buildReport() throws AonSQLException {
+		
 		SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
 		
 	    Calendar cal = Calendar.getInstance();
@@ -307,183 +303,108 @@ public class ProductionReportController implements Serializable {
 		Integer hotel = getHotel().getId();
 		Integer wp = getHotel().getWorkPlace().getId();
 		
+		ApplicationParameter ap = AppParamUtil.getParameter("PMS_PRODUCTION_REPORT_PCATEGORY");
+		int productCategory = 0;
+		try {
+			productCategory = (ap==null || ap.getValue()==null)?11:Integer.parseInt(ap.getValue());
+		} catch (Exception e) {
+			productCategory = 11;
+		}
+		
+		Date logDate = new Date();
+		LOGGER.info("****** INFORME DE PRODUCCION **************");
+		
+		
+		LOGGER.info("****** Inicio de la busqueda de produccion       -> " + timeFormatter.format(new Date()));
+		Date tmpDate = new Date();
+		buildProductionReport(date, previousDate, year, previousYear, month, hotel, wp, productCategory);
+		long diff = (new Date()).getTime() - tmpDate.getTime();
+		LOGGER.info("****** Fin de la busqueda de produccion          -> " + timeFormatter.format(new Date()) 
+				+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
+		
+		
+		LOGGER.info("****** Inicio de la busqueda de prod. pendiente  -> " + timeFormatter.format(new Date()));
+		tmpDate = new Date();
+		buildPendingProductionReport(date, previousDate, year, previousYear, month, hotel, wp);
+		diff = (new Date()).getTime() - tmpDate.getTime();
+		LOGGER.info("****** Fin de la busqueda de prod. pendiente     -> " + timeFormatter.format(new Date()) 
+				+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
+		
+		
+		LOGGER.info("****** Inicio de la busqueda de pax              -> " + timeFormatter.format(new Date()));
+		tmpDate = new Date();
+		buildPaxReport(date, previousDate, year, previousYear, month, hotel);
+		diff = (new Date()).getTime() - tmpDate.getTime();
+		LOGGER.info("****** Fin de la busqueda de pax                 -> " + timeFormatter.format(new Date()) 
+				+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
+		
+		
+		LOGGER.info("****** Inicio de la busqueda de facturas         -> " + timeFormatter.format(new Date()));
+		tmpDate = new Date();
+		buildPaymethodReport(date, previousDate, year, previousYear, month, hotel, wp);
+		diff = (new Date()).getTime() - tmpDate.getTime();
+		LOGGER.info("****** Fin de la busqueda de facturas            -> " + timeFormatter.format(new Date()) 
+				+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
+		
+		
+		diff = (new Date()).getTime() - logDate.getTime();
+        LOGGER.info("****** Tiempo TOTAL                              -> " + diff + " seg. (" 
+        		+ (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg.)" );
+		
+	}
+		
+	private void buildProductionReport(java.sql.Date date,
+			java.sql.Date previousDate, Integer year, Integer previousYear,
+			Integer month, Integer hotel, Integer wp, Integer productCategory) throws AonSQLException {
 		Connection connection = null;
 		PreparedStatement productionStmt = null;
-		PreparedStatement pendingProductionStmt = null;
-		PreparedStatement paxStmt = null;
-		PreparedStatement paymethodStmt = null;
 		ResultSet productionRs = null;
-		ResultSet pendingProductionRs = null;
-		ResultSet paxRs = null;
-		ResultSet paymethodRs = null;
-		
 		try {
-			Date logDate = new Date();
-			LOGGER.info("****** INFORME DE PRODUCCION **************");
-			
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			productionStmt = connection.prepareStatement(getHotelProductionSQL(date, previousDate, year, previousYear, month, hotel, wp));
-			pendingProductionStmt = connection.prepareStatement(getPendingHotelProductionSQL(date, previousDate, hotel, year, previousYear, month));
-			paxStmt = connection.prepareStatement(getPaxSQL(date, previousDate, year, previousYear, month, hotel));
-			paymethodStmt = connection.prepareStatement(getInvoicePayMethodsSQL(date, previousDate, year, previousYear, month, wp));
-			
-			LOGGER.info("****** Inicio de la busqueda de produccion       -> " + timeFormatter.format(new Date()));
-			Date tmpDate = new Date();
-			productionRs = productionStmt.executeQuery();
-			long diff = (new Date()).getTime() - tmpDate.getTime();
-			LOGGER.info("****** Fin de la busqueda de produccion          -> " + timeFormatter.format(new Date()) 
-					+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
-			
+			try {
+				productionStmt = connection.prepareStatement(getHotelProductionSQL(
+						date, previousDate, year, previousYear, month, hotel, wp, productCategory));
+				productionRs = productionStmt.executeQuery();
+			} catch (Exception e) {
+				SQLUtils.closeQuietly(productionStmt);
+				SQLUtils.closeQuietly(productionRs);
+				testingProductionSql = false;
+				LOGGER.error("@#$%&@#$%&!!!! " + e.getMessage());
+				LOGGER.error("ERROR EN LA QUERY DE TEST DE PRODUCCION, continua con la query por defecto");
+				productionStmt = connection.prepareStatement(hotelProductionSQL(
+						date, previousDate, year, previousYear, month, hotel, wp, productCategory));
+				productionRs = productionStmt.executeQuery();
+			}
 			while (productionRs.next()) {
 				String description = productionRs.getString(1);
 				String period = productionRs.getString(2);
 				Double amount = productionRs.getDouble(3);
-				
-				if(!productionMap.containsKey(description)){
+
+				if (!productionMap.containsKey(description)) {
 					ReportObject ro = new ReportObject();
 					ro.setDescription(description);
 					productionMap.put(description, ro);
 				}
-				if(period.equals("ANIO")){
+				if (period.equals("ANIO")) {
 					productionMap.get(description).setYearAmount(amount);
-				} else if(period.equals("ANIO_ANTERIOR")){
-					productionMap.get(description).setPreviousYearAmount(amount);
-				} else if(period.equals("MES")){
+				} else if (period.equals("ANIO_ANTERIOR")) {
+					productionMap.get(description)
+							.setPreviousYearAmount(amount);
+				} else if (period.equals("MES")) {
 					productionMap.get(description).setMonthAmount(amount);
-				} else if(period.equals("MES_ANIO_ANTERIOR")){
-					productionMap.get(description).setPreviousMonthAmount(amount);
-				} else if(period.equals("DIA")){
+				} else if (period.equals("MES_ANIO_ANTERIOR")) {
+					productionMap.get(description).setPreviousMonthAmount(
+							amount);
+				} else if (period.equals("DIA")) {
 					productionMap.get(description).setDayAmount(amount);
-				} else if(period.equals("DIA_ANIO_ANTERIOR")){
+				} else if (period.equals("DIA_ANIO_ANTERIOR")) {
 					productionMap.get(description).setPreviousDayAmount(amount);
 				}
 			}
-			
+
 			productionModel = buildModel(productionMap);
 			productionTotal = buildTotalizeTo(productionMap);
-			
-			LOGGER.info("****** Inicio de la busqueda de prod. pendiente  -> " + timeFormatter.format(new Date()));
-			tmpDate = new Date();
-			pendingProductionRs = pendingProductionStmt.executeQuery();
-			diff = (new Date()).getTime() - tmpDate.getTime();
-			LOGGER.info("****** Fin de la busqueda de prod. pendiente     -> " + timeFormatter.format(new Date()) 
-					+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
-			while (pendingProductionRs.next()) {
-				String description = pendingProductionRs.getString(1);
-				String period = pendingProductionRs.getString(2);
-				Double amount = pendingProductionRs.getDouble(3);
-				
-				if(!pendingProductionMap.containsKey(description)){
-					ReportObject ro = new ReportObject();
-					ro.setDescription(description);
-					pendingProductionMap.put(description, ro);
-				}
-				
-				if(period.equals("ANIO")){
-					double _amount = pendingProductionMap.get(description).getYearAmount();
-					pendingProductionMap.get(description).setYearAmount(_amount+amount);
-				} else if(period.equals("ANIO_ANTERIOR")){
-					double _amount = pendingProductionMap.get(description).getPreviousYearAmount();
-					pendingProductionMap.get(description).setPreviousYearAmount(_amount+amount);
-				} else if(period.equals("MES")){
-					double _amount = pendingProductionMap.get(description).getMonthAmount();
-					pendingProductionMap.get(description).setMonthAmount(_amount+amount);
-				} else if(period.equals("MES_ANIO_ANTERIOR")){
-					double _amount = pendingProductionMap.get(description).getPreviousMonthAmount();
-					pendingProductionMap.get(description).setPreviousMonthAmount(_amount+amount);
-				} else if(period.equals("DIA")){
-					double _amount = pendingProductionMap.get(description).getDayAmount();
-					pendingProductionMap.get(description).setDayAmount(_amount+amount);
-				} else if(period.equals("DIA_ANIO_ANTERIOR")){
-					double _amount = pendingProductionMap.get(description).getPreviousDayAmount();
-					pendingProductionMap.get(description).setPreviousDayAmount(_amount+amount);
-				}
-			}
-			
-			pendingProductionModel = buildModel(pendingProductionMap);
-			summaryModel = buildModel(getSummaryMap());
-			
-			LOGGER.info("****** Inicio de la busqueda de pax              -> " + timeFormatter.format(new Date()));
-			tmpDate = new Date();
-			paxRs = paxStmt.executeQuery();
-			diff = (new Date()).getTime() - tmpDate.getTime();
-			LOGGER.info("****** Fin de la busqueda de pax                 -> " + timeFormatter.format(new Date()) 
-					+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
-			while (paxRs.next()) {
-				String period = paxRs.getString(1);
-				Double amount = paxRs.getDouble(2);
-				if(!paxMap.containsKey("PAX")){
-					ReportObject ro = new ReportObject();
-					ro.setDescription("PAX");
-					paxMap.put("PAX", ro);
-				}
-				if(period.equals("ANIO")){
-					paxMap.get("PAX").setYearAmount(amount);
-				} else if(period.equals("ANIO_ANTERIOR")){
-					paxMap.get("PAX").setPreviousYearAmount(amount);
-				} else if(period.equals("MES")){
-					paxMap.get("PAX").setMonthAmount(amount);
-				} else if(period.equals("MES_ANIO_ANTERIOR")){
-					paxMap.get("PAX").setPreviousMonthAmount(amount);
-				} else if(period.equals("DIA")){
-					paxMap.get("PAX").setDayAmount(amount);
-				} else if(period.equals("DIA_ANIO_ANTERIOR")){
-					paxMap.get("PAX").setPreviousDayAmount(amount);
-				}
-			}
-			
-			paxModel = buildModel(paxMap);
-			ratioModel = buildModel(getProductionRatioMap());
-			ratioTotal = buildTotalizeTo(getProductionRatioMap());
-			
-			LOGGER.info("****** Inicio de la busqueda de facturas         -> " + timeFormatter.format(new Date()));
-			tmpDate = new Date();
-			paymethodRs = paymethodStmt.executeQuery();
-			diff = (new Date()).getTime() - tmpDate.getTime();
-			LOGGER.info("****** Fin de la busqueda de facturas            -> " + timeFormatter.format(new Date()) 
-					+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
-			while (paymethodRs.next()) {
-				String description = paymethodRs.getString(1);
-				String type = paymethodRs.getString(2);
-				String period = paymethodRs.getString(3);
-				Double amount = paymethodRs.getDouble(4);
-				
-				Map<String, ReportObject> map = null;
-				if(type.equalsIgnoreCase("NORMAL")){
-					map = paymethodMap;
-				} else if(type.equalsIgnoreCase("ANTICIPO")){
-					map = advancePaymethodMap;
-				}
-				
-				if(!map.containsKey(description)){
-					ReportObject ro = new ReportObject();
-					ro.setDescription(description);
-					map.put(description, ro);
-				}
-				if(period.equals("ANIO")){
-					map.get(description).setYearAmount(amount);
-				} else if(period.equals("ANIO_ANTERIOR")){
-					map.get(description).setPreviousYearAmount(amount);
-				} else if(period.equals("MES")){
-					map.get(description).setMonthAmount(amount);
-				} else if(period.equals("MES_ANIO_ANTERIOR")){
-					map.get(description).setPreviousMonthAmount(amount);
-				} else if(period.equals("DIA")){
-					map.get(description).setDayAmount(amount);
-				} else if(period.equals("DIA_ANIO_ANTERIOR")){
-					map.get(description).setPreviousDayAmount(amount);
-				}
-			}
-			
-			advancePaymethodModel = buildModel(advancePaymethodMap);
-			advancePaymethodTotal = buildTotalizeTo(advancePaymethodMap);
 
-			paymethodModel = buildModel(paymethodMap);
-			paymethodTotal = buildTotalizeTo(paymethodMap);
-			
-			diff = (new Date()).getTime() - logDate.getTime();
-	        LOGGER.info("****** Tiempo TOTAL                              -> " + diff + " seg. (" 
-	        		+ (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg.)" );
 		} catch (Throwable e) {
 			try {
 				connection.rollback();
@@ -492,14 +413,229 @@ public class ProductionReportController implements Serializable {
 			throw new AonSQLException(e.getMessage());
 		} finally {
 			SQLUtils.closeQuietly(productionRs);
-			SQLUtils.closeQuietly(paxRs);
-			SQLUtils.closeQuietly(paymethodRs);
 			SQLUtils.closeQuietly(productionStmt);
+			SQLUtils.closeQuietly(connection);
+		}
+	}
+	
+	private void buildPendingProductionReport(java.sql.Date date,
+			java.sql.Date previousDate, Integer year, Integer previousYear,
+			Integer month, Integer hotel, Integer wp) throws AonSQLException {
+		Connection connection = null;
+		PreparedStatement pendingProductionStmt = null;
+		ResultSet pendingProductionRs = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			try {
+				pendingProductionStmt = connection
+						.prepareStatement(getPendingHotelProductionSQL(date,
+								previousDate, hotel, year, previousYear, month));
+				pendingProductionRs = pendingProductionStmt.executeQuery();
+			} catch (Exception e) {
+				SQLUtils.closeQuietly(pendingProductionStmt);
+				SQLUtils.closeQuietly(pendingProductionRs);
+				testingPendingSql = false;
+				LOGGER.error("@#$%&@#$%&!!!! " + e.getMessage());
+				LOGGER.error("ERROR EN LA QUERY DE TEST DE PRODUCCION PENDIENTE, continua con la query por defecto");
+				pendingProductionStmt = connection
+						.prepareStatement(pendingHotelProductionSQL(date,
+								previousDate, hotel, year, previousYear, month));
+				pendingProductionRs = pendingProductionStmt.executeQuery();
+			}
+			while (pendingProductionRs.next()) {
+				String description = pendingProductionRs.getString(1);
+				String period = pendingProductionRs.getString(2);
+				Double amount = pendingProductionRs.getDouble(3);
+
+				if (!pendingProductionMap.containsKey(description)) {
+					ReportObject ro = new ReportObject();
+					ro.setDescription(description);
+					pendingProductionMap.put(description, ro);
+				}
+
+				if (period.equals("ANIO")) {
+					double _amount = pendingProductionMap.get(description)
+							.getYearAmount();
+					pendingProductionMap.get(description).setYearAmount(
+							_amount + amount);
+				} else if (period.equals("ANIO_ANTERIOR")) {
+					double _amount = pendingProductionMap.get(description)
+							.getPreviousYearAmount();
+					pendingProductionMap.get(description)
+							.setPreviousYearAmount(_amount + amount);
+				} else if (period.equals("MES")) {
+					double _amount = pendingProductionMap.get(description)
+							.getMonthAmount();
+					pendingProductionMap.get(description).setMonthAmount(
+							_amount + amount);
+				} else if (period.equals("MES_ANIO_ANTERIOR")) {
+					double _amount = pendingProductionMap.get(description)
+							.getPreviousMonthAmount();
+					pendingProductionMap.get(description)
+							.setPreviousMonthAmount(_amount + amount);
+				} else if (period.equals("DIA")) {
+					double _amount = pendingProductionMap.get(description)
+							.getDayAmount();
+					pendingProductionMap.get(description).setDayAmount(
+							_amount + amount);
+				} else if (period.equals("DIA_ANIO_ANTERIOR")) {
+					double _amount = pendingProductionMap.get(description)
+							.getPreviousDayAmount();
+					pendingProductionMap.get(description).setPreviousDayAmount(
+							_amount + amount);
+				}
+			}
+
+			pendingProductionModel = buildModel(pendingProductionMap);
+			summaryModel = buildModel(getSummaryMap());
+
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+			throw new AonSQLException(e.getMessage());
+		} finally {
+			SQLUtils.closeQuietly(pendingProductionRs);
+			SQLUtils.closeQuietly(pendingProductionStmt);
+			SQLUtils.closeQuietly(connection);
+		}
+	}
+	
+	private void buildPaxReport(java.sql.Date date, java.sql.Date previousDate,
+			Integer year, Integer previousYear, Integer month, Integer hotel)
+			throws AonSQLException {
+		Connection connection = null;
+		PreparedStatement paxStmt = null;
+		ResultSet paxRs = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			try {
+				paxStmt = connection.prepareStatement(getPaxSQL(date, previousDate,
+						year, previousYear, month, hotel));
+				paxRs = paxStmt.executeQuery();
+			} catch (Exception e) {
+				SQLUtils.closeQuietly(paxStmt);
+				SQLUtils.closeQuietly(paxRs);
+				testingPaxSql = false;
+				LOGGER.error("@#$%&@#$%&!!!! " + e.getMessage());
+				LOGGER.error("ERROR EN LA QUERY DE TEST DE PAX, continua con la query por defecto");
+				paxStmt = connection.prepareStatement(paxSQL(date, previousDate,
+						year, previousYear, month, hotel));
+				paxRs = paxStmt.executeQuery();
+			}
+			while (paxRs.next()) {
+				String period = paxRs.getString(1);
+				Double amount = paxRs.getDouble(2);
+				if (!paxMap.containsKey("PAX")) {
+					ReportObject ro = new ReportObject();
+					ro.setDescription("PAX");
+					paxMap.put("PAX", ro);
+				}
+				if (period.equals("ANIO")) {
+					paxMap.get("PAX").setYearAmount(amount);
+				} else if (period.equals("ANIO_ANTERIOR")) {
+					paxMap.get("PAX").setPreviousYearAmount(amount);
+				} else if (period.equals("MES")) {
+					paxMap.get("PAX").setMonthAmount(amount);
+				} else if (period.equals("MES_ANIO_ANTERIOR")) {
+					paxMap.get("PAX").setPreviousMonthAmount(amount);
+				} else if (period.equals("DIA")) {
+					paxMap.get("PAX").setDayAmount(amount);
+				} else if (period.equals("DIA_ANIO_ANTERIOR")) {
+					paxMap.get("PAX").setPreviousDayAmount(amount);
+				}
+			}
+
+			paxModel = buildModel(paxMap);
+			ratioModel = buildModel(getProductionRatioMap());
+			ratioTotal = buildTotalizeTo(getProductionRatioMap());
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+			throw new AonSQLException(e.getMessage());
+		} finally {
+			SQLUtils.closeQuietly(paxRs);
 			SQLUtils.closeQuietly(paxStmt);
+			SQLUtils.closeQuietly(connection);
+		}
+	}
+	
+	private void buildPaymethodReport(java.sql.Date date,
+			java.sql.Date previousDate, Integer year, Integer previousYear,
+			Integer month, Integer hotel, Integer wp) throws AonSQLException {
+		Connection connection = null;
+		PreparedStatement paymethodStmt = null;
+		ResultSet paymethodRs = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			try {
+				paymethodStmt = connection
+						.prepareStatement(getInvoicePayMethodsSQL(date,
+								previousDate, year, previousYear, month, wp));
+				paymethodRs = paymethodStmt.executeQuery();
+			} catch (Exception e) {
+				SQLUtils.closeQuietly(paymethodStmt);
+				SQLUtils.closeQuietly(paymethodRs);
+				testingPaymethodSql = false;
+				LOGGER.error("@#$%&@#$%&!!!! " + e.getMessage());
+				LOGGER.error("ERROR EN LA QUERY DE TEST DE PAYMETHOD, continua con la query por defecto");
+				paymethodStmt = connection
+						.prepareStatement(invoicePayMethodsSQL(date,
+								previousDate, year, previousYear, month, wp));
+				paymethodRs = paymethodStmt.executeQuery();
+			}
+			while (paymethodRs.next()) {
+				String description = paymethodRs.getString(1);
+				String type = paymethodRs.getString(2);
+				String period = paymethodRs.getString(3);
+				Double amount = paymethodRs.getDouble(4);
+
+				Map<String, ReportObject> map = null;
+				if (type.equalsIgnoreCase("NORMAL")) {
+					map = paymethodMap;
+				} else if (type.equalsIgnoreCase("ANTICIPO")) {
+					map = advancePaymethodMap;
+				}
+
+				if (!map.containsKey(description)) {
+					ReportObject ro = new ReportObject();
+					ro.setDescription(description);
+					map.put(description, ro);
+				}
+				if (period.equals("ANIO")) {
+					map.get(description).setYearAmount(amount);
+				} else if (period.equals("ANIO_ANTERIOR")) {
+					map.get(description).setPreviousYearAmount(amount);
+				} else if (period.equals("MES")) {
+					map.get(description).setMonthAmount(amount);
+				} else if (period.equals("MES_ANIO_ANTERIOR")) {
+					map.get(description).setPreviousMonthAmount(amount);
+				} else if (period.equals("DIA")) {
+					map.get(description).setDayAmount(amount);
+				} else if (period.equals("DIA_ANIO_ANTERIOR")) {
+					map.get(description).setPreviousDayAmount(amount);
+				}
+			}
+
+			advancePaymethodModel = buildModel(advancePaymethodMap);
+			advancePaymethodTotal = buildTotalizeTo(advancePaymethodMap);
+
+			paymethodModel = buildModel(paymethodMap);
+			paymethodTotal = buildTotalizeTo(paymethodMap);
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+			throw new AonSQLException(e.getMessage());
+		} finally {
+			SQLUtils.closeQuietly(paymethodRs);
 			SQLUtils.closeQuietly(paymethodStmt);
 			SQLUtils.closeQuietly(connection);
 		}
-		
 	}
 	
 	private static final String SQL_FILE = String.format("%1$s/PMS_SQL/", System.getProperty("user.home"));
@@ -522,20 +658,25 @@ public class ProductionReportController implements Serializable {
 	
 	private String getHotelProductionSQL(java.sql.Date date,
 			java.sql.Date previousDate, Integer year, Integer previousYear,
-			Integer month, Integer hotel, Integer wp) {
+			Integer month, Integer hotel, Integer wp, Integer productCategory) {
 		String query = getLocalSQL("production.sql");
 		if (query != null) {
 			testingProductionSql = true;
-			query = query.replaceAll("@date", "'"+date.toString()+"'")
-					.replaceAll("@previousDate", "'"+previousDate.toString()+"'")
+			query = query
+					.replaceAll("@date", "'" + date.toString() + "'")
+					.replaceAll("@previousDate",
+							"'" + previousDate.toString() + "'")
 					.replaceAll("@year", year.toString())
 					.replaceAll("@previousYear", previousYear.toString())
 					.replaceAll("@month", month.toString())
 					.replaceAll("@hotel", hotel.toString())
-					.replaceAll("@wp", wp.toString());
+					.replaceAll("@wp", wp.toString())
+					.replaceAll("@productCategory", productCategory.toString())
+					.replaceAll("[\n|\t]", "");
+//			sqlToJava(query);
 		} else {
 			query = hotelProductionSQL(date, previousDate, year, previousYear,
-					month, hotel, wp);
+					month, hotel, wp, productCategory);
 		}
 		return query;
 	}
@@ -551,7 +692,9 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@hotel", hotel.toString())
 					.replaceAll("@year", year.toString())
 					.replaceAll("@previousYear", previousYear.toString())
-					.replaceAll("@month", month.toString());
+					.replaceAll("@month", month.toString())
+					.replaceAll("[\n|\t]", "");
+//			sqlToJava(query);
 		} else {
 			query = pendingHotelProductionSQL(date, previousDate, hotel,
 					year, previousYear, month);
@@ -569,7 +712,9 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@year", year.toString())
 					.replaceAll("@previousYear", previousYear.toString())
 					.replaceAll("@month", month.toString())
-					.replaceAll("@hotel", hotel.toString());
+					.replaceAll("@hotel", hotel.toString())
+					.replaceAll("[\n|\t]", "");
+//			sqlToJava(query);
 		} else {
 			query = paxSQL(date, previousDate, year, previousYear, month,
 					hotel);
@@ -588,7 +733,9 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@year", year.toString())
 					.replaceAll("@previousYear", previousYear.toString())
 					.replaceAll("@month", month.toString())
-					.replaceAll("@wp", wp.toString());
+					.replaceAll("@wp", wp.toString())
+					.replaceAll("[\n|\t]", "");
+//			sqlToJava(query);
 		} else {
 			query = invoicePayMethodsSQL(date, previousDate, year,
 					previousYear, month, wp);
@@ -632,7 +779,6 @@ public class ProductionReportController implements Serializable {
 		String OTROS_INGRESOS = "OTROS INGRESOS";
 		String VENTAS = "1.VENTAS";
 		String SALDO_CTA_CLIENTE = "3.SALDO CTA. CLIENTE";
-//		String SALDO_CTA_CLIENTE_FRA_ANTICIPO = "4.SALDO CTA. CLIENTE FRA. ANTICIPO";
 
 		double ALOJAMIENTO_YearAmount = productionMap
 				.containsKey(ALOJAMIENTO) ? productionMap.get(ALOJAMIENTO)
@@ -647,9 +793,6 @@ public class ProductionReportController implements Serializable {
 		double SALDO_CTA_CLIENTE_DayAmount = pendingProductionMap
 				.containsKey(SALDO_CTA_CLIENTE) ? pendingProductionMap.get(
 				SALDO_CTA_CLIENTE).getDayAmount() : 0.0;
-//		double SALDO_CTA_CLIENTE_FRA_ANTICIPO_DayAmount = pendingProductionMap
-//				.containsKey(SALDO_CTA_CLIENTE_FRA_ANTICIPO) ? pendingProductionMap
-//				.get(SALDO_CTA_CLIENTE_FRA_ANTICIPO).getDayAmount() : 0.0;
 		
 		ReportObject ro = new ReportObject();
 		ro.setDescription("1.FACTURACION RESERVAS");
@@ -921,15 +1064,7 @@ public class ProductionReportController implements Serializable {
 	
 	private String hotelProductionSQL(java.sql.Date date,
 			java.sql.Date previousDate, Integer year, Integer previousYear,
-			Integer month, Integer hotel, Integer wp) {
-		
-		ApplicationParameter ap = AppParamUtil.getParameter("PMS_PRODUCTION_REPORT_PCATEGORY");
-		int productCategory = 0;
-		try {
-			productCategory = (ap==null || ap.getValue()==null)?11:Integer.parseInt(ap.getValue());
-		} catch (NumberFormatException e) {
-			productCategory = 11;
-		}
+			Integer month, Integer hotel, Integer wp, Integer productCategory) {
 		
 		StringBuffer stmt = new StringBuffer();
         stmt.append("  SELECT Concepto,Periodo,SUM(Importe),IVA FROM (");
@@ -1105,10 +1240,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("  GROUP BY Concepto,Periodo ");
         stmt.append("  ORDER BY Concepto,Periodo ;");
         
-        // LOGGER.info("****** SQL   -> " + stmt.toString() );
-        
-         return stmt.toString();		
-		
+        return stmt.toString();		
 	}
 	
 	private String invoicePayMethodsSQL(java.sql.Date date,
@@ -1226,13 +1358,8 @@ public class ProductionReportController implements Serializable {
         stmt.append("  GROUP BY Periodo,Tipo,FormaPago ");
         stmt.append("  ORDER BY Periodo,Tipo,FormaPago ;");
         
-        // LOGGER.info("****** SQL   -> " + stmt.toString() );
-        
         return stmt.toString();
-			
 	}
-	
-	
 	
 	private String paxSQL(java.sql.Date date, java.sql.Date previousDate,
 			Integer year, Integer previousYear, Integer month, Integer hotel) {
@@ -1264,7 +1391,6 @@ public class ProductionReportController implements Serializable {
 		stmt.append("  AND (  (B.stay_date<='"+date+"'          AND YEAR(B.stay_date)="+year+")");
 		stmt.append("	   OR (B.stay_date<='"+previousDate+"' AND YEAR(B.stay_date)="+previousYear+"))");
 		stmt.append(" GROUP BY 1);");
-		
 		
 		return stmt.toString();
 	}
@@ -1382,9 +1508,21 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 	AND I.advance=1 ");
 		stmt.append(" GROUP BY 1,2) ");
 		stmt.append(" ORDER BY 1,2;");
+		
 		return stmt.toString();
 	}
 	
-	
+	@SuppressWarnings("unused")
+	private void sqlToJava(String query) {
+		query = query.replaceAll("@date", "'date'")
+				.replaceAll("@previousDate", "'previousDate'")
+				.replaceAll("@year", "year")
+				.replaceAll("@previousYear", "previousYear")
+				.replaceAll("@month", "month")
+				.replaceAll("@hotel", "hotel")
+				.replaceAll("@wp", "wp")
+				.replaceAll("@productCategory", "productCategory");
+		System.out.println(query);
+	}
 	
 }
