@@ -120,7 +120,39 @@ public class SalarySelect extends Composite {
 		syncTypeListBox();
 		syncDateListBox(getSelectedType());
 		//reset start, end & issue dates
-		//syncSalarySelectDates();
+		getSelectedType().accept(new TypeVisitor<Void>() {
+
+			@Override
+			public Void visitSalary(Type type) {
+				syncSalarySelectDates();
+				return null;
+			}
+
+			@Override
+			public Void visitExtra(Type type) {
+				syncSalarySelectDates();
+				return null;
+			}
+
+			@Override
+			public Void visitSettle(Type type) {
+				// NOOP
+				return null;
+			}
+
+			@Override
+			public Void visitDelay(Type type) {
+				syncSalarySelectDates();
+				return null;
+			}
+
+			@Override
+			public Void visitNotEnjoyedVacations(Type type) {
+				// NOOP
+				return null;
+			}
+			
+		});
 		
 	}
 
