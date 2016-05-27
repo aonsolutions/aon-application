@@ -110,6 +110,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 		variables.clear();
 		
+		this.prevPayment = new SalaryPaymentRecord();
 		
 		InsertSetStep<SalaryRecord> insertSalary = insertMoreSalary == null ? dslContext
 				.insertInto(SALARY) : insertMoreSalary.newRecord();
