@@ -1411,8 +1411,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			// Get the new range.
 			final Range range = display.getVisibleRange();
 			// Query the data asynchronously (RPC call).
-			getServiceAsync().getEmployees(getWorkplace().getId(), getEndDate(),
-					null, range.getStart(), range.getLength(),
+			getServiceAsync().getEmployees(
+					getWorkplace().getId(), 
+					EmployeeTree.this.employees.getFromDate(),
+					EmployeeTree.this.employees.getNamePattern(),
+					range.getStart(), 
+					range.getLength(),
 					new AsyncCallback<List<Employee>>() {
 
 						@Override

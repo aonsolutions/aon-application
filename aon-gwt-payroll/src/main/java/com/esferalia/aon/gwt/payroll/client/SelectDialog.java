@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -282,6 +283,7 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 	}
 
 	public void setDataProvider(AbstractDataProvider<T> provider) {
+		selectDataGrid.setVisibleRangeAndClearData(new Range(0, selectDataGrid.getPageSize()) , false);
 		provider.addDataDisplay(selectDataGrid);
 		selectionModel.clear();
 	}

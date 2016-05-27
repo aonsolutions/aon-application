@@ -634,6 +634,16 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	// ------------------------------------------------------------------------
 
+	protected Date getFromDate() {
+		return formers ? (fromDate == null ? new Date(0) : fromDate) : DateUtils.getFirstDayOfMonth();
+	}
+	
+	public String getNamePattern() {
+		return namePattern;
+	}
+
+	// ------------------------------------------------------------------------
+
 	private TreeItem loadWorkplace(Enterprise enterprise, final TreeItem workplaceItem, Workplace workplace) {
 		String description = workplace.getDescription();
 
@@ -1546,10 +1556,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			}
 		});
 
-	}
-
-	private Date getFromDate() {
-		return formers ? (fromDate == null ? new Date(0) : fromDate) : DateUtils.getFirstDayOfMonth();
 	}
 
 	private void collapse() {
