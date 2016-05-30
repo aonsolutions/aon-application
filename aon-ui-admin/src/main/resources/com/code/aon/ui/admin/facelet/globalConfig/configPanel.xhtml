@@ -39,7 +39,7 @@
 								<aon:commandLink id="addresses"
 									reRender="configPanelBar,configContent" 
 									action="globalConfig_form"
-									actionListener="#{companyAddress.onCancel}"
+									actionListener="#{companyAddress.onSearch}"
 									value="#{bundle.registry_addresses}" />
 							</aon:div>
 							<aon:if test="#{!actionDenied.manager.renderPayrollConfig}">

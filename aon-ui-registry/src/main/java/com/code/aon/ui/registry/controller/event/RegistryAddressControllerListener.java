@@ -41,5 +41,11 @@ public class RegistryAddressControllerListener extends ControllerAdapter impleme
 			to.setStreetType(StreetType.CL);
 		}
 	}
+	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		event.getController().initializeModel();
+	}
 
 }

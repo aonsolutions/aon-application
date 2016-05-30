@@ -14,7 +14,8 @@
 			<aon:outputLabel for="RegistryAddress_addressType" value="#{bundle.aon_type}" 
 				rendered="#{controller.to.addressType != null}" />
 			<aon:selectOneMenu id="RegistryAddress_addressType#{sufix}" styleClass="aon-margin-left aon-form-input-text"
-				value="#{controller.to.addressType}" rendered="#{controller.to.addressType != null}">
+				value="#{controller.to.addressType}" rendered="#{controller.to.addressType != null}"
+				disabled="#{controller.to.mainAddress}" >
 				<f:selectItems value="#{registryCollections.addressTypes}" />
 			</aon:selectOneMenu>
 

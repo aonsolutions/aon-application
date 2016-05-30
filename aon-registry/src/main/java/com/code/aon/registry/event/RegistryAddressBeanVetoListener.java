@@ -3,6 +3,7 @@ package com.code.aon.registry.event;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
@@ -47,9 +48,14 @@ public class RegistryAddressBeanVetoListener extends ManagerBeanVetoListenerAdap
 	    			}
 		    	} else if (to.getAddressType() == AddressType.MAIN) {
 	    			c.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE ), AddressType.MAIN);
-	    			int count = bean.getCount(c);
-	    			if (count>0) {
-	    				throw new ManagerBeanVetoListenerException("Sólo puede haber una dirección principal y ya se ha definido.");  
+	    			for(ITransferObject updatableTo: bean.getList(c)){
+	    				try {
+	    					RegistryAddress ra = (RegistryAddress) updatableTo;
+	    					ra.setAddressType(AddressType.DELEGATION);
+	    					bean.update(ra);
+	    				} catch (Exception e) {
+	    					throw new ManagerBeanVetoListenerException("No se ha podido modificar a tipo principal.");  
+	    				}
 	    			}
 	    		}
     		}

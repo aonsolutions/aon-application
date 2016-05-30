@@ -11,15 +11,15 @@
 		<ui:param name="skipRemoveButton" value="#{controller.to.mainAddress}" />
 	
 		<ui:define name="beginFormListContent">
-			<aon:outputText value="&#160;&#160;&#160;" title="#{bundle.aon_principal}"
+			<aon:outputText value="&#160;" title="#{bundle.aon_principal}"
 				rendered="#{to.mainAddress}"
-				styleClass="aon-icon-company" />
+				styleClass="aon-icon-company aon-padding-right" />
 		</ui:define>
 		
 		<ui:define name="beginFormEditContent">
-			<aon:outputText value="&#160;&#160;&#160;" title="#{bundle.aon_principal}"
+			<aon:outputText value="&#160;" title="#{bundle.aon_principal}"
 				rendered="#{to.mainAddress}"
-				styleClass="aon-icon-company" />
+				styleClass="aon-icon-company aon-padding-right" />
 		</ui:define>
 		
 		<ui:define name="columns">
