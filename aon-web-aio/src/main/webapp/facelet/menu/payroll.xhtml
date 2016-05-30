@@ -273,11 +273,13 @@
 									</aon:commandLink>
 								</aon:div-->
 
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="holiday-payroll" action="holiday_search"
-										actionListener="#{holiday.onEditSearch}"
-										value="#{bundle.calendar_holidays}" />
-								</aon:div>
+								<aon:if test="#{domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="holiday-payroll" action="holiday_search"
+											actionListener="#{holiday.onEditSearch}"
+											value="#{bundle.calendar_holidays}" />
+									</aon:div>
+								</aon:if>
 
 							</aon:div>
 						</aon:panelGrid>
