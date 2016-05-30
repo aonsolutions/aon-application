@@ -319,7 +319,7 @@ public class CertificadosController implements ISepeHandler, Serializable {
 		byte[] data = getGeneratedFile().getData();
 		InputStream in = new ByteArrayInputStream(data);
 		long size = ArrayUtils.getLength(data);
-		DownloadUtil.downloadAttachment("certificado-"+"NO_DESCRIPTION", MimeType.MIME_XML, in, size);
+		DownloadUtil.downloadAttachment("certificado-empresa_"+getContract().getPerson().getFullName(), MimeType.MIME_XML, in, size);
 	}
 
 	

@@ -387,30 +387,15 @@ public class CertificadosWriter implements Serializable {
 			Date contractStart = batchDetail.getContract().getStartDate();
 			Date contractEnd = batchDetail.getContract().getEndDate();
 			List<ContractData[]> weekList = SEPEUtils.getInstance().obtainWeekList(batchDetail.getContract());
-			if(weekList!=null && weekList.size()>0){
-				Integer totalWeekDays = obtainTotalWeekDays(weekList.get(0));
-				Date start = weekList.get(0)[0].getStartDate();
-				Date end = weekList.get(0)[0].getEndDate();
-				addPeriod(REGULAR_VALUE, start!=null?start:contractStart, end!=null?end:contractEnd, totalWeekDays.toString(), listaPeriodos, periodo);
-			}
-			if(weekList!=null && weekList.size()>1){
-				Integer totalWeekDays = obtainTotalWeekDays(weekList.get(1));
-				Date start = weekList.get(1)[0].getStartDate();
-				Date end = weekList.get(1)[0].getEndDate();
-				addPeriod(REGULAR_VALUE, start!=null?start:contractStart, end!=null?end:contractEnd, totalWeekDays.toString(), listaPeriodos, periodo);
-			}
-			if(weekList!=null && weekList.size()>2){
-				Integer totalWeekDays = obtainTotalWeekDays(weekList.get(2));
-				Date start = weekList.get(2)[0].getStartDate();
-				Date end = weekList.get(2)[0].getEndDate();
-				addPeriod(REGULAR_VALUE, start!=null?start:contractStart, end!=null?end:contractEnd, totalWeekDays.toString(), listaPeriodos, periodo);
-			}
-			if(weekList!=null && weekList.size()>3){
-				Integer totalWeekDays = obtainTotalWeekDays(weekList.get(3));
-				Date start = weekList.get(3)[0].getStartDate();
-				Date end = weekList.get(3)[0].getEndDate();
-				addPeriod(REGULAR_VALUE, start!=null?start:contractStart, end!=null?end:contractEnd, totalWeekDays.toString(), listaPeriodos, periodo);
-			}
+			
+			weekList.forEach(week -> {
+				Integer totalWeekDays = obtainTotalWeekDays(week);
+				if(totalWeekDays>0){
+					Date start = week[0].getStartDate();
+					Date end = week[0].getEndDate();
+					addPeriod(REGULAR_VALUE, start!=null?start:contractStart, end!=null?end:contractEnd, totalWeekDays.toString(), listaPeriodos, periodo);
+				}
+			});
 		}
 
 		if(!listaPeriodos.isEmpty()){
