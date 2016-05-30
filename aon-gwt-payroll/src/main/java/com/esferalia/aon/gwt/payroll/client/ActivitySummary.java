@@ -236,7 +236,11 @@ public class ActivitySummary extends MainEntryPoint {
 		searchButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				loadData();
+				if(startDate.getValue()==null || endDate.getValue()==null){
+					Window.alert("Se deben seleccionar las fechas de inicio y fin");
+				} else {
+					loadData();
+				}
 			}
 		}, ClickEvent.getType());
 	}
@@ -575,6 +579,7 @@ public class ActivitySummary extends MainEntryPoint {
 	 */
 	private class CustomHeaderBuilder extends AbstractHeaderOrFooterBuilder<ActivitySummaryObject> {
 
+		private Header<String> selectHeader = new TextHeader("");
 		private Header<String> nameHeader = new TextHeader("Nombre");
 		private Header<String> startHeader = new TextHeader("Inicio contr.");
 		private Header<String> endHeader = new TextHeader("Fin contr.");
@@ -600,10 +605,8 @@ public class ActivitySummary extends MainEntryPoint {
 
 			TableRowBuilder tr = startRow();
 			tr.style().trustedBorderColor("#BDBDBD").endStyle();
-			tr.startTH().colSpan(1).rowSpan(2);
-			tr.endTH();
 
-			TableCellBuilder th = tr.startTH().colSpan(1);
+			TableCellBuilder th = tr.startTH().colSpan(2);
 			th.endTH();
 
 			// Contract group header.
@@ -627,6 +630,7 @@ public class ActivitySummary extends MainEntryPoint {
 			// Add column headers.
 			tr = startRow();
 			tr.style().trustedBackgroundColor("#BDBDBD").endStyle();
+			buildHeader(tr, selectHeader, selectColumn, sortedColumn, isSortAscending, true, false);
 			buildHeader(tr, nameHeader, nameColumn, sortedColumn, isSortAscending, false, false);
 			buildHeader(tr, startHeader, startCountColumn, sortedColumn, isSortAscending, false, false);
 			buildHeader(tr, endHeader, endCountColumn, sortedColumn, isSortAscending, false, false);
@@ -675,7 +679,8 @@ public class ActivitySummary extends MainEntryPoint {
 
 		@Override
 		protected boolean buildHeaderOrFooterImpl() {
-			String footerStyle = dataGrid.getResources().style().footer();
+			String footerStyle = AON.AON_CSS.aonBorderTop();
+			String centerColumnStyles = " " + AON.AON_TEXT_CENTER;
 
 			List<ActivitySummaryObject> items = dataGrid.getVisibleItems();
 
@@ -686,27 +691,27 @@ public class ActivitySummary extends MainEntryPoint {
 			/** name */
 			renderCell(tr, footerStyle, String.valueOf(getTotalCountEmployee(items)));
 			/** start */
-			renderCell(tr, footerStyle, String.valueOf(getTotalCountStartEmployee(items)));
+			renderCell(tr, footerStyle + centerColumnStyles, String.valueOf(getTotalCountStartEmployee(items)));
 			/** end */
-			renderCell(tr, footerStyle, String.valueOf(getTotalCountEndEmployee(items)));
+			renderCell(tr, footerStyle + centerColumnStyles, String.valueOf(getTotalCountEndEmployee(items)));
 			
 			/** salary */
-			renderCell(tr, footerStyle, String.valueOf(getTotalCountSalary(items)));
+			renderCell(tr, footerStyle + centerColumnStyles, String.valueOf(getTotalCountSalary(items)));
 			/** salary extra */
-			renderCell(tr, footerStyle, String.valueOf(getTotalCountExtraSalary(items)));
+			renderCell(tr, footerStyle + centerColumnStyles, String.valueOf(getTotalCountExtraSalary(items)));
 			/** salary settle */
-			renderCell(tr, footerStyle, String.valueOf(getTotalCountSettleSalary(items)));
+			renderCell(tr, footerStyle + centerColumnStyles, String.valueOf(getTotalCountSettleSalary(items)));
 			/** salary other */
-			renderCell(tr, footerStyle, String.valueOf(getTotalCountOtherSalary(items)));
+			renderCell(tr, footerStyle + centerColumnStyles, String.valueOf(getTotalCountOtherSalary(items)));
 			
 			/** IT EC-AN */
-			renderCell(tr, footerStyle, String.valueOf(getTotalCountITCommonDiseaseSalary(items)));
+			renderCell(tr, footerStyle + centerColumnStyles, String.valueOf(getTotalCountITCommonDiseaseSalary(items)));
 			/** IT AT-EP */
-			renderCell(tr, footerStyle, String.valueOf(getTotalCountITOccupationalDiseaseSalary(items)));
+			renderCell(tr, footerStyle + centerColumnStyles, String.valueOf(getTotalCountITOccupationalDiseaseSalary(items)));
 			/** IT M-P */
-			renderCell(tr, footerStyle, String.valueOf(getTotalCountITMaternitySalary(items)));
+			renderCell(tr, footerStyle + centerColumnStyles, String.valueOf(getTotalCountITMaternitySalary(items)));
 			/** IT other */
-			renderCell(tr, footerStyle, String.valueOf(getTotalCountITOtherSalary(items)));
+			renderCell(tr, footerStyle + centerColumnStyles, String.valueOf(getTotalCountITOtherSalary(items)));
 
 			tr.endTR();
 
@@ -830,12 +835,8 @@ public class ActivitySummary extends MainEntryPoint {
 	 */
 	private class CustomTableBuilder extends AbstractCellTableBuilder<ActivitySummaryObject> {
 
-//		private final String childCell = " " + resources.styles().childCell();
 		private final String childCell = " ";
-		private final String rowStyle;
 		private final String selectedRowStyle;
-		private final String oddRowStyle;
-		private final String cellStyle;
 		private final String selectedCellStyle;
 
 		public CustomTableBuilder() {
@@ -843,11 +844,8 @@ public class ActivitySummary extends MainEntryPoint {
 
 			// Cache styles for faster access.
 			AbstractCellTable.Style style = dataGrid.getResources().style();
-			rowStyle = style.evenRow();
 			selectedRowStyle = " " + style.selectedRow();
-			cellStyle = style.cell() + " " + style.evenRowCell();
 			selectedCellStyle = " " + style.selectedRowCell();
-			oddRowStyle = style.oddRow();
 		}
 
 		@Override
@@ -875,15 +873,19 @@ public class ActivitySummary extends MainEntryPoint {
 			SelectionModel<? super ActivitySummaryObject> selectionModel = dataGrid.getSelectionModel();
 			boolean isSelected = (selectionModel == null || rowValue == null) ? false : selectionModel.isSelected(rowValue);
 			boolean isEven = absRowIndex % 2 == 0;
-			StringBuilder trClasses = new StringBuilder(rowStyle);
+			String separatorColumnStyles = " " + AON.AON_CSS.aonBorderRight() + " ";
+			String centerColumnStyles = " " + AON.AON_TEXT_CENTER;
+			StringBuilder trClasses = new StringBuilder("");
 			if (isSelected) {
 				trClasses.append(selectedRowStyle);
+			} else if(!isInnerRow && isEven){
+				trClasses.append(" "+AON.AON_DATA_TABLE_ROW_EVEN);
 			} else if(!isInnerRow && !isEven){
-				trClasses.append(oddRowStyle);
+				trClasses.append(" "+AON.AON_DATA_TABLE_ROW_ODD);
 			}
 
 			// Calculate the cell styles.
-			String cellStyles = cellStyle;
+			String cellStyles = "";
 			if (isSelected) {
 				cellStyles += selectedCellStyle;
 			}
@@ -904,39 +906,40 @@ public class ActivitySummary extends MainEntryPoint {
 			renderCell(tr, cellStyles, isInnerRow, 0, selectColumn, innerRowValue, rowValue);
 			/** name */
 			innerRowValue = rowValue.getFullname();
-			renderCell(tr, cellStyles, isInnerRow, 1, nameColumn, innerRowValue, rowValue);
+			renderCell(tr, cellStyles + separatorColumnStyles, isInnerRow, 1, nameColumn, innerRowValue, rowValue);
+			
 			/** start */
 			innerRowValue = rowValue.getStartDate()!=null?DateTimeFormat.getFormat("dd/MM/yyyy").format(rowValue.getStartDate()):"-";
-			renderCell(tr, cellStyles, isInnerRow, 2, startCountColumn, innerRowValue, rowValue);
+			renderCell(tr, cellStyles + centerColumnStyles, isInnerRow, 2, startCountColumn, innerRowValue, rowValue);
 			/** end */
 			innerRowValue = rowValue.getEndDate()!=null?DateTimeFormat.getFormat("dd/MM/yyyy").format(rowValue.getEndDate()):"-";
-			renderCell(tr, cellStyles, isInnerRow, 3, endCountColumn, innerRowValue, rowValue);
+			renderCell(tr, cellStyles + centerColumnStyles + separatorColumnStyles, isInnerRow, 3, endCountColumn, innerRowValue, rowValue);
 			
 			/** salary */
 			innerRowValue = String.valueOf(rowValue.getSalaryCount()!=null?rowValue.getSalaryCount():0);
-			renderCell(tr, cellStyles, isInnerRow, 4, salaryCountColumn, innerRowValue, rowValue);
+			renderCell(tr, cellStyles + centerColumnStyles, isInnerRow, 4, salaryCountColumn, innerRowValue, rowValue);
 			/** salary extra */
 			innerRowValue = String.valueOf(rowValue.getSalaryExtraCount()!=null?rowValue.getSalaryExtraCount():0);
-			renderCell(tr, cellStyles, isInnerRow, 5, salaryExtraCountColumn, innerRowValue, rowValue);
+			renderCell(tr, cellStyles + centerColumnStyles, isInnerRow, 5, salaryExtraCountColumn, innerRowValue, rowValue);
 			/** salary settle */
 			innerRowValue = String.valueOf(rowValue.getSalarySettleCount()!=null?rowValue.getSalarySettleCount():0);
-			renderCell(tr, cellStyles, isInnerRow, 6, salarySettleCountColumn, innerRowValue, rowValue);
+			renderCell(tr, cellStyles + centerColumnStyles, isInnerRow, 6, salarySettleCountColumn, innerRowValue, rowValue);
 			/** salary other */
 			innerRowValue = String.valueOf(rowValue.getSalaryOtherCount()!=null?rowValue.getSalaryOtherCount():0);
-			renderCell(tr, cellStyles, isInnerRow, 7, salaryOtherCountColumn, innerRowValue, rowValue);
+			renderCell(tr, cellStyles + centerColumnStyles + separatorColumnStyles, isInnerRow, 7, salaryOtherCountColumn, innerRowValue, rowValue);
 			
 			/** it EC-AN */
 			innerRowValue = String.valueOf(rowValue.getItCommonDiseaseCount()!=null?rowValue.getItCommonDiseaseCount():0);
-			renderCell(tr, cellStyles, isInnerRow, 8, itCommonDiseaseCountColumn, innerRowValue, rowValue);
+			renderCell(tr, cellStyles + centerColumnStyles, isInnerRow, 8, itCommonDiseaseCountColumn, innerRowValue, rowValue);
 			/** it AT-EP */
 			innerRowValue = String.valueOf(rowValue.getItOccupationalDiseaseCount()!=null?rowValue.getItOccupationalDiseaseCount():0);
-			renderCell(tr, cellStyles, isInnerRow, 9, itOccupationalDiseaseCountColumn, innerRowValue, rowValue);
+			renderCell(tr, cellStyles + centerColumnStyles, isInnerRow, 9, itOccupationalDiseaseCountColumn, innerRowValue, rowValue);
 			/** it M-P */
 			innerRowValue = String.valueOf(rowValue.getItMaternityCount()!=null?rowValue.getItMaternityCount():0);
-			renderCell(tr, cellStyles, isInnerRow, 10, itMaternityCountColumn, innerRowValue, rowValue);
+			renderCell(tr, cellStyles + centerColumnStyles, isInnerRow, 10, itMaternityCountColumn, innerRowValue, rowValue);
 			/** it other */
 			innerRowValue = String.valueOf(rowValue.getItOtherCount()!=null?rowValue.getItOtherCount():0);
-			renderCell(tr, cellStyles, isInnerRow, 11, itOtherCountColumn, innerRowValue, rowValue);
+			renderCell(tr, cellStyles + centerColumnStyles, isInnerRow, 11, itOtherCountColumn, innerRowValue, rowValue);
 
 			tr.endTR();
 		}

@@ -44,26 +44,29 @@ public class JooqActivitySummary {
 			Boolean salaryOther, Boolean itCommonDisease,
 			Boolean itOccupationalDisease, Boolean itMaternity, Boolean itOther) {
 
-		if(domainName!=null && domainId!=null){
+		if (domainName != null && domainId != null && startDate != null
+				&& endDate != null) {
 			AONContext ctx = null;
 			try {
 				ctx = AONContext.getAONContext(domainName, domainId,
 						AonServletUtils.getLoggedUser());
-				
+
 				Map<Integer, ActivitySummaryObject> summaryMap = null;
 				Map<Integer, ActivitySummaryObject> salaryMap = null;
 				Map<Integer, ActivitySummaryObject> itMap = null;
 				if (parentDomain) {
 					try {
 						Integer[] childDomains = getChildDomainIDs(domainId);
-						summaryMap = getSummaryEnterprise(childDomains, domainId,
-								domainName, startDate, endDate, starts, ends);
+						summaryMap = getSummaryEnterprise(childDomains,
+								domainId, domainName, startDate, endDate,
+								starts, ends);
 						salaryMap = getSummaryEnterpriseSalary(childDomains,
-								domainId, domainName, startDate, endDate, salary,
-								salaryExtra, salarySettle, salaryOther);
+								domainId, domainName, startDate, endDate,
+								salary, salaryExtra, salarySettle, salaryOther);
 						itMap = getSummaryEnterpriseIT(childDomains, domainId,
-								domainName, startDate, endDate, itCommonDisease,
-								itOccupationalDisease, itMaternity, itOther);
+								domainName, startDate, endDate,
+								itCommonDisease, itOccupationalDisease,
+								itMaternity, itOther);
 					} catch (ManagerBeanException e) {
 						throw new RuntimeException(e.getMessage());
 					}
@@ -71,15 +74,15 @@ public class JooqActivitySummary {
 					summaryMap = getSummaryEmployee(domainId, domainName,
 							startDate, endDate, starts, ends);
 					salaryMap = getSummaryEmployeeSalary(domainId, domainName,
-							startDate, endDate, salary, salaryExtra, salarySettle,
-							salaryOther);
-					itMap = getSummaryEmployeeIT(domainId, domainName, startDate,
-							endDate, itCommonDisease, itOccupationalDisease,
-							itMaternity, itOther);
+							startDate, endDate, salary, salaryExtra,
+							salarySettle, salaryOther);
+					itMap = getSummaryEmployeeIT(domainId, domainName,
+							startDate, endDate, itCommonDisease,
+							itOccupationalDisease, itMaternity, itOther);
 				}
 				fillMapData(summaryMap, salaryMap);
 				fillMapData(summaryMap, itMap);
-				
+
 				return new ArrayList<>(summaryMap
 						.values()
 						.stream()
@@ -90,7 +93,7 @@ public class JooqActivitySummary {
 					ctx.close();
 			}
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 	private static Integer[] getChildDomainIDs(Integer domainId)

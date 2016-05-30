@@ -145,6 +145,11 @@
 					<c:DataGrid ui:field='dataGrid' visible="true" styleName="aon_dataGrid-template" />
 				</g:center>
 				
+				<g:south size="2">
+					<g:Label styleName="aon-outputText" text="" />
+				</g:south>
+				
+				
 			</g:DockLayoutPanel>
 			
 		</g:center>
