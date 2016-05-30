@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.dbutils.AonSQLException;
@@ -57,6 +59,8 @@ public class ProductionReportController implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProductionReportController.class.getName());
+	
+	private static final String SQL_FILE = String.format("%1$s/PMS_SQL/", System.getProperty("user.home"));
 	
 	private Hotel hotel;
 	private Date date;
@@ -315,6 +319,8 @@ public class ProductionReportController implements Serializable {
 		LOGGER.info("****** INFORME DE PRODUCCION **************");
 		
 		
+		LOGGER.info("****** SEARCHING FOR TESTING QUERY IN -> " + SQL_FILE);
+		
 		LOGGER.info("****** Inicio de la busqueda de produccion       -> " + timeFormatter.format(new Date()));
 		Date tmpDate = new Date();
 		buildProductionReport(date, previousDate, year, previousYear, month, hotel, wp, productCategory);
@@ -378,7 +384,7 @@ public class ProductionReportController implements Serializable {
 			while (productionRs.next()) {
 				String description = productionRs.getString(1);
 				String period = productionRs.getString(2);
-				Double amount = productionRs.getDouble(3);
+				Double amount = CommonUtil.round(productionRs.getDouble(3));
 
 				if (!productionMap.containsKey(description)) {
 					ReportObject ro = new ReportObject();
@@ -445,7 +451,7 @@ public class ProductionReportController implements Serializable {
 			while (pendingProductionRs.next()) {
 				String description = pendingProductionRs.getString(1);
 				String period = pendingProductionRs.getString(2);
-				Double amount = pendingProductionRs.getDouble(3);
+				Double amount = CommonUtil.round(pendingProductionRs.getDouble(3));
 
 				if (!pendingProductionMap.containsKey(description)) {
 					ReportObject ro = new ReportObject();
@@ -526,7 +532,8 @@ public class ProductionReportController implements Serializable {
 			}
 			while (paxRs.next()) {
 				String period = paxRs.getString(1);
-				Double amount = paxRs.getDouble(2);
+				Double amount = CommonUtil.round(paxRs.getDouble(2));
+				
 				if (!paxMap.containsKey("PAX")) {
 					ReportObject ro = new ReportObject();
 					ro.setDescription("PAX");
@@ -591,8 +598,8 @@ public class ProductionReportController implements Serializable {
 				String description = paymethodRs.getString(1);
 				String type = paymethodRs.getString(2);
 				String period = paymethodRs.getString(3);
-				Double amount = paymethodRs.getDouble(4);
-
+				Double amount = CommonUtil.round(paymethodRs.getDouble(4));
+				
 				Map<String, ReportObject> map = null;
 				if (type.equalsIgnoreCase("NORMAL")) {
 					map = paymethodMap;
@@ -638,13 +645,12 @@ public class ProductionReportController implements Serializable {
 		}
 	}
 	
-	private static final String SQL_FILE = String.format("%1$s/PMS_SQL/", System.getProperty("user.home"));
-	
 	private String getLocalSQL(String fileName) {
 		if (Files.exists(Paths.get(SQL_FILE + fileName))) {
 			LOGGER.info("****** TESTING QUERY DETECTED -> " + SQL_FILE + fileName);
 			try {
-				String query = new String(Files.readAllBytes(Paths.get(SQL_FILE + fileName)));
+//				sqlToJava(fileName);
+				String query = new String( Files.readAllBytes(Paths.get(SQL_FILE + fileName)) );
 				query = query.replaceAll("SET @.*;", "");
 				return query;
 			} catch (FileNotFoundException e) {
@@ -673,7 +679,6 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@wp", wp.toString())
 					.replaceAll("@productCategory", productCategory.toString())
 					.replaceAll("[\n|\t]", "");
-//			sqlToJava(query);
 		} else {
 			query = hotelProductionSQL(date, previousDate, year, previousYear,
 					month, hotel, wp, productCategory);
@@ -694,7 +699,6 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@previousYear", previousYear.toString())
 					.replaceAll("@month", month.toString())
 					.replaceAll("[\n|\t]", "");
-//			sqlToJava(query);
 		} else {
 			query = pendingHotelProductionSQL(date, previousDate, hotel,
 					year, previousYear, month);
@@ -714,7 +718,6 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@month", month.toString())
 					.replaceAll("@hotel", hotel.toString())
 					.replaceAll("[\n|\t]", "");
-//			sqlToJava(query);
 		} else {
 			query = paxSQL(date, previousDate, year, previousYear, month,
 					hotel);
@@ -735,7 +738,6 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@month", month.toString())
 					.replaceAll("@wp", wp.toString())
 					.replaceAll("[\n|\t]", "");
-//			sqlToJava(query);
 		} else {
 			query = invoicePayMethodsSQL(date, previousDate, year,
 					previousYear, month, wp);
@@ -950,12 +952,12 @@ public class ProductionReportController implements Serializable {
 			exporter.startLine();
 			try {
 				exporter.exportColumn(metadata.getColumns().get(column++), "", cellStyle);
-				exporter.exportColumn(metadata.getColumns().get(column++), map.values().stream().mapToDouble(ReportObject::getDayAmount).sum(), cellStyle);
-				exporter.exportColumn(metadata.getColumns().get(column++), map.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum(), cellStyle);
-				exporter.exportColumn(metadata.getColumns().get(column++), map.values().stream().mapToDouble(ReportObject::getMonthAmount).sum(), cellStyle);
-				exporter.exportColumn(metadata.getColumns().get(column++), map.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum(), cellStyle);
-				exporter.exportColumn(metadata.getColumns().get(column++), map.values().stream().mapToDouble(ReportObject::getYearAmount).sum(), cellStyle);
-				exporter.exportColumn(metadata.getColumns().get(column++), map.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum(), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), CommonUtil.round(map.values().stream().mapToDouble(ReportObject::getDayAmount).sum()), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), CommonUtil.round(map.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum()), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), CommonUtil.round(map.values().stream().mapToDouble(ReportObject::getMonthAmount).sum()), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), CommonUtil.round(map.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum()), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), CommonUtil.round(map.values().stream().mapToDouble(ReportObject::getYearAmount).sum()), cellStyle);
+				exporter.exportColumn(metadata.getColumns().get(column++), CommonUtil.round(map.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum()), cellStyle);
 			} catch (ReportException e) {
 				LOGGER.error("No se ha podido completar la fila del informe de produccion.");
 			} finally {
@@ -1088,6 +1090,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("                  AND P.category <> "+productCategory+")");
         stmt.append("  GROUP BY 1,2)");
         stmt.append("  UNION       ");
+        
         stmt.append("  (SELECT IF(I.project is not NULL,");
         stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),");
         stmt.append("      'OTROS INGRESOS') as Concepto,");
@@ -1106,6 +1109,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("                  AND P.category <> "+productCategory+")");
         stmt.append("  GROUP BY 1,2)");
         stmt.append("  UNION");
+        
         stmt.append("  (SELECT IF(I.project is not NULL,");
         stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),");
         stmt.append("      'OTROS INGRESOS') as Concepto,");
@@ -1127,6 +1131,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("                    AND P.category <> "+productCategory+")");
         stmt.append("  GROUP BY 1,2)");
         stmt.append("  UNION");
+        
         stmt.append("         (SELECT IF(I.project is not NULL,");
         stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),");
         stmt.append("      'OTROS INGRESOS') as Concepto,");
@@ -1147,6 +1152,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("                  AND P.category <> "+productCategory+")");
         stmt.append("  GROUP BY 1,2)");
         stmt.append("  UNION");
+        
         stmt.append("  (SELECT IF(I.project is not NULL,");
         stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),");
         stmt.append("      'OTROS INGRESOS') as Concepto,");
@@ -1167,6 +1173,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("                   AND P.category <> "+productCategory+")");
         stmt.append("  GROUP BY 1,2)");
         stmt.append("  UNION");
+        
         stmt.append("  (SELECT IF(I.project is not NULL,");
         stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),");
         stmt.append("      'OTROS INGRESOS') as Concepto,");
@@ -1186,6 +1193,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("                   AND P.category <> "+productCategory+")");
         stmt.append("  GROUP BY 1,2)");
         stmt.append("  UNION");
+        
         stmt.append("  (SELECT P.name as Concepto,");
         stmt.append("      IF(YEAR(PS.start_time)="+year+", 'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
         stmt.append("      SUM(INVD.taxable_base+(INVD.taxable_base*INVT.percentage/100)), INVT.percentage as IVA");
@@ -1203,6 +1211,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("    AND INVD.workplace="+wp+"");
         stmt.append("  GROUP BY IT.id,INVT.percentage,2)");
         stmt.append("  UNION");
+        
         stmt.append("  (SELECT P.name as Concepto,");
         stmt.append("      IF(YEAR(PS.start_time)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
         stmt.append("      SUM(INVD.taxable_base+(INVD.taxable_base*INVT.percentage/100)), INVT.percentage as IVA");
@@ -1221,6 +1230,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("    AND INVD.workplace="+wp+"");
         stmt.append("  GROUP BY IT.id,INVT.percentage,2)");
         stmt.append("  UNION");
+        
         stmt.append("  (SELECT P.name as Concepto,");
         stmt.append(" IF(YEAR(PS.start_time)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
         stmt.append("      SUM(INVD.taxable_base+(INVD.taxable_base*INVT.percentage/100)), INVT.percentage as IVA");
@@ -1265,6 +1275,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("                        AND INVD.invoice=INV.id)");
         stmt.append("      GROUP BY 1,2,3)");
         stmt.append("    UNION");
+        
         stmt.append("    (SELECT PM.name as FormaPago,");
         stmt.append("        IF(INV.advance=1,'Anticipo','Normal') as Tipo,");
         stmt.append("           IF(YEAR(INV.issue_date)="+year+",'MES','MES_ANIO_ANTERIOR') as Periodo,");
@@ -1283,6 +1294,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("                       AND INVD.invoice=INV.id)");
         stmt.append("      GROUP BY 1,2,3)");
         stmt.append("    UNION");
+        
         stmt.append("    (SELECT PM.name as FormaPago,");
         stmt.append("        IF(INV.advance=1,'Anticipo','Normal') as Tipo,");
         stmt.append("           IF(YEAR(INV.issue_date)="+year+",'ANIO','ANIO_ANTERIOR') as Periodo,");
@@ -1300,7 +1312,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("                      AND INVD.invoice=INV.id)");
         stmt.append("    GROUP BY 1,2,3)");
         stmt.append("    UNION");
-
+        
         stmt.append("(SELECT PM.name as FormaPago,");
         stmt.append("        IF(INV.advance=1,'Anticipo','Normal') as Tipo,");
         stmt.append("        IF(YEAR(PS.start_time)="+year+",'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
@@ -1319,6 +1331,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("                        AND INVD.invoice=INV.id)");
         stmt.append("      GROUP BY 1,2,3)");
         stmt.append("    UNION");
+        
         stmt.append("    (SELECT PM.name as FormaPago,");
         stmt.append("        IF(INV.advance=1,'Anticipo','Normal') as Tipo,");
         stmt.append("           IF(YEAR(PS.start_time)="+year+",'MES','MES_ANIO_ANTERIOR') as Periodo,");
@@ -1338,6 +1351,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("                        AND INVD.invoice=INV.id)");
         stmt.append("      GROUP BY 1,2,3)");
         stmt.append("    UNION");
+        
         stmt.append("    (SELECT PM.name as FormaPago,");
         stmt.append("        IF(INV.advance=1,'Anticipo','Normal') as Tipo,");
         stmt.append("           IF(YEAR(PS.start_time)="+year+",'ANIO','ANIO_ANTERIOR') as Periodo,");
@@ -1373,6 +1387,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" AND (B.stay_date='"+date+"' OR B.stay_date='"+previousDate+"')");
 		stmt.append(" GROUP BY 1)");
 		stmt.append(" UNION");
+		
 		stmt.append(" (SELECT IF(YEAR(B.stay_date)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
 		stmt.append("	       IFNULL(SUM(B.guests),0) as Pax");
 		stmt.append(" FROM booking B"); 
@@ -1383,6 +1398,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append("  AND MONTH(B.stay_date)="+month+"");
 		stmt.append(" GROUP BY 1)");
 		stmt.append(" UNION");
+		
 		stmt.append(" (SELECT IF(YEAR(B.stay_date)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
 		stmt.append("       IFNULL(SUM(B.guests),0) as Pax");
 		stmt.append(" FROM booking B"); 
@@ -1436,7 +1452,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 	AND PR.creation_date<curdate()");
 		stmt.append(" GROUP BY 1,2) ");
 		stmt.append(" UNION ");
-
+		
 		stmt.append(" (SELECT IF(PRS.extra=0,'1.VENTAS','2.OTROS INGRESOS') as Concepto, ");
 		stmt.append("        IF(YEAR(PRSD.effective_date)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
 		stmt.append("        SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
@@ -1456,7 +1472,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 	AND PR.creation_date<curdate() ");
 		stmt.append(" GROUP BY 1,2) ");
 		stmt.append(" UNION ");
-
+		
 		stmt.append(" (SELECT IF(PRS.extra=0,IF(PR.check_status<3,'3.SALDO CTA. CLIENTE','6.NOSHOW - CANCELACIONES FACTURABLES'),'5.OTROS INGRESOS PEND. PRODUCIR') as Concepto,");
 		stmt.append(" 	'DIA' as Periodo,");
 		stmt.append(" 	SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
@@ -1471,7 +1487,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 	AND PR.creation_date<curdate() ");
 		stmt.append(" GROUP BY 1,2) ");
 		stmt.append(" UNION ");
-
+		
 		stmt.append(" (SELECT '4.SALDO CTA. CLIENTE FRA. ANTICIPO' as Concepto,");
 		stmt.append(" 	'DIA' as Periodo,");
 		stmt.append(" 	SUM(I.taxable_base) as Importe,   '10' as IVA");
@@ -1483,7 +1499,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 	AND I.advance=1");
 		stmt.append(" GROUP BY 1,2) ");
 		stmt.append(" UNION ");
-
+		
 		stmt.append(" (SELECT IF(PRS.extra=0,IF(PR.check_status<3,'3.SALDO CTA. CLIENTE','6.NOSHOW - CANCELACIONES FACTURABLES'),'5.OTROS INGRESOS PEND. PRODUCIR') as Concepto,");
 		stmt.append(" 	'DIA_ANIO_ANTERIOR' as Periodo,");
 		stmt.append(" 	SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
@@ -1497,7 +1513,7 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" 	AND PR.status<>2 ");
 		stmt.append(" GROUP BY 1,2 ) ");
 		stmt.append(" UNION ");
-
+		
 		stmt.append(" (SELECT '4.SALDO CTA. CLIENTE FRA. ANTICIPO' as Concepto,");
 		stmt.append(" 	'DIA_ANIO_ANTERIOR' as Periodo,");
 		stmt.append(" 	SUM(I.taxable_base) as Importe,   '10' as IVA");
@@ -1513,16 +1529,28 @@ public class ProductionReportController implements Serializable {
 	}
 	
 	@SuppressWarnings("unused")
-	private void sqlToJava(String query) {
-		query = query.replaceAll("@date", "'date'")
-				.replaceAll("@previousDate", "'previousDate'")
-				.replaceAll("@year", "year")
-				.replaceAll("@previousYear", "previousYear")
-				.replaceAll("@month", "month")
-				.replaceAll("@hotel", "hotel")
-				.replaceAll("@wp", "wp")
-				.replaceAll("@productCategory", "productCategory");
-		System.out.println(query);
+	private void sqlToJava(String fileName) throws IOException {
+		List<String> list = Files.readAllLines(Paths.get(SQL_FILE + fileName));
+		if (list != null && !list.isEmpty()) {
+			System.out.println("### Query code for "
+					+ fileName.replaceAll(".sql", "").toUpperCase());
+			System.out.println("#################################");
+			list.forEach(line -> {
+				if (!line.matches("SET .*;")) {
+					line = line
+							.replaceAll("@date", "'\"+date+\"'")
+							.replaceAll("@previousDate", "'\"+previousDate+\"'")
+							.replaceAll("@year", "\"+year+\"")
+							.replaceAll("@previousYear", "\"+previousYear+\"")
+							.replaceAll("@month", "\"+month+\"")
+							.replaceAll("@hotel", "\"+hotel+\"")
+							.replaceAll("@wp", "\"+wp+\"")
+							.replaceAll("@productCategory",
+									"\"+productCategory+\"");
+					System.out.println("stmt.append(\"" + line + "\");");
+				}
+			});
+		}
 	}
 	
 }
