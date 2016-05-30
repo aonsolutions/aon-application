@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Series.SERIES;
-
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
@@ -30,15 +28,8 @@ public class ConfigurationDAO {
 									,AccountPeriodStatus.OPENING.getValue()
 									,AccountPeriodStatus.OPERATING.getValue()} )))
 						.collect(Collectors.toCollection(LinkedList::new)))
-				.setInvoiceSalesSeries(ctx.getDslContext()
-						.select(SERIES.CODE)
-						.from(SERIES)
-						.where(SERIES.DOMAIN.eq(ctx.getDomainId())
-								.and(SERIES.ACTIVE.eq((byte) 1))
-								.and(SERIES.INVOICE.eq((byte) 1)))
-						.fetch()
-						.stream() 
-						.map(rec -> rec.getValue(SERIES.CODE))
+				.setInvoiceSalesSeries( SeriesDAO.getInvoiceSeries(ctx)
+						.map(series -> series.getCode() )
 						.collect(Collectors.toCollection(LinkedList::new)))
 				.setEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(),atDate)
 						.collect(Collectors.toCollection(LinkedList::new)))

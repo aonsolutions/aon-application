@@ -274,25 +274,25 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		vatAccrualPayment.setValue(invoice.isVatAccrualPayment());
 		transactionBox.setValue(invoice.getTransaction());
 		taxDate.setValue(callback.getAccountEntry().getAccountEntry().getEntryDate());
-		invoice.getRegistry().getType().visit(accountingRegistryVisitor);	
+		invoice.getRegistry().getType().visit(invoice.getRegistry(),accountingRegistryVisitor);	
 	}
 	
 	
 	private class AccountingRegistryVisitor implements IAccountingRegistryTypeVisitor {
 
 		@Override
-		public void visitCustomer() {
+		public void visitCustomer(AccountingRegistry reg) {
 			investment.setVisible(false);
 			service.setVisible(true);
 		}
 
 		@Override
-		public void visitCreditor() {
+		public void visitCreditor(AccountingRegistry reg) {
 			investment.setVisible(true);
 		}
 
 		@Override
-		public void visitSupplier() {
+		public void visitSupplier(AccountingRegistry reg) {
 			investment.setVisible(true);
 		}
 		

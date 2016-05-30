@@ -7,6 +7,23 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 
 public interface Properties {
 
+	public interface SeriesProperties {
+		Property<Integer> getIdProperty(); 
+		Property<Integer> getDomainProperty();	
+		Property<Integer> getScopeProperty();	
+		Property<String> getDescriptionProperty();
+		Property<Byte> getActiveProperty();
+		Property<String> getCodeProperty();
+		Property<Byte> getTasProperty();
+		Property<Byte> getOfferProperty();
+		Property<Byte> getSalesProperty();
+		Property<Byte> getDeliveryProperty();
+		Property<Byte> getInvoiceProperty();
+		Property<Byte> getRectificationProperty();
+		Property<Byte> getPosProperty();
+		Property<Byte> getConfidentialProperty();
+	}
+
 	public interface WorkplaceProperties {
 		
 		Property<Integer> getIdProperty();

@@ -2,9 +2,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Department.DEPARTMENT;
 import static com.esferalia.aon.jooq.tables.Stock.STOCK;
-import static com.esferalia.aon.jooq.tables.Series.SERIES;
-import static com.esferalia.aon.jooq.tables.User.USER;
-import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
@@ -15,11 +12,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jooq.Condition;
-import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Result;
 
-import com.esferalia.aon.jooq.tables.records.SeriesRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferRecord;
@@ -32,7 +27,6 @@ import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
-import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
@@ -162,18 +156,6 @@ public class WarehouseDAO {
 		return list;
 	}
 	
-	public static LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId){
-		return ctx.getDslContext().select()
-			.from(SERIES).join(USER_SCOPE).on(SERIES.SCOPE.eq(USER_SCOPE.SCOPE))
-			.join(USER).on(USER_SCOPE.USER_ID.eq(USER.ID))
-			.where(SERIES.SCOPE.eq(scopeId))
-			.and(USER.LOGIN.eq(ctx.getUser()))
-			.and(SERIES.DELIVERY.eq((byte) 1))
-			.fetchInto(SERIES).stream().map(new FullSeriesFiller())
-			.collect(Collectors.toCollection(LinkedList::new));
-			
-	}
-	
 	private static class FullWarehouseFiller implements Function<WarehouseRecord, Warehouse> {
 		@Override
 		public Warehouse apply(WarehouseRecord r) {
@@ -228,26 +210,4 @@ public class WarehouseDAO {
 		}
 
 	}
-	
-	private static class FullSeriesFiller implements Function<SeriesRecord, Series> {
-		@Override
-		public Series apply(SeriesRecord r) {
-			return new Series()
-					.setActive(r.getActive())
-					.setDomain(r.getDomain())
-					.setId(r.getId())
-					.setCode(r.getCode())
-					.setDelivery(r.getDelivery())
-					.setDescription(r.getDescription())
-					.setInvoice(r.getInvoice())
-					.setOffer(r.getOffer())
-					.setPos(r.getPos())
-					.setRectification(r.getRectification())
-					.setSales(r.getSales())
-					.setScope(r.getScope())
-					.setSecurityLevel(r.getSecurityLevel())
-					.setTas(r.getTas());
-		}
-	}
-	
 }

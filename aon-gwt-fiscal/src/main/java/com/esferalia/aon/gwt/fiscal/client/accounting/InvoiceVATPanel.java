@@ -248,6 +248,13 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			int currentRow = tab.getRowCount();
 			int col = 0;
 			expAccount.setValue(vat.getExpAccountId(),vat.getExpAccountCode(),vat.getExpAccountDescription(),true);
+			if (vat.getExpAccountId() != null) {
+				SelectionEvent.<Account>fire(InvoiceVATPanel.this, 
+						new Account()
+							.setId(vat.getExpAccountId())
+							.setCode(vat.getExpAccountCode())
+							.setDescription(vat.getExpAccountDescription()) );
+			}
 			expAccount.addSelectionHandler( new SelectionHandler<Account>() {
 				@Override
 				public void onSelection(SelectionEvent<Account> event) {
@@ -258,13 +265,6 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					SelectionEvent.<Account>fire(InvoiceVATPanel.this, a);
 				}
 			});
-			if (vat.getExpAccountId() != null) {
-				Account a = new Account();
-				a.setId(vat.getExpAccountId());
-				a.setCode(vat.getExpAccountCode());
-				a.setDescription(vat.getExpAccountDescription());
-				SelectionEvent.<Account>fire(InvoiceVATPanel.this, a);
-			}
 			tab.setWidget(currentRow, col, expAccount);
 			++col;
 

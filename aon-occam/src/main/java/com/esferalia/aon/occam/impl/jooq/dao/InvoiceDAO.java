@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
+import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -590,105 +591,131 @@ public class InvoiceDAO {
 					+ reg.getType().getInvoiceType().getDescription() );
 		}
 		final AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, issueDate);
-		AccountingInvoice ai = new AccountingInvoice();
-		ai.setRegistry(reg);
-		final Invoice invoice = new Invoice();
-		ai.setInvoice(invoice);
-		invoice.setRecorded(false);
-		invoice.setRectificationType(RectificationType.NONE);
-		invoice.setConfidential(false);
-		invoice.setIssueDate(issueDate);
-		invoice.setTaxDate(issueDate);
-		invoice.setType(reg.getType().getInvoiceType());
-		invoice.setTransaction(reg.getTransaction());
-		invoice.setSeries(null);
-		invoice.setNumber(0);
-		invoice.setReferenceCode(null);
-		
-		
-		InvoiceVAT vat = new InvoiceVAT();
-		
-		reg.getType().visit( new  IAccountingRegistryTypeVisitor() {
-			@Override
-			public void visitCustomer() {
-				invoice.setSurcharge(reg.isSurcharge());
-				invoice.setWithholding(reg.isWithholding() && config.getCompany().isWithholding());
-				invoice.setWithholdingFarmer(false);
-				invoice.setVatAccrualPayment(invoice.isNational()
-						&& !invoice.getIssueDate().before(VAT_ACCRUAL_START_DATE)
-						&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
-				if (config.getDefaultSalesAccount() != null) {
-					vat.setExpAccountId(config.getDefaultSalesAccount().getId());
-					vat.setExpAccountCode(config.getDefaultSalesAccount().getCode());
-					vat.setExpAccountDescription(config.getDefaultSalesAccount().getDescription());
-				}
-				invoice.setSeries(config.getDefaultInvoiceSeries());
-				invoice.setNumber( getNextNumber(ctx, type, invoice.getSeries()));
-				assignVatAccounts();
-			}
+		AccountingInvoice ai = new AccountingInvoice()
+				.setRegistry(reg)
+				.setInvoice(new Invoice()
+					.setRecorded(false)
+					.setRectificationType(RectificationType.NONE)
+					.setConfidential(false)
+					.setIssueDate(issueDate)
+					.setTaxDate(issueDate)
+					.setType(reg.getType().getInvoiceType())
+					.setTransaction(reg.getTransaction())
+					.setSeries(null)
+					.setNumber(0)
+					.setReferenceCode(null));
+		reg.getType().visit(reg, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), config));
+		ai.addVat(createNewInvoiceVAT(ai, config));
 
-			@Override
-			public void visitSupplier() {
-				invoice.setSurcharge(reg.isSurcharge() && config.getCompany().isSurcharge());
-				invoice.setWithholding(reg.isWithholding());
-				invoice.setWithholdingFarmer(reg.isWithholdingFarmer());
-				invoice.setVatAccrualPayment(invoice.isNational()
-						&& !invoice.getIssueDate().before(VAT_ACCRUAL_START_DATE)
-						&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
-				if (config.getDefaultPurchaseAccount() != null) {
-					vat.setExpAccountId(config.getDefaultPurchaseAccount().getId());
-					vat.setExpAccountCode(config.getDefaultPurchaseAccount().getCode());
-					vat.setExpAccountDescription(config.getDefaultPurchaseAccount().getDescription());
-				}
-				assignVatAccounts();
+		/// RETENCIÓN
+		if (ai.isWithholding()) {
+			ai.setWithholdingData(new InvoiceWithholding());
+			Account withholdingAccount = null;
+			if (config.getDefaultWithholdingPercent() != null) {
+				ai.getWithholdingData().setPercentage(config.getDefaultWithholdingPercent().getPercentage());
+				ai.getWithholdingData().setWithholdingType(config.getDefaultWithholdingPercent().getWithholdingType());
+				withholdingAccount = (ai.isSales())
+						?config.getDefaultWithholdingPercent().getSalesAccount()
+						:config.getDefaultWithholdingPercent().getPurchaseAccount();
 			}
+			if (withholdingAccount == null) {
+				withholdingAccount = ai.isSales()
+					?config.getDefaultChargedRetAccount()
+					:config.getDefaultPaidRetAccount(); 
+			}
+			if (withholdingAccount != null) {
+				ai.getWithholdingData().setAccountId(withholdingAccount.getId());
+				ai.getWithholdingData().setAccountCode(withholdingAccount.getCode());
+				ai.getWithholdingData().setAccountDescription(withholdingAccount.getDescription());
+			}
+		}
 
-			@Override
-			public void visitCreditor() {
-				invoice.setSurcharge(false);
-				invoice.setWithholding(reg.isWithholding());
-				invoice.setWithholdingFarmer(reg.isWithholdingFarmer());
-				invoice.setVatAccrualPayment(invoice.isNational()
-						&& !invoice.getIssueDate().before(VAT_ACCRUAL_START_DATE)
-						&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
-				assignVatAccounts();
-			}
-			
-			private void assignVatAccounts() {
-				Account inputVatAccount = null;
-				Account outputVatAccount = null;
-				if (config.getDefaultVatPercent() != null) {
-					vat.setPercentage(config.getDefaultVatPercent().getPercentage());
-					if (invoice.isSurcharge()) {
-						vat.setSurcharge(config.getDefaultVatPercent().getSurcharge());	
-					}
-					inputVatAccount = config.getDefaultVatPercent().getPurchaseAccount();
-					outputVatAccount = config.getDefaultVatPercent().getSalesAccount();
-				}
-				if (inputVatAccount == null) {
-					inputVatAccount = config.getDefaultPaidVatAccount();
-				}
-				if (inputVatAccount != null) {
-					vat.setInputAccountId(inputVatAccount.getId());
-					vat.setInputAccountCode(inputVatAccount.getCode());
-					vat.setInputAccountDescription(inputVatAccount.getDescription());
-				}
-				if (outputVatAccount == null) {
-					outputVatAccount = config.getDefaultChargedVatAccount();
-				}
-				if (outputVatAccount != null) {
-					vat.setOutputAccountId(outputVatAccount.getId());
-					vat.setOutputAccountCode(outputVatAccount.getCode());
-					vat.setOutputAccountDescription(outputVatAccount.getDescription());
-				}
-				if (config.getVatNegativeAdjustAccount() != null) {
-					vat.setAdjAccountId( config.getVatNegativeAdjustAccount().getId());
-					vat.setAdjAccountCode( config.getVatNegativeAdjustAccount().getCode());
-					vat.setAdjAccountDescription( config.getVatNegativeAdjustAccount().getDescription());
-				}
-			}
-		});
-		ai.addVat(vat);
 		return ai;
+	}
+	
+	private static InvoiceVAT createNewInvoiceVAT(AccountingInvoice ai,AonConfiguration config) {
+		InvoiceVAT vat = new InvoiceVAT();
+		Account inputVatAccount = null;
+		Account outputVatAccount = null;
+		if (config.getDefaultVatPercent() != null) {
+			vat.setPercentage(config.getDefaultVatPercent().getPercentage());
+			if (ai.isSurcharge()) {
+				vat.setSurcharge(config.getDefaultVatPercent().getSurcharge());	
+			}
+			inputVatAccount = config.getDefaultVatPercent().getPurchaseAccount();
+			outputVatAccount = config.getDefaultVatPercent().getSalesAccount();
+		}
+		if (inputVatAccount == null) inputVatAccount = config.getDefaultPaidVatAccount();
+		if (inputVatAccount != null) {
+			vat.setInputAccountId(inputVatAccount.getId());
+			vat.setInputAccountCode(inputVatAccount.getCode());
+			vat.setInputAccountDescription(inputVatAccount.getDescription());
+		}
+		if (outputVatAccount== null) outputVatAccount = config.getDefaultChargedVatAccount();
+		if (outputVatAccount != null) {
+			vat.setOutputAccountId(outputVatAccount.getId());
+			vat.setOutputAccountCode(outputVatAccount.getCode());
+			vat.setOutputAccountDescription(outputVatAccount.getDescription());
+		}
+		if (config.getVatNegativeAdjustAccount() != null) {
+			vat.setAdjAccountId( config.getVatNegativeAdjustAccount().getId());
+			vat.setAdjAccountCode( config.getVatNegativeAdjustAccount().getCode());
+			vat.setAdjAccountDescription( config.getVatNegativeAdjustAccount().getDescription());
+		}
+		if (ai.isSales() && config.getDefaultSalesAccount() != null) {
+			vat.setExpAccountId(config.getDefaultSalesAccount().getId());
+			vat.setExpAccountCode(config.getDefaultSalesAccount().getCode());
+			vat.setExpAccountDescription(config.getDefaultSalesAccount().getDescription());
+		}
+		if (ai.isPurchase() && config.getDefaultPurchaseAccount() != null) {
+			vat.setExpAccountId(config.getDefaultPurchaseAccount().getId());
+			vat.setExpAccountCode(config.getDefaultPurchaseAccount().getCode());
+			vat.setExpAccountDescription(config.getDefaultPurchaseAccount().getDescription());
+		}
+		return vat;
+	}
+
+	private static class InvoiceRegistryInitializer implements IAccountingRegistryTypeVisitor {
+		private AONContext ctx;
+		private Invoice invoice;
+		private AonConfiguration config;
+		
+		private InvoiceRegistryInitializer(AONContext ctx,Invoice invoice,AonConfiguration config) {
+			this.ctx = ctx;
+			this.invoice = invoice;
+			this.config = config;
+		}
+		
+		@Override
+		public void visitCustomer(AccountingRegistry reg) {
+			invoice.setSurcharge(reg.isSurcharge());
+			invoice.setWithholding(reg.isWithholding() && config.getCompany().isWithholding());
+			invoice.setWithholdingFarmer(false);
+			invoice.setVatAccrualPayment(invoice.isNational()
+					&& !invoice.getIssueDate().before(VAT_ACCRUAL_START_DATE)
+					&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
+			invoice.setSeries(config.getDefaultInvoiceSeries());
+			invoice.setNumber( getNextNumber(ctx, invoice.getType(), invoice.getSeries()));
+		}
+
+		@Override
+		public void visitSupplier(AccountingRegistry reg) {
+			invoice.setSurcharge(reg.isSurcharge() && config.getCompany().isSurcharge());
+			invoice.setWithholding(reg.isWithholding());
+			invoice.setWithholdingFarmer(reg.isWithholdingFarmer());
+			invoice.setVatAccrualPayment(invoice.isNational()
+					&& !invoice.getIssueDate().before(VAT_ACCRUAL_START_DATE)
+					&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
+		}
+
+		@Override
+		public void visitCreditor(AccountingRegistry reg) {
+			invoice.setSurcharge(false);
+			invoice.setWithholding(reg.isWithholding());
+			invoice.setWithholdingFarmer(reg.isWithholdingFarmer());
+			invoice.setVatAccrualPayment(invoice.isNational()
+					&& !invoice.getIssueDate().before(VAT_ACCRUAL_START_DATE)
+					&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
+		}
 	}
 }

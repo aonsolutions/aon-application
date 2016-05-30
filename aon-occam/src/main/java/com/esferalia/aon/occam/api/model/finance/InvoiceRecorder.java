@@ -11,7 +11,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceRecorder {
-
+	
 	private static interface IVisitor {
 		void visit( AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map);
 	}
@@ -124,19 +124,21 @@ public class InvoiceRecorder {
 
 			@Override
 			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
-				if (invoice.isSales() && invoice.isWithholding() && invoice.getWithholdingData() != null) {
-					if (invoice.getWithholdingData().getAccountId() != null 
-						&& invoice.getWithholdingData().getQuota() !=  0.0) {
-						AccountEntryDetail detail = map.get(invoice.getWithholdingData().getAccountId());
-						if (detail == null) {
-							detail = new AccountEntryDetail()
-									.setAccount(invoice.getWithholdingData().getAccountId())
-									.setAccountCode(invoice.getWithholdingData().getAccountCode())
-									.setAccountDescription(invoice.getWithholdingData().getAccountDescription());
-							map.put(invoice.getWithholdingData().getAccountId(),detail);
-						}
-						detail.addDebit( invoice.getWithholdingData().getQuota() );
+				if (invoice.isSales() 
+					&& invoice.isWithholding() 
+					&& invoice.getWithholdingData() != null 
+					&& invoice.getWithholdingData().getAccountId() != null 
+					&& invoice.getWithholdingData().getQuota() !=  0.0) {
+					
+					AccountEntryDetail detail = map.get(invoice.getWithholdingData().getAccountId());
+					if (detail == null) {
+						detail = new AccountEntryDetail()
+								.setAccount(invoice.getWithholdingData().getAccountId())
+								.setAccountCode(invoice.getWithholdingData().getAccountCode())
+								.setAccountDescription(invoice.getWithholdingData().getAccountDescription());
+						map.put(invoice.getWithholdingData().getAccountId(),detail);
 					}
+					detail.addDebit( invoice.getWithholdingData().getQuota() );
 				}
 			}
 			 
@@ -145,22 +147,23 @@ public class InvoiceRecorder {
 
 			@Override
 			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
-				if (!invoice.isSales() && invoice.isWithholding() && invoice.getWithholdingData() != null) {
-					if (invoice.getWithholdingData().getAccountId() != null 
-						&& invoice.getWithholdingData().getQuota() !=  0.0) {
-						AccountEntryDetail detail = map.get(invoice.getWithholdingData().getAccountId());
-						if (detail == null) {
-							detail = new AccountEntryDetail()
-									.setAccount(invoice.getWithholdingData().getAccountId())
-									.setAccountCode(invoice.getWithholdingData().getAccountCode())
-									.setAccountDescription(invoice.getWithholdingData().getAccountDescription());
-							map.put(invoice.getWithholdingData().getAccountId(),detail);
-						}
-						detail.addCredit( invoice.getWithholdingData().getQuota() );
+				if (!invoice.isSales() 
+					&& invoice.isWithholding() 
+					&& invoice.getWithholdingData() != null 
+					&& invoice.getWithholdingData().getAccountId() != null 
+					&& invoice.getWithholdingData().getQuota() !=  0.0) {
+					
+					AccountEntryDetail detail = map.get(invoice.getWithholdingData().getAccountId());
+					if (detail == null) {
+						detail = new AccountEntryDetail()
+								.setAccount(invoice.getWithholdingData().getAccountId())
+								.setAccountCode(invoice.getWithholdingData().getAccountCode())
+								.setAccountDescription(invoice.getWithholdingData().getAccountDescription());
+						map.put(invoice.getWithholdingData().getAccountId(),detail);
 					}
+					detail.addCredit( invoice.getWithholdingData().getQuota() );
 				}
 			}
-			 
 	 	})
 		,SALES( new IVisitor() {
 
@@ -245,5 +248,6 @@ public class InvoiceRecorder {
 		}
 		return new AccountEntry[]{ae};
 	}
+	
 
 }

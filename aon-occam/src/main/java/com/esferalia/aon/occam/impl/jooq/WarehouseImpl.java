@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InventoryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SeriesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -121,6 +122,6 @@ public class WarehouseImpl implements IWarehouse {
 	@Override
 	public LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId){
 		return ctx.getDslContext().transactionResult(configuration ->
-				WarehouseDAO.getSeriesDeliveryList(ctx, scopeId));
+				SeriesDAO.getSeriesDeliveryList(ctx, scopeId));
 	}
 }

@@ -16,13 +16,11 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
-import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -156,8 +154,6 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 			@Override
 			public void withholdingChanged() {
 				enableWithholdingIfNeeded();
-				withholdingType.setValue(extraPanel.isWithholding()?WithholdingType.PROFESSIONAL:null);
-				paintEntry();
 			}
 
 			@Override
@@ -205,14 +201,18 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 		invoiceDataPanel.setVisible(false);
 		enableWithholdingIfNeeded();
 		withholdingPanel.setVisible(false);
+		withholdingBase.setEnabled(false);
+		withholdingQuota.setEnabled(false);
 		fillSalesSeries();
 		fillWithholdingTaxs();
 		invoicePanelVisitor = new InvoicePanelVisitor();
 	}
 	
 	private void enableWithholdingIfNeeded() {
+		if (extraPanel.isWithholding()) populateWithholding();
 		withholdingLabel.setVisible(extraPanel.isWithholding());
 		withholdingTaxs.setVisible(extraPanel.isWithholding());
+		withholdingBase.setVisible(extraPanel.isWithholding());
 		withholdingPercent.setVisible(extraPanel.isWithholding());
 		withholdingQuota.setVisible(extraPanel.isWithholding());
 		withholdingAccount.setVisible(extraPanel.isWithholding());
@@ -235,14 +235,8 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	private void fillWithholdingTaxs() {
 		withholdingTaxs.setWidth("100px");
 		if (callback.getConfiguration().getWithholdingTaxes() != null && callback.getConfiguration().getWithholdingTaxes().size() > 0) {
-			int i = 0;
 			for (Tax tax : callback.getConfiguration().getWithholdingTaxes()) {
 				withholdingTaxs.addItem(tax.getName(),AonNumberUtils.toString( tax.getId()));
-				if (callback.getConfiguration().getDefaultWithholdingPercent() != null 
-					&& tax.getId() == callback.getConfiguration().getDefaultWithholdingPercent().getId() ) {
-					withholdingTaxs.setSelectedIndex(i);
-					DomEvent.fireNativeEvent(Document.get().createChangeEvent(), withholdingTaxs);
-				}
 			}
 		}
 	}
@@ -277,9 +271,17 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 					account.setId(ar.getAccountId());
 					account.setCode(ar.getAccountCode());
 					account.setDescription(ar.getAccountDescription());
-					
 					callback.onShowBalance(account);
-					invoice.getRegistry().getType().visit(invoicePanelVisitor);
+					
+					invoice.getRegistry().getType().visit(invoice.getRegistry(),invoicePanelVisitor);
+					onChangeWithholdingTaxs(null);
+					vatPanel.paint();
+					
+					withholdingPanel.setVisible(invoice.isWithholding());
+					if (invoice.isWithholding()) {
+						populateWithholding();
+					}
+					paintEntry();
 				}
 				
 				@Override
@@ -289,6 +291,20 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 			});
 	}
 	
+	private void populateWithholding() {
+		invoice.getWithholdingData().setBase( invoice.getTotalTaxableBase() );
+		withholdingBase.setValue( invoice.getTotalTaxableBase() );
+		withholdingPercent.setValue( invoice.getWithholdingData().getPercentage() );
+		invoice.getWithholdingData().setQuota(
+				AonMathUtils.round(invoice.getWithholdingData().getBase() 
+				* invoice.getWithholdingData().getPercentage() / 100));
+		withholdingQuota.setValue( invoice.getWithholdingData().getQuota() );
+		withholdingType.setValue(invoice.getWithholdingData().getWithholdingType());
+		withholdingAccount.setValue(invoice.getWithholdingData().getAccountId()
+				,invoice.getWithholdingData().getAccountCode()
+				,invoice.getWithholdingData().getAccountDescription());
+	}
+
 	@UiHandler("withholdingTaxs")
 	public void onChangeWithholdingTaxs(ChangeEvent event) {
 		for (Tax tax : callback.getConfiguration().getWithholdingTaxes()) {
@@ -311,7 +327,7 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	private class InvoicePanelVisitor implements IAccountingRegistryTypeVisitor {
 
 		@Override
-		public void visitCustomer() {
+		public void visitCustomer(AccountingRegistry reg) {
 			for (int i = 0; i < series.getItemCount(); i++) {
 				if (AonStringUtils.equals(invoice.getInvoice().getSeries(), series.getValue(i))) {
 					series.setSelectedIndex(i);
@@ -319,42 +335,30 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 			}
 			number.setValue(invoice.getInvoice().getNumber());
 			invoiceDataPanel.setVisible(true);
-			withholdingPanel.setVisible(true);
 			series.setVisible(true);
 			number.setVisible(true);
 			referenceCode.setVisible(false);
 			series.setFocus(true);
 			invoice.getInvoice().setReferenceCode(null);
-			onChangeWithholdingTaxs(null);
-			vatPanel.paint();
-			paintEntry();
 		}
 
 		@Override
-		public void visitCreditor() {
+		public void visitCreditor(AccountingRegistry reg) {
 			invoiceDataPanel.setVisible(true);
-			withholdingPanel.setVisible(true);
 			series.setVisible(false);
 			number.setVisible(false);
 			referenceCode.setVisible(true);
 			referenceCode.setFocus(true);
 			withholdingType.setVisible(extraPanel.isWithholding());
-			onChangeWithholdingTaxs(null);
-			vatPanel.paint();
-			paintEntry();
 		}
 
 		@Override
-		public void visitSupplier() {
+		public void visitSupplier(AccountingRegistry reg) {
 			invoiceDataPanel.setVisible(true);
-			withholdingPanel.setVisible(true);
 			series.setVisible(false);
 			number.setVisible(false);
 			referenceCode.setVisible(true);
 			referenceCode.setFocus(true);
-			onChangeWithholdingTaxs(null);
-			vatPanel.paint();
-			paintEntry();
 		}
 		
 	}
@@ -372,6 +376,7 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	}
 	@UiHandler("vatPanel")
 	public void onValueChangeAccountVatPanel(ValueChangeEvent<InvoiceVAT> event) {
+		if (invoice.isWithholding()) populateWithholding();
 		paintEntry();
 	}
 	@UiHandler("vatPanel")
@@ -390,23 +395,10 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
             extraPanel.setFocus();
         }
 	}
-	
-	@UiHandler("withholdingBase")
-	public void onValueChangeWithholdingBase(ValueChangeEvent<Double> event) {
-		invoice.setWithholdingBase( event.getValue() );
-		withholdingQuota.setValue(invoice.getWithholdingData().getQuota());
-		paintEntry();
-	}
 	@UiHandler("withholdingPercent")
 	public void onValueChangeWithholdingPercent(ValueChangeEvent<Double> event) {
 		invoice.setWithholdingPercent( event.getValue() );
-		withholdingQuota.setValue(invoice.getWithholdingData().getQuota());
-		paintEntry();
-	}
-	
-	@UiHandler("withholdingQuota")
-	public void onValueChangeWithholdingQuota(ValueChangeEvent<Double> event) {
-		invoice.setWithholdingQuota( event.getValue() );
+		populateWithholding();
 		paintEntry();
 	}
 	

@@ -10,28 +10,28 @@ public enum AccountingRegistryType implements Serializable {
 	SUPPLIER (InvoiceType.PURCHASE, AccountEntryType.PURCHASE_INVOICE
 		,new IAccountingRegistryTypeVisitorWalker() {
 			@Override
-			public void visit(IAccountingRegistryTypeVisitor visitor) {
-				visitor.visitSupplier();
+			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
+				visitor.visitSupplier(reg);
 			}
 		})
 	,CUSTOMER (InvoiceType.SALES, AccountEntryType.SALES_INVOICE
 		, new IAccountingRegistryTypeVisitorWalker() {
 			@Override
-			public void visit(IAccountingRegistryTypeVisitor visitor) {
-				visitor.visitCustomer();
+			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
+				visitor.visitCustomer(reg);
 			}
 		})
 	,CREDITOR (InvoiceType.EXPENSES, AccountEntryType.EXPENSE_INVOICE
 		, new IAccountingRegistryTypeVisitorWalker() {
 			@Override
-			public void visit(IAccountingRegistryTypeVisitor visitor) {
-				visitor.visitCreditor();
+			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
+				visitor.visitCreditor(reg);
 			}
 		})
 	;
 	
 	public interface IAccountingRegistryTypeVisitorWalker {
-		void visit( IAccountingRegistryTypeVisitor visitor);
+		void visit( AccountingRegistry reg, IAccountingRegistryTypeVisitor visitor);
 	}
 	
 	
@@ -53,8 +53,8 @@ public enum AccountingRegistryType implements Serializable {
 	public AccountEntryType getAccountEntryType() {
 		return accountEntryType;
 	}
-	public void visit(IAccountingRegistryTypeVisitor visitor) {
-		walker.visit(visitor);
+	public void visit(AccountingRegistry reg, IAccountingRegistryTypeVisitor visitor) {
+		walker.visit(reg,visitor);
 	}
 	
 }

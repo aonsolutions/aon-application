@@ -52,12 +52,12 @@ public class AccountingInvoice implements Serializable {
 	public LinkedList<InvoiceVAT> getVats() {
 		return vats;
 	}
-	public LinkedList<InvoiceVAT> addVat(InvoiceVAT vat) {
+	public AccountingInvoice addVat(InvoiceVAT vat) {
 		if (getVats() == null) {
 			setVats(new LinkedList<InvoiceVAT>());
 		}
 		getVats().add(vat);
-		return vats;
+		return this;
 	}
 	public AccountingInvoice setVats(LinkedList<InvoiceVAT> vats) {
 		this.vats = vats;
@@ -100,6 +100,12 @@ public class AccountingInvoice implements Serializable {
 
 	public boolean isSales() {
 		return invoice != null && invoice.isSales(); 
+	}
+	public boolean isPurchase() {
+		return invoice != null && invoice.isPurchase(); 
+	}
+	public boolean isExpenses() {
+		return invoice != null && invoice.isExpenses(); 
 	}
 
 	public boolean isSurcharge() {
@@ -158,6 +164,10 @@ public class AccountingInvoice implements Serializable {
 			setWithholdingData( new InvoiceWithholding() );
 		}
 		getWithholdingData().setWithholdingType(type);
+	}
+	
+	public InvoiceVAT getFirstVat() {
+		return getVats().get(0);
 	}
 	
 	
