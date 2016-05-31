@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.document.server;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import java.security.KeyStoreException;
 import java.sql.Date;
 import java.text.Collator;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.Vector;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import javax.mail.BodyPart;
@@ -1498,4 +1501,131 @@ public Vector<FileInfo> insertFileMultiple(Domain domain, String dialogCode, Fil
 		System.out.println();
 		System.out.println("++++++++++++++++++++++++++++++++++++++++++");
 	}
+	
+	public LinkedList<FileInfo> decompress(Domain domain, FileInfo fileInfo){
+		LinkedList<FileInfo> fileList = new LinkedList<FileInfo>();
+		try {
+			java.io.File file = new java.io.File("file.zip");
+			Integer id = fileInfo.getFileId();
+			byte[] data  = null;
+			if(fileInfo.getDriveId() != null) 
+				data = DriveUtils.getByteFile(domain, getUser(), fileInfo.getDriveId(), id);
+			else data = AON.getAttach(domain.getName(), domain.getId(), getUserLogin(), f -> f.getIdProperty().eq(id), AttachType.REGISTRY).getData();
+			AonFileUtils.writeByteArrayToFile(file, data);
+			ZipInputStream zis = new ZipInputStream(new FileInputStream(file));
+			ZipEntry entrada;
+			while (null != (entrada=zis.getNextEntry()) ){			
+				System.out.println(entrada.getName());
+			   
+			   ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			   int leido;
+			   byte [] buffer = new byte[1024];
+			   while (0<(leido=zis.read(buffer))){
+			      bos.write(buffer,0,leido);
+			   }
+
+			   
+			   java.io.File f = new java.io.File("aux");
+			   AonFileUtils.writeByteArrayToFile(f, bos.toByteArray());
+			 
+			   eu.medsea.mimeutil.MimeUtil.registerMimeDetector("eu.medsea.mimeutil.detector.MagicMimeMimeDetector");
+			   Collection<?> mimeTypes = eu.medsea.mimeutil.MimeUtil.getMimeTypes(f);
+			   if(MimeType.get(mimeTypes.toString()) != null && !MimeType.get(mimeTypes.toString()).equals(MimeType.OCTECT_STREAM)){
+				   FileInfo fileInfoAux = fileInfo;
+				   fileInfoAux.setData(bos.toByteArray());
+				   if(entrada.getName().contains("/")){
+					   Integer pos = entrada.getName().lastIndexOf("/");
+					   fileInfoAux.setTitle(entrada.getName().substring(pos+1));
+				   }else fileInfoAux.setTitle(entrada.getName());
+				   
+				   fileInfoAux.setMimetype(MimeType.get(mimeTypes.toString()).value());
+				   fileInfoAux.setMimeString(mimeTypes.toString());
+				   fileInfoAux.setIcon(icon(mimeTypes.toString()));
+				   fileInfoAux.setSize(bos.size());
+				   Integer fid = insertFile(domain, fileInfoAux);
+				   fileInfoAux.setFileId(fid);
+				   fileList.add(fileInfoAux);
+			   }	
+			   bos.close();
+			   zis.closeEntry();
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return fileList;
+	}
+	
+	public Integer insertFile(Domain domain, FileInfo fi) {
+		Attach attach = new Attach();
+		attach.setAttachType(AttachType.REGISTRY);
+		attach.setAttachModule(DBConsults.getRegistry(domain, getUserLogin()));
+		attach.setCategory(fi.getCategory());
+		attach.setDate(new java.util.Date());
+		attach.setMimeType(MimeType.values()[fi.getMimetype()]);
+		attach.setDescription(fi.getTitle());
+		attach.setType(com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.CORPORATE_IDENTITY.value());
+		if(fi.getScope()!= null) attach.setScope(fi.getScope().getId());
+		attach.setConfidential(fi.getConfidential());
+		attach.setDomain(domain.setId(fi.getDomainId()));
+		attach.setDparentId(fi.getSize().toString());
+		attach.setData(fi.getData());
+		attach.setCreationDate(new java.util.Date());
+		attach.setModificationDate(new java.util.Date());
+		attach.setCreationUser(getUserLogin());
+		attach.setModificationUser(getUserLogin());
+		Integer id = AON.insert(domain.getName(), domain.getId(), getUserLogin(), attach);
+		fi.getTags().stream().forEach(tag ->{
+			AON.insertRegistryAttachTag(domain.getName(), domain.getId(), getUserLogin(), id, tag.getId());
+		});
+		return id;
+	}
+	
+	public static String icon(String m) {
+		if(m.contains("audio")) return "aon-icon-google-drive-audio";
+		if(m.contains("image")) return "aon-icon-google-drive-image";
+		if(m.contains("video")) return "aon-icon-google-drive-mov";
+		switch (m) {
+		case "application/vnd.google-apps.audio":return "aon-icon-google-drive-audio";
+		case "application/vnd.google-apps.document":return "aon-icon-google-drive-docs";
+		case "application/vnd.google-apps.drawing":return "aon-icon-google-drive-drawing";
+		case "application/vnd.google-apps.folder":return "aon-icon-google-drive-folder";
+		case "application/vnd.google-apps.form":return "aon-icon-google-drive-form";
+		case "application/vnd.google-apps.photo":return "aon-icon-google-drive-image";
+		case "application/vnd.google-apps.presentation":return "aon-icon-google-drive-presentation";
+		case "application/vnd.google-apps.spreadsheet":return "aon-icon-google-drive-calc";
+		case "application/vnd.google-apps.video":return "aon-icon-google-drive-mov";
+		
+		case "application/msword":
+		case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+		case "application/vnd.openxmlformats-officedocument.wordprocessingml.template":
+		case "application/vnd.ms-word.document.macroEnabled.12":
+		case "application/vnd.ms-word.template.macroEnabled.12":
+			return "aon-icon-google-drive-word";
+		case "application/vnd.ms-excel": 
+		case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": 
+		case "application/vnd.openxmlformats-officedocument.spreadsheetml.template": 
+		case "application/vnd.ms-excel.sheet.macroEnabled.12": 
+		case "application/vnd.ms-excel.template.macroEnabled.12": 
+		case "application/vnd.ms-excel.addin.macroEnabled.12": 
+		case "application/vnd.ms-excel.sheet.binary.macroEnabled.12": 
+			return "aon-icon-google-drive-excel";
+		case "application/vnd.ms-powerpoint": 
+		case "application/vnd.openxmlformats-officedocument.presentationml.presentation": 
+		case "application/vnd.openxmlformats-officedocument.presentationml.template": 
+		case "application/vnd.openxmlformats-officedocument.presentationml.slideshow": 
+		case "application/vnd.ms-powerpoint.addin.macroEnabled.12": 
+		case "application/vnd.ms-powerpoint.presentation.macroEnabled.12": 
+		case "application/vnd.ms-powerpoint.slideshow.macroEnabled.12": 
+			return "aon-icon-google-drive-power-point";
+		case "application/pdf": return "aon-icon-google-drive-pdf-sinfondo";
+		
+		case "application/x-rar-compressed": return "aon-icon-google-drive-zip";
+		case "application/zip": return "aon-icon-google-drive-zip";
+		default:
+			return "aon-icon-google-drive-unknown";
+		}
+	}
+	
 }

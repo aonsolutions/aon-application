@@ -116,4 +116,6 @@ public interface IDocumentAsync {
 
 	void insertFileBD(Domain domain, String dialogCode, FileInfo fi, AsyncCallback<Vector<FileInfo>> callback);
 
+	void decompress(Domain domain, FileInfo fileInfo, AsyncCallback<LinkedList<FileInfo>> callback);
+
 }

@@ -285,6 +285,13 @@ public class Documents extends Composite implements EntryPoint {
 				info(object);
 			};
 		};
+		
+		ScheduledCommand decompressCommand = new ScheduledCommand() {
+			public void execute() {
+				FileInfo object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+				decompress(object);
+			};
+		};
 
 		private MenuItem viewItem;
 		private MenuItem editItem;
@@ -293,6 +300,7 @@ public class Documents extends Composite implements EntryPoint {
 		private MenuItem shareItem;
 		private MenuItem downloadItem;
 		private MenuItem infoItem;
+		private MenuItem decompressItem;
 		private Integer number = 0;
 		private Integer heigth;
 		private Integer width;
@@ -360,6 +368,13 @@ public class Documents extends Composite implements EntryPoint {
 			this.editItem = editItem;
 		}
 		
+		public MenuItem getDecompressItem() {
+			return decompressItem;
+		}
+		public void setDecompressItem(MenuItem decompressItem) {
+			this.decompressItem = decompressItem;
+		}
+		
 		public DocumentContextMenu(Boolean par, Boolean lot,FileInfo object,Boolean permiso){
 
 			if(par || permiso){
@@ -410,6 +425,13 @@ public class Documents extends Composite implements EntryPoint {
 				downloadItem = addItem("Descargar",downloadCommand,
 						"aon-icon-mail-save",AON.AON_ICON_CMD_BUTTON);
 				downloadItem.setEnabled(true);number++;
+				
+				if(object.getMimetype().equals(MimeType.ZIP.value())){
+					decompressItem = addItem("Descomprimir", decompressCommand,
+						"aon-icon-google-drive-zip",AON.AON_ICON_CMD_BUTTON);
+					decompressItem.setEnabled(true);number++;
+				}
+				
 				if(selFiles.size() <= 1){
 					addSeparator();
 					infoItem = addItem("Detalles",infoCommand,
@@ -3068,6 +3090,25 @@ public class Documents extends Composite implements EntryPoint {
 		popup2.show();
 	}
 
+	private void decompress(final FileInfo object){
+		cargando.show();
+		idoc.decompress(getDomain(), object, new AsyncCallback<LinkedList<FileInfo>>() {
+			
+			@Override
+			public void onSuccess(LinkedList<FileInfo> result) {
+				cargando.hide();
+				dataProvider.getList().addAll(result);
+				updateDatagridColumns();
+				dataGrid.redraw();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				cargando.hide();
+			}
+		});
+	}
+	
 	private void sons(TreeItem parent, Vector<TreeDriveInfo> sons) {
 		for (TreeDriveInfo f : sons) {
 			TreeItem ti = new TreeItem();

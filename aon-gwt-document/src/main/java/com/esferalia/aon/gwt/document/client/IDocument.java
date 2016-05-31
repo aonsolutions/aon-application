@@ -113,4 +113,6 @@ public interface IDocument extends RemoteService{
 	
 	public String getLink(Domain domain, FileInfo fileInfo, String l);
 	
+	public LinkedList<FileInfo> decompress(Domain domain, FileInfo fileInfo);
+
 }

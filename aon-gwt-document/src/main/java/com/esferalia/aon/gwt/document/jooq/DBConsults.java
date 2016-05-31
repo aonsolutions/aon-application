@@ -937,6 +937,20 @@ public class DBConsults {
 		
 	}
 	
+	public static Integer getRegistry(Domain domain, String login){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
+		
+			Result<Record1<Integer>> reg = ctx.getDslContext().select(ENTERPRISE.REGISTRY)
+					.from(ENTERPRISE.join(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID)))
+					.where(DOMAIN.NAME.eq(domain.getName())).fetch();
+			return reg.get(0).value1();
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	public static Integer insertFile(Domain domain,User user, com.code.aon.google.apis.FileInfo fi){
 		AONContext ctx = null;
 		try {
