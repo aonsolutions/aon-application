@@ -167,6 +167,8 @@ public class SQLSystemDataTestCase extends AbstractSQLTestCase {
 						.get(0).getValue());
 
 		builder = new SalaryBuilder();
+		ctx = getContractSalaryCalculatorContext(connection, firstDayOfMonth,
+				lastDayOfMonth, lastDayOfMonth, contract);
 		Salary salary = new ContractSalaryCalculator<Salary>(builder)
 				.calculate(ctx);
 

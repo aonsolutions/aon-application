@@ -127,6 +127,10 @@ public class ExpressionContext {
 			this.start = start;
 			this.expression = expression;
 		}
+		
+		public IExpression getExpression() {
+			return expression;
+		}
 
 		@Override
 		public <T> List<ITimedResult<T>> eval(ExpressionContext context, Class<T> toType) throws ExpressionException {

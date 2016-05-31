@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -40,6 +38,7 @@ import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
@@ -144,6 +143,41 @@ public abstract class QuoteCalculator {
 		
 	}
 	
+	private static class BaseVariable implements ITimedVariable<Double> {
+
+		private Double value;
+		private Period period;
+		
+		public BaseVariable(Double value, Period period ) {
+			this.value = value;
+			this.period = period;
+		}
+		
+		public BaseVariable(Double value, Date start, Date end ) {
+			this ( value, new Period(start, end) );
+		}
+
+
+		@Override
+		public Period getPeriod() {
+			return period;
+		}
+		
+		@Override
+		public Double getValue(Period period) {
+			return value / getValueDays() * getPeriodDays(period);
+		}
+		
+		private long getValueDays() {
+			return getPeriodDays(period);
+		}
+
+		private long getPeriodDays(Period p) {
+			return AonDateUtils.getDaysBetweenDates(p.getStart(), p.getEnd())+1;
+		}
+
+	}
+
 	public static class NonQuote extends QuoteCalculator {
 		private NonQuote() {
 		}
@@ -362,21 +396,26 @@ public abstract class QuoteCalculator {
 
 					if (context.containsVariable(CGC_BASE.getName(), start,
 							end))
-						quotesImpl.addAll(limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
-								CGC_BASE_MIN.getName(), CGC_BASE_MAX.getName(),
+						//@formatter:off
+						quotesImpl.addAll(limit(
+								CGC_BASE, 
+								CGC_BASE_RAW,
+								CGC_BASE_MIN, 
+								CGC_BASE_MAX,
 								context, start, end, 
-								MATERNITY_BASE.getName(),
-								ERE_BASE.getName(),
-								DIRECT_BASE.getName()
+								MATERNITY_BASE,
+								ERE_BASE,
+								DIRECT_BASE
 								));
+						//@formatter:on
 					if (context.containsVariable(CGP_BASE.getName(), start,
 							end))
-						quotesImpl.addAll(limit(CGP_BASE.getName(), CGP_BASE_RAW.getName(),
-								CGP_BASE_MIN.getName(), CGP_BASE_MAX.getName(),
+						quotesImpl.addAll(limit(CGP_BASE, CGP_BASE_RAW,
+								CGP_BASE_MIN, CGP_BASE_MAX,
 								context, start, end, 
-								MATERNITY_BASE.getName(),
-								ERE_BASE.getName(), 
-								DIRECT_BASE.getName()));
+								MATERNITY_BASE,
+								ERE_BASE, 
+								DIRECT_BASE));
 
 					return quotesImpl;
 				}
@@ -392,12 +431,15 @@ public abstract class QuoteCalculator {
 				@Override
 				public void visitOther(PaymentType type) {
 					add(CGC_BASE_RAW.getName(), quote, context, start, end);
-					quotesImpl.addAll(limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
-							CGC_BASE_MIN.getName(), CGC_BASE_MAX.getName(),
+					quotesImpl.addAll(limit(
+							CGC_BASE, 
+							CGC_BASE_RAW,
+							CGC_BASE_MIN, 
+							CGC_BASE_MAX,
 							context, start, end, 
-							MATERNITY_BASE.getName(),
-							ERE_BASE.getName(), 
-							DIRECT_BASE.getName()));
+							MATERNITY_BASE,
+							ERE_BASE, 
+							DIRECT_BASE));
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 
@@ -418,24 +460,32 @@ public abstract class QuoteCalculator {
 				@Override
 				public void visitSalaryInKind(PaymentType paymentType) {
 					add(CGC_BASE_RAW.getName(), quote, context, start, end);
-					quotesImpl.addAll(limit(CGC_BASE.getName(), CGC_BASE_RAW.getName(),
-							CGC_BASE_MIN.getName(), CGC_BASE_MAX.getName(),
+					quotesImpl.addAll(limit(
+							CGC_BASE, 
+							CGC_BASE_RAW,
+							CGC_BASE_MIN, 
+							CGC_BASE_MAX,
 							context, start, end, 
-							MATERNITY_BASE.getName(),
-							ERE_BASE.getName(), 
-							DIRECT_BASE.getName()));
+							MATERNITY_BASE,
+							ERE_BASE, 
+							DIRECT_BASE));
 					GeneralQuote.this.rawCgcBase += quote;
 				}
 
 			});
 
 			add(CGP_BASE_RAW.getName(), quote, context, start, end);
-			quotesImpl.addAll(limit(CGP_BASE.getName(), CGP_BASE_RAW.getName(),
-					CGP_BASE_MIN.getName(), CGP_BASE_MAX.getName(), context,
-					start, end, 
-					MATERNITY_BASE.getName(), 
-					ERE_BASE.getName(), 
-					DIRECT_BASE.getName()));
+			quotesImpl.addAll(limit(
+					CGP_BASE, 
+					CGP_BASE_RAW,
+					CGP_BASE_MIN, 
+					CGP_BASE_MAX, 
+					context,
+					start, 
+					end, 
+					MATERNITY_BASE, 
+					ERE_BASE, 
+					DIRECT_BASE));
 
 			SalaryType salaryType = payment.getSalaryType();
 			salaryType.accept(new SalaryTypeVisitor<Object>() {
@@ -470,11 +520,11 @@ public abstract class QuoteCalculator {
 			return quotesImpl;
 		}
 
-		protected List<ITimedResult<Double>> limit(String limitName, String rawName,
-				String minExpression, String maxExpression,
-				ExpressionContext ctx, Date start, Date end, String... others) {
-			return QuoteCalculator.limit(limitName, rawName, minExpression,
-					maxExpression, ctx, start, end, others);
+		protected List<ITimedResult<Double>> limit(ContextVariable limit, ContextVariable raw,
+				ContextVariable min, ContextVariable max,
+				ExpressionContext ctx, Date start, Date end, ContextVariable... others) {
+			return QuoteCalculator.limit(limit, raw, min,
+					max, ctx, start, end, others);
 		}
 
 	}
@@ -702,22 +752,41 @@ public abstract class QuoteCalculator {
 		return total;
 	}
 
-	private static List<ITimedResult<Double>> getLimit(String expression,
-			ExpressionContext expressionContext, Date start, Date end)
-					throws ExpressionException {
+	private static List<ITimedResult<Double>> getLimit(
+			ContextVariable ctxVar,
+			ExpressionContext expressionContext, 
+			Date start, 
+			Date end)
+	throws ExpressionException {
 
-		if (expression == null)
-			return Collections.emptyList();
-
-		List<ITimedResult<Double>> limits = null;
-		limits = expressionContext.eval(expression, start, end, Double.class);
+		List<ITimedResult<Double>> limits = new ArrayList<ITimedResult<Double>>(); 
 		
-
-		if (limits == null || limits.size() == 0) {
-			return Collections.emptyList();
+		
+		
+		List<ITimedVariable<Number>> vars = expressionContext.getVariables(ctxVar, start, end);
+		if ( vars.isEmpty() )
+			throw new UndefinedContextVariablesException(ctxVar);
+		
+		for ( ITimedVariable<Number> var: vars ) {
+			try {
+				Number value = var.getValue(var.getPeriod());
+				limits.add(
+						new TimedResult<Double>(
+						value.doubleValue(), 
+						var.getPeriod(), 
+						Collections.emptyMap()));
+			} catch ( ExpressionExceptionWrapper e){
+				try {
+					throw e.getExpressionException();
+				} catch ( DeferredExpressionException de){
+					limits.addAll(expressionContext.eval(de.getExpression().getExpression(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
+				} catch ( Throwable t ){
+					limits.addAll(expressionContext.eval(ctxVar.getName(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
+				}
+			} catch ( Throwable t ){
+				limits.addAll(expressionContext.eval(ctxVar.getName(), var.getPeriod().getStart(), var.getPeriod().getEnd(), Double.class));
+			}
 		}
-		
-		
 		
 		return limits;
 	}
@@ -739,7 +808,7 @@ public abstract class QuoteCalculator {
 			Double oldValue = var.getValue(period);
 			long days = AonDateUtils.getDaysBetweenDates(period.getStart(),
 					period.getEnd()) + 1;
-			ctx.putVariable(name, new TimedObject<Double>(
+			ctx.putVariable(name, new BaseVariable(
 					oldValue + (valueDay * days), period));
 		}
 
@@ -749,19 +818,26 @@ public abstract class QuoteCalculator {
 			long days = AonDateUtils.getDaysBetweenDates(period.getStart(),
 					period.getEnd()) + 1;
 			ctx.putVariable(name,
-					new TimedObject<Double>(valueDay * days, period));
+					new BaseVariable(valueDay * days, period));
 		}
 
 	}
+	
 
-	private static List<ITimedResult<Double>> limit(String limitName, String rawName,
-			String minExpression, String maxExpression, ExpressionContext ctx,
-			Date start, Date end, String... others) {
+	private static List<ITimedResult<Double>> limit(
+			ContextVariable limitVar, 
+			ContextVariable rawVar,
+			ContextVariable minVar, 
+			ContextVariable maxVar, 
+			ExpressionContext ctx,
+			Date start, 
+			Date end, 
+			ContextVariable... otherVars) {
 
 		List<ITimedResult<Double>> results = new ArrayList<ITimedResult<Double>>();
 		
 		
-		List<ITimedVariable<Double>> raws = ctx.getVariables(rawName, start,
+		List<ITimedVariable<Double>> raws = ctx.getVariables(rawVar, start,
 				end);
 
 		for (ITimedVariable<Double> raw : raws) {
@@ -769,12 +845,15 @@ public abstract class QuoteCalculator {
 			Double rawValue = raw.getValue(raw.getPeriod());
 
 			Double othersValue = 0.00;
-			for (String other : others)
+			for (ContextVariable other : otherVars)
 				othersValue += sum(other, rawPeriod, ctx);
 
 			try {
-				List<ITimedResult<Double>> minValues = getLimit(minExpression,
-						ctx, rawPeriod.getStart(), rawPeriod.getEnd());
+				List<ITimedResult<Double>> minValues = getLimit(
+						minVar,
+						ctx, 
+						rawPeriod.getStart(), 
+						rawPeriod.getEnd());
 
 				double minValue = 0.00;
 				for ( ITimedResult<Double> minResult: minValues ) {
@@ -785,8 +864,8 @@ public abstract class QuoteCalculator {
 				minValue -= othersValue;
 
 				if (rawValue <= minValue) {
-					ctx.putVariable(limitName,
-							new TimedObject<Double>(minValue, rawPeriod));
+					ctx.putVariable(limitVar,
+							new BaseVariable(minValue, rawPeriod));
 					continue;
 				}
 				
@@ -803,7 +882,7 @@ public abstract class QuoteCalculator {
 			}
 
 			try {
-				List<ITimedResult<Double>> maxValues = getLimit(maxExpression,
+				List<ITimedResult<Double>> maxValues = getLimit(maxVar,
 						ctx, rawPeriod.getStart(), rawPeriod.getEnd());
 
 				double maxValue = 0.00;
@@ -814,7 +893,7 @@ public abstract class QuoteCalculator {
 
 				maxValue -= othersValue;
 
-				ctx.putVariable(limitName, new TimedObject<Double>(
+				ctx.putVariable(limitVar, new BaseVariable(
 						Math.min(rawValue, maxValue), rawPeriod));
 				continue;
 			} catch (UndefinedVariablesException e) {
@@ -826,18 +905,18 @@ public abstract class QuoteCalculator {
 				});
 			} catch (Exception e) {
 			}
-			ctx.putVariable(limitName,
-					new TimedObject<Double>(rawValue, rawPeriod));
+			ctx.putVariable(limitVar,
+					new BaseVariable(rawValue, rawPeriod));
 		}
 		
 		return results;
 
 	}
 
-	private static Double sum(String name, Period p, ExpressionContext ctx) {
+	private static Double sum(ContextVariable ctxVar, Period p, ExpressionContext ctx) {
 		Double sum = 0.00;
 
-		List<ITimedVariable<Double>> vars = getVariables(name, p, ctx);
+		List<ITimedVariable<Double>> vars = getVariables(ctxVar, p, ctx);
 
 		for (ITimedVariable<Double> var : vars) {
 			Period intersect = var.getPeriod().intersect(p);
@@ -852,7 +931,8 @@ public abstract class QuoteCalculator {
 		return CommonUtil.getDaysBetweenDates(p.getStart(), p.getEnd()) + 1;
 	}
 
-	private static <T> List<ITimedVariable<T>> getVariables(String name,
+	
+	private static <T> List<ITimedVariable<T>> getVariables(Object name,
 			Period p, ExpressionContext ctx) {
 		List<ITimedVariable<Object>> variables = ctx.getVariables(name);
 		if (variables == null)
