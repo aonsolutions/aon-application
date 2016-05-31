@@ -24,42 +24,53 @@
 					<ui:define name="columns">
 					
 						<aon:column alias="IrpfData.contract.person.firstSurname,IrpfData.contract.person.registry.name" 
-							styleClass="aon-editDataTable-textColumn aon-width-600">
+							styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.payroll_contract}" />
+								<aon:outputText value="#{bundle.registry_person}" />
 							</f:facet>
 							<aon:div styleClass="aon-nowrap aon-width-all">
 								<aon:div style="display:inline;">
 									<aon:outputText value="#{to.contract.person.fullName}"/>
 								</aon:div>
-								<aon:panelGroup styleClass="aon-margin-left aon-float-right">
-									<aon:outputText value="#{irpfData.rowContractCode}"
-										title="#{irpfData.rowContractCode}" >
-										<aon:abbreviateConverter maxWidth="40" />
-									</aon:outputText>
-									<aon:div styleClass="aon-margin-left aon-width-100" style="display:inline;">
-										<aon:outputText value="#{bundle.aon_date_from}" />
-										<aon:outputText value="#{to.contract.startDate}" styleClass="aon-margin-left">
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-										</aon:outputText>		
-									</aon:div>
-									<aon:div styleClass="aon-margin-left aon-width-100" style="display:inline;">
-										<aon:outputText rendered="#{not empty to.contract.endDate}" 
-											value="#{bundle.aon_date_to}" />
-										<aon:outputText value="#{to.contract.endDate}" styleClass="aon-margin-left">
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-										</aon:outputText>		
-									</aon:div>
-								</aon:panelGroup>
 							</aon:div>
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-300">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.payroll_contract_contract_type}" />
+							</f:facet>
+							<aon:outputText value="#{irpfData.rowContractCode}"
+								title="#{irpfData.rowContractCode}" >
+								<aon:abbreviateConverter maxWidth="40" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column alias="IrpfData.contract.startDate" 
+							styleClass="aon-editDataTable-dateColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_start_date} contr." />
+							</f:facet>
+							<aon:outputText value="#{to.contract.startDate}" styleClass="aon-margin-left">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column alias="IrpfData.contract.endDate" 
+							styleClass="aon-editDataTable-dateColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_end_date} contr." />
+							</f:facet>
+							<aon:outputText value="#{to.contract.endDate}" styleClass="aon-margin-left">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>		
 						</aon:column>
 						
 						<aon:column alias="IrpfData.startDate" 
 							styleClass="aon-editDataTable-dateColumn aon-width-80">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_start_date}" />
+								<aon:outputText value="#{bundle.payroll_irpfData_validity} #{bundle.aon_date_from}" />
 							</f:facet>
 							<aon:outputText value="#{to.startDate}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -70,15 +81,15 @@
 						<aon:column alias="IrpfData.endDate" 
 							styleClass="aon-editDataTable-dateColumn aon-width-80">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_end_date}" />
+								<aon:outputText value="#{bundle.payroll_irpfData_validity} #{bundle.aon_date_to}" />
 							</f:facet>
 							<aon:outputText value="#{to.endDate}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>		
 						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+						
+						<aon:column styleClass="aon-editDataTable-iconColumn">
 							<f:facet name="header">
 								<aon:outputText value="&#160;" />
 							</f:facet>

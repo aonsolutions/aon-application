@@ -36,29 +36,49 @@
 			
 			<aon:div styleClass="aon-scroll-area" style="padding-bottom:1px;" >
 
-				<aon:panelGrid rendered="#{!irpfData.nevv}" columns="4" dir="true" width="100%">
-					<aon:outputLabel value="#{bundle.payroll_salary_employee}" />
-					<aon:outputText value="#{irpfData.to.contract.person.registry.fullName}" />
-
-					<aon:outputLabel value="#{bundle.aon_document}" />
-					<aon:outputText value="#{irpfData.to.contract.person.registry.document}" />
-				</aon:panelGrid>
-			
-				<aon:panelGrid id="irpfDataContent" columns="2" 
-					width="100%" style="margin-top:10px;">
-					
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{irpfData.to.contract}" />
-						<ui:param name="idRequired" value="#{true}" />
-						<ui:param name="lookupRendered" value="#{irpfData.nevv}" />
-						<ui:param name="lookupReRender" value="IrpfData_validity" />
-						<aon:methodParam name="lookupChangeListener" 
-							value="#{irpfData.onContractChange}" type="lookupChangeListener" />
-					</ui:include>
+				<aon:panelGrid columns="2" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-auto">
+					<aon:if test="#{!irpfData.nevv}" >
+						<aon:outputLabel value="#{bundle.payroll_salary_employee}" />
+						<aon:panelGroup>
+							<aon:outputText value="#{irpfData.to.contract.person.registry.fullName}" />
+							<aon:outputText value="#{bundle.aon_document}: "
+								styleClass="aon-bold aon-margin-left" />
+							<aon:outputText value="#{irpfData.to.contract.person.registry.document}" />
+							
+							<aon:outputText value="#{bundle.aon_start_date}: "
+								styleClass="aon-bold aon-margin-left" />
+							<aon:outputText value="#{irpfData.to.contract.startDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>		
+							
+							<aon:outputText value="#{bundle.aon_end_date}"
+								rendered="#{not empty irpfData.to.contract.endDate}"
+								styleClass="aon-bold aon-margin-left" />
+							<aon:outputText value="#{irpfData.to.contract.endDate}"
+								rendered="#{not empty irpfData.to.contract.endDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>		
+						</aon:panelGroup>
+					</aon:if>
+						
+					<aon:if test="#{irpfData.nevv}" >
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{irpfData.to.contract}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="lookupRendered" value="#{irpfData.nevv}" />
+							<ui:param name="lookupReRender" value="IrpfData_validity" />
+							<aon:methodParam name="lookupChangeListener" 
+								value="#{irpfData.onContractChange}" type="lookupChangeListener" />
+						</ui:include>
+					</aon:if>
 					
 					<aon:outputLabel value="#{bundle.payroll_irpfData_validity}" />
 					<aon:div id="IrpfData_validity">
-						<aon:outputLabel for="irpfData_startDate" value="#{bundle.aon_date_from}:" styleClass="aon-italic"/>
+						<aon:outputLabel for="irpfData_startDate" value="#{bundle.aon_date_from}: " 
+							styleClass="aon-bold"/>
 						<aon:selectInputDate id="irpfData_startDate"
 							required="#{true}" 
 							value="#{irpfData.to.startDate}" 
@@ -66,7 +86,8 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 						
-						<aon:outputLabel for="irpfData_endDate" value="#{bundle.aon_date_to}:" styleClass="aon-italic aon-margin-left"/>
+						<aon:outputLabel for="irpfData_endDate" value="#{bundle.aon_date_to}: " 
+							styleClass="aon-bold aon-margin-left"/>
 						<aon:selectInputDate id="irpfData_endDate" 
 							value="#{irpfData.to.endDate}" 
 							inputSize="10" renderAsPopup="true" enableManualInput="true"
@@ -76,8 +97,34 @@
 					
 					<aon:outputLabel for="irpfData_fiscal_exclusion"
 						value="#{bundle.payroll_irpfData_fiscal_exclusion}" />
-					<aon:selectBooleanCheckbox id="irpfData_fiscal_exclusion" 
-						value="#{irpfData.to.fiscalExclusion}"/> 
+					<aon:selectBooleanCheckbox id="irpfData_fiscal_exclusion"
+						value="#{irpfData.to.fiscalExclusion}">
+						<a4j:support event="onchange" reRender="irpfData_irpfPercent-panel" 
+							actionListener="#{irpfData.onChangeFiscalExclusion}" />
+					</aon:selectBooleanCheckbox> 
+						
+					<aon:outputLabel for="irpfData_irpfCustomPercent" value="IRPF Solicitado por el trabajador" />
+					<aon:div id="irpfData_irpfPercent-panel">
+						<aon:selectBooleanCheckbox id="irpfData_irpfCustomPercent"
+							disabled="#{irpfData.to.fiscalExclusion}" 
+							value="#{irpfData.irpfCustomPercent}" >
+							<a4j:support event="onchange" reRender="irpfData_irpfPercent-panel" ajaxSingle="true" />
+						</aon:selectBooleanCheckbox> 
+						<aon:outputLabel for="irpfData_irpfPercent"
+							rendered="#{irpfData.irpfCustomPercent}"
+							value="#{bundle.aon_percentage} "
+							styleClass="aon-margin-left" />
+						<aon:inputText id="irpfData_irpfPercent" 
+							size="5" maxlength="5"
+							disabled="#{irpfData.to.fiscalExclusion}" 
+							rendered="#{irpfData.irpfCustomPercent}"
+							value="#{irpfData.irpfPercent}"/>
+					</aon:div>
+				</aon:panelGrid>
+			
+				<aon:panelGrid id="irpfDataContent" columns="2" styleClass="aon-width-all"
+					columnClasses="aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-auto"
+					style="margin-top:10px;">
 					
 					<aon:outputLabel for="irpfData_familySituation" value="#{bundle.payroll_irpfData_familySituation}" />
 					<aon:selectOneRadio id="irpfData_familySituation" layout="pageDirection" 
@@ -141,16 +188,16 @@
 		
 					<aon:outputLabel for="irpfData_labourProlongation" value="#{bundle.payroll_irpfData_labourProlongation}" />
 					<aon:selectBooleanCheckbox id="irpfData_labourProlongation" value="#{irpfData.to.labourProlongation}"/>
-					
+										
 				</aon:panelGrid>
 
 			
 				<aon:if test="#{!irpfData.nevv}" >
 					<aon:panelTabSet>
-							<aon:panelTab label="#{bundle.payroll_irpfData_descendants_data}">
-								<ui:include 
-									src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/form_dependents.xhtml" />
-							</aon:panelTab>
+						<aon:panelTab label="#{bundle.payroll_irpfData_descendants_data}">
+							<ui:include 
+								src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/form_dependents.xhtml" />
+						</aon:panelTab>
 						<aon:panelTab label="#{bundle.payroll_irpfData_economic_data}">
 							<ui:include 
 								src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/form_economic.xhtml" />

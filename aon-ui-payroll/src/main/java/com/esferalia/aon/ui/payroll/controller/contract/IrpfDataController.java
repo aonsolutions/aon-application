@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -42,12 +43,26 @@ public class IrpfDataController extends BasicController {
 		'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E' };
 	
 	private DisabilityLevel disabilityLevel;
+	private boolean irpfCustomPercent;
+	private Double irpfPercent;
 		
 	public DisabilityLevel getDisabilityLevel() {
 		return disabilityLevel;
 	}
 	public void setDisabilityLevel(DisabilityLevel disabilityLevel) {
 		this.disabilityLevel = disabilityLevel;
+	}
+	public boolean getIrpfCustomPercent() {
+		return irpfCustomPercent;
+	}
+	public void setIrpfCustomPercent(boolean irpfCustomPercent) {
+		this.irpfCustomPercent = irpfCustomPercent;
+	}
+	public Double getIrpfPercent() {
+		return irpfPercent;
+	}
+	public void setIrpfPercent(Double irpfPercent) {
+		this.irpfPercent = irpfPercent;
 	}
 	public boolean isDeductHomeLoan() {
 		IrpfData irpfData = (IrpfData) this.getTo();
@@ -57,6 +72,8 @@ public class IrpfDataController extends BasicController {
 		IrpfData irpfData = (IrpfData) this.getTo();
 		if(deductHomeLoan && irpfData!=null){
 			irpfData.setDeductHomeLoan(DeductHomeLoan.BEFORE_01_01_2001);
+		} else {
+			irpfData.setDeductHomeLoan(null);
 		}
 	}
 	public Integer getCurrentYear(){
@@ -70,7 +87,7 @@ public class IrpfDataController extends BasicController {
 			ContractCode contractCode = ContractCode.getContractCodeByValue(code);
 			return contractCode!=null?code + " - " + contractCode.getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()):"";
 		} catch (ManagerBeanException e) {
-			// nothing
+			LOGGER.error("no se ha podido recuperar el codigo del contrato");
 		}
 		return null;
 	}
@@ -81,8 +98,7 @@ public class IrpfDataController extends BasicController {
 			IManagerBean bean = BeanManager.getManagerBean(IrpfDataDescendients.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.IRPF_DATA_DESCENDIENTS_IRPF_DATA_ID), data.getId());
-			List<ITransferObject> list = bean.getList(criteria);
-			return list.size();
+			return bean.getCount(criteria);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los descendientes";
 			LOGGER.error(msg);
@@ -114,6 +130,14 @@ public class IrpfDataController extends BasicController {
 			irpfData.setStartDate(null);
 		} else {
 			irpfData.setStartDate(contract.getStartDate());
+		}
+	}
+	
+	public void onChangeFiscalExclusion(ActionEvent event){
+		IrpfData irpfData = (IrpfData) getTo();
+		if(irpfData.isFiscalExclusion()){
+			setIrpfCustomPercent(false);
+			setIrpfPercent(null);
 		}
 	}
 	

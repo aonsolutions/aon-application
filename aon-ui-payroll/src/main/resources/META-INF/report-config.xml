@@ -227,6 +227,7 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="descendants" value="#{irpfData.getDescentants}" />
 			<param id="ascendants" value="#{irpfData.getAscendants}" />
+			<param id="customIrpf" value="#{irpfData.getIrpfPercent}" />
 		</params>
 	</report>
 
