@@ -72,6 +72,7 @@ public enum Mod2002015Key implements IMod200Key {
 	,C0063(63)
 	,C0059(59)
 	,C0065(65)			
+	,C0071(71)
 	
 	// ESTADOS DE CUENTAS
 	,C0050(50)
@@ -1209,14 +1210,4 @@ public enum Mod2002015Key implements IMod200Key {
 		return getCode();
 	}
 	
-	public static void main(String[] args) {
-//		for (Mod2002015Key key : Mod2002015Key.values()) {
-//			if (key.toString().startsWith("TC")) {
-//				System.out.print(
-//						",Mod200Key.TC" + key.getCode()
-//						 );
-//			}
-//				
-//		}
-	}
 }
