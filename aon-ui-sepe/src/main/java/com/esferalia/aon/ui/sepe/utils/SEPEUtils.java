@@ -45,6 +45,9 @@ public class SEPEUtils {
 		return instance;
 	}
 
+	/*
+	 * CONTRACT DATA
+	 */
 	public Map<String, String> getContractDataMap(Contract contract) {
 		return getContractDataMap(contract, false, false);
 	}
@@ -103,7 +106,31 @@ public class SEPEUtils {
 		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), false);
 		return bean.getList(criteria);
 	}
+
+	public List<ITransferObject> getContractData(Contract contract, Date startDate, Date endDate, String name, boolean includeChildDomains) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), name);
+		if(startDate!=null){
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), startDate);
+		}
+		if(endDate!=null){
+			Expression endDateExp = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+			Expression exp = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), startDate);
+			endDateExp = ExpressionUtilities.getOrExpression(exp, endDateExp);
+			criteria.addExpression(endDateExp);
+		}
+		if(includeChildDomains){
+			completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CONTRACT_DATA_DOMAIN));
+		}
+		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), false);
+		return bean.getList(criteria);
+	}
 	
+	/*
+	 * CONTRACT INFO
+	 */
 	public Map<String, String> getContractInfoMap(Contract contract) {
 		return getContractInfoMap(contract, true, false);
 	}
@@ -162,6 +189,9 @@ public class SEPEUtils {
 		return bean.getList(criteria);
 	}
 	
+	/*
+	 * SALARY DATA
+	 */
 	public List<SalaryData> getSalaryDataList(ISalary salary, Date startDate, Date endDate, String name) throws ManagerBeanException {
 		List<SalaryData> list = new LinkedList<SalaryData>();
 		if( salary!=null && salary.getId()!=null ){
@@ -203,6 +233,10 @@ public class SEPEUtils {
 		return map;
 	}
 	
+	
+	/*
+	 * CONTRACT WORKDAY HOURS
+	 */
 	public List<ITransferObject> getContractWorkdayHours(Contract contract) throws ManagerBeanException{
 		String[] varList = {ContextVariable.MONDAY_HOURS.getName(),
 				ContextVariable.TUESDAY_HOURS.getName(), ContextVariable.WEDNESDAY_HOURS.getName(),

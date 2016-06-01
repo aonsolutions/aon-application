@@ -123,6 +123,12 @@ public class IrpfDataController extends BasicController {
 		return (doc[8] == DNI_LETTERS[(Integer.parseInt(numbers) % 23)]);
 	}
 	
+	public void init() {
+		disabilityLevel = null;
+		irpfCustomPercent = false;
+		irpfPercent = null;	
+	}
+	
 	public void onContractChange(LookupChangeEvent event){
 		Contract contract = (Contract) event.getNewValue();
 		IrpfData irpfData = (IrpfData) getTo();
@@ -137,7 +143,7 @@ public class IrpfDataController extends BasicController {
 		IrpfData irpfData = (IrpfData) getTo();
 		if(irpfData.isFiscalExclusion()){
 			setIrpfCustomPercent(false);
-			setIrpfPercent(null);
+			setIrpfPercent(0.0);
 		}
 	}
 	

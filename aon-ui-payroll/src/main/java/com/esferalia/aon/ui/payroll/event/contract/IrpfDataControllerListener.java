@@ -1,12 +1,15 @@
 package com.esferalia.aon.ui.payroll.event.contract;
 
 
+import java.util.List;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -43,9 +46,20 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 	}
 	
 	@Override
+	public void beforeBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		IrpfDataController controller = (IrpfDataController) this.getController();
+		controller.init();
+	}
+	
+	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
-		completeCustomIrpf();
+		try {
+			completeCustomIrpf();
+		} catch (ManagerBeanException e) {
+			LOGGER.error("No se ha podido recuperar el porcentaje de IRPF");
+		}
 		completeHandicap();
 	}
 	
@@ -83,41 +97,31 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 	private void createCustomPercent(IrpfData irpf) throws ManagerBeanException {
 		IrpfDataController controller = (IrpfDataController) this
 				.getController();
-		ContractData data = SEPEUtils
-				.getInstance()
-				.getContractDataMap(irpf.getContract(), irpf.getStartDate(),
-						irpf.getEndDate(), true)
-				.get(ContextVariable.IRPF_PERCENT.name());
-		if (data == null || data.getId() == null) {
-			data = new ContractData();
-			data.setContract(irpf.getContract());
-			data.setName(ContextVariable.IRPF_PERCENT.name());
+		if(controller.getIrpfPercent()!=null){
+			ContractData data = getPercentData(irpf);
+			if (data == null || data.getId() == null) {
+				data = new ContractData();
+				data.setContract(irpf.getContract());
+				data.setName(ContextVariable.IRPF_PERCENT.name());
+			}
+			data.setStartDate(irpf.getStartDate());
+			data.setEndDate(irpf.getEndDate());
+			data.setExpression(controller.getIrpfPercent().toString());
+			BeanManager.getManagerBean(ContractData.class).insertOrUpdate(data);
 		}
-		data.setStartDate(irpf.getStartDate());
-		data.setEndDate(irpf.getEndDate());
-		data.setExpression(controller.getIrpfPercent().toString());
-		BeanManager.getManagerBean(ContractData.class).insertOrUpdate(data);
 	}
 	
 	private void removeCustomPercent(IrpfData irpf) throws ManagerBeanException {
-		ContractData data = SEPEUtils
-				.getInstance()
-				.getContractDataMap(irpf.getContract(), irpf.getStartDate(),
-						irpf.getEndDate(), true)
-				.get(ContextVariable.IRPF_PERCENT.name());
+		ContractData data = getPercentData(irpf);
 		if(data!=null && data.getId()!=null){
 			BeanManager.getManagerBean(ContractData.class).remove(data);
 		}
 	}
 
-	private void completeCustomIrpf() {
+	private void completeCustomIrpf() throws ManagerBeanException {
 		IrpfDataController controller = (IrpfDataController) this.getController();
 		IrpfData irpf = ((IrpfData) controller.getTo());
-		ContractData data = SEPEUtils
-				.getInstance()
-				.getContractDataMap(irpf.getContract(), irpf.getStartDate(),
-						irpf.getEndDate(), true)
-						.get(ContextVariable.IRPF_PERCENT.name());
+		ContractData data = getPercentData(irpf);
 		if(data!=null && data.getId()!=null){
 			controller.setIrpfCustomPercent(true);
 			if(NumberUtils.isNumber(data.getExpression())){
@@ -152,6 +156,13 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 			data.setDisabilityLevel(null);
 			data.setDependence(false);
 		}
+	}
+	
+	private ContractData getPercentData(IrpfData irpf) throws ManagerBeanException {
+		List<ITransferObject> data = SEPEUtils.getInstance().getContractData(
+				irpf.getContract(), irpf.getStartDate(), irpf.getEndDate(),
+				ContextVariable.IRPF_PERCENT.name(), true);
+		return data!=null && data.size()>0?(ContractData) data.get(0):null;
 	}
 	
 }

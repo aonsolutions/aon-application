@@ -22,7 +22,7 @@
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:htmlCommandLink id="mod145_list"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-							value="#{bundle.payroll_irpfData_mod145}"
+							value="#{bundle.aon_report}"
 							rendered="#{!irpfData.nevv}"
 							action="#{report.onExecute}">
 							<f:param name="reportKey" value="mod145Report" />
@@ -115,10 +115,12 @@
 							value="#{bundle.aon_percentage} "
 							styleClass="aon-margin-left" />
 						<aon:inputText id="irpfData_irpfPercent" 
-							size="5" maxlength="5"
+							size="5" maxlength="5"  
 							disabled="#{irpfData.to.fiscalExclusion}" 
 							rendered="#{irpfData.irpfCustomPercent}"
-							value="#{irpfData.irpfPercent}"/>
+							value="#{irpfData.irpfPercent}">
+							<f:validateDoubleRange minimum="0" />
+						</aon:inputText>
 					</aon:div>
 				</aon:panelGrid>
 			

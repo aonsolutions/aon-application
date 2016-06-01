@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mod145" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="57b986b0-2884-41e4-b8a0-9d0c8d670d13">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="336"/>
+	<property name="ireport.y" value="144"/>
 	<style name="default" isDefault="true" fontName="SansSerif"/>
 	<style name="Default"/>
 	<style name="complements_TABLE">
@@ -1463,7 +1463,7 @@
 				<textFieldExpression><![CDATA["En _________________________________ a _____ de _________________ de _______"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="9ac38a55-51d0-4861-a9d7-6c7630dcc238" x="10" y="229" width="100" height="11">
+				<reportElement uuid="9ac38a55-51d0-4861-a9d7-6c7630dcc238" x="10" y="229" width="90" height="11">
 					<printWhenExpression><![CDATA[$P{customIrpf}!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle" markup="none">
@@ -1472,16 +1472,16 @@
 				<textFieldExpression><![CDATA["Tributación solicitada"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement uuid="1c45f12a-66c2-4b30-b062-8bf81f4093ac" x="110" y="229" width="402" height="11">
+				<reportElement uuid="1c45f12a-66c2-4b30-b062-8bf81f4093ac" x="100" y="229" width="395" height="11">
 					<printWhenExpression><![CDATA[$P{customIrpf}!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font size="6" isItalic="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA["El trabajador solicita expresamente que le sea aplicada una retención del __%"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["El trabajador solicita expresamente que le sea aplicada una retención del "]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
-				<reportElement uuid="53546a72-1500-4821-9b51-6b6b7057e766" mode="Opaque" x="513" y="229" width="30" height="11">
+				<reportElement uuid="53546a72-1500-4821-9b51-6b6b7057e766" mode="Opaque" x="495" y="229" width="48" height="11">
 					<printWhenExpression><![CDATA[$P{customIrpf}!=null]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
@@ -1493,7 +1493,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{customIrpf}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{customIrpf}/100]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
