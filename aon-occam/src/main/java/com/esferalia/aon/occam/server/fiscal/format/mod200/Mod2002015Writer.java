@@ -1566,489 +1566,588 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN590)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN887)
 			,(line,mod200, label) -> addEndLabel(line,label)
-			})
-/*			
+		})
+
 		,PAG17 ("T200170", new IPropertyFiller[] {
-			 (line,mod200, label) -> addStartLabel(line,label)  // Etiqueta de inicio de pagina
-			,(line,mod200, label) -> line.append(" ")  // Indicador de pagina complementaria
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN768)  // Deducc. para  incentivar determ.actividades - 1998 Suma deducciones - Deducción pendiente/generada [768]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN769)  // Deducc. para  incentivar determ.actividades - 1998 Suma deducciones - Aplicado en esta liquidación [769]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN770)  // Deducc. para  incentivar determ.actividades - 1998 Suma deducciones - Pendiente de aplicación en periodos futuros [770]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN774)  // Deducc. para  incentivar determ.actividades - 1999 Suma deducciones - Deducción pendiente/generada [774]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN775)  // Deducc. para  incentivar determ.actividades - 1999 Suma deducciones - Aplicado en esta liquidación [775]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN776)  // Deducc. para  incentivar determ.actividades - 1999 Suma deducciones - Pendiente de aplicación en periodos futuros [776]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN780)  // Deducc. para  incentivar determ.actividades - 2000 Suma deducciones - Deducción pendiente/generada [780]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN781)  // Deducc. para  incentivar determ.actividades - 2000 Suma deducciones - Aplicado en esta liquidación [781]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN782)  // Deducc. para  incentivar determ.actividades - 2000 Suma deducciones - Pendiente de aplicación en periodos futuros [782]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN786)  // Deducc. para  incentivar determ.actividades - 2001 Suma deducciones - Deducción pendiente/generada [786]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN787)  // Deducc. para  incentivar determ.actividades - 2001 Suma deducciones - Aplicado en esta liquidación [787]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN788)  // Deducc. para  incentivar determ.actividades - 2001 Suma deducciones - Pendiente de aplicación en periodos futuros [788]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN766)  // Deducc. para  incentivar determ.actividades - 2002 Suma deducciones - Deducción pendiente/generada [766]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN767)  // Deducc. para  incentivar determ.actividades - 2002 Suma deducciones - Aplicado en esta liquidación [767]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN833)  // Deducc. para  incentivar determ.actividades - 2002 Suma deducciones - Pendiente de aplicación en periodos futuros [833]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN198)  // Deducc. para  incentivar determ.actividades - 2003 Suma deducciones - Deducción pendiente/generada [198]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN896)  // Deducc. para  incentivar determ.actividades - 2003 Suma deducciones - Aplicado en esta liquidación [896]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN897)  // Deducc. para  incentivar determ.actividades - 2003 Suma deducciones - Pendiente de aplicación en periodos futuros [897]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN288)  // Deducc. para  incentivar determ.actividades - 2004 Suma deducciones - Deducción pendiente/generada [288]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN289)  // Deducc. para  incentivar determ.actividades - 2004 Suma deducciones - Aplicado en esta liquidación [289]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN290)  // Deducc. para  incentivar determ.actividades - 2004 Suma deducciones - Pendiente de aplicación en periodos futuros [290]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN466)  // Deducc. para  incentivar determ.actividades - 2005 Suma deducciones - Deducción pendiente/generada [466]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN467)  // Deducc. para  incentivar determ.actividades - 2005 Suma deducciones - Aplicado en esta liquidación [467]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN468)  // Deducc. para  incentivar determ.actividades - 2005 Suma deducciones - Pendiente de aplicación en periodos futuros [468]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN061)  // Deducc. para  incentivar determ.actividades - 2006 Suma deducciones - Deducción pendiente/generada [061]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN498)  // Deducc. para  incentivar determ.actividades - 2006 Suma deducciones - Aplicado en esta liquidación [498]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN586)  // Deducc. para  incentivar determ.actividades - 2006 Suma deducciones - Pendiente de aplicación en periodos futuros [586]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN472)  // Deducc. para  incentivar determ.actividades - 2007 Suma deducciones - Deducción pendiente/generada [472]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN473)  // Deducc. para  incentivar determ.actividades - 2007 Suma deducciones - Aplicado en esta liquidación [473]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN478)  // Deducc. para  incentivar determ.actividades - 2007 Suma deducciones - Pendiente de aplicación en periodos futuros [478]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN180)  // Deducc. para  incentivar determ.actividades - 2008 Suma deducciones - Deducción pendiente/generada [180]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN181)  // Deducc. para  incentivar determ.actividades - 2008 Suma deducciones - Aplicado en esta liquidación [181]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN182)  // Deducc. para  incentivar determ.actividades - 2008 Suma deducciones - Pendiente de aplicación en periodos futuros [182]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN531)  // Deducc. para  incentivar determ.actividades - 2009 Suma deducciones - Deducción pendiente/generada [531]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN532)  // Deducc. para  incentivar determ.actividades - 2009 Suma deducciones - Aplicado en esta liquidación [532]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN533)  // Deducc. para  incentivar determ.actividades - 2009 Suma deducciones - Pendiente de aplicación en periodos futuros [533]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN945)  // Deducc. para  incentivar determ.actividades - 2010 Suma deducciones - Deducción pendiente/generada [945]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN946)  // Deducc. para  incentivar determ.actividades - 2010 Suma deducciones - Aplicado en esta liquidación [946]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN947)  // Deducc. para  incentivar determ.actividades - 2010 Suma deducciones - Pendiente de aplicación en periodos futuros [947]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN960)  // Deducc. para incentivar determ.actividades - 2011 Suma deducciones - Deducción pendiente/generada [960]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN961)  // Deducc. para incentivar determ.actividades - 2011 Suma deducciones - Aplicado en esta liquidación [961]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN962)  // Deducc. para incentivar determ.actividades - 2011 Suma deducciones - Pendiente de aplicación en periodos futuros [962]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN183)  // Deducc. para incentivar determ.actividades - 2012 Suma deducciones - Deducción pendiente/generada [183]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN185)  // Deducc. para incentivar determ.actividades - 2012 Suma deducciones - Aplicado en esta liquidación [185]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN186)  // Deducc. para incentivar determ.actividades - 2012 Suma deducciones - Pendiente de aplicación en periodos futuros [186]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN966)  // Deducc. para incentivar determ.actividades - 2013 Suma deducciones - Deducción pendiente/generada [966]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN967)  // Deducc. para incentivar determ.actividades - 2013 Suma deducciones - Aplicado en esta liquidación [967]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN968)  // Deducc. para incentivar determ.actividades - 2013 Suma deducciones - Pendiente de aplicación en periodos futuros [968]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN457)  // Deducc. para incentivar determ.actividades - 2013 Investigación y desarrollo - Deducción pendiente/generada [457]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN458)  // Deducc. para incentivar determ.actividades - 2013 Investigación y desarrollo - Aplicado en esta liquidación [458]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN459)  // Deducc. para incentivar determ.actividades - 2013 Investigación y desarrollo - Pendiente de aplicación en periodos futuros [459]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN460)  // Deducc. para incentivar determ.actividades - 2013 Innovación tecnológica - Deducción pendiente/generada [460]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN461)  // Deducc. para incentivar determ.actividades - 2013 Innovación tecnológica - Aplicado en esta liquidación [461]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN462)  // Deducc. para incentivar determ.actividades - 2013 Innovación tecnológica - Pendiente de aplicación en periodos futuros [462]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN813)  // Deducc. para incentivar determ.actividades - 2014 (**) Suma deducciones - Deducción pendiente/generada [813]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN814)  // Deducc. para incentivar determ.actividades - 2014 (**) Suma deducciones - Aplicado en esta liquidación [814]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN815)  // Deducc. para incentivar determ.actividades - 2014 (**)Suma deducciones - Pendiente de aplicación en periodos futuros [815]			
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN792)  // Deducc. para incentivar determ.actividades - 2014 Inv.protección medio ambiente - Deducción pendiente/generada [792]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN793)  // Deducc. para incentivar determ.actividades - 2014 Inv. protección medio ambiente - Aplicado en esta liquidación [793]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN794)  // Deducc. para incentivar determ.actividades - 2014 Inv. protección medio ambiente - Pendiente de aplicación en periodos futuros [794]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN795)  // Deducc. para incentivar determ.actividades - 2014 Deducción creación empleo trabajadores discapacidad - Deducción pendiente/generada [795]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN796)  // Deducc. para incentivar determ.actividades - 2014 Deducción creación empleo trabajadores discapacidad - Deducción pendiente/generada [796]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN797)  // Deducc. para incentivar determ.actividades - 2014 Deducción creación empleo trabajadores discapacidad - Deducción pendiente/generada [797]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN798)  // Deducc. para incentivar determ.actividades - 2014 Gastos investigación y desarrollo - Deducción pendiente/generada [798]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN799)  // Deducc. para incentivar determ.actividades - 2014 Gastos investigación y desarrollo - Aplicado en esta liquidación [799]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN800)  // Deducc. para incentivar determ.actividades - 2014 Gastos investigación y desarrollo - Pendiente de aplicación en periodos futuros [800]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN096)  // Deducc. para incentivar determ.actividades - 2014 Gastos innovación tecnológica - Deducción pendiente/generada [096]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN698)  // Deducc. para incentivar determ.actividades - 2014 Gastos innovación tecnológica - Aplicado en esta liquidación [698]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN713)  // Deducc. para incentivar determ.actividades - 2014 Gastos innovación tecnológica - Pendiente de aplicación en periodos futuros [713]
-            ,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN986)  // Deducc. para incentivar determ.actividades - 2014 (**) Gastos investigación y desarrollo - Aplicado en esta liquidación [986]
-            ,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN810)  // Deducc. para incentivar determ.actividades - 2014 (**) Gastos investigación y desarrollo - Pendiente de aplicación en periodos futuros [810]
-            ,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN507)  // Deducc. para incentivar determ.actividades - 2014 (**) Gastos innovación tecnológica - Deducción pendiente/generada [507]
-            ,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN557)  // Deducc. para incentivar determ.actividades - 2014 (**) Gastos innovación tecnológica - Deducción pendiente/generada [557]
-            ,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN591)  // Deducc. para incentivar determ.actividades - 2014 (**) Gastos innovación tecnológica - Aplicado en esta liquidación [591]
-            ,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN594)  // Deducc. para incentivar determ.actividades - 2014 (**) Gastos innovación tecnológica - Pendiente de aplicación en periodos futuros [594]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN549)  // Deducc. para incentivar determ.actividades - 2014 Deducción inversión beneficios - Deducción pendiente/generada [549]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN888)  // Deducc. para incentivar determ.actividades - 2014 Deducción inversión beneficios - Aplicado en esta liquidación [888]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN889)  // Deducc. para incentivar determ.actividades - 2014 Deducción inversión beneficios - Pendiente de aplicación en periodos futuros [889]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN807)  // Deducc. para incentivar determ.actividades - 2014 Produc. cinematográficas - Deducción pendiente/generada [807]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN808)  // Deducc. para incentivar determ.actividades - 2014 Produc. cinematográficas - Aplicado en esta liquidación [808]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN809)  // Deducc. para incentivar determ.actividades - 2014 Produc. cinematográficas - Pendiente de aplicación en periodos futuros [809]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN816)  // Deducc. para incentivar determ.actividades - 2014 Gastos formación profesional - Deducción pendiente/generada [816]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN817)  // Deducc. para incentivar determ.actividades - 2014 Gastos formación profesional - Aplicado en esta liquidación [817]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN818)  // Deducc. para incentivar determ.actividades - 2014 Gastos formación profesional - Pendiente de aplicación en periodos futuros [818]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN963)  // Deducc. para incentivar determ.actividades - 2014 Creación empleo menores 30 años - Deducción pendiente/generada [963]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN964)  // Deducc. para incentivar determ.actividades - 2014 Creación empleo menores 30 años - Aplicado en esta liquidación [964]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN965)  // Deducc. para incentivar determ.actividades - 2014 Creación empleo menores 30 años - Pendiente de aplicación en periodos futuros [965]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN931)  // Deducc. para incentivar determ.actividades - 2014 Creación empleo contratación desempleados con prestación desempleo - Deducción pendiente/generada [931]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN502)  // Deducc. para incentivar determ.actividades - 2014 Creación empleo contratación desempleados con prestación desempleo - Aplicado en esta liquidación [502]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN751)  // Deducc. para incentivar determ.actividades - 2014 Creación empleo contratación desempleados con prestación desempleo - Pendiente de aplicación en periodos futuros [751]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN972)  // Deducc. para incentivar determ.actividades - 2014 Alicante 2011 - Deducción pendiente/generada [972]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN973)  // Deducc. para incentivar determ.actividades - 2014 Alicante 2011 - Aplicado en esta liquidación [973]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN975)  // Deducc. para incentivar determ.actividades - 2014 Alicante 2011 - Pendiente de aplicación en periodos futuros [975]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN540)  // Deducc. para incentivar determ.actividades - 2014 Mundobasket 2014 - Deducción pendiente/generada [540]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN541)  // Deducc. para incentivar determ.actividades - 2014 Mundobasket 2014 - Aplicado en esta liquidación [541]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN542)  // Deducc. para incentivar determ.actividades - 2014 Mundobasket 2014 - Pendiente de aplicación en periodos futuros [542]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN901)  // Deducc. para incentivar determ.actividades - 2014 IV Centenario del fallecimiento de El Greco - Deducción pendiente/generada [901]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN902)  // Deducc. para incentivar determ.actividades - 2014 IV Centenario del fallecimiento de El Greco - Aplicado en esta liquidación [902]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN903)  // Deducc. para incentivar determ.actividades - 2014 IV Centenario del fallecimiento de El Greco - Pendiente de aplicación en periodos futuros [903]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN063)  // Deducc. para incentivar determ.actividades - 2014 Vitoria-Gasteiz Capital Verde Europea 2012 - Deducción pendiente/generada [063]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN064)  // Deducc. para incentivar determ.actividades - 2014 Vitoria-Gasteiz Capital Verde Europea 2012 - Aplicado en esta liquidación [064]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN065)  // Deducc. para incentivar determ.actividades - 2014 Vitoria-Gasteiz Capital Verde Europea 2012 - Pendiente de aplicación en periodos futuros [065]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN067)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo de Vela Santander 2014 - Deducción pendiente/generada [067]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN068)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo de Vela Santander 2014 - Aplicado en esta liquidación [068]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN069)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo de Vela Santander 2014  - Pendiente de aplicación en periodos futuros [069]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN070)  // Deducc. para incentivar determ.actividades - 2014 Programa "El árbol es vida" - Deducción pendiente/generada [070]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN072)  // Deducc. para incentivar determ.actividades - 2014 Programa "El árbol es vida" - Aplicado en esta liquidación [072]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN073)  // Deducc. para incentivar determ.actividades - 2014 Programa "El árbol es vida" - Pendiente de aplicación en periodos futuros [073]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN075)  // Deducc. para incentivar determ.actividades - 2014 Año de España en Japón - Deducción pendiente/generada [075]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN076)  // Deducc. para incentivar determ.actividades - 2014 Año de España en Japón - Aplicado en esta liquidación [076]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN077)  // Deducc. para incentivar determ.actividades - 2014 Año de España en Japón - Pendiente de aplicación en periodos futuros [077]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN078)  // Deducc. para incentivar determ.actividades - 2014 Plan Director recuperación Patimonio Cultural Lorca - Deducción pendiente/generada [078]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN079)  // Deducc. para incentivar determ.actividades - 2014 Plan Director recuperación Patimonio Cultural Lorca - Aplicado en esta liquidación [079]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN080)  // Deducc. para incentivar determ.actividades - 2014 Plan Director recuperación Patimonio Cultural Lorca - Pendiente de aplicación en periodos futuros [080]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN085)  // Deducc. para incentivar determ.actividades - 2014 Universiada de Invierno Granada 2015 - Deducción pendiente/generada [085]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN086)  // Deducc. para incentivar determ.actividades - 2014 Universiada de Invierno Granada 2015 - Aplicado en esta liquidación [086]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN087)  // Deducc. para incentivar determ.actividades - 2014 Universiada de Invierno Granada 2015 - Pendiente de aplicación en periodos futuros [087]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN093)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo de Ciclismo en Carretera Ponferrada 2014 - Deducción pendiente/generada [093]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN057)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo de Ciclismo en Carretera Ponferrada 2014 - Aplicado en esta liquidación [057]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN058)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo de Ciclismo en Carretera Ponferrada 2014 - Pendiente de aplicación en periodos futuros [058]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN207)  // Deducc. para incentivar determ.actividades - 2014 Barcelona World Jumping Challenge - Deducción pendiente/generada [207]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN208)  // Deducc. para incentivar determ.actividades - 2014 Barcelona World Jumping Challenge - Aplicado en esta liquidación [208]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN209)  // Deducc. para incentivar determ.actividades - 2014 Barcelona World Jumping Challenge - Pendiente de aplicación en periodos futuros [209]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN213)  // Deducc. para incentivar determ.actividades - 2014 Barcelona Mobile World Capital - Deducción pendiente/generada [213]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN214)  // Deducc. para incentivar determ.actividades - 2014 Barcelona Mobile World Capital - Aplicado en esta liquidación [214]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN215)  // Deducc. para incentivar determ.actividades - 2014 Barcelona Mobile World Capital - Pendiente de aplicación en periodos futuros [215]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN216)  // Deducc. para incentivar determ.actividades - 2014 3ª Edición Barcelona World Race - Deducción pendiente/generada [216]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN217)  // Deducc. para incentivar determ.actividades - 2014 3ª Edición Barcelona World Race - Aplicado en esta liquidación [217]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN218)  // Deducc. para incentivar determ.actividades - 2014 3ª Edición Barcelona World Race - Pendiente de aplicación en periodos futuros [218]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN222)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo Tiro Olímpico "Las Gabias" - Deducción pendiente/generada [222]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN223)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo Tiro Olímpico "Las Gabias" - Aplicado en esta liquidación [223]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN224)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo Tiro Olímpico "Las Gabias" - Pendiente de aplicación en periodos futuros [224]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN243)  // Deducc. para incentivar determ.actividades - 2014 2014 Año Internacional Dieta Mediterránea - Deducción pendiente/generada [243]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN244)  // Deducc. para incentivar determ.actividades - 2014 2014 Año Internacional Dieta Mediterránea  - Aplicado en esta liquidación [244]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN245)  // Deducc. para incentivar determ.actividades - 2014 2014 Año Internacional Dieta Mediterránea  - Pendiente de aplicación en periodos futuros [245]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN204)  // Deducc. para incentivar determ.actividades - 2014 Programa preparación deportistas españoles juegos "Río de Janeiro 2016"  - Deducción pendiente/generada [204]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN205)  // Deducc. para incentivar determ.actividades - 2014 Programa preparación deportistas españoles juegos "Río de Janeiro 2016"  - Aplicado en esta liquidación [205]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN206)  // Deducc. para incentivar determ.actividades - 2014 Programa preparación deportistas españoles juegos "Río de Janeiro 2016"  - Pendiente de aplicación en periodos futuros [206]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN219)  // Deducc. para incentivar determ.actividades - 2014 VIII Centenario Peregrinación San Francisco de Asís a Santiago de Compostela  - Deducción pendiente/generada [219]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN220)  // Deducc. para incentivar determ.actividades - 2014  VIII Centenario Peregrinación San Francisco de Asís a Santiago de Compostela  - Aplicado en esta liquidación [220]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN221)  // Deducc. para incentivar determ.actividades - 2014  VIII Centenario Peregrinación San Francisco de Asís a Santiago de Compostela  - Pendiente de aplicación en periodos futuros [221]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN228)  // Deducc. para incentivar determ.actividades - 2014 V Centenario del Nacimiento Santa Teresa Avila 2015  - Deducción pendiente/generada [228] 
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN229)  // Deducc. para incentivar determ.actividades - 2014  V Centenario del Nacimiento Santa Teresa Avila 2015  - Aplicado en esta liquidación [229]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN230)  // Deducc. para incentivar determ.actividades - 2014  V Centenario del Nacimiento Santa Teresa Avila 2015  - Pendiente de aplicación en periodos futuros [230]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN234)  // Deducc. para incentivar determ.actividades - 2014 Año Santo Jubilar Mariano a celebrar ciudad de Sevilla - Deducción pendiente/generada [234]  
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN235)  // Deducc. para incentivar determ.actividades - 2014 Año Santo Jubilar Mariano a celebrar ciudad de Sevilla - Aplicado en esta liquidación [235]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN236)  // Deducc. para incentivar determ.actividades - 2014 Año Santo Jubilar Mariano a celebrar ciudad de Sevilla - Pendiente de aplicación en periodos futuros [236]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN237)  // Deducc. para incentivar determ.actividades - 2014 Vuelta al mundo a vela Alicante 2014 - Deducción pendiente/generada [237]  
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN238)  // Deducc. para incentivar determ.actividades - 2014 Vuelta al mundo a vela Alicante 2014 - Aplicado en esta liquidación [238]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN239)  // Deducc. para incentivar determ.actividades - 2014 Vuelta al mundo a vela Alicante 2014 - Pendiente de aplicación en periodos futuros [239]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN007)  // Deducc. para incentivar determ.actividades - 2014 Donostia/San Sebastián, Capital Europea de la Cultura - Deducción pendiente/generada [007]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN012)  // Deducc. para incentivar determ.actividades - 2014 Donostia/San Sebastián, Capital Europea de la Cultura - Aplicado en esta liquidación [012]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN016)  // Deducc. para incentivar determ.actividades - 2014 Donostia/San Sebastián, Capital Europea de la Cultura - Pendiente de aplicación en periodos futuros [016]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN199)  // Deducc. para incentivar determ.actividades - 2014 Expo Milán 2015 - Deducción pendiente/generada [199]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN292)  // Deducc. para incentivar determ.actividades - 2014 Expo Milán 2015 - Aplicado en esta liquidación [292]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN293)  // Deducc. para incentivar determ.actividades - 2014 Expo Milán 2015 - Pendiente de aplicación en periodos futuros [293]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN353)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo de Escalada 2014 - Deducción pendiente/generada [353]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN366)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo de Escalada 2014 - Aplicado en esta liquidación [366]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN394)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo de Escalada 2014 - Pendiente de aplicación en periodos futuros [394]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN395)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo de Patinaje Artístico 2014 - Deducción pendiente/generada [395]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN401)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo de Patinaje Artístico 2014 - Aplicado en esta liquidación [401]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN407)  // Deducc. para incentivar determ.actividades - 2014 Campeonato del Mundo de Patinaje Artístico 2014 - Pendiente de aplicación en periodos futuros [407]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN419)  // Deducc. para incentivar determ.actividades - 2014 Madrid Horse Week - Deducción pendiente/generada [419]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN422)  // Deducc. para incentivar determ.actividades - 2014 Madrid Horse Week - Aplicado en esta liquidación [422]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN423)  // Deducc. para incentivar determ.actividades - 2014 Madrid Horse Week - Pendiente de aplicación en periodos futuros [423]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN424)  // Deducc. para incentivar determ.actividades - 2014 III Centenario de la Real Academia Española - Deducción pendiente/generada [424]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN425)  // Deducc. para incentivar determ.actividades - 2014 III Centenario de la Real Academia Española - Aplicado en esta liquidación [425]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN428)  // Deducc. para incentivar determ.actividades - 2014 III Centenario de la Real Academia Española - Pendiente de aplicación en periodos futuros [428]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN429)  // Deducc. para incentivar determ.actividades - 2014 A Coruña 2015-120 años después - Deducción pendiente/generada [429]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN430)  // Deducc. para incentivar determ.actividades - 2014 A Coruña 2015-120 años después - Aplicado en esta liquidación [430]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN431)  // Deducc. para incentivar determ.actividades - 2014 A Coruña 2015-120 años después - Pendiente de aplicación en periodos futuros [431]
-			,(line,mod200, label) -> addEndLabel(line,label) // Etiqueta fin de pagina
-			})
+			 (line,mod200, label) -> addStartLabel(line,label)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1061)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1062)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN768)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN769)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN770)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN774)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN775)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN776)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN780)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN781)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN782)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN786)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN787)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN788)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN766)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN767)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN833)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN198)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN896)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN897)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN288)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN289)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN290)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN466)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN467)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN468)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN061)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN498)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN586)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN472)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN473)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN478)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN180)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN181)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN182)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN531)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN532)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN533)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN945)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN946)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN947)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN960)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN961)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN962)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN183)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN185)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN186)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN966)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN967)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN968)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN457)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN458)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN459)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN460)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN461)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN462)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1063)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1064)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1065)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1066)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1067)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1068)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1069)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1070)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1071)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN813)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN814)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN815)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN986)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN810)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN507)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN557)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN591)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN594)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN795)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN796)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN797)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN798)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN799)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN800)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN096)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN698)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN713)
 			
-		,PAG17B ("T20017B", new IPropertyFiller[] {				
-			 (line,mod200, label) -> addStartLabel(line,label)  // Etiqueta de inicio de pagina
-			,(line,mod200, label) -> line.append(" ")  // Indicador de pagina complementaria
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN432)  // Deducc. para incentivar determ.actividades - 2014 IV Centenario de la segunda parte de El Quijote - Deducción pendiente/generada [432]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN433)  // Deducc. para incentivar determ.actividades - 2014 IV Centenario de la segunda parte de El Quijote - Aplicado en esta liquidación [433]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN434)  // Deducc. para incentivar determ.actividades - 2014 IV Centenario de la segunda parte de El Quijote - Pendiente de aplicación en periodos futuros [434]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN435)  // Deducc. para incentivar determ.actividades - 2014 World Challenge LFP/ 85 Aniversario de la Liga - Deducción pendiente/generada [435]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN436)  // Deducc. para incentivar determ.actividades - 2014 World Challenge LFP/ 85 Aniversario de la Liga - Aplicado en esta liquidación [436]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN437)  // Deducc. para incentivar determ.actividades - 2014 World Challenge LFP/ 85 Aniversario de la Liga - Pendiente de aplicación en periodos futuros [437]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN438)  // Deducc. para incentivar determ.actividades - 2014 Juegos del Mediterráneo de 2017 - Deducción pendiente/generada [438]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN439)  // Deducc. para incentivar determ.actividades - 2014 Juegos del Mediterráneo de 2017 - Aplicado en esta liquidación [439]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN440)  // Deducc. para incentivar determ.actividades - 2014 Juegos del Mediterráneo de 2017 - Pendiente de aplicación en periodos futuros [440]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN441)  // Deducc. para incentivar determ.actividades - 2014 Sesenta Edición Festival Internacional Teatro Clásico de Mérida - Deducción pendiente/generada [441]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN452)  // Deducc. para incentivar determ.actividades - 2014 Sesenta Edición Festival Internacional Teatro Clásico de Mérida - Aplicado en esta liquidación [452]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN453)  // Deducc. para incentivar determ.actividades - 2014 Sesenta Edición Festival Internacional Teatro Clásico de Mérida - Pendiente de aplicación en periodos futuros [453]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN454)  // Deducc. para incentivar determ.actividades - 2014 Año de la Biotecnología en España - Deducción pendiente/generada [454]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN455)  // Deducc. para incentivar determ.actividades - 2014 Año de la Biotecnología en España - Aplicado en esta liquidación [455]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN456)  // Deducc. para incentivar determ.actividades - 2014 Año de la Biotecnología en España - Pendiente de aplicación en periodos futuros [456]			
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN828)  // Deducc. para incentivar determ.actividades - 2014 Diferimiento Deducciones - Deducción pendiente/generada [828]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN829)  // Deducc. para incentivar determ.actividades - 2014 Diferimiento deducciones - Aplicado en esta liquidación [829]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN830)  // Deducc. para incentivar determ.actividades - 2014 Diferimiento deducciones - Pendiente de aplicación en periodos futuros [830]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN634)  // Deducc. para incentivar determ.actividades - Total deducciones programas apoyo acontecimientos de excepcional interés público - Deducción pendiente/generada [634]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN635)  // Deducc. para incentivar determ.actividades - Total deducciones programas apoyo acontecimientos de excepcional interés público - Aplicado en esta liquidación [635]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN636)  // Deducc. para incentivar determ.actividades - Total deducciones programas apoyo acontecimientos de excepcional interés público - Pendiente de aplicación en periodos futuros [636]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN831)  // Deducc. para incentivar determ.actividades - Total deducciones Cap.IV Tít.VI - Deducción pendiente/generada [831]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN588)  // Deducc. para incentivar determ.actividades - Total deducciones Cap.IV Tít.VI - Aplicado en esta liquidación [588]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN832)  // Deducc. para incentivar determ.actividades - Total deducciones Cap.IV Tít.VI - Pendiente de aplicación en periodos futuros [832]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN918)  // Deducciones I+D+i excluidas de límite - 2013 Investigación y desarrollo - Deducción generada [918]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN919)  // Deducciones I+D+i excluidas de límite - 2013 Investigación y desarrollo - Deducción reducida [919]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN574)  // Deducciones I+D+i excluidas de límite - 2013 Investigación y desarrollo - Importe deducible en cuota [574]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN580)  // Deducciones I+D+i excluidas de límite - 2013 Investigación y desarrollo - Pendiente insuficiencia cuota [580]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN589)  // Deducciones I+D+i excluidas de límite - 2013 Innovación tecnológica - Deducción generada [589]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN976)  // Deducciones I+D+i excluidas de límite - 2013 Innovación tecnológica - Deducción reducida [976]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN977)  // Deducciones I+D+i excluidas de límite - 2013 Innovación tecnológica - Importe deducible en cuota [977]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN978)  // Deducciones I+D+i excluidas de límite - 2013 Innovación tecnológica - Pendiente insuficiencia cuota [978]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN822)  // Deducciones I+D+i excluidas de límite - 2014 Investigación y desarrollo - Deducción pendiente/generada [822]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN823)  // Deducciones I+D+i excluidas de límite - 2014 Investigación y desarrollo - Deducción reducida [823]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN824)  // Deducciones I+D+i excluidas de límite - 2014 Investigación y desarrollo - Aplicado en esta liquidación [824]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN231)  // Deducciones I+D+i excluidas de límite - 2014 Investigación y desarrollo - Importe abonado por insuficiencia de cuota [231]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN232)  // Deducciones I+D+i excluidas de límite - 2014 Innovación tecnológica - Deducción pendiente/generada [232]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN233)  // Deducciones I+D+i excluidas de límite - 2014 Innovación tecnológica - Deducción reducida [233]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN850)  // Deducciones I+D+i excluidas de límite - 2014 Innovación tecnológica - Aplicado en esta liquidación [850]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN851)  // Deducciones I+D+i excluidas de límite - 2014 Innovación tecnológica - Importe abonado por insuficiencia de cuota [851]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN517)  // Deducciones I+D+i excluidas de límite - Total - Deducción generada [517]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN081)  // Deducciones I+D+i excluidas de límite - Total - Deducción reducida [081]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN082)  // Deducciones I+D+i excluidas de límite - Total - Importe deducible en cuota [082]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN083)  // Deducciones I+D+i excluidas de límite - Total - Pendiente insuficiencia cuota [083]
-			,(line,mod200, label) -> addEndLabel(line,label) // Etiqueta fin de pagina	
-		    })
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN549)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN888)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN889)
 			
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN807)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN808)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN809)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1075)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1076)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1077)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN963)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN964)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN965)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN931)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN502)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN751)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1078)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1079)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1080)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN070)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN072)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN073)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN078)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN079)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN080)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN085)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN086)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN087)
+			
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN093)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN057)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN058)
+			
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN207)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN208)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN209)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN216)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN217)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN218)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN204)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN205)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN206)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN219)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN220)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN221)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN228)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN229)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN230)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN237)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN238)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN239)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN007)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN012)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN016)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN199)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN292)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN293)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN419)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN422)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN423)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN424)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN425)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN428)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN429)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN430)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN431)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN432)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN433)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN434)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN435)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN436)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN437)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN438)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN439)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN440)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1081)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1082)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1083)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1084)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1085)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1086)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1087)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1088)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1089)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1090)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1091)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1092)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1093)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1094)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1095)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1096)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1097)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1098)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1099)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1100)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1101)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1102)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1103)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1104)
+			,(line,mod200, label) -> addEndLabel(line,label)
+		})
 		,PAG18 ("T200180", new IPropertyFiller[] {
 			 (line,mod200, label) -> addStartLabel(line,label)  // Etiqueta de inicio de pagina
 			,(line,mod200, label) -> line.append(" ")  // Indicador de pagina complementaria
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN929)  // Deducción donativos entidades sin fines lucro - 2004 - Deducción pendiente/generada [929]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN930)  // Deducción donativos entidades sin fines lucro - 2004 - Aplicado en esta liquidación [930]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN942)  // Deducción donativos entidades sin fines lucro - 2005 - Deducción pendiente/generada [942]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN943)  // Deducción donativos entidades sin fines lucro - 2005 - Aplicado en esta liquidación [943]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN944)  // Deducción donativos entidades sin fines lucro - 2005 - Pendiente de aplicación en periodos futuros [944]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN294)  // Deducción donativos entidades sin fines lucro - 2006 - Deducción pendiente/generada [294]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN295)  // Deducción donativos entidades sin fines lucro - 2006 - Aplicado en esta liquidación [295]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN296)  // Deducción donativos entidades sin fines lucro - 2006 - Pendiente de aplicación en periodos futuros [296]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN066)  // Deducción donativos entidades sin fines lucro - 2007 - Deducción pendiente/generada [066]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN074)  // Deducción donativos entidades sin fines lucro - 2007 - Aplicado en esta liquidación [074]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN084)  // Deducción donativos entidades sin fines lucro - 2007 - Pendiente de aplicación en periodos futuros [084]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN008)  // Deducción donativos entidades sin fines lucro - 2008 - Deducción pendiente/generada [008]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN009)  // Deducción donativos entidades sin fines lucro - 2008 - Aplicado en esta liquidación [009]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN010)  // Deducción donativos entidades sin fines lucro - 2008 - Pendiente de aplicación en periodos futuros [010]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN034)  // Deducción donativos entidades sin fines lucro - 2009 - Deducción pendiente/generada [034]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN035)  // Deducción donativos entidades sin fines lucro - 2009 - Aplicado en esta liquidación [035]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN036)  // Deducción donativos entidades sin fines lucro - 2009 - Pendiente de aplicación en periodos futuros [036]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN201)  // Deducción donativos entidades sin fines lucro - 2010 - Deducción pendiente/generada [201]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN202)  // Deducción donativos entidades sin fines lucro - 2010 - Aplicado en esta liquidación [202]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN203)  // Deducción donativos entidades sin fines lucro - 2010 - Pendiente de aplicación en periodos futuros [203]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN904)  // Deducción donativos entidades sin fines lucro - 2011 - Deducción pendiente/generada [904]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN905)  // Deducción donativos entidades sin fines lucro - 2011 - Aplicado en esta liquidación [905]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN906)  // Deducción donativos entidades sin fines lucro - 2011 - Pendiente de aplicación en periodos futuros [906]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN990)  // Deducción donativos entidades sin fines lucro - 2012 - Deducción pendiente/generada [990]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN991)  // Deducción donativos entidades sin fines lucro - 2012 - Aplicado en esta liquidación [991]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN992)  // Deducción donativos entidades sin fines lucro - 2012 - Pendiente de aplicación en periodos futuros [992]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN997)  // Deducción donativos entidades sin fines lucro - 2013 - Deducción pendiente/generada [997]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN998)  // Deducción donativos entidades sin fines lucro - 2013 - Aplicado en esta liquidación [998]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN999)  // Deducción donativos entidades sin fines lucro - 2013 - Pendiente de aplicación en periodos futuros [999]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN246)  // Deducción donativos entidades sin fines lucro - 2014 (*) - Deducción pendiente/generada [246]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN247)  // Deducción donativos entidades sin fines lucro - 2014 (*) - Aplicado en esta liquidación [247]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN248)  // Deducción donativos entidades sin fines lucro - 2014 (*) - Pendiente de aplicación en periodos futuros [248]		
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN993)  // Deducción donativos entidades sin fines lucro - 2013 - Deducción pendiente/generada [993]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN994)  // Deducción donativos entidades sin fines lucro - 2013 - Aplicado en esta liquidación [994]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN995)  // Deducción donativos entidades sin fines lucro - 2013 - Pendiente de aplicación en periodos futuros [995]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN598)  // Deducción donativos entidades sin fines lucro - Total deducciones donaciones a entidades sin fines lucro - Deducción pendiente/generada [598]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN565)  // Deducción donativos entidades sin fines lucro - Total deducciones donaciones a entidades sin fines lucro - Aplicado en esta liquidación [565]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN895)  // Deducción donativos entidades sin fines lucro - Total deducciones donaciones a entidades sin fines lucro - Pendiente de aplicación en periodos futuros [895]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN974)  // Deducción donativos entidades sin fines lucro - Donaciones del período impositivo efectuadas a entidades sin fines de lucro [974]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID650)  // Aplicación de resultados - Base de reparto - Pérdidas y ganancias [650]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID651)  // Aplicación de resultados - Base de reparto - Remanente [651]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID652)  // Aplicación de resultados - Base de reparto - Reservas [652]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID653)  // Aplicación de resultados - Base de reparto - Total [653]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID654)  // Aplicación de resultados - Aplicación - A reservas [654]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID655)  // Aplicación de resultados - Aplicación - Intereses aportaciones al capital (Cooperativas) [655]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID656)  // Aplicación de resultados - Aplicación - A dividendos [656]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID658)  // Aplicación de resultados - Aplicación - A dotación O.S. (Cajas de ahorro y fundaciones bancarias) [658]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID659)  // Aplicación de resultados - Aplicación - A F.R.O y dotaciones voluntarias al F.E.P (Cooperativas) [659]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID660)  // Aplicación de resultados - Aplicación - A retornos cooperativos (Cooperativas) [660]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID662)  // Aplicación de resultados - Aplicación - Partícipes (IIC) [662]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID664)  // Aplicación de resultados - Aplicación - A remanente y otros [664]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID665)  // Aplicación de resultados - Aplicación - A compensación de pérdidas de ejercicios anteriores [665]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.ID666)  // Aplicación de resultados - Aplicación - Total [666]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC001)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correcciones permanentes - Del ejercicio - Aumentos
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC002)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correcciones permanentes - Del ejercicio - Disminuciones
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC003)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Del ejercicio - Aumentos
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC004)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Del ejercicio - Disminuciones
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC005)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Saldo pendiente - Aumentos futuros 
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC006)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Saldo pendiente - Disminuciones futuras
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC007)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Amortizaciones - Del ejercicio - Aumentos
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC008)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Amortizaciones - Del ejercicio - Disminuciones
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC009)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Amortizaciones - Saldo pendiente - Aumentos futuros
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC010)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Amortizaciones - Saldo pendiente - Disminuciones futuras
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC011)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Deterioros valor - Del ejercicio - Aumentos
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC012)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Deterioros valor - Del ejercicio - Disminuciones
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC013)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Deterioros valor - Saldo pendiente - Aumentos futuros
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC014)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Deterioros valor - Saldo pendiente - Disminuciones futuras
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC015)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Pensiones -  Del ejercicio - Aumentos
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC016)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Pensiones -  Del ejercicio - Disminuciones
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC017)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Pensiones -  Saldo pendiente - Aumentos futuros
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC018)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Pensiones -  Saldo pendiente - Disminuciones futuras
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC019)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Fondo de comercio - Del ejercicio - Aumentos
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC020)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Fondo de comercio - Del ejercicio - Disminuciones
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC021)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Fondo de comercio - Saldo pendiente - Aumentos futuros
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC022)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Fondo de comercio - Saldo pendiente - Disminuciones futuras
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC023)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Resto - Aumentos
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC024)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Resto - Disminuciones
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC025)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Resto - Saldo pendiente - Aumentos futuros
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC026)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejercicio - Resto - Saldo pendiente - Disminuciones futuras
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC027)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Del ejercicio - Aumentos
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC028)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Del ejercicio - Disminuciones
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC029)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Saldo pendiente - Aumentos futuros
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC030)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Saldo pendiente - Disminuciones futuras
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC031)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Amortizaciones - Del ejercicio - Aumentos
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC032)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Amortizaciones - Del ejercicio - Disminuciones
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC033)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Amortizaciones - Saldo pendiente - Aumentos futuros
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC034)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Amortizaciones - Saldo pendiente - Disminuciones futuras
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC035)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Deterioros valor - Del ejercicio - Aumentos
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC036)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Deterioros valor - Del ejercicio - Disminuciones
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC037)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Deterioros valor - Saldo pendiente - Aumentos futuros
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC038)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Deterioros valor - Saldo pendiente - Disminuciones futuras
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC039)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Pensiones - Del ejercicio - Aumentos
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC040)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Pensiones - Del ejercicio - Disminuciones
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC041)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Pensiones - Saldo pendiente - Aumentos futuros
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC042)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Pensiones - Saldo pendiente - Disminuciones futuras
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC043)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Fondo de comercio - Del ejercicio - Aumentos
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC044)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Fondo de comercio - Del ejercicio - Disminuciones
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC045)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Fondo de comercio - Saldo pendiente - Aumentos futuros
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC046)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Fondo de comercio - Saldo pendiente - Disminuciones futuras
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC047)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Resto - Del ejercicio - Aumentos
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC048)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Resto - Del ejercicio - Disminuciones
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC049)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Resto - Saldo pendiente - Aumentos futuros
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC050)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Correc. temporarias origen ejerc. anteriores - Resto - Saldo pendiente - Disminuciones futuras
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC051)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Total correcciones resultado de pérdidas y ganancias - Del ejercicio - Aumentos  [417]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC052)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Total correcciones resultado de pérdidas y ganancias - Del ejercicio - Disminuciones [418]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC053)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Total correcciones resultado de pérdidas y ganancias - Saldo pendiente - Aumentos futuros
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC054)	//	Detalle correcciones resultado pérdidas y ganancias - Correcciones fiscales - Total correcciones resultado de pérdidas y ganancias - Saldo pendiente - Disminuciones futuras
-			,(line,mod200, label) -> line.append(AonFiscalFileUtils.spaces(22)) // [...] NO ESTA EN EL MODELO - Presentación de documentación previa en la sede electrónica. NRS1
-			,(line,mod200, label) -> line.append(AonFiscalFileUtils.spaces(22)) // [...] NO ESTA EN EL MODELO - Presentación de documentación previa en la sede electrónica. NRS2			
-			,(line,mod200, label) -> addEndLabel(line,label) // Etiqueta fin de pagina
-			})
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1105)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1106)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1107)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1108)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1109)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1110)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1111)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1112)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1113)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1114)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1115)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1116)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1117)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1118)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1119)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1120)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1121)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1122)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN828)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN829)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN830)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN634)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN635)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN636)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN831)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN588)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN832)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN918)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN919)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN574)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN580)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN589)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN976)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN977)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN978)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN822)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN823)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN824)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN231)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN232)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN233)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN850)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN851)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1123)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1124)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1125)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1126)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1127)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1128)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1129)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1130)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN517)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN081)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN082)
 			
-		,PAG18B ("T20018B", new IPropertyFiller[] {
-			 (line,mod200, label) -> addStartLabel(line,label)  // Etiqueta de inicio de pagina
-			,(line,mod200, label) -> line.append(" ")  // Indicador de pagina complementaria
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM175)  // Limitación deducibilidad gastos financieros - a) Resultado explotación [175]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM176)  // Limitación deducibilidad gastos financieros - b) Amortización del inmovilizado [176]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM177)  // Limitación deducibilidad gastos financieros - c) Imputación subvenciones inmovilizado no financiero y otras [177]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM178)  // Limitación deducibilidad gastos financieros - d) Deterioro y resultado enajenaciones inmovilizado [178]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM179)  // Limitación deducibilidad gastos financieros - e) Ingresos financieros participaciones instrumentos de patrimonio [179]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM043)  // Limitación deducibilidad gastos financieros - f) Límite deducción gastos financieros netos [043]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM049)  // Limitación deducibilidad gastos financieros - g) Adición por límite beneficio operativo no aplicado en cinco ejercicios anteriores [049]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM249)  // Limitación deducibilidad gastos financieros - h) Gastos financieros periodo impositivo excluidos art. 14.1.h) LIS [249]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM252)  // Limitación deducibilidad gastos financieros - i) Ingresos financieros periodo impositivo derivados cesión terceros de capitales propios [252]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM253)  // Limitación deducibilidad gastos financieros - j) Gastos financieros netos del periodo [253]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM254)  // Limitación deducibilidad gastos financieros - k) Gastos financieros netos del periodo deducibles [254]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM255)  // Limitación deducibilidad gastos financieros - l) Gastos financieros netos del periodo no deducibles [255]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM258)  // Limitación deducibilidad gastos financieros - m) Gastos financieros netos pendientes deducir de periodos anteriores aplicados [258]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM259)  // Limitación deducibilidad gastos financieros - n) Total gastos financieros netos deducibles en el periodo [259]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM260)  // Limitación deducibilidad gastos financieros - ñ) Total gastos financieros deducibles en el periodo [260]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM212)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Ejercicio generación 2012 - Pendiente aplicación a principio del período [212]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM270)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Ejercicio generación 2012 - Aplicado en esta liquidación [270]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM271)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Ejercicio generación 2012 - Pendiente aplicación períodos futuros [271]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM969)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Ejercicio generación 2013 - Pendiente aplicación a principio del período [969]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM970)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Ejercicio generación 2013 - Aplicado en esta liquidación [970]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM971)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Ejercicio generación 2013 - Pendiente aplicación períodos futuros  [971]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM261)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Ejercicio generación 2014(*) - Pendiente aplicación a principio del período [261]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM262)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Ejercicio generación 2014(*) - Aplicado en esta liquidación [262]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM263)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Ejercicio generación 2014(*) - Pendiente aplicación períodos futuros  [263]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM264)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Ejercicio generación 2014(**) - Pendiente aplicación a principio del período [264]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM265)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Ejercicio generación 2014(**) - Aplicado en esta liquidación [265]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM266)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Ejercicio generación 2014(**) - Pendiente aplicación períodos futuros  [266]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM267)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Total - Pendiente aplicación a principio del período [267]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM268)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Total - Aplicado en esta liquidación [268]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM269)  // Limitación deducibilidad gastos financieros, gastos financieros pendientes deducir - Total - Pendiente aplicación períodos futuros  [269]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM890)  // Pendiente adición por límite beneficio operativo no aplicado - Ejercicio generación 2012 - Pendiente aplicación a principio del período [890]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM891)  // Pendiente adición por límite beneficio operativo no aplicado - Ejercicio generación 2012 - Aplicado en esta liquidación [891]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM892)  // Num Pendiente adición por límite beneficio operativo no aplicado - Ejercicio generación 2012 - Pendiente aplicación períodos futuros [892]			
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM503)  // Pendiente adición por límite beneficio operativo no aplicado - Ejercicio generación 2013 - Pendiente aplicación a principio del período [503]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM522)  // Pendiente adición por límite beneficio operativo no aplicado - Ejercicio generación 2013 - Aplicado en esta liquidación [522]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM523)  // Pendiente adición por límite beneficio operativo no aplicado - Ejercicio generación 2013 - Pendiente aplicación períodos futuros  [523]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM273)  // Pendiente adición por límite beneficio operativo no aplicado - Ejercicio generación 2014(*) - Pendiente aplicación a principio del período [273]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM274)  // Pendiente adición por límite beneficio operativo no aplicado - Ejercicio generación 2014(*) - Aplicado en esta liquidación [274]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM537)  // Pendiente adición por límite beneficio operativo no aplicado - Ejercicio generación 2014(*) - Pendiente aplicación períodos futuros  [537]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM955)  // Pendiente adición por límite beneficio operativo no aplicado - Ejercicio generación 2014(**) - Pendiente aplicación a principio del período [955]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM956)  // Pendiente adición por límite beneficio operativo no aplicado - Ejercicio generación 2014(**) - Aplicado en esta liquidación [956]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM957)  // Pendiente adición por límite beneficio operativo no aplicado - Ejercicio generación 2014(**) - Pendiente aplicación períodos futuros [957]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM538)  // Pendiente adición por límite beneficio operativo no aplicado - Total - Pendiente aplicación a principio del período [538]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM539)  // Pendiente adición por límite beneficio operativo no aplicado - Total - Aplicado en esta liquidación [539]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM546)  // Pendiente adición por límite beneficio operativo no aplicado - Total - Pendiente aplicación períodos futuros  [546]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM893)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2011 - Pendiente aplicación a principio del período [893]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM173)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2011 - Ingresado en esta liquidación [173] 
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM958)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2011 - Conversión [958]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM898)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2011 - Pendiente de integración [898]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM899)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2012 - Pendiente aplicación a principio del período [899]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM227)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2012 - Ingresado en esta liquidación [227]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM959)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2012 - Conversión [959]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM917)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2012 - Pendiente de integración [917]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM948)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2013 - Pendiente aplicación a principio del período [948]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM291)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2013 - Ingresado en esta liquidación [291]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM979)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2013 - Conversión [979]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM949)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2013 - Pendiente de integración [949]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM950)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2014 (*) - Pendiente aplicación a principio del período [950]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM951)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2014 (*) - Ingresado en esta liquidación [951]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM980)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2014 (*) - Conversión [980]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM952)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2014 (*) - Pendiente de integración [952]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM981)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2014 - Pendiente aplicación a principio del período [981]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM982)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2014 - Ingresado en esta liquidación [982]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM983)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2014 - Conversión [983]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM984)  // Dotaciones deterioro créditos u otros activos - Ejercicio generación 2014 - Pendiente de integración [984]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM953)  // Dotaciones deterioro créditos u otros activos - Total - Pendiente aplicación a principio del período [953]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM344)  // Dotaciones deterioro créditos u otros activos - Total - Ingresado en esta liquidación [344]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM985)  // Dotaciones deterioro créditos u otros activos - Total - Conversión [985]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM954)  // Dotaciones deterioro créditos u otros activos - Total - Pendiente de integración [954]			
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM393)  // Dotaciones deterioro créditos u otros activos - Conversión activos impuesto diferido - Importe crédito exigible [393]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM150)  // Dotaciones deterioro créditos u otros activos - Conversión activos impuesto diferido - Opciones: Abono [150]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM506)  // Dotaciones deterioro créditos u otros activos - Conversión activos impuesto diferido - Opciones: Compensación [506]
-			,(line,mod200, label) -> addEndLabel(line,label) // Etiqueta fin de pagina
-			})		
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1234)
 			
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN929)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN930)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN942)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN943)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN944)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN294)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN295)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN296)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN066)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN074)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN084)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN008)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN009)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN010)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN034)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN035)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN036)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN201)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN202)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN203)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN904)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN905)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN906)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN990)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN991)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN992)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN997)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN998)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN999)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN246)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN247)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN248)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN993)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN994)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN995)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN598)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN565)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN895)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN974)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1162)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1163)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1164)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1165)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1166)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1167)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1168)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1169)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1170)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1171)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1040)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1173)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1174)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1175)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1176)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1177)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1178)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1179)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1180)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1181)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1182)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1183)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1041)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1185)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1131)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1132)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1133)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1134)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1135)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1136)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1137)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1032)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1139)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1140)
+			,(line,mod200, label) -> addEndLabel(line,label) // Etiqueta fin de pagina
+		})
 		,PAG19 ("T200190", new IPropertyFiller[] {
-
-			(line,mod200, label) -> {
-				    
-				    addStartLabel(line,label);  // Etiqueta de inicio de pagina
-				    
-				    // Esta página puede tener complementarias en los apartados que ahora no están en el modelo
-				    // Si se añaden dichos apartados hay que tenerlo en cuenta, para hacerlo de forma similar a la pagina 2
-				    boolean isComplementary = false;
-					line.append(isComplementary?"C":" ");  // Indicador de pagina complementaria
-				
-					// [...] NO ESTA EN EL MODELO - Operaciones relacionadas con paises o territorios considerados como paraisos fiscales (hasta 6)
-					for (int i=0;i<6;i++) {
-						line.append(AonFiscalFileUtils.spaces(20));    // Descripción de la operación
-						line.append(AonFiscalFileUtils.spaces(20));    // Persona o entidad
-						line.append(AonFiscalFileUtils.spaces(1));     // F/J 
-						line.append(AonFiscalFileUtils.spaces(2));     // Clave país/territorio
-						line.append(AonFiscalFileUtils.zeros(DS));  // Importe
-					}
-					
-					// [...] NO ESTA EN EL MODELO - Tenencia de valores con paraisos fiscales (hasta 6)
-					for (int i=0;i<6;i++) {
-						line.append(AonFiscalFileUtils.spaces( 1)); // Tipo A - B - C
-						line.append(AonFiscalFileUtils.spaces(23)); // Entidad participada
-						line.append(AonFiscalFileUtils.spaces( 2)); // Clave país/territorio
-						line.append(AonFiscalFileUtils.zeros(DS)); // Valor adquisición
-						line.append(AonFiscalFileUtils.zeros(5));            // % participación
-					}
-					
-					// [...] NO ESTA EN EL MODELO - Comunicación del importe neto de la cifra de negocios
-					line.append(AonFiscalFileUtils.zeros(DS)); // Grupos de sociedades. Importe neto cifra negocios [987] (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
-					line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [1]
-					line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [2]
-					line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [3]
-					line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [4]
-					line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [5]
-					line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [6]
-					line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [7]
-					line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [8]
-					line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [9]
-					line.append(AonFiscalFileUtils.zeros(DS)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. Importe neto [988] (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
-					line.append(AonFiscalFileUtils.zeros(3)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. Nº establecimientos (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
-					line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [1]
-					line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [2]
-					line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [3]
-					line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [4]
-					line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [5]
-					line.append(AonFiscalFileUtils.zeros(DS)); // Comunicación importe neto cifra negocios - Entidades de crédito, aseguradoras, I.I.C. y sociedades de garantíarecíproca - Importe neto [989] (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
-					
-					// Las siguientes 5 casillas solo van con importes en la primera pagina, en las complementarias van a cero
-					addUnSignedKey(line, mod200, Mod2002015Key.LQ0N1, 4, 0, isComplementary); // Rég. Entidades navieras en función del tonelaje. Nº de buques  [N1]
-					addSignedKey(line, mod200, Mod2002015Key.LQ630,isComplementary); // Rég. Entidades navieras en función del tonelaje. Base imponible resultante de  aplicar la escala [630]
-					addSignedKey(line, mod200, Mod2002015Key.LQ631,isComplementary); // Rég. Entidades navieras en función del tonelaje. Importe rentas generadas en trasmisiones de buques [631]
-					addSignedKey(line, mod200, Mod2002015Key.LQ632,isComplementary); // Rég. Entidades navieras en función del tonelaje. Compensación bases imponibles negativas períodos anteriores [632]
-					addSignedKey(line, mod200, Mod2002015Key.LQ579,isComplementary); // Rég. Entidades navieras en función del tonelaje. Base imponible resultante de la aplicación del régimen [579]
-					
-					addEndLabel(line,label); // Etiqueta fin de pagina
-				}
-			})		
+				 (line,mod200, label) -> addStartLabel(line,label)
+				,(line,mod200, label) -> line.append(" ")
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1141)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1142)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1143)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1144)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1145)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1146)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1147)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1148)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1149)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1150)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1151)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1152)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1153)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1154)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1155)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1156)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1157)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1158)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1159)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1160)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1161)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ650)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ651)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ652)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ653)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ654)
+//				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1270)
+//				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1271)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ655)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ656)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ658)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ659)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ660)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ662)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ664)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ665)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ666)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC001)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC002)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC003)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC004)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC005)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC006)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC007)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC008)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC009)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC010)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC011)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC012)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC013)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC014)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC015)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC016)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC017)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC018)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC019)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC020)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC021)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC022)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC023)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC024)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC025)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC026)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC027)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC028)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC029)	
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC030)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC031)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC032)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC033)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC034)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC035)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC036)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC037)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC038)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC039)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC040)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC041)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC042)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC043)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC044)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC045)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC046)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC047)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC048)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC049)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC050)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC051)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC052)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC053)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC054)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0417)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0418)
+				,(line,mod200, label) -> addEndLabel(line,label)
+		})
 		
 		,PAG20 ("T200200", new IPropertyFiller[] {
+				 (line,mod200, label) -> addStartLabel(line,label)
+				,(line,mod200, label) -> line.append(" ")
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1240)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1241)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1242)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1243)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1244)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1245)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1246)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1247)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1248)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1249)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1250)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1251)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1252)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1253)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1254)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1255)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1256)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1257)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1258)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1259)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1260)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1188)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1189)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1191)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1193)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1194)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1196)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1198)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1199)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1201)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1202)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1203)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1204)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1205)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1206)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1209)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1210)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1211)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1212)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1213)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1214)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1215)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1216)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM890)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM891)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM892)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM503)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM522)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM523)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM273)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM274)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM537)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM955)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM956)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM957)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1217)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1218)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1219)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM538)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM539)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM546)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM893)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM173)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM958)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM898)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM899)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM227)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM959)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM917)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM948)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM291)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM979)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM949)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM950)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM951)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM980)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM952)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM981)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM982)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM983)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM984)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1220)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1221)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1222)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM1223)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM953)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM344)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM985)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM954)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM393)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM150)
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LM506)
+				,(line,mod200, label) -> addEndLabel(line,label)
+		})
+		
+		,PAG21 ("T200210", new IPropertyFiller[] {
+
+				(line,mod200, label) -> {
+					    
+					    addStartLabel(line,label);  // Etiqueta de inicio de pagina
+					    
+					    // Esta página puede tener complementarias en los apartados que ahora no están en el modelo
+					    // Si se añaden dichos apartados hay que tenerlo en cuenta, para hacerlo de forma similar a la pagina 2
+					    boolean isComplementary = false;
+						line.append(isComplementary?"C":" ");  // Indicador de pagina complementaria
+					
+						// [...] NO ESTA EN EL MODELO - Operaciones relacionadas con paises o territorios considerados como paraisos fiscales (hasta 6)
+						for (int i=0;i<6;i++) {
+							line.append(AonFiscalFileUtils.spaces(20));    // Descripción de la operación
+							line.append(AonFiscalFileUtils.spaces(20));    // Persona o entidad
+							line.append(AonFiscalFileUtils.spaces(1));     // F/J 
+							line.append(AonFiscalFileUtils.spaces(2));     // Clave país/territorio
+							line.append(AonFiscalFileUtils.zeros(DS));  // Importe
+						}
+						
+						// [...] NO ESTA EN EL MODELO - Tenencia de valores con paraisos fiscales (hasta 6)
+						for (int i=0;i<6;i++) {
+							line.append(AonFiscalFileUtils.spaces( 1)); // Tipo A - B - C
+							line.append(AonFiscalFileUtils.spaces(23)); // Entidad participada
+							line.append(AonFiscalFileUtils.spaces( 2)); // Clave país/territorio
+							line.append(AonFiscalFileUtils.zeros(DS)); // Valor adquisición
+							line.append(AonFiscalFileUtils.zeros(5));            // % participación
+						}
+						
+						// [...] NO ESTA EN EL MODELO - Comunicación del importe neto de la cifra de negocios
+						line.append(AonFiscalFileUtils.zeros(DS)); // Grupos de sociedades. Importe neto cifra negocios [987] (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
+						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [1]
+						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [2]
+						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [3]
+						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [4]
+						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [5]
+						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [6]
+						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [7]
+						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [8]
+						line.append(AonFiscalFileUtils.spaces(9)); // Grupos de sociedades. NIF de las entidades del grupo [9]
+						line.append(AonFiscalFileUtils.zeros(DS)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. Importe neto [988] (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
+						line.append(AonFiscalFileUtils.zeros(3)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. Nº establecimientos (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
+						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [1]
+						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [2]
+						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [3]
+						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [4]
+						line.append(AonFiscalFileUtils.spaces(9)); // Comunicación importe neto cifra negocios - No residentes más de un establecimiento. NIF de los establecimientos permanentes [5]
+						line.append(AonFiscalFileUtils.zeros(DS)); // Comunicación importe neto cifra negocios - Entidades de crédito, aseguradoras, I.I.C. y sociedades de garantíarecíproca - Importe neto [989] (Esta casilla solo va en la primera pagina, en las complemetarias va a cero)
+						
+						// Las siguientes 5 casillas solo van con importes en la primera pagina, en las complementarias van a cero
+						addUnSignedKey(line, mod200, Mod2002015Key.LQ0N1, 4, 0, isComplementary); // Rég. Entidades navieras en función del tonelaje. Nº de buques  [N1]
+						addSignedKey(line, mod200, Mod2002015Key.LQ630,isComplementary); // Rég. Entidades navieras en función del tonelaje. Base imponible resultante de  aplicar la escala [630]
+						addSignedKey(line, mod200, Mod2002015Key.LQ631,isComplementary); // Rég. Entidades navieras en función del tonelaje. Importe rentas generadas en trasmisiones de buques [631]
+						addSignedKey(line, mod200, Mod2002015Key.LQ632,isComplementary); // Rég. Entidades navieras en función del tonelaje. Compensación bases imponibles negativas períodos anteriores [632]
+						addSignedKey(line, mod200, Mod2002015Key.LQ579,isComplementary); // Rég. Entidades navieras en función del tonelaje. Base imponible resultante de la aplicación del régimen [579]
+						
+						addEndLabel(line,label); // Etiqueta fin de pagina
+					}
+		})
+		
+		,PAG22 ("T200220", new IPropertyFiller[] {
 				
 				(line,mod200, label) -> {
 					
@@ -2062,8 +2161,21 @@ public class Mod2002015Writer {
 					// [...] NO ESTA EN EL MODELO - Regimen Especial de la reserva para inversiones en Canarias (21 campos, estos van a cero en las complementarias)
 					line.append(AonFiscalFileUtils.zeros(21*DS));
 					
-					// [...] NO ESTA EN EL MODELO - Operaciones con personas o entidades vinculadas (hasta 6)
-					for (int i=0;i<6;i++) {
+					line.append(AonFiscalFileUtils.spaces(15)); // Operaciones con personas o entidades vinculadas - Nº identificación matriz
+					line.append(AonFiscalFileUtils.spaces(40)); // Operaciones con personas o entidades vinculadas - Razón social (matriz)
+					
+					// [...] NO ESTA EN EL MODELO - Operaciones con personas o entidades vinculadas (hasta 3)
+					for (int i=0;i<3;i++) {
+						line.append(AonFiscalFileUtils.spaces(15)); // NIF
+						line.append(AonFiscalFileUtils.spaces( 1)); // F/J
+						line.append(AonFiscalFileUtils.spaces(40)); // Apellidos y nombre
+						line.append(AonFiscalFileUtils.spaces( 2)); // Código provincia/país
+						line.append(AonFiscalFileUtils.spaces( 1)); // Tipo vinculación A a L
+						line.append(AonFiscalFileUtils.zeros (DS)); // Importe operación
+					}
+
+					// [...] NO ESTA EN EL MODELO - Operaciones con personas o entidades vinculadas (hasta 4)
+					for (int i=0;i<4;i++) {
 						line.append(AonFiscalFileUtils.spaces(15)); // NIF
 						line.append(AonFiscalFileUtils.spaces( 1)); // F/J
 						line.append(AonFiscalFileUtils.spaces(40)); // Apellidos y nombre
@@ -2097,65 +2209,88 @@ public class Mod2002015Writer {
 					addSignedKey(line, mod200, Mod2002015Key.CPE11, isComplementary); // Rég. cooperativas - Determ. base imponible - Factor de agotamiento - Resultados extracooperativos [E11]
 					addSignedKey(line, mod200, Mod2002015Key.CPC12, isComplementary); // Rég. cooperativas - Determ. base imponible - Base imponible - Resultados cooperativos [553]
 					addSignedKey(line, mod200, Mod2002015Key.CPE12, isComplementary); // Rég. cooperativas - Determ. base imponible - Base imponible - Resultados extracooperativos [554]
-					addSignedKey(line, mod200, Mod2002015Key.LQ673, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 1999 Pendiente aplicación al principio del periodo [673]
-					addSignedKey(line, mod200, Mod2002015Key.LQ674, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 1999 Aplicado en esta liquidación [674]
-					addSignedKey(line, mod200, Mod2002015Key.LQ676, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2000 Pendiente aplicación al principio del periodo [676]
-					addSignedKey(line, mod200, Mod2002015Key.LQ677, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2000 Aplicado en esta liquidación [677]
-					addSignedKey(line, mod200, Mod2002015Key.LQ678, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2000 Pendiente aplicación en ejercicios futuros [678]
-					addSignedKey(line, mod200, Mod2002015Key.LQ679, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2001 Pendiente aplicación al principio del periodo [679]
-					addSignedKey(line, mod200, Mod2002015Key.LQ680, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2001 Aplicado en esta liquidación [680]
-					addSignedKey(line, mod200, Mod2002015Key.LQ681, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2001 Pendiente aplicación en ejercicios futuros [681]
-					addSignedKey(line, mod200, Mod2002015Key.LQ682, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2002 Pendiente aplicación al principio del periodo [682]
-					addSignedKey(line, mod200, Mod2002015Key.LQ683, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2002 Aplicado en esta liquidación [683]
-					addSignedKey(line, mod200, Mod2002015Key.LQ684, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2002 Pendiente aplicación en ejercicios futuros [684]
-					addSignedKey(line, mod200, Mod2002015Key.LQ685, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2003 Pendiente aplicación al principio del periodo [685]
-					addSignedKey(line, mod200, Mod2002015Key.LQ686, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2003 Aplicado en esta liquidación [686]
-					addSignedKey(line, mod200, Mod2002015Key.LQ687, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2003 Pendiente aplicación en ejercicios futuros [687]
-					addSignedKey(line, mod200, Mod2002015Key.LQ688, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2004 Pendiente aplicación al principio del periodo [688]
-					addSignedKey(line, mod200, Mod2002015Key.LQ689, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2004 Aplicado en esta liquidación [689]
-					addSignedKey(line, mod200, Mod2002015Key.LQ690, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2004 Pendiente aplicación en ejercicios futuros [690]
-					addSignedKey(line, mod200, Mod2002015Key.LQ691, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2005 Pendiente aplicación al principio del periodo [691]
-					addSignedKey(line, mod200, Mod2002015Key.LQ692, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2005 Aplicado en esta liquidación [692]
-					addSignedKey(line, mod200, Mod2002015Key.LQ693, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2005 Pendiente aplicación en ejercicios futuros [693]
-					addSignedKey(line, mod200, Mod2002015Key.LQ623, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2006 Pendiente aplicación al principio del periodo [623]
-					addSignedKey(line, mod200, Mod2002015Key.LQ624, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2006 Aplicado en esta liquidación [624]
-					addSignedKey(line, mod200, Mod2002015Key.LQ672, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2006 Pendiente aplicación en ejercicios futuros [672]
-					addSignedKey(line, mod200, Mod2002015Key.LQ279, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2007 Pendiente aplicación al principio del periodo [279]
-					addSignedKey(line, mod200, Mod2002015Key.LQ280, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2007 Aplicado en esta liquidación [280]
-					addSignedKey(line, mod200, Mod2002015Key.LQ281, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2007 Pendiente aplicación en ejercicios futuros [281]
-					addSignedKey(line, mod200, Mod2002015Key.LQ587, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2008 Pendiente aplicación al principio del periodo [587]
-					addSignedKey(line, mod200, Mod2002015Key.LQ515, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2008 Aplicado en esta liquidación [515]
-					addSignedKey(line, mod200, Mod2002015Key.LQ900, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2008 Pendiente aplicación en ejercicios futuros [900]
-					addSignedKey(line, mod200, Mod2002015Key.LQ059, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2009 Pendiente aplicación al principio del periodo [059]
-					addSignedKey(line, mod200, Mod2002015Key.LQ099, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2009 Aplicado en esta liquidación [099]
-					addSignedKey(line, mod200, Mod2002015Key.LQ100, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2009 Pendiente aplicación en ejercicios futuros [100]
-					addSignedKey(line, mod200, Mod2002015Key.LQ017, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2010 Pendiente aplicación al principio del periodo [017]
-					addSignedKey(line, mod200, Mod2002015Key.LQ018, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2010 Aplicado en esta liquidación [018]
-					addSignedKey(line, mod200, Mod2002015Key.LQ019, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2010 Pendiente aplicación en ejercicios futuros [019]
-					addSignedKey(line, mod200, Mod2002015Key.LQ772, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2011 Pendiente aplicación al principio del periodo [772]
-					addSignedKey(line, mod200, Mod2002015Key.LQ773, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2011 Aplicado en esta liquidación [773]
-					addSignedKey(line, mod200, Mod2002015Key.LQ777, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2011 Pendiente aplicación en ejercicios futuros [777]
-					addSignedKey(line, mod200, Mod2002015Key.LQ907, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2012 Pendiente aplicación al principio del periodo [907]
-					addSignedKey(line, mod200, Mod2002015Key.LQ908, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2012 Aplicado en esta liquidación [908]
-					addSignedKey(line, mod200, Mod2002015Key.LQ909, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2012 Pendiente aplicación en ejercicios futuros [909]
-					addSignedKey(line, mod200, Mod2002015Key.LQ910, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2013 Pendiente aplicación al principio del periodo [910]
-					addSignedKey(line, mod200, Mod2002015Key.LQ911, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2013 Aplicado en esta liquidación [911]
-					addSignedKey(line, mod200, Mod2002015Key.LQ912, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2013 Pendiente aplicación en ejercicios futuros [912]
-					addSignedKey(line, mod200, Mod2002015Key.LQ935, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2014 (*) Pendiente aplicación al principio del periodo [935]
-					addSignedKey(line, mod200, Mod2002015Key.LQ936, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2014 (*) Aplicado en esta liquidación [936]
-					addSignedKey(line, mod200, Mod2002015Key.LQ937, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. 2014 (*) Pendiente aplicación en ejercicios futuros [937]
-					addSignedKey(line, mod200, Mod2002015Key.LQ694, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. Total. Pendiente aplicación al principio del periodo [694]
-					addSignedKey(line, mod200, Mod2002015Key.LQ561, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. Total. Aplicado en esta liquidación [561]
-					addSignedKey(line, mod200, Mod2002015Key.LQ695, isComplementary); // Rég. cooperativas - Detalle compensación cuotas. Total. Pendiente aplicación en ejercicios futuros [695]
 					addEndLabel(line,label); // Etiqueta fin de pagina
 				}
-			})                                                                     
-			                                                                       
-		// [...] NO ESTA EN EL MODELO - Página 21: Operaciones fusión, escisión, canje valores... 
-		// [...] NO ESTA EN EL MODELO - Página 22: Agrup. interés económico y UTES 
-		// [...] NO ESTA EN EL MODELO - Página 23: Régimen especial de transparencia fiscal internacional
-                                                                                   
-		,PAG24 ("T200240", new IPropertyFiller[] {
+			})
+		
+		,PAG23 ("T200230", new IPropertyFiller[] {
+				 (line,mod200, label) -> addStartLabel(line,label)
+				,(line,mod200, label) -> line.append(" ")
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ673, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ674, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1224, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ676, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ677, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ678, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ679, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ680, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ681, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ682, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ683, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ684, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ685, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ686, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ687, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ688, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ689, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ690, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ691, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ692, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ693, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ623, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ624, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ672, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ279, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ280, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ281, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ587, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ515, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ900, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ059, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ099, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ100, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ017, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ018, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ019, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ772, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ773, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ777, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ907, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ908, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ909, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ910, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ911, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ912, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ935, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ936, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ937, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ694, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ561, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ695, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1225, mod200.isComplementary())
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1226, mod200.isComplementary())
+				,(line,mod200, label) -> {
+					// [...] NO ESTA EN EL MODELO - Operaciones fusión, escisión, canje de valores.
+					for (int i=0;i<3;i++) {
+						line.append(AonFiscalFileUtils.spaces( 1)); 
+						line.append(AonFiscalFileUtils.spaces( 9)); 
+						line.append(AonFiscalFileUtils.spaces(40)); 
+						line.append(AonFiscalFileUtils.spaces( 9)); 
+						line.append(AonFiscalFileUtils.spaces(40)); 
+						line.append(AonFiscalFileUtils.zeros ( 8));
+						line.append(AonFiscalFileUtils.zeros (DS));
+						line.append(AonFiscalFileUtils.zeros (DS));
+						line.append(AonFiscalFileUtils.zeros (DS));
+					}
+				}
+				
+				,(line,mod200, label) -> addEndLabel(line,label)
+		})
+		
+		// [...] NO ESTA EN EL MODELO - Página 24: Agrup. interés económico y UTES
+		// [...] NO ESTA EN EL MODELO - Página 25: Régimen especial de transparencia fiscal internacional
+		
+		,PAG26 ("T200260", new IPropertyFiller[] {
 			 (line,mod200, label) -> addStartLabel(line,label)  // Etiqueta de inicio de pagina
 			,(line,mod200, label) -> line.append(" ")  // Indicador de pagina complementaria
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR050) // Tributación conjunta Estado y Adm.Forales - Concierto económico - Volumen total de operaciones  [050]
@@ -2215,57 +2350,83 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR492) // Tributación conjunta Estado y Adm.Forales - Importe  ingreso/devolución declaración originaria - Bizkaia [492]
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR493) // Tributación conjunta Estado y Adm.Forales - Importe  ingreso/devolución declaración originaria - Navarra  [493]
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR620) // Tributación conjunta Estado y Adm.Forales - Importe  ingreso/devolución declaración originaria - Total [620]
+
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1334)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1335)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1336)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1337)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1332)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1338)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1339)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1340)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1341)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1332)
+
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR494) // Tributación conjunta Estado y Adm.Forales -  Líquido a ingresar o a devolver - Araba [494]
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR495) // Tributación conjunta Estado y Adm.Forales -  Líquido a ingresar o a devolver - Gipuzkoa [495]
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR496) // Tributación conjunta Estado y Adm.Forales -  Líquido a ingresar o a devolver - Bizkaia [496]
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR497) // Tributación conjunta Estado y Adm.Forales -  Líquido a ingresar o a devolver - Navarra [497]
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR622) // Tributación conjunta Estado y Adm.Forales -  Líquido a ingresar o a devolver - Total [622]
+			
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1300)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1301)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1302)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1304)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1043)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1305)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1306)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1307)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1308)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1044)
+			
+			
 			,(line,mod200, label) -> addEndLabel(line,label) // Etiqueta fin de pagina
-			})	
-			
-		// [...] NO ESTAN EN EL MODELO - Páginas 25 a 52
-			
+		})	
+
+		// [...] NO ESTAN EN EL MODELO - Páginas 27 a 54
+
 		,DID ("T200DID", new IPropertyFiller[] {
-			 (line,mod200, label) -> addStartLabel(line,label)   // Etiqueta de inicio de pagina
-			,(line,mod200, label) -> line.append(" ")  			 // Indicador de pagina complementaria
-			,(line,mod200, label) -> line.append("0")            // Cuenta corriente tributaria "0" o "1" (no se usa)
-			,(line,mod200, label) -> line.append( AonFiscalFileUtils.unsigned(mod200.getYear(), 4, 0) )      // Identificación - Ejercicio
-	        ,(line,mod200, label) -> line.append( AonFiscalFileUtils.unsigned(mod200.getPeriodType(),1,0) )  //	Tipo de ejercicio
-	        ,(line,mod200, label) -> line.append( "0A" )                                                     // Período Impositivo "0A"
-			,(line,mod200, label) -> line.append( mod200.getPeriodStart() == null ? AonStringUtils.repeat('0', 6) : DATE_FORMAT_6.format(mod200.getPeriodStart()) ) // Período Impositivo Inicio (ddmmaa)
-			,(line,mod200, label) -> line.append( mod200.getPeriodEnd()   == null ? AonStringUtils.repeat('0', 6) : DATE_FORMAT_6.format(mod200.getPeriodEnd()) )   // Período Impositivo Fin (ddmmaa)
-			,(line,mod200, label) -> line.append( AonFiscalFileUtils.text(mod200.getEnterpriseDocument(),9) )  // Identificación - NIF 
-			,(line,mod200, label) -> line.append( AonFiscalFileUtils.text(mod200.getEnterpriseName(),40) )     // Identificación - Apellidos y nombre o Razón Social
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ552)   // Liquidación - Base imponible [552]                                    
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ562)   // Liquidación - Cuota íntegra [562]                          
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN621)   // Liquidación - Líquido a ingresar o a devolver Estado [621]
-			
-			,(line,mod200, label) -> line.append(AonFiscalFileUtils.zeros(17))         // RESERVADO AEAT
-			,(line,mod200, label) -> line.append(AonFiscalFileUtils.zeros(17))         // RESERVADO AEAT
-			,(line,mod200, label) -> line.append(AonFiscalFileUtils.zeros(17))         // RESERVADO AEAT
-			,(line,mod200, label) -> line.append(AonFiscalFileUtils.zeros(17))         // RESERVADO AEAT
-			,(line,mod200, label) -> {
-					double importe = mod200.getDoubleValue(Mod2002015Key.BN621); // importe a ingresar o a devolver
-					
-					line.append( AonFiscalFileUtils.text(importe<0 ? mod200.getDevType() : "",1) );                                   // Devolución - Renuncia o por Transferencia "blanco" "R","D"				
-					line.append( AonFiscalFileUtils.signedZero(importe<0 ? Math.abs(importe) : 0.0, DS, DD) );     // Devolución - Importe a devolver
-					line.append( AonFiscalFileUtils.text(importe<0 && "D".equals(mod200.getDevType()) ? mod200.getIban() : "",34) );  // Devolución - Número de cuenta IBAN (si devolución por transferencia)			
+				 (line,mod200, label) -> addStartLabel(line,label)   // Etiqueta de inicio de pagina
+				,(line,mod200, label) -> line.append(" ")  			 // Indicador de pagina complementaria
+				,(line,mod200, label) -> line.append("0")            // Cuenta corriente tributaria "0" o "1" (no se usa)
+				,(line,mod200, label) -> line.append( AonFiscalFileUtils.unsigned(mod200.getYear(), 4, 0) )      // Identificación - Ejercicio
+		        ,(line,mod200, label) -> line.append( AonFiscalFileUtils.unsigned(mod200.getPeriodType(),1,0) )  //	Tipo de ejercicio
+		        ,(line,mod200, label) -> line.append( "0A" )                                                     // Período Impositivo "0A"
+				,(line,mod200, label) -> line.append( mod200.getPeriodStart() == null ? AonStringUtils.repeat('0', 6) : DATE_FORMAT_6.format(mod200.getPeriodStart()) ) // Período Impositivo Inicio (ddmmaa)
+				,(line,mod200, label) -> line.append( mod200.getPeriodEnd()   == null ? AonStringUtils.repeat('0', 6) : DATE_FORMAT_6.format(mod200.getPeriodEnd()) )   // Período Impositivo Fin (ddmmaa)
+				,(line,mod200, label) -> line.append( AonFiscalFileUtils.text(mod200.getEnterpriseDocument(),9) )  // Identificación - NIF 
+				,(line,mod200, label) -> line.append( AonFiscalFileUtils.text(mod200.getEnterpriseName(),40) )     // Identificación - Apellidos y nombre o Razón Social
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ552)   // Liquidación - Base imponible [552]                                    
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ562)   // Liquidación - Cuota íntegra [562]                          
+				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN621)   // Liquidación - Líquido a ingresar o a devolver Estado [621]
 				
-					line.append( AonFiscalFileUtils.text(importe>0 ? mod200.getPayType() : "",1) );  // Ingreso - Modalidad de ingreso. Uno de los siguientes valores	"blanco", "I" Adeudo en	cuenta, "H" Efectivo, "U" Domiciliación
-					line.append(" ");   // RESERVADO AEAT
-					line.append(" ");   // RESERVADO AEAT
-					line.append( AonFiscalFileUtils.signedZero(importe>0 ? importe : 0.0, DS, DD) );               // Ingreso - Importe a ingresar
-					line.append( AonFiscalFileUtils.text(importe>0 && ("I".equals(mod200.getPayType()) || "U".equals(mod200.getPayType())) ? mod200.getIban() : "",34) ); // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)			
-	
-					addSignedKey(line, mod200, Mod2002015Key.BN150);  // Abono/Compensación - Abono por conversión de activos impuesto diferido - A       
-					addSignedKey(line, mod200, Mod2002015Key.BN506);  // Abono/Compensación - Compensación por conversión de activos impuesto diferido - C
+				,(line,mod200, label) -> line.append(AonFiscalFileUtils.zeros(17))         // RESERVADO AEAT
+				,(line,mod200, label) -> line.append(AonFiscalFileUtils.zeros(17))         // RESERVADO AEAT
+				,(line,mod200, label) -> line.append(AonFiscalFileUtils.zeros(17))         // RESERVADO AEAT
+				,(line,mod200, label) -> line.append(AonFiscalFileUtils.zeros(17))         // RESERVADO AEAT
+				,(line,mod200, label) -> {
+						double importe = mod200.getDoubleValue(Mod2002015Key.BN621); // importe a ingresar o a devolver
+						
+						line.append( AonFiscalFileUtils.text(importe<0 ? mod200.getDevType() : "",1) );                                   // Devolución - Renuncia o por Transferencia "blanco" "R","D"				
+						line.append( AonFiscalFileUtils.signedZero(importe<0 ? Math.abs(importe) : 0.0, DS, DD) );     // Devolución - Importe a devolver
+						line.append( AonFiscalFileUtils.text(importe<0 && "D".equals(mod200.getDevType()) ? mod200.getIban() : "",34) );  // Devolución - Número de cuenta IBAN (si devolución por transferencia)
+						
+						line.append( AonFiscalFileUtils.spaces(11)); // Devolución - Código SWIFT-BIC
 					
-					line.append(importe == 0 ? "1" : "0"); // Cuota Cero "0" o "1"
-			}
-			,(line,mod200, label) -> addEndLabel(line,label) // Etiqueta fin de pagina
-				
-			})
-*/		
+						line.append( AonFiscalFileUtils.text(importe>0 ? mod200.getPayType() : "",1) );  // Ingreso - Modalidad de ingreso. Uno de los siguientes valores	"blanco", "I" Adeudo en	cuenta, "H" Efectivo, "U" Domiciliación
+						line.append(" ");   // RESERVADO AEAT
+						line.append(" ");   // RESERVADO AEAT
+						line.append( AonFiscalFileUtils.signedZero(importe>0 ? importe : 0.0, DS, DD) );               // Ingreso - Importe a ingresar
+						line.append( AonFiscalFileUtils.text(importe>0 && ("I".equals(mod200.getPayType()) || "U".equals(mod200.getPayType())) ? mod200.getIban() : "",34) ); // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)			
+		
+						addSignedKey(line, mod200, Mod2002015Key.BN150);  // Abono/Compensación - Abono por conversión de activos impuesto diferido - A       
+						addSignedKey(line, mod200, Mod2002015Key.BN506);  // Abono/Compensación - Compensación por conversión de activos impuesto diferido - C
+						
+						line.append(importe == 0 ? "1" : "0"); // Cuota Cero "0" o "1"
+					}
+				,(line,mod200, label) -> addEndLabel(line,label) // Etiqueta fin de pagina
+					
+				})
 		;
 		 
 		private String tag;
