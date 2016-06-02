@@ -143,7 +143,7 @@ public class IrpfDataController extends BasicController {
 		IrpfData irpfData = (IrpfData) getTo();
 		if(irpfData.isFiscalExclusion()){
 			setIrpfCustomPercent(false);
-			setIrpfPercent(0.0);
+			setIrpfPercent(null);
 		}
 	}
 	
