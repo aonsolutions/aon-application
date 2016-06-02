@@ -96,6 +96,26 @@
 						<ui:param name="amountPattern" value="#{bundle.aon_integer_pattern}" />
 						<ui:param name="testing" value="#{productionReport.testingPaxQuery}" />
 					</ui:decorate>
+	
+					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+						<ui:param name="model" value="#{productionReport.roomModel}" />
+						<ui:param name="tableHeader" value="ROOM" />
+						<ui:param name="skipHeaders" value="#{true}" />
+						<ui:param name="skipFooters" value="#{true}" />
+						<ui:param name="skipTableHeader" value="#{true}" />
+						<ui:param name="amountPattern" value="#{bundle.aon_integer_pattern}" />
+						<ui:param name="testing" value="#{productionReport.testingRoomsQuery}" />
+					</ui:decorate>
+	
+					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+						<ui:param name="model" value="#{productionReport.availableRoomModel}" />
+						<ui:param name="tableHeader" value="AVAILABLE ROOM" />
+						<ui:param name="skipHeaders" value="#{true}" />
+						<ui:param name="skipFooters" value="#{true}" />
+						<ui:param name="skipTableHeader" value="#{true}" />
+						<ui:param name="amountPattern" value="#{bundle.aon_integer_pattern}" />
+						<ui:param name="testing" value="#{productionReport.testingOpendateRoomsQuery}" />
+					</ui:decorate>
 					
 					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
 						<ui:param name="model" value="#{productionReport.ratioModel}" />

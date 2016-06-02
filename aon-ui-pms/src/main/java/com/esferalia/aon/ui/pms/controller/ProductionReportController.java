@@ -65,28 +65,21 @@ public class ProductionReportController implements Serializable {
 	private Hotel hotel;
 	private Date date;
 
-	
-	private Map<String, ReportObject> productionMap = new HashMap<>();
-	private Map<String, ReportObject> pendingProductionMap = new HashMap<>();
-	private Map<String, ReportObject> paxMap = new HashMap<>();
-	private Map<String, ReportObject> advancePaymethodMap = new HashMap<>();
-	private Map<String, ReportObject> paymethodMap = new HashMap<>();
-	
-	private DataModel productionModel;
-	private DataModel pendingProductionModel;
-	private DataModel paxModel;
-	private DataModel ratioModel;
-	private DataModel advancePaymethodModel;
-	private DataModel paymethodModel;
-	private DataModel summaryModel;
-	
-	private ReportObject productionTotal;
-	private ReportObject ratioTotal;
-	private ReportObject advancePaymethodTotal;
-	private ReportObject paymethodTotal;
-	
-	private boolean testingProductionSql, testingPendingSql, testingPaxSql, testingPaymethodSql;
-	
+	private Map<String, ReportObject> productionMap = new HashMap<>(),
+			pendingProductionMap = new HashMap<>(), paxMap = new HashMap<>(),
+			roomMap = new HashMap<>(), availableRoomMap = new HashMap<>(),
+			advancePaymethodMap = new HashMap<>(),
+			paymethodMap = new HashMap<>();
+
+	private DataModel productionModel, pendingProductionModel, paxModel,
+			roomModel, availableRoomModel, ratioModel, advancePaymethodModel,
+			paymethodModel, summaryModel;
+
+	private ReportObject productionTotal, ratioTotal, advancePaymethodTotal,
+			paymethodTotal;
+
+	private boolean testingProductionSql, testingPendingSql, testingPaxSql,
+			testingPaymethodSql, testingRoomsSql, testingOpendateRoomsSql;
 	
 	public Hotel getHotel() {
 		return hotel;
@@ -110,9 +103,9 @@ public class ProductionReportController implements Serializable {
 	}
 	
 	public boolean isNevv() {
-		return productionModel == null && paxModel == null
-				&& advancePaymethodModel == null && paymethodModel == null
-				&& pendingProductionModel == null;
+		return productionModel == null && paxModel == null && roomModel == null
+				&& availableRoomModel == null && advancePaymethodModel == null
+				&& paymethodModel == null && pendingProductionModel == null;
 	}
 	
 	public boolean isTestingProductionQuery() {
@@ -130,6 +123,14 @@ public class ProductionReportController implements Serializable {
 	public boolean isTestingPaymethodQuery() {
 		return testingPaymethodSql;
 	}
+	
+	public boolean isTestingRoomsQuery() {
+		return testingRoomsSql;
+	}
+	
+	public boolean isTestingOpendateRoomsQuery() {
+		return testingOpendateRoomsSql;
+	}
 
 	public DataModel getProductionModel() {
 		return productionModel;
@@ -141,6 +142,14 @@ public class ProductionReportController implements Serializable {
 
 	public DataModel getPaxModel() {
 		return paxModel;
+	}
+	
+	public DataModel getRoomModel() {
+		return roomModel;
+	}
+	
+	public DataModel getAvailableRoomModel() {
+		return availableRoomModel;
 	}
 
 	public DataModel getRatioModel() {
@@ -183,16 +192,22 @@ public class ProductionReportController implements Serializable {
 		testingPendingSql = false;
 		testingPaxSql = false;
 		testingPaymethodSql = false;
+		testingRoomsSql = false;
+		testingOpendateRoomsSql = false;
 		
 		productionMap.clear();
 		pendingProductionMap.clear();
 		paxMap.clear();
+		roomMap.clear();
+		availableRoomMap.clear();
 		advancePaymethodMap.clear();
 		paymethodMap.clear();
 		
 		productionModel = null;
 		pendingProductionModel = null;
 		paxModel = null;
+		roomModel = null;
+		availableRoomModel = null;
 		ratioModel = null;
 		advancePaymethodModel = null;
 		paymethodModel = null;
@@ -306,6 +321,8 @@ public class ProductionReportController implements Serializable {
 		Integer month = cal.get(Calendar.MONTH)+1;
 		Integer hotel = getHotel().getId();
 		Integer wp = getHotel().getWorkPlace().getId();
+		Integer rooms = getRoomsCountHotel(hotel);
+		java.sql.Date openDate = getOpenDate(hotel, year);
 		
 		ApplicationParameter ap = AppParamUtil.getParameter("PMS_PRODUCTION_REPORT_PCATEGORY");
 		int productCategory = 0;
@@ -337,6 +354,22 @@ public class ProductionReportController implements Serializable {
 				+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
 		
 		
+		LOGGER.info("****** Inicio de la busqueda de habitaciones     -> " + timeFormatter.format(new Date()));
+		tmpDate = new Date();
+		buildRoomsReport(previousDate, previousDate, year, previousYear, month, hotel, wp, rooms, openDate);
+		diff = (new Date()).getTime() - tmpDate.getTime();
+		LOGGER.info("****** Fin de la busqueda de habitaciones        -> " + timeFormatter.format(new Date()) 
+				+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
+		
+		
+		LOGGER.info("****** Inicio de la busqueda de opendate room    -> " + timeFormatter.format(new Date()));
+		tmpDate = new Date();
+		buildOpendateroomsReport(previousDate, previousDate, year, previousYear, month, hotel, wp, rooms, openDate);
+		diff = (new Date()).getTime() - tmpDate.getTime();
+		LOGGER.info("****** Fin de la busqueda de opendate room       -> " + timeFormatter.format(new Date()) 
+				+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
+		
+		
 		LOGGER.info("****** Inicio de la busqueda de pax              -> " + timeFormatter.format(new Date()));
 		tmpDate = new Date();
 		buildPaxReport(date, previousDate, year, previousYear, month, hotel);
@@ -358,7 +391,7 @@ public class ProductionReportController implements Serializable {
         		+ (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg.)" );
 		
 	}
-		
+	
 	private void buildProductionReport(java.sql.Date date,
 			java.sql.Date previousDate, Integer year, Integer previousYear,
 			Integer month, Integer hotel, Integer wp, Integer productCategory) throws AonSQLException {
@@ -530,15 +563,17 @@ public class ProductionReportController implements Serializable {
 						year, previousYear, month, hotel));
 				paxRs = paxStmt.executeQuery();
 			}
+			
+			if (!paxMap.containsKey("PAX")) {
+				ReportObject ro = new ReportObject();
+				ro.setDescription("PAX");
+				paxMap.put("PAX", ro);
+			}
+			
 			while (paxRs.next()) {
 				String period = paxRs.getString(1);
 				Double amount = CommonUtil.round(paxRs.getDouble(2));
 				
-				if (!paxMap.containsKey("PAX")) {
-					ReportObject ro = new ReportObject();
-					ro.setDescription("PAX");
-					paxMap.put("PAX", ro);
-				}
 				if (period.equals("ANIO")) {
 					paxMap.get("PAX").setYearAmount(amount);
 				} else if (period.equals("ANIO_ANTERIOR")) {
@@ -612,6 +647,7 @@ public class ProductionReportController implements Serializable {
 					ro.setDescription(description);
 					map.put(description, ro);
 				}
+				
 				if (period.equals("ANIO")) {
 					map.get(description).setYearAmount(amount);
 				} else if (period.equals("ANIO_ANTERIOR")) {
@@ -641,6 +677,195 @@ public class ProductionReportController implements Serializable {
 		} finally {
 			SQLUtils.closeQuietly(paymethodRs);
 			SQLUtils.closeQuietly(paymethodStmt);
+			SQLUtils.closeQuietly(connection);
+		}
+	}
+	
+	
+	private java.sql.Date getOpenDate(Integer hotel, Integer year) throws AonSQLException {
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			stmt = connection.prepareStatement(opendateSQL(year, hotel));
+			rs = stmt.executeQuery();
+			
+			if (rs.next()) {
+				return rs.getDate(1);
+			}
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+			throw new AonSQLException(e.getMessage());
+		} finally {
+			SQLUtils.closeQuietly(rs);
+			SQLUtils.closeQuietly(stmt);
+			SQLUtils.closeQuietly(connection);
+		}
+		return null;
+	}
+	
+	private Integer getRoomsCountHotel(Integer hotel) throws AonSQLException {
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			stmt = connection.prepareStatement(roomCountSQL(hotel));
+			rs = stmt.executeQuery();
+			
+			if (rs.next()) {
+				return rs.getInt(1);
+			}
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+			throw new AonSQLException(e.getMessage());
+		} finally {
+			SQLUtils.closeQuietly(rs);
+			SQLUtils.closeQuietly(stmt);
+			SQLUtils.closeQuietly(connection);
+		}
+		return null;
+	}
+	
+	private void buildRoomsReport(java.sql.Date date,
+			java.sql.Date previousDate, Integer year, Integer previousYear,
+			Integer month, Integer hotel, Integer wp, Integer rooms, java.sql.Date opendate) throws AonSQLException {
+		Connection connection = null;
+		PreparedStatement roomsStmt = null;
+		ResultSet roomsRs = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			try {
+				roomsStmt = connection.prepareStatement(getRoomsSQL(date,
+						previousDate, year, previousYear, month, wp, hotel,
+						rooms, opendate));
+				roomsRs = roomsStmt.executeQuery();
+			} catch (Exception e) {
+				SQLUtils.closeQuietly(roomsStmt);
+				SQLUtils.closeQuietly(roomsRs);
+				testingRoomsSql = false;
+				LOGGER.error("@#$%&@#$%&!!!! " + e.getMessage());
+				LOGGER.error("ERROR EN LA QUERY DE TEST DE ROOMS, continua con la query por defecto");
+				roomsStmt = connection.prepareStatement(roomsSQL(date,
+						previousDate, hotel, year, previousYear, month, rooms,
+						opendate));
+				roomsRs = roomsStmt.executeQuery();
+			}
+			
+			if (!availableRoomMap.containsKey("Hab.Disponibles")) {
+				ReportObject ro = new ReportObject();
+				ro.setDescription("Hab.Disponibles");
+				availableRoomMap.put("Hab.Disponibles", ro);
+			}
+			
+			while (roomsRs.next()) {
+				String period = roomsRs.getString(1);
+				Double roomCount = CommonUtil.round(roomsRs.getDouble(2));
+//				Double ocupation = CommonUtil.round(roomsRs.getDouble(3));
+//				System.out.println(period + " - " + roomCount + " - " + ocupation);
+				
+				if (period.equals("ANIO")) {
+					availableRoomMap.get("Hab.Disponibles").setYearAmount(roomCount);
+				} else if (period.equals("ANIO_ANTERIOR")) {
+					availableRoomMap.get("Hab.Disponibles").setPreviousYearAmount(roomCount);
+				} else if (period.equals("MES")) {
+					availableRoomMap.get("Hab.Disponibles").setMonthAmount(roomCount);
+				} else if (period.equals("MES_ANIO_ANTERIOR")) {
+					availableRoomMap.get("Hab.Disponibles").setPreviousMonthAmount(roomCount);
+				} else if (period.equals("DIA")) {
+					availableRoomMap.get("Hab.Disponibles").setDayAmount(roomCount);
+				} else if (period.equals("DIA_ANIO_ANTERIOR")) {
+					availableRoomMap.get("Hab.Disponibles").setPreviousDayAmount(roomCount);
+				}
+			}
+			
+			availableRoomModel = buildModel(availableRoomMap);
+			
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+			throw new AonSQLException(e.getMessage());
+		} finally {
+			SQLUtils.closeQuietly(roomsRs);
+			SQLUtils.closeQuietly(roomsStmt);
+			SQLUtils.closeQuietly(connection);
+		}
+	}
+	
+	private void buildOpendateroomsReport(java.sql.Date date,
+			java.sql.Date previousDate, Integer year, Integer previousYear,
+			Integer month, Integer hotel, Integer wp, Integer rooms, java.sql.Date opendate) throws AonSQLException {
+		Connection connection = null;
+		PreparedStatement opendateRoomsStmt = null;
+		ResultSet opendateRoomsRs = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			try {
+				opendateRoomsStmt = connection
+						.prepareStatement(getOpendateRoomsSQL(date,
+								previousDate, year, previousYear, month, wp,
+								hotel, rooms, opendate));
+				opendateRoomsRs = opendateRoomsStmt.executeQuery();
+			} catch (Exception e) {
+				SQLUtils.closeQuietly(opendateRoomsStmt);
+				SQLUtils.closeQuietly(opendateRoomsRs);
+				testingOpendateRoomsSql = false;
+				LOGGER.error("@#$%&@#$%&!!!! " + e.getMessage());
+				LOGGER.error("ERROR EN LA QUERY DE TEST DE ROOMS, continua con la query por defecto");
+				opendateRoomsStmt = connection
+						.prepareStatement(opendateroomsSQL(date, previousDate,
+								hotel, year, previousYear, month, rooms,
+								opendate));
+				opendateRoomsRs = opendateRoomsStmt.executeQuery();
+			}
+			
+			if (!roomMap.containsKey("Habitaciones")) {
+				ReportObject ro = new ReportObject();
+				ro.setDescription("Habitaciones");
+				roomMap.put("Habitaciones", ro);
+			}
+			
+			while (opendateRoomsRs.next()) {
+				String period = opendateRoomsRs.getString(1);
+				Double ocupation = CommonUtil.round(opendateRoomsRs.getDouble(2));
+//				Double days = CommonUtil.round(opendateRoomsRs.getDouble(3));
+//				System.out.println(period + " - " + ocupation + " - " + days);
+				
+				if (period.equals("ANIO")) {
+					roomMap.get("Habitaciones").setYearAmount(ocupation);
+				} else if (period.equals("ANIO_ANTERIOR")) {
+					roomMap.get("Habitaciones").setPreviousYearAmount(ocupation);
+				} else if (period.equals("MES")) {
+					roomMap.get("Habitaciones").setMonthAmount(ocupation);
+				} else if (period.equals("MES_ANIO_ANTERIOR")) {
+					roomMap.get("Habitaciones").setPreviousMonthAmount(ocupation);
+				} else if (period.equals("DIA")) {
+					roomMap.get("Habitaciones").setDayAmount(ocupation);
+				} else if (period.equals("DIA_ANIO_ANTERIOR")) {
+					roomMap.get("Habitaciones").setPreviousDayAmount(ocupation);
+				}
+			}
+			
+			roomModel = buildModel(roomMap);
+			
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+			throw new AonSQLException(e.getMessage());
+		} finally {
+			SQLUtils.closeQuietly(opendateRoomsRs);
+			SQLUtils.closeQuietly(opendateRoomsStmt);
 			SQLUtils.closeQuietly(connection);
 		}
 	}
@@ -745,32 +970,97 @@ public class ProductionReportController implements Serializable {
 		return query;
 	}
 	
+	private String getRoomsSQL(java.sql.Date date,
+			java.sql.Date previousDate, Integer year, Integer previousYear,
+			Integer month, Integer wp, Integer hotel, Integer rooms, java.sql.Date opendate) {
+		String query = getLocalSQL("rooms.sql");
+		if (query != null) {
+			testingRoomsSql = true;
+			query = query.replaceAll("@date", "'"+date.toString()+"'")
+					.replaceAll("@previousDate", "'"+previousDate.toString()+"'")
+					.replaceAll("@year", year.toString())
+					.replaceAll("@previousYear", previousYear.toString())
+					.replaceAll("@month", month.toString())
+					.replaceAll("@hotel", hotel.toString())
+					.replaceAll("@wp", wp.toString())
+					.replaceAll("@rooms", rooms.toString())
+					.replaceAll("@opendate", "'"+opendate.toString()+"'")
+					.replaceAll("[\n|\t]", "");
+		} else {
+			query = roomsSQL(date, previousDate, hotel, year, previousYear, month, rooms, opendate);
+		}
+		return query;
+	}
+	
+	private String getOpendateRoomsSQL(java.sql.Date date,
+			java.sql.Date previousDate, Integer year, Integer previousYear,
+			Integer month, Integer wp, Integer hotel, Integer rooms, java.sql.Date opendate) {
+		String query = getLocalSQL("opendateRooms.sql");
+		if (query != null) {
+			testingOpendateRoomsSql = true;
+			query = query.replaceAll("@date", "'"+date.toString()+"'")
+					.replaceAll("@previousDate", "'"+previousDate.toString()+"'")
+					.replaceAll("@year", year.toString())
+					.replaceAll("@previousYear", previousYear.toString())
+					.replaceAll("@month", month.toString())
+					.replaceAll("@wp", wp.toString())
+					.replaceAll("[\n|\t]", "");
+		} else {
+			query = opendateroomsSQL(previousDate, previousDate, hotel, year,
+					previousYear, month, rooms, opendate);
+		}
+		return query;
+	}
+	
 	
 	private Map<String, ReportObject> getProductionRatioMap() {
 		Map<String, ReportObject> productionRatioMap = new HashMap<>();
 		productionMap.keySet().stream().sorted().forEach(key -> {
-			fillRatioMapObject(key, productionMap, productionRatioMap);
+			fillPaxRatioMapObject(key, productionMap, productionRatioMap);
 		});
-		fillRatioMapObject("1.VENTAS", pendingProductionMap, productionRatioMap);
-		fillRatioMapObject("3.SALDO CTA. CLIENTE", pendingProductionMap, productionRatioMap);
+		
+		// TODO
+//		=habitaciones*100/habitaciones disponibles
+//		fillRoomRatioMapObject("% OCUPACION Habitación", pendingProductionMap, productionRatioMap);
+		
+		// TODO
+//		=PAX/(Habitaciones-Habitaciones disponibles)
+//		fillRoomRatioMapObject("PAX por Habitación", pendingProductionMap, productionRatioMap);
+		
+		// TODO 
+//		=1.VENTAS/(Habitaciones-Habitaciones disponibles)
+//		fillRoomRatioMapObject("1.VENTAS/Habitación", pendingProductionMap, productionRatioMap);
+		
+		fillPaxRatioMapObject("1.VENTAS", pendingProductionMap, productionRatioMap);
+		fillPaxRatioMapObject("3.SALDO CTA. CLIENTE", pendingProductionMap, productionRatioMap);
 		return productionRatioMap;
 	}
 	
-	private void fillRatioMapObject(String key, Map<String, ReportObject> productionMap, Map<String, ReportObject> productionRatioMap){
+	private void fillPaxRatioMapObject(String key, Map<String, ReportObject> productionMap, Map<String, ReportObject> productionRatioMap){
 		ReportObject ro = new ReportObject();
-		ro.setDescription(productionMap.get(key).getDescription()+"/Pax");
-		double paxDayAmount = paxMap.values().stream().mapToDouble(ReportObject::getDayAmount).sum();
-		ro.setDayAmount(paxDayAmount > 0.0f ? (productionMap.get(key).getDayAmount() / paxDayAmount) : 0.0);
-		double paxPreviousDayAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum();
-		ro.setPreviousDayAmount(paxPreviousDayAmount > 0.0f ? (productionMap.get(key).getPreviousDayAmount() / paxPreviousDayAmount) : 0.0);
-		double paxMonthAmount = paxMap.values().stream().mapToDouble(ReportObject::getMonthAmount).sum();
-		ro.setMonthAmount(paxMonthAmount > 0.0f ? (productionMap.get(key).getMonthAmount() / paxMonthAmount) : 0.0);			 
-		double paxPreviousMonthAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum();
-		ro.setPreviousMonthAmount(paxPreviousMonthAmount > 0.0f ? (productionMap.get(key).getPreviousMonthAmount() / paxPreviousMonthAmount) : 0.0);
-		double paxYearAmount = paxMap.values().stream().mapToDouble(ReportObject::getYearAmount).sum();
-		ro.setYearAmount(paxYearAmount > 0.0f ? (productionMap.get(key).getYearAmount() / paxYearAmount) : 0.0);
-		double paxPreviousYearAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum();
-		ro.setPreviousYearAmount(paxPreviousYearAmount > 0.0f ? (productionMap.get(key).getPreviousYearAmount() / paxPreviousYearAmount) : 0.0);
+		if( productionMap.containsKey(key) ){
+			ro.setDescription(productionMap.get(key).getDescription()+"/Pax");
+			double paxDayAmount = paxMap.values().stream().mapToDouble(ReportObject::getDayAmount).sum();
+			ro.setDayAmount(paxDayAmount > 0.0f ? (productionMap.get(key).getDayAmount() / paxDayAmount) : 0.0);
+			double paxPreviousDayAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum();
+			ro.setPreviousDayAmount(paxPreviousDayAmount > 0.0f ? (productionMap.get(key).getPreviousDayAmount() / paxPreviousDayAmount) : 0.0);
+			double paxMonthAmount = paxMap.values().stream().mapToDouble(ReportObject::getMonthAmount).sum();
+			ro.setMonthAmount(paxMonthAmount > 0.0f ? (productionMap.get(key).getMonthAmount() / paxMonthAmount) : 0.0);			 
+			double paxPreviousMonthAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum();
+			ro.setPreviousMonthAmount(paxPreviousMonthAmount > 0.0f ? (productionMap.get(key).getPreviousMonthAmount() / paxPreviousMonthAmount) : 0.0);
+			double paxYearAmount = paxMap.values().stream().mapToDouble(ReportObject::getYearAmount).sum();
+			ro.setYearAmount(paxYearAmount > 0.0f ? (productionMap.get(key).getYearAmount() / paxYearAmount) : 0.0);
+			double paxPreviousYearAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum();
+			ro.setPreviousYearAmount(paxPreviousYearAmount > 0.0f ? (productionMap.get(key).getPreviousYearAmount() / paxPreviousYearAmount) : 0.0);
+		}
+		productionRatioMap.put(key, ro);
+	}
+	
+	private void fillRoomRatioMapObject(String key, Map<String, ReportObject> productionMap, Map<String, ReportObject> productionRatioMap){
+		ReportObject ro = new ReportObject();
+		if( productionMap.containsKey(key) ){
+			
+		}
 		productionRatioMap.put(key, ro);
 	}
 	
@@ -841,7 +1131,9 @@ public class ProductionReportController implements Serializable {
 		
 		exporter.startLine();
 		exporter.endLine();
-		exportData(exporter, columnMetadata, "PAX", paxMap, false);
+		exportData(exporter, columnMetadata, "PAX-ROOMS", paxMap, false);
+		exportData(exporter, columnMetadata, null, roomMap, false);
+		exportData(exporter, columnMetadata, null, availableRoomMap, false);
 
 		exporter.startLine();
 		exporter.endLine();
@@ -1374,7 +1666,7 @@ public class ProductionReportController implements Serializable {
         
         return stmt.toString();
 	}
-	
+		
 	private String paxSQL(java.sql.Date date, java.sql.Date previousDate,
 			Integer year, Integer previousYear, Integer month, Integer hotel) {
 		
@@ -1528,10 +1820,104 @@ public class ProductionReportController implements Serializable {
 		return stmt.toString();
 	}
 	
+	private String roomCountSQL(Integer hotel) {
+		StringBuffer stmt = new StringBuffer();
+		stmt.append(" SELECT count(item)");
+		stmt.append(" from room");
+		stmt.append(" where active=1");
+		stmt.append(" and hotel=" + hotel);
+		return stmt.toString();
+	}
+
+	private String opendateSQL(Integer year, Integer hotel) {
+		StringBuffer stmt = new StringBuffer();
+		stmt.append("SELECT min(stay_date)");
+		stmt.append(" from booking");
+		stmt.append(" where hotel=" + hotel);
+		stmt.append(" and year(stay_date)=" + year);
+		return stmt.toString();
+	}
+	
+	private String roomsSQL(java.sql.Date date,
+			java.sql.Date previousDate, Integer hotel, Integer year,
+			Integer previousYear, Integer month, Integer rooms, java.sql.Date opendate) {
+		StringBuffer stmt = new StringBuffer();
+		stmt.append("(SELECT IF(B.stay_date='"+date+"', 'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
+		stmt.append("       IFNULL(Count(B.item),0) as Room,");
+		stmt.append("       IFNULL(Count(B.item),0)*100/"+rooms+" as Ocupacion");
+		stmt.append(" FROM booking B");
+		stmt.append(" WHERE B.hotel="+hotel+"");
+		stmt.append(" AND B.stay_type<>1");
+		stmt.append(" AND (B.stay_date='"+date+"' OR B.stay_date='"+previousDate+"')");
+		stmt.append(" GROUP BY 1)");
+		stmt.append(" UNION");
+		stmt.append(" (SELECT IF(YEAR(B.stay_date)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
+		stmt.append("      IFNULL(Count(B.item),0) as Room,");
+		stmt.append("      (IFNULL(Count(B.item),0)*100)/("+rooms+"*(datediff('"+date+"',concat("+year+",'-',"+month+",'-',");
+		stmt.append("       IF(month('"+opendate+"')="+month+",day('"+opendate+"'),'01')))+1)) as Ocupacion");
+		stmt.append(" FROM booking B");
+		stmt.append(" WHERE B.hotel="+hotel+"");
+		stmt.append(" AND B.stay_type<>1");
+		stmt.append(" AND (   (B.stay_date<='"+date+"'          AND YEAR(B.stay_date)="+year+")");
+		stmt.append("      OR (B.stay_date<='"+previousDate+"'  AND YEAR(B.stay_date)="+previousYear+"))");
+		stmt.append("  AND MONTH(B.stay_date)="+month+"");
+		stmt.append(" GROUP BY 1)");
+		stmt.append(" UNION");
+		stmt.append(" (SELECT IF(YEAR(B.stay_date)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
+		stmt.append("      IFNULL(Count(B.item),0) as Room,");
+		stmt.append("      (IFNULL(Count(B.item),0)*100)/("+rooms+"*(datediff('"+date+"','"+opendate+"')+1)) as Ocupacion");
+		stmt.append(" FROM booking B");
+		stmt.append(" WHERE B.hotel="+hotel+"");
+		stmt.append(" AND B.stay_type<>1");
+		stmt.append("  AND (  (B.stay_date<='"+date+"'          AND YEAR(B.stay_date)="+year+")");
+		stmt.append("       OR (B.stay_date<='"+previousDate+"' AND YEAR(B.stay_date)="+previousYear+"))");
+		stmt.append(" GROUP BY 1);");
+		return stmt.toString();
+	}
+	
+	private String opendateroomsSQL(java.sql.Date date,
+			java.sql.Date previousDate, Integer hotel, Integer year,
+			Integer previousYear, Integer month, Integer rooms, java.sql.Date opendate) {
+		StringBuffer stmt = new StringBuffer();
+		stmt.append("(SELECT 'DIA' as Periodo,");
+		stmt.append("       "+rooms+" as Ocupacion,");
+		stmt.append("       1 as Dias");
+		stmt.append(" FROM booking B");
+		stmt.append(" WHERE B.hotel="+hotel+"");
+		stmt.append(" AND B.stay_type<>1");
+		stmt.append(" AND (B.stay_date='"+date+"')");
+		stmt.append(" GROUP BY 1)");
+		stmt.append(" UNION");
+		stmt.append(" (SELECT 'MES' as Periodo,");
+		stmt.append("          "+rooms+"*(datediff('"+date+"',concat("+year+",'-',"+month+",'-',");
+		stmt.append("          IF(month('"+opendate+"')="+month+",day('"+opendate+"'),'01')))+1) as Ocupacion,");
+		stmt.append("          datediff('"+date+"',concat("+year+",'-',"+month+",'-',");
+		stmt.append("          IF(month('"+opendate+"')="+month+",day('"+opendate+"'),'01')))+1 as Dias");
+		stmt.append(" FROM booking B");
+		stmt.append(" WHERE B.hotel="+hotel+"");
+		stmt.append("   AND B.stay_type<>1");
+		stmt.append("   AND (B.stay_date<='"+date+"'         ");
+		stmt.append("   AND YEAR(B.stay_date)="+year+")");
+		stmt.append("   AND MONTH(B.stay_date)="+month+"");
+		stmt.append(" GROUP BY 1)");
+		stmt.append(" UNION");
+		stmt.append(" (SELECT 'ANIO' as Periodo,");
+		stmt.append("         "+rooms+"*(datediff('"+date+"','"+opendate+"')+1) as Ocupacion,");
+		stmt.append("         datediff('"+date+"','"+opendate+"')+1 as Dias");
+		stmt.append(" FROM booking B");
+		stmt.append(" WHERE B.hotel="+hotel+"");
+		stmt.append("   AND B.stay_type<>1");
+		stmt.append("   AND (B.stay_date<='"+date+"'         ");
+		stmt.append("   AND YEAR(B.stay_date)="+year+")");
+		stmt.append(" GROUP BY 1);");
+		return stmt.toString();
+	}
+	
 	@SuppressWarnings("unused")
-	private void sqlToJava(String fileName) throws IOException {
+	private static void sqlToJava(String fileName) throws IOException {
 		List<String> list = Files.readAllLines(Paths.get(SQL_FILE + fileName));
 		if (list != null && !list.isEmpty()) {
+			System.out.println("#################################");
 			System.out.println("### Query code for "
 					+ fileName.replaceAll(".sql", "").toUpperCase());
 			System.out.println("#################################");
@@ -1546,11 +1932,15 @@ public class ProductionReportController implements Serializable {
 							.replaceAll("@hotel", "\"+hotel+\"")
 							.replaceAll("@wp", "\"+wp+\"")
 							.replaceAll("@productCategory",
-									"\"+productCategory+\"");
+									"\"+productCategory+\"")
+							.replaceAll("@rooms", "\"+rooms+\"")
+							.replaceAll("@opendate", "'\"+opendate+\"'")
+							;
 					System.out.println("stmt.append(\"" + line + "\");");
 				}
 			});
 		}
 	}
+	
 	
 }
