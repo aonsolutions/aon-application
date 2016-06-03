@@ -1053,6 +1053,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
+		
 
 		// @formatter:off
 		
@@ -1108,7 +1109,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(
 				(1000.00 * workedDays/ monthDays)
 				+ (1000.00 * 3/ monthDays)
-				+ (1000.00/31 * 0.60 * 12), 
+				+ (1000.00/monthDays * 0.60 * 12), 
 				salary.getTotalPayment() 
 				, DELTA);
 		//@formatter:on
@@ -1175,7 +1176,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		//@formatter:off
 		Assert.assertEquals(
 				(1000.00 * workedDays/ monthDays)
-				+ (1000.00/31 * 0.60 * 3), 
+				+ (1000.00/monthDays * 0.60 * 3), 
 				salary.getTotalPayment() 
 				, DELTA);
 		//@formatter:on
@@ -1348,7 +1349,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		double monthDays = AonDateUtils.getMax(getToday(), DATE);
 		double itDays = monthDays - workedDays;
 		
-		double br = ((1750.00 + 1750.00 * 0.10) + (1750.00 + 1750.00 * 0.10)/12 + (1750.00 + 1750.00 * 0.10)/12)/ 31 ;
+		double br = ((1750.00 + 1750.00 * 0.10) + (1750.00 + 1750.00 * 0.10)/12 + (1750.00 + 1750.00 * 0.10)/12)/ monthDays ;
 		
 		System.out.println("BR = " + br );
 		
