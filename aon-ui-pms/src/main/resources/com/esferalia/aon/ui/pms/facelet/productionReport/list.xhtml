@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -70,83 +71,104 @@
 					</aon:panelGrid>
 				</aon:div>
 			
-				<aon:div id="productionReport-listData">
-					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
-						<ui:param name="model" value="#{productionReport.productionModel}" />
-						<ui:param name="tableHeader" value="FACTURACION POR AREA" />
-						<ui:param name="name" value="PRODUCCION" />
-						<ui:param name="totalTo" value="#{productionReport.productionTotal}" />
-						<ui:param name="testing" value="#{productionReport.testingProductionQuery}" />
-					</ui:decorate>
+				<aon:div id="productionReport-listData" rendered="#{!productionReport.nevv}">
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="FACTURACION POR AREA" />
+						</f:facet>
+						<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+							<ui:param name="model" value="#{productionReport.productionModel}" />
+							<ui:param name="name" value="PRODUCCION" />
+							<ui:param name="totalTo" value="#{productionReport.productionTotal}" />
+							<ui:param name="testing" value="#{productionReport.testingProductionQuery}" />
+						</ui:decorate>
+					</aon:panel>
 					
-					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
-						<ui:param name="model" value="#{productionReport.pendingProductionModel}" />
-						<ui:param name="tableHeader" value="PRODUCCION" />
-						<ui:param name="skipHeaders" value="#{true}" />
-						<ui:param name="skipFooters" value="#{true}" />
-						<ui:param name="testing" value="#{productionReport.testingPendingQuery}" />
-					</ui:decorate>
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="PRODUCCION" />
+						</f:facet>
+						<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+							<ui:param name="model" value="#{productionReport.pendingProductionModel}" />
+							<ui:param name="skipHeaders" value="#{true}" />
+							<ui:param name="skipFooters" value="#{true}" />
+							<ui:param name="testing" value="#{productionReport.testingPendingQuery}" />
+						</ui:decorate>
+					</aon:panel>
 	
-					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
-						<ui:param name="model" value="#{productionReport.paxModel}" />
-						<ui:param name="tableHeader" value="PAX" />
-						<ui:param name="skipHeaders" value="#{true}" />
-						<ui:param name="skipFooters" value="#{true}" />
-						<ui:param name="skipTableHeader" value="#{true}" />
-						<ui:param name="amountPattern" value="#{bundle.aon_integer_pattern}" />
-						<ui:param name="testing" value="#{productionReport.testingPaxQuery}" />
-					</ui:decorate>
-	
-					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
-						<ui:param name="model" value="#{productionReport.roomModel}" />
-						<ui:param name="tableHeader" value="ROOM" />
-						<ui:param name="skipHeaders" value="#{true}" />
-						<ui:param name="skipFooters" value="#{true}" />
-						<ui:param name="skipTableHeader" value="#{true}" />
-						<ui:param name="amountPattern" value="#{bundle.aon_integer_pattern}" />
-						<ui:param name="testing" value="#{productionReport.testingRoomsQuery}" />
-					</ui:decorate>
-	
-					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
-						<ui:param name="model" value="#{productionReport.availableRoomModel}" />
-						<ui:param name="tableHeader" value="AVAILABLE ROOM" />
-						<ui:param name="skipHeaders" value="#{true}" />
-						<ui:param name="skipFooters" value="#{true}" />
-						<ui:param name="skipTableHeader" value="#{true}" />
-						<ui:param name="amountPattern" value="#{bundle.aon_integer_pattern}" />
-						<ui:param name="testing" value="#{productionReport.testingOpendateRoomsQuery}" />
-					</ui:decorate>
+					<aon:panel styleClass="aon-padding-top aon-padding-bottom">
+						<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+							<ui:param name="model" value="#{productionReport.paxModel}" />
+							<ui:param name="skipHeaders" value="#{true}" />
+							<ui:param name="skipFooters" value="#{true}" />
+							<ui:param name="amountPattern" value="#{bundle.aon_integer_pattern}" />
+							<ui:param name="testing" value="#{productionReport.testingPaxQuery}" />
+						</ui:decorate>
+		
+						<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+							<ui:param name="model" value="#{productionReport.roomModel}" />
+							<ui:param name="skipHeaders" value="#{true}" />
+							<ui:param name="skipFooters" value="#{true}" />
+							<ui:param name="amountPattern" value="#{bundle.aon_integer_pattern}" />
+							<ui:param name="testing" value="#{productionReport.testingRoomsQuery}" />
+						</ui:decorate>
+		
+						<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+							<ui:param name="model" value="#{productionReport.availableRoomModel}" />
+							<ui:param name="skipHeaders" value="#{true}" />
+							<ui:param name="skipFooters" value="#{true}" />
+							<ui:param name="amountPattern" value="#{bundle.aon_integer_pattern}" />
+							<ui:param name="testing" value="#{productionReport.testingOpendateRoomsQuery}" />
+						</ui:decorate>
+					</aon:panel>
 					
-					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
-						<ui:param name="model" value="#{productionReport.ratioModel}" />
-						<ui:param name="tableHeader" value="RATIOS" />
-						<ui:param name="skipHeaders" value="#{true}" />
-						<ui:param name="totalTo" value="#{productionReport.ratioTotal}" />
-					</ui:decorate>
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="RATIOS" />
+						</f:facet>
+						<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+							<ui:param name="model" value="#{productionReport.ratioModel}" />
+							<ui:param name="skipHeaders" value="#{true}" />
+							<ui:param name="totalTo" value="#{productionReport.ratioTotal}" />
+						</ui:decorate>
+					</aon:panel>
 					
-					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
-						<ui:param name="model" value="#{productionReport.advancePaymethodModel}" />
-						<ui:param name="tableHeader" value="FACTURAS ANTICIPO" />
-						<ui:param name="totalTo" value="#{productionReport.advancePaymethodTotal}" />
-						<ui:param name="testing" value="#{productionReport.testingPaymethodQuery}" />
-					</ui:decorate>
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="FACTURAS ANTICIPO" />
+						</f:facet>
+						<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+							<ui:param name="model" value="#{productionReport.advancePaymethodModel}" />
+							<ui:param name="name" value="Forma de pago" />
+							<ui:param name="totalTo" value="#{productionReport.advancePaymethodTotal}" />
+							<ui:param name="testing" value="#{productionReport.testingPaymethodQuery}" />
+						</ui:decorate>
+					</aon:panel>
 					
-					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
-						<ui:param name="model" value="#{productionReport.paymethodModel}" />
-						<ui:param name="tableHeader" value="FACTURAS" />
-						<ui:param name="name" value="Forma de pago" />
-						<ui:param name="totalTo" value="#{productionReport.paymethodTotal}" />
-						<ui:param name="testing" value="#{productionReport.testingPaymethodQuery}" />
-					</ui:decorate>
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="FACTURAS" />
+						</f:facet>
+						<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+							<ui:param name="model" value="#{productionReport.paymethodModel}" />
+							<ui:param name="name" value="Forma de pago" />
+							<ui:param name="totalTo" value="#{productionReport.paymethodTotal}" />
+							<ui:param name="testing" value="#{productionReport.testingPaymethodQuery}" />
+						</ui:decorate>
+					</aon:panel>
 					
-					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
-						<ui:param name="model" value="#{productionReport.summaryModel}" />
-						<ui:param name="tableHeader" value="RESUMEN" />
-						<ui:param name="skipHeaders" value="#{true}" />
-						<ui:param name="skipFooters" value="#{true}" />
-						<ui:param name="defaultEmpty" value="#{true}" />
-						<ui:param name="amountPattern" value="" />
-					</ui:decorate>
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="RESUMEN" />
+						</f:facet>
+						<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+							<ui:param name="model" value="#{productionReport.summaryModel}" />
+							<ui:param name="skipHeaders" value="#{true}" />
+							<ui:param name="skipFooters" value="#{true}" />
+							<ui:param name="defaultEmpty" value="#{true}" />
+							<ui:param name="amountPattern" value="" />
+						</ui:decorate>
+					</aon:panel>
 					
 				</aon:div>
 				

@@ -364,7 +364,7 @@ public class ProductionReportController implements Serializable {
 		
 		LOGGER.info("****** Inicio de la busqueda de opendate room    -> " + timeFormatter.format(new Date()));
 		tmpDate = new Date();
-		buildOpendateroomsReport(previousDate, previousDate, year, previousYear, month, hotel, wp, rooms, openDate);
+		buildOpendateroomsReport(date, previousDate, year, previousYear, month, hotel, wp, rooms, openDate);
 		diff = (new Date()).getTime() - tmpDate.getTime();
 		LOGGER.info("****** Fin de la busqueda de opendate room       -> " + timeFormatter.format(new Date()) 
 				+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
@@ -903,7 +903,7 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@hotel", hotel.toString())
 					.replaceAll("@wp", wp.toString())
 					.replaceAll("@productCategory", productCategory.toString())
-					.replaceAll("[\n|\t]", "");
+					.replaceFirst("[\n|\t|\r]*", "");
 		} else {
 			query = hotelProductionSQL(date, previousDate, year, previousYear,
 					month, hotel, wp, productCategory);
@@ -923,7 +923,7 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@year", year.toString())
 					.replaceAll("@previousYear", previousYear.toString())
 					.replaceAll("@month", month.toString())
-					.replaceAll("[\n|\t]", "");
+					.replaceFirst("[\n|\t|\r]*", "");
 		} else {
 			query = pendingHotelProductionSQL(date, previousDate, hotel,
 					year, previousYear, month);
@@ -942,7 +942,7 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@previousYear", previousYear.toString())
 					.replaceAll("@month", month.toString())
 					.replaceAll("@hotel", hotel.toString())
-					.replaceAll("[\n|\t]", "");
+					.replaceFirst("[\n|\t|\r]*", "");
 		} else {
 			query = paxSQL(date, previousDate, year, previousYear, month,
 					hotel);
@@ -962,7 +962,7 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@previousYear", previousYear.toString())
 					.replaceAll("@month", month.toString())
 					.replaceAll("@wp", wp.toString())
-					.replaceAll("[\n|\t]", "");
+					.replaceFirst("[\n|\t|\r]*", "");
 		} else {
 			query = invoicePayMethodsSQL(date, previousDate, year,
 					previousYear, month, wp);
@@ -985,7 +985,7 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@wp", wp.toString())
 					.replaceAll("@rooms", rooms.toString())
 					.replaceAll("@opendate", "'"+opendate.toString()+"'")
-					.replaceAll("[\n|\t]", "");
+					.replaceFirst("[\n|\t|\r]*", "");
 		} else {
 			query = roomsSQL(date, previousDate, hotel, year, previousYear, month, rooms, opendate);
 		}
@@ -1004,9 +1004,9 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@previousYear", previousYear.toString())
 					.replaceAll("@month", month.toString())
 					.replaceAll("@wp", wp.toString())
-					.replaceAll("[\n|\t]", "");
+					.replaceFirst("[\n|\t|\r]*", "");
 		} else {
-			query = opendateroomsSQL(previousDate, previousDate, hotel, year,
+			query = opendateroomsSQL(date, previousDate, hotel, year,
 					previousYear, month, rooms, opendate);
 		}
 		return query;
@@ -1019,20 +1019,14 @@ public class ProductionReportController implements Serializable {
 			fillPaxRatioMapObject(key, productionMap, productionRatioMap);
 		});
 		
-		// TODO
-//		=habitaciones*100/habitaciones disponibles
-//		fillRoomRatioMapObject("% OCUPACION Habitación", pendingProductionMap, productionRatioMap);
+		fillRoomOcupationRatioMapObject("% OCUPACION Habitación", productionRatioMap);
 		
-		// TODO
-//		=PAX/(Habitaciones-Habitaciones disponibles)
-//		fillRoomRatioMapObject("PAX por Habitación", pendingProductionMap, productionRatioMap);
+		fillRoomPaxRatioMapObject("PAX", " PAX por Habitación", paxMap, productionRatioMap);
 		
-		// TODO 
-//		=1.VENTAS/(Habitaciones-Habitaciones disponibles)
-//		fillRoomRatioMapObject("1.VENTAS/Habitación", pendingProductionMap, productionRatioMap);
+		fillRoomPaxRatioMapObject("1.VENTAS", "1.VENTAS/Habitación", pendingProductionMap, productionRatioMap);
 		
 		fillPaxRatioMapObject("1.VENTAS", pendingProductionMap, productionRatioMap);
-		fillPaxRatioMapObject("3.SALDO CTA. CLIENTE", pendingProductionMap, productionRatioMap);
+		
 		return productionRatioMap;
 	}
 	
@@ -1056,12 +1050,71 @@ public class ProductionReportController implements Serializable {
 		productionRatioMap.put(key, ro);
 	}
 	
-	private void fillRoomRatioMapObject(String key, Map<String, ReportObject> productionMap, Map<String, ReportObject> productionRatioMap){
+	private void fillRoomOcupationRatioMapObject(String key, Map<String, ReportObject> productionRatioMap){
+		double roomYear = roomMap.get("Habitaciones").getYearAmount();
+		double availableRoomYear = availableRoomMap.get("Hab.Disponibles").getYearAmount();
+		double roomPreviousYear = roomMap.get("Habitaciones").getPreviousYearAmount();
+		double availableRoomPreviousYear = availableRoomMap.get("Hab.Disponibles").getPreviousYearAmount();
+
+		double roomMonth = roomMap.get("Habitaciones").getMonthAmount();
+		double availableRoomMonth = availableRoomMap.get("Hab.Disponibles").getMonthAmount();
+		double roomPreviousMonth = roomMap.get("Habitaciones").getPreviousMonthAmount();
+		double availableRoomPreviousMonth = availableRoomMap.get("Hab.Disponibles").getPreviousMonthAmount();
+		
+		double roomDay = roomMap.get("Habitaciones").getDayAmount();
+		double availableRoomDay = availableRoomMap.get("Hab.Disponibles").getDayAmount();
+		double roomPreviousDay = roomMap.get("Habitaciones").getPreviousDayAmount();
+		double availableRoomPreviousDay = availableRoomMap.get("Hab.Disponibles").getPreviousDayAmount();
+		
 		ReportObject ro = new ReportObject();
-		if( productionMap.containsKey(key) ){
-			
-		}
+		ro.setDescription(key);		
+		ro.setYearAmount(availableRoomYear > 0.0f ? (roomYear * 100 / availableRoomYear) : 0.0);
+		ro.setPreviousYearAmount(availableRoomPreviousYear > 0.0f ? (roomPreviousYear * 100 / availableRoomPreviousYear) : 0.0);
+		ro.setMonthAmount(availableRoomMonth > 0.0f ? (roomMonth * 100 / availableRoomMonth) : 0.0);
+		ro.setPreviousMonthAmount(availableRoomPreviousMonth > 0.0f ? (roomPreviousMonth * 100 / availableRoomPreviousMonth) : 0.0);
+		ro.setDayAmount(availableRoomDay > 0.0f ? (roomDay * 100 / availableRoomDay) : 0.0);
+		ro.setPreviousDayAmount(availableRoomPreviousDay > 0.0f ? (roomPreviousDay * 100 / availableRoomPreviousDay) : 0.0);
 		productionRatioMap.put(key, ro);
+	}
+	
+	private void fillRoomPaxRatioMapObject(String key, String description, Map<String, ReportObject> map, Map<String, ReportObject> productionRatioMap){
+		double roomYear = roomMap.get("Habitaciones").getYearAmount() 
+				- availableRoomMap.get("Hab.Disponibles").getYearAmount();
+		double roomPreviousYear = roomMap.get("Habitaciones").getPreviousYearAmount() 
+				-  availableRoomMap.get("Hab.Disponibles").getPreviousYearAmount();
+		
+		double roomMonth = roomMap.get("Habitaciones").getMonthAmount()
+				- availableRoomMap.get("Hab.Disponibles").getMonthAmount();
+		double roomPreviousMonth = roomMap.get("Habitaciones").getPreviousMonthAmount()
+				- availableRoomMap.get("Hab.Disponibles").getPreviousMonthAmount();
+		
+		double roomDay = roomMap.get("Habitaciones").getDayAmount()
+				- availableRoomMap.get("Hab.Disponibles").getDayAmount();
+		double roomPreviousDay = roomMap.get("Habitaciones").getPreviousDayAmount()
+				- availableRoomMap.get("Hab.Disponibles").getPreviousDayAmount();
+		
+//		double yearAmount = map.values().stream().mapToDouble(ReportObject::getYearAmount).sum();
+//		double previousYearAmount = map.values().stream().mapToDouble(ReportObject::getPreviousYearAmount).sum();
+//		double monthAmount = map.values().stream().mapToDouble(ReportObject::getMonthAmount).sum();
+//		double previousMonthAmount = map.values().stream().mapToDouble(ReportObject::getPreviousMonthAmount).sum();
+//		double dayAmount = map.values().stream().mapToDouble(ReportObject::getDayAmount).sum();
+//		double previousDayAmount = map.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum();
+		double yearAmount = map.get(key).getYearAmount();
+		double previousYearAmount = map.get(key).getPreviousYearAmount();
+		double monthAmount = map.get(key).getMonthAmount();
+		double previousMonthAmount = map.get(key).getPreviousMonthAmount();
+		double dayAmount = map.get(key).getDayAmount();
+		double previousDayAmount = map.get(key).getPreviousDayAmount();
+		
+		ReportObject ro = new ReportObject();
+		ro.setDescription(description);		
+		ro.setYearAmount(roomYear != 0.0f ? ( yearAmount / roomYear) : 0.0);
+		ro.setPreviousYearAmount(roomPreviousYear != 0.0f ? ( previousYearAmount / roomPreviousYear) : 0.0);
+		ro.setMonthAmount(roomMonth != 0.0f ? ( monthAmount / roomMonth) : 0.0);
+		ro.setPreviousMonthAmount(roomPreviousMonth != 0.0f ? ( previousMonthAmount / roomPreviousMonth) : 0.0);
+		ro.setDayAmount(roomDay != 0.0f ? ( dayAmount / roomDay) : 0.0);
+		ro.setPreviousDayAmount(roomPreviousDay != 0.0f ? ( previousDayAmount / roomPreviousDay) : 0.0);
+		productionRatioMap.put(description, ro);
 	}
 	
 	private Map<String, ReportObject> getSummaryMap() {
