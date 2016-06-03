@@ -1276,8 +1276,11 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Tipo r\u00E9gimen especial aplicable: Art. 163 sexies.cinco")
 	String groupRegimeType();
 
-	@DefaultMessage("NIF entidad dominante")
+	@DefaultMessage("NIF de la sociedad representante/dominante (incluida en el grupo fiscal)")
 	String groupDocument();
+	
+	@DefaultMessage("N\u00BA identificaci\u00F3n de la sociedad dominante (en el caso de grupos constituidos s\u00F3lo por entidades dependientes)")
+	String dominantIdentificationNumber();
 
 	@DefaultMessage("\u00BFLa autoliquidaci\u00F3n del \u00FAltimo "
 			+ "per\u00EDodo corresponde al r\u00E9gimen especial del "

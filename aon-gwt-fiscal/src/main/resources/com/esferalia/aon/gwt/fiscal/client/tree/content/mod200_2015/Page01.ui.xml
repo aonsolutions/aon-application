@@ -52,19 +52,31 @@
 					<div class="{aonResources.css.aonGroupBody}">
 						<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonMarginBottom}">
 							<tr>
-								<td style="width: 250px;">
+								<td class="{aonResources.css.aonWidthAuto} {aonResources.css.aonTextRight} {aonResources.css.aonPaddingRight}">
 									<g:Label text="{msg.fiscalGroup}"  />	
 								</td>
-								<td>
+								<td style="width: 250px;">
 									<g:TextBox ui:field="fiscalGroup" visibleLength="8" maxLength="7"
 										styleName="{aonResources.css.aonInputText}"/>
 								</td>
-								<td style="width: 250px;">
+							</tr>
+							<tr>	
+								<td class="{aonResources.css.aonTextRight} {aonResources.css.aonPaddingRight}">
 									<g:Label text="{msg.dominantDocument}"  />	
 								</td>
 								<td>
 									<aon:DocumentTextBox ui:field="dominantDocument"
 										styleName="{aonResources.css.aonInputText}"/>	
+								</td>
+							</tr>
+							<tr>	
+								<td class="{aonResources.css.aonTextRight} {aonResources.css.aonPaddingRight}">
+									<g:Label text="{msg.dominantIdentificationNumber}"  />	
+								</td>
+								<td>
+									<g:TextBox ui:field="dominantIdentificationNumber" 
+										visibleLength="9" maxLength="9"
+										styleName="{aonResources.css.aonInputText}"/>
 								</td>
 							</tr>
 						</table>

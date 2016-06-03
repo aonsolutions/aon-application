@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002015TreeObject;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ButtonCell;
@@ -67,6 +68,8 @@ public class Page01 extends PageAbs {
 	TextBox fiscalGroup;
 	@UiField
 	DocumentTextBox dominantDocument;
+	@UiField
+	TextBox dominantIdentificationNumber;
 	
 	@UiField
 	Button newLegalRepresentative;
@@ -114,11 +117,17 @@ public class Page01 extends PageAbs {
 		dataProvider2.addDataDisplay(table2);
 		table2.redraw();
 		
-//		fiscalGroupPanel.setVisible( this.mod200Object.getMod200().isChecked(Mod200Key.C0009) 
-//								  || this.mod200Object.getMod200().isChecked(Mod200Key.C0010));	
 		
 		this.fiscalGroup.setValue( this.mod200Object.getMod200().getFiscalGroup());
+		this.fiscalGroup.setEnabled( 
+				 this.mod200Object.getMod200().isChecked(Mod2002015Key.C0009) 
+			  || this.mod200Object.getMod200().isChecked(Mod2002015Key.C0010));	
 		this.dominantDocument.setValue(this.mod200Object.getMod200().getDominantDocument());
+		this.dominantDocument.setEnabled( 
+				 this.mod200Object.getMod200().isChecked(Mod2002015Key.C0009) 
+			  || this.mod200Object.getMod200().isChecked(Mod2002015Key.C0010));	
+		this.dominantIdentificationNumber.setValue(this.mod200Object.getMod200().getDominantIdentificationNumber());
+		this.dominantIdentificationNumber.setEnabled(this.mod200Object.getMod200().isChecked(Mod2002015Key.C0010));	
 
 		Secretary secretary = this.mod200Object.getMod200().getSecretary();
 		if (secretary != null) {
@@ -144,6 +153,7 @@ public class Page01 extends PageAbs {
 		
 		this.mod200Object.getMod200().setFiscalGroup(this.fiscalGroup.getValue());
 		this.mod200Object.getMod200().setDominantDocument(this.dominantDocument.getValue());
+		this.mod200Object.getMod200().setDominantIdentificationNumber(dominantIdentificationNumber.getValue());
 		
 		List<LegalRepresentative> list1 = new LinkedList<LegalRepresentative>();
 		for (LegalRepresentative lr : dataProvider1.getList()) {
