@@ -4,9 +4,9 @@
 
 BEGIN;
 
-UPDATE `payment_concept` SET `description` = REPLACE(`description`,'ANTIGA?EDAD','ANTIGÜEDAD') WHERE `code` = 'ANTIGUEDAD';
+UPDATE `payment_concept` SET `description` = REPLACE(`description`,'ANTIGÃ?EDAD','ANTIGÜEDAD') WHERE `code` = 'ANTIGUEDAD';
 
-UPDATE `system_data` SET `expression` = REPLACE(`expression`,'ANTIGA?EDAD','ANTIG&Uuml;EDAD') WHERE `name` = 'ANTIGUEDAD_HELP';
+UPDATE `system_data` SET `expression` = REPLACE(`expression`,'ANTIGÃ?EDAD','ANTIG&Uuml;EDAD') WHERE `name` = 'ANTIGUEDAD_HELP';
 
 UPDATE `system_payment` SET `expression` = REPLACE(`expression`,'(15 - DIAS_PREAVISO)', 'MAX((15 - DIAS_PREAVISO),0)')  WHERE `salary_type`= 2;
 
