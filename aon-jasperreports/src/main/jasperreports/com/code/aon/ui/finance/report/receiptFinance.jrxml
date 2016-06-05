@@ -8,6 +8,7 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
+	<scriptlet name="FinanceReportScriptlet" class="com.code.aon.ui.finance.util.print.FinanceReportScriptlet"/>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
@@ -19,6 +20,10 @@
 	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
 	<field name="amount" class="java.lang.Double"/>
 	<field name="id" class="java.lang.Integer"/>
+	<variable name="isEmptyInvoice" class="java.lang.Boolean">
+		<variableExpression><![CDATA[($F{invoice} == null || $F{invoice}.getId() == null);]]></variableExpression>
+		<initialValueExpression><![CDATA[($F{invoice} == null || $F{invoice}.getId() == null);]]></initialValueExpression>
+	</variable>
 	<group name="financeGroup" minHeightToStartNewPage="300">
 		<groupExpression><![CDATA[$F{invoice}.getId()]]></groupExpression>
 		<groupHeader>
@@ -150,7 +155,9 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Vto. " + $V{financeGroup_COUNT} + " " + $R{aon_of2} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Vto. "
++ ($V{isEmptyInvoice}?$V{financeGroup_COUNT}:$P{FinanceReportScriptlet_SCRIPTLET}.getInvoiceFinanceOrder())
++ " " + $R{aon_of2} + " "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Group" evaluationGroup="financeGroup" isBlankWhenNull="false">
 				<reportElement uuid="6a0b8133-b7ab-4a20-867e-d952a18a869f" key="textField-15" x="517" y="5" width="16" height="12"/>
@@ -163,7 +170,9 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{financeGroup_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{isEmptyInvoice}
+?($V{financeGroup_COUNT})
+:($P{FinanceReportScriptlet_SCRIPTLET}.getInvoiceFinancesCount())]]></textFieldExpression>
 			</textField>
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Top" isUsingCache="true">
 				<reportElement uuid="8007cb6e-a0ee-46de-9b10-3a8acd69560b" key="image-1" positionType="Float" mode="Opaque" x="5" y="6" width="56" height="37" forecolor="#000000" backcolor="#FFFFFF"/>
