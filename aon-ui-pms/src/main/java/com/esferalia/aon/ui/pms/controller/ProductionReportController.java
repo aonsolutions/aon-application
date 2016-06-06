@@ -372,7 +372,7 @@ public class ProductionReportController implements Serializable {
 		
 		LOGGER.info("****** Inicio de la busqueda de pax              -> " + timeFormatter.format(new Date()));
 		tmpDate = new Date();
-		buildPaxReport(date, previousDate, year, previousYear, month, hotel);
+		buildPaxReport(date, previousDate, year, previousYear, month, hotel, openDate);
 		diff = (new Date()).getTime() - tmpDate.getTime();
 		LOGGER.info("****** Fin de la busqueda de pax                 -> " + timeFormatter.format(new Date()) 
 				+ " || TIEMPO EMPLEADO -> " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg." );
@@ -542,7 +542,7 @@ public class ProductionReportController implements Serializable {
 	}
 	
 	private void buildPaxReport(java.sql.Date date, java.sql.Date previousDate,
-			Integer year, Integer previousYear, Integer month, Integer hotel)
+			Integer year, Integer previousYear, Integer month, Integer hotel, java.sql.Date opendate)
 			throws AonSQLException {
 		Connection connection = null;
 		PreparedStatement paxStmt = null;
@@ -551,7 +551,7 @@ public class ProductionReportController implements Serializable {
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			try {
 				paxStmt = connection.prepareStatement(getPaxSQL(date, previousDate,
-						year, previousYear, month, hotel));
+						year, previousYear, month, hotel, opendate));
 				paxRs = paxStmt.executeQuery();
 			} catch (Exception e) {
 				SQLUtils.closeQuietly(paxStmt);
@@ -560,7 +560,7 @@ public class ProductionReportController implements Serializable {
 				LOGGER.error("@#$%&@#$%&!!!! " + e.getMessage());
 				LOGGER.error("ERROR EN LA QUERY DE TEST DE PAX, continua con la query por defecto");
 				paxStmt = connection.prepareStatement(paxSQL(date, previousDate,
-						year, previousYear, month, hotel));
+						year, previousYear, month, hotel, opendate));
 				paxRs = paxStmt.executeQuery();
 			}
 			
@@ -947,7 +947,7 @@ public class ProductionReportController implements Serializable {
 	}
 
 	private String getPaxSQL(java.sql.Date date, java.sql.Date previousDate,
-			Integer year, Integer previousYear, Integer month, Integer hotel) {
+			Integer year, Integer previousYear, Integer month, Integer hotel, java.sql.Date opendate) {
 		String query = getLocalSQL("pax.sql", false);
 		if (query != null) {
 			testingPaxSql = true;
@@ -957,10 +957,11 @@ public class ProductionReportController implements Serializable {
 					.replaceAll("@previousYear", previousYear.toString())
 					.replaceAll("@month", month.toString())
 					.replaceAll("@hotel", hotel.toString())
+					.replaceAll("@opendate", "'"+opendate.toString()+"'")
 					.replaceFirst("[\n|\t|\r]*", "");
 		} else {
 			query = paxSQL(date, previousDate, year, previousYear, month,
-					hotel);
+					hotel, opendate);
 		}
 		return query;
 	}
@@ -1010,7 +1011,7 @@ public class ProductionReportController implements Serializable {
 	private String getOpendateRoomsSQL(java.sql.Date date,
 			java.sql.Date previousDate, Integer year, Integer previousYear,
 			Integer month, Integer wp, Integer hotel, Integer rooms, java.sql.Date opendate) {
-		String query = getLocalSQL("opendateRooms.sql", true);
+		String query = getLocalSQL("opendateRooms.sql", false);
 		if (query != null) {
 			testingOpendateRoomsSql = true;
 			query = query.replaceAll("@date", "'"+date.toString()+"'")
@@ -1421,187 +1422,175 @@ public class ProductionReportController implements Serializable {
 			Integer month, Integer hotel, Integer wp, Integer productCategory) {
 		
 		StringBuffer stmt = new StringBuffer();
-        stmt.append("  SELECT Concepto,Periodo,SUM(Importe),IVA FROM (");
-        stmt.append("  (SELECT IF(I.project is not NULL,");
-        stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),");
-        stmt.append("      'OTROS INGRESOS') as Concepto,");
-        stmt.append("      IF(YEAR(PS.start_time)="+year+", 'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
-        stmt.append("      SUM(I.total) as Importe,   '10' as IVA");
-        stmt.append("  FROM invoice I");
-        stmt.append("  INNER JOIN pos_shift PS ON PS.id=I.pos_shift");
-        stmt.append("  INNER JOIN pos P ON P.id=PS.pos AND P.workplace="+wp+"");
-        stmt.append("  WHERE (  (PS.start_time between date_add('"+date+"', INTERVAL 8 HOUR)         AND date_add('"+date+"',         INTERVAL '1 07:59:59' DAY_SECOND))");
-        stmt.append("        OR (PS.start_time between date_add('"+previousDate+"', INTERVAL 8 HOUR) AND date_add('"+previousDate+"', INTERVAL '1 07:59:59' DAY_SECOND)) )");
-        stmt.append("  AND I.type=1");
-        stmt.append("  AND I.id in (SELECT INVD.invoice ");
-        stmt.append("                 FROM invoice_detail INVD");
-        stmt.append("                 INNER JOIN item IT             ON INVD.item=IT.id");
-        stmt.append("                 INNER JOIN product P           ON IT.product=P.id");
-        stmt.append("                WHERE INVD.invoice=I.id ");
-        stmt.append("                  AND INVD.workplace="+wp+"");
-        stmt.append("                  AND P.category <> "+productCategory+")");
-        stmt.append("  GROUP BY 1,2)");
-        stmt.append("  UNION       ");
-        
-        stmt.append("  (SELECT IF(I.project is not NULL,");
-        stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),");
-        stmt.append("      'OTROS INGRESOS') as Concepto,");
-        stmt.append("      IF(I.issue_date='"+date+"', 'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
-        stmt.append("      SUM(I.total) as Importe,   '10' as IVA");
-        stmt.append("  FROM invoice I");
-        stmt.append("  WHERE (I.issue_date = '"+date+"' OR I.issue_date =  '"+previousDate+"')");
-        stmt.append("  AND I.type=1");
-        stmt.append("  AND I.pos_shift is NULL");
-        stmt.append("  AND I.id in (SELECT INVD.invoice ");
-        stmt.append("                 FROM invoice_detail INVD");
-        stmt.append("                 INNER JOIN item IT             ON INVD.item=IT.id");
-        stmt.append("                 INNER JOIN product P           ON IT.product=P.id");
-        stmt.append("                WHERE INVD.invoice=I.id");
-        stmt.append("                  AND INVD.workplace="+wp+"");
-        stmt.append("                  AND P.category <> "+productCategory+")");
-        stmt.append("  GROUP BY 1,2)");
-        stmt.append("  UNION");
-        
-        stmt.append("  (SELECT IF(I.project is not NULL,");
-        stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),");
-        stmt.append("      'OTROS INGRESOS') as Concepto,");
-        stmt.append("      IF(YEAR(PS.start_time)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
-        stmt.append("      SUM(I.total) as Importe,   '10' as IVA");
-        stmt.append("  FROM invoice I");
-        stmt.append("  INNER JOIN pos_shift PS ON PS.id=I.pos_shift");
-        stmt.append("  INNER JOIN pos P ON P.id=PS.pos AND P.workplace="+wp+"");
-        stmt.append("  WHERE (  (PS.start_time <= date_add('"+date+"', INTERVAL 8 HOUR)             AND year(PS.start_time)="+year+")");
-        stmt.append("        OR (PS.start_time <= date_add( '"+previousDate+"', INTERVAL 8 HOUR)    AND year(PS.start_time)="+previousYear+") )");
-        stmt.append("    AND month(PS.start_time)="+month+"");
-        stmt.append("    AND I.type=1");
-        stmt.append("    AND I.id in (SELECT INVD.invoice ");
-        stmt.append("                   FROM invoice_detail INVD");
-        stmt.append("                   INNER JOIN item IT             ON INVD.item=IT.id");
-        stmt.append("                   INNER JOIN product P           ON IT.product=P.id");
-        stmt.append("                  WHERE INVD.invoice=I.id ");
-        stmt.append("                    AND INVD.workplace="+wp+"");
-        stmt.append("                    AND P.category <> "+productCategory+")");
-        stmt.append("  GROUP BY 1,2)");
-        stmt.append("  UNION");
-        
-        stmt.append("         (SELECT IF(I.project is not NULL,");
-        stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),");
-        stmt.append("      'OTROS INGRESOS') as Concepto,");
-        stmt.append("      IF(YEAR(I.issue_date)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
-        stmt.append("      SUM(I.total) as Importe,   '10' as IVA");
-        stmt.append("  FROM invoice I");
-        stmt.append("  WHERE (   (I.issue_date <= '"+date+"'          AND year(I.issue_date)="+year+")");
-        stmt.append("         OR (I.issue_date <=  '"+previousDate+"' AND year(I.issue_date)="+previousYear+") )");
-        stmt.append("  AND month(I.issue_date)="+month+"");
-        stmt.append("  AND I.type=1");
-        stmt.append("  AND I.pos_shift is NULL");
-        stmt.append("  AND I.id in (SELECT INVD.invoice ");
-        stmt.append("                 FROM invoice_detail INVD");
-        stmt.append("                 INNER JOIN item IT             ON INVD.item=IT.id");
-        stmt.append("                 INNER JOIN product P           ON IT.product=P.id");
-        stmt.append("                WHERE INVD.invoice=I.id ");
-        stmt.append("                  AND INVD.workplace="+wp+"");
-        stmt.append("                  AND P.category <> "+productCategory+")");
-        stmt.append("  GROUP BY 1,2)");
-        stmt.append("  UNION");
-        
-        stmt.append("  (SELECT IF(I.project is not NULL,");
-        stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),");
-        stmt.append("      'OTROS INGRESOS') as Concepto,");
-        stmt.append("      IF(YEAR(PS.start_time)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
-        stmt.append("      SUM(I.total) as Importe,   '10' as IVA");
-        stmt.append("  FROM invoice I");
-        stmt.append("  INNER JOIN pos_shift PS ON PS.id=I.pos_shift");
-        stmt.append("  INNER JOIN pos P ON P.id=PS.pos AND P.workplace="+wp+"");
-        stmt.append("  WHERE (  (PS.start_time <= date_add('"+date+"', INTERVAL 8 HOUR)             AND year(PS.start_time)="+year+")");
-        stmt.append("        OR (PS.start_time <= date_add( '"+previousDate+"', INTERVAL 8 HOUR)    AND year(PS.start_time)="+previousYear+") )");
-        stmt.append("    AND I.type=1");
-        stmt.append("    AND I.id in (SELECT INVD.invoice ");
-        stmt.append("                    FROM invoice_detail INVD");
-        stmt.append("                    INNER JOIN item IT             ON INVD.item=IT.id");
-        stmt.append("                    INNER JOIN product P           ON IT.product=P.id");
-        stmt.append("                 WHERE INVD.invoice=I.id ");
-        stmt.append("                   AND INVD.workplace="+wp+"");
-        stmt.append("                   AND P.category <> "+productCategory+")");
-        stmt.append("  GROUP BY 1,2)");
-        stmt.append("  UNION");
-        
-        stmt.append("  (SELECT IF(I.project is not NULL,");
-        stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),");
-        stmt.append("      'OTROS INGRESOS') as Concepto,");
-        stmt.append("      IF(YEAR(I.issue_date)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo, ");
-        stmt.append("      SUM(I.total) as Importe,   '10' as IVA");
-        stmt.append("  FROM invoice I");
-        stmt.append("  WHERE (  (I.issue_date <= '"+date+"'            AND year(I.issue_date)="+year+")");
-        stmt.append("        OR (I.issue_date <=  '"+previousDate+"'   AND year(I.issue_date)="+previousYear+") )");
-        stmt.append("    AND I.type=1");
-        stmt.append("    AND I.pos_shift is NULL");
-        stmt.append("    AND I.id in (SELECT INVD.invoice ");
-        stmt.append("                   FROM invoice_detail INVD");
-        stmt.append("                   INNER JOIN item IT      ON INVD.item=IT.id");
-        stmt.append("                   INNER JOIN product P    ON IT.product=P.id");
-        stmt.append("                 WHERE INVD.invoice=I.id ");
-        stmt.append("                   AND INVD.workplace="+wp+"");
-        stmt.append("                   AND P.category <> "+productCategory+")");
-        stmt.append("  GROUP BY 1,2)");
-        stmt.append("  UNION");
-        
-        stmt.append("  (SELECT P.name as Concepto,");
-        stmt.append("      IF(YEAR(PS.start_time)="+year+", 'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
-        stmt.append("      SUM(INVD.taxable_base+(INVD.taxable_base*INVT.percentage/100)), INVT.percentage as IVA");
-        stmt.append("  FROM invoice INV");
-        stmt.append("  INNER JOIN invoice_detail INVD ON INVD.invoice=INV.id");
-        stmt.append("  INNER JOIN invoice_tax INVT    ON INVT.invoice_detail=INVD.id");
-        stmt.append("  INNER JOIN item IT             ON INVD.item=IT.id");
-        stmt.append("  INNER JOIN product P           ON IT.product=P.id");
-        stmt.append("  INNER JOIN pos_shift PS        ON PS.id=INV.pos_shift");
-        stmt.append("  INNER JOIN pos PO              ON PO.id=PS.pos AND PO.workplace="+wp+"");
-        stmt.append("  WHERE (  (PS.start_time between date_add('"+date+"', INTERVAL 8 HOUR)          and date_add('"+date+"',       INTERVAL '1 07:59:59' DAY_SECOND))");
-        stmt.append("        OR (PS.start_time between date_add( '"+previousDate+"', INTERVAL 8 HOUR) and date_add( '"+previousDate+"', INTERVAL '1 07:59:59' DAY_SECOND)) )");  
-        stmt.append("     AND INV.type=1");
-        stmt.append("    AND P.category = "+productCategory+"");
-        stmt.append("    AND INVD.workplace="+wp+"");
-        stmt.append("  GROUP BY IT.id,INVT.percentage,2)");
-        stmt.append("  UNION");
-        
-        stmt.append("  (SELECT P.name as Concepto,");
-        stmt.append("      IF(YEAR(PS.start_time)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
-        stmt.append("      SUM(INVD.taxable_base+(INVD.taxable_base*INVT.percentage/100)), INVT.percentage as IVA");
-        stmt.append("  FROM invoice INV");
-        stmt.append("  INNER JOIN invoice_detail INVD ON INVD.invoice=INV.id");
-        stmt.append("  INNER JOIN invoice_tax INVT    ON INVT.invoice_detail=INVD.id");
-        stmt.append("  INNER JOIN item IT             ON INVD.item=IT.id");
-        stmt.append("  INNER JOIN product P           ON IT.product=P.id");
-        stmt.append("  INNER JOIN pos_shift PS        ON PS.id=INV.pos_shift");
-        stmt.append("  INNER JOIN pos PO              ON PO.id=PS.pos AND PO.workplace="+wp+"");
-        stmt.append("  WHERE ( (PS.start_time <= date_add('"+date+"', INTERVAL 8 HOUR)            AND year(PS.start_time)="+year+")");
-        stmt.append("       OR (PS.start_time <= date_add( '"+previousDate+"', INTERVAL 8 HOUR)    AND year(PS.start_time)="+previousYear+") )        ");
-        stmt.append("    AND MONTH(PS.start_time)="+month+"");
-        stmt.append("    AND INV.type=1");
-        stmt.append("    AND P.category = "+productCategory+"");
-        stmt.append("    AND INVD.workplace="+wp+"");
-        stmt.append("  GROUP BY IT.id,INVT.percentage,2)");
-        stmt.append("  UNION");
-        
-        stmt.append("  (SELECT P.name as Concepto,");
-        stmt.append(" IF(YEAR(PS.start_time)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
-        stmt.append("      SUM(INVD.taxable_base+(INVD.taxable_base*INVT.percentage/100)), INVT.percentage as IVA");
-        stmt.append(" FROM invoice INV");
-        stmt.append("  INNER JOIN invoice_detail INVD ON INVD.invoice=INV.id");
-        stmt.append("  INNER JOIN invoice_tax INVT    ON INVT.invoice_detail=INVD.id");
-        stmt.append("  INNER JOIN item IT             ON INVD.item=IT.id");
-        stmt.append("  INNER JOIN product P           ON IT.product=P.id");
-        stmt.append("  INNER JOIN pos_shift PS        ON PS.id=INV.pos_shift");
-        stmt.append("  INNER JOIN pos PO              ON PO.id=PS.pos AND PO.workplace="+wp+"");
-        stmt.append("  WHERE ( (PS.start_time <= date_add('"+date+"', INTERVAL 8 HOUR)             AND year(PS.start_time)="+year+")");
-        stmt.append("       OR (PS.start_time <= date_add( '"+previousDate+"', INTERVAL 8 HOUR)    AND year(PS.start_time)="+previousYear+") )");
-        stmt.append("    AND INV.type=1");
-        stmt.append("    AND P.category = "+productCategory+"");
-        stmt.append("    AND INVD.workplace="+wp+"");
-        stmt.append("  GROUP BY IT.id,INVT.percentage,2) ) AS Q ");
-        stmt.append("  GROUP BY Concepto,Periodo ");
-        stmt.append("  ORDER BY Concepto,Periodo ;");
-        
+		
+		stmt.append("  SELECT Concepto,Periodo,SUM(Importe),IVA FROM (");
+		stmt.append("  (SELECT IF(I.project is not NULL,");
+		stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),  'OTROS INGRESOS') as Concepto,");
+		stmt.append("      IF(YEAR(PS.start_time)="+year+", 'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
+		stmt.append("      SUM(I.total) as Importe,   '10' as IVA");
+		stmt.append("  FROM invoice I");
+		stmt.append("  INNER JOIN pos_shift PS ON PS.id=I.pos_shift");
+		stmt.append("  INNER JOIN pos P        ON  P.id=PS.pos");
+		stmt.append("  WHERE (  (PS.start_time between date_add('"+date+"', INTERVAL 4 HOUR)         AND date_add('"+date+"',         INTERVAL '1 03:59:59' DAY_SECOND))");
+		stmt.append("        OR (PS.start_time between date_add('"+previousDate+"', INTERVAL 4 HOUR) AND date_add('"+previousDate+"', INTERVAL '1 03:59:59' DAY_SECOND)) )");
+		stmt.append("  AND P.workplace="+wp+"");
+		stmt.append("  AND I.type=1");
+		stmt.append("  AND I.id in (SELECT INVD.invoice ");
+		stmt.append("                 FROM invoice_detail INVD");
+		stmt.append("                 INNER JOIN item IT             ON INVD.item=IT.id");
+		stmt.append("                 INNER JOIN product P           ON IT.product=P.id");
+		stmt.append("                WHERE INVD.invoice=I.id ");
+		stmt.append("                  AND P.category <> "+productCategory+")");
+		stmt.append("  GROUP BY 1,2)");
+		stmt.append("  UNION       ");
+		stmt.append("  (SELECT IF(I.project is not NULL,");
+		stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),      'OTROS INGRESOS') as Concepto,");
+		stmt.append("      IF(I.issue_date='"+date+"', 'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
+		stmt.append("      SUM(I.total) as Importe,   '10' as IVA");
+		stmt.append("  FROM invoice I");
+		stmt.append("  WHERE (I.issue_date = '"+date+"' OR I.issue_date =  '"+previousDate+"')");
+		stmt.append("  AND I.type=1");
+		stmt.append("  AND I.pos_shift is NULL");
+		stmt.append("  AND I.id in (SELECT INVD.invoice ");
+		stmt.append("                 FROM invoice_detail INVD");
+		stmt.append("                 INNER JOIN item IT             ON INVD.item=IT.id");
+		stmt.append("                 INNER JOIN product P           ON IT.product=P.id");
+		stmt.append("                WHERE INVD.invoice=I.id");
+		stmt.append("                  AND INVD.workplace="+wp+"");
+		stmt.append("                  AND P.category <> "+productCategory+")");
+		stmt.append("  GROUP BY 1,2)");
+		stmt.append("  UNION");
+		stmt.append("  (SELECT IF(I.project is not NULL,");
+		stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),      'OTROS INGRESOS') as Concepto,");
+		stmt.append("      IF(YEAR(PS.start_time)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
+		stmt.append("      SUM(I.total) as Importe,   '10' as IVA");
+		stmt.append("  FROM invoice I");
+		stmt.append("  INNER JOIN pos_shift PS ON PS.id=I.pos_shift");
+		stmt.append("  INNER JOIN pos P ON P.id=PS.pos ");
+		stmt.append("  WHERE (  (PS.start_time <= date_add('"+date+"', INTERVAL '1 03:59:59' DAY_SECOND)            AND year(PS.start_time)="+year+")");
+		stmt.append("        OR (PS.start_time <= date_add('"+previousDate+"', INTERVAL '1 03:59:59' DAY_SECOND)    AND year(PS.start_time)="+previousYear+") )");
+		stmt.append("    AND month(PS.start_time)="+month+"");
+		stmt.append("    AND P.workplace="+wp+"");
+		stmt.append("    AND I.type=1");
+		stmt.append("    AND I.id in (SELECT INVD.invoice ");
+		stmt.append("                   FROM invoice_detail INVD");
+		stmt.append("                   INNER JOIN item IT             ON INVD.item=IT.id");
+		stmt.append("                   INNER JOIN product P           ON IT.product=P.id");
+		stmt.append("                  WHERE INVD.invoice=I.id ");
+		stmt.append("                    AND P.category <> "+productCategory+")");
+		stmt.append("  GROUP BY 1,2)");
+		stmt.append("  UNION");
+		stmt.append("         (SELECT IF(I.project is not NULL,");
+		stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),      'OTROS INGRESOS') as Concepto,");
+		stmt.append("      IF(YEAR(I.issue_date)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
+		stmt.append("      SUM(I.total) as Importe,   '10' as IVA");
+		stmt.append("  FROM invoice I");
+		stmt.append("  WHERE (   (I.issue_date <= '"+date+"'         AND year(I.issue_date)="+year+")");
+		stmt.append("         OR (I.issue_date <= '"+previousDate+"' AND year(I.issue_date)="+previousYear+") )");
+		stmt.append("  AND month(I.issue_date)="+month+"");
+		stmt.append("  AND I.type=1");
+		stmt.append("  AND I.pos_shift is NULL");
+		stmt.append("  AND I.id in (SELECT INVD.invoice ");
+		stmt.append("                 FROM invoice_detail INVD");
+		stmt.append("                 INNER JOIN item IT             ON INVD.item=IT.id");
+		stmt.append("                 INNER JOIN product P           ON IT.product=P.id");
+		stmt.append("                WHERE INVD.invoice=I.id ");
+		stmt.append("                  AND INVD.workplace="+wp+"");
+		stmt.append("                  AND P.category <> "+productCategory+")");
+		stmt.append("  GROUP BY 1,2)");
+		stmt.append("  UNION");
+		stmt.append("  (SELECT IF(I.project is not NULL,");
+		stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),      'OTROS INGRESOS') as Concepto,");
+		stmt.append("      IF(YEAR(PS.start_time)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
+		stmt.append("      SUM(I.total) as Importe,   '10' as IVA");
+		stmt.append("  FROM invoice I");
+		stmt.append("  INNER JOIN pos_shift PS ON PS.id=I.pos_shift");
+		stmt.append("  INNER JOIN pos P ON P.id=PS.pos ");
+		stmt.append("  WHERE (  (PS.start_time <= date_add('"+date+"', INTERVAL '1 03:59:59' DAY_SECOND)            AND year(PS.start_time)="+year+")");
+		stmt.append("        OR (PS.start_time <= date_add('"+previousDate+"', INTERVAL '1 03:59:59' DAY_SECOND)    AND year(PS.start_time)="+previousYear+") )");
+		stmt.append("        AND P.workplace="+wp+"");
+		stmt.append("    AND I.type=1");
+		stmt.append("    AND I.id in (SELECT INVD.invoice ");
+		stmt.append("                    FROM invoice_detail INVD");
+		stmt.append("                    INNER JOIN item IT             ON INVD.item=IT.id");
+		stmt.append("                    INNER JOIN product P           ON IT.product=P.id");
+		stmt.append("                 WHERE INVD.invoice=I.id ");
+		stmt.append("                   AND P.category <> "+productCategory+")");
+		stmt.append("  GROUP BY 1,2)");
+		stmt.append("  UNION");
+		stmt.append("  (SELECT IF(I.project is not NULL,");
+		stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),      'OTROS INGRESOS') as Concepto,");
+		stmt.append("      IF(YEAR(I.issue_date)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo, ");
+		stmt.append("      SUM(I.total) as Importe,   '10' as IVA");
+		stmt.append("  FROM invoice I");
+		stmt.append("  WHERE (  (I.issue_date <= '"+date+"'            AND year(I.issue_date)="+year+")");
+		stmt.append("        OR (I.issue_date <=  '"+previousDate+"'   AND year(I.issue_date)="+previousYear+") )");
+		stmt.append("    AND I.type=1");
+		stmt.append("    AND I.pos_shift is NULL");
+		stmt.append("    AND I.id in (SELECT INVD.invoice ");
+		stmt.append("                   FROM invoice_detail INVD");
+		stmt.append("                   INNER JOIN item IT      ON INVD.item=IT.id");
+		stmt.append("                   INNER JOIN product P    ON IT.product=P.id");
+		stmt.append("                 WHERE INVD.invoice=I.id ");
+		stmt.append("                   AND INVD.workplace="+wp+"");
+		stmt.append("                   AND P.category <> "+productCategory+")");
+		stmt.append("  GROUP BY 1,2)");
+		stmt.append("  UNION");
+		stmt.append("  (SELECT P.name as Concepto,");
+		stmt.append("      IF(YEAR(PS.start_time)="+year+", 'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
+		stmt.append("      SUM(INVD.taxable_base+(INVD.taxable_base*INVT.percentage/100)), INVT.percentage as IVA");
+		stmt.append("  FROM invoice INV");
+		stmt.append("  INNER JOIN invoice_detail INVD ON INVD.invoice=INV.id");
+		stmt.append("  INNER JOIN invoice_tax INVT    ON INVT.invoice_detail=INVD.id");
+		stmt.append("  INNER JOIN item IT             ON INVD.item=IT.id");
+		stmt.append("  INNER JOIN product P           ON IT.product=P.id");
+		stmt.append("  INNER JOIN pos_shift PS        ON PS.id=INV.pos_shift");
+		stmt.append("  INNER JOIN pos PO              ON PO.id=PS.pos");
+		stmt.append("  WHERE (  (PS.start_time between date_add('"+date+"', INTERVAL 4 HOUR)         and date_add('"+date+"',         INTERVAL '1 03:59:59' DAY_SECOND))");
+		stmt.append("        OR (PS.start_time between date_add('"+previousDate+"', INTERVAL 4 HOUR) and date_add('"+previousDate+"', INTERVAL '1 03:59:59' DAY_SECOND)) )  ");
+		stmt.append("    AND PO.workplace="+wp+"");
+		stmt.append("    AND INV.type=1");
+		stmt.append("    AND P.category = "+productCategory+"");
+		stmt.append("  GROUP BY IT.id,INVT.percentage,2)");
+		stmt.append("  UNION");
+		stmt.append("  (SELECT P.name as Concepto,");
+		stmt.append("      IF(YEAR(PS.start_time)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
+		stmt.append("      SUM(INVD.taxable_base+(INVD.taxable_base*INVT.percentage/100)), INVT.percentage as IVA");
+		stmt.append("  FROM invoice INV");
+		stmt.append("  INNER JOIN invoice_detail INVD ON INVD.invoice=INV.id");
+		stmt.append("  INNER JOIN invoice_tax INVT    ON INVT.invoice_detail=INVD.id");
+		stmt.append("  INNER JOIN item IT             ON INVD.item=IT.id");
+		stmt.append("  INNER JOIN product P           ON IT.product=P.id");
+		stmt.append("  INNER JOIN pos_shift PS        ON PS.id=INV.pos_shift");
+		stmt.append("  INNER JOIN pos PO              ON PO.id=PS.pos AND PO.workplace="+wp+"");
+		stmt.append("  WHERE ( (PS.start_time <= date_add('"+date+"', INTERVAL 4 HOUR)             AND year(PS.start_time)="+year+")");
+		stmt.append("       OR (PS.start_time <= date_add( '"+previousDate+"', INTERVAL 4 HOUR)    AND year(PS.start_time)="+previousYear+") )        ");
+		stmt.append("    AND MONTH(PS.start_time)="+month+"");
+		stmt.append("    AND INV.type=1");
+		stmt.append("    AND P.category = "+productCategory+"");
+		stmt.append("    AND INVD.workplace="+wp+"");
+		stmt.append("  GROUP BY IT.id,INVT.percentage,2)");
+		stmt.append("  UNION");
+		stmt.append("  (SELECT P.name as Concepto,");
+		stmt.append(" IF(YEAR(PS.start_time)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
+		stmt.append("      SUM(INVD.taxable_base+(INVD.taxable_base*INVT.percentage/100)), INVT.percentage as IVA");
+		stmt.append(" FROM invoice INV");
+		stmt.append("  INNER JOIN invoice_detail INVD ON INVD.invoice=INV.id");
+		stmt.append("  INNER JOIN invoice_tax INVT    ON INVT.invoice_detail=INVD.id");
+		stmt.append("  INNER JOIN item IT             ON INVD.item=IT.id");
+		stmt.append("  INNER JOIN product P           ON IT.product=P.id");
+		stmt.append("  INNER JOIN pos_shift PS        ON PS.id=INV.pos_shift");
+		stmt.append("  INNER JOIN pos PO              ON PO.id=PS.pos");
+		stmt.append("  WHERE ( (PS.start_time <= date_add('"+date+"', INTERVAL 4 HOUR)            AND year(PS.start_time)="+year+")");
+		stmt.append("       OR (PS.start_time <= date_add('"+previousDate+"', INTERVAL 4 HOUR)    AND year(PS.start_time)="+previousYear+") )");
+		stmt.append("    AND PO.workplace="+wp+"");
+		stmt.append("    AND INV.type=1");
+		stmt.append("    AND P.category = "+productCategory+"");
+		stmt.append("  GROUP BY IT.id,INVT.percentage,2) ) AS Q ");
+		stmt.append("  GROUP BY Concepto,Periodo ");
+		stmt.append("  ORDER BY Concepto,Periodo ;");
+		stmt.append("    ");
+		
         return stmt.toString();		
 	}
 	
@@ -1610,7 +1599,8 @@ public class ProductionReportController implements Serializable {
 			Integer month, Integer wp) {
 		
         StringBuffer stmt = new StringBuffer();
-        stmt.append(" SELECT FormaPago,Tipo,Periodo,SUM(Importe) FROM (");     
+        
+        stmt.append(" SELECT FormaPago,Tipo,Periodo,SUM(Importe) FROM (     ");
         stmt.append("(SELECT PM.name as FormaPago,");
         stmt.append("        IF(INV.advance=1,'Anticipo','Normal') as Tipo,");
         stmt.append("           IF(INV.issue_date='"+date+"','DIA','DIA_ANIO_ANTERIOR') as Periodo,");
@@ -1627,7 +1617,6 @@ public class ProductionReportController implements Serializable {
         stmt.append("                        AND INVD.invoice=INV.id)");
         stmt.append("      GROUP BY 1,2,3)");
         stmt.append("    UNION");
-        
         stmt.append("    (SELECT PM.name as FormaPago,");
         stmt.append("        IF(INV.advance=1,'Anticipo','Normal') as Tipo,");
         stmt.append("           IF(YEAR(INV.issue_date)="+year+",'MES','MES_ANIO_ANTERIOR') as Periodo,");
@@ -1646,7 +1635,6 @@ public class ProductionReportController implements Serializable {
         stmt.append("                       AND INVD.invoice=INV.id)");
         stmt.append("      GROUP BY 1,2,3)");
         stmt.append("    UNION");
-        
         stmt.append("    (SELECT PM.name as FormaPago,");
         stmt.append("        IF(INV.advance=1,'Anticipo','Normal') as Tipo,");
         stmt.append("           IF(YEAR(INV.issue_date)="+year+",'ANIO','ANIO_ANTERIOR') as Periodo,");
@@ -1664,7 +1652,7 @@ public class ProductionReportController implements Serializable {
         stmt.append("                      AND INVD.invoice=INV.id)");
         stmt.append("    GROUP BY 1,2,3)");
         stmt.append("    UNION");
-        
+        stmt.append("");
         stmt.append("(SELECT PM.name as FormaPago,");
         stmt.append("        IF(INV.advance=1,'Anticipo','Normal') as Tipo,");
         stmt.append("        IF(YEAR(PS.start_time)="+year+",'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
@@ -1673,17 +1661,13 @@ public class ProductionReportController implements Serializable {
         stmt.append("    INNER JOIN pay_method PM       ON PM.id=F.pay_method");
         stmt.append("    INNER JOIN invoice INV         ON INV.id=F.invoice");
         stmt.append("    INNER JOIN pos_shift PS        ON PS.id=INV.pos_shift");
-        stmt.append("    INNER JOIN pos PO              ON PO.id=PS.pos AND PO.workplace="+wp+"");
-        stmt.append("    WHERE (  (PS.start_time between date_add('"+date+"', INTERVAL 8 HOUR)         and date_add('"+date+"',       INTERVAL '1 07:59:59' DAY_SECOND))");
-        stmt.append("          OR (PS.start_time between date_add('"+previousDate+"', INTERVAL 8 HOUR) and date_add('"+previousDate+"', INTERVAL '1 07:59:59' DAY_SECOND)) )");  
+        stmt.append("    INNER JOIN pos PO              ON PO.id=PS.pos ");
+        stmt.append("    WHERE (  (PS.start_time between date_add('"+date+"', INTERVAL 4 HOUR)         and date_add('"+date+"',         INTERVAL '1 03:59:59' DAY_SECOND))");
+        stmt.append("          OR (PS.start_time between date_add('"+previousDate+"', INTERVAL 4 HOUR) and date_add('"+previousDate+"', INTERVAL '1 03:59:59' DAY_SECOND)) )  ");
+        stmt.append("      AND PO.workplace="+wp+"");
         stmt.append("      AND INV.type=1");
-        stmt.append("      AND INV.id IN (SELECT distinct INVD.invoice ");
-        stmt.append("                       FROM invoice_detail INVD");
-        stmt.append("                      WHERE INVD.workplace="+wp+" ");
-        stmt.append("                        AND INVD.invoice=INV.id)");
         stmt.append("      GROUP BY 1,2,3)");
         stmt.append("    UNION");
-        
         stmt.append("    (SELECT PM.name as FormaPago,");
         stmt.append("        IF(INV.advance=1,'Anticipo','Normal') as Tipo,");
         stmt.append("           IF(YEAR(PS.start_time)="+year+",'MES','MES_ANIO_ANTERIOR') as Periodo,");
@@ -1692,18 +1676,14 @@ public class ProductionReportController implements Serializable {
         stmt.append("    INNER JOIN pay_method PM       ON PM.id=F.pay_method");
         stmt.append("    INNER JOIN invoice INV         ON INV.id=F.invoice");
         stmt.append("    INNER JOIN pos_shift PS        ON PS.id=INV.pos_shift");
-        stmt.append("    INNER JOIN pos PO              ON PO.id=PS.pos AND PO.workplace="+wp+"");
-        stmt.append("    WHERE (  (PS.start_time <= date_add('"+date+"', INTERVAL 8 HOUR)             AND year(PS.start_time)="+year+")");
-        stmt.append("          OR (PS.start_time <= date_add( '"+previousDate+"', INTERVAL 8 HOUR)    AND year(PS.start_time)="+previousYear+") )        ");
+        stmt.append("    INNER JOIN pos PO              ON PO.id=PS.pos");
+        stmt.append("    WHERE (  (PS.start_time <= date_add('"+date+"', INTERVAL 4 HOUR)             AND year(PS.start_time)="+year+")");
+        stmt.append("          OR (PS.start_time <= date_add( '"+previousDate+"', INTERVAL 4 HOUR)    AND year(PS.start_time)="+previousYear+") )        ");
         stmt.append("      AND MONTH(PS.start_time)="+month+"");
-        stmt.append("      AND INV.type=1");        
-        stmt.append("      AND INV.id IN (SELECT distinct INVD.invoice ");
-        stmt.append("                       FROM invoice_detail INVD");
-        stmt.append("                      WHERE INVD.workplace="+wp+" ");
-        stmt.append("                        AND INVD.invoice=INV.id)");
+        stmt.append("      AND PO.workplace="+wp+"");
+        stmt.append("      AND INV.type=1        ");
         stmt.append("      GROUP BY 1,2,3)");
         stmt.append("    UNION");
-        
         stmt.append("    (SELECT PM.name as FormaPago,");
         stmt.append("        IF(INV.advance=1,'Anticipo','Normal') as Tipo,");
         stmt.append("           IF(YEAR(PS.start_time)="+year+",'ANIO','ANIO_ANTERIOR') as Periodo,");
@@ -1712,53 +1692,49 @@ public class ProductionReportController implements Serializable {
         stmt.append("    INNER JOIN pay_method PM       ON PM.id=F.pay_method");
         stmt.append("    INNER JOIN invoice INV         ON INV.id=F.invoice");
         stmt.append("    INNER JOIN pos_shift PS        ON PS.id=INV.pos_shift");
-        stmt.append("    INNER JOIN pos PO              ON PO.id=PS.pos AND PO.workplace="+wp+"");
-        stmt.append("    WHERE (  (PS.start_time <= date_add('"+date+"', INTERVAL 8 HOUR)             AND year(PS.start_time)="+year+")");
-        stmt.append("          OR (PS.start_time <= date_add( '"+previousDate+"', INTERVAL 8 HOUR)    AND year(PS.start_time)="+previousYear+") )        ");
+        stmt.append("    INNER JOIN pos PO              ON PO.id=PS.pos ");
+        stmt.append("    WHERE (  (PS.start_time <= date_add('"+date+"', INTERVAL 4 HOUR)             AND year(PS.start_time)="+year+")");
+        stmt.append("          OR (PS.start_time <= date_add( '"+previousDate+"', INTERVAL 4 HOUR)    AND year(PS.start_time)="+previousYear+") )        ");
+        stmt.append("      AND PO.workplace="+wp+"");
         stmt.append("      AND INV.type=1");
-        stmt.append("      AND INV.id IN (SELECT distinct INVD.invoice ");
-        stmt.append("                       FROM invoice_detail INVD");
-        stmt.append("                      WHERE INVD.workplace="+wp+" ");
-        stmt.append("                        AND INVD.invoice=INV.id)");
         stmt.append("      GROUP BY 1,2,3) ) AS W ");
         stmt.append("  GROUP BY Periodo,Tipo,FormaPago ");
         stmt.append("  ORDER BY Periodo,Tipo,FormaPago ;");
-        
         return stmt.toString();
 	}
 		
 	private String paxSQL(java.sql.Date date, java.sql.Date previousDate,
-			Integer year, Integer previousYear, Integer month, Integer hotel) {
+			Integer year, Integer previousYear, Integer month, Integer hotel, java.sql.Date opendate) {
 		
 		StringBuffer stmt = new StringBuffer();
+		
 		stmt.append("(SELECT IF(B.stay_date='"+date+"', 'DIA','DIA_ANIO_ANTERIOR') as Periodo,");
 		stmt.append("	       IFNULL(SUM(B.guests),0) as Pax");
-		stmt.append(" FROM booking B"); 
+		stmt.append(" FROM booking B ");
 		stmt.append(" WHERE B.hotel="+hotel+"");
-		stmt.append(" AND B.stay_type<>1 ");
-		stmt.append(" AND (B.stay_date='"+date+"' OR B.stay_date='"+previousDate+"')");
+		stmt.append(" 	AND B.stay_type<>1 ");
+		stmt.append(" 	AND (B.stay_date='"+date+"' OR B.stay_date='"+previousDate+"')");
 		stmt.append(" GROUP BY 1)");
 		stmt.append(" UNION");
-		
 		stmt.append(" (SELECT IF(YEAR(B.stay_date)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
 		stmt.append("	       IFNULL(SUM(B.guests),0) as Pax");
-		stmt.append(" FROM booking B"); 
+		stmt.append(" FROM booking B ");
 		stmt.append(" WHERE B.hotel="+hotel+"");
 		stmt.append(" AND B.stay_type<>1 ");
 		stmt.append(" AND (   (B.stay_date<='"+date+"'          AND YEAR(B.stay_date)="+year+")");
 		stmt.append("      OR (B.stay_date<='"+previousDate+"' AND YEAR(B.stay_date)="+previousYear+"))");
-		stmt.append("  AND MONTH(B.stay_date)="+month+"");
+		stmt.append("   AND MONTH(B.stay_date)="+month+"");
 		stmt.append(" GROUP BY 1)");
 		stmt.append(" UNION");
-		
 		stmt.append(" (SELECT IF(YEAR(B.stay_date)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
 		stmt.append("       IFNULL(SUM(B.guests),0) as Pax");
-		stmt.append(" FROM booking B"); 
+		stmt.append(" FROM booking B ");
 		stmt.append(" WHERE B.hotel="+hotel+"");
-		stmt.append(" AND B.stay_type<>1 ");
-		stmt.append("  AND (  (B.stay_date<='"+date+"'          AND YEAR(B.stay_date)="+year+")");
-		stmt.append("	   OR (B.stay_date<='"+previousDate+"' AND YEAR(B.stay_date)="+previousYear+"))");
+		stmt.append(" 	AND B.stay_type<>1 ");
+		stmt.append(" 	AND (  ((B.stay_date between '"+opendate+"' AND '"+date+"') AND YEAR(B.stay_date)="+year+")");
+		stmt.append("       OR ((B.stay_date between date_sub('"+opendate+"', INTERVAL 1 YEAR) AND '"+previousDate+"') AND YEAR(B.stay_date)="+previousYear+"))	   ");
 		stmt.append(" GROUP BY 1);");
+		stmt.append("		");
 		
 		return stmt.toString();
 	}
@@ -1776,105 +1752,115 @@ public class ProductionReportController implements Serializable {
 		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
 		stmt.append(" INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
 		stmt.append(" INNER JOIN asset_activity AA                       ON PRRD.asset_activity=AA.id");
-		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);
-		stmt.append(" WHERE (PRSD.effective_date='"+date+"' OR PRSD.effective_date='"+previousDate+"')");
-		stmt.append(" 	AND (AA.date='"+date+"' OR AA.date='"+previousDate+"')");
-		stmt.append(" 	AND PR.status<>2");
-		stmt.append(" 	AND PR.creation_date<curdate()");
+		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset");
+		stmt.append(" WHERE (PRSD.effective_date='"+date+"'     OR PRSD.effective_date='"+previousDate+"')");
+		stmt.append("   AND (AA.date='"+date+"'                 OR AA.date='"+previousDate+"')");
+		stmt.append("   AND PR.status=3");
+		stmt.append("   AND R.hotel="+hotel+"");
+		stmt.append("   AND PR.creation_date<curdate()");
 		stmt.append(" GROUP BY 1,2) ");
 		stmt.append(" UNION ");
-		
+		stmt.append("		");
 		stmt.append(" (SELECT IF(PRS.extra=0,'1.VENTAS','2.OTROS INGRESOS') as Concepto, ");
-		stmt.append("        IF(YEAR(PRSD.effective_date)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
-		stmt.append("        SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
+		stmt.append("         IF(YEAR(PRSD.effective_date)="+year+", 'MES','MES_ANIO_ANTERIOR') as Periodo,");
+		stmt.append("         SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
 		stmt.append(" FROM project_reservation_service PRS");
 		stmt.append(" INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
 		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
 		stmt.append(" INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
 		stmt.append(" INNER JOIN asset_activity AA                       ON PRRD.asset_activity=AA.id");
-		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);
-		stmt.append(" WHERE ((PRSD.effective_date<='"+date+"'        AND YEAR(PRSD.effective_date)="+year+")");
+		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset ");
+		stmt.append(" WHERE ((PRSD.effective_date<='"+date+"'         AND YEAR(PRSD.effective_date)="+year+")");
 		stmt.append("        OR");
-		stmt.append(" 		(PRSD.effective_date<='"+previousDate+"' AND YEAR(PRSD.effective_date)="+previousYear+"))");
-		stmt.append(" 	AND MONTH(PRSD.effective_date)="+month+"");
-		stmt.append(" 	AND ((AA.date<='"+date+"'                     AND YEAR(AA.date)="+year+")");
+		stmt.append(" 	(PRSD.effective_date<='"+previousDate+"' AND YEAR(PRSD.effective_date)="+previousYear+"))");
+		stmt.append("   AND MONTH(PRSD.effective_date)="+month+"");
+		stmt.append("   AND ((AA.date<='"+date+"'                     AND YEAR(AA.date)="+year+")");
 		stmt.append("        OR");
-		stmt.append("       (AA.date<='"+previousDate+"'             AND YEAR(AA.date)="+previousYear+"))");
-		stmt.append(" 	AND PR.status<>2");
-		stmt.append(" 	AND PR.creation_date<curdate()");
+		stmt.append("       (AA.date<='"+previousDate+"'              AND YEAR(AA.date)="+previousYear+"))");
+		stmt.append("   AND PR.status=3");
+		stmt.append("   AND R.hotel="+hotel+"");
+		stmt.append("   AND PR.creation_date<curdate()");
 		stmt.append(" GROUP BY 1,2) ");
 		stmt.append(" UNION ");
-		
+		stmt.append("");
 		stmt.append(" (SELECT IF(PRS.extra=0,'1.VENTAS','2.OTROS INGRESOS') as Concepto, ");
-		stmt.append("        IF(YEAR(PRSD.effective_date)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
-		stmt.append("        SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
+		stmt.append("         IF(YEAR(PRSD.effective_date)="+year+", 'ANIO','ANIO_ANTERIOR') as Periodo,");
+		stmt.append("         SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
 		stmt.append(" FROM project_reservation_service PRS");
 		stmt.append(" INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
 		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
 		stmt.append(" INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
 		stmt.append(" INNER JOIN asset_activity AA                         ON PRRD.asset_activity=AA.id");
-		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);
+		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset ");
 		stmt.append(" WHERE ((PRSD.effective_date<='"+date+"' AND YEAR(PRSD.effective_date)="+year+")");
 		stmt.append("        OR");
-		stmt.append(" 		(PRSD.effective_date<='"+previousDate+"' AND YEAR(PRSD.effective_date)="+previousYear+"))");
-		stmt.append(" 	AND ((AA.date<='"+date+"'                     AND YEAR(AA.date)="+year+")");
-		stmt.append(" 		OR");
-		stmt.append(" 		(AA.date<='"+previousDate+"'             AND YEAR(AA.date)="+previousYear+"))");
-		stmt.append(" 	AND PR.status<>2 ");
-		stmt.append(" 	AND PR.creation_date<curdate() ");
+		stmt.append("	(PRSD.effective_date<='"+previousDate+"' AND YEAR(PRSD.effective_date)="+previousYear+"))");
+		stmt.append("   AND ((AA.date<='"+date+"'                     AND YEAR(AA.date)="+year+")");
+		stmt.append(" 	OR");
+		stmt.append(" 	(AA.date<='"+previousDate+"'             AND YEAR(AA.date)="+previousYear+"))");
+		stmt.append("   AND PR.status=3");
+		stmt.append("   AND R.hotel="+hotel+"");
+		stmt.append("   AND PR.creation_date<curdate() ");
 		stmt.append(" GROUP BY 1,2) ");
 		stmt.append(" UNION ");
-		
+		stmt.append("");
 		stmt.append(" (SELECT IF(PRS.extra=0,IF(PR.check_status<3,'3.SALDO CTA. CLIENTE','6.NOSHOW - CANCELACIONES FACTURABLES'),'5.OTROS INGRESOS PEND. PRODUCIR') as Concepto,");
-		stmt.append(" 	'DIA' as Periodo,");
-		stmt.append(" 	SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
+		stmt.append(" 	 'DIA' as Periodo,");
+		stmt.append("  	 SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
 		stmt.append(" FROM project_reservation_service PRS");
-		stmt.append(" 	INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
-		stmt.append(" 	INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
-		stmt.append(" 	INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
-		stmt.append(" 	INNER JOIN asset_activity AA                       ON PRRD.asset_activity=AA.id");                
-		stmt.append(" 	INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);                       
-		stmt.append(" WHERE PRSD.effective_date>'"+date+"'  AND PR.start_date<='"+date+"'");
-		stmt.append(" 	AND PR.status<>2 ");
-		stmt.append(" 	AND PR.creation_date<curdate() ");
-		stmt.append(" GROUP BY 1,2) ");
-		stmt.append(" UNION ");
-		
+		stmt.append(" INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
+		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
+		stmt.append(" INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
+		stmt.append(" INNER JOIN asset_activity AA                       ON PRRD.asset_activity=AA.id");
+		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset");
+		stmt.append(" WHERE PRSD.effective_date>'"+date+"'");
+		stmt.append("   AND PR.start_date<='"+date+"'");
+		stmt.append("   AND PR.status=3");
+		stmt.append("   AND R.hotel="+hotel+"");
+		stmt.append("   AND PR.creation_date<curdate()");
+		stmt.append(" GROUP BY 1,2)");
+		stmt.append(" UNION");
+		stmt.append("");
 		stmt.append(" (SELECT '4.SALDO CTA. CLIENTE FRA. ANTICIPO' as Concepto,");
-		stmt.append(" 	'DIA' as Periodo,");
-		stmt.append(" 	SUM(I.taxable_base) as Importe,   '10' as IVA");
+		stmt.append(" 	 'DIA' as Periodo,");
+		stmt.append(" 	 SUM(I.taxable_base) as Importe,   '10' as IVA");
 		stmt.append(" FROM invoice I");
-		stmt.append(" 	INNER JOIN project_reservation PR                  ON PR.project=I.project");
-		stmt.append(" WHERE I.issue_date<'"+date+"'  AND PR.start_date>'"+date+"'");
-		stmt.append(" 	AND PR.hotel_reservation="+hotel);
-		stmt.append(" 	AND PR.status<>2");
-		stmt.append(" 	AND I.advance=1");
+		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=I.project");
+		stmt.append(" WHERE I.issue_date<'"+date+"'  ");
+		stmt.append("   AND PR.start_date>'"+date+"'");
+		stmt.append("   AND PR.hotel_reservation="+hotel+"");
+		stmt.append("   AND PR.status<>2");
+		stmt.append("   AND I.advance=1");
 		stmt.append(" GROUP BY 1,2) ");
 		stmt.append(" UNION ");
-		
+		stmt.append("");
 		stmt.append(" (SELECT IF(PRS.extra=0,IF(PR.check_status<3,'3.SALDO CTA. CLIENTE','6.NOSHOW - CANCELACIONES FACTURABLES'),'5.OTROS INGRESOS PEND. PRODUCIR') as Concepto,");
-		stmt.append(" 	'DIA_ANIO_ANTERIOR' as Periodo,");
-		stmt.append(" 	SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
+		stmt.append(" 	 'DIA_ANIO_ANTERIOR' as Periodo,");
+		stmt.append(" 	 SUM(PRSD.taxable_base) as Importe,   '10' as IVA");
 		stmt.append(" FROM project_reservation_service PRS");
-		stmt.append(" 	INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
-		stmt.append(" 	INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
-		stmt.append(" 	INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
-		stmt.append(" 	INNER JOIN asset_activity AA                       ON PRRD.asset_activity=AA.id");                
-		stmt.append(" 	INNER JOIN room R                                  ON R.asset=AA.asset AND R.hotel="+hotel);                          
-		stmt.append(" WHERE PRSD.effective_date>'"+previousDate+"'  AND PR.start_date<='"+previousDate+"'");
-		stmt.append(" 	AND PR.status<>2 ");
+		stmt.append(" INNER JOIN project_reservation_service_detail PRSD ON PRSD.project_reservation_service=PRS.id");
+		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=PRS.project_reservation");
+		stmt.append(" INNER JOIN project_reservation_room_detail PRRD    ON PRRD.id=PRSD.project_reservation_room_detail");
+		stmt.append(" INNER JOIN asset_activity AA                       ON PRRD.asset_activity=AA.id                ");
+		stmt.append(" INNER JOIN room R                                  ON R.asset=AA.asset                     ");
+		stmt.append(" WHERE PRSD.effective_date>'"+previousDate+"'");
+		stmt.append("   AND PR.start_date<='"+previousDate+"'");
+		stmt.append("   AND PR.status=3");
+		stmt.append("   AND R.hotel="+hotel+"");
 		stmt.append(" GROUP BY 1,2 ) ");
 		stmt.append(" UNION ");
-		
+		stmt.append("");
 		stmt.append(" (SELECT '4.SALDO CTA. CLIENTE FRA. ANTICIPO' as Concepto,");
-		stmt.append(" 	'DIA_ANIO_ANTERIOR' as Periodo,");
-		stmt.append(" 	SUM(I.taxable_base) as Importe,   '10' as IVA");
+		stmt.append("  	 'DIA_ANIO_ANTERIOR' as Periodo,");
+		stmt.append(" 	 SUM(I.taxable_base) as Importe,   '10' as IVA");
 		stmt.append(" FROM invoice I");
-		stmt.append(" 	INNER JOIN project_reservation PR                  ON PR.project=I.project");
-		stmt.append(" WHERE I.issue_date<'"+previousDate+"'  AND PR.start_date>'"+previousDate+"'");
-		stmt.append(" 	AND PR.hotel_reservation="+hotel);
-		stmt.append(" 	AND I.advance=1 ");
-		stmt.append(" GROUP BY 1,2) ");
+		stmt.append(" INNER JOIN project_reservation PR                  ON PR.project=I.project");
+		stmt.append(" WHERE I.issue_date<'"+previousDate+"'");
+		stmt.append("   AND PR.start_date>'"+previousDate+"'");
+		stmt.append("   AND PR.hotel_reservation="+hotel+"");
+		stmt.append("   AND PR.status<>2");
+		stmt.append("   AND I.advance=1");
+		stmt.append(" GROUP BY 1,2)");
 		stmt.append(" ORDER BY 1,2;");
 		
 		return stmt.toString();
