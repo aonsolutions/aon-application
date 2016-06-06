@@ -9,9 +9,7 @@ import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CATEGORY;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_ENTERPRISE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
@@ -20,17 +18,12 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.jooq.AggregateFunction;
 import org.jooq.DSLContext;
 import org.jooq.Identity;
@@ -46,11 +39,9 @@ import com.esferalia.aon.jooq.tables.records.SalaryDeductionRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryEmbargoRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
@@ -89,6 +80,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	private Variables variables;
 
 	private SalaryPaymentRecord prevPayment;
+	private SalaryDeductionRecord prevDeduction;
 
 	public JooqSalaryBuilder(Connection connection) {
 		this(DSL.using(connection, JooqCommon.getDefaultSettings()));
@@ -98,6 +90,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		this.dslContext = dslContext;
 		this.variables = new Variables(null);
 		this.prevPayment = new SalaryPaymentRecord();
+		this.prevDeduction = new SalaryDeductionRecord();
 	}
 
 	@Override
@@ -111,6 +104,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		variables.clear();
 		
 		this.prevPayment = new SalaryPaymentRecord();
+		this.prevDeduction = new SalaryDeductionRecord();
 		
 		InsertSetStep<SalaryRecord> insertSalary = insertMoreSalary == null ? dslContext
 				.insertInto(SALARY) : insertMoreSalary.newRecord();
@@ -451,25 +445,38 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	@Override
 	public void addDeduction(Double amount, String description,
 			Date start, Date end, IDeduction deduction, Map<String, ITimedVariable<?>> context) {
+		
+		
 
-		InsertSetStep<SalaryDeductionRecord> insertDeduction = insertMoreDeduction == null ? dslContext
-				.insertInto(SALARY_DEDUCTION) : insertMoreDeduction.newRecord();
+		if (isSiblingOfPrevious(deduction)) {
+			if (prevDeduction.getAmount() != null)
+				amount += prevDeduction.getAmount();
+			insertMoreDeduction = insertMoreDeduction.set(SALARY_DEDUCTION.AMOUNT, amount != null ? amount : 0.00);
+		} else {
 
-		DeductionType type = deduction.getType();
-		if (type != null && (type.isSsDeduction() || type.isTaxDeduction()))
-			description = null;
-		// end-if: Skip percentage descriptions
+			InsertSetStep<SalaryDeductionRecord> insertDeduction = insertMoreDeduction == null ? dslContext
+					.insertInto(SALARY_DEDUCTION) : insertMoreDeduction.newRecord();
 
-		//TODO: start & end dates ???
-		insertMoreDeduction = insertDeduction
-				.set(SALARY_DEDUCTION.DOMAIN, this.domainId)
-				.set(SALARY_DEDUCTION.SALARY, salaryId)
-				.set(SALARY_DEDUCTION.AMOUNT, amount)
-				.set(SALARY_DEDUCTION.DEDUCTION_CONCEPT, deduction.getName())
-				// .set(SALARY_DEDUCTION.EXPRESSION, deduction.getExpression())
-				.set(SALARY_DEDUCTION.DESCRIPTION, description)
-				.set(SALARY_DEDUCTION.TYPE,
-						type != null ? (byte) type.ordinal() : null);
+			DeductionType type = deduction.getType();
+			if (type != null && (type.isSsDeduction() || type.isTaxDeduction()))
+				description = null;
+
+
+			//TODO: start & end dates ???
+			insertMoreDeduction = insertDeduction
+					.set(SALARY_DEDUCTION.DOMAIN, this.domainId)
+					.set(SALARY_DEDUCTION.SALARY, salaryId)
+					.set(SALARY_DEDUCTION.DESCRIPTION, description)
+					.set(SALARY_DEDUCTION.DEDUCTION_CONCEPT, deduction.getName())
+					.set(SALARY_DEDUCTION.TYPE,type != null ? (byte) type.ordinal() : null);
+			
+			insertMoreDeduction = insertMoreDeduction.set(SALARY_DEDUCTION.AMOUNT, amount != null  ? amount : 0.00 );
+		}
+
+		prevDeduction.setAmount(amount);
+		prevDeduction.setId(((IContractDeduction) deduction).getId());
+
+
 		putContext(context);
 	}
 
@@ -587,6 +594,13 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 				&& (((IContractPayment) payment).getId() != null)
 				&& ((IContractPayment) payment).getId().equals(
 						prevPayment.getId());
+	}
+
+	private boolean isSiblingOfPrevious(IDeduction deduction) {
+		return (prevDeduction.getId() != null)
+				&& (((IContractDeduction) deduction).getId() != null)
+				&& ((IContractDeduction) deduction).getId().equals(
+						prevDeduction.getId());
 	}
 
 	// ------------------------------------------------------------------------
