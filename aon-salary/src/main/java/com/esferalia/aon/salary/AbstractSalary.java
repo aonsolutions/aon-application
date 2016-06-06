@@ -161,7 +161,14 @@ public abstract class AbstractSalary implements ISalary {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	@Override
+	public <T extends IDeduction> Collection<T> getCostS() 
+			throws SalaryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	@Override
 	public <T extends IPayment> Collection<T> getPaymentS()
 			throws SalaryException {

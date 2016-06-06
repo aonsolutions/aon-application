@@ -162,7 +162,6 @@ public class SalaryDraftBuilder
 		}
 
 		// match up draft deductions & db deductions
-		//
 		List<IDeduction> dbDeductions;
 		dbDeductions = new ArrayList<IDeduction>(dbSalary.getDeductionS());
 		for (Deduction deduction : salaryDraft.getDeductions()) {
@@ -186,10 +185,31 @@ public class SalaryDraftBuilder
 			salaryDraft.addDeduction(deduction);
 		}
 
-		// match up draft embargos & db embargos
-		//
-		// List<IDeduction> dbEmbargos;
-		// dbEmbargos = new ArrayList<IDeduction>(dbSalary.getDeductionS()..);
+		// match up draft costs & db costs
+		List<IDeduction> dbCosts;
+		dbCosts = new ArrayList<IDeduction>(dbSalary.getCostS());
+		for (Deduction cost : salaryDraft.getCosts()) {
+			List<IDeduction> dbCounterParts = getDbDeductionCounterParts(
+					dbCosts, cost);
+			if (dbCounterParts.size() == 0)
+				continue;
+			// Found almost one counterpart. Gets first of them.
+			IDeduction dbCost = dbCounterParts.get(0);
+			cost.setDbAmount(dbCost.getAmount());
+			// Remove it from the list to avoid processing later.
+			dbCosts.remove(dbCost);
+		}
+		
+		for (IDeduction dbCost : dbCosts) {
+			Deduction cost = new Deduction();
+			cost.setName(dbCost.getName());
+			cost.setDbAmount(dbCost.getAmount());
+			cost.setExpression(dbCost.getExpression());
+			cost.setDescription(dbCost.getDescription());
+			salaryDraft.addCost(cost);
+		}
+
+		
 	}
 
 	@Override
