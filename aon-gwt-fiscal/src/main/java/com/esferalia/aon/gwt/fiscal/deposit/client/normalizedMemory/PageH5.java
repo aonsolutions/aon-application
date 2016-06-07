@@ -7,7 +7,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -39,10 +38,17 @@ public class PageH5 extends PageAbs {
 		tabPanel.selectTab(0);
 	}
 
-	public PageH5(Enterprise enterprise, NormalizedMemory nm) {
+	public PageH5(Enterprise enterprise, NormalizedMemory nm, Integer year) {
 		super();
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
+		this.year = year;
+		
+		LMA8099000 = new Label(); 
+		IMA8099000 = new CheckBox();
+		LMA8099010 = new Label();
+		IMA8099010 = new CheckBox();
+		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 		tabPanel.selectTab(0);
@@ -73,6 +79,7 @@ public class PageH5 extends PageAbs {
 			String value = map.get(D2DepositHeaderKey.IMA8099010.getCode());
 			IMA8099010.setValue(value.equals("1"));
 		}
+		
 		IMA8099000.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 			@Override
@@ -81,22 +88,9 @@ public class PageH5 extends PageAbs {
 				normalizedMemory.cancelButton.setVisible(true);
 				onEdit(D2DepositHeaderKey.IMA8099000.getCode(),
 						event.getValue() ? "1" : "0");
-				inma.updateSchema(enterprise.getDocument(),
-						enterprise.getDomain(),
-						D2DepositHeaderKey.IMA8099000.getCode(),
-						event.getValue() ? "1" : "0", year,
-						new AsyncCallback<Void>() {
-							@Override
-							public void onFailure(Throwable caught) {
-							}
-
-							@Override
-							public void onSuccess(Void result) {
-							}
-						});
 				if (event.getValue()) {
 					IMA8099010.setValue(false);
-					specialUpdate(D2DepositHeaderKey.IMA8099010.getCode(), "0");
+					onEdit(D2DepositHeaderKey.IMA8099010.getCode(), "0");
 				}
 			}
 		});
@@ -107,22 +101,9 @@ public class PageH5 extends PageAbs {
 				normalizedMemory.cancelButton.setVisible(true);
 				onEdit(D2DepositHeaderKey.IMA8099010.getCode(),
 						event.getValue() ? "1" : "0");
-				inma.updateSchema(enterprise.getDocument(),
-						enterprise.getDomain(),
-						D2DepositHeaderKey.IMA8099010.getCode(),
-						event.getValue() ? "1" : "0", year,
-						new AsyncCallback<Void>() {
-							@Override
-							public void onFailure(Throwable caught) {
-							}
-
-							@Override
-							public void onSuccess(Void result) {
-							}
-						});
 				if (event.getValue()) {
 					IMA8099000.setValue(false);
-					specialUpdate(D2DepositHeaderKey.IMA8099000.getCode(), "0");
+					onEdit(D2DepositHeaderKey.IMA8099000.getCode(), "0");
 				}
 			}
 		});
@@ -133,17 +114,12 @@ public class PageH5 extends PageAbs {
 		init();
 	}
 
-	private void specialUpdate(String key, String value) {
-		onEdit(key, value);
-		inma.updateSchema(enterprise.getDocument(), enterprise.getDomain(),
-				key, value, year, new AsyncCallback<Void>() {
-					@Override
-					public void onFailure(Throwable caught) {
-					}
-
-					@Override
-					public void onSuccess(Void result) {
-					}
-				});
+	@Override
+	protected void onEdit(String key, String value) {
+			if(mapDraft.containsKey(key))
+				mapDraft.remove(key);
+			mapDraft.put(key, value);
+			normalizedMemory.getD2Deposit2014().setMapDraft(mapDraft);
+			normalizedMemory.getD2Deposit2014().setModify(true);		
 	}
 }
