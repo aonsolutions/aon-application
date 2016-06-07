@@ -120,6 +120,14 @@
 							<ui:param name="amountPattern" value="#{bundle.aon_integer_pattern}" />
 							<ui:param name="testing" value="#{productionReport.testingOpendateRoomsQuery}" />
 						</ui:decorate>
+		
+						<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/productionReport/list_detail.xhtml">
+							<ui:param name="model" value="#{productionReport.roomOcupationModel}" />
+							<ui:param name="skipHeaders" value="#{true}" />
+							<ui:param name="skipFooters" value="#{true}" />
+							<ui:param name="showPercent" value="#{true}" />
+							<ui:param name="testing" value="#{productionReport.testingOpendateRoomsQuery}" />
+						</ui:decorate>
 					</aon:panel>
 					
 					<aon:panel>

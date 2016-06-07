@@ -68,11 +68,12 @@ public class ProductionReportController implements Serializable {
 	private Map<String, ReportObject> productionMap = new HashMap<>(),
 			pendingProductionMap = new HashMap<>(), paxMap = new HashMap<>(),
 			roomMap = new HashMap<>(), availableRoomMap = new HashMap<>(),
+			roomOcupationMap = new HashMap<>(),
 			advancePaymethodMap = new HashMap<>(),
 			paymethodMap = new HashMap<>();
 
 	private DataModel productionModel, pendingProductionModel, paxModel,
-			roomModel, availableRoomModel, ratioModel, advancePaymethodModel,
+			roomModel, availableRoomModel, roomOcupationModel, ratioModel, advancePaymethodModel,
 			paymethodModel, summaryModel;
 
 	private ReportObject productionTotal, ratioTotal, advancePaymethodTotal,
@@ -104,8 +105,9 @@ public class ProductionReportController implements Serializable {
 	
 	public boolean isNevv() {
 		return productionModel == null && paxModel == null && roomModel == null
-				&& availableRoomModel == null && advancePaymethodModel == null
-				&& paymethodModel == null && pendingProductionModel == null;
+				&& availableRoomModel == null && roomOcupationModel == null
+				&& advancePaymethodModel == null && paymethodModel == null
+				&& pendingProductionModel == null;
 	}
 	
 	public boolean isTestingProductionQuery() {
@@ -150,6 +152,10 @@ public class ProductionReportController implements Serializable {
 	
 	public DataModel getAvailableRoomModel() {
 		return availableRoomModel;
+	}
+
+	public DataModel getRoomOcupationModel() {
+		return roomOcupationModel;
 	}
 
 	public DataModel getRatioModel() {
@@ -200,6 +206,7 @@ public class ProductionReportController implements Serializable {
 		paxMap.clear();
 		roomMap.clear();
 		availableRoomMap.clear();
+		roomOcupationMap.clear();
 		advancePaymethodMap.clear();
 		paymethodMap.clear();
 		
@@ -208,6 +215,7 @@ public class ProductionReportController implements Serializable {
 		paxModel = null;
 		roomModel = null;
 		availableRoomModel = null;
+		roomOcupationModel = null;
 		ratioModel = null;
 		advancePaymethodModel = null;
 		paymethodModel = null;
@@ -770,6 +778,11 @@ public class ProductionReportController implements Serializable {
 				ro.setDescription("Hab.Disponibles");
 				availableRoomMap.put("Hab.Disponibles", ro);
 			}
+			if (!roomOcupationMap.containsKey("% Ocupación")) {
+				ReportObject ro = new ReportObject();
+				ro.setDescription("% Ocupación");
+				roomOcupationMap.put("% Ocupación", ro);
+			}
 			
 			while (roomsRs.next()) {
 				String period = roomsRs.getString(1);
@@ -778,28 +791,48 @@ public class ProductionReportController implements Serializable {
 //				Double ocupation = CommonUtil.round(roomsRs.getDouble(4));
 //				System.out.println(period + " - " + roomCount +" - "+ availablesRoomCount + " - " + ocupation);
 				
+				double roomYear = roomMap.get("Habitaciones").getYearAmount();
+				double roomPreviousYear = roomMap.get("Habitaciones").getPreviousYearAmount();
+				double roomMonth = roomMap.get("Habitaciones").getMonthAmount();
+				double roomPreviousMonth = roomMap.get("Habitaciones").getPreviousMonthAmount();
+				double roomDay = roomMap.get("Habitaciones").getDayAmount();
+				double roomPreviousDay = roomMap.get("Habitaciones").getPreviousDayAmount();
+				
 				if (period.equals("ANIO")) {
 					availableRoomMap.get("Hab.Ocupadas").setYearAmount(roomCount);
 					availableRoomMap.get("Hab.Disponibles").setYearAmount(roomMap.get("Habitaciones").getYearAmount()-roomCount);
+					double availableRoomYear = availableRoomMap.get("Hab.Ocupadas").getYearAmount();
+					roomOcupationMap.get("% Ocupación").setYearAmount(roomYear > 0.0f ? (availableRoomYear * 100 / roomYear) : 0.0);
 				} else if (period.equals("ANIO_ANTERIOR")) {
 					availableRoomMap.get("Hab.Ocupadas").setPreviousYearAmount(roomCount);
 					availableRoomMap.get("Hab.Disponibles").setPreviousYearAmount(roomMap.get("Habitaciones").getPreviousYearAmount()-roomCount);
+					double availableRoomPreviousYear = availableRoomMap.get("Hab.Ocupadas").getPreviousYearAmount();
+					roomOcupationMap.get("% Ocupación").setPreviousYearAmount(roomPreviousYear > 0.0f ? (availableRoomPreviousYear * 100 / roomPreviousYear) : 0.0);
 				} else if (period.equals("MES")) {
 					availableRoomMap.get("Hab.Ocupadas").setMonthAmount(roomCount);
 					availableRoomMap.get("Hab.Disponibles").setMonthAmount(roomMap.get("Habitaciones").getMonthAmount()-roomCount);
+					double availableRoomMonth = availableRoomMap.get("Hab.Ocupadas").getMonthAmount();
+					roomOcupationMap.get("% Ocupación").setMonthAmount(roomMonth > 0.0f ? (availableRoomMonth * 100 / roomMonth) : 0.0);
 				} else if (period.equals("MES_ANIO_ANTERIOR")) {
 					availableRoomMap.get("Hab.Ocupadas").setPreviousMonthAmount(roomCount);
 					availableRoomMap.get("Hab.Disponibles").setPreviousMonthAmount(roomMap.get("Habitaciones").getPreviousMonthAmount()-roomCount);
+					double availableRoomPreviousMonth = availableRoomMap.get("Hab.Ocupadas").getPreviousMonthAmount();
+					roomOcupationMap.get("% Ocupación").setPreviousMonthAmount(roomPreviousMonth > 0.0f ? (availableRoomPreviousMonth * 100 / roomPreviousMonth) : 0.0);
 				} else if (period.equals("DIA")) {
 					availableRoomMap.get("Hab.Ocupadas").setDayAmount(roomCount);
 					availableRoomMap.get("Hab.Disponibles").setDayAmount(roomMap.get("Habitaciones").getDayAmount()-roomCount);
+					double availableRoomDay = availableRoomMap.get("Hab.Ocupadas").getDayAmount();
+					roomOcupationMap.get("% Ocupación").setDayAmount(roomDay > 0.0f ? (availableRoomDay * 100 / roomDay) : 0.0);
 				} else if (period.equals("DIA_ANIO_ANTERIOR")) {
 					availableRoomMap.get("Hab.Ocupadas").setPreviousDayAmount(roomCount);
 					availableRoomMap.get("Hab.Disponibles").setPreviousDayAmount(roomMap.get("Habitaciones").getPreviousDayAmount()-roomCount);
+					double availableRoomPreviousDay = availableRoomMap.get("Hab.Ocupadas").getPreviousDayAmount();
+					roomOcupationMap.get("% Ocupación").setPreviousDayAmount(roomPreviousDay > 0.0f ? (availableRoomPreviousDay * 100 / roomPreviousDay) : 0.0);
 				}
 			}
 			
 			availableRoomModel = buildModel(availableRoomMap);
+			roomOcupationModel = buildModel(roomOcupationMap);
 			
 		} catch (Throwable e) {
 			try {
@@ -1035,11 +1068,9 @@ public class ProductionReportController implements Serializable {
 			fillPaxRatioMapObject(key, productionMap, productionRatioMap);
 		});
 		
-		fillRoomOcupationRatioMapObject("% OCUPACION Habitación", productionRatioMap);
-		
 		fillRoomPaxRatioMapObject("PAX", " PAX por Habitación", paxMap, productionRatioMap);
 		
-		fillRoomPaxRatioMapObject("1.VENTAS", "1.VENTAS/Habitación", pendingProductionMap, productionRatioMap);
+		fillRoomPaxRatioMapObject("1.VENTAS", " VENTAS/Habitación", pendingProductionMap, productionRatioMap);
 		
 		fillPaxRatioMapObject("1.VENTAS", pendingProductionMap, productionRatioMap);
 		
@@ -1049,7 +1080,8 @@ public class ProductionReportController implements Serializable {
 	private void fillPaxRatioMapObject(String key, Map<String, ReportObject> productionMap, Map<String, ReportObject> productionRatioMap){
 		ReportObject ro = new ReportObject();
 		if( productionMap.containsKey(key) ){
-			ro.setDescription(productionMap.get(key).getDescription()+"/Pax");
+			String description = productionMap.get(key).getDescription().replace("1.", " ");
+			ro.setDescription(description+"/Pax");
 			double paxDayAmount = paxMap.values().stream().mapToDouble(ReportObject::getDayAmount).sum();
 			ro.setDayAmount(paxDayAmount > 0.0f ? (productionMap.get(key).getDayAmount() / paxDayAmount) : 0.0);
 			double paxPreviousDayAmount = paxMap.values().stream().mapToDouble(ReportObject::getPreviousDayAmount).sum();
@@ -1066,32 +1098,6 @@ public class ProductionReportController implements Serializable {
 		productionRatioMap.put(key, ro);
 	}
 	
-	private void fillRoomOcupationRatioMapObject(String key, Map<String, ReportObject> productionRatioMap){
-		double roomYear = roomMap.get("Habitaciones").getYearAmount();
-		double availableRoomYear = availableRoomMap.get("Hab.Ocupadas").getYearAmount();
-		double roomPreviousYear = roomMap.get("Habitaciones").getPreviousYearAmount();
-		double availableRoomPreviousYear = availableRoomMap.get("Hab.Ocupadas").getPreviousYearAmount();
-
-		double roomMonth = roomMap.get("Habitaciones").getMonthAmount();
-		double availableRoomMonth = availableRoomMap.get("Hab.Ocupadas").getMonthAmount();
-		double roomPreviousMonth = roomMap.get("Habitaciones").getPreviousMonthAmount();
-		double availableRoomPreviousMonth = availableRoomMap.get("Hab.Ocupadas").getPreviousMonthAmount();
-		
-		double roomDay = roomMap.get("Habitaciones").getDayAmount();
-		double availableRoomDay = availableRoomMap.get("Hab.Ocupadas").getDayAmount();
-		double roomPreviousDay = roomMap.get("Habitaciones").getPreviousDayAmount();
-		double availableRoomPreviousDay = availableRoomMap.get("Hab.Ocupadas").getPreviousDayAmount();
-		
-		ReportObject ro = new ReportObject();
-		ro.setDescription(key);		
-		ro.setYearAmount(roomYear > 0.0f ? (availableRoomYear * 100 / roomYear) : 0.0);
-		ro.setPreviousYearAmount(roomPreviousYear > 0.0f ? (availableRoomPreviousYear * 100 / roomPreviousYear) : 0.0);
-		ro.setMonthAmount(roomMonth > 0.0f ? (availableRoomMonth * 100 / roomMonth) : 0.0);
-		ro.setPreviousMonthAmount(roomPreviousMonth > 0.0f ? (availableRoomPreviousMonth * 100 / roomPreviousMonth) : 0.0);
-		ro.setDayAmount(roomDay > 0.0f ? (availableRoomDay * 100 / roomDay) : 0.0);
-		ro.setPreviousDayAmount(roomPreviousDay > 0.0f ? (availableRoomPreviousDay * 100 / roomPreviousDay) : 0.0);
-		productionRatioMap.put(key, ro);
-	}
 	
 	private void fillRoomPaxRatioMapObject(String key, String description, Map<String, ReportObject> map, Map<String, ReportObject> productionRatioMap){
 		double roomYear = roomMap.get("Habitaciones").getYearAmount() 
@@ -1422,7 +1428,6 @@ public class ProductionReportController implements Serializable {
 			Integer month, Integer hotel, Integer wp, Integer productCategory) {
 		
 		StringBuffer stmt = new StringBuffer();
-		
 		stmt.append("  SELECT Concepto,Periodo,SUM(Importe),IVA FROM (");
 		stmt.append("  (SELECT IF(I.project is not NULL,");
 		stmt.append("      IF(I.service=0,'ALOJAMIENTO','OTROS INGRESOS'),  'OTROS INGRESOS') as Concepto,");
@@ -1467,8 +1472,8 @@ public class ProductionReportController implements Serializable {
 		stmt.append("  FROM invoice I");
 		stmt.append("  INNER JOIN pos_shift PS ON PS.id=I.pos_shift");
 		stmt.append("  INNER JOIN pos P ON P.id=PS.pos ");
-		stmt.append("  WHERE (  (PS.start_time <= date_add('"+date+"', INTERVAL '1 03:59:59' DAY_SECOND)            AND year(PS.start_time)="+year+")");
-		stmt.append("        OR (PS.start_time <= date_add('"+previousDate+"', INTERVAL '1 03:59:59' DAY_SECOND)    AND year(PS.start_time)="+previousYear+") )");
+		stmt.append("  WHERE (  (PS.start_time <= date_add('"+date+"', INTERVAL 4 HOUR)            AND year(PS.start_time)="+year+")");
+		stmt.append("        OR (PS.start_time <= date_add('"+previousDate+"', INTERVAL 4 HOUR)    AND year(PS.start_time)="+previousYear+") )");
 		stmt.append("    AND month(PS.start_time)="+month+"");
 		stmt.append("    AND P.workplace="+wp+"");
 		stmt.append("    AND I.type=1");
@@ -1506,9 +1511,9 @@ public class ProductionReportController implements Serializable {
 		stmt.append("  FROM invoice I");
 		stmt.append("  INNER JOIN pos_shift PS ON PS.id=I.pos_shift");
 		stmt.append("  INNER JOIN pos P ON P.id=PS.pos ");
-		stmt.append("  WHERE (  (PS.start_time <= date_add('"+date+"', INTERVAL '1 03:59:59' DAY_SECOND)            AND year(PS.start_time)="+year+")");
-		stmt.append("        OR (PS.start_time <= date_add('"+previousDate+"', INTERVAL '1 03:59:59' DAY_SECOND)    AND year(PS.start_time)="+previousYear+") )");
-		stmt.append("        AND P.workplace="+wp+"");
+		stmt.append("  WHERE (  (PS.start_time <= date_add('"+date+"', INTERVAL 4 HOUR)          AND year(PS.start_time)="+year+")");
+		stmt.append("        OR (PS.start_time <= date_add('"+previousDate+"', INTERVAL 4 HOUR)  AND year(PS.start_time)="+previousYear+") )");
+		stmt.append("    AND P.workplace="+wp+"");
 		stmt.append("    AND I.type=1");
 		stmt.append("    AND I.id in (SELECT INVD.invoice ");
 		stmt.append("                    FROM invoice_detail INVD");
@@ -1589,7 +1594,6 @@ public class ProductionReportController implements Serializable {
 		stmt.append("  GROUP BY IT.id,INVT.percentage,2) ) AS Q ");
 		stmt.append("  GROUP BY Concepto,Periodo ");
 		stmt.append("  ORDER BY Concepto,Periodo ;");
-		stmt.append("    ");
 		
         return stmt.toString();		
 	}
@@ -1599,7 +1603,6 @@ public class ProductionReportController implements Serializable {
 			Integer month, Integer wp) {
 		
         StringBuffer stmt = new StringBuffer();
-        
         stmt.append(" SELECT FormaPago,Tipo,Periodo,SUM(Importe) FROM (     ");
         stmt.append("(SELECT PM.name as FormaPago,");
         stmt.append("        IF(INV.advance=1,'Anticipo','Normal') as Tipo,");

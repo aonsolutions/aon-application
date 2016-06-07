@@ -32,10 +32,14 @@
 					<aon:outputText value="#{bundle.aon_day}" />
 				</f:facet>
 			</c:if>
-			<aon:outputText value="#{to.dayAmount==0.0 and defaultEmpty ? '' : to.dayAmount}" 
-				styleClass="#{(to.dayAmount >= 0 ? '':'aon-label-error')}" >
-				<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
-			</aon:outputText>
+			<aon:div>
+				<aon:outputText value="#{to.dayAmount==0.0 and defaultEmpty ? '' : to.dayAmount}" 
+					styleClass="#{(to.dayAmount >= 0 ? '':'aon-label-error')}" >
+					<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
+				</aon:outputText>
+				<aon:outputText value=" &#37;" 
+					rendered="#{showPercent}" />
+			</aon:div>
 			<c:if test="#{!skipFooters}">
 				<f:facet name="footer">
 					<aon:div style="text-align: right; width: 100%">
@@ -53,10 +57,14 @@
 					<aon:outputText value="#{bundle.aon_day} (#{productionReport.previousYear})" />
 				</f:facet>
 			</c:if>
-			<aon:outputText value="#{to.previousDayAmount==0.0 and defaultEmpty ? '' : to.previousDayAmount}" 
-				styleClass="#{(to.previousDayAmount >= 0 ? '':'aon-label-error')}" >
-				<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
-			</aon:outputText>
+			<aon:div>
+				<aon:outputText value="#{to.previousDayAmount==0.0 and defaultEmpty ? '' : to.previousDayAmount}" 
+					styleClass="#{(to.previousDayAmount >= 0 ? '':'aon-label-error')}" >
+					<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
+				</aon:outputText>
+				<aon:outputText value=" &#37;" 
+					rendered="#{showPercent}" />
+			</aon:div>
 			<c:if test="#{!skipFooters}">
 				<f:facet name="footer">
 					<aon:div style="text-align: right; width: 100%">
@@ -74,10 +82,14 @@
 					<aon:outputText value="#{bundle.aon_month}" />
 				</f:facet>
 			</c:if>
-			<aon:outputText value="#{to.monthAmount==0.0 and defaultEmpty ? '' : to.monthAmount}" 
-				styleClass="#{(to.monthAmount >= 0 ? '':'aon-label-error')}" >
-				<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
-			</aon:outputText>
+			<aon:div>
+				<aon:outputText value="#{to.monthAmount==0.0 and defaultEmpty ? '' : to.monthAmount}" 
+					styleClass="#{(to.monthAmount >= 0 ? '':'aon-label-error')}" >
+					<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
+				</aon:outputText>
+				<aon:outputText value=" &#37;" 
+					rendered="#{showPercent}" />
+			</aon:div>
 			<c:if test="#{!skipFooters}">
 				<f:facet name="footer">
 					<aon:div style="text-align: right; width: 100%">
@@ -95,10 +107,14 @@
 					<aon:outputText value="#{bundle.aon_month} (#{productionReport.previousYear})" />
 				</f:facet>
 			</c:if>
-			<aon:outputText value="#{to.previousMonthAmount==0.0 and defaultEmpty ? '' : to.previousMonthAmount}" 
-				styleClass="#{(to.previousMonthAmount >= 0 ? '':'aon-label-error')}" >
-				<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
-			</aon:outputText>
+			<aon:div>
+				<aon:outputText value="#{to.previousMonthAmount==0.0 and defaultEmpty ? '' : to.previousMonthAmount}" 
+					styleClass="#{(to.previousMonthAmount >= 0 ? '':'aon-label-error')}" >
+					<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
+				</aon:outputText>
+				<aon:outputText value=" &#37;" 
+					rendered="#{showPercent}" />
+			</aon:div>
 			<c:if test="#{!skipFooters}">
 				<f:facet name="footer">
 					<aon:div style="text-align: right; width: 100%">
@@ -116,10 +132,14 @@
 					<aon:outputText value="#{bundle.aon_year}" />
 				</f:facet>
 			</c:if>
-			<aon:outputText value="#{to.yearAmount==0.0 and defaultEmpty ? '' : to.yearAmount}" 
-				styleClass="#{(to.yearAmount >= 0 ? '':'aon-label-error')}" >
-				<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
-			</aon:outputText>
+			<aon:div>
+				<aon:outputText value="#{to.yearAmount==0.0 and defaultEmpty ? '' : to.yearAmount}" 
+					styleClass="#{(to.yearAmount >= 0 ? '':'aon-label-error')}" >
+					<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
+				</aon:outputText>
+				<aon:outputText value=" &#37;" 
+					rendered="#{showPercent}" />
+			</aon:div>
 			<c:if test="#{!skipFooters}">
 				<f:facet name="footer">
 					<aon:div style="text-align: right; width: 100%">
@@ -137,10 +157,14 @@
 					<aon:outputText value="#{bundle.aon_year} (#{productionReport.previousYear})" />
 				</f:facet>
 			</c:if>
-			<aon:outputText value="#{to.previousYearAmount==0.0 and defaultEmpty ? '' : to.previousYearAmount}" 
-				styleClass="#{(to.previousYearAmount >= 0 ? '':'aon-label-error')}" >
-				<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
-			</aon:outputText>
+			<aon:div>
+				<aon:outputText value="#{to.previousYearAmount==0.0 and defaultEmpty ? '' : to.previousYearAmount}" 
+					styleClass="#{(to.previousYearAmount >= 0 ? '':'aon-label-error')}" >
+					<f:convertNumber pattern="#{empty amountPattern ? bundle.aon_decimal2_pattern : amountPattern}" />
+				</aon:outputText>
+				<aon:outputText value=" &#37;" 
+					rendered="#{showPercent}" />
+			</aon:div>
 			<c:if test="#{!skipFooters}">
 				<f:facet name="footer">
 					<aon:div style="text-align: right; width: 100%">
@@ -154,4 +178,5 @@
 		
 	</aon:dataTable>
 	
+
 </ui:composition>
