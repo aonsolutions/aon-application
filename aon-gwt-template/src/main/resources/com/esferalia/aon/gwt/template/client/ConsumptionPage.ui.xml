@@ -170,11 +170,12 @@
 							<tr>
 								<td></td>
 								<td>
-									<div class="aon-search-lookup-button" style="display: inline-block;">
+									<!-- <div class="aon-search-lookup-button" style="display: inline-block;">
 										<g:Button ui:field="pdfButton" text="{msg.listTemplates}" 
 											styleName="aon-icon-commandButton aon-icon-pdf">
 										</g:Button>
 									</div>
+									 -->
 								</td>
 								<td>
 									<div class="aon-search-lookup-button" style="display: inline-block;">

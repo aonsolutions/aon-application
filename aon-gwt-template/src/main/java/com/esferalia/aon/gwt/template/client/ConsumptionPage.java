@@ -54,7 +54,7 @@ public class ConsumptionPage extends Composite{
 	
 	@UiField CheckBox warehouseCheckBox;
 	@UiField CheckBox detailCheckBox;
-	@UiField Button pdfButton;
+	// @UiField Button pdfButton;
 	@UiField Button excelButton;
 	@UiField Button cleanButton;
 	@UiField Label titleLabel;
@@ -86,7 +86,7 @@ public class ConsumptionPage extends Composite{
 		selectedBoxPanel = new VerticalPanel();selectedBoxPanel.setSpacing(4);
 		warehouseCheckBox = new CheckBox();
 		detailCheckBox = new CheckBox();
-		pdfButton = new Button();
+		// pdfButton = new Button();
 		excelButton = new Button();
 		cleanButton = new Button();
 		
@@ -99,7 +99,6 @@ public class ConsumptionPage extends Composite{
 	}
 
 	private void init() {
-		
 	    DateTimeFormat dateFormat = DateTimeFormat.getMediumDateFormat();
 
 		startDate.setStyleName("aon-inputText");
@@ -171,10 +170,12 @@ public class ConsumptionPage extends Composite{
 		clean();
 	}
 	
+	/*
 	@UiHandler("pdfButton")
 	void pdfAction(ClickEvent event) {
 		download(PDF);
 	}
+	*/
 	
 	@UiHandler("excelButton")
 	void excelAction(ClickEvent event) {
@@ -379,12 +380,12 @@ public class ConsumptionPage extends Composite{
 	
 	private void activeDownloadButtons() {
 		excelButton.setEnabled(true);
-		pdfButton.setEnabled(true);
+		// pdfButton.setEnabled(true);
 	}
 	
 	private void deactiveDownloadButtons() {
 		excelButton.setEnabled(false);
-		pdfButton.setEnabled(false);
+		// pdfButton.setEnabled(false);
 	}
 	
 	private Domain getDomain() {

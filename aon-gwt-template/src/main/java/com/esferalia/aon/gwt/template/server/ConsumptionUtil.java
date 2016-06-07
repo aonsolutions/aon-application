@@ -201,7 +201,10 @@ public class ConsumptionUtil {
         				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
         							else celda.setCellValue(0);	
         							celda.setCellStyle(style2);break; 
-        				case "Consumo \u20AC": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
+        				case "Consumo \u20AC": 
+        					if(ci.getConsumption() == 0) celda.setCellValue(0);
+        					else celda.setCellValue(round(consumValue,2));
+        					celda.setCellStyle(style2);break;
         				case "Importe": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
 
         				case "Consumo": celda.setCellValue(round(ci.getConsumption(),2));celda.setCellStyle(style2);break;
@@ -254,7 +257,7 @@ public class ConsumptionUtil {
 				e1.printStackTrace();
 			}
 			 
-        	 for (Integer index = 0; index < size+3; index++){ 
+        	 for (Integer index = 0; index < size+2; index++){ 
         		 HSSFSheet my_worksheet = libro.getSheetAt(index);
         		 Iterator<Row> rowIterator = my_worksheet.iterator();             
         		 Integer columnNum = getColumnNum(index, columns, packaged);
@@ -332,16 +335,16 @@ public class ConsumptionUtil {
         			 com.itextpdf.text.Font fontPhrase2 = new com.itextpdf.text.Font();
         			 fontPhrase.setSize(12);
         			 
-        			 if(index<3){
+        			 if(index<2){
         				 iText_xls_2_pdf.add(new Paragraph(" "));
         				 iText_xls_2_pdf.add(new Paragraph("Resumen " + index, fontPhrase));
         				 iText_xls_2_pdf.add(new Paragraph(" "));
         			 }
         			 else{
         				iText_xls_2_pdf.add(new Paragraph(" "));
-        			 	iText_xls_2_pdf.add(new Paragraph("Almac\u00e9n: " + warehouses.get(index-3).getName(), fontPhrase));
-        			 	iText_xls_2_pdf.add(new Paragraph("Inventario Inicial: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getInitialInventoryName(), fontPhrase2), fontPhrase));
-        			 	iText_xls_2_pdf.add(new Paragraph("Inventario Final: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getFinalInventoryName(), fontPhrase2), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Almac\u00e9n: " + warehouses.get(index-2).getName(), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Inventario Inicial: " + new Phrase(cisMap.get(warehouses.get(index-2).getId()).getInitialInventoryName(), fontPhrase2), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Inventario Final: " + new Phrase(cisMap.get(warehouses.get(index-2).getId()).getFinalInventoryName(), fontPhrase2), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph(" "));
         			 }
         			 iText_xls_2_pdf.add(my_table);
@@ -540,7 +543,10 @@ public class ConsumptionUtil {
         				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
         							else celda.setCellValue(0);	
         							celda.setCellStyle(style2);break; 
-        				case "Consumo \u20AC": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
+        				case "Consumo \u20AC": 
+        					if(ci.getConsumption() == 0) celda.setCellValue(0);
+        					else celda.setCellValue(round(consumValue,2));
+        					celda.setCellStyle(style2);break;
         				case "Importe": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style2);break;
 
         				case "Consumo": celda.setCellValue(round(ci.getConsumption(),2));celda.setCellStyle(style2);break;
@@ -594,7 +600,7 @@ public class ConsumptionUtil {
 				e1.printStackTrace();
 			}
 			 
-        	 for (int index = 0; index < size+3; index++){ 
+        	 for (int index = 0; index < size+2; index++){ 
         		 HSSFSheet my_worksheet = libro.getSheetAt(index);
         		 Iterator<Row> rowIterator = my_worksheet.iterator();             
         		 Integer columnNum = getColumnNum(index, columns, packaged);
@@ -674,16 +680,16 @@ public class ConsumptionUtil {
         			 com.itextpdf.text.Font fontPhrase2 = new com.itextpdf.text.Font();
         			 fontPhrase.setSize(12);
         			 
-        			 if(index<3){
+        			 if(index<2){
         				 iText_xls_2_pdf.add(new Paragraph(" "));
         				 iText_xls_2_pdf.add(new Paragraph("Resumen " + index, fontPhrase));
         				 iText_xls_2_pdf.add(new Paragraph(" "));
         			 }
         			 else{
         				iText_xls_2_pdf.add(new Paragraph(" "));
-        			 	iText_xls_2_pdf.add(new Paragraph("Almac\u00e9n: " + warehouses.get(index-3).getName(), fontPhrase));
-        			 	iText_xls_2_pdf.add(new Paragraph("Inventario Inicial: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getInitialInventoryName(), fontPhrase2), fontPhrase));
-        			 	iText_xls_2_pdf.add(new Paragraph("Inventario Final: " + new Phrase(cisMap.get(warehouses.get(index-3).getId()).getFinalInventoryName(), fontPhrase2), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Almac\u00e9n: " + warehouses.get(index-2).getName(), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Inventario Inicial: " + new Phrase(cisMap.get(warehouses.get(index-2).getId()).getInitialInventoryName(), fontPhrase2), fontPhrase));
+        			 	iText_xls_2_pdf.add(new Paragraph("Inventario Final: " + new Phrase(cisMap.get(warehouses.get(index-2).getId()).getFinalInventoryName(), fontPhrase2), fontPhrase));
         			 	iText_xls_2_pdf.add(new Paragraph(" "));
         			 }
         			 iText_xls_2_pdf.add(my_table);
@@ -907,7 +913,10 @@ public class ConsumptionUtil {
         				case "Precio": if(ci.getConsumption() != 0) celda.setCellValue(round(consumValue / ci.getConsumption(), 2));
         							else celda.setCellValue(0);	
         							celda.setCellStyle(style20);break; 
-        				case "Consumo \u20AC": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style20);break;
+        				case "Consumo \u20AC":
+        					if(ci.getConsumption() == 0) celda.setCellValue(0);
+        					else celda.setCellValue(round(consumValue,2));
+        					celda.setCellStyle(style20);break;
         				case "Importe": celda.setCellValue(round(consumValue,2));celda.setCellStyle(style20);break;
 
         				case "Consumo": celda.setCellValue(round(ci.getConsumption(),2));celda.setCellStyle(style20);break;
@@ -1006,7 +1015,7 @@ public class ConsumptionUtil {
         		startDate = sumarRestarDiasFecha(ci.getInitialDate(), -1);
         		endDate = ci.getFinalDate();
         		ci.setConsumption(ci.getInitialQuantity()+ci.getPurchasesAlb()+ci.getPurchasesFac()+ci.getTransfersPlus()-ci.getSalesAlb()-ci.getSalesFac()-ci.getTransfersMinus()-ci.getFinalQuantity());
-        		Double consumValue = ci.getConsumValue();
+        		Double consumValue = ci.getConsumption() == 0 ? 0 : ci.getConsumValue();
             	
         		if((onlyNegative && consumValue < 0) || !onlyNegative){
         		
