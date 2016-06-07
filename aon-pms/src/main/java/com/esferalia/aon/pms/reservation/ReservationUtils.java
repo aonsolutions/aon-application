@@ -15,6 +15,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.opentravel.ota.x2003.x05.AmountType;
 import org.opentravel.ota.x2003.x05.CommentType.Comment;
 import org.opentravel.ota.x2003.x05.ProfilesType.ProfileInfo;
@@ -30,6 +32,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.common.util.CryptoUtil;
@@ -266,6 +269,25 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		updateBooking(reservationRoom);
 	}
 
+	public List<Item> getProjectReservationRoomDetailItems(ProjectReservationRoom reservationRoom, Date startDate, Date endDate) throws ManagerBeanException {
+		List<Item> roomDetailItemIds = new LinkedList<Item>();
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		Session session = HibernateUtil.getSession(sessionFactoryName);
+		String hqlQuery = 
+				"SELECT DISTINCT R.item " +
+				"FROM ProjectReservationRoomDetail AS PRRD, " +
+					"AssetActivity AS AA, " +
+					"Room as R " +
+				"WHERE PRRD.projectReservationRoom.id = " + reservationRoom.getId() +
+				" AND PRRD.assetActivity.id = AA.id" +
+				" AND AA.asset.id = R.asset.id";
+		Query query = session.createQuery(hqlQuery);
+		for (Object obj : query.list()) {
+			roomDetailItemIds.add((Item)obj);
+		}
+		return roomDetailItemIds;
+	}
+
 	public boolean isPendingRoomAssignation(ProjectReservation reservation) throws ManagerBeanException {
 		boolean pendingRooms = true;
 		IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
@@ -418,6 +440,18 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), false);
 		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ADVANCE), true);
 		Projection projection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_TOTAL));
+		Object result = invoiceBean.getUniqueResult(projection, criteria);
+		return (result != null) ? CommonUtil.round(((Double)result).doubleValue()) : 0;
+	}
+
+	public double getReservationAdvancedVatAmount(Integer reservationId) throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), reservationId);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), false);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ADVANCE), true);
+		Projection projection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_VAT_QUOTA));
 		Object result = invoiceBean.getUniqueResult(projection, criteria);
 		return (result != null) ? CommonUtil.round(((Double)result).doubleValue()) : 0;
 	}

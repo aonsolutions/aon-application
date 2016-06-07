@@ -287,10 +287,16 @@ public class ReservationInvoicing implements IReservationConstants {
 		ReservationUtils reservationUtils = new ReservationUtils(reservation.getDomain());
 		boolean isVatWrong = false;
 		double vatAmount = 0;
+		boolean allAdvanced = false;
 		double advancedAmount = 0;
 		if (!reservationInvoiceTo.isEarlyCheckOut() && !reservation.isEarlyCheckOut()) {
-			vatAmount = reservationUtils.getReservationCalculatedVatQuota(reservation);
 			advancedAmount = reservation.getAdvancedAmount();
+			if (advancedAmount > 0 && advancedAmount == reservationUtils.getReservationCalculatedTotal(reservation)) {
+				vatAmount = reservationUtils.getReservationAdvancedVatAmount(reservation.getId());
+				allAdvanced = true;
+			} else {
+				vatAmount = reservationUtils.getReservationCalculatedVatQuota(reservation);
+			}
 			isVatWrong = (reservation.getVatQuota() != vatAmount || advancedAmount > 0);
 		}
 
@@ -336,7 +342,7 @@ public class ReservationInvoicing implements IReservationConstants {
 						vatQuota = vatAmount;
 					}
 					invoiceDetail.setVatQuota(vatQuota);
-					vatAmount = vatAmount - vatQuota;
+					vatAmount = CommonUtil.round(vatAmount - vatQuota);
 				} else {
 					invoiceDetail.setVatPercent(0);
 					invoiceDetail.setVatQuota(0);
@@ -385,7 +391,7 @@ public class ReservationInvoicing implements IReservationConstants {
 				invoiceDetail = (InvoiceDetail)invoiceDetailBean.insert(invoiceDetail);
 				taxableBase = CommonUtil.round(taxableBase + invoiceDetail.getTaxableBase(), 4);
 
-				if (advancedAmount == reservation.getTotal() && taxableBase != 0 && taxableBase <= Math.abs(0.01)) {
+				if (allAdvanced && taxableBase != 0 && taxableBase <= Math.abs(0.01)) {
 					invoiceDetail.setPrice(invoiceDetail.getPrice() + taxableBase);
 					invoiceDetail.setTaxableBase(invoiceDetail.getPrice() * (-1));
 					invoiceDetailBean.update(invoiceDetail);
