@@ -108,7 +108,7 @@ public class NormalizedMemory extends ResizeComposite {
 		year = ddtn.getD2Deposit2014().getYear();
 		this.textMode = false;
 		digitalDepositTreeNode = ddtn;
-		this.deposit = deposit;		
+		this.deposit = deposit;	
 
 		headerPanel = new SimplePanel();
 		pagesPanel = new FlowPanel();
@@ -1044,7 +1044,8 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiHandler("downloadButton")
 	void downExcel(ClickEvent event) {
-		DownloadDialog dd = new DownloadDialog() {
+		
+		DownloadDialog dd = new DownloadDialog(digitalDepositTreeNode.getIsMemory(), digitalDepositTreeNode.getIsMa()) {
 		
 			@Override 
 			protected void onCancel() {
@@ -1078,7 +1079,7 @@ public class NormalizedMemory extends ResizeComposite {
 	
 	@UiHandler("downloadButtonPdf")
 	void downPdf(ClickEvent event) {
-		DownloadDialog dd = new DownloadDialog() {
+		DownloadDialog dd = new DownloadDialog(digitalDepositTreeNode.getIsMemory(), digitalDepositTreeNode.getIsMa()) {
 			
 			@Override 
 			protected void onCancel() {

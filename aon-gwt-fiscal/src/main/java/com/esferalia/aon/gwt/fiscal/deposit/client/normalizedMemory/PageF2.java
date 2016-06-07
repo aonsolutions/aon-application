@@ -73,6 +73,7 @@ public class PageF2 extends PageAbs {
 	@UiField TextBox PR8081209 ; // email
 	
 	@UiField TextBox ROAC; // ROAC
+	@UiField Label ROACLabel; // ROAC
 
 	public PageF2() {
 		super();
@@ -119,8 +120,8 @@ public class PageF2 extends PageAbs {
 		initWidget(ui);
 	}
 	
-	public PageF2(Enterprise enterprise, NormalizedMemory nm) {
-		super();
+	public PageF2(Enterprise enterprise, NormalizedMemory nm, Integer year) {
+		super(year);
 		this.enterprise = enterprise;
 		this.normalizedMemory = nm;
 		IDA01010 = new Label();
@@ -163,6 +164,7 @@ public class PageF2 extends PageAbs {
 		PR8081209 = new TextBox(); // email
 		
 		ROAC = new TextBox();
+		ROACLabel = new Label();
 		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
@@ -219,7 +221,14 @@ public class PageF2 extends PageAbs {
 		PR8081209.setWidth("99%");
 		keyExe("8081209", PR8081209, "text", true);
 		
-		keyExe("8081320", ROAC, "text", true);
+		if(year> 2014) {
+			ROACLabel.setText("Codigo ROAC del Auditor firmante");
+			keyExe("8081320", ROAC, "text", true);
+		}
+		else {
+			ROAC.setVisible(false);
+			ROACLabel.setVisible(false);
+		}
 	}
 	
 	@Override

@@ -23,11 +23,11 @@ public abstract class DownloadDialog extends CustomDialogB {
 	@UiField Button accept_button;
 	@UiField Button cancel_button;
 	
-	public DownloadDialog() {
+	public DownloadDialog(Boolean isMemory, Boolean isMa) {
 		setCaption("Descargar");
 		flex_table = new FlexTable();
 		setWidget(binder.createAndBindUi(this));
-		buildTable();
+		buildTable(isMemory, isMa);
 		accept_button.setText("Aceptar");
 		accept_button.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
@@ -73,7 +73,7 @@ public abstract class DownloadDialog extends CustomDialogB {
 	private static final String CHD = "Certificaci\u00f3n de la huella digital";
 
 	CheckBox cb,cb0,cb1,cb2,cb3,cb4,cb5,cb6,cb7,cb8,cb9,cb10,cb11,cb12,cb13,cb14,cb15,cb16,cb17,cb18,cb19,cb20,cb21,cb22;
-	private void buildTable() {
+	private void buildTable(final Boolean isMemory, final Boolean isMa) {
 		
 		flex_table.setWidget(1, 0, new Label(IDA));
 		cb0 = new CheckBox();cb0.setValue(true);
@@ -95,68 +95,85 @@ public abstract class DownloadDialog extends CustomDialogB {
 		cb4 = new CheckBox();cb4.setValue(true);
 		flex_table.setWidget(5, 1, cb4);
 	
+
 		flex_table.setWidget(6, 0, new Label(AP1));
-		cb5 = new CheckBox();cb5.setValue(true);
+		cb5 = new CheckBox();cb5.setValue(!isMemory);
+		cb5.setEnabled(!isMemory);
 		flex_table.setWidget(6, 1, cb5);
 
 		flex_table.setWidget(7, 0, new Label(AP2));
-		cb6 = new CheckBox();cb6.setValue(true);
+		cb6 = new CheckBox();cb6.setValue(!isMemory);
+		cb6.setEnabled(!isMemory);
 		flex_table.setWidget(7, 1, cb6);
-		
+			
 		flex_table.setWidget(8, 0, new Label(AP3));
-		cb7 = new CheckBox();cb7.setValue(true);
+		cb7 = new CheckBox();cb7.setValue(!isMemory);
+		cb7.setEnabled(!isMemory);
 		flex_table.setWidget(8, 1, cb7);
-		
+			
 		flex_table.setWidget(9, 0, new Label(AP4));
-		cb8 = new CheckBox();cb8.setValue(true);
+		cb8 = new CheckBox();cb8.setValue(!isMemory);
+		cb8.setEnabled(!isMemory);
 		flex_table.setWidget(9, 1, cb8);
-		
+			
 		flex_table.setWidget(10, 0, new Label(AP5));
-		cb9 = new CheckBox();cb9.setValue(true);
+		cb9 = new CheckBox();cb9.setValue(!isMemory);
+		cb9.setEnabled(!isMemory);
 		flex_table.setWidget(10, 1, cb9);
-		
+			
 		flex_table.setWidget(11, 0, new Label(AP6));
-		cb10 = new CheckBox();cb10.setValue(true);
+		cb10 = new CheckBox();cb10.setValue(!isMemory);
+		cb10.setEnabled(!isMemory);
 		flex_table.setWidget(11, 1, cb10);
 		
 		flex_table.setWidget(12, 0, new Label(AP7));
-		cb11 = new CheckBox();cb11.setValue(true);
+		cb11 = new CheckBox();cb11.setValue(!isMemory);
+		cb11.setEnabled(!isMemory);
 		flex_table.setWidget(12, 1, cb11);
 		
 		flex_table.setWidget(13, 0, new Label(AP8));
-		cb12 = new CheckBox();cb12.setValue(true);
+		cb12 = new CheckBox();cb12.setValue(!isMemory);
+		cb12.setEnabled(!isMemory);
 		flex_table.setWidget(13, 1, cb12);
 		
 		flex_table.setWidget(14, 0, new Label(AP9));
-		cb13 = new CheckBox();cb13.setValue(true);
+		cb13 = new CheckBox();cb13.setValue(!isMemory);
+		cb13.setEnabled(!isMemory);
 		flex_table.setWidget(14, 1, cb13);
 		
 		flex_table.setWidget(15, 0, new Label(AP10));
-		cb14 = new CheckBox();cb14.setValue(true);
+		cb14 = new CheckBox();cb14.setValue(!isMemory);
+		cb14.setEnabled(!isMemory);
 		flex_table.setWidget(15, 1, cb14);
 		
 		flex_table.setWidget(16, 0, new Label(AP11));
-		cb15 = new CheckBox();cb15.setValue(true);
+		cb15 = new CheckBox();cb15.setValue(!isMemory);
+		cb15.setEnabled(!isMemory);
 		flex_table.setWidget(16, 1, cb15);
-		
+			
 		flex_table.setWidget(17, 0, new Label(AP12));
-		cb16 = new CheckBox();cb16.setValue(true);
+		cb16 = new CheckBox();cb16.setValue(!isMemory);
+		cb16.setEnabled(!isMemory);
 		flex_table.setWidget(17, 1, cb16);
 		
 		flex_table.setWidget(18, 0, new Label(AP13));
-		cb17 = new CheckBox();cb17.setValue(true);
+		cb17 = new CheckBox();cb17.setValue(!isMemory);
+		cb17.setEnabled(!isMemory);
 		flex_table.setWidget(18, 1, cb17);
 	
 		flex_table.setWidget(19, 0, new Label(AP14));
-		cb18 = new CheckBox();cb18.setValue(true);
+		cb18 = new CheckBox();cb18.setValue(!isMemory);
+		cb18.setEnabled(!isMemory);
 		flex_table.setWidget(19, 1, cb18);
 		
 		flex_table.setWidget(20, 0, new Label(AP15));
-		cb19 = new CheckBox();cb19.setValue(true);
+		cb19 = new CheckBox();cb19.setValue(!isMemory);
+		cb19.setEnabled(!isMemory);
 		flex_table.setWidget(20, 1, cb19);
-		
+	
 		flex_table.setWidget(21, 0, new Label(MA));
-		cb20 = new CheckBox();cb20.setValue(true);
+		cb20 = new CheckBox();cb20.setValue(!isMa);
+		cb20.setEnabled(!isMa);
 		flex_table.setWidget(21, 1, cb20);
 		
 		flex_table.setWidget(22, 0, new Label(IP));
@@ -180,22 +197,25 @@ public abstract class DownloadDialog extends CustomDialogB {
 				cb2.setValue(bool);
 				cb3.setValue(bool);
 				cb4.setValue(bool);
-				cb5.setValue(bool);
-				cb6.setValue(bool);
-				cb7.setValue(bool);
-				cb8.setValue(bool);
-				cb9.setValue(bool);
-				cb10.setValue(bool);
-				cb11.setValue(bool);
-				cb12.setValue(bool);
-				cb13.setValue(bool);
-				cb14.setValue(bool);
-				cb15.setValue(bool);
-				cb16.setValue(bool);
-				cb17.setValue(bool);
-				cb18.setValue(bool);
-				cb19.setValue(bool);
-				cb20.setValue(bool);
+				
+				cb5.setValue(!isMemory ? bool : false);
+				cb6.setValue(!isMemory ? bool : false);
+				cb7.setValue(!isMemory ? bool : false);
+				cb8.setValue(!isMemory ? bool : false);
+				cb9.setValue(!isMemory ? bool : false);
+				cb10.setValue(!isMemory ? bool : false);
+				cb11.setValue(!isMemory ? bool : false);
+				cb12.setValue(!isMemory ? bool : false);
+				cb13.setValue(!isMemory ? bool : false);
+				cb14.setValue(!isMemory ? bool : false);
+				cb15.setValue(!isMemory ? bool : false);
+				cb16.setValue(!isMemory ? bool : false);
+				cb17.setValue(!isMemory ? bool : false);
+				cb18.setValue(!isMemory ? bool : false);
+				cb19.setValue(!isMemory ? bool : false);
+				
+				cb20.setValue(!isMa ? bool : false);
+				
 				cb21.setValue(bool);
 				cb22.setValue(bool);
 			}

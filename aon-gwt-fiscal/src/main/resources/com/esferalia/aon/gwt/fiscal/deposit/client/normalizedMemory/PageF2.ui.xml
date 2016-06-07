@@ -183,7 +183,7 @@
 							<table> 
 								<tr> 
 									<td>
-										<g:Label text="Codigo ROAC del Auditor firmante"></g:Label>
+										<g:Label ui:field="ROACLabel"></g:Label>
 									</td>
 									<td>
 										<g:TextBox ui:field="ROAC" styleName="{aonResources.css.aonInputText}"></g:TextBox>

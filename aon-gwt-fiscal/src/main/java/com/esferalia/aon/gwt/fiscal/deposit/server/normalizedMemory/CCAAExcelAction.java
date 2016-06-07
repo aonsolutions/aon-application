@@ -24,6 +24,7 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
+import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Cities;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositDescription;
@@ -39,12 +40,12 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public abstract class CCAAExcelAction extends AbsExcelAction {
 	/*
-	\u00e1 -> á		\u00c1 -> Á
-	\u00e9 -> é	 	\u00c9 -> É
-	\u00ed -> í		\u00cd -> Í
-	\u00f3 -> ó		\u00d3 -> Ó
-	\u00fa -> ú		\u00da -> Ú	
-	\u00f1 -> ñ 	\u00d1 -> Ñ
+	\u00e1 -> Ã¡		\u00c1 -> Ã
+	\u00e9 -> Ã©	 	\u00c9 -> Ã‰
+	\u00ed -> Ã­		\u00cd -> Ã
+	\u00f3 -> Ã³		\u00d3 -> Ã“
+	\u00fa -> Ãº		\u00da -> Ãš	
+	\u00f1 -> Ã± 	\u00d1 -> Ã‘
 	*/
 	public CCAAExcelAction(D2Deposit d2Deposit) {
 		this.d2Deposit = d2Deposit;
@@ -897,7 +898,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			row = sheet.createRow(rowCount++);cellCount = 0;
 			String a = getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01902.getCode());
 			row.setHeight(x.shortValue());
-			idacell("Marque con una X si la empresa ha optado por la adopci\u00f3n conjunta de los criterios espec\u00ed­ficos, aplicables por microempresas, previstos en el Plan General de Contabilidad de PYMES (6)", 0, 7);
+			idacell("Marque con una X si la empresa ha optado por la adopci\u00f3n conjunta de los criterios espec\u00edï¿½ficos, aplicables por microempresas, previstos en el Plan General de Contabilidad de PYMES (6)", 0, 7);
 			row = sheet.createRow(rowCount++);cellCount = 0;
 			idacell(getBoolText(a), 0, 7);
 		}
@@ -1010,13 +1011,13 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		String text1 = "Los abajo firmantes, como Administradores de la Sociedad citada,"
 				+ " manifiestan que en la contabilidad correspondiente a las presentes "
 				+ "cuentas anuales NO existe ninguna partida de naturaleza medioambiental"
-				+ " que deba ser inclu\u00ed­da de acuerdo a la norma de elaboraci\u00f3n '4Âº Cuentas"
+				+ " que deba ser inclu\u00edda de acuerdo a la norma de elaboraci\u00f3n '4Âº Cuentas"
 				+ " anuales abreviadas' en su punto 5, de la tercera parte del Plan General"
 				+ " de Contabilidad (Real Decreto 1514/2007 de 16 de Noviembre).";
 		String text2 = "Los abajo firmantes, como Administradores de la Sociedad citada,"
 				+ " manifiestan que en la contabilidad correspondiente a las presentes"
 				+ " cuentas anuales SI existen partidas de naturaleza medioambiental,"
-				+ " y han sido inclu\u00ed­das en un Apartado adiciones de la Memoria de"
+				+ " y han sido inclu\u00eddas en un Apartado adiciones de la Memoria de"
 				+ " acuerdo a la norma de elaboraci\u00f3n '4Âº Cuentas anuales abreviadas'"
 				+ " en su punto 5, de la tercera parte del Plan General de Contabilidad "
 				+ "(Real Decreto 1514/2007 de 16 de Noviembre).";
@@ -1312,7 +1313,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		sheet.createRow(rowCount++);
 		// 3
 		general(pageMaxNumber, 3, new String[]{"Lineas de descuento y p\u00f3lizas al cierre del ejercicio"+ getD2Deposit().getYear(),
-				"L\u00ed­mite concedido", "Dispuesto", "Disponible"},keys4, 3, 4, null);
+				"L\u00edï¿½mite concedido", "Dispuesto", "Disponible"},keys4, 3, 4, null);
 	}
 	
 	public void AP8(){
@@ -1478,7 +1479,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		D2DepositKey[][] keys = D2DepositConstants.MRN13_ABREVIATE_KEYS;
 		
 		// 2
-		general(pageMaxNumber, 2, new String[]{"N\u00famero medio de personas empleadas en el curso del ejercicio, por categor\u00ed­as (adaptadas a la CNO-11)", "Ejercicio " + getD2Deposit().getYear(), 
+		general(pageMaxNumber, 2, new String[]{"N\u00famero medio de personas empleadas en el curso del ejercicio, por categor\u00edas (adaptadas a la CNO-11)", "Ejercicio " + getD2Deposit().getYear(), 
 				"Ejercicio " + (getD2Deposit().getYear()-1)}, keys, 2, 0, null);
 	}
 	
@@ -1712,12 +1713,12 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		
 		ssHeader("Modelo de autocartera", 5);
 		row = sheet.createRow(rowCount++); cellCount = 0;
-		idacell("Relaci\u00f3n de acciones o participaciones adquiridas al amparo de los art\u00ed­culos 140, 144 y 146 de la Ley de SOciedades de Capital, durante el ejercicio.", 0, 7);
+		idacell("Relaci\u00f3n de acciones o participaciones adquiridas al amparo de los art\u00edculos 140, 144 y 146 de la Ley de SOciedades de Capital, durante el ejercicio.", 0, 7);
 		Double x = (row.getHeight() * 2) / 1.5;
 		row.setHeight(x.shortValue());
 		row = sheet.createRow(rowCount++); cellCount = 0;
 		
-		ssHeader(new String[]{"Fecha", "Relaci\u00f3n numerada de las acciones / participaciones", "T\u00ed­tulo de adquisici\u00f3n", "% sobre capital"}, 4, 2);
+		ssHeader(new String[]{"Fecha", "Relaci\u00f3n numerada de las acciones / participaciones", "T\u00edtulo de adquisici\u00f3n", "% sobre capital"}, 4, 2);
 
 		for(Integer i = 0; i< D2DepositConstants.A3_ABREVIATE_KEYS.length; i+=4){
 			D2DepositFooterKey[] d2 = new D2DepositFooterKey[]{
@@ -1741,12 +1742,12 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		
 		ssHeader("Modelo de autocartera", 5);
 		row = sheet.createRow(rowCount++); cellCount = 0;
-		idacell("Relaci\u00f3n de acciones o participaciones adquiridas por los mismo t\u00ed­tulos, enajenadas o amortizadas durante el presente ejercicio.", 0, 7);
+		idacell("Relaci\u00f3n de acciones o participaciones adquiridas por los mismo t\u00edtulos, enajenadas o amortizadas durante el presente ejercicio.", 0, 7);
 		Double x = (row.getHeight() * 2) / 1.5;
 		row.setHeight(x.shortValue());
 		row = sheet.createRow(rowCount++); cellCount = 0;
 		
-		ssHeader(new String[]{"Fecha", "Relaci\u00f3n numerada de las acciones / participaciones", "T\u00ed­tulo de adquisici\u00f3n", "% sobre capital"}, 4, 2);
+		ssHeader(new String[]{"Fecha", "Relaci\u00f3n numerada de las acciones / participaciones", "T\u00edtulo de adquisici\u00f3n", "% sobre capital"}, 4, 2);
 
 		for(Integer i = 0; i< D2DepositConstants.A3_ABREVIATE_KEYS.length; i+=4){
 			D2DepositFooterKey[] d2 = new D2DepositFooterKey[]{
@@ -1778,12 +1779,12 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
 		
 		row = sheet.createRow(rowCount++); cellCount = 0;
-		idacell("Negocios que han implicado la aceptaci\u00f3n en garant\u00ed­a de acciones propias, con las excepciones legales (art\u00ed­culo 149 de la Ley de Sociedades de Capital).", 0, 8);
+		idacell("Negocios que han implicado la aceptaci\u00f3n en garant\u00eda de acciones propias, con las excepciones legales (art\u00edculo 149 de la Ley de Sociedades de Capital).", 0, 8);
 		Double x = (row.getHeight() * 2) / 1.5;
 		row.setHeight(x.shortValue());
 		row = sheet.createRow(rowCount++); cellCount = 0;
 		
-		String[] strings = new String[]{"Fecha", "Descripci\u00f3n del negocio", "N\u00famero de acciones dadas en garant\u00ed­a"};
+		String[] strings = new String[]{"Fecha", "Descripci\u00f3n del negocio", "N\u00famero de acciones dadas en garant\u00eda"};
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		row.setHeight(x.shortValue());
@@ -1830,12 +1831,12 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 8));
 		
 		row = sheet.createRow(rowCount++); cellCount = 0;
-		idacell("Negocios que han implicado la asistencia finanaciera para la adquisicin de acciones propias salvo las excepciones legales (art\u00ed­culo 150 de la Ley de Sociedades de Capital).", 0, 8);
+		idacell("Negocios que han implicado la asistencia finanaciera para la adquisicin de acciones propias salvo las excepciones legales (art\u00edculo 150 de la Ley de Sociedades de Capital).", 0, 8);
 		Double x = (row.getHeight() * 2) / 1.5;
 		row.setHeight(x.shortValue());
 		row = sheet.createRow(rowCount++); cellCount = 0;
 		
-		String[] strings = new String[]{"Fecha", "Descripci\u00f3n del negocio", "N\u00famero de acciones dadas en garant\u00ed­a"};
+		String[] strings = new String[]{"Fecha", "Descripci\u00f3n del negocio", "N\u00famero de acciones dadas en garant\u00eda"};
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		row.setHeight(x.shortValue());
@@ -1882,7 +1883,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 9));
 		
 		row = sheet.createRow(rowCount++); cellCount = 0;
-		idacell("Supuestos de infracci\u00f3n de las normas sobre participaciones rec\u00ed­procas de capital (art\u00ed­culo 151 y siguiente de la Ley de Sociedades de Capital).", 0, 9);
+		idacell("Supuestos de infracci\u00f3n de las normas sobre participaciones rec\u00edprocas de capital (art\u00edculo 151 y siguiente de la Ley de Sociedades de Capital).", 0, 9);
 		Double x1 = (row.getHeight() * 2) / 1.5;
 		row.setHeight(x1.shortValue());
 		row = sheet.createRow(rowCount++); cellCount = 0;
@@ -1970,7 +1971,14 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		header(5);
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-		idacell("SOLICITUD DE PRESENTACI\u00d3N EN EL REGISTRO MERCANTIL DE " + getD2Deposit().getMap().get(D2DepositFooterKey.PR8081001.getCode()), 0, 7);
+		
+		String city = "";
+		for(Cities c : Cities.values()){
+			if(c.getId().equals(getD2Deposit().getMap().get(D2DepositFooterKey.PR8081001.getCode())))
+				city = c.getName();
+		}
+		
+		idacell("SOLICITUD DE PRESENTACI\u00d3N EN EL REGISTRO MERCANTIL DE " + city, 0, 7);
 		
 		row = sheet.createRow(rowCount++);
 		ssHeader("IDENTIFICACI\u00d3N DE LA ENTIDAD QUE PRESENTA LAS CUENTAS A DEP\u00d3SITO", 5);
@@ -2031,8 +2039,8 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-		String s = "-";
-		if(!isPymes()) s = TIC;
+
+		String s = !isPymes() ? TIC : "-" ;
 		idacell(s + " Abreviado", 0, 0);
 		idacell(s + " Abreviado", 1, 2);
 		idacell(s + " Abreviado", 3, 3);
@@ -2040,7 +2048,8 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-		if(isPymes()) s = TIC;
+		
+		s = isPymes() ? TIC : "-" ;
 		idacell(s + " PYME", 0, 0);
 		idacell(s + " PYME", 1, 2);
 		idacell(s + " PYME", 3, 3);
@@ -2056,7 +2065,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		idacell(getBoolText(a1) + " Hoja de Identificaci\u00f3n de la sociedad", 0, 1);
 		idacell(getBoolText(b1) + " Declaraci\u00f3n medioambiental", 2, 3);
 		idacell(getBoolText(c1) + " Informe de gestion", 4, 5);
-		idacell(getBoolText(d1) + " Informe de Auditor\u00ed­a", 6, 7);
+		idacell(getBoolText(d1) + " Informe de Auditor\u00eda", 6, 7);
 		
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
@@ -2072,12 +2081,14 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		idacell("- Otros Documentos", 0, 1);
-		idacell("Nº ", 2, 3);
+		idacell("NÂº ", 2, 3);
 	
-		row = sheet.createRow(rowCount++);
-		cellCount = 0;
-		idacell("Codigo ROAC del Auditor firmante ",0, 2);
-		idacell("",3, 4);
+		if(getD2Deposit().getYear() > 2014){
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+			idacell("Codigo ROAC del Auditor firmante ",0, 2);
+			idacell(getD2Deposit().getMap().get(D2DepositFooterKey.PR8081320.getCode()),3, 4);
+		}
 		
 		row = sheet.createRow(rowCount++);
 		ssHeader("IDENTIFICACI\u00d3N DEL PRESENTANTE QUE HACE LA SOLICITUD", 5);
@@ -2104,7 +2115,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		a1 = getD2Deposit().getMap().get(D2DepositFooterKey.PR8081204.getCode());
 		String province = "";
 		for(Provinces p : Provinces.values()){
-			if(p.getId().equals(getD2Deposit().getMap().get(D2DepositHeaderKey.IDA01025.getCode())))
+			if(p.getId().equals(getD2Deposit().getMap().get(D2DepositFooterKey.PR8081206.getCode())))
 				province = p.getName();
 		}
 		idacell("Ciudad", 0, 1);
@@ -2184,8 +2195,8 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		if(desc.contains("@")){
 			Integer pos = desc.indexOf("@");
 			return desc.substring(0, pos) + getD2Deposit().getYear() + desc.substring(pos+1);
-		} else if(desc.contains("¬")){
-			Integer pos = desc.indexOf("¬");
+		} else if(desc.contains("Â¬")){
+			Integer pos = desc.indexOf("Â¬");
 			return desc.substring(0, pos) + (getD2Deposit().getYear()-2) + desc.substring(pos+1);
 		} else if(desc.contains("#")){
 			Integer pos = desc.indexOf("#");

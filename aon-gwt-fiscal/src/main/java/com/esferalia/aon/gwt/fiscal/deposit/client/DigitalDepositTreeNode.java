@@ -404,7 +404,7 @@ public class DigitalDepositTreeNode extends TreeNode<D2DepositTreeObject> {
 			@Override
 			public void select(Deposit fiscalPanel) {
 				normalizedMemory.paintHeaderTable("Cuentas Anuales", ddtn.getD2Deposit2014().getMap().get(D2DepositConstants.DEPOSIT_TYPE), d2Deposit2014.getYear().toString());
-				PageF2 pf2 = new PageF2(d2Deposit2014.getEnterprise(), normalizedMemory);
+				PageF2 pf2 = new PageF2(d2Deposit2014.getEnterprise(), normalizedMemory, d2Deposit2014.getYear());
 				normalizedMemory.setPagesPanel(pf2);
     			fiscalPanel.setContent(normalizedMemory);	
 			}
