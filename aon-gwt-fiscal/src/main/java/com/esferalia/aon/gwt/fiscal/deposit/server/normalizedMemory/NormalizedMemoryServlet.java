@@ -507,22 +507,19 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		String domainName = AonServletUtils.getRequestDomainName(request);
 		Enterprise enterprise = AON.getEnterprise(domainName, domainId, this.getUserLogin(), id);
 		
-		Esquema previousSchema = getSchema(domainId, year-1);
-		
-		Map<D2DepositHeaderKey, Double> mapPrevious = getHeaderKeySchema(previousSchema);
-		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-		D2PrevioustoD2Current.fillBalance(ctx, mapPrevious);
-		D2PrevioustoD2Current.fillPyg(ctx, mapPrevious);
-		
-		Map<D2DepositKey, Double> mapPreviousMem = getKeySchema(previousSchema);
-		System.out.println(mapPreviousMem.get(D2DepositKey.MA391003));
-		System.out.println(mapPreviousMem.get(D2DepositKey.MA3910039));
-		System.out.println(mapPreviousMem.get(D2DepositKey.MA391012));
-		System.out.println(mapPreviousMem.get(D2DepositKey.MA3910129));
+		Map<D2DepositKey,String> mapFreeText = new HashMap<D2DepositKey, String>();
 		Map<D2DepositKey, Double> ctxMem = new LinkedHashMap<D2DepositKey, Double>();
-		D2PrevioustoD2Current.fill2(ctxMem, mapPreviousMem);
+		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
 		
-		Map<D2DepositKey,String> mapFreeText = getFreeTextKeySchema(previousSchema);
+		if(isDigitalDeposit(domainId, year-1)){
+			Esquema previousSchema = getSchema(domainId, year-1);
+			Map<D2DepositHeaderKey, Double> mapPrevious = getHeaderKeySchema(previousSchema);
+			D2PrevioustoD2Current.fillBalance(ctx, mapPrevious);
+			D2PrevioustoD2Current.fillPyg(ctx, mapPrevious);
+			Map<D2DepositKey, Double> mapPreviousMem = getKeySchema(previousSchema);
+			D2PrevioustoD2Current.fill2(ctxMem, mapPreviousMem);
+			mapFreeText = getFreeTextKeySchema(previousSchema);
+		}
 		
 		byte[] b = Utils.CreateXml(ctx, ctxMem, mapFreeText, enterprise, name, type, domainName, year);
 		
