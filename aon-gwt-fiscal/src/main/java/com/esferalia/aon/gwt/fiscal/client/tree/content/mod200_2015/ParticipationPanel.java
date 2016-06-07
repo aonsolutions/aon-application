@@ -50,6 +50,8 @@ public class ParticipationPanel extends CustomDialog {
 	DoubleBox cValue;
 	@UiField
 	DoubleBox dValue;
+	@UiField
+	DoubleBox eValue;
 	
 	@UiField
 	DoubleBox capital;
@@ -101,8 +103,9 @@ public class ParticipationPanel extends CustomDialog {
 		this.incomes.setValue(companyParticipation.getIncomes());
 		this.aValue.setValue(companyParticipation.getaValue());
 		this.bValue.setValue(companyParticipation.getbValue());
-		this.cValue.setValue(companyParticipation.getcValue());
-		this.dValue.setValue(companyParticipation.getdValue());
+		this.cValue.setValue(companyParticipation.getccValue());
+		this.dValue.setValue(companyParticipation.getcValue());
+		this.eValue.setValue(companyParticipation.getdValue());
 		this.capital.setValue(companyParticipation.getCapital());
 		this.reserve.setValue(companyParticipation.getReserve());
 		this.otherAmounts.setValue(companyParticipation.getOtherAmounts());
@@ -125,8 +128,9 @@ public class ParticipationPanel extends CustomDialog {
 		companyParticipation.setIncomes(this.incomes.getValue());
 		companyParticipation.setaValue(this.aValue.getValue());
 		companyParticipation.setbValue(this.bValue.getValue());
-		companyParticipation.setcValue(this.cValue.getValue());
-		companyParticipation.setdValue(this.dValue.getValue());
+		companyParticipation.setccValue(this.cValue.getValue());
+		companyParticipation.setcValue(this.dValue.getValue());
+		companyParticipation.setdValue(this.eValue.getValue());
 		companyParticipation.setCapital(this.capital.getValue());
 		companyParticipation.setReserve(this.reserve.getValue());
 		companyParticipation.setOtherAmounts(this.otherAmounts.getValue());

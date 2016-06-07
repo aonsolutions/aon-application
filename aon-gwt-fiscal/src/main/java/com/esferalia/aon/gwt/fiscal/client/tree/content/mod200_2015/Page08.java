@@ -107,6 +107,13 @@ public class Page08 extends PageAbs {
 		paintKeyField(table, Mod2002015Key.LQ501, row, 2);
 		++row;
 		
+		paintKeyDescription(table, Mod2002015Key.LQ1230, row, 0);
+		paintKeyField(table, Mod2002015Key.LQ1230, row, 1);
+		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonWidth150());
+		paintKeyField(table, Mod2002015Key.LQ1231, row, 2);
+		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonWidth150());
+		++row;
+
 		paintEmptyCell(table, row, 0);
 		paintEmptyCell(table, row, 1);
 		paintEmptyCell(table, row, 2);

@@ -72,7 +72,8 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.C0043,"Obligaci\u00F3n informacion art.16 RIS importe CN>=45 mill. euros");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0069,"Obligaci\u00F3n informacion art.16 RIS importe CN<45 mill. euros");		
 		DESCRIPTION_MAP.put(Mod2002015Key.C0045,"Inversiones anticipadas-reserva inversiones en Canarias (art. 27.11 Ley 19/1994)");		 
-		DESCRIPTION_MAP.put(Mod2002015Key.C0063,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002015Key.C0063,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n (DT 22a LIS)");
+		DESCRIPTION_MAP.put(Mod2002015Key.C0071,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n (art. 29.1 LIS)");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0059,"Opci\u00F3n art. 39.2 LIS");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0065,"Bonificaci\u00F3n personal investigador (R.D. 475/2014)");
 		
@@ -261,8 +262,12 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.PG258,"Variaci\u00F3n de existencias de productos terminados y en curso de fabricaci\u00F3n (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002015Key.PG259,"Trabajos realizados por la empresa para su activo (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002015Key.PG260,"Aprovisionamientos (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002015Key.PG261,"Consumo de mercader\u00EDas (N)");
-		DESCRIPTION_MAP.put(Mod2002015Key.PG262,"Consumo de materias primas y otras materias consumibles (N)");
+		DESCRIPTION_MAP.put(Mod2002015Key.PG261,"Consumo de mercader\u00EDas (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002015Key.PG760,"Compras de mercader\u00EDas (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002015Key.PG761,"Variaci\u00F3n de existencias (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002015Key.PG262,"Consumo de materias primas y otras materias consumibles (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002015Key.PG762,"Compras de materias primas y otras materias consumibles (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002015Key.PG763,"Variaci\u00F3n de materias primas y otras materias consumibles (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002015Key.PG263,"Trabajos realizados por otras empresas (N)");
 		DESCRIPTION_MAP.put(Mod2002015Key.PG264,"Deterioro de mercader\u00EDas, materias primas y otros aprovisionamientos (N)");
 		DESCRIPTION_MAP.put(Mod2002015Key.PG265,"Otros ingresos de explotaci\u00F3n (N, A, P)");
@@ -366,8 +371,8 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ301,"Correcciones por Impuesto sobre Sociedades. Aumentos.");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ302,"Correcciones por Impuesto sobre Sociedades. Disminuciones.");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ501,"Resultado de la cuenta de p\u00E9rdidas y ganancias antes de Impuesto sobre Sociedades");
-		DESCRIPTION_MAP.put(Mod2002015Key.LQ1230,"Correcciones al resultado contable al considerar los requisitos o calificaciones contables referidos al grupo fiscal. Aumentos");
-		DESCRIPTION_MAP.put(Mod2002015Key.LQ1231,"Correcciones al resultado contable al considerar los requisitos o calificaciones contables referidos al grupo fiscal. Disminuciones");
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ1230,"Correcciones al resultado contable al considerar los requisitos o calificaciones contables referidos al grupo fiscal");
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ1231,"Correcciones al resultado contable al considerar los requisitos o calificaciones contables referidos al grupo fiscal");
 		DESCRIPTION_MAP.put(Mod2002015Key.I0417,"Total correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias");
 		DESCRIPTION_MAP.put(Mod2002015Key.D0418,"Total correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias");
 	}

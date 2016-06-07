@@ -1411,12 +1411,24 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("b) Reversi\u00F3n de p\u00E9rdidas por deterioro de valores (D.T. 41a LIS)")
 	String partMsg10();
+	
+	@DefaultMessage("b) Reversi\u00F3n de p\u00E9rdidas por deterioro de valores (D.T. 16a LIS)")
+	String partMsg101();
 
 	@DefaultMessage("c) Efecto de la correcci\u00F3n valorativa en la BI del ejercicio")
 	String partMsg11();
+	
+	@DefaultMessage("c) Eliminaci\u00F3n del deterioro contable incluido en P y G (art. 13.2b) LIS)")
+	String partMsg111();
 
 	@DefaultMessage("d) Saldo de correcciones fiscales (art. 12.3 LIS) pendientes a fin de ejercicio")
 	String partMsg12();
+	
+	@DefaultMessage("d) Efecto de la correcci\u00F3n valorativa en la BI del ejercicio")
+	String partMsg121();
+	
+	@DefaultMessage("e) Saldo de correcciones fiscales (art. 12.3 RDL 4/2004) pendientes a fin de ejercicio")
+	String partMsg122();
 
 	@DefaultMessage("Datos adicionales de la participada:")
 	String partMsg13();

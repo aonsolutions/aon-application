@@ -1071,8 +1071,8 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0384)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0387)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0388)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I1024)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D1025)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I1024)
+//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D1025)
 			,(line,mod200, label) -> addEndLabel(line,label)
 		})
 			

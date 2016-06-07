@@ -110,7 +110,7 @@
 					</tr>
 					<tr>
 						<td class="{aonResources.css.aonFiscalBorderBottom}">
-							<g:Label text="{msg.partMsg10}"/>
+							<g:Label text="{msg.partMsg101}"/>
 						</td>
 						<td>
 							<aon:DoubleBox ui:field="bValue"
@@ -119,7 +119,7 @@
 					</tr>
 					<tr>
 						<td class="{aonResources.css.aonFiscalBorderBottom}">
-							<g:Label text="{msg.partMsg11}"/>
+							<g:Label text="{msg.partMsg111}"/>
 						</td>
 						<td>
 							<aon:DoubleBox ui:field="cValue"
@@ -128,10 +128,19 @@
 					</tr>
 					<tr>
 						<td class="{aonResources.css.aonFiscalBorderBottom}">
-							<g:Label text="{msg.partMsg12}"/>
+							<g:Label text="{msg.partMsg121}"/>
 						</td>
 						<td>
 							<aon:DoubleBox ui:field="dValue"
+								styleName="{aonResources.css.aonInputText}"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="{aonResources.css.aonFiscalBorderBottom}">
+							<g:Label text="{msg.partMsg122}"/>
+						</td>
+						<td>
+							<aon:DoubleBox ui:field="eValue"
 								styleName="{aonResources.css.aonInputText}"/>
 						</td>
 					</tr>
