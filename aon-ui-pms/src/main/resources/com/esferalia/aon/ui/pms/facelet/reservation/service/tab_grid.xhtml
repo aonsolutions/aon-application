@@ -92,17 +92,15 @@
 					rendered="#{to.showServiceDetail}" 
 					actionListener="#{controller.onHideServiceDetails}"
 					reRender="#{dataTableId}" />
-				<aon:if test="#{!to.extra}">
-					<aon:commandButton id="showServicePrices"
-						value="&#160;" styleClass="aon-icon-tariff aon-noborder aon-padding-left"
-						title="#{bundle.admin_product_price_change}"
-						rendered="#{reservation.reservationPermission.reservationServicePricesEditable}"
-						actionListener="#{controller.onShowServicePrices}"
-						reRender="showServicePricesWindow">
-						<f:setPropertyActionListener target="#{controller.showServicePricesWindow}"
-							value="#{true}" />
-					</aon:commandButton>
-				</aon:if>
+				<aon:commandButton id="showServicePrices"
+					value="&#160;" styleClass="aon-icon-tariff aon-noborder aon-padding-left"
+					title="#{bundle.admin_product_price_change}"
+					rendered="#{!to.extra and reservation.reservationPermission.reservationServicePricesEditable}"
+					actionListener="#{controller.onShowServicePrices}"
+					reRender="showServicePricesWindow">
+					<f:setPropertyActionListener target="#{controller.showServicePricesWindow}"
+						value="#{true}" />
+				</aon:commandButton>
 				<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
 					<ui:param name="auditableTO" value="#{to}" />
 				</ui:include>
