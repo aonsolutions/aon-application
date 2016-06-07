@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_D
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.payroll.calculator.jooq.JooqCommon.getDefaultSettings;
@@ -43,6 +44,7 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.jooq.tables.AgreementExtra;
 import com.esferalia.aon.jooq.tables.Contract;
+import com.esferalia.aon.jooq.tables.EnterpriseData;
 import com.esferalia.aon.jooq.tables.records.AgreementDataRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -530,13 +532,20 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 					.set(AGREEMENT_PAYMENT.AGREEMENT, -(agreement.getId()))
 					.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId()))
 					.execute();
-
 			dslContext
 					.update(PAYROLL_WORKPLACE)
-					.set(PAYROLL_WORKPLACE.ID, PAYROLL_WORKPLACE.ID.mul(-1))
+					.set(PAYROLL_WORKPLACE.ID, PAYROLL_WORKPLACE.ID.mul(-1)) // ????
 					.set(PAYROLL_WORKPLACE.AGREEMENT,
 							PAYROLL_WORKPLACE.AGREEMENT.mul(-1))
 					.where(PAYROLL_WORKPLACE.AGREEMENT.eq(agreement.getId()))
+					.execute();
+
+			dslContext
+					.update(ENTERPRISE_DATA)
+					.set(ENTERPRISE_DATA.EXPRESSION,
+							ENTERPRISE_DATA.EXPRESSION.mul(-1))
+					.where(ENTERPRISE_DATA.NAME.eq(AGREEMENT.getName()))
+					.and(ENTERPRISE_DATA.EXPRESSION.eq(Integer.toString(agreement.getId())))
 					.execute();
 
 			// @formatter:on
