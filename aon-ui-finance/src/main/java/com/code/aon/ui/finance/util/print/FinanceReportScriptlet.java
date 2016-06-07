@@ -53,4 +53,8 @@ public class FinanceReportScriptlet extends JRDefaultScriptlet implements Serial
 		return null;
 	}
 	
+	public String convertAmountToText(Double amount) {
+		return FinancePrintUtil.numberToText(amount);
+	}
+	
 }
