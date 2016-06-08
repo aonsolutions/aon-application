@@ -7,26 +7,34 @@ import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER
 import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Result;
+import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
+import com.esferalia.aon.occam.api.model.Properties.StockProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
+import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
@@ -35,6 +43,8 @@ public class WarehouseDAO {
 	
 	private static final WarehousePropertiesDAO WAREHOUSE_PROPERTIES = new WarehousePropertiesDAO();
 	private static final DepartmentPropertiesDAO DEPARTMENT_PROPERTIES = new DepartmentPropertiesDAO();
+	private static final StockPropertiesDAO STOCK_PROPERTIES = new StockPropertiesDAO();
+	
 	
 	protected static class WarehousePropertiesDAO implements WarehouseProperties {
 		protected Condition[] getConditions(WarehouseFilter filter) {
@@ -67,6 +77,50 @@ public class WarehouseDAO {
 				.where(WAREHOUSE_PROPERTIES.getConditions(filter))
 				.fetchInto(WAREHOUSE).stream().map(new FullWarehouseFiller())
 				.findFirst().orElse(null);
+	}
+	
+	public static Integer insertWarehouseTransfer(AONContext ctx, WarehouseTransfer warehouseTransfer){
+		return ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER)
+				.set(WAREHOUSE_TRANSFER.COMMENTS, warehouseTransfer.getComments())
+				.set(WAREHOUSE_TRANSFER.DOMAIN, warehouseTransfer.getDomain())
+				.set(WAREHOUSE_TRANSFER.CREATION_DATE, new Timestamp(warehouseTransfer.getCreationDate().getTime()))
+				.set(WAREHOUSE_TRANSFER.CREATION_USER, warehouseTransfer.getCreationUser())
+				.set(WAREHOUSE_TRANSFER.INVENTORY, warehouseTransfer.getInventory() != null ? warehouseTransfer.getInventory().getId(): null)
+				.set(WAREHOUSE_TRANSFER.MODIFICATION_DATE,new Timestamp(warehouseTransfer.getModificationDate().getTime()))
+				.set(WAREHOUSE_TRANSFER.MODIFICATION_USER, warehouseTransfer.getModificationUser())
+				.set(WAREHOUSE_TRANSFER.ISSUE_TIME, new Timestamp(warehouseTransfer.getIssueTime().getTime()))
+				.set(WAREHOUSE_TRANSFER.NUMBER, warehouseTransfer.getNumber())
+				.set(WAREHOUSE_TRANSFER.SOURCE, warehouseTransfer.getSource())
+				.set(WAREHOUSE_TRANSFER.SOURCE_ID, warehouseTransfer.getSourceId())
+				.set(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, warehouseTransfer.getSourceWarehouse())
+				.set(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE, warehouseTransfer.getTargetWarehouse())
+				.returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
+	}
+	
+	public static Integer insertWarehouseTransferDetail(AONContext ctx, WarehouseTransferDetail warehouseTransferDetail){
+		return ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL)
+				.set(WAREHOUSE_TRANSFER_DETAIL.DOMAIN, warehouseTransferDetail.getDomain())
+				.set(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, warehouseTransferDetail.getWarehouseTransfer().getId())
+				.set(WAREHOUSE_TRANSFER_DETAIL.ITEM, warehouseTransferDetail.getItem().getId())
+				.set(WAREHOUSE_TRANSFER_DETAIL.QUANTITY, warehouseTransferDetail.getQuantity())
+				.set(WAREHOUSE_TRANSFER_DETAIL.CREATION_DATE, new Timestamp(warehouseTransferDetail.getCreationDate().getTime()))
+				.set(WAREHOUSE_TRANSFER_DETAIL.CREATION_USER, warehouseTransferDetail.getCreationUser())
+				.set(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_DATE, new Timestamp(warehouseTransferDetail.getModificationDate().getTime()))
+				.set(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_USER, warehouseTransferDetail.getModificationUser())
+				.returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
+	}
+	
+	protected static class StockPropertiesDAO implements StockProperties {
+		protected Condition[] getConditions(StockFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(STOCK.ID);} 
+		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(STOCK.WAREHOUSE);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(STOCK.DOMAIN);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(STOCK.ITEM);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(STOCK.QUANTITY);}
 	}
 	
 	public static void deleteWarehouseTransfer(AONContext ctx, Integer inventoryId){
@@ -156,6 +210,27 @@ public class WarehouseDAO {
 		return list;
 	}
 	
+	
+	public static LinkedList<Stock> getStockList(AONContext ctx, StockFilter filter){
+		return ctx.getDslContext().select().from(STOCK).where(STOCK_PROPERTIES.getConditions(filter))
+		.fetchInto(STOCK).stream().map(new FullStockFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Stream<Stock> getStockStream(AONContext ctx, StockFilter filter){
+		return ctx.getDslContext().select().from(STOCK).where(STOCK_PROPERTIES.getConditions(filter))
+		.fetchInto(STOCK).stream().map(new FullStockFiller());
+	}
+	
+	
+	public static Integer getWarehouseTransferNextNumber(AONContext ctx, String serie) {
+		Result<Record1<Integer>> result = null;
+		if(serie != null) result = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER)).from(WAREHOUSE_TRANSFER)
+			.where(WAREHOUSE_TRANSFER.SERIES.eq("serie")).fetch();
+		else if(result == null) result = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER)).from(WAREHOUSE_TRANSFER)
+			.where(WAREHOUSE_TRANSFER.SERIES.isNull()).fetch();
+		return result.isEmpty() ? 0 : result.get(0).value1()+1;
+	}
+	
 	private static class FullWarehouseFiller implements Function<WarehouseRecord, Warehouse> {
 		@Override
 		public Warehouse apply(WarehouseRecord r) {
@@ -209,5 +284,17 @@ public class WarehouseDAO {
 					.setWarehouseTransfer(new WarehouseTransfer().setId(r.getWarehouseTransfer()));
 		}
 
+	}
+	
+	private static class FullStockFiller implements Function<StockRecord, Stock> {
+		@Override
+		public Stock apply(StockRecord r) {
+			return new Stock()
+					.setDomain(r.getDomain())
+					.setId(r.getId())
+					.setItem(r.getItem())
+					.setQuantity(r.getQuantity())
+					.setWarehouse(r.getWarehouse());
+		}
 	}
 }

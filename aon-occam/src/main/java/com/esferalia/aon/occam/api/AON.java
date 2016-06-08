@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
+import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
@@ -85,7 +86,10 @@ import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
+import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
+import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
 import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CommercialImpl;
@@ -1901,12 +1905,71 @@ public class AON {
 	// ******************************* Warehouse **
 	// ********************************************
 
+	public static LinkedList<Stock> getStockList(String domainName, Integer domainId, String login, 
+			StockFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getStockList(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<Stock> getStockStream(String domainName, Integer domainId, String login, 
+			StockFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getStockStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Integer getWarehouseTransferNextNumber(String domainName, Integer domainId, String login, String serie){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getWarehouseTransferNextNumber(ctx, serie);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static void deleteWarehouseTransfer(String domainName,
 			Integer domainId, String login, Integer inventoryId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getWarehouse().deleteWarehouseTransfer(ctx, inventoryId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Integer insertWarehouseTransfer(String domainName, Integer domainId, String login,
+			WarehouseTransfer warehouseTransfer){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().insertWarehouseTransfer(ctx, warehouseTransfer);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Integer insertWarehouseTransferDetail(String domainName, Integer domainId, String login,
+			WarehouseTransferDetail warehouseTransferDetail){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().insertWarehouseTransferDetail(ctx, warehouseTransferDetail);
 		} finally {
 			if (ctx != null)
 				ctx.close();

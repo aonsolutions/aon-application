@@ -124,6 +124,35 @@ public class InventoryController extends BasicController implements IAuditableCo
 		super.onReset(event);
 	}
 	
+	private void createWarehouseTransfer(String domainName, Integer domainId, String user, Integer warehouseId) {
+		Integer number = AON.getWarehouseTransferNextNumber(domainName, domainId, user, null);
+		com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer wt = new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer()
+			.setDomain(domainId)
+			.setNumber(number)
+			.setIssueTime(new Date())
+			.setComments("")
+			.setSourceWarehouse(warehouse.getId())
+			.setSource((byte)0)
+			.setSourceId(0)
+			.setCreationUser("system")
+			.setCreationDate(new Date())
+			.setModificationDate(new Date())
+			.setModificationUser("system");
+		wt.setId(AON.insertWarehouseTransfer(domainName, domainId, user, wt));
+		AON.getStockStream(domainName, domainId, user, f -> f.getWarehouseProperty().eq(warehouse.getId())).forEach(s ->{
+			com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail wtd = new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail()
+					.setCreationDate(new Date())
+					.setCreationUser("system")
+					.setDomain(DomainManager.getCurrentDomain())
+					.setItem(new com.esferalia.aon.occam.api.model.product.Item().setId(s.getItem()))
+					.setModificationDate(new Date())
+					.setModificationUser("system")
+					.setQuantity(s.getQuantity())
+					.setWarehouseTransfer(wt);
+			AON.insertWarehouseTransferDetail(domainName, domainId, user, wtd);
+		});
+	}
+	
 	private void closeInventary() throws Exception{
 		HibernateUtil.setCloseSession(false);
 		HibernateUtil.setBeginTransaction(false);
@@ -136,6 +165,11 @@ public class InventoryController extends BasicController implements IAuditableCo
 
 	        Session session = HibernateUtil.getSession(sessionName);
 			if (initStock){
+				String domainName = AonUtil.getDomainName();
+				Integer domainId = DomainManager.getCurrentDomain();
+				String user = AonUtil.getRemoteUser();
+				createWarehouseTransfer(domainName, domainId, user, warehouse.getId());
+
 				Criteria c = new Criteria();
 				c.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID), warehouse.getId());
 				Iterator<?> initStockListIter = stockBean.getList(c).iterator();

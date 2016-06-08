@@ -317,4 +317,12 @@ public interface Properties {
 		Property<Byte> getTechnicalProperty();
 		Property<Integer> getRaddressProperty();
 	}
+	
+	public interface StockProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getItemProperty();
+		Property<Double> getQuantityProperty();
+		Property<Integer> getWarehouseProperty();
+	}
 }

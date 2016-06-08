@@ -2,10 +2,12 @@ package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IWarehouse;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
@@ -13,7 +15,10 @@ import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
+import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
+import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.IncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InventoryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SeriesDAO;
@@ -84,6 +89,18 @@ public class WarehouseImpl implements IWarehouse {
 	}
 	
 	@Override
+	public Integer insertWarehouseTransfer(AONContext ctx, WarehouseTransfer warehouseTransfer) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			WarehouseDAO.insertWarehouseTransfer(ctx, warehouseTransfer));		
+	}
+	
+	@Override
+	public Integer insertWarehouseTransferDetail(AONContext ctx, WarehouseTransferDetail warehouseTransferDetail) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			WarehouseDAO.insertWarehouseTransferDetail(ctx, warehouseTransferDetail));		
+	}
+	
+	@Override
 	public void deleteWarehouseTransfer(AONContext ctx, Integer inventoryId) {
 		ctx.getDslContext().transaction(configuration -> 
 			WarehouseDAO.deleteWarehouseTransfer(ctx, inventoryId));		
@@ -124,4 +141,24 @@ public class WarehouseImpl implements IWarehouse {
 		return ctx.getDslContext().transactionResult(configuration ->
 				SeriesDAO.getSeriesDeliveryList(ctx, scopeId));
 	}
+	
+	@Override
+	public LinkedList<Stock> getStockList(AONContext ctx, StockFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+			WarehouseDAO.getStockList(ctx, filter));
+	}
+	
+	@Override
+	public Stream<Stock> getStockStream(AONContext ctx, StockFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+			WarehouseDAO.getStockStream(ctx, filter));
+	}
+
+
+	@Override
+	public Integer getWarehouseTransferNextNumber(AONContext ctx, String serie) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			WarehouseDAO.getWarehouseTransferNextNumber(ctx, serie));
+	}
+	
 }

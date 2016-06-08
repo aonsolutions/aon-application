@@ -2,8 +2,10 @@ package com.esferalia.aon.occam.api;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
@@ -11,7 +13,10 @@ import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
+import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
+import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 
 public interface IWarehouse {
 	
@@ -54,7 +59,12 @@ public interface IWarehouse {
 	// 	************************ WAREHOUSE TRANSFER ***
 	// 	***********************************************
 	
+	Integer insertWarehouseTransfer(AONContext ctx, WarehouseTransfer warehouseTransfer);
+	Integer insertWarehouseTransferDetail(AONContext ctx, WarehouseTransferDetail warehouseTransferDetail);
+
 	void deleteWarehouseTransfer(AONContext ctx, Integer inventoryId);
+	
+	Integer getWarehouseTransferNextNumber(AONContext ctx, String serie);
 	
 	// 	***********************************************
 	// 	******************************** DEPARTMENT ***
@@ -68,4 +78,12 @@ public interface IWarehouse {
 	// 	***********************************************
 	
 	LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId);
+
+	// 	***********************************************
+	// 	************************************ STOCK ****
+	// 	***********************************************
+	
+	LinkedList<Stock> getStockList(AONContext ctx, StockFilter filter);
+	Stream<Stock> getStockStream(AONContext ctx, StockFilter filter);
+	
 }
