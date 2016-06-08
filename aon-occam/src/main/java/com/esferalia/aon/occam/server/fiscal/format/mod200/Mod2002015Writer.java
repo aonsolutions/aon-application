@@ -548,15 +548,11 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG259)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG260)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG261)
-			
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG760)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG761)
-			
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG760)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG761)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG262)
-
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG262)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG262)
-			
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG762)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG763)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG263)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG264)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.PG265)
@@ -1045,22 +1041,18 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0374)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0340)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0351)
-			
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0375)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0376)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I1320)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D1321)
-			
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0375)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0376)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I1320)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D1321)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0184)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0544)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I1022)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D1023)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I1018)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D1019)
-			
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I1275)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D1276)
-			
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I1275)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D1276)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0377)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0378)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0379)
@@ -1088,10 +1080,8 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0318)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0385)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0386)
-			
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0389)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0390)
-			
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0389)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0390)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0396)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0397) 
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0398) 
@@ -1131,9 +1121,7 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ552)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1033)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1034)
-			
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1330)
-			
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1330)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ553)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ554)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ555)
@@ -1148,16 +1136,12 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ560)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ210)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ480)
-			
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ408)
-			
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ408)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1037)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ561)
-			
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1285)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1286)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1331)
-			
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1285)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1286)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1331)
 			,(line,mod200, label) -> addEndLabel(line,label)
 		})
 

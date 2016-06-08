@@ -398,6 +398,7 @@ public class Mod2002015Description {
 		
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ1033,"Reserva de nivelaci\u00F3n (Aumentos)");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ1034,"Reserva de nivelaci\u00F3n (Disminuciones)");		
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ1330,"Base imponible despu\u00E9s de la reserva de nivelaci\u00F3n");
 		
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ553,"Resultados cooperativos");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ554,"Resultados extracooperativos");
@@ -418,10 +419,13 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ560,"Cuota \u00EDntegra previa");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ210,"P\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2) LIS a los que se refi ere el art. 11.12 LIS (convertida en cuota). Aumentos");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ480,"P\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2) LIS a los que se refi ere el art. 11.12 LIS (convertida en cuota). Disminuciones");
-		DESCRIPTION_MAP.put(Mod2002015Key.LQ1036,"Aplicaci\u00F3n del l\u00EDmite del art. 11.12 LIS a las p\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2 LIS). Aumentos");
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ408 ,"Aplicaci\u00F3n del l\u00EDmite del art. 11.12 LIS a las p\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2 LIS). Aumentos");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ1037,"Aplicaci\u00F3n del l\u00EDmite del art. 11.12 LIS a las p\u00E9rdidas por deterioro del art. 13.1 LIS y provisiones y gastos (art. 14.1 y 14.2 LIS). Disminuciones");
-		DESCRIPTION_MAP.put(Mod2002015Key.LQ561,"Compensaci\u00F3n de cuotas por p\u00E9rdidas de cooperativas");
-		DESCRIPTION_MAP.put(Mod2002015Key.LQ562,"Cuota \u00EDntegra");
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ561 ,"Compensaci\u00F3n de cuotas por p\u00E9rdidas de cooperativas");
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ1285,"Reserva de nivelaci\u00F3n convertido en cuotas (s\u00F3lo entidades del art. 101 LIS). Aumentos");	
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ1286,"Reserva de nivelaci\u00F3n convertido en cuotas (s\u00F3lo entidades del art. 101 LIS). Disminuciones");
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ1331,"Cuota \u00EDntegra previa despu\u00E9s de la reserva de nivelaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ562 ,"Cuota \u00EDntegra");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ1038,"Incremento por incumplimiento reserva de nivelaci\u00F3n (art. 105.6 LIS)");
 	}
 	
@@ -433,14 +437,13 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.BN576,"Bonificaciones entidades dedicadas al arrendamiento de viviendas (Cap\u00EDtulo III T\u00EDtulo VII LIS)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN569,"Otras bonificaciones");
 		
-		DESCRIPTION_MAP.put(Mod2002015Key.BN570,"D.I. interna de per\u00EDodos anteriores aplicada en el ejercicio (art. 30 RDL 4/2004)");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN572,"D.I. internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 RDL 4/2004)");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN571 ,"DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 LIS)");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN1265,"DI internacional de per\u00EDodos anteriores a su incorporaci\u00F3n al grupo (art. 31 y 32 LIS)");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN165 ,"DI jur\u00EDdica generada y aplicada en el ejercicio actual (art. 31 LIS)");   // Desglose en Mod2002015BN573Key
-		DESCRIPTION_MAP.put(Mod2002015Key.BN169 ,"DI econ\u00F3mica internacional generada y aplicada en el ejercicio actual (art. 32 LIS)"); // Desglose en Mod2002015BN573Key
-		DESCRIPTION_MAP.put(Mod2002015Key.BN575,"Transparencia fiscal internacional (art. 100.11 LIS)");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN577,"D.I. interna intersocietaria al 5/10% (cooperativas)");
+
+		DESCRIPTION_MAP.put(Mod2002015Key.BN570,"DI interna de per\u00EDodos anteriores aplicada en el ejercicio (art. 30 RDL 4/2004)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN572,"DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 RDL 4/2004)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN571,"DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 LIS)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN573,"DI internacional generada y aplicada en el ejercicio actual (arts. 31 y 32 LIS)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN575,"Transparencia fi scal internacional (art. 100.11 LIS)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN577,"DI interna intersocietaria al 5/10% (cooperativas)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN581,"Bonificaciones empresas navieras en Canarias (art. 76 Ley 19/1994)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN582,"Cuota \u00EDntegra ajustada positiva");
 		

@@ -15,7 +15,7 @@ public enum Mod2002015BN573Key implements Serializable, IMod200KeysProvider {
 
 	 C01(new Mod2002015Key[]{Mod2002015Key.BN163,Mod2002015Key.BN165,Mod2002015Key.BN166},"DI jur\u00EDdica: Imp. soportado por el contribuyente (art. 31 LIS)")
 	,C02(new Mod2002015Key[]{Mod2002015Key.BN167,Mod2002015Key.BN169,Mod2002015Key.BN170},"DI econ\u00F3mica: Dividendos y part. en beneficios (art. 32 LIS)")
-	,C03(new Mod2002015Key[]{Mod2002015Key.BN171,Mod2002015Key.BN573,Mod2002015Key.BN174},"Total 2015")
+	,C03(new Mod2002015Key[]{Mod2002015Key.BN171,null /*BN573*/		,Mod2002015Key.BN174},"Total 2015")
 	;
 	 
     private String description;
