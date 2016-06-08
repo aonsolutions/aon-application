@@ -20,6 +20,7 @@ import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
 import com.code.aon.common.annotations.Heritable;
 import com.code.aon.common.dao.hibernate.HibernateBlobManager;
+import com.code.aon.google.apis.DriveUtils;
 import com.esferalia.aon.entity.master.ItemAttachmentDB;
 
 @Entity
@@ -79,12 +80,15 @@ public class ItemAttachment extends ItemAttachmentDB implements IAttachment, Clo
 	@Override
 	@Transient
 	public Serializable getReference( String property ) {
-		return getId();
+		return (getDriveId()!=null) ? getDriveId() : getId();
 	}
 
 	@Override
 	@Transient
 	public IBlobManager getManager( BlobObjectAction action ) {
+		if ( getDriveId() != null ) {
+			return DriveUtils.getInstace();
+		}
 		return HibernateBlobManager.getInstance();
 	}
 

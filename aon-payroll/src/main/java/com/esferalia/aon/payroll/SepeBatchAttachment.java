@@ -23,6 +23,7 @@ import com.code.aon.common.IBlobManager;
 import com.code.aon.common.IBlobObject;
 import com.code.aon.common.dao.hibernate.HibernateBlobManager;
 import com.code.aon.config.IScopable;
+import com.code.aon.google.apis.DriveUtils;
 import com.esferalia.aon.entity.master.SepeBatchAttachmentDB;
 import com.esferalia.aon.payroll.enumeration.SepeBatchType;
 
@@ -87,12 +88,15 @@ public class SepeBatchAttachment extends SepeBatchAttachmentDB implements IAttac
 	@Override
 	@Transient
 	public Serializable getReference( String property ) {
-		return getId();
+		return (getDriveId()!=null) ? getDriveId() : getId();
 	}
 
 	@Override
 	@Transient
 	public IBlobManager getManager( BlobObjectAction action ) {
+		if ( getDriveId() != null ) {
+			return DriveUtils.getInstace();
+		}
 		return HibernateBlobManager.getInstance();
 	}
 
