@@ -1201,6 +1201,7 @@ public class ProductionReportController implements Serializable {
 		exportData(exporter, columnMetadata, "PAX-ROOMS", paxMap, false);
 		exportData(exporter, columnMetadata, null, roomMap, false);
 		exportData(exporter, columnMetadata, null, availableRoomMap, false);
+		exportData(exporter, columnMetadata, null, roomOcupationMap, false);
 
 		exporter.startLine();
 		exporter.endLine();
