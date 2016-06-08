@@ -1,11 +1,5 @@
 package com.esferalia.aon.occam.api.model.attachment;
 
-
-import java.util.Locale;
-import java.util.ResourceBundle;
-
-
-
 public enum RegistryAttachmentType {
 
 	LOGO,

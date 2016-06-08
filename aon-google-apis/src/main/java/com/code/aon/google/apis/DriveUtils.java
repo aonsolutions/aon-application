@@ -1341,7 +1341,7 @@ public class DriveUtils implements IBlobManager {
 		String driveId = (String) blobObject.getReference(property);
 		if (driveId != null) {
 			User user = new User().setLogin(AonUtil.getRemoteUser());
-			return getByteFile(domain, user, driveId, null);
+			return getByteFile(domain, user, driveId, blobObject.getId());
 		}
 		return null;
 	}
