@@ -29,26 +29,30 @@ public class FinanceReportScriptlet extends JRDefaultScriptlet implements Serial
 	
 	
 	public Integer getInvoiceFinanceOrder() throws JRScriptletException{
+		Integer financeId = (Integer)super.getFieldValue(FIELD_ID);
+		Invoice invoice = (Invoice) super.getFieldValue(FIELD_INVOICE);
+		return getInvoiceFinancesCount(invoice.getId(), financeId);
+	}
+	
+	public Integer getInvoiceFinancesCount() throws JRScriptletException{
+		Invoice invoice = (Invoice) super.getFieldValue(FIELD_INVOICE);
+		return getInvoiceFinancesCount(invoice.getId(), null);
+	}
+	
+	private Integer getInvoiceFinancesCount(Integer invoiceId, Integer financeMaxId) {
 		try {
-			Invoice invoice = (Invoice) super.getFieldValue(FIELD_INVOICE);
-			if(invoice!=null && invoice.getId()!=null){
+			if(invoiceId!=null){
 				IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
-				criteria.addLessThanOrEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_ID), (Integer)super.getFieldValue(FIELD_ID));
+				criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoiceId);
+				if(financeMaxId!=null){
+					criteria.addLessThanOrEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_ID), financeMaxId);
+				}
 				return financeBean.getCount(criteria);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "ERROR: imposible obtener los datos de la factura al generar su informe";
 			LOGGER.error(msg,e);
-		}
-		return null;
-	}
-	
-	public Integer getInvoiceFinancesCount() throws JRScriptletException{
-		Invoice invoice = (Invoice) super.getFieldValue(FIELD_INVOICE);
-		if(invoice!=null && invoice.getId()!=null){
-			return invoice.getFinances().size();
 		}
 		return null;
 	}
