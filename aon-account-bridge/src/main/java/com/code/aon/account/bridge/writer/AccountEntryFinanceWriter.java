@@ -2,12 +2,12 @@ package com.code.aon.account.bridge.writer;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryBankStatement;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
@@ -18,7 +18,6 @@ import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -95,9 +94,8 @@ public class AccountEntryFinanceWriter implements Serializable {
 	        IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
 	        IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 	        IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-	        Iterator<ITransferObject> iterator = fBatch.getDetailList().iterator();
-	        while (iterator.hasNext()) {
-	            FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
+	        for (ITransferObject ito : fBatch.getDetailList()) {
+	            FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)ito;
 	            fBatchDetail.setStatus(FinanceStatus.PAID);
 	            fBatchDetailBean.update(fBatchDetail);
 
@@ -231,22 +229,22 @@ public class AccountEntryFinanceWriter implements Serializable {
 		IManagerBean accountEntryFinanceBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryFinanceBatchBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), fBatch.getId());
-		Iterator<ITransferObject> iterator = accountEntryFinanceBatchBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			AccountEntryFinanceBatch accountEntryFinanceBatch = (AccountEntryFinanceBatch)iterator.next();
-			accountEntryFinanceBatchBean.remove(accountEntryFinanceBatch);
+		for (ITransferObject ito : accountEntryFinanceBatchBean.getList(criteria)) {
+			AccountEntryFinanceBatch accountEntryFinanceBatch = (AccountEntryFinanceBatch)ito;
 			if (removeAccountEntry) {
 				getAccountingUtil().checkPeriod(accountEntryFinanceBatch.getAccountEntry());
+				accountEntryFinanceBatchBean.remove(accountEntryFinanceBatch);
 				removeAccountEntryDetails(accountEntryFinanceBatch.getAccountEntry());
 				removeAccountEntry(accountEntryFinanceBatch.getAccountEntry());
+			} else {
+				accountEntryFinanceBatchBean.remove(accountEntryFinanceBatch);
 			}
 		}
 
         IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
         IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-        iterator = fBatch.getDetailList().iterator();
-        while (iterator.hasNext()) {
-            FinanceBatchDetail fbatchDetail = (FinanceBatchDetail)iterator.next();
+        for (ITransferObject ito : fBatch.getDetailList()) {
+            FinanceBatchDetail fbatchDetail = (FinanceBatchDetail)ito;
             fbatchDetail.setStatus(FinanceStatus.BATCHED);
             fBatchDetailBean.update(fbatchDetail);
 
@@ -694,14 +692,15 @@ public class AccountEntryFinanceWriter implements Serializable {
 		IManagerBean accountEntryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryFinanceTrackingBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
-		Iterator<ITransferObject> iterator = accountEntryFinanceTrackingBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
-			accountEntryFinanceTrackingBean.remove(accountEntryFinanceTracking);
+		for (ITransferObject ito : accountEntryFinanceTrackingBean.getList(criteria)) {
+			AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)ito;
 			if (removeAccountEntry) {
 				getAccountingUtil().checkPeriod(accountEntryFinanceTracking.getAccountEntry());
+				accountEntryFinanceTrackingBean.remove(accountEntryFinanceTracking);
 				removeAccountEntryDetails(accountEntryFinanceTracking.getAccountEntry());
 				removeAccountEntry(accountEntryFinanceTracking.getAccountEntry());
+			} else {
+				accountEntryFinanceTrackingBean.remove(accountEntryFinanceTracking);
 			}
 		}
 	}
@@ -764,14 +763,15 @@ public class AccountEntryFinanceWriter implements Serializable {
 		IManagerBean accountEntryBankStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryBankStatementBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID), statement.getId());
-		Iterator<ITransferObject> iterator = accountEntryBankStatementBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			AccountEntryBankStatement accountEntryBankStatement= (AccountEntryBankStatement)iterator.next();
-			accountEntryBankStatementBean.remove(accountEntryBankStatement);
+		for (ITransferObject ito : accountEntryBankStatementBean.getList(criteria)) {
+			AccountEntryBankStatement accountEntryBankStatement= (AccountEntryBankStatement)ito;
 			if (removeAccountEntry) {
 				getAccountingUtil().checkPeriod(accountEntryBankStatement.getAccountEntry());
+				accountEntryBankStatementBean.remove(accountEntryBankStatement);
 				removeAccountEntryDetails(accountEntryBankStatement.getAccountEntry());
 				removeAccountEntry(accountEntryBankStatement.getAccountEntry());
+			} else {
+				accountEntryBankStatementBean.remove(accountEntryBankStatement);
 			}
 		}
 	}
@@ -830,9 +830,8 @@ public class AccountEntryFinanceWriter implements Serializable {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
-		Iterator<ITransferObject> iter = accountEntryDetailBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			AccountEntryDetail accEntryDetail = (AccountEntryDetail) iter.next();
+		for (ITransferObject ito : accountEntryDetailBean.getList(criteria)) {
+			AccountEntryDetail accEntryDetail = (AccountEntryDetail)ito;
 			accountEntryDetailBean.remove(accEntryDetail);
 		}
 	}
