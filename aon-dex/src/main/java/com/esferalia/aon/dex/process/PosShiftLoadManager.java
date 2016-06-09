@@ -88,8 +88,8 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 						updatePosShift();
 						PosShiftDeclared psDeclared = ps.getPosShiftDeclared();
 						if (psDeclared != null) {
+							removePosShiftCount();
 							for (PosShiftDeclaredDetail psDeclaredDetail : psDeclared.getPosShiftDeclaredDetail()) {
-								removePosShiftCount();
 								insertPosShiftCount(psDeclaredDetail, domain);
 							}
 						}
