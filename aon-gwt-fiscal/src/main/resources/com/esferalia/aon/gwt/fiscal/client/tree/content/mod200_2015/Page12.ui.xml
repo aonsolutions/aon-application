@@ -35,6 +35,14 @@
 						</div>
 					</div>
 					
+		 			<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="{msg.documentsElectronicSede}" />
+						</div>
+						<div class="{aonResources.css.aonGroupBody}">
+							<g:FlexTable ui:field="table2"/>
+						</div>
+					</div>
 				</div>
 			</div>
 		</g:HTMLPanel>

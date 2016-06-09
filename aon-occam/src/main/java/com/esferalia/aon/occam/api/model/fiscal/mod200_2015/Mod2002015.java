@@ -72,9 +72,10 @@ public class Mod2002015 implements IFiscalModel {
 
 	private String comments;
 
-	private String nrs;  			// Número de Referencia de Sociedades (NRS) de la documentación presentada (Ajustes y deducciones)
+	private String nrsAnexoIII;  	// Número de Referencia de Sociedades (NRS) de la documentación presentada (Ajustes y deducciones)
 	private String justCanarias; 	// Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Canarias
-	private String nrsAnexo;  		// Número de Referencia de Sociedades (NRS) de la documentación	presentada por el Anexo IV (Personal investigador)
+	private String nrsAnexoIV;  	// Número de Referencia de Sociedades (NRS) de la documentación	presentada por el Anexo IV (Personal investigador)
+	private String nrsAnexoV;  		// Número de Referencia de Sociedades (NRS) del documento normalizado presentada por el Anexo V
 	
 	private EnumMap<Mod2002015Key,DoubleVariable2015> keysMap = new EnumMap<Mod2002015Key,DoubleVariable2015>(Mod2002015Key.class);
 	private EnumMap<Mod2002015Key,DoubleVariable2015> draftMap = new EnumMap<Mod2002015Key,DoubleVariable2015>(Mod2002015Key.class);
@@ -422,11 +423,11 @@ public class Mod2002015 implements IFiscalModel {
 		this.dominantIdentificationNumber = dominantIdentificationNumber;
 	}
 	
-	public String getNrs() {
-		return nrs;
+	public String getNrsAnexoIII() {
+		return nrsAnexoIII;
 	}
-	public void setNrs(String nrs) {
-		this.nrs = nrs;
+	public void setNrsAnexoIII(String nrsAnexoIII) {
+		this.nrsAnexoIII = nrsAnexoIII;
 	}
 	public String getJustCanarias() {
 		return justCanarias;
@@ -434,11 +435,17 @@ public class Mod2002015 implements IFiscalModel {
 	public void setJustCanarias(String justCanarias) {
 		this.justCanarias = justCanarias;
 	}
-	public String getNrsAnexo() {
-		return nrsAnexo;
+	public String getNrsAnexoIV() {
+		return nrsAnexoIV;
 	}
-	public void setNrsAnexo(String nrsAnexo) {
-		this.nrsAnexo = nrsAnexo;
+	public void setNrsAnexoIV(String nrsAnexoIV) {
+		this.nrsAnexoIV = nrsAnexoIV;
+	}
+	public String getNrsAnexoV() {
+		return nrsAnexoV;
+	}
+	public void setNrsAnexoV(String nrsAnexoV) {
+		this.nrsAnexoV = nrsAnexoV;
 	}
 	
 }

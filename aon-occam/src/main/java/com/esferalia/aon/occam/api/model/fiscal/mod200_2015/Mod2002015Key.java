@@ -1086,6 +1086,8 @@ public enum Mod2002015Key implements IMod200Key {
 	,ID652(652)
 	,ID653(653)
 	,ID654(654)
+	,ID1270(1270)
+	,ID1271(1271)
 	,ID655(655)
 	,ID656(656)
 	,ID658(658)

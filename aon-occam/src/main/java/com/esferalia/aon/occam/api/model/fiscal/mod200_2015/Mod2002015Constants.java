@@ -196,6 +196,8 @@ public class Mod2002015Constants {
 
 	public static Mod2002015Key[] INCOME_DISTRIBUTION_KEYS_2 = new Mod2002015Key[] {
 		  Mod2002015Key.ID654
+		 ,Mod2002015Key.ID1270
+		 ,Mod2002015Key.ID1271
 		 ,Mod2002015Key.ID655
 		 ,Mod2002015Key.ID656
 		 ,Mod2002015Key.ID658
