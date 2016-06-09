@@ -213,14 +213,20 @@ public class InventoryManager implements IReservationConstants, ISQLConstants {
 			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
 			soapRequest.getSOAPBody().addDocument(obtainMessageDocument(message));
 			soapRequest.writeTo(System.out);
-			System.out.println(" " + RESERVATION_ROOM + ": " + reservationRoom.getId());
-			System.out.println(" / " + RESERVATION + ": " + reservationRoom.getProjectReservation().getId());
+			if (reservationRoom != null) {
+				System.out.print(" " + RESERVATION_ROOM + ": " + reservationRoom.getId());
+				System.out.print(" / " + RESERVATION + ": " + reservationRoom.getProjectReservation().getId());
+			}
+			System.out.println();
 
 			SOAPConnection soapConnection = SOAPConnectionFactory.newInstance().createConnection();
 			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
 			soapResponse.writeTo(System.out);
-			System.out.println(" " + RESERVATION_ROOM + ": " + reservationRoom.getId());
-			System.out.println(" / " + RESERVATION + ": " + reservationRoom.getProjectReservation().getId());
+			if (reservationRoom != null) {
+				System.out.print(" " + RESERVATION_ROOM + ": " + reservationRoom.getId());
+				System.out.print(" / " + RESERVATION + ": " + reservationRoom.getProjectReservation().getId());
+			}
+			System.out.println();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

@@ -21,12 +21,16 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Room;
+import com.esferalia.aon.pms.reservation.InventoryManager;
 
 public class RoomController extends BasicController {
 	
@@ -118,7 +122,12 @@ public class RoomController extends BasicController {
 	}
 
 	public void onRoomBlock(ActionEvent event) {
+		List<Item> roomItems = new LinkedList<Item>();
 		for (Room room : getCheckedRooms()) {
+			if (!roomItems.contains(room.getItem())) {
+				roomItems.add(room.getItem());
+			}
+
 			try {
 				List<Date> occupiedDates = new LinkedList<Date>();
 				IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
@@ -126,9 +135,9 @@ public class RoomController extends BasicController {
 				criteria.addEqualExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), room.getAsset().getId());
 				criteria.addGreaterThanOrEqualExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getBlockFromDate());
 				criteria.addLessThanOrEqualExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getBlockToDate());
-				for (ITransferObject ito : assetActivityBean.getList(criteria)) {
-					AssetActivity assetActivity = (AssetActivity)ito;
-					occupiedDates.add(assetActivity.getDate());
+				Projection prjDate = Projection.property(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE));
+				for (Object obj : assetActivityBean.getList(new ProjectionList(prjDate), criteria)) {
+					occupiedDates.add((Date)obj);
 				}
 
 				Date fromDate = getBlockFromDate();
@@ -143,7 +152,6 @@ public class RoomController extends BasicController {
 						assetActivity.setStatus(getBlockStatus());
 						assetActivityBean.insert(assetActivity);
 					}
-
 					fromDate = DateUtils.addDays(fromDate, 1);
 				}
 			} catch (ManagerBeanException ex) {
@@ -152,19 +160,38 @@ public class RoomController extends BasicController {
 				throw new AbortProcessingException(msg);
 			}
 		}
+
+		InventoryManager manager = new InventoryManager();
+		for (Item item : roomItems) {
+			manager.processInventoryQuery(null, getCheckedRooms().get(0).getHotel(), item, getBlockFromDate(), getBlockToDate());
+		}
 	}
 
 	public void onRoomUnblock(ActionEvent event) {
 		if (getCheckedCount() > 0) {
+			List<Integer> checkedRoomsIds = new LinkedList<Integer>();
+			List<Item> roomItems = new LinkedList<Item>();
+			for (Room room : getCheckedRooms()) {
+				checkedRoomsIds.add(room.getAsset().getId());
+				if (!roomItems.contains(room.getItem())) {
+					roomItems.add(room.getItem());
+				}
+			}
+
 			try {
 				IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
 				Criteria criteria = new Criteria();
-				criteria.addExpression(ExpressionUtilities.getInExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), getCheckedRoomsIds()));
+				criteria.addExpression(ExpressionUtilities.getInExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), checkedRoomsIds));
 				criteria.addGreaterThanOrEqualExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getBlockFromDate());
 				criteria.addLessThanOrEqualExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getBlockToDate());
 				criteria.addNotEqualExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.BUSY);
 				for (ITransferObject ito : assetActivityBean.getList(criteria)) {
 					assetActivityBean.remove((AssetActivity)ito);
+				}
+
+				InventoryManager manager = new InventoryManager();
+				for (Item item : roomItems) {
+					manager.processInventoryQuery(null, getCheckedRooms().get(0).getHotel(), item, getBlockFromDate(), getBlockToDate());
 				}
 			} catch (ManagerBeanException ex) {
 				String msg = "Error desbloqueando Habitaciones!";
@@ -172,14 +199,6 @@ public class RoomController extends BasicController {
 				throw new AbortProcessingException(msg);
 			}
 		}
-	}
-
-	private List<Integer> getCheckedRoomsIds() {
-		List<Integer> checkedRoomsIds = new LinkedList<Integer>();
-		for (Room room : getCheckedRooms()) {
-			checkedRoomsIds.add(room.getAsset().getId());
-		}
-		return checkedRoomsIds;
 	}
 
 
