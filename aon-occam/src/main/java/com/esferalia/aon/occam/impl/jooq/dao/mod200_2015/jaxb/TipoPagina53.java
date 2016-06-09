@@ -16,66 +16,60 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for tipo_Pagina07 complex type.
+ * <p>Java class for tipo_Pagina53 complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="tipo_Pagina07">
+ * &lt;complexType name="tipo_Pagina53">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="T00255" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00256" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00257" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00705" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00706" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00707" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00708" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00258" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00259" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00260" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00261" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00208" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00209" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00210" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00211" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00212" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00217" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00218" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00219" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00220" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00221" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00226" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00227" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00228" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00229" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00230" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00244" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00245" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00246" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00247" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00248" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00262" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00263" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00264" type="{}tipo_ImpNegativo" minOccurs="0"/>
+ *         &lt;element name="T00265" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00266" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00267" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00268" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00269" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00271" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00272" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00273" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00274" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00275" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00276" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00277" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00278" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00279" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00280" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00281" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00282" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00283" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00709" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00284" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00285" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00286" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00288" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00289" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00290" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00291" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00292" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00293" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00710" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00294" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00295" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00298" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00299" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00300" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00301" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *         &lt;element name="T00302" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00303" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00304" type="{}tipo_ImpNegativo" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -85,97 +79,105 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "tipo_Pagina07", propOrder = {
-    "t00255",
-    "t00256",
-    "t00257",
-    "t00705",
-    "t00706",
-    "t00707",
-    "t00708",
-    "t00258",
-    "t00259",
-    "t00260",
-    "t00261",
+@XmlType(name = "tipo_Pagina53", propOrder = {
+    "t00208",
+    "t00209",
+    "t00210",
+    "t00211",
+    "t00212",
+    "t00217",
+    "t00218",
+    "t00219",
+    "t00220",
+    "t00221",
+    "t00226",
+    "t00227",
+    "t00228",
+    "t00229",
+    "t00230",
+    "t00244",
+    "t00245",
+    "t00246",
+    "t00247",
+    "t00248",
     "t00262",
     "t00263",
     "t00264",
+    "t00265",
     "t00266",
-    "t00267",
-    "t00268",
-    "t00269",
     "t00271",
     "t00272",
     "t00273",
     "t00274",
     "t00275",
-    "t00276",
-    "t00277",
-    "t00278",
-    "t00279",
     "t00280",
     "t00281",
     "t00282",
     "t00283",
-    "t00709",
     "t00284",
-    "t00285",
-    "t00286",
-    "t00288",
     "t00289",
     "t00290",
     "t00291",
     "t00292",
     "t00293",
-    "t00710",
-    "t00294",
-    "t00295",
     "t00298",
     "t00299",
     "t00300",
     "t00301",
-    "t00302",
-    "t00303",
-    "t00304"
+    "t00302"
 })
-public class TipoPagina07 {
+public class TipoPagina53 {
 
-    @XmlElement(name = "T00255")
-    protected BigDecimal t00255;
-    @XmlElement(name = "T00256")
-    protected BigDecimal t00256;
-    @XmlElement(name = "T00257")
-    protected BigDecimal t00257;
-    @XmlElement(name = "T00705")
-    protected BigDecimal t00705;
-    @XmlElement(name = "T00706")
-    protected BigDecimal t00706;
-    @XmlElement(name = "T00707")
-    protected BigDecimal t00707;
-    @XmlElement(name = "T00708")
-    protected BigDecimal t00708;
-    @XmlElement(name = "T00258")
-    protected BigDecimal t00258;
-    @XmlElement(name = "T00259")
-    protected BigDecimal t00259;
-    @XmlElement(name = "T00260")
-    protected BigDecimal t00260;
-    @XmlElement(name = "T00261")
-    protected BigDecimal t00261;
+    @XmlElement(name = "T00208")
+    protected BigDecimal t00208;
+    @XmlElement(name = "T00209")
+    protected BigDecimal t00209;
+    @XmlElement(name = "T00210")
+    protected BigDecimal t00210;
+    @XmlElement(name = "T00211")
+    protected BigDecimal t00211;
+    @XmlElement(name = "T00212")
+    protected BigDecimal t00212;
+    @XmlElement(name = "T00217")
+    protected BigDecimal t00217;
+    @XmlElement(name = "T00218")
+    protected BigDecimal t00218;
+    @XmlElement(name = "T00219")
+    protected BigDecimal t00219;
+    @XmlElement(name = "T00220")
+    protected BigDecimal t00220;
+    @XmlElement(name = "T00221")
+    protected BigDecimal t00221;
+    @XmlElement(name = "T00226")
+    protected BigDecimal t00226;
+    @XmlElement(name = "T00227")
+    protected BigDecimal t00227;
+    @XmlElement(name = "T00228")
+    protected BigDecimal t00228;
+    @XmlElement(name = "T00229")
+    protected BigDecimal t00229;
+    @XmlElement(name = "T00230")
+    protected BigDecimal t00230;
+    @XmlElement(name = "T00244")
+    protected BigDecimal t00244;
+    @XmlElement(name = "T00245")
+    protected BigDecimal t00245;
+    @XmlElement(name = "T00246")
+    protected BigDecimal t00246;
+    @XmlElement(name = "T00247")
+    protected BigDecimal t00247;
+    @XmlElement(name = "T00248")
+    protected BigDecimal t00248;
     @XmlElement(name = "T00262")
     protected BigDecimal t00262;
     @XmlElement(name = "T00263")
     protected BigDecimal t00263;
     @XmlElement(name = "T00264")
     protected BigDecimal t00264;
+    @XmlElement(name = "T00265")
+    protected BigDecimal t00265;
     @XmlElement(name = "T00266")
     protected BigDecimal t00266;
-    @XmlElement(name = "T00267")
-    protected BigDecimal t00267;
-    @XmlElement(name = "T00268")
-    protected BigDecimal t00268;
-    @XmlElement(name = "T00269")
-    protected BigDecimal t00269;
     @XmlElement(name = "T00271")
     protected BigDecimal t00271;
     @XmlElement(name = "T00272")
@@ -186,14 +188,6 @@ public class TipoPagina07 {
     protected BigDecimal t00274;
     @XmlElement(name = "T00275")
     protected BigDecimal t00275;
-    @XmlElement(name = "T00276")
-    protected BigDecimal t00276;
-    @XmlElement(name = "T00277")
-    protected BigDecimal t00277;
-    @XmlElement(name = "T00278")
-    protected BigDecimal t00278;
-    @XmlElement(name = "T00279")
-    protected BigDecimal t00279;
     @XmlElement(name = "T00280")
     protected BigDecimal t00280;
     @XmlElement(name = "T00281")
@@ -202,16 +196,8 @@ public class TipoPagina07 {
     protected BigDecimal t00282;
     @XmlElement(name = "T00283")
     protected BigDecimal t00283;
-    @XmlElement(name = "T00709")
-    protected BigDecimal t00709;
     @XmlElement(name = "T00284")
     protected BigDecimal t00284;
-    @XmlElement(name = "T00285")
-    protected BigDecimal t00285;
-    @XmlElement(name = "T00286")
-    protected BigDecimal t00286;
-    @XmlElement(name = "T00288")
-    protected BigDecimal t00288;
     @XmlElement(name = "T00289")
     protected BigDecimal t00289;
     @XmlElement(name = "T00290")
@@ -222,12 +208,6 @@ public class TipoPagina07 {
     protected BigDecimal t00292;
     @XmlElement(name = "T00293")
     protected BigDecimal t00293;
-    @XmlElement(name = "T00710")
-    protected BigDecimal t00710;
-    @XmlElement(name = "T00294")
-    protected BigDecimal t00294;
-    @XmlElement(name = "T00295")
-    protected BigDecimal t00295;
     @XmlElement(name = "T00298")
     protected BigDecimal t00298;
     @XmlElement(name = "T00299")
@@ -238,273 +218,485 @@ public class TipoPagina07 {
     protected BigDecimal t00301;
     @XmlElement(name = "T00302")
     protected BigDecimal t00302;
-    @XmlElement(name = "T00303")
-    protected BigDecimal t00303;
-    @XmlElement(name = "T00304")
-    protected BigDecimal t00304;
 
     /**
-     * Gets the value of the t00255 property.
+     * Gets the value of the t00208 property.
      * 
      * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
      */
-    public BigDecimal getT00255() {
-        return t00255;
+    public BigDecimal getT00208() {
+        return t00208;
     }
 
     /**
-     * Sets the value of the t00255 property.
+     * Sets the value of the t00208 property.
      * 
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
      *     
      */
-    public void setT00255(BigDecimal value) {
-        this.t00255 = value;
+    public void setT00208(BigDecimal value) {
+        this.t00208 = value;
     }
 
     /**
-     * Gets the value of the t00256 property.
+     * Gets the value of the t00209 property.
      * 
      * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
      */
-    public BigDecimal getT00256() {
-        return t00256;
+    public BigDecimal getT00209() {
+        return t00209;
     }
 
     /**
-     * Sets the value of the t00256 property.
+     * Sets the value of the t00209 property.
      * 
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
      *     
      */
-    public void setT00256(BigDecimal value) {
-        this.t00256 = value;
+    public void setT00209(BigDecimal value) {
+        this.t00209 = value;
     }
 
     /**
-     * Gets the value of the t00257 property.
+     * Gets the value of the t00210 property.
      * 
      * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
      */
-    public BigDecimal getT00257() {
-        return t00257;
+    public BigDecimal getT00210() {
+        return t00210;
     }
 
     /**
-     * Sets the value of the t00257 property.
+     * Sets the value of the t00210 property.
      * 
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
      *     
      */
-    public void setT00257(BigDecimal value) {
-        this.t00257 = value;
+    public void setT00210(BigDecimal value) {
+        this.t00210 = value;
     }
 
     /**
-     * Gets the value of the t00705 property.
+     * Gets the value of the t00211 property.
      * 
      * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
      */
-    public BigDecimal getT00705() {
-        return t00705;
+    public BigDecimal getT00211() {
+        return t00211;
     }
 
     /**
-     * Sets the value of the t00705 property.
+     * Sets the value of the t00211 property.
      * 
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
      *     
      */
-    public void setT00705(BigDecimal value) {
-        this.t00705 = value;
+    public void setT00211(BigDecimal value) {
+        this.t00211 = value;
     }
 
     /**
-     * Gets the value of the t00706 property.
+     * Gets the value of the t00212 property.
      * 
      * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
      */
-    public BigDecimal getT00706() {
-        return t00706;
+    public BigDecimal getT00212() {
+        return t00212;
     }
 
     /**
-     * Sets the value of the t00706 property.
+     * Sets the value of the t00212 property.
      * 
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
      *     
      */
-    public void setT00706(BigDecimal value) {
-        this.t00706 = value;
+    public void setT00212(BigDecimal value) {
+        this.t00212 = value;
     }
 
     /**
-     * Gets the value of the t00707 property.
+     * Gets the value of the t00217 property.
      * 
      * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
      */
-    public BigDecimal getT00707() {
-        return t00707;
+    public BigDecimal getT00217() {
+        return t00217;
     }
 
     /**
-     * Sets the value of the t00707 property.
+     * Sets the value of the t00217 property.
      * 
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
      *     
      */
-    public void setT00707(BigDecimal value) {
-        this.t00707 = value;
+    public void setT00217(BigDecimal value) {
+        this.t00217 = value;
     }
 
     /**
-     * Gets the value of the t00708 property.
+     * Gets the value of the t00218 property.
      * 
      * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
      */
-    public BigDecimal getT00708() {
-        return t00708;
+    public BigDecimal getT00218() {
+        return t00218;
     }
 
     /**
-     * Sets the value of the t00708 property.
+     * Sets the value of the t00218 property.
      * 
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
      *     
      */
-    public void setT00708(BigDecimal value) {
-        this.t00708 = value;
+    public void setT00218(BigDecimal value) {
+        this.t00218 = value;
     }
 
     /**
-     * Gets the value of the t00258 property.
+     * Gets the value of the t00219 property.
      * 
      * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
      */
-    public BigDecimal getT00258() {
-        return t00258;
+    public BigDecimal getT00219() {
+        return t00219;
     }
 
     /**
-     * Sets the value of the t00258 property.
+     * Sets the value of the t00219 property.
      * 
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
      *     
      */
-    public void setT00258(BigDecimal value) {
-        this.t00258 = value;
+    public void setT00219(BigDecimal value) {
+        this.t00219 = value;
     }
 
     /**
-     * Gets the value of the t00259 property.
+     * Gets the value of the t00220 property.
      * 
      * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
      */
-    public BigDecimal getT00259() {
-        return t00259;
+    public BigDecimal getT00220() {
+        return t00220;
     }
 
     /**
-     * Sets the value of the t00259 property.
+     * Sets the value of the t00220 property.
      * 
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
      *     
      */
-    public void setT00259(BigDecimal value) {
-        this.t00259 = value;
+    public void setT00220(BigDecimal value) {
+        this.t00220 = value;
     }
 
     /**
-     * Gets the value of the t00260 property.
+     * Gets the value of the t00221 property.
      * 
      * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
      */
-    public BigDecimal getT00260() {
-        return t00260;
+    public BigDecimal getT00221() {
+        return t00221;
     }
 
     /**
-     * Sets the value of the t00260 property.
+     * Sets the value of the t00221 property.
      * 
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
      *     
      */
-    public void setT00260(BigDecimal value) {
-        this.t00260 = value;
+    public void setT00221(BigDecimal value) {
+        this.t00221 = value;
     }
 
     /**
-     * Gets the value of the t00261 property.
+     * Gets the value of the t00226 property.
      * 
      * @return
      *     possible object is
      *     {@link BigDecimal }
      *     
      */
-    public BigDecimal getT00261() {
-        return t00261;
+    public BigDecimal getT00226() {
+        return t00226;
     }
 
     /**
-     * Sets the value of the t00261 property.
+     * Sets the value of the t00226 property.
      * 
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
      *     
      */
-    public void setT00261(BigDecimal value) {
-        this.t00261 = value;
+    public void setT00226(BigDecimal value) {
+        this.t00226 = value;
+    }
+
+    /**
+     * Gets the value of the t00227 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00227() {
+        return t00227;
+    }
+
+    /**
+     * Sets the value of the t00227 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00227(BigDecimal value) {
+        this.t00227 = value;
+    }
+
+    /**
+     * Gets the value of the t00228 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00228() {
+        return t00228;
+    }
+
+    /**
+     * Sets the value of the t00228 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00228(BigDecimal value) {
+        this.t00228 = value;
+    }
+
+    /**
+     * Gets the value of the t00229 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00229() {
+        return t00229;
+    }
+
+    /**
+     * Sets the value of the t00229 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00229(BigDecimal value) {
+        this.t00229 = value;
+    }
+
+    /**
+     * Gets the value of the t00230 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00230() {
+        return t00230;
+    }
+
+    /**
+     * Sets the value of the t00230 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00230(BigDecimal value) {
+        this.t00230 = value;
+    }
+
+    /**
+     * Gets the value of the t00244 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00244() {
+        return t00244;
+    }
+
+    /**
+     * Sets the value of the t00244 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00244(BigDecimal value) {
+        this.t00244 = value;
+    }
+
+    /**
+     * Gets the value of the t00245 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00245() {
+        return t00245;
+    }
+
+    /**
+     * Sets the value of the t00245 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00245(BigDecimal value) {
+        this.t00245 = value;
+    }
+
+    /**
+     * Gets the value of the t00246 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00246() {
+        return t00246;
+    }
+
+    /**
+     * Sets the value of the t00246 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00246(BigDecimal value) {
+        this.t00246 = value;
+    }
+
+    /**
+     * Gets the value of the t00247 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00247() {
+        return t00247;
+    }
+
+    /**
+     * Sets the value of the t00247 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00247(BigDecimal value) {
+        this.t00247 = value;
+    }
+
+    /**
+     * Gets the value of the t00248 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00248() {
+        return t00248;
+    }
+
+    /**
+     * Sets the value of the t00248 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00248(BigDecimal value) {
+        this.t00248 = value;
     }
 
     /**
@@ -580,6 +772,30 @@ public class TipoPagina07 {
     }
 
     /**
+     * Gets the value of the t00265 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00265() {
+        return t00265;
+    }
+
+    /**
+     * Sets the value of the t00265 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00265(BigDecimal value) {
+        this.t00265 = value;
+    }
+
+    /**
      * Gets the value of the t00266 property.
      * 
      * @return
@@ -601,78 +817,6 @@ public class TipoPagina07 {
      */
     public void setT00266(BigDecimal value) {
         this.t00266 = value;
-    }
-
-    /**
-     * Gets the value of the t00267 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00267() {
-        return t00267;
-    }
-
-    /**
-     * Sets the value of the t00267 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00267(BigDecimal value) {
-        this.t00267 = value;
-    }
-
-    /**
-     * Gets the value of the t00268 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00268() {
-        return t00268;
-    }
-
-    /**
-     * Sets the value of the t00268 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00268(BigDecimal value) {
-        this.t00268 = value;
-    }
-
-    /**
-     * Gets the value of the t00269 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00269() {
-        return t00269;
-    }
-
-    /**
-     * Sets the value of the t00269 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00269(BigDecimal value) {
-        this.t00269 = value;
     }
 
     /**
@@ -796,102 +940,6 @@ public class TipoPagina07 {
     }
 
     /**
-     * Gets the value of the t00276 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00276() {
-        return t00276;
-    }
-
-    /**
-     * Sets the value of the t00276 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00276(BigDecimal value) {
-        this.t00276 = value;
-    }
-
-    /**
-     * Gets the value of the t00277 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00277() {
-        return t00277;
-    }
-
-    /**
-     * Sets the value of the t00277 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00277(BigDecimal value) {
-        this.t00277 = value;
-    }
-
-    /**
-     * Gets the value of the t00278 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00278() {
-        return t00278;
-    }
-
-    /**
-     * Sets the value of the t00278 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00278(BigDecimal value) {
-        this.t00278 = value;
-    }
-
-    /**
-     * Gets the value of the t00279 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00279() {
-        return t00279;
-    }
-
-    /**
-     * Sets the value of the t00279 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00279(BigDecimal value) {
-        this.t00279 = value;
-    }
-
-    /**
      * Gets the value of the t00280 property.
      * 
      * @return
@@ -988,30 +1036,6 @@ public class TipoPagina07 {
     }
 
     /**
-     * Gets the value of the t00709 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00709() {
-        return t00709;
-    }
-
-    /**
-     * Sets the value of the t00709 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00709(BigDecimal value) {
-        this.t00709 = value;
-    }
-
-    /**
      * Gets the value of the t00284 property.
      * 
      * @return
@@ -1033,78 +1057,6 @@ public class TipoPagina07 {
      */
     public void setT00284(BigDecimal value) {
         this.t00284 = value;
-    }
-
-    /**
-     * Gets the value of the t00285 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00285() {
-        return t00285;
-    }
-
-    /**
-     * Sets the value of the t00285 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00285(BigDecimal value) {
-        this.t00285 = value;
-    }
-
-    /**
-     * Gets the value of the t00286 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00286() {
-        return t00286;
-    }
-
-    /**
-     * Sets the value of the t00286 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00286(BigDecimal value) {
-        this.t00286 = value;
-    }
-
-    /**
-     * Gets the value of the t00288 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00288() {
-        return t00288;
-    }
-
-    /**
-     * Sets the value of the t00288 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00288(BigDecimal value) {
-        this.t00288 = value;
     }
 
     /**
@@ -1228,78 +1180,6 @@ public class TipoPagina07 {
     }
 
     /**
-     * Gets the value of the t00710 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00710() {
-        return t00710;
-    }
-
-    /**
-     * Sets the value of the t00710 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00710(BigDecimal value) {
-        this.t00710 = value;
-    }
-
-    /**
-     * Gets the value of the t00294 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00294() {
-        return t00294;
-    }
-
-    /**
-     * Sets the value of the t00294 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00294(BigDecimal value) {
-        this.t00294 = value;
-    }
-
-    /**
-     * Gets the value of the t00295 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00295() {
-        return t00295;
-    }
-
-    /**
-     * Sets the value of the t00295 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00295(BigDecimal value) {
-        this.t00295 = value;
-    }
-
-    /**
      * Gets the value of the t00298 property.
      * 
      * @return
@@ -1417,54 +1297,6 @@ public class TipoPagina07 {
      */
     public void setT00302(BigDecimal value) {
         this.t00302 = value;
-    }
-
-    /**
-     * Gets the value of the t00303 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00303() {
-        return t00303;
-    }
-
-    /**
-     * Sets the value of the t00303 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00303(BigDecimal value) {
-        this.t00303 = value;
-    }
-
-    /**
-     * Gets the value of the t00304 property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public BigDecimal getT00304() {
-        return t00304;
-    }
-
-    /**
-     * Sets the value of the t00304 property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigDecimal }
-     *     
-     */
-    public void setT00304(BigDecimal value) {
-        this.t00304 = value;
     }
 
 }
