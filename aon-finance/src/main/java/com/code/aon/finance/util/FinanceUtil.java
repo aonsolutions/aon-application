@@ -3,7 +3,6 @@ package com.code.aon.finance.util;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,9 +12,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
-import com.code.aon.common.util.AdminUtil;
 import com.code.aon.company.Enterprise;
-import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -41,15 +38,7 @@ public class FinanceUtil {
 	}
 
 	public static boolean isValidLimitDate(Invoice invoice) {
-		Integer type = AdminUtil.getDomainType(DomainManager.getCurrentDomain());
-		DomainType domainType = (type!=null) ? DomainType.values()[type] : null;
-
 		Date deadline = getLimitDate();
-		if (deadline != null) {
-			if (domainType != null && domainType.equals(DomainType.HOTEL) && !invoice.isSales() && DateUtils.addDays(deadline, 12).after(new Date())) {
-				return deadline.after(invoice.getIssueDate());
-			}
-		}
 		return deadline == null || !deadline.after(invoice.getIssueDate());
 	}
 
