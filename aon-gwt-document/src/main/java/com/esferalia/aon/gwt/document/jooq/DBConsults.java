@@ -541,12 +541,16 @@ public class DBConsults {
 				scope = ctx.getDslContext().select(SCOPE.DESCRIPTION, SCOPE.ID)
 					.from(SCOPE).join(USER_SCOPE)
 					.on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
-					.where(SCOPE.DOMAIN.eq(domain.getId()).and(USER_SCOPE.USER_ID.eq(user.getId()))).fetch();
+					.where(SCOPE.DOMAIN.eq(domain.getId()).and(USER_SCOPE.USER_ID.eq(user.getId())))
+					.orderBy(SCOPE.DESCRIPTION)
+					.fetch();
 			}
 			else{
 				scope = ctx.getDslContext().select(SCOPE.DESCRIPTION, SCOPE.ID)
 						.from(SCOPE)
-						.where(SCOPE.DOMAIN.eq(domain.getId())).fetch();
+						.where(SCOPE.DOMAIN.eq(domain.getId()))
+						.orderBy(SCOPE.DESCRIPTION)
+						.fetch();
 			}
 			Vector<Scope> vector = new Vector<Scope>();
 			for (Record2<String, Integer> record : scope) {
@@ -564,7 +568,9 @@ public class DBConsults {
 					.from(SCOPE).join(DOMAIN)
 					.on(SCOPE.DOMAIN.eq(DOMAIN.PARENT)).join(USER_SCOPE)
 					.on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
-					.where(DOMAIN.ID.eq(domain.getId()).and(USER_SCOPE.USER_ID.eq(user.getId()))).fetch();
+					.where(DOMAIN.ID.eq(domain.getId()).and(USER_SCOPE.USER_ID.eq(user.getId())))
+					.orderBy(SCOPE.DESCRIPTION)
+					.fetch();
 			
 			for (Record2<String, Integer> record : scopeParent) {
 				Scope s = new Scope();

@@ -621,12 +621,11 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 				fileInfo.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
 				fi.setMimetype((byte)MimeType.get(getMimetype()).ordinal());
 				fi.setIcon(Utils.icon(getMimetype()));
-				fileInfo.setSize(getSize());
 				fi.setSize(getSize());
 				fi.setSizeStr(FileUtils.byteCountToDisplaySize(fi.getSize()));
-			}
-		
+			} 
 			else fileInfo.setMimetype(fi.getMimetype());
+			fileInfo.setSize(fi.getSize());
 			fileInfo.setTitle(fi.getTitle());
 			if(fi.getScope() != null)fileInfo.setScopeId(fi.getScope().getId());
 			Byte conf;if(fi.getConfidential())conf=1; else conf=0;
@@ -637,7 +636,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			Calendar cal = Calendar.getInstance();
 			String dateStr = cal.get(Calendar.DATE)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.YEAR);
 			fi.setModificationDateStr(dateStr);
-			
+
 			try {
 				DBConsults.updateFile(domain, getUser(), fileInfo,fi.getTags());
 				
