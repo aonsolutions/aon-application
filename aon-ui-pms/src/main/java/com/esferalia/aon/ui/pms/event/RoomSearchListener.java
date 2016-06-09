@@ -11,8 +11,11 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.ui.pms.controller.IPmsConstants;
+import com.esferalia.aon.ui.pms.controller.PmsCollectionsController;
 import com.esferalia.aon.ui.pms.controller.RoomController;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
@@ -47,7 +50,8 @@ public class RoomSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
+		PmsCollectionsController collections = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		setHotel((Hotel)collections.getCurrentUserHotelList().get(0));
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 		setActive(Boolean.TRUE);
 
