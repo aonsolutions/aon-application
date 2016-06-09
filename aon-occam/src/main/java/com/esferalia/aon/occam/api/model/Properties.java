@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.model;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import com.esferalia.aon.jooq.tables.WarehouseTransfer;
+import com.esferalia.aon.jooq.tables.records.WarehouseTransferRecord;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 
 public interface Properties {
@@ -324,5 +326,35 @@ public interface Properties {
 		Property<Integer> getItemProperty();
 		Property<Double> getQuantityProperty();
 		Property<Integer> getWarehouseProperty();
+	}
+	
+	public interface WarehouseTransferProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getCommentsProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getCreationUserProperty();
+		Property<Integer> getInventoryProperty();
+		Property<Timestamp> getIssueTimeProperty();
+		Property<Timestamp> getModificationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Integer> getNumberProperty();
+		Property<String> getSeriesProperty();
+		Property<Byte> getSourceProperty();
+		Property<Integer> getSourceIdProperty();
+		Property<Integer> getSourceWarehouseProperty();
+		Property<Integer> getTargetWarehouseProperty();
+	}
+	
+	public interface WarehouseTransferDetailProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getWarehouseTransferProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getCreationUserProperty();
+		Property<Integer> getItemProperty();
+		Property<Timestamp> getModificationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Double> getQuantityProperty();
 	}
 }

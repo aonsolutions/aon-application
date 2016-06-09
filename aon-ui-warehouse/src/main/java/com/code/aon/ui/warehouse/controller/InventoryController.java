@@ -45,6 +45,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferSource;
 
 /**
  * Controller for Inventory.
@@ -124,7 +125,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		super.onReset(event);
 	}
 	
-	private void createWarehouseTransfer(String domainName, Integer domainId, String user, Integer warehouseId) {
+	private com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer createWarehouseTransfer(String domainName, Integer domainId, String user, Integer warehouseId) {
 		Integer number = AON.getWarehouseTransferNextNumber(domainName, domainId, user, null);
 		com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer wt = new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer()
 			.setDomain(domainId)
@@ -132,7 +133,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 			.setIssueTime(new Date())
 			.setComments("")
 			.setSourceWarehouse(warehouse.getId())
-			.setSource((byte)0)
+			.setSource((byte) 0)
 			.setSourceId(0)
 			.setCreationUser("system")
 			.setCreationDate(new Date())
@@ -140,7 +141,8 @@ public class InventoryController extends BasicController implements IAuditableCo
 			.setModificationUser("system");
 		wt.setId(AON.insertWarehouseTransfer(domainName, domainId, user, wt));
 		AON.getStockStream(domainName, domainId, user, f -> f.getWarehouseProperty().eq(warehouse.getId())).forEach(s ->{
-			com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail wtd = new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail()
+			if(s.getQuantity() != 0){
+				com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail wtd = new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail()
 					.setCreationDate(new Date())
 					.setCreationUser("system")
 					.setDomain(DomainManager.getCurrentDomain())
@@ -149,8 +151,10 @@ public class InventoryController extends BasicController implements IAuditableCo
 					.setModificationUser("system")
 					.setQuantity(s.getQuantity())
 					.setWarehouseTransfer(wt);
-			AON.insertWarehouseTransferDetail(domainName, domainId, user, wtd);
+				AON.insertWarehouseTransferDetail(domainName, domainId, user, wtd);
+			}
 		});
+		return wt;
 	}
 	
 	private void closeInventary() throws Exception{
@@ -162,13 +166,15 @@ public class InventoryController extends BasicController implements IAuditableCo
 			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 			IManagerBean inventoryBean = BeanManager.getManagerBean(Inventory.class);
 			IManagerBean inventoryDetailBean = BeanManager.getManagerBean(InventoryDetail.class);
-
-	        Session session = HibernateUtil.getSession(sessionName);
+			
+			com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer wt = null;
+			String domainName = AonUtil.getDomainName();
+			Integer domainId = DomainManager.getCurrentDomain();
+			String user = AonUtil.getRemoteUser();
+			
+			Session session = HibernateUtil.getSession(sessionName);
 			if (initStock){
-				String domainName = AonUtil.getDomainName();
-				Integer domainId = DomainManager.getCurrentDomain();
-				String user = AonUtil.getRemoteUser();
-				createWarehouseTransfer(domainName, domainId, user, warehouse.getId());
+				wt = createWarehouseTransfer(domainName, domainId, user, warehouse.getId());
 
 				Criteria c = new Criteria();
 				c.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID), warehouse.getId());
@@ -187,7 +193,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 			
 			inventory.setWarehouse(warehouse);
 			inventory = (Inventory) inventoryBean.insert(inventory);
-			
+						
 	        Query q = session.createQuery(
 	                " select item, sum(stock.quantity), item.id " +
 	                " from Item as item, Stock as stock " +
@@ -219,6 +225,10 @@ public class InventoryController extends BasicController implements IAuditableCo
 			this.onSearch(null);
 			this.getModel().setRowIndex(0);
 			this.onSelect(null);
+			if(initStock) AON.updateWarehouseTransfer(domainName, domainId, user, 
+					wt.setSource(WarehouseTransferSource.INVENTORY_INIT_STOCK.value()).setSourceId(inventory.getId()).setInventory(
+					new com.esferalia.aon.occam.api.model.warehouse.Inventory().setId(inventory.getId())));
+
 		} catch (Exception e) {
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
@@ -383,9 +393,10 @@ public class InventoryController extends BasicController implements IAuditableCo
 			Integer domainId = DomainManager.getCurrentDomain();
 			String user = AonUtil.getRemoteUser();
 	
-			AON.deleteWarehouseTransfer(domainName, domainId, user, inventory.getId());
-		
-		
+			AON.deleteWarehouseTransfer(domainName, domainId, user,
+					f -> f.getInventoryProperty().eq(inventory.getId())
+					.and(f.getSourceProperty().ne(WarehouseTransferSource.INVENTORY_INIT_STOCK.value())));
+			
 			//AON.updateInventory(domainName, domainId, user,
 			//	OccamClassesTransform.getInventory(inventory));
 			LinkedList<com.esferalia.aon.occam.api.model.warehouse.Inventory> list =  AON.getTwoLastInventory(domainName, domainId, user, inventory.getWarehouse().getId());
@@ -563,6 +574,20 @@ public class InventoryController extends BasicController implements IAuditableCo
 		public void setDiscount(Double discount) {
 			this.discount = discount;
 		}
+	}
+	
+	@Override
+	public void onRemove(ActionEvent event) {
+		Inventory inventory = (Inventory) getTo();
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String user = AonUtil.getRemoteUser();
+		
+		AON.deleteWarehouseTransfer(domainName, domainId, user,
+				f -> f.getSourceProperty().eq(WarehouseTransferSource.INVENTORY_INIT_STOCK.value())
+				.and(f.getSourceIdProperty().eq(inventory.getId())));
+		
+		super.onRemove(event);
 	}
 
 }

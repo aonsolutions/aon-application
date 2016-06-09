@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Agreement;
@@ -39,6 +40,7 @@ import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
+import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
@@ -1307,67 +1309,14 @@ public class AON {
 
 	public static Attach getAttach(String domainName, Integer domainId,
 			String login, AttachFilter filter, AttachType attachType) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-
-			Attach attach = new Attach();
-
-			if (attachType.equals(AttachType.REGISTRY))
-				attach = getAttachment().getRegistryAttach(ctx, filter);
-			else if (attachType.equals(AttachType.CONTRACT))
-				attach = getAttachment().getContractAttach(ctx, filter);
-			else if (attachType.equals(AttachType.INVOICE))
-				attach = getAttachment().getInvoiceAttach(ctx, filter);
-			else if (attachType.equals(AttachType.ITEM))
-				attach = getAttachment().getItemAttach(ctx, filter);
-			else if (attachType.equals(AttachType.OFFER))
-				attach = getAttachment().getOfferAttach(ctx, filter);
-			else if (attachType.equals(AttachType.PAYROLL))
-				attach = getAttachment().getPayrollAttach(ctx, filter);
-			else if (attachType.equals(AttachType.PROJECT))
-				attach = getAttachment().getProjectAttach(ctx, filter);
-			else if (attachType.equals(AttachType.SEPE))
-				attach = getAttachment().getSepeAttach(ctx, filter);
-
-			return attach;
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+		return getAttachStream(domainName, domainId, login, filter, attachType)
+				.findFirst().orElse(new Attach());
 	}
 
 	public static LinkedList<Attach> getAttachList(String domainName,
-			Integer domainId, String login, AttachFilter filter,
-			AttachType attachType) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-
-			LinkedList<Attach> attachList = new LinkedList<Attach>();
-
-			if (attachType.equals(AttachType.REGISTRY))
-				attachList = getAttachment().getRegistryAttachList(ctx, filter);
-			else if (attachType.equals(AttachType.CONTRACT))
-				attachList = getAttachment().getContractAttachList(ctx, filter);
-			else if (attachType.equals(AttachType.INVOICE))
-				attachList = getAttachment().getInvoiceAttachList(ctx, filter);
-			else if (attachType.equals(AttachType.ITEM))
-				attachList = getAttachment().getItemAttachList(ctx, filter);
-			else if (attachType.equals(AttachType.OFFER))
-				attachList = getAttachment().getOfferAttachList(ctx, filter);
-			else if (attachType.equals(AttachType.PAYROLL))
-				attachList = getAttachment().getPayrollAttachList(ctx, filter);
-			else if (attachType.equals(AttachType.PROJECT))
-				attachList = getAttachment().getProjectAttachList(ctx, filter);
-			else if (attachType.equals(AttachType.SEPE))
-				attachList = getAttachment().getSepeAttachList(ctx, filter);
-
-			return attachList;
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+			Integer domainId, String login, AttachFilter filter, AttachType attachType) {
+		return getAttachStream(domainName, domainId, login, filter, attachType)
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	public static Stream<Attach> getAttachStream(String domainName,
@@ -1907,14 +1856,7 @@ public class AON {
 
 	public static LinkedList<Stock> getStockList(String domainName, Integer domainId, String login, 
 			StockFilter filter){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getWarehouse().getStockList(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+		return getStockStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static Stream<Stock> getStockStream(String domainName, Integer domainId, String login, 
@@ -1941,15 +1883,49 @@ public class AON {
 	}
 	
 	public static void deleteWarehouseTransfer(String domainName,
-			Integer domainId, String login, Integer inventoryId) {
+			Integer domainId, String login, WarehouseTransferFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getWarehouse().deleteWarehouseTransfer(ctx, inventoryId);
+			getWarehouse().deleteWarehouseTransfer(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
+	}
+	
+	public static void updateWarehouseTransfer(String domainName, Integer domainId, String login, 
+			WarehouseTransfer warehouseTransfer){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getWarehouse().updateWarehouseTransfer(ctx, warehouseTransfer);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Stream<WarehouseTransfer> getWarehouseTransferStream(String domainName, Integer domainId, String login,
+			WarehouseTransferFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getWarehouse().getWarehouseTransferStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static WarehouseTransfer getWarehouseTransfer(String domainName, Integer domainId, String login,
+			WarehouseTransferFilter filter){
+		return getWarehouseTransferStream(domainName, domainId, login, filter).findFirst().orElse(new WarehouseTransfer());
+	}
+	
+	public static LinkedList<WarehouseTransfer> getWarehouseTransferList(String domainName, Integer domainId, String login,
+			WarehouseTransferFilter filter){
+		return getWarehouseTransferStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static Integer insertWarehouseTransfer(String domainName, Integer domainId, String login,

@@ -14,6 +14,8 @@ import com.esferalia.aon.occam.api.model.Properties.StockProperties;
 import com.esferalia.aon.occam.api.model.Properties.TagProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaxProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
+import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferDetailProperties;
+import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
 
 public interface Filter {
 	
@@ -106,4 +108,13 @@ public interface Filter {
 		Filter filter(StockProperties properties);
 	}
 	
+	@FunctionalInterface
+	public interface WarehouseTransferFilter{
+		Filter filter(WarehouseTransferProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface WarehouseTransferDetailFilter{
+		Filter filter(WarehouseTransferDetailProperties properties);
+	}
 }

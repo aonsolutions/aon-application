@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.IWarehouse;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
+import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -89,9 +90,21 @@ public class WarehouseImpl implements IWarehouse {
 	}
 	
 	@Override
+	public Stream<WarehouseTransfer> getWarehouseTransferStream(AONContext ctx, WarehouseTransferFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			WarehouseDAO.getWarehouseTransferStream(ctx, filter));		
+	}
+	
+	@Override
 	public Integer insertWarehouseTransfer(AONContext ctx, WarehouseTransfer warehouseTransfer) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			WarehouseDAO.insertWarehouseTransfer(ctx, warehouseTransfer));		
+	}
+	
+	@Override
+	public void updateWarehouseTransfer(AONContext ctx, WarehouseTransfer warehouseTransfer) {
+		ctx.getDslContext().transaction(configuration -> 
+			WarehouseDAO.updateWarehouseTransfer(ctx, warehouseTransfer));		
 	}
 	
 	@Override
@@ -101,9 +114,9 @@ public class WarehouseImpl implements IWarehouse {
 	}
 	
 	@Override
-	public void deleteWarehouseTransfer(AONContext ctx, Integer inventoryId) {
+	public void deleteWarehouseTransfer(AONContext ctx, WarehouseTransferFilter filter) {
 		ctx.getDslContext().transaction(configuration -> 
-			WarehouseDAO.deleteWarehouseTransfer(ctx, inventoryId));		
+			WarehouseDAO.deleteWarehouseTransfer(ctx, filter));		
 	}
 	
 	@Override
@@ -140,12 +153,6 @@ public class WarehouseImpl implements IWarehouse {
 	public LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId){
 		return ctx.getDslContext().transactionResult(configuration ->
 				SeriesDAO.getSeriesDeliveryList(ctx, scopeId));
-	}
-	
-	@Override
-	public LinkedList<Stock> getStockList(AONContext ctx, StockFilter filter){
-		return ctx.getDslContext().transactionResult(configuration ->
-			WarehouseDAO.getStockList(ctx, filter));
 	}
 	
 	@Override

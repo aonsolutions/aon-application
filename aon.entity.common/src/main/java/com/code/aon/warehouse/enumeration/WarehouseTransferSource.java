@@ -11,7 +11,9 @@ public enum WarehouseTransferSource implements IResourceable {
 	
 	INVENTORY,
 	
-	MANUFACTURING_ORDER;
+	MANUFACTURING_ORDER,
+	
+	INVENTORY_INIT_STOCK;
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_warehouseTransfer_source_";
 

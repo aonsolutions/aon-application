@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TR
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -28,9 +29,13 @@ import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
+import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferDetailFilter;
+import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
 import com.esferalia.aon.occam.api.model.Properties.StockProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
+import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferDetailProperties;
+import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
@@ -42,6 +47,9 @@ import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
 public class WarehouseDAO {
 	
 	private static final WarehousePropertiesDAO WAREHOUSE_PROPERTIES = new WarehousePropertiesDAO();
+	private static final WarehouseTransferPropertiesDAO WAREHOUSE_TRANSFER_PROPERTIES = new WarehouseTransferPropertiesDAO();
+	private static final WarehouseTransferDetailPropertiesDAO WAREHOUSE_TRANSFER_DETAIL_PROPERTIES = new WarehouseTransferDetailPropertiesDAO();
+
 	private static final DepartmentPropertiesDAO DEPARTMENT_PROPERTIES = new DepartmentPropertiesDAO();
 	private static final StockPropertiesDAO STOCK_PROPERTIES = new StockPropertiesDAO();
 	
@@ -58,6 +66,46 @@ public class WarehouseDAO {
 		@Override public Property<Integer> getDepartmentProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE.DEPARTMENT);}
 		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE.WORKPLACE);}
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE.NAME);}
+	}
+
+	protected static class WarehouseTransferPropertiesDAO implements WarehouseTransferProperties {
+		protected Condition[] getConditions(WarehouseTransferFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.DOMAIN);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.COMMENTS);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.CREATION_USER);}
+		@Override public Property<Integer> getInventoryProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.INVENTORY);}
+		@Override public Property<Timestamp> getIssueTimeProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER.ISSUE_TIME);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.MODIFICATION_USER);}
+		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.NUMBER);}
+		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.SERIES);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(WAREHOUSE_TRANSFER.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.SOURCE_ID);}
+		@Override public Property<Integer> getSourceWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE);}
+		@Override public Property<Integer> getTargetWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE);}
+	}
+	
+	protected static class WarehouseTransferDetailPropertiesDAO implements WarehouseTransferDetailProperties {
+		protected Condition[] getConditions(WarehouseTransferDetailFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER_DETAIL.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER_DETAIL.DOMAIN);}
+		@Override public Property<Integer> getWarehouseTransferProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.CREATION_USER);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER_DETAIL.ITEM);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_USER);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(WAREHOUSE_TRANSFER_DETAIL.QUANTITY);}
 	}
 	
 	protected static class DepartmentPropertiesDAO implements DepartmentProperties {
@@ -79,6 +127,11 @@ public class WarehouseDAO {
 				.findFirst().orElse(null);
 	}
 	
+	public static WarehouseTransfer getWarehouseTransfer(AONContext ctx, WarehouseTransferFilter filter){
+		return ctx.getDslContext().select().from(WAREHOUSE_TRANSFER).where(WAREHOUSE_TRANSFER_PROPERTIES.getConditions(filter))
+				.fetchInto(WAREHOUSE_TRANSFER).stream().map(new FullWarehouseTransferFiller()).findFirst().orElse(new WarehouseTransfer());
+	}
+	
 	public static Integer insertWarehouseTransfer(AONContext ctx, WarehouseTransfer warehouseTransfer){
 		return ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER)
 				.set(WAREHOUSE_TRANSFER.COMMENTS, warehouseTransfer.getComments())
@@ -95,6 +148,25 @@ public class WarehouseDAO {
 				.set(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, warehouseTransfer.getSourceWarehouse())
 				.set(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE, warehouseTransfer.getTargetWarehouse())
 				.returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
+	}
+	
+	public static void updateWarehouseTransfer(AONContext ctx, WarehouseTransfer warehouseTransfer){
+		ctx.getDslContext().update(WAREHOUSE_TRANSFER)
+				.set(WAREHOUSE_TRANSFER.COMMENTS, warehouseTransfer.getComments())
+				.set(WAREHOUSE_TRANSFER.DOMAIN, warehouseTransfer.getDomain())
+				.set(WAREHOUSE_TRANSFER.CREATION_DATE, new Timestamp(warehouseTransfer.getCreationDate().getTime()))
+				.set(WAREHOUSE_TRANSFER.CREATION_USER, warehouseTransfer.getCreationUser())
+				.set(WAREHOUSE_TRANSFER.INVENTORY, warehouseTransfer.getInventory() != null ? warehouseTransfer.getInventory().getId(): null)
+				.set(WAREHOUSE_TRANSFER.MODIFICATION_DATE,new Timestamp(warehouseTransfer.getModificationDate().getTime()))
+				.set(WAREHOUSE_TRANSFER.MODIFICATION_USER, warehouseTransfer.getModificationUser())
+				.set(WAREHOUSE_TRANSFER.ISSUE_TIME, new Timestamp(warehouseTransfer.getIssueTime().getTime()))
+				.set(WAREHOUSE_TRANSFER.NUMBER, warehouseTransfer.getNumber())
+				.set(WAREHOUSE_TRANSFER.SOURCE, warehouseTransfer.getSource())
+				.set(WAREHOUSE_TRANSFER.SOURCE_ID, warehouseTransfer.getSourceId())
+				.set(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, warehouseTransfer.getSourceWarehouse())
+				.set(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE, warehouseTransfer.getTargetWarehouse())
+				.where(WAREHOUSE_TRANSFER.ID.eq(warehouseTransfer.getId()))
+				.execute();
 	}
 	
 	public static Integer insertWarehouseTransferDetail(AONContext ctx, WarehouseTransferDetail warehouseTransferDetail){
@@ -123,37 +195,52 @@ public class WarehouseDAO {
 		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(STOCK.QUANTITY);}
 	}
 	
-	public static void deleteWarehouseTransfer(AONContext ctx, Integer inventoryId){
-		LinkedList<WarehouseTransfer>  warehouseTransferlist = getWarehouseTransferList(ctx, inventoryId);
-		warehouseTransferlist.stream().forEach(wt ->{
-			final Integer source = wt.getSourceWarehouse();
-			final Integer target = wt.getTargetWarehouse();
-			LinkedList<WarehouseTransferDetail> warehouseTransferDetailList = 
-					getWarehouseTransferDetailList(ctx, wt.getId());
-			warehouseTransferDetailList.stream().forEach(wtd ->{
-				Double quantity = wtd.getQuantity();
-				if(source != null){
-					ctx.getDslContext().update(STOCK)
-						.set(STOCK.QUANTITY, STOCK.QUANTITY.add(quantity))
-						.where(STOCK.WAREHOUSE.eq(source))
-						.and(STOCK.ITEM.eq(wtd.getItem().getId()))
-						.execute();
-				}
-				if(target != null){
-					ctx.getDslContext().update(STOCK)
-						.set(STOCK.QUANTITY, STOCK.QUANTITY.add(-quantity))
-						.where(STOCK.WAREHOUSE.eq(target))
-						.and(STOCK.ITEM.eq(wtd.getItem().getId()))
-						.execute();
-				}
-			});
-			ctx.getDslContext().delete(WAREHOUSE_TRANSFER_DETAIL)
-				.where(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER.eq(wt.getId()))
+	
+	public static Stream<WarehouseTransfer> getWarehouseTransferStream(AONContext ctx, WarehouseTransferFilter filter){
+		return ctx.getDslContext().select().from(WAREHOUSE_TRANSFER).where(WAREHOUSE_TRANSFER_PROPERTIES.getConditions(filter))
+				.fetchInto(WAREHOUSE_TRANSFER).stream().map(new FullWarehouseTransferFiller());
+	}
+	
+	public static Stream<WarehouseTransferDetail> getWarehouseTransferDetailStream(AONContext ctx, WarehouseTransferDetailFilter filter){
+		return ctx.getDslContext().select().from(WAREHOUSE_TRANSFER_DETAIL).where(WAREHOUSE_TRANSFER_DETAIL_PROPERTIES.getConditions(filter))
+				.fetchInto(WAREHOUSE_TRANSFER_DETAIL).stream().map(new FullWarehouseTransferDetailFiller());
+	}
+	
+	public static void updateStock(AONContext ctx, WarehouseTransfer wt, WarehouseTransferDetail wtd){
+		Double quantity = wtd.getQuantity();
+		if(wt.getSourceWarehouse() != null){
+			ctx.getDslContext().update(STOCK)
+				.set(STOCK.QUANTITY, STOCK.QUANTITY.add(quantity))
+				.where(STOCK.WAREHOUSE.eq(wt.getSourceWarehouse()))
+				.and(STOCK.ITEM.eq(wtd.getItem().getId()))
 				.execute();
+		}
+		if(wt.getTargetWarehouse() != null){
+			ctx.getDslContext().update(STOCK)
+				.set(STOCK.QUANTITY, STOCK.QUANTITY.add(-quantity))
+				.where(STOCK.WAREHOUSE.eq(wt.getTargetWarehouse()))
+				.and(STOCK.ITEM.eq(wtd.getItem().getId()))
+				.execute();
+		}
+	}
+	
+	public static void deleteWarehouseTransfer(AONContext ctx, WarehouseTransferFilter filter){
+		LinkedList<Integer> list = new LinkedList<Integer>();
+		getWarehouseTransferStream(ctx, filter).forEach(wt -> {
+			final WarehouseTransfer wtAux = wt;
+			getWarehouseTransferDetailStream(ctx, f -> f.getWarehouseTransferProperty().eq(wt.getId()))
+			.forEach(wtd -> updateStock(ctx, wtAux, wtd));
+			list.add(wt.getId());
 		});
-		ctx.getDslContext().delete(WAREHOUSE_TRANSFER)
-			.where(WAREHOUSE_TRANSFER.INVENTORY.eq(inventoryId))
-			.execute();
+		Integer[] array = new Integer[list.size()];
+		for(Integer i = 0; i < list.size();i++) array[i] = list.get(i);
+		deleteWarehouseTransferDetail(ctx, f -> f.getWarehouseTransferProperty().in(array));
+		ctx.getDslContext().delete(WAREHOUSE_TRANSFER).where(WAREHOUSE_TRANSFER_PROPERTIES.getConditions(filter)).execute();
+	}
+
+	public static void deleteWarehouseTransferDetail(AONContext ctx, WarehouseTransferDetailFilter filter){
+		ctx.getDslContext().delete(WAREHOUSE_TRANSFER_DETAIL)
+		.where(WAREHOUSE_TRANSFER_DETAIL_PROPERTIES.getConditions(filter)).execute();
 	}
 	
 	public static LinkedList<WarehouseTransfer> getWarehouseTransferList(AONContext ctx, Integer inventoryId){
@@ -208,12 +295,6 @@ public class WarehouseDAO {
 			list.add(d);
 		});
 		return list;
-	}
-	
-	
-	public static LinkedList<Stock> getStockList(AONContext ctx, StockFilter filter){
-		return ctx.getDslContext().select().from(STOCK).where(STOCK_PROPERTIES.getConditions(filter))
-		.fetchInto(STOCK).stream().map(new FullStockFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static Stream<Stock> getStockStream(AONContext ctx, StockFilter filter){

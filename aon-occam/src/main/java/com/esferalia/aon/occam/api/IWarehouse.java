@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
+import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -58,11 +59,14 @@ public interface IWarehouse {
 	// 	***********************************************
 	// 	************************ WAREHOUSE TRANSFER ***
 	// 	***********************************************
+
+	Stream<WarehouseTransfer> getWarehouseTransferStream(AONContext ctx, WarehouseTransferFilter filter);
 	
+	void updateWarehouseTransfer(AONContext ctx, WarehouseTransfer warehouseTransfer);
 	Integer insertWarehouseTransfer(AONContext ctx, WarehouseTransfer warehouseTransfer);
 	Integer insertWarehouseTransferDetail(AONContext ctx, WarehouseTransferDetail warehouseTransferDetail);
 
-	void deleteWarehouseTransfer(AONContext ctx, Integer inventoryId);
+	void deleteWarehouseTransfer(AONContext ctx, WarehouseTransferFilter filter);
 	
 	Integer getWarehouseTransferNextNumber(AONContext ctx, String serie);
 	
@@ -83,7 +87,6 @@ public interface IWarehouse {
 	// 	************************************ STOCK ****
 	// 	***********************************************
 	
-	LinkedList<Stock> getStockList(AONContext ctx, StockFilter filter);
 	Stream<Stock> getStockStream(AONContext ctx, StockFilter filter);
 	
 }
