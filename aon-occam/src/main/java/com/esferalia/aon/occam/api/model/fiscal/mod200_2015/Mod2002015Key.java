@@ -1058,8 +1058,6 @@ public enum Mod2002015Key implements IMod200Key {
 	,BN595(595)
 	,BN596(596)
 	,BN597(597)
-	,BN083(83) // Está en el Desglose de la 082: Abono de deducciones I+D+i por insufi ciencia de cuota (opción art. 44.2 RDL 4/2004 y DT 24ª.7 LIS)
-	,BN1042(1042)
 	,BN599(599)		,BN600(600)
 	
 	// Pagos fraccionados. Cuota diferencial
@@ -1073,9 +1071,14 @@ public enum Mod2002015Key implements IMod200Key {
 	,BN633(633)		,BN642(642)
 	,BN617(617)		,BN618(618)
 	,BN619(619)		,BN620(620)
+	,BN083(83) 		,BN1332(1332)
+	,BN1200(1200)		
+	,BN1042(1042)	,BN1333(1333)
 	,BN621(621)		,BN622(622)
-	,BN150(150)		,BN1043(1043)
-	,BN506(506)		,BN1044(1044)
+	,BN1020(1020)	,BN1043(1043)
+	,BN1021(1021)	,BN1044(1044)
+	//,BN150(150)		,BN1043(1043)
+	//,BN506(506)		,BN1044(1044)
 		
 	// APLICACION DE RESULTADOS 
 	,ID650(650)

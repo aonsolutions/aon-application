@@ -2403,8 +2403,8 @@ public class Mod2002015Writer {
 						line.append( AonFiscalFileUtils.signedZero(importe>0 ? importe : 0.0, DS, DD) );               // Ingreso - Importe a ingresar
 						line.append( AonFiscalFileUtils.text(importe>0 && ("I".equals(mod200.getPayType()) || "U".equals(mod200.getPayType())) ? mod200.getIban() : "",34) ); // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)			
 		
-						addSignedKey(line, mod200, Mod2002015Key.BN150);  // Abono/Compensación - Abono por conversión de activos impuesto diferido - A       
-						addSignedKey(line, mod200, Mod2002015Key.BN506);  // Abono/Compensación - Compensación por conversión de activos impuesto diferido - C
+//						addSignedKey(line, mod200, Mod2002015Key.BN150);  // Abono/Compensación - Abono por conversión de activos impuesto diferido - A       
+//						addSignedKey(line, mod200, Mod2002015Key.BN506);  // Abono/Compensación - Compensación por conversión de activos impuesto diferido - C
 						
 						line.append(importe == 0 ? "1" : "0"); // Cuota Cero "0" o "1"
 					}

@@ -50,14 +50,13 @@ public class Page11 extends PageAbs {
 		table1.setCellSpacing(0);
 		table1.getColumnFormatter().setWidth(1, "200px");
 		table1.getColumnFormatter().setWidth(2, "200px");
-		row = 0;
 		for (int i = 0; i < Mod2002015Constants.LIQUIDATION_IV_KEYS_2.length; i++) {
 			Mod2002015Key key = Mod2002015Constants.LIQUIDATION_IV_KEYS_2[i];
 			if (mod200Object.isVisible(key)) {
-				if ((i+1)%2 == 0) {
-					paintKeyField(table1,key,row,2);
+				if (i%2 == 0) {
+					paintKey(table1,key, (i/2));
 				} else {
-					row = paintKey(table1,key,row);	
+					paintKeyField(table1,key,(i/2),2);
 				}
 			}
 		}
@@ -66,27 +65,16 @@ public class Page11 extends PageAbs {
 		table2.setCellSpacing(0);
 		table2.getColumnFormatter().setWidth(1, "200px");
 		table2.getColumnFormatter().setWidth(2, "200px");
-		row = 0;
 		for (int i = 0; i < Mod2002015Constants.LIQUIDATION_IV_KEYS_3.length; i++) {
 			Mod2002015Key key = Mod2002015Constants.LIQUIDATION_IV_KEYS_3[i];
-			if (mod200Object.isVisible(key)) {
-				if ((i+1)%2 == 0) {
-					paintKeyField(table2,key,row,2);
-				} else {
-					row = paintKey(table2,key,row);	
+			if (i%2 == 0) {
+				if (mod200Object.isVisible(key)) {
+					paintKey(table2,key,(i/2));
 				}
-			}
-		}
-
-		table3.setWidth("100%");
-		table3.setCellSpacing(0);
-		table3.getColumnFormatter().setWidth(1, "200px");
-		table3.getColumnFormatter().setWidth(2, "200px");
-		row = 0;
-		for (int i = 0; i < Mod2002015Constants.LIQUIDATION_IV_KEYS_4.length; i++) {
-			Mod2002015Key key = Mod2002015Constants.LIQUIDATION_IV_KEYS_4[i];
-			if (mod200Object.isVisible(key)) {
-				row = paintKey(table3,key,row);
+			} else {
+				if (key != null && mod200Object.isVisible(key)) {
+					paintKeyField(table2,key,(i/2),2);
+				}
 			}
 		}
 		

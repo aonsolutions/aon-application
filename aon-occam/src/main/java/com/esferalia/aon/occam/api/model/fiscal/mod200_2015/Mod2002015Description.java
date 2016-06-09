@@ -485,13 +485,15 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.BN618,"Intereses de demora (D. Forales / Navarra)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN619,"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria (Estado)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN620,"Importe ingreso / devoluci\u00F3n efectuada de la declaraci\u00F3n originaria (D. Forales / Navarra)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN1200,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS). TOTAL");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN1042,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS). (Estado)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN1333,"Abono de deducciones por producciones extranjeras (art. 39.3 LIS). (D. Forales / Navarra)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN621,"L\u00EDquido a ingresar o a devolver (Estado)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN622,"L\u00EDquido a ingresar o a devolver (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN150,"Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS) (Estado)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN1020,"Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS) (Estado)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN1043,"Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS) (D. Forales / Navarra)");
-		DESCRIPTION_MAP.put(Mod2002015Key.BN506,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS) (Estado)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN1021,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS) (Estado)");		
 		DESCRIPTION_MAP.put(Mod2002015Key.BN1044,"Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS) (D. Forales / Navarra)");
-
 	}
 	
 	static {
