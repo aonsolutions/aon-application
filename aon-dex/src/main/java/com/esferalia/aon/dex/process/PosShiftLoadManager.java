@@ -18,6 +18,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.Pos;
+import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.Shift;
 import com.code.aon.finance.invoicing.WsPosInvoicing;
 import com.code.aon.product.util.DiscountExpression;
@@ -35,11 +36,10 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadConstants {
 
-	private com.code.aon.finance.PosShift posShiftBD;
+	private com.code.aon.finance.PosShift posShiftDB;
 
 	public String processPosShift(PosShiftDex posShiftDex, int domain) {
 		int numRegsOk = 0;
-		int numRegsDup = 0;
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -50,53 +50,92 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 			HibernateUtil.startSession(sessionName);
 
 			for (PosShift ps: posShiftDex.getPosShift()) {
-				if (validatePosShift(ps, domain)) {
-					HibernateUtil.beginTransaction(sessionName);
+				List<InvoiceDetail> details = obtainDetailList(ps.getItems());
+				List<Finance> finances = obtainFinanceList(ps.getPosShiftCount());
+				if (validatePosShift(details, finances)) {
+					posShiftDB = obtainPosShift(ps, domain);
+					if (posShiftDB == null) {
+						HibernateUtil.beginTransaction(sessionName);
 
-					insertPosShift(ps, domain);
-					PosShiftDeclared psDeclared = ps.getPosShiftDeclared();
-					if (psDeclared != null) {
-						for (PosShiftDeclaredDetail psDeclaredDetail : psDeclared.getPosShiftDeclaredDetail()) {
-							insertPosShiftCount(psDeclaredDetail, domain);
+						insertPosShift(ps, domain);
+						PosShiftDeclared psDeclared = ps.getPosShiftDeclared();
+						if (psDeclared != null) {
+							for (PosShiftDeclaredDetail psDeclaredDetail : psDeclared.getPosShiftDeclaredDetail()) {
+								insertPosShiftCount(psDeclaredDetail, domain);
+							}
 						}
+
+						HibernateUtil.getSession(sessionName).flush();
+						HibernateUtil.commitTransaction(sessionName);
+
+			            if (posShiftDB.getPos().isInvoiceable()) {
+			            	Invoice invoice = generateInvoice(ps, details, finances, domain);
+			            	if (invoice != null) {
+								HibernateUtil.beginTransaction(sessionName);
+	
+								AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
+				        		entryWriter.recordAndUpdateInvoice(invoice);
+	
+								HibernateUtil.getSession(sessionName).flush();
+								HibernateUtil.commitTransaction(sessionName);
+			            	}
+			            }
+
+			            ++numRegsOk;
+					} else {
+						HibernateUtil.beginTransaction(sessionName);
+
+						updatePosShift();
+						PosShiftDeclared psDeclared = ps.getPosShiftDeclared();
+						if (psDeclared != null) {
+							for (PosShiftDeclaredDetail psDeclaredDetail : psDeclared.getPosShiftDeclaredDetail()) {
+								removePosShiftCount();
+								insertPosShiftCount(psDeclaredDetail, domain);
+							}
+						}
+
+						HibernateUtil.getSession(sessionName).flush();
+						HibernateUtil.commitTransaction(sessionName);
+
+			            if (posShiftDB.getPos().isInvoiceable()) {
+			            	Invoice invoice = obtainInvoice();
+			            	if (invoice == null) {
+				            	invoice = generateInvoice(ps, details, finances, domain);
+				            	if (invoice != null) {
+									HibernateUtil.beginTransaction(sessionName);
+		
+									AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
+					        		entryWriter.recordAndUpdateInvoice(invoice);
+		
+									HibernateUtil.getSession(sessionName).flush();
+									HibernateUtil.commitTransaction(sessionName);
+				            	}
+			            	} else {
+								HibernateUtil.beginTransaction(sessionName);
+	
+								if (invoice.getTotal() == obtainFinanceAmount(finances) && invoice.isAllFinancePending()) {
+									removeFinances(invoice);
+									insertFinances(invoice, finances);
+								}
+	
+								HibernateUtil.getSession(sessionName).flush();
+								HibernateUtil.commitTransaction(sessionName);
+			            	}
+			            }
+
+			            ++numRegsOk;
 					}
-
-					HibernateUtil.getSession(sessionName).flush();
-					HibernateUtil.commitTransaction(sessionName);
-
-		            if (posShiftBD.getPos().isInvoiceable()) {
-		            	Invoice invoice = generateInvoice(ps, domain);
-		            	if (invoice.getTotal() != 0 && invoice.getTotal() == obtainFinanceAmount(ps.getPosShiftCount())) {
-							HibernateUtil.beginTransaction(sessionName);
-
-							AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
-			        		entryWriter.recordAndUpdateInvoice(invoice);
-
-							HibernateUtil.getSession(sessionName).flush();
-							HibernateUtil.commitTransaction(sessionName);
-		            	}
-		            }
-
-		            ++numRegsOk;
 				} else {
-					++numRegsDup;
+					throw new Exception("El importe de los Productos de la Factura no coincide con el importe de los Pagos!");
 				}
 			}
-			return documentSuccess(numRegsOk, numRegsDup);
+			return documentSuccess(numRegsOk, 0);
 		} catch (Exception ex) {
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
-				if (posShiftBD != null && posShiftBD.getId() != null) {
-					HibernateUtil.beginTransaction(sessionName);
-
-					removeCurrentPosShift();
-
-					HibernateUtil.getSession(sessionName).flush();
-					HibernateUtil.commitTransaction(sessionName);
-				}
 			} catch (Exception e) {
 			}
-			return documentError(ex.getMessage(), numRegsOk, numRegsDup);
+			return documentError(ex.getMessage(), numRegsOk, 0);
 		} finally {
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
@@ -104,7 +143,11 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		}
 	}
 
-	private boolean validatePosShift(PosShift ps, int domain) throws Exception {
+	private boolean validatePosShift(List<InvoiceDetail> details, List<Finance> finances) throws Exception {
+		return obtainDetailAmount(details) == obtainFinanceAmount(finances);
+	}
+
+	private com.code.aon.finance.PosShift obtainPosShift(PosShift ps, int domain) throws Exception {
 		IManagerBean posShiftBean = BeanManager.getManagerBean(com.code.aon.finance.PosShift.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_DOMAIN), domain);
@@ -112,50 +155,69 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		criteria.addEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_SHIFT), Shift.values()[ps.getShift()]);
 		criteria.addEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_USERNAME), ps.getUsername());
 		criteria.addEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_START_TIME), ps.getStartTime());
-		return posShiftBean.getCount(criteria) == 0;
+		for (ITransferObject ito : posShiftBean.getList(criteria)) {
+			return (com.code.aon.finance.PosShift)ito;
+		}
+		return null;
 	}
 
 	private void insertPosShift(PosShift ps, int domain) throws Exception {
-		posShiftBD = populatePosShift(ps, domain);
-		posShiftBD = (com.code.aon.finance.PosShift)BeanManager.getManagerBean(com.code.aon.finance.PosShift.class).insert(posShiftBD);
+		posShiftDB = populatePosShift(ps, domain);
+		posShiftDB = (com.code.aon.finance.PosShift)BeanManager.getManagerBean(com.code.aon.finance.PosShift.class).insert(posShiftDB);
 	}
 
 	private com.code.aon.finance.PosShift populatePosShift(PosShift ps, int domain) throws Exception {
 		String dexInfo = LOADED_FROM_WS_MSG + " [" + getDateTimeAdapter().marshal(new Date()) + "]";
 		String ticketInfo = TICKET_MSG + " " + FROM_MSG + ": " + ps.getTicketStart() + " " + TO_MSG + ": " + ps.getTicketEnd();
 
-		posShiftBD = new com.code.aon.finance.PosShift();
-		posShiftBD.setDomain(domain);
-		posShiftBD.setPos((Pos)BeanManager.getManagerBean(Pos.class).get(ps.getPos()));
-		posShiftBD.setShift(Shift.values()[ps.getShift()]);
-		posShiftBD.setUsername(ps.getUsername());
-		posShiftBD.setStartTime(ps.getStartTime());
-		posShiftBD.setEndTime(ps.getEndTime());
-		posShiftBD.setInitialAmount(ps.getInitialAmount());
-		posShiftBD.setImbalance(ps.isImbalance());
-		posShiftBD.setRemarks(dexInfo + "\n" + ticketInfo + "\n" + ps.getRemarks());
-		return posShiftBD;
+		posShiftDB = new com.code.aon.finance.PosShift();
+		posShiftDB.setDomain(domain);
+		posShiftDB.setPos((Pos)BeanManager.getManagerBean(Pos.class).get(ps.getPos()));
+		posShiftDB.setShift(Shift.values()[ps.getShift()]);
+		posShiftDB.setUsername(ps.getUsername());
+		posShiftDB.setStartTime(ps.getStartTime());
+		posShiftDB.setEndTime(ps.getEndTime());
+		posShiftDB.setInitialAmount(ps.getInitialAmount());
+		posShiftDB.setImbalance(ps.isImbalance());
+		posShiftDB.setRemarks(dexInfo + "\n" + ticketInfo + "\n" + ps.getRemarks());
+		return posShiftDB;
+	}
+
+	private void updatePosShift() throws Exception {
+		String dexInfo = RELOADED_FROM_WS_MSG + " [" + getDateTimeAdapter().marshal(new Date()) + "]";
+		posShiftDB.setRemarks(dexInfo + "\n" + posShiftDB.getRemarks());
+
+		posShiftDB = (com.code.aon.finance.PosShift)BeanManager.getManagerBean(com.code.aon.finance.PosShift.class).update(posShiftDB);
 	}
 
 	private void insertPosShiftCount(PosShiftDeclaredDetail psDeclaredDetail, int domain) throws Exception {
 		if (psDeclaredDetail.getAmount() != 0) {
-			com.code.aon.finance.PosShiftCount posShiftCountBD = populatePosShiftCount(psDeclaredDetail, domain);
-			BeanManager.getManagerBean(com.code.aon.finance.PosShiftCount.class).insert(posShiftCountBD);
+			com.code.aon.finance.PosShiftCount posShiftCountDB = populatePosShiftCount(psDeclaredDetail, domain);
+			BeanManager.getManagerBean(com.code.aon.finance.PosShiftCount.class).insert(posShiftCountDB);
 		}
 	}
 
 	private com.code.aon.finance.PosShiftCount populatePosShiftCount(PosShiftDeclaredDetail psDeclaredDetail, int domain) throws Exception {
-		com.code.aon.finance.PosShiftCount posShiftCountBD = new com.code.aon.finance.PosShiftCount();
-		posShiftCountBD.setDomain(domain);
-		posShiftCountBD.setPosShift(posShiftBD);
-		posShiftCountBD.setPayMethod((PayMethod)BeanManager.getManagerBean(PayMethod.class).get(psDeclaredDetail.getPayMethod()));
-		posShiftCountBD.setAmount(psDeclaredDetail.getAmount());
-		return posShiftCountBD;
+		com.code.aon.finance.PosShiftCount posShiftCountDB = new com.code.aon.finance.PosShiftCount();
+		posShiftCountDB.setDomain(domain);
+		posShiftCountDB.setPosShift(posShiftDB);
+		posShiftCountDB.setPayMethod((PayMethod)BeanManager.getManagerBean(PayMethod.class).get(psDeclaredDetail.getPayMethod()));
+		posShiftCountDB.setAmount(psDeclaredDetail.getAmount());
+		return posShiftCountDB;
 	}
 
-	private Invoice generateInvoice(PosShift ps, int domain) throws Exception {
+	private void removePosShiftCount() throws Exception {
+		IManagerBean posShiftCountBean = BeanManager.getManagerBean(com.code.aon.finance.PosShiftCount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(posShiftCountBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_POS_SHIFT_ID), posShiftDB.getId());
+		for (ITransferObject ito : posShiftCountBean.getList(criteria)) {
+			posShiftCountBean.remove(ito);
+		}
+	}
+
+	private Invoice generateInvoice(PosShift ps, List<InvoiceDetail> details, List<Finance> finances, int domain) throws Exception {
 		WsPosInvoicing posInvoicing = new WsPosInvoicing();
-		return posInvoicing.createInvoice(posShiftBD, new Date(), getComments(ps), obtainDetailList(ps.getItems()), obtainFinanceList(ps.getPosShiftCount()));
+		return posInvoicing.createInvoice(posShiftDB, new Date(), getComments(ps), details, finances, WS_USER);
 	}
 
 	private String getComments(PosShift ps) throws Exception {
@@ -169,13 +231,13 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		if (items != null) {
 			for (Item item : items.getItem()) {
 				if (item.getTaxableBase() != 0) {
-					com.code.aon.product.Item itemBD = (com.code.aon.product.Item)BeanManager.getManagerBean(com.code.aon.product.Item.class).get(item.getId());
-					if (itemBD == null) {
+					com.code.aon.product.Item itemDB = (com.code.aon.product.Item)BeanManager.getManagerBean(com.code.aon.product.Item.class).get(item.getId());
+					if (itemDB == null) {
 						throw new Exception("El Producto con ID = " + item.getId() + " no existe!");
 					}
 
 					InvoiceDetail invoiceDetail = new InvoiceDetail();
-					invoiceDetail.setItem(itemBD);
+					invoiceDetail.setItem(itemDB);
 					invoiceDetail.setQuantity(item.getQuantity());
 					if (StringUtils.isNotBlank(item.getDiscountExpr())) {
 						invoiceDetail.setDiscountExpression(new DiscountExpression(item.getDiscountExpr()));
@@ -202,6 +264,14 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		return details;
 	}
 
+	private double obtainDetailAmount(List<InvoiceDetail> details) {
+		double detailAmount = 0;
+		for (InvoiceDetail detail : details) {
+			detailAmount = CommonUtil.round(detailAmount + detail.getTaxableBase() * (1 + detail.getVatPercent() / 100));
+		}
+		return detailAmount;
+	}
+
 	private List<Finance> obtainFinanceList(PosShiftCount psCount) throws Exception {
 		List<Finance> finances = new LinkedList<Finance>();
 		for (PosShiftCountDetail psCountDetail : psCount.getPosShiftCountDetail()) {
@@ -215,25 +285,56 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		return finances;
 	}
 
-	private double obtainFinanceAmount(PosShiftCount psCount) throws Exception {
+	private double obtainFinanceAmount(List<Finance> finances) {
 		double financeAmount = 0;
-		for (PosShiftCountDetail psCountDetail : psCount.getPosShiftCountDetail()) {
-			if (psCountDetail.getAmount() != 0) {
-				financeAmount = CommonUtil.round(financeAmount + psCountDetail.getAmount());
-			}
+		for (Finance finance : finances) {
+			financeAmount = CommonUtil.round(financeAmount + finance.getAmount());
 		}
 		return financeAmount;
 	}
 
-	private void removeCurrentPosShift() throws ManagerBeanException {
-		IManagerBean posShiftCountBean = BeanManager.getManagerBean(com.code.aon.finance.PosShiftCount.class);
+	private Invoice obtainInvoice() throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(posShiftCountBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_POS_SHIFT_ID), posShiftBD.getId());
-		for (ITransferObject ito : posShiftCountBean.getList(criteria)) {
-			posShiftCountBean.remove(ito);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_POS_SHIFT_ID), posShiftDB.getId());
+		for (ITransferObject ito : invoiceBean.getList(criteria)) {
+			return (Invoice)ito;
 		}
+		return null;
+	}
 
-		BeanManager.getManagerBean(com.code.aon.finance.PosShift.class).remove(posShiftBD);
+	private void removeFinances(Invoice invoice) throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
+		for (ITransferObject ito : financeBean.getList(criteria)) {
+			financeBean.remove(ito);
+		}
+	}
+
+	private void insertFinances(Invoice invoice, List<Finance> finances) throws ManagerBeanException {
+		for (Finance finance : finances) {
+			finance.setDomain(invoice.getDomain());
+			finance.setPayment(false);
+			finance.setInvoice(invoice);
+			finance.setRegistry(invoice.getRegistry());
+			finance.setRegistryDocument(invoice.getRegistryDocument());
+			finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
+			finance.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry());
+			finance.setRegistryName(invoice.getRegistryName());
+	        finance.setConcept(invoice.getDocumentNumber()); 
+			finance.setDueDate(invoice.getIssueDate());
+			finance.setSecurityLevel(invoice.getSecurityLevel());
+			finance.setScope(invoice.getScope());
+			finance.setFinanceStatus(FinanceStatus.PENDING);
+			finance.setManual(true);
+			finance.setCreationUser(WS_USER);
+			finance.setCreationDate(new Date());
+			finance.setSkipCheckPosShift(true);
+
+			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			financeBean.insert(finance);
+		}
 	}
 
 }

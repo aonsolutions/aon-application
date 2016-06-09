@@ -45,8 +45,10 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class WsPosInvoicing {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WsPosInvoicing.class.getName());
-	
-	public Invoice createInvoice(PosShift posShift, Date issueDate, String comments, List<InvoiceDetail> details, List<Finance> finances) 
+
+	private String userName;
+
+	public Invoice createInvoice(PosShift posShift, Date issueDate, String comments, List<InvoiceDetail> details, List<Finance> finances, String userName) 
 			throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -57,6 +59,7 @@ public class WsPosInvoicing {
 
 			HibernateUtil.beginTransaction(sessionName);
 
+			this.userName = userName;
 			Invoice invoice = createInvoice(posShift, issueDate, comments, obtainTaxableBase(details), obtainVatQuota(details));
 			createInvoiceDetails(invoice, posShift.getPos().getWorkPlace(), details);
 			createInvoiceTaxes(obtainTaxList(details));
@@ -112,7 +115,7 @@ public class WsPosInvoicing {
 		invoice.setTaxableBase(taxableBase);
 		invoice.setVatQuota(vatQuota);
 		invoice.setTotal(CommonUtil.round(invoice.getTaxableBase() + invoice.getVatQuota()));
-		invoice.setCreationUser("WebService");
+		invoice.setCreationUser(userName);
 		invoice.setCreationDate(new Date());
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
@@ -128,7 +131,7 @@ public class WsPosInvoicing {
 			invoiceDetail.setDescription(obtainDetailDescription(invoice.getIssueDate(), null, invoiceDetail.getItem().getProduct().getName()));
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 			invoiceDetail.setWorkPlace(workPlace);
-			invoiceDetail.setCreationUser("WebService");
+			invoiceDetail.setCreationUser(userName);
 			invoiceDetail.setCreationDate(new Date());
 
 			invoiceDetail = (InvoiceDetail)BeanManager.getManagerBean(InvoiceDetail.class).insert(invoiceDetail);
@@ -157,7 +160,7 @@ public class WsPosInvoicing {
 			finance.setScope(invoice.getScope());
 			finance.setFinanceStatus(FinanceStatus.PENDING);
 			finance.setManual(true);
-			finance.setCreationUser("WebService");
+			finance.setCreationUser(userName);
 			finance.setCreationDate(new Date());
 			finance.setSkipCheckPosShift(true);
 

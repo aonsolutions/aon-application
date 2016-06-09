@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.esferalia.aon.dex.IDataLoadConstants;
 import com.esferalia.aon.dex.shared.DateTimeAdapter;
-import com.esferalia.aon.dex.shared.PosShiftDexResponse;
+import com.esferalia.aon.dex.shared.DocumentResponse;
 
 public class CommonLoadManager implements IDataLoadConstants {
 
@@ -24,20 +24,18 @@ public class CommonLoadManager implements IDataLoadConstants {
 	}
 
 	protected String documentSuccess(int numRegsOk, int numRegsDup) {
-		PosShiftDexResponse response = new PosShiftDexResponse();
+		DocumentResponse response = new DocumentResponse();
 		response.setOperation(OPERATION_OK);
 		response.setNumRegsOk(numRegsOk);
-		response.setNumRegsDup(numRegsDup);
 
 		return getJaxbDocument(response);
 	}
 
 	protected String documentError(String message, int numRegsOk, int numRegsDup) {
-		PosShiftDexResponse response = new PosShiftDexResponse();
+		DocumentResponse response = new DocumentResponse();
 		response.setOperation(OPERATION_KO);
 		response.setError((message!=null) ? message : "NULL");
 		response.setNumRegsOk(numRegsOk);
-		response.setNumRegsDup(numRegsDup);
 
 		return getJaxbDocument(response);
 	}

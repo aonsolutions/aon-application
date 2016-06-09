@@ -13,9 +13,11 @@ public interface IDataLoadConstants {
 	String OPERATION_KO = "KO";
 
 	String LOADED_FROM_WS_MSG = "IMPORTADO DESDE WEB SERVICE";
+	String RELOADED_FROM_WS_MSG = "MODIFICADO DESDE WEB SERVICE";
 	String GENERATED_FROM_WS_MSG = "GENERADA DESDE WEB SERVICE";
 	String TICKET_MSG = "Ticket";
 	String FROM_MSG = "Desde";
 	String TO_MSG = "Hasta";
+	String WS_USER = "WebService";
 
 }
