@@ -53,6 +53,7 @@ public interface ISQLConstants {
 	String QUANTITY = "quantity";
 	String BREAKDOWN = "breakdown";
 	String ALIAS = "alias";
+	String MESSAGE = "message";
 
 	String FINANCE = "finance";
 	String DUE_DATE = "dueDate";

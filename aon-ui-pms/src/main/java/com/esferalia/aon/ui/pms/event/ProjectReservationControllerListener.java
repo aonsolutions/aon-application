@@ -25,6 +25,7 @@ import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationSource;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.pms.reservation.InventoryManager;
 import com.esferalia.aon.ui.pms.controller.ProjectReservationController;
 
 public class ProjectReservationControllerListener extends ControllerAdapter {
@@ -171,7 +172,14 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		reservationRoom.setTariff(roomTariff);
 		
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
-		reservationRoomBean.insert(reservationRoom);
+		reservationRoom = (ProjectReservationRoom)reservationRoomBean.insert(reservationRoom);
+
+		sendInventoryData(reservationRoom);
 	}
+
+    private void sendInventoryData(ProjectReservationRoom reservationRoom) {
+    	InventoryManager manager = new InventoryManager();
+    	manager.processInventoryQuery(reservationRoom);
+    }
 
 }

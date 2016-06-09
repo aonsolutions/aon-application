@@ -90,4 +90,9 @@ public class ProjectReservationRoom extends ProjectReservationRoomDB implements 
 		return null;
 	}
 
+	@Transient
+	public Hotel getHotel() {
+		return getProjectReservation().getHotel();
+	}
+
 }

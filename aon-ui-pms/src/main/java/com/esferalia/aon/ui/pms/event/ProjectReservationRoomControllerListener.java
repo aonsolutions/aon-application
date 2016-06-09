@@ -21,6 +21,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationService;
+import com.esferalia.aon.pms.reservation.InventoryManager;
 import com.esferalia.aon.ui.pms.controller.ProjectReservationRoomController;
 
 public class ProjectReservationRoomControllerListener extends ControllerAdapter {
@@ -37,12 +38,19 @@ public class ProjectReservationRoomControllerListener extends ControllerAdapter 
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationRoomController controller = (ProjectReservationRoomController)event.getController();
 		linkServicesToRoom((ProjectReservationRoom)controller.getTo(), controller.getLinkedServices());
+		sendInventoryData((ProjectReservationRoom)controller.getTo());
 	}
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationRoomController controller = (ProjectReservationRoomController)event.getController();
 		linkServicesToRoom((ProjectReservationRoom)controller.getTo(), controller.getLinkedServices());
+	}
+
+	@Override
+	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		ProjectReservationRoomController controller = (ProjectReservationRoomController)event.getController();
+		sendInventoryData((ProjectReservationRoom)controller.getTo());
 	}
 
 	private void linkServicesToRoom(ProjectReservationRoom reservationRoom, Integer[] services) throws ControllerListenerException {
@@ -89,6 +97,11 @@ public class ProjectReservationRoomControllerListener extends ControllerAdapter 
 			query.setInteger("reservationRoom", reservationRoom.getId());
 		}
 		query.executeUpdate();
+    }
+
+    private void sendInventoryData(ProjectReservationRoom reservationRoom) {
+    	InventoryManager manager = new InventoryManager();
+    	manager.processInventoryQuery(reservationRoom);
     }
 
 }
