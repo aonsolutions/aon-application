@@ -192,7 +192,7 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		addHandlers2DropDownPopupPanel();
 
 		dropDowncell.setComboBox(this);
-
+		
 	}
 
 	// ------------------------------------------------------- delegated methods
@@ -310,6 +310,15 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 	}
 
 	// ------------------------------------------------------ overrided methods
+	
+	@Override
+	protected void onEnsureDebugId(String baseID) {
+		super.onEnsureDebugId(baseID);
+
+	    // Set the id of popup & cell list
+		dropDownPopupPanel.ensureDebugId(baseID + "-popup");
+		dropDownCellList.ensureDebugId(baseID + "-celllist");
+	}
 
 	@Override
 	public void setSelectedIndex(int index) {
