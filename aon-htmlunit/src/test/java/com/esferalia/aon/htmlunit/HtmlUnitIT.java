@@ -1,9 +1,12 @@
 package com.esferalia.aon.htmlunit;
 
+import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
+
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
+import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
@@ -14,16 +17,17 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
+
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HtmlUnitIT {
 
 	public static final Logger LOGGER = Logger
 			.getLogger("com.gargoylesoftware.htmlunit");
-
+	
+	public static final String GWT_DEBUG_ID_PREFIX= "gwt-debug-";
 	public static final String AON_MAIN_MENU_FORM = "aonContent:mainMenuForm";
-	public static final String INTEGRATION_BASE_PASSWORD = "integration.base.password";
-	public static final String INTEGRATION_BASE_USER = "integration.base.user";
-	public static final String INTEGRATION_BASE_URL = "integration.base.url";
+	public static final String INTEGRATION_BASE_USER = "integration.test.user";
+	public static final String INTEGRATION_BASE_PASSWORD = "integration.test.password";
 
 	// ------------------------------------------------------------------------
 	
@@ -31,12 +35,14 @@ public class HtmlUnitIT {
         //try 20 times to wait .5 second each for filling the page.
         for (int i = 0; i < 20; i++) {
             if (predicate.test(page)) {
-                break;
+                return;
             }
             synchronized (page) {
                 page.wait(500);
             }
-        }		
+        }
+        Assert.fail();
+        
 	}
 
 	public static <T> T wait4(HtmlPage page, Supplier<T> supplier) throws InterruptedException{

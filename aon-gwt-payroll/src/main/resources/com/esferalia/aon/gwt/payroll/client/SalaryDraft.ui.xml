@@ -241,7 +241,7 @@
 									<g:customCell>
 										<g:HTMLPanel>
 											<g:Label styleName="{style.cell-label}">TRABAJADOR/A</g:Label>
-											<g:Label ui:field="employeeNameLabel" styleName="aon-text-center">&nbsp; </g:Label>
+											<g:Label debugId="employeeNameLabel" ui:field="employeeNameLabel" styleName="aon-text-center">&nbsp; </g:Label>
 										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
@@ -330,7 +330,7 @@
 													<g:HTMLPanel>
 														<g:Label styleName="{style.cell-label}">PERIODO DE
 															LIQUIDACION</g:Label>
-														<g:Label ui:field="periodLabel" styleName="aon-text-center">&nbsp; </g:Label>
+														<g:Label debugId="periodLabel" ui:field="periodLabel" styleName="aon-text-center">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell-last}">
@@ -351,7 +351,7 @@
 												<!-- e:ValueInlineHTML changeDisplayStyleName="{style.value-changed}"
 													ui:field="totalPaymentsLabel">&nbsp; </e:ValueInlineHTML-->
 												<e:ExpressionValueBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
-														changeDisplayStyleName="{style.value-changed}" ui:field="totalPaymentsLabel">&nbsp; </e:ExpressionValueBox>												<g:InlineHTML ui:field="dbTotalPaymentsLabel"
+														changeDisplayStyleName="{style.value-changed}" debugId="totalPaymentsLabel" ui:field="totalPaymentsLabel">&nbsp; </e:ExpressionValueBox>												<g:InlineHTML ui:field="dbTotalPaymentsLabel"
 													visible="false" />
 											</g:HTMLPanel>
 										</g:HTMLPanel>
@@ -372,7 +372,7 @@
 							
 							<g:HTML styleName="{style.vertical-space} {style.context-tab-voffset}" />
 
-							<g:FlexTable ui:field="eventsTable" styleName="aon-dataTable {style.context-tab-voffset}" />
+							<g:FlexTable debugId="eventsTable" ui:field="eventsTable" styleName="aon-dataTable {style.context-tab-voffset}" />
 							<g:HTML ui:field="eventsTableSpace" styleName="{style.vertical-space} {style.context-tab-voffset}"
 								visible="false" />
 
@@ -414,7 +414,7 @@
 													COTIZ.</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ValueExpressionBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
-														changeDisplayStyleName="{style.value-changed}" ui:field="cgcBaseLabel">&nbsp; </e:ValueExpressionBox>
+														changeDisplayStyleName="{style.value-changed}" debugId="cgcBaseLabel" ui:field="cgcBaseLabel">&nbsp; </e:ValueExpressionBox>
 													<g:InlineHTML ui:field="dbCgcBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -444,7 +444,7 @@
 												<g:Label styleName="{style.cell-label}">BASE AT Y EP.</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ValueExpressionBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
-														changeDisplayStyleName="{style.value-changed}" ui:field="cgpBaseLabel">&nbsp; </e:ValueExpressionBox>
+														changeDisplayStyleName="{style.value-changed}" debugId="cgpBaseLabel" ui:field="cgpBaseLabel">&nbsp; </e:ValueExpressionBox>
 													<g:InlineHTML ui:field="dbCgpBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -494,7 +494,7 @@
 													DEVENGO</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ValueInlineHTML
-														changeDisplayStyleName="{style.value-changed}" ui:field="totalPaymentLabel" htmlNull="&nbsp;">&nbsp; </e:ValueInlineHTML>
+														changeDisplayStyleName="{style.value-changed}" debugId="totalPaymentLabel" ui:field="totalPaymentLabel" htmlNull="&nbsp;">&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbTotalPaymentLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -518,7 +518,7 @@
 													PERCIBIR (A-B)</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ExpressionValueBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
-														changeDisplayStyleName="{style.value-changed}" ui:field="totalLiquidLabel">&nbsp; </e:ExpressionValueBox>
+														changeDisplayStyleName="{style.value-changed}" debugId="totalLiquidLabel" ui:field="totalLiquidLabel">&nbsp; </e:ExpressionValueBox>
 													<g:InlineHTML ui:field="dbTotalLiquidLabel"
 														visible="false" />
 												</g:HTMLPanel>

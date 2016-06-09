@@ -1537,9 +1537,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		// LocalStorage Items
 		storage = Storage.getLocalStorageIfSupported();
-
-		jsf = new JSF();
-		logEvent("jsfWidgetCreated");
+		
 
 		employees.addListener(this);
 		metaData.addListener(this);
@@ -1555,7 +1553,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		export2JS();
 		logEvent("end");
-
+		
+		jsf = new JSF();
+		logEvent("jsfWidgetCreated");
 	}
 
 	// --------------------------------------------------- Cost.Listener methods

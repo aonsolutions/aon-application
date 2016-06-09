@@ -4453,6 +4453,7 @@ public class SalaryDraft extends ResizeComposite
 	private Widget newIrpfPercentBox(final Deduction irpf, final Double percent) {
 
 		final TextBox irpfPercentTexTBox = new ExpressionBox();
+		irpfPercentTexTBox.ensureDebugId("irpfPercentTexTBox");
 
 		class IrpfPercentHandler implements FocusHandler, BlurHandler, ChangeHandler {
 

@@ -47,8 +47,11 @@
 								<g:Label styleName="aon-outputLabel">Mes</g:Label>
 							</td>
 							<td class="aon-panelGrid-even">
-								<aon:MonthListBox styleName="aon-selectOneMenu"
-									ui:field="monthListBox" monthStyles="{style.monthListBox-item}"
+								<aon:MonthListBox
+									debugId="monthListBox"
+									ui:field="monthListBox" 
+									styleName="aon-selectOneMenu"
+									monthStyles="{style.monthListBox-item}"
 									highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}" />
 							</td>
 						</tr>
@@ -58,7 +61,9 @@
 							</td>
 							<td class="aon-panelGrid-even ">
 								<g:ListBox styleName="aon-selectOneMenu"
-									ui:field="dbMonthListBox" />
+									debugId="dbMonthListBox"
+									ui:field="dbMonthListBox" 
+									/>
 							</td>
 						</tr>
 						<tr>
@@ -68,15 +73,30 @@
 							<td class="aon-panelGrid-even" >
 								<div class="aon-group aon-width-half">
 									<div class="aon-group-title" style="background-color: transparent;">
-										<g:CheckBox ui:field="saveCheckBox" checked="false">Guardar</g:CheckBox>
+										<g:CheckBox 
+										checked="false"
+										debugId="saveCheckBox"  
+										ui:field="saveCheckBox" 
+										>
+										Guardar
+										</g:CheckBox>
 									</div>
 									<div>
-										<g:RadioButton name="saveRadioButton" ui:field="keepRadioButton"
-											checked="true" enabled="false">Conservar n&oacute;minas calculadas</g:RadioButton>
+										<g:RadioButton 
+											checked="true" 
+											enabled="false"
+											name="saveRadioButton" 
+											debugId="keepRadioButton" 
+											ui:field="keepRadioButton"
+											>Conservar n&oacute;minas calculadas</g:RadioButton>
 									</div>
 									<div>
-										<g:RadioButton name="saveRadioButton" ui:field="overwriteRadioButton"
-											enabled="false">Eliminar n&oacute;minas calculadas</g:RadioButton>
+										<g:RadioButton
+											enabled="false" 
+											name="saveRadioButton" 
+											debugId="overwriteRadioButton" 
+											ui:field="overwriteRadioButton"
+											>Eliminar n&oacute;minas calculadas</g:RadioButton>
 									</div>
 									<!-- div>
 										<g:RadioButton name="saveRadioButton" ui:field="duplicateRadioButton"
@@ -98,13 +118,15 @@
 								<span class="aon-outputText"></span>
 							</td>
 							<td class="aon-panelGrid-even">
-								<g:Button ui:field="calcButton" enabled="false">Calcular</g:Button>
+								<g:Button debugId="calcButton" ui:field="calcButton" enabled="false">Calcular</g:Button>
 							</td>
 						</tr>
 						<tr>
 							<td colspan="2" class="aon-panelGrid-even aon-width-all aon-height-all">
 								<aon:CustomDataGrid 
-									ui:field="enterprisesDataGrid" styleName="aon-width-all aon-height-all aon-text-left" />
+									debugId="enterprisesDataGrid" 
+									ui:field="enterprisesDataGrid" 
+									styleName="aon-width-all aon-height-all aon-text-left" />
 							</td>
 						</tr>
 					</table>
@@ -123,7 +145,7 @@
 						<g:header>
 							<span class="aon-icon-time aon-icon-commandButton">Resultados</span>
 						</g:header>
-						<aon:ResultsPanel ui:field="resultsPanel" />
+						<aon:ResultsPanel debugId="resultsPanel" ui:field="resultsPanel" />
 					</g:tab>
 				</g:TabLayoutPanel>
 			</aon:MinimizePanel>

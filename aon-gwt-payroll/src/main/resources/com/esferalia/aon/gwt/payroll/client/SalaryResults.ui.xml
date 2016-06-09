@@ -23,11 +23,11 @@
 	}
 	</ui:Style>
 
-	<g:DockLayoutPanel styleName="aon-width-all" unit="PX" ui:field="dockLayoutPanel">
+	<g:DockLayoutPanel styleName="aon-width-all" unit="PX" debugId="dockLayoutPanel" ui:field="dockLayoutPanel">
 
 		<g:north size="26" >
 			<g:FlowPanel styleName="{style.button-bar} gwt-MenuBar-horizontal" 
-			    ui:field="flowPanel">
+			    debugId="flowPanel" ui:field="flowPanel">
 				<!--  g:Button styleName="aon-icon-task-start gwt-MenuItem"
 					ui:field="runButton"></g:Button-->
 				<g:Button styleName="aon-icon-delete gwt-MenuItem"
@@ -36,7 +36,7 @@
 		</g:north>
 		
 		<g:center>
-			<aon:SalaryResultsGrid ui:field="salaryResultsGrid" />
+			<aon:SalaryResultsGrid debugId="salaryResultsGrid" ui:field="salaryResultsGrid" />
 		</g:center>
 				
 	</g:DockLayoutPanel>

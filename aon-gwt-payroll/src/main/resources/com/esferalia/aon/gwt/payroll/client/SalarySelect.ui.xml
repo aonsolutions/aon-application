@@ -4,10 +4,10 @@
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget' >
 
 	<g:HTMLPanel  tag="span">
-		<g:ListBox ui:field="typeListBox"/>
-		<aon:MonthListBox ui:field="fromMonthListBox" visible="false" />
-		<aon:MonthListBox ui:field="monthListBox"/>
-		<aon:DateListBox ui:field="dateListBox" visible="false"/>
+		<g:ListBox debugId="typeListBox" ui:field="typeListBox"/>
+		<aon:MonthListBox debugId="fromMonthListBox" ui:field="fromMonthListBox" visible="false" />
+		<aon:MonthListBox debugId="monthListBox" ui:field="monthListBox" />
+		<aon:DateListBox debugId="dateListBox" ui:field="dateListBox" visible="false"/>
 	</g:HTMLPanel>
 
 </ui:UiBinder> 

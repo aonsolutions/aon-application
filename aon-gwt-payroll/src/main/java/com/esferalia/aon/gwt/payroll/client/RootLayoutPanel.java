@@ -14,8 +14,13 @@ import com.google.gwt.user.client.ui.RootPanel;
 public class RootLayoutPanel extends LayoutPanel {
 
 	public static RootLayoutPanel get(String id) {
+		
 		RootLayoutPanel rootLayoutPanel = new RootLayoutPanel();
-		RootPanel.get(id).add(rootLayoutPanel);
+		RootPanel rootPanel = RootPanel.get(id);
+		if ( rootPanel == null )
+			rootPanel = RootPanel.get();
+		
+		rootPanel.add(rootLayoutPanel);
 		return rootLayoutPanel;
 	}
 

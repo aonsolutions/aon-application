@@ -35,6 +35,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -47,6 +48,7 @@ import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -197,8 +199,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		// service.
 		EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
 		employeesService = new EmployeesServiceAsyncDecorator(employeesServiceRaw);
-
+		
 		initWidget(binder.createAndBindUi(this));
+
 
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
@@ -207,6 +210,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		toolbar.addListener(this);
 		// employeesService.getEnterprise(this);
+
 
 		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
 
@@ -225,6 +229,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		scrollPanel.addScrollHandler(this);
 
+
 		employeesService.getAvaiableEmployees(new AsyncCallback<Map<String, String>>() {
 
 			@Override
@@ -238,6 +243,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 				Employees.this.onAvaiableEmployees(result);
 			}
 		});
+
 	}
 
 	public boolean isExtended() {
@@ -272,6 +278,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		List<Workplace> workplaces = enterprise.getWorkplaces();
 
 		final TreeItem enterpriseItem = new TreeItem(imageItemHTML(images.enterprise(), enterprise.getName()));
+		enterpriseItem.ensureDebugId(getId(enterprise));
+		
 
 		enterpriseItem.setUserObject(enterprise);
 		tree.addItem(enterpriseItem);
@@ -310,6 +318,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		scrollPanel.scrollToLeft();
 
 		initViewButton(toolbar.getViewButton());
+		
 
 	}
 
@@ -650,6 +659,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		workplaceItem.setHTML(imageItemHTML(images.workplace(), description));
 		workplaceItem.setUserObject(workplace);
 		workplaceItem.setVisible(isWorkPlaceVisible(workplace));
+		workplaceItem.ensureDebugId(getId(workplace));
 
 		addImageItem(workplaceItem, "Costes", images.costs());
 		addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
@@ -1293,8 +1303,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		employeeItem.setHTML(imageItemHTML(current ? images.employee() : images.oldemployee(), text.toString()));
 		employeeItem.setUserObject(employee);
+		employeeItem.ensureDebugId(getId(employee));
 
-		addImageItem(employeeItem, "N\u00F3minas", images.salaries());
+		TreeItem salariestItem = addImageItem(employeeItem, "N\u00F3minas", images.salaries());
+		salariestItem.ensureDebugId(getId(employee)+"-salaries");
 
 		// addImageItem(employeeItem, "Calendario",
 		// images.laboralCalendar());
@@ -1310,6 +1322,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			Date issueDate = endDate;
 
 			TreeItem salaryDraftItem = addImageItem(employeeItem, "Borrador", images.draft());
+			salaryDraftItem.ensureDebugId(getId(employee)+"-draft");
 
 			SalaryDraft salaryDraft = new SalaryDraft();
 			salaryDraft.setEmployee(employee);
@@ -1323,6 +1336,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			// final TreeItem employeeEventsItem = addImageItem(employeeItem,
 			// "Incidencias", images.data());
 			final TreeItem employeeEventsItem = new TreeItem();
+			employeeEventsItem.ensureDebugId(getId(employee)+"-events");
 
 			final EmployeeEventsDraftObject employeeEventsDraftObject;
 
@@ -1380,7 +1394,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			final TreeItem categoryItem = addImageItem(employeeItem,
 					category.getLevel() + ". " + category.getDescription(), images.agreement());
-
+			categoryItem.ensureDebugId(getId(employee)+"-category");
+			
 			CategoryDraft categoryDraft = new CategoryDraft();
 			categoryDraft.setId(agreement.getId());
 			categoryDraft.setLevelId(category.getLevelId());
@@ -1808,7 +1823,35 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private static ITDataObject getITDataObject(TreeItem workplaceItem) {
 		return (ITDataObject) workplaceItem.getChild(WORKPLACE_PARTSIT_INDEX).getUserObject();
 	}
-
+	
+	private static String getId(Enterprise enterprise) {
+		return normalize(enterprise.getName());
+	}
+	
+	private static String getId(Workplace workplace) {
+		return normalize(workplace.getDescription());
+	}
+	
+	
+	private static String getId(Employee employee) {
+		return normalize(employee.getFullname());
+	}
+	
+	private static String normalize(String str){
+		return str
+		.toLowerCase()
+		.replace('\u00E1', 'a')
+		.replace('\u00E9', 'e')
+		.replace('\u00ED', 'i')
+		.replace('\u00F3', 'o')
+		.replace('\u00FA', 'u')
+		.replace('\u00F1', 'n')
+		.replace('\u00FC', 'u')
+		.replaceAll("\\s+", "_")
+		;
+		
+	}
+	
 	@Override
 	public void onLoad(LoadEvent event) {
 

@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.HasId;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class Employee implements Serializable, HasId<Integer> {
@@ -232,10 +233,10 @@ public class Employee implements Serializable, HasId<Integer> {
 	public String getFullname() {
 		StringBuffer sb = new StringBuffer();
 
-		if (firstSurname != null) {
+		if (AonStringUtils.isNotBlank(firstSurname)) {
 			sb.append(firstSurname.trim());
 		}
-		if (secondSurname != null) {
+		if (AonStringUtils.isNotBlank(secondSurname)) {
 			if (sb.length() > 0) {
 				sb.append(" ");
 			}
