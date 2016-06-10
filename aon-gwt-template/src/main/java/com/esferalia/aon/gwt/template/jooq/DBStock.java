@@ -1034,7 +1034,8 @@ public class DBStock {
 				Department d = DBCatalogue.getDepartment(domain, wp, r.value2(), login);
 				Record5<Integer, String, String, String, String> rd = ctx.getDslContext().select(ITEM.PRODUCT,ITEM.DETAIL,ITEM.DETAIL2, ITEM.DETAIL3, ITEM.SERIAL_NUMBER).from(ITEM).where(ITEM.ID.eq(r.value6())).fetchOne();
 				Integer productId = rd.getValue(ITEM.PRODUCT);
-				com.esferalia.aon.occam.api.model.product.Product p = AON.getProduct(ctx, productId);
+				com.esferalia.aon.occam.api.model.product.Product p = AON.getProduct(domain.getName(), domain.getId(), login,
+						f -> f.getIdProperty().eq(productId));
 				si.setDepartmentStr(d.getName());
 				si.setWorkplaceStr(wp.getDescription());
 				si.setDomainId(domain.getId());

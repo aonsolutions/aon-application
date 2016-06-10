@@ -160,7 +160,8 @@ public class DBCatalogue {
 					Department d = getDepartment(domain, w, r.value4(), login);
 					c.setDepartment(d.getName());
 					c.setWorkplace(w.getDescription());
-					Product p = AON.getProduct(sctx, r.value1());
+					Product p = AON.getProduct(domain.getName(), domain.getId(), login,
+							f -> f.getIdProperty().eq(r.getValue(ITEM.PRODUCT))); 
 					c.setProductCode(p.getCode());
 					c.setProductName(p.getName());
 					if(r.value5() != null) c.setDetail(r.value5());
