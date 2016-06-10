@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,8 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.apache.velocity.runtime.parser.node.GetExecutor;
+import java.util.NoSuchElementException;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -48,7 +46,6 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -60,9 +57,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
-import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -113,6 +108,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	private ActivityContextMenu activityContextMenu;
 	private EnterpriseContextMenu enterpriseContextMenu;
 	private EnterprisesContextMenu enterprisesContextMenu;
+	
 
 	@Override
 	public void onModuleLoad() {
@@ -376,15 +372,36 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			mergeEditor.setMode("text/xml");
 			mergeEditor.setFoldGutter(true);
 			mergeEditor.setLineNumbers(true);
+			mergeEditor.setOrig(result.getBasesFile());
+
 			try {
+				
 				mergeEditor.setText(result.getChangedBasesFile());
-			} catch (NullPointerException e) {
-				mergeEditor.setShowDifferences(false);
-				mergeEditor.setText(result.getDraftRequestFile());
-			}
-			mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-			mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
-			detailPanel.setWidget(mergeEditor);
+				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
+				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+				detailPanel.setWidget(mergeEditor);
+				mergeEditor.autoRefresh();
+
+			} catch (NoSuchElementException e1) {
+				try {
+					mergeEditor.setShowDifferences(false);
+					mergeEditor.setText(result.getDraftRequestFile());
+					mergeEditor.setTitle(CretaService.File.BASES.getFilename());
+					mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+					detailPanel.setWidget(mergeEditor);
+					mergeEditor.autoRefresh();
+				} catch ( NoSuchElementException e2 ){
+					FileEditor basesEditor = new FileEditor();
+					basesEditor.setMode("text/xml");
+					basesEditor.setFoldGutter(true);
+					basesEditor.setLineNumbers(true);
+					basesEditor.setText(result.getBasesFile());
+					basesEditor.setTitle(CretaService.File.BASES.getFilename());
+					basesEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+					detailPanel.setWidget(basesEditor);
+					basesEditor.autoRefresh();
+				}
+			}	
 
 			CretaResults cretaResults = new CretaResults() {
 				@Override
@@ -404,7 +421,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				result.getUnknown().length > 0)
 				showResultsPanel();
 
-			mergeEditor.autoRefresh();
 		}
 		
 		@Override

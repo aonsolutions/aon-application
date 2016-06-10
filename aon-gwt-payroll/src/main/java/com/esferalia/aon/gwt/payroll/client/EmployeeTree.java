@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -682,20 +683,42 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void onBases(CretaService.JsBasesResult result) {
 			dialog.hide();
 
+
 			MergeEditor mergeEditor = new MergeEditor();
 			mergeEditor.setOrig(result.getBasesFile());
 			mergeEditor.setMode("text/xml");
 			mergeEditor.setFoldGutter(true);
 			mergeEditor.setLineNumbers(true);
+			mergeEditor.setOrig(result.getBasesFile());
+
 			try {
+				
 				mergeEditor.setText(result.getChangedBasesFile());
-			} catch (NullPointerException e) {
-				mergeEditor.setShowDifferences(false);
-				mergeEditor.setText(result.getDraftRequestFile());
+				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
+				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+				detailPanel.setWidget(mergeEditor);
+				mergeEditor.autoRefresh();
+
+			} catch (NoSuchElementException e1) {
+				try {
+					mergeEditor.setShowDifferences(false);
+					mergeEditor.setText(result.getDraftRequestFile());
+					mergeEditor.setTitle(CretaService.File.BASES.getFilename());
+					mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+					detailPanel.setWidget(mergeEditor);
+					mergeEditor.autoRefresh();
+				} catch ( NoSuchElementException e2 ){
+					FileEditor basesEditor = new FileEditor();
+					basesEditor.setMode("text/xml");
+					basesEditor.setFoldGutter(true);
+					basesEditor.setLineNumbers(true);
+					basesEditor.setText(result.getBasesFile());
+					basesEditor.setTitle(CretaService.File.BASES.getFilename());
+					basesEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+					detailPanel.setWidget(basesEditor);
+					basesEditor.autoRefresh();
+				}
 			}	
-			mergeEditor.setTitle(file.getFilename());
-			mergeEditor.setFilename(file.getFilename() + ".xml");
-			detailPanel.setWidget(mergeEditor);
 
 			CretaResults cretaResults = new CretaResults() {
 				@Override
@@ -713,7 +736,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					|| result.getWarnings().length > 0)
 				showResultsPanel();
 
-			mergeEditor.autoRefresh();
 		}
 
 		// --------------------------------------------------------------------

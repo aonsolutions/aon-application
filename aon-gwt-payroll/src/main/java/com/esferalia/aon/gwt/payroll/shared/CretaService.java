@@ -1,9 +1,13 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import java.util.NoSuchElementException;
+
 import com.esferalia.aon.gwt.common.shared.HasId;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 
 public interface CretaService {
 
@@ -244,12 +248,16 @@ public interface CretaService {
 
 		public final String getChangedBasesFile() {
 			String bases = getDiffBases();
+			if ( bases == null )
+				throw new NoSuchElementException();
 			return URL.decodeQueryString(bases);
 
 		}
 
 		public final String getDraftRequestFile() {
 			String draft = getDraftRequest();
+			if ( draft == null )
+				throw new NoSuchElementException();
 			return URL.decodeQueryString(draft);
 
 		}

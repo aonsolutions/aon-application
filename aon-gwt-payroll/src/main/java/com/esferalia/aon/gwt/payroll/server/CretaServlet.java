@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.security.GeneralSecurityException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -54,12 +53,12 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
 import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.EmptyBasesException;
-import com.esferalia.aon.payroll.tgss.creta.DCL.LineaSalary;
 import com.esferalia.aon.payroll.tgss.creta.Borrador;
 import com.esferalia.aon.payroll.tgss.creta.Calculo;
 import com.esferalia.aon.payroll.tgss.creta.Confirmacion;
 import com.esferalia.aon.payroll.tgss.creta.DBA;
 import com.esferalia.aon.payroll.tgss.creta.DCL;
+import com.esferalia.aon.payroll.tgss.creta.DCL.LineaSalary;
 import com.esferalia.aon.payroll.tgss.creta.IndentXMLStreamWriter;
 import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.expression.Period;
@@ -170,6 +169,7 @@ public class CretaServlet extends HttpServlet
 			}
 		}
 
+		NoSkippedCallback skippedCallback = new NoSkippedCallback();
 		NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {
 			@Override
 			public void noDiffs(net.aonsolutions.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
@@ -177,14 +177,17 @@ public class CretaServlet extends HttpServlet
 				pickerBasesCb.noDiffs(liquidacion);
 			}
 		};
+		
 		try {
 			os.printf("\"diff_bases\":\"%s\",\r\n", generateBases(connection, true, true, true, nafs, defaults,
-					trabajadoresYTramosIss, respuestasIss, noDiffsBasesCb));
+					trabajadoresYTramosIss, respuestasIss, noDiffsBasesCb, skippedCallback));
 		} catch (EmptyBasesException e) {
 			os.printf("\"draft_request\":\"%s\",\r\n",
 					generateBorrador(e.getAutorizado(), noDiffsBasesCb.getMeses(), noDiffsBasesCb.getAnhos(),
 							noDiffsBasesCb.getTipos(), noDiffsBasesCb.getAceptarBasesAnteriores(),
 							noDiffsBasesCb.getCCCs()));
+		} catch (NoneSkippedException e) {
+//			os.printf("\"diff_bases\":null,\r\n");
 		}
 
 		os.printf("\"errors\":%s,\r\n", toJSON(pickerBasesCb.errors));
@@ -698,50 +701,50 @@ public class CretaServlet extends HttpServlet
 		}
 
 		@Override
-		public void wrongContextVariable(Salary salary, ContextVariable var, Period p, String right, String wrong) {
+		public void wrongVariable(Salary salary, String var, Period p, String right, String wrong) {
 			if (right == null)
 				warnings.add(new Event().setMessage(
 						format("%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. No se esperaba y es '%7$s'",
 								salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
-								var.getName(), p.getStart(), p.getEnd(), wrong)));
+								var, p.getStart(), p.getEnd(), wrong)));
 			else
 				warnings.add(new Event().setMessage(
 						format("%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecta. Se esperaba '%7$s' y es '%8$s'",
 								salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
-								var.getName(), p.getStart(), p.getEnd(), right, wrong)));
+								var, p.getStart(), p.getEnd(), right, wrong)));
 		}
 
 		@Override
-		public void noSuchContextVariable(Salary salary, ContextVariable var, Period p, String right) {
+		public void noSuchVariable(Salary salary, String var, Period p, String right) {
 			warnings.add(new Event().setMessage(format(
 					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) no encontrada. Se esperaba '%7$s'",
 					// salary.getEnterpriseName(),
 					salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
-					var.getName(), p.getStart(), p.getEnd(), right)));
+					var, p.getStart(), p.getEnd(), right)));
 		}
 
 		@Override
-		public void ambigousContextVariable(Salary salary, ContextVariable var, Period p, String right,
+		public void ambigousVariable(Salary salary, String var, Period p, String right,
 				String... wrongs) {
 			warnings.add(new Event().setMessage(format(
 					"%s (IPF:%s, NAF:%s) .%s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) ambigua. Se esperaba '%7$s' y es %8$s",
 					// salary.getEnterpriseName(),
 					salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
-					var.getName(), p.getStart(), p.getEnd(), right, Arrays.stream(wrongs)
+					var, p.getStart(), p.getEnd(), right, Arrays.stream(wrongs)
 							.map(wrong -> String.format("'%s'", wrong)).collect(Collectors.joining(",")))));
 		}
 
 		@Override
-		public void unMatchedContextVariable(Salary salary, ContextVariable var, ContextData contextData,
+		public void unMatchedVariable(Salary salary, String var, ContextData contextData,
 				Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder, boolean optional) {
 			errors.add(new Event().setMessage(format(
 					"%s (IPF:%s, NAF:%s) .Tramo para %s (%5$td/%5$tm/%5$tY..%6$td/%6$tm/%6$tY) incorrecto se esperaba (%7$s/%8$s/%9$s...%10$s/%11$s/%12$s)",
 					// salary.getEnterpriseName(),
 					salary.getEmployeeName(), salary.getEmployeeDocument(), salary.getEmployeeSSNumber(),
 					// salary.getEnterpriseCCC(),
-					var.getName(),
+					var,
 
 					contextData.getStartDate(), contextData.getEndDate(),
 
@@ -828,6 +831,29 @@ public class CretaServlet extends HttpServlet
 
 	}
 
+	public static class NoneSkippedException extends RuntimeException {
+		
+	}
+
+	public static class NoSkippedCallback implements BasesCallback {
+		
+		private boolean skipped = false;
+		
+		@Override
+		public void bases(net.aonsolutions.tgss.creta.jaxb.bases.Bases bases) {
+			if ( skipped )
+				return;
+			throw new NoneSkippedException();
+		}
+		
+		@Override
+		public void trabajadorSkipped(net.aonsolutions.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
+				Trabajador trabajadorCreta, Salary salary) {
+			skipped = true;
+		}
+		
+		
+	}
 	private static <J extends JSON> String toJSON(List<J> jsons) {
 		StringBuffer buff = new StringBuffer();
 		buff.append("[\r\n");

@@ -12,6 +12,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
@@ -1099,7 +1100,8 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				MATERNITY_BASE.getName(),
 				STRUCTURAL_OVERTIME_BASE.getName(),
 				NON_STRUCTURAL_OVERTIME_BASE.getName(),
-				WORKED_HOURS.getName()}){
+				WORKED_HOURS.getName(), 
+				PREST_IT}){
 			try {
 				for ( ITimedVariable<Object> data: expressionContext.getVariables(name) ){
 					try {
