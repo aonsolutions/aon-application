@@ -175,6 +175,7 @@
 						<g:ListBox ui:field="quoteListBox" styleName="gwt-ListBox aon-width-all">
 							<g:item value="{ALL}">Importe &Iacute;ntegro</g:item>
 							<g:item value="{NONE}">Exento</g:item>
+							<g:item value="{PRORATED}">Prorrateado</g:item>
 							<g:item value="{CUSTOM}">Personalizado...</g:item>
 						</g:ListBox>
 						<g:Label>&nbsp;</g:Label>

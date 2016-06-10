@@ -53,6 +53,7 @@ public class Payment extends ResizeComposite {
 	public static final String NONE = "NONE";
 	public static final String IPREM = "IPREM";
 	public static final String CUSTOM = "CUSTOM";
+	public static final String PRORATED = "PRORATED";
 	
 	private static final List<Variable> EMPTY_VARS = Collections.emptyList();
 
@@ -523,6 +524,9 @@ public class Payment extends ResizeComposite {
 		if (IPREM.equals(listValue)) {
 			return "EXCESO_IPREM(_P)";
 		}
+		if (PRORATED.equals(listValue)) {
+			return "_P/12";
+		}
 		// It must be CUSTOM
 		return src;
 	}
@@ -553,6 +557,8 @@ public class Payment extends ResizeComposite {
 			return ALL;
 		if (StringUtils.equals(getExpression(), expression))// TODO:
 			return ALL;
+		if ("_P/12".equals(expression))
+			return PRORATED;
 
 		try {
 			if (Double.parseDouble(expression) == 0.00)
