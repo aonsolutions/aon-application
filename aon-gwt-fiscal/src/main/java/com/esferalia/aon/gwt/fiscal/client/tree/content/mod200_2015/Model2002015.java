@@ -383,6 +383,7 @@ public class Model2002015 extends ResizeComposite  {
 		page00.populate(mod200Object);
 		page01.populate(mod200Object);
 		page02.populate(mod200Object);
+		page12.populate(mod200Object);
 		page14.populate(mod200Object);
 	}
 	

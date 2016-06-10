@@ -114,6 +114,11 @@ public class Mod2002015DAO  {
 			 .set(FS_MODEL200.AMOUNT,mod200.getAmount())
 			 .set(FS_MODEL200.IBAN,mod200.getIban())
 			 .set(FS_MODEL200.COMMENTS,mod200.getComments())
+			 .set(FS_MODEL200.BIC,mod200.getBic())
+			 .set(FS_MODEL200.NRS_ANEXOIII,mod200.getNrsAnexoIII())
+			 .set(FS_MODEL200.JUST_CANARIAS,mod200.getJustCanarias())
+			 .set(FS_MODEL200.NRS_ANEXOIV,mod200.getNrsAnexoIV())
+			 .set(FS_MODEL200.NRS_ANEXOV,mod200.getNrsAnexoV())
 			 .returning()
 			 .fetchOne();
 		mod200.setId(record.getValue(FS_MODEL200.ID));
@@ -154,6 +159,7 @@ public class Mod2002015DAO  {
 				detail.setIncomes(cp.getIncomes());
 				detail.setAValue(cp.getaValue());
 				detail.setBValue(cp.getbValue());
+				detail.setCcValue(cp.getccValue());
 				detail.setCValue(cp.getcValue());
 				detail.setDValue(cp.getdValue());
 				detail.setCapital(cp.getCapital());
@@ -250,6 +256,11 @@ public class Mod2002015DAO  {
 		 .set(FS_MODEL200.PAY_TYPE,mod200.getPayType())
 		 .set(FS_MODEL200.AMOUNT,mod200.getAmount())
 		 .set(FS_MODEL200.IBAN,mod200.getIban())
+		 .set(FS_MODEL200.BIC,mod200.getBic())
+		 .set(FS_MODEL200.NRS_ANEXOIII,mod200.getNrsAnexoIII())
+		 .set(FS_MODEL200.JUST_CANARIAS,mod200.getJustCanarias())
+		 .set(FS_MODEL200.NRS_ANEXOIV,mod200.getNrsAnexoIV())
+		 .set(FS_MODEL200.NRS_ANEXOV,mod200.getNrsAnexoV())
 		 .where(FS_MODEL200.ID.equal(mod200.getId()))
 		 .execute();
 		deleteDetail(ctx, mod200.getId());
@@ -346,6 +357,11 @@ public class Mod2002015DAO  {
 		mod200.setPayType(record.getPayType());
 		mod200.setAmount(record.getAmount());
 		mod200.setIban(record.getIban());
+		mod200.setBic(record.getBic());
+		mod200.setNrsAnexoIII(record.getNrsAnexoiii());
+		mod200.setJustCanarias(record.getJustCanarias());
+		mod200.setNrsAnexoIV(record.getNrsAnexoiv());
+		mod200.setNrsAnexoV(record.getNrsAnexov());
 		return mod200;
 	}
 	
@@ -428,6 +444,7 @@ public class Mod2002015DAO  {
 				cp.setIncomes(reg.getIncomes());
 				cp.setaValue(reg.getAValue());
 				cp.setbValue(reg.getBValue());
+				cp.setccValue(reg.getCcValue());
 				cp.setcValue(reg.getCValue());
 				cp.setdValue(reg.getDValue());
 				cp.setCapital(reg.getCapital());

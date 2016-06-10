@@ -69,13 +69,14 @@ public class Mod2002015 implements IFiscalModel {
 	private String payType;
 	private Double amount;
 	private String iban;
+	private String bic;
 
 	private String comments;
 
-	private String nrsAnexoIII;  	// Número de Referencia de Sociedades (NRS) de la documentación presentada (Ajustes y deducciones)
-	private String justCanarias; 	// Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Canarias
-	private String nrsAnexoIV;  	// Número de Referencia de Sociedades (NRS) de la documentación	presentada por el Anexo IV (Personal investigador)
-	private String nrsAnexoV;  		// Número de Referencia de Sociedades (NRS) del documento normalizado presentada por el Anexo V
+	private String nrsAnexoIII;
+	private String justCanarias;
+	private String nrsAnexoIV;
+	private String nrsAnexoV;
 	
 	private EnumMap<Mod2002015Key,DoubleVariable2015> keysMap = new EnumMap<Mod2002015Key,DoubleVariable2015>(Mod2002015Key.class);
 	private EnumMap<Mod2002015Key,DoubleVariable2015> draftMap = new EnumMap<Mod2002015Key,DoubleVariable2015>(Mod2002015Key.class);
@@ -296,6 +297,12 @@ public class Mod2002015 implements IFiscalModel {
 	}
 	public void setIban(String iban) {
 		this.iban = iban;
+	}
+	public String getBic() {
+		return bic;
+	}
+	public void setBic(String bic) {
+		this.bic = bic;
 	}
 	public void setVisibleMap(EnumMap<Mod2002015Key, Boolean> visibleMap) {
 		this.visibleMap = visibleMap;

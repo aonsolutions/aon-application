@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2015;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002015TreeObject;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key;
 import com.google.gwt.core.client.GWT;
@@ -88,6 +89,22 @@ public class Page12 extends PageAbs {
 		paintDescription(table2, AON.MSG.nrsAnexoV(), 3, 0, false);
 		table2.setWidget(3, 1, nrsAnexoV);
 		
+	}
+
+	@Override
+	public void dump(Mod2002015TreeObject mod200) {
+		super.dump(mod200);
+		nrsAnexoIII.setValue( mod200Object.getMod200().getNrsAnexoIII());
+		justCanarias.setValue( mod200Object.getMod200().getJustCanarias());
+		nrsAnexoIV.setValue( mod200Object.getMod200().getNrsAnexoIV());
+		nrsAnexoV.setValue( mod200Object.getMod200().getNrsAnexoV());
+	}
+	
+	public void populate(Mod2002015TreeObject mod200Object) {
+		mod200Object.getMod200().setNrsAnexoIII(nrsAnexoIII.getValue());
+		mod200Object.getMod200().setJustCanarias(justCanarias.getValue());
+		mod200Object.getMod200().setNrsAnexoIV(nrsAnexoIV.getValue());
+		mod200Object.getMod200().setNrsAnexoV(nrsAnexoV.getValue());
 	}
 
 }
