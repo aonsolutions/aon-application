@@ -58,8 +58,9 @@ public class CompanySaleInvoiceFooterControllerListener extends ControllerAdapte
 			} else {
 				controller.onSelectFirst(null);
 				RegistryAttachment attach = (RegistryAttachment) controller.getTo();
-				if(attach!=null && (attach.getSize() >0)) {
-					controller.setText(new String(attach.getData()));
+				byte[] data;
+				if(attach!=null && (data = attach.getData())!= null ) {
+					controller.setText(new String(data));
 				}
 			}
 		} catch (ManagerBeanException e) {
