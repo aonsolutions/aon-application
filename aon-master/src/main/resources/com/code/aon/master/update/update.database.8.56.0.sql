@@ -13,7 +13,6 @@ AND `description` = 'DIAS PREAVISO');
 
 SET @PREAVISO=(SELECT `id` FROM `payment_concept` WHERE `code`='PREAVISO');
 
-
 UPDATE `system_payment` 
 SET 
 `type` = NULL,
@@ -23,6 +22,12 @@ SET
 `payment_concept` = @PREAVISO
 WHERE `salary_type` = 2 
 AND `description` = 'DIAS PREAVISO';
+
+
+UPDATE  `system_payment` 
+SET `expression`= REPLACE(`expression`, 'FIN_CONTRATO', 'INICIO_CONTRATO') 
+WHERE `salary_type` = 2 
+AND `expression` LIKE '%CAUSA_INDEMNIZACION == FIN\_%';
 
 UPDATE `db_version` SET `version_number` = '8.57.0';
 
