@@ -16,19 +16,28 @@ public class PosShiftCountBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		PosShiftCount posShiftCount = (PosShiftCount) evt.getTo();
-		checkPosShift(posShiftCount.getPosShift());
+		if (!posShiftCount.isSkipCheckPosShift()) {
+			checkPosShift(posShiftCount.getPosShift());
+		}
+		posShiftCount.setSkipCheckPosShift(false);
 	}
 
 	@Override
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		PosShiftCount posShiftCount = (PosShiftCount) evt.getTo();
-		checkPosShift(posShiftCount.getPosShift());
+		if (!posShiftCount.isSkipCheckPosShift()) {
+			checkPosShift(posShiftCount.getPosShift());
+		}
+		posShiftCount.setSkipCheckPosShift(false);
 	}
 
 	@Override
 	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
 		PosShiftCount posShiftCount = (PosShiftCount) evt.getTo();
-		checkPosShift(posShiftCount.getPosShift());
+		if (!posShiftCount.isSkipCheckPosShift()) {
+			checkPosShift(posShiftCount.getPosShift());
+		}
+		posShiftCount.setSkipCheckPosShift(false);
 	}
 
 	private void checkPosShift(PosShift posShift) throws ManagerBeanException {

@@ -117,6 +117,8 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 								if (invoice.getTotal() == obtainFinanceAmount(finances) && isAllFinancePending(invoice)) {
 									removeFinances(invoice);
 									insertFinances(invoice, finances);
+								} else {
+									updatePosShift(null);
 								}
 	
 								HibernateUtil.getSession(sessionName).flush();
@@ -181,14 +183,19 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		posShiftDB.setInitialAmount(ps.getInitialAmount());
 		posShiftDB.setImbalance(ps.isImbalance());
 		posShiftDB.setRemarks(dexInfo + "\n" + ticketInfo + "\n" + ps.getRemarks());
+		posShiftDB.setSkipCheckPosShift(true);
 		return posShiftDB;
 	}
 
 	private void updatePosShift(PosShift ps) throws Exception {
-		String dexInfo = RELOADED_FROM_WS_MSG + " [" + getDateTimeAdapter().marshal(new Date()) + "]";
-		posShiftDB.setImbalance(ps.isImbalance());
-		posShiftDB.setRemarks(dexInfo + "\n" + posShiftDB.getRemarks());
-
+		if (ps != null) {
+			String dexInfo = RELOADED_FROM_WS_MSG + " [" + getDateTimeAdapter().marshal(new Date()) + "]";
+			posShiftDB.setImbalance(ps.isImbalance());
+			posShiftDB.setRemarks(dexInfo + "\n" + posShiftDB.getRemarks());
+			posShiftDB.setSkipCheckPosShift(true);
+		} else {
+			posShiftDB.setSkipCheckPosShift(false);
+		}
 		posShiftDB = (com.code.aon.finance.PosShift)BeanManager.getManagerBean(com.code.aon.finance.PosShift.class).update(posShiftDB);
 	}
 
@@ -205,6 +212,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		posShiftCountDB.setPosShift(posShiftDB);
 		posShiftCountDB.setPayMethod((PayMethod)BeanManager.getManagerBean(PayMethod.class).get(psDeclaredDetail.getPayMethod()));
 		posShiftCountDB.setAmount(psDeclaredDetail.getAmount());
+		posShiftCountDB.setSkipCheckPosShift(true);
 		return posShiftCountDB;
 	}
 
@@ -213,7 +221,9 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(posShiftCountBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_POS_SHIFT_ID), posShiftDB.getId());
 		for (ITransferObject ito : posShiftCountBean.getList(criteria)) {
-			posShiftCountBean.remove(ito);
+			com.code.aon.finance.PosShiftCount posShiftCount = (com.code.aon.finance.PosShiftCount)ito;
+			posShiftCount.setSkipCheckPosShift(true);
+			posShiftCountBean.remove(posShiftCount);
 		}
 	}
 
@@ -321,7 +331,9 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
 		for (ITransferObject ito : financeBean.getList(criteria)) {
-			financeBean.remove(ito);
+			Finance finance = (Finance)ito;
+			finance.setSkipCheckPosShift(true);
+			financeBean.remove(finance);
 		}
 	}
 
