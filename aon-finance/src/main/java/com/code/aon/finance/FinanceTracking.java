@@ -1,6 +1,5 @@
 package com.code.aon.finance;
 
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;

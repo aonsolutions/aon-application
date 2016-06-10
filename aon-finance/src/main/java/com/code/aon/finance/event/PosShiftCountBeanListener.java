@@ -53,9 +53,11 @@ public class PosShiftCountBeanListener extends ManagerBeanListenerAdapter {
 				}
 			}
 
-			posShift.setImbalance(imbalance);
-			posShift.setSkipCheckPosShift(true);
-			posShift = (PosShift)BeanManager.getManagerBean(PosShift.class).update(posShift);
+			if (imbalance != posShift.isImbalance()) {
+				posShift.setImbalance(imbalance);
+				posShift.setSkipCheckPosShift(true);
+				posShift = (PosShift)BeanManager.getManagerBean(PosShift.class).update(posShift);
+			}
 		}
 	}
 

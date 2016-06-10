@@ -81,8 +81,6 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 								HibernateUtil.commitTransaction(sessionName);
 			            	}
 			            }
-
-			            ++numRegsOk;
 					} else {
 						HibernateUtil.beginTransaction(sessionName);
 
@@ -113,21 +111,26 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 				            	}
 			            	} else {
 								HibernateUtil.beginTransaction(sessionName);
-	
+
 								if (invoice.getTotal() == obtainFinanceAmount(finances) && isAllFinancePending(invoice)) {
 									removeFinances(invoice);
 									insertFinances(invoice, finances);
-								} else {
-									updatePosShift(null);
 								}
 	
 								HibernateUtil.getSession(sessionName).flush();
 								HibernateUtil.commitTransaction(sessionName);
 			            	}
 			            }
-
-			            ++numRegsOk;
 					}
+
+					HibernateUtil.beginTransaction(sessionName);
+
+					updatePosShift(null);
+
+					HibernateUtil.getSession(sessionName).flush();
+					HibernateUtil.commitTransaction(sessionName);
+
+					++numRegsOk;
 				} else {
 					throw new Exception("El importe de los Productos de la Factura no coincide con el importe de los Pagos!");
 				}
