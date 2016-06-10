@@ -215,18 +215,9 @@ public class ProductDAO {
 			.stream().map(new FullProductFiller()).findFirst().orElse(new Product());
 	}
 	
-	public static Product getProduct(AONContext ctx, ProductFilter filter){
-		return ctx.getDslContext().select().from(PRODUCT).where(PRODUCT_PROPERTIES.getConditions(filter)).limit(1)
-				.fetchInto(PRODUCT).stream().map(new FullProductFiller()).findFirst().orElse(new Product());
-	}
-	
 	public static Stream<Product> getProductStream(AONContext ctx, ProductFilter filter){
 		return ctx.getDslContext().select().from(PRODUCT).where(PRODUCT_PROPERTIES.getConditions(filter))
 				.fetchInto(PRODUCT).stream().map(new FullProductFiller());
-	}
-	
-	public static LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter){
-		return getProductStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	@Deprecated

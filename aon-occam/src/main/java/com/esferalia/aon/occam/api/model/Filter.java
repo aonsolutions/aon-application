@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
+import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
 import com.esferalia.aon.occam.api.model.Properties.StockProperties;
 import com.esferalia.aon.occam.api.model.Properties.TagProperties;
@@ -116,5 +117,10 @@ public interface Filter {
 	@FunctionalInterface
 	public interface WarehouseTransferDetailFilter{
 		Filter filter(WarehouseTransferDetailProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface SeriesFilter{
+		Filter filter(SeriesProperties properties);
 	}
 }

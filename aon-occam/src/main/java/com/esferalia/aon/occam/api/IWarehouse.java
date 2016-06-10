@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
@@ -81,6 +82,7 @@ public interface IWarehouse {
 	// 	************************************ SERIES ***
 	// 	***********************************************
 	
+	Stream<Series> getSeriesStream(AONContext ctx, SeriesFilter filter);
 	LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId);
 
 	// 	***********************************************

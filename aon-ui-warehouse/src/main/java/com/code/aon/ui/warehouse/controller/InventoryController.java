@@ -45,6 +45,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferSource;
 
 /**
@@ -65,6 +66,10 @@ public class InventoryController extends BasicController implements IAuditableCo
 	private boolean showInventoryAdjustmentWindow;
 	private boolean showAuditInfoWindow;
 	private boolean showConfirmWindow;
+	private boolean showSeriesNumberWindow;
+	private boolean oneSeries;
+	private String series;
+	
 	private String text;
 	
 	public Warehouse getWarehouse() {
@@ -102,6 +107,25 @@ public class InventoryController extends BasicController implements IAuditableCo
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 	
+	public boolean isShowSeriesNumberWindow() {
+		return showSeriesNumberWindow;
+	}
+	public void setShowSeriesNumberWindow(boolean showSeriesNumberWindow) {
+		this.showSeriesNumberWindow = showSeriesNumberWindow;
+	}
+	
+	public String getSeries() {
+		return series;
+	}
+	public void setSeries(String series) {
+		this.series = series;
+	}
+	public boolean isOneSeries() {
+		return oneSeries;
+	}
+	public void setOneSeries(boolean oneSeries) {
+		this.oneSeries = oneSeries;
+	}
 	public String getText() {
 		return text;
 	}
@@ -109,6 +133,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 		this.text = text;
 	}
 	public void onClosing(ActionEvent event) {
+		setShowSeriesNumberWindow(false);
 		closeValidation();
 		try {
 			closeInventary();
@@ -125,10 +150,57 @@ public class InventoryController extends BasicController implements IAuditableCo
 		super.onReset(event);
 	}
 	
+
+	
+	public boolean isOneSeries2(){
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String user = AonUtil.getRemoteUser();
+		Integer userId = AON.getUser(domainName, domainId, user).getId();
+		Integer[] array = AON.getUserScopes(domainName, domainId, user, userId);
+		LinkedList<Series> list = AON.getSeriesList(domainName, domainId, user,
+				f -> f.getActiveProperty().eq((byte) 1)
+				.and(f.getDeliveryProperty().eq((byte)1))
+				.and(f.getScopeProperty().in(array)));
+		setOneSeries(list.size() <= 1);
+		if(isOneSeries()) setSeries(list.size() > 0 ? list.get(0).getCode() : null);
+		return isOneSeries();
+	}
+	
+	public boolean isCloseButton1(){
+		return isOneSeries2() || !isInitStock();
+	}
+	
+	public boolean isCloseButton2(){
+		return !isOneSeries2() && isInitStock();
+	}
+	
+	public void onContinueClosing(ActionEvent event) throws Exception {
+		if(initStock && !isOneSeries()) {
+			setShowSeriesNumberWindow(true);
+			IController controller = FormUtil.getController(IWarehouseConstants.WAREHOUSE_TRANSFER_CONTROLLER_NAME);
+			controller.onReset(event);
+		} else {
+			if(initStock) ;
+			onClosing(event);
+		}
+	}
+	
 	private com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer createWarehouseTransfer(String domainName, Integer domainId, String user, Integer warehouseId) {
-		Integer number = AON.getWarehouseTransferNextNumber(domainName, domainId, user, null);
+		Integer number; String series;
+		if(isOneSeries()){
+			series = getSeries();
+			number = AON.getWarehouseTransferNextNumber(domainName, domainId, user, getSeries());
+		} else {
+			WarehouseTransferController wtc = (WarehouseTransferController) AonUtil.getRegisteredBean(IWarehouseConstants.WAREHOUSE_TRANSFER_CONTROLLER_NAME);
+			WarehouseTransfer _wt = (WarehouseTransfer) wtc.getTo();
+			series = _wt.getSeries();
+			number = _wt.getNumber();
+		}
+	
 		com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer wt = new com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer()
 			.setDomain(domainId)
+			.setSeries(series)
 			.setNumber(number)
 			.setIssueTime(new Date())
 			.setComments("")

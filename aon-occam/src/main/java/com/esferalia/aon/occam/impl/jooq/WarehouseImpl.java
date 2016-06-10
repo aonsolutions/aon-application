@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IWarehouse;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
+import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
@@ -153,6 +154,12 @@ public class WarehouseImpl implements IWarehouse {
 	public LinkedList<Series> getSeriesDeliveryList(AONContext ctx, Integer scopeId){
 		return ctx.getDslContext().transactionResult(configuration ->
 				SeriesDAO.getSeriesDeliveryList(ctx, scopeId));
+	}
+	
+	@Override
+	public Stream<Series> getSeriesStream(AONContext ctx, SeriesFilter filter){
+		return ctx.getDslContext().transactionResult(configuration ->
+				SeriesDAO.getSeries(ctx, filter));
 	}
 	
 	@Override

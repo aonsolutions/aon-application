@@ -16,9 +16,6 @@ import com.esferalia.aon.occam.api.model.product.ProductTag;
 public interface IProduct {
 
 	// PRODUCT
-	public Product getProduct(AONContext ctx, Integer productId);
-	public Product getProduct(AONContext ctx, ProductFilter filter);
-	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter);
 	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter);
 	public void insert(AONContext ctx,Product p);
 	public void insertWithId(AONContext ctx,Product p);

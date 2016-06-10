@@ -2,9 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
-import java.util.LinkedList;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -37,18 +35,9 @@ public class TagDAO {
 				.stream().map(new FullTagFiller()).findFirst().orElse(new Tag());
 	}
 	
-	public static Tag getTag(AONContext ctx, TagFilter filter){
-		return ctx.getDslContext().select().from(TAG).where(TAG_PROPERTIES.getConditions(filter)).limit(1)
-				.fetchInto(TAG).stream().map(new FullTagFiller()).findFirst().orElse(new Tag());
-	}
-	
 	public static Stream<Tag> getTagStream(AONContext ctx, TagFilter filter){
 		return ctx.getDslContext().select().from(TAG).where(TAG_PROPERTIES.getConditions(filter))
 				.fetchInto(TAG).stream().map(new FullTagFiller());
-	}
-	
-	public static LinkedList<Tag> getTagList(AONContext ctx, TagFilter filter){
-		return getTagStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static void updateTag(AONContext ctx, Tag tag){

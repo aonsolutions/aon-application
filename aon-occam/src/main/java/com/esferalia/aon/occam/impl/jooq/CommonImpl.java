@@ -186,24 +186,6 @@ public class CommonImpl implements ICommon {
 	// ------------------ TAG
 	
 	@Override
-	public Tag getTag(AONContext ctx, Integer tagId){
-		return ctx.getDslContext().transactionResult(
-				configuration -> TagDAO.getTag(ctx, tagId));
-	}
-	
-	@Override
-	public Tag getTag(AONContext ctx, TagFilter filter){
-		return ctx.getDslContext().transactionResult(
-				configuration -> TagDAO.getTag(ctx, filter));
-	}
-	
-	@Override
-	public LinkedList<Tag> getTagList(AONContext ctx, TagFilter filter){
-		return ctx.getDslContext().transactionResult(
-				configuration -> TagDAO.getTagList(ctx, filter));
-	}
-	
-	@Override
 	public Stream<Tag> getTagStream(AONContext ctx, TagFilter filter){
 		return ctx.getDslContext().transactionResult(
 				configuration -> TagDAO.getTagStream(ctx, filter));

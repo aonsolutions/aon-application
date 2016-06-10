@@ -85,9 +85,6 @@ public interface ICommon {
 	public Integer[] getSonsDomains(AONContext ctx);
 	
 	// TAG
-	public Tag getTag(AONContext ctx, Integer tagId);
-	public Tag getTag(AONContext ctx, TagFilter filter);
-	public LinkedList<Tag> getTagList(AONContext ctx, TagFilter filter);
 	public Stream<Tag> getTagStream(AONContext ctx, TagFilter filter);
 	public void updateTag(AONContext ctx, Tag tag);
 	public void deleteTag(AONContext ctx, Tag tag);

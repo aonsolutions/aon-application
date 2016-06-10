@@ -20,6 +20,7 @@ import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.records.SeriesRecord;
 import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
@@ -142,6 +143,7 @@ public class WarehouseDAO {
 				.set(WAREHOUSE_TRANSFER.MODIFICATION_DATE,new Timestamp(warehouseTransfer.getModificationDate().getTime()))
 				.set(WAREHOUSE_TRANSFER.MODIFICATION_USER, warehouseTransfer.getModificationUser())
 				.set(WAREHOUSE_TRANSFER.ISSUE_TIME, new Timestamp(warehouseTransfer.getIssueTime().getTime()))
+				.set(WAREHOUSE_TRANSFER.SERIES, warehouseTransfer.getSeries())
 				.set(WAREHOUSE_TRANSFER.NUMBER, warehouseTransfer.getNumber())
 				.set(WAREHOUSE_TRANSFER.SOURCE, warehouseTransfer.getSource())
 				.set(WAREHOUSE_TRANSFER.SOURCE_ID, warehouseTransfer.getSourceId())
@@ -306,7 +308,7 @@ public class WarehouseDAO {
 	public static Integer getWarehouseTransferNextNumber(AONContext ctx, String serie) {
 		Result<Record1<Integer>> result = null;
 		if(serie != null) result = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER)).from(WAREHOUSE_TRANSFER)
-			.where(WAREHOUSE_TRANSFER.SERIES.eq("serie")).fetch();
+			.where(WAREHOUSE_TRANSFER.SERIES.eq(serie)).fetch();
 		else if(result == null) result = ctx.getDslContext().select(DSL.max(WAREHOUSE_TRANSFER.NUMBER)).from(WAREHOUSE_TRANSFER)
 			.where(WAREHOUSE_TRANSFER.SERIES.isNull()).fetch();
 		return result.isEmpty() ? 0 : result.get(0).value1()+1;

@@ -10,20 +10,32 @@
 	<ui:define name="content">
 
 		<aon:form id="inventoryCloseForm">
-		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{bundle.warehouse_inventory_remake_module}" />
-				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
-				<ui:define name="toolbarContent">		
-					<aon:commandButton id="accept"
-						value="#{bundle.warehouse_inventory_close_module}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						actionListener="#{inventory.onClosing}"
-						action="inventory_form"
-						accesskey="#{bundle.aon_key_cancel}" />
-				</ui:define>
-			</ui:decorate>
-
+			<aon:div id="closeToolbar">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{bundle.warehouse_inventory_remake_module}" />
+					<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
+					<ui:define name="toolbarContent">		
+						<aon:if test="#{inventory.closeButton1}">
+							<aon:commandButton id="accept"
+								value="#{bundle.warehouse_inventory_close_module}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								actionListener="#{inventory.onClosing}"
+								action="inventory_form"
+								accesskey="#{bundle.aon_key_cancel}" />
+						</aon:if>
+						<aon:if test="#{inventory.closeButton2}">
+							<aon:commandButton id="accept22"
+								value="#{bundle.warehouse_inventory_close_module}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								actionListener="#{inventory.onContinueClosing}"
+								accesskey="#{bundle.aon_key_cancel}" 
+								reRender="showSeriesNumberWindow" >
+							</aon:commandButton>
+						</aon:if>
+						
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="2">
 
@@ -50,14 +62,21 @@
 					<aon:outputLabel for="Inventory_init"
 						value="#{bundle.warehouse_inventory_init_stock}" />
 					<aon:selectOneRadio id="Inventory_init"
-						value="#{inventory.initStock}">
-						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+						value="#{inventory.initStock}"
+						reRender="closeToolbar"
+						>
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
 						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+						
 					</aon:selectOneRadio>
 
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{allItemLookup}" />
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/code/aon/ui/warehouse/facelet/inventory/modalSeriesNumber.xhtml" />
+		
 	</ui:define>
 	
 </ui:composition>

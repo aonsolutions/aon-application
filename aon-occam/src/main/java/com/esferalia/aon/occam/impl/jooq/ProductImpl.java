@@ -21,24 +21,6 @@ public class ProductImpl implements IProduct{
 	// ------------------------------------- PRODUCT
 	
 	@Override
-	public Product getProduct(AONContext ctx, Integer productId) {
-		return ctx.getDslContext().transactionResult( configuration ->
-			ProductDAO.getProduct(ctx, productId));
-	}
-	
-	@Override
-	public Product getProduct(AONContext ctx, ProductFilter filter) {
-		return ctx.getDslContext().transactionResult( configuration -> 
-			ProductDAO.getProduct(ctx, filter));
-	}
-	
-	@Override
-	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter) {
-		return ctx.getDslContext().transactionResult( configuration -> 
-			ProductDAO.getProductList(ctx, filter));
-	}
-	
-	@Override
 	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter) {
 		return ctx.getDslContext().transactionResult( configuration -> 
 			ProductDAO.getProductStream(ctx, filter));

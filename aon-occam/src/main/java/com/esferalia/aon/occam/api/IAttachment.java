@@ -9,24 +9,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 
 
 public interface IAttachment {
-	public Attach getRegistryAttach(AONContext ctx, AttachFilter filter);
-	public Attach getContractAttach(AONContext ctx, AttachFilter filter);
-	public Attach getInvoiceAttach(AONContext ctx, AttachFilter filter);
-	public Attach getItemAttach(AONContext ctx, AttachFilter filter);
-	public Attach getOfferAttach(AONContext ctx, AttachFilter filter);
-	public Attach getPayrollAttach(AONContext ctx, AttachFilter filter);
-	public Attach getProjectAttach(AONContext ctx, AttachFilter filter);
-	public Attach getSepeAttach(AONContext ctx, AttachFilter filter);
-	
-	public LinkedList<Attach> getRegistryAttachList(AONContext ctx, AttachFilter filter);
-	public LinkedList<Attach> getContractAttachList(AONContext ctx, AttachFilter filter);
-	public LinkedList<Attach> getInvoiceAttachList(AONContext ctx, AttachFilter filter);
-	public LinkedList<Attach> getItemAttachList(AONContext ctx, AttachFilter filter);
-	public LinkedList<Attach> getOfferAttachList(AONContext ctx, AttachFilter filter);
-	public LinkedList<Attach> getPayrollAttachList(AONContext ctx, AttachFilter filter);
-	public LinkedList<Attach> getProjectAttachList(AONContext ctx, AttachFilter filter);
-	public LinkedList<Attach> getSepeAttachList(AONContext ctx, AttachFilter filter);
-	
+
 	public Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter);
 	public Stream<Attach> getContractAttachStream(AONContext ctx, AttachFilter filter);
 	public Stream<Attach> getInvoiceAttachStream(AONContext ctx, AttachFilter filter);

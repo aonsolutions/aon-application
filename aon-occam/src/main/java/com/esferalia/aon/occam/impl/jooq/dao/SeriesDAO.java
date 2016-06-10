@@ -14,8 +14,8 @@ import org.jooq.Record;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
-import com.esferalia.aon.occam.api.model.SeriesFilter;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
