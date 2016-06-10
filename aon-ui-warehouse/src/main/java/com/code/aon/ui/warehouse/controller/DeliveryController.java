@@ -438,7 +438,9 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
 		WorkPlace workPlace = ((Delivery)this.getTo()).getWorkPlace();
-		return WarehouseCollectionsController.getWarehouses(workPlace);
+		if(workPlace != null && workPlace.getId() != null) 
+			return WarehouseCollectionsController.getWarehouses(workPlace, true);
+		else return WarehouseCollectionsController.getWarehouses(workPlace);
 	}
 
 	public double getTaxableBase(){

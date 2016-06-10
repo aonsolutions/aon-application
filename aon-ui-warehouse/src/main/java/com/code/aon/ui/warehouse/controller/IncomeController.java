@@ -403,7 +403,9 @@ public class IncomeController extends BasicController implements IWarehouseConst
 
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
 		Income income = (Income) getTo();
-		return WarehouseCollectionsController.getWarehouses(income.getWorkPlace());
+		if(income.getWorkPlace() != null && income.getWorkPlace().getId() != null) 
+			return WarehouseCollectionsController.getWarehouses(income.getWorkPlace(), true);
+		else return WarehouseCollectionsController.getWarehouses(income.getWorkPlace());
 	}
 
 	public double getTaxableBase(){
