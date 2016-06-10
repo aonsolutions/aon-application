@@ -15,6 +15,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.PayMethod;
 import com.code.aon.finance.Finance;
+import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.Pos;
@@ -85,7 +86,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 					} else {
 						HibernateUtil.beginTransaction(sessionName);
 
-						updatePosShift();
+						updatePosShift(ps);
 						PosShiftDeclared psDeclared = ps.getPosShiftDeclared();
 						if (psDeclared != null) {
 							removePosShiftCount();
@@ -113,7 +114,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 			            	} else {
 								HibernateUtil.beginTransaction(sessionName);
 	
-								if (invoice.getTotal() == obtainFinanceAmount(finances) && invoice.isAllFinancePending()) {
+								if (invoice.getTotal() == obtainFinanceAmount(finances) && isAllFinancePending(invoice)) {
 									removeFinances(invoice);
 									insertFinances(invoice, finances);
 								}
@@ -183,8 +184,9 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		return posShiftDB;
 	}
 
-	private void updatePosShift() throws Exception {
+	private void updatePosShift(PosShift ps) throws Exception {
 		String dexInfo = RELOADED_FROM_WS_MSG + " [" + getDateTimeAdapter().marshal(new Date()) + "]";
+		posShiftDB.setImbalance(ps.isImbalance());
 		posShiftDB.setRemarks(dexInfo + "\n" + posShiftDB.getRemarks());
 
 		posShiftDB = (com.code.aon.finance.PosShift)BeanManager.getManagerBean(com.code.aon.finance.PosShift.class).update(posShiftDB);
@@ -301,6 +303,17 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 			return (Invoice)ito;
 		}
 		return null;
+	}
+
+	private boolean isAllFinancePending(Invoice invoice) throws ManagerBeanException {
+		if (!invoice.isAllFinancePending()) {
+			return false;
+		}
+
+		IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_INVOICE_ID), invoice.getId());
+		return financeTrackingBean.getCount(criteria) == 0;
 	}
 
 	private void removeFinances(Invoice invoice) throws ManagerBeanException {
