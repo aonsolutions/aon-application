@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.50.5
+# Version: 8.57.1
 # Created by: girazu
-# Creation Date: 11/05/2016 11:35
+# Creation Date: 10/06/2016 12:15
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -4800,6 +4800,11 @@ CREATE TABLE `fs_model200` (
   `amount` double(15,3) default NULL COMMENT 'Importe',
   `iban` varchar(34) collate latin1_spanish_ci default NULL COMMENT 'IBAN',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
+  `nrs_anexoIII` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'NRS anexo III',
+  `just_canarias` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de justificante Canarias',
+  `nrs_anexoIV` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'NRS anexo IV',
+  `nrs_anexoV` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'NRS anexo V',
+  `bic` char(11) collate latin1_spanish_ci default NULL COMMENT 'BIC - Codigo Identificador del Banco',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_MODEL200_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL200_ENTERPRISE` (`enterprise`),
@@ -4815,7 +4820,7 @@ CREATE TABLE `fs_model200_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `fs_model200` int(4) NOT NULL COMMENT 'Identificador del modelo 200',
-  `key` varchar(5) collate latin1_spanish_ci NOT NULL COMMENT 'Clave Casilla',
+  `key` varchar(7) collate latin1_spanish_ci NOT NULL COMMENT 'Clave Casilla',
   `value` double(15,3) default NULL COMMENT 'Valor de la casilla',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_MODEL200_DETAIL_DOMAIN` (`domain`),
@@ -4853,6 +4858,7 @@ CREATE TABLE `fs_model200_registry` (
   `result` double(15,3) default NULL COMMENT 'Resultado del ultimo ejercicio',
   `notary` varchar(20) collate latin1_spanish_ci default NULL COMMENT 'Notaria',
   `notary_date` date default NULL COMMENT 'Fecha Notaria',
+  `cc_value` double(15,3) default NULL COMMENT 'Eliminacion del deterioro contable',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_MODEL200_REGISTRY_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL200_REGISTRY_FS_MODEL200` (`fs_model200`),
@@ -8111,7 +8117,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.50.5');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.57.1');
 
 COMMIT;
 
