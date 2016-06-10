@@ -223,6 +223,27 @@ public class FiscalModelsTreeNode extends TreeNode<EnterpriseYear> {
 									}
 								});
             		    		parentNode.setState(true);
+        					} else if (TreeNodeFiscalModelTypes.MODEL_200_2015.accept(fm) ) {
+        						final ModelTreeNode parentNode = getModelNode(fm.getYear(),fm.getModel());
+        						Mod2002015TreeObject to = TreeNodeFiscalModelTypes.MODEL_200_2015.getFiscalModel(fm);
+        						final TreeItem item = TreeNodeFiscalModelTypes.CORPORATE_TAX_2015.getInstance().render(parentNode,to);
+        						to.setFiscalTreeCallback(new FiscalTreeCallback<Mod2002015TreeObject>() {
+								
+									@Override
+									public void remove(Mod2002015TreeObject treeObject) {
+										item.remove();
+										parentNode.getTree().setSelectedItem(parentNode);
+									}
+
+									@Override
+									public void onError(Mod2002015TreeObject treeObject) {
+									
+									}
+									@Override
+									public void changeLabel(Mod2002015TreeObject treeObject) {
+									}
+								});
+            		    		parentNode.setState(true);
         					}
     					}
     				}
