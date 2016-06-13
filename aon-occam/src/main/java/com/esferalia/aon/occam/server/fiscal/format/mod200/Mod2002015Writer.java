@@ -285,7 +285,6 @@ public class Mod2002015Writer {
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002015Key.C0068, 1, 0 )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002015Key.C0069, 1, 0 ) 
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002015Key.C0045, 1, 0 )
-				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002015Key.C0062, 1, 0 )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002015Key.C0063, 1, 0 )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002015Key.C0071, 1, 0 )
 				,(line,mod200, label) -> addUnSignedKey( line, mod200, Mod2002015Key.C0059, 1, 0 )
