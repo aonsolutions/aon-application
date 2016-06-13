@@ -282,6 +282,34 @@
 		<servlet-name>AmazonLoginCallbackServlet</servlet-name>
 		<url-pattern>/amazonLoginPopupClose/*</url-pattern>
 	</servlet-mapping>
+	
+	<!-- SignIn with Github Servlet -->
+	<servlet>
+		<servlet-name>OAuth2GithubServlet</servlet-name>
+		<servlet-class>com.code.aon.oauth2.github.GithubAuthorizationCodeServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>OAuth2GithubServlet</servlet-name>
+		<url-pattern>/githuboauth2/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>OAuth2GithubCallbackServlet</servlet-name>
+		<servlet-class>com.code.aon.oauth2.github.GithubAuthorizationCodeCallbackServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>OAuth2GithubCallbackServlet</servlet-name>
+		<url-pattern>/githuboauth2callback/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>GithubLoginCallbackServlet</servlet-name>
+		<servlet-class>com.code.aon.oauth2.github.GithubLoginCallbackServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>GithubLoginCallbackServlet</servlet-name>
+		<url-pattern>/githubLoginPopupClose/*</url-pattern>
+	</servlet-mapping>
 
 	<!-- Aon GWT Template -->
 

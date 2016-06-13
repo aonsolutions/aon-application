@@ -3,6 +3,7 @@ package com.code.aon.oauth2.sessionInfo;
 import java.util.Hashtable;
 
 import com.code.aon.oauth2.amazon.AmazonUser;
+import com.code.aon.oauth2.github.GithubUser;
 import com.code.aon.oauth2.google.GoogleUser;
 
 public class SessionUserInfo {
@@ -13,6 +14,8 @@ public class SessionUserInfo {
 	private  Hashtable<String,AmazonUser> amazonUsers = new Hashtable<String, AmazonUser>();
 	private Boolean isGoogleSession;
 	private Hashtable<String, GoogleUser> googleUsers = new Hashtable<String, GoogleUser>();
+	private Boolean isGithubSession;
+	private Hashtable<String, GithubUser> githubUsers = new Hashtable<String, GithubUser>();
 	
 	public SessionUserInfo(){
 		
@@ -64,6 +67,22 @@ public class SessionUserInfo {
 
 	public void setGoogleUsers(Hashtable<String, GoogleUser> googleUsers) {
 		this.googleUsers = googleUsers;
+	}
+
+	public Boolean getIsGithubSession() {
+		return isGithubSession;
+	}
+
+	public void setIsGithubSession(Boolean isGithubSession) {
+		this.isGithubSession = isGithubSession;
+	}
+
+	public Hashtable<String, GithubUser> getGithubUsers() {
+		return githubUsers;
+	}
+
+	public void setGithubUsers(Hashtable<String, GithubUser> githubUsers) {
+		this.githubUsers = githubUsers;
 	}
 	
 	

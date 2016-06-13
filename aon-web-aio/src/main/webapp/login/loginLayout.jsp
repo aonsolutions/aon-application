@@ -180,7 +180,7 @@ try {
 												<img src="aonResource/com/code/aon/ui/resources/facelet/login/css/images/icons/google.png"/>
 											</a>
 												
-												<!-- amazon -->
+											<!-- amazon -->
 											<c:url value="/amazonoauth2" var="amazon_oauth2_url">
 											</c:url>
 											
@@ -189,6 +189,16 @@ try {
 												<img src="aonResource/com/code/aon/ui/resources/facelet/login/css/images/icons/amazon.png"/>
 											</a>
 											
+											
+											<!-- github 
+											<c:url value="/githuboauth2" var="github_oauth2_url">
+											</c:url>
+											
+										
+											<a id="LoginWithGithub" href="${github_oauth2_url}" target="_blank" onClick="self.name='<%=domainName%>';window.open(this.href, this.target, 'width=700,height=800,scrollbars=yes'); return false;" >
+												<img src="aonResource/com/code/aon/ui/resources/facelet/login/css/images/icons/github.png"/>
+											</a>
+											-->
 														
 										</td>
 									</tr>
