@@ -28,11 +28,15 @@
 						<g:RadioButton ui:field="devTypeR" name="devTypeButton" text="{msg.payBackRefuse}"/>
 						<g:RadioButton ui:field="devTypeT" name="devTypeButton" text="{msg.payBackTransfer}"/>
 					</div>
-					<g:InlineLabel text="{msg.amount}" />
-					<aon:DoubleBox ui:field="amountD" enabled="false" 
-						styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonInputText}"/>
-					<g:InlineLabel text="{msg.iban}" styleName="{aonResources.css.aonMarginLeft}"/>
-					<aon:IbanTextBox ui:field="ibanD" styleName="{aonResources.css.aonMarginLeft}"/>
+					<div class="{aonResources.css.aonMarginTop}">
+						<g:InlineLabel text="{msg.amount}" />
+						<aon:DoubleBox ui:field="amountD" enabled="false" 
+							styleName="{aonResources.css.aonMarginLeft} {aonResources.css.aonInputText}"/>
+					</div>
+					<div class="{aonResources.css.aonMarginTop}">
+						<g:InlineLabel text="{msg.iban}"/>
+						<aon:IbanTextBox ui:field="ibanD" styleName="{aonResources.css.aonMarginLeft}"/>
+					</div>
 				</div>
 			</g:HTMLPanel>
 	
@@ -45,11 +49,15 @@
 						<g:RadioButton ui:field="payTypeE" name="devTypeButton" text="{msg.cash}"/>
 						<g:RadioButton ui:field="payTypeU" name="devTypeButton" text="{msg.directDebit}"/>
 					</div>
-					<g:InlineLabel text="{msg.amount}"/>
-					<aon:DoubleBox ui:field="amountP" enabled="false" 
-						styleName="{aonResources.css.aonMarginLeft}  {aonResources.css.aonInputText}"/>
-					<g:InlineLabel text="{msg.iban}" styleName="{aonResources.css.aonMarginLeft}"/>
-					<aon:IbanTextBox ui:field="ibanP" styleName="{aonResources.css.aonMarginLeft}"/>
+					<div class="{aonResources.css.aonMarginTop}">
+						<g:InlineLabel text="{msg.amount}"/>
+						<aon:DoubleBox ui:field="amountP" enabled="false" 
+							styleName="{aonResources.css.aonMarginLeft}  {aonResources.css.aonInputText}"/>
+						</div>
+					<div class="{aonResources.css.aonMarginTop}">
+						<g:InlineLabel text="{msg.iban}"/>
+						<aon:IbanTextBox ui:field="ibanP" styleName="{aonResources.css.aonMarginLeft}"/>
+					</div>
 				</div>
 			</g:HTMLPanel>
 	

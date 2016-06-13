@@ -1,10 +1,9 @@
 package com.esferalia.aon.gwt.common.client.widget;
 
 
-import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.IIbanContainer;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -20,39 +19,52 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Suggestion>, HasEnabled {
 	
-	private static final AonResources AON_RESOURCES = GWT.create(AonResources.class);
-	
 	SuggestBox iban1;
 	TextBox iban2 = new TextBox();
 	TextBox iban3 = new TextBox();
 	TextBox iban4 = new TextBox();
 	TextBox iban5 = new TextBox();
 	TextBox iban6 = new TextBox();
+	TextBox bic = new TextBox();
 	
 	private TextBox[] textBoxes = new TextBox[]{
 			iban2,iban3,iban4,iban5,iban6};
 	
 	public IbanTextBox(SuggestOracle suggestOracle) {
+		this(suggestOracle, false);
+	}
+	public IbanTextBox(SuggestOracle suggestOracle, boolean showbic) {
 		super( DOM.createSpan());
 		FlowPanel panel = new FlowPanel();
-		panel.addStyleName(AON_RESOURCES.css().aonNowrap());
-		panel.addStyleName(AON_RESOURCES.css().aonInline());
+		panel.addStyleName(AON.AON_CSS.aonNowrap());
+		panel.addStyleName(AON.AON_CSS.aonInline());
 		this.add(panel);
 		iban1 = new SuggestBox(suggestOracle);
-		iban1.setStyleName(AON_RESOURCES.css().aonInputText());
+		iban1.setStyleName(AON.AON_CSS.aonInputText());
 		iban1.setWidth("100px");
 		panel.add(iban1);
 		for (TextBox textBox : textBoxes ) {
-			textBox.setStyleName(AON_RESOURCES.css().aonInputText());
-			textBox.addStyleName(AON_RESOURCES.css().aonMarginLeft());
+			textBox.setStyleName(AON.AON_CSS.aonInputText());
+			textBox.addStyleName(AON.AON_CSS.aonMarginLeft());
 			textBox.setMaxLength(4);
 			textBox.setVisibleLength(5);
 			panel.add(textBox);
 		}
+		if (showbic) {
+			InlineLabel bicLabel = new InlineLabel("BIC");
+			bicLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
+			bicLabel.addStyleName(AON.AON_CSS.aonMarginRight());
+			panel.add(bicLabel);
+			bic.setStyleName(AON.AON_CSS.aonInputText());
+			bic.addStyleName(AON.AON_CSS.aonMarginLeft());
+			bic.setMaxLength(11);
+			bic.setVisibleLength(10);
+			panel.add(bic);
+		}
 		FlowPanel panel2 = new FlowPanel();
 		InlineLabel label = new InlineLabel("Comience a escribir para recuperar algun banco de la empresa");
-		label.addStyleName(AON_RESOURCES.css().aonFontSmall());
-		label.addStyleName(AON_RESOURCES.css().aonItalic());
+		label.addStyleName(AON.AON_CSS.aonFontSmall());
+		label.addStyleName(AON.AON_CSS.aonItalic());
 		panel2.add(label);
 		panel.add(panel2);
 	}
@@ -62,6 +74,10 @@ public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Sug
 			 + iban4.getValue() + iban5.getValue() + iban6.getValue();
 	}
 	
+	public String getBic() {
+		return bic.getValue();
+	}
+	
 	public void setValue(String value) {
 		iban1.setValue( AonStringUtils.substring(value, 0,4));
 		iban2.setValue( AonStringUtils.substring(value, 4,8));
@@ -69,6 +85,7 @@ public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Sug
 		iban4.setValue( AonStringUtils.substring(value, 12,16));
 		iban5.setValue( AonStringUtils.substring(value, 16,20));
 		iban6.setValue( AonStringUtils.substring(value, 20,24));
+		bic.setValue( AonStringUtils.substring(value, 24));
 	}
 	
 	@Override
@@ -91,7 +108,7 @@ public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Sug
 
 		@Override
 		public String getReplacementString() {
-			return ibanContainer.getIBan();
+			return AonStringUtils.rightPad(ibanContainer.getIBan(), 24) + ibanContainer.getBic();
 		}
 		
 		public IIbanContainer getIbanContainer() {
@@ -112,5 +129,6 @@ public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Sug
 		iban4.setEnabled(enabled);
 		iban5.setEnabled(enabled);
 		iban6.setEnabled(enabled);
+		bic.setEnabled(enabled);
 	}
 }

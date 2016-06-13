@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2015;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -71,8 +70,8 @@ public class Page14 extends PageAbs {
 	
 	public Page14() {
 		super();
-		ibanD = new IbanTextBox(getSuggestOracle());
-		ibanP = new IbanTextBox(getSuggestOracle());
+		ibanD = new IbanTextBox(getSuggestOracle(),true);
+		ibanP = new IbanTextBox(getSuggestOracle(),true);
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
 		
@@ -180,7 +179,7 @@ public class Page14 extends PageAbs {
 			devPanel.setVisible(true);
 			devTypeR.setValue("R".equals(mod200.getDevType()));
 			devTypeT.setValue("D".equals(mod200.getDevType()));
-			ibanD.setValue(mod200.getIban());
+			ibanD.setValue(AonStringUtils.rightPad(mod200.getIban(),24) + mod200.getBic());
 			amountD.setValue( mod200.getAmount() );	
 		} else if ("I".equals( mod200.getResultType()) ) {
 			payPanel.setVisible(true);
@@ -188,7 +187,7 @@ public class Page14 extends PageAbs {
 			devPanel.setVisible(false);
 			payTypeU.setValue("U".equals(mod200.getPayType()));
 			payTypeE.setValue("H".equals(mod200.getPayType()));
-			ibanP.setValue(mod200.getIban());
+			ibanP.setValue(AonStringUtils.rightPad(mod200.getIban(),24) + mod200.getBic());
 			amountP.setValue( mod200.getAmount() );	
 		} else if ("C".equals( mod200.getResultType()) ) {
 			payPanel.setVisible(false);
@@ -208,18 +207,21 @@ public class Page14 extends PageAbs {
 			mod200Object.getMod200().setDevType(null);	
 			mod200Object.getMod200().setPayType(null);
 			mod200Object.getMod200().setIban(null);
+			mod200Object.getMod200().setBic(null);
 		} else if (AonMathUtils.round(value) < 0.0) {
 			mod200Object.getMod200().setAmount(AonMathUtils.round(value * -1));
 			mod200Object.getMod200().setResultType("D");
 			mod200Object.getMod200().setDevType(devTypeR.getValue()?"R":"D");
 			mod200Object.getMod200().setPayType(null);
 			mod200Object.getMod200().setIban(ibanD.getValue());
+			mod200Object.getMod200().setBic(ibanD.getBic());
 		} else {
 			mod200Object.getMod200().setAmount(AonMathUtils.round(value));
 			mod200Object.getMod200().setResultType("I");
 			mod200Object.getMod200().setDevType(null);
 			mod200Object.getMod200().setPayType(payTypeE.getValue()?"H":"U");
 			mod200Object.getMod200().setIban(ibanP.getValue());
+			mod200Object.getMod200().setBic(ibanP.getBic());
 		}
 	}
 
@@ -251,7 +253,7 @@ public class Page14 extends PageAbs {
 						}
 
 						public void onSuccess(LinkedList<CompanyBank> result) {
-							ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
+							LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
 							if (result != null) {
 								for (final CompanyBank cb : result) {
 									suggestions.add(new IbanTextBox.IbanSuggestion(cb));
