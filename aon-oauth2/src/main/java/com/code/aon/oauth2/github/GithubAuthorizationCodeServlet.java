@@ -34,7 +34,7 @@ public class GithubAuthorizationCodeServlet extends HttpServlet {
 	    
 	      String authorizationUrl = "https://github.com/login/oauth/authorize"
 	      		+ "?client_id="+getClientId()
-	      		+ "&scope=user"
+	      		+ "&scope=user,repo"
 	      		//+ "&response_type=code"
 	      		+ "&redirect_uri=" + getRedirectUri(req);
 	    

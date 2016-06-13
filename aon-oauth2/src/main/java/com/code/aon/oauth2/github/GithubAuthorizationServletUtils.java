@@ -24,8 +24,10 @@ public class GithubAuthorizationServletUtils {
 	/** Global instance of the HTTP transport. */
 	private static HttpTransport HTTP_TRANSPORT = null;
 	
-	private static String CLIENT_ID = "122ab05cea7bbfd793a9";
-	private static String CLIENT_SECRET = "db120a8e83f92acbbb9533b1bffd6660d7a758d6";
+	private static String CLIENT_ID = "d3b50ef269e10b788ad8"; // PRUEBAS
+	//private static String CLIENT_ID = "536875b028d1ea8f88d1"; // PRODUCCIÓN
+	private static String CLIENT_SECRET = "8c589117b4954073a4734161bdb2c2b7ce80e056"; // PRUEBAS
+	//private static String CLIENT_SECRET = "a53fdaeea60530f93e4782cd785d15785354a8a4"; // PRODUCCIÓN
 
 	public static JsonFactory getJsonFactory() {
 		return JSON_FACTORY;
@@ -53,8 +55,7 @@ public class GithubAuthorizationServletUtils {
 
 	public static String getAuth2CallbackUri(HttpServletRequest req)
 			throws ServletException, IOException {
-		String servername = req.getServerName();
-		return getAuth2CallbackUri(req, "oauth2callback" + servername.substring(servername.indexOf('.')));
+		return getAuth2CallbackUri(req, "oauth2callback.aonsolutions.net");// + servername.substring(servername.indexOf('.')));
 	}
 
 	public static String getAuth2CallbackUri(HttpServletRequest req,

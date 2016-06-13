@@ -37,8 +37,10 @@ public class GithubAuthorizationCodeCallbackServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	static String CLIENT_ID = "122ab05cea7bbfd793a9";
-	static String CLIENT_SECRET = "db120a8e83f92acbbb9533b1bffd6660d7a758d6";
+	//private static String CLIENT_ID = "d3b50ef269e10b788ad8"; // PRUEBAS
+	private static String CLIENT_ID = "536875b028d1ea8f88d1"; // PRODUCCIÓN
+	//private static String CLIENT_SECRET = "8c589117b4954073a4734161bdb2c2b7ce80e056"; // PRUEBAS
+	private static String CLIENT_SECRET = "a53fdaeea60530f93e4782cd785d15785354a8a4"; // PRODUCCIÓN
 	
 	public static String pass;
 
@@ -219,15 +221,6 @@ public class GithubAuthorizationCodeCallbackServlet extends HttpServlet {
 				Utils.PasswordGenerator.MINUSCULAS
 						+ Utils.PasswordGenerator.MAYUSCULAS
 						+ Utils.PasswordGenerator.NUMEROS, 10);
-
-		/*
-		 * RequestDispatcher dispatcher = getServletContext()
-		 * .getRequestDispatcher("/login/popupclose.jsp");
-		 * req.setAttribute("name", key); req.setAttribute("act",
-		 * SessionInfo.table.get(key).getAction()); req.setAttribute("username",
-		 * getUsername(email, statepass)); req.setAttribute("password",
-		 * getPassword());
-		 */
 		
 		Integer port = GithubAuthorizationServletUtils.getServerPort(req);
 		GenericUrl url = new GenericUrl(GithubAuthorizationServletUtils.getScheme(req) + "://" + domain
@@ -268,23 +261,7 @@ public class GithubAuthorizationCodeCallbackServlet extends HttpServlet {
 			Domain domain = util.getDomain(domainName);
 			connection = connectionInfo.getDomainConnection(domain
 					.getDataBaseName());
-			/*
-			 * DSLContext dslContext= DSL.using(connection,
-			 * JooqSettings.getDefaultSettings());
-			 * 
-			 * Result<Record1<String>> username = dslContext.select(USER.LOGIN)
-			 * .from(USER)
-			 * .join(MAIL_ACCOUNT).on(USER.ID.eq(MAIL_ACCOUNT.USER_ID))
-			 * .join(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))
-			 * .where(MAIL_ACCOUNT.EMAIL
-			 * .eq(email).and(DOMAIN.NAME.eq(domainName))).fetch();
-			 * 
-			 * String a= username.format();
-			 * 
-			 * System.out.println(a);
-			 * 
-			 * return a;
-			 */
+	
 			stmt = connection.prepareStatement(sql);
 			stmt.setString(1, email);
 			stmt.setString(2, domainName);
