@@ -1647,7 +1647,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Limitaci\u00F3n en la deducibilidad de gastos financieros.")
 	String deducibleLimitation();
 	
-	@DefaultMessage("Limitaci\u00F3n en la deducibilidad de gastos financieros. Art. 20 LIS")
+	@DefaultMessage("Limitaci\u00F3n en la deducibilidad de gastos financieros.")
 	String deducibleLimitationArt();
 	
 	@DefaultMessage("Limitaci\u00F3n en la deducibilidad de gastos financieros. Gastos financieros pendientes de deducir")
@@ -1656,7 +1656,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado")
 	String pendingAddinngs();
 	
-	@DefaultMessage("Dotaciones por deterioro de cr\u00E9ditos u otros activos derivados de las posibles insolvencias de los deudores no vinculados con el sujeto pasivo (art. 19.13 lis) y conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la adm\u00F3n. tributaria (D.A. 22a LIS)")
+	@DefaultMessage("Dotaciones por deterioro de cr\u00E9ditos u otros activos derivados de las posibles insolvencias de los deudores no vinculados con el contribuyemte y otras del art. 11.12 LIS. conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la adm\u00F3n. tributaria (ART. 130 LIS)")
 	String damageAmount();
 	
 	@DefaultMessage("Conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria")

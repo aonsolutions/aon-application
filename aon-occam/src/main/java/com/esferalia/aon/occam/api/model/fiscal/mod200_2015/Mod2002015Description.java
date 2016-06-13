@@ -523,13 +523,13 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1243,"c2) Gastos financieros del per\u00EDodo impositivo no deducibles tras aplicaci\u00F3n l\u00EDmite art. 16.5 y/o 83 LIS (=[a- c1], >= 0)");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1244,"d) Gastos financieros pendientes de deducir en periodos anteriores afectados por art. 16.5 y/o 83 LIS, deducibles tras este l\u00EDmite ([b>=c1+d], >= 0]");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1245,"e) Gastos financieros del periodo impositivo no afectados por art. 16.5, 67 b) y/o 83 LIS (sin signo)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1246,"f) Gastos financieros del per\u00EDodo impositivo excluidos aquellos a que se refiere el art. 15 g), h) y j) LIS (= [c1+e])");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1246,"f) Gastos financieros del per\u00EDodo impositivo (= [c1+e])");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1247,"g) Ingresos financieros del per\u00EDodo impositivo derivados de la cesi\u00F3n a terceros de capitales propios");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1248,"h) Gastos financieros netos del per\u00EDodo impositivo (= [f-g])");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1249,"i) L\u00EDmite a la deducci\u00F3n de gastos financieros netos (= 30%* [i1-i2-i3-i4+i5], m\u00EDnimo 1 mill\u00F3n de euros si gasto financiero neto >= 1 mill\u00F3n)");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1250,"i1) Resultado de explotaci\u00F3n (signo igual a Cuenta de P\u00E9rd. y Gan.)");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1251,"i2) Amortizaci\u00F3n del inmovilizado (signo igual a Cuenta de P\u00E9rd. y Gan.)");
-		DESCRIPTION_MAP.put(Mod2002015Key.LM1252,"i3) Imputaci\u00F3n de subvenciones de inmovilizado no financiero y otras (signo igual a Cuenta de P\u00E9rd. y Gan.)");
+		DESCRIPTION_MAP.put(Mod2002015Key.LM1252,"i3) Imputaci\u00F3n de subvenciones de inmovilizado no fi nanciero y otras (signo igual a Cuenta de P\u00E9rd. y Gan.)");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1253,"i4) Deterioro y resultado por enajenaciones del inmovilizado (signo igual a Cuenta de P\u00E9rd. y Gan.)");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1254,"i5) Ingresos financieros de participaciones en instrumentos de patrimonio (signo igual a Cuenta de P\u00E9rd. y Gan.)");
 		DESCRIPTION_MAP.put(Mod2002015Key.LM1255,"j) Adici\u00F3n por l\u00EDmite beneficio operativo no aplicado en los cinco ejercicios anteriores");

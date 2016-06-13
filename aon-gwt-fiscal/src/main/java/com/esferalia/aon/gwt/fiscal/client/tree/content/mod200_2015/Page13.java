@@ -97,15 +97,14 @@ public class Page13 extends PageAbs {
 		
 		for (int i = 0; i < Mod2002015Constants.DEDUCIBLE_LIMITATION_KEYS_2.length; i++) {
 			Mod2002015Key key = Mod2002015Constants.DEDUCIBLE_LIMITATION_KEYS_2[i];
-			if (mod200Object.isVisible(key)) {
+			if (key == null || mod200Object.isVisible(key)) {
 				int col = i % 5;
 				if (col == 0) {
 					++row;
-					paintDescription(table1
-						, Mod2002015Constants.DEDUCIBLE_LIMITATION_KEYS_DESCRIPTIONS1[row-2]
-						,row, 0, (col == 5));
+					paintDescription(table1,Mod2002015Constants.DEDUCIBLE_LIMITATION_KEYS_DESCRIPTIONS1[row-2],row, 0, (col == 5));
 				}
-				paintKeyField(table1,key,row,col+1,10);
+				if (key != null)
+					paintKeyField(table1,key,row,col+1,10);
 			}
 		}
 		
@@ -131,11 +130,11 @@ public class Page13 extends PageAbs {
 		table2.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBold());
 		table2.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonBorderBottom());
 		table2.getFlexCellFormatter().addStyleName(row, 3, AON.AON_CSS.aonTextCenter());
-		++row;
+		//++row;
 		for (int i = 0; i < Mod2002015Constants.DEDUCIBLE_LIMITATION_KEYS_3.length; i++) {
 			Mod2002015Key key = Mod2002015Constants.DEDUCIBLE_LIMITATION_KEYS_3[i];
 			if (mod200Object.isVisible(key)) {
-				int col = (i+1)%3;
+				int col = i%3;
 				if (col == 0) {
 					++row;
 					paintDescription(table2
@@ -170,19 +169,19 @@ public class Page13 extends PageAbs {
 		table3.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBold());
 		table3.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonBorderBottom());
 		table3.getFlexCellFormatter().addStyleName(row, 4, AON.AON_CSS.aonTextCenter());
-		++row;
+//		++row;
 		for (int i = 0; i < Mod2002015Constants.DEDUCIBLE_LIMITATION_KEYS_4.length; i++) {
 			Mod2002015Key key = Mod2002015Constants.DEDUCIBLE_LIMITATION_KEYS_4[i];
 			if (mod200Object.isVisible(key)) {
 				if (mod200Object.isVisible(key)) {
-					int col = (i+1)%4;
+					int col = i%4;
 					if (col == 0) {
 						++row;
-						paintDescription(table2
+						paintDescription(table3
 							, Mod2002015Constants.DEDUCIBLE_LIMITATION_KEYS_DESCRIPTIONS2[row-1]
 							,row, 0, (col == 5));
 					}
-					paintKeyField(table2,key,row,col+1,10);
+					paintKeyField(table3,key,row,col+1,10);
 				}
 			}
 		}
