@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.57.1
+# Version: 8.58.0
 # Created by: girazu
-# Creation Date: 10/06/2016 12:15
+# Creation Date: 13/06/2016 17:20
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -981,6 +981,10 @@ CREATE TABLE `pos_shift` (
   `initial_amount` double(15,2) default '0.00' COMMENT 'Efectivo inicial',
   `imbalance` tinyint(1) NOT NULL default '0' COMMENT 'Indica si existen descuadres en el Turno',
   `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones del turno',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_POS_SHIFT_POS` (`pos`),
   KEY `IDX_POS_SHIFT_DOMAIN` (`domain`),
@@ -6414,6 +6418,10 @@ CREATE TABLE `pos_shift_count` (
   `pos_shift` int(4) NOT NULL COMMENT 'Identificador del Turno de trabajo',
   `pay_method` int(4) default NULL COMMENT 'Identificador de la Forma de pago',
   `amount` double(15,2) default '0.00' COMMENT 'Total efectivo',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_POS_SHIFT_COUNT_POS_SHIFT` (`pos_shift`),
   KEY `IDX_POS_SHIFT_COUNT_PAY_METHOD` (`pay_method`),
@@ -8117,7 +8125,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.57.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.58.0');
 
 COMMIT;
 

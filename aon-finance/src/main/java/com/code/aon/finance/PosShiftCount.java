@@ -5,11 +5,12 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.audit.IAuditable;
 import com.esferalia.aon.entity.master.PosShiftCountDB;
 
 @Entity
 @Table(name="pos_shift_count")
-public class PosShiftCount extends PosShiftCountDB {
+public class PosShiftCount extends PosShiftCountDB implements IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

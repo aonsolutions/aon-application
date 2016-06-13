@@ -19,6 +19,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
@@ -30,7 +31,7 @@ import com.esferalia.aon.entity.master.PosShiftDB;
 
 @Entity
 @Table(name="pos_shift")
-public class PosShift extends PosShiftDB {
+public class PosShift extends PosShiftDB implements IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
