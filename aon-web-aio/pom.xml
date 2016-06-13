@@ -257,19 +257,33 @@
       <scope>runtime</scope>
     </dependency>
      
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.gwt.document</artifactId>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-		</dependency>
+	<dependency>
+		<groupId>com.esferalia.aon</groupId>
+		<artifactId>aon.gwt.document</artifactId>
+		<version>${project.version}</version>
+		<scope>runtime</scope>
+	</dependency>
 				
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.gwt.template</artifactId>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-		</dependency>
+	<dependency>
+		<groupId>com.esferalia.aon</groupId>
+		<artifactId>aon.gwt.template</artifactId>
+		<version>${project.version}</version>
+		<scope>runtime</scope>
+	</dependency>
+ 
+ 	<dependency>
+		<groupId>com.esferalia.aon</groupId>
+		<artifactId>aon.gwt.issues</artifactId>
+		<version>${project.version}</version>
+		<scope>runtime</scope>
+	</dependency>
+ 
+ 	<dependency>
+		<groupId>com.esferalia.aon</groupId>
+		<artifactId>aon.gwt.api</artifactId>
+		<version>${project.version}</version>
+		<scope>runtime</scope>
+	</dependency>
  
     <dependency>
       <groupId>com.code.aon</groupId>
