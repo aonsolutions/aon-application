@@ -53,7 +53,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 			for (PosShift ps: posShiftDex.getPosShift()) {
 				List<InvoiceDetail> details = obtainDetailList(ps.getItems());
 				List<Finance> finances = obtainFinanceList(ps.getPosShiftCount());
-				if (validatePosShift(details, finances)) {
+				if (validatePosShift(ps, details, finances)) {
 					posShiftDB = obtainPosShift(ps, domain);
 					if (posShiftDB == null) {
 						HibernateUtil.beginTransaction(sessionName);
@@ -131,8 +131,6 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 					HibernateUtil.commitTransaction(sessionName);
 
 					++numRegsOk;
-				} else {
-					throw new Exception("El importe de los Productos de la Factura no coincide con el importe de los Pagos!");
 				}
 			}
 			return documentSuccess(numRegsOk, 0);
@@ -149,8 +147,16 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		}
 	}
 
-	private boolean validatePosShift(List<InvoiceDetail> details, List<Finance> finances) throws Exception {
-		return obtainDetailAmount(details) == obtainFinanceAmount(finances);
+	private boolean validatePosShift(PosShift ps, List<InvoiceDetail> details, List<Finance> finances) throws Exception {
+		if (ps.getStartTime().after(new Date())) {
+			throw new Exception("Fecha de Apertura de Caja incorrecta.");
+		} else if (ps.getStartTime().after(ps.getEndTime())) {
+			throw new Exception("Fecha de Cierre de Caja incorrecta.");
+		} else if (obtainDetailAmount(details) != obtainFinanceAmount(finances)) {
+			throw new Exception("El importe de los Productos de la Factura no coincide con el importe de los Pagos.");
+		}
+
+		return true;
 	}
 
 	private com.code.aon.finance.PosShift obtainPosShift(PosShift ps, int domain) throws Exception {
