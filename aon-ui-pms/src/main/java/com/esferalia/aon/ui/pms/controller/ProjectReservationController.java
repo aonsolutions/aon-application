@@ -97,6 +97,7 @@ import com.esferalia.aon.pms.invoicing.AdvanceInvoiceTo;
 import com.esferalia.aon.pms.invoicing.AdvanceInvoicing;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
+import com.esferalia.aon.pms.reservation.InventoryManager;
 import com.esferalia.aon.pms.reservation.ReservationRequestManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.ProjectReservationConexFlow;
@@ -651,12 +652,23 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	private void cancelReservation(ActionEvent event) throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
+    	InventoryManager manager = new InventoryManager();
 
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
 		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
 			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
+			if (StringUtils.isEmpty(reservation.getCrsCode())) {
+				List<Item> inventoryItems = getReservationUtils().getProjectReservationRoomDetailItems(reservationRoom);
+		    	if (!inventoryItems.contains(reservationRoom.getItem())) {
+		    		inventoryItems.add(reservationRoom.getItem());
+		    	}
+	        	for (Item roomItem : inventoryItems) {
+		        	manager.processInventoryQuery(reservationRoom, reservationRoom.getHotel(), roomItem);
+	        	}
+			}
+
 	    	getReservationUtils().removeProjectReservationRoomDetails(reservationRoom, false, null);
 		}
 

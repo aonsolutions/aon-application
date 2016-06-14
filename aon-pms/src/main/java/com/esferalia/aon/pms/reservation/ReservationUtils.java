@@ -269,6 +269,11 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		updateBooking(reservationRoom);
 	}
 
+	public List<Item> getProjectReservationRoomDetailItems(ProjectReservationRoom reservationRoom) throws ManagerBeanException {
+		Date startDate = reservationRoom.getProjectReservation().getStartDate();
+		return getProjectReservationRoomDetailItems(reservationRoom, startDate, reservationRoom.getProjectReservation().getEndDate());
+	}
+
 	public List<Item> getProjectReservationRoomDetailItems(ProjectReservationRoom reservationRoom, Date startDate, Date endDate) throws ManagerBeanException {
 		List<Item> roomDetailItemIds = new LinkedList<Item>();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
