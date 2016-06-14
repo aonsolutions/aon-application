@@ -1113,7 +1113,6 @@ public enum Mod2002015Key implements IMod200Key {
 	,DC043(-46 )	,DC044(-47 )	,DC045(-48 )	,DC046(-49 )
 	,DC047(-50 )	,DC048(-51 )	,DC049(-52 )	,DC050(-53 )
 	,DC051(-54 )	,DC052(-55 )	,DC053(-56 )	,DC054(-57 )
-	// FALTA - Página 19 - Presentación de documentación previa en la sede electrónica
 	
 	// LIMITACION EN LA DEDUCIBILIDAD DE GASTOS FINANCIEROS. Art. 16 LIS
 	// Límite art.16.5, 67 b) o 83 LIS

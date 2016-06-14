@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
+import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002015TreeObject;
 import com.esferalia.aon.gwt.fiscal.client.tree.node.Mod2002015TreeObject.IMod200ChangeListener;
 import com.esferalia.aon.occam.api.model.CompanyBank;
@@ -179,7 +180,7 @@ public class Page14 extends PageAbs {
 			devPanel.setVisible(true);
 			devTypeR.setValue("R".equals(mod200.getDevType()));
 			devTypeT.setValue("D".equals(mod200.getDevType()));
-			ibanD.setValue(AonStringUtils.rightPad(mod200.getIban(),24) + mod200.getBic());
+			ibanD.setValue(mod200.getIban(),mod200.getBic());
 			amountD.setValue( mod200.getAmount() );	
 		} else if ("I".equals( mod200.getResultType()) ) {
 			payPanel.setVisible(true);
@@ -187,7 +188,7 @@ public class Page14 extends PageAbs {
 			devPanel.setVisible(false);
 			payTypeU.setValue("U".equals(mod200.getPayType()));
 			payTypeE.setValue("H".equals(mod200.getPayType()));
-			ibanP.setValue(AonStringUtils.rightPad(mod200.getIban(),24) + mod200.getBic());
+			ibanP.setValue(mod200.getIban(),mod200.getBic());
 			amountP.setValue( mod200.getAmount() );	
 		} else if ("C".equals( mod200.getResultType()) ) {
 			payPanel.setVisible(false);
@@ -273,12 +274,23 @@ public class Page14 extends PageAbs {
 	@UiHandler("ibanD")
 	void onIbanD(SelectionEvent<Suggestion> event) {
 		Suggestion suggestion = event.getSelectedItem();
-		ibanD.setValue(suggestion.getReplacementString());
+		if (suggestion instanceof IbanSuggestion) {
+			IbanSuggestion is = (IbanSuggestion) suggestion;
+			ibanD.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
+		} else {
+			ibanD.setValue(suggestion.getReplacementString());	
+		}
+		
 	}
 	@UiHandler("ibanP")
 	void onIbanP(SelectionEvent<Suggestion> event) {
 		Suggestion suggestion = event.getSelectedItem();
-		ibanP.setValue(suggestion.getReplacementString());
+		if (suggestion instanceof IbanSuggestion) {
+			IbanSuggestion is = (IbanSuggestion) suggestion;
+			ibanP.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());	
+		} else {
+			ibanP.setValue(suggestion.getReplacementString());	
+		}
 	}
 
 }

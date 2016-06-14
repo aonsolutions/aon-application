@@ -78,6 +78,11 @@ public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Sug
 		return bic.getValue();
 	}
 	
+	public void setValue(String iban, String bic2 ) {
+		setValue(iban);
+		bic.setValue( bic2 );		
+	}
+
 	public void setValue(String value) {
 		iban1.setValue( AonStringUtils.substring(value, 0,4));
 		iban2.setValue( AonStringUtils.substring(value, 4,8));
@@ -85,7 +90,6 @@ public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Sug
 		iban4.setValue( AonStringUtils.substring(value, 12,16));
 		iban5.setValue( AonStringUtils.substring(value, 16,20));
 		iban6.setValue( AonStringUtils.substring(value, 20,24));
-		bic.setValue( AonStringUtils.substring(value, 24));
 	}
 	
 	@Override

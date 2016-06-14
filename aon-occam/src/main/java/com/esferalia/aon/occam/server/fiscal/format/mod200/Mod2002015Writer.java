@@ -809,6 +809,7 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TC635)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TC636)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TC637)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TC638)
 		    ,(line,mod200, label) -> addEndLabel(line,label)
 		})
 			
@@ -1029,10 +1030,8 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D1014)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I1015)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D1016)
-			
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0369)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0370)
-			
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0369)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0370)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0256)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0278)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0372)
@@ -1062,13 +1061,18 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0384)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0387)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0388)
+// ---------------------------------------------------------------------------------			
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I1024)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D1025)
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+// ---------------------------------------------------------------------------------			
 			,(line,mod200, label) -> addEndLabel(line,label)
 		})
 			
 		,PAG13 ("T200130", new IPropertyFiller[] {
 			 (line,mod200, label) -> addStartLabel(line,label)  // Etiqueta de inicio de pagina
+			,(line,mod200, label) -> line.append(" ")
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0311)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0312)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0313)
@@ -1146,6 +1150,7 @@ public class Mod2002015Writer {
 
 		,PAG14 ("T200140", new IPropertyFiller[] {
 			 (line,mod200, label) -> addStartLabel(line,label)  // Etiqueta de inicio de pagina
+			,(line,mod200, label) -> line.append(" ")
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ562)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1038)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN567)
@@ -1198,21 +1203,22 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN619)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN620)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN083)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1332)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1200)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1332)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1200)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1042)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1333)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1333)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN621)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN622)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1020)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1020)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1043)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1021)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1021)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1044)
 			,(line,mod200, label) -> addEndLabel(line,label)
 		})
 
 		,PAG15 ("T200150", new IPropertyFiller[] {
 			 (line,mod200, label) -> addStartLabel(line,label)  // Etiqueta de inicio de pagina
+			,(line,mod200, label) -> line.append(" ")
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ640)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ641)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ548)
@@ -1276,39 +1282,41 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1048)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.LQ1049)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN104)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN105)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN105, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN846)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN847)
 			
+// ---------------------------------------------------------------------------------
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN848)
+// ---------------------------------------------------------------------------------			
 			
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN106)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN107)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN107, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN282)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN283)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN284)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN108)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN109)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN109, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN702)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN703)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN707)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN110)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN111)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN111, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN071)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN187)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN300)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN112)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN113)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN113, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN025)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN026)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN027)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN114)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN115)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN115, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN714)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN715)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN716)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN735)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN920)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN920, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN736)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN737)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN738)
@@ -1316,53 +1324,53 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN117)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN570)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN118)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN103)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN103, 7, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN153)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN728)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN728, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN637)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN638)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN154)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN729)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN729, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN849)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN894)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN197)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN155)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN730)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN730, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN285)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN286)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN287)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN156)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN731)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN731, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN825)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN826)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN827)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN157)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN732)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN732, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN001)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN002)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN003)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN158)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN733)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN733, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN028)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN029)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN030)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN159)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN734)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN734, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN717)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN718)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN719)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN720)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN721)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN721, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN722)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN723)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN724)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN739)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN921)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN921, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN740)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN741)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN742)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN134)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN926)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN926, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN135)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN136)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN137)
@@ -1370,7 +1378,7 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN161)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN572)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN162)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN103)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN103, 7, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1054)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1050)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1051)
@@ -1395,6 +1403,7 @@ public class Mod2002015Writer {
 
 		,PAG16 ("T200160", new IPropertyFiller[] {
 			 (line,mod200, label) -> addStartLabel(line,label)
+			,(line,mod200, label) -> line.append(" ")
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN835)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN836)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN837)
@@ -1553,6 +1562,7 @@ public class Mod2002015Writer {
 
 		,PAG17 ("T200170", new IPropertyFiller[] {
 			 (line,mod200, label) -> addStartLabel(line,label)
+			,(line,mod200, label) -> line.append(" ")
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1061)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1062)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN768)
@@ -1636,10 +1646,15 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN096)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN698)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN713)
-			
+
+// 			------------------------------------------------------------------------			
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN549)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN888)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN889)
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+// 			------------------------------------------------------------------------			
 			
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN807)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN808)
@@ -1666,9 +1681,14 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN086)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN087)
 			
+// 			------------------------------------------------------------------------			
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN093)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN057)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN058)
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+// 			------------------------------------------------------------------------			
 			
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN207)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN208)
@@ -1796,8 +1816,11 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN081)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN082)
 			
+// 			------------------------------------------------------------------------			
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1234)
-			
+			,(line,mod200, label) -> line.append("00000000000000000")
+// 			------------------------------------------------------------------------			
+					
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN929)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN930)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN942)
@@ -1861,6 +1884,7 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1183)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1041)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1185)
+// 			------------------------------------------------------------------------			
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1131)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1132)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1133)
@@ -1871,6 +1895,17 @@ public class Mod2002015Writer {
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1032)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1139)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1140)
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+// 			------------------------------------------------------------------------			
 			,(line,mod200, label) -> addEndLabel(line,label) // Etiqueta fin de pagina
 		})
 		,PAG19 ("T200190", new IPropertyFiller[] {
@@ -1967,8 +2002,10 @@ public class Mod2002015Writer {
 				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC052)
 				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC053)
 				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.DC054)
-				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0417)
-				,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0418)
+				,(line,mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getNrsAnexoIII(), 22))
+				,(line,mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getJustCanarias(), 22))
+				,(line,mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getNrsAnexoIV(), 22))
+				,(line,mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getNrsAnexoV(), 22))
 				,(line,mod200, label) -> addEndLabel(line,label)
 		})
 		
@@ -2276,64 +2313,64 @@ public class Mod2002015Writer {
 		,PAG26 ("T200260", new IPropertyFiller[] {
 			 (line,mod200, label) -> addStartLabel(line,label)  // Etiqueta de inicio de pagina
 			,(line,mod200, label) -> line.append(" ")  // Indicador de pagina complementaria
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR050) // Tributación conjunta Estado y Adm.Forales - Concierto económico - Volumen total de operaciones  [050]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR051) // Tributación conjunta Estado y Adm.Forales - Concierto económico - Volumen operaciones en el extranjero [051]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR052) // Tributación conjunta Estado y Adm.Forales - Concierto económico - Volumen operaciones en Araba [052]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR053) // Tributación conjunta Estado y Adm.Forales - Concierto económico - Volumen operaciones en Gipuzkoa [053]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR054) // Tributación conjunta Estado y Adm.Forales - Concierto económico - Volumen operaciones en Bizkaia [054]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR055) // Tributación conjunta Estado y Adm.Forales - Convenio económico - Volumen operaciones en Navarra [055]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR056) // Tributación conjunta Estado y Adm.Forales - Concierto económico - Volumen operaciones en Territorio común [056]
-			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.TR626, 5, 2) // Tributación conjunta Estado y Adm.Forales - Cálculo porcentajes tributación - Araba [626]
-			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.TR627, 5, 2) // Tributación conjunta Estado y Adm.Forales - Cálculo porcentajes tributación - Gipuzkoa [627]
-			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.TR628, 5, 2) // Tributación conjunta Estado y Adm.Forales - Cálculo porcentajes tributación - Bizkaia [628]
-			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.TR629, 5, 2) // Tributación conjunta Estado y Adm.Forales - Cálculo porcentajes tributación - Navarra [629]
-			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.TR625, 5, 2) // Tributación conjunta Estado y Adm.Forales - Cálculo porcentajes tributación - Admón.del Estado [625]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR420) // Tributación conjunta Estado y Adm.Forales - Cuota del ejercicio a ingresar/devolver - Araba [420]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR421) // Tributación conjunta Estado y Adm.Forales - Cuota del ejercicio a ingresar/devolver - Gipuzkoa [421]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR426) // Tributación conjunta Estado y Adm.Forales - Cuota del ejercicio a ingresar/devolver - Bizkaia [426]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR427) // Tributación conjunta Estado y Adm.Forales - Cuota del ejercicio a ingresar/devolver - Navarra [427]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR600) // Tributación conjunta Estado y Adm.Forales - Cuota del ejercicio a ingresar/devolver - Total [600]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR402) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 1 - Araba [402]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR442) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 1 - Gipuzkoa [442]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR443) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 1 - Bizkaia [443]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR444) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 1 - Navarra [444]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR602) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 1 - Total [602]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR445) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 2 - Araba [445]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR446) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 2 - Gipuzkoa [446]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR447) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 2 - Bizkaia [447]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR448) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 2 - Navarra [448]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR604) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 2 - Total [604]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR449) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 3 - Araba [449]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR450) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 3 - Gipuzkoa [450]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR451) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 3 - Bizkaia [451]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR465) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 3 - Navarra [465]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR606) // Tributación conjunta Estado y Adm.Forales - Pagos fraccionados 3 - Total [606]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR474) // Tributación conjunta Estado y Adm.Forales - Cuota diferencial - Araba [474]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR475) // Tributación conjunta Estado y Adm.Forales - Cuota diferencial - Gipuzkoa [475]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR476) // Tributación conjunta Estado y Adm.Forales - Cuota diferencial - Bizkaia [476]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR477) // Tributación conjunta Estado y Adm.Forales - Cuota diferencial - Navarra [477]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR612) // Tributación conjunta Estado y Adm.Forales - Cuota diferencial - Total [612]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR482) // Tributación conjunta Estado y Adm.Forales - Incremento por pérdida beneficios fiscales - Araba [482]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR483) // Tributación conjunta Estado y Adm.Forales - Incremento por pérdida beneficios fiscales - Gipuzkoa [483]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR484) // Tributación conjunta Estado y Adm.Forales - Incremento por pérdida beneficios fiscales - Bizkaia [484]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR485) // Tributación conjunta Estado y Adm.Forales - Incremento por pérdida beneficios fiscales - Navarra [485]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR616) // Tributación conjunta Estado y Adm.Forales - Incremento por pérdida beneficios fiscales - Total [616]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR913) // Tributación conjunta Estado y Adm.Forales - Incremento por incumplimiento requisitos SOCIMI - Araba [913]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR914) // Tributación conjunta Estado y Adm.Forales - Incremento por incumplimiento requisitos SOCIMI - Gipuzkoa [914
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR915) // Tributación conjunta Estado y Adm.Forales - Incremento por incumplimiento requisitos SOCIMI - Bizkaia [915]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR916) // Tributación conjunta Estado y Adm.Forales - Incremento por incumplimiento requisitos SOCIMI - Navarra [916]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR642) // Tributación conjunta Estado y Adm.Forales - Incremento por incumplimiento requisitos SOCIMI - Total [642]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR486) // Tributación conjunta Estado y Adm.Forales - Intereses demora - Araba [486]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR487) // Tributación conjunta Estado y Adm.Forales - Intereses demora - Gipuzkoa [487]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR488) // Tributación conjunta Estado y Adm.Forales - Intereses demora - Bizkaia [488]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR489) // Tributación conjunta Estado y Adm.Forales - Intereses demora - Navarra [489]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR618) // Tributación conjunta Estado y Adm.Forales - Intereses demora - Total [618]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR490) // Tributación conjunta Estado y Adm.Forales - Importe  ingreso/devolución declaración originaria - Araba [490]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR491) // Tributación conjunta Estado y Adm.Forales - Importe  ingreso/devolución declaración originaria - Gipuzkoa [491]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR492) // Tributación conjunta Estado y Adm.Forales - Importe  ingreso/devolución declaración originaria - Bizkaia [492]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR493) // Tributación conjunta Estado y Adm.Forales - Importe  ingreso/devolución declaración originaria - Navarra  [493]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR620) // Tributación conjunta Estado y Adm.Forales - Importe  ingreso/devolución declaración originaria - Total [620]
-
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR050) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR051) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR052) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR053) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR054) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR055) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR056) 
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.TR626, 5, 2) 
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.TR627, 5, 2) 
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.TR628, 5, 2) 
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.TR629, 5, 2) 
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.TR625, 5, 2) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR420) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR421) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR426) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR427) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR600) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR402) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR442) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR443) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR444) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR602) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR445) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR446) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR447) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR448) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR604) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR449) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR450) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR451) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR465) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR606) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR474) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR475) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR476) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR477) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR612) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR482) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR483) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR484) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR485) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR616) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR913) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR914) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR915) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR916) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR642) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR486) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR487) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR488) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR489) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR618) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR490) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR491) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR492) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR493) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR620) 
+// 			------------------------------------------------------------------------			
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1334)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1335)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1336)
@@ -2344,13 +2381,25 @@ public class Mod2002015Writer {
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1340)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1341)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1332)
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+// 			------------------------------------------------------------------------			
 
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR494) // Tributación conjunta Estado y Adm.Forales -  Líquido a ingresar o a devolver - Araba [494]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR495) // Tributación conjunta Estado y Adm.Forales -  Líquido a ingresar o a devolver - Gipuzkoa [495]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR496) // Tributación conjunta Estado y Adm.Forales -  Líquido a ingresar o a devolver - Bizkaia [496]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR497) // Tributación conjunta Estado y Adm.Forales -  Líquido a ingresar o a devolver - Navarra [497]
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR622) // Tributación conjunta Estado y Adm.Forales -  Líquido a ingresar o a devolver - Total [622]
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR494) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR495) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR496) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR497) 
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR622) 
 			
+// 			------------------------------------------------------------------------			
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1300)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1301)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1302)
@@ -2361,8 +2410,17 @@ public class Mod2002015Writer {
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1307)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1308)
 //			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.TR1044)
-			
-			
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+			,(line,mod200, label) -> line.append("00000000000000000")
+// 			------------------------------------------------------------------------			
 			,(line,mod200, label) -> addEndLabel(line,label) // Etiqueta fin de pagina
 		})	
 
@@ -2394,16 +2452,19 @@ public class Mod2002015Writer {
 						line.append( AonFiscalFileUtils.signedZero(importe<0 ? Math.abs(importe) : 0.0, DS, DD) );     // Devolución - Importe a devolver
 						line.append( AonFiscalFileUtils.text(importe<0 && "D".equals(mod200.getDevType()) ? mod200.getIban() : "",34) );  // Devolución - Número de cuenta IBAN (si devolución por transferencia)
 						
-						line.append( AonFiscalFileUtils.spaces(11)); // Devolución - Código SWIFT-BIC
+						line.append( AonFiscalFileUtils.text(mod200.getBic(),11)); // Devolución - Código SWIFT-BIC
 					
 						line.append( AonFiscalFileUtils.text(importe>0 ? mod200.getPayType() : "",1) );  // Ingreso - Modalidad de ingreso. Uno de los siguientes valores	"blanco", "I" Adeudo en	cuenta, "H" Efectivo, "U" Domiciliación
 						line.append(" ");   // RESERVADO AEAT
 						line.append(" ");   // RESERVADO AEAT
 						line.append( AonFiscalFileUtils.signedZero(importe>0 ? importe : 0.0, DS, DD) );               // Ingreso - Importe a ingresar
 						line.append( AonFiscalFileUtils.text(importe>0 && ("I".equals(mod200.getPayType()) || "U".equals(mod200.getPayType())) ? mod200.getIban() : "",34) ); // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)			
-		
+// --------------------------------------------------------------------------------------------------		
 //						addSignedKey(line, mod200, Mod2002015Key.BN150);  // Abono/Compensación - Abono por conversión de activos impuesto diferido - A       
 //						addSignedKey(line, mod200, Mod2002015Key.BN506);  // Abono/Compensación - Compensación por conversión de activos impuesto diferido - C
+						line.append("00000000000000000");
+						line.append("00000000000000000");
+// --------------------------------------------------------------------------------------------------		
 						
 						line.append(importe == 0 ? "1" : "0"); // Cuota Cero "0" o "1"
 					}
