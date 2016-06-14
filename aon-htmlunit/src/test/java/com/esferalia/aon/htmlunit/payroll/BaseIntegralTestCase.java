@@ -9,6 +9,8 @@ import static com.esferalia.aon.htmlunit.HtmlUnitIT.login;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.wait4;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -22,17 +24,23 @@ import org.junit.BeforeClass;
 
 import com.gargoylesoftware.htmlunit.AlertHandler;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.InteractivePage;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 
 public abstract class BaseIntegralTestCase {
 
@@ -87,6 +95,11 @@ public abstract class BaseIntegralTestCase {
 		wait4Text("employeeNameLabel", employeeName);
 	}
 
+	protected static boolean hasElementById(String id) {
+		LOGGER.warning(GWT_DEBUG_ID_PREFIX +id + ": " +htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id));
+		return  htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null;
+	}
+
 	protected static <T extends DomElement> T getElementById(String id) {
 		return (T) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id);
 	}
@@ -97,7 +110,7 @@ public abstract class BaseIntegralTestCase {
 		calculate(calendar.getTime());
 	}
 
-	protected static void calculate(Date date) throws IOException, InterruptedException {
+	protected static void calculat3(Date date) throws IOException, InterruptedException {
 		getElementById("monthListBox").click();
 		((HtmlSpan)((HtmlDivision)getElementById("monthListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$tB de %1$tY", date)+"']")).click();
 		
@@ -110,6 +123,39 @@ public abstract class BaseIntegralTestCase {
 		wait4Text("periodLabel", String.format( new Locale("es","ES"),"1/%2$d/%1$d - %3$d/%2$d/%1$d", year, month, end));
 	}
 
+
+	protected static void calculate(Date date) throws IOException, InterruptedException {
+		getElementById("monthListBox").click();
+		((HtmlSpan)((HtmlDivision)getElementById("monthListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$tB de %1$tY", date)+"']")).click();
+		
+		Calendar calendar = Calendar.getInstance(new Locale("es","ES"));
+		calendar.setTime(date);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH)+1;
+		int end = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+	
+		wait4Regex("periodLabel", String.format( new Locale("es","ES"),"[0-9]+/%2$d/%1$d - [0-9]+/%2$d/%1$d", year, month, end));
+	}
+
+	protected static void settle(Date date) throws IOException, InterruptedException {
+		
+		HtmlSelect typeSelect = getElementById("typeListBox");
+		typeSelect.click();
+		HtmlOption settleOption = typeSelect.getOptionByValue("SETTLE");
+		settleOption.click();
+		
+		getElementById("dateListBox").click();
+		((HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", date)+"']")).click();
+		
+		Calendar calendar = Calendar.getInstance(new Locale("es","ES"));
+		calendar.setTime(date);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH)+1;
+		int end = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+	
+		wait4Regex("periodLabel", String.format( new Locale("es","ES"),"[0-9]+/%2$d/%1$d - [0-9]+/%2$d/%1$d", year, month, end));
+	}
+
 	protected static void wait4Id(String id) throws InterruptedException {
 		wait4(htmlPage,
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
@@ -118,9 +164,22 @@ public abstract class BaseIntegralTestCase {
 	protected static void wait4Text(String id, String text) throws InterruptedException {
 		wait4(htmlPage,
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
-		LOGGER.warning("Found el: " + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id ).getTextContent());
+		LOGGER.warning("Found el: '" + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id ).getTextContent()+"'");
 		wait4(htmlPage,
-				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id).getTextContent().equals(text));
+				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id).getTextContent().trim().equals(text.trim()));
+	}
+
+	protected static void wait4Regex(String id, String regex) throws InterruptedException {
+		wait4(htmlPage,
+				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
+		LOGGER.warning("Found el: '" + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id ).getTextContent()+"'");
+		wait4(htmlPage,
+				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id).getTextContent().matches(regex));
+	}
+
+	protected static void assertText(String id, String text) throws ParseException {
+		HtmlElement el = getElementById(id);
+		Assert.assertEquals(text, el.getTextContent());
 	}
 
 	protected static void assertValue(String id, String value) throws ParseException {
@@ -138,7 +197,12 @@ public abstract class BaseIntegralTestCase {
 		LOGGER.warning("Cick on: " + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id + "-content").getTextContent());
 	}
 
-	protected static void select(String id) throws IndexOutOfBoundsException, IOException {
+	protected static void close(String id) throws IndexOutOfBoundsException, IOException {
+		((HtmlImage)((HtmlTable)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id).getFirstChild()).getRow(0).getCell(0).getFirstChild()).click();
+		LOGGER.warning("Cick on: " + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id + "-content").getTextContent());
+	}
+
+	protected static void select(String id) throws IndexOutOfBoundsException, IOException, InterruptedException {
 		htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id ).click();
 		LOGGER.warning("Cick on: " + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id + "-content").getTextContent());
 	}

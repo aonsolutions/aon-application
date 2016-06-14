@@ -1470,7 +1470,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	private static final String EMPLOYEE = "C-EMPLOYEE";
 
-	@UiField
+	@UiField(provided=true)
 	Employees employees;
 	@UiField
 	MetaData metaData;
@@ -1540,7 +1540,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 						MainEntryPoint.CodeMirrorResources.class)
 				.css().ensureInjected();
 		logEvent("richStylesInjected");
-
+		
+		employees = new Employees(true, true);
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
 		logEvent("uiCreatedAndBound");
@@ -1560,7 +1561,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		// LocalStorage Items
 		storage = Storage.getLocalStorageIfSupported();
 		
-
 		employees.addListener(this);
 		metaData.addListener(this);
 
@@ -1575,9 +1575,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		export2JS();
 		logEvent("end");
-		
-		jsf = new JSF();
-		logEvent("jsfWidgetCreated");
+		try {
+			jsf = new JSF();
+			logEvent("jsfWidgetCreated");
+		} catch ( Throwable t){
+			//TODO:
+		}
 	}
 
 	// --------------------------------------------------- Cost.Listener methods

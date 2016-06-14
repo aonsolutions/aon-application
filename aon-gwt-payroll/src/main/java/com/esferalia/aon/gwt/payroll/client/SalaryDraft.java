@@ -3412,6 +3412,8 @@ public class SalaryDraft extends ResizeComposite
 			}
 		}
 		
+		ensureDebugId(paymentsTable.getRowFormatter().getElement(row), "payment-" + row);
+		
 	}
 
 	private <I extends Item> void dumpItem(I item, int row, String iconStyleName, ItemChangeHandler<TextBox, I> handler,
@@ -3463,6 +3465,7 @@ public class SalaryDraft extends ResizeComposite
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		paymentsTable.setWidget(row, 2, descriptionBox);
 		handler.setDescriptionWidget(descriptionBox);
+		descriptionBox.ensureDebugId("description-box-" + row );
 
 		String expression = item.getExpression();
 		boolean isReadOnly = SpecialExpresion.isReadOnly(expression);
@@ -3475,12 +3478,14 @@ public class SalaryDraft extends ResizeComposite
 		amountBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		handler.setExpressionWidget(amountBox);
 		contentAssistManager.addValueBox(amountBox);
+		amountBox.ensureDebugId("expression-box-" + row );
 
 		InlineLabel dbAmountLabel = new InlineLabel();
 		dbAmountLabel.setText(format(item.getDbAmount()));
 		dbAmountLabel.setVisible(salaryDraftObject.hasDbSalary());
 		dbAmountLabel.addStyleName(AON.AON_TEXT_RIGHT);
 		setDbStyleName(dbAmountLabel, amountBox.getText(), dbAmountLabel.getText());
+		amountBox.ensureDebugId("db-amount-label-" + row );
 
 		HorizontalPanel amountsPanel = new HorizontalPanel();
 		amountsPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
@@ -3525,6 +3530,7 @@ public class SalaryDraft extends ResizeComposite
 		paymentsTable.getCellFormatter().addStyleName(row, 5, AON.AON_TEXT_RIGHT);
 
 		formatRow(row);
+		
 
 		if (item.getScope() == Scope.SALARY) {
 			paymentsTable.getRowFormatter().addStyleName(row, AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
@@ -3595,6 +3601,7 @@ public class SalaryDraft extends ResizeComposite
 	private void dumpSystemDeduction(Deduction deduction, Double percent, String description, int row,
 			Button expandButton, String... iconStyles) {
 		Widget percentWidget = newPercentWidget(deduction, percent);
+		
 
 		dumpSystemItem(deduction, description, row, percentWidget, expandButton, iconStyles);
 
@@ -3654,6 +3661,7 @@ public class SalaryDraft extends ResizeComposite
 		amountsPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 		InlineLabel amountLabel = new InlineLabel();
 		amountLabel.setText(format(deduction.getAmount()));
+		amountLabel.ensureDebugId(deduction.getType().name().toLowerCase());
 
 		InlineLabel dbAmountLabel = new InlineLabel();
 		dbAmountLabel.setText(format(deduction.getDbAmount()));

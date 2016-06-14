@@ -78,6 +78,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class Employees extends ResizeComposite implements OpenHandler<TreeItem>, SelectionHandler<TreeItem>,
 		ScrollHandler, ContextMenuHandler, KeyDownHandler, LoadHandler, OptionsToolbar.Listener {
 
+	private static final int MIN_EMPLOYEE_LIMIT = 10;
+
 	interface Listener {
 
 		void onLoadAvaiableEmployees(Map<String, String> map);
@@ -189,8 +191,16 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	private List<TreeItem> employeeCentinels;
 
-	public Employees() {
 
+	public Employees() {
+		this(false, true);
+	}
+
+	public Employees(boolean extended, boolean formers ) {
+
+		this.formers = formers;
+		this.extended = extended;
+		
 		images = GWT.create(Images.class);
 		listeners = new LinkedList<Employees.Listener>();
 		employeeCentinels = new LinkedList<TreeItem>();
@@ -1312,7 +1322,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		// images.laboralCalendar());
 
 		if (extended) {
-
 			ITDataObject dataObject = getITDataObject(workplaceItem);
 
 			Date salaryDate = DateUtils.before(DateUtils.after(new Date(), employee.getStartDate()),
@@ -1595,7 +1604,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		int itemHeight = item.getOffsetHeight();
 		int browserHeight = Window.getClientHeight();
 		int visibleItems = browserHeight / itemHeight;
-		return visibleItems + 1;
+		return Math.max(visibleItems + 1, MIN_EMPLOYEE_LIMIT);
 	}
 
 	/**
