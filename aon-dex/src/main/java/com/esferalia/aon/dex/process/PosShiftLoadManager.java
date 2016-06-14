@@ -186,6 +186,8 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		posShiftDB.setInitialAmount(ps.getInitialAmount());
 		posShiftDB.setImbalance(ps.isImbalance());
 		posShiftDB.setRemarks(dexInfo + "\n" + ticketInfo + "\n" + ps.getRemarks());
+		posShiftDB.setCreationUser(WS_USER);
+		posShiftDB.setCreationDate(new Date());
 		posShiftDB.setSkipCheckPosShift(true);
 		return posShiftDB;
 	}
@@ -195,6 +197,8 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 			String dexInfo = RELOADED_FROM_WS_MSG + " [" + getDateTimeAdapter().marshal(new Date()) + "]";
 			posShiftDB.setImbalance(ps.isImbalance());
 			posShiftDB.setRemarks(dexInfo + "\n" + posShiftDB.getRemarks());
+			posShiftDB.setModificationUser(WS_USER);
+			posShiftDB.setModificationDate(new Date());
 			posShiftDB.setSkipCheckPosShift(true);
 		} else {
 			posShiftDB.setSkipCheckPosShift(false);
@@ -215,6 +219,8 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 		posShiftCountDB.setPosShift(posShiftDB);
 		posShiftCountDB.setPayMethod((PayMethod)BeanManager.getManagerBean(PayMethod.class).get(psDeclaredDetail.getPayMethod()));
 		posShiftCountDB.setAmount(psDeclaredDetail.getAmount());
+		posShiftCountDB.setCreationUser(WS_USER);
+		posShiftCountDB.setCreationDate(new Date());
 		posShiftCountDB.setSkipCheckPosShift(true);
 		return posShiftCountDB;
 	}
