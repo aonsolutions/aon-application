@@ -122,10 +122,10 @@ public class RoomController extends BasicController {
 	}
 
 	public void onRoomBlock(ActionEvent event) {
-		List<Item> roomItems = new LinkedList<Item>();
+		List<Item> inventoryItems = new LinkedList<Item>();
 		for (Room room : getCheckedRooms()) {
-			if (!roomItems.contains(room.getItem())) {
-				roomItems.add(room.getItem());
+			if (!inventoryItems.contains(room.getItem())) {
+				inventoryItems.add(room.getItem());
 			}
 
 			try {
@@ -162,7 +162,7 @@ public class RoomController extends BasicController {
 		}
 
 		InventoryManager manager = new InventoryManager();
-		for (Item item : roomItems) {
+		for (Item item : inventoryItems) {
 			manager.processInventoryQuery(null, getCheckedRooms().get(0).getHotel(), item, getBlockFromDate(), getBlockToDate());
 		}
 	}
@@ -170,11 +170,11 @@ public class RoomController extends BasicController {
 	public void onRoomUnblock(ActionEvent event) {
 		if (getCheckedCount() > 0) {
 			List<Integer> checkedRoomsIds = new LinkedList<Integer>();
-			List<Item> roomItems = new LinkedList<Item>();
+			List<Item> inventoryItems = new LinkedList<Item>();
 			for (Room room : getCheckedRooms()) {
 				checkedRoomsIds.add(room.getAsset().getId());
-				if (!roomItems.contains(room.getItem())) {
-					roomItems.add(room.getItem());
+				if (!inventoryItems.contains(room.getItem())) {
+					inventoryItems.add(room.getItem());
 				}
 			}
 
@@ -190,7 +190,7 @@ public class RoomController extends BasicController {
 				}
 
 				InventoryManager manager = new InventoryManager();
-				for (Item item : roomItems) {
+				for (Item item : inventoryItems) {
 					manager.processInventoryQuery(null, getCheckedRooms().get(0).getHotel(), item, getBlockFromDate(), getBlockToDate());
 				}
 			} catch (ManagerBeanException ex) {

@@ -156,11 +156,11 @@ public class ProjectReservationRoomController extends LinesController {
 			RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
 			Date startDate = roomAvailability.getFilterParams().getViewerStartDate();
 			Date endDate = roomAvailability.getFilterParams().getViewerEndDate();
-			List<Item> roomItems = reservationUtils.getProjectReservationRoomDetailItems(reservationRoom, startDate, endDate);
+			List<Item> inventoryItems = reservationUtils.getProjectReservationRoomDetailItems(reservationRoom, startDate, endDate);
 			reservationUtils.updateProjectReservationRoomDetails(reservationRoom, startDate, endDate, availableRoom);
-	    	if (roomItems.size() > 1 || (roomItems.size() == 1 && !roomItems.get(0).equals(availableRoom.getItem()))) {
+	    	if (inventoryItems.size() > 1 || (inventoryItems.size() == 1 && !inventoryItems.get(0).equals(availableRoom.getItem()))) {
 	        	InventoryManager manager = new InventoryManager();
-	        	for (Item roomItem : roomItems) {
+	        	for (Item roomItem : inventoryItems) {
 		        	manager.processInventoryQuery(reservationRoom, reservationRoom.getHotel(), roomItem, startDate, DateUtils.addDays(endDate, -1));
 	        	}
 	        	manager.processInventoryQuery(reservationRoom, availableRoom.getHotel(), availableRoom.getItem(), startDate, DateUtils.addDays(endDate, -1));
@@ -177,13 +177,11 @@ public class ProjectReservationRoomController extends LinesController {
 		reservationRoom.setRoomNumber(null);
 
 		ReservationUtils reservationUtils = new ReservationUtils();
-		Date startDate = reservationRoom.getProjectReservation().getStartDate();
-		Date endDate = reservationRoom.getProjectReservation().getEndDate();
-		List<Item> roomItems = reservationUtils.getProjectReservationRoomDetailItems(reservationRoom, startDate, endDate);
+		List<Item> inventoryItems = reservationUtils.getProjectReservationRoomDetailItems(reservationRoom);
     	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false, null);
-    	if (roomItems.size() > 1 || (roomItems.size() == 1 && !roomItems.get(0).equals(reservationRoom.getItem()))) {
+    	if (inventoryItems.size() > 1 || (inventoryItems.size() == 1 && !inventoryItems.get(0).equals(reservationRoom.getItem()))) {
 	    	InventoryManager manager = new InventoryManager();
-	    	for (Item roomItem : roomItems) {
+	    	for (Item roomItem : inventoryItems) {
 		    	if (!roomItem.getId().equals(reservationRoom.getItem().getId())) {
 		        	manager.processInventoryQuery(reservationRoom, reservationRoom.getHotel(), roomItem);
 		    	}
