@@ -88,15 +88,16 @@
 								<aon:selectInputDate id="PosShift_startTime"
 									value="#{posShift.to.startTime}" required="true" 
 									rendered="#{!readOnly}" 
-									size="20" inputSize="16"
+									size="20" inputSize="18"
 									renderAsPopup="true" enableManualInput="true"
 									timeZone="#{timeZoneController.timeZone}" defaultTime="00:00:00"
-									popupDateFormat="#{bundle.aon_timestamp2_pattern}">
+									popupDateFormat="#{bundle.aon_timestamp_pattern}"
+									onchanged="this.value = this.value.replace('ss','00');">
 								</aon:selectInputDate>
 								<aon:outputText styleClass="aon-bold"
 									value="#{posShift.to.startTime}"
 									rendered="#{readOnly}">
-									<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+									<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
 								<aon:div>
@@ -141,15 +142,16 @@
 							<aon:selectInputDate id="PosShift_endTime"
 								value="#{posShift.to.endTime}"
 								rendered="#{!readOnly}" 
-								size="20" inputSize="16" 
+								size="20" inputSize="18" 
 								renderAsPopup="true" enableManualInput="true"
 								timeZone="#{timeZoneController.timeZone}" defaultTime="23:59:59"
-								popupDateFormat="#{bundle.aon_timestamp2_pattern}">
+								popupDateFormat="#{bundle.aon_timestamp_pattern}"
+								onchanged="this.value = this.value.replace('ss','59');">
 							</aon:selectInputDate>
 							<aon:outputText styleClass="aon-bold"
 								value="#{posShift.to.endTime}"
 								rendered="#{readOnly}">
-								<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 
