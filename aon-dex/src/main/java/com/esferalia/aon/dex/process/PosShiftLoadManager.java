@@ -125,6 +125,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 
 					HibernateUtil.beginTransaction(sessionName);
 
+					posShiftDB = (com.code.aon.finance.PosShift)HibernateUtil.getSession(sessionName).merge(posShiftDB);
 					updatePosShift(null);
 
 					HibernateUtil.getSession(sessionName).flush();
