@@ -562,6 +562,23 @@ public abstract class QuoteCalculator {
 			
 			return Collections.emptyList();
 		}
+		
+		@Override
+		protected List<ITimedResult<Double>> limit(ContextVariable limit, ContextVariable raw, ContextVariable min,
+				ContextVariable max, ExpressionContext ctx, Date start, Date end, ContextVariable... others) {
+
+			List<ITimedVariable<Double>> rawVars = ctx.getVariables(raw.getName(), start,
+					end);
+
+			for (ITimedVariable<Double> rawVar : rawVars) {
+				Period rawPeriod = rawVar.getPeriod();
+				Double rawValue = rawVar.getValue(rawVar.getPeriod());
+				ctx.putVariable(limit.getName(),
+						new TimedObject<Double>(rawValue, rawPeriod));
+			}
+			
+			return Collections.emptyList();
+		}
 	}
 
 	public static class CompositeGeneralQuote extends QuoteCalculator {

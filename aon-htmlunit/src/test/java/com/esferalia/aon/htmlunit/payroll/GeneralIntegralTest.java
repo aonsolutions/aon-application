@@ -3,6 +3,7 @@ package com.esferalia.aon.htmlunit.payroll;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 
+import java.time.Month;
 import java.util.Calendar;
 
 import org.junit.BeforeClass;
@@ -18,8 +19,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		String user = System.getProperty(INTEGRATION_BASE_USER);
 		String password = System.getProperty(INTEGRATION_BASE_PASSWORD);
 		
-		System.out.println("PROPERTIES:" + url+","+ user+","+ password);
-
 		setup(url, user, password);
 		
 		wait4Id("regimen_general");
@@ -37,37 +36,29 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		draft("1989 TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		assertValue("totalPaymentsLabel",
-				15454.46 / 14 // SALARIO_BASE
-						+ 15454.46 / 14 * 5 / 100 // ANTIGUEDAD 1989-1992 ( 1
-													// TRIENIO 5%)
-						+ 15454.46 / 14 * 4 / 100 // ANTIGUEDAD 1992-1995 ( 1
-													// TRIENIO 4%)
-						+ 15454.46 / 14 * 5 * 4 / 100 // ANTIGUEDAD 1995-2016 (
-														// 5 CUATRIENIOS 4% )
+				15454.46 / 14 							// SALARIO_BASE
+						+ 15454.46 / 14 * 5 / 100 		// ANTIGUEDAD 1989-1992 ( 1 TRIENIO 5%)
+						+ 15454.46 / 14 * 4 / 100 		// ANTIGUEDAD 1992-1995 ( 1 TRIENIO 4%)
+						+ 15454.46 / 14 * 5 * 4 / 100 	// ANTIGUEDAD 1995-2016 (	5 CUATRIENIOS 4% )
 		);
 
 		draft("1991 TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		assertValue("totalPaymentsLabel",
-				15454.46 / 14 // SALARIO_BASE
-						+ 15454.46 / 14 * 4 / 100 // ANTIGUEDAD 1991-1994 ( 1
-													// TRIENIO 4%)
-						+ 15454.46 / 14 * 5 * 4 / 100 // ANTIGUEDAD 1994-2016 (
-														// 5 CUATRIENIOS 4% )
+				15454.46 / 14 							// SALARIO_BASE
+						+ 15454.46 / 14 * 4 / 100 		// ANTIGUEDAD 1991-1994 ( 1 TRIENIO 4%)
+						+ 15454.46 / 14 * 5 * 4 / 100 	// ANTIGUEDAD 1994-2016 ( 5 CUATRIENIOS 4% )
 		);
 
 		draft("1993 TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		assertValue("totalPaymentsLabel",
-				15454.46 / 14 // SALARIO_BASE
-						+ 15454.46 / 14 * 4 / 100 // ANTIGUEDAD 1993-1996 ( 1
-													// TRIENIO 4%)
-						+ 15454.46 / 14 * 5 * 4 / 100 // ANTIGUEDAD 1996-2016 (
-														// 5 CUATRIENIOS 4% )
+				15454.46 / 14 							// SALARIO_BASE
+						+ 15454.46 / 14 * 4 / 100 		// ANTIGUEDAD 1993-1996 ( 1 TRIENIO 4%)
+						+ 15454.46 / 14 * 5 * 4 / 100 	// ANTIGUEDAD 1996-2016 ( 5 CUATRIENIOS 4% )
 		);
 
 		draft("2012 TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
 		assertValue("totalPaymentsLabel", 15454.46 / 14 // SALARIO_BASE
-				+ 15454.46 / 14 * 4 / 100 // ANTIGUEDAD 2012-2016 ( 1 CUATRIENIO
-											// 4% )
+				+ 15454.46 / 14 * 4 / 100 				// ANTIGUEDAD 2012-2016 ( 1 CUATRIENIO 4% )
 		);
 
 		// + CONCEPTO ANTIGUEDAD, DESCRIPCION ?
@@ -274,6 +265,45 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("irpfPercentTexTBox", "0,00 %");
 
 	}
+
+	@Test
+	public void TestFiniquito() throws Exception {
+
+		open("finiquitos");
+
+		wait4Id("cotizacion,_cero");
+
+		draft("COTIZACIÓN, CERO");
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2016, Calendar.JUNE, 25);
+		settle(calendar.getTime());
+		
+		assertValue("cgcBaseLabel", 0.00);
+		assertValue("cgpBaseLabel", 0.00);
+		assertValue("totalPaymentsLabel", 0.00);
+		assertValue("totalLiquidLabel", 0.00);
+
+
+		draft("COTIZACIÓN, MÁX");
+		settle(calendar.getTime());
+		
+		assertValue("cgcBaseLabel", 666000.00);
+		assertValue("cgpBaseLabel", 666000.00);
+		assertValue("totalPaymentsLabel", 666000.00);
+		assertValue("totalLiquidLabel", 666000.00 - (666000.00 * (4.70 + 1.55 + 0.10) / 100.00));
+
+	
+		draft("FINIQUITO, REDEFINIDO");
+		settle(calendar.getTime());
+		assertValue("cgcBaseLabel", 300.00);
+		assertValue("cgpBaseLabel", 300.00);
+		assertValue("totalPaymentsLabel", 300.00);
+		assertValue("totalLiquidLabel", 300.00 - (300.00 * (4.70 + 1.55 + 0.10) / 100.00));
+		
+
+	}
+
 	// -------------------------------------------------------------------------
 
 }
