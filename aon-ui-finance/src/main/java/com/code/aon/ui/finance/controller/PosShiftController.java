@@ -38,6 +38,7 @@ import com.code.aon.finance.Pos;
 import com.code.aon.finance.PosShift;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
@@ -45,7 +46,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class PosShiftController extends BasicController implements IFinanceConstants {
+public class PosShiftController extends BasicController implements IFinanceConstants, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -56,6 +57,7 @@ public class PosShiftController extends BasicController implements IFinanceConst
 	private DataModel financeModel;
 	private boolean showBindInvoiceWindow;
 	private String invoiceReferenceCode;
+	private boolean showAuditInfoWindow;
 
 	public WorkPlace getWorkPlace() {
 		return workPlace;
@@ -121,6 +123,13 @@ public class PosShiftController extends BasicController implements IFinanceConst
 	public void setInvoiceReferenceCode(String invoiceReferenceCode) {
 		this.invoiceReferenceCode = invoiceReferenceCode;
 	}
+
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}	
 
 	public void resetTotalShiftCount() {
 		((PosShift)getTo()).setTotalShiftCountMap(null);

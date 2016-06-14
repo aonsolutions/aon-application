@@ -30,6 +30,8 @@
 						<f:param name="reportKey" value="posShift" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
+					<ui:include
+						src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />											
 				</ui:define>
 			</ui:decorate>
 
@@ -245,6 +247,9 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/posShift/finance/modalBindInvoice.xhtml">
 			<ui:param name="controller" value="#{posShift}" />
 		</ui:include>
+		<ui:decorate template="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{posShift}" />
+		</ui:decorate>
 		
 	</ui:define>
 </ui:composition>

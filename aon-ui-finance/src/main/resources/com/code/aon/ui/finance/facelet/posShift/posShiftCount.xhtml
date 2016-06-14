@@ -121,6 +121,12 @@
 			</aon:column>
 
 		</ui:define>
+
+		<ui:define name="endFormListContent">
+			<ui:include src="/com/code/aon/ui/common/facelet/auditable/toolTipAuditInfo.xhtml">
+				<ui:param name="auditableTO" value="#{to}" />
+			</ui:include>
+		</ui:define>
 	</ui:decorate>	
 
 </ui:composition>
