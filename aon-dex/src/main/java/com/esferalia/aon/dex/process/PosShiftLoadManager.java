@@ -1,8 +1,10 @@
 package com.esferalia.aon.dex.process;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -293,11 +295,28 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 	}
 
 	private double obtainDetailAmount(List<InvoiceDetail> details) {
-		double detailAmount = 0;
-		for (InvoiceDetail detail : details) {
-			detailAmount = CommonUtil.round(detailAmount + detail.getTaxableBase() * (1 + detail.getVatPercent() / 100));
+		double taxableBase = 0;
+		for (InvoiceDetail invoiceDetail : details) {
+			taxableBase = CommonUtil.round(taxableBase + invoiceDetail.getTaxableBase(), 4);
 		}
-		return detailAmount;
+		taxableBase = CommonUtil.round(taxableBase);
+
+		Map<Double, Double> vatMap = new HashMap<Double, Double>();
+		for (InvoiceDetail invoiceDetail : details) {
+			double base = 0;
+			if (vatMap.containsKey(invoiceDetail.getVatPercent())) {
+				base = vatMap.get(invoiceDetail.getVatPercent());
+			}
+			base = CommonUtil.round(base + invoiceDetail.getTaxableBase(), 4);
+			vatMap.put(invoiceDetail.getVatPercent(), base);
+		}
+		double vatQuota = 0;
+		for (Double vatPercent : vatMap.keySet()) {
+			vatQuota = CommonUtil.round(vatQuota + CommonUtil.round(vatMap.get(vatPercent) * vatPercent / 100));
+		}
+		vatQuota = CommonUtil.round(vatQuota);
+
+		return CommonUtil.round(taxableBase + vatQuota);
 	}
 
 	private List<Finance> obtainFinanceList(PosShiftCount psCount) throws Exception {
