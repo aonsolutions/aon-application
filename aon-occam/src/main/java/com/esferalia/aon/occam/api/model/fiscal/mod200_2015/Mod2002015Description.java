@@ -34,8 +34,8 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.C0025,"Entidad aseguradora");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0031,"Entidades de capital-riesgo");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0032,"Sociedad de desarrollo industrial regional");
-		DESCRIPTION_MAP.put(Mod2002015Key.C0036,"Fondo de pensiones Real Decreto Legislativo 1/2002, de 29 de noviembre");
-		DESCRIPTION_MAP.put(Mod2002015Key.C0048,"Sociedad de garant\u00EDa rec\u00EDproca o de reafianzamiento");
+		DESCRIPTION_MAP.put(Mod2002015Key.C0036,"Sociedad de garant\u00EDa rec\u00EDproca o de reafianzamiento.");
+		DESCRIPTION_MAP.put(Mod2002015Key.C0048,"Fondo de pensiones R.D.L. 1/2002, 00048 de 29 de noviembre");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0058,"Mutua de seguros o Mutualidad de previsi\u00F3n social");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0060,"Fondos o activos de titulizaci\u00F3n");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0066,"Entidad patrimonial");
@@ -68,13 +68,13 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.C0030,"Transmisi\u00F3n elementos patrimoniales arts. 27.2.d) y 77.1 LIS");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0039,"Entidad que forma parte de un grupo mercantil (art. 42 del C\u00F3d. Comercio)");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0067,"Obligaci\u00F3n informaci\u00F3n art. 14 RIS");
-		DESCRIPTION_MAP.put(Mod2002015Key.C0068,"Obligaci\u00F3n informaci\u00F3n art. 15 RIS");
-		DESCRIPTION_MAP.put(Mod2002015Key.C0043,"Obligaci\u00F3n informacion art.16 RIS importe CN>=45 mill. euros");
-		DESCRIPTION_MAP.put(Mod2002015Key.C0069,"Obligaci\u00F3n informacion art.16 RIS importe CN<45 mill. euros");		
+		DESCRIPTION_MAP.put(Mod2002015Key.C0068,"Documento normalizado art. 16.4 RIS");
+		DESCRIPTION_MAP.put(Mod2002015Key.C0043,"Obligaci\u00F3n informaci\u00F3n DT 5a RIS");
+		DESCRIPTION_MAP.put(Mod2002015Key.C0069,"Obligaci\u00F3n informaci\u00F3n operaciones vinculadas (art. 13.4 RIS)");		
 		DESCRIPTION_MAP.put(Mod2002015Key.C0045,"Inversiones anticipadas-reserva inversiones en Canarias (art. 27.11 Ley 19/1994)");		 
 		DESCRIPTION_MAP.put(Mod2002015Key.C0063,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n (DT 22a LIS)");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0071,"Tipo gravamen reducido para entidades de nueva creaci\u00F3n (art. 29.1 LIS)");
-		DESCRIPTION_MAP.put(Mod2002015Key.C0059,"Opci\u00F3n art. 39.2 LIS");
+		DESCRIPTION_MAP.put(Mod2002015Key.C0059,"Opciones arts. 39.2 y 39.3 LIS");
 		DESCRIPTION_MAP.put(Mod2002015Key.C0065,"Bonificaci\u00F3n personal investigador (R.D. 475/2014)");
 		
 		DESCRIPTION_MAP.put(Mod2002015Key.C0050,"Balance y ECPN. Normal");
