@@ -1406,17 +1406,17 @@ public class SQLContractSalaryCalculatorContext
 
 		StringBuffer employeeName = new StringBuffer();
 
-		if (!StringUtils.isEmpty(firstSurname)) {
-			employeeName.append(firstSurname);
+		if (StringUtils.isNotBlank(firstSurname)) {
+			employeeName.append(firstSurname.trim());
 		}
-		if (!StringUtils.isEmpty(secondSurname)) {
+		if (StringUtils.isNotBlank(secondSurname)) {
 			employeeName.append(SPACE);
-			employeeName.append(secondSurname);
+			employeeName.append(secondSurname.trim());
 		}
-		if (!StringUtils.isEmpty(name)) {
+		if (StringUtils.isNotBlank(name)) {
 			employeeName.append(COMMA);
 			employeeName.append(SPACE);
-			employeeName.append(name);
+			employeeName.append(name.trim());
 		}
 
 		return employeeName.toString();
