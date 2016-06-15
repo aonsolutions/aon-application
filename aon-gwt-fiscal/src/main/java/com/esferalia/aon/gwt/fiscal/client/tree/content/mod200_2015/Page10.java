@@ -37,16 +37,10 @@ public class Page10 extends PageAbs {
 	
 	private static final String[] HEADERS_2 = new String[]{null,
 		AON.MSG.pendingDeduction(),
-		AON.MSG.pendingDeduction2015(),
-		AON.MSG.appliedDeduction(),
-		AON.MSG.futureDeduction()};
-
-	private static final String[] HEADERS_3 = new String[]{null,
-		AON.MSG.pendingDeduction(),
 		AON.MSG.appliedDeduction(),
 		AON.MSG.futureDeduction()};
 	
-	private static final String[] HEADERS_4 = new String[]{null,
+	private static final String[] HEADERS_3 = new String[]{null,
 		AON.MSG.generatedDeduction(),
 		AON.MSG.reducedDeduction(),
 		AON.MSG.quotableAmount(),
@@ -99,27 +93,27 @@ public class Page10 extends PageAbs {
 			if (mod200Object.isVisible(key)) {
 				if (key == Mod2002015Key.BN585) {
 					row = paintKeyBreakdownLink(table1,row,Mod2002015Key.BN585.getDescription()
-							,Mod2002015BN585Key.values(),HEADERS_3);
+							,Mod2002015BN585Key.values(),HEADERS_2);
 				} 
 				if (key == Mod2002015Key.BN584) {
 					row = paintKeyBreakdownLink(table1,row,Mod2002015Key.BN584.getDescription()
-							,Mod2002015BN584Key.values(),HEADERS_3);
+							,Mod2002015BN584Key.values(),HEADERS_2);
 				} 
 				if (key == Mod2002015Key.BN588) {
 					row = paintKeyBreakdownLink(table1,row,Mod2002015Key.BN588.getDescription()
-							,Mod2002015BN588Key.values(),HEADERS_3);
+							,Mod2002015BN588Key.values(),HEADERS_2);
 				} 
 				if (key == Mod2002015Key.BN082) {
 					row = paintKeyBreakdownLink(table1,row,Mod2002015Key.BN082.getDescription()
-							,Mod2002015BN082Key.values(),HEADERS_4);
+							,Mod2002015BN082Key.values(),HEADERS_3);
 				} 
 				if (key == Mod2002015Key.BN565) {
 					row = paintKeyBreakdownLink(table1,row,Mod2002015Key.BN082.getDescription()
-							,Mod2002015BN565Key.values(),HEADERS_3);
+							,Mod2002015BN565Key.values(),HEADERS_2);
 				} 
 				if (key == Mod2002015Key.BN590) {
 					row = paintKeyBreakdownLink(table1,row,Mod2002015Key.BN590.getDescription()
-							,Mod2002015BN590Key.values(),HEADERS_3);
+							,Mod2002015BN590Key.values(),HEADERS_2);
 				}
 			}
 		}
