@@ -1,15 +1,25 @@
 package com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2015;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.IMod200KeysProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Constants;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ1032Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ1033_1Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ1033_2Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ547Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ554Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ561Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015LQ579Key;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Page09 extends PageAbs {
@@ -29,7 +39,12 @@ public class Page09 extends PageAbs {
 		,AON.MSG.cooperativeResult()
 	 	,AON.MSG.extraCooperativeResult()
 	};
-
+	private static final String[] HEADERS_3 = new String[]{""
+			,"Derecho a reducir la B.I. generado en el per\u00EDodo/pendiente de aplicar a inicio del per\u00EDodo"
+		 	,"Reducci\u00F3n B.I. aplicada"
+		 	,"Reducci\u00F3n B.I. pendiente de aplicar en per\u00EDodos futuros"
+		};
+	
 	public Page09() {
 		super();
 		Widget ui = pageBinder.createAndBindUi(this);
@@ -112,11 +127,115 @@ public class Page09 extends PageAbs {
 					row = paintKeyBreakdownLink(table,row,Mod2002015Key.LQ579.getDescription()
 							,Mod2002015LQ579Key.values(),null);
 				}
+				if (key == Mod2002015Key.LQ1032) {
+					row = paintKeyBreakdownLink(table,row,Mod2002015Key.LQ1032.getDescription()
+							,Mod2002015LQ1032Key.values(),HEADERS_3);
+				}
 				if (key == Mod2002015Key.LQ547) {
 					row = paintKeyBreakdownLink(table,row,Mod2002015Key.LQ547.getDescription()
 							,Mod2002015LQ547Key.values(),HEADERS_2);
 				}
+				if (key == Mod2002015Key.LQ1033) {
+					row = paintKeyBreakdownLinkLQ1033(table,row,Mod2002015Key.LQ1033.getDescription());
+				}
+
 			}
 		}
 	}
+	
+	protected int paintKeyBreakdownLinkLQ1033(final FlexTable tab,int row,final String label) {
+		final int boxRow = row-1;
+		final int boxCell = tab.getCellCount(boxRow) - 1;
+		FlowPanel panel  = (FlowPanel) tab.getWidget( boxRow , boxCell );
+		panel.addStyleName(AON.AON_CSS.aonNowrap());
+		Button breakdown = new Button();
+		breakdown.setStyleName(AON.AON_CSS.aonIconModel());
+		breakdown.addStyleName(AON.AON_CSS.aonBorderNone());
+		breakdown.addStyleName(AON.AON_CSS.aonCursorPointer());
+		breakdown.addStyleName(AON.AON_CSS.aonMarginRight());
+		breakdown.setTitle(AON.MSG.breakdown());
+		panel.insert(breakdown,0);
+		final FlowPanel container = new FlowPanel();
+		container.setVisible(false);
+		final String backgroundColor = "#E0FFFF";
+		Label label1 = new Label("Reducci\u00F3n en base imponible");
+		label1.setStyleName(AON.AON_CSS.aonBold());
+		label1.addStyleName(AON.AON_CSS.aonTextUnderline());
+		container.add(label1);
+		FlexTable tableDetail = getFlexTable(container,row,label, new String[]{
+				 "Ejercicio de generaci\u00F3n"
+				,"Importe minoraci\u00F3n B.I. en el per\u00EDodo/pen diente de adicionar a inicio del per\u00EDodo"
+				,"Importe adicionado a base imponible en el per\u00EDodo"
+				,"Importe pendiente de adicionar en per\u00EDodos futuros"
+				}				
+				);
+		int r = 1;
+		int col = 0;
+		for (IMod200KeysProvider key : Mod2002015LQ1033_1Key.values()) {
+			Label desc = new Label(key.getDescription() );
+			tableDetail.setWidget(r, 0, desc);
+			tableDetail.getFlexCellFormatter().setStyleName(r, 0, AON.AON_CSS.aonFiscalBorderBottom());
+			col = 1;
+			for (final Mod2002015Key k : key.getKeys() ) {
+				if (k != null){
+					paintKeyField(tableDetail, k, r, col, 9);
+				}
+				++col;
+			}
+			++r;
+		}
+		Label label2 = new Label("Dotaci\u00F3n de la reserva");
+		label2.setStyleName(AON.AON_CSS.aonBold());
+		label2.addStyleName(AON.AON_CSS.aonTextUnderline());
+		container.add(label2);
+		FlexTable tableDetail2 = getFlexTable(container,row,label, new String[]{
+				 "Ejercicio de generaci\u00F3n"
+				,"Importe reserva a dotar"
+				,"Importe reserva dotada"
+				,"Importe reserva pendiente dotaci\u00F3n"
+				,"Reserva dispuesta"				
+				}				
+				);
+		r = 1;
+		col = 0;
+		for (IMod200KeysProvider key : Mod2002015LQ1033_2Key.values()) {
+			Label desc = new Label(key.getDescription() );
+			tableDetail2.setWidget(r, 0, desc);
+			tableDetail2.getFlexCellFormatter().setStyleName(r, 0, AON.AON_CSS.aonFiscalBorderBottom());
+			col = 1;
+			for (final Mod2002015Key k : key.getKeys() ) {
+				if (k != null){
+					paintKeyField(tableDetail2, k, r, col, 9);
+				}
+				++col;
+			}
+			++r;
+		}
+		
+		
+		
+		tab.setWidget(row, 0, container);
+		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		
+		
+		
+
+		breakdown.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				container.setVisible( !container.isVisible() );
+				for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {
+					tab.getCellFormatter().getElement(boxRow , i).getStyle().setBackgroundColor(
+							container.isVisible()?backgroundColor:"#FFFFFF");	
+				}
+				container.getElement().getStyle().setBackgroundColor(
+						container.isVisible()?backgroundColor:"#FFFFFF");
+			}
+			
+		});
+		
+		return ++row;
+	}
+	
 }

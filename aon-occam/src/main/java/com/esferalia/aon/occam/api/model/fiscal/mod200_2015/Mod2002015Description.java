@@ -439,6 +439,7 @@ public class Mod2002015Description {
 		
 
 		DESCRIPTION_MAP.put(Mod2002015Key.BN570,"DI interna de per\u00EDodos anteriores aplicada en el ejercicio (art. 30 RDL 4/2004)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BN1280,"DI interna (DT 23a.1 LIS)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN572,"DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 RDL 4/2004)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN571,"DI internacional de per\u00EDodos anteriores aplicada en el ejercicio (art. 31 y 32 LIS)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BN573,"DI internacional generada y aplicada en el ejercicio actual (arts. 31 y 32 LIS)");

@@ -870,6 +870,7 @@ public enum Mod2002015Key implements IMod200Key {
 		,BN114(114)		,BN115(115)		,BN714(714)		,BN715(715)		,BN716(716)
 		,BN735(735)		,BN920(920)		,BN736(736)		,BN737(737)		,BN738(738)
 		,BN116(116)						,BN117(117)						,BN118(118)
+	,BN1280(1280)
 	,BN572(572) // DI internacional de periodos anteriores aplicada en el ejercicio (art.31 y 32 RDL 4/2004)		
 		,BN153(153)		,BN728(728)		,BN637(637)		,BN638(638)		
 		,BN154(154)		,BN729(729)		,BN849(849)		,BN894(894)		,BN197(197)

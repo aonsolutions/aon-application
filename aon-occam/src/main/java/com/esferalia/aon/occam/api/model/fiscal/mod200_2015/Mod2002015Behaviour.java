@@ -245,6 +245,24 @@ public class Mod2002015Behaviour {
 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ578.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ579.toString(),new Boolean[]{FALSE,TRUE});
+		
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1133.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1136.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1137.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1138.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1139.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1032.toString(),new Boolean[]{FALSE,TRUE});
+		
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1147.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1148.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1143.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1146.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1149.toString(),new Boolean[]{FALSE,TRUE});
+
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1158.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1159.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1160.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1161.toString(),new Boolean[]{FALSE,TRUE});
 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ547.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.LQ1330.toString(),new Boolean[]{FALSE,TRUE});
