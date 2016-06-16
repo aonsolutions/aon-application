@@ -1051,7 +1051,7 @@ public enum Mod2002015Key implements IMod200Key {
 	    ,BN232(232)	    ,BN233(233)	    ,BN850(850)	    ,BN851(851)	    
 	    ,BN1123(1123)	,BN1124(1124)	,BN1125(1125)	,BN1126(1126)
 	    ,BN1127(1127)	,BN1128(1128)	,BN1129(1129)	,BN1130(1130)	    
-	    ,BN517(517)		,BN081(81)		/* BN082 */		/* BN083 */
+	    ,BN517(517)		,BN081(81)		/* BN082 */		,BN1234(1234)
 	,BN592(592)   // Cuota líquida positiva
 	
 	// Cuota del ejercicio al ingresar o a devolver

@@ -1815,12 +1815,7 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN517)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN081)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN082)
-			
-// 			------------------------------------------------------------------------			
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1234)
-			,(line,mod200, label) -> line.append("00000000000000000")
-// 			------------------------------------------------------------------------			
-					
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1234)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN929)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN930)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN942)

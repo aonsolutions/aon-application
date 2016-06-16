@@ -486,6 +486,7 @@ public class Mod2002015Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.BN1128.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.BN517.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.BN081.toString(),new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.BN1234.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.BN082.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.BN580.toString(),new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002015Key.BN978.toString(),new Boolean[]{FALSE,TRUE});
