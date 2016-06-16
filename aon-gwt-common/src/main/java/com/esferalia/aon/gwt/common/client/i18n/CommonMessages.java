@@ -1735,6 +1735,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Deducciones doble imposici\u00F3n internacional 2015")
 	String doubleContributionInternational2015();
 
+	@DefaultMessage("Base de deducci\u00F3n")
+	String deductionTaxablebase();
+
 	@DefaultMessage("Deducci\u00F3n generada")
 	String generatedDeduction();
 	
@@ -1746,6 +1749,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Pendiente por insuficiencia de cuota")
 	String pendingDueToQuota();
+	
+	@DefaultMessage("Importe pendiente")
+	String pendingAmount();
 	
 	@DefaultMessage("Personal fijo")
 	String fixedPersonal();
@@ -2213,6 +2219,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Aplicado en esta liquidaci\u00F3n")
 	String liquiMsg3();
 	
+	@DefaultMessage("Importe aplicado")
+	String liquiMsg31();
+
 	@DefaultMessage("Pendiente de aplicaci\u00F3n en periodos futuros")
 	String liquiMsg4();
 	

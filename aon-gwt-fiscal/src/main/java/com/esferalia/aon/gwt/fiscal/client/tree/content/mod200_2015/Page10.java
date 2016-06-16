@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.fiscal.client.tree.content.mod200_2015;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015BN082Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015BN1040Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015BN1041Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015BN565Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015BN570Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015BN571Key;
@@ -46,6 +48,11 @@ public class Page10 extends PageAbs {
 		AON.MSG.quotableAmount(),
 		AON.MSG.pendingDueToQuota()};
 	
+	private static final String[] HEADERS_4 = new String[]{null,
+			AON.MSG.deductionTaxablebase(),
+			AON.MSG.liquiMsg2(),
+			AON.MSG.liquiMsg31(),
+			AON.MSG.pendingAmount()};
 
 	@UiField(provided = true)
 	FlexTable table1;
@@ -114,6 +121,14 @@ public class Page10 extends PageAbs {
 				if (key == Mod2002015Key.BN590) {
 					row = paintKeyBreakdownLink(table1,row,Mod2002015Key.BN590.getDescription()
 							,Mod2002015BN590Key.values(),HEADERS_2);
+				}
+				if (key == Mod2002015Key.BN1040) {
+					row = paintKeyBreakdownLink(table1,row,Mod2002015Key.BN1040.getDescription()
+							,Mod2002015BN1040Key.values(),HEADERS_4);
+				}
+				if (key == Mod2002015Key.BN1041) {
+					row = paintKeyBreakdownLink(table1,row,Mod2002015Key.BN1041.getDescription()
+							,Mod2002015BN1041Key.values(),HEADERS_4);
 				}
 			}
 		}
