@@ -35,6 +35,7 @@ import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
+import com.esferalia.aon.pms.reservation.InventoryManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
@@ -47,8 +48,7 @@ public class DivertReceptionController extends BasicController {
 	private ProjectReservationRoom pendingRoom;
 	private List<ProjectReservationRoom> reallocationList;
 	private List<RoomReallocation> asignedList;
-	
-	
+
 	public List<RoomReallocation> getAsignedList() {
 		if(asignedList==null){
 			asignedList = new LinkedList<DivertReceptionController.RoomReallocation>();
@@ -172,9 +172,23 @@ public class DivertReceptionController extends BasicController {
 			ReservationUtils reservationUtils = new ReservationUtils();
 			for(RoomReallocation rr: getAsignedList()){
 				if(rr.getReservationRoom().getRoomNumber()==null){
-					reservationUtils.insertProjectReservationRoomDetails(rr.getReservationRoom(), startDate, endDate, rr.getRoom(),getAvailableServicesList(rr.getReservationRoom()));
+					reservationUtils.insertProjectReservationRoomDetails(rr.getReservationRoom(), startDate, endDate, rr.getRoom(), getAvailableServicesList(rr.getReservationRoom()));
+
+					InventoryManager manager = new InventoryManager();
+		        	manager.processInventoryQuery(rr.getReservationRoom(), rr.getReservationRoom().getHotel(), rr.getReservationRoom().getItem(), startDate, DateUtils.addDays(endDate, -1));
+		        	manager.processInventoryQuery(rr.getReservationRoom(), rr.getRoom().getHotel(), rr.getRoom().getItem(), startDate, DateUtils.addDays(endDate, -1));
 				} else {
+					List<Item> inventoryItems = reservationUtils.getProjectReservationRoomDetailItems(rr.getReservationRoom(), startDate, endDate);
+			    	if (!inventoryItems.contains(rr.getReservationRoom().getItem())) {
+			    		inventoryItems.add(rr.getReservationRoom().getItem());
+			    	}
 					reservationUtils.updateProjectReservationRoomDetails(rr.getReservationRoom(), startDate, endDate, rr.getRoom());
+
+					InventoryManager manager = new InventoryManager();
+					for (Item roomItem : inventoryItems) {
+				       	manager.processInventoryQuery(rr.getReservationRoom(), rr.getReservationRoom().getHotel(), roomItem, startDate, DateUtils.addDays(endDate, -1));
+			        }
+		        	manager.processInventoryQuery(rr.getReservationRoom(), rr.getRoom().getHotel(), rr.getRoom().getItem(), startDate, DateUtils.addDays(endDate, -1));
 				}
 			}
 		} catch (NumberFormatException e) {

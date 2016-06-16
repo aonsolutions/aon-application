@@ -44,6 +44,7 @@ import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 import com.tradyso.twiota.twiOta.hicnrq.OTAHotelInvCountNotifRQDocument;
 import com.tradyso.twiota.twiOta.hicnrq.OTAHotelInvCountNotifRQDocument.OTAHotelInvCountNotifRQ;
+import com.tradyso.twiota.twiOta.hicnrq.StatusApplicationControlType.InvCodeApplication;
 
 public class InventoryManager implements IReservationConstants, ISQLConstants {
 
@@ -124,7 +125,8 @@ public class InventoryManager implements IReservationConstants, ISQLConstants {
 			int i = message.getInventories().sizeOfInventoryArray();
 			message.getInventories().addNewInventory();
 			message.getInventories().getInventoryArray(i).addNewStatusApplicationControl();
-			message.getInventories().getInventoryArray(i).getStatusApplicationControl().setInvCode(item.getProduct().getCode());
+			message.getInventories().getInventoryArray(i).getStatusApplicationControl().setInvTypeCode(item.getProduct().getCode());
+			message.getInventories().getInventoryArray(i).getStatusApplicationControl().setInvCodeApplication(InvCodeApplication.INV_CODE);
 			message.getInventories().getInventoryArray(i).getStatusApplicationControl().setStart(start);
 			message.getInventories().getInventoryArray(i).addNewInvCounts().addNewInvCount();
 			message.getInventories().getInventoryArray(i).getInvCounts().getInvCountArray(0).setCount(BigInteger.valueOf(freeRoomMap.get(inventoryDate)));
