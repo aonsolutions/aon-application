@@ -85,31 +85,43 @@ public class Mod2002015Constants {
 	};
 	
 	public static Mod2002015Key[] LIQUIDATION_II_KEYS = new Mod2002015Key[] {
+		
+		// Entidades navieras en régimen de tributación en función del tonelaje
 		Mod2002015Key.LQ578, 
 		Mod2002015Key.LQ579,
+		// Entidades que forman parte de grupos de consolidación fiscal
 		Mod2002015Key.LQ1029, 
 		Mod2002015Key.LQ1030,
 		Mod2002015Key.LQ1031,
+		
 		Mod2002015Key.LQ550, 
 		Mod2002015Key.LQ1032,
 		Mod2002015Key.LQ547,
 		Mod2002015Key.LQ552,
+		// Sólo entidades de reducida dimensión
 		Mod2002015Key.LQ1033,
 		Mod2002015Key.LQ1034,
 		Mod2002015Key.LQ1330,
+		// Sólo sociedades cooperativas
 		Mod2002015Key.LQ553, 
-		Mod2002015Key.LQ554, 
+		Mod2002015Key.LQ554,
+		// Sólo agrupaciones españolas de interés económico y UTES
 		Mod2002015Key.LQ555, 
-		Mod2002015Key.LQ556, 
+		Mod2002015Key.LQ556,
+		// Sólo entidades ZEC
 		Mod2002015Key.LQ559,
 		Mod2002015Key.LQ1035,
+		// Sólo SOCIMIS
 		Mod2002015Key.LQ520, 
 		Mod2002015Key.LQ521,
+		// Quitas por acuerdo con acreedores no vinculados
 		Mod2002015Key.LQ545, 
 		Mod2002015Key.LQ593,
-
+		
+		// Tipo de gravamen
 		Mod2002015Key.LQ558,
 		
+		// Sólo sociedades cooperativas
 		Mod2002015Key.LQ560,
 		Mod2002015Key.LQ210, Mod2002015Key.LQ480, 
 		Mod2002015Key.LQ408, Mod2002015Key.LQ1037,
@@ -117,6 +129,7 @@ public class Mod2002015Constants {
 		Mod2002015Key.LQ1285,Mod2002015Key.LQ1286,
 		Mod2002015Key.LQ1331,
 		
+		// TODOS
 		Mod2002015Key.LQ562, 
 		Mod2002015Key.LQ1038 
 	};

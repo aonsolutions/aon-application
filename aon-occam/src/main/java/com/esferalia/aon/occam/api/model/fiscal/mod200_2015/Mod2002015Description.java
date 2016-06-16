@@ -390,7 +390,7 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ1030,"Eliminaciones e incorporaciones correspondientes a la entidad");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ1031,"Integraci\u00F3n individual de las dotaciones del art. 11.12 LIS");
 		
-		DESCRIPTION_MAP.put(Mod2002015Key.LQ550,"Base imponible antes de la compensaci\u00F3n de bases imponibles negativas");
+		DESCRIPTION_MAP.put(Mod2002015Key.LQ550,"Base imponible antes de la aplicaci\u00F3n de la reserva de capitalizaci\u00F3n y compensaci\u00F3n de bases imponibles negativas");
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ1032,"Reserva de capitalizaci\u00F3n");		
 		DESCRIPTION_MAP.put(Mod2002015Key.LQ547,"Compensaci\u00F3n de bases imponibles negativas de per\u00EDodos anteriores");
 		
