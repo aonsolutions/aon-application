@@ -7,6 +7,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -1061,12 +1062,6 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0384)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I0387)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D0388)
-// ---------------------------------------------------------------------------------			
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.I1024)
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.D1025)
-			,(line,mod200, label) -> line.append("00000000000000000")
-			,(line,mod200, label) -> line.append("00000000000000000")
-// ---------------------------------------------------------------------------------			
 			,(line,mod200, label) -> addEndLabel(line,label)
 		})
 			
@@ -1160,6 +1155,7 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN576)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN569)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN570)
+			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1280)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN572)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN571)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN573)
@@ -1182,8 +1178,6 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN595)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN596)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN597)
-//
-//
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN599)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN600)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN601)
@@ -1285,11 +1279,6 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN105, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN846)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN847)
-			
-// ---------------------------------------------------------------------------------
-//			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN848)
-// ---------------------------------------------------------------------------------			
-			
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN106)
 			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN107, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN282)
@@ -1380,7 +1369,7 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN162)
 			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN103, 7, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1054)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1050)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN1050, 4, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1051)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1052)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN1053)
@@ -1388,7 +1377,7 @@ public class Mod2002015Writer {
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN132)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN571)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN133)
-			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN103)
+			,(line,mod200, label) -> addUnSignedKey(line, mod200, Mod2002015Key.BN103, 7, 2 )
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN163)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN165)
 			,(line,mod200, label) -> addSignedKey(line, mod200, Mod2002015Key.BN166)
@@ -2430,10 +2419,8 @@ public class Mod2002015Writer {
 						line.append( AonFiscalFileUtils.signedZero(importe>0 ? importe : 0.0, DS, DD) );               // Ingreso - Importe a ingresar
 						line.append( AonFiscalFileUtils.text(importe>0 && ("I".equals(mod200.getPayType()) || "U".equals(mod200.getPayType())) ? mod200.getIban() : "",34) ); // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)			
 // --------------------------------------------------------------------------------------------------		
-//						addSignedKey(line, mod200, Mod2002015Key.BN150);  // Abono/Compensación - Abono por conversión de activos impuesto diferido - A       
-//						addSignedKey(line, mod200, Mod2002015Key.BN506);  // Abono/Compensación - Compensación por conversión de activos impuesto diferido - C
-						line.append("00000000000000000");
-						line.append("00000000000000000");
+						addSignedKey(line, mod200, Mod2002015Key.BN1020);  // Abono/Compensación - Abono por conversión de activos impuesto diferido - A       
+						addSignedKey(line, mod200, Mod2002015Key.BN1021);  // Abono/Compensación - Compensación por conversión de activos impuesto diferido - C
 // --------------------------------------------------------------------------------------------------		
 						
 						line.append(importe == 0 ? "1" : "0"); // Cuota Cero "0" o "1"
@@ -2457,26 +2444,25 @@ public class Mod2002015Writer {
 			boolean addPage = true;
 			
 			// Página 9. Estado de Ingresos y Gastos Reconocidos. Solo si Balance Normal o Abreviado
-/*			
+
 			if (this == Pages2015.PAG09) {  
 				addPage = (mod200.getBalanceType() == BalanceType.NORMAL) ||
 				          (mod200.getBalanceType() == BalanceType.ABREVIADO);					
 			}
-*/
+
 			
 			// Página 22. Agrupaciones de interes económico y UTES (regimen especial). Caracteres 013 o 014 marcados
 			// La página 22 actualmente no está en el Modelo 200, luego por ahora nunca se pone, ni siquiera está definida en el enumerado
-//			if (this == Pages2014.PAG22) {
-//				addPage = (mod200.getDoubleValue(Mod2002015Key.C0013)==1) ||
-//			              (mod200.getDoubleValue(Mod2002015Key.C0014)==1);
-//			}
+			if (this == Pages2015.PAG22) {
+				addPage = (mod200.getDoubleValue(Mod2002015Key.C0013)==1) ||
+			              (mod200.getDoubleValue(Mod2002015Key.C0014)==1);
+			}
 			
 			// Página 24. Tributación Conjunta. Caracter 028 marcado
-/*
-			if (this == Pages2015.PAG24) {
+
+			if (this == Pages2015.PAG26) {
 				addPage = (mod200.getDoubleValue(Mod2002015Key.C0028)==1);
 			}
-*/			
 			
 			// Añadir el contenido de la página
 			if (addPage) {
