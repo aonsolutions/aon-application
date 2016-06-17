@@ -30,6 +30,44 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 	// ------------------------------------------------------------------------
 
+	//@Test
+	public void TestFiniquito() throws Exception {
+
+		open("finiquitos");
+
+		wait4Id("cotizacion,_cero");
+
+		draft("COTIZACIÓN, CERO");
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2016, Calendar.JUNE, 25);
+		settle(calendar.getTime());
+		
+		assertValue("cgcBaseLabel", 0.00);
+		assertValue("cgpBaseLabel", 0.00);
+		assertValue("totalPaymentsLabel", 0.00);
+		assertValue("totalLiquidLabel", 0.00);
+
+
+		draft("COTIZACIÓN, MÁX");
+		settle(calendar.getTime());
+		
+		assertValue("cgcBaseLabel", 666000.00);
+		assertValue("cgpBaseLabel", 666000.00);
+		assertValue("totalPaymentsLabel", 666000.00);
+		assertValue("totalLiquidLabel", 666000.00 - (666000.00 * (4.70 + 1.55 + 0.10) / 100.00));
+
+	
+		draft("FINIQUITO, REDEFINIDO");
+		settle(calendar.getTime());
+		assertValue("cgcBaseLabel", 300.00);
+		assertValue("cgpBaseLabel", 300.00);
+		assertValue("totalPaymentsLabel", 300.00);
+		assertValue("totalLiquidLabel", 300.00 - (300.00 * (4.70 + 1.55 + 0.10) / 100.00));
+		
+
+	}
+
 	@Test
 	public void TestAntiguedad() throws Exception {
 
@@ -307,43 +345,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 	}
 
-	@Test
-	public void TestFiniquito() throws Exception {
-
-		open("finiquitos");
-
-		wait4Id("cotizacion,_cero");
-
-		draft("COTIZACIÓN, CERO");
-		
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(2016, Calendar.JUNE, 25);
-		settle(calendar.getTime());
-		
-		assertValue("cgcBaseLabel", 0.00);
-		assertValue("cgpBaseLabel", 0.00);
-		assertValue("totalPaymentsLabel", 0.00);
-		assertValue("totalLiquidLabel", 0.00);
-
-
-		draft("COTIZACIÓN, MÁX");
-		settle(calendar.getTime());
-		
-		assertValue("cgcBaseLabel", 666000.00);
-		assertValue("cgpBaseLabel", 666000.00);
-		assertValue("totalPaymentsLabel", 666000.00);
-		assertValue("totalLiquidLabel", 666000.00 - (666000.00 * (4.70 + 1.55 + 0.10) / 100.00));
-
-	
-		draft("FINIQUITO, REDEFINIDO");
-		settle(calendar.getTime());
-		assertValue("cgcBaseLabel", 300.00);
-		assertValue("cgpBaseLabel", 300.00);
-		assertValue("totalPaymentsLabel", 300.00);
-		assertValue("totalLiquidLabel", 300.00 - (300.00 * (4.70 + 1.55 + 0.10) / 100.00));
-		
-
-	}
 
 	@Test
 	public void TestExtras() throws Exception {
