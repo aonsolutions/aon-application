@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ERE1D">
+	<field name="Descuentos" value="bean" property="descuentos" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de Pedido (220, 221, 224, 226, 22E)" value="bean" property="tipoDePedido_220_221_224_226_22E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Pedido" value="bean" property="numeroDePedido" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Línea Artículo" value="bean" property="numeroDeLineaArticulo" format="Numeric" pattern="9(6)" />
+	<field name="Número Descuento/Cargo" value="bean" property="numeroDescuento_Cargo" format="Numeric" pattern="9(2)" />
+	<field name="Indicador Descuento/Cargo (A/C)" value="bean" property="indicadorDescuento_Cargo_A_C_" format="AlphaNumeric" pattern="X(1)" />
+	<field name="Indicador Secuencia de cálculo" value="bean" property="indicadorSecuenciaDeCalculo" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Servicios Especiales" value="bean" property="serviciosEspeciales" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Porcentaje Descuento/Cargo (3)" value="bean" property="porcentajeDescuento_Cargo_3_" format="Numeric" pattern="9(4).9999" />
+	<field name="Importe Descuento/Cargo (23/204)" value="bean" property="importeDescuento_Cargo_23_204_" format="Numeric" pattern="9(4).999" />
+	<field name="Cantidad de Unidades que se descuentan (1)" value="bean" property="cantidadDeUnidadesQueSeDescuentan_1_" format="Numeric" pattern="9(2).999" />
+	<field name="Descuentos Monetarios por Unidad" value="bean" property="descuentosMonetariosPorUnidad" format="Numeric" pattern="9(2).999" />
+	<field name="Unidad de Medida" value="bean" property="unidadDeMedida" format="AlphaNumeric" pattern="X(6)" />
+</register>

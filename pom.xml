@@ -172,6 +172,7 @@
 		<module>aon-file-tax</module>
 		<module>aon-file-payroll</module>
 		<module>aon-file-pms</module>
+		<module>aon-file-seres</module>
 		<module>aon-facturae</module>
 		<module>aon-stat</module>
 		

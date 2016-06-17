@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ERE1L">
+	<field name="Líneas" value="bean" property="lineas" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de Pedido (220, 221, 224, 226, 22E)" value="bean" property="tipoDePedido_220_221_224_226_22E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Pedido" value="bean" property="numeroDePedido" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Línea Artículo" value="bean" property="numeroDeLineaArticulo" format="Numeric" pattern="9(6)" />
+	<field name="Código de Artículo EAN-13 o DUN-14" value="bean" property="codigoDeArticuloEAN_13ODUN_14" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Tipo de Número de Artículo" value="bean" property="tipoDeNumeroDeArticulo" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Descripción del Artículo 1" value="bean" property="descripcionDelArticulo1" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Descripción del Artículo 2" value="bean" property="descripcionDelArticulo2" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Tipo Artículo" value="bean" property="tipoArticulo" format="AlphaNumeric" pattern="X(1)" />
+	<field name="Código Interno Artículo Proveedor (SA)" value="bean" property="codigoInternoArticuloProveedor_SA_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Código Interno Artículo Cliente (IN)" value="bean" property="codigoInternoArticuloCliente_IN_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Código Variable Promocional (1) (PV)" value="bean" property="codigoVariablePromocional_1__PV_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Código Unidad de Expedición (1) (EN)" value="bean" property="codigoUnidadDeExpedicion_1__EN_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Cantidad Pedida (21)" value="bean" property="cantidadPedida_21_" format="Numeric" pattern="9(2).999" />
+	<field name="Cantidad Bonificada (192)" value="bean" property="cantidadBonificada_192_" format="Numeric" pattern="9(2).999" />
+	<field name="Calificador Unidad de Medida Cantidad" value="bean" property="calificadorUnidadDeMedidaCantidad" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de U.C. en Unidad de Expedición" value="bean" property="numeroDeU_C_EnUnidadDeExpedicion" format="Numeric" pattern="9(2).999" />
+	<field name="Calificador Fecha de Entrega (3-63-64-PER)" value="bean" property="calificadorFechaDeEntrega_3_63_64_PER_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha de Entrega 1" value="bean" property="fechaDeEntrega1" format="Numeric" pattern="9(8)" />
+	<field name="Hora de Entrega 1" value="bean" property="horaDeEntrega1" format="Numeric" pattern="9(4)" />
+	<field name="Fecha de Entrega 2" value="bean" property="fechaDeEntrega2" format="Numeric" pattern="9(8)" />
+	<field name="Hora de Entrega 2" value="bean" property="horaDeEntrega2" format="Numeric" pattern="9(4)" />
+	<field name="Importe Total Neto Línea (203)" value="bean" property="importeTotalNetoLinea_203_" format="Numeric" pattern="9(4).999" />
+	<field name="Precio Bruto Unitario (AAB)" value="bean" property="precioBrutoUnitario_AAB_" format="Numeric" pattern="9(2).999" />
+	<field name="Precio Neto Unitario  (AAA)" value="bean" property="precioNetoUnitario_AAA_" format="Numeric" pattern="9(2).999" />
+	<field name="Precio a titulo Informativo  (INF)" value="bean" property="precioATituloInformativo_INF_" format="Numeric" pattern="9(2).999" />
+	<field name="Calificador Unidad de Medida Precio" value="bean" property="calificadorUnidadDeMedidaPrecio" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Calificador IVA/IGIG" value="bean" property="calificadorIVA_IGIG" format="AlphaNumeric" pattern="X(6)" />
+	<field name="% Impuesto  IVA/IGIC" value="bean" property="porcentajeImpuestoIVA_IGIC" format="Numeric" pattern="9(3).99" />
+	<field name="Importe Impuesto IVA/IGIC" value="bean" property="importeImpuestoIVA_IGIC" format="Numeric" pattern="9(4).999" />
+	<field name="% Recargo de Equivalencia" value="bean" property="porcentajeRecargoDeEquivalencia" format="Numeric" pattern="9(3).99" />
+	<field name="Importe Recargo de Equivalencia" value="bean" property="importeRecargoDeEquivalencia" format="Numeric" pattern="9(4).999" />
+	<field name="Calificador Otro Tipo de Impuesto" value="bean" property="calificadorOtroTipoDeImpuesto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="% Otro Tipo de Impuesto" value="bean" property="porcentajeOtroTipoDeImpuesto" format="Numeric" pattern="9(3).99" />
+	<field name="Importe Otro Tipo de Impuesto" value="bean" property="importeOtroTipoDeImpuesto" format="Numeric" pattern="9(4).999" />
+	<field name="Peso Neto (PD) (AAA)" value="bean" property="pesoNeto_PD__AAA_" format="Numeric" pattern="9(4).999" />
+	<field name="Unidad de Medida Peso" value="bean" property="unidadDeMedidaPeso" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo Articulo EAN (CU/DU)" value="bean" property="tipoArticuloEAN_CU_DU_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Descripción del Modelo (BRN)" value="bean" property="descripcionDelModelo_BRN_" format="AlphaNumeric" pattern="X(25)" />
+	<field name="Variedad 1 (35)" value="bean" property="variedad1_35_" format="AlphaNumeric" pattern="X(25)" />
+	<field name="Variedad 2 (UP5)" value="bean" property="variedad2_UP5_" format="AlphaNumeric" pattern="X(25)" />
+	<field name="Presentación, cantidad, formato (U03)" value="bean" property="presentacion_Cantidad_Formato_U03_" format="AlphaNumeric" pattern="X(25)" />
+</register>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ERE1C">
+	<field name="Cabecera" value="bean" property="cabecera" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de Pedido (220, 221, 224, 226, 22E)" value="bean" property="tipoDePedido_220_221_224_226_22E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Pedido" value="bean" property="numeroDePedido" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Función del Mensaje (31)" value="bean" property="funcionDelMensaje_31_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Fecha del Documento (137) (102)" value="bean" property="fechaDelDocumento_137__102_" format="Numeric" pattern="9(8)" />
+	<field name="Calificador Fecha 1" value="bean" property="calificadorFecha1" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha de Servicio 1" value="bean" property="fechaDeServicio1" format="Numeric" pattern="9(8)" />
+	<field name="Hora de Servicio 1" value="bean" property="horaDeServicio1" format="Numeric" pattern="9(4)" />
+	<field name="Calificador Fecha 2" value="bean" property="calificadorFecha2" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha de Servicio 2" value="bean" property="fechaDeServicio2" format="Numeric" pattern="9(8)" />
+	<field name="Hora de Servicio 2" value="bean" property="horaDeServicio2" format="Numeric" pattern="9(4)" />
+	<field name="Condiciones Especiales" value="bean" property="condicionesEspeciales" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de Pedido Abierto (BO)" value="bean" property="numeroDePedidoAbierto_BO_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Lista de Precios" value="bean" property="numeroDeListaDePrecios" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Pedido Proveedor (VN)" value="bean" property="numeroDePedidoProveedor_VN_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Comprador  (BY)" value="bean" property="codigoComprador_BY_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Proveedor (SU)" value="bean" property="codigoProveedor_SU_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código A quien se Factura (IV)" value="bean" property="codigoAQuienSeFactura_IV_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Punto de Entrega (DP)" value="bean" property="codigoPuntoDeEntrega_DP_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Identificación Adicional  P. Entrega (API)" value="bean" property="identificacionAdicionalP_Entrega_API_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Reposición (ACD)" value="bean" property="numeroDeReposicion_ACD_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Punto de Expedición (PW)" value="bean" property="codigoPuntoDeExpedicion_PW_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código quien Paga (PR)" value="bean" property="codigoQuienPaga_PR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código de Moneda" value="bean" property="codigoDeMoneda" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Fecha vencimiento único" value="bean" property="fechaVencimientoUnico" format="Numeric" pattern="9(8)" />
+	<field name="Método Pago de costes de transportes" value="bean" property="metodoPagoDeCostesDeTransportes" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Condiciones de Entrega" value="bean" property="condicionesDeEntrega" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Importe Total Neto (79)" value="bean" property="importeTotalNeto_79_" format="Numeric" pattern="9(4).999" />
+	<field name="Importe Total Descuentos/Cargos (131)" value="bean" property="importeTotalDescuentos_Cargos_131_" format="Numeric" pattern="9(4).999" />
+	<field name="Importe Base Imponible (125)" value="bean" property="importeBaseImponible_125_" format="Numeric" pattern="9(4).999" />
+	<field name="Importe Total Impuestos (176)" value="bean" property="importeTotalImpuestos_176_" format="Numeric" pattern="9(4).999" />
+	<field name="Importe a Pagar (139)" value="bean" property="importeAPagar_139_" format="Numeric" pattern="9(4).999" />
+	<field name="Importe Total Bruto (98)" value="bean" property="importeTotalBruto_98_" format="Numeric" pattern="9(4).999" />
+	<field name="Estado" value="bean" property="estado" format="AlphaNumeric" pattern="X(1)" />
+	<field name="Referencia Adicional  1 (BY ZZZ)" value="bean" property="referenciaAdicional1_BYZZZ_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Referencia Adicional  2 (BY ZZZ)" value="bean" property="referenciaAdicional2_BYZZZ_" format="AlphaNumeric" pattern="X(17)" />
+</register>
