@@ -5,9 +5,13 @@ import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 
 import java.time.Month;
 import java.util.Calendar;
+import java.util.Date;
 
+import org.apache.bcel.generic.ISUB;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class GeneralIntegralTest extends BaseIntegralTestCase {
 
@@ -193,6 +197,43 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 1000.00);
 		assertValue("totalPaymentsLabel", 1000.00);
 
+		draft("EXTRAS, IT");
+		calculate(Calendar.JULY);
+		assertValue("cgcBaseLabel", 1067.40 + 1067.40 / 6 );
+		assertValue("cgpBaseLabel", 1067.40 + 1067.40 / 6 );
+		calculate(Calendar.AUGUST);
+		assertValue("cgcBaseLabel", 1067.40 + 1067.40 / 6 );
+		assertValue("cgpBaseLabel", 1067.40 + 1067.40 / 6 );
+		calculate(Calendar.SEPTEMBER);
+		assertValue("cgcBaseLabel", 1067.40 + 1067.40 / 6 );
+		assertValue("cgpBaseLabel", 1067.40 + 1067.40 / 6 );
+		calculate(Calendar.OCTOBER);
+		assertValue("cgcBaseLabel", 1067.40 + 1067.40 / 6 );
+		assertValue("cgpBaseLabel", 1067.40 + 1067.40 / 6 );
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2016, Calendar.DECEMBER, 31);
+		Date endDate = calendar.getTime();
+		calendar.set(Calendar.DAY_OF_MONTH, 15);
+		Date issueDate = calendar.getTime();
+		extra(issueDate, endDate);
+		assertValue("totalPaymentsLabel", 1067.40 * 4 / 30 /6  +  1067.40 * 14 / 30 /6 );
+		
+		
+		
+		draft("EXTRAS, IT (REDEFINIDO)");
+		calculate(Calendar.JULY);
+		assertValue("cgcBaseLabel", 1067.40  + 1067.40 / 6 );
+		assertValue("cgpBaseLabel", 1067.40  + 1067.40 / 6 );
+		calculate(Calendar.AUGUST);
+		assertValue("cgcBaseLabel", 1067.40  + 1067.40 / 6 );
+		assertValue("cgpBaseLabel", 1067.40  + 1067.40 / 6 );
+		calculate(Calendar.SEPTEMBER);
+		assertValue("cgcBaseLabel", 1067.40  + 1067.40 / 6 );
+		assertValue("cgpBaseLabel", 1067.40  + 1067.40 / 6 );
+		extra(issueDate, endDate);
+		assertValue("totalPaymentsLabel", 1067.40/6 * 5  + (1067.40*20/30)/6);
+
 //		draft("GARANTIZADOS, SIN I.Ts");
 //
 //		draft("MATERNIDAD, ");
@@ -304,6 +345,36 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 	}
 
+	@Test
+	public void TestExtras() throws Exception {
+
+		open("extras");
+
+		wait4Id("extra,_devengo_fuera");
+
+		draft("EXTRA, DEVENGO FUERA");
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2016, Calendar.DECEMBER, 15);
+		Date issueDate = calendar.getTime();
+		calendar.set(2016, Calendar.DECEMBER, 31);
+		Date endDate = calendar.getTime();
+		extra(issueDate, endDate);
+		assertValue("cgcBaseLabel", "");
+		assertValue("cgpBaseLabel", "");
+		assertValue("totalPaymentsLabel", 1067.40);
+		
+		calendar.set(2016, Calendar.JULY, 15);
+		issueDate = calendar.getTime();
+		calendar.set(2016, Calendar.JUNE, 30);
+		endDate = calendar.getTime();
+		extra(issueDate, endDate);
+		assertValue("cgcBaseLabel", "");
+		assertValue("cgpBaseLabel", "");
+		assertValue("totalPaymentsLabel", 1067.40/6 + (1067.40*29/30)/6);
+
+		draft("EXTRA, DEVENGO FUERA");
+	}
 	// -------------------------------------------------------------------------
 
 }

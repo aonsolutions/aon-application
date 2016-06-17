@@ -156,6 +156,25 @@ public abstract class BaseIntegralTestCase {
 		wait4Regex("periodLabel", String.format( new Locale("es","ES"),"[0-9]+/%2$d/%1$d - [0-9]+/%2$d/%1$d", year, month, end));
 	}
 
+	protected static void extra(Date issueDate, Date endDate) throws IOException, InterruptedException {
+		
+		HtmlSelect typeSelect = getElementById("typeListBox");
+		typeSelect.click();
+		HtmlOption settleOption = typeSelect.getOptionByValue("EXTRA");
+		settleOption.click();
+		
+		getElementById("dateListBox").click();
+		((HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", issueDate)+"']")).click();
+		
+		Calendar calendar = Calendar.getInstance(new Locale("es","ES"));
+		calendar.setTime(endDate);
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH)+1;
+		int end = calendar.get(Calendar.DAY_OF_MONTH);
+	
+		wait4Regex("periodLabel", String.format( new Locale("es","ES"),"[0-9]+/[0-9]+/[0-9]+ - %3$d/%2$d/%1$d", year, month, end));
+	}
+
 	protected static void wait4Id(String id) throws InterruptedException {
 		wait4(htmlPage,
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
