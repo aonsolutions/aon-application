@@ -15,8 +15,10 @@ import java.util.TreeMap;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Calendar;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.datepicker.client.DatePicker;
 
 public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
@@ -45,8 +47,9 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	private CalendarDraftObject calendarDraftObject;
 
 	private Map<Integer, String> listboxHolidayItems;
-	
+
 	private List<MyHolidayDraft> myDrafts;
+	
 	
 	private Map<Date, String> insertsDraft;
 
@@ -261,6 +264,14 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		}
 	}
 
+	public void setWorkingDay(int dayOfWeek) {
+		calendarDraftObject.getCalendar().removeStyleFromDay("datePickerDayIsWeekend", dayOfWeek);
+	}
+
+	public void setNonWorkingDay(int dayOfWeek) {
+		calendarDraftObject.getCalendar().addStyleToDay("datePickerDayIsWeekend", dayOfWeek);
+	}
+
 	public void addHoliday(Date date, String description) {
 		if (myDrafts.isEmpty())
 			myDrafts.add(initMyDrafts());
@@ -331,6 +342,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	public void removeCalendarEvent(CalendarEvents event) {
 		calendarEvents.remove(event);
 	}
+	
 
 	@Override
 	public void onValueChangeEvent(Date date) {
@@ -363,6 +375,10 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 				deleteDateSelected(date, map.get(date));
 		}
 
+	}
+	
+	public boolean isNotWorkDay(int dayOfWeek ){
+		return calendarDraftObject.getDayType(dayOfWeek) == DayType.NOT_WORKING_DAY;
 	}
 	
 	private void deleteFromInsertDraft(Date date, String description) {

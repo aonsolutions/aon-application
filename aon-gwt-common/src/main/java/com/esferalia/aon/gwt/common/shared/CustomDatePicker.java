@@ -1,5 +1,9 @@
 package com.esferalia.aon.gwt.common.shared;
 
+import static com.esferalia.aon.gwt.common.shared.DateUtils.addDays2Date;
+import static com.esferalia.aon.gwt.common.shared.DateUtils.copyDateOnly;
+
+import java.time.DayOfWeek;
 import java.util.Date;
 
 import com.google.gwt.event.dom.client.HasKeyDownHandlers;
@@ -85,6 +89,7 @@ public class CustomDatePicker extends DatePicker implements HasKeyDownHandlers {
 	}
 	
 	
+	
 	public CustomDatePicker() {
 		super(new MonthAndYearSelector() , new DefaultCalendarView(),
 				new CalendarModel());
@@ -110,6 +115,36 @@ public class CustomDatePicker extends DatePicker implements HasKeyDownHandlers {
 	public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
 		return addHandler(handler, KeyDownEvent.getType());
 	}
+	
+	// ------------------------------------------------------------------------
 
+	public void addStyleToDay(String styleName, int dayOfWeek) {
+    	Date date = copyDateOnly(getFirstDate());
+    	
+    	while( date.compareTo(getLastDate())<=0  ) {
+    		if ( date.getDay() == dayOfWeek)
+    			super.addStyleToDates(styleName, date);
+    		addDays2Date(date, 1);
+    	}
+    }
 
+    public void addStyleToDays(String styleName, int ...daysOfWeek) {
+    	for (int dayOfWeek : daysOfWeek)
+			addStyleToDay(styleName, dayOfWeek);
+    }
+
+    public void removeStyleFromDay(String styleName, int dayOfWeek) {
+    	Date date = copyDateOnly(getFirstDate());
+    	
+    	while( date.compareTo(getLastDate())<=0  ) {
+    		if ( date.getDay() == dayOfWeek)
+    			super.removeStyleFromDates(styleName, date);
+    		addDays2Date(date, 1);
+    	}
+    }
+
+    public void removeStyleFromDays(String styleName, int ...daysOfWeek) {
+    	for (int dayOfWeek : daysOfWeek)
+			removeStyleFromDay(styleName, dayOfWeek);
+    }
 }

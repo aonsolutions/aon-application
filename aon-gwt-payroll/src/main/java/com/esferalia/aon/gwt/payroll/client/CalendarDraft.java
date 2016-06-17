@@ -15,11 +15,13 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.FilterDialog;
 import com.esferalia.aon.gwt.payroll.client.CalendarDraftObjectData.MyHolidayDraft;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
+import com.esferalia.aon.watson.util.AonWordUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -41,6 +43,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class CalendarDraft extends Composite implements
 		CalendarDraftObjectData.CalendarDraftListener {
@@ -77,6 +80,8 @@ public class CalendarDraft extends Composite implements
 		@ClassName("other")
 		String other();
 
+		@ClassName("not-work")
+		String notWork();
 	}
 	
 
@@ -458,6 +463,12 @@ public class CalendarDraft extends Composite implements
 		List<HolidayDraft> list = calendarDraftObjectData.getListHolidayDraft();
 		ListIterator<HolidayDraft> iterator = list.listIterator(list.size());
 		legendVerticalPanel.clear();
+		
+		legendVerticalPanel.add(
+				addNotWorkLegend(false,
+				"No Laborables", 
+				style.notWork()));
+
 		int contador = 0;
 		while (iterator.hasPrevious()) {
 			HolidayDraft draft = iterator.previous();
@@ -477,6 +488,68 @@ public class CalendarDraft extends Composite implements
 					draft.getDescription(), draft.getGeneralMap(),
 					getStyle(contador++)));
 		}
+	}
+
+	private DisclosurePanel addNotWorkLegend(boolean open, String title, String pStyle) {
+
+		DisclosurePanel disclosurePanel = createDisclosurePanel(open,
+				title, pStyle);
+		VerticalPanel vPanel = new VerticalPanel();
+		
+		DateTimeFormat dayOfWeekFormat = DateTimeFormat.getFormat("EEEE");
+		
+		Date date = new Date();
+		while ( date.getDay() != 0 )
+			CalendarUtil.addDaysToDate(date, 1);
+		
+		for ( int i = 1; i < 8 ; i++) {
+			CalendarUtil.addDaysToDate(date, 1);
+			String label = dayOfWeekFormat.format(date);
+			
+			final Button dayOfWeekButton = new Button(AonWordUtils.capitalize(label));
+			dayOfWeekButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+			dayOfWeekButton.addStyleName(style.holiday());
+			
+			final int dayOfWeek = date.getDay();
+			final boolean isNotWorkDay = calendarDraftObjectData.isNotWorkDay(date.getDay()); 
+			
+			dayOfWeekButton.addStyleName(isNotWorkDay ? AON.AON_ICON_CHECK_YES: AON.AON_ICON_CHECK_NO);
+			
+			dayOfWeekButton.addClickHandler( new ClickHandler() {
+				
+				boolean checked = isNotWorkDay;
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					if ( checked ) 
+						unCheck();
+					else 
+						check();
+					
+					checked = !checked;
+					setEnableSaveButton();
+				}
+				
+				private void check() {
+					dayOfWeekButton.removeStyleName(AON.AON_ICON_CHECK_NO);
+					dayOfWeekButton.addStyleName(AON.AON_ICON_CHECK_YES);
+					CalendarDraft.this.calendarDraftObjectData.setNonWorkingDay(dayOfWeek);
+				}
+
+				private void unCheck() {
+					dayOfWeekButton.removeStyleName(AON.AON_ICON_CHECK_YES);
+					dayOfWeekButton.addStyleName(AON.AON_ICON_CHECK_NO);
+					CalendarDraft.this.calendarDraftObjectData.setWorkingDay(dayOfWeek);
+				}
+			});
+			
+			vPanel.add(dayOfWeekButton);
+		}
+		
+
+		disclosurePanel.setContent(vPanel);
+
+		return disclosurePanel;
 	}
 
 	private DisclosurePanel addHolidaysLegend(boolean open, String title,

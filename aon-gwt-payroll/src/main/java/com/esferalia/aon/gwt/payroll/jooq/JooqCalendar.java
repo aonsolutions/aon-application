@@ -4,8 +4,16 @@ import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
 import static com.esferalia.aon.jooq.tables.HolidayDetail.HOLIDAY_DETAIL;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
+import static java.util.Calendar.FRIDAY;
+import static java.util.Calendar.MONDAY;
+import static java.util.Calendar.SATURDAY;
+import static java.util.Calendar.SUNDAY;
+import static java.util.Calendar.THURSDAY;
+import static java.util.Calendar.TUESDAY;
+import static java.util.Calendar.WEDNESDAY;
 
 import java.sql.Connection;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +26,8 @@ import org.jooq.Record;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 import com.esferalia.aon.jooq.tables.records.HolidayDetailRecord;
 import com.esferalia.aon.jooq.tables.records.HolidayRecord;
@@ -59,7 +69,7 @@ public class JooqCalendar {
 		return map;
 	}
 
-	public static List<HolidayDraft> getCalendar(Connection conn,
+	public static CalendarDraft getCalendar(Connection conn,
 			Integer workplaceId, Integer pattern, Integer year)
 			throws IllegalArgumentException {
 
@@ -72,11 +82,15 @@ public class JooqCalendar {
 					pattern, year);
 	}
 
-	private static List<HolidayDraft> getCalendar(DSLContext dslContext, Integer year,
+	private static CalendarDraft getCalendar(DSLContext dslContext, Integer year,
 			Integer workplaceId) throws IllegalArgumentException {
 
-		Record record = dslContext.select().from(PAYROLL_WORKPLACE)
-				.join(CALENDAR).on(PAYROLL_WORKPLACE.CALENDAR.eq(CALENDAR.ID))
+		CalendarDraft calendarDraft = new CalendarDraft();
+
+		Record record = dslContext.select()
+				.from(PAYROLL_WORKPLACE)
+				.join(CALENDAR)
+				.on(PAYROLL_WORKPLACE.CALENDAR.eq(CALENDAR.ID))
 				.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId)).fetchOne();
 
 		List<HolidayDraft> holidays = new LinkedList<HolidayDraft>();
@@ -92,12 +106,21 @@ public class JooqCalendar {
 				while (holiday != null)
 					holiday = loadHoliday(dslContext, year, holidays, holiday);
 			}
+			
+			calendarDraft.setDayType(0, DayType.valueOf(record.getValue(CALENDAR.SUNDAY)));
+			calendarDraft.setDayType(1, DayType.valueOf(record.getValue(CALENDAR.MONDAY)));
+			calendarDraft.setDayType(2, DayType.valueOf(record.getValue(CALENDAR.TUESDAY)));
+			calendarDraft.setDayType(3, DayType.valueOf(record.getValue(CALENDAR.WEDNESDAY)));
+			calendarDraft.setDayType(4, DayType.valueOf(record.getValue(CALENDAR.THURSDAY)));
+			calendarDraft.setDayType(5, DayType.valueOf(record.getValue(CALENDAR.FRIDAY)));
+			calendarDraft.setDayType(6, DayType.valueOf(record.getValue(CALENDAR.SATURDAY)));
 		}
-
-		return holidays;
+		
+		calendarDraft.setHolidayDrafts(holidays);
+		return calendarDraft;
 	}
 
-	private static List<HolidayDraft> getCalendarSelected(
+	private static CalendarDraft getCalendarSelected(
 			DSLContext dslContext, Integer pattern, Integer year)
 			throws IllegalArgumentException {
 
@@ -115,7 +138,9 @@ public class JooqCalendar {
 				holiday = loadHoliday(dslContext, year, holidays, holiday);
 		}
 
-		return holidays;
+		CalendarDraft calendarDraft = new CalendarDraft();
+		calendarDraft.setHolidayDrafts(holidays);
+		return calendarDraft;
 
 	}
 

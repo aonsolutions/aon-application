@@ -179,6 +179,22 @@ public class Calendar extends ResizeComposite implements
 
 	}
 	
+	public void addStyleToDay(String styleName, int dayOfWeek) {
+		Iterator<Widget> iterator = table.iterator();
+		while ( iterator.hasNext() )
+			((CustomDatePicker) iterator.next()).addStyleToDay(styleName, dayOfWeek);
+	}
+
+	public void removeStyleFromDay(String styleName, int dayOfWeek) {
+		Iterator<Widget> iterator = table.iterator();
+		while ( iterator.hasNext() )
+			((CustomDatePicker) iterator.next()).removeStyleFromDay(styleName, dayOfWeek);
+	}
+
+
+
+	// -------------------------------------------------------------------------
+
 	private final void onSuprPress (Date date) {
 		for(Listener listener : listeners)
 			listener.onSuprPressEvent(date);

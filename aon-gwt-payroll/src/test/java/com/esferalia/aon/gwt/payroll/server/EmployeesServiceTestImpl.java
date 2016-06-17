@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -38,7 +39,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		EmployeesService {
 
 	@Override
-	public List<HolidayDraft> getCalendar(int workplaceId, Integer pattern,
+	public CalendarDraft getCalendar(int workplaceId, Integer pattern,
 			Integer calendar) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");

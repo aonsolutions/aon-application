@@ -10,9 +10,9 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.widget.Calendar;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class CalendarDraftObject implements Calendar.Listener {
@@ -45,7 +45,7 @@ public class CalendarDraftObject implements Calendar.Listener {
 	private Integer workplaceId;
 	private Calendar calendar;
 	private Integer year;
-	private List<HolidayDraft> holidays;
+	private CalendarDraft calendarDraft;
 	private Map<Integer, String> listBoxItems;
 	private List<Listener> listeners;
 
@@ -93,17 +93,17 @@ public class CalendarDraftObject implements Calendar.Listener {
 		this.year = year;
 		
 		employeesService.getCalendar(workplaceId, pattern, year,
-				new AsyncCallback<List<HolidayDraft>>() {
+				new AsyncCallback<com.esferalia.aon.gwt.payroll.shared.CalendarDraft>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						CalendarDraftObject.this.holidays = new ArrayList<HolidayDraft>();
+						CalendarDraftObject.this.calendarDraft = new CalendarDraft();
 						cb.onFailure(caught);
 					}
 
 					@Override
-					public void onSuccess(List<HolidayDraft> holidays) {
-						CalendarDraftObject.this.holidays = holidays;
+					public void onSuccess(com.esferalia.aon.gwt.payroll.shared.CalendarDraft calendarDraft) {
+						CalendarDraftObject.this.calendarDraft = calendarDraft;
 						CalendarDraftObject.this.initCalendarObject();
 						cb.onSuccess(CalendarDraftObject.this);
 					}
@@ -152,9 +152,13 @@ public class CalendarDraftObject implements Calendar.Listener {
 	public Integer getWorkplaceId() {
 		return workplaceId;
 	}
-
+	
+	public DayType getDayType(int weekDay ){
+		return calendarDraft.getDayType(weekDay);
+	}
+	
 	public List<HolidayDraft> getHolidays() {
-		return Collections.unmodifiableList(holidays);
+		return calendarDraft.getHolidayDrafts();
 	}
 
 	private void initCalendarObject() {

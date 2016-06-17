@@ -4,11 +4,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.HolidayDraft;
 
 public interface CalendarService {
 
-	List<HolidayDraft> getCalendar(int workplaceId, Integer pattern, Integer calendar)
+	CalendarDraft getCalendar(int workplaceId, Integer pattern, Integer calendar)
 			throws IllegalArgumentException;
 
 	Map<Integer, String> getHolidayDescription() throws IllegalArgumentException;

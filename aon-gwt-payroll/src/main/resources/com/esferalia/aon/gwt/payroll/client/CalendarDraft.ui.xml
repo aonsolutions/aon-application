@@ -75,6 +75,10 @@
 	.other {
 		background-color: #E6CCFF;
 	}
+
+	.not-work {
+		background-color: #FF7800;
+	}
 	</ui:style>
 
 	<g:HTMLPanel>

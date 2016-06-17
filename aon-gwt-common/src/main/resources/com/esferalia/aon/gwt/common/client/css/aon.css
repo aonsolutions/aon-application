@@ -1785,6 +1785,18 @@ input:disabled+label {
 	width: auto;
 }
 
+@sprite .aon-icon-check-no {
+	gwt-image: "aonIconCheckNo";
+	width: auto !important;
+	height: auto !important;
+}
+
+@sprite .aon-icon-check-yes {
+	gwt-image: "aonIconCheckYes";
+	width: auto !important;
+	height: auto !important;
+}
+
 .aon-fiscal-enterprise-suggest {
 	background-color: #eee;
 	border: medium none;

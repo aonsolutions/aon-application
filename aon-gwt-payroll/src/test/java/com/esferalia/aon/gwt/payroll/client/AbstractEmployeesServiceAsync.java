@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -81,7 +82,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 
 	@Override
 	public void getCalendar(int workplaceId, Integer pattern,
-			Integer calendar, AsyncCallback<List<HolidayDraft>> callback)
+			Integer calendar, AsyncCallback<CalendarDraft> callback)
 			throws IllegalArgumentException {
 		failure(callback);
 

@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -503,11 +504,11 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 
 	@Override
 	public void getCalendar(int workplaceId, Integer pattern, Integer year,
-			AsyncCallback<List<HolidayDraft>> callback)
+			AsyncCallback<CalendarDraft> callback)
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getCalendar(workplaceId, pattern, year,
-				new AsyncCallbackWrapper<List<HolidayDraft>>(callback));
+				new AsyncCallbackWrapper<CalendarDraft>(callback));
 	}
 
 	@Override

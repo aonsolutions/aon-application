@@ -633,6 +633,12 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-rowSelector-C")
 	String aonIconRowSelectorAgreement();
 
+	@ClassName("aon-icon-check-no")
+	String aonIconCheckNo();
+
+	@ClassName("aon-icon-check-yes")
+	String aonIconCheckYes();
+
 	/*
 	 * ProgressBar
 	 */

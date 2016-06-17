@@ -101,6 +101,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
+import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -473,7 +474,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<HolidayDraft> getCalendar(int workplaceId, Integer pattern,
+	public CalendarDraft getCalendar(int workplaceId, Integer pattern,
 			Integer year) throws IllegalArgumentException {
 
 		Connection conn = null;
