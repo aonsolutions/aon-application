@@ -1271,7 +1271,7 @@ public class FANWriter implements Serializable {
 	
 	private Integer getNotEnjoyedVacationDays(Contract contract) {
 		String days = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.NO_HOLIDAYS.getName());
-		return (int) NumberUtils.toDouble(days);
+		return (int) CommonUtil.ceil(NumberUtils.toDouble(days));
 	}
 	
 	private Double obtainDayHours(Contract contract) throws ManagerBeanException {
