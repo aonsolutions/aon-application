@@ -1,0 +1,4 @@
+driverClass=org.gjt.mm.mysql.Driver
+jdbcUrl=jdbc:mysql://dbudapa.cdhc46h3yjvt.eu-west-1.rds.amazonaws.com:3306
+user=ingenet
+password=udapa

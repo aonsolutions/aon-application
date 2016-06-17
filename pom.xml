@@ -42,6 +42,7 @@
 		<module>aon.entity.alias</module>
 		<module>aon-db-manager</module>
 		<module>aon-dbutils</module>
+		<module>aon-ingenet</module>
 		<module>aon-ui-dbutils</module>
 		<module>aon-ui-db-manager</module>
 		<module>aon-master-jooq</module>
