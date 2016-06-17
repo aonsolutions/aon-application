@@ -19,7 +19,7 @@ public class Purchase implements Serializable {
 	private Integer project;
 	private int supplier;
 	private String series;
-	private int number;
+	private Integer number;
 	private String purchaseReference;
 	private Integer address;
 	private String discountExpr;
@@ -82,10 +82,10 @@ public class Purchase implements Serializable {
 	public void setSeries(String series) {
 		this.series = series;
 	}
-	public int getNumber() {
+	public Integer getNumber() {
 		return number;
 	}
-	public void setNumber(int number) {
+	public void setNumber(Integer number) {
 		this.number = number;
 	}
 	public String getPurchaseReference() {

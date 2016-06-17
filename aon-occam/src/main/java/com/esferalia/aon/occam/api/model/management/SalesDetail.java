@@ -22,7 +22,7 @@ public class SalesDetail implements Serializable {
 	private String discountExpression;
 	private double taxes;
 	private SalesDetailStatus status;
-	private int offerDetail;
+	private Integer offerDetail;
 	private double delivered;
 	
 	
@@ -92,10 +92,10 @@ public class SalesDetail implements Serializable {
 	public void setStatus(SalesDetailStatus status) {
 		this.status = status;
 	}
-	public int getOfferDetail() {
+	public Integer getOfferDetail() {
 		return offerDetail;
 	}
-	public void setOfferDetail(int offerDetail) {
+	public void setOfferDetail(Integer offerDetail) {
 		this.offerDetail = offerDetail;
 	}
 	public double getDelivered() {

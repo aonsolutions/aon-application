@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.ItemComposition.ITEM_COMPOSITION;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
@@ -43,6 +44,7 @@ import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
@@ -676,6 +678,33 @@ public class ProductDAO {
 					.setDomain(r.getDomain());		
 		}
 	}
+	
+	// ------------------------------------- ITEM-COMPOSITION
+	public static void insertItemComposition(AONContext ctx,
+			ItemComposition itemComposition) {
+		ctx.checkWrite();
+		ctx.getDslContext().transaction(
+				configuration -> {
+					ctx.getDslContext()
+							.insertInto(ITEM_COMPOSITION,
+									ITEM_COMPOSITION.DOMAIN,
+									ITEM_COMPOSITION.ITEM,
+									ITEM_COMPOSITION.COMPOSITION_ITEM,
+									ITEM_COMPOSITION.SEQUENCE,
+									ITEM_COMPOSITION.DESCRIPTION,
+									ITEM_COMPOSITION.QUANTITY,
+									ITEM_COMPOSITION.DISCOUNT_EXPR)
+							.values(itemComposition.getDomain(),
+									itemComposition.getItemId(),
+									itemComposition.getCompositionItemId(),
+									(short) itemComposition.getSequence(),
+									itemComposition.getDescription(),
+									itemComposition.getQuantity(),
+									itemComposition.getDiscountExpression())
+							.execute();
+				});
+	}
+	
 	
 	// ------------------------------------- BRAND
 	

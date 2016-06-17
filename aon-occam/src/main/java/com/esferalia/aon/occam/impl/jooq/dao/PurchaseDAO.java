@@ -26,8 +26,6 @@ public class PurchaseDAO {
 		if(supplier==null){
 			supplier = createCompanySupplier(ctx, purchase.getDomain(), enterpriseId, enterpriseScope);
 		}
-		Integer number = obtainManufactureMaxNumber(ctx, purchase.getDomain(), purchase.getSeries());
-		purchase.setNumber(++number);
 		purchase.setSupplier(supplier);
 		purchase.setDocumentType(PurchaseType.MANUFACTURE);
 		return insertPurchase(ctx, purchase);
@@ -39,7 +37,10 @@ public class PurchaseDAO {
 		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
 		modificationDate = new java.sql.Timestamp(
 				new java.util.Date().getTime());
-
+		if(purchase.getNumber()==null || purchase.getNumber()==0){
+			Integer number = obtainManufactureMaxNumber(ctx, purchase.getDomain(), purchase.getSeries());
+			purchase.setNumber(++number);
+		}
 		return ctx
 				.getDslContext()
 				.insertInto(PURCHASE, PURCHASE.DOMAIN, PURCHASE.PROJECT,
