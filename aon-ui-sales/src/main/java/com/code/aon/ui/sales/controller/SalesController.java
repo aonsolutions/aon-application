@@ -26,8 +26,10 @@ import com.code.aon.common.ProgressionState;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Finance;
@@ -76,6 +78,10 @@ import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.ingenet.IngenetSalesManager;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.PurchaseDAO;
 
 public class SalesController extends HeaderObjectController implements ISalesConstants, IAuditableController {
 	
@@ -313,6 +319,40 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_SALES_DETAIL_SALES_ID), sales.getId());
 		return deliveryDetailBean.getCount(criteria) > 0;
+	}
+
+	public boolean isManufacturable() throws ManagerBeanException {
+		Sales sales = (Sales) this.getTo();
+		try {
+			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
+			// TODO alias for: SalesDetail.item.product.manufactured
+			criteria.addEqualExpression("SalesDetail.item.product.manufactured", Boolean.TRUE);
+			return salesDetailBean.getCount(criteria) > 0;
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage());
+		}
+	}
+
+	public boolean isManufacturePending() throws ManagerBeanException {
+		Sales sales = (Sales) this.getTo();
+		try {
+			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
+			// TODO alias for: SalesDetail.item.product.manufactured
+			criteria.addEqualExpression("SalesDetail.item.product.manufactured", Boolean.TRUE);
+			long pending = salesDetailBean.getList(criteria).stream()
+				.map(to -> (SalesDetail)to)
+				.filter(detail -> (detail.getQuantity() > detail.getDelivered()))
+				.count();
+			return pending > 0;
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage());
+		}
 	}
 
 	public boolean isPending(){
@@ -860,6 +900,127 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		SalesInvoiceProcess sip = new SalesInvoiceProcess(this);
 		LongProcessThread thread = new LongProcessThread(sip); 
 		thread.start();		
+	}
+	
+	public void onManufacture(ActionEvent event) {
+		Sales sales = (Sales) this.getTo();
+		List<ITransferObject> salesDetailList = sales.getDetailList();
+		
+		createManufacturingOrder(sales, salesDetailList);
+		
+		ApplicationParameter ap = AppParamUtil.getParameter("UDAPA_INGENET_ENABLED");
+		if (ap != null && new Boolean(ap.getValue())) {
+			LOGGER.info(" *** UDAPA INGENET ENABLED ***");
+			try {
+				IngenetSalesManager.getInstance().createSales(
+						AonUtil.getDomainName(), AonUtil.getRemoteUser(), sales,
+						salesDetailList);
+				AonUtil.addInfoMessage("Traspasado correctamente a INGENET");
+			} catch (Exception e) {
+				AonUtil.addErrorMessage(e.getMessage());
+				LOGGER.error(e.getMessage());
+			}
+		}
+	}
+	
+	private void createManufacturingOrder(Sales sales,
+			List<ITransferObject> salesDetailList) {
+		AONContext ctx = AONContext
+				.getAONContext(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser());
+//		int purchaseId = PurchaseDAO.insertManufacturePurchase(ctx, sales
+//				.getDomain(), sales.getProject() != null ? sales.getProject()
+//				.getId() : null, sales.getSeries(), null, null, sales
+//				.getDiscountExpression() != null ? sales
+//				.getDiscountExpression().getDiscountExpr() : null, new Date(),
+//				null, sales.getSecurityLevel().ordinal(), SalesStatus.PENDING
+//						.ordinal(), sales.getComments(), sales.getRemarks(),
+//				sales.getWorkPlace() != null ? sales.getWorkPlace().getId()
+//						: null,
+//				null,// warehouse,
+//				sales.getScope().getId(), 0, 0, 0, "0", null, null, null,
+//				false, null, null, null, null, null, null, null, null, 0);
+		
+		com.esferalia.aon.occam.api.model.management.Purchase p = new com.esferalia.aon.occam.api.model.management.Purchase();
+		
+		p.setDomain(sales.getDomain());
+		p.setProject(sales.getProject() != null ? sales
+				.getProject().getId() : null);
+		// p.setSupplier(-1);
+		p.setSeries(sales.getSeries());
+		// p.setNumber(-1);
+		p.setPurchaseReference(null);
+		p.setAddress(null);
+		p.setDiscountExpr(sales.getDiscountExpression() != null ? sales
+				.getDiscountExpression().getDiscountExpr()
+				: null);
+		p.setIssueDate(new Date());
+		p.setPayMethod(null);
+		// p.setDocumentType(null);
+		p.setSecurityLevel(sales.getSecurityLevel()
+				.ordinal());
+		p.setStatus(PurchaseStatus.PENDING);
+		p.setComments(sales.getComments());
+		p.setRemarks(sales.getRemarks());
+		p.setWorkplace(sales.getWorkPlace() != null ? sales
+				.getWorkPlace().getId() : null);
+		p.setWarehouse(null);
+		p.setScope(sales.getScope().getId());
+		p.setNumberOfPymnts(0);
+		p.setDaysToFirstPymnt(0);
+		p.setDaysBetweenPymnts(0);
+		p.setPymntDays("0");
+		p.setBankAccount(null);
+		p.setBankAlias(null);
+		p.setBic(null);
+		p.setEmailCommunication(false);
+		p.setCarrier(null);
+		p.setShippingAlternativeAddress(null);
+		p.setShippingAlternativeAddress2(null);
+		p.setShippingAlternativeZip(null);
+		p.setShippingAlternativeCity(null);
+		p.setShippingAlternativePhone(null);
+		p.setShippingAlternativeRecipient(null);
+		p.setShippingContact(null);
+		p.setShippingPeriod(0);
+		
+		int purchaseId = PurchaseDAO.insertManufacturePurchase(ctx, p);
+		ctx.getDslContext().transaction(configuration -> {
+			createPurchaseLines(ctx, salesDetailList, purchaseId);
+		});
+	}
+	
+	private void createPurchaseLines(AONContext ctx,
+			List<ITransferObject> list, Integer purchaseId) {
+		list.stream()
+				.map(to -> (SalesDetail) to)
+				.forEach(
+						detail -> {
+							com.esferalia.aon.occam.api.model.management.PurchaseDetail pd = new com.esferalia.aon.occam.api.model.management.PurchaseDetail(); 
+							pd.setDomain(detail.getDomain());
+							pd.setPurchase(purchaseId);
+							pd.setProject(null);
+							pd.setLine(detail.getLine());
+							pd.setItem(detail.getItem().getId());
+							pd.setDescription(detail.getDescription());
+							pd.setQuantity(detail.getQuantity());
+							pd.setPrice(detail.getPrice());
+							pd.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
+							pd.setTaxes(detail.getTaxes());
+							pd.setStatus(com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus.valueOf(detail.getStatus().name()));
+							pd.setProposalDetail(null);
+							pd.setDelivered(detail.getDelivered());
+							PurchaseDAO.insertPurchaseDetail(ctx, pd);
+							
+//							PurchaseDAO.insertPurchaseDetail(ctx, detail
+//									.getDomain(), purchaseId, null, detail
+//									.getLine().shortValue(), detail.getItem()
+//									.getId(), detail.getDescription(), detail
+//									.getQuantity(), detail.getPrice(), detail
+//									.getDiscountExpression().getDiscountExpr(),
+//									detail.getTaxes(), (byte) detail
+//											.getStatus().ordinal(), null,
+//									detail.getDelivered());
+						});
 	}
 
 }

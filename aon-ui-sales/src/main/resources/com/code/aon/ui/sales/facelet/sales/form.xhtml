@@ -50,6 +50,16 @@
 									value="#{true}" />
 							</aon:menuItem>
 						</aon:if>
+						<aon:if test="#{aonRole.warehouseOperator}">
+							<aon:menuItem id="manufacture"
+								value="#{bundle.warehouse_manufacturing_order}"
+								immediate="#{true}" rendered="#{sales.manufacturable}"
+								disabled="#{!sales.manufacturePending}"
+								iconClass="aon-icon-task"
+								actionListener="#{sales.onManufacture}"
+								action="sales_form"
+								onclick="if (!confirm('#{bundle.aon_confirm_title}')) { return false;}"/>
+						</aon:if>
 						<aon:menuItem id="purchaseGeneration"
 							value="#{bundle.sales_to_purchase}"
 							immediate="#{true}" 
