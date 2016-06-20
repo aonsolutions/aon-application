@@ -226,7 +226,7 @@
 
 		</g:north>
 		<g:center>
-			<g:ScrollPanel styleName="{style.editor}">
+			<g:ScrollPanel ui:field="scrollPanel" styleName="{style.editor}">
 				<g:VerticalPanel styleName="{style.document}">
 					<g:DeckPanel ui:field="deckPanel">
 						<g:VerticalPanel ui:field="draftPanel" width="auto">
