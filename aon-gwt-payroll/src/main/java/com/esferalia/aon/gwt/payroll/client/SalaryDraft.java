@@ -55,6 +55,7 @@ import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.O
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.RowLabelStyle;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.Timeline;
 import com.esferalia.aon.gwt.visualization.client.visualizations.Tooltip;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -90,7 +91,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -127,6 +127,7 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
@@ -1853,6 +1854,8 @@ public class SalaryDraft extends ResizeComposite
 	private static final Binder binder = GWT.create(Binder.class);
 
 	@UiField
+	ScrollPanel scrollPanel;
+	@UiField
 	DeckPanel deckPanel;
 	@UiField
 	Panel draftPanel;
@@ -2342,7 +2345,8 @@ public class SalaryDraft extends ResizeComposite
 		salarySelect.setVisible(true);
 		datesListBox.setVisible(true);
 		printPreviewButton.setVisible(true);
-		dbSalaryCheck.setVisible(salaryDraftObject != null && salaryDraftObject.hasDbSalary());
+		dbSalaryCheck.setVisible(hasDbSalary());
+		
 	}
 
 	private void showPreview() {
@@ -2697,7 +2701,8 @@ public class SalaryDraft extends ResizeComposite
 				break;
 		}
 
-		dbSalaryCheck.setVisible(salaryDraftObject.hasDbSalary());
+		initDbSalaryCheck();		
+
 		setDbVisible(salaryDraftObject.hasDbSalary() && dbSalaryCheck.getValue());
 		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
 		undoButton.setEnabled(salaryDraftObject.canUndo());
@@ -2707,6 +2712,18 @@ public class SalaryDraft extends ResizeComposite
 
 		dumpEvents(salaryDraftObject.getEvents());
 		eventsTableSpace.setVisible(eventsTable.getRowCount() > 0);
+	}
+	
+	private void initDbSalaryCheck(){
+		dbSalaryCheck.setVisible(hasDbSalary());
+		Widget dbDiffWidget = getDiffsWithDbSalary();
+		boolean hasDiffsWithDbSalary = dbDiffWidget != null;
+		dbSalaryCheck.setValue(hasDiffsWithDbSalary, false);
+		dbSalaryCheck.addStyleName(hasDiffsWithDbSalary ? style.textError() : style.textOk());
+		dbSalaryCheck.removeStyleName(hasDiffsWithDbSalary ? style.textOk() : style.textError());
+		if ( hasDiffsWithDbSalary )
+			scrollPanel.ensureVisible(dbDiffWidget);
+		
 	}
 
 	private void initAvailablePayments() {
@@ -4710,6 +4727,48 @@ public class SalaryDraft extends ResizeComposite
 				if ( payment.getPayment().equals(p))
 					return true;
 		return false;
+	}
+	
+	private boolean hasDbSalary(){
+		return salaryDraftObject != null  && salaryDraftObject.hasDbSalary();
+	}
+	
+	private Widget getDiffsWithDbSalary(){
+		if ( salaryDraftObject == null ) 
+			return null;
+		
+		if ( !salaryDraftObject.hasDbSalary() )	
+			return null;
+			
+		if ( !AonStringUtils.equals(totalPaymentLabel.getText(), dbTotalPaymentLabel.getText()))
+			return dbTotalPaymentLabel;
+
+		if ( !AonStringUtils.equals(totalLiquidLabel.getText(), dbTotalLiquidLabel.getText()))
+			return dbTotalLiquidLabel;
+
+		if ( !AonStringUtils.equals(cgcBaseLabel.getText(), dbCgcBaseLabel.getText()))
+			return dbCgcBaseLabel;
+
+		if ( !AonStringUtils.equals(cgpBaseLabel.getText(), dbCgpBaseLabel.getText()))
+			return dbCgpBaseLabel;
+
+		if ( !AonStringUtils.equals(irpfBaseLabel.getText(), dbIrpfBaseLabel.getText()))
+			return dbIrpfBaseLabel;
+
+		if ( !AonStringUtils.equals(prorationBaseLabel.getText(), dbProrationBaseLabel.getText()))
+			return dbProrationBaseLabel;
+
+		if ( !AonStringUtils.equals(totalDeductionLabel.getText(), dbTotalDeductionLabel.getText()))
+			return dbTotalDeductionLabel;
+		
+		if ( !AonStringUtils.equals(hExtraBaseLabel.getText(), dbHExtraBaseLabel.getText()))
+			return dbHExtraBaseLabel;
+
+		if ( !AonStringUtils.equals(nonHExtraBaseLabel.getText(), dbNonHExtraBaseLabel.getText()))
+			return dbNonHExtraBaseLabel;
+
+
+		return null;
 	}
 
 	// ------------------------------------------------------- Static 'Library'
