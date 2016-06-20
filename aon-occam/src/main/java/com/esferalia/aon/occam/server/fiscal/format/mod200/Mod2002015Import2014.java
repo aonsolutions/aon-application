@@ -201,8 +201,15 @@ public class Mod2002015Import2014 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.LQ704, mod200old.getDoubleValue(Mod2002014Key.LQ706))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.LQ013, mod200old.getDoubleValue(Mod2002014Key.LQ015))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.LQ725, mod200old.getDoubleValue(Mod2002014Key.LQ727))
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.LQ534, mod200old.getDoubleValue(Mod2002014Key.LQ536)+
-					                                                                  (mod200old.getDoubleValue(Mod2002014Key.C0017)==0 && mod200old.getDoubleValue(Mod2002014Key.C0018)==0 && mod200old.getDoubleValue(Mod2002014Key.C0019)==0 && mod200old.getDoubleValue(Mod2002014Key.LQ552)<0 ? Math.abs(mod200old.getDoubleValue(Mod2002014Key.LQ552)) : 0) )  // Si la base imponible (casilla 552) del 2013 era negativa, tambien se suma a la casilla 534 (si no es cooperativa)
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.LQ534, mod200old.getDoubleValue(Mod2002014Key.LQ536))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.LQ607, mod200old.getDoubleValue(Mod2002014Key.LQ699)+
+					             (mod200old.getDoubleValue(Mod2002014Key.C0017)==0 
+                               && mod200old.getDoubleValue(Mod2002014Key.C0018)==0 
+                               && mod200old.getDoubleValue(Mod2002014Key.C0019)==0 
+                               && mod200old.getDoubleValue(Mod2002014Key.LQ552)<0 
+                               ?Math.abs(mod200old.getDoubleValue(Mod2002014Key.LQ552)) 
+                               : 0) )  // Si la base imponible (casilla 552) del 2014 era negativa, tambien se suma a la 
+									   // casilla 534 (si no es cooperativa)
 						
 			// Deducciones por doble imposición interna
 //			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN101, adjustDoubleTax( mod200old.getDoubleValue(Mod2002014Key.BN848), mod200old.getDoubleValue(Mod2002014Key.BN105), mod200old.getDoubleValue(Mod2002014Key.BN103) ) )  // pendiente/generada
