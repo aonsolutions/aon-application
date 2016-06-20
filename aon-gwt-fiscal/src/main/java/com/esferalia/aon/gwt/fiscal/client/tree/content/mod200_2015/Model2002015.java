@@ -283,13 +283,13 @@ public class Model2002015 extends ResizeComposite  {
 				cb.onSuccess(result);
 				paintHeaderTable(mod200Object.getMod200());				
 				calculateCheck.setValue(mod200Object.isAuthomaticCalculation());
+				deckPanel.showWidget(deckPanel.getWidgetIndex(page00));
 				if (result.getId() == null) {
 					page00.enableCharacters( true );
 					refreshButtonsVisibility();
 				} else {
 					dump();
 				}
-				deckPanel.showWidget(deckPanel.getWidgetIndex(page00));
 				popup.hide();
 			}
 			

@@ -212,7 +212,8 @@ public class Page00 extends PageAbs {
 		for (Mod2002015Key key : CHARACTERS_KEYS) {
 			DoubleVariable2015 sv = this.mod200Object.getMod200().getKeysMap().get(key);
 			if (sv != null && inputs.containsKey( key )) {
-				inputs.get( key ).setValue( AonMathUtils.equals(sv.getValue() , 1.0) );
+				boolean checked = AonMathUtils.equals(sv.getValue() , 1.0);
+				inputs.get( key ).setValue( checked);
 			}
 		}
 		cnaeLabel.setText(null);
@@ -414,34 +415,12 @@ public class Page00 extends PageAbs {
 			check.setEnabled(enabled);
 		}
 		c061.setEnabled(enabled);
+		
+		for (Mod2002015Key key : CHARACTERS_KEYS) {
+			if (inputs.containsKey( key ) && inputs.get( key ).getValue()) {
+				changeAvailability(key);
+			}
+		}
 	}
-
-//	private changeCharacters() {
-//		C0050
-//		C0051
-//		C0052
-//		C0055
-//		C0053
-//		C0053
-//		C0054
-//		C0022
-//		C0017
-//		C0018
-//		C0019
-//		C0013
-//		C0015
-//		C0012
-//		X0000
-//		C0047
-//		C0028
-//		C0024
-//		C0003
-//		C0004
-//		C0009 
-//		C0010 
-//		C0024 
-//		C0025
-//	}
-
 	
 }
