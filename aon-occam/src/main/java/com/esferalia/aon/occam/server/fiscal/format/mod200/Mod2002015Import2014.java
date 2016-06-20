@@ -342,46 +342,61 @@ public class Mod2002015Import2014 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN531, mod200old.getDoubleValue(Mod2002014Key.BN533)) // 2009
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN945, mod200old.getDoubleValue(Mod2002014Key.BN947)) // 2010
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN960, mod200old.getDoubleValue(Mod2002014Key.BN962)) // 2011
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN183, mod200old.getDoubleValue(Mod2002014Key.BN186)) // 2012			  
-	        ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN966, mod200old.getDoubleValue(Mod2002014Key.BN794)+ // 2013: Suma de deducciones Cap.IV Tit.VI Ley 43/95 y LIS (excepto I+D+i)			  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN797)+
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN889)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN809)+				  
-//                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN812)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN818)+				  
-//                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN821)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN965)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN751)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN968)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN975)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN542)+				  
-//                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN545)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN903)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN065)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN069)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN073)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN077)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN080)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN087)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN058)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN209)+				  
-//                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN212)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN215)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN218)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN224)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN242)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN245)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN248)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN206)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN221)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN230)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN233)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN236)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN239)+				  
-                                                                                      mod200old.getDoubleValue(Mod2002014Key.BN830))  
-            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN457, mod200old.getDoubleValue(Mod2002014Key.BN800)) // 2013: Investigación y desarrollo (CT)
-		    ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN460, mod200old.getDoubleValue(Mod2002014Key.BN713)) // 2013: Innovación tecnológica (IT)   
-							 
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN183, mod200old.getDoubleValue(Mod2002014Key.BN186)) // 2012
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN966, mod200old.getDoubleValue(Mod2002014Key.BN968)) // 2012
+			
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN457, mod200old.getDoubleValue(Mod2002014Key.BN459)) 
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN460, mod200old.getDoubleValue(Mod2002014Key.BN462))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN1063, 
+					 mod200old.getDoubleValue(Mod2002014Key.BN968)
+					+mod200old.getDoubleValue(Mod2002014Key.BN968)
+					+mod200old.getDoubleValue(Mod2002014Key.BN815)
+					+mod200old.getDoubleValue(Mod2002014Key.BN794)
+					+mod200old.getDoubleValue(Mod2002014Key.BN797)
+					+mod200old.getDoubleValue(Mod2002014Key.BN800)
+					+mod200old.getDoubleValue(Mod2002014Key.BN713)
+					+mod200old.getDoubleValue(Mod2002014Key.BN507)
+					+mod200old.getDoubleValue(Mod2002014Key.BN594)
+					+mod200old.getDoubleValue(Mod2002014Key.BN889)
+					+mod200old.getDoubleValue(Mod2002014Key.BN809)
+					+mod200old.getDoubleValue(Mod2002014Key.BN818)
+					+mod200old.getDoubleValue(Mod2002014Key.BN965)
+					+mod200old.getDoubleValue(Mod2002014Key.BN751)
+					+mod200old.getDoubleValue(Mod2002014Key.BN975)
+					+mod200old.getDoubleValue(Mod2002014Key.BN542)
+					+mod200old.getDoubleValue(Mod2002014Key.BN903)
+					+mod200old.getDoubleValue(Mod2002014Key.BN065)
+					+mod200old.getDoubleValue(Mod2002014Key.BN069)
+					+mod200old.getDoubleValue(Mod2002014Key.BN073)
+					+mod200old.getDoubleValue(Mod2002014Key.BN077)
+					+mod200old.getDoubleValue(Mod2002014Key.BN080)
+					+mod200old.getDoubleValue(Mod2002014Key.BN087)
+					+mod200old.getDoubleValue(Mod2002014Key.BN058)
+					+mod200old.getDoubleValue(Mod2002014Key.BN209)
+					+mod200old.getDoubleValue(Mod2002014Key.BN215)
+					+mod200old.getDoubleValue(Mod2002014Key.BN218)
+					+mod200old.getDoubleValue(Mod2002014Key.BN224)
+					+mod200old.getDoubleValue(Mod2002014Key.BN245)
+					+mod200old.getDoubleValue(Mod2002014Key.BN206)
+					+mod200old.getDoubleValue(Mod2002014Key.BN221)
+					+mod200old.getDoubleValue(Mod2002014Key.BN230)
+					+mod200old.getDoubleValue(Mod2002014Key.BN236)
+					+mod200old.getDoubleValue(Mod2002014Key.BN239)
+					+mod200old.getDoubleValue(Mod2002014Key.BN016)
+					+mod200old.getDoubleValue(Mod2002014Key.BN293)
+					+mod200old.getDoubleValue(Mod2002014Key.BN394)
+					+mod200old.getDoubleValue(Mod2002014Key.BN407)
+					+mod200old.getDoubleValue(Mod2002014Key.BN423)
+					+mod200old.getDoubleValue(Mod2002014Key.BN428)
+					+mod200old.getDoubleValue(Mod2002014Key.BN431)
+					+mod200old.getDoubleValue(Mod2002014Key.BN434)
+					+mod200old.getDoubleValue(Mod2002014Key.BN437)
+					+mod200old.getDoubleValue(Mod2002014Key.BN440)
+					+mod200old.getDoubleValue(Mod2002014Key.BN453)
+					+mod200old.getDoubleValue(Mod2002014Key.BN456)
+					)
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN1066, mod200old.getDoubleValue(Mod2002014Key.BN800)) 
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN1069, mod200old.getDoubleValue(Mod2002014Key.BN713)) 
 			})
 			
 		,PAG17B ( new IPropertyFiller[] {
