@@ -30,9 +30,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 	// ------------------------------------------------------------------------
 
-	//@Test
+	@Test
 	public void TestFiniquito() throws Exception {
-
+		
 		open("finiquitos");
 
 		wait4Id("cotizacion,_cero");

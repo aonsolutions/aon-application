@@ -11,8 +11,10 @@ import static com.esferalia.aon.htmlunit.HtmlUnitIT.wait4;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -40,7 +42,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.html.Keyboard;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
+import com.gargoylesoftware.htmlunit.javascript.host.event.KeyboardEvent;
 
 public abstract class BaseIntegralTestCase {
 
@@ -137,7 +141,7 @@ public abstract class BaseIntegralTestCase {
 		wait4Regex("periodLabel", String.format( new Locale("es","ES"),"[0-9]+/%2$d/%1$d - [0-9]+/%2$d/%1$d", year, month, end));
 	}
 
-	protected static void settle(Date date) throws IOException, InterruptedException {
+	protected static void settle(Date date) throws IOException, InterruptedException, ParseException {
 		
 		HtmlSelect typeSelect = getElementById("typeListBox");
 		typeSelect.click();
@@ -145,6 +149,10 @@ public abstract class BaseIntegralTestCase {
 		settleOption.click();
 		
 		getElementById("dateListBox").click();
+		
+		scroll2DateListBox(date);
+		
+
 		((HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", date)+"']")).click();
 		
 		Calendar calendar = Calendar.getInstance(new Locale("es","ES"));
@@ -156,7 +164,7 @@ public abstract class BaseIntegralTestCase {
 		wait4Regex("periodLabel", String.format( new Locale("es","ES"),"[0-9]+/%2$d/%1$d - [0-9]+/%2$d/%1$d", year, month, end));
 	}
 
-	protected static void extra(Date issueDate, Date endDate) throws IOException, InterruptedException {
+	protected static void extra(Date issueDate, Date endDate) throws IOException, InterruptedException, ParseException {
 		
 		HtmlSelect typeSelect = getElementById("typeListBox");
 		typeSelect.click();
@@ -164,6 +172,9 @@ public abstract class BaseIntegralTestCase {
 		settleOption.click();
 		
 		getElementById("dateListBox").click();
+		
+		//scroll2DateListBox(issueDate);
+		
 		((HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", issueDate)+"']")).click();
 		
 		Calendar calendar = Calendar.getInstance(new Locale("es","ES"));
@@ -173,6 +184,35 @@ public abstract class BaseIntegralTestCase {
 		int end = calendar.get(Calendar.DAY_OF_MONTH);
 	
 		wait4Regex("periodLabel", String.format( new Locale("es","ES"),"[0-9]+/[0-9]+/[0-9]+ - %3$d/%2$d/%1$d", year, month, end));
+	}
+	
+	protected static void scroll2DateListBox(Date date) throws ParseException {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("d 'de' MMMMM 'de' yyyy", new Locale("es","ES"));
+
+		HtmlSpan firstSpan = (HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("div/div/span");
+		Date firstDate = dateFormat.parse(firstSpan.getTextContent());
+		LOGGER.warning("First visible date is : " + dateFormat.format(firstDate) );
+		while ( firstDate.after(date) )  {
+			LOGGER.warning("Opps we need to scroll up to : " + dateFormat.format(date) );
+			htmlPage.setFocusedElement(firstSpan);
+			firstSpan.type(KeyboardEvent.DOM_VK_PAGE_UP);
+			firstSpan = (HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("div/div/span");
+			firstDate = dateFormat.parse(firstSpan.getTextContent());
+			LOGGER.warning("First visible date is : " + dateFormat.format(firstDate) );
+		}
+
+		HtmlSpan lastSpan = (HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("div/div[last()]/span");
+		Date lastDate = dateFormat.parse(lastSpan.getTextContent());
+		LOGGER.warning("Last visible date is : " + dateFormat.format(lastDate) );
+		while ( lastDate.before(date) )  {
+			LOGGER.warning("Opps we need to scroll down to : " + dateFormat.format(date) );
+			htmlPage.setFocusedElement(firstSpan);
+			lastSpan.type(KeyboardEvent.DOM_VK_PAGE_DOWN);
+			lastSpan = (HtmlSpan)((HtmlDivision)getElementById("dateListBox-celllist")).getFirstByXPath("div/div[last()]/span");
+			lastDate = dateFormat.parse(firstSpan.getTextContent());
+			LOGGER.warning("Last visible date is : " + dateFormat.format(lastDate) );
+		}
+		
 	}
 
 	protected static void wait4Id(String id) throws InterruptedException {
