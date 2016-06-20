@@ -149,6 +149,7 @@ public class FiscalMatrixDAO {
 								.where(USER_SCOPE.USER_ID.equal(user))
 								.and(USER_SCOPE.SCOPE.equal(DOMAIN.SCOPE))
 								)))
+				.and(FS_MODEL.MODEL.ne("3O3"))
  			.orderBy(FS_MODEL.YEAR)
 			.fetch()
 			.map( rec -> (IFiscalModel) new FiscalModel()
