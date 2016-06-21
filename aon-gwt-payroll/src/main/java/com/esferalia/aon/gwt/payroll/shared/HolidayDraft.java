@@ -3,8 +3,10 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class HolidayDraft implements Serializable {
 	
@@ -21,7 +23,6 @@ public class HolidayDraft implements Serializable {
 	private Map<Date, String> holidays;
 	
 	public HolidayDraft() {
-		
 		holidays = new LinkedHashMap<Date, String>();
 	}
 	
@@ -68,4 +69,6 @@ public class HolidayDraft implements Serializable {
 	public Map<Date, String> getHolidaysMap() {
 		return Collections.unmodifiableMap(holidays);
 	}
+	
+	
 }

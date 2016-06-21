@@ -496,8 +496,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void saveHolidayList(int workplaceId, String holidayDescription,
-			Integer holidayListBox, Map<Date, String> map)
+	public void saveHolidaysAndDays(int workplaceId, String holidayDescription,
+			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType daysTypes [])
 			throws IllegalArgumentException {
 
 		Connection conn = null;
@@ -505,7 +505,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 			JooqCalendar.insertHolidays(conn, getDomainID(), workplaceId,
-					holidayDescription, holidayListBox, map);
+					holidayDescription, holidayListBox, map, daysTypes);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {

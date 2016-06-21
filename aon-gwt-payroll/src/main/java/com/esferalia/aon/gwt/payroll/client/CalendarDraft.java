@@ -513,8 +513,15 @@ public class CalendarDraft extends Composite implements
 			final int dayOfWeek = date.getDay();
 			final boolean isNotWorkDay = calendarDraftObjectData.isNotWorkDay(date.getDay()); 
 			
-			dayOfWeekButton.addStyleName(isNotWorkDay ? AON.AON_ICON_CHECK_YES: AON.AON_ICON_CHECK_NO);
-			
+			if ( isNotWorkDay ){
+				CalendarDraft.this.calendarDraftObjectData.setNonWorkingDay(dayOfWeek);
+				dayOfWeekButton.addStyleName(AON.AON_ICON_CHECK_YES);
+			}
+			else { 
+				CalendarDraft.this.calendarDraftObjectData.setWorkingDay(dayOfWeek);
+				dayOfWeekButton.addStyleName(AON.AON_ICON_CHECK_NO);
+			}
+				
 			dayOfWeekButton.addClickHandler( new ClickHandler() {
 				
 				boolean checked = isNotWorkDay;
