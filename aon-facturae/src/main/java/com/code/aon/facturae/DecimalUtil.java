@@ -66,7 +66,7 @@ public class DecimalUtil {
 		return decimals;
 	}
 	
-	private static int getRegistryDecimals( Registry registry ) {
+	public static int getRegistryDecimals( Registry registry ) {
 		int value = -1;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RegistryAddInfo.class);

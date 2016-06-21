@@ -121,6 +121,8 @@ public class FacturaeWriter {
 	
 	private int numberOfDecimals;
 	
+	private int registryDecimals;
+	
 	public FacturaeWriter( Locale locale ) {
 		this.locale = locale;
 	}
@@ -726,10 +728,10 @@ public class FacturaeWriter {
 		invoiceLine.setIssuerTransactionReference(Util.toTextMax20Type(String.valueOf(line.getId())) );
 		invoiceLine.setItemDescription(Util.toTextMax2500Type(line.getDescription()) );
 		invoiceLine.setQuantity( line.getQuantity() );
-		invoiceLine.setUnitPriceWithoutTax( line.getPrice() );
-		double totalCost = line.getQuantity() * line.getPrice();
+		invoiceLine.setUnitPriceWithoutTax( getLineAmount(line.getPrice()) );
+		double totalCost = getLineAmount( line.getQuantity() * line.getPrice() );
 		invoiceLine.setTotalCost( totalCost );
-		invoiceLine.setGrossAmount( line.getTaxableBase() );
+		invoiceLine.setGrossAmount( getLineAmount(line.getTaxableBase()) );
 		if ( line.getDiscountExpression() != null ) {
 			invoiceLine.setDiscountsAndRebates( getDiscountsAndRebates(line, totalCost) );
 		}
@@ -762,7 +764,14 @@ public class FacturaeWriter {
 		}
 		return invoiceLine;
 	}
-	
+
+	private double getLineAmount(double amount) {
+		if (registryDecimals != -1) {
+			amount = CommonUtil.round(amount, numberOfDecimals);
+		}
+		return amount;
+	}
+
 	private ItemsType getItems( InvoiceType invoiceType ) {
 		ItemsType items = new ItemsType();
 		for( InvoiceDetail line : invoice.getLines() ) {
@@ -845,6 +854,7 @@ public class FacturaeWriter {
 		this.workPlace = getWorkPlace();
 		this.enterprise = getEnterprise();
 		this.numberOfDecimals = DecimalUtil.getNumberOfDecimals(invoice);
+		this.registryDecimals = DecimalUtil.getRegistryDecimals(invoice.getRegistry());
 	}
 	
 	public void serialize( Invoice invoice, String fileName ) throws AonException {
