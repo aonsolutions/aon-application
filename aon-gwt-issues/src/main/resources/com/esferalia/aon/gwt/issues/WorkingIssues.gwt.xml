@@ -2,9 +2,9 @@
 <module rename-to='aon_gwt_issues' >
 
 	<inherits name='com.esferalia.aon.gwt.issues.Issues' />
+	<inherits name="com.vaadin.polymer.Elements"/>
 
 	<set-property name="locale" value="es_ES"/> 
-
 	<set-property name="user.agent" value="gecko1_8" />	
 
 </module>

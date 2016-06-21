@@ -16,10 +16,10 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class Methods {
 	
-	private static final String HTTP_GET = "GET";
-	private static final String HTTP_POST = "POST";
-	private static String accessToken = "bb2cccd827086589a98d1ae936cff6c6a92ed16d";
-	private static boolean authorized = false;
+	private final String HTTP_GET = "GET";
+	private final String HTTP_POST = "POST";
+	protected  String accessToken = "";
+	private boolean authorized = false;
 	
 	protected <T extends JavaScriptObject> void get(String url, AsyncCallback<T> callback) {
 		String requestUrl = makeRequestUrl(url);
@@ -27,7 +27,7 @@ public class Methods {
 		jsonp.requestObject(requestUrl, hookCallback(callback));
 	}
 
-	private static <T extends JavaScriptObject> AsyncCallback<T> hookCallback(final AsyncCallback<T> callback) {
+	private <T extends JavaScriptObject> AsyncCallback<T> hookCallback(final AsyncCallback<T> callback) {
 		return new AsyncCallback<T>() {
 			@Override
 			public void onSuccess(T result) {
@@ -43,14 +43,14 @@ public class Methods {
 		};
 	}
 	
-	private static String makeRequestUrl(String url) {
+	private  String makeRequestUrl(String url) {
 		String prefix = "?";
 		if (url.contains("?")) prefix = "&";
 		if (accessToken != null) url += prefix + "access_token=" + accessToken;
 		return url;
 	}
 	
-	private static String makeNamesString(String[] names) {
+	private String makeNamesString(String[] names) {
 		StringBuilder sb = new StringBuilder();
 		for (int x = 0; x < names.length; x++) {
 			sb.append(names[x]);
@@ -147,4 +147,42 @@ public class Methods {
 			GWT.log(log.toString());
 		}
 	}
+	
+	protected <T extends JavaScriptObject> void delete(String url, AsyncCallback<T> callback) {
+		String requestUrl = makeRequestUrl(url);
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.DELETE,
+				requestUrl);
+		final AsyncCallback<T> hookedCallback = hookCallback(callback);
+		final StringBuilder log = new StringBuilder();
+		log.append(" [DELETE] ---> " + requestUrl);
+
+		try {
+			builder.sendRequest(null, new RequestCallback() {
+
+				@Override
+				public void onResponseReceived(Request request,
+						Response response) {
+					log.append("\n\n--" + response.getStatusText() + ":"
+							+ response.getStatusCode() + "\n"
+							+ response.getText());
+					hookedCallback.onSuccess(null);
+					GWT.log(log.toString());
+				}
+
+				@Override
+				public void onError(Request request, Throwable e) {
+					log.append("\n\n--" + e.getStackTrace());
+					hookedCallback.onFailure(e);
+					GWT.log(log.toString());
+				}
+			});
+
+		} catch (RequestException ex) {
+			log.append("\n\n--" + ex.getStackTrace());
+			hookedCallback.onFailure(ex);
+			GWT.log(log.toString());
+		}
+	}
+	
+	
 }

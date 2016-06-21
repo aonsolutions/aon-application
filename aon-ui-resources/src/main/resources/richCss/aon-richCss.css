@@ -1961,7 +1961,7 @@ color:#000;
 .aon-menuBar{
 	border-top:#fff 1px solid;
 	border-bottom:#717e88 1px solid;
-	background:#d7d7d6 url(images/aon-header/aon-menuBar.png) scroll left top repeat-x;
+	background:#d7d7d6 url(images/aon-header/aon-menuBar.png) scroll left top repeat-x !important;
 	font-size:11px;
 	height: 28px;
 	}

@@ -1,0 +1,20 @@
+@external .*;
+
+
+
+.aon-panelGrid-search-issues{
+	height: 55px;margin: 10px;
+}
+	
+.aon-panelGrid-search-info-issues{
+	margin-bottom:0px !important;
+}
+
+
+	.avatar {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                overflow: hidden;
+            }

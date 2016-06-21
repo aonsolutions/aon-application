@@ -9,6 +9,10 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<meta name="gwt:property" content="locale=es_ES" />
+	<meta name="viewport"
+       content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+	
+	
 	<aon:valueParam name="entryPoint" default="issues" />
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
@@ -43,6 +47,8 @@ body {
             ]]>
     </script> 
 	
+	    <script src="aon_gwt_issues/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+		
 	<script type="text/javascript"
 		src="aon_gwt_issues/aon_gwt_issues.nocache.js?entryPoint=#{entryPoint}" />
 

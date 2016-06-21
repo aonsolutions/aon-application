@@ -1,0 +1,50 @@
+
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:doc='urn:import:com.esferalia.aon.gwt.issues.client'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core"
+	
+
+	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
+	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'>
+	
+<ui:with type="com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources"
+		field="issuesResources"></ui:with>
+
+<g:HTMLPanel  styleName="aon-panelGrid-search {issuesResources.css.aonPanelGridSearchIssues}" >
+	<div class="aon-panelGrid-search-info {issuesResources.css.aonPanelGridSearchInfoIssues}">							
+		<g:HorizontalPanel styleName="aon-width-all">
+			<g:HTMLPanel>
+				<span class="aon-panelGrid-search-info-internal" style="position: relative;top: 2px;">Filtrar:</span>						
+			</g:HTMLPanel>
+			<g:HTMLPanel>
+				<a style="font-size:10px;font-weight:bold;float:right;"
+						onclick="" href="#">
+					<span class="aon-outputText">
+				 	 	<g:Button ui:field="cleanButton" text="Limpiar Filtro" styleName="aon-editDataTable-button aon-icon-rubber"/>						    		
+					</span>
+				</a>
+			</g:HTMLPanel>
+		</g:HorizontalPanel>					
+	</div>
+	<table class="aon-panelGrid">
+		<tr>
+			<td style="padding-left: 10px;">
+				<span class="">Asunto:</span>
+			</td>
+			<td style="width:200px">
+				<g:TextBox ui:field="titleFilter" styleName="aon-textBox"/>
+			</td>
+			<td>
+				<p:PaperButton ui:field="openButton"><i:IronIcon icon="error-outline"/>Abiertas</p:PaperButton>
+			</td>
+			<td>
+				<p:PaperButton ui:field="closeButton"><i:IronIcon icon="check"/>Cerradas</p:PaperButton>	
+			</td>
+		</tr>
+	</table>
+</g:HTMLPanel>
+
+</ui:UiBinder>

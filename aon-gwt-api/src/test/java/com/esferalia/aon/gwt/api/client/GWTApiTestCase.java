@@ -3,28 +3,70 @@
  */
 package com.esferalia.aon.gwt.api.client;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
+import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
+import com.esferalia.aon.gwt.api.client.incidence.JsRepository;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-
 public class GWTApiTestCase extends GWTTestCase {
 
-	protected static String USER = "anderibz";
-	protected static String REPONAME = "githubapi";
+	protected static String USER_NAME = "aibanez91";
+	protected static String ORG_NAME = "aonPrueba";
+	protected static String REPO_NAME = "repoPrueba";
+	protected static String ACCESS_TOKEN = "d8aa641723e106b5d7c2d79d3cad963e0eb6e92d";
 	protected static String DESCRIPTION = "Repositorio de prueba para metodos de TEST";
 	
-	public String getModuleName() {                                         // <span style="color:black;">**(2)**</span>
+	public String getModuleName() {                               
 	    return "com.esferalia.aon.gwt.api.Api";
+	}
+	
+	@BeforeClass
+	public void testCreateRepository() {
+		System.out.println("======== >>> Creando repositorio de prueba .....");
+		
+		String r= "{\"name\":\""+ REPO_NAME + "\",\"description\":\""+ DESCRIPTION +"\""
+				+ ",\"private\":false,\"has_issues\":true,\"has_wiki\":false,\"has_downloads\":true}";
+
+		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);		
+		i.createOrgRepository(r, new AsyncCallback<JsRepository>() {
+			
+			@Override
+			public void onSuccess(JsRepository result) {
+				result.getName();
+				System.out.println("El repositorio "+ result.getName()+ " se ha creado correctament.");
+				
+				String r= "{\"title\":\"aaaa\",\"body\":\"aaaa\",\"assignee\":\"aibanez91\",\"labels\":[\"bug\"]}";
+				testCreateIssue(r);
+
+				String r1= "{\"title\":\"bbbb\",\"body\":\"bbbb\",\"assignee\":\"aibanez91\",\"labels\":[\"bug\"]}";
+				testCreateIssue(r1);
+
+				String r2= "{\"title\":\"cccc\",\"body\":\"cccc\",\"assignee\":\"aibanez91\",\"labels\":[\"bug\"]}";
+				testCreateIssue(r2);
+
+				String r3= "{\"title\":\"dddd\",\"body\":\"dddd\",\"assignee\":\"aibanez91\",\"labels\":[\"bug\"]}";
+				testCreateIssue(r3);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				System.out.println("ERROR FATAL");
+				System.out.println(caught.getMessage());
+			    assertTrue(false);
+			}
+		});
 	}
 	
 	@Test
 	public void testGetOpenIssues() {
-		Incidence i = new Incidence(AonUrlApi.GITHUB);
-		i.getOpenIssues(USER, REPONAME, new AsyncCallback<JSON<JsIssue>>() {
+		IssueFilter f = new IssueFilter().setState("open");
+		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);		
+		i.getOrgIssues(f, new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {
@@ -35,7 +77,8 @@ public class GWTApiTestCase extends GWTTestCase {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				System.out.println("K.O.");
+				System.out.println("ERROR FATAL");
+				System.out.println(caught.getMessage());
 			    assertTrue(false);
 			}
 		});
@@ -43,8 +86,9 @@ public class GWTApiTestCase extends GWTTestCase {
 	
 	@Test
 	public void testGetClosedIssues() {
-		Incidence i = new Incidence(AonUrlApi.GITHUB);
-		i.getClosedIssues(USER, REPONAME, new AsyncCallback<JSON<JsIssue>>() {
+		IssueFilter f = new IssueFilter().setState("closed");
+		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);		
+		i.getOrgIssues(f, new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {
@@ -55,15 +99,18 @@ public class GWTApiTestCase extends GWTTestCase {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				System.out.println("K.O.");
+				System.out.println("ERROR FATAL");
+				System.out.println(caught.getMessage());
+			    assertTrue(false);
 			}
 		});
 	}
 	
 	@Test
 	public void testGetAllIssues() {
-		Incidence i = new Incidence(AonUrlApi.GITHUB);
-		i.getAllIssues(USER, REPONAME, new AsyncCallback<JSON<JsIssue>>() {
+		IssueFilter f = new IssueFilter().setState("all");
+		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);		
+		i.getOrgIssues(f, new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {
@@ -74,34 +121,37 @@ public class GWTApiTestCase extends GWTTestCase {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				System.out.println("K.O.");
-			}
-		});
-	}
-	
-	
-	
-	
-	@Test
-	public void testCreateIssue() {
-		String r= "{\"title\":\"aaaa\",\"body\":\"bbbb\",\"assignee\":\"anderibz\",\"labels\":[\"bug\"]}";
-		Incidence i = new Incidence(AonUrlApi.GITHUB);
-		i.createIssue(USER, REPONAME, r, new AsyncCallback<JsIssue>() {
-			
-			@Override
-			public void onSuccess(JsIssue result) {
-				System.out.println("oki doki");
-			    System.out.println(result.getTitle());
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				System.out.println("K.O.");
+				System.out.println("ERROR FATAL");
+				System.out.println(caught.getMessage());
 			    assertTrue(false);
 			}
 		});
 	}
 	
 	
+	
+
+	public void testCreateIssue(String requestData) {
+		System.out.println("======== >>> Creando issue de prueba .....");
+
+		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);		
+		i.createOrgIssue(requestData, new AsyncCallback<JsIssue>() {
+			
+			@Override
+			public void onSuccess(JsIssue result) {
+				System.out.println("La issue "+ result.getTitle()+ " se ha creado correctament.");
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				System.out.println("ERROR FATAL");
+				System.out.println(caught.getMessage());
+				assertTrue(false);
+			}
+		});
+	}
+	
+	
+
 	
 }

@@ -18,6 +18,7 @@
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>2.8.0-beta1</version>
 				<configuration>
+				    <jsInteropMode>JS</jsInteropMode>
 					<skipTests>true</skipTests>
 					<includes>**/GWT*.java</includes>
 					<deploy>${project.build.directory}/extra</deploy>
@@ -74,6 +75,14 @@
 
 	<dependencies>
 	
+	
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+			
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.oauth2</artifactId>
@@ -131,7 +140,14 @@
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
-
+		
+		<dependency>
+  		  	<groupId>com.vaadin.polymer</groupId>
+    		<artifactId>vaadin-gwt-polymer-elements</artifactId>
+    		<version>1.2.3.0</version>
+    	 	<scope>provided</scope>
+		</dependency>
+		
 	</dependencies>
 	<profiles>
 		<profile>
@@ -148,6 +164,7 @@
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>gwt-maven-plugin</artifactId>
 						<configuration>
+						    <jsInteropMode>JS</jsInteropMode>
 							<draftCompile>true</draftCompile>
 							<module>com.esferalia.aon.gwt.issues.WorkingIssues</module>
 						</configuration>

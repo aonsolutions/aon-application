@@ -1,0 +1,86 @@
+
+<!DOCTYPE html [
+    <!ENTITY nbsp "&#160;"> 
+]>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:doc='urn:import:com.esferalia.aon.gwt.issues.client'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core"
+	
+
+	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
+	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'
+>
+
+<ui:style>
+
+
+
+</ui:style>
+<g:HTMLPanel addStyleNames="iron-list-issue"> 
+
+	<style is="custom-style">
+            .iron-list-issue iron-list {
+                background-color:#fff;
+                padding-bottom: 0px;
+                margin:10px;
+                border-top: 1px solid #ddd;
+            }
+            .iron-list-issue .item {
+        		padding: 10px;
+        		background-color: white;
+        		border: 1px solid #ddd;
+       	 		border-top:0px;
+            }
+            
+            .iron-list-issue .pad {
+            	padding-left: 30px;
+                display: inline-block;
+                @apply(--layout-flex);
+                @apply(--layout-vertical);
+            }
+            .iron-list-issue .primary {
+                font-size: 16px;
+                font-weight: bold;
+            }
+            .iron-list-issue .secondary {
+                font-size: 14px;
+            }
+            .iron-list-issue .dim {
+                color: gray;
+            }
+    </style>
+        <i:IronList ui:field="issueList" as="item" addStyleNames="fit" selectionEnabled="true">
+            <template>
+                <div>
+                    <div class="item">
+                    	<template is="dom-if" if="[[!item.closed_at]]">
+                    		<iron-icon style="color:green;position:absolute;" icon="error-outline"/>
+                    	</template>
+                    	
+                    	<template is="dom-if" if="[[item.closed_at]]">
+                    		<iron-icon style="color:red;position:absolute;" icon="error-outline"/>
+                    	</template>
+               
+                    
+                    	
+                        <div class="pad">
+                            <div class="primary">
+                           		[[item.title]]
+								<template is="dom-repeat" items="[[item.labels]]" as="label"> 
+									<span style="background-color: #[[label.color]];color: white;
+											font-size: 12px;font-weight: 600;padding: 2px;
+											    margin-right: 5px;">[[label.name]]
+									</span>
+								</template>                                
+                            </div>
+                            <div class="secondary"> #[[item.number]] creado [[item.created_at]] por [[item.user.login]]</div>
+                        </div>
+                        
+                    </div>
+        		</div>
+        	</template>
+  		</i:IronList>
+  		 
+  </g:HTMLPanel>
+
+</ui:UiBinder>

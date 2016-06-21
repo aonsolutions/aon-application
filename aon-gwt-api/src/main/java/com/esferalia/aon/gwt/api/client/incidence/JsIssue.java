@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.api.client.incidence;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-public class JsIssue extends JavaScriptObject {
+public class JsIssue extends JavaScriptObject{
 
 	public static JavaScriptObject create() {
 		return JavaScriptObject.createObject().cast();
