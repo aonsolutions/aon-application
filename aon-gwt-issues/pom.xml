@@ -18,7 +18,6 @@
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>2.8.0-beta1</version>
 				<configuration>
-				    <jsInteropMode>JS</jsInteropMode>
 					<skipTests>true</skipTests>
 					<includes>**/GWT*.java</includes>
 					<deploy>${project.build.directory}/extra</deploy>
@@ -28,6 +27,7 @@
 					<compileSourcesArtifacts>
 						<compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>
 						<compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
+						<compileSourcesArtifact>com.esferalia.aon:aon.gwt.api</compileSourcesArtifact>
 					</compileSourcesArtifacts>
 				</configuration>
 				<executions>
@@ -80,9 +80,16 @@
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.gwt.api</artifactId>
 			<version>${project.version}</version>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
-			
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.gwt.api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+			<classifier>sources</classifier>
+		</dependency>
+		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.oauth2</artifactId>
@@ -164,7 +171,6 @@
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>gwt-maven-plugin</artifactId>
 						<configuration>
-						    <jsInteropMode>JS</jsInteropMode>
 							<draftCompile>true</draftCompile>
 							<module>com.esferalia.aon.gwt.issues.WorkingIssues</module>
 						</configuration>
