@@ -212,30 +212,48 @@ public class Mod2002015Import2014 {
 									   // casilla 534 (si no es cooperativa)
 						
 			// Deducciones por doble imposición interna
-//			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN101, adjustDoubleTax( mod200old.getDoubleValue(Mod2002014Key.BN848), mod200old.getDoubleValue(Mod2002014Key.BN105), mod200old.getDoubleValue(Mod2002014Key.BN103) ) )  // pendiente/generada
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN104, adjustDoubleTax( mod200old.getDoubleValue(Mod2002014Key.BN284), mod200old.getDoubleValue(Mod2002014Key.BN107), mod200old.getDoubleValue(Mod2002014Key.BN103) ) )  
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN106, adjustDoubleTax( mod200old.getDoubleValue(Mod2002014Key.BN707), mod200old.getDoubleValue(Mod2002014Key.BN109), mod200old.getDoubleValue(Mod2002014Key.BN103) ) )  
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN108, adjustDoubleTax( mod200old.getDoubleValue(Mod2002014Key.BN300), mod200old.getDoubleValue(Mod2002014Key.BN111), mod200old.getDoubleValue(Mod2002014Key.BN103) ) )  
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN110, adjustDoubleTax( mod200old.getDoubleValue(Mod2002014Key.BN027), mod200old.getDoubleValue(Mod2002014Key.BN113), mod200old.getDoubleValue(Mod2002014Key.BN103) ) )  
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN112, adjustDoubleTax( mod200old.getDoubleValue(Mod2002014Key.BN716), mod200old.getDoubleValue(Mod2002014Key.BN115), mod200old.getDoubleValue(Mod2002014Key.BN103) ) )  
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN114, mod200old.getDoubleValue(Mod2002014Key.BN738)+
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN104, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002014Key.BN848), 
+					mod200old.getDoubleValue(Mod2002014Key.BN105), 
+					mod200old.getDoubleValue(Mod2002014Key.BN103) ) )
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN106, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002014Key.BN284), 
+					mod200old.getDoubleValue(Mod2002014Key.BN107), 
+					mod200old.getDoubleValue(Mod2002014Key.BN103) ) )  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN108, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002014Key.BN707), 
+					mod200old.getDoubleValue(Mod2002014Key.BN109), 
+					mod200old.getDoubleValue(Mod2002014Key.BN103) ) )  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN110, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002014Key.BN300), 
+					mod200old.getDoubleValue(Mod2002014Key.BN111), 
+					mod200old.getDoubleValue(Mod2002014Key.BN103) ) )  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN112, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002014Key.BN027), 
+					mod200old.getDoubleValue(Mod2002014Key.BN113), 
+					mod200old.getDoubleValue(Mod2002014Key.BN103) ) )  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN114, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002014Key.BN716), 
+					mod200old.getDoubleValue(Mod2002014Key.BN115), 
+					mod200old.getDoubleValue(Mod2002014Key.BN103) ) )  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN735, mod200old.getDoubleValue(Mod2002014Key.BN738)+
 			                                                                          mod200old.getDoubleValue(Mod2002014Key.BN133))
                                                                                   
-//			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN102, mod200old.getDoubleValue(Mod2002014Key.BN105))  // tipo de gravamen
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN105, mod200old.getDoubleValue(Mod2002014Key.BN107))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN107, mod200old.getDoubleValue(Mod2002014Key.BN109))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN109, mod200old.getDoubleValue(Mod2002014Key.BN111))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN111, mod200old.getDoubleValue(Mod2002014Key.BN113))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN113, mod200old.getDoubleValue(Mod2002014Key.BN115))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN115, mod200old.getDoubleValue(Mod2002014Key.BN103))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN920, mod200old.getDoubleValue(Mod2002014Key.BN920))
                                                                                   
-//			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN696, mod200old.getDoubleValue(Mod2002014Key.BN848))  // pendiente
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN846, mod200old.getDoubleValue(Mod2002014Key.BN284))
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN282, mod200old.getDoubleValue(Mod2002014Key.BN707))
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN702, mod200old.getDoubleValue(Mod2002014Key.BN300))
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN071, mod200old.getDoubleValue(Mod2002014Key.BN027))
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN025, mod200old.getDoubleValue(Mod2002014Key.BN716))
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN714, mod200old.getDoubleValue(Mod2002014Key.BN738)+
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN846, mod200old.getDoubleValue(Mod2002014Key.BN848))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN282, mod200old.getDoubleValue(Mod2002014Key.BN284))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN702, mod200old.getDoubleValue(Mod2002014Key.BN707))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN071, mod200old.getDoubleValue(Mod2002014Key.BN300))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN025, mod200old.getDoubleValue(Mod2002014Key.BN027))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN714, mod200old.getDoubleValue(Mod2002014Key.BN716))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN736, mod200old.getDoubleValue(Mod2002014Key.BN738)+
 			                                                                          mod200old.getDoubleValue(Mod2002014Key.BN133))
             
 			// Deducciones por doble imposición internacional
