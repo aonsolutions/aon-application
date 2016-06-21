@@ -291,6 +291,10 @@ public class Mod2002015Import2014 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN722, mod200old.getDoubleValue(Mod2002014Key.BN742))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN740, mod200old.getDoubleValue(Mod2002014Key.BN137)+
 			                                                            		  mod200old.getDoubleValue(Mod2002014Key.BN174))
+			
+			
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN163, mod200old.getDoubleValue(Mod2002014Key.BN166))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN167, mod200old.getDoubleValue(Mod2002014Key.BN170))
 			                                                                    
 			})                                                                  
 			                                                                    
@@ -367,7 +371,6 @@ public class Mod2002015Import2014 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN460, mod200old.getDoubleValue(Mod2002014Key.BN462))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN1063, 
 					 mod200old.getDoubleValue(Mod2002014Key.BN968)
-					+mod200old.getDoubleValue(Mod2002014Key.BN968)
 					+mod200old.getDoubleValue(Mod2002014Key.BN815)
 					+mod200old.getDoubleValue(Mod2002014Key.BN794)
 					+mod200old.getDoubleValue(Mod2002014Key.BN797)
@@ -725,3 +728,5 @@ public class Mod2002015Import2014 {
 	}
 	
 }
+
+
