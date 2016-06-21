@@ -454,8 +454,14 @@ public class Mod2002015Import2014 {
 			// El año pasado la casilla 919 era el 80% de la casilla 918 y en la casilla 580 quedaba lo pendiente, por lo tanto para pasar 
 			// lo pendiente del 2013 (casilla 580) a la casilla 918, habria que tener en cuenta que esa 918 esta reducida en un 20%, es decir hacer la 
 			// operacion inversa
-			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN918, AonMathUtils.round(mod200old.getDoubleValue(Mod2002014Key.BN580)*100/80))
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN589, AonMathUtils.round(mod200old.getDoubleValue(Mod2002014Key.BN978)*100/80))
+			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN918, 
+					AonMathUtils.round(mod200old.getDoubleValue(Mod2002014Key.BN580)*100/80))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN589, 
+					AonMathUtils.round(mod200old.getDoubleValue(Mod2002014Key.BN978)*100/80))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN822, 
+					AonMathUtils.round(mod200old.getDoubleValue(Mod2002014Key.BN231)*100/80))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN232, 
+					AonMathUtils.round(mod200old.getDoubleValue(Mod2002014Key.BN851)*100/80))
 				
 			})
 			
