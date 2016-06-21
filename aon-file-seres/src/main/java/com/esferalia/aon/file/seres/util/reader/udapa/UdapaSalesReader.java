@@ -94,11 +94,12 @@ public class UdapaSalesReader {
 	public static void main(String[] args) {
 		UdapaSalesReader reader = new UdapaSalesReader();
 		
-		String FILE = String.format("%1$s/Descargas/EDI/", System.getProperty("user.home"));
+		String FILE = String.format("%1$s/Descargas/EDI/udapa", System.getProperty("user.home"));
 		String fileName = "ORDERS EROSKI";
 		if (Files.exists(Paths.get(FILE + fileName))) {
 			try {
-				reader.readFile(new FileInputStream(FILE + fileName), CHARSET_ENCODING);
+				ERE1C value = reader.readFile(new FileInputStream(FILE + fileName), CHARSET_ENCODING);
+				value.getCabecera();
 			} catch (FileNotFoundException e) {
 				// nada
 			} catch (IOException e) {

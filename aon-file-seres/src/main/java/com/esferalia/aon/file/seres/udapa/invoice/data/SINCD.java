@@ -1,0 +1,599 @@
+package com.esferalia.aon.file.seres.udapa.invoice.data;
+
+/** 
+ * This is an AUTOMATICALLY GENERATED class for represent EDI SINCD entity.
+ * <br>
+ * IMPORTANT: Any changes made to the code will be lost, so...
+ * 
+ * DO NOT CHANGE THIS!!!!!!!!!!!!!!!!
+ * 
+ * <table border="1" cellpadding="1" cellspacing="0">
+ * 	<tr bgcolor="#CCCCFF"> 
+ * 		<th>Tipo de registro</th>
+ * 		<th>Descripcion</th>
+ * 		<th>Tipo</th>
+ * 		<th>Repeticiones</th>
+ * 	</tr>
+ * 	<tr>
+ * 		<td>SINCD</th>
+ * 		<td>Descuentos Cabecera</th>
+ * 		<td>Opcional</th>
+ * 		<td>N</th>
+ * 	</tr>
+ * </table>
+ */ 
+
+public class SINCD {
+
+	private String descuentos;
+	private String tipoFactura_325_380_381_383_385_;
+	private String numeroDeFactura;
+	private String codigoVendedor_SU_;
+	private String codigoComprador_BY_;
+	private String numeroDeLinea;
+	private String numeroDescuento_Cargo;
+	private String indicadorDescuento_Cargo_A_C_;
+	private String indicadorSecuenciaDeCalculo;
+	private String porcentajeDescuento_Cargo;
+	private String importeDescuento_Cargo;
+	private String importeTotalSujetoAAplicacion_13_;
+	private String cantidadDeUnidadesQueSeDescuentanPorLinea;
+	private String tipoDescuento;
+	private String descuentosMonetariosPorUnidad;
+	private String unidadDeMedida;
+
+
+	private static java.util.regex.Pattern PATTERN_SINCD_descuentos = java.util.regex.Pattern.compile("^(.{6}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_tipoFactura_325_380_381_383_385_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_numeroDeFactura = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_codigoVendedor_SU_ = java.util.regex.Pattern.compile("^.{29}(.{13}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_codigoComprador_BY_ = java.util.regex.Pattern.compile("^.{42}(.{13}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_numeroDeLinea = java.util.regex.Pattern.compile("^.{55}(.{6}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_numeroDescuento_Cargo = java.util.regex.Pattern.compile("^.{61}(.{2}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_indicadorDescuento_Cargo_A_C_ = java.util.regex.Pattern.compile("^.{63}(.{1}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_indicadorSecuenciaDeCalculo = java.util.regex.Pattern.compile("^.{64}(.{3}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_porcentajeDescuento_Cargo = java.util.regex.Pattern.compile("^.{67}(.{9}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_importeDescuento_Cargo = java.util.regex.Pattern.compile("^.{76}(.{18}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_importeTotalSujetoAAplicacion_13_ = java.util.regex.Pattern.compile("^.{94}(.{18}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_cantidadDeUnidadesQueSeDescuentanPorLinea = java.util.regex.Pattern.compile("^.{112}(.{16}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_tipoDescuento = java.util.regex.Pattern.compile("^.{128}(.{6}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_descuentosMonetariosPorUnidad = java.util.regex.Pattern.compile("^.{134}(.{16}).*");
+	private static java.util.regex.Pattern PATTERN_SINCD_unidadDeMedida = java.util.regex.Pattern.compile("^.{150}(.{6}).*");
+
+	public void parse(String value) {
+		java.util.regex.Matcher m;
+		if((m = PATTERN_SINCD_descuentos.matcher(value)).find()) {
+			setDescuentos(m.group(1));
+		}
+		if((m = PATTERN_SINCD_tipoFactura_325_380_381_383_385_.matcher(value)).find()) {
+			setTipoFactura_325_380_381_383_385_(m.group(1));
+		}
+		if((m = PATTERN_SINCD_numeroDeFactura.matcher(value)).find()) {
+			setNumeroDeFactura(m.group(1));
+		}
+		if((m = PATTERN_SINCD_codigoVendedor_SU_.matcher(value)).find()) {
+			setCodigoVendedor_SU_(m.group(1));
+		}
+		if((m = PATTERN_SINCD_codigoComprador_BY_.matcher(value)).find()) {
+			setCodigoComprador_BY_(m.group(1));
+		}
+		if((m = PATTERN_SINCD_numeroDeLinea.matcher(value)).find()) {
+			setNumeroDeLinea(m.group(1));
+		}
+		if((m = PATTERN_SINCD_numeroDescuento_Cargo.matcher(value)).find()) {
+			setNumeroDescuento_Cargo(m.group(1));
+		}
+		if((m = PATTERN_SINCD_indicadorDescuento_Cargo_A_C_.matcher(value)).find()) {
+			setIndicadorDescuento_Cargo_A_C_(m.group(1));
+		}
+		if((m = PATTERN_SINCD_indicadorSecuenciaDeCalculo.matcher(value)).find()) {
+			setIndicadorSecuenciaDeCalculo(m.group(1));
+		}
+		if((m = PATTERN_SINCD_porcentajeDescuento_Cargo.matcher(value)).find()) {
+			setPorcentajeDescuento_Cargo(m.group(1));
+		}
+		if((m = PATTERN_SINCD_importeDescuento_Cargo.matcher(value)).find()) {
+			setImporteDescuento_Cargo(m.group(1));
+		}
+		if((m = PATTERN_SINCD_importeTotalSujetoAAplicacion_13_.matcher(value)).find()) {
+			setImporteTotalSujetoAAplicacion_13_(m.group(1));
+		}
+		if((m = PATTERN_SINCD_cantidadDeUnidadesQueSeDescuentanPorLinea.matcher(value)).find()) {
+			setCantidadDeUnidadesQueSeDescuentanPorLinea(m.group(1));
+		}
+		if((m = PATTERN_SINCD_tipoDescuento.matcher(value)).find()) {
+			setTipoDescuento(m.group(1));
+		}
+		if((m = PATTERN_SINCD_descuentosMonetariosPorUnidad.matcher(value)).find()) {
+			setDescuentosMonetariosPorUnidad(m.group(1));
+		}
+		if((m = PATTERN_SINCD_unidadDeMedida.matcher(value)).find()) {
+			setUnidadDeMedida(m.group(1));
+		}
+	}
+
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>SINCD</th>
+	 * 		<td>Descuentos</th>
+	 * 		<td>C</th>
+	 * 		<td>6</th>
+	 * 		<td>1</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getDescuentos() {
+		return descuentos;
+	}
+	public void setDescuentos(String descuentos) {
+		this.descuentos = descuentos;
+	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F1001T</th>
+	 * 		<td>Tipo Factura (325, 380, 381, 383, 385)</th>
+	 * 		<td>C</th>
+	 * 		<td>6</th>
+	 * 		<td>7</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getTipoFactura_325_380_381_383_385_() {
+		return tipoFactura_325_380_381_383_385_;
+	}
+	public void setTipoFactura_325_380_381_383_385_(String tipoFactura_325_380_381_383_385_) {
+		this.tipoFactura_325_380_381_383_385_ = tipoFactura_325_380_381_383_385_;
+	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F1004N</th>
+	 * 		<td>Número de Factura</th>
+	 * 		<td>C</th>
+	 * 		<td>17</th>
+	 * 		<td>13</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getNumeroDeFactura() {
+		return numeroDeFactura;
+	}
+	public void setNumeroDeFactura(String numeroDeFactura) {
+		this.numeroDeFactura = numeroDeFactura;
+	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F3039V</th>
+	 * 		<td>Código Vendedor (SU)</th>
+	 * 		<td>C</th>
+	 * 		<td>13</th>
+	 * 		<td>30</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getCodigoVendedor_SU_() {
+		return codigoVendedor_SU_;
+	}
+	public void setCodigoVendedor_SU_(String codigoVendedor_SU_) {
+		this.codigoVendedor_SU_ = codigoVendedor_SU_;
+	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F3039C</th>
+	 * 		<td>Código Comprador (BY)</th>
+	 * 		<td>C</th>
+	 * 		<td>13</th>
+	 * 		<td>43</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getCodigoComprador_BY_() {
+		return codigoComprador_BY_;
+	}
+	public void setCodigoComprador_BY_(String codigoComprador_BY_) {
+		this.codigoComprador_BY_ = codigoComprador_BY_;
+	}
+
+	/** 
+	 * F1082L  - Número de Línea:   Si los Descuentos o Cargos se están aplicando a pie de factura, el Número de Línea será cero. Si se trata de un descuento/cargo aplicado sobre una línea, el valor que aquí se grabe debe coincidir con el Número de línea de factura (campo F1082 del registro SINCL) al que haga referencia.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F1082L</th>
+	 * 		<td>Número de Línea</th>
+	 * 		<td>N</th>
+	 * 		<td>6</th>
+	 * 		<td>56</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getNumeroDeLinea() {
+		return numeroDeLinea;
+	}
+	public void setNumeroDeLinea(String numeroDeLinea) {
+		this.numeroDeLinea = numeroDeLinea;
+	}
+
+	/** 
+	 * F1082D - Número de Descuento o Cargo:  Es un campo contador. Se sumará 1 por cada dto / cargo aplicado sobre una misma línea a sobre pie de factura. El valor inicial por cada línea o a pie es '1'
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F1082D</th>
+	 * 		<td>Número Descuento/Cargo</th>
+	 * 		<td>N</th>
+	 * 		<td>2</th>
+	 * 		<td>62</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getNumeroDescuento_Cargo() {
+		return numeroDescuento_Cargo;
+	}
+	public void setNumeroDescuento_Cargo(String numeroDescuento_Cargo) {
+		this.numeroDescuento_Cargo = numeroDescuento_Cargo;
+	}
+
+	/** 
+	 * F5463I  -  Indicador de Descuento/Cargo: puede ser 'A' (Descuento) o 'C' (Cargo).
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F5463I</th>
+	 * 		<td>Indicador Descuento/Cargo (A/C)</th>
+	 * 		<td>C</th>
+	 * 		<td>1</th>
+	 * 		<td>64</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getIndicadorDescuento_Cargo_A_C_() {
+		return indicadorDescuento_Cargo_A_C_;
+	}
+	public void setIndicadorDescuento_Cargo_A_C_(String indicadorDescuento_Cargo_A_C_) {
+		this.indicadorDescuento_Cargo_A_C_ = indicadorDescuento_Cargo_A_C_;
+	}
+
+	/** 
+	 * F1227S -  Indicador de Secuencia de Cálculo:  Se utiliza para aplicar descuentos en cascada. Tendrá valor '1  ' si aplicamos el descuento sobre la primera base imponible. Si sobre la base resultante se aplica otro descuento se grabaran con valor '2  ' y así sucesivamente.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F1227S</th>
+	 * 		<td>Indicador Secuencia de cálculo</th>
+	 * 		<td>C</th>
+	 * 		<td>3</th>
+	 * 		<td>65</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getIndicadorSecuenciaDeCalculo() {
+		return indicadorSecuenciaDeCalculo;
+	}
+	public void setIndicadorSecuenciaDeCalculo(String indicadorSecuenciaDeCalculo) {
+		this.indicadorSecuenciaDeCalculo = indicadorSecuenciaDeCalculo;
+	}
+
+	/** 
+	 * F5482D  - Porcentaje de Descuento/cargo * F5004A - Importe de Descuento/Cargo:  Uno de los dos campos debe ser cumplimentado (F5482D o F5004A). Es aconsejable cumplimentar los dos.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F5482D</th>
+	 * 		<td>Porcentaje Descuento/Cargo</th>
+	 * 		<td>N(4,4)</th>
+	 * 		<td>9</th>
+	 * 		<td>68</th>
+	 * 		<td>D</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getPorcentajeDescuento_Cargo() {
+		return porcentajeDescuento_Cargo;
+	}
+	public void setPorcentajeDescuento_Cargo(String porcentajeDescuento_Cargo) {
+		this.porcentajeDescuento_Cargo = porcentajeDescuento_Cargo;
+	}
+
+	/** 
+	 * F5482D  - Porcentaje de Descuento/cargo * F5004A - Importe de Descuento/Cargo:  Uno de los dos campos debe ser cumplimentado (F5482D o F5004A). Es aconsejable cumplimentar los dos.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F5004A</th>
+	 * 		<td>Importe Descuento/Cargo</th>
+	 * 		<td>N(14,3)</th>
+	 * 		<td>18</th>
+	 * 		<td>77</th>
+	 * 		<td>D</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getImporteDescuento_Cargo() {
+		return importeDescuento_Cargo;
+	}
+	public void setImporteDescuento_Cargo(String importeDescuento_Cargo) {
+		this.importeDescuento_Cargo = importeDescuento_Cargo;
+	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F5004F</th>
+	 * 		<td>Importe Total Sujeto a Aplicación (13)</th>
+	 * 		<td>N(14,3)</th>
+	 * 		<td>18</th>
+	 * 		<td>95</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getImporteTotalSujetoAAplicacion_13_() {
+		return importeTotalSujetoAAplicacion_13_;
+	}
+	public void setImporteTotalSujetoAAplicacion_13_(String importeTotalSujetoAAplicacion_13_) {
+		this.importeTotalSujetoAAplicacion_13_ = importeTotalSujetoAAplicacion_13_;
+	}
+
+	/** 
+	 * F6060D  - Cantidad de Unidades que se descuentan por línea:  Solo se cumplimentará a nivel de Línea si se hace una bonificación sobre el mismo artículo que se factura. Se especificará en la misma unidad de medida que en la Línea.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F6060D</th>
+	 * 		<td>Cantidad de Unidades que se descuentan por Línea</th>
+	 * 		<td>N(12,3)</th>
+	 * 		<td>16</th>
+	 * 		<td>113</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getCantidadDeUnidadesQueSeDescuentanPorLinea() {
+		return cantidadDeUnidadesQueSeDescuentanPorLinea;
+	}
+	public void setCantidadDeUnidadesQueSeDescuentanPorLinea(String cantidadDeUnidadesQueSeDescuentanPorLinea) {
+		this.cantidadDeUnidadesQueSeDescuentanPorLinea = cantidadDeUnidadesQueSeDescuentanPorLinea;
+	}
+
+	/** 
+	 * F7161T  -  Tipo de Descuento: Solo se cumplimentará a nivel de Cabecera. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F7161T</th>
+	 * 		<td>Tipo Descuento</th>
+	 * 		<td>C</th>
+	 * 		<td>6</th>
+	 * 		<td>129</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getTipoDescuento() {
+		return tipoDescuento;
+	}
+	public void setTipoDescuento(String tipoDescuento) {
+		this.tipoDescuento = tipoDescuento;
+	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F5420D</th>
+	 * 		<td>Descuentos Monetarios por Unidad</th>
+	 * 		<td>N(12,3)</th>
+	 * 		<td>16</th>
+	 * 		<td>135</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getDescuentosMonetariosPorUnidad() {
+		return descuentosMonetariosPorUnidad;
+	}
+	public void setDescuentosMonetariosPorUnidad(String descuentosMonetariosPorUnidad) {
+		this.descuentosMonetariosPorUnidad = descuentosMonetariosPorUnidad;
+	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>F6411D</th>
+	 * 		<td>Unidad de Medida</th>
+	 * 		<td>C</th>
+	 * 		<td>6</th>
+	 * 		<td>151</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public String getUnidadDeMedida() {
+		return unidadDeMedida;
+	}
+	public void setUnidadDeMedida(String unidadDeMedida) {
+		this.unidadDeMedida = unidadDeMedida;
+	}
+
+	public enum TipoDeDescuento {
+		DTO_PRONTO_PAG_EAB("EAB"),
+		DTO_COMERCIA_TD("TD"),
+		CARGO_POR_FLETE_FC("FC"),
+		CARGO_POR_EMBALAJE_PC("PC"),
+		CARGO_POR_MONTAJE_SH("SH"),
+		;
+		
+		private String value;
+		
+		private TipoDeDescuento(String value) {
+			this.value = value;
+		}
+		
+		public String getValue() {
+			return value;
+		}
+	}
+
+}

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SEH1C">
+	<field name="Cabecera" value="bean" property="cabecera" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo Aviso de Expedición (351/35E)" value="bean" property="tipoAvisoDeExpedicion_351_35E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número Aviso de Expedición" value="bean" property="numeroAvisoDeExpedicion" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Función del Mensaje" value="bean" property="funcionDelMensaje" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Fecha del Documento (137) (102/203)" value="bean" property="fechaDelDocumento_137__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Fecha esperada de Entrega (17) (102/203)" value="bean" property="fechaEsperadaDeEntrega_17__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador Fecha  Entrega(2-11-PER(358-359))" value="bean" property="calificadorFechaEntrega_2_11_PER_358_359__" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha de Servicio 1" value="bean" property="fechaDeServicio1" format="AlphaNumeric" pattern="X(8)" />
+	<field name="Hora de Servicio 1" value="bean" property="horaDeServicio1" format="AlphaNumeric" pattern="X(4)" />
+	<field name="Fecha de Servicio 2" value="bean" property="fechaDeServicio2" format="AlphaNumeric" pattern="X(8)" />
+	<field name="Hora de Servicio 2" value="bean" property="horaDeServicio2" format="AlphaNumeric" pattern="X(4)" />
+	<field name="Información adicional" value="bean" property="informacionAdicional" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Pedido (ON)" value="bean" property="numeroDePedido_ON_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha de Pedido (171) (102/203)" value="bean" property="fechaDePedido_171__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Número de Albarán  (DQ)" value="bean" property="numeroDeAlbaran_DQ_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha de Albarán (171) (102/203)" value="bean" property="fechaDeAlbaran_171__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador Referencia 1" value="bean" property="calificadorReferencia1" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de Referencia 1" value="bean" property="numeroDeReferencia1" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha de Referencia 1(102/203)" value="bean" property="fechaDeReferencia1_102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador Referencia 2" value="bean" property="calificadorReferencia2" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de Referencia 2" value="bean" property="numeroDeReferencia2" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha de Referencia 2(102/203)" value="bean" property="fechaDeReferencia2_102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Método Pago de Costes de Transporte" value="bean" property="metodoPagoDeCostesDeTransporte" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Código Condiciones de Entrega" value="bean" property="codigoCondicionesDeEntrega" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Descripción Condiciones de Entrega" value="bean" property="descripcionCondicionesDeEntrega" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Modo de Transporte" value="bean" property="modoDeTransporte" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Código Transportista" value="bean" property="codigoTransportista" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Nombre Transportista" value="bean" property="nombreTransportista" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Matricula del Vehículo" value="bean" property="matriculaDelVehiculo" format="AlphaNumeric" pattern="X(17)" />
+</register>

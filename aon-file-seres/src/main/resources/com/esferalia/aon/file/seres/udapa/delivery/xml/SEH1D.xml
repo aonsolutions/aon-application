@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SEH1D">
+	<field name="Direcciones" value="bean" property="direcciones" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo Aviso de Expedición (351/35E)" value="bean" property="tipoAvisoDeExpedicion_351_35E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número Aviso de Expedición" value="bean" property="numeroAvisoDeExpedicion" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Calificador Interlocutor" value="bean" property="calificadorInterlocutor" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Código Interlocutor" value="bean" property="codigoInterlocutor" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Agencia Responsable lista de Códigos" value="bean" property="agenciaResponsableListaDeCodigos" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Nombre 1" value="bean" property="nombre1" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 2" value="bean" property="nombre2" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 3" value="bean" property="nombre3" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 4" value="bean" property="nombre4" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 5" value="bean" property="nombre5" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 1  (Calle+Número)" value="bean" property="direccion1_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 2  (Calle+Número)" value="bean" property="direccion2_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 3  (Calle+Número)" value="bean" property="direccion3_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 4  (Calle+Número)" value="bean" property="direccion4_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Población" value="bean" property="poblacion" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Provincia" value="bean" property="provincia" format="AlphaNumeric" pattern="X(9)" />
+	<field name="Código Postal" value="bean" property="codigoPostal" format="AlphaNumeric" pattern="X(9)" />
+	<field name="Código País" value="bean" property="codigoPais" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Calificador Referencia" value="bean" property="calificadorReferencia" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de Referencia" value="bean" property="numeroDeReferencia" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Función de Contacto" value="bean" property="funcionDeContacto" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Código Departamento o Empleado" value="bean" property="codigoDepartamentoOEmpleado" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Nombre Departamento o Empleado" value="bean" property="nombreDepartamentoOEmpleado" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Calificador Referencia 2" value="bean" property="calificadorReferencia2" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de Referencia 2" value="bean" property="numeroDeReferencia2" format="AlphaNumeric" pattern="X(17)" />
+</register>

@@ -1,5 +1,28 @@
 package com.esferalia.aon.file.seres.udapa.sales.data;
 
+/** 
+ * This is an AUTOMATICALLY GENERATED class for represent EDI ERE1L entity.
+ * <br>
+ * IMPORTANT: Any changes made to the code will be lost, so...
+ * 
+ * DO NOT CHANGE THIS!!!!!!!!!!!!!!!!
+ * 
+ * <table border="1" cellpadding="1" cellspacing="0">
+ * 	<tr bgcolor="#CCCCFF"> 
+ * 		<th>Tipo de registro</th>
+ * 		<th>Descripcion</th>
+ * 		<th>Tipo</th>
+ * 		<th>Repeticiones</th>
+ * 	</tr>
+ * 	<tr>
+ * 		<td>ERE1L</th>
+ * 		<td>Líneas</th>
+ * 		<td>Obligatorio</th>
+ * 		<td>N</th>
+ * 	</tr>
+ * </table>
+ */ 
+
 public class ERE1L {
 
 	private String lineas;
@@ -230,269 +253,1388 @@ public class ERE1L {
 	}
 
 
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>ERE1L</th>
+	 * 		<td>Líneas</th>
+	 * 		<td>C</th>
+	 * 		<td>6</th>
+	 * 		<td>1</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getLineas() {
 		return lineas;
 	}
 	public void setLineas(String lineas) {
 		this.lineas = lineas;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C1001T</th>
+	 * 		<td>Tipo de Pedido (220, 221, 224, 226, 22E)</th>
+	 * 		<td>C</th>
+	 * 		<td>6</th>
+	 * 		<td>7</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getTipoDePedido_220_221_224_226_22E_() {
 		return tipoDePedido_220_221_224_226_22E_;
 	}
 	public void setTipoDePedido_220_221_224_226_22E_(String tipoDePedido_220_221_224_226_22E_) {
 		this.tipoDePedido_220_221_224_226_22E_ = tipoDePedido_220_221_224_226_22E_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C1004P</th>
+	 * 		<td>Número de Pedido</th>
+	 * 		<td>C</th>
+	 * 		<td>17</th>
+	 * 		<td>13</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getNumeroDePedido() {
 		return numeroDePedido;
 	}
 	public void setNumeroDePedido(String numeroDePedido) {
 		this.numeroDePedido = numeroDePedido;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C3039E</th>
+	 * 		<td>Código Emisor  (MS)</th>
+	 * 		<td>C</th>
+	 * 		<td>17</th>
+	 * 		<td>30</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCodigoEmisor_MS_() {
 		return codigoEmisor_MS_;
 	}
 	public void setCodigoEmisor_MS_(String codigoEmisor_MS_) {
 		this.codigoEmisor_MS_ = codigoEmisor_MS_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C3039R</th>
+	 * 		<td>Código Receptor (MR)</th>
+	 * 		<td>C</th>
+	 * 		<td>17</th>
+	 * 		<td>47</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCodigoReceptor_MR_() {
 		return codigoReceptor_MR_;
 	}
 	public void setCodigoReceptor_MR_(String codigoReceptor_MR_) {
 		this.codigoReceptor_MR_ = codigoReceptor_MR_;
 	}
+
+	/** 
+	 * C1082L - Número de Línea Artículo: Contador Secuencial.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C1082L</th>
+	 * 		<td>Número de Línea Artículo</th>
+	 * 		<td>N</th>
+	 * 		<td>6</th>
+	 * 		<td>64</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getNumeroDeLineaArticulo() {
 		return numeroDeLineaArticulo;
 	}
 	public void setNumeroDeLineaArticulo(String numeroDeLineaArticulo) {
 		this.numeroDeLineaArticulo = numeroDeLineaArticulo;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C7140E</th>
+	 * 		<td>Código de Artículo EAN-13 o DUN-14</th>
+	 * 		<td>C</th>
+	 * 		<td>15</th>
+	 * 		<td>70</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCodigoDeArticuloEAN_13ODUN_14() {
 		return codigoDeArticuloEAN_13ODUN_14;
 	}
 	public void setCodigoDeArticuloEAN_13ODUN_14(String codigoDeArticuloEAN_13ODUN_14) {
 		this.codigoDeArticuloEAN_13ODUN_14 = codigoDeArticuloEAN_13ODUN_14;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C7140E</th>
+	 * 		<td>Tipo de Número de Artículo</th>
+	 * 		<td>C</th>
+	 * 		<td>3</th>
+	 * 		<td>85</th>
+	 * 		<td>M</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getTipoDeNumeroDeArticulo() {
 		return tipoDeNumeroDeArticulo;
 	}
 	public void setTipoDeNumeroDeArticulo(String tipoDeNumeroDeArticulo) {
 		this.tipoDeNumeroDeArticulo = tipoDeNumeroDeArticulo;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C7008D</th>
+	 * 		<td>Descripción del Artículo 1</th>
+	 * 		<td>C</th>
+	 * 		<td>70</th>
+	 * 		<td>88</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getDescripcionDelArticulo1() {
 		return descripcionDelArticulo1;
 	}
 	public void setDescripcionDelArticulo1(String descripcionDelArticulo1) {
 		this.descripcionDelArticulo1 = descripcionDelArticulo1;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C70082</th>
+	 * 		<td>Descripción del Artículo 2</th>
+	 * 		<td>C</th>
+	 * 		<td>70</th>
+	 * 		<td>158</th>
+	 * 		<td>-</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getDescripcionDelArticulo2() {
 		return descripcionDelArticulo2;
 	}
 	public void setDescripcionDelArticulo2(String descripcionDelArticulo2) {
 		this.descripcionDelArticulo2 = descripcionDelArticulo2;
 	}
+
+	/** 
+	 * C7081A - Tipo Artículo: Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C7081A</th>
+	 * 		<td>Tipo Artículo</th>
+	 * 		<td>C</th>
+	 * 		<td>1</th>
+	 * 		<td>228</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getTipoArticulo() {
 		return tipoArticulo;
 	}
 	public void setTipoArticulo(String tipoArticulo) {
 		this.tipoArticulo = tipoArticulo;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C7140P</th>
+	 * 		<td>Código Interno Artículo Proveedor (SA)</th>
+	 * 		<td>C</th>
+	 * 		<td>35</th>
+	 * 		<td>229</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCodigoInternoArticuloProveedor_SA_() {
 		return codigoInternoArticuloProveedor_SA_;
 	}
 	public void setCodigoInternoArticuloProveedor_SA_(String codigoInternoArticuloProveedor_SA_) {
 		this.codigoInternoArticuloProveedor_SA_ = codigoInternoArticuloProveedor_SA_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C7140C</th>
+	 * 		<td>Código Interno Artículo Cliente (IN)</th>
+	 * 		<td>C</th>
+	 * 		<td>35</th>
+	 * 		<td>264</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCodigoInternoArticuloCliente_IN_() {
 		return codigoInternoArticuloCliente_IN_;
 	}
 	public void setCodigoInternoArticuloCliente_IN_(String codigoInternoArticuloCliente_IN_) {
 		this.codigoInternoArticuloCliente_IN_ = codigoInternoArticuloCliente_IN_;
 	}
+
+	/** 
+	 * C7140V - Código Variable Promocional (1) (PV):  El Código Variable Promocional del Producto hace referencia a una promoción para la que no se ha generado un nuevo código de Barras. Este es un concepto que prácticamente no está en uso por las empresas que intercambian.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C7140V</th>
+	 * 		<td>Código Variable Promocional (1) (PV)</th>
+	 * 		<td>C</th>
+	 * 		<td>35</th>
+	 * 		<td>299</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCodigoVariablePromocional_1__PV_() {
 		return codigoVariablePromocional_1__PV_;
 	}
 	public void setCodigoVariablePromocional_1__PV_(String codigoVariablePromocional_1__PV_) {
 		this.codigoVariablePromocional_1__PV_ = codigoVariablePromocional_1__PV_;
 	}
+
+	/** 
+	 * C7140D - Código Unidad de Expedición (1) (EN): Código que hace referencia a la forma de distribución del producto (por ej: cajas de unidades).
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C7140D</th>
+	 * 		<td>Código Unidad de Expedición (1) (EN)</th>
+	 * 		<td>C</th>
+	 * 		<td>35</th>
+	 * 		<td>334</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCodigoUnidadDeExpedicion_1__EN_() {
 		return codigoUnidadDeExpedicion_1__EN_;
 	}
 	public void setCodigoUnidadDeExpedicion_1__EN_(String codigoUnidadDeExpedicion_1__EN_) {
 		this.codigoUnidadDeExpedicion_1__EN_ = codigoUnidadDeExpedicion_1__EN_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C6060C</th>
+	 * 		<td>Cantidad Pedida (21)</th>
+	 * 		<td>N(12,3)</th>
+	 * 		<td>16</th>
+	 * 		<td>369</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCantidadPedida_21_() {
 		return cantidadPedida_21_;
 	}
 	public void setCantidadPedida_21_(String cantidadPedida_21_) {
 		this.cantidadPedida_21_ = cantidadPedida_21_;
 	}
+
+	/** 
+	 * C6060B - Cantidad Bonificada (192): Cantidad de Mercancías sin Cargo. Si se bonifica con el mismo artículo, la cantidad bonificada puede encontrarse en este campo o en el fichero de descuentos ERE1D.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C6060B</th>
+	 * 		<td>Cantidad Bonificada (192)</th>
+	 * 		<td>N(12,3)</th>
+	 * 		<td>16</th>
+	 * 		<td>385</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCantidadBonificada_192_() {
 		return cantidadBonificada_192_;
 	}
 	public void setCantidadBonificada_192_(String cantidadBonificada_192_) {
 		this.cantidadBonificada_192_ = cantidadBonificada_192_;
 	}
+
+	/** 
+	 * C6411C - Calificador Unidad de Medida Cantidad: Solo se utilizará si el producto es de medida variable. El campo corresponde a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C6411C</th>
+	 * 		<td>Calificador Unidad de Medida Cantidad</th>
+	 * 		<td>C</th>
+	 * 		<td>6</th>
+	 * 		<td>401</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCalificadorUnidadDeMedidaCantidad() {
 		return calificadorUnidadDeMedidaCantidad;
 	}
 	public void setCalificadorUnidadDeMedidaCantidad(String calificadorUnidadDeMedidaCantidad) {
 		this.calificadorUnidadDeMedidaCantidad = calificadorUnidadDeMedidaCantidad;
 	}
+
+	/** 
+	 * C6060U - Número de U.C. en Unidad de Expedición: Se usará solo para indicar en productos de peso variable, la cantidad de unidades que se piden.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C6060U</th>
+	 * 		<td>Número de U.C. en Unidad de Expedición</th>
+	 * 		<td>N(12,3)</th>
+	 * 		<td>16</th>
+	 * 		<td>407</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getNumeroDeU_C_EnUnidadDeExpedicion() {
 		return numeroDeU_C_EnUnidadDeExpedicion;
 	}
 	public void setNumeroDeU_C_EnUnidadDeExpedicion(String numeroDeU_C_EnUnidadDeExpedicion) {
 		this.numeroDeU_C_EnUnidadDeExpedicion = numeroDeU_C_EnUnidadDeExpedicion;
 	}
+
+	/** 
+	 * C2005F - Calificador Fecha de Entrega (69-63-64-PE): Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C2005F</th>
+	 * 		<td>Calificador Fecha de Entrega (3-63-64-PER)</th>
+	 * 		<td>C</th>
+	 * 		<td>3</th>
+	 * 		<td>423</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCalificadorFechaDeEntrega_3_63_64_PER_() {
 		return calificadorFechaDeEntrega_3_63_64_PER_;
 	}
 	public void setCalificadorFechaDeEntrega_3_63_64_PER_(String calificadorFechaDeEntrega_3_63_64_PER_) {
 		this.calificadorFechaDeEntrega_3_63_64_PER_ = calificadorFechaDeEntrega_3_63_64_PER_;
 	}
+
+	/** 
+	 * C2380J - Fecha de Entrega 1: Fecha de entrega si el calificador es 69 o 64 o 63  en formato AAAAMMDD
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C2380J</th>
+	 * 		<td>Fecha de Entrega 1</th>
+	 * 		<td>N</th>
+	 * 		<td>8</th>
+	 * 		<td>426</th>
+	 * 		<td>-</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getFechaDeEntrega1() {
 		return fechaDeEntrega1;
 	}
 	public void setFechaDeEntrega1(String fechaDeEntrega1) {
 		this.fechaDeEntrega1 = fechaDeEntrega1;
 	}
+
+	/** 
+	 * C2380L - Hora de Entrega 1: En formato HHMM
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C2380L</th>
+	 * 		<td>Hora de Entrega 1</th>
+	 * 		<td>N</th>
+	 * 		<td>4</th>
+	 * 		<td>434</th>
+	 * 		<td>-</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getHoraDeEntrega1() {
 		return horaDeEntrega1;
 	}
 	public void setHoraDeEntrega1(String horaDeEntrega1) {
 		this.horaDeEntrega1 = horaDeEntrega1;
 	}
+
+	/** 
+	 * C2380K - Fecha de Entrega 2: Fecha de entrega límite si el calificador es PER en formato AAAAMMDD
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C2380K</th>
+	 * 		<td>Fecha de Entrega 2</th>
+	 * 		<td>N</th>
+	 * 		<td>8</th>
+	 * 		<td>438</th>
+	 * 		<td>-</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getFechaDeEntrega2() {
 		return fechaDeEntrega2;
 	}
 	public void setFechaDeEntrega2(String fechaDeEntrega2) {
 		this.fechaDeEntrega2 = fechaDeEntrega2;
 	}
+
+	/** 
+	 * C2380M - Hora de Entrega 2: En formato HHMM
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C2380M</th>
+	 * 		<td>Hora de Entrega 2</th>
+	 * 		<td>N</th>
+	 * 		<td>4</th>
+	 * 		<td>446</th>
+	 * 		<td>-</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getHoraDeEntrega2() {
 		return horaDeEntrega2;
 	}
 	public void setHoraDeEntrega2(String horaDeEntrega2) {
 		this.horaDeEntrega2 = horaDeEntrega2;
 	}
+
+	/** 
+	 * C5004L - Importe Total Neto Línea (203): Incluye descuentos y cargos, no incluye impuestos.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C5004L</th>
+	 * 		<td>Importe Total Neto Línea (203)</th>
+	 * 		<td>N(14,3)</th>
+	 * 		<td>18</th>
+	 * 		<td>450</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getImporteTotalNetoLinea_203_() {
 		return importeTotalNetoLinea_203_;
 	}
 	public void setImporteTotalNetoLinea_203_(String importeTotalNetoLinea_203_) {
 		this.importeTotalNetoLinea_203_ = importeTotalNetoLinea_203_;
 	}
+
+	/** 
+	 * C5118B - Precio Bruto Unitario (AAB): Excluye descuentos, cargos e impuestos.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C5118B</th>
+	 * 		<td>Precio Bruto Unitario (AAB)</th>
+	 * 		<td>N(12,3)</th>
+	 * 		<td>16</th>
+	 * 		<td>468</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getPrecioBrutoUnitario_AAB_() {
 		return precioBrutoUnitario_AAB_;
 	}
 	public void setPrecioBrutoUnitario_AAB_(String precioBrutoUnitario_AAB_) {
 		this.precioBrutoUnitario_AAB_ = precioBrutoUnitario_AAB_;
 	}
+
+	/** 
+	 * C5118N - Precio Neto Unitario  (AAA):Incluye descuentos y cargos pero no impuestos..
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C5118N</th>
+	 * 		<td>Precio Neto Unitario  (AAA)</th>
+	 * 		<td>N(12,3)</th>
+	 * 		<td>16</th>
+	 * 		<td>484</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getPrecioNetoUnitario_AAA_() {
 		return precioNetoUnitario_AAA_;
 	}
 	public void setPrecioNetoUnitario_AAA_(String precioNetoUnitario_AAA_) {
 		this.precioNetoUnitario_AAA_ = precioNetoUnitario_AAA_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C5118I</th>
+	 * 		<td>Precio a titulo Informativo  (INF)</th>
+	 * 		<td>N(12,3)</th>
+	 * 		<td>16</th>
+	 * 		<td>500</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getPrecioATituloInformativo_INF_() {
 		return precioATituloInformativo_INF_;
 	}
 	public void setPrecioATituloInformativo_INF_(String precioATituloInformativo_INF_) {
 		this.precioATituloInformativo_INF_ = precioATituloInformativo_INF_;
 	}
+
+	/** 
+	 * C6411P - Calificador Unidad de Medida Precio: Solo se utilizará si el articulo es de medida variable. Los  Valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C6411P</th>
+	 * 		<td>Calificador Unidad de Medida Precio</th>
+	 * 		<td>C</th>
+	 * 		<td>6</th>
+	 * 		<td>516</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCalificadorUnidadDeMedidaPrecio() {
 		return calificadorUnidadDeMedidaPrecio;
 	}
 	public void setCalificadorUnidadDeMedidaPrecio(String calificadorUnidadDeMedidaPrecio) {
 		this.calificadorUnidadDeMedidaPrecio = calificadorUnidadDeMedidaPrecio;
 	}
+
+	/** 
+	 * C5153I - Calificador IVA/IGIC: El campo corresponde a un código EANCOM. Los Valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C5153I</th>
+	 * 		<td>Calificador IVA/IGIG</th>
+	 * 		<td>C</th>
+	 * 		<td>6</th>
+	 * 		<td>522</th>
+	 * 		<td>-</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCalificadorIVA_IGIG() {
 		return calificadorIVA_IGIG;
 	}
 	public void setCalificadorIVA_IGIG(String calificadorIVA_IGIG) {
 		this.calificadorIVA_IGIG = calificadorIVA_IGIG;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C5278V</th>
+	 * 		<td>% Impuesto  IVA/IGIC</th>
+	 * 		<td>N(3,2)</th>
+	 * 		<td>6</th>
+	 * 		<td>528</th>
+	 * 		<td>-</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getPorcentajeImpuestoIVA_IGIC() {
 		return porcentajeImpuestoIVA_IGIC;
 	}
 	public void setPorcentajeImpuestoIVA_IGIC(String porcentajeImpuestoIVA_IGIC) {
 		this.porcentajeImpuestoIVA_IGIC = porcentajeImpuestoIVA_IGIC;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C5004V</th>
+	 * 		<td>Importe Impuesto IVA/IGIC</th>
+	 * 		<td>N(14,3)</th>
+	 * 		<td>18</th>
+	 * 		<td>534</th>
+	 * 		<td>-</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getImporteImpuestoIVA_IGIC() {
 		return importeImpuestoIVA_IGIC;
 	}
 	public void setImporteImpuestoIVA_IGIC(String importeImpuestoIVA_IGIC) {
 		this.importeImpuestoIVA_IGIC = importeImpuestoIVA_IGIC;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C5278R</th>
+	 * 		<td>% Recargo de Equivalencia</th>
+	 * 		<td>N(3,2)</th>
+	 * 		<td>6</th>
+	 * 		<td>552</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getPorcentajeRecargoDeEquivalencia() {
 		return porcentajeRecargoDeEquivalencia;
 	}
 	public void setPorcentajeRecargoDeEquivalencia(String porcentajeRecargoDeEquivalencia) {
 		this.porcentajeRecargoDeEquivalencia = porcentajeRecargoDeEquivalencia;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C5004R</th>
+	 * 		<td>Importe Recargo de Equivalencia</th>
+	 * 		<td>N(14,3)</th>
+	 * 		<td>18</th>
+	 * 		<td>558</th>
+	 * 		<td>-</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getImporteRecargoDeEquivalencia() {
 		return importeRecargoDeEquivalencia;
 	}
 	public void setImporteRecargoDeEquivalencia(String importeRecargoDeEquivalencia) {
 		this.importeRecargoDeEquivalencia = importeRecargoDeEquivalencia;
 	}
+
+	/** 
+	 * C5153O - Calificador Otro Tipo de Impuesto: Campo Opcional, corresponde a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C5153O</th>
+	 * 		<td>Calificador Otro Tipo de Impuesto</th>
+	 * 		<td>C</th>
+	 * 		<td>6</th>
+	 * 		<td>576</th>
+	 * 		<td>-</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getCalificadorOtroTipoDeImpuesto() {
 		return calificadorOtroTipoDeImpuesto;
 	}
 	public void setCalificadorOtroTipoDeImpuesto(String calificadorOtroTipoDeImpuesto) {
 		this.calificadorOtroTipoDeImpuesto = calificadorOtroTipoDeImpuesto;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C5278O</th>
+	 * 		<td>% Otro Tipo de Impuesto</th>
+	 * 		<td>N(3,2)</th>
+	 * 		<td>6</th>
+	 * 		<td>582</th>
+	 * 		<td>-</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getPorcentajeOtroTipoDeImpuesto() {
 		return porcentajeOtroTipoDeImpuesto;
 	}
 	public void setPorcentajeOtroTipoDeImpuesto(String porcentajeOtroTipoDeImpuesto) {
 		this.porcentajeOtroTipoDeImpuesto = porcentajeOtroTipoDeImpuesto;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C5004O</th>
+	 * 		<td>Importe Otro Tipo de Impuesto</th>
+	 * 		<td>N(14,3)</th>
+	 * 		<td>18</th>
+	 * 		<td>588</th>
+	 * 		<td>-</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getImporteOtroTipoDeImpuesto() {
 		return importeOtroTipoDeImpuesto;
 	}
 	public void setImporteOtroTipoDeImpuesto(String importeOtroTipoDeImpuesto) {
 		this.importeOtroTipoDeImpuesto = importeOtroTipoDeImpuesto;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C6314N</th>
+	 * 		<td>Peso Neto (PD) (AAA)</th>
+	 * 		<td>N(14,3)</th>
+	 * 		<td>18</th>
+	 * 		<td>606</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getPesoNeto_PD__AAA_() {
 		return pesoNeto_PD__AAA_;
 	}
 	public void setPesoNeto_PD__AAA_(String pesoNeto_PD__AAA_) {
 		this.pesoNeto_PD__AAA_ = pesoNeto_PD__AAA_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C6411N</th>
+	 * 		<td>Unidad de Medida Peso</th>
+	 * 		<td>C</th>
+	 * 		<td>6</th>
+	 * 		<td>624</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getUnidadDeMedidaPeso() {
 		return unidadDeMedidaPeso;
 	}
 	public void setUnidadDeMedidaPeso(String unidadDeMedidaPeso) {
 		this.unidadDeMedidaPeso = unidadDeMedidaPeso;
 	}
+
+	/** 
+	 * C7009A - Tipo Articulo EAN (CU/DU): Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C7009A</th>
+	 * 		<td>Tipo Articulo EAN (CU/DU)</th>
+	 * 		<td>C</th>
+	 * 		<td>17</th>
+	 * 		<td>630</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getTipoArticuloEAN_CU_DU_() {
 		return tipoArticuloEAN_CU_DU_;
 	}
 	public void setTipoArticuloEAN_CU_DU_(String tipoArticuloEAN_CU_DU_) {
 		this.tipoArticuloEAN_CU_DU_ = tipoArticuloEAN_CU_DU_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C7008M</th>
+	 * 		<td>Descripción del Modelo (BRN)</th>
+	 * 		<td>C</th>
+	 * 		<td>25</th>
+	 * 		<td>647</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getDescripcionDelModelo_BRN_() {
 		return descripcionDelModelo_BRN_;
 	}
 	public void setDescripcionDelModelo_BRN_(String descripcionDelModelo_BRN_) {
 		this.descripcionDelModelo_BRN_ = descripcionDelModelo_BRN_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C7008V</th>
+	 * 		<td>Variedad 1 (35)</th>
+	 * 		<td>C</th>
+	 * 		<td>25</th>
+	 * 		<td>682</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getVariedad1_35_() {
 		return variedad1_35_;
 	}
 	public void setVariedad1_35_(String variedad1_35_) {
 		this.variedad1_35_ = variedad1_35_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C7008W</th>
+	 * 		<td>Variedad 2 (UP5)</th>
+	 * 		<td>C</th>
+	 * 		<td>25</th>
+	 * 		<td>717</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getVariedad2_UP5_() {
 		return variedad2_UP5_;
 	}
 	public void setVariedad2_UP5_(String variedad2_UP5_) {
 		this.variedad2_UP5_ = variedad2_UP5_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		<th>Campo</th>
+	 * 		<th>Descripcion</th>
+	 * 		<th>Tipo</th>
+	 * 		<th>Longitud</th>
+	 * 		<th>Pos. Inicial</th>
+	 * 		<th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		<td>C7008P</th>
+	 * 		<td>Presentación, cantidad, formato (U03)</th>
+	 * 		<td>C</th>
+	 * 		<td>25</th>
+	 * 		<td>752</th>
+	 * 		<td>C</th>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public String getPresentacion_Cantidad_Formato_U03_() {
 		return presentacion_Cantidad_Formato_U03_;
 	}
 	public void setPresentacion_Cantidad_Formato_U03_(String presentacion_Cantidad_Formato_U03_) {
 		this.presentacion_Cantidad_Formato_U03_ = presentacion_Cantidad_Formato_U03_;
+	}
+
+	public enum TipoDeNumeroDeArticulo {
+		INTERNATIONAL_ARTICLE_NUMBERING_ASSOCIATION__EAN_EN("EN"),
+		UPC__UNIVERSAL_PRODUCT_CODE_UP("UP"),
+		;
+		
+		private String value;
+		
+		private TipoDeNumeroDeArticulo(String value) {
+			this.value = value;
+		}
+		
+		public String getValue() {
+			return value;
+		}
+	}
+
+	public enum TipoArticulo {
+		MERCANCI_M("M"),
+		SERVICI_S("S"),
+		MATERIAL_CONSIGNAD_C("C"),
+		;
+		
+		private String value;
+		
+		private TipoArticulo(String value) {
+			this.value = value;
+		}
+		
+		public String getValue() {
+			return value;
+		}
+	}
+
+	public enum CalificadorUnidadDeMedidaCantidad {
+		KILOGRAM_KGM("KGM"),
+		LITR_LTR("LTR"),
+		;
+		
+		private String value;
+		
+		private CalificadorUnidadDeMedidaCantidad(String value) {
+			this.value = value;
+		}
+		
+		public String getValue() {
+			return value;
+		}
+	}
+
+	public enum CalificadorFechaDeEntrega_69_63_64_PE_ {
+		FECHA___HORA_DE_ENTREGA_FIJ_69("69"),
+		ENTREGAR_A_PARTIR_DE_FECHA___HOR_64("64"),
+		FECHA___HORA_LIMITE_DE_ENTREG_63("63"),
+		INDICA_UN_PERIODO_DE_ENTREGA__64__63_PER("PER"),
+		KILOGRAM_KGM("KGM"),
+		LITR_LTR("LTR"),
+		IV_VAT("VAT"),
+		IGI_IGI("IGI"),
+		;
+		
+		private String value;
+		
+		private CalificadorFechaDeEntrega_69_63_64_PE_(String value) {
+			this.value = value;
+		}
+		
+		public String getValue() {
+			return value;
+		}
+	}
+
+	public enum CalificadorOtroTipoDeImpuesto {
+		EXENTO_DE_IV_EXT("EXT"),
+		IMPUESTO_DE_ALCOHOLE_ACT("ACT"),
+		CANON_DE_SOCIEDAD_DE_AUTORE_CSA("CSA"),
+		RETENCIONES_DE_SERVICIOS_PROFESIONALE_RET("RET"),
+		OTRO_OTH("OTH"),
+		;
+		
+		private String value;
+		
+		private CalificadorOtroTipoDeImpuesto(String value) {
+			this.value = value;
+		}
+		
+		public String getValue() {
+			return value;
+		}
+	}
+
+	public enum TipoArticuloEAN_CU_DU_ {
+		CONSUMER_UNIT__EAN_CODE_CU("CU"),
+		DESPATCH_UNIT__EAN_CODE_DU("DU"),
+		TRADED_UNIT__EAN_CODE_TU("TU"),
+		VARIABLE_QUANTITY_PRODUCT__EAN_CODE_VQ("VQ"),
+		;
+		
+		private String value;
+		
+		private TipoArticuloEAN_CU_DU_(String value) {
+			this.value = value;
+		}
+		
+		public String getValue() {
+			return value;
+		}
 	}
 
 }

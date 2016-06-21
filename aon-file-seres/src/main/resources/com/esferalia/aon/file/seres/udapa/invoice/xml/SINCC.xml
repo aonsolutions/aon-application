@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SINCC">
+	<field name="Cabecera" value="bean" property="cabecera" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo Factura (325, 380, 381, 383, 385)" value="bean" property="tipoFactura_325_380_381_383_385_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Factura" value="bean" property="numeroDeFactura" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Vendedor (a Quien se Pide) (SU)" value="bean" property="codigoVendedor_aQuienSePide__SU_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Código Comprador (Quien Pide) (BY)" value="bean" property="codigoComprador_QuienPide__BY_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Función del Mensaje (7, 31, 5)" value="bean" property="funcionDelMensaje_7_31_5_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Fecha Factura" value="bean" property="fechaFactura" format="Numeric" pattern="9(8)" />
+	<field name="Periodo de Facturación" value="bean" property="periodoDeFacturacion" format="AlphaNumeric" pattern="X(16)" />
+	<field name="Forma de Pago" value="bean" property="formaDePago" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Código Emisor de la Factura (Quien Factura) (II)" value="bean" property="codigoEmisorDeLaFactura_QuienFactura__II_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Código Receptor de la Factura (a Quien se Factura)" value="bean" property="codigoReceptorDeLaFactura_aQuienSeFactura_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Código Receptor de las Mercancías (Quien Recibe)" value="bean" property="codigoReceptorDeLasMercancias_QuienRecibe_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Código Receptor del Pago (a Quien se Paga)" value="bean" property="codigoReceptorDelPago_aQuienSePaga_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Código Emisor del Pago (Quien Paga)" value="bean" property="codigoEmisorDelPago_QuienPaga_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Razón del Cargo o del Abono" value="bean" property="razonDelCargoODelAbono" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Pedido (ON)" value="bean" property="numeroDePedido_ON_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Albarán (DQ)" value="bean" property="numeroDeAlbaran_DQ_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Calificador Documento Rectificado / Sustituido" value="bean" property="calificadorDocumentoRectificado_Sustituido" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número Documento Rectificado / Sustituido" value="bean" property="numeroDocumentoRectificado_Sustituido" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Contrato/Acuerdo (CT)" value="bean" property="numeroDeContrato_Acuerdo_CT_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Relación de Entregas (REN)" value="bean" property="numeroDeRelacionDeEntregas_REN_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Razón social Receptor de la Factura" value="bean" property="razonSocialReceptorDeLaFactura" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Nombre/Número de la calle del Receptor de la Factura" value="bean" property="nombre_NumeroDeLaCalleDelReceptorDeLaFactura" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Población del Receptor de la Factura" value="bean" property="poblacionDelReceptorDeLaFactura" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Código Postal del Receptor de la Factura" value="bean" property="codigoPostalDelReceptorDeLaFactura" format="AlphaNumeric" pattern="X(9)" />
+	<field name="NIF del Receptor de la Factura" value="bean" property="nIFDelReceptorDeLaFactura" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Nombre/Número de la calle del Emisor de la Factura" value="bean" property="nombre_NumeroDeLaCalleDelEmisorDeLaFactura" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Población del Emisor de la Factura" value="bean" property="poblacionDelEmisorDeLaFactura" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Código Postal del Emisor de la Factura" value="bean" property="codigoPostalDelEmisorDeLaFactura" format="AlphaNumeric" pattern="X(9)" />
+	<field name="Código de Moneda" value="bean" property="codigoDeMoneda" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Fecha vencimiento único" value="bean" property="fechaVencimientoUnico" format="Numeric" pattern="9(8)" />
+	<field name="Importe Neto Total Factura (79)" value="bean" property="importeNetoTotalFactura_79_" format="Numeric" pattern="9(4).999" />
+	<field name="Base Imponible (125)" value="bean" property="baseImponible_125_" format="Numeric" pattern="9(4).999" />
+	<field name="Importe Bruto Total Factura (98)" value="bean" property="importeBrutoTotalFactura_98_" format="Numeric" pattern="9(4).999" />
+	<field name="Importe Total de Impuestos (176)" value="bean" property="importeTotalDeImpuestos_176_" format="Numeric" pattern="9(4).999" />
+	<field name="Importe Total a Pagar (139)" value="bean" property="importeTotalAPagar_139_" format="Numeric" pattern="9(4).999" />
+	<field name="Subvenciones vinculadas al Precio  (80A)" value="bean" property="subvencionesVinculadasAlPrecio_80A_" format="Numeric" pattern="9(4).999" />
+	<field name="Total Incrementos del Importe Bruto (259)" value="bean" property="totalIncrementosDelImporteBruto_259_" format="Numeric" pattern="9(4).999" />
+	<field name="Total Minoraciones del Importe Bruto (260)" value="bean" property="totalMinoracionesDelImporteBruto_260_" format="Numeric" pattern="9(4).999" />
+	<field name="Identificación Adicional de la Parte (API)" value="bean" property="identificacionAdicionalDeLaParte_API_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Receptor del documento" value="bean" property="receptorDelDocumento" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Identificación Adicional Proveedor(API)(NAD+SU)" value="bean" property="identificacionAdicionalProveedor_API__NAD_SU_" format="AlphaNumeric" pattern="X(17)" />
+</register>

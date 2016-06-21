@@ -1,7 +1,7 @@
-package com.esferalia.aon.file.seres.udapa.sales.data;
+package com.esferalia.aon.file.seres.udapa.invoice.data;
 
 /** 
- * This is an AUTOMATICALLY GENERATED class for represent EDI ERE1T entity.
+ * This is an AUTOMATICALLY GENERATED class for represent EDI SINCU entity.
  * <br>
  * IMPORTANT: Any changes made to the code will be lost, so...
  * 
@@ -15,23 +15,23 @@ package com.esferalia.aon.file.seres.udapa.sales.data;
  * 		<th>Repeticiones</th>
  * 	</tr>
  * 	<tr>
- * 		<td>ERE1T</th>
- * 		<td>Observaciones</th>
+ * 		<td>SINCU</th>
+ * 		<td>Observaciones Línea</th>
  * 		<td>Opcional</th>
  * 		<td>N</th>
  * 	</tr>
  * </table>
  */ 
 
-public class ERE1T {
+public class SINCU {
 
-	private String textos;
-	private String tipoDePedido_220_221_224_226_22E_;
-	private String numeroDePedido;
-	private String codigoEmisor_MS_;
-	private String codigoReceptor_MR_;
-	private String numeroTexto;
-	private String calificadorDelTemaDelTexto_AAI_DEL_;
+	private String textosLinea;
+	private String tipoFactura_325_380_381_383_385_;
+	private String numeroDeFactura;
+	private String codigoVendedor_SU_;
+	private String codigoComprador_BY_;
+	private String numeroDeLinea;
+	private String calificadorDelTemaDelTexto;
 	private String texto1;
 	private String texto2;
 	private String texto3;
@@ -39,55 +39,55 @@ public class ERE1T {
 	private String texto5;
 
 
-	private static java.util.regex.Pattern PATTERN_ERE1T_textos = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_tipoDePedido_220_221_224_226_22E_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_numeroDePedido = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_codigoEmisor_MS_ = java.util.regex.Pattern.compile("^.{29}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_codigoReceptor_MR_ = java.util.regex.Pattern.compile("^.{46}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_numeroTexto = java.util.regex.Pattern.compile("^.{63}(.{2}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_calificadorDelTemaDelTexto_AAI_DEL_ = java.util.regex.Pattern.compile("^.{65}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_texto1 = java.util.regex.Pattern.compile("^.{68}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_texto2 = java.util.regex.Pattern.compile("^.{138}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_texto3 = java.util.regex.Pattern.compile("^.{208}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_texto4 = java.util.regex.Pattern.compile("^.{278}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_texto5 = java.util.regex.Pattern.compile("^.{348}(.{70}).*");
+	private static java.util.regex.Pattern PATTERN_SINCU_textosLinea = java.util.regex.Pattern.compile("^(.{6}).*");
+	private static java.util.regex.Pattern PATTERN_SINCU_tipoFactura_325_380_381_383_385_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
+	private static java.util.regex.Pattern PATTERN_SINCU_numeroDeFactura = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
+	private static java.util.regex.Pattern PATTERN_SINCU_codigoVendedor_SU_ = java.util.regex.Pattern.compile("^.{29}(.{13}).*");
+	private static java.util.regex.Pattern PATTERN_SINCU_codigoComprador_BY_ = java.util.regex.Pattern.compile("^.{42}(.{13}).*");
+	private static java.util.regex.Pattern PATTERN_SINCU_numeroDeLinea = java.util.regex.Pattern.compile("^.{55}(.{6}).*");
+	private static java.util.regex.Pattern PATTERN_SINCU_calificadorDelTemaDelTexto = java.util.regex.Pattern.compile("^.{61}(.{6}).*");
+	private static java.util.regex.Pattern PATTERN_SINCU_texto1 = java.util.regex.Pattern.compile("^.{67}(.{70}).*");
+	private static java.util.regex.Pattern PATTERN_SINCU_texto2 = java.util.regex.Pattern.compile("^.{137}(.{70}).*");
+	private static java.util.regex.Pattern PATTERN_SINCU_texto3 = java.util.regex.Pattern.compile("^.{207}(.{70}).*");
+	private static java.util.regex.Pattern PATTERN_SINCU_texto4 = java.util.regex.Pattern.compile("^.{277}(.{70}).*");
+	private static java.util.regex.Pattern PATTERN_SINCU_texto5 = java.util.regex.Pattern.compile("^.{347}(.{70}).*");
 
 	public void parse(String value) {
 		java.util.regex.Matcher m;
-		if((m = PATTERN_ERE1T_textos.matcher(value)).find()) {
-			setTextos(m.group(1));
+		if((m = PATTERN_SINCU_textosLinea.matcher(value)).find()) {
+			setTextosLinea(m.group(1));
 		}
-		if((m = PATTERN_ERE1T_tipoDePedido_220_221_224_226_22E_.matcher(value)).find()) {
-			setTipoDePedido_220_221_224_226_22E_(m.group(1));
+		if((m = PATTERN_SINCU_tipoFactura_325_380_381_383_385_.matcher(value)).find()) {
+			setTipoFactura_325_380_381_383_385_(m.group(1));
 		}
-		if((m = PATTERN_ERE1T_numeroDePedido.matcher(value)).find()) {
-			setNumeroDePedido(m.group(1));
+		if((m = PATTERN_SINCU_numeroDeFactura.matcher(value)).find()) {
+			setNumeroDeFactura(m.group(1));
 		}
-		if((m = PATTERN_ERE1T_codigoEmisor_MS_.matcher(value)).find()) {
-			setCodigoEmisor_MS_(m.group(1));
+		if((m = PATTERN_SINCU_codigoVendedor_SU_.matcher(value)).find()) {
+			setCodigoVendedor_SU_(m.group(1));
 		}
-		if((m = PATTERN_ERE1T_codigoReceptor_MR_.matcher(value)).find()) {
-			setCodigoReceptor_MR_(m.group(1));
+		if((m = PATTERN_SINCU_codigoComprador_BY_.matcher(value)).find()) {
+			setCodigoComprador_BY_(m.group(1));
 		}
-		if((m = PATTERN_ERE1T_numeroTexto.matcher(value)).find()) {
-			setNumeroTexto(m.group(1));
+		if((m = PATTERN_SINCU_numeroDeLinea.matcher(value)).find()) {
+			setNumeroDeLinea(m.group(1));
 		}
-		if((m = PATTERN_ERE1T_calificadorDelTemaDelTexto_AAI_DEL_.matcher(value)).find()) {
-			setCalificadorDelTemaDelTexto_AAI_DEL_(m.group(1));
+		if((m = PATTERN_SINCU_calificadorDelTemaDelTexto.matcher(value)).find()) {
+			setCalificadorDelTemaDelTexto(m.group(1));
 		}
-		if((m = PATTERN_ERE1T_texto1.matcher(value)).find()) {
+		if((m = PATTERN_SINCU_texto1.matcher(value)).find()) {
 			setTexto1(m.group(1));
 		}
-		if((m = PATTERN_ERE1T_texto2.matcher(value)).find()) {
+		if((m = PATTERN_SINCU_texto2.matcher(value)).find()) {
 			setTexto2(m.group(1));
 		}
-		if((m = PATTERN_ERE1T_texto3.matcher(value)).find()) {
+		if((m = PATTERN_SINCU_texto3.matcher(value)).find()) {
 			setTexto3(m.group(1));
 		}
-		if((m = PATTERN_ERE1T_texto4.matcher(value)).find()) {
+		if((m = PATTERN_SINCU_texto4.matcher(value)).find()) {
 			setTexto4(m.group(1));
 		}
-		if((m = PATTERN_ERE1T_texto5.matcher(value)).find()) {
+		if((m = PATTERN_SINCU_texto5.matcher(value)).find()) {
 			setTexto5(m.group(1));
 		}
 	}
@@ -106,8 +106,8 @@ public class ERE1T {
 	 * 		<th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>ERE1T</th>
-	 * 		<td>Textos</th>
+	 * 		<td>SINCT</th>
+	 * 		<td>Textos Línea</th>
 	 * 		<td>C</th>
 	 * 		<td>6</th>
 	 * 		<td>1</th>
@@ -115,11 +115,11 @@ public class ERE1T {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getTextos() {
-		return textos;
+	public String getTextosLinea() {
+		return textosLinea;
 	}
-	public void setTextos(String textos) {
-		this.textos = textos;
+	public void setTextosLinea(String textosLinea) {
+		this.textosLinea = textosLinea;
 	}
 
 	/** 
@@ -135,8 +135,8 @@ public class ERE1T {
 	 * 		<th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C1001T</th>
-	 * 		<td>Tipo de Pedido (220, 221, 224, 226, 22E)</th>
+	 * 		<td>F1001T</th>
+	 * 		<td>Tipo Factura (325, 380, 381, 383, 385)</th>
 	 * 		<td>C</th>
 	 * 		<td>6</th>
 	 * 		<td>7</th>
@@ -144,11 +144,11 @@ public class ERE1T {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getTipoDePedido_220_221_224_226_22E_() {
-		return tipoDePedido_220_221_224_226_22E_;
+	public String getTipoFactura_325_380_381_383_385_() {
+		return tipoFactura_325_380_381_383_385_;
 	}
-	public void setTipoDePedido_220_221_224_226_22E_(String tipoDePedido_220_221_224_226_22E_) {
-		this.tipoDePedido_220_221_224_226_22E_ = tipoDePedido_220_221_224_226_22E_;
+	public void setTipoFactura_325_380_381_383_385_(String tipoFactura_325_380_381_383_385_) {
+		this.tipoFactura_325_380_381_383_385_ = tipoFactura_325_380_381_383_385_;
 	}
 
 	/** 
@@ -164,8 +164,8 @@ public class ERE1T {
 	 * 		<th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C1004P</th>
-	 * 		<td>Número de Pedido</th>
+	 * 		<td>F1004N</th>
+	 * 		<td>Número de Factura</th>
 	 * 		<td>C</th>
 	 * 		<td>17</th>
 	 * 		<td>13</th>
@@ -173,11 +173,11 @@ public class ERE1T {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDePedido() {
-		return numeroDePedido;
+	public String getNumeroDeFactura() {
+		return numeroDeFactura;
 	}
-	public void setNumeroDePedido(String numeroDePedido) {
-		this.numeroDePedido = numeroDePedido;
+	public void setNumeroDeFactura(String numeroDeFactura) {
+		this.numeroDeFactura = numeroDeFactura;
 	}
 
 	/** 
@@ -193,20 +193,20 @@ public class ERE1T {
 	 * 		<th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C3039E</th>
-	 * 		<td>Código Emisor  (MS)</th>
+	 * 		<td>F3039V</th>
+	 * 		<td>Código Vendedor (SU)</th>
 	 * 		<td>C</th>
-	 * 		<td>17</th>
+	 * 		<td>13</th>
 	 * 		<td>30</th>
 	 * 		<td>M</th>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCodigoEmisor_MS_() {
-		return codigoEmisor_MS_;
+	public String getCodigoVendedor_SU_() {
+		return codigoVendedor_SU_;
 	}
-	public void setCodigoEmisor_MS_(String codigoEmisor_MS_) {
-		this.codigoEmisor_MS_ = codigoEmisor_MS_;
+	public void setCodigoVendedor_SU_(String codigoVendedor_SU_) {
+		this.codigoVendedor_SU_ = codigoVendedor_SU_;
 	}
 
 	/** 
@@ -222,24 +222,24 @@ public class ERE1T {
 	 * 		<th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C3039R</th>
-	 * 		<td>Código Receptor (MR)</th>
+	 * 		<td>F3039C</th>
+	 * 		<td>Código Comprador (BY)</th>
 	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>47</th>
+	 * 		<td>13</th>
+	 * 		<td>43</th>
 	 * 		<td>M</th>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCodigoReceptor_MR_() {
-		return codigoReceptor_MR_;
+	public String getCodigoComprador_BY_() {
+		return codigoComprador_BY_;
 	}
-	public void setCodigoReceptor_MR_(String codigoReceptor_MR_) {
-		this.codigoReceptor_MR_ = codigoReceptor_MR_;
+	public void setCodigoComprador_BY_(String codigoComprador_BY_) {
+		this.codigoComprador_BY_ = codigoComprador_BY_;
 	}
 
 	/** 
-	 * 
+	 * F1082L  - Número de Línea a la que se refiere el texto: Aquí se graba el Número de línea de factura (campo F1082 del registro SINCL) al que haga referencia.
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
@@ -251,24 +251,24 @@ public class ERE1T {
 	 * 		<th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C1082T</th>
-	 * 		<td>Número Texto</th>
+	 * 		<td>F1082L</th>
+	 * 		<td>Número de Línea</th>
 	 * 		<td>N</th>
-	 * 		<td>2</th>
-	 * 		<td>64</th>
+	 * 		<td>6</th>
+	 * 		<td>56</th>
 	 * 		<td>M</th>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroTexto() {
-		return numeroTexto;
+	public String getNumeroDeLinea() {
+		return numeroDeLinea;
 	}
-	public void setNumeroTexto(String numeroTexto) {
-		this.numeroTexto = numeroTexto;
+	public void setNumeroDeLinea(String numeroDeLinea) {
+		this.numeroDeLinea = numeroDeLinea;
 	}
 
 	/** 
-	 * C4451C - Calificador del Tema del Texto (AAI , DEL): El campo corresponde a un código EANCOM. Los valores posibles son:
+	 * F4451C  - Calificador del tema de Texto: Los valores posibles son:
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
@@ -280,20 +280,20 @@ public class ERE1T {
 	 * 		<th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C4451C</th>
-	 * 		<td>Calificador del Tema del Texto (AAI , DEL)</th>
+	 * 		<td>F4451C</th>
+	 * 		<td>Calificador del Tema del Texto</th>
 	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>66</th>
+	 * 		<td>6</th>
+	 * 		<td>62</th>
 	 * 		<td>M</th>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCalificadorDelTemaDelTexto_AAI_DEL_() {
-		return calificadorDelTemaDelTexto_AAI_DEL_;
+	public String getCalificadorDelTemaDelTexto() {
+		return calificadorDelTemaDelTexto;
 	}
-	public void setCalificadorDelTemaDelTexto_AAI_DEL_(String calificadorDelTemaDelTexto_AAI_DEL_) {
-		this.calificadorDelTemaDelTexto_AAI_DEL_ = calificadorDelTemaDelTexto_AAI_DEL_;
+	public void setCalificadorDelTemaDelTexto(String calificadorDelTemaDelTexto) {
+		this.calificadorDelTemaDelTexto = calificadorDelTemaDelTexto;
 	}
 
 	/** 
@@ -309,11 +309,11 @@ public class ERE1T {
 	 * 		<th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C44401</th>
+	 * 		<td>F44401</th>
 	 * 		<td>Texto 1</th>
 	 * 		<td>C</th>
 	 * 		<td>70</th>
-	 * 		<td>69</th>
+	 * 		<td>68</th>
 	 * 		<td>M</th>
 	 * 	</tr>
 	 * </table>
@@ -338,11 +338,11 @@ public class ERE1T {
 	 * 		<th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C44402</th>
+	 * 		<td>F44402</th>
 	 * 		<td>Texto 2</th>
 	 * 		<td>C</th>
 	 * 		<td>70</th>
-	 * 		<td>139</th>
+	 * 		<td>138</th>
 	 * 		<td>C</th>
 	 * 	</tr>
 	 * </table>
@@ -367,11 +367,11 @@ public class ERE1T {
 	 * 		<th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C44403</th>
+	 * 		<td>F44403</th>
 	 * 		<td>Texto 3</th>
 	 * 		<td>C</th>
 	 * 		<td>70</th>
-	 * 		<td>209</th>
+	 * 		<td>208</th>
 	 * 		<td>C</th>
 	 * 	</tr>
 	 * </table>
@@ -396,11 +396,11 @@ public class ERE1T {
 	 * 		<th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C44404</th>
+	 * 		<td>F44404</th>
 	 * 		<td>Texto 4</th>
 	 * 		<td>C</th>
 	 * 		<td>70</th>
-	 * 		<td>279</th>
+	 * 		<td>278</th>
 	 * 		<td>C</th>
 	 * 	</tr>
 	 * </table>
@@ -425,11 +425,11 @@ public class ERE1T {
 	 * 		<th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C44405</th>
+	 * 		<td>F44405</th>
 	 * 		<td>Texto 5</th>
 	 * 		<td>C</th>
 	 * 		<td>70</th>
-	 * 		<td>349</th>
+	 * 		<td>348</th>
 	 * 		<td>C</th>
 	 * 	</tr>
 	 * </table>
@@ -441,15 +441,13 @@ public class ERE1T {
 		this.texto5 = texto5;
 	}
 
-	public enum CalificadorDelTemaDelTexto_AAI_DEL_ {
+	public enum CalificadorDelTemaDeTexto {
 		INFORMACION_GENERA_AAI("AAI"),
-		INFORMACION_DE_FACTURACIO_INV("INV"),
-		INFORMACION_DE_ENTREG_DEL("DEL"),
 		;
 		
 		private String value;
 		
-		private CalificadorDelTemaDelTexto_AAI_DEL_(String value) {
+		private CalificadorDelTemaDeTexto(String value) {
 			this.value = value;
 		}
 		

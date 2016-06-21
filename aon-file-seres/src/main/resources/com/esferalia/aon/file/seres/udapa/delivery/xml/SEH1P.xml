@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="SEH1P">
+	<field name="Embalajes" value="bean" property="embalajes" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo Aviso de Expedición (351/35E)" value="bean" property="tipoAvisoDeExpedicion_351_35E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número Aviso de Expedición" value="bean" property="numeroAvisoDeExpedicion" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Jerarquía de Embalaje" value="bean" property="numeroDeJerarquiaDeEmbalaje" format="Numeric" pattern="9(12)" />
+	<field name="Número de Sub-jerarquia de Embalaje" value="bean" property="numeroDeSub_jerarquiaDeEmbalaje" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Contador de Embalaje" value="bean" property="contadorDeEmbalaje" format="Numeric" pattern="9(6)" />
+	<field name="Número de Bultos o Embalajes" value="bean" property="numeroDeBultosOEmbalajes" format="Numeric" pattern="9(8)" />
+	<field name="Calificador Codificación del Embalaje" value="bean" property="calificadorCodificacionDelEmbalaje" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Acuerdos y Condiciones de Embalajes" value="bean" property="acuerdosYCondicionesDeEmbalajes" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de Embalaje codificado" value="bean" property="tipoDeEmbalajeCodificado" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de Embalaje Descripción" value="bean" property="tipoDeEmbalajeDescripcion" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Resp. Pago Transporte de Embalaje Retornable" value="bean" property="resp_PagoTransporteDeEmbalajeRetornable" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Peso Total Neto 1 (AAC)" value="bean" property="pesoTotalNeto1_AAC_" format="Numeric" pattern="9(4).999" />
+	<field name="Peso Total Neto 2" value="bean" property="pesoTotalNeto2" format="Numeric" pattern="9(4).999" />
+	<field name="Cód. Significación de la medida Peso Total Neto" value="bean" property="cod_SignificacionDeLaMedidaPesoTotalNeto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Código Unidad de medida Peso Total Neto" value="bean" property="codigoUnidadDeMedidaPesoTotalNeto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Peso Total Bruto 1 (AAD)" value="bean" property="pesoTotalBruto1_AAD_" format="Numeric" pattern="9(4).999" />
+	<field name="Peso Total Bruto 2" value="bean" property="pesoTotalBruto2" format="Numeric" pattern="9(4).999" />
+	<field name="Cód. Significación de la medida Peso Total Bruto" value="bean" property="cod_SignificacionDeLaMedidaPesoTotalBruto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Código Unidad de medida Peso Total Bruto" value="bean" property="codigoUnidadDeMedidaPesoTotalBruto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Altura 1 (HT)" value="bean" property="altura1_HT_" format="Numeric" pattern="9(4).999" />
+	<field name="Altura 2" value="bean" property="altura2" format="Numeric" pattern="9(4).999" />
+	<field name="Código Significación de la medida Altura (3 , 4)" value="bean" property="codigoSignificacionDeLaMedidaAltura_3_4_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Código Unidad de medida Altura" value="bean" property="codigoUnidadDeMedidaAltura" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Ancho 1 (WD)" value="bean" property="ancho1_WD_" format="Numeric" pattern="9(4).999" />
+	<field name="Ancho 2" value="bean" property="ancho2" format="Numeric" pattern="9(4).999" />
+	<field name="Código Significación de la medida Ancho (3 , 4)" value="bean" property="codigoSignificacionDeLaMedidaAncho_3_4_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Código Unidad de medida Ancho" value="bean" property="codigoUnidadDeMedidaAncho" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Longitud 1 (AAC)" value="bean" property="longitud1_AAC_" format="Numeric" pattern="9(4).999" />
+	<field name="Longitud 2 (AAC)" value="bean" property="longitud2_AAC_" format="Numeric" pattern="9(4).999" />
+	<field name="Código Significación de la medida Longitud(3 , 4)" value="bean" property="codigoSignificacionDeLaMedidaLongitud_3_4_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Código Unidad de medida Longitud" value="bean" property="codigoUnidadDeMedidaLongitud" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Unidades de Material Consignado" value="bean" property="unidadesDeMaterialConsignado" format="Numeric" pattern="9(2).999" />
+	<field name="Calificador Manipulación" value="bean" property="calificadorManipulacion" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Instrucciones de Manipulación" value="bean" property="instruccionesDeManipulacion" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Marca o Etiqueta de embarque 1" value="bean" property="marcaOEtiquetaDeEmbarque1" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Marca o Etiqueta de embarque 2" value="bean" property="marcaOEtiquetaDeEmbarque2" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Marca o Etiqueta de embarque 3" value="bean" property="marcaOEtiquetaDeEmbarque3" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Marca o Etiqueta de embarque 4" value="bean" property="marcaOEtiquetaDeEmbarque4" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número 1 de Seriado o Rango inferior del embalaje" value="bean" property="numero1DeSeriadoORangoInferiorDelEmbalaje" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número 1 de Seriado o Rango superior del embalaje" value="bean" property="numero1DeSeriadoORangoSuperiorDelEmbalaje" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número 2 de Seriado o Rango  inferior del embalaje" value="bean" property="numero2DeSeriadoORangoInferiorDelEmbalaje" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número 2 de Seriado o Rango superior del embalaje" value="bean" property="numero2DeSeriadoORangoSuperiorDelEmbalaje" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número 3 de Seriado o Rango  inferior del embalaje" value="bean" property="numero3DeSeriadoORangoInferiorDelEmbalaje" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número 3 de Seriado o Rango superior del embalaje" value="bean" property="numero3DeSeriadoORangoSuperiorDelEmbalaje" format="AlphaNumeric" pattern="X(35)" />
+</register>
