@@ -341,6 +341,7 @@ public class Mod2002015Import2014 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN138, mod200old.getDoubleValue(Mod2002014Key.BN140))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN141, mod200old.getDoubleValue(Mod2002014Key.BN143))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN188, mod200old.getDoubleValue(Mod2002014Key.BN190))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN803, mod200old.getDoubleValue(Mod2002014Key.BN805))
 				
 			// Deducciones disposición transitoria octava LIS			
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002015Key.BN749, mod200old.getDoubleValue(Mod2002014Key.BN754))				
