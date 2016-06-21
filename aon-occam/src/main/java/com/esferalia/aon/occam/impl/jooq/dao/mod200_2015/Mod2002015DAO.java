@@ -30,7 +30,9 @@ import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.DoubleVariable2015;
@@ -41,9 +43,11 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.ValidationMessage2015;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.Mod2002014DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.jaxb.MOD2002015;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.jaxb.Mod2002015toMOD2002015;
@@ -559,11 +563,34 @@ public class Mod2002015DAO  {
 				mod200.addVariable( dv );
 			}
 		}		
+		fillMod202(ctx,mod200);
 		calculate(mod200,false);
 		initializeActiveMap(mod200);
 		return mod200;
 	}
 	
+	private static void fillMod202(AONContext ctx,Mod2002015 mod200) {
+		Mod202DAO.getMod202s(ctx, mod200.getDomain())
+			.filter(mod -> mod.getYear() == mod200.getYear() && mod.getStatus() == FiscalStatus.FINISHED )
+			
+			.forEach( mod -> {
+				Mod202 mod202 = Mod202DAO.getMod202(ctx, mod.getId());		
+				Mod2002015Key key = null;
+				if (mod202.getPeriod() == Period.T1) {
+					key = Mod2002015Key.BN601;
+				} else if (mod202.getPeriod() == Period.T2) {
+					key = Mod2002015Key.BN603;
+				} if (mod202.getPeriod() == Period.T3) {
+					key = Mod2002015Key.BN605;
+				}
+				if (key != null) {
+					DoubleVariable2015 dv = new DoubleVariable2015( key );
+					dv.setValue( (Double) mod202.getResult() );
+					mod200.addVariable( dv );
+				}
+			});
+	}
+
 	public static Mod2002015 calculate(Mod2002015 mod200) {
 		return calculate(mod200,true);
 	}
