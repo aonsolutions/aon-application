@@ -14,8 +14,8 @@ public interface CalendarServiceAsync {
 	void getHolidayDescription(AsyncCallback<Map<Integer, String>> callback)
 			throws IllegalArgumentException;
 	
-	void saveHolidayList(int workplaceId, String holidayDescription,
-			Integer holidayListBox, Map<Date, String> map, AsyncCallback<Void> callback)
+	void saveHolidaysAndDays(int workplaceId, String holidayDescription,
+			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType dayTypes[], AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 	
 	void deletePropertyHoliday(Integer id, Date date, AsyncCallback<Void> callback) 

@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -48,8 +49,8 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 	private Map<Integer, String> listboxHolidayItems;
 
-	private List<MyHolidayDraft> myDrafts;
-	
+	private DayType myDayTypesDrafts [];
+	private List<MyHolidayDraft> myHolidaysDrafts;
 	
 	private Map<Date, String> insertsDraft;
 
@@ -73,9 +74,11 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 		calendarDraftObject.addListener(this);
 
-		myDrafts = new LinkedList<MyHolidayDraft>();
+		myHolidaysDrafts = new LinkedList<MyHolidayDraft>();
 		
 		insertsDraft = new HashMap<Date, String>();
+		
+		myDayTypesDrafts = new DayType [7];
 	}
 
 	public Map<Integer, String> loadListBoxItems(final AsyncCallback<Map<Integer, String>> cb) {
@@ -145,26 +148,32 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 						CalendarDraftObjectData.this.calendarDraftObject = result;
 						List<HolidayDraft> list = calendarDraftObject
 								.getHolidays();
+						DayType daysTypes [] = calendarDraftObject.getDayTypes();
 						CalendarDraftObjectData.this.initHolidayList(list);
+ 						CalendarDraftObjectData.this.initDaysTypes(daysTypes);
 						cb.onSuccess(CalendarDraftObjectData.this);
 					}
 				});
 	}
 	
+	public void setDayType(int weekDay, DayType dayType ) {
+		myDayTypesDrafts[weekDay] = dayType;
+	}
+	
 	public void assignHoliday2Draft(Integer value) {
 		
-		if(myDrafts.isEmpty() == false) {
-			MyHolidayDraft draft = myDrafts.get(0);
+		if(myHolidaysDrafts.isEmpty() == false) {
+			MyHolidayDraft draft = myHolidaysDrafts.get(0);
 			draft.setHoliday(value);
 		}
 	}
 
 	public void saveHolidayDraft(Integer value, final AsyncCallback<Void> cb) {
 		
-		if (myDrafts.isEmpty())
-			myDrafts.add(initMyDrafts());
+		if (myHolidaysDrafts.isEmpty())
+			myHolidaysDrafts.add(initMyDrafts());
 		
-		MyHolidayDraft myDraft = myDrafts.get(myDrafts.size() - 1);
+		MyHolidayDraft myDraft = myHolidaysDrafts.get(myHolidaysDrafts.size() - 1);
 		
 		String description =  myDraft.getDescription();
 		Map<Date, String> map = myDraft.getGeneralMap();
@@ -174,7 +183,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		for (Date date : map.keySet())
 			aux.put(date, map.get(date));
 		
-		calendarDraftObject.insertHolidaysList(description, value, aux, new AsyncCallback<Void>() {
+		calendarDraftObject.saveHolidaysAndDays(description, value, aux, myDayTypesDrafts, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -202,6 +211,10 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 				addPropertyCalendar(draft);
 		}
 	}
+	
+	private void initDaysTypes (DayType daysTypes []) {
+		myDayTypesDrafts = Arrays.copyOf(daysTypes, daysTypes.length);
+	}
 
 	private void addPropertyCalendar(HolidayDraft draft) {			
 
@@ -212,7 +225,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 			myDraftAux.setDescription(draft.getDescription());
 			myDraftAux.setMap(draft.getHolidaysMap());
 
-			myDrafts.add(myDraftAux);
+			myHolidaysDrafts.add(myDraftAux);
 		}
 	}
 
@@ -240,7 +253,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	}
 
 	private ListIterator<MyHolidayDraft> getMyHolidayDraftsIterator() {
-		return myDrafts.listIterator();
+		return myHolidaysDrafts.listIterator();
 	}
 
 	private ListIterator<HolidayDraft> getHolidaysListIterator() {
@@ -265,20 +278,22 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	}
 
 	public void setWorkingDay(int dayOfWeek) {
+		myDayTypesDrafts[dayOfWeek] = DayType.WORKING_DAY;
 		calendarDraftObject.getCalendar().removeStyleFromDay("datePickerDayIsWeekend", dayOfWeek);
 	}
 
 	public void setNonWorkingDay(int dayOfWeek) {
+		myDayTypesDrafts[dayOfWeek] = DayType.NOT_WORKING_DAY;
 		calendarDraftObject.getCalendar().addStyleToDay("datePickerDayIsWeekend", dayOfWeek);
 	}
 
 	public void addHoliday(Date date, String description) {
-		if (myDrafts.isEmpty())
-			myDrafts.add(initMyDrafts());
+		if (myHolidaysDrafts.isEmpty())
+			myHolidaysDrafts.add(initMyDrafts());
 		
 		insertsDraft.put(date, description);
 
-		MyHolidayDraft draft = myDrafts.get(myDrafts.size() - 1);
+		MyHolidayDraft draft = myHolidaysDrafts.get(myHolidaysDrafts.size() - 1);
 
 		calendarDraftObject.getCalendar().addStyle2Date(date, getStyle(colors));
 		draft.addHoliday(date, description);
@@ -301,8 +316,8 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 
 	public Integer getHolidayDescription() {
 		
-		if ( myDrafts.isEmpty() == false)
-			return myDrafts.get(myDrafts.size() - 1).getHoliday();
+		if ( myHolidaysDrafts.isEmpty() == false)
+			return myHolidaysDrafts.get(myHolidaysDrafts.size() - 1).getHoliday();
 
 		else if ( generalHolidays.isEmpty() == false)
 			return generalHolidays.get(0).getId();
@@ -312,7 +327,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	}
 
 	public List<MyHolidayDraft> getMyDrafts() {
-		return Collections.unmodifiableList(myDrafts);
+		return Collections.unmodifiableList(myHolidaysDrafts);
 	}
 
 	public Calendar getCalendar() {
@@ -369,8 +384,8 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		if(insertsDraft.containsKey(date)) 
 			deleteFromInsertDraft(date, insertsDraft.get(date));
 		
-		else if (!myDrafts.isEmpty())  {
-			Map<Date, String> map = myDrafts.get(myDrafts.size() -1).getGeneralMap();
+		else if (!myHolidaysDrafts.isEmpty())  {
+			Map<Date, String> map = myHolidaysDrafts.get(myHolidaysDrafts.size() -1).getGeneralMap();
 			if (map.containsKey(date))
 				deleteDateSelected(date, map.get(date));
 		}
@@ -383,7 +398,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	
 	private void deleteFromInsertDraft(Date date, String description) {
 		
-		Map<Date, String> aux = myDrafts.get(myDrafts.size() - 1).getGeneralMap();
+		Map<Date, String> aux = myHolidaysDrafts.get(myHolidaysDrafts.size() - 1).getGeneralMap();
 		
 		insertsDraft.remove(date);
 		aux.remove(date);
@@ -398,7 +413,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 		
 		if(Window.confirm("\u00BFConfirma que desea eliminar el festivo propio '" + description + "' \u003F ")) {
 			
-			MyHolidayDraft draft = myDrafts.get(myDrafts.size() - 1);
+			MyHolidayDraft draft = myHolidaysDrafts.get(myHolidaysDrafts.size() - 1);
 			Integer id = draft.getId();
 			draft.getGeneralMap().remove(date);
 						
@@ -421,19 +436,20 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	
 	public boolean canDeleteMyHoliday(Date date) {
 		
-		if (!myDrafts.isEmpty())
-			return myDrafts.get(myDrafts.size() - 1).getGeneralMap().containsKey(date);
+		if (!myHolidaysDrafts.isEmpty())
+			return myHolidaysDrafts.get(myHolidaysDrafts.size() - 1).getGeneralMap().containsKey(date);
 		
 		return false;
 	}
 
 	public boolean insertIsEmpy() {
-		return insertsDraft.isEmpty();
+		return insertsDraft.isEmpty() 
+				&& Arrays.deepEquals(myDayTypesDrafts, calendarDraftObject.getDayTypes());
 	}
 	
 	private boolean conteinsId(Integer id) {
 		
-		for(MyHolidayDraft item : myDrafts) {
+		for(MyHolidayDraft item : myHolidaysDrafts) {
 			if (item.getId() == id)
 				return true;
 		}
@@ -443,7 +459,7 @@ public class CalendarDraftObjectData implements CalendarDraftObject.Listener {
 	
 	private void clearDrafts() {		
 		insertsDraft.clear();
-		myDrafts.clear();
+		myHolidaysDrafts.clear();
 		generalHolidays.clear();
 		pattern = -50;
 	}

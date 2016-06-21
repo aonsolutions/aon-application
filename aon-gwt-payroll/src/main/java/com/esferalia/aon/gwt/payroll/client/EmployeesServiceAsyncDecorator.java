@@ -522,12 +522,12 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 	}
 
 	@Override
-	public void saveHolidayList(int workplaceId, String holidayDescription,
-			Integer holidayListBox, Map<Date, String> map,
+	public void saveHolidaysAndDays(int workplaceId, String holidayDescription,
+			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType dayTypes[],
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.saveHolidayList(workplaceId, holidayDescription,
-				holidayListBox, map, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.saveHolidaysAndDays(workplaceId, holidayDescription,
+				holidayListBox, map, dayTypes,new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override

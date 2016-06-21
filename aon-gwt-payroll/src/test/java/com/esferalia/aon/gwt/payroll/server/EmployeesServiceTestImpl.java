@@ -55,8 +55,8 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void saveHolidayList(int workplaceId, String holidayDescription,
-			Integer holidayListBox, Map<Date, String> map)
+	public void saveHolidaysAndDays(int workplaceId, String holidayDescription,
+			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType daysTypes[])
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");

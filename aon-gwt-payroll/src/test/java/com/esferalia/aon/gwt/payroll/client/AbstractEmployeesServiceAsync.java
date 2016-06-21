@@ -97,8 +97,8 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void saveHolidayList(int workplaceId, String holidayDescription,
-			Integer holidayListBox, Map<Date, String> map,
+	public void saveHolidaysAndDays(int workplaceId, String holidayDescription,
+			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType dayTypes[],
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		failure(callback);
 

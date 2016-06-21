@@ -191,7 +191,7 @@ public class JooqCalendar {
 
 	public static void insertHolidays(Connection conn, Integer domain,
 			Integer workplaceId, String holidayDescription,
-			Integer holidayListBox, Map<Date, String> map)
+			Integer holidayListBox, Map<Date, String> map, DayType daysTypes [])
 			throws IllegalArgumentException {
 
 		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
@@ -224,10 +224,18 @@ public class JooqCalendar {
 					Integer holidayId = insert.returning(HOLIDAY.ID).fetchOne()
 							.getId();
 
-					Integer calendarId = dslContext.insertInto(CALENDAR)
+					Integer calendarId = 
+							dslContext.insertInto(CALENDAR)
 							.set(CALENDAR.DOMAIN, domain)
 							.set(CALENDAR.HOLIDAY, holidayId)
-							.returning(CALENDAR.ID).fetchOne().getId();
+							.set(CALENDAR.SUNDAY, (byte)daysTypes[0].ordinal())
+							.set(CALENDAR.MONDAY, (byte)daysTypes[1].ordinal())
+							.set(CALENDAR.TUESDAY, (byte)daysTypes[2].ordinal())
+							.set(CALENDAR.WEDNESDAY, (byte)daysTypes[3].ordinal())
+							.set(CALENDAR.THURSDAY, (byte)daysTypes[4].ordinal())
+							.set(CALENDAR.FRIDAY, (byte)daysTypes[5].ordinal())
+							.set(CALENDAR.SATURDAY, (byte)daysTypes[6].ordinal())
+						.returning(CALENDAR.ID).fetchOne().getId();
 
 					dslContext.update(PAYROLL_WORKPLACE)
 							.set(PAYROLL_WORKPLACE.CALENDAR, calendarId)
@@ -238,6 +246,19 @@ public class JooqCalendar {
 				}
 
 				else { // Calendar en Payroll_workplace no es NULL
+
+					dslContext
+					.update(CALENDAR)
+					.set(CALENDAR.SUNDAY, (byte)daysTypes[0].ordinal())
+					.set(CALENDAR.MONDAY, (byte)daysTypes[1].ordinal())
+					.set(CALENDAR.TUESDAY, (byte)daysTypes[2].ordinal())
+					.set(CALENDAR.WEDNESDAY, (byte)daysTypes[3].ordinal())
+					.set(CALENDAR.THURSDAY, (byte)daysTypes[4].ordinal())
+					.set(CALENDAR.FRIDAY, (byte)daysTypes[5].ordinal())
+					.set(CALENDAR.SATURDAY, (byte)daysTypes[6].ordinal())
+					.where(CALENDAR.ID.eq(result
+							.getValue(PAYROLL_WORKPLACE.CALENDAR)))
+					.execute();
 
 					Record holidayResult = dslContext
 							.select()

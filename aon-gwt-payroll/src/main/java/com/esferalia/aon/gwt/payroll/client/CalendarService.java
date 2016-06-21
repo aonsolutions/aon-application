@@ -14,8 +14,8 @@ public interface CalendarService {
 
 	Map<Integer, String> getHolidayDescription() throws IllegalArgumentException;
 
-	void saveHolidayList(int workplaceId, String holidayDescription,
-			Integer holidayListBox, Map<Date, String> map)
+	void saveHolidaysAndDays(int workplaceId, String holidayDescription,
+			Integer holidayListBox, Map<Date, String> map, CalendarDraft.DayType daysTypes [])
 			throws IllegalArgumentException;
 	
 	void deletePropertyHoliday(Integer id, Date date) throws IllegalArgumentException;

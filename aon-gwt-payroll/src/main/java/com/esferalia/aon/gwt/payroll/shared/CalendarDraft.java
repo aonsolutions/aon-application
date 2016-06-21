@@ -4,6 +4,7 @@ import static com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType.NOT_WOR
 import static com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType.WORKING_DAY;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,6 +41,10 @@ public class CalendarDraft implements Serializable {
 	
 	public void setDayType(int weekDay, DayType type ){
 		daysTypes[weekDay] = type;
+	}
+	
+	public DayType[] getDaysTypes() {
+		return daysTypes;
 	}
 	
 	public List<HolidayDraft> getHolidayDrafts() {
