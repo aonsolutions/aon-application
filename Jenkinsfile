@@ -20,8 +20,8 @@ node {
    
    def commits = '';
    for ( commitEntry in commitsMap ) {
-      if ( commit.value ) 
-          commits += commit.key + ' ' 
+      if ( commitEntry.value ) 
+          commits += commitEntry.key + ' ' 
    }
    
    
