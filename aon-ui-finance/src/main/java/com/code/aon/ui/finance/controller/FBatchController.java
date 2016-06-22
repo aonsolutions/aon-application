@@ -266,7 +266,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
                 criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYROLL), to.getFinanceBatchType().isPayroll());
         	}
-            if ((to.getFinanceBatchType() != FinanceBatchType.AEB_58) && (to.getFinanceBatchType() != FinanceBatchType.AEB_58_D)) {
+        	if(!to.getFinanceBatchType().is58()){
             	criteria.addNotNullExpression(financeController.getFieldName(IEntityAlias.FINANCE_BANK_ACCOUNT));
             	criteria.addNotEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_BANK_ACCOUNT), new BankAccount());
                 if ( to.getFinanceBatchType().is19() ) {

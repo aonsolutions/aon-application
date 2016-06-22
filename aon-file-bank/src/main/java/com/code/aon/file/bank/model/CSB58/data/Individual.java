@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
+import com.code.aon.file.bank.model.SEPA.Address;
+import com.code.aon.file.bank.model.SEPA.Entity;
 import com.code.aon.file.format.core.Account;
 
-public class Individual {
+public class Individual implements Entity{
 
 	private String referenceCode;
 	private String name;
@@ -16,12 +18,19 @@ public class Individual {
 	private String internalCode;
 	private String concept;
 	private Date expiryDate;
+	private String accountUserName;
 	private String accountUserAddress;
 	private String accountUserAddress2;
 	private Integer accountUserPCode;
 	private String ordererCounty;
 	private String country;
 	private Date initDate;
+	
+	private Address SEPAAddress;
+	private boolean organisation;
+	private String document;
+	private String documentType;
+	private String documentNumber;
 
 	/**
 	 * Concepts
@@ -222,6 +231,48 @@ public class Individual {
 		this.expiryDate = expiryDate;
 	}
 
+	public String getAccountUserName() {
+		return accountUserName;
+	}
+	public void setAccountUserName(String accountUserName) {
+		this.accountUserName = accountUserName;
+	}
+	public Address getSEPAAddress() {
+		return SEPAAddress;
+	}
+	public void setSEPAAddress(Address sEPAAddress) {
+		SEPAAddress = sEPAAddress;
+	}
+	public boolean isOrganisation() {
+		return organisation;
+	}
+	public void setOrganisation(boolean organisation) {
+		this.organisation = organisation;
+	}
+	public String getDocument() {
+		return document;
+	}
+	public void setDocument(String document) {
+		this.document = document;
+	}
+	public String getDocumentType() {
+		return documentType;
+	}
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
+	}
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
+	public void setDocumentNumber(String documentNumber) {
+		this.documentNumber = documentNumber;
+	}
+	public ArrayList<String> getConcepts() {
+		return concepts;
+	}
+	public void setConcepts(ArrayList<String> concepts) {
+		this.concepts = concepts;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
