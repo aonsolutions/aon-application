@@ -352,7 +352,6 @@ public class CalendarDraft extends Composite implements
 
 	public void setCalendarDraftObject(Integer pattern,
 			CalendarDraftObjectData calendarDraftObjectData) {
-
 		calendarDraftObjectData
 				.loadListBoxItems(new AsyncCallback<Map<Integer, String>>() {
 
@@ -364,6 +363,8 @@ public class CalendarDraft extends Composite implements
 					@Override
 					public void onSuccess(Map<Integer, String> map) {
 						
+						CalendarDraft.this.holidayList.clear();
+
 						CalendarDraft.this.holidayList.addItem("-", "-50");
 
 						Map<Integer, String> sortedMap = sortedByComparator(map);
