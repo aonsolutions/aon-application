@@ -3,15 +3,16 @@ package com.esferalia.aon.htmlunit.payroll;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 
-import java.time.Month;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.bcel.generic.ISUB;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+
 
 public class GeneralIntegralTest extends BaseIntegralTestCase {
 
@@ -375,6 +376,57 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentsLabel", 1067.40/6 + (1067.40*29/30)/6);
 
 		draft("EXTRA, DEVENGO FUERA");
+	}
+
+	@Test
+	public void TestNomina() throws Exception {
+
+		open("nominas");
+
+		wait4Id("nomina,_diferencias");
+
+		draft("NOMINA, DIFERENCIAS");
+		calculate(Calendar.JUNE);
+		HtmlCheckBoxInput dbSalaryCheck = getElementById("dbSalaryCheck-input");
+		Assert.assertTrue(dbSalaryCheck.isDisplayed());
+		Assert.assertTrue(dbSalaryCheck.isChecked());
+		Assert.assertTrue(getElementById("dbTotalLiquidLabel").isDisplayed());
+		
+		
+		calculate(Calendar.JULY);
+		dbSalaryCheck = getElementById("dbSalaryCheck-input");
+		Assert.assertTrue(dbSalaryCheck.isDisplayed());
+		Assert.assertTrue(dbSalaryCheck.isChecked());
+		Assert.assertTrue(getElementById("dbTotalLiquidLabel").isDisplayed());
+
+		calculate(Calendar.AUGUST);
+		dbSalaryCheck = getElementById("dbSalaryCheck-input");
+		Assert.assertTrue(dbSalaryCheck.isDisplayed());
+		Assert.assertTrue(dbSalaryCheck.isChecked());
+		Assert.assertTrue(getElementById("dbTotalLiquidLabel").isDisplayed());
+
+		calculate(Calendar.SEPTEMBER);
+		dbSalaryCheck = getElementById("dbSalaryCheck-input");
+		Assert.assertTrue(dbSalaryCheck.isDisplayed());
+		Assert.assertTrue(dbSalaryCheck.isChecked());
+		Assert.assertTrue(getElementById("dbTotalLiquidLabel").isDisplayed());
+		
+		calculate(Calendar.OCTOBER);
+		dbSalaryCheck = getElementById("dbSalaryCheck-input");
+		Assert.assertTrue(dbSalaryCheck.isDisplayed());
+		Assert.assertFalse(dbSalaryCheck.isChecked());
+		Assert.assertFalse(getElementById("dbTotalLiquidLabel").isDisplayed());
+
+		calculate(Calendar.DECEMBER);
+		dbSalaryCheck = getElementById("dbSalaryCheck-input");
+		Assert.assertFalse(dbSalaryCheck.isDisplayed());
+		Assert.assertFalse(getElementById("dbTotalLiquidLabel").isDisplayed());
+
+//		draft("NOMINA, EXTRAS");
+//
+//		draft("NOMINA, SALARIO BASE");
+//
+//		draft("NOMINA, OFICINAS Y DESPACHOS");
 	}
 	// -------------------------------------------------------------------------
 

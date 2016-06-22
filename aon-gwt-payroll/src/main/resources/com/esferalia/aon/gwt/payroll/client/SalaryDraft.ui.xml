@@ -214,7 +214,7 @@
 								<g:CheckBox ui:field='costsCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="COSTES Y BONIFICACIONES" checked="false" />
-								<g:CheckBox ui:field='dbSalaryCheck'
+								<g:CheckBox debugId='dbSalaryCheck' ui:field='dbSalaryCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="DIFERENCIAS" checked="false" />
 							</g:HTMLPanel>
@@ -351,7 +351,8 @@
 												<!-- e:ValueInlineHTML changeDisplayStyleName="{style.value-changed}"
 													ui:field="totalPaymentsLabel">&nbsp; </e:ValueInlineHTML-->
 												<e:ExpressionValueBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
-														changeDisplayStyleName="{style.value-changed}" debugId="totalPaymentsLabel" ui:field="totalPaymentsLabel">&nbsp; </e:ExpressionValueBox>												<g:InlineHTML ui:field="dbTotalPaymentsLabel"
+														changeDisplayStyleName="{style.value-changed}" debugId="totalPaymentsLabel" ui:field="totalPaymentsLabel">&nbsp; </e:ExpressionValueBox>												
+												<g:InlineHTML debugId="dbTotalPaymentsLabel" ui:field="dbTotalPaymentsLabel"
 													visible="false" />
 											</g:HTMLPanel>
 										</g:HTMLPanel>
@@ -376,7 +377,7 @@
 							<g:HTML ui:field="eventsTableSpace" styleName="{style.vertical-space} {style.context-tab-voffset}"
 								visible="false" />
 
-							<g:FlexTable ui:field="paymentsTable"
+							<g:FlexTable debugId="paymentsTable" ui:field="paymentsTable"
 								styleName="aon-dataTable {style.edit-rows} {style.context-tab-voffset}" />
 
 							<g:HTML styleName="{style.vertical-space} {style.context-tab-voffset}" />
@@ -445,7 +446,7 @@
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ValueExpressionBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
 														changeDisplayStyleName="{style.value-changed}" debugId="cgpBaseLabel" ui:field="cgpBaseLabel">&nbsp; </e:ValueExpressionBox>
-													<g:InlineHTML ui:field="dbCgpBaseLabel"
+													<g:InlineHTML debugId="dbCgpBaseLabel" ui:field="dbCgpBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
 											</g:HTMLPanel>
@@ -495,7 +496,7 @@
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ValueInlineHTML
 														changeDisplayStyleName="{style.value-changed}" debugId="totalPaymentLabel" ui:field="totalPaymentLabel" htmlNull="&nbsp;">&nbsp; </e:ValueInlineHTML>
-													<g:InlineHTML ui:field="dbTotalPaymentLabel"
+													<g:InlineHTML debugId="dbTotalPaymentLabel" ui:field="dbTotalPaymentLabel"
 														visible="false" />
 												</g:HTMLPanel>
 											</g:HTMLPanel>
@@ -507,7 +508,7 @@
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ValueInlineHTML
 														changeDisplayStyleName="{style.value-changed}" ui:field="totalDeductionLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
-													<g:InlineHTML ui:field="dbTotalDeductionLabel"
+													<g:InlineHTML debugId="dbTotalDeductionLabel" ui:field="dbTotalDeductionLabel"
 														visible="false" />
 												</g:HTMLPanel>
 											</g:HTMLPanel>
@@ -519,7 +520,7 @@
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ExpressionValueBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
 														changeDisplayStyleName="{style.value-changed}" debugId="totalLiquidLabel" ui:field="totalLiquidLabel">&nbsp; </e:ExpressionValueBox>
-													<g:InlineHTML ui:field="dbTotalLiquidLabel"
+													<g:InlineHTML debugId="dbTotalLiquidLabel" ui:field="dbTotalLiquidLabel"
 														visible="false" />
 												</g:HTMLPanel>
 											</g:HTMLPanel>
