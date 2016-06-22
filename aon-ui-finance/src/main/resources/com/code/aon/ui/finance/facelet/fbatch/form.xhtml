@@ -37,14 +37,16 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="fBatch" />
 					</aon:htmlCommandLink>
-					<aon:if test="#{(fbatch.to.financeBatchType != 'SEPA_19_14_CORE_XML') and (fbatch.to.financeBatchType != 'SEPA_19_14_COR1_XML')}" >
+					<aon:if test="#{(fbatch.to.financeBatchType != 'SEPA_19_14_CORE_XML') and (fbatch.to.financeBatchType != 'SEPA_19_14_COR1_XML')
+							or (fbatch.to.financeBatchType != 'SEPA_58_ANTICIPO_XML')}" >
 						<aon:commandButton id="aeb" value="#{bundle.finance_create_disk}"
 							rendered="#{!fbatch.nevv and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							reRender="progressBarForm"
 							action="fbatch_form" actionListener="#{fbatch.onCreateDisk}" />
 					</aon:if>	
-					<aon:if test="#{(fbatch.to.financeBatchType == 'SEPA_19_14_CORE_XML') or (fbatch.to.financeBatchType == 'SEPA_19_14_COR1_XML')}" >
+					<aon:if test="#{(fbatch.to.financeBatchType == 'SEPA_19_14_CORE_XML') or (fbatch.to.financeBatchType == 'SEPA_19_14_COR1_XML')
+							or (fbatch.to.financeBatchType == 'SEPA_58_ANTICIPO_XML')}" >
 						<aon:commandButton id="sepaCreateDisk" value="#{bundle.finance_create_disk}"
 							rendered="#{!fbatch.nevv and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
@@ -138,7 +140,7 @@
 						</aon:if>
 						<aon:if test="#{fbatch.payroll}">
 							<f:selectItems value="#{financeCollections.financeBatchPayrollTypes}" />
-						</aon:if>
+						</aon:if>								
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="RegistryBank_Lookup_id"

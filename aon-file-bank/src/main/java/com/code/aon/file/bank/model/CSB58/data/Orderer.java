@@ -1,8 +1,11 @@
 package com.code.aon.file.bank.model.CSB58.data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
+import com.code.aon.file.bank.model.SEPA.Address;
+import com.code.aon.file.bank.model.SEPA.Entity;
 import com.code.aon.file.format.core.Account;
 
 /**
@@ -11,7 +14,7 @@ import com.code.aon.file.format.core.Account;
  * @since 1.0
  *
  */
-public class Orderer {
+public class Orderer implements Entity {
 
 	/**
 	 * Code 
@@ -21,6 +24,14 @@ public class Orderer {
 	 * Sufix
 	 */
 	private String sufix;
+	/**
+	 * The disk making date
+	 */
+	private Date makeDate;
+	/**
+	 * Start date
+	 */
+	private Date startDate;
 	/**
 	 * Name
 	 */
@@ -34,6 +45,17 @@ public class Orderer {
 	 */
 	private Integer codeINE;
 
+	/**
+	 * Procedure
+	 */
+	private Integer procedure;
+	
+	private Address SEPAAddress;
+	
+	private boolean organisation;
+	
+	private String id;	
+	
 	public int numRegs = 0;
 	
 	/**
@@ -162,6 +184,56 @@ public class Orderer {
 		this.numRegs = numRegs;
 	}
 
+	
+	
+	public Date getMakeDate() {
+		return makeDate;
+	}
+
+	public void setMakeDate(Date makeDate) {
+		this.makeDate = makeDate;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Integer getProcedure() {
+		return procedure;
+	}
+
+	public void setProcedure(Integer procedure) {
+		this.procedure = procedure;
+	}
+
+	public Address getSEPAAddress() {
+		return SEPAAddress;
+	}
+
+	public void setSEPAAddress(Address sEPAAddress) {
+		SEPAAddress = sEPAAddress;
+	}
+
+	public boolean isOrganisation() {
+		return organisation;
+	}
+
+	public void setOrganisation(boolean organisation) {
+		this.organisation = organisation;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -173,6 +245,16 @@ public class Orderer {
 		description += "ACCOUNT "+account.getCcc()+"; ";
 		description += "CODE_INE "+codeINE+"; ";
 		return description;
+	}
+	
+	@Override
+	public String getDocument() {
+		return getCode();
+	}
+
+	@Override
+	public String getDocumentType() {
+		return null;
 	}
 	
 }

@@ -25,7 +25,9 @@ public enum FinanceBatchType implements IResourceable {
     SEPA_19_14_CORE_XML(false, false),
     SEPA_34_14_XML(true, false),
     SEPA_34_14_N_XML(true, true),
-    SEPA_19_14_COR1_XML(false, false);
+    SEPA_19_14_COR1_XML(false, false),
+    SEPA_58_ANTICIPO_XML(false, false);
+    //SEPA_58_DESCUENTO_XML(false, false);
 
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_financebatchtype_";
@@ -54,6 +56,11 @@ public enum FinanceBatchType implements IResourceable {
     public boolean is34() {
     	return (this == AEB_34) || (this == FinanceBatchType.SEPA_34_14_XML) ||
     			(this == AEB_34_N) || (this == FinanceBatchType.SEPA_34_14_N_XML);
+    }
+    
+    public boolean is58() {
+    	return (this == AEB_58) || (this == FinanceBatchType.AEB_58_D) ||
+    			(this == SEPA_58_ANTICIPO_XML) ;//|| (this == FinanceBatchType.SEPA_58_DESCUENTO_XML);
     }
     
     /**

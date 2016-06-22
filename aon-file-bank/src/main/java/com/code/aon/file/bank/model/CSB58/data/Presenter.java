@@ -2,6 +2,8 @@ package com.code.aon.file.bank.model.CSB58.data;
 
 import java.util.Date;
 
+import com.code.aon.file.format.core.Account;
+
 /**
  * The presenter
  * 
@@ -41,7 +43,9 @@ public class Presenter {
 	 */
 	private String office;
 
-
+	private String id;
+	
+	private Account account;
 	/**
 	 * Returns the code
 	 * 
@@ -150,6 +154,28 @@ public class Presenter {
 		this.sufix = sufix;
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	/**
+	 * @return the account
+	 */
+	public Account getAccount() {
+		return account;
+	}
+
+	/**
+	 * @param account the acount to set
+	 */
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

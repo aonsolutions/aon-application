@@ -3,6 +3,7 @@ package com.code.aon.file.bank.model.CSB58.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+
 public class Lot {
 
 	private int type = 0;
@@ -10,6 +11,8 @@ public class Lot {
 	private Presenter presenter;
 	
 	private int numRegs = 0;
+	
+	private String id;
 	
 	/**
 	 * Orderers
@@ -107,6 +110,19 @@ public class Lot {
 	public void setNumRegs(int numRegs) {
 		this.numRegs = numRegs;
 	}
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public Orderer getOrderer() {
+		return getOrderersIterator().next();
+	}	
+
 	
 	public static int RESUMED = 0;
 	

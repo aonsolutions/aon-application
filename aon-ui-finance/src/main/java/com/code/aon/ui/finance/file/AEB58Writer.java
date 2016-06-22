@@ -57,6 +57,21 @@ public class AEB58Writer implements IFinanceConstants {
 	}
 	
 	public FileOutput createAEB58(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
+		Lot lot = getLot(company, fBatch, fbatchDetails);
+
+		try {
+			File file = File.createTempFile("AEB58_", ".txt");
+			FileFiller csb58 = new CSB58(lot, file.getAbsolutePath());
+			FileOutput output = new FileOutput();
+			output.setFile(file);
+			output.setErrors(csb58.create());
+			return output;
+		} catch (IOException e) {
+			throw new ManagerBeanException(e);
+		}
+	}
+	
+	public Lot getLot(Company company, FinanceBatch fBatch,  List<FinanceBatchDetail> fbatchDetails)  throws ManagerBeanException{
 		Lot lot = new Lot();
 		if (fBatch.getFinanceBatchType().equals(FinanceBatchType.AEB_58)) {
 			lot.setType(Lot.RESUMED);
@@ -90,17 +105,44 @@ public class AEB58Writer implements IFinanceConstants {
 			updateProgress(++current, fbatchDetails.size());
 		}
 		lot.addOrderer(orderer);
-
-		try {
-			File file = File.createTempFile("AEB58_", ".txt");
-			FileFiller csb58 = new CSB58(lot, file.getAbsolutePath());
-			FileOutput output = new FileOutput();
-			output.setFile(file);
-			output.setErrors(csb58.create());
-			return output;
-		} catch (IOException e) {
-			throw new ManagerBeanException(e);
+		return lot;
+	}
+	
+	public Lot getLot(Company company, FinanceBatch fBatch,  List<FinanceBatchDetail> fbatchDetails, Date date)  throws ManagerBeanException{
+		Lot lot = new Lot();
+		if (fBatch.getFinanceBatchType().equals(FinanceBatchType.AEB_58)) {
+			lot.setType(Lot.RESUMED);
+		} else {
+			lot.setType(Lot.EXTENDED);
 		}
+
+		RegistryBank companyRBank = fBatch.getRegistryBank();
+		Presenter presenter = new Presenter();
+		presenter.setCode(company.getDocument());
+		presenter.setSufix(companyRBank.getSufix());
+		presenter.setMakeDate(date);
+		presenter.setName(company.getName());
+		presenter.setEntity(companyRBank.getBankAccount().getBban1());
+		presenter.setOffice(companyRBank.getBankAccount().getBban2());
+		lot.setPresenter(presenter);
+
+		Orderer orderer = new Orderer();
+		Account companyAccount = new Account();
+		companyAccount.parse(companyRBank.getBankAccount().getBban());
+		orderer.setAccount(companyAccount);
+		orderer.setCode(company.getDocument());
+		orderer.setName(company.getName());
+		orderer.setSufix(companyRBank.getSufix());
+		orderer.setCodeINE(new Integer(1));
+
+		int current = 0;
+		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
+			Individual individual  = createIndividual(fBatchDetail.getFinance(), fBatch.getIssueDate(), lot.getType());
+			orderer.addIndividual(individual);
+			updateProgress(++current, fbatchDetails.size());
+		}
+		lot.addOrderer(orderer);
+		return lot;
 	}
 
 	private Individual createIndividual(Finance finance, Date expiryDate, int lotType) throws ManagerBeanException {

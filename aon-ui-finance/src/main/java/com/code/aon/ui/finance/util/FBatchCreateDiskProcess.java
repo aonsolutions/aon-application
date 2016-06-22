@@ -26,6 +26,7 @@ import com.code.aon.ui.finance.file.AEB34Writer;
 import com.code.aon.ui.finance.file.AEB58Writer;
 import com.code.aon.ui.finance.file.SEPA19_14CoreXmlWriter;
 import com.code.aon.ui.finance.file.SEPA34_14XmlWriter;
+import com.code.aon.ui.finance.file.SEPA58XmlWriter;
 import com.code.aon.ui.util.AonUtil;
 
 public class FBatchCreateDiskProcess implements ILongProcess {
@@ -101,6 +102,12 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 					SEPA34_14XmlWriter sepa34Writer = new SEPA34_14XmlWriter();
 					sepa34Writer.setProgression(controller.getProgressionState());
 					aebOutput = sepa34Writer.createXml(company, fbatch, fbatchDetailCollection);
+		    		break;
+		    	case SEPA_58_ANTICIPO_XML:
+		    		controller.setMimeType(MimeType.MIME_XML);
+		    		SEPA58XmlWriter sepa58Writer = new SEPA58XmlWriter();
+		    		sepa58Writer.setProgression(controller.getProgressionState());
+					aebOutput = sepa58Writer.createXml(company,  controller.getBankDate(), fbatch, fbatchDetailCollection);
 		    		break;
 		    	case NONE:
 		    		LOGGER.debug( "None finance batch type");
