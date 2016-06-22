@@ -75,15 +75,16 @@ def hotfix(text) {
 @NonCPS
 def parameters(text) {
    matcher = text =~ '(?m)^\\+\\s+([0-9a-fA-F]+)\\s+(.*)$'
-   def parameters = new java.util.Map [matcher.size()]
-   for ( int i = 0; i < matcher.size(); i++ ) {
+   def parameters =  []
+   def i = 0;
+   for ( match in matcher ) {
       parameter = [
       $class: 'BooleanParameterDefinition',
-      name:  matcher[i][1],
+      name:  match[1],
       defaultValue: false,
-      description: matcher[i][2]    
+      description: match[2]    
       ]
-      parameters[i] = parameter
+      parameters[i++] = parameter
    }
    return parameters
 }
