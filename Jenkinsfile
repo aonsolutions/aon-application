@@ -12,9 +12,11 @@ node {
    
    def hotfix = hotfix(pom.version)   
    
-   def commits = input message: "Peform HotFix ${hotfix}", 
-   parameters: [[$class: 'TextParameterDefinition', defaultValue: '', description: 'Commits to cherry-pick', name: 'commits']
-   ]
+   sh "git cherry -v origin/8.58.X origin/master > cherryOut"
+   
+   def cherryOut = readFile 'cherryOut'
+
+   def commits = input message: "Peform HotFix ${hotfix}", parameters: parameters(cherryOut)
    
    if ( commits ) {
       // Mark the perform hotfix 'stage'....
@@ -68,4 +70,20 @@ def hotfix(text) {
    def minor = matcher[0][2]
    def hotfix = matcher[0][4] ? (matcher[0][4] as int) : 1;
    return "${major}.${minor}.${hotfix}";
+}
+
+@NonCPS
+def parameters(text) {
+   matcher = text =~ '(?m)^\\+\\s+([0-9a-fA-F]+)\\s+(.*)$'
+   def parameters = new java.util.Map [matcher.size()]
+   for ( int i = 0; i < matcher.size(); i++ ) {
+      parameter = [
+      $class: 'BooleanParameterDefinition',
+      name:  matcher[i][1],
+      defaultValue: false,
+      description: matcher[i][2]    
+      ]
+      parameters[i] = parameter
+   }
+   return parameters
 }
