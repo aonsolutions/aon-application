@@ -134,6 +134,12 @@
 			background-position-x : right !important;
 		}
 		
+		.textbox-readonly {
+    		border: none !important;
+    		color: #4b4b4b !important;		
+			background: transparent !important;
+		}
+		
 	</ui:style>
 
 
@@ -414,8 +420,8 @@
 												<g:Label styleName="{style.cell-label}">BASE TOTAL
 													COTIZ.</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<e:ValueExpressionBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
-														changeDisplayStyleName="{style.value-changed}" debugId="cgcBaseLabel" ui:field="cgcBaseLabel">&nbsp; </e:ValueExpressionBox>
+													<e:ValueExpressionBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center {style.textbox-readonly}" visibleLength="9"
+														changeDisplayStyleName="{style.value-changed}" debugId="cgcBaseLabel" ui:field="cgcBaseLabel" enabled="false" >&nbsp; </e:ValueExpressionBox>
 													<g:InlineHTML ui:field="dbCgcBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -444,8 +450,8 @@
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">BASE AT Y EP.</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<e:ValueExpressionBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
-														changeDisplayStyleName="{style.value-changed}" debugId="cgpBaseLabel" ui:field="cgpBaseLabel">&nbsp; </e:ValueExpressionBox>
+													<e:ValueExpressionBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center {style.textbox-readonly}" visibleLength="9"
+														changeDisplayStyleName="{style.value-changed}" debugId="cgpBaseLabel" ui:field="cgpBaseLabel" enabled="false" >&nbsp; </e:ValueExpressionBox>
 													<g:InlineHTML debugId="dbCgpBaseLabel" ui:field="dbCgpBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
