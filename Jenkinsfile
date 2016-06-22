@@ -10,6 +10,8 @@ node {
    // We want to pick up the version from the pom
    def pom = readMavenPom file: 'pom.xml'
    
+   def hotfix = hotfix(pom.version)   
+   
    def commits = input message: "Peform HotFix ${hotfix}", 
    parameters: [[$class: 'TextParameterDefinition', defaultValue: '', description: 'Commits to cherry-pick', name: 'commits']
    ]
