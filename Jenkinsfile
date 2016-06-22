@@ -16,7 +16,14 @@ node {
    
    def cherryOut = readFile 'cherryOut'
 
-   def commits = input message: "Peform HotFix ${hotfix}", parameters: parameters(cherryOut)
+   def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: parameters(cherryOut)
+   
+   def commits = '';
+   for ( commitEntry in commitsMap ) {
+      if ( commit.value ) 
+          commits += commit.key + ' ' 
+   }
+   
    
    if ( commits ) {
       // Mark the perform hotfix 'stage'....
