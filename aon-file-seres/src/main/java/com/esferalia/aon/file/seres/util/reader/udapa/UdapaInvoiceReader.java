@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +25,6 @@ public class UdapaInvoiceReader {
 	
 	public static final String CHARSET_ENCODING = "ISO-8859-1";
 
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
-	
-	
 	private static String SINCC = "SIN1C";
 	
 	private static String SINCT = "SINCT";
@@ -40,7 +36,11 @@ public class UdapaInvoiceReader {
 	private static String SINCI = "SINCI";
 	
 	
-	public SINCC readFile(InputStream input, String encoding) throws ManagerBeanException, IOException {
+	public SINCC readFile(InputStream input) throws IOException {
+		return readFile(input, CHARSET_ENCODING);
+	}
+	
+	public SINCC readFile(InputStream input, String encoding) throws IOException {
 		
 		SINCC sincc = new SINCC();
 		
@@ -112,8 +112,6 @@ public class UdapaInvoiceReader {
 			} catch (FileNotFoundException e) {
 				// nada
 			} catch (IOException e) {
-				// nada
-			} catch (ManagerBeanException e) {
 				// nada
 			}
 		}

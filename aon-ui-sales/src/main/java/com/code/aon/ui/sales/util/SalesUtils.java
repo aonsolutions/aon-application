@@ -46,6 +46,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.carrier.enumeration.ShipmentPeriod;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.PurchaseDAO;
 
 public class SalesUtils {
 	
@@ -246,4 +249,78 @@ public class SalesUtils {
 			DatabaseUtil.closeQuietly(connection);
 		}
 	}
+	
+	public void createManufacturingOrder(Sales sales) {
+		AONContext ctx = AONContext
+				.getAONContext(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser());
+		
+		com.esferalia.aon.occam.api.model.management.Purchase p = new com.esferalia.aon.occam.api.model.management.Purchase();
+		p.setDomain(sales.getDomain());
+		p.setProject(sales.getProject() != null ? sales
+				.getProject().getId() : null);
+		p.setSeries(sales.getSeries());
+		p.setPurchaseReference(null);
+		p.setAddress(null);
+		p.setDiscountExpr(sales.getDiscountExpression() != null ? sales
+				.getDiscountExpression().getDiscountExpr()
+				: null);
+		p.setIssueDate(new Date());
+		p.setPayMethod(null);
+		p.setSecurityLevel(sales.getSecurityLevel()
+				.ordinal());
+		p.setStatus(PurchaseStatus.PENDING);
+		p.setComments(sales.getComments());
+		p.setRemarks(sales.getRemarks());
+		p.setWorkplace(sales.getWorkPlace() != null ? sales
+				.getWorkPlace().getId() : null);
+		p.setWarehouse(null);
+		p.setScope(sales.getScope().getId());
+		p.setNumberOfPymnts(0);
+		p.setDaysToFirstPymnt(0);
+		p.setDaysBetweenPymnts(0);
+		p.setPymntDays("0");
+		p.setBankAccount(null);
+		p.setBankAlias(null);
+		p.setBic(null);
+		p.setEmailCommunication(false);
+		p.setCarrier(null);
+		p.setShippingAlternativeAddress(null);
+		p.setShippingAlternativeAddress2(null);
+		p.setShippingAlternativeZip(null);
+		p.setShippingAlternativeCity(null);
+		p.setShippingAlternativePhone(null);
+		p.setShippingAlternativeRecipient(null);
+		p.setShippingContact(null);
+		p.setShippingPeriod(0);
+		
+		int purchaseId = PurchaseDAO.insertManufacturePurchase(ctx, p);
+		ctx.getDslContext().transaction(configuration -> {
+			createPurchaseLines(ctx, sales.getDetailList(), purchaseId);
+		});
+	}
+	
+	public void createPurchaseLines(AONContext ctx,
+			List<ITransferObject> list, Integer purchaseId) {
+		list.stream()
+				.map(to -> (SalesDetail) to)
+				.forEach(
+						detail -> {
+							com.esferalia.aon.occam.api.model.management.PurchaseDetail pd = new com.esferalia.aon.occam.api.model.management.PurchaseDetail(); 
+							pd.setDomain(detail.getDomain());
+							pd.setPurchase(purchaseId);
+							pd.setProject(null);
+							pd.setLine(detail.getLine());
+							pd.setItem(detail.getItem().getId());
+							pd.setDescription(detail.getDescription());
+							pd.setQuantity(detail.getQuantity());
+							pd.setPrice(detail.getPrice());
+							pd.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
+							pd.setTaxes(detail.getTaxes());
+							pd.setStatus(com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus.valueOf(detail.getStatus().name()));
+							pd.setProposalDetail(null);
+							pd.setDelivered(detail.getDelivered());
+							PurchaseDAO.insertPurchaseDetail(ctx, pd);
+						});
+	}
+	
 }

@@ -8,11 +8,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.file.seres.udapa.sales.data.ERE1C;
 import com.esferalia.aon.file.seres.udapa.sales.data.ERE1D;
 import com.esferalia.aon.file.seres.udapa.sales.data.ERE1G;
@@ -24,8 +22,6 @@ import com.esferalia.aon.file.seres.udapa.sales.data.ERE1V;
 public class UdapaSalesReader {
 	
 	public static final String CHARSET_ENCODING = "ISO-8859-1";
-
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
 	
 	private static String ERE1C = "ERE1C";
 	private static String ERE1T = "ERE1T";
@@ -37,7 +33,11 @@ public class UdapaSalesReader {
 	
 	
 
-	public ERE1C readFile(InputStream input, String encoding) throws ManagerBeanException, IOException {
+	public ERE1C readFile(InputStream input) throws IOException {
+		return readFile(input, CHARSET_ENCODING);
+	}
+	
+	public ERE1C readFile(InputStream input, String encoding) throws IOException {
 		
 		ERE1C ere1c = new ERE1C();
 		List<ERE1T> ere1tList = new ArrayList<ERE1T>();
@@ -103,8 +103,6 @@ public class UdapaSalesReader {
 			} catch (FileNotFoundException e) {
 				// nada
 			} catch (IOException e) {
-				// nada
-			} catch (ManagerBeanException e) {
 				// nada
 			}
 		}

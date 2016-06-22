@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import com.code.aon.file.format.model.FileFiller;
@@ -23,15 +22,12 @@ import com.esferalia.aon.file.seres.udapa.invoice.data.SINCV;
 public class UdapaSaleInvoiceWriter {
 	
 	public static final String CHARSET_ENCODING = "ISO-8859-1";
-
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
-
 	
 	public FileOutput createFile(Invoice invoice) throws FileNotFoundException, UnsupportedEncodingException {
 		SINCC sincc = createSINCCRecord( invoice );
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
-		FileFiller filler = new UdapaInvoice(null, writer);
+		FileFiller filler = new UdapaInvoice(sincc, writer);
 		FileOutput output = new FileOutput();
 		output.setErrors(filler.create());
 		output.setContent(outputStream.toString().getBytes(CHARSET_ENCODING));

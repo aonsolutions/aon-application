@@ -10,10 +10,23 @@
 	<ui:define name="content">
 		<aon:form id="salesSearch">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.sales_module}" />
 				<ui:param name="controller" value="#{sales}" />
-			</ui:include>
+				<ui:define name="additionalToolbarContent">
+					<aon:if test="#{sales.udapaIngenetEnabled}">
+						<aon:commandButton id="import-Popup"
+							value="#{bundle.aon_import}"
+							title="#{bundle.aon_import}"
+							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+							actionListener="#{controller.udapaImporter.onImportFileShow}"
+							action="sales_form">
+							<f:setPropertyActionListener target="#{controller.udapaImporter.showImportFileWindow}"
+								value="#{true}" />
+						</aon:commandButton>
+					</aon:if>
+				</ui:define>
+			</ui:decorate>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">

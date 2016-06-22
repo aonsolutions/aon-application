@@ -67,6 +67,7 @@ import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
+import com.code.aon.ui.sales.udapa.EdiSalesImporterHandler;
 import com.code.aon.ui.sales.util.PurchaseGeneratorManager;
 import com.code.aon.ui.sales.util.SalesEmailUtil;
 import com.code.aon.ui.sales.util.SalesUtils;
@@ -79,9 +80,6 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ingenet.IngenetSalesManager;
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
-import com.esferalia.aon.occam.impl.jooq.dao.PurchaseDAO;
 
 public class SalesController extends HeaderObjectController implements ISalesConstants, IAuditableController {
 	
@@ -114,6 +112,8 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	private ProgressionState progressionState;
 	private Integer invoiceId;
 	private BankAccountHelper accountHelper;
+	
+	private EdiSalesImporterHandler udapaImporter;
 	
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
@@ -297,6 +297,13 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		this.progressionState = progressionState;
 	}
 	
+	public EdiSalesImporterHandler getUdapaImporter() {
+		if(udapaImporter==null){
+			udapaImporter = new EdiSalesImporterHandler(this);
+		}
+		return udapaImporter;
+	}
+
 	public Integer getInvoiceId() {
 		return invoiceId;
 	}
@@ -902,19 +909,22 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		thread.start();		
 	}
 	
+	public boolean isUdapaIngenetEnabled() {
+		ApplicationParameter ap = AppParamUtil.getParameter("UDAPA_INGENET_ENABLED");
+		return ap != null && new Boolean(ap.getValue());
+	}
+	
 	public void onManufacture(ActionEvent event) {
 		Sales sales = (Sales) this.getTo();
-		List<ITransferObject> salesDetailList = sales.getDetailList();
 		
-		createManufacturingOrder(sales, salesDetailList);
+		SalesUtils utils = new SalesUtils();
+		utils.createManufacturingOrder(sales);
 		
-		ApplicationParameter ap = AppParamUtil.getParameter("UDAPA_INGENET_ENABLED");
-		if (ap != null && new Boolean(ap.getValue())) {
+		if (isUdapaIngenetEnabled()) {
 			LOGGER.info(" *** UDAPA INGENET ENABLED ***");
 			try {
 				IngenetSalesManager.getInstance().createSales(
-						AonUtil.getDomainName(), AonUtil.getRemoteUser(), sales,
-						salesDetailList);
+						AonUtil.getDomainName(), AonUtil.getRemoteUser(), sales);
 				AonUtil.addInfoMessage("Traspasado correctamente a INGENET");
 			} catch (Exception e) {
 				AonUtil.addErrorMessage(e.getMessage());
@@ -923,104 +933,5 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		}
 	}
 	
-	private void createManufacturingOrder(Sales sales,
-			List<ITransferObject> salesDetailList) {
-		AONContext ctx = AONContext
-				.getAONContext(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser());
-//		int purchaseId = PurchaseDAO.insertManufacturePurchase(ctx, sales
-//				.getDomain(), sales.getProject() != null ? sales.getProject()
-//				.getId() : null, sales.getSeries(), null, null, sales
-//				.getDiscountExpression() != null ? sales
-//				.getDiscountExpression().getDiscountExpr() : null, new Date(),
-//				null, sales.getSecurityLevel().ordinal(), SalesStatus.PENDING
-//						.ordinal(), sales.getComments(), sales.getRemarks(),
-//				sales.getWorkPlace() != null ? sales.getWorkPlace().getId()
-//						: null,
-//				null,// warehouse,
-//				sales.getScope().getId(), 0, 0, 0, "0", null, null, null,
-//				false, null, null, null, null, null, null, null, null, 0);
-		
-		com.esferalia.aon.occam.api.model.management.Purchase p = new com.esferalia.aon.occam.api.model.management.Purchase();
-		
-		p.setDomain(sales.getDomain());
-		p.setProject(sales.getProject() != null ? sales
-				.getProject().getId() : null);
-		// p.setSupplier(-1);
-		p.setSeries(sales.getSeries());
-		// p.setNumber(-1);
-		p.setPurchaseReference(null);
-		p.setAddress(null);
-		p.setDiscountExpr(sales.getDiscountExpression() != null ? sales
-				.getDiscountExpression().getDiscountExpr()
-				: null);
-		p.setIssueDate(new Date());
-		p.setPayMethod(null);
-		// p.setDocumentType(null);
-		p.setSecurityLevel(sales.getSecurityLevel()
-				.ordinal());
-		p.setStatus(PurchaseStatus.PENDING);
-		p.setComments(sales.getComments());
-		p.setRemarks(sales.getRemarks());
-		p.setWorkplace(sales.getWorkPlace() != null ? sales
-				.getWorkPlace().getId() : null);
-		p.setWarehouse(null);
-		p.setScope(sales.getScope().getId());
-		p.setNumberOfPymnts(0);
-		p.setDaysToFirstPymnt(0);
-		p.setDaysBetweenPymnts(0);
-		p.setPymntDays("0");
-		p.setBankAccount(null);
-		p.setBankAlias(null);
-		p.setBic(null);
-		p.setEmailCommunication(false);
-		p.setCarrier(null);
-		p.setShippingAlternativeAddress(null);
-		p.setShippingAlternativeAddress2(null);
-		p.setShippingAlternativeZip(null);
-		p.setShippingAlternativeCity(null);
-		p.setShippingAlternativePhone(null);
-		p.setShippingAlternativeRecipient(null);
-		p.setShippingContact(null);
-		p.setShippingPeriod(0);
-		
-		int purchaseId = PurchaseDAO.insertManufacturePurchase(ctx, p);
-		ctx.getDslContext().transaction(configuration -> {
-			createPurchaseLines(ctx, salesDetailList, purchaseId);
-		});
-	}
 	
-	private void createPurchaseLines(AONContext ctx,
-			List<ITransferObject> list, Integer purchaseId) {
-		list.stream()
-				.map(to -> (SalesDetail) to)
-				.forEach(
-						detail -> {
-							com.esferalia.aon.occam.api.model.management.PurchaseDetail pd = new com.esferalia.aon.occam.api.model.management.PurchaseDetail(); 
-							pd.setDomain(detail.getDomain());
-							pd.setPurchase(purchaseId);
-							pd.setProject(null);
-							pd.setLine(detail.getLine());
-							pd.setItem(detail.getItem().getId());
-							pd.setDescription(detail.getDescription());
-							pd.setQuantity(detail.getQuantity());
-							pd.setPrice(detail.getPrice());
-							pd.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
-							pd.setTaxes(detail.getTaxes());
-							pd.setStatus(com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus.valueOf(detail.getStatus().name()));
-							pd.setProposalDetail(null);
-							pd.setDelivered(detail.getDelivered());
-							PurchaseDAO.insertPurchaseDetail(ctx, pd);
-							
-//							PurchaseDAO.insertPurchaseDetail(ctx, detail
-//									.getDomain(), purchaseId, null, detail
-//									.getLine().shortValue(), detail.getItem()
-//									.getId(), detail.getDescription(), detail
-//									.getQuantity(), detail.getPrice(), detail
-//									.getDiscountExpression().getDiscountExpr(),
-//									detail.getTaxes(), (byte) detail
-//											.getStatus().ordinal(), null,
-//									detail.getDelivered());
-						});
-	}
-
 }

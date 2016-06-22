@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -23,8 +22,6 @@ import com.esferalia.aon.file.seres.udapa.delivery.data.SEH1P;
 public class UdapaDeliveryWriter {
 	
 	public static final String CHARSET_ENCODING = "ISO-8859-1";
-	
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
 	
 	
 	public FileOutput createFile(Delivery delivery, List<ITransferObject> list, Date date ) throws FileNotFoundException, UnsupportedEncodingException {

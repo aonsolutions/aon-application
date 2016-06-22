@@ -41,9 +41,10 @@ public class IngenetSalesManager {
 	}
 
 	
-	public void createSales(String domainName, String user, Sales sales, List<ITransferObject> salesDetailList) {
+	public void createSales(String domainName, String user, Sales sales) {
 		int domainId = IngenetContext.getUdapaDomainId();
 		int scopeId = IngenetContext.getUdapaMainScopeId();
+		List<ITransferObject> salesDetailList = sales.getDetailList();
 
 		AONContext ctx = IngenetContext.getAONContext(domainName,
 				domainId, user);

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -17,7 +19,8 @@ import com.code.aon.pool.AonConnectionException;
 
 public class IngenetConnectionInfo {
 
-	public static final String DEFAULT_CONFIG_FILE = "/etc/aon-aio/ingenet-connection";
+	public static final String CONNECTION_NAME = "ingenet-connection";
+	public static final String DEFAULT_CONFIG_FILE = "/etc/aon-aio/" + CONNECTION_NAME;
 
 	private static final String DRIVER_CLASS_PROPERTY = "driverClass";
 	private static final String USER_PROPERTY = "user";
@@ -39,7 +42,7 @@ public class IngenetConnectionInfo {
 	}
 
 	public static final IngenetConnectionInfo getDefaultConnectionInfo()
-			throws AonConnectionException {
+			throws AonConnectionException {	
 		synchronized (DEFAULT_CONFIG_FILE) {
 			if (DEFAULT_CONNNECTION == null) {
 				DEFAULT_CONNNECTION = new IngenetConnectionInfo();
@@ -108,8 +111,25 @@ public class IngenetConnectionInfo {
 	}
 
 	private void loadDefaulConfiguration() throws AonConnectionException {
-		load(new File(DEFAULT_CONFIG_FILE));
-
+		if(Files.exists(Paths.get(DEFAULT_CONFIG_FILE))){
+			load(new File(DEFAULT_CONFIG_FILE));
+		} else {
+			System.out.println("### Loading default connection info (File not found: " + DEFAULT_CONFIG_FILE +")");
+			InputStream in = null;
+			try {
+				in = IngenetConnectionInfo.class.getClassLoader().getResourceAsStream("com/esferalia/aon/ingenet/" + CONNECTION_NAME);
+				load(in);
+			} catch (IOException e) {
+				throw new AonConnectionException(e.getMessage(),e);
+			} finally {
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException e) {
+					}
+				}
+			}
+		}
 	}
 
 	public Connection getMetadataConnection() throws AonConnectionException {

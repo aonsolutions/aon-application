@@ -96,6 +96,16 @@
 							<f:setPropertyActionListener target="#{sales.showShipmentWindow}"
 								value="#{true}" />
 						</aon:menuItem>
+						<aon:if test="#{sales.udapaIngenetEnabled}">
+							<aon:menuItem id="import-Popup"
+								value="#{bundle.aon_import}"
+								iconClass="aon-icon-file-entrance"
+								actionListener="#{sales.udapaImporter.onImportFileShow}"
+								action="sales_form">
+								<f:setPropertyActionListener target="#{sales.udapaImporter.showImportFileWindow}"
+									value="#{true}" />
+							</aon:menuItem>
+						</aon:if>
 						<ui:include
 							src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 					</ui:define>
@@ -470,6 +480,7 @@
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalInvoice.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalSerialNumber.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalShipment.xhtml" />
+		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalImport.xhtml" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		<ui:include
