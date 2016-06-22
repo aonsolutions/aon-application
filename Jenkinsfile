@@ -63,7 +63,6 @@ node {
 
 @NonCPS
 def hotfix(text) {
-   def matcher = (text =~ /([0-9]+).([0-9]+)(.([0-9]+))?/);
-   matcher.matches();
+   def matcher = text =~ '([0-9]+).([0-9]+)(.([0-9]+))?'
    return "${matcher[0][1]}.${matcher[0][2]}.${matcher[0][4]?++(matcher[0][4]):1}";
 }
