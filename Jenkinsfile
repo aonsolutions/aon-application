@@ -74,7 +74,7 @@ def hotfix(text) {
 
 @NonCPS
 def parameters(text) {
-   matcher = text =~ '(?m)^\\+\\s+([0-9a-fA-F]+)\\s+(.*)$'
+   def matcher = text =~ '(?m)^\\+\\s+([0-9a-fA-F]+)\\s+(.*)$'
    def parameters =  []
    def i = 0;
    for ( match in matcher ) {
