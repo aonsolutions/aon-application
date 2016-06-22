@@ -64,5 +64,8 @@ node {
 @NonCPS
 def hotfix(text) {
    def matcher = text =~ '([0-9]+).([0-9]+)(.([0-9]+))?'
-   return "${matcher[0][1]}.${matcher[0][2]}.${matcher[0][4]?++(matcher[0][4]):1}";
+   def major = matcher[0][1]
+   def minor = matcher[0][2]
+   def hotfix = matcher[0][4] ? (matcher[0][4] as int) : 1;
+   return "${major}.${minor}.${hotfix}";
 }
