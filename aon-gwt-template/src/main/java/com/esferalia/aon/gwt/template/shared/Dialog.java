@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Vector;
 
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Dialog implements IsSerializable{

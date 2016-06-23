@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.template.shared;
 
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Hotel implements IsSerializable{

@@ -47,7 +47,6 @@ import com.esferalia.aon.gwt.template.server.StockInfo;
 import com.esferalia.aon.gwt.template.server.TransferInfo;
 import com.esferalia.aon.gwt.template.server.Utils;
 import com.esferalia.aon.gwt.template.shared.Error;
-import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.jooq.tables.records.ProposalDetailRecord;
 import com.esferalia.aon.jooq.tables.records.StockRecord;
 import com.esferalia.aon.jooq.tables.records.WarehouseTransferDetailRecord;
@@ -62,6 +61,7 @@ import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 
 public class DBStock {
 	
@@ -920,7 +920,7 @@ public class DBStock {
 			
 			for(Record3<Integer, String,Integer> r : data){
 				
-				w.setDomainId(domain.getId());
+				w.setDomain(domain.getId());
 				w.setId(r.value1());
 				w.setName(r.value2());
 				w.setWorkplace(r.value3());	
@@ -939,25 +939,25 @@ public class DBStock {
 			Result<Record3< Integer, String,Integer>> data ;
 			if(DBCatalogue.isParentUser(domain, user)){
 				data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
-						.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
+						.from(WAREHOUSE).leftOuterJoin(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
 						.where(WAREHOUSE.DOMAIN.eq(domain.getId()))
 						.orderBy(WAREHOUSE.NAME)
 						.fetch();
 			}
 			else{
 			data = ctx.getDslContext().select(WAREHOUSE.ID,WAREHOUSE.NAME,WAREHOUSE.WORKPLACE)
-				.from(WAREHOUSE).join(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
-				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
+				.from(WAREHOUSE).leftOuterJoin(WORKPLACE).on(WAREHOUSE.WORKPLACE.eq(WORKPLACE.ID))
+				.leftOuterJoin(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(WORKPLACE.SCOPE))
 				.where(WAREHOUSE.DOMAIN.eq(domain.getId()))
 				.and(USER_SCOPE.USER_ID.eq(user.getId()))
 				.orderBy(WAREHOUSE.NAME)
 				.fetch();
 			}
-			Vector<Warehouse> v = new Vector<Warehouse>();
 			
+			Vector<Warehouse> v = new Vector<Warehouse>();
 			for(Record3<Integer, String,Integer> r : data){
 				Warehouse w = new Warehouse();
-				w.setDomainId(domain.getId());
+				w.setDomain(domain.getId());
 				w.setId(r.value1());
 				w.setName(r.value2());
 				w.setWorkplace(0);//
@@ -999,7 +999,7 @@ public class DBStock {
 			
 			for(Record3<Integer, String,Integer> r : data){
 				Warehouse w = new Warehouse();
-				w.setDomainId(domain.getId());
+				w.setDomain(domain.getId());
 				w.setId(r.value1());
 				w.setName(r.value2());
 				w.setWorkplace(0);//
