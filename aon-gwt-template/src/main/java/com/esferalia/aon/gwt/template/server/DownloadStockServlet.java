@@ -33,10 +33,10 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
 import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
-import com.esferalia.aon.gwt.template.shared.Warehouse;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
