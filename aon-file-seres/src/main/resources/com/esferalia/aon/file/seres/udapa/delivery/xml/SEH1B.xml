@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <register name="SEH1B">
-	<field name="Información de Lotes" value="bean" property="informacionDeLotes" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Tipo Aviso de Expedición (351/35E)" value="bean" property="tipoAvisoDeExpedicion_351_35E_" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número Aviso de Expedición" value="bean" property="numeroAvisoDeExpedicion" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Emisor  (MS)" value="bean" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Receptor (MR)" value="bean" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Número de Jerarquía de Embalaje" value="bean" property="numeroDeJerarquiaDeEmbalaje" format="Numeric" pattern="9(12)" />
-	<field name="Número de Sub-jerarquía de Embalaje" value="bean" property="numeroDeSub_jerarquiaDeEmbalaje" format="AlphaNumeric" pattern="X(12)" />
-	<field name="Número de Línea Artículo" value="bean" property="numeroDeLineaArticulo" format="Numeric" pattern="9(6)" />
-	<field name="Contador Información de Lotes" value="bean" property="contadorInformacionDeLotes" format="Numeric" pattern="9(4)" />
-	<field name="Código Instrucciones" value="bean" property="codigoInstrucciones" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Fecha de Caducidad (36) (102/203)" value="bean" property="fechaDeCaducidad_36__102_203_" format="AlphaNumeric" pattern="X(12)" />
-	<field name="Fecha Recepción de Mercancías (50) (102/203)" value="bean" property="fechaRecepcionDeMercancias_50__102_203_" format="AlphaNumeric" pattern="X(12)" />
-	<field name="Mejor antes de fecha (361) (102/203)" value="bean" property="mejorAntesDeFecha_361__102_203_" format="AlphaNumeric" pattern="X(12)" />
-	<field name="Calificador cantidad  (11/12)" value="bean" property="calificadorCantidad_11_12_" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Cantidad" value="bean" property="cantidad" format="Numeric" pattern="9(2).999" />
-	<field name="Calificador  del número de identidad" value="bean" property="calificadorDelNumeroDeIdentidad" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Número de Identidad" value="bean" property="numeroDeIdentidad" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Fecha de Envasado o Empaquetado" value="bean" property="fechaDeEnvasadoOEmpaquetado" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Información de Lotes" value="bean" bean="SEH1B" property="informacionDeLotes" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo Aviso de Expedición (351/35E)" value="bean" bean="SEH1B" property="tipoAvisoDeExpedicion_351_35E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número Aviso de Expedición" value="bean" bean="SEH1B" property="numeroAvisoDeExpedicion" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" bean="SEH1B" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" bean="SEH1B" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Jerarquía de Embalaje" value="bean" bean="SEH1B" property="numeroDeJerarquiaDeEmbalaje" format="Numeric" pattern="9(12)" />
+	<field name="Número de Sub-jerarquía de Embalaje" value="bean" bean="SEH1B" property="numeroDeSub_jerarquiaDeEmbalaje" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Número de Línea Artículo" value="bean" bean="SEH1B" property="numeroDeLineaArticulo" format="Numeric" pattern="9(6)" />
+	<field name="Contador Información de Lotes" value="bean" bean="SEH1B" property="contadorInformacionDeLotes" format="Numeric" pattern="9(4)" />
+	<field name="Código Instrucciones" value="bean" bean="SEH1B" property="codigoInstrucciones" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha de Caducidad (36) (102/203)" value="bean" bean="SEH1B" property="fechaDeCaducidad_36__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Fecha Recepción de Mercancías (50) (102/203)" value="bean" bean="SEH1B" property="fechaRecepcionDeMercancias_50__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Mejor antes de fecha (361) (102/203)" value="bean" bean="SEH1B" property="mejorAntesDeFecha_361__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador cantidad  (11/12)" value="bean" bean="SEH1B" property="calificadorCantidad_11_12_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Cantidad" value="bean" bean="SEH1B" property="cantidad" format="Numeric" pattern="9(2).999" />
+	<field name="Calificador  del número de identidad" value="bean" bean="SEH1B" property="calificadorDelNumeroDeIdentidad" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de Identidad" value="bean" bean="SEH1B" property="numeroDeIdentidad" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Fecha de Envasado o Empaquetado" value="bean" bean="SEH1B" property="fechaDeEnvasadoOEmpaquetado" format="AlphaNumeric" pattern="X(12)" />
 </register>

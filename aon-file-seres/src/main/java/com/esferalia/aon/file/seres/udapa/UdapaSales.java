@@ -34,7 +34,7 @@ public class UdapaSales extends AbstractFileFiller{
 	public UdapaSales(ERE1C ere1c, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
 		super(writer);
 		if (ere1c == null)  {
-			throw new IllegalArgumentException("El registro RECTL no puede ser nulo!");
+			throw new IllegalArgumentException("El registro ERE1C no puede ser nulo!");
 		}
 		this.ere1c = ere1c;
 		

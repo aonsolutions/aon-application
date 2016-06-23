@@ -97,6 +97,16 @@
 							iconClass="aon-icon-pdf"
 							action="corporateIdentity_label"
 							actionListener="#{delivery.onSelectCorporateIdentity}" />
+							
+						<aon:if test="#{sales.udapaIngenetEnabled}">
+							<aon:menuItem id="exportEdi-file"
+								iconClass="aon-icon-file-entrance">
+								<aon:htmlCommandLink target="_blank"
+									value="#{bundle.webmail_download} EDI"
+									actionListener="#{delivery.onExportUdapaEdiFile}" >
+								</aon:htmlCommandLink>
+							</aon:menuItem>
+						</aon:if>
 						
 						<ui:include
 							src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />

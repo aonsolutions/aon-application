@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <register name="SEH1L">
-	<field name="Líneas" value="bean" property="lineas" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Tipo Aviso de Expedición (351/35E)" value="bean" property="tipoAvisoDeExpedicion_351_35E_" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número Aviso de Expedición" value="bean" property="numeroAvisoDeExpedicion" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Emisor  (MS)" value="bean" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Receptor (MR)" value="bean" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Número de Jerarquía de Embalaje" value="bean" property="numeroDeJerarquiaDeEmbalaje" format="AlphaNumeric" pattern="X(12)" />
-	<field name="Número de Sub-jerarquía de Embalaje" value="bean" property="numeroDeSub_jerarquiaDeEmbalaje" format="AlphaNumeric" pattern="X(12)" />
-	<field name="Número de Línea Artículo" value="bean" property="numeroDeLineaArticulo" format="Numeric" pattern="9(6)" />
-	<field name="Código de Artículo EAN-13 o DUN-14" value="bean" property="codigoDeArticuloEAN_13ODUN_14" format="AlphaNumeric" pattern="X(15)" />
-	<field name="Descripción del Artículo" value="bean" property="descripcionDelArticulo" format="AlphaNumeric" pattern="X(70)" />
-	<field name="Tipo Artículo EAN (CU/DU)" value="bean" property="tipoArticuloEAN_CU_DU_" format="AlphaNumeric" pattern="X(7)" />
-	<field name="Código Interno Artículo para el Proveedor  (SA)" value="bean" property="codigoInternoArticuloParaElProveedor_SA_" format="AlphaNumeric" pattern="X(15)" />
-	<field name="Variable Promocional  (PV)" value="bean" property="variablePromocional_PV_" format="AlphaNumeric" pattern="X(15)" />
-	<field name="Código DUN-14  (ADU)" value="bean" property="codigoDUN_14_ADU_" format="AlphaNumeric" pattern="X(15)" />
-	<field name="Código  ACU" value="bean" property="codigoACU" format="AlphaNumeric" pattern="X(15)" />
-	<field name="Número de Lote  (NB)" value="bean" property="numeroDeLote_NB_" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Número de Artículo del Comprador (1) (IN)" value="bean" property="numeroDeArticuloDelComprador_1__IN_" format="AlphaNumeric" pattern="X(15)" />
-	<field name="Cantidad de Envío (12)" value="bean" property="cantidadDeEnvio_12_" format="Numeric" pattern="9(2).999" />
-	<field name="Calificador Unidad de Medida" value="bean" property="calificadorUnidadDeMedida" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Unidades de Consumo en Unidad de Expedición" value="bean" property="unidadesDeConsumoEnUnidadDeExpedicion" format="Numeric" pattern="9(2).999" />
-	<field name="Fecha de Expiración (36) (102/203)" value="bean" property="fechaDeExpiracion_36__102_203_" format="AlphaNumeric" pattern="X(12)" />
-	<field name="Calificador Referencia 1" value="bean" property="calificadorReferencia1" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número Referencia 1" value="bean" property="numeroReferencia1" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Fecha Referencia 1(102/203)" value="bean" property="fechaReferencia1_102_203_" format="AlphaNumeric" pattern="X(12)" />
-	<field name="Calificador Referencia 2" value="bean" property="calificadorReferencia2" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número Referencia 2" value="bean" property="numeroReferencia2" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Fecha Referencia 2(102/203)" value="bean" property="fechaReferencia2_102_203_" format="AlphaNumeric" pattern="X(12)" />
-	<field name="Calificador Referencia 3" value="bean" property="calificadorReferencia3" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número Referencia 3" value="bean" property="numeroReferencia3" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Fecha Referencia 3(102/203)" value="bean" property="fechaReferencia3_102_203_" format="AlphaNumeric" pattern="X(12)" />
-	<field name="Unidades en Agrupación Superior (45E)" value="bean" property="unidadesEnAgrupacionSuperior_45E_" format="AlphaNumeric" pattern="X(16)" />
-	<field name="Código EAN adicional" value="bean" property="codigoEANAdicional" format="AlphaNumeric" pattern="X(15)" />
-	<field name="Cantidad sin Cargo (192)" value="bean" property="cantidadSinCargo_192_" format="AlphaNumeric" pattern="X(16)" />
-	<field name="Calificador  de Cantidad" value="bean" property="calificadorDeCantidad" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Otras Cantidades" value="bean" property="otrasCantidades" format="Numeric" pattern="9(2).999" />
-	<field name="Unidad de Medida Cantidad" value="bean" property="unidadDeMedidaCantidad" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Líneas" value="bean" bean="SEH1L" property="lineas" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo Aviso de Expedición (351/35E)" value="bean" bean="SEH1L" property="tipoAvisoDeExpedicion_351_35E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número Aviso de Expedición" value="bean" bean="SEH1L" property="numeroAvisoDeExpedicion" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" bean="SEH1L" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" bean="SEH1L" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Jerarquía de Embalaje" value="bean" bean="SEH1L" property="numeroDeJerarquiaDeEmbalaje" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Número de Sub-jerarquía de Embalaje" value="bean" bean="SEH1L" property="numeroDeSub_jerarquiaDeEmbalaje" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Número de Línea Artículo" value="bean" bean="SEH1L" property="numeroDeLineaArticulo" format="Numeric" pattern="9(6)" />
+	<field name="Código de Artículo EAN-13 o DUN-14" value="bean" bean="SEH1L" property="codigoDeArticuloEAN_13ODUN_14" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Descripción del Artículo" value="bean" bean="SEH1L" property="descripcionDelArticulo" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Tipo Artículo EAN (CU/DU)" value="bean" bean="SEH1L" property="tipoArticuloEAN_CU_DU_" format="AlphaNumeric" pattern="X(7)" />
+	<field name="Código Interno Artículo para el Proveedor  (SA)" value="bean" bean="SEH1L" property="codigoInternoArticuloParaElProveedor_SA_" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Variable Promocional  (PV)" value="bean" bean="SEH1L" property="variablePromocional_PV_" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Código DUN-14  (ADU)" value="bean" bean="SEH1L" property="codigoDUN_14_ADU_" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Código  ACU" value="bean" bean="SEH1L" property="codigoACU" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Número de Lote  (NB)" value="bean" bean="SEH1L" property="numeroDeLote_NB_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número de Artículo del Comprador (1) (IN)" value="bean" bean="SEH1L" property="numeroDeArticuloDelComprador_1__IN_" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Cantidad de Envío (12)" value="bean" bean="SEH1L" property="cantidadDeEnvio_12_" format="Numeric" pattern="9(12).999" />
+	<field name="Calificador Unidad de Medida" value="bean" bean="SEH1L" property="calificadorUnidadDeMedida" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Unidades de Consumo en Unidad de Expedición" value="bean" bean="SEH1L" property="unidadesDeConsumoEnUnidadDeExpedicion" format="Numeric" pattern="9(12).999" />
+	<field name="Fecha de Expiración (36) (102/203)" value="bean" bean="SEH1L" property="fechaDeExpiracion_36__102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador Referencia 1" value="bean" bean="SEH1L" property="calificadorReferencia1" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número Referencia 1" value="bean" bean="SEH1L" property="numeroReferencia1" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha Referencia 1(102/203)" value="bean" bean="SEH1L" property="fechaReferencia1_102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador Referencia 2" value="bean" bean="SEH1L" property="calificadorReferencia2" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número Referencia 2" value="bean" bean="SEH1L" property="numeroReferencia2" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha Referencia 2(102/203)" value="bean" bean="SEH1L" property="fechaReferencia2_102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador Referencia 3" value="bean" bean="SEH1L" property="calificadorReferencia3" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número Referencia 3" value="bean" bean="SEH1L" property="numeroReferencia3" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha Referencia 3(102/203)" value="bean" bean="SEH1L" property="fechaReferencia3_102_203_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Unidades en Agrupación Superior (45E)" value="bean" bean="SEH1L" property="unidadesEnAgrupacionSuperior_45E_" format="AlphaNumeric" pattern="X(16)" />
+	<field name="Código EAN adicional" value="bean" bean="SEH1L" property="codigoEANAdicional" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Cantidad sin Cargo (192)" value="bean" bean="SEH1L" property="cantidadSinCargo_192_" format="AlphaNumeric" pattern="X(16)" />
+	<field name="Calificador  de Cantidad" value="bean" bean="SEH1L" property="calificadorDeCantidad" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Otras Cantidades" value="bean" bean="SEH1L" property="otrasCantidades" format="Numeric" pattern="9(12).999" />
+	<field name="Unidad de Medida Cantidad" value="bean" bean="SEH1L" property="unidadDeMedidaCantidad" format="AlphaNumeric" pattern="X(6)" />
 </register>

@@ -32,13 +32,11 @@ public class UdapaDelivery extends AbstractFileFiller{
 	public UdapaDelivery(SEH1C seh1c, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
 		super(writer);
 		if (seh1c == null)  {
-			throw new IllegalArgumentException("El registro RECTL no puede ser nulo!");
+			throw new IllegalArgumentException("El registro SEH1C no puede ser nulo!");
 		}
 		this.seh1c = seh1c;
 		
 		InputStream input = null;
-		input = UdapaDelivery.class.getResourceAsStream("/com/esferalia/aon/file/seres/udapa/delivery/xml/SEH1C.xml");
-		DiskRegisterLoader.load(input, manager);
 		input = UdapaDelivery.class.getResourceAsStream("/com/esferalia/aon/file/seres/udapa/delivery/xml/SEH1C.xml");
 		DiskRegisterLoader.load(input, manager);
 		input = UdapaDelivery.class.getResourceAsStream("/com/esferalia/aon/file/seres/udapa/delivery/xml/SEH1D.xml");
