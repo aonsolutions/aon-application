@@ -123,6 +123,8 @@ public class Mod2002015toMOD2002015 {
 	    pagina05.setT00189(getKey(mod200,Mod2002015Key.BP189));
 	    pagina05.setT00190(getKey(mod200,Mod2002015Key.BP190));
 	    pagina05.setT00191(getKey(mod200,Mod2002015Key.BP191));
+	    pagina05.setT01001(getKey(mod200,Mod2002015Key.BP1001));
+	    pagina05.setT01002(getKey(mod200,Mod2002015Key.BP1002));
 	    pagina05.setT00192(getKey(mod200,Mod2002015Key.BP192));
 	    pagina05.setT00193(getKey(mod200,Mod2002015Key.BP193));
 	    pagina05.setT00702(getKey(mod200,Mod2002015Key.BP702));
@@ -208,7 +210,11 @@ public class Mod2002015toMOD2002015 {
 	    pagina07.setT00259(getKey(mod200,Mod2002015Key.PG259));
 	    pagina07.setT00260(getKey(mod200,Mod2002015Key.PG260));
 	    pagina07.setT00261(getKey(mod200,Mod2002015Key.PG261));
+	    pagina07.setT00760(getKey(mod200,Mod2002015Key.PG760));
+	    pagina07.setT00761(getKey(mod200,Mod2002015Key.PG761));
 	    pagina07.setT00262(getKey(mod200,Mod2002015Key.PG262));
+	    pagina07.setT00762(getKey(mod200,Mod2002015Key.PG762));
+	    pagina07.setT00763(getKey(mod200,Mod2002015Key.PG763));
 	    pagina07.setT00263(getKey(mod200,Mod2002015Key.PG263));
 	    pagina07.setT00264(getKey(mod200,Mod2002015Key.PG264));
 	    pagina07.setT00266(getKey(mod200,Mod2002015Key.PG266));
@@ -216,7 +222,6 @@ public class Mod2002015toMOD2002015 {
 	    pagina07.setT00268(getKey(mod200,Mod2002015Key.PG268));
 	    pagina07.setT00269(getKey(mod200,Mod2002015Key.PG269));
 	    pagina07.setT00271(getKey(mod200,Mod2002015Key.PG271));
-//	    pagina07.setT00272(getKey(mod200,Mod200Key.PG272));
 	    pagina07.setT00273(getKey(mod200,Mod2002015Key.PG273));
 	    pagina07.setT00274(getKey(mod200,Mod2002015Key.PG274));
 	    pagina07.setT00275(getKey(mod200,Mod2002015Key.PG275));

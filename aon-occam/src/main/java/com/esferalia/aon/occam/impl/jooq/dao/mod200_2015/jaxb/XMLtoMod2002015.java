@@ -113,6 +113,8 @@ public class XMLtoMod2002015 {
 		addVariable(mod200,Mod2002015Key.BP189, pag.getT00189());
 		addVariable(mod200,Mod2002015Key.BP190, pag.getT00190());
 		addVariable(mod200,Mod2002015Key.BP191, pag.getT00191());
+		addVariable(mod200,Mod2002015Key.BP1001, pag.getT01001());
+		addVariable(mod200,Mod2002015Key.BP1002, pag.getT01002());
 		addVariable(mod200,Mod2002015Key.BP192, pag.getT00192());
 		addVariable(mod200,Mod2002015Key.BP193, pag.getT00193());
 		addVariable(mod200,Mod2002015Key.BP702, pag.getT00702());
@@ -191,15 +193,17 @@ public class XMLtoMod2002015 {
 		addVariable(mod200,Mod2002015Key.PG259, pag.getT00259());
 		addVariable(mod200,Mod2002015Key.PG260, pag.getT00260());
 		addVariable(mod200,Mod2002015Key.PG261, pag.getT00261());
+		addVariable(mod200,Mod2002015Key.PG760, pag.getT00760());
+		addVariable(mod200,Mod2002015Key.PG761, pag.getT00761());
 		addVariable(mod200,Mod2002015Key.PG262, pag.getT00262());
+		addVariable(mod200,Mod2002015Key.PG762, pag.getT00762());
+		addVariable(mod200,Mod2002015Key.PG763, pag.getT00763());
 		addVariable(mod200,Mod2002015Key.PG263, pag.getT00263());
 		addVariable(mod200,Mod2002015Key.PG264, pag.getT00264());
-		//addVariable(mod200,Mod2002015Key.PG266, pag.getT00266());
 		addVariable(mod200,Mod2002015Key.PG267, pag.getT00267());
 		addVariable(mod200,Mod2002015Key.PG268, pag.getT00268());
 		addVariable(mod200,Mod2002015Key.PG269, pag.getT00269());
 		addVariable(mod200,Mod2002015Key.PG271, pag.getT00271());
-		//addVariable(mod200,Mod2002015Key.PG272, pag.getT00272()); ¿¿¿???
 		addVariable(mod200,Mod2002015Key.PG273, pag.getT00273());
 		addVariable(mod200,Mod2002015Key.PG274, pag.getT00274());
 		addVariable(mod200,Mod2002015Key.PG275, pag.getT00275());
