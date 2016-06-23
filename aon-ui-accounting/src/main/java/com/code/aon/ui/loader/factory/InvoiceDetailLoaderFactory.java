@@ -255,6 +255,7 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 					vatAccountEntryDetail2.setDocumento(invoice.getDocumentNumber());
 					vatAccountEntryDetail2.setEntry(entry);
 					vatAccountEntryDetail2.setConcepto(concept);
+					vatAccountEntryDetail2.setCuenta(null);
 					if (StringUtils.isBlank(vatAccountEntryDetail2.getCuenta())) {
 						Account vatAccount = (type == AccountEntryType.SALES_INVOICE)?getLoaderUtils().getOutputVatAccount():getLoaderUtils().getInputVatAccount();
 						vatAccountEntryDetail2.setCuenta( vatAccount.getCode() );
