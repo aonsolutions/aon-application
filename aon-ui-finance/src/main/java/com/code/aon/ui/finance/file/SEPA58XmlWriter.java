@@ -28,6 +28,7 @@ import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
+import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.enumeration.RegistryType;
@@ -72,7 +73,8 @@ public class SEPA58XmlWriter {
 		});
 		try {
 			File file = File.createTempFile("SEPA58", ".xml");
-			FileFiller sepa58 = new SEPA58Xml(lotList, false, file);
+			boolean cobro = fBatch.getFinanceBatchType() == FinanceBatchType.SEPA_58_COBRO_XML;
+			FileFiller sepa58 = new SEPA58Xml(lotList, cobro, file);
 			FileOutput output = new FileOutput();
 			output.setFile(file);
 			output.setErrors(sepa58.create());
@@ -83,7 +85,10 @@ public class SEPA58XmlWriter {
 	}
 
 	private void updateLot( Lot lot, Company company, Date bankDate, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails ) throws ManagerBeanException {
-		lot.setId(SEPA34_14XmlWriter.createId(company, fBatch, true));
+		String fsdd = "";
+		if(fBatch.getFinanceBatchType() == FinanceBatchType.SEPA_58_ANTICIPO_XML)
+			fsdd="FSDD";
+		lot.setId(fsdd +SEPA34_14XmlWriter.createId(company, fBatch, true));
 		
 		Presenter presenter = lot.getPresenter();
 		presenter.setId(SEPA34_14XmlWriter.createId(company, fBatch, false));
