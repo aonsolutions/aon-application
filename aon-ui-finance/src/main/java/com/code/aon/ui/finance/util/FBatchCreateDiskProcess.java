@@ -104,6 +104,7 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 					aebOutput = sepa34Writer.createXml(company, fbatch, fbatchDetailCollection);
 		    		break;
 		    	case SEPA_58_ANTICIPO_XML:
+		    	case SEPA_58_COBRO_XML:
 		    		controller.setMimeType(MimeType.MIME_XML);
 		    		SEPA58XmlWriter sepa58Writer = new SEPA58XmlWriter();
 		    		sepa58Writer.setProgression(controller.getProgressionState());

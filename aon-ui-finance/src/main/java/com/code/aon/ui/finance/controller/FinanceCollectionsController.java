@@ -29,8 +29,6 @@ import com.code.aon.finance.enumeration.Shift;
 import com.code.aon.finance.enumeration.StatementConcept;
 import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.config.controller.ConfigConstants;
-import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.InvoiceExportType;
 import com.code.aon.ui.util.AonUtil;
@@ -106,17 +104,13 @@ public class FinanceCollectionsController implements Serializable {
 	}
 
 	public List<SelectItem> getFinanceBatchPaymentTypes() {
-		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
 		if (financeBatchPaymentTypes == null) {
 			Locale locale = AonUtil.getCurrentLocale();
 			financeBatchPaymentTypes = new LinkedList<SelectItem>();
 			for (FinanceBatchType type : FinanceBatchType.values()) {
 				if ((type.isPayment() == null || type.isPayment()) && !type.isPayroll()) {
-					if(!type.equals(FinanceBatchType.SEPA_58_ANTICIPO_XML) || 
-							(type.equals(FinanceBatchType.SEPA_58_ANTICIPO_XML) && domainSwitcher.isBetaDomain())){
-						SelectItem item = new SelectItem(type, type.getName(locale));
-						financeBatchPaymentTypes.add(item);
-					}
+					SelectItem item = new SelectItem(type, type.getName(locale));
+					financeBatchPaymentTypes.add(item);
 				}
 			}
 		}
@@ -124,17 +118,13 @@ public class FinanceCollectionsController implements Serializable {
 	}
 
 	public List<SelectItem> getFinanceBatchChargeTypes() {
-		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
 		if (financeBatchChargeTypes == null) {
 			Locale locale = AonUtil.getCurrentLocale();
 			financeBatchChargeTypes = new LinkedList<SelectItem>();
 			for (FinanceBatchType type : FinanceBatchType.values()) {
 				if (type.isPayment() == null || !type.isPayment()) {
-					if(!type.equals(FinanceBatchType.SEPA_58_ANTICIPO_XML) || 
-							(type.equals(FinanceBatchType.SEPA_58_ANTICIPO_XML) && domainSwitcher.isBetaDomain())){
-						SelectItem item = new SelectItem(type, type.getName(locale));
-						financeBatchChargeTypes.add(item);
-					}
+					SelectItem item = new SelectItem(type, type.getName(locale));
+					financeBatchChargeTypes.add(item);
 				}
 			}
 		}
@@ -142,17 +132,13 @@ public class FinanceCollectionsController implements Serializable {
 	}
 
 	public List<SelectItem> getFinanceBatchPayrollTypes() {
-		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
 		if (financeBatchPayrollTypes == null) {
 			Locale locale = AonUtil.getCurrentLocale();
 			financeBatchPayrollTypes = new LinkedList<SelectItem>();
 			for (FinanceBatchType type : FinanceBatchType.values()) {
 				if ((type.isPayment() == null || type.isPayment()) && type.isPayroll()) {
-					if(!type.equals(FinanceBatchType.SEPA_58_ANTICIPO_XML) || 
-						(type.equals(FinanceBatchType.SEPA_58_ANTICIPO_XML) && domainSwitcher.isBetaDomain())){
-						SelectItem item = new SelectItem(type, type.getName(locale));
-						financeBatchPayrollTypes.add(item);
-					}
+					SelectItem item = new SelectItem(type, type.getName(locale));
+					financeBatchPayrollTypes.add(item);
 				}
 			}
 		}

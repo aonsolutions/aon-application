@@ -57,7 +57,7 @@ public class SEPA58Xml extends BasicSEPAXml {
 		addValue(name, lot.getPresenter().getName(), 70);
 		initiatingParty.appendChild(name);
 	
-		addOrganisationIdentification(initiatingParty, lot.getOrderer().getId(), null, getLocalInstrumentCode(), null );
+		addOrganisationIdentification(initiatingParty, lot.getOrderer().getId(), null, null, "SEPA" );
 	}
 	
 	private void addGroupHeader(Lot lot, Element customerDirectDebitInitiation ) {
