@@ -127,8 +127,8 @@ public class SocialInsuranceEntryController implements Serializable {
 				entry.setAccountPeriod(getEntry().getPeriod());
 				entry.setType(AccountEntryType.SOCIAL_INSURANCE);
 				entry.setSecurityLevel(getEntry().getSecurityLevel());
+				entry = (AccountEntry) entryBean.insert(entry);
 				entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
-				entry = (AccountEntry) entryBean.update(entry);
 				insertEntryDetails(entry);
 				AccountEntry adjust = null;
 				if (getEntry().isPaymentAdjustable()) {
