@@ -50,8 +50,8 @@ public class JooqCalendar {
 
 		List<HolidayRecord> result = dslContext.selectFrom(HOLIDAY)
 				.where(HOLIDAY.DOMAIN.eq(0))
-				//.or(HOLIDAY.DOMAIN.eq(parentDomain))
-				//.or(HOLIDAY.DOMAIN.eq(domain))
+				.or(HOLIDAY.DOMAIN.eq(parentDomain))
+				.or(HOLIDAY.DOMAIN.eq(domain))
 				.orderBy(HOLIDAY.DESCRIPTION.asc()).fetchInto(HOLIDAY);
 
 		Map<Integer, String> map = new TreeMap<Integer, String>();
