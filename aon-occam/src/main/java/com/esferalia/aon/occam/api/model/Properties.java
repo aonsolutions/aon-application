@@ -256,6 +256,53 @@ public interface Properties {
 		Property<Integer> getContactDataProperty();
 	}
 	
+	public interface DeliveryProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getProjectProperty();
+		Property<String> getSeriesProperty();
+		Property<Integer> getNumberProperty();
+		Property<Integer> getCustomerProperty();
+		Property<Integer> getAddressProperty();
+		Property<Timestamp> getIssueTimeProperty();
+		Property<Integer> getPayMethodProperty();
+		Property<Byte> getSecurityLevelProperty();
+		Property<Byte> getStatusProperty();
+		Property<String> getCommentsProperty();
+		Property<String> getRemarksProperty();
+		Property<Integer> getWorkplaceProperty();
+		Property<Integer> getScopeProperty();
+		Property<Short> getNumberOfPymntsProperty();
+		Property<Short> getDaysToFirstPymntProperty();
+		Property<Short> getDaysBetweenPymntProperty();
+		Property<String> getPymntDaysProperty();
+		Property<String> getBankAccountProperty();
+		Property<String> getBankAliasProperty();
+		Property<String> getBicProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
+		Property<String> getModificationUserProperty();
+	}
+	
+	public interface DeliveryDetailProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getDelivery();
+		Property<Short> getLine();
+		Property<Integer> getItem();
+		Property<String> getDescriptionProperty();
+		Property<Integer> getWarehouse();
+		Property<Double> getQuantity();
+		Property<Double> getPrice();
+		Property<String> getDiscountExpressionProperty();
+		Property<Integer> getSalesDetail();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
+		Property<String> getModificationUserProperty();
+	}
+	
 	public interface TagProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
