@@ -7,10 +7,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -28,8 +30,10 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
@@ -78,6 +82,7 @@ import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.util.writer.udapa.UdapaDeliveryWriter;
+import com.esferalia.aon.ingenet.IngenetDeliveryManager;
 
 public class DeliveryController extends HeaderObjectController implements IWarehouseConstants, IAuditableController {
 	
@@ -106,6 +111,8 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private WarehouseEmailUtil emailUtil;
 	private boolean shippingAlternativeAddress;
 	private BankAccountHelper accountHelper;
+	
+	private boolean showIngenetWindow;
 	
     public DeliveryController() {
     	this.emailUtil = new WarehouseEmailUtil();
@@ -265,6 +272,14 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 
 	public void setShippingAlternativeAddress(boolean shippingAlternativeAddress) {
 		this.shippingAlternativeAddress = shippingAlternativeAddress;
+	}
+
+	public boolean isShowIngenetWindow() {
+		return showIngenetWindow;
+	}
+
+	public void setShowIngenetWindow(boolean showIngenetWindow) {
+		this.showIngenetWindow = showIngenetWindow;
 	}
 
 	public boolean isCustomerReadOnly() {
@@ -766,6 +781,46 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	// **************************
 	// UDAPA EDI FILE
 	// **************************
+	private Map<Integer, String> ingenetDeliveries;
+	
+	public boolean isIngenetPendingDeliveries() {
+		return ingenetDeliveries!=null && ingenetDeliveries.keySet().size()>0;
+	}
+
+	public Collection<String> getIngenetDeliveries() {
+		return ingenetDeliveries.values();
+	}
+
+	public boolean isUdapaIngenetEnabled() {
+		ApplicationParameter ap = AppParamUtil.getParameter("UDAPA_INGENET_ENABLED");
+		return ap != null && new Boolean(ap.getValue());
+	}
+	
+	public void onSincronizeIngenet(ActionEvent event) {
+		try {
+			ingenetDeliveries = IngenetDeliveryManager.getInstance().obtainUnreadDeliveries(
+					AonUtil.getDomainName(), AonUtil.getRemoteUser());
+			this.setShowIngenetWindow(true);
+		} catch (Exception e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			LOGGER.error(e.getMessage());
+		}
+	}
+	
+	public void confirmIngenetDeliveries(ActionEvent event) {
+		try {
+			IngenetDeliveryManager.getInstance().createAonDeliveries(
+					AonUtil.getDomainName(), AonUtil.getRemoteUser(),
+					new LinkedList<>(ingenetDeliveries.keySet()),
+					DomainManager.getCurrentDomain());
+			AonUtil.addInfoMessage("Albaranes importados correctamente desde INGENET");
+		} catch (Exception e) {
+			AonUtil.addErrorMessage("NO SE HA PODIDO PROCESAR EL TRASPASO");
+			AonUtil.addErrorMessage(e.getMessage());
+			this.setShowIngenetWindow(false);
+		}
+	}
+	
 	public void onExportUdapaEdiFile(ActionEvent event) {
 		FileOutput output = null;
 		HttpServletResponse response = null;

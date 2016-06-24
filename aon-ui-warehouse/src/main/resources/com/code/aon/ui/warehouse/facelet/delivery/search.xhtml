@@ -15,10 +15,16 @@
 				<ui:param name="controller" value="#{delivery}" />
 				
 				<ui:define name="additionalToolbarContent">
-						<aon:commandLink id="proposal-import" value="Confirmación de Envíos"
-							onclick="deliveryx()"
-							styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
-						</aon:commandLink>
+					<aon:commandLink id="proposal-import" value="Confirmación de Envíos"
+						onclick="deliveryx()"
+						styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
+					</aon:commandLink>
+					<aon:if test="#{delivery.udapaIngenetEnabled}">
+						<aon:commandButton	id="sincronizeIngenet-delivery" 
+							value="Sincronizar INGENET"
+							styleClass="aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-sincronize"
+							actionListener="#{delivery.onSincronizeIngenet}" />
+					</aon:if>
 				</ui:define>
 			</ui:decorate>
 
@@ -35,6 +41,8 @@
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{saleItemLookup}" />		
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
-		<aon:lookupButtonPopup lookup="#{registryLookup}" />		
+		<aon:lookupButtonPopup lookup="#{registryLookup}" />
+		
+		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalIngenet.xhtml" />		
 	</ui:define>
 </ui:composition>
