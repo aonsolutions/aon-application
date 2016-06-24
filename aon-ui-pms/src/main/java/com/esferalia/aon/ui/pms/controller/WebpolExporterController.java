@@ -144,7 +144,7 @@ public class WebpolExporterController extends BasicController {
 			this.fileCount = 0;
 			this.clearCriteria();
 			this.setOrderList(null);
-			this.getCriteria().addInExpression("ProjectReservationGuest.projectReservation.hotelReservation.id", getHotelIds());
+			this.getCriteria().addInExpression("ProjectReservationGuest.projectReservation.hotel.id", getHotelIds());
 			this.getCriteria().addNotNullExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_DOCUMENT));
 			this.getCriteria().addNotEqualExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_DOCUMENT), "");
 			this.getCriteria().addNotEqualExpression("ProjectReservationGuest.projectReservation.status", ReservationStatus.CANCELLED);
