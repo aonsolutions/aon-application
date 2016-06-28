@@ -98,7 +98,8 @@ public class DBProduct {
 		product.setCode(p.getCode());
 		if(ti.getColumns().contains("Marca")) product.setBrand(p.getBrand());
 		if(ti.getColumns().contains("Categor\u00eda")) product.setCategory(p.getCategory());
-		if(ti.getColumns().contains("Inventoriable")) product.setInventoriable(p.isInventoriable());
+		if(ti.getColumns().contains("Inventariable") 
+				|| ti.getColumns().contains("Inventariable")) product.setInventoriable(p.isInventoriable());
 		if(ti.getColumns().contains("Estado")) product.setStatus(p.getStatus());
 		if(ti.getColumns().contains("IVA")) product.setVat(p.getVat());
 		if(ti.getColumns().contains("IRPF")) product.setRetention(p.getRetention());
@@ -150,6 +151,11 @@ public class DBProduct {
 			
 			products.stream().forEach(r->{	
 				
+				if(r.getProduct().isLotable() && !r.getProduct().isSerializable()){
+					error.setError(false);
+					verror.add("*Fila " + (r.getRow()+1)+": Para ser loteable tiene que ser serializable.");
+					error.setTextError(verror);
+				}
 				com.esferalia.aon.occam.api.model.product.Product product  = getProduct(domain, login, r.getProduct(), templateInfo);	
 				if(product != null){
 					
@@ -178,8 +184,6 @@ public class DBProduct {
 						}
 						if(r.getItem() != null){	
 							r.getItem().stream().forEach(i ->{
-								
-								
 								com.esferalia.aon.occam.api.model.product.Item item = getItem(domain, login, i, product);
 										//getItem(i, product.getId(), domain.getId(), sctx);
 								if(item != null && item.getId() != null){

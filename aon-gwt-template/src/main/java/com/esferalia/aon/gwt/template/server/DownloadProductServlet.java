@@ -425,7 +425,8 @@ public class DownloadProductServlet extends HttpServlet {
         		case "Tipo": celda.setCellValue(com.code.aon.product.enumeration.ProductType.values()[pi.getDownloadItem().getType().ordinal()].getName(new Locale("es_ES")));celda.setCellStyle(style2);break;
         		case "IVA": celda.setCellValue(pi.getDownloadItem().getVat().getName());celda.setCellStyle(style2);break;
         		case "IRPF": celda.setCellValue(pi.getDownloadItem().getRetention().getName());celda.setCellStyle(style2);break;
-        		case "Inventoriable": celda.setCellValue(pi.getDownloadItem().isInventoriable());celda.setCellStyle(style2);break;
+        		case "Inventoriable":
+        		case "Inventariable":celda.setCellValue(pi.getDownloadItem().isInventoriable());celda.setCellStyle(style2);break;
         		case "Producto Compuesto": celda.setCellValue(pi.getDownloadItem().isComposition());celda.setCellStyle(style2);break;
         		case "Precio Composici\u00f3n": celda.setCellValue(pi.getDownloadItem().isCompositionPrice());celda.setCellStyle(style2);break;
         		case "Estado": celda.setCellValue(ProductStatus.values()[pi.getDownloadItem().getStatus()].getName(new Locale("es_ES")));celda.setCellStyle(style2);break;

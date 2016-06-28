@@ -75,7 +75,7 @@ public interface TemplatesMessages extends Messages {
  	@DefaultMessage("IRPF")
 	String irpf();
  	
- 	@DefaultMessage("Inventoriable")
+ 	@DefaultMessage("Inventariable")
 	String inventoriable();
  	
  	@DefaultMessage("Producto Compuesto")
