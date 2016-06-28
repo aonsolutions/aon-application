@@ -424,7 +424,9 @@ public class CertificadosWriter implements Serializable {
 			if(cd.getName().equals(ContextVariable.WEEK_DAYS.getName()) || cd.getName().equals(ContextVariable.CONTRACT_DAYS.getName())){
 				Date startDate = cd.getStartDate();
 				Date endDate = cd.getEndDate();
-				Period period = new Period(startDate, endDate!=null?endDate:contract.getEndDate());
+				Period period = new Period(
+						startDate!=null?startDate:contract.getStartDate(),
+						endDate!=null?endDate:contract.getEndDate());
 				if(list==null){
 					list = new LinkedList<Period>();
 					list.add(period);
