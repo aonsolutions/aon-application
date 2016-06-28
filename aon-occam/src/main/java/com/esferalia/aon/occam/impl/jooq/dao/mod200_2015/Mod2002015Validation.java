@@ -93,7 +93,8 @@ public class Mod2002015Validation {
 				,MessageFormat.format(MUST_NEGATIVE_EXP,BP200.toString())));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE04,BP199
 				,MessageFormat.format(MUST_EQUAL_MSG,BP199.getDescription(),LQ500.getDescription())
-				,"(C0003 || C0004 || C0024 || C0025 || C0036 || C0061)? true : round(BP199) == round(LQ500)"));
+				//,"(C0003 || C0004 || C0024 || C0025 || C0036 || C0061)? true : round(BP199) == round(LQ500)"));
+				,"(C0003 || C0004 || C0024 || C0025 || C0036)? true : round(BP199) == round(LQ500)"));
 	}
 
 	
@@ -851,18 +852,18 @@ public class Mod2002015Validation {
 //				,"Compruebe los gastos financieros pendientes de deducir de per\u00EDodos "
 //				+ "anteriores aplicados en esta liquidaci\u00F3n, claves 258, 970 y 262" 
 //				,"LM258==(LM970+LM262)"));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE13,LM522
-				,MessageFormat.format(EQUAL_LESS_MSG,LM522.getDescription(),LM503.getDescription())
-				,MessageFormat.format(EQUAL_LESS_EXP,LM522.toString(),LM503.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE13,LM522
+//				,MessageFormat.format(EQUAL_LESS_MSG,LM522.getDescription(),LM503.getDescription())
+//				,MessageFormat.format(EQUAL_LESS_EXP,LM522.toString(),LM503.toString())));
 //		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE13,LM271
 //				,MessageFormat.format(EQUAL_LESS_MSG,LM271.getDescription(),LM270.getDescription())
 //				,MessageFormat.format(EQUAL_LESS_EXP,LM271.toString(),LM270.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE13,LM274
-				,MessageFormat.format(EQUAL_LESS_MSG,LM274.getDescription(),LM273.getDescription())
-				,MessageFormat.format(EQUAL_LESS_EXP,LM274.toString(),LM273.toString())));
-		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE13,LM957
-				,"Compruebe el importe pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado"
-				,"LM957==(LM043+LM049)-LM254-LM258"));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE13,LM274
+//				,MessageFormat.format(EQUAL_LESS_MSG,LM274.getDescription(),LM273.getDescription())
+//				,MessageFormat.format(EQUAL_LESS_EXP,LM274.toString(),LM273.toString())));
+//		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE13,LM957
+//				,"Compruebe el importe pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado"
+//				,"LM957==(LM043+LM049)-LM254-LM258"));
 	}
 
 	
