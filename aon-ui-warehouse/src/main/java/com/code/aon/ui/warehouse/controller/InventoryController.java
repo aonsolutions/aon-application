@@ -156,7 +156,10 @@ public class InventoryController extends BasicController implements IAuditableCo
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		String user = AonUtil.getRemoteUser();
+		if(user.contains("cau="))
+			user = user.substring(4);
 		Integer userId = AON.getUser(domainName, domainId, user).getId();
+		System.out.println(userId);
 		Integer[] array = AON.getUserScopes(domainName, domainId, user, userId);
 		LinkedList<Series> list = AON.getSeriesList(domainName, domainId, user,
 				f -> f.getActiveProperty().eq((byte) 1)
