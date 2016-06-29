@@ -1056,8 +1056,17 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		
 		switch (template) {
 		case "Producto": case "Product":
-			if((type.equals(Cell.CELL_TYPE_STRING) && !value.equals("")) || type.equals(Cell.CELL_TYPE_NUMERIC)){
-				stock.setProduct(toString(value));
+			if((type.equals(Cell.CELL_TYPE_STRING) && !value.equals(""))){
+				stock.setProduct(value.toString());
+				if(stock.getProduct().length() > 15){
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
+				}
+			}
+			
+			else if( type.equals(Cell.CELL_TYPE_NUMERIC)){
+				
+				stock.setProduct(String.format("%.0f",value ));
 				if(stock.getProduct().length() > 15){
 					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
 					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
