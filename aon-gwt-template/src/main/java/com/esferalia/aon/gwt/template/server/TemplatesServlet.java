@@ -1393,8 +1393,12 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 					}
 				}
 				if(b){
+					Long c = ti.getColumns().stream().filter(f -> f.contains("Detalle")).count();
 					ProductCategory productCategory = AON.insertProductCategory(domain.getName(), domain.getId(), getUser().getLogin(),
-							new ProductCategory().setDomain(domain.getId()).setName(strAux).setDetail(" ").setDetail2(" ").setDetail3(" "));
+							new ProductCategory().setDomain(domain.getId()).setName(strAux)
+							.setDetail(c==1 || c==2 || c==3 ? " " : null)
+							.setDetail2(c==2 || c==3 ? " " : null)
+							.setDetail3(c==3 ? " " : null));
 					product.getProduct().setCategory(productCategory.getId());
 				}
 			}
