@@ -19,6 +19,7 @@ import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.PrepaymentCollect;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.TaxBreakDown;
+import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.SalesDetail;
@@ -49,6 +50,7 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 		setUpdateEnabled(true);
 		setTaxDataInDetail(false);
 		setSkipServiceProcess(false);
+		setDiscountExpression(new DiscountExpression("0.0"));
 	}
 
     public void setPrice(double price) {

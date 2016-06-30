@@ -1227,6 +1227,7 @@
 		</primary-key>
 		<column name="booking_holder" type="com.esferalia.aon.pms.enumeration.BookingHolder"/>
 		<column name="source" type="com.esferalia.aon.pms.enumeration.ReservationSource"/>
+		<column name="tourist_tax_free" type="com.esferalia.aon.pms.enumeration.TouristTaxFreeCause"/>
 		<column name="check_status" type="com.esferalia.aon.pms.enumeration.ReservationCheckStatus"/>
 		<column name="status" type="com.esferalia.aon.pms.enumeration.ReservationStatus"/>
 		<column name="comments" type="text"/>

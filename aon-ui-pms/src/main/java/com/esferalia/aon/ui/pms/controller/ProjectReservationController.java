@@ -97,6 +97,7 @@ import com.esferalia.aon.pms.invoicing.AdvanceInvoiceTo;
 import com.esferalia.aon.pms.invoicing.AdvanceInvoicing;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
+import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
 import com.esferalia.aon.pms.reservation.InventoryManager;
 import com.esferalia.aon.pms.reservation.ReservationRequestManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
@@ -125,6 +126,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	private boolean showAuditInfoWindow;
 	private boolean showAdvanceInvoiceWindow;
 	private AdvanceInvoiceTo advanceInvoiceTo;
+	private boolean showTouristTaxInvoiceWindow;
 	private boolean showInvoiceWindow;
 	private ReservationInvoiceTo reservationInvoiceTo;
 	private boolean showRectificationWindow;
@@ -297,6 +299,13 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 	public void setAdvanceInvoiceTo(AdvanceInvoiceTo advanceInvoiceTo) {
 		this.advanceInvoiceTo = advanceInvoiceTo;
+	}
+
+	public boolean isShowTouristTaxInvoiceWindow() {
+		return showTouristTaxInvoiceWindow;
+	}
+	public void setShowTouristTaxInvoiceWindow(boolean showTouristTaxInvoiceWindow) {
+		this.showTouristTaxInvoiceWindow = showTouristTaxInvoiceWindow;
 	}
 
 	public boolean isShowInvoiceWindow() {
@@ -652,24 +661,25 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	private void cancelReservation(ActionEvent event) throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-    	InventoryManager manager = new InventoryManager();
 
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
 		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
 			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
+	    	List<Item> inventoryItems = new LinkedList<Item>();
 			if (StringUtils.isEmpty(reservation.getCrsCode())) {
-				List<Item> inventoryItems = getReservationUtils().getProjectReservationRoomDetailItems(reservationRoom);
+		    	inventoryItems = getReservationUtils().getProjectReservationRoomDetailItems(reservationRoom);
 		    	if (!inventoryItems.contains(reservationRoom.getItem())) {
 		    		inventoryItems.add(reservationRoom.getItem());
 		    	}
-	        	for (Item roomItem : inventoryItems) {
-		        	manager.processInventoryQuery(reservationRoom, reservationRoom.getHotel(), roomItem);
-	        	}
 			}
 
 	    	getReservationUtils().removeProjectReservationRoomDetails(reservationRoom, false, null);
+
+			if (StringUtils.isEmpty(reservation.getCrsCode())) {
+				sendInventoryData(reservationRoom, inventoryItems);
+			}
 		}
 
 		boolean cancelOk = true;
@@ -715,6 +725,13 @@ public class ProjectReservationController extends BasicController implements IPm
 			sendAgencyNoShowEmail(reservation);
 		}
 	}
+
+    private void sendInventoryData(ProjectReservationRoom reservationRoom, List<Item> inventoryItems) {
+    	InventoryManager manager = new InventoryManager();
+		for (Item item : inventoryItems) {
+	    	manager.processInventoryQuery(reservationRoom, reservationRoom.getHotel(), item);
+		}
+    }
 
 	private Integer obtainCancelPenaltyDays(ProjectReservation reservation, boolean noShow) throws ManagerBeanException {
 		Integer penaltyDays = null;
@@ -957,6 +974,113 @@ public class ProjectReservationController extends BasicController implements IPm
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
+		}
+		return true;
+	}
+
+	public void onTouristTaxInvoiceShow(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		try {
+			if (!PosUtils.isUserPosShiftOpened()) {
+				setShowAdvanceInvoiceWindow(false);
+				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			if (isReservationAlreadyInvoiced(reservation)) {
+				reservation.setStatus(ReservationStatus.INVOICED);
+				accept(event);
+				setSelectedTab(INVOICE);
+
+				setShowAdvanceInvoiceWindow(false);
+				String msg = "La Reserva ya estaba Facturada.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			Item touristTaxItem = getReservationUtils().obtainTouristTaxItem();
+			if (touristTaxItem == null) {
+				setShowTouristTaxInvoiceWindow(false);
+				String msg = "No se puede Facturar. No esta definido el Producto para Tasas.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			setReservationInvoiceTo(new ReservationInvoiceTo(true));
+			getReservationInvoiceTo().setIssueDate(reservation.getStartDate());
+			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
+			fillTouristTaxInvoiceData(reservation, touristTaxItem);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+	}
+
+	private void fillTouristTaxInvoiceData(ProjectReservation reservation, Item touristTaxItem) throws ManagerBeanException {
+		getReservationInvoiceTo().setRegistry(reservation.getHotel().getCustomer().getRegistry());
+		getReservationInvoiceTo().setAddress(new InvoiceAddress());
+
+		IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID), reservation.getId());
+		criteria.addOrder(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_GUEST_INDEX));
+		for (ITransferObject ito : reservationGuestBean.getList(criteria)) {
+			ProjectReservationGuest reservationGuest = (ProjectReservationGuest)ito;
+			getReservationInvoiceTo().setGuest(reservationGuest);
+			fillGuestData(reservationGuest);
+			break;
+		}
+
+		getReservationInvoiceTo().setTouristTax(true);
+		getReservationInvoiceTo().setHotel(reservation.getHotel());
+
+		getReservationInvoiceTo().setServices(new LinkedList<HotelService>());
+		HotelService service = new HotelService(getReservationInvoiceTo());
+		service.setItem(touristTaxItem);
+		service.setFromDate(reservation.getStartDate());
+		service.setToDate(DateUtils.addDays(reservation.getEndDate(), -1));
+		service.setQuantity(reservation.getTouristTaxPending());
+		getReservationInvoiceTo().getServices().add(service);
+
+		getReservationInvoiceTo().setFinances(new LinkedList<Finance>());
+		Finance finance = new Finance();
+		finance.setAmount(getReservationUtils().getReservationPendingTouristTaxAmount(reservation, touristTaxItem));
+		getReservationInvoiceTo().getFinances().add(finance);
+	}
+
+	public void onTouristTaxInvoice(ActionEvent event) {
+		setInvoiceModel(null);
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		try {
+			if (validateTouristTaxInvoice()) {
+				getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
+				getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+
+				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
+				reservationInvoicing.invoice(getReservationInvoiceTo(), reservation);
+
+        		reservation.setTouristTaxPayed(null);
+				setSelectedTab(INVOICE);
+			}
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+	}
+
+	private boolean validateTouristTaxInvoice() throws ManagerBeanException {
+		if (getReservationInvoiceTo().getRegistry().isDocumentValidable() && !getReservationInvoiceTo().getRegistry().isValidDocument()) {
+			String msg = AonUtil.getMessage(REGISTRY_DOCUMENT_INCORRECT_ERROR);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (getReservationInvoiceTo().getFirstFinance().getPayMethod() == null) {
+			String msg = "La Forma de Pago es obligatoria.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (getReservationInvoiceTo().getFirstFinance().getAmount() < 0) {
+			String msg = "No se puede generar Factura. Importe incorrecto.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 		return true;
 	}
@@ -1354,6 +1478,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			if (getInvoiceToRectify().isService()) {
 				IController reservationServiceController = (IController)AonUtil.getRegisteredBean(RESERVATION_SERVICE_CONTROLLER_NAME);
 				reservationServiceController.onSearch(null);
+				reservation.setTouristTaxPayed(null);
 			}
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());

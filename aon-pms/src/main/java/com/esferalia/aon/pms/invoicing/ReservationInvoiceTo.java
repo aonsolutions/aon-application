@@ -38,6 +38,7 @@ public class ReservationInvoiceTo implements Serializable {
 	private IAddress address;
 	private String comments;
 	private ProductType serviceType;
+	private boolean touristTax;
 	private boolean earlyCheckOut;
 	private Date earlyCheckOutDate;
 	private Item penaltyItem;
@@ -143,6 +144,13 @@ public class ReservationInvoiceTo implements Serializable {
 	}
 	public void setServiceType(ProductType serviceType) {
 		this.serviceType = serviceType;
+	}
+
+	public boolean isTouristTax() {
+		return touristTax;
+	}
+	public void setTouristTax(boolean touristTax) {
+		this.touristTax = touristTax;
 	}
 
 	public boolean isEarlyCheckOut() {

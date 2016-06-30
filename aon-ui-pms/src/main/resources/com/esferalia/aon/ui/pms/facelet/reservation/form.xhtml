@@ -45,6 +45,14 @@
 						<f:setPropertyActionListener target="#{reservation.showAdvanceInvoiceWindow}"
 							value="#{true}" />
 					</aon:menuItem>
+					<aon:menuItem id="reservation-TouristTaxInvoice"
+						value="#{bundle.pms_tourist_tax_invoice}" immediate="#{true}" 
+						rendered="#{reservation.reservationPermission.touristTaxInvoiceAllowed}"
+						iconClass="aon-icon-favorite"
+						actionListener="#{reservation.onTouristTaxInvoiceShow}">
+						<f:setPropertyActionListener target="#{reservation.showTouristTaxInvoiceWindow}"
+							value="#{true}" />
+					</aon:menuItem>
 					<aon:menuItem id="reservation-Invoice"
 						value="#{bundle.aon_key_invoice_description}" immediate="#{true}" 
 						rendered="#{reservation.reservationPermission.invoiceAllowed}"
@@ -188,6 +196,9 @@
 			</ui:define>
 		</ui:decorate>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalAdvance.xhtml">
+			<ui:param name="controller" value="#{reservation}" />
+		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalTouristTax.xhtml">
 			<ui:param name="controller" value="#{reservation}" />
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalInvoice.xhtml">

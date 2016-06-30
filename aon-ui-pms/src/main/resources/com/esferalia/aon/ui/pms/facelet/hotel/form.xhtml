@@ -143,29 +143,39 @@
 						value="#{bundle.pms_hotel_sheet_changing}" />
 					<aon:inputText id="Hotel_sheetChanging"
 						value="#{hotel.to.sheetChanging}"
-						size="2" maxlength="2" />
+						size="5" maxlength="2" />
 						
 					<aon:outputLabel for="Hotel_policeCode"
 						value="#{bundle.pms_policeCode}" />
-					<h:panelGrid columns="3">
+					<aon:panelGrid columns="3" styleClass="aon-noborder" 
+						columnClasses="aon-noborder aon-width-110,aon-noborder aon-width-90,aon-noborder aon-width-auto">
 						<aon:inputText id="Hotel_policeCode"
 							value="#{hotel.to.policeCode}"
-							size="10" maxlength="10" />
+							size="16" maxlength="10" />
 						<aon:outputLabel for="Hotel_policeCounter" styleClass="aon-italic aon-margin-left"
 							value="#{bundle.aon_counter}" />
-						<rich:inputNumberSpinner id="Hotel_policeCounter" 
+						<rich:inputNumberSpinner id="Hotel_policeCounter" styleClass="aon-margin-left"
 							value="#{hotel.to.policeCounter}"
-							inputSize="3" minValue="001" maxValue="999">
-			   			</rich:inputNumberSpinner>
-					</h:panelGrid>
+							inputSize="3" minValue="001" maxValue="999" />
+					</aon:panelGrid>
 					
 					<aon:outputLabel for="Hotel_active" 
 						value="#{bundle.aon_active}" />
-					<aon:selectOneRadio id="Hotel_active"
-						value="#{hotel.to.active}" required="true">
-						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-					</aon:selectOneRadio>				
+					<aon:panelGrid columns="3" styleClass="aon-noborder" 
+						columnClasses="aon-noborder aon-width-110,aon-noborder aon-width-90,aon-noborder aon-width-auto">
+						<aon:selectOneRadio id="Hotel_active"
+							value="#{hotel.to.active}" required="true">
+							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+						</aon:selectOneRadio>				
+						<aon:outputLabel for="Hotel_touristTax" styleClass="aon-italic aon-margin-left"
+							value="#{bundle.pms_tourist_tax}" />
+						<aon:selectOneRadio id="Hotel_touristTax"
+							value="#{hotel.to.touristTax}" required="true">
+							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+						</aon:selectOneRadio>				
+					</aon:panelGrid>
 
 				</aon:panelGrid>
 				

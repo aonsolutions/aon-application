@@ -44,6 +44,7 @@ import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemAddInfo;
@@ -442,8 +443,8 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), reservationId);
 		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
-		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), false);
-		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ADVANCE), true);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), Boolean.FALSE);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ADVANCE), Boolean.TRUE);
 		Projection projection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_TOTAL));
 		Object result = invoiceBean.getUniqueResult(projection, criteria);
 		return (result != null) ? CommonUtil.round(((Double)result).doubleValue()) : 0;
@@ -454,8 +455,8 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), reservationId);
 		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
-		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), false);
-		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ADVANCE), true);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), Boolean.FALSE);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ADVANCE), Boolean.TRUE);
 		Projection projection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_VAT_QUOTA));
 		Object result = invoiceBean.getUniqueResult(projection, criteria);
 		return (result != null) ? CommonUtil.round(((Double)result).doubleValue()) : 0;
@@ -477,6 +478,38 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
 		return strategy.getTotalPrice(reservation, customer);
     }
+
+	public int getReservationTouristTaxPayed(Integer reservationId) throws ManagerBeanException {
+		Item touristTaxItem = obtainTouristTaxItem();
+		if (touristTaxItem != null) {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_PROJECT_ID), reservationId);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_TYPE), InvoiceType.SALES);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_SERVICE), Boolean.TRUE);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ADVANCE), Boolean.FALSE);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_ID), touristTaxItem.getId());
+			Projection projection = Projection.sum(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_QUANTITY));
+			Object result = invoiceDetailBean.getUniqueResult(projection, criteria);
+			return (result != null) ? ((Double)result).intValue() : 0;
+		}
+		return 0;
+	}
+
+	public double getReservationPendingTouristTaxAmount(ProjectReservation reservation, Item touristTaxItem) throws ManagerBeanException {
+		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
+		InvoiceDetail calculable = new InvoiceDetail();
+		calculable.setItem(touristTaxItem);
+
+		int quantity = reservation.getTouristTaxPending();
+		double amount = 0;
+		for (Date date = reservation.getStartDate(); date.before(reservation.getEndDate()); date = DateUtils.addDays(date, 1)) {
+			calculable.setQuantity(calculable.getQuantity() + 1);
+			double price = strategy.getUnitPrice(calculable, date, reservation.getHotel().getCustomer());
+			amount = CommonUtil.round(amount + quantity * price, 4);
+		}
+		return CommonUtil.round(amount * (1 + touristTaxItem.getVat().getPercentage() / 100));
+	}
 
 
 	public Hotel obtainHotel(String hotelCode) throws ManagerBeanException, ReservationException {
@@ -1171,6 +1204,10 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 
 	public Item obtainAdvanceItem() throws ManagerBeanException {
 		return obtainAppParamItem(AppParam.PMS_ADVANCE_ITEM);
+	}
+
+	public Item obtainTouristTaxItem() throws ManagerBeanException {
+		return obtainAppParamItem(AppParam.PMS_TOURIST_TAX_ITEM);
 	}
 
 	public Item obtainEarlyCheckOutItem() throws ManagerBeanException {

@@ -168,10 +168,16 @@ public class ProjectReservationPermission implements Serializable {
 		return roleAllowed && reservation.isActive() && reservation.isGuestHolder();
 	}
 
+	public boolean isTouristTaxInvoiceAllowed() throws ManagerBeanException {
+		Date now = new Date();
+		boolean roleAllowed = isInHouse(now) || isAfterCheckOut(now);
+		return roleAllowed && reservation.isActive() && !isPendingAssignation() && reservation.getTouristTaxPending() > 0;
+	}
+
 	public boolean isInvoiceAllowed() throws ManagerBeanException {
 		Date now = new Date();
 		boolean roleAllowed = isInHouse(now) || isAfterCheckOut(now);
-		return roleAllowed && reservation.isActive() && !isPendingAssignation();
+		return roleAllowed && reservation.isActive() && !isPendingAssignation() && reservation.getTouristTaxPending() == 0;
 	}
 
 	public boolean isNoShowAllowed() throws ManagerBeanException {

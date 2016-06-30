@@ -59,7 +59,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
     	} catch (ManagerBeanException ex) {
     		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
     	}
-	}	
+	}
 
 	@Override
 	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {

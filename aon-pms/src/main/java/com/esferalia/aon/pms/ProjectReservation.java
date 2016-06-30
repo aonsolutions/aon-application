@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,6 +65,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private double vatPercent;
 	private double realDiscountPercent;
 	private Double advancedAmount;
+	private Integer touristTaxPayed;
 	private String hrCreditCardHolder;
 	private String hrCreditCardNumber;
 	private String hrCreditCardExpirationMonth;
@@ -135,6 +137,35 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setAdvancedAmount(Double advancedAmount) {
 		this.advancedAmount = advancedAmount;
+	}
+
+	@Transient
+	public boolean isTouristTax() throws ManagerBeanException {
+		return getHotel().isTouristTax() && getTouristTaxFree() == null;
+	}
+
+	@Transient
+	public Integer getTouristTaxPayed() {
+		if (touristTaxPayed == null) {
+			ReservationUtils reservationUtils = new ReservationUtils(getDomain());
+			try {
+				touristTaxPayed = reservationUtils.getReservationTouristTaxPayed(getId());
+			} catch (ManagerBeanException ex) {
+				LOGGER.error("Error obtaining advanced amount", ex);
+			}
+		}
+		return touristTaxPayed;
+	}
+	public void setTouristTaxPayed(Integer touristTaxPayed) {
+		this.touristTaxPayed = touristTaxPayed;
+	}
+
+	@Transient
+	public int getTouristTaxPending() throws ManagerBeanException {
+		if (isTouristTax()) {
+			return getAdultCount() - (getTouristTaxPayed() / getNights());
+		}
+		return 0;
 	}
 
 	@Transient
@@ -365,6 +396,19 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 			return guestName;
 		}
 		return null;
+	}
+
+	@Transient
+	public List<ProjectReservationRoom> getReservationRoomList() throws ManagerBeanException {
+		List<ProjectReservationRoom> reservationRoomList = new LinkedList<ProjectReservationRoom>();
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
+		criteria.addOrder(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ROOM_INDEX));
+		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
+			reservationRoomList.add((ProjectReservationRoom)ito);
+		}
+		return reservationRoomList;
 	}
 
 	@Transient
