@@ -169,6 +169,10 @@ public enum AppParam {
 
 	APP_SMART_CARD_PARAM,
 	
+	EDI_SUPPORT,
+	
+	EDI_COMPANY_CODE,
+	
 	REPORT_invoicePrint,
 	
 	REPORT_saleInvoice,

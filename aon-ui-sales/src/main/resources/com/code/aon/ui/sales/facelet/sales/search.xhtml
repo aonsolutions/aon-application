@@ -14,7 +14,7 @@
 				<ui:param name="toolbarTitle" value="#{bundle.sales_module}" />
 				<ui:param name="controller" value="#{sales}" />
 				<ui:define name="additionalToolbarContent">
-					<aon:if test="#{sales.udapaIngenetEnabled}">
+					<aon:if test="#{company.ediSupportEnabled}">
 						<aon:commandButton id="import-Popup"
 							value="#{bundle.aon_import}"
 							title="#{bundle.aon_import}"

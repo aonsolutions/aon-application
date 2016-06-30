@@ -28,8 +28,8 @@ public class UdapaDeliveryWriter {
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 	
 	
-	public FileOutput createFile(Delivery delivery) throws FileNotFoundException, UnsupportedEncodingException {
-		SEH1C seh1c = createSEH1CRecord( delivery );
+	public FileOutput createFile(Delivery delivery, String companyEdiCode, String customerEdiCode) throws FileNotFoundException, UnsupportedEncodingException {
+		SEH1C seh1c = createSEH1CRecord( delivery, companyEdiCode, customerEdiCode );
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
 		FileFiller filler = new UdapaDelivery(seh1c, writer);
@@ -39,17 +39,20 @@ public class UdapaDeliveryWriter {
 		return output;
 	}
 	
-	private SEH1C createSEH1CRecord( Delivery delivery ) {
+	private SEH1C createSEH1CRecord( Delivery delivery, String companyEdiCode, String customerEdiCode ) {
 		// TODO Auto-generated method stub
 		SEH1C seh1c = new SEH1C();
 		
 		seh1c.setCabecera("SEH1C");
 		seh1c.setTipoAvisoDeExpedicion_351_35E_(SEH1C.V1001T.AVISO_DE_EXPEDICIO_351.getValue());
 		seh1c.setNumeroAvisoDeExpedicion(delivery.getReferenceCode());
+		
 		// TODO CodigoEmisor
-		seh1c.setCodigoEmisor_MS_("");
+		seh1c.setCodigoEmisor_MS_(companyEdiCode);
+		
 		// TODO CodigoReceptor
-		seh1c.setCodigoReceptor_MR_("");
+		seh1c.setCodigoReceptor_MR_(customerEdiCode);
+		
 		seh1c.setFuncionDelMensaje(SEH1C.V1225F.ORIGINA_9.getValue());
 		seh1c.setFechaDelDocumento_137__102_203_(dateFormat.format(delivery.getDate()));
 		seh1c.setFechaEsperadaDeEntrega_17__102_203_(null);

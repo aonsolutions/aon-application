@@ -8,6 +8,7 @@ public interface ICustomerConstants {
 	
 	String CUSTOMER_CONTROLLER_NAME = "customer";
 	String CUSTOMER_OBSERVATION_CONTROLLER_NAME = "customerObservation";
+	String CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME = "customerEdiSupport";
 	String CUSTOMER_FACE_CONTROLLER_NAME = "customerFACe";
 	String CUSTOMER_SEARCH_LISTENER_NAME = "customerSearch";
 	
@@ -20,6 +21,7 @@ public interface ICustomerConstants {
 	// ************************************************************
 
 	String CUSTOMER_EINVOICE_TAB = "customerEInvoice";
+	String CUSTOMER_EDI_TAB = "customerEDI";
 	String CUSTOMER_FORM_NAME = "customer_form";
 	String CUSTOMER_FEE_TAB = "fee";
 	String INVOICING_GROUP_FORM_NAME = "invoicingGroup_form";

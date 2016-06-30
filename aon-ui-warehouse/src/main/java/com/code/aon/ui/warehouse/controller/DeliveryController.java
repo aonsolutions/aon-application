@@ -60,10 +60,14 @@ import com.code.aon.sales.bridge.SalesTransferManager;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
+import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
+import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
@@ -826,10 +830,15 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		HttpServletResponse response = null;
 		OutputStream out = null;
 		try {
-			// writer file
 			Delivery delivery = (Delivery) this.getTo();
+			CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
+			String customerEdiCode = ediSupport.getEdiCodes(delivery.getCustomer(), delivery.getRegistryAddress()).get(CustomerEdiSupportController.ALBARANES);
+			CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			String companyEdiCode = company.getEdiCompanyCode();
+			
+			// writer file
 			UdapaDeliveryWriter writer = new UdapaDeliveryWriter();
-			output = writer.createFile(delivery);
+			output = writer.createFile(delivery, companyEdiCode, customerEdiCode);
 		
 			// download file
         	String name = "albaran";

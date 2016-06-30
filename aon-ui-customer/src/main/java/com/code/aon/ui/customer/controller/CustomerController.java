@@ -6,11 +6,15 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ui.common.controller.IAuditableController;
@@ -68,6 +72,10 @@ public class CustomerController extends CustomerListController implements ICusto
 	protected boolean isAccountSynchronizable(Customer customer) {
 		Account account = customer.getAccount();
 		return account != null && account.getId() != null && !customer.getRegistry().getFullName().equals(account.getDescription());
+	}
+
+	public boolean isEdiSupportEnabled() {
+		return StringUtils.isNotBlank(AppParamUtil.getValue(AppParam.EDI_SUPPORT));
 	}
 
 	public void onAccountSynchronize(ActionEvent event) {
@@ -150,10 +158,18 @@ public class CustomerController extends CustomerListController implements ICusto
 		BasicController invoicingGroupController = (BasicController)AonUtil.getRegisteredBean(INVOICING_GROUP_CONTROLLER_NAME);
 		invoicingGroupController.onLoad(event, customer.getInvoicingGroup().getId(), CUSTOMER_FORM_NAME, CUSTOMER_CONTROLLER_NAME + ".select");
 	}
-
+	
 	public void eInvoiceChange(ValueChangeEvent event) throws ManagerBeanException {
 		if(event.getNewValue()!=null && (boolean) event.getNewValue()){
 			setSelectedTab(CUSTOMER_EINVOICE_TAB);
+		} else {
+			setSelectedTab(null);
+		}
+	}
+	
+	public void ediChange(ValueChangeEvent event) throws ManagerBeanException {
+		if(event.getNewValue()!=null && (boolean) event.getNewValue()){
+			setSelectedTab(CUSTOMER_EDI_TAB);
 		} else {
 			setSelectedTab(null);
 		}

@@ -36,6 +36,13 @@
 				value="#{company.active}" />										
 		</aon:if>
 		
+		<aon:if test="#{company.ediSupportEnabled}">
+			<aon:outputLabel for="Company_ediCompanyCode"
+				value="Cod. Punto operacional EDI" />
+			<aon:inputText id="Company_ediCompanyCode" size="60"
+				value="#{company.ediCompanyCode}" />
+		</aon:if>
+		
 		<aon:if test="#{!company.nevv}" >
 			<aon:outputText value="#{bundle.aon_lastAccess_date}" />
 			<aon:panelGroup>

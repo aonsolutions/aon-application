@@ -98,11 +98,13 @@
 							action="corporateIdentity_label"
 							actionListener="#{delivery.onSelectCorporateIdentity}" />
 							
-						<aon:if test="#{sales.udapaIngenetEnabled}">
+						<aon:if test="#{company.ediSupport eq 'seresnet_udapa'}">
 							<aon:menuItem id="sincronizeIngenet-delivery"
 								value="Sincronizar INGENET"
 								iconClass="aon-icon-sincronize"
 								actionListener="#{delivery.onSincronizeIngenet}" />
+						</aon:if>
+						<aon:if test="#{company.ediSupportEnabled}">
 							<aon:menuItem id="exportEdi-delivery"
 								iconClass="aon-icon-file-entrance">
 								<aon:htmlCommandLink target="_blank"

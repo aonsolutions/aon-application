@@ -11,10 +11,13 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
@@ -24,6 +27,7 @@ import com.code.aon.ui.company.controller.ICompanyController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyControllerListener extends ControllerAdapter {
@@ -89,12 +93,20 @@ public class CompanyControllerListener extends ControllerAdapter {
 					case WEB:
 						web = rmedia;
 						break;
+					default:
+						break;
 				}
 			}
 			c.setPhone(phone);				
 			c.setFax(fax);				
 			c.setEmail(email);				
 			c.setWeb(web);
+			
+			if(((CompanyController)c).isEdiSupportEnabled()){
+				ApplicationParameter param = AppParamUtil.getParameter(AppParam.EDI_SUPPORT);
+				((CompanyController)event.getController()).setEdiSupport(param!=null?param.getValue():null);
+				((CompanyController)event.getController()).setEdiCompanyCode(AppParamUtil.getParameter(AppParam.EDI_COMPANY_CODE).getValue());
+			}
 			
 			initDomainValues(c);
 		} catch (ManagerBeanException e) {
@@ -122,6 +134,14 @@ public class CompanyControllerListener extends ControllerAdapter {
 			
 			if(c.isAddressDirty()){
 				saveRegistryAddress(c.getMainAddress());
+			}
+			
+			if(AonUtil.getRoleManager().isSysAdmin()){
+				AppParamUtil.insertParameter(AppParam.EDI_SUPPORT.name(), ((CompanyController)c).getEdiSupport());
+			}
+			
+			if(((CompanyController)c).isEdiSupportEnabled()){
+				AppParamUtil.insertParameter(AppParam.EDI_COMPANY_CODE.name(), ((CompanyController)c).getEdiCompanyCode());
 			}
 			
 			updateDomainValues(c);

@@ -1200,6 +1200,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- **************** CUSTOMER EDI SUPPORT  *************** -->
+	<managed-bean>
+		<managed-bean-name>customerEdiSupport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.customer.controller.CustomerEdiSupportController</managed-bean-class>		
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- **************** INVOICING GROUP  *************** -->
 	<managed-bean>
 		<managed-bean-name>invoicingGroup</managed-bean-name>

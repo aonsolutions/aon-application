@@ -42,6 +42,19 @@
 							actionListener="#{company.onDisableBetaDomain}" />
 					</aon:panelGrid>
 				</aon:panel>
+				<aon:panel style="width:100%;" >
+					<f:facet name="header">
+						<aon:outputText value="Otros parametros" />
+					</f:facet>
+					<aon:panelGrid  columns="2" style="padding:10px;">
+						<aon:outputText value="Soporte EDI" />
+						<aon:selectOneMenu value="#{company.ediSupport}">
+							<f:selectItem itemLabel="No Habilitado" itemValue="#{null}" />
+							<f:selectItem itemLabel="Seresnet estandar" itemValue="seresnet_standard" />
+							<f:selectItem itemLabel="Seresnet Udapa" itemValue="seresnet_udapa" />
+						</aon:selectOneMenu>
+					</aon:panelGrid>
+				</aon:panel>
 			</aon:if>
 						
 			<ui:include

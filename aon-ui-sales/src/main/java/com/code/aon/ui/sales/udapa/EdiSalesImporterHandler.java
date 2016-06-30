@@ -28,12 +28,14 @@ import com.code.aon.product.enumeration.ProductKind;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryAddInfo;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryNote;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
+import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sales.controller.ISalesConstants;
@@ -54,7 +56,6 @@ public class EdiSalesImporterHandler implements Serializable {
 	private static final long serialVersionUID = 210023208960242355L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(EdiSalesImporterHandler.class);
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
-	private final String ADD_INFO_UDAPA_CODE_NAME = "CODIGO_UDAPA";
 	
 	private IController controller;
 	private AonFile aonFile;
@@ -104,9 +105,9 @@ public class EdiSalesImporterHandler implements Serializable {
 	public void createSales(ActionEvent event, ERE1C ere1c) {
 		Sales sales = (Sales) controller.getTo();
 		try {
-			Customer customer = searchCustomer(ere1c.getCodigoComprador_BY_());
+			Customer customer = searchCustomer(ere1c.getCodigoEmisor_MS_().trim());
 			if(customer==null){
-				AonUtil.addErrorMessage("No existe el cliente con el codigo " + ere1c.getCodigoComprador_BY_());
+				AonUtil.addErrorMessage("No existe el cliente con el codigo " + ere1c.getCodigoEmisor_MS_());
 			} else {
 				SalesController salesController = (SalesController) controller;
 				sales.setCustomer(customer);
@@ -124,7 +125,7 @@ public class EdiSalesImporterHandler implements Serializable {
 					AonUtil.addErrorMessage("No se ha podido convertir la fecha: " + ere1c.getFechaDelDocumento_137__102_());
 					throw new AbortProcessingException(e.getMessage(), e);
 				}
-				if(ere1c.getTipoDePedido_220_221_224_226_22E_().equals(ERE1C.C1001T.CANCELACION_DE_PEDID_226)){
+				if(ere1c.getTipoDePedido_220_221_224_226_22E_().equals(ERE1C.C1001T.CANCELACION_DE_PEDID_226.getValue())){
 					sales.setDocumentType(DocumentType.ITEM_RETURN);
 				} else {
 					sales.setDocumentType(DocumentType.NORMAL);
@@ -178,23 +179,24 @@ public class EdiSalesImporterHandler implements Serializable {
 	private Customer searchCustomer(String customerCode) {
 		Integer registryId = null;
 		try {
-			IManagerBean addInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
+			IManagerBean rnoteBean = BeanManager.getManagerBean(RegistryNote.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(addInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), ADD_INFO_UDAPA_CODE_NAME);
-			criteria.addEqualExpression(addInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE), customerCode);
-			List<ITransferObject> list = addInfoBean.getList(criteria);
-			registryId = list!=null && !list.isEmpty()?((RegistryAddInfo)list.get(0)).getRegistry().getId():null;
+			criteria.addExpression(ExpressionUtilities.getLikeExpression(
+					rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_COMMENTS),
+					"%" + CustomerEdiSupportController.PEDIDOS + "="
+							+ customerCode + ";%"));
+			List<ITransferObject> list = rnoteBean.getList(criteria);
+			registryId = list != null && !list.isEmpty() ? ((RegistryNote) list
+					.get(0)).getRegistry().getId() : null;
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage());
 		}
+		
 		if(registryId!=null){
 			try {
 				IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_ID), registryId);
-				List<ITransferObject> list = customerBean.getList(criteria);
-				return list!=null && !list.isEmpty()?(Customer)list.get(0):null;
+				return (Customer) customerBean.get(registryId);
 			} catch (ManagerBeanException ex) {
 				AonUtil.addErrorMessage(ex.getMessage());
 				throw new AbortProcessingException(ex.getMessage());

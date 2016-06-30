@@ -96,7 +96,7 @@
 							<f:setPropertyActionListener target="#{sales.showShipmentWindow}"
 								value="#{true}" />
 						</aon:menuItem>
-						<aon:if test="#{sales.udapaIngenetEnabled}">
+						<aon:if test="#{company.ediSupportEnabled}">
 							<aon:menuItem id="import-Popup"
 								value="#{bundle.aon_import} EDI"
 								iconClass="aon-icon-file-entrance"

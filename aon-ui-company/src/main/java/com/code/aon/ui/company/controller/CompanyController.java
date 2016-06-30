@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +19,14 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.ImageUtil;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Scope;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
@@ -54,7 +57,31 @@ public class CompanyController extends CompanyParentController {
 	private AonFile deliveryBackgroundFile;
 	private AonFile salesBackgroundFile;
 	private AonFile offerBackgroundFile;
+	
+	private String ediSupport;
+	private String ediCompanyCode;
+	
+	
 
+	public String getEdiSupport() {
+		return ediSupport;
+	}
+	public void setEdiSupport(String ediSupport) {
+		this.ediSupport = ediSupport;
+	}
+	
+	public boolean isEdiSupportEnabled() {
+		return StringUtils.isNotBlank(AppParamUtil
+				.getValue(AppParam.EDI_SUPPORT));
+	}
+	
+	public String getEdiCompanyCode() {
+		return ediCompanyCode;
+	}
+	public void setEdiCompanyCode(String ediCompanyCode) {
+		this.ediCompanyCode = ediCompanyCode;
+	}
+	
 	/**
 	 * Gets the uploaded logo file.
 	 * 

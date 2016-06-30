@@ -77,22 +77,35 @@
 							</aon:div>
 						</aon:if>
 
-						<aon:if test="#{company.EInvoice}">
-							<aon:outputLabel for="Customer_eInvoice"
-								value="#{bundle.customer_eInvoice}" />
-							<aon:div id="customerEInvoiceDiv">
-								<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
-									<aon:selectOneRadio id="Customer_eInvoice" value="#{customer.to.EInvoice}"
+						<aon:if test="#{company.ediSupportEnabled or company.EInvoice}">
+							<aon:outputText value="#{bundle.aon_edi}" title="#{bundle.aon_edi_title}" />
+							<aon:div>
+								<aon:if test="#{company.EInvoice}">
+									<aon:selectBooleanCheckbox id="Customer_eInvoice"
+										styleClass="aon-margin-left" value="#{customer.to.EInvoice}"
+										title="#{bundle.aon_activate}/#{bundle.aon_deactivate} #{bundle.customer_eInvoice}"
 										valueChangeListener="#{customer.eInvoiceChange}">
-										<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
-										<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
 										<a4j:support event="onchange" ajaxSingle="true"
-											reRender="customerEInvoiceDiv,customerTab" />
-									</aon:selectOneRadio>
-								</h:panelGrid>
+											reRender="customerTab" />
+									</aon:selectBooleanCheckbox>
+									<aon:outputLabel for="Customer_eInvoice"
+										value="#{bundle.customer_eInvoice}" />
+								</aon:if>
+								<aon:if test="#{company.ediSupportEnabled}">
+									<aon:selectBooleanCheckbox id="Customer_edi"
+										styleClass="aon-margin-left"
+										value="#{customerEdiSupport.enabled}"
+										title="#{bundle.aon_activate}/#{bundle.aon_deactivate} #{bundle.aon_edi_message}"
+										valueChangeListener="#{customer.ediChange}">
+										<a4j:support event="onchange" ajaxSingle="true"
+											reRender="customerTab" />
+									</aon:selectBooleanCheckbox>
+									<aon:outputLabel for="Customer_edi"
+										value="#{bundle.aon_edi_message}" />
+								</aon:if>
 							</aon:div>
 						</aon:if>
-	
+
 						<aon:if test="#{!customer.nevv and customer.to.invoicingGroup.id != null}">
 							<aon:outputLabel value="#{bundle.customer_invoicingGroup}" />
 							<aon:div>
@@ -343,6 +356,12 @@
 									<ui:param name="controller" value="#{customer}" />
 								</ui:include>
  							</aon:panelTab>
+						</aon:if>						
+						
+						<aon:if test="#{company.ediSupportEnabled and customerEdiSupport.enabled}">
+							<aon:panelTab id="customerEDI" label="#{bundle.aon_edi_message}">
+								<ui:include src="/com/code/aon/ui/customer/facelet/customer/formEDI.xhtml"  />
+							</aon:panelTab>
 						</aon:if>						
 
 					</aon:panelTabSet>
