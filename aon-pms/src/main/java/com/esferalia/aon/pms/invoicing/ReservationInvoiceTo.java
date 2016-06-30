@@ -21,6 +21,7 @@ import com.code.aon.registry.Registry;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
+import com.esferalia.aon.pms.enumeration.TouristTaxFreeCause;
 
 public class ReservationInvoiceTo implements Serializable {
 	
@@ -39,6 +40,7 @@ public class ReservationInvoiceTo implements Serializable {
 	private String comments;
 	private ProductType serviceType;
 	private boolean touristTax;
+	private TouristTaxFreeCause touristTaxFreeCause;
 	private boolean earlyCheckOut;
 	private Date earlyCheckOutDate;
 	private Item penaltyItem;
@@ -151,6 +153,13 @@ public class ReservationInvoiceTo implements Serializable {
 	}
 	public void setTouristTax(boolean touristTax) {
 		this.touristTax = touristTax;
+	}
+
+	public TouristTaxFreeCause getTouristTaxFreeCause() {
+		return touristTaxFreeCause;
+	}
+	public void setTouristTaxFreeCause(TouristTaxFreeCause touristTaxFreeCause) {
+		this.touristTaxFreeCause = touristTaxFreeCause;
 	}
 
 	public boolean isEarlyCheckOut() {

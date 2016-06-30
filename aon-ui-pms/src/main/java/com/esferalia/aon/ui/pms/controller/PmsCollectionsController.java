@@ -36,6 +36,7 @@ import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.pms.enumeration.TouristTaxFreeCause;
 import com.esferalia.aon.pms.reservation.IReservationConstants;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
@@ -47,6 +48,7 @@ public class PmsCollectionsController implements Serializable {
 	private List<SelectItem> reservationDivertStatuses;
 	private List<SelectItem> bookingHolders;
 	private List<SelectItem> personDocumentTypes;
+	private List<SelectItem> touristTaxFreeCauses;
 
 	public Hotel getHotel() {
 		return null;
@@ -393,6 +395,19 @@ public class PmsCollectionsController implements Serializable {
 			personDocumentTypes.add(new SelectItem(DocumentType.PASSPORT, DocumentType.PASSPORT.getName(locale)));
 		}
 		return personDocumentTypes;
+	}
+
+	public List<SelectItem> getTouristTaxFreeCauses() {
+		if (touristTaxFreeCauses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			touristTaxFreeCauses = new LinkedList<SelectItem>();
+			for (TouristTaxFreeCause cause : TouristTaxFreeCause.values()) {
+				String name = cause.getName(locale);
+				SelectItem item = new SelectItem(cause, name);
+				touristTaxFreeCauses.add(item);
+			}
+		}
+		return touristTaxFreeCauses;
 	}
 
 }

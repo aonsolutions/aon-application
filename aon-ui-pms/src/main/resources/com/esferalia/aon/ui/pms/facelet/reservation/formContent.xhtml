@@ -58,8 +58,8 @@
 				rendered="#{reservation.reservationPermission.undoCheckStatusAllowed}">
 				<f:setPropertyActionListener target="#{reservation.showConfirmWindow}"
 					value="#{reservation.to.noShow}" />
-						<f:setPropertyActionListener target="#{reservation.confirmNoShow}"
-							value="#{false}" />
+				<f:setPropertyActionListener target="#{reservation.confirmNoShow}"
+					value="#{false}" />
 			</aon:commandButton>
 		</aon:div>
 	</aon:panelGrid>
@@ -286,7 +286,7 @@
 	</aon:div>
 
 	<aon:outputLabel value="#{bundle.aon_amount} #{bundle.aon_total}" rendered="#{!reservation.nevv}" />
-	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto" rendered="#{!reservation.nevv}">
+	<aon:panelGrid columns="3" columnClasses="aon-width-130, aon-width-130, aon-width-auto" rendered="#{!reservation.nevv}">
 		<aon:div>
 			<aon:outputText	value="#{reservation.to.total}"	styleClass="aon-bold">
 				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
@@ -326,13 +326,40 @@
 				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 			</aon:outputText>
 			<aon:commandButton id="enable-Advance" value="&#160;"
-				styleClass="aon-icon-commandButton aon-search-add aon-margin-left"
+				styleClass="aon-icon-commandButton aon-icon-plus aon-margin-left"
 				title="#{bundle.pms_advance_enabled}" immediate="true" 
 				actionListener="#{reservation.onEnableAdvance}"
 				rendered="#{reservation.reservationPermission.advanceEnable}" />
 			<aon:inputText id="ProjectReservation_advance"
-				value="#{reservation.to.advance}" size="8"
+				value="#{reservation.to.advance}" size="6"
 				rendered="#{reservation.reservationPermission.advanceEditable}" />
+		</aon:div>
+		<aon:div id="TouristTaxDiv" rendered="#{reservation.to.hotel.touristTax}">
+			<aon:outputLabel for="ProjectReservation_touristTax"
+				value="#{bundle.pms_tourist_tax}:" 
+				styleClass="aon-margin-right aon-italic" />
+			<aon:outputText value="#{reservation.to.touristTaxAmount}"
+				styleClass="aon-bold" style="#{(reservation.to.touristTaxPending > 0) ? ('color:red;') : ('')}"
+				rendered="#{reservation.to.touristTaxFree == null}">
+				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+			</aon:outputText>
+			<aon:commandButton id="free-TouristTax" value="&#160;"
+				styleClass="aon-icon-commandButton aon-icon-wrong aon-margin-left"
+				title="#{bundle.pms_tourist_tax_free}" immediate="true" 
+				actionListener="#{reservation.onTouristTaxFreeShow}"
+				rendered="#{reservation.to.touristTaxFree == null and reservation.to.touristTaxPending == reservation.to.adultCount}">
+				<f:setPropertyActionListener target="#{reservation.showTouristTaxFreeWindow}"
+					value="#{true}" />
+			</aon:commandButton>
+			<aon:outputText value="#{bundle.aon_exempt}"
+				styleClass="aon-bold"
+				rendered="#{reservation.to.touristTaxFree != null}" />
+			<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-info"
+				rendered="#{reservation.to.touristTaxFree != null}" />
+			<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="auto" 
+				rendered="#{reservation.to.touristTaxFree != null}">
+				<aon:outputText	value="#{reservation.to.touristTaxFree}" />
+			</rich:toolTip>
 		</aon:div>
 	</aon:panelGrid>
 

@@ -169,6 +169,17 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
+	public double getTouristTaxAmount() throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils(getDomain());
+		try {
+			return reservationUtils.getReservationTouristTaxAmount(this, null, false);
+		} catch (ManagerBeanException ex) {
+			LOGGER.error("Error obtaining advanced amount", ex);
+		}
+		return 0;
+	}
+
+	@Transient
 	public String getHrCreditCardHolder() {
 		return hrCreditCardHolder;
 	}

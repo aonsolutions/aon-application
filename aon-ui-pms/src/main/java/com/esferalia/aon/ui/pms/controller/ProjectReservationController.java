@@ -127,6 +127,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	private boolean showAdvanceInvoiceWindow;
 	private AdvanceInvoiceTo advanceInvoiceTo;
 	private boolean showTouristTaxInvoiceWindow;
+	private boolean showTouristTaxFreeWindow;
 	private boolean showInvoiceWindow;
 	private ReservationInvoiceTo reservationInvoiceTo;
 	private boolean showRectificationWindow;
@@ -306,6 +307,13 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 	public void setShowTouristTaxInvoiceWindow(boolean showTouristTaxInvoiceWindow) {
 		this.showTouristTaxInvoiceWindow = showTouristTaxInvoiceWindow;
+	}
+
+	public boolean isShowTouristTaxFreeWindow() {
+		return showTouristTaxFreeWindow;
+	}
+	public void setShowTouristTaxFreeWindow(boolean showTouristTaxFreeWindow) {
+		this.showTouristTaxFreeWindow = showTouristTaxFreeWindow;
 	}
 
 	public boolean isShowInvoiceWindow() {
@@ -1042,7 +1050,7 @@ public class ProjectReservationController extends BasicController implements IPm
 
 		getReservationInvoiceTo().setFinances(new LinkedList<Finance>());
 		Finance finance = new Finance();
-		finance.setAmount(getReservationUtils().getReservationPendingTouristTaxAmount(reservation, touristTaxItem));
+		finance.setAmount(getReservationUtils().getReservationTouristTaxAmount(reservation, touristTaxItem, true));
 		getReservationInvoiceTo().getFinances().add(finance);
 	}
 
@@ -1063,6 +1071,19 @@ public class ProjectReservationController extends BasicController implements IPm
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+	}
+
+	public void onTouristTaxFreeShow(ActionEvent event) {
+		setReservationInvoiceTo(new ReservationInvoiceTo(true));
+		getReservationInvoiceTo().setTouristTaxFreeCause(null);
+	}
+
+	public void onTouristTaxFree(ActionEvent event) {
+		if (getReservationInvoiceTo().getTouristTaxFreeCause() != null) {
+			ProjectReservation reservation = (ProjectReservation)this.getTo();
+			reservation.setTouristTaxFree(getReservationInvoiceTo().getTouristTaxFreeCause());
+			accept(event);
 		}
 	}
 

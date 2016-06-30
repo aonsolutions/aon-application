@@ -479,6 +479,25 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return strategy.getTotalPrice(reservation, customer);
     }
 
+	public double getReservationTouristTaxAmount(ProjectReservation reservation, Item touristTaxItem, boolean pending) throws ManagerBeanException {
+		if (touristTaxItem == null) {
+			touristTaxItem = obtainTouristTaxItem();
+		}
+
+		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
+		InvoiceDetail calculable = new InvoiceDetail();
+		calculable.setItem(touristTaxItem);
+
+		int quantity = pending ? reservation.getTouristTaxPending() : reservation.getAdultCount();
+		double amount = 0;
+		for (Date date = reservation.getStartDate(); date.before(reservation.getEndDate()); date = DateUtils.addDays(date, 1)) {
+			calculable.setQuantity(calculable.getQuantity() + 1);
+			double price = strategy.getUnitPrice(calculable, date, reservation.getHotel().getCustomer());
+			amount = CommonUtil.round(amount + quantity * price, 4);
+		}
+		return CommonUtil.round(amount * (1 + touristTaxItem.getVat().getPercentage() / 100));
+	}
+
 	public int getReservationTouristTaxPayed(Integer reservationId) throws ManagerBeanException {
 		Item touristTaxItem = obtainTouristTaxItem();
 		if (touristTaxItem != null) {
@@ -494,21 +513,6 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			return (result != null) ? ((Double)result).intValue() : 0;
 		}
 		return 0;
-	}
-
-	public double getReservationPendingTouristTaxAmount(ProjectReservation reservation, Item touristTaxItem) throws ManagerBeanException {
-		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
-		InvoiceDetail calculable = new InvoiceDetail();
-		calculable.setItem(touristTaxItem);
-
-		int quantity = reservation.getTouristTaxPending();
-		double amount = 0;
-		for (Date date = reservation.getStartDate(); date.before(reservation.getEndDate()); date = DateUtils.addDays(date, 1)) {
-			calculable.setQuantity(calculable.getQuantity() + 1);
-			double price = strategy.getUnitPrice(calculable, date, reservation.getHotel().getCustomer());
-			amount = CommonUtil.round(amount + quantity * price, 4);
-		}
-		return CommonUtil.round(amount * (1 + touristTaxItem.getVat().getPercentage() / 100));
 	}
 
 
