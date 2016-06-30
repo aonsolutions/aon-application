@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <register name="SINCV">
-	<field name="Vencimientos" value="bean" property="vencimientos" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Tipo Factura (325, 380, 381, 383, 385)" value="bean" property="tipoFactura_325_380_381_383_385_" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número de Factura" value="bean" property="numeroDeFactura" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Vendedor (SU)" value="bean" property="codigoVendedor_SU_" format="AlphaNumeric" pattern="X(13)" />
-	<field name="Código Comprador (BY)" value="bean" property="codigoComprador_BY_" format="AlphaNumeric" pattern="X(13)" />
-	<field name="Número de Vencimiento" value="bean" property="numeroDeVencimiento" format="Numeric" pattern="9(6)" />
-	<field name="Fecha Vencimiento" value="bean" property="fechaVencimiento" format="Numeric" pattern="9(8)" />
-	<field name="Importe sujeto al vencimiento" value="bean" property="importeSujetoAlVencimiento" format="Numeric" pattern="9(4).999" />
+	<field name="Vencimientos" value="SINCV" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo Factura (325, 380, 381, 383, 385)" value="bean" bean ="SINCV" property="tipoFactura_325_380_381_383_385_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Factura" value="bean" bean ="SINCV" property="numeroDeFactura" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Vendedor (SU)" value="bean" bean ="SINCV" property="codigoVendedor_SU_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Código Comprador (BY)" value="bean" bean ="SINCV" property="codigoComprador_BY_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Número de Vencimiento" value="bean" bean ="SINCV" property="numeroDeVencimiento" format="Numeric" pattern="9(6)" />
+	<field name="Fecha Vencimiento" value="bean" bean ="SINCV" property="fechaVencimiento" format="Numeric" pattern="9(8)" />
+	<field name="Importe sujeto al vencimiento" value="bean" bean ="SINCV" property="importeSujetoAlVencimiento" format="Numeric" pattern="9(14).999" />
 </register>

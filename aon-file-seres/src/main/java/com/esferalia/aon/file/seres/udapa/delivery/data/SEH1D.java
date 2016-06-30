@@ -1,5 +1,11 @@
 package com.esferalia.aon.file.seres.udapa.delivery.data;
 
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI SEH1D entity.
  * <br>
@@ -55,120 +61,120 @@ public class SEH1D {
 	private String numeroDeReferencia2;
 
 
-	private static java.util.regex.Pattern PATTERN_SEH1D_direcciones = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_tipoAvisoDeExpedicion_351_35E_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_numeroAvisoDeExpedicion = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_codigoEmisor_MS_ = java.util.regex.Pattern.compile("^.{29}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_codigoReceptor_MR_ = java.util.regex.Pattern.compile("^.{46}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_calificadorInterlocutor = java.util.regex.Pattern.compile("^.{63}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_codigoInterlocutor = java.util.regex.Pattern.compile("^.{66}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_agenciaResponsableListaDeCodigos = java.util.regex.Pattern.compile("^.{83}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_nombre1 = java.util.regex.Pattern.compile("^.{86}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_nombre2 = java.util.regex.Pattern.compile("^.{121}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_nombre3 = java.util.regex.Pattern.compile("^.{156}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_nombre4 = java.util.regex.Pattern.compile("^.{191}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_nombre5 = java.util.regex.Pattern.compile("^.{226}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_direccion1_Calle_Numero_ = java.util.regex.Pattern.compile("^.{261}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_direccion2_Calle_Numero_ = java.util.regex.Pattern.compile("^.{296}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_direccion3_Calle_Numero_ = java.util.regex.Pattern.compile("^.{331}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_direccion4_Calle_Numero_ = java.util.regex.Pattern.compile("^.{366}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_poblacion = java.util.regex.Pattern.compile("^.{401}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_provincia = java.util.regex.Pattern.compile("^.{436}(.{9}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_codigoPostal = java.util.regex.Pattern.compile("^.{445}(.{9}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_codigoPais = java.util.regex.Pattern.compile("^.{454}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_calificadorReferencia = java.util.regex.Pattern.compile("^.{457}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_numeroDeReferencia = java.util.regex.Pattern.compile("^.{460}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_funcionDeContacto = java.util.regex.Pattern.compile("^.{495}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_codigoDepartamentoOEmpleado = java.util.regex.Pattern.compile("^.{498}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_nombreDepartamentoOEmpleado = java.util.regex.Pattern.compile("^.{515}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_calificadorReferencia2 = java.util.regex.Pattern.compile("^.{550}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1D_numeroDeReferencia2 = java.util.regex.Pattern.compile("^.{553}(.{17}).*");
+	private static Pattern PATTERN_SEH1D_direcciones = Pattern.compile("^(.{6}).*");
+	private static Pattern PATTERN_SEH1D_tipoAvisoDeExpedicion_351_35E_ = Pattern.compile("^.{6}(.{6}).*");
+	private static Pattern PATTERN_SEH1D_numeroAvisoDeExpedicion = Pattern.compile("^.{12}(.{17}).*");
+	private static Pattern PATTERN_SEH1D_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
+	private static Pattern PATTERN_SEH1D_codigoReceptor_MR_ = Pattern.compile("^.{46}(.{17}).*");
+	private static Pattern PATTERN_SEH1D_calificadorInterlocutor = Pattern.compile("^.{63}(.{3}).*");
+	private static Pattern PATTERN_SEH1D_codigoInterlocutor = Pattern.compile("^.{66}(.{17}).*");
+	private static Pattern PATTERN_SEH1D_agenciaResponsableListaDeCodigos = Pattern.compile("^.{83}(.{3}).*");
+	private static Pattern PATTERN_SEH1D_nombre1 = Pattern.compile("^.{86}(.{35}).*");
+	private static Pattern PATTERN_SEH1D_nombre2 = Pattern.compile("^.{121}(.{35}).*");
+	private static Pattern PATTERN_SEH1D_nombre3 = Pattern.compile("^.{156}(.{35}).*");
+	private static Pattern PATTERN_SEH1D_nombre4 = Pattern.compile("^.{191}(.{35}).*");
+	private static Pattern PATTERN_SEH1D_nombre5 = Pattern.compile("^.{226}(.{35}).*");
+	private static Pattern PATTERN_SEH1D_direccion1_Calle_Numero_ = Pattern.compile("^.{261}(.{35}).*");
+	private static Pattern PATTERN_SEH1D_direccion2_Calle_Numero_ = Pattern.compile("^.{296}(.{35}).*");
+	private static Pattern PATTERN_SEH1D_direccion3_Calle_Numero_ = Pattern.compile("^.{331}(.{35}).*");
+	private static Pattern PATTERN_SEH1D_direccion4_Calle_Numero_ = Pattern.compile("^.{366}(.{35}).*");
+	private static Pattern PATTERN_SEH1D_poblacion = Pattern.compile("^.{401}(.{35}).*");
+	private static Pattern PATTERN_SEH1D_provincia = Pattern.compile("^.{436}(.{9}).*");
+	private static Pattern PATTERN_SEH1D_codigoPostal = Pattern.compile("^.{445}(.{9}).*");
+	private static Pattern PATTERN_SEH1D_codigoPais = Pattern.compile("^.{454}(.{3}).*");
+	private static Pattern PATTERN_SEH1D_calificadorReferencia = Pattern.compile("^.{457}(.{3}).*");
+	private static Pattern PATTERN_SEH1D_numeroDeReferencia = Pattern.compile("^.{460}(.{35}).*");
+	private static Pattern PATTERN_SEH1D_funcionDeContacto = Pattern.compile("^.{495}(.{3}).*");
+	private static Pattern PATTERN_SEH1D_codigoDepartamentoOEmpleado = Pattern.compile("^.{498}(.{17}).*");
+	private static Pattern PATTERN_SEH1D_nombreDepartamentoOEmpleado = Pattern.compile("^.{515}(.{35}).*");
+	private static Pattern PATTERN_SEH1D_calificadorReferencia2 = Pattern.compile("^.{550}(.{3}).*");
+	private static Pattern PATTERN_SEH1D_numeroDeReferencia2 = Pattern.compile("^.{553}(.{17}).*");
 
 	public void parse(String value) {
-		java.util.regex.Matcher m;
-		if((m = PATTERN_SEH1D_direcciones.matcher(value)).find()) {
-			setDirecciones(m.group(1));
+		Matcher m;
+		if((m = PATTERN_SEH1D_direcciones.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDirecciones(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_tipoAvisoDeExpedicion_351_35E_.matcher(value)).find()) {
-			setTipoAvisoDeExpedicion_351_35E_(m.group(1));
+		if((m = PATTERN_SEH1D_tipoAvisoDeExpedicion_351_35E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoAvisoDeExpedicion_351_35E_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_numeroAvisoDeExpedicion.matcher(value)).find()) {
-			setNumeroAvisoDeExpedicion(m.group(1));
+		if((m = PATTERN_SEH1D_numeroAvisoDeExpedicion.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroAvisoDeExpedicion(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_codigoEmisor_MS_.matcher(value)).find()) {
-			setCodigoEmisor_MS_(m.group(1));
+		if((m = PATTERN_SEH1D_codigoEmisor_MS_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoEmisor_MS_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_codigoReceptor_MR_.matcher(value)).find()) {
-			setCodigoReceptor_MR_(m.group(1));
+		if((m = PATTERN_SEH1D_codigoReceptor_MR_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoReceptor_MR_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_calificadorInterlocutor.matcher(value)).find()) {
-			setCalificadorInterlocutor(m.group(1));
+		if((m = PATTERN_SEH1D_calificadorInterlocutor.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorInterlocutor(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_codigoInterlocutor.matcher(value)).find()) {
-			setCodigoInterlocutor(m.group(1));
+		if((m = PATTERN_SEH1D_codigoInterlocutor.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoInterlocutor(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_agenciaResponsableListaDeCodigos.matcher(value)).find()) {
-			setAgenciaResponsableListaDeCodigos(m.group(1));
+		if((m = PATTERN_SEH1D_agenciaResponsableListaDeCodigos.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setAgenciaResponsableListaDeCodigos(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_nombre1.matcher(value)).find()) {
-			setNombre1(m.group(1));
+		if((m = PATTERN_SEH1D_nombre1.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNombre1(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_nombre2.matcher(value)).find()) {
-			setNombre2(m.group(1));
+		if((m = PATTERN_SEH1D_nombre2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNombre2(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_nombre3.matcher(value)).find()) {
-			setNombre3(m.group(1));
+		if((m = PATTERN_SEH1D_nombre3.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNombre3(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_nombre4.matcher(value)).find()) {
-			setNombre4(m.group(1));
+		if((m = PATTERN_SEH1D_nombre4.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNombre4(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_nombre5.matcher(value)).find()) {
-			setNombre5(m.group(1));
+		if((m = PATTERN_SEH1D_nombre5.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNombre5(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_direccion1_Calle_Numero_.matcher(value)).find()) {
-			setDireccion1_Calle_Numero_(m.group(1));
+		if((m = PATTERN_SEH1D_direccion1_Calle_Numero_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDireccion1_Calle_Numero_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_direccion2_Calle_Numero_.matcher(value)).find()) {
-			setDireccion2_Calle_Numero_(m.group(1));
+		if((m = PATTERN_SEH1D_direccion2_Calle_Numero_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDireccion2_Calle_Numero_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_direccion3_Calle_Numero_.matcher(value)).find()) {
-			setDireccion3_Calle_Numero_(m.group(1));
+		if((m = PATTERN_SEH1D_direccion3_Calle_Numero_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDireccion3_Calle_Numero_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_direccion4_Calle_Numero_.matcher(value)).find()) {
-			setDireccion4_Calle_Numero_(m.group(1));
+		if((m = PATTERN_SEH1D_direccion4_Calle_Numero_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDireccion4_Calle_Numero_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_poblacion.matcher(value)).find()) {
-			setPoblacion(m.group(1));
+		if((m = PATTERN_SEH1D_poblacion.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPoblacion(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_provincia.matcher(value)).find()) {
-			setProvincia(m.group(1));
+		if((m = PATTERN_SEH1D_provincia.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setProvincia(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_codigoPostal.matcher(value)).find()) {
-			setCodigoPostal(m.group(1));
+		if((m = PATTERN_SEH1D_codigoPostal.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoPostal(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_codigoPais.matcher(value)).find()) {
-			setCodigoPais(m.group(1));
+		if((m = PATTERN_SEH1D_codigoPais.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoPais(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_calificadorReferencia.matcher(value)).find()) {
-			setCalificadorReferencia(m.group(1));
+		if((m = PATTERN_SEH1D_calificadorReferencia.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorReferencia(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_numeroDeReferencia.matcher(value)).find()) {
-			setNumeroDeReferencia(m.group(1));
+		if((m = PATTERN_SEH1D_numeroDeReferencia.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeReferencia(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_funcionDeContacto.matcher(value)).find()) {
-			setFuncionDeContacto(m.group(1));
+		if((m = PATTERN_SEH1D_funcionDeContacto.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFuncionDeContacto(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_codigoDepartamentoOEmpleado.matcher(value)).find()) {
-			setCodigoDepartamentoOEmpleado(m.group(1));
+		if((m = PATTERN_SEH1D_codigoDepartamentoOEmpleado.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoDepartamentoOEmpleado(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_nombreDepartamentoOEmpleado.matcher(value)).find()) {
-			setNombreDepartamentoOEmpleado(m.group(1));
+		if((m = PATTERN_SEH1D_nombreDepartamentoOEmpleado.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNombreDepartamentoOEmpleado(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_calificadorReferencia2.matcher(value)).find()) {
-			setCalificadorReferencia2(m.group(1));
+		if((m = PATTERN_SEH1D_calificadorReferencia2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorReferencia2(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1D_numeroDeReferencia2.matcher(value)).find()) {
-			setNumeroDeReferencia2(m.group(1));
+		if((m = PATTERN_SEH1D_numeroDeReferencia2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeReferencia2(String.valueOf(m.group(1).trim()));
 		}
 	}
 
@@ -985,7 +991,10 @@ public class SEH1D {
 		this.numeroDeReferencia2 = numeroDeReferencia2;
 	}
 
-	public enum CalificadorInterlocutor {
+	/** 
+	 * V3035D-Calificador Interlocutor: Los valores posibles son:
+	 */
+	public enum V3035D {
 		ORIGEN_DEL_MENSAJE___FUNCION_PROV_MS("MS"),
 		RECEPTOR_DEL_MENSAJE__FUNCION_PRES_MR("MR"),
 		PROVEEDOR_DE_LAS_MERCANCIAS__FUNCION_PROV_SU("SU"),
@@ -997,59 +1006,92 @@ public class SEH1D {
 		
 		private String value;
 		
-		private CalificadorInterlocutor(String value) {
+		private V3035D(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum AgenciaResponsableListaDeCodigos {
+		public static V3035D enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V3055C-Agencia Responsable lista de Códigos: Los valores posibles son:
+	 */
+	public enum V3055C {
 		EA_9("9"),
 		;
 		
 		private String value;
 		
-		private AgenciaResponsableListaDeCodigos(String value) {
+		private V3055C(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum CalificadorReferencia {
+		public static V3055C enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V1153D-Calificador Referencia: Los valores posibles son:
+	 */
+	public enum V1153D {
 		N__DE_IDENTIFICACION_FISCAL__NIF__VA("VA"),
 		;
 		
 		private String value;
 		
-		private CalificadorReferencia(String value) {
+		private V1153D(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum FuncionDeContacto {
+		public static V1153D enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V3139D-Función de Contacto: Utilizado para identificar los nombres de contacto especificados por la compañía. Los valores posibles son:
+	 */
+	public enum V3139D {
 		CONTACTO_PARA_LA_ENTREGA_DL("DL"),
 		CONTACTO_PARA_TRANSPORTE_TR("TR"),
 		;
 		
 		private String value;
 		
-		private FuncionDeContacto(String value) {
+		private V3139D(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
+		public static V3139D enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
 }

@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.file.seres.udapa.invoice.data.SINCC;
 import com.esferalia.aon.file.seres.udapa.invoice.data.SINCD;
 import com.esferalia.aon.file.seres.udapa.invoice.data.SINCE;
@@ -25,7 +24,7 @@ public class UdapaInvoiceReader {
 	
 	public static final String CHARSET_ENCODING = "ISO-8859-1";
 
-	private static String SINCC = "SIN1C";
+	private static String SINCC = "SINCC";
 	
 	private static String SINCT = "SINCT";
 	private static String SINCV = "SINCV";

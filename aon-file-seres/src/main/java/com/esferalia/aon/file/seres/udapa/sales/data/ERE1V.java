@@ -1,5 +1,11 @@
 package com.esferalia.aon.file.seres.udapa.sales.data;
 
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI ERE1V entity.
  * <br>
@@ -30,65 +36,65 @@ public class ERE1V {
 	private String numeroDePedido;
 	private String codigoEmisor_MS_;
 	private String codigoReceptor_MR_;
-	private String numeroDeVencimiento;
+	private Integer numeroDeVencimiento;
 	private String referenciaDeTiempoDePago;
 	private String relacionDeTiempo;
 	private String tipoDePeriodo_D_M_Y_;
-	private String numeroDePeriodos;
-	private String fechaVencimiento;
-	private String importeSujetoAlVencimiento;
+	private Integer numeroDePeriodos;
+	private Integer fechaVencimiento;
+	private Double importeSujetoAlVencimiento;
 
 
-	private static java.util.regex.Pattern PATTERN_ERE1V_vencimientos = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1V_tipoDePedido_220_221_224_226_22E_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1V_numeroDePedido = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1V_codigoEmisor_MS_ = java.util.regex.Pattern.compile("^.{29}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1V_codigoReceptor_MR_ = java.util.regex.Pattern.compile("^.{46}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1V_numeroDeVencimiento = java.util.regex.Pattern.compile("^.{63}(.{2}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1V_referenciaDeTiempoDePago = java.util.regex.Pattern.compile("^.{65}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1V_relacionDeTiempo = java.util.regex.Pattern.compile("^.{68}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1V_tipoDePeriodo_D_M_Y_ = java.util.regex.Pattern.compile("^.{71}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1V_numeroDePeriodos = java.util.regex.Pattern.compile("^.{74}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1V_fechaVencimiento = java.util.regex.Pattern.compile("^.{77}(.{8}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1V_importeSujetoAlVencimiento = java.util.regex.Pattern.compile("^.{85}(.{18}).*");
+	private static Pattern PATTERN_ERE1V_vencimientos = Pattern.compile("^(.{6}).*");
+	private static Pattern PATTERN_ERE1V_tipoDePedido_220_221_224_226_22E_ = Pattern.compile("^.{6}(.{6}).*");
+	private static Pattern PATTERN_ERE1V_numeroDePedido = Pattern.compile("^.{12}(.{17}).*");
+	private static Pattern PATTERN_ERE1V_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
+	private static Pattern PATTERN_ERE1V_codigoReceptor_MR_ = Pattern.compile("^.{46}(.{17}).*");
+	private static Pattern PATTERN_ERE1V_numeroDeVencimiento = Pattern.compile("^.{63}(.{2}).*");
+	private static Pattern PATTERN_ERE1V_referenciaDeTiempoDePago = Pattern.compile("^.{65}(.{3}).*");
+	private static Pattern PATTERN_ERE1V_relacionDeTiempo = Pattern.compile("^.{68}(.{3}).*");
+	private static Pattern PATTERN_ERE1V_tipoDePeriodo_D_M_Y_ = Pattern.compile("^.{71}(.{3}).*");
+	private static Pattern PATTERN_ERE1V_numeroDePeriodos = Pattern.compile("^.{74}(.{3}).*");
+	private static Pattern PATTERN_ERE1V_fechaVencimiento = Pattern.compile("^.{77}(.{8}).*");
+	private static Pattern PATTERN_ERE1V_importeSujetoAlVencimiento = Pattern.compile("^.{85}(.{18}).*");
 
 	public void parse(String value) {
-		java.util.regex.Matcher m;
-		if((m = PATTERN_ERE1V_vencimientos.matcher(value)).find()) {
-			setVencimientos(m.group(1));
+		Matcher m;
+		if((m = PATTERN_ERE1V_vencimientos.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setVencimientos(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1V_tipoDePedido_220_221_224_226_22E_.matcher(value)).find()) {
-			setTipoDePedido_220_221_224_226_22E_(m.group(1));
+		if((m = PATTERN_ERE1V_tipoDePedido_220_221_224_226_22E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoDePedido_220_221_224_226_22E_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1V_numeroDePedido.matcher(value)).find()) {
-			setNumeroDePedido(m.group(1));
+		if((m = PATTERN_ERE1V_numeroDePedido.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDePedido(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1V_codigoEmisor_MS_.matcher(value)).find()) {
-			setCodigoEmisor_MS_(m.group(1));
+		if((m = PATTERN_ERE1V_codigoEmisor_MS_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoEmisor_MS_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1V_codigoReceptor_MR_.matcher(value)).find()) {
-			setCodigoReceptor_MR_(m.group(1));
+		if((m = PATTERN_ERE1V_codigoReceptor_MR_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoReceptor_MR_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1V_numeroDeVencimiento.matcher(value)).find()) {
-			setNumeroDeVencimiento(m.group(1));
+		if((m = PATTERN_ERE1V_numeroDeVencimiento.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeVencimiento(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1V_referenciaDeTiempoDePago.matcher(value)).find()) {
-			setReferenciaDeTiempoDePago(m.group(1));
+		if((m = PATTERN_ERE1V_referenciaDeTiempoDePago.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setReferenciaDeTiempoDePago(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1V_relacionDeTiempo.matcher(value)).find()) {
-			setRelacionDeTiempo(m.group(1));
+		if((m = PATTERN_ERE1V_relacionDeTiempo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setRelacionDeTiempo(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1V_tipoDePeriodo_D_M_Y_.matcher(value)).find()) {
-			setTipoDePeriodo_D_M_Y_(m.group(1));
+		if((m = PATTERN_ERE1V_tipoDePeriodo_D_M_Y_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoDePeriodo_D_M_Y_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1V_numeroDePeriodos.matcher(value)).find()) {
-			setNumeroDePeriodos(m.group(1));
+		if((m = PATTERN_ERE1V_numeroDePeriodos.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDePeriodos(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1V_fechaVencimiento.matcher(value)).find()) {
-			setFechaVencimiento(m.group(1));
+		if((m = PATTERN_ERE1V_fechaVencimiento.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaVencimiento(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1V_importeSujetoAlVencimiento.matcher(value)).find()) {
-			setImporteSujetoAlVencimiento(m.group(1));
+		if((m = PATTERN_ERE1V_importeSujetoAlVencimiento.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteSujetoAlVencimiento(Double.valueOf(m.group(1).trim()));
 		}
 	}
 
@@ -260,10 +266,10 @@ public class ERE1V {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDeVencimiento() {
+	public Integer getNumeroDeVencimiento() {
 		return numeroDeVencimiento;
 	}
-	public void setNumeroDeVencimiento(String numeroDeVencimiento) {
+	public void setNumeroDeVencimiento(Integer numeroDeVencimiento) {
 		this.numeroDeVencimiento = numeroDeVencimiento;
 	}
 
@@ -376,10 +382,10 @@ public class ERE1V {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDePeriodos() {
+	public Integer getNumeroDePeriodos() {
 		return numeroDePeriodos;
 	}
-	public void setNumeroDePeriodos(String numeroDePeriodos) {
+	public void setNumeroDePeriodos(Integer numeroDePeriodos) {
 		this.numeroDePeriodos = numeroDePeriodos;
 	}
 
@@ -405,10 +411,10 @@ public class ERE1V {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getFechaVencimiento() {
+	public Integer getFechaVencimiento() {
 		return fechaVencimiento;
 	}
-	public void setFechaVencimiento(String fechaVencimiento) {
+	public void setFechaVencimiento(Integer fechaVencimiento) {
 		this.fechaVencimiento = fechaVencimiento;
 	}
 
@@ -434,14 +440,17 @@ public class ERE1V {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteSujetoAlVencimiento() {
+	public Double getImporteSujetoAlVencimiento() {
 		return importeSujetoAlVencimiento;
 	}
-	public void setImporteSujetoAlVencimiento(String importeSujetoAlVencimiento) {
+	public void setImporteSujetoAlVencimiento(Double importeSujetoAlVencimiento) {
 		this.importeSujetoAlVencimiento = importeSujetoAlVencimiento;
 	}
 
-	public enum ReferenciaDeTiempoDePago {
+	/** 
+	 * C2475V - Referencia de Tiempo de Pago: Los valores posibles son:
+	 */
+	public enum C2475V {
 		DATE_OF_INVOIC_5("5"),
 		SPECIFIED_DAT_66("66"),
 		INVOICE_TRANSMISSION_DAT_69("69"),
@@ -450,32 +459,50 @@ public class ERE1V {
 		
 		private String value;
 		
-		private ReferenciaDeTiempoDePago(String value) {
+		private C2475V(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum RelacionDeTiempo {
+		public static C2475V enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * C2009V - Relación de Tiempo: Los valores posibles son:
+	 */
+	public enum C2009V {
 		FECHA_DE_LA_REFERENCI_1("1"),
 		DESPUES_DE_LA_REFERENCI_3("3"),
 		;
 		
 		private String value;
 		
-		private RelacionDeTiempo(String value) {
+		private C2009V(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum TipoDePeriodo_D_M_Y_ {
+		public static C2009V enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * C2151V - Tipo de Período (D/M/Y): Los valores posibles son:
+	 */
+	public enum C2151V {
 		DA_D("D"),
 		MONT_M("M"),
 		WORKING_DAY_WD("WD"),
@@ -484,13 +511,19 @@ public class ERE1V {
 		
 		private String value;
 		
-		private TipoDePeriodo_D_M_Y_(String value) {
+		private C2151V(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
+		public static C2151V enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
 }

@@ -1,5 +1,12 @@
 package com.esferalia.aon.file.seres.udapa.invoice.data;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI SINCC entity.
  * <br>
@@ -31,7 +38,7 @@ public class SINCC {
 	private String codigoVendedor_aQuienSePide__SU_;
 	private String codigoComprador_QuienPide__BY_;
 	private String funcionDelMensaje_7_31_5_;
-	private String fechaFactura;
+	private Integer fechaFactura;
 	private String periodoDeFacturacion;
 	private String formaDePago;
 	private String codigoEmisorDeLaFactura_QuienFactura__II_;
@@ -55,199 +62,199 @@ public class SINCC {
 	private String poblacionDelEmisorDeLaFactura;
 	private String codigoPostalDelEmisorDeLaFactura;
 	private String codigoDeMoneda;
-	private String fechaVencimientoUnico;
-	private String importeNetoTotalFactura_79_;
-	private String baseImponible_125_;
-	private String importeBrutoTotalFactura_98_;
-	private String importeTotalDeImpuestos_176_;
-	private String importeTotalAPagar_139_;
-	private String subvencionesVinculadasAlPrecio_80A_;
-	private String totalIncrementosDelImporteBruto_259_;
-	private String totalMinoracionesDelImporteBruto_260_;
+	private Integer fechaVencimientoUnico;
+	private Double importeNetoTotalFactura_79_;
+	private Double baseImponible_125_;
+	private Double importeBrutoTotalFactura_98_;
+	private Double importeTotalDeImpuestos_176_;
+	private Double importeTotalAPagar_139_;
+	private Double subvencionesVinculadasAlPrecio_80A_;
+	private Double totalIncrementosDelImporteBruto_259_;
+	private Double totalMinoracionesDelImporteBruto_260_;
 	private String identificacionAdicionalDeLaParte_API_;
 	private String receptorDelDocumento;
 	private String identificacionAdicionalProveedor_API__NAD_SU_;
 
 
-	public java.util.List<SINCT> sinctList;
-	public java.util.List<SINCV> sincvList;
-	public java.util.List<SINCD> sincdList;
-	public java.util.List<SINCL> sinclList;
-	public java.util.List<SINCU> sincuList;
-	public java.util.List<SINCE> sinceList;
-	public java.util.List<SINCI> sinciList;
+	public List<SINCT> sinctList;
+	public List<SINCV> sincvList;
+	public List<SINCD> sincdList;
+	public List<SINCL> sinclList;
+	public List<SINCU> sincuList;
+	public List<SINCE> sinceList;
+	public List<SINCI> sinciList;
 
 
-	private static java.util.regex.Pattern PATTERN_SINCC_cabecera = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_tipoFactura_325_380_381_383_385_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_numeroDeFactura = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_codigoVendedor_aQuienSePide__SU_ = java.util.regex.Pattern.compile("^.{29}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_codigoComprador_QuienPide__BY_ = java.util.regex.Pattern.compile("^.{42}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_funcionDelMensaje_7_31_5_ = java.util.regex.Pattern.compile("^.{55}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_fechaFactura = java.util.regex.Pattern.compile("^.{61}(.{8}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_periodoDeFacturacion = java.util.regex.Pattern.compile("^.{69}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_formaDePago = java.util.regex.Pattern.compile("^.{85}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_codigoEmisorDeLaFactura_QuienFactura__II_ = java.util.regex.Pattern.compile("^.{91}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_codigoReceptorDeLaFactura_aQuienSeFactura_ = java.util.regex.Pattern.compile("^.{104}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_codigoReceptorDeLasMercancias_QuienRecibe_ = java.util.regex.Pattern.compile("^.{117}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_codigoReceptorDelPago_aQuienSePaga_ = java.util.regex.Pattern.compile("^.{130}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_codigoEmisorDelPago_QuienPaga_ = java.util.regex.Pattern.compile("^.{143}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_razonDelCargoODelAbono = java.util.regex.Pattern.compile("^.{156}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_numeroDePedido_ON_ = java.util.regex.Pattern.compile("^.{162}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_numeroDeAlbaran_DQ_ = java.util.regex.Pattern.compile("^.{179}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_calificadorDocumentoRectificado_Sustituido = java.util.regex.Pattern.compile("^.{196}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_numeroDocumentoRectificado_Sustituido = java.util.regex.Pattern.compile("^.{199}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_numeroDeContrato_Acuerdo_CT_ = java.util.regex.Pattern.compile("^.{216}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_numeroDeRelacionDeEntregas_REN_ = java.util.regex.Pattern.compile("^.{233}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_razonSocialReceptorDeLaFactura = java.util.regex.Pattern.compile("^.{250}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_nombre_NumeroDeLaCalleDelReceptorDeLaFactura = java.util.regex.Pattern.compile("^.{320}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_poblacionDelReceptorDeLaFactura = java.util.regex.Pattern.compile("^.{390}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_codigoPostalDelReceptorDeLaFactura = java.util.regex.Pattern.compile("^.{425}(.{9}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_nIFDelReceptorDeLaFactura = java.util.regex.Pattern.compile("^.{434}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_nombre_NumeroDeLaCalleDelEmisorDeLaFactura = java.util.regex.Pattern.compile("^.{451}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_poblacionDelEmisorDeLaFactura = java.util.regex.Pattern.compile("^.{521}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_codigoPostalDelEmisorDeLaFactura = java.util.regex.Pattern.compile("^.{556}(.{9}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_codigoDeMoneda = java.util.regex.Pattern.compile("^.{565}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_fechaVencimientoUnico = java.util.regex.Pattern.compile("^.{571}(.{8}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_importeNetoTotalFactura_79_ = java.util.regex.Pattern.compile("^.{579}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_baseImponible_125_ = java.util.regex.Pattern.compile("^.{597}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_importeBrutoTotalFactura_98_ = java.util.regex.Pattern.compile("^.{615}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_importeTotalDeImpuestos_176_ = java.util.regex.Pattern.compile("^.{633}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_importeTotalAPagar_139_ = java.util.regex.Pattern.compile("^.{651}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_subvencionesVinculadasAlPrecio_80A_ = java.util.regex.Pattern.compile("^.{669}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_totalIncrementosDelImporteBruto_259_ = java.util.regex.Pattern.compile("^.{687}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_totalMinoracionesDelImporteBruto_260_ = java.util.regex.Pattern.compile("^.{705}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_identificacionAdicionalDeLaParte_API_ = java.util.regex.Pattern.compile("^.{723}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_receptorDelDocumento = java.util.regex.Pattern.compile("^.{740}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCC_identificacionAdicionalProveedor_API__NAD_SU_ = java.util.regex.Pattern.compile("^.{753}(.{17}).*");
+	private static Pattern PATTERN_SINCC_cabecera = Pattern.compile("^(.{6}).*");
+	private static Pattern PATTERN_SINCC_tipoFactura_325_380_381_383_385_ = Pattern.compile("^.{6}(.{6}).*");
+	private static Pattern PATTERN_SINCC_numeroDeFactura = Pattern.compile("^.{12}(.{17}).*");
+	private static Pattern PATTERN_SINCC_codigoVendedor_aQuienSePide__SU_ = Pattern.compile("^.{29}(.{13}).*");
+	private static Pattern PATTERN_SINCC_codigoComprador_QuienPide__BY_ = Pattern.compile("^.{42}(.{13}).*");
+	private static Pattern PATTERN_SINCC_funcionDelMensaje_7_31_5_ = Pattern.compile("^.{55}(.{6}).*");
+	private static Pattern PATTERN_SINCC_fechaFactura = Pattern.compile("^.{61}(.{8}).*");
+	private static Pattern PATTERN_SINCC_periodoDeFacturacion = Pattern.compile("^.{69}(.{16}).*");
+	private static Pattern PATTERN_SINCC_formaDePago = Pattern.compile("^.{85}(.{6}).*");
+	private static Pattern PATTERN_SINCC_codigoEmisorDeLaFactura_QuienFactura__II_ = Pattern.compile("^.{91}(.{13}).*");
+	private static Pattern PATTERN_SINCC_codigoReceptorDeLaFactura_aQuienSeFactura_ = Pattern.compile("^.{104}(.{13}).*");
+	private static Pattern PATTERN_SINCC_codigoReceptorDeLasMercancias_QuienRecibe_ = Pattern.compile("^.{117}(.{13}).*");
+	private static Pattern PATTERN_SINCC_codigoReceptorDelPago_aQuienSePaga_ = Pattern.compile("^.{130}(.{13}).*");
+	private static Pattern PATTERN_SINCC_codigoEmisorDelPago_QuienPaga_ = Pattern.compile("^.{143}(.{13}).*");
+	private static Pattern PATTERN_SINCC_razonDelCargoODelAbono = Pattern.compile("^.{156}(.{6}).*");
+	private static Pattern PATTERN_SINCC_numeroDePedido_ON_ = Pattern.compile("^.{162}(.{17}).*");
+	private static Pattern PATTERN_SINCC_numeroDeAlbaran_DQ_ = Pattern.compile("^.{179}(.{17}).*");
+	private static Pattern PATTERN_SINCC_calificadorDocumentoRectificado_Sustituido = Pattern.compile("^.{196}(.{3}).*");
+	private static Pattern PATTERN_SINCC_numeroDocumentoRectificado_Sustituido = Pattern.compile("^.{199}(.{17}).*");
+	private static Pattern PATTERN_SINCC_numeroDeContrato_Acuerdo_CT_ = Pattern.compile("^.{216}(.{17}).*");
+	private static Pattern PATTERN_SINCC_numeroDeRelacionDeEntregas_REN_ = Pattern.compile("^.{233}(.{17}).*");
+	private static Pattern PATTERN_SINCC_razonSocialReceptorDeLaFactura = Pattern.compile("^.{250}(.{70}).*");
+	private static Pattern PATTERN_SINCC_nombre_NumeroDeLaCalleDelReceptorDeLaFactura = Pattern.compile("^.{320}(.{70}).*");
+	private static Pattern PATTERN_SINCC_poblacionDelReceptorDeLaFactura = Pattern.compile("^.{390}(.{35}).*");
+	private static Pattern PATTERN_SINCC_codigoPostalDelReceptorDeLaFactura = Pattern.compile("^.{425}(.{9}).*");
+	private static Pattern PATTERN_SINCC_nIFDelReceptorDeLaFactura = Pattern.compile("^.{434}(.{17}).*");
+	private static Pattern PATTERN_SINCC_nombre_NumeroDeLaCalleDelEmisorDeLaFactura = Pattern.compile("^.{451}(.{70}).*");
+	private static Pattern PATTERN_SINCC_poblacionDelEmisorDeLaFactura = Pattern.compile("^.{521}(.{35}).*");
+	private static Pattern PATTERN_SINCC_codigoPostalDelEmisorDeLaFactura = Pattern.compile("^.{556}(.{9}).*");
+	private static Pattern PATTERN_SINCC_codigoDeMoneda = Pattern.compile("^.{565}(.{6}).*");
+	private static Pattern PATTERN_SINCC_fechaVencimientoUnico = Pattern.compile("^.{571}(.{8}).*");
+	private static Pattern PATTERN_SINCC_importeNetoTotalFactura_79_ = Pattern.compile("^.{579}(.{18}).*");
+	private static Pattern PATTERN_SINCC_baseImponible_125_ = Pattern.compile("^.{597}(.{18}).*");
+	private static Pattern PATTERN_SINCC_importeBrutoTotalFactura_98_ = Pattern.compile("^.{615}(.{18}).*");
+	private static Pattern PATTERN_SINCC_importeTotalDeImpuestos_176_ = Pattern.compile("^.{633}(.{18}).*");
+	private static Pattern PATTERN_SINCC_importeTotalAPagar_139_ = Pattern.compile("^.{651}(.{18}).*");
+	private static Pattern PATTERN_SINCC_subvencionesVinculadasAlPrecio_80A_ = Pattern.compile("^.{669}(.{18}).*");
+	private static Pattern PATTERN_SINCC_totalIncrementosDelImporteBruto_259_ = Pattern.compile("^.{687}(.{18}).*");
+	private static Pattern PATTERN_SINCC_totalMinoracionesDelImporteBruto_260_ = Pattern.compile("^.{705}(.{18}).*");
+	private static Pattern PATTERN_SINCC_identificacionAdicionalDeLaParte_API_ = Pattern.compile("^.{723}(.{17}).*");
+	private static Pattern PATTERN_SINCC_receptorDelDocumento = Pattern.compile("^.{740}(.{13}).*");
+	private static Pattern PATTERN_SINCC_identificacionAdicionalProveedor_API__NAD_SU_ = Pattern.compile("^.{753}(.{17}).*");
 
 	public void parse(String value) {
-		java.util.regex.Matcher m;
-		if((m = PATTERN_SINCC_cabecera.matcher(value)).find()) {
-			setCabecera(m.group(1));
+		Matcher m;
+		if((m = PATTERN_SINCC_cabecera.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCabecera(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_tipoFactura_325_380_381_383_385_.matcher(value)).find()) {
-			setTipoFactura_325_380_381_383_385_(m.group(1));
+		if((m = PATTERN_SINCC_tipoFactura_325_380_381_383_385_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoFactura_325_380_381_383_385_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_numeroDeFactura.matcher(value)).find()) {
-			setNumeroDeFactura(m.group(1));
+		if((m = PATTERN_SINCC_numeroDeFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeFactura(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_codigoVendedor_aQuienSePide__SU_.matcher(value)).find()) {
-			setCodigoVendedor_aQuienSePide__SU_(m.group(1));
+		if((m = PATTERN_SINCC_codigoVendedor_aQuienSePide__SU_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoVendedor_aQuienSePide__SU_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_codigoComprador_QuienPide__BY_.matcher(value)).find()) {
-			setCodigoComprador_QuienPide__BY_(m.group(1));
+		if((m = PATTERN_SINCC_codigoComprador_QuienPide__BY_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoComprador_QuienPide__BY_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_funcionDelMensaje_7_31_5_.matcher(value)).find()) {
-			setFuncionDelMensaje_7_31_5_(m.group(1));
+		if((m = PATTERN_SINCC_funcionDelMensaje_7_31_5_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFuncionDelMensaje_7_31_5_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_fechaFactura.matcher(value)).find()) {
-			setFechaFactura(m.group(1));
+		if((m = PATTERN_SINCC_fechaFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaFactura(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_periodoDeFacturacion.matcher(value)).find()) {
-			setPeriodoDeFacturacion(m.group(1));
+		if((m = PATTERN_SINCC_periodoDeFacturacion.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPeriodoDeFacturacion(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_formaDePago.matcher(value)).find()) {
-			setFormaDePago(m.group(1));
+		if((m = PATTERN_SINCC_formaDePago.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFormaDePago(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_codigoEmisorDeLaFactura_QuienFactura__II_.matcher(value)).find()) {
-			setCodigoEmisorDeLaFactura_QuienFactura__II_(m.group(1));
+		if((m = PATTERN_SINCC_codigoEmisorDeLaFactura_QuienFactura__II_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoEmisorDeLaFactura_QuienFactura__II_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_codigoReceptorDeLaFactura_aQuienSeFactura_.matcher(value)).find()) {
-			setCodigoReceptorDeLaFactura_aQuienSeFactura_(m.group(1));
+		if((m = PATTERN_SINCC_codigoReceptorDeLaFactura_aQuienSeFactura_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoReceptorDeLaFactura_aQuienSeFactura_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_codigoReceptorDeLasMercancias_QuienRecibe_.matcher(value)).find()) {
-			setCodigoReceptorDeLasMercancias_QuienRecibe_(m.group(1));
+		if((m = PATTERN_SINCC_codigoReceptorDeLasMercancias_QuienRecibe_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoReceptorDeLasMercancias_QuienRecibe_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_codigoReceptorDelPago_aQuienSePaga_.matcher(value)).find()) {
-			setCodigoReceptorDelPago_aQuienSePaga_(m.group(1));
+		if((m = PATTERN_SINCC_codigoReceptorDelPago_aQuienSePaga_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoReceptorDelPago_aQuienSePaga_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_codigoEmisorDelPago_QuienPaga_.matcher(value)).find()) {
-			setCodigoEmisorDelPago_QuienPaga_(m.group(1));
+		if((m = PATTERN_SINCC_codigoEmisorDelPago_QuienPaga_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoEmisorDelPago_QuienPaga_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_razonDelCargoODelAbono.matcher(value)).find()) {
-			setRazonDelCargoODelAbono(m.group(1));
+		if((m = PATTERN_SINCC_razonDelCargoODelAbono.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setRazonDelCargoODelAbono(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_numeroDePedido_ON_.matcher(value)).find()) {
-			setNumeroDePedido_ON_(m.group(1));
+		if((m = PATTERN_SINCC_numeroDePedido_ON_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDePedido_ON_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_numeroDeAlbaran_DQ_.matcher(value)).find()) {
-			setNumeroDeAlbaran_DQ_(m.group(1));
+		if((m = PATTERN_SINCC_numeroDeAlbaran_DQ_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeAlbaran_DQ_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_calificadorDocumentoRectificado_Sustituido.matcher(value)).find()) {
-			setCalificadorDocumentoRectificado_Sustituido(m.group(1));
+		if((m = PATTERN_SINCC_calificadorDocumentoRectificado_Sustituido.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorDocumentoRectificado_Sustituido(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_numeroDocumentoRectificado_Sustituido.matcher(value)).find()) {
-			setNumeroDocumentoRectificado_Sustituido(m.group(1));
+		if((m = PATTERN_SINCC_numeroDocumentoRectificado_Sustituido.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDocumentoRectificado_Sustituido(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_numeroDeContrato_Acuerdo_CT_.matcher(value)).find()) {
-			setNumeroDeContrato_Acuerdo_CT_(m.group(1));
+		if((m = PATTERN_SINCC_numeroDeContrato_Acuerdo_CT_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeContrato_Acuerdo_CT_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_numeroDeRelacionDeEntregas_REN_.matcher(value)).find()) {
-			setNumeroDeRelacionDeEntregas_REN_(m.group(1));
+		if((m = PATTERN_SINCC_numeroDeRelacionDeEntregas_REN_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeRelacionDeEntregas_REN_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_razonSocialReceptorDeLaFactura.matcher(value)).find()) {
-			setRazonSocialReceptorDeLaFactura(m.group(1));
+		if((m = PATTERN_SINCC_razonSocialReceptorDeLaFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setRazonSocialReceptorDeLaFactura(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_nombre_NumeroDeLaCalleDelReceptorDeLaFactura.matcher(value)).find()) {
-			setNombre_NumeroDeLaCalleDelReceptorDeLaFactura(m.group(1));
+		if((m = PATTERN_SINCC_nombre_NumeroDeLaCalleDelReceptorDeLaFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNombre_NumeroDeLaCalleDelReceptorDeLaFactura(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_poblacionDelReceptorDeLaFactura.matcher(value)).find()) {
-			setPoblacionDelReceptorDeLaFactura(m.group(1));
+		if((m = PATTERN_SINCC_poblacionDelReceptorDeLaFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPoblacionDelReceptorDeLaFactura(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_codigoPostalDelReceptorDeLaFactura.matcher(value)).find()) {
-			setCodigoPostalDelReceptorDeLaFactura(m.group(1));
+		if((m = PATTERN_SINCC_codigoPostalDelReceptorDeLaFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoPostalDelReceptorDeLaFactura(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_nIFDelReceptorDeLaFactura.matcher(value)).find()) {
-			setNIFDelReceptorDeLaFactura(m.group(1));
+		if((m = PATTERN_SINCC_nIFDelReceptorDeLaFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNIFDelReceptorDeLaFactura(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_nombre_NumeroDeLaCalleDelEmisorDeLaFactura.matcher(value)).find()) {
-			setNombre_NumeroDeLaCalleDelEmisorDeLaFactura(m.group(1));
+		if((m = PATTERN_SINCC_nombre_NumeroDeLaCalleDelEmisorDeLaFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNombre_NumeroDeLaCalleDelEmisorDeLaFactura(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_poblacionDelEmisorDeLaFactura.matcher(value)).find()) {
-			setPoblacionDelEmisorDeLaFactura(m.group(1));
+		if((m = PATTERN_SINCC_poblacionDelEmisorDeLaFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPoblacionDelEmisorDeLaFactura(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_codigoPostalDelEmisorDeLaFactura.matcher(value)).find()) {
-			setCodigoPostalDelEmisorDeLaFactura(m.group(1));
+		if((m = PATTERN_SINCC_codigoPostalDelEmisorDeLaFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoPostalDelEmisorDeLaFactura(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_codigoDeMoneda.matcher(value)).find()) {
-			setCodigoDeMoneda(m.group(1));
+		if((m = PATTERN_SINCC_codigoDeMoneda.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoDeMoneda(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_fechaVencimientoUnico.matcher(value)).find()) {
-			setFechaVencimientoUnico(m.group(1));
+		if((m = PATTERN_SINCC_fechaVencimientoUnico.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaVencimientoUnico(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_importeNetoTotalFactura_79_.matcher(value)).find()) {
-			setImporteNetoTotalFactura_79_(m.group(1));
+		if((m = PATTERN_SINCC_importeNetoTotalFactura_79_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteNetoTotalFactura_79_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_baseImponible_125_.matcher(value)).find()) {
-			setBaseImponible_125_(m.group(1));
+		if((m = PATTERN_SINCC_baseImponible_125_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setBaseImponible_125_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_importeBrutoTotalFactura_98_.matcher(value)).find()) {
-			setImporteBrutoTotalFactura_98_(m.group(1));
+		if((m = PATTERN_SINCC_importeBrutoTotalFactura_98_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteBrutoTotalFactura_98_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_importeTotalDeImpuestos_176_.matcher(value)).find()) {
-			setImporteTotalDeImpuestos_176_(m.group(1));
+		if((m = PATTERN_SINCC_importeTotalDeImpuestos_176_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteTotalDeImpuestos_176_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_importeTotalAPagar_139_.matcher(value)).find()) {
-			setImporteTotalAPagar_139_(m.group(1));
+		if((m = PATTERN_SINCC_importeTotalAPagar_139_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteTotalAPagar_139_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_subvencionesVinculadasAlPrecio_80A_.matcher(value)).find()) {
-			setSubvencionesVinculadasAlPrecio_80A_(m.group(1));
+		if((m = PATTERN_SINCC_subvencionesVinculadasAlPrecio_80A_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setSubvencionesVinculadasAlPrecio_80A_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_totalIncrementosDelImporteBruto_259_.matcher(value)).find()) {
-			setTotalIncrementosDelImporteBruto_259_(m.group(1));
+		if((m = PATTERN_SINCC_totalIncrementosDelImporteBruto_259_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTotalIncrementosDelImporteBruto_259_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_totalMinoracionesDelImporteBruto_260_.matcher(value)).find()) {
-			setTotalMinoracionesDelImporteBruto_260_(m.group(1));
+		if((m = PATTERN_SINCC_totalMinoracionesDelImporteBruto_260_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTotalMinoracionesDelImporteBruto_260_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_identificacionAdicionalDeLaParte_API_.matcher(value)).find()) {
-			setIdentificacionAdicionalDeLaParte_API_(m.group(1));
+		if((m = PATTERN_SINCC_identificacionAdicionalDeLaParte_API_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setIdentificacionAdicionalDeLaParte_API_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_receptorDelDocumento.matcher(value)).find()) {
-			setReceptorDelDocumento(m.group(1));
+		if((m = PATTERN_SINCC_receptorDelDocumento.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setReceptorDelDocumento(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_identificacionAdicionalProveedor_API__NAD_SU_.matcher(value)).find()) {
-			setIdentificacionAdicionalProveedor_API__NAD_SU_(m.group(1));
+		if((m = PATTERN_SINCC_identificacionAdicionalProveedor_API__NAD_SU_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setIdentificacionAdicionalProveedor_API__NAD_SU_(String.valueOf(m.group(1).trim()));
 		}
 	}
 
@@ -448,10 +455,10 @@ public class SINCC {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getFechaFactura() {
+	public Integer getFechaFactura() {
 		return fechaFactura;
 	}
-	public void setFechaFactura(String fechaFactura) {
+	public void setFechaFactura(Integer fechaFactura) {
 		this.fechaFactura = fechaFactura;
 	}
 
@@ -1144,10 +1151,10 @@ public class SINCC {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getFechaVencimientoUnico() {
+	public Integer getFechaVencimientoUnico() {
 		return fechaVencimientoUnico;
 	}
-	public void setFechaVencimientoUnico(String fechaVencimientoUnico) {
+	public void setFechaVencimientoUnico(Integer fechaVencimientoUnico) {
 		this.fechaVencimientoUnico = fechaVencimientoUnico;
 	}
 
@@ -1173,10 +1180,10 @@ public class SINCC {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteNetoTotalFactura_79_() {
+	public Double getImporteNetoTotalFactura_79_() {
 		return importeNetoTotalFactura_79_;
 	}
-	public void setImporteNetoTotalFactura_79_(String importeNetoTotalFactura_79_) {
+	public void setImporteNetoTotalFactura_79_(Double importeNetoTotalFactura_79_) {
 		this.importeNetoTotalFactura_79_ = importeNetoTotalFactura_79_;
 	}
 
@@ -1202,10 +1209,10 @@ public class SINCC {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getBaseImponible_125_() {
+	public Double getBaseImponible_125_() {
 		return baseImponible_125_;
 	}
-	public void setBaseImponible_125_(String baseImponible_125_) {
+	public void setBaseImponible_125_(Double baseImponible_125_) {
 		this.baseImponible_125_ = baseImponible_125_;
 	}
 
@@ -1231,10 +1238,10 @@ public class SINCC {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteBrutoTotalFactura_98_() {
+	public Double getImporteBrutoTotalFactura_98_() {
 		return importeBrutoTotalFactura_98_;
 	}
-	public void setImporteBrutoTotalFactura_98_(String importeBrutoTotalFactura_98_) {
+	public void setImporteBrutoTotalFactura_98_(Double importeBrutoTotalFactura_98_) {
 		this.importeBrutoTotalFactura_98_ = importeBrutoTotalFactura_98_;
 	}
 
@@ -1260,10 +1267,10 @@ public class SINCC {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteTotalDeImpuestos_176_() {
+	public Double getImporteTotalDeImpuestos_176_() {
 		return importeTotalDeImpuestos_176_;
 	}
-	public void setImporteTotalDeImpuestos_176_(String importeTotalDeImpuestos_176_) {
+	public void setImporteTotalDeImpuestos_176_(Double importeTotalDeImpuestos_176_) {
 		this.importeTotalDeImpuestos_176_ = importeTotalDeImpuestos_176_;
 	}
 
@@ -1289,10 +1296,10 @@ public class SINCC {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteTotalAPagar_139_() {
+	public Double getImporteTotalAPagar_139_() {
 		return importeTotalAPagar_139_;
 	}
-	public void setImporteTotalAPagar_139_(String importeTotalAPagar_139_) {
+	public void setImporteTotalAPagar_139_(Double importeTotalAPagar_139_) {
 		this.importeTotalAPagar_139_ = importeTotalAPagar_139_;
 	}
 
@@ -1318,10 +1325,10 @@ public class SINCC {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getSubvencionesVinculadasAlPrecio_80A_() {
+	public Double getSubvencionesVinculadasAlPrecio_80A_() {
 		return subvencionesVinculadasAlPrecio_80A_;
 	}
-	public void setSubvencionesVinculadasAlPrecio_80A_(String subvencionesVinculadasAlPrecio_80A_) {
+	public void setSubvencionesVinculadasAlPrecio_80A_(Double subvencionesVinculadasAlPrecio_80A_) {
 		this.subvencionesVinculadasAlPrecio_80A_ = subvencionesVinculadasAlPrecio_80A_;
 	}
 
@@ -1347,10 +1354,10 @@ public class SINCC {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getTotalIncrementosDelImporteBruto_259_() {
+	public Double getTotalIncrementosDelImporteBruto_259_() {
 		return totalIncrementosDelImporteBruto_259_;
 	}
-	public void setTotalIncrementosDelImporteBruto_259_(String totalIncrementosDelImporteBruto_259_) {
+	public void setTotalIncrementosDelImporteBruto_259_(Double totalIncrementosDelImporteBruto_259_) {
 		this.totalIncrementosDelImporteBruto_259_ = totalIncrementosDelImporteBruto_259_;
 	}
 
@@ -1376,10 +1383,10 @@ public class SINCC {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getTotalMinoracionesDelImporteBruto_260_() {
+	public Double getTotalMinoracionesDelImporteBruto_260_() {
 		return totalMinoracionesDelImporteBruto_260_;
 	}
-	public void setTotalMinoracionesDelImporteBruto_260_(String totalMinoracionesDelImporteBruto_260_) {
+	public void setTotalMinoracionesDelImporteBruto_260_(Double totalMinoracionesDelImporteBruto_260_) {
 		this.totalMinoracionesDelImporteBruto_260_ = totalMinoracionesDelImporteBruto_260_;
 	}
 
@@ -1470,7 +1477,10 @@ public class SINCC {
 		this.identificacionAdicionalProveedor_API__NAD_SU_ = identificacionAdicionalProveedor_API__NAD_SU_;
 	}
 
-	public enum TipoFactura {
+	/** 
+	 * F1001T - Tipo Factura: Existe un código para identificar cada tipo de factura que queramos enviar. Las más habituales son las Facturas Comerciales(tipo 380) y los Abonos (tipo 381). El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum F1001T {
 		FACTURA_PRO_FORM_325("325"),
 		FACTURA_COMERCIA_380("380"),
 		NOTA_DE_ABON_381("381"),
@@ -1481,16 +1491,25 @@ public class SINCC {
 		
 		private String value;
 		
-		private TipoFactura(String value) {
+		private F1001T(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum FuncionDelMensaje {
+		public static F1001T enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * F1225 - Función del Mensaje: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum F1225 {
 		DUPLICAD_7("7"),
 		COPIA__INDICA_QUE_EL_MENSAJE_ES_UNA_COPIA__PUEDE_UTILIZARSE_PARA_ENVIAR_LA_FACTURA_A_UN_TERCER_INTERLOCUTOR_CON_PROPOSITOS_INFORMATIVOS_31("31"),
 		SUSTITUTIVA__SE_USARA_EN_EL_CASO_DE_ANULACION_DE_FACTURAS_POR_ERRORES_ADMINISTRATIVOS__LA_FACTURA_ANULA_LA_ANTERIOR_REFERENCIADA_EN_EL_CAMPO_F1154F__NUMERO_DE_DOC__SUSTITUIDO_5("5"),
@@ -1500,16 +1519,25 @@ public class SINCC {
 		
 		private String value;
 		
-		private FuncionDelMensaje(String value) {
+		private F1225(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum RazonDelCargoODelAbono {
+		public static F1225 enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * F4183R - Razón del Cargo o del Abono: Solo se enviará si el tipo de Factura es 381(abonos) o 383 (notas de cargo). El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum F4183R {
 		DEVOLUCION_DE_MERCANCI_1A("1A"),
 		BONIFICACION_POR_VOLUMEN__RAPPEL_2A("2A"),
 		DIFERENCIA__PRECIO__CANTIDAD_____3A("3A"),
@@ -1517,16 +1545,25 @@ public class SINCC {
 		
 		private String value;
 		
-		private RazonDelCargoODelAbono(String value) {
+		private F4183R(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum CalificadorDocumentoRectificado {
+		public static F4183R enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * F1153F - Calificador Documento Rectificado: Será obligatorio si el Tipo de Factura es 381 o 383. El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum F1153F {
 		NUMERO_DE_FACTUR_IV("IV"),
 		NUMERO_DE_RELACION_DE_FACTURA_RFA("RFA"),
 		NUMERO_DE_FACTURA_RECAPITULATIV_FR("FR"),
@@ -1534,13 +1571,19 @@ public class SINCC {
 		
 		private String value;
 		
-		private CalificadorDocumentoRectificado(String value) {
+		private F1153F(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
+		public static F1153F enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
 }

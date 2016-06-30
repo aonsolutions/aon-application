@@ -1,5 +1,11 @@
 package com.esferalia.aon.file.seres.udapa.sales.data;
 
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI ERE1T entity.
  * <br>
@@ -30,7 +36,7 @@ public class ERE1T {
 	private String numeroDePedido;
 	private String codigoEmisor_MS_;
 	private String codigoReceptor_MR_;
-	private String numeroTexto;
+	private Integer numeroTexto;
 	private String calificadorDelTemaDelTexto_AAI_DEL_;
 	private String texto1;
 	private String texto2;
@@ -39,56 +45,56 @@ public class ERE1T {
 	private String texto5;
 
 
-	private static java.util.regex.Pattern PATTERN_ERE1T_textos = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_tipoDePedido_220_221_224_226_22E_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_numeroDePedido = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_codigoEmisor_MS_ = java.util.regex.Pattern.compile("^.{29}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_codigoReceptor_MR_ = java.util.regex.Pattern.compile("^.{46}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_numeroTexto = java.util.regex.Pattern.compile("^.{63}(.{2}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_calificadorDelTemaDelTexto_AAI_DEL_ = java.util.regex.Pattern.compile("^.{65}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_texto1 = java.util.regex.Pattern.compile("^.{68}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_texto2 = java.util.regex.Pattern.compile("^.{138}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_texto3 = java.util.regex.Pattern.compile("^.{208}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_texto4 = java.util.regex.Pattern.compile("^.{278}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1T_texto5 = java.util.regex.Pattern.compile("^.{348}(.{70}).*");
+	private static Pattern PATTERN_ERE1T_textos = Pattern.compile("^(.{6}).*");
+	private static Pattern PATTERN_ERE1T_tipoDePedido_220_221_224_226_22E_ = Pattern.compile("^.{6}(.{6}).*");
+	private static Pattern PATTERN_ERE1T_numeroDePedido = Pattern.compile("^.{12}(.{17}).*");
+	private static Pattern PATTERN_ERE1T_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
+	private static Pattern PATTERN_ERE1T_codigoReceptor_MR_ = Pattern.compile("^.{46}(.{17}).*");
+	private static Pattern PATTERN_ERE1T_numeroTexto = Pattern.compile("^.{63}(.{2}).*");
+	private static Pattern PATTERN_ERE1T_calificadorDelTemaDelTexto_AAI_DEL_ = Pattern.compile("^.{65}(.{3}).*");
+	private static Pattern PATTERN_ERE1T_texto1 = Pattern.compile("^.{68}(.{70}).*");
+	private static Pattern PATTERN_ERE1T_texto2 = Pattern.compile("^.{138}(.{70}).*");
+	private static Pattern PATTERN_ERE1T_texto3 = Pattern.compile("^.{208}(.{70}).*");
+	private static Pattern PATTERN_ERE1T_texto4 = Pattern.compile("^.{278}(.{70}).*");
+	private static Pattern PATTERN_ERE1T_texto5 = Pattern.compile("^.{348}(.{70}).*");
 
 	public void parse(String value) {
-		java.util.regex.Matcher m;
-		if((m = PATTERN_ERE1T_textos.matcher(value)).find()) {
-			setTextos(m.group(1));
+		Matcher m;
+		if((m = PATTERN_ERE1T_textos.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTextos(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1T_tipoDePedido_220_221_224_226_22E_.matcher(value)).find()) {
-			setTipoDePedido_220_221_224_226_22E_(m.group(1));
+		if((m = PATTERN_ERE1T_tipoDePedido_220_221_224_226_22E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoDePedido_220_221_224_226_22E_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1T_numeroDePedido.matcher(value)).find()) {
-			setNumeroDePedido(m.group(1));
+		if((m = PATTERN_ERE1T_numeroDePedido.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDePedido(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1T_codigoEmisor_MS_.matcher(value)).find()) {
-			setCodigoEmisor_MS_(m.group(1));
+		if((m = PATTERN_ERE1T_codigoEmisor_MS_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoEmisor_MS_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1T_codigoReceptor_MR_.matcher(value)).find()) {
-			setCodigoReceptor_MR_(m.group(1));
+		if((m = PATTERN_ERE1T_codigoReceptor_MR_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoReceptor_MR_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1T_numeroTexto.matcher(value)).find()) {
-			setNumeroTexto(m.group(1));
+		if((m = PATTERN_ERE1T_numeroTexto.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroTexto(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1T_calificadorDelTemaDelTexto_AAI_DEL_.matcher(value)).find()) {
-			setCalificadorDelTemaDelTexto_AAI_DEL_(m.group(1));
+		if((m = PATTERN_ERE1T_calificadorDelTemaDelTexto_AAI_DEL_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorDelTemaDelTexto_AAI_DEL_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1T_texto1.matcher(value)).find()) {
-			setTexto1(m.group(1));
+		if((m = PATTERN_ERE1T_texto1.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTexto1(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1T_texto2.matcher(value)).find()) {
-			setTexto2(m.group(1));
+		if((m = PATTERN_ERE1T_texto2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTexto2(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1T_texto3.matcher(value)).find()) {
-			setTexto3(m.group(1));
+		if((m = PATTERN_ERE1T_texto3.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTexto3(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1T_texto4.matcher(value)).find()) {
-			setTexto4(m.group(1));
+		if((m = PATTERN_ERE1T_texto4.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTexto4(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1T_texto5.matcher(value)).find()) {
-			setTexto5(m.group(1));
+		if((m = PATTERN_ERE1T_texto5.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTexto5(String.valueOf(m.group(1).trim()));
 		}
 	}
 
@@ -260,10 +266,10 @@ public class ERE1T {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroTexto() {
+	public Integer getNumeroTexto() {
 		return numeroTexto;
 	}
-	public void setNumeroTexto(String numeroTexto) {
+	public void setNumeroTexto(Integer numeroTexto) {
 		this.numeroTexto = numeroTexto;
 	}
 
@@ -441,7 +447,10 @@ public class ERE1T {
 		this.texto5 = texto5;
 	}
 
-	public enum CalificadorDelTemaDelTexto_AAI_DEL_ {
+	/** 
+	 * C4451C - Calificador del Tema del Texto (AAI , DEL): El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum C4451C {
 		INFORMACION_GENERA_AAI("AAI"),
 		INFORMACION_DE_FACTURACIO_INV("INV"),
 		INFORMACION_DE_ENTREG_DEL("DEL"),
@@ -449,13 +458,19 @@ public class ERE1T {
 		
 		private String value;
 		
-		private CalificadorDelTemaDelTexto_AAI_DEL_(String value) {
+		private C4451C(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
+		public static C4451C enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
 }

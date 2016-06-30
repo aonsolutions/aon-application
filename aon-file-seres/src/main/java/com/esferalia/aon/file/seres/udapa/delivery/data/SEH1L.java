@@ -1,5 +1,11 @@
 package com.esferalia.aon.file.seres.udapa.delivery.data;
 
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI SEH1L entity.
  * <br>
@@ -32,7 +38,7 @@ public class SEH1L {
 	private String codigoReceptor_MR_;
 	private String numeroDeJerarquiaDeEmbalaje;
 	private String numeroDeSub_jerarquiaDeEmbalaje;
-	private String numeroDeLineaArticulo;
+	private Integer numeroDeLineaArticulo;
 	private String codigoDeArticuloEAN_13ODUN_14;
 	private String descripcionDelArticulo;
 	private String tipoArticuloEAN_CU_DU_;
@@ -42,9 +48,9 @@ public class SEH1L {
 	private String codigoACU;
 	private String numeroDeLote_NB_;
 	private String numeroDeArticuloDelComprador_1__IN_;
-	private String cantidadDeEnvio_12_;
+	private Double cantidadDeEnvio_12_;
 	private String calificadorUnidadDeMedida;
-	private String unidadesDeConsumoEnUnidadDeExpedicion;
+	private Double unidadesDeConsumoEnUnidadDeExpedicion;
 	private String fechaDeExpiracion_36__102_203_;
 	private String calificadorReferencia1;
 	private String numeroReferencia1;
@@ -59,156 +65,156 @@ public class SEH1L {
 	private String codigoEANAdicional;
 	private String cantidadSinCargo_192_;
 	private String calificadorDeCantidad;
-	private String otrasCantidades;
+	private Double otrasCantidades;
 	private String unidadDeMedidaCantidad;
 
 
-	private static java.util.regex.Pattern PATTERN_SEH1L_lineas = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_tipoAvisoDeExpedicion_351_35E_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_numeroAvisoDeExpedicion = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_codigoEmisor_MS_ = java.util.regex.Pattern.compile("^.{29}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_codigoReceptor_MR_ = java.util.regex.Pattern.compile("^.{46}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_numeroDeJerarquiaDeEmbalaje = java.util.regex.Pattern.compile("^.{63}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_numeroDeSub_jerarquiaDeEmbalaje = java.util.regex.Pattern.compile("^.{75}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_numeroDeLineaArticulo = java.util.regex.Pattern.compile("^.{87}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_codigoDeArticuloEAN_13ODUN_14 = java.util.regex.Pattern.compile("^.{93}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_descripcionDelArticulo = java.util.regex.Pattern.compile("^.{108}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_tipoArticuloEAN_CU_DU_ = java.util.regex.Pattern.compile("^.{178}(.{7}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_codigoInternoArticuloParaElProveedor_SA_ = java.util.regex.Pattern.compile("^.{185}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_variablePromocional_PV_ = java.util.regex.Pattern.compile("^.{200}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_codigoDUN_14_ADU_ = java.util.regex.Pattern.compile("^.{215}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_codigoACU = java.util.regex.Pattern.compile("^.{230}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_numeroDeLote_NB_ = java.util.regex.Pattern.compile("^.{245}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_numeroDeArticuloDelComprador_1__IN_ = java.util.regex.Pattern.compile("^.{280}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_cantidadDeEnvio_12_ = java.util.regex.Pattern.compile("^.{295}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_calificadorUnidadDeMedida = java.util.regex.Pattern.compile("^.{311}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_unidadesDeConsumoEnUnidadDeExpedicion = java.util.regex.Pattern.compile("^.{317}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_fechaDeExpiracion_36__102_203_ = java.util.regex.Pattern.compile("^.{333}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_calificadorReferencia1 = java.util.regex.Pattern.compile("^.{345}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_numeroReferencia1 = java.util.regex.Pattern.compile("^.{351}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_fechaReferencia1_102_203_ = java.util.regex.Pattern.compile("^.{368}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_calificadorReferencia2 = java.util.regex.Pattern.compile("^.{380}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_numeroReferencia2 = java.util.regex.Pattern.compile("^.{386}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_fechaReferencia2_102_203_ = java.util.regex.Pattern.compile("^.{403}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_calificadorReferencia3 = java.util.regex.Pattern.compile("^.{415}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_numeroReferencia3 = java.util.regex.Pattern.compile("^.{421}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_fechaReferencia3_102_203_ = java.util.regex.Pattern.compile("^.{438}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_unidadesEnAgrupacionSuperior_45E_ = java.util.regex.Pattern.compile("^.{450}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_codigoEANAdicional = java.util.regex.Pattern.compile("^.{466}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_cantidadSinCargo_192_ = java.util.regex.Pattern.compile("^.{481}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_calificadorDeCantidad = java.util.regex.Pattern.compile("^.{497}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_otrasCantidades = java.util.regex.Pattern.compile("^.{500}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1L_unidadDeMedidaCantidad = java.util.regex.Pattern.compile("^.{516}(.{6}).*");
+	private static Pattern PATTERN_SEH1L_lineas = Pattern.compile("^(.{6}).*");
+	private static Pattern PATTERN_SEH1L_tipoAvisoDeExpedicion_351_35E_ = Pattern.compile("^.{6}(.{6}).*");
+	private static Pattern PATTERN_SEH1L_numeroAvisoDeExpedicion = Pattern.compile("^.{12}(.{17}).*");
+	private static Pattern PATTERN_SEH1L_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
+	private static Pattern PATTERN_SEH1L_codigoReceptor_MR_ = Pattern.compile("^.{46}(.{17}).*");
+	private static Pattern PATTERN_SEH1L_numeroDeJerarquiaDeEmbalaje = Pattern.compile("^.{63}(.{12}).*");
+	private static Pattern PATTERN_SEH1L_numeroDeSub_jerarquiaDeEmbalaje = Pattern.compile("^.{75}(.{12}).*");
+	private static Pattern PATTERN_SEH1L_numeroDeLineaArticulo = Pattern.compile("^.{87}(.{6}).*");
+	private static Pattern PATTERN_SEH1L_codigoDeArticuloEAN_13ODUN_14 = Pattern.compile("^.{93}(.{15}).*");
+	private static Pattern PATTERN_SEH1L_descripcionDelArticulo = Pattern.compile("^.{108}(.{70}).*");
+	private static Pattern PATTERN_SEH1L_tipoArticuloEAN_CU_DU_ = Pattern.compile("^.{178}(.{7}).*");
+	private static Pattern PATTERN_SEH1L_codigoInternoArticuloParaElProveedor_SA_ = Pattern.compile("^.{185}(.{15}).*");
+	private static Pattern PATTERN_SEH1L_variablePromocional_PV_ = Pattern.compile("^.{200}(.{15}).*");
+	private static Pattern PATTERN_SEH1L_codigoDUN_14_ADU_ = Pattern.compile("^.{215}(.{15}).*");
+	private static Pattern PATTERN_SEH1L_codigoACU = Pattern.compile("^.{230}(.{15}).*");
+	private static Pattern PATTERN_SEH1L_numeroDeLote_NB_ = Pattern.compile("^.{245}(.{35}).*");
+	private static Pattern PATTERN_SEH1L_numeroDeArticuloDelComprador_1__IN_ = Pattern.compile("^.{280}(.{15}).*");
+	private static Pattern PATTERN_SEH1L_cantidadDeEnvio_12_ = Pattern.compile("^.{295}(.{16}).*");
+	private static Pattern PATTERN_SEH1L_calificadorUnidadDeMedida = Pattern.compile("^.{311}(.{6}).*");
+	private static Pattern PATTERN_SEH1L_unidadesDeConsumoEnUnidadDeExpedicion = Pattern.compile("^.{317}(.{16}).*");
+	private static Pattern PATTERN_SEH1L_fechaDeExpiracion_36__102_203_ = Pattern.compile("^.{333}(.{12}).*");
+	private static Pattern PATTERN_SEH1L_calificadorReferencia1 = Pattern.compile("^.{345}(.{6}).*");
+	private static Pattern PATTERN_SEH1L_numeroReferencia1 = Pattern.compile("^.{351}(.{17}).*");
+	private static Pattern PATTERN_SEH1L_fechaReferencia1_102_203_ = Pattern.compile("^.{368}(.{12}).*");
+	private static Pattern PATTERN_SEH1L_calificadorReferencia2 = Pattern.compile("^.{380}(.{6}).*");
+	private static Pattern PATTERN_SEH1L_numeroReferencia2 = Pattern.compile("^.{386}(.{17}).*");
+	private static Pattern PATTERN_SEH1L_fechaReferencia2_102_203_ = Pattern.compile("^.{403}(.{12}).*");
+	private static Pattern PATTERN_SEH1L_calificadorReferencia3 = Pattern.compile("^.{415}(.{6}).*");
+	private static Pattern PATTERN_SEH1L_numeroReferencia3 = Pattern.compile("^.{421}(.{17}).*");
+	private static Pattern PATTERN_SEH1L_fechaReferencia3_102_203_ = Pattern.compile("^.{438}(.{12}).*");
+	private static Pattern PATTERN_SEH1L_unidadesEnAgrupacionSuperior_45E_ = Pattern.compile("^.{450}(.{16}).*");
+	private static Pattern PATTERN_SEH1L_codigoEANAdicional = Pattern.compile("^.{466}(.{15}).*");
+	private static Pattern PATTERN_SEH1L_cantidadSinCargo_192_ = Pattern.compile("^.{481}(.{16}).*");
+	private static Pattern PATTERN_SEH1L_calificadorDeCantidad = Pattern.compile("^.{497}(.{3}).*");
+	private static Pattern PATTERN_SEH1L_otrasCantidades = Pattern.compile("^.{500}(.{16}).*");
+	private static Pattern PATTERN_SEH1L_unidadDeMedidaCantidad = Pattern.compile("^.{516}(.{6}).*");
 
 	public void parse(String value) {
-		java.util.regex.Matcher m;
-		if((m = PATTERN_SEH1L_lineas.matcher(value)).find()) {
-			setLineas(m.group(1));
+		Matcher m;
+		if((m = PATTERN_SEH1L_lineas.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setLineas(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_tipoAvisoDeExpedicion_351_35E_.matcher(value)).find()) {
-			setTipoAvisoDeExpedicion_351_35E_(m.group(1));
+		if((m = PATTERN_SEH1L_tipoAvisoDeExpedicion_351_35E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoAvisoDeExpedicion_351_35E_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_numeroAvisoDeExpedicion.matcher(value)).find()) {
-			setNumeroAvisoDeExpedicion(m.group(1));
+		if((m = PATTERN_SEH1L_numeroAvisoDeExpedicion.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroAvisoDeExpedicion(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_codigoEmisor_MS_.matcher(value)).find()) {
-			setCodigoEmisor_MS_(m.group(1));
+		if((m = PATTERN_SEH1L_codigoEmisor_MS_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoEmisor_MS_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_codigoReceptor_MR_.matcher(value)).find()) {
-			setCodigoReceptor_MR_(m.group(1));
+		if((m = PATTERN_SEH1L_codigoReceptor_MR_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoReceptor_MR_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_numeroDeJerarquiaDeEmbalaje.matcher(value)).find()) {
-			setNumeroDeJerarquiaDeEmbalaje(m.group(1));
+		if((m = PATTERN_SEH1L_numeroDeJerarquiaDeEmbalaje.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeJerarquiaDeEmbalaje(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_numeroDeSub_jerarquiaDeEmbalaje.matcher(value)).find()) {
-			setNumeroDeSub_jerarquiaDeEmbalaje(m.group(1));
+		if((m = PATTERN_SEH1L_numeroDeSub_jerarquiaDeEmbalaje.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeSub_jerarquiaDeEmbalaje(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_numeroDeLineaArticulo.matcher(value)).find()) {
-			setNumeroDeLineaArticulo(m.group(1));
+		if((m = PATTERN_SEH1L_numeroDeLineaArticulo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeLineaArticulo(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_codigoDeArticuloEAN_13ODUN_14.matcher(value)).find()) {
-			setCodigoDeArticuloEAN_13ODUN_14(m.group(1));
+		if((m = PATTERN_SEH1L_codigoDeArticuloEAN_13ODUN_14.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoDeArticuloEAN_13ODUN_14(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_descripcionDelArticulo.matcher(value)).find()) {
-			setDescripcionDelArticulo(m.group(1));
+		if((m = PATTERN_SEH1L_descripcionDelArticulo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDescripcionDelArticulo(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_tipoArticuloEAN_CU_DU_.matcher(value)).find()) {
-			setTipoArticuloEAN_CU_DU_(m.group(1));
+		if((m = PATTERN_SEH1L_tipoArticuloEAN_CU_DU_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoArticuloEAN_CU_DU_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_codigoInternoArticuloParaElProveedor_SA_.matcher(value)).find()) {
-			setCodigoInternoArticuloParaElProveedor_SA_(m.group(1));
+		if((m = PATTERN_SEH1L_codigoInternoArticuloParaElProveedor_SA_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoInternoArticuloParaElProveedor_SA_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_variablePromocional_PV_.matcher(value)).find()) {
-			setVariablePromocional_PV_(m.group(1));
+		if((m = PATTERN_SEH1L_variablePromocional_PV_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setVariablePromocional_PV_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_codigoDUN_14_ADU_.matcher(value)).find()) {
-			setCodigoDUN_14_ADU_(m.group(1));
+		if((m = PATTERN_SEH1L_codigoDUN_14_ADU_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoDUN_14_ADU_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_codigoACU.matcher(value)).find()) {
-			setCodigoACU(m.group(1));
+		if((m = PATTERN_SEH1L_codigoACU.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoACU(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_numeroDeLote_NB_.matcher(value)).find()) {
-			setNumeroDeLote_NB_(m.group(1));
+		if((m = PATTERN_SEH1L_numeroDeLote_NB_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeLote_NB_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_numeroDeArticuloDelComprador_1__IN_.matcher(value)).find()) {
-			setNumeroDeArticuloDelComprador_1__IN_(m.group(1));
+		if((m = PATTERN_SEH1L_numeroDeArticuloDelComprador_1__IN_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeArticuloDelComprador_1__IN_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_cantidadDeEnvio_12_.matcher(value)).find()) {
-			setCantidadDeEnvio_12_(m.group(1));
+		if((m = PATTERN_SEH1L_cantidadDeEnvio_12_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCantidadDeEnvio_12_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_calificadorUnidadDeMedida.matcher(value)).find()) {
-			setCalificadorUnidadDeMedida(m.group(1));
+		if((m = PATTERN_SEH1L_calificadorUnidadDeMedida.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorUnidadDeMedida(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_unidadesDeConsumoEnUnidadDeExpedicion.matcher(value)).find()) {
-			setUnidadesDeConsumoEnUnidadDeExpedicion(m.group(1));
+		if((m = PATTERN_SEH1L_unidadesDeConsumoEnUnidadDeExpedicion.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setUnidadesDeConsumoEnUnidadDeExpedicion(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_fechaDeExpiracion_36__102_203_.matcher(value)).find()) {
-			setFechaDeExpiracion_36__102_203_(m.group(1));
+		if((m = PATTERN_SEH1L_fechaDeExpiracion_36__102_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaDeExpiracion_36__102_203_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_calificadorReferencia1.matcher(value)).find()) {
-			setCalificadorReferencia1(m.group(1));
+		if((m = PATTERN_SEH1L_calificadorReferencia1.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorReferencia1(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_numeroReferencia1.matcher(value)).find()) {
-			setNumeroReferencia1(m.group(1));
+		if((m = PATTERN_SEH1L_numeroReferencia1.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroReferencia1(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_fechaReferencia1_102_203_.matcher(value)).find()) {
-			setFechaReferencia1_102_203_(m.group(1));
+		if((m = PATTERN_SEH1L_fechaReferencia1_102_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaReferencia1_102_203_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_calificadorReferencia2.matcher(value)).find()) {
-			setCalificadorReferencia2(m.group(1));
+		if((m = PATTERN_SEH1L_calificadorReferencia2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorReferencia2(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_numeroReferencia2.matcher(value)).find()) {
-			setNumeroReferencia2(m.group(1));
+		if((m = PATTERN_SEH1L_numeroReferencia2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroReferencia2(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_fechaReferencia2_102_203_.matcher(value)).find()) {
-			setFechaReferencia2_102_203_(m.group(1));
+		if((m = PATTERN_SEH1L_fechaReferencia2_102_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaReferencia2_102_203_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_calificadorReferencia3.matcher(value)).find()) {
-			setCalificadorReferencia3(m.group(1));
+		if((m = PATTERN_SEH1L_calificadorReferencia3.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorReferencia3(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_numeroReferencia3.matcher(value)).find()) {
-			setNumeroReferencia3(m.group(1));
+		if((m = PATTERN_SEH1L_numeroReferencia3.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroReferencia3(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_fechaReferencia3_102_203_.matcher(value)).find()) {
-			setFechaReferencia3_102_203_(m.group(1));
+		if((m = PATTERN_SEH1L_fechaReferencia3_102_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaReferencia3_102_203_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_unidadesEnAgrupacionSuperior_45E_.matcher(value)).find()) {
-			setUnidadesEnAgrupacionSuperior_45E_(m.group(1));
+		if((m = PATTERN_SEH1L_unidadesEnAgrupacionSuperior_45E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setUnidadesEnAgrupacionSuperior_45E_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_codigoEANAdicional.matcher(value)).find()) {
-			setCodigoEANAdicional(m.group(1));
+		if((m = PATTERN_SEH1L_codigoEANAdicional.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoEANAdicional(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_cantidadSinCargo_192_.matcher(value)).find()) {
-			setCantidadSinCargo_192_(m.group(1));
+		if((m = PATTERN_SEH1L_cantidadSinCargo_192_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCantidadSinCargo_192_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_calificadorDeCantidad.matcher(value)).find()) {
-			setCalificadorDeCantidad(m.group(1));
+		if((m = PATTERN_SEH1L_calificadorDeCantidad.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorDeCantidad(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_otrasCantidades.matcher(value)).find()) {
-			setOtrasCantidades(m.group(1));
+		if((m = PATTERN_SEH1L_otrasCantidades.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setOtrasCantidades(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1L_unidadDeMedidaCantidad.matcher(value)).find()) {
-			setUnidadDeMedidaCantidad(m.group(1));
+		if((m = PATTERN_SEH1L_unidadDeMedidaCantidad.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setUnidadDeMedidaCantidad(String.valueOf(m.group(1).trim()));
 		}
 	}
 
@@ -438,10 +444,10 @@ public class SEH1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDeLineaArticulo() {
+	public Integer getNumeroDeLineaArticulo() {
 		return numeroDeLineaArticulo;
 	}
-	public void setNumeroDeLineaArticulo(String numeroDeLineaArticulo) {
+	public void setNumeroDeLineaArticulo(Integer numeroDeLineaArticulo) {
 		this.numeroDeLineaArticulo = numeroDeLineaArticulo;
 	}
 
@@ -728,10 +734,10 @@ public class SEH1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCantidadDeEnvio_12_() {
+	public Double getCantidadDeEnvio_12_() {
 		return cantidadDeEnvio_12_;
 	}
-	public void setCantidadDeEnvio_12_(String cantidadDeEnvio_12_) {
+	public void setCantidadDeEnvio_12_(Double cantidadDeEnvio_12_) {
 		this.cantidadDeEnvio_12_ = cantidadDeEnvio_12_;
 	}
 
@@ -786,10 +792,10 @@ public class SEH1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getUnidadesDeConsumoEnUnidadDeExpedicion() {
+	public Double getUnidadesDeConsumoEnUnidadDeExpedicion() {
 		return unidadesDeConsumoEnUnidadDeExpedicion;
 	}
-	public void setUnidadesDeConsumoEnUnidadDeExpedicion(String unidadesDeConsumoEnUnidadDeExpedicion) {
+	public void setUnidadesDeConsumoEnUnidadDeExpedicion(Double unidadesDeConsumoEnUnidadDeExpedicion) {
 		this.unidadesDeConsumoEnUnidadDeExpedicion = unidadesDeConsumoEnUnidadDeExpedicion;
 	}
 
@@ -1221,10 +1227,10 @@ public class SEH1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getOtrasCantidades() {
+	public Double getOtrasCantidades() {
 		return otrasCantidades;
 	}
-	public void setOtrasCantidades(String otrasCantidades) {
+	public void setOtrasCantidades(Double otrasCantidades) {
 		this.otrasCantidades = otrasCantidades;
 	}
 
@@ -1257,51 +1263,78 @@ public class SEH1L {
 		this.unidadDeMedidaCantidad = unidadDeMedidaCantidad;
 	}
 
-	public enum TipoArticuloEAN_CU_DU_ {
+	/** 
+	 * V7009E-Tipo Artículo EAN (CU/DU): Los valores posibles son:
+	 */
+	public enum V7009E {
 		SI_EL_EAN_HACE_REFERENCIA_A_UNA_UNIDAD_DE_CONSUM_CU("CU"),
 		SI_EL_EAN_HACE_REFERENCIA_A_UNA_UNIDAD_D_DU("DU"),
 		;
 		
 		private String value;
 		
-		private TipoArticuloEAN_CU_DU_(String value) {
+		private V7009E(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum CalificadorUnidadDeMedida {
+		public static V7009E enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V6411U-Calificador Unidad de Medida: Solo se utiliza si el producto que se está identificando es de medida variable. El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum V6411U {
 		KILOGRAM_KGM("KGM"),
 		;
 		
 		private String value;
 		
-		private CalificadorUnidadDeMedida(String value) {
+		private V6411U(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum V11532_V11533CalificadoresDeReferenciasAplicablesALaLineaDeArticulo {
+		public static V6411U enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V11531-V11532-V11533 Calificadores de referencias aplicables a la línea de artículo: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum V11531 {
 		N__DE_PEDIDO_ASIGNADO_POR_EL_COMPRADO_ON("ON"),
 		N__DE_ALBARA_DQ("DQ"),
 		;
 		
 		private String value;
 		
-		private V11532_V11533CalificadoresDeReferenciasAplicablesALaLineaDeArticulo(String value) {
+		private V11531(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
+		public static V11531 enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
 }

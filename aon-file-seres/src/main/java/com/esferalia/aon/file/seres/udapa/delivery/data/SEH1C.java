@@ -1,5 +1,12 @@
 package com.esferalia.aon.file.seres.udapa.delivery.data;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI SEH1C entity.
  * <br>
@@ -58,139 +65,139 @@ public class SEH1C {
 	private String matriculaDelVehiculo;
 
 
-	public java.util.List<SEH1D> seh1dList;
-	public java.util.List<SEH1P> seh1pList;
-	public java.util.List<SEH1L> seh1lList;
-	public java.util.List<SEH1G> seh1gList;
-	public java.util.List<SEH1B> seh1bList;
+	public List<SEH1D> seh1dList;
+	public List<SEH1P> seh1pList;
+	public List<SEH1L> seh1lList;
+	public List<SEH1G> seh1gList;
+	public List<SEH1B> seh1bList;
 
 
-	private static java.util.regex.Pattern PATTERN_SEH1C_cabecera = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_tipoAvisoDeExpedicion_351_35E_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_numeroAvisoDeExpedicion = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_codigoEmisor_MS_ = java.util.regex.Pattern.compile("^.{29}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_codigoReceptor_MR_ = java.util.regex.Pattern.compile("^.{46}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_funcionDelMensaje = java.util.regex.Pattern.compile("^.{63}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_fechaDelDocumento_137__102_203_ = java.util.regex.Pattern.compile("^.{69}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_fechaEsperadaDeEntrega_17__102_203_ = java.util.regex.Pattern.compile("^.{81}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_calificadorFechaEntrega_2_11_PER_358_359__ = java.util.regex.Pattern.compile("^.{93}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_fechaDeServicio1 = java.util.regex.Pattern.compile("^.{96}(.{8}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_horaDeServicio1 = java.util.regex.Pattern.compile("^.{104}(.{4}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_fechaDeServicio2 = java.util.regex.Pattern.compile("^.{108}(.{8}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_horaDeServicio2 = java.util.regex.Pattern.compile("^.{116}(.{4}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_informacionAdicional = java.util.regex.Pattern.compile("^.{120}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_numeroDePedido_ON_ = java.util.regex.Pattern.compile("^.{126}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_fechaDePedido_171__102_203_ = java.util.regex.Pattern.compile("^.{143}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_numeroDeAlbaran_DQ_ = java.util.regex.Pattern.compile("^.{155}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_fechaDeAlbaran_171__102_203_ = java.util.regex.Pattern.compile("^.{172}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_calificadorReferencia1 = java.util.regex.Pattern.compile("^.{184}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_numeroDeReferencia1 = java.util.regex.Pattern.compile("^.{187}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_fechaDeReferencia1_102_203_ = java.util.regex.Pattern.compile("^.{204}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_calificadorReferencia2 = java.util.regex.Pattern.compile("^.{216}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_numeroDeReferencia2 = java.util.regex.Pattern.compile("^.{219}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_fechaDeReferencia2_102_203_ = java.util.regex.Pattern.compile("^.{236}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_metodoPagoDeCostesDeTransporte = java.util.regex.Pattern.compile("^.{248}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_codigoCondicionesDeEntrega = java.util.regex.Pattern.compile("^.{251}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_descripcionCondicionesDeEntrega = java.util.regex.Pattern.compile("^.{254}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_modoDeTransporte = java.util.regex.Pattern.compile("^.{324}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_codigoTransportista = java.util.regex.Pattern.compile("^.{327}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_nombreTransportista = java.util.regex.Pattern.compile("^.{340}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1C_matriculaDelVehiculo = java.util.regex.Pattern.compile("^.{375}(.{17}).*");
+	private static Pattern PATTERN_SEH1C_cabecera = Pattern.compile("^(.{6}).*");
+	private static Pattern PATTERN_SEH1C_tipoAvisoDeExpedicion_351_35E_ = Pattern.compile("^.{6}(.{6}).*");
+	private static Pattern PATTERN_SEH1C_numeroAvisoDeExpedicion = Pattern.compile("^.{12}(.{17}).*");
+	private static Pattern PATTERN_SEH1C_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
+	private static Pattern PATTERN_SEH1C_codigoReceptor_MR_ = Pattern.compile("^.{46}(.{17}).*");
+	private static Pattern PATTERN_SEH1C_funcionDelMensaje = Pattern.compile("^.{63}(.{6}).*");
+	private static Pattern PATTERN_SEH1C_fechaDelDocumento_137__102_203_ = Pattern.compile("^.{69}(.{12}).*");
+	private static Pattern PATTERN_SEH1C_fechaEsperadaDeEntrega_17__102_203_ = Pattern.compile("^.{81}(.{12}).*");
+	private static Pattern PATTERN_SEH1C_calificadorFechaEntrega_2_11_PER_358_359__ = Pattern.compile("^.{93}(.{3}).*");
+	private static Pattern PATTERN_SEH1C_fechaDeServicio1 = Pattern.compile("^.{96}(.{8}).*");
+	private static Pattern PATTERN_SEH1C_horaDeServicio1 = Pattern.compile("^.{104}(.{4}).*");
+	private static Pattern PATTERN_SEH1C_fechaDeServicio2 = Pattern.compile("^.{108}(.{8}).*");
+	private static Pattern PATTERN_SEH1C_horaDeServicio2 = Pattern.compile("^.{116}(.{4}).*");
+	private static Pattern PATTERN_SEH1C_informacionAdicional = Pattern.compile("^.{120}(.{6}).*");
+	private static Pattern PATTERN_SEH1C_numeroDePedido_ON_ = Pattern.compile("^.{126}(.{17}).*");
+	private static Pattern PATTERN_SEH1C_fechaDePedido_171__102_203_ = Pattern.compile("^.{143}(.{12}).*");
+	private static Pattern PATTERN_SEH1C_numeroDeAlbaran_DQ_ = Pattern.compile("^.{155}(.{17}).*");
+	private static Pattern PATTERN_SEH1C_fechaDeAlbaran_171__102_203_ = Pattern.compile("^.{172}(.{12}).*");
+	private static Pattern PATTERN_SEH1C_calificadorReferencia1 = Pattern.compile("^.{184}(.{3}).*");
+	private static Pattern PATTERN_SEH1C_numeroDeReferencia1 = Pattern.compile("^.{187}(.{17}).*");
+	private static Pattern PATTERN_SEH1C_fechaDeReferencia1_102_203_ = Pattern.compile("^.{204}(.{12}).*");
+	private static Pattern PATTERN_SEH1C_calificadorReferencia2 = Pattern.compile("^.{216}(.{3}).*");
+	private static Pattern PATTERN_SEH1C_numeroDeReferencia2 = Pattern.compile("^.{219}(.{17}).*");
+	private static Pattern PATTERN_SEH1C_fechaDeReferencia2_102_203_ = Pattern.compile("^.{236}(.{12}).*");
+	private static Pattern PATTERN_SEH1C_metodoPagoDeCostesDeTransporte = Pattern.compile("^.{248}(.{3}).*");
+	private static Pattern PATTERN_SEH1C_codigoCondicionesDeEntrega = Pattern.compile("^.{251}(.{3}).*");
+	private static Pattern PATTERN_SEH1C_descripcionCondicionesDeEntrega = Pattern.compile("^.{254}(.{70}).*");
+	private static Pattern PATTERN_SEH1C_modoDeTransporte = Pattern.compile("^.{324}(.{3}).*");
+	private static Pattern PATTERN_SEH1C_codigoTransportista = Pattern.compile("^.{327}(.{13}).*");
+	private static Pattern PATTERN_SEH1C_nombreTransportista = Pattern.compile("^.{340}(.{35}).*");
+	private static Pattern PATTERN_SEH1C_matriculaDelVehiculo = Pattern.compile("^.{375}(.{17}).*");
 
 	public void parse(String value) {
-		java.util.regex.Matcher m;
-		if((m = PATTERN_SEH1C_cabecera.matcher(value)).find()) {
-			setCabecera(m.group(1));
+		Matcher m;
+		if((m = PATTERN_SEH1C_cabecera.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCabecera(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_tipoAvisoDeExpedicion_351_35E_.matcher(value)).find()) {
-			setTipoAvisoDeExpedicion_351_35E_(m.group(1));
+		if((m = PATTERN_SEH1C_tipoAvisoDeExpedicion_351_35E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoAvisoDeExpedicion_351_35E_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_numeroAvisoDeExpedicion.matcher(value)).find()) {
-			setNumeroAvisoDeExpedicion(m.group(1));
+		if((m = PATTERN_SEH1C_numeroAvisoDeExpedicion.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroAvisoDeExpedicion(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_codigoEmisor_MS_.matcher(value)).find()) {
-			setCodigoEmisor_MS_(m.group(1));
+		if((m = PATTERN_SEH1C_codigoEmisor_MS_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoEmisor_MS_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_codigoReceptor_MR_.matcher(value)).find()) {
-			setCodigoReceptor_MR_(m.group(1));
+		if((m = PATTERN_SEH1C_codigoReceptor_MR_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoReceptor_MR_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_funcionDelMensaje.matcher(value)).find()) {
-			setFuncionDelMensaje(m.group(1));
+		if((m = PATTERN_SEH1C_funcionDelMensaje.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFuncionDelMensaje(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_fechaDelDocumento_137__102_203_.matcher(value)).find()) {
-			setFechaDelDocumento_137__102_203_(m.group(1));
+		if((m = PATTERN_SEH1C_fechaDelDocumento_137__102_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaDelDocumento_137__102_203_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_fechaEsperadaDeEntrega_17__102_203_.matcher(value)).find()) {
-			setFechaEsperadaDeEntrega_17__102_203_(m.group(1));
+		if((m = PATTERN_SEH1C_fechaEsperadaDeEntrega_17__102_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaEsperadaDeEntrega_17__102_203_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_calificadorFechaEntrega_2_11_PER_358_359__.matcher(value)).find()) {
-			setCalificadorFechaEntrega_2_11_PER_358_359__(m.group(1));
+		if((m = PATTERN_SEH1C_calificadorFechaEntrega_2_11_PER_358_359__.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorFechaEntrega_2_11_PER_358_359__(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_fechaDeServicio1.matcher(value)).find()) {
-			setFechaDeServicio1(m.group(1));
+		if((m = PATTERN_SEH1C_fechaDeServicio1.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaDeServicio1(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_horaDeServicio1.matcher(value)).find()) {
-			setHoraDeServicio1(m.group(1));
+		if((m = PATTERN_SEH1C_horaDeServicio1.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setHoraDeServicio1(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_fechaDeServicio2.matcher(value)).find()) {
-			setFechaDeServicio2(m.group(1));
+		if((m = PATTERN_SEH1C_fechaDeServicio2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaDeServicio2(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_horaDeServicio2.matcher(value)).find()) {
-			setHoraDeServicio2(m.group(1));
+		if((m = PATTERN_SEH1C_horaDeServicio2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setHoraDeServicio2(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_informacionAdicional.matcher(value)).find()) {
-			setInformacionAdicional(m.group(1));
+		if((m = PATTERN_SEH1C_informacionAdicional.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setInformacionAdicional(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_numeroDePedido_ON_.matcher(value)).find()) {
-			setNumeroDePedido_ON_(m.group(1));
+		if((m = PATTERN_SEH1C_numeroDePedido_ON_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDePedido_ON_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_fechaDePedido_171__102_203_.matcher(value)).find()) {
-			setFechaDePedido_171__102_203_(m.group(1));
+		if((m = PATTERN_SEH1C_fechaDePedido_171__102_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaDePedido_171__102_203_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_numeroDeAlbaran_DQ_.matcher(value)).find()) {
-			setNumeroDeAlbaran_DQ_(m.group(1));
+		if((m = PATTERN_SEH1C_numeroDeAlbaran_DQ_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeAlbaran_DQ_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_fechaDeAlbaran_171__102_203_.matcher(value)).find()) {
-			setFechaDeAlbaran_171__102_203_(m.group(1));
+		if((m = PATTERN_SEH1C_fechaDeAlbaran_171__102_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaDeAlbaran_171__102_203_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_calificadorReferencia1.matcher(value)).find()) {
-			setCalificadorReferencia1(m.group(1));
+		if((m = PATTERN_SEH1C_calificadorReferencia1.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorReferencia1(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_numeroDeReferencia1.matcher(value)).find()) {
-			setNumeroDeReferencia1(m.group(1));
+		if((m = PATTERN_SEH1C_numeroDeReferencia1.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeReferencia1(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_fechaDeReferencia1_102_203_.matcher(value)).find()) {
-			setFechaDeReferencia1_102_203_(m.group(1));
+		if((m = PATTERN_SEH1C_fechaDeReferencia1_102_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaDeReferencia1_102_203_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_calificadorReferencia2.matcher(value)).find()) {
-			setCalificadorReferencia2(m.group(1));
+		if((m = PATTERN_SEH1C_calificadorReferencia2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorReferencia2(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_numeroDeReferencia2.matcher(value)).find()) {
-			setNumeroDeReferencia2(m.group(1));
+		if((m = PATTERN_SEH1C_numeroDeReferencia2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeReferencia2(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_fechaDeReferencia2_102_203_.matcher(value)).find()) {
-			setFechaDeReferencia2_102_203_(m.group(1));
+		if((m = PATTERN_SEH1C_fechaDeReferencia2_102_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaDeReferencia2_102_203_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_metodoPagoDeCostesDeTransporte.matcher(value)).find()) {
-			setMetodoPagoDeCostesDeTransporte(m.group(1));
+		if((m = PATTERN_SEH1C_metodoPagoDeCostesDeTransporte.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setMetodoPagoDeCostesDeTransporte(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_codigoCondicionesDeEntrega.matcher(value)).find()) {
-			setCodigoCondicionesDeEntrega(m.group(1));
+		if((m = PATTERN_SEH1C_codigoCondicionesDeEntrega.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoCondicionesDeEntrega(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_descripcionCondicionesDeEntrega.matcher(value)).find()) {
-			setDescripcionCondicionesDeEntrega(m.group(1));
+		if((m = PATTERN_SEH1C_descripcionCondicionesDeEntrega.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDescripcionCondicionesDeEntrega(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_modoDeTransporte.matcher(value)).find()) {
-			setModoDeTransporte(m.group(1));
+		if((m = PATTERN_SEH1C_modoDeTransporte.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setModoDeTransporte(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_codigoTransportista.matcher(value)).find()) {
-			setCodigoTransportista(m.group(1));
+		if((m = PATTERN_SEH1C_codigoTransportista.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoTransportista(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_nombreTransportista.matcher(value)).find()) {
-			setNombreTransportista(m.group(1));
+		if((m = PATTERN_SEH1C_nombreTransportista.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNombreTransportista(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1C_matriculaDelVehiculo.matcher(value)).find()) {
-			setMatriculaDelVehiculo(m.group(1));
+		if((m = PATTERN_SEH1C_matriculaDelVehiculo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setMatriculaDelVehiculo(String.valueOf(m.group(1).trim()));
 		}
 	}
 
@@ -1094,23 +1101,35 @@ public class SEH1C {
 		this.matriculaDelVehiculo = matriculaDelVehiculo;
 	}
 
-	public enum TipoAvisoDeExpedicion_351_35E_ {
+	/** 
+	 * V1001T-Tipo Aviso de Expedición (351/35E): El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum V1001T {
 		AVISO_DE_EXPEDICIO_351("351"),
 		RESPUESTA_AL_AVIS_35E("35E"),
 		;
 		
 		private String value;
 		
-		private TipoAvisoDeExpedicion_351_35E_(String value) {
+		private V1001T(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum FuncionDelMensaje {
+		public static V1001T enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V1225F-Función del Mensaje: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum V1225F {
 		CANCELACIO_1("1"),
 		DUPLICAD_7("7"),
 		ORIGINA_9("9"),
@@ -1119,16 +1138,25 @@ public class SEH1C {
 		
 		private String value;
 		
-		private FuncionDelMensaje(String value) {
+		private V1225F(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum Calif_FechaDeEntregaDeLaMercancia {
+		public static V1225F enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V2005C-Calif. Fecha de Entrega de la mercancía: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum V2005C {
 		FECHA_Y_HORA_DE_ENTREGA_SOLICITAD_2("2"),
 		DESPACHO_EN_FECHA_Y_O_HOR_11("11"),
 		SI_NOS_INTERESA_ESPECIFICAR_UN_PERIODO_DE_ENTREGA____DESDE______HASTA____PER("PER"),
@@ -1136,31 +1164,49 @@ public class SEH1C {
 		
 		private String value;
 		
-		private Calif_FechaDeEntregaDeLaMercancia(String value) {
+		private V2005C(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum InformacionAdicional {
+		public static V2005C enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V4183I-Información adicional: Permite indicar que la mercancía especificada en el Aviso de Expedición se envía en depósito. El campo corresponde a un EANCOM. Los valores posibles son:
+	 */
+	public enum V4183I {
 		ENVIAR_PERO_NO_FACTURAR__EN_DEPOSITO_82E("82E"),
 		;
 		
 		private String value;
 		
-		private InformacionAdicional(String value) {
+		private V4183I(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum CalificadoresParaEspecificarOtrasReferencias {
+		public static V4183I enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V1153C y V1153V - Calificadores para especificar otras referencias: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum V1153CYV1153V {
 		N__DE_AVISO_DE_EXPEDICIO_AAJ("AAJ"),
 		N__DE_LISTA_DE_EMPAQUETAD_PK("PK"),
 		N__DE_PEDIDO_PARA_EL_PROVEEDO_VN("VN"),
@@ -1168,16 +1214,25 @@ public class SEH1C {
 		
 		private String value;
 		
-		private CalificadoresParaEspecificarOtrasReferencias(String value) {
+		private V1153CYV1153V(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum MetodoDePagoDeCostesDeTransporte {
+		public static V1153CYV1153V enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V4215T-Método de Pago de Costes de Transporte: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum V4215T {
 		DEFINIDO_POR_EL_COMPRADOR_Y_EL_VENDEDO_DF("DF"),
 		PAGADO_DE_ANTEMANO_PERO_CON_CARGO_AL_CLIENT_PC("PC"),
 		PORTES_PAGADO_PP("PP"),
@@ -1185,32 +1240,50 @@ public class SEH1C {
 		
 		private String value;
 		
-		private MetodoDePagoDeCostesDeTransporte(String value) {
+		private V4215T(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum CodigoCondicionesDeEntrega {
+		public static V4215T enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V4053T-Código Condiciones de Entrega: Los valores posibles son:
+	 */
+	public enum V4053T {
 		RECOGIDA_POR_EL_EMISOR_DEL_PEDID_RD("RD"),
 		ENVIADO_POR_EL_RECEPTOR_DEL_PEDID_EP("EP"),
 		;
 		
 		private String value;
 		
-		private CodigoCondicionesDeEntrega(String value) {
+		private V4053T(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum ModoDeTransporte {
+		public static V4053T enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V8067T-Modo de Transporte: Los valores posibles son:
+	 */
+	public enum V8067T {
 		MARITIM_10("10"),
 		FERROCARRI_20("20"),
 		CARRETER_30("30"),
@@ -1219,13 +1292,19 @@ public class SEH1C {
 		
 		private String value;
 		
-		private ModoDeTransporte(String value) {
+		private V8067T(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
+		public static V8067T enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
 }

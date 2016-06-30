@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <register name="SEH1D">
-	<field name="Direcciones" value="bean" bean="SEH1D" property="direcciones" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Tipo Aviso de Expedición (351/35E)" value="bean" bean="SEH1D" property="tipoAvisoDeExpedicion_351_35E_" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número Aviso de Expedición" value="bean" bean="SEH1D" property="numeroAvisoDeExpedicion" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Emisor  (MS)" value="bean" bean="SEH1D" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Receptor (MR)" value="bean" bean="SEH1D" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Calificador Interlocutor" value="bean" bean="SEH1D" property="calificadorInterlocutor" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Código Interlocutor" value="bean" bean="SEH1D" property="codigoInterlocutor" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Agencia Responsable lista de Códigos" value="bean" bean="SEH1D" property="agenciaResponsableListaDeCodigos" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Nombre 1" value="bean" bean="SEH1D" property="nombre1" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Nombre 2" value="bean" bean="SEH1D" property="nombre2" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Nombre 3" value="bean" bean="SEH1D" property="nombre3" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Nombre 4" value="bean" bean="SEH1D" property="nombre4" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Nombre 5" value="bean" bean="SEH1D" property="nombre5" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Dirección 1  (Calle+Número)" value="bean" bean="SEH1D" property="direccion1_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Dirección 2  (Calle+Número)" value="bean" bean="SEH1D" property="direccion2_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Dirección 3  (Calle+Número)" value="bean" bean="SEH1D" property="direccion3_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Dirección 4  (Calle+Número)" value="bean" bean="SEH1D" property="direccion4_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Población" value="bean" bean="SEH1D" property="poblacion" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Provincia" value="bean" bean="SEH1D" property="provincia" format="AlphaNumeric" pattern="X(9)" />
-	<field name="Código Postal" value="bean" bean="SEH1D" property="codigoPostal" format="AlphaNumeric" pattern="X(9)" />
-	<field name="Código País" value="bean" bean="SEH1D" property="codigoPais" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Calificador Referencia" value="bean" bean="SEH1D" property="calificadorReferencia" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Número de Referencia" value="bean" bean="SEH1D" property="numeroDeReferencia" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Función de Contacto" value="bean" bean="SEH1D" property="funcionDeContacto" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Código Departamento o Empleado" value="bean" bean="SEH1D" property="codigoDepartamentoOEmpleado" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Nombre Departamento o Empleado" value="bean" bean="SEH1D" property="nombreDepartamentoOEmpleado" format="AlphaNumeric" pattern="X(35)" />
-	<field name="Calificador Referencia 2" value="bean" bean="SEH1D" property="calificadorReferencia2" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Número de Referencia 2" value="bean" bean="SEH1D" property="numeroDeReferencia2" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Direcciones" value="SEH1D" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo Aviso de Expedición (351/35E)" value="bean" bean ="SEH1D" property="tipoAvisoDeExpedicion_351_35E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número Aviso de Expedición" value="bean" bean ="SEH1D" property="numeroAvisoDeExpedicion" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" bean ="SEH1D" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" bean ="SEH1D" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Calificador Interlocutor" value="bean" bean ="SEH1D" property="calificadorInterlocutor" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Código Interlocutor" value="bean" bean ="SEH1D" property="codigoInterlocutor" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Agencia Responsable lista de Códigos" value="bean" bean ="SEH1D" property="agenciaResponsableListaDeCodigos" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Nombre 1" value="bean" bean ="SEH1D" property="nombre1" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 2" value="bean" bean ="SEH1D" property="nombre2" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 3" value="bean" bean ="SEH1D" property="nombre3" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 4" value="bean" bean ="SEH1D" property="nombre4" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Nombre 5" value="bean" bean ="SEH1D" property="nombre5" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 1  (Calle+Número)" value="bean" bean ="SEH1D" property="direccion1_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 2  (Calle+Número)" value="bean" bean ="SEH1D" property="direccion2_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 3  (Calle+Número)" value="bean" bean ="SEH1D" property="direccion3_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Dirección 4  (Calle+Número)" value="bean" bean ="SEH1D" property="direccion4_Calle_Numero_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Población" value="bean" bean ="SEH1D" property="poblacion" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Provincia" value="bean" bean ="SEH1D" property="provincia" format="AlphaNumeric" pattern="X(9)" />
+	<field name="Código Postal" value="bean" bean ="SEH1D" property="codigoPostal" format="AlphaNumeric" pattern="X(9)" />
+	<field name="Código País" value="bean" bean ="SEH1D" property="codigoPais" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Calificador Referencia" value="bean" bean ="SEH1D" property="calificadorReferencia" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de Referencia" value="bean" bean ="SEH1D" property="numeroDeReferencia" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Función de Contacto" value="bean" bean ="SEH1D" property="funcionDeContacto" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Código Departamento o Empleado" value="bean" bean ="SEH1D" property="codigoDepartamentoOEmpleado" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Nombre Departamento o Empleado" value="bean" bean ="SEH1D" property="nombreDepartamentoOEmpleado" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Calificador Referencia 2" value="bean" bean ="SEH1D" property="calificadorReferencia2" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de Referencia 2" value="bean" bean ="SEH1D" property="numeroDeReferencia2" format="AlphaNumeric" pattern="X(17)" />
 </register>

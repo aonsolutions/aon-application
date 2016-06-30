@@ -1,5 +1,11 @@
 package com.esferalia.aon.file.seres.udapa.sales.data;
 
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI ERE1L entity.
  * <br>
@@ -30,7 +36,7 @@ public class ERE1L {
 	private String numeroDePedido;
 	private String codigoEmisor_MS_;
 	private String codigoReceptor_MR_;
-	private String numeroDeLineaArticulo;
+	private Integer numeroDeLineaArticulo;
 	private String codigoDeArticuloEAN_13ODUN_14;
 	private String tipoDeNumeroDeArticulo;
 	private String descripcionDelArticulo1;
@@ -40,29 +46,29 @@ public class ERE1L {
 	private String codigoInternoArticuloCliente_IN_;
 	private String codigoVariablePromocional_1__PV_;
 	private String codigoUnidadDeExpedicion_1__EN_;
-	private String cantidadPedida_21_;
-	private String cantidadBonificada_192_;
+	private Double cantidadPedida_21_;
+	private Double cantidadBonificada_192_;
 	private String calificadorUnidadDeMedidaCantidad;
-	private String numeroDeU_C_EnUnidadDeExpedicion;
+	private Double numeroDeU_C_EnUnidadDeExpedicion;
 	private String calificadorFechaDeEntrega_3_63_64_PER_;
-	private String fechaDeEntrega1;
-	private String horaDeEntrega1;
-	private String fechaDeEntrega2;
-	private String horaDeEntrega2;
-	private String importeTotalNetoLinea_203_;
-	private String precioBrutoUnitario_AAB_;
-	private String precioNetoUnitario_AAA_;
-	private String precioATituloInformativo_INF_;
+	private Integer fechaDeEntrega1;
+	private Integer horaDeEntrega1;
+	private Integer fechaDeEntrega2;
+	private Integer horaDeEntrega2;
+	private Double importeTotalNetoLinea_203_;
+	private Double precioBrutoUnitario_AAB_;
+	private Double precioNetoUnitario_AAA_;
+	private Double precioATituloInformativo_INF_;
 	private String calificadorUnidadDeMedidaPrecio;
 	private String calificadorIVA_IGIG;
-	private String porcentajeImpuestoIVA_IGIC;
-	private String importeImpuestoIVA_IGIC;
-	private String porcentajeRecargoDeEquivalencia;
-	private String importeRecargoDeEquivalencia;
+	private Double porcentajeImpuestoIVA_IGIC;
+	private Double importeImpuestoIVA_IGIC;
+	private Double porcentajeRecargoDeEquivalencia;
+	private Double importeRecargoDeEquivalencia;
 	private String calificadorOtroTipoDeImpuesto;
-	private String porcentajeOtroTipoDeImpuesto;
-	private String importeOtroTipoDeImpuesto;
-	private String pesoNeto_PD__AAA_;
+	private Double porcentajeOtroTipoDeImpuesto;
+	private Double importeOtroTipoDeImpuesto;
+	private Double pesoNeto_PD__AAA_;
 	private String unidadDeMedidaPeso;
 	private String tipoArticuloEAN_CU_DU_;
 	private String descripcionDelModelo_BRN_;
@@ -71,184 +77,184 @@ public class ERE1L {
 	private String presentacion_Cantidad_Formato_U03_;
 
 
-	private static java.util.regex.Pattern PATTERN_ERE1L_lineas = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_tipoDePedido_220_221_224_226_22E_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_numeroDePedido = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_codigoEmisor_MS_ = java.util.regex.Pattern.compile("^.{29}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_codigoReceptor_MR_ = java.util.regex.Pattern.compile("^.{46}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_numeroDeLineaArticulo = java.util.regex.Pattern.compile("^.{63}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_codigoDeArticuloEAN_13ODUN_14 = java.util.regex.Pattern.compile("^.{69}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_tipoDeNumeroDeArticulo = java.util.regex.Pattern.compile("^.{84}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_descripcionDelArticulo1 = java.util.regex.Pattern.compile("^.{87}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_descripcionDelArticulo2 = java.util.regex.Pattern.compile("^.{157}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_tipoArticulo = java.util.regex.Pattern.compile("^.{227}(.{1}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_codigoInternoArticuloProveedor_SA_ = java.util.regex.Pattern.compile("^.{228}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_codigoInternoArticuloCliente_IN_ = java.util.regex.Pattern.compile("^.{263}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_codigoVariablePromocional_1__PV_ = java.util.regex.Pattern.compile("^.{298}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_codigoUnidadDeExpedicion_1__EN_ = java.util.regex.Pattern.compile("^.{333}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_cantidadPedida_21_ = java.util.regex.Pattern.compile("^.{368}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_cantidadBonificada_192_ = java.util.regex.Pattern.compile("^.{384}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_calificadorUnidadDeMedidaCantidad = java.util.regex.Pattern.compile("^.{400}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_numeroDeU_C_EnUnidadDeExpedicion = java.util.regex.Pattern.compile("^.{406}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_calificadorFechaDeEntrega_3_63_64_PER_ = java.util.regex.Pattern.compile("^.{422}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_fechaDeEntrega1 = java.util.regex.Pattern.compile("^.{425}(.{8}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_horaDeEntrega1 = java.util.regex.Pattern.compile("^.{433}(.{4}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_fechaDeEntrega2 = java.util.regex.Pattern.compile("^.{437}(.{8}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_horaDeEntrega2 = java.util.regex.Pattern.compile("^.{445}(.{4}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_importeTotalNetoLinea_203_ = java.util.regex.Pattern.compile("^.{449}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_precioBrutoUnitario_AAB_ = java.util.regex.Pattern.compile("^.{467}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_precioNetoUnitario_AAA_ = java.util.regex.Pattern.compile("^.{483}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_precioATituloInformativo_INF_ = java.util.regex.Pattern.compile("^.{499}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_calificadorUnidadDeMedidaPrecio = java.util.regex.Pattern.compile("^.{515}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_calificadorIVA_IGIG = java.util.regex.Pattern.compile("^.{521}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_porcentajeImpuestoIVA_IGIC = java.util.regex.Pattern.compile("^.{527}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_importeImpuestoIVA_IGIC = java.util.regex.Pattern.compile("^.{533}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_porcentajeRecargoDeEquivalencia = java.util.regex.Pattern.compile("^.{551}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_importeRecargoDeEquivalencia = java.util.regex.Pattern.compile("^.{557}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_calificadorOtroTipoDeImpuesto = java.util.regex.Pattern.compile("^.{575}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_porcentajeOtroTipoDeImpuesto = java.util.regex.Pattern.compile("^.{581}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_importeOtroTipoDeImpuesto = java.util.regex.Pattern.compile("^.{587}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_pesoNeto_PD__AAA_ = java.util.regex.Pattern.compile("^.{605}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_unidadDeMedidaPeso = java.util.regex.Pattern.compile("^.{623}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_tipoArticuloEAN_CU_DU_ = java.util.regex.Pattern.compile("^.{629}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_descripcionDelModelo_BRN_ = java.util.regex.Pattern.compile("^.{646}(.{25}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_variedad1_35_ = java.util.regex.Pattern.compile("^.{681}(.{25}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_variedad2_UP5_ = java.util.regex.Pattern.compile("^.{716}(.{25}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1L_presentacion_Cantidad_Formato_U03_ = java.util.regex.Pattern.compile("^.{751}(.{25}).*");
+	private static Pattern PATTERN_ERE1L_lineas = Pattern.compile("^(.{6}).*");
+	private static Pattern PATTERN_ERE1L_tipoDePedido_220_221_224_226_22E_ = Pattern.compile("^.{6}(.{6}).*");
+	private static Pattern PATTERN_ERE1L_numeroDePedido = Pattern.compile("^.{12}(.{17}).*");
+	private static Pattern PATTERN_ERE1L_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
+	private static Pattern PATTERN_ERE1L_codigoReceptor_MR_ = Pattern.compile("^.{46}(.{17}).*");
+	private static Pattern PATTERN_ERE1L_numeroDeLineaArticulo = Pattern.compile("^.{63}(.{6}).*");
+	private static Pattern PATTERN_ERE1L_codigoDeArticuloEAN_13ODUN_14 = Pattern.compile("^.{69}(.{15}).*");
+	private static Pattern PATTERN_ERE1L_tipoDeNumeroDeArticulo = Pattern.compile("^.{84}(.{3}).*");
+	private static Pattern PATTERN_ERE1L_descripcionDelArticulo1 = Pattern.compile("^.{87}(.{70}).*");
+	private static Pattern PATTERN_ERE1L_descripcionDelArticulo2 = Pattern.compile("^.{157}(.{70}).*");
+	private static Pattern PATTERN_ERE1L_tipoArticulo = Pattern.compile("^.{227}(.{1}).*");
+	private static Pattern PATTERN_ERE1L_codigoInternoArticuloProveedor_SA_ = Pattern.compile("^.{228}(.{35}).*");
+	private static Pattern PATTERN_ERE1L_codigoInternoArticuloCliente_IN_ = Pattern.compile("^.{263}(.{35}).*");
+	private static Pattern PATTERN_ERE1L_codigoVariablePromocional_1__PV_ = Pattern.compile("^.{298}(.{35}).*");
+	private static Pattern PATTERN_ERE1L_codigoUnidadDeExpedicion_1__EN_ = Pattern.compile("^.{333}(.{35}).*");
+	private static Pattern PATTERN_ERE1L_cantidadPedida_21_ = Pattern.compile("^.{368}(.{16}).*");
+	private static Pattern PATTERN_ERE1L_cantidadBonificada_192_ = Pattern.compile("^.{384}(.{16}).*");
+	private static Pattern PATTERN_ERE1L_calificadorUnidadDeMedidaCantidad = Pattern.compile("^.{400}(.{6}).*");
+	private static Pattern PATTERN_ERE1L_numeroDeU_C_EnUnidadDeExpedicion = Pattern.compile("^.{406}(.{16}).*");
+	private static Pattern PATTERN_ERE1L_calificadorFechaDeEntrega_3_63_64_PER_ = Pattern.compile("^.{422}(.{3}).*");
+	private static Pattern PATTERN_ERE1L_fechaDeEntrega1 = Pattern.compile("^.{425}(.{8}).*");
+	private static Pattern PATTERN_ERE1L_horaDeEntrega1 = Pattern.compile("^.{433}(.{4}).*");
+	private static Pattern PATTERN_ERE1L_fechaDeEntrega2 = Pattern.compile("^.{437}(.{8}).*");
+	private static Pattern PATTERN_ERE1L_horaDeEntrega2 = Pattern.compile("^.{445}(.{4}).*");
+	private static Pattern PATTERN_ERE1L_importeTotalNetoLinea_203_ = Pattern.compile("^.{449}(.{18}).*");
+	private static Pattern PATTERN_ERE1L_precioBrutoUnitario_AAB_ = Pattern.compile("^.{467}(.{16}).*");
+	private static Pattern PATTERN_ERE1L_precioNetoUnitario_AAA_ = Pattern.compile("^.{483}(.{16}).*");
+	private static Pattern PATTERN_ERE1L_precioATituloInformativo_INF_ = Pattern.compile("^.{499}(.{16}).*");
+	private static Pattern PATTERN_ERE1L_calificadorUnidadDeMedidaPrecio = Pattern.compile("^.{515}(.{6}).*");
+	private static Pattern PATTERN_ERE1L_calificadorIVA_IGIG = Pattern.compile("^.{521}(.{6}).*");
+	private static Pattern PATTERN_ERE1L_porcentajeImpuestoIVA_IGIC = Pattern.compile("^.{527}(.{6}).*");
+	private static Pattern PATTERN_ERE1L_importeImpuestoIVA_IGIC = Pattern.compile("^.{533}(.{18}).*");
+	private static Pattern PATTERN_ERE1L_porcentajeRecargoDeEquivalencia = Pattern.compile("^.{551}(.{6}).*");
+	private static Pattern PATTERN_ERE1L_importeRecargoDeEquivalencia = Pattern.compile("^.{557}(.{18}).*");
+	private static Pattern PATTERN_ERE1L_calificadorOtroTipoDeImpuesto = Pattern.compile("^.{575}(.{6}).*");
+	private static Pattern PATTERN_ERE1L_porcentajeOtroTipoDeImpuesto = Pattern.compile("^.{581}(.{6}).*");
+	private static Pattern PATTERN_ERE1L_importeOtroTipoDeImpuesto = Pattern.compile("^.{587}(.{18}).*");
+	private static Pattern PATTERN_ERE1L_pesoNeto_PD__AAA_ = Pattern.compile("^.{605}(.{18}).*");
+	private static Pattern PATTERN_ERE1L_unidadDeMedidaPeso = Pattern.compile("^.{623}(.{6}).*");
+	private static Pattern PATTERN_ERE1L_tipoArticuloEAN_CU_DU_ = Pattern.compile("^.{629}(.{17}).*");
+	private static Pattern PATTERN_ERE1L_descripcionDelModelo_BRN_ = Pattern.compile("^.{646}(.{25}).*");
+	private static Pattern PATTERN_ERE1L_variedad1_35_ = Pattern.compile("^.{681}(.{25}).*");
+	private static Pattern PATTERN_ERE1L_variedad2_UP5_ = Pattern.compile("^.{716}(.{25}).*");
+	private static Pattern PATTERN_ERE1L_presentacion_Cantidad_Formato_U03_ = Pattern.compile("^.{751}(.{25}).*");
 
 	public void parse(String value) {
-		java.util.regex.Matcher m;
-		if((m = PATTERN_ERE1L_lineas.matcher(value)).find()) {
-			setLineas(m.group(1));
+		Matcher m;
+		if((m = PATTERN_ERE1L_lineas.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setLineas(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_tipoDePedido_220_221_224_226_22E_.matcher(value)).find()) {
-			setTipoDePedido_220_221_224_226_22E_(m.group(1));
+		if((m = PATTERN_ERE1L_tipoDePedido_220_221_224_226_22E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoDePedido_220_221_224_226_22E_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_numeroDePedido.matcher(value)).find()) {
-			setNumeroDePedido(m.group(1));
+		if((m = PATTERN_ERE1L_numeroDePedido.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDePedido(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_codigoEmisor_MS_.matcher(value)).find()) {
-			setCodigoEmisor_MS_(m.group(1));
+		if((m = PATTERN_ERE1L_codigoEmisor_MS_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoEmisor_MS_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_codigoReceptor_MR_.matcher(value)).find()) {
-			setCodigoReceptor_MR_(m.group(1));
+		if((m = PATTERN_ERE1L_codigoReceptor_MR_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoReceptor_MR_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_numeroDeLineaArticulo.matcher(value)).find()) {
-			setNumeroDeLineaArticulo(m.group(1));
+		if((m = PATTERN_ERE1L_numeroDeLineaArticulo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeLineaArticulo(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_codigoDeArticuloEAN_13ODUN_14.matcher(value)).find()) {
-			setCodigoDeArticuloEAN_13ODUN_14(m.group(1));
+		if((m = PATTERN_ERE1L_codigoDeArticuloEAN_13ODUN_14.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoDeArticuloEAN_13ODUN_14(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_tipoDeNumeroDeArticulo.matcher(value)).find()) {
-			setTipoDeNumeroDeArticulo(m.group(1));
+		if((m = PATTERN_ERE1L_tipoDeNumeroDeArticulo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoDeNumeroDeArticulo(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_descripcionDelArticulo1.matcher(value)).find()) {
-			setDescripcionDelArticulo1(m.group(1));
+		if((m = PATTERN_ERE1L_descripcionDelArticulo1.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDescripcionDelArticulo1(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_descripcionDelArticulo2.matcher(value)).find()) {
-			setDescripcionDelArticulo2(m.group(1));
+		if((m = PATTERN_ERE1L_descripcionDelArticulo2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDescripcionDelArticulo2(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_tipoArticulo.matcher(value)).find()) {
-			setTipoArticulo(m.group(1));
+		if((m = PATTERN_ERE1L_tipoArticulo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoArticulo(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_codigoInternoArticuloProveedor_SA_.matcher(value)).find()) {
-			setCodigoInternoArticuloProveedor_SA_(m.group(1));
+		if((m = PATTERN_ERE1L_codigoInternoArticuloProveedor_SA_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoInternoArticuloProveedor_SA_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_codigoInternoArticuloCliente_IN_.matcher(value)).find()) {
-			setCodigoInternoArticuloCliente_IN_(m.group(1));
+		if((m = PATTERN_ERE1L_codigoInternoArticuloCliente_IN_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoInternoArticuloCliente_IN_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_codigoVariablePromocional_1__PV_.matcher(value)).find()) {
-			setCodigoVariablePromocional_1__PV_(m.group(1));
+		if((m = PATTERN_ERE1L_codigoVariablePromocional_1__PV_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoVariablePromocional_1__PV_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_codigoUnidadDeExpedicion_1__EN_.matcher(value)).find()) {
-			setCodigoUnidadDeExpedicion_1__EN_(m.group(1));
+		if((m = PATTERN_ERE1L_codigoUnidadDeExpedicion_1__EN_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoUnidadDeExpedicion_1__EN_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_cantidadPedida_21_.matcher(value)).find()) {
-			setCantidadPedida_21_(m.group(1));
+		if((m = PATTERN_ERE1L_cantidadPedida_21_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCantidadPedida_21_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_cantidadBonificada_192_.matcher(value)).find()) {
-			setCantidadBonificada_192_(m.group(1));
+		if((m = PATTERN_ERE1L_cantidadBonificada_192_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCantidadBonificada_192_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_calificadorUnidadDeMedidaCantidad.matcher(value)).find()) {
-			setCalificadorUnidadDeMedidaCantidad(m.group(1));
+		if((m = PATTERN_ERE1L_calificadorUnidadDeMedidaCantidad.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorUnidadDeMedidaCantidad(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_numeroDeU_C_EnUnidadDeExpedicion.matcher(value)).find()) {
-			setNumeroDeU_C_EnUnidadDeExpedicion(m.group(1));
+		if((m = PATTERN_ERE1L_numeroDeU_C_EnUnidadDeExpedicion.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeU_C_EnUnidadDeExpedicion(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_calificadorFechaDeEntrega_3_63_64_PER_.matcher(value)).find()) {
-			setCalificadorFechaDeEntrega_3_63_64_PER_(m.group(1));
+		if((m = PATTERN_ERE1L_calificadorFechaDeEntrega_3_63_64_PER_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorFechaDeEntrega_3_63_64_PER_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_fechaDeEntrega1.matcher(value)).find()) {
-			setFechaDeEntrega1(m.group(1));
+		if((m = PATTERN_ERE1L_fechaDeEntrega1.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaDeEntrega1(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_horaDeEntrega1.matcher(value)).find()) {
-			setHoraDeEntrega1(m.group(1));
+		if((m = PATTERN_ERE1L_horaDeEntrega1.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setHoraDeEntrega1(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_fechaDeEntrega2.matcher(value)).find()) {
-			setFechaDeEntrega2(m.group(1));
+		if((m = PATTERN_ERE1L_fechaDeEntrega2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaDeEntrega2(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_horaDeEntrega2.matcher(value)).find()) {
-			setHoraDeEntrega2(m.group(1));
+		if((m = PATTERN_ERE1L_horaDeEntrega2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setHoraDeEntrega2(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_importeTotalNetoLinea_203_.matcher(value)).find()) {
-			setImporteTotalNetoLinea_203_(m.group(1));
+		if((m = PATTERN_ERE1L_importeTotalNetoLinea_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteTotalNetoLinea_203_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_precioBrutoUnitario_AAB_.matcher(value)).find()) {
-			setPrecioBrutoUnitario_AAB_(m.group(1));
+		if((m = PATTERN_ERE1L_precioBrutoUnitario_AAB_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPrecioBrutoUnitario_AAB_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_precioNetoUnitario_AAA_.matcher(value)).find()) {
-			setPrecioNetoUnitario_AAA_(m.group(1));
+		if((m = PATTERN_ERE1L_precioNetoUnitario_AAA_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPrecioNetoUnitario_AAA_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_precioATituloInformativo_INF_.matcher(value)).find()) {
-			setPrecioATituloInformativo_INF_(m.group(1));
+		if((m = PATTERN_ERE1L_precioATituloInformativo_INF_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPrecioATituloInformativo_INF_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_calificadorUnidadDeMedidaPrecio.matcher(value)).find()) {
-			setCalificadorUnidadDeMedidaPrecio(m.group(1));
+		if((m = PATTERN_ERE1L_calificadorUnidadDeMedidaPrecio.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorUnidadDeMedidaPrecio(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_calificadorIVA_IGIG.matcher(value)).find()) {
-			setCalificadorIVA_IGIG(m.group(1));
+		if((m = PATTERN_ERE1L_calificadorIVA_IGIG.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorIVA_IGIG(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_porcentajeImpuestoIVA_IGIC.matcher(value)).find()) {
-			setPorcentajeImpuestoIVA_IGIC(m.group(1));
+		if((m = PATTERN_ERE1L_porcentajeImpuestoIVA_IGIC.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPorcentajeImpuestoIVA_IGIC(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_importeImpuestoIVA_IGIC.matcher(value)).find()) {
-			setImporteImpuestoIVA_IGIC(m.group(1));
+		if((m = PATTERN_ERE1L_importeImpuestoIVA_IGIC.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteImpuestoIVA_IGIC(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_porcentajeRecargoDeEquivalencia.matcher(value)).find()) {
-			setPorcentajeRecargoDeEquivalencia(m.group(1));
+		if((m = PATTERN_ERE1L_porcentajeRecargoDeEquivalencia.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPorcentajeRecargoDeEquivalencia(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_importeRecargoDeEquivalencia.matcher(value)).find()) {
-			setImporteRecargoDeEquivalencia(m.group(1));
+		if((m = PATTERN_ERE1L_importeRecargoDeEquivalencia.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteRecargoDeEquivalencia(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_calificadorOtroTipoDeImpuesto.matcher(value)).find()) {
-			setCalificadorOtroTipoDeImpuesto(m.group(1));
+		if((m = PATTERN_ERE1L_calificadorOtroTipoDeImpuesto.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorOtroTipoDeImpuesto(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_porcentajeOtroTipoDeImpuesto.matcher(value)).find()) {
-			setPorcentajeOtroTipoDeImpuesto(m.group(1));
+		if((m = PATTERN_ERE1L_porcentajeOtroTipoDeImpuesto.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPorcentajeOtroTipoDeImpuesto(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_importeOtroTipoDeImpuesto.matcher(value)).find()) {
-			setImporteOtroTipoDeImpuesto(m.group(1));
+		if((m = PATTERN_ERE1L_importeOtroTipoDeImpuesto.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteOtroTipoDeImpuesto(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_pesoNeto_PD__AAA_.matcher(value)).find()) {
-			setPesoNeto_PD__AAA_(m.group(1));
+		if((m = PATTERN_ERE1L_pesoNeto_PD__AAA_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPesoNeto_PD__AAA_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_unidadDeMedidaPeso.matcher(value)).find()) {
-			setUnidadDeMedidaPeso(m.group(1));
+		if((m = PATTERN_ERE1L_unidadDeMedidaPeso.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setUnidadDeMedidaPeso(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_tipoArticuloEAN_CU_DU_.matcher(value)).find()) {
-			setTipoArticuloEAN_CU_DU_(m.group(1));
+		if((m = PATTERN_ERE1L_tipoArticuloEAN_CU_DU_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoArticuloEAN_CU_DU_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_descripcionDelModelo_BRN_.matcher(value)).find()) {
-			setDescripcionDelModelo_BRN_(m.group(1));
+		if((m = PATTERN_ERE1L_descripcionDelModelo_BRN_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDescripcionDelModelo_BRN_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_variedad1_35_.matcher(value)).find()) {
-			setVariedad1_35_(m.group(1));
+		if((m = PATTERN_ERE1L_variedad1_35_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setVariedad1_35_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_variedad2_UP5_.matcher(value)).find()) {
-			setVariedad2_UP5_(m.group(1));
+		if((m = PATTERN_ERE1L_variedad2_UP5_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setVariedad2_UP5_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1L_presentacion_Cantidad_Formato_U03_.matcher(value)).find()) {
-			setPresentacion_Cantidad_Formato_U03_(m.group(1));
+		if((m = PATTERN_ERE1L_presentacion_Cantidad_Formato_U03_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPresentacion_Cantidad_Formato_U03_(String.valueOf(m.group(1).trim()));
 		}
 	}
 
@@ -420,10 +426,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDeLineaArticulo() {
+	public Integer getNumeroDeLineaArticulo() {
 		return numeroDeLineaArticulo;
 	}
-	public void setNumeroDeLineaArticulo(String numeroDeLineaArticulo) {
+	public void setNumeroDeLineaArticulo(Integer numeroDeLineaArticulo) {
 		this.numeroDeLineaArticulo = numeroDeLineaArticulo;
 	}
 
@@ -710,10 +716,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCantidadPedida_21_() {
+	public Double getCantidadPedida_21_() {
 		return cantidadPedida_21_;
 	}
-	public void setCantidadPedida_21_(String cantidadPedida_21_) {
+	public void setCantidadPedida_21_(Double cantidadPedida_21_) {
 		this.cantidadPedida_21_ = cantidadPedida_21_;
 	}
 
@@ -739,10 +745,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCantidadBonificada_192_() {
+	public Double getCantidadBonificada_192_() {
 		return cantidadBonificada_192_;
 	}
-	public void setCantidadBonificada_192_(String cantidadBonificada_192_) {
+	public void setCantidadBonificada_192_(Double cantidadBonificada_192_) {
 		this.cantidadBonificada_192_ = cantidadBonificada_192_;
 	}
 
@@ -797,10 +803,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDeU_C_EnUnidadDeExpedicion() {
+	public Double getNumeroDeU_C_EnUnidadDeExpedicion() {
 		return numeroDeU_C_EnUnidadDeExpedicion;
 	}
-	public void setNumeroDeU_C_EnUnidadDeExpedicion(String numeroDeU_C_EnUnidadDeExpedicion) {
+	public void setNumeroDeU_C_EnUnidadDeExpedicion(Double numeroDeU_C_EnUnidadDeExpedicion) {
 		this.numeroDeU_C_EnUnidadDeExpedicion = numeroDeU_C_EnUnidadDeExpedicion;
 	}
 
@@ -855,10 +861,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getFechaDeEntrega1() {
+	public Integer getFechaDeEntrega1() {
 		return fechaDeEntrega1;
 	}
-	public void setFechaDeEntrega1(String fechaDeEntrega1) {
+	public void setFechaDeEntrega1(Integer fechaDeEntrega1) {
 		this.fechaDeEntrega1 = fechaDeEntrega1;
 	}
 
@@ -884,10 +890,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getHoraDeEntrega1() {
+	public Integer getHoraDeEntrega1() {
 		return horaDeEntrega1;
 	}
-	public void setHoraDeEntrega1(String horaDeEntrega1) {
+	public void setHoraDeEntrega1(Integer horaDeEntrega1) {
 		this.horaDeEntrega1 = horaDeEntrega1;
 	}
 
@@ -913,10 +919,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getFechaDeEntrega2() {
+	public Integer getFechaDeEntrega2() {
 		return fechaDeEntrega2;
 	}
-	public void setFechaDeEntrega2(String fechaDeEntrega2) {
+	public void setFechaDeEntrega2(Integer fechaDeEntrega2) {
 		this.fechaDeEntrega2 = fechaDeEntrega2;
 	}
 
@@ -942,10 +948,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getHoraDeEntrega2() {
+	public Integer getHoraDeEntrega2() {
 		return horaDeEntrega2;
 	}
-	public void setHoraDeEntrega2(String horaDeEntrega2) {
+	public void setHoraDeEntrega2(Integer horaDeEntrega2) {
 		this.horaDeEntrega2 = horaDeEntrega2;
 	}
 
@@ -971,10 +977,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteTotalNetoLinea_203_() {
+	public Double getImporteTotalNetoLinea_203_() {
 		return importeTotalNetoLinea_203_;
 	}
-	public void setImporteTotalNetoLinea_203_(String importeTotalNetoLinea_203_) {
+	public void setImporteTotalNetoLinea_203_(Double importeTotalNetoLinea_203_) {
 		this.importeTotalNetoLinea_203_ = importeTotalNetoLinea_203_;
 	}
 
@@ -1000,10 +1006,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPrecioBrutoUnitario_AAB_() {
+	public Double getPrecioBrutoUnitario_AAB_() {
 		return precioBrutoUnitario_AAB_;
 	}
-	public void setPrecioBrutoUnitario_AAB_(String precioBrutoUnitario_AAB_) {
+	public void setPrecioBrutoUnitario_AAB_(Double precioBrutoUnitario_AAB_) {
 		this.precioBrutoUnitario_AAB_ = precioBrutoUnitario_AAB_;
 	}
 
@@ -1029,10 +1035,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPrecioNetoUnitario_AAA_() {
+	public Double getPrecioNetoUnitario_AAA_() {
 		return precioNetoUnitario_AAA_;
 	}
-	public void setPrecioNetoUnitario_AAA_(String precioNetoUnitario_AAA_) {
+	public void setPrecioNetoUnitario_AAA_(Double precioNetoUnitario_AAA_) {
 		this.precioNetoUnitario_AAA_ = precioNetoUnitario_AAA_;
 	}
 
@@ -1058,10 +1064,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPrecioATituloInformativo_INF_() {
+	public Double getPrecioATituloInformativo_INF_() {
 		return precioATituloInformativo_INF_;
 	}
-	public void setPrecioATituloInformativo_INF_(String precioATituloInformativo_INF_) {
+	public void setPrecioATituloInformativo_INF_(Double precioATituloInformativo_INF_) {
 		this.precioATituloInformativo_INF_ = precioATituloInformativo_INF_;
 	}
 
@@ -1145,10 +1151,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPorcentajeImpuestoIVA_IGIC() {
+	public Double getPorcentajeImpuestoIVA_IGIC() {
 		return porcentajeImpuestoIVA_IGIC;
 	}
-	public void setPorcentajeImpuestoIVA_IGIC(String porcentajeImpuestoIVA_IGIC) {
+	public void setPorcentajeImpuestoIVA_IGIC(Double porcentajeImpuestoIVA_IGIC) {
 		this.porcentajeImpuestoIVA_IGIC = porcentajeImpuestoIVA_IGIC;
 	}
 
@@ -1174,10 +1180,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteImpuestoIVA_IGIC() {
+	public Double getImporteImpuestoIVA_IGIC() {
 		return importeImpuestoIVA_IGIC;
 	}
-	public void setImporteImpuestoIVA_IGIC(String importeImpuestoIVA_IGIC) {
+	public void setImporteImpuestoIVA_IGIC(Double importeImpuestoIVA_IGIC) {
 		this.importeImpuestoIVA_IGIC = importeImpuestoIVA_IGIC;
 	}
 
@@ -1203,10 +1209,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPorcentajeRecargoDeEquivalencia() {
+	public Double getPorcentajeRecargoDeEquivalencia() {
 		return porcentajeRecargoDeEquivalencia;
 	}
-	public void setPorcentajeRecargoDeEquivalencia(String porcentajeRecargoDeEquivalencia) {
+	public void setPorcentajeRecargoDeEquivalencia(Double porcentajeRecargoDeEquivalencia) {
 		this.porcentajeRecargoDeEquivalencia = porcentajeRecargoDeEquivalencia;
 	}
 
@@ -1232,10 +1238,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteRecargoDeEquivalencia() {
+	public Double getImporteRecargoDeEquivalencia() {
 		return importeRecargoDeEquivalencia;
 	}
-	public void setImporteRecargoDeEquivalencia(String importeRecargoDeEquivalencia) {
+	public void setImporteRecargoDeEquivalencia(Double importeRecargoDeEquivalencia) {
 		this.importeRecargoDeEquivalencia = importeRecargoDeEquivalencia;
 	}
 
@@ -1290,10 +1296,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPorcentajeOtroTipoDeImpuesto() {
+	public Double getPorcentajeOtroTipoDeImpuesto() {
 		return porcentajeOtroTipoDeImpuesto;
 	}
-	public void setPorcentajeOtroTipoDeImpuesto(String porcentajeOtroTipoDeImpuesto) {
+	public void setPorcentajeOtroTipoDeImpuesto(Double porcentajeOtroTipoDeImpuesto) {
 		this.porcentajeOtroTipoDeImpuesto = porcentajeOtroTipoDeImpuesto;
 	}
 
@@ -1319,10 +1325,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteOtroTipoDeImpuesto() {
+	public Double getImporteOtroTipoDeImpuesto() {
 		return importeOtroTipoDeImpuesto;
 	}
-	public void setImporteOtroTipoDeImpuesto(String importeOtroTipoDeImpuesto) {
+	public void setImporteOtroTipoDeImpuesto(Double importeOtroTipoDeImpuesto) {
 		this.importeOtroTipoDeImpuesto = importeOtroTipoDeImpuesto;
 	}
 
@@ -1348,10 +1354,10 @@ public class ERE1L {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPesoNeto_PD__AAA_() {
+	public Double getPesoNeto_PD__AAA_() {
 		return pesoNeto_PD__AAA_;
 	}
-	public void setPesoNeto_PD__AAA_(String pesoNeto_PD__AAA_) {
+	public void setPesoNeto_PD__AAA_(Double pesoNeto_PD__AAA_) {
 		this.pesoNeto_PD__AAA_ = pesoNeto_PD__AAA_;
 	}
 
@@ -1529,23 +1535,35 @@ public class ERE1L {
 		this.presentacion_Cantidad_Formato_U03_ = presentacion_Cantidad_Formato_U03_;
 	}
 
-	public enum TipoDeNumeroDeArticulo {
+	/** 
+	 * C7143E - Tipo de Número de Artículo: Los valores posibles son:
+	 */
+	public enum C7143E {
 		INTERNATIONAL_ARTICLE_NUMBERING_ASSOCIATION__EAN_EN("EN"),
 		UPC__UNIVERSAL_PRODUCT_CODE_UP("UP"),
 		;
 		
 		private String value;
 		
-		private TipoDeNumeroDeArticulo(String value) {
+		private C7143E(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum TipoArticulo {
+		public static C7143E enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * C7081A - Tipo Artículo: Los valores posibles son:
+	 */
+	public enum C7081A {
 		MERCANCI_M("M"),
 		SERVICI_S("S"),
 		MATERIAL_CONSIGNAD_C("C"),
@@ -1553,32 +1571,50 @@ public class ERE1L {
 		
 		private String value;
 		
-		private TipoArticulo(String value) {
+		private C7081A(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum CalificadorUnidadDeMedidaCantidad {
+		public static C7081A enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * C6411C - Calificador Unidad de Medida Cantidad: Solo se utilizará si el producto es de medida variable. El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum C6411C {
 		KILOGRAM_KGM("KGM"),
 		LITR_LTR("LTR"),
 		;
 		
 		private String value;
 		
-		private CalificadorUnidadDeMedidaCantidad(String value) {
+		private C6411C(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum CalificadorFechaDeEntrega_69_63_64_PE_ {
+		public static C6411C enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * C2005F - Calificador Fecha de Entrega (69-63-64-PE): Los valores posibles son:
+	 */
+	public enum C2005F {
 		FECHA___HORA_DE_ENTREGA_FIJ_69("69"),
 		ENTREGAR_A_PARTIR_DE_FECHA___HOR_64("64"),
 		FECHA___HORA_LIMITE_DE_ENTREG_63("63"),
@@ -1591,16 +1627,25 @@ public class ERE1L {
 		
 		private String value;
 		
-		private CalificadorFechaDeEntrega_69_63_64_PE_(String value) {
+		private C2005F(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum CalificadorOtroTipoDeImpuesto {
+		public static C2005F enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * C5153O - Calificador Otro Tipo de Impuesto: Campo Opcional, corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum C5153O {
 		EXENTO_DE_IV_EXT("EXT"),
 		IMPUESTO_DE_ALCOHOLE_ACT("ACT"),
 		CANON_DE_SOCIEDAD_DE_AUTORE_CSA("CSA"),
@@ -1610,16 +1655,25 @@ public class ERE1L {
 		
 		private String value;
 		
-		private CalificadorOtroTipoDeImpuesto(String value) {
+		private C5153O(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum TipoArticuloEAN_CU_DU_ {
+		public static C5153O enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * C7009A - Tipo Articulo EAN (CU/DU): Los valores posibles son:
+	 */
+	public enum C7009A {
 		CONSUMER_UNIT__EAN_CODE_CU("CU"),
 		DESPATCH_UNIT__EAN_CODE_DU("DU"),
 		TRADED_UNIT__EAN_CODE_TU("TU"),
@@ -1628,13 +1682,19 @@ public class ERE1L {
 		
 		private String value;
 		
-		private TipoArticuloEAN_CU_DU_(String value) {
+		private C7009A(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
+		public static C7009A enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
 }

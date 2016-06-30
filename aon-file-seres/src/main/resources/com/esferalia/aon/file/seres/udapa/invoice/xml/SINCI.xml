@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <register name="SINCI">
-	<field name="Impuestos" value="bean" property="impuestos" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Tipo Factura (325, 380, 381, 383, 385)" value="bean" property="tipoFactura_325_380_381_383_385_" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número de Factura" value="bean" property="numeroDeFactura" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Vendedor (SU)" value="bean" property="codigoVendedor_SU_" format="AlphaNumeric" pattern="X(13)" />
-	<field name="Código Comprador (BY)" value="bean" property="codigoComprador_BY_" format="AlphaNumeric" pattern="X(13)" />
-	<field name="Número de Línea Impuesto" value="bean" property="numeroDeLineaImpuesto" format="Numeric" pattern="9(2)" />
-	<field name="Calificador Tipo de Impuesto" value="bean" property="calificadorTipoDeImpuesto" format="AlphaNumeric" pattern="X(6)" />
-	<field name="% Tipo de Impuesto" value="bean" property="porcentajeTipoDeImpuesto" format="Numeric" pattern="9(3).99" />
-	<field name="Importe Tipo de Impuesto" value="bean" property="importeTipoDeImpuesto" format="Numeric" pattern="9(4).999" />
-	<field name="Base Imponible" value="bean" property="baseImponible" format="Numeric" pattern="9(4).999" />
+	<field name="Impuestos" value="SINCI" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo Factura (325, 380, 381, 383, 385)" value="bean" bean ="SINCI" property="tipoFactura_325_380_381_383_385_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Factura" value="bean" bean ="SINCI" property="numeroDeFactura" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Vendedor (SU)" value="bean" bean ="SINCI" property="codigoVendedor_SU_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Código Comprador (BY)" value="bean" bean ="SINCI" property="codigoComprador_BY_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Número de Línea Impuesto" value="bean" bean ="SINCI" property="numeroDeLineaImpuesto" format="Numeric" pattern="9(2)" />
+	<field name="Calificador Tipo de Impuesto" value="bean" bean ="SINCI" property="calificadorTipoDeImpuesto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="% Tipo de Impuesto" value="bean" bean ="SINCI" property="porcentajeTipoDeImpuesto" format="Numeric" pattern="9(3).99" />
+	<field name="Importe Tipo de Impuesto" value="bean" bean ="SINCI" property="importeTipoDeImpuesto" format="Numeric" pattern="9(14).999" />
+	<field name="Base Imponible" value="bean" bean ="SINCI" property="baseImponible" format="Numeric" pattern="9(14).999" />
 </register>

@@ -1,5 +1,11 @@
 package com.esferalia.aon.file.seres.udapa.invoice.data;
 
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI SINCL entity.
  * <br>
@@ -30,7 +36,7 @@ public class SINCL {
 	private String numeroDeFactura;
 	private String codigoVendedor_SU_;
 	private String codigoComprador_BY_;
-	private String numeroDeLinea;
+	private Integer numeroDeLinea;
 	private String codigoArticulo;
 	private String descripcionDelArticulo;
 	private String tipoArticulo;
@@ -39,176 +45,176 @@ public class SINCL {
 	private String codigoVariablePromocional_PV_;
 	private String codigoUnidadDeExpedicion_EN_;
 	private String numeroDeLote_BN_;
-	private String cantidadFacturada_47_;
-	private String cantidadBonificada_15E_;
+	private Double cantidadFacturada_47_;
+	private Double cantidadBonificada_15E_;
 	private String unidadDeMedida;
-	private String unidadesEntregadas;
-	private String numeroUnidadesDeConsumoEnU_Expedicion_59_;
-	private String importeTotalNetoDeLaLineaDeArticulo;
-	private String precioBrutoUnitario;
-	private String precioNetoUnitario;
+	private Double unidadesEntregadas;
+	private Double numeroUnidadesDeConsumoEnU_Expedicion_59_;
+	private Double importeTotalNetoDeLaLineaDeArticulo;
+	private Double precioBrutoUnitario;
+	private Double precioNetoUnitario;
 	private String unidadDeMedidaDelPrecio;
 	private String calificadorIVA_IGIG;
-	private String porcentajeImpuestoIVA_IGIG;
-	private String importeImpuestoIVA_IGIG;
-	private String porcentajeRecargoDeEquivalencia;
-	private String importeRecargoDeEquivalencia;
+	private Double porcentajeImpuestoIVA_IGIG;
+	private Double importeImpuestoIVA_IGIG;
+	private Double porcentajeRecargoDeEquivalencia;
+	private Double importeRecargoDeEquivalencia;
 	private String calificadorOtroTipoDeImpuesto;
-	private String porcentajeOtroTipoDeImpuesto;
-	private String importeOtroTipoDeImpuesto;
+	private Double porcentajeOtroTipoDeImpuesto;
+	private Double importeOtroTipoDeImpuesto;
 	private String numeroPedido_ON_;
 	private String numeroDeAlbaran_DQ_;
-	private String numeroDeEmbalajes;
+	private Integer numeroDeEmbalajes;
 	private String tipoDeEmbalaje;
-	private String importeTotalBrutoDeLaLineaDeArticulo_98_;
+	private Double importeTotalBrutoDeLaLineaDeArticulo_98_;
 
 
-	private static java.util.regex.Pattern PATTERN_SINCL_lineas = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_tipoFactura_325_380_381_383_385_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_numeroDeFactura = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_codigoVendedor_SU_ = java.util.regex.Pattern.compile("^.{29}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_codigoComprador_BY_ = java.util.regex.Pattern.compile("^.{42}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_numeroDeLinea = java.util.regex.Pattern.compile("^.{55}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_codigoArticulo = java.util.regex.Pattern.compile("^.{61}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_descripcionDelArticulo = java.util.regex.Pattern.compile("^.{76}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_tipoArticulo = java.util.regex.Pattern.compile("^.{111}(.{1}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_codigoInternoArticuloProveedor_SA_ = java.util.regex.Pattern.compile("^.{112}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_codigoInternoArticuloCliente_IN_ = java.util.regex.Pattern.compile("^.{127}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_codigoVariablePromocional_PV_ = java.util.regex.Pattern.compile("^.{142}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_codigoUnidadDeExpedicion_EN_ = java.util.regex.Pattern.compile("^.{157}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_numeroDeLote_BN_ = java.util.regex.Pattern.compile("^.{172}(.{15}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_cantidadFacturada_47_ = java.util.regex.Pattern.compile("^.{187}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_cantidadBonificada_15E_ = java.util.regex.Pattern.compile("^.{203}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_unidadDeMedida = java.util.regex.Pattern.compile("^.{219}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_unidadesEntregadas = java.util.regex.Pattern.compile("^.{225}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_numeroUnidadesDeConsumoEnU_Expedicion_59_ = java.util.regex.Pattern.compile("^.{241}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_importeTotalNetoDeLaLineaDeArticulo = java.util.regex.Pattern.compile("^.{257}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_precioBrutoUnitario = java.util.regex.Pattern.compile("^.{275}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_precioNetoUnitario = java.util.regex.Pattern.compile("^.{291}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_unidadDeMedidaDelPrecio = java.util.regex.Pattern.compile("^.{307}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_calificadorIVA_IGIG = java.util.regex.Pattern.compile("^.{313}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_porcentajeImpuestoIVA_IGIG = java.util.regex.Pattern.compile("^.{319}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_importeImpuestoIVA_IGIG = java.util.regex.Pattern.compile("^.{325}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_porcentajeRecargoDeEquivalencia = java.util.regex.Pattern.compile("^.{343}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_importeRecargoDeEquivalencia = java.util.regex.Pattern.compile("^.{349}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_calificadorOtroTipoDeImpuesto = java.util.regex.Pattern.compile("^.{367}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_porcentajeOtroTipoDeImpuesto = java.util.regex.Pattern.compile("^.{373}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_importeOtroTipoDeImpuesto = java.util.regex.Pattern.compile("^.{379}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_numeroPedido_ON_ = java.util.regex.Pattern.compile("^.{397}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_numeroDeAlbaran_DQ_ = java.util.regex.Pattern.compile("^.{414}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_numeroDeEmbalajes = java.util.regex.Pattern.compile("^.{431}(.{8}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_tipoDeEmbalaje = java.util.regex.Pattern.compile("^.{439}(.{7}).*");
-	private static java.util.regex.Pattern PATTERN_SINCL_importeTotalBrutoDeLaLineaDeArticulo_98_ = java.util.regex.Pattern.compile("^.{446}(.{18}).*");
+	private static Pattern PATTERN_SINCL_lineas = Pattern.compile("^(.{6}).*");
+	private static Pattern PATTERN_SINCL_tipoFactura_325_380_381_383_385_ = Pattern.compile("^.{6}(.{6}).*");
+	private static Pattern PATTERN_SINCL_numeroDeFactura = Pattern.compile("^.{12}(.{17}).*");
+	private static Pattern PATTERN_SINCL_codigoVendedor_SU_ = Pattern.compile("^.{29}(.{13}).*");
+	private static Pattern PATTERN_SINCL_codigoComprador_BY_ = Pattern.compile("^.{42}(.{13}).*");
+	private static Pattern PATTERN_SINCL_numeroDeLinea = Pattern.compile("^.{55}(.{6}).*");
+	private static Pattern PATTERN_SINCL_codigoArticulo = Pattern.compile("^.{61}(.{15}).*");
+	private static Pattern PATTERN_SINCL_descripcionDelArticulo = Pattern.compile("^.{76}(.{35}).*");
+	private static Pattern PATTERN_SINCL_tipoArticulo = Pattern.compile("^.{111}(.{1}).*");
+	private static Pattern PATTERN_SINCL_codigoInternoArticuloProveedor_SA_ = Pattern.compile("^.{112}(.{15}).*");
+	private static Pattern PATTERN_SINCL_codigoInternoArticuloCliente_IN_ = Pattern.compile("^.{127}(.{15}).*");
+	private static Pattern PATTERN_SINCL_codigoVariablePromocional_PV_ = Pattern.compile("^.{142}(.{15}).*");
+	private static Pattern PATTERN_SINCL_codigoUnidadDeExpedicion_EN_ = Pattern.compile("^.{157}(.{15}).*");
+	private static Pattern PATTERN_SINCL_numeroDeLote_BN_ = Pattern.compile("^.{172}(.{15}).*");
+	private static Pattern PATTERN_SINCL_cantidadFacturada_47_ = Pattern.compile("^.{187}(.{16}).*");
+	private static Pattern PATTERN_SINCL_cantidadBonificada_15E_ = Pattern.compile("^.{203}(.{16}).*");
+	private static Pattern PATTERN_SINCL_unidadDeMedida = Pattern.compile("^.{219}(.{6}).*");
+	private static Pattern PATTERN_SINCL_unidadesEntregadas = Pattern.compile("^.{225}(.{16}).*");
+	private static Pattern PATTERN_SINCL_numeroUnidadesDeConsumoEnU_Expedicion_59_ = Pattern.compile("^.{241}(.{16}).*");
+	private static Pattern PATTERN_SINCL_importeTotalNetoDeLaLineaDeArticulo = Pattern.compile("^.{257}(.{18}).*");
+	private static Pattern PATTERN_SINCL_precioBrutoUnitario = Pattern.compile("^.{275}(.{16}).*");
+	private static Pattern PATTERN_SINCL_precioNetoUnitario = Pattern.compile("^.{291}(.{16}).*");
+	private static Pattern PATTERN_SINCL_unidadDeMedidaDelPrecio = Pattern.compile("^.{307}(.{6}).*");
+	private static Pattern PATTERN_SINCL_calificadorIVA_IGIG = Pattern.compile("^.{313}(.{6}).*");
+	private static Pattern PATTERN_SINCL_porcentajeImpuestoIVA_IGIG = Pattern.compile("^.{319}(.{6}).*");
+	private static Pattern PATTERN_SINCL_importeImpuestoIVA_IGIG = Pattern.compile("^.{325}(.{18}).*");
+	private static Pattern PATTERN_SINCL_porcentajeRecargoDeEquivalencia = Pattern.compile("^.{343}(.{6}).*");
+	private static Pattern PATTERN_SINCL_importeRecargoDeEquivalencia = Pattern.compile("^.{349}(.{18}).*");
+	private static Pattern PATTERN_SINCL_calificadorOtroTipoDeImpuesto = Pattern.compile("^.{367}(.{6}).*");
+	private static Pattern PATTERN_SINCL_porcentajeOtroTipoDeImpuesto = Pattern.compile("^.{373}(.{6}).*");
+	private static Pattern PATTERN_SINCL_importeOtroTipoDeImpuesto = Pattern.compile("^.{379}(.{18}).*");
+	private static Pattern PATTERN_SINCL_numeroPedido_ON_ = Pattern.compile("^.{397}(.{17}).*");
+	private static Pattern PATTERN_SINCL_numeroDeAlbaran_DQ_ = Pattern.compile("^.{414}(.{17}).*");
+	private static Pattern PATTERN_SINCL_numeroDeEmbalajes = Pattern.compile("^.{431}(.{8}).*");
+	private static Pattern PATTERN_SINCL_tipoDeEmbalaje = Pattern.compile("^.{439}(.{7}).*");
+	private static Pattern PATTERN_SINCL_importeTotalBrutoDeLaLineaDeArticulo_98_ = Pattern.compile("^.{446}(.{18}).*");
 
 	public void parse(String value) {
-		java.util.regex.Matcher m;
-		if((m = PATTERN_SINCL_lineas.matcher(value)).find()) {
-			setLineas(m.group(1));
+		Matcher m;
+		if((m = PATTERN_SINCL_lineas.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setLineas(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_tipoFactura_325_380_381_383_385_.matcher(value)).find()) {
-			setTipoFactura_325_380_381_383_385_(m.group(1));
+		if((m = PATTERN_SINCL_tipoFactura_325_380_381_383_385_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoFactura_325_380_381_383_385_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_numeroDeFactura.matcher(value)).find()) {
-			setNumeroDeFactura(m.group(1));
+		if((m = PATTERN_SINCL_numeroDeFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeFactura(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_codigoVendedor_SU_.matcher(value)).find()) {
-			setCodigoVendedor_SU_(m.group(1));
+		if((m = PATTERN_SINCL_codigoVendedor_SU_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoVendedor_SU_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_codigoComprador_BY_.matcher(value)).find()) {
-			setCodigoComprador_BY_(m.group(1));
+		if((m = PATTERN_SINCL_codigoComprador_BY_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoComprador_BY_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_numeroDeLinea.matcher(value)).find()) {
-			setNumeroDeLinea(m.group(1));
+		if((m = PATTERN_SINCL_numeroDeLinea.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeLinea(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_codigoArticulo.matcher(value)).find()) {
-			setCodigoArticulo(m.group(1));
+		if((m = PATTERN_SINCL_codigoArticulo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoArticulo(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_descripcionDelArticulo.matcher(value)).find()) {
-			setDescripcionDelArticulo(m.group(1));
+		if((m = PATTERN_SINCL_descripcionDelArticulo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDescripcionDelArticulo(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_tipoArticulo.matcher(value)).find()) {
-			setTipoArticulo(m.group(1));
+		if((m = PATTERN_SINCL_tipoArticulo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoArticulo(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_codigoInternoArticuloProveedor_SA_.matcher(value)).find()) {
-			setCodigoInternoArticuloProveedor_SA_(m.group(1));
+		if((m = PATTERN_SINCL_codigoInternoArticuloProveedor_SA_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoInternoArticuloProveedor_SA_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_codigoInternoArticuloCliente_IN_.matcher(value)).find()) {
-			setCodigoInternoArticuloCliente_IN_(m.group(1));
+		if((m = PATTERN_SINCL_codigoInternoArticuloCliente_IN_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoInternoArticuloCliente_IN_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_codigoVariablePromocional_PV_.matcher(value)).find()) {
-			setCodigoVariablePromocional_PV_(m.group(1));
+		if((m = PATTERN_SINCL_codigoVariablePromocional_PV_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoVariablePromocional_PV_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_codigoUnidadDeExpedicion_EN_.matcher(value)).find()) {
-			setCodigoUnidadDeExpedicion_EN_(m.group(1));
+		if((m = PATTERN_SINCL_codigoUnidadDeExpedicion_EN_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoUnidadDeExpedicion_EN_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_numeroDeLote_BN_.matcher(value)).find()) {
-			setNumeroDeLote_BN_(m.group(1));
+		if((m = PATTERN_SINCL_numeroDeLote_BN_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeLote_BN_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_cantidadFacturada_47_.matcher(value)).find()) {
-			setCantidadFacturada_47_(m.group(1));
+		if((m = PATTERN_SINCL_cantidadFacturada_47_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCantidadFacturada_47_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_cantidadBonificada_15E_.matcher(value)).find()) {
-			setCantidadBonificada_15E_(m.group(1));
+		if((m = PATTERN_SINCL_cantidadBonificada_15E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCantidadBonificada_15E_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_unidadDeMedida.matcher(value)).find()) {
-			setUnidadDeMedida(m.group(1));
+		if((m = PATTERN_SINCL_unidadDeMedida.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setUnidadDeMedida(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_unidadesEntregadas.matcher(value)).find()) {
-			setUnidadesEntregadas(m.group(1));
+		if((m = PATTERN_SINCL_unidadesEntregadas.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setUnidadesEntregadas(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_numeroUnidadesDeConsumoEnU_Expedicion_59_.matcher(value)).find()) {
-			setNumeroUnidadesDeConsumoEnU_Expedicion_59_(m.group(1));
+		if((m = PATTERN_SINCL_numeroUnidadesDeConsumoEnU_Expedicion_59_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroUnidadesDeConsumoEnU_Expedicion_59_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_importeTotalNetoDeLaLineaDeArticulo.matcher(value)).find()) {
-			setImporteTotalNetoDeLaLineaDeArticulo(m.group(1));
+		if((m = PATTERN_SINCL_importeTotalNetoDeLaLineaDeArticulo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteTotalNetoDeLaLineaDeArticulo(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_precioBrutoUnitario.matcher(value)).find()) {
-			setPrecioBrutoUnitario(m.group(1));
+		if((m = PATTERN_SINCL_precioBrutoUnitario.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPrecioBrutoUnitario(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_precioNetoUnitario.matcher(value)).find()) {
-			setPrecioNetoUnitario(m.group(1));
+		if((m = PATTERN_SINCL_precioNetoUnitario.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPrecioNetoUnitario(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_unidadDeMedidaDelPrecio.matcher(value)).find()) {
-			setUnidadDeMedidaDelPrecio(m.group(1));
+		if((m = PATTERN_SINCL_unidadDeMedidaDelPrecio.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setUnidadDeMedidaDelPrecio(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_calificadorIVA_IGIG.matcher(value)).find()) {
-			setCalificadorIVA_IGIG(m.group(1));
+		if((m = PATTERN_SINCL_calificadorIVA_IGIG.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorIVA_IGIG(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_porcentajeImpuestoIVA_IGIG.matcher(value)).find()) {
-			setPorcentajeImpuestoIVA_IGIG(m.group(1));
+		if((m = PATTERN_SINCL_porcentajeImpuestoIVA_IGIG.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPorcentajeImpuestoIVA_IGIG(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_importeImpuestoIVA_IGIG.matcher(value)).find()) {
-			setImporteImpuestoIVA_IGIG(m.group(1));
+		if((m = PATTERN_SINCL_importeImpuestoIVA_IGIG.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteImpuestoIVA_IGIG(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_porcentajeRecargoDeEquivalencia.matcher(value)).find()) {
-			setPorcentajeRecargoDeEquivalencia(m.group(1));
+		if((m = PATTERN_SINCL_porcentajeRecargoDeEquivalencia.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPorcentajeRecargoDeEquivalencia(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_importeRecargoDeEquivalencia.matcher(value)).find()) {
-			setImporteRecargoDeEquivalencia(m.group(1));
+		if((m = PATTERN_SINCL_importeRecargoDeEquivalencia.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteRecargoDeEquivalencia(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_calificadorOtroTipoDeImpuesto.matcher(value)).find()) {
-			setCalificadorOtroTipoDeImpuesto(m.group(1));
+		if((m = PATTERN_SINCL_calificadorOtroTipoDeImpuesto.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorOtroTipoDeImpuesto(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_porcentajeOtroTipoDeImpuesto.matcher(value)).find()) {
-			setPorcentajeOtroTipoDeImpuesto(m.group(1));
+		if((m = PATTERN_SINCL_porcentajeOtroTipoDeImpuesto.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPorcentajeOtroTipoDeImpuesto(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_importeOtroTipoDeImpuesto.matcher(value)).find()) {
-			setImporteOtroTipoDeImpuesto(m.group(1));
+		if((m = PATTERN_SINCL_importeOtroTipoDeImpuesto.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteOtroTipoDeImpuesto(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_numeroPedido_ON_.matcher(value)).find()) {
-			setNumeroPedido_ON_(m.group(1));
+		if((m = PATTERN_SINCL_numeroPedido_ON_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroPedido_ON_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_numeroDeAlbaran_DQ_.matcher(value)).find()) {
-			setNumeroDeAlbaran_DQ_(m.group(1));
+		if((m = PATTERN_SINCL_numeroDeAlbaran_DQ_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeAlbaran_DQ_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_numeroDeEmbalajes.matcher(value)).find()) {
-			setNumeroDeEmbalajes(m.group(1));
+		if((m = PATTERN_SINCL_numeroDeEmbalajes.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeEmbalajes(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_tipoDeEmbalaje.matcher(value)).find()) {
-			setTipoDeEmbalaje(m.group(1));
+		if((m = PATTERN_SINCL_tipoDeEmbalaje.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoDeEmbalaje(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCL_importeTotalBrutoDeLaLineaDeArticulo_98_.matcher(value)).find()) {
-			setImporteTotalBrutoDeLaLineaDeArticulo_98_(m.group(1));
+		if((m = PATTERN_SINCL_importeTotalBrutoDeLaLineaDeArticulo_98_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteTotalBrutoDeLaLineaDeArticulo_98_(Double.valueOf(m.group(1).trim()));
 		}
 	}
 
@@ -380,10 +386,10 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDeLinea() {
+	public Integer getNumeroDeLinea() {
 		return numeroDeLinea;
 	}
-	public void setNumeroDeLinea(String numeroDeLinea) {
+	public void setNumeroDeLinea(Integer numeroDeLinea) {
 		this.numeroDeLinea = numeroDeLinea;
 	}
 
@@ -641,10 +647,10 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCantidadFacturada_47_() {
+	public Double getCantidadFacturada_47_() {
 		return cantidadFacturada_47_;
 	}
-	public void setCantidadFacturada_47_(String cantidadFacturada_47_) {
+	public void setCantidadFacturada_47_(Double cantidadFacturada_47_) {
 		this.cantidadFacturada_47_ = cantidadFacturada_47_;
 	}
 
@@ -670,15 +676,15 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCantidadBonificada_15E_() {
+	public Double getCantidadBonificada_15E_() {
 		return cantidadBonificada_15E_;
 	}
-	public void setCantidadBonificada_15E_(String cantidadBonificada_15E_) {
+	public void setCantidadBonificada_15E_(Double cantidadBonificada_15E_) {
 		this.cantidadBonificada_15E_ = cantidadBonificada_15E_;
 	}
 
 	/** 
-	 * 
+	 * F6411C - Unidad de Medida del producto que se está facturando:  Solo se utilizará si el producto es de medida variable. El campo corresponde a un código EANCOM. Los valores posibles son:
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
@@ -728,10 +734,10 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getUnidadesEntregadas() {
+	public Double getUnidadesEntregadas() {
 		return unidadesEntregadas;
 	}
-	public void setUnidadesEntregadas(String unidadesEntregadas) {
+	public void setUnidadesEntregadas(Double unidadesEntregadas) {
 		this.unidadesEntregadas = unidadesEntregadas;
 	}
 
@@ -757,10 +763,10 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroUnidadesDeConsumoEnU_Expedicion_59_() {
+	public Double getNumeroUnidadesDeConsumoEnU_Expedicion_59_() {
 		return numeroUnidadesDeConsumoEnU_Expedicion_59_;
 	}
-	public void setNumeroUnidadesDeConsumoEnU_Expedicion_59_(String numeroUnidadesDeConsumoEnU_Expedicion_59_) {
+	public void setNumeroUnidadesDeConsumoEnU_Expedicion_59_(Double numeroUnidadesDeConsumoEnU_Expedicion_59_) {
 		this.numeroUnidadesDeConsumoEnU_Expedicion_59_ = numeroUnidadesDeConsumoEnU_Expedicion_59_;
 	}
 
@@ -786,10 +792,10 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteTotalNetoDeLaLineaDeArticulo() {
+	public Double getImporteTotalNetoDeLaLineaDeArticulo() {
 		return importeTotalNetoDeLaLineaDeArticulo;
 	}
-	public void setImporteTotalNetoDeLaLineaDeArticulo(String importeTotalNetoDeLaLineaDeArticulo) {
+	public void setImporteTotalNetoDeLaLineaDeArticulo(Double importeTotalNetoDeLaLineaDeArticulo) {
 		this.importeTotalNetoDeLaLineaDeArticulo = importeTotalNetoDeLaLineaDeArticulo;
 	}
 
@@ -815,10 +821,10 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPrecioBrutoUnitario() {
+	public Double getPrecioBrutoUnitario() {
 		return precioBrutoUnitario;
 	}
-	public void setPrecioBrutoUnitario(String precioBrutoUnitario) {
+	public void setPrecioBrutoUnitario(Double precioBrutoUnitario) {
 		this.precioBrutoUnitario = precioBrutoUnitario;
 	}
 
@@ -844,15 +850,15 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPrecioNetoUnitario() {
+	public Double getPrecioNetoUnitario() {
 		return precioNetoUnitario;
 	}
-	public void setPrecioNetoUnitario(String precioNetoUnitario) {
+	public void setPrecioNetoUnitario(Double precioNetoUnitario) {
 		this.precioNetoUnitario = precioNetoUnitario;
 	}
 
 	/** 
-	 * F6411P - Unidad de Medida del producto que se está facturando:  Solo se utilizará si el producto es de medida variable. El campo corresponde a un código EANCOM. Los valores posibles son:
+	 * F6411P - Unidad de Medida del Precio: Solo se utilizará si el articulo es de medida variable. El campo corresponde a un código EANCOM. Los valores posibles son:
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
@@ -931,10 +937,10 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPorcentajeImpuestoIVA_IGIG() {
+	public Double getPorcentajeImpuestoIVA_IGIG() {
 		return porcentajeImpuestoIVA_IGIG;
 	}
-	public void setPorcentajeImpuestoIVA_IGIG(String porcentajeImpuestoIVA_IGIG) {
+	public void setPorcentajeImpuestoIVA_IGIG(Double porcentajeImpuestoIVA_IGIG) {
 		this.porcentajeImpuestoIVA_IGIG = porcentajeImpuestoIVA_IGIG;
 	}
 
@@ -960,10 +966,10 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteImpuestoIVA_IGIG() {
+	public Double getImporteImpuestoIVA_IGIG() {
 		return importeImpuestoIVA_IGIG;
 	}
-	public void setImporteImpuestoIVA_IGIG(String importeImpuestoIVA_IGIG) {
+	public void setImporteImpuestoIVA_IGIG(Double importeImpuestoIVA_IGIG) {
 		this.importeImpuestoIVA_IGIG = importeImpuestoIVA_IGIG;
 	}
 
@@ -989,10 +995,10 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPorcentajeRecargoDeEquivalencia() {
+	public Double getPorcentajeRecargoDeEquivalencia() {
 		return porcentajeRecargoDeEquivalencia;
 	}
-	public void setPorcentajeRecargoDeEquivalencia(String porcentajeRecargoDeEquivalencia) {
+	public void setPorcentajeRecargoDeEquivalencia(Double porcentajeRecargoDeEquivalencia) {
 		this.porcentajeRecargoDeEquivalencia = porcentajeRecargoDeEquivalencia;
 	}
 
@@ -1018,10 +1024,10 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteRecargoDeEquivalencia() {
+	public Double getImporteRecargoDeEquivalencia() {
 		return importeRecargoDeEquivalencia;
 	}
-	public void setImporteRecargoDeEquivalencia(String importeRecargoDeEquivalencia) {
+	public void setImporteRecargoDeEquivalencia(Double importeRecargoDeEquivalencia) {
 		this.importeRecargoDeEquivalencia = importeRecargoDeEquivalencia;
 	}
 
@@ -1076,10 +1082,10 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPorcentajeOtroTipoDeImpuesto() {
+	public Double getPorcentajeOtroTipoDeImpuesto() {
 		return porcentajeOtroTipoDeImpuesto;
 	}
-	public void setPorcentajeOtroTipoDeImpuesto(String porcentajeOtroTipoDeImpuesto) {
+	public void setPorcentajeOtroTipoDeImpuesto(Double porcentajeOtroTipoDeImpuesto) {
 		this.porcentajeOtroTipoDeImpuesto = porcentajeOtroTipoDeImpuesto;
 	}
 
@@ -1105,10 +1111,10 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteOtroTipoDeImpuesto() {
+	public Double getImporteOtroTipoDeImpuesto() {
 		return importeOtroTipoDeImpuesto;
 	}
-	public void setImporteOtroTipoDeImpuesto(String importeOtroTipoDeImpuesto) {
+	public void setImporteOtroTipoDeImpuesto(Double importeOtroTipoDeImpuesto) {
 		this.importeOtroTipoDeImpuesto = importeOtroTipoDeImpuesto;
 	}
 
@@ -1192,10 +1198,10 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDeEmbalajes() {
+	public Integer getNumeroDeEmbalajes() {
 		return numeroDeEmbalajes;
 	}
-	public void setNumeroDeEmbalajes(String numeroDeEmbalajes) {
+	public void setNumeroDeEmbalajes(Integer numeroDeEmbalajes) {
 		this.numeroDeEmbalajes = numeroDeEmbalajes;
 	}
 
@@ -1250,59 +1256,86 @@ public class SINCL {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteTotalBrutoDeLaLineaDeArticulo_98_() {
+	public Double getImporteTotalBrutoDeLaLineaDeArticulo_98_() {
 		return importeTotalBrutoDeLaLineaDeArticulo_98_;
 	}
-	public void setImporteTotalBrutoDeLaLineaDeArticulo_98_(String importeTotalBrutoDeLaLineaDeArticulo_98_) {
+	public void setImporteTotalBrutoDeLaLineaDeArticulo_98_(Double importeTotalBrutoDeLaLineaDeArticulo_98_) {
 		this.importeTotalBrutoDeLaLineaDeArticulo_98_ = importeTotalBrutoDeLaLineaDeArticulo_98_;
 	}
 
-	public enum UnidadDeMedidaDelProductoQueSeEstaFacturando {
+	/** 
+	 * F6411C - Unidad de Medida del producto que se está facturando:  Solo se utilizará si el producto es de medida variable. El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum F6411C {
 		KILOGRAM_KGM("KGM"),
 		LITR_LTR("LTR"),
 		;
 		
 		private String value;
 		
-		private UnidadDeMedidaDelProductoQueSeEstaFacturando(String value) {
+		private F6411C(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum UnidadDeMedidaDelPrecio {
+		public static F6411C enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * F6411P - Unidad de Medida del Precio: Solo se utilizará si el articulo es de medida variable. El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum F6411P {
 		KILOGRAM_KGM("KGM"),
 		LITR_LTR("LTR"),
 		;
 		
 		private String value;
 		
-		private UnidadDeMedidaDelPrecio(String value) {
+		private F6411P(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum CalificadorDeIVAOIGIC {
+		public static F6411P enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * F5153I - Calificador de IVA o IGIC: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum F5153I {
 		IV_VAT("VAT"),
 		IGI_IGI("IGI"),
 		;
 		
 		private String value;
 		
-		private CalificadorDeIVAOIGIC(String value) {
+		private F5153I(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
+		public static F5153I enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
 }

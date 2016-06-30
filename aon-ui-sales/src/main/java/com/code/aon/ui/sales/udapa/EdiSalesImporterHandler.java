@@ -119,12 +119,12 @@ public class EdiSalesImporterHandler implements Serializable {
 				
 				try {
 					sales.setIssueDate(dateFormatter.parse(ere1c
-							.getFechaDelDocumento_137__102_()));
+							.getFechaDelDocumento_137__102_().toString()));
 				} catch (ParseException e) {
 					AonUtil.addErrorMessage("No se ha podido convertir la fecha: " + ere1c.getFechaDelDocumento_137__102_());
 					throw new AbortProcessingException(e.getMessage(), e);
 				}
-				if(ere1c.getTipoDePedido_220_221_224_226_22E_().equals(ERE1C.TipoDePedido_220_221_224_226_22E_.CANCELACION_DE_PEDID_226.getValue())){
+				if(ere1c.getTipoDePedido_220_221_224_226_22E_().equals(ERE1C.C1001T.CANCELACION_DE_PEDID_226)){
 					sales.setDocumentType(DocumentType.ITEM_RETURN);
 				} else {
 					sales.setDocumentType(DocumentType.NORMAL);

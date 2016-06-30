@@ -44,13 +44,13 @@ public class UdapaDeliveryWriter {
 		SEH1C seh1c = new SEH1C();
 		
 		seh1c.setCabecera("SEH1C");
-		seh1c.setTipoAvisoDeExpedicion_351_35E_(SEH1C.TipoAvisoDeExpedicion_351_35E_.AVISO_DE_EXPEDICIO_351.getValue());
+		seh1c.setTipoAvisoDeExpedicion_351_35E_(SEH1C.V1001T.AVISO_DE_EXPEDICIO_351.getValue());
 		seh1c.setNumeroAvisoDeExpedicion(delivery.getReferenceCode());
 		// TODO CodigoEmisor
 		seh1c.setCodigoEmisor_MS_("");
 		// TODO CodigoReceptor
 		seh1c.setCodigoReceptor_MR_("");
-		seh1c.setFuncionDelMensaje(SEH1C.FuncionDelMensaje.ORIGINA_9.getValue());
+		seh1c.setFuncionDelMensaje(SEH1C.V1225F.ORIGINA_9.getValue());
 		seh1c.setFechaDelDocumento_137__102_203_(dateFormat.format(delivery.getDate()));
 		seh1c.setFechaEsperadaDeEntrega_17__102_203_(null);
 		seh1c.setCalificadorFechaEntrega_2_11_PER_358_359__(null);
@@ -220,9 +220,10 @@ public class UdapaDeliveryWriter {
 
 	private SEH1L createSEH1LRecord(DeliveryDetail detail) {
 		Item item = detail.getItem();
+		String tipoAvisoDeExpedicion = SEH1C.V1001T.AVISO_DE_EXPEDICIO_351.getValue();
 		SEH1L record = new SEH1L();
 		record.setLineas("SEH1L");
-		record.setTipoAvisoDeExpedicion_351_35E_(SEH1C.TipoAvisoDeExpedicion_351_35E_.AVISO_DE_EXPEDICIO_351.getValue());
+		record.setTipoAvisoDeExpedicion_351_35E_(tipoAvisoDeExpedicion);
 		record.setNumeroAvisoDeExpedicion("");
 		// TODO CodigoEmisor		
 		record.setCodigoEmisor_MS_("");
@@ -230,7 +231,7 @@ public class UdapaDeliveryWriter {
 		record.setCodigoReceptor_MR_("");
 		record.setNumeroDeJerarquiaDeEmbalaje(null);
 		record.setNumeroDeSub_jerarquiaDeEmbalaje(null);
-		record.setNumeroDeLineaArticulo(detail.getLine().toString());
+		record.setNumeroDeLineaArticulo(detail.getLine());
 		record.setCodigoDeArticuloEAN_13ODUN_14(item.getBarcode());
 		record.setDescripcionDelArticulo(item.getProduct().getName());
 		record.setTipoArticuloEAN_CU_DU_(null);
@@ -240,7 +241,7 @@ public class UdapaDeliveryWriter {
 		record.setCodigoACU(null);
 		record.setNumeroDeLote_NB_(item.getSerialNumber());
 		record.setNumeroDeArticuloDelComprador_1__IN_(null);
-		record.setCantidadDeEnvio_12_(String.valueOf(detail.getQuantity()));
+		record.setCantidadDeEnvio_12_(detail.getQuantity());
 		record.setCalificadorUnidadDeMedida(null);
 		record.setUnidadesDeConsumoEnUnidadDeExpedicion(null);
 		record.setFechaDeExpiracion_36__102_203_(null);

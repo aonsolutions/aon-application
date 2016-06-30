@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <register name="SINCE">
-	<field name="Descuentos" value="bean" property="descuentos" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Tipo Factura (325, 380, 381, 383, 385)" value="bean" property="tipoFactura_325_380_381_383_385_" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número de Factura" value="bean" property="numeroDeFactura" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Vendedor (SU)" value="bean" property="codigoVendedor_SU_" format="AlphaNumeric" pattern="X(13)" />
-	<field name="Código Comprador (BY)" value="bean" property="codigoComprador_BY_" format="AlphaNumeric" pattern="X(13)" />
-	<field name="Número de Línea" value="bean" property="numeroDeLinea" format="Numeric" pattern="9(6)" />
-	<field name="Número Descuento/Cargo" value="bean" property="numeroDescuento_Cargo" format="Numeric" pattern="9(2)" />
-	<field name="Indicador Descuento/Cargo (A/C)" value="bean" property="indicadorDescuento_Cargo_A_C_" format="AlphaNumeric" pattern="X(1)" />
-	<field name="Indicador Secuencia de cálculo" value="bean" property="indicadorSecuenciaDeCalculo" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Porcentaje Descuento/Cargo" value="bean" property="porcentajeDescuento_Cargo" format="Numeric" pattern="9(4).9999" />
-	<field name="Importe Descuento/Cargo" value="bean" property="importeDescuento_Cargo" format="Numeric" pattern="9(4).999" />
-	<field name="Importe Total Sujeto a Aplicación (13)" value="bean" property="importeTotalSujetoAAplicacion_13_" format="Numeric" pattern="9(4).999" />
-	<field name="Cantidad de Unidades que se descuentan por Línea" value="bean" property="cantidadDeUnidadesQueSeDescuentanPorLinea" format="Numeric" pattern="9(2).999" />
-	<field name="Tipo Descuento" value="bean" property="tipoDescuento" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Descuentos Monetarios por Unidad" value="bean" property="descuentosMonetariosPorUnidad" format="Numeric" pattern="9(2).999" />
-	<field name="Unidad de Medida" value="bean" property="unidadDeMedida" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Descuentos" value="bean" bean ="SINCE" property="descuentos" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo Factura (325, 380, 381, 383, 385)" value="bean" bean ="SINCE" property="tipoFactura_325_380_381_383_385_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Factura" value="bean" bean ="SINCE" property="numeroDeFactura" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Vendedor (SU)" value="bean" bean ="SINCE" property="codigoVendedor_SU_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Código Comprador (BY)" value="bean" bean ="SINCE" property="codigoComprador_BY_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Número de Línea" value="bean" bean ="SINCE" property="numeroDeLinea" format="Numeric" pattern="9(6)" />
+	<field name="Número Descuento/Cargo" value="bean" bean ="SINCE" property="numeroDescuento_Cargo" format="Numeric" pattern="9(2)" />
+	<field name="Indicador Descuento/Cargo (A/C)" value="bean" bean ="SINCE" property="indicadorDescuento_Cargo_A_C_" format="AlphaNumeric" pattern="X(1)" />
+	<field name="Indicador Secuencia de cálculo" value="bean" bean ="SINCE" property="indicadorSecuenciaDeCalculo" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Porcentaje Descuento/Cargo" value="bean" bean ="SINCE" property="porcentajeDescuento_Cargo" format="Numeric" pattern="9(4).9999" />
+	<field name="Importe Descuento/Cargo" value="bean" bean ="SINCE" property="importeDescuento_Cargo" format="Numeric" pattern="9(14).999" />
+	<field name="Importe Total Sujeto a Aplicación (13)" value="bean" bean ="SINCE" property="importeTotalSujetoAAplicacion_13_" format="Numeric" pattern="9(14).999" />
+	<field name="Cantidad de Unidades que se descuentan por Línea" value="bean" bean ="SINCE" property="cantidadDeUnidadesQueSeDescuentanPorLinea" format="Numeric" pattern="9(12).999" />
+	<field name="Tipo Descuento" value="bean" bean ="SINCE" property="tipoDescuento" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Descuentos Monetarios por Unidad" value="bean" bean ="SINCE" property="descuentosMonetariosPorUnidad" format="Numeric" pattern="9(12).999" />
+	<field name="Unidad de Medida" value="bean" bean ="SINCE" property="unidadDeMedida" format="AlphaNumeric" pattern="X(6)" />
 </register>

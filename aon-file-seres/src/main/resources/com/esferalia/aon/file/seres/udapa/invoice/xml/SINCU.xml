@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <register name="SINCU">
-	<field name="Textos Línea" value="bean" property="textosLinea" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Tipo Factura (325, 380, 381, 383, 385)" value="bean" property="tipoFactura_325_380_381_383_385_" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número de Factura" value="bean" property="numeroDeFactura" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Vendedor (SU)" value="bean" property="codigoVendedor_SU_" format="AlphaNumeric" pattern="X(13)" />
-	<field name="Código Comprador (BY)" value="bean" property="codigoComprador_BY_" format="AlphaNumeric" pattern="X(13)" />
-	<field name="Número de Línea" value="bean" property="numeroDeLinea" format="Numeric" pattern="9(6)" />
-	<field name="Calificador del Tema del Texto" value="bean" property="calificadorDelTemaDelTexto" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Texto 1" value="bean" property="texto1" format="AlphaNumeric" pattern="X(70)" />
-	<field name="Texto 2" value="bean" property="texto2" format="AlphaNumeric" pattern="X(70)" />
-	<field name="Texto 3" value="bean" property="texto3" format="AlphaNumeric" pattern="X(70)" />
-	<field name="Texto 4" value="bean" property="texto4" format="AlphaNumeric" pattern="X(70)" />
-	<field name="Texto 5" value="bean" property="texto5" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Textos Línea" value="bean" bean ="SINCU" property="textosLinea" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo Factura (325, 380, 381, 383, 385)" value="bean" bean ="SINCU" property="tipoFactura_325_380_381_383_385_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Factura" value="bean" bean ="SINCU" property="numeroDeFactura" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Vendedor (SU)" value="bean" bean ="SINCU" property="codigoVendedor_SU_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Código Comprador (BY)" value="bean" bean ="SINCU" property="codigoComprador_BY_" format="AlphaNumeric" pattern="X(13)" />
+	<field name="Número de Línea" value="bean" bean ="SINCU" property="numeroDeLinea" format="Numeric" pattern="9(6)" />
+	<field name="Calificador del Tema del Texto" value="bean" bean ="SINCU" property="calificadorDelTemaDelTexto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Texto 1" value="bean" bean ="SINCU" property="texto1" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 2" value="bean" bean ="SINCU" property="texto2" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 3" value="bean" bean ="SINCU" property="texto3" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 4" value="bean" bean ="SINCU" property="texto4" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 5" value="bean" bean ="SINCU" property="texto5" format="AlphaNumeric" pattern="X(70)" />
 </register>

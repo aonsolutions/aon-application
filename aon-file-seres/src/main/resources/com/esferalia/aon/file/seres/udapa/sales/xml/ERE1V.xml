@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <register name="ERE1V">
-	<field name="Vencimientos" value="bean" property="vencimientos" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Tipo de Pedido (220, 221, 224, 226, 22E)" value="bean" property="tipoDePedido_220_221_224_226_22E_" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número de Pedido" value="bean" property="numeroDePedido" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Emisor  (MS)" value="bean" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Receptor (MR)" value="bean" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Número de Vencimiento" value="bean" property="numeroDeVencimiento" format="Numeric" pattern="9(2)" />
-	<field name="Referencia de Tiempo de Pago" value="bean" property="referenciaDeTiempoDePago" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Relación de Tiempo" value="bean" property="relacionDeTiempo" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Tipo de Periodo (D/M/Y)" value="bean" property="tipoDePeriodo_D_M_Y_" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Número de Periodos" value="bean" property="numeroDePeriodos" format="Numeric" pattern="9(3)" />
-	<field name="Fecha Vencimiento" value="bean" property="fechaVencimiento" format="Numeric" pattern="9(8)" />
-	<field name="Importe sujeto al vencimiento" value="bean" property="importeSujetoAlVencimiento" format="Numeric" pattern="9(4).999" />
+	<field name="Vencimientos" value="ERE1V" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de Pedido (220, 221, 224, 226, 22E)" value="bean" bean ="ERE1V" property="tipoDePedido_220_221_224_226_22E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Pedido" value="bean" bean ="ERE1V" property="numeroDePedido" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" bean ="ERE1V" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" bean ="ERE1V" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Vencimiento" value="bean" bean ="ERE1V" property="numeroDeVencimiento" format="Numeric" pattern="9(2)" />
+	<field name="Referencia de Tiempo de Pago" value="bean" bean ="ERE1V" property="referenciaDeTiempoDePago" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Relación de Tiempo" value="bean" bean ="ERE1V" property="relacionDeTiempo" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Tipo de Periodo (D/M/Y)" value="bean" bean ="ERE1V" property="tipoDePeriodo_D_M_Y_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Número de Periodos" value="bean" bean ="ERE1V" property="numeroDePeriodos" format="Numeric" pattern="9(3)" />
+	<field name="Fecha Vencimiento" value="bean" bean ="ERE1V" property="fechaVencimiento" format="Numeric" pattern="9(8)" />
+	<field name="Importe sujeto al vencimiento" value="bean" bean ="ERE1V" property="importeSujetoAlVencimiento" format="Numeric" pattern="9(14).999" />
 </register>

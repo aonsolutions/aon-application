@@ -1,5 +1,11 @@
 package com.esferalia.aon.file.seres.udapa.invoice.data;
 
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI SINCE entity.
  * <br>
@@ -30,85 +36,85 @@ public class SINCE {
 	private String numeroDeFactura;
 	private String codigoVendedor_SU_;
 	private String codigoComprador_BY_;
-	private String numeroDeLinea;
-	private String numeroDescuento_Cargo;
+	private Integer numeroDeLinea;
+	private Integer numeroDescuento_Cargo;
 	private String indicadorDescuento_Cargo_A_C_;
 	private String indicadorSecuenciaDeCalculo;
-	private String porcentajeDescuento_Cargo;
-	private String importeDescuento_Cargo;
-	private String importeTotalSujetoAAplicacion_13_;
-	private String cantidadDeUnidadesQueSeDescuentanPorLinea;
+	private Double porcentajeDescuento_Cargo;
+	private Double importeDescuento_Cargo;
+	private Double importeTotalSujetoAAplicacion_13_;
+	private Double cantidadDeUnidadesQueSeDescuentanPorLinea;
 	private String tipoDescuento;
-	private String descuentosMonetariosPorUnidad;
+	private Double descuentosMonetariosPorUnidad;
 	private String unidadDeMedida;
 
 
-	private static java.util.regex.Pattern PATTERN_SINCE_descuentos = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_tipoFactura_325_380_381_383_385_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_numeroDeFactura = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_codigoVendedor_SU_ = java.util.regex.Pattern.compile("^.{29}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_codigoComprador_BY_ = java.util.regex.Pattern.compile("^.{42}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_numeroDeLinea = java.util.regex.Pattern.compile("^.{55}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_numeroDescuento_Cargo = java.util.regex.Pattern.compile("^.{61}(.{2}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_indicadorDescuento_Cargo_A_C_ = java.util.regex.Pattern.compile("^.{63}(.{1}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_indicadorSecuenciaDeCalculo = java.util.regex.Pattern.compile("^.{64}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_porcentajeDescuento_Cargo = java.util.regex.Pattern.compile("^.{67}(.{9}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_importeDescuento_Cargo = java.util.regex.Pattern.compile("^.{76}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_importeTotalSujetoAAplicacion_13_ = java.util.regex.Pattern.compile("^.{94}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_cantidadDeUnidadesQueSeDescuentanPorLinea = java.util.regex.Pattern.compile("^.{112}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_tipoDescuento = java.util.regex.Pattern.compile("^.{128}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_descuentosMonetariosPorUnidad = java.util.regex.Pattern.compile("^.{134}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SINCE_unidadDeMedida = java.util.regex.Pattern.compile("^.{150}(.{6}).*");
+	private static Pattern PATTERN_SINCE_descuentos = Pattern.compile("^(.{6}).*");
+	private static Pattern PATTERN_SINCE_tipoFactura_325_380_381_383_385_ = Pattern.compile("^.{6}(.{6}).*");
+	private static Pattern PATTERN_SINCE_numeroDeFactura = Pattern.compile("^.{12}(.{17}).*");
+	private static Pattern PATTERN_SINCE_codigoVendedor_SU_ = Pattern.compile("^.{29}(.{13}).*");
+	private static Pattern PATTERN_SINCE_codigoComprador_BY_ = Pattern.compile("^.{42}(.{13}).*");
+	private static Pattern PATTERN_SINCE_numeroDeLinea = Pattern.compile("^.{55}(.{6}).*");
+	private static Pattern PATTERN_SINCE_numeroDescuento_Cargo = Pattern.compile("^.{61}(.{2}).*");
+	private static Pattern PATTERN_SINCE_indicadorDescuento_Cargo_A_C_ = Pattern.compile("^.{63}(.{1}).*");
+	private static Pattern PATTERN_SINCE_indicadorSecuenciaDeCalculo = Pattern.compile("^.{64}(.{3}).*");
+	private static Pattern PATTERN_SINCE_porcentajeDescuento_Cargo = Pattern.compile("^.{67}(.{9}).*");
+	private static Pattern PATTERN_SINCE_importeDescuento_Cargo = Pattern.compile("^.{76}(.{18}).*");
+	private static Pattern PATTERN_SINCE_importeTotalSujetoAAplicacion_13_ = Pattern.compile("^.{94}(.{18}).*");
+	private static Pattern PATTERN_SINCE_cantidadDeUnidadesQueSeDescuentanPorLinea = Pattern.compile("^.{112}(.{16}).*");
+	private static Pattern PATTERN_SINCE_tipoDescuento = Pattern.compile("^.{128}(.{6}).*");
+	private static Pattern PATTERN_SINCE_descuentosMonetariosPorUnidad = Pattern.compile("^.{134}(.{16}).*");
+	private static Pattern PATTERN_SINCE_unidadDeMedida = Pattern.compile("^.{150}(.{6}).*");
 
 	public void parse(String value) {
-		java.util.regex.Matcher m;
-		if((m = PATTERN_SINCE_descuentos.matcher(value)).find()) {
-			setDescuentos(m.group(1));
+		Matcher m;
+		if((m = PATTERN_SINCE_descuentos.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDescuentos(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_tipoFactura_325_380_381_383_385_.matcher(value)).find()) {
-			setTipoFactura_325_380_381_383_385_(m.group(1));
+		if((m = PATTERN_SINCE_tipoFactura_325_380_381_383_385_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoFactura_325_380_381_383_385_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_numeroDeFactura.matcher(value)).find()) {
-			setNumeroDeFactura(m.group(1));
+		if((m = PATTERN_SINCE_numeroDeFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeFactura(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_codigoVendedor_SU_.matcher(value)).find()) {
-			setCodigoVendedor_SU_(m.group(1));
+		if((m = PATTERN_SINCE_codigoVendedor_SU_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoVendedor_SU_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_codigoComprador_BY_.matcher(value)).find()) {
-			setCodigoComprador_BY_(m.group(1));
+		if((m = PATTERN_SINCE_codigoComprador_BY_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoComprador_BY_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_numeroDeLinea.matcher(value)).find()) {
-			setNumeroDeLinea(m.group(1));
+		if((m = PATTERN_SINCE_numeroDeLinea.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeLinea(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_numeroDescuento_Cargo.matcher(value)).find()) {
-			setNumeroDescuento_Cargo(m.group(1));
+		if((m = PATTERN_SINCE_numeroDescuento_Cargo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDescuento_Cargo(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_indicadorDescuento_Cargo_A_C_.matcher(value)).find()) {
-			setIndicadorDescuento_Cargo_A_C_(m.group(1));
+		if((m = PATTERN_SINCE_indicadorDescuento_Cargo_A_C_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setIndicadorDescuento_Cargo_A_C_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_indicadorSecuenciaDeCalculo.matcher(value)).find()) {
-			setIndicadorSecuenciaDeCalculo(m.group(1));
+		if((m = PATTERN_SINCE_indicadorSecuenciaDeCalculo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setIndicadorSecuenciaDeCalculo(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_porcentajeDescuento_Cargo.matcher(value)).find()) {
-			setPorcentajeDescuento_Cargo(m.group(1));
+		if((m = PATTERN_SINCE_porcentajeDescuento_Cargo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPorcentajeDescuento_Cargo(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_importeDescuento_Cargo.matcher(value)).find()) {
-			setImporteDescuento_Cargo(m.group(1));
+		if((m = PATTERN_SINCE_importeDescuento_Cargo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteDescuento_Cargo(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_importeTotalSujetoAAplicacion_13_.matcher(value)).find()) {
-			setImporteTotalSujetoAAplicacion_13_(m.group(1));
+		if((m = PATTERN_SINCE_importeTotalSujetoAAplicacion_13_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteTotalSujetoAAplicacion_13_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_cantidadDeUnidadesQueSeDescuentanPorLinea.matcher(value)).find()) {
-			setCantidadDeUnidadesQueSeDescuentanPorLinea(m.group(1));
+		if((m = PATTERN_SINCE_cantidadDeUnidadesQueSeDescuentanPorLinea.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCantidadDeUnidadesQueSeDescuentanPorLinea(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_tipoDescuento.matcher(value)).find()) {
-			setTipoDescuento(m.group(1));
+		if((m = PATTERN_SINCE_tipoDescuento.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoDescuento(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_descuentosMonetariosPorUnidad.matcher(value)).find()) {
-			setDescuentosMonetariosPorUnidad(m.group(1));
+		if((m = PATTERN_SINCE_descuentosMonetariosPorUnidad.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDescuentosMonetariosPorUnidad(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCE_unidadDeMedida.matcher(value)).find()) {
-			setUnidadDeMedida(m.group(1));
+		if((m = PATTERN_SINCE_unidadDeMedida.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setUnidadDeMedida(String.valueOf(m.group(1).trim()));
 		}
 	}
 
@@ -280,10 +286,10 @@ public class SINCE {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDeLinea() {
+	public Integer getNumeroDeLinea() {
 		return numeroDeLinea;
 	}
-	public void setNumeroDeLinea(String numeroDeLinea) {
+	public void setNumeroDeLinea(Integer numeroDeLinea) {
 		this.numeroDeLinea = numeroDeLinea;
 	}
 
@@ -309,10 +315,10 @@ public class SINCE {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDescuento_Cargo() {
+	public Integer getNumeroDescuento_Cargo() {
 		return numeroDescuento_Cargo;
 	}
-	public void setNumeroDescuento_Cargo(String numeroDescuento_Cargo) {
+	public void setNumeroDescuento_Cargo(Integer numeroDescuento_Cargo) {
 		this.numeroDescuento_Cargo = numeroDescuento_Cargo;
 	}
 
@@ -396,10 +402,10 @@ public class SINCE {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPorcentajeDescuento_Cargo() {
+	public Double getPorcentajeDescuento_Cargo() {
 		return porcentajeDescuento_Cargo;
 	}
-	public void setPorcentajeDescuento_Cargo(String porcentajeDescuento_Cargo) {
+	public void setPorcentajeDescuento_Cargo(Double porcentajeDescuento_Cargo) {
 		this.porcentajeDescuento_Cargo = porcentajeDescuento_Cargo;
 	}
 
@@ -425,10 +431,10 @@ public class SINCE {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteDescuento_Cargo() {
+	public Double getImporteDescuento_Cargo() {
 		return importeDescuento_Cargo;
 	}
-	public void setImporteDescuento_Cargo(String importeDescuento_Cargo) {
+	public void setImporteDescuento_Cargo(Double importeDescuento_Cargo) {
 		this.importeDescuento_Cargo = importeDescuento_Cargo;
 	}
 
@@ -454,10 +460,10 @@ public class SINCE {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteTotalSujetoAAplicacion_13_() {
+	public Double getImporteTotalSujetoAAplicacion_13_() {
 		return importeTotalSujetoAAplicacion_13_;
 	}
-	public void setImporteTotalSujetoAAplicacion_13_(String importeTotalSujetoAAplicacion_13_) {
+	public void setImporteTotalSujetoAAplicacion_13_(Double importeTotalSujetoAAplicacion_13_) {
 		this.importeTotalSujetoAAplicacion_13_ = importeTotalSujetoAAplicacion_13_;
 	}
 
@@ -483,10 +489,10 @@ public class SINCE {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCantidadDeUnidadesQueSeDescuentanPorLinea() {
+	public Double getCantidadDeUnidadesQueSeDescuentanPorLinea() {
 		return cantidadDeUnidadesQueSeDescuentanPorLinea;
 	}
-	public void setCantidadDeUnidadesQueSeDescuentanPorLinea(String cantidadDeUnidadesQueSeDescuentanPorLinea) {
+	public void setCantidadDeUnidadesQueSeDescuentanPorLinea(Double cantidadDeUnidadesQueSeDescuentanPorLinea) {
 		this.cantidadDeUnidadesQueSeDescuentanPorLinea = cantidadDeUnidadesQueSeDescuentanPorLinea;
 	}
 
@@ -541,10 +547,10 @@ public class SINCE {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getDescuentosMonetariosPorUnidad() {
+	public Double getDescuentosMonetariosPorUnidad() {
 		return descuentosMonetariosPorUnidad;
 	}
-	public void setDescuentosMonetariosPorUnidad(String descuentosMonetariosPorUnidad) {
+	public void setDescuentosMonetariosPorUnidad(Double descuentosMonetariosPorUnidad) {
 		this.descuentosMonetariosPorUnidad = descuentosMonetariosPorUnidad;
 	}
 
@@ -577,7 +583,10 @@ public class SINCE {
 		this.unidadDeMedida = unidadDeMedida;
 	}
 
-	public enum TipoDeDescuento {
+	/** 
+	 * F7161T  -  Tipo de Descuento: Solo se cumplimentará a nivel de Cabecera. Los valores posibles son:
+	 */
+	public enum F7161T {
 		DTO_PRONTO_PAG_EAB("EAB"),
 		DTO_COMERCIA_TD("TD"),
 		CARGO_POR_FLETE_FC("FC"),
@@ -587,13 +596,19 @@ public class SINCE {
 		
 		private String value;
 		
-		private TipoDeDescuento(String value) {
+		private F7161T(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
+		public static F7161T enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
 }

@@ -1,5 +1,11 @@
 package com.esferalia.aon.file.seres.udapa.sales.data;
 
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI ERE1I entity.
  * <br>
@@ -30,55 +36,55 @@ public class ERE1I {
 	private String numeroDePedido;
 	private String codigoEmisor_MS_;
 	private String codigoReceptor_MR_;
-	private String numeroDeLineaImpuesto;
+	private Integer numeroDeLineaImpuesto;
 	private String calificadorTipoDeImpuesto;
-	private String porcentajeTipoDeImpuesto;
-	private String importeTipoDeImpuesto;
-	private String baseImponible;
+	private Double porcentajeTipoDeImpuesto;
+	private Double importeTipoDeImpuesto;
+	private Double baseImponible;
 
 
-	private static java.util.regex.Pattern PATTERN_ERE1I_impuestos = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1I_tipoDePedido_220_221_224_226_22E_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1I_numeroDePedido = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1I_codigoEmisor_MS_ = java.util.regex.Pattern.compile("^.{29}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1I_codigoReceptor_MR_ = java.util.regex.Pattern.compile("^.{46}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1I_numeroDeLineaImpuesto = java.util.regex.Pattern.compile("^.{63}(.{2}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1I_calificadorTipoDeImpuesto = java.util.regex.Pattern.compile("^.{65}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1I_porcentajeTipoDeImpuesto = java.util.regex.Pattern.compile("^.{71}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1I_importeTipoDeImpuesto = java.util.regex.Pattern.compile("^.{77}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1I_baseImponible = java.util.regex.Pattern.compile("^.{95}(.{18}).*");
+	private static Pattern PATTERN_ERE1I_impuestos = Pattern.compile("^(.{6}).*");
+	private static Pattern PATTERN_ERE1I_tipoDePedido_220_221_224_226_22E_ = Pattern.compile("^.{6}(.{6}).*");
+	private static Pattern PATTERN_ERE1I_numeroDePedido = Pattern.compile("^.{12}(.{17}).*");
+	private static Pattern PATTERN_ERE1I_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
+	private static Pattern PATTERN_ERE1I_codigoReceptor_MR_ = Pattern.compile("^.{46}(.{17}).*");
+	private static Pattern PATTERN_ERE1I_numeroDeLineaImpuesto = Pattern.compile("^.{63}(.{2}).*");
+	private static Pattern PATTERN_ERE1I_calificadorTipoDeImpuesto = Pattern.compile("^.{65}(.{6}).*");
+	private static Pattern PATTERN_ERE1I_porcentajeTipoDeImpuesto = Pattern.compile("^.{71}(.{6}).*");
+	private static Pattern PATTERN_ERE1I_importeTipoDeImpuesto = Pattern.compile("^.{77}(.{18}).*");
+	private static Pattern PATTERN_ERE1I_baseImponible = Pattern.compile("^.{95}(.{18}).*");
 
 	public void parse(String value) {
-		java.util.regex.Matcher m;
-		if((m = PATTERN_ERE1I_impuestos.matcher(value)).find()) {
-			setImpuestos(m.group(1));
+		Matcher m;
+		if((m = PATTERN_ERE1I_impuestos.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImpuestos(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1I_tipoDePedido_220_221_224_226_22E_.matcher(value)).find()) {
-			setTipoDePedido_220_221_224_226_22E_(m.group(1));
+		if((m = PATTERN_ERE1I_tipoDePedido_220_221_224_226_22E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoDePedido_220_221_224_226_22E_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1I_numeroDePedido.matcher(value)).find()) {
-			setNumeroDePedido(m.group(1));
+		if((m = PATTERN_ERE1I_numeroDePedido.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDePedido(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1I_codigoEmisor_MS_.matcher(value)).find()) {
-			setCodigoEmisor_MS_(m.group(1));
+		if((m = PATTERN_ERE1I_codigoEmisor_MS_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoEmisor_MS_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1I_codigoReceptor_MR_.matcher(value)).find()) {
-			setCodigoReceptor_MR_(m.group(1));
+		if((m = PATTERN_ERE1I_codigoReceptor_MR_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoReceptor_MR_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1I_numeroDeLineaImpuesto.matcher(value)).find()) {
-			setNumeroDeLineaImpuesto(m.group(1));
+		if((m = PATTERN_ERE1I_numeroDeLineaImpuesto.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeLineaImpuesto(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1I_calificadorTipoDeImpuesto.matcher(value)).find()) {
-			setCalificadorTipoDeImpuesto(m.group(1));
+		if((m = PATTERN_ERE1I_calificadorTipoDeImpuesto.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorTipoDeImpuesto(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1I_porcentajeTipoDeImpuesto.matcher(value)).find()) {
-			setPorcentajeTipoDeImpuesto(m.group(1));
+		if((m = PATTERN_ERE1I_porcentajeTipoDeImpuesto.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPorcentajeTipoDeImpuesto(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1I_importeTipoDeImpuesto.matcher(value)).find()) {
-			setImporteTipoDeImpuesto(m.group(1));
+		if((m = PATTERN_ERE1I_importeTipoDeImpuesto.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteTipoDeImpuesto(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1I_baseImponible.matcher(value)).find()) {
-			setBaseImponible(m.group(1));
+		if((m = PATTERN_ERE1I_baseImponible.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setBaseImponible(Double.valueOf(m.group(1).trim()));
 		}
 	}
 
@@ -96,7 +102,7 @@ public class ERE1I {
 	 * 		<th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>ERE1L</th>
+	 * 		<td>ERE1I</th>
 	 * 		<td>Impuestos</th>
 	 * 		<td>C</th>
 	 * 		<td>6</th>
@@ -250,10 +256,10 @@ public class ERE1I {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDeLineaImpuesto() {
+	public Integer getNumeroDeLineaImpuesto() {
 		return numeroDeLineaImpuesto;
 	}
-	public void setNumeroDeLineaImpuesto(String numeroDeLineaImpuesto) {
+	public void setNumeroDeLineaImpuesto(Integer numeroDeLineaImpuesto) {
 		this.numeroDeLineaImpuesto = numeroDeLineaImpuesto;
 	}
 
@@ -308,10 +314,10 @@ public class ERE1I {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPorcentajeTipoDeImpuesto() {
+	public Double getPorcentajeTipoDeImpuesto() {
 		return porcentajeTipoDeImpuesto;
 	}
-	public void setPorcentajeTipoDeImpuesto(String porcentajeTipoDeImpuesto) {
+	public void setPorcentajeTipoDeImpuesto(Double porcentajeTipoDeImpuesto) {
 		this.porcentajeTipoDeImpuesto = porcentajeTipoDeImpuesto;
 	}
 
@@ -337,10 +343,10 @@ public class ERE1I {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteTipoDeImpuesto() {
+	public Double getImporteTipoDeImpuesto() {
 		return importeTipoDeImpuesto;
 	}
-	public void setImporteTipoDeImpuesto(String importeTipoDeImpuesto) {
+	public void setImporteTipoDeImpuesto(Double importeTipoDeImpuesto) {
 		this.importeTipoDeImpuesto = importeTipoDeImpuesto;
 	}
 
@@ -366,14 +372,17 @@ public class ERE1I {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getBaseImponible() {
+	public Double getBaseImponible() {
 		return baseImponible;
 	}
-	public void setBaseImponible(String baseImponible) {
+	public void setBaseImponible(Double baseImponible) {
 		this.baseImponible = baseImponible;
 	}
 
-	public enum CalificadorTipoDeImpuesto {
+	/** 
+	 * C5153T - Calificador Tipo de Impuesto: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 */
+	public enum C5153T {
 		IV_VAT("VAT"),
 		IGI_IGI("IGI"),
 		RECARGO_DE_EQUIVALENCI_RE("RE"),
@@ -382,13 +391,19 @@ public class ERE1I {
 		
 		private String value;
 		
-		private CalificadorTipoDeImpuesto(String value) {
+		private C5153T(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
+		public static C5153T enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
 }

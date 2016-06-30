@@ -1,5 +1,11 @@
 package com.esferalia.aon.file.seres.udapa.delivery.data;
 
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI SEH1B entity.
  * <br>
@@ -30,95 +36,95 @@ public class SEH1B {
 	private String numeroAvisoDeExpedicion;
 	private String codigoEmisor_MS_;
 	private String codigoReceptor_MR_;
-	private String numeroDeJerarquiaDeEmbalaje;
+	private Integer numeroDeJerarquiaDeEmbalaje;
 	private String numeroDeSub_jerarquiaDeEmbalaje;
-	private String numeroDeLineaArticulo;
-	private String contadorInformacionDeLotes;
+	private Integer numeroDeLineaArticulo;
+	private Integer contadorInformacionDeLotes;
 	private String codigoInstrucciones;
 	private String fechaDeCaducidad_36__102_203_;
 	private String fechaRecepcionDeMercancias_50__102_203_;
 	private String mejorAntesDeFecha_361__102_203_;
 	private String calificadorCantidad_11_12_;
-	private String cantidad;
+	private Double cantidad;
 	private String calificadorDelNumeroDeIdentidad;
 	private String numeroDeIdentidad;
 	private String fechaDeEnvasadoOEmpaquetado;
 
 
-	private static java.util.regex.Pattern PATTERN_SEH1B_informacionDeLotes = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_tipoAvisoDeExpedicion_351_35E_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_numeroAvisoDeExpedicion = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_codigoEmisor_MS_ = java.util.regex.Pattern.compile("^.{29}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_codigoReceptor_MR_ = java.util.regex.Pattern.compile("^.{46}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_numeroDeJerarquiaDeEmbalaje = java.util.regex.Pattern.compile("^.{63}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_numeroDeSub_jerarquiaDeEmbalaje = java.util.regex.Pattern.compile("^.{75}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_numeroDeLineaArticulo = java.util.regex.Pattern.compile("^.{87}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_contadorInformacionDeLotes = java.util.regex.Pattern.compile("^.{93}(.{4}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_codigoInstrucciones = java.util.regex.Pattern.compile("^.{97}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_fechaDeCaducidad_36__102_203_ = java.util.regex.Pattern.compile("^.{100}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_fechaRecepcionDeMercancias_50__102_203_ = java.util.regex.Pattern.compile("^.{112}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_mejorAntesDeFecha_361__102_203_ = java.util.regex.Pattern.compile("^.{124}(.{12}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_calificadorCantidad_11_12_ = java.util.regex.Pattern.compile("^.{136}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_cantidad = java.util.regex.Pattern.compile("^.{139}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_calificadorDelNumeroDeIdentidad = java.util.regex.Pattern.compile("^.{155}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_numeroDeIdentidad = java.util.regex.Pattern.compile("^.{158}(.{35}).*");
-	private static java.util.regex.Pattern PATTERN_SEH1B_fechaDeEnvasadoOEmpaquetado = java.util.regex.Pattern.compile("^.{193}(.{12}).*");
+	private static Pattern PATTERN_SEH1B_informacionDeLotes = Pattern.compile("^(.{6}).*");
+	private static Pattern PATTERN_SEH1B_tipoAvisoDeExpedicion_351_35E_ = Pattern.compile("^.{6}(.{6}).*");
+	private static Pattern PATTERN_SEH1B_numeroAvisoDeExpedicion = Pattern.compile("^.{12}(.{17}).*");
+	private static Pattern PATTERN_SEH1B_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
+	private static Pattern PATTERN_SEH1B_codigoReceptor_MR_ = Pattern.compile("^.{46}(.{17}).*");
+	private static Pattern PATTERN_SEH1B_numeroDeJerarquiaDeEmbalaje = Pattern.compile("^.{63}(.{12}).*");
+	private static Pattern PATTERN_SEH1B_numeroDeSub_jerarquiaDeEmbalaje = Pattern.compile("^.{75}(.{12}).*");
+	private static Pattern PATTERN_SEH1B_numeroDeLineaArticulo = Pattern.compile("^.{87}(.{6}).*");
+	private static Pattern PATTERN_SEH1B_contadorInformacionDeLotes = Pattern.compile("^.{93}(.{4}).*");
+	private static Pattern PATTERN_SEH1B_codigoInstrucciones = Pattern.compile("^.{97}(.{3}).*");
+	private static Pattern PATTERN_SEH1B_fechaDeCaducidad_36__102_203_ = Pattern.compile("^.{100}(.{12}).*");
+	private static Pattern PATTERN_SEH1B_fechaRecepcionDeMercancias_50__102_203_ = Pattern.compile("^.{112}(.{12}).*");
+	private static Pattern PATTERN_SEH1B_mejorAntesDeFecha_361__102_203_ = Pattern.compile("^.{124}(.{12}).*");
+	private static Pattern PATTERN_SEH1B_calificadorCantidad_11_12_ = Pattern.compile("^.{136}(.{3}).*");
+	private static Pattern PATTERN_SEH1B_cantidad = Pattern.compile("^.{139}(.{16}).*");
+	private static Pattern PATTERN_SEH1B_calificadorDelNumeroDeIdentidad = Pattern.compile("^.{155}(.{3}).*");
+	private static Pattern PATTERN_SEH1B_numeroDeIdentidad = Pattern.compile("^.{158}(.{35}).*");
+	private static Pattern PATTERN_SEH1B_fechaDeEnvasadoOEmpaquetado = Pattern.compile("^.{193}(.{12}).*");
 
 	public void parse(String value) {
-		java.util.regex.Matcher m;
-		if((m = PATTERN_SEH1B_informacionDeLotes.matcher(value)).find()) {
-			setInformacionDeLotes(m.group(1));
+		Matcher m;
+		if((m = PATTERN_SEH1B_informacionDeLotes.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setInformacionDeLotes(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_tipoAvisoDeExpedicion_351_35E_.matcher(value)).find()) {
-			setTipoAvisoDeExpedicion_351_35E_(m.group(1));
+		if((m = PATTERN_SEH1B_tipoAvisoDeExpedicion_351_35E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoAvisoDeExpedicion_351_35E_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_numeroAvisoDeExpedicion.matcher(value)).find()) {
-			setNumeroAvisoDeExpedicion(m.group(1));
+		if((m = PATTERN_SEH1B_numeroAvisoDeExpedicion.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroAvisoDeExpedicion(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_codigoEmisor_MS_.matcher(value)).find()) {
-			setCodigoEmisor_MS_(m.group(1));
+		if((m = PATTERN_SEH1B_codigoEmisor_MS_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoEmisor_MS_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_codigoReceptor_MR_.matcher(value)).find()) {
-			setCodigoReceptor_MR_(m.group(1));
+		if((m = PATTERN_SEH1B_codigoReceptor_MR_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoReceptor_MR_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_numeroDeJerarquiaDeEmbalaje.matcher(value)).find()) {
-			setNumeroDeJerarquiaDeEmbalaje(m.group(1));
+		if((m = PATTERN_SEH1B_numeroDeJerarquiaDeEmbalaje.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeJerarquiaDeEmbalaje(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_numeroDeSub_jerarquiaDeEmbalaje.matcher(value)).find()) {
-			setNumeroDeSub_jerarquiaDeEmbalaje(m.group(1));
+		if((m = PATTERN_SEH1B_numeroDeSub_jerarquiaDeEmbalaje.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeSub_jerarquiaDeEmbalaje(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_numeroDeLineaArticulo.matcher(value)).find()) {
-			setNumeroDeLineaArticulo(m.group(1));
+		if((m = PATTERN_SEH1B_numeroDeLineaArticulo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeLineaArticulo(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_contadorInformacionDeLotes.matcher(value)).find()) {
-			setContadorInformacionDeLotes(m.group(1));
+		if((m = PATTERN_SEH1B_contadorInformacionDeLotes.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setContadorInformacionDeLotes(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_codigoInstrucciones.matcher(value)).find()) {
-			setCodigoInstrucciones(m.group(1));
+		if((m = PATTERN_SEH1B_codigoInstrucciones.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoInstrucciones(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_fechaDeCaducidad_36__102_203_.matcher(value)).find()) {
-			setFechaDeCaducidad_36__102_203_(m.group(1));
+		if((m = PATTERN_SEH1B_fechaDeCaducidad_36__102_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaDeCaducidad_36__102_203_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_fechaRecepcionDeMercancias_50__102_203_.matcher(value)).find()) {
-			setFechaRecepcionDeMercancias_50__102_203_(m.group(1));
+		if((m = PATTERN_SEH1B_fechaRecepcionDeMercancias_50__102_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaRecepcionDeMercancias_50__102_203_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_mejorAntesDeFecha_361__102_203_.matcher(value)).find()) {
-			setMejorAntesDeFecha_361__102_203_(m.group(1));
+		if((m = PATTERN_SEH1B_mejorAntesDeFecha_361__102_203_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setMejorAntesDeFecha_361__102_203_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_calificadorCantidad_11_12_.matcher(value)).find()) {
-			setCalificadorCantidad_11_12_(m.group(1));
+		if((m = PATTERN_SEH1B_calificadorCantidad_11_12_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorCantidad_11_12_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_cantidad.matcher(value)).find()) {
-			setCantidad(m.group(1));
+		if((m = PATTERN_SEH1B_cantidad.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCantidad(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_calificadorDelNumeroDeIdentidad.matcher(value)).find()) {
-			setCalificadorDelNumeroDeIdentidad(m.group(1));
+		if((m = PATTERN_SEH1B_calificadorDelNumeroDeIdentidad.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorDelNumeroDeIdentidad(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_numeroDeIdentidad.matcher(value)).find()) {
-			setNumeroDeIdentidad(m.group(1));
+		if((m = PATTERN_SEH1B_numeroDeIdentidad.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeIdentidad(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SEH1B_fechaDeEnvasadoOEmpaquetado.matcher(value)).find()) {
-			setFechaDeEnvasadoOEmpaquetado(m.group(1));
+		if((m = PATTERN_SEH1B_fechaDeEnvasadoOEmpaquetado.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setFechaDeEnvasadoOEmpaquetado(String.valueOf(m.group(1).trim()));
 		}
 	}
 
@@ -290,10 +296,10 @@ public class SEH1B {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDeJerarquiaDeEmbalaje() {
+	public Integer getNumeroDeJerarquiaDeEmbalaje() {
 		return numeroDeJerarquiaDeEmbalaje;
 	}
-	public void setNumeroDeJerarquiaDeEmbalaje(String numeroDeJerarquiaDeEmbalaje) {
+	public void setNumeroDeJerarquiaDeEmbalaje(Integer numeroDeJerarquiaDeEmbalaje) {
 		this.numeroDeJerarquiaDeEmbalaje = numeroDeJerarquiaDeEmbalaje;
 	}
 
@@ -348,10 +354,10 @@ public class SEH1B {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDeLineaArticulo() {
+	public Integer getNumeroDeLineaArticulo() {
 		return numeroDeLineaArticulo;
 	}
-	public void setNumeroDeLineaArticulo(String numeroDeLineaArticulo) {
+	public void setNumeroDeLineaArticulo(Integer numeroDeLineaArticulo) {
 		this.numeroDeLineaArticulo = numeroDeLineaArticulo;
 	}
 
@@ -377,10 +383,10 @@ public class SEH1B {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getContadorInformacionDeLotes() {
+	public Integer getContadorInformacionDeLotes() {
 		return contadorInformacionDeLotes;
 	}
-	public void setContadorInformacionDeLotes(String contadorInformacionDeLotes) {
+	public void setContadorInformacionDeLotes(Integer contadorInformacionDeLotes) {
 		this.contadorInformacionDeLotes = contadorInformacionDeLotes;
 	}
 
@@ -551,10 +557,10 @@ public class SEH1B {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCantidad() {
+	public Double getCantidad() {
 		return cantidad;
 	}
-	public void setCantidad(String cantidad) {
+	public void setCantidad(Double cantidad) {
 		this.cantidad = cantidad;
 	}
 
@@ -645,39 +651,60 @@ public class SEH1B {
 		this.fechaDeEnvasadoOEmpaquetado = fechaDeEnvasadoOEmpaquetado;
 	}
 
-	public enum CodigoInstrucciones {
+	/** 
+	 * V4233L-Código Instrucciones: Los valores posibles son:
+	 */
+	public enum V4233L {
 		INSTRUCCIONES_DEL_FABRICANT_17("17"),
 		MARCADO_CON_UN_CODIGO_DE_EXPEDICION_DE_SERI_33E("33E"),
 		;
 		
 		private String value;
 		
-		private CodigoInstrucciones(String value) {
+		private V4233L(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum CalificadorDeCantidad_11_12_ {
+		public static V4233L enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V6063D-Calificador de Cantidad (11/12): Los valores posibles son:
+	 */
+	public enum V6063D {
 		CANTIDAD_DIVIDID_11("11"),
 		CANTIDAD_POR_LOTE__PETICION_ALCAMPO_12("12"),
 		;
 		
 		private String value;
 		
-		private CalificadorDeCantidad_11_12_(String value) {
+		private V6063D(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum CalificadorDelNumeroDeIdentidad {
+		public static V6063D enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * V7405L-Calificador  del número de identidad: Los valores posibles son:
+	 */
+	public enum V7405L {
 		NUMERO_EAN_UP_EU("EU"),
 		N__SE_SERIE_DEL_CONTINENTE_DE_LA_EXPEDICIO_BJ("BJ"),
 		N__DE_LA_EXPEDICIO_BX("BX"),
@@ -685,13 +712,19 @@ public class SEH1B {
 		
 		private String value;
 		
-		private CalificadorDelNumeroDeIdentidad(String value) {
+		private V7405L(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
+		public static V7405L enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
 }

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <register name="SEH1G">
-	<field name="Desglose Cantidad Líneas" value="bean" bean="SEH1G" property="desgloseCantidadLineas" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Tipo Aviso de Expedición (351/35E)" value="bean" bean="SEH1G" property="tipoAvisoDeExpedicion_351_35E_" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número Aviso de Expedición" value="bean" bean="SEH1G" property="numeroAvisoDeExpedicion" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Emisor  (MS)" value="bean" bean="SEH1G" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Receptor (MR)" value="bean" bean="SEH1G" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Número de Jerarquía de Embalaje" value="bean" bean="SEH1G" property="numeroDeJerarquiaDeEmbalaje" format="Numeric" pattern="9(12)" />
-	<field name="Número de Sub-jerarquía de Embalaje" value="bean" bean="SEH1G" property="numeroDeSub_jerarquiaDeEmbalaje" format="AlphaNumeric" pattern="X(12)" />
-	<field name="Número de Línea Artículo" value="bean" bean="SEH1G" property="numeroDeLineaArticulo" format="Numeric" pattern="9(6)" />
-	<field name="Contador Desglose Líneas" value="bean" bean="SEH1G" property="contadorDesgloseLineas" format="Numeric" pattern="9(4)" />
-	<field name="Código  Lugar de Entrega" value="bean" bean="SEH1G" property="codigoLugarDeEntrega" format="AlphaNumeric" pattern="X(25)" />
-	<field name="Tipo Código" value="bean" bean="SEH1G" property="tipoCodigo" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Fecha de Entrega (17)" value="bean" bean="SEH1G" property="fechaDeEntrega_17_" format="AlphaNumeric" pattern="X(12)" />
-	<field name="Cantidad Dividida (11)" value="bean" bean="SEH1G" property="cantidadDividida_11_" format="Numeric" pattern="9(2).999" />
-	<field name="Peso Envío Dividido en KGM" value="bean" bean="SEH1G" property="pesoEnvioDivididoEnKGM" format="Numeric" pattern="9(2).999" />
+	<field name="Desglose Cantidad Líneas" value="SEH1G" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo Aviso de Expedición (351/35E)" value="bean" bean ="SEH1G" property="tipoAvisoDeExpedicion_351_35E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número Aviso de Expedición" value="bean" bean ="SEH1G" property="numeroAvisoDeExpedicion" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" bean ="SEH1G" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" bean ="SEH1G" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Jerarquía de Embalaje" value="bean" bean ="SEH1G" property="numeroDeJerarquiaDeEmbalaje" format="Numeric" pattern="9(12)" />
+	<field name="Número de Sub-jerarquía de Embalaje" value="bean" bean ="SEH1G" property="numeroDeSub_jerarquiaDeEmbalaje" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Número de Línea Artículo" value="bean" bean ="SEH1G" property="numeroDeLineaArticulo" format="Numeric" pattern="9(6)" />
+	<field name="Contador Desglose Líneas" value="bean" bean ="SEH1G" property="contadorDesgloseLineas" format="Numeric" pattern="9(4)" />
+	<field name="Código  Lugar de Entrega" value="bean" bean ="SEH1G" property="codigoLugarDeEntrega" format="AlphaNumeric" pattern="X(25)" />
+	<field name="Tipo Código" value="bean" bean ="SEH1G" property="tipoCodigo" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha de Entrega (17)" value="bean" bean ="SEH1G" property="fechaDeEntrega_17_" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Cantidad Dividida (11)" value="bean" bean ="SEH1G" property="cantidadDividida_11_" format="Numeric" pattern="9(12).999" />
+	<field name="Peso Envío Dividido en KGM" value="bean" bean ="SEH1G" property="pesoEnvioDivididoEnKGM" format="Numeric" pattern="9(12).999" />
 </register>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <register name="ERE1T">
-	<field name="Textos" value="bean" property="textos" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Tipo de Pedido (220, 221, 224, 226, 22E)" value="bean" property="tipoDePedido_220_221_224_226_22E_" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número de Pedido" value="bean" property="numeroDePedido" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Emisor  (MS)" value="bean" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Receptor (MR)" value="bean" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Número Texto" value="bean" property="numeroTexto" format="Numeric" pattern="9(2)" />
-	<field name="Calificador del Tema del Texto (AAI , DEL)" value="bean" property="calificadorDelTemaDelTexto_AAI_DEL_" format="AlphaNumeric" pattern="X(3)" />
-	<field name="Texto 1" value="bean" property="texto1" format="AlphaNumeric" pattern="X(70)" />
-	<field name="Texto 2" value="bean" property="texto2" format="AlphaNumeric" pattern="X(70)" />
-	<field name="Texto 3" value="bean" property="texto3" format="AlphaNumeric" pattern="X(70)" />
-	<field name="Texto 4" value="bean" property="texto4" format="AlphaNumeric" pattern="X(70)" />
-	<field name="Texto 5" value="bean" property="texto5" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Textos" value="ERE1T" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de Pedido (220, 221, 224, 226, 22E)" value="bean" bean ="ERE1T" property="tipoDePedido_220_221_224_226_22E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Pedido" value="bean" bean ="ERE1T" property="numeroDePedido" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" bean ="ERE1T" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" bean ="ERE1T" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número Texto" value="bean" bean ="ERE1T" property="numeroTexto" format="Numeric" pattern="9(2)" />
+	<field name="Calificador del Tema del Texto (AAI , DEL)" value="bean" bean ="ERE1T" property="calificadorDelTemaDelTexto_AAI_DEL_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Texto 1" value="bean" bean ="ERE1T" property="texto1" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 2" value="bean" bean ="ERE1T" property="texto2" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 3" value="bean" bean ="ERE1T" property="texto3" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 4" value="bean" bean ="ERE1T" property="texto4" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Texto 5" value="bean" bean ="ERE1T" property="texto5" format="AlphaNumeric" pattern="X(70)" />
 </register>

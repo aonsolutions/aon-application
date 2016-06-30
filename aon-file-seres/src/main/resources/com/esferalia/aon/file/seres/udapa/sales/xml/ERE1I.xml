@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <register name="ERE1I">
-	<field name="Impuestos" value="bean" property="impuestos" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Tipo de Pedido (220, 221, 224, 226, 22E)" value="bean" property="tipoDePedido_220_221_224_226_22E_" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número de Pedido" value="bean" property="numeroDePedido" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Emisor  (MS)" value="bean" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Receptor (MR)" value="bean" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Número de Línea Impuesto" value="bean" property="numeroDeLineaImpuesto" format="Numeric" pattern="9(2)" />
-	<field name="Calificador Tipo de Impuesto" value="bean" property="calificadorTipoDeImpuesto" format="AlphaNumeric" pattern="X(6)" />
-	<field name="% Tipo de Impuesto" value="bean" property="porcentajeTipoDeImpuesto" format="Numeric" pattern="9(3).99" />
-	<field name="Importe Tipo de Impuesto" value="bean" property="importeTipoDeImpuesto" format="Numeric" pattern="9(4).999" />
-	<field name="Base Imponible" value="bean" property="baseImponible" format="Numeric" pattern="9(4).999" />
+	<field name="Impuestos" value="ERE1I" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de Pedido (220, 221, 224, 226, 22E)" value="bean" bean ="ERE1I" property="tipoDePedido_220_221_224_226_22E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Pedido" value="bean" bean ="ERE1I" property="numeroDePedido" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" bean ="ERE1I" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" bean ="ERE1I" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Línea Impuesto" value="bean" bean ="ERE1I" property="numeroDeLineaImpuesto" format="Numeric" pattern="9(2)" />
+	<field name="Calificador Tipo de Impuesto" value="bean" bean ="ERE1I" property="calificadorTipoDeImpuesto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="% Tipo de Impuesto" value="bean" bean ="ERE1I" property="porcentajeTipoDeImpuesto" format="Numeric" pattern="9(3).99" />
+	<field name="Importe Tipo de Impuesto" value="bean" bean ="ERE1I" property="importeTipoDeImpuesto" format="Numeric" pattern="9(14).999" />
+	<field name="Base Imponible" value="bean" bean ="ERE1I" property="baseImponible" format="Numeric" pattern="9(14).999" />
 </register>

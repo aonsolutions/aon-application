@@ -1,5 +1,11 @@
 package com.esferalia.aon.file.seres.udapa.invoice.data;
 
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI SINCU entity.
  * <br>
@@ -30,7 +36,7 @@ public class SINCU {
 	private String numeroDeFactura;
 	private String codigoVendedor_SU_;
 	private String codigoComprador_BY_;
-	private String numeroDeLinea;
+	private Integer numeroDeLinea;
 	private String calificadorDelTemaDelTexto;
 	private String texto1;
 	private String texto2;
@@ -39,56 +45,56 @@ public class SINCU {
 	private String texto5;
 
 
-	private static java.util.regex.Pattern PATTERN_SINCU_textosLinea = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCU_tipoFactura_325_380_381_383_385_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCU_numeroDeFactura = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_SINCU_codigoVendedor_SU_ = java.util.regex.Pattern.compile("^.{29}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCU_codigoComprador_BY_ = java.util.regex.Pattern.compile("^.{42}(.{13}).*");
-	private static java.util.regex.Pattern PATTERN_SINCU_numeroDeLinea = java.util.regex.Pattern.compile("^.{55}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCU_calificadorDelTemaDelTexto = java.util.regex.Pattern.compile("^.{61}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_SINCU_texto1 = java.util.regex.Pattern.compile("^.{67}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_SINCU_texto2 = java.util.regex.Pattern.compile("^.{137}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_SINCU_texto3 = java.util.regex.Pattern.compile("^.{207}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_SINCU_texto4 = java.util.regex.Pattern.compile("^.{277}(.{70}).*");
-	private static java.util.regex.Pattern PATTERN_SINCU_texto5 = java.util.regex.Pattern.compile("^.{347}(.{70}).*");
+	private static Pattern PATTERN_SINCU_textosLinea = Pattern.compile("^(.{6}).*");
+	private static Pattern PATTERN_SINCU_tipoFactura_325_380_381_383_385_ = Pattern.compile("^.{6}(.{6}).*");
+	private static Pattern PATTERN_SINCU_numeroDeFactura = Pattern.compile("^.{12}(.{17}).*");
+	private static Pattern PATTERN_SINCU_codigoVendedor_SU_ = Pattern.compile("^.{29}(.{13}).*");
+	private static Pattern PATTERN_SINCU_codigoComprador_BY_ = Pattern.compile("^.{42}(.{13}).*");
+	private static Pattern PATTERN_SINCU_numeroDeLinea = Pattern.compile("^.{55}(.{6}).*");
+	private static Pattern PATTERN_SINCU_calificadorDelTemaDelTexto = Pattern.compile("^.{61}(.{6}).*");
+	private static Pattern PATTERN_SINCU_texto1 = Pattern.compile("^.{67}(.{70}).*");
+	private static Pattern PATTERN_SINCU_texto2 = Pattern.compile("^.{137}(.{70}).*");
+	private static Pattern PATTERN_SINCU_texto3 = Pattern.compile("^.{207}(.{70}).*");
+	private static Pattern PATTERN_SINCU_texto4 = Pattern.compile("^.{277}(.{70}).*");
+	private static Pattern PATTERN_SINCU_texto5 = Pattern.compile("^.{347}(.{70}).*");
 
 	public void parse(String value) {
-		java.util.regex.Matcher m;
-		if((m = PATTERN_SINCU_textosLinea.matcher(value)).find()) {
-			setTextosLinea(m.group(1));
+		Matcher m;
+		if((m = PATTERN_SINCU_textosLinea.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTextosLinea(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCU_tipoFactura_325_380_381_383_385_.matcher(value)).find()) {
-			setTipoFactura_325_380_381_383_385_(m.group(1));
+		if((m = PATTERN_SINCU_tipoFactura_325_380_381_383_385_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoFactura_325_380_381_383_385_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCU_numeroDeFactura.matcher(value)).find()) {
-			setNumeroDeFactura(m.group(1));
+		if((m = PATTERN_SINCU_numeroDeFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeFactura(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCU_codigoVendedor_SU_.matcher(value)).find()) {
-			setCodigoVendedor_SU_(m.group(1));
+		if((m = PATTERN_SINCU_codigoVendedor_SU_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoVendedor_SU_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCU_codigoComprador_BY_.matcher(value)).find()) {
-			setCodigoComprador_BY_(m.group(1));
+		if((m = PATTERN_SINCU_codigoComprador_BY_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoComprador_BY_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCU_numeroDeLinea.matcher(value)).find()) {
-			setNumeroDeLinea(m.group(1));
+		if((m = PATTERN_SINCU_numeroDeLinea.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeLinea(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCU_calificadorDelTemaDelTexto.matcher(value)).find()) {
-			setCalificadorDelTemaDelTexto(m.group(1));
+		if((m = PATTERN_SINCU_calificadorDelTemaDelTexto.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCalificadorDelTemaDelTexto(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCU_texto1.matcher(value)).find()) {
-			setTexto1(m.group(1));
+		if((m = PATTERN_SINCU_texto1.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTexto1(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCU_texto2.matcher(value)).find()) {
-			setTexto2(m.group(1));
+		if((m = PATTERN_SINCU_texto2.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTexto2(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCU_texto3.matcher(value)).find()) {
-			setTexto3(m.group(1));
+		if((m = PATTERN_SINCU_texto3.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTexto3(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCU_texto4.matcher(value)).find()) {
-			setTexto4(m.group(1));
+		if((m = PATTERN_SINCU_texto4.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTexto4(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCU_texto5.matcher(value)).find()) {
-			setTexto5(m.group(1));
+		if((m = PATTERN_SINCU_texto5.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTexto5(String.valueOf(m.group(1).trim()));
 		}
 	}
 
@@ -260,10 +266,10 @@ public class SINCU {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDeLinea() {
+	public Integer getNumeroDeLinea() {
 		return numeroDeLinea;
 	}
-	public void setNumeroDeLinea(String numeroDeLinea) {
+	public void setNumeroDeLinea(Integer numeroDeLinea) {
 		this.numeroDeLinea = numeroDeLinea;
 	}
 
@@ -441,19 +447,28 @@ public class SINCU {
 		this.texto5 = texto5;
 	}
 
-	public enum CalificadorDelTemaDeTexto {
+	/** 
+	 * F4451C  - Calificador del tema de Texto: Los valores posibles son:
+	 */
+	public enum F4451C {
 		INFORMACION_GENERA_AAI("AAI"),
 		;
 		
 		private String value;
 		
-		private CalificadorDelTemaDeTexto(String value) {
+		private F4451C(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
+		public static F4451C enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
 }

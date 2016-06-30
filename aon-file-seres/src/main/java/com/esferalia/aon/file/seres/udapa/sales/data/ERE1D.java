@@ -1,5 +1,11 @@
 package com.esferalia.aon.file.seres.udapa.sales.data;
 
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI ERE1D entity.
  * <br>
@@ -30,80 +36,80 @@ public class ERE1D {
 	private String numeroDePedido;
 	private String codigoEmisor_MS_;
 	private String codigoReceptor_MR_;
-	private String numeroDeLineaArticulo;
-	private String numeroDescuento_Cargo;
+	private Integer numeroDeLineaArticulo;
+	private Integer numeroDescuento_Cargo;
 	private String indicadorDescuento_Cargo_A_C_;
 	private String indicadorSecuenciaDeCalculo;
 	private String serviciosEspeciales;
-	private String porcentajeDescuento_Cargo_3_;
-	private String importeDescuento_Cargo_23_204_;
-	private String cantidadDeUnidadesQueSeDescuentan_1_;
-	private String descuentosMonetariosPorUnidad;
+	private Double porcentajeDescuento_Cargo_3_;
+	private Double importeDescuento_Cargo_23_204_;
+	private Double cantidadDeUnidadesQueSeDescuentan_1_;
+	private Double descuentosMonetariosPorUnidad;
 	private String unidadDeMedida;
 
 
-	private static java.util.regex.Pattern PATTERN_ERE1D_descuentos = java.util.regex.Pattern.compile("^(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_tipoDePedido_220_221_224_226_22E_ = java.util.regex.Pattern.compile("^.{6}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_numeroDePedido = java.util.regex.Pattern.compile("^.{12}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_codigoEmisor_MS_ = java.util.regex.Pattern.compile("^.{29}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_codigoReceptor_MR_ = java.util.regex.Pattern.compile("^.{46}(.{17}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_numeroDeLineaArticulo = java.util.regex.Pattern.compile("^.{63}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_numeroDescuento_Cargo = java.util.regex.Pattern.compile("^.{69}(.{2}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_indicadorDescuento_Cargo_A_C_ = java.util.regex.Pattern.compile("^.{71}(.{1}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_indicadorSecuenciaDeCalculo = java.util.regex.Pattern.compile("^.{72}(.{3}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_serviciosEspeciales = java.util.regex.Pattern.compile("^.{75}(.{6}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_porcentajeDescuento_Cargo_3_ = java.util.regex.Pattern.compile("^.{81}(.{9}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_importeDescuento_Cargo_23_204_ = java.util.regex.Pattern.compile("^.{90}(.{18}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_cantidadDeUnidadesQueSeDescuentan_1_ = java.util.regex.Pattern.compile("^.{108}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_descuentosMonetariosPorUnidad = java.util.regex.Pattern.compile("^.{124}(.{16}).*");
-	private static java.util.regex.Pattern PATTERN_ERE1D_unidadDeMedida = java.util.regex.Pattern.compile("^.{140}(.{6}).*");
+	private static Pattern PATTERN_ERE1D_descuentos = Pattern.compile("^(.{6}).*");
+	private static Pattern PATTERN_ERE1D_tipoDePedido_220_221_224_226_22E_ = Pattern.compile("^.{6}(.{6}).*");
+	private static Pattern PATTERN_ERE1D_numeroDePedido = Pattern.compile("^.{12}(.{17}).*");
+	private static Pattern PATTERN_ERE1D_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
+	private static Pattern PATTERN_ERE1D_codigoReceptor_MR_ = Pattern.compile("^.{46}(.{17}).*");
+	private static Pattern PATTERN_ERE1D_numeroDeLineaArticulo = Pattern.compile("^.{63}(.{6}).*");
+	private static Pattern PATTERN_ERE1D_numeroDescuento_Cargo = Pattern.compile("^.{69}(.{2}).*");
+	private static Pattern PATTERN_ERE1D_indicadorDescuento_Cargo_A_C_ = Pattern.compile("^.{71}(.{1}).*");
+	private static Pattern PATTERN_ERE1D_indicadorSecuenciaDeCalculo = Pattern.compile("^.{72}(.{3}).*");
+	private static Pattern PATTERN_ERE1D_serviciosEspeciales = Pattern.compile("^.{75}(.{6}).*");
+	private static Pattern PATTERN_ERE1D_porcentajeDescuento_Cargo_3_ = Pattern.compile("^.{81}(.{9}).*");
+	private static Pattern PATTERN_ERE1D_importeDescuento_Cargo_23_204_ = Pattern.compile("^.{90}(.{18}).*");
+	private static Pattern PATTERN_ERE1D_cantidadDeUnidadesQueSeDescuentan_1_ = Pattern.compile("^.{108}(.{16}).*");
+	private static Pattern PATTERN_ERE1D_descuentosMonetariosPorUnidad = Pattern.compile("^.{124}(.{16}).*");
+	private static Pattern PATTERN_ERE1D_unidadDeMedida = Pattern.compile("^.{140}(.{6}).*");
 
 	public void parse(String value) {
-		java.util.regex.Matcher m;
-		if((m = PATTERN_ERE1D_descuentos.matcher(value)).find()) {
-			setDescuentos(m.group(1));
+		Matcher m;
+		if((m = PATTERN_ERE1D_descuentos.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDescuentos(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_tipoDePedido_220_221_224_226_22E_.matcher(value)).find()) {
-			setTipoDePedido_220_221_224_226_22E_(m.group(1));
+		if((m = PATTERN_ERE1D_tipoDePedido_220_221_224_226_22E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setTipoDePedido_220_221_224_226_22E_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_numeroDePedido.matcher(value)).find()) {
-			setNumeroDePedido(m.group(1));
+		if((m = PATTERN_ERE1D_numeroDePedido.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDePedido(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_codigoEmisor_MS_.matcher(value)).find()) {
-			setCodigoEmisor_MS_(m.group(1));
+		if((m = PATTERN_ERE1D_codigoEmisor_MS_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoEmisor_MS_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_codigoReceptor_MR_.matcher(value)).find()) {
-			setCodigoReceptor_MR_(m.group(1));
+		if((m = PATTERN_ERE1D_codigoReceptor_MR_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCodigoReceptor_MR_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_numeroDeLineaArticulo.matcher(value)).find()) {
-			setNumeroDeLineaArticulo(m.group(1));
+		if((m = PATTERN_ERE1D_numeroDeLineaArticulo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDeLineaArticulo(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_numeroDescuento_Cargo.matcher(value)).find()) {
-			setNumeroDescuento_Cargo(m.group(1));
+		if((m = PATTERN_ERE1D_numeroDescuento_Cargo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNumeroDescuento_Cargo(Integer.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_indicadorDescuento_Cargo_A_C_.matcher(value)).find()) {
-			setIndicadorDescuento_Cargo_A_C_(m.group(1));
+		if((m = PATTERN_ERE1D_indicadorDescuento_Cargo_A_C_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setIndicadorDescuento_Cargo_A_C_(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_indicadorSecuenciaDeCalculo.matcher(value)).find()) {
-			setIndicadorSecuenciaDeCalculo(m.group(1));
+		if((m = PATTERN_ERE1D_indicadorSecuenciaDeCalculo.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setIndicadorSecuenciaDeCalculo(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_serviciosEspeciales.matcher(value)).find()) {
-			setServiciosEspeciales(m.group(1));
+		if((m = PATTERN_ERE1D_serviciosEspeciales.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setServiciosEspeciales(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_porcentajeDescuento_Cargo_3_.matcher(value)).find()) {
-			setPorcentajeDescuento_Cargo_3_(m.group(1));
+		if((m = PATTERN_ERE1D_porcentajeDescuento_Cargo_3_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setPorcentajeDescuento_Cargo_3_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_importeDescuento_Cargo_23_204_.matcher(value)).find()) {
-			setImporteDescuento_Cargo_23_204_(m.group(1));
+		if((m = PATTERN_ERE1D_importeDescuento_Cargo_23_204_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setImporteDescuento_Cargo_23_204_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_cantidadDeUnidadesQueSeDescuentan_1_.matcher(value)).find()) {
-			setCantidadDeUnidadesQueSeDescuentan_1_(m.group(1));
+		if((m = PATTERN_ERE1D_cantidadDeUnidadesQueSeDescuentan_1_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setCantidadDeUnidadesQueSeDescuentan_1_(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_descuentosMonetariosPorUnidad.matcher(value)).find()) {
-			setDescuentosMonetariosPorUnidad(m.group(1));
+		if((m = PATTERN_ERE1D_descuentosMonetariosPorUnidad.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setDescuentosMonetariosPorUnidad(Double.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_ERE1D_unidadDeMedida.matcher(value)).find()) {
-			setUnidadDeMedida(m.group(1));
+		if((m = PATTERN_ERE1D_unidadDeMedida.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setUnidadDeMedida(String.valueOf(m.group(1).trim()));
 		}
 	}
 
@@ -275,10 +281,10 @@ public class ERE1D {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDeLineaArticulo() {
+	public Integer getNumeroDeLineaArticulo() {
 		return numeroDeLineaArticulo;
 	}
-	public void setNumeroDeLineaArticulo(String numeroDeLineaArticulo) {
+	public void setNumeroDeLineaArticulo(Integer numeroDeLineaArticulo) {
 		this.numeroDeLineaArticulo = numeroDeLineaArticulo;
 	}
 
@@ -304,10 +310,10 @@ public class ERE1D {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getNumeroDescuento_Cargo() {
+	public Integer getNumeroDescuento_Cargo() {
 		return numeroDescuento_Cargo;
 	}
-	public void setNumeroDescuento_Cargo(String numeroDescuento_Cargo) {
+	public void setNumeroDescuento_Cargo(Integer numeroDescuento_Cargo) {
 		this.numeroDescuento_Cargo = numeroDescuento_Cargo;
 	}
 
@@ -420,10 +426,10 @@ public class ERE1D {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getPorcentajeDescuento_Cargo_3_() {
+	public Double getPorcentajeDescuento_Cargo_3_() {
 		return porcentajeDescuento_Cargo_3_;
 	}
-	public void setPorcentajeDescuento_Cargo_3_(String porcentajeDescuento_Cargo_3_) {
+	public void setPorcentajeDescuento_Cargo_3_(Double porcentajeDescuento_Cargo_3_) {
 		this.porcentajeDescuento_Cargo_3_ = porcentajeDescuento_Cargo_3_;
 	}
 
@@ -449,10 +455,10 @@ public class ERE1D {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getImporteDescuento_Cargo_23_204_() {
+	public Double getImporteDescuento_Cargo_23_204_() {
 		return importeDescuento_Cargo_23_204_;
 	}
-	public void setImporteDescuento_Cargo_23_204_(String importeDescuento_Cargo_23_204_) {
+	public void setImporteDescuento_Cargo_23_204_(Double importeDescuento_Cargo_23_204_) {
 		this.importeDescuento_Cargo_23_204_ = importeDescuento_Cargo_23_204_;
 	}
 
@@ -478,10 +484,10 @@ public class ERE1D {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCantidadDeUnidadesQueSeDescuentan_1_() {
+	public Double getCantidadDeUnidadesQueSeDescuentan_1_() {
 		return cantidadDeUnidadesQueSeDescuentan_1_;
 	}
-	public void setCantidadDeUnidadesQueSeDescuentan_1_(String cantidadDeUnidadesQueSeDescuentan_1_) {
+	public void setCantidadDeUnidadesQueSeDescuentan_1_(Double cantidadDeUnidadesQueSeDescuentan_1_) {
 		this.cantidadDeUnidadesQueSeDescuentan_1_ = cantidadDeUnidadesQueSeDescuentan_1_;
 	}
 
@@ -507,10 +513,10 @@ public class ERE1D {
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getDescuentosMonetariosPorUnidad() {
+	public Double getDescuentosMonetariosPorUnidad() {
 		return descuentosMonetariosPorUnidad;
 	}
-	public void setDescuentosMonetariosPorUnidad(String descuentosMonetariosPorUnidad) {
+	public void setDescuentosMonetariosPorUnidad(Double descuentosMonetariosPorUnidad) {
 		this.descuentosMonetariosPorUnidad = descuentosMonetariosPorUnidad;
 	}
 
@@ -543,36 +549,54 @@ public class ERE1D {
 		this.unidadDeMedida = unidadDeMedida;
 	}
 
-	public enum IndicadorDescuento_Cargo_A_C_ {
+	/** 
+	 * C5463I - Indicador Descuento/Cargo (A/C): Los valores posibles son:
+	 */
+	public enum C5463I {
 		DESCUENT_A("A"),
 		CARG_C("C"),
 		;
 		
 		private String value;
 		
-		private IndicadorDescuento_Cargo_A_C_(String value) {
+		private C5463I(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
-	public enum ServiciosEspeciales {
+		public static C5463I enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
+	/** 
+	 * C7161S - Servicios Especiales: Los valores posibles son:
+	 */
+	public enum C7161S {
 		DEALER_DISCOUNT_ALLOWANCE__EAN_CODE_DDA("DDA"),
 		TRADE_DISCOUN_TD("TD"),
 		;
 		
 		private String value;
 		
-		private ServiciosEspeciales(String value) {
+		private C7161S(String value) {
 			this.value = value;
 		}
 		
 		public String getValue() {
 			return value;
 		}
-	}
 
+		public static C7161S enumByValue(String value) {
+			return Arrays.asList(values()).stream()
+				.filter(o -> (o.getValue().equalsIgnoreCase(value)))
+				.findFirst().orElse(null);
+		}
+
+	}
 }

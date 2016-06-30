@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <register name="ERE1G">
-	<field name="Desglose de Cantidad" value="bean" property="desgloseDeCantidad" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Tipo de Pedido (220, 221, 224, 226, 22E)" value="bean" property="tipoDePedido_220_221_224_226_22E_" format="AlphaNumeric" pattern="X(6)" />
-	<field name="Número de Pedido" value="bean" property="numeroDePedido" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Emisor  (MS)" value="bean" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Código Receptor (MR)" value="bean" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
-	<field name="Número de Línea Artículo" value="bean" property="numeroDeLineaArticulo" format="Numeric" pattern="9(6)" />
-	<field name="Contador Desglose" value="bean" property="contadorDesglose" format="Numeric" pattern="9(4)" />
-	<field name="Código Lugar de Entrega (7)" value="bean" property="codigoLugarDeEntrega_7_" format="AlphaNumeric" pattern="X(25)" />
-	<field name="Cantidad Dividida (11)" value="bean" property="cantidadDividida_11_" format="Numeric" pattern="9(2).999" />
+	<field name="Desglose de Cantidad" value="ERE1G" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Tipo de Pedido (220, 221, 224, 226, 22E)" value="bean" bean ="ERE1G" property="tipoDePedido_220_221_224_226_22E_" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de Pedido" value="bean" bean ="ERE1G" property="numeroDePedido" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Emisor  (MS)" value="bean" bean ="ERE1G" property="codigoEmisor_MS_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Código Receptor (MR)" value="bean" bean ="ERE1G" property="codigoReceptor_MR_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Número de Línea Artículo" value="bean" bean ="ERE1G" property="numeroDeLineaArticulo" format="Numeric" pattern="9(6)" />
+	<field name="Contador Desglose" value="bean" bean ="ERE1G" property="contadorDesglose" format="Numeric" pattern="9(4)" />
+	<field name="Código Lugar de Entrega (7)" value="bean" bean ="ERE1G" property="codigoLugarDeEntrega_7_" format="AlphaNumeric" pattern="X(25)" />
+	<field name="Cantidad Dividida (11)" value="bean" bean ="ERE1G" property="cantidadDividida_11_" format="Numeric" pattern="9(12).999" />
 </register>
