@@ -322,7 +322,7 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 				<textFieldExpression><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
-				<reportElement uuid="a2deb147-4e83-44d1-afd8-5b0fcbd3bc35" key="textField-49" x="69" y="41" width="140" height="13"/>
+				<reportElement uuid="a2deb147-4e83-44d1-afd8-5b0fcbd3bc35" key="textField-49" x="69" y="41" width="160" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -348,7 +348,7 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 				<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="a4dbb5ae-2baa-4ce8-bbaf-ead897624c91" key="textField-51" x="69" y="54" width="140" height="13"/>
+				<reportElement uuid="a4dbb5ae-2baa-4ce8-bbaf-ead897624c91" key="textField-51" x="69" y="54" width="160" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

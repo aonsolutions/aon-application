@@ -352,7 +352,7 @@
 				<imageExpression><![CDATA[$P{logoImageFile}]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="c31f6262-30c1-4727-b1c4-13286255963a" key="textField-47" x="440" y="6" width="95" height="13">
+				<reportElement uuid="c31f6262-30c1-4727-b1c4-13286255963a" key="textField-47" x="425" y="6" width="110" height="13">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -367,7 +367,7 @@
 				<textFieldExpression><![CDATA[($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="3b13991d-5f70-4755-9c90-d06b5c375f01" key="textField-48" x="392" y="6" width="48" height="13">
+				<reportElement uuid="3b13991d-5f70-4755-9c90-d06b5c375f01" key="textField-48" x="377" y="6" width="48" height="13">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -382,7 +382,7 @@
 				<textFieldExpression><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
-				<reportElement uuid="8f22eb83-bcc2-4132-93f9-8df84b0c1a71" key="textField-49" x="440" y="19" width="95" height="13">
+				<reportElement uuid="8f22eb83-bcc2-4132-93f9-8df84b0c1a71" key="textField-49" x="425" y="19" width="110" height="13">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -397,7 +397,7 @@
 				<textFieldExpression><![CDATA[$F{issueDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="9cb242cf-1dfe-482b-8393-f2f91bb759bc" key="textField-50" x="392" y="19" width="48" height="13">
+				<reportElement uuid="9cb242cf-1dfe-482b-8393-f2f91bb759bc" key="textField-50" x="377" y="19" width="48" height="13">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -412,7 +412,7 @@
 				<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="e13cf255-802c-4450-b68f-16853841817f" key="textField-51" x="440" y="32" width="95" height="13">
+				<reportElement uuid="e13cf255-802c-4450-b68f-16853841817f" key="textField-51" x="425" y="32" width="110" height="13">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -428,7 +428,7 @@
 +$F{registryDocument}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="4ca237cf-ec5f-4d2a-9590-410a8a4223aa" key="textField-52" x="392" y="32" width="48" height="13">
+				<reportElement uuid="4ca237cf-ec5f-4d2a-9590-410a8a4223aa" key="textField-52" x="377" y="32" width="48" height="13">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -443,7 +443,7 @@
 				<textFieldExpression><![CDATA[$R{aon_company_document} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="a8ca3aab-6410-4bcb-83ed-25389779cc33" key="textField-55" x="287" y="6" width="101" height="20">
+				<reportElement uuid="a8ca3aab-6410-4bcb-83ed-25389779cc33" key="textField-55" x="274" y="6" width="101" height="20">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -458,7 +458,7 @@
 				<textFieldExpression><![CDATA[$R{finance_invoice}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement uuid="eae2d3ef-0bc6-4a5c-89ad-511da7834cc5" key="textField-55" x="287" y="26" width="101" height="20">
+				<reportElement uuid="eae2d3ef-0bc6-4a5c-89ad-511da7834cc5" key="textField-55" x="274" y="26" width="101" height="20">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
