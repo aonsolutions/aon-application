@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -279,6 +280,14 @@ public class WarehouseDAO {
 	
 	public static void updateStock(AONContext ctx, WarehouseTransfer wt, WarehouseTransferDetail wtd){
 		Double quantity = wtd.getQuantity();
+	
+		if(quantity > 0 ){
+			Integer itemId = wtd.getItem().getId();
+			Item item = ProductDAO.getItem(ctx, itemId);
+			if(item.getProduct().isSerializable())
+				ProductDAO.updateItem(ctx, item.setStatus(ProductStatus.ACTIVE.value()));	
+		}
+		
 		if(wt.getSourceWarehouse() != null){
 			ctx.getDslContext().update(STOCK)
 				.set(STOCK.QUANTITY, STOCK.QUANTITY.add(quantity))
