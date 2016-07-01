@@ -74,7 +74,7 @@ public class ReservationRequest extends ReservationRequestDB implements IAuditab
 		Projection prjName = Projection.property(requestGuestBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_GUEST_NAME));
 		Projection prjSurname = Projection.property(requestGuestBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_GUEST_SURNAME));
 		List<?> resultList = requestGuestBean.getList(new ProjectionList(prjName, prjSurname), criteria);
-		if (resultList.size() > 0) {
+		if (resultList.size() > 0 && resultList.get(0) != null) {
 			Object[] result = (Object[])resultList.get(0);
 	    	String guestName = (result[0] == null) ? "" : result[0].toString() + " ";
 	    	guestName += (result[1] == null) ? "" : result[1].toString();

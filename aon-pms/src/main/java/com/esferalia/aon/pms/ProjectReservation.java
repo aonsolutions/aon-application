@@ -345,7 +345,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), getId());
 				Projection prjStatus = Projection.property(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS));
 				List<?> resultList = reservationBean.getList(new ProjectionList(prjStatus), criteria);
-				if (resultList.size() > 0) {
+				if (resultList.size() > 0 && resultList.get(0) != null) {
 					return (ReservationStatus)resultList.get(0);
 				}
 			} catch (ManagerBeanException ex) {
@@ -364,7 +364,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), getId());
 				Projection prjStatus = Projection.property(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CHECK_STATUS));
 				List<?> resultList = reservationBean.getList(new ProjectionList(prjStatus), criteria);
-				if (resultList.size() > 0) {
+				if (resultList.size() > 0 && resultList.get(0) != null) {
 					return (ReservationCheckStatus)resultList.get(0);
 				}
 			} catch (ManagerBeanException ex) {
@@ -399,7 +399,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		Projection prjSurname = Projection.property(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_SURNAME));
 		Projection prjSurname2 = Projection.property(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_SURNAME2));
 		List<?> resultList = reservationGuestBean.getList(new ProjectionList(prjName, prjSurname, prjSurname2), criteria);
-		if (resultList.size() > 0) {
+		if (resultList.size() > 0 && resultList.get(0) != null) {
 			Object[] result = (Object[])resultList.get(0);
 	    	String guestName = (result[0] == null) ? "" : result[0].toString() + " ";
 	    	guestName += (result[1] == null) ? "" : result[1].toString() + " ";
@@ -430,7 +430,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		criteria.addOrder(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ROOM_INDEX));
 		Projection prjTariff = Projection.property(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_TARIFF_ID));
 		List<?> resultList = reservationRoomBean.getList(new ProjectionList(prjTariff), criteria);
-		if (resultList.size() > 0) {
+		if (resultList.size() > 0 && resultList.get(0) != null) {
 			return (Integer)resultList.get(0);
 		}
 		return null;
@@ -482,7 +482,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		Projection prjAdults = Projection.sum(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ADULTS));
 		Projection prjChildren = Projection.sum(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_CHILDREN));
 		List<?> resultList = reservationRoomBean.getList(new ProjectionList(prjAdults, prjChildren), criteria);
-		if (resultList.size() > 0) {
+		if (resultList.size() > 0 && resultList.get(0) != null) {
 			Object[] result = (Object[])resultList.get(0);
 	    	Integer adults = (result[0] == null) ? 0 : (Integer)result[0];
 	    	Integer children = (result[1] == null) ? 0 : (Integer)result[1];
@@ -498,7 +498,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
 		Projection prjAdults = Projection.sum(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ADULTS));
 		List<?> resultList = reservationRoomBean.getList(new ProjectionList(prjAdults), criteria);
-		if (resultList.size() > 0) {
+		if (resultList.size() > 0 && resultList.get(0) != null) {
 			return (Integer)resultList.get(0);
 		}
 		return 0;
@@ -511,7 +511,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
 		Projection prjChild = Projection.sum(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_CHILDREN));
 		List<?> resultList = reservationRoomBean.getList(new ProjectionList(prjChild), criteria);
-		if (resultList.size() > 0) {
+		if (resultList.size() > 0 && resultList.get(0) != null) {
 			return (Integer)resultList.get(0);
 		}
 		return 0;
@@ -543,7 +543,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		criteria.addOrder(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_COMPOSITION), false);
 		Projection prjMealPlan = Projection.property(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_MEAL_PLAN));
 		List<?> resultList = reservationServiceBean.getList(new ProjectionList(prjMealPlan), criteria);
-		if (resultList.size() > 0) {
+		if (resultList.size() > 0 && resultList.get(0) != null) {
 			return (MealPlan)resultList.get(0);
 		}
 		return null;
@@ -563,7 +563,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 				criteria.addOrder(reservationRoomDetailBean.getFieldName(alias), false);
 				Projection prjCheckOutDate = Projection.property(reservationRoomDetailBean.getFieldName(alias));
 				List<?> resultList = reservationRoomDetailBean.getList(new ProjectionList(prjCheckOutDate), criteria);
-				if (resultList.size() > 0) {
+				if (resultList.size() > 0 && resultList.get(0) != null) {
 					return DateUtils.addDays((Date)resultList.get(0), 1);
 				} else {
 					return getStartDate();

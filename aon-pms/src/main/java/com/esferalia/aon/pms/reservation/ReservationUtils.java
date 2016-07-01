@@ -1129,7 +1129,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		criteria.addGreaterThanExpression(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_AGREED_PRICE), Double.valueOf(0));
 		Projection prjAgreedPrice = Projection.property(requestRoomBean.getFieldName(IEntityAlias.RESERVATION_REQUEST_ROOM_AGREED_PRICE));
 		List<?> resultList = requestRoomBean.getList(new ProjectionList(prjAgreedPrice), criteria);
-		if (resultList.size() > 0) {
+		if (resultList.size() > 0 && resultList.get(0) != null) {
 			return (Double)resultList.get(0);
 		}
 		return 0;
@@ -1199,7 +1199,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_ADMINISTRATIVE), Boolean.TRUE);
 			Projection prjValue = Projection.property(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_VALUE));
 			List<?> resultList = rMediaBean.getList(new ProjectionList(prjValue), criteria);
-			if (resultList.size() > 0) {
+			if (resultList.size() > 0 && resultList.get(0) != null) {
 				return (String)resultList.get(0);
 			}
 		}

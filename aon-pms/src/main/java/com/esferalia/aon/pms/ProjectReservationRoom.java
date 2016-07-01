@@ -84,7 +84,7 @@ public class ProjectReservationRoom extends ProjectReservationRoomDB implements 
 		criteria.addOrder(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE), first);
 		Projection prjRoomName = Projection.property(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_NAME));
 		List<?> resultList = reservationRoomDetailBean.getList(new ProjectionList(prjRoomName), criteria);
-		if (resultList.size() > 0) {
+		if (resultList.size() > 0 && resultList.get(0) != null) {
 			return (String)resultList.get(0);
 		}
 		return null;

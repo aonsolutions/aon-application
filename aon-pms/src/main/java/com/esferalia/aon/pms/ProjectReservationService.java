@@ -71,7 +71,7 @@ public class ProjectReservationService extends ProjectReservationServiceDB imple
 		alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_NAME);
 		Projection prjRoomName = Projection.property(alias);
 		List<?> resultList = reservationServiceDetailBean.getList(new ProjectionList(prjRoomName), criteria);
-		if (resultList.size() > 0) {
+		if (resultList.size() > 0 && resultList.get(0) != null) {
 			return (String)resultList.get(0);
 		}
 		return null;
