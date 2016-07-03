@@ -224,7 +224,7 @@ public class SQLSeniorityTestCase extends
 
 		startDate = add(add(getFirstDayOfYear(getToday()), Calendar.YEAR, -1), Calendar.MONTH,6); // 01/07 -1
 		endDate = getLastDayOfMonth(add(getFirstDayOfYear(getToday()),Calendar.MONTH,5)); // 30/06
-		issueDate = add(startDate, Calendar.YEAR, 1 );
+		issueDate = add(startDate, Calendar.YEAR, 2 );
 		
 		year = get(issueDate,YEAR);
 		extra = getExtra(aonContext, agreement.getId(), "01/07");
