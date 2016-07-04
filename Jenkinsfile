@@ -1,63 +1,97 @@
 node {
+   def mvnHome = tool 'M3'
 
    // Mark the code checkout 'stage'....
    stage 'Checkout'
 
    // Get some code from a GitHub repository
-   git url: 'https://github.com/aonsolutions/aon-application', credentialsId: '0057f1a5-ba06-4421-8785-7288a1eecfc4'
-
-   // Get the maven tool.
-   // ** NOTE: This 'M3' maven tool must be configured
-   // **       in the global configuration.           
-   def mvnHome = tool 'M3'
-
-   // Mark the code build 'stage'....
-   stage 'Build'
+   git url: 'https://github.com/aonsolutions/aon-application', branch: '8.59.X', credentialsId: '0057f1a5-ba06-4421-8785-7288a1eecfc4'
+       
+   // We want to pick up the version from the pom
+   def pom = readMavenPom file: 'pom.xml'
    
-   // Run the maven build
-   sh "${mvnHome}/bin/mvn  -T 4 -B -Drpm.release=true -Dmaven.test.failure.ignore=true -Dgwt.working=true clean deploy"
+   def hotfix = hotfix(pom.version)   
    
-   // Recording test results
-   //step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+   sh "git cherry -v origin/8.59.X origin/master > cherryOut"
+   
+   def cherryOut = readFile 'cherryOut'
 
+   def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: parameters(cherryOut)
+   
+   def commits = '';
+   for ( commitEntry in commitsMap ) {
+      if ( commitEntry.value ) 
+          commits = commitEntry.key + ' ' + commits
+   }
+   
+   
+   if ( commits ) {
+      // Mark the perform hotfix 'stage'....
+      stage "Perform HotFix ${hotfix}"
+
+      // Apply the changes introduced by introduced commits
+      sh "git cherry-pick ${commits}"
+
+      // Prepare hotfix   
+      sh "find -name 'pom.xml'  | while read pom; do sed -i  -e 's/${pom.version}/${hotfix}/' \$pom; done"
+
+      // Reread pom
+      pom = readMavenPom file: 'pom.xml'
+   }   
+   
+   // Mark the build 'stage'....
+   stage "Build HotFix ${pom.version}"
+   
+   sh "${mvnHome}/bin/mvn  -B -Drpm.release=true  clean deploy"
+   
+   if ( commits ) {
+
+      sh "${mvnHome}/bin/mvn  -B clean"
+
+      sh "git commit -a -m 'Hotfix ${pom.version}'"
+   
+      sh "git push --repo=https://j3nk1ns:aon945121010@github.com/aonsolutions/aon-application.git"
+       
+   }
+   
+       
    // Mark the RPMs deploy 'stage'....
    stage 'Deploy RPMs'
-    
+   
    // Upload RPMs 
-   sh "scp `find -name *.noarch.rpm` dev.esferalia.net:/var/www/rpms/aon-inetserver/noarch"
+   sh "scp `find -name *${pom.version}*.noarch.rpm` dev.esferalia.net:/var/www/rpms/aon-solutions/noarch"
    
    // Remove oldest RPMs. Keep 2 newest RPMs
-   sh "ssh dev.esferalia.net 'repomanage --keep=2 --old /var/www/rpms/aon-inetserver/noarch | xargs rm -rf'"
+   sh "ssh dev.esferalia.net 'repomanage --keep=2 --old /var/www/rpms/aon-solutions/noarch | xargs rm -rf'"
    
    // Create RPMs repository
-   sh "ssh dev.esferalia.net 'createrepo /var/www/rpms/aon-inetserver'"
-   
+   sh "ssh dev.esferalia.net 'createrepo /var/www/rpms/aon-solutions'"
 
-   // Mark the Integration Tests 'stage'....
-   stage 'Integration Tests'
-   
-   // 
-   sh "sudo yum clean all"
+    
+}
 
-   // 
-   sh "sudo yum update -y --enablerepo=aon-testing"
-   
-   //    
-   sh "sudo service tomcat8 restart"
+@NonCPS
+def hotfix(text) {
+   def matcher = text =~ '([0-9]+).([0-9]+)(.([0-9]+))?'
+   def major = matcher[0][1]
+   def minor = matcher[0][2]
+   def hotfix = matcher[0][4] ? (matcher[0][4] as int) + 1 : 1;
+   return "${major}.${minor}.${hotfix}";
+}
 
-   //       
-   sh "sudo mysql < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql"
-   
-   //
-   sh "sudo /usr/share/aon-master/bin/up2datedbs.sh"
-   
-   //
-   sh "echo 127.0.0.1 trainning-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
-
-   // Run the maven integration tests
-   sh "${mvnHome}/bin/mvn  -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/aon-aio/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/aon-aio/ -f aon-htmlunit/pom.xml integration-test"
-  
-   // Recording test results
-   step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
-
+@NonCPS
+def parameters(text) {
+   def matcher = text =~ '(?m)^\\+\\s+([0-9a-fA-F]+)\\s+(.*)$'
+   def parameters =  []
+   def i = 0;
+   for ( match in matcher ) {
+      parameter = [
+      $class: 'BooleanParameterDefinition',
+      name:  match[1],
+      defaultValue: false,
+      description: match[2]    
+      ]
+      parameters[i++] = parameter
+   }
+   return parameters
 }
