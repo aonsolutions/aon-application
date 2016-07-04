@@ -143,7 +143,7 @@ public enum Country implements Serializable {
 	,LI("LIECHTENSTEIN","LI","LIE",438)
 	,LT("LITUANIA","LT","LTU",440)
 	,LU("LUXEMBURGO","LU","LUX",442)
-	,XG("LUXEMBURGO","XG","LUX",442)
+	,XG("LUXEMBURGO (XG)","XG","LUX",442)
 	,MO("MACAO","MO","MAC",446)
 	,MG("MADAGASCAR","MG","MDG",450)
 	,MY("MALASIA","MY","MYS",458)

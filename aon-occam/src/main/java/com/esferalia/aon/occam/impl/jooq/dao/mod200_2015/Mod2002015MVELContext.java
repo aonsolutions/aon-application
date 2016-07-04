@@ -13,6 +13,7 @@ import static com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key.C0018;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key.C0019;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key.C0022;
+import static com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key.C0024;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key.C0030;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key.C0034;
 import static com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key.C0036;
@@ -78,8 +79,13 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 
 	public double computeLQ558() throws AonCoreException {
 		if ( isChecked(C0030) ) return round(getValue(LQ558));
+		if ( isChecked(C0047) ) return round(getValue(LQ558));
+
 		if ( isChecked(C0063) ) return 15.0;
-		if ( isChecked(C0046) ) return 30.0;
+		if(isChecked(Mod2002015Key.C0071)) return 15.0;
+		if ( isChecked(C0024) && isChecked(Mod2002015Key.C0066)) return 28.0;
+		if ( isChecked(C0024)) return 30.0;
+		if ( isChecked(C0046) ) return 28.0;
 
 		if ( isChecked(C0001) ) return 10.0;
 		if ( isChecked(C0002) ) return 25.0;
@@ -89,22 +95,27 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 		if ( isChecked(C0017) ) return round(getValue(LQ558));
 		if ( isChecked(C0018) ) return round(getValue(LQ558));
 		if ( isChecked(C0019) ) return round(getValue(LQ558));
-		if ( isChecked(C0006) && isChecked(C0056)) return 20.0;
-		if ( isChecked(C0006) && isChecked(C0034)) return 35.0;
+		if ( isChecked(C0006) && isChecked(C0056)) return 25.0;
+		if ( isChecked(C0006) && isChecked(C0034) && isChecked(Mod2002015Key.C0066)) return 28.0;
+		if ( isChecked(C0006) && isChecked(C0034)) return 33.0;
 		if ( isChecked(C0006) && !isChecked(C0034)) return 25.0;
-		if ( isChecked(C0012) ) return 30.0;
+		if ( isChecked(C0012) ) return 28.0;
 		if ( isChecked(C0015) ) return 4.0;
-		// ---
-		if ( isChecked(C0034) ) return 35.0;
+		// --- 
+		if ( isChecked(C0034) && isChecked(Mod2002015Key.C0066)) return 28.0;
+		if ( isChecked(C0034) ) return 33.0;
 		if ( isChecked(C0036) ) return 25.0;
-		if ( isChecked(C0038) ) return 30.0;
-		if ( isChecked(C0047) ) return round(getValue(LQ558));
+		if ( isChecked(C0038) ) return 28.0;
 		if ( isChecked(C0048) ) return 0.0;
 		if ( isChecked(C0049) ) return round(getValue(LQ558));
-		if ( isChecked(C0056) ) return 20.0;
-		if ( isChecked(C0057) ) return 20.0;
+		if ( isChecked(C0056) ) return 25.0;
+		if ( isChecked(C0057) && (isChecked(C0056) || isChecked(C0006)))
+			return 25.0;
+		if( isChecked(C0057)) return 28.0;
 		if ( isChecked(C0058) ) return 25.0;
-		return 30.0;
+		if(isChecked(Mod2002015Key.C0064)) return 28.0;
+
+		return 28.0;
 	}
 	private double getLimit(int limit) {
 		return AonMathUtils.round(limit * getDays() / 365);	
@@ -115,12 +126,13 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 		double lq552 = round(getValue(LQ552));
 		double lq558 = round(getValue(LQ558));
 		double lq559 = round(getValue(LQ559));
-		
+		double lq1035 = round(getValue(Mod2002015Key.LQ1035));
 		double lq560 = round(getValue(LQ560));
 		double lq210 = round(getValue(LQ210));
 		double lq480 = round(getValue(LQ480));
 //		double lq408 = round(getValue(LQ408));
 		double lq561 = round(getValue(LQ561));
+		double lq1330 = round(getValue(Mod2002015Key.LQ1330));
 		
 		if (isChecked(C0017) || isChecked(C0018) || isChecked(C0019)) {
 //			double lq562 = round(lq560+lq210-lq480+lq408-lq561);
@@ -150,18 +162,18 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 		if (isChecked(C0015)) {
 			if (isChecked(C0057)) {
 				if (round(lq552 - lq559 - lq521) > 0) {
-					return round((lq559 * lq558 / 100) + (lq552 - lq559 - lq521) * 30 / 100);	
+					return round(((lq559+lq1035) * lq558 / 100) + (lq552 - lq559 - lq521 - lq1035) * 28 / 100);	
 				} else {
 					return round((lq559 * lq558 / 100));
 				}
 			}
-			return round((lq559 * lq558 / 100) + (lq552 - lq559) * 30 / 100);
+			return round(((lq559+lq1035) * lq558 / 100) + (lq552 - lq559 - lq1035) * 28 / 100);
 		}
 		if (isChecked(C0006)) {
 			if (lq552<=getLimit(LIM_1)){
 				return round( lq552*25/100);			
 			} else {
-				return (getLimit(LIM_1)*25/100) + (lq552 - getLimit(LIM_1))*30/100;				
+				return (getLimit(LIM_1)*25/100) + (lq552 - getLimit(LIM_1))*28/100;				
 			}
 		}
 	
@@ -183,6 +195,36 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 			return 0;
 		}
 		return round(lq552 * lq558 / 100);
+	}
+	
+	public double computeLQ550()  throws AonCoreException {
+		double lq501 = round(getValue(Mod2002015Key.LQ501));
+		double i0417 = round(getValue(Mod2002015Key.I0417));
+		double d0418 = round(getValue(Mod2002015Key.D0418));
+		double lq578 = round(getValue(Mod2002015Key.LQ578));
+		double lq579 = round(getValue(Mod2002015Key.LQ579));
+		double lq1029 = round(getValue(Mod2002015Key.LQ1029));
+		double lq1030 = round(getValue(Mod2002015Key.LQ1030));
+		double lq1031 = round(getValue(Mod2002015Key.LQ1031));
+		
+		if(!isChecked(C0022) && !isChecked(Mod2002015Key.C0009) && !isChecked(Mod2002015Key.C0010))
+			return lq501 + i0417 + d0418;
+		if(isChecked(C0022)){
+			if(isChecked(Mod2002015Key.C0009) || isChecked(Mod2002015Key.C0010)){
+				if((lq578 + lq1030 + lq1031) > 0)
+					return lq578 + lq1030 + lq1031 + lq579;
+				else return lq579;
+			}
+			if(lq578>0) return lq578 + lq579;
+			else return lq579; 
+		}
+		if(isChecked(Mod2002015Key.C0009) || isChecked(Mod2002015Key.C0010)){
+			if(isChecked(C0017) || isChecked(C0018) || isChecked(C0019)){
+				return lq1029 +lq1030;
+			} 
+			return lq1029 +lq1030 + lq1031;
+		}
+		return lq501 + i0417 + d0418;
 	}
 	
 	public double computeLM043() throws AonCoreException {
