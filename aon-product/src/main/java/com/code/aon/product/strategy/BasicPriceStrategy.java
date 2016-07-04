@@ -85,9 +85,9 @@ public class BasicPriceStrategy implements IPriceStrategy, Serializable {
 		Registry registry = iTariffable.getRegistry();
 		Tariff tariff = iTariffable.getTariff();
 		Item item = calc.getItem();
-		Product product = item.getProduct();
 		try {
 			if (item != null && item.getId() != null && iTariffable != null) {
+				Product product = item.getProduct();
 				if (registry != null && registry.getId() != null) {
 					IManagerBean rItemBean = BeanManager.getManagerBean(RegistryItem.class);
 					Criteria criteria = new Criteria();

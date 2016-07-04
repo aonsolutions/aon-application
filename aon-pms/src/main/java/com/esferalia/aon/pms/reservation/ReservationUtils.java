@@ -489,13 +489,14 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		calculable.setItem(touristTaxItem);
 
 		int quantity = pending ? reservation.getTouristTaxPending() : reservation.getAdultCount();
+		double vatPercent = (touristTaxItem != null) ? touristTaxItem.getVat().getPercentage() : 0;
 		double amount = 0;
 		for (Date date = reservation.getStartDate(); date.before(reservation.getEndDate()); date = DateUtils.addDays(date, 1)) {
 			calculable.setQuantity(calculable.getQuantity() + 1);
 			double price = strategy.getUnitPrice(calculable, date, reservation.getHotel().getCustomer());
 			amount = CommonUtil.round(amount + quantity * price, 4);
 		}
-		return CommonUtil.round(amount * (1 + touristTaxItem.getVat().getPercentage() / 100));
+		return CommonUtil.round(amount * (1 + vatPercent / 100));
 	}
 
 	public int getReservationTouristTaxPayed(Integer reservationId) throws ManagerBeanException {
