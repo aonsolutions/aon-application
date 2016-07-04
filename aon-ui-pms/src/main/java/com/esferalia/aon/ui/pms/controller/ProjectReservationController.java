@@ -1106,6 +1106,14 @@ public class ProjectReservationController extends BasicController implements IPm
 		return true;
 	}
 
+	public void onUndoTouristTaxFree(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		if (reservation.getTouristTaxFree() != null) {
+			reservation.setTouristTaxFree(null);
+			accept(event);
+		}
+	}
+
 	public void onInvoiceShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {

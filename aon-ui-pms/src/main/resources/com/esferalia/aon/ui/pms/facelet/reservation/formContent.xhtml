@@ -347,19 +347,22 @@
 				styleClass="aon-icon-commandButton aon-icon-wrong aon-margin-left"
 				title="#{bundle.pms_tourist_tax_free}" immediate="true" 
 				actionListener="#{reservation.onTouristTaxFreeShow}"
-				rendered="#{reservation.to.touristTaxFree == null and reservation.to.touristTaxPending == reservation.to.adultCount}">
+				rendered="#{reservation.reservationPermission.touristTaxFreeAllowed}">
 				<f:setPropertyActionListener target="#{reservation.showTouristTaxFreeWindow}"
 					value="#{true}" />
 			</aon:commandButton>
 			<aon:outputText value="#{bundle.aon_exempt}"
 				styleClass="aon-bold"
 				rendered="#{reservation.to.touristTaxFree != null}" />
-			<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-info"
-				rendered="#{reservation.to.touristTaxFree != null}" />
-			<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="auto" 
+			<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto" 
 				rendered="#{reservation.to.touristTaxFree != null}">
 				<aon:outputText	value="#{reservation.to.touristTaxFree}" />
 			</rich:toolTip>
+			<aon:commandButton id="undo-TouristTaxFree" value="&#160;"
+				styleClass="aon-icon-commandButton aon-icon-sincronize aon-margin-left"
+				title="#{bundle.aon_undo}" immediate="true" 
+				actionListener="#{reservation.onUndoTouristTaxFree}"
+				rendered="#{reservation.reservationPermission.undoTouristTaxFreeAllowed}" />
 		</aon:div>
 	</aon:panelGrid>
 

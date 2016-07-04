@@ -322,6 +322,14 @@ public class ProjectReservationPermission implements Serializable {
 		return roleAllowed && reservation.getCreationDate() != null && StringUtils.isNotEmpty(reservation.getCreditCardNumber());
 	}
 
+	public boolean isTouristTaxFreeAllowed() throws ManagerBeanException {
+		return reservation.isActive() && reservation.getTouristTaxFree() == null && reservation.getTouristTaxPending() == reservation.getAdultCount();
+	}
+
+	public boolean isUndoTouristTaxFreeAllowed() throws ManagerBeanException {
+		return reservation.isActive() && reservation.getTouristTaxFree() != null;
+	}
+
 	/*************************** RESERVATION GUEST *******************************/
 
 	public boolean isNewReservationGuestAllowed() throws ManagerBeanException {
