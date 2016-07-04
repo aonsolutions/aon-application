@@ -33,7 +33,7 @@ node {
       sh "git cherry-pick ${commits}"
 
       // Prepare hotfix   
-      sh "find -name 'pom.xml'  | while read pom; do sed -i  -e 's/${pom.version}/${hotfix}/' \$pom; done"
+      sh "find -name 'pom.xml'  | while read pom; do sed -i  -e 's/<version>${pom.version}/<version>${hotfix}/' \$pom; done"
 
       // Reread pom
       pom = readMavenPom file: 'pom.xml'
