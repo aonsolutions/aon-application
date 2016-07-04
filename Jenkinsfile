@@ -21,7 +21,7 @@ node {
    def commits = '';
    for ( commitEntry in commitsMap ) {
       if ( commitEntry.value ) 
-          commits = commitEntry.key + ' ' + commits
+          commits = commits + ' ' + commitEntry.key
    }
    
    
