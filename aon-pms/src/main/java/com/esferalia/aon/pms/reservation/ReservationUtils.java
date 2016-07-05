@@ -516,6 +516,18 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		return 0;
 	}
 
+	public boolean isTouristTaxInvoice(Invoice invoice) throws ManagerBeanException {
+		Item touristTaxItem = obtainTouristTaxItem();
+		if (touristTaxItem != null) {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_ID), touristTaxItem.getId());
+			return invoiceDetailBean.getCount(criteria) > 0;
+		}
+		return false;
+	}
+
 
 	public Hotel obtainHotel(String hotelCode) throws ManagerBeanException, ReservationException {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);

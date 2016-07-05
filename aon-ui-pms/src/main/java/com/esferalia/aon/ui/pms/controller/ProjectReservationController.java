@@ -1477,13 +1477,30 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 		Invoice invoice = (Invoice)getInvoiceModel().getRowData();
 		if (!FinanceUtil.isValidLimitRectificationDate(invoice)) {
-			String message = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
-			throw new AbortProcessingException(message);
+			setShowRectificationWindow(false);
+			String msg = AonUtil.addErrorMessageFromBundle(FINANCE_OPERATION_NOT_ALLOWED_PERIOD_EXCEEDED_ERROR);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		if (reservation.isInvoiced() && isTouristTaxInvoice(invoice)) {
+			setShowRectificationWindow(false);
+			String msg = "No se puede Abonar la Factura de Tasas.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 
 		setInvoiceToRectify(invoice);
 		setReservationInvoiceTo(new ReservationInvoiceTo(false));
 		getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
+	}
+
+	private boolean isTouristTaxInvoice(Invoice invoice) {
+		try {
+			return getReservationUtils().isTouristTaxInvoice(invoice);
+		} catch (ManagerBeanException ex) {
+			throw new AbortProcessingException(ex.getMessage());
+		}
 	}
 
 	public void onRectify(ActionEvent event) {
