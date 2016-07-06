@@ -44,7 +44,7 @@ public class PMSDAO {
 				.and(PROJECT_RESERVATION.START_DATE.lessOrEqual(new java.sql.Date(date.getTime())))
 				.and(PROJECT_RESERVATION.END_DATE.greaterThan(new java.sql.Date(date.getTime()))))
 			.groupBy(WORKPLACE.DESCRIPTION, PROJECT_RESERVATION_GUEST.DOCUMENT_COUNTRY)	
-			.orderBy(WORKPLACE.DESCRIPTION, DSL.count(PROJECT_RESERVATION_GUEST.ID))
+			.orderBy(WORKPLACE.DESCRIPTION.asc(), DSL.count(PROJECT_RESERVATION_GUEST.ID).desc())
 			.fetch();
 		return r.stream().map(new HotelGuestByCountryFiller())
 			.collect(Collectors.toCollection(LinkedList::new));

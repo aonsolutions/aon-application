@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -17,6 +18,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.faces.component.util.DownloadUtil;
@@ -65,38 +67,40 @@ public class HotelGuestUtils {
 		style3.setBorderRight(CellStyle.BORDER_THIN);
 		style3.setBorderLeft(CellStyle.BORDER_THIN);
 	
-	    Row fila = hoja.createRow(0);
-	    
-		Cell celda = fila.createCell(0);
-    	celda.setCellValue("Hotel");
-    	celda.setCellStyle(style);
+        hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, 1));
+        Row rowInfo = hoja.createRow(0);
+       	rowInfo.setHeightInPoints(32);
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        String info = hgbcList.get(0).getHotelName() + "\n" + format.format(date) ;
+        Cell cellInfo = rowInfo.createCell(0);
+       	cellInfo.setCellValue(info);
+       	cellInfo.setCellStyle(styleInfo);
+		
+       	
+	    Row fila = hoja.createRow(1);
     	
-		Cell celda2 = fila.createCell(1);
+		Cell celda2 = fila.createCell(0);
 		celda2.setCellValue("País");
 		celda2.setCellStyle(style);
     	
-		Cell celda3 = fila.createCell(2);
+		Cell celda3 = fila.createCell(1);
 		celda3.setCellValue("Huespedes");
 		celda3.setCellStyle(style);
-		
+
 		for (HotelGuestByCountry hgbc : hgbcList) {
 			fila = hoja.createRow(fila.getRowNum()+1);
-			Cell cell = fila.createCell(0);
-			cell.setCellValue(hgbc.getHotelName());
-			cell.setCellStyle(style3);
 	    	
-			Cell cell2 = fila.createCell(1);
+			Cell cell2 = fila.createCell(0);
 			cell2.setCellValue(hgbc.getCountry().getName());
 			cell2.setCellStyle(style3);
 	    	
-			Cell cell3 = fila.createCell(2);
+			Cell cell3 = fila.createCell(1);
 			cell3.setCellValue(hgbc.getGuestQuantity());
 			cell3.setCellStyle(style2);
 		}
     	hoja.autoSizeColumn(0);
     	hoja.autoSizeColumn(1);
-    	hoja.autoSizeColumn(2);
-
+    	
     	libro.write(archivo);  
         byte[] data = archivo.toByteArray();
         archivo.close();
