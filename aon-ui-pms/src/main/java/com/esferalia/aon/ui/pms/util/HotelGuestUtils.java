@@ -29,7 +29,9 @@ import com.esferalia.aon.pms.Hotel;
 
 public class HotelGuestUtils {
 
-	
+	private static Integer cont;
+	private static Integer cont2;
+
 	public static void downloadHotelGuestByCountryExcel(Hotel hotel, Date date) throws IOException{
 		String domainName = AonUtil.getServerName();
 		Integer domainId = DomainManager.getCurrentDomain();
@@ -86,16 +88,29 @@ public class HotelGuestUtils {
 		Cell celda3 = fila.createCell(1);
 		celda3.setCellValue("Huespedes");
 		celda3.setCellStyle(style);
-
-		for (HotelGuestByCountry hgbc : hgbcList) {
-			fila = hoja.createRow(fila.getRowNum()+1);
+		cont = 1;
+		hgbcList.stream().filter(r -> r.getCountry() != null).forEach(hgbc ->{
+			Row row = hoja.createRow(cont+1);cont++;
 	    	
-			Cell cell2 = fila.createCell(0);
+			Cell cell2 = row.createCell(0);
 			cell2.setCellValue(hgbc.getCountry().getName());
 			cell2.setCellStyle(style3);
 	    	
-			Cell cell3 = fila.createCell(1);
+			Cell cell3 = row.createCell(1);
 			cell3.setCellValue(hgbc.getGuestQuantity());
+			cell3.setCellStyle(style2);
+		});
+		cont2 = 0;
+		hgbcList.stream().filter(r -> r.getCountry() == null).forEach(hgbc -> cont2 = hgbc.getGuestQuantity());
+		if(cont2 > 0){
+			Row row = hoja.createRow(cont+1);
+	    	
+			Cell cell2 = row.createCell(0);
+			cell2.setCellValue("Otros");
+			cell2.setCellStyle(style3);
+	    
+			Cell cell3 = row.createCell(1);
+			cell3.setCellValue(cont2);
 			cell3.setCellStyle(style2);
 		}
     	hoja.autoSizeColumn(0);
