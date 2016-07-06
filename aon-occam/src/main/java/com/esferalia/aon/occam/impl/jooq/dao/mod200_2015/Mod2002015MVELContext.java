@@ -123,7 +123,6 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 		
 	public double computeLQ562() throws AonCoreException {
 		double lq521 = round(getValue(LQ521));
-		double lq552 = round(getValue(LQ552));
 		double lq558 = round(getValue(LQ558));
 		double lq559 = round(getValue(LQ559));
 		double lq1035 = round(getValue(Mod2002015Key.LQ1035));
@@ -141,39 +140,39 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 			return lq562; 
 		}
 		
-		if (lq552 <= 0) return 0;
+		if (lq1330 <= 0) return 0;
 		if (isChecked(C0006) && isChecked(C0022) && (isChecked(C0056) || isChecked(C0063))) {
 			return getValue(LQ562);
 		}
 		if (isChecked(C0063)) {
-			if (lq552<=getLimit(LIM_1)){
-				return round( lq552*15/100);			
+			if (lq1330<=getLimit(LIM_1)){
+				return round( lq1330*15/100);			
 			} else {
-				return (getLimit(LIM_1)*15/100) + (lq552 - getLimit(LIM_1))*20/100;				
+				return (getLimit(LIM_1)*15/100) + (lq1330 - getLimit(LIM_1))*20/100;				
 			}
 		}
 		if (isChecked(C0056)) {
-			if (lq552<=getLimit(LIM_1)){
-				return round( lq552*20/100);			
+			if (lq1330<=getLimit(LIM_1)){
+				return round( lq1330*20/100);			
 			} else {
-				return (getLimit(LIM_1)*20/100) + (lq552 - getLimit(LIM_1))*25/100;				
+				return (getLimit(LIM_1)*20/100) + (lq1330 - getLimit(LIM_1))*25/100;				
 			}
 		}
 		if (isChecked(C0015)) {
 			if (isChecked(C0057)) {
-				if (round(lq552 - lq559 - lq521) > 0) {
-					return round(((lq559+lq1035) * lq558 / 100) + (lq552 - lq559 - lq521 - lq1035) * 28 / 100);	
+				if (round(lq1330 - lq559 - lq521) > 0) {
+					return round(((lq559+lq1035) * lq558 / 100) + (lq1330 - lq559 - lq521 - lq1035) * 28 / 100);	
 				} else {
 					return round((lq559 * lq558 / 100));
 				}
 			}
-			return round(((lq559+lq1035) * lq558 / 100) + (lq552 - lq559 - lq1035) * 28 / 100);
+			return round(((lq559+lq1035) * lq558 / 100) + (lq1330 - lq559 - lq1035) * 28 / 100);
 		}
 		if (isChecked(C0006)) {
-			if (lq552<=getLimit(LIM_1)){
-				return round( lq552*25/100);			
+			if (lq1330<=getLimit(LIM_1)){
+				return round( lq1330*25/100);			
 			} else {
-				return (getLimit(LIM_1)*25/100) + (lq552 - getLimit(LIM_1))*28/100;				
+				return (getLimit(LIM_1)*25/100) + (lq1330 - getLimit(LIM_1))*28/100;				
 			}
 		}
 	
@@ -189,12 +188,12 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 		}
 		
 		if (isChecked(C0057)) {
-			if (round(lq552-lq521) > 0) {
-				return round((lq552 -lq521)* lq558 /100);
+			if (round(lq1330-lq521) > 0) {
+				return round((lq1330 -lq521)* lq558 /100);
 			}
 			return 0;
 		}
-		return round(lq552 * lq558 / 100);
+		return round(lq1330 * lq558 / 100);
 	}
 	
 	public double computeLQ550()  throws AonCoreException {
