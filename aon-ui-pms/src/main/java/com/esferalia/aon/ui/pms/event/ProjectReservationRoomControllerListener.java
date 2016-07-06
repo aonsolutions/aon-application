@@ -55,30 +55,32 @@ public class ProjectReservationRoomControllerListener extends ControllerAdapter 
 
 	private void linkServicesToRoom(ProjectReservationRoom reservationRoom, Integer[] services) throws ControllerListenerException {
 		try {
-			IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
-			Criteria criteria = new Criteria();
-			String alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
-			criteria.addEqualExpression(alias, reservationRoom.getProjectReservation().getId());
-			if (services != null && services.length > 0) {
-				alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_ID);
-				Expression idExpr = ExpressionUtilities.getInExpression(alias, Arrays.asList(services));
-				alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ROOM);
-				Expression roomExpr = ExpressionUtilities.getEqualExpression(alias, reservationRoom.getId());
-				criteria.addExpression(ExpressionUtilities.getOrExpression(idExpr, roomExpr));
-			} else {
-				alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ROOM);
-				criteria.addEqualExpression(alias, reservationRoom.getId());
-			}
-			for (ITransferObject ito : reservationServiceBean.getList(criteria)) {
-				ProjectReservationService reservationService = (ProjectReservationService)ito;
-				if (ArrayUtils.indexOf(services, reservationService.getId()) >= 0) {
-					if (reservationService.getProjectReservationRoom() == null || reservationService.getProjectReservationRoom() != reservationRoom.getId()) {
-			    		reservationService.setProjectReservationRoom(reservationRoom.getId());
-			    		updateLinkedServiceRoom(reservationService, reservationRoom);
-			    	}
+			if (reservationRoom.getRoomNumber() == null) {
+				IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
+				Criteria criteria = new Criteria();
+				String alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
+				criteria.addEqualExpression(alias, reservationRoom.getProjectReservation().getId());
+				if (services != null && services.length > 0) {
+					alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_ID);
+					Expression idExpr = ExpressionUtilities.getInExpression(alias, Arrays.asList(services));
+					alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ROOM);
+					Expression roomExpr = ExpressionUtilities.getEqualExpression(alias, reservationRoom.getId());
+					criteria.addExpression(ExpressionUtilities.getOrExpression(idExpr, roomExpr));
 				} else {
-		    		reservationService.setProjectReservationRoom(null);
-		    		updateLinkedServiceRoom(reservationService, null);
+					alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ROOM);
+					criteria.addEqualExpression(alias, reservationRoom.getId());
+				}
+				for (ITransferObject ito : reservationServiceBean.getList(criteria)) {
+					ProjectReservationService reservationService = (ProjectReservationService)ito;
+					if (ArrayUtils.indexOf(services, reservationService.getId()) >= 0) {
+						if (reservationService.getProjectReservationRoom() == null || reservationService.getProjectReservationRoom() != reservationRoom.getId()) {
+							reservationService.setProjectReservationRoom(reservationRoom.getId());
+				    		updateLinkedServiceRoom(reservationService, reservationRoom);
+						}
+					} else {
+			    		reservationService.setProjectReservationRoom(null);
+			    		updateLinkedServiceRoom(reservationService, null);
+					}
 				}
 			}
 		} catch (ManagerBeanException ex) {
