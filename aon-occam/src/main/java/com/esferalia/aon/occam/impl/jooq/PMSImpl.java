@@ -1,7 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.Date;
+import java.util.LinkedList;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IPMS;
+import com.esferalia.aon.occam.api.model.pms.HotelGuestByCountry;
 import com.esferalia.aon.occam.impl.jooq.dao.PMSDAO;
 
 public class PMSImpl implements IPMS {
@@ -10,5 +14,11 @@ public class PMSImpl implements IPMS {
 	public void deleteReservationCreditCard(AONContext ctx, Integer reservationId) {
 		ctx.getDslContext().transaction(configuration -> 
 			PMSDAO.deleteReservationCreditCard(ctx, reservationId));
+	}
+
+	@Override
+	public LinkedList<HotelGuestByCountry> getHotelGuestByCountry(AONContext ctx, Integer hotelId, Date date) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			PMSDAO.getHotelGuestByCountry(ctx, hotelId, date));
 	}
 }

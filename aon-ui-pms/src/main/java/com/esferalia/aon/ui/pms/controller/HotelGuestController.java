@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.pms.controller;
 import static com.code.aon.ui.common.ICommonMessages.PMS_ROOM_ABBRV;
 import static com.code.aon.ui.common.ICommonMessages.SEE;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,6 +33,7 @@ import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
+import com.esferalia.aon.ui.pms.util.HotelGuestUtils;
 
 public class HotelGuestController extends DataScrollerState implements ICollectionProvider, ISQLConstants {
 
@@ -271,5 +273,13 @@ public class HotelGuestController extends DataScrollerState implements ICollecti
 		}
 
 	}
+	
+	/****************** DOWNLOAD EXCEL BY COUNTRY 
+	 * @throws IOException *********************/
+	
+	public void onByCountry() throws IOException {
+		HotelGuestUtils.downloadHotelGuestByCountryExcel(hotel, date);
+	}
+	
 
 }
