@@ -333,7 +333,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 		moneyIrpfBase = f.apply(moneyIrpfBase);
 		inkindIrpfBase = f.apply(inkindIrpfBase);
-		remuneration = moneyIrpfBase;
+		remuneration = f.apply(remuneration);
 		irpfBase = moneyIrpfBase + inkindIrpfBase;
 		salaryBuilder.setIrpfBase(irpfBase);
 		salaryBuilder.setMoneyIrpfBase(moneyIrpfBase);
