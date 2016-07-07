@@ -33,7 +33,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
@@ -793,11 +792,6 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 
 	public Collection<String> getIngenetDeliveries() {
 		return ingenetDeliveries.values();
-	}
-
-	public boolean isUdapaIngenetEnabled() {
-		ApplicationParameter ap = AppParamUtil.getParameter("UDAPA_INGENET_ENABLED");
-		return ap != null && new Boolean(ap.getValue());
 	}
 	
 	public void onSincronizeIngenet(ActionEvent event) {

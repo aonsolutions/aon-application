@@ -105,7 +105,8 @@ public class CompanyControllerListener extends ControllerAdapter {
 			if(((CompanyController)c).isEdiSupportEnabled()){
 				ApplicationParameter param = AppParamUtil.getParameter(AppParam.EDI_SUPPORT);
 				((CompanyController)event.getController()).setEdiSupport(param!=null?param.getValue():null);
-				((CompanyController)event.getController()).setEdiCompanyCode(AppParamUtil.getParameter(AppParam.EDI_COMPANY_CODE).getValue());
+				param = AppParamUtil.getParameter(AppParam.EDI_COMPANY_CODE);
+				((CompanyController)event.getController()).setEdiCompanyCode(param!=null?param.getValue():null);
 			}
 			
 			initDomainValues(c);

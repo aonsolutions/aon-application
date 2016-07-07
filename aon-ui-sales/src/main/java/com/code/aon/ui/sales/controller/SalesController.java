@@ -26,10 +26,8 @@ import com.code.aon.common.ProgressionState;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Finance;
@@ -58,6 +56,8 @@ import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
@@ -909,18 +909,16 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		thread.start();		
 	}
 	
-	public boolean isUdapaIngenetEnabled() {
-		ApplicationParameter ap = AppParamUtil.getParameter("UDAPA_INGENET_ENABLED");
-		return ap != null && new Boolean(ap.getValue());
-	}
-	
 	public void onManufacture(ActionEvent event) {
 		Sales sales = (Sales) this.getTo();
 		
 		SalesUtils utils = new SalesUtils();
 		utils.createManufacturingOrder(sales);
 		
-		if (isUdapaIngenetEnabled()) {
+		CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		String ediSupport = company.getEdiSupport();
+		
+		if (ediSupport!=null && ediSupport.equals("seresnet_udapa")) {
 			LOGGER.info(" *** UDAPA INGENET ENABLED ***");
 			try {
 				IngenetSalesManager.getInstance().createSales(
