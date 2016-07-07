@@ -181,7 +181,7 @@
 								<aon:outputText value="#{bundle.contrata_main_menu_group}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+								<aon:if test="#{((domainSwitcher.type != 'ADMIN') and !domainSwitcher.domainManagementAvailable)}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="contract-payroll"
 											action="contract_search-payroll"
@@ -189,12 +189,14 @@
 											value="#{bundle.payroll_contract_module}" />
 									</aon:div>
 								</aon:if>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="person-payroll"
-										action="#{person.initialAction}"
-										actionListener="#{person.onEditSearch}"
-										value="#{bundle.report_room_persons}" />
-								</aon:div>
+								<aon:if test="#{(domainSwitcher.type != 'ADMIN')}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="person-payroll"
+											action="#{person.initialAction}"
+											actionListener="#{person.onEditSearch}"
+											value="#{bundle.report_room_persons}" />
+									</aon:div>
+								</aon:if>
 
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">

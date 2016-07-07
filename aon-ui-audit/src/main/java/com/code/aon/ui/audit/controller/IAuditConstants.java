@@ -35,12 +35,14 @@ public interface IAuditConstants {
 	String ENTERPRISE_CATEGORY = "enterprise";
 	String CONFIGURATION_CATEGORY = "configuration";
 	String DOCUMENT_CATEGORY = "document";
+	String PAYROLL_CATEGORY = "payroll";
 	
 	String GROUP_CONFIG_COMPANY = "group_config_company";
 	String GROUP_CONFIG_SECURITY = "group_configuration_security";
 	String GROUP_ENTERPRISE_SECURITY = "group_enterprise_security";
 	String GROUP_DOCUMENT = "group_documental";
 	String GROUP_DOCUMENT_UTILITIES = "group_documental_utilities";
+	String GROUP_PAYROLL_CONTRATA_MAIN = "group_payroll_contrata_general";
 	
 	String MAIL_ACCOUNT_ACTION = "mailAccount_list-enterprise";	
 	String SIGNATURE_ACTION = "signature_list-enterprise";

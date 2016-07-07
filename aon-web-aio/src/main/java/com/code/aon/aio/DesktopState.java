@@ -139,11 +139,14 @@ public class DesktopState implements Serializable {
 	private void initAdminDomain() {
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		String[] categories = new String[]{IAuditConstants.CONFIGURATION_CATEGORY};
-		String[] groups = new String[]{IAuditConstants.GROUP_CONFIG_SECURITY, IAuditConstants.GROUP_CONFIG_COMPANY,
-				};
+		String[] groups = new String[]{IAuditConstants.GROUP_CONFIG_SECURITY, IAuditConstants.GROUP_CONFIG_COMPANY};
 		if (! adc.isDeniedModule(Module.DOCUMENT.getName()) ) {
 			categories = (String[]) ArrayUtils.add(categories, IAuditConstants.DOCUMENT_CATEGORY);
 			groups = (String[]) ArrayUtils.addAll(groups, new String[]{IAuditConstants.GROUP_DOCUMENT, IAuditConstants.GROUP_DOCUMENT_UTILITIES});
+		}
+		if (! adc.isDeniedModule(Module.PAYROLL.getName()) ) {
+			categories = (String[]) ArrayUtils.add(categories, IAuditConstants.PAYROLL_CATEGORY);
+			groups = (String[]) ArrayUtils.addAll(groups, new String[]{IAuditConstants.GROUP_PAYROLL_CONTRATA_MAIN});
 		}
 		adc.getManager().enableOnly(categories, groups, IAuditConstants.MAIL_ACCOUNT_ACTION, IAuditConstants.SIGNATURE_ACTION);
 	}
