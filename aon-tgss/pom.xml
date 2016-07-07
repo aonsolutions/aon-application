@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.59.1</version>
+		<version>8.59.2</version>
 	</parent>
 	<groupId>net.aonsolutions</groupId>
 	<artifactId>aon.tgss</artifactId>
