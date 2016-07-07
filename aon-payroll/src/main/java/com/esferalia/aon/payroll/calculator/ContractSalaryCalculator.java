@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -59,10 +60,15 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalculator<T> {
 
+	private static final String BASE_CGC_MIN_MSG = "%s %.2f ha sido ampliada al m\u00ednimo obligatorio %.2f";
+	private static final String BASE_CGC_MAX_MSG = "%s %.2f ha sido limitada al m\u00e1ximo permitido %.2f";
+	private static final String BASE_CGP_MIN_MSG = "%s %.2f ha sido ampliada al m\u00ednimo obligatorio %.2f";
+	private static final String BASE_CGP_MAX_MSG = "%s %.2f ha sido limitada al m\u00e1ximo permitido %.2f";
 	private static final String DESCRIPTION_UNDEF_ERROR = "Error en la descripic\u00F3n, variable '%s' desconocida.";
 	private static final String DESCRIPTION_UNKNOWN_ERROR = "Error desconocido en la descripic\u00F3n.";
 	private static final String DESCRIPTION_SYNTAX_ERROR = "Error sint\u00E1ctico en la descripic\u00F3n.";
@@ -520,6 +526,13 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			} catch (UndefinedVariablesException e) {
 				onInvalidData(e.getVariableNames());
 			}
+			
+			if (AonNumberUtils.compare(rawCgcbase, cgcBase) > 0 ) //rawCgcbase > cgcBase
+				onCheckError(String.format(BASE_CGC_MAX_MSG, CGC_BASE.getDescription(), rawCgcbase, cgcBase));
+			else if (AonNumberUtils.compare(rawCgcbase, cgcBase) < 0 ) // rawCgcbase < cgcBase 
+				onCheckError(String.format(BASE_CGC_MIN_MSG, CGC_BASE.getDescription(), rawCgcbase, cgcBase));
+				
+			
 			Double ereBase = quoteCalculator.getEreBase();
 			if ( ereBase != null ) 
 				cgcBase += ereBase;
@@ -541,6 +554,11 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			} catch (UndefinedVariablesException e) {
 				onInvalidData(e.getVariableNames());
 			}
+			if ( AonNumberUtils.compare(rawCgcbase, cgpBase) > 0 ) // rawCgcbase > cgpBase
+				onCheckError(String.format(BASE_CGP_MAX_MSG, CGP_BASE.getDescription(), rawCgcbase, cgpBase));
+			else if (AonNumberUtils.compare(rawCgcbase, cgpBase)< 0 ) // rawCgcbase < cgpBase 
+				onCheckError(String.format(BASE_CGP_MIN_MSG, CGP_BASE.getDescription(), rawCgcbase, cgpBase));
+
 			if ( ereBase != null ) 
 				cgpBase += ereBase;
 			if ( maternityBase != null ) 
@@ -1131,6 +1149,12 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			for (int i = 0; i < variableNames.length; i++) {
 				listener.onInvalidData(variableNames[i], null);
 			}
+		}
+	}
+
+	private void onCheckError(String message) {
+		if (listener != null) {
+			listener.onCheckError(message);
 		}
 	}
 

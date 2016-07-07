@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.server;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,12 +54,17 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.DeferredExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.IExpressionVariable;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.LazyExpressionVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
 public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorContext>
@@ -283,6 +289,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		List<Variable> draftData = draft.getDraftContext();
 		for (Variable variable : draftData) {
 			String name = variable.getName();
+			
 
 			Date varStartDate = resetTime(variable.getStartDate());
 			Date varEndDate = resetTime(variable.getEndDate());
@@ -290,8 +297,11 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			Date startDate = Period.max(ctxStartDate, varStartDate);
 			Date endDate = Period.min(ctxEndDate, varEndDate);
 
-			addVariable(variable, startDate, endDate, exprCtx);
+			ITimedVariable<?> prev = exprCtx.getVariable(name, startDate, endDate);
 
+			List<ITimedVariable<Object>> redefined = addVariable(variable, startDate, endDate, exprCtx);
+			
+			onRedefinedImplicit(exprCtx, name, variable.getExpression(), prev, redefined);
 		}
 
 	}
@@ -493,7 +503,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		return newDraftPayment(payment);
 	}
 
-	private void addVariable(Variable var, Date start, Date end,
+	private List<ITimedVariable<Object>> addVariable(Variable var, Date start, Date end,
 			ExpressionContext ctx) throws ExpressionException {
 
 		if (Variable.isAgreementVariable(var)) {
@@ -502,14 +512,37 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 					var.getName(), start, end);
 			if (agreementVar != null) {
 				ctx.putVariable(var.getName(), agreementVar);
-				return;
+				return Collections.emptyList();
 			}
 		}
 
 		ExpressionImpl expr = newExpressionImpl(var);
-		ctx.addLazyExpression(expr, start, end);
+		return new ArrayList<ITimedVariable<Object>>(ctx.addLazyExpression(expr, start, end));
 	}
 
+	protected void onRedefinedImplicit(ExpressionContext ctx, String name, String expr,
+			ITimedVariable<?> implicit, List<ITimedVariable<Object>> redefined) {
+		if (getListener() == null)
+			return;
+		if (redefined == null)
+			return;
+		if (redefined.isEmpty())
+			return;
+		if (implicit == null)
+			return;
+		
+		if (implicit instanceof IExpressionVariable<?>
+				&& ((IExpressionVariable<?>) implicit).getExpression()
+						.getScope().compareTo(ExpressionScope.AGREEMENT) >= 0)
+			return;
+		
+		
+		if ( isSystem(name, expr) ) 
+			return ;
+		
+		
+		getListener().onRedefinedImplicit(name, redefined.get(0), implicit);
+	}
 	// ------------------------------------------------------------------------
 
 	private static Date resetTime(Date date) {
@@ -614,4 +647,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		return type != null ? LeaveType.values()[type.ordinal()] : null;
 	}
 
+	private static boolean isSystem(String name, String expr) {
+		return AonStringUtils.isNotEmpty(expr) && expr.matches("\\s*SISTEMA\\s*\\(\\s*['\"]"+ name +"['\"]\\s*\\)\\s*;*\\s*");
+	}
 }

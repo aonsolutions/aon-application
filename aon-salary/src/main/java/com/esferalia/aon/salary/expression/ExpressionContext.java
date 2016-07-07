@@ -5,6 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -474,7 +475,7 @@ public class ExpressionContext {
 		}
 	}
 
-	public void addLazyExpression(IExpression expression, Date start, Date end) throws ExpressionException {
+	public List<LazyExpressionVariable> addLazyExpression(IExpression expression, Date start, Date end) throws ExpressionException {
 		String script = expression.getExpression();
 
 		Set<String> inputs = null;
@@ -483,14 +484,16 @@ public class ExpressionContext {
 			inputs = Collections.emptySet();
 		else
 			inputs = getVarNames(script);
-
+		
 		List<PeriodMap> bindings = variables.getBindings(inputs, start, end);
+		List<LazyExpressionVariable> lazyExpressionVariables = new ArrayList<LazyExpressionVariable>(bindings.size());
 		for (PeriodMap periodMap : bindings) {
 			Period period = periodMap.getPeriod();
-			putVariable(expression.getName(),
-					new LazyExpressionVariable(this, expression, period.getStart(), period.getEnd()));
+			LazyExpressionVariable lazyExpressionVariable = new LazyExpressionVariable(this, expression, period.getStart(), period.getEnd());
+			putVariable(expression.getName(),lazyExpressionVariable);
+			lazyExpressionVariables.add(lazyExpressionVariable);
 		}
-
+		return lazyExpressionVariables;
 	}
 
 	public <V> void addPullExpression(IExpression expression, Date start, Date end, Class<V> toType)

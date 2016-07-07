@@ -48,6 +48,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.REDEFINE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.REGULATORY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
@@ -2668,6 +2669,20 @@ public class SQLContractSalaryCalculatorContext
 		return total;
 	}
 
+	public Object redefined(String name, Object value)
+			throws ExpressionException, SQLException {
+		
+		ITimedVariable<?> implicit = contractExpressionContext.getVariable(name, getStart(), getEnd());
+		if ( implicit == null )
+			return value;
+		
+		ITimedVariable<?> redefined = new TimedObject<Object>(value, getStart(), getEnd());
+		
+		onRedefinedImplicit(name, redefined, implicit);
+		
+		return value;
+	}
+
 	public Object agreement(String name)
 			throws ExpressionException, SQLException {
 		ExpressionContext agreementCtx = getAgreementContext();
@@ -3570,6 +3585,9 @@ public class SQLContractSalaryCalculatorContext
 				"def(x){ SELF.system(x)};", this.startDate, this.getEnd());
 		loadExpression(this.contractExpressionContext, AGREEMENT,
 				"def(x){ SELF.agreement(x)};", this.startDate, this.getEnd());
+	
+		loadExpression(this.contractExpressionContext, REDEFINE,
+				"def(x,v){ SELF.redefined(x,v)};", this.startDate, this.getEnd());
 
 
 		loadContractLeave(this.contractExpressionContext);
@@ -4052,7 +4070,7 @@ public class SQLContractSalaryCalculatorContext
 		}
 	}
 
-	private void onRedefinedImplicit(ExpressionContext ctx, String name, String expr,
+	protected void onRedefinedImplicit(ExpressionContext ctx, String name, String expr,
 			ITimedVariable<?> implicit, List<ITimedResult<Object>> results) {
 		if (listener == null)
 			return;

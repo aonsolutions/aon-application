@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.mvel2.util.MethodStub;
@@ -64,6 +64,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryDraftBuilder
 		implements ISalaryBuilder<ISalary>, ContractSalaryCalculator.IListener,
@@ -548,7 +549,7 @@ public class SalaryDraftBuilder
 
 	@Override
 	public void onCheckError(String message) {
-		// TODO Auto-generated method stub
+		salaryDraft.addWarning(message);
 	}
 
 	@Override
@@ -762,11 +763,28 @@ public class SalaryDraftBuilder
 	@Override
 	public void onRedefinedImplicit(String name, ITimedVariable<?> redefined,
 			ITimedVariable<?> implicit) {
+		
+		ContextVariable var = ContextVariable.getVariableByName(name);
+		if ( var != null ) {
+			String description = var.getDescription( new Locale("es"));
+			if ( AonStringUtils.isNotBlank(description) ) {
+				salaryDraft.addWarning(String.format(
+						"%s con valor %.2f esta redefinida con el valor %.2f",
+						description, 
+						((Number)implicit.getValue(implicit.getPeriod())).doubleValue(),
+						((Number)redefined.getValue(redefined.getPeriod())).doubleValue()
+						));
+				return;
+			}
+		}
+
 		salaryDraft.addWarning(String.format(
-				"La variable del sistema '%s' con valor '%s' esta redefinida con el valor '%s'",
+				"La variable del sistema '%s' con valor %.2f esta redefinida con el valor %.2f",
 				name, 
-				implicit.getValue(implicit.getPeriod()),
-				redefined.getValue(redefined.getPeriod())));
+				((Number)implicit.getValue(implicit.getPeriod())).doubleValue(),
+				((Number)redefined.getValue(redefined.getPeriod())).doubleValue()
+				));
+			
 	}
 
 	@Override

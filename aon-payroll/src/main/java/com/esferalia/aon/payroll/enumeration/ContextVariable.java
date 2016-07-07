@@ -274,6 +274,7 @@ public enum ContextVariable implements IResourceable{
 	public static final String WARNING = "AVISO";
 	public static final String ISDEF = "DEFINIDA";
 	public static final String CHECK_VAR = "CHECK_VAR";
+	public static final String REDEFINE = "REDEFINE";
 	
 	public static final String OLDD = "ANTIGUEDAD";
 	public static final String PREST_IT = "PREST_IT";
@@ -331,6 +332,10 @@ public enum ContextVariable implements IResourceable{
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + super.toString());
     }
+    public String getDescription() {
+    	return getDescription(new Locale("es", "ES"));
+    }
+
     public String getDescription(Locale locale) {
     	ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
     	return bundle.getString(EXT_MSG_KEY_PREFIX + super.toString());

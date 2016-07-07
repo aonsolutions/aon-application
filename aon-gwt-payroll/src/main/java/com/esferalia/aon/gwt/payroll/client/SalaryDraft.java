@@ -2621,21 +2621,11 @@ public class SalaryDraft extends ResizeComposite
 		cgcBaseLabel.setText(format(cgcBase), displayChanges);
 		dbCgcBaseLabel.setText(format(salaryDraftObject.getDbCgcBase()));
 		setDbStyleName(dbCgcBaseLabel, cgcBaseLabel);
-		Double rawCgcBase = salaryDraftObject.getRawCgcBase();
-		setWarnStyles(cgcBaseLabel, !NumberUtils.equals(cgcBase, rawCgcBase),
-				"La Base por Contingecias Comunes " + format(rawCgcBase) + "\u20A0 ha sido "
-						+ ((NumberUtils.compare(rawCgcBase, cgcBase) > 0) ? "limitada al m\u00e1ximo permitido"
-								: "ampliada al m\u00ednimo obligatorio"));
 
 		Double cgpBase = salaryDraftObject.getCgpBase();
 		cgpBaseLabel.setText(format(cgpBase), displayChanges);
 		dbCgpBaseLabel.setText(format(cgpBase));
 		setDbStyleName(dbCgpBaseLabel, cgpBaseLabel);
-		Double rawCgpBase = salaryDraftObject.getRawCgpBase();
-		setWarnStyles(cgpBaseLabel, !NumberUtils.equals(cgpBase, rawCgpBase),
-				"La Base por Accidentes de Trabajo y Enfermedades Profesionales  " + format(rawCgpBase)
-						+ "\u20A0 ha sido " + ((NumberUtils.compare(rawCgcBase, cgcBase) > 0)
-								? "limitada al m\u00e1ximo permitido" : "ampliada al m\u00ednimo obligatorio"));
 
 		irpfBaseLabel.setText(format(salaryDraftObject.getIrpfBase()), displayChanges);
 		dbIrpfBaseLabel.setText(format(salaryDraftObject.getDbIrpfBase()));
