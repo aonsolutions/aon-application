@@ -52,6 +52,7 @@
 							<f:selectItem itemLabel="No Habilitado" itemValue="#{null}" />
 							<f:selectItem itemLabel="Seresnet estandar" itemValue="seresnet_standard" />
 							<f:selectItem itemLabel="Seresnet Udapa" itemValue="seresnet_udapa" />
+							<a4j:support event="onchange" reRender="globalConfigCompanyForm" ajaxSingle="#{true}" />
 						</aon:selectOneMenu>
 					</aon:panelGrid>
 				</aon:panel>

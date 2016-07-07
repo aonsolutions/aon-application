@@ -105,68 +105,80 @@ public class EdiSalesImporterHandler implements Serializable {
 	public void createSales(ActionEvent event, ERE1C ere1c) {
 		Sales sales = (Sales) controller.getTo();
 		try {
-			Customer customer = searchCustomer(ere1c.getCodigoEmisor_MS_().trim());
-			if(customer==null){
-				AonUtil.addErrorMessage("No existe el cliente con el codigo " + ere1c.getCodigoEmisor_MS_());
+			if(ere1c.getCodigoPuntoDeEntrega_DP_()==null){
+				AonUtil.addErrorMessage("Imposible continuar, el fichero no contiene codigo de punto de entrega.");
+				AonUtil.addErrorMessage("Comprador: " + ere1c.getCodigoComprador_BY_());
 			} else {
-				SalesController salesController = (SalesController) controller;
-				sales.setCustomer(customer);
-				sales.setShippingAddress(null);
-				sales.setScope(customer.getScope());
-				salesController.loadAddresses(customer.getId());
-				salesController.loadProjects(customer.getId());
-				salesController.loadCommercial(customer.getId());
-				salesController.loadDefaultPayMethod(customer.getRegistry(), true);
-				
-				try {
-					sales.setIssueDate(dateFormatter.parse(ere1c
-							.getFechaDelDocumento_137__102_().toString()));
-				} catch (ParseException e) {
-					AonUtil.addErrorMessage("No se ha podido convertir la fecha: " + ere1c.getFechaDelDocumento_137__102_());
-					throw new AbortProcessingException(e.getMessage(), e);
-				}
-				if(ere1c.getTipoDePedido_220_221_224_226_22E_().equals(ERE1C.C1001T.CANCELACION_DE_PEDID_226.getValue())){
-					sales.setDocumentType(DocumentType.ITEM_RETURN);
+				Customer customer = searchCustomer(ere1c.getCodigoPuntoDeEntrega_DP_().trim());
+				if(customer==null){
+					AonUtil.addErrorMessage("No existe el cliente con el codigo de punto de entrega " + ere1c.getCodigoPuntoDeEntrega_DP_());
 				} else {
-					sales.setDocumentType(DocumentType.NORMAL);
-				}
-				sales.setSecurityLevel(SecurityLevel.OFFICIAL);
-				sales.setStatus(SalesStatus.PENDING);
-				sales.setPurchaseGenerated(false);
-				
-				String remarks = "";
-				for(ERE1T value: ere1c.ere1tList){
-					remarks += (StringUtils.isNotBlank(value.getTexto1())?value.getTexto1().trim():"") +
-							(StringUtils.isNotBlank(value.getTexto2())?", " + value.getTexto2().trim():"") +
-							(StringUtils.isNotBlank(value.getTexto3())?", " + value.getTexto3().trim():"") +
-							(StringUtils.isNotBlank(value.getTexto4())?", " + value.getTexto4().trim():"") +
-							(StringUtils.isNotBlank(value.getTexto5())?", " + value.getTexto5().trim():"") + 
-							System.getProperty("line.separator");
-				}
-				sales.setRemarks(remarks);
-				sales.setComments("");
-				
-				salesController.accept(event);
-				
-				SalesDetailController detailController = (SalesDetailController) FormUtil.getController(ISalesConstants.SALES_DETAIL_CONTROLLER_NAME);
-				for(ERE1L ere1l: ere1c.ere1lList){
-					detailController.onReset(event);
-					SalesDetail detail = (SalesDetail) detailController.getTo();
-					detail.setSales(sales);
-					Item item = searchItem(ere1l);
-					detail.setItem(item);
-					detail.setLine(Integer.valueOf(ere1l.getNumeroDeLineaArticulo()));
-					detail.setDescription(ere1l.getDescripcionDelArticulo1()
-							+ ere1l.getDescripcionDelArticulo2()
-							+ ere1l.getDescripcionDelModelo_BRN_());
-					detail.setQuantity(Double.valueOf(ere1l.getCantidadPedida_21_()));
-					detail.setPrice(Double.valueOf(ere1l.getPrecioBrutoUnitario_AAB_()));
+					SalesController salesController = (SalesController) controller;
+					sales.setCustomer(customer);
+					sales.setShippingAddress(null);
+					sales.setScope(customer.getScope());
+					salesController.loadAddresses(customer.getId());
+					salesController.loadProjects(customer.getId());
+					salesController.loadCommercial(customer.getId());
+					salesController.loadDefaultPayMethod(customer.getRegistry(), true);
+					
+					try {
+						sales.setIssueDate(dateFormatter.parse(ere1c
+								.getFechaDelDocumento_137__102_().toString()));
+					} catch (ParseException e) {
+						AonUtil.addErrorMessage("No se ha podido convertir la fecha: " + ere1c.getFechaDelDocumento_137__102_());
+						throw new AbortProcessingException(e.getMessage(), e);
+					}
+					if(ere1c.getTipoDePedido_220_221_224_226_22E_().equals(ERE1C.C1001T.CANCELACION_DE_PEDID_226.getValue())){
+						sales.setDocumentType(DocumentType.ITEM_RETURN);
+					} else {
+						sales.setDocumentType(DocumentType.NORMAL);
+					}
+					sales.setSecurityLevel(SecurityLevel.OFFICIAL);
+					sales.setStatus(SalesStatus.PENDING);
+					sales.setPurchaseGenerated(false);
+					sales.setPurchaseReference(ere1c.getNumeroDePedido());
+					
+					String remarks = "Pedido: " + ere1c.getNumeroDePedido();
+					remarks += System.getProperty("line.separator");
+					for(ERE1T value: ere1c.ere1tList){
+						remarks += (StringUtils.isNotBlank(value.getTexto1())?value.getTexto1().trim():"") +
+								(StringUtils.isNotBlank(value.getTexto2())?", " + value.getTexto2().trim():"") +
+								(StringUtils.isNotBlank(value.getTexto3())?", " + value.getTexto3().trim():"") +
+								(StringUtils.isNotBlank(value.getTexto4())?", " + value.getTexto4().trim():"") +
+								(StringUtils.isNotBlank(value.getTexto5())?", " + value.getTexto5().trim():"") + 
+								System.getProperty("line.separator");
+					}
+					sales.setRemarks(remarks);
+					sales.setComments("");
+					
+					salesController.accept(event);
+					
+					SalesDetailController detailController = (SalesDetailController) FormUtil.getController(ISalesConstants.SALES_DETAIL_CONTROLLER_NAME);
+					for(ERE1L ere1l: ere1c.ere1lList){
+						detailController.onReset(event);
+						SalesDetail detail = (SalesDetail) detailController.getTo();
+						detail.setSales(sales);
+						Item item = searchItem(ere1l);
+						detail.setItem(item);
+						detail.setLine(Integer.valueOf(ere1l.getNumeroDeLineaArticulo()));
+						String description = String.format("%s. %s. %s.",
+								StringUtils.trimToEmpty(ere1l
+										.getDescripcionDelArticulo1()), StringUtils
+										.trimToEmpty(ere1l
+												.getDescripcionDelArticulo2()),
+												StringUtils.trimToEmpty(ere1l
+														.getDescripcionDelModelo_BRN_()));
+						detail.setDescription(description);
+						detail.setQuantity(Double.valueOf(ere1l.getCantidadPedida_21_()));
+						detail.setPrice(Double.valueOf(ere1l.getPrecioBrutoUnitario_AAB_()));
 //					detail.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
 //					detail.setTaxes(detail.getTaxes());
-					detail.setStatus(SalesDetailStatus.PENDING);
+						detail.setStatus(SalesDetailStatus.PENDING);
 //					detail.setOfferDetail(null);
-					detail.setDelivered(0.0);
-					detailController.onAccept(event);
+						detail.setDelivered(0.0);
+						detailController.onAccept(event);
+					}
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -183,7 +195,7 @@ public class EdiSalesImporterHandler implements Serializable {
 			Criteria criteria = new Criteria();
 			criteria.addExpression(ExpressionUtilities.getLikeExpression(
 					rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_COMMENTS),
-					"%" + CustomerEdiSupportController.PEDIDOS + "="
+					"%" + CustomerEdiSupportController.PTO_ENTREGA + "="
 							+ customerCode + ";%"));
 			List<ITransferObject> list = rnoteBean.getList(criteria);
 			registryId = list != null && !list.isEmpty() ? ((RegistryNote) list
@@ -232,7 +244,10 @@ public class EdiSalesImporterHandler implements Serializable {
 //		detail` varchar(15) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Detalle del Articulo',
 //		detail2` varchar(15) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Detalle 2 del Articulo',
 //		detail3` varchar(15) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Detalle 3 del Articulo',
-		item.setDescription(ere1l.getDescripcionDelArticulo1() + ". " + ere1l.getDescripcionDelArticulo2());
+		String description = String.format("%s. %s.",
+				StringUtils.trimToEmpty(ere1l.getDescripcionDelArticulo1()),
+				StringUtils.trimToEmpty(ere1l.getDescripcionDelArticulo2()));
+		item.setDescription(description);
 //		serial_number` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de serie',
 //		serial_date` date DEFAULT NULL COMMENT 'Fecha de serializacion',
 		item.setPrice(Double.valueOf(ere1l.getPrecioBrutoUnitario_AAB_()));
@@ -255,10 +270,10 @@ public class EdiSalesImporterHandler implements Serializable {
 	
 	private Product searchProduct(ERE1L ere1l) throws ManagerBeanException {
 		try {
-			IManagerBean itemBean = BeanManager.getManagerBean(Product.class);
+			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.PRODUCT_CODE), ere1l.getCodigoInternoArticuloProveedor_SA_().trim());
-			List<ITransferObject> list = itemBean.getList(criteria);
+			criteria.addEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_CODE), StringUtils.trimToNull(ere1l.getCodigoInternoArticuloCliente_IN_()));
+			List<ITransferObject> list = productBean.getList(criteria);
 			if(list!=null && !list.isEmpty()){
 				return (Product) list.get(0);
 			} else {
@@ -273,8 +288,8 @@ public class EdiSalesImporterHandler implements Serializable {
 	private Product createProduct(ERE1L ere1l) throws ManagerBeanException {
 		IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 		Product product = new Product();
-		product.setCode(ere1l.getCodigoInternoArticuloCliente_IN_().trim());
-		product.setName(ere1l.getCodigoInternoArticuloProveedor_SA_().trim());
+		product.setCode(StringUtils.trimToEmpty(ere1l.getCodigoInternoArticuloCliente_IN_()));
+		product.setName(StringUtils.abbreviate(ere1l.getDescripcionDelArticulo1().trim(), 64));
 		product.setKind(ProductKind.SALE);
 //		brand` int(4) DEFAULT NULL COMMENT 'Marca Comercial del Producto',
 //		category` int(4) DEFAULT NULL COMMENT 'Categoria del Producto',

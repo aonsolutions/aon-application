@@ -46,13 +46,8 @@ public class UdapaDeliveryWriter {
 		seh1c.setCabecera("SEH1C");
 		seh1c.setTipoAvisoDeExpedicion_351_35E_(SEH1C.V1001T.AVISO_DE_EXPEDICIO_351.getValue());
 		seh1c.setNumeroAvisoDeExpedicion(delivery.getReferenceCode());
-		
-		// TODO CodigoEmisor
 		seh1c.setCodigoEmisor_MS_(companyEdiCode);
-		
-		// TODO CodigoReceptor
 		seh1c.setCodigoReceptor_MR_(customerEdiCode);
-		
 		seh1c.setFuncionDelMensaje(SEH1C.V1225F.ORIGINA_9.getValue());
 		seh1c.setFechaDelDocumento_137__102_203_(dateFormat.format(delivery.getDate()));
 		seh1c.setFechaEsperadaDeEntrega_17__102_203_(null);
@@ -82,7 +77,7 @@ public class UdapaDeliveryWriter {
 		
 		seh1c.seh1dList = createSEH1DList(delivery);
 		seh1c.seh1pList = createSEH1PList(delivery);
-		seh1c.seh1lList = createSEH1LList(delivery);
+		seh1c.seh1lList = createSEH1LList(delivery, companyEdiCode, customerEdiCode);
 		seh1c.seh1gList = createSEH1GList(delivery);
 		seh1c.seh1bList = createSEH1BList(delivery);
 		
@@ -92,25 +87,19 @@ public class UdapaDeliveryWriter {
 	// TODO createSEH1DList
 	private List<SEH1D> createSEH1DList(Delivery delivery) {
 		List<SEH1D> list = new ArrayList<>();
-//		delivery.getDetailList().forEach(to -> {
-//			list.add( createSEH1DRecord((DeliveryDetail)to) );
-//		});
 		return list;
 	}
 
 	// TODO createSEH1PList
 	private List<SEH1P> createSEH1PList(Delivery delivery) {
 		List<SEH1P> list = new ArrayList<>();
-//		delivery.getDetailList().forEach(to -> {
-//			list.add( createSEH1PRecord((DeliveryDetail)to) );
-//		});
 		return list;
 	}
 
-	private List<SEH1L> createSEH1LList(Delivery delivery) {
+	private List<SEH1L> createSEH1LList(Delivery delivery, String companyEdiCode, String customerEdiCode) {
 		List<SEH1L> list = new ArrayList<>();
 		delivery.getDetailList().forEach(to -> {
-			list.add( createSEH1LRecord((DeliveryDetail)to) );
+			list.add( createSEH1LRecord((DeliveryDetail)to, companyEdiCode, customerEdiCode) );
 		});
 		return list;
 	}
@@ -118,18 +107,12 @@ public class UdapaDeliveryWriter {
 	// TODO createSEH1GList
 	private List<SEH1G> createSEH1GList(Delivery delivery) {
 		List<SEH1G> list = new ArrayList<>();
-//		delivery.getDetailList().forEach(to -> {
-//			list.add( createSEH1GRecord((DeliveryDetail)to) );
-//		});
 		return list;
 	}
 
 	// TODO createSEH1BList
 	private List<SEH1B> createSEH1BList(Delivery delivery) {
 		List<SEH1B> list = new ArrayList<>();
-//		delivery.getDetailList().forEach(to -> {
-//			list.add( createSEH1BRecord((DeliveryDetail)to) );
-//		});
 		return list;
 	}
 
@@ -221,17 +204,15 @@ public class UdapaDeliveryWriter {
 		return record;
 	}
 
-	private SEH1L createSEH1LRecord(DeliveryDetail detail) {
+	private SEH1L createSEH1LRecord(DeliveryDetail detail, String companyEdiCode, String customerEdiCode) {
 		Item item = detail.getItem();
 		String tipoAvisoDeExpedicion = SEH1C.V1001T.AVISO_DE_EXPEDICIO_351.getValue();
 		SEH1L record = new SEH1L();
 		record.setLineas("SEH1L");
 		record.setTipoAvisoDeExpedicion_351_35E_(tipoAvisoDeExpedicion);
 		record.setNumeroAvisoDeExpedicion("");
-		// TODO CodigoEmisor		
-		record.setCodigoEmisor_MS_("");
-		// TODO CodigoReceptor
-		record.setCodigoReceptor_MR_("");
+		record.setCodigoEmisor_MS_(companyEdiCode);
+		record.setCodigoReceptor_MR_(customerEdiCode);
 		record.setNumeroDeJerarquiaDeEmbalaje(null);
 		record.setNumeroDeSub_jerarquiaDeEmbalaje(null);
 		record.setNumeroDeLineaArticulo(detail.getLine());
