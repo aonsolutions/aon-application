@@ -15,9 +15,11 @@ node {
    sh "git cherry -v origin/8.59.X origin/master > cherryOut"
    
    def cherryOut = readFile 'cherryOut'
-
-   def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: parameters(cherryOut)
    
+   timeout(time:180, unit:'SECONDS') {
+      def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: parameters(cherryOut)
+   }
+
    def commits = '';
    for ( commitEntry in commitsMap ) {
       if ( commitEntry.value ) 
