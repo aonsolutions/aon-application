@@ -96,7 +96,7 @@ public class SQLSalaryDraftCalculatorTestCase extends AbstractSQLTestCase {
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
-
+		
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
 				new String[]{
@@ -107,7 +107,7 @@ public class SQLSalaryDraftCalculatorTestCase extends AbstractSQLTestCase {
 				"BASE_CGP * 0.05",
 				"BASE_ESTR * 0.10",
 				"BASE_NESTR * 0.20",
-				"BASE_IRPF * PORCENTAJE_IRPF/100"
+				"BASE_IRPF * 0.00/100"
 				}
 				);
 		//@formatter:on
@@ -149,6 +149,8 @@ public class SQLSalaryDraftCalculatorTestCase extends AbstractSQLTestCase {
 
 		draft.addDraftEmbargo(draftEmbargo);
 
+		ctx = EmployeesServiceHelper
+				.getSalaryCalculatorContext(connection, draft, null);
 		builder = new SalaryDraftBuilder(draft);
 		calculator = new ContractSalaryCalculator<ISalary>(builder);
 		calculator.setListener(builder);
@@ -271,6 +273,8 @@ public class SQLSalaryDraftCalculatorTestCase extends AbstractSQLTestCase {
 		draftBonus.setDescriptionTemplate("BONUS");
 		draft.addDraftBonus(draftBonus);
 
+		ctx = EmployeesServiceHelper
+				.getSalaryCalculatorContext(connection, draft, null);
 		builder = new SalaryDraftBuilder(draft);
 		calculator = new ContractSalaryCalculator<ISalary>(builder);
 		calculator.setListener(builder);
