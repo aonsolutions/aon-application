@@ -1425,8 +1425,7 @@ public class AON {
 			String login, Attach attach) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(attach.getDomain().getName(),
-					attach.getDomain().getId(), login);
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 
 			if (attach.getAttachType().equals(AttachType.REGISTRY))
 				getAttachment().updateRegistryAttachData(ctx, attach);
