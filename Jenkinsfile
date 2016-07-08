@@ -1,4 +1,7 @@
+   properties ([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5']]])
+
 node {
+
 
    // Mark the code checkout 'stage'....
    stage 'Checkout'
