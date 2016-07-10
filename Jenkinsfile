@@ -17,13 +17,13 @@ node {
    
    def cherryOut = readFile 'cherryOut'
 
-   def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: parameters(cherryOut)
+   //def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: parameters(cherryOut)
    
    def commits = '';
-   for ( commitEntry in commitsMap ) {
-      if ( commitEntry.value ) 
-          commits = commitEntry.key + ' ' + commits
-   }
+   //for ( commitEntry in commitsMap ) {
+   //   if ( commitEntry.value ) 
+   //       commits = commitEntry.key + ' ' + commits
+   //}
    
    
    if ( commits ) {
