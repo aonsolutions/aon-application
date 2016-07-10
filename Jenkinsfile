@@ -24,7 +24,8 @@ node {
           commits = commits + ' ' + commitEntry.key
    }
    
-   
+   echo 'commits: "' + commits + '"'
+	   
    if ( commits ) {
       // Mark the perform hotfix 'stage'....
       stage "Perform HotFix ${hotfix}"
