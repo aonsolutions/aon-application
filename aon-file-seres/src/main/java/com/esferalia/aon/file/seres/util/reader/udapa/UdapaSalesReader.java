@@ -99,7 +99,7 @@ public class UdapaSalesReader {
 		if (Files.exists(Paths.get(FILE + fileName))) {
 			try {
 				ERE1C value = reader.readFile(new FileInputStream(FILE + fileName), CHARSET_ENCODING);
-				value.getCabecera();
+				value.getTipoDePedido_220_221_224_226_22E_();
 			} catch (FileNotFoundException e) {
 				// nada
 			} catch (IOException e) {

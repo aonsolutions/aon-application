@@ -43,7 +43,6 @@ public class UdapaDeliveryWriter {
 		// TODO Auto-generated method stub
 		SEH1C seh1c = new SEH1C();
 		
-		seh1c.setCabecera("SEH1C");
 		seh1c.setTipoAvisoDeExpedicion_351_35E_(SEH1C.V1001T.AVISO_DE_EXPEDICIO_351.getValue());
 		seh1c.setNumeroAvisoDeExpedicion(delivery.getReferenceCode());
 		seh1c.setCodigoEmisor_MS_(companyEdiCode);
@@ -120,7 +119,6 @@ public class UdapaDeliveryWriter {
 	private SEH1D createSEH1DRecord(DeliveryDetail detail) {
 		// TODO Auto-generated method stub
 		SEH1D record = new SEH1D();
-		record.setDirecciones(null);
 		record.setTipoAvisoDeExpedicion_351_35E_(null);
 		record.setNumeroAvisoDeExpedicion(null);
 		record.setCodigoEmisor_MS_(null);
@@ -154,7 +152,6 @@ public class UdapaDeliveryWriter {
 	private SEH1P createSEH1PRecord(DeliveryDetail detail) {
 		// TODO Auto-generated method stub
 		SEH1P record = new SEH1P();
-		record.setEmbalajes(null);
 		record.setTipoAvisoDeExpedicion_351_35E_(null);
 		record.setNumeroAvisoDeExpedicion(null);
 		record.setCodigoEmisor_MS_(null);
@@ -208,7 +205,6 @@ public class UdapaDeliveryWriter {
 		Item item = detail.getItem();
 		String tipoAvisoDeExpedicion = SEH1C.V1001T.AVISO_DE_EXPEDICIO_351.getValue();
 		SEH1L record = new SEH1L();
-		record.setLineas("SEH1L");
 		record.setTipoAvisoDeExpedicion_351_35E_(tipoAvisoDeExpedicion);
 		record.setNumeroAvisoDeExpedicion("");
 		record.setCodigoEmisor_MS_(companyEdiCode);
@@ -250,7 +246,6 @@ public class UdapaDeliveryWriter {
 	private SEH1G createSEH1GRecord(DeliveryDetail detail) {
 		// TODO Auto-generated method stub
 		SEH1G record = new SEH1G();
-		record.setDesgloseCantidadLineas(null);
 		record.setTipoAvisoDeExpedicion_351_35E_(null);
 		record.setNumeroAvisoDeExpedicion(null);
 		record.setCodigoEmisor_MS_(null);
@@ -270,7 +265,6 @@ public class UdapaDeliveryWriter {
 	private SEH1B createSEH1BRecord(DeliveryDetail detail) {
 		// TODO Auto-generated method stub
 		SEH1B record = new SEH1B();
-		record.setInformacionDeLotes(null);
 		record.setTipoAvisoDeExpedicion_351_35E_(null);
 		record.setNumeroAvisoDeExpedicion(null);
 		record.setCodigoEmisor_MS_(null);

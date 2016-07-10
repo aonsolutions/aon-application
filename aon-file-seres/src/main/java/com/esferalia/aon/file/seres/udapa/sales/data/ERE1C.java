@@ -16,23 +16,16 @@ import org.apache.commons.lang.StringUtils;
  * 
  * <table border="1" cellpadding="1" cellspacing="0">
  * 	<tr bgcolor="#CCCCFF"> 
- * 		<th>Tipo de registro</th>
- * 		<th>Descripcion</th>
- * 		<th>Tipo</th>
- * 		<th>Repeticiones</th>
+ * 		 <th>Tipo de registro</th> <th>Descripcion</th> <th>Tipo</th> <th>Repeticiones</th>
  * 	</tr>
  * 	<tr>
- * 		<td>ERE1C</th>
- * 		<td>Cabecera</th>
- * 		<td>Obligatorio</th>
- * 		<td>1</th>
+ * 		 <td>ERE1C</td> <td>Cabecera</td> <td>Obligatorio</td> <td>1</td>
  * 	</tr>
  * </table>
  */ 
 
 public class ERE1C {
 
-	private String cabecera;
 	private String tipoDePedido_220_221_224_226_22E_;
 	private String numeroDePedido;
 	private String codigoEmisor_MS_;
@@ -80,7 +73,6 @@ public class ERE1C {
 	public List<ERE1I> ere1iList;
 
 
-	private static Pattern PATTERN_ERE1C_cabecera = Pattern.compile("^(.{6}).*");
 	private static Pattern PATTERN_ERE1C_tipoDePedido_220_221_224_226_22E_ = Pattern.compile("^.{6}(.{6}).*");
 	private static Pattern PATTERN_ERE1C_numeroDePedido = Pattern.compile("^.{12}(.{17}).*");
 	private static Pattern PATTERN_ERE1C_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
@@ -121,9 +113,6 @@ public class ERE1C {
 
 	public void parse(String value) {
 		Matcher m;
-		if((m = PATTERN_ERE1C_cabecera.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
-			setCabecera(String.valueOf(m.group(1).trim()));
-		}
 		if((m = PATTERN_ERE1C_tipoDePedido_220_221_224_226_22E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
 			setTipoDePedido_220_221_224_226_22E_(String.valueOf(m.group(1).trim()));
 		}
@@ -239,322 +228,171 @@ public class ERE1C {
 
 
 	/** 
-	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>ERE1C</th>
-	 * 		<td>Cabecera</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>1</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
-	 */ 
-	public String getCabecera() {
-		return cabecera;
-	}
-	public void setCabecera(String cabecera) {
-		this.cabecera = cabecera;
-	}
-
-	/** 
-	 * C1001T - Tipo de Pedido (220, 221, 224, 226, 22E): Existe un cÃ³digo para identificar cada tipo de pedido que queramos enviar.El campo corresponde a un cÃ³digo EDI. Los valores posibles:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1001T</th>
-	 * 		<td>Tipo de Pedido (220, 221, 224, 226, 22E)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>7</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * C1001T - Tipo de Pedido (220, 221, 224, 226, 22E): Existe un código para identificar cada tipo de pedido que queramos enviar.El campo corresponde a un código EDI. Los valores posibles:
 	 */ 
 	public String getTipoDePedido_220_221_224_226_22E_() {
 		return tipoDePedido_220_221_224_226_22E_;
 	}
+
+	/** 
+	 * C1001T - Tipo de Pedido (220, 221, 224, 226, 22E): Existe un código para identificar cada tipo de pedido que queramos enviar.El campo corresponde a un código EDI. Los valores posibles:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1001T</td> <td>Tipo de Pedido (220, 221, 224, 226, 22E)</td> <td>C</td> <td>6</td> <td>7</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setTipoDePedido_220_221_224_226_22E_(String tipoDePedido_220_221_224_226_22E_) {
 		this.tipoDePedido_220_221_224_226_22E_ = tipoDePedido_220_221_224_226_22E_;
 	}
 
 	/** 
-	 * C1004P - NÃºmero de Pedido: Se cumplimentarÃ¡ con el nÃºmero de pedido correspondiente
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1004P</th>
-	 * 		<td>NÃºmero de Pedido</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>13</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * C1004P - Número de Pedido: Se cumplimentará con el número de pedido correspondiente
 	 */ 
 	public String getNumeroDePedido() {
 		return numeroDePedido;
 	}
+
+	/** 
+	 * C1004P - Número de Pedido: Se cumplimentará con el número de pedido correspondiente
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1004P</td> <td>Número de Pedido</td> <td>C</td> <td>17</td> <td>13</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDePedido(String numeroDePedido) {
 		this.numeroDePedido = numeroDePedido;
 	}
 
 	/** 
-	 * C3039E - CÃ³digo Emisor  (MS): Departamento que emite el pedido (funciÃ³n general asociada FGEN).
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C3039E</th>
-	 * 		<td>CÃ³digo Emisor  (MS)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>30</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * C3039E - Código Emisor  (MS): Departamento que emite el pedido (función general asociada FGEN).
 	 */ 
 	public String getCodigoEmisor_MS_() {
 		return codigoEmisor_MS_;
 	}
+
+	/** 
+	 * C3039E - Código Emisor  (MS): Departamento que emite el pedido (función general asociada FGEN).
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C3039E</td> <td>Código Emisor  (MS)</td> <td>C</td> <td>17</td> <td>30</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoEmisor_MS_(String codigoEmisor_MS_) {
 		this.codigoEmisor_MS_ = codigoEmisor_MS_;
 	}
 
 	/** 
-	 * C3039R - CÃ³digo Receptor (MR): CÃ³digo interno del Cliente que recibe el pedido (funciÃ³n asociada DSPI).
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C3039R</th>
-	 * 		<td>CÃ³digo Receptor (MR)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>47</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * C3039R - Código Receptor (MR): Código interno del Cliente que recibe el pedido (función asociada DSPI).
 	 */ 
 	public String getCodigoReceptor_MR_() {
 		return codigoReceptor_MR_;
 	}
+
+	/** 
+	 * C3039R - Código Receptor (MR): Código interno del Cliente que recibe el pedido (función asociada DSPI).
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C3039R</td> <td>Código Receptor (MR)</td> <td>C</td> <td>17</td> <td>47</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoReceptor_MR_(String codigoReceptor_MR_) {
 		this.codigoReceptor_MR_ = codigoReceptor_MR_;
 	}
 
 	/** 
-	 * C1225F - FunciÃ³n del Mensaje (31): El campo corresponde a un cÃ³digo EDI. Los valores posibles:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1225F</th>
-	 * 		<td>FunciÃ³n del Mensaje (31)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>64</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C1225F - Función del Mensaje (31): El campo corresponde a un código EDI. Los valores posibles:
 	 */ 
 	public String getFuncionDelMensaje_31_() {
 		return funcionDelMensaje_31_;
 	}
+
+	/** 
+	 * C1225F - Función del Mensaje (31): El campo corresponde a un código EDI. Los valores posibles:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1225F</td> <td>Función del Mensaje (31)</td> <td>C</td> <td>6</td> <td>64</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFuncionDelMensaje_31_(String funcionDelMensaje_31_) {
 		this.funcionDelMensaje_31_ = funcionDelMensaje_31_;
 	}
 
 	/** 
-	 * C2380D - Fecha del Documento (137) (102): Fecha de generaciÃ³n del Documento en formato AAAAMMDD
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C2380D</th>
-	 * 		<td>Fecha del Documento (137) (102)</th>
-	 * 		<td>N</th>
-	 * 		<td>8</th>
-	 * 		<td>70</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * C2380D - Fecha del Documento (137) (102): Fecha de generación del Documento en formato AAAAMMDD
 	 */ 
 	public Integer getFechaDelDocumento_137__102_() {
 		return fechaDelDocumento_137__102_;
 	}
+
+	/** 
+	 * C2380D - Fecha del Documento (137) (102): Fecha de generación del Documento en formato AAAAMMDD
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C2380D</td> <td>Fecha del Documento (137) (102)</td> <td>N</td> <td>8</td> <td>70</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFechaDelDocumento_137__102_(Integer fechaDelDocumento_137__102_) {
 		this.fechaDelDocumento_137__102_ = fechaDelDocumento_137__102_;
 	}
 
 	/** 
-	 * C20051 / C20052 - Calificador de las Fechas de Entrega: El campo corresponde a un cÃ³digo EDI. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C20051</th>
-	 * 		<td>Calificador Fecha 1</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>78</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C20051 / C20052 - Calificador de las Fechas de Entrega: El campo corresponde a un código EDI. Los valores posibles son:
 	 */ 
 	public String getCalificadorFecha1() {
 		return calificadorFecha1;
 	}
+
+	/** 
+	 * C20051 / C20052 - Calificador de las Fechas de Entrega: El campo corresponde a un código EDI. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C20051</td> <td>Calificador Fecha 1</td> <td>C</td> <td>3</td> <td>78</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCalificadorFecha1(String calificadorFecha1) {
 		this.calificadorFecha1 = calificadorFecha1;
 	}
 
 	/** 
 	 * C2380F/C2380G - Fechas de Servicio en formato AAAAMMDD
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C2380F</th>
-	 * 		<td>Fecha de Servicio 1</th>
-	 * 		<td>N</th>
-	 * 		<td>8</th>
-	 * 		<td>81</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Integer getFechaDeServicio1() {
 		return fechaDeServicio1;
-	}
-	public void setFechaDeServicio1(Integer fechaDeServicio1) {
-		this.fechaDeServicio1 = fechaDeServicio1;
-	}
-
-	/** 
-	 * C2380H/C2380I - Hora de Servicio en formato HHMM
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C2380H</th>
-	 * 		<td>Hora de Servicio 1</th>
-	 * 		<td>N</th>
-	 * 		<td>4</th>
-	 * 		<td>89</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
-	 */ 
-	public Integer getHoraDeServicio1() {
-		return horaDeServicio1;
-	}
-	public void setHoraDeServicio1(Integer horaDeServicio1) {
-		this.horaDeServicio1 = horaDeServicio1;
-	}
-
-	/** 
-	 * C20051 / C20052 - Calificador de las Fechas de Entrega: El campo corresponde a un cÃ³digo EDI. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C20052</th>
-	 * 		<td>Calificador Fecha 2</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>93</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
-	 */ 
-	public String getCalificadorFecha2() {
-		return calificadorFecha2;
-	}
-	public void setCalificadorFecha2(String calificadorFecha2) {
-		this.calificadorFecha2 = calificadorFecha2;
 	}
 
 	/** 
@@ -562,28 +400,22 @@ public class ERE1C {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C2380G</th>
-	 * 		<td>Fecha de Servicio 2</th>
-	 * 		<td>N</th>
-	 * 		<td>8</th>
-	 * 		<td>96</th>
-	 * 		<td>C</th>
+	 * 		 <td>C2380F</td> <td>Fecha de Servicio 1</td> <td>N</td> <td>8</td> <td>81</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public Integer getFechaDeServicio2() {
-		return fechaDeServicio2;
+	public void setFechaDeServicio1(Integer fechaDeServicio1) {
+		this.fechaDeServicio1 = fechaDeServicio1;
 	}
-	public void setFechaDeServicio2(Integer fechaDeServicio2) {
-		this.fechaDeServicio2 = fechaDeServicio2;
+
+	/** 
+	 * C2380H/C2380I - Hora de Servicio en formato HHMM
+	 */ 
+	public Integer getHoraDeServicio1() {
+		return horaDeServicio1;
 	}
 
 	/** 
@@ -591,550 +423,505 @@ public class ERE1C {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C2380I</th>
-	 * 		<td>Hora de Servicio 2</th>
-	 * 		<td>N</th>
-	 * 		<td>4</th>
-	 * 		<td>104</th>
-	 * 		<td>C</th>
+	 * 		 <td>C2380H</td> <td>Hora de Servicio 1</td> <td>N</td> <td>4</td> <td>89</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
+	 */ 
+	public void setHoraDeServicio1(Integer horaDeServicio1) {
+		this.horaDeServicio1 = horaDeServicio1;
+	}
+
+	/** 
+	 * C20051 / C20052 - Calificador de las Fechas de Entrega: El campo corresponde a un código EDI. Los valores posibles son:
+	 */ 
+	public String getCalificadorFecha2() {
+		return calificadorFecha2;
+	}
+
+	/** 
+	 * C20051 / C20052 - Calificador de las Fechas de Entrega: El campo corresponde a un código EDI. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C20052</td> <td>Calificador Fecha 2</td> <td>C</td> <td>3</td> <td>93</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public void setCalificadorFecha2(String calificadorFecha2) {
+		this.calificadorFecha2 = calificadorFecha2;
+	}
+
+	/** 
+	 * C2380F/C2380G - Fechas de Servicio en formato AAAAMMDD
+	 */ 
+	public Integer getFechaDeServicio2() {
+		return fechaDeServicio2;
+	}
+
+	/** 
+	 * C2380F/C2380G - Fechas de Servicio en formato AAAAMMDD
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C2380G</td> <td>Fecha de Servicio 2</td> <td>N</td> <td>8</td> <td>96</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public void setFechaDeServicio2(Integer fechaDeServicio2) {
+		this.fechaDeServicio2 = fechaDeServicio2;
+	}
+
+	/** 
+	 * C2380H/C2380I - Hora de Servicio en formato HHMM
 	 */ 
 	public Integer getHoraDeServicio2() {
 		return horaDeServicio2;
 	}
+
+	/** 
+	 * C2380H/C2380I - Hora de Servicio en formato HHMM
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C2380I</td> <td>Hora de Servicio 2</td> <td>N</td> <td>4</td> <td>104</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setHoraDeServicio2(Integer horaDeServicio2) {
 		this.horaDeServicio2 = horaDeServicio2;
 	}
 
 	/** 
-	 * C4183E - Condiciones Especiales: Campo opcional. Se utiliza para especificar informaciÃ³n adicional relacionada con el pedido. Los valores posibles:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C4183E</th>
-	 * 		<td>Condiciones Especiales</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>108</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C4183E - Condiciones Especiales: Campo opcional. Se utiliza para especificar información adicional relacionada con el pedido. Los valores posibles:
 	 */ 
 	public String getCondicionesEspeciales() {
 		return condicionesEspeciales;
 	}
+
+	/** 
+	 * C4183E - Condiciones Especiales: Campo opcional. Se utiliza para especificar información adicional relacionada con el pedido. Los valores posibles:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C4183E</td> <td>Condiciones Especiales</td> <td>C</td> <td>3</td> <td>108</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCondicionesEspeciales(String condicionesEspeciales) {
 		this.condicionesEspeciales = condicionesEspeciales;
 	}
 
 	/** 
-	 * C1154A - NÃºmero de Pedido Abierto (BO):En caso de estar montando una cancelaciÃ³n, hace referencia al nÃºmero de Pedido Abierto enviado antes.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1154A</th>
-	 * 		<td>NÃºmero de Pedido Abierto (BO)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>111</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C1154A - Número de Pedido Abierto (BO):En caso de estar montando una cancelación, hace referencia al número de Pedido Abierto enviado antes.
 	 */ 
 	public String getNumeroDePedidoAbierto_BO_() {
 		return numeroDePedidoAbierto_BO_;
 	}
+
+	/** 
+	 * C1154A - Número de Pedido Abierto (BO):En caso de estar montando una cancelación, hace referencia al número de Pedido Abierto enviado antes.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1154A</td> <td>Número de Pedido Abierto (BO)</td> <td>C</td> <td>17</td> <td>111</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDePedidoAbierto_BO_(String numeroDePedidoAbierto_BO_) {
 		this.numeroDePedidoAbierto_BO_ = numeroDePedidoAbierto_BO_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1154L</th>
-	 * 		<td>NÃºmero de Lista de Precios</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>128</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroDeListaDePrecios() {
 		return numeroDeListaDePrecios;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1154L</td> <td>Número de Lista de Precios</td> <td>C</td> <td>17</td> <td>128</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeListaDePrecios(String numeroDeListaDePrecios) {
 		this.numeroDeListaDePrecios = numeroDeListaDePrecios;
 	}
 
 	/** 
-	 * C1154P - CÃ³digo Proveedor (SU): Departamento al que se pide la mercancia (funciÃ³n asociada DSPI).
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1154P</th>
-	 * 		<td>NÃºmero de Pedido Proveedor (VN)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>145</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C1154P - Código Proveedor (SU): Departamento al que se pide la mercancia (función asociada DSPI).
 	 */ 
 	public String getNumeroDePedidoProveedor_VN_() {
 		return numeroDePedidoProveedor_VN_;
 	}
+
+	/** 
+	 * C1154P - Código Proveedor (SU): Departamento al que se pide la mercancia (función asociada DSPI).
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1154P</td> <td>Número de Pedido Proveedor (VN)</td> <td>C</td> <td>17</td> <td>145</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDePedidoProveedor_VN_(String numeroDePedidoProveedor_VN_) {
 		this.numeroDePedidoProveedor_VN_ = numeroDePedidoProveedor_VN_;
 	}
 
 	/** 
-	 * C3039C - CÃ³digo Comprador  (BY): Punto Operacional EDI del Cliente que hace el Pedido (funciÃ³n asociada QPID).
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C3039C</th>
-	 * 		<td>CÃ³digo Comprador  (BY)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>162</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C3039C - Código Comprador  (BY): Punto Operacional EDI del Cliente que hace el Pedido (función asociada QPID).
 	 */ 
 	public String getCodigoComprador_BY_() {
 		return codigoComprador_BY_;
 	}
+
+	/** 
+	 * C3039C - Código Comprador  (BY): Punto Operacional EDI del Cliente que hace el Pedido (función asociada QPID).
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C3039C</td> <td>Código Comprador  (BY)</td> <td>C</td> <td>17</td> <td>162</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoComprador_BY_(String codigoComprador_BY_) {
 		this.codigoComprador_BY_ = codigoComprador_BY_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C3039P</th>
-	 * 		<td>CÃ³digo Proveedor (SU)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>179</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoProveedor_SU_() {
 		return codigoProveedor_SU_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C3039P</td> <td>Código Proveedor (SU)</td> <td>C</td> <td>17</td> <td>179</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoProveedor_SU_(String codigoProveedor_SU_) {
 		this.codigoProveedor_SU_ = codigoProveedor_SU_;
 	}
 
 	/** 
-	 * C3039F - CÃ³digo A quien se Factura (IV): Departamento al que se factura (funciÃ³n asociada AQSF).
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C3039F</th>
-	 * 		<td>CÃ³digo A quien se Factura (IV)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>196</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * C3039F - Código A quien se Factura (IV): Departamento al que se factura (función asociada AQSF).
 	 */ 
 	public String getCodigoAQuienSeFactura_IV_() {
 		return codigoAQuienSeFactura_IV_;
 	}
+
+	/** 
+	 * C3039F - Código A quien se Factura (IV): Departamento al que se factura (función asociada AQSF).
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C3039F</td> <td>Código A quien se Factura (IV)</td> <td>C</td> <td>17</td> <td>196</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoAQuienSeFactura_IV_(String codigoAQuienSeFactura_IV_) {
 		this.codigoAQuienSeFactura_IV_ = codigoAQuienSeFactura_IV_;
 	}
 
 	/** 
-	 * C3039Q - CÃ³digo Punto de Entrega (DP): CÃ³digo interno del Cliente al que se entrega la mercancÃ­a (funciÃ³n asociada QREC).
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C3039Q</th>
-	 * 		<td>CÃ³digo Punto de Entrega (DP)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>213</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C3039Q - Código Punto de Entrega (DP): Código interno del Cliente al que se entrega la mercancía (función asociada QREC).
 	 */ 
 	public String getCodigoPuntoDeEntrega_DP_() {
 		return codigoPuntoDeEntrega_DP_;
 	}
+
+	/** 
+	 * C3039Q - Código Punto de Entrega (DP): Código interno del Cliente al que se entrega la mercancía (función asociada QREC).
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C3039Q</td> <td>Código Punto de Entrega (DP)</td> <td>C</td> <td>17</td> <td>213</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoPuntoDeEntrega_DP_(String codigoPuntoDeEntrega_DP_) {
 		this.codigoPuntoDeEntrega_DP_ = codigoPuntoDeEntrega_DP_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1154I</th>
-	 * 		<td>IdentificaciÃ³n Adicional  P. Entrega (API)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>230</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getIdentificacionAdicionalP_Entrega_API_() {
 		return identificacionAdicionalP_Entrega_API_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1154I</td> <td>Identificación Adicional  P. Entrega (API)</td> <td>C</td> <td>17</td> <td>230</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setIdentificacionAdicionalP_Entrega_API_(String identificacionAdicionalP_Entrega_API_) {
 		this.identificacionAdicionalP_Entrega_API_ = identificacionAdicionalP_Entrega_API_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1154R</th>
-	 * 		<td>NÃºmero de ReposiciÃ³n (ACD)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>247</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroDeReposicion_ACD_() {
 		return numeroDeReposicion_ACD_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1154R</td> <td>Número de Reposición (ACD)</td> <td>C</td> <td>17</td> <td>247</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeReposicion_ACD_(String numeroDeReposicion_ACD_) {
 		this.numeroDeReposicion_ACD_ = numeroDeReposicion_ACD_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C3039M</th>
-	 * 		<td>CÃ³digo Punto de ExpediciÃ³n (PW)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>264</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoPuntoDeExpedicion_PW_() {
 		return codigoPuntoDeExpedicion_PW_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C3039M</td> <td>Código Punto de Expedición (PW)</td> <td>C</td> <td>17</td> <td>264</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoPuntoDeExpedicion_PW_(String codigoPuntoDeExpedicion_PW_) {
 		this.codigoPuntoDeExpedicion_PW_ = codigoPuntoDeExpedicion_PW_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C3039A</th>
-	 * 		<td>CÃ³digo quien Paga (PR)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>281</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoQuienPaga_PR_() {
 		return codigoQuienPaga_PR_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C3039A</td> <td>Código quien Paga (PR)</td> <td>C</td> <td>17</td> <td>281</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoQuienPaga_PR_(String codigoQuienPaga_PR_) {
 		this.codigoQuienPaga_PR_ = codigoQuienPaga_PR_;
 	}
 
 	/** 
-	 * C6345M - CÃ³digo de Moneda: Los valores posibles:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C6345M</th>
-	 * 		<td>CÃ³digo de Moneda</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>298</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C6345M - Código de Moneda: Los valores posibles:
 	 */ 
 	public String getCodigoDeMoneda() {
 		return codigoDeMoneda;
 	}
+
+	/** 
+	 * C6345M - Código de Moneda: Los valores posibles:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C6345M</td> <td>Código de Moneda</td> <td>C</td> <td>6</td> <td>298</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoDeMoneda(String codigoDeMoneda) {
 		this.codigoDeMoneda = codigoDeMoneda;
 	}
 
 	/** 
-	 * C2380V - Fecha vencimiento Ãºnico: EstÃ¡ pensado para que el emisor del pedido pueda solicitar una fecha de pago. Se indicarÃ¡ si la factura es de Pago Ãºnico, en caso contrario se dejarÃ¡ a cero y los vencimientos se especificaran en el fichero ERE1V. Debe montarse en formato AAAAMMDD.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C2380V</th>
-	 * 		<td>Fecha vencimiento Ãºnico</th>
-	 * 		<td>N</th>
-	 * 		<td>8</th>
-	 * 		<td>304</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C2380V - Fecha vencimiento único: Está pensado para que el emisor del pedido pueda solicitar una fecha de pago. Se indicará si la factura es de Pago único, en caso contrario se dejará a cero y los vencimientos se especificaran en el fichero ERE1V. Debe montarse en formato AAAAMMDD.
 	 */ 
 	public Integer getFechaVencimientoUnico() {
 		return fechaVencimientoUnico;
 	}
+
+	/** 
+	 * C2380V - Fecha vencimiento único: Está pensado para que el emisor del pedido pueda solicitar una fecha de pago. Se indicará si la factura es de Pago único, en caso contrario se dejará a cero y los vencimientos se especificaran en el fichero ERE1V. Debe montarse en formato AAAAMMDD.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C2380V</td> <td>Fecha vencimiento único</td> <td>N</td> <td>8</td> <td>304</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFechaVencimientoUnico(Integer fechaVencimientoUnico) {
 		this.fechaVencimientoUnico = fechaVencimientoUnico;
 	}
 
 	/** 
-	 * C4215P - MÃ©todo Pago de costes de transportes: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C4215P</th>
-	 * 		<td>MÃ©todo Pago de costes de transportes</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>312</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C4215P - Método Pago de costes de transportes: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */ 
 	public String getMetodoPagoDeCostesDeTransportes() {
 		return metodoPagoDeCostesDeTransportes;
 	}
+
+	/** 
+	 * C4215P - Método Pago de costes de transportes: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C4215P</td> <td>Método Pago de costes de transportes</td> <td>C</td> <td>6</td> <td>312</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setMetodoPagoDeCostesDeTransportes(String metodoPagoDeCostesDeTransportes) {
 		this.metodoPagoDeCostesDeTransportes = metodoPagoDeCostesDeTransportes;
 	}
 
 	/** 
-	 * C4053E - Condiciones de Entrega: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C4053E</th>
-	 * 		<td>Condiciones de Entrega</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>318</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C4053E - Condiciones de Entrega: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */ 
 	public String getCondicionesDeEntrega() {
 		return condicionesDeEntrega;
 	}
+
+	/** 
+	 * C4053E - Condiciones de Entrega: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C4053E</td> <td>Condiciones de Entrega</td> <td>C</td> <td>6</td> <td>318</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCondicionesDeEntrega(String condicionesDeEntrega) {
 		this.condicionesDeEntrega = condicionesDeEntrega;
 	}
 
 	/** 
-	 * C5004N - Importe Total Neto (79): Corresponde al sumatorio de los importes netos por lÃ­nea si se valora el pedido.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C5004N</th>
-	 * 		<td>Importe Total Neto (79)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>324</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C5004N - Importe Total Neto (79): Corresponde al sumatorio de los importes netos por línea si se valora el pedido.
 	 */ 
 	public Double getImporteTotalNeto_79_() {
 		return importeTotalNeto_79_;
 	}
+
+	/** 
+	 * C5004N - Importe Total Neto (79): Corresponde al sumatorio de los importes netos por línea si se valora el pedido.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C5004N</td> <td>Importe Total Neto (79)</td> <td>N(14,3)</td> <td>18</td> <td>324</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setImporteTotalNeto_79_(Double importeTotalNeto_79_) {
 		this.importeTotalNeto_79_ = importeTotalNeto_79_;
 	}
 
 	/** 
-	 * C5004D - Importe Total Descuentos/Cargos (131): Suma de todos los descuentos y cargos globales del pedido, excluyendo los de lÃ­neas (en caso de pedidos valorados).
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C5004D</th>
-	 * 		<td>Importe Total Descuentos/Cargos (131)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>342</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C5004D - Importe Total Descuentos/Cargos (131): Suma de todos los descuentos y cargos globales del pedido, excluyendo los de líneas (en caso de pedidos valorados).
 	 */ 
 	public Double getImporteTotalDescuentos_Cargos_131_() {
 		return importeTotalDescuentos_Cargos_131_;
 	}
+
+	/** 
+	 * C5004D - Importe Total Descuentos/Cargos (131): Suma de todos los descuentos y cargos globales del pedido, excluyendo los de líneas (en caso de pedidos valorados).
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C5004D</td> <td>Importe Total Descuentos/Cargos (131)</td> <td>N(14,3)</td> <td>18</td> <td>342</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setImporteTotalDescuentos_Cargos_131_(Double importeTotalDescuentos_Cargos_131_) {
 		this.importeTotalDescuentos_Cargos_131_ = importeTotalDescuentos_Cargos_131_;
+	}
+
+	/** 
+	 * C5004B - Importe Base Imponible (125):Importe Neto Total  de Factura (C500N) + Total cargos y descuentos Gobales (C5004D)
+	 */ 
+	public Double getImporteBaseImponible_125_() {
+		return importeBaseImponible_125_;
 	}
 
 	/** 
@@ -1142,57 +929,45 @@ public class ERE1C {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C5004B</th>
-	 * 		<td>Importe Base Imponible (125)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>360</th>
-	 * 		<td>C</th>
+	 * 		 <td>C5004B</td> <td>Importe Base Imponible (125)</td> <td>N(14,3)</td> <td>18</td> <td>360</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public Double getImporteBaseImponible_125_() {
-		return importeBaseImponible_125_;
-	}
 	public void setImporteBaseImponible_125_(Double importeBaseImponible_125_) {
 		this.importeBaseImponible_125_ = importeBaseImponible_125_;
 	}
 
 	/** 
-	 * C5004I - Importe Total Impuestos (176): Sumatorio de los importes  de impuestos por lÃ­nea.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C5004I</th>
-	 * 		<td>Importe Total Impuestos (176)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>378</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C5004I - Importe Total Impuestos (176): Sumatorio de los importes  de impuestos por línea.
 	 */ 
 	public Double getImporteTotalImpuestos_176_() {
 		return importeTotalImpuestos_176_;
 	}
+
+	/** 
+	 * C5004I - Importe Total Impuestos (176): Sumatorio de los importes  de impuestos por línea.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C5004I</td> <td>Importe Total Impuestos (176)</td> <td>N(14,3)</td> <td>18</td> <td>378</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setImporteTotalImpuestos_176_(Double importeTotalImpuestos_176_) {
 		this.importeTotalImpuestos_176_ = importeTotalImpuestos_176_;
+	}
+
+	/** 
+	 * C5004P - Importe a Pagar (139): Base Imponible + Importe Total de Impuestos
+	 */ 
+	public Double getImporteAPagar_139_() {
+		return importeAPagar_139_;
 	}
 
 	/** 
@@ -1200,148 +975,111 @@ public class ERE1C {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C5004P</th>
-	 * 		<td>Importe a Pagar (139)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>396</th>
-	 * 		<td>C</th>
+	 * 		 <td>C5004P</td> <td>Importe a Pagar (139)</td> <td>N(14,3)</td> <td>18</td> <td>396</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public Double getImporteAPagar_139_() {
-		return importeAPagar_139_;
-	}
 	public void setImporteAPagar_139_(Double importeAPagar_139_) {
 		this.importeAPagar_139_ = importeAPagar_139_;
 	}
 
 	/** 
-	 * C5004U - Importe Total Bruto (98): Sumatorio de los importes Brutos de las lÃ­neas (cantidad facturada x precio unitario Bruto).No se tienen en cuenta Cargos ni Descuentos(ni a nivel de lÃ­neas, ni globales).
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C5004U</th>
-	 * 		<td>Importe Total Bruto (98)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>414</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * C5004U - Importe Total Bruto (98): Sumatorio de los importes Brutos de las líneas (cantidad facturada x precio unitario Bruto).No se tienen en cuenta Cargos ni Descuentos(ni a nivel de líneas, ni globales).
 	 */ 
 	public Double getImporteTotalBruto_98_() {
 		return importeTotalBruto_98_;
 	}
+
+	/** 
+	 * C5004U - Importe Total Bruto (98): Sumatorio de los importes Brutos de las líneas (cantidad facturada x precio unitario Bruto).No se tienen en cuenta Cargos ni Descuentos(ni a nivel de líneas, ni globales).
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C5004U</td> <td>Importe Total Bruto (98)</td> <td>N(14,3)</td> <td>18</td> <td>414</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setImporteTotalBruto_98_(Double importeTotalBruto_98_) {
 		this.importeTotalBruto_98_ = importeTotalBruto_98_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>CESTAD</th>
-	 * 		<td>Estado</th>
-	 * 		<td>C</th>
-	 * 		<td>1</th>
-	 * 		<td>432</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getEstado() {
 		return estado;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>CESTAD</td> <td>Estado</td> <td>C</td> <td>1</td> <td>432</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1154B</th>
-	 * 		<td>Referencia Adicional  1 (BY ZZZ)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>433</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getReferenciaAdicional1_BYZZZ_() {
 		return referenciaAdicional1_BYZZZ_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1154B</td> <td>Referencia Adicional  1 (BY ZZZ)</td> <td>C</td> <td>17</td> <td>433</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setReferenciaAdicional1_BYZZZ_(String referenciaAdicional1_BYZZZ_) {
 		this.referenciaAdicional1_BYZZZ_ = referenciaAdicional1_BYZZZ_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1154C</th>
-	 * 		<td>Referencia Adicional  2 (BY ZZZ)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>450</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getReferenciaAdicional2_BYZZZ_() {
 		return referenciaAdicional2_BYZZZ_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1154C</td> <td>Referencia Adicional  2 (BY ZZZ)</td> <td>C</td> <td>17</td> <td>450</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setReferenciaAdicional2_BYZZZ_(String referenciaAdicional2_BYZZZ_) {
 		this.referenciaAdicional2_BYZZZ_ = referenciaAdicional2_BYZZZ_;
 	}
 
 	/** 
-	 * C1001T - Tipo de Pedido (220, 221, 224, 226, 22E): Existe un cÃ³digo para identificar cada tipo de pedido que queramos enviar.El campo corresponde a un cÃ³digo EDI. Los valores posibles:
+	 * C1001T - Tipo de Pedido (220, 221, 224, 226, 22E): Existe un código para identificar cada tipo de pedido que queramos enviar.El campo corresponde a un código EDI. Los valores posibles:
 	 */
 	public enum C1001T {
 		PEDID_220("220"),
@@ -1369,7 +1107,7 @@ public class ERE1C {
 
 	}
 	/** 
-	 * C1225F - FunciÃ³n del Mensaje (31): El campo corresponde a un cÃ³digo EDI. Los valores posibles:
+	 * C1225F - Función del Mensaje (31): El campo corresponde a un código EDI. Los valores posibles:
 	 */
 	public enum C1225F {
 		CONFIRMATIO_6("6"),
@@ -1399,7 +1137,7 @@ public class ERE1C {
 
 	}
 	/** 
-	 * C20051 / C20052 - Calificador de las Fechas de Entrega: El campo corresponde a un cÃ³digo EDI. Los valores posibles son:
+	 * C20051 / C20052 - Calificador de las Fechas de Entrega: El campo corresponde a un código EDI. Los valores posibles son:
 	 */
 	public enum C20051_C20052 {
 		DELIVERY_DATE_TIME__REQUESTE_2("2"),
@@ -1438,7 +1176,7 @@ public class ERE1C {
 
 	}
 	/** 
-	 * C4183E - Condiciones Especiales: Campo opcional. Se utiliza para especificar informaciÃ³n adicional relacionada con el pedido. Los valores posibles:
+	 * C4183E - Condiciones Especiales: Campo opcional. Se utiliza para especificar información adicional relacionada con el pedido. Los valores posibles:
 	 */
 	public enum C4183E {
 		BUYING_GROUP_CONDITIONS__EAN_CODE_71E("71E"),
@@ -1467,7 +1205,7 @@ public class ERE1C {
 
 	}
 	/** 
-	 * C6345M - CÃ³digo de Moneda: Los valores posibles:
+	 * C6345M - Código de Moneda: Los valores posibles:
 	 */
 	public enum C6345M {
 		PESETA_ESPA_OL_ESP("ESP"),
@@ -1493,7 +1231,7 @@ public class ERE1C {
 
 	}
 	/** 
-	 * C4215P - MÃ©todo Pago de costes de transportes: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
+	 * C4215P - Método Pago de costes de transportes: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */
 	public enum C4215P {
 		COLLEC_CC("CC"),
@@ -1522,7 +1260,7 @@ public class ERE1C {
 
 	}
 	/** 
-	 * C4053E - Condiciones de Entrega: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
+	 * C4053E - Condiciones de Entrega: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */
 	public enum C4053E {
 		RECOGIDA_POR_EL_EMISOR_DEL_PEDID_PD("PD"),

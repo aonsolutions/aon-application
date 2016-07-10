@@ -15,23 +15,16 @@ import org.apache.commons.lang.StringUtils;
  * 
  * <table border="1" cellpadding="1" cellspacing="0">
  * 	<tr bgcolor="#CCCCFF"> 
- * 		<th>Tipo de registro</th>
- * 		<th>Descripcion</th>
- * 		<th>Tipo</th>
- * 		<th>Repeticiones</th>
+ * 		 <th>Tipo de registro</th> <th>Descripcion</th> <th>Tipo</th> <th>Repeticiones</th>
  * 	</tr>
  * 	<tr>
- * 		<td>ERE1G</th>
- * 		<td>Desglose de Cantidad</th>
- * 		<td>Opcional</th>
- * 		<td>N</th>
+ * 		 <td>ERE1G</td> <td>Desglose de Cantidad</td> <td>Opcional</td> <td>N</td>
  * 	</tr>
  * </table>
  */ 
 
 public class ERE1G {
 
-	private String desgloseDeCantidad;
 	private String tipoDePedido_220_221_224_226_22E_;
 	private String numeroDePedido;
 	private String codigoEmisor_MS_;
@@ -42,7 +35,6 @@ public class ERE1G {
 	private Double cantidadDividida_11_;
 
 
-	private static Pattern PATTERN_ERE1G_desgloseDeCantidad = Pattern.compile("^(.{6}).*");
 	private static Pattern PATTERN_ERE1G_tipoDePedido_220_221_224_226_22E_ = Pattern.compile("^.{6}(.{6}).*");
 	private static Pattern PATTERN_ERE1G_numeroDePedido = Pattern.compile("^.{12}(.{17}).*");
 	private static Pattern PATTERN_ERE1G_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
@@ -54,9 +46,6 @@ public class ERE1G {
 
 	public void parse(String value) {
 		Matcher m;
-		if((m = PATTERN_ERE1G_desgloseDeCantidad.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
-			setDesgloseDeCantidad(String.valueOf(m.group(1).trim()));
-		}
 		if((m = PATTERN_ERE1G_tipoDePedido_220_221_224_226_22E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
 			setTipoDePedido_220_221_224_226_22E_(String.valueOf(m.group(1).trim()));
 		}
@@ -86,31 +75,9 @@ public class ERE1G {
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>ERE1G</th>
-	 * 		<td>Desglose de Cantidad</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>1</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
-	public String getDesgloseDeCantidad() {
-		return desgloseDeCantidad;
-	}
-	public void setDesgloseDeCantidad(String desgloseDeCantidad) {
-		this.desgloseDeCantidad = desgloseDeCantidad;
+	public String getTipoDePedido_220_221_224_226_22E_() {
+		return tipoDePedido_220_221_224_226_22E_;
 	}
 
 	/** 
@@ -118,202 +85,160 @@ public class ERE1G {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C1001T</th>
-	 * 		<td>Tipo de Pedido (220, 221, 224, 226, 22E)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>7</th>
-	 * 		<td>M</th>
+	 * 		 <td>C1001T</td> <td>Tipo de Pedido (220, 221, 224, 226, 22E)</td> <td>C</td> <td>6</td> <td>7</td> <td>M</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getTipoDePedido_220_221_224_226_22E_() {
-		return tipoDePedido_220_221_224_226_22E_;
-	}
 	public void setTipoDePedido_220_221_224_226_22E_(String tipoDePedido_220_221_224_226_22E_) {
 		this.tipoDePedido_220_221_224_226_22E_ = tipoDePedido_220_221_224_226_22E_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1004P</th>
-	 * 		<td>N煤mero de Pedido</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>13</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroDePedido() {
 		return numeroDePedido;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1004P</td> <td>N鷐ero de Pedido</td> <td>C</td> <td>17</td> <td>13</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDePedido(String numeroDePedido) {
 		this.numeroDePedido = numeroDePedido;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C3039E</th>
-	 * 		<td>C贸digo Emisor  (MS)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>30</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoEmisor_MS_() {
 		return codigoEmisor_MS_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C3039E</td> <td>C骴igo Emisor  (MS)</td> <td>C</td> <td>17</td> <td>30</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoEmisor_MS_(String codigoEmisor_MS_) {
 		this.codigoEmisor_MS_ = codigoEmisor_MS_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C3039R</th>
-	 * 		<td>C贸digo Receptor (MR)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>47</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoReceptor_MR_() {
 		return codigoReceptor_MR_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C3039R</td> <td>C骴igo Receptor (MR)</td> <td>C</td> <td>17</td> <td>47</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoReceptor_MR_(String codigoReceptor_MR_) {
 		this.codigoReceptor_MR_ = codigoReceptor_MR_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1082L</th>
-	 * 		<td>N煤mero de L铆nea Art铆culo</th>
-	 * 		<td>N</th>
-	 * 		<td>6</th>
-	 * 		<td>64</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Integer getNumeroDeLineaArticulo() {
 		return numeroDeLineaArticulo;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1082L</td> <td>N鷐ero de L韓ea Art韈ulo</td> <td>N</td> <td>6</td> <td>64</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeLineaArticulo(Integer numeroDeLineaArticulo) {
 		this.numeroDeLineaArticulo = numeroDeLineaArticulo;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1082G</th>
-	 * 		<td>Contador Desglose</th>
-	 * 		<td>N</th>
-	 * 		<td>4</th>
-	 * 		<td>70</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Integer getContadorDesglose() {
 		return contadorDesglose;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1082G</td> <td>Contador Desglose</td> <td>N</td> <td>4</td> <td>70</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setContadorDesglose(Integer contadorDesglose) {
 		this.contadorDesglose = contadorDesglose;
 	}
 
 	/** 
-	 * C3225L - C贸digo Lugar de Entrega (7): C贸digo EAN  del  lugar donde se entrega la mercanc铆a.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C3225L</th>
-	 * 		<td>C贸digo Lugar de Entrega (7)</th>
-	 * 		<td>C</th>
-	 * 		<td>25</th>
-	 * 		<td>74</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * C3225L - C骴igo Lugar de Entrega (7): C骴igo EAN  del  lugar donde se entrega la mercanc韆.
 	 */ 
 	public String getCodigoLugarDeEntrega_7_() {
 		return codigoLugarDeEntrega_7_;
 	}
+
+	/** 
+	 * C3225L - C骴igo Lugar de Entrega (7): C骴igo EAN  del  lugar donde se entrega la mercanc韆.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C3225L</td> <td>C骴igo Lugar de Entrega (7)</td> <td>C</td> <td>25</td> <td>74</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoLugarDeEntrega_7_(String codigoLugarDeEntrega_7_) {
 		this.codigoLugarDeEntrega_7_ = codigoLugarDeEntrega_7_;
+	}
+
+	/** 
+	 * C6060V - Cantidad Dividida (11):Cantidad que se entrega.
+	 */ 
+	public Double getCantidadDividida_11_() {
+		return cantidadDividida_11_;
 	}
 
 	/** 
@@ -321,26 +246,13 @@ public class ERE1G {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C6060V</th>
-	 * 		<td>Cantidad Dividida (11)</th>
-	 * 		<td>N(12,3)</th>
-	 * 		<td>16</th>
-	 * 		<td>99</th>
-	 * 		<td>C</th>
+	 * 		 <td>C6060V</td> <td>Cantidad Dividida (11)</td> <td>N(12,3)</td> <td>16</td> <td>99</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public Double getCantidadDividida_11_() {
-		return cantidadDividida_11_;
-	}
 	public void setCantidadDividida_11_(Double cantidadDividida_11_) {
 		this.cantidadDividida_11_ = cantidadDividida_11_;
 	}

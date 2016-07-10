@@ -15,23 +15,16 @@ import org.apache.commons.lang.StringUtils;
  * 
  * <table border="1" cellpadding="1" cellspacing="0">
  * 	<tr bgcolor="#CCCCFF"> 
- * 		<th>Tipo de registro</th>
- * 		<th>Descripcion</th>
- * 		<th>Tipo</th>
- * 		<th>Repeticiones</th>
+ * 		 <th>Tipo de registro</th> <th>Descripcion</th> <th>Tipo</th> <th>Repeticiones</th>
  * 	</tr>
  * 	<tr>
- * 		<td>SEH1D</th>
- * 		<td>Direcciones</th>
- * 		<td>Opcional</th>
- * 		<td>N</th>
+ * 		 <td>SEH1D</td> <td>Direcciones</td> <td>Opcional</td> <td>N</td>
  * 	</tr>
  * </table>
  */ 
 
 public class SEH1D {
 
-	private String direcciones;
 	private String tipoAvisoDeExpedicion_351_35E_;
 	private String numeroAvisoDeExpedicion;
 	private String codigoEmisor_MS_;
@@ -61,7 +54,6 @@ public class SEH1D {
 	private String numeroDeReferencia2;
 
 
-	private static Pattern PATTERN_SEH1D_direcciones = Pattern.compile("^(.{6}).*");
 	private static Pattern PATTERN_SEH1D_tipoAvisoDeExpedicion_351_35E_ = Pattern.compile("^.{6}(.{6}).*");
 	private static Pattern PATTERN_SEH1D_numeroAvisoDeExpedicion = Pattern.compile("^.{12}(.{17}).*");
 	private static Pattern PATTERN_SEH1D_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
@@ -92,9 +84,6 @@ public class SEH1D {
 
 	public void parse(String value) {
 		Matcher m;
-		if((m = PATTERN_SEH1D_direcciones.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
-			setDirecciones(String.valueOf(m.group(1).trim()));
-		}
 		if((m = PATTERN_SEH1D_tipoAvisoDeExpedicion_351_35E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
 			setTipoAvisoDeExpedicion_351_35E_(String.valueOf(m.group(1).trim()));
 		}
@@ -181,31 +170,9 @@ public class SEH1D {
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>SEH1D</th>
-	 * 		<td>Direcciones</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>1</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
-	public String getDirecciones() {
-		return direcciones;
-	}
-	public void setDirecciones(String direcciones) {
-		this.direcciones = direcciones;
+	public String getTipoAvisoDeExpedicion_351_35E_() {
+		return tipoAvisoDeExpedicion_351_35E_;
 	}
 
 	/** 
@@ -213,86 +180,45 @@ public class SEH1D {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V1001T</th>
-	 * 		<td>Tipo Aviso de Expedici贸n (351/35E)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>7</th>
-	 * 		<td>M</th>
+	 * 		 <td>V1001T</td> <td>Tipo Aviso de Expedici髇 (351/35E)</td> <td>C</td> <td>6</td> <td>7</td> <td>M</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getTipoAvisoDeExpedicion_351_35E_() {
-		return tipoAvisoDeExpedicion_351_35E_;
-	}
 	public void setTipoAvisoDeExpedicion_351_35E_(String tipoAvisoDeExpedicion_351_35E_) {
 		this.tipoAvisoDeExpedicion_351_35E_ = tipoAvisoDeExpedicion_351_35E_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1004P</th>
-	 * 		<td>N煤mero Aviso de Expedici贸n</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>13</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroAvisoDeExpedicion() {
 		return numeroAvisoDeExpedicion;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1004P</td> <td>N鷐ero Aviso de Expedici髇</td> <td>C</td> <td>17</td> <td>13</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroAvisoDeExpedicion(String numeroAvisoDeExpedicion) {
 		this.numeroAvisoDeExpedicion = numeroAvisoDeExpedicion;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3039E</th>
-	 * 		<td>C贸digo Emisor  (MS)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>30</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoEmisor_MS_() {
 		return codigoEmisor_MS_;
-	}
-	public void setCodigoEmisor_MS_(String codigoEmisor_MS_) {
-		this.codigoEmisor_MS_ = codigoEmisor_MS_;
 	}
 
 	/** 
@@ -300,28 +226,45 @@ public class SEH1D {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V3039R</th>
-	 * 		<td>C贸digo Receptor (MR)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>47</th>
-	 * 		<td>M</th>
+	 * 		 <td>V3039E</td> <td>C骴igo Emisor  (MS)</td> <td>C</td> <td>17</td> <td>30</td> <td>M</td>
 	 * 	</tr>
 	 * </table>
+	 */ 
+	public void setCodigoEmisor_MS_(String codigoEmisor_MS_) {
+		this.codigoEmisor_MS_ = codigoEmisor_MS_;
+	}
+
+	/** 
+	 * 
 	 */ 
 	public String getCodigoReceptor_MR_() {
 		return codigoReceptor_MR_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3039R</td> <td>C骴igo Receptor (MR)</td> <td>C</td> <td>17</td> <td>47</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoReceptor_MR_(String codigoReceptor_MR_) {
 		this.codigoReceptor_MR_ = codigoReceptor_MR_;
+	}
+
+	/** 
+	 * V3035D-Calificador Interlocutor: Los valores posibles son:
+	 */ 
+	public String getCalificadorInterlocutor() {
+		return calificadorInterlocutor;
 	}
 
 	/** 
@@ -329,434 +272,321 @@ public class SEH1D {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V3035D</th>
-	 * 		<td>Calificador Interlocutor</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>64</th>
-	 * 		<td>M</th>
+	 * 		 <td>V3035D</td> <td>Calificador Interlocutor</td> <td>C</td> <td>3</td> <td>64</td> <td>M</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCalificadorInterlocutor() {
-		return calificadorInterlocutor;
-	}
 	public void setCalificadorInterlocutor(String calificadorInterlocutor) {
 		this.calificadorInterlocutor = calificadorInterlocutor;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3039D</th>
-	 * 		<td>C贸digo Interlocutor</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>67</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoInterlocutor() {
 		return codigoInterlocutor;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3039D</td> <td>C骴igo Interlocutor</td> <td>C</td> <td>17</td> <td>67</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoInterlocutor(String codigoInterlocutor) {
 		this.codigoInterlocutor = codigoInterlocutor;
 	}
 
 	/** 
-	 * V3055C-Agencia Responsable lista de C贸digos: Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3055C</th>
-	 * 		<td>Agencia Responsable lista de C贸digos</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>84</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V3055C-Agencia Responsable lista de C骴igos: Los valores posibles son:
 	 */ 
 	public String getAgenciaResponsableListaDeCodigos() {
 		return agenciaResponsableListaDeCodigos;
 	}
+
+	/** 
+	 * V3055C-Agencia Responsable lista de C骴igos: Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3055C</td> <td>Agencia Responsable lista de C骴igos</td> <td>C</td> <td>3</td> <td>84</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setAgenciaResponsableListaDeCodigos(String agenciaResponsableListaDeCodigos) {
 		this.agenciaResponsableListaDeCodigos = agenciaResponsableListaDeCodigos;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V30361</th>
-	 * 		<td>Nombre 1</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>87</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNombre1() {
 		return nombre1;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V30361</td> <td>Nombre 1</td> <td>C</td> <td>35</td> <td>87</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNombre1(String nombre1) {
 		this.nombre1 = nombre1;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V30362</th>
-	 * 		<td>Nombre 2</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>122</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNombre2() {
 		return nombre2;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V30362</td> <td>Nombre 2</td> <td>C</td> <td>35</td> <td>122</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNombre2(String nombre2) {
 		this.nombre2 = nombre2;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V30363</th>
-	 * 		<td>Nombre 3</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>157</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNombre3() {
 		return nombre3;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V30363</td> <td>Nombre 3</td> <td>C</td> <td>35</td> <td>157</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNombre3(String nombre3) {
 		this.nombre3 = nombre3;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V30364</th>
-	 * 		<td>Nombre 4</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>192</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNombre4() {
 		return nombre4;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V30364</td> <td>Nombre 4</td> <td>C</td> <td>35</td> <td>192</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNombre4(String nombre4) {
 		this.nombre4 = nombre4;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V30365</th>
-	 * 		<td>Nombre 5</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>227</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNombre5() {
 		return nombre5;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V30365</td> <td>Nombre 5</td> <td>C</td> <td>35</td> <td>227</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNombre5(String nombre5) {
 		this.nombre5 = nombre5;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V30421</th>
-	 * 		<td>Direcci贸n 1  (Calle+N煤mero)</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>262</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getDireccion1_Calle_Numero_() {
 		return direccion1_Calle_Numero_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V30421</td> <td>Direcci髇 1  (Calle+N鷐ero)</td> <td>C</td> <td>35</td> <td>262</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setDireccion1_Calle_Numero_(String direccion1_Calle_Numero_) {
 		this.direccion1_Calle_Numero_ = direccion1_Calle_Numero_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V30422</th>
-	 * 		<td>Direcci贸n 2  (Calle+N煤mero)</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>297</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getDireccion2_Calle_Numero_() {
 		return direccion2_Calle_Numero_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V30422</td> <td>Direcci髇 2  (Calle+N鷐ero)</td> <td>C</td> <td>35</td> <td>297</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setDireccion2_Calle_Numero_(String direccion2_Calle_Numero_) {
 		this.direccion2_Calle_Numero_ = direccion2_Calle_Numero_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V30423</th>
-	 * 		<td>Direcci贸n 3  (Calle+N煤mero)</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>332</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getDireccion3_Calle_Numero_() {
 		return direccion3_Calle_Numero_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V30423</td> <td>Direcci髇 3  (Calle+N鷐ero)</td> <td>C</td> <td>35</td> <td>332</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setDireccion3_Calle_Numero_(String direccion3_Calle_Numero_) {
 		this.direccion3_Calle_Numero_ = direccion3_Calle_Numero_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V30424</th>
-	 * 		<td>Direcci贸n 4  (Calle+N煤mero)</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>367</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getDireccion4_Calle_Numero_() {
 		return direccion4_Calle_Numero_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V30424</td> <td>Direcci髇 4  (Calle+N鷐ero)</td> <td>C</td> <td>35</td> <td>367</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setDireccion4_Calle_Numero_(String direccion4_Calle_Numero_) {
 		this.direccion4_Calle_Numero_ = direccion4_Calle_Numero_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3164P</th>
-	 * 		<td>Poblaci贸n</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>402</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getPoblacion() {
 		return poblacion;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3164P</td> <td>Poblaci髇</td> <td>C</td> <td>35</td> <td>402</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setPoblacion(String poblacion) {
 		this.poblacion = poblacion;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3229P</th>
-	 * 		<td>Provincia</th>
-	 * 		<td>C</th>
-	 * 		<td>9</th>
-	 * 		<td>437</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getProvincia() {
 		return provincia;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3229P</td> <td>Provincia</td> <td>C</td> <td>9</td> <td>437</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setProvincia(String provincia) {
 		this.provincia = provincia;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3251C</th>
-	 * 		<td>C贸digo Postal</th>
-	 * 		<td>C</th>
-	 * 		<td>9</th>
-	 * 		<td>446</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoPostal() {
 		return codigoPostal;
-	}
-	public void setCodigoPostal(String codigoPostal) {
-		this.codigoPostal = codigoPostal;
 	}
 
 	/** 
@@ -764,28 +594,45 @@ public class SEH1D {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V3207P</th>
-	 * 		<td>C贸digo Pa铆s</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>455</th>
-	 * 		<td>C</th>
+	 * 		 <td>V3251C</td> <td>C骴igo Postal</td> <td>C</td> <td>9</td> <td>446</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
+	 */ 
+	public void setCodigoPostal(String codigoPostal) {
+		this.codigoPostal = codigoPostal;
+	}
+
+	/** 
+	 * 
 	 */ 
 	public String getCodigoPais() {
 		return codigoPais;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3207P</td> <td>C骴igo Pa韘</td> <td>C</td> <td>3</td> <td>455</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoPais(String codigoPais) {
 		this.codigoPais = codigoPais;
+	}
+
+	/** 
+	 * V1153D-Calificador Referencia: Los valores posibles son:
+	 */ 
+	public String getCalificadorReferencia() {
+		return calificadorReferencia;
 	}
 
 	/** 
@@ -793,173 +640,114 @@ public class SEH1D {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V1153D</th>
-	 * 		<td>Calificador Referencia</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>458</th>
-	 * 		<td>C</th>
+	 * 		 <td>V1153D</td> <td>Calificador Referencia</td> <td>C</td> <td>3</td> <td>458</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCalificadorReferencia() {
-		return calificadorReferencia;
-	}
 	public void setCalificadorReferencia(String calificadorReferencia) {
 		this.calificadorReferencia = calificadorReferencia;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1154D</th>
-	 * 		<td>N煤mero de Referencia</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>461</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroDeReferencia() {
 		return numeroDeReferencia;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1154D</td> <td>N鷐ero de Referencia</td> <td>C</td> <td>35</td> <td>461</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeReferencia(String numeroDeReferencia) {
 		this.numeroDeReferencia = numeroDeReferencia;
 	}
 
 	/** 
-	 * V3139D-Funci贸n de Contacto: Utilizado para identificar los nombres de contacto especificados por la compa帽铆a. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3139D</th>
-	 * 		<td>Funci贸n de Contacto</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>496</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V3139D-Funci髇 de Contacto: Utilizado para identificar los nombres de contacto especificados por la compa耥a. Los valores posibles son:
 	 */ 
 	public String getFuncionDeContacto() {
 		return funcionDeContacto;
 	}
+
+	/** 
+	 * V3139D-Funci髇 de Contacto: Utilizado para identificar los nombres de contacto especificados por la compa耥a. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3139D</td> <td>Funci髇 de Contacto</td> <td>C</td> <td>3</td> <td>496</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFuncionDeContacto(String funcionDeContacto) {
 		this.funcionDeContacto = funcionDeContacto;
 	}
 
 	/** 
-	 * V3413D-C贸digo Departamento o Empleado: Punto Operacional o C贸digo interno que identifica a la persona de contacto.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3413D</th>
-	 * 		<td>C贸digo Departamento o Empleado</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>499</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V3413D-C骴igo Departamento o Empleado: Punto Operacional o C骴igo interno que identifica a la persona de contacto.
 	 */ 
 	public String getCodigoDepartamentoOEmpleado() {
 		return codigoDepartamentoOEmpleado;
 	}
+
+	/** 
+	 * V3413D-C骴igo Departamento o Empleado: Punto Operacional o C骴igo interno que identifica a la persona de contacto.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3413D</td> <td>C骴igo Departamento o Empleado</td> <td>C</td> <td>17</td> <td>499</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoDepartamentoOEmpleado(String codigoDepartamentoOEmpleado) {
 		this.codigoDepartamentoOEmpleado = codigoDepartamentoOEmpleado;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3412D</th>
-	 * 		<td>Nombre Departamento o Empleado</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>516</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNombreDepartamentoOEmpleado() {
 		return nombreDepartamentoOEmpleado;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3412D</td> <td>Nombre Departamento o Empleado</td> <td>C</td> <td>35</td> <td>516</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNombreDepartamentoOEmpleado(String nombreDepartamentoOEmpleado) {
 		this.nombreDepartamentoOEmpleado = nombreDepartamentoOEmpleado;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1153E</th>
-	 * 		<td>Calificador Referencia 2</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>551</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCalificadorReferencia2() {
 		return calificadorReferencia2;
-	}
-	public void setCalificadorReferencia2(String calificadorReferencia2) {
-		this.calificadorReferencia2 = calificadorReferencia2;
 	}
 
 	/** 
@@ -967,26 +755,36 @@ public class SEH1D {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V1154E</th>
-	 * 		<td>N煤mero de Referencia 2</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>554</th>
-	 * 		<td>C</th>
+	 * 		 <td>V1153E</td> <td>Calificador Referencia 2</td> <td>C</td> <td>3</td> <td>551</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
+	 */ 
+	public void setCalificadorReferencia2(String calificadorReferencia2) {
+		this.calificadorReferencia2 = calificadorReferencia2;
+	}
+
+	/** 
+	 * 
 	 */ 
 	public String getNumeroDeReferencia2() {
 		return numeroDeReferencia2;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1154E</td> <td>N鷐ero de Referencia 2</td> <td>C</td> <td>17</td> <td>554</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeReferencia2(String numeroDeReferencia2) {
 		this.numeroDeReferencia2 = numeroDeReferencia2;
 	}
@@ -1022,7 +820,7 @@ public class SEH1D {
 
 	}
 	/** 
-	 * V3055C-Agencia Responsable lista de C贸digos: Los valores posibles son:
+	 * V3055C-Agencia Responsable lista de C骴igos: Los valores posibles son:
 	 */
 	public enum V3055C {
 		EA_9("9"),
@@ -1070,7 +868,7 @@ public class SEH1D {
 
 	}
 	/** 
-	 * V3139D-Funci贸n de Contacto: Utilizado para identificar los nombres de contacto especificados por la compa帽铆a. Los valores posibles son:
+	 * V3139D-Funci髇 de Contacto: Utilizado para identificar los nombres de contacto especificados por la compa耥a. Los valores posibles son:
 	 */
 	public enum V3139D {
 		CONTACTO_PARA_LA_ENTREGA_DL("DL"),

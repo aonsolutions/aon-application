@@ -16,23 +16,16 @@ import org.apache.commons.lang.StringUtils;
  * 
  * <table border="1" cellpadding="1" cellspacing="0">
  * 	<tr bgcolor="#CCCCFF"> 
- * 		<th>Tipo de registro</th>
- * 		<th>Descripcion</th>
- * 		<th>Tipo</th>
- * 		<th>Repeticiones</th>
+ * 		 <th>Tipo de registro</th> <th>Descripcion</th> <th>Tipo</th> <th>Repeticiones</th>
  * 	</tr>
  * 	<tr>
- * 		<td>SEH1C</th>
- * 		<td>Cabecera</th>
- * 		<td>Obligatorio</th>
- * 		<td>1</th>
+ * 		 <td>SEH1C</td> <td>Cabecera</td> <td>Obligatorio</td> <td>1</td>
  * 	</tr>
  * </table>
  */ 
 
 public class SEH1C {
 
-	private String cabecera;
 	private String tipoAvisoDeExpedicion_351_35E_;
 	private String numeroAvisoDeExpedicion;
 	private String codigoEmisor_MS_;
@@ -72,7 +65,6 @@ public class SEH1C {
 	public List<SEH1B> seh1bList;
 
 
-	private static Pattern PATTERN_SEH1C_cabecera = Pattern.compile("^(.{6}).*");
 	private static Pattern PATTERN_SEH1C_tipoAvisoDeExpedicion_351_35E_ = Pattern.compile("^.{6}(.{6}).*");
 	private static Pattern PATTERN_SEH1C_numeroAvisoDeExpedicion = Pattern.compile("^.{12}(.{17}).*");
 	private static Pattern PATTERN_SEH1C_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
@@ -106,9 +98,6 @@ public class SEH1C {
 
 	public void parse(String value) {
 		Matcher m;
-		if((m = PATTERN_SEH1C_cabecera.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
-			setCabecera(String.valueOf(m.group(1).trim()));
-		}
 		if((m = PATTERN_SEH1C_tipoAvisoDeExpedicion_351_35E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
 			setTipoAvisoDeExpedicion_351_35E_(String.valueOf(m.group(1).trim()));
 		}
@@ -203,206 +192,148 @@ public class SEH1C {
 
 
 	/** 
-	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>SEH1C</th>
-	 * 		<td>Cabecera</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>1</th>
-	 * 		<td>m</th>
-	 * 	</tr>
-	 * </table>
-	 */ 
-	public String getCabecera() {
-		return cabecera;
-	}
-	public void setCabecera(String cabecera) {
-		this.cabecera = cabecera;
-	}
-
-	/** 
-	 * V1001T-Tipo Aviso de Expedici贸n (351/35E): El campo corresponde a un c贸digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1001T</th>
-	 * 		<td>Tipo Aviso de Expedici贸n (351/35E)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>7</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * V1001T-Tipo Aviso de Expedici髇 (351/35E): El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
 	 */ 
 	public String getTipoAvisoDeExpedicion_351_35E_() {
 		return tipoAvisoDeExpedicion_351_35E_;
 	}
+
+	/** 
+	 * V1001T-Tipo Aviso de Expedici髇 (351/35E): El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1001T</td> <td>Tipo Aviso de Expedici髇 (351/35E)</td> <td>C</td> <td>6</td> <td>7</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setTipoAvisoDeExpedicion_351_35E_(String tipoAvisoDeExpedicion_351_35E_) {
 		this.tipoAvisoDeExpedicion_351_35E_ = tipoAvisoDeExpedicion_351_35E_;
 	}
 
 	/** 
-	 * V1004P-N煤mero Aviso de Expedici贸n: N煤mero de Aviso de Expedici贸n  asignado por el emisor del documento.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1004P</th>
-	 * 		<td>N煤mero Aviso de Expedici贸n</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>13</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * V1004P-N鷐ero Aviso de Expedici髇: N鷐ero de Aviso de Expedici髇  asignado por el emisor del documento.
 	 */ 
 	public String getNumeroAvisoDeExpedicion() {
 		return numeroAvisoDeExpedicion;
 	}
+
+	/** 
+	 * V1004P-N鷐ero Aviso de Expedici髇: N鷐ero de Aviso de Expedici髇  asignado por el emisor del documento.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1004P</td> <td>N鷐ero Aviso de Expedici髇</td> <td>C</td> <td>17</td> <td>13</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroAvisoDeExpedicion(String numeroAvisoDeExpedicion) {
 		this.numeroAvisoDeExpedicion = numeroAvisoDeExpedicion;
 	}
 
 	/** 
-	 * V3039E-C贸digo Dpto. que emite el mensaje (MS): El campo corresponde a un Punto Operacional EDI. Funci贸n asociada 'PROV'
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3039E</th>
-	 * 		<td>C贸digo Emisor  (MS)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>30</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * V3039E-C骴igo Dpto. que emite el mensaje (MS): El campo corresponde a un Punto Operacional EDI. Funci髇 asociada 'PROV'
 	 */ 
 	public String getCodigoEmisor_MS_() {
 		return codigoEmisor_MS_;
 	}
+
+	/** 
+	 * V3039E-C骴igo Dpto. que emite el mensaje (MS): El campo corresponde a un Punto Operacional EDI. Funci髇 asociada 'PROV'
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3039E</td> <td>C骴igo Emisor  (MS)</td> <td>C</td> <td>17</td> <td>30</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoEmisor_MS_(String codigoEmisor_MS_) {
 		this.codigoEmisor_MS_ = codigoEmisor_MS_;
 	}
 
 	/** 
-	 * V3039R-C贸digo Receptor del mensaje (MR): El campo corresponde a un Punto Operacional EDI. Funci贸n asociada 'PRES'
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3039R</th>
-	 * 		<td>C贸digo Receptor (MR)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>47</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * V3039R-C骴igo Receptor del mensaje (MR): El campo corresponde a un Punto Operacional EDI. Funci髇 asociada 'PRES'
 	 */ 
 	public String getCodigoReceptor_MR_() {
 		return codigoReceptor_MR_;
 	}
+
+	/** 
+	 * V3039R-C骴igo Receptor del mensaje (MR): El campo corresponde a un Punto Operacional EDI. Funci髇 asociada 'PRES'
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3039R</td> <td>C骴igo Receptor (MR)</td> <td>C</td> <td>17</td> <td>47</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoReceptor_MR_(String codigoReceptor_MR_) {
 		this.codigoReceptor_MR_ = codigoReceptor_MR_;
 	}
 
 	/** 
-	 * V1225F-Funci贸n del Mensaje: El campo corresponde a un c贸digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1225F</th>
-	 * 		<td>Funci贸n del Mensaje</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>64</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * V1225F-Funci髇 del Mensaje: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
 	 */ 
 	public String getFuncionDelMensaje() {
 		return funcionDelMensaje;
 	}
+
+	/** 
+	 * V1225F-Funci髇 del Mensaje: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1225F</td> <td>Funci髇 del Mensaje</td> <td>C</td> <td>6</td> <td>64</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFuncionDelMensaje(String funcionDelMensaje) {
 		this.funcionDelMensaje = funcionDelMensaje;
 	}
 
 	/** 
-	 * V2380D-Fecha del Documento (137) (102/203): Fecha de generaci贸n del Aviso de Expedici贸n en formato AAAAMMDD o AAAAMMDDHHMM
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V2380D</th>
-	 * 		<td>Fecha del Documento (137) (102/203)</th>
-	 * 		<td>C</th>
-	 * 		<td>12</th>
-	 * 		<td>70</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * V2380D-Fecha del Documento (137) (102/203): Fecha de generaci髇 del Aviso de Expedici髇 en formato AAAAMMDD o AAAAMMDDHHMM
 	 */ 
 	public String getFechaDelDocumento_137__102_203_() {
 		return fechaDelDocumento_137__102_203_;
 	}
+
+	/** 
+	 * V2380D-Fecha del Documento (137) (102/203): Fecha de generaci髇 del Aviso de Expedici髇 en formato AAAAMMDD o AAAAMMDDHHMM
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V2380D</td> <td>Fecha del Documento (137) (102/203)</td> <td>C</td> <td>12</td> <td>70</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFechaDelDocumento_137__102_203_(String fechaDelDocumento_137__102_203_) {
 		this.fechaDelDocumento_137__102_203_ = fechaDelDocumento_137__102_203_;
+	}
+
+	/** 
+	 * V2380X-Fecha esperada de Entrega (17) (102/203): Campo Opcional en formato AAAAMMDD o AAAAMMDDHHMM
+	 */ 
+	public String getFechaEsperadaDeEntrega_17__102_203_() {
+		return fechaEsperadaDeEntrega_17__102_203_;
 	}
 
 	/** 
@@ -410,86 +341,68 @@ public class SEH1C {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V2380X</th>
-	 * 		<td>Fecha esperada de Entrega (17) (102/203)</th>
-	 * 		<td>C</th>
-	 * 		<td>12</th>
-	 * 		<td>82</th>
-	 * 		<td>C</th>
+	 * 		 <td>V2380X</td> <td>Fecha esperada de Entrega (17) (102/203)</td> <td>C</td> <td>12</td> <td>82</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getFechaEsperadaDeEntrega_17__102_203_() {
-		return fechaEsperadaDeEntrega_17__102_203_;
-	}
 	public void setFechaEsperadaDeEntrega_17__102_203_(String fechaEsperadaDeEntrega_17__102_203_) {
 		this.fechaEsperadaDeEntrega_17__102_203_ = fechaEsperadaDeEntrega_17__102_203_;
 	}
 
 	/** 
-	 * V2005C-Calif. Fecha de Entrega de la mercanc铆a: El campo corresponde a un c贸digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V2005C</th>
-	 * 		<td>Calificador Fecha  Entrega(2-11-PER(358-359))</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>94</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V2005C-Calif. Fecha de Entrega de la mercanc韆: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
 	 */ 
 	public String getCalificadorFechaEntrega_2_11_PER_358_359__() {
 		return calificadorFechaEntrega_2_11_PER_358_359__;
 	}
+
+	/** 
+	 * V2005C-Calif. Fecha de Entrega de la mercanc韆: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V2005C</td> <td>Calificador Fecha  Entrega(2-11-PER(358-359))</td> <td>C</td> <td>3</td> <td>94</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCalificadorFechaEntrega_2_11_PER_358_359__(String calificadorFechaEntrega_2_11_PER_358_359__) {
 		this.calificadorFechaEntrega_2_11_PER_358_359__ = calificadorFechaEntrega_2_11_PER_358_359__;
 	}
 
 	/** 
-	 * V2380F-Fecha de Servicio 1: Fecha a  partir de la cual entregaremos la mercanc铆a en formato AAAAMMDD
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V2380F</th>
-	 * 		<td>Fecha de Servicio 1</th>
-	 * 		<td>C</th>
-	 * 		<td>8</th>
-	 * 		<td>97</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V2380F-Fecha de Servicio 1: Fecha a  partir de la cual entregaremos la mercanc韆 en formato AAAAMMDD
 	 */ 
 	public String getFechaDeServicio1() {
 		return fechaDeServicio1;
 	}
+
+	/** 
+	 * V2380F-Fecha de Servicio 1: Fecha a  partir de la cual entregaremos la mercanc韆 en formato AAAAMMDD
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V2380F</td> <td>Fecha de Servicio 1</td> <td>C</td> <td>8</td> <td>97</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFechaDeServicio1(String fechaDeServicio1) {
 		this.fechaDeServicio1 = fechaDeServicio1;
+	}
+
+	/** 
+	 * V2380H-Hora de Servicio 1: Puede especificarse una hora asociada a la fecha de servicio 1, en formato HHMM
+	 */ 
+	public String getHoraDeServicio1() {
+		return horaDeServicio1;
 	}
 
 	/** 
@@ -497,57 +410,45 @@ public class SEH1C {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V2380H</th>
-	 * 		<td>Hora de Servicio 1</th>
-	 * 		<td>C</th>
-	 * 		<td>4</th>
-	 * 		<td>105</th>
-	 * 		<td>C</th>
+	 * 		 <td>V2380H</td> <td>Hora de Servicio 1</td> <td>C</td> <td>4</td> <td>105</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getHoraDeServicio1() {
-		return horaDeServicio1;
-	}
 	public void setHoraDeServicio1(String horaDeServicio1) {
 		this.horaDeServicio1 = horaDeServicio1;
 	}
 
 	/** 
-	 * V2380G-Fecha de Servicio 2: Fecha l铆mite de entrega en formato AAAAMMDD
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V2380G</th>
-	 * 		<td>Fecha de Servicio 2</th>
-	 * 		<td>C</th>
-	 * 		<td>8</th>
-	 * 		<td>109</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V2380G-Fecha de Servicio 2: Fecha l韒ite de entrega en formato AAAAMMDD
 	 */ 
 	public String getFechaDeServicio2() {
 		return fechaDeServicio2;
 	}
+
+	/** 
+	 * V2380G-Fecha de Servicio 2: Fecha l韒ite de entrega en formato AAAAMMDD
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V2380G</td> <td>Fecha de Servicio 2</td> <td>C</td> <td>8</td> <td>109</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFechaDeServicio2(String fechaDeServicio2) {
 		this.fechaDeServicio2 = fechaDeServicio2;
+	}
+
+	/** 
+	 * V2380I-Hora de Servicio 2: Hora asociada a la fecha de servicio 2, en formato HHMM
+	 */ 
+	public String getHoraDeServicio2() {
+		return horaDeServicio2;
 	}
 
 	/** 
@@ -555,86 +456,68 @@ public class SEH1C {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V2380I</th>
-	 * 		<td>Hora de Servicio 2</th>
-	 * 		<td>C</th>
-	 * 		<td>4</th>
-	 * 		<td>117</th>
-	 * 		<td>C</th>
+	 * 		 <td>V2380I</td> <td>Hora de Servicio 2</td> <td>C</td> <td>4</td> <td>117</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getHoraDeServicio2() {
-		return horaDeServicio2;
-	}
 	public void setHoraDeServicio2(String horaDeServicio2) {
 		this.horaDeServicio2 = horaDeServicio2;
 	}
 
 	/** 
-	 * V4183I-Informaci贸n adicional: Permite indicar que la mercanc铆a especificada en el Aviso de Expedici贸n se env铆a en dep贸sito. El campo corresponde a un EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V4183I</th>
-	 * 		<td>Informaci贸n adicional</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>121</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V4183I-Informaci髇 adicional: Permite indicar que la mercanc韆 especificada en el Aviso de Expedici髇 se env韆 en dep髎ito. El campo corresponde a un EANCOM. Los valores posibles son:
 	 */ 
 	public String getInformacionAdicional() {
 		return informacionAdicional;
 	}
+
+	/** 
+	 * V4183I-Informaci髇 adicional: Permite indicar que la mercanc韆 especificada en el Aviso de Expedici髇 se env韆 en dep髎ito. El campo corresponde a un EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V4183I</td> <td>Informaci髇 adicional</td> <td>C</td> <td>6</td> <td>121</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setInformacionAdicional(String informacionAdicional) {
 		this.informacionAdicional = informacionAdicional;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1154P</th>
-	 * 		<td>N煤mero de Pedido (ON)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>127</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroDePedido_ON_() {
 		return numeroDePedido_ON_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1154P</td> <td>N鷐ero de Pedido (ON)</td> <td>C</td> <td>17</td> <td>127</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDePedido_ON_(String numeroDePedido_ON_) {
 		this.numeroDePedido_ON_ = numeroDePedido_ON_;
+	}
+
+	/** 
+	 * V2380P-Fecha de Pedido (171) (102/203): En formato AAAAMMDD o AAAAMMDDHHMM
+	 */ 
+	public String getFechaDePedido_171__102_203_() {
+		return fechaDePedido_171__102_203_;
 	}
 
 	/** 
@@ -642,231 +525,114 @@ public class SEH1C {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V2380P</th>
-	 * 		<td>Fecha de Pedido (171) (102/203)</th>
-	 * 		<td>C</th>
-	 * 		<td>12</th>
-	 * 		<td>144</th>
-	 * 		<td>C</th>
+	 * 		 <td>V2380P</td> <td>Fecha de Pedido (171) (102/203)</td> <td>C</td> <td>12</td> <td>144</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getFechaDePedido_171__102_203_() {
-		return fechaDePedido_171__102_203_;
-	}
 	public void setFechaDePedido_171__102_203_(String fechaDePedido_171__102_203_) {
 		this.fechaDePedido_171__102_203_ = fechaDePedido_171__102_203_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1154L</th>
-	 * 		<td>N煤mero de Albar谩n  (DQ)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>156</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroDeAlbaran_DQ_() {
 		return numeroDeAlbaran_DQ_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1154L</td> <td>N鷐ero de Albar醤  (DQ)</td> <td>C</td> <td>17</td> <td>156</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeAlbaran_DQ_(String numeroDeAlbaran_DQ_) {
 		this.numeroDeAlbaran_DQ_ = numeroDeAlbaran_DQ_;
 	}
 
 	/** 
-	 * V2380L-Fecha de Albar谩n (171) (102/203): En formato AAAAMMDD o AAAAMMDDHHMM
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V2380L</th>
-	 * 		<td>Fecha de Albar谩n (171) (102/203)</th>
-	 * 		<td>C</th>
-	 * 		<td>12</th>
-	 * 		<td>173</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V2380L-Fecha de Albar醤 (171) (102/203): En formato AAAAMMDD o AAAAMMDDHHMM
 	 */ 
 	public String getFechaDeAlbaran_171__102_203_() {
 		return fechaDeAlbaran_171__102_203_;
 	}
+
+	/** 
+	 * V2380L-Fecha de Albar醤 (171) (102/203): En formato AAAAMMDD o AAAAMMDDHHMM
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V2380L</td> <td>Fecha de Albar醤 (171) (102/203)</td> <td>C</td> <td>12</td> <td>173</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFechaDeAlbaran_171__102_203_(String fechaDeAlbaran_171__102_203_) {
 		this.fechaDeAlbaran_171__102_203_ = fechaDeAlbaran_171__102_203_;
 	}
 
 	/** 
-	 * V1153C y V1153V - Calificadores para especificar otras referencias: El campo corresponde a un c贸digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1153C</th>
-	 * 		<td>Calificador Referencia 1</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>185</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V1153C y V1153V - Calificadores para especificar otras referencias: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
 	 */ 
 	public String getCalificadorReferencia1() {
 		return calificadorReferencia1;
 	}
+
+	/** 
+	 * V1153C y V1153V - Calificadores para especificar otras referencias: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1153C</td> <td>Calificador Referencia 1</td> <td>C</td> <td>3</td> <td>185</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCalificadorReferencia1(String calificadorReferencia1) {
 		this.calificadorReferencia1 = calificadorReferencia1;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1154C</th>
-	 * 		<td>N煤mero de Referencia 1</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>188</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroDeReferencia1() {
 		return numeroDeReferencia1;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1154C</td> <td>N鷐ero de Referencia 1</td> <td>C</td> <td>17</td> <td>188</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeReferencia1(String numeroDeReferencia1) {
 		this.numeroDeReferencia1 = numeroDeReferencia1;
 	}
 
 	/** 
 	 * V2380C y V2380V - Fechas de referencia: En formato AAAAMMDD o AAAAMMDDHHMM
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V2380C</th>
-	 * 		<td>Fecha de Referencia 1(102/203)</th>
-	 * 		<td>C</th>
-	 * 		<td>12</th>
-	 * 		<td>205</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getFechaDeReferencia1_102_203_() {
 		return fechaDeReferencia1_102_203_;
-	}
-	public void setFechaDeReferencia1_102_203_(String fechaDeReferencia1_102_203_) {
-		this.fechaDeReferencia1_102_203_ = fechaDeReferencia1_102_203_;
-	}
-
-	/** 
-	 * V1153C y V1153V - Calificadores para especificar otras referencias: El campo corresponde a un c贸digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1153V</th>
-	 * 		<td>Calificador Referencia 2</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>217</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
-	 */ 
-	public String getCalificadorReferencia2() {
-		return calificadorReferencia2;
-	}
-	public void setCalificadorReferencia2(String calificadorReferencia2) {
-		this.calificadorReferencia2 = calificadorReferencia2;
-	}
-
-	/** 
-	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1154V</th>
-	 * 		<td>N煤mero de Referencia 2</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>220</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
-	 */ 
-	public String getNumeroDeReferencia2() {
-		return numeroDeReferencia2;
-	}
-	public void setNumeroDeReferencia2(String numeroDeReferencia2) {
-		this.numeroDeReferencia2 = numeroDeReferencia2;
 	}
 
 	/** 
@@ -874,115 +640,160 @@ public class SEH1C {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V2380V</th>
-	 * 		<td>Fecha de Referencia 2(102/203)</th>
-	 * 		<td>C</th>
-	 * 		<td>12</th>
-	 * 		<td>237</th>
-	 * 		<td>C</th>
+	 * 		 <td>V2380C</td> <td>Fecha de Referencia 1(102/203)</td> <td>C</td> <td>12</td> <td>205</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
+	 */ 
+	public void setFechaDeReferencia1_102_203_(String fechaDeReferencia1_102_203_) {
+		this.fechaDeReferencia1_102_203_ = fechaDeReferencia1_102_203_;
+	}
+
+	/** 
+	 * V1153C y V1153V - Calificadores para especificar otras referencias: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
+	 */ 
+	public String getCalificadorReferencia2() {
+		return calificadorReferencia2;
+	}
+
+	/** 
+	 * V1153C y V1153V - Calificadores para especificar otras referencias: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1153V</td> <td>Calificador Referencia 2</td> <td>C</td> <td>3</td> <td>217</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public void setCalificadorReferencia2(String calificadorReferencia2) {
+		this.calificadorReferencia2 = calificadorReferencia2;
+	}
+
+	/** 
+	 * 
+	 */ 
+	public String getNumeroDeReferencia2() {
+		return numeroDeReferencia2;
+	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1154V</td> <td>N鷐ero de Referencia 2</td> <td>C</td> <td>17</td> <td>220</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
+	public void setNumeroDeReferencia2(String numeroDeReferencia2) {
+		this.numeroDeReferencia2 = numeroDeReferencia2;
+	}
+
+	/** 
+	 * V2380C y V2380V - Fechas de referencia: En formato AAAAMMDD o AAAAMMDDHHMM
 	 */ 
 	public String getFechaDeReferencia2_102_203_() {
 		return fechaDeReferencia2_102_203_;
 	}
+
+	/** 
+	 * V2380C y V2380V - Fechas de referencia: En formato AAAAMMDD o AAAAMMDDHHMM
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V2380V</td> <td>Fecha de Referencia 2(102/203)</td> <td>C</td> <td>12</td> <td>237</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFechaDeReferencia2_102_203_(String fechaDeReferencia2_102_203_) {
 		this.fechaDeReferencia2_102_203_ = fechaDeReferencia2_102_203_;
 	}
 
 	/** 
-	 * V4215T-M茅todo de Pago de Costes de Transporte: El campo corresponde a un c贸digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V4215T</th>
-	 * 		<td>M茅todo Pago de Costes de Transporte</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>249</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V4215T-M閠odo de Pago de Costes de Transporte: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
 	 */ 
 	public String getMetodoPagoDeCostesDeTransporte() {
 		return metodoPagoDeCostesDeTransporte;
 	}
+
+	/** 
+	 * V4215T-M閠odo de Pago de Costes de Transporte: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V4215T</td> <td>M閠odo Pago de Costes de Transporte</td> <td>C</td> <td>3</td> <td>249</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setMetodoPagoDeCostesDeTransporte(String metodoPagoDeCostesDeTransporte) {
 		this.metodoPagoDeCostesDeTransporte = metodoPagoDeCostesDeTransporte;
 	}
 
 	/** 
-	 * V4053T-C贸digo Condiciones de Entrega: Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V4053T</th>
-	 * 		<td>C贸digo Condiciones de Entrega</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>252</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V4053T-C骴igo Condiciones de Entrega: Los valores posibles son:
 	 */ 
 	public String getCodigoCondicionesDeEntrega() {
 		return codigoCondicionesDeEntrega;
 	}
+
+	/** 
+	 * V4053T-C骴igo Condiciones de Entrega: Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V4053T</td> <td>C骴igo Condiciones de Entrega</td> <td>C</td> <td>3</td> <td>252</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoCondicionesDeEntrega(String codigoCondicionesDeEntrega) {
 		this.codigoCondicionesDeEntrega = codigoCondicionesDeEntrega;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V4052T</th>
-	 * 		<td>Descripci贸n Condiciones de Entrega</th>
-	 * 		<td>C</th>
-	 * 		<td>70</th>
-	 * 		<td>255</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getDescripcionCondicionesDeEntrega() {
 		return descripcionCondicionesDeEntrega;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V4052T</td> <td>Descripci髇 Condiciones de Entrega</td> <td>C</td> <td>70</td> <td>255</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setDescripcionCondicionesDeEntrega(String descripcionCondicionesDeEntrega) {
 		this.descripcionCondicionesDeEntrega = descripcionCondicionesDeEntrega;
+	}
+
+	/** 
+	 * V8067T-Modo de Transporte: Los valores posibles son:
+	 */ 
+	public String getModoDeTransporte() {
+		return modoDeTransporte;
 	}
 
 	/** 
@@ -990,119 +801,88 @@ public class SEH1C {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V8067T</th>
-	 * 		<td>Modo de Transporte</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>325</th>
-	 * 		<td>C</th>
+	 * 		 <td>V8067T</td> <td>Modo de Transporte</td> <td>C</td> <td>3</td> <td>325</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getModoDeTransporte() {
-		return modoDeTransporte;
-	}
 	public void setModoDeTransporte(String modoDeTransporte) {
 		this.modoDeTransporte = modoDeTransporte;
 	}
 
 	/** 
-	 * V3127T-C贸digo  del Transportista: El campo corresponde a un Punto Operacional EDI. Funci贸n asociada 'TRAN'
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3127T</th>
-	 * 		<td>C贸digo Transportista</th>
-	 * 		<td>C</th>
-	 * 		<td>13</th>
-	 * 		<td>328</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V3127T-C骴igo  del Transportista: El campo corresponde a un Punto Operacional EDI. Funci髇 asociada 'TRAN'
 	 */ 
 	public String getCodigoTransportista() {
 		return codigoTransportista;
 	}
+
+	/** 
+	 * V3127T-C骴igo  del Transportista: El campo corresponde a un Punto Operacional EDI. Funci髇 asociada 'TRAN'
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3127T</td> <td>C骴igo Transportista</td> <td>C</td> <td>13</td> <td>328</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoTransportista(String codigoTransportista) {
 		this.codigoTransportista = codigoTransportista;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3128T</th>
-	 * 		<td>Nombre Transportista</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>341</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNombreTransportista() {
 		return nombreTransportista;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3128T</td> <td>Nombre Transportista</td> <td>C</td> <td>35</td> <td>341</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNombreTransportista(String nombreTransportista) {
 		this.nombreTransportista = nombreTransportista;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V8212T</th>
-	 * 		<td>Matricula del Veh铆culo</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>376</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getMatriculaDelVehiculo() {
 		return matriculaDelVehiculo;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V8212T</td> <td>Matricula del Veh韈ulo</td> <td>C</td> <td>17</td> <td>376</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setMatriculaDelVehiculo(String matriculaDelVehiculo) {
 		this.matriculaDelVehiculo = matriculaDelVehiculo;
 	}
 
 	/** 
-	 * V1001T-Tipo Aviso de Expedici贸n (351/35E): El campo corresponde a un c贸digo EANCOM. Los valores posibles son:
+	 * V1001T-Tipo Aviso de Expedici髇 (351/35E): El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
 	 */
 	public enum V1001T {
 		AVISO_DE_EXPEDICIO_351("351"),
@@ -1127,7 +907,7 @@ public class SEH1C {
 
 	}
 	/** 
-	 * V1225F-Funci贸n del Mensaje: El campo corresponde a un c贸digo EANCOM. Los valores posibles son:
+	 * V1225F-Funci髇 del Mensaje: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
 	 */
 	public enum V1225F {
 		CANCELACIO_1("1"),
@@ -1154,7 +934,7 @@ public class SEH1C {
 
 	}
 	/** 
-	 * V2005C-Calif. Fecha de Entrega de la mercanc铆a: El campo corresponde a un c贸digo EANCOM. Los valores posibles son:
+	 * V2005C-Calif. Fecha de Entrega de la mercanc韆: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
 	 */
 	public enum V2005C {
 		FECHA_Y_HORA_DE_ENTREGA_SOLICITAD_2("2"),
@@ -1180,7 +960,7 @@ public class SEH1C {
 
 	}
 	/** 
-	 * V4183I-Informaci贸n adicional: Permite indicar que la mercanc铆a especificada en el Aviso de Expedici贸n se env铆a en dep贸sito. El campo corresponde a un EANCOM. Los valores posibles son:
+	 * V4183I-Informaci髇 adicional: Permite indicar que la mercanc韆 especificada en el Aviso de Expedici髇 se env韆 en dep髎ito. El campo corresponde a un EANCOM. Los valores posibles son:
 	 */
 	public enum V4183I {
 		ENVIAR_PERO_NO_FACTURAR__EN_DEPOSITO_82E("82E"),
@@ -1204,7 +984,7 @@ public class SEH1C {
 
 	}
 	/** 
-	 * V1153C y V1153V - Calificadores para especificar otras referencias: El campo corresponde a un c贸digo EANCOM. Los valores posibles son:
+	 * V1153C y V1153V - Calificadores para especificar otras referencias: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
 	 */
 	public enum V1153CYV1153V {
 		N__DE_AVISO_DE_EXPEDICIO_AAJ("AAJ"),
@@ -1230,7 +1010,7 @@ public class SEH1C {
 
 	}
 	/** 
-	 * V4215T-M茅todo de Pago de Costes de Transporte: El campo corresponde a un c贸digo EANCOM. Los valores posibles son:
+	 * V4215T-M閠odo de Pago de Costes de Transporte: El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
 	 */
 	public enum V4215T {
 		DEFINIDO_POR_EL_COMPRADOR_Y_EL_VENDEDO_DF("DF"),
@@ -1256,7 +1036,7 @@ public class SEH1C {
 
 	}
 	/** 
-	 * V4053T-C贸digo Condiciones de Entrega: Los valores posibles son:
+	 * V4053T-C骴igo Condiciones de Entrega: Los valores posibles son:
 	 */
 	public enum V4053T {
 		RECOGIDA_POR_EL_EMISOR_DEL_PEDID_RD("RD"),

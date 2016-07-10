@@ -39,19 +39,19 @@ public class UdapaSales extends AbstractFileFiller{
 		this.ere1c = ere1c;
 		
 		InputStream input = null;
-		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/edi/sales/xml/ERE1C.xml");
+		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/seres/udapa/sales/xml/ERE1C.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/edi/sales/xml/ERE1D.xml");
+		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/seres/udapa/sales/xml/ERE1D.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/edi/sales/xml/ERE1G.xml");
+		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/seres/udapa/sales/xml/ERE1G.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/edi/sales/xml/ERE1I.xml");
+		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/seres/udapa/sales/xml/ERE1I.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/edi/sales/xml/ERE1L.xml");
+		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/seres/udapa/sales/xml/ERE1L.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/edi/sales/xml/ERE1T.xml");
+		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/seres/udapa/sales/xml/ERE1T.xml");
 		DiskRegisterLoader.load(input, manager);
-		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/edi/sales/xml/ERE1V.xml");
+		input = UdapaSales.class.getResourceAsStream("/com/esferalia/aon/file/seres/udapa/sales/xml/ERE1V.xml");
 		DiskRegisterLoader.load(input, manager);
 	}
 	

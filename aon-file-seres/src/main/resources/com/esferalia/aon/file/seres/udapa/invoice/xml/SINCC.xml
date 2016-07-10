@@ -25,7 +25,7 @@
 	<field name="Nombre/Número de la calle del Receptor de la Factura" value="bean" bean ="SINCC" property="nombre_NumeroDeLaCalleDelReceptorDeLaFactura" format="AlphaNumeric" pattern="X(70)" />
 	<field name="Población del Receptor de la Factura" value="bean" bean ="SINCC" property="poblacionDelReceptorDeLaFactura" format="AlphaNumeric" pattern="X(35)" />
 	<field name="Código Postal del Receptor de la Factura" value="bean" bean ="SINCC" property="codigoPostalDelReceptorDeLaFactura" format="AlphaNumeric" pattern="X(9)" />
-	<field name="NIF del Receptor de la Factura" value="bean" bean ="SINCC" property="nIFDelReceptorDeLaFactura" format="AlphaNumeric" pattern="X(17)" />
+	<field name="NIF del Receptor de la Factura" value="bean" bean ="SINCC" property="nifDelReceptorDeLaFactura" format="AlphaNumeric" pattern="X(17)" />
 	<field name="Nombre/Número de la calle del Emisor de la Factura" value="bean" bean ="SINCC" property="nombre_NumeroDeLaCalleDelEmisorDeLaFactura" format="AlphaNumeric" pattern="X(70)" />
 	<field name="Población del Emisor de la Factura" value="bean" bean ="SINCC" property="poblacionDelEmisorDeLaFactura" format="AlphaNumeric" pattern="X(35)" />
 	<field name="Código Postal del Emisor de la Factura" value="bean" bean ="SINCC" property="codigoPostalDelEmisorDeLaFactura" format="AlphaNumeric" pattern="X(9)" />

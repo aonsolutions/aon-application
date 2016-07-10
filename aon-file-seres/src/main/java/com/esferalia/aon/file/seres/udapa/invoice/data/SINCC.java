@@ -16,23 +16,16 @@ import org.apache.commons.lang.StringUtils;
  * 
  * <table border="1" cellpadding="1" cellspacing="0">
  * 	<tr bgcolor="#CCCCFF"> 
- * 		<th>Tipo de registro</th>
- * 		<th>Descripcion</th>
- * 		<th>Tipo</th>
- * 		<th>Repeticiones</th>
+ * 		 <th>Tipo de registro</th> <th>Descripcion</th> <th>Tipo</th> <th>Repeticiones</th>
  * 	</tr>
  * 	<tr>
- * 		<td>SINCC</th>
- * 		<td>Cabecera</th>
- * 		<td>Obligatorio</th>
- * 		<td>1</th>
+ * 		 <td>SINCC</td> <td>Cabecera</td> <td>Obligatorio</td> <td>1</td>
  * 	</tr>
  * </table>
  */ 
 
 public class SINCC {
 
-	private String cabecera;
 	private String tipoFactura_325_380_381_383_385_;
 	private String numeroDeFactura;
 	private String codigoVendedor_aQuienSePide__SU_;
@@ -57,7 +50,7 @@ public class SINCC {
 	private String nombre_NumeroDeLaCalleDelReceptorDeLaFactura;
 	private String poblacionDelReceptorDeLaFactura;
 	private String codigoPostalDelReceptorDeLaFactura;
-	private String nIFDelReceptorDeLaFactura;
+	private String nifDelReceptorDeLaFactura;
 	private String nombre_NumeroDeLaCalleDelEmisorDeLaFactura;
 	private String poblacionDelEmisorDeLaFactura;
 	private String codigoPostalDelEmisorDeLaFactura;
@@ -85,7 +78,6 @@ public class SINCC {
 	public List<SINCI> sinciList;
 
 
-	private static Pattern PATTERN_SINCC_cabecera = Pattern.compile("^(.{6}).*");
 	private static Pattern PATTERN_SINCC_tipoFactura_325_380_381_383_385_ = Pattern.compile("^.{6}(.{6}).*");
 	private static Pattern PATTERN_SINCC_numeroDeFactura = Pattern.compile("^.{12}(.{17}).*");
 	private static Pattern PATTERN_SINCC_codigoVendedor_aQuienSePide__SU_ = Pattern.compile("^.{29}(.{13}).*");
@@ -110,7 +102,7 @@ public class SINCC {
 	private static Pattern PATTERN_SINCC_nombre_NumeroDeLaCalleDelReceptorDeLaFactura = Pattern.compile("^.{320}(.{70}).*");
 	private static Pattern PATTERN_SINCC_poblacionDelReceptorDeLaFactura = Pattern.compile("^.{390}(.{35}).*");
 	private static Pattern PATTERN_SINCC_codigoPostalDelReceptorDeLaFactura = Pattern.compile("^.{425}(.{9}).*");
-	private static Pattern PATTERN_SINCC_nIFDelReceptorDeLaFactura = Pattern.compile("^.{434}(.{17}).*");
+	private static Pattern PATTERN_SINCC_nifDelReceptorDeLaFactura = Pattern.compile("^.{434}(.{17}).*");
 	private static Pattern PATTERN_SINCC_nombre_NumeroDeLaCalleDelEmisorDeLaFactura = Pattern.compile("^.{451}(.{70}).*");
 	private static Pattern PATTERN_SINCC_poblacionDelEmisorDeLaFactura = Pattern.compile("^.{521}(.{35}).*");
 	private static Pattern PATTERN_SINCC_codigoPostalDelEmisorDeLaFactura = Pattern.compile("^.{556}(.{9}).*");
@@ -130,9 +122,6 @@ public class SINCC {
 
 	public void parse(String value) {
 		Matcher m;
-		if((m = PATTERN_SINCC_cabecera.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
-			setCabecera(String.valueOf(m.group(1).trim()));
-		}
 		if((m = PATTERN_SINCC_tipoFactura_325_380_381_383_385_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
 			setTipoFactura_325_380_381_383_385_(String.valueOf(m.group(1).trim()));
 		}
@@ -205,8 +194,8 @@ public class SINCC {
 		if((m = PATTERN_SINCC_codigoPostalDelReceptorDeLaFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
 			setCodigoPostalDelReceptorDeLaFactura(String.valueOf(m.group(1).trim()));
 		}
-		if((m = PATTERN_SINCC_nIFDelReceptorDeLaFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
-			setNIFDelReceptorDeLaFactura(String.valueOf(m.group(1).trim()));
+		if((m = PATTERN_SINCC_nifDelReceptorDeLaFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
+			setNifDelReceptorDeLaFactura(String.valueOf(m.group(1).trim()));
 		}
 		if((m = PATTERN_SINCC_nombre_NumeroDeLaCalleDelEmisorDeLaFactura.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
 			setNombre_NumeroDeLaCalleDelEmisorDeLaFactura(String.valueOf(m.group(1).trim()));
@@ -260,757 +249,562 @@ public class SINCC {
 
 
 	/** 
-	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>SINCC</th>
-	 * 		<td>Cabecera</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>1</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
-	 */ 
-	public String getCabecera() {
-		return cabecera;
-	}
-	public void setCabecera(String cabecera) {
-		this.cabecera = cabecera;
-	}
-
-	/** 
-	 * F1001T - Tipo Factura: Existe un cÃ³digo para identificar cada tipo de factura que queramos enviar. Las mÃ¡s habituales son las Facturas Comerciales(tipo 380) y los Abonos (tipo 381). El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1001T</th>
-	 * 		<td>Tipo Factura (325, 380, 381, 383, 385)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>7</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * F1001T - Tipo Factura: Existe un código para identificar cada tipo de factura que queramos enviar. Las más habituales son las Facturas Comerciales(tipo 380) y los Abonos (tipo 381). El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */ 
 	public String getTipoFactura_325_380_381_383_385_() {
 		return tipoFactura_325_380_381_383_385_;
 	}
+
+	/** 
+	 * F1001T - Tipo Factura: Existe un código para identificar cada tipo de factura que queramos enviar. Las más habituales son las Facturas Comerciales(tipo 380) y los Abonos (tipo 381). El campo corresponde a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F1001T</td> <td>Tipo Factura (325, 380, 381, 383, 385)</td> <td>C</td> <td>6</td> <td>7</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setTipoFactura_325_380_381_383_385_(String tipoFactura_325_380_381_383_385_) {
 		this.tipoFactura_325_380_381_383_385_ = tipoFactura_325_380_381_383_385_;
 	}
 
 	/** 
-	 * F1004N - NÃºmero de Factura: Se cumplimentarÃ¡ con el nÃºmero de factura o abono correspondiente
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1004N</th>
-	 * 		<td>NÃºmero de Factura</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>13</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * F1004N - Número de Factura: Se cumplimentará con el número de factura o abono correspondiente
 	 */ 
 	public String getNumeroDeFactura() {
 		return numeroDeFactura;
 	}
+
+	/** 
+	 * F1004N - Número de Factura: Se cumplimentará con el número de factura o abono correspondiente
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F1004N</td> <td>Número de Factura</td> <td>C</td> <td>17</td> <td>13</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeFactura(String numeroDeFactura) {
 		this.numeroDeFactura = numeroDeFactura;
 	}
 
 	/** 
-	 * F3039V - CÃ³digo Vendedor: Departamento al que se pide la mercancÃ­a.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3039V</th>
-	 * 		<td>CÃ³digo Vendedor (a Quien se Pide) (SU)</th>
-	 * 		<td>C</th>
-	 * 		<td>13</th>
-	 * 		<td>30</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * F3039V - Código Vendedor: Departamento al que se pide la mercancía.
 	 */ 
 	public String getCodigoVendedor_aQuienSePide__SU_() {
 		return codigoVendedor_aQuienSePide__SU_;
 	}
+
+	/** 
+	 * F3039V - Código Vendedor: Departamento al que se pide la mercancía.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3039V</td> <td>Código Vendedor (a Quien se Pide) (SU)</td> <td>C</td> <td>13</td> <td>30</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoVendedor_aQuienSePide__SU_(String codigoVendedor_aQuienSePide__SU_) {
 		this.codigoVendedor_aQuienSePide__SU_ = codigoVendedor_aQuienSePide__SU_;
 	}
 
 	/** 
-	 * F3039C - CÃ³digo Comprador: CÃ³digo EDI del Cliente que hace el Pedido
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3039C</th>
-	 * 		<td>CÃ³digo Comprador (Quien Pide) (BY)</th>
-	 * 		<td>C</th>
-	 * 		<td>13</th>
-	 * 		<td>43</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * F3039C - Código Comprador: Código EDI del Cliente que hace el Pedido
 	 */ 
 	public String getCodigoComprador_QuienPide__BY_() {
 		return codigoComprador_QuienPide__BY_;
 	}
+
+	/** 
+	 * F3039C - Código Comprador: Código EDI del Cliente que hace el Pedido
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3039C</td> <td>Código Comprador (Quien Pide) (BY)</td> <td>C</td> <td>13</td> <td>43</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoComprador_QuienPide__BY_(String codigoComprador_QuienPide__BY_) {
 		this.codigoComprador_QuienPide__BY_ = codigoComprador_QuienPide__BY_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1225F</th>
-	 * 		<td>FunciÃ³n del Mensaje (7, 31, 5)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>56</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getFuncionDelMensaje_7_31_5_() {
 		return funcionDelMensaje_7_31_5_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F1225F</td> <td>Función del Mensaje (7, 31, 5)</td> <td>C</td> <td>6</td> <td>56</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFuncionDelMensaje_7_31_5_(String funcionDelMensaje_7_31_5_) {
 		this.funcionDelMensaje_7_31_5_ = funcionDelMensaje_7_31_5_;
 	}
 
 	/** 
-	 * F2380F - Fecha de Factura: Fecha de generaciÃ³n del Documento en formato AAAAMMDD
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F2380F</th>
-	 * 		<td>Fecha Factura</th>
-	 * 		<td>N</th>
-	 * 		<td>8</th>
-	 * 		<td>62</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * F2380F - Fecha de Factura: Fecha de generación del Documento en formato AAAAMMDD
 	 */ 
 	public Integer getFechaFactura() {
 		return fechaFactura;
 	}
+
+	/** 
+	 * F2380F - Fecha de Factura: Fecha de generación del Documento en formato AAAAMMDD
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F2380F</td> <td>Fecha Factura</td> <td>N</td> <td>8</td> <td>62</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFechaFactura(Integer fechaFactura) {
 		this.fechaFactura = fechaFactura;
 	}
 
 	/** 
-	 * F2380P - Periodo de FacturaciÃ³n: Periodo de la factura en formato AAAAMMDDAAAAMMDD
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F2380P</th>
-	 * 		<td>Periodo de FacturaciÃ³n</th>
-	 * 		<td>C</th>
-	 * 		<td>16</th>
-	 * 		<td>70</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * F2380P - Periodo de Facturación: Periodo de la factura en formato AAAAMMDDAAAAMMDD
 	 */ 
 	public String getPeriodoDeFacturacion() {
 		return periodoDeFacturacion;
 	}
+
+	/** 
+	 * F2380P - Periodo de Facturación: Periodo de la factura en formato AAAAMMDDAAAAMMDD
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F2380P</td> <td>Periodo de Facturación</td> <td>C</td> <td>16</td> <td>70</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setPeriodoDeFacturacion(String periodoDeFacturacion) {
 		this.periodoDeFacturacion = periodoDeFacturacion;
 	}
 
 	/** 
-	 * F4461P - Forma de Pago: Permite al interlocutor que emite la factura, especificar cÃ³mo debe realizarse el pago de la misma. Valores posibles:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F4461P</th>
-	 * 		<td>Forma de Pago</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>86</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * F4461P - Forma de Pago: Permite al interlocutor que emite la factura, especificar cómo debe realizarse el pago de la misma. Valores posibles:
 	 */ 
 	public String getFormaDePago() {
 		return formaDePago;
 	}
+
+	/** 
+	 * F4461P - Forma de Pago: Permite al interlocutor que emite la factura, especificar cómo debe realizarse el pago de la misma. Valores posibles:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F4461P</td> <td>Forma de Pago</td> <td>C</td> <td>6</td> <td>86</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFormaDePago(String formaDePago) {
 		this.formaDePago = formaDePago;
 	}
 
 	/** 
-	 * F3039E - CÃ³digo Emisor de la Factura: Departamento que factura (puede no coincidir con el cÃ³digo de vendedor).
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3039E</th>
-	 * 		<td>CÃ³digo Emisor de la Factura (Quien Factura) (II)</th>
-	 * 		<td>C</th>
-	 * 		<td>13</th>
-	 * 		<td>92</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * F3039E - Código Emisor de la Factura: Departamento que factura (puede no coincidir con el código de vendedor).
 	 */ 
 	public String getCodigoEmisorDeLaFactura_QuienFactura__II_() {
 		return codigoEmisorDeLaFactura_QuienFactura__II_;
 	}
+
+	/** 
+	 * F3039E - Código Emisor de la Factura: Departamento que factura (puede no coincidir con el código de vendedor).
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3039E</td> <td>Código Emisor de la Factura (Quien Factura) (II)</td> <td>C</td> <td>13</td> <td>92</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoEmisorDeLaFactura_QuienFactura__II_(String codigoEmisorDeLaFactura_QuienFactura__II_) {
 		this.codigoEmisorDeLaFactura_QuienFactura__II_ = codigoEmisorDeLaFactura_QuienFactura__II_;
 	}
 
 	/** 
-	 * F3039R - CÃ³digo Receptor de la Factura: CÃ³digo EDI  del Cliente al que se envÃ­a la  factura (puede no coincidir con el comprador)
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3039R</th>
-	 * 		<td>CÃ³digo Receptor de la Factura (a Quien se Factura)</th>
-	 * 		<td>C</th>
-	 * 		<td>13</th>
-	 * 		<td>105</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * F3039R - Código Receptor de la Factura: Código EDI  del Cliente al que se envía la  factura (puede no coincidir con el comprador)
 	 */ 
 	public String getCodigoReceptorDeLaFactura_aQuienSeFactura_() {
 		return codigoReceptorDeLaFactura_aQuienSeFactura_;
 	}
+
+	/** 
+	 * F3039R - Código Receptor de la Factura: Código EDI  del Cliente al que se envía la  factura (puede no coincidir con el comprador)
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3039R</td> <td>Código Receptor de la Factura (a Quien se Factura)</td> <td>C</td> <td>13</td> <td>105</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoReceptorDeLaFactura_aQuienSeFactura_(String codigoReceptorDeLaFactura_aQuienSeFactura_) {
 		this.codigoReceptorDeLaFactura_aQuienSeFactura_ = codigoReceptorDeLaFactura_aQuienSeFactura_;
 	}
 
 	/** 
-	 * F3039A - CÃ³digo Receptor de la MercancÃ­a: El campo corresponde a un cÃ³digo a un Punto Operacional EDI.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3039A</th>
-	 * 		<td>CÃ³digo Receptor de las MercancÃ­as (Quien Recibe)</th>
-	 * 		<td>C</th>
-	 * 		<td>13</th>
-	 * 		<td>118</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * F3039A - Código Receptor de la Mercancía: El campo corresponde a un código a un Punto Operacional EDI.
 	 */ 
 	public String getCodigoReceptorDeLasMercancias_QuienRecibe_() {
 		return codigoReceptorDeLasMercancias_QuienRecibe_;
 	}
+
+	/** 
+	 * F3039A - Código Receptor de la Mercancía: El campo corresponde a un código a un Punto Operacional EDI.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3039A</td> <td>Código Receptor de las Mercancías (Quien Recibe)</td> <td>C</td> <td>13</td> <td>118</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoReceptorDeLasMercancias_QuienRecibe_(String codigoReceptorDeLasMercancias_QuienRecibe_) {
 		this.codigoReceptorDeLasMercancias_QuienRecibe_ = codigoReceptorDeLasMercancias_QuienRecibe_;
 	}
 
 	/** 
-	 * F3039P - CÃ³digo Receptor del Pago: Departamento a quien se paga. El campo corresponde a un Punto Operacional EDI.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3039P</th>
-	 * 		<td>CÃ³digo Receptor del Pago (a Quien se Paga)</th>
-	 * 		<td>C</th>
-	 * 		<td>13</th>
-	 * 		<td>131</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * F3039P - Código Receptor del Pago: Departamento a quien se paga. El campo corresponde a un Punto Operacional EDI.
 	 */ 
 	public String getCodigoReceptorDelPago_aQuienSePaga_() {
 		return codigoReceptorDelPago_aQuienSePaga_;
 	}
+
+	/** 
+	 * F3039P - Código Receptor del Pago: Departamento a quien se paga. El campo corresponde a un Punto Operacional EDI.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3039P</td> <td>Código Receptor del Pago (a Quien se Paga)</td> <td>C</td> <td>13</td> <td>131</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoReceptorDelPago_aQuienSePaga_(String codigoReceptorDelPago_aQuienSePaga_) {
 		this.codigoReceptorDelPago_aQuienSePaga_ = codigoReceptorDelPago_aQuienSePaga_;
 	}
 
 	/** 
-	 * F3039Q - CÃ³digo Emisor del Pago: CÃ³digo interno del Cliente que paga la factura. El campo corresponde a un Punto Operacional EDI.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3039Q</th>
-	 * 		<td>CÃ³digo Emisor del Pago (Quien Paga)</th>
-	 * 		<td>C</th>
-	 * 		<td>13</th>
-	 * 		<td>144</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * F3039Q - Código Emisor del Pago: Código interno del Cliente que paga la factura. El campo corresponde a un Punto Operacional EDI.
 	 */ 
 	public String getCodigoEmisorDelPago_QuienPaga_() {
 		return codigoEmisorDelPago_QuienPaga_;
 	}
+
+	/** 
+	 * F3039Q - Código Emisor del Pago: Código interno del Cliente que paga la factura. El campo corresponde a un Punto Operacional EDI.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3039Q</td> <td>Código Emisor del Pago (Quien Paga)</td> <td>C</td> <td>13</td> <td>144</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoEmisorDelPago_QuienPaga_(String codigoEmisorDelPago_QuienPaga_) {
 		this.codigoEmisorDelPago_QuienPaga_ = codigoEmisorDelPago_QuienPaga_;
 	}
 
 	/** 
-	 * F4183R - RazÃ³n del Cargo o del Abono: Solo se enviarÃ¡ si el tipo de Factura es 381(abonos) o 383 (notas de cargo). El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F4183R</th>
-	 * 		<td>RazÃ³n del Cargo o del Abono</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>157</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * F4183R - Razón del Cargo o del Abono: Solo se enviará si el tipo de Factura es 381(abonos) o 383 (notas de cargo). El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */ 
 	public String getRazonDelCargoODelAbono() {
 		return razonDelCargoODelAbono;
 	}
+
+	/** 
+	 * F4183R - Razón del Cargo o del Abono: Solo se enviará si el tipo de Factura es 381(abonos) o 383 (notas de cargo). El campo corresponde a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F4183R</td> <td>Razón del Cargo o del Abono</td> <td>C</td> <td>6</td> <td>157</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setRazonDelCargoODelAbono(String razonDelCargoODelAbono) {
 		this.razonDelCargoODelAbono = razonDelCargoODelAbono;
 	}
 
 	/** 
-	 * F1154P - NÃºmero de Pedido: SerÃ¡ obligatorio si el Tipo de Factura es 380 y no es una entrega directa en tienda.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1154P</th>
-	 * 		<td>NÃºmero de Pedido (ON)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>163</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * F1154P - Número de Pedido: Será obligatorio si el Tipo de Factura es 380 y no es una entrega directa en tienda.
 	 */ 
 	public String getNumeroDePedido_ON_() {
 		return numeroDePedido_ON_;
 	}
+
+	/** 
+	 * F1154P - Número de Pedido: Será obligatorio si el Tipo de Factura es 380 y no es una entrega directa en tienda.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F1154P</td> <td>Número de Pedido (ON)</td> <td>C</td> <td>17</td> <td>163</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDePedido_ON_(String numeroDePedido_ON_) {
 		this.numeroDePedido_ON_ = numeroDePedido_ON_;
 	}
 
 	/** 
-	 * F1154A - NÃºmero de AlbarÃ¡n: SerÃ¡ obligatorio si el Tipo de Factura es 380 y la factura es de mercancÃ­as. O si la factura es 381 o 383 y la razÃ³n es por devoluciÃ³n de mercancÃ­as.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1154A</th>
-	 * 		<td>NÃºmero de AlbarÃ¡n (DQ)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>180</th>
-	 * 		<td>D</th>
-	 * 	</tr>
-	 * </table>
+	 * F1154A - Número de Albarán: Será obligatorio si el Tipo de Factura es 380 y la factura es de mercancías. O si la factura es 381 o 383 y la razón es por devolución de mercancías.
 	 */ 
 	public String getNumeroDeAlbaran_DQ_() {
 		return numeroDeAlbaran_DQ_;
 	}
+
+	/** 
+	 * F1154A - Número de Albarán: Será obligatorio si el Tipo de Factura es 380 y la factura es de mercancías. O si la factura es 381 o 383 y la razón es por devolución de mercancías.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F1154A</td> <td>Número de Albarán (DQ)</td> <td>C</td> <td>17</td> <td>180</td> <td>D</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeAlbaran_DQ_(String numeroDeAlbaran_DQ_) {
 		this.numeroDeAlbaran_DQ_ = numeroDeAlbaran_DQ_;
 	}
 
 	/** 
-	 * F1153F - Calificador Documento Rectificado: SerÃ¡ obligatorio si el Tipo de Factura es 381 o 383. El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1153F</th>
-	 * 		<td>Calificador Documento Rectificado / Sustituido</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>197</th>
-	 * 		<td>D</th>
-	 * 	</tr>
-	 * </table>
+	 * F1153F - Calificador Documento Rectificado: Será obligatorio si el Tipo de Factura es 381 o 383. El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */ 
 	public String getCalificadorDocumentoRectificado_Sustituido() {
 		return calificadorDocumentoRectificado_Sustituido;
 	}
+
+	/** 
+	 * F1153F - Calificador Documento Rectificado: Será obligatorio si el Tipo de Factura es 381 o 383. El campo corresponde a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F1153F</td> <td>Calificador Documento Rectificado / Sustituido</td> <td>C</td> <td>3</td> <td>197</td> <td>D</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCalificadorDocumentoRectificado_Sustituido(String calificadorDocumentoRectificado_Sustituido) {
 		this.calificadorDocumentoRectificado_Sustituido = calificadorDocumentoRectificado_Sustituido;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1154F</th>
-	 * 		<td>NÃºmero Documento Rectificado / Sustituido</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>200</th>
-	 * 		<td>D</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroDocumentoRectificado_Sustituido() {
 		return numeroDocumentoRectificado_Sustituido;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F1154F</td> <td>Número Documento Rectificado / Sustituido</td> <td>C</td> <td>17</td> <td>200</td> <td>D</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDocumentoRectificado_Sustituido(String numeroDocumentoRectificado_Sustituido) {
 		this.numeroDocumentoRectificado_Sustituido = numeroDocumentoRectificado_Sustituido;
 	}
 
 	/** 
-	 * F1154C - NÃºmero de Contrato: SerÃ¡ obligatorio si el Tipo de Factura es 380 y la factura es de servicios.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1154C</th>
-	 * 		<td>NÃºmero de Contrato/Acuerdo (CT)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>217</th>
-	 * 		<td>D</th>
-	 * 	</tr>
-	 * </table>
+	 * F1154C - Número de Contrato: Será obligatorio si el Tipo de Factura es 380 y la factura es de servicios.
 	 */ 
 	public String getNumeroDeContrato_Acuerdo_CT_() {
 		return numeroDeContrato_Acuerdo_CT_;
 	}
+
+	/** 
+	 * F1154C - Número de Contrato: Será obligatorio si el Tipo de Factura es 380 y la factura es de servicios.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F1154C</td> <td>Número de Contrato/Acuerdo (CT)</td> <td>C</td> <td>17</td> <td>217</td> <td>D</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeContrato_Acuerdo_CT_(String numeroDeContrato_Acuerdo_CT_) {
 		this.numeroDeContrato_Acuerdo_CT_ = numeroDeContrato_Acuerdo_CT_;
 	}
 
 	/** 
-	 * F1154R - NÃºmero RelaciÃ³n de Entregas: SerÃ¡ obligatorio si el Tipo de Factura es 385 (Fact.Recapitulativa)
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1154R</th>
-	 * 		<td>NÃºmero de RelaciÃ³n de Entregas (REN)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>234</th>
-	 * 		<td>D</th>
-	 * 	</tr>
-	 * </table>
+	 * F1154R - Número Relación de Entregas: Será obligatorio si el Tipo de Factura es 385 (Fact.Recapitulativa)
 	 */ 
 	public String getNumeroDeRelacionDeEntregas_REN_() {
 		return numeroDeRelacionDeEntregas_REN_;
 	}
+
+	/** 
+	 * F1154R - Número Relación de Entregas: Será obligatorio si el Tipo de Factura es 385 (Fact.Recapitulativa)
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F1154R</td> <td>Número de Relación de Entregas (REN)</td> <td>C</td> <td>17</td> <td>234</td> <td>D</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeRelacionDeEntregas_REN_(String numeroDeRelacionDeEntregas_REN_) {
 		this.numeroDeRelacionDeEntregas_REN_ = numeroDeRelacionDeEntregas_REN_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3036R</th>
-	 * 		<td>RazÃ³n social Receptor de la Factura</th>
-	 * 		<td>C</th>
-	 * 		<td>70</th>
-	 * 		<td>251</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getRazonSocialReceptorDeLaFactura() {
 		return razonSocialReceptorDeLaFactura;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3036R</td> <td>Razón social Receptor de la Factura</td> <td>C</td> <td>70</td> <td>251</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setRazonSocialReceptorDeLaFactura(String razonSocialReceptorDeLaFactura) {
 		this.razonSocialReceptorDeLaFactura = razonSocialReceptorDeLaFactura;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3042D</th>
-	 * 		<td>Nombre/NÃºmero de la calle del Receptor de la Factura</th>
-	 * 		<td>C</th>
-	 * 		<td>70</th>
-	 * 		<td>321</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNombre_NumeroDeLaCalleDelReceptorDeLaFactura() {
 		return nombre_NumeroDeLaCalleDelReceptorDeLaFactura;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3042D</td> <td>Nombre/Número de la calle del Receptor de la Factura</td> <td>C</td> <td>70</td> <td>321</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNombre_NumeroDeLaCalleDelReceptorDeLaFactura(String nombre_NumeroDeLaCalleDelReceptorDeLaFactura) {
 		this.nombre_NumeroDeLaCalleDelReceptorDeLaFactura = nombre_NumeroDeLaCalleDelReceptorDeLaFactura;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3164P</th>
-	 * 		<td>PoblaciÃ³n del Receptor de la Factura</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>391</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getPoblacionDelReceptorDeLaFactura() {
 		return poblacionDelReceptorDeLaFactura;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3164P</td> <td>Población del Receptor de la Factura</td> <td>C</td> <td>35</td> <td>391</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setPoblacionDelReceptorDeLaFactura(String poblacionDelReceptorDeLaFactura) {
 		this.poblacionDelReceptorDeLaFactura = poblacionDelReceptorDeLaFactura;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3251P</th>
-	 * 		<td>CÃ³digo Postal del Receptor de la Factura</th>
-	 * 		<td>C</th>
-	 * 		<td>9</th>
-	 * 		<td>426</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoPostalDelReceptorDeLaFactura() {
 		return codigoPostalDelReceptorDeLaFactura;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3251P</td> <td>Código Postal del Receptor de la Factura</td> <td>C</td> <td>9</td> <td>426</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoPostalDelReceptorDeLaFactura(String codigoPostalDelReceptorDeLaFactura) {
 		this.codigoPostalDelReceptorDeLaFactura = codigoPostalDelReceptorDeLaFactura;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1154N</th>
-	 * 		<td>NIF del Receptor de la Factura</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>435</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
-	public String getNIFDelReceptorDeLaFactura() {
-		return nIFDelReceptorDeLaFactura;
-	}
-	public void setNIFDelReceptorDeLaFactura(String nIFDelReceptorDeLaFactura) {
-		this.nIFDelReceptorDeLaFactura = nIFDelReceptorDeLaFactura;
+	public String getNifDelReceptorDeLaFactura() {
+		return nifDelReceptorDeLaFactura;
 	}
 
 	/** 
@@ -1018,173 +812,160 @@ public class SINCC {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>F3042E</th>
-	 * 		<td>Nombre/NÃºmero de la calle del Emisor de la Factura</th>
-	 * 		<td>C</th>
-	 * 		<td>70</th>
-	 * 		<td>452</th>
-	 * 		<td>C</th>
+	 * 		 <td>F1154N</td> <td>NIF del Receptor de la Factura</td> <td>C</td> <td>17</td> <td>435</td> <td>M</td>
 	 * 	</tr>
 	 * </table>
+	 */ 
+	public void setNifDelReceptorDeLaFactura(String nifDelReceptorDeLaFactura) {
+		this.nifDelReceptorDeLaFactura = nifDelReceptorDeLaFactura;
+	}
+
+	/** 
+	 * 
 	 */ 
 	public String getNombre_NumeroDeLaCalleDelEmisorDeLaFactura() {
 		return nombre_NumeroDeLaCalleDelEmisorDeLaFactura;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3042E</td> <td>Nombre/Número de la calle del Emisor de la Factura</td> <td>C</td> <td>70</td> <td>452</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNombre_NumeroDeLaCalleDelEmisorDeLaFactura(String nombre_NumeroDeLaCalleDelEmisorDeLaFactura) {
 		this.nombre_NumeroDeLaCalleDelEmisorDeLaFactura = nombre_NumeroDeLaCalleDelEmisorDeLaFactura;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3164E</th>
-	 * 		<td>PoblaciÃ³n del Emisor de la Factura</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>522</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getPoblacionDelEmisorDeLaFactura() {
 		return poblacionDelEmisorDeLaFactura;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3164E</td> <td>Población del Emisor de la Factura</td> <td>C</td> <td>35</td> <td>522</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setPoblacionDelEmisorDeLaFactura(String poblacionDelEmisorDeLaFactura) {
 		this.poblacionDelEmisorDeLaFactura = poblacionDelEmisorDeLaFactura;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3251E</th>
-	 * 		<td>CÃ³digo Postal del Emisor de la Factura</th>
-	 * 		<td>C</th>
-	 * 		<td>9</th>
-	 * 		<td>557</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoPostalDelEmisorDeLaFactura() {
 		return codigoPostalDelEmisorDeLaFactura;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3251E</td> <td>Código Postal del Emisor de la Factura</td> <td>C</td> <td>9</td> <td>557</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoPostalDelEmisorDeLaFactura(String codigoPostalDelEmisorDeLaFactura) {
 		this.codigoPostalDelEmisorDeLaFactura = codigoPostalDelEmisorDeLaFactura;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F6345M</th>
-	 * 		<td>CÃ³digo de Moneda</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>566</th>
-	 * 		<td>N</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoDeMoneda() {
 		return codigoDeMoneda;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F6345M</td> <td>Código de Moneda</td> <td>C</td> <td>6</td> <td>566</td> <td>N</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoDeMoneda(String codigoDeMoneda) {
 		this.codigoDeMoneda = codigoDeMoneda;
 	}
 
 	/** 
-	 * F2380V - Fecha vencimiento: Se indicarÃ¡ si la factura es de Pago Ãºnico, en caso contrario se dejarÃ¡ a cero y los vencimientos se indicarÃ¡n en el registro SINCV. Debe montarse en formato AAAAMMDD
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F2380V</th>
-	 * 		<td>Fecha vencimiento Ãºnico</th>
-	 * 		<td>N</th>
-	 * 		<td>8</th>
-	 * 		<td>572</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * F2380V - Fecha vencimiento: Se indicará si la factura es de Pago único, en caso contrario se dejará a cero y los vencimientos se indicarán en el registro SINCV. Debe montarse en formato AAAAMMDD
 	 */ 
 	public Integer getFechaVencimientoUnico() {
 		return fechaVencimientoUnico;
 	}
+
+	/** 
+	 * F2380V - Fecha vencimiento: Se indicará si la factura es de Pago único, en caso contrario se dejará a cero y los vencimientos se indicarán en el registro SINCV. Debe montarse en formato AAAAMMDD
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F2380V</td> <td>Fecha vencimiento único</td> <td>N</td> <td>8</td> <td>572</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFechaVencimientoUnico(Integer fechaVencimientoUnico) {
 		this.fechaVencimientoUnico = fechaVencimientoUnico;
 	}
 
 	/** 
-	 * F5004N - Importe Neto Total Factura: Corresponde al sumatorio de los importes netos por lÃ­nea
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F5004N</th>
-	 * 		<td>Importe Neto Total Factura (79)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>580</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * F5004N - Importe Neto Total Factura: Corresponde al sumatorio de los importes netos por línea
 	 */ 
 	public Double getImporteNetoTotalFactura_79_() {
 		return importeNetoTotalFactura_79_;
 	}
+
+	/** 
+	 * F5004N - Importe Neto Total Factura: Corresponde al sumatorio de los importes netos por línea
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F5004N</td> <td>Importe Neto Total Factura (79)</td> <td>N(14,3)</td> <td>18</td> <td>580</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setImporteNetoTotalFactura_79_(Double importeNetoTotalFactura_79_) {
 		this.importeNetoTotalFactura_79_ = importeNetoTotalFactura_79_;
+	}
+
+	/** 
+	 * F5004B - Base Imponible: Importe Neto Total  de Factura (F500N) + Total cargos y descuentos Gobales (F5004D)
+	 */ 
+	public Double getBaseImponible_125_() {
+		return baseImponible_125_;
 	}
 
 	/** 
@@ -1192,86 +973,68 @@ public class SINCC {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>F5004B</th>
-	 * 		<td>Base Imponible (125)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>598</th>
-	 * 		<td>M</th>
+	 * 		 <td>F5004B</td> <td>Base Imponible (125)</td> <td>N(14,3)</td> <td>18</td> <td>598</td> <td>M</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public Double getBaseImponible_125_() {
-		return baseImponible_125_;
-	}
 	public void setBaseImponible_125_(Double baseImponible_125_) {
 		this.baseImponible_125_ = baseImponible_125_;
 	}
 
 	/** 
-	 * F5004D - Importe Bruto: Sumatorio de los importes Brutos de las lineas (cantidad facturada x precio unitario Bruto). No se tienen en cuenta Cargos ni Descuentos tanto a nivel de lÃ­neas como globales.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F5004D</th>
-	 * 		<td>Importe Bruto Total Factura (98)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>616</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * F5004D - Importe Bruto: Sumatorio de los importes Brutos de las lineas (cantidad facturada x precio unitario Bruto). No se tienen en cuenta Cargos ni Descuentos tanto a nivel de líneas como globales.
 	 */ 
 	public Double getImporteBrutoTotalFactura_98_() {
 		return importeBrutoTotalFactura_98_;
 	}
+
+	/** 
+	 * F5004D - Importe Bruto: Sumatorio de los importes Brutos de las lineas (cantidad facturada x precio unitario Bruto). No se tienen en cuenta Cargos ni Descuentos tanto a nivel de líneas como globales.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F5004D</td> <td>Importe Bruto Total Factura (98)</td> <td>N(14,3)</td> <td>18</td> <td>616</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setImporteBrutoTotalFactura_98_(Double importeBrutoTotalFactura_98_) {
 		this.importeBrutoTotalFactura_98_ = importeBrutoTotalFactura_98_;
 	}
 
 	/** 
-	 * F5004I - Importe Total de Impuestos: Sumatorio de los importes  de impuestos por lÃ­nea.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F5004I</th>
-	 * 		<td>Importe Total de Impuestos (176)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>634</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * F5004I - Importe Total de Impuestos: Sumatorio de los importes  de impuestos por línea.
 	 */ 
 	public Double getImporteTotalDeImpuestos_176_() {
 		return importeTotalDeImpuestos_176_;
 	}
+
+	/** 
+	 * F5004I - Importe Total de Impuestos: Sumatorio de los importes  de impuestos por línea.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F5004I</td> <td>Importe Total de Impuestos (176)</td> <td>N(14,3)</td> <td>18</td> <td>634</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setImporteTotalDeImpuestos_176_(Double importeTotalDeImpuestos_176_) {
 		this.importeTotalDeImpuestos_176_ = importeTotalDeImpuestos_176_;
+	}
+
+	/** 
+	 * F5004P - Importe Total a Pagar: Base Imponible + Importe Total de Impuestos
+	 */ 
+	public Double getImporteTotalAPagar_139_() {
+		return importeTotalAPagar_139_;
 	}
 
 	/** 
@@ -1279,206 +1042,157 @@ public class SINCC {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>F5004P</th>
-	 * 		<td>Importe Total a Pagar (139)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>652</th>
-	 * 		<td>M</th>
+	 * 		 <td>F5004P</td> <td>Importe Total a Pagar (139)</td> <td>N(14,3)</td> <td>18</td> <td>652</td> <td>M</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public Double getImporteTotalAPagar_139_() {
-		return importeTotalAPagar_139_;
-	}
 	public void setImporteTotalAPagar_139_(Double importeTotalAPagar_139_) {
 		this.importeTotalAPagar_139_ = importeTotalAPagar_139_;
 	}
 
 	/** 
-	 * F5004S - Subvenciones vinculadas al precio: Las subvenciones vinculadas al precio deben formar parte de la base imponible para calcular el IVA aunque no estÃ©n reflejadas en el importe total a pagar.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F5004S</th>
-	 * 		<td>Subvenciones vinculadas al Precio  (80A)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>670</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * F5004S - Subvenciones vinculadas al precio: Las subvenciones vinculadas al precio deben formar parte de la base imponible para calcular el IVA aunque no estén reflejadas en el importe total a pagar.
 	 */ 
 	public Double getSubvencionesVinculadasAlPrecio_80A_() {
 		return subvencionesVinculadasAlPrecio_80A_;
 	}
+
+	/** 
+	 * F5004S - Subvenciones vinculadas al precio: Las subvenciones vinculadas al precio deben formar parte de la base imponible para calcular el IVA aunque no estén reflejadas en el importe total a pagar.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F5004S</td> <td>Subvenciones vinculadas al Precio  (80A)</td> <td>N(14,3)</td> <td>18</td> <td>670</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setSubvencionesVinculadasAlPrecio_80A_(Double subvencionesVinculadasAlPrecio_80A_) {
 		this.subvencionesVinculadasAlPrecio_80A_ = subvencionesVinculadasAlPrecio_80A_;
 	}
 
 	/** 
-	 * F5004E - Total Incrementos Importe Bruto: Sumatorio de los cargos globales de factura excluyendo los de lÃ­neas (no especificar signo).
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F5004E</th>
-	 * 		<td>Total Incrementos del Importe Bruto (259)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>688</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * F5004E - Total Incrementos Importe Bruto: Sumatorio de los cargos globales de factura excluyendo los de líneas (no especificar signo).
 	 */ 
 	public Double getTotalIncrementosDelImporteBruto_259_() {
 		return totalIncrementosDelImporteBruto_259_;
 	}
+
+	/** 
+	 * F5004E - Total Incrementos Importe Bruto: Sumatorio de los cargos globales de factura excluyendo los de líneas (no especificar signo).
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F5004E</td> <td>Total Incrementos del Importe Bruto (259)</td> <td>N(14,3)</td> <td>18</td> <td>688</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setTotalIncrementosDelImporteBruto_259_(Double totalIncrementosDelImporteBruto_259_) {
 		this.totalIncrementosDelImporteBruto_259_ = totalIncrementosDelImporteBruto_259_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F5004M</th>
-	 * 		<td>Total Minoraciones del Importe Bruto (260)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>706</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getTotalMinoracionesDelImporteBruto_260_() {
 		return totalMinoracionesDelImporteBruto_260_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F5004M</td> <td>Total Minoraciones del Importe Bruto (260)</td> <td>N(14,3)</td> <td>18</td> <td>706</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setTotalMinoracionesDelImporteBruto_260_(Double totalMinoracionesDelImporteBruto_260_) {
 		this.totalMinoracionesDelImporteBruto_260_ = totalMinoracionesDelImporteBruto_260_;
 	}
 
 	/** 
-	 * F1154I - IdentificaciÃ³n adicional de la parte: Se utiliza para especificar el departamento que realizÃ³ el pedido. Se informa como una referencia asociada al Punto Operacional del Comprador (lo encontraremos como segmento RFF con calificador API asociado al NAD con calificador BY).
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1154I</th>
-	 * 		<td>IdentificaciÃ³n Adicional de la Parte (API)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>724</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * F1154I - Identificación adicional de la parte: Se utiliza para especificar el departamento que realizó el pedido. Se informa como una referencia asociada al Punto Operacional del Comprador (lo encontraremos como segmento RFF con calificador API asociado al NAD con calificador BY).
 	 */ 
 	public String getIdentificacionAdicionalDeLaParte_API_() {
 		return identificacionAdicionalDeLaParte_API_;
 	}
+
+	/** 
+	 * F1154I - Identificación adicional de la parte: Se utiliza para especificar el departamento que realizó el pedido. Se informa como una referencia asociada al Punto Operacional del Comprador (lo encontraremos como segmento RFF con calificador API asociado al NAD con calificador BY).
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F1154I</td> <td>Identificación Adicional de la Parte (API)</td> <td>C</td> <td>17</td> <td>724</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setIdentificacionAdicionalDeLaParte_API_(String identificacionAdicionalDeLaParte_API_) {
 		this.identificacionAdicionalDeLaParte_API_ = identificacionAdicionalDeLaParte_API_;
 	}
 
 	/** 
-	 * F3039M - Receptor del documento: CÃ³digo EDI  del Cliente al que se recibe la  factura
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3039M</th>
-	 * 		<td>Receptor del documento</th>
-	 * 		<td>C</th>
-	 * 		<td>13</th>
-	 * 		<td>741</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * F3039M - Receptor del documento: Código EDI  del Cliente al que se recibe la  factura
 	 */ 
 	public String getReceptorDelDocumento() {
 		return receptorDelDocumento;
 	}
+
+	/** 
+	 * F3039M - Receptor del documento: Código EDI  del Cliente al que se recibe la  factura
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3039M</td> <td>Receptor del documento</td> <td>C</td> <td>13</td> <td>741</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setReceptorDelDocumento(String receptorDelDocumento) {
 		this.receptorDelDocumento = receptorDelDocumento;
 	}
 
 	/** 
-	 * F1154S - IdentificaciÃ³n Adicional Proveedor(API)(NAD+SU):
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1154S</th>
-	 * 		<td>IdentificaciÃ³n Adicional Proveedor(API)(NAD+SU)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>754</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * F1154S - Identificación Adicional Proveedor(API)(NAD+SU):
 	 */ 
 	public String getIdentificacionAdicionalProveedor_API__NAD_SU_() {
 		return identificacionAdicionalProveedor_API__NAD_SU_;
 	}
+
+	/** 
+	 * F1154S - Identificación Adicional Proveedor(API)(NAD+SU):
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F1154S</td> <td>Identificación Adicional Proveedor(API)(NAD+SU)</td> <td>C</td> <td>17</td> <td>754</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setIdentificacionAdicionalProveedor_API__NAD_SU_(String identificacionAdicionalProveedor_API__NAD_SU_) {
 		this.identificacionAdicionalProveedor_API__NAD_SU_ = identificacionAdicionalProveedor_API__NAD_SU_;
 	}
 
 	/** 
-	 * F1001T - Tipo Factura: Existe un cÃ³digo para identificar cada tipo de factura que queramos enviar. Las mÃ¡s habituales son las Facturas Comerciales(tipo 380) y los Abonos (tipo 381). El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
+	 * F1001T - Tipo Factura: Existe un código para identificar cada tipo de factura que queramos enviar. Las más habituales son las Facturas Comerciales(tipo 380) y los Abonos (tipo 381). El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */
 	public enum F1001T {
 		FACTURA_PRO_FORM_325("325"),
@@ -1507,7 +1221,7 @@ public class SINCC {
 
 	}
 	/** 
-	 * F1225 - FunciÃ³n del Mensaje: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
+	 * F1225 - Función del Mensaje: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */
 	public enum F1225 {
 		DUPLICAD_7("7"),
@@ -1535,7 +1249,7 @@ public class SINCC {
 
 	}
 	/** 
-	 * F4183R - RazÃ³n del Cargo o del Abono: Solo se enviarÃ¡ si el tipo de Factura es 381(abonos) o 383 (notas de cargo). El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
+	 * F4183R - Razón del Cargo o del Abono: Solo se enviará si el tipo de Factura es 381(abonos) o 383 (notas de cargo). El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */
 	public enum F4183R {
 		DEVOLUCION_DE_MERCANCI_1A("1A"),
@@ -1561,7 +1275,7 @@ public class SINCC {
 
 	}
 	/** 
-	 * F1153F - Calificador Documento Rectificado: SerÃ¡ obligatorio si el Tipo de Factura es 381 o 383. El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
+	 * F1153F - Calificador Documento Rectificado: Será obligatorio si el Tipo de Factura es 381 o 383. El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */
 	public enum F1153F {
 		NUMERO_DE_FACTUR_IV("IV"),

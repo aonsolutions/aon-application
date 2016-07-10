@@ -15,23 +15,16 @@ import org.apache.commons.lang.StringUtils;
  * 
  * <table border="1" cellpadding="1" cellspacing="0">
  * 	<tr bgcolor="#CCCCFF"> 
- * 		<th>Tipo de registro</th>
- * 		<th>Descripcion</th>
- * 		<th>Tipo</th>
- * 		<th>Repeticiones</th>
+ * 		 <th>Tipo de registro</th> <th>Descripcion</th> <th>Tipo</th> <th>Repeticiones</th>
  * 	</tr>
  * 	<tr>
- * 		<td>SEH1P</th>
- * 		<td>Embalajes</th>
- * 		<td>Opcional</th>
- * 		<td>N</th>
+ * 		 <td>SEH1P</td> <td>Embalajes</td> <td>Opcional</td> <td>N</td>
  * 	</tr>
  * </table>
  */ 
 
 public class SEH1P {
 
-	private String embalajes;
 	private String tipoAvisoDeExpedicion_351_35E_;
 	private String numeroAvisoDeExpedicion;
 	private String codigoEmisor_MS_;
@@ -80,7 +73,6 @@ public class SEH1P {
 	private String numero3DeSeriadoORangoSuperiorDelEmbalaje;
 
 
-	private static Pattern PATTERN_SEH1P_embalajes = Pattern.compile("^(.{6}).*");
 	private static Pattern PATTERN_SEH1P_tipoAvisoDeExpedicion_351_35E_ = Pattern.compile("^.{6}(.{6}).*");
 	private static Pattern PATTERN_SEH1P_numeroAvisoDeExpedicion = Pattern.compile("^.{12}(.{17}).*");
 	private static Pattern PATTERN_SEH1P_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
@@ -130,9 +122,6 @@ public class SEH1P {
 
 	public void parse(String value) {
 		Matcher m;
-		if((m = PATTERN_SEH1P_embalajes.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
-			setEmbalajes(String.valueOf(m.group(1).trim()));
-		}
 		if((m = PATTERN_SEH1P_tipoAvisoDeExpedicion_351_35E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
 			setTipoAvisoDeExpedicion_351_35E_(String.valueOf(m.group(1).trim()));
 		}
@@ -276,31 +265,9 @@ public class SEH1P {
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>SEH1P</th>
-	 * 		<td>Embalajes</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>1</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
-	public String getEmbalajes() {
-		return embalajes;
-	}
-	public void setEmbalajes(String embalajes) {
-		this.embalajes = embalajes;
+	public String getTipoAvisoDeExpedicion_351_35E_() {
+		return tipoAvisoDeExpedicion_351_35E_;
 	}
 
 	/** 
@@ -308,463 +275,367 @@ public class SEH1P {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V1001T</th>
-	 * 		<td>Tipo Aviso de ExpediciÃ³n (351/35E)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>7</th>
-	 * 		<td>M</th>
+	 * 		 <td>V1001T</td> <td>Tipo Aviso de Expedición (351/35E)</td> <td>C</td> <td>6</td> <td>7</td> <td>M</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getTipoAvisoDeExpedicion_351_35E_() {
-		return tipoAvisoDeExpedicion_351_35E_;
-	}
 	public void setTipoAvisoDeExpedicion_351_35E_(String tipoAvisoDeExpedicion_351_35E_) {
 		this.tipoAvisoDeExpedicion_351_35E_ = tipoAvisoDeExpedicion_351_35E_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1004P</th>
-	 * 		<td>NÃºmero Aviso de ExpediciÃ³n</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>13</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroAvisoDeExpedicion() {
 		return numeroAvisoDeExpedicion;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1004P</td> <td>Número Aviso de Expedición</td> <td>C</td> <td>17</td> <td>13</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroAvisoDeExpedicion(String numeroAvisoDeExpedicion) {
 		this.numeroAvisoDeExpedicion = numeroAvisoDeExpedicion;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3039E</th>
-	 * 		<td>CÃ³digo Emisor  (MS)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>30</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoEmisor_MS_() {
 		return codigoEmisor_MS_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3039E</td> <td>Código Emisor  (MS)</td> <td>C</td> <td>17</td> <td>30</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoEmisor_MS_(String codigoEmisor_MS_) {
 		this.codigoEmisor_MS_ = codigoEmisor_MS_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3039R</th>
-	 * 		<td>CÃ³digo Receptor (MR)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>47</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoReceptor_MR_() {
 		return codigoReceptor_MR_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3039R</td> <td>Código Receptor (MR)</td> <td>C</td> <td>17</td> <td>47</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoReceptor_MR_(String codigoReceptor_MR_) {
 		this.codigoReceptor_MR_ = codigoReceptor_MR_;
 	}
 
 	/** 
-	 * V7164J-NÃºmero de JerarquÃ­a de Embalaje: Se recomienda una numeraciÃ³n Secuencial.  Tanto los embalajes como los artÃ­culos que componen la expediciÃ³n suelen emitirse bajo un mismo NÂº de JerarquÃ­a (valor 1). Se utiliza para identificar la secuencia en la que el embalaje fÃ­sico estÃ¡ dispuesto.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V7164J</th>
-	 * 		<td>NÃºmero de JerarquÃ­a de Embalaje</th>
-	 * 		<td>N</th>
-	 * 		<td>12</th>
-	 * 		<td>64</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * V7164J-Número de Jerarquía de Embalaje: Se recomienda una numeración Secuencial.  Tanto los embalajes como los artículos que componen la expedición suelen emitirse bajo un mismo Nº de Jerarquía (valor 1). Se utiliza para identificar la secuencia en la que el embalaje físico está dispuesto.
 	 */ 
 	public Integer getNumeroDeJerarquiaDeEmbalaje() {
 		return numeroDeJerarquiaDeEmbalaje;
 	}
+
+	/** 
+	 * V7164J-Número de Jerarquía de Embalaje: Se recomienda una numeración Secuencial.  Tanto los embalajes como los artículos que componen la expedición suelen emitirse bajo un mismo Nº de Jerarquía (valor 1). Se utiliza para identificar la secuencia en la que el embalaje físico está dispuesto.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V7164J</td> <td>Número de Jerarquía de Embalaje</td> <td>N</td> <td>12</td> <td>64</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeJerarquiaDeEmbalaje(Integer numeroDeJerarquiaDeEmbalaje) {
 		this.numeroDeJerarquiaDeEmbalaje = numeroDeJerarquiaDeEmbalaje;
 	}
 
 	/** 
-	 * V7166J-NÃºmero de Sub-jerarquÃ­a de Embalaje: Campo Opcional que indica el nivel jerÃ¡rquico del que depende el nivel de empaquetamiento actual.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V7166J</th>
-	 * 		<td>NÃºmero de Sub-jerarquia de Embalaje</th>
-	 * 		<td>C</th>
-	 * 		<td>12</th>
-	 * 		<td>76</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V7166J-Número de Sub-jerarquía de Embalaje: Campo Opcional que indica el nivel jerárquico del que depende el nivel de empaquetamiento actual.
 	 */ 
 	public String getNumeroDeSub_jerarquiaDeEmbalaje() {
 		return numeroDeSub_jerarquiaDeEmbalaje;
 	}
+
+	/** 
+	 * V7166J-Número de Sub-jerarquía de Embalaje: Campo Opcional que indica el nivel jerárquico del que depende el nivel de empaquetamiento actual.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V7166J</td> <td>Número de Sub-jerarquia de Embalaje</td> <td>C</td> <td>12</td> <td>76</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeSub_jerarquiaDeEmbalaje(String numeroDeSub_jerarquiaDeEmbalaje) {
 		this.numeroDeSub_jerarquiaDeEmbalaje = numeroDeSub_jerarquiaDeEmbalaje;
 	}
 
 	/** 
-	 * V1082E-Contador de Embalaje: Contador que permite diferenciar los distintos tipos de embalajes en la expediciÃ³n.
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1082E</th>
-	 * 		<td>Contador de Embalaje</th>
-	 * 		<td>N</th>
-	 * 		<td>6</th>
-	 * 		<td>88</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * V1082E-Contador de Embalaje: Contador que permite diferenciar los distintos tipos de embalajes en la expedición.
 	 */ 
 	public Integer getContadorDeEmbalaje() {
 		return contadorDeEmbalaje;
 	}
+
+	/** 
+	 * V1082E-Contador de Embalaje: Contador que permite diferenciar los distintos tipos de embalajes en la expedición.
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1082E</td> <td>Contador de Embalaje</td> <td>N</td> <td>6</td> <td>88</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setContadorDeEmbalaje(Integer contadorDeEmbalaje) {
 		this.contadorDeEmbalaje = contadorDeEmbalaje;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V7224B</th>
-	 * 		<td>NÃºmero de Bultos o Embalajes</th>
-	 * 		<td>N</th>
-	 * 		<td>8</th>
-	 * 		<td>94</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Integer getNumeroDeBultosOEmbalajes() {
 		return numeroDeBultosOEmbalajes;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V7224B</td> <td>Número de Bultos o Embalajes</td> <td>N</td> <td>8</td> <td>94</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeBultosOEmbalajes(Integer numeroDeBultosOEmbalajes) {
 		this.numeroDeBultosOEmbalajes = numeroDeBultosOEmbalajes;
 	}
 
 	/** 
-	 * V7233C-Calificador CodificaciÃ³n del Embalaje: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V7233C</th>
-	 * 		<td>Calificador CodificaciÃ³n del Embalaje</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>102</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V7233C-Calificador Codificación del Embalaje: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */ 
 	public String getCalificadorCodificacionDelEmbalaje() {
 		return calificadorCodificacionDelEmbalaje;
 	}
+
+	/** 
+	 * V7233C-Calificador Codificación del Embalaje: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V7233C</td> <td>Calificador Codificación del Embalaje</td> <td>C</td> <td>6</td> <td>102</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCalificadorCodificacionDelEmbalaje(String calificadorCodificacionDelEmbalaje) {
 		this.calificadorCodificacionDelEmbalaje = calificadorCodificacionDelEmbalaje;
 	}
 
 	/** 
-	 * V7073T-Acuerdos y Condiciones de Embalajes: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V7073T</th>
-	 * 		<td>Acuerdos y Condiciones de Embalajes</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>108</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V7073T-Acuerdos y Condiciones de Embalajes: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */ 
 	public String getAcuerdosYCondicionesDeEmbalajes() {
 		return acuerdosYCondicionesDeEmbalajes;
 	}
+
+	/** 
+	 * V7073T-Acuerdos y Condiciones de Embalajes: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V7073T</td> <td>Acuerdos y Condiciones de Embalajes</td> <td>C</td> <td>6</td> <td>108</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setAcuerdosYCondicionesDeEmbalajes(String acuerdosYCondicionesDeEmbalajes) {
 		this.acuerdosYCondicionesDeEmbalajes = acuerdosYCondicionesDeEmbalajes;
 	}
 
 	/** 
-	 * V7065T-Tipo de Embalaje codificado: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V7065T</th>
-	 * 		<td>Tipo de Embalaje codificado</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>114</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V7065T-Tipo de Embalaje codificado: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */ 
 	public String getTipoDeEmbalajeCodificado() {
 		return tipoDeEmbalajeCodificado;
 	}
+
+	/** 
+	 * V7065T-Tipo de Embalaje codificado: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V7065T</td> <td>Tipo de Embalaje codificado</td> <td>C</td> <td>6</td> <td>114</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setTipoDeEmbalajeCodificado(String tipoDeEmbalajeCodificado) {
 		this.tipoDeEmbalajeCodificado = tipoDeEmbalajeCodificado;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V7064D</th>
-	 * 		<td>Tipo de Embalaje DescripciÃ³n</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>120</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getTipoDeEmbalajeDescripcion() {
 		return tipoDeEmbalajeDescripcion;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V7064D</td> <td>Tipo de Embalaje Descripción</td> <td>C</td> <td>35</td> <td>120</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setTipoDeEmbalajeDescripcion(String tipoDeEmbalajeDescripcion) {
 		this.tipoDeEmbalajeDescripcion = tipoDeEmbalajeDescripcion;
 	}
 
 	/** 
-	 * V8395P - Responsabilidad de pago del Transporte de embalajes Retornables: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V8395P</th>
-	 * 		<td>Resp. Pago Transporte de Embalaje Retornable</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>155</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V8395P - Responsabilidad de pago del Transporte de embalajes Retornables: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */ 
 	public String getResp_PagoTransporteDeEmbalajeRetornable() {
 		return resp_PagoTransporteDeEmbalajeRetornable;
 	}
+
+	/** 
+	 * V8395P - Responsabilidad de pago del Transporte de embalajes Retornables: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V8395P</td> <td>Resp. Pago Transporte de Embalaje Retornable</td> <td>C</td> <td>6</td> <td>155</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setResp_PagoTransporteDeEmbalajeRetornable(String resp_PagoTransporteDeEmbalajeRetornable) {
 		this.resp_PagoTransporteDeEmbalajeRetornable = resp_PagoTransporteDeEmbalajeRetornable;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3131N</th>
-	 * 		<td>Peso Total Neto 1 (AAC)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>161</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getPesoTotalNeto1_AAC_() {
 		return pesoTotalNeto1_AAC_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3131N</td> <td>Peso Total Neto 1 (AAC)</td> <td>N(14,3)</td> <td>18</td> <td>161</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setPesoTotalNeto1_AAC_(Double pesoTotalNeto1_AAC_) {
 		this.pesoTotalNeto1_AAC_ = pesoTotalNeto1_AAC_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3132N</th>
-	 * 		<td>Peso Total Neto 2</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>179</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getPesoTotalNeto2() {
 		return pesoTotalNeto2;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3132N</td> <td>Peso Total Neto 2</td> <td>N(14,3)</td> <td>18</td> <td>179</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setPesoTotalNeto2(Double pesoTotalNeto2) {
 		this.pesoTotalNeto2 = pesoTotalNeto2;
 	}
 
 	/** 
-	 * V6321N - CÃ³digo de SignificaciÃ³n del peso Total Neto
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V6321N</th>
-	 * 		<td>CÃ³d. SignificaciÃ³n de la medida Peso Total Neto</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>197</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V6321N - Código de Significación del peso Total Neto
 	 */ 
 	public String getCod_SignificacionDeLaMedidaPesoTotalNeto() {
 		return cod_SignificacionDeLaMedidaPesoTotalNeto;
 	}
+
+	/** 
+	 * V6321N - Código de Significación del peso Total Neto
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V6321N</td> <td>Cód. Significación de la medida Peso Total Neto</td> <td>C</td> <td>6</td> <td>197</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCod_SignificacionDeLaMedidaPesoTotalNeto(String cod_SignificacionDeLaMedidaPesoTotalNeto) {
 		this.cod_SignificacionDeLaMedidaPesoTotalNeto = cod_SignificacionDeLaMedidaPesoTotalNeto;
+	}
+
+	/** 
+	 * V6411N - Unidad de medida del Peso Total Neto
+	 */ 
+	public String getCodigoUnidadDeMedidaPesoTotalNeto() {
+		return codigoUnidadDeMedidaPesoTotalNeto;
 	}
 
 	/** 
@@ -772,115 +643,91 @@ public class SEH1P {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V6411N</th>
-	 * 		<td>CÃ³digo Unidad de medida Peso Total Neto</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>203</th>
-	 * 		<td>C</th>
+	 * 		 <td>V6411N</td> <td>Código Unidad de medida Peso Total Neto</td> <td>C</td> <td>6</td> <td>203</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCodigoUnidadDeMedidaPesoTotalNeto() {
-		return codigoUnidadDeMedidaPesoTotalNeto;
-	}
 	public void setCodigoUnidadDeMedidaPesoTotalNeto(String codigoUnidadDeMedidaPesoTotalNeto) {
 		this.codigoUnidadDeMedidaPesoTotalNeto = codigoUnidadDeMedidaPesoTotalNeto;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3131B</th>
-	 * 		<td>Peso Total Bruto 1 (AAD)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>209</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getPesoTotalBruto1_AAD_() {
 		return pesoTotalBruto1_AAD_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3131B</td> <td>Peso Total Bruto 1 (AAD)</td> <td>N(14,3)</td> <td>18</td> <td>209</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setPesoTotalBruto1_AAD_(Double pesoTotalBruto1_AAD_) {
 		this.pesoTotalBruto1_AAD_ = pesoTotalBruto1_AAD_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3132B</th>
-	 * 		<td>Peso Total Bruto 2</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>227</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getPesoTotalBruto2() {
 		return pesoTotalBruto2;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3132B</td> <td>Peso Total Bruto 2</td> <td>N(14,3)</td> <td>18</td> <td>227</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setPesoTotalBruto2(Double pesoTotalBruto2) {
 		this.pesoTotalBruto2 = pesoTotalBruto2;
 	}
 
 	/** 
-	 * V6321B - CÃ³digo de SignificaciÃ³n del peso Total Bruto
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V6321B</th>
-	 * 		<td>CÃ³d. SignificaciÃ³n de la medida Peso Total Bruto</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>245</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V6321B - Código de Significación del peso Total Bruto
 	 */ 
 	public String getCod_SignificacionDeLaMedidaPesoTotalBruto() {
 		return cod_SignificacionDeLaMedidaPesoTotalBruto;
 	}
+
+	/** 
+	 * V6321B - Código de Significación del peso Total Bruto
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V6321B</td> <td>Cód. Significación de la medida Peso Total Bruto</td> <td>C</td> <td>6</td> <td>245</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCod_SignificacionDeLaMedidaPesoTotalBruto(String cod_SignificacionDeLaMedidaPesoTotalBruto) {
 		this.cod_SignificacionDeLaMedidaPesoTotalBruto = cod_SignificacionDeLaMedidaPesoTotalBruto;
+	}
+
+	/** 
+	 * V6411B - Unidad de medida del Peso Total Bruto
+	 */ 
+	public String getCodigoUnidadDeMedidaPesoTotalBruto() {
+		return codigoUnidadDeMedidaPesoTotalBruto;
 	}
 
 	/** 
@@ -888,115 +735,91 @@ public class SEH1P {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V6411B</th>
-	 * 		<td>CÃ³digo Unidad de medida Peso Total Bruto</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>251</th>
-	 * 		<td>C</th>
+	 * 		 <td>V6411B</td> <td>Código Unidad de medida Peso Total Bruto</td> <td>C</td> <td>6</td> <td>251</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCodigoUnidadDeMedidaPesoTotalBruto() {
-		return codigoUnidadDeMedidaPesoTotalBruto;
-	}
 	public void setCodigoUnidadDeMedidaPesoTotalBruto(String codigoUnidadDeMedidaPesoTotalBruto) {
 		this.codigoUnidadDeMedidaPesoTotalBruto = codigoUnidadDeMedidaPesoTotalBruto;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3131A</th>
-	 * 		<td>Altura 1 (HT)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>257</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getAltura1_HT_() {
 		return altura1_HT_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3131A</td> <td>Altura 1 (HT)</td> <td>N(14,3)</td> <td>18</td> <td>257</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setAltura1_HT_(Double altura1_HT_) {
 		this.altura1_HT_ = altura1_HT_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3132A</th>
-	 * 		<td>Altura 2</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>275</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getAltura2() {
 		return altura2;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3132A</td> <td>Altura 2</td> <td>N(14,3)</td> <td>18</td> <td>275</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setAltura2(Double altura2) {
 		this.altura2 = altura2;
 	}
 
 	/** 
-	 * V6321A - CÃ³digo de SignificaciÃ³n de la Altura
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V6321A</th>
-	 * 		<td>CÃ³digo SignificaciÃ³n de la medida Altura (3 , 4)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>293</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V6321A - Código de Significación de la Altura
 	 */ 
 	public String getCodigoSignificacionDeLaMedidaAltura_3_4_() {
 		return codigoSignificacionDeLaMedidaAltura_3_4_;
 	}
+
+	/** 
+	 * V6321A - Código de Significación de la Altura
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V6321A</td> <td>Código Significación de la medida Altura (3 , 4)</td> <td>C</td> <td>6</td> <td>293</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoSignificacionDeLaMedidaAltura_3_4_(String codigoSignificacionDeLaMedidaAltura_3_4_) {
 		this.codigoSignificacionDeLaMedidaAltura_3_4_ = codigoSignificacionDeLaMedidaAltura_3_4_;
+	}
+
+	/** 
+	 * V6411A - Unidad de medida de la Altura
+	 */ 
+	public String getCodigoUnidadDeMedidaAltura() {
+		return codigoUnidadDeMedidaAltura;
 	}
 
 	/** 
@@ -1004,115 +827,91 @@ public class SEH1P {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V6411A</th>
-	 * 		<td>CÃ³digo Unidad de medida Altura</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>299</th>
-	 * 		<td>C</th>
+	 * 		 <td>V6411A</td> <td>Código Unidad de medida Altura</td> <td>C</td> <td>6</td> <td>299</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCodigoUnidadDeMedidaAltura() {
-		return codigoUnidadDeMedidaAltura;
-	}
 	public void setCodigoUnidadDeMedidaAltura(String codigoUnidadDeMedidaAltura) {
 		this.codigoUnidadDeMedidaAltura = codigoUnidadDeMedidaAltura;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3131W</th>
-	 * 		<td>Ancho 1 (WD)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>305</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getAncho1_WD_() {
 		return ancho1_WD_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3131W</td> <td>Ancho 1 (WD)</td> <td>N(14,3)</td> <td>18</td> <td>305</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setAncho1_WD_(Double ancho1_WD_) {
 		this.ancho1_WD_ = ancho1_WD_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3132W</th>
-	 * 		<td>Ancho 2</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>323</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getAncho2() {
 		return ancho2;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3132W</td> <td>Ancho 2</td> <td>N(14,3)</td> <td>18</td> <td>323</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setAncho2(Double ancho2) {
 		this.ancho2 = ancho2;
 	}
 
 	/** 
-	 * V6321W- CÃ³digo de SignificaciÃ³n del  Ancho
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V6321W</th>
-	 * 		<td>CÃ³digo SignificaciÃ³n de la medida Ancho (3 , 4)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>341</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V6321W- Código de Significación del  Ancho
 	 */ 
 	public String getCodigoSignificacionDeLaMedidaAncho_3_4_() {
 		return codigoSignificacionDeLaMedidaAncho_3_4_;
 	}
+
+	/** 
+	 * V6321W- Código de Significación del  Ancho
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V6321W</td> <td>Código Significación de la medida Ancho (3 , 4)</td> <td>C</td> <td>6</td> <td>341</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoSignificacionDeLaMedidaAncho_3_4_(String codigoSignificacionDeLaMedidaAncho_3_4_) {
 		this.codigoSignificacionDeLaMedidaAncho_3_4_ = codigoSignificacionDeLaMedidaAncho_3_4_;
+	}
+
+	/** 
+	 * V6411W - Unidad de medida del  Ancho
+	 */ 
+	public String getCodigoUnidadDeMedidaAncho() {
+		return codigoUnidadDeMedidaAncho;
 	}
 
 	/** 
@@ -1120,144 +919,114 @@ public class SEH1P {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V6411W</th>
-	 * 		<td>CÃ³digo Unidad de medida Ancho</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>347</th>
-	 * 		<td>C</th>
+	 * 		 <td>V6411W</td> <td>Código Unidad de medida Ancho</td> <td>C</td> <td>6</td> <td>347</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCodigoUnidadDeMedidaAncho() {
-		return codigoUnidadDeMedidaAncho;
-	}
 	public void setCodigoUnidadDeMedidaAncho(String codigoUnidadDeMedidaAncho) {
 		this.codigoUnidadDeMedidaAncho = codigoUnidadDeMedidaAncho;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3131L</th>
-	 * 		<td>Longitud 1 (AAC)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>353</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getLongitud1_AAC_() {
 		return longitud1_AAC_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3131L</td> <td>Longitud 1 (AAC)</td> <td>N(14,3)</td> <td>18</td> <td>353</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setLongitud1_AAC_(Double longitud1_AAC_) {
 		this.longitud1_AAC_ = longitud1_AAC_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3132L</th>
-	 * 		<td>Longitud 2 (AAC)</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>371</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getLongitud2_AAC_() {
 		return longitud2_AAC_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3132L</td> <td>Longitud 2 (AAC)</td> <td>N(14,3)</td> <td>18</td> <td>371</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setLongitud2_AAC_(Double longitud2_AAC_) {
 		this.longitud2_AAC_ = longitud2_AAC_;
 	}
 
 	/** 
-	 * V6321L - CÃ³digo de SignificaciÃ³n de la Longitud: Estos campos corresponden a un cÃ³digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V6321L</th>
-	 * 		<td>CÃ³digo SignificaciÃ³n de la medida Longitud(3 , 4)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>389</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V6321L - Código de Significación de la Longitud: Estos campos corresponden a un código EANCOM. Los valores posibles son:
 	 */ 
 	public String getCodigoSignificacionDeLaMedidaLongitud_3_4_() {
 		return codigoSignificacionDeLaMedidaLongitud_3_4_;
 	}
+
+	/** 
+	 * V6321L - Código de Significación de la Longitud: Estos campos corresponden a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V6321L</td> <td>Código Significación de la medida Longitud(3 , 4)</td> <td>C</td> <td>6</td> <td>389</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoSignificacionDeLaMedidaLongitud_3_4_(String codigoSignificacionDeLaMedidaLongitud_3_4_) {
 		this.codigoSignificacionDeLaMedidaLongitud_3_4_ = codigoSignificacionDeLaMedidaLongitud_3_4_;
 	}
 
 	/** 
-	 * V6411L - Unidad de medida de la Longitud: Estos campos corresponden a un cÃ³digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V6411L</th>
-	 * 		<td>CÃ³digo Unidad de medida Longitud</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>395</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V6411L - Unidad de medida de la Longitud: Estos campos corresponden a un código EANCOM. Los valores posibles son:
 	 */ 
 	public String getCodigoUnidadDeMedidaLongitud() {
 		return codigoUnidadDeMedidaLongitud;
 	}
+
+	/** 
+	 * V6411L - Unidad de medida de la Longitud: Estos campos corresponden a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V6411L</td> <td>Código Unidad de medida Longitud</td> <td>C</td> <td>6</td> <td>395</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoUnidadDeMedidaLongitud(String codigoUnidadDeMedidaLongitud) {
 		this.codigoUnidadDeMedidaLongitud = codigoUnidadDeMedidaLongitud;
+	}
+
+	/** 
+	 * V6060M-Unidades de Material Consignado: Cantidad de unidades de Material Consignado por embalaje especificado en V7224B. Por ejemplo:	10 pallets.
+	 */ 
+	public Double getUnidadesDeMaterialConsignado() {
+		return unidadesDeMaterialConsignado;
 	}
 
 	/** 
@@ -1265,380 +1034,295 @@ public class SEH1P {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V6060M</th>
-	 * 		<td>Unidades de Material Consignado</th>
-	 * 		<td>N(12,3)</th>
-	 * 		<td>16</th>
-	 * 		<td>401</th>
-	 * 		<td>C</th>
+	 * 		 <td>V6060M</td> <td>Unidades de Material Consignado</td> <td>N(12,3)</td> <td>16</td> <td>401</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public Double getUnidadesDeMaterialConsignado() {
-		return unidadesDeMaterialConsignado;
-	}
 	public void setUnidadesDeMaterialConsignado(Double unidadesDeMaterialConsignado) {
 		this.unidadesDeMaterialConsignado = unidadesDeMaterialConsignado;
 	}
 
 	/** 
-	 * V4079C-Calificador de Instrucciones de ManipulaciÃ³n: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V4079C</th>
-	 * 		<td>Calificador ManipulaciÃ³n</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>417</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V4079C-Calificador de Instrucciones de Manipulación: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */ 
 	public String getCalificadorManipulacion() {
 		return calificadorManipulacion;
 	}
+
+	/** 
+	 * V4079C-Calificador de Instrucciones de Manipulación: El campo corresponde a un código EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V4079C</td> <td>Calificador Manipulación</td> <td>C</td> <td>6</td> <td>417</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCalificadorManipulacion(String calificadorManipulacion) {
 		this.calificadorManipulacion = calificadorManipulacion;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V4078D</th>
-	 * 		<td>Instrucciones de ManipulaciÃ³n</th>
-	 * 		<td>C</th>
-	 * 		<td>70</th>
-	 * 		<td>423</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getInstruccionesDeManipulacion() {
 		return instruccionesDeManipulacion;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V4078D</td> <td>Instrucciones de Manipulación</td> <td>C</td> <td>70</td> <td>423</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setInstruccionesDeManipulacion(String instruccionesDeManipulacion) {
 		this.instruccionesDeManipulacion = instruccionesDeManipulacion;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V71021</th>
-	 * 		<td>Marca o Etiqueta de embarque 1</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>493</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getMarcaOEtiquetaDeEmbarque1() {
 		return marcaOEtiquetaDeEmbarque1;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V71021</td> <td>Marca o Etiqueta de embarque 1</td> <td>C</td> <td>35</td> <td>493</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setMarcaOEtiquetaDeEmbarque1(String marcaOEtiquetaDeEmbarque1) {
 		this.marcaOEtiquetaDeEmbarque1 = marcaOEtiquetaDeEmbarque1;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V71022</th>
-	 * 		<td>Marca o Etiqueta de embarque 2</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>528</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getMarcaOEtiquetaDeEmbarque2() {
 		return marcaOEtiquetaDeEmbarque2;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V71022</td> <td>Marca o Etiqueta de embarque 2</td> <td>C</td> <td>35</td> <td>528</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setMarcaOEtiquetaDeEmbarque2(String marcaOEtiquetaDeEmbarque2) {
 		this.marcaOEtiquetaDeEmbarque2 = marcaOEtiquetaDeEmbarque2;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V71023</th>
-	 * 		<td>Marca o Etiqueta de embarque 3</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>563</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getMarcaOEtiquetaDeEmbarque3() {
 		return marcaOEtiquetaDeEmbarque3;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V71023</td> <td>Marca o Etiqueta de embarque 3</td> <td>C</td> <td>35</td> <td>563</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setMarcaOEtiquetaDeEmbarque3(String marcaOEtiquetaDeEmbarque3) {
 		this.marcaOEtiquetaDeEmbarque3 = marcaOEtiquetaDeEmbarque3;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V71024</th>
-	 * 		<td>Marca o Etiqueta de embarque 4</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>598</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getMarcaOEtiquetaDeEmbarque4() {
 		return marcaOEtiquetaDeEmbarque4;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V71024</td> <td>Marca o Etiqueta de embarque 4</td> <td>C</td> <td>35</td> <td>598</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setMarcaOEtiquetaDeEmbarque4(String marcaOEtiquetaDeEmbarque4) {
 		this.marcaOEtiquetaDeEmbarque4 = marcaOEtiquetaDeEmbarque4;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V74011</th>
-	 * 		<td>NÃºmero 1 de Seriado o Rango inferior del embalaje</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>633</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumero1DeSeriadoORangoInferiorDelEmbalaje() {
 		return numero1DeSeriadoORangoInferiorDelEmbalaje;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V74011</td> <td>Número 1 de Seriado o Rango inferior del embalaje</td> <td>C</td> <td>35</td> <td>633</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumero1DeSeriadoORangoInferiorDelEmbalaje(String numero1DeSeriadoORangoInferiorDelEmbalaje) {
 		this.numero1DeSeriadoORangoInferiorDelEmbalaje = numero1DeSeriadoORangoInferiorDelEmbalaje;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V74012</th>
-	 * 		<td>NÃºmero 1 de Seriado o Rango superior del embalaje</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>668</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumero1DeSeriadoORangoSuperiorDelEmbalaje() {
 		return numero1DeSeriadoORangoSuperiorDelEmbalaje;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V74012</td> <td>Número 1 de Seriado o Rango superior del embalaje</td> <td>C</td> <td>35</td> <td>668</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumero1DeSeriadoORangoSuperiorDelEmbalaje(String numero1DeSeriadoORangoSuperiorDelEmbalaje) {
 		this.numero1DeSeriadoORangoSuperiorDelEmbalaje = numero1DeSeriadoORangoSuperiorDelEmbalaje;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V74021</th>
-	 * 		<td>NÃºmero 2 de Seriado o Rango  inferior del embalaje</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>703</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumero2DeSeriadoORangoInferiorDelEmbalaje() {
 		return numero2DeSeriadoORangoInferiorDelEmbalaje;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V74021</td> <td>Número 2 de Seriado o Rango  inferior del embalaje</td> <td>C</td> <td>35</td> <td>703</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumero2DeSeriadoORangoInferiorDelEmbalaje(String numero2DeSeriadoORangoInferiorDelEmbalaje) {
 		this.numero2DeSeriadoORangoInferiorDelEmbalaje = numero2DeSeriadoORangoInferiorDelEmbalaje;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V74022</th>
-	 * 		<td>NÃºmero 2 de Seriado o Rango superior del embalaje</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>738</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumero2DeSeriadoORangoSuperiorDelEmbalaje() {
 		return numero2DeSeriadoORangoSuperiorDelEmbalaje;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V74022</td> <td>Número 2 de Seriado o Rango superior del embalaje</td> <td>C</td> <td>35</td> <td>738</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumero2DeSeriadoORangoSuperiorDelEmbalaje(String numero2DeSeriadoORangoSuperiorDelEmbalaje) {
 		this.numero2DeSeriadoORangoSuperiorDelEmbalaje = numero2DeSeriadoORangoSuperiorDelEmbalaje;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V74031</th>
-	 * 		<td>NÃºmero 3 de Seriado o Rango  inferior del embalaje</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>773</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumero3DeSeriadoORangoInferiorDelEmbalaje() {
 		return numero3DeSeriadoORangoInferiorDelEmbalaje;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V74031</td> <td>Número 3 de Seriado o Rango  inferior del embalaje</td> <td>C</td> <td>35</td> <td>773</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumero3DeSeriadoORangoInferiorDelEmbalaje(String numero3DeSeriadoORangoInferiorDelEmbalaje) {
 		this.numero3DeSeriadoORangoInferiorDelEmbalaje = numero3DeSeriadoORangoInferiorDelEmbalaje;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V74032</th>
-	 * 		<td>NÃºmero 3 de Seriado o Rango superior del embalaje</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>808</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumero3DeSeriadoORangoSuperiorDelEmbalaje() {
 		return numero3DeSeriadoORangoSuperiorDelEmbalaje;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V74032</td> <td>Número 3 de Seriado o Rango superior del embalaje</td> <td>C</td> <td>35</td> <td>808</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumero3DeSeriadoORangoSuperiorDelEmbalaje(String numero3DeSeriadoORangoSuperiorDelEmbalaje) {
 		this.numero3DeSeriadoORangoSuperiorDelEmbalaje = numero3DeSeriadoORangoSuperiorDelEmbalaje;
 	}
 
 	/** 
-	 * V7233C-Calificador CodificaciÃ³n del Embalaje: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
+	 * V7233C-Calificador Codificación del Embalaje: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */
 	public enum V7233C {
 		;
@@ -1661,7 +1345,7 @@ public class SEH1P {
 
 	}
 	/** 
-	 * V7073T-Acuerdos y Condiciones de Embalajes: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
+	 * V7073T-Acuerdos y Condiciones de Embalajes: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */
 	public enum V7073T {
 		;
@@ -1684,7 +1368,7 @@ public class SEH1P {
 
 	}
 	/** 
-	 * V7065T-Tipo de Embalaje codificado: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
+	 * V7065T-Tipo de Embalaje codificado: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */
 	public enum V7065T {
 		CAJA_DE_CARTO_CT("CT"),
@@ -1716,7 +1400,7 @@ public class SEH1P {
 
 	}
 	/** 
-	 * V8395P - Responsabilidad de pago del Transporte de embalajes Retornables: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
+	 * V8395P - Responsabilidad de pago del Transporte de embalajes Retornables: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */
 	public enum V8395P {
 		PAGADO_POR_CLIENT_1("1"),
@@ -1742,7 +1426,7 @@ public class SEH1P {
 
 	}
 	/** 
-	 * V6321L - CÃ³digo de SignificaciÃ³n de la Longitud: Estos campos corresponden a un cÃ³digo EANCOM. Los valores posibles son:
+	 * V6321L - Código de Significación de la Longitud: Estos campos corresponden a un código EANCOM. Los valores posibles son:
 	 */
 	public enum V6321L {
 		APROXIMADAMENT_3("3"),
@@ -1767,7 +1451,7 @@ public class SEH1P {
 
 	}
 	/** 
-	 * V6411L - Unidad de medida de la Longitud: Estos campos corresponden a un cÃ³digo EANCOM. Los valores posibles son:
+	 * V6411L - Unidad de medida de la Longitud: Estos campos corresponden a un código EANCOM. Los valores posibles son:
 	 */
 	public enum V6411L {
 		CENTIMETRO_CMT("CMT"),
@@ -1792,7 +1476,7 @@ public class SEH1P {
 
 	}
 	/** 
-	 * V4079C-Calificador de Instrucciones de ManipulaciÃ³n: El campo corresponde a un cÃ³digo EANCOM. Los valores posibles son:
+	 * V4079C-Calificador de Instrucciones de Manipulación: El campo corresponde a un código EANCOM. Los valores posibles son:
 	 */
 	public enum V4079C {
 		COMESTIBLE_EAT("EAT"),

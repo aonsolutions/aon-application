@@ -15,23 +15,16 @@ import org.apache.commons.lang.StringUtils;
  * 
  * <table border="1" cellpadding="1" cellspacing="0">
  * 	<tr bgcolor="#CCCCFF"> 
- * 		<th>Tipo de registro</th>
- * 		<th>Descripcion</th>
- * 		<th>Tipo</th>
- * 		<th>Repeticiones</th>
+ * 		 <th>Tipo de registro</th> <th>Descripcion</th> <th>Tipo</th> <th>Repeticiones</th>
  * 	</tr>
  * 	<tr>
- * 		<td>ERE1T</th>
- * 		<td>Observaciones</th>
- * 		<td>Opcional</th>
- * 		<td>N</th>
+ * 		 <td>ERE1T</td> <td>Observaciones</td> <td>Opcional</td> <td>N</td>
  * 	</tr>
  * </table>
  */ 
 
 public class ERE1T {
 
-	private String textos;
 	private String tipoDePedido_220_221_224_226_22E_;
 	private String numeroDePedido;
 	private String codigoEmisor_MS_;
@@ -45,7 +38,6 @@ public class ERE1T {
 	private String texto5;
 
 
-	private static Pattern PATTERN_ERE1T_textos = Pattern.compile("^(.{6}).*");
 	private static Pattern PATTERN_ERE1T_tipoDePedido_220_221_224_226_22E_ = Pattern.compile("^.{6}(.{6}).*");
 	private static Pattern PATTERN_ERE1T_numeroDePedido = Pattern.compile("^.{12}(.{17}).*");
 	private static Pattern PATTERN_ERE1T_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
@@ -60,9 +52,6 @@ public class ERE1T {
 
 	public void parse(String value) {
 		Matcher m;
-		if((m = PATTERN_ERE1T_textos.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
-			setTextos(String.valueOf(m.group(1).trim()));
-		}
 		if((m = PATTERN_ERE1T_tipoDePedido_220_221_224_226_22E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
 			setTipoDePedido_220_221_224_226_22E_(String.valueOf(m.group(1).trim()));
 		}
@@ -101,31 +90,9 @@ public class ERE1T {
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>ERE1T</th>
-	 * 		<td>Textos</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>1</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
-	public String getTextos() {
-		return textos;
-	}
-	public void setTextos(String textos) {
-		this.textos = textos;
+	public String getTipoDePedido_220_221_224_226_22E_() {
+		return tipoDePedido_220_221_224_226_22E_;
 	}
 
 	/** 
@@ -133,322 +100,249 @@ public class ERE1T {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>C1001T</th>
-	 * 		<td>Tipo de Pedido (220, 221, 224, 226, 22E)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>7</th>
-	 * 		<td>M</th>
+	 * 		 <td>C1001T</td> <td>Tipo de Pedido (220, 221, 224, 226, 22E)</td> <td>C</td> <td>6</td> <td>7</td> <td>M</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getTipoDePedido_220_221_224_226_22E_() {
-		return tipoDePedido_220_221_224_226_22E_;
-	}
 	public void setTipoDePedido_220_221_224_226_22E_(String tipoDePedido_220_221_224_226_22E_) {
 		this.tipoDePedido_220_221_224_226_22E_ = tipoDePedido_220_221_224_226_22E_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1004P</th>
-	 * 		<td>N煤mero de Pedido</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>13</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroDePedido() {
 		return numeroDePedido;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1004P</td> <td>N鷐ero de Pedido</td> <td>C</td> <td>17</td> <td>13</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDePedido(String numeroDePedido) {
 		this.numeroDePedido = numeroDePedido;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C3039E</th>
-	 * 		<td>C贸digo Emisor  (MS)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>30</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoEmisor_MS_() {
 		return codigoEmisor_MS_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C3039E</td> <td>C骴igo Emisor  (MS)</td> <td>C</td> <td>17</td> <td>30</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoEmisor_MS_(String codigoEmisor_MS_) {
 		this.codigoEmisor_MS_ = codigoEmisor_MS_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C3039R</th>
-	 * 		<td>C贸digo Receptor (MR)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>47</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoReceptor_MR_() {
 		return codigoReceptor_MR_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C3039R</td> <td>C骴igo Receptor (MR)</td> <td>C</td> <td>17</td> <td>47</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoReceptor_MR_(String codigoReceptor_MR_) {
 		this.codigoReceptor_MR_ = codigoReceptor_MR_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C1082T</th>
-	 * 		<td>N煤mero Texto</th>
-	 * 		<td>N</th>
-	 * 		<td>2</th>
-	 * 		<td>64</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Integer getNumeroTexto() {
 		return numeroTexto;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C1082T</td> <td>N鷐ero Texto</td> <td>N</td> <td>2</td> <td>64</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroTexto(Integer numeroTexto) {
 		this.numeroTexto = numeroTexto;
 	}
 
 	/** 
-	 * C4451C - Calificador del Tema del Texto (AAI , DEL): El campo corresponde a un c贸digo EANCOM. Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C4451C</th>
-	 * 		<td>Calificador del Tema del Texto (AAI , DEL)</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>66</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * C4451C - Calificador del Tema del Texto (AAI , DEL): El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
 	 */ 
 	public String getCalificadorDelTemaDelTexto_AAI_DEL_() {
 		return calificadorDelTemaDelTexto_AAI_DEL_;
 	}
+
+	/** 
+	 * C4451C - Calificador del Tema del Texto (AAI , DEL): El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C4451C</td> <td>Calificador del Tema del Texto (AAI , DEL)</td> <td>C</td> <td>3</td> <td>66</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCalificadorDelTemaDelTexto_AAI_DEL_(String calificadorDelTemaDelTexto_AAI_DEL_) {
 		this.calificadorDelTemaDelTexto_AAI_DEL_ = calificadorDelTemaDelTexto_AAI_DEL_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C44401</th>
-	 * 		<td>Texto 1</th>
-	 * 		<td>C</th>
-	 * 		<td>70</th>
-	 * 		<td>69</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getTexto1() {
 		return texto1;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C44401</td> <td>Texto 1</td> <td>C</td> <td>70</td> <td>69</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setTexto1(String texto1) {
 		this.texto1 = texto1;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C44402</th>
-	 * 		<td>Texto 2</th>
-	 * 		<td>C</th>
-	 * 		<td>70</th>
-	 * 		<td>139</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getTexto2() {
 		return texto2;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C44402</td> <td>Texto 2</td> <td>C</td> <td>70</td> <td>139</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setTexto2(String texto2) {
 		this.texto2 = texto2;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C44403</th>
-	 * 		<td>Texto 3</th>
-	 * 		<td>C</th>
-	 * 		<td>70</th>
-	 * 		<td>209</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getTexto3() {
 		return texto3;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C44403</td> <td>Texto 3</td> <td>C</td> <td>70</td> <td>209</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setTexto3(String texto3) {
 		this.texto3 = texto3;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C44404</th>
-	 * 		<td>Texto 4</th>
-	 * 		<td>C</th>
-	 * 		<td>70</th>
-	 * 		<td>279</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getTexto4() {
 		return texto4;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C44404</td> <td>Texto 4</td> <td>C</td> <td>70</td> <td>279</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setTexto4(String texto4) {
 		this.texto4 = texto4;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>C44405</th>
-	 * 		<td>Texto 5</th>
-	 * 		<td>C</th>
-	 * 		<td>70</th>
-	 * 		<td>349</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getTexto5() {
 		return texto5;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>C44405</td> <td>Texto 5</td> <td>C</td> <td>70</td> <td>349</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setTexto5(String texto5) {
 		this.texto5 = texto5;
 	}
 
 	/** 
-	 * C4451C - Calificador del Tema del Texto (AAI , DEL): El campo corresponde a un c贸digo EANCOM. Los valores posibles son:
+	 * C4451C - Calificador del Tema del Texto (AAI , DEL): El campo corresponde a un c骴igo EANCOM. Los valores posibles son:
 	 */
 	public enum C4451C {
 		INFORMACION_GENERA_AAI("AAI"),

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<register name="ERE1L">
+	<field name="Tipo registro ERE1L" value="ERE1L" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número de línea artículo" value="bean" bean ="ERE1L" property="numeroDeLineaArticulo" format="Numeric" pattern="9(6)" />
+	<field name="Código EAN-13/DUN-14 del artículo" value="bean" bean ="ERE1L" property="codigoEAN_13_DUN_14DelArticulo" format="AlphaNumeric" pattern="X(15)" />
+	<field name="Tipo código artículo" value="bean" bean ="ERE1L" property="tipoCodigoArticulo" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Tipo identificación de artículo (CU/DU)" value="bean" bean ="ERE1L" property="tipoIdentificacionDeArticulo_CU_DU_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Descripción 1 artículo" value="bean" bean ="ERE1L" property="descripcion1Articulo" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Descripción 2 artículo" value="bean" bean ="ERE1L" property="descripcion2Articulo" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Tipo artículo" value="bean" bean ="ERE1L" property="tipoArticulo" format="AlphaNumeric" pattern="X(1)" />
+	<field name="Número artículo proveedor (SA)" value="bean" bean ="ERE1L" property="numeroArticuloProveedor_SA_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número artículo comprador (IN/BP)" value="bean" bean ="ERE1L" property="numeroArticuloComprador_IN_BP_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Variable promocional (PV)" value="bean" bean ="ERE1L" property="variablePromocional_PV_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Código EAN del artículo adicional (1) (EN)" value="bean" bean ="ERE1L" property="codigoEANDelArticuloAdicional_1__EN_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Cantidad pedida (21)" value="bean" bean ="ERE1L" property="cantidadPedida_21_" format="Numeric" pattern="9(12).999" />
+	<field name="Cantidad bonificada (192)" value="bean" bean ="ERE1L" property="cantidadBonificada_192_" format="Numeric" pattern="9(12).999" />
+	<field name="Calificador unidad de medida" value="bean" bean ="ERE1L" property="calificadorUnidadDeMedida" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Número Unidades de Consumo en U. Expedición" value="bean" bean ="ERE1L" property="numeroUnidadesDeConsumoEnU_Expedicion" format="Numeric" pattern="9(12).999" />
+	<field name="Calificador Fecha/Hora 1 (2-11-64)" value="bean" bean ="ERE1L" property="calificadorFecha_Hora1_2_11_64_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha/Hora 1" value="bean" bean ="ERE1L" property="fecha_Hora1" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Calificador Fecha/Hora 2 (2-11-63)" value="bean" bean ="ERE1L" property="calificadorFecha_Hora2_2_11_63_" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha/Hora 2" value="bean" bean ="ERE1L" property="fecha_Hora2" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Importe neto línea (203)" value="bean" bean ="ERE1L" property="importeNetoLinea_203_" format="Numeric" pattern="9(14).999" />
+	<field name="Precio bruto unitario (AAB)" value="bean" bean ="ERE1L" property="precioBrutoUnitario_AAB_" format="Numeric" pattern="9(12).999" />
+	<field name="Precio neto unitario (AAA)" value="bean" bean ="ERE1L" property="precioNetoUnitario_AAA_" format="Numeric" pattern="9(12).999" />
+	<field name="Precio a título Informativo (INF)" value="bean" bean ="ERE1L" property="precioATituloInformativo_INF_" format="Numeric" pattern="9(12).999" />
+	<field name="Calificador unidad de medida precio" value="bean" bean ="ERE1L" property="calificadorUnidadDeMedidaPrecio" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Calificador IVA/IGIC" value="bean" bean ="ERE1L" property="calificadorIVA_IGIC" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Porcentaje IVA/IGIC" value="bean" bean ="ERE1L" property="porcentajeIVA_IGIC" format="Numeric" pattern="9(3).99" />
+	<field name="Importe IVA/IGIC" value="bean" bean ="ERE1L" property="importeIVA_IGIC" format="Numeric" pattern="9(14).999" />
+	<field name="% Recargo de Equivalencia" value="bean" bean ="ERE1L" property="porcentajeRecargoDeEquivalencia" format="Numeric" pattern="9(3).99" />
+	<field name="Importe Recargo de Equivalencia" value="bean" bean ="ERE1L" property="importeRecargoDeEquivalencia" format="Numeric" pattern="9(14).999" />
+	<field name="Calificador Otro Tipo de Impuesto" value="bean" bean ="ERE1L" property="calificadorOtroTipoDeImpuesto" format="AlphaNumeric" pattern="X(6)" />
+	<field name="% Otro Tipo de Impuesto" value="bean" bean ="ERE1L" property="porcentajeOtroTipoDeImpuesto" format="Numeric" pattern="9(3).99" />
+	<field name="Importe Otro Tipo de Impuesto" value="bean" bean ="ERE1L" property="importeOtroTipoDeImpuesto" format="Numeric" pattern="9(14).999" />
+	<field name="Peso neto (PD) (AAA)" value="bean" bean ="ERE1L" property="pesoNeto_PD__AAA_" format="Numeric" pattern="9(14).999" />
+	<field name="Calificador unidad de medida peso" value="bean" bean ="ERE1L" property="calificadorUnidadDeMedidaPeso" format="AlphaNumeric" pattern="X(6)" />
+	<field name="Descripción del Modelo (BRN)" value="bean" bean ="ERE1L" property="descripcionDelModelo_BRN_" format="AlphaNumeric" pattern="X(25)" />
+	<field name="Color (35)" value="bean" bean ="ERE1L" property="color_35_" format="AlphaNumeric" pattern="X(25)" />
+	<field name="Anchura o talla (UP5)" value="bean" bean ="ERE1L" property="anchuraOTalla_UP5_" format="AlphaNumeric" pattern="X(25)" />
+	<field name="Presentación, cantidad, formato (U03)" value="bean" bean ="ERE1L" property="presentacion_Cantidad_Formato_U03_" format="AlphaNumeric" pattern="X(25)" />
+	<field name="Código grupo artículo comprador (GB)" value="bean" bean ="ERE1L" property="codigoGrupoArticuloComprador_GB_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número de serie del artículo (SN)" value="bean" bean ="ERE1L" property="numeroDeSerieDelArticulo_SN_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número artículo fabricante (MF)" value="bean" bean ="ERE1L" property="numeroArticuloFabricante_MF_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Número de lote (NB)" value="bean" bean ="ERE1L" property="numeroDeLote_NB_" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Calificador Fecha/Hora 3" value="bean" bean ="ERE1L" property="calificadorFecha_Hora3" format="AlphaNumeric" pattern="X(3)" />
+	<field name="Fecha/Hora 3" value="bean" bean ="ERE1L" property="fecha_Hora3" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Importe línea con impuestos (388)" value="bean" bean ="ERE1L" property="importeLineaConImpuestos_388_" format="Numeric" pattern="9(14).999" />
+	<field name="Base precio neto unitario (AAA)" value="bean" bean ="ERE1L" property="basePrecioNetoUnitario_AAA_" format="Numeric" pattern="9(9)" />
+	<field name="Precio artículo con impuestos (NTP)" value="bean" bean ="ERE1L" property="precioArticuloConImpuestos_NTP_" format="Numeric" pattern="9(12).999" />
+	<field name="Base precio artículo con impuestos (NTP)" value="bean" bean ="ERE1L" property="basePrecioArticuloConImpuestos_NTP_" format="Numeric" pattern="9(9)" />
+	<field name="Número Albarán (DQ)" value="bean" bean ="ERE1L" property="numeroAlbaran_DQ_" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Fecha Albarán" value="bean" bean ="ERE1L" property="fechaAlbaran" format="AlphaNumeric" pattern="X(12)" />
+	<field name="Código cliente final" value="bean" bean ="ERE1L" property="codigoClienteFinal" format="AlphaNumeric" pattern="X(17)" />
+	<field name="Nombre cliente final" value="bean" bean ="ERE1L" property="nombreClienteFinal" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Dirección cliente final" value="bean" bean ="ERE1L" property="direccionClienteFinal" format="AlphaNumeric" pattern="X(70)" />
+	<field name="Población cliente final" value="bean" bean ="ERE1L" property="poblacionClienteFinal" format="AlphaNumeric" pattern="X(35)" />
+	<field name="Código Postal cliente final" value="bean" bean ="ERE1L" property="codigoPostalClienteFinal" format="AlphaNumeric" pattern="X(9)" />
+	<field name="Identificador producto/línea pedido (MP)" value="bean" bean ="ERE1L" property="identificadorProducto_lineaPedido_MP_" format="AlphaNumeric" pattern="X(15)" />
+</register>

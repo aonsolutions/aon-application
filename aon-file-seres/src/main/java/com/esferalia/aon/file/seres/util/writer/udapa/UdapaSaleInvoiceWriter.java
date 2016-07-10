@@ -39,7 +39,6 @@ public class UdapaSaleInvoiceWriter {
 		// TODO Auto-generated method stub
 		SINCC sincc = new SINCC();
 		
-		sincc.setCabecera(null);
 		sincc.setTipoFactura_325_380_381_383_385_(null);
 		sincc.setNumeroDeFactura(null);
 		sincc.setCodigoVendedor_aQuienSePide__SU_(null);
@@ -64,7 +63,7 @@ public class UdapaSaleInvoiceWriter {
 		sincc.setNombre_NumeroDeLaCalleDelReceptorDeLaFactura(null);
 		sincc.setPoblacionDelReceptorDeLaFactura(null);
 		sincc.setCodigoPostalDelReceptorDeLaFactura(null);
-		sincc.setNIFDelReceptorDeLaFactura(null);
+		sincc.setNifDelReceptorDeLaFactura(null);
 		sincc.setNombre_NumeroDeLaCalleDelEmisorDeLaFactura(null);
 		sincc.setPoblacionDelEmisorDeLaFactura(null);
 		sincc.setCodigoPostalDelEmisorDeLaFactura(null);

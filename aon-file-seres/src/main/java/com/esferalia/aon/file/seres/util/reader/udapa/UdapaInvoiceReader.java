@@ -107,7 +107,7 @@ public class UdapaInvoiceReader {
 		if (Files.exists(Paths.get(FILE + fileName))) {
 			try {
 				SINCC value = reader.readFile(new FileInputStream(FILE + fileName), CHARSET_ENCODING);
-				value.getCabecera();
+				value.getTipoFactura_325_380_381_383_385_();
 			} catch (FileNotFoundException e) {
 				// nada
 			} catch (IOException e) {

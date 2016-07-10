@@ -15,23 +15,16 @@ import org.apache.commons.lang.StringUtils;
  * 
  * <table border="1" cellpadding="1" cellspacing="0">
  * 	<tr bgcolor="#CCCCFF"> 
- * 		<th>Tipo de registro</th>
- * 		<th>Descripcion</th>
- * 		<th>Tipo</th>
- * 		<th>Repeticiones</th>
+ * 		 <th>Tipo de registro</th> <th>Descripcion</th> <th>Tipo</th> <th>Repeticiones</th>
  * 	</tr>
  * 	<tr>
- * 		<td>SEH1B</th>
- * 		<td>Informaci贸n de Lotes</th>
- * 		<td>Opcional</th>
- * 		<td>N</th>
+ * 		 <td>SEH1B</td> <td>Informaci髇 de Lotes</td> <td>Opcional</td> <td>N</td>
  * 	</tr>
  * </table>
  */ 
 
 public class SEH1B {
 
-	private String informacionDeLotes;
 	private String tipoAvisoDeExpedicion_351_35E_;
 	private String numeroAvisoDeExpedicion;
 	private String codigoEmisor_MS_;
@@ -51,7 +44,6 @@ public class SEH1B {
 	private String fechaDeEnvasadoOEmpaquetado;
 
 
-	private static Pattern PATTERN_SEH1B_informacionDeLotes = Pattern.compile("^(.{6}).*");
 	private static Pattern PATTERN_SEH1B_tipoAvisoDeExpedicion_351_35E_ = Pattern.compile("^.{6}(.{6}).*");
 	private static Pattern PATTERN_SEH1B_numeroAvisoDeExpedicion = Pattern.compile("^.{12}(.{17}).*");
 	private static Pattern PATTERN_SEH1B_codigoEmisor_MS_ = Pattern.compile("^.{29}(.{17}).*");
@@ -72,9 +64,6 @@ public class SEH1B {
 
 	public void parse(String value) {
 		Matcher m;
-		if((m = PATTERN_SEH1B_informacionDeLotes.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
-			setInformacionDeLotes(String.valueOf(m.group(1).trim()));
-		}
 		if((m = PATTERN_SEH1B_tipoAvisoDeExpedicion_351_35E_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
 			setTipoAvisoDeExpedicion_351_35E_(String.valueOf(m.group(1).trim()));
 		}
@@ -131,31 +120,9 @@ public class SEH1B {
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>SEH1B</th>
-	 * 		<td>Informaci贸n de Lotes</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>1</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
-	public String getInformacionDeLotes() {
-		return informacionDeLotes;
-	}
-	public void setInformacionDeLotes(String informacionDeLotes) {
-		this.informacionDeLotes = informacionDeLotes;
+	public String getTipoAvisoDeExpedicion_351_35E_() {
+		return tipoAvisoDeExpedicion_351_35E_;
 	}
 
 	/** 
@@ -163,318 +130,229 @@ public class SEH1B {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V1001T</th>
-	 * 		<td>Tipo Aviso de Expedici贸n (351/35E)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>7</th>
-	 * 		<td>M</th>
+	 * 		 <td>V1001T</td> <td>Tipo Aviso de Expedici髇 (351/35E)</td> <td>C</td> <td>6</td> <td>7</td> <td>M</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getTipoAvisoDeExpedicion_351_35E_() {
-		return tipoAvisoDeExpedicion_351_35E_;
-	}
 	public void setTipoAvisoDeExpedicion_351_35E_(String tipoAvisoDeExpedicion_351_35E_) {
 		this.tipoAvisoDeExpedicion_351_35E_ = tipoAvisoDeExpedicion_351_35E_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1004P</th>
-	 * 		<td>N煤mero Aviso de Expedici贸n</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>13</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroAvisoDeExpedicion() {
 		return numeroAvisoDeExpedicion;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1004P</td> <td>N鷐ero Aviso de Expedici髇</td> <td>C</td> <td>17</td> <td>13</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroAvisoDeExpedicion(String numeroAvisoDeExpedicion) {
 		this.numeroAvisoDeExpedicion = numeroAvisoDeExpedicion;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3039E</th>
-	 * 		<td>C贸digo Emisor  (MS)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>30</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoEmisor_MS_() {
 		return codigoEmisor_MS_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3039E</td> <td>C骴igo Emisor  (MS)</td> <td>C</td> <td>17</td> <td>30</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoEmisor_MS_(String codigoEmisor_MS_) {
 		this.codigoEmisor_MS_ = codigoEmisor_MS_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V3039R</th>
-	 * 		<td>C贸digo Receptor (MR)</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>47</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoReceptor_MR_() {
 		return codigoReceptor_MR_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V3039R</td> <td>C骴igo Receptor (MR)</td> <td>C</td> <td>17</td> <td>47</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoReceptor_MR_(String codigoReceptor_MR_) {
 		this.codigoReceptor_MR_ = codigoReceptor_MR_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V7164J</th>
-	 * 		<td>N煤mero de Jerarqu铆a de Embalaje</th>
-	 * 		<td>N</th>
-	 * 		<td>12</th>
-	 * 		<td>64</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Integer getNumeroDeJerarquiaDeEmbalaje() {
 		return numeroDeJerarquiaDeEmbalaje;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V7164J</td> <td>N鷐ero de Jerarqu韆 de Embalaje</td> <td>N</td> <td>12</td> <td>64</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeJerarquiaDeEmbalaje(Integer numeroDeJerarquiaDeEmbalaje) {
 		this.numeroDeJerarquiaDeEmbalaje = numeroDeJerarquiaDeEmbalaje;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V7166J</th>
-	 * 		<td>N煤mero de Sub-jerarqu铆a de Embalaje</th>
-	 * 		<td>C</th>
-	 * 		<td>12</th>
-	 * 		<td>76</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroDeSub_jerarquiaDeEmbalaje() {
 		return numeroDeSub_jerarquiaDeEmbalaje;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V7166J</td> <td>N鷐ero de Sub-jerarqu韆 de Embalaje</td> <td>C</td> <td>12</td> <td>76</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeSub_jerarquiaDeEmbalaje(String numeroDeSub_jerarquiaDeEmbalaje) {
 		this.numeroDeSub_jerarquiaDeEmbalaje = numeroDeSub_jerarquiaDeEmbalaje;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1082L</th>
-	 * 		<td>N煤mero de L铆nea Art铆culo</th>
-	 * 		<td>N</th>
-	 * 		<td>6</th>
-	 * 		<td>88</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Integer getNumeroDeLineaArticulo() {
 		return numeroDeLineaArticulo;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1082L</td> <td>N鷐ero de L韓ea Art韈ulo</td> <td>N</td> <td>6</td> <td>88</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeLineaArticulo(Integer numeroDeLineaArticulo) {
 		this.numeroDeLineaArticulo = numeroDeLineaArticulo;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V1082B</th>
-	 * 		<td>Contador Informaci贸n de Lotes</th>
-	 * 		<td>N</th>
-	 * 		<td>4</th>
-	 * 		<td>94</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Integer getContadorInformacionDeLotes() {
 		return contadorInformacionDeLotes;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V1082B</td> <td>Contador Informaci髇 de Lotes</td> <td>N</td> <td>4</td> <td>94</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setContadorInformacionDeLotes(Integer contadorInformacionDeLotes) {
 		this.contadorInformacionDeLotes = contadorInformacionDeLotes;
 	}
 
 	/** 
-	 * V4233L-C贸digo Instrucciones: Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V4233L</th>
-	 * 		<td>C贸digo Instrucciones</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>98</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * V4233L-C骴igo Instrucciones: Los valores posibles son:
 	 */ 
 	public String getCodigoInstrucciones() {
 		return codigoInstrucciones;
 	}
+
+	/** 
+	 * V4233L-C骴igo Instrucciones: Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V4233L</td> <td>C骴igo Instrucciones</td> <td>C</td> <td>3</td> <td>98</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoInstrucciones(String codigoInstrucciones) {
 		this.codigoInstrucciones = codigoInstrucciones;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V2380M</th>
-	 * 		<td>Fecha de Caducidad (36) (102/203)</th>
-	 * 		<td>C</th>
-	 * 		<td>12</th>
-	 * 		<td>101</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getFechaDeCaducidad_36__102_203_() {
 		return fechaDeCaducidad_36__102_203_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V2380M</td> <td>Fecha de Caducidad (36) (102/203)</td> <td>C</td> <td>12</td> <td>101</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setFechaDeCaducidad_36__102_203_(String fechaDeCaducidad_36__102_203_) {
 		this.fechaDeCaducidad_36__102_203_ = fechaDeCaducidad_36__102_203_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V2380R</th>
-	 * 		<td>Fecha Recepci贸n de Mercanc铆as (50) (102/203)</th>
-	 * 		<td>C</th>
-	 * 		<td>12</th>
-	 * 		<td>113</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getFechaRecepcionDeMercancias_50__102_203_() {
 		return fechaRecepcionDeMercancias_50__102_203_;
-	}
-	public void setFechaRecepcionDeMercancias_50__102_203_(String fechaRecepcionDeMercancias_50__102_203_) {
-		this.fechaRecepcionDeMercancias_50__102_203_ = fechaRecepcionDeMercancias_50__102_203_;
 	}
 
 	/** 
@@ -482,28 +360,45 @@ public class SEH1B {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V2380B</th>
-	 * 		<td>Mejor antes de fecha (361) (102/203)</th>
-	 * 		<td>C</th>
-	 * 		<td>12</th>
-	 * 		<td>125</th>
-	 * 		<td>C</th>
+	 * 		 <td>V2380R</td> <td>Fecha Recepci髇 de Mercanc韆s (50) (102/203)</td> <td>C</td> <td>12</td> <td>113</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
+	 */ 
+	public void setFechaRecepcionDeMercancias_50__102_203_(String fechaRecepcionDeMercancias_50__102_203_) {
+		this.fechaRecepcionDeMercancias_50__102_203_ = fechaRecepcionDeMercancias_50__102_203_;
+	}
+
+	/** 
+	 * 
 	 */ 
 	public String getMejorAntesDeFecha_361__102_203_() {
 		return mejorAntesDeFecha_361__102_203_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V2380B</td> <td>Mejor antes de fecha (361) (102/203)</td> <td>C</td> <td>12</td> <td>125</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setMejorAntesDeFecha_361__102_203_(String mejorAntesDeFecha_361__102_203_) {
 		this.mejorAntesDeFecha_361__102_203_ = mejorAntesDeFecha_361__102_203_;
+	}
+
+	/** 
+	 * V6063D-Calificador de Cantidad (11/12): Los valores posibles son:
+	 */ 
+	public String getCalificadorCantidad_11_12_() {
+		return calificadorCantidad_11_12_;
 	}
 
 	/** 
@@ -511,115 +406,91 @@ public class SEH1B {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V6063D</th>
-	 * 		<td>Calificador cantidad  (11/12)</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>137</th>
-	 * 		<td>C</th>
+	 * 		 <td>V6063D</td> <td>Calificador cantidad  (11/12)</td> <td>C</td> <td>3</td> <td>137</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getCalificadorCantidad_11_12_() {
-		return calificadorCantidad_11_12_;
-	}
 	public void setCalificadorCantidad_11_12_(String calificadorCantidad_11_12_) {
 		this.calificadorCantidad_11_12_ = calificadorCantidad_11_12_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V6060D</th>
-	 * 		<td>Cantidad</th>
-	 * 		<td>N(12,3)</th>
-	 * 		<td>16</th>
-	 * 		<td>140</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getCantidad() {
 		return cantidad;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V6060D</td> <td>Cantidad</td> <td>N(12,3)</td> <td>16</td> <td>140</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCantidad(Double cantidad) {
 		this.cantidad = cantidad;
 	}
 
 	/** 
-	 * V7405L-Calificador  del n煤mero de identidad: Los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V7405L</th>
-	 * 		<td>Calificador  del n煤mero de identidad</th>
-	 * 		<td>C</th>
-	 * 		<td>3</th>
-	 * 		<td>156</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
+	 * V7405L-Calificador  del n鷐ero de identidad: Los valores posibles son:
 	 */ 
 	public String getCalificadorDelNumeroDeIdentidad() {
 		return calificadorDelNumeroDeIdentidad;
 	}
+
+	/** 
+	 * V7405L-Calificador  del n鷐ero de identidad: Los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V7405L</td> <td>Calificador  del n鷐ero de identidad</td> <td>C</td> <td>3</td> <td>156</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCalificadorDelNumeroDeIdentidad(String calificadorDelNumeroDeIdentidad) {
 		this.calificadorDelNumeroDeIdentidad = calificadorDelNumeroDeIdentidad;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>V7402L</th>
-	 * 		<td>N煤mero de Identidad</th>
-	 * 		<td>C</th>
-	 * 		<td>35</th>
-	 * 		<td>159</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroDeIdentidad() {
 		return numeroDeIdentidad;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>V7402L</td> <td>N鷐ero de Identidad</td> <td>C</td> <td>35</td> <td>159</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeIdentidad(String numeroDeIdentidad) {
 		this.numeroDeIdentidad = numeroDeIdentidad;
+	}
+
+	/** 
+	 * V2380K-Fecha de Embasado o Empaquetado (365) (102/103): En formato AAAAMMDD o AAAAMMDDHHMM.
+	 */ 
+	public String getFechaDeEnvasadoOEmpaquetado() {
+		return fechaDeEnvasadoOEmpaquetado;
 	}
 
 	/** 
@@ -627,32 +498,19 @@ public class SEH1B {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>V2380K</th>
-	 * 		<td>Fecha de Envasado o Empaquetado</th>
-	 * 		<td>C</th>
-	 * 		<td>12</th>
-	 * 		<td>194</th>
-	 * 		<td>C</th>
+	 * 		 <td>V2380K</td> <td>Fecha de Envasado o Empaquetado</td> <td>C</td> <td>12</td> <td>194</td> <td>C</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getFechaDeEnvasadoOEmpaquetado() {
-		return fechaDeEnvasadoOEmpaquetado;
-	}
 	public void setFechaDeEnvasadoOEmpaquetado(String fechaDeEnvasadoOEmpaquetado) {
 		this.fechaDeEnvasadoOEmpaquetado = fechaDeEnvasadoOEmpaquetado;
 	}
 
 	/** 
-	 * V4233L-C贸digo Instrucciones: Los valores posibles son:
+	 * V4233L-C骴igo Instrucciones: Los valores posibles son:
 	 */
 	public enum V4233L {
 		INSTRUCCIONES_DEL_FABRICANT_17("17"),
@@ -702,7 +560,7 @@ public class SEH1B {
 
 	}
 	/** 
-	 * V7405L-Calificador  del n煤mero de identidad: Los valores posibles son:
+	 * V7405L-Calificador  del n鷐ero de identidad: Los valores posibles son:
 	 */
 	public enum V7405L {
 		NUMERO_EAN_UP_EU("EU"),

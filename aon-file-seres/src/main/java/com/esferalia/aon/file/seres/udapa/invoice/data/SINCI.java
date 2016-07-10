@@ -15,23 +15,16 @@ import org.apache.commons.lang.StringUtils;
  * 
  * <table border="1" cellpadding="1" cellspacing="0">
  * 	<tr bgcolor="#CCCCFF"> 
- * 		<th>Tipo de registro</th>
- * 		<th>Descripcion</th>
- * 		<th>Tipo</th>
- * 		<th>Repeticiones</th>
+ * 		 <th>Tipo de registro</th> <th>Descripcion</th> <th>Tipo</th> <th>Repeticiones</th>
  * 	</tr>
  * 	<tr>
- * 		<td>SINCI</th>
- * 		<td>Impuestos</th>
- * 		<td>Obligatorio</th>
- * 		<td>N</th>
+ * 		 <td>SINCI</td> <td>Impuestos</td> <td>Obligatorio</td> <td>N</td>
  * 	</tr>
  * </table>
  */ 
 
 public class SINCI {
 
-	private String impuestos;
 	private String tipoFactura_325_380_381_383_385_;
 	private String numeroDeFactura;
 	private String codigoVendedor_SU_;
@@ -43,7 +36,6 @@ public class SINCI {
 	private Double baseImponible;
 
 
-	private static Pattern PATTERN_SINCI_impuestos = Pattern.compile("^(.{6}).*");
 	private static Pattern PATTERN_SINCI_tipoFactura_325_380_381_383_385_ = Pattern.compile("^.{6}(.{6}).*");
 	private static Pattern PATTERN_SINCI_numeroDeFactura = Pattern.compile("^.{12}(.{17}).*");
 	private static Pattern PATTERN_SINCI_codigoVendedor_SU_ = Pattern.compile("^.{29}(.{13}).*");
@@ -56,9 +48,6 @@ public class SINCI {
 
 	public void parse(String value) {
 		Matcher m;
-		if((m = PATTERN_SINCI_impuestos.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
-			setImpuestos(String.valueOf(m.group(1).trim()));
-		}
 		if((m = PATTERN_SINCI_tipoFactura_325_380_381_383_385_.matcher(value)).find() && StringUtils.isNotBlank(m.group(1))) {
 			setTipoFactura_325_380_381_383_385_(String.valueOf(m.group(1).trim()));
 		}
@@ -91,31 +80,9 @@ public class SINCI {
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>SINCI</th>
-	 * 		<td>Impuestos</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>1</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
-	public String getImpuestos() {
-		return impuestos;
-	}
-	public void setImpuestos(String impuestos) {
-		this.impuestos = impuestos;
+	public String getTipoFactura_325_380_381_383_385_() {
+		return tipoFactura_325_380_381_383_385_;
 	}
 
 	/** 
@@ -123,264 +90,203 @@ public class SINCI {
 	 * 
 	 * <table border="1" cellpadding="1" cellspacing="0">
 	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
 	 * 	</tr>
 	 * 	<tr>
-	 * 		<td>F1001T</th>
-	 * 		<td>Tipo Factura (325, 380, 381, 383, 385)</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>7</th>
-	 * 		<td>M</th>
+	 * 		 <td>F1001T</td> <td>Tipo Factura (325, 380, 381, 383, 385)</td> <td>C</td> <td>6</td> <td>7</td> <td>M</td>
 	 * 	</tr>
 	 * </table>
 	 */ 
-	public String getTipoFactura_325_380_381_383_385_() {
-		return tipoFactura_325_380_381_383_385_;
-	}
 	public void setTipoFactura_325_380_381_383_385_(String tipoFactura_325_380_381_383_385_) {
 		this.tipoFactura_325_380_381_383_385_ = tipoFactura_325_380_381_383_385_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1004N</th>
-	 * 		<td>NÃºmero de Factura</th>
-	 * 		<td>C</th>
-	 * 		<td>17</th>
-	 * 		<td>13</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getNumeroDeFactura() {
 		return numeroDeFactura;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F1004N</td> <td>Número de Factura</td> <td>C</td> <td>17</td> <td>13</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeFactura(String numeroDeFactura) {
 		this.numeroDeFactura = numeroDeFactura;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3039V</th>
-	 * 		<td>CÃ³digo Vendedor (SU)</th>
-	 * 		<td>C</th>
-	 * 		<td>13</th>
-	 * 		<td>30</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoVendedor_SU_() {
 		return codigoVendedor_SU_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3039V</td> <td>Código Vendedor (SU)</td> <td>C</td> <td>13</td> <td>30</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoVendedor_SU_(String codigoVendedor_SU_) {
 		this.codigoVendedor_SU_ = codigoVendedor_SU_;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F3039C</th>
-	 * 		<td>CÃ³digo Comprador (BY)</th>
-	 * 		<td>C</th>
-	 * 		<td>13</th>
-	 * 		<td>43</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public String getCodigoComprador_BY_() {
 		return codigoComprador_BY_;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F3039C</td> <td>Código Comprador (BY)</td> <td>C</td> <td>13</td> <td>43</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCodigoComprador_BY_(String codigoComprador_BY_) {
 		this.codigoComprador_BY_ = codigoComprador_BY_;
 	}
 
 	/** 
-	 * F1082I - NÃºmero de  LÃ­nea de Impuesto:  Es un campo contador. Se sumarÃ¡ 1 por cada tipo de impuesto que se aplique. El valor inicial  es '1'
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F1082I</th>
-	 * 		<td>NÃºmero de LÃ­nea Impuesto</th>
-	 * 		<td>N</th>
-	 * 		<td>2</th>
-	 * 		<td>56</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * F1082I - Número de  Línea de Impuesto:  Es un campo contador. Se sumará 1 por cada tipo de impuesto que se aplique. El valor inicial  es '1'
 	 */ 
 	public Integer getNumeroDeLineaImpuesto() {
 		return numeroDeLineaImpuesto;
 	}
+
+	/** 
+	 * F1082I - Número de  Línea de Impuesto:  Es un campo contador. Se sumará 1 por cada tipo de impuesto que se aplique. El valor inicial  es '1'
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F1082I</td> <td>Número de Línea Impuesto</td> <td>N</td> <td>2</td> <td>56</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setNumeroDeLineaImpuesto(Integer numeroDeLineaImpuesto) {
 		this.numeroDeLineaImpuesto = numeroDeLineaImpuesto;
 	}
 
 	/** 
-	 * F5153T - Calificador del tipo de Impuesto: El campo corresponde a un cÃ³digo interno que GAP convertirÃ¡ a cÃ³digo EANCOM. Si no se utiliza nomenclatura interna puede moverse a este campo directamente el calificador EDI,  los valores posibles son:
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F5153T</th>
-	 * 		<td>Calificador Tipo de Impuesto</th>
-	 * 		<td>C</th>
-	 * 		<td>6</th>
-	 * 		<td>58</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
+	 * F5153T - Calificador del tipo de Impuesto: El campo corresponde a un código interno que GAP convertirá a código EANCOM. Si no se utiliza nomenclatura interna puede moverse a este campo directamente el calificador EDI,  los valores posibles son:
 	 */ 
 	public String getCalificadorTipoDeImpuesto() {
 		return calificadorTipoDeImpuesto;
 	}
+
+	/** 
+	 * F5153T - Calificador del tipo de Impuesto: El campo corresponde a un código interno que GAP convertirá a código EANCOM. Si no se utiliza nomenclatura interna puede moverse a este campo directamente el calificador EDI,  los valores posibles son:
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F5153T</td> <td>Calificador Tipo de Impuesto</td> <td>C</td> <td>6</td> <td>58</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setCalificadorTipoDeImpuesto(String calificadorTipoDeImpuesto) {
 		this.calificadorTipoDeImpuesto = calificadorTipoDeImpuesto;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F5278T</th>
-	 * 		<td>% Tipo de Impuesto</th>
-	 * 		<td>N(3,2)</th>
-	 * 		<td>6</th>
-	 * 		<td>64</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getPorcentajeTipoDeImpuesto() {
 		return porcentajeTipoDeImpuesto;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F5278T</td> <td>% Tipo de Impuesto</td> <td>N(3,2)</td> <td>6</td> <td>64</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setPorcentajeTipoDeImpuesto(Double porcentajeTipoDeImpuesto) {
 		this.porcentajeTipoDeImpuesto = porcentajeTipoDeImpuesto;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F5004T</th>
-	 * 		<td>Importe Tipo de Impuesto</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>70</th>
-	 * 		<td>M</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getImporteTipoDeImpuesto() {
 		return importeTipoDeImpuesto;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F5004T</td> <td>Importe Tipo de Impuesto</td> <td>N(14,3)</td> <td>18</td> <td>70</td> <td>M</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setImporteTipoDeImpuesto(Double importeTipoDeImpuesto) {
 		this.importeTipoDeImpuesto = importeTipoDeImpuesto;
 	}
 
 	/** 
 	 * 
-	 * 
-	 * <table border="1" cellpadding="1" cellspacing="0">
-	 * 	<tr bgcolor="#CCCCFF"> 
-	 * 		<th>Campo</th>
-	 * 		<th>Descripcion</th>
-	 * 		<th>Tipo</th>
-	 * 		<th>Longitud</th>
-	 * 		<th>Pos. Inicial</th>
-	 * 		<th>Obligatoriedad</th>
-	 * 	</tr>
-	 * 	<tr>
-	 * 		<td>F5004U</th>
-	 * 		<td>Base Imponible</th>
-	 * 		<td>N(14,3)</th>
-	 * 		<td>18</th>
-	 * 		<td>88</th>
-	 * 		<td>C</th>
-	 * 	</tr>
-	 * </table>
 	 */ 
 	public Double getBaseImponible() {
 		return baseImponible;
 	}
+
+	/** 
+	 * 
+	 * 
+	 * <table border="1" cellpadding="1" cellspacing="0">
+	 * 	<tr bgcolor="#CCCCFF"> 
+	 * 		 <th>Campo</th> <th>Descripcion</th> <th>Tipo</th> <th>Longitud</th> <th>Pos. Inicial</th> <th>Obligatoriedad</th>
+	 * 	</tr>
+	 * 	<tr>
+	 * 		 <td>F5004U</td> <td>Base Imponible</td> <td>N(14,3)</td> <td>18</td> <td>88</td> <td>C</td>
+	 * 	</tr>
+	 * </table>
+	 */ 
 	public void setBaseImponible(Double baseImponible) {
 		this.baseImponible = baseImponible;
 	}
 
 	/** 
-	 * F5153T - Calificador del tipo de Impuesto: El campo corresponde a un cÃ³digo interno que GAP convertirÃ¡ a cÃ³digo EANCOM. Si no se utiliza nomenclatura interna puede moverse a este campo directamente el calificador EDI,  los valores posibles son:
+	 * F5153T - Calificador del tipo de Impuesto: El campo corresponde a un código interno que GAP convertirá a código EANCOM. Si no se utiliza nomenclatura interna puede moverse a este campo directamente el calificador EDI,  los valores posibles son:
 	 */
 	public enum F5153T {
 		IV_VAT("VAT"),
