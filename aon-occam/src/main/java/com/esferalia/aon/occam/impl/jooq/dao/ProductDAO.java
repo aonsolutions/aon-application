@@ -217,6 +217,11 @@ public class ProductDAO {
 			.stream().map(new FullProductFiller()).findFirst().orElse(new Product());
 	}
 	
+	public static Product getProduct(AONContext ctx, String code){
+		return ctx.getDslContext().select().from(PRODUCT).where(PRODUCT.CODE.eq(code)).limit(1).fetchInto(PRODUCT)
+			.stream().map(new FullProductFiller()).findFirst().orElse(new Product());
+	}
+	
 	public static Stream<Product> getProductStream(AONContext ctx, ProductFilter filter){
 		return ctx.getDslContext().select().from(PRODUCT).where(PRODUCT_PROPERTIES.getConditions(filter))
 				.fetchInto(PRODUCT).stream().map(new FullProductFiller());

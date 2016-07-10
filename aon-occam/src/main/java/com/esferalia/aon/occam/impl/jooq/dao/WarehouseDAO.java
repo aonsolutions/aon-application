@@ -489,6 +489,42 @@ public class WarehouseDAO {
 						ctx.getUser(), modificationDate).execute();
 	}
 	
+	public static void updateDelivery(AONContext ctx, Delivery delivery) {
+		ctx.checkWrite();
+		Timestamp creationDate = null, modificationDate = null;
+		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+		modificationDate = new java.sql.Timestamp(
+				new java.util.Date().getTime());
+		
+		ctx.getDslContext().update(DELIVERY)
+		.set(DELIVERY.DOMAIN, delivery.getDomain())
+		.set(DELIVERY.PROJECT, delivery.getProject().getId())
+		.set(DELIVERY.SERIES, delivery.getSeries())
+		.set(DELIVERY.NUMBER, delivery.getNumber())
+		.set(DELIVERY.CUSTOMER, delivery.getCustomer())
+		.set(DELIVERY.ADDRESS, delivery.getAddress())
+		.set(DELIVERY.ISSUE_TIME, new Timestamp(delivery.getIssueTime().getTime()))
+		.set(DELIVERY.PAY_METHOD, delivery.getPayMethod())
+		.set(DELIVERY.SECURITY_LEVEL, delivery.getSecurityLevel())
+		.set(DELIVERY.STATUS, (byte)delivery.getStatus().ordinal())
+		.set(DELIVERY.COMMENTS, delivery.getComments())
+		.set(DELIVERY.REMARKS, delivery.getRemarks())
+		.set(DELIVERY.WORKPLACE, delivery.getWorkplace())
+		.set(DELIVERY.SCOPE, delivery.getScope())
+		.set(DELIVERY.NUMBER_OF_PYMNTS, delivery.getNumberOfPymnts())
+		.set(DELIVERY.DAYS_TO_FIRST_PYMNT, delivery.getDaysToFirstPymnt())
+		.set(DELIVERY.DAYS_BETWEEN_PYMNTS, delivery.getDaysBetweenPymnt())
+		.set(DELIVERY.PYMNT_DAYS, delivery.getPymntDays())
+		.set(DELIVERY.BANK_ACCOUNT, delivery.getBankAccount())
+		.set(DELIVERY.BANK_ALIAS, delivery.getBankAlias())
+		.set(DELIVERY.BIC, delivery.getBic())
+		.set(DELIVERY.CREATION_USER, ctx.getUser())
+		.set(DELIVERY.CREATION_DATE, creationDate)
+		.set(DELIVERY.MODIFICATION_USER, ctx.getUser())
+		.set(DELIVERY.MODIFICATION_DATE, modificationDate)
+		.where(DELIVERY.ID.eq(delivery.getId()))
+		.execute();
+	}
 	
 	
 	private static class FullWarehouseFiller implements Function<WarehouseRecord, Warehouse> {

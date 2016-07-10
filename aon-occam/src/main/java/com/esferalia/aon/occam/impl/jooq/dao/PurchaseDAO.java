@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import org.jooq.Record1;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -39,7 +40,7 @@ public class PurchaseDAO {
 				new java.util.Date().getTime());
 		if(purchase.getNumber()==null || purchase.getNumber()==0){
 			Integer number = obtainManufactureMaxNumber(ctx, purchase.getDomain(), purchase.getSeries());
-			purchase.setNumber(++number);
+			purchase.setNumber(number!=null?++number:1);
 		}
 		return ctx
 				.getDslContext()
@@ -143,8 +144,9 @@ public class PurchaseDAO {
 
 	
 	private static Integer obtainSupplier(AONContext ctx, Integer registryId) {
-		return ctx.getDslContext().select(SUPPLIER.REGISTRY).from(SUPPLIER)
-				.where(SUPPLIER.REGISTRY.eq(registryId)).fetchAny().value1();
+		Record1<Integer> result = ctx.getDslContext().select(SUPPLIER.REGISTRY).from(SUPPLIER)
+				.where(SUPPLIER.REGISTRY.eq(registryId)).fetchAny();
+		return result!=null?result.value1():null;
 	}
 	
 	private static Integer obtainEnterpriseId(AONContext ctx, int domain) {

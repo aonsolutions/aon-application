@@ -106,6 +106,7 @@ public class IngenetSalesManager {
 		
 		int domainId = IngenetContext.getUdapaDomainId();
 		
+		
 		list.stream()
 		.map(to -> (SalesDetail) to)
 		.forEach(
@@ -116,7 +117,7 @@ public class IngenetSalesManager {
 					if(item!=null && item.getId()!=null){
 						Product product = item.getProduct();
 						if(product!=null && product.getId()!=null){
-							Integer productId = ProductDAO.getProduct(ctx, product.getId()).getId();
+							Integer productId = ProductDAO.getProduct(ctx, product.getCode()).getId();
 							if(productId == null){
 								createProduct(ctx, domainId, product);
 								productId = product.getId();
@@ -132,19 +133,12 @@ public class IngenetSalesManager {
 	//						Integer vatId;
 	//						Integer eetentionId;
 							
-							Integer itemId = ProductDAO.getItem(ctx, 
-									p -> p.getDomainProperty().eq(domainId)
-									.and(p.getProductProperty().eq(item.getProduct().getId()))
-									.and(item.getDetail()!=null?p.getDetailProperty().eq(item.getDetail()):p.getDetailProperty().isNull())
-									).getId();
+							Integer itemId = obtainItemId(ctx, domainId, productId, item);
+							
 							if(itemId == null && productId !=null){
 								createItem(ctx, domainId, productId, item);
 								
-								itemId = ProductDAO.getItem(ctx, 
-										p -> p.getDomainProperty().eq(domainId)
-										.and(p.getProductProperty().eq(item.getProduct().getId()))
-										.and(item.getDetail()!=null?p.getDetailProperty().eq(item.getDetail()):p.getDetailProperty().isNull())
-										).getId();
+								itemId = obtainItemId(ctx, domainId, productId, item);
 								
 								try {
 									createCompositionItems(ctx, domainId, itemId, item.getItemCompositionList());
@@ -152,10 +146,6 @@ public class IngenetSalesManager {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
-								
-//								createCompositionItems(ctx, domainId, itemId, Arrays.asList( 
-//										item.getCompositions().toArray( new ItemComposition[0] ) ));
-								
 							}
 						}
 					}
@@ -166,6 +156,14 @@ public class IngenetSalesManager {
 //					}
 					
 				});
+	}
+	
+	private Integer obtainItemId(AONContext ctx, Integer domainId, Integer productId, Item item){
+		return ProductDAO.getItem(ctx, 
+				p -> p.getDomainProperty().eq(domainId)
+				.and(p.getProductProperty().eq(productId))
+				.and(item.getDetail()!=null?p.getDetailProperty().eq(item.getDetail()):p.getDetailProperty().isNull())
+				).getId();
 	}
 	
 	private void createSalesLines(AONContext ctx, Integer salesId, List<ITransferObject> list) {
@@ -194,7 +192,7 @@ public class IngenetSalesManager {
 	private void createRegistry(AONContext ctx, int domain, Registry registry) {
 		SalesDAO.createRegistry(ctx, domain,
 				registry.getId(), 
-				(byte)registry.getType().ordinal(),
+				registry.getType()!=null?(byte)registry.getType().ordinal():null,
 				registry.getName(),
 				registry.getAlias(),
 				registry.getNationality().getValue(),
@@ -222,6 +220,9 @@ public class IngenetSalesManager {
 		RegistryAddress raddress = wp.getAddress();
 		if (raddress != null && raddress.getId() != null
 				&& !SalesDAO.existAddress(ctx, raddress.getId())) {
+			if (!SalesDAO.existRegistry(ctx, raddress.getRegistry().getId())) {
+				createRegistry(ctx, domain, raddress.getRegistry());	
+			}
 			createRegistryAddress(ctx, domain, raddress);
 		}
 		Customer customer = wp.getCustomer();
@@ -232,11 +233,9 @@ public class IngenetSalesManager {
 		}
 		Integer enterprise = SalesDAO.obtainEnterpriseId(ctx, domain);
 		SalesDAO.createWorkplace(ctx, domain, wp.getId(), enterprise, (byte) 1,
-				raddress != null && raddress.getId() != null ? raddress.getId()
-						: null,
-				customer != null && customer.getId() != null ? customer.getId()
-						: null, wp.getDescription(), (byte) wp
-						.getEconomicAgreement().ordinal(), scope);
+				raddress != null && raddress.getId() != null ? raddress.getId() : null,
+				customer != null && customer.getId() != null ? customer.getId() : null, wp.getDescription(),
+				wp.getEconomicAgreement() != null ? (byte) wp.getEconomicAgreement().ordinal() : null, scope);
 	}
 
 	private void createProduct(AONContext ctx, int domainId, Product product) {

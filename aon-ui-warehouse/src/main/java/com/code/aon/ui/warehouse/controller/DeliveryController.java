@@ -807,10 +807,19 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	
 	public void confirmIngenetDeliveries(ActionEvent event) {
 		try {
+			// copy delivery to AON
 			IngenetDeliveryManager.getInstance().createAonDeliveries(
 					AonUtil.getDomainName(), AonUtil.getRemoteUser(),
 					new LinkedList<>(ingenetDeliveries.keySet()),
 					DomainManager.getCurrentDomain());
+			
+			// close delivery on INGENET
+			ingenetDeliveries.keySet().forEach(id -> {
+				IngenetDeliveryManager.getInstance().closeIngenetDelivery(
+						AonUtil.getDomainName(), AonUtil.getRemoteUser(),
+						id);
+			});
+			
 			AonUtil.addInfoMessage("Albaranes importados correctamente desde INGENET");
 		} catch (Exception e) {
 			AonUtil.addErrorMessage("NO SE HA PODIDO PROCESAR EL TRASPASO");

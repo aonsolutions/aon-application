@@ -1,5 +1,7 @@
 package com.esferalia.aon.ingenet;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +17,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 
 public class IngenetDeliveryManager {
 
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
 	private static IngenetDeliveryManager instance;
 	
 	
@@ -39,7 +43,8 @@ public class IngenetDeliveryManager {
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		LinkedList<Delivery> list = WarehouseDAO.getDeliveryList(ctx, f -> f.getStatusProperty().eq((byte)DeliveryStatus.PENDING.ordinal()));
 		list.forEach(delivery -> {
-			map.put(delivery.getId(), delivery.getSeries()+"/"+delivery.getNumber());
+			String description = "Albaran "+delivery.getSeries()+"/"+delivery.getNumber()+" con fecha del "+(delivery.getIssueTime()!=null?dateFormat.format(delivery.getIssueTime()):"-");
+			map.put(delivery.getId(), description);
 		});
 		
 		return map;
@@ -57,6 +62,8 @@ public class IngenetDeliveryManager {
 		
 		Delivery delivery = obtainIngenetDelivery(domainName, user, deliveryId);
 		delivery.setDomain(ctx.getDomainId());
+		delivery.setStatus(DeliveryStatus.PENDING);
+		delivery.setIssueTime(new Date());
 		WarehouseDAO.insertDelivery(ctx, delivery);
 		
 		List<DeliveryDetail> detailList = obtainIngenetDeliveryDetailList(domainName, user, deliveryId);
@@ -82,7 +89,16 @@ public class IngenetDeliveryManager {
 		return WarehouseDAO.getDeliveryDetailList(ctx, deliveryId);
 	}
 	
-		
+	public void closeIngenetDelivery(String domainName, String user, Integer deliveryId) {
+		int domainId = IngenetContext.getUdapaDomainId();
+		AONContext ctx = IngenetContext.getAONContext(domainName,
+				domainId, user);
+		Delivery delivery = WarehouseDAO.getDelivery(ctx, deliveryId);
+		delivery.setStatus(DeliveryStatus.INVOICED);
+		delivery.setModificationUser(user);
+		delivery.setModificationDate(new Date());
+		WarehouseDAO.updateDelivery(ctx, delivery);
+	}
 	
 	
 }

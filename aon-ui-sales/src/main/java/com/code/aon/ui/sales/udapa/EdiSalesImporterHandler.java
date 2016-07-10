@@ -22,13 +22,9 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.customer.Customer;
 import com.code.aon.faces.controller.AttachmentUtil;
-import com.code.aon.product.Item;
-import com.code.aon.product.Product;
-import com.code.aon.product.enumeration.ProductKind;
-import com.code.aon.product.enumeration.ProductStatus;
-import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
@@ -113,6 +109,14 @@ public class EdiSalesImporterHandler implements Serializable {
 				if(customer==null){
 					AonUtil.addErrorMessage("No existe el cliente con el codigo de punto de entrega " + ere1c.getCodigoPuntoDeEntrega_DP_());
 				} else {
+					
+					IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_PURCHASE_REFERENCE), ere1c.getNumeroDePedido());
+					if( salesBean.getCount(criteria) > 0) {
+						AonUtil.addErrorMessage("Ya existe un pedido con la misma referencia de compra " + ere1c.getNumeroDePedido());
+					}
+					
 					SalesController salesController = (SalesController) controller;
 					sales.setCustomer(customer);
 					sales.setShippingAddress(null);
@@ -156,28 +160,30 @@ public class EdiSalesImporterHandler implements Serializable {
 					
 					SalesDetailController detailController = (SalesDetailController) FormUtil.getController(ISalesConstants.SALES_DETAIL_CONTROLLER_NAME);
 					for(ERE1L ere1l: ere1c.ere1lList){
-						detailController.onReset(event);
-						SalesDetail detail = (SalesDetail) detailController.getTo();
-						detail.setSales(sales);
-						Item item = searchItem(ere1l);
-						detail.setItem(item);
-						detail.setLine(Integer.valueOf(ere1l.getNumeroDeLineaArticulo()));
-						String description = String.format("%s. %s. %s.",
-								StringUtils.trimToEmpty(ere1l
-										.getDescripcionDelArticulo1()), StringUtils
-										.trimToEmpty(ere1l
-												.getDescripcionDelArticulo2()),
-												StringUtils.trimToEmpty(ere1l
-														.getDescripcionDelModelo_BRN_()));
-						detail.setDescription(description);
-						detail.setQuantity(Double.valueOf(ere1l.getCantidadPedida_21_()));
-						detail.setPrice(Double.valueOf(ere1l.getPrecioBrutoUnitario_AAB_()));
-//					detail.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
-//					detail.setTaxes(detail.getTaxes());
-						detail.setStatus(SalesDetailStatus.PENDING);
-//					detail.setOfferDetail(null);
-						detail.setDelivered(0.0);
-						detailController.onAccept(event);
+						RegistryItem rItem = searchRegistryItem(ere1l, customer);
+						if(rItem!=null) {
+							detailController.onReset(event);
+							SalesDetail detail = (SalesDetail) detailController.getTo();
+							detail.setSales(sales);							
+							detail.setItem(rItem.getItem());
+							detail.setLine(Integer.valueOf(ere1l.getNumeroDeLineaArticulo()));
+							String description = String.format("%s. %s. %s.",
+									StringUtils.trimToEmpty(ere1l
+											.getDescripcionDelArticulo1()), StringUtils
+											.trimToEmpty(ere1l
+													.getDescripcionDelArticulo2()),
+													StringUtils.trimToEmpty(ere1l
+															.getDescripcionDelModelo_BRN_()));
+							detail.setDescription(description);
+							detail.setQuantity(Double.valueOf(ere1l.getCantidadPedida_21_()));
+							detail.setPrice(Double.valueOf(ere1l.getPrecioBrutoUnitario_AAB_()));
+//							detail.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
+//							detail.setTaxes(detail.getTaxes());
+							detail.setStatus(SalesDetailStatus.PENDING);
+//							detail.setOfferDetail(null);
+							detail.setDelivered(0.0);
+							detailController.onAccept(event);
+						}
 					}
 				}
 			}
@@ -217,16 +223,19 @@ public class EdiSalesImporterHandler implements Serializable {
 		return null;
 	}
 	
-	private Item searchItem(ERE1L ere1l) {
+	private RegistryItem searchRegistryItem(ERE1L ere1l, Customer customer) {
 		try {
-			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+			IManagerBean itemBean = BeanManager.getManagerBean(RegistryItem.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_BARCODE), ere1l.getCodigoDeArticuloEAN_13ODUN_14().trim());
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_CODE), ere1l.getCodigoDeArticuloEAN_13ODUN_14().trim());
 			List<ITransferObject> list = itemBean.getList(criteria);
 			if(list!=null && !list.isEmpty()){
-				return (Item) list.get(0);
+				return (RegistryItem) list.get(0);
 			} else {
-				return createItem(ere1l);
+				AonUtil.addErrorMessage("La referencia de producto: " + ere1l.getDescripcionDelArticulo1().trim()
+						+ " no existe para el cliente" + customer.getRegistry().getFullName()
+						+ " (Cod. EAN: " + ere1l.getCodigoDeArticuloEAN_13ODUN_14().trim() + ")");
+				return null;
 			}
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -234,78 +243,5 @@ public class EdiSalesImporterHandler implements Serializable {
 		}
 	}
 
-	private Item createItem(ERE1L ere1l) throws ManagerBeanException {
-		
-		Product product = searchProduct(ere1l);
-		
-		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-		Item item = new Item();
-		item.setProduct(product);
-//		detail` varchar(15) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Detalle del Articulo',
-//		detail2` varchar(15) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Detalle 2 del Articulo',
-//		detail3` varchar(15) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Detalle 3 del Articulo',
-		String description = String.format("%s. %s.",
-				StringUtils.trimToEmpty(ere1l.getDescripcionDelArticulo1()),
-				StringUtils.trimToEmpty(ere1l.getDescripcionDelArticulo2()));
-		item.setDescription(description);
-//		serial_number` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de serie',
-//		serial_date` date DEFAULT NULL COMMENT 'Fecha de serializacion',
-		item.setPrice(Double.valueOf(ere1l.getPrecioBrutoUnitario_AAB_()));
-		item.setStatus(ProductStatus.ACTIVE);
-//		expenses_percent` double DEFAULT '0' COMMENT 'Gastos porcentuales del Articulo',
-//		expenses_fixed` double DEFAULT '0' COMMENT 'Gastos fijos del Articulo',
-//		profit_percent` double DEFAULT '0' COMMENT 'Porcentaje de beneficio del Articulo',
-//		purchase_price` double DEFAULT '0' COMMENT 'Precio de compra del Articulo',
-		item.setInternet(false);
-		item.setBarcode(ere1l.getCodigoDeArticuloEAN_13ODUN_14().trim());
-//		pack_format_tag` int(4) DEFAULT NULL COMMENT 'Identificador de la Etiqueta de formato',
-//		pack_units` int(4) DEFAULT '0' COMMENT 'Numero de unidades por formato',
-//		pack_units_tag` int(4) DEFAULT NULL COMMENT 'Identificador de la Etiqueta de unidad de envase',
-//		pack_measurement` double DEFAULT '0' COMMENT 'Medida envasada',
-//		pack_measurement_tag` int(4) DEFAULT NULL COMMENT 'Identificador de la Etiqueta de unidad de medida',
-		item = (Item) itemBean.insert(item);
-		
-		return item;
-	}
-	
-	private Product searchProduct(ERE1L ere1l) throws ManagerBeanException {
-		try {
-			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_CODE), StringUtils.trimToNull(ere1l.getCodigoInternoArticuloCliente_IN_()));
-			List<ITransferObject> list = productBean.getList(criteria);
-			if(list!=null && !list.isEmpty()){
-				return (Product) list.get(0);
-			} else {
-				return createProduct(ere1l);
-			}
-		} catch (ManagerBeanException ex) {
-			AonUtil.addErrorMessage(ex.getMessage());
-			throw new AbortProcessingException(ex.getMessage());
-		}
-	}
-	
-	private Product createProduct(ERE1L ere1l) throws ManagerBeanException {
-		IManagerBean productBean = BeanManager.getManagerBean(Product.class);
-		Product product = new Product();
-		product.setCode(StringUtils.trimToEmpty(ere1l.getCodigoInternoArticuloCliente_IN_()));
-		product.setName(StringUtils.abbreviate(ere1l.getDescripcionDelArticulo1().trim(), 64));
-		product.setKind(ProductKind.SALE);
-//		brand` int(4) DEFAULT NULL COMMENT 'Marca Comercial del Producto',
-//		category` int(4) DEFAULT NULL COMMENT 'Categoria del Producto',
-//		inventoriable` tinyint(1) DEFAULT NULL COMMENT 'Indica si el Producto es inventariable',
-		product.setSerializable(false);
-		product.setLotable(false);
-		product.setStatus(ProductStatus.ACTIVE);
-//		vat` int(4) DEFAULT NULL COMMENT 'IVA del Producto',
-//		retention` int(4) DEFAULT NULL COMMENT 'Retencion del Producto',
-		product.setType(ProductType.COMMERCIAL_PRODUCT);
-		product.setManufactured(true);
-		product.setComposition(false);
-		product.setCompositionPrice(false);
-		product.setPackaged(false);
-		product = (Product) productBean.insert(product);
-		return product;
-	}
 	
 }

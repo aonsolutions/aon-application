@@ -159,8 +159,8 @@ public class SalesDAO {
 	}
 	
 	public static void createRegistry(AONContext ctx, int domain, int id,
-			byte type, String name, String alias, String nationality,
-			byte documentType, String documentCountry, String document) {
+			Byte type, String name, String alias, String nationality,
+			Byte documentType, String documentCountry, String document) {
 		ctx.getDslContext()
 				.insertInto(REGISTRY, REGISTRY.DOMAIN, REGISTRY.ID,
 						REGISTRY.TYPE, REGISTRY.NAME, REGISTRY.ALIAS,
@@ -189,7 +189,7 @@ public class SalesDAO {
 	
 	public static void createWorkplace(AONContext ctx, int domain, int id,
 			int enterprise, byte active, int address, Integer customer,
-			String description, byte economicAgreement, int scope) {
+			String description, Byte economicAgreement, int scope) {
 		ctx.getDslContext()
 				.insertInto(WORKPLACE, WORKPLACE.DOMAIN, WORKPLACE.ID,
 						WORKPLACE.ENTERPRISE, WORKPLACE.ACTIVE,
