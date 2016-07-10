@@ -18,6 +18,8 @@ node {
    
    def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: parameters(cherryOut)
 
+   echo ' ----------------------------------------- '
+
    def commits = '';
    for ( commitEntry in commitsMap ) {
       if ( commitEntry.value ) 
