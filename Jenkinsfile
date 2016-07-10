@@ -1,3 +1,4 @@
+
 node {
    def mvnHome = tool 'M3'
 
@@ -15,19 +16,16 @@ node {
    sh "git cherry -v origin/8.60.X origin/master > cherryOut"
    
    def cherryOut = readFile 'cherryOut'
-   
+
    def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: parameters(cherryOut)
-
-   echo ' ----------------------------------------- '
-
+   
    def commits = '';
    for ( commitEntry in commitsMap ) {
       if ( commitEntry.value ) 
-          commits = commits + ' ' + commitEntry.key
+          commits = commitEntry.key + ' ' + commits
    }
    
-   echo 'commits: "' + commits + '"'
-	   
+   
    if ( commits ) {
       // Mark the perform hotfix 'stage'....
       stage "Perform HotFix ${hotfix}"
@@ -36,7 +34,7 @@ node {
       sh "git cherry-pick ${commits}"
 
       // Prepare hotfix   
-      sh "find -name 'pom.xml'  | while read pom; do sed -i  -e 's/<version>${pom.version}/<version>${hotfix}/' \$pom; done"
+      sh "find -name 'pom.xml'  | while read pom; do sed -i  -e 's/${pom.version}/${hotfix}/' \$pom; done"
 
       // Reread pom
       pom = readMavenPom file: 'pom.xml'
@@ -47,6 +45,7 @@ node {
    
    sh "${mvnHome}/bin/mvn  -B -Drpm.release=true  clean deploy"
    
+       
    // Mark the RPMs deploy 'stage'....
    stage 'Deploy RPMs'
    
@@ -72,8 +71,6 @@ node {
        
    }
    
-       
-
     
 }
 
@@ -102,4 +99,3 @@ def parameters(text) {
    }
    return parameters
 }
-
