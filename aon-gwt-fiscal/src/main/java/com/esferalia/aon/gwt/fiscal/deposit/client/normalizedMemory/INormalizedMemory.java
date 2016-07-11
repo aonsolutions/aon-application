@@ -50,7 +50,7 @@ public interface INormalizedMemory extends RemoteService{
 	public Map<String, String> createD2Deposit(Integer domainId, Integer id, String name, String type, Integer year);
 	
 	public Map<String, String> importAll(String type, String ejercicio, MemoryTemplate mt,
-			Integer domainId, String cif, Map<String, String> map);
+			Integer domainId, String cif, Map<String, String> map, Integer year);
 	
 	public void delete(Integer domainId, String document, Integer year);
 

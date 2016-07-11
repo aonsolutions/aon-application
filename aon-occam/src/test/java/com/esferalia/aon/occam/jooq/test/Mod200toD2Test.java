@@ -43,7 +43,7 @@ public class Mod200toD2Test {
 	public void testInitialize() throws IOException {
 		Mod2002014 mod200 = FISCAL.getMod2002014ByYear(DOMAIN_NAME, DOMAIN_ID, LOGIN, 2014);
 		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-		Mod2002014toD2.fillBalance(ctx, mod200);
+		Mod2002014toD2.fillBalance(ctx, mod200, 2014);
 		System.out.println(AonStringUtils.repeat('-', 104));
 		System.out.println(AonStringUtils.center("BALANCE DE SITUACION 2014", 104));
 		System.out.println(AonStringUtils.repeat('-', 104));
@@ -66,7 +66,7 @@ public class Mod200toD2Test {
 		System.out.println();
 		
 		ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-		Mod2002014toD2.fillPyg(ctx, mod200);
+		Mod2002014toD2.fillPyg(ctx, mod200, 2014);
 		System.out.println(AonStringUtils.repeat('-', 104));
 		System.out.println(AonStringUtils.center("BALANCE DE PERDIDAS Y GANANCIAS 2014", 104));
 		System.out.println(AonStringUtils.repeat('-', 104));
@@ -88,7 +88,7 @@ public class Mod200toD2Test {
 		System.out.println();
 		
 		ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-		Mod2002014toD2.fillEcpn(ctx, mod200);
+		Mod2002014toD2.fillEcpn(ctx, mod200, 2014);
 		System.out.println(AonStringUtils.repeat('-', 104));
 		System.out.println(AonStringUtils.center("BALANCE E.C.P.N. 2014", 104));
 		System.out.println(AonStringUtils.repeat('-', 104));
@@ -110,7 +110,7 @@ public class Mod200toD2Test {
 		System.out.println();
 		
 		ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-		Mod2002014toD2.fillEcpn2(ctx, mod200);
+		Mod2002014toD2.fillEcpn2(ctx, mod200,2014);
 		System.out.println(AonStringUtils.repeat('-', 104));
 		System.out.println(AonStringUtils.center("BALANCE E.C.P.N. (II) 2014", 104));
 		System.out.println(AonStringUtils.repeat('-', 104));
