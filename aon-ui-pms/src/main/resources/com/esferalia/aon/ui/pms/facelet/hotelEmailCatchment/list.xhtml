@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="hotelGuestList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{bundle.pms_hotel_email_catchment_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="hotelEmailCatchment-search"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						value="#{bundle.aon_search}" 
+						action="hotelEmailCatchment_search"
+						accesskey="#{bundle.aon_key_search}" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panel styleClass="aon-panelGrid-search aon-margin-bottom">
+					<aon:outputText value="#{bundle.aon_module_hotel}:" styleClass="aon-italic" />
+					<aon:outputText value="#{hotelEmailCatchment.hotelNames}" styleClass="aon-margin-left aon-bold" />
+
+					<aon:outputText value="#{bundle.aon_year}:" styleClass="aon-margin-left aon-italic" />
+					<aon:outputText styleClass="aon-margin-left aon-bold"
+						value="#{hotelEmailCatchment.year}"/>
+				</aon:panel>
+
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{hotelEmailCatchment}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:define name="columns">
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText value="Hotel" />
+							</f:facet>
+							<aon:outputText value="#{to.hotelName}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+							<f:facet name="header">
+								<aon:outputText value="Mes" />
+							</f:facet>
+							<aon:outputText value="#{to.month}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
+							<f:facet name="header">
+								<aon:outputText value="Recepcion" />
+							</f:facet>
+							<aon:outputText value="#{to.reception}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-120">
+							<f:facet name="header">
+								<aon:outputText value="WIfi" />
+							</f:facet>
+							<aon:outputText value="#{to.wifi}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-120">
+							<f:facet name="header">
+								<aon:outputText value="TOTAL" />
+							</f:facet>
+							<aon:outputText value="#{to.total}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-250">
+							<f:facet name="header">
+								<aon:outputText value="Huespedes" />
+							</f:facet>
+							<aon:outputText value="#{to.guest}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
+							<f:facet name="header">
+								<aon:outputText value="RECEPCION %" />
+							</f:facet>
+							<aon:outputText value="#{to.receptionPercentage}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputText value="TOTAL %" />
+							</f:facet>
+							<aon:outputText value="#{to.totalPercentage}" />
+						</aon:column>
+
+
+					</ui:define>
+				</ui:decorate>
+
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

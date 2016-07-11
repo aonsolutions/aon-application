@@ -1,6 +1,7 @@
 package com.esferalia.aon.ui.pms.controller;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -408,6 +409,17 @@ public class PmsCollectionsController implements Serializable {
 			}
 		}
 		return touristTaxFreeCauses;
+	}
+	
+	public List<SelectItem> getYearItems() throws ManagerBeanException {
+		List<SelectItem> yearItems = new LinkedList<SelectItem>();
+		Integer currentYear = new Date().getYear()+1900;
+	
+		for(Integer y = 2010;y <= currentYear; y++){
+			SelectItem item = new SelectItem(y, y.toString());
+			yearItems.add(item);
+		}
+		return yearItems;
 	}
 
 }

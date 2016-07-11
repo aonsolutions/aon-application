@@ -342,6 +342,14 @@
 										actionListener="#{hotelGuest.onInit}"
 										value="#{bundle.pms_hotelGuest_module}" />
 								</aon:div>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="hotelEmailCatchmentList"
+										action="hotelEmailCatchment_search"
+										actionListener="#{hotelEmailCatchment.onInit}"
+										value="#{bundle.pms_hotel_email_catchment_module}" />
+								</aon:div>
+								
 								<aon:if test="#{aonRole.commercialOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="person-hotel"

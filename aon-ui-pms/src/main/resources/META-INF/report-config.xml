@@ -138,6 +138,19 @@
 			<param id="date" value="#{hotelGuest.getDate}" />
 		</params>
 	</report>
+	
+	<!--  ********* Hotel Guests ********* -->
+	<report id="hotelEmailCatchment" description="Hotel Email Catchment Report">
+		<collection provider="#{hotelEmailCatchment}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="hotels" value="#{hotelEmailCatchment.getHotels}" />
+			<param id="year" value="#{hotelEmailCatchment.getYear}" />
+		</params>
+	</report>
 
 	<!--  *********  Sale Invoice ********* -->
 	<report id="saleInvoiceHotel" description="Fee Hotel Invoice's Report Template">
