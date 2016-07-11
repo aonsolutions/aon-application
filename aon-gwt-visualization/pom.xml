@@ -3,14 +3,14 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.60</version>
+		<version>8.60.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.gwt.visualization</artifactId>
 
 	<packaging>jar</packaging>
-	<version>8.60</version>
+	<version>8.60.1</version>
 	<description>AON GWT VISUALIZATION</description>
 	<name>AON GWT VISUALIZATION</name>
 
