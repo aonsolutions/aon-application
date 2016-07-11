@@ -526,7 +526,7 @@ public class NormalizedMemory extends ResizeComposite {
 										if(t.equals("Balance (I.S.)")){
 											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
 											String ejercicio = ej.getSelectedItemText();
-											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(),d2Deposit2014.getMapDraft(), new AsyncCallback<Map<String, String>>() {
+											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(),d2Deposit2014.getMapDraft(), year, new AsyncCallback<Map<String, String>>() {
 												@Override
 												public void onFailure(
 														Throwable caught) {
@@ -549,7 +549,7 @@ public class NormalizedMemory extends ResizeComposite {
 											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
 											String ejercicio = ej.getSelectedItemText();
 											
-											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit2014.getMapDraft(), new AsyncCallback<Map<String, String>>() {
+											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit2014.getMapDraft(), year, new AsyncCallback<Map<String, String>>() {
 												@Override
 												public void onFailure(
 														Throwable caught) {
@@ -569,7 +569,7 @@ public class NormalizedMemory extends ResizeComposite {
 										else if(t.equals("ECPN (I.S.)")){
 											ListBox ej = (ListBox) flex_table.getWidget(2, 1);
 											String ejercicio = ej.getSelectedItemText();
-											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit2014.getMapDraft(), new AsyncCallback<Map<String, String>>() {
+											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit2014.getMapDraft(), year, new AsyncCallback<Map<String, String>>() {
 												@Override
 												public void onFailure(
 														Throwable caught) {
@@ -624,7 +624,7 @@ public class NormalizedMemory extends ResizeComposite {
 											ListBox ej = (ListBox) flex_table.getWidget(1, 1);
 											String ejercicio = ej.getSelectedItemText();
 											
-											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit2014.getMapDraft(), new AsyncCallback<Map<String, String>>() {
+											inma.importAll(t, ejercicio, null, enterprise.getDomain(), enterprise.getDocument(), d2Deposit2014.getMapDraft(), year, new AsyncCallback<Map<String, String>>() {
 												@Override
 												public void onFailure(
 														Throwable caught) {

@@ -376,7 +376,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 	}
 
 	public Map<String, String> importAll(String type, String ejercicio, MemoryTemplate mt,
-			Integer domainId, String cif, Map<String, String> map) {
+			Integer domainId, String cif, Map<String, String> map, Integer year) {
 		String domainName = getDomainName(domainId);
 		if (type.equals("Balance (I.S.)")) {
 			if (ejercicio.equals("2013")) {
@@ -393,7 +393,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 			} else if (ejercicio.equals("2014")) {
 				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-				Mod2002014toD2.fillBalance(ctx, mod2002014);
+				Mod2002014toD2.fillBalance(ctx, mod2002014, year);
 
 				for (D2DepositHeaderKey key : ctx.keySet()) {
 					if(map.containsKey(key.getCode().toString()))
@@ -428,7 +428,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 			} else if (ejercicio.equals("2014")) {
 				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-				Mod2002014toD2.fillPyg(ctx, mod2002014);
+				Mod2002014toD2.fillPyg(ctx, mod2002014, year);
 
 				for (D2DepositHeaderKey key : ctx.keySet()) {
 					if(map.containsKey(key.getCode().toString()))
@@ -464,8 +464,8 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 			} else if (ejercicio.equals("2014")) {
 				Mod2002014 mod2002014 = FISCAL.getMod2002014ByYear(domainName, domainId, getUserLogin(), 2014);
 				Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
-				Mod2002014toD2.fillEcpn(ctx, mod2002014);
-				Mod2002014toD2.fillEcpn2(ctx, mod2002014);
+				Mod2002014toD2.fillEcpn(ctx, mod2002014, year);
+				Mod2002014toD2.fillEcpn2(ctx, mod2002014, year);
 
 				for (D2DepositHeaderKey key : ctx.keySet()) {
 					if(map.containsKey(key.getCode().toString()))

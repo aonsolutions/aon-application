@@ -40,9 +40,8 @@ public interface INormalizedMemoryAsync {
 
 	void getDate(String str, AsyncCallback<Date> callback);
 
-	void importAll(String type, String ejercicio, MemoryTemplate mt,
-			Integer domainId, String cif, Map<String, String> map,
-			AsyncCallback<Map<String, String>> callback);
+	void importAll(String type, String ejercicio, MemoryTemplate mt, Integer domainId, String cif,
+			Map<String, String> map, Integer year, AsyncCallback<Map<String, String>> callback);
 
 	void delete(Integer domainId, String document, Integer year,
 			AsyncCallback<Void> callback);
