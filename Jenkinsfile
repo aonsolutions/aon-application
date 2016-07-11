@@ -1,3 +1,4 @@
+properties ([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5']]])
 
 node {
    def mvnHome = tool 'M3'
@@ -45,17 +46,6 @@ node {
    
    sh "${mvnHome}/bin/mvn  -B -Drpm.release=true  clean deploy"
    
-   if ( commits ) {
-
-      sh "${mvnHome}/bin/mvn  -B clean"
-
-      sh "git commit -a -m 'Hotfix ${pom.version}'"
-   
-      sh "git push --repo=https://j3nk1ns:aon945121010@github.com/aonsolutions/aon-application.git"
-       
-   }
-   
-       
    // Mark the RPMs deploy 'stage'....
    stage 'Deploy RPMs'
    
@@ -68,6 +58,20 @@ node {
    // Create RPMs repository
    sh "ssh dev.esferalia.net 'createrepo /var/www/rpms/aon-solutions'"
 
+   if ( commits ) {
+
+      // Mark the RPMs deploy 'stage'....
+      stage "Publish HotFix ${pom.version}"
+
+      sh "${mvnHome}/bin/mvn  -B clean"
+
+      sh "git commit -a -m 'Hotfix ${pom.version}'"
+   
+      sh "git push --repo=https://j3nk1ns:aon945121010@github.com/aonsolutions/aon-application.git"
+       
+   }
+   
+       
     
 }
 
