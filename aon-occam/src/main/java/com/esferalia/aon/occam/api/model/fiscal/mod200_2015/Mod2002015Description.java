@@ -183,6 +183,7 @@ public class Mod2002015Description {
 		DESCRIPTION_MAP.put(Mod2002015Key.BP189,"(Capital no exigido) (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BP190,"Prima de emisi\u00F3n (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BP191,"Reservas (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002015Key.BP191X,"Otras Reservas");
 		DESCRIPTION_MAP.put(Mod2002015Key.BP192,"Legal y estatutarias (N)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BP193,"Otras reservas (N)");
 		DESCRIPTION_MAP.put(Mod2002015Key.BP702,"Reserva de revalorizaci\u00F3n (Ley 16/2012 de 27 de diciembre) (N)");		
