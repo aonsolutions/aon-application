@@ -115,7 +115,9 @@ public class DBConsults {
 	}
 	
 	public static void updateAttachData(Domain domain, User user, AttachType attachType, Integer attachId, byte[] data){
-		Attach attach = new Attach().setAttachType(attachType).setId(attachId).setData(data);
+		Attach attach  = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(),
+				f -> f.getIdProperty().eq(attachId),attachType);
+		attach.setData(data);
 		AON.updateAttachData(domain.getName(), domain.getId(), user.getLogin(), attach);
 	}
 	

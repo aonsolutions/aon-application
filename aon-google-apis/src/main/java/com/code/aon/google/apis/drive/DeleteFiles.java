@@ -129,30 +129,34 @@ public class DeleteFiles {
 		}
 	}
 		
-	private static void insertBlobs(byte[] data, String driveId, Domain domain, Integer id){
-		DBConsults.updateAttachData(domain, getUser(), AttachType.REGISTRY, id, data);
-		DBConsults.updateAttachData(domain, getUser(), AttachType.CONTRACT, id, data);
-		DBConsults.updateAttachData(domain, getUser(), AttachType.INVOICE, id, data);
-		DBConsults.updateAttachData(domain, getUser(), AttachType.ITEM, id, data);
-		DBConsults.updateAttachData(domain, getUser(), AttachType.OFFER, id, data);
-		DBConsults.updateAttachData(domain, getUser(), AttachType.PAYROLL, id, data);
-		DBConsults.updateAttachData(domain, getUser(), AttachType.PROJECT, id, data);
-		DBConsults.updateAttachData(domain, getUser(), AttachType.SEPE, id, data);
+	private static void insertBlobs(byte[] data, String driveId, Domain domain, Integer id, String aonType){
+		if(aonType.equals("registry")) DBConsults.updateAttachData(domain, getUser(), AttachType.REGISTRY, id, data);
+		if(aonType.equals("contract")) DBConsults.updateAttachData(domain, getUser(), AttachType.CONTRACT, id, data);
+		if(aonType.equals("invoice")) DBConsults.updateAttachData(domain, getUser(), AttachType.INVOICE, id, data);
+		if(aonType.equals("item")) DBConsults.updateAttachData(domain, getUser(), AttachType.ITEM, id, data);
+		if(aonType.equals("offer")) DBConsults.updateAttachData(domain, getUser(), AttachType.OFFER, id, data);
+		if(aonType.equals("payroll")) DBConsults.updateAttachData(domain, getUser(), AttachType.PAYROLL, id, data);
+		if(aonType.equals("project")) DBConsults.updateAttachData(domain, getUser(), AttachType.PROJECT, id, data);
+		if(aonType.equals("sepe")) DBConsults.updateAttachData(domain, getUser(), AttachType.SEPE, id, data);
 	}
 
 	public static void deleteFile(Drive drive, File f, Domain domain) throws IOException{
 		Integer idAux = -1;
-		
+		String aonType = null;
 		if(f.getProperties() != null){
 			for (Property property : f.getProperties()) {
 				if(property.getKey().equals("fileId")){
 					String fileId = property.getValue();
 					idAux = Integer.parseInt(fileId);
 				}
+				if(property.getKey().equals("aontype")){
+					System.out.println(property.getValue());
+					aonType = property.getValue();
+				}
 			}
 		}
 	 
-		if(idAux != -1){
+		if(idAux != -1 && aonType != null){
 			if(remove.equals("force")){
 				if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
 					deleteFileBD(domain, f, idAux);
@@ -162,7 +166,7 @@ public class DeleteFiles {
 			else{
 				if(!f.getMimeType().equals("application/vnd.google-apps.folder")){
 					InputStream data = DriveUtils.downloadFile(drive, f);
-					insertBlobs(AonIOUtils.toByteArray(data), f.getId(), domain, idAux);
+					insertBlobs(AonIOUtils.toByteArray(data), f.getId(), domain, idAux, aonType);
 				}
 				drive.files().delete(f.getId()).execute();
 		
@@ -232,7 +236,7 @@ public class DeleteFiles {
 	public static void main(String[] args) throws  IOException, GeneralSecurityException, AonConnectionException {
 		parse(args);
 		Map<String, Integer> domainMap = initializeDomainMap();
-		System.out.println(domains[0]);
+		
 		if(id != -1){
 			Map<String, String> domains1=DBSync.getDomains();
 			Vector<String> v = new Vector<String>(domains1.keySet());
@@ -346,7 +350,6 @@ public class DeleteFiles {
 
 		try {
 			CommandLine line = parser.parse(options, args);
-					
 			String[] typesaux = line.getOptionValues(typeOption.getOpt());
 			if (typesaux != null) {
 				types = typesaux;
@@ -376,6 +379,7 @@ public class DeleteFiles {
 			login = line.getOptionValue(loginOption.getOpt());
 			
 		} catch (ParseException e) {
+			System.out.println(e);
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX,
 					options, true);
 		}

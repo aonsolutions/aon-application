@@ -19,6 +19,8 @@ public class View {
 				if(p.getKey().equals("oldDriveId")){
 					System.out.println("   --> OLD DRIVE ID: "+ p.getValue());
 				}
+				if(p.getKey().equals("aontype"))
+					System.out.println("   --> AON TYPE: "+ p.getValue());
 			}
 		}
 		System.out.println("");

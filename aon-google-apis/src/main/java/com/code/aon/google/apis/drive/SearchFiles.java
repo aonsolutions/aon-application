@@ -37,6 +37,15 @@ public class SearchFiles {
 	public static FileList searchFilesProperties(final Drive drive, final String key, final String property) throws IOException {
         return (FileList) drive.files().list().setQ("properties has {key='" + key + "' and value='" + property + "' and visibility='PRIVATE'}").execute();
     }
+	
+	public static FileList searchFilesProperties2(final Drive drive, final String[] key, final String[] property) throws IOException {
+        String q = "";
+        for(Integer i = 0; i < key.length; i++){
+        	if(i > 0) q = q + " and ";
+        	q = q +  "properties has {key='" + key[i] + "' and value='" + property[i] + "' and visibility='PRIVATE'}";
+        }
+		return (FileList) drive.files().list().setQ(q).execute();
+    }
 
 	
 	public static FileList searchFilesFulltext(Drive drive, String searcher) throws IOException{
