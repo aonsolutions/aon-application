@@ -18,7 +18,7 @@ node {
    
    def cherryOut = readFile 'cherryOut'
 
-   //def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: parameters(cherryOut)
+   def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: parameters(cherryOut)
    
    def commits = '';
    //for ( commitEntry in commitsMap ) {
