@@ -752,7 +752,7 @@ public enum Mod2002015Key implements IMod200Key {
 	,LQ1032(1032)  // Reserva de capitalizacion
 	    ,LQ1131(1131)   ,LQ1132(1132)   ,LQ1133(1133)
 	    ,LQ1134(1134)   ,LQ1135(1135)   ,LQ1136(1136)
-	    ,LQ1137(1137)   ,LQ1138(1138)   ,LQ1139(1139)
+	    ,LQ1137(1137)  /*LQ1138(1138)*/ ,LQ1139(1139)
 	    ,LQ1140(1140)  
 	
 	,LQ547(547)  // Compensación de bases imponibles negativas periodos anteriores		

@@ -387,7 +387,12 @@ public class Mod2002015DAO  {
 			 	.where(	FS_MODEL200_DETAIL.FS_MODEL200.equal(mod200.getId()))
 			 	.fetch();
 		for (FsModel200DetailRecord det : result) {
-			map.put(det.getKey(),det.getValue());
+			try {
+				Mod2002015Key.valueOf(det.getKey());
+				map.put(det.getKey(),det.getValue());
+			} catch (IllegalArgumentException e) {
+				System.out.println( "WARNING: Clave "+ det.getKey()+" no encontrada!" );
+			}
 		}
 
 		DoubleVariable2015 v = null;
