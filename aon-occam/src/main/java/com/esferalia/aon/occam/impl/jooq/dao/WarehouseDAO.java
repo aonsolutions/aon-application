@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TR
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -415,7 +416,7 @@ public class WarehouseDAO {
 	}
 	
 	public static LinkedList<DeliveryDetail> getDeliveryDetailList(AONContext ctx, Integer deliveryId){
-		return ctx.getDslContext().select().from(DELIVERY_DETAIL).where(DELIVERY_DETAIL.ID.eq(deliveryId)).limit(1).fetchInto(DELIVERY_DETAIL)
+		return ctx.getDslContext().select().from(DELIVERY_DETAIL).where(DELIVERY_DETAIL.DELIVERY.eq(deliveryId)).limit(1).fetchInto(DELIVERY_DETAIL)
 				.stream().map(new FullDeliveryDetailFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -449,7 +450,7 @@ public class WarehouseDAO {
 						delivery.getSeries(), delivery.getNumber(),
 						delivery.getCustomer(), delivery.getAddress(),
 						delivery.getIssueTime(), delivery.getPayMethod(),
-						delivery.getSecurityLevel(), delivery.getStatus(),
+						delivery.getSecurityLevel(), delivery.getStatus().ordinal(),
 						delivery.getComments(), delivery.getRemarks(),
 						delivery.getWorkplace(), delivery.getScope(),
 						delivery.getNumberOfPymnts(),
@@ -503,7 +504,7 @@ public class WarehouseDAO {
 		.set(DELIVERY.NUMBER, delivery.getNumber())
 		.set(DELIVERY.CUSTOMER, delivery.getCustomer())
 		.set(DELIVERY.ADDRESS, delivery.getAddress())
-		.set(DELIVERY.ISSUE_TIME, new Timestamp(delivery.getIssueTime().getTime()))
+		.set(DELIVERY.ISSUE_TIME, new Timestamp(delivery.getIssueTime()!=null?delivery.getIssueTime().getTime():(new Date()).getTime()))
 		.set(DELIVERY.PAY_METHOD, delivery.getPayMethod())
 		.set(DELIVERY.SECURITY_LEVEL, delivery.getSecurityLevel())
 		.set(DELIVERY.STATUS, (byte)delivery.getStatus().ordinal())

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -22,6 +23,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.customer.Customer;
 import com.code.aon.faces.controller.AttachmentUtil;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryItem;
@@ -37,7 +39,6 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sales.controller.ISalesConstants;
 import com.code.aon.ui.sales.controller.SalesController;
 import com.code.aon.ui.sales.controller.SalesDetailController;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.udapa.sales.data.ERE1C;
 import com.esferalia.aon.file.seres.udapa.sales.data.ERE1L;
@@ -78,11 +79,17 @@ public class EdiSalesImporterHandler implements Serializable {
 	public void fileUploaded(UploadEvent event) {
 		setAonFile(AttachmentUtil.fileUploaded(event));
 	}
-
+	
+	
 	
 	public void onImportFileShow(ActionEvent event) {
 		controller.onReset(event);
 		setAonFile(null);
+		getLogPanel().reset();
+	}
+	
+	public void onImportFileHide(ActionEvent event) {
+		getLogPanel().finish();
 	}
 	
 	public void onImportFile(ActionEvent event) {
@@ -90,106 +97,144 @@ public class EdiSalesImporterHandler implements Serializable {
 		ERE1C ere1c = null;
 		try {
 			ere1c = reader.readFile(aonFile.openStream());
+			getLogPanel().info("Fichero leido correctamente");
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
+		getLogPanel().info("Inicio del proceso de importacion");
 		createSales(event, ere1c);
+		getLogPanel().info("Proceso finalizado correctamente");
 		setAonFile(null);
+		setShowImportFileWindow(false);
 	}
 	
 	public void createSales(ActionEvent event, ERE1C ere1c) {
 		Sales sales = (Sales) controller.getTo();
 		try {
 			if(ere1c.getCodigoPuntoDeEntrega_DP_()==null){
-				AonUtil.addErrorMessage("Imposible continuar, el fichero no contiene codigo de punto de entrega.");
-				AonUtil.addErrorMessage("Comprador: " + ere1c.getCodigoComprador_BY_());
+				getLogPanel().error("Imposible continuar, el fichero no contiene codigo de punto de entrega.");
+				getLogPanel().error("Comprador: " + ere1c.getCodigoComprador_BY_());
 			} else {
 				Customer customer = searchCustomer(ere1c.getCodigoPuntoDeEntrega_DP_().trim());
 				if(customer==null){
-					AonUtil.addErrorMessage("No existe el cliente con el codigo de punto de entrega " + ere1c.getCodigoPuntoDeEntrega_DP_());
+					getLogPanel().error("No existe el cliente con el codigo de punto de entrega " + ere1c.getCodigoPuntoDeEntrega_DP_());
 				} else {
+					getLogPanel().info("Cliente detectado con el codigo de punto de entrega " + ere1c.getCodigoPuntoDeEntrega_DP_());
 					
 					IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_PURCHASE_REFERENCE), ere1c.getNumeroDePedido());
 					if( salesBean.getCount(criteria) > 0) {
-						AonUtil.addErrorMessage("Ya existe un pedido con la misma referencia de compra " + ere1c.getNumeroDePedido());
+						getLogPanel().error("Ya existe un pedido con la misma referencia de compra " + ere1c.getNumeroDePedido());
 					}
 					
-					SalesController salesController = (SalesController) controller;
-					sales.setCustomer(customer);
-					sales.setShippingAddress(null);
-					sales.setScope(customer.getScope());
-					salesController.loadAddresses(customer.getId());
-					salesController.loadProjects(customer.getId());
-					salesController.loadCommercial(customer.getId());
-					salesController.loadDefaultPayMethod(customer.getRegistry(), true);
-					
-					try {
-						sales.setIssueDate(dateFormatter.parse(ere1c
-								.getFechaDelDocumento_137__102_().toString()));
-					} catch (ParseException e) {
-						AonUtil.addErrorMessage("No se ha podido convertir la fecha: " + ere1c.getFechaDelDocumento_137__102_());
-						throw new AbortProcessingException(e.getMessage(), e);
-					}
-					if(ere1c.getTipoDePedido_220_221_224_226_22E_().equals(ERE1C.C1001T.CANCELACION_DE_PEDID_226.getValue())){
-						sales.setDocumentType(DocumentType.ITEM_RETURN);
-					} else {
-						sales.setDocumentType(DocumentType.NORMAL);
-					}
-					sales.setSecurityLevel(SecurityLevel.OFFICIAL);
-					sales.setStatus(SalesStatus.PENDING);
-					sales.setPurchaseGenerated(false);
-					sales.setPurchaseReference(ere1c.getNumeroDePedido());
-					
-					String remarks = "Pedido: " + ere1c.getNumeroDePedido();
-					remarks += System.getProperty("line.separator");
-					for(ERE1T value: ere1c.ere1tList){
-						remarks += (StringUtils.isNotBlank(value.getTexto1())?value.getTexto1().trim():"") +
-								(StringUtils.isNotBlank(value.getTexto2())?", " + value.getTexto2().trim():"") +
-								(StringUtils.isNotBlank(value.getTexto3())?", " + value.getTexto3().trim():"") +
-								(StringUtils.isNotBlank(value.getTexto4())?", " + value.getTexto4().trim():"") +
-								(StringUtils.isNotBlank(value.getTexto5())?", " + value.getTexto5().trim():"") + 
-								System.getProperty("line.separator");
-					}
-					sales.setRemarks(remarks);
-					sales.setComments("");
-					
-					salesController.accept(event);
-					
-					SalesDetailController detailController = (SalesDetailController) FormUtil.getController(ISalesConstants.SALES_DETAIL_CONTROLLER_NAME);
-					for(ERE1L ere1l: ere1c.ere1lList){
+					List<ERE1L> undefinedItems = new LinkedList<ERE1L>();
+					ere1c.ere1lList.forEach(ere1l -> {
 						RegistryItem rItem = searchRegistryItem(ere1l, customer);
-						if(rItem!=null) {
-							detailController.onReset(event);
-							SalesDetail detail = (SalesDetail) detailController.getTo();
-							detail.setSales(sales);							
-							detail.setItem(rItem.getItem());
-							detail.setLine(Integer.valueOf(ere1l.getNumeroDeLineaArticulo()));
-							String description = String.format("%s. %s. %s.",
-									StringUtils.trimToEmpty(ere1l
-											.getDescripcionDelArticulo1()), StringUtils
-											.trimToEmpty(ere1l
-													.getDescripcionDelArticulo2()),
-													StringUtils.trimToEmpty(ere1l
-															.getDescripcionDelModelo_BRN_()));
-							detail.setDescription(description);
-							detail.setQuantity(Double.valueOf(ere1l.getCantidadPedida_21_()));
-							detail.setPrice(Double.valueOf(ere1l.getPrecioBrutoUnitario_AAB_()));
-//							detail.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
-//							detail.setTaxes(detail.getTaxes());
-							detail.setStatus(SalesDetailStatus.PENDING);
-//							detail.setOfferDetail(null);
-							detail.setDelivered(0.0);
-							detailController.onAccept(event);
+						if(rItem==null) {
+							undefinedItems.add(ere1l);
+						}
+					});
+					
+					if(!undefinedItems.isEmpty()){
+						ere1c.ere1lList.forEach(ere1l -> {
+							getLogPanel().error("Linea " + ere1l.getNumeroDeLineaArticulo() 
+									+ " omitida: La referencia de producto: " + StringUtils.trimToEmpty(ere1l.getDescripcionDelArticulo1())
+									+ " (Cod. EAN: " + StringUtils.trimToEmpty(ere1l.getCodigoUnidadDeExpedicion_1__EN_()) + ")"
+									+ " no existe para el cliente" + customer.getRegistry().getFullName());
+						});
+					} else {
+						SalesController salesController = (SalesController) controller;
+						sales.setCustomer(customer);
+						sales.setShippingAddress(null);
+						sales.setScope(customer.getScope());
+						salesController.loadAddresses(customer.getId());
+						salesController.loadProjects(customer.getId());
+						salesController.loadCommercial(customer.getId());
+						salesController.loadDefaultPayMethod(customer.getRegistry(), true);
+						
+						try {
+							sales.setIssueDate(dateFormatter.parse(ere1c
+									.getFechaDelDocumento_137__102_().toString()));
+						} catch (ParseException e) {
+							getLogPanel().error("No se ha podido convertir la fecha: " + ere1c.getFechaDelDocumento_137__102_());
+							sales.setIssueDate(null);
+						}
+						if(ere1c.getTipoDePedido_220_221_224_226_22E_().equals(ERE1C.C1001T.CANCELACION_DE_PEDID_226.getValue())){
+							sales.setDocumentType(DocumentType.ITEM_RETURN);
+						} else {
+							sales.setDocumentType(DocumentType.NORMAL);
+						}
+						sales.setSecurityLevel(SecurityLevel.OFFICIAL);
+						sales.setStatus(SalesStatus.PENDING);
+						sales.setPurchaseGenerated(false);
+						sales.setPurchaseReference(ere1c.getNumeroDePedido());
+						
+						String remarks = "Pedido: " + ere1c.getNumeroDePedido();
+						remarks += System.getProperty("line.separator");
+						for(ERE1T value: ere1c.ere1tList){
+							remarks += (StringUtils.isNotBlank(value.getTexto1())?value.getTexto1().trim():"") +
+									(StringUtils.isNotBlank(value.getTexto2())?", " + value.getTexto2().trim():"") +
+									(StringUtils.isNotBlank(value.getTexto3())?", " + value.getTexto3().trim():"") +
+									(StringUtils.isNotBlank(value.getTexto4())?", " + value.getTexto4().trim():"") +
+									(StringUtils.isNotBlank(value.getTexto5())?", " + value.getTexto5().trim():"") + 
+									System.getProperty("line.separator");
+						}
+						sales.setRemarks(remarks);
+						sales.setComments("");
+						
+						salesController.accept(event);
+						
+						getLogPanel().info("Pedido creado: " + sales.getReferenceCode());
+						
+						SalesDetailController detailController = (SalesDetailController) FormUtil.getController(ISalesConstants.SALES_DETAIL_CONTROLLER_NAME);
+						for(ERE1L ere1l: ere1c.ere1lList){
+							RegistryItem rItem = searchRegistryItem(ere1l, customer);
+							if(rItem==null) {
+								getLogPanel().error("Linea " + ere1l.getNumeroDeLineaArticulo() 
+										+ " omitida: La referencia de producto: " + ere1l.getDescripcionDelArticulo1().trim()
+										+ " (Cod. referencia: " + ere1l.getCodigoUnidadDeExpedicion_1__EN_().trim() + ")"
+										+ " no existe para el cliente " + customer.getRegistry().getFullName());
+							} else {
+								detailController.onReset(event);
+								SalesDetail detail = (SalesDetail) detailController.getTo();
+								detail.setSales(sales);							
+								detail.setItem(rItem.getItem());
+								detail.setLine(Integer.valueOf(ere1l.getNumeroDeLineaArticulo()));
+								String description = String.format("%s. %s. %s.",
+										StringUtils.trimToEmpty(ere1l
+												.getDescripcionDelArticulo1()), StringUtils
+												.trimToEmpty(ere1l
+														.getDescripcionDelArticulo2()),
+														StringUtils.trimToEmpty(ere1l
+																.getDescripcionDelModelo_BRN_()));
+								detail.setDescription(description);
+								detail.setQuantity(Double.valueOf(ere1l.getCantidadPedida_21_()));
+								Double price = Double.valueOf(ere1l.getPrecioBrutoUnitario_AAB_());
+								if(price.equals(0.0)){
+									price = rItem.getPrice();
+									getLogPanel().warn("Precio no definido en la linea " + detail.getLine() 
+											+ " de " + detail.getQuantity() + " unidades de " + detail.getDescription());
+								}
+								detail.setPrice(price);
+//								detail.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
+//								detail.setTaxes(detail.getTaxes());
+								detail.setStatus(SalesDetailStatus.PENDING);
+//								detail.setOfferDetail(null);
+								detail.setDelivered(0.0);
+								detailController.onAccept(event);
+								getLogPanel().info("Linea de pedido " + detail.getLine() 
+										+ " creada: " + detail.getQuantity() + " unidades de " + detail.getDescription());
+							}
 						}
 					}
+					
 				}
 			}
 		} catch (ManagerBeanException e) {
+			getLogPanel().error(e.getMessage());
 			LOGGER.error(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
 		}
 
 	}
@@ -207,8 +252,8 @@ public class EdiSalesImporterHandler implements Serializable {
 			registryId = list != null && !list.isEmpty() ? ((RegistryNote) list
 					.get(0)).getRegistry().getId() : null;
 		} catch (ManagerBeanException ex) {
-			AonUtil.addErrorMessage(ex.getMessage());
-			throw new AbortProcessingException(ex.getMessage());
+			getLogPanel().error(ex.getMessage());
+			LOGGER.error(ex.getMessage());
 		}
 		
 		if(registryId!=null){
@@ -216,8 +261,8 @@ public class EdiSalesImporterHandler implements Serializable {
 				IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 				return (Customer) customerBean.get(registryId);
 			} catch (ManagerBeanException ex) {
-				AonUtil.addErrorMessage(ex.getMessage());
-				throw new AbortProcessingException(ex.getMessage());
+				getLogPanel().error(ex.getMessage());
+				LOGGER.error(ex.getMessage());
 			}
 		}
 		return null;
@@ -225,22 +270,28 @@ public class EdiSalesImporterHandler implements Serializable {
 	
 	private RegistryItem searchRegistryItem(ERE1L ere1l, Customer customer) {
 		try {
-			IManagerBean itemBean = BeanManager.getManagerBean(RegistryItem.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_CODE), ere1l.getCodigoDeArticuloEAN_13ODUN_14().trim());
-			List<ITransferObject> list = itemBean.getList(criteria);
-			if(list!=null && !list.isEmpty()){
-				return (RegistryItem) list.get(0);
-			} else {
-				AonUtil.addErrorMessage("La referencia de producto: " + ere1l.getDescripcionDelArticulo1().trim()
-						+ " no existe para el cliente" + customer.getRegistry().getFullName()
-						+ " (Cod. EAN: " + ere1l.getCodigoDeArticuloEAN_13ODUN_14().trim() + ")");
-				return null;
+			String itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoUnidadDeExpedicion_1__EN_());
+			if(itemCustomerCode==null){
+				itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoDeArticuloEAN_13ODUN_14());
+			}
+			if(itemCustomerCode!=null){
+				IManagerBean itemBean = BeanManager.getManagerBean(RegistryItem.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_CODE), itemCustomerCode);
+				List<ITransferObject> list = itemBean.getList(criteria);
+				if(list!=null && !list.isEmpty()){
+					return (RegistryItem) list.get(0);
+				}
 			}
 		} catch (ManagerBeanException ex) {
-			AonUtil.addErrorMessage(ex.getMessage());
-			throw new AbortProcessingException(ex.getMessage());
+			getLogPanel().error(ex.getMessage());
+			LOGGER.error(ex.getMessage());
 		}
+		return null;
+	}
+	
+	private LogPanelController getLogPanel(){
+		return LogPanelController.getInstance();
 	}
 
 	

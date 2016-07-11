@@ -37,14 +37,13 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div id="importFileToolBar" styleClass="aon-toolbar">
-									<aon:commandButton id="importFile-payment"
+									<aon:commandButton id="importFile-import"
 										value="#{bundle.aon_import}"
 										disabled="#{sales.udapaImporter.aonFile == null}"
 										reRender="showImportFileWindow,salesForm"
 										actionListener="#{sales.udapaImporter.onImportFile}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
-										<rich:componentControl for="importFileModalPanel"
-											event="onclick" operation="hide"/>																					
+										<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
 										<f:setPropertyActionListener
 											target="#{sales.udapaImporter.showImportFileWindow}"
 											value="#{false}" />

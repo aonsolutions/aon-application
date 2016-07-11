@@ -58,7 +58,8 @@
 								iconClass="aon-icon-task"
 								actionListener="#{sales.onManufacture}"
 								action="sales_form"
-								onclick="if (!confirm('#{bundle.aon_confirm_title}')) { return false;}"/>
+								onclick="if (!confirm('#{bundle.aon_confirm_title}')) {return false;} else {Richfaces.showModalPanel('waitProccess');}"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
 						</aon:if>
 						<aon:menuItem id="purchaseGeneration"
 							value="#{bundle.sales_to_purchase}"
@@ -98,7 +99,7 @@
 						</aon:menuItem>
 						<aon:if test="#{company.ediSupportEnabled}">
 							<aon:menuItem id="import-Popup"
-								value="#{bundle.aon_import} EDI"
+								value="#{bundle.aon_import} #{bundle.aon_edi}"
 								iconClass="aon-icon-file-entrance"
 								actionListener="#{sales.udapaImporter.onImportFileShow}"
 								action="sales_form">
@@ -499,5 +500,18 @@
 			<ui:param name="bankAccountController" value="#{sales.accountHelper}" />
 			<ui:param name="modalReRender" value="payMethodDiv" />
 		</ui:include>
+		<aon:if test="#{company.ediSupportEnabled}">
+			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+				<ui:param name="logPanelTitle" value="#{bundle.aon_import} #{bundle.aon_edi}" />
+				<ui:param name="closeButtonReRender" value="salesForm" />
+				<aon:valueParam name="pollInterval" value="3000" />
+				<aon:methodParam name="closeLogPanelAtionListener"
+					default="#{sales.udapaImporter.onImportFileHide}" type="actionListener" />
+			</ui:include>
+		</aon:if>
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
+			<ui:param name="addWaitProcessPoll" value="#{true}" />
+		</ui:include>
+		
 	</ui:define>
 </ui:composition>
