@@ -183,10 +183,10 @@ public interface TemplatesMessages extends Messages {
  	@DefaultMessage("Cuota")
 	String fee();
  	
- 	@DefaultMessage("Inventorio Cerrado")
+ 	@DefaultMessage("Inventario Cerrado")
 	String closedInventory();
  	
- 	@DefaultMessage("Inventorio Valorado")
+ 	@DefaultMessage("Inventario Valorado")
 	String valuedInventory();
  	
  	@DefaultMessage("Columna {0}")
