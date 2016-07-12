@@ -1189,6 +1189,11 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 	Boolean productBool;
 	Vector<ProductInfo> products;
 	ProductInfo pi;
+	
+	private Boolean checkInventariable(Cell cell){
+		return cell.getStringCellValue().equalsIgnoreCase("inventoriable") 
+			&& ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase("inventariable");
+	}
 	private void executeExcelProduct(Domain domain, Iterator<Row> rowIterator, com.esferalia.aon.gwt.template.shared.Error error) {
 		Vector<ProductInfo> products = new Vector<ProductInfo>();
 		/* LAMBDA java 1.8 */
@@ -1205,8 +1210,8 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				cellStream.forEach(cell ->{
 					if(cell.getColumnIndex() != ti.getColumns().size()){
 						Object object = getObjectValue(cell);
-						if(cell.getRowIndex() == 1){//Primera fila del fichero Excel.
-							if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || cell.getCellType() != Cell.CELL_TYPE_STRING || !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue())){
+						if(cell.getRowIndex() == 1){//Primera fila del fichero Excel
+							if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || cell.getCellType() != Cell.CELL_TYPE_STRING || (!checkInventariable(cell) && !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue()))){
 								// El archivo no es compatible con la plantilla
 								error.setError(false);
 								if(verror.isEmpty()) verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
