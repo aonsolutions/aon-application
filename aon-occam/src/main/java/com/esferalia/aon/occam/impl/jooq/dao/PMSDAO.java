@@ -22,6 +22,7 @@ import org.jooq.Record6;
 import org.jooq.Record7;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
+import org.mvel2.ast.And;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.pms.HotelEmailCatchment;
@@ -40,7 +41,6 @@ public class PMSDAO {
 		.set(PROJECT_RESERVATION.CREDIT_CARD_CVV, nullString)
 		.where(PROJECT_RESERVATION.PROJECT.eq(reservationId)).execute();
 	}
-	
 	
 	public static LinkedList<HotelGuestByCountry> getHotelGuestByCountry(AONContext ctx, Integer hotelId, Date date) {
 		Result<Record3<String, String, Integer>> r = ctx.getDslContext()
@@ -109,13 +109,15 @@ public class PMSDAO {
 				.and(PROJECT_RESERVATION.HOTEL.in(hotelArray))
 				.and(DSL.year(PROJECT_RESERVATION.START_DATE).eq(year))
 				.and((PROJECT_RESERVATION_GUEST.EMAIL.isNull().or(DSL.length(PROJECT_RESERVATION_GUEST.EMAIL).eq(0)))
-					.or(PROJECT_RESERVATION_GUEST.EMAIL.notLike("%@guest.booking.com")
+					.or(PROJECT_RESERVATION_GUEST.EMAIL.likeRegex("^[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9._-]@[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9]\\.[a-zA-Z]{2,4}$")
+						.and(PROJECT_RESERVATION_GUEST.EMAIL.notLike("%@guest.booking.com"))
 						.and(PROJECT_RESERVATION_GUEST.EMAIL.notLike("%@travelrepublic.co.uk"))
 						.and(PROJECT_RESERVATION_GUEST.EMAIL.notLike("%@lowcostbeds.com"))
 						.and(PROJECT_RESERVATION_GUEST.EMAIL.notLike("%@alwaystravelling.es"))
 						.and(PROJECT_RESERVATION_GUEST.EMAIL.notLike("davidmursl@msn.com"))))
 				.and((SURVEY_RESPONSE_DETAIL.VALUE_TEXT.isNull().or(DSL.length(SURVEY_RESPONSE_DETAIL.VALUE_TEXT).eq(0)))
-					.or(SURVEY_RESPONSE_DETAIL.VALUE_TEXT.notLike("%@guest.booking.com")
+					.or(SURVEY_RESPONSE_DETAIL.VALUE_TEXT.likeRegex("^[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9._-]@[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9]\\.[a-zA-Z]{2,4}$")
+						.and(SURVEY_RESPONSE_DETAIL.VALUE_TEXT.notLike("%@guest.booking.com"))
 						.and(SURVEY_RESPONSE_DETAIL.VALUE_TEXT.notLike("%@travelrepublic.co.uk"))
 						.and(SURVEY_RESPONSE_DETAIL.VALUE_TEXT.notLike("%@lowcostbeds.com"))
 						.and(SURVEY_RESPONSE_DETAIL.VALUE_TEXT.notLike("%@alwaystravelling.es"))
