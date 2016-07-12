@@ -91,8 +91,8 @@ public class CustomerFACeController implements Serializable {
 			RegistryNote note = getNote(FACeUtil.FACE_ENABLED);
 			if (note != null) {
 				note.setComments(String.valueOf(isEnabled()));
-				save();
 			}
+			save();
 		} else {
 			onRemove(customer);
 		}

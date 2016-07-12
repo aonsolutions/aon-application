@@ -20,6 +20,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryNote;
@@ -161,6 +163,18 @@ public class CustomerEdiSupportController implements Serializable {
 
 	public void onRemove(Customer customer) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryNote.class);
+
+		String ediCommentsPattern = CABECERA + "=%;" + PEDIDOS + "=%;" + PTO_ENTREGA
+				+ "=%;" + FACTURA + "=%;" + FINANCIERA + "=%;"
+				+ ALBARANES + "=%;";
+		Expression ediTypeExp = ExpressionUtilities.getOrExpression(
+				ExpressionUtilities.getLikeExpression(
+						bean.getFieldName(IEntityAlias.REGISTRY_NOTE_COMMENTS),
+						ediCommentsPattern),
+						ExpressionUtilities.getEqualExpression(bean
+								.getFieldName(IEntityAlias.REGISTRY_NOTE_DESCRIPTION),
+								ACTIVE));
+		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
 				bean.getFieldName(IEntityAlias.REGISTRY_NOTE_REGISTRY_ID),
@@ -168,6 +182,7 @@ public class CustomerEdiSupportController implements Serializable {
 		criteria.addEqualExpression(
 				bean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE),
 				NoteType.FACTURAE);
+		criteria.addExpression(ediTypeExp);
 		for (ITransferObject to : bean.getList(criteria)) {
 			bean.remove(to);
 		}
