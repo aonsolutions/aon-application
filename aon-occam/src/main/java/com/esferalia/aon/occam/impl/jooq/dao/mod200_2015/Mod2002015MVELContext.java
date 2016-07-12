@@ -160,6 +160,9 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 		if (isChecked(C0006) && isChecked(C0034)) {
 			return round(lq1330 * lq558 / 100);			
 		}
+		if (isChecked(C0006) && isChecked(C0046)) {
+			return round(lq1330 * lq558 / 100);			
+		}
 		if (isChecked(C0006)) {
 			if (lq1330<=getLimit(LIM_1)){
 				return round( lq1330*25/100);			
