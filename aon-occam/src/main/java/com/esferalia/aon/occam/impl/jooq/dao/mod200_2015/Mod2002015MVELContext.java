@@ -211,7 +211,7 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 		double lq1031 = round(getValue(Mod2002015Key.LQ1031));
 		
 		if(!isChecked(C0022) && !isChecked(Mod2002015Key.C0009) && !isChecked(Mod2002015Key.C0010))
-			return lq501 + i0417 + d0418;
+			return lq501 + i0417 - d0418;
 		if(isChecked(C0022)){
 			if(isChecked(Mod2002015Key.C0009) || isChecked(Mod2002015Key.C0010)){
 				if((lq578 + lq1030 + lq1031) > 0)
@@ -227,7 +227,7 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 			} 
 			return lq1029 +lq1030 + lq1031;
 		}
-		return lq501 + i0417 + d0418;
+		return lq501 + i0417 - d0418;
 	}
 	public double computeLM1249() throws AonCoreException {
 		double lm1250 = round(getValue(Mod2002015Key.LM1250)); 
