@@ -267,6 +267,16 @@ public class Page00 extends PageAbs {
 							check.setValue(false);
 						} else {
 							changeAvailability(key);
+							if (key == Mod2002015Key.C0067 && check.getValue()) {
+								if (inputs.get(Mod2002015Key.C0009).getValue()
+								 || inputs.get(Mod2002015Key.C0010).getValue()
+								 || inputs.get(Mod2002015Key.C0021).getValue()
+								 || inputs.get(Mod2002015Key.C0039).getValue()) {
+									// OK
+								} else {
+									Window.alert("El caracter 67 no se puede marcar si no se se marca algunos de los siguientes: 009, 010, 21 o 39");		
+								}
+							}
 						}
 					}
 					
