@@ -18,13 +18,16 @@ node {
    sh "git cherry -v origin/${env.BRANCH_NAME} origin/master > cherryOut"
    
    def cherryOut = readFile 'cherryOut'
+   
+   def commitsParams = parameters(cherryOut);
 
-   def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: parameters(cherryOut)
+   def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: commitsParams
    
    def commits = '';
-   for ( commitEntry in commitsMap ) {
-      if ( commitEntry.value ) 
-          commits = commitEntry.key + ' ' + commits
+   for ( commitParam in commitsParams ) {
+      if ( commitsMap[commitParam.name] ) {
+          commits = commits + ' ' + commitParam.name
+      } 
    }
    
    
