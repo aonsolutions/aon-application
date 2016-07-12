@@ -183,7 +183,6 @@ public enum Mod2002015Key implements IMod200Key {
 	,BP189(189)
 	,BP190(190)
 	,BP191(191)
-	,BP191X(-3)
 	,BP192(192)
 	,BP193(193)
 	,BP702(702)
