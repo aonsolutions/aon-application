@@ -13,6 +13,8 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import org.jooq.Record1;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
@@ -108,6 +110,44 @@ public class SalesDAO {
 				.execute();
 	}
 	
+	public static Integer getSalesId(AONContext ctx, int salesDetailId) {
+		return ctx.getDslContext().select(SALES_DETAIL.SALES).from(SALES_DETAIL)
+				.where(SALES_DETAIL.ID.eq(salesDetailId)).fetchAny().value1();
+	}
+	
+	public static Integer getSalesId(AONContext ctx, String series, int number) {
+		Record1<Integer> result = ctx.getDslContext().select(SALES.ID).from(SALES)
+				.where(SALES.SERIES.eq(series)).and(SALES.NUMBER.eq(number)).fetchAny();
+		return result!=null && result.size()>0?result.value1():null;
+	}
+	
+	public static String getSalesSeries(AONContext ctx, int salesId) {
+		return ctx.getDslContext().select(SALES.SERIES).from(SALES)
+				.where(SALES.ID.eq(salesId)).fetchAny().value1();
+	}
+
+	public static Integer getSalesNumber(AONContext ctx, int salesId) {
+		return ctx.getDslContext().select(SALES.NUMBER).from(SALES)
+				.where(SALES.ID.eq(salesId)).fetchAny().value1();
+	}
+
+	public static Short getSalesDetailLine(AONContext ctx, int detailId) {
+		return ctx.getDslContext().select(SALES_DETAIL.LINE).from(SALES_DETAIL)
+				.where(SALES_DETAIL.ID.eq(detailId)).fetchAny().value1();
+	}
+	
+	public static Integer getSalesDetailId(AONContext ctx, int salesId, short detailLine) {
+		return ctx.getDslContext().select(SALES_DETAIL.ID).from(SALES_DETAIL)
+				.where(SALES_DETAIL.SALES.eq(salesId))
+				.and(SALES_DETAIL.LINE.eq(detailLine))
+				.fetchAny().value1();
+	}
+	
+	public static Integer getSalesDetailItemId(AONContext ctx, int salesDetailId) {
+		return ctx.getDslContext().select(SALES_DETAIL.ITEM).from(SALES_DETAIL)
+				.where(SALES_DETAIL.ID.eq(salesDetailId)).fetchAny().value1();
+	}
+	
 	public static Integer obtainEnterpriseId(AONContext ctx, int domain) {
 		return ctx.getDslContext().select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
 				.where(ENTERPRISE.DOMAIN.eq(domain)).fetchAny().value1();
@@ -199,7 +239,6 @@ public class SalesDAO {
 				.values(domain, id, enterprise, active, address, customer,
 						description, economicAgreement, scope).execute();
 	}
-
 	
 	
 	

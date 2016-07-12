@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPART
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -416,7 +417,7 @@ public class WarehouseDAO {
 	}
 	
 	public static LinkedList<DeliveryDetail> getDeliveryDetailList(AONContext ctx, Integer deliveryId){
-		return ctx.getDslContext().select().from(DELIVERY_DETAIL).where(DELIVERY_DETAIL.DELIVERY.eq(deliveryId)).limit(1).fetchInto(DELIVERY_DETAIL)
+		return ctx.getDslContext().select().from(DELIVERY_DETAIL).where(DELIVERY_DETAIL.DELIVERY.eq(deliveryId)).fetchInto(DELIVERY_DETAIL)
 				.stream().map(new FullDeliveryDetailFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -488,6 +489,35 @@ public class WarehouseDAO {
 						detail.getDiscountExpression(),
 						detail.getSalesDetail(), ctx.getUser(), creationDate,
 						ctx.getUser(), modificationDate).execute();
+	}
+	
+	public static void insertDeliveryDetails(AONContext ctx,
+			List<DeliveryDetail> list) {
+		ctx.checkWrite();
+		list.forEach(detail -> {
+			Timestamp creationDate = null, modificationDate = null;
+			creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+			modificationDate = new java.sql.Timestamp(
+					new java.util.Date().getTime());
+			ctx.getDslContext()
+			.insertInto(DELIVERY_DETAIL, DELIVERY_DETAIL.DOMAIN,
+					DELIVERY_DETAIL.DELIVERY, DELIVERY_DETAIL.LINE,
+					DELIVERY_DETAIL.ITEM, DELIVERY_DETAIL.DESCRIPTION,
+					DELIVERY_DETAIL.WAREHOUSE, DELIVERY_DETAIL.QUANTITY,
+					DELIVERY_DETAIL.PRICE, DELIVERY_DETAIL.DISCOUNT_EXPR,
+					DELIVERY_DETAIL.SALES_DETAIL,
+					DELIVERY_DETAIL.CREATION_USER,
+					DELIVERY_DETAIL.CREATION_DATE,
+					DELIVERY_DETAIL.MODIFICATION_USER,
+					DELIVERY_DETAIL.MODIFICATION_DATE)
+					.values(detail.getDomain(), detail.getDelivery().getId(),
+							detail.getLine(), detail.getItem().getId(),
+							detail.getDescription(), detail.getWarehouse(),
+							detail.getQuantity(), detail.getPrice(),
+							detail.getDiscountExpression(),
+							detail.getSalesDetail(), ctx.getUser(), creationDate,
+							ctx.getUser(), modificationDate).execute();
+		});
 	}
 	
 	public static void updateDelivery(AONContext ctx, Delivery delivery) {

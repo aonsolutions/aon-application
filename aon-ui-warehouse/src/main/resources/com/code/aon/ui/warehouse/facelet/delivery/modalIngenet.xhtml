@@ -6,6 +6,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showIngenetWindow">
@@ -51,8 +52,17 @@
 										</aon:div>
 										
 										<ui:repeat var="delivery" value="#{delivery.ingenetDeliveries}">
-											<aon:outputText value="#{delivery}" />
+											<aon:outputText value="#{delivery}" /> <br/>
 										</ui:repeat>
+										
+										<aon:if test="#{fn:length(delivery.warehouses) gt 1}">
+											<aon:outputLabel for="Ingenet_Delivery_warehouse" 
+												value="#{bundle.aon_module_warehouse}" />
+											<aon:selectOneMenu id="Ingenet_Delivery_warehouse" 
+												value="#{delivery.warehouse}" required="#{true}">
+												<f:selectItems value="#{delivery.warehouses}" />
+											</aon:selectOneMenu>
+										</aon:if>
 	
 										<aon:div styleClass="aon-width-all aon-text-center">
 											<aon:commandButton id="confirm-accept"

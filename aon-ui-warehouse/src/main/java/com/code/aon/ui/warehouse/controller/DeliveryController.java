@@ -806,12 +806,27 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	}
 	
 	public void confirmIngenetDeliveries(ActionEvent event) {
+//		this.setShowIngenetWindow(false);
+		
+//		LogPanelController logPanel = LogPanelController.getInstance();
+//		logPanel.reset();
+		
 		try {
 			// copy delivery to AON
-			IngenetDeliveryManager.getInstance().createAonDeliveries(
-					AonUtil.getDomainName(), AonUtil.getRemoteUser(),
-					new LinkedList<>(ingenetDeliveries.keySet()),
-					DomainManager.getCurrentDomain());
+			Integer warehouseId = getWarehouse() != null && getWarehouse().getId() != null ? getWarehouse().getId()
+					: ((Warehouse) getWarehouses().get(0).getValue()).getId();  
+			
+			ingenetDeliveries.keySet().forEach(id -> {
+				IngenetDeliveryManager.getInstance().createAonDelivery(
+						AonUtil.getDomainName(), AonUtil.getRemoteUser(),
+						id,
+						DomainManager.getCurrentDomain(), warehouseId);
+			});
+//			
+//			IngenetDeliveryManager.getInstance().createAonDeliveries(
+//					AonUtil.getDomainName(), AonUtil.getRemoteUser(),
+//					new LinkedList<>(ingenetDeliveries.keySet()),
+//					DomainManager.getCurrentDomain(), warehouseId);
 			
 			// close delivery on INGENET
 			ingenetDeliveries.keySet().forEach(id -> {
@@ -824,7 +839,6 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		} catch (Exception e) {
 			AonUtil.addErrorMessage("NO SE HA PODIDO PROCESAR EL TRASPASO");
 			AonUtil.addErrorMessage(e.getMessage());
-			this.setShowIngenetWindow(false);
 		}
 	}
 	

@@ -23,7 +23,9 @@
 						<aon:commandButton	id="sincronizeIngenet-delivery" 
 							value="Sincronizar INGENET"
 							styleClass="aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-sincronize"
-							actionListener="#{delivery.onSincronizeIngenet}" />
+							actionListener="#{delivery.onSincronizeIngenet}"
+							onclick="Richfaces.showModalPanel('waitProccess')"
+							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					</aon:if>
 				</ui:define>
 			</ui:decorate>
@@ -43,6 +45,10 @@
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<aon:lookupButtonPopup lookup="#{registryLookup}" />
 		
-		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalIngenet.xhtml" />		
+		<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/modalIngenet.xhtml" />
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
+			<ui:param name="addWaitProcessPoll" value="#{true}" />
+		</ui:include>
+				
 	</ui:define>
 </ui:composition>

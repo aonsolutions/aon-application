@@ -9,8 +9,7 @@ import java.util.Map;
 
 import com.esferalia.aon.ingenet.util.IngenetContext;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.management.Sales;
-import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
@@ -54,15 +53,21 @@ public class IngenetDeliveryManager {
 		return map;
 	}
 	
-	public void createAonDeliveries(String domainName, String user, List<Integer> deliveryIds, Integer currentDomainId) {
+	public void createAonDelivery(String domainName, String user, Integer deliveryId, Integer currentDomainId, Integer warehouseId) {
+		AONContext ctx = AONContext.getAONContext(domainName,
+				currentDomainId, user);
+		createDelivery(ctx, domainName, user, currentDomainId, deliveryId, warehouseId);
+	}
+	
+	public void createAonDeliveries(String domainName, String user, List<Integer> deliveryIds, Integer currentDomainId, Integer warehouseId) {
 		AONContext ctx = AONContext.getAONContext(domainName,
 				currentDomainId, user);
 		deliveryIds.forEach(id -> {
-			createDelivery(ctx, domainName, user, currentDomainId, id);
+			createDelivery(ctx, domainName, user, currentDomainId, id, warehouseId);
 		});
 	}
 	
-	private void createDelivery(AONContext ctx, String domainName, String user, Integer currentDomainId, Integer deliveryId){
+	private void createDelivery(AONContext ctx, String domainName, String user, Integer currentDomainId, Integer deliveryId, Integer warehouseId){
 		
 		Integer[] scopes = SecurityDAO.getUserScopes(ctx, user);
 		
@@ -71,24 +76,27 @@ public class IngenetDeliveryManager {
 		delivery.setStatus(DeliveryStatus.PENDING);
 		delivery.setScope(scopes[0]);
 		delivery.setIssueTime(new Date());
+		delivery.setPayMethod(null);
+		delivery.setWorkplace(null);
 		Integer newId = WarehouseDAO.insertDelivery(ctx, delivery);
 		delivery.setId(newId);
 		
 		List<DeliveryDetail> detailList = obtainIngenetDeliveryDetailList(domainName, user, deliveryId);
-		ctx.getDslContext().transaction(
-				configuration -> {
-					detailList.forEach(detail -> {
-						detail.setDomain(ctx.getDomainId());
-						detail.setDelivery(delivery);
-						SalesDetail salesDetail = obtainAonSalesDetail(domainName, user, currentDomainId, detail);
-						// TODO
-//						Sales sales = obtainAonSales(domainName, user, currentDomainId, detail);
-//						detail.setWarehouse(sales.);
-						detail.setSalesDetail(salesDetail.getId());
-						WarehouseDAO.insertDeliveryDetail(ctx, detail);
-					});
-				}
-		);
+		detailList.forEach(detail -> {
+			Integer salesDetailId = obtainAonSalesDetail(domainName, user, currentDomainId, detail);
+			Integer itemId = obtainAonSalesDetailItemId(domainName, user, currentDomainId, salesDetailId);
+			if(itemId!=null){
+				detail.setId(null);
+				detail.setDomain(ctx.getDomainId());
+				detail.setDelivery(delivery);
+				detail.setWarehouse(warehouseId);
+				detail.setSalesDetail(salesDetailId);
+				detail.setItem(new Item().setId(itemId));
+			}
+		});
+		
+		WarehouseDAO.insertDeliveryDetails(ctx, detailList);
+		
 	}
 
 	private Delivery obtainIngenetDelivery(String domainName, String user, Integer deliveryId) {
@@ -103,11 +111,50 @@ public class IngenetDeliveryManager {
 		return WarehouseDAO.getDeliveryDetailList(ctx, deliveryId);
 	}
 	
-	// TODO
-	private SalesDetail obtainAonSalesDetail(String domainName, String user, Integer currentDomainId, DeliveryDetail deliveryDetail) {
+	private Integer obtainIngenetSales(String domainName, String user, Integer salesDetailId) {
+		AONContext ctx = IngenetContext.getAONContext(domainName,
+				IngenetContext.getUdapaDomainId(), user);
+		return SalesDAO.getSalesId(ctx, salesDetailId);
+	}
+	
+	private String obtainIngenetSalesSeries(String domainName, String user, Integer salesId) {
+		AONContext ctx = IngenetContext.getAONContext(domainName,
+				IngenetContext.getUdapaDomainId(), user);
+		return SalesDAO.getSalesSeries(ctx, salesId);
+	}
+	private Integer obtainIngenetSalesNumber(String domainName, String user, Integer salesId) {
+		AONContext ctx = IngenetContext.getAONContext(domainName,
+				IngenetContext.getUdapaDomainId(), user);
+		return SalesDAO.getSalesNumber(ctx, salesId);
+	}
+	private Short obtainIngenetSalesDetailLine(String domainName, String user, Integer salesDetailId) {
+		AONContext ctx = IngenetContext.getAONContext(domainName,
+				IngenetContext.getUdapaDomainId(), user);
+		return SalesDAO.getSalesDetailLine(ctx, salesDetailId);
+	}
+	
+	private Integer obtainAonSalesDetailItemId(String domainName, String user, Integer currentDomainId, Integer salesDetailId) {
+		if(salesDetailId!=null){
+			AONContext ctx = AONContext.getAONContext(domainName,
+					currentDomainId, user);
+			return SalesDAO.getSalesDetailItemId(ctx, salesDetailId);
+		}
+		return null;
+	}
+	
+	private Integer obtainAonSalesDetail(String domainName, String user, Integer currentDomainId, DeliveryDetail deliveryDetail) {
+		
+		Integer salesId = obtainIngenetSales(domainName, user, deliveryDetail.getSalesDetail());
+		String salesSeries = obtainIngenetSalesSeries(domainName, user, salesId);
+		Integer salesNumber = obtainIngenetSalesNumber(domainName, user, salesId);
+		Short salesDetailLine = obtainIngenetSalesDetailLine(domainName, user, deliveryDetail.getSalesDetail());
+		
 		AONContext ctx = AONContext.getAONContext(domainName,
 				currentDomainId, user);
-//		return SalesDAO.getSalesDetail(ctx, deliveryDetail.getLine(), );
+		Integer aonSalesId = SalesDAO.getSalesId(ctx, salesSeries, salesNumber);
+		if(aonSalesId!=null && salesDetailLine!=null){
+			return SalesDAO.getSalesDetailId(ctx, aonSalesId, salesDetailLine);
+		}
 		return null;
 	}
 	
