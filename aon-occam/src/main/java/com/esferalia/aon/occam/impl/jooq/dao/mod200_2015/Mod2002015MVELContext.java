@@ -153,7 +153,9 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 				return (getLimit(LIM_1)*15/100) + (lq1330 - getLimit(LIM_1))*20/100;				
 			}
 		}
-
+		if (isChecked(C0071)) {
+			return round(lq1330 * lq558 / 100);
+		}
 		if (isChecked(C0022) &&  (isChecked(C0006) ||isChecked(C0013) || isChecked(C0056) || isChecked(C0063))) {
 			return getValue(LQ562);
 		}
@@ -200,9 +202,6 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 		}
 		if (isChecked(C0056)) {
 			return round(lq1330 * lq558 / 100);			
-		}
-		if (isChecked(C0071)) {
-			return round(lq1330 * lq558 / 100);
 		}
 		return round(lq1330 * lq558 / 100);
 	}
