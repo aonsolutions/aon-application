@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.product;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.sql.Timestamp;
 
 import com.esferalia.aon.occam.api.model.Account;
@@ -42,6 +43,7 @@ public class Item implements Serializable {
 	private String barcode;
 	private Byte status;
 	private String serialNumber;
+	private Date serialDate;
 	private String creationUser;
 	private Timestamp creationDate;
 	private String modificationUser;
@@ -258,6 +260,14 @@ public class Item implements Serializable {
 	}
 	public Item setSerialNumber(String serialNumber) {
 		this.serialNumber = serialNumber;
+		return this;
+	}
+
+	public Date getSerialDate() {
+		return serialDate;
+	}
+	public Item setSerialDate(Date serialDate) {
+		this.serialDate = serialDate;
 		return this;
 	}
 	

@@ -9,10 +9,13 @@ import java.util.Map;
 
 import com.esferalia.aon.ingenet.util.IngenetContext;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
@@ -83,20 +86,48 @@ public class IngenetDeliveryManager {
 		
 		List<DeliveryDetail> detailList = obtainIngenetDeliveryDetailList(domainName, user, deliveryId);
 		detailList.forEach(detail -> {
-			Integer salesDetailId = obtainAonSalesDetail(domainName, user, currentDomainId, detail);
-			Integer itemId = obtainAonSalesDetailItemId(domainName, user, currentDomainId, salesDetailId);
-			if(itemId!=null){
+			Item ingenetItem = obtainIngenetItem(domainName, user, detail.getItem().getId());
+			SalesDetail aonSalesDetail = obtainAonSalesDetail(domainName, user, currentDomainId, detail);
+			Item newItem = createNewItem(ctx, currentDomainId,
+					aonSalesDetail.getItem(), ingenetItem.getSerialNumber(),
+					ingenetItem.getSerialDate());
+			
+			if(newItem!=null && newItem.getId()!=null){
 				detail.setId(null);
 				detail.setDomain(ctx.getDomainId());
 				detail.setDelivery(delivery);
 				detail.setWarehouse(warehouseId);
-				detail.setSalesDetail(salesDetailId);
-				detail.setItem(new Item().setId(itemId));
+				detail.setSalesDetail(aonSalesDetail.getId());
+				detail.setItem(newItem);
+				detail.setDescription(aonSalesDetail.getDescription());
+				detail.setDiscountExpression(aonSalesDetail.getDiscountExpression());
+				detail.setLine(aonSalesDetail.getLine());
+				detail.setPrice(aonSalesDetail.getPrice());
+				WarehouseDAO.insertDeliveryDetail(ctx, detail);
 			}
 		});
 		
-		WarehouseDAO.insertDeliveryDetails(ctx, detailList);
 		
+	}
+	
+	private Item createNewItem(AONContext ctx, int domainId, Integer itemId, String serialNumber, Date serialDate) {
+		if(serialNumber!=null && serialDate!=null){
+			Item newItem = ProductDAO.getItem(ctx, itemId);
+			newItem.setId(null);
+			newItem.setBarcode(null);
+			newItem.setSerialNumber(serialNumber);
+			newItem.setSerialDate(serialDate!=null?new java.sql.Date(serialDate.getTime()):null);
+			ProductDAO.insertItem(ctx, newItem);
+			return ProductDAO.getItem(
+					ctx,
+					o -> o.getDomainProperty()
+							.eq(domainId)
+							.and(o.getSerialNumberProperty().eq(
+									newItem.getSerialNumber()))
+							.and(o.getSerialDateProperty().eq(
+									newItem.getSerialDate())));
+		}
+		return null;
 	}
 
 	private Delivery obtainIngenetDelivery(String domainName, String user, Integer deliveryId) {
@@ -111,49 +142,34 @@ public class IngenetDeliveryManager {
 		return WarehouseDAO.getDeliveryDetailList(ctx, deliveryId);
 	}
 	
-	private Integer obtainIngenetSales(String domainName, String user, Integer salesDetailId) {
+	private SalesDetail obtainIngenetSalesDetail(String domainName, String user, Integer salesDetailId) {
 		AONContext ctx = IngenetContext.getAONContext(domainName,
 				IngenetContext.getUdapaDomainId(), user);
-		return SalesDAO.getSalesId(ctx, salesDetailId);
+		return SalesDAO.getSalesDetail(ctx, salesDetailId);
 	}
 	
-	private String obtainIngenetSalesSeries(String domainName, String user, Integer salesId) {
+	private Sales obtainIngenetSales(String domainName, String user, Integer salesId) {
 		AONContext ctx = IngenetContext.getAONContext(domainName,
 				IngenetContext.getUdapaDomainId(), user);
-		return SalesDAO.getSalesSeries(ctx, salesId);
-	}
-	private Integer obtainIngenetSalesNumber(String domainName, String user, Integer salesId) {
-		AONContext ctx = IngenetContext.getAONContext(domainName,
-				IngenetContext.getUdapaDomainId(), user);
-		return SalesDAO.getSalesNumber(ctx, salesId);
-	}
-	private Short obtainIngenetSalesDetailLine(String domainName, String user, Integer salesDetailId) {
-		AONContext ctx = IngenetContext.getAONContext(domainName,
-				IngenetContext.getUdapaDomainId(), user);
-		return SalesDAO.getSalesDetailLine(ctx, salesDetailId);
+		return SalesDAO.getSales(ctx, salesId);
 	}
 	
-	private Integer obtainAonSalesDetailItemId(String domainName, String user, Integer currentDomainId, Integer salesDetailId) {
-		if(salesDetailId!=null){
-			AONContext ctx = AONContext.getAONContext(domainName,
-					currentDomainId, user);
-			return SalesDAO.getSalesDetailItemId(ctx, salesDetailId);
-		}
-		return null;
+	private Item obtainIngenetItem(String domainName, String user, Integer itemId) {
+		AONContext ctx = IngenetContext.getAONContext(domainName,
+				IngenetContext.getUdapaDomainId(), user);
+		return ProductDAO.getItem( ctx, o -> o.getIdProperty() .eq(itemId));
 	}
 	
-	private Integer obtainAonSalesDetail(String domainName, String user, Integer currentDomainId, DeliveryDetail deliveryDetail) {
+	private SalesDetail obtainAonSalesDetail(String domainName, String user, Integer currentDomainId, DeliveryDetail deliveryDetail) {
 		
-		Integer salesId = obtainIngenetSales(domainName, user, deliveryDetail.getSalesDetail());
-		String salesSeries = obtainIngenetSalesSeries(domainName, user, salesId);
-		Integer salesNumber = obtainIngenetSalesNumber(domainName, user, salesId);
-		Short salesDetailLine = obtainIngenetSalesDetailLine(domainName, user, deliveryDetail.getSalesDetail());
+		SalesDetail salesDetail = obtainIngenetSalesDetail(domainName, user, deliveryDetail.getSalesDetail());
+		Sales sales = obtainIngenetSales(domainName, user, salesDetail.getSales());
 		
 		AONContext ctx = AONContext.getAONContext(domainName,
 				currentDomainId, user);
-		Integer aonSalesId = SalesDAO.getSalesId(ctx, salesSeries, salesNumber);
-		if(aonSalesId!=null && salesDetailLine!=null){
-			return SalesDAO.getSalesDetailId(ctx, aonSalesId, salesDetailLine);
+		Sales aonSales = SalesDAO.getSales(ctx, sales.getSeries(), sales.getNumber());
+		if(aonSales!=null && salesDetail!=null){
+			return SalesDAO.getSalesDetail(ctx, aonSales.getId(), salesDetail.getLine());
 		}
 		return null;
 	}
