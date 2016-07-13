@@ -548,6 +548,8 @@ public class VatTaxManager implements Serializable {
 					detail.setQuotaDeclared(detail.getQuota());
 					detail.setDeductibleQuotaDeclared(detail.getDeductibleQuota());
 					
+					detail.setId(null);
+					
 					detail.calculate();
 					summary.add(detail);
 				}
