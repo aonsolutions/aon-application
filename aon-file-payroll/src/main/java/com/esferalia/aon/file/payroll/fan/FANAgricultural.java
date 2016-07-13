@@ -83,7 +83,9 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 			Date start = startDate.before(contractStart)?contractStart:startDate;
 			Date end = (contractEnd!=null && endDate.after(contractEnd))?contractEnd:endDate;
 			int availableDays = (int) getAvailableDays(start, end);
-			return (contractEnd!=null && contractEnd.before(endDate)) ? availableDays : 30;
+			return (contractEnd!=null && contractEnd.before(endDate)) 
+					|| (contractStart!=null && contractStart.after(startDate)) 
+					? availableDays : 30;
 		}
 		
 	}
