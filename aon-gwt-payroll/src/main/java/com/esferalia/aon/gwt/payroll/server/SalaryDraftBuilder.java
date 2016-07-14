@@ -9,7 +9,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.MissingResourceException;
 import java.util.stream.Stream;
+
+import javax.faces.el.PropertyNotFoundException;
 
 import org.mvel2.util.MethodStub;
 
@@ -766,24 +769,49 @@ public class SalaryDraftBuilder
 		
 		ContextVariable var = ContextVariable.getVariableByName(name);
 		if ( var != null ) {
-			String description = var.getDescription( new Locale("es"));
+			
+			String description = null; 
+			try {
+				description = var.getDescription( new Locale("es"));
+			} catch ( MissingResourceException e){
+				
+			}
+			
 			if ( AonStringUtils.isNotBlank(description) ) {
-				salaryDraft.addWarning(String.format(
-						"%s con valor %.2f esta redefinida con el valor %.2f",
-						description, 
-						((Number)implicit.getValue(implicit.getPeriod())).doubleValue(),
-						((Number)redefined.getValue(redefined.getPeriod())).doubleValue()
-						));
+				try {
+					salaryDraft.addWarning(String.format(
+							"%s con valor %.2f esta redefinida con el valor %.2f",
+							description, 
+							((Number)implicit.getValue(implicit.getPeriod())).doubleValue(),
+							((Number)redefined.getValue(redefined.getPeriod())).doubleValue()
+							));
+				} catch ( ClassCastException e){
+					salaryDraft.addWarning(String.format(
+							"%s con valor '%s' esta redefinida con el valor '%s'",
+							description, 
+							implicit.getValue(implicit.getPeriod()),
+							redefined.getValue(redefined.getPeriod())
+							));
+				}
 				return;
 			}
 		}
-
-		salaryDraft.addWarning(String.format(
-				"La variable del sistema '%s' con valor %.2f esta redefinida con el valor %.2f",
-				name, 
-				((Number)implicit.getValue(implicit.getPeriod())).doubleValue(),
-				((Number)redefined.getValue(redefined.getPeriod())).doubleValue()
-				));
+		
+		try {
+			salaryDraft.addWarning(String.format(
+					"La variable del sistema '%s' con valor %.2f esta redefinida con el valor %.2f",
+					name, 
+					((Number)implicit.getValue(implicit.getPeriod())).doubleValue(),
+					((Number)redefined.getValue(redefined.getPeriod())).doubleValue()
+					));
+		} catch ( ClassCastException e ){
+			salaryDraft.addWarning(String.format(
+					"La variable del sistema '%s' con valor '%s' esta redefinida con el valor '%s'",
+					name, 
+					implicit.getValue(implicit.getPeriod()),
+					redefined.getValue(redefined.getPeriod())
+					));
+		}
 			
 	}
 
