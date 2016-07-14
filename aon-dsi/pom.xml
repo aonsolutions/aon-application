@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.60.2</version>
+		<version>8.60.3</version>
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.dsi</artifactId>
@@ -19,7 +19,7 @@
 	<scm>
 		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-dsi</developerConnection>
 		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-dsi</connection>
-	  <tag>8.60.2.x</tag>
+	  <tag>8.60.3.x</tag>
   </scm>
 	<build>
 		<plugins>
