@@ -18,11 +18,15 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.customer.Customer;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.product.Item;
+import com.code.aon.registry.ITariffable;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.DataScrollerState;
@@ -32,6 +36,7 @@ import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.enumeration.RoomStatus;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 
@@ -39,14 +44,23 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
+	private ReservationUtils reservationUtils;
 	private Hotel hotel;
 	private boolean checkin;
 	private ReservationCheckStatus[] checkStatuses;
 	private Date fromDate;
 	private Date toDate;
 	private Integer sortMode;
+	private Item touristTaxItem;
 
 	private List<ReservationIO> reservationIOList;
+
+	public ReservationUtils getReservationUtils() {
+		if (reservationUtils == null) {
+			reservationUtils = new ReservationUtils(DomainManager.getCurrentDomain());
+		}
+		return reservationUtils;
+	}
 
 	public Hotel getHotel() {
 		return hotel;
@@ -90,6 +104,13 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		this.sortMode = sortMode;
 	}
 
+	public Item getTouristTaxItem() {
+		return touristTaxItem;
+	}
+	public void setTouristTaxItem(Item touristTaxItem) {
+		this.touristTaxItem = touristTaxItem;
+	}
+
 	public List<ReservationIO> getReservationIOList() {
 		return reservationIOList;
 	}
@@ -116,6 +137,12 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 	}
 
 	public void onSearch(ActionEvent event) {
+		try {
+			setTouristTaxItem((getHotel()!= null && getHotel().isTouristTax()) ? getReservationUtils().obtainTouristTaxItem() : null);
+		} catch (ManagerBeanException e) {
+			setTouristTaxItem(null);
+		}
+
 		try {
 			buildReservationIOList();
 		} catch (AonSQLException e) {
@@ -151,11 +178,14 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 				reservationIO.setPhone(reservationIORs.getString(PHONE));
 				reservationIO.setAgency(reservationIORs.getString(AGENCY));
 				reservationIO.setTotal(reservationIORs.getObject(TOTAL) != null ? reservationIORs.getDouble(TOTAL) : 0);
-				reservationIO.setHotel(reservationIORs.getInt(HOTEL));
-				reservationIO.setHotelName(reservationIORs.getString(HOTEL_NAME));
 				reservationIO.setHotelReservation(reservationIORs.getInt(RESERVATION_HOTEL));
 				reservationIO.setHotelReservationName(reservationIORs.getString(RESERVATION_HOTEL_NAME));
+				reservationIO.setHotel(reservationIORs.getInt(HOTEL));
+				reservationIO.setHotelName(reservationIORs.getString(HOTEL_NAME));
+				reservationIO.setHotelCustomer(reservationIORs.getInt(HOTEL_CUSTOMER));
+				reservationIO.setHotelTouristTax(reservationIORs.getBoolean(HOTEL_TOURIST_TAX));
 				reservationIO.setComments(reservationIORs.getString(COMMENTS));
+				reservationIO.setTouristTaxFree(reservationIORs.getObject(TOURIST_TAX_FREE) != null ? reservationIORs.getInt(TOURIST_TAX_FREE) : null);
 				reservationIO.setStayDate(reservationIORs.getDate(STAY_DATE));
 				reservationIO.setAdults(reservationIORs.getObject(ADULTS) != null ? reservationIORs.getInt(ADULTS) : 0);
 				reservationIO.setChildren(reservationIORs.getObject(CHILDREN) != null ? reservationIORs.getInt(CHILDREN) : 0);
@@ -165,6 +195,7 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 				reservationIO.setRoomStatus(reservationIORs.getObject(ROOM_STATUS) != null ? RoomStatus.values()[reservationIORs.getInt(ROOM_STATUS)] : null);
 				reservationIO.setRoomCount(reservationIORs.getInt(ROOMS));
 				reservationIO.setMealPlan(reservationIORs.getString(MEAL_PLAN));
+				reservationIO.setTouristTaxAmount(obtainTouristTaxAmount(reservationIO));
 
 				getReservationIOList().add(reservationIO);
 			}
@@ -191,13 +222,18 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		StringBuffer stmt = new StringBuffer();
 		stmt.append("SELECT PR.project AS " + RESERVATION + ", PR.code AS " + CODE + ", PR.start_date AS " + START_DATE + ", PR.end_date AS " + END_DATE);
 		stmt.append(", PR.check_status AS " + CHECK_STATUS + ", PR.status AS " + STATUS + ", PR.booking_holder AS " + HOLDER + ", PR.total AS " + TOTAL);
-		stmt.append(", PR.hotel AS " + HOTEL + ", PR.hotel_reservation AS " + RESERVATION_HOTEL + ", PR.comments AS " + COMMENTS);
-		stmt.append(", B.stay_date AS " + STAY_DATE + ", PRR.adults AS " + ADULTS + ", PRR.children AS " + CHILDREN);
+		stmt.append(", PR.hotel_reservation AS " + RESERVATION_HOTEL + ", PR.hotel AS " + HOTEL + ", PR.comments AS " + COMMENTS);
+		stmt.append(", PR.tourist_tax_free AS " + TOURIST_TAX_FREE + ", B.stay_date AS " + STAY_DATE);
+		stmt.append(", PRR.adults AS " + ADULTS + ", PRR.children AS " + CHILDREN);
 		stmt.append(", IF(R.alias IS NOT NULL AND R.alias != '', R.alias, R.name) AS " + AGENCY + ", P.code AS " + ROOM_CODE + ", P.name AS " + ROOM_TYPE);
 		stmt.append(", (SELECT W.description FROM workplace AS W, hotel AS H");
-		stmt.append("     WHERE H.id = PR.hotel AND W.id = H.workplace LIMIT 1) AS " + HOTEL_NAME);
-		stmt.append(", (SELECT W.description FROM workplace AS W, hotel AS H");
 		stmt.append("     WHERE H.id = PR.hotel_reservation AND W.id = H.workplace LIMIT 1) AS " + RESERVATION_HOTEL_NAME);
+		stmt.append(", (SELECT W.description FROM workplace AS W, hotel AS H");
+		stmt.append("     WHERE H.id = PR.hotel AND W.id = H.workplace LIMIT 1) AS " + HOTEL_NAME);
+		stmt.append(", (SELECT W.customer FROM workplace AS W, hotel AS H");
+		stmt.append("     WHERE H.id = PR.hotel AND W.id = H.workplace LIMIT 1) AS " + HOTEL_CUSTOMER);
+		stmt.append(", (SELECT H.tourist_tax FROM hotel AS H");
+		stmt.append("     WHERE H.id = PR.hotel LIMIT 1) AS " + HOTEL_TOURIST_TAX);
 		stmt.append(", (SELECT CONCAT(PRG.name, ' ', PRG.surname) FROM project_reservation_guest AS PRG");
 		stmt.append("     WHERE PRG.project_reservation = PR.project AND guest_index = 1 LIMIT 1) AS " + GUEST);
 		stmt.append(", (SELECT PRG.email FROM project_reservation_guest AS PRG");
@@ -272,6 +308,16 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		return RESERVATION;
 	}
 
+	private double obtainTouristTaxAmount(ReservationIO reservationIO) throws ManagerBeanException {
+		if (isCheckin() && getTouristTaxItem() != null && reservationIO.isHotelTouristTax() && reservationIO.getTouristTaxFree() == null) {
+			ITariffable iTariffable = (ITariffable)BeanManager.getManagerBean(Customer.class).get(reservationIO.getHotelCustomer());
+			Date startDate = reservationIO.getCheckInDate();
+			Date endDate = reservationIO.getCheckOutDate();
+			return getReservationUtils().getReservationTouristTaxAmount(getTouristTaxItem(), iTariffable, startDate, endDate, reservationIO.getAdults(), false);
+		}
+		return 0;
+	}
+
 	public void onSelect(ActionEvent event) {
 		try {
 			if (getModel().isRowAvailable()) {
@@ -305,10 +351,12 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		private ReservationInOutController controller;
 		
 		private Integer reservation;
-		private Integer hotel;
-		private String hotelName;
 		private Integer hotelReservation;
 		private String hotelReservationName;
+		private Integer hotel;
+		private String hotelName;
+		private Integer hotelCustomer;
+		private Boolean hotelTouristTax;
 		private String code;
 		private Date checkInDate;
 		private Date checkOutDate;
@@ -321,6 +369,7 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		private String agency;
 		private Double total;
 		private String comments;
+		private Integer touristTaxFree;
 		private Date stayDate;
 		private Integer adults;
 		private Integer children;
@@ -330,6 +379,7 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		private RoomStatus roomStatus;
 		private int roomCount;
 		private String mealPlan;
+		private Double touristTaxAmount;
 		
 		public ReservationIO(ReservationInOutController controller) {
 			this.controller = controller;
@@ -340,6 +390,20 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		}
 		public void setReservation(Integer reservation) {
 			this.reservation = reservation;
+		}
+
+		public Integer getHotelReservation() {
+			return hotelReservation;
+		}
+		public void setHotelReservation(Integer hotelReservation) {
+			this.hotelReservation = hotelReservation;
+		}
+
+		public String getHotelReservationName() {
+			return hotelReservationName;
+		}
+		public void setHotelReservationName(String hotelReservationName) {
+			this.hotelReservationName = hotelReservationName;
 		}
 
 		public Integer getHotel() {
@@ -356,18 +420,18 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 			this.hotelName = hotelName;
 		}
 
-		public String getHotelReservationName() {
-			return hotelReservationName;
+		public Integer getHotelCustomer() {
+			return hotelCustomer;
 		}
-		public void setHotelReservationName(String hotelReservationName) {
-			this.hotelReservationName = hotelReservationName;
+		public void setHotelCustomer(Integer hotelCustomer) {
+			this.hotelCustomer = hotelCustomer;
 		}
 
-		public Integer getHotelReservation() {
-			return hotelReservation;
+		public Boolean isHotelTouristTax() {
+			return hotelTouristTax;
 		}
-		public void setHotelReservation(Integer hotelReservation) {
-			this.hotelReservation = hotelReservation;
+		public void setHotelTouristTax(Boolean hotelTouristTax) {
+			this.hotelTouristTax = hotelTouristTax;
 		}
 
 		public String getCode() {
@@ -454,6 +518,13 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 			this.comments = comments;
 		}
 
+		public Integer getTouristTaxFree() {
+			return touristTaxFree;
+		}
+		public void setTouristTaxFree(Integer touristTaxFree) {
+			this.touristTaxFree = touristTaxFree;
+		}
+
 		public Date getStayDate() {
 			return stayDate;
 		}
@@ -515,6 +586,13 @@ public class ReservationInOutController extends DataScrollerState implements ICo
 		}
 		public void setMealPlan(String mealPlan) {
 			this.mealPlan = mealPlan;
+		}
+
+		public Double getTouristTaxAmount() {
+			return touristTaxAmount;
+		}
+		public void setTouristTaxAmount(Double touristTaxAmount) {
+			this.touristTaxAmount = touristTaxAmount;
 		}
 
 		public boolean isCheckIn() {

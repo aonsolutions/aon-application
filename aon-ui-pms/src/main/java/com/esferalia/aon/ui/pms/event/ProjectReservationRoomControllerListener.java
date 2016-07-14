@@ -78,7 +78,7 @@ public class ProjectReservationRoomControllerListener extends ControllerAdapter 
 				    		updateLinkedServiceRoom(reservationService, reservationRoom);
 						}
 					} else {
-			    		reservationService.setProjectReservationRoom(null);
+						reservationService.setProjectReservationRoom(null);
 			    		updateLinkedServiceRoom(reservationService, null);
 					}
 				}

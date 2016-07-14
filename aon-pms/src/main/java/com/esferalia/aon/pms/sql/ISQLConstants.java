@@ -25,6 +25,8 @@ public interface ISQLConstants {
 
 	String HOTEL = "hotel";
 	String HOTEL_NAME = "hotelName";
+	String HOTEL_CUSTOMER = "hotelCustomer";
+	String HOTEL_TOURIST_TAX = "hotelTouristTax";
 	String RESERVATION_HOTEL = "reservationHotel";
 	String RESERVATION_HOTEL_NAME = "reservationHotelName";
 	String CODE = "code";
@@ -50,6 +52,8 @@ public interface ISQLConstants {
 	String CHILDREN = "children";
 	String MEAL_PLAN = "mealPlan";
 	String ALLOTMENT = "allotment";
+	String TOURIST_TAX = "touristTax";
+	String TOURIST_TAX_FREE = "touristTaxFree";
 	String QUANTITY = "quantity";
 	String BREAKDOWN = "breakdown";
 	String ALIAS = "alias";

@@ -76,7 +76,7 @@
 									<aon:outputText value="#{bundle.pms_room}" />
 								</rich:column>
 								
-								<rich:column colspan="7">
+								<rich:column colspan="#{reservationIO.checkin ? 8 : 7}">
 									<aon:outputText value="#{bundle.aon_reservation}" />
 								</rich:column>
 							</rich:columnGroup>
@@ -181,6 +181,22 @@
 								style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}"
 								rendered="#{to.agencyHolder}" />
 						</aon:column>
+
+						<aon:if test="#{reservationIO.checkin and reservationIO.touristTaxItem != null}">
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-40">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.pms_tourist_tax_abrv}" />
+								</f:facet>
+								<aon:outputText value="#{to.touristTaxAmount}" 
+									style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}"
+									rendered="#{to.touristTaxFree == null}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+								<aon:outputText value="#{bundle.aon_exempt}" 
+									style="#{(to.diverted) ? ((!to.myDivert) ? ('color:red;') : ('color:forestgreen;')) : ''}"
+									rendered="#{to.touristTaxFree != null}" />
+							</aon:column>
+						</aon:if>
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 							<f:facet name="header">

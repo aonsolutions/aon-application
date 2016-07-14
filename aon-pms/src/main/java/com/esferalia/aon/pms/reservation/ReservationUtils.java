@@ -55,6 +55,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.ITariffable;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryMedia;
@@ -483,18 +484,34 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		if (touristTaxItem == null) {
 			touristTaxItem = obtainTouristTaxItem();
 		}
+		ITariffable iTariffable = reservation.getHotel().getCustomer();
+		int adults = pending ? reservation.getTouristTaxPending() : reservation.getAdultCount();
 
+		return getReservationTouristTaxAmount(touristTaxItem, iTariffable, reservation.getStartDate(), reservation.getEndDate(), adults, pending);
+	}
+
+	public double getReservationTouristTaxAmount(Item touristTaxItem, ITariffable iTariffable, Date startDate, Date endDate, int adults, boolean pending) {
 		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
-		InvoiceDetail calculable = new InvoiceDetail();
-		calculable.setItem(touristTaxItem);
-
-		int quantity = pending ? reservation.getTouristTaxPending() : reservation.getAdultCount();
+		int nights = (int)CommonUtil.getDaysBetweenDates(startDate, endDate);
 		double vatPercent = (touristTaxItem != null) ? touristTaxItem.getVat().getPercentage() : 0;
 		double amount = 0;
-		for (Date date = reservation.getStartDate(); date.before(reservation.getEndDate()); date = DateUtils.addDays(date, 1)) {
-			calculable.setQuantity(calculable.getQuantity() + 1);
-			double price = strategy.getUnitPrice(calculable, date, reservation.getHotel().getCustomer());
-			amount = CommonUtil.round(amount + quantity * price, 4);
+
+		InvoiceDetail calculable = new InvoiceDetail();
+		calculable.setItem(touristTaxItem);
+		calculable.setQuantity(1);
+		double firstDayAmount = strategy.getUnitPrice(calculable, startDate, iTariffable);
+		calculable.setQuantity(nights);
+		double lastDayAmount = strategy.getUnitPrice(calculable, DateUtils.addDays(endDate, -1), iTariffable);
+		if (firstDayAmount == lastDayAmount) {
+			amount = CommonUtil.round(firstDayAmount * nights * adults, 4);
+		} else {
+			amount = CommonUtil.round((firstDayAmount + lastDayAmount) * adults, 4);
+			calculable.setQuantity(1);
+			for (Date date = DateUtils.addDays(startDate, 1); date.before(DateUtils.addDays(endDate, -1)); date = DateUtils.addDays(date, 1)) {
+				calculable.setQuantity(calculable.getQuantity() + 1);
+				double price = strategy.getUnitPrice(calculable, date, iTariffable);
+				amount = CommonUtil.round(amount + adults * price, 4);
+			}
 		}
 		return CommonUtil.round(amount * (1 + vatPercent / 100));
 	}
