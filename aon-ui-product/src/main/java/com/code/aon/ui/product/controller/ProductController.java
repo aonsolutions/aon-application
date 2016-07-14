@@ -18,6 +18,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Tax;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.product.Item;
@@ -104,8 +106,21 @@ public class ProductController extends BasicController implements IAuditableCont
 			ConfigCollectionsController configCollections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
 			List<SelectItem> vats = configCollections.getVatTaxes();
         	if (vats.size() > 0) {
-        		Tax vat = (Tax) vats.get(0).getValue();
-        		product.setVat(vat);
+    			ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.ACC_DEFAULT_VAT_PERCENT);
+    			if (appParam != null && StringUtils.isNotBlank(appParam.getValue())) {
+    				for (SelectItem selectItem : vats) {
+    					Tax vat = (Tax)selectItem.getValue();
+    					if (vat.getId().intValue() == Integer.parseInt(appParam.getValue())) {
+    						product.setVat(vat);
+    						break;
+    					}
+    				}
+    			}
+
+    			if (product.getVat() == null || product.getVat().getId() == null) {
+    	    		Tax vat = (Tax) vats.get(0).getValue();
+    	    		product.setVat(vat);
+    			}
         	}
 		}		
 	}	
