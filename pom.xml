@@ -74,6 +74,7 @@
 		<module>aon-conexflow</module>
 		<module>aon-aeat</module>
 		<module>aon-oauth2</module>
+		<module>aon-hhg-webservice</module>
 		
 
 		<!-- ENTITY -->

@@ -1,13 +1,16 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Hotel.HOTEL;
+import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
 import static com.esferalia.aon.jooq.tables.ProjectReservation.PROJECT_RESERVATION;
 import static com.esferalia.aon.jooq.tables.ProjectReservationGuest.PROJECT_RESERVATION_GUEST;
+import static com.esferalia.aon.jooq.tables.ProjectReservationRoom.PROJECT_RESERVATION_ROOM;
+import static com.esferalia.aon.jooq.tables.ProjectReservationService.PROJECT_RESERVATION_SERVICE;
+import static com.esferalia.aon.jooq.tables.ProjectReservationServiceDetail.PROJECT_RESERVATION_SERVICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.SurveyResponse.SURVEY_RESPONSE;
 import static com.esferalia.aon.jooq.tables.SurveyResponseDetail.SURVEY_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
-import java.math.BigDecimal;
 import java.time.Month;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,14 +22,20 @@ import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Record6;
-import org.jooq.Record7;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
-import org.mvel2.ast.And;
 
+import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
+import com.esferalia.aon.jooq.tables.records.ProjectReservationServiceDetailRecord;
+import com.esferalia.aon.jooq.tables.records.ProjectReservationServiceRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.pms.HotelEmailCatchment;
 import com.esferalia.aon.occam.api.model.pms.HotelGuestByCountry;
+import com.esferalia.aon.occam.api.model.project.ProjectReservation;
+import com.esferalia.aon.occam.api.model.project.ProjectReservationRoom;
+import com.esferalia.aon.occam.api.model.project.ProjectReservationService;
+import com.esferalia.aon.occam.api.model.project.ProjectReservationServiceDetail;
 import com.esferalia.aon.occam.api.model.type.Country;
 
 public class PMSDAO {
@@ -182,6 +191,77 @@ public class PMSDAO {
 		return a.value1();
 	}
 	
+	public static ProjectReservation getHHGReservation(AONContext ctx, Integer project){
+		return ctx.getDslContext().select()
+		.from(PROJECT_RESERVATION)
+		.where(PROJECT_RESERVATION.PROJECT.eq(project)).limit(1)
+		.fetchInto(PROJECT_RESERVATION).stream().map(new HHGProjectReservationFiller())
+			.findFirst().orElse(new ProjectReservation());
+	}
+	
+	public static LinkedList<ProjectReservation> getHHGReservations(AONContext ctx, Integer[] array){
+		return ctx.getDslContext().select()
+		.from(PROJECT_RESERVATION)
+		.where(PROJECT_RESERVATION.PROJECT.in(array))
+		.fetchInto(PROJECT_RESERVATION).stream().map(new HHGProjectReservationFiller())
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<ProjectReservationRoom> getHHGReservationRooms(AONContext ctx, Integer project){
+		return ctx.getDslContext().select(PROJECT_RESERVATION_ROOM.ROOM_INDEX, PROJECT_RESERVATION_ROOM.ROOM_CODE, 
+				PROJECT_RESERVATION_ROOM.ADULTS, PROJECT_RESERVATION_ROOM.CHILDREN, PROJECT_RESERVATION_ROOM.RATE_PLAN,
+				PROJECT_RESERVATION.HOTEL)
+		.from(PROJECT_RESERVATION).join(PROJECT_RESERVATION_ROOM).on(PROJECT_RESERVATION.PROJECT.eq(PROJECT_RESERVATION_ROOM.PROJECT_RESERVATION))
+		.where(PROJECT_RESERVATION.PROJECT.eq(project)).fetch().stream().map(new HHGProjectReservationRoomFiller())
+		.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<ProjectReservationService> getHHGReservationServices(AONContext ctx, Integer project){
+		return ctx.getDslContext().select(PROJECT_RESERVATION_SERVICE.SERVICE_CODE, PROJECT_RESERVATION_SERVICE.MEAL_PLAN, PROJECT_RESERVATION_SERVICE.ID)
+		.from(PROJECT_RESERVATION_SERVICE)
+		.where(PROJECT_RESERVATION_SERVICE.PROJECT_RESERVATION.eq(project)).fetchInto(PROJECT_RESERVATION_SERVICE)
+		.stream().map(new HHGProjectReservationServiceFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<ProjectReservationServiceDetail> getHHGReservationServicesDetail(AONContext ctx, Integer service){
+		return ctx.getDslContext().select(PROJECT_RESERVATION_SERVICE_DETAIL.EFFECTIVE_DATE, PROJECT_RESERVATION_SERVICE_DETAIL.QUANTITY,
+				PROJECT_RESERVATION_SERVICE_DETAIL.PRICE, PROJECT_RESERVATION_SERVICE_DETAIL.TAXABLE_BASE)
+		.from(PROJECT_RESERVATION_SERVICE_DETAIL)
+		.where(PROJECT_RESERVATION_SERVICE_DETAIL.PROJECT_RESERVATION_SERVICE.eq(service)).fetchInto(PROJECT_RESERVATION_SERVICE_DETAIL)
+		.stream().map(new HHGProjectReservationServiceDetailFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	
+	public static HashMap<Integer, Attach> getHHGProjectAttach(AONContext ctx, Date date){
+		Result<Record3<Integer, Integer, String>> result = ctx.getDslContext().select(PROJECT_ATTACH.ID,PROJECT_ATTACH.PROJECT, PROJECT_ATTACH.DESCRIPTION)
+		.from(PROJECT_ATTACH)
+		.where(PROJECT_ATTACH.DESCRIPTION.like("%CRS%"))
+		.and(PROJECT_ATTACH.ATTACH_DATE.eq(new java.sql.Date(date.getTime()))).limit(20).fetch();
+		
+		HashMap<Integer, Attach> map = new HashMap<Integer, Attach>();
+		
+		result.stream().forEach(r ->{
+			Integer id = r.getValue(PROJECT_ATTACH.ID);
+			Integer project = r.getValue(PROJECT_ATTACH.PROJECT);
+			String description = r.getValue(PROJECT_ATTACH.DESCRIPTION);
+			if(!map.containsKey(project)){
+				if(description.contains("ALTA"))
+					map.put(project, new Attach().setId(id).setDescription("ADD"));
+				if(description.contains("MODIFICACION"))
+					map.put(project, new Attach().setId(id).setDescription("MODIFY"));
+				if(description.contains("CANCELACION"))
+					map.put(project, new Attach().setId(id).setDescription("CANCEL"));
+			}
+		});
+		return map;
+	}
+	
+	public static void updateHHGProjectAttachDate(AONContext ctx, Integer[] ids, Date date) {
+		ctx.getDslContext().update(PROJECT_ATTACH)
+		.set(PROJECT_ATTACH.ATTACH_DATE, new java.sql.Date(date.getTime()))
+		.where(PROJECT_ATTACH.ID.in(ids))
+		.execute();
+	}
 
 	private static class HotelGuestByCountryFiller implements Function<Record3<String, String, Integer>, HotelGuestByCountry> {
 	
@@ -191,6 +271,55 @@ public class PMSDAO {
 					.setHotelName(r.value1())
 					.setCountry(Country.safeValueOf(r.value2()))
 					.setGuestQuantity(r.value3());
+		}
+	}
+	
+	private static class HHGProjectReservationFiller implements Function<ProjectReservationRecord, ProjectReservation> {
+		
+		@Override
+		public ProjectReservation apply(ProjectReservationRecord r) {
+			return new ProjectReservation()
+					.setProject(r.getProject())
+					.setAgency(r.getAgency())
+					.setCrsCode(r.getCrsCode())
+					.setStartDate(r.getStartDate())
+					.setEndDate(r.getEndDate());
+		}
+	}
+	
+	private static class HHGProjectReservationRoomFiller implements Function<Record6<Byte, String, Short, Short, String, Integer>, ProjectReservationRoom> {
+		
+		@Override
+		public ProjectReservationRoom apply(Record6<Byte, String, Short, Short, String, Integer> r) {
+			return new ProjectReservationRoom()
+					.setAdults(r.getValue(PROJECT_RESERVATION_ROOM.ADULTS).intValue())
+					.setChildren(r.getValue(PROJECT_RESERVATION_ROOM.CHILDREN).intValue())
+					.setRatePlan(r.getValue(PROJECT_RESERVATION_ROOM.RATE_PLAN))
+					.setRoomCode(r.getValue(PROJECT_RESERVATION_ROOM.ROOM_CODE))
+					.setRoomIndex(r.getValue(PROJECT_RESERVATION_ROOM.ROOM_INDEX).intValue())
+					.setHotel(r.getValue(PROJECT_RESERVATION.HOTEL));
+		}
+	}
+	
+	private static class HHGProjectReservationServiceFiller implements Function<ProjectReservationServiceRecord, ProjectReservationService> {
+		
+		@Override
+		public ProjectReservationService apply(ProjectReservationServiceRecord r) {
+			return new ProjectReservationService()
+					.setServiceCode(r.getServiceCode())
+					.setMealPlan(r.getMealPlan());
+		}
+	}
+	
+	private static class HHGProjectReservationServiceDetailFiller implements Function<ProjectReservationServiceDetailRecord, ProjectReservationServiceDetail> {
+		
+		@Override
+		public ProjectReservationServiceDetail apply(ProjectReservationServiceDetailRecord r) {
+			return new ProjectReservationServiceDetail()
+					.setEffectiveDate(r.getEffectiveDate())
+					.setQuantity(r.getQuantity())
+					.setPrice(r.getPrice())
+					.setTaxableBase(r.getTaxableBase());
 		}
 	}
 }

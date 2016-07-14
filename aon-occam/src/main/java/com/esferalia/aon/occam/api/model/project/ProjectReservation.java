@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.api.model.project;
 
+import java.io.Serializable;
 import java.util.Date;
 import com.esferalia.aon.occam.api.model.Domain;
 
-public class ProjectReservation {
+@SuppressWarnings("serial")
+public class ProjectReservation implements Serializable{
 
 	Double advance;
 	Byte advanceInvoiced;
