@@ -48,7 +48,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 	private static String INSERT_REGISTRY_DATA =
 			"INSERT INTO registry (domain, document, document_type, document_country, name, type) VALUES (?, ?, ?, ?, ?, 0)";
 	private static String UPDATE_REGISTRY_DATA =
-			"UPDATE registry SET name =? WHERE id = ?";
+			"UPDATE registry SET name = ? WHERE id = ?";
 	private static String INSERT_PERSON_DATA =
 			"INSERT INTO person (registry, domain, birth_date, gender, name, first_surname, second_surname) VALUES (?, ?, ?, ?, ?, ?, ?)";
 	private static String UPDATE_PERSON_DATA =
@@ -464,7 +464,8 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 							jsonResponse = JSON_OK_RESPONSE;
 						}
 
-						if (question.equals(EMAIL) && email == 0) {
+						/* Se comenta este trozo de codigo que graba en RegistryMedia el email que viene en la encuesta
+						 * if (question.equals(EMAIL) && email == 0) {
 							insertMediaStmt = connection.prepareStatement(INSERT_MEDIA_DATA);
 							SQLUtils.setInt(insertMediaStmt, 1, domainId);
 							SQLUtils.setInt(insertMediaStmt, 2, person);
@@ -478,9 +479,10 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 							SQLUtils.setInt(insertMediaStmt, 3, MediaType.CELLULAR.ordinal());
 							SQLUtils.setString(insertMediaStmt, 4, value);
 							insertMediaStmt.execute();
-						}
+						}*/
 
-						if (question.equals(EMAIL) && StringUtils.isBlank(guestEmail)) {
+						/* Se comenta este trozo de codigo que graba en ProjectReservationGuest el email que viene en la encuesta
+						 * if (question.equals(EMAIL) && StringUtils.isBlank(guestEmail)) {
 							updateReservationGuestStmt = connection.prepareStatement(UPDATE_RESERVATION_GUEST.replace("${field}", EMAIL));
 							SQLUtils.setString(updateReservationGuestStmt, 1, value);
 							SQLUtils.setString(updateReservationGuestStmt, 2, SERVLET_WIFI);
@@ -494,7 +496,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 							SQLUtils.set(updateReservationGuestStmt, 3, new Date(), Types.TIMESTAMP);
 							SQLUtils.setInt(updateReservationGuestStmt, 4, Integer.parseInt(guest));
 							updateReservationGuestStmt.execute();
-						}
+						}*/
 					}
 				}
 			}
