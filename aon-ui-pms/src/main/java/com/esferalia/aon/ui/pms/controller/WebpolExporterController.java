@@ -24,6 +24,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.faces.component.util.DownloadUtil;
@@ -118,6 +119,24 @@ public class WebpolExporterController extends BasicController {
 	private boolean isMultipleGenerationHotel(List<ITransferObject> list) {
 		return getGenerationHotels(list).size() > 1;
 	}
+	
+	public boolean isInvalidGuestData() throws ManagerBeanException{
+		if(this.getModel().isRowAvailable()){
+			ProjectReservationGuest guest = (ProjectReservationGuest) this.getModel().getRowData();
+			return guest.getDocumentCountry() == null
+					|| StringUtils.isBlank(guest.getDocumentCountry()
+							.getValue())
+					|| guest.getDocumentType() == null
+					|| StringUtils.isBlank(guest.getDocument())
+					|| guest.getDocumentExpDate() == null
+					|| StringUtils.isBlank(guest.getName())
+					|| StringUtils.isBlank(guest.getSurname())
+					|| (StringUtils.isBlank(guest.getSurname2()) && guest
+							.getDocumentCountry() != Country.ES)
+					|| guest.getBirthDate() == null;
+		}
+		return false;
+	}
 
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException {
@@ -152,6 +171,7 @@ public class WebpolExporterController extends BasicController {
 			this.getCriteria().addBetweenExpression(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_START_DATE), getFromDate(), getToDate());
 			this.getCriteria().addOrder(this.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_HOTEL_ID));
 			super.onSearch(event);
+			super.setPageLimit(0);
 			loadParams();
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException("No se ha podido obtener la lista de huespedes.");

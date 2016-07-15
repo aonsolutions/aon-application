@@ -106,58 +106,85 @@
 							<f:facet name="header">
 								<aon:outputText value="&#160;" />
 							</f:facet>
-							
+							<aon:div>
+								<aon:outputText value="&#160;" 
+									title="Faltan datos de la persona"
+									rendered="#{controller.invalidGuestData}"
+									styleClass="aon-icon-commandButton aon-icon-exception" />
+							</aon:div>
 							<f:facet name="footer">
-						
+								<aon:outputText value="#{controller.model.rowCount}" />
 							</f:facet>
 						</aon:column>
-			
-						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
+						
+						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-80 aon-nowrap">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.registry_nationality}" />
+							</f:facet>
+							<aon:outputText value="#{to.documentCountry.value}"
+								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-80 aon-nowrap">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_document_type}" />
+							</f:facet>
+							<aon:outputText value="#{to.documentType}"
+								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-100 aon-nowrap">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_document}" />
 							</f:facet>
-							<aon:div style="display:inline;">
-								<aon:outputText value="#{to.documentCountry.value}" styleClass="aon-margin-right" 
-									rendered="#{!empty to.document}" />
-								<aon:outputText value="#{to.document}" styleClass="aon-margin-right" />
-								<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact"
-									title="#{bundle.pms_reservation_guest_type_newInHotel}"
-									rendered="#{to.person.id != null and to.guestNewInHotel}" />
-								<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact-new"
-									title="#{bundle.pms_reservation_guest_type_newInChain}"
-									rendered="#{to.person.id != null and to.guestNewInChain}" />
-								<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact-error"
-									title="#{bundle.pms_reservation_guest_type_previouslyStayedInHotel}"
-									rendered="#{to.person.id != null and to.guestPreviouslyStayedInHotel}" />
-							</aon:div>
-							
+							<aon:outputText value="#{to.document}"
+								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" />
 						</aon:column>
-			
-						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top">
+
+						<aon:column styleClass="aon-editDataTable-dateColumn aon-vertical-align-top aon-width-100 aon-nowrap">
 							<f:facet name="header">
-								<aon:outputLabel value="#{bundle.report_guest}" />
+								<aon:outputLabel value="#{bundle.aon_expedition_date}" />
 							</f:facet>
-							<aon:div>
-								<aon:outputText value="#{to.fullName}"  />
-								<aon:div rendered="#{!empty to.barcode}" style="display:inline;">
-									<aon:outputText value="(" styleClass="aon-margin-left" />
-									<aon:outputText value="#{bundle.pms_barcode}:" styleClass="aon-italic" />
-									<aon:outputText value="#{to.barcode}" styleClass="aon-bold aon-margin-left" />
-									<aon:outputText value=")" />
-								</aon:div>
-							</aon:div>
-						</aon:column>
-			
-						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-300 aon-nowrap">
-							<f:facet name="header">
-								<aon:outputLabel value="#{bundle.aon_address}" />
-							</f:facet>
-							<aon:outputText value="#{to.fullAddress}" >
-								<aon:abbreviateConverter maxWidth="50" />
+							<aon:outputText value="#{to.documentExpDate}"
+								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
-							<rich:toolTip rendered="#{!empty to.fullAddress}">
-								<aon:outputText value="#{to.fullAddress}" />
-							</rich:toolTip>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-auto aon-nowrap">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}"
+								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-auto aon-nowrap">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_surname_1}" />
+							</f:facet>
+							<aon:outputText value="#{to.surname}"
+								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-auto aon-nowrap">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_surname_2}" />
+							</f:facet>
+							<aon:outputText value="#{to.surname2}"
+								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-dateColumn aon-vertical-align-top aon-width-100 aon-nowrap">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.registry_person_birthDate}" />
+							</f:facet>
+							<aon:outputText value="#{to.birthDate}"
+								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
 						</aon:column>
 						
 						<aon:column styleClass="aon-editDataTable-iconColumn">
