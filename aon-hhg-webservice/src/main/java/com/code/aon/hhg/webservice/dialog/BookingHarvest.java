@@ -1,10 +1,8 @@
 package com.code.aon.hhg.webservice.dialog;
 
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,9 +55,10 @@ public class BookingHarvest {
 			json.put("nonce", getNonce());
 			json.put("hash", getHash());
 			System.out.println(getPayload().get(0).getReservation());
-			json.put("payload",new JSONArray(
-					getPayload().stream().map(res -> res.toJSON())
-					.collect(Collectors.toCollection(LinkedList::new))));
+			json.put("payload",""
+				/*new JSONArray(
+					getPayload().stream().map(res -> res.toJSON().toString())
+					.collect(Collectors.toCollection(LinkedList::new)))*/);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -182,12 +181,14 @@ public class BookingHarvest {
 				json.put("crscode", getCrscode());
 				json.put("start_date", getStartDate());
 				json.put("end_date", getEndDate());
-				json.put("rooms", new JSONArray(
-						getRooms().stream().map(room -> room.toJSON())
-						.collect(Collectors.toCollection(LinkedList::new))));
-				json.put("services", new JSONArray(
-						getServices().stream().map(service -> service.toJSON())
-						.collect(Collectors.toCollection(LinkedList::new))));
+				json.put("rooms", ""
+						/*new JSONArray(
+						getRooms().stream().map(room -> room.toJSON().toString())
+						.collect(Collectors.toCollection(LinkedList::new)))*/);
+				json.put("services", ""
+						/*new JSONArray(
+						getServices().stream().map(service -> service.toJSON().toString())
+						.collect(Collectors.toCollection(LinkedList::new)))*/);
 				
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -291,9 +292,10 @@ public class BookingHarvest {
 			try {
 				json.put("service_code", getServiceCode());
 				json.put("meal_plan", getMealPlan());
-				json.put("servicesDetail", new JSONArray(
-						getServicesDetail().stream().map(service -> service.toJSON())
-						.collect(Collectors.toCollection(LinkedList::new))));
+				json.put("servicesDetail", ""
+						/*new JSONArray(
+						getServicesDetail().stream().map(service -> service.toJSON().toString())
+						.collect(Collectors.toCollection(LinkedList::new)))*/);
 				jsonService.put("service", json);
 			} catch (JSONException e) {
 				e.printStackTrace();
