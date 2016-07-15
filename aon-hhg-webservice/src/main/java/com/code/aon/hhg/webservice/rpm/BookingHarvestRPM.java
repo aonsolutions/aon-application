@@ -3,6 +3,7 @@ package com.code.aon.hhg.webservice.rpm;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.cli.CommandLine;
@@ -31,7 +32,7 @@ public class BookingHarvestRPM {
  	private static String user;
 	private static String password;
 	private static String nonce;
-	private static HashMap<String, Integer> domainMap;
+	private static Map<String, Integer> domainMap;
 	
 	private static BookingHarvest buildBookingHarvest() throws java.text.ParseException {
 		return DBConsults.getHHG(domain, domainMap.get(domain), user)
@@ -40,7 +41,7 @@ public class BookingHarvestRPM {
 				.calculateHash(password);
 	}
 	
-	public static void main(String[] args) throws java.text.ParseException {
+	/*public static void main(String[] args) throws java.text.ParseException {
 		domain="test.grupoplayasol.com";
 		nonce = "12345678912345678912";
 		user = "aibanez";
@@ -48,9 +49,14 @@ public class BookingHarvestRPM {
 		domainMap = DBSync.initializeDomainMap();
 		if(domain == null)
 			domain = domainMap.keySet().stream().findFirst().orElse("");
+		System.out.println(buildBookingHarvest().toJSON().toString());
+	}*/
+	
+	public static void main(String[] args) throws java.text.ParseException {
+		domainMap = DBSync.initializeDomainMap();
+		if(domain == null)
+			domain = domainMap.keySet().stream().findFirst().orElse("");
 		
-		System.out.println(buildBookingHarvest().toString());
-
 		parse(args);
 		if(nonce == null){
 			//***** GET-NONCE *****/

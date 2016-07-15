@@ -1,8 +1,11 @@
 package com.code.aon.hhg.webservice.dialog;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,18 +50,16 @@ public class BookingHarvest {
 	}
 
 	//***** Utils *****/
-	
 	public JSONObject toJSON(){
 		JSONObject json = new JSONObject();
 		try {
 			json.put("username", getUsername());
 			json.put("nonce", getNonce());
 			json.put("hash", getHash());
-			System.out.println(getPayload().get(0).getReservation());
-			json.put("payload",""
-				/*new JSONArray(
-					getPayload().stream().map(res -> res.toJSON().toString())
-					.collect(Collectors.toCollection(LinkedList::new)))*/);
+			
+			JSONArray arrayPayload = new JSONArray();
+			getPayload().stream().map(res -> res.toJSON()).forEach(s -> arrayPayload.put(s));
+			json.put("payload",arrayPayload);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -170,7 +171,8 @@ public class BookingHarvest {
 			this.projectAttachId = projectAttachId;
 			return this;
 		}
-		
+		String strServices;
+		String strRooms;
 		public JSONObject toJSON(){
 			JSONObject json = new JSONObject();
 			try {
@@ -181,15 +183,15 @@ public class BookingHarvest {
 				json.put("crscode", getCrscode());
 				json.put("start_date", getStartDate());
 				json.put("end_date", getEndDate());
-				json.put("rooms", ""
-						/*new JSONArray(
-						getRooms().stream().map(room -> room.toJSON().toString())
-						.collect(Collectors.toCollection(LinkedList::new)))*/);
-				json.put("services", ""
-						/*new JSONArray(
-						getServices().stream().map(service -> service.toJSON().toString())
-						.collect(Collectors.toCollection(LinkedList::new)))*/);
 				
+				JSONArray arrayRooms = new JSONArray();
+				getRooms().stream().map(room -> room.toJSON()).forEach(s -> arrayRooms.put(s));
+				json.put("rooms",arrayRooms);
+
+				JSONArray arrayServices = new JSONArray();
+				getServices().stream().map(service -> service.toJSON()).forEach(s -> arrayServices.put(s));
+				json.put("services",arrayServices);
+						
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -285,17 +287,18 @@ public class BookingHarvest {
 		public void setServicesDetail(LinkedList<ServiceDetail> servicesDetail) {
 			this.servicesDetail = servicesDetail;
 		}
-
+		String strServicesDetail;
 		public JSONObject toJSON(){
 			JSONObject jsonService = new JSONObject();
 			JSONObject json = new JSONObject();
 			try {
 				json.put("service_code", getServiceCode());
 				json.put("meal_plan", getMealPlan());
-				json.put("servicesDetail", ""
-						/*new JSONArray(
-						getServicesDetail().stream().map(service -> service.toJSON().toString())
-						.collect(Collectors.toCollection(LinkedList::new)))*/);
+								
+				JSONArray arrayServicesDetail = new JSONArray();
+				getServicesDetail().stream().map(service -> service.toJSON()).forEach(s -> arrayServicesDetail.put(s));
+				json.put("servicesDetail",arrayServicesDetail);
+		
 				jsonService.put("service", json);
 			} catch (JSONException e) {
 				e.printStackTrace();

@@ -26,10 +26,10 @@ public class DBSync {
 		return  connectionInfo.getDomains();
 	}
 	
-	public static HashMap<String, Integer> getDomainMap() throws AonConnectionException {
+	public static Map<String, Integer> getDomainMap() throws AonConnectionException {
 		ConnectionInfo connectionInfo = ConnectionInfo
 				.getDefaultConnectionInfo();
-		return (HashMap<String, Integer>)  connectionInfo.getDomainMap();
+		return connectionInfo.getDomainMap();
 	}
 	
 	public static Map<String, String> initializeDomains(){
@@ -42,8 +42,8 @@ public class DBSync {
 		return map;
 	}
 	
-	public static HashMap<String, Integer> initializeDomainMap(){
-		HashMap<String, Integer> map  = new HashMap<String, Integer>();
+	public static Map<String, Integer> initializeDomainMap(){
+		Map<String, Integer> map  = new HashMap<String, Integer>();
 		try {
 			map =  DBSync.getDomainMap();
 		} catch (AonConnectionException e) {
