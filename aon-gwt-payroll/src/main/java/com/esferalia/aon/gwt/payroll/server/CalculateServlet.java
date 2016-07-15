@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.PERSON_REGISTRY;
 
 import java.io.IOException;
@@ -271,6 +272,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 				getDSLContext().delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(toRemove)).execute();
 				getDSLContext().delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(toRemove)).execute();
 				getDSLContext().delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(toRemove)).execute();
+				getDSLContext().delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(toRemove)).execute();
 				getDSLContext().delete(SALARY).where(SALARY.ID.in(toRemove)).execute();
 			}
 		}
