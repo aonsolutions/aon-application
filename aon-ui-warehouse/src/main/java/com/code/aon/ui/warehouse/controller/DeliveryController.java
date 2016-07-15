@@ -2,25 +2,16 @@ package com.code.aon.ui.warehouse.controller;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
-import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +21,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
@@ -38,8 +28,6 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
-import com.code.aon.faces.component.util.DownloadUtil;
-import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.DeliveryInvoicingManager;
@@ -59,14 +47,10 @@ import com.code.aon.sales.bridge.SalesTransferManager;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.controller.IAuditableController;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.BankAccountHelper;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
-import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
-import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
@@ -77,6 +61,7 @@ import com.code.aon.ui.registry.controller.CorporateIdentity;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.udapa.UdapaDeliveryHandler;
 import com.code.aon.ui.warehouse.util.WarehouseEmailUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.warehouse.Delivery;
@@ -84,8 +69,6 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.seres.util.writer.udapa.UdapaDeliveryWriter;
-import com.esferalia.aon.ingenet.IngenetDeliveryManager;
 
 public class DeliveryController extends HeaderObjectController implements IWarehouseConstants, IAuditableController {
 	
@@ -114,8 +97,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private WarehouseEmailUtil emailUtil;
 	private boolean shippingAlternativeAddress;
 	private BankAccountHelper accountHelper;
-	
-	private boolean showIngenetWindow;
+	private UdapaDeliveryHandler udapaDeliveryHandler;
 	
     public DeliveryController() {
     	this.emailUtil = new WarehouseEmailUtil();
@@ -277,14 +259,13 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		this.shippingAlternativeAddress = shippingAlternativeAddress;
 	}
 
-	public boolean isShowIngenetWindow() {
-		return showIngenetWindow;
+	public UdapaDeliveryHandler getUdapaDeliveryHandler(){
+		if(udapaDeliveryHandler==null){
+			udapaDeliveryHandler = new UdapaDeliveryHandler(this);
+		}
+		return udapaDeliveryHandler;
 	}
-
-	public void setShowIngenetWindow(boolean showIngenetWindow) {
-		this.showIngenetWindow = showIngenetWindow;
-	}
-
+	
 	public boolean isCustomerReadOnly() {
 		Delivery delivery = (Delivery)this.getTo();
 		return (delivery.getProject() != null && delivery.getProject().getId() != null);
@@ -780,102 +761,5 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 		return ccc.getDeliverySeriesIds();
 	}
 	
-	
-	// **************************
-	// UDAPA EDI FILE
-	// **************************
-	private Map<Integer, String> ingenetDeliveries;
-	
-	public boolean isIngenetPendingDeliveries() {
-		return ingenetDeliveries!=null && ingenetDeliveries.keySet().size()>0;
-	}
-
-	public Collection<String> getIngenetDeliveries() {
-		return ingenetDeliveries.values();
-	}
-	
-	public void onSincronizeIngenet(ActionEvent event) {
-		try {
-			ingenetDeliveries = IngenetDeliveryManager.getInstance().obtainUnreadDeliveries(
-					AonUtil.getDomainName(), AonUtil.getRemoteUser());
-			this.setShowIngenetWindow(true);
-		} catch (Exception e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			LOGGER.error(e.getMessage());
-		}
-	}
-	
-	public void confirmIngenetDeliveries(ActionEvent event) {
-//		this.setShowIngenetWindow(false);
-		
-//		LogPanelController logPanel = LogPanelController.getInstance();
-//		logPanel.reset();
-		
-		try {
-			// copy delivery to AON
-			Integer warehouseId = getWarehouse() != null && getWarehouse().getId() != null ? getWarehouse().getId()
-					: ((Warehouse) getWarehouses().get(0).getValue()).getId();  
-			
-			ingenetDeliveries.keySet().forEach(id -> {
-				IngenetDeliveryManager.getInstance().createAonDelivery(
-						AonUtil.getDomainName(), AonUtil.getRemoteUser(),
-						id,
-						DomainManager.getCurrentDomain(), warehouseId);
-			});
-//			
-//			IngenetDeliveryManager.getInstance().createAonDeliveries(
-//					AonUtil.getDomainName(), AonUtil.getRemoteUser(),
-//					new LinkedList<>(ingenetDeliveries.keySet()),
-//					DomainManager.getCurrentDomain(), warehouseId);
-			
-			// close delivery on INGENET
-			ingenetDeliveries.keySet().forEach(id -> {
-				IngenetDeliveryManager.getInstance().closeIngenetDelivery(
-						AonUtil.getDomainName(), AonUtil.getRemoteUser(),
-						id);
-			});
-			
-			AonUtil.addInfoMessage("Albaranes importados correctamente desde INGENET");
-		} catch (Exception e) {
-			AonUtil.addErrorMessage("NO SE HA PODIDO PROCESAR EL TRASPASO");
-			AonUtil.addErrorMessage(e.getMessage());
-		}
-	}
-	
-	public void onExportUdapaEdiFile(ActionEvent event) {
-		FileOutput output = null;
-		HttpServletResponse response = null;
-		OutputStream out = null;
-		try {
-			Delivery delivery = (Delivery) this.getTo();
-			CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
-			String customerEdiCode = ediSupport.getEdiCodes(delivery.getCustomer(), delivery.getRegistryAddress()).get(CustomerEdiSupportController.ALBARANES);
-			CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			String companyEdiCode = company.getEdiCompanyCode();
-			
-			// writer file
-			UdapaDeliveryWriter writer = new UdapaDeliveryWriter();
-			output = writer.createFile(delivery, companyEdiCode, customerEdiCode);
-		
-			// download file
-        	String name = "albaran";
-    		String number = delivery.getReferenceCode();
-    		byte[] data = output.getContent();
-        	int size = data.length;
-			response = DownloadUtil.getResponse();
-    		out = DownloadUtil.initDownload(response, name+"."+number, null, size);
-        	InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
-        	IOUtils.copy( fileIn, out );
-        	IOUtils.closeQuietly(fileIn);
-        } catch (IOException e) {
-        	LOGGER.error(e.getMessage());
-        	throw new AbortProcessingException(e.getMessage(), e);
-        } catch (Throwable e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		} finally {
-			DownloadUtil.finishDownload(response, out);
-		}
-	}
 
 }

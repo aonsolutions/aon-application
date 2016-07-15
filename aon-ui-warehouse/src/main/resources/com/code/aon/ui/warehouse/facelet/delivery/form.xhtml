@@ -102,14 +102,14 @@
 							<aon:menuItem id="sincronizeIngenet-delivery"
 								value="Sincronizar INGENET"
 								iconClass="aon-icon-sincronize"
-								actionListener="#{delivery.onSincronizeIngenet}" />
+								actionListener="#{delivery.udapaDeliveryHandler.onSincronizeIngenet}" />
 						</aon:if>
 						<aon:if test="#{company.ediSupportEnabled}">
 							<aon:menuItem id="exportEdi-delivery"
 								iconClass="aon-icon-file-entrance">
 								<aon:htmlCommandLink target="_blank"
 									value="#{bundle.webmail_download} EDI"
-									actionListener="#{delivery.onExportUdapaEdiFile}" >
+									actionListener="#{delivery.udapaDeliveryHandler.onExportUdapaEdiFile}" >
 								</aon:htmlCommandLink>
 							</aon:menuItem>
 						</aon:if>
@@ -436,6 +436,15 @@
 		<ui:include src="/com/code/aon/ui/registry/facelet/rbank/newBankAccountModal.xhtml">
 			<ui:param name="bankAccountController" value="#{delivery.accountHelper}" />
 			<ui:param name="modalReRender" value="payMethodDiv" />
-		</ui:include>		
+		</ui:include>
+		<aon:if test="#{company.ediSupportEnabled}">
+			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+				<ui:param name="logPanelTitle" value="#{bundle.aon_import} #{bundle.registry_stat_delivery} INGENET" />
+				<ui:param name="closeButtonReRender" value="deliveryForm" />
+				<aon:valueParam name="pollInterval" value="3000" />
+				<aon:methodParam name="closeLogPanelAtionListener"
+					default="#{delivery.udapaDeliveryHandler.onLogPanelFinish}" type="actionListener" />
+			</ui:include>
+		</aon:if>		
 	</ui:define>
 </ui:composition>

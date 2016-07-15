@@ -182,6 +182,32 @@ public class SalesDAO {
 				.execute();
 	}
 	
+	public static void updateSalesDetail(AONContext ctx, SalesDetail detail) {
+		ctx.checkWrite();
+		Timestamp modificationDate = null;
+		modificationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+		
+		ctx.getDslContext()
+				.update(SALES_DETAIL)
+//				.set(SALES_DETAIL.DOMAIN, detail.getDomain())
+//				.set(SALES_DETAIL.SALES, detail.getSales())
+				.set(SALES_DETAIL.LINE, detail.getLine())
+				.set(SALES_DETAIL.ITEM, detail.getItem())
+				.set(SALES_DETAIL.DESCRIPTION, detail.getDescription())
+				.set(SALES_DETAIL.QUANTITY, detail.getQuantity())
+				.set(SALES_DETAIL.PRICE, detail.getPrice())
+				.set(SALES_DETAIL.DISCOUNT_EXPR, detail.getDiscountExpression())
+				.set(SALES_DETAIL.TAXES, detail.getTaxes())
+				.set(SALES_DETAIL.STATUS, (byte) detail.getStatus().ordinal())
+				.set(SALES_DETAIL.OFFER_DETAIL, detail.getOfferDetail())
+				.set(SALES_DETAIL.DELIVERED, detail.getDelivered())
+//				.set(SALES_DETAIL.CREATION_USER, ctx.getUser())
+//				.set(SALES_DETAIL.CREATION_DATE, creationDate)
+				.set(SALES_DETAIL.MODIFICATION_USER, ctx.getUser())
+				.set(SALES_DETAIL.MODIFICATION_DATE, modificationDate)
+				.where(SALES_DETAIL.ID.eq(detail.getId())).execute();
+	}
+	
 	public static Sales getSales(AONContext ctx, SalesFilter filter){
 		return ctx.getDslContext().select().from(SALES).where(SALES_PROPERTIES.getConditions(filter))
 				.limit(1).fetchInto(SALES).stream().map(new FullSalesFiller()).findFirst().orElse(new Sales());

@@ -23,7 +23,7 @@
 						<aon:commandButton	id="sincronizeIngenet-delivery" 
 							value="Sincronizar INGENET"
 							styleClass="aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-sincronize"
-							actionListener="#{delivery.onSincronizeIngenet}"
+							actionListener="#{delivery.udapaDeliveryHandler.onSincronizeIngenet}"
 							onclick="Richfaces.showModalPanel('waitProccess')"
 							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					</aon:if>
@@ -49,6 +49,16 @@
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
 			<ui:param name="addWaitProcessPoll" value="#{true}" />
 		</ui:include>
+		
+		<aon:if test="#{company.ediSupportEnabled}">
+			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+				<ui:param name="logPanelTitle" value="#{bundle.aon_import} #{bundle.registry_stat_delivery} INGENET" />
+				<ui:param name="closeButtonReRender" value="deliverySearch" />
+				<aon:valueParam name="pollInterval" value="3000" />
+				<aon:methodParam name="closeLogPanelAtionListener"
+					default="#{delivery.udapaDeliveryHandler.onLogPanelFinish}" type="actionListener" />
+			</ui:include>
+		</aon:if>
 				
 	</ui:define>
 </ui:composition>

@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
@@ -49,28 +50,30 @@ public class IngenetDeliveryManager {
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		LinkedList<Delivery> list = WarehouseDAO.getDeliveryList(ctx, f -> f.getStatusProperty().eq((byte)DeliveryStatus.PENDING.ordinal()));
 		list.forEach(delivery -> {
-			String description = "Albaran "+delivery.getSeries()+"/"+delivery.getNumber()+" con fecha del "+(delivery.getIssueTime()!=null?dateFormat.format(delivery.getIssueTime()):"-");
+			String description = "Albaran " 
+					+ (delivery.getSeries()!=null?delivery.getSeries():"") + "/" + delivery.getNumber()
+					+ " con fecha del " 
+					+ (delivery.getIssueTime()!=null?dateFormat.format(delivery.getIssueTime()):"-");
 			map.put(delivery.getId(), description);
 		});
 		
 		return map;
 	}
 	
-	public void createAonDelivery(String domainName, String user, Integer deliveryId, Integer currentDomainId, Integer warehouseId) {
+	public Delivery createAonDelivery(String domainName, String user, Integer deliveryId, Integer currentDomainId) {
 		AONContext ctx = AONContext.getAONContext(domainName,
 				currentDomainId, user);
-		createDelivery(ctx, domainName, user, currentDomainId, deliveryId, warehouseId);
+		return createDelivery(ctx, domainName, user, currentDomainId, deliveryId);
 	}
 	
-	public void createAonDeliveries(String domainName, String user, List<Integer> deliveryIds, Integer currentDomainId, Integer warehouseId) {
+	public void createAonDeliveryDetails(String domainName, String user, Integer currentDomainId, Integer ingenetDeliveryId, Integer aonDeliveryId, Integer warehouseId) {
 		AONContext ctx = AONContext.getAONContext(domainName,
 				currentDomainId, user);
-		deliveryIds.forEach(id -> {
-			createDelivery(ctx, domainName, user, currentDomainId, id, warehouseId);
-		});
+		createDeliveryDetails(ctx, domainName, user, currentDomainId, ingenetDeliveryId, aonDeliveryId, warehouseId);
 	}
 	
-	private void createDelivery(AONContext ctx, String domainName, String user, Integer currentDomainId, Integer deliveryId, Integer warehouseId){
+	private Delivery createDelivery(AONContext ctx, String domainName,
+			String user, Integer currentDomainId, Integer deliveryId) {
 		
 		Integer[] scopes = SecurityDAO.getUserScopes(ctx, user);
 		
@@ -81,11 +84,18 @@ public class IngenetDeliveryManager {
 		delivery.setIssueTime(new Date());
 		delivery.setPayMethod(null);
 		delivery.setWorkplace(null);
-		Integer newId = WarehouseDAO.insertDelivery(ctx, delivery);
-		delivery.setId(newId);
+		delivery.setId(WarehouseDAO.insertDelivery(ctx, delivery));
+		return delivery;
+	}
+	
+	private void createDeliveryDetails(AONContext ctx, String domainName,
+			String user, Integer currentDomainId, Integer ingenetDeliveryId,
+			Integer aonDeliveryId, Integer warehouseId) {
 		
-		List<DeliveryDetail> detailList = obtainIngenetDeliveryDetailList(domainName, user, deliveryId);
-		detailList.forEach(detail -> {
+		List<DeliveryDetail> detailList = obtainIngenetDeliveryDetailList(domainName, user, ingenetDeliveryId);
+		for(int idx=0;idx<detailList.size();idx++){
+			DeliveryDetail detail = detailList.get(idx);
+			
 			Item ingenetItem = obtainIngenetItem(domainName, user, detail.getItem().getId());
 			SalesDetail aonSalesDetail = obtainAonSalesDetail(domainName, user, currentDomainId, detail);
 			Item newItem = createNewItem(ctx, currentDomainId,
@@ -95,18 +105,23 @@ public class IngenetDeliveryManager {
 			if(newItem!=null && newItem.getId()!=null){
 				detail.setId(null);
 				detail.setDomain(ctx.getDomainId());
-				detail.setDelivery(delivery);
+				detail.setDelivery(new Delivery().setId(aonDeliveryId));
 				detail.setWarehouse(warehouseId);
 				detail.setSalesDetail(aonSalesDetail.getId());
 				detail.setItem(newItem);
 				detail.setDescription(aonSalesDetail.getDescription());
 				detail.setDiscountExpression(aonSalesDetail.getDiscountExpression());
-				detail.setLine(aonSalesDetail.getLine());
+				detail.setLine(Integer.valueOf(idx+1).shortValue());
 				detail.setPrice(aonSalesDetail.getPrice());
 				WarehouseDAO.insertDeliveryDetail(ctx, detail);
+				
+				// TODO: close manufacture_order served lines
+				
+				// update sales_detail, increase delivered
+				aonSalesDetail.setDelivered(aonSalesDetail.getDelivered()+detail.getQuantity());
+				SalesDAO.updateSalesDetail(ctx, aonSalesDetail);
 			}
-		});
-		
+		}
 		
 	}
 	
@@ -117,6 +132,8 @@ public class IngenetDeliveryManager {
 			newItem.setBarcode(null);
 			newItem.setSerialNumber(serialNumber);
 			newItem.setSerialDate(serialDate!=null?new java.sql.Date(serialDate.getTime()):null);
+			newItem.setActive(false);
+			newItem.setStatus(Integer.valueOf(ProductStatus.DISCONTINUED.ordinal()).byteValue());
 			ProductDAO.insertItem(ctx, newItem);
 			return ProductDAO.getItem(
 					ctx,

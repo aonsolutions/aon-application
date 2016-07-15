@@ -10,9 +10,9 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showIngenetWindow">
-		<aon:if test="#{delivery.showIngenetWindow}">
+		<aon:if test="#{delivery.udapaDeliveryHandler.showIngenetWindow}">
 			<rich:modalPanel id="ingenetModalPanel" minHeight="250" minWidth="420" 
-				rendered="#{delivery.showIngenetWindow}"
+				rendered="#{delivery.udapaDeliveryHandler.showIngenetWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -26,7 +26,7 @@
 							reRender="showIngenetWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{delivery.showIngenetWindow}"
+								target="#{delivery.udapaDeliveryHandler.showIngenetWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -36,49 +36,64 @@
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
-								<aon:div styleClass="aon-scroll-area" style="margin-top: 0.1em;" >
-									
-									<aon:if test="#{!delivery.ingenetPendingDeliveries}">
+							
+								<aon:if test="#{!delivery.udapaDeliveryHandler.ingenetPendingDeliveries}">
+									<aon:div styleClass="aon-scroll-area" style="margin-top: 0.1em;" >
 										<aon:div style="margin-bottom:20px;">
 											<aon:outputText style="display: inline-block;" styleClass="aon-bold" 
-												value="No hay datos por traspasar" />
+												value="No hay albaranes pendientes" />
 										</aon:div>
-									</aon:if>
-
-									<aon:if test="#{delivery.ingenetPendingDeliveries}">
+									</aon:div>
+								</aon:if>
+								
+								<aon:if test="#{delivery.udapaDeliveryHandler.ingenetPendingDeliveries}">
+									<aon:div styleClass="aon-scroll-area" style="margin-top: 0.1em;" >
 										<aon:div style="margin-bottom:20px;">
 											<aon:outputText style="display: inline-block;" styleClass="aon-bold" 
-												value="Se han encontrado los siguientes resutados:" />
+												value="Seleccionar albaranes pendientes:" />
 										</aon:div>
 										
-										<ui:repeat var="delivery" value="#{delivery.ingenetDeliveries}">
-											<aon:outputText value="#{delivery}" /> <br/>
-										</ui:repeat>
+										<aon:dataTable id="listData" value="#{delivery.udapaDeliveryHandler.model}"
+											var="id" rows="20" rendered="#{delivery.udapaDeliveryHandler.model.rowCount > 0}" >	
+											<aon:rowSelector id="noBatched-select" toggleOnClick="#{false}"/>
+											<aon:column styleClass="aon-editDataTable-iconColumn">
+												<aon:selectBooleanCheckbox id="Included_Row_checked"
+													value="#{delivery.udapaDeliveryHandler.rowChecked}"
+													ajaxSingle="#{true}"
+													valueChangeListener="#{delivery.udapaDeliveryHandler.rowSelected}" >
+													<a4j:support event="onclick" reRender="ingenetForm" />
+												</aon:selectBooleanCheckbox>
+											</aon:column>
+											<aon:column styleClass="aon-editDataTable-textColumn">
+												<aon:outputText value="#{delivery.udapaDeliveryHandler.ingenetDeliveries[id]}" />
+											</aon:column>
+										</aon:dataTable>
 										
-										<aon:if test="#{fn:length(delivery.warehouses) gt 1}">
+										<aon:panelGrid columns="2" styleClass="aon-width-all aon-margin-top">
 											<aon:outputLabel for="Ingenet_Delivery_warehouse" 
 												value="#{bundle.aon_module_warehouse}" />
 											<aon:selectOneMenu id="Ingenet_Delivery_warehouse" 
-												value="#{delivery.warehouse}" required="#{true}">
-												<f:selectItems value="#{delivery.warehouses}" />
+												value="#{delivery.udapaDeliveryHandler.warehouse}" required="#{true}"
+												disabled="#{fn:length(delivery.udapaDeliveryHandler.warehouses) eq 1}">
+												<f:selectItems value="#{delivery.udapaDeliveryHandler.warehouses}" />
 											</aon:selectOneMenu>
-										</aon:if>
-	
-										<aon:div styleClass="aon-width-all aon-text-center">
-											<aon:commandButton id="confirm-accept"
-												styleClass="aon-commandButton"
-												value="#{bundle.aon_confirm}"
-												actionListener="#{delivery.confirmIngenetDeliveries}">
-												<rich:componentControl for="ingenetModalPanel"
-													event="onclick" operation="hide"/>																					
-												<f:setPropertyActionListener
-													target="#{delivery.showIngenetWindow}"
-													value="#{false}" />
-											</aon:commandButton>
-										</aon:div>
-									</aon:if>
+										</aon:panelGrid>
+									</aon:div>
+									
+									<aon:div styleClass="aon-width-all aon-text-center">
+										<aon:commandButton id="confirm-accept"
+											styleClass="aon-commandButton"
+											value="#{bundle.aon_confirm}"
+											reRender="showIngenetWindow,deliverySearch,deliveryForm"
+											actionListener="#{delivery.udapaDeliveryHandler.confirmIngenetDeliveries}">
+											<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+											<f:setPropertyActionListener
+												target="#{delivery.udapaDeliveryHandler.showIngenetWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+									</aon:div>
+								</aon:if>
 
-								</aon:div>
 							</aon:div>
 						</aon:div>
 					</aon:div>
