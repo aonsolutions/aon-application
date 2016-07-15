@@ -1,5 +1,10 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,7 +12,9 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
@@ -19,6 +26,8 @@ import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.faces.component.util.DownloadUtil;
+import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -36,6 +45,10 @@ import com.code.aon.registry.RegistrySeller;
 import com.code.aon.registry.enumeration.RegistrySellerStatus;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
+import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
@@ -46,6 +59,7 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.bridge.DeliveryTransferManager;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.seres.util.writer.udapa.UdapaSaleInvoiceWriter;
 
 public class SaleInvoiceController extends InvoiceController {
 	
@@ -305,6 +319,49 @@ public class SaleInvoiceController extends InvoiceController {
 		SignerController signer = super.getSignerController();
 		signer.setReportKey(getCompanyController().getSaleInvoiceTemplateValue());
 		return signer;
+	}
+	
+	public void onExportEdiFile(ActionEvent event) {
+		FileOutput output = null;
+		HttpServletResponse response = null;
+		OutputStream out = null;
+		try {
+			Invoice invoice = (Invoice) this.getTo();
+			
+			String customerEdiMainCode = null;
+			String customerEdiOperationCode = null;
+			if(invoice.getRegistryAddress()!=null && invoice.getRegistryAddress().getId()!=null){
+				CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
+				customerEdiMainCode = ediSupport.getEdiCodes(invoice.getRegistry(), invoice.getRegistryAddress()).get(CustomerEdiSupportController.CABECERA);
+				customerEdiOperationCode = ediSupport.getEdiCodes(invoice.getRegistry(), invoice.getRegistryAddress()).get(CustomerEdiSupportController.FACTURA);
+			}
+			CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			String companyEdiCode = company.getEdiCompanyCode();
+			
+			// writer file
+			UdapaSaleInvoiceWriter writer = new UdapaSaleInvoiceWriter();
+			output = writer.createFile(invoice, getPriceStrategy(), companyEdiCode, customerEdiMainCode, customerEdiOperationCode);
+			
+			// download file
+			String name = "factura";
+			String number = invoice.getReferenceCode();
+			byte[] data = output.getContent();
+			int size = data.length;
+			response = DownloadUtil.getResponse();
+			out = DownloadUtil.initDownload(response, name+"."+number, null, size);
+			InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
+			IOUtils.copy( fileIn, out );
+			IOUtils.closeQuietly(fileIn);
+			
+        } catch (IOException e) {
+        	AonUtil.addErrorMessage(e.getMessage());
+        	throw new AbortProcessingException(e.getMessage(), e);
+        } catch (Throwable e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DownloadUtil.finishDownload(response, out);
+		}
 	}
 
 }

@@ -251,9 +251,9 @@ public class CustomerEdiSupportController implements Serializable {
 		return note;
 	}
 	
-	public Map<String, String> getEdiCodes(Customer customer, RegistryAddress address){
+	public Map<String, String> getEdiCodes(Registry registry, RegistryAddress address){
 		RegistryNote rnote = this.getRegistryNote(address.getId().toString(),
-				customer.getId());
+				registry.getId());
 		String value = null;
 		if (rnote != null) {
 			value = rnote.getComments();

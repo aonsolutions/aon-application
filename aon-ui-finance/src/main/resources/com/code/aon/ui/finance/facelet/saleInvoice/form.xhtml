@@ -117,6 +117,17 @@
 							<ui:param name="skipCancelSignButton" value="#{!saleInvoice.signed}" />
 							<ui:param name="signButtonReRender" value="saleInvoiceForm" />
 						</ui:include>
+						<aon:if test="#{company.ediSupportEnabled}">
+							<aon:menuItem id="exportEdi-saleInvoice"
+								disabled="#{empty saleInvoice.to.registryAddress.id}"
+								iconClass="aon-icon-file-entrance">
+								<aon:htmlCommandLink target="_blank"
+									disabled="#{empty saleInvoice.to.registryAddress.id}"
+									actionListener="#{saleInvoice.onExportEdiFile}"
+									value="#{bundle.webmail_download} EDI">
+								</aon:htmlCommandLink>
+							</aon:menuItem>
+						</aon:if>
 						
 						<rich:menuSeparator id="actionMenuSeparator" />
 						

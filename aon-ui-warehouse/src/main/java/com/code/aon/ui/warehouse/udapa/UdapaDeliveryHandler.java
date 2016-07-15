@@ -201,7 +201,7 @@ public class UdapaDeliveryHandler implements Serializable {
 		try {
 			Delivery delivery = (Delivery) controller.getTo();
 			CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
-			String customerEdiCode = ediSupport.getEdiCodes(delivery.getCustomer(), delivery.getRegistryAddress()).get(CustomerEdiSupportController.ALBARANES);
+			String customerEdiCode = ediSupport.getEdiCodes(delivery.getCustomer().getRegistry(), delivery.getRegistryAddress()).get(CustomerEdiSupportController.ALBARANES);
 			CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 			String companyEdiCode = company.getEdiCompanyCode();
 			
