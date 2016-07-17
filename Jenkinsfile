@@ -5,6 +5,8 @@
 
 node {
 
+   echo "MAVEN_RELEASE=${env.MAVEN_RELEASE}"
+   
    // Mark the code checkout 'stage'....
    stage 'Checkout'
 
