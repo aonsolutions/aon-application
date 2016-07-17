@@ -3375,6 +3375,12 @@ public class SQLContractSalaryCalculatorContext
 		};
 
 		LazyTimedVariable<Double> irpf = new LazyTimedVariable<Double>() {
+			
+			@Override
+				public Period getPeriod() {
+					return new Period(startDate, Period.max(getEnd(), getIrpfDate()));
+				}
+			
 			@Override
 			public Double create() {
 				try {

@@ -2,11 +2,14 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C401;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 import static junit.framework.Assert.assertEquals;
 
 import java.sql.Connection;
@@ -14,6 +17,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
@@ -27,7 +31,9 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.SalaryDeduction;
+import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.IrpfOutcome;
@@ -39,8 +45,10 @@ import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.ILi
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.IExpression;
@@ -277,6 +285,74 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				this.issue = "01/07";
 			}
 		}, });
+	}
+
+	@Test
+	public void testIssueOutExtras() throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Calendar calendar = Calendar.getInstance();
+		// Be care that the first day of the month has value 1.
+		calendar.set(DAY_OF_MONTH, 1);
+		Date startDate = new Date(calendar.getTimeInMillis());
+
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/01";
+						this.end = "30/06";
+						this.issue = "15/07";
+					}					
+				}, });
+		
+		
+		ContractRecord contract = newContract(aonContext, SSRegimeType.GENERAL,
+				CCCType.PRINCIPAL, 
+				startDate,
+				null,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), C100.getValue());
+						put(ContextVariable.QUOTE_GROUP.getName(), "'01'");
+					}
+				}, new String[] { 
+						"GTZDO(P_1 + P_2 ,1,3)",
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"5000.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				},
+						new String[] {
+						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+						"BASE_IRPF * PORCENTAJE_IRPF / 100.00" 
+				}
+				, category);
+
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "15/07");
+		
+		calendar = Calendar.getInstance();
+		calendar.add(YEAR, 1);
+		calendar.set(MONTH, 6);
+		calendar.set(DAY_OF_MONTH, 15);
+		Date chargeDate = new Date(calendar.getTimeInMillis());
+		
+		ISQLContractSalaryCalculatorContext ctx  = getExtraSalaryCalculatorContext(connection, contract, extra, calendar.get(YEAR), chargeDate);
+		
+		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		for ( com.esferalia.aon.payroll.SalaryDeduction deduction : salary.getSalaryDeductions())
+			System.out.println(deduction.getDescription() + " = " + deduction.getAmount());
+		
+		Assert.assertEquals(1, salary.getSalaryDeductions().size());
 	}
 
 	@Test
