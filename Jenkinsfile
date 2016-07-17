@@ -5,8 +5,6 @@
 
 node {
 
-   echo "MAVEN_RELEASE=${env.MAVEN_RELEASE}"
-   
    // Mark the code checkout 'stage'....
    stage 'Checkout'
 
@@ -18,7 +16,7 @@ node {
    // **       in the global configuration.           
    def mvnHome = tool 'M3'
    
-   if ( env.MAVEN_RELEASE ) {
+   if ( true ) {
       stage 'Perform Maven Release'
    
       // we want to pick up the version from the pom
