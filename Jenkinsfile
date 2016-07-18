@@ -16,7 +16,7 @@ node {
    // **       in the global configuration.           
    def mvnHome = tool 'M3'
    
-   if ( true ) {
+   if ( env.MAVEN_RELEASE ) {
       stage 'Perform Maven Release'
    
       // we want to pick up the version from the pom
