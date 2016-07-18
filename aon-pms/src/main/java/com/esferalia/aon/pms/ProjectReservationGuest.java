@@ -18,6 +18,7 @@ import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.person.Person;
 import com.code.aon.registry.RegistryDocument;
 import com.code.aon.registry.enumeration.DocumentType;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.master.ProjectReservationGuestDB;
 import com.esferalia.aon.pms.enumeration.ReservationGuestType;
 import com.esferalia.aon.pms.sql.ISQLConstants;
@@ -97,23 +98,30 @@ public class ProjectReservationGuest extends ProjectReservationGuestDB implement
 
 	@Transient
 	public String getFullName() {
-    	String fullName = StringUtils.isEmpty(getTreatment()) ? "" : getTreatment() + " ";
-    	fullName += StringUtils.isEmpty(getName()) ? "" : getName() + " ";
-    	fullName += StringUtils.isEmpty(getSurname()) ? "" : getSurname() + " ";
-    	fullName += StringUtils.isEmpty(getSurname2()) ? "" : getSurname2();
-    	return fullName;
+    	String value = StringUtils.isEmpty(getTreatment()) ? "" : getTreatment() + " ";
+    	value += StringUtils.isEmpty(getName()) ? "" : getName() + " ";
+    	value += StringUtils.isEmpty(getSurname()) ? "" : getSurname() + " ";
+    	value += StringUtils.isEmpty(getSurname2()) ? "" : getSurname2();
+    	return value;
 	}
 
     @Transient
+	public String getFullDocument() {
+    	String value = StringUtils.isEmpty(getDocument()) ? "" : StringUtils.substring(getDocumentCountry().getName(AonUtil.getCurrentLocale()), 0, 15) + " ";
+    	value += StringUtils.isEmpty(getDocument()) ? "" : getDocument() + " ";
+    	return value;
+	}
+	
+    @Transient
 	public String getFullAddress() {
-    	String fullAddress = StringUtils.isEmpty(getAddress()) ? "" : getAddress() + " ";
-    	fullAddress += StringUtils.isEmpty(getNumber()) ? "" : getNumber() + " ";
-    	fullAddress += StringUtils.isEmpty(getAddress2()) ? "" : getAddress2() + " ";
-    	fullAddress += StringUtils.isEmpty(getZip()) ? "" : getZip() + " - ";
-    	fullAddress += StringUtils.isEmpty(getCity()) ? "" : getCity() + " ";
-    	fullAddress += StringUtils.isEmpty(getProvince()) ? "" : "(" + getProvince() + ") ";
-    	fullAddress += getCountry() == null ? "" : getCountry().getValue();
-    	return fullAddress;
+    	String value = StringUtils.isEmpty(getAddress()) ? "" : getAddress() + " ";
+    	value += StringUtils.isEmpty(getNumber()) ? "" : getNumber() + " ";
+    	value += StringUtils.isEmpty(getAddress2()) ? "" : getAddress2() + " ";
+    	value += StringUtils.isEmpty(getZip()) ? "" : getZip() + " - ";
+    	value += StringUtils.isEmpty(getCity()) ? "" : getCity() + " ";
+    	value += StringUtils.isEmpty(getProvince()) ? "" : "(" + getProvince() + ") ";
+    	value += getCountry() == null ? "" : getCountry().getName(AonUtil.getCurrentLocale());
+    	return value;
 	}
 	
 	@Transient

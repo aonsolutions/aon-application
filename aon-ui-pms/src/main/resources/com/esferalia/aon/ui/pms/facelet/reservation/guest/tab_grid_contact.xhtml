@@ -8,13 +8,19 @@
 
 	<aon:div id="GuestContactDiv#{suffix}" styleClass="aon-width-all">
 		<aon:panelGrid columns="2" columnClasses="aon-italic,">
-			<aon:outputLabel for="ProjectReservationGuest_phone" value="#{bundle.aon_phone}" />
+			<aon:div>
+				<aon:outputLabel for="ProjectReservationGuest_phone" value="#{bundle.aon_phone}" style="display: none;" />
+				<aon:outputText value="&#160;" styleClass="aon-icon-call aon-padding-left" />
+			</aon:div>
 			<aon:inputText id="ProjectReservationGuest_phone#{suffix}" styleClass="aon-form-input-text"
-				value="#{controller.to.phone}" size="15" maxlength="32" ajaxSingle="true" />
+				value="#{controller.to.phone}" size="20" maxlength="32" ajaxSingle="true" />
 
-			<aon:outputLabel for="ProjectReservationGuest_email" value="#{bundle.aon_email_abrv}" />
+			<aon:div>
+				<aon:outputLabel for="ProjectReservationGuest_email" value="#{bundle.aon_email_abrv}" style="display: none;" />
+				<aon:outputText value="&#160;" styleClass="aon-icon-mailInbox aon-padding-left" />
+			</aon:div>
 			<aon:inputText id="ProjectReservationGuest_email#{suffix}" styleClass="aon-form-input-text"
-				value="#{controller.to.email}" size="15" maxlength="128"
+				value="#{controller.to.email}" size="20" maxlength="128" 
 				onblur="toLowCase(this);" ajaxSingle="true" />
 		</aon:panelGrid>
  	</aon:div>

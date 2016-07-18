@@ -50,13 +50,6 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
-				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_order}" />
-				</f:facet>
-				<aon:outputText value="#{to.roomIndex}" />
-			</aon:column>
-
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.pms_room_type}" />
@@ -64,7 +57,7 @@
 				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" />
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-130">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.pms_room_number}" />
 				</f:facet>
@@ -121,10 +114,6 @@
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
-					<aon:outputText value="&#160;" />
-				</aon:column>
-
-				<aon:column colspan="2"	styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-width-120, aon-noborder aon-width-auto">
 						<aon:div>
 							<aon:outputLabel value="#{bundle.aon_date}:" styleClass="aon-margin-right"/>
@@ -141,7 +130,7 @@
 					</aon:panelGrid>
 				</aon:column>
 
-				<aon:column colspan="4"	styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
+				<aon:column colspan="5"	styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-width-130, aon-noborder aon-width-auto">
 						<aon:div>
 							<aon:outputLabel value="#{bundle.pms_room}:" styleClass="aon-margin-right" />

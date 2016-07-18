@@ -335,8 +335,7 @@
 				rendered="#{reservation.reservationPermission.advanceEditable}" />
 		</aon:div>
 		<aon:div id="TouristTaxDiv" rendered="#{reservation.to.hotel.touristTax}">
-			<aon:outputLabel for="ProjectReservation_touristTax"
-				value="#{bundle.pms_tourist_tax}:" 
+			<aon:outputLabel value="#{bundle.pms_tourist_tax}:" 
 				styleClass="aon-margin-right aon-italic" />
 			<aon:outputText value="#{reservation.to.touristTaxAmount}"
 				styleClass="aon-bold" style="#{(reservation.to.touristTaxPending > 0) ? ('color:red;') : ('')}"

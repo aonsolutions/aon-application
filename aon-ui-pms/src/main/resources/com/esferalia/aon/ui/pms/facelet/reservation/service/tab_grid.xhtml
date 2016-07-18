@@ -48,13 +48,6 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
-				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_order}" />
-				</f:facet>
-				<aon:outputText value="#{to.serviceIndex}" />
-			</aon:column>
-
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.finance_service}" />
@@ -62,7 +55,7 @@
 				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" />
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-130">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.pms_room_number}" />
 				</f:facet>
@@ -109,10 +102,6 @@
 				rendered="#{controller.showServiceDetail}"
 				value="#{controller.serviceDetailList}" var="serviceDetail"
 				rowClasses="aon-subTable-column-yellow">
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
-					<aon:outputText value="&#160;" />
-				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<aon:outputText value="&#160;" />

@@ -14,6 +14,8 @@
 		<ui:param name="newSaveButtonReRender" value="reservationForm" />
 		<ui:param name="saveButtonReRender" value="reservationForm" />
 		<ui:param name="skipRemoveButton" value="#{controller.to.guestIndex == 1}" />
+		<ui:param name="focusOnAdd" value="ProjectReservationGuest_document-New" />
+		<ui:param name="focusOnSelect" value="ProjectReservationGuest_document" />
 
 		<ui:define name="columns">
 			<aon:column styleClass="aon-editDataTable-iconColumn">
@@ -38,22 +40,14 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-10">
-				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationGuest_guestIndex" value="#{bundle.aon_order}" />
-				</f:facet>
-				<aon:outputText id="ProjectReservationGuest_guestIndex" value="#{to.guestIndex}" 
-					rendered="#{formList or formEdit}" />
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-220 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.aon_document}" />
 				</f:facet>
 				<aon:div rendered="#{formList}" style="display:inline;">
-					<aon:outputText value="#{to.documentCountry.value}" styleClass="aon-margin-right" 
-						rendered="#{!empty to.document}" />
-					<aon:outputText value="#{to.document}" styleClass="aon-margin-right" />
+					<aon:outputText value="#{to.fullDocument}" rendered="#{formList}">
+						<aon:abbreviateConverter maxWidth="25" />
+					</aon:outputText>
 					<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact"
 						title="#{bundle.pms_reservation_guest_type_newInHotel}"
 						rendered="#{to.person.id != null and to.guestNewInHotel}" />
@@ -105,7 +99,7 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-200 aon-nowrap">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-220 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.aon_contact_data}" />
 				</f:facet>
@@ -134,7 +128,7 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-300 aon-nowrap">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-280 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.aon_address}" />
 				</f:facet>

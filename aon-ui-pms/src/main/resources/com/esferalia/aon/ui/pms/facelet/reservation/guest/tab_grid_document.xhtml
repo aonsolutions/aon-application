@@ -10,22 +10,13 @@
 	<aon:div id="GuestDocumentDiv#{suffix}" styleClass="aon-width-all">
 		<aon:panelGrid columns="2" columnClasses="aon-italic,">
 			<aon:outputLabel for="ProjectReservationGuest_documentType" value="#{bundle.aon_type}" />
-			<aon:selectOneMenu id="ProjectReservationGuest_documentType#{suffix}" styleClass="aon-form-input-text"
-				value="#{controller.to.documentType}"
-				valueChangeListener="#{controller.onDocumentTypeChanged}"
-				reRender="GuestDocumentDiv#{suffix},GuestNameDiv#{suffix},GuestContactDiv#{suffix},GuestAddressDiv#{suffix}"
-				focus="ProjectReservationGuest_documentCountry#{suffix}">
-				<f:selectItems value="#{pmsCollections.personDocumentTypes}" />
-			</aon:selectOneMenu>
-
-			<aon:outputLabel for="ProjectReservationGuest_documentCountry" value="#{bundle.aon_country}" />
 			<aon:div>
-				<aon:selectOneMenu id="ProjectReservationGuest_documentCountry#{suffix}" styleClass="aon-form-input-text aon-margin-right"
-					value="#{controller.to.documentCountry}"
-					valueChangeListener="#{controller.onDocumentCountryChanged}"
+				<aon:selectOneMenu id="ProjectReservationGuest_documentType#{suffix}" styleClass="aon-form-input-text aon-margin-right"
+					value="#{controller.to.documentType}"
+					valueChangeListener="#{controller.onDocumentTypeChanged}"
 					reRender="GuestDocumentDiv#{suffix},GuestNameDiv#{suffix},GuestContactDiv#{suffix},GuestAddressDiv#{suffix}"
-					focus="ProjectReservationGuest_document#{suffix}">
-					<f:selectItems value="#{commonCollections.countryCodes}" />
+					focus="ProjectReservationGuest_documentCountry#{suffix}">
+					<f:selectItems value="#{pmsCollections.personDocumentTypes}" />
 				</aon:selectOneMenu>
 				<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-contact"
 					title="#{bundle.pms_reservation_guest_type_newInHotel}"
@@ -38,6 +29,15 @@
 					rendered="#{controller.to.person.id != null and controller.to.guestPreviouslyStayedInHotel}" />
 			</aon:div>
 
+			<aon:outputLabel for="ProjectReservationGuest_documentCountry" value="#{bundle.aon_country}" />
+			<aon:selectOneMenu id="ProjectReservationGuest_documentCountry#{suffix}" styleClass="aon-width-125 aon-form-input-text"
+				value="#{controller.to.documentCountry}"
+				valueChangeListener="#{controller.onDocumentCountryChanged}"
+				reRender="GuestDocumentDiv#{suffix},GuestNameDiv#{suffix},GuestContactDiv#{suffix},GuestAddressDiv#{suffix}"
+				focus="ProjectReservationGuest_document#{suffix}">
+				<f:selectItems value="#{commonCollections.countries}" />
+			</aon:selectOneMenu>
+
 			<aon:outputLabel for="ProjectReservationGuest_document" value="#{bundle.aon_number}" />
 			<aon:inputText id="ProjectReservationGuest_document#{suffix}" styleClass="aon-form-input-text"
 				value="#{controller.to.document}" size="15" maxlength="16"
@@ -45,7 +45,7 @@
 				reRender="GuestDocumentDiv#{suffix},GuestNameDiv#{suffix},GuestContactDiv#{suffix},GuestAddressDiv#{suffix}"
 				onblur="toUpperCase(this);" ajaxSingle="true"
 				converter="aon.TrimStringConverter"
-				focus="ProjectReservationGuest_name#{suffix}" />
+				focus="#{rich:clientId('ProjectReservationGuest_documentExpDate')}#{suffix}InputDate" />
 
 			<aon:outputLabel for="ProjectReservationGuest_documentExpDate" value="#{bundle.aon_expedition_date_abbrv}" />
 			<aon:selectInputDate id="ProjectReservationGuest_documentExpDate#{suffix}" inputClass="aon-form-input-text"
