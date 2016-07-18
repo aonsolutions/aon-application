@@ -1,6 +1,5 @@
 package com.esferalia.aon.ui.pms.controller;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;

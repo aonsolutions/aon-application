@@ -7,6 +7,7 @@ public class HotelEmailCatchment implements Serializable {
 
 	private String hotelName;
 	private String month;
+	private Integer monthNumber;
 	private Integer reception;
 	private Integer wifi;
 	private Integer total;
@@ -70,4 +71,12 @@ public class HotelEmailCatchment implements Serializable {
 		this.totalPercentage = totalPercentage;
 		return this;
 	}
+	public Integer getMonthNumber() {
+		return monthNumber;
+	}
+	public HotelEmailCatchment setMonthNumber(Integer monthNumber) {
+		this.monthNumber = monthNumber;
+		return this;
+	}
+	
 }

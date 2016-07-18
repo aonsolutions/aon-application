@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.SurveyResponseDetail.SURVEY_RESPONSE
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.time.Month;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -146,34 +147,53 @@ public class PMSDAO {
 		result.stream().forEach(r -> {
 			Integer hotelId = r.value1();
 			String hotelName = r.value2();
-			String month = Month.values()[r.value4()-1].name();
+			String month = getMonthName(Month.values()[r.value4()-1]);
 			Integer yy = r.value3();
 			String capt = r.value5();
 			Integer emails= r.value6().intValue();
 			String key = hotelName + r.value4();
-
-			if(map.containsKey(key)){
-				map.get(key).setTotal(map.get(key).getTotal()+emails);
-				if(capt.equals("WIFI"))	map.get(key).setWifi(map.get(key).getWifi()+emails);
-				if(capt.equals("RECEPCION")) map.get(key).setReception(map.get(key).getReception()+emails);
-				Double receptionPercentage = (double) (map.get(key).getReception()*100) /map.get(key).getTotal();
-				map.get(key).setReceptionPercentage((double) Math.round(receptionPercentage));
-				Double totalPercentage = (double) (map.get(key).getTotal()*100) /map.get(key).getGuest();	
-				map.get(key).setTotalPercentage((double) Math.round(totalPercentage));
-			} else {
-				HotelEmailCatchment hec = new HotelEmailCatchment()
-				.setHotelName(hotelName)
-				.setMonth(month)
-				.setTotal(emails);
-				if(capt.equals("WIFI")) hec.setWifi(emails); else hec.setWifi(0);
-				if(capt.equals("RECEPCION")) hec.setReception(emails); else hec.setReception(0);
-				hec.setGuest(getGuest(ctx, yy,r.value4(), hotelId));
-				map.put(key, hec);
+			if(capt != null){
+				if(map.containsKey(key)){
+					map.get(key).setTotal(map.get(key).getTotal()+emails);
+					if(capt.equals("WIFI"))	map.get(key).setWifi(map.get(key).getWifi()+emails);
+					if(capt.equals("RECEPCION")) map.get(key).setReception(map.get(key).getReception()+emails);
+					Double receptionPercentage = (double) (map.get(key).getReception()*100) /map.get(key).getTotal();
+					map.get(key).setReceptionPercentage((double) Math.round(receptionPercentage));
+					Double totalPercentage = (double) (map.get(key).getTotal()*100) /map.get(key).getGuest();	
+					map.get(key).setTotalPercentage((double) Math.round(totalPercentage));
+				} else {
+					HotelEmailCatchment hec = new HotelEmailCatchment()
+						.setHotelName(hotelName)
+						.setMonth(month)
+						.setTotal(emails)
+						.setMonthNumber(r.value4());
+					if(capt.equals("WIFI")) hec.setWifi(emails); else hec.setWifi(0);
+					if(capt.equals("RECEPCION")) hec.setReception(emails); else hec.setReception(0);
+					hec.setGuest(getGuest(ctx, yy,r.value4(), hotelId));
+					map.put(key, hec);
+				}
 			}
 		});
 		LinkedList<HotelEmailCatchment> l = new LinkedList<HotelEmailCatchment>();
 		l.addAll(map.values());
+		Collections.sort(l, (l1,l2) -> l1.getMonthNumber().compareTo(l2.getMonthNumber()));
 		return l;
+	}
+	
+	private static String getMonthName(Month month) {
+		if(month.equals(Month.JANUARY)) return "Enero";
+		if(month.equals(Month.FEBRUARY)) return "Febrero";
+		if(month.equals(Month.MARCH)) return "Marzo";		
+		if(month.equals(Month.APRIL)) return "Abril";
+		if(month.equals(Month.MAY)) return "Mayo";
+		if(month.equals(Month.JUNE)) return "Junio";
+		if(month.equals(Month.JULY)) return "Julio";
+		if(month.equals(Month.AUGUST)) return "Agosto";
+		if(month.equals(Month.SEPTEMBER)) return "Septiembre";
+		if(month.equals(Month.OCTOBER)) return "Octubre";
+		if(month.equals(Month.NOVEMBER)) return "Noviembre";
+		if(month.equals(Month.DECEMBER)) return "Diciembre";
+		return "";
 	}
 
 	private static Integer getGuest(AONContext ctx, Integer year, Integer month, Integer hotelId) {
