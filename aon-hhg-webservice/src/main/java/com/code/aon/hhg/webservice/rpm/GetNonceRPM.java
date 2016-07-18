@@ -13,7 +13,7 @@ public class GetNonceRPM {
 	
 	public static void main(String[] args) {
 		try {
-			JSONObject json = HHGPost.post(GetNonce.URL);
+			JSONObject json = HHGPost.post2(GetNonce.URL, null);
 			Response response = new Response(json);
 			LOGGER.info("POST " + GetNonce.URL);
 			View.response(response);

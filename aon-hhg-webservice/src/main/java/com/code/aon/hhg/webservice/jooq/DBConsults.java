@@ -2,7 +2,6 @@ package com.code.aon.hhg.webservice.jooq;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -26,8 +25,7 @@ public class DBConsults {
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	public static BookingHarvest getHHG(String domainName, Integer domainId, String login) throws ParseException {
-		Date date = dateFormat.parse("1900-01-01");
-		HashMap<Integer, Attach> map = PMS.getHHGProjectAttach(domainName, domainId, login, date);
+		HashMap<Integer, Attach> map = PMS.getHHGProjectAttach(domainName, domainId, login);
 		Integer[] array = map.keySet().toArray(new Integer[map.size()]);
 		BookingHarvest bh = new BookingHarvest();
 		bh.setPayload(getHHGReservations(domainName, domainId, login, array).stream().map(new ReservationFiller(bh, map, domainName, domainId, login))
@@ -56,8 +54,8 @@ public class DBConsults {
 		return PMS.getHHGReservationServicesDetail(domainName, domainId, login, service);
 	}
 	
-	public static void updateHHGProjectAttachDate(String domainName, Integer domainId, String login, Integer[] ids, Date date){
-		PMS.updateHHGProjectAttachDate(domainName, domainId, login,ids, date);
+	public static void updateHHGProjectAttachDate(String domainName, Integer domainId, String login, LinkedList<Attach> attachList){
+		PMS.updateHHGProjectAttachDate(domainName, domainId, login, attachList);
 	}
 
 	private static class ReservationFiller implements Function<ProjectReservation, Payload> {

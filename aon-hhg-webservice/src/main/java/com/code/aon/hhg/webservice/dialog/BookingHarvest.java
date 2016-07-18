@@ -1,8 +1,6 @@
 package com.code.aon.hhg.webservice.dialog;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONArray;
@@ -11,7 +9,8 @@ import org.json.JSONObject;
 
 public class BookingHarvest {
 
-	public static final String URL = "http://intranet.hhg-hotels.net/services/booking-harvest/";
+//	public static final String URL = "http://intranet.hhg-hotels.net/services/booking-harvest/";
+	public static final String URL = "https://213.236.3.11/services/booking-harvest/";
 
 	private String username;
 	private String nonce;
@@ -86,13 +85,14 @@ public class BookingHarvest {
 		}
 		
 		public JSONObject toJSON(){
-			JSONObject json = new JSONObject();
+			return getReservation().toJSON();
+			/*JSONObject json = new JSONObject();
 			try {
 				json.put("reservation", getReservation().toJSON());
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			return json;
+			return json;*/
 		}
 	}
 	
@@ -247,7 +247,7 @@ public class BookingHarvest {
 		}
 
 		public JSONObject toJSON(){
-			JSONObject jsonRoom = new JSONObject();
+		//	JSONObject jsonRoom = new JSONObject();
 			JSONObject json = new JSONObject();
 			try {
 				json.put("room_index", getRoomIndex());
@@ -256,11 +256,11 @@ public class BookingHarvest {
 				json.put("adults", getAdults());
 				json.put("children", getChildren());
 				json.put("hotel", getHotel());
-				jsonRoom.put("room", json);
+		//		jsonRoom.put("room", json);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			return jsonRoom;
+			return json;
 		}
 	}
 	
@@ -289,7 +289,7 @@ public class BookingHarvest {
 		}
 		String strServicesDetail;
 		public JSONObject toJSON(){
-			JSONObject jsonService = new JSONObject();
+		//	JSONObject jsonService = new JSONObject();
 			JSONObject json = new JSONObject();
 			try {
 				json.put("service_code", getServiceCode());
@@ -299,11 +299,11 @@ public class BookingHarvest {
 				getServicesDetail().stream().map(service -> service.toJSON()).forEach(s -> arrayServicesDetail.put(s));
 				json.put("servicesDetail",arrayServicesDetail);
 		
-				jsonService.put("service", json);
+				//jsonService.put("service", json);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			return jsonService;
+			return json;
 		}
 	}
 	

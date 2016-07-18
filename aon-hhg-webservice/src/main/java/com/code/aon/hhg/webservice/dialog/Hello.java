@@ -6,7 +6,8 @@ import org.json.JSONObject;
 
 public class Hello {
 	
-	protected static final String URL = "http://intranet.hhg-hotels.net/services/hello/";
+//	protected static final String URL = "http://intranet.hhg-hotels.net/services/hello/";
+	protected static final String URL = "https://213.236.3.11/services/hello/";
 
 	private String username;
 	private String nonce;

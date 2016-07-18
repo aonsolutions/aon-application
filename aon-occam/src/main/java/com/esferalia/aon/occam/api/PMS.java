@@ -101,22 +101,22 @@ public class PMS {
 		}
 	}
 	
-	public static HashMap<Integer, Attach> getHHGProjectAttach(String domainName, Integer domainId, String login, Date date){
+	public static HashMap<Integer, Attach> getHHGProjectAttach(String domainName, Integer domainId, String login){
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getPMS().getHHGProjectAttach(ctx, date);
+			return getPMS().getHHGProjectAttach(ctx);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}		
 	}
 	
-	public static void updateHHGProjectAttachDate(String domainName, Integer domainId, String login, Integer[] ids, Date date){
+	public static void updateHHGProjectAttachDate(String domainName, Integer domainId, String login, LinkedList<Attach> attachList){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getPMS().updateHHGProjectAttachDate(ctx, ids, date);
+			getPMS().updateHHGProjectAttachDate(ctx, attachList);
 		} finally {
 			if(ctx != null)
 				ctx.close();

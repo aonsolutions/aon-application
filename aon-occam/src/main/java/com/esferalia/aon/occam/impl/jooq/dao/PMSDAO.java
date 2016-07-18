@@ -252,11 +252,11 @@ public class PMSDAO {
 	}
 
 	
-	public static HashMap<Integer, Attach> getHHGProjectAttach(AONContext ctx, Date date){
+	public static HashMap<Integer, Attach> getHHGProjectAttach(AONContext ctx){
 		Result<Record3<Integer, Integer, String>> result = ctx.getDslContext().select(PROJECT_ATTACH.ID,PROJECT_ATTACH.PROJECT, PROJECT_ATTACH.DESCRIPTION)
 		.from(PROJECT_ATTACH)
-		.where(PROJECT_ATTACH.DESCRIPTION.like("%CRS%"))
-		.and(PROJECT_ATTACH.ATTACH_DATE.eq(new java.sql.Date(date.getTime()))).limit(20).fetch();
+		.where(PROJECT_ATTACH.DESCRIPTION.like("%CRS%#"))
+		.limit(20).fetch();
 		
 		HashMap<Integer, Attach> map = new HashMap<Integer, Attach>();
 		
@@ -276,11 +276,13 @@ public class PMSDAO {
 		return map;
 	}
 	
-	public static void updateHHGProjectAttachDate(AONContext ctx, Integer[] ids, Date date) {
-		ctx.getDslContext().update(PROJECT_ATTACH)
-		.set(PROJECT_ATTACH.ATTACH_DATE, new java.sql.Date(date.getTime()))
-		.where(PROJECT_ATTACH.ID.in(ids))
-		.execute();
+	public static void updateHHGProjectAttachDate(AONContext ctx, LinkedList<Attach> attachList) {
+		attachList.stream().forEach(a -> {
+			ctx.getDslContext().update(PROJECT_ATTACH)
+			.set(PROJECT_ATTACH.DESCRIPTION, a.getDescription())
+			.where(PROJECT_ATTACH.ID.eq(a.getId()))
+			.execute();
+		});
 	}
 
 	private static class HotelGuestByCountryFiller implements Function<Record3<String, String, Integer>, HotelGuestByCountry> {

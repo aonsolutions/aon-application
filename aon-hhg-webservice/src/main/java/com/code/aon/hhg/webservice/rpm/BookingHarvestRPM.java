@@ -1,7 +1,5 @@
 package com.code.aon.hhg.webservice.rpm;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,6 +22,7 @@ import com.code.aon.hhg.webservice.dialog.HHGPost;
 import com.code.aon.hhg.webservice.dialog.Response;
 import com.code.aon.hhg.webservice.jooq.DBConsults;
 import com.code.aon.hhg.webservice.jooq.DBSync;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 
 public class BookingHarvestRPM {
 	
@@ -39,6 +38,13 @@ public class BookingHarvestRPM {
 				.setUsername(user)
 				.setNonce(nonce)
 				.calculateHash(password);
+	}
+	
+	private static String getDescriptionName(String method) {
+		if(method.equals("ADD")) return "CRS ALTA";
+		if(method.equals("CANCEL")) return "CRS CANCELACION";
+		if(method.equals("MODIFY")) return "CRS MODIFICACION";
+		return "";
 	}
 	
 	/*public static void main(String[] args) throws java.text.ParseException {
@@ -60,7 +66,7 @@ public class BookingHarvestRPM {
 		parse(args);
 		if(nonce == null){
 			//***** GET-NONCE *****/
-			JSONObject json1 = HHGPost.post(GetNonce.URL);
+			JSONObject json1 = HHGPost.post(GetNonce.URL, null);
 			Response response1 = new Response(json1);
 			LOGGER.info("POST " + GetNonce.URL);
 			View.response(response1);
@@ -73,8 +79,10 @@ public class BookingHarvestRPM {
 			JSONObject jsonResponse = HHGPost.post(GetNonce.URL, bh.toJSON());
 			Response response2 = new Response(jsonResponse);
 			if(!response2.getResult().getType().equals("error")){
-				LinkedList<Integer> ps = bh.getPayload().stream().map(r -> r.getReservation().getProjectAttachId()).collect(Collectors.toCollection(LinkedList::new));
-				DBConsults.updateHHGProjectAttachDate(domain, domainMap.get(domain), user,ps.toArray(new Integer[ps.size()]),  new Date());
+				LinkedList<Attach> attachList = bh.getPayload().stream().map(r -> new Attach().setId(r.getReservation().getProjectAttachId())
+																	.setDescription(getDescriptionName(r.getReservation().getMethod())))
+					.collect(Collectors.toCollection(LinkedList::new));
+				DBConsults.updateHHGProjectAttachDate(domain, domainMap.get(domain), user, attachList);
 			}
 			LOGGER.info("POST " + BookingHarvest.URL);
 			View.response(response2);

@@ -67,14 +67,14 @@ public class PMSImpl implements IPMS {
 	}
 
 	@Override
-	public HashMap<Integer, Attach> getHHGProjectAttach(AONContext ctx, Date date) {
+	public HashMap<Integer, Attach> getHHGProjectAttach(AONContext ctx) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-			PMSDAO.getHHGProjectAttach(ctx, date));
+			PMSDAO.getHHGProjectAttach(ctx));
 	}
 
 	@Override
-	public void updateHHGProjectAttachDate(AONContext ctx, Integer[] ids, Date date) {
-		ctx.getDslContext().transaction(configuration -> PMSDAO.updateHHGProjectAttachDate(ctx, ids, date));
+	public void updateHHGProjectAttachDate(AONContext ctx, LinkedList<Attach> attachList) {
+		ctx.getDslContext().transaction(configuration -> PMSDAO.updateHHGProjectAttachDate(ctx, attachList));
 	}
 	
 	

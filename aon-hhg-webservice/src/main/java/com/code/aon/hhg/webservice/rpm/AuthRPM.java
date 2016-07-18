@@ -26,7 +26,7 @@ public class AuthRPM {
 		parse(args);
 		
 		//***** GET-NONCE *****/
-		JSONObject json1 = HHGPost.post(GetNonce.URL);
+		JSONObject json1 = HHGPost.post(GetNonce.URL, null);
 		Response response1 = new Response(json1);
 		LOGGER.info("POST " + GetNonce.URL);
 		View.response(response1);

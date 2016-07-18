@@ -25,12 +25,19 @@ public class HelloRPM {
 	
 	public static void main(String[] args) {
 		parse(args);
+		
+		/*
+		user = "pruebas.api@hhg-hotels.net";
+		password = "c802f1e2aa51";
+		nonce = "7436535567980";
+		*/
+		
 		JSONObject json = new Hello().setUsername(user)
 			.setNonce(nonce)
 			.calculateHash(password)
 			.toJSON();
 	
-		JSONObject jsonResponse = HHGPost.post(GetNonce.URL, json);
+		JSONObject jsonResponse = HHGPost.post2(GetNonce.URL, json);
 		Response response = new Response(jsonResponse);
 		LOGGER.info("POST " + GetNonce.URL);
 		View.response(response);
