@@ -590,7 +590,9 @@ public class Mod130DAO extends FiscalModelDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 		double c05 = 0;
 		for (FiscalModel fm : list) {
-			c05 = AonMathUtils.round( c05 + (fm.getAmount(Mod130Key.C07) - fm.getAmount(Mod130Key.C16)));
+			double c007 = fm.getAmount(Mod130Key.C07);
+			c007 = c007 < 0 ? 0.0 : c007;
+			c05 = AonMathUtils.round( c05 + ( c007 - fm.getAmount(Mod130Key.C16)));
 		}
 		return c05;
 	}
