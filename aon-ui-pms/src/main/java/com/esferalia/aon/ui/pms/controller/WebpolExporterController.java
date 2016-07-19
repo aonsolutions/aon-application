@@ -132,7 +132,7 @@ public class WebpolExporterController extends BasicController {
 					|| StringUtils.isBlank(guest.getName())
 					|| StringUtils.isBlank(guest.getSurname())
 					|| (StringUtils.isBlank(guest.getSurname2()) && guest
-							.getDocumentCountry() != Country.ES)
+							.getDocumentCountry() == Country.ES)
 					|| guest.getBirthDate() == null;
 		}
 		return false;
@@ -155,6 +155,7 @@ public class WebpolExporterController extends BasicController {
 		ProjectReservationController controller = (ProjectReservationController) AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
 		controller.select(event, guest.getProjectReservation().getId());
 		controller.setBackAction(IPmsConstants.WEBPOL_EXPORTER_LIST_NAME);
+		controller.setBackActionListener(this.getBeanName()+".onSearch");
 	}
 	
 	public void onSearch(ActionEvent event) {

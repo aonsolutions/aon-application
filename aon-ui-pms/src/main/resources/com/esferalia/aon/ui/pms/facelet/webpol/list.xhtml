@@ -121,32 +121,28 @@
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.registry_nationality}" />
 							</f:facet>
-							<aon:outputText value="#{to.documentCountry.value}"
-								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" />
+							<aon:outputText value="#{to.documentCountry.value}" />
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-80 aon-nowrap">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_document_type}" />
 							</f:facet>
-							<aon:outputText value="#{to.documentType}"
-								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" />
+							<aon:outputText value="#{to.documentType}" />
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-100 aon-nowrap">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_document}" />
 							</f:facet>
-							<aon:outputText value="#{to.document}"
-								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" />
+							<aon:outputText value="#{to.document}" />
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-dateColumn aon-vertical-align-top aon-width-100 aon-nowrap">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_expedition_date}" />
 							</f:facet>
-							<aon:outputText value="#{to.documentExpDate}"
-								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" >
+							<aon:outputText value="#{to.documentExpDate}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
@@ -156,32 +152,28 @@
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_name}" />
 							</f:facet>
-							<aon:outputText value="#{to.name}"
-								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" />
+							<aon:outputText value="#{to.name}" />
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-auto aon-nowrap">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_surname_1}" />
 							</f:facet>
-							<aon:outputText value="#{to.surname}"
-								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" />
+							<aon:outputText value="#{to.surname}" />
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-auto aon-nowrap">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_surname_2}" />
 							</f:facet>
-							<aon:outputText value="#{to.surname2}"
-								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" />
+							<aon:outputText value="#{to.surname2}" />
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-dateColumn aon-vertical-align-top aon-width-100 aon-nowrap">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.registry_person_birthDate}" />
 							</f:facet>
-							<aon:outputText value="#{to.birthDate}"
-								styleClass="#{controller.invalidGuestData?'aon-message-error':''}" >
+							<aon:outputText value="#{to.birthDate}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
