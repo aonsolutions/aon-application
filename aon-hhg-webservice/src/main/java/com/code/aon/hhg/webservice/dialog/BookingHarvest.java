@@ -15,7 +15,7 @@ public class BookingHarvest {
 	private String username;
 	private String nonce;
 	private String hash;
-	private LinkedList<Payload> payload;
+	private Payload payload;
 	
 	//***** Gets & Sets *****/
 
@@ -40,10 +40,10 @@ public class BookingHarvest {
 		this.hash = hash;
 		return this;
 	}
-	public LinkedList<Payload> getPayload() {
+	public Payload getPayload() {
 		return payload;
 	}
-	public BookingHarvest setPayload(LinkedList<Payload> payload) {
+	public BookingHarvest setPayload(Payload payload) {
 		this.payload = payload;
 		return this;
 	}
@@ -55,20 +55,24 @@ public class BookingHarvest {
 			json.put("username", getUsername());
 			json.put("nonce", getNonce());
 			json.put("hash", getHash());
-			
-			JSONArray arrayPayload = new JSONArray();
-			getPayload().stream().map(res -> res.toJSON()).forEach(s -> arrayPayload.put(s));
-			json.put("payload",arrayPayload);
+			json.put("payload", getPayload().toJSON());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return json;
 	}
 		
-	public BookingHarvest calculateHash(String password){
+	public BookingHarvest calculateHash(){
 		String hash = "";
-		hash = hash.concat(getUsername()).concat(getNonce()).concat(password);
+		hash = hash.concat(getNonce()).concat(getUsername());
 		setHash(DigestUtils.md5Hex(hash));
+		return this;
+	}
+	
+	public BookingHarvest calculateNonce(String password){
+		String nonce = "" ;
+		nonce = nonce.concat(getUsername()).concat(getPayload().getReservation().getCrscode()).concat(password);
+		setNonce(DigestUtils.md5Hex(nonce));
 		return this;
 	}
 	
@@ -85,14 +89,13 @@ public class BookingHarvest {
 		}
 		
 		public JSONObject toJSON(){
-			return getReservation().toJSON();
-			/*JSONObject json = new JSONObject();
+			JSONObject json = new JSONObject();
 			try {
 				json.put("reservation", getReservation().toJSON());
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			return json;*/
+			return json;
 		}
 	}
 	
@@ -184,14 +187,15 @@ public class BookingHarvest {
 				json.put("start_date", getStartDate());
 				json.put("end_date", getEndDate());
 				
-				JSONArray arrayRooms = new JSONArray();
-				getRooms().stream().map(room -> room.toJSON()).forEach(s -> arrayRooms.put(s));
-				json.put("rooms",arrayRooms);
+				JSONObject jsonRooms = new JSONObject();
+				for (Integer i = 0; i < getRooms().size(); i++) 
+					jsonRooms.put(i.toString(), getRooms().get(i).toJSON());
+				json.put("rooms",jsonRooms);
 
-				JSONArray arrayServices = new JSONArray();
-				getServices().stream().map(service -> service.toJSON()).forEach(s -> arrayServices.put(s));
-				json.put("services",arrayServices);
-						
+				JSONObject jsonServices = new JSONObject();
+				for (Integer i = 0; i < getServices().size(); i++) 
+					jsonServices.put(i.toString(), getServices().get(i).toJSON());
+				json.put("services",jsonServices);	
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -247,7 +251,6 @@ public class BookingHarvest {
 		}
 
 		public JSONObject toJSON(){
-		//	JSONObject jsonRoom = new JSONObject();
 			JSONObject json = new JSONObject();
 			try {
 				json.put("room_index", getRoomIndex());
@@ -256,7 +259,6 @@ public class BookingHarvest {
 				json.put("adults", getAdults());
 				json.put("children", getChildren());
 				json.put("hotel", getHotel());
-		//		jsonRoom.put("room", json);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -289,7 +291,6 @@ public class BookingHarvest {
 		}
 		String strServicesDetail;
 		public JSONObject toJSON(){
-		//	JSONObject jsonService = new JSONObject();
 			JSONObject json = new JSONObject();
 			try {
 				json.put("service_code", getServiceCode());
@@ -298,8 +299,6 @@ public class BookingHarvest {
 				JSONArray arrayServicesDetail = new JSONArray();
 				getServicesDetail().stream().map(service -> service.toJSON()).forEach(s -> arrayServicesDetail.put(s));
 				json.put("servicesDetail",arrayServicesDetail);
-		
-				//jsonService.put("service", json);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

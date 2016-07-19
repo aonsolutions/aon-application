@@ -1,8 +1,6 @@
 package com.code.aon.hhg.webservice.rpm;
 
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -17,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.hhg.webservice.dialog.BookingHarvest;
-import com.code.aon.hhg.webservice.dialog.GetNonce;
 import com.code.aon.hhg.webservice.dialog.HHGPost;
 import com.code.aon.hhg.webservice.dialog.Response;
 import com.code.aon.hhg.webservice.jooq.DBConsults;
@@ -30,14 +27,13 @@ public class BookingHarvestRPM {
 	private static String domain;
  	private static String user;
 	private static String password;
-	private static String nonce;
 	private static Map<String, Integer> domainMap;
 	
 	private static BookingHarvest buildBookingHarvest() throws java.text.ParseException {
 		return DBConsults.getHHG(domain, domainMap.get(domain), user)
 				.setUsername(user)
-				.setNonce(nonce)
-				.calculateHash(password);
+				.calculateNonce(password)
+				.calculateHash();
 	}
 	
 	private static String getDescriptionName(String method) {
@@ -49,9 +45,8 @@ public class BookingHarvestRPM {
 	
 	/*public static void main(String[] args) throws java.text.ParseException {
 		domain="test.grupoplayasol.com";
-		nonce = "12345678912345678912";
-		user = "aibanez";
-		password = "aiekba";
+		user = "pruebas.api@hhg-hotels.net";
+		password = "c802f1e2aa51";
 		domainMap = DBSync.initializeDomainMap();
 		if(domain == null)
 			domain = domainMap.keySet().stream().findFirst().orElse("");
@@ -64,29 +59,22 @@ public class BookingHarvestRPM {
 			domain = domainMap.keySet().stream().findFirst().orElse("");
 		
 		parse(args);
-		if(nonce == null){
-			//***** GET-NONCE *****/
-			JSONObject json1 = HHGPost.post(GetNonce.URL, null);
-			Response response1 = new Response(json1);
-			LOGGER.info("POST " + GetNonce.URL);
-			View.response(response1);
-			if(!response1.getResult().getType().equals("error"))
-				nonce = response1.getResult().getPayload().getNonce();
+		
+		domain="test.grupoplayasol.com";
+		user = "pruebas.api@hhg-hotels.net";
+		password = "c802f1e2aa51";
+		
+		//***** BOOKING-HARVEST *****/
+		BookingHarvest bh = buildBookingHarvest();
+		JSONObject jsonResponse = HHGPost.post2(BookingHarvest.URL, bh.toJSON());
+		Response response2 = new Response(jsonResponse);
+		if(!response2.getResult().getType().equals("error")){
+			Attach attach = new Attach().setId(bh.getPayload().getReservation().getProjectAttachId())
+					.setDescription(getDescriptionName(bh.getPayload().getReservation().getMethod()));
+			DBConsults.updateHHGProjectAttach(domain, domainMap.get(domain), user, attach);
 		}
-		if(nonce != null){
-			//***** BOOKING-HARVEST *****/
-			BookingHarvest bh = buildBookingHarvest();
-			JSONObject jsonResponse = HHGPost.post(GetNonce.URL, bh.toJSON());
-			Response response2 = new Response(jsonResponse);
-			if(!response2.getResult().getType().equals("error")){
-				LinkedList<Attach> attachList = bh.getPayload().stream().map(r -> new Attach().setId(r.getReservation().getProjectAttachId())
-																	.setDescription(getDescriptionName(r.getReservation().getMethod())))
-					.collect(Collectors.toCollection(LinkedList::new));
-				DBConsults.updateHHGProjectAttachDate(domain, domainMap.get(domain), user, attachList);
-			}
-			LOGGER.info("POST " + BookingHarvest.URL);
-			View.response(response2);
-		}	
+		LOGGER.info("POST " + BookingHarvest.URL);
+		View.response(response2);	
 	}
 	
 	private static boolean parse(String args[]) {
@@ -122,19 +110,11 @@ public class BookingHarvestRPM {
 		OptionBuilder.withValueSeparator(',');
 		OptionBuilder.withLongOpt("password");
 		Option passwordOption = OptionBuilder.create("p");
-		
-		OptionBuilder.isRequired(true);
-		OptionBuilder.hasArg(true);
-		OptionBuilder.withDescription("nonce, value received from GET-NONCE call");
-		OptionBuilder.withValueSeparator(',');
-		OptionBuilder.withLongOpt("nonce");
-		Option nonceOption = OptionBuilder.create("n");
 
 		options.addOption(helpOption);
 		options.addOption(domainOption);
 		options.addOption(userOption);
 		options.addOption(passwordOption);
-		options.addOption(nonceOption);
 
 		try {
 			CommandLine line = parser.parse(options, args);
@@ -146,7 +126,6 @@ public class BookingHarvestRPM {
 			
 			user = line.getOptionValue(userOption.getOpt());
 			password = line.getOptionValue(passwordOption.getOpt());
-			nonce = line.getOptionValue(nonceOption.getOpt());
 			domain = line.getOptionValue(domainOption.getOpt());			
 		} catch (ParseException e) {
 			System.out.print(e.getMessage());

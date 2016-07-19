@@ -9,11 +9,7 @@ public class Response {
 	static final String ok = "{\"result\":{\"type\":\"ok\",\"payload\":{\"nonce\":\"213456789347215436743\"}}} ";
 	
 	public Response(JSONObject json) {
-		try {
-			setResult(new Result(new JSONObject(json.get("result").toString())));
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		setResult(new Result(json));
 	}
 	
 	Result result;
@@ -119,7 +115,7 @@ public class Response {
 		
 	}
 	public static void main(String[] args) {
-		try {
+		/*
 			JSONObject jsonError = new JSONObject(error);
 			JSONObject jsonOk = new JSONObject(ok);
 			System.out.println(jsonError.toString());
@@ -137,6 +133,6 @@ public class Response {
 			System.out.println(responseOk.getResult().getPayload().getNonce());
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 }

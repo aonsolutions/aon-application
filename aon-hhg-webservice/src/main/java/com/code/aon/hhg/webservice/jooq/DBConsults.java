@@ -29,8 +29,7 @@ public class DBConsults {
 		Integer[] array = map.keySet().toArray(new Integer[map.size()]);
 		BookingHarvest bh = new BookingHarvest();
 		bh.setPayload(getHHGReservations(domainName, domainId, login, array).stream().map(new ReservationFiller(bh, map, domainName, domainId, login))
-				.collect(Collectors.toCollection(LinkedList::new)));
-
+				.findFirst().orElse(bh.new Payload()));
 		return bh;
 	}
 	
@@ -54,8 +53,8 @@ public class DBConsults {
 		return PMS.getHHGReservationServicesDetail(domainName, domainId, login, service);
 	}
 	
-	public static void updateHHGProjectAttachDate(String domainName, Integer domainId, String login, LinkedList<Attach> attachList){
-		PMS.updateHHGProjectAttachDate(domainName, domainId, login, attachList);
+	public static void updateHHGProjectAttach(String domainName, Integer domainId, String login, Attach attach){
+		PMS.updateHHGProjectAttach(domainName, domainId, login, attach);
 	}
 
 	private static class ReservationFiller implements Function<ProjectReservation, Payload> {

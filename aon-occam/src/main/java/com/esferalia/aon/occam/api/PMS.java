@@ -112,11 +112,11 @@ public class PMS {
 		}		
 	}
 	
-	public static void updateHHGProjectAttachDate(String domainName, Integer domainId, String login, LinkedList<Attach> attachList){
+	public static void updateHHGProjectAttach(String domainName, Integer domainId, String login, Attach attach){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getPMS().updateHHGProjectAttachDate(ctx, attachList);
+			getPMS().updateHHGProjectAttach(ctx, attach);
 		} finally {
 			if(ctx != null)
 				ctx.close();

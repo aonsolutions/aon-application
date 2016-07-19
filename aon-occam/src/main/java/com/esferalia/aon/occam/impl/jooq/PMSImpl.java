@@ -73,8 +73,8 @@ public class PMSImpl implements IPMS {
 	}
 
 	@Override
-	public void updateHHGProjectAttachDate(AONContext ctx, LinkedList<Attach> attachList) {
-		ctx.getDslContext().transaction(configuration -> PMSDAO.updateHHGProjectAttachDate(ctx, attachList));
+	public void updateHHGProjectAttach(AONContext ctx, Attach attach) {
+		ctx.getDslContext().transaction(configuration -> PMSDAO.updateHHGProjectAttach(ctx, attach));
 	}
 	
 	

@@ -27,5 +27,5 @@ public interface IPMS {
 	public LinkedList<ProjectReservationService> getHHGReservationServices(AONContext ctx, Integer project);
 	public LinkedList<ProjectReservationServiceDetail> getHHGReservationServicesDetail(AONContext ctx, Integer service);
 	public HashMap<Integer, Attach> getHHGProjectAttach(AONContext ctx);
-	public void updateHHGProjectAttachDate(AONContext ctx, LinkedList<Attach> attachList);
+	public void updateHHGProjectAttach(AONContext ctx, Attach attach);
 }

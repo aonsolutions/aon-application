@@ -276,13 +276,11 @@ public class PMSDAO {
 		return map;
 	}
 	
-	public static void updateHHGProjectAttachDate(AONContext ctx, LinkedList<Attach> attachList) {
-		attachList.stream().forEach(a -> {
-			ctx.getDslContext().update(PROJECT_ATTACH)
-			.set(PROJECT_ATTACH.DESCRIPTION, a.getDescription())
-			.where(PROJECT_ATTACH.ID.eq(a.getId()))
+	public static void updateHHGProjectAttach(AONContext ctx, Attach attach) {
+		ctx.getDslContext().update(PROJECT_ATTACH)
+			.set(PROJECT_ATTACH.DESCRIPTION, attach.getDescription())
+			.where(PROJECT_ATTACH.ID.eq(attach.getId()))
 			.execute();
-		});
 	}
 
 	private static class HotelGuestByCountryFiller implements Function<Record3<String, String, Integer>, HotelGuestByCountry> {

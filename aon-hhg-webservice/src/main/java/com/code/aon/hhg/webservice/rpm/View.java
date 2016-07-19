@@ -6,12 +6,11 @@ import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
 public class View {
 	
 	public static void response(Response response){
-		System.out.println(response.getResult().getType());
 		if(response.getResult().getType().equals("error"))
 			System.out.println(
 				"Error " + response.getResult().getPayload().getCode()
 				+ ": " + response.getResult().getPayload().getMessage());
-		else System.out.println("Nonce: " + response.getResult().getPayload().getNonce());
+		else System.out.println("OK 200");
 	}
 	
 	public static void hotel(String hotel){
