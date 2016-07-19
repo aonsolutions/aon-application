@@ -12,28 +12,31 @@
 >
 
 <ui:style>
-
+	@external .gwt-DisclosurePanel .content;
+	@external .gwt-DisclosurePanel .header;
+	.gwt-DisclosurePanel .content {
+		border-left: 3px solid #FFF !important;
+		padding: 4px 8px 4px 0px !important;
+		margin-left: 20px !important;
+	}
+		
+	.gwt-DisclosurePanel .header td{
+		font-family: "Roboto", "Noto", sans-serif !important;
+    	font-size: 14px !important;
+   		line-height: 24px !important;
+	    color: #212121 !important;
+	}
 </ui:style>
 
 <g:HTMLPanel>
-	<style is="custom-style">
 
-    </style>
-
-	<g:Button ui:field="priorityButton">Prioridad</g:Button>
-    <i:IronCollapse ui:field="priorityCollapse">
-		
-    </i:IronCollapse>
-    
-    <g:Button ui:field="typeButton">Tipo de Incidencia</g:Button>
-    <i:IronCollapse ui:field="typeCollapse">
-		
-    </i:IronCollapse>
-    
-   	<g:Button ui:field="tagButton">Etiquetas</g:Button>
-    <i:IronCollapse ui:field="tagCollapse">
-		
-    </i:IronCollapse>
+	<g:ScrollPanel>
+		<g:Tree ui:field="tree">
+			<g:TreeItem ui:field="priorityTreeItem" text="Prioridad" />
+			<g:TreeItem ui:field="typeTreeItem" text="Tipo" />
+			<g:TreeItem ui:field="issueTreeItem" text="Incidencia" />
+		</g:Tree>
+	</g:ScrollPanel>
 </g:HTMLPanel>
 
 </ui:UiBinder>

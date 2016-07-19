@@ -2,15 +2,35 @@
 
 
 
-.aon-panelGrid-search-issues{
-	height: 55px;margin: 10px;
-}
+	.aon-panelGrid-search-issues{
+		height: 55px;margin: 10px;
+	}
 	
-.aon-panelGrid-search-info-issues{
-	margin-bottom:0px !important;
-}
+	.aon-panelGrid-search-info-issues{
+		margin-bottom:0px !important;
+	}
 
+	.aon-configuration-panel-issues{
+		background:#eee;
+		border-right: 1px solid #ddd;
+	}
 
+	.scrollpanel-options-issues {
+		padding-left: 20%;
+	}
+	
+	.buttons-issues {
+		padding-top: 10px;
+		text-align: right;
+	}
+	
+	.table-issues {
+		vertical-align: top;
+	}
+	
+	.display-none-issues{
+		display: none !important;
+	}
 	.avatar {
                 display: inline-block;
                 width: 40px;

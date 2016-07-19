@@ -16,10 +16,10 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class Methods {
 	
-	private final String HTTP_GET = "GET";
+	public final String HTTP_GET = "GET";
 	private final String HTTP_POST = "POST";
 	protected  String accessToken = "";
-	private boolean authorized = false;
+	public boolean authorized = false;
 	
 	protected <T extends JavaScriptObject> void get(String url, AsyncCallback<T> callback) {
 		String requestUrl = makeRequestUrl(url);

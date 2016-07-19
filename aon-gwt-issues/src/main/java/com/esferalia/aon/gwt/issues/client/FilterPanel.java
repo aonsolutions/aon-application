@@ -41,7 +41,7 @@ public class FilterPanel extends Composite {
 			public void onKeyUp(KeyUpEvent event) {
 				if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER){
 					getIssues().issueFilter.setTitle(titleFilter.getText());
-					getIssues().updateIssueList(getIssues().issueFilter);
+					getIssues().updateIssueList(getIssues().issueFilter, false);
 				}
 			}
 		});
@@ -50,19 +50,19 @@ public class FilterPanel extends Composite {
 	@UiHandler("openButton")
 	void openButtonClick(ClickEvent event){
 		getIssues().issueFilter.setState("open");
-		getIssues().updateIssueList(issues.issueFilter);
+		getIssues().updateIssueList(issues.issueFilter, false);
 	}
 	
 	@UiHandler("closeButton")
 	void closeButtonClick(ClickEvent event){
 		getIssues().issueFilter.setState("closed");
-		getIssues().updateIssueList(issues.issueFilter);
+		getIssues().updateIssueList(issues.issueFilter, false);
 	}
 	
 	@UiHandler("cleanButton")
 	void cleanButtonClick(ClickEvent event){
 		getIssues().issueFilter = new IssueFilter();
-		getIssues().updateIssueList(issues.issueFilter);
+		getIssues().updateIssueList(issues.issueFilter, false);
 	}
 
 	public Issues getIssues() {

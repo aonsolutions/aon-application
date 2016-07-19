@@ -13,6 +13,14 @@ public class IssueFilter {
 	String direction;
 	String since;
 	
+	Integer page = 1;
+	Integer perPage = 30;
+	
+	public IssueFilter() {
+		this.page = 1;
+		this.perPage = 30;
+	}
+	
 	public String getMilestone() {
 		return milestone;
 	}
@@ -81,6 +89,18 @@ public class IssueFilter {
 	}
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	public Integer getPage() {
+		return page;
+	}
+	public void setPage(Integer page) {
+		this.page = page;
+	}
+	public Integer getPerPage() {
+		return perPage;
+	}
+	public void setPerPage(Integer perPage) {
+		this.perPage = perPage;
 	}
 	
 	

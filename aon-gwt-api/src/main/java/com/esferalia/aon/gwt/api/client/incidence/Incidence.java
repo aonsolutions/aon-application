@@ -90,6 +90,7 @@ public class Incidence extends Methods{
 				+ (filter.getSort() != null ? "&sort=" + filter.getSort() : "")
 				+ (filter.getDirection() != null ? "&direction=" + filter.getDirection() : "")
 				+ (filter.getSince()!= null ? "&since=" + filter.getSince() : "")
+				+ "&page="+ filter.getPage()+ "&per_page="+ filter.getPerPage()
 				, callback);
 	}
 	
@@ -104,6 +105,7 @@ public class Incidence extends Methods{
 				+ (filter.getSort() != null ? "&sort=" + filter.getSort() : "")
 				+ (filter.getDirection() != null ? "&direction=" + filter.getDirection() : "")
 				+ (filter.getSince()!= null ? "&since=" + filter.getSince() : "")
+				+ "&page="+ filter.getPage()+ "&per_page="+ filter.getPerPage()
 				, callback);
 	}
 	
@@ -118,6 +120,7 @@ public class Incidence extends Methods{
 				+ (filter.getSort() != null ? "&sort=" + filter.getSort() : "")
 				+ (filter.getDirection() != null ? "&direction=" + filter.getDirection() : "")
 				+ (filter.getSince()!= null ? "&since=" + filter.getSince() : "")
+				+ "&page="+ filter.getPage()+ "&per_page="+ filter.getPerPage()
 				, callback);
 	}
 	

@@ -9,36 +9,28 @@
 	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
 	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'>
 
-<ui:style>
-	.proa{
-		background:#eee;
-		border-right: 1px solid #ddd;
-	}
-	
-</ui:style>
+<ui:with type="com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources"
+		field="issuesResources"></ui:with>
+		
 <g:DockLayoutPanel ui:field="dockLayoutPanel">
 	<g:north size="40">
-		<g:HTMLPanel addStyleNames="paper-toolbar">
-        	<style is="custom-style">
-        		paper-toolbar ::shadow #topBar {
-       				color:#000;
-       				height:var(--paper-toolbar-height, 40px);
-      			}
-        	</style>
-		 	<p:PaperToolbar height="40px" styleName="aon-menuBar" 
-		 			style="border-top: 0px;">
-            	<p:PaperIconButton ui:field="menuButton" icon="menu"/>
-            	<span class="title">Incidencias</span>
-            	<p:PaperIconButton ui:field="refreshButton" icon="refresh"/>
-            	<p:PaperIconButton ui:field="addButton" icon="add">+</p:PaperIconButton>
-        	</p:PaperToolbar>
-        </g:HTMLPanel>
+		<g:HTMLPanel ui:field="toolbar" />
 	</g:north>
 	<g:west size="0">
-		<g:HTMLPanel styleName="{style.proa}" ui:field="configurationPanel"/>
+		<g:HTMLPanel styleName="{issuesResources.css.aonConfigurationPanelIssues}" ui:field="configurationPanel"/>
 	</g:west>
 	<g:center>
-		<g:HTMLPanel ui:field="content"/>	
+		<g:DockLayoutPanel ui:field="contentDockLayoutPanel">
+			<g:north size="85">
+				<g:HTMLPanel ui:field="searchContent"/>
+			</g:north>
+			<g:center>
+				<g:HTMLPanel ui:field="content"/>	
+			</g:center>
+			<g:south size="0">
+				<g:HTMLPanel ui:field="issueContent"></g:HTMLPanel>
+			</g:south>
+		</g:DockLayoutPanel>
 	</g:center>
 </g:DockLayoutPanel>
 

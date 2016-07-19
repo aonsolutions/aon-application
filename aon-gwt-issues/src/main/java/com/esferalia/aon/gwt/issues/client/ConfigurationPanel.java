@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.issues.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.vaadin.polymer.iron.widget.event.IronSelectEvent;
@@ -39,17 +38,20 @@ public class ConfigurationPanel extends Composite {
 				tabs.setSize("350px", "48px");
 				if(tabs.getSelected().equals(ZERO)
 					|| tabs.getSelected() == ZERO){
-					Window.alert("zero");
+					//Window.alert("zero");
 					//tabContent.add(new TagPanel());
 				} else if(tabs.getSelected().equals(ONE)
 					|| tabs.getSelected() == ONE){
-					Window.alert("one");
+					//Window.alert("one");
 				} else if(tabs.getSelected().equals(TWO)
 						|| tabs.getSelected() == TWO){
-					Window.alert("two");
+					//Window.alert("two");
 				}
 			}
 		});
+        tabs.setVisible(false);
+        
+        tabContent.add(new TagPanel());
     }
     
     
