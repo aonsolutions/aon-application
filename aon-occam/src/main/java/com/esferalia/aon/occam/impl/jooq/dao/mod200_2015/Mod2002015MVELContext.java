@@ -56,6 +56,7 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 	
 	private static final int LIM_1 = 300000;
 	private static final int LIM_2 = 1000000;
+	private static final int LIM_3 = 25000;
 	
 	private Mod2002015 mod200;
 	
@@ -124,9 +125,16 @@ public class Mod2002015MVELContext extends AccMiningMVELContext {
 		return 28.0;
 	}
 	private double getLimit(int limit) {
-		return AonMathUtils.round(limit * getDays() / 365);	
+		return AonMathUtils.round( (double) limit * getDays() / 365);	
 	}
-		
+	public double computeD1004() throws AonCoreException {
+		double d1004 = getValue(Mod2002015Key.D1004);
+		if (d1004>getLimit(LIM_3)){
+			return getLimit(LIM_3);			
+		} else {
+			return d1004;				
+		}
+	}
 	public double computeLQ562() throws AonCoreException {
 		double lq521 = round(getValue(LQ521));
 		double lq558 = round(getValue(LQ558));
