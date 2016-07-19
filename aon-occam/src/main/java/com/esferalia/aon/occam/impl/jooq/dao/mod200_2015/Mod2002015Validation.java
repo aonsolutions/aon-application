@@ -560,6 +560,11 @@ public class Mod2002015Validation {
 	}
 	
 	static {// PAGE 10
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE10,BN565
+				,"No puede aplicarse la clave 565 mientras existan saldos pendientes "
+				+ "de aplicaci\u00F3n de deducciones por doble imposici\u00F3n o de deducciones "
+				+ "del cap\u00EDtulo IV T\u00EDtulo VI de la Ley del Impuesto."
+				,"BN565 == 0 || (BN565 != 0 && (BN118 == 0 && BN133 == 0 && BN162 == 0 && BN174 == 0 && BN832 == 0))"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE10,BN567
 				,"La clave 567 no puede superar el 50% de la clave 562"
 				,"BN567 <= (LQ562 * 50 /100)"));
