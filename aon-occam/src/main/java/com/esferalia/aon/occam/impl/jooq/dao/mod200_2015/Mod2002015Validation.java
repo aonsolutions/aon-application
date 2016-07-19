@@ -561,6 +561,9 @@ public class Mod2002015Validation {
 	
 	static {// PAGE 10
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE10,BN567
+				,"La clave 567 no puede superar el 50% de la clave 562"
+				,"BN567 <= (LQ562 * 50 /100)"));
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE10,BN567
 				,MessageFormat.format(EQUAL_GREATER_MSG,BN567.toString(),"0")
 				,MessageFormat.format(EQUAL_GREATER_EXP,BN567.toString(),"0")));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE10,BN568
