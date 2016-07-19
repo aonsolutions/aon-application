@@ -13,6 +13,7 @@ import com.code.aon.hhg.webservice.dialog.BookingHarvest.Reservation;
 import com.code.aon.hhg.webservice.dialog.BookingHarvest.Room;
 import com.code.aon.hhg.webservice.dialog.BookingHarvest.Service;
 import com.code.aon.hhg.webservice.dialog.BookingHarvest.ServiceDetail;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.PMS;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
@@ -76,7 +77,8 @@ public class DBConsults {
 		public Payload apply(ProjectReservation pr) {
 			Payload payload = bh.new Payload();
 			Reservation reservation = bh.new Reservation();
-			reservation.setAgency(pr.getAgency().toString()); // TODO ESTA PASANDO EL ID DE AGENCY ¿PASAR EL NOMBRE? 
+			String agency = AON.getRegistry(domainName, domainId, login, pr.getAgency()).getName();
+			reservation.setAgency(agency); // TODO ESTA PASANDO EL ID DE AGENCY ¿PASAR EL NOMBRE? 
 			reservation.setCrscode(pr.getCrsCode());
 			reservation.setEndDate(dateFormat.format(pr.getEndDate()));
 			reservation.setMethod(map.get(pr.getProject()).getDescription());

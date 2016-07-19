@@ -33,7 +33,7 @@ public class BookingHarvestRPM {
 		return DBConsults.getHHG(domain, domainMap.get(domain), user)
 				.setUsername(user)
 				.calculateNonce(password)
-				.calculateHash();
+				.calculateHash(password);
 	}
 	
 	private static String getDescriptionName(String method) {
@@ -60,21 +60,29 @@ public class BookingHarvestRPM {
 		
 		parse(args);
 		
-		domain="test.grupoplayasol.com";
+		/*domain="test.grupoplayasol.com";
 		user = "pruebas.api@hhg-hotels.net";
 		password = "c802f1e2aa51";
+		*/
 		
 		//***** BOOKING-HARVEST *****/
 		BookingHarvest bh = buildBookingHarvest();
-		JSONObject jsonResponse = HHGPost.post2(BookingHarvest.URL, bh.toJSON());
-		Response response2 = new Response(jsonResponse);
-		if(!response2.getResult().getType().equals("error")){
-			Attach attach = new Attach().setId(bh.getPayload().getReservation().getProjectAttachId())
+		if(bh.getPayload().getReservation() == null || bh.getPayload().getReservation().getCrscode() == null)
+			LOGGER.info("No hay ninguna reserva para procesar.");
+		else {
+			System.out.println("json -> ");
+			System.out.println(bh.toJSON());
+			System.out.println(" ");
+			JSONObject jsonResponse = HHGPost.post2(BookingHarvest.URL, bh.toJSON());
+			Response response2 = new Response(jsonResponse);
+			if(!response2.getResult().getType().equals("error")){
+				Attach attach = new Attach().setId(bh.getPayload().getReservation().getProjectAttachId())
 					.setDescription(getDescriptionName(bh.getPayload().getReservation().getMethod()));
-			DBConsults.updateHHGProjectAttach(domain, domainMap.get(domain), user, attach);
+				DBConsults.updateHHGProjectAttach(domain, domainMap.get(domain), user, attach);
+			}
+			LOGGER.info("POST " + BookingHarvest.URL);
+			View.response(response2);
 		}
-		LOGGER.info("POST " + BookingHarvest.URL);
-		View.response(response2);	
 	}
 	
 	private static boolean parse(String args[]) {

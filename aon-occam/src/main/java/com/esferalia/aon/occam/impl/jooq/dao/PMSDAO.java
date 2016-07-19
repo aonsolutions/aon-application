@@ -327,7 +327,8 @@ public class PMSDAO {
 		public ProjectReservationService apply(ProjectReservationServiceRecord r) {
 			return new ProjectReservationService()
 					.setServiceCode(r.getServiceCode())
-					.setMealPlan(r.getMealPlan());
+					.setMealPlan(r.getMealPlan())
+					.setId(r.getId());
 		}
 	}
 	

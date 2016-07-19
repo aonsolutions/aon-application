@@ -9,7 +9,13 @@ public class Response {
 	static final String ok = "{\"result\":{\"type\":\"ok\",\"payload\":{\"nonce\":\"213456789347215436743\"}}} ";
 	
 	public Response(JSONObject json) {
-		setResult(new Result(json));
+		try {
+			System.out.println(json.toString());
+			setResult(new Result(json.getJSONObject("result")));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	Result result;
@@ -30,7 +36,8 @@ public class Response {
 		public Result(JSONObject json) {
 			try {
 				setType(json.get("type").toString());
-				setPayload(new Payload(json.getJSONObject("payload"), getType().equals("error")));
+				if(getType().equals("error"))
+					setPayload(new Payload(json.getJSONObject("payload"), getType().equals("error")));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

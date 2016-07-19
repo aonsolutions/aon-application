@@ -62,15 +62,18 @@ public class BookingHarvest {
 		return json;
 	}
 		
-	public BookingHarvest calculateHash(){
+	public BookingHarvest calculateHash(String password){
 		String hash = "";
-		hash = hash.concat(getNonce()).concat(getUsername());
+		if(getNonce() == null) return this; 
+		hash = hash.concat(getNonce()).concat(password);
 		setHash(DigestUtils.md5Hex(hash));
 		return this;
 	}
 	
 	public BookingHarvest calculateNonce(String password){
 		String nonce = "" ;
+		if(getPayload().getReservation() == null || getPayload().getReservation().getCrscode() == null)
+			return this; 
 		nonce = nonce.concat(getUsername()).concat(getPayload().getReservation().getCrscode()).concat(password);
 		setNonce(DigestUtils.md5Hex(nonce));
 		return this;
@@ -298,7 +301,7 @@ public class BookingHarvest {
 								
 				JSONArray arrayServicesDetail = new JSONArray();
 				getServicesDetail().stream().map(service -> service.toJSON()).forEach(s -> arrayServicesDetail.put(s));
-				json.put("servicesDetail",arrayServicesDetail);
+				json.put("servicesdetail",arrayServicesDetail);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

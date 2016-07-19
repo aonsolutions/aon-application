@@ -17,5 +17,6 @@ public interface IRegistry {
 	
 	
 	public Registry getRegistry(AONContext ctx, String name);
+	public Registry getRegistry(AONContext ctx, Integer id);
 
 }

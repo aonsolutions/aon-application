@@ -45,6 +45,11 @@ public class RegistryImpl implements IRegistry{
 				configuration -> RegistryDAO.getRegistry(ctx, name));
 	}
 	
+	@Override
+	public Registry getRegistry(AONContext ctx, Integer id) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getRegistry(ctx, id));
+	}
 	
 	
 }

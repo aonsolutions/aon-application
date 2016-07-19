@@ -1193,6 +1193,17 @@ public class AON {
 		}
 	}
 	
+	public static Registry getRegistry(String domainName, Integer domainId, String login, Integer id){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRegistry(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static List<RegistryMedia> getRMedias(Integer domainId,
 			String domainName, String userName) {
 		AONContext ctx = null;

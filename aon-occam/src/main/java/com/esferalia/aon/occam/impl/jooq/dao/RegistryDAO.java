@@ -92,6 +92,11 @@ public class RegistryDAO {
 			.stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
 	}
 	
+	public static Registry getRegistry(AONContext ctx, Integer id){
+		return ctx.getDslContext().select().from(REGISTRY).where(REGISTRY.ID.eq(id)).fetchInto(REGISTRY)
+			.stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
+	}
+	
 	private static class FullCategoryFiller implements Function<CategoryRecord, Category> {
 		@Override
 		public Category apply(CategoryRecord r) {
