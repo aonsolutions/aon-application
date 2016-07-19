@@ -21,14 +21,14 @@ node {
    
    def commitsParams = parameters(cherryOut);
 
-   //def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: commitsParams
+   def commitsMap = input message: "Peform HotFix ${hotfix}", parameters: commitsParams
    
    def commits = '';
-   //for ( commitParam in commitsParams ) {
-   //   if ( commitsMap[commitParam.name] ) {
-   //       commits = commits + ' ' + commitParam.name
-   //   } 
-   //}
+   for ( commitParam in commitsParams ) {
+      if ( commitsMap[commitParam.name] ) {
+          commits = commits + ' ' + commitParam.name
+      } 
+   }
    
    
    if ( commits ) {
