@@ -76,21 +76,34 @@ public class Page10 extends PageAbs {
 		for (final Mod2002015Key key : Mod2002015Constants.LIQUIDATION_III_KEYS_1) {
 			if (mod200Object.isVisible(key)) {
 				row = paintKey(table,key,row);
+				if (key == Mod2002015Key.BN1280) {
+					table.getFlexCellFormatter().addStyleName((row-1), 0, AON.AON_CSS.aonPadding2Left());
+				}
 				if (key == Mod2002015Key.BN570) {
 					row = paintKeyBreakdownLink(table,row,AON.MSG.doubleContributionNationalPrevious()
 							,Mod2002015BN570Key.values(),HEADERS_1);
+					table.getFlexCellFormatter().addStyleName((row-2), 0, AON.AON_CSS.aonPadding2Left());
 				} 
 				if (key == Mod2002015Key.BN571) {
 					row = paintKeyBreakdownLink(table,row,AON.MSG.doubleContributionNational2015()
 							,Mod2002015BN571Key.values(),HEADERS_1);
+					table.getFlexCellFormatter().addStyleName((row-2), 0, AON.AON_CSS.aonPadding2Left());
 				} 
 				if (key == Mod2002015Key.BN572) {
 					row = paintKeyBreakdownLink(table,row,AON.MSG.doubleContributionInternationalPrevious()
 							,Mod2002015BN572Key.values(),HEADERS_1);
+					table.getFlexCellFormatter().addStyleName((row-2), 0, AON.AON_CSS.aonPadding2Left());
 				} 
 				if (key == Mod2002015Key.BN573) {
 					row = paintKeyBreakdownLink(table,row,AON.MSG.doubleContributionInternational2015()
 							,Mod2002015BN573Key.values(),HEADERS_2);
+					table.getFlexCellFormatter().addStyleName((row-2), 0, AON.AON_CSS.aonPadding2Left());
+				}
+				if (key == Mod2002015Key.BN575) {
+					table.getFlexCellFormatter().addStyleName((row-1), 0, AON.AON_CSS.aonPadding2Left());
+				}
+				if (key == Mod2002015Key.BN577) {
+					table.getFlexCellFormatter().addStyleName((row-1), 0, AON.AON_CSS.aonPadding2Left());
 				}
 			}
 		}
