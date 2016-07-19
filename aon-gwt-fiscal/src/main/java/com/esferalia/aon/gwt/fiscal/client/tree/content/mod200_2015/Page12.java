@@ -74,6 +74,10 @@ public class Page12 extends PageAbs {
 		for (final Mod2002015Key key : Mod2002015Constants.INCOME_DISTRIBUTION_KEYS_2) {
 			if (mod200Object.isVisible(key)) {
 				row = paintKey(table1,key,row);
+				if (key == Mod2002015Key.ID1270 || key == Mod2002015Key.ID1271) {
+					table1.getFlexCellFormatter().addStyleName((row-1), 0, AON.AON_CSS.aonPadding2Left());
+				}
+				
 			}
 		}
 
