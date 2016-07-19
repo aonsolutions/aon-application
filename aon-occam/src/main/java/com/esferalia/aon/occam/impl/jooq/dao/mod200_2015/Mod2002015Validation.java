@@ -752,6 +752,14 @@ public class Mod2002015Validation {
 				,MessageFormat.format(CHECK_SIGN_MSG,ID665.getDescription())
 				,MessageFormat.format(MUST_POSITIVE_EXP,ID665.toString())));
 	}
+	
+	
+	static {
+		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE08,D0364
+				,"Compruebe la correspondencia entre el importe declarado en "
+				+ "la clave 364 y los de las claves 1258 y 1259 de la p\u00E1gina 14."
+				,"D0364 == round(LM1258 + LM1259)"));
+	}
 
 	static { // PAGE 13 		
 //		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE13,LM259
