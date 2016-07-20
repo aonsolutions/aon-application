@@ -2455,7 +2455,11 @@ public class Mod2002015Writer {
 			// La página 22 actualmente no está en el Modelo 200, luego por ahora nunca se pone, ni siquiera está definida en el enumerado
 			if (this == Pages2015.PAG22) {
 				addPage = (mod200.getDoubleValue(Mod2002015Key.C0013)==1) ||
-			              (mod200.getDoubleValue(Mod2002015Key.C0014)==1);
+			              (mod200.getDoubleValue(Mod2002015Key.C0014)==1) || 
+			              (mod200.getDoubleValue(Mod2002015Key.C0017)==1) ||
+			              (mod200.getDoubleValue(Mod2002015Key.C0018)==1) ||
+			              (mod200.getDoubleValue(Mod2002015Key.C0019)==1)
+			              ;
 			}
 			
 			// Página 24. Tributación Conjunta. Caracter 028 marcado

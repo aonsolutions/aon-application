@@ -504,7 +504,7 @@ public class Mod2002015Validation {
 				,"C0034?"+MessageFormat.format(EQUAL_LESS_FACTOR_EXP,LQ535.toString(),LQ534.toString(),"0.50")+":true"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE09,LQ553
 				,"La suma de las casillas \""+LQ553.getDescription()+"\" y \""+LQ554.getDescription()+"\" debe ser igual que \""+LQ552.getDescription()+"\""	
-				,"(C0017 || C0018 || C0019)?LQ552 == (LQ553 + LQ554):true"));
+				,"(C0017 || C0018 || C0019)?(round(LQ552) == round(LQ553 + LQ554)):true"));
 		VALIDATION_EXPRESSION_LIST.add(new ValidationMessage2015(PAGE09,LQ559
 				,"La casilla \""+LQ559.getDescription()+"\" debe ser mayor igual que cero y menor o igual que la casilla \""+LQ552.getDescription()+"\""
 				,"C0015?(0.0 <= round(LQ559) && round(LQ559) <= round(LQ552)):true"));
