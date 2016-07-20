@@ -38,7 +38,7 @@ public class Page05 extends PageAbs {
 		}
 	}
 	protected boolean isDisabled(Mod2002015Key key) {
-		if (mod200Object.getMod200().getBalanceType() == BalanceType.NORMAL) {
+		if (mod200Object.getMod200().getPygType() == BalanceType.NORMAL) {
 			if (key == Mod2002015Key.PG255
 			  ||key == Mod2002015Key.PG279
 			  ||key == Mod2002015Key.PG309
