@@ -30,6 +30,7 @@
         		background-color: white;
         		border: 1px solid #ddd;
        	 		border-top:0px;
+       	 		cursor:pointer;
             }
             
             .iron-list-issue .pad {

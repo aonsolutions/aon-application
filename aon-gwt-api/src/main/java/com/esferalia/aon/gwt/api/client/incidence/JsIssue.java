@@ -35,6 +35,10 @@ public class JsIssue extends JavaScriptObject{
 		return this.comments_url;
 	}-*/;
 	
+	public final native String getEventsUrl() /*-{
+		return this.events_url;
+	}-*/;
+	
 	public final native int getNumber() /*-{
 		return this.number;
 	}-*/;
@@ -61,6 +65,10 @@ public class JsIssue extends JavaScriptObject{
 	
 	public final native JsUser getAssignee() /*-{
 		return this.assignee;
+	}-*/;
+	
+	public final native JsUser getUser() /*-{
+		return this.user;
 	}-*/;
 
 }

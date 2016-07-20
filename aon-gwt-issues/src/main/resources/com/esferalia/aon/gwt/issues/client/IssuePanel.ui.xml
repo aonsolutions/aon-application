@@ -18,11 +18,12 @@
 
 	<ui:with type="com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources"
 		field="issuesResources"></ui:with>
-
 	<g:SplitLayoutPanel ui:field="dockLayoutPanel">
-		<g:center>
+		<g:center>		    
 			<g:ScrollPanel>
 				<g:HTMLPanel height="100%" width="100%">
+				    <p:PaperIconButton ui:field="returnButton" icon="arrow-back" style="position:fixed;" />
+				    
 					<table width="100%" class="{issuesResources.css.tableIssues}">
 						<tr>
 							<td width="70%" class="{issuesResources.css.tableIssues}">
@@ -119,6 +120,7 @@
 					</table>
 				</g:HTMLPanel>
 			</g:ScrollPanel>
+			
 		</g:center>
 
 		<g:south size="30">

@@ -157,6 +157,12 @@ public class Incidence extends Methods{
 				+ label.getName(), callback);
 	}
 	
+	//-------------------- EVENTS
+	
+	public void getEvents(String url, AsyncCallback<JSON<JsEvent>> callback){
+		get(url, callback);
+	}
+	
 	//---------------------- Métodos Get & Set
 	
 	public AonUrlApi getUrl() {
