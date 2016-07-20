@@ -155,10 +155,24 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 			throw new Exception("Fecha de Apertura de Caja incorrecta.");
 		} else if (ps.getStartTime().after(ps.getEndTime())) {
 			throw new Exception("Fecha de Cierre de Caja incorrecta.");
-		} else if (obtainDetailAmount(details) != obtainFinanceAmount(finances)) {
-			throw new Exception("El importe de los Productos de la Factura no coincide con el importe de los Pagos.");
+		} else {
+			double diff = CommonUtil.round(obtainFinanceAmount(finances) - obtainDetailAmount(details));
+			if (diff != 0) {
+				if (Math.abs(diff) == 0.01) {
+					for (int i=1; i<=10; i++) {
+						InvoiceDetail invoiceDetail = details.get(details.size() - 1);
+						if (invoiceDetail.getDiscountExpression().getDiscounts()[0] == 0) {
+							invoiceDetail.setPrice(invoiceDetail.getPrice() + (diff / 100));
+						}
+						invoiceDetail.setTaxableBase(invoiceDetail.getTaxableBase() + (diff / 100));
+						if (obtainDetailAmount(details) == obtainFinanceAmount(finances)) {
+							return true;
+						}
+					}
+				}
+				throw new Exception("El importe de los Productos de la Factura no coincide con el importe de los Pagos.");
+			}
 		}
-
 		return true;
 	}
 
