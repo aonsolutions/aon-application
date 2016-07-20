@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -18,6 +21,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tag;
+import com.code.aon.config.enumeration.TagType;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -42,10 +47,13 @@ public class CustomerEdiSupportController implements Serializable {
 	public final static String FACTURA = "EDI_FACTURA";
 	public final static String FINANCIERA = "EDI_FINANCIERA";
 	public final static String ALBARANES = "EDI_ALBARANES";
+	public final static String MEDIDA = "EDI_MEDIDA";
 	
-	private final static String EDI_CODES_PATTERN = CABECERA + "=(.*);" + PEDIDOS
-			+ "=(.*);" + PTO_ENTREGA + "=(.*);" + FACTURA + "=(.*);"
-			+ FINANCIERA + "=(.*);" + ALBARANES + "=(.*);";
+	private final static String EDI_CODES_PATTERN = CABECERA + "=([^;]*);" + PEDIDOS
+			+ "=([^;]*);" + PTO_ENTREGA + "=([^;]*);" + FACTURA + "=([^;]*);"
+			+ FINANCIERA + "=([^;]*);" + ALBARANES + "=([^;]*);";
+
+	private final static String EDI_PACKING_PATTERN = MEDIDA + "=([^;]*);";
 
 	private Map<Integer, List<String>> addressCodes;
 	private List<RegistryAddress> customerAddresses;
@@ -65,6 +73,18 @@ public class CustomerEdiSupportController implements Serializable {
 
 	public List<RegistryAddress> getCustomerAddresses() {
 		return customerAddresses;
+	}
+	
+	public List<SelectItem> getPackingTypeTags() throws ManagerBeanException {
+		IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(tagBean.getFieldName(IEntityAlias.TAG_TYPE), TagType.PACKING);
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for (ITransferObject to : tagBean.getList(criteria)) {
+			Tag tag = (Tag) to;
+			list.add(new SelectItem(tag.getId().toString(), tag.getName()));
+		}
+		return list;
 	}
 
 	public void onRecover(Customer customer) throws ManagerBeanException {
@@ -102,16 +122,21 @@ public class CustomerEdiSupportController implements Serializable {
 		if (registryNote != null) {
 			value = registryNote.getComments();
 		}
-		String[] values = { "", "", "", "", "", "" };
+		String[] values = { "", "", "", "", "", "", "" };
 		Matcher m;
-		Pattern p = Pattern.compile(EDI_CODES_PATTERN);
-		if (value != null && (m = p.matcher(value)).find()) {
+		
+		Pattern p1 = Pattern.compile(EDI_CODES_PATTERN);
+		if (value != null && (m = p1.matcher(value)).find()) {
 			values[0] = m.group(1);
 			values[1] = m.group(2);
 			values[2] = m.group(3);
 			values[3] = m.group(4);
 			values[4] = m.group(5);
 			values[5] = m.group(6);
+		}
+		Pattern p2 = Pattern.compile(EDI_PACKING_PATTERN);
+		if (value != null && (m = p2.matcher(value)).find()) {
+			values[6] = m.group(1);
 		}
 		return Arrays.asList(values);
 	}
@@ -145,7 +170,7 @@ public class CustomerEdiSupportController implements Serializable {
 			}
 			String format = CABECERA + "=%s;" + PEDIDOS + "=%s;" + PTO_ENTREGA
 					+ "=%s;" + FACTURA + "=%s;" + FINANCIERA + "=%s;"
-					+ ALBARANES + "=%s;";
+					+ ALBARANES + "=%s;"+ MEDIDA + "=%s;";
 			List<String> values = this.addressCodes.get(addressId);
 			note.setComments(String.format(format, values.toArray()));
 			saveRegistryNote(note);
@@ -166,7 +191,9 @@ public class CustomerEdiSupportController implements Serializable {
 
 		String ediCommentsPattern = CABECERA + "=%;" + PEDIDOS + "=%;" + PTO_ENTREGA
 				+ "=%;" + FACTURA + "=%;" + FINANCIERA + "=%;"
-				+ ALBARANES + "=%;";
+				+ ALBARANES + "=%;"
+//				+ MEDIDA + "=%;"
+				;
 		Expression ediTypeExp = ExpressionUtilities.getOrExpression(
 				ExpressionUtilities.getLikeExpression(
 						bean.getFieldName(IEntityAlias.REGISTRY_NOTE_COMMENTS),
@@ -268,6 +295,7 @@ public class CustomerEdiSupportController implements Serializable {
 			values.put(FACTURA, m.group(4));
 			values.put(FINANCIERA, m.group(5));
 			values.put(ALBARANES, m.group(6));
+			values.put(MEDIDA, m.group(7));
 		}
 		return values;
 	}

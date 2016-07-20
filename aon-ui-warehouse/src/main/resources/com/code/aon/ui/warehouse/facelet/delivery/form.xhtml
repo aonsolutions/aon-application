@@ -49,6 +49,14 @@
 							<f:param name="reportKey" value="#{delivery.reportTemplate}" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
+						<aon:if test="#{company.ediSupportEnabled}">
+							<aon:htmlCommandLink id="delivery-edi" 
+								value="#{bundle.aon_edi}" target="_blank"
+								title="#{bundle.webmail_download}"
+								actionListener="#{delivery.udapaDeliveryHandler.onExportUdapaEdiFile}" 
+								styleClass="aon-finding-toolbar-item aon-icon-file-download">
+							</aon:htmlCommandLink>
+						</aon:if>
 						
 						<!-- 
 						<ui:include
@@ -106,13 +114,6 @@
 									iconClass="aon-icon-sincronize"
 									actionListener="#{delivery.udapaDeliveryHandler.onSincronizeIngenet}" />
 							</aon:if>
-							<aon:menuItem id="exportEdi-delivery"
-								iconClass="aon-icon-file-entrance">
-								<aon:htmlCommandLink target="_blank"
-									value="#{bundle.webmail_download} EDI"
-									actionListener="#{delivery.udapaDeliveryHandler.onExportUdapaEdiFile}" >
-								</aon:htmlCommandLink>
-							</aon:menuItem>
 						</aon:if>
 						
 						<ui:include

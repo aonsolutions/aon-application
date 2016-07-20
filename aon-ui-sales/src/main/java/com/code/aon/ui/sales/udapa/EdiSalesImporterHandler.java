@@ -6,6 +6,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -21,13 +23,16 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.config.Tag;
 import com.code.aon.customer.Customer;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryItem;
 import com.code.aon.registry.RegistryNote;
+import com.code.aon.registry.enumeration.NoteType;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.DocumentType;
@@ -110,17 +115,24 @@ public class EdiSalesImporterHandler implements Serializable {
 	}
 	
 	public void createSales(ActionEvent event, ERE1C ere1c) {
+//		System.out.println(ere1c.toString());
+//		System.out.println(ere1c.ere1lList.get(0).toString());
 		Sales sales = (Sales) controller.getTo();
 		try {
 			if(ere1c.getCodigoPuntoDeEntrega_DP_()==null){
 				getLogPanel().error("Imposible continuar, el fichero no contiene codigo de punto de entrega.");
 				getLogPanel().error("Comprador: " + ere1c.getCodigoComprador_BY_());
 			} else {
-				Customer customer = searchCustomer(ere1c.getCodigoPuntoDeEntrega_DP_().trim());
-				if(customer==null){
+				RegistryNote customerRegitryNote = searchCustomerNote(ere1c.getCodigoPuntoDeEntrega_DP_().trim());
+				if(customerRegitryNote==null 
+						|| customerRegitryNote.getRegistry()==null 
+						|| customerRegitryNote.getRegistry().getId()==null){
 					getLogPanel().error("No existe el cliente con el codigo de punto de entrega " + ere1c.getCodigoPuntoDeEntrega_DP_());
 				} else {
+					Customer customer = obtainCustomer(customerRegitryNote.getRegistry().getId());
 					getLogPanel().info("Cliente detectado con el codigo de punto de entrega " + ere1c.getCodigoPuntoDeEntrega_DP_());
+					RegistryAddress address = obtainAddress(Integer.valueOf(customerRegitryNote.getDescription()));
+					getLogPanel().info("Dirección localizada: " + address.getFullAddress());
 					
 					IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
 					Criteria criteria = new Criteria();
@@ -141,8 +153,10 @@ public class EdiSalesImporterHandler implements Serializable {
 						ere1c.ere1lList.forEach(ere1l -> {
 							getLogPanel().error("Linea " + ere1l.getNumeroDeLineaArticulo() 
 									+ " omitida: La referencia de producto: " + StringUtils.trimToEmpty(ere1l.getDescripcionDelArticulo1())
-									+ " (Cod. EAN: " + StringUtils.trimToEmpty(ere1l.getCodigoUnidadDeExpedicion_1__EN_()) + ")"
-									+ " no existe para el cliente" + customer.getRegistry().getFullName());
+									+ " (Cod. cliente: " + StringUtils.trimToEmpty(ere1l.getCodigoInternoArticuloCliente_IN_()) + ")"
+									+ " (Cod. unidad exp.: " + StringUtils.trimToEmpty(ere1l.getCodigoUnidadDeExpedicion_1__EN_()) + ")"
+									+ " (Cod. EAN: " + StringUtils.trimToEmpty(ere1l.getCodigoDeArticuloEAN_13ODUN_14()) + ")"
+									+ " no existe para el cliente " + customer.getRegistry().getFullName());
 						});
 					} else {
 						SalesController salesController = (SalesController) controller;
@@ -154,9 +168,16 @@ public class EdiSalesImporterHandler implements Serializable {
 						salesController.loadCommercial(customer.getId());
 						salesController.loadDefaultPayMethod(customer.getRegistry(), true);
 						
+						if(address==null || address.getId()==null){
+							getLogPanel().error("No se ha podido localizar la dirección (plataforma) para el pedido " + sales.getReferenceCode());
+							sales.setShippingAddress((RegistryAddress) salesController.getAddresses().get(0).getValue());
+						} else {
+							sales.setShippingAddress(address);
+						}
+						
 						try {
 							sales.setIssueDate(dateFormatter.parse(ere1c
-									.getFechaDelDocumento_137__102_().toString()));
+									.getFechaDeServicio1().toString()));
 						} catch (ParseException e) {
 							getLogPanel().error("No se ha podido convertir la fecha: " + ere1c.getFechaDelDocumento_137__102_());
 							sales.setIssueDate(null);
@@ -194,8 +215,11 @@ public class EdiSalesImporterHandler implements Serializable {
 							if(rItem==null) {
 								getLogPanel().error("Linea " + ere1l.getNumeroDeLineaArticulo() 
 										+ " omitida: La referencia de producto: " + ere1l.getDescripcionDelArticulo1().trim()
-										+ " (Cod. referencia: " + ere1l.getCodigoUnidadDeExpedicion_1__EN_().trim() + ")"
-										+ " no existe para el cliente " + customer.getRegistry().getFullName());
+										+ " no existe para el cliente " + customer.getRegistry().getFullName()
+										+ " (CodigoInternoArticuloCliente: " + StringUtils.trimToNull(ere1l.getCodigoInternoArticuloCliente_IN_())
+										+ ", CodigoUnidadDeExpedicion: " + StringUtils.trimToNull(ere1l.getCodigoUnidadDeExpedicion_1__EN_())
+										+ ", CodigoDeArticuloEAN: " + StringUtils.trimToNull(ere1l.getCodigoDeArticuloEAN_13ODUN_14())
+										+ ")");
 							} else {
 								detailController.onReset(event);
 								SalesDetail detail = (SalesDetail) detailController.getTo();
@@ -210,7 +234,15 @@ public class EdiSalesImporterHandler implements Serializable {
 														StringUtils.trimToEmpty(ere1l
 																.getDescripcionDelModelo_BRN_()));
 								detail.setDescription(description);
-								detail.setQuantity(Double.valueOf(ere1l.getCantidadPedida_21_()));
+								Double quantity = Double.valueOf(ere1l.getCantidadPedida_21_());
+								Tag customerPackingTag = searchPackingTag(customerRegitryNote);
+								Tag itemPackingTag = rItem.getItem().getPackUnitsTag();
+								if(customerPackingTag!=null && itemPackingTag!=null 
+										&& !customerPackingTag.getId().equals(itemPackingTag.getId())){
+									detail.setQuantity(quantity * rItem.getItem().getPackUnits());
+								} else {
+									detail.setQuantity(quantity);
+								}
 								Double price = Double.valueOf(ere1l.getPrecioBrutoUnitario_AAB_());
 								if(price.equals(0.0)){
 									price = rItem.getPrice();
@@ -225,7 +257,10 @@ public class EdiSalesImporterHandler implements Serializable {
 								detail.setDelivered(0.0);
 								detailController.onAccept(event);
 								getLogPanel().info("Linea de pedido " + detail.getLine() 
-										+ " creada: " + detail.getQuantity() + " unidades de " + detail.getDescription());
+										+ " creada: " + detail.getQuantity() 
+										+ (customerPackingTag!=null && itemPackingTag!=null && !customerPackingTag.getId().equals(itemPackingTag.getId())
+											?" (" + quantity +" x "+ rItem.getItem().getPackUnits() + ")":"")
+										+ " unidades de " + detail.getDescription());
 							}
 						}
 					}
@@ -239,23 +274,38 @@ public class EdiSalesImporterHandler implements Serializable {
 
 	}
 
-	private Customer searchCustomer(String customerCode) {
-		Integer registryId = null;
+	private RegistryNote searchCustomerNote(String customerCode) {
+		RegistryNote rNote = null;
 		try {
 			IManagerBean rnoteBean = BeanManager.getManagerBean(RegistryNote.class);
 			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.FACTURAE);
 			criteria.addExpression(ExpressionUtilities.getLikeExpression(
 					rnoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_COMMENTS),
 					"%" + CustomerEdiSupportController.PTO_ENTREGA + "="
 							+ customerCode + ";%"));
 			List<ITransferObject> list = rnoteBean.getList(criteria);
-			registryId = list != null && !list.isEmpty() ? ((RegistryNote) list
-					.get(0)).getRegistry().getId() : null;
+			rNote = list != null && !list.isEmpty() ? ((RegistryNote) list
+					.get(0)) : null;
 		} catch (ManagerBeanException ex) {
 			getLogPanel().error(ex.getMessage());
 			LOGGER.error(ex.getMessage());
 		}
-		
+		return rNote;
+	}
+	
+	private Tag searchPackingTag(RegistryNote rNote) throws ManagerBeanException {
+		String value = rNote.getComments();
+		Matcher m;
+		Pattern p = Pattern.compile(CustomerEdiSupportController.MEDIDA + "=([^;]*);");
+		if (value != null && (m = p.matcher(value)).find()) {
+			IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
+			return (Tag) tagBean.get(Integer.valueOf(m.group(1)));
+		}
+		return null;
+	}
+	
+	private Customer obtainCustomer(Integer registryId) {		
 		if(registryId!=null){
 			try {
 				IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
@@ -267,10 +317,26 @@ public class EdiSalesImporterHandler implements Serializable {
 		}
 		return null;
 	}
+
+	private RegistryAddress obtainAddress(Integer addressId) {		
+		if(addressId!=null){
+			try {
+				IManagerBean addressBean = BeanManager.getManagerBean(RegistryAddress.class);
+				return (RegistryAddress) addressBean.get(addressId);
+			} catch (ManagerBeanException ex) {
+				getLogPanel().error(ex.getMessage());
+				LOGGER.error(ex.getMessage());
+			}
+		}
+		return null;
+	}
 	
 	private RegistryItem searchRegistryItem(ERE1L ere1l, Customer customer) {
-		try {
-			String itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoUnidadDeExpedicion_1__EN_());
+		try {			
+			String itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoInternoArticuloCliente_IN_());
+			if(itemCustomerCode==null){
+				itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoUnidadDeExpedicion_1__EN_());
+			}
 			if(itemCustomerCode==null){
 				itemCustomerCode = StringUtils.trimToNull(ere1l.getCodigoDeArticuloEAN_13ODUN_14());
 			}

@@ -12,7 +12,7 @@
 			
 		<aon:column styleClass="aon-editDataTable-textColumn" >
 			<f:facet name="header">
-				<aon:outputText value="&#160;" />
+				<aon:outputText value="#{bundle.aon_address}" />
 			</f:facet>
 			<aon:outputText value="#{address.fullAddress}" />
 		</aon:column>
@@ -63,6 +63,20 @@
 			</f:facet>
 			<aon:inputText size="15" maxlength="20"
 				value="#{customerEdiSupport.addressCodes[address.id][5]}" />
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn" >
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.product_package}" />
+			</f:facet>
+			<aon:selectOneMenu  
+				value="#{customerEdiSupport.addressCodes[address.id][6]}">
+				<f:selectItem itemLabel="-" itemValue="#{null}" />
+				<!--  
+				<f:selectItems value="#{configCollections.packingTypeTags}" />
+				-->
+				<f:selectItems value="#{customerEdiSupport.packingTypeTags}" />
+			</aon:selectOneMenu>
 		</aon:column>
 		
 	</aon:dataTable>

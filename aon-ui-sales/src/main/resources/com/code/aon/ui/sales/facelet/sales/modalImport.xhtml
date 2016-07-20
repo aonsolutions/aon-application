@@ -63,6 +63,11 @@
 										columnClasses="aon-panelGrid-odd aon-width-500
 											,aon-panelGrid-even aon-width-auto">
 										
+										<ui:include src="/com/code/aon/ui/config/facelet/series/formContent.xhtml">
+											<ui:param name="controller" value="#{sales}" />
+											<ui:param name="skipSeriesLabel" value="#{false}" />
+										</ui:include>
+										
 										<aon:outputLabel for="Sales_file"
 											value="#{bundle.finance_disk}" />
 										<aon:div>
