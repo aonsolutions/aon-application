@@ -155,8 +155,8 @@ public class UdapaDeliveryHandler implements Serializable {
 		
 		try {
 			// copy delivery to AON
-			Integer warehouseId = getWarehouse() != null && getWarehouse().getId() != null ? getWarehouse().getId()
-					: ((Warehouse) getWarehouses().get(0).getValue()).getId();  
+			Warehouse warehouse = getWarehouse() != null && getWarehouse().getId() != null ? getWarehouse()
+					: ((Warehouse) getWarehouses().get(0).getValue());  
 			
 			getLogPanel().info("Inicio del proceso de importacion");
 			
@@ -166,6 +166,7 @@ public class UdapaDeliveryHandler implements Serializable {
 						AonUtil.getDomainName(), 
 						AonUtil.getRemoteUser(),
 						ingenetDeliveryId,
+						warehouse.getWorkPlace().getId(),
 						DomainManager.getCurrentDomain());
 
 				IngenetDeliveryManager.getInstance().createAonDeliveryDetails(
@@ -174,7 +175,7 @@ public class UdapaDeliveryHandler implements Serializable {
 						DomainManager.getCurrentDomain(), 
 						ingenetDeliveryId, 
 						aonDelivery.getId(),
-						warehouseId);
+						warehouse.getId());
 				
 				getLogPanel().info("Albaran " + (aonDelivery.getSeries()!=null?aonDelivery.getSeries():"") + "/" + aonDelivery.getNumber() + " creado correctamente");
 			}

@@ -57,6 +57,15 @@
 							action="#{saleInvoiceSigner.onDownloadFacturae}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save">
 						</aon:htmlCommandLink>
+						<aon:if test="#{company.ediSupportEnabled}">
+							<aon:htmlCommandLink id="saleInvoice-edi"
+								value="#{bundle.aon_edi}" target="_blank"
+								title="#{bundle.webmail_download}"
+								disabled="#{empty saleInvoice.to.registryAddress.id}"
+								actionListener="#{saleInvoice.onExportEdiFile}"
+								styleClass="aon-finding-toolbar-item aon-icon-file-download">
+							</aon:htmlCommandLink>
+						</aon:if>
 					</ui:define>
 					<ui:define name="moreMenuContent">
 						<aon:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
@@ -117,17 +126,6 @@
 							<ui:param name="skipCancelSignButton" value="#{!saleInvoice.signed}" />
 							<ui:param name="signButtonReRender" value="saleInvoiceForm" />
 						</ui:include>
-						<aon:if test="#{company.ediSupportEnabled}">
-							<aon:menuItem id="exportEdi-saleInvoice"
-								disabled="#{empty saleInvoice.to.registryAddress.id}"
-								iconClass="aon-icon-file-entrance">
-								<aon:htmlCommandLink target="_blank"
-									disabled="#{empty saleInvoice.to.registryAddress.id}"
-									actionListener="#{saleInvoice.onExportEdiFile}"
-									value="#{bundle.webmail_download} EDI">
-								</aon:htmlCommandLink>
-							</aon:menuItem>
-						</aon:if>
 						
 						<rich:menuSeparator id="actionMenuSeparator" />
 						

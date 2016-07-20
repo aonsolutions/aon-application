@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -60,10 +61,10 @@ public class IngenetDeliveryManager {
 		return map;
 	}
 	
-	public Delivery createAonDelivery(String domainName, String user, Integer deliveryId, Integer currentDomainId) {
+	public Delivery createAonDelivery(String domainName, String user, Integer deliveryId, Integer workplaceId, Integer currentDomainId) {
 		AONContext ctx = AONContext.getAONContext(domainName,
 				currentDomainId, user);
-		return createDelivery(ctx, domainName, user, currentDomainId, deliveryId);
+		return createDelivery(ctx, domainName, user, currentDomainId, deliveryId, workplaceId);
 	}
 	
 	public void createAonDeliveryDetails(String domainName, String user, Integer currentDomainId, Integer ingenetDeliveryId, Integer aonDeliveryId, Integer warehouseId) {
@@ -73,7 +74,7 @@ public class IngenetDeliveryManager {
 	}
 	
 	private Delivery createDelivery(AONContext ctx, String domainName,
-			String user, Integer currentDomainId, Integer deliveryId) {
+			String user, Integer currentDomainId, Integer deliveryId, Integer workplaceId) {
 		
 		Integer[] scopes = SecurityDAO.getUserScopes(ctx, user);
 		
@@ -83,7 +84,7 @@ public class IngenetDeliveryManager {
 		delivery.setScope(scopes[0]);
 		delivery.setIssueTime(new Date());
 		delivery.setPayMethod(null);
-		delivery.setWorkplace(null);
+		delivery.setWorkplace(workplaceId);
 		delivery.setId(WarehouseDAO.insertDelivery(ctx, delivery));
 		return delivery;
 	}
@@ -97,29 +98,37 @@ public class IngenetDeliveryManager {
 			DeliveryDetail detail = detailList.get(idx);
 			
 			Item ingenetItem = obtainIngenetItem(domainName, user, detail.getItem().getId());
-			SalesDetail aonSalesDetail = obtainAonSalesDetail(domainName, user, currentDomainId, detail);
-			Item newItem = createNewItem(ctx, currentDomainId,
-					aonSalesDetail.getItem(), ingenetItem.getSerialNumber(),
-					ingenetItem.getSerialDate());
+			SalesDetail aonSalesDetail = null;
+			Item item = null;
+			if(ingenetItem.getSerialNumber()==null && ingenetItem.getSerialDate()==null){
+				item = obtainAonItem(domainName, user, currentDomainId, ingenetItem.getProduct().getCode());
+			} else {
+				aonSalesDetail = obtainAonSalesDetail(domainName, user, currentDomainId, detail);
+				item = createNewItem(ctx, currentDomainId,
+						aonSalesDetail.getItem(), ingenetItem.getSerialNumber(),
+						ingenetItem.getSerialDate());
+			}
 			
-			if(newItem!=null && newItem.getId()!=null){
+			if(item!=null && item.getId()!=null){
 				detail.setId(null);
 				detail.setDomain(ctx.getDomainId());
 				detail.setDelivery(new Delivery().setId(aonDeliveryId));
 				detail.setWarehouse(warehouseId);
-				detail.setSalesDetail(aonSalesDetail.getId());
-				detail.setItem(newItem);
-				detail.setDescription(aonSalesDetail.getDescription());
-				detail.setDiscountExpression(aonSalesDetail.getDiscountExpression());
+				detail.setSalesDetail(aonSalesDetail!=null?aonSalesDetail.getId():null);
+				detail.setItem(item);
+				detail.setDescription(item.getProduct().getName());
+				detail.setDiscountExpression(aonSalesDetail!=null?aonSalesDetail.getDiscountExpression():"0");
 				detail.setLine(Integer.valueOf(idx+1).shortValue());
-				detail.setPrice(aonSalesDetail.getPrice());
+				detail.setPrice(aonSalesDetail!=null?aonSalesDetail.getPrice():0.0);
 				WarehouseDAO.insertDeliveryDetail(ctx, detail);
 				
 				// TODO: close manufacture_order served lines
 				
 				// update sales_detail, increase delivered
-				aonSalesDetail.setDelivered(aonSalesDetail.getDelivered()+detail.getQuantity());
-				SalesDAO.updateSalesDetail(ctx, aonSalesDetail);
+				if(aonSalesDetail!=null && aonSalesDetail.getId()!=null){
+					aonSalesDetail.setDelivered(aonSalesDetail.getDelivered()+detail.getQuantity());
+					SalesDAO.updateSalesDetail(ctx, aonSalesDetail);
+				}
 			}
 		}
 		
@@ -174,7 +183,14 @@ public class IngenetDeliveryManager {
 	private Item obtainIngenetItem(String domainName, String user, Integer itemId) {
 		AONContext ctx = IngenetContext.getAONContext(domainName,
 				IngenetContext.getUdapaDomainId(), user);
-		return ProductDAO.getItem( ctx, o -> o.getIdProperty() .eq(itemId));
+		return ProductDAO.getItem( ctx, o -> o.getIdProperty().eq(itemId));
+	}
+	
+	private Item obtainAonItem(String domainName, String user, Integer currentDomainId, String productCode) {
+		AONContext ctx = AONContext.getAONContext(domainName,
+				currentDomainId, user);
+		Product product = ProductDAO.getProduct( ctx, productCode);
+		return ProductDAO.getItem( ctx, o -> o.getProductProperty().eq(product.getId()));
 	}
 	
 	private SalesDetail obtainAonSalesDetail(String domainName, String user, Integer currentDomainId, DeliveryDetail deliveryDetail) {
