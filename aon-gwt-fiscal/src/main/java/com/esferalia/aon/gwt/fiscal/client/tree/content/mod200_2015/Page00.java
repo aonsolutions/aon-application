@@ -396,15 +396,15 @@ public class Page00 extends PageAbs {
 		obj.getMod200().addVariable(bv);
 			
 		bv = new DoubleVariable2015( Mod2002015Key.C0053 );
-		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.NORMAL));
+		bv.setValue((obj.getMod200().getPygType() == BalanceType.NORMAL));
 		obj.getMod200().addVariable(bv);
 		
 		bv = new DoubleVariable2015( Mod2002015Key.C0054 );
-		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.ABREVIADO));
+		bv.setValue((obj.getMod200().getPygType() == BalanceType.ABREVIADO));
 		obj.getMod200().addVariable(bv);
 		
 		bv = new DoubleVariable2015( Mod2002015Key.C0055 );
-		bv.setValue((obj.getMod200().getBalanceType() == BalanceType.PYMES));
+		bv.setValue((obj.getMod200().getPygType() == BalanceType.PYMES));
 		obj.getMod200().addVariable(bv);
 		
 		bv = new DoubleVariable2015( Mod2002015Key.C0041 );
