@@ -94,7 +94,7 @@ public class GuestDataServlet extends HttpServlet implements ISQLConstants {
 			" AND AA.asset = R.asset" +
 			" AND R.active = 1";
 	private static String SELECT_SURVEY_DATA =
-			"SELECT S.id AS " + SURVEY + ", Q.id AS " + QUESTION +", Q.alias AS " + ALIAS + ", Q.type AS " + QUESTION_TYPE + 
+			"SELECT S.id AS " + SURVEY + ", Q.id AS " + QUESTION + ", Q.alias AS " + ALIAS + ", Q.type AS " + QUESTION_TYPE + 
 			"	, (SELECT SR.id FROM survey_response AS SR" +
 			"		WHERE SR.survey = S.id AND SR.registry = ? AND SR.response_date = ?) AS " + RESPONSE +
 			"	, (SELECT SRD.id FROM survey_response_detail AS SRD, survey_response AS SR" +

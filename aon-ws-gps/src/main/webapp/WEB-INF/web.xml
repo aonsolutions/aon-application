@@ -42,4 +42,15 @@
         <url-pattern>/GuestDataServlet</url-pattern>
     </servlet-mapping>
 
+	<!-- Guest Email Confirm Servlet -->
+    <servlet>
+        <servlet-name>GuestEmailConfirmServlet</servlet-name>
+        <servlet-class>com.code.aon.gps.servlet.GuestEmailConfirmServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GuestEmailConfirmServlet</servlet-name>
+        <url-pattern>/GuestEmailConfirmServlet</url-pattern>
+    </servlet-mapping>
+
 </web-app>
