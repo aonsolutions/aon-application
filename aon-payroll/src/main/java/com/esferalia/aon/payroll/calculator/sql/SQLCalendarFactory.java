@@ -25,7 +25,15 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 		private Map<Date, DayType> days = 
 			new HashMap<Date, DayType>();
 		
-		private DayType week [] = new DayType [7];
+		private DayType week [] = {
+				DayType.NOT_WORKING_DAY, 	// SUNDAY
+				DayType.WORKING_DAY,		// MONDAY
+				DayType.WORKING_DAY,		// TUESDAY
+				DayType.WORKING_DAY,		// WEDNESDAY
+				DayType.WORKING_DAY,		// THURSDAY
+				DayType.WORKING_DAY,		// FRIDAY
+				DayType.NOT_WORKING_DAY		// SATURDAY
+		};
 		
 		private DefaultCalendar parent = null;
 		

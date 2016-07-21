@@ -386,7 +386,20 @@ public class SQLContractSalaryCalculatorContext
 					WORKED_DAYS, SALARY_DAYS, PARTIAL_FACTOR,
 					REGULATORY_BASE });
 
-	public static interface NextHook {
+	private static final Map<Integer, ContextVariable > WEEK_HOURS_VARIABLES = 
+	new HashMap<Integer, ContextVariable>(){ 
+			{
+			put(SUNDAY, SUNDAY_HOURS);
+			put(MONDAY, MONDAY_HOURS); 
+			put(TUESDAY, TUESDAY_HOURS);
+			put(WEDNESDAY, WEDNESDAY_HOURS); 
+			put(THURSDAY, THURSDAY_HOURS); 
+			put(FRIDAY, FRIDAY_HOURS);
+			put(SATURDAY, SATURDAY_HOURS);
+			}
+		};
+
+		public static interface NextHook {
 		void beforeLoadDaysContextVariables(ExpressionContext ctx)
 				throws ExpressionException;
 	}
@@ -2938,22 +2951,44 @@ public class SQLContractSalaryCalculatorContext
 		}
 
 	}
+	
+	private int getWeekDaysOf(DayType dayType) {
+		int days = 0;
+		
+		ICalendar calendar = getCalendar();
+		
+		Calendar day = Calendar.getInstance();
+		day.setTime(contractStartDate);
+		for (int i = 0; i < 7 ; ++i ){
+			if ( dayType == calendar.getDayType(day) )
+				days++;
+			day.add(Calendar.DAY_OF_WEEK, 1);
+		}
+		
+		return days;
+	}
 
 	/*
 	 * Calculate 'DIAS_EFECTIVOS' for the contract (employee). Be care of leaves
 	 * and agreement.
 	 */
 	private double getActualDays() {
+		return getActualDays(contractStartDate, contractEndDate);
+	}
+
+
+	private double getActualDays(Date startDate, Date endDate) {
 		long days = 0;
 
 		ICalendar calendar = getCalendar();
 		Calendar end = Calendar.getInstance();
-		end.setTime(contractEndDate);
+		end.setTime(endDate);
 		Calendar day = Calendar.getInstance();
-		day.setTime(contractStartDate);
+		day.setTime(startDate);
 		while (end.after(day) || end.equals(day)) {
 			DayType type = calendar.getDayType(day);
-			if (isActualDay(type, day) && !leaveLoader.isLeaveDay(day)
+			if (isActualDay(type, day) 
+					&& !leaveLoader.isLeaveDay(day)
 					&& !isHoliday(day)) {
 				days++;
 			}
@@ -3650,15 +3685,38 @@ public class SQLContractSalaryCalculatorContext
 					@Override
 					public Double getValue(Period p) {
 						try {
-							if (!isFullTime())
-								return getCurrentBindings().get(WEEK_HOURS,
-										obj -> ((Number) obj).doubleValue(),
-										DEFAULT_AGRREEMENT_HOURS)
-										/ getCurrentBindings().get(
-												AGREEMENT_HOURS,
-												obj -> ((Number) obj)
-														.doubleValue(),
-												DEFAULT_AGRREEMENT_HOURS);
+							if (!isFullTime()) {
+								double agreementWeekHours = getCurrentBindings().get(
+										AGREEMENT_HOURS,
+										obj -> ((Number) obj)
+												.doubleValue(),
+										DEFAULT_AGRREEMENT_HOURS);
+								
+								if ( isWholeMonth(p) /*&& false*/ ) {
+									double weekHours = getCurrentBindings().get(WEEK_HOURS,
+											obj -> ((Number) obj).doubleValue(),
+											DEFAULT_AGRREEMENT_HOURS);
+									return weekHours / agreementWeekHours;
+								}
+								else {
+									ICalendar calendar = getCalendar();
+									double agreementDayHours = agreementWeekHours / getWeekDaysOf(DayType.WORKING_DAY);
+
+									double hours [] = {0.00, 0.00};
+									p.daysStream()
+									.forEach(day -> {
+										double dayHours = getCurrentBindings()
+												.get(WEEK_HOURS_VARIABLES.get(day.get(DAY_OF_WEEK))
+														, h -> ((Number)h).doubleValue() , 0.00);
+										hours[0] += dayHours;
+										hours[1] += dayHours > 0.00 || calendar.getDayType(day) == DayType.WORKING_DAY ? 
+												agreementDayHours : 0.00;
+									});
+									
+									return hours[0] / hours[1];
+								}
+							}
+							
 						} catch (ExpressionExceptionWrapper e) {
 						}
 						return 1.00;
@@ -4580,6 +4638,11 @@ public class SQLContractSalaryCalculatorContext
 	
 	protected static boolean isSystem(String name, String expr) {
 		return AonStringUtils.isNotEmpty(expr) && expr.matches("\\s*SISTEMA\\s*\\(\\s*['\"]"+ name +"['\"]\\s*\\)\\s*;*\\s*");
+	}
+
+	protected static boolean isWholeMonth(Period period) {
+		return AonDateUtils.get(period.getStart(), Calendar.DAY_OF_MONTH) == 1 &&
+				AonDateUtils.get(period.getEnd(), Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(period.getEnd(), Calendar.DAY_OF_MONTH);
 	}
 
 	@Override
