@@ -299,12 +299,18 @@ public class Mod2002014DAO  {
 	}
 
 	public static Mod2002014 getByYear(AONContext ctx, int year) {
-		FsModel200Record record = ctx.getDslContext()
+		Result<FsModel200Record> result = ctx.getDslContext()
 				.selectFrom(FS_MODEL200)
 				.where(FS_MODEL200.DOMAIN.equal(ctx.getDomainId()))
 				.and(FS_MODEL200.YEAR.equal(year))
-				.fetchOne();
-		Mod2002014 mod200 = populateMod200(ctx,record);
+				.orderBy(FS_MODEL200.COMPLEMENTARY.desc())
+				.fetch();
+		FsModel200Record record = null;
+		Mod2002014 mod200 = null; 
+		if (result != null && result.isNotEmpty()) {
+			record = result.get(0);
+			mod200 = populateMod200(ctx,record);
+		}
 		if (mod200 == null) {
 			createNewMod200(ctx, year);
 		} else {
