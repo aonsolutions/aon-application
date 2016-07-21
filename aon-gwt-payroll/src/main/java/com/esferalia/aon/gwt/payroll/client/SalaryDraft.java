@@ -3819,17 +3819,21 @@ public class SalaryDraft extends ResizeComposite
 
 		valuePanel.add(new InlineHTML("&nbsp;"));
 
+		boolean enabled = true ;
+
 		if (!(variable instanceof UndefinedVariable)) {
-			editor.setEnabled(agreeWithDraftPeriod(variable));
-			if (scope.compareTo(Scope.AGREEMENT) > 0 && variable.isDefinedAt(Scope.AGREEMENT)) {
+			enabled = wasUniqueDraftPeriod(variable);
+			editor.setEnabled(enabled);
+			if (enabled && scope.compareTo(Scope.AGREEMENT) > 0 && variable.isDefinedAt(Scope.AGREEMENT)) {
 				Button agreementVarButton = getAgreementVarButton(variable);
 				agreementVarButton.setTabIndex(Short.MAX_VALUE);
 				valuePanel.add(agreementVarButton);
 			}
-
-			Button deleteButton = getDeleteButton(variable);
-			deleteButton.setTabIndex(Short.MAX_VALUE);
-			valuePanel.add(deleteButton);
+			if ( enabled ){
+				Button deleteButton = getDeleteButton(variable);
+				deleteButton.setTabIndex(Short.MAX_VALUE);
+				valuePanel.add(deleteButton);
+			}
 		} else if (variable instanceof UndefinedPaymentVariable) {
 			String styles[] = eventStyles.get(Event.Type.WARNING);
 
@@ -3849,7 +3853,7 @@ public class SalaryDraft extends ResizeComposite
 			itemButton.setValue(show && variable.getScope() == Scope.SALARY, true);
 		}
 
-		if (scope.compareTo(Scope.APPLICATION) > 0
+		if (enabled && scope.compareTo(Scope.APPLICATION) > 0
 				&& (variable.isDefinedAt(Scope.SYSTEM) || variable.isDefinedAt(Scope.APPLICATION))) {
 			Button systemButton = getSystemVarButton(variable);
 			systemButton.setTabIndex(Short.MAX_VALUE);
@@ -4027,7 +4031,7 @@ public class SalaryDraft extends ResizeComposite
 		StringBuffer text = new StringBuffer(variable.getName());
 
 		try {
-			if (!agreeWithDraftPeriod(variable) && !(variable instanceof UndefinedVariable)) {
+			if (!wasUniqueDraftPeriod(variable) && !(variable instanceof UndefinedVariable)) {
 				Date startDate = variable.getStartDate();
 				Date endDate = variable.getEndDate();
 				DateTimeFormat format = DateTimeFormat.getFormat("dd/MM");
@@ -4050,10 +4054,12 @@ public class SalaryDraft extends ResizeComposite
 		return label;
 	}
 
-	private boolean agreeWithDraftPeriod(Variable variable) {
-		Date startDate = variable.getStartDate();
-		Date endDate = variable.getEndDate();
-		return (startDate.equals(salaryDraftObject.getStartDate()) && endDate.equals(salaryDraftObject.getEndDate()));
+	private boolean wasUniqueDraftPeriod(Variable variable) {
+		int count = 0;
+		for ( Variable var : salaryDraftObject.getContext() )
+			if ( var.getName().equals(variable.getName()))
+				count++;
+		return count <= 1;
 	}
 
 	private Button getSystemVarButton(Variable variable) {
