@@ -123,15 +123,15 @@ public class EdiSalesImporterHandler implements Serializable {
 				getLogPanel().error("Imposible continuar, el fichero no contiene codigo de punto de entrega.");
 				getLogPanel().error("Comprador: " + ere1c.getCodigoComprador_BY_());
 			} else {
-				RegistryNote customerRegitryNote = searchCustomerNote(ere1c.getCodigoPuntoDeEntrega_DP_().trim());
-				if(customerRegitryNote==null 
-						|| customerRegitryNote.getRegistry()==null 
-						|| customerRegitryNote.getRegistry().getId()==null){
+				RegistryNote customerRegistryNote = searchCustomerNote(ere1c.getCodigoPuntoDeEntrega_DP_().trim());
+				if(customerRegistryNote==null 
+						|| customerRegistryNote.getRegistry()==null 
+						|| customerRegistryNote.getRegistry().getId()==null){
 					getLogPanel().error("No existe el cliente con el codigo de punto de entrega " + ere1c.getCodigoPuntoDeEntrega_DP_());
 				} else {
-					Customer customer = obtainCustomer(customerRegitryNote.getRegistry().getId());
+					Customer customer = obtainCustomer(customerRegistryNote.getRegistry().getId());
 					getLogPanel().info("Cliente detectado con el codigo de punto de entrega " + ere1c.getCodigoPuntoDeEntrega_DP_());
-					RegistryAddress address = obtainAddress(Integer.valueOf(customerRegitryNote.getDescription()));
+					RegistryAddress address = obtainAddress(Integer.valueOf(customerRegistryNote.getDescription()));
 					getLogPanel().info("Dirección localizada: " + address.getFullAddress());
 					
 					IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
@@ -223,9 +223,7 @@ public class EdiSalesImporterHandler implements Serializable {
 							} else {
 								detailController.onReset(event);
 								SalesDetail detail = (SalesDetail) detailController.getTo();
-								detail.setSales(sales);							
-								detail.setItem(rItem.getItem());
-								detail.setLine(Integer.valueOf(ere1l.getNumeroDeLineaArticulo()));
+								Integer line = Integer.valueOf(ere1l.getNumeroDeLineaArticulo());
 								String description = String.format("%s. %s. %s.",
 										StringUtils.trimToEmpty(ere1l
 												.getDescripcionDelArticulo1()), StringUtils
@@ -233,34 +231,45 @@ public class EdiSalesImporterHandler implements Serializable {
 														.getDescripcionDelArticulo2()),
 														StringUtils.trimToEmpty(ere1l
 																.getDescripcionDelModelo_BRN_()));
-								detail.setDescription(description);
-								Double quantity = Double.valueOf(ere1l.getCantidadPedida_21_());
-								Tag customerPackingTag = searchPackingTag(customerRegitryNote);
-								Tag itemPackingTag = rItem.getItem().getPackUnitsTag();
-								if(customerPackingTag!=null && itemPackingTag!=null 
-										&& !customerPackingTag.getId().equals(itemPackingTag.getId())){
-									detail.setQuantity(quantity * rItem.getItem().getPackUnits());
-								} else {
-									detail.setQuantity(quantity);
-								}
+								Double ediLineQuantity = ere1l.getCantidadPedida_21_();
+								Tag customerPackingTag = searchPackingTag(customerRegistryNote);
+								Double quantity = obtainQuantity(ediLineQuantity, customerPackingTag, rItem);
 								Double price = Double.valueOf(ere1l.getPrecioBrutoUnitario_AAB_());
-								if(price.equals(0.0)){
+								if (price.equals(0.0d)) {
 									price = rItem.getPrice();
-									getLogPanel().warn("Precio no definido en la linea " + detail.getLine() 
-											+ " de " + detail.getQuantity() + " unidades de " + detail.getDescription());
+									getLogPanel()
+											.warn("Precio no definido en la linea "
+													+ line
+													+ " de "
+													+ ediLineQuantity
+													+ " unidades de "
+													+ description);
 								}
+								detail.setSales(sales);
+								detail.setItem(rItem.getItem());
+								detail.setLine(line);
+								detail.setDescription(description);
+								detail.setQuantity(quantity);
 								detail.setPrice(price);
 //								detail.setDiscountExpression(detail.getDiscountExpression().getDiscountExpr());
-//								detail.setTaxes(detail.getTaxes());
+								detail.setTaxes(0.0);
 								detail.setStatus(SalesDetailStatus.PENDING);
-//								detail.setOfferDetail(null);
+								detail.setOfferDetail(null);
 								detail.setDelivered(0.0);
 								detailController.onAccept(event);
-								getLogPanel().info("Linea de pedido " + detail.getLine() 
-										+ " creada: " + detail.getQuantity() 
-										+ (customerPackingTag!=null && itemPackingTag!=null && !customerPackingTag.getId().equals(itemPackingTag.getId())
-											?" (" + quantity +" x "+ rItem.getItem().getPackUnits() + ")":"")
-										+ " unidades de " + detail.getDescription());
+								Tag itemPackMeasurementTag = rItem.getItem().getPackMeasurementTag();
+								Tag itemPackingTag = rItem.getItem().getPackUnitsTag();
+								Tag itemPackFormatTag = rItem.getItem().getPackFormatTag();
+								double itemPackMeasurement = rItem.getItem().getPackMeasurement();
+								int itemPackUnits = rItem.getItem().getPackUnits();
+								getLogPanel().info(String.format("Linea de pedido %1$d creada: %2$.2f unidades ", line, quantity)
+										+ (quantity.equals(ediLineQuantity)
+												?String.format("(%1$.2f %2$s)", ediLineQuantity, itemPackMeasurementTag.getName()):"")
+										+ (quantity.equals(ediLineQuantity * itemPackMeasurement)
+												?String.format("(%1$.2f %2$s x %3$.2f %4$s)", ediLineQuantity, itemPackingTag.getName(), itemPackMeasurement, itemPackMeasurementTag.getName()):"")
+										+ (quantity.equals(ediLineQuantity * itemPackMeasurement * itemPackUnits)
+												?String.format("(%1$.2f %2$s x %3$d %4$s x %5$.2f %6$s)", ediLineQuantity, itemPackFormatTag.getName(), itemPackUnits, itemPackingTag.getName(), itemPackMeasurement, itemPackMeasurementTag.getName()):"")
+										+ " de " + description);
 							}
 						}
 					}
@@ -272,6 +281,28 @@ public class EdiSalesImporterHandler implements Serializable {
 			LOGGER.error(e.getMessage());
 		}
 
+	}
+	
+	private Double obtainQuantity(Double quantity, Tag customerPackingTag,
+			RegistryItem rItem) {
+		Tag itemPackFormatTag = rItem.getItem().getPackFormatTag();
+		Tag itemPackMeasurementTag = rItem.getItem().getPackMeasurementTag();
+		Tag itemPackingTag = rItem.getItem().getPackUnitsTag();
+		double itemPackMeasurement = rItem.getItem().getPackMeasurement();
+		int itemPackUnits = rItem.getItem().getPackUnits();
+		if (customerPackingTag != null && itemPackingTag != null
+				&& itemPackFormatTag != null && itemPackMeasurementTag != null) {
+			if (customerPackingTag.getId().equals(itemPackMeasurementTag.getId())) {
+				return quantity;
+			} else if (customerPackingTag.getId().equals(
+					itemPackingTag.getId())) {
+				return quantity * itemPackMeasurement;
+			} else if (customerPackingTag.getId().equals(
+					itemPackFormatTag.getId())) {
+				return quantity * itemPackMeasurement* itemPackUnits;
+			}
+		}
+		return quantity;
 	}
 
 	private RegistryNote searchCustomerNote(String customerCode) {
@@ -294,13 +325,19 @@ public class EdiSalesImporterHandler implements Serializable {
 		return rNote;
 	}
 	
-	private Tag searchPackingTag(RegistryNote rNote) throws ManagerBeanException {
+	private Tag searchPackingTag(RegistryNote rNote) {
 		String value = rNote.getComments();
 		Matcher m;
 		Pattern p = Pattern.compile(CustomerEdiSupportController.MEDIDA + "=([^;]*);");
-		if (value != null && (m = p.matcher(value)).find()) {
-			IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
-			return (Tag) tagBean.get(Integer.valueOf(m.group(1)));
+		try {
+			if (value != null && (m = p.matcher(value)).find()) {
+				IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
+				return (Tag) tagBean.get(Integer.valueOf(m.group(1)));
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		} catch (NumberFormatException e) {
+			LOGGER.error(e.getMessage());
 		}
 		return null;
 	}

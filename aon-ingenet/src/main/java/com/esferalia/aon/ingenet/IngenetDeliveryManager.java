@@ -1,6 +1,7 @@
 package com.esferalia.aon.ingenet;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,6 +12,7 @@ import com.esferalia.aon.ingenet.util.IngenetContext;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
@@ -94,6 +96,8 @@ public class IngenetDeliveryManager {
 			Integer aonDeliveryId, Integer warehouseId) {
 		
 		List<DeliveryDetail> detailList = obtainIngenetDeliveryDetailList(domainName, user, ingenetDeliveryId);
+		Collections.sort(detailList, 
+				(d1, d2)-> Integer.compare((d1.getSalesDetail()!=null?d1.getSalesDetail():0), (d2.getSalesDetail()!=null?d2.getSalesDetail():0)));
 		for(int idx=0;idx<detailList.size();idx++){
 			DeliveryDetail detail = detailList.get(idx);
 			
@@ -116,7 +120,7 @@ public class IngenetDeliveryManager {
 				detail.setWarehouse(warehouseId);
 				detail.setSalesDetail(aonSalesDetail!=null?aonSalesDetail.getId():null);
 				detail.setItem(item);
-				detail.setDescription(item.getProduct().getName());
+				detail.setDescription(obtainDeliveryDetailDescription(item, detail.getQuantity()));
 				detail.setDiscountExpression(aonSalesDetail!=null?aonSalesDetail.getDiscountExpression():"0");
 				detail.setLine(Integer.valueOf(idx+1).shortValue());
 				detail.setPrice(aonSalesDetail!=null?aonSalesDetail.getPrice():0.0);
@@ -134,6 +138,20 @@ public class IngenetDeliveryManager {
 		
 	}
 	
+	private String obtainDeliveryDetailDescription(Item item, double quantity) {
+		if(item.getSerialNumber()!=null && item.getSerialDate()!=null){
+			Tag itemPackMeasurementTag = item.getPackMeasurementTag();
+			Tag itemPackingTag = item.getPackUnitsTag();
+			Tag itemPackFormatTag = item.getPackFormatTag();
+			Double itemPackMeasurement = item.getPackMeasurement();
+			Double itemPackUnits = item.getPackUnits();
+			return String.format("%1$s \n\t- %2$.2f %3$s de %4$.2f %5$s \n\t- %6$.2f %7$s de %8$.2f %9$s", item.getProduct().getName(), 
+					(quantity/itemPackMeasurement), itemPackingTag.getName(), itemPackMeasurement, itemPackMeasurementTag.getName(),
+					(quantity/itemPackMeasurement/itemPackUnits), itemPackFormatTag.getName(), itemPackUnits, itemPackingTag.getName());
+		}
+		return item.getProduct().getName();
+	}
+
 	private Item createNewItem(AONContext ctx, int domainId, Integer itemId, String serialNumber, Date serialDate) {
 		if(serialNumber!=null && serialDate!=null){
 			Item newItem = ProductDAO.getItem(ctx, itemId);
