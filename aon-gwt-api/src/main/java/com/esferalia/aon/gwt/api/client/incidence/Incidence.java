@@ -136,6 +136,11 @@ public class Incidence extends Methods{
 		post(url.getUrl() + "repos/" + getUserName() + "/" + getRepositoryName() + "/issues/"
 						+ issue.getNumber(), requestData, callback);
 	}
+	
+	public void updateOrgIssue(JsIssue issue, String requestData, AsyncCallback<JsIssue> callback) {
+		post(url.getUrl() + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues/"
+						+ issue.getNumber(), requestData, callback);
+	}
 
 	//-------------------- LABELS
 	
@@ -148,19 +153,81 @@ public class Incidence extends Methods{
 	}	
 	
 	public void updateLabel(JsLabel label, String requestData, AsyncCallback<JsLabel> callback){
-		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels"
+		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels/"
 				+ label.getName(), requestData, callback);
 	}	
 	
 	public void deleteLabel(JsLabel label, AsyncCallback<JsLabel> callback){
-		delete(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels"
+		delete(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels/"
 				+ label.getName(), callback);
 	}
 	
+	//-------------------- TYPES
+	
+	public void getTypes(AsyncCallback<JSON<JsLabel>> callback){
+		get(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types",callback);
+	}	
+	
+	public void createType(String requestData, AsyncCallback<JsLabel> callback){
+		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types", requestData, callback);
+	}	
+	
+	public void updateType(JsLabel label, String requestData, AsyncCallback<JsLabel> callback){
+		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types/"
+				+ label.getName(), requestData, callback);
+	}	
+	
+	public void deleteType(JsLabel label, AsyncCallback<JsLabel> callback){
+		delete(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types/"
+				+ label.getName(), callback);
+	}
+	
+	//-------------------- PRIORITIES
+	
+	public void getPriorities(AsyncCallback<JSON<JsLabel>> callback){
+		get(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities",callback);
+	}	
+	
+	public void createPriority(String requestData, AsyncCallback<JsLabel> callback){
+		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities", requestData, callback);
+	}	
+
+	public void updatePriority(JsLabel label, String requestData, AsyncCallback<JsLabel> callback){
+		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities/"
+				+ label.getName(), requestData, callback);
+	}	
+	
+	public void deletePriority(JsLabel label, AsyncCallback<JsLabel> callback){
+		delete(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities/"
+				+ label.getName(), callback);
+	}
+	
+	//-------------------- USERS
+	
+	public void getUsers(AsyncCallback<JSON<JsUser>> callback){
+		get(url.getUrl() + "orgs/"+getOrganizationName()+"/members",callback);
+	}	
+
 	//-------------------- EVENTS
 	
 	public void getEvents(String url, AsyncCallback<JSON<JsEvent>> callback){
 		get(url, callback);
+	}
+	
+	//-------------------- COMMENTS
+	
+	public void getComments(String url, AsyncCallback<JSON<JsComment>> callback){
+		get(url, callback);
+	}
+	
+	public void newComment(JsIssue issue, String requestData, AsyncCallback<JsComment> callback){
+		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"
+				+ issue.getNumber() + "/comments", requestData, callback);
+	}
+	
+	public void updateComment(JsIssue issue, JsComment comment, String requestData, AsyncCallback<JsComment> callback){
+		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"
+				+ "comments/" + comment.getId(), requestData, callback);
 	}
 	
 	//---------------------- Métodos Get & Set

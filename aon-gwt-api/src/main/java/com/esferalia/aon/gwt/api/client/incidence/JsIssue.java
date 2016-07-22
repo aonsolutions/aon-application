@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.api.client.incidence;
 
+import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.google.gwt.core.client.JavaScriptObject;
 
 public class JsIssue extends JavaScriptObject{
@@ -70,5 +71,25 @@ public class JsIssue extends JavaScriptObject{
 	public final native JsUser getUser() /*-{
 		return this.user;
 	}-*/;
+	
+	public final native AonJsArray<JsLabel> getLabels() /*-{
+		return this.labels;
+	}-*/;
+	
+	public final native int getComments() /*-{
+		return this.comments;
+	}-*/;
+	
+	//************ BD ***************//
+	
+	public final native JsLabel getType() /*-{
+		return this.type;
+	}-*/;	
+	
+	public final native JsLabel getPriority() /*-{
+		return this.priority;
+	}-*/;
+	
+	
 
 }

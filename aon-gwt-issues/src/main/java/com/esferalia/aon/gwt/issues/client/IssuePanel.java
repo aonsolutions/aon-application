@@ -7,16 +7,25 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.AonUrlApi;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
+import com.esferalia.aon.gwt.api.client.incidence.JsComment;
 import com.esferalia.aon.gwt.api.client.incidence.JsEvent;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
+import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -26,13 +35,17 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 
@@ -43,7 +56,8 @@ public class IssuePanel extends Composite{
 	
 	private static Binder binder = GWT.create(Binder.class);
 
-	@UiField VerticalPanel headerVPanel;
+	@UiField SimplePanel headerPanel;
+	//@UiField VerticalPanel headerVPanel;
 	@UiField Label userLogged;
 	@UiField Label typeLabel;
 	@UiField Label priorityLabel;
@@ -70,14 +84,22 @@ public class IssuePanel extends Composite{
 	private DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	private DateTimeFormat hourFormat = DateTimeFormat.getFormat("HH:mm");
 	
+	JsIssue issue;
+	
+	
 	public IssuePanel(Issues parent, JsIssue issue) {
 		initWidget(binder.createAndBindUi(this));		
 		this.parent = parent;
-		initHeader(issue);
+		this.issue = issue;
+		VerticalPanel vp = new VerticalPanel();
+		vp.setSpacing(10);
+		initHeader(vp, issue);
+		initLabels(issue);
+		initComments(issue);
 	}
 	
-	private void initHeader(JsIssue issue) {
-		headerVPanel.add(getTitleLabel(issue.getTitle(), issue.getNumber()));
+	private void initHeader(VerticalPanel vp, JsIssue issue) {
+		vp.add(getTitleLabel(issue.getTitle(), issue.getNumber()));
 		
 		Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
 		i.getEvents(issue.getEventsUrl(), new AsyncCallback<JSON<JsEvent>>() {
@@ -92,12 +114,50 @@ public class IssuePanel extends Composite{
 				for (JsEvent e : result.getData().toLinkedList()) 
 					if(e.getEvent().equals("reopened") || e.getEvent().equals("closed"))
 						list.add(e);
-				headerVPanel.add(getStatusPanel(issue, list));
-				headerVPanel.add(getCompanyPanel(issue));
+				vp.add(getStatusPanel(vp, issue, list));
+				vp.add(getCompanyPanel(issue));
+				
+				headerPanel.add(vp);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
+	}
+	
+	private void initLabels(JsIssue issue){
+		typeLabel.setText(issue.getType() != null ? issue.getType().getName() : "Sin Asignar");
+		priorityLabel.setText(issue.getPriority() != null ? issue.getPriority().getName() : "Sin Asignar");
+		for (JsLabel label : issue.getLabels().toLinkedList()){
+			Label l = new Label(label.getName());
+			l.setStyleName(AON.AON_CSS.tagStyle());
+			l.addStyleName(AON.AON_CSS.tagNotice());
+			labelsVPanel.add(l);
+		}
+		if(issue.getAssignee() != null){
+			Label l = new Label(issue.getAssignee().getLogin());
+			l.setStyleName(AON.AON_CSS.tagStyle());
+			l.addStyleName(AON.AON_CSS.tagNotice());
+			usersVPanel.add(l);
+		}
+	}
+	
+	
+	private void initComments(JsIssue issue){
+		userLogged.setText(issue.getUser().getLogin());
+		printDescription(issue);
+		if(issue.getComments()>0){
+			Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+			i.getComments(issue.getCommentsUrl(), new AsyncCallback<JSON<JsComment>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsComment> result) {
+					for (JsComment comment : result.getData().toLinkedList())
+						printComment(comment);
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		}
 	}
 	
 	private Label getTitleLabel(String title, Integer id) {
@@ -142,7 +202,7 @@ public class IssuePanel extends Composite{
 	*/
 	
 	// TODO FUNCION TEMPORAL!!
-	private Widget getStatusPanel(JsIssue issue, LinkedList<JsEvent> events) {
+	private Widget getStatusPanel(VerticalPanel headerVPanel, JsIssue issue, LinkedList<JsEvent> events) {
 		if(events.isEmpty()){
 			return getHistorialLogHeader(issue.getState(), issue.getUser().getLogin(), 
 					dateTimeFormat.parse(issue.getCreatedAt()));
@@ -164,7 +224,7 @@ public class IssuePanel extends Composite{
 				vp.add(getHistorialLogHeader(events.get(i).getEvent(), events.get(i).getUser().getLogin(),
 						dateTimeFormat.parse(events.get(i).getCreatedAt())));
 			}
-			vp.add(getHistorialLogHeader(issue.getState(), issue.getUser().getLogin(), 
+			vp.add(getHistorialLogHeader("open", issue.getUser().getLogin(), 
 					dateTimeFormat.parse(issue.getCreatedAt())));
 			logPanel.setContent(vp);
 			headerVPanel.add(logPanel);
@@ -204,9 +264,253 @@ public class IssuePanel extends Composite{
 		return new HorizontalPanel();
 	}
 	
+	private void printDescription(JsIssue issue) {
+		int days = getDaysBefore(dateTimeFormat.parse(issue.getCreatedAt()));
+
+		final Button editButton = new Button();
+		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
+		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		editButton.addStyleName(AON.AON_CSS.editButton());
+		editButton.setTitle("Editar descripci\u00f3n");
+		editButton.setVisible(AonStringUtils.equals(
+				userLogged.getText(), issue.getUser().getLogin()));
+
+		final TextArea textArea = getTextArea(issue.getBody());
+
+		textArea.setName(String.valueOf(issue.getId()));
+
+		editButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+
+				if (editButton.getStyleName().contains(AON.AON_ICON_EDIT_ADD))
+					onEditCommentButtonClick(textArea, editButton);
+				else
+					onAcceptEditDescriptionButtonClick(textArea, editButton);
+			}
+		});
+		
+		editButton.setVisible(userLogged.getText().equals(issue.getUser().getLogin()));
+
+		FlexTable flexTable = new FlexTable();
+		flexTable.setWidget(0, 0, getHeadDescriptionLabel(issue, days));
+		flexTable.setWidget(0, 1, editButton);
+		flexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
+		flexTable.setWidget(1, 0, textArea);
+
+		historialVPanel.add(flexTable);
+	}
+	
+	private void printComment(JsComment comment) {
+		int days = getDaysBefore(dateTimeFormat.parse(comment.getCreatedAt()));
+
+		final Button editButton = new Button();
+		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
+		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		editButton.addStyleName(AON.AON_CSS.editButton());
+		editButton.setTitle("Editar comentario");
+		editButton.setVisible(AonStringUtils.equals(
+				userLogged.getText(), comment.getUser().getLogin()));
+
+		final TextArea textArea = getTextArea(comment.getBody());
+
+		textArea.setName(String.valueOf(comment.getId()));
+
+		editButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+
+				if (editButton.getStyleName().contains(AON.AON_ICON_EDIT_ADD))
+					onEditCommentButtonClick(textArea, editButton);
+				else
+					onAcceptEditCommentButtonClick(comment, textArea, editButton);
+			}
+		});
+
+		editButton.setVisible(AonStringUtils.equals(
+				userLogged.getText(), comment.getUser().getLogin()));
+
+		FlexTable flexTable = new FlexTable();
+		flexTable.setWidget(0, 0, getHeadCommentLabel(comment, days));
+		flexTable.setWidget(0, 1, editButton);
+		flexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
+		flexTable.setWidget(1, 0, textArea);
+
+		historialVPanel.add(flexTable);
+	}
+	
+	private int getDaysBefore(Date date) {
+		return CalendarUtil.getDaysBetween(date, new Date());
+	}
+	
+	private TextArea getTextArea(String text) {
+		TextArea textArea = new TextArea();
+		textArea.setReadOnly(true);
+		textArea.setVisibleLines(5);
+		textArea.setCharacterWidth(10);
+		textArea.setWidth("600px");
+		textArea.setStylePrimaryName(AON.AON_CSS.textAreaStyle());
+		textArea.setValue(text);
+		return textArea;
+	}
+	
+	private Label getHeadCommentLabel(JsComment comment, int days) {
+		Date createdAt = dateTimeFormat.parse(comment.getCreatedAt());
+		StringBuilder sb = new StringBuilder();
+		sb.append("COMENTADO por ");
+		sb.append(comment.getUser().getLogin());
+		sb.append(" el ");
+		sb.append(dateFormat.format(createdAt));
+		sb.append(" ");
+		sb.append(hourFormat.format(createdAt));
+		sb.append(" (hace " + days
+				+ ((days == 1) ? " d\u00EDa)" : " d\u00EDas)"));
+		
+		//if (AonStringUtils.isNotBlank(comment.getCompany()))
+		//	sb.append( " ( " + comment.getCompany() + " )");
+
+		Label label = new Label();
+		label.setText(sb.toString());
+		label.setStyleName(AON.AON_BOLD);
+		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+		return label;
+	}
+	
+	private Label getHeadDescriptionLabel(JsIssue comment, int days) {
+		Date createdAt = dateTimeFormat.parse(comment.getCreatedAt());
+		StringBuilder sb = new StringBuilder();
+		sb.append("DESCRITO por ");
+		sb.append(comment.getUser().getLogin());
+		sb.append(" el ");
+		sb.append(dateFormat.format(createdAt));
+		sb.append(" ");
+		sb.append(hourFormat.format(createdAt));
+		sb.append(" (hace " + days
+				+ ((days == 1) ? " d\u00EDa)" : " d\u00EDas)"));
+		
+		//if (AonStringUtils.isNotBlank(comment.getCompany()))
+		//	sb.append( " ( " + comment.getCompany() + " )");
+
+		Label label = new Label();
+		label.setText(sb.toString());
+		label.setStyleName(AON.AON_BOLD);
+		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+		return label;
+	}
+	
 	@UiHandler("returnButton")
 	void onReturnButtonClick(ClickEvent event){
-		//TODO
+		parent.contentDockLayoutPanel.removeFromParent();
+		AonToolbar t = (AonToolbar)parent.toolbar.getWidget(0);
+		t.setVisibleRefreshButton(true);
+		parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+		parent.contentDockLayoutPanel.addNorth(parent.searchContent, 85);
+		parent.contentDockLayoutPanel.add(parent.content);
+		parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);
+	}
+	
+	private void onEditCommentButtonClick(final TextArea textArea,
+			final Button button) {
+		button.removeStyleName(AON.AON_ICON_EDIT_ADD);
+		button.addStyleName(AON.AON_ICON_ACCEPT);
+		textArea.setReadOnly(false);
+		textArea.setFocus(true);
+		textArea.selectAll();
+
+		textArea.addKeyDownHandler(new KeyDownHandler() {
+
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				int keyCode = event.getNativeKeyCode();
+				if (keyCode == KeyCodes.KEY_ESCAPE)
+					onCancelEditComment(textArea, button);
+			}
+		});
+	}
+	
+	private void onCancelEditComment(TextArea textArea, Button button) {
+		button.removeStyleName(AON.AON_ICON_ACCEPT);
+		button.addStyleName(AON.AON_ICON_EDIT_ADD);
+		textArea.setReadOnly(true);
+		textArea.setFocus(false);
+	}
+	
+	private void onAcceptEditCommentButtonClick(JsComment comment, final TextArea textArea,
+			final Button button) {
+		button.removeStyleName(AON.AON_ICON_ACCEPT);
+		button.addStyleName(AON.AON_ICON_EDIT_ADD);
+		String request = "{\"body\":\""+ textArea.getText() +"\"}";
+		Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+		i.updateComment(issue, comment, request, new AsyncCallback<JsComment>() {
+			@Override
+			public void onSuccess(JsComment result) {
+				textArea.setValue(result.getBody());
+				textArea.setReadOnly(true);			
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	private void onAcceptEditDescriptionButtonClick(final TextArea textArea,
+			final Button button) {
+		button.removeStyleName(AON.AON_ICON_ACCEPT);
+		button.addStyleName(AON.AON_ICON_EDIT_ADD);
+		
+		String request = "{\"body\":\""+ textArea.getText() +"\"}";
+		Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+	
+		i.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
+			
+			@Override
+			public void onSuccess(JsIssue result) {
+				textArea.setValue(result.getBody());
+				textArea.setReadOnly(true);							
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	@UiHandler("commentButton")
+	void onClickCommentButton(ClickEvent event){
+		String request = "{\"body\":\""+ commentTextArea.getText() +"\"}";
+		Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+		i.newComment(issue, request, new AsyncCallback<JsComment>() {
+			
+			@Override public void onSuccess(JsComment result) {
+				commentTextArea.setText("");
+				printComment(result);
+				commentButton.setEnabled(false);
+			}
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	@UiHandler("commentTextArea")
+	void onKeyUpEvent(KeyUpEvent event) {
+		String value = commentTextArea.getValue().trim();
+		commentButton.setEnabled(!value.isEmpty());
+	}
+	
+	@UiHandler("closedButton")
+	void onClickClosedButton(ClickEvent event){
+		String request = "{\"state\":\"closed\"}";
+		Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+		i.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
+			
+			@Override
+			public void onSuccess(JsIssue result) {
+				headerPanel.getWidget().removeFromParent();
+				VerticalPanel vp = new VerticalPanel();
+				vp.setSpacing(10);
+				initHeader(vp, result);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
 	@UiHandler("footPanel")

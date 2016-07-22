@@ -28,8 +28,10 @@
 						<tr>
 							<td width="70%" class="{issuesResources.css.tableIssues}">
 								<g:VerticalPanel styleName="{issuesResources.css.scrollpanelOptionsIssues}">
-									<g:VerticalPanel ui:field="headerVPanel"
-										spacing="10" />
+									<g:SimplePanel ui:field="headerPanel">
+										<!-- g:VerticalPanel ui:field="headerVPanel"
+											spacing="10" /-->
+									</g:SimplePanel>
 									<g:FlowPanel ui:field="historialVPanel" />
 									<g:TextArea visibleLines="5" characterWidth="10"
 										styleName="{aonResources.css.textAreaStyle}" ui:field="commentTextArea" />
@@ -109,11 +111,10 @@
 												<g:Label text="{msg.assignedTo}" styleName="{aonResources.css.aonBold}" />
 												<g:Button ui:field="userButton" text="{msg.assignedTo}"
 													styleName="{aonResources.css.aonIconView} 
-				{aonResources.css.aonIconCommandButton}" />
-											</g:HorizontalPanel>
+														{aonResources.css.aonIconCommandButton}" />
+											</g:HorizontalPanel>		
 										</g:VerticalPanel>
 									</g:FlowPanel>
-
 								</g:VerticalPanel>
 							</td>
 						</tr>
