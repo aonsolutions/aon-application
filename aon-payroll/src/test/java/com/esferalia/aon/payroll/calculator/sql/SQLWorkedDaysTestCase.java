@@ -209,8 +209,10 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 								format("\"%s\"", random(PARTIAL_TIME)
 										.getValue()));
 						put(MONDAY_HOURS.getName(), format("%d", 0));
-						put(FRIDAY_HOURS.getName(), format("%d", 0));
+						put(TUESDAY_HOURS.getName(), format("%d", 0));
 						put(WEDNESDAY_HOURS.getName(), format("%d", 4));
+						put(THURSDAY_HOURS.getName(), format("%d", 0));
+						put(FRIDAY_HOURS.getName(), format("%d", 0));
 					}
 				});
 		

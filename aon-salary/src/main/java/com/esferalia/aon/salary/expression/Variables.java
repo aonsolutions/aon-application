@@ -164,11 +164,11 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 				var = new TimedObject<T>(def, period);
 			
 			Object value = var.getValue(period);
-			if ( value == null )
-				var = new TimedObject<T>(def, period);
+//			if ( value == null )
+//				var = new TimedObject<T>(def, period);
 			
 			read.put(key, var);
-			return mapper.apply(value);
+			return value == null ? def : mapper.apply(value);
 		}
 		
 		public <T> T get(Object key, Function<Object,T> mapper) {

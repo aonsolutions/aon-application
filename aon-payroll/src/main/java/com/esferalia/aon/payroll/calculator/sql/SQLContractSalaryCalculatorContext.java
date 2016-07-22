@@ -3707,13 +3707,26 @@ public class SQLContractSalaryCalculatorContext
 									.forEach(day -> {
 										double dayHours = getCurrentBindings()
 												.get(WEEK_HOURS_VARIABLES.get(day.get(DAY_OF_WEEK))
-														, h -> ((Number)h).doubleValue() , 0.00);
-										hours[0] += dayHours;
-										hours[1] += dayHours > 0.00 || calendar.getDayType(day) == DayType.WORKING_DAY ? 
+														, h -> ((Number)h).doubleValue() , -1.00);
+										hours[0] += dayHours > 0.00 ? dayHours : 0.00;
+//										if ( dayHours < 0 )
+//											hours[1] = 0.00;
+//										else if (dayHours > 0.00)
+//											hours[1] = agreementDayHours;
+//										else if ( calendar.getDayType(day) == DayType.WORKING_DAY)
+//											hours[1] = agreementDayHours;
+//										else
+//											hours[1] = 0.00;
+										if ( dayHours == -1.00 )
+											hours[1] += 0.00;
+										else 
+											hours[1] += dayHours > 0.00 || calendar.getDayType(day) == DayType.WORKING_DAY ? 
 												agreementDayHours : 0.00;
 									});
 									
-									return hours[0] / hours[1];
+									
+									
+									return hours[1] == 0.00? 0.00 : (hours[0] / hours[1]);
 								}
 							}
 							
