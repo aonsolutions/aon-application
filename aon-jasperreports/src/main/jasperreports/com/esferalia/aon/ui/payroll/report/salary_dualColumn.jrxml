@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary_dualColumn" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2219f940-1d11-45db-a72b-ad1a7427b049">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="265"/>
+	<property name="ireport.y" value="432"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.code.aon.common.util.CommonUtil"/>
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
@@ -235,12 +235,12 @@ $F{salary}.getDeductions().getIrpf().getAmount()-$V{irpfInKind})]]></variableExp
 				</textElement>
 				<textFieldExpression><![CDATA["RECIBO INDIVIDUAL JUSTIFICATIVO DEL PAGO DE " +
 (($F{salary}!=null && $F{salary}.getType()!=null)?(
-($F{salary}.getType().ordinal()==0?"SALARIOS":"")+
-($F{salary}.getType().ordinal()==1?"P. EXTRAS":"")+
-($F{salary}.getType().ordinal()==2?"FINIQUITOS":"")+
+($F{salary}.getType().ordinal()==0?"SALARIO":"")+
+($F{salary}.getType().ordinal()==1?"PAGA EXTRA":"")+
+($F{salary}.getType().ordinal()==2?"FINIQUITO":"")+
 ($F{salary}.getType().ordinal()==3?"ATRASOS":"")+
 ($F{salary}.getType().ordinal()==4?"VACACIONES":"")
-):"SALARIOS")]]></textFieldExpression>
+):"SALARIO")]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="52eb7ca9-98f1-4114-934f-13941cd2b741" style="label" x="2" y="94" width="109" height="13"/>

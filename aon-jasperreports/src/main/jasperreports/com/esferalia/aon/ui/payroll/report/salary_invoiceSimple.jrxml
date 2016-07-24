@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary_invoiceSimple" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3e1549ae-83d3-4d0d-86dd-406ce868a0b5">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="51"/>
+	<property name="ireport.y" value="576"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.code.aon.common.util.CommonUtil"/>
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
@@ -198,12 +198,12 @@
 				</textElement>
 				<textFieldExpression><![CDATA["RECIBO DE " +
 (($F{salary}!=null && $F{salary}.getType()!=null)?(
-($F{salary}.getType().ordinal()==0?"SALARIOS":"")+
-($F{salary}.getType().ordinal()==1?"P. EXTRAS":"")+
-($F{salary}.getType().ordinal()==2?"FINIQUITOS":"")+
+($F{salary}.getType().ordinal()==0?"SALARIO":"")+
+($F{salary}.getType().ordinal()==1?"PAGA EXTRA":"")+
+($F{salary}.getType().ordinal()==2?"FINIQUITO":"")+
 ($F{salary}.getType().ordinal()==3?"ATRASOS":"")+
 ($F{salary}.getType().ordinal()==4?"VACACIONES":"")
-):"SALARIOS")]]></textFieldExpression>
+):"SALARIO")]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement uuid="8262b029-3801-4ee3-9c03-850cff5506f9" x="562" y="574" width="14" height="228">
@@ -466,12 +466,12 @@
 				</textElement>
 				<textFieldExpression><![CDATA["RECIBO DE " +
 (($F{salary}!=null && $F{salary}.getType()!=null)?(
-($F{salary}.getType().ordinal()==0?"SALARIOS":"")+
-($F{salary}.getType().ordinal()==1?"P. EXTRAS":"")+
-($F{salary}.getType().ordinal()==2?"FINIQUITOS":"")+
+($F{salary}.getType().ordinal()==0?"SALARIO":"")+
+($F{salary}.getType().ordinal()==1?"PAGA EXTRA":"")+
+($F{salary}.getType().ordinal()==2?"FINIQUITO":"")+
 ($F{salary}.getType().ordinal()==3?"ATRASOS":"")+
 ($F{salary}.getType().ordinal()==4?"VACACIONES":"")
-):"SALARIOS")]]></textFieldExpression>
+):"SALARIO")]]></textFieldExpression>
 			</textField>
 			<image scaleImage="RetainShape" hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
 				<reportElement uuid="e341a1b5-1650-404d-9d66-92ab9de36b56" x="0" y="0" width="274" height="58">
@@ -1144,8 +1144,9 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				</box>
 				<textElement textAlignment="Left"/>
 				<textFieldExpression><![CDATA[($P{salaryScriptlet_SCRIPTLET}.getUnemploymentPercentEnterprise()!=null?
-    $P{salaryScriptlet_SCRIPTLET}.getUnemploymentPercentEnterprise() + " % | " : "")
-+ $P{salaryScriptlet_SCRIPTLET}.getUnemploymentEnterprise()]]></textFieldExpression>
+    $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getUnemploymentPercentEnterprise()*100)
+    + " % | " : "")
++ $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getUnemploymentEnterprise())]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="c5af9d57-0d81-46ef-9fe4-6f67332484da" style="text" x="98" y="188" width="86" height="12" forecolor="#000000"/>
@@ -1156,8 +1157,9 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				</box>
 				<textElement textAlignment="Left"/>
 				<textFieldExpression><![CDATA[($P{salaryScriptlet_SCRIPTLET}.getOvertimePercent()!=null?
-    $P{salaryScriptlet_SCRIPTLET}.getOvertimePercent() + " % | " : "" )
-+ $P{salaryScriptlet_SCRIPTLET}.getOvertime()]]></textFieldExpression>
+    $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getOvertimePercent()*100)
+    + " % | " : "" )
++ $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getOvertime())]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="50f11d67-e2a5-4919-a9eb-ae52fa08dd0a" style="title" x="400" y="125" width="147" height="11"/>
@@ -1213,8 +1215,9 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				</box>
 				<textElement textAlignment="Left"/>
 				<textFieldExpression><![CDATA[($P{salaryScriptlet_SCRIPTLET}.getFogasaPercent()!=null?
-    $P{salaryScriptlet_SCRIPTLET}.getFogasaPercent() + " % | " : "")
-+ $P{salaryScriptlet_SCRIPTLET}.getFogasa()]]></textFieldExpression>
+    $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getFogasaPercent()*100)
+    + " % | " : "")
++ $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getFogasa())]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="e550e595-1c55-4610-97a8-e93c4f1a5642" style="title" x="98" y="13" width="86" height="11"/>
@@ -1362,8 +1365,9 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				</box>
 				<textElement textAlignment="Left"/>
 				<textFieldExpression><![CDATA[($P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertimePercent()!=null?
-    $P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertimePercent() + " % | " : "")
-+ $P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertime()]]></textFieldExpression>
+    $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertimePercent()*100)
+    + " % | " : "")
++ $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertime())]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="51951871-77d4-4783-9399-38e61d35027a" style="text" x="184" y="166" width="86" height="12" forecolor="#000000"/>
@@ -1394,8 +1398,9 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				</box>
 				<textElement textAlignment="Left"/>
 				<textFieldExpression><![CDATA[($P{salaryScriptlet_SCRIPTLET}.getFpPercentEnterprise()!=null?
-    $P{salaryScriptlet_SCRIPTLET}.getFpPercentEnterprise() + " % | " : "")
-+ $P{salaryScriptlet_SCRIPTLET}.getFpEnterprise()]]></textFieldExpression>
+    $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getFpPercentEnterprise()*100)
+    + " % | " : "")
++ $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getFpEnterprise())]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement uuid="a8cbcd6e-d47c-4450-874d-6368b9087b7e" style="text" x="8" y="210" width="90" height="12" forecolor="#000000"/>
@@ -1416,8 +1421,9 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				</box>
 				<textElement textAlignment="Left"/>
 				<textFieldExpression><![CDATA[($P{salaryScriptlet_SCRIPTLET}.getAtEpPercentEnterprise()!=null?
-    $P{salaryScriptlet_SCRIPTLET}.getAtEpPercentEnterprise() + " % | " : "")
-+ $P{salaryScriptlet_SCRIPTLET}.getAtEpEnterprise()]]></textFieldExpression>
+    $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getAtEpPercentEnterprise()*100)
+    + " % | " : "")
++ $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getAtEpEnterprise())]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="853fe7bf-6520-4cee-a3d9-5accc4b7704a" style="title" x="8" y="68" width="90" height="10"/>
@@ -1439,8 +1445,10 @@ $F{salary}.getDeductions().getIrpf().getAmount() != 0.00]]></printWhenExpression
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[($P{salaryScriptlet_SCRIPTLET}.getCgcPercentEnterprise()!=null?
-    $P{salaryScriptlet_SCRIPTLET}.getCgcPercentEnterprise() + " % | " : "")
-+ $P{salaryScriptlet_SCRIPTLET}.getCgcEnterprise()]]></textFieldExpression>
+    $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getCgcPercentEnterprise()*100)
+    + " % | " : "")
++ $V{DoubleFormater}.format($P{salaryScriptlet_SCRIPTLET}.getCgcEnterprise())
+]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="6e658551-bbf1-4972-baf8-5882c66be506" style="title" x="184" y="24" width="86" height="10"/>
