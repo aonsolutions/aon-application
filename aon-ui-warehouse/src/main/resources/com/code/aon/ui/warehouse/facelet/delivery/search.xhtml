@@ -54,6 +54,7 @@
 			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
 				<ui:param name="logPanelTitle" value="#{bundle.aon_import} #{bundle.registry_stat_delivery} INGENET" />
 				<ui:param name="closeButtonReRender" value="deliverySearch" />
+				<aon:methodParam name="closeButtonAction" value="delivery_list" />
 				<aon:valueParam name="pollInterval" value="3000" />
 				<aon:methodParam name="closeLogPanelAtionListener"
 					default="#{delivery.udapaDeliveryHandler.onLogPanelFinish}" type="actionListener" />

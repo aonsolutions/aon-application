@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.company.WorkPlace;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.format.output.FileOutput;
@@ -120,10 +119,11 @@ public class UdapaDeliveryHandler implements Serializable {
 	}
 	
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
-		WorkPlace workPlace = ((Delivery)controller.getTo()).getWorkPlace();
-		if(workPlace != null && workPlace.getId() != null) 
-			return WarehouseCollectionsController.getWarehouses(workPlace, true);
-		else return WarehouseCollectionsController.getWarehouses(workPlace);
+		Delivery delivery = ((Delivery)controller.getTo());
+		if(delivery !=null && delivery.getId()!=null
+				&& delivery.getWorkPlace() != null && delivery.getWorkPlace().getId() != null)
+			return WarehouseCollectionsController.getWarehouses(delivery.getWorkPlace(), true);
+		else return WarehouseCollectionsController.getWarehouses(null);
 	}
 	
 	public boolean isIngenetPendingDeliveries() {
@@ -165,28 +165,16 @@ public class UdapaDeliveryHandler implements Serializable {
 				com.esferalia.aon.occam.api.model.warehouse.Delivery aonDelivery = IngenetDeliveryManager.getInstance().createAonDelivery(
 						AonUtil.getDomainName(), 
 						AonUtil.getRemoteUser(),
+						DomainManager.getCurrentDomain(),
 						ingenetDeliveryId,
 						warehouse.getWorkPlace().getId(),
-						DomainManager.getCurrentDomain());
-
-				IngenetDeliveryManager.getInstance().createAonDeliveryDetails(
-						AonUtil.getDomainName(), 
-						AonUtil.getRemoteUser(),
-						DomainManager.getCurrentDomain(), 
-						ingenetDeliveryId, 
-						aonDelivery.getId(),
 						warehouse.getId());
-				
+				if(aonDelivery==null || aonDelivery.getId()==null){
+					throw new AbortProcessingException("No se ha podido crear el albaran " + ingenetDeliveryId);
+				}
 				getLogPanel().info("Albaran " + (aonDelivery.getSeries()!=null?aonDelivery.getSeries():"") + "/" + aonDelivery.getNumber() + " creado correctamente");
 			}
 			
-			// close delivery created from INGENET
-			checks.forEach(id -> {
-				IngenetDeliveryManager.getInstance().closeIngenetDelivery(
-						AonUtil.getDomainName(), AonUtil.getRemoteUser(),
-						id);
-			});
-
 			getLogPanel().info("Albaranes importados correctamente desde INGENET");
 		} catch (Exception e) {
 			getLogPanel().info("NO SE HA PODIDO PROCESAR EL TRASPASO");
@@ -237,6 +225,7 @@ public class UdapaDeliveryHandler implements Serializable {
 	
 	public void onLogPanelFinish(ActionEvent event) {
 		getLogPanel().finish();
+		controller.onSearch(event);
 	}
 	
 	

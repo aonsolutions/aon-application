@@ -396,34 +396,55 @@ public class WarehouseDAO {
 	
 	
 	
-	public static Delivery getDelivery(AONContext ctx, Integer deliveryId){
-		return ctx.getDslContext().select().from(DELIVERY).where(DELIVERY.ID.eq(deliveryId)).limit(1).fetchInto(DELIVERY)
-				.stream().map(new FullDeliveryFiller()).findFirst().orElse(new Delivery());
-	}
-	
-	public static Delivery getDelivery(AONContext ctx, DeliveryFilter filter){
-		return ctx.getDslContext().select().from(DELIVERY).where(DELIVERY_PROPERTIES.getConditions(filter)).limit(1).fetchInto(DELIVERY)
-				.stream().map(new FullDeliveryFiller()).findFirst().orElse(new Delivery());
-	}
-	
-	public static LinkedList<Delivery> getDeliveryList(AONContext ctx, DeliveryFilter filter){
-		return ctx.getDslContext().select().from(DELIVERY).where(DELIVERY_PROPERTIES.getConditions(filter)).fetchInto(DELIVERY)
-				.stream().map(new FullDeliveryFiller()).collect(Collectors.toCollection(LinkedList::new));
+	public static Delivery getDelivery(AONContext ctx, Integer deliveryId) {
+		return ctx.getDslContext().select().from(DELIVERY)
+				.where(DELIVERY.ID.eq(deliveryId)).limit(1).fetchInto(DELIVERY)
+				.stream().map(new FullDeliveryFiller()).findFirst()
+				.orElse(new Delivery());
 	}
 
-	public static DeliveryDetail getDeliveryDetail(AONContext ctx, DeliveryDetailFilter filter){
-		return ctx.getDslContext().select().from(DELIVERY_DETAIL).where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter)).limit(1).fetchInto(DELIVERY_DETAIL)
-				.stream().map(new FullDeliveryDetailFiller()).findFirst().orElse(new DeliveryDetail());
+	public static Delivery getDelivery(AONContext ctx, DeliveryFilter filter) {
+		return ctx.getDslContext().select().from(DELIVERY)
+				.where(DELIVERY_PROPERTIES.getConditions(filter)).limit(1)
+				.fetchInto(DELIVERY).stream().map(new FullDeliveryFiller())
+				.findFirst().orElse(new Delivery());
+	}
+
+	public static LinkedList<Delivery> getDeliveryList(AONContext ctx,
+			DeliveryFilter filter) {
+		return ctx.getDslContext().select().from(DELIVERY)
+				.where(DELIVERY_PROPERTIES.getConditions(filter))
+				.fetchInto(DELIVERY).stream().map(new FullDeliveryFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	public static DeliveryDetail getDeliveryDetail(AONContext ctx,
+			DeliveryDetailFilter filter) {
+		return ctx.getDslContext().select().from(DELIVERY_DETAIL)
+				.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(DELIVERY_DETAIL).stream()
+				.map(new FullDeliveryDetailFiller()).findFirst()
+				.orElse(new DeliveryDetail());
 	}
 	
-	public static LinkedList<DeliveryDetail> getDeliveryDetailList(AONContext ctx, Integer deliveryId){
-		return ctx.getDslContext().select().from(DELIVERY_DETAIL).where(DELIVERY_DETAIL.DELIVERY.eq(deliveryId)).fetchInto(DELIVERY_DETAIL)
-				.stream().map(new FullDeliveryDetailFiller()).collect(Collectors.toCollection(LinkedList::new));
+	public static LinkedList<DeliveryDetail> getDeliveryDetailList(
+			AONContext ctx, Integer deliveryId) {
+		return ctx.getDslContext().select().from(DELIVERY_DETAIL)
+				.where(DELIVERY_DETAIL.DELIVERY.eq(deliveryId))
+				.orderBy(DELIVERY_DETAIL.SALES_DETAIL.desc(), DELIVERY_DETAIL.ITEM.asc())
+				.fetchInto(DELIVERY_DETAIL).stream()
+				.map(new FullDeliveryDetailFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static LinkedList<DeliveryDetail> getDeliveryDetailList(AONContext ctx, DeliveryDetailFilter filter){
-		return ctx.getDslContext().select().from(DELIVERY_DETAIL).where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter)).fetchInto(DELIVERY_DETAIL)
-				.stream().map(new FullDeliveryDetailFiller()).collect(Collectors.toCollection(LinkedList::new));
+	public static LinkedList<DeliveryDetail> getDeliveryDetailList(
+			AONContext ctx, DeliveryDetailFilter filter) {
+		return ctx.getDslContext().select().from(DELIVERY_DETAIL)
+				.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter))
+				.orderBy(DELIVERY_DETAIL.SALES_DETAIL.desc(), DELIVERY_DETAIL.ITEM.asc())
+				.fetchInto(DELIVERY_DETAIL).stream()
+				.map(new FullDeliveryDetailFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static int insertDelivery(AONContext ctx, Delivery delivery) {
