@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="bf352430-a19b-4ee5-89ee-fc85c0ca4d0c">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="144"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -1138,6 +1138,19 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 	</detail>
 	<pageFooter>
 		<band height="185" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="ecb5c69f-0daa-4aa9-aa29-a07388462f7c" key="textField-56" mode="Opaque" x="0" y="133" width="535" height="10" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="6" isItalic="true" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getInvoiceFooterText()]]></textFieldExpression>
+			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="7508e359-cfb6-4e70-ae8a-448b0169ec92" key="textField-56" positionType="FixRelativeToBottom" x="0" y="175" width="535" height="10"/>
 				<box>
@@ -1185,19 +1198,6 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
     +$P{company}.getDocumentCountry() + "-"
     +$P{company}.getDocument()
     : "")]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="ecb5c69f-0daa-4aa9-aa29-a07388462f7c" key="textField-56" mode="Opaque" x="0" y="137" width="535" height="10" isRemoveLineWhenBlank="true" backcolor="#CCCCCC"/>
-				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Justified" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="6" isItalic="true" pdfFontName="Helvetica-Oblique"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getInvoiceFooterText()]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement uuid="6b12e5a0-c93d-40d7-bb9f-bb6e82c877d6" key="line-9" positionType="FixRelativeToBottom" x="553" y="1" width="15" height="184" forecolor="#999999">

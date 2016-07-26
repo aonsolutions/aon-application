@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="136"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -1155,6 +1155,19 @@ $R{report_from} + " " + new SimpleDateFormat("dd/MM/yyyy").format($F{sourceTo}.g
 	</detail>
 	<pageFooter>
 		<band height="185" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="02a7cda3-00cf-47f4-96b5-2dee37bd9f92" key="textField-56" mode="Opaque" x="0" y="133" width="535" height="10" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="6" isItalic="true" pdfFontName="Helvetica-Oblique"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getInvoiceFooterText()]]></textFieldExpression>
+			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="a24c6b58-6d31-4b68-85d0-1255063686e5" key="textField-56" positionType="FixRelativeToBottom" x="0" y="175" width="535" height="10"/>
 				<box>
@@ -1202,19 +1215,6 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
     +$P{company}.getDocumentCountry() + "-"
     +$P{company}.getDocument()
     : "")]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="02a7cda3-00cf-47f4-96b5-2dee37bd9f92" key="textField-56" mode="Opaque" x="0" y="137" width="535" height="10" isRemoveLineWhenBlank="true" backcolor="#CCCCCC"/>
-				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Justified" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="6" isItalic="true" pdfFontName="Helvetica-Oblique"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{invoiceReportScriptlet_SCRIPTLET}.getInvoiceFooterText()]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement uuid="2eea654d-dd4e-49d5-ac97-083a4d020745" key="line-9" positionType="FixRelativeToBottom" x="553" y="1" width="15" height="184" forecolor="#999999">
