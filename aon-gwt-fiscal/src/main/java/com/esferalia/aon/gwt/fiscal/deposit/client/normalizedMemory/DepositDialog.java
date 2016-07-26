@@ -321,7 +321,7 @@ public abstract class DepositDialog extends CustomDialogB {
 				}
 				if(lb.getSelectedItemText().equals("Memoria predefinida")){
 					ListBox lb1 = new ListBox();
-					if(mts.size()>1) lb1.addItem("-");
+					lb1.addItem("-");
 					for (MemoryTemplate memoryTemplate : mts) {
 						lb1.addItem(memoryTemplate.getName());
 					}
