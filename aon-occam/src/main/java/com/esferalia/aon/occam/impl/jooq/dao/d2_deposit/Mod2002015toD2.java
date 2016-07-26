@@ -38,12 +38,6 @@ public class Mod2002015toD2 {
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA112700,Mod2002015Key.BA177)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA110000,Mod2002015Key.BA180)
 		
-		// TODO 
-		//********************************************************************************/
-		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA2121350,Mod2002015Key.BP1001)
-		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA2121360,Mod2002015Key.BP1002)
-		//********************************************************************************/
-		
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA2120000,Mod2002015Key.BP185)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA2121000,Mod2002015Key.BP186)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA2121100,Mod2002015Key.BP187)
@@ -51,6 +45,14 @@ public class Mod2002015toD2 {
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA2121120,Mod2002015Key.BP189)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA2121200,Mod2002015Key.BP190)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA2121300,Mod2002015Key.BP191)
+		
+		// TODO 
+		//********************************************************************************/
+		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA2121350,Mod2002015Key.BP1001)
+		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA2121360, new Mod2002015Key[]
+				{Mod2002015Key.BP1002, Mod2002015Key.BP193, Mod2002015Key.BP192, Mod2002015Key.BP702})
+		//********************************************************************************/
+		
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA2121400,Mod2002015Key.BP194)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA2121500,Mod2002015Key.BP195)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA2121600,Mod2002015Key.BP198)
@@ -364,6 +366,16 @@ public class Mod2002015toD2 {
 		DoubleVariable2015 dv = mod200.getVariable(mod200Key);
 		ctx.put(D2Key, dv==null?0.0:dv.getValue());
 	} 
+	
+	private static void set(Map<D2DepositHeaderKey, Double> ctx, Mod2002015 mod200, D2DepositHeaderKey D2Key, Mod2002015Key[] mod200Keys) {
+		Double d = 0.0;
+		for(Integer i = 0; i< mod200Keys.length ; i++){
+			DoubleVariable2015 dv = mod200.getVariable(mod200Keys[i]);
+			d = d + dv.getValue();
+		}
+		ctx.put(D2Key, d==null?0.0:d);
+	} 
+	
 	
 	public static void fill(Map<D2DepositHeaderKey, Double> ctx, Mod2002015 mod200) {
 		fillBalance(ctx, mod200);
