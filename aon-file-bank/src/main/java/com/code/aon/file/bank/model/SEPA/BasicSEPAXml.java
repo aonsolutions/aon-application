@@ -1,6 +1,7 @@
 package com.code.aon.file.bank.model.SEPA;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -45,12 +46,24 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
 	
 	private Document document;
 	
+	@Deprecated
 	private File file;
+	private PrintWriter writer;
 	
 	private ArrayList<Exception> exceptions;
 	
+	/**
+	 * This will be replaced with <code>PrintWriter</code> argument's Constructor
+	 * @param file
+	 */
+	@Deprecated
 	public BasicSEPAXml(File file) {
 		this.file = file;
+		this.exceptions = new ArrayList<Exception>();
+	}
+
+	public BasicSEPAXml(PrintWriter writer) {
+		this.writer = writer;
 		this.exceptions = new ArrayList<Exception>();
 	}
 	
@@ -73,7 +86,12 @@ public abstract class BasicSEPAXml implements FileFiller, ISEPAConstants {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(document);
-		StreamResult result = new StreamResult(this.file);
+		StreamResult result = null;
+		if(this.file!=null){
+			result = new StreamResult(this.file);
+		} else {
+			result = new StreamResult(this.writer);
+		}
  		transformer.transform(source, result);
 	}
 	

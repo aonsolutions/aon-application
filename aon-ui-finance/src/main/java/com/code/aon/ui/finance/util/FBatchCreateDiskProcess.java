@@ -1,8 +1,5 @@
 package com.code.aon.ui.finance.util;
 
-import static com.code.aon.common.IProgression.ERROR_VALUE;
-import static com.code.aon.common.IProgression.FINISH_VALUE;
-
 import java.util.List;
 
 import org.hibernate.Query;
@@ -69,45 +66,51 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 		    	case AEB_19:
 		    	case AEB_19_D:
 					AEB19Writer aeb19Writer = new AEB19Writer();
-					aeb19Writer.setProgression(controller.getProgressionState());
+					// TODO remove ProgressionState field of AEB19Writer
+//					aeb19Writer.setProgression(controller.getProgressionState());
 					aebOutput = aeb19Writer.createAEB19(company, fbatch, fbatchDetailCollection);
 					break;
 		    	case AEB_32:
 					AEB32Writer aeb32Writer = new AEB32Writer();
-					aeb32Writer.setProgression(controller.getProgressionState());
+					// TODO remove ProgressionState field of AEB32Writer
+//					aeb32Writer.setProgression(controller.getProgressionState());
 					aebOutput = aeb32Writer.createAEB32(company, fbatch, fbatchDetailCollection);
 		    		break;
 		    	case AEB_34:
 		    	case AEB_34_N:
 					AEB34Writer aeb34Writer = new AEB34Writer();
-					aeb34Writer.setProgression(controller.getProgressionState());
+					// TODO remove ProgressionState field of AEB34Writer
+//					aeb34Writer.setProgression(controller.getProgressionState());
 					aebOutput = aeb34Writer.createAEB34(company, fbatch, fbatchDetailCollection);
 					break;
 		    	case AEB_58:
 		    	case AEB_58_D:
 					AEB58Writer aeb58Writer = new AEB58Writer();
-					aeb58Writer.setProgression(controller.getProgressionState());
+					// TODO remove ProgressionState field of AEB58Writer
+//					aeb58Writer.setProgression(controller.getProgressionState());
 					aebOutput = aeb58Writer.createAEB58(company, fbatch, fbatchDetailCollection);
 					break;
 		    	case SEPA_19_14_CORE_XML:
 		    	case SEPA_19_14_COR1_XML:
 		    		controller.setMimeType(MimeType.MIME_XML);
 					SEPA19_14CoreXmlWriter sepa19Writer = new SEPA19_14CoreXmlWriter();
-					sepa19Writer.setProgression(controller.getProgressionState());
+					// TODO remove ProgressionState field of SEPA19_14CoreXmlWriter
+//					sepa19Writer.setProgression(controller.getProgressionState());
 					aebOutput = sepa19Writer.createXml(company, controller.getBankDate(), fbatch, fbatchDetailCollection);
 					break;
 		    	case SEPA_34_14_XML:
 		    	case SEPA_34_14_N_XML:
 		    		controller.setMimeType(MimeType.MIME_XML);
 					SEPA34_14XmlWriter sepa34Writer = new SEPA34_14XmlWriter();
-					sepa34Writer.setProgression(controller.getProgressionState());
+					sepa34Writer.setLogPanel(controller.getLogPanel());
 					aebOutput = sepa34Writer.createXml(company, fbatch, fbatchDetailCollection);
 		    		break;
 		    	case SEPA_58_ANTICIPO_XML:
 		    	case SEPA_58_COBRO_XML:
 		    		controller.setMimeType(MimeType.MIME_XML);
 		    		SEPA58XmlWriter sepa58Writer = new SEPA58XmlWriter();
-		    		sepa58Writer.setProgression(controller.getProgressionState());
+		    		// TODO remove ProgressionState field of SEPA58XmlWriter
+//		    		sepa58Writer.setProgression(controller.getProgressionState());
 					aebOutput = sepa58Writer.createXml(company,  controller.getBankDate(), fbatch, fbatchDetailCollection);
 		    		break;
 		    	case NONE:
@@ -116,20 +119,18 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 	    	}
 	    	controller.setAebOutput(aebOutput);
 	
-	    	Long value = FINISH_VALUE;
 	        if (aebOutput != null) {
 	        	if (aebOutput.getErrors().size() > 0) {
-	    			value = ERROR_VALUE;
-	    			controller.getProgressionState().setProgressionErrorMessage(errorMessage);
+	    			controller.getLogPanel().error(errorMessage);
 	        	} else {
 	                fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
 	                controller.getManagerBean().update(fbatch);
+	                controller.getLogPanel().info("Se han procesado todas las lineas.");
 	        	}
 	        }
-			controller.getProgressionState().setProgressionCurrentValue(value);
+	        controller.getLogPanel().info("Proceso finalizado.");
 		} catch (Throwable e) {
-			controller.getProgressionState().setProgressionErrorMessage(errorMessage);
-			controller.getProgressionState().setProgressionCurrentValue(ERROR_VALUE);
+			controller.getLogPanel().error(errorMessage);
 		}		
 	}
 

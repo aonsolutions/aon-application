@@ -9,10 +9,10 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.bank.model.CSB34.CSB34;
 import com.code.aon.file.bank.model.CSB34.data.Check;
 import com.code.aon.file.bank.model.CSB34.data.Detail;
@@ -37,18 +37,19 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB34Writer implements IFinanceConstants {
 
-	private IProgression progression;
-	
-	public void setProgression(IProgression progression) {
-		this.progression = progression;
-	}
+	private LogPanelController logPanel;
 
-	private void updateProgress( int current, int total ) {
-		if ( this.progression != null ) {
-			this.progression.setProgressionCurrentValue(Math.round((current * 100.0)/total));
+	
+	public void setLogPanel(LogPanelController logPanel) {
+		this.logPanel = logPanel;
+	}
+	
+	private void updateLogPanel( int current, int total ) {
+		if ( this.logPanel != null ) {
+			this.logPanel.info("Vencimiento "+ current + " de " + total + " procesado.");
 		}
 	}
-	
+
 	public Master getMaster(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		Orderer orderer = new Orderer();
 		orderer.setCode(StringUtils.leftPad(company.getDocument(), 10));
@@ -70,7 +71,7 @@ public class AEB34Writer implements IFinanceConstants {
 		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Detail detail = createDetail(fBatchDetail.getFinance());
 			master.addReceiver(detail);
-			updateProgress(++current, fbatchDetails.size());
+			updateLogPanel(++current, fbatchDetails.size());
 		}
 		return master;
 	}

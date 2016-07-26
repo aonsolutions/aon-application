@@ -1,7 +1,7 @@
 package com.code.aon.ui.finance.file;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,10 +12,10 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.Company;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.bank.model.CSB34.data.Detail;
 import com.code.aon.file.bank.model.CSB34.data.Master;
 import com.code.aon.file.bank.model.CSB34.data.Orderer;
@@ -36,27 +36,25 @@ import com.code.aon.ui.util.AonUtil;
 
 public class SEPA34_14XmlWriter {
 	
-	private IProgression progression;
-	
-	public void setProgression(IProgression progression) {
-		this.progression = progression;
+	private LogPanelController logPanel;
+
+	public void setLogPanel(LogPanelController logPanel) {
+		this.logPanel = logPanel;
 	}
 
 	public FileOutput createXml(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		AEB34Writer aeb34Writer = new AEB34Writer();
-		aeb34Writer.setProgression(progression);
+		aeb34Writer.setLogPanel(logPanel);
 		Master master = aeb34Writer.getMaster(company, fBatch, fbatchDetails);
 		updateMaster(master, company, fBatch, fbatchDetails);
-		try {
-			File file = File.createTempFile("SEPA34_14_", ".xml");
-			FileFiller sepa3414 = new SEPA34_14Xml(master, file);
-			FileOutput output = new FileOutput();
-			output.setFile(file);
-			output.setErrors(sepa3414.create());
-			return output;
-		} catch (IOException e) {
-			throw new ManagerBeanException(e);
-		}
+		
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		PrintWriter writer = new PrintWriter(outputStream);
+		FileFiller sepa3414 = new SEPA34_14Xml(master, writer);
+		FileOutput output = new FileOutput();
+		output.setErrors(sepa3414.create());
+		output.setContent(outputStream.toByteArray());
+		return output;
 	}
 	
 	private void updateMaster( Master master, Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails ) throws ManagerBeanException {

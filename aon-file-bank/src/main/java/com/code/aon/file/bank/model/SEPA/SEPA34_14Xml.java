@@ -1,6 +1,6 @@
 package com.code.aon.file.bank.model.SEPA;
 
-import java.io.File;
+import java.io.PrintWriter;
 import java.util.Iterator;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,8 +14,8 @@ public class SEPA34_14Xml extends BasicSEPAXml {
 	
 	private Master master;
 	
-	public SEPA34_14Xml(Master master, File file) {
-		super(file);
+	public SEPA34_14Xml(Master master, PrintWriter writer) {
+		super(writer);
 		this.master = master;
 	}
 

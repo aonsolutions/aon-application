@@ -29,7 +29,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.ProgressionState;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
@@ -37,6 +36,7 @@ import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.Finance;
@@ -76,7 +76,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private boolean showFbatchRecordWindow;
 	private boolean showSEPAWindow;
 	private AccountEntryFinanceWriter writer;
-	private ProgressionState progressionState;
+	private LogPanelController logPanel;
 	private boolean showAuditInfoWindow;
 
 	public Company getCompany() {
@@ -145,6 +145,14 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public void setShowSEPAWindow(boolean showSEPAWindow) {
 		this.showSEPAWindow = showSEPAWindow;
+	}
+	
+	public LogPanelController getLogPanel() {
+		return logPanel;
+	}
+
+	public void setLogPanel(LogPanelController logPanel) {
+		this.logPanel = logPanel;
 	}
 
 	public AccountEntryFinanceWriter getWriter() {
@@ -415,62 +423,12 @@ public class FBatchController extends BasicController implements ICollectionProv
     }
 
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
-		setProgressionState(new ProgressionState());
-		getProgressionState().start();
+		setLogPanel(LogPanelController.getInstance());
+		getLogPanel().reset();
+		getLogPanel().info("Inicio del proceso de generacion");
 		FBatchCreateDiskProcess fcdp = new FBatchCreateDiskProcess(this);
 		LongProcessThread thread = new LongProcessThread(fcdp); 
 		thread.start();		
-		/*
-		FinanceBatch fbatch = (FinanceBatch)this.getTo();
-
-    	this.mimeType = MimeType.MIME_TXT;
-    	List<FinanceBatchDetail> fbatchDetailCollection = obtainDetailsCollection(fbatch);
-    	switch ( fbatch.getFinanceBatchType() ) {
-	    	case AEB_19:
-	    	case AEB_19_D:
-				AEB19Writer aeb19Writer = new AEB19Writer();
-				aebOutput = aeb19Writer.createAEB19(getCompany(), fbatch, fbatchDetailCollection);
-				break;
-	    	case AEB_32:
-				AEB32Writer aeb32Writer = new AEB32Writer();
-				aebOutput = aeb32Writer.createAEB32(getCompany(), fbatch, fbatchDetailCollection);
-	    		break;
-	    	case AEB_34:
-	    	case AEB_34_N:
-				AEB34Writer aeb34Writer = new AEB34Writer();
-				aebOutput = aeb34Writer.createAEB34(getCompany(), fbatch, fbatchDetailCollection);
-				break;
-	    	case AEB_58:
-	    	case AEB_58_D:
-				AEB58Writer aeb58Writer = new AEB58Writer();
-				aebOutput = aeb58Writer.createAEB58(getCompany(), fbatch, fbatchDetailCollection);
-				break;
-	    	case SEPA_19_14_CORE_XML:
-	    	case SEPA_19_14_COR1_XML:
-				this.mimeType = MimeType.MIME_XML;
-				SEPA19_14CoreXmlWriter sepa19Writer = new SEPA19_14CoreXmlWriter();
-				aebOutput = sepa19Writer.createXml(getCompany(), bankDate, fbatch, fbatchDetailCollection);
-				break;
-	    	case SEPA_34_14_XML:
-	    	case SEPA_34_14_N_XML:
-				this.mimeType = MimeType.MIME_XML;
-				SEPA34_14XmlWriter sepa34Writer = new SEPA34_14XmlWriter();
-				aebOutput = sepa34Writer.createXml(getCompany(), fbatch, fbatchDetailCollection);
-	    		break;
-	    	case NONE:
-	    		LOGGER.debug( "None finance batch type");
-	    		break;
-    	}
-
-        if (aebOutput != null) {
-        	if (aebOutput.getErrors().size() > 0) {
-        		AonUtil.addErrorMessageFromBundle(FINANCE_BATCH_DISK_ERROR);
-        	} else {
-                fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
-                getManagerBean().update(fbatch);
-        	}
-        }
-        */
 	}
 
 	public boolean isDiskOk() {
@@ -494,7 +452,13 @@ public class FBatchController extends BasicController implements ICollectionProv
 	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "." + this.mimeType.getExtension() +"\"");
 
 	        ServletOutputStream output = response.getOutputStream();
-	        InputStream input = new FileInputStream(aebOutput.getFile());
+	        InputStream input = null;
+	        if(aebOutput.getFile()!=null){
+	        	input = new FileInputStream(aebOutput.getFile());
+	        } else {
+	        	input = new java.io.ByteArrayInputStream(aebOutput.getContent());
+	        }
+	        
 	        int size = IOUtils.copy(input, output);
 	        if (size > 0) {
 		        response.setHeader("Content-Length", String.valueOf(size));
@@ -504,7 +468,9 @@ public class FBatchController extends BasicController implements ICollectionProv
 	        response.flushBuffer();
 	        faces.responseComplete();
 
-	        aebOutput.getFile().delete();
+	        if(aebOutput.getFile()!=null){
+	        	aebOutput.getFile().delete();
+	        }
 	        setAebOutput(null);
         } catch (IOException e) {
 			throw new ManagerBeanException(e);
@@ -562,22 +528,14 @@ public class FBatchController extends BasicController implements ICollectionProv
 		setBankDate(new Date());
 		setShowSEPAWindow(true);
 	}
-
-	public ProgressionState getProgressionState() {
-		return progressionState;
-	}
-
-	public void setProgressionState(ProgressionState progressionState) {
-		this.progressionState = progressionState;
-	}
-
+	
 	public void setMimeType(MimeType mimeType) {
 		this.mimeType = mimeType;
 	}
 
 	public void onClosePanel(ActionEvent event) {
 		setShowSEPAWindow(false);
-		getProgressionState().finish();
+		getLogPanel().finish();
 	}
 
 	@Override
