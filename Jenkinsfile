@@ -188,6 +188,8 @@ eu-west-1
 EOF
 
 aws deploy push --application-name AON-SNAPSHOT-APP --s3-location s3://aon-solutions/aon-snapshot-app-${VERSION}${BUILD_ID}.zip --source ${temp_dir}
+
+aws deploy create-deployment --application-name AON-SNAPSHOT-APP --s3-location bucket=aon-solutions,key=aon-snapshot-app-${VERSION}${BUILD_ID}.zip,bundleType=zip --deployment-group-name AON-NET-GROUP  --deployment-config-name  CodeDeployDefault.AllAtOnce  
 '''
    }   
 
