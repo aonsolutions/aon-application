@@ -235,7 +235,7 @@ public abstract class PageAbs extends ResizeComposite {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(key.getCode(), d.toString());
+					onEdit(key.getCode(), round(d, 2).toString());
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -295,7 +295,7 @@ public abstract class PageAbs extends ResizeComposite {
 					text.addStyleName(AON.AON_CSS.aonChanged());
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(key.getCode(), d.toString());
+					onEdit(key.getCode(), round(d, 2).toString());
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -342,7 +342,7 @@ public abstract class PageAbs extends ResizeComposite {
 					text.addStyleName(AON.AON_CSS.aonChanged());
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(key.getCode(), d.toString());
+					onEdit(key.getCode(), round(d, 2).toString());
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -398,7 +398,7 @@ public abstract class PageAbs extends ResizeComposite {
 					
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(key.getCode(), d.toString());
+					onEdit(key.getCode(), round(d, 2).toString());
 				} catch (ParseException e) {
 					// nothing.
 				}
@@ -695,6 +695,14 @@ public abstract class PageAbs extends ResizeComposite {
 			return desc.substring(0, pos) + (year-1) + desc.substring(pos+1);
 
 		}else return desc;	
+	}
+	
+	public static Double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+	    long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    long tmp = Math.round(value);
+	    return (double) tmp / factor;
 	}
 	
 	protected abstract void initializeTable();

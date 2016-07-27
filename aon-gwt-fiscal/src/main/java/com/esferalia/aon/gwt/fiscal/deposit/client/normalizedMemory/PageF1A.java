@@ -235,7 +235,7 @@ public class PageF1A extends PageAbs {
 					text.setTitle(code);
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(code, d.toString());
+					onEdit(code, round(d, 2).toString());
 					
 				} catch (ParseException e) {
 					// nothing.
@@ -326,7 +326,7 @@ public class PageF1A extends PageAbs {
 					dl.addStyleName(AON.AON_CSS.aonChanged());
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(key2, dl.getValue().toString());
+					onEdit(key2, round(dl.getValue(),2).toString());
 				}
 			});
 		}
