@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.impl.jooq.dao.d2_deposit;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
-import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.DoubleVariable2015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key;
@@ -112,8 +111,6 @@ public class Mod2002015toD2 {
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41490,new Mod2002015Key[]
 				{Mod2002015Key.PG298, Mod2002015Key.PG301})
 		
-		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41430,Mod2002015Key.PG304)
-		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41490,Mod2002015Key.PG329)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41500,Mod2002015Key.PG305)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41600,Mod2002015Key.PG309)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41700,Mod2002015Key.PG312)
