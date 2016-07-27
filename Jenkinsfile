@@ -16,11 +16,11 @@ node {
    // **       in the global configuration.           
    def mvnHome = tool 'M3'
    
+   // we want to pick up the version from the pom
+   def pom = readMavenPom file: 'pom.xml'
+   
    if ( env.MAVEN_RELEASE ) {
       stage 'Perform Maven Release'
-   
-      // we want to pick up the version from the pom
-      def pom = readMavenPom file: 'pom.xml'
    
       def tag = pom.version.replace("-SNAPSHOT", ".x")
 
@@ -101,6 +101,8 @@ node {
 
       // Mark the AWS deploy 'stage'....
       stage 'AWS CodeDeploy'
+
+      env.VERSION=pom.version
 
       // 
       sh '''
@@ -185,7 +187,7 @@ eu-west-1
 
 EOF
 
-aws deploy push --application-name AON-SNAPSHOT-APP --s3-location s3://aon-solutions/aon-snapshot-app.zip --source ${temp_dir}
+aws deploy push --application-name AON-SNAPSHOT-APP --s3-location s3://aon-solutions/aon-snapshot-app-${VERSION}${BUILD_ID}.zip --source ${temp_dir}
 '''
    }   
 
