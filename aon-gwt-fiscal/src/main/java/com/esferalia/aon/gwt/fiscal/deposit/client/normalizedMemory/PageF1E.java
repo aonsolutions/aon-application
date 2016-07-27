@@ -234,7 +234,7 @@ public class PageF1E extends PageAbs {
 					text.setTitle(code);
 					normalizedMemory.saveButton.setEnabled(true);
 					normalizedMemory.cancelButton.setVisible(true);
-					onEdit(code, d.toString());
+					onEdit(code, round(d,2).toString());
 					
 				} catch (ParseException e) {
 					// nothing.

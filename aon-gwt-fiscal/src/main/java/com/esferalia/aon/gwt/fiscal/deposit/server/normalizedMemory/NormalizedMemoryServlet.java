@@ -599,7 +599,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 				ctx.put("Q"+key, calculated);
 				
 				if(map.containsKey(key)) map.remove(key);
-				map.put(key, calculated.toString());
+				map.put(key, round(calculated, 2).toString());
 			}
 		}
 		return map;
@@ -916,4 +916,12 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements
 		return map;
 	}
 	
+	
+	public static Double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+	    long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    long tmp = Math.round(value);
+	    return (double) tmp / factor;
+	}
 }
