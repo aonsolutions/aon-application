@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.d2_deposit;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
- 
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.DoubleVariable2014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
@@ -97,9 +97,12 @@ public class Mod2002014toD2 {
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41200,Mod2002014Key.PG294)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41300,Mod2002014Key.PG295)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA49100,Mod2002014Key.PG296)
+		
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41400,Mod2002014Key.PG297)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41430,Mod2002014Key.PG304)
-		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41490,Mod2002014Key.PG329)
+		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41490,new Mod2002014Key[]
+				{Mod2002014Key.PG298, Mod2002014Key.PG301})
+		
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41500,Mod2002014Key.PG305)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41600,Mod2002014Key.PG309)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41700,Mod2002014Key.PG312)
@@ -108,6 +111,11 @@ public class Mod2002014toD2 {
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA49300,Mod2002014Key.PG325)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41900,Mod2002014Key.PG326)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA49500,Mod2002014Key.PG327)
+		
+		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA42100,Mod2002014Key.PG329)
+		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA42110,Mod2002014Key.PG330)
+		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA42120,Mod2002014Key.PG331)
+		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA42130,Mod2002014Key.PG332)
 	};
 		
 	private static final IPropertyFiller[] ECPN_ACTIVE_KEYS = new IPropertyFiller[] {
@@ -440,7 +448,12 @@ public class Mod2002014toD2 {
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA412009,Mod2002014Key.PG294)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA413009,Mod2002014Key.PG295)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA491009,Mod2002014Key.PG296)
+			
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA414009,Mod2002014Key.PG297)
+			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA414309,Mod2002014Key.PG304)
+			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA414909,new Mod2002014Key[]
+					{Mod2002014Key.PG298, Mod2002014Key.PG301})
+			
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA414309,Mod2002014Key.PG304)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA414909,Mod2002014Key.PG329)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA415009,Mod2002014Key.PG305)
@@ -451,6 +464,11 @@ public class Mod2002014toD2 {
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA493009,Mod2002014Key.PG325)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA419009,Mod2002014Key.PG326)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA495009,Mod2002014Key.PG327)
+			
+			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA421009,Mod2002014Key.PG329)
+			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA421109,Mod2002014Key.PG330)
+			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA421209,Mod2002014Key.PG331)
+			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA421309,Mod2002014Key.PG332)
 		};
 			
 		private static final IPropertyFiller[] ECPN_ACTIVE_KEYS_NEXT = new IPropertyFiller[] {
@@ -702,6 +720,15 @@ public class Mod2002014toD2 {
 	private static void set(Map<D2DepositHeaderKey, Double> ctx, Mod2002014 mod200, D2DepositHeaderKey D2Key, Mod2002014Key mod200Key) {
 		DoubleVariable2014 dv = mod200.getVariable(mod200Key);
 		ctx.put(D2Key, dv==null?0.0:dv.getValue());
+	} 
+	
+	private static void set(Map<D2DepositHeaderKey, Double> ctx, Mod2002014 mod200, D2DepositHeaderKey D2Key, Mod2002014Key[] mod200Keys) {
+		Double d = 0.0;
+		for(Integer i = 0; i < mod200Keys.length; i++){
+			DoubleVariable2014 dv = mod200.getVariable(mod200Keys[i]);
+			d = d + (dv == null ? 0.0 : dv.getValue());
+		}
+		ctx.put(D2Key, d);
 	} 
 	
 	public static void fill(Map<D2DepositHeaderKey, Double> ctx, Mod2002014 mod200, Integer year) {
