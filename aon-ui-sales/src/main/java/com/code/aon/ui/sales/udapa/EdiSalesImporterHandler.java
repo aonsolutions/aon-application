@@ -107,9 +107,9 @@ public class EdiSalesImporterHandler implements Serializable {
 			LOGGER.error(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-		getLogPanel().info("Inicio del proceso de importacion");
+		getLogPanel().info("Inicio del proceso.");
 		createSales(event, ere1c);
-		getLogPanel().info("Proceso finalizado correctamente");
+		getLogPanel().info("Proceso finalizado.");
 		setAonFile(null);
 		setShowImportFileWindow(false);
 	}
@@ -150,14 +150,15 @@ public class EdiSalesImporterHandler implements Serializable {
 					});
 					
 					if(!undefinedItems.isEmpty()){
-						ere1c.ere1lList.forEach(ere1l -> {
+						undefinedItems.forEach(ere1l -> {
 							getLogPanel().error("Linea " + ere1l.getNumeroDeLineaArticulo() 
-									+ " omitida: La referencia de producto: " + StringUtils.trimToEmpty(ere1l.getDescripcionDelArticulo1())
+									+ " : La referencia de producto: " + StringUtils.trimToEmpty(ere1l.getDescripcionDelArticulo1())
 									+ " (Cod. cliente: " + StringUtils.trimToEmpty(ere1l.getCodigoInternoArticuloCliente_IN_()) + ")"
 									+ " (Cod. unidad exp.: " + StringUtils.trimToEmpty(ere1l.getCodigoUnidadDeExpedicion_1__EN_()) + ")"
 									+ " (Cod. EAN: " + StringUtils.trimToEmpty(ere1l.getCodigoDeArticuloEAN_13ODUN_14()) + ")"
 									+ " no existe para el cliente " + customer.getRegistry().getFullName());
 						});
+						getLogPanel().info("PROCESO ABORTADO");
 					} else {
 						SalesController salesController = (SalesController) controller;
 						sales.setCustomer(customer);
@@ -381,6 +382,7 @@ public class EdiSalesImporterHandler implements Serializable {
 				IManagerBean itemBean = BeanManager.getManagerBean(RegistryItem.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_CODE), itemCustomerCode);
+				criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID), customer.getRegistry().getId());
 				List<ITransferObject> list = itemBean.getList(criteria);
 				if(list!=null && !list.isEmpty()){
 					return (RegistryItem) list.get(0);
