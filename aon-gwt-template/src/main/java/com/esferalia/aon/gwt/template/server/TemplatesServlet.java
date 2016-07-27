@@ -1389,22 +1389,27 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		case "Categor\u00eda" :
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
 				String strAux = toString(value);
-				Vector<ProductCategory> v = DBProduct.getCategories(domain.getName(), domain.getId(), getUser().getLogin());
-				Boolean b = true;
-				for(ProductCategory pc : v){
-					if(strAux.equalsIgnoreCase(pc.getName())){
-						product.getProduct().setCategory(pc.getId());
-						b= false;
+				if(strAux.length() > 31){
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
+				} else {
+					Vector<ProductCategory> v = DBProduct.getCategories(domain.getName(), domain.getId(), getUser().getLogin());
+					Boolean b = true;
+					for(ProductCategory pc : v){
+						if(strAux.equalsIgnoreCase(pc.getName())){
+							product.getProduct().setCategory(pc.getId());
+							b= false;
+						}
 					}
-				}
-				if(b){
-					Long c = ti.getColumns().stream().filter(f -> f.contains("Detalle")).count();
-					ProductCategory productCategory = AON.insertProductCategory(domain.getName(), domain.getId(), getUser().getLogin(),
+					if(b){
+						Long c = ti.getColumns().stream().filter(f -> f.contains("Detalle")).count();
+						ProductCategory productCategory = AON.insertProductCategory(domain.getName(), domain.getId(), getUser().getLogin(),
 							new ProductCategory().setDomain(domain.getId()).setName(strAux)
 							.setDetail(c==1 || c==2 || c==3 ? " " : null)
 							.setDetail2(c==2 || c==3 ? " " : null)
 							.setDetail3(c==3 ? " " : null));
-					product.getProduct().setCategory(productCategory.getId());
+						product.getProduct().setCategory(productCategory.getId());
+					}
 				}
 			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
@@ -1412,18 +1417,23 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 		case "Marca" : 
 			if(type.equals(Cell.CELL_TYPE_STRING) || type.equals(Cell.CELL_TYPE_NUMERIC)){
 				String strAux = toString(value);
-				Vector<Brand> v =  DBProduct.getBrands(domain.getName(), domain.getId(), getUser().getLogin());
-				Boolean b = true;
-				for(Brand brand : v){
-					if(strAux.equalsIgnoreCase(brand.getName())){
-						product.getProduct().setBrand(brand.getId());
-						b= false;
+				if(strAux.length() > 63){
+					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
+					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
+				} else {
+					Vector<Brand> v =  DBProduct.getBrands(domain.getName(), domain.getId(), getUser().getLogin());
+					Boolean b = true;
+					for(Brand brand : v){
+						if(strAux.equalsIgnoreCase(brand.getName())){
+							product.getProduct().setBrand(brand.getId());
+							b= false;
+						}
 					}
-				}
-				if(b) {
-					Brand brand = AON.insertBrand(domain.getName(), domain.getId(), getUser().getLogin(),
+					if(b) {
+						Brand brand = AON.insertBrand(domain.getName(), domain.getId(), getUser().getLogin(),
 							new Brand().setDomain(domain.getId()).setName(strAux));
-					product.getProduct().setBrand(brand.getId());
+						product.getProduct().setBrand(brand.getId());
+					}
 				}
 			}
 			else if(!type.equals(Cell.CELL_TYPE_BLANK)) return null;
