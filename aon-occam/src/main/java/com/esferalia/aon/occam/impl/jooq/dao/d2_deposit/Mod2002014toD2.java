@@ -14,7 +14,7 @@ public class Mod2002014toD2 {
 	private static interface IPropertyFiller {
 		public void fill(Map<D2DepositHeaderKey,Double> map,Mod2002014 mod200);
 	}
-	
+
 	private static final IPropertyFiller[] BALANCE_ACTIVE_KEYS = new IPropertyFiller[] {
 		 (ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA111000,Mod2002014Key.BA101)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA111100,Mod2002014Key.BA102)
@@ -385,6 +385,9 @@ public class Mod2002014toD2 {
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA21211209,Mod2002014Key.BP189)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA21212009,Mod2002014Key.BP190)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA21213009,Mod2002014Key.BP191)
+			
+			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA21213609,Mod2002014Key.BP191)
+			
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA21214009,Mod2002014Key.BP194)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA21215009,Mod2002014Key.BP195)
 			,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.BA21216009,Mod2002014Key.BP198)
@@ -709,8 +712,9 @@ public class Mod2002014toD2 {
 	}
 	public static void fillBalance(Map<D2DepositHeaderKey, Double> ctx, Mod2002014 mod200, Integer year) {
 		if(year == 2014)
-			for (IPropertyFiller filler : BALANCE_ACTIVE_KEYS) 
+			for (IPropertyFiller filler : BALANCE_ACTIVE_KEYS)
 				filler.fill(ctx, mod200);
+			
 		if(year == 2015)
 			for (IPropertyFiller filler : BALANCE_ACTIVE_KEYS_NEXT)
 				filler.fill(ctx, mod200);
