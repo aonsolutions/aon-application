@@ -156,15 +156,11 @@ public class AFI extends AbstractFileFiller{
 			createLine(ETI,properties);
 			int numEmp = 0;
 			int numTotal = 0;
-			String empresa = null;
 			for (EMP emp: eti.getEmpresas()) {
-				if (!ObjectUtils.equals(empresa, emp.getNumeroIdentificacion())) {
-					++numEmp;
-					properties.put(EMP , emp);
-					createLine(EMP,properties);
-					++numTotal;
-					empresa = emp.getNumeroIdentificacion();
-				}
+				++numEmp;
+				properties.put(EMP , emp);
+				createLine(EMP,properties);
+				++numTotal;
 				if (emp.getRzs() != null) {
 					properties.put(RZS , emp.getRzs());
 					createLine(RZS,properties);
