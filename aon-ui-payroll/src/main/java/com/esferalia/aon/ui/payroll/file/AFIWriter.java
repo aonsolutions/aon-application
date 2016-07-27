@@ -116,9 +116,21 @@ public class AFIWriter implements Serializable {
 			AonUtil.addErrorMessage("No se ha definido la clave de autorización.");
 		}
 		eti.setPrueba( testFile?TESTING_CHECK:WHITESPACE_1 );
-		for (Enterprise e: getEnterprises(list)) {
-			EMP emp = createEMPrecord(e, list);
-			eti.getEmpresas().add(emp);
+		
+		list = list.stream()
+				.sorted((d1, d2) -> d1.getContract().getEnterpriseCCC().getId().compareTo(d2.getContract().getEnterpriseCCC().getId()))
+				.collect(Collectors.toList());
+		
+		EMP emp = null;
+		EnterpriseCCC previousCcc = null;
+		for (ContractBatchDetail detail: list) {
+			if(emp==null || !detail.getContract().getEnterpriseCCC().getId().equals(previousCcc.getId())){
+				previousCcc = detail.getContract().getEnterpriseCCC();
+				emp = createEMPrecord(previousCcc, list);
+				eti.getEmpresas().add(emp);
+			}
+			TRA tra = createTRARecord(detail);
+			emp.getTrabajadores().add(tra);
 		}
 		setEti( eti );
 		createETFRecord( eti );
@@ -136,10 +148,10 @@ public class AFIWriter implements Serializable {
 		eti.setEtf(etf);
 	}
 	
-	private EMP createEMPrecord(Enterprise enterprise, List<ContractBatchDetail> list) throws  ManagerBeanException {
+	private EMP createEMPrecord(EnterpriseCCC enterpriseCcc, List<ContractBatchDetail> list) throws  ManagerBeanException {
 		EMP emp = new EMP();
-		emp.setCodigoCuentaCotizacionSeguridadSocial(obtainMainCCC(enterprise));
-		
+		Enterprise enterprise = enterpriseCcc.getActivity().getEnterprise();
+		emp.setCodigoCuentaCotizacionSeguridadSocial(PayrollUtils.getInstance().getRegimeCode(enterpriseCcc)+enterpriseCcc.getCcc());
 		DocumentType docType = enterprise.getRegistry().getDocumentType();
     	if(docType==DocumentType.NIF){
     		emp.setTipoDocumento("1");
@@ -168,14 +180,6 @@ public class AFIWriter implements Serializable {
 
 		emp.setRzs(createRZSrecord(enterprise));
 		emp.setAccion(WHITESPACE_3);
-//		for(Contract c: getContracts(enterprise, list)){
-		list = list.stream()
-				.filter(o -> o.getContract().getWorkPlace().getEnterprise().getId().equals(enterprise.getId()))
-				.collect(Collectors.toList());
-		for(ContractBatchDetail c: list){
-			TRA tra = createTRARecord(c);
-			emp.getTrabajadores().add(tra);
-		}
 		return emp;
 	}
 	
