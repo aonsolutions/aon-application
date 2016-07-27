@@ -8,7 +8,7 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<scriptlet name="DeliveryScriptlet" class="com.code.aon.ui.product.util.print.DeliveryReportScriptlet"/>
+	<scriptlet name="ProductScriptlet" class="com.code.aon.ui.product.util.print.ProductReportScriptlet"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="valuated" class="java.lang.Boolean"/>
 	<field name="price" class="java.lang.Double"/>
@@ -256,7 +256,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{DeliveryScriptlet_SCRIPTLET}.getItemCode($F{item},$F{delivery}.getCustomer())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ProductScriptlet_SCRIPTLET}.getCode($F{item},$F{delivery}.getCustomer())]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

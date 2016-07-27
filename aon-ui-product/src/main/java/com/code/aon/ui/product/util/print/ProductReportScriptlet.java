@@ -21,13 +21,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 import net.sf.jasperreports.engine.JRDefaultScriptlet;
 
 
-public class DeliveryReportScriptlet extends JRDefaultScriptlet implements Serializable {
+public class ProductReportScriptlet extends JRDefaultScriptlet implements Serializable {
 		
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryReportScriptlet.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProductReportScriptlet.class.getName());
 	
-	public String getItemCode(Item item, Customer customer){
+	public String getCode(Item item, Customer customer){
 		try {
 			if(item.getProduct().isSerializable()){
 				item = item.getProduct().getBaseItem();
