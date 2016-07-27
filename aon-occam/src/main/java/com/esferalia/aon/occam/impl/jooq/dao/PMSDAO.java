@@ -237,7 +237,8 @@ public class PMSDAO {
 	}
 	
 	public static LinkedList<ProjectReservationService> getHHGReservationServices(AONContext ctx, Integer project){
-		return ctx.getDslContext().select(PROJECT_RESERVATION_SERVICE.SERVICE_CODE, PROJECT_RESERVATION_SERVICE.MEAL_PLAN, PROJECT_RESERVATION_SERVICE.ID)
+		return ctx.getDslContext().select(PROJECT_RESERVATION_SERVICE.SERVICE_CODE, PROJECT_RESERVATION_SERVICE.MEAL_PLAN, PROJECT_RESERVATION_SERVICE.ID,
+				PROJECT_RESERVATION_SERVICE.ITEM)
 		.from(PROJECT_RESERVATION_SERVICE)
 		.where(PROJECT_RESERVATION_SERVICE.PROJECT_RESERVATION.eq(project)).fetchInto(PROJECT_RESERVATION_SERVICE)
 		.stream().map(new HHGProjectReservationServiceFiller()).collect(Collectors.toCollection(LinkedList::new));
@@ -328,7 +329,8 @@ public class PMSDAO {
 			return new ProjectReservationService()
 					.setServiceCode(r.getServiceCode())
 					.setMealPlan(r.getMealPlan())
-					.setId(r.getId());
+					.setId(r.getId())
+					.setItem(r.getItem());
 		}
 	}
 	

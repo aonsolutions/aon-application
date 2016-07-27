@@ -311,9 +311,10 @@ public class BookingHarvest {
 	
 	public class ServiceDetail{
 		private String effectiveDate;
-		private String quantity;
-		private String price;
-		private String taxableBase;
+		private Double quantity;
+		private Double price;
+		private Double taxableBase;
+		private Double total;
 
 		public String getEffectiveDate() {
 			return effectiveDate;
@@ -321,23 +322,29 @@ public class BookingHarvest {
 		public void setEffectiveDate(String effectiveDate) {
 			this.effectiveDate = effectiveDate;
 		}
-		public String getQuantity() {
+		public Double getQuantity() {
 			return quantity;
 		}
-		public void setQuantity(String quantity) {
+		public void setQuantity(Double quantity) {
 			this.quantity = quantity;
 		}
-		public String getPrice() {
+		public Double getPrice() {
 			return price;
 		}
-		public void setPrice(String price) {
+		public void setPrice(Double price) {
 			this.price = price;
 		}
-		public String getTaxableBase() {
+		public Double getTaxableBase() {
 			return taxableBase;
 		}
-		public void setTaxableBase(String taxableBase) {
+		public void setTaxableBase(Double taxableBase) {
 			this.taxableBase = taxableBase;
+		}
+		public Double getTotal() {
+			return total;
+		}
+		public void setTotal(Double total) {
+			this.total = total;
 		}
 
 		public JSONObject toJSON(){
@@ -347,6 +354,7 @@ public class BookingHarvest {
 				json.put("quantity", getQuantity());
 				json.put("price", getPrice());
 				json.put("taxable_base", getTaxableBase());
+				json.put("total", getTotal());
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

@@ -16,6 +16,8 @@ import com.code.aon.hhg.webservice.dialog.BookingHarvest.ServiceDetail;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.PMS;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectReservationRoom;
 import com.esferalia.aon.occam.api.model.project.ProjectReservationService;
@@ -132,25 +134,32 @@ public class DBConsults {
 			Service service = bh.new Service();
 			service.setMealPlan(pr.getMealPlan());
 			service.setServiceCode(pr.getServiceCode());
+			Item item = AON.getItem(domainName, domainId, login, pr.getItem());
+			
+			Tax tax = AON.getTax(domainName, domainId, login,item.getProduct().getVat());
 			service.setServicesDetail(getHHGReservationServicesDetail(domainName, domainId, login, pr.getId()).stream()
-				.map(new ServiceDetailFiller(bh)).collect(Collectors.toCollection(LinkedList::new)));
+				.map(new ServiceDetailFiller(bh, tax.getPercentage())).collect(Collectors.toCollection(LinkedList::new)));
 			return service;
 		}
 	}
 	
 	private static class ServiceDetailFiller implements Function<ProjectReservationServiceDetail, ServiceDetail> {
 		BookingHarvest bh;
-		public ServiceDetailFiller(BookingHarvest bh) {
+		Double vat;
+		public ServiceDetailFiller(BookingHarvest bh, Double vat) {
 			this.bh = bh;
+			this.vat = vat;
 		}
 		
 		@Override
 		public ServiceDetail apply(ProjectReservationServiceDetail pr) {
+			
 			ServiceDetail serviceDetail = bh.new ServiceDetail();
 			serviceDetail.setEffectiveDate(dateFormat.format(pr.getEffectiveDate()));
-			serviceDetail.setPrice(pr.getPrice().toString());
-			serviceDetail.setQuantity(pr.getQuantity().toString());
-			serviceDetail.setTaxableBase(pr.getTaxableBase().toString());
+			serviceDetail.setPrice(pr.getPrice());
+			serviceDetail.setQuantity(pr.getQuantity());
+			serviceDetail.setTaxableBase(pr.getTaxableBase());
+			serviceDetail.setTotal(pr.getTaxableBase() + (pr.getTaxableBase() * (vat/100)));
 			
 			return serviceDetail;
 		}
