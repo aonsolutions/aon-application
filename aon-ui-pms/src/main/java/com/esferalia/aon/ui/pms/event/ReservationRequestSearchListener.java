@@ -71,7 +71,11 @@ public class ReservationRequestSearchListener extends ControllerSearchListener {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.RESERVATION_REQUEST_HOTEL_ID), getHotel().getId());			
 		}
 		if (StringUtils.isNotEmpty(getCrsCode())) {
-			criteria.addExpression(ExpressionUtilities.getLikeExpression(getController().resolveAlias("ReservationRequest.rooms.crsCode"), "%"+getCrsCode()+"%"));
+			if (getCrsCode().startsWith("=")) {
+				criteria.addEqualExpression(getController().resolveAlias("ReservationRequest.rooms.crsCode"), getCrsCode().substring(1));
+			} else {
+				criteria.addExpression(ExpressionUtilities.getLikeExpression(getController().resolveAlias("ReservationRequest.rooms.crsCode"), "%"+getCrsCode()+"%"));
+			}
 		}
 		if (getAgency() != null && getAgency().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.RESERVATION_REQUEST_AGENCY_ID), getAgency().getId());			
