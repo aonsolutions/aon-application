@@ -2,6 +2,7 @@ package com.code.aon.file.bank.model.CSB19;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,9 +30,9 @@ public class CSB19 extends AbstractFileFiller {
 	private Lot lot;
 	private int numreg;
 
-	public CSB19(Lot lot, String filePath) throws FileNotFoundException,
+	public CSB19(Lot lot, PrintWriter writer) throws FileNotFoundException,
 			UnsupportedEncodingException {
-		super(filePath);
+		super(writer);
 		this.lot = lot;
 
 		InputStream input = XMLLoader.class.getResourceAsStream("Cabecera_Presentador.xml");
@@ -237,7 +238,7 @@ public class CSB19 extends AbstractFileFiller {
 		lot.addOrderer(orderer);
 
 		String filePath = "c:/tmp/CSB19_31444.txt";
-		FileFiller csb19 = new CSB19(lot, filePath);
+		FileFiller csb19 = new CSB19(lot, new PrintWriter(filePath));
 		csb19.create();
 	}
 

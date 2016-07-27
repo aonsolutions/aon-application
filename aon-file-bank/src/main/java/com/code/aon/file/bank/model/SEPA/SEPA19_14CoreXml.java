@@ -1,6 +1,6 @@
 package com.code.aon.file.bank.model.SEPA;
 
-import java.io.File;
+import java.io.PrintWriter;
 import java.util.Iterator;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,8 +16,8 @@ public class SEPA19_14CoreXml extends BasicSEPAXml {
 	
 	private boolean cor1;
 
-	public SEPA19_14CoreXml(Lot lot, boolean cor1, File file) {
-		super(file);
+	public SEPA19_14CoreXml(Lot lot, boolean cor1, PrintWriter writer) {
+		super(writer);
 		this.cor1 = cor1;		
 		this.lot = lot;
 	}

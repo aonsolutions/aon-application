@@ -2,6 +2,7 @@ package com.code.aon.file.bank.model.CSB34;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,8 +35,8 @@ public class CSB34 extends AbstractFileFiller{
 	private int num010;
 	private double amount;
 	
-	public CSB34(Master master, String filePath) throws FileNotFoundException, UnsupportedEncodingException {
-		super(filePath);
+	public CSB34(Master master, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
+		super(writer);
 		this.master = master;
 		
 		InputStream input = XMLLoader.class.getResourceAsStream("Cabecera_1.xml");

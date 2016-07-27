@@ -1,7 +1,8 @@
 package com.code.aon.ui.finance.file;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -103,11 +104,12 @@ public class AEB19Writer implements IFinanceConstants {
 		Lot lot = getLot(company, fbatch, fbatchDetails);
 
 		try {
-			File file = File.createTempFile("AEB19_", ".txt");
-			FileFiller csb19 = new CSB19(lot, file.getAbsolutePath());
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			PrintWriter writer = new PrintWriter(outputStream);
+			FileFiller csb19 = new CSB19(lot, writer);
 			FileOutput output = new FileOutput();
-			output.setFile(file);
 			output.setErrors(csb19.create());
+			output.setContent(outputStream.toByteArray());
 			return output;
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);

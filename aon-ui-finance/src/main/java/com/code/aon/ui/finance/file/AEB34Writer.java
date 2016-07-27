@@ -1,7 +1,8 @@
 package com.code.aon.ui.finance.file;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.List;
 
@@ -79,11 +80,14 @@ public class AEB34Writer implements IFinanceConstants {
 	public FileOutput createAEB34(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		Master master = getMaster(company, fBatch, fbatchDetails);
 		try {
-			File file = File.createTempFile("AEB34_", ".txt");
-			FileFiller csb34 = new CSB34(master, file.getAbsolutePath());
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			PrintWriter writer = new PrintWriter(outputStream);
+//			File file = File.createTempFile("AEB34_", ".txt");
+			FileFiller csb34 = new CSB34(master, writer);
 			FileOutput output = new FileOutput();
-			output.setFile(file);
+//			output.setFile(file);
 			output.setErrors(csb34.create());
+			output.setContent(outputStream.toByteArray());
 			return output;
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);

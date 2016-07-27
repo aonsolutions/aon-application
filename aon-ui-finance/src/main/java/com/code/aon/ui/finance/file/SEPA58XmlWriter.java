@@ -1,7 +1,7 @@
 package com.code.aon.ui.finance.file;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -72,17 +72,15 @@ public class SEPA58XmlWriter {
 				e.printStackTrace();
 			}
 		});
-		try {
-			File file = File.createTempFile("SEPA58", ".xml");
-			boolean cobro = fBatch.getFinanceBatchType() == FinanceBatchType.SEPA_58_COBRO_XML;
-			FileFiller sepa58 = new SEPA58Xml(lotList, cobro, file);
-			FileOutput output = new FileOutput();
-			output.setFile(file);
-			output.setErrors(sepa58.create());
-			return output;
-		} catch (IOException e) {
-			throw new ManagerBeanException(e);
-		}
+		
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		PrintWriter writer = new PrintWriter(outputStream);
+		boolean cobro = fBatch.getFinanceBatchType() == FinanceBatchType.SEPA_58_COBRO_XML;
+		FileFiller sepa58 = new SEPA58Xml(lotList, cobro, writer);
+		FileOutput output = new FileOutput();
+		output.setErrors(sepa58.create());
+		output.setContent(outputStream.toByteArray());
+		return output;
 	}
 
 	private void updateLot( Lot lot, Company company, Date bankDate, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails ) throws ManagerBeanException {

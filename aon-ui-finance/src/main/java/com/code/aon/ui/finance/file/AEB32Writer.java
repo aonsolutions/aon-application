@@ -1,7 +1,8 @@
 package com.code.aon.ui.finance.file;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -77,11 +78,12 @@ public class AEB32Writer implements IFinanceConstants {
 		lot.addDelivery(delivery);
 
 		try {
-			File file = File.createTempFile("AEB32_", ".txt");
-			FileFiller csb32 = new CSB32(lot, file.getAbsolutePath());
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			PrintWriter writer = new PrintWriter(outputStream);
+			FileFiller csb32 = new CSB32(lot, writer);
 			FileOutput output = new FileOutput();
-			output.setFile(file);
 			output.setErrors(csb32.create());
+			output.setContent(outputStream.toByteArray());
 			return output;
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);

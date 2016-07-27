@@ -2,6 +2,7 @@ package com.code.aon.file.bank.model.CSB32;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,8 +27,8 @@ public class CSB32 extends AbstractFileFiller {
 
 	private Lot lot;
 	
-	public CSB32(Lot lot, String filePath) throws FileNotFoundException, UnsupportedEncodingException {
-		super(filePath);
+	public CSB32(Lot lot, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
+		super(writer);
 		this.lot = lot;
 		
 		InputStream input = XMLLoader.class.getResourceAsStream("Cabecera.xml");
@@ -184,7 +185,7 @@ public class CSB32 extends AbstractFileFiller {
 		lot.addDelivery(delivery);
 		
 		String filePath = "c:/tmp/csb/CSB32.txt";
-		FileFiller csb32 = new CSB32(lot,filePath);
+		FileFiller csb32 = new CSB32(lot, new PrintWriter(filePath));
 		csb32.create();
 	}
 	

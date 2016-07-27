@@ -1,6 +1,6 @@
 package com.code.aon.file.bank.model.SEPA;
 
-import java.io.File;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -18,8 +18,8 @@ public class SEPA58Xml extends BasicSEPAXml {
 	
 	private boolean desc;
 
-	public SEPA58Xml(LinkedList<Lot> lotList, boolean desc, File file) {
-		super(file);
+	public SEPA58Xml(LinkedList<Lot> lotList, boolean desc, PrintWriter writer) {
+		super(writer);
 		this.desc = desc;		
 		this.lotList = lotList;
 	}

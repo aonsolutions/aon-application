@@ -2,6 +2,7 @@ package com.code.aon.file.bank.model.CSB58;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,8 +31,8 @@ public class CSB58 extends AbstractFileFiller {
 	private Lot lot;
 	private int numreg;
 	
-	public CSB58(Lot lot, String filePath) throws FileNotFoundException, UnsupportedEncodingException {
-		super(filePath);
+	public CSB58(Lot lot, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
+		super(writer);
 		this.lot = lot;
 		
 		InputStream input = XMLLoader.class.getResourceAsStream("Cabecera_Presentador.xml");
@@ -272,7 +273,7 @@ public class CSB58 extends AbstractFileFiller {
 		lot.addOrderer(orderer);
 		
 		String filePath = "c:/tmp/CSB58.txt";
-		FileFiller csb58 = new CSB58(lot,filePath);
+		FileFiller csb58 = new CSB58(lot, new PrintWriter(filePath));
 		csb58.create();
 	}
 	

@@ -1,7 +1,7 @@
 package com.code.aon.ui.finance.file;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -46,17 +46,15 @@ public class SEPA19_14CoreXmlWriter {
 		aeb19Writer.setLogPanel(logPanel);
 		Lot lot = aeb19Writer.getLot(company, fBatch, fbatchDetails);
 		updateLot(lot, company, bankDate, fBatch, fbatchDetails);
-		try {
-			File file = File.createTempFile("SEPA19_14_CORE_", ".xml");
-			boolean cor1 = fBatch.getFinanceBatchType() == FinanceBatchType.SEPA_19_14_COR1_XML;
-			FileFiller sepa1914 = new SEPA19_14CoreXml(lot, cor1, file);
-			FileOutput output = new FileOutput();
-			output.setFile(file);
-			output.setErrors(sepa1914.create());
-			return output;
-		} catch (IOException e) {
-			throw new ManagerBeanException(e);
-		}
+		
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		PrintWriter writer = new PrintWriter(outputStream);
+		boolean cor1 = fBatch.getFinanceBatchType() == FinanceBatchType.SEPA_19_14_COR1_XML;
+		FileFiller sepa1914 = new SEPA19_14CoreXml(lot, cor1, writer);
+		FileOutput output = new FileOutput();
+		output.setErrors(sepa1914.create());
+		output.setContent(outputStream.toByteArray());
+		return output;
 	}
 
 	private void updateLot( Lot lot, Company company, Date bankDate, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails ) throws ManagerBeanException {
