@@ -425,10 +425,11 @@ public class FBatchController extends BasicController implements ICollectionProv
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
 		setLogPanel(LogPanelController.getInstance());
 		getLogPanel().reset();
-		getLogPanel().info("Inicio del proceso de generacion");
+		getLogPanel().info("Inicio del proceso.");
 		FBatchCreateDiskProcess fcdp = new FBatchCreateDiskProcess(this);
 		LongProcessThread thread = new LongProcessThread(fcdp); 
-		thread.start();		
+		thread.start();
+		getLogPanel().info("Proceso finalizado.");
 	}
 
 	public boolean isDiskOk() {

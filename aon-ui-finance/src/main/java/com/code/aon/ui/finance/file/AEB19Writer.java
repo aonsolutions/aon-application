@@ -13,10 +13,10 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.bank.model.CSB19.CSB19;
 import com.code.aon.file.bank.model.CSB19.data.Individual;
 import com.code.aon.file.bank.model.CSB19.data.Lot;
@@ -46,18 +46,19 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB19Writer implements IFinanceConstants {
 
-	private IProgression progression;
-	
-	public void setProgression(IProgression progression) {
-		this.progression = progression;
-	}
+	private LogPanelController logPanel;
 
-	private void updateProgress( int current, int total ) {
-		if ( this.progression != null ) {
-			this.progression.setProgressionCurrentValue(Math.round((current * 100.0)/total));
+	
+	public void setLogPanel(LogPanelController logPanel) {
+		this.logPanel = logPanel;
+	}
+	
+	private void updateLogPanel( int current, int total ) {
+		if ( this.logPanel != null ) {
+			this.logPanel.info("Vencimiento "+ current + " de " + total + " procesado.");
 		}
 	}
-	
+		
 	public Lot getLot(Company company, FinanceBatch fbatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		Lot lot = new Lot();
 		if (fbatch.getFinanceBatchType().equals(FinanceBatchType.AEB_19)) {
@@ -92,7 +93,7 @@ public class AEB19Writer implements IFinanceConstants {
 		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Individual individual  = createIndividual(fBatchDetail.getFinance(), lot.getType());
 			orderer.addIndividual(individual);
-			updateProgress(++current, fbatchDetails.size());
+			updateLogPanel(++current, fbatchDetails.size());
 		}
 		lot.addOrderer(orderer);		
 		return lot;

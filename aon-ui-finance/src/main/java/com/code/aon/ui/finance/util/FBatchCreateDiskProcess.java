@@ -66,36 +66,31 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 		    	case AEB_19:
 		    	case AEB_19_D:
 					AEB19Writer aeb19Writer = new AEB19Writer();
-					// TODO remove ProgressionState field of AEB19Writer
-//					aeb19Writer.setProgression(controller.getProgressionState());
+					aeb19Writer.setLogPanel(controller.getLogPanel());
 					aebOutput = aeb19Writer.createAEB19(company, fbatch, fbatchDetailCollection);
 					break;
 		    	case AEB_32:
 					AEB32Writer aeb32Writer = new AEB32Writer();
-					// TODO remove ProgressionState field of AEB32Writer
-//					aeb32Writer.setProgression(controller.getProgressionState());
+					aeb32Writer.setLogPanel(controller.getLogPanel());
 					aebOutput = aeb32Writer.createAEB32(company, fbatch, fbatchDetailCollection);
 		    		break;
 		    	case AEB_34:
 		    	case AEB_34_N:
 					AEB34Writer aeb34Writer = new AEB34Writer();
-					// TODO remove ProgressionState field of AEB34Writer
-//					aeb34Writer.setProgression(controller.getProgressionState());
+					aeb34Writer.setLogPanel(controller.getLogPanel());
 					aebOutput = aeb34Writer.createAEB34(company, fbatch, fbatchDetailCollection);
 					break;
 		    	case AEB_58:
 		    	case AEB_58_D:
 					AEB58Writer aeb58Writer = new AEB58Writer();
-					// TODO remove ProgressionState field of AEB58Writer
-//					aeb58Writer.setProgression(controller.getProgressionState());
+					aeb58Writer.setLogPanel(controller.getLogPanel());
 					aebOutput = aeb58Writer.createAEB58(company, fbatch, fbatchDetailCollection);
 					break;
 		    	case SEPA_19_14_CORE_XML:
 		    	case SEPA_19_14_COR1_XML:
 		    		controller.setMimeType(MimeType.MIME_XML);
 					SEPA19_14CoreXmlWriter sepa19Writer = new SEPA19_14CoreXmlWriter();
-					// TODO remove ProgressionState field of SEPA19_14CoreXmlWriter
-//					sepa19Writer.setProgression(controller.getProgressionState());
+					sepa19Writer.setLogPanel(controller.getLogPanel());
 					aebOutput = sepa19Writer.createXml(company, controller.getBankDate(), fbatch, fbatchDetailCollection);
 					break;
 		    	case SEPA_34_14_XML:
@@ -109,8 +104,7 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 		    	case SEPA_58_COBRO_XML:
 		    		controller.setMimeType(MimeType.MIME_XML);
 		    		SEPA58XmlWriter sepa58Writer = new SEPA58XmlWriter();
-		    		// TODO remove ProgressionState field of SEPA58XmlWriter
-//		    		sepa58Writer.setProgression(controller.getProgressionState());
+		    		sepa58Writer.setLogPanel(controller.getLogPanel());
 					aebOutput = sepa58Writer.createXml(company,  controller.getBankDate(), fbatch, fbatchDetailCollection);
 		    		break;
 		    	case NONE:
@@ -128,7 +122,6 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 	                controller.getLogPanel().info("Se han procesado todas las lineas.");
 	        	}
 	        }
-	        controller.getLogPanel().info("Proceso finalizado.");
 		} catch (Throwable e) {
 			controller.getLogPanel().error(errorMessage);
 		}		

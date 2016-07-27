@@ -8,9 +8,9 @@ import java.util.List;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.bank.model.CSB32.CSB32;
 import com.code.aon.file.bank.model.CSB32.data.Delivery;
 import com.code.aon.file.bank.model.CSB32.data.Individual;
@@ -33,15 +33,16 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB32Writer implements IFinanceConstants {
 
-	private IProgression progression;
-	
-	public void setProgression(IProgression progression) {
-		this.progression = progression;
-	}
+	private LogPanelController logPanel;
 
-	private void updateProgress( int current, int total ) {
-		if ( this.progression != null ) {
-			this.progression.setProgressionCurrentValue(Math.round((current * 100.0)/total));
+	
+	public void setLogPanel(LogPanelController logPanel) {
+		this.logPanel = logPanel;
+	}
+	
+	private void updateLogPanel( int current, int total ) {
+		if ( this.logPanel != null ) {
+			this.logPanel.info("Vencimiento "+ current + " de " + total + " procesado.");
 		}
 	}
 
@@ -71,7 +72,7 @@ public class AEB32Writer implements IFinanceConstants {
 		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Individual individual = createIndividual(company, fBatchDetail.getFinance(), fBatch.getIssueDate());
 			delivery.addIndividual(individual);
-			updateProgress(++current, fbatchDetails.size());
+			updateLogPanel(++current, fbatchDetails.size());
 		}
 		lot.addDelivery(delivery);
 
