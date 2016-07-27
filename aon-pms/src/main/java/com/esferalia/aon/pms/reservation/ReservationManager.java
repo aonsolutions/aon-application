@@ -1,6 +1,8 @@
 package com.esferalia.aon.pms.reservation;
 
 import java.sql.Connection;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -544,6 +546,10 @@ public class ReservationManager implements IReservationConstants {
 
 		reservation.setTaxableBase(CommonUtil.round(calculatedTaxableBase));
 		reservation.setVatQuota(CommonUtil.round(reservation.getTotal() - reservation.getTaxableBase() - reservation.getOtherTaxQuota()));
+		if (agreedPrice > 0) {
+			NumberFormat formatter = new DecimalFormat("#,##0.00");
+			reservation.setRemarks(reservation.getRemarks() + "PRECIO PACTADO: " + formatter.format(agreedPrice) + "\n");
+		}
 		reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 	}
 
@@ -565,7 +571,9 @@ public class ReservationManager implements IReservationConstants {
 				}
 			}
 
-			if (calculateCommission || reservation.getDiscountAmount() != 0) {
+			if (agreedPrice > 0) {
+				discountPercent = (1 - agreedPrice / totalServices) * 100;
+			} else if (calculateCommission || reservation.getDiscountAmount() != 0) {
 				double totalDiscount = calculateCommission ? reservation.getAgencyCommissionAmount() : reservation.getDiscountAmount();
 				/** Tendria que ser cero, pero se admite un error de +- 1 centimo por error de redondeo en los calculos de Idiso al enviar la Reserva.
 					El discountAmount VIENE YA aplicado sobre el Total en el XML, no asi el agencyCommissionAmount (por eso se descuenta previamente del Total) **/
@@ -578,8 +586,6 @@ public class ReservationManager implements IReservationConstants {
 						throw new ReservationException("Reservation Discount Amount is not correct", reservation.getCrsCode(), 197);
 					}
 				}
-			} else if (agreedPrice > 0) {
-				discountPercent = (1 - agreedPrice / totalServices) * 100;
 			}
 		}
 		reservation.setRealDiscountPercent(discountPercent);
