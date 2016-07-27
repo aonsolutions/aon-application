@@ -103,6 +103,7 @@ public class CRAWriter {
 						if(trb==null || !contract.getPerson().getSocialSecurityNumber().equals(trb.getNaf())){
 							trb = createTRBRecord(contract.getPerson().getSocialSecurityNumber());
 							dde.getTrbList().add(trb);
+							previousType = "";
 						}
 						CRE cre = createCRERecord(String.valueOf(type), amount, previousType.equals(String.valueOf(type)));
 						previousType = String.valueOf(type);
