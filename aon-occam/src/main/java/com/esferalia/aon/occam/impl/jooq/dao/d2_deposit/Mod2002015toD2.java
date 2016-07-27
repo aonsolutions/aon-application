@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.d2_deposit;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.DoubleVariable2015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key;
@@ -105,7 +106,12 @@ public class Mod2002015toD2 {
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41200,Mod2002015Key.PG294)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41300,Mod2002015Key.PG295)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA49100,Mod2002015Key.PG296)
+		
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41400,Mod2002015Key.PG297)
+		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41430,Mod2002015Key.PG304)
+		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41490,new Mod2002015Key[]
+				{Mod2002015Key.PG298, Mod2002015Key.PG301})
+		
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41430,Mod2002015Key.PG304)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41490,Mod2002015Key.PG329)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41500,Mod2002015Key.PG305)
@@ -116,6 +122,12 @@ public class Mod2002015toD2 {
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA49300,Mod2002015Key.PG325)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA41900,Mod2002015Key.PG326)
 		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA49500,Mod2002015Key.PG327)
+		
+		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA42100,Mod2002015Key.PG329)
+		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA42110,Mod2002015Key.PG330)
+		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA42120,Mod2002015Key.PG331)
+		,(ctx,mod200) ->  set(ctx,mod200,D2DepositHeaderKey.PA42130,Mod2002015Key.PG332)
+
 	};
 		
 	private static final IPropertyFiller[] ECPN_ACTIVE_KEYS = new IPropertyFiller[] {
@@ -371,9 +383,9 @@ public class Mod2002015toD2 {
 		Double d = 0.0;
 		for(Integer i = 0; i< mod200Keys.length ; i++){
 			DoubleVariable2015 dv = mod200.getVariable(mod200Keys[i]);
-			d = d + dv.getValue();
+			d = d + (dv==null? 0.0:dv.getValue());
 		}
-		ctx.put(D2Key, d==null?0.0:d);
+		ctx.put(D2Key, d);
 	} 
 	
 	
