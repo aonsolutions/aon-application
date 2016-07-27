@@ -5,6 +5,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI SEH1G entity.
@@ -255,6 +257,12 @@ public class SEH1G {
 	 */ 
 	public void setFechaDeSacrificio_X20_(String fechaDeSacrificio_X20_) {
 		this.fechaDeSacrificio_X20_ = fechaDeSacrificio_X20_;
+	}
+
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }

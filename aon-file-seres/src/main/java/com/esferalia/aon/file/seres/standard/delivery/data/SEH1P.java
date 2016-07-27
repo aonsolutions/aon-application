@@ -5,6 +5,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI SEH1P entity.
@@ -1291,6 +1293,12 @@ public class SEH1P {
 	 */ 
 	public void setNumeroSerial3ONumeroDeIdentificacionSuperior(String numeroSerial3ONumeroDeIdentificacionSuperior) {
 		this.numeroSerial3ONumeroDeIdentificacionSuperior = numeroSerial3ONumeroDeIdentificacionSuperior;
+	}
+
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }

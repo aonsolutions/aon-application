@@ -5,6 +5,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 /** 
  * This is an AUTOMATICALLY GENERATED class for represent EDI SINCE entity.
@@ -339,6 +341,12 @@ public class SINCE {
 	 */ 
 	public void setDescripcionDescuento_Cargo(String descripcionDescuento_Cargo) {
 		this.descripcionDescuento_Cargo = descripcionDescuento_Cargo;
+	}
+
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }
