@@ -132,9 +132,13 @@ for rpm_file in $(find -name aon-aio8*.rpm -o -name aon-common*.rpm -o -name aon
 		mode=${arr[4]}; 
 		owner=${arr[5]}; 
 		group=${arr[6]}; 
+		object=$(dirname ${arr[0]}); 
+		pattern=$(basename ${arr[0]}); 
 		(( $IF_DIR & $mode )) && type=directory || type=file;  
-		echo -e "  - object: ${arr[0]}\r\n    owner: $owner\r\n    group: $group\r\n    mode: ${mode:(-3)}\r\n    type:\r\n      - $type";  
+		echo -e "  - object: ${object}\r\n    pattern: \"${pattern}\"\r\n    owner: $owner\r\n    group: $group\r\n    mode: ${mode:(-3)}\r\n    type:\r\n      - $type";  
 	done`
+
+	[[ $(rpm --info -qp $rpm_file ) =~ ^Name[[:space:]]*:[[:space:]]*([^[:space:]]+) ]] && name=${BASH_REMATCH[1]};
 
 	OLD_IFS="$IFS"
 	IFS=
