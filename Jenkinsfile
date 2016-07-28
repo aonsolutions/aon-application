@@ -106,41 +106,42 @@ node {
 
       // 
       sh '''
-rpm_file=$(find -name aon-aio8*.noarch.rpm)
-
-rpm_file=$(cd "$(dirname "$rpm_file")"; pwd)/$(basename "$rpm_file")
 
 temp_dir=$(mktemp -d)
-
 mkdir ${temp_dir}/files
 mkdir ${temp_dir}/scripts
 
-pushd ${temp_dir}/files
-rpm2cpio ${rpm_file} | cpio -imd
-popd
+for rpm_file in $(find -name aon-aio8*.noarch.rpm); do
 
-rpm -qlcp ${rpm_file} | while read file; do
-	mkdir -p $(dirname  ${temp_dir}/conf${file}) 
-	mv ${temp_dir}/files${file}  ${temp_dir}/conf${file} 
+	rpm_file=$(cd "$(dirname "$rpm_file")"; pwd)/$(basename "$rpm_file")
+
+	pushd ${temp_dir}/files
+	rpm2cpio ${rpm_file} | cpio -imd
+	popd
+
+	rpm -qlcp ${rpm_file} | while read file; do
+		mkdir -p $(dirname  ${temp_dir}/conf${file}) 
+		mv ${temp_dir}/files${file}  ${temp_dir}/conf${file} 
+	done
+
+	permissions+=`IF_DIR=0040000; 
+	rpm --dump -qlp ${rpm_file} | while read line; do 
+		arr=($line); 
+		mode=${arr[4]}; 
+		owner=${arr[5]}; 
+		group=${arr[6]}; 
+		(( $IF_DIR & $mode )) && type=directory || type=file;  
+		echo -e "  - object: ${arr[0]}\r\n    owner: $owner\r\n    group: $group\r\n    mode: ${mode:4:3}\r\n    type:\r\n      - $type";  
+	done`
+
+	OLD_IFS="$IFS"
+	IFS=
+	rpm --scripts -qp ${rpm_file} | while read line; do
+		[[ $line =~ ^([^[:space:]]*)[[:space:]]scriptlet(.*):$ ]] && script=${BASH_REMATCH[1]} && echo -n '' > ${temp_dir}/scripts/$script && continue;
+		echo -e "$line" >> ${temp_dir}/scripts/$script;
+	done
+	IFS="$OLD_IFS"
 done
-
-permissions=`IF_DIR=0040000; 
-rpm --dump -qlp ${rpm_file} | while read line; do 
-	arr=($line); 
-	mode=${arr[4]}; 
-	owner=${arr[5]}; 
-	group=${arr[6]}; 
-	(( $IF_DIR & $mode )) && type=directory || type=file;  
-	echo -e "  - object: ${arr[0]}\r\n    owner: $owner\r\n    group: $group\r\n    mode: ${mode:4:3}\r\n    type:\r\n      - $type";  
-done`
-
-OLD_IFS="$IFS"
-IFS=
-rpm --scripts -qp ${rpm_file} | while read line; do
-        [[ $line =~ ^([^[:space:]]*)[[:space:]]scriptlet(.*):$ ]] && script=${BASH_REMATCH[1]} && echo -n '' > ${temp_dir}/scripts/$script && continue;
-        echo -e "$line" >> ${temp_dir}/scripts/$script;
-done
-IFS="$OLD_IFS"
 
 pushd ${temp_dir}
 
