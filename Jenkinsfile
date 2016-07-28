@@ -186,7 +186,7 @@ hooks:
   AfterInstall:
     - location: scripts/links
       runas: root
-$(for script in scripts/postinstall*; do 
+$(for script in $(find scripts -name postinstall*); do 
 echo "    - location: ${script}
       timeout: 300
       runas: root"
