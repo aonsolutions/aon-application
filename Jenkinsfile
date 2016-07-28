@@ -143,8 +143,8 @@ for rpm_file in $(find -name aon-aio8*.rpm -o -name aon-common*.rpm -o -name aon
 	OLD_IFS="$IFS"
 	IFS=
 	rpm --scripts -qp ${rpm_file} | while read line; do
-		[[ $line =~ ^([^[:space:]]*)[[:space:]]scriptlet(.*):$ ]] && script=${BASH_REMATCH[1]} && echo -n '' > ${temp_dir}/scripts/$script_$name && continue;
-		echo -e "$line" >> ${temp_dir}/scripts/$script_$name;
+		[[ $line =~ ^([^[:space:]]*)[[:space:]]scriptlet(.*):$ ]] && script=${BASH_REMATCH[1]} && echo -n '' > ${temp_dir}/scripts/${script}_${name} && continue;
+		echo -e "$line" >> ${temp_dir}/scripts/${script}_${name};
 	done
 	IFS="$OLD_IFS"
 done
