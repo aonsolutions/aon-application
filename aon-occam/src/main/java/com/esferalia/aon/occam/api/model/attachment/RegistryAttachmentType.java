@@ -23,7 +23,8 @@ public enum RegistryAttachmentType {
 	ECOMMERCE_PRODUCT_TEMPLATES,
 	REPORT_BACKGROUND,
 	CRETA_RESPUESTA,
-	CRETA_TRABAJADORES_Y_TRAMOS;
+	CRETA_TRABAJADORES_Y_TRAMOS,
+	SYSTEM_MESSAGE;
 	
 	public byte value() {
 		return (byte) this.ordinal();

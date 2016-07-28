@@ -1259,4 +1259,21 @@ public class DBConsults {
 		cl.setList(vector);
 		return cl;
 	}
+	
+	public static LinkedList<FileInfo> getSystemFiles(Domain domain, User user){
+		return AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(), 
+				f-> f.getDomainProperty().eq(domain.getId())
+				.and(f.getTypeProperty().eq(com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SYSTEM_MESSAGE.value()))
+				,AttachType.REGISTRY)
+			.map(new AttachToFileInfo(user, domain.getId()))
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Boolean hasSystemFiles(Domain domain, User user){
+		return AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(), 
+				f-> f.getDomainProperty().eq(domain.getId())
+				.and(f.getTypeProperty().eq(com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SYSTEM_MESSAGE.value()))
+				,AttachType.REGISTRY)
+				.count() > 0;
+	}
 }

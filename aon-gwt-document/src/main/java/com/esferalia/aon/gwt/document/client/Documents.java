@@ -607,65 +607,42 @@ public class Documents extends Composite implements EntryPoint {
 	
 	@UiField PaperItem allFilesPaper;
 	// @UiField PaperItem serviConveniosPaper;
+	@UiField PaperItem systemPaper;
 	@UiField PaperItem lotePaper;
 	@UiField PaperMenu lateralMenuPaper;
 	
 	@UiField(provided = true) HorizontalPanel prueba2;
-	
 	@UiField SimplePanel sp;
-	
 	@UiField Button upDrive;
-	
 	@UiField Button cleanFilterButton;
-		
 	@UiField Button advanceSearch;
-
 	@UiField(provided=true) DisclosurePanel epanel;
-
 	@UiField(provided=true) DisclosurePanel dpanel;
-	
 	@UiField SplitLayoutPanel splitLayoutPanel;
-
 	@UiField StackLayoutPanel stack1;
-	
 	@UiField HorizontalPanel ftoolbar;
-	
 	@UiField Label sConvenios;
-	
 	@UiField Button newFile;
-
 	@UiField Button editFile;
-	
 	@UiField Button delFile;
-	
 	@UiField Button optionFile;
-	
 	@UiField Button reset;
-	
 	@UiField(provided = true) DataGrid<FileInfo> dataGrid;
-
 	@UiField(provided = true) TextBox searchBox;
-	
 	@UiField(provided = true) SuggestBox enterpriseSearchBox;
-	
 	@UiField Button searchButton;
-	
 	@UiField Button eSearchButton;
-	
 	@UiField Button tagButton;
-	
 	@UiField Button catButton;
-	
 	@UiField HorizontalPanel gestionLote;
 	@UiField HorizontalPanel gestionDocs;
-	
 	@UiField Button send;
 	@UiField Button clean;
-	
 
 	Boolean gConnection;
 	Boolean documentManager;
 	Boolean confidentialUser;
+	Boolean systemMessage;
 	Vector<FileInfo> selFiles;
 	ShowMorePager showMorePager;
 	
@@ -682,6 +659,8 @@ public class Documents extends Composite implements EntryPoint {
 			public void onSuccess(Init result) {
 				documentManager = result.getVector().get(0);
 				confidentialUser = result.getVector().get(1);
+				systemMessage = result.getVector().get(2);
+				
 				if(!documentManager){
 					// desactivar lotebutton
 				}
@@ -1044,6 +1023,14 @@ public class Documents extends Composite implements EntryPoint {
 		lotePaper.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				loteClickAction();
+			}
+		});
+		
+	//	systemPaper.setDisabled(!systemMessage);
+		systemPaper.setVisible(systemMessage);
+		systemPaper.addClickHandler(new ClickHandler() {
+			@Override public void onClick(ClickEvent event) {
+				systemClickAction();
 			}
 		});
 		
@@ -4051,6 +4038,34 @@ public class Documents extends Composite implements EntryPoint {
 		dataProvider.addDataDisplay(dataGrid);
 		updateDatagridColumns();
 		dataGrid.redraw();
+	}
+	
+	private void systemClickAction() {
+		newFile.setVisible(false);
+		sConvenios.setVisible(false);
+		gestionLote.setVisible(false);
+		gestionDocs.setVisible(true);
+		editFile.setVisible(false);
+		delFile.setVisible(false);
+		optionFile.setVisible(false);
+		
+		idoc.getSystemFiles(getDomain(), new AsyncCallback<LinkedList<FileInfo>>() {
+			@Override
+			public void onSuccess(LinkedList<FileInfo> result) {
+				removeFilterItems();
+				for(FileInfo f : dataProvider.getList()){
+					dataGrid.getSelectionModel().setSelected(f, false);
+				}
+				dataProvider = new ListDataProvider<FileInfo>(result);
+				dataProvider.addDataDisplay(dataGrid);
+				updateDatagridColumns();
+				dataGrid.redraw();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		
+		
 	}
 	
 	public Boolean estaLote(FileInfo fi){

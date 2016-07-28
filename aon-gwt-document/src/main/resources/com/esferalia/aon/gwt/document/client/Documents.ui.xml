@@ -144,6 +144,12 @@
                						<p:PaperRipple/>
             					</p:PaperItem>
             				-->	
+	            				<p:PaperItem ui:field="systemPaper">
+              						<i:IronIcon icon="mail"/>
+               						<div>Mensajes de Sistema</div>
+               						<p:PaperRipple/>
+            					</p:PaperItem>   
+            				
             					<p:PaperItem ui:field="lotePaper">
               						<i:IronIcon icon="mail"/>
                						<div>Lote</div>

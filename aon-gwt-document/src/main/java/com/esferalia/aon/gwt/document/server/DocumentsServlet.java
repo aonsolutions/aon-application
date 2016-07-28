@@ -165,6 +165,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			Boolean documentManager = AonUtil.getRoleManager().isDocumentManager();
 			v.add(documentManager);
 			v.add(confidential);
+			v.add(DBConsults.hasSystemFiles(domain, getUser()));
 			init.setVector(v);
 			return init;
 		}finally{
@@ -180,6 +181,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	
 		docs.setDomain(domain.getName());
 		docs.setIsServiconvenios(getServiconvenios());
+		
 		return docs;
 	}
 	
@@ -1625,6 +1627,11 @@ public Vector<FileInfo> insertFileMultiple(Domain domain, String dialogCode, Fil
 		default:
 			return "aon-icon-google-drive-unknown";
 		}
+	}
+
+	@Override
+	public LinkedList<FileInfo> getSystemFiles(Domain domain) {
+		return  DBConsults.getSystemFiles(domain, getUser());
 	}
 	
 }

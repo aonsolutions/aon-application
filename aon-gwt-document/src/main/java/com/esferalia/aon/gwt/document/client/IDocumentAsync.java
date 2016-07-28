@@ -118,4 +118,6 @@ public interface IDocumentAsync {
 
 	void decompress(Domain domain, FileInfo fileInfo, AsyncCallback<LinkedList<FileInfo>> callback);
 
+	void getSystemFiles(Domain domain, AsyncCallback<LinkedList<FileInfo>> callback);
+	
 }
