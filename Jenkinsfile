@@ -127,6 +127,8 @@ for rpm_file in $(find -name aon-aio8*.rpm -o -name aon-common*.rpm -o -name aon
 	permissions+=`IF_DIR=0040000; 
 	rpm --dump -qlp ${rpm_file} | while read line; do 
 		arr=($line); 
+		[ -e ${temp_dir}/files/${arr[0]} ] || continue;
+		[ -L ${temp_dir}/files/${arr[0]} ] && continue;
 		mode=${arr[4]}; 
 		owner=${arr[5]}; 
 		group=${arr[6]}; 
@@ -144,6 +146,15 @@ for rpm_file in $(find -name aon-aio8*.rpm -o -name aon-common*.rpm -o -name aon
 done
 
 pushd ${temp_dir}
+
+cat << EOF > scripts/links
+#/bin/bash
+$(for link in $(find -type l); do echo -e "ln -sf $(readlink -f $link) ${link##./files};"; done)
+EOF
+
+for link in $(find -type l); do 
+	rm -rf $link; 
+done
 
 cat << EOF > scripts/stop_server
 #/bin/bash
@@ -166,6 +177,10 @@ ${permissions}
 hooks:
   ApplicationStop:
     - location: scripts/stop_server
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: scripts/links
       timeout: 300
       runas: root
   AfterInstall:
