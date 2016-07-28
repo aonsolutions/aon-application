@@ -133,7 +133,7 @@ for rpm_file in $(find -name aon-aio8*.rpm -o -name aon-common*.rpm -o -name aon
 		owner=${arr[5]}; 
 		group=${arr[6]}; 
 		(( $IF_DIR & $mode )) && type=directory || type=file;  
-		echo -e "  - object: ${arr[0]}\r\n    owner: $owner\r\n    group: $group\r\n    mode: ${mode:4:3}\r\n    type:\r\n      - $type";  
+		echo -e "  - object: ${arr[0]}\r\n    owner: $owner\r\n    group: $group\r\n    mode: ${mode:(-3)}\r\n    type:\r\n      - $type";  
 	done`
 
 	OLD_IFS="$IFS"
