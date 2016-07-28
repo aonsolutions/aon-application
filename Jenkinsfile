@@ -185,9 +185,7 @@ hooks:
       runas: root
   AfterInstall:
     - location: scripts/links
-      timeout: 300
       runas: root
-  AfterInstall:
     - location: scripts/postinstall
       timeout: 300
       runas: root
