@@ -338,7 +338,7 @@ public class ReservationManager implements IReservationConstants {
 			projectAttach.setDomain(reservation.getDomain());
 			projectAttach.setProject(reservation.getProject());
 			projectAttach.setMimeType(MimeType.MIME_XML);
-			projectAttach.setDescription(getReservationUtils().obtainCrsAttachDescription(actionType));
+			projectAttach.setDescription(getReservationUtils().obtainCrsAttachDescription(actionType) + "#");
 			projectAttach.setData(xmlData.getBytes());
 			projectAttach.setSecurityLevel(SecurityLevel.CONFIDENTIAL);
 			projectAttach.setAttachDate(new Date());
