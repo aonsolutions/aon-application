@@ -235,17 +235,7 @@ public class EdiSalesImporterHandler implements Serializable {
 								Double ediLineQuantity = ere1l.getCantidadPedida_21_();
 								Tag customerPackingTag = searchPackingTag(customerRegistryNote);
 								Double quantity = obtainQuantity(ediLineQuantity, customerPackingTag, rItem);
-								Double price = Double.valueOf(ere1l.getPrecioBrutoUnitario_AAB_());
-								if (price.equals(0.0d)) {
-									price = rItem.getPrice();
-									getLogPanel()
-											.warn("Precio no definido en la linea "
-													+ line
-													+ " de "
-													+ ediLineQuantity
-													+ " unidades de "
-													+ description);
-								}
+								Double price = rItem.getPrice();
 								detail.setSales(sales);
 								detail.setItem(rItem.getItem());
 								detail.setLine(line);
@@ -300,7 +290,7 @@ public class EdiSalesImporterHandler implements Serializable {
 				return quantity * itemPackMeasurement;
 			} else if (customerPackingTag.getId().equals(
 					itemPackFormatTag.getId())) {
-				return quantity * itemPackMeasurement* itemPackUnits;
+				return quantity * itemPackMeasurement * itemPackUnits;
 			}
 		}
 		return quantity;
