@@ -36,7 +36,6 @@ import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
-import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.Finance;
@@ -48,7 +47,6 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -76,7 +74,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private boolean showFbatchRecordWindow;
 	private boolean showSEPAWindow;
 	private AccountEntryFinanceWriter writer;
-	private LogPanelController logPanel;
 	private boolean showAuditInfoWindow;
 
 	public Company getCompany() {
@@ -145,14 +142,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public void setShowSEPAWindow(boolean showSEPAWindow) {
 		this.showSEPAWindow = showSEPAWindow;
-	}
-	
-	public LogPanelController getLogPanel() {
-		return logPanel;
-	}
-
-	public void setLogPanel(LogPanelController logPanel) {
-		this.logPanel = logPanel;
 	}
 
 	public AccountEntryFinanceWriter getWriter() {
@@ -423,13 +412,9 @@ public class FBatchController extends BasicController implements ICollectionProv
     }
 
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
-		setLogPanel(LogPanelController.getInstance());
-		getLogPanel().reset();
-		getLogPanel().info("Inicio del proceso.");
+		AonUtil.addInfoMessage("El fichero se ha mandado generar en segundo plano");
 		FBatchCreateDiskProcess fcdp = new FBatchCreateDiskProcess(this);
-		LongProcessThread thread = new LongProcessThread(fcdp); 
-		thread.start();
-		getLogPanel().info("Proceso finalizado.");
+		fcdp.execute();
 	}
 
 	public boolean isDiskOk() {
@@ -536,7 +521,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public void onClosePanel(ActionEvent event) {
 		setShowSEPAWindow(false);
-		getLogPanel().finish();
 	}
 
 	@Override

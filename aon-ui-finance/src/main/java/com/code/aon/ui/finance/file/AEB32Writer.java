@@ -11,7 +11,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
-import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.bank.model.CSB32.CSB32;
 import com.code.aon.file.bank.model.CSB32.data.Delivery;
 import com.code.aon.file.bank.model.CSB32.data.Individual;
@@ -33,19 +32,6 @@ import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB32Writer implements IFinanceConstants {
-
-	private LogPanelController logPanel;
-
-	
-	public void setLogPanel(LogPanelController logPanel) {
-		this.logPanel = logPanel;
-	}
-	
-	private void updateLogPanel( int current, int total ) {
-		if ( this.logPanel != null ) {
-			this.logPanel.info("Vencimiento "+ current + " de " + total + " procesado.");
-		}
-	}
 
 	public FileOutput createAEB32(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		Lot lot = new Lot();
@@ -69,11 +55,9 @@ public class AEB32Writer implements IFinanceConstants {
 		delivery.setPaymentAccount(ccc3);
 		delivery.setTruncatedEffects(new Integer(1));
 
-		int current = 0;
 		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Individual individual = createIndividual(company, fBatchDetail.getFinance(), fBatch.getIssueDate());
 			delivery.addIndividual(individual);
-			updateLogPanel(++current, fbatchDetails.size());
 		}
 		lot.addDelivery(delivery);
 

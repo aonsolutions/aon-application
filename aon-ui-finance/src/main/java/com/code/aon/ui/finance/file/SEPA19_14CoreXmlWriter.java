@@ -13,7 +13,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
-import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.bank.model.CSB19.data.Individual;
 import com.code.aon.file.bank.model.CSB19.data.Lot;
 import com.code.aon.file.bank.model.CSB19.data.Orderer;
@@ -33,17 +32,9 @@ import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.util.AonUtil;
 
 public class SEPA19_14CoreXmlWriter {
-
-	private LogPanelController logPanel;
-	
-	public void setLogPanel(LogPanelController logPanel) {
-		this.logPanel = logPanel;
-	}
-	
 	
 	public FileOutput createXml(Company company, Date bankDate, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		AEB19Writer aeb19Writer = new AEB19Writer();
-		aeb19Writer.setLogPanel(logPanel);
 		Lot lot = aeb19Writer.getLot(company, fBatch, fbatchDetails);
 		updateLot(lot, company, bankDate, fBatch, fbatchDetails);
 		

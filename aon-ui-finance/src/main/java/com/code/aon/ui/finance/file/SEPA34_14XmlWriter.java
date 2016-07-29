@@ -15,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.Company;
-import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.bank.model.CSB34.data.Detail;
 import com.code.aon.file.bank.model.CSB34.data.Master;
 import com.code.aon.file.bank.model.CSB34.data.Orderer;
@@ -35,16 +34,9 @@ import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.util.AonUtil;
 
 public class SEPA34_14XmlWriter {
-	
-	private LogPanelController logPanel;
-
-	public void setLogPanel(LogPanelController logPanel) {
-		this.logPanel = logPanel;
-	}
 
 	public FileOutput createXml(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		AEB34Writer aeb34Writer = new AEB34Writer();
-		aeb34Writer.setLogPanel(logPanel);
 		Master master = aeb34Writer.getMaster(company, fBatch, fbatchDetails);
 		updateMaster(master, company, fBatch, fbatchDetails);
 		

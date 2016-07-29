@@ -43,9 +43,7 @@
 							rendered="#{!fbatch.nevv and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							reRender="financeBatchForm"
-							actionListener="#{fbatch.onCreateDisk}" >
-							<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
-						</aon:commandButton>
+							actionListener="#{fbatch.onCreateDisk}" />
 					</aon:if>	
 					<aon:if test="#{(fbatch.to.financeBatchType == 'SEPA_19_14_CORE_XML') or (fbatch.to.financeBatchType == 'SEPA_19_14_COR1_XML')
 							or (fbatch.to.financeBatchType == 'SEPA_58_ANTICIPO_XML') or (fbatch.to.financeBatchType == 'SEPA_58_COBRO_XML')}" >
@@ -208,14 +206,6 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/modalSEPA.xhtml" />
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
 			<ui:param name="addWaitProcessPoll" value="#{true}" />
-		</ui:include>
-		<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
-			<ui:param name="logPanelTitle" value="#{bundle.finance_create_disk}" />
-			<ui:param name="closeButtonReRender" value="financeBatchForm, showSEPAWindow" />
-			<aon:methodParam name="closeButtonAction" value="fbatch_form" />
-			<aon:valueParam name="pollInterval" value="3000" />
-			<aon:methodParam name="closeLogPanelAtionListener"
-				default="#{fbatch.onClosePanel}" type="actionListener" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 			<ui:param name="auditableController" value="#{fbatch}" />

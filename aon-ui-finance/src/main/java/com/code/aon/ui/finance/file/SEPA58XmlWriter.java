@@ -15,7 +15,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
-import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.bank.model.CSB58.data.Individual;
 import com.code.aon.file.bank.model.CSB58.data.Lot;
 import com.code.aon.file.bank.model.CSB58.data.Orderer;
@@ -36,13 +35,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class SEPA58XmlWriter {
 	
-	private LogPanelController logPanel;
-	
-	public void setLogPanel(LogPanelController logPanel) {
-		this.logPanel = logPanel;
-	}
-	
-	
 	public FileOutput createXml(Company company, Date bankDate, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		
 		HashMap<Date, LinkedList<FinanceBatchDetail>>  map = new HashMap<Date,LinkedList<FinanceBatchDetail>>();
@@ -58,7 +50,6 @@ public class SEPA58XmlWriter {
 		});
 		
 		AEB58Writer aeb58Writer = new AEB58Writer();
-		aeb58Writer.setLogPanel(logPanel);
 		LinkedList<Lot> lotList = new LinkedList<Lot>();
 		Lot generic = aeb58Writer.getLot(company, fBatch, fbatchDetails);
 		updateLot(generic, company, bankDate, fBatch, fbatchDetails);

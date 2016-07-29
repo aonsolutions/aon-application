@@ -13,7 +13,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.PayMethodType;
-import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.bank.model.CSB34.CSB34;
 import com.code.aon.file.bank.model.CSB34.data.Check;
 import com.code.aon.file.bank.model.CSB34.data.Detail;
@@ -38,19 +37,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB34Writer implements IFinanceConstants {
 
-	private LogPanelController logPanel;
-
-	
-	public void setLogPanel(LogPanelController logPanel) {
-		this.logPanel = logPanel;
-	}
-	
-	private void updateLogPanel( int current, int total ) {
-		if ( this.logPanel != null ) {
-			this.logPanel.info("Vencimiento "+ current + " de " + total + " procesado.");
-		}
-	}
-
 	public Master getMaster(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		Orderer orderer = new Orderer();
 		orderer.setCode(StringUtils.leftPad(company.getDocument(), 10));
@@ -68,11 +54,9 @@ public class AEB34Writer implements IFinanceConstants {
 		master.setOrderDate(fBatch.getIssueDate());
 		master.setDetail("0");
 
-		int current = 0;
 		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Detail detail = createDetail(fBatchDetail.getFinance());
 			master.addReceiver(detail);
-			updateLogPanel(++current, fbatchDetails.size());
 		}
 		return master;
 	}
@@ -82,10 +66,8 @@ public class AEB34Writer implements IFinanceConstants {
 		try {
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			PrintWriter writer = new PrintWriter(outputStream);
-//			File file = File.createTempFile("AEB34_", ".txt");
 			FileFiller csb34 = new CSB34(master, writer);
 			FileOutput output = new FileOutput();
-//			output.setFile(file);
 			output.setErrors(csb34.create());
 			output.setContent(outputStream.toByteArray());
 			return output;

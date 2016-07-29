@@ -17,7 +17,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.TaxType;
-import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.bank.model.CSB19.CSB19;
 import com.code.aon.file.bank.model.CSB19.data.Individual;
 import com.code.aon.file.bank.model.CSB19.data.Lot;
@@ -46,19 +45,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB19Writer implements IFinanceConstants {
-
-	private LogPanelController logPanel;
-
-	
-	public void setLogPanel(LogPanelController logPanel) {
-		this.logPanel = logPanel;
-	}
-	
-	private void updateLogPanel( int current, int total ) {
-		if ( this.logPanel != null ) {
-			this.logPanel.info("Vencimiento "+ current + " de " + total + " procesado.");
-		}
-	}
 		
 	public Lot getLot(Company company, FinanceBatch fbatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		Lot lot = new Lot();
@@ -90,11 +76,9 @@ public class AEB19Writer implements IFinanceConstants {
 		orderer.setSufix(companyRBank.getSufix());
 		orderer.setOrganisation(company.getRegistry().getType()==RegistryType.LEGAL);
 
-		int current = 0;
 		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Individual individual  = createIndividual(fBatchDetail.getFinance(), lot.getType());
 			orderer.addIndividual(individual);
-			updateLogPanel(++current, fbatchDetails.size());
 		}
 		lot.addOrderer(orderer);		
 		return lot;

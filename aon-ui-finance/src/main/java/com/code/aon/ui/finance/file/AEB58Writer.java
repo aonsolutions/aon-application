@@ -17,7 +17,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.config.enumeration.TaxType;
-import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.bank.model.CSB58.CSB58;
 import com.code.aon.file.bank.model.CSB58.data.Individual;
 import com.code.aon.file.bank.model.CSB58.data.Lot;
@@ -44,19 +43,6 @@ import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB58Writer implements IFinanceConstants {
-
-	private LogPanelController logPanel;
-
-	
-	public void setLogPanel(LogPanelController logPanel) {
-		this.logPanel = logPanel;
-	}
-	
-	private void updateLogPanel( int current, int total ) {
-		if ( this.logPanel != null ) {
-			this.logPanel.info("Vencimiento "+ current + " de " + total + " procesado.");
-		}
-	}
 	
 	public FileOutput createAEB58(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		Lot lot = getLot(company, fBatch, fbatchDetails);
@@ -101,11 +87,9 @@ public class AEB58Writer implements IFinanceConstants {
 		orderer.setSufix(companyRBank.getSufix());
 		orderer.setCodeINE(new Integer(1));
 
-		int current = 0;
 		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Individual individual  = createIndividual(fBatchDetail.getFinance(), fBatch.getIssueDate(), lot.getType());
 			orderer.addIndividual(individual);
-			updateLogPanel(++current, fbatchDetails.size());
 		}
 		lot.addOrderer(orderer);
 		return lot;
@@ -138,11 +122,9 @@ public class AEB58Writer implements IFinanceConstants {
 		orderer.setSufix(companyRBank.getSufix());
 		orderer.setCodeINE(new Integer(1));
 
-		int current = 0;
 		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Individual individual  = createIndividual(fBatchDetail.getFinance(), fBatch.getIssueDate(), lot.getType());
 			orderer.addIndividual(individual);
-			updateLogPanel(++current, fbatchDetails.size());
 		}
 		lot.addOrderer(orderer);
 		return lot;
