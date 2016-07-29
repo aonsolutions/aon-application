@@ -58,7 +58,7 @@ node {
       stage 'Build'
    
       // Run the maven build
-      sh "${mvnHome}/bin/mvn  -T 4 -B -Drpm.release=true -Dmaven.test.failure.ignore=true -Dgwt.working=true clean deploy"
+      //sh "${mvnHome}/bin/mvn  -T 4 -B -Drpm.release=true -Dmaven.test.failure.ignore=true -Dgwt.working=true clean deploy"
 
       // Mark the RPMs deploy 'stage'....
       stage 'Deploy RPMs'
@@ -94,10 +94,10 @@ node {
       sh "echo 127.0.0.1 trainning-payroll-test.aonsolutions.org | sudo tee -a /etc/hosts"
 
       // Run the maven integration tests
-      sh "${mvnHome}/bin/mvn  -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/aon-aio/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/aon-aio/ -f aon-htmlunit/pom.xml integration-test"
+      //sh "${mvnHome}/bin/mvn  -B -Dmaven.test.failure.ignore=true -Dintegration.test.user=admin -Dintegration.test.password=org -Dintegration.test.general.payroll.url=http://general-payroll-test.aonsolutions.org:8080/aon-aio/ -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/aon-aio/ -f aon-htmlunit/pom.xml integration-test"
   
       // Recording test results
-      step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+      //step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
 
       // Mark the AWS deploy 'stage'....
       stage 'AWS CodeDeploy'
@@ -152,7 +152,7 @@ done
 pushd ${temp_dir}
 
 cat << EOF > scripts/links
-#/bin/bash
+#!/bin/bash
 $(for link in $(find -type l); do echo -e "ln -sf $(readlink -f $link) ${link##./files};"; done)
 EOF
 
@@ -161,12 +161,12 @@ for link in $(find -type l); do
 done
 
 cat << EOF > scripts/stop_server
-#/bin/bash
+#!/bin/bash
 service tomcat8 stop
 EOF
 
 cat << EOF > scripts/start_server
-#/bin/bash
+#!/bin/bash
 service tomcat8 start
 EOF
 
@@ -207,10 +207,29 @@ eu-west-1
 
 EOF
 
-aws deploy push --application-name AON-SNAPSHOT-APP --s3-location s3://aon-solutions/aon-snapshot-app-${VERSION}${BUILD_ID}.zip --source ${temp_dir}
+#aws deploy push --application-name AON-SNAPSHOT-APP --s3-location s3://aon-solutions/aon-snapshot-app-${VERSION}${BUILD_ID}.zip --source ${temp_dir}
 
-aws deploy create-deployment --application-name AON-SNAPSHOT-APP --s3-location bucket=aon-solutions,key=aon-snapshot-app-${VERSION}${BUILD_ID}.zip,bundleType=zip --deployment-group-name AON-NET-GROUP  --deployment-config-name  CodeDeployDefault.AllAtOnce  
+#aws deploy create-deployment --application-name AON-SNAPSHOT-APP --s3-location bucket=aon-solutions,key=aon-snapshot-app-${VERSION}${BUILD_ID}.zip,bundleType=zip --deployment-group-name AON-NET-GROUP  --deployment-config-name  CodeDeployDefault.AllAtOnce  
+
 '''
+       sh "aws s3api list-objects --bucket aon-solutions --prefix aon-snapshot-app > aon-snapshot-apps.json"
+       def aon_snapshot_apps_json = readFile 'aon-snapshot-apps.json'    
+       def keys = getKeys(aon_snapshot_apps_json)
+//       for (int i = 0; i < keys.size() - 3; i++){
+//          def key = key[i]
+//          sh "aws s3api delete-object --bucket aon-solutions --key ${key}"   
+//       }
+   
    }   
 
+}
+
+@NonCPS
+def getKeys(def json) {
+    def objects = new groovy.json.JsonSlurper().parseText(json)
+    dek keys = new String[10]
+//    dek keys = new String[objects.Contents.size()]
+//    for (int i = 0; i < objects.Contents.size(); i++)
+//       keys[i]=objects.Contents[i].Key
+    return keys
 }
