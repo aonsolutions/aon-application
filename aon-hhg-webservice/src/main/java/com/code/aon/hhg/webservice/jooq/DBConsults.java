@@ -15,6 +15,7 @@ import com.code.aon.hhg.webservice.dialog.BookingHarvest.Service;
 import com.code.aon.hhg.webservice.dialog.BookingHarvest.ServiceDetail;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.PMS;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectReservationRoom;
 import com.esferalia.aon.occam.api.model.project.ProjectReservationService;
 import com.esferalia.aon.occam.api.model.project.ProjectReservationServiceDetail;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 
 public class DBConsults {
 
@@ -58,6 +60,11 @@ public class DBConsults {
 	
 	public static void updateHHGProjectAttach(String domainName, Integer domainId, String login, Attach attach){
 		PMS.updateHHGProjectAttach(domainName, domainId, login, attach);
+	}
+	
+	public static String getHHGUrl(String domainName, Integer domainId, String login){
+		ApplicationParameter ap = AON.fetchApplicationParameter(domainName,domainId, login, AppParam.PMS_HHG_SERVER);
+		return ap != null ? ap.getValue() : null;
 	}
 
 	private static class ReservationFiller implements Function<ProjectReservation, Payload> {

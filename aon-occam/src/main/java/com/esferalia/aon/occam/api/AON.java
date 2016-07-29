@@ -420,6 +420,18 @@ public class AON {
 			AppParam param) {
 		return getCommon().fetchOne(ctx, param);
 	}
+	
+	public static ApplicationParameter fetchApplicationParameter(String domainName, Integer domainId, String login,
+			AppParam param) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().fetchOne(ctx, param);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	// --------------------------------- ENTERPRISE
 	public static LinkedList<Enterprise> getParentEnterprises(String domainName,

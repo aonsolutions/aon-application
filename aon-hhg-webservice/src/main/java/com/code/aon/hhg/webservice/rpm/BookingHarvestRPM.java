@@ -64,7 +64,9 @@ public class BookingHarvestRPM {
 		user = "pruebas.api@hhg-hotels.net";
 		password = "c802f1e2aa51";
 		*/
-		
+		String url = DBConsults.getHHGUrl(domain, domainMap.get(domain), user);
+		if(url == null) url = BookingHarvest.URL;
+
 		//***** BOOKING-HARVEST *****/
 		BookingHarvest bh = buildBookingHarvest();
 		if(bh.getPayload().getReservation() == null || bh.getPayload().getReservation().getCrscode() == null)
@@ -73,14 +75,14 @@ public class BookingHarvestRPM {
 			System.out.println("json -> ");
 			System.out.println(bh.toJSON());
 			System.out.println(" ");
-			JSONObject jsonResponse = HHGPost.post2(BookingHarvest.URL, bh.toJSON());
+			JSONObject jsonResponse = HHGPost.post2(url, bh.toJSON());
 			Response response2 = new Response(jsonResponse);
 			if(!response2.getResult().getType().equals("error")){
 				Attach attach = new Attach().setId(bh.getPayload().getReservation().getProjectAttachId())
 					.setDescription(getDescriptionName(bh.getPayload().getReservation().getMethod()));
 				DBConsults.updateHHGProjectAttach(domain, domainMap.get(domain), user, attach);
 			}
-			LOGGER.info("POST " + BookingHarvest.URL);
+			LOGGER.info("POST " + url);
 			View.response(response2);
 		}
 	}
