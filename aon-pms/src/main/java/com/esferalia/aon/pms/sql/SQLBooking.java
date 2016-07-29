@@ -25,10 +25,6 @@ public class SQLBooking implements ISQLConstants {
 			", " + ITEM + ", " + TARIFF + ", " + STAY_DATE + ", " + STAY_TYPE + ", " + GUESTS + ") " +
 			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-	public static String DELETE_RESERVATION_BOOKING =
-			"DELETE FROM booking WHERE " + PROJECT_RESERVATION_ROOM + " IN " +
-			"(SELECT id from project_reservation_room WHERE project_reservation = ?)";
-
 	public static String DELETE_RESERVATION_ROOM_BOOKING =
 			"DELETE FROM booking WHERE " + PROJECT_RESERVATION_ROOM + " = ?";
 
@@ -230,11 +226,27 @@ public class SQLBooking implements ISQLConstants {
 	}
 
 	public static void delete(Connection connection, ProjectReservation reservation) throws AonSQLException {
+		PreparedStatement reservationRoomStmt = null;
+		ResultSet reservationRoomRs = null;
+		try {
+			reservationRoomStmt = connection.prepareStatement("SELECT id AS " + RESERVATION_ROOM + " FROM project_reservation_room WHERE project_reservation = ?");
+			SQLUtils.setInt(reservationRoomStmt, 1, reservation.getId());
+			reservationRoomRs = reservationRoomStmt.executeQuery();
+			while (reservationRoomRs.next()) {
+				delete(connection, reservationRoomRs.getInt(RESERVATION_ROOM));
+			}
+		} catch (Throwable e) {
+			throw new AonSQLException(e.getMessage());
+		} finally {
+			SQLUtils.closeQuietly(reservationRoomRs);
+			SQLUtils.closeQuietly(reservationRoomStmt);
+		}
+	}
+
+	public static void delete(Connection connection, ProjectReservationRoom reservationRoom) throws AonSQLException {
 		PreparedStatement deleteStmt = null;
 		try {
-			deleteStmt = connection.prepareStatement(DELETE_RESERVATION_BOOKING);
-			SQLUtils.setInt(deleteStmt, 1, reservation.getId());
-			deleteStmt.execute();
+			delete(connection, reservationRoom.getId());
 		} catch (Throwable e) {
 			throw new AonSQLException(e.getMessage());
 		} finally {
@@ -242,11 +254,11 @@ public class SQLBooking implements ISQLConstants {
 		}
 	}
 
-	public static void delete(Connection connection, ProjectReservationRoom reservationRoom) throws AonSQLException {
+	public static void delete(Connection connection, Integer reservationRoomId) throws AonSQLException {
 		PreparedStatement deleteStmt = null;
 		try {
 			deleteStmt = connection.prepareStatement(DELETE_RESERVATION_ROOM_BOOKING);
-			SQLUtils.setInt(deleteStmt, 1, reservationRoom.getId());
+			SQLUtils.setInt(deleteStmt, 1, reservationRoomId);
 			deleteStmt.execute();
 		} catch (Throwable e) {
 			throw new AonSQLException(e.getMessage());
