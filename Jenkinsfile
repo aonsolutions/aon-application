@@ -111,7 +111,7 @@ temp_dir=$(mktemp -d)
 mkdir ${temp_dir}/files
 mkdir ${temp_dir}/scripts
 
-for rpm_file in $(find -name aon-aio8*.rpm -o -name aon-common*.rpm -o -name aon-infoweb*.rpm -o -name aon.aeat*.rpm -o -name aon-master*.rpm -o -name aon-dbutils*.rpm ); do
+for rpm_file in $(find -name aon-aio8*.rpm -o -name aon-common*.rpm -o -name aon-infoweb*.rpm -o -name aon.aeat*.rpm -o -name aon-master*.rpm -o -name aon-dbutils*.rpm -o -name aon-msm8*.rpm ); do
 
 	rpm_file=$(cd "$(dirname "$rpm_file")"; pwd)/$(basename "$rpm_file")
 
