@@ -80,6 +80,7 @@ public interface ISQLConstants {
 	String MEDIA = "media";
 	String EMAIL = "email";
 	String PHONE = "phone";
+	String MAC_ADDRESS = "mac_address";
 
 	String GUEST_ID = "guestId";
 	String GUEST_INDEX = "guestIndex";

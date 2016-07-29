@@ -39,7 +39,22 @@ public class GuestEmailConfirmServlet extends HttpServlet implements ISQLConstan
 			" AND SRD.surveyResponse = SR.id" +
 			" AND SRD.value_text LIKE '%#%'" +
 			" AND Q.alias = '" + EMAIL + "'" +
-			" AND SRD.question = Q.id" +
+			" AND SRD.question = Q.id";
+	private static String WHERE_MAC_ADDRESS_DATA =
+			" AND SRD.surveyResponse = (" +
+				"SELECT SRD2.surveyResponse" +
+				" FROM project_reservation_guest AS PRG2, survey AS S2, survey_response AS SR2, survey_response_detail AS SRD2, question AS Q2" +
+				" WHERE PRG2.id = ?" +
+				" AND PRG2.person IS NOT NULL" +
+				" AND S2.description = ?" +
+				" AND SR2.survey = S2.id" +
+				" AND SR2.registry = PRG2.person" +
+				" AND SRD2.surveyResponse = SR2.id" +
+				" AND SRD2.value_text = ?" +
+				" AND Q2.alias = '" + MAC_ADDRESS + "'" +
+				" AND SRD2.question = Q2.id" +
+			")";
+	private static String ORDER_RESPONSE_DETAIL_DATA =
 			" ORDER BY SR.response_date DESC";
 	private static String UPDATE_RESPONSE_DETAIL_DATA =
 			"UPDATE survey_response_detail SET value_text = ? WHERE id = ?";
@@ -68,6 +83,7 @@ public class GuestEmailConfirmServlet extends HttpServlet implements ISQLConstan
 		String login = request.getParameter(LOGIN);
 		String guest = request.getParameter(GUEST);
 		String survey = request.getParameter(SURVEY);
+		String macAddress = request.getParameter(MAC_ADDRESS);
 		String jsonResponse = JSON_KO_RESPONSE;
 
 		Connection connection = null;
@@ -77,7 +93,7 @@ public class GuestEmailConfirmServlet extends HttpServlet implements ISQLConstan
 				Integer domainId = DatabaseUtil.getDomain(connection, domain);
 				if (StringUtils.isNotBlank(login) && getServletUtils().isValidLogin(connection, domainId, login)) {
 					if (guest != null && survey != null) {
-						jsonResponse = updateSurveyEmailData(request, connection, domainId, guest, survey);
+						jsonResponse = updateSurveyEmailData(request, connection, domainId, guest, survey, macAddress);
 					}
 				}
 			}
@@ -93,16 +109,27 @@ public class GuestEmailConfirmServlet extends HttpServlet implements ISQLConstan
 		}
 	}
 
-	private String updateSurveyEmailData(HttpServletRequest request, Connection connection, Integer domainId, String guest, String survey) throws Exception {
+	private String updateSurveyEmailData(HttpServletRequest request, Connection connection, Integer domainId, String guest, String survey, String macAddress) 
+			throws Exception {
 		String jsonResponse = JSON_KO_RESPONSE;
 
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		PreparedStatement updateResponseDetailStmt = null;
 		try {
-			stmt = connection.prepareStatement(SELECT_RESPONSE_DETAIL_DATA, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			String query = SELECT_RESPONSE_DETAIL_DATA;
+			if (StringUtils.isNotBlank(macAddress)) {
+				query += WHERE_MAC_ADDRESS_DATA;
+			}
+			query += ORDER_RESPONSE_DETAIL_DATA;
+			stmt = connection.prepareStatement(query, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			SQLUtils.setInt(stmt, 1, Integer.parseInt(guest));
 			SQLUtils.setString(stmt, 2, survey);
+			if (StringUtils.isNotBlank(macAddress)) {
+				SQLUtils.setInt(stmt, 3, Integer.parseInt(guest));
+				SQLUtils.setString(stmt, 4, survey);
+				SQLUtils.setString(stmt, 5, macAddress);
+			}
 			rs = stmt.executeQuery();
 			if (rs.next()) {
 				int responseDetailId = rs.getInt(RESPONSE_DETAIL);
