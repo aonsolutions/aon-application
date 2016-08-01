@@ -1,7 +1,5 @@
 package com.code.aon.ui.finance.util;
 
-import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
-
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +17,6 @@ import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.ILongProcess;
-import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.finance.controller.FBatchController;
 import com.code.aon.ui.finance.file.AEB19Writer;
 import com.code.aon.ui.finance.file.AEB32Writer;
@@ -30,12 +27,10 @@ import com.code.aon.ui.finance.file.SEPA34_14XmlWriter;
 import com.code.aon.ui.finance.file.SEPA58XmlWriter;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 
 public class FBatchCreateDiskProcess implements ILongProcess {
 
@@ -102,21 +97,21 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 		    		controller.setMimeType(MimeType.MIME_XML);
 					SEPA19_14CoreXmlWriter sepa19Writer = new SEPA19_14CoreXmlWriter();
 					aebOutput = sepa19Writer.createXml(company, controller.getBankDate(), fbatch, fbatchDetailCollection);
-					saveRegistryAttach(aebOutput, "SEPA_19_14_COR1_XML_"+fbatch.getDescription());
+					saveRegistryAttach(aebOutput, "SEPA_19_14_COR1_XML_"+fbatch.getDescription(), MimeType.MIME_XML);
 					break;
 		    	case SEPA_34_14_XML:
 		    	case SEPA_34_14_N_XML:
 		    		controller.setMimeType(MimeType.MIME_XML);
 					SEPA34_14XmlWriter sepa34Writer = new SEPA34_14XmlWriter();
 					aebOutput = sepa34Writer.createXml(company, fbatch, fbatchDetailCollection);
-					saveRegistryAttach(aebOutput, "SEPA_34_14_XML_"+fbatch.getDescription());
+					saveRegistryAttach(aebOutput, "SEPA_34_14_XML_"+fbatch.getDescription(), MimeType.MIME_XML);
 		    		break;
 		    	case SEPA_58_ANTICIPO_XML:
 		    	case SEPA_58_COBRO_XML:
 		    		controller.setMimeType(MimeType.MIME_XML);
 		    		SEPA58XmlWriter sepa58Writer = new SEPA58XmlWriter();
 					aebOutput = sepa58Writer.createXml(company,  controller.getBankDate(), fbatch, fbatchDetailCollection);
-					saveRegistryAttach(aebOutput, "SEPA_58_COBRO_XML_"+fbatch.getDescription());
+					saveRegistryAttach(aebOutput, "SEPA_58_COBRO_XML_"+fbatch.getDescription(), MimeType.MIME_XML);
 		    		break;
 		    	case NONE:
 		    		LOGGER.debug( "None finance batch type");
@@ -137,29 +132,29 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 		}		
 	}
 	
-	private void saveRegistryAttach(FileOutput aebOutput, String name){
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		String domainName = AonUtil.getDomainName();
-		Integer domainId = ds.getDomainId();
-		String user = AonUtil.getRemoteUser();
-		AONContext ctx = AONContext.getAONContext(domainName, domainId, user);
-		Integer companyId = CompanyDAO.getCompany(ctx, domainId).getId();
+	private void saveRegistryAttach(FileOutput aebOutput, String name) {
+		saveRegistryAttach(aebOutput, name, MimeType.MIME_TXT);
+	}
+	
+	private void saveRegistryAttach(FileOutput aebOutput, String name,
+			MimeType mimeType) {
 		Attach attach = new Attach();
-		attach.setDomain(new Domain().setId(domainId));
+		attach.setDomain(new Domain().setId(company.getDomain()));
 		attach.setData(aebOutput.getContent());
-		attach.setDescription(name);
+		attach.setDescription(name.concat(".").concat(mimeType.getExtension()));
 		attach.setAttachType(AttachType.REGISTRY);
-		attach.setType((short)RegistryAttachmentType.SYSTEM_MESSAGE.ordinal());
-		attach.setAttachModule(companyId);
+		attach.setType((short) RegistryAttachmentType.SYSTEM_MESSAGE.ordinal());
+		attach.setAttachModule(company.getId());
 		attach.setDate(new Date());
 		attach.setCreationDate(new Date());
-		attach.setCreationUser(user);
+		attach.setCreationUser(null);
 		attach.setModificationDate(new Date());
-		attach.setModificationUser(user);
-		attach.setMimeType(com.esferalia.aon.occam.api.model.type.MimeType.TXT);
+		attach.setModificationUser(null);
+		attach.setMimeType(com.esferalia.aon.occam.api.model.type.MimeType
+				.getByExtension(mimeType.getExtension()));
 		attach.setConfidential(false);
-		AON.insert(domainName, domainId, user, attach);
-		LOGGER.info("## Nuevo rAttach creado: " + attach.getDescription());
+		AON.insert(AonUtil.getDomainName(), company.getDomain(), "", attach);
+		LOGGER.info("## Nuevo Mensaje de Sistema: " + attach.getDescription());
 	}
 
 }

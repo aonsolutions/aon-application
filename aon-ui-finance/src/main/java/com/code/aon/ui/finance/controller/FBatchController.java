@@ -47,6 +47,7 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -414,7 +415,8 @@ public class FBatchController extends BasicController implements ICollectionProv
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
 		AonUtil.addInfoMessage("El fichero se ha mandado generar en segundo plano");
 		FBatchCreateDiskProcess fcdp = new FBatchCreateDiskProcess(this);
-		fcdp.execute();
+		LongProcessThread thread = new LongProcessThread(fcdp);
+		thread.start();
 	}
 
 	public boolean isDiskOk() {
