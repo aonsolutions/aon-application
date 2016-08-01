@@ -396,7 +396,7 @@ public class FANWriter implements Serializable {
 				ContractCode code = getContractCode(contract);
 				if(code!=null && !code.getValue().startsWith("1") && !code.getValue().startsWith("4")){
 					Double dayHours = obtainDayHours(contract);
-					itDays = Double.valueOf(CommonUtil.round(itDays * dayHours, 0)).intValue();
+					itDays = dayHours!=null && dayHours>0.0f ? Double.valueOf(CommonUtil.round(itDays * dayHours, 0)).intValue():itDays;
 				}
 				createDATRecord(datList, contract, salaryDataList, autoComplete(getJournalReduction(contract), 3, " ", true), itDays);
 			}
@@ -1542,10 +1542,8 @@ public class FANWriter implements Serializable {
 			Double CGCOnlyEnterpriseTotal = obtainCGCOnlyEnterpriseTotal(ccc);
 			Double CGCEmployeeTotal = obtainCGCEmployeeTotal(ccc);
 			
-			fanFactory.createEDTCa01Segment(
-					CGCEnterpriseTotal - CGCOnlyEnterpriseTotal, 
-					CGCEmployeeTotal, 
-					emp);
+			fanFactory.createEDTCa01Segment(CGCEnterpriseTotal,
+					CGCOnlyEnterpriseTotal, CGCEmployeeTotal, emp);
 			fanFactory.createEDTCa02Segment(CGCOnlyEnterpriseTotal, emp);
 			fanFactory.createEDTCa03Segment(emp);
 			fanFactory.createEDTCa11Segment(obtainLessThanSevenDaysContractAmount(ccc), emp);
@@ -1565,9 +1563,13 @@ public class FANWriter implements Serializable {
 			Double otherEmployeeTotalUnemployment = obtainOtherEmployeeTotal(ccc, DeductionType.UNEMPLOYMENT);
 			Double otherEmployeeTotalJobTraining = obtainOtherEmployeeTotal(ccc, DeductionType.JOB_TRAINING);
 
-			Double otherOnlyEnterpriseTotalUnemployment = obtainOtherOnlyEnterpriseTotal(ccc, DeductionType.UNEMPLOYMENT);
-			Double otherOnlyEnterpriseTotalFogasa = obtainOtherOnlyEnterpriseTotal(ccc, DeductionType.FOGASA);
-			Double otherOnlyEnterpriseTotalJobTraining = obtainOtherOnlyEnterpriseTotal(ccc, DeductionType.JOB_TRAINING);
+			//TODO faltan calculos de cuotas exclusivamente empresarial
+//			Double otherOnlyEnterpriseTotalUnemployment = obtainOtherOnlyEnterpriseTotal(ccc, DeductionType.UNEMPLOYMENT);
+//			Double otherOnlyEnterpriseTotalFogasa = obtainOtherOnlyEnterpriseTotal(ccc, DeductionType.FOGASA);
+//			Double otherOnlyEnterpriseTotalJobTraining = obtainOtherOnlyEnterpriseTotal(ccc, DeductionType.JOB_TRAINING);
+			Double otherOnlyEnterpriseTotalUnemployment = 0.0;
+			Double otherOnlyEnterpriseTotalFogasa = 0.0;
+			Double otherOnlyEnterpriseTotalJobTraining = 0.0;
 			Double otherOnlyEmployeeTotalUnemployment = obtainOtherOnlyEmployeeTotal(ccc, DeductionType.UNEMPLOYMENT);
 			Double otherOnlyEmployeeTotalJobTraining = obtainOtherOnlyEmployeeTotal(ccc, DeductionType.JOB_TRAINING);
 			

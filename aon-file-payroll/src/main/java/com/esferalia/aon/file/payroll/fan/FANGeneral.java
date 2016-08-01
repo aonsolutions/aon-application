@@ -1354,12 +1354,17 @@ public class FANGeneral implements Serializable, IFanFactory {
 	 * @param cgcTotalEmployee
 	 * @param emp
 	 */
-	public void createEDTCa01Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, EMP emp) {
+	public void createEDTCa01Segment(Double cgcEnterpriseTotal, Double cgcOnlyEnterpriseTotal, Double cgcEmployeeTotal, EMP emp) {
 		Integer base = emp.getEdt().containsKey("EDTBA01") ? emp.getEdtSegment("EDTBA01").getBase() : 0;
+		Integer onlyEnterpriseBase = emp.getEdt().containsKey("EDTBA21") ? emp.getEdtSegment("EDTBA21").getBase() : 0;
 	
 		Double amount = 0.0;
-		amount += cgcTotalEnterprise;
-		amount += cgcTotalEmployee;
+		amount += cgcEnterpriseTotal;
+		if(onlyEnterpriseBase > 0.0){
+			// no hay de donde obtener la cuota exclusivamente empresarial, se calcula  
+			amount -= onlyEnterpriseBase * 0.236 / 100;
+		}
+		amount += cgcEmployeeTotal;
 		amount = CommonUtil.round(amount, 2);
 
 		if (base != 0) {
@@ -1387,11 +1392,12 @@ public class FANGeneral implements Serializable, IFanFactory {
 	public void createEDTCa02Segment(Double cgcOnlyEnterprise, EMP emp) {
 		Integer base = emp.getEdt().containsKey("EDTBA21") ? emp.getEdtSegment("EDTBA21").getBase() : 0;
 		
-		Double amount = 0.0;
-		amount += cgcOnlyEnterprise;
-		amount = CommonUtil.round(amount, 2);
-		
 		if (base != 0) {
+			Double amount = 0.0;
+			// no hay de donde obtener la cuota exclusivamente empresarial, se calcula  
+			amount += base * 0.236 / 100;
+			amount = CommonUtil.round(amount, 2);
+			
 			EDT edt = emp.getEdtSegment("EDTCA02");
 			edt.setTipoElemento("CA");
 			edt.setClave(2);
@@ -1639,7 +1645,7 @@ public class FANGeneral implements Serializable, IFanFactory {
 		amount += fpOnlyEnterpriseTotal;
 		amount = CommonUtil.round(amount, 2);
 
-		if (base != 0) {
+		if (base != 0 && amount !=0) {
 			EDT edt = emp.getEdtSegment("EDTCA57");
 			edt.setTipoElemento("CA");
 			edt.setClave(57);

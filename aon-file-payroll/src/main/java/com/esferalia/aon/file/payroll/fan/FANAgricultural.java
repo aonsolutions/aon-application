@@ -209,8 +209,8 @@ public class FANAgricultural extends FANGeneral implements Serializable, IFanFac
 	 * @param emp
 	 */
 	@Override
-	public void createEDTCa01Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, EMP emp) {
-		super.createEDTCa01Segment(cgcTotalEnterprise, cgcTotalEmployee, emp);
+	public void createEDTCa01Segment(Double cgcEnterpriseTotal, Double cgcOnlyEnterpriseTotal, Double cgcEmployeeTotal, EMP emp) {
+		super.createEDTCa01Segment(cgcEnterpriseTotal, cgcOnlyEnterpriseTotal, cgcEmployeeTotal, emp);
 		
 		// La cuota se calcula el descuento de la reduccion SEA incluida
 		// pero se debe indicar la cuota integra

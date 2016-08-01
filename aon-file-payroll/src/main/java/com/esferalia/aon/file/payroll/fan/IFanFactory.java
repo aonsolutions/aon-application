@@ -155,7 +155,7 @@ public interface IFanFactory {
 	public void createEDTCd31Segment(EnterpriseCCC ccc, EMP emp);
 	public void createEDTCd34Segment(EnterpriseCCC ccc, EMP emp);
 			
-	public void createEDTCa01Segment(Double cgcTotalEnterprise, Double cgcTotalEmployee, EMP emp);
+	public void createEDTCa01Segment(Double cgcEnterpriseTotal, Double cgcOnlyEnterpriseTotal, Double cgcEmployeeTotal, EMP emp);
 	public void createEDTCa02Segment(Double cgcOnlyEnterprise, EMP emp);
 	public void createEDTCa03Segment(EMP emp);
 	public void createEDTCa11Segment(Double lessThanSevenDaysContractAmount, EMP emp);
