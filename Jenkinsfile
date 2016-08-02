@@ -40,7 +40,6 @@ node {
 
 
       sh "${mvnHome}/bin/mvn  -T 4 -B  -DdevelopmentVersion=${mavenRelease['developmentVersion']} -DreleaseVersion=${mavenRelease['releaseVersion']} -Dusername=${mavenRelease['username']} -Dpassword=${mavenRelease['password']} -Dtag=${mavenRelease['tag']} -Dresume=false -DdryRun=${mavenRelease['dryRun']} -DscmCommentPrefix=${mavenRelease['scmCommentPrefix']} release:prepare"
-
       // Mark the RPMs deploy 'stage'....
       stage 'Deploy RPMs'
     
@@ -170,6 +169,19 @@ cat << EOF > scripts/start_server
 service tomcat8 start
 EOF
 
+cat << EOF > scripts/cleanup
+#!/bin/bash
+$(
+OLD_IFS="$IFS"
+IFS=$'\n'
+for file in $(find files -type f); do
+echo "rm -f '${file#files}'"
+done
+IFS="$OLD_IFS"
+)
+EOF
+
+
 cat << EOF > appspec.yml
 version: 0.0
 os: linux 
@@ -181,6 +193,10 @@ ${permissions}
 hooks:
   ApplicationStop:
     - location: scripts/stop_server
+      timeout: 300
+      runas: root
+  BeforeInstall:
+    - location: scripts/cleanup
       timeout: 300
       runas: root
   AfterInstall:
