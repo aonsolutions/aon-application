@@ -792,6 +792,11 @@ public class SalaryDraftBuilder
 							implicit.getValue(implicit.getPeriod()),
 							redefined.getValue(redefined.getPeriod())
 							));
+				} catch ( Throwable e){
+					salaryDraft.addWarning(String.format(
+							"%s esta redefinida ",
+							description
+							));
 				}
 				return;
 			}
@@ -810,6 +815,10 @@ public class SalaryDraftBuilder
 					name, 
 					implicit.getValue(implicit.getPeriod()),
 					redefined.getValue(redefined.getPeriod())
+					));
+		} catch ( Throwable e){
+			salaryDraft.addWarning(String.format(
+					"La variable del sistema '%s' esta redefinida"
 					));
 		}
 			
