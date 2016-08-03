@@ -19,9 +19,9 @@ node {
    // we want to pick up the version from the pom
    def pom = readMavenPom file: 'pom.xml'
 
-   echo "MAVEN_RELEASE = ${MAVEN_RELEASE}"
+   //echo "MAVEN_RELEASE = ${MAVEN_RELEASE}"
    
-   if ( MAVEN_RELEASE ) {
+   if ( MAVEN_RELEASE == true ) {
       stage 'Perform Maven Release'
    
       def tag = pom.version.replace("-SNAPSHOT", ".x")
