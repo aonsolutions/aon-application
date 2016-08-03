@@ -19,7 +19,7 @@ node {
    // we want to pick up the version from the pom
    def pom = readMavenPom file: 'pom.xml'
    
-   if ( env.MAVEN_RELEASE ) {
+   if ( MAVEN_RELEASE ) {
       stage 'Perform Maven Release'
    
       def tag = pom.version.replace("-SNAPSHOT", ".x")
@@ -39,7 +39,8 @@ node {
       ]
 
 
-      sh "${mvnHome}/bin/mvn  -T 4 -B  -DdevelopmentVersion=${mavenRelease['developmentVersion']} -DreleaseVersion=${mavenRelease['releaseVersion']} -Dusername=${mavenRelease['username']} -Dpassword=${mavenRelease['password']} -Dtag=${mavenRelease['tag']} -Dresume=false -DdryRun=${mavenRelease['dryRun']} -DscmCommentPrefix=${mavenRelease['scmCommentPrefix']} release:prepare"
+      sh "echo yes | ${mvnHome}/bin/mvn  -T 4 -DdevelopmentVersion=${mavenRelease['developmentVersion']} -DreleaseVersion=${mavenRelease['releaseVersion']} -Dusername=${mavenRelease['username']} -Dpassword=${mavenRelease['password']} -Dtag=${mavenRelease['tag']} -Dresume=false -DdryRun=${mavenRelease['dryRun']} -DscmCommentPrefix=${mavenRelease['scmCommentPrefix']} release:prepare"
+      
       // Mark the RPMs deploy 'stage'....
       stage 'Deploy RPMs'
     
