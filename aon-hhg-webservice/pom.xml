@@ -67,6 +67,13 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		
+		<!-- JSON ORG -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20140107</version>
+		</dependency>
 	
 	</dependencies>
 	<profiles>
@@ -330,6 +337,13 @@
 					<artifactId>jta</artifactId>
 					<version>1.1</version>
 				</dependency>
+				
+				<!-- JSON ORG -->
+				<dependency>
+					<groupId>org.json</groupId>
+					<artifactId>json</artifactId>
+					<version>20140107</version>
+				</dependency>
 			</dependencies>
 				
 			<build>
@@ -389,6 +403,8 @@
 											<include>antlr:antlr:2.7.6</include>
 											
 											<include>javax.transaction:jta:1.1</include>										
+										
+											<include>org.json:json:20140107</include>				
 										
 											<!-- aon -->
 											<include>com.code.aon:aon.pool:${project.version}</include>
