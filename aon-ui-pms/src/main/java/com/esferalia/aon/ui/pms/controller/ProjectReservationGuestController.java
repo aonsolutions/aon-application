@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.ValueChangeEvent;
@@ -15,6 +16,8 @@ import com.code.aon.common.enumeration.Country;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -66,6 +69,7 @@ public class ProjectReservationGuestController extends LinesController {
 			reservationGuest.setName(person.getName());
 			reservationGuest.setSurname(person.getFirstSurname());
 			reservationGuest.setSurname2(person.getSecondSurname());
+			reservationGuest.setDocumentExpDate(obtainDocumentExpDate(person.getId()));
 			reservationGuest.setBirthDate(person.getBirthDate());
 			reservationGuest.setEmail((email!=null) ? email.getValue() : null);
 			reservationGuest.setPhone((phone!=null) ? phone.getValue() : null);
@@ -92,6 +96,20 @@ public class ProjectReservationGuestController extends LinesController {
 		List<ITransferObject> personList = personBean.getList(criteria);
 		if (personList.size() > 0) {
 			return (Person)personList.get(0);
+		}
+		return null;
+	}
+
+	public Date obtainDocumentExpDate(Integer personId) throws ManagerBeanException {
+		IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PERSON_ID), personId);
+		criteria.addNotNullExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_DOCUMENT_EXP_DATE));
+		criteria.addOrder(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_DOCUMENT_EXP_DATE), false);
+		Projection prjExpDate = Projection.property(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_DOCUMENT_EXP_DATE));
+		List<?> resultList = reservationGuestBean.getList(new ProjectionList(prjExpDate), criteria);
+		if (resultList.size() > 0 && resultList.get(0) != null) {
+			return (Date)resultList.get(0);
 		}
 		return null;
 	}
