@@ -234,7 +234,7 @@ aws deploy create-deployment --application-name AON-SNAPSHOT-APP --s3-location b
        sh "aws s3api list-objects --bucket aon-solutions --prefix aon-snapshot-app > aon-snapshot-apps.json"
        def aon_snapshot_apps_json = readFile 'aon-snapshot-apps.json'    
        def keys = getKeys(aon_snapshot_apps_json)
-       for (int i = 0; i < keys.size() - 3; i++){
+       for (int i = 0; i < keys.size() - 20; i++){
           def key = keys[i]
           sh "aws s3api delete-object --bucket aon-solutions --key ${key}"   
        }
