@@ -126,7 +126,9 @@ public class WebpolGuestsWriter implements Serializable {
 		if(guest.getDocumentType()==null || guest.getDocumentType()==DocumentType.NIF){
 			if(guest.getDocumentCountry()==Country.ES){
 				tipo2.setTipoDocumento("D");
-			} else {
+			} else if(guest.getDocumentCountry()==Country.NL){
+				tipo2.setTipoDocumento("P");
+            } else {
 				tipo2.setTipoDocumento("I");
 			}
 		} else if(guest.getDocumentType()==DocumentType.CIF){
