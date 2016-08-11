@@ -133,7 +133,9 @@ public class HHGPost {
 			
 			HttpResponse response = client.execute(post);
 			printResponse(response);
-			object = new JSONObject(inputStreamToString(response.getEntity().getContent()).toString());
+			String aa = inputStreamToString(response.getEntity().getContent()).toString();
+			System.out.println(aa);
+			object = new JSONObject(aa);
 		} catch (UnsupportedOperationException | JSONException | IOException | NoSuchAlgorithmException | KeyManagementException e) {
 			e.printStackTrace();
 		}
