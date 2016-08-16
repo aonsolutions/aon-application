@@ -38,11 +38,11 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="fbatchSEPA-accept"
 										value="#{bundle.aon_accept}"
-										reRender="financeBatchForm"
+										reRender="showSEPAWindow"
 										actionListener="#{fbatch.onCreateDisk}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept" >
-										<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
-									</aon:commandButton>											
+										<aon:actionListener method="#{fbatch.onClosePanel}"/>
+									</aon:commandButton>
 									<aon:commandButton id="fbatchSEPA-cancel"
 										value="#{bundle.aon_cancel}"
 										reRender="showSEPAWindow"
