@@ -10,6 +10,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUO
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
@@ -18,8 +19,10 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_O
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,7 +31,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,6 +49,8 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
@@ -74,6 +79,14 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 	private static final String DESCRIPTION_SYNTAX_ERROR = "Error sint\u00E1ctico en la descripic\u00F3n.";
 	private static final String BUILDER_VARIABLE = "BUILDER";
 
+	private static final String IT_PAY_MSG = 
+			"El <span <span style='color:orange;'>%s</span> devemga durante la incapacidad temporal."
+			+ "<ul style='margin-left:1em;'>" 
+			+ "<li>¿Es una Mejora de la Prestaci\u00F3n de la SS por Incapacidad Temporal?. Elija el tipo <span style='color:orange;'>CRA 0055</span></li>"
+			+ "<li>Revise la expressi\u00F3n <span style='color:orange;'>%s</span>. ¿ Falta mutiplicar por <span style='color:orange;'>DIAS_TRABAJADOS / DIAS_MES</span> ?.</li>"
+			+ "</ul>"
+			;
+	
 
 	public interface IListener {
 
@@ -527,9 +540,9 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				onInvalidData(e.getVariableNames());
 			}
 			
-			if (AonNumberUtils.compare(rawCgcbase, cgcBase) > 0 ) //rawCgcbase > cgcBase
+			if (AonNumberUtils.compare(rawCgcbase, cgcBase, 3) > 0 ) //rawCgcbase > cgcBase
 				onCheckError(String.format(BASE_CGC_MAX_MSG, CGC_BASE.getDescription(), rawCgcbase, cgcBase));
-			else if (AonNumberUtils.compare(rawCgcbase, cgcBase) < 0 ) // rawCgcbase < cgcBase 
+			else if (AonNumberUtils.compare(rawCgcbase, cgcBase,3) < 0 ) // rawCgcbase < cgcBase 
 				onCheckError(String.format(BASE_CGC_MIN_MSG, CGC_BASE.getDescription(), rawCgcbase, cgcBase));
 				
 			
@@ -548,15 +561,17 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 				expressionContext.setVariable(CGC_BASE_ENTERPRISE,
 						cgcBase , start, end);
 
-			Double cgpBase = quoteCalculator.getRawCgpBase();
+			Double rawCgpbase = quoteCalculator.getRawCgpBase();
+
+			Double cgpBase = rawCgpbase;
 			try {
 				cgpBase = quoteCalculator.getCgpBase();
 			} catch (UndefinedVariablesException e) {
 				onInvalidData(e.getVariableNames());
 			}
-			if ( AonNumberUtils.compare(rawCgcbase, cgpBase) > 0 ) // rawCgcbase > cgpBase
+			if ( AonNumberUtils.compare(rawCgpbase, cgpBase,3) > 0 ) // rawCgcbase > cgpBase
 				onCheckError(String.format(BASE_CGP_MAX_MSG, CGP_BASE.getDescription(), rawCgcbase, cgpBase));
-			else if (AonNumberUtils.compare(rawCgcbase, cgpBase)< 0 ) // rawCgcbase < cgpBase 
+			else if (AonNumberUtils.compare(rawCgpbase, cgpBase,3)< 0 ) // rawCgcbase < cgpBase 
 				onCheckError(String.format(BASE_CGP_MIN_MSG, CGP_BASE.getDescription(), rawCgcbase, cgpBase));
 
 			if ( ereBase != null ) 
@@ -572,15 +587,15 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 			Double nonStructuralBase = quoteCalculator.getNonStructuralBase();
 			salaryBuilder.setNonHExtraBase(nonStructuralBase);
-			if (nonStructuralBase != null)
-				expressionContext.setVariable(NON_STRUCTURAL_OVERTIME_BASE,
-						nonStructuralBase, start, end);
+//			if (nonStructuralBase != null)
+//				expressionContext.setVariable(NON_STRUCTURAL_OVERTIME_BASE,
+//						nonStructuralBase, start, end);
 
 			Double structuralBase = quoteCalculator.getStructuralBase();
 			salaryBuilder.setHExtraBase(structuralBase);
-			if (structuralBase != null)
-				expressionContext.setVariable(STRUCTURAL_OVERTIME_BASE,
-						structuralBase, start, end);
+//			if (structuralBase != null)
+//				expressionContext.setVariable(STRUCTURAL_OVERTIME_BASE,
+//						structuralBase, start, end);
 
 			salaryBuilder.setProExtBase(quoteCalculator.getProExtBase());
 
@@ -891,12 +906,27 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		if (paymentEnd.before(paymentStart)) {
 			return; // TODO : must be done in context ?
 		}
+		
 		String name = contractPayment.getName();
+		
+		List<Period> leavePeriods = expressionContext.getPeriods(LEAVE_DAYS);
 
 		try {
 			List<ITimedResult<Double>> results = expressionContext.eval(
 					contractPayment.getExpression(), paymentStart, paymentEnd,
 					Double.class);
+			if ( contractPayment.getType() != PaymentType.CRA_0055 
+					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name) 
+					&& Period.intersects(results.stream().filter(r->r.getValue() != null && r.getValue() > 0.00).map(r->r.getPeriod()).iterator(), leavePeriods.iterator()) ){
+				if ( results.size() == 1  
+					&& ( contractPayment.getType() == PaymentType.CRA_0002 
+						|| contractPayment.getType() == PaymentType.CRA_0003 ))
+					results = shareITResults(results.get(0), leavePeriods);
+				else 
+					onCheckError(contractPayment, String.format(IT_PAY_MSG,contractPayment.getDescription(), contractPayment.getExpression()));
+			}
+			
+
 			for (ITimedResult<Double> result : results) {
 
 				Date resultStart = result.getPeriod().getStart();
@@ -1280,6 +1310,42 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 		calendar.setTime(date);
 		calendar.add(Calendar.DATE, days);
 		return calendar.getTime();
+	}
+	
+	private static List<ITimedResult<Double>> shareITResults(ITimedResult<Double> result, List<Period> its){
+		List<ITimedResult<Double>> fixed = new ArrayList<ITimedResult<Double>>();
+		
+		List<Period> noIts = Period.sub(result.getPeriod(), its);
+		
+		long noItDays = noIts.stream().collect(Collectors.summingLong(p -> AonDateUtils.getDaysBetweenDates(p.getStart(), p.getEnd())));
+		
+		for ( Period p : noIts) {
+			fixed.add(new ITimedResult<Double>() {
+				@Override
+				public Period getPeriod() {
+					return p;
+				}
+				
+				@Override
+				public Double getValue() {
+					return getValue(p);
+				}
+				
+				@Override
+				public Double getValue(Period period) {
+					return result.getValue() * AonDateUtils.getDaysBetweenDates(period.getStart(), period.getEnd()) / noItDays;
+				}
+				@Override
+				public Map<String, ITimedVariable<?>> getContext() {
+					return result.getContext();
+				}
+			});
+		}
+		;
+		
+		
+		
+		return fixed;
 	}
 
 }

@@ -35,6 +35,16 @@ public class AonNumberUtils {
 		return Double.compare(n1.doubleValue(), n2.doubleValue());
 	}
 
+	public static <T extends Number> int compare(T n1, T n2, int decimals) {
+		if (n1 == n2)
+			return 0;
+		if (n1 == null)
+			return -1;
+		if (n2 == null)
+			return 1;
+		return Double.compare(Math.round(n1.doubleValue() * 10*decimals), Math.round(n2.doubleValue() * 10 * decimals ));
+	}
+
 	public static Byte toByte(String value) {
 		if (!AonStringUtils.isBlank(value)) {
 			return Byte.parseByte(value);

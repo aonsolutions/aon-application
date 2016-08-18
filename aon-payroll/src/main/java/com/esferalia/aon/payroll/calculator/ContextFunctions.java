@@ -4,8 +4,10 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CHECK;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.INPUT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SECTION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WARNING;
+import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
 
 import java.lang.reflect.Method;
 import java.util.Calendar;
@@ -26,17 +28,20 @@ import com.esferalia.aon.salary.expression.ExpressionContext.DeferredException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
+import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
 
 public class ContextFunctions {
 
 	private static final String _OLD = "_OLD";
 	private static final String _GROSS = "_BRUTO";
+	private static final String _SECTION = "_SECTION";
 	private static final String MONTHS_IMPL = "MESESIMPL";
 
 	public static class UselessGuaranteeException extends CheckException {
@@ -96,6 +101,16 @@ public class ContextFunctions {
 		}
 	}
 
+	public static void section(Date date) throws MacroException {
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.SECTION),
+						String.format("%s\\(%s,", _SECTION, ContextVariable.CONTEXT));
+			}
+		};
+	}
+
 	public static void check(boolean condition, String msg) throws CheckException {
 		if (!condition) {
 			throw new CheckException(msg);
@@ -117,6 +132,7 @@ public class ContextFunctions {
 	public static void warning(String msg) throws CheckException {
 		throw new CheckException(msg);
 	}
+
 
 	public static int getMonths(Date start, Date end, double days) {
 		Calendar startCalendar = Calendar.getInstance();
@@ -160,7 +176,65 @@ public class ContextFunctions {
 	}
 
 	// ------------------------------------------------------------------------
-	// ANIGÜEDAD
+	// SECTION
+	// ------------------------------------------------------------------------
+
+	public static void section(ExpressionContext context, Date date) {
+		
+		for ( String name : new String[ ]{
+				ContextVariable.PREST_IT,
+				ContextVariable.CGC_BASE.getName(),
+				ContextVariable.CGP_BASE.getName(),
+				ContextVariable.STRUCTURAL_OVERTIME_BASE.getName(),
+				ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName(),
+				})
+		{
+			for ( ITimedVariable<Object> var : context.getVariables(name) ) {
+				if ( var.getPeriod().contains(date)) {
+					
+					Period varPeriod = var.getPeriod();
+					Double varValue = ((Number)var.getValue(varPeriod)).doubleValue();
+					long varDays = getDaysBetweenDates(varPeriod.getStart(), varPeriod.getEnd())+ 1;
+					
+					ITimedVariable<Object> firstVariable = new ITimedVariable<Object>() {
+						
+						@Override
+						public Period getPeriod() {
+							return new Period(varPeriod.getStart(), date);
+						}
+						
+						@Override
+						public Object getValue(Period period) {
+							long days = getDaysBetweenDates(period.getStart(), period.getEnd()) +1;
+							return varValue * days / varDays;
+						}
+					};
+					
+					context.putVariable(name, firstVariable);
+
+					ITimedVariable<Object> lastVariable = new ITimedVariable<Object>() {
+						@Override
+						public Period getPeriod() {
+							return new Period( AonDateUtils.addDays(date, 1), varPeriod.getEnd());
+						}
+						
+						@Override
+						public Object getValue(Period period) {
+							long days = getDaysBetweenDates(period.getStart(), period.getEnd()) +1;
+							return varValue * days / varDays;
+						}
+					};
+					
+					context.putVariable(name, lastVariable);
+				} // split;
+			}
+		}
+		
+	}
+	
+
+	// ------------------------------------------------------------------------
+	// ANTIGÜEDAD
 	// ------------------------------------------------------------------------
 
 	public static Double old(ExpressionContext context, Double amount, Years years) {
@@ -350,6 +424,26 @@ public class ContextFunctions {
 	// ------------------------------------------------------------------------
 	// Private Static methods (library)
 	// ------------------------------------------------------------------------
+	private static void loadSectionFunction(ExpressionContext context, Date startDate, Date endDate)
+			throws ExpressionException {
+
+		// WARNING function
+		try {
+			Method section = ContextFunctions.class.getMethod("section", Date.class);
+
+			MethodStub sectionStub = new MethodStub(section);
+			context.setVariable(SECTION, sectionStub, startDate, endDate);
+			
+			Method _section = ContextFunctions.class.getMethod("section", ExpressionContext.class, Date.class);
+
+			MethodStub _sectionStub = new MethodStub(_section);
+			context.setVariable(_SECTION, _sectionStub, startDate, endDate);
+			
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		}
+	}
+
 	private static void loadRemoveFunction(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
 		try {
@@ -519,6 +613,7 @@ public class ContextFunctions {
 		loadRemoveFunction(context, startDate, endDate);
 		loadExcessFunction(context, startDate, endDate);
 		loadSeniorityFunction(context, startDate, endDate);
+		loadSectionFunction(context, startDate, endDate);
 	}
 
 }

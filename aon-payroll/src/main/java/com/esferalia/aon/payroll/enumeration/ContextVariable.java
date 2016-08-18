@@ -251,6 +251,7 @@ public enum ContextVariable implements IResourceable{
 	DIRECT_PAY("PAGO_DIRECTO", VariableType.BOOLEAN),
 	
 	MONTHLY_SALARY("MODALIDAD_MENSUAL", VariableType.BOOLEAN)
+	
 
 	;
 	 
@@ -271,6 +272,7 @@ public enum ContextVariable implements IResourceable{
 	public static final String CHECK = "CHECK";
 	public static final String INPUT = "INPUT";
 	public static final String MONTHS = "MESES";
+	public static final String SECTION = "TRAMO";
 	public static final String WARNING = "AVISO";
 	public static final String ISDEF = "DEFINIDA";
 	public static final String CHECK_VAR = "CHECK_VAR";

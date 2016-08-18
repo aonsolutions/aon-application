@@ -2,7 +2,10 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
@@ -12,11 +15,14 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +31,12 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
+import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
@@ -36,13 +44,17 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.BonusType;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
@@ -392,6 +404,541 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				});
 		;
 
+	}
+
+	// -------------------------------------------------------------------------
+	@Test
+	public void testCustomPeriod() throws ExpressionException, SQLException,
+	SalaryException{
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getToday(), 
+			new HashMap<String,String>(){
+			{
+				put(ContextVariable.TC2.getName(), "'100'");
+			}
+			},
+			new String[] { 
+					"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"500.00*DIAS_TRABAJADOS/DIAS_MES",
+					}, 
+			new String[] {
+					"BASE_CGC * 0.10", 
+					"BASE_CGP * 0.05",
+					},
+			null
+		);
+		//@formatter:on
+
+		addSSRegimeData(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), null,
+				new HashMap<String, String>() {
+					{
+						put("PORCENTAJE_CGC_E", "23.60");
+					}
+				});
+
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "CGC_E",
+				DeductionType.COMMON_CONTINGENCY,
+				"( BASE_CGC_E = BASE_CGC) * PORCENTAJE_CGC_E/100");
+
+		//@formatter:off
+		BonusConceptRecord concept = addBonusConcept(aonContext, 
+				BonusType.SOCIAL_SECURITY,
+				"/*read-only*/"+
+				"FIN_BONIF=AÑO(INICIO_CONTRATO,2);"+
+				"TRAMO(FIN_BONIF);"+
+				"0.00"+
+				"/**/");
+		addBonus(aonContext, contract, concept, null);
+		//@formatter:on
+	
+		// After two years.
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection,
+						getFirstDayOfMonth(add(getToday(), YEAR, 2)),
+						getLastDayOfMonth(add(getToday(), YEAR, 2)),
+						getLastDayOfMonth(add(getToday(), YEAR, 2)), 
+						contract);
+		
+		int salaries = calculateAndSave(connection, ctx);
+		Assert.assertEquals(1, salaries);
+
+		// Only one salary saved to DB.
+		Map<String, List<ContextData>> datas =
+		AON.getSalaryData(
+				aonContext, 
+				props -> props.getContractProperty().eq(contract.getId())
+		)
+		.findFirst()
+		.map(salary-> salary.getContextData())
+		.get()
+		;
+		
+		List<ContextData> cgcBases = datas.get(ContextVariable.CGC_BASE.getName());
+		Assert.assertEquals(2, cgcBases.size());
+		
+		Collections.sort(cgcBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
+		Assert.assertEquals(cgcBases.get(0).getStartDate(), getFirstDayOfMonth(add(getToday(), YEAR, 2)));
+		Assert.assertEquals(cgcBases.get(0).getEndDate(), add(getToday(), YEAR, 2));
+		Assert.assertEquals(cgcBases.get(1).getStartDate(), add(add(getToday(), YEAR, 2), DAY_OF_MONTH ,1));
+		Assert.assertEquals(cgcBases.get(1).getEndDate(), getLastDayOfMonth(add(getToday(), YEAR, 2)));
+		
+		List<ContextData> cgpBases = datas.get(ContextVariable.CGP_BASE.getName());
+		Assert.assertEquals(2, cgpBases.size());
+		Collections.sort(cgpBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
+		Assert.assertEquals(cgpBases.get(0).getStartDate(), getFirstDayOfMonth(add(getToday(), YEAR, 2)));
+		Assert.assertEquals(cgpBases.get(0).getEndDate(), add(getToday(), YEAR, 2));
+		Assert.assertEquals(cgpBases.get(1).getStartDate(), add(add(getToday(), YEAR, 2), DAY_OF_MONTH ,1));
+		Assert.assertEquals(cgpBases.get(1).getEndDate(), getLastDayOfMonth(add(getToday(), YEAR, 2)));
+		
+//		List<ContextData> structuralBases = datas.get(ContextVariable.STRUCTURAL_OVERTIME_BASE.getName());
+//		Assert.assertEquals(1, structuralBases.size());
+//
+//		List<ContextData> nonStructuralBases = datas.get(ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName());
+//		Assert.assertEquals(1, nonStructuralBases.size());
+		
+	}
+	
+	@Test
+	public void testCustomPeriodWithIT() throws ExpressionException, SQLException,
+	SalaryException{
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfMonth(getToday()), 
+			new HashMap<String,String>(){
+			{
+				put(ContextVariable.TC2.getName(), "'100'");
+			}
+			},
+			new String[] { 
+					"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"500.00 * DIAS_TRABAJADOS/DIAS_MES",
+					}, 
+			new String[] {
+					"BASE_CGC * 0.10", 
+					"BASE_CGP * 0.05",
+					},
+			null
+		);
+		//@formatter:on
+
+		addSSRegimeData(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), null,
+				new HashMap<String, String>() {
+					{
+						put("PORCENTAJE_CGC_E", "23.60");
+					}
+				});
+
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "CGC_E",
+				DeductionType.COMMON_CONTINGENCY,
+				"( BASE_CGC_E = BASE_CGC) * PORCENTAJE_CGC_E/100");
+
+		//@formatter:off
+		BonusConceptRecord concept = addBonusConcept(aonContext, 
+				BonusType.SOCIAL_SECURITY,
+				"/*read-only*/"+
+				"FIN_BONIF=DIA(AÑO(INICIO_CONTRATO,2),9);"+
+				"TRAMO(FIN_BONIF);"+
+				"0.00"+
+				"/**/");
+		addBonus(aonContext, contract, concept, null);
+		//@formatter:on
+		
+		addIT(aonContext, contract, 
+				LeaveType.COMMON_DISEASE, 
+				getFirstDayOfMonth(add(getToday(), YEAR, 2)), 
+				add(getFirstDayOfMonth(add(getToday(), YEAR, 2)), DAY_OF_MONTH, 14 ), 
+				100.00);
+	
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+		// After two years.
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection,
+						getFirstDayOfMonth(add(getToday(), YEAR, 2)),
+						getLastDayOfMonth(add(getToday(), YEAR, 2)),
+						getLastDayOfMonth(add(getToday(), YEAR, 2)), 
+						contract);
+		
+		int salaries = calculateAndSave(connection, ctx);
+		Assert.assertEquals(1, salaries);
+
+		// Only one salary saved to DB.
+		Map<String, List<ContextData>> datas =
+		AON.getSalaryData(
+				aonContext, 
+				props -> props.getContractProperty().eq(contract.getId())
+		)
+		.findFirst()
+		.map(salary-> salary.getContextData())
+		.get()
+		;
+		
+		Date startDate = getFirstDayOfMonth(add(getToday(), YEAR, 2));
+		Date sectionDate = add(startDate, DAY_OF_MONTH,9);
+		Date next2SectionDate = add(sectionDate, DAY_OF_MONTH,1);
+		Date itEndDate = add(startDate, DAY_OF_MONTH,14);
+		Date workStartDate = add(itEndDate, DAY_OF_MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		
+		
+		List<ContextData> cgcBases = datas.get(ContextVariable.CGC_BASE.getName());
+		Assert.assertEquals(4, cgcBases.size());
+		Collections.sort(cgcBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
+		Assert.assertEquals(cgcBases.get(0).getStartDate(), startDate);
+		Assert.assertEquals(cgcBases.get(1).getEndDate(), sectionDate);
+		Assert.assertEquals(cgcBases.get(2).getStartDate(), next2SectionDate);
+		Assert.assertEquals(cgcBases.get(2).getEndDate(), itEndDate);
+		Assert.assertEquals(cgcBases.get(3).getStartDate(), workStartDate);
+		Assert.assertEquals(cgcBases.get(3).getEndDate(), endDate);
+		
+		Assert.assertEquals(100.00 * 3, Double.parseDouble(cgcBases.get(0).getExpression()));
+		Assert.assertEquals(100.00 * 7, Double.parseDouble(cgcBases.get(1).getExpression()));
+		Assert.assertEquals(100.00 * 5 , Double.parseDouble(cgcBases.get(2).getExpression()));
+		Assert.assertEquals(1500.00 * (monthDays -15) / monthDays, Double.parseDouble(cgcBases.get(3).getExpression()));
+		
+		List<ContextData> cgpBases = datas.get(ContextVariable.CGP_BASE.getName());
+		Assert.assertEquals(4, cgpBases.size());
+		Collections.sort(cgpBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
+		Assert.assertEquals(cgpBases.get(0).getStartDate(), startDate);
+		Assert.assertEquals(cgpBases.get(1).getEndDate(), sectionDate);
+		Assert.assertEquals(cgpBases.get(2).getStartDate(), next2SectionDate);
+		Assert.assertEquals(cgpBases.get(2).getEndDate(), itEndDate);
+		Assert.assertEquals(cgpBases.get(3).getStartDate(), workStartDate);
+		Assert.assertEquals(cgpBases.get(3).getEndDate(), endDate);
+
+		Assert.assertEquals(100.00 * 3, Double.parseDouble(cgpBases.get(0).getExpression()));
+		Assert.assertEquals(100.00 * 7, Double.parseDouble(cgpBases.get(1).getExpression()));
+		Assert.assertEquals(100.00 * 5 , Double.parseDouble(cgpBases.get(2).getExpression()));
+		Assert.assertEquals(1500.00 * (monthDays -15) / monthDays, Double.parseDouble(cgpBases.get(3).getExpression()));
+
+		List<ContextData> prestIts = datas.get(ContextVariable.PREST_IT);
+		Assert.assertEquals(4, prestIts.size());
+		Collections.sort(prestIts, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
+		Assert.assertEquals(prestIts.get(0).getStartDate(), startDate);
+		Assert.assertEquals(prestIts.get(1).getEndDate(), sectionDate);
+		Assert.assertEquals(prestIts.get(2).getStartDate(), next2SectionDate);
+		Assert.assertEquals(prestIts.get(2).getEndDate(), itEndDate);
+		Assert.assertEquals(prestIts.get(3).getStartDate(), workStartDate);
+		Assert.assertEquals(prestIts.get(3).getEndDate(), endDate);
+
+		Assert.assertEquals(0.00, Double.parseDouble(prestIts.get(0).getExpression()));
+		Assert.assertEquals(100.00 * 7 * 0.60, Double.parseDouble(prestIts.get(1).getExpression()));
+		Assert.assertEquals(100.00 * 5 * 0.60, Double.parseDouble(prestIts.get(2).getExpression()));
+		Assert.assertEquals(0.00, Double.parseDouble(prestIts.get(3).getExpression()));
+		
+//		List<ContextData> structuralBases = datas.get(ContextVariable.STRUCTURAL_OVERTIME_BASE.getName());
+//		Assert.assertEquals(1, structuralBases.size());
+//		Assert.assertEquals(startDate, structuralBases.get(0).getStartDate());
+//		Assert.assertEquals(endDate, structuralBases.get(0).getEndDate());
+//
+//		List<ContextData> nonStructuralBases = datas.get(ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName());
+//		Assert.assertEquals(1, nonStructuralBases.size());
+//		Assert.assertEquals(startDate, nonStructuralBases.get(0).getStartDate());
+//		Assert.assertEquals(endDate, nonStructuralBases.get(0).getEndDate());
+		
+	}
+
+	@Test
+	public void testCustomPeriodHextraBaseIT() throws ExpressionException, SQLException,
+	SalaryException{
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()), 
+			new HashMap<String,String>(){
+			{
+				put(ContextVariable.TC2.getName(), "'100'");
+			}
+			},
+			new String[] { 
+					"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"500.00 * DIAS_TRABAJADOS/DIAS_MES",
+					}, 
+			new String[] {
+					"BASE_CGC * 0.10", 
+					"BASE_CGP * 0.05",
+					},
+			null
+		);
+		//@formatter:on
+		
+		addIT(aonContext, contract, 
+				LeaveType.COMMON_DISEASE, 
+				getFirstDayOfMonth(getToday()), 
+				add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH, 14 ), 
+				100.00);
+	
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+		
+		//@formatter:off
+		BonusConceptRecord concept = addBonusConcept(aonContext, 
+				BonusType.SOCIAL_SECURITY,
+				"/*read-only*/"+
+				"FIN_BONIF=DIA(INICIO_NOMINA,9);"+
+				"TRAMO(FIN_BONIF);"+
+				"0.00"+
+				"/**/");
+		addBonus(aonContext, contract, concept, null);
+		//@formatter:on
+
+		addPayment(aonContext, contract, "", "100.00", "_P", "_P", PaymentType.CRA_0002);
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection,
+						getFirstDayOfMonth(getToday()),
+						getLastDayOfMonth(getToday()),
+						getLastDayOfMonth(getToday()), 
+						contract);
+
+		int salaries = calculateAndSave(connection, ctx);
+		Assert.assertEquals(1, salaries);
+
+		// Only one salary saved to DB.
+		Map<String, List<ContextData>> datas =
+		AON.getSalaryData(
+				aonContext, 
+				props -> props.getContractProperty().eq(contract.getId())
+		)
+		.findFirst()
+		.map(salary-> salary.getContextData())
+		.get()
+		;
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date sectionDate = add(startDate, DAY_OF_MONTH,9);
+		Date next2SectionDate = add(sectionDate, DAY_OF_MONTH,1);
+		Date itEndDate = add(startDate, DAY_OF_MONTH,14);
+		Date workStartDate = add(itEndDate, DAY_OF_MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		
+		
+		List<ContextData> cgcBases = datas.get(ContextVariable.CGC_BASE.getName());
+		Assert.assertEquals(4, cgcBases.size());
+		Collections.sort(cgcBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
+		Assert.assertEquals(cgcBases.get(0).getStartDate(), startDate);
+		Assert.assertEquals(cgcBases.get(1).getEndDate(), sectionDate);
+		Assert.assertEquals(cgcBases.get(2).getStartDate(), next2SectionDate);
+		Assert.assertEquals(cgcBases.get(2).getEndDate(), itEndDate);
+		Assert.assertEquals(cgcBases.get(3).getStartDate(), workStartDate);
+		Assert.assertEquals(cgcBases.get(3).getEndDate(), endDate);
+		
+		Assert.assertEquals(100.00 * 3, Double.parseDouble(cgcBases.get(0).getExpression()));
+		Assert.assertEquals(100.00 * 7, Double.parseDouble(cgcBases.get(1).getExpression()));
+		Assert.assertEquals(100.00 * 5 , Double.parseDouble(cgcBases.get(2).getExpression()));
+		
+		Assert.assertEquals(1500.00 * (monthDays -15) / monthDays, Double.parseDouble(cgcBases.get(3).getExpression()));
+		
+		List<ContextData> cgpBases = datas.get(ContextVariable.CGP_BASE.getName());
+		Assert.assertEquals(4, cgpBases.size());
+		Collections.sort(cgpBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
+		Assert.assertEquals(cgpBases.get(0).getStartDate(), startDate);
+		Assert.assertEquals(cgpBases.get(1).getEndDate(), sectionDate);
+		Assert.assertEquals(cgpBases.get(2).getStartDate(), next2SectionDate);
+		Assert.assertEquals(cgpBases.get(2).getEndDate(), itEndDate);
+		Assert.assertEquals(cgpBases.get(3).getStartDate(), workStartDate);
+		Assert.assertEquals(cgpBases.get(3).getEndDate(), endDate);
+
+		Assert.assertEquals(100.00 * 3, Double.parseDouble(cgpBases.get(0).getExpression()));
+		Assert.assertEquals(100.00 * 7, Double.parseDouble(cgpBases.get(1).getExpression()));
+		Assert.assertEquals(100.00 * 5 , Double.parseDouble(cgpBases.get(2).getExpression()));
+		
+		Assert.assertEquals(100.00 +(1500.00 * (monthDays -15) / monthDays), Double.parseDouble(cgpBases.get(3).getExpression()));
+
+		List<ContextData> prestIts = datas.get(ContextVariable.PREST_IT);
+		Assert.assertEquals(4, prestIts.size());
+		Collections.sort(prestIts, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
+		Assert.assertEquals(prestIts.get(0).getStartDate(), startDate);
+		Assert.assertEquals(prestIts.get(1).getEndDate(), sectionDate);
+		Assert.assertEquals(prestIts.get(2).getStartDate(), next2SectionDate);
+		Assert.assertEquals(prestIts.get(2).getEndDate(), itEndDate);
+		Assert.assertEquals(prestIts.get(3).getStartDate(), workStartDate);
+		Assert.assertEquals(prestIts.get(3).getEndDate(), endDate);
+
+		List<ContextData> structuralBases = datas.get(ContextVariable.STRUCTURAL_OVERTIME_BASE.getName());
+		Assert.assertEquals(1, structuralBases.size());
+		Assert.assertEquals(structuralBases.get(0).getStartDate(), startDate);
+		Assert.assertEquals(structuralBases.get(0).getEndDate(), endDate);
+		Assert.assertEquals(0.00 , Double.parseDouble(structuralBases.get(0).getExpression()));
+
+		List<ContextData> nonStructuralBases = datas.get(ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName());
+		Assert.assertEquals(1, nonStructuralBases.size());
+		Assert.assertEquals(nonStructuralBases.get(0).getStartDate(), workStartDate);
+		Assert.assertEquals(nonStructuralBases.get(0).getEndDate(), endDate);
+		Assert.assertEquals(100.00 , Double.parseDouble(nonStructuralBases.get(0).getExpression()));
+	}
+
+	@Test
+	public void test31QuoteIT() throws ExpressionException, SQLException,
+	SalaryException{
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		
+		Date startDate = getFirstDayOfYear(getToday());
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()), 
+			new HashMap<String,String>(){
+			{
+				put(ContextVariable.TC2.getName(), "'100'");
+				put(ContextVariable.MONTH_DAYS.getName(), "30");
+			}
+			},
+			new String[] { 
+					"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+					"500.00 * DIAS_TRABAJADOS/DIAS_MES",
+					}, 
+			new String[] {
+					"BASE_CGC * 0.10", 
+					"BASE_CGP * 0.05",
+					},
+			null
+		);
+		//@formatter:on
+
+		
+		Date itDate = startDate;
+
+		addIT(aonContext, contract, 
+				LeaveType.COMMON_DISEASE, 
+				itDate, 
+				itDate, 
+				100.00);
+	
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+		// After two years.
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection,
+						startDate,
+						getLastDayOfMonth(startDate),
+						getLastDayOfMonth(startDate), 
+						contract);
+		
+		int salaries = calculateAndSave(connection, ctx);
+		Assert.assertEquals(1, salaries);
+
+		// Only one salary saved to DB.
+		Map<String, List<ContextData>> datas =
+		AON.getSalaryData(
+				aonContext, 
+				props -> props.getContractProperty().eq(contract.getId())
+		)
+		.findFirst()
+		.map(salary-> salary.getContextData())
+		.get()
+		;
+		
+		Date workStartDate = add(itDate, DAY_OF_MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+		List<ContextData> cgcBases = datas.get(ContextVariable.CGC_BASE.getName());
+
+		Assert.assertEquals(2, cgcBases.size());
+		Collections.sort(cgcBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
+		Assert.assertEquals(cgcBases.get(0).getStartDate(), startDate);
+		Assert.assertEquals(cgcBases.get(0).getEndDate(), itDate);
+		Assert.assertEquals(cgcBases.get(1).getStartDate(), workStartDate);
+		Assert.assertEquals(cgcBases.get(1).getEndDate(), endDate);
+		
+		Assert.assertEquals(0.00, Double.parseDouble(cgcBases.get(0).getExpression()));
+		Assert.assertEquals(1500.00, Double.parseDouble(cgcBases.get(1).getExpression()), DELTA);
+		
+
+		List<ContextData> cgpBases = datas.get(ContextVariable.CGP_BASE.getName());
+
+		Assert.assertEquals(2, cgpBases.size());
+		Collections.sort(cgpBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
+		Assert.assertEquals(cgpBases.get(0).getStartDate(), startDate);
+		Assert.assertEquals(cgpBases.get(0).getEndDate(), itDate);
+		Assert.assertEquals(cgpBases.get(1).getStartDate(), workStartDate);
+		Assert.assertEquals(cgpBases.get(1).getEndDate(), endDate);
+		
+		Assert.assertEquals(0.00, Double.parseDouble(cgpBases.get(0).getExpression()));
+		Assert.assertEquals(1500.00, Double.parseDouble(cgpBases.get(1).getExpression()), DELTA);
 	}
 
 	// -------------------------------------------------------------------------

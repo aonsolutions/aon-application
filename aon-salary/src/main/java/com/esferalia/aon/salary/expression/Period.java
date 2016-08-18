@@ -148,6 +148,35 @@ public class Period implements Comparable<Period> {
 		return compare(start, other.start) == 0 && compare(end, other.end) == 0;
 	}
 
+	public static boolean intersects(Iterator<Period> aIterator, Iterator<Period> bIterator) {
+
+		Period aPeriod = null;
+		Period bPeriod = null;
+		while (aIterator.hasNext() || bIterator.hasNext()) {
+
+			int ends = compareEnds(aPeriod, bPeriod);
+			if (ends <= 0) {
+				if (!aIterator.hasNext())
+					break;
+				aPeriod = aIterator.next();
+			}
+			if (ends >= 0) {
+				if (!bIterator.hasNext())
+					break;
+				bPeriod = bIterator.next();
+			}
+
+			Period intersectPeriod = aPeriod.intersect(bPeriod);
+			if (intersectPeriod != null) {
+				return true;
+			}
+		}
+
+
+		return false;
+		
+	}
+
 	public static List<Period> intersect(Iterable<Period> a, Iterable<Period> b) {
 		if (a == null || b == null)
 			return null;

@@ -47,6 +47,7 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -56,6 +57,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
@@ -1973,5 +1975,54 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 
 	}
+	
+	@Test
+	public void testWarningQuoteIT() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"666.00"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				startITDate, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setListener( new ContractSalaryCalculator.Listener() {
+			@Override
+			public void onCheckError(IContractPayment payment, String message) {
+				if ( "666.00".equals(payment.getExpression()) )
+					throw new AssertionError("OK");
+			}
+		});
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		try {
+			Salary salary = calculator.calculate(ctx);
+		} catch ( AssertionError e ){
+			if ( "OK".equals(e.getMessage()))
+					return;
+		}
+
+		Assert.fail();
+
+	}
+
+	
 	
 }
