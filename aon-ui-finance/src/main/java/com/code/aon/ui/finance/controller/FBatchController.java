@@ -5,6 +5,7 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_UNRECORD_ERRO
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -35,6 +36,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.User;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.BankStatement;
@@ -47,10 +49,14 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.event.FinanceListSearchListener;
 import com.code.aon.ui.finance.util.FBatchCreateDiskProcess;
 import com.code.aon.ui.form.BasicController;
@@ -74,6 +80,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private Date bankDate;
 	private boolean showFbatchRecordWindow;
 	private boolean showSEPAWindow;
+	private boolean showAebWaitingProcessWindow;
 	private AccountEntryFinanceWriter writer;
 	private boolean showAuditInfoWindow;
 
@@ -143,6 +150,14 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public void setShowSEPAWindow(boolean showSEPAWindow) {
 		this.showSEPAWindow = showSEPAWindow;
+	}
+
+	public boolean isShowAebWaitingProcessWindow() {
+		return showAebWaitingProcessWindow;
+	}
+
+	public void setShowAebWaitingProcessWindow(boolean showAebWaitingProcessWindow) {
+		this.showAebWaitingProcessWindow = showAebWaitingProcessWindow;
 	}
 
 	public AccountEntryFinanceWriter getWriter() {
@@ -413,10 +428,35 @@ public class FBatchController extends BasicController implements ICollectionProv
     }
 
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
-		AonUtil.addInfoMessage("El fichero se ha mandado generar en segundo plano");
-		FBatchCreateDiskProcess fcdp = new FBatchCreateDiskProcess(this);
+		setShowAebWaitingProcessWindow(true);
+		User user = UserUtils.getInstance().getLoggedUser();
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+		FBatchCreateDiskProcess fcdp = new FBatchCreateDiskProcess(this, user, ds.getDomainURL());
 		LongProcessThread thread = new LongProcessThread(fcdp);
 		thread.start();
+	}
+	
+	public void loadAebFile() throws ManagerBeanException {
+		FinanceBatch fbatch = (FinanceBatch) this.getTo();
+		Integer rattachId = fbatch.getRattach();
+		if(rattachId!=null){
+			RegistryAttachment rattach = (RegistryAttachment) BeanManager.getManagerBean(RegistryAttachment.class).get(rattachId);
+			if(rattach!=null){
+				aebOutput = new FileOutput();
+				aebOutput.setErrors(Collections.emptyList());
+				aebOutput.setContent(rattach!=null?rattach.getData():null);
+			}
+		}
+	}
+	
+	public void cleanAebFile() throws ManagerBeanException {
+		FinanceBatch fbatch = (FinanceBatch) this.getTo();
+		Integer rattachId = fbatch.getRattach();
+		if(rattachId!=null){
+			if( BeanManager.getManagerBean(RegistryAttachment.class).remove(rattachId)){
+				fbatch.setRattach(null);
+			}
+		}
 	}
 
 	public boolean isDiskOk() {
@@ -459,7 +499,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	        if(aebOutput.getFile()!=null){
 	        	aebOutput.getFile().delete();
 	        }
-	        setAebOutput(null);
+	        
         } catch (IOException e) {
 			throw new ManagerBeanException(e);
 		}
@@ -523,6 +563,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public void onClosePanel(ActionEvent event) {
 		setShowSEPAWindow(false);
+		setShowAebWaitingProcessWindow(true);
 	}
 
 	@Override

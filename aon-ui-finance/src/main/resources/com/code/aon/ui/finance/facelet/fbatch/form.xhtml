@@ -37,22 +37,32 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="fBatch" />
 					</aon:htmlCommandLink>
-					<aon:if test="#{(fbatch.to.financeBatchType != 'SEPA_19_14_CORE_XML') and (fbatch.to.financeBatchType != 'SEPA_19_14_COR1_XML')
-							and (fbatch.to.financeBatchType != 'SEPA_58_ANTICIPO_XML') and (fbatch.to.financeBatchType != 'SEPA_58_COBRO_XML')  }" >
-						<aon:commandButton id="aeb" value="#{bundle.finance_create_disk}"
-							rendered="#{!fbatch.nevv and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
-							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
-							reRender="financeBatchForm"
-							actionListener="#{fbatch.onCreateDisk}" />
-					</aon:if>	
-					<aon:if test="#{(fbatch.to.financeBatchType == 'SEPA_19_14_CORE_XML') or (fbatch.to.financeBatchType == 'SEPA_19_14_COR1_XML')
-							or (fbatch.to.financeBatchType == 'SEPA_58_ANTICIPO_XML') or (fbatch.to.financeBatchType == 'SEPA_58_COBRO_XML')}" >
-						<aon:commandButton id="sepaCreateDisk" value="#{bundle.finance_create_disk}"
-							rendered="#{!fbatch.nevv and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
-							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
-							actionListener="#{fbatch.onShowSEPAWindow}"
-							reRender="showSEPAWindow" />
-				     </aon:if>	
+					<aon:if test="#{empty fbatch.aebOutput}">
+						<aon:if test="#{(fbatch.to.financeBatchType != 'SEPA_19_14_CORE_XML') and (fbatch.to.financeBatchType != 'SEPA_19_14_COR1_XML')
+								and (fbatch.to.financeBatchType != 'SEPA_58_ANTICIPO_XML') and (fbatch.to.financeBatchType != 'SEPA_58_COBRO_XML')  }" >
+							<aon:commandButton id="aeb" value="#{bundle.finance_create_disk}"
+								rendered="#{!fbatch.nevv and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
+								styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+								reRender="financeBatchForm, showAebWaitingProcessWindow"
+								actionListener="#{fbatch.onCreateDisk}" />
+						</aon:if>	
+						<aon:if test="#{(fbatch.to.financeBatchType == 'SEPA_19_14_CORE_XML') or (fbatch.to.financeBatchType == 'SEPA_19_14_COR1_XML')
+								or (fbatch.to.financeBatchType == 'SEPA_58_ANTICIPO_XML') or (fbatch.to.financeBatchType == 'SEPA_58_COBRO_XML')}" >
+							<aon:commandButton id="sepaCreateDisk" value="#{bundle.finance_create_disk}"
+								rendered="#{!fbatch.nevv and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
+								styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+								actionListener="#{fbatch.onShowSEPAWindow}"
+								reRender="showSEPAWindow" />
+					     </aon:if>	
+				    </aon:if>
+					<aon:if test="#{not empty fbatch.aebOutput}">
+						<aon:htmlCommandLink target="_blank"
+							title="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
+							value="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
+							actionListener="#{fbatch.downloadDisk}" rendered="#{fbatch.aebOutput!=null}"
+							styleClass="aon-finding-toolbar-item aon-icon-mail-save"
+							onclick="this.style.display='none';" />
+					</aon:if>
 					<aon:if test="#{aonRole.accountingOperator}">
 						<aon:commandButton id="recordPopup" value="#{bundle.finance_record}"
 							rendered="#{!fbatch.nevv and !fbatch.readOnly and (fbatch.done or !fbatch.diskMode)}"
@@ -204,6 +214,7 @@
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/modalRecord.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/modalSEPA.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/modalAebWaitingProcess.xhtml" />
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
 			<ui:param name="addWaitProcessPoll" value="#{true}" />
 		</ui:include>

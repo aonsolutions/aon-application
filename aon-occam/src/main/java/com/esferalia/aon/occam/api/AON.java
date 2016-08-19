@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Agreement;
+import com.esferalia.aon.occam.api.model.Alarm;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.AttachFilter;
@@ -99,6 +100,7 @@ import com.esferalia.aon.occam.impl.jooq.CommercialImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.FeeImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
+import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.MarketplaceImpl;
 import com.esferalia.aon.occam.impl.jooq.OfficeImpl;
@@ -162,7 +164,11 @@ public class AON {
 	private static IOffice getOffice() {
 		return new OfficeImpl();
 	}
-
+	
+	private static IGroupware getGroupware() {
+		return new GroupwareImpl();
+	}
+	
 	private static IAttachment getAttachment() {
 		return new AttachmentImpl();
 	}
@@ -1299,6 +1305,59 @@ public class AON {
 		}
 	}
 
+	// ********************************************
+	// ****************************** GROUPWARE **
+	// ********************************************
+	public static Notice getNotice(String domainName, Integer domainId,
+			String login, Integer noticeId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getGroupware().getNotice(ctx, noticeId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Integer insertNotice(Integer domainId, String domainName,
+			String userName, Notice notice) throws Exception {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getGroupware().insertNotice(ctx, notice);
+			
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Alarm getAlarm(String domainName, Integer domainId,
+			String login, Integer alarmId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getGroupware().getAlarm(ctx, alarmId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Integer insertAlarm(Integer domainId, String domainName,
+			String userName, Alarm alarm) throws Exception {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, userName);
+			return getGroupware().insertAlarm(ctx, alarm);
+			
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	// ********************************************
 	// ****************************** ATTACHMENT **
 	// ********************************************

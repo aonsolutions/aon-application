@@ -29,12 +29,6 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />     		
      	</aon:commandButton>	
-		<aon:htmlCommandLink target="_blank"
-			title="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
-			value="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
-			actionListener="#{fbatch.downloadDisk}" rendered="#{fbatch.aebOutput!=null}"
-			styleClass="aon-finding-toolbar-item aon-icon-mail-save"
-			onclick="this.style.display='none';" />
 	</aon:div>
 
 	<aon:div id="fBatchDetailDataDiv">

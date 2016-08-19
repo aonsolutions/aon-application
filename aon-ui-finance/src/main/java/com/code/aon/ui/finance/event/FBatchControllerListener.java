@@ -49,6 +49,7 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
 		fBatchController.setAebOutput(null);
 		try {
 			fBatchController.loadAvailableFinances();
+			fBatchController.loadAebFile();
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -90,6 +91,11 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
             }
         }
         fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
+        try {
+        	fBatchController.cleanAebFile();
+        } catch(ManagerBeanException e) {
+        	throw new ControllerListenerException(e.getMessage(), e);
+        }
     }
 
     @Override

@@ -38,7 +38,7 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="fbatchSEPA-accept"
 										value="#{bundle.aon_accept}"
-										reRender="showSEPAWindow"
+										reRender="showSEPAWindow, showAebWaitingProcessWindow"
 										actionListener="#{fbatch.onCreateDisk}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept" >
 										<aon:actionListener method="#{fbatch.onClosePanel}"/>
