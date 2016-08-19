@@ -1571,7 +1571,7 @@ DROP TABLE IF EXISTS `bonus_concept`;
 CREATE TABLE `bonus_concept` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `expression` varchar(512) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
+  `expression` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
   `description` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de Bonificacion Salarial',
   PRIMARY KEY (`id`),
@@ -12677,4 +12677,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-08-19  2:17:15
+-- Dump completed on 2016-08-19  2:44:46
