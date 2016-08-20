@@ -332,7 +332,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 	        if (FinanceBatchStatus.TODO != fBatch.getFinanceBatchStatus()) {
 	            fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
 	            getManagerBean().update(fBatch);
-	            setAebOutput(null);
 	        }
 
 	        IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
@@ -391,7 +390,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 	        if (FinanceBatchStatus.TODO != fBatch.getFinanceBatchStatus()) {
 	            fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
 	            getManagerBean().update(fBatch);
-	            setAebOutput(null);
 	        }
 	
 			IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
@@ -437,6 +435,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	}
 	
 	public void loadAebFile() throws ManagerBeanException {
+		setAebOutput(null);
 		FinanceBatch fbatch = (FinanceBatch) this.getTo();
 		Integer rattachId = fbatch.getRattach();
 		if(rattachId!=null){
@@ -445,6 +444,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 				aebOutput = new FileOutput();
 				aebOutput.setErrors(Collections.emptyList());
 				aebOutput.setContent(rattach!=null?rattach.getData():null);
+				setMimeType(rattach.getMimeType());
 			}
 		}
 	}
