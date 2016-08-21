@@ -21,7 +21,7 @@ node {
 
    echo "MAVEN_RELEASE = ${MAVEN_RELEASE}"
    
-   if ( MAVEN_RELEASE == true ) {
+   if ( MAVEN_RELEASE == 'true' ) {
       stage 'Perform Maven Release'
    
       def tag = pom.version.replace("-SNAPSHOT", ".x")
