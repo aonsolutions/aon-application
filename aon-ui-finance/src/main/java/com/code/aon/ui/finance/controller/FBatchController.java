@@ -436,6 +436,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	
 	public void loadAebFile() throws ManagerBeanException {
 		setAebOutput(null);
+		this.refresh(null);
 		FinanceBatch fbatch = (FinanceBatch) this.getTo();
 		Integer rattachId = fbatch.getRattach();
 		if(rattachId!=null){
