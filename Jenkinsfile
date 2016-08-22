@@ -178,6 +178,7 @@ $(
 OLD_IFS="$IFS"
 IFS=$'\n'
 for file in $(find files -type f); do
+file=${file/-[[:digit:]]*./-\\*.}
 echo "rm -f '${file#files}'"
 done
 IFS="$OLD_IFS"
