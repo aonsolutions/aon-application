@@ -93,10 +93,15 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			
 			read.put(key.toString(), var);
 			
-			if ( var instanceof ITimedResult<?>) 
-				read.putAll(((ITimedResult<?>)var).getContext() );
+			if ( var instanceof ITimedResult<?>) {
+				read(((ITimedResult<?>)var).getContext() );
+			}
 			
-			return var != null ? var.getValue(period) : null;
+//			return var != null ? var.getValue(period) : null;
+			
+			Object value = var != null ? var.getValue(period) : null;
+			read(key.toString(), var, value);
+			return value;
 		}
 
 		@Override
@@ -167,8 +172,12 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 //			if ( value == null )
 //				var = new TimedObject<T>(def, period);
 			
-			read.put(key, var);
-			return value == null ? def : mapper.apply(value);
+//			read.put(key, var);
+//			return value == null ? def : mapper.apply(value);
+			
+			T t = value == null ? def : mapper.apply(value);
+			read(key, var,t);
+			return t;
 		}
 		
 		public <T> T get(Object key, Function<Object,T> mapper) {
@@ -186,9 +195,29 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			if ( value == null )
 				return null;
 			
-			read.put(key, var);
-			return mapper.apply(value);
+//			read.put(key, var);
+//			return mapper.apply(value);
+
+			T t = mapper.apply(value);
+			read(key, var, t);
+			return t;
 		}
+		
+		public <T> ITimedVariable<T> get(Object key, Class<T> clazz) {
+			return (ITimedVariable<T>) Variables.this.getVariable(key.toString(),
+					period);
+			
+		}
+		
+		private <T>  void read(Map<String,ITimedVariable<?>> map) {
+			for( Map.Entry<String,ITimedVariable<?>> entry : map.entrySet())
+				read(entry.getKey(), entry.getValue(), entry.getValue().getValue(period));
+		}
+
+		private <T>  void read(String key, ITimedVariable<?> var, T value) {
+			this.read.put(key, wrapVariable(period, var, value));
+		}
+		
 		
 	}
 
@@ -559,6 +588,18 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 				new WrapTimedVariable<>(period, timedVariable);
 	}
 	
+	private static <T> ITimedVariable<T> wrapVariable(Period period,
+			ITimedVariable<?> timedVariable, T value) {
+		return timedVariable instanceof IExpressionVariable<?> ?
+				new ExpressionVariable<T>(
+						value, 
+						period, 
+						((IExpressionVariable<?>) timedVariable).getExpression(),
+						((IExpressionVariable<?>) timedVariable).getContext()
+						): 
+				new TimedObject<T>(value, period);
+	}
+
 	private static <T> WrapTimedVariable<T> newWrapTimedVariable(Date start, Date end, ITimedVariable<T> var){
 		return ( var instanceof IConstantVariable ) ? new WrapTimedConstant<T>(start, end, var): new WrapTimedVariable<T>(start, end, var);
 	}
