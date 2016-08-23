@@ -427,11 +427,15 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
 		setShowAebWaitingProcessWindow(true);
-		User user = UserUtils.getInstance().getLoggedUser();
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-		FBatchCreateDiskProcess fcdp = new FBatchCreateDiskProcess(this, user, ds.getDomainURL());
-		LongProcessThread thread = new LongProcessThread(fcdp);
-		thread.start();
+		this.refresh(event);
+		FinanceBatch fbatch = (FinanceBatch) this.getTo();
+		if(fbatch.getRattach()==null){
+			User user = UserUtils.getInstance().getLoggedUser();
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+			FBatchCreateDiskProcess fcdp = new FBatchCreateDiskProcess(this, user, ds.getDomainURL());
+			LongProcessThread thread = new LongProcessThread(fcdp);
+			thread.start();
+		}
 	}
 	
 	public void onLoadDisk(ActionEvent event) throws ManagerBeanException {
@@ -557,9 +561,15 @@ public class FBatchController extends BasicController implements ICollectionProv
 		}
 	}
 
-	public void onShowSEPAWindow( ActionEvent event ) {
-		setBankDate(new Date());
-		setShowSEPAWindow(true);
+	public void onShowSEPAWindow( ActionEvent event ) throws ManagerBeanException {
+		this.refresh(event);
+		FinanceBatch fbatch = (FinanceBatch)this.getTo();
+		if(fbatch.getRattach()==null){
+			setBankDate(new Date());
+			setShowSEPAWindow(true);
+		} else {
+			setShowAebWaitingProcessWindow(true);
+		}
 	}
 	
 	public void setMimeType(MimeType mimeType) {

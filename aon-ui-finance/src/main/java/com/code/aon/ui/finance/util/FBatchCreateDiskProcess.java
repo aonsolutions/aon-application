@@ -89,9 +89,7 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 	@Override
 	public void execute() {
 		FinanceBatch fbatch = (FinanceBatch) controller.getTo();
-
-		controller.setAebOutput(null);
-    	controller.setMimeType(MimeType.MIME_TXT);
+		startProcess();
     	try {
 	    	List<FinanceBatchDetail> fbatchDetailCollection = obtainDetailsCollection(fbatch);
 	    	FileOutput aebOutput = null;
@@ -121,21 +119,18 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 					break;
 		    	case SEPA_19_14_CORE_XML:
 		    	case SEPA_19_14_COR1_XML:
-		    		controller.setMimeType(MimeType.MIME_XML);
 					SEPA19_14CoreXmlWriter sepa19Writer = new SEPA19_14CoreXmlWriter();
 					aebOutput = sepa19Writer.createXml(company, controller.getBankDate(), fbatch, fbatchDetailCollection);
 					saveRegistryAttach(aebOutput, "SEPA_19_14_COR1_XML_"+fbatch.getDescription(), MimeType.MIME_XML);
 					break;
 		    	case SEPA_34_14_XML:
 		    	case SEPA_34_14_N_XML:
-		    		controller.setMimeType(MimeType.MIME_XML);
 					SEPA34_14XmlWriter sepa34Writer = new SEPA34_14XmlWriter();
 					aebOutput = sepa34Writer.createXml(company, fbatch, fbatchDetailCollection);
 					saveRegistryAttach(aebOutput, "SEPA_34_14_XML_"+fbatch.getDescription(), MimeType.MIME_XML);
 		    		break;
 		    	case SEPA_58_ANTICIPO_XML:
 		    	case SEPA_58_COBRO_XML:
-		    		controller.setMimeType(MimeType.MIME_XML);
 		    		SEPA58XmlWriter sepa58Writer = new SEPA58XmlWriter();
 					aebOutput = sepa58Writer.createXml(company,  controller.getBankDate(), fbatch, fbatchDetailCollection);
 					saveRegistryAttach(aebOutput, "SEPA_58_COBRO_XML_"+fbatch.getDescription(), MimeType.MIME_XML);
@@ -144,19 +139,25 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 		    		LOGGER.debug( "None finance batch type");
 		    		break;
 	    	}
-	    	controller.setAebOutput(aebOutput);
-	
+	    	
 	        if (aebOutput != null) {
 	        	if (aebOutput.getErrors().size() > 0) {
 	    			LOGGER.error(errorMessage);
-	        	} else {
-	                fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
-	                controller.getManagerBean().update(fbatch);
 	            }
 	        }
 		} catch (Throwable e) {
 			LOGGER.error(errorMessage);
 		}		
+	}
+	
+	private void startProcess() {
+		FinanceBatch fbatch = (FinanceBatch) controller.getTo();
+		try {
+			fbatch.setRattach(0);
+            controller.getManagerBean().update(fbatch);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
 	}
 	
 	private void saveRegistryAttach(FileOutput aebOutput, String name) {
@@ -194,9 +195,10 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 		}
 		
 		FinanceBatch fbatch = (FinanceBatch) controller.getTo();
-		fbatch.setRattach(attachId);
 		try {
-			controller.loadAebFile();
+			fbatch.setRattach(attachId);
+            fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
+            controller.getManagerBean().update(fbatch);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
 		}

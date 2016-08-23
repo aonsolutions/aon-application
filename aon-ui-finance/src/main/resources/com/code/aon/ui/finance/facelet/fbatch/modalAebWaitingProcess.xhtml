@@ -33,7 +33,9 @@
 				
 				<a4j:region>
 					<h:form>
-						<a4j:poll status="aonStatus" interval="5000"
+						<a4j:poll status="aonStatus" interval="3000"
+							enabled="#{empty fbatch.aebOutput}"
+							actionListener="#{fbatch.onLoadDisk}"
 							reRender="showAebWaitingProcessWindow" />
 					</h:form>
 				</a4j:region>
@@ -43,29 +45,16 @@
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
-								<aon:div styleClass="aon-toolbar">
-									<aon:commandButton id="fbatchRecord-refresh"
-										value="Comprobar ahora"
-										reRender="showAebWaitingProcessWindow"
-										actionListener="#{fbatch.onLoadDisk}"
-										styleClass="aon-finding-toolbar-item aon-icon-refresh">	
-									</aon:commandButton>
-								</aon:div>
-								<aon:div style="font-size: 80%; color: grey;">
-									<aon:outputText value="Ultima actualizacion: " />
-									<aon:outputText value="#{fbatch.to.modificationDate}" />
-									<aon:outputText value=" ( #{fbatch.to.rattach} )" />
-								</aon:div>
 								<aon:div styleClass="aon-scroll-area">
 									<aon:if test="#{empty fbatch.aebOutput}">
-										<aon:div styleClass="aon-margin-top">
-											<aon:outputText value="Se procede a ejecutar la tarea." />
+										<aon:div styleClass="aon-margin-top aon-bold">
+											<aon:outputText value="La tarea se está ejecutando." />
 										</aon:div>
-										<aon:div styleClass="aon-margin-top">
+										<aon:div styleClass="aon-margin-top aon-bold">
 											<aon:outputText
 												value="Puede continuar trabajando o esperar hasta que el proceso termine." />
 										</aon:div>
-										<aon:div styleClass="aon-margin-top">
+										<aon:div styleClass="aon-margin-top aon-bold">
 											<aon:outputText
 												value="A su finalización se creará un aviso desde donde se podrá descargar el fichero." />
 										</aon:div>

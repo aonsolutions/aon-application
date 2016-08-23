@@ -52,7 +52,7 @@
 								rendered="#{!fbatch.nevv and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
 								styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 								actionListener="#{fbatch.onShowSEPAWindow}"
-								reRender="showSEPAWindow" />
+								reRender="showSEPAWindow, showAebWaitingProcessWindow" />
 					     </aon:if>	
 				    </aon:if>
 					<aon:if test="#{not empty fbatch.aebOutput}">
@@ -60,8 +60,7 @@
 							title="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
 							value="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
 							actionListener="#{fbatch.downloadDisk}" rendered="#{fbatch.aebOutput!=null}"
-							styleClass="aon-finding-toolbar-item aon-icon-mail-save"
-							onclick="this.style.display='none';" />
+							styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
 					</aon:if>
 					<aon:if test="#{aonRole.accountingOperator}">
 						<aon:commandButton id="recordPopup" value="#{bundle.finance_record}"
