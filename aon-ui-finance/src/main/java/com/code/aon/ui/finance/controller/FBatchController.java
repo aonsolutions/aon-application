@@ -434,6 +434,10 @@ public class FBatchController extends BasicController implements ICollectionProv
 		thread.start();
 	}
 	
+	public void onLoadDisk(ActionEvent event) throws ManagerBeanException {
+		loadAebFile();
+	}
+	
 	public void loadAebFile() throws ManagerBeanException {
 		setAebOutput(null);
 		this.refresh(null);

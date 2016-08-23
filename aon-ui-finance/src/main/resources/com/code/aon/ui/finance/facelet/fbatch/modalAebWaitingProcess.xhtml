@@ -43,11 +43,23 @@
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="fbatchRecord-refresh"
+										value="Comprobar ahora"
+										reRender="showAebWaitingProcessWindow"
+										actionListener="#{fbatch.onLoadDisk}"
+										styleClass="aon-finding-toolbar-item aon-icon-refresh">	
+									</aon:commandButton>
+								</aon:div>
+								<aon:div style="font-size: 80%; color: grey;">
+									<aon:outputText value="Ultima actualizacion: " />
+									<aon:outputText value="#{fbatch.to.modificationDate}" />
+									<aon:outputText value=" ( #{fbatch.to.rattach} )" />
+								</aon:div>
 								<aon:div styleClass="aon-scroll-area">
 									<aon:if test="#{empty fbatch.aebOutput}">
 										<aon:div styleClass="aon-margin-top">
-											<aon:outputText
-												value="Se procede a ejecutar la tarea." />
+											<aon:outputText value="Se procede a ejecutar la tarea." />
 										</aon:div>
 										<aon:div styleClass="aon-margin-top">
 											<aon:outputText
@@ -59,10 +71,8 @@
 										</aon:div>
 									</aon:if>
 									<aon:if test="#{not empty fbatch.aebOutput}">
-										<aon:div styleClass="aon-margin-top">
-											<aon:outputText
-												value="Fichero generado correctamente" />
-										</aon:div>
+										<aon:outputText styleClass="aon-margin-top"
+											value="Fichero generado correctamente" />
 										<aon:div styleClass="aon-margin-top">
 											<aon:htmlCommandLink target="_blank"
 												title="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
