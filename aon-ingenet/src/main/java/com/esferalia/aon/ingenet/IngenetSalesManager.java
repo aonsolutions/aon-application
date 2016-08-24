@@ -1,7 +1,11 @@
 package com.esferalia.aon.ingenet;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.company.WorkPlace;
@@ -25,6 +29,8 @@ import com.esferalia.aon.watson.error.AonCoreException;
 
 
 public class IngenetSalesManager {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(IngenetSalesManager.class.getName());
 
 	private static IngenetSalesManager instance;
 	
@@ -94,7 +100,7 @@ public class IngenetSalesManager {
 					createSalesLinesItems(ctx, salesDetailList);
 					
 				});
-
+		
 		Integer salesId = createSales(ctx, domainId, scopeId, sales);
 
 		ctx.getDslContext().transaction(configuration -> {
@@ -121,40 +127,30 @@ public class IngenetSalesManager {
 							if(productId == null){
 								createProduct(ctx, domainId, product);
 								productId = product.getId();
+							} else {
+								updateProduct(ctx, domainId, product);
 							}
-	//						Integer brandId = ProductDAO.getBrand(ctx, product.getBrand().getId()).getId();
-	//						if(brandId == null){
-	//							createBrand(ctx, domainId, product.getBrand());
-	//						}
-	//						Integer categoryId = ProductDAO.getProductCategory(ctx, product.getCategory().getId()).getId();
-	//						if(categoryId == null){
-	//							createCategory(ctx, domainId, product.getCategory());
-	//						}
-	//						Integer vatId;
-	//						Integer eetentionId;
 							
-							Integer itemId = obtainItemId(ctx, domainId, productId, item);
-							
-							if(itemId == null && productId !=null){
-								createItem(ctx, domainId, productId, item);
+							if(productId !=null){
+								Integer itemId = obtainItemId(ctx, domainId, productId, item);
 								
-								itemId = obtainItemId(ctx, domainId, productId, item);
-								
-								try {
-									createCompositionItems(ctx, domainId, itemId, item.getItemCompositionList());
-								} catch (Exception e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+								if(itemId == null){
+									createItem(ctx, domainId, productId, item);
+									
+									itemId = obtainItemId(ctx, domainId, productId, item);
+									
+									try {
+										createCompositionItems(ctx, domainId, itemId, item.getItemCompositionList());
+									} catch (Exception e) {
+										LOGGER.error(e.getMessage());
+									}
+								} else {
+									updateItem(ctx, domainId, productId, item, itemId);
 								}
 							}
 						}
 					}
-					
-//					WorkPlace workplace = detail.getWorkPlace();
-//					if(workplace!=null && workplace.getId()!=null && !SalesDAO.existWorkplace(ctx, workplace.getId())){
-//						createWorkplace(ctx, domainId, workplace);
-//					}
-					
+										
 				});
 	}
 	
@@ -239,59 +235,109 @@ public class IngenetSalesManager {
 	}
 
 	private void createProduct(AONContext ctx, int domainId, Product product) {
-		com.esferalia.aon.occam.api.model.product.Product p = new com.esferalia.aon.occam.api.model.product.Product();
-		p.setId(product.getId());
-		p.setDomain(domainId);
-		p.setName(product.getName());
-		p.setCode(product.getCode());
-//		p.setBrand(product.getBrand()!=null?product.getBrand().getId():null);
-//		p.setCategory(product.getCategory()!=null?product.getCategory().getId():null);
-		p.setInventoriable(product.isInventoriable());
-		p.setSerializable(product.isSerializable());
-		p.setLotable(product.isLotable());
-		p.setStatus((byte) product.getStatus().ordinal());
-//		p.setVat(product.getVat()!=null?product.getVat().getId():null);
-//		p.setRetention(product.getRetention()!=null?product.getRetention().getId():null);
-		p.setType((byte) product.getType().ordinal());
-		p.setManufactured((byte)(product.isManufactured()?1:0));
-		p.setComposition(product.isComposition());
-		p.setCompositionPrice(product.isCompositionPrice());
-		p.setPackaged(product.isPackaged());
-//		p.setSalesAccount(product.getSalesAccount().getId());
-//		p.setPurchaseAccount(product.getPurchaseAccount().getId());
-		p.setKind((byte) product.getKind().ordinal());
-		p.setCreationUser(ctx.getUser());
-		p.setCreationDate(new Date());
-		ProductDAO.insertWithId(ctx, p);
+		com.esferalia.aon.occam.api.model.product.Product newProduct = new com.esferalia.aon.occam.api.model.product.Product();
+		newProduct.setId(product.getId());
+		newProduct.setDomain(domainId);
+		newProduct.setName(product.getName());
+		newProduct.setCode(product.getCode());
+		newProduct.setInventoriable(product.isInventoriable());
+		newProduct.setSerializable(product.isSerializable());
+		newProduct.setLotable(product.isLotable());
+		newProduct.setStatus((byte) product.getStatus().ordinal());
+		newProduct.setType((byte) product.getType().ordinal());
+		newProduct.setManufactured((byte)(product.isManufactured()?1:0));
+		newProduct.setComposition(product.isComposition());
+		newProduct.setCompositionPrice(product.isCompositionPrice());
+		newProduct.setPackaged(product.isPackaged());
+		newProduct.setKind((byte) product.getKind().ordinal());
+		newProduct.setCreationUser(ctx.getUser());
+		newProduct.setCreationDate(new Date());
+		ProductDAO.insertWithId(ctx, newProduct);
+	}
+
+	private void updateProduct(AONContext ctx, int domainId, Product product) {
+		com.esferalia.aon.occam.api.model.product.Product newProduct = new com.esferalia.aon.occam.api.model.product.Product();
+		newProduct.setId(product.getId());
+		newProduct.setDomain(domainId);
+		newProduct.setName(product.getName());
+		newProduct.setCode(product.getCode());
+		newProduct.setInventoriable(product.isInventoriable());
+		newProduct.setSerializable(product.isSerializable());
+		newProduct.setLotable(product.isLotable());
+		newProduct.setStatus((byte) product.getStatus().ordinal());
+		newProduct.setType((byte) product.getType().ordinal());
+		newProduct.setManufactured((byte)(product.isManufactured()?1:0));
+		newProduct.setComposition(product.isComposition());
+		newProduct.setCompositionPrice(product.isCompositionPrice());
+		newProduct.setPackaged(product.isPackaged());
+		newProduct.setKind((byte) product.getKind().ordinal());
+		newProduct.setModificationUser(ctx.getUser());
+		newProduct.setModificationDate(new Date());
+		ProductDAO.update(ctx, newProduct);
 	}
 
 	private void createItem(AONContext ctx, int domainId, Integer productId, Item item) {
-		com.esferalia.aon.occam.api.model.product.Item i = new com.esferalia.aon.occam.api.model.product.Item();
-		i.setDomain(domainId);
-		i.setProductId(productId);
-		i.setDetail(item.getDetail());
-		i.setDetail2(item.getDetail2());
-		i.setDetail3(item.getDetail3());
-		i.setDescription(item.getDescription());
-		i.setSerialNumber(item.getSerialNumber());
-		i.setPrice(item.getPrice());
-		i.setStatus((byte) item.getStatus().ordinal());
-		i.setExpensesPercent(item.getExpensesPercent());
-		i.setExpensesFixed(item.getExpensesFixed());
-		i.setProfitPercent(item.getProfitPercent());
-		i.setPurchasePrice(item.getPurchasePrice());
-		i.setBarcode(item.getBarcode());
-		i.setPackFormatTag(new Tag());
-		i.setPackUnits((double) item.getPackUnits());
-		i.setPackUnitsTag(new Tag());
-		i.setPackMeasurement(item.getPackMeasurement());
-		i.setPackMeasurementTag(new Tag());
+		com.esferalia.aon.occam.api.model.product.Item newItem = new com.esferalia.aon.occam.api.model.product.Item();
+		newItem.setDomain(domainId);
+		newItem.setProductId(productId);
+		newItem.setDetail(item.getDetail());
+		newItem.setDetail2(item.getDetail2());
+		newItem.setDetail3(item.getDetail3());
+		newItem.setDescription(item.getDescription());
+		newItem.setSerialNumber(item.getSerialNumber());
+		newItem.setPrice(item.getPrice());
+		newItem.setStatus((byte) item.getStatus().ordinal());
+		newItem.setExpensesPercent(item.getExpensesPercent());
+		newItem.setExpensesFixed(item.getExpensesFixed());
+		newItem.setProfitPercent(item.getProfitPercent());
+		newItem.setPurchasePrice(item.getPurchasePrice());
+		newItem.setBarcode(item.getBarcode());
+		newItem.setPackFormatTag(new Tag());
+		newItem.setPackUnits((double) item.getPackUnits());
+		newItem.setPackUnitsTag(new Tag());
+		newItem.setPackMeasurement(item.getPackMeasurement());
+		newItem.setPackMeasurementTag(new Tag());
+		newItem.setCreationUser(ctx.getUser());
+		newItem.setCreationDate(new Timestamp(new Date().getTime()));
 		try {
-			ProductValidation.validateItem(ctx, i);
-			ProductDAO.insertItem(ctx, i);
+			ProductValidation.validateItem(ctx, newItem);
+			ProductDAO.insertItem(ctx, newItem);
 		} catch (AonCoreException e) {
 			// no es valido, no se guarda
-//			e.printStackTrace();
+			LOGGER.error(e.getMessage());
+		}
+	}
+	
+	private void updateItem(AONContext ctx, int domainId, Integer productId, Item item, Integer itemId) {
+		com.esferalia.aon.occam.api.model.product.Item newItem = new com.esferalia.aon.occam.api.model.product.Item();
+		newItem.setId(itemId);
+		newItem.setDomain(domainId);
+		newItem.setProductId(productId);
+		newItem.setDetail(item.getDetail());
+		newItem.setDetail2(item.getDetail2());
+		newItem.setDetail3(item.getDetail3());
+		newItem.setDescription(item.getDescription());
+		newItem.setSerialNumber(item.getSerialNumber());
+		newItem.setPrice(item.getPrice());
+		newItem.setStatus((byte) item.getStatus().ordinal());
+		newItem.setExpensesPercent(item.getExpensesPercent());
+		newItem.setExpensesFixed(item.getExpensesFixed());
+		newItem.setProfitPercent(item.getProfitPercent());
+		newItem.setPurchasePrice(item.getPurchasePrice());
+		newItem.setBarcode(item.getBarcode());
+		newItem.setPackFormatTag(new Tag());
+		newItem.setPackUnits((double) item.getPackUnits());
+		newItem.setPackUnitsTag(new Tag());
+		newItem.setPackMeasurement(item.getPackMeasurement());
+		newItem.setPackMeasurementTag(new Tag());
+		newItem.setModificationUser(ctx.getUser());
+		newItem.setModificationDate(new Timestamp(new Date().getTime()));
+		try {
+//			ProductValidation.validateItem(ctx, i);
+			ProductDAO.updateItem(ctx, newItem);
+		} catch (AonCoreException e) {
+			// no es valido, no se guarda
+			LOGGER.error(e.getMessage());
 		}
 	}
 	
@@ -316,63 +362,77 @@ public class IngenetSalesManager {
 	}
 	
 	private Integer createSales(AONContext ctx, int domainId, int scopeId, Sales sales){
-		com.esferalia.aon.occam.api.model.management.Sales  s = new com.esferalia.aon.occam.api.model.management.Sales();
-		s.setDomain(domainId);
-		s.setProject(sales.getProject() != null ? sales.getProject().getId() : null);
-		s.setCustomer(sales.getCustomer() != null ? sales.getCustomer().getId() : null);
-		s.setSeries(sales.getSeries());
-		s.setNumber(sales.getNumber());
-		s.setPurchaseReference(sales.getPurchaseReference());
-		s.setShippingAddress(sales.getShippingAddress() != null ? sales.getShippingAddress().getId() : null);
-		s.setSeller(sales.getSeller() != null ? sales.getSeller().getId() : null);
-		s.setDiscountExpr(sales.getDiscountExpression() != null ? sales.getDiscountExpression().getDiscountExpr() : null);
-		s.setIssueDate(sales.getIssueDate());
-		s.setPayMethod(sales.getPayMethod() != null ? sales.getPayMethod().getId() : null);
-		s.setDocumentType(sales.getDocumentType() != null ? sales.getDocumentType().ordinal() : null);
-		s.setSecurityLevel(sales.getSecurityLevel().ordinal());
-		s.setStatus(SalesStatus.valueOf(sales.getStatus().name()));
-		s.setComments(sales.getComments());
-		s.setRemarks(sales.getRemarks());
-		s.setWorkplace(sales.getWorkPlace().getId());
-		s.setScope(scopeId);
-		s.setNumberOfPymnts(sales.getNumberOfPayments());
-		s.setDaysToFirstPymnt(sales.getDaysToFirstPayment());
-		s.setDaysBetweenPymnts(sales.getDaysBetweenPayments());
-		s.setPymntDays(sales.getPaymentDays());
-		s.setBankAccount(sales.getBankAccount().getIban());
-		s.setBankAlias(sales.getBankAlias());
-		s.setBic(sales.getBic());
-		s.setPurchaseGenerated(sales.isPurchaseGenerated());
-		s.setCarrier(sales.getCarrier() != null ? sales.getCarrier().getId() : null);
-		s.setShippingAlternativeAddress(sales.getShippingAlternativeAddress());
-		s.setShippingAlternativeAddress2(sales.getShippingAlternativeAddress2());
-		s.setShippingAlternativeZip(sales.getShippingAlternativeZip());
-		s.setShippingAlternativeCity(sales.getShippingAlternativeCity());
-		s.setShippingAlternativePhone(sales.getShippingAlternativePhone());
-		s.setShippingAlternativeRecipient(sales.getShippingAlternativeRecipient());
-		s.setShippingContact(sales.getShippingContact());
-		s.setShippingPeriod(sales.getShippingPeriod() != null ? sales.getShippingPeriod().ordinal() : null);
-		return SalesDAO.insertSales(ctx, s);
+		com.esferalia.aon.occam.api.model.management.Sales  newSales = new com.esferalia.aon.occam.api.model.management.Sales();
+		newSales.setDomain(domainId);
+		newSales.setProject(sales.getProject() != null ? sales.getProject().getId() : null);
+		newSales.setCustomer(sales.getCustomer() != null ? sales.getCustomer().getId() : null);
+		newSales.setSeries(sales.getSeries());
+		newSales.setNumber(sales.getNumber());
+		newSales.setPurchaseReference(sales.getPurchaseReference());
+		newSales.setShippingAddress(sales.getShippingAddress() != null ? sales.getShippingAddress().getId() : null);
+		newSales.setSeller(sales.getSeller() != null ? sales.getSeller().getId() : null);
+		newSales.setDiscountExpr(sales.getDiscountExpression() != null ? sales.getDiscountExpression().getDiscountExpr() : null);
+		newSales.setIssueDate(sales.getIssueDate());
+		newSales.setPayMethod(sales.getPayMethod() != null ? sales.getPayMethod().getId() : null);
+		newSales.setDocumentType(sales.getDocumentType() != null ? sales.getDocumentType().ordinal() : null);
+		newSales.setSecurityLevel(sales.getSecurityLevel().ordinal());
+		newSales.setStatus(SalesStatus.valueOf(sales.getStatus().name()));
+		newSales.setComments(sales.getComments());
+		newSales.setRemarks(sales.getRemarks());
+		newSales.setWorkplace(sales.getWorkPlace().getId());
+		newSales.setScope(scopeId);
+		newSales.setNumberOfPymnts(sales.getNumberOfPayments());
+		newSales.setDaysToFirstPymnt(sales.getDaysToFirstPayment());
+		newSales.setDaysBetweenPymnts(sales.getDaysBetweenPayments());
+		newSales.setPymntDays(sales.getPaymentDays());
+		newSales.setBankAccount(sales.getBankAccount().getIban());
+		newSales.setBankAlias(sales.getBankAlias());
+		newSales.setBic(sales.getBic());
+		newSales.setPurchaseGenerated(sales.isPurchaseGenerated());
+		newSales.setCarrier(sales.getCarrier() != null ? sales.getCarrier().getId() : null);
+		newSales.setShippingAlternativeAddress(sales.getShippingAlternativeAddress());
+		newSales.setShippingAlternativeAddress2(sales.getShippingAlternativeAddress2());
+		newSales.setShippingAlternativeZip(sales.getShippingAlternativeZip());
+		newSales.setShippingAlternativeCity(sales.getShippingAlternativeCity());
+		newSales.setShippingAlternativePhone(sales.getShippingAlternativePhone());
+		newSales.setShippingAlternativeRecipient(sales.getShippingAlternativeRecipient());
+		newSales.setShippingContact(sales.getShippingContact());
+		newSales.setShippingPeriod(sales.getShippingPeriod() != null ? sales.getShippingPeriod().ordinal() : null);
+		
+		Integer salesId = SalesDAO.getSales(ctx, 
+				filter -> filter.getSeriesProperty().eq(sales.getSeries())
+				.and(filter.getNumberProperty().eq(sales.getNumber()))
+				.and(filter.getStatusProperty().eq(SalesStatus.PENDING.value()))
+				).getId();
+		
+		if(salesId!=null){
+			newSales.setId(salesId);
+			SalesDAO.updateSales(ctx, newSales);
+			SalesDAO.deleteSalesDetail(ctx, newSales);
+		} else {
+			salesId = SalesDAO.insertSales(ctx, newSales);
+		}
+		return salesId;
 	}
 			
 	private void createSalesDetail(AONContext ctx, int domainId,
 			Integer salesId, Integer itemId, SalesDetail detail) {
-		com.esferalia.aon.occam.api.model.management.SalesDetail sd = new com.esferalia.aon.occam.api.model.management.SalesDetail();
-		sd.setDomain(domainId);
-		sd.setSales(salesId);
-		sd.setItem(itemId);
-		sd.setLine(detail.getLine().shortValue());
-		sd.setDescription(detail.getDescription());
-		sd.setQuantity(detail.getQuantity());
-		sd.setPrice(detail.getPrice());
-		sd.setDiscountExpression(detail.getDiscountExpression()
+		com.esferalia.aon.occam.api.model.management.SalesDetail newDetail = new com.esferalia.aon.occam.api.model.management.SalesDetail();
+		newDetail.setDomain(domainId);
+		newDetail.setSales(salesId);
+		newDetail.setItem(itemId);
+		newDetail.setLine(detail.getLine().shortValue());
+		newDetail.setDescription(detail.getDescription());
+		newDetail.setQuantity(detail.getQuantity());
+		newDetail.setPrice(detail.getPrice());
+		newDetail.setDiscountExpression(detail.getDiscountExpression()
 				.getDiscountExpr());
-		sd.setTaxes(detail.getTaxes());
-		sd.setStatus(SalesDetailStatus.valueOf(detail.getStatus().name()));
-		sd.setOfferDetail(detail.getOfferDetail() != null ? detail
+		newDetail.setTaxes(detail.getTaxes());
+		newDetail.setStatus(SalesDetailStatus.valueOf(detail.getStatus().name()));
+		newDetail.setOfferDetail(detail.getOfferDetail() != null ? detail
 				.getOfferDetail().getId() : null);
-		sd.setDelivered(detail.getDelivered());
-		SalesDAO.insertSalesDetail(ctx, sd);
+		newDetail.setDelivered(detail.getDelivered());
+		SalesDAO.insertSalesDetail(ctx, newDetail);
 	}
 	
 }

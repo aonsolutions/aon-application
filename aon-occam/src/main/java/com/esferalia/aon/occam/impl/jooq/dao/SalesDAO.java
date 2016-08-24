@@ -155,6 +155,55 @@ public class SalesDAO {
 				.getId();
 	}
 	
+
+	public static void updateSales(AONContext ctx, Sales sales) {
+		ctx.checkWrite();
+		Timestamp modificationDate = null;
+		modificationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+		
+		ctx.getDslContext()
+				.update(SALES)
+				.set(SALES.DOMAIN, sales.getDomain())
+				.set(SALES.PROJECT, sales.getProject())
+				.set(SALES.CUSTOMER, sales.getCustomer())
+				.set(SALES.SERIES, sales.getSeries())
+				.set(SALES.NUMBER, sales.getNumber())
+				.set(SALES.PURCHASE_REFERENCE, sales.getPurchaseReference())
+				.set(SALES.SHIPPING_ADDRESS, sales.getShippingAddress())
+				.set(SALES.SELLER, sales.getSeller())
+				.set(SALES.DISCOUNT_EXPR, sales.getDiscountExpr())
+				.set(SALES.ISSUE_DATE, new java.sql.Date(sales.getIssueDate().getTime()))
+				.set(SALES.PAY_METHOD, sales.getPayMethod())
+				.set(SALES.DOCUMENT_TYPE, (byte)sales.getDocumentType())
+				.set(SALES.SECURITY_LEVEL, (byte)sales.getSecurityLevel())
+				.set(SALES.STATUS, sales.getStatus().value())
+				.set(SALES.COMMENTS, sales.getComments())
+				.set(SALES.REMARKS, sales.getRemarks())
+				.set(SALES.WORKPLACE, sales.getWorkplace())
+				.set(SALES.SCOPE, sales.getScope())
+				.set(SALES.NUMBER_OF_PYMNTS, (short)sales.getNumberOfPymnts())
+				.set(SALES.DAYS_TO_FIRST_PYMNT, (short)sales.getDaysToFirstPymnt())
+				.set(SALES.DAYS_BETWEEN_PYMNTS, (short)sales.getDaysBetweenPymnts())
+				.set(SALES.PYMNT_DAYS, sales.getPymntDays())
+				.set(SALES.BANK_ACCOUNT, sales.getBankAccount())
+				.set(SALES.BANK_ALIAS, sales.getBankAlias())
+				.set(SALES.BIC, sales.getBic())
+				.set(SALES.PURCHASE_GENERATED, (byte) (sales.isPurchaseGenerated() ? 1 : 0 ))
+				.set(SALES.CARRIER, sales.getCarrier())
+				.set(SALES.SHIPPING_ALTERNATIVE_ADDRESS, sales.getShippingAlternativeAddress())
+				.set(SALES.SHIPPING_ALTERNATIVE_ADDRESS2, sales.getShippingAlternativeAddress2())
+				.set(SALES.SHIPPING_ALTERNATIVE_ZIP, sales.getShippingAlternativeZip())
+				.set(SALES.SHIPPING_ALTERNATIVE_CITY, sales.getShippingAlternativeCity())
+				.set(SALES.SHIPPING_ALTERNATIVE_PHONE, sales.getShippingAlternativePhone())
+				.set(SALES.SHIPPING_ALTERNATIVE_RECIPIENT, sales.getShippingAlternativeRecipient())
+				.set(SALES.SHIPPING_CONTACT, sales.getShippingContact())
+				.set(SALES.SHIPPING_PERIOD, sales.getShippingPeriod()!=null?sales.getShippingPeriod().byteValue():null)
+				.set(SALES.MODIFICATION_USER, ctx.getUser())
+				.set(SALES.MODIFICATION_DATE, modificationDate)
+				.where(SALES.ID.eq(sales.getId()))
+				.execute();
+	}
+	
 	public static void insertSalesDetail(AONContext ctx, SalesDetail detail) {
 		ctx.checkWrite();
 		Timestamp creationDate = null, modificationDate = null;
@@ -189,8 +238,6 @@ public class SalesDAO {
 		
 		ctx.getDslContext()
 				.update(SALES_DETAIL)
-//				.set(SALES_DETAIL.DOMAIN, detail.getDomain())
-//				.set(SALES_DETAIL.SALES, detail.getSales())
 				.set(SALES_DETAIL.LINE, detail.getLine())
 				.set(SALES_DETAIL.ITEM, detail.getItem())
 				.set(SALES_DETAIL.DESCRIPTION, detail.getDescription())
@@ -201,11 +248,16 @@ public class SalesDAO {
 				.set(SALES_DETAIL.STATUS, (byte) detail.getStatus().ordinal())
 				.set(SALES_DETAIL.OFFER_DETAIL, detail.getOfferDetail())
 				.set(SALES_DETAIL.DELIVERED, detail.getDelivered())
-//				.set(SALES_DETAIL.CREATION_USER, ctx.getUser())
-//				.set(SALES_DETAIL.CREATION_DATE, creationDate)
 				.set(SALES_DETAIL.MODIFICATION_USER, ctx.getUser())
 				.set(SALES_DETAIL.MODIFICATION_DATE, modificationDate)
 				.where(SALES_DETAIL.ID.eq(detail.getId())).execute();
+	}
+	
+	public static void deleteSalesDetail(AONContext ctx, Sales sales) {
+		ctx.checkWrite();
+		ctx.getDslContext()
+				.delete(SALES_DETAIL)
+				.where(SALES_DETAIL.SALES.eq(sales.getId())).execute();
 	}
 	
 	public static Sales getSales(AONContext ctx, SalesFilter filter){
