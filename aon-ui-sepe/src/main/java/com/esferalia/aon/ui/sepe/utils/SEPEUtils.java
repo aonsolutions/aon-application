@@ -268,6 +268,11 @@ public class SEPEUtils {
 				ContractData data = (ContractData) to;
 				if(previous==null || data.getStartDate().before(previous.getStartDate())){
 					week = new ContractData[7];
+					for(int i = 0;i<week.length;i++){
+						week[i]=new ContractData();
+						week[i].setStartDate(data.getStartDate());
+						week[i].setEndDate(data.getEndDate());
+					}
 					weekList.add(week);
 				}
 				
