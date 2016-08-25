@@ -919,7 +919,7 @@ public class CretaServlet extends HttpServlet
 
 		Attach attach = getAttach(domainName, domainId, login, type, md5);
 
-		if (attach != null) 
+		if (attach != null && attach.getId() != null ) 
 			return; // already saved
 
 		Company  company = AON.getCompanyForDomain(domainName, domainId, login);
