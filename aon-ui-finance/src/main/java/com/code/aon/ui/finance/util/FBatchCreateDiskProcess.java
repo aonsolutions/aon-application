@@ -28,7 +28,6 @@ import com.code.aon.google.apis.jooq.DBConsults;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.ILongProcess;
-import com.code.aon.ui.finance.controller.FBatchController;
 import com.code.aon.ui.finance.file.AEB19Writer;
 import com.code.aon.ui.finance.file.AEB32Writer;
 import com.code.aon.ui.finance.file.AEB34Writer;
@@ -57,21 +56,26 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FBatchCreateDiskProcess.class.getName());
 	
-	private FBatchController controller;
+	private FinanceBatch fbatch;
+	
+	private Date bankDate;
 	
 	private User user;
 	
-	String domainUrl;
+	private String domainUrl;
 	
 	private Company company;
 	
 	private String errorMessage;
 	
-	public FBatchCreateDiskProcess(FBatchController controller, User user, String domainUrl) {
-		this.controller = controller;
+	private boolean interrupt = false;
+	
+	public FBatchCreateDiskProcess(FinanceBatch fbatch, Company company, Date bankDate, User user, String domainUrl) {
 		this.user = user;
 		this.domainUrl = domainUrl;
-		this.company = controller.getCompany();
+		this.company = company;
+		this.fbatch = fbatch;
+		this.bankDate = bankDate;
 		this.errorMessage = AonUtil.getMessage(ICommonMessages.FINANCE_BATCH_DISK_ERROR);
 	}
 	
@@ -88,7 +92,6 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 	
 	@Override
 	public void execute() {
-		FinanceBatch fbatch = (FinanceBatch) controller.getTo();
 		startProcess();
     	try {
 	    	List<FinanceBatchDetail> fbatchDetailCollection = obtainDetailsCollection(fbatch);
@@ -120,7 +123,7 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 		    	case SEPA_19_14_CORE_XML:
 		    	case SEPA_19_14_COR1_XML:
 					SEPA19_14CoreXmlWriter sepa19Writer = new SEPA19_14CoreXmlWriter();
-					aebOutput = sepa19Writer.createXml(company, controller.getBankDate(), fbatch, fbatchDetailCollection);
+					aebOutput = sepa19Writer.createXml(company, bankDate, fbatch, fbatchDetailCollection);
 					saveRegistryAttach(aebOutput, "SEPA_19_14_COR1_XML_"+fbatch.getDescription(), MimeType.MIME_XML);
 					break;
 		    	case SEPA_34_14_XML:
@@ -132,7 +135,7 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 		    	case SEPA_58_ANTICIPO_XML:
 		    	case SEPA_58_COBRO_XML:
 		    		SEPA58XmlWriter sepa58Writer = new SEPA58XmlWriter();
-					aebOutput = sepa58Writer.createXml(company,  controller.getBankDate(), fbatch, fbatchDetailCollection);
+					aebOutput = sepa58Writer.createXml(company,  bankDate, fbatch, fbatchDetailCollection);
 					saveRegistryAttach(aebOutput, "SEPA_58_COBRO_XML_"+fbatch.getDescription(), MimeType.MIME_XML);
 		    		break;
 		    	case NONE:
@@ -151,13 +154,17 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 	}
 	
 	private void startProcess() {
-		FinanceBatch fbatch = (FinanceBatch) controller.getTo();
+		interrupt = false;
 		try {
 			fbatch.setRattach(0);
-            controller.getManagerBean().update(fbatch);
+			BeanManager.getManagerBean(FinanceBatch.class).update(fbatch);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
 		}
+	}
+	
+	public void interrupt() {
+		interrupt = true;
 	}
 	
 	private void saveRegistryAttach(FileOutput aebOutput, String name) {
@@ -166,46 +173,46 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 	
 	private void saveRegistryAttach(FileOutput aebOutput, String name,
 			MimeType mimeType) {
-		Attach attach = new Attach();
-		attach.setDomain(new Domain().setId(company.getDomain()));
-		attach.setData(aebOutput.getContent());
-		attach.setDescription(name.concat(".").concat(mimeType.getExtension()));
-		attach.setAttachType(AttachType.REGISTRY);
-		attach.setType((short) RegistryAttachmentType.SYSTEM_MESSAGE.ordinal());
-		attach.setAttachModule(company.getId());
-		attach.setDate(new Date());
-		attach.setCreationDate(new Date());
-		attach.setCreationUser(null);
-		attach.setModificationDate(new Date());
-		attach.setModificationUser(null);
-		attach.setMimeType(com.esferalia.aon.occam.api.model.type.MimeType
-				.getByExtension(mimeType.getExtension()));
-		attach.setConfidential(false);
-		Integer attachId = AON.insert(AonUtil.getDomainName(), company.getDomain(), user.getLogin(), attach);
-		LOGGER.info("## Nuevo Mensaje de Sistema: " + attach.getDescription());
-		
-		
-		RegistryAttachment ra;
-		String downloadURL = null;
-		try {
-			ra = (RegistryAttachment) BeanManager.getManagerBean(RegistryAttachment.class).get(attachId);
-			downloadURL = getDownloadURL(ra);
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage());
-		}
-		
-		FinanceBatch fbatch = (FinanceBatch) controller.getTo();
-		try {
-			fbatch.setRattach(attachId);
-            fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
-            controller.getManagerBean().update(fbatch);
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage());
-		}
-		
-		Integer noticeId = createNotice(attachId, name, mimeType, downloadURL);
-		if(noticeId!=null){
-			createAlarm(noticeId, name, mimeType, downloadURL);
+		if(!interrupt){
+			Attach attach = new Attach();
+			attach.setDomain(new Domain().setId(company.getDomain()));
+			attach.setData(aebOutput.getContent());
+			attach.setDescription(name.concat(".").concat(mimeType.getExtension()));
+			attach.setAttachType(AttachType.REGISTRY);
+			attach.setType((short) RegistryAttachmentType.SYSTEM_MESSAGE.ordinal());
+			attach.setAttachModule(company.getId());
+			attach.setDate(new Date());
+			attach.setCreationDate(new Date());
+			attach.setCreationUser(null);
+			attach.setModificationDate(new Date());
+			attach.setModificationUser(null);
+			attach.setMimeType(com.esferalia.aon.occam.api.model.type.MimeType
+					.getByExtension(mimeType.getExtension()));
+			attach.setConfidential(false);
+			Integer attachId = AON.insert(AonUtil.getDomainName(), company.getDomain(), user.getLogin(), attach);
+			LOGGER.info("## Nuevo Mensaje de Sistema: " + attach.getDescription());
+			
+			RegistryAttachment ra;
+			String downloadURL = null;
+			try {
+				ra = (RegistryAttachment) BeanManager.getManagerBean(RegistryAttachment.class).get(attachId);
+				downloadURL = getDownloadURL(ra);
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage());
+			}
+			
+			try {
+				fbatch.setRattach(attachId);
+				fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
+				BeanManager.getManagerBean(FinanceBatch.class).update(fbatch);
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage());
+			}
+			
+			Integer noticeId = createNotice(attachId, name, mimeType, downloadURL);
+			if(noticeId!=null){
+				createAlarm(noticeId, name, mimeType, downloadURL);
+			}
 		}
 	}
 	

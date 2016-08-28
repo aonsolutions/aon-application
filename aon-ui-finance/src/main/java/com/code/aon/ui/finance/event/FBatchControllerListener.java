@@ -33,6 +33,7 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		FBatchController fBatchController = (FBatchController)event.getController();
+		fBatchController.setAebOutput(null);
 		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
 		fBatch.setPayment(fBatchController.isPayment());
 		fBatch.setIssueDate(new Date());

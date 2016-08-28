@@ -33,6 +33,16 @@ public class LongProcessThread implements Runnable {
          thread.start();
     }
 	
+	public void interrupt() {
+		if(thread!=null){
+			thread.interrupt();
+		}
+	}
+	
+	public boolean isTerminated(){
+		return thread.getState()==Thread.State.TERMINATED;
+	}
+	
 	private FacesDomainProvider getFacesDomainProvider() {
 		IDomainProvider dp = DomainManager.getDomainProvider();
 		if ( (dp!=null) && (dp instanceof FacesDomainProvider) ) {

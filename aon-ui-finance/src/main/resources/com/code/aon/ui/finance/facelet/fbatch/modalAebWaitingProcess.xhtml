@@ -46,7 +46,7 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-scroll-area">
-									<aon:if test="#{empty fbatch.aebOutput}">
+									<aon:if test="#{empty fbatch.aebOutput and not empty fbatch.to.rattach}">
 										<aon:div styleClass="aon-margin-top aon-bold">
 											<aon:outputText value="La tarea se está ejecutando." />
 										</aon:div>
@@ -60,7 +60,7 @@
 										</aon:div>
 									</aon:if>
 									<aon:if test="#{not empty fbatch.aebOutput}">
-										<aon:outputText styleClass="aon-margin-top"
+										<aon:outputText styleClass="aon-margin-top aon-bold"
 											value="Fichero generado correctamente" />
 										<aon:div styleClass="aon-margin-top">
 											<aon:htmlCommandLink target="_blank"

@@ -328,6 +328,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 
+			cleanAebFile();
 	        FinanceBatch fBatch = (FinanceBatch)getTo();
 	        if (FinanceBatchStatus.TODO != fBatch.getFinanceBatchStatus()) {
 	            fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
@@ -386,6 +387,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 
+			cleanAebFile();
 			FinanceBatch fBatch = (FinanceBatch)getTo();
 	        if (FinanceBatchStatus.TODO != fBatch.getFinanceBatchStatus()) {
 	            fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
@@ -424,17 +426,41 @@ public class FBatchController extends BasicController implements ICollectionProv
 	        onSearchFinance(event);
 		}
     }
-
+	
+	private FBatchCreateDiskProcess fcdp;
+	private LongProcessThread thread;
+	
+	public boolean isDiskProcessTerminated() {
+		return thread==null || thread.isTerminated();
+	}
+	
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
 		setShowAebWaitingProcessWindow(true);
 		this.refresh(event);
 		FinanceBatch fbatch = (FinanceBatch) this.getTo();
-		if(fbatch.getRattach()==null){
+		if(fbatch.getRattach()==null && isDiskProcessTerminated()){
 			User user = UserUtils.getInstance().getLoggedUser();
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-			FBatchCreateDiskProcess fcdp = new FBatchCreateDiskProcess(this, user, ds.getDomainURL());
-			LongProcessThread thread = new LongProcessThread(fcdp);
+			fcdp = new FBatchCreateDiskProcess(fbatch, getCompany(), getBankDate(), user, ds.getDomainURL());
+			thread = new LongProcessThread(fcdp);
 			thread.start();
+		}
+	}
+	
+	public void onCancelCreateDisk(ActionEvent event) throws ManagerBeanException {
+		if(fcdp!=null){
+			fcdp.interrupt();
+		}
+		if(thread!=null){
+			thread.interrupt();
+		}
+		FinanceBatch fbatch = (FinanceBatch) this.getTo();
+		this.refresh(null);
+		cleanAebFile();
+		Integer rattachId = fbatch.getRattach();
+		if(rattachId!=null){
+			fbatch.setRattach(null);
+			getManagerBean().update(fbatch);
 		}
 	}
 	
@@ -459,6 +485,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	}
 	
 	public void cleanAebFile() throws ManagerBeanException {
+		setAebOutput(null);
 		FinanceBatch fbatch = (FinanceBatch) this.getTo();
 		Integer rattachId = fbatch.getRattach();
 		if(rattachId!=null){

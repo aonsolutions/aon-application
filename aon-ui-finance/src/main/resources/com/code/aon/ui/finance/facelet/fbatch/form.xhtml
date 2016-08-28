@@ -114,6 +114,14 @@
 
 						<aon:outputText styleClass="aon-margin-left"
 							value="#{fbatch.to.financeBatchStatus}" />
+						<aon:if test="#{fbatch.to.rattach==0}">
+							<aon:outputText styleClass="aon-margin-left"
+								value=" (Generando fichero)" />
+							<aon:commandButton title="#{bundle.aon_cancel}"
+								styleClass="aon-finding-toolbar-item aon-noborder aon-icon-cancel"
+								actionListener="#{fbatch.onCancelCreateDisk}"
+								reRender="financeBatchForm" />
+						</aon:if>
 						<aon:if test="#{aonRole.accountingOperator and fbatch.recorded}">
 							<aon:commandLink immediate="true"
 								styleClass="aon-button-goto"
