@@ -25,6 +25,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.Calculate;
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CompositeDeduction;
@@ -169,7 +170,6 @@ public class SalaryDraft extends ResizeComposite
 			put(Scope.APPLICATION, "Sistema");
 			put(Scope.SYSTEM, "Sistema");
 			put(Scope.CONTRACT, "Contrato");
-			put(Scope.SALARY, "Borrador");
 		}
 	};
 
@@ -870,7 +870,12 @@ public class SalaryDraft extends ResizeComposite
 		protected CalculateCallback getNextVariableFocusCallback() {
 			class NextVariableFocusCallback implements CalculateCallback {
 				private String name = VariableChangeHandler.this.variable.getName();
-
+				
+				@Override
+				public Calculate getCalculate() {
+					return SalaryDraft.this.getCalculate();
+				}
+				
 				@Override
 				public void onCalculateFailure(Throwable throwable) {
 					onCalculateSucces(null);
@@ -1121,6 +1126,11 @@ public class SalaryDraft extends ResizeComposite
 				private int id = PaymentChangeHandler.this.item.getId();
 
 				@Override
+				public Calculate getCalculate() {
+					return SalaryDraft.this.getCalculate();
+				}
+
+				@Override
 				public void onCalculateFailure(Throwable throwable) {
 				}
 
@@ -1143,6 +1153,10 @@ public class SalaryDraft extends ResizeComposite
 
 				private int id = PaymentChangeHandler.this.item.getId();
 
+				@Override
+				public Calculate getCalculate() {
+					return SalaryDraft.this.getCalculate();
+				}
 				@Override
 				public void onCalculateFailure(Throwable throwable) {
 					onCalculateSucces(null);
@@ -1620,6 +1634,11 @@ public class SalaryDraft extends ResizeComposite
 			class NextItemFocusCallback implements CalculateCallback {
 
 				@Override
+				public Calculate getCalculate() {
+					return SalaryDraft.this.getCalculate();
+				}
+
+				@Override
 				public void onCalculateFailure(Throwable throwable) {
 					onCalculateSucces(null);
 				}
@@ -2015,14 +2034,15 @@ public class SalaryDraft extends ResizeComposite
 	private NewBonusHandler newBonusHandler;
 	private List<PaymentChangeHandler<?>> paymentChangeHandlers;
 	private List<VariableChangeHandler<?>> variableChangeHandlers;
-
-	
 	
 	private final ContentAsistManager contentAssistManager = new ContentAsistManager();
 
 	private PopupPanel morePopup;
 	private boolean autoSave = true;
 	private MenuItem autoSaveMenuItem;
+	
+	private boolean dummies = false;
+	private MenuItem dummiesMenuItem;
 
 
 	public SalaryDraft() {
@@ -2062,7 +2082,13 @@ public class SalaryDraft extends ResizeComposite
 		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
 		undoAllButton.setEnabled(salaryDraftObject.hasDrafts());
 	}
-
+	// ------------------------------------------------------------------------
+	@Override
+	public Calculate getCalculate() {
+		// TODO Auto-generated method stub
+		return dummies ? Calculate.DUMMIES : Calculate.STANDARD;
+	}
+	
 	@Override
 	public void onCalculateSucces(SalaryDraftObject salaryDraftObject) {
 		boolean draftObjectChanged = this.salaryDraftObject != salaryDraftObject;
@@ -2073,6 +2099,8 @@ public class SalaryDraft extends ResizeComposite
 		if (isPreviewVisible()) {
 			getPrintPreview();
 		}
+		
+		
 		dumpSalaryDraft(!draftObjectChanged);
 
 		salarySelect.setSalaryPreview(salaryDraftObject.asSalaryPreview());
@@ -2103,6 +2131,18 @@ public class SalaryDraft extends ResizeComposite
 			autoSaveMenuItem.setStyleName("aon-MenuItemCheckYes", autoSave);
 			autoSaveMenuItem.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
 			menuBar.addItem(autoSaveMenuItem);
+			
+			dummiesMenuItem = new MenuItem("N\u00f3minas para DUMMIES (\u25CEo\u25CE)", new Command() {
+				@Override
+				public void execute() {
+					dummies = !dummies;
+					dummiesMenuItem.setStyleName("aon-MenuItemCheckYes", dummies);
+					SalaryDraft.this.calculate();
+				}
+			});
+			dummiesMenuItem.setStyleName("aon-MenuItemCheckYes", dummies);
+			dummiesMenuItem.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
+			menuBar.addItem(dummiesMenuItem);
 
 			morePopup = new PopupPanel();
 			morePopup.add(menuBar);
@@ -2871,10 +2911,19 @@ public class SalaryDraft extends ResizeComposite
 		if (autoSave)
 			salaryDraftObject.saveITData(new CalculateCallback() {
 				@Override
+				public Calculate getCalculate() {
+					return SalaryDraft.this.getCalculate();
+				}
+
+				@Override
 				public void onCalculateSucces(SalaryDraftObject object) {
 					
 					salaryDraftObject.save(new CalculateCallback() {
 
+						@Override
+						public Calculate getCalculate() {
+							return SalaryDraft.this.getCalculate();
+						}
 						@Override
 						public void onCalculateSucces(SalaryDraftObject object) {
 							SalaryDraft.this.onCalculateSucces(object); // TODO:
@@ -4620,6 +4669,11 @@ public class SalaryDraft extends ResizeComposite
 
 	private void calculate(final CalculateCallback callback) {
 		salaryDraftObject.calculate(new CalculateCallback() {
+
+			@Override
+			public Calculate getCalculate() {
+				return SalaryDraft.this.getCalculate();
+			}
 
 			@Override
 			public void onCalculateFailure(Throwable throwable) {

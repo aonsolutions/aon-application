@@ -93,6 +93,10 @@ public interface EmployeesServiceAsync extends StatisticsServiceAsync,
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
 
+	void calculateSalaryDraft4Dummies(SalaryDraft salaryDraft,
+			AsyncCallback<SalaryDraft> callback)
+			throws IllegalArgumentException;
+
 	void calculateAgreementDraft(AgreementDraft agreementDraft,
 			AsyncCallback<AgreementDraft> callback)
 			throws IllegalArgumentException;

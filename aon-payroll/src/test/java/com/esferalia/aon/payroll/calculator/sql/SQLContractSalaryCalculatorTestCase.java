@@ -25,6 +25,7 @@ import org.junit.Test;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
@@ -311,7 +312,7 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 								ContextVariable.SUNDAY_HOURS,
 								ContextVariable.WORKED_HOURS,
 								ContextVariable.SALARY_HOURS, }) {
-							Assert.assertEquals(true, salary.getContextData()
+							Assert.assertEquals(var.getName(), true, salary.getContextData()
 									.containsKey(var.getName()));
 							System.out.printf("%s = %s\r\n", var.name(),
 									salary.getContextData().get(var.getName())
@@ -533,19 +534,19 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, 
 				contract, 
 				"DESCRIPTION WITH UNDEFINED VAR @{CUALESQUIERA}", 
-				"666.66", 
+				"666.66 * DIAS_TRABAJADOS / DIAS_MES", 
 				"_P", 
 				"_P", 
 				PaymentType.CRA_0001);
 		addPayment(aonContext, 
 				contract, 
 				"DESCRIPTION WITH UNDEFINED VAR @{CUALESQUIERA ", 
-				"666.66", 
+				"666.66 * DIAS_TRABAJADOS / DIAS_MES", 
 				"_P", 
 				"_P", 
 				PaymentType.CRA_0001);
 		
-		Date start = getFirstDayOfMonth(getToday());
+		Date start = getFirstDayOfMonth(add(getToday(), Calendar.MONTH, 1));
 		Date end = getLastDayOfMonth(start);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -571,15 +572,206 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		ISalary salary = calculator.calculate(ctx);
 		
 		for ( String message: errors ) 
-			System.out.println(message);
+			System.out.println("ERROR: " + message);
 		
 		
-		Assert.assertEquals(errors.size() , 2 );
+		Assert.assertEquals(2, errors.size() );
 		Assert.assertEquals(666.66 * 2, salary.getTotalPayment());
 		
 		
 	}
+	
+	@Test
+	public void testConstantWarnningI()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				new String[] { 
+						"25.00",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"BRUTO(4000.00) * DIAS_TRABAJADOS / DIAS_MES"
+						},
+				new String[] { 
+						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" });
+
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, start, end, end, criteria);
+
+		ctx.next();
+
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		calculator.setListener(new ContractSalaryCalculator.Listener() {
+			@Override
+			public void onCheckError(IContractPayment payment, String message) {
+				System.out.println(message);
+				if ( payment.getExpression().equals("25.00"))
+					throw new SuccessException();
+			}
+		});
+
+		try {
+			ISalary salary = calculator.calculate(ctx);
+		} catch ( SuccessException e ){
+			return;
+		}
+		
+		Assert.fail();
+	}
+	
+	@Test
+	public void testConstantWarnningII()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				new String[] { 
+						"4000.00 + 200.00 + 10.00"
+						},
+				new String[] { 
+						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" });
+
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, start, end, end, criteria);
+
+		ctx.next();
+
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		calculator.setListener(new ContractSalaryCalculator.Listener() {
+			@Override
+			public void onCheckError(IContractPayment payment, String message) {
+				System.out.println(message);
+				if ( payment.getExpression().equals("4000.00 + 200.00 + 10.00"))
+					throw new SuccessException();
+			}
+		});
+
+		try {
+			ISalary salary = calculator.calculate(ctx);
+		} catch ( SuccessException e ){
+			return;
+		}
+		
+		Assert.fail();
+	}
 	// ------------------------------------------------------------------------
+	@Test
+	public void testConstantWarnningIII()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES"
+						},
+				new String[] { 
+						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" });
+
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+		
+		PaymentConceptRecord cteConcept = addConcept(aonContext, "CTE");
+		addPayment(aonContext, contract, start, end, cteConcept, "666.66");
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, start, end, end, contract);
+
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		calculator.setListener(new ContractSalaryCalculator.Listener() {
+			@Override
+			public void onCheckError(IContractPayment payment, String message) {
+				if ( payment.getExpression().equals("666.66"))
+					Assert.fail();
+			}
+		});
+
+		ISalary salary = calculator.calculate(ctx);
+	}
+
+	@Test
+	public void testConstantWarnningIV()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES"
+						},
+				new String[] { 
+						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" });
+
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+		
+		PaymentConceptRecord cteConcept = addConcept(aonContext, "CTE");
+		addPayment(aonContext, contract, start, add(end, Calendar.DAY_OF_MONTH, 10), cteConcept, "666.66");
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, start, end, end, contract);
+
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		calculator.setListener(new ContractSalaryCalculator.Listener() {
+			@Override
+			public void onCheckError(IContractPayment payment, String message) {
+				if ( payment.getExpression().equals("666.66"))
+					throw new SuccessException();
+			}
+		});
+
+		try {
+			ISalary salary = calculator.calculate(ctx);
+		} catch ( SuccessException e ){
+			return;
+		}
+		
+		Assert.fail();
+	}
 
 	private static void load(Map<String, ITimedVariable<?>> context,
 			Map<String, Object> data) {

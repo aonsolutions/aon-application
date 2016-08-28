@@ -144,6 +144,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.ContractSalaryCalculator4Dummies;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports;
 import com.esferalia.aon.payroll.calculator.jooq.JooqGPSReports.A3Line;
@@ -939,12 +940,23 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
-			calculate(salaryDraft);
+			calculate(salaryDraft, new ContractSalaryCalculator<ISalary>());
 			return salaryDraft;
 		} finally {
 			releaseFacesContext();
 		}
+	}
 
+	@Override
+	public SalaryDraft calculateSalaryDraft4Dummies(SalaryDraft salaryDraft)
+			throws IllegalArgumentException {
+		try {
+			initFacesContext();
+			calculate(salaryDraft, new ContractSalaryCalculator.ContractSalaryCalculator4Dummies<ISalary>());
+			return salaryDraft;
+		} finally {
+			releaseFacesContext();
+		}
 	}
 
 	@Override
@@ -1062,7 +1074,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			connection = getConnection();
 			EmployeesServiceHelper.calculate(connection, agreementDraft,
-					getDomainID(), getParentDomainID());
+					getDomainID(), agreementDraft.getDomain()/*getParentDomainID()*/);
 			return agreementDraft;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -3045,11 +3057,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static void calculate(SalaryDraft draft) {
+	private static void calculate(SalaryDraft draft, ContractSalaryCalculator<ISalary> salaryCalculator) {
 
 		SalaryDraftBuilder salaryBuilder = new SalaryDraftBuilder(draft);
 		try {
-			calculate(draft, salaryBuilder, salaryBuilder);
+			calculate(draft, salaryBuilder, salaryBuilder, salaryCalculator);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -3148,12 +3160,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(draft);
 		CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>> compositeSalaryBuilder = new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(
 				salaryDraftBuilder, roundSalaryBuilder);
+		ContractSalaryCalculator<ISalary> salaryCalculator = new ContractSalaryCalculator<ISalary>();
 
 		boolean autocommit = false;
 		try {
 			autocommit = conn.getAutoCommit();
 			conn.setAutoCommit(false);
-			calculate(draft, compositeSalaryBuilder, salaryDraftBuilder);
+			calculate(draft, compositeSalaryBuilder, salaryDraftBuilder, salaryCalculator);
 			jooqSalaryBuilder.execute();
 			conn.commit();
 		} finally {
@@ -3171,9 +3184,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
-			SalaryDraft draft, T salaryBuilder, L draftBuilder) {
-
-		ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+			SalaryDraft draft, T salaryBuilder, L draftBuilder, ContractSalaryCalculator<ISalary> calculator) {
 
 		calculator.setSalaryBuilder(salaryBuilder);
 		calculator.setListener(draftBuilder);
@@ -4080,6 +4091,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				agreement.setId((Integer) agreementId);
 				agreement.setDescription(rs.getString(tableCol(AGREEMENT,
 						AgreementColumns.DESCRIPTION)));
+				agreement.setDomain((Integer)rs.getObject(tableCol(AGREEMENT,
+						AgreementColumns.DOMAIN)));
 				workplace.setAgreement(agreement);
 			}
 

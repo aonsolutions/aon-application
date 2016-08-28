@@ -97,6 +97,9 @@ public interface EmployeesService extends RemoteService, CalendarService,
 	SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
+	SalaryDraft calculateSalaryDraft4Dummies(SalaryDraft salaryDraft)
+			throws IllegalArgumentException;
+
 	AgreementDraft calculateAgreementDraft(AgreementDraft agreementDraft)
 			throws IllegalArgumentException;
 

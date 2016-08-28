@@ -38,8 +38,34 @@ public class SalaryDraftObject implements IContextProvider {
 
 	public static Date NULL_DATE = new Date() {
 	};
+	
+	
+	enum Calculate {
+		STANDARD {
+			@Override
+			void accept(CalculateVisitor visitor) {
+				visitor.visitStandard();
+			}
+		},
+		DUMMIES{
+			@Override
+			void accept(CalculateVisitor visitor) {
+				visitor.visit4Dummies();
+			}
+		};
+		
+		abstract void accept(CalculateVisitor visitor);
+	}
+	
+	interface CalculateVisitor {
+		void visitStandard();
+		void visit4Dummies();
+	}
 
 	interface CalculateCallback {
+		
+		Calculate getCalculate();
+		
 		void onCalculateSucces(SalaryDraftObject object);
 
 		void onCalculateFailure(Throwable throwable);
@@ -326,23 +352,38 @@ public class SalaryDraftObject implements IContextProvider {
 		removeSalaryPart(salaryDraft);
 
 		salaryDraft.setDraftLeaveIts(getDrafLeaveIts());
+		
+		final AsyncCallback<SalaryDraft> asyncCallback = new AsyncCallback<SalaryDraft>() {
 
-		employeesServiceAsync.calculateSalaryDraft(salaryDraft,
-				new AsyncCallback<SalaryDraft>() {
+			@Override
+			public void onSuccess(SalaryDraft result) {
+				SalaryDraftObject.this.salaryDraft = result;
+				callback.onCalculateSucces(SalaryDraftObject.this);
+			}
 
-					@Override
-					public void onSuccess(SalaryDraft result) {
-						SalaryDraftObject.this.salaryDraft = result;
-						callback.onCalculateSucces(SalaryDraftObject.this);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						callback.onCalculateFailure(caught);
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onCalculateFailure(caught);
+			}
+		};
+		
+		callback.getCalculate().accept( new CalculateVisitor() {
+			
+			@Override
+			public void visitStandard() {
+				employeesServiceAsync.calculateSalaryDraft(salaryDraft,
+						asyncCallback);
+			}
+			
+			@Override
+			public void visit4Dummies() {
+				employeesServiceAsync.calculateSalaryDraft4Dummies(salaryDraft,
+						asyncCallback);
+			}
+		});
 	}
 
+	
 	public void emitSalary(final CalculateCallback callback) {
 
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);

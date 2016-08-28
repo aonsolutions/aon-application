@@ -281,6 +281,15 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
+	public void calculateSalaryDraft4Dummies(
+			com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
+			AsyncCallback<com.esferalia.aon.gwt.payroll.shared.SalaryDraft> callback)
+			throws IllegalArgumentException {
+		failure(callback);
+		
+	}
+
+	@Override
 	public void calculateAgreementDraft(AgreementDraft agreementDraft,
 			AsyncCallback<AgreementDraft> callback)
 			throws IllegalArgumentException {

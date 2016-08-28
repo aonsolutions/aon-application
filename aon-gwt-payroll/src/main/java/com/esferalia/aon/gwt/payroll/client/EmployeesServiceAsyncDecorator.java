@@ -314,6 +314,15 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync,
 	}
 
 	@Override
+	public void calculateSalaryDraft4Dummies(SalaryDraft salaryDraft,
+			AsyncCallback<SalaryDraft> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.calculateSalaryDraft4Dummies(salaryDraft,
+				new AsyncCallbackWrapper<SalaryDraft>(callback));
+	}
+
+	@Override
 	public void calculateAgreementDraft(AgreementDraft agreementDraft,
 			AsyncCallback<AgreementDraft> callback)
 			throws IllegalArgumentException {

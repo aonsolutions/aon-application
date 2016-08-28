@@ -19,12 +19,17 @@ public interface IContractSalaryCalculatorContext extends
 
 		void onIrpf(IrpfOutcome irpfOutcome);
 
+
 		default void onUndefinedData(IExpression expression,
 				String variableName, String message, Date start, Date end) {
 		};
 
 		default void onRedefinedImplicit(String name,
 				ITimedVariable<?> redefined, ITimedVariable<?> implicit) {
+		}
+
+		default <T> T onConstantParameter(String func, T constant, ExpressionContext ctx) {
+			return constant;
 		}
 	}
 
