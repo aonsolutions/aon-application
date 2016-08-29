@@ -46,6 +46,7 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -59,6 +60,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
@@ -822,6 +824,25 @@ public class SalaryDraftBuilder
 					));
 		}
 			
+	}
+	
+	@Override
+	public <T> T onConstantParameter(String func, T constant, ExpressionContext ctx) {
+		
+		salaryDraft.addWarning(String.format(
+				"Revise el %1$s <span style='color:orange;'>%2$.2f</span>."
+				+"<ul style='margin-left:1em;'>"
+				+"<li>Si el %1s es proporcional a los d\u00edas trabajados deber\u00eda ser: <span style='color:orange;'>%1$s(%2$.2f * DIAS_TRABAJADOS / DIAS_MES) </span></li>" 
+				+"<li>Si quiere garantizarlo. Debe utilizar un nuevo concepto <span style='color:orange;'>CRA 0055</span>"
+				+"<ul style='margin-left:1em;'>"
+				+"<li>GTZDO( TODO )</li>"
+				+"<li>GTZDO( %1$s( %2$.2f * DIAS_TRABAJADOS / DIAS_MES ) )</li>"
+				+"</ul>"
+				+"</li> "
+				+"</ul>"
+				,func, ((Number)constant).doubleValue()) );
+		
+		return IListener.super.onConstantParameter(func, constant, ctx);
 	}
 
 	@Override
