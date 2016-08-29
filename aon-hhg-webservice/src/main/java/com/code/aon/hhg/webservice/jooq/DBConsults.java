@@ -38,8 +38,20 @@ public class DBConsults {
 		return bh;
 	}
 	
+	public static Integer getHHGCount(String domainName, Integer domainId, String login){
+		HashMap<Integer, Attach> map = PMS.getHHGProjectAttach(domainName, domainId, login);
+		Integer[] array = map.keySet().toArray(new Integer[map.size()]);	
+		return getHHGReservations(domainName, domainId, login, array).size();		
+	}
+	
 	public static ProjectReservation getHHGReservation(String domainName, Integer domainId, String login, Integer project){
 		return PMS.getHHGReservation(domainName, domainId, login, project);
+	}
+	
+	public static LinkedList<ProjectReservation> getHHGReservations(String domainName, Integer domainId, String login){
+		HashMap<Integer, Attach> map = PMS.getHHGProjectAttach(domainName, domainId, login);
+		Integer[] array = map.keySet().toArray(new Integer[map.size()]);	
+		return PMS.getHHGReservations(domainName, domainId, login, array);
 	}
 	
 	public static LinkedList<ProjectReservation> getHHGReservations(String domainName, Integer domainId, String login, Integer[] array){
