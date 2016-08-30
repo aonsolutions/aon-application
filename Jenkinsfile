@@ -86,7 +86,7 @@ node {
       //    
       sh "sudo service tomcat8 restart"
 
-      sh "sudo mysql -e 'DROP DATABASE \`test-aonsolutions-org\`'"
+      sh "sudo mysql -e 'DROP DATABASE \\`test-aonsolutions-org\\`'"
 
       //       
       sh "sudo mysql < aon-htmlunit/src/test/resources/com/esferalia/aon/htmlunit/payroll/test-aonsolutions-org.sql"
