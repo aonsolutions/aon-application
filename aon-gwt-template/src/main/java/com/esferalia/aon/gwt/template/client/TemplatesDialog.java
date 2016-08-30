@@ -584,8 +584,11 @@ public abstract class TemplatesDialog extends CustomDialogB {
 	private void importResponse(Error error){
 		
 		if(!error.getError()){
+			Label l1 = new Label("No se ha importado correctamente");
+			l1.setStyleName("aon-check-template");
+			vp.add(l1);
 			for(String s : error.getTextError()){
-				if(vp.getWidgetCount()< 10){
+				if(vp.getWidgetCount()< 11){
 					Label l = new Label(s);
 					l.setStyleName("aon-check-template");
 					vp.add(l);
