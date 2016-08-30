@@ -108,7 +108,7 @@ node {
 
       // RPMs 2 AWS
       //def rpms2aws = readFile 'rpms2aws.sh'
-      sh "rpms2aws.sh"
+      sh "/bin/sh rpms2aws.sh"
       
       sh "aws s3api list-objects --bucket aon-solutions --prefix aon-snapshot-app > aon-snapshot-apps.json"
       def aon_snapshot_apps_json = readFile 'aon-snapshot-apps.json'    
