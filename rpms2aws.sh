@@ -1,4 +1,16 @@
 #!/bin/sh
+#####################################################################
+# Copyright (c) 2015, AON SOLUTIONS,S.L.U
+#
+# The copyright of the computer program herein is the property
+# of AON SOLUTIONS.
+#####################################################################
+# The program may be used and/or copied only with the written
+# permission of AON SOLUTIONS, or in accordance with the terms
+# and conditions stipulated in the agreement contract under
+# which the program has been supplied.
+####################################################################
+#
 
 temp_dir=$(mktemp -d)
 mkdir ${temp_dir}/files
@@ -119,8 +131,11 @@ eu-west-1
 
 EOF
 
-aws deploy push --application-name AON-SNAPSHOT-APP --s3-location s3://aon-solutions/aon-snapshot-app-${VERSION}${BUILD_ID}.zip --source ${temp_dir}
+APP=${1:-AON-SNAPSHOT-APP}
+GROUP=${1:-AON-NET-GROUP}
 
-aws deploy create-deployment --application-name AON-SNAPSHOT-APP --s3-location bucket=aon-solutions,key=aon-snapshot-app-${VERSION}${BUILD_ID}.zip,bundleType=zip --deployment-group-name AON-NET-GROUP  --deployment-config-name  CodeDeployDefault.AllAtOnce  
+aws deploy push --application-name ${APP} --s3-location s3://aon-solutions/${APP,,}-${VERSION}${BUILD_ID}.zip --source ${temp_dir}
+
+aws deploy create-deployment --application-name ${APP} --s3-location bucket=aon-solutions,key=${APP,,}-${VERSION}${BUILD_ID}.zip,bundleType=zip --deployment-group-name ${GROUP}  --deployment-config-name  CodeDeployDefault.AllAtOnce  
 
 
