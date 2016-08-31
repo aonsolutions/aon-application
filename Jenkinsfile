@@ -50,7 +50,7 @@ node {
    // Mark the build 'stage'....
    stage "Build HotFix ${pom.version}"
    
-   sh "${mvnHome}/bin/mvn  -B -Drpm.release=true -DskipTests clean deploy"
+   sh "echo yes | ${mvnHome}/bin/mvn  -Drpm.release=true -DskipTests clean deploy"
    
    // Mark the RPMs deploy 'stage'....
    stage 'Deploy RPMs'
