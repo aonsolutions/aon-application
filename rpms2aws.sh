@@ -82,7 +82,7 @@ OLD_IFS="$IFS"
 IFS=$'\n'
 for file in $(find files -type f); do
 file=$(printf %q "$file")
-file=${file/-[[:digit:]]*./-\\*.}
+file=${file/-[[:digit:]]*./-\*.}
 echo "rm -f ${file#files}"
 done
 IFS="$OLD_IFS"
@@ -134,8 +134,8 @@ EOF
 APP=${1:-AON-SNAPSHOT-APP}
 GROUP=${1:-AON-NET-GROUP}
 
-aws deploy push --application-name ${APP} --s3-location s3://aon-solutions/${APP,,}-${VERSION}${BUILD_ID}.zip --source ${temp_dir}
+aws deploy push --application-name ${APP} --s3-location s3://aon-solutions/${APP,,}-${VERSION}-${BUILD_ID}.zip --source ${temp_dir}
 
-aws deploy create-deployment --application-name ${APP} --s3-location bucket=aon-solutions,key=${APP,,}-${VERSION}${BUILD_ID}.zip,bundleType=zip --deployment-group-name ${GROUP}  --deployment-config-name  CodeDeployDefault.AllAtOnce  
+aws deploy create-deployment --application-name ${APP} --s3-location bucket=aon-solutions,key=${APP,,}-${VERSION}-${BUILD_ID}.zip,bundleType=zip --deployment-group-name ${GROUP}  --deployment-config-name  CodeDeployDefault.AllAtOnce  
 
 
