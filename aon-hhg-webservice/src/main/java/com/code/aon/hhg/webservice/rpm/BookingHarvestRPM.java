@@ -43,6 +43,13 @@ public class BookingHarvestRPM {
 		return "";
 	}
 	
+	private static String getErrorDescriptionName(String method) {
+		if(method.equals("ADD")) return "CRS ALTA&";
+		if(method.equals("CANCEL")) return "CRS CANCELACION&";
+		if(method.equals("MODIFY")) return "CRS MODIFICACION&";
+		return "";
+	}
+	
 	/*public static void main(String[] args) throws java.text.ParseException {
 		domain="test.grupoplayasol.com";
 		user = "pruebas.api@hhg-hotels.net";
@@ -70,6 +77,7 @@ public class BookingHarvestRPM {
 		//***** BOOKING-HARVEST *****/
 		Integer index = DBConsults.getHHGCount(domain, domainMap.get(domain), user);
 		if(index <= 0) LOGGER.info("No hay ninguna reserva para procesar.");
+		if(index > 60) index = 60;
 		for(Integer i = 0; i < index; i++){
 			BookingHarvest bh = buildBookingHarvest();		
 			if(bh.getPayload().getReservation() == null || bh.getPayload().getReservation().getCrscode() == null)
@@ -78,13 +86,19 @@ public class BookingHarvestRPM {
 				System.out.println("json -> ");
 				System.out.println(bh.toJSON());
 				System.out.println(" ");
+				
+				Attach attachError = new Attach().setId(bh.getPayload().getReservation().getProjectAttachId())
+					.setDescription(getErrorDescriptionName(bh.getPayload().getReservation().getMethod()));
+				DBConsults.updateHHGProjectAttach(domain, domainMap.get(domain), user, attachError);
+					
 				JSONObject jsonResponse = HHGPost.post2(url, bh.toJSON());
 				Response response2 = new Response(jsonResponse);
 				if(!response2.getResult().getType().equals("error")){
 					Attach attach = new Attach().setId(bh.getPayload().getReservation().getProjectAttachId())
 						.setDescription(getDescriptionName(bh.getPayload().getReservation().getMethod()));
 					DBConsults.updateHHGProjectAttach(domain, domainMap.get(domain), user, attach);
-				}
+				} 
+
 				LOGGER.info("POST " + url);
 				View.response(response2);
 			}
