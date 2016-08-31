@@ -31,6 +31,7 @@
 					</aon:form>
 				</f:facet>
 				
+				<!--  
 				<a4j:region>
 					<h:form>
 						<a4j:poll status="aonStatus" interval="3000"
@@ -39,6 +40,7 @@
 							reRender="showAebWaitingProcessWindow" />
 					</h:form>
 				</a4j:region>
+				-->
 				
 				<aon:form id="fbatchAebWaitingProcessForm">
 				<aon:div styleClass="aon-popupWindow-content">
@@ -52,12 +54,18 @@
 										</aon:div>
 										<aon:div styleClass="aon-margin-top aon-bold">
 											<aon:outputText
+												value="Puede continuar con su trabajo. Podrá descargar el fichero cuando la tarea finalice." />
+										</aon:div>
+										<!--  
+										<aon:div styleClass="aon-margin-top aon-bold">
+											<aon:outputText
 												value="Puede continuar trabajando o esperar hasta que el proceso termine." />
 										</aon:div>
 										<aon:div styleClass="aon-margin-top aon-bold">
 											<aon:outputText
 												value="A su finalización se creará un aviso desde donde se podrá descargar el fichero." />
 										</aon:div>
+										-->
 									</aon:if>
 									<aon:if test="#{not empty fbatch.aebOutput}">
 										<aon:outputText styleClass="aon-margin-top aon-bold"

@@ -209,10 +209,11 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 				LOGGER.error(e.getMessage());
 			}
 			
-			Integer noticeId = createNotice(attachId, name, mimeType, downloadURL);
-			if(noticeId!=null){
-				createAlarm(noticeId, name, mimeType, downloadURL);
-			}
+			// TODO
+//			Integer noticeId = createNotice(attachId, name, mimeType, downloadURL);
+//			if(noticeId!=null){
+//				createAlarm(noticeId, name, mimeType, downloadURL);
+//			}
 		}
 	}
 	

@@ -444,6 +444,14 @@ public class FBatchController extends BasicController implements ICollectionProv
 			fcdp = new FBatchCreateDiskProcess(fbatch, getCompany(), getBankDate(), user, ds.getDomainURL());
 			thread = new LongProcessThread(fcdp);
 			thread.start();
+		} else {
+			RegistryAttachment rattach = (RegistryAttachment) BeanManager.getManagerBean(RegistryAttachment.class).get(fbatch.getRattach());
+			if(rattach!=null){
+				aebOutput = new FileOutput();
+				aebOutput.setErrors(Collections.emptyList());
+				aebOutput.setContent(rattach!=null?rattach.getData():null);
+				setMimeType(rattach.getMimeType());
+			}
 		}
 	}
 	
