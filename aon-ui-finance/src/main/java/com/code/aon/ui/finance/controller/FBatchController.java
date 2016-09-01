@@ -36,7 +36,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.User;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.BankStatement;
@@ -50,12 +49,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.config.controller.ConfigConstants;
-import com.code.aon.ui.config.controller.DomainSwitcher;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.event.FinanceListSearchListener;
 import com.code.aon.ui.finance.util.FBatchCreateDiskProcess;
 import com.code.aon.ui.form.BasicController;
@@ -427,26 +424,29 @@ public class FBatchController extends BasicController implements ICollectionProv
     }
 	
 	private FBatchCreateDiskProcess fcdp;
+	private LongProcessThread thread;
 	
 	public boolean isDiskProcessTerminated() {
-		return fcdp==null || fcdp.isTerminated();
+		return thread==null || thread.isTerminated();
 	}
 	
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
+		setShowAebWaitingProcessWindow(true);
 		this.refresh(event);
 		FinanceBatch fbatch = (FinanceBatch) this.getTo();
 		if(fbatch.getRattach()==null && isDiskProcessTerminated()){
-			User user = UserUtils.getInstance().getLoggedUser();
-			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-			fcdp = new FBatchCreateDiskProcess(fbatch, getCompany(), getBankDate(), user, ds.getDomainURL());
-			fcdp.execute();
-			loadAebFile();
+			fcdp = new FBatchCreateDiskProcess(fbatch, getCompany(), getBankDate());
+			thread = new LongProcessThread(fcdp);
+			thread.start();
 		}
 	}
 	
 	public void onCancelCreateDisk(ActionEvent event) throws ManagerBeanException {
 		if(fcdp!=null){
 			fcdp.interrupt();
+		}
+		if(thread!=null){
+			thread.interrupt();
 		}
 		FinanceBatch fbatch = (FinanceBatch) this.getTo();
 		this.refresh(null);
@@ -483,9 +483,8 @@ public class FBatchController extends BasicController implements ICollectionProv
 		FinanceBatch fbatch = (FinanceBatch) this.getTo();
 		Integer rattachId = fbatch.getRattach();
 		if(rattachId!=null){
-			if( BeanManager.getManagerBean(RegistryAttachment.class).remove(rattachId)){
-				fbatch.setRattach(null);
-			}
+			BeanManager.getManagerBean(RegistryAttachment.class).remove(rattachId);
+			fbatch.setRattach(null);
 		}
 	}
 
@@ -599,6 +598,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public void onClosePanel(ActionEvent event) {
 		setShowSEPAWindow(false);
+		setShowAebWaitingProcessWindow(true);
 	}
 
 	@Override
