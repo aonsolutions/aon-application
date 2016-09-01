@@ -5,9 +5,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
-import com.code.aon.config.PayMethod;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.PosShift;
+import com.code.aon.finance.util.PosBalanceUtils;
 
 public class FinanceBeanListener extends ManagerBeanListenerAdapter {
 	
@@ -48,16 +48,7 @@ public class FinanceBeanListener extends ManagerBeanListenerAdapter {
 
 	private void checkPosShift(PosShift posShift) throws ManagerBeanException {
 		if (posShift.isClosed()) {
-			posShift.setTotalShiftCountMap(null);
-			boolean imbalance = false;
-			for (PayMethod payMethod : posShift.getTotalShiftCountMap().keySet()) {
-				double[] totals = posShift.getTotalShiftCountMap().get(payMethod);
-				if (totals[0] != totals[1]) {
-					imbalance = true;
-					break;
-				}
-			}
-
+			boolean imbalance = PosBalanceUtils.isPosShiftImbalance(posShift);
 			if (imbalance != posShift.isImbalance()) {
 				posShift.setImbalance(imbalance);
 				posShift.setSkipCheckPosShift(true);

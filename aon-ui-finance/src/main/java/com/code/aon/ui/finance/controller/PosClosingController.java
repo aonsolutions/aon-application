@@ -22,6 +22,7 @@ import com.code.aon.finance.Pos;
 import com.code.aon.finance.PosShift;
 import com.code.aon.finance.enumeration.Shift;
 import com.code.aon.finance.invoicing.PosInvoicing;
+import com.code.aon.finance.util.PosBalanceUtils;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -121,7 +122,7 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 	}
 
 	public void onConfirmClose(ActionEvent event) {
-		if (!getPosShift().isClosed() && !getPosShift().getPos().isInvoiceable() && PosUtils.isPosShiftImbalance(getPosShift())) {
+		if (!getPosShift().isClosed() && !getPosShift().getPos().isInvoiceable() && PosBalanceUtils.isPosShiftImbalance(getPosShift())) {
 			setShowConfirmWindow(true);
 		} else if (!getPosShift().isClosed()) {
 			onClose(event);

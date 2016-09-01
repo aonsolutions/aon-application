@@ -8,7 +8,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.PayMethod;
 import com.code.aon.finance.Pos;
 import com.code.aon.finance.PosShift;
 import com.code.aon.finance.enumeration.Shift;
@@ -62,19 +61,6 @@ public class PosUtils {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage());
 		}
-	}
-
-	public static boolean isPosShiftImbalance(PosShift posShift) {
-		posShift.setTotalShiftCountMap(null);
-		boolean imbalance = false;
-		for (PayMethod payMethod : posShift.getTotalShiftCountMap().keySet()) {
-			double[] totals = posShift.getTotalShiftCountMap().get(payMethod);
-			if (totals[0] != totals[1]) {
-				imbalance = true;
-				break;
-			}
-		}
-		return imbalance;
 	}
 
 }

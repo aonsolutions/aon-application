@@ -4,8 +4,8 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
-import com.code.aon.config.PayMethod;
 import com.code.aon.finance.PosShift;
+import com.code.aon.finance.util.PosBalanceUtils;
 
 public class PosShiftBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -22,16 +22,7 @@ public class PosShiftBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 	private void checkPosShift(PosShift posShift) {
 		if (posShift.isClosed()) {
-			posShift.setTotalShiftCountMap(null);
-			boolean imbalance = false;
-			for (PayMethod payMethod : posShift.getTotalShiftCountMap().keySet()) {
-				double[] totals = posShift.getTotalShiftCountMap().get(payMethod);
-				if (totals[0] != totals[1]) {
-					imbalance = true;
-					break;
-				}
-			}
-			posShift.setImbalance(imbalance);
+			posShift.setImbalance(PosBalanceUtils.isPosShiftImbalance(posShift));
 		}
 	}
 
