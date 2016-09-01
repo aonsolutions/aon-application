@@ -50,7 +50,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -428,39 +427,26 @@ public class FBatchController extends BasicController implements ICollectionProv
     }
 	
 	private FBatchCreateDiskProcess fcdp;
-	private LongProcessThread thread;
 	
 	public boolean isDiskProcessTerminated() {
-		return thread==null || thread.isTerminated();
+		return fcdp==null || fcdp.isTerminated();
 	}
 	
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
-		setShowAebWaitingProcessWindow(true);
 		this.refresh(event);
 		FinanceBatch fbatch = (FinanceBatch) this.getTo();
 		if(fbatch.getRattach()==null && isDiskProcessTerminated()){
 			User user = UserUtils.getInstance().getLoggedUser();
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
 			fcdp = new FBatchCreateDiskProcess(fbatch, getCompany(), getBankDate(), user, ds.getDomainURL());
-			thread = new LongProcessThread(fcdp);
-			thread.start();
-		} else {
-			RegistryAttachment rattach = (RegistryAttachment) BeanManager.getManagerBean(RegistryAttachment.class).get(fbatch.getRattach());
-			if(rattach!=null){
-				aebOutput = new FileOutput();
-				aebOutput.setErrors(Collections.emptyList());
-				aebOutput.setContent(rattach!=null?rattach.getData():null);
-				setMimeType(rattach.getMimeType());
-			}
+			fcdp.execute();
+			loadAebFile();
 		}
 	}
 	
 	public void onCancelCreateDisk(ActionEvent event) throws ManagerBeanException {
 		if(fcdp!=null){
 			fcdp.interrupt();
-		}
-		if(thread!=null){
-			thread.interrupt();
 		}
 		FinanceBatch fbatch = (FinanceBatch) this.getTo();
 		this.refresh(null);
@@ -613,7 +599,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public void onClosePanel(ActionEvent event) {
 		setShowSEPAWindow(false);
-		setShowAebWaitingProcessWindow(true);
 	}
 
 	@Override

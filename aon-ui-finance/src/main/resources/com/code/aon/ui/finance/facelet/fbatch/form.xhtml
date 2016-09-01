@@ -44,7 +44,9 @@
 								rendered="#{!fbatch.nevv and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
 								styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 								reRender="financeBatchForm, showAebWaitingProcessWindow"
-								actionListener="#{fbatch.onCreateDisk}" />
+								actionListener="#{fbatch.onCreateDisk}" >
+								<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcessSupport.xhtml" />
+							</aon:commandButton>
 						</aon:if>	
 						<aon:if test="#{(fbatch.to.financeBatchType == 'SEPA_19_14_CORE_XML') or (fbatch.to.financeBatchType == 'SEPA_19_14_COR1_XML')
 								or (fbatch.to.financeBatchType == 'SEPA_58_ANTICIPO_XML') or (fbatch.to.financeBatchType == 'SEPA_58_COBRO_XML')}" >

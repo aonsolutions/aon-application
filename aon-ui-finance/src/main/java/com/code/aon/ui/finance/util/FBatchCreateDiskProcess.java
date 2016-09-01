@@ -70,6 +70,8 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 	
 	private boolean interrupt = false;
 	
+	private boolean terminated = false;
+	
 	public FBatchCreateDiskProcess(FinanceBatch fbatch, Company company, Date bankDate, User user, String domainUrl) {
 		this.user = user;
 		this.domainUrl = domainUrl;
@@ -143,6 +145,8 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 		    		break;
 	    	}
 	    	
+	    	terminated = true;
+	    	
 	        if (aebOutput != null) {
 	        	if (aebOutput.getErrors().size() > 0) {
 	    			LOGGER.error(errorMessage);
@@ -155,6 +159,7 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 	
 	private void startProcess() {
 		interrupt = false;
+		terminated = false;
 		try {
 			fbatch.setRattach(0);
 			BeanManager.getManagerBean(FinanceBatch.class).update(fbatch);
@@ -165,6 +170,10 @@ public class FBatchCreateDiskProcess implements ILongProcess {
 	
 	public void interrupt() {
 		interrupt = true;
+	}
+	
+	public boolean isTerminated(){
+		return terminated;
 	}
 	
 	private void saveRegistryAttach(FileOutput aebOutput, String name) {
