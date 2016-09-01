@@ -24,6 +24,7 @@ import com.code.aon.finance.Pos;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.Shift;
 import com.code.aon.finance.invoicing.WsPosInvoicing;
+import com.code.aon.finance.util.PosBalanceUtils;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.dex.IDataLoadConstants;
@@ -224,7 +225,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 			posShiftDB.setModificationDate(new Date());
 			posShiftDB.setSkipCheckPosShift(true);
 		} else {
-			posShiftDB.setSkipCheckPosShift(false);
+			posShiftDB.setImbalance(PosBalanceUtils.isPosShiftImbalance(posShiftDB));
 		}
 		posShiftDB = (com.code.aon.finance.PosShift)BeanManager.getManagerBean(com.code.aon.finance.PosShift.class).update(posShiftDB);
 	}
@@ -292,7 +293,12 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 					invoiceDetail.setVatPercent(invoiceDetail.getItem().getVat().getDatedPercentage(new Date()));
 					invoiceDetail.setVatQuota(item.getTaxes());
 
-					if (invoiceDetail.getVatQuota() == CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceDetail.getVatPercent() / 100)) {
+					double vatQuota = CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceDetail.getVatPercent() / 100);
+					if (Math.abs(CommonUtil.round(invoiceDetail.getVatQuota() - vatQuota)) == 0.01) {
+						invoiceDetail.setVatQuota(vatQuota);
+					}
+
+					if (invoiceDetail.getVatQuota() == vatQuota) {
 						double price = invoiceDetail.getTaxableBase();
 						for (int i=0; i<invoiceDetail.getDiscountExpression().getDiscounts().length; i++) {
 							price = price / ( 1 - invoiceDetail.getDiscountExpression().getDiscounts()[i] /100);
