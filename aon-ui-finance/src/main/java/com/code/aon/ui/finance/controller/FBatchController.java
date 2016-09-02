@@ -458,8 +458,10 @@ public class FBatchController extends BasicController implements ICollectionProv
 		}
 	}
 	
-	public void onLoadDisk(ActionEvent event) throws ManagerBeanException {
-		loadAebFile();
+	public void onReloadDisk(ActionEvent event) throws ManagerBeanException {
+		if(isDiskProcessTerminated()){
+			loadAebFile();
+		}
 	}
 	
 	public void loadAebFile() throws ManagerBeanException {
