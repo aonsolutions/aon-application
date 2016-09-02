@@ -30,7 +30,6 @@
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				
 				<a4j:region>
 					<h:form>
 						<a4j:poll status="aonStatus" interval="3000"
@@ -39,39 +38,38 @@
 							reRender="showAebWaitingProcessWindow" />
 					</h:form>
 				</a4j:region>
-				
 				<aon:form id="fbatchAebWaitingProcessForm">
-				<aon:div styleClass="aon-popupWindow-content">
-					<aon:div style="width:100%">
-						<aon:div styleClass="aon-popupWindow-content-internal">
-							<aon:div style="width:99%">
-								<aon:div styleClass="aon-scroll-area">
-									<aon:if test="#{empty fbatch.aebOutput}">
-										<aon:div styleClass="aon-margin-top aon-bold">
-											<aon:outputText value="La tarea se está ejecutando." />
-										</aon:div>
-										<aon:div styleClass="aon-margin-top aon-bold">
-											<aon:outputText
-												value="Puede esperar o continuar con su trabajo. Podrá descargar el fichero cuando la tarea finalice." />
-										</aon:div>
-									</aon:if>
-									<aon:if test="#{not empty fbatch.aebOutput}">
-										<aon:outputText styleClass="aon-margin-top aon-bold"
-											value="Fichero generado correctamente" />
-										<aon:div styleClass="aon-margin-top">
-											<aon:htmlCommandLink target="_blank"
-												title="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
-												value="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
-												actionListener="#{fbatch.downloadDisk}" rendered="#{fbatch.aebOutput!=null}"
-												styleClass="aon-commandButton aon-icon-mail-save"
-												onclick="this.style.display='none';" />
-										</aon:div>
-									</aon:if>
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<aon:div styleClass="aon-scroll-area">
+										<aon:if test="#{empty fbatch.aebOutput}">
+											<aon:div styleClass="aon-margin-top aon-bold">
+												<aon:outputText value="La tarea se está ejecutando." />
+											</aon:div>
+											<aon:div styleClass="aon-margin-top aon-bold">
+												<aon:outputText
+													value="Puede esperar o continuar con su trabajo. Podrá descargar el fichero cuando la tarea finalice." />
+											</aon:div>
+										</aon:if>
+										<aon:if test="#{not empty fbatch.aebOutput}">
+											<aon:outputText styleClass="aon-margin-top aon-bold"
+												value="Fichero generado correctamente" />
+											<aon:div styleClass="aon-margin-top">
+												<aon:htmlCommandLink target="_blank"
+													title="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
+													value="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
+													actionListener="#{fbatch.downloadDisk}" rendered="#{fbatch.aebOutput!=null}"
+													styleClass="aon-commandButton aon-icon-mail-save"
+													onclick="this.style.display='none';" />
+											</aon:div>
+										</aon:if>
+									</aon:div>
 								</aon:div>
 							</aon:div>
 						</aon:div>
 					</aon:div>
-				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
 		</aon:if>
