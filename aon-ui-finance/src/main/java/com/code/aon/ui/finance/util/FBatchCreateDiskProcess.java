@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.util;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -30,7 +32,9 @@ import com.code.aon.ui.finance.file.SEPA34_14XmlWriter;
 import com.code.aon.ui.finance.file.SEPA58XmlWriter;
 import com.code.aon.ui.util.AonUtil;
 
-public class FBatchCreateDiskProcess implements ILongProcess {
+public class FBatchCreateDiskProcess implements ILongProcess, Serializable {
+
+	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FBatchCreateDiskProcess.class.getName());
 	

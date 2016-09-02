@@ -424,10 +424,9 @@ public class FBatchController extends BasicController implements ICollectionProv
     }
 	
 	private FBatchCreateDiskProcess fcdp;
-	private LongProcessThread thread;
 	
 	public boolean isDiskProcessTerminated() {
-		return thread==null || thread.isTerminated();
+		return fcdp==null || fcdp.isTerminated();
 	}
 	
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
@@ -436,7 +435,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 		FinanceBatch fbatch = (FinanceBatch) this.getTo();
 		if(fbatch.getRattach()==null && isDiskProcessTerminated()){
 			fcdp = new FBatchCreateDiskProcess(fbatch, getCompany(), getBankDate());
-			thread = new LongProcessThread(fcdp);
+			LongProcessThread thread = new LongProcessThread(fcdp);
 			thread.start();
 		}
 	}
@@ -444,9 +443,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 	public void onCancelCreateDisk(ActionEvent event) throws ManagerBeanException {
 		if(fcdp!=null){
 			fcdp.interrupt();
-		}
-		if(thread!=null){
-			thread.interrupt();
 		}
 		FinanceBatch fbatch = (FinanceBatch) this.getTo();
 		this.refresh(null);
