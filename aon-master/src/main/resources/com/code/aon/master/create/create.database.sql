@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.59.0
+# Version: 8.65.0
 # Created by: girazu
-# Creation Date: 22/06/2016 15:50
+# Creation Date: 29/08/2016 15:00
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -695,6 +695,7 @@ CREATE TABLE `fbatch` (
   `bank_statement_link` int(4) DEFAULT NULL COMMENT 'Identificador de la Linea del Extracto bancario',
   `payment` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si es un pago o un cobro',
   `security_level` tinyint(2) DEFAULT '0' COMMENT 'Nivel de seguridad',
+  `rattach` int(4) DEFAULT NULL COMMENT 'Identificador del Archivo Adjunto',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -1698,6 +1699,7 @@ CREATE TABLE `allotment` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel',
+  `rate_code` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de Cupo',
   `agency` int(4) DEFAULT NULL COMMENT 'Identificador de la agencia de viajes',
   `agency_group` int(4) DEFAULT NULL COMMENT 'Identificador del Grupo de agencias',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio del Cupo',
@@ -2122,7 +2124,7 @@ CREATE TABLE `bank_concept` (
 CREATE TABLE `bonus_concept` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `expression` varchar(512) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
+  `expression` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
   `description` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de Bonificacion Salarial',
   PRIMARY KEY (`id`),
@@ -2211,6 +2213,7 @@ CREATE TABLE `project_reservation_room` (
   `room_index` tinyint(2) NOT NULL COMMENT 'Numero de Habitacion',
   `room_code` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de Habitacion en origen',
   `item` int(4) NOT NULL COMMENT 'Identificador del Tipo de Habitacion',
+  `allotment_rate_code` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de Cupo',
   `rate_plan` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de Tarifa en origen',
   `tariff` int(4) NOT NULL COMMENT 'Identificador de la Tarifa',
   `adults` smallint(2) DEFAULT '0' COMMENT 'Numero de adultos',
@@ -3698,10 +3701,12 @@ CREATE TABLE `job_type` (
 CREATE TABLE `task` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico de la Tarea',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `number` int(4) DEFAULT NULL COMMENT 'Numero de la Tarea',
   `description` varchar(128) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Tarea',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio de la Tarea',
   `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion de la Tarea',
   `due_date` date NOT NULL COMMENT 'Fecha de vencimiento de la Tarea',
+  `update_date` date DEFAULT NULL COMMENT 'Fecha de modificacion de la Tarea',
   `priority` tinyint(2) DEFAULT '0' COMMENT 'Prioridad de la Tarea',
   `status` tinyint(2) DEFAULT '0' COMMENT 'Estado de la Tarea',
   `percent` tinyint(2) DEFAULT '0' COMMENT 'Porcentaje de realizacion de la Tarea',
@@ -7843,6 +7848,47 @@ CREATE TABLE `tariff_catalogue` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas por Catalogo';
 
 #
+# Structure for the `task_comment` table : 
+#
+
+CREATE TABLE `task_comment` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `task` int(4) NOT NULL COMMENT 'Identificador de la tarea',
+  `registry` int(4) NOT NULL COMMENT 'Identificador de registry',
+  `comment` text COLLATE latin1_spanish_ci COMMENT 'Comentario de la Tarea',
+  `create_date` date NOT NULL COMMENT 'Fecha de creacion',
+  `update_date` date DEFAULT NULL COMMENT 'Fecha de modificacion',
+  PRIMARY KEY (`id`),
+  KEY `IDX_TASK_COMMENT_DOMAIN` (`domain`),
+  KEY `IDX_TASK_COMMENT_TASK` (`task`),
+  KEY `IDX_TASK_COMMENT_REGISTRY` (`registry`),
+  CONSTRAINT `FK_TASK_COMMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_TASK_COMMENT_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`),
+  CONSTRAINT `FK_TASK_COMMENT_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas y Comentarios';
+
+#
+# Structure for the `task_event` table : 
+#
+
+CREATE TABLE `task_event` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `task` int(4) NOT NULL COMMENT 'Identificador de la tarea',
+  `registry` int(4) NOT NULL COMMENT 'Identificador de registry',
+  `event` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Evento de la Tarea',
+  `create_date` date NOT NULL COMMENT 'Fecha de creacion',
+  PRIMARY KEY (`id`),
+  KEY `IDX_TASK_EVENT_DOMAIN` (`domain`),
+  KEY `IDX_TASK_EVENT_TASK` (`task`),
+  KEY `IDX_TASK_EVENT_REGISTRY` (`registry`),
+  CONSTRAINT `FK_TASK_EVENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_TASK_EVENT_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`),
+  CONSTRAINT `FK_TASK_EVENT_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas y Eventos';
+
+#
 # Structure for the `task_holder_workgroup` table : 
 #
 
@@ -7859,6 +7905,24 @@ CREATE TABLE `task_holder_workgroup` (
   CONSTRAINT `FK_TASK_HOLDER_WORKGROUP_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`),
   CONSTRAINT `FK_TASK_HOLDER_WORKGROUP_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Usuarios y Grupos de Trabajo';
+
+#
+# Structure for the `task_tag` table : 
+#
+
+CREATE TABLE `task_tag` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `task` int(4) NOT NULL COMMENT 'Identificador de la tarea',
+  `tag` int(4) NOT NULL COMMENT 'Identificador de la Etiqueta',
+  PRIMARY KEY (`id`),
+  KEY `IDX_TASK_TAG_DOMAIN` (`domain`),
+  KEY `IDX_TASK_TAG_TASK` (`task`),
+  KEY `IDX_TASK_TAG_TAG` (`tag`),
+  CONSTRAINT `FK_TASK_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_TASK_TAG_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`),
+  CONSTRAINT `FK_TASK_TAG_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas y Etiquetas';
 
 #
 # Structure for the `tax_detail` table : 
@@ -8127,7 +8191,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.59.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.65.0');
 
 COMMIT;
 

@@ -38,6 +38,8 @@ public interface ISQLConstants {
 	String CHECK_STATUS = "checkStatus";
 	String COMMENTS = "comments";
 	String TOTAL = "total";
+	String RATE = "rate";
+	String RATE_CODE = "rateCode";
 	String ROOM = "room";
 	String ROOM_STATUS = "roomStatus";
 	String ROOM_LAST_CLEANING_DATE = "lastCleaningDate";

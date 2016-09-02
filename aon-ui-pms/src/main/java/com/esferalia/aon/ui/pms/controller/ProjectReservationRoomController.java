@@ -158,7 +158,7 @@ public class ProjectReservationRoomController extends LinesController {
 			Date endDate = roomAvailability.getFilterParams().getViewerEndDate();
 			List<Item> inventoryItems = reservationUtils.getProjectReservationRoomDetailItems(reservationRoom, startDate, endDate);
 			reservationUtils.updateProjectReservationRoomDetails(reservationRoom, startDate, endDate, availableRoom);
-	    	if (inventoryItems.size() > 1 || (inventoryItems.size() == 1 && !inventoryItems.get(0).equals(availableRoom.getItem()))) {
+	    	if (inventoryItems.size() > 1 || (inventoryItems.size() == 1 && !availableRoom.getItem().getId().equals(inventoryItems.get(0).getId()))) {
 	        	InventoryManager manager = new InventoryManager();
 	        	for (Item roomItem : inventoryItems) {
 		        	manager.processInventoryQuery(reservationRoom, reservationRoom.getHotel(), roomItem, startDate, DateUtils.addDays(endDate, -1));
@@ -179,7 +179,7 @@ public class ProjectReservationRoomController extends LinesController {
 		ReservationUtils reservationUtils = new ReservationUtils();
 		List<Item> inventoryItems = reservationUtils.getProjectReservationRoomDetailItems(reservationRoom);
     	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false, null);
-    	if (inventoryItems.size() > 1 || (inventoryItems.size() == 1 && !inventoryItems.get(0).equals(reservationRoom.getItem()))) {
+    	if (inventoryItems.size() > 1 || (inventoryItems.size() == 1 && !reservationRoom.getItem().getId().equals(inventoryItems.get(0).getId()))) {
 	    	InventoryManager manager = new InventoryManager();
 	    	for (Item roomItem : inventoryItems) {
 		    	if (!roomItem.getId().equals(reservationRoom.getItem().getId())) {

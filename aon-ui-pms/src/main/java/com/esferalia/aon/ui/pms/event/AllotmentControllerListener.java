@@ -23,6 +23,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Allotment;
 import com.esferalia.aon.pms.AllotmentItem;
 import com.esferalia.aon.pms.AllotmentTariff;
+import com.esferalia.aon.pms.reservation.InventoryManager;
 import com.esferalia.aon.pms.sql.SQLAllotment;
 import com.esferalia.aon.pms.sql.SQLUtils;
 import com.esferalia.aon.ui.pms.controller.AllotmentController;
@@ -35,6 +36,7 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		AllotmentController controller = (AllotmentController)event.getController();
+		controller.setRateCode(true);
 		controller.setGroup(false);
 		controller.setItems(null);
 		controller.setItem(null);
@@ -47,9 +49,10 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		AllotmentController controller = (AllotmentController)event.getController();
 		Allotment allotment = (Allotment)controller.getTo();
 		try {
+			controller.setRateCode(StringUtils.isNotEmpty(allotment.getRateCode()));
 			controller.setGroup(allotment.isGroup());
 			controller.setItems(obtainAllotmentItems(allotment));
-			controller.setItem(null);
+			controller.setItem(controller.isRateCode() ? controller.getItems()[0] : null);
 			controller.setTariffs(obtainAllotmentTariffs(allotment));
 			controller.setTariff(null);
 		} catch(ManagerBeanException e) {
@@ -79,6 +82,10 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		try {
 			insertAllotmentItems(allotment, controller.getItems());
 			insertAllotmentTariffs(allotment, controller.getTariffs());
+
+			if (allotment.isActive() && controller.isRateCode()) {
+				sendInventoryData(allotment);
+			}
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -108,6 +115,10 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 			insertAllotmentItems(allotment, controller.getItems());
 			removeAllotmentTariffs(allotment);
 			insertAllotmentTariffs(allotment, controller.getTariffs());
+
+			if (allotment.isActive() && controller.isRateCode()) {
+				sendInventoryData(allotment);
+			}
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -215,5 +226,10 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 			allotmentTariffBean.remove(ito);
 		}
 	}
+
+    private void sendInventoryData(Allotment allotment) {
+    	InventoryManager manager = new InventoryManager();
+    	manager.processInventoryQuery(allotment);
+    }
 
 }

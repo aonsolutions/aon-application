@@ -13,6 +13,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.pms_allotment_module}" />
 				<ui:param name="controller" value="#{allotment}" />
+				<ui:param name="skipRemoveButton" value="true" />
 				<ui:define name="beforeSpinToolbarContent">				
 					<ui:include
 						src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />											

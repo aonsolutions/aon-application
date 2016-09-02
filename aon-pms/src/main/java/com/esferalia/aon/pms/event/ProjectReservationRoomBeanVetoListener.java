@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
@@ -17,6 +18,7 @@ import com.code.aon.common.util.AdminUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.pms.sql.SQLBooking;
 import com.esferalia.aon.pms.sql.SQLStopSales;
 import com.esferalia.aon.pms.sql.SQLUtils;
@@ -36,7 +38,11 @@ public class ProjectReservationRoomBeanVetoListener extends ManagerBeanVetoListe
     		if (to.getRoomIndex() == 0) {
         		to.setRoomIndex(calculateNextIndex(to.getProjectReservation()));
     		}
-		} catch (ManagerBeanException e) {
+    		if (StringUtils.isBlank(to.getAllotmentRateCode())) {
+    			ReservationUtils reservationUtils = new ReservationUtils();
+    			to.setAllotmentRateCode(reservationUtils.obtainAllotmentRateCode(to.getProjectReservation()));
+    		}
+    	} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage());
 		}
     }

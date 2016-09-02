@@ -161,7 +161,38 @@ public class ReservationUtils implements IReservationConstants, Serializable {
     	return StringUtils.abbreviate(dates + (guest == null ? "" : " " + guest) + (code == null ? "" : " (" + reservation.getCode() + ")"), 64);
     }
 
-    private void updateBooking(ProjectReservationRoom reservationRoom) throws ManagerBeanException {
+	public String obtainAllotmentRateCode(ProjectReservation reservation) throws ManagerBeanException {
+		String rateCode = null;
+		if (reservation.getAgency() != null && reservation.getAgency().getId() != null) {
+			IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), reservation.getAgency().getId());
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), ALLOTMENT_RATE_CODE);
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), reservation.getDomain());
+			criteria.addGreaterThanOrEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE_DATE), reservation.getStartDate());
+			criteria.addOrder(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE_DATE), false);
+			Projection prjValue = Projection.property(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE));
+			List<?> resultList = rAddInfoBean.getList(new ProjectionList(prjValue), criteria);
+			if (resultList.size() > 0 && resultList.get(0) != null) {
+				rateCode = (String)resultList.get(0);
+			}
+		}
+
+		if (rateCode == null) {
+			rateCode = obtainDefaultAllotmentRateCode();
+		}
+		return rateCode;
+	}
+
+	public String obtainDefaultAllotmentRateCode() throws ManagerBeanException {
+		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.PMS_ALLOTMENT_RATE_CODE, domain);
+		if (appParam != null) {
+			return appParam.getValue();
+		}
+		return null;
+	}
+
+	private void updateBooking(ProjectReservationRoom reservationRoom) throws ManagerBeanException {
     	reservationRoom.setForceRefreshBooking(true);
     	BeanManager.getManagerBean(ProjectReservationRoom.class).update(reservationRoom);
     }

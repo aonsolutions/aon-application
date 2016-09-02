@@ -26,6 +26,7 @@ public class AllotmentController extends BasicController implements IPmsConstant
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean showAuditInfoWindow;
+	private boolean rateCode;
 	private boolean group;
 	private Item item;
 	private Item[] items;
@@ -39,6 +40,14 @@ public class AllotmentController extends BasicController implements IPmsConstant
 	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}	
+
+	public boolean isRateCode() {
+		return rateCode;
+	}
+
+	public void setRateCode(boolean rateCode) {
+		this.rateCode = rateCode;
+	}
 
 	public boolean isGroup() {
 		return group;
@@ -90,8 +99,10 @@ public class AllotmentController extends BasicController implements IPmsConstant
 	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
 		List<SelectItem> roomItemList = new LinkedList<SelectItem>();
 		roomItemList.addAll(PmsUtils.getRoomItems(((Allotment)getTo()).getHotel()));
-		for (SelectItem roomItem : roomItemList) {
-			roomItem.setDisabled(ArrayUtils.contains(getItems(), (Item)roomItem.getValue()));
+		if (!isRateCode()) {
+			for (SelectItem roomItem : roomItemList) {
+				roomItem.setDisabled(ArrayUtils.contains(getItems(), (Item)roomItem.getValue()));
+			}
 		}
 		return roomItemList;
 	}
@@ -106,18 +117,31 @@ public class AllotmentController extends BasicController implements IPmsConstant
 	}
 
 	public void onChangeHolder(ActionEvent event) {
-		setGroup(!isGroup());
+		if (isRateCode()) {
+			setRateCode(false);
+			setGroup(false);
+		} else {
+			if (isGroup()) {
+				setItems(null);
+				setItem(null);
+				setTariffs(null);
+				setTariff(null);
+			}
+			setRateCode(isGroup());
+			setGroup(!isGroup());
+		}
 
 		Allotment allotment = (Allotment)getTo();
-		if (isGroup()) {
-			allotment.setAgency(null);
-		} else {
-			allotment.setAgencyGroup(null);
-		}
+		allotment.setRateCode(null);
+		allotment.setAgency(null);
+		allotment.setAgencyGroup(null);
 	}
 
 	public void onItemChanged(ValueChangeEvent event) {
 		setItem((Item)event.getNewValue());
+		if (isRateCode()) {
+			setItems(null);
+		}
 	}
 
 	public Integer[] getItemsIds() {

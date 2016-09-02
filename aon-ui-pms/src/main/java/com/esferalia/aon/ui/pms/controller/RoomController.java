@@ -14,9 +14,9 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.AonVersion;
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.enumeration.ActivityStatus;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -29,6 +29,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.reservation.InventoryManager;
 
@@ -122,48 +123,47 @@ public class RoomController extends BasicController {
 	}
 
 	public void onRoomBlock(ActionEvent event) {
-		List<Item> inventoryItems = new LinkedList<Item>();
-		for (Room room : getCheckedRooms()) {
-			if (!inventoryItems.contains(room.getItem())) {
-				inventoryItems.add(room.getItem());
-			}
-
-			try {
-				List<Date> occupiedDates = new LinkedList<Date>();
-				IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), room.getAsset().getId());
-				criteria.addGreaterThanOrEqualExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getBlockFromDate());
-				criteria.addLessThanOrEqualExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getBlockToDate());
-				Projection prjDate = Projection.property(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE));
-				for (Object obj : assetActivityBean.getList(new ProjectionList(prjDate), criteria)) {
-					occupiedDates.add((Date)obj);
+		if (getCheckedCount() > 0) {
+			List<Item> inventoryItems = new LinkedList<Item>();
+			for (Room room : getCheckedRooms()) {
+				if (!inventoryItems.contains(room.getItem())) {
+					inventoryItems.add(room.getItem());
 				}
 
-				Date fromDate = getBlockFromDate();
-				while (fromDate.compareTo(getBlockToDate()) <= 0) {
-					if (!occupiedDates.contains(fromDate)) {
-						AssetActivity assetActivity = new AssetActivity();
-						assetActivity.setAsset(room.getAsset());
-						assetActivity.setDate(fromDate);
-						assetActivity.setFromTime(fromDate);
-						assetActivity.setToTime(fromDate);
-						assetActivity.setComments(getBlockRemarks());
-						assetActivity.setStatus(getBlockStatus());
-						assetActivityBean.insert(assetActivity);
+				try {
+					List<Date> occupiedDates = new LinkedList<Date>();
+					IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), room.getAsset().getId());
+					criteria.addGreaterThanOrEqualExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getBlockFromDate());
+					criteria.addLessThanOrEqualExpression(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getBlockToDate());
+					Projection prjDate = Projection.property(assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE));
+					for (Object obj : assetActivityBean.getList(new ProjectionList(prjDate), criteria)) {
+						occupiedDates.add((Date)obj);
 					}
-					fromDate = DateUtils.addDays(fromDate, 1);
-				}
-			} catch (ManagerBeanException ex) {
-				String msg = "Error bloqueando Habitaciones!";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
-			}
-		}
 
-		InventoryManager manager = new InventoryManager();
-		for (Item item : inventoryItems) {
-			manager.processInventoryQuery(null, getCheckedRooms().get(0).getHotel(), item, getBlockFromDate(), getBlockToDate());
+					Date fromDate = getBlockFromDate();
+					while (fromDate.compareTo(getBlockToDate()) <= 0) {
+						if (!occupiedDates.contains(fromDate)) {
+							AssetActivity assetActivity = new AssetActivity();
+							assetActivity.setAsset(room.getAsset());
+							assetActivity.setDate(fromDate);
+							assetActivity.setFromTime(fromDate);
+							assetActivity.setToTime(fromDate);
+							assetActivity.setComments(getBlockRemarks());
+							assetActivity.setStatus(getBlockStatus());
+							assetActivityBean.insert(assetActivity);
+						}
+						fromDate = DateUtils.addDays(fromDate, 1);
+					}
+				} catch (ManagerBeanException ex) {
+					String msg = "Error bloqueando Habitaciones!";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+			}
+
+			sendInventoryData(getCheckedRooms().get(0).getHotel(), inventoryItems, getBlockFromDate(), getBlockToDate());
 		}
 	}
 
@@ -189,10 +189,7 @@ public class RoomController extends BasicController {
 					assetActivityBean.remove((AssetActivity)ito);
 				}
 
-				InventoryManager manager = new InventoryManager();
-				for (Item item : inventoryItems) {
-					manager.processInventoryQuery(null, getCheckedRooms().get(0).getHotel(), item, getBlockFromDate(), getBlockToDate());
-				}
+				sendInventoryData(getCheckedRooms().get(0).getHotel(), inventoryItems, getBlockFromDate(), getBlockToDate());
 			} catch (ManagerBeanException ex) {
 				String msg = "Error desbloqueando Habitaciones!";
 				AonUtil.addErrorMessage(msg);
@@ -200,6 +197,13 @@ public class RoomController extends BasicController {
 			}
 		}
 	}
+
+    private void sendInventoryData(Hotel hotel, List<Item> inventoryItems, Date startDate, Date endDate) {
+    	InventoryManager manager = new InventoryManager();
+		for (Item item : inventoryItems) {
+			manager.processInventoryQuery(null, hotel, item, startDate, endDate);
+		}
+    }
 
 
 	private ArrayList<Room> checks = new ArrayList<Room>();

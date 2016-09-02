@@ -18,38 +18,27 @@
 	</aon:if>
 
 	<aon:outputLabel  
-		value="#{bundle.aon_start_date}" />
+		value="#{bundle.aon_date}" />
 	<aon:div>
-		<aon:outputLabel for="Allotment_startDate-From"
+		<aon:outputLabel for="Allotment_fromDate-From"
 			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-		<aon:selectInputDate id="Allotment_startDate-From"
-			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+		<aon:selectInputDate id="Allotment_fromDate-From"
+			value="#{searchController.fromDate}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
-		<aon:outputLabel for="Allotment_startDate-To"
+		<aon:outputLabel for="Allotment_fromDate-To"
 			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-		<aon:selectInputDate id="Allotment_startDate-To"
-			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+		<aon:selectInputDate id="Allotment_fromDate-To"
+			value="#{searchController.toDate}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 
-	<aon:outputLabel  
-		value="#{bundle.aon_end_date}" />
-	<aon:div>
-		<aon:outputLabel for="Allotment_endDate-From"
-			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-		<aon:selectInputDate id="Allotment_endDate-From"
-			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
-			timeZone="#{timeZoneController.timeZone}"
-			popupDateFormat="#{bundle.aon_date_pattern}"/>
-		<aon:outputLabel for="Allotment_endDate-To"
-			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-		<aon:selectInputDate id="Allotment_endDate-To"
-			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
-			timeZone="#{timeZoneController.timeZone}"
-			popupDateFormat="#{bundle.aon_date_pattern}"/>
-	</aon:div>
+	<aon:outputLabel for="Allotment_rateCode" 
+		value="#{bundle.aon_id}" />
+	<aon:inputText id="Allotment_rateCode"
+		valueChangeListener="#{controller.addExpression}"
+		size="10" />
 
 	<aon:outputLabel for="Allotment_agency" 
 		value="#{bundle.report_agency}" />
@@ -74,12 +63,12 @@
 	<aon:outputLabel for="Allotment_remarks" 
 		value="#{bundle.aon_remark}" />
 	<aon:inputText id="Allotment_remarks"
-		valueChangeListener="#{controller.addExpression}"
+		value="#{searchController.remarks}"
 		size="64" />
 
 	<aon:outputLabel for="Allotment_active" value="#{bundle.aon_status}" />
 	<aon:selectOneRadio id="Allotment_active"
-		valueChangeListener="#{controller.addExpression}">
+		value="#{searchController.active}">
 		<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="true" />
 		<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="false" />
 	</aon:selectOneRadio>				

@@ -27,6 +27,7 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationDivert;
 import com.esferalia.aon.pms.ProjectReservationRoom;
@@ -174,9 +175,8 @@ public class DivertReceptionController extends BasicController {
 				if(rr.getReservationRoom().getRoomNumber()==null){
 					reservationUtils.insertProjectReservationRoomDetails(rr.getReservationRoom(), startDate, endDate, rr.getRoom(), getAvailableServicesList(rr.getReservationRoom()));
 
-					InventoryManager manager = new InventoryManager();
-		        	manager.processInventoryQuery(rr.getReservationRoom(), rr.getReservationRoom().getHotel(), rr.getReservationRoom().getItem(), startDate, DateUtils.addDays(endDate, -1));
-		        	manager.processInventoryQuery(rr.getReservationRoom(), rr.getRoom().getHotel(), rr.getRoom().getItem(), startDate, DateUtils.addDays(endDate, -1));
+					sendInventoryData(rr.getReservationRoom(), rr.getReservationRoom().getHotel(), rr.getReservationRoom().getItem(), startDate, endDate);
+					sendInventoryData(rr.getReservationRoom(), rr.getRoom().getHotel(), rr.getRoom().getItem(), startDate, endDate);
 				} else {
 					List<Item> inventoryItems = reservationUtils.getProjectReservationRoomDetailItems(rr.getReservationRoom(), startDate, endDate);
 			    	if (!inventoryItems.contains(rr.getReservationRoom().getItem())) {
@@ -184,11 +184,8 @@ public class DivertReceptionController extends BasicController {
 			    	}
 					reservationUtils.updateProjectReservationRoomDetails(rr.getReservationRoom(), startDate, endDate, rr.getRoom());
 
-					InventoryManager manager = new InventoryManager();
-					for (Item roomItem : inventoryItems) {
-				       	manager.processInventoryQuery(rr.getReservationRoom(), rr.getReservationRoom().getHotel(), roomItem, startDate, DateUtils.addDays(endDate, -1));
-			        }
-		        	manager.processInventoryQuery(rr.getReservationRoom(), rr.getRoom().getHotel(), rr.getRoom().getItem(), startDate, DateUtils.addDays(endDate, -1));
+					sendInventoryData(rr.getReservationRoom(), rr.getReservationRoom().getHotel(), inventoryItems, startDate, endDate);
+					sendInventoryData(rr.getReservationRoom(), rr.getRoom().getHotel(), rr.getRoom().getItem(), startDate, endDate);
 				}
 			}
 		} catch (NumberFormatException e) {
@@ -203,6 +200,17 @@ public class DivertReceptionController extends BasicController {
 		changeReservationHotel();
 		updateStatus((ProjectReservationDivert) getTo(), ReservationDivertStatus.ACCEPTED);
 	}
+
+    private void sendInventoryData(ProjectReservationRoom reservationRoom, Hotel hotel, Item item, Date startDate, Date endDate) {
+    	InventoryManager manager = new InventoryManager();
+       	manager.processInventoryQuery(reservationRoom, hotel, item, startDate, DateUtils.addDays(endDate, -1));
+    }
+
+    private void sendInventoryData(ProjectReservationRoom reservationRoom, Hotel hotel, List<Item> items, Date startDate, Date endDate) {
+		for (Item item : items) {
+			sendInventoryData(reservationRoom, hotel, item, startDate, endDate);
+		}
+    }
 
 	public void onCancelDivert(ActionEvent event) throws ManagerBeanException{
 		cancelDivert((ProjectReservationDivert) getModel().getRowData());

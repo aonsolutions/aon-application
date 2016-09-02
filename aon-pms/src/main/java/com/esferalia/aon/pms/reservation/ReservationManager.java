@@ -637,6 +637,7 @@ public class ReservationManager implements IReservationConstants {
 		reservationRoom.setRoomIndex(stay.getIndexNumber());
 		reservationRoom.setRoomCode(stay.getRoomTypes().getRoomTypeArray(0).getRoomTypeCode());
 		reservationRoom.setItem(getReservationUtils().obtainRoomItem(reservation, stay.getRoomTypes().getRoomTypeArray(0)));
+		reservationRoom.setAllotmentRateCode(getReservationUtils().obtainAllotmentRateCode(reservation));
 		if (stay.getRatePlans() != null && stay.getRatePlans().sizeOfRatePlanArray() > 0) {
 			reservationRoom.setRatePlan(stay.getRatePlans().getRatePlanArray(0).getRatePlanCode());
 			reservationRoom.setTariff(getReservationUtils().obtainRoomTariff(reservation, stay.getRatePlans().getRatePlanArray(0)));
