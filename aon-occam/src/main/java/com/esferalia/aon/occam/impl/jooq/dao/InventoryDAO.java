@@ -25,7 +25,7 @@ public class InventoryDAO {
 				.from(INVENTORY_DETAIL)
 				.where(INVENTORY_DETAIL.INVENTORY.eq(inventoryId))
 				.fetchInto(INVENTORY_DETAIL)
-				.stream().map(new InventoryDetailFiller())
+				.stream().map(new InventoryDetailFiller(ctx))
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -104,6 +104,10 @@ public class InventoryDAO {
 	}
 	
 	private static class InventoryDetailFiller implements Function<InventoryDetailRecord, InventoryDetail> {
+		AONContext ctx;
+		public InventoryDetailFiller(AONContext ctx) {
+			this.ctx = ctx;
+		}
 		
 		@Override
 		public InventoryDetail apply(InventoryDetailRecord r) {
@@ -114,7 +118,7 @@ public class InventoryDAO {
 					.setCreationDate(r.getCreationDate())
 					.setCreationUser(r.getCreationUser())
 					.setDomain(r.getDomain())
-					.setItem(new Item().setId(r.getItem()).setDomain(r.getDomain()))
+					.setItem(ProductDAO.getItem(ctx, r.getItem()))
 					.setModificationDate(r.getModificationDate())
 					.setModificationUser(r.getModificationUser())
 					.setRealQuantity(r.getRealQuantity());
