@@ -628,10 +628,10 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(cgcBases.get(3).getStartDate(), workStartDate);
 		Assert.assertEquals(cgcBases.get(3).getEndDate(), endDate);
 		
-		Assert.assertEquals(100.00 * 3, Double.parseDouble(cgcBases.get(0).getExpression()));
-		Assert.assertEquals(100.00 * 7, Double.parseDouble(cgcBases.get(1).getExpression()));
-		Assert.assertEquals(100.00 * 5 , Double.parseDouble(cgcBases.get(2).getExpression()));
-		Assert.assertEquals(1500.00 * (monthDays -15) / monthDays, Double.parseDouble(cgcBases.get(3).getExpression()));
+		Assert.assertEquals(100.00 * 3, Double.parseDouble(cgcBases.get(0).getExpression()), DELTA);
+		Assert.assertEquals(100.00 * 7, Double.parseDouble(cgcBases.get(1).getExpression()), DELTA);
+		Assert.assertEquals(100.00 * 5 , Double.parseDouble(cgcBases.get(2).getExpression()), DELTA);
+		Assert.assertEquals(1500.00 * (monthDays -15) / monthDays, Double.parseDouble(cgcBases.get(3).getExpression()), DELTA);
 		
 		List<ContextData> cgpBases = datas.get(ContextVariable.CGP_BASE.getName());
 		Assert.assertEquals(4, cgpBases.size());
@@ -643,10 +643,10 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(cgpBases.get(3).getStartDate(), workStartDate);
 		Assert.assertEquals(cgpBases.get(3).getEndDate(), endDate);
 
-		Assert.assertEquals(100.00 * 3, Double.parseDouble(cgpBases.get(0).getExpression()));
-		Assert.assertEquals(100.00 * 7, Double.parseDouble(cgpBases.get(1).getExpression()));
-		Assert.assertEquals(100.00 * 5 , Double.parseDouble(cgpBases.get(2).getExpression()));
-		Assert.assertEquals(1500.00 * (monthDays -15) / monthDays, Double.parseDouble(cgpBases.get(3).getExpression()));
+		Assert.assertEquals(100.00 * 3, Double.parseDouble(cgpBases.get(0).getExpression()), DELTA);
+		Assert.assertEquals(100.00 * 7, Double.parseDouble(cgpBases.get(1).getExpression()), DELTA);
+		Assert.assertEquals(100.00 * 5 , Double.parseDouble(cgpBases.get(2).getExpression()), DELTA);
+		Assert.assertEquals(1500.00 * (monthDays -15) / monthDays, Double.parseDouble(cgpBases.get(3).getExpression()), DELTA);
 
 		List<ContextData> prestIts = datas.get(ContextVariable.PREST_IT);
 		Assert.assertEquals(4, prestIts.size());
@@ -658,10 +658,10 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(prestIts.get(3).getStartDate(), workStartDate);
 		Assert.assertEquals(prestIts.get(3).getEndDate(), endDate);
 
-		Assert.assertEquals(0.00, Double.parseDouble(prestIts.get(0).getExpression()));
-		Assert.assertEquals(100.00 * 7 * 0.60, Double.parseDouble(prestIts.get(1).getExpression()));
-		Assert.assertEquals(100.00 * 5 * 0.60, Double.parseDouble(prestIts.get(2).getExpression()));
-		Assert.assertEquals(0.00, Double.parseDouble(prestIts.get(3).getExpression()));
+		Assert.assertEquals(0.00, Double.parseDouble(prestIts.get(0).getExpression()), DELTA);
+		Assert.assertEquals(100.00 * 7 * 0.60, Double.parseDouble(prestIts.get(1).getExpression()), DELTA);
+		Assert.assertEquals(100.00 * 5 * 0.60, Double.parseDouble(prestIts.get(2).getExpression()), DELTA);
+		Assert.assertEquals(0.00, Double.parseDouble(prestIts.get(3).getExpression()), DELTA);
 		
 //		List<ContextData> structuralBases = datas.get(ContextVariable.STRUCTURAL_OVERTIME_BASE.getName());
 //		Assert.assertEquals(1, structuralBases.size());
@@ -783,11 +783,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(cgcBases.get(3).getStartDate(), workStartDate);
 		Assert.assertEquals(cgcBases.get(3).getEndDate(), endDate);
 		
-		Assert.assertEquals(100.00 * 3, Double.parseDouble(cgcBases.get(0).getExpression()));
-		Assert.assertEquals(100.00 * 7, Double.parseDouble(cgcBases.get(1).getExpression()));
-		Assert.assertEquals(100.00 * 5 , Double.parseDouble(cgcBases.get(2).getExpression()));
+		Assert.assertEquals(100.00 * 3, Double.parseDouble(cgcBases.get(0).getExpression()), DELTA);
+		Assert.assertEquals(100.00 * 7, Double.parseDouble(cgcBases.get(1).getExpression()), DELTA);
+		Assert.assertEquals(100.00 * 5 , Double.parseDouble(cgcBases.get(2).getExpression()), DELTA);
 		
-		Assert.assertEquals(1500.00 * (monthDays -15) / monthDays, Double.parseDouble(cgcBases.get(3).getExpression()));
+		Assert.assertEquals(1500.00 * (monthDays -15) / monthDays, Double.parseDouble(cgcBases.get(3).getExpression()), DELTA);
 		
 		List<ContextData> cgpBases = datas.get(ContextVariable.CGP_BASE.getName());
 		Assert.assertEquals(4, cgpBases.size());
@@ -799,11 +799,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(cgpBases.get(3).getStartDate(), workStartDate);
 		Assert.assertEquals(cgpBases.get(3).getEndDate(), endDate);
 
-		Assert.assertEquals(100.00 * 3, Double.parseDouble(cgpBases.get(0).getExpression()));
-		Assert.assertEquals(100.00 * 7, Double.parseDouble(cgpBases.get(1).getExpression()));
-		Assert.assertEquals(100.00 * 5 , Double.parseDouble(cgpBases.get(2).getExpression()));
+		Assert.assertEquals(100.00 * 3, Double.parseDouble(cgpBases.get(0).getExpression()), DELTA);
+		Assert.assertEquals(100.00 * 7, Double.parseDouble(cgpBases.get(1).getExpression()), DELTA);
+		Assert.assertEquals(100.00 * 5 , Double.parseDouble(cgpBases.get(2).getExpression()), DELTA);
 		
-		Assert.assertEquals(100.00 +(1500.00 * (monthDays -15) / monthDays), Double.parseDouble(cgpBases.get(3).getExpression()));
+		Assert.assertEquals(100.00 +(1500.00 * (monthDays -15) / monthDays), Double.parseDouble(cgpBases.get(3).getExpression()), DELTA);
 
 		List<ContextData> prestIts = datas.get(ContextVariable.PREST_IT);
 		Assert.assertEquals(4, prestIts.size());
@@ -819,13 +819,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(1, structuralBases.size());
 		Assert.assertEquals(structuralBases.get(0).getStartDate(), startDate);
 		Assert.assertEquals(structuralBases.get(0).getEndDate(), endDate);
-		Assert.assertEquals(0.00 , Double.parseDouble(structuralBases.get(0).getExpression()));
+		Assert.assertEquals(0.00 , Double.parseDouble(structuralBases.get(0).getExpression()), DELTA);
 
 		List<ContextData> nonStructuralBases = datas.get(ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName());
 		Assert.assertEquals(1, nonStructuralBases.size());
 		Assert.assertEquals(nonStructuralBases.get(0).getStartDate(), workStartDate);
 		Assert.assertEquals(nonStructuralBases.get(0).getEndDate(), endDate);
-		Assert.assertEquals(100.00 , Double.parseDouble(nonStructuralBases.get(0).getExpression()));
+		Assert.assertEquals(100.00 , Double.parseDouble(nonStructuralBases.get(0).getExpression()), DELTA);
 	}
 
 	@Test
