@@ -423,41 +423,16 @@ public class FBatchController extends BasicController implements ICollectionProv
 		}
     }
 	
-	private FBatchCreateDiskProcess fcdp;
-	
-	public boolean isDiskProcessTerminated() {
-		return fcdp==null || fcdp.isTerminated();
-	}
-	
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
 		setShowAebWaitingProcessWindow(true);
-		this.refresh(event);
 		FinanceBatch fbatch = (FinanceBatch) this.getTo();
-		if(fbatch.getRattach()==null && isDiskProcessTerminated()){
-			fcdp = new FBatchCreateDiskProcess(fbatch, getCompany(), getBankDate());
-			LongProcessThread thread = new LongProcessThread(fcdp);
-			thread.start();
-		}
-	}
-	
-	public void onCancelCreateDisk(ActionEvent event) throws ManagerBeanException {
-		if(fcdp!=null){
-			fcdp.interrupt();
-		}
-		FinanceBatch fbatch = (FinanceBatch) this.getTo();
-		this.refresh(null);
-		cleanAebFile();
-		Integer rattachId = fbatch.getRattach();
-		if(rattachId!=null){
-			fbatch.setRattach(null);
-			getManagerBean().update(fbatch);
-		}
+		FBatchCreateDiskProcess fcdp = new FBatchCreateDiskProcess(fbatch, getCompany(), getBankDate());
+		LongProcessThread thread = new LongProcessThread(fcdp);
+		thread.start();
 	}
 	
 	public void onReloadDisk(ActionEvent event) throws ManagerBeanException {
-		if(isDiskProcessTerminated()){
-			loadAebFile();
-		}
+		loadAebFile();
 	}
 	
 	public void loadAebFile() throws ManagerBeanException {
@@ -580,14 +555,8 @@ public class FBatchController extends BasicController implements ICollectionProv
 	}
 
 	public void onShowSEPAWindow( ActionEvent event ) throws ManagerBeanException {
-		this.refresh(event);
-		FinanceBatch fbatch = (FinanceBatch)this.getTo();
-		if(fbatch.getRattach()==null){
-			setBankDate(new Date());
-			setShowSEPAWindow(true);
-		} else {
-			setShowAebWaitingProcessWindow(true);
-		}
+		setBankDate(new Date());
+		setShowSEPAWindow(true);
 	}
 	
 	public void setMimeType(MimeType mimeType) {
