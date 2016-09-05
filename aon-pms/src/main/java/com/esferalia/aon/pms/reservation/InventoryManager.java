@@ -142,26 +142,28 @@ public class InventoryManager implements IReservationConstants, ISQLConstants {
 		message.getInventories().setHotelCode(hotel.getCode());
 		message.getInventories().setChainCode(GP);
 		Map<Date, int[]> freeRoomMap = obtainDayFreeRoomMap(hotel, item, rateCode, startDate, endDate);
-		for (Date inventoryDate : freeRoomMap.keySet()) {
-			Calendar start = Calendar.getInstance();
-			start.setTime(inventoryDate);
-			int freeRooms = freeRoomMap.get(inventoryDate)[0] - freeRoomMap.get(inventoryDate)[1];
-			freeRooms = (freeRooms < 0) ? 0 : freeRooms;
+		if (freeRoomMap.size() > 0) {
+			for (Date inventoryDate : freeRoomMap.keySet()) {
+				Calendar start = Calendar.getInstance();
+				start.setTime(inventoryDate);
+				int freeRooms = freeRoomMap.get(inventoryDate)[0] - freeRoomMap.get(inventoryDate)[1];
+				freeRooms = (freeRooms < 0) ? 0 : freeRooms;
 
-			int i = message.getInventories().sizeOfInventoryArray();
-			message.getInventories().addNewInventory();
-			message.getInventories().getInventoryArray(i).addNewStatusApplicationControl();
-			message.getInventories().getInventoryArray(i).getStatusApplicationControl().setRatePlanCode(rateCode);
-			message.getInventories().getInventoryArray(i).getStatusApplicationControl().setRatePlanCodeType(RatePlanCodeType.RATE_PLAN_CODE);
-			message.getInventories().getInventoryArray(i).getStatusApplicationControl().setInvTypeCode(item.getProduct().getCode());
-			message.getInventories().getInventoryArray(i).getStatusApplicationControl().setInvCodeApplication(InvCodeApplication.INV_CODE);
-			message.getInventories().getInventoryArray(i).getStatusApplicationControl().setStart(start);
-			message.getInventories().getInventoryArray(i).addNewInvCounts().addNewInvCount();
-			message.getInventories().getInventoryArray(i).getInvCounts().getInvCountArray(0).setCount(BigInteger.valueOf(freeRooms));
-			message.getInventories().getInventoryArray(i).getInvCounts().getInvCountArray(0).setCountType(INVENTORY_COUNT_TYPE);
+				int i = message.getInventories().sizeOfInventoryArray();
+				message.getInventories().addNewInventory();
+				message.getInventories().getInventoryArray(i).addNewStatusApplicationControl();
+				message.getInventories().getInventoryArray(i).getStatusApplicationControl().setRatePlanCode(rateCode);
+				message.getInventories().getInventoryArray(i).getStatusApplicationControl().setRatePlanCodeType(RatePlanCodeType.RATE_PLAN_CODE);
+				message.getInventories().getInventoryArray(i).getStatusApplicationControl().setInvTypeCode(item.getProduct().getCode());
+				message.getInventories().getInventoryArray(i).getStatusApplicationControl().setInvCodeApplication(InvCodeApplication.INV_CODE);
+				message.getInventories().getInventoryArray(i).getStatusApplicationControl().setStart(start);
+				message.getInventories().getInventoryArray(i).addNewInvCounts().addNewInvCount();
+				message.getInventories().getInventoryArray(i).getInvCounts().getInvCountArray(0).setCount(BigInteger.valueOf(freeRooms));
+				message.getInventories().getInventoryArray(i).getInvCounts().getInvCountArray(0).setCountType(INVENTORY_COUNT_TYPE);
+			}
+			return document.xmlText();
 		}
-
-		return document.xmlText();
+		return null;
 	}
 
 	private Map<Date, int[]> obtainDayFreeRoomMap(Hotel hotel, Item item, String rateCode, Date startDate, Date endDate) throws ManagerBeanException {
@@ -185,16 +187,18 @@ public class InventoryManager implements IReservationConstants, ISQLConstants {
 
 	private void sendInventoryQuery(String inventoryUrl, String message) {
 		try {
-			Endpoint endpoint = new URLEndpoint(new URL(inventoryUrl).toString());
-			SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
-			soapRequest.getSOAPBody().addDocument(obtainMessageDocument(message));
-			soapRequest.writeTo(System.out);
-			System.out.println();
-
-			SOAPConnection soapConnection = SOAPConnectionFactory.newInstance().createConnection();
-			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
-			soapResponse.writeTo(System.out);
-			System.out.println();
+			if (message != null) {
+				Endpoint endpoint = new URLEndpoint(new URL(inventoryUrl).toString());
+				SOAPMessage soapRequest = MessageFactory.newInstance().createMessage();
+				soapRequest.getSOAPBody().addDocument(obtainMessageDocument(message));
+				soapRequest.writeTo(System.out);
+				System.out.println();
+	
+				SOAPConnection soapConnection = SOAPConnectionFactory.newInstance().createConnection();
+				SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
+				soapResponse.writeTo(System.out);
+				System.out.println();
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
