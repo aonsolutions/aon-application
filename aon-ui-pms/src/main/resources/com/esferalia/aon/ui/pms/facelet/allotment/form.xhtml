@@ -13,10 +13,33 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.pms_allotment_module}" />
 				<ui:param name="controller" value="#{allotment}" />
-				<ui:param name="skipRemoveButton" value="true" />
+				<ui:param name="skipRemoveButton" value="#{allotment.rateCode}" />
+				<ui:param name="showMoreMenu" value="#{!allotment.nevv and allotment.rateCode}" />
 				<ui:define name="beforeSpinToolbarContent">				
 					<ui:include
 						src="/com/code/aon/ui/common/facelet/auditable/toolbarContent.xhtml" />											
+				</ui:define>				
+				<ui:define name="moreMenuContent">
+					<aon:menuItem id="AllotmentCopy"
+						value="#{bundle.aon_copy}"
+						immediate="#{true}"
+						iconClass="aon-icon-copy"
+						actionListener="#{allotment.onAllotmentCopyShow}"
+						reRender="showAllotmentCopyWindow">
+						<f:setPropertyActionListener target="#{allotment.showAllotmentCopyWindow}"
+							value="#{true}" />
+					</aon:menuItem>
+<!-- 
+					<aon:menuItem id="AllotmentFraction"
+						value="#{bundle.finance_to_fraction}"
+						immediate="#{true}"
+						iconClass="aon-icon-task-liberate"
+						actionListener="#{allotment.onAllotmentFractionShow}"
+						reRender="showAllotmentFractionWindow">
+						<f:setPropertyActionListener target="#{allotment.showAllotmentFractionWindow}"
+							value="#{true}" />
+					</aon:menuItem>
+ -->
 				</ui:define>				
 			</ui:decorate>
 
@@ -29,6 +52,9 @@
 		<aon:if test="#{!allotment.nevv}">
 			<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
 				<ui:param name="auditableController" value="#{allotment}" />
+			</ui:include>
+			<ui:include src="/com/esferalia/aon/ui/pms/facelet/allotment/modalCopy.xhtml">
+				<ui:param name="controller" value="#{allotment}" />
 			</ui:include>
 		</aon:if>
 

@@ -1,9 +1,12 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -13,33 +16,32 @@ import org.apache.commons.lang.ArrayUtils;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.product.Item;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Allotment;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.sql.SQLAllotment;
+import com.esferalia.aon.pms.sql.SQLUtils;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class AllotmentController extends BasicController implements IPmsConstants, IAuditableController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	private boolean showAuditInfoWindow;
 	private boolean rateCode;
 	private boolean group;
 	private Item item;
 	private Item[] items;
 	private Tariff tariff;
 	private Tariff[] tariffs;
-
-	public boolean isShowAuditInfoWindow() {
-		return showAuditInfoWindow;
-	}
-
-	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
-		this.showAuditInfoWindow = showAuditInfoWindow;
-	}	
+	private boolean showAuditInfoWindow;
+	private boolean showAllotmentCopyWindow;
+	private Allotment allotmentCopy;
+	private Item itemCopy;
+	private boolean showAllotmentFractionWindow;
 
 	public boolean isRateCode() {
 		return rateCode;
@@ -88,6 +90,46 @@ public class AllotmentController extends BasicController implements IPmsConstant
 	public void setTariffs(Tariff[] tariffs) {
 		this.tariffs = tariffs;
 	}
+
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}	
+
+	public boolean isShowAllotmentCopyWindow() {
+		return showAllotmentCopyWindow;
+	}
+
+	public void setShowAllotmentCopyWindow(boolean showAllotmentCopyWindow) {
+		this.showAllotmentCopyWindow = showAllotmentCopyWindow;
+	}	
+
+	public Allotment getAllotmentCopy() {
+		return allotmentCopy;
+	}
+
+	public void setAllotmentCopy(Allotment allotmentCopy) {
+		this.allotmentCopy = allotmentCopy;
+	}	
+
+	public Item getItemCopy() {
+		return itemCopy;
+	}
+
+	public void setItemCopy(Item itemCopy) {
+		this.itemCopy = itemCopy;
+	}	
+
+	public boolean isShowAllotmentFractionWindow() {
+		return showAllotmentFractionWindow;
+	}
+
+	public void setShowAllotmentFractionWindow(boolean showAllotmentFractionWindow) {
+		this.showAllotmentFractionWindow = showAllotmentFractionWindow;
+	}	
 
 	public void onHotelChanged(ValueChangeEvent event) {
 		Allotment allotment = (Allotment)getTo();
@@ -196,6 +238,66 @@ public class AllotmentController extends BasicController implements IPmsConstant
         FacesContext context = FacesContext.getCurrentInstance();
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("allotmentTariffIdx"));		
 		setTariffs((Tariff[])ArrayUtils.remove(getTariffs(), index));
+	}
+
+	public void onAllotmentCopyShow(ActionEvent event) {
+		Allotment allotment = (Allotment)getTo();
+		setAllotmentCopy(new Allotment());
+		getAllotmentCopy().setHotel(allotment.getHotel());
+		setItemCopy(new Item());
+	}
+
+	public void onAllotmentCopy(ActionEvent event) throws ManagerBeanException {
+		Allotment to = (Allotment)getTo();
+		getAllotmentCopy().setRateCode(to.getRateCode());
+		getAllotmentCopy().setAgency(to.getAgency() != null && to.getAgency().getId() != null ? to.getAgency() : null);
+		getAllotmentCopy().setAgencyGroup(to.getAgencyGroup() != null && to.getAgencyGroup().getId() != null ? to.getAgencyGroup() : null);
+		getAllotmentCopy().setStartDate(to.getStartDate());
+		getAllotmentCopy().setEndDate(to.getEndDate());
+		getAllotmentCopy().setQuantity(to.getQuantity());
+		getAllotmentCopy().setActive(true);
+
+		if (isAllotmentOverlap(getAllotmentCopy(), getItemCopy().getId().toString(), null)) {
+			String message = "Ya existen Cupos definidos con esas condiciones en el periodo.";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		} else {
+			setNevv(true);
+			setTo(getAllotmentCopy());
+			setItems(null);
+			setItem(getItemCopy());
+			accept(event);
+		}
+	}
+
+	public void onHotelCopyChanged(ValueChangeEvent event) {
+		getAllotmentCopy().setHotel((Hotel)event.getNewValue());
+	}
+
+	public List<SelectItem> getHotelCopyRoomItems() throws ManagerBeanException {
+		return PmsUtils.getRoomItems(getAllotmentCopy().getHotel());
+	}
+
+	public void onAllotmentFractionShow(ActionEvent event) {
+	}
+
+	public void onAllotmentFraction(ActionEvent event) {
+	}
+
+	public boolean isAllotmentOverlap(Allotment allotment, String items, String tariffs) {
+		Connection connection = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			return SQLAllotment.isAllotmentDefined(connection, allotment, items, tariffs);
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+			return false;
+		} finally {
+			SQLUtils.closeQuietly(connection);
+		}
 	}
 
 }

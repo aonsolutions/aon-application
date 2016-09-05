@@ -1,8 +1,5 @@
 package com.esferalia.aon.ui.pms.event;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -12,20 +9,16 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
-import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Allotment;
 import com.esferalia.aon.pms.AllotmentItem;
 import com.esferalia.aon.pms.AllotmentTariff;
 import com.esferalia.aon.pms.reservation.InventoryManager;
-import com.esferalia.aon.pms.sql.SQLAllotment;
-import com.esferalia.aon.pms.sql.SQLUtils;
 import com.esferalia.aon.ui.pms.controller.AllotmentController;
 import com.esferalia.aon.ui.pms.controller.IPmsConstants;
 
@@ -71,7 +64,9 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		controller.setTariffs(obtainsSelectedTariffs(controller.getTariffs(), controller.getTariff()));
 
 		if (allotment.isActive()) {
-			verifyAllotmentOverlap(allotment, StringUtils.join(controller.getItemsIds(), ","), StringUtils.join(controller.getTariffsIds(), ","));
+			if (controller.isAllotmentOverlap(allotment, StringUtils.join(controller.getItemsIds(), ","), StringUtils.join(controller.getTariffsIds(), ","))) {
+				throw new ControllerListenerException("Ya existen Cupos definidos con esas condiciones en el periodo.");
+			}
 		}
 	}
 
@@ -102,7 +97,9 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		controller.setTariffs(obtainsSelectedTariffs(controller.getTariffs(), controller.getTariff()));
 
 		if (allotment.isActive()) {
-			verifyAllotmentOverlap(allotment, StringUtils.join(controller.getItemsIds(), ","), StringUtils.join(controller.getTariffsIds(), ","));
+			if (controller.isAllotmentOverlap(allotment, StringUtils.join(controller.getItemsIds(), ","), StringUtils.join(controller.getTariffsIds(), ","))) {
+				throw new ControllerListenerException("Ya existen Cupos definidos con esas condiciones en el periodo.");
+			}
 		}
 	}
 
@@ -165,24 +162,6 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 			tariffs = (Tariff[])ArrayUtils.add(tariffs, tariff);
 		}
 		return (Tariff[])ArrayUtils.removeElement(tariffs, null);
-	}
-
-	private void verifyAllotmentOverlap(Allotment allotment, String items, String tariffs) throws ControllerListenerException {
-		Connection connection = null;
-		try {
-			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			if (SQLAllotment.isAllotmentDefined(connection, allotment, items, tariffs)) {
-				throw new ControllerListenerException("Ya existen Cupos definidos para la Agencia con esas condiciones.");
-			}
-		} catch (Throwable e) {
-			try {
-				connection.rollback();
-			} catch (SQLException ex) {
-			}
-			throw new ControllerListenerException(e.getMessage());
-		} finally {
-			SQLUtils.closeQuietly(connection);
-		}
 	}
 
 	private void insertAllotmentItems(Allotment allotment, Item[] items) throws ManagerBeanException {
