@@ -82,7 +82,7 @@
 										<aon:selectOneMenu id="Finance_paymentRegistryBank"
 											value="#{finance.paymentRegistryBank}"
 											rendered="#{finance.paymentRegistryBank != null}">
-											<f:selectItems value="#{companyCollections.allCompanyBanks}" />
+											<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
 										</aon:selectOneMenu>
 										<aon:outputLabel for="Finance_paymentPayMethodTypeDetail"
 											value="#{bundle.aon_detail}"

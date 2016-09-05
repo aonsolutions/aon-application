@@ -94,7 +94,7 @@
 										<aon:selectOneMenu id="Finance_returnRegistryBank"
 											value="#{finance.returnRegistryBank}"
 											rendered="#{finance.returnDeposit == 0}">
-											<f:selectItems value="#{companyCollections.allCompanyBanks}" />
+											<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
 										</aon:selectOneMenu>
 										<aon:outputLabel for="Finance_returnPayMethodTypeDetail"
 											value="#{bundle.aon_detail}"
