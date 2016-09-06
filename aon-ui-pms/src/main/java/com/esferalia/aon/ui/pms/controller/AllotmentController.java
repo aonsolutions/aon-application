@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.pms.controller;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
@@ -39,9 +41,9 @@ public class AllotmentController extends BasicController implements IPmsConstant
 	private Tariff[] tariffs;
 	private boolean showAuditInfoWindow;
 	private boolean showAllotmentCopyWindow;
-	private Allotment allotmentCopy;
-	private Item itemCopy;
 	private boolean showAllotmentFractionWindow;
+	private Allotment allotmentAux;
+	private Item itemAux;
 
 	public boolean isRateCode() {
 		return rateCode;
@@ -107,22 +109,6 @@ public class AllotmentController extends BasicController implements IPmsConstant
 		this.showAllotmentCopyWindow = showAllotmentCopyWindow;
 	}	
 
-	public Allotment getAllotmentCopy() {
-		return allotmentCopy;
-	}
-
-	public void setAllotmentCopy(Allotment allotmentCopy) {
-		this.allotmentCopy = allotmentCopy;
-	}	
-
-	public Item getItemCopy() {
-		return itemCopy;
-	}
-
-	public void setItemCopy(Item itemCopy) {
-		this.itemCopy = itemCopy;
-	}	
-
 	public boolean isShowAllotmentFractionWindow() {
 		return showAllotmentFractionWindow;
 	}
@@ -131,9 +117,25 @@ public class AllotmentController extends BasicController implements IPmsConstant
 		this.showAllotmentFractionWindow = showAllotmentFractionWindow;
 	}	
 
+	public Allotment getAllotmentAux() {
+		return allotmentAux;
+	}
+
+	public void setAllotmentAux(Allotment allotmentAux) {
+		this.allotmentAux = allotmentAux;
+	}	
+
+	public Item getItemAux() {
+		return itemAux;
+	}
+
+	public void setItemAux(Item itemAux) {
+		this.itemAux = itemAux;
+	}	
+
 	public void onHotelChanged(ValueChangeEvent event) {
-		Allotment allotment = (Allotment)getTo();
-		allotment.setHotel((Hotel)event.getNewValue());
+		Allotment to = (Allotment)getTo();
+		to.setHotel((Hotel)event.getNewValue());
 		setItems(null);
 		setItem(null);
 	}
@@ -173,10 +175,10 @@ public class AllotmentController extends BasicController implements IPmsConstant
 			setGroup(!isGroup());
 		}
 
-		Allotment allotment = (Allotment)getTo();
-		allotment.setRateCode(null);
-		allotment.setAgency(null);
-		allotment.setAgencyGroup(null);
+		Allotment to = (Allotment)getTo();
+		to.setRateCode(null);
+		to.setAgency(null);
+		to.setAgencyGroup(null);
 	}
 
 	public void onItemChanged(ValueChangeEvent event) {
@@ -241,47 +243,102 @@ public class AllotmentController extends BasicController implements IPmsConstant
 	}
 
 	public void onAllotmentCopyShow(ActionEvent event) {
-		Allotment allotment = (Allotment)getTo();
-		setAllotmentCopy(new Allotment());
-		getAllotmentCopy().setHotel(allotment.getHotel());
-		setItemCopy(new Item());
+		Allotment to = (Allotment)getTo();
+		setAllotmentAux(new Allotment());
+		getAllotmentAux().setHotel(to.getHotel());
+		setItemAux(new Item());
 	}
 
 	public void onAllotmentCopy(ActionEvent event) throws ManagerBeanException {
 		Allotment to = (Allotment)getTo();
-		getAllotmentCopy().setRateCode(to.getRateCode());
-		getAllotmentCopy().setAgency(to.getAgency() != null && to.getAgency().getId() != null ? to.getAgency() : null);
-		getAllotmentCopy().setAgencyGroup(to.getAgencyGroup() != null && to.getAgencyGroup().getId() != null ? to.getAgencyGroup() : null);
-		getAllotmentCopy().setStartDate(to.getStartDate());
-		getAllotmentCopy().setEndDate(to.getEndDate());
-		getAllotmentCopy().setQuantity(to.getQuantity());
-		getAllotmentCopy().setActive(true);
+		getAllotmentAux().setRateCode(to.getRateCode());
+		getAllotmentAux().setAgency(to.getAgency() != null && to.getAgency().getId() != null ? to.getAgency() : null);
+		getAllotmentAux().setAgencyGroup(to.getAgencyGroup() != null && to.getAgencyGroup().getId() != null ? to.getAgencyGroup() : null);
+		getAllotmentAux().setStartDate(to.getStartDate());
+		getAllotmentAux().setEndDate(to.getEndDate());
+		getAllotmentAux().setQuantity(to.getQuantity());
+		getAllotmentAux().setActive(true);
 
-		if (isAllotmentOverlap(getAllotmentCopy(), getItemCopy().getId().toString(), null)) {
+		if (isAllotmentOverlap(getAllotmentAux(), getItemAux().getId().toString(), null)) {
 			String message = "Ya existen Cupos definidos con esas condiciones en el periodo.";
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message);
 		} else {
-			setNevv(true);
-			setTo(getAllotmentCopy());
-			setItems(null);
-			setItem(getItemCopy());
-			accept(event);
+			addNewAllotment(getAllotmentAux(), getItemAux());
 		}
 	}
 
-	public void onHotelCopyChanged(ValueChangeEvent event) {
-		getAllotmentCopy().setHotel((Hotel)event.getNewValue());
+	public void onHotelAuxChanged(ValueChangeEvent event) {
+		getAllotmentAux().setHotel((Hotel)event.getNewValue());
 	}
 
-	public List<SelectItem> getHotelCopyRoomItems() throws ManagerBeanException {
-		return PmsUtils.getRoomItems(getAllotmentCopy().getHotel());
+	public List<SelectItem> getHotelAuxRoomItems() throws ManagerBeanException {
+		return PmsUtils.getRoomItems(getAllotmentAux().getHotel());
 	}
 
 	public void onAllotmentFractionShow(ActionEvent event) {
+		setAllotmentAux(new Allotment());
+		setItemAux(getItem());
 	}
 
 	public void onAllotmentFraction(ActionEvent event) {
+		Allotment to = (Allotment)getTo();
+		Date fractionStart = getAllotmentAux().getStartDate();
+		Date fractionEnd = getAllotmentAux().getEndDate();
+		if (isDateFractionOverlap(to.getStartDate(), to.getEndDate(), fractionStart, fractionEnd)) {
+			String message = "Las fechas no estan dentro del periodo a fraccionar.";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		} else {
+			getAllotmentAux().setHotel(to.getHotel());
+			getAllotmentAux().setRateCode(to.getRateCode());
+			getAllotmentAux().setAgency(to.getAgency() != null && to.getAgency().getId() != null ? to.getAgency() : null);
+			getAllotmentAux().setAgencyGroup(to.getAgencyGroup() != null && to.getAgencyGroup().getId() != null ? to.getAgencyGroup() : null);
+			getAllotmentAux().setActive(true);
+
+			if (getAllotmentAux().getEndDate().before(getAllotmentAux().getStartDate())) {
+				String message = "Las fechas de Inicio y Fin del Periodo son incorrectas.";
+				AonUtil.addErrorMessage(message);
+				throw new AbortProcessingException(message);
+			} else if (DateUtils.isSameDay(to.getStartDate(), fractionStart) || DateUtils.isSameDay(to.getEndDate(), fractionEnd)) {
+				to.setStartDate(DateUtils.isSameDay(to.getStartDate(), fractionStart) ? DateUtils.addDays(fractionEnd, 1) : to.getStartDate());
+				to.setEndDate(DateUtils.isSameDay(to.getEndDate(), fractionEnd) ? DateUtils.addDays(fractionStart, -1) : to.getEndDate());
+				accept(null);
+
+				addNewAllotment(getAllotmentAux(), getItemAux());
+			} else {
+				Date endDate = to.getEndDate();
+				to.setEndDate(DateUtils.addDays(fractionStart, -1));
+				accept(null);
+
+				getAllotmentAux().setStartDate(DateUtils.addDays(fractionEnd, 1));
+				getAllotmentAux().setEndDate(endDate);
+				addNewAllotment(getAllotmentAux(), getItemAux());
+
+				getAllotmentAux().setStartDate(fractionStart);
+				getAllotmentAux().setEndDate(fractionEnd);
+				addNewAllotment(getAllotmentAux(), getItemAux());
+			}
+		}
+	}
+
+	private void addNewAllotment(Allotment allotment, Item item) {
+		setNevv(true);
+		setTo(allotment);
+		setItems(null);
+		setItem(item);
+		accept(null);
+	}
+
+	private boolean isDateFractionOverlap(Date startDate, Date endDate, Date fractionStart, Date fractionEnd) {
+		boolean overlap = false;
+		if (DateUtils.isSameDay(startDate, fractionStart) && DateUtils.isSameDay(endDate, fractionEnd)) {
+			overlap = true;
+		}
+		if (startDate.after(fractionStart) || endDate.before(fractionEnd)) {
+			overlap = true;
+		}
+		return overlap;
 	}
 
 	public boolean isAllotmentOverlap(Allotment allotment, String items, String tariffs) {

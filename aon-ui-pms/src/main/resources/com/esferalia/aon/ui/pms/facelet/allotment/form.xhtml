@@ -29,7 +29,6 @@
 						<f:setPropertyActionListener target="#{allotment.showAllotmentCopyWindow}"
 							value="#{true}" />
 					</aon:menuItem>
-<!-- 
 					<aon:menuItem id="AllotmentFraction"
 						value="#{bundle.finance_to_fraction}"
 						immediate="#{true}"
@@ -39,7 +38,6 @@
 						<f:setPropertyActionListener target="#{allotment.showAllotmentFractionWindow}"
 							value="#{true}" />
 					</aon:menuItem>
- -->
 				</ui:define>				
 			</ui:decorate>
 
@@ -54,6 +52,9 @@
 				<ui:param name="auditableController" value="#{allotment}" />
 			</ui:include>
 			<ui:include src="/com/esferalia/aon/ui/pms/facelet/allotment/modalCopy.xhtml">
+				<ui:param name="controller" value="#{allotment}" />
+			</ui:include>
+			<ui:include src="/com/esferalia/aon/ui/pms/facelet/allotment/modalFraction.xhtml">
 				<ui:param name="controller" value="#{allotment}" />
 			</ui:include>
 		</aon:if>

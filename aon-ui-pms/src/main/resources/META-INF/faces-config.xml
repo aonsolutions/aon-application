@@ -1005,7 +1005,7 @@
 		</managed-property>				
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Allotment_startDate desc,Allotment_endDate desc</value>
+			<value>Allotment_hotel_workPlace_description,Allotment_rateCode,Allotment.agency&lt;registry&lt;name,Allotment.agencyGroup&lt;description,Allotment_startDate desc,Allotment_endDate desc</value>
 		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>
