@@ -128,7 +128,7 @@ public class ContaPlusWriter extends BasicExporter {
 		} else {
 			code = StringUtils.substring(code, 0, 3) + "0" + StringUtils.substring(code, 3);
 		}
-		return getString( code, 12 );
+		return getString( getAccountCode(code), 12 );
 	}
 	
 	private boolean isVatAccount( Account account ) {
