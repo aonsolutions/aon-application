@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
+import com.code.aon.account.bridge.writer.pricing.AccountInvoicePriceStrategy;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.enumeration.AccountEntryType;
@@ -190,7 +191,7 @@ public class DiamaconWriter extends BasicExporter {
 		}
 	}
 	
-	private void addSaleInvoiceDetail( AccountEntry accountEntry, Account account ) {
+	private void addSaleInvoiceDetail( AccountEntry accountEntry, Account account, TaxBreakDown taxBreakDown ) {
 		if ( isInvoiceExport() ) {
 			String codCliente = "";
 			String comentario = "";
@@ -242,7 +243,7 @@ public class DiamaconWriter extends BasicExporter {
 //			TOTAL FRA.
 			this.exporter.addDecimalCell( total );
 //			COD. VENTAS
-			if(account!=null){
+			if(account!=null && account.getCode()!=null){
 				this.exporter.addStringCell( account.getCode() );
 			} else {
 				this.exporter.addStringCell( defaultSalesAccount );
@@ -268,31 +269,21 @@ public class DiamaconWriter extends BasicExporter {
 		}
 	}
 	
-	private void addPurchaseInvoiceDetail( AccountEntry accountEntry, Account account ) {
-		if ( isInvoiceExport() ) {			
+	private void addPurchaseInvoiceDetail( AccountEntry accountEntry, Account account, TaxBreakDown taxBreakDown ) {
+		if ( isInvoiceExport() ) {
 			String codProveed = "";
 			String comentario = "";
-			if(getDetails().get(0).getBalancingAccount()!=null){
-				codProveed = getDetails().get(0).getBalancingAccount().getCode();
-				comentario = getDetails().get(0).getBalancingAccount().getDescription();
+			
+			if(getRegistryDetail().getAccount()!=null){
+				codProveed = getRegistryDetail().getAccount().getCode();
+				comentario = getRegistryDetail().getAccount().getDescription();
 			}
-			Double credit = getDetails().stream()
-				.filter(a -> a.getAccount().getId().equals(account.getId()) )
-				.mapToDouble(AccountEntryDetail::getCredit).sum();
-			Double debit = getDetails().stream()
-				.filter(a -> a.getAccount().getId().equals(account.getId()) )
-				.mapToDouble(AccountEntryDetail::getDebit).sum();
-			double base = - credit + debit; 
-			double taxPercent = -0.0;
-			double taxQuota = 0.0;
+			double base = taxBreakDown.getBase();
+			double taxPercent = taxBreakDown.getTaxPercent();
+			double taxQuota = taxBreakDown.getTaxQuota();
 			double total = 0.0;
-			List<TaxBreakDown> vats = getTaxes(TaxType.VAT);
-			for( TaxBreakDown tbd : vats ) {
-				taxPercent = Double.compare(taxPercent, 0.0)<0?tbd.getTaxPercent():((taxPercent+tbd.getTaxPercent())/2);
-			}
 			taxQuota = base * taxPercent / 100;
 			total = base + taxQuota;
-			
 			
 			
 			this.exporter.startLine();
@@ -311,7 +302,7 @@ public class DiamaconWriter extends BasicExporter {
 //			TOTAL FRA.
 			this.exporter.addDecimalCell( total );
 //			COD. GASTOS
-			if(account!=null){
+			if(account!=null && account.getCode()!=null){
 				this.exporter.addStringCell( account.getCode() );
 			} else {
 				this.exporter.addStringCell( defaultPurchaseAccount );
@@ -332,6 +323,7 @@ public class DiamaconWriter extends BasicExporter {
 			this.exporter.endLine();
 		}
 	}
+	
 	
 	private void addBankDetail( AccountEntry accountEntry, AccountEntryDetail aed ) {
 		
@@ -402,52 +394,56 @@ public class DiamaconWriter extends BasicExporter {
 	@Override
 	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
 			
-		while (! getDetails().isEmpty() ) {
+		AccountInvoicePriceStrategy priceStrategy = new AccountInvoicePriceStrategy();
+		List<TaxBreakDown> list = priceStrategy.getTaxBreakDowns(getInvoice(), getInvoice(), false);
 			
-			try {
+		try {
+			
+			if(accountEntry.getType()==AccountEntryType.SALES_INVOICE){
 				
-				if(accountEntry.getType()==AccountEntryType.SALES_INVOICE){
-					
-					this.exporter.restoreSheet(SHEET_SALES);
-					getDetails().stream()
+				this.exporter.restoreSheet(SHEET_SALES);
+				Account account = getDetails()
+						.stream()
 						.map(AccountEntryDetail::getAccount)
-						.filter(account -> (!account.getCode().startsWith("4")))
-						.distinct()
-						.forEach(account -> {
-							addSaleInvoiceDetail(accountEntry, account);
-						});
-					forwardNextInvoice(getInvoice().getDocumentNumber());
-					
-				} else if(accountEntry.getType()==AccountEntryType.PURCHASE_INVOICE || accountEntry.getType()==AccountEntryType.EXPENSE_INVOICE){
-					
-					this.exporter.restoreSheet(SHEET_PURCHASE);
-					getDetails().stream()
-						.map(AccountEntryDetail::getAccount)
-						.filter(account -> (!account.getCode().startsWith("4")))
-						.distinct()
-						.forEach(account -> {
-							addPurchaseInvoiceDetail(accountEntry, account);
-						});
-					forwardNextInvoice(getInvoice().getDocumentNumber());
-					
-				} else if(accountEntry.getType()==AccountEntryType.PAYMENT || accountEntry.getType()==AccountEntryType.EXPENSES){
-					
-					this.exporter.restoreSheet(SHEET_BANK);
-					addBankDetail(accountEntry, getNextDetail());
-					
-				} else {
-					
-					LogPanelController.getInstance().error("Linea omitida. La entrada no se reconoce."
-							+ " (" + accountEntry.getType().getName(AonUtil.getCurrentLocale()) + ". " 
-							+ getDetails().get(0).getDocumentNumber() + ")");
-					getNextDetail();
-					
-				}
+						.filter(acc -> (!acc.getCode().startsWith("4")))
+						.distinct().findFirst().orElse(null);
+				list.forEach(taxBreakDown -> {
+					addSaleInvoiceDetail(accountEntry, account, taxBreakDown);
+				});
+				forwardNextInvoice(getInvoice().getDocumentNumber());
 				
-			} catch (ReportException e) {
-				LOGGER.error(e.getMessage());
+			} else if(accountEntry.getType()==AccountEntryType.PURCHASE_INVOICE 
+					|| accountEntry.getType()==AccountEntryType.EXPENSE_INVOICE){
+				
+				this.exporter.restoreSheet(SHEET_PURCHASE);
+				
+				Account account = getDetails()
+						.stream()
+						.map(AccountEntryDetail::getAccount)
+						.filter(acc -> (!acc.getCode().startsWith("4")))
+						.distinct().findFirst().orElse(null);
+				list.forEach(taxBreakDown -> {
+					addPurchaseInvoiceDetail(accountEntry, account, taxBreakDown);
+				});
+				forwardNextInvoice(getInvoice().getDocumentNumber());
+				
+			} else if(accountEntry.getType()==AccountEntryType.PAYMENT 
+					|| accountEntry.getType()==AccountEntryType.EXPENSES){
+				
+				this.exporter.restoreSheet(SHEET_BANK);
+				addBankDetail(accountEntry, getNextDetail());
+				
+			} else {
+				
+				LogPanelController.getInstance().error("Linea omitida. La entrada no se reconoce."
+						+ " (" + accountEntry.getType().getName(AonUtil.getCurrentLocale()) + ". " 
+						+ getDetails().get(0).getDocumentNumber() + ")");
+				getNextDetail();
+				
 			}
 			
+		} catch (ReportException e) {
+			LOGGER.error(e.getMessage());
 		}
 			
 	}
