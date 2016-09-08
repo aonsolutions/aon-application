@@ -517,11 +517,11 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 				conf = 1;
 			else conf = 0;
 			fileInfo.setSecurityLevel(conf);
-			if(!fi.getDomain().equals("")){
+			if(fi.getDomain() != null && !fi.getDomain().equals("")){
 				Integer domainId = DBConsults.getDomainId(domainAux, getUser(), fi.getDomain());
 				domainAux = DBConsults.getDomain(new Domain().setName(fi.getDomain()).setId(domainId), getUser());
 			}
-			fileInfo.setDomainId(domain.getId());
+			fileInfo.setDomainId(domainAux.getId());
 			fileInfo.setSize((Integer) f.getSize());
 			Integer id = DBConsults.insertFile(domainAux, getUser(),fileInfo);
 			DBConsults.insertTagsFile(domainAux, getUser(), id, fi.getTags());
