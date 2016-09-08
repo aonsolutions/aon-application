@@ -59,38 +59,20 @@ public class InventoryManager implements IReservationConstants, ISQLConstants {
 	public void processInventoryQuery(ProjectReservationRoom reservationRoom) {
 		Date startDate = reservationRoom.getProjectReservation().getStartDate();
 		Date endDate = DateUtils.addDays(reservationRoom.getProjectReservation().getEndDate(), -1);
-		try {
-			processInventoryQuery(reservationRoom, startDate, endDate);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		processInventoryQuery(reservationRoom, startDate, endDate);
 	}
 
 	public void processInventoryQuery(ProjectReservationRoom reservationRoom, Hotel hotel, Item item) {
 		Date startDate = reservationRoom.getProjectReservation().getStartDate();
 		Date endDate = DateUtils.addDays(reservationRoom.getProjectReservation().getEndDate(), -1);
-		try {
-			processInventoryQuery(reservationRoom, hotel, item, startDate, endDate);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		processInventoryQuery(reservationRoom, hotel, item, startDate, endDate);
 	}
 
 	public void processInventoryQuery(ProjectReservationRoom reservationRoom, Date startDate, Date endDate) {
-		try {
-			processInventoryQuery(reservationRoom, reservationRoom.getHotel(), reservationRoom.getItem(), startDate, endDate);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		processInventoryQuery(reservationRoom, reservationRoom.getHotel(), reservationRoom.getItem(), startDate, endDate);
 	}
 
 	public void processInventoryQuery(ProjectReservationRoom reservationRoom, Hotel hotel, Item item, Date startDate, Date endDate) {
-		if (reservationRoom != null) {
-			System.out.print(" " + RESERVATION_ROOM + ": " + reservationRoom.getId());
-			System.out.print(" / " + RESERVATION + ": " + reservationRoom.getProjectReservation().getId());
-		}
-		System.out.println();
-
 		processInventoryQuery(hotel, item, reservationRoom.getAllotmentRateCode(), startDate, endDate);
 	}
 
@@ -107,13 +89,17 @@ public class InventoryManager implements IReservationConstants, ISQLConstants {
 	}
 
 	public void processInventoryQuery(Hotel hotel, Item item, String rateCode, Date startDate, Date endDate) {
+		processInventoryQuery(hotel, item, rateCode, startDate, endDate, 0);
+	}
+
+	public void processInventoryQuery(Hotel hotel, Item item, String rateCode, Date startDate, Date endDate, int addedRooms) {
 		if (!endDate.before(startDate) && !endDate.before(DateUtils.truncate(new Date(), Calendar.DATE))) {
 			try {
 				rateCode = StringUtils.isNotEmpty(rateCode) ? rateCode : getReservationUtils().obtainDefaultAllotmentRateCode();
 				if (StringUtils.isNotBlank(rateCode)) {
 					String inventoryUrl = getReservationUtils().obtainUrl(CRS_INVENTORY_URL);
 					if (StringUtils.isNotBlank(inventoryUrl)) {
-						sendInventoryQuery(inventoryUrl, createInventoryMessage(hotel, item, rateCode, startDate, endDate));
+						sendInventoryQuery(inventoryUrl, createInventoryMessage(hotel, item, rateCode, startDate, endDate, addedRooms));
 					}
 				}
 			} catch (Exception ex) {
@@ -122,7 +108,7 @@ public class InventoryManager implements IReservationConstants, ISQLConstants {
 		}
 	}
 
-	private String createInventoryMessage(Hotel hotel, Item item, String rateCode, Date startDate, Date endDate) throws ManagerBeanException {
+	private String createInventoryMessage(Hotel hotel, Item item, String rateCode, Date startDate, Date endDate, int addedRooms) throws ManagerBeanException {
 		String messageId = GP;
 		messageId = messageId + StringUtils.leftPad(StringUtils.substring(hotel.getId().toString(), 0, 3), 3, "0");
 		messageId = messageId + new SimpleDateFormat("DDDHHmmss").format(new Date());
@@ -146,7 +132,7 @@ public class InventoryManager implements IReservationConstants, ISQLConstants {
 			for (Date inventoryDate : freeRoomMap.keySet()) {
 				Calendar start = Calendar.getInstance();
 				start.setTime(inventoryDate);
-				int freeRooms = freeRoomMap.get(inventoryDate)[0] - freeRoomMap.get(inventoryDate)[1];
+				int freeRooms = freeRoomMap.get(inventoryDate)[0] - freeRoomMap.get(inventoryDate)[1] + addedRooms;
 				freeRooms = (freeRooms < 0) ? 0 : freeRooms;
 
 				int i = message.getInventories().sizeOfInventoryArray();

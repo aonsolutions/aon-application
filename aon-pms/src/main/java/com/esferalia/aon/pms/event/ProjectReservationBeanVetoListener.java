@@ -1,16 +1,29 @@
 package com.esferalia.aon.pms.event;
 
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.product.Item;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
+import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
+import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.reservation.InventoryManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerAdapter {
@@ -36,9 +49,9 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
     	try {
     		reservationUtils.fillProject(to);
     		calculateReservationTotals(reservationUtils, to);
-
-        	if (!to.isForceRefreshBooking()) {
-        		to.setForceRefreshBooking(to.isEarlyCheckOut() || to.isCancelled() || to.isNoShow() || isRefreshBookingNeeded(to));
+    		checkInventoryChanges(to);
+    		if (!to.isForceRefreshBooking()) {
+        		to.setForceRefreshBooking(to.isEarlyCheckOut() || to.isCancelled() || to.isNoShow());
         	}
     	} catch (ManagerBeanException ex) {
     		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
@@ -56,25 +69,75 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
 		}
 	}
 
-	private boolean isRefreshBookingNeeded(ProjectReservation reservation) {
+	private void checkInventoryChanges(ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), reservation.getId());
+		Projection prjHotel = Projection.property(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_ID));
+		Projection prjStart = Projection.property(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE));
+		Projection prjEnd = Projection.property(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE));
+		Projection prjAgency = Projection.property("ProjectReservation.agency<id");
+		Object[] objs = (Object[])reservationBean.getUniqueResult(new ProjectionList(prjHotel, prjStart, prjEnd, prjAgency), criteria);
+
+		boolean hotelChanged = !reservation.getHotel().getId().equals((Integer)objs[0]);
+		boolean startChanged = !DateUtils.isSameDay(reservation.getStartDate(), (Date)objs[1]);
+		boolean endChanged = !DateUtils.isSameDay(reservation.getEndDate(), (Date)objs[2]);
 		Integer agency = (reservation.getAgency() != null && reservation.getAgency().getId() != null) ? reservation.getAgency().getId() : null;
-		String stmt = "SELECT 1" +
-						" FROM project_reservation as project_reservation" +
-    					" WHERE project_reservation.project = :project" +
-    					" AND project_reservation.hotel = :hotel" +
-    					" AND project_reservation.agency " + ((agency != null) ? "= :agency" : "IS NULL") +
-    					" AND project_reservation.start_date = :start_date" + 
-    					" AND project_reservation.end_date = :end_date";
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		SQLQuery query = session.createSQLQuery(stmt);
-		query.setInteger("project", reservation.getId());
-		query.setInteger("hotel", reservation.getHotel().getId());
-		if (agency != null) {
-			query.setInteger("agency", agency);
+		boolean agencyChanged = !ObjectUtils.equals(agency, objs[3]);
+
+		if (hotelChanged || startChanged || endChanged || agencyChanged) {
+			reservation.setForceRefreshBooking(true);
+
+			ReservationUtils reservationUtils = new ReservationUtils(reservation.getDomain());
+			String oldRateCode = reservation.getAllotmentRateCode();
+			String newRateCode = (agencyChanged) ? reservationUtils.obtainAllotmentRateCode(reservation) : null;
+			boolean rateCodeChanged = (agencyChanged) ? !ObjectUtils.equals(newRateCode, oldRateCode) : false;
+			if (hotelChanged || startChanged || endChanged || rateCodeChanged) {
+				Map<Item, Integer> inventoryItemMap = new HashMap<Item, Integer>();
+				for (ProjectReservationRoom reservationRoom : reservation.getReservationRoomList()) {
+					int count = (inventoryItemMap.containsKey(reservationRoom.getItem())) ? inventoryItemMap.get(reservationRoom.getItem()) : 0;
+					inventoryItemMap.put(reservationRoom.getItem(), ++count);
+				}
+
+				/** Si ha cambiado el Hotel o el Cupo hay que enviar todo a +1 con los datos viejos y a -1 con los nuevos.
+				Si unicamente han cambiado las Fechas, hay que enviar las fechas viejas que ya no estan en la Reserva a +1 y las nuevas a -1 */
+				if (!hotelChanged && !rateCodeChanged) {
+					for(Date date=(Date)objs[1]; date.before((Date)objs[2]); date=DateUtils.addDays(date, 1)) {
+						if (date.before(reservation.getStartDate()) || !date.before(reservation.getEndDate())) {
+							sendInventoryData(reservation.getHotel(), oldRateCode, date, date, inventoryItemMap, 1);
+						}
+					}
+
+					for(Date date=reservation.getStartDate(); date.before(reservation.getEndDate()); date=DateUtils.addDays(date, 1)) {
+						if (date.before((Date)objs[1]) || !date.before((Date)objs[2])) {
+							sendInventoryData(reservation.getHotel(), newRateCode, date, date, inventoryItemMap, -1);
+						}
+					}
+				} else {
+					Hotel oldHotel = (hotelChanged) ? (Hotel)BeanManager.getManagerBean(Hotel.class).get((Integer)objs[0]) : reservation.getHotel();
+					sendInventoryData(oldHotel, oldRateCode, (Date)objs[1], DateUtils.addDays((Date)objs[2], -1), inventoryItemMap, 1);
+
+					Date endDate = DateUtils.addDays(reservation.getEndDate(), -1);
+					sendInventoryData(reservation.getHotel(), newRateCode, reservation.getStartDate(), endDate, inventoryItemMap, -1);
+				}
+
+				/** Si ha cambiado el Cupo hay que grabar el nuevo Cupo en las Habitaciones. Esto se hace lo ultimo, ya que hay que hacerlo asi
+				para usar los datos antiguos del Booking, que todavia no se han modificado, se modificaran en el ProjectReservationBeanListener.*/
+				if (rateCodeChanged) {
+					for (ProjectReservationRoom reservationRoom : reservation.getReservationRoomList()) {
+						reservationRoom.setAllotmentRateCode(newRateCode);
+						BeanManager.getManagerBean(ProjectReservationRoom.class).update(reservationRoom);
+					}
+				}
+			}
 		}
-		query.setDate("start_date", reservation.getStartDate());
-		query.setDate("end_date", reservation.getEndDate());
-        return query.list().isEmpty();
 	}
+
+    private void sendInventoryData(Hotel hotel, String rateCode, Date startDate, Date endDate, Map<Item, Integer> inventoryItemMap, int factor) {
+    	InventoryManager manager = new InventoryManager();
+		for (Item item : inventoryItemMap.keySet()) {
+	    	manager.processInventoryQuery(hotel, item, rateCode, startDate, endDate, inventoryItemMap.get(item) * factor);
+		}
+    }
 
 }

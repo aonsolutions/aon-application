@@ -423,6 +423,20 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
+	public String getAllotmentRateCode() throws ManagerBeanException {
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
+		criteria.addOrder(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ROOM_INDEX));
+		Projection prjRateCode = Projection.property(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ALLOTMENT_RATE_CODE));
+		List<?> resultList = reservationRoomBean.getList(new ProjectionList(prjRateCode), criteria);
+		if (resultList.size() > 0 && resultList.get(0) != null) {
+			return (String)resultList.get(0);
+		}
+		return null;
+	}
+
+	@Transient
 	public Integer getMainTariffId() throws ManagerBeanException {
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		Criteria criteria = new Criteria();
