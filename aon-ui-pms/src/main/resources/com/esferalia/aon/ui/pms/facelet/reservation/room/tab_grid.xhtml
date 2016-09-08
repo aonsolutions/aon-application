@@ -7,6 +7,8 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
+	<aon:valueParam name="allotmentRateCode" default="#{reservation.to.allotmentRateCode}" />
+
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="skipSelectRow" value="#{true}" />
@@ -71,6 +73,15 @@
 				<aon:outputText value="#{to.tariff.code} - #{to.tariff.name}" />
 			</aon:column>
 
+			<aon:if test="#{allotmentRateCode != null}">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
+					<f:facet name="header">
+						<aon:outputLabel value="#{bundle.pms_allotment}" />
+					</f:facet>
+					<aon:outputText value="#{allotmentRateCode}" />
+				</aon:column>
+			</aon:if>
+
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.pms_adults}" />
@@ -130,7 +141,7 @@
 					</aon:panelGrid>
 				</aon:column>
 
-				<aon:column colspan="5"	styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
+				<aon:column colspan="#{(allotmentRateCode == null) ? '5' : '6'}" styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-width-130, aon-noborder aon-width-auto">
 						<aon:div>
 							<aon:outputLabel value="#{bundle.pms_room}:" styleClass="aon-margin-right" />
