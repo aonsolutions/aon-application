@@ -49,7 +49,9 @@ public class ProjectReservationRoomBeanListener extends ManagerBeanListenerAdapt
     		try {
     			connection = DatabaseUtil.getConnection(AdminUtil.getDomainName(to.getDomain()));
     			SQLBooking.delete(connection, to);
-   				SQLBooking.insert(connection, to);
+    			if (!to.getProjectReservation().isCancelled() && !to.getProjectReservation().isNoShow()) {
+       				SQLBooking.insert(connection, to);
+    			}
 			} catch (Throwable e) {
 				try {
 					connection.rollback();
