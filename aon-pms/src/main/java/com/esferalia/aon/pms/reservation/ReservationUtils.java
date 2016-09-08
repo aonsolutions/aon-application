@@ -169,7 +169,7 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), reservation.getAgency().getId());
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), ALLOTMENT_RATE_CODE);
 			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), reservation.getDomain());
-			criteria.addGreaterThanOrEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE_DATE), reservation.getStartDate());
+			criteria.addLessThanOrEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE_DATE), reservation.getStartDate());
 			criteria.addOrder(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE_DATE), false);
 			Projection prjValue = Projection.property(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE));
 			List<?> resultList = rAddInfoBean.getList(new ProjectionList(prjValue), criteria);
