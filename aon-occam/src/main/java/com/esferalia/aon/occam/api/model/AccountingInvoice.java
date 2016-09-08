@@ -19,6 +19,7 @@ public class AccountingInvoice implements Serializable {
 	private AccountingRegistry registry;
 
 	private InvoiceWithholding withholdingData;
+	private LinkedList<Account> suggestedAccounts;
 	private LinkedList<InvoiceVAT> vats;
 	
 	public Invoice getInvoice() {
@@ -47,6 +48,14 @@ public class AccountingInvoice implements Serializable {
 	}
 	public AccountingInvoice setWithholdingData(InvoiceWithholding withholdingData) {
 		this.withholdingData = withholdingData;
+		return this;
+	}
+	
+	public LinkedList<Account> getSuggestedAccounts() {
+		return suggestedAccounts;
+	}
+	public AccountingInvoice setSuggestedAccounts(LinkedList<Account> suggestedAccounts) {
+		this.suggestedAccounts = suggestedAccounts;
 		return this;
 	}
 	public LinkedList<InvoiceVAT> getVats() {

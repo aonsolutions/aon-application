@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting;
+package com.esferalia.aon.gwt.fiscal.client.accounting.invoice;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Country2ListBox;
@@ -6,7 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTypeListBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
-import com.esferalia.aon.gwt.fiscal.client.accounting.InvoicePanel.IInvoicePanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.invoice.InvoicePanel.IInvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
@@ -17,6 +17,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -261,7 +262,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 
 	public void invoiceChanged(AccountingInvoice invoice) {
 		AccountingRegistry ar = invoice.getRegistry();
-		invoiceTypeLabel.setText( AON.MSG.accountEntryType( ar.getType().getAccountEntryType() ));		
+		invoiceTypeLabel.setText( AON.MSG.accountEntryType( ar.getType().getAccountEntryType() ));
 		eastPanelInner.setVisible(true);
 		
 		rDocumentType.setValue(invoice.getRegistry().getDocumentType());
@@ -269,12 +270,13 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		rDocument.setValue(invoice.getRegistry().getDocument());
 		rName.setValue(invoice.getRegistry().getName());
 		surcharge.setValue(invoice.isSurcharge());
-		withholding.setValue(invoice.isWithholding(),true);
+		withholding.setValue(invoice.isWithholding());
+		callback.withholdingChanged();
 		withholdingFarmer.setValue(invoice.isWithholdingFarmer());
 		vatAccrualPayment.setValue(invoice.isVatAccrualPayment());
 		transactionBox.setValue(invoice.getTransaction());
-		taxDate.setValue(callback.getAccountEntry().getAccountEntry().getEntryDate());
-		invoice.getRegistry().getType().visit(invoice.getRegistry(),accountingRegistryVisitor);	
+		taxDate.setValue(callback.getAccountEntryType().getAccountEntry().getEntryDate());
+		invoice.getRegistry().getType().visit(invoice.getRegistry(),accountingRegistryVisitor);
 	}
 	
 	

@@ -113,6 +113,12 @@ public class InvoiceRecorder {
 										.setAccountDescription(vat.getAdjAccountDescription());
 								map.put(vat.getAdjAccountId(),detail);
 							}
+							double amount = vat.getQuota() - vat.getDeductibleQuota();
+							if (invoice.isOutputVatEnabled()) {
+								detail.addCredit( amount );
+							} else {
+								detail.addDebit( amount );
+							}
 						}
 					}
 				}

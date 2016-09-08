@@ -4,7 +4,8 @@
 	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:fiscal='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'
-	xmlns:acc='urn:import:com.esferalia.aon.gwt.fiscal.client.accounting'>
+	xmlns:acc='urn:import:com.esferalia.aon.gwt.fiscal.client.accounting'
+	xmlns:accPanel='urn:import:com.esferalia.aon.gwt.fiscal.client.accounting.panel'>
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
@@ -87,8 +88,7 @@
 				<g:center>
 					<g:SplitLayoutPanel ui:field="splitLayoutPanel">
 						<g:north size="0">
-							<g:SimpleLayoutPanel ui:field="wizardPanel">
-							</g:SimpleLayoutPanel>
+							<g:SimpleLayoutPanel ui:field="wizardPanel" />
 						</g:north>
 							
 						<g:center>
@@ -104,7 +104,7 @@
 												styleName="{aonResources.css.aonIconJournalLog} {aonResources.css.aonPaddingRight}"  
 												text="{msg.sessionLog}" />
 										</g:customHeader>
-										<acc:SessionLog ui:field="sessionLog"/>
+										<accPanel:SessionLog ui:field="sessionLog"/>
 									</g:tab>
 									<g:tab>
 										<g:customHeader>
@@ -112,7 +112,7 @@
 												styleName="{aonResources.css.aonIconEuro} {aonResources.css.aonPaddingRight}" 
 												text="{msg.accountBalances}" />
 										</g:customHeader>
-										<acc:AccountBalancePanel ui:field="balancePanel"/>
+										<accPanel:AccountBalancePanel ui:field="balancePanel"/>
 									</g:tab>
 									<g:tab>
 										<g:customHeader>
@@ -120,7 +120,7 @@
 												styleName="{aonResources.css.aonIconStatement} {aonResources.css.aonPaddingRight}"  
 												text="{msg.accountStatetement}" />
 										</g:customHeader>
-										<acc:AccountStatementPanel ui:field="statementPanel"/>
+										<accPanel:AccountStatementPanel ui:field="statementPanel"/>
 									</g:tab>
 									<g:tab>
 										<g:customHeader>
@@ -128,7 +128,7 @@
 												styleName="{aonResources.css.aonIconJournal} {aonResources.css.aonPaddingRight}"  
 												text="{msg.journalBook}" />
 										</g:customHeader>
-										<acc:JournalPanel ui:field="journalPanel"/>
+										<accPanel:JournalPanel ui:field="journalPanel"/>
 									</g:tab>
 								</g:TabLayoutPanel>
 							</aon:MinimizePanel>

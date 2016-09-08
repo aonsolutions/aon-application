@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting;
+package com.esferalia.aon.gwt.fiscal.client.accounting.panel;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;

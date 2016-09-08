@@ -1,11 +1,12 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting;
+package com.esferalia.aon.gwt.fiscal.client.accounting.invoice;
 
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.accounting.InvoicePanel.IInvoicePanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.invoice.InvoicePanel.IInvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
@@ -35,6 +36,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	private FlexTable tab;
 	private IInvoicePanelCallback callback;
 	private LinkedList<InvoicePanelRow> rows;
+	private LinkedList<Account> suggestedAccounts;
 	
 	private Label reLabel;
 	private Label reQuotaLabel;
@@ -44,6 +46,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	private Label adjAccountLabel;
 	private Label inputVatLabel;
 	private Label outputVatLabel;
+	
 	
 	private class InvestAssetListBox extends ListBox {
 		private InvestAssetListBox() {
@@ -81,6 +84,10 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		this.callback = callback;
 		container = new FlowPanel();
 		add(container);
+	}
+
+	public void setSuggestedAccounts(LinkedList<Account> suggestedAccounts) {
+		this.suggestedAccounts = suggestedAccounts;
 	}
 
 	void paint() {
@@ -185,7 +192,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		addButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				InvoiceVAT last = callback.getInvoice().getVats().get( callback.getInvoice().getVats().size() - 1 ); 
+				int idx = callback.getInvoice().getVats().size() - 1;
+				InvoiceVAT last = callback.getInvoice().getVats().get( idx );
 				InvoiceVAT vat = new InvoiceVAT();
 				vat.setExpAccountId(last.getExpAccountId());
 				vat.setExpAccountCode(last.getExpAccountCode());
@@ -216,6 +224,12 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	}
 
 	private void addRow(InvoiceVAT vat, boolean focus) {
+		if (suggestedAccounts != null && !suggestedAccounts.isEmpty() && suggestedAccounts.size() > rows.size()) {
+			Account a = suggestedAccounts.get(rows.size());
+			vat.setExpAccountId(a.getId());
+			vat.setExpAccountCode(a.getCode());
+			vat.setExpAccountDescription(a.getDescription());
+		}
 		InvoicePanelRow invoiceRow = new InvoicePanelRow(vat, tab, focus);
 		rows.add(invoiceRow);
 		if (rows.size() > 1) {

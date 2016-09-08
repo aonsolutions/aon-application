@@ -20,6 +20,13 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.accounting.invoice.InvoicePanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AccountBalancePanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.AccountStatementPanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.JournalPanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.SessionLog;
+import com.esferalia.aon.gwt.fiscal.client.accounting.type.AccountEntryManual;
+import com.esferalia.aon.gwt.fiscal.client.accounting.type.IAccountEntryType;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
@@ -81,25 +88,26 @@ public class AccountEntryModule extends MainEntryPoint {
 			.create(AccountEntryModuleBinder.class);
 	
 	public static interface IAccountEntryModuleCallback {
-		AccountEntryObject getAccountEntry();
-		void onShowBalance(Account account);
 		AonConfiguration getConfiguration();
-		void showWorkingLog( AccountEntry  entry );
-		void showWorkingLog( AccountEntry[]  entries );
+		void onAccountSelected(Account account);
 		void onError(String msg);
+		
+		IAccountEntryType getAccountEntryType();
+		void onLog( AccountEntry  entry );
+		void onLog( AccountEntry[]  entries );
 	}
 	
 	private final IAccountEntryModuleCallback callback = new IAccountEntryModuleCallback() {
 		
 		@Override
-		public void onShowBalance(Account account) {
+		public void onAccountSelected(Account account) {
 			openFootPanelIfNeeded();
 			Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
 			balancePanel.add(account, from, entryDate.getValue());			
 		}
 
 		@Override
-		public AccountEntryObject getAccountEntry() {
+		public IAccountEntryType getAccountEntryType() {
 			return current;
 		}
 
@@ -109,13 +117,13 @@ public class AccountEntryModule extends MainEntryPoint {
 		}
 
 		@Override
-		public void showWorkingLog(AccountEntry entry) {
+		public void onLog(AccountEntry entry) {
 			workingLog.clear();
 			workingLog.add(entry);			
 		}
 		
 		@Override
-		public void showWorkingLog(AccountEntry[] entries) {
+		public void onLog(AccountEntry[] entries) {
 			workingLog.clear();
 			for (AccountEntry entry : entries) {
 				workingLog.add(entry,"PREVISUALIAZACI\u00D3N");			
@@ -189,10 +197,11 @@ public class AccountEntryModule extends MainEntryPoint {
 	ErrorPanel errors;
 	SessionLog workingLog;
 	AccountEntryTable tab;
+	boolean minimizedByUser;
 	
 	
 	private boolean periodErrorShown;
-	private AccountEntryObject current;
+	private IAccountEntryType current;
 
 	@Override
 	public void onModuleLoad() {
@@ -263,6 +272,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	@UiHandler("footPanel")
 	void onFootMinimize(MinimizeEvent event) {
+		minimizedByUser = true;
 		closeFootPanel();
 	}
 
@@ -278,7 +288,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 
 	private void openFootPanelIfNeeded() {
-		if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
+		if (!minimizedByUser && splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
 			openFootPanel();
 		}
 	}
@@ -494,8 +504,17 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	@UiHandler("reset")
 	public void onReset(ClickEvent event) {
-		reset();
-		tab.setFocus(true);
+		ConfirmDialog.showInputDialog("Nuevo?", "Nuevo",new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				reset();
+				tab.setFocus(true);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				// Nothing
+			}
+		});
 	}
 
 	@UiHandler("remove")
@@ -639,7 +658,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		journalPanel.setUser(configuration.getUser());
 		if (configuration.getPeriods() != null && !configuration.getPeriods().isEmpty()) {
 			period.fill(configuration.getPeriods());
-			this.current = AccountEntryObject.newInstance(getCurrentDomainName(),getCurrentDomain());
+			this.current = new AccountEntryManual();
 			if (entryDate.getValue() != null) {
 				this.current.getAccountEntry().setEntryDate(entryDate.getValue());
 			}
@@ -703,7 +722,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		InvoicePanel invoicePanel = new InvoicePanel(callback);
 		wizardPanel.setWidget(invoicePanel);
 		openWizard();	
-		invoicePanel.registryBox.setFocus(true);
+		invoicePanel.setFocus(true);
 	}
 	
 	private void openWizard() {

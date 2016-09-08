@@ -2,6 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
 	xmlns:aon="urn:import:com.esferalia.aon.gwt.common.client.widget"
+	xmlns:accInvoice="urn:import:com.esferalia.aon.gwt.fiscal.client.accounting.invoice"
 	xmlns:acc="urn:import:com.esferalia.aon.gwt.fiscal.client.accounting">
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
@@ -29,7 +30,7 @@
 								styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5}"/>
 						</g:FlowPanel>
 					</g:FlowPanel>
-					<acc:InvoiceVATPanel ui:field="vatPanel"/>
+					<accInvoice:InvoiceVATPanel ui:field="vatPanel"/>
 					<g:HTMLPanel ui:field="withholdingPanel" styleName="{aonResources.css.aonWizardPanelInner}">
 						<table>
 							<tr>
@@ -62,7 +63,7 @@
 			</g:ScrollPanel>
 		</g:center>	
 		<g:east size="450">
-			<acc:InvoiceExtraPanel ui:field="extraPanel"/>
+			<accInvoice:InvoiceExtraPanel ui:field="extraPanel"/>
 		</g:east>
 	</g:SplitLayoutPanel>
 </ui:UiBinder>

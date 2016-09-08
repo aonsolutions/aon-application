@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
+import com.esferalia.aon.gwt.fiscal.client.accounting.type.IAccountEntryType;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -42,7 +43,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Focusable
  , HasSelectionHandlers<Account>, HasValueChangeHandlers<AccountEntryDetail> {
 	
-	private AccountEntryObject entry;
+	private IAccountEntryType entry;
 	private Label sumDebit;
 	private Label sumCredit;
 	private ExpressionResolver resolver;
@@ -82,7 +83,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		}
 	}
 	
-	public AccountEntryTable(AccountEntryObject entry ) {
+	public AccountEntryTable(IAccountEntryType entry ) {
 		this.entry = entry;
 		sumDebit = new Label();
 		sumDebit.setStyleName(AON.AON_CSS.aonBold());

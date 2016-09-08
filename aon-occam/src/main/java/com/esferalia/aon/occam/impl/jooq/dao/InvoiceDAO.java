@@ -5,8 +5,10 @@ import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
@@ -569,7 +571,9 @@ public class InvoiceDAO {
 					:INVOICE.SERIES.eq(series))
 			.fetch()
 			.stream()
-			.mapToInt(rec -> rec.getValue(DSL.max(INVOICE.NUMBER)))
+			.mapToInt(rec -> (rec != null && rec.getValue(DSL.max(INVOICE.NUMBER)) != null) 
+					? rec.getValue(DSL.max(INVOICE.NUMBER)) 
+					: 0)
 			.findFirst()
 			.orElse(0);
 		return ++next;
@@ -605,6 +609,26 @@ public class InvoiceDAO {
 					.setNumber(0)
 					.setReferenceCode(null));
 		reg.getType().visit(reg, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), config));
+		ai.setSuggestedAccounts(		
+				ctx.getDslContext()
+					.select( ACCOUNT.ID, ACCOUNT.CODE, ACCOUNT.DESCRIPTION)
+					.from(INVOICE)
+					.join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+					.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL.ID.eq(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL))
+					.join(ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
+					.where(INVOICE.REGISTRY.eq(ai.getRegistry().getId()))
+					.and(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+					.orderBy(INVOICE.ISSUE_DATE.desc(), INVOICE.ID.asc() , INVOICE_DETAIL.LINE.asc())
+					.limit(3)
+					.fetch()
+					.stream()
+					.map( rec -> new Account()
+								.setId(rec.getValue(ACCOUNT.ID))
+								.setCode(rec.getValue(ACCOUNT.CODE))
+								.setDescription(rec.getValue(ACCOUNT.DESCRIPTION))
+						)
+					.collect(Collectors.toCollection(LinkedList::new))
+			);
 		ai.addVat(createNewInvoiceVAT(ai, config));
 
 		/// RETENCIÓN
@@ -629,7 +653,6 @@ public class InvoiceDAO {
 				ai.getWithholdingData().setAccountDescription(withholdingAccount.getDescription());
 			}
 		}
-
 		return ai;
 	}
 	

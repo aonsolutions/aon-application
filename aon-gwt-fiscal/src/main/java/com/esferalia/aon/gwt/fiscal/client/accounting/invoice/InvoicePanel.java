@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting;
+package com.esferalia.aon.gwt.fiscal.client.accounting.invoice;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
@@ -6,7 +6,12 @@ import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.WithholdingTypeListBox;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.type.IAccountEntryType;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
@@ -41,6 +46,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	
+	static FiscalServiceAsync fiscalService;
 	
 	public static interface IInvoicePanelCallback extends IAccountEntryModuleCallback{
 		AccountingInvoice getInvoice();
@@ -104,6 +110,10 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	
 	public InvoicePanel(final IAccountEntryModuleCallback callback) {
 		this.callback = callback;
+		
+		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
+		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+
 		registryBox = new AccountingRegistryBox(AccountEntryModule.getCurrentDomainName()
 				, AccountEntryModule.getCurrentDomain(), true);
 		withholdingAccount = new AccountBox(AccountEntryModule.getCurrentDomainName()
@@ -111,18 +121,18 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 		IInvoicePanelCallback invoiceCallback = new IInvoicePanelCallback() {
 			
 			@Override
-			public void showWorkingLog(AccountEntry entry) {
-				callback.showWorkingLog(entry);
+			public void onLog(AccountEntry entry) {
+				callback.onLog(entry);
 			}
 			
 			@Override
-			public void showWorkingLog(AccountEntry[] entries) {
-				callback.showWorkingLog(entries);
+			public void onLog(AccountEntry[] entries) {
+				callback.onLog(entries);
 			}
 
 			@Override
-			public void onShowBalance(Account account) {
-				callback.onShowBalance(account);
+			public void onAccountSelected(Account account) {
+				callback.onAccountSelected(account);
 			}
 			
 			@Override
@@ -131,8 +141,8 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 			}
 			
 			@Override
-			public AccountEntryObject getAccountEntry() {
-				return callback.getAccountEntry();
+			public IAccountEntryType getAccountEntryType() {
+				return callback.getAccountEntryType();
 			}
 			
 			@Override
@@ -148,18 +158,19 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 			@Override
 			public void transactionChanged() {
 				vatPanel.transactionChanged();
-				paintEntry();
+				_paintEntry();
 			}
 
 			@Override
 			public void withholdingChanged() {
 				enableWithholdingIfNeeded();
+				_paintEntry();
 			}
 
 			@Override
 			public void surchargeChanged() {
 				enableSurchargeIfNeeded();
-				paintEntry();
+				_paintEntry();
 			}
 			@Override
 			public void invoiceTotalChanged() {
@@ -177,7 +188,7 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 
 			@Override
 			public void paintEntry() {
-				paintEntry();
+				_paintEntry();
 			}
 
 			@Override
@@ -209,6 +220,7 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	}
 	
 	private void enableWithholdingIfNeeded() {
+		withholdingPanel.setVisible(extraPanel.isWithholding());
 		if (extraPanel.isWithholding()) populateWithholding();
 		withholdingLabel.setVisible(extraPanel.isWithholding());
 		withholdingTaxs.setVisible(extraPanel.isWithholding());
@@ -243,23 +255,23 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	@UiHandler("series")
 	public void onSelectSeries(ChangeEvent event) {
 		invoice.getInvoice().setSeries(series.getSelectedValue());
-		paintEntry();
+		_paintEntry();
 	}
 	@UiHandler("number")
 	public void onValueChangeEvent(ValueChangeEvent<Integer> event) {
 		invoice.getInvoice().setNumber(number.getValue());
-		paintEntry();
+		_paintEntry();
 	}
 
 	@UiHandler("registryBox")
 	public void onSelectRegistry(SelectionEvent<AccountingRegistry> event) {
 		final AccountingRegistry ar = event.getSelectedItem();
-		AccountEntryModule.fiscalService.initializeInvoice(
+		fiscalService.initializeInvoice(
 			 AccountEntryModule.getCurrentDomainName()
 			,AccountEntryModule.getCurrentDomain()
 			,ar.getType().getInvoiceType()
 			,ar.getId()
-			,callback.getAccountEntry().getAccountEntry().getEntryDate()
+			,callback.getAccountEntryType().getAccountEntry().getEntryDate()
 			, new AsyncCallback<AccountingInvoice>() {
 				
 				@Override
@@ -271,8 +283,9 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 					account.setId(ar.getAccountId());
 					account.setCode(ar.getAccountCode());
 					account.setDescription(ar.getAccountDescription());
-					callback.onShowBalance(account);
+					callback.onAccountSelected(account);
 					
+					vatPanel.setSuggestedAccounts(invoice.getSuggestedAccounts());
 					invoice.getRegistry().getType().visit(invoice.getRegistry(),invoicePanelVisitor);
 					onChangeWithholdingTaxs(null);
 					vatPanel.paint();
@@ -281,7 +294,7 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 					if (invoice.isWithholding()) {
 						populateWithholding();
 					}
-					paintEntry();
+					_paintEntry();
 				}
 				
 				@Override
@@ -366,7 +379,7 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	@UiHandler("referenceCode")
 	public void onValueChangeReferenceCode(ValueChangeEvent<String> event) {
 		invoice.getInvoice().setReferenceCode(referenceCode.getValue());
-		paintEntry();
+		_paintEntry();
 	}
 	
 	@UiHandler("invoiceTotal")
@@ -377,16 +390,16 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	@UiHandler("vatPanel")
 	public void onValueChangeAccountVatPanel(ValueChangeEvent<InvoiceVAT> event) {
 		if (invoice.isWithholding()) populateWithholding();
-		paintEntry();
+		_paintEntry();
 	}
 	@UiHandler("vatPanel")
 	public void onSelectionAccountVatPanel(SelectionEvent<Account> event) {
-		callback.onShowBalance(event.getSelectedItem());
+		callback.onAccountSelected(event.getSelectedItem());
 	}
 	
-	private void paintEntry() {
-		AccountEntry[] entries = InvoiceRecorder.recordInvoice(callback.getAccountEntry().getAccountEntry(),invoice);
-		callback.showWorkingLog(entries);
+	private void _paintEntry() {
+		AccountEntry[] entries = InvoiceRecorder.recordInvoice(callback.getAccountEntryType().getAccountEntry(),invoice);
+		callback.onLog(entries);
 	}
 	
 	@UiHandler("registryBox")
@@ -399,14 +412,18 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	public void onValueChangeWithholdingPercent(ValueChangeEvent<Double> event) {
 		invoice.setWithholdingPercent( event.getValue() );
 		populateWithholding();
-		paintEntry();
+		_paintEntry();
 	}
 	
 	@UiHandler("withholdingAccount")
 	public void onSelectionWithholdingAccount(SelectionEvent<Account> event) {
 		invoice.setWithholdingAccount( event.getSelectedItem() );
-		callback.onShowBalance(event.getSelectedItem());
-		paintEntry();
+		callback.onAccountSelected(event.getSelectedItem());
+		_paintEntry();
+	}
+
+	public void setFocus(boolean b) {
+		registryBox.setFocus(b);
 	}
 	
 }
