@@ -62,6 +62,20 @@
 			<param id="date" value="#{workPlanning.getDate}" />
 		</params>
 	</report>
+	
+	<!--  ********* Governess - Room Cleaning Control  ********* -->
+	<report id="roomCleaningControl" description="Governess Room Cleaning Control Report">
+		<template path="/com/esferalia/aon/ui/pms/report/roomCleaningControl.jasper" />
+		<collection provider="#{workPlanning}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="hotel" value="#{workPlanning.getHotel}" />
+			<param id="date" value="#{workPlanning.getDate}" />
+		</params>
+	</report>
 
 	<!--  ********* Board list ********* -->
 	<report id="boardList" description="Board list Report">
