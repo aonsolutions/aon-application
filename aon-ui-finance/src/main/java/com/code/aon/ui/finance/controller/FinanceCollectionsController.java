@@ -1,6 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.finance.BankConcept;
 import com.code.aon.finance.Pos;
 import com.code.aon.finance.enumeration.BillingPeriod;
@@ -107,7 +110,7 @@ public class FinanceCollectionsController implements Serializable {
 		if (financeBatchPaymentTypes == null) {
 			Locale locale = AonUtil.getCurrentLocale();
 			financeBatchPaymentTypes = new LinkedList<SelectItem>();
-			for (FinanceBatchType type : FinanceBatchType.values()) {
+			for (FinanceBatchType type : getActiveFinanceBatchTypes()) {
 				if ((type.isPayment() == null || type.isPayment()) && !type.isPayroll()) {
 					SelectItem item = new SelectItem(type, type.getName(locale));
 					financeBatchPaymentTypes.add(item);
@@ -121,7 +124,7 @@ public class FinanceCollectionsController implements Serializable {
 		if (financeBatchChargeTypes == null) {
 			Locale locale = AonUtil.getCurrentLocale();
 			financeBatchChargeTypes = new LinkedList<SelectItem>();
-			for (FinanceBatchType type : FinanceBatchType.values()) {
+			for (FinanceBatchType type : getActiveFinanceBatchTypes()) {
 				if (type.isPayment() == null || !type.isPayment()) {
 					SelectItem item = new SelectItem(type, type.getName(locale));
 					financeBatchChargeTypes.add(item);
@@ -135,7 +138,7 @@ public class FinanceCollectionsController implements Serializable {
 		if (financeBatchPayrollTypes == null) {
 			Locale locale = AonUtil.getCurrentLocale();
 			financeBatchPayrollTypes = new LinkedList<SelectItem>();
-			for (FinanceBatchType type : FinanceBatchType.values()) {
+			for (FinanceBatchType type : getActiveFinanceBatchTypes()) {
 				if ((type.isPayment() == null || type.isPayment()) && type.isPayroll()) {
 					SelectItem item = new SelectItem(type, type.getName(locale));
 					financeBatchPayrollTypes.add(item);
@@ -145,6 +148,14 @@ public class FinanceCollectionsController implements Serializable {
 		return financeBatchPayrollTypes;
 	}
 
+	private FinanceBatchType[] getActiveFinanceBatchTypes() {
+		if (AppParamUtil.getValueAsBoolean(AppParam.AON_AEB_ENABLED)) {
+			return FinanceBatchType.values();
+		}
+		return Arrays.stream(FinanceBatchType.values())
+				.filter(type -> type.name().matches("^(?!AEB_).+"))
+				.toArray(FinanceBatchType[]::new);
+	}
 
 	public List<SelectItem> getFinanceStatuses() {
 		if (financeStatuses == null) {
