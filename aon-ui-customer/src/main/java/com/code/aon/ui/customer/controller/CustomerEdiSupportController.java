@@ -289,13 +289,13 @@ public class CustomerEdiSupportController implements Serializable {
 		Matcher m;
 		Pattern p = Pattern.compile(EDI_CODES_PATTERN);
 		if (value != null && (m = p.matcher(value)).find()) {
-			values.put(CABECERA, m.group(1));
-			values.put(PEDIDOS, m.group(2));
-			values.put(PTO_ENTREGA, m.group(3));
-			values.put(FACTURA, m.group(4));
-			values.put(FINANCIERA, m.group(5));
-			values.put(ALBARANES, m.group(6));
-			values.put(MEDIDA, m.group(7));
+			values.put(CABECERA, m.groupCount()>0 ? m.group(1) : null);
+			values.put(PEDIDOS, m.groupCount()>1 ? m.group(2) : null);
+			values.put(PTO_ENTREGA, m.groupCount()>2 ? m.group(3) : null);
+			values.put(FACTURA, m.groupCount()>3 ? m.group(4) : null);
+			values.put(FINANCIERA, m.groupCount()>4 ? m.group(5) : null);
+			values.put(ALBARANES, m.groupCount()>5 ? m.group(6) : null);
+			values.put(MEDIDA, m.groupCount()>6 ? m.group(7) : null);
 		}
 		return values;
 	}

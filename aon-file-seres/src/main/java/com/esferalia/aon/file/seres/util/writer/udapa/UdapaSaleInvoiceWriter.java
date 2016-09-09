@@ -6,21 +6,30 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.sales.Sales;
+import com.code.aon.warehouse.Delivery;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.udapa.UdapaInvoice;
 import com.esferalia.aon.file.seres.udapa.invoice.data.SINCC;
 import com.esferalia.aon.file.seres.udapa.invoice.data.SINCD;
@@ -28,10 +37,14 @@ import com.esferalia.aon.file.seres.udapa.invoice.data.SINCE;
 import com.esferalia.aon.file.seres.udapa.invoice.data.SINCI;
 import com.esferalia.aon.file.seres.udapa.invoice.data.SINCL;
 import com.esferalia.aon.file.seres.udapa.invoice.data.SINCT;
+import com.esferalia.aon.file.seres.udapa.invoice.data.SINCT.F4451C;
 import com.esferalia.aon.file.seres.udapa.invoice.data.SINCU;
 import com.esferalia.aon.file.seres.udapa.invoice.data.SINCV;
 
 public class UdapaSaleInvoiceWriter {
+
+	private final static Logger LOGGER = LoggerFactory
+			.getLogger(UdapaSaleInvoiceWriter.class);
 	
 	public static final String CHARSET_ENCODING = "ISO-8859-1";
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
@@ -49,8 +62,6 @@ public class UdapaSaleInvoiceWriter {
 
 
 	private SINCC createSINCCRecord(Invoice invoice, IPriceStrategy priceStrategy, String companyEdiCode, String customerEdiMainCode, String customerEdiOperationCode) {
-		// TODO Auto-generated method stub
-		
 		List<Finance> financeList = getFinances(invoice);
 		
 		SINCC sincc = new SINCC();
@@ -58,7 +69,6 @@ public class UdapaSaleInvoiceWriter {
 		sincc.setNumeroDeFactura(invoice.getReferenceCode());
 		sincc.setCodigoVendedor_aQuienSePide__SU_(companyEdiCode);
 		sincc.setCodigoComprador_QuienPide__BY_(customerEdiMainCode);
-		// TODO FuncionDelMensaje_7_31_5_
 		sincc.setFuncionDelMensaje_7_31_5_(null);
 		sincc.setFechaFactura(Integer.valueOf(formatter.format(invoice.getIssueDate())));
 		sincc.setPeriodoDeFacturacion(null);
@@ -69,8 +79,8 @@ public class UdapaSaleInvoiceWriter {
 		sincc.setCodigoReceptorDelPago_aQuienSePaga_(null);
 		sincc.setCodigoEmisorDelPago_QuienPaga_(null);
 		sincc.setRazonDelCargoODelAbono(null);
-		sincc.setNumeroDePedido_ON_(obtainSalesNumber());
-		sincc.setNumeroDeAlbaran_DQ_(obtainDeliveryNumber());
+		sincc.setNumeroDePedido_ON_(obtainSalesNumber(invoice));
+		sincc.setNumeroDeAlbaran_DQ_(obtainDeliveryNumber(invoice));
 		sincc.setCalificadorDocumentoRectificado_Sustituido(null);
 		sincc.setNumeroDocumentoRectificado_Sustituido(null);
 		sincc.setNumeroDeContrato_Acuerdo_CT_(null);
@@ -80,7 +90,7 @@ public class UdapaSaleInvoiceWriter {
 		sincc.setNombre_NumeroDeLaCalleDelReceptorDeLaFactura(StringUtils.abbreviate(rAddress.getFullAddress(),70));
 		sincc.setPoblacionDelReceptorDeLaFactura(StringUtils.abbreviate(rAddress.getCity(),35));
 		sincc.setCodigoPostalDelReceptorDeLaFactura(rAddress.getZip()==null || rAddress.getZip().length()<=9 ? rAddress.getZip() : rAddress.getZip().substring(0, 9));
-//		sincc.setNIFDelReceptorDeLaFactura(invoice.getRegistryDocument());
+		sincc.setNifDelReceptorDeLaFactura(invoice.getRegistryDocument());
 		sincc.setNombre_NumeroDeLaCalleDelEmisorDeLaFactura(null);
 		sincc.setPoblacionDelEmisorDeLaFactura(null);
 		sincc.setCodigoPostalDelEmisorDeLaFactura(null);
@@ -101,8 +111,9 @@ public class UdapaSaleInvoiceWriter {
 		sincc.setIdentificacionAdicionalProveedor_API__NAD_SU_(null);
 
 
-		sincc.sinctList = createSINCTList(invoice);
-		sincc.sincvList = createSINCVList(getFinances(invoice), companyEdiCode,
+		sincc.sinctList = createSINCTList(invoice, companyEdiCode,
+				customerEdiMainCode);
+		sincc.sincvList = createSINCVList(financeList, companyEdiCode,
 				customerEdiMainCode);
 		sincc.sincdList = createSINCDList(invoice);
 		sincc.sinclList = createSINCLList(
@@ -112,25 +123,29 @@ public class UdapaSaleInvoiceWriter {
 				customerEdiMainCode);
 		sincc.sincuList = createSINCUList(invoice);
 		sincc.sinceList = createSINCEList(invoice);
-		sincc.sinciList = createSINCIList(getTaxes(invoice, priceStrategy), invoice, companyEdiCode,
+		sincc.sinciList = createSINCIList(
+				invoice.getDetailList().stream()
+						.map(to -> ((InvoiceDetail) to))
+						.collect(Collectors.toList()), invoice, companyEdiCode,
 				customerEdiMainCode);
 		
 		return sincc;
 	}
 
 
-
-	// TODO createSINCTList
-	private List<SINCT> createSINCTList(Invoice invoice) {
+	private List<SINCT> createSINCTList(Invoice invoice, String companyEdiCode, String customerEdiMainCode) {
 		List<SINCT> list = new ArrayList<>();
+		list.add( createSINCTRecord(invoice, companyEdiCode, customerEdiMainCode) );
 		return list;
 	}
 
-	private List<SINCV> createSINCVList(List<Finance> finances, String companyEdiCode, String customerEdiMainCode ) {
+	private List<SINCV> createSINCVList(List<Finance> financeList, String companyEdiCode, String customerEdiMainCode ) {
 		List<SINCV> list = new ArrayList<>();
-		finances.forEach(finance -> {
-			list.add( createSINCVRecord(finance, finances.indexOf(finance), companyEdiCode, customerEdiMainCode) );
-		});
+		if (financeList != null && financeList.size() > 1) {
+			financeList.forEach(finance -> {
+				list.add( createSINCVRecord(finance, financeList.indexOf(finance), companyEdiCode, customerEdiMainCode) );
+			});
+		}
 		return list;
 	}
 
@@ -161,18 +176,32 @@ public class UdapaSaleInvoiceWriter {
 	}
 
 
-	private List<SINCI> createSINCIList(List<TaxBreakDown> taxList, Invoice invoice, String companyEdiCode, String customerEdiMainCode ) {
+	private List<SINCI> createSINCIList(List<InvoiceDetail> detailList, Invoice invoice, String companyEdiCode, String customerEdiMainCode ) {
 		List<SINCI> list = new ArrayList<>();
-		taxList.forEach(tax -> {
-			list.add( createSINCIRecord(tax, taxList.indexOf(tax), invoice, companyEdiCode, customerEdiMainCode) );
-		});
+		for(InvoiceDetail detail: detailList){
+			detail.getTaxBreakDowns().forEach(tax -> {
+				list.add( createSINCIRecord(tax, detailList.indexOf(detail), invoice, companyEdiCode, customerEdiMainCode) );
+			});
+		}
 		return list;
 	}
 	
 
-	// TODO createSINCTRecord
-	private SINCT createSINCTRecord(Invoice invoice) {
-		return null;
+	private SINCT createSINCTRecord(Invoice invoice, String companyEdiCode, String customerEdiMainCode) {
+		SINCT sinct = new SINCT();
+		sinct.setTipoFactura_325_380_381_383_385_(SINCC.F1001T.FACTURA_COMERCIA_380.getValue());
+		sinct.setCalificadorDelTemaDelTexto(F4451C.INFORMACION_GENERA_AAI.getValue());
+		sinct.setCodigoComprador_BY_(customerEdiMainCode);
+		sinct.setCodigoVendedor_SU_(companyEdiCode);
+		sinct.setNumeroDeFactura(invoice.getReferenceCode());
+		sinct.setNumeroDeLinea(0);
+		String[] comments = invoice.getComments().split("(?<=\\G.{70})");
+		sinct.setTexto1(comments.length>0 ? comments[0] : null);
+		sinct.setTexto2(comments.length>1 ? comments[1] : null);
+		sinct.setTexto3(comments.length>2 ? comments[2] : null);
+		sinct.setTexto4(comments.length>3 ? comments[3] : null);
+		sinct.setTexto5(comments.length>4 ? comments[4] : null);
+		return sinct;
 	}
 
 
@@ -263,31 +292,61 @@ public class UdapaSaleInvoiceWriter {
 		sinci.setCodigoComprador_BY_(customerEdiMainCode);
 		sinci.setNumeroDeLineaImpuesto(lineNumber);
 		sinci.setCalificadorTipoDeImpuesto(SINCI.F5153T.IV_VAT.getValue());
-		sinci.setPorcentajeTipoDeImpuesto(tax.getTaxPercent());
-		sinci.setImporteTipoDeImpuesto(tax.getTaxQuota());
 		sinci.setBaseImponible(tax.getBase());
+		sinci.setPorcentajeTipoDeImpuesto(tax.getTaxPercent());
+		sinci.setImporteTipoDeImpuesto(tax.getBase() * tax.getTaxPercent() / 100);
 		return sinci;
 	}
 	
 	
-	private String obtainSalesNumber() {
-		// TODO Auto-generated method stub
+	private String obtainSalesNumber(Invoice invoice) {
+		List<InvoiceDetail> list = invoice.getDetailList().stream()
+				.map(to -> ((InvoiceDetail) to)).collect(Collectors.toList());
+		try {
+			if(!list.isEmpty()){
+				InvoiceDetail detail = list.get(0);
+				if(detail.getSource()==InvoiceSource.SALES){
+					Sales sales = (Sales) detail.getSourceTo();
+					return sales.getReferenceCode();
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
 		return null;
 	}
 	
-	private String obtainDeliveryNumber() {
-		// TODO Auto-generated method stub
+	private String obtainDeliveryNumber(Invoice invoice) {
+		List<InvoiceDetail> list = invoice.getDetailList().stream()
+				.map(to -> ((InvoiceDetail) to)).collect(Collectors.toList());
+		try {
+			if(!list.isEmpty()){
+				InvoiceDetail detail = list.get(0);
+				if(detail.getSource()==InvoiceSource.DELIVERY){
+					Delivery delivery = (Delivery) detail.getSourceTo();
+					return delivery.getSeries() + "/" + delivery.getNumber();
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
 		return null;
 	}
 	
 	private List<Finance> getFinances(Invoice invoice) {
-		// TODO Auto-generated method stub
-		
-		return new LinkedList<Finance>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Finance.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(
+					bean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID),
+					invoice.getId());
+			return bean.getList(criteria).stream().map(to -> ((Finance) to))
+					.collect(Collectors.toList());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return null;
 	}
 
-	private List<TaxBreakDown> getTaxes(Invoice invoice, IPriceStrategy priceStrategy) {
-		return priceStrategy.getTaxBreakDowns(invoice, invoice);
-	}
 	
 }
