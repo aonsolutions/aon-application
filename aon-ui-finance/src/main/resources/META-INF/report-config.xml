@@ -918,6 +918,7 @@
 			<param id="printDirStaff" value="#{posInvoiceParams.getPrintDirStaff}" />
 			<param id="printSellerName" value="#{posInvoiceParams.getPrintSellerName}" />
 			<param id="printDomain" value="#{posInvoiceParams.isPrintDomain}" />
+			<param id="printDiscount" value="#{posInvoiceParams.isPrintDiscount}" />
 			<param id="footerText" value="#{posInvoiceParams.getFooterText}" />
 		</params>
 	</report>	

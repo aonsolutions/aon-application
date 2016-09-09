@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.controller;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_FOOTER_TEXT;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_DIR_STAFF;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_DOMAIN;
+import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_DISCOUNT;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_LOGO;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_OUTPUT;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_SELLER_NAME;
@@ -112,6 +113,16 @@ public class PosInvoiceParamsController implements Serializable {
 		params.put(POS_INVOICE_PRINT_DOMAIN, param );
 	}
 	
+	public boolean isPrintDiscount() {
+		return Boolean.valueOf(params.get(POS_INVOICE_PRINT_DISCOUNT).getValue()).booleanValue();
+	}
+	
+	public void setPrintDiscount(boolean printDiscount) throws ManagerBeanException {
+		ApplicationParameter param = obtainApplicationParameter(POS_INVOICE_PRINT_DISCOUNT);
+		param.setValue(String.valueOf(printDiscount));
+		params.put(POS_INVOICE_PRINT_DISCOUNT, param );
+	}
+	
 	private void initFooterText() throws ManagerBeanException {
 		this.footerText = null;
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
@@ -181,6 +192,7 @@ public class PosInvoiceParamsController implements Serializable {
 			params.put(POS_INVOICE_PRINT_DIR_STAFF, obtainApplicationParameter(POS_INVOICE_PRINT_DIR_STAFF) );
 			params.put(POS_INVOICE_PRINT_SELLER_NAME, obtainApplicationParameter(POS_INVOICE_PRINT_SELLER_NAME) );
 			params.put(POS_INVOICE_PRINT_DOMAIN, obtainApplicationParameter(POS_INVOICE_PRINT_DOMAIN) );
+			params.put(POS_INVOICE_PRINT_DISCOUNT, obtainApplicationParameter(POS_INVOICE_PRINT_DISCOUNT) );
 			params.put(POS_INVOICE_WIDTH, obtainApplicationParameter(POS_INVOICE_WIDTH) );
 			initFooterText();
 		} catch (ManagerBeanException e) {

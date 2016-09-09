@@ -67,6 +67,11 @@
 			<aon:selectBooleanCheckbox id="posInvoice_print_domain"
 				value="#{posInvoiceParams.printDomain}" />
 				
+			<aon:outputLabel for="posInvoice_print_discount"
+				value="#{bundle.finance_print_discount}" />
+			<aon:selectBooleanCheckbox id="posInvoice_print_discount"
+				value="#{posInvoiceParams.printDiscount}" />
+				
 			<aon:outputLabel for="posInvoice_footer_text"
 				value="#{bundle.company_invoice_footer_text}" />
 			<aon:inputTextarea id="posInvoice_footer_text"
