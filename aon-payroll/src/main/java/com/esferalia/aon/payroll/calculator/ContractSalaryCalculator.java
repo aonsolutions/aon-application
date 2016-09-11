@@ -1092,7 +1092,11 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			List<ITimedResult<Double>> results = expressionContext.eval(contractPayment.getExpression(), paymentStart,
 					paymentEnd, Double.class);
 			
-
+			// Fix variable with same name than payment. Remove variable.
+			results.stream()
+			.filter(r->r.getContext().containsKey(name))
+			.findAny().ifPresent( r-> expressionContext.removeVariable(name));
+			
 
 			if (contractPayment.getType() != PaymentType.CRA_0055
 					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)

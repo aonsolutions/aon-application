@@ -13,6 +13,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -771,6 +772,47 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		}
 		
 		Assert.fail();
+	}
+
+	@Test
+	public void testPaymentConceptVariable()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()),
+				Collections.emptyMap(),
+				new String[] { 
+						},
+				new String[] { 
+						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" },
+				null);
+
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+		
+		PaymentConceptRecord baseConcept = addConcept(aonContext, "SALARIO_BASE");
+		addPayment(aonContext, contract, start, null, baseConcept, "1000.00  * DIAS_TRABAJADOS / DIAS_MES ");
+
+		PaymentConceptRecord plusConcept = addConcept(aonContext, "PLUS_SALARIAL");
+		addData(aonContext, contract, start, null, "PLUS_SALARIAL", "250.00" );
+		addPayment(aonContext, contract, start, null, plusConcept, "PLUS_SALARIAL  * DIAS_TRABAJADOS / DIAS_MES ");
+
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA");
+		addPayment(aonContext, contract, start, null, pagaExtra, "(SALARIO_BASE + PLUS_SALARIAL)/12");
+
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, start, end, end, contract);
+
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		
+		ISalary salary = calculator.calculate(ctx);
+		
+		Assert.assertEquals( 1250.00 + 1250.00/12, salary.getTotalPayment());
 	}
 
 	private static void load(Map<String, ITimedVariable<?>> context,
