@@ -365,7 +365,7 @@ public class ReposServlet extends HttpServlet{
 	private JSONArray getAllRegistriesJSON(Domain domain, String userName) {
 		List<Registry> list = AON.getRegistries(domain.getId(), domain.getName(), userName);
 		JSONArray array = new JSONArray();
-		list.stream().forEach(l->array.put(l.toJSON()));
+		//list.stream().forEach(l->array.put(l.toJSON()));
 		return array;
 	}
 	

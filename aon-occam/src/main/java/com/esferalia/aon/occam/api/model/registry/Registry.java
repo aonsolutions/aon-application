@@ -2,8 +2,6 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
-import org.jooq.tools.json.JSONObject;
-
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -119,12 +117,5 @@ public class Registry implements Serializable{
 				;
 	}
 	
-	public JSONObject toJSON() {
-		JSONObject json = new JSONObject();
-		json.put("id", getId());
-		json.put("alias", getAlias());
-		json.put("document", getDocument());
-		json.put("name", getName());
-		return json;
-	}
+
 }
