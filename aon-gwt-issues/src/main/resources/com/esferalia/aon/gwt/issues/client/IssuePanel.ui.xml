@@ -41,7 +41,7 @@
 												<g:HTMLPanel height="100%" width="100%">
 													<div>
 														<g:InlineLabel styleName="{aonResources.css.aonBold}"
-															text="{msg.userSender} " />
+															text="{msg.userSender}" />
 														<g:InlineLabel ui:field="userLogged"
 															styleName="{aonResources.css.aonColorGreen}" />
 													</div>
@@ -55,8 +55,9 @@
 											<g:customCell>
 												<g:HTMLPanel height="100%" width="100%">
 													<div class="{issuesResources.css.buttonsIssues}">
-														<g:Button ui:field="duplicatedButton" text="{msg.duplicated}" />
+														<g:Button ui:field="duplicatedButton" text="{msg.duplicated}" visible="false" />
 														<g:Button ui:field="closedButton" text="{msg.close}" />
+														<g:Button ui:field="reopenButton" text="Abrir"/>
 														<g:Button ui:field="commentButton" text="{msg.comment}"
 															enabled="false" />
 													</div>
@@ -105,6 +106,19 @@
 									</g:FlowPanel>
 
 									<g:FlowPanel>
+										<g:VerticalPanel spacing="10">
+											<g:HorizontalPanel>
+												<g:Label text="{msg.workgroup}" styleName="{aonResources.css.aonBold}" />
+												<g:Button ui:field="workgroupButton" text="Grupo de Trabajo"
+													styleName="{aonResources.css.aonIconView} 
+				{aonResources.css.aonIconCommandButton}" />
+											</g:HorizontalPanel>
+											<g:Label ui:field="workgroupLabel"
+												styleName="{aonResources.css.tagStyle} {aonResources.css.tagPriority}" />
+										</g:VerticalPanel>
+									</g:FlowPanel>
+
+									<g:FlowPanel>
 										<g:VerticalPanel ui:field="usersVPanel"
 											spacing="10">
 											<g:HorizontalPanel>
@@ -112,7 +126,9 @@
 												<g:Button ui:field="userButton" text="{msg.assignedTo}"
 													styleName="{aonResources.css.aonIconView} 
 														{aonResources.css.aonIconCommandButton}" />
-											</g:HorizontalPanel>		
+											</g:HorizontalPanel>
+											<g:Label ui:field="userLabel"
+												styleName="{aonResources.css.tagStyle} {aonResources.css.tagNotice}" />		
 										</g:VerticalPanel>
 									</g:FlowPanel>
 								</g:VerticalPanel>

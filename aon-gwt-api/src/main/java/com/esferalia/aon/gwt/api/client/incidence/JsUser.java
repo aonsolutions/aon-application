@@ -11,6 +11,13 @@ public class JsUser extends JavaScriptObject {
 	}-*/;
 
 	public final native String getLogin() /*-{
+		if(this.login === undefined){
+			return "Sin Asignar";
+		}
 		return this.login;
+	}-*/;
+	
+	public final native String getType() /*-{
+		return this.type;
 	}-*/;
 }

@@ -15,6 +15,10 @@ import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
 import com.esferalia.aon.occam.api.model.Properties.StockProperties;
 import com.esferalia.aon.occam.api.model.Properties.TagProperties;
+import com.esferalia.aon.occam.api.model.Properties.TaskCommentProperties;
+import com.esferalia.aon.occam.api.model.Properties.TaskEventProperties;
+import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
+import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaxProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferDetailProperties;
@@ -134,5 +138,25 @@ public interface Filter {
 	@FunctionalInterface
 	public interface SeriesFilter{
 		Filter filter(SeriesProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface TaskFilter{
+		Filter filter(TaskProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface TaskTagFilter{
+		Filter filter(TaskTagProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface TaskCommentFilter{
+		Filter filter(TaskCommentProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface TaskEventFilter{
+		Filter filter(TaskEventProperties properties);
 	}
 }

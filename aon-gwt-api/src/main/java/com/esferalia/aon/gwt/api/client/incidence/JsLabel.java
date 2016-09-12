@@ -15,6 +15,9 @@ public class JsLabel extends JavaScriptObject {
 	}-*/;
 
 	public final native String getName() /*-{
+		if(this.name === undefined){
+			return "Sin Asignar";
+		}
 		return this.name;
 	}-*/;
 

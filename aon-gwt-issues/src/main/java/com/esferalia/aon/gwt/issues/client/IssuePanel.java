@@ -11,12 +11,14 @@ import com.esferalia.aon.gwt.api.client.incidence.JsComment;
 import com.esferalia.aon.gwt.api.client.incidence.JsEvent;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
+import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
@@ -62,16 +64,20 @@ public class IssuePanel extends Composite{
 	@UiField Label typeLabel;
 	@UiField Label priorityLabel;
 	@UiField VerticalPanel labelsVPanel;
+	@UiField Label workgroupLabel;
+	@UiField Label userLabel;
 	@UiField VerticalPanel usersVPanel;
 	@UiField FlowPanel historialVPanel;
 	@UiField Button sendButton;
 	@UiField Button duplicatedButton;
 	@UiField Button closedButton;
+	@UiField Button reopenButton;
 	@UiField Button commentButton;
 	@UiField TextArea commentTextArea;
 	@UiField Button typeButton;
 	@UiField Button priorityButton;
 	@UiField Button tagButton;
+	@UiField Button workgroupButton;	
 	@UiField Button userButton;
 
 	@UiField SplitLayoutPanel dockLayoutPanel;
@@ -86,11 +92,29 @@ public class IssuePanel extends Composite{
 	
 	JsIssue issue;
 	
+	public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
+
+	public static native int getCurrentDomain()
+	/*-{
+		return $wnd.getCurrentDomain();
+	}-*/;
 	
 	public IssuePanel(Issues parent, JsIssue issue) {
 		initWidget(binder.createAndBindUi(this));		
 		this.parent = parent;
 		this.issue = issue;
+
+		if(issue.getState().equals("open")){
+			closedButton.setVisible(true);
+			reopenButton.setVisible(false);
+		}else if(issue.getState().equals("closed")){
+			closedButton.setVisible(false);
+			reopenButton.setVisible(true);
+		}
+
 		VerticalPanel vp = new VerticalPanel();
 		vp.setSpacing(10);
 		initHeader(vp, issue);
@@ -100,8 +124,10 @@ public class IssuePanel extends Composite{
 	
 	private void initHeader(VerticalPanel vp, JsIssue issue) {
 		vp.add(getTitleLabel(issue.getTitle(), issue.getNumber()));
-		
-		Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+		String str = Issues.USER_NAME + getCurrentDomainName();
+		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
+		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
 		i.getEvents(issue.getEventsUrl(), new AsyncCallback<JSON<JsEvent>>() {
 			@Override
 			public void onSuccess(JSON<JsEvent> result) {
@@ -116,7 +142,6 @@ public class IssuePanel extends Composite{
 						list.add(e);
 				vp.add(getStatusPanel(vp, issue, list));
 				vp.add(getCompanyPanel(issue));
-				
 				headerPanel.add(vp);
 			}
 			
@@ -125,20 +150,16 @@ public class IssuePanel extends Composite{
 	}
 	
 	private void initLabels(JsIssue issue){
-		typeLabel.setText(issue.getType() != null ? issue.getType().getName() : "Sin Asignar");
-		priorityLabel.setText(issue.getPriority() != null ? issue.getPriority().getName() : "Sin Asignar");
+		typeLabel.setText(issue.getType().getName());
+		priorityLabel.setText(issue.getPriority().getName());
 		for (JsLabel label : issue.getLabels().toLinkedList()){
 			Label l = new Label(label.getName());
 			l.setStyleName(AON.AON_CSS.tagStyle());
 			l.addStyleName(AON.AON_CSS.tagNotice());
 			labelsVPanel.add(l);
 		}
-		if(issue.getAssignee() != null){
-			Label l = new Label(issue.getAssignee().getLogin());
-			l.setStyleName(AON.AON_CSS.tagStyle());
-			l.addStyleName(AON.AON_CSS.tagNotice());
-			usersVPanel.add(l);
-		}
+		workgroupLabel.setText(issue.getWorkgroup().getLogin());
+		userLabel.setText(issue.getAssignee().getLogin());
 	}
 	
 	
@@ -146,7 +167,11 @@ public class IssuePanel extends Composite{
 		userLogged.setText(issue.getUser().getLogin());
 		printDescription(issue);
 		if(issue.getComments()>0){
-			Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+			//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+			String str = Issues.USER_NAME + getCurrentDomainName();
+			String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
+			Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
+		
 			i.getComments(issue.getCommentsUrl(), new AsyncCallback<JSON<JsComment>>() {
 				
 				@Override
@@ -210,7 +235,6 @@ public class IssuePanel extends Composite{
 			Collections.sort(events, (e1,e2) -> e1.getCreatedAt().compareTo(e2.getCreatedAt()));
 			DisclosurePanel logPanel = new DisclosurePanel();
 			logPanel.setAnimationEnabled(true);
-			
 			Label icon = new Label();
 			icon.setStyleName(AON.AON_CSS.aonIconView());
 			JsEvent event = events.get(0);
@@ -218,7 +242,6 @@ public class IssuePanel extends Composite{
 					dateTimeFormat.parse(event.getCreatedAt()));
 			hp.insert(icon, 0);
 			logPanel.setHeader(hp);
-			
 			VerticalPanel vp = new VerticalPanel();
 			for (Integer i = 1; i < events.size(); i++) {
 				vp.add(getHistorialLogHeader(events.get(i).getEvent(), events.get(i).getUser().getLogin(),
@@ -266,7 +289,6 @@ public class IssuePanel extends Composite{
 	
 	private void printDescription(JsIssue issue) {
 		int days = getDaysBefore(dateTimeFormat.parse(issue.getCreatedAt()));
-
 		final Button editButton = new Button();
 		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
 		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
@@ -274,11 +296,8 @@ public class IssuePanel extends Composite{
 		editButton.setTitle("Editar descripci\u00f3n");
 		editButton.setVisible(AonStringUtils.equals(
 				userLogged.getText(), issue.getUser().getLogin()));
-
 		final TextArea textArea = getTextArea(issue.getBody());
-
 		textArea.setName(String.valueOf(issue.getId()));
-
 		editButton.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -290,15 +309,12 @@ public class IssuePanel extends Composite{
 					onAcceptEditDescriptionButtonClick(textArea, editButton);
 			}
 		});
-		
 		editButton.setVisible(userLogged.getText().equals(issue.getUser().getLogin()));
-
 		FlexTable flexTable = new FlexTable();
 		flexTable.setWidget(0, 0, getHeadDescriptionLabel(issue, days));
 		flexTable.setWidget(0, 1, editButton);
 		flexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
 		flexTable.setWidget(1, 0, textArea);
-
 		historialVPanel.add(flexTable);
 	}
 	
@@ -442,7 +458,12 @@ public class IssuePanel extends Composite{
 		button.removeStyleName(AON.AON_ICON_ACCEPT);
 		button.addStyleName(AON.AON_ICON_EDIT_ADD);
 		String request = "{\"body\":\""+ textArea.getText() +"\"}";
-		Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+
+		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+		String str = Issues.USER_NAME + getCurrentDomainName();
+		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
+		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
+		
 		i.updateComment(issue, comment, request, new AsyncCallback<JsComment>() {
 			@Override
 			public void onSuccess(JsComment result) {
@@ -460,8 +481,12 @@ public class IssuePanel extends Composite{
 		button.addStyleName(AON.AON_ICON_EDIT_ADD);
 		
 		String request = "{\"body\":\""+ textArea.getText() +"\"}";
-		Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
-	
+		
+		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+		String str = Issues.USER_NAME + getCurrentDomainName();
+		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
+		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
+
 		i.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
@@ -477,7 +502,12 @@ public class IssuePanel extends Composite{
 	@UiHandler("commentButton")
 	void onClickCommentButton(ClickEvent event){
 		String request = "{\"body\":\""+ commentTextArea.getText() +"\"}";
-		Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+	
+		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+		String str = Issues.USER_NAME + getCurrentDomainName();
+		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
+		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
+		
 		i.newComment(issue, request, new AsyncCallback<JsComment>() {
 			
 			@Override public void onSuccess(JsComment result) {
@@ -498,7 +528,12 @@ public class IssuePanel extends Composite{
 	@UiHandler("closedButton")
 	void onClickClosedButton(ClickEvent event){
 		String request = "{\"state\":\"closed\"}";
-		Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+		
+		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+		String str = Issues.USER_NAME + getCurrentDomainName();
+		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
+		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
+
 		i.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
@@ -507,6 +542,285 @@ public class IssuePanel extends Composite{
 				VerticalPanel vp = new VerticalPanel();
 				vp.setSpacing(10);
 				initHeader(vp, result);
+				closedButton.setVisible(false);
+				reopenButton.setVisible(true);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	@UiHandler("reopenButton")
+	void onClickReopenButton(ClickEvent event){
+		String request = "{\"state\":\"open\"}";
+		
+		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+		String str = Issues.USER_NAME + getCurrentDomainName();
+		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
+		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
+
+		i.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
+			
+			@Override
+			public void onSuccess(JsIssue result) {
+				headerPanel.getWidget().removeFromParent();
+				VerticalPanel vp = new VerticalPanel();
+				vp.setSpacing(10);
+				initHeader(vp, result);
+				closedButton.setVisible(true);
+				reopenButton.setVisible(false);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	@UiHandler("typeButton")
+	void onClickTypeButton(ClickEvent event){	
+		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+		String str = Issues.USER_NAME + getCurrentDomainName();
+		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
+		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
+		
+		i.getTypes( new AsyncCallback<JSON<JsLabel>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsLabel> result) {
+				AonListDialog dialog = new AonListDialog(result.getData(), null) {
+
+					@Override
+					protected void onSelect(JavaScriptObject item) {
+						JsLabel label = (JsLabel) item;
+						typeLabel.setText(label.getName());
+						hide();
+						// TODO UPDATE - CREATE
+						i.addType2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+							@Override public void onFailure(Throwable caught) {}
+							@Override public void onSuccess(JsLabel result) {}
+						});
+					}
+
+					@Override
+					protected void onFilter(String filter) {
+						i.getTypes(filter, new AsyncCallback<JSON<JsLabel>>() {
+							@Override
+							public void onSuccess(JSON<JsLabel> result) { 
+								updateLabels(result.getData());
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+					}
+				};
+				
+				int left = typeButton.getAbsoluteLeft();
+				int top = typeButton.getAbsoluteTop()
+						+ typeButton.getOffsetHeight();
+				dialog.setAutoHideEnabled(true);
+				dialog.setPopupPosition(left, top);
+				dialog.show();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	@UiHandler("priorityButton")
+	void onClickPriorityButton(ClickEvent event){		
+		String str = Issues.USER_NAME + getCurrentDomainName();
+		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
+		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
+		
+		i.getPriorities(new AsyncCallback<JSON<JsLabel>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsLabel> result) {
+				AonListDialog dialog = new AonListDialog(result.getData(), null) {
+
+					@Override
+					protected void onSelect(JavaScriptObject item) {
+						JsLabel label = (JsLabel) item;
+						priorityLabel.setText(label.getName());
+						hide();
+						// TODO UPDATE - CREATE
+						i.addPriority2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+							@Override public void onFailure(Throwable caught) {}
+							@Override public void onSuccess(JsLabel result) {}
+						});
+					}
+					
+					@Override
+					protected void onFilter(String filter) {
+						i.getPriorities(filter, new AsyncCallback<JSON<JsLabel>>() {
+							@Override
+							public void onSuccess(JSON<JsLabel> result) { 
+								updateLabels(result.getData());
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+					}
+				};
+				int left = priorityButton.getAbsoluteLeft();
+				int top = priorityButton.getAbsoluteTop()
+						+ priorityButton.getOffsetHeight();
+				dialog.setAutoHideEnabled(true);
+				dialog.setPopupPosition(left, top);
+				dialog.show();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	@UiHandler("tagButton")
+	void onClickTagButton(ClickEvent event){		
+		String str = Issues.USER_NAME + getCurrentDomainName();
+		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
+		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
+		
+		i.getLabels(new AsyncCallback<JSON<JsLabel>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsLabel> result) {
+				AonListDialog dialog = new AonListDialog(result.getData(), null) {
+
+					@Override
+					protected void onSelect(JavaScriptObject item) {
+						JsLabel label = (JsLabel) item;
+						Label l = new Label(label.getName());
+						l.setStyleName(AON.AON_CSS.tagStyle());
+						l.addStyleName(AON.AON_CSS.tagNotice());
+						labelsVPanel.add(l);
+						hide();
+						// TODO UPDATE - CREATE
+						i.addLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+							@Override public void onFailure(Throwable caught) {}
+							@Override public void onSuccess(JsLabel result) {}
+						});
+					}
+					
+					@Override
+					protected void onFilter(String filter) {
+						i.getPriorities(filter, new AsyncCallback<JSON<JsLabel>>() {
+							@Override
+							public void onSuccess(JSON<JsLabel> result) { 
+								updateLabels(result.getData());
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+					}
+				};
+				int left = tagButton.getAbsoluteLeft();
+				int top = tagButton.getAbsoluteTop()
+						+ tagButton.getOffsetHeight();
+				dialog.setAutoHideEnabled(true);
+				dialog.setPopupPosition(left, top);
+				dialog.show();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	@UiHandler("workgroupButton")
+	void onClickWorkgroupButton(ClickEvent event){		
+		String str = Issues.USER_NAME + getCurrentDomainName();
+		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
+		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
+		
+		i.getWorkgroups(new AsyncCallback<JSON<JsUser>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsUser> result) {
+				
+				AonListDialog dialog = new AonListDialog(null, result.getData()) {
+
+					@Override
+					protected void onSelect(JavaScriptObject item) {
+						JsUser jsUser = (JsUser) item;
+						workgroupLabel.setText(jsUser.getLogin());
+						// TODO UPDATE - CREATE
+						Window.alert("" + jsUser.getId());
+						i.addWorkgroup2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
+							@Override public void onFailure(Throwable caught) {}
+							@Override public void onSuccess(JsUser result) {}
+						});
+						hide();
+					}
+					
+					@Override
+					protected void onFilter(String filter) {
+						i.getWorkgroups(filter, new AsyncCallback<JSON<JsUser>>() {
+							@Override
+							public void onSuccess(JSON<JsUser> result) { 
+								updateUsers(result.getData());
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+					}
+				};
+				int left = workgroupButton.getAbsoluteLeft();
+				int top = workgroupButton.getAbsoluteTop()
+						+ workgroupButton.getOffsetHeight();
+				dialog.setAutoHideEnabled(true);
+				dialog.setPopupPosition(left, top);
+				dialog.show();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	@UiHandler("userButton")
+	void onClickUserButton(ClickEvent event){		
+		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
+		String str = Issues.USER_NAME + getCurrentDomainName();
+		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
+		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
+
+		i.getUsers(new AsyncCallback<JSON<JsUser>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsUser> result) {
+				AonListDialog dialog = new AonListDialog(null, result.getData()) {
+
+					@Override
+					protected void onSelect(JavaScriptObject item) {
+						JsUser jsUser = (JsUser) item;
+						userLabel.setText(jsUser.getLogin());
+						Window.alert(""+ jsUser.getId());
+						// TODO UPDATE - CREATE
+						Window.alert(""+ issue.getNumber());
+						i.addUser2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
+							@Override public void onFailure(Throwable caught) {}
+							@Override public void onSuccess(JsUser result) {}
+						});
+						hide();
+
+					}
+					
+					@Override
+					protected void onFilter(String filter) {
+						i.getUsers(filter, new AsyncCallback<JSON<JsUser>>() {
+							@Override
+							public void onSuccess(JSON<JsUser> result) { 
+								updateUsers(result.getData());
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+					}
+				};
+				
+				int left = userButton.getAbsoluteLeft();
+				int top = userButton.getAbsoluteTop()
+						+ userButton.getOffsetHeight();
+				dialog.setAutoHideEnabled(true);
+				dialog.setPopupPosition(left, top);
+				dialog.show();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}

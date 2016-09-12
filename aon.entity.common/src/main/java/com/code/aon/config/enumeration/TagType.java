@@ -49,7 +49,16 @@ public enum TagType implements IResourceable {
 	/**
 	 * PACKING
 	 */
-	PACKING;
+	PACKING,
+	
+	/**
+	 * TASK
+	 */
+	TASK_TYPE,
+	TASK_PRIORITY,
+	TASK_LABEL,
+	TASK_DOCUMENT
+	;
 
 	/**
 	 * Message key prefix.

@@ -68,6 +68,7 @@ public interface ICommon {
 	// --------------------------------------------
 	
 	public Domain getDomain(AONContext ctx, Integer domainId);
+	public Domain getDomain(AONContext ctx, DomainFilter filter);
 	public LinkedList<Domain> getDomainList(AONContext ctx, DomainFilter filter);
 	
 	public Domain insertDomain(AONContext ctx, Integer parentDomain,

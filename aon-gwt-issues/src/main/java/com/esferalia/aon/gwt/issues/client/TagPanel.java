@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 
 public class TagPanel extends Composite {
 	
-	protected static String USER_NAME = "aibanez91";
+	protected static String USER_NAME = "admin"; //"aibanez91";
 	protected static String ORG_NAME = "aonPrueba"; //"aonsolutions";
 	protected static String REPO_NAME = "aonPrueba"; //"aon-application";
 	protected static String ACCESS_TOKEN = "d8aa641723e106b5d7c2d79d3cad963e0eb6e92d";
@@ -34,6 +34,16 @@ public class TagPanel extends Composite {
 
     private static Binder binder = GWT.create(Binder.class);
     
+    public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
+
+	public static native int getCurrentDomain()
+	/*-{
+		return $wnd.getCurrentDomain();
+	}-*/; 
+	
     public TagPanel() {
         initWidget(binder.createAndBindUi(this));
         	
@@ -41,7 +51,10 @@ public class TagPanel extends Composite {
     }
     
     protected void getTagList() {
-		Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);
+		//Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);
+		String str = USER_NAME + getCurrentDomainName();
+		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
+		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, USER_NAME, USER_NAME, getCurrentDomainName());
 		i.getLabels(new AsyncCallback<JSON<JsLabel>>() {
 			
 			@Override
@@ -57,8 +70,6 @@ public class TagPanel extends Composite {
 					ti.getElement().getStyle().setMarginRight(100, Unit.PX);
 					ti.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 					issueTreeItem.addItem(ti);
-					
-					
 				}
 			}
 			

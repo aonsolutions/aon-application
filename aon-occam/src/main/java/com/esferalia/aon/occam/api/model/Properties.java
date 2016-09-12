@@ -402,4 +402,54 @@ public interface Properties {
 		Property<String> getModificationUserProperty();
 		Property<Double> getQuantityProperty();
 	}
+	
+	public interface TaskProperties{
+		Property<Integer> getActivityTypeProperty();
+		Property<String> getCommentsProperty();
+		Property<String> getDescriptionProperty();
+		Property<Integer> getDomainProperty();
+		Property<Date> getDueDateProperty();
+		Property<Date> getEndDateProperty();
+		Property<String> getGtaskIdProperty();
+		Property<String> getGtasklisIdProperty();
+		Property<Integer> getIdProperty();
+		Property<Byte> getPercentProperty();
+		Property<Byte> getPriorityProperty();
+		Property<Integer> getProjectProperty();
+		Property<Integer> getRegistryProperty();
+		Property<Byte> getRepeatPeriodProperty();
+		Property<Integer> getSenderProperty();
+		Property<Byte> getSourceProperty();
+		Property<Date> getStartDateProperty();
+		Property<Byte> getStatusProperty();
+		Property<Integer> getTaskHolderProperty();
+		Property<Integer> getWorkgroupProperty();
+		Property<Integer> getNumberProperty();
+	}
+	
+	public interface TaskTagProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getTagProperty();
+		Property<Integer> getTaskProperty();
+	}
+	
+	public interface TaskCommentProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getTaskProperty();
+		Property<Integer> getRegistryProperty();
+		Property<String> getCommentProperty();
+		Property<Date> getCreateDateProperty();
+		Property<Date> getUpdateteDateProperty();	
+	}
+	
+	public interface TaskEventProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getTaskProperty();
+		Property<Integer> getRegistryProperty();
+		Property<String> getEventProperty();
+		Property<Date> getCreateDateProperty();
+	}
 }

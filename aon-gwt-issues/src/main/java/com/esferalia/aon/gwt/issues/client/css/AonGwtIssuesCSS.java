@@ -25,4 +25,7 @@ public interface AonGwtIssuesCSS extends CssResource{
 	
 	@ClassName("display-none-issues")
 	String displayNoneIssues();
+	
+	@ClassName("dialog-issues")
+	String dialogIssues();
 }

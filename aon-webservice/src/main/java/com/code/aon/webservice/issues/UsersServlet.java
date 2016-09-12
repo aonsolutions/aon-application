@@ -1,0 +1,35 @@
+package com.code.aon.webservice.issues;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.esferalia.aon.occam.api.model.type.AonUrlApi;
+
+@SuppressWarnings("serial")
+@WebServlet(name = "UsersServlet", urlPatterns = { "/users/*" })
+public class UsersServlet extends HttpServlet{
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		System.out.println("GET METHOD");
+		String serverName = req.getServerName();
+		System.out.println(serverName);
+		if(serverName.equals(AonUrlApi.AON.getUrl())){
+			String pathInfo = req.getPathInfo();
+			System.out.println(pathInfo);
+			
+			super.doGet(req, resp);
+		}
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		System.out.println("POST METHOD");
+		super.doPost(req, resp);
+	}
+}

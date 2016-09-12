@@ -409,6 +409,13 @@
       <scope>compile</scope>
     </dependency>
     
+     <dependency>
+      <groupId>com.code.aon</groupId>
+      <artifactId>aon.webservice</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    
     <!-- EXTERNAL LIBRARIES -->
     <dependency>
       <groupId>org.openid4java</groupId>

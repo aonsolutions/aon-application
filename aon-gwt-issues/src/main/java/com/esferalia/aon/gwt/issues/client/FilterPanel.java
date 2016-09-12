@@ -32,7 +32,7 @@ public class FilterPanel extends Composite {
     
     public FilterPanel(Issues issues) {
     	this.issues = issues;
-    
+    	
     	initWidget(binder.createAndBindUi(this));       
     	
     	titleFilter.addKeyUpHandler(new KeyUpHandler() {

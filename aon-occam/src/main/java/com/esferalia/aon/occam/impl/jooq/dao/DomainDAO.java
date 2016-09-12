@@ -89,6 +89,11 @@ public class DomainDAO {
 		return domain;
 	}
 	
+	public static Domain getDomain(AONContext ctx, DomainFilter filter){
+		return ctx.getDslContext().select().from(DOMAIN).where(DOMAIN_PROPERTIES.getConditions(filter))
+			.fetchInto(DOMAIN).stream().map(new FullDomainFiller()).findFirst().orElse(new Domain());
+	}
+	
 	public static LinkedList<Domain> getDomainList(AONContext ctx, DomainFilter filter){
 		return ctx.getDslContext().select().from(DOMAIN).where(DOMAIN_PROPERTIES.getConditions(filter))
 			.fetchInto(DOMAIN).stream().map(new FullDomainFiller()).collect(Collectors.toCollection(LinkedList::new));

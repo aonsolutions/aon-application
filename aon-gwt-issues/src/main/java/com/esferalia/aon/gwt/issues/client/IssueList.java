@@ -32,7 +32,7 @@ public class IssueList extends Composite {
     Issues parent;
     AonJsArray<JsIssue> issues;
     
-    public IssueList(Issues parent, AonJsArray<JsIssue> issues) {
+    public IssueList(Issues parent, AonJsArray<JsIssue> issues) {    
         initWidget(binder.createAndBindUi(this));
         this.parent = parent;
         issueList.setItems(issues);

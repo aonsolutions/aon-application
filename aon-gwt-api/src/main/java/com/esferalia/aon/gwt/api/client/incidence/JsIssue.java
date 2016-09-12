@@ -90,6 +90,10 @@ public class JsIssue extends JavaScriptObject{
 		return this.priority;
 	}-*/;
 	
+	public final native JsUser getWorkgroup() /*-{
+		return this.workgroup;
+	}-*/;
+	
 	
 
 }

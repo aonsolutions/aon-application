@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record5;
+import org.jooq.Record6;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.ContactRecord;
@@ -112,13 +112,14 @@ public class SecurityDAO {
 	
 	public static User getUser(AONContext ctx, Integer userId) {
 		ctx.checkRead();
-		Record5<Integer, Integer, String, String, Byte> record = 
+		Record6<Integer, Integer, String, String, Byte, Integer> record = 
 			ctx.getDslContext()
 				.select(USER.ID, 
 						USER.DOMAIN, 
 						USER.NAME, 
 						USER.LOGIN,
-						USER.ACTIVE)
+						USER.ACTIVE,
+						USER.REGISTRY)
 				.from(USER)
 				.where(USER.ID.equal(userId))
 				.fetchOne();
@@ -130,6 +131,7 @@ public class SecurityDAO {
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN)); 
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
+			user.setRegistry(record.getValue(USER.REGISTRY));
 			user.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
 		}
 		return user;
@@ -141,13 +143,14 @@ public class SecurityDAO {
 
 	public static User getUser(AONContext ctx, String login) {
 		ctx.checkRead();
-		Record5<Integer, Integer, String, String, Byte> record = 
+		Record6<Integer, Integer, String, String, Byte, Integer> record = 
 			ctx.getDslContext()
 				.select(USER.ID, 
 						USER.DOMAIN, 
 						USER.NAME, 
 						USER.LOGIN,
-						USER.ACTIVE)
+						USER.ACTIVE,
+						USER.REGISTRY)
 				.from(USER)
 				.where(USER.DOMAIN.equal(ctx.getDomainId()))
 				.and(USER.LOGIN.equal(login))
@@ -159,7 +162,8 @@ public class SecurityDAO {
 								USER.DOMAIN, 
 								USER.NAME, 
 								USER.LOGIN,
-								USER.ACTIVE)
+								USER.ACTIVE,
+								USER.REGISTRY)
 						.from(DOMAIN)
 						.join(PARENT_DOMAIN).on(DOMAIN.PARENT.equal(PARENT_DOMAIN.ID))
 						.join(USER).on(USER.DOMAIN.equal(PARENT_DOMAIN.ID))
@@ -174,6 +178,7 @@ public class SecurityDAO {
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN)); 
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
+			user.setRegistry(record.getValue(USER.REGISTRY));
 			user.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
 		}
 		return user;

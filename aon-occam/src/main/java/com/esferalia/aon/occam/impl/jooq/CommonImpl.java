@@ -125,6 +125,12 @@ public class CommonImpl implements ICommon {
 	}
 	
 	@Override
+	public Domain getDomain(AONContext ctx, DomainFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DomainDAO.getDomain(ctx, filter));
+	}
+	
+	@Override
 	public LinkedList<Domain> getDomainList(AONContext ctx, DomainFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> DomainDAO.getDomainList(ctx, filter));

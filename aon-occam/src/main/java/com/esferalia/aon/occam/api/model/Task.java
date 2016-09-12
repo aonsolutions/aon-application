@@ -20,12 +20,18 @@ public class Task  implements Serializable{
 	private Byte source; 
 	private Integer project; 
 	private Integer registry; 
+	private Integer user;
 	private Integer activityType; 
 	private Integer sender; 
 	private String comments; 
 	private Byte repeatPeriod; 
 	private String gtaskId; 
 	private String gtasklistId; 
+	
+	private Integer number;
+	private Date updateDate;
+	
+	
 	
 	public Task() {
 		
@@ -210,4 +216,33 @@ public class Task  implements Serializable{
 		this.gtasklistId = gtasklistId;
 		return this;
 	}
+	
+	public Integer getNumber() {
+		return number;
+	}
+
+	public Task setNumber(Integer number) {
+		this.number = number;
+		return this;
+	}
+	
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+
+	public Task setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+		return this;
+	}
+	
+	public Integer getUser() {
+		return user;
+	}
+
+	public Task setUser(Integer user) {
+		this.user = user;
+		return this;
+	}
+	
+	
 }

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.api.client.incidence;
 import com.esferalia.aon.gwt.api.client.AonUrlApi;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Incidence extends Methods{
@@ -148,6 +149,10 @@ public class Incidence extends Methods{
 		get(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels",callback);
 	}	
 	
+	public void getLabels(String filter, AsyncCallback<JSON<JsLabel>> callback){
+		get(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels?filter=" + filter,callback);
+	}	
+	
 	public void createLabel(String requestData, AsyncCallback<JsLabel> callback){
 		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels", requestData, callback);
 	}	
@@ -162,10 +167,22 @@ public class Incidence extends Methods{
 				+ label.getName(), callback);
 	}
 	
+	public void addLabel2Issue(String name, Integer number, AsyncCallback<JsLabel> callback){
+		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/labels/"+name, "{}", callback);
+	}
+	
+	public void deleteLabel2Issue(String name, Integer number, AsyncCallback<JsLabel> callback){
+		delete(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/labels/"+name, callback);
+	}
+	
 	//-------------------- TYPES
 	
 	public void getTypes(AsyncCallback<JSON<JsLabel>> callback){
 		get(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types",callback);
+	}	
+	
+	public void getTypes(String filter, AsyncCallback<JSON<JsLabel>> callback){
+		get(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types?filter=" + filter,callback);
 	}	
 	
 	public void createType(String requestData, AsyncCallback<JsLabel> callback){
@@ -182,10 +199,22 @@ public class Incidence extends Methods{
 				+ label.getName(), callback);
 	}
 	
+	public void addType2Issue(String name, Integer number, AsyncCallback<JsLabel> callback){
+		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/type/"+name, "{}", callback);
+	}
+	
+	public void deleteType2Issue(String name, Integer number, AsyncCallback<JsLabel> callback){
+		delete(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/type/"+name, callback);
+	}
+	
 	//-------------------- PRIORITIES
 	
 	public void getPriorities(AsyncCallback<JSON<JsLabel>> callback){
 		get(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities",callback);
+	}	
+	
+	public void getPriorities(String filter, AsyncCallback<JSON<JsLabel>> callback){
+		get(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities?filter=" + filter,callback);
 	}	
 	
 	public void createPriority(String requestData, AsyncCallback<JsLabel> callback){
@@ -202,12 +231,53 @@ public class Incidence extends Methods{
 				+ label.getName(), callback);
 	}
 	
+	public void addPriority2Issue(String name, Integer number, AsyncCallback<JsLabel> callback){
+		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/priority/"+name, "{}", callback);
+	}
+	
+	public void deletePriority2Issue(String name, Integer number, AsyncCallback<JsLabel> callback){
+		delete(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/priority/"+name, callback);
+	}
+	
 	//-------------------- USERS
 	
 	public void getUsers(AsyncCallback<JSON<JsUser>> callback){
-		get(url.getUrl() + "orgs/"+getOrganizationName()+"/members",callback);
+		get(url.getUrl() + "orgs/"+getRepositoryName()+ "/members",callback);
+		//GITHUB get(url.getUrl() + "orgs/"+getOrganizationName()+ "/members",callback);
 	}	
-
+	
+	public void getUsers(String filter, AsyncCallback<JSON<JsUser>> callback){
+		get(url.getUrl() + "orgs/"+getRepositoryName()+"/members?filter=" + filter,callback);
+		//GITHUB get(url.getUrl() + "orgs/"+getOrganizationName()+"/members?filter=" + filter,callback);
+	}
+	
+	public void getWorkgroups(AsyncCallback<JSON<JsUser>> callback){
+		get(url.getUrl() + "orgs/"+getRepositoryName()+"/workgroups",callback);
+	}	
+	
+	public void getWorkgroups(String filter, AsyncCallback<JSON<JsUser>> callback){
+		get(url.getUrl() + "orgs/"+getRepositoryName()+"/workgroups?filter=" + filter, callback);
+	}	
+	
+	public void addUser2Issue(Integer id, Integer number, AsyncCallback<JsUser> callback){
+		Window.alert("aa");
+		Window.alert(id+"");
+		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/user/"+id, "", callback);
+	}
+	
+	public void deleteUser2Issue(String name, Integer number, AsyncCallback<JsUser> callback){
+		delete(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/user/"+name, callback);
+	}
+	
+	public void addWorkgroup2Issue(Integer id, Integer number, AsyncCallback<JsUser> callback){
+		Window.alert(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/workgroup/"+id);
+		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/workgroup/"+id, "", callback);
+	}
+	
+	public void deleteWorkgroup2Issue(String name, Integer number, AsyncCallback<JsUser> callback){
+		delete(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"+number+"/workgroup/"+name, callback);
+	}
+	
 	//-------------------- EVENTS
 	
 	public void getEvents(String url, AsyncCallback<JSON<JsEvent>> callback){
@@ -228,6 +298,12 @@ public class Incidence extends Methods{
 	public void updateComment(JsIssue issue, JsComment comment, String requestData, AsyncCallback<JsComment> callback){
 		post(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"
 				+ "comments/" + comment.getId(), requestData, callback);
+	}
+	
+	//-------------------- REGISTRIES
+	
+	public void getRegistries(AsyncCallback<JSON<JsRegistry>> callback){
+		get(url.getUrl() + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/registries",callback);
 	}
 	
 	//---------------------- Métodos Get & Set

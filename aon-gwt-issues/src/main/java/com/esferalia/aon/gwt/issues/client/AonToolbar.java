@@ -30,7 +30,7 @@ public abstract class AonToolbar extends Composite {
     // ----------- CONSTRUCTORS
     
     public AonToolbar() {
-        initWidget(binder.createAndBindUi(this));
+    	initWidget(binder.createAndBindUi(this));
     }
     
     public AonToolbar(String title) {

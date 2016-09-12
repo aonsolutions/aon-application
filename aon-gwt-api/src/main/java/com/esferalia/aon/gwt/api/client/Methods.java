@@ -30,7 +30,7 @@ public class Methods {
 	private <T extends JavaScriptObject> AsyncCallback<T> hookCallback(final AsyncCallback<T> callback) {
 		return new AsyncCallback<T>() {
 			@Override
-			public void onSuccess(T result) {
+			public void onSuccess(T result) {				
 				if (accessToken != null) authorized = true;
 				callback.onSuccess(result);
 			}
@@ -71,15 +71,12 @@ public class Methods {
 			@Override
 			public void onReadyStateChange(XMLHttpRequest xhr) {
 				int state = xhr.getReadyState();
-	
 				if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
 					String text = xhr.getResponseText();
 					try {
 						for (T result = read(text); text != null; result = read(text))
 							callback.onSuccess(result);
-					} catch (IndexOutOfBoundsException e) {
-						
-					}
+					} catch (IndexOutOfBoundsException e) {}
 				}
 			}
 	
@@ -125,7 +122,6 @@ public class Methods {
 				@Override
 				public void onResponseReceived(Request request,
 						Response response) {
-
 					T result = JsonUtils.<T> safeEval(response.getText());
 					log.append("\n\n--" + response.getStatusText() + ":"
 							+ response.getStatusCode() + "\n"
