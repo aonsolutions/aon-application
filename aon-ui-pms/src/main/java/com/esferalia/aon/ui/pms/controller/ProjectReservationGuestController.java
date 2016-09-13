@@ -29,6 +29,23 @@ public class ProjectReservationGuestController extends LinesController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
+	private String phonePrefix;
+	private String phoneNumber;
+
+	public String getPhonePrefix() {
+		return phonePrefix;
+	}
+	public void setPhonePrefix(String phonePrefix) {
+		this.phonePrefix = phonePrefix;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
 	public void onDocumentTypeChanged(ValueChangeEvent event) throws ManagerBeanException {
 		ProjectReservationGuest reservationGuest = (ProjectReservationGuest)getTo();
 		reservationGuest.setDocumentType((DocumentType)event.getNewValue());
@@ -81,6 +98,9 @@ public class ProjectReservationGuestController extends LinesController {
 			reservationGuest.setProvince((address!=null) ? ((geoZone!=null) ? geoZone.getName() : StringUtils.substring(address.getAddress3(), 0, 64)) : null);
 			reservationGuest.setCountry((geoZone!=null) ? Country.obtainCountry(address.getGeozone().getGeoZoneCountry().getCode()) : null);
 			reservationGuest.setPerson(person);
+
+			setPhonePrefix(obtainPhonePrefix((phone!=null) ? phone.getValue() : null));
+			setPhoneNumber(obtainPhoneNumber((phone!=null) ? phone.getValue() : null));
 		} else {
 			reservationGuest.setPerson(null);
 		}
@@ -112,6 +132,39 @@ public class ProjectReservationGuestController extends LinesController {
 			return (Date)resultList.get(0);
 		}
 		return null;
+	}
+
+	public String obtainPhonePrefix(String phone) {
+		String prefix = "+";
+		if (phone != null) {
+			if (phone.contains("(") && phone.contains(")")) {
+				prefix = StringUtils.substring(phone, phone.indexOf("(")+1, phone.indexOf(")"));
+			}
+		}
+		return prefix;
+	}
+
+	public String obtainPhoneNumber(String phone) {
+		String number = null;
+		if (phone != null) {
+			if (phone.contains("(") && phone.contains(")")) {
+				number =  StringUtils.substring(phone, phone.indexOf(")")+1);
+			} else {
+				number = phone;
+			}
+		}
+		return number;
+	}
+
+	public String obtainFullPhone() {
+		String phone = "";
+		if (getPhonePrefix() != null && getPhonePrefix().length() > 1) {
+			phone = "(" + getPhonePrefix() + ")";
+		}
+		if (getPhoneNumber() != null && getPhoneNumber().length() > 0) {
+			phone += getPhoneNumber();
+		}
+		return phone;
 	}
 
 }

@@ -39,6 +39,8 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 		to.setProjectReservation((ProjectReservation)controller.getMasterController().getTo());
 		to.setDocumentCountry(Country.ES);
 		to.setCountry(Country.ES);
+		controller.setPhonePrefix("+");
+		controller.setPhoneNumber(null);
 	}
 
 	@Override
@@ -48,12 +50,16 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 		if (to.getCountry() == null) {
 			to.setCountry(to.getDocumentCountry());
 		}
+		controller.setPhonePrefix(controller.obtainPhonePrefix(to.getPhone()));
+		controller.setPhoneNumber(controller.obtainPhoneNumber(to.getPhone()));
 	}
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		ProjectReservationGuest to = (ProjectReservationGuest)event.getController().getTo();
+		ProjectReservationGuestController controller = (ProjectReservationGuestController)event.getController();
+		ProjectReservationGuest to = (ProjectReservationGuest)controller.getTo();
 		to.setGuestIndex(0);
+		to.setPhone(controller.obtainFullPhone());
 		if (StringUtils.isNotBlank(to.getDocument())) {
 			savePerson(event);
 		}
@@ -75,7 +81,9 @@ public class ProjectReservationGuestControllerListener extends ControllerAdapter
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		ProjectReservationGuest to = (ProjectReservationGuest)event.getController().getTo();
+		ProjectReservationGuestController controller = (ProjectReservationGuestController)event.getController();
+		ProjectReservationGuest to = (ProjectReservationGuest)controller.getTo();
+		to.setPhone(controller.obtainFullPhone());
 		if (StringUtils.isNotBlank(to.getDocument())) {
 			savePerson(event);
 		}
