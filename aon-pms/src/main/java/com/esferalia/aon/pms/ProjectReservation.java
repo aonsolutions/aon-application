@@ -61,6 +61,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectReservation.class.getName());
 	private boolean forceCalculateTotals;
 	private boolean forceRefreshBooking;
+	private boolean refreshRooms;
 	private boolean skipDirtyControl;
 	private double vatPercent;
 	private double realDiscountPercent;
@@ -97,6 +98,14 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setForceRefreshBooking(boolean forceRefreshBooking) {
 		this.forceRefreshBooking = forceRefreshBooking;
+	}
+
+	@Transient
+	public boolean isRefreshRooms() {
+		return refreshRooms;
+	}
+	public void setRefreshRooms(boolean refreshRooms) {
+		this.refreshRooms = refreshRooms;
 	}
 
 	@Transient

@@ -128,6 +128,7 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
 						reservationRoom.setAllotmentRateCode(newRateCode);
 						BeanManager.getManagerBean(ProjectReservationRoom.class).update(reservationRoom);
 					}
+					reservation.setRefreshRooms(true);
 				}
 			}
 		}

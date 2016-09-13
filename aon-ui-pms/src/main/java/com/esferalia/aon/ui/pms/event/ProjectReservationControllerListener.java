@@ -14,6 +14,8 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -26,6 +28,7 @@ import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationSource;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.reservation.InventoryManager;
+import com.esferalia.aon.ui.pms.controller.IPmsConstants;
 import com.esferalia.aon.ui.pms.controller.ProjectReservationController;
 
 public class ProjectReservationControllerListener extends ControllerAdapter {
@@ -105,6 +108,17 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		validateReservation(reservation);
 		reservation.setStartTime(controller.obtainStartTime());
 		reservation.setEndTime(controller.obtainEndTime());
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		ProjectReservation reservation = (ProjectReservation)event.getController().getTo();
+		if (reservation.isRefreshRooms()) {
+			IController reservationRoomController = FormUtil.getController(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
+			reservationRoomController.onSearch(null);
+
+			reservation.setRefreshRooms(false);
+		}
 	}
 
 	private void validateReservation(ProjectReservation reservation) throws ControllerListenerException {
