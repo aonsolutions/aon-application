@@ -17,6 +17,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
@@ -410,12 +411,11 @@ public class PmsCollectionsController implements Serializable {
 		}
 		return touristTaxFreeCauses;
 	}
-	
+
 	public List<SelectItem> getYearItems() throws ManagerBeanException {
 		List<SelectItem> yearItems = new LinkedList<SelectItem>();
-		Integer currentYear = new Date().getYear()+1900;
-	
-		for(Integer y = 2010;y <= currentYear; y++){
+		Integer currentYear = CommonUtil.getYear(new Date());
+		for(Integer y=2010; y<=currentYear; y++){
 			SelectItem item = new SelectItem(y, y.toString());
 			yearItems.add(item);
 		}
