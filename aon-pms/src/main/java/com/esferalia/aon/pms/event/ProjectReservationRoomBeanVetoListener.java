@@ -39,7 +39,7 @@ public class ProjectReservationRoomBeanVetoListener extends ManagerBeanVetoListe
         		to.setRoomIndex(calculateNextIndex(to.getProjectReservation()));
     		}
     		if (StringUtils.isBlank(to.getAllotmentRateCode())) {
-    			ReservationUtils reservationUtils = new ReservationUtils();
+    			ReservationUtils reservationUtils = new ReservationUtils(to.getProjectReservation().getDomain());
     			to.setAllotmentRateCode(reservationUtils.obtainAllotmentRateCode(to.getProjectReservation()));
     		}
     	} catch (ManagerBeanException e) {
