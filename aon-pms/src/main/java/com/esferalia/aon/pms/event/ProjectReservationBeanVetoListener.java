@@ -90,7 +90,7 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
 
 			ReservationUtils reservationUtils = new ReservationUtils(reservation.getDomain());
 			String oldRateCode = reservation.getAllotmentRateCode();
-			String newRateCode = (agencyChanged) ? reservationUtils.obtainAllotmentRateCode(reservation) : null;
+			String newRateCode = (agencyChanged) ? reservationUtils.obtainAllotmentRateCode(reservation) : oldRateCode;
 			boolean rateCodeChanged = (agencyChanged) ? !ObjectUtils.equals(newRateCode, oldRateCode) : false;
 			if (hotelChanged || startChanged || endChanged || rateCodeChanged) {
 				Map<Item, Integer> inventoryItemMap = new HashMap<Item, Integer>();
@@ -110,7 +110,7 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
 
 					for(Date date=reservation.getStartDate(); date.before(reservation.getEndDate()); date=DateUtils.addDays(date, 1)) {
 						if (date.before((Date)objs[1]) || !date.before((Date)objs[2])) {
-							sendInventoryData(reservation.getHotel(), newRateCode, date, date, inventoryItemMap, -1);
+							sendInventoryData(reservation.getHotel(), oldRateCode, date, date, inventoryItemMap, -1);
 						}
 					}
 				} else {
