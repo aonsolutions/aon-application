@@ -26,7 +26,7 @@ public class Incidence extends Methods{
 	}
 	
 	public Incidence(String url, String accesToken, String userName, String organizationName, String repositoryName) {
-		this.url = url+ "aon-aio/";
+		this.url = url; //+ "aon-aio/";
 		this.userName = userName;
 		this.repositoryName = repositoryName;
 		this.organizationName = organizationName;
