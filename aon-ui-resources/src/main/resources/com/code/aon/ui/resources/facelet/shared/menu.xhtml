@@ -34,16 +34,16 @@
 								title="#{alarm.pendingAlarmTitle}"
 								value="(#{alarm.pendingCount})"
 								rendered="#{alarm.pendingCount &gt; 0}"
-								action="alarm_list" actionListener="#{alarm.onInit}" 
+								action="alairm_list" actionListener="#{alarm.onInit}" 
 								style="padding-right: 5px;padding-left: 18px"
 								styleClass="aon-bold aon-menu-icon aon-icon-alarm-pending" />					
-						</aon:if>
-						<aon:if test="#{company.helpdeskEnabled}">
-							<aon:commandLink id="menu-quickIssue" 
+						</aon:if>				
+						<aon:if test="#{company.helpdeskEnabled}">		
+							<aon:commandLink id="menu-polymerIssue" 
 								action="gwt_issues"
 								title="C.A.U. POLYMER" value="&#160;"
 								styleClass="aon-menu-icon aon-icon-helpdesk" />
-							
+											
 							<aon:commandLink id="menu-quickIssue" 
 								action="gwt_office"
 								title="C.A.U." value="&#160;"
