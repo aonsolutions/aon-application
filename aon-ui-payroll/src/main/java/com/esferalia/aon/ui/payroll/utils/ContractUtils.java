@@ -1,10 +1,6 @@
 package com.esferalia.aon.ui.payroll.utils;
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -27,8 +23,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.dbutils.DatabaseUtil;
-import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -1382,38 +1376,10 @@ public class ContractUtils implements Serializable {
 	}
 	
 	public String getDataCurrentValue(Contract contract, String valueName) {
-		return getContractCurrentValue(contract, "contract_data", valueName);
+		return SEPEUtils.getInstance().getDataCurrentValue(contract, valueName);
 	}
 	public String getInfoCurrentValue(Contract contract, String valueName) {
-		return getContractCurrentValue(contract, "contract_info", valueName);
-	}
-	private String getContractCurrentValue(Contract contract, String tableName, String valueName) {
-		Connection conn = null;
-		PreparedStatement ps = null;
-		try {
-			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			String select = "SELECT expression"
-			+ " FROM " + tableName
-			+ " WHERE contract = " + contract.getId()
-			+ " AND name = '" + valueName + "'"
-			+ " ORDER BY start_date DESC";
-			ps = conn.prepareStatement(select);
-			ResultSet rs = ps.executeQuery();
-			if(rs.next()){
-				String value = rs.getString(1);
-				return value.replaceAll("\"", "");
-			}
-		} catch (SQLException e) {
-			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
-		} catch (AonConnectionException e) {
-			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
-		} finally {
-			DatabaseUtil.closeQuietly(ps);
-			DatabaseUtil.closeQuietly(conn);
-		}
-		return null;
+		return SEPEUtils.getInstance().getInfoCurrentValue(contract, valueName);
 	}
 	
 	public static List<ITransferObject> getContractWorkdayHours(Contract contract) throws ManagerBeanException{

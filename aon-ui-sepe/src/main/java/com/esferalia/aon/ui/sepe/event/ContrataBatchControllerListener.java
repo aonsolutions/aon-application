@@ -9,6 +9,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.ContrataBatch;
+import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.ui.sepe.controller.ContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
@@ -52,8 +53,16 @@ public class ContrataBatchControllerListener extends ControllerAdapter {
 		controller.onInit(null);
 		ContrataBatch batch = (ContrataBatch) controller.getTo();
 		if(batch.getStatus() == FileStatus.GENERATED){
-			ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-			contrataController.initialize(batch);
+			if(batch.getType()==ContrataFileType.CONTRACT){
+				ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+				contrataController.initialize(batch);
+			} else if(batch.getType()==ContrataFileType.EXTENSION){
+				ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+				contrataController.initialize(batch);
+			} else if(batch.getType()==ContrataFileType.TRANSFORMATION){
+				ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+				contrataController.initialize(batch);
+			}
 		}
 	}
 	

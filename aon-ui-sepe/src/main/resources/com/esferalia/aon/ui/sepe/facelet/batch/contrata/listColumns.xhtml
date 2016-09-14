@@ -20,12 +20,22 @@
 	</aon:if>
 
 	<aon:column alias="Contract.person.firstSurname, Contract.person.secondSurname, Contract.person.name"
-		styleClass="aon-editDataTable-textColumn aon-width-width">
+		styleClass="aon-editDataTable-textColumn aon-width-auto">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.registry_person}" />
 		</f:facet>
 		<aon:div styleClass="aon-nowrap">
 			<aon:outputText value="#{to.person.fullName}"/>
+		</aon:div>
+	</aon:column>
+
+	<aon:column 
+		styleClass="aon-editDataTable-textColumn aon-width-auto">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.payroll_contract_contract_code}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{controllerList.rowContractCode}"/>
 		</aon:div>
 	</aon:column>
 

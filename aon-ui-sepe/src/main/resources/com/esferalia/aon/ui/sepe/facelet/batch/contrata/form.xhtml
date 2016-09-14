@@ -19,13 +19,29 @@
 			<ui:param name="controllerAttach" value="#{contrataBatchAttach}" />
 			
 			<ui:define name="moreToolbarContent" >
-				<aon:commandButton id="contrata-batch-communication"
+				<aon:commandButton id="contractContrata-batch-communication"
 					value="#{bundle.sepe_contrata}"
-					rendered="#{controller.recorded}" ajaxSingle="true"
+					rendered="#{controller.recorded and contrataBatch.to.type=='CONTRACT'}" ajaxSingle="true"
 					reRender="showContrataCommunicationWindow-#{contractContrata.contrataModelName}"
 					styleClass="aon-finding-toolbar-item aon-icon-sepe-contrata" >
 					<f:setPropertyActionListener
 						target="#{contractContrata.showCommunicationWindow}" value="#{true}" />
+				</aon:commandButton>
+				<aon:commandButton id="extensionContrata-batch-communication"
+					value="#{bundle.sepe_contrata}"
+					rendered="#{controller.recorded and contrataBatch.to.type=='EXTENSION'}" ajaxSingle="true"
+					reRender="showContrataCommunicationWindow-#{extensionContrata.contrataModelName}"
+					styleClass="aon-finding-toolbar-item aon-icon-sepe-contrata" >
+					<f:setPropertyActionListener
+						target="#{extensionContrata.showCommunicationWindow}" value="#{true}" />
+				</aon:commandButton>
+				<aon:commandButton id="transformContrata-batch-communication"
+					value="#{bundle.sepe_contrata}"
+					rendered="#{controller.recorded and contrataBatch.to.type=='TRANSFORMATION'}" ajaxSingle="true"
+					reRender="showContrataCommunicationWindow-#{transformContrata.contrataModelName}"
+					styleClass="aon-finding-toolbar-item aon-icon-sepe-contrata" >
+					<f:setPropertyActionListener
+						target="#{transformContrata.showCommunicationWindow}" value="#{true}" />
 				</aon:commandButton>
 			</ui:define>        
 			
@@ -91,6 +107,17 @@
 					<ui:param name="skipBatchButton" value="#{true}" />
 					<ui:param name="skipDownloadButton" value="#{true}" />
 				</ui:include>
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >
+					<ui:param name="controller" value="#{extensionContrata}" />
+					<ui:param name="skipBatchButton" value="#{true}" />
+					<ui:param name="skipDownloadButton" value="#{true}" />
+				</ui:include>
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >
+					<ui:param name="controller" value="#{transformContrata}" />
+					<ui:param name="skipBatchButton" value="#{true}" />
+					<ui:param name="skipDownloadButton" value="#{true}" />
+				</ui:include>
+				
 			</ui:define>
 			
 		</ui:decorate>

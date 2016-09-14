@@ -10,10 +10,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -37,15 +41,21 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContrataBatch;
 import com.esferalia.aon.payroll.ContrataBatchAttachment;
 import com.esferalia.aon.payroll.ContrataBatchDetail;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
+import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
 public class ContrataBatchController extends BasicController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(ContrataBatchController.class);
 	
 	private FileOutput fileOutput;
 	private boolean recorded;
@@ -76,6 +86,23 @@ public class ContrataBatchController extends BasicController {
 
 	public void setRecorded(boolean recorded) {
 		this.recorded = recorded;
+	}
+	
+	public String getRowContractCode(){
+		try {
+			BatchDetailController detailController = (BatchDetailController)FormUtil.getController(ISepeConstants.CONTRATA_BATCH_DETAIL_CONTROLLER_NAME);
+			if(detailController.getModel().isRowAvailable()){
+				ContrataBatchDetail detail = (ContrataBatchDetail) detailController.getModel().getRowData();
+				if(detail!=null){
+					String code = SEPEUtils.getInstance().getDataCurrentValue(detail.getContract(), ContextVariable.TC2.getName());
+					ContractCode contractCode = ContractCode.getContractCodeByValue(code);
+					return contractCode!=null?code + " - " + contractCode.getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()):"";
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return null;
 	}
 	
 	public void onInit(ActionEvent event) {
@@ -188,13 +215,25 @@ public class ContrataBatchController extends BasicController {
 
 	private byte[] createData() {
 		
-		final String XML_OPEN_TAG = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>";
-		final String XML_CONTRATOS_OPEN_TAG = "<CONTRATOS>";
-		final String XML_CONTRATOS_END_TAG = "</CONTRATOS>";
-		final String XML_NEW_LINE = "\n";
+		ContrataBatch batch = (ContrataBatch) this.getTo();
 		
-		int offset = XML_OPEN_TAG.length() + XML_NEW_LINE.length() + XML_CONTRATOS_OPEN_TAG.length() + XML_NEW_LINE.length();
-		int lenght_increase = offset + XML_CONTRATOS_END_TAG.length() + XML_NEW_LINE.length();
+		String XML_DEF_TAG = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>";
+		String XML_OPEN_TAG = null;
+		String XML_END_TAG = null;
+		if(batch.getType()==ContrataFileType.CONTRACT){
+			XML_OPEN_TAG = "<CONTRATOS>";
+			XML_END_TAG = "</CONTRATOS>";
+		} else if(batch.getType()==ContrataFileType.EXTENSION){
+			XML_OPEN_TAG = "<PRORROGAS>";
+			XML_END_TAG = "</PRORROGAS>";
+		} else if(batch.getType()==ContrataFileType.TRANSFORMATION){
+			XML_OPEN_TAG = "<TRANSFORMACIONES>";
+			XML_END_TAG = "</TRANSFORMACIONES>";
+		}
+		String XML_NEW_LINE = "\n";
+		
+		int offset = XML_DEF_TAG.length() + XML_NEW_LINE.length() + XML_OPEN_TAG.length() + XML_NEW_LINE.length();
+		int lenght_increase = offset + XML_END_TAG.length() + XML_NEW_LINE.length();
 		
 		try {
 			LinesController batchDetailController = (LinesController)FormUtil.getController(ISepeConstants.CONTRATA_BATCH_DETAIL_CONTROLLER_NAME);
@@ -205,22 +244,26 @@ public class ContrataBatchController extends BasicController {
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			Criteria criteria = new Criteria();
 			criteria.addInExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contractIds);
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_CONTRACT_FILE);
+			if(batch.getType()==ContrataFileType.CONTRACT){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_CONTRACT_FILE);
+			} else if(batch.getType()==ContrataFileType.EXTENSION){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_EXTENSION_FILE);
+			} else if(batch.getType()==ContrataFileType.TRANSFORMATION){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_TRANSFORM_FILE);
+			}
 			criteria.setSkipDomainFilter(true);
-			// TODO: averiguar el orden de la info dentro del fichero
-//			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID));
 			List<ITransferObject> list = bean.getList(criteria);
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			os.write(XML_OPEN_TAG.getBytes());
+			os.write(XML_DEF_TAG.getBytes());
 			os.write(XML_NEW_LINE.getBytes());
-			os.write(XML_CONTRATOS_OPEN_TAG.getBytes());
+			os.write(XML_OPEN_TAG.getBytes());
 			os.write(XML_NEW_LINE.getBytes());
 			for(ITransferObject to: list){
 				ContractAttachment attach = (ContractAttachment) to;
 				byte[] data = attach.getData();
 				os.write(data, offset, data.length-lenght_increase);
 			}
-			os.write(XML_CONTRATOS_END_TAG.getBytes());
+			os.write(XML_END_TAG.getBytes());
 			return os.toByteArray();
 		} catch (ManagerBeanException e) {
 			String msg = "El fichero no se ha podido generar.";

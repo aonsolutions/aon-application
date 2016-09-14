@@ -20,6 +20,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
+import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
 import com.esferalia.aon.sepe.api.contrata.contratos.ENVIO100TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.ENVIO130TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.ENVIO150TYPE;
@@ -55,15 +56,28 @@ import com.esferalia.aon.sepe.api.contrata.contratos.RESPUESTACONTRATOTYPE;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.ENVIOTYPE;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.FICHEROPRORROGAS;
 import com.esferalia.aon.sepe.api.contrata.prorrogas.RESPUESTAPRORROGATYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.ENVIO109TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.ENVIO139TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.ENVIO189TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.ENVIO209TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.ENVIO239TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.ENVIO289TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.ENVIO309TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.ENVIO339TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.ENVIO389TYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.FICHEROTRANSFORMACIONES;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.RESPUESTATRANSFORMACIONTYPE;
 
 public class ContrataResponseReader {
 	
 	private final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.contratos";
 	private final String CONTRATA_PRORROGAS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.prorrogas";
+	private final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.transformaciones";
 	
 	
 	public FICHEROCONTRATOS ficheroContratos;
 	public FICHEROPRORROGAS ficheroProrrogas;
+	public FICHEROTRANSFORMACIONES ficheroTransformaciones;
 	
 	public FICHEROCONTRATOS getFicheroContratos() {
 		return ficheroContratos;
@@ -79,6 +93,14 @@ public class ContrataResponseReader {
 
 	public void setFicheroProrrogas(FICHEROPRORROGAS ficheroProrrogas) {
 		this.ficheroProrrogas = ficheroProrrogas;
+	}
+	
+	public FICHEROTRANSFORMACIONES getFicheroTransformaciones() {
+		return ficheroTransformaciones;
+	}
+	
+	public void setFicheroTransformacines(FICHEROTRANSFORMACIONES ficheroTransformaciones) {
+		this.ficheroTransformaciones = ficheroTransformaciones;
 	}
 
 	public void readContratoFile(InputStream input) throws IOException, JAXBException, SAXException, ParserConfigurationException{
@@ -113,6 +135,25 @@ public class ContrataResponseReader {
 			SAXSource source = new SAXSource(xmlFilter, new InputSource(input));
 			
 			ficheroProrrogas = (FICHEROPRORROGAS) unmarshaller.unmarshal(source);
+			
+		} finally {
+			input.close();
+		}
+	}
+	
+	public void readTrasformacionFile(InputStream input) throws IOException, JAXBException, SAXException, ParserConfigurationException{
+		try {
+			input.reset();
+			
+			JAXBContext jc = JAXBContext.newInstance(CONTRATA_TRANSFORMACIONES_MODEL_PATH);
+			Unmarshaller unmarshaller = jc.createUnmarshaller();
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			XMLReader reader = factory.newSAXParser().getXMLReader();
+			XMLFilterImpl xmlFilter = new XMLNamespaceFilter(reader);
+			reader.setContentHandler(unmarshaller.getUnmarshallerHandler());
+			SAXSource source = new SAXSource(xmlFilter, new InputSource(input));
+			
+			ficheroTransformaciones = (FICHEROTRANSFORMACIONES) unmarshaller.unmarshal(source);
 			
 		} finally {
 			input.close();
@@ -252,6 +293,52 @@ public class ContrataResponseReader {
 	public RESPUESTAPRORROGATYPE getRepuestaProrroga(Object envioType){
 		if(envioType instanceof ENVIOTYPE){
 			return ((ENVIOTYPE) envioType).getRESPUESTAPRORROGA();
+		}
+		return null;
+	}
+	
+	public RESPUESTATRANSFORMACIONTYPE getRepuestaTransformacion(Object envioType){
+		if(envioType instanceof ENVIO109TYPE){
+			return ((ENVIO109TYPE) envioType).getRESPUESTATRANSFORMACION();
+		} else if(envioType instanceof ENVIO139TYPE){
+			return ((ENVIO139TYPE) envioType).getRESPUESTATRANSFORMACION();
+		} else if(envioType instanceof ENVIO189TYPE){
+			return ((ENVIO189TYPE) envioType).getRESPUESTATRANSFORMACION();
+		} else if(envioType instanceof ENVIO209TYPE){
+			return ((ENVIO209TYPE) envioType).getRESPUESTATRANSFORMACION();
+		} else if(envioType instanceof ENVIO239TYPE){
+			return ((ENVIO239TYPE) envioType).getRESPUESTATRANSFORMACION();
+		} else if(envioType instanceof ENVIO289TYPE){
+			return ((ENVIO289TYPE) envioType).getRESPUESTATRANSFORMACION();
+		} else if(envioType instanceof ENVIO309TYPE){
+			return ((ENVIO309TYPE) envioType).getRESPUESTATRANSFORMACION();
+		} else if(envioType instanceof ENVIO339TYPE){
+			return ((ENVIO339TYPE) envioType).getRESPUESTATRANSFORMACION();
+		} else if(envioType instanceof ENVIO389TYPE){
+			return ((ENVIO389TYPE) envioType).getRESPUESTATRANSFORMACION();
+		}
+		return null;
+	}
+
+	public ITransformacionType getTransformacionType(Object envioType){
+		if(envioType instanceof ENVIO109TYPE){
+			return ((ENVIO109TYPE) envioType).getTRANSFORMACION109();
+		} else if(envioType instanceof ENVIO139TYPE){
+			return ((ENVIO139TYPE) envioType).getTRANSFORMACION139();
+		} else if(envioType instanceof ENVIO189TYPE){
+			return ((ENVIO189TYPE) envioType).getTRANSFORMACION189();
+		} else if(envioType instanceof ENVIO209TYPE){
+			return ((ENVIO209TYPE) envioType).getTRANSFORMACION209();
+		} else if(envioType instanceof ENVIO239TYPE){
+			return ((ENVIO239TYPE) envioType).getTRANSFORMACION239();
+		} else if(envioType instanceof ENVIO289TYPE){
+			return ((ENVIO289TYPE) envioType).getTRANSFORMACION289();
+		} else if(envioType instanceof ENVIO309TYPE){
+			return ((ENVIO309TYPE) envioType).getTRANSFORMACION309();
+		} else if(envioType instanceof ENVIO339TYPE){
+			return ((ENVIO339TYPE) envioType).getTRANSFORMACION339();
+		} else if(envioType instanceof ENVIO389TYPE){
+			return ((ENVIO389TYPE) envioType).getTRANSFORMACION389();
 		}
 		return null;
 	}

@@ -1,5 +1,9 @@
 package com.esferalia.aon.ui.sepe.utils;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,6 +22,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Enterprise;
 import com.code.aon.config.Domain;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -126,6 +132,41 @@ public class SEPEUtils {
 		}
 		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), false);
 		return bean.getList(criteria);
+	}
+	
+	public String getDataCurrentValue(Contract contract, String valueName) {
+		return getContractCurrentValue(contract, "contract_data", valueName);
+	}
+	public String getInfoCurrentValue(Contract contract, String valueName) {
+		return getContractCurrentValue(contract, "contract_info", valueName);
+	}
+	private String getContractCurrentValue(Contract contract, String tableName, String valueName) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT expression"
+			+ " FROM " + tableName
+			+ " WHERE contract = " + contract.getId()
+			+ " AND name = '" + valueName + "'"
+			+ " ORDER BY start_date DESC";
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				String value = rs.getString(1);
+				return value.replaceAll("\"", "");
+			}
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return null;
 	}
 	
 	/*

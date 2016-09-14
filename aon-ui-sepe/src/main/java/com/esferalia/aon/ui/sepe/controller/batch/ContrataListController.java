@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.sepe.controller.batch;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -22,7 +23,10 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContrataBatchDetail;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
@@ -92,6 +96,23 @@ public class ContrataListController extends BasicController {
 	public void setEnterprise(Enterprise enterprise) {
 		this.enterprise = enterprise;
 	}
+	
+	public String getRowContractCode(){
+		try {
+			if(this.getModel().isRowAvailable()){
+				Contract contract = (Contract) this.getModel().getRowData();
+				if(contract!=null){
+					String code = SEPEUtils.getInstance().getDataCurrentValue(contract, ContextVariable.TC2.getName());
+					ContractCode contractCode = ContractCode.getContractCodeByValue(code);
+					return contractCode!=null?code + " - " + contractCode.getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()):"";
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return null;
+	}
+	
 	
 	public void init(){
 		try {
