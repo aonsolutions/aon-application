@@ -625,6 +625,10 @@ public class IssuePanel extends Composite{
 				int left = typeButton.getAbsoluteLeft();
 				int top = typeButton.getAbsoluteTop()
 						+ typeButton.getOffsetHeight();
+				Integer width = Window.getClientWidth();
+				if(left > width - 200){
+					left = left - 200;
+				}
 				dialog.setAutoHideEnabled(true);
 				dialog.setPopupPosition(left, top);
 				dialog.show();
@@ -670,6 +674,10 @@ public class IssuePanel extends Composite{
 				int left = priorityButton.getAbsoluteLeft();
 				int top = priorityButton.getAbsoluteTop()
 						+ priorityButton.getOffsetHeight();
+				Integer width = Window.getClientWidth();
+				if(left > width - 200){
+					left = left - 200;
+				}
 				dialog.setAutoHideEnabled(true);
 				dialog.setPopupPosition(left, top);
 				dialog.show();
@@ -738,6 +746,10 @@ public class IssuePanel extends Composite{
 				int left = tagButton.getAbsoluteLeft();
 				int top = tagButton.getAbsoluteTop()
 						+ tagButton.getOffsetHeight();
+				Integer width = Window.getClientWidth();
+				if(left > width - 200){
+					left = left - 200;
+				}
 				dialog.setAutoHideEnabled(true);
 				dialog.setPopupPosition(left, top);
 				dialog.show();
@@ -784,6 +796,10 @@ public class IssuePanel extends Composite{
 				int left = workgroupButton.getAbsoluteLeft();
 				int top = workgroupButton.getAbsoluteTop()
 						+ workgroupButton.getOffsetHeight();
+				Integer width = Window.getClientWidth();
+				if(left > width - 200){
+					left = left - 200;
+				}
 				dialog.setAutoHideEnabled(true);
 				dialog.setPopupPosition(left, top);
 				dialog.show();
@@ -832,6 +848,10 @@ public class IssuePanel extends Composite{
 				int left = userButton.getAbsoluteLeft();
 				int top = userButton.getAbsoluteTop()
 						+ userButton.getOffsetHeight();
+				Integer width = Window.getClientWidth();
+				if(left > width - 200){
+					left = left - 200;
+				}
 				dialog.setAutoHideEnabled(true);
 				dialog.setPopupPosition(left, top);
 				dialog.show();

@@ -25,33 +25,30 @@ public class ConfigurationPanel extends Composite {
     private static final String TWO = "2";
     
     public ConfigurationPanel() {
-    	tabs = new PaperTabs();
         initWidget(binder.createAndBindUi(this));
-        tabs.setNoBar(false);
-        tabs.setNoink(true);
-        tabs.setSize("350px", "48px");
         tabs.setSelected("0");
         tabs.addIronSelectHandler(new IronSelectEventHandler() {
 			
 			@Override
 			public void onIronSelect(IronSelectEvent event) {
-				tabs.setSize("350px", "48px");
 				if(tabs.getSelected().equals(ZERO)
 					|| tabs.getSelected() == ZERO){
-					//Window.alert("zero");
-					//tabContent.add(new TagPanel());
+					if(tabContent.getWidgetCount()> 0){
+						for(Integer i = 0; i < tabContent.getWidgetCount(); i++)
+							tabContent.remove(i);
+					}
+					tabContent.add(new TagPanel());
 				} else if(tabs.getSelected().equals(ONE)
 					|| tabs.getSelected() == ONE){
-					//Window.alert("one");
+					
+					
 				} else if(tabs.getSelected().equals(TWO)
 						|| tabs.getSelected() == TWO){
-					//Window.alert("two");
+					
 				}
 			}
 		});
-        tabs.setVisible(false);
-        
-        tabContent.add(new TagPanel());
+                
     }
     
     

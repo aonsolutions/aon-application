@@ -176,8 +176,7 @@ public class Issues implements EntryPoint {
 			
 			@Override
 			protected void onMenuButtonClick() {
-				Window.alert("Funcionalidad deshabilitada");
-				/*
+				// TODO
 				if(dockLayoutPanel.getWidgetSize(configurationPanel) == 0){
 					configurationPanel.add(new ConfigurationPanel());
 					dockLayoutPanel.setWidgetSize(configurationPanel, 350);
@@ -185,7 +184,7 @@ public class Issues implements EntryPoint {
 				else {
 					configurationPanel.remove(0);
 					dockLayoutPanel.setWidgetSize(configurationPanel, 0);
-				}*/				
+				}		
 			}
 			
 			@Override protected void onEditButtonClick() {}

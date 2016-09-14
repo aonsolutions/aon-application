@@ -25,16 +25,19 @@
        		background:#2e9afe
        	}
     </style>
-   
-	<p:PaperTabs ui:field="tabs">
-            <p:PaperTab>Etiquetas</p:PaperTab>
-            <p:PaperTab>Notificaciones</p:PaperTab>
-            <p:PaperTab>FAQs</p:PaperTab>
-    </p:PaperTabs>
     
-	<g:HTMLPanel ui:field="tabContent">
+    <template is="dom-bind">
+		<p:PaperTabs ui:field="tabs">
+			<paper-tab>Etiquetas</paper-tab>
+            <paper-tab>Notificaciones</paper-tab>
+            <paper-tab>FAQs</paper-tab>
+    	</p:PaperTabs>
+    	<g:HTMLPanel ui:field="tabContent">
 		
-	</g:HTMLPanel>
+		</g:HTMLPanel>
+    </template>
+   
+		
 </g:HTMLPanel>
 
 </ui:UiBinder>
