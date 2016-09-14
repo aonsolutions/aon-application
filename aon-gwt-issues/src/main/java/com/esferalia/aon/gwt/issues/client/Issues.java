@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.issues.client;
 import java.util.Arrays;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
-import com.esferalia.aon.gwt.api.client.AonUrlApi;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
@@ -12,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
+import com.esferalia.aon.gwt.issues.shared.AonData;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -36,7 +36,10 @@ public class Issues implements EntryPoint {
 	}
 	private static final Binder binder = GWT.create(Binder.class);
 
-	protected static String USER_NAME = "admin";//"aibanez91";
+	final IIssuesAsync serv = GWT.create(IIssues.class);
+	
+	//protected static String USER_NAME = "admin";//"aibanez91";
+	private static final String HTTP = "http://";
 	protected static String ORG_NAME = "aonPrueba"; //"aonsolutions";
 	protected static String REPO_NAME = "aonPrueba"; //"aon-application";
 	protected static String ACCESS_TOKEN = "d8aa641723e106b5d7c2d79d3cad963e0eb6e92d";
@@ -52,6 +55,9 @@ public class Issues implements EntryPoint {
 	
 	IssueFilter issueFilter;
 	Issues me;
+	AonData aonData;
+	
+	private Incidence incidence;
 	
 	public static native String getCurrentDomainName()
 	/*-{
@@ -79,14 +85,27 @@ public class Issues implements EntryPoint {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css().ensureInjected();
+		
+
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
 		me = this;
-				
-		createAonToolbar();
-		createFilterPanel(new FilterPanel(this));
-		createIssueList(issueFilter = new IssueFilter());
+		serv.getAonData(getCurrentDomainName(), new AsyncCallback<AonData>() {
+			
+			@Override
+			public void onSuccess(AonData result) {
+				aonData = result;
+				incidence = new Incidence(HTTP+getCurrentDomainName()+"/", result.getMd5(),
+						result.getLoggedUser(), result.getLoggedUser(), getCurrentDomainName());
+				createAonToolbar();
+				createFilterPanel(new FilterPanel(me));
+				createIssueList(issueFilter = new IssueFilter());
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
 	}
 
 	protected void createFilterPanel(FilterPanel filterPanel){
@@ -94,13 +113,7 @@ public class Issues implements EntryPoint {
 	}
 	
 	protected void createIssueList(IssueFilter filter) {
-		//Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);
-		String str = USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa"; //Md5Utils.getMd5Digest(str.getBytes()).toString();
-				
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, USER_NAME, USER_NAME, getCurrentDomainName());
-
-		i.getOrgIssues(filter, new AsyncCallback<JSON<JsIssue>>() {
+		incidence.getOrgIssues(filter, new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {			
@@ -127,12 +140,7 @@ public class Issues implements EntryPoint {
 	protected void updateIssueList(IssueFilter filter, Boolean showMore) {
 		if(!showMore) filter.setPage(1);
 		
-		//Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);
-		String str = USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, USER_NAME, USER_NAME, getCurrentDomainName());
-		
-		i.getOrgIssues(filter, new AsyncCallback<JSON<JsIssue>>() {
+		incidence.getOrgIssues(filter, new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {
@@ -224,13 +232,8 @@ public class Issues implements EntryPoint {
 				
 				String r= "{\"title\":\""+ pi.getValue() +"\",\"body\":\""+ pi4.getValue()+" \",\"assignee\":\" \",\"labels\":[],"
 						+ "\"enterprise\":\""+ pi2.getValue() +"\", \"due_date\":\""+ pi3.getValue() +"\"}";
-				
-				//Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);
-				String str = USER_NAME + getCurrentDomainName();
-				String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-				Incidence i = new Incidence(AonUrlApi.AONTEST, md5, USER_NAME, USER_NAME, getCurrentDomainName());
-				
-				i.createOrgIssue(r, new AsyncCallback<JsIssue>() {
+					
+				incidence.createOrgIssue(r, new AsyncCallback<JsIssue>() {
 					
 					@Override
 					public void onSuccess(JsIssue result) {
@@ -247,4 +250,5 @@ public class Issues implements EntryPoint {
 			}
 		};
 	}
+	
 }

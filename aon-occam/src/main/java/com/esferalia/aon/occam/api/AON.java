@@ -2694,4 +2694,14 @@ public class AON {
 		}
 	}
 	
+	public static void deleteTaskTag(String domainName, Integer domainId, String login, TaskTagFilter filter) {
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getTask().deleteTaskTag(ctx, filter);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 }

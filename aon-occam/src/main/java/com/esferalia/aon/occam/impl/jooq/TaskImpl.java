@@ -142,4 +142,9 @@ public class TaskImpl implements ITask {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.getWorkgroup(ctx, wId));	
 	}
+
+	@Override
+	public void deleteTaskTag(AONContext ctx, TaskTagFilter filter) {
+		ctx.getDslContext().transaction(configuration -> TaskDAO.deleteTaskTag(ctx, filter));		
+	}
 }

@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 
-import com.esferalia.aon.gwt.api.client.AonUrlApi;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.JsComment;
@@ -84,6 +83,12 @@ public class IssuePanel extends Composite{
 	@UiField MinimizePanel footPanel;
 	
 	@UiField PaperIconButton returnButton;
+	@UiField PaperIconButton userDeleteButton;
+	@UiField PaperIconButton priorityDeleteButton;
+	@UiField PaperIconButton typeDeleteButton;
+	@UiField PaperIconButton workgroupDeleteButton;
+
+	private static final String HTTP = "http://";
 
 	Issues parent;
 	private DateTimeFormat dateFormat = DateTimeFormat.getFormat("dd/MM/yyyy");
@@ -102,11 +107,24 @@ public class IssuePanel extends Composite{
 		return $wnd.getCurrentDomain();
 	}-*/;
 	
+	public String getUrl(){
+		return "http://" + getCurrentDomainName() + "/";
+	}
+	
+	private Incidence incidence; 
+	
 	public IssuePanel(Issues parent, JsIssue issue) {
 		initWidget(binder.createAndBindUi(this));		
+	
+		incidence = new Incidence(HTTP+getCurrentDomainName()+"/", parent.aonData.getMd5(),
+				parent.aonData.getLoggedUser(), parent.aonData.getLoggedUser(), getCurrentDomainName());
+
 		this.parent = parent;
 		this.issue = issue;
-
+		userDeleteButton.setSize("22px", "22px");
+		priorityDeleteButton.setSize("22px", "22px");
+		typeDeleteButton.setSize("22px", "22px");
+		workgroupDeleteButton.setSize("22px", "22px");
 		if(issue.getState().equals("open")){
 			closedButton.setVisible(true);
 			reopenButton.setVisible(false);
@@ -122,13 +140,11 @@ public class IssuePanel extends Composite{
 		initComments(issue);
 	}
 	
+	
+	
 	private void initHeader(VerticalPanel vp, JsIssue issue) {
 		vp.add(getTitleLabel(issue.getTitle(), issue.getNumber()));
-		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
-		String str = Issues.USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
-		i.getEvents(issue.getEventsUrl(), new AsyncCallback<JSON<JsEvent>>() {
+		incidence.getEvents(issue.getEventsUrl(), new AsyncCallback<JSON<JsEvent>>() {
 			@Override
 			public void onSuccess(JSON<JsEvent> result) {
 				/* TODO PARA CUANDO SE PUEDA COMPILAR STREAM CON GWT 2.8 anObject
@@ -150,16 +166,43 @@ public class IssuePanel extends Composite{
 	}
 	
 	private void initLabels(JsIssue issue){
+		String notAssign = "Sin Asignar";
 		typeLabel.setText(issue.getType().getName());
+		if(issue.getType().getName().equals(notAssign)) {typeDeleteButton.setVisible(false);}
 		priorityLabel.setText(issue.getPriority().getName());
+		if(issue.getPriority().getName().equals(notAssign)) {priorityDeleteButton.setVisible(false);}
 		for (JsLabel label : issue.getLabels().toLinkedList()){
+			HorizontalPanel hp = new HorizontalPanel();
 			Label l = new Label(label.getName());
 			l.setStyleName(AON.AON_CSS.tagStyle());
 			l.addStyleName(AON.AON_CSS.tagNotice());
-			labelsVPanel.add(l);
+			hp.add(l);
+			PaperIconButton pib = new PaperIconButton();
+			pib.setIcon("close");
+			pib.setStyle("padding:3px !important;");
+			pib.setSize("22px", "22px");
+			pib.setTitle(labelsVPanel.getWidgetCount()+"");
+			pib.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					incidence.deleteLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+						@Override public void onFailure(Throwable caught) {}
+						@Override public void onSuccess(JsLabel result) {
+							Integer index = Integer.parseInt(pib.getTitle());
+							labelsVPanel.remove(index);
+							
+						}
+					});
+				}
+			});
+			hp.add(pib);
+			labelsVPanel.add(hp);
 		}
 		workgroupLabel.setText(issue.getWorkgroup().getLogin());
+		if(issue.getWorkgroup().getLogin().equals(notAssign)) {workgroupDeleteButton.setVisible(false);}
 		userLabel.setText(issue.getAssignee().getLogin());
+		if(issue.getAssignee().getLogin().equals(notAssign)) {userDeleteButton.setVisible(false);}
 	}
 	
 	
@@ -167,12 +210,7 @@ public class IssuePanel extends Composite{
 		userLogged.setText(issue.getUser().getLogin());
 		printDescription(issue);
 		if(issue.getComments()>0){
-			//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
-			String str = Issues.USER_NAME + getCurrentDomainName();
-			String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-			Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
-		
-			i.getComments(issue.getCommentsUrl(), new AsyncCallback<JSON<JsComment>>() {
+			incidence.getComments(issue.getCommentsUrl(), new AsyncCallback<JSON<JsComment>>() {
 				
 				@Override
 				public void onSuccess(JSON<JsComment> result) {
@@ -459,12 +497,7 @@ public class IssuePanel extends Composite{
 		button.addStyleName(AON.AON_ICON_EDIT_ADD);
 		String request = "{\"body\":\""+ textArea.getText() +"\"}";
 
-		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
-		String str = Issues.USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
-		
-		i.updateComment(issue, comment, request, new AsyncCallback<JsComment>() {
+		incidence.updateComment(issue, comment, request, new AsyncCallback<JsComment>() {
 			@Override
 			public void onSuccess(JsComment result) {
 				textArea.setValue(result.getBody());
@@ -482,12 +515,7 @@ public class IssuePanel extends Composite{
 		
 		String request = "{\"body\":\""+ textArea.getText() +"\"}";
 		
-		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
-		String str = Issues.USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
-
-		i.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
+		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
 			public void onSuccess(JsIssue result) {
@@ -503,12 +531,7 @@ public class IssuePanel extends Composite{
 	void onClickCommentButton(ClickEvent event){
 		String request = "{\"body\":\""+ commentTextArea.getText() +"\"}";
 	
-		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
-		String str = Issues.USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
-		
-		i.newComment(issue, request, new AsyncCallback<JsComment>() {
+		incidence.newComment(issue, request, new AsyncCallback<JsComment>() {
 			
 			@Override public void onSuccess(JsComment result) {
 				commentTextArea.setText("");
@@ -528,13 +551,8 @@ public class IssuePanel extends Composite{
 	@UiHandler("closedButton")
 	void onClickClosedButton(ClickEvent event){
 		String request = "{\"state\":\"closed\"}";
-		
-		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
-		String str = Issues.USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
-
-		i.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
+	
+		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
 			public void onSuccess(JsIssue result) {
@@ -554,12 +572,7 @@ public class IssuePanel extends Composite{
 	void onClickReopenButton(ClickEvent event){
 		String request = "{\"state\":\"open\"}";
 		
-		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
-		String str = Issues.USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
-
-		i.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
+		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
 			public void onSuccess(JsIssue result) {
@@ -577,12 +590,7 @@ public class IssuePanel extends Composite{
 	
 	@UiHandler("typeButton")
 	void onClickTypeButton(ClickEvent event){	
-		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
-		String str = Issues.USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
-		
-		i.getTypes( new AsyncCallback<JSON<JsLabel>>() {
+		incidence.getTypes( new AsyncCallback<JSON<JsLabel>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsLabel> result) {
@@ -592,9 +600,10 @@ public class IssuePanel extends Composite{
 					protected void onSelect(JavaScriptObject item) {
 						JsLabel label = (JsLabel) item;
 						typeLabel.setText(label.getName());
+						typeDeleteButton.setVisible(true);
 						hide();
 						// TODO UPDATE - CREATE
-						i.addType2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+						incidence.addType2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
 							@Override public void onFailure(Throwable caught) {}
 							@Override public void onSuccess(JsLabel result) {}
 						});
@@ -602,7 +611,7 @@ public class IssuePanel extends Composite{
 
 					@Override
 					protected void onFilter(String filter) {
-						i.getTypes(filter, new AsyncCallback<JSON<JsLabel>>() {
+						incidence.getTypes(filter, new AsyncCallback<JSON<JsLabel>>() {
 							@Override
 							public void onSuccess(JSON<JsLabel> result) { 
 								updateLabels(result.getData());
@@ -626,12 +635,8 @@ public class IssuePanel extends Composite{
 	}
 	
 	@UiHandler("priorityButton")
-	void onClickPriorityButton(ClickEvent event){		
-		String str = Issues.USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
-		
-		i.getPriorities(new AsyncCallback<JSON<JsLabel>>() {
+	void onClickPriorityButton(ClickEvent event){				
+		incidence.getPriorities(new AsyncCallback<JSON<JsLabel>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsLabel> result) {
@@ -641,9 +646,10 @@ public class IssuePanel extends Composite{
 					protected void onSelect(JavaScriptObject item) {
 						JsLabel label = (JsLabel) item;
 						priorityLabel.setText(label.getName());
+						priorityDeleteButton.setVisible(true);
 						hide();
 						// TODO UPDATE - CREATE
-						i.addPriority2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+						incidence.addPriority2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
 							@Override public void onFailure(Throwable caught) {}
 							@Override public void onSuccess(JsLabel result) {}
 						});
@@ -651,7 +657,7 @@ public class IssuePanel extends Composite{
 					
 					@Override
 					protected void onFilter(String filter) {
-						i.getPriorities(filter, new AsyncCallback<JSON<JsLabel>>() {
+						incidence.getPriorities(filter, new AsyncCallback<JSON<JsLabel>>() {
 							@Override
 							public void onSuccess(JSON<JsLabel> result) { 
 								updateLabels(result.getData());
@@ -674,12 +680,8 @@ public class IssuePanel extends Composite{
 	}
 	
 	@UiHandler("tagButton")
-	void onClickTagButton(ClickEvent event){		
-		String str = Issues.USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
-		
-		i.getLabels(new AsyncCallback<JSON<JsLabel>>() {
+	void onClickTagButton(ClickEvent event){				
+		incidence.getLabels(new AsyncCallback<JSON<JsLabel>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsLabel> result) {
@@ -687,14 +689,35 @@ public class IssuePanel extends Composite{
 
 					@Override
 					protected void onSelect(JavaScriptObject item) {
+						HorizontalPanel hp = new HorizontalPanel();
 						JsLabel label = (JsLabel) item;
 						Label l = new Label(label.getName());
 						l.setStyleName(AON.AON_CSS.tagStyle());
 						l.addStyleName(AON.AON_CSS.tagNotice());
-						labelsVPanel.add(l);
+						hp.add(l);
+						PaperIconButton pib = new PaperIconButton();
+						pib.setIcon("close");
+						pib.setStyle("padding:3px !important;");
+						pib.setSize("22px", "22px");
+						pib.setTitle(labelsVPanel.getWidgetCount()+"");
+						pib.addClickHandler(new ClickHandler() {
+							
+							@Override
+							public void onClick(ClickEvent event) {
+								incidence.deleteLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+									@Override public void onFailure(Throwable caught) {}
+									@Override public void onSuccess(JsLabel result) {
+										Integer index = Integer.parseInt(pib.getTitle());
+										labelsVPanel.remove(index);
+									}
+								});
+							}
+						});
+						hp.add(pib);
+						labelsVPanel.add(hp);
 						hide();
 						// TODO UPDATE - CREATE
-						i.addLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+						incidence.addLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
 							@Override public void onFailure(Throwable caught) {}
 							@Override public void onSuccess(JsLabel result) {}
 						});
@@ -702,7 +725,7 @@ public class IssuePanel extends Composite{
 					
 					@Override
 					protected void onFilter(String filter) {
-						i.getPriorities(filter, new AsyncCallback<JSON<JsLabel>>() {
+						incidence.getPriorities(filter, new AsyncCallback<JSON<JsLabel>>() {
 							@Override
 							public void onSuccess(JSON<JsLabel> result) { 
 								updateLabels(result.getData());
@@ -726,11 +749,7 @@ public class IssuePanel extends Composite{
 	
 	@UiHandler("workgroupButton")
 	void onClickWorkgroupButton(ClickEvent event){		
-		String str = Issues.USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
-		
-		i.getWorkgroups(new AsyncCallback<JSON<JsUser>>() {
+		incidence.getWorkgroups(new AsyncCallback<JSON<JsUser>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsUser> result) {
@@ -741,9 +760,9 @@ public class IssuePanel extends Composite{
 					protected void onSelect(JavaScriptObject item) {
 						JsUser jsUser = (JsUser) item;
 						workgroupLabel.setText(jsUser.getLogin());
+						workgroupDeleteButton.setVisible(true);
 						// TODO UPDATE - CREATE
-						Window.alert("" + jsUser.getId());
-						i.addWorkgroup2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
+						incidence.addWorkgroup2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
 							@Override public void onFailure(Throwable caught) {}
 							@Override public void onSuccess(JsUser result) {}
 						});
@@ -752,7 +771,7 @@ public class IssuePanel extends Composite{
 					
 					@Override
 					protected void onFilter(String filter) {
-						i.getWorkgroups(filter, new AsyncCallback<JSON<JsUser>>() {
+						incidence.getWorkgroups(filter, new AsyncCallback<JSON<JsUser>>() {
 							@Override
 							public void onSuccess(JSON<JsUser> result) { 
 								updateUsers(result.getData());
@@ -776,12 +795,7 @@ public class IssuePanel extends Composite{
 	
 	@UiHandler("userButton")
 	void onClickUserButton(ClickEvent event){		
-		//Incidence i = new Incidence(AonUrlApi.GITHUB, Issues.ACCESS_TOKEN, Issues.USER_NAME, Issues.ORG_NAME, Issues.REPO_NAME);
-		String str = Issues.USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, Issues.USER_NAME, Issues.USER_NAME, getCurrentDomainName());
-
-		i.getUsers(new AsyncCallback<JSON<JsUser>>() {
+		incidence.getUsers(new AsyncCallback<JSON<JsUser>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsUser> result) {
@@ -790,11 +804,11 @@ public class IssuePanel extends Composite{
 					@Override
 					protected void onSelect(JavaScriptObject item) {
 						JsUser jsUser = (JsUser) item;
+						
 						userLabel.setText(jsUser.getLogin());
-						Window.alert(""+ jsUser.getId());
+						userDeleteButton.setVisible(true);
 						// TODO UPDATE - CREATE
-						Window.alert(""+ issue.getNumber());
-						i.addUser2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
+						incidence.addUser2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
 							@Override public void onFailure(Throwable caught) {}
 							@Override public void onSuccess(JsUser result) {}
 						});
@@ -804,7 +818,7 @@ public class IssuePanel extends Composite{
 					
 					@Override
 					protected void onFilter(String filter) {
-						i.getUsers(filter, new AsyncCallback<JSON<JsUser>>() {
+						incidence.getUsers(filter, new AsyncCallback<JSON<JsUser>>() {
 							@Override
 							public void onSuccess(JSON<JsUser> result) { 
 								updateUsers(result.getData());
@@ -824,6 +838,50 @@ public class IssuePanel extends Composite{
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	@UiHandler("userDeleteButton")
+	void onClickUserDeleteButton(ClickEvent event){		
+		incidence.deleteUser2Issue(issue.getNumber(), new AsyncCallback<JsUser>() {
+			@Override public void onFailure(Throwable caught) {}
+			@Override public void onSuccess(JsUser result) {
+				userLabel.setText("Sin Asignar");
+				userDeleteButton.setVisible(false);
+			}
+		});
+	}
+	
+	@UiHandler("typeDeleteButton")
+	void onClickTypeDeleteButton(ClickEvent event){		
+		incidence.deleteType2Issue(issue.getNumber(), new AsyncCallback<JsLabel>() {
+			@Override public void onFailure(Throwable caught) {}
+			@Override public void onSuccess(JsLabel result) {
+				typeLabel.setText("Sin Asignar");
+				typeDeleteButton.setVisible(false);
+			}
+		});
+	}
+	
+	@UiHandler("priorityDeleteButton")
+	void onClickPriorityDeleteButton(ClickEvent event){		
+		incidence.deletePriority2Issue(issue.getNumber(), new AsyncCallback<JsLabel>() {
+			@Override public void onFailure(Throwable caught) {}
+			@Override public void onSuccess(JsLabel result) {
+				priorityLabel.setText("Sin Asignar");
+				priorityDeleteButton.setVisible(false);
+			}
+		});
+	}
+	
+	@UiHandler("workgroupDeleteButton")
+	void onClickWorkgroupDeleteButton(ClickEvent event){		
+		incidence.deleteWorkgroup2Issue(issue.getNumber(), new AsyncCallback<JsUser>() {
+			@Override public void onFailure(Throwable caught) {}
+			@Override public void onSuccess(JsUser result) {
+				workgroupLabel.setText("Sin Asignar");
+				workgroupDeleteButton.setVisible(false);
+			}
 		});
 	}
 	

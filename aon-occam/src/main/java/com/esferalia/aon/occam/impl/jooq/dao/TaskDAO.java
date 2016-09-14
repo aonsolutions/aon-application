@@ -276,6 +276,10 @@ public class TaskDAO {
 		ctx.getDslContext().delete(TASK_TAG).where(TASK_TAG.TASK.eq(id)).and(TASK_TAG.TAG.in(list)).execute();
 	}
 	
+	public static void deleteTaskTag(AONContext ctx, TaskTagFilter filter){
+		ctx.getDslContext().delete(TASK_TAG).where(TASK_TAG_PROPERTIES.getConditions(filter)).execute();
+	}
+	
 	public static void createTaskTag(AONContext ctx, TaskTag taskTag ){
 		ctx.getDslContext().insertInto(TASK_TAG, TASK_TAG.DOMAIN, TASK_TAG.TAG, TASK_TAG.TASK)
 		.values(taskTag.getDomain(), taskTag.getTag(), taskTag.getTask()).execute();

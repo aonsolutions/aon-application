@@ -41,6 +41,8 @@ public interface ITask {
 	
 	public void deleteTaskTag(AONContext ctx, Integer taskId, TagType tagType);
 	public void createTaskTag(AONContext ctx, TaskTag taskTag);
+	public void deleteTaskTag(AONContext ctx, TaskTagFilter filter);
 
+	
 	public Workgroup getWorkgroup(AONContext ctx, Integer wId); 
 }

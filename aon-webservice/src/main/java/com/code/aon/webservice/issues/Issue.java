@@ -11,7 +11,6 @@ import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
-import com.esferalia.aon.occam.api.model.type.AonUrlApi;
 
 
 public class Issue {
@@ -45,15 +44,15 @@ public class Issue {
 	public Issue(Task task, com.esferalia.aon.occam.api.model.security.User creator, Registry assignee, LinkedList<Label> labels,
 			Label type, Label priority, Integer comments, Domain domain, String userName, Workgroup workgroup) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
+		String url = "http://"+domain.getName();//+"/aon-aio/";
 		this.id = task.getId();
 		this.title = task.getDescription();
-		this.url = AonUrlApi.AONTEST.getUrl() + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber();
-		this.repositoryUrl = AonUrlApi.AONTEST.getUrl() + "repos/" + userName + "/" + domain.getName();
+		this.url = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber();
+		this.repositoryUrl = url + "repos/" + userName + "/" + domain.getName();
 		this.number =  task.getNumber();
-		this.labelsUrl = AonUrlApi.AONTEST.getUrl() + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/labels";
-		this.commentsUrl = AonUrlApi.AONTEST.getUrl() + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/comments";
-		this.eventsUrl = AonUrlApi.AONTEST.getUrl() + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/events";
+		this.labelsUrl = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/labels";
+		this.commentsUrl = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/comments";
+		this.eventsUrl = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/events";
 		this.state = TaskStatus.values()[task.getStatus()].getName();
 		this.body = task.getComments();
 		this.closedAt = task.getEndDate() != null ? dateFormat.format(task.getEndDate()) : "";

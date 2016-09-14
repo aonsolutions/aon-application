@@ -77,8 +77,11 @@
 													styleName="{aonResources.css.aonIconView} 
 				{aonResources.css.aonIconCommandButton}" />
 											</g:HorizontalPanel>
-											<g:Label ui:field="typeLabel"
-												styleName="{aonResources.css.tagStyle} {aonResources.css.tagType}" />
+											<g:HorizontalPanel>
+												<g:Label ui:field="typeLabel"
+													styleName="{aonResources.css.tagStyle} {aonResources.css.tagType}" />
+												<p:PaperIconButton ui:field="typeDeleteButton" icon="close" style="padding:3px !important;"/>
+											</g:HorizontalPanel>
 										</g:VerticalPanel>
 									</g:FlowPanel>
 									<g:FlowPanel>
@@ -89,8 +92,11 @@
 													styleName="{aonResources.css.aonIconView} 
 				{aonResources.css.aonIconCommandButton}" />
 											</g:HorizontalPanel>
-											<g:Label ui:field="priorityLabel"
+											<g:HorizontalPanel>
+												<g:Label ui:field="priorityLabel"
 												styleName="{aonResources.css.tagStyle} {aonResources.css.tagPriority}" />
+												<p:PaperIconButton ui:field="priorityDeleteButton" icon="close" style="padding:3px !important;"/>
+											</g:HorizontalPanel>
 										</g:VerticalPanel>
 									</g:FlowPanel>
 									<g:FlowPanel>
@@ -113,8 +119,11 @@
 													styleName="{aonResources.css.aonIconView} 
 				{aonResources.css.aonIconCommandButton}" />
 											</g:HorizontalPanel>
-											<g:Label ui:field="workgroupLabel"
-												styleName="{aonResources.css.tagStyle} {aonResources.css.tagPriority}" />
+											<g:HorizontalPanel>
+												<g:Label ui:field="workgroupLabel"
+													styleName="{aonResources.css.tagStyle} {aonResources.css.tagPriority}" />
+												<p:PaperIconButton ui:field="workgroupDeleteButton" icon="close" style="padding:3px !important;"/>
+											</g:HorizontalPanel>										
 										</g:VerticalPanel>
 									</g:FlowPanel>
 
@@ -122,13 +131,16 @@
 										<g:VerticalPanel ui:field="usersVPanel"
 											spacing="10">
 											<g:HorizontalPanel>
-												<g:Label text="{msg.assignedTo}" styleName="{aonResources.css.aonBold}" />
+												<g:Label text="{msg.assignedTo}" styleName="{aonResources.css.aonBold}" />			
 												<g:Button ui:field="userButton" text="{msg.assignedTo}"
 													styleName="{aonResources.css.aonIconView} 
 														{aonResources.css.aonIconCommandButton}" />
 											</g:HorizontalPanel>
-											<g:Label ui:field="userLabel"
-												styleName="{aonResources.css.tagStyle} {aonResources.css.tagNotice}" />		
+											<g:HorizontalPanel>
+												<g:Label ui:field="userLabel"
+													styleName="{aonResources.css.tagStyle} {aonResources.css.tagNotice}" />		
+												<p:PaperIconButton ui:field="userDeleteButton" icon="close" style="padding:3px !important;"/>
+											</g:HorizontalPanel>
 										</g:VerticalPanel>
 									</g:FlowPanel>
 								</g:VerticalPanel>

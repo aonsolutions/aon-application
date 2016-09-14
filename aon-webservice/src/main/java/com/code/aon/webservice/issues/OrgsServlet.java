@@ -2,6 +2,8 @@ package com.code.aon.webservice.issues;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -17,7 +19,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
-import com.esferalia.aon.occam.api.model.type.AonUrlApi;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "OrgsServlet", urlPatterns = { "/orgs/*" })
@@ -29,20 +30,18 @@ public class OrgsServlet extends HttpServlet{
 		String accessToken = req.getParameter("access_token");
 		String serverName = req.getServerName();
 		
-		if(AonUrlApi.AONTEST.getUrl().contains(serverName)){
+		//if(AonUrlApi.AONTEST.getUrl().contains(serverName)){
 			String[] pathInfo = req.getPathInfo().split("/");
-			String domainName = pathInfo[1]; 
-			String userName = "";
+			String userName = pathInfo[1];
+			String domainName = pathInfo[2]; 
 			
-			String md5 = "aaaaa";// TODO getMd5(userName+domainName);
+			String md5 = getMd5(userName+domainName);
 			if(accessToken.equals(md5)){
 				String filter = req.getParameter("filter") != null ? req.getParameter("filter") : "";
 				Domain domain = AON.getDomain(domainName, 1, userName, f-> f.getNameProperty().eq(domainName));
-				if(pathInfo.length > 2){
+				if(pathInfo.length > 3){
 					Object object = new Object();
-					
-					
-					switch (pathInfo[2]) {
+					switch (pathInfo[3]) {
 					case "members": // ALL MEMBERS
 						object = getAllUsersJSON(domain, userName, filter);
 						break;
@@ -69,7 +68,7 @@ public class OrgsServlet extends HttpServlet{
 				}
 
 			}
-		}
+		//}
 	}
 	
 	@Override
@@ -115,5 +114,24 @@ public class OrgsServlet extends HttpServlet{
 					.setId(r.getId())
 					.setLogin(r.getDescription());  
 		}
+	}
+	
+	private String getMd5(String str){
+		MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+        md.update(str.getBytes());
+        byte byteData[] = md.digest();
+
+        //convert the byte to hex format method 1
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < byteData.length; i++) {
+        	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        
+        return sb.toString();
 	}
 }

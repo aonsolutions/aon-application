@@ -18,6 +18,7 @@ public class Methods {
 	
 	public final String HTTP_GET = "GET";
 	private final String HTTP_POST = "POST";
+	private final String HTTP_DELETE = "DELETE";
 	protected  String accessToken = "";
 	public boolean authorized = false;
 	
@@ -144,14 +145,61 @@ public class Methods {
 		}
 	}
 	
-	protected <T extends JavaScriptObject> void delete(String url, AsyncCallback<T> callback) {
+	
+	protected <T extends JavaScriptObject> void delete(String url, String requestData, AsyncCallback<T> callback) {
+		String requestUrl = makeRequestUrl(url);
+
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open(HTTP_DELETE, requestUrl);
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+			private int loaded = 0;
+	
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				int state = xhr.getReadyState();
+				if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
+					String text = xhr.getResponseText();
+					try {
+						for (T result = read(text); text != null; result = read(text))
+							callback.onSuccess(result);
+					} catch (IndexOutOfBoundsException e) {}
+				}
+			}
+	
+			private T read(String text) {
+				for (int begin = loaded; begin < text.length(); begin++) {
+					if (text.charAt(begin) == '{') {
+						loaded = findEnd(text, begin + 1) + 1;
+						String json = text.substring(begin, loaded);
+						return JsonUtils.safeEval(json);
+					}
+				}
+				throw new IndexOutOfBoundsException();
+			}
+	
+			private int findEnd(String text, int start) {
+				for (int end = start; end < text.length(); end++) {
+					switch (text.charAt(end)) {
+					case '}':
+						return end;
+					case '{':
+						end = findEnd(text, end + 1);
+					}
+				}
+				throw new IndexOutOfBoundsException();
+			}
+		});
+		xhr.send(requestData);
+	}
+	
+	protected <T extends JavaScriptObject> void delete2(String url, AsyncCallback<T> callback) {
 		String requestUrl = makeRequestUrl(url);
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.DELETE,
 				requestUrl);
 		final AsyncCallback<T> hookedCallback = hookCallback(callback);
 		final StringBuilder log = new StringBuilder();
 		log.append(" [DELETE] ---> " + requestUrl);
-
 		try {
 			builder.sendRequest(null, new RequestCallback() {
 

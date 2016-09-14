@@ -6,6 +6,10 @@ public class JsLabel extends JavaScriptObject {
 
 	protected JsLabel() {}
 	
+	public final native String getId() /*-{
+		return this.url;
+	}-*/;
+	
 	public final native String getUrl() /*-{
 		return this.url;
 	}-*/;

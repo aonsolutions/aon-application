@@ -46,12 +46,12 @@ public class ReposServlet extends HttpServlet{
 		String accessToken = req.getParameter("access_token");
 		String serverName = req.getServerName();
 		
-		if(AonUrlApi.AONTEST.getUrl().contains(serverName)){
+		//if(AonUrlApi.AONTEST.getUrl().contains(serverName)){
 			String[] pathInfo = req.getPathInfo().split("/");
 			String userName = pathInfo[1];
 			String domainName = pathInfo[2]; 
 			
-			String md5 = "aaaaa";// TODO getMd5(userName+domainName);
+			String md5 = getMd5(userName+domainName);
 			if(accessToken.equals(md5)){
 				String filter = req.getParameter("filter") != null ? req.getParameter("filter") : "";
 				Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
@@ -108,7 +108,7 @@ public class ReposServlet extends HttpServlet{
 					}
 				}
 			}
-		}
+		//}
 	}
 	
 	@Override
@@ -116,7 +116,7 @@ public class ReposServlet extends HttpServlet{
 		System.out.println("POST METHOD");
 		String serverName = req.getServerName();
 		
-		if(AonUrlApi.AON.getUrl().contains(serverName)){
+		//if(AonUrlApi.AON.getUrl().contains(serverName)){
 			String[] pathInfo = req.getPathInfo().split("/");
 			String userName = pathInfo[1];
 			String domainName = pathInfo[2]; 
@@ -273,7 +273,7 @@ public class ReposServlet extends HttpServlet{
 				os.println(object.toString());
 				os.flush();
 			}
-		}
+		//}
 	}
 	
     private void addCorsHeader(HttpServletResponse response){
@@ -296,11 +296,48 @@ public class ReposServlet extends HttpServlet{
 			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 			if(pathInfo.length > 3){
 				String s = req.getReader().readLine();
+				if(s == null) s = "{}";
 				JSONObject json = new JSONObject(s);
-								
+				Object object = new Object();
+		
 				switch (pathInfo[3]) {
 				case "issues":
 					if(pathInfo.length > 4){
+						if(pathInfo.length > 5){
+							if(pathInfo[5].equalsIgnoreCase("labels")){
+								if(pathInfo.length > 6){
+									Integer taskId = DBConsults.getTaskId(domain.getName(), domain.getId(), userName, Integer.parseInt(pathInfo[4]));
+									Integer tagId = Integer.parseInt(pathInfo[6]);
+									AON.deleteTaskTag(domain.getName(), domain.getId(), userName, 
+											f -> f.getTagProperty().eq(tagId).and(f.getTaskProperty().eq(taskId)));
+									object = new Label().toJSON();
+								}
+							} else if(pathInfo[5].equalsIgnoreCase("type")){
+								if(pathInfo.length > 6){
+									Integer taskId = DBConsults.getTaskId(domain.getName(), domain.getId(), userName, Integer.parseInt(pathInfo[4]));
+									AON.deleteTypeTaskTag(domain.getName(), domain.getId(), userName, taskId);
+									object = new Label().toJSON();
+								} 						
+							} else if(pathInfo[5].equalsIgnoreCase("priority")){
+								if(pathInfo.length > 6){
+									Integer taskId = DBConsults.getTaskId(domain.getName(), domain.getId(), userName, Integer.parseInt(pathInfo[4]));
+									AON.deletePriorityTaskTag(domain.getName(), domain.getId(), userName, taskId);
+									object = new Label().toJSON();
+								}
+							} else if(pathInfo[5].equalsIgnoreCase("user")){
+								if(pathInfo.length > 6){
+									Task task = DBConsults.getTaskWithNumber(domain.getName(), domain.getId(), userName, Integer.parseInt(pathInfo[4]));
+									AON.updateTaskUser(domain.getName(), domain.getId(), userName, task.setTaskHolder(null));
+									object = new User().toJSON();
+								} 
+							} else if(pathInfo[5].equalsIgnoreCase("workgroup")){
+								if(pathInfo.length > 6){
+									Task task = DBConsults.getTaskWithNumber(domain.getName(), domain.getId(), userName, Integer.parseInt(pathInfo[4]));
+									AON.updateTaskUser(domain.getName(), domain.getId(), userName, task.setWorkgroup(null));
+									object = new User().toJSON();
+								}
+							}
+						}
 						// DELETE ISSUE / TASK
 					}
 					break;
@@ -322,6 +359,12 @@ public class ReposServlet extends HttpServlet{
 				default:
 					break;
 				}
+				
+				resp.setContentType("application/json;charset=UTF-8");
+				addCorsHeader(resp);
+				PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
+				os.println(object.toString());
+				os.flush();
 			}
 		}
 	}
@@ -365,7 +408,7 @@ public class ReposServlet extends HttpServlet{
 	private JSONArray getAllRegistriesJSON(Domain domain, String userName) {
 		List<Registry> list = AON.getRegistries(domain.getId(), domain.getName(), userName);
 		JSONArray array = new JSONArray();
-		//list.stream().forEach(l->array.put(l.toJSON()));
+		list.stream().map(new RegistryToUserFiller()).forEach(l->array.put(l.toJSON()));
 		return array;
 	}
 	
@@ -461,7 +504,8 @@ public class ReposServlet extends HttpServlet{
 		
 		@Override
 		public Label apply(Tag r) {
-			return new Label().setName(r.getName())
+			return new Label().setId(r.getId())
+					.setName(r.getName())
 					.setColor(r.getColor())
 					.setUrl(AonUrlApi.AONTEST.getUrl() + "repos/" + userName + "/" + domain.getName() + "/labels/" + r.getName());  
 		}
@@ -507,6 +551,17 @@ public class ReposServlet extends HttpServlet{
 					.setId(r.getId())
 					.setUrl(AonUrlApi.AONTEST.getUrl() + "repos/" + userName + "/" + domain.getName() + "/issues/events/" + r.getId()) 
 					.setUser(new User(r.getUser()));
+		}
+	}
+	
+	private static class RegistryToUserFiller implements Function<Registry, User>{
+	
+		@Override
+		public User apply(Registry r) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+			return new User()
+					.setId(r.getId())
+					.setLogin(r.getName());
 		}
 	}
 	
