@@ -309,14 +309,16 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 
 	public List<Item> getProjectReservationRoomDetailItems(ProjectReservationRoom reservationRoom, Date startDate, Date endDate) throws ManagerBeanException {
 		List<Item> roomDetailItemIds = new LinkedList<Item>();
+		roomDetailItemIds.add(reservationRoom.getItem());
+
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
 		Session session = HibernateUtil.getSession(sessionFactoryName);
 		String hqlQuery = 
-				"SELECT DISTINCT R.item " +
-				"FROM ProjectReservationRoomDetail AS PRRD, " +
-					"AssetActivity AS AA, " +
-					"Room as R " +
-				"WHERE PRRD.projectReservationRoom.id = " + reservationRoom.getId() +
+				"SELECT DISTINCT R.item" +
+				" FROM ProjectReservationRoomDetail AS PRRD," +
+					" AssetActivity AS AA," +
+					" Room AS R" +
+				" WHERE PRRD.projectReservationRoom.id = " + reservationRoom.getId() +
 				" AND PRRD.assetActivity.id = AA.id" +
 				" AND AA.date BETWEEN :start AND :end" +
 				" AND AA.asset.id = R.asset.id";
@@ -324,10 +326,43 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 		query.setDate("start", startDate);
 		query.setDate("end", endDate);
 		for (Object obj : query.list()) {
-			roomDetailItemIds.add((Item)obj);
+			if (!roomDetailItemIds.contains((Item)obj)) {
+				roomDetailItemIds.add((Item)obj);
+			}
 		}
-		if (!roomDetailItemIds.contains(reservationRoom.getItem())) {
-			roomDetailItemIds.add(reservationRoom.getItem());
+		return roomDetailItemIds;
+	}
+
+	public List<Item> getProjectReservationRoomDetailItems(ProjectReservation reservation) throws ManagerBeanException {
+		List<Item> roomDetailItemIds = new LinkedList<Item>();
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		Session session = HibernateUtil.getSession(sessionFactoryName);
+		String hqlQuery = 
+				"SELECT DISTINCT R.item" +
+				" FROM ProjectReservationRoomDetail AS PRRD," +
+					" ProjectReservationRoom AS PRR," +
+					" AssetActivity AS AA," +
+					" Room AS R" +
+				" WHERE PRRD.projectReservationRoom.id = PRR.id" +
+				" AND PRR.projectReservation.id = " + reservation.getId() +
+				" AND PRRD.assetActivity.id = AA.id" +
+				" AND AA.asset.id = R.asset.id";
+		Query query = session.createQuery(hqlQuery);
+		for (Object obj : query.list()) {
+			if (!roomDetailItemIds.contains((Item)obj)) {
+				roomDetailItemIds.add((Item)obj);
+			}
+		}
+
+		hqlQuery = 
+				" SELECT DISTINCT PRR.item" +
+				" FROM ProjectReservationRoom AS PRR" +
+				" WHERE PRR.projectReservation.id = " + reservation.getId();
+		query = session.createQuery(hqlQuery);
+		for (Object obj : query.list()) {
+			if (!roomDetailItemIds.contains((Item)obj)) {
+				roomDetailItemIds.add((Item)obj);
+			}
 		}
 		return roomDetailItemIds;
 	}

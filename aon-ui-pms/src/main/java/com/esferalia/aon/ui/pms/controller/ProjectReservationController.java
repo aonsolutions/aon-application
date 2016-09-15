@@ -165,7 +165,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 		return reservationConexFlow;
 	}
-	
 	public void setReservationConexFlow(ProjectReservationConexFlow reservationConexFlow) {
 		this.reservationConexFlow = reservationConexFlow;
 	}
@@ -173,7 +172,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	public String getSelectedTab() {
 		return selectedTab;
 	}
-	
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}
@@ -669,25 +667,10 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	private void cancelReservation(ActionEvent event) throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		List<Item> inventoryItems = StringUtils.isEmpty(reservation.getCrsCode()) ? getReservationUtils().getProjectReservationRoomDetailItems(reservation) : null;
 
-		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
-		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
-			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
-	    	List<Item> inventoryItems = new LinkedList<Item>();
-			if (StringUtils.isEmpty(reservation.getCrsCode())) {
-		    	inventoryItems = getReservationUtils().getProjectReservationRoomDetailItems(reservationRoom);
-		    	if (!inventoryItems.contains(reservationRoom.getItem())) {
-		    		inventoryItems.add(reservationRoom.getItem());
-		    	}
-			}
-
+		for (ProjectReservationRoom reservationRoom : reservation.getReservationRoomList()) {
 	    	getReservationUtils().removeProjectReservationRoomDetails(reservationRoom, false, null);
-
-			if (StringUtils.isEmpty(reservation.getCrsCode())) {
-				sendInventoryData(reservationRoom, inventoryItems);
-			}
 		}
 
 		boolean cancelOk = true;
@@ -724,6 +707,10 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 		accept(event);
 
+		if (StringUtils.isEmpty(reservation.getCrsCode())) {
+			sendInventoryData(reservation, inventoryItems);
+		}
+
 		IController reservationRoomController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
     	reservationRoomController.onSearch(event);
 		IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
@@ -734,10 +721,10 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
-    private void sendInventoryData(ProjectReservationRoom reservationRoom, List<Item> inventoryItems) {
+    private void sendInventoryData(ProjectReservation reservation, List<Item> inventoryItems) throws ManagerBeanException {
     	InventoryManager manager = new InventoryManager();
 		for (Item item : inventoryItems) {
-	    	manager.processInventoryQuery(reservationRoom, reservationRoom.getHotel(), item);
+	    	manager.processInventoryQuery(reservation.getHotel(), item, reservation.getAllotmentRateCode(), reservation.getStartDate(), reservation.getEndDate());
 		}
     }
 
