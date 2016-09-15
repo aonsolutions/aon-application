@@ -14,6 +14,7 @@
 			<aon:outputText value="#{bundle.sepe_contrata_contract_other_data}" />
 		</f:facet>
 
+<!--  
 		<aon:panelGrid columns="2" id="otherDataPanel"
 			styleClass="aon-width-all"
 			columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even aon-width-auto">
@@ -63,10 +64,6 @@
 		<aon:panelGrid columns="2" id="otherDataPanel2"
 			styleClass="aon-width-all aon-margin-top"
 			columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even aon-width-auto">
-	
-			<!--
-			ActividadSinFechaCierta  
-			-->
 			
 			<aon:outputText 
 				rendered="#{transformContrata.handler.showFijoDiscontinuoPeriodico}"
@@ -79,8 +76,9 @@
 			</aon:div>
 
 		</aon:panelGrid>
+-->		
 		
-		
+<!--  
 		<aon:div id="medidasFomentoPanel" rendered="#{contractContrata.params.medidasFomentoData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
@@ -104,6 +102,7 @@
 				</aon:panelGrid>
 			</aon:panel>
 		</aon:div>
+-->
 		
 <!--  
 	<xsd:complexType name="DATOS_BONIFICACIONTYPE">
@@ -113,6 +112,7 @@
 	</xsd:element>xsd:complexType>
 -->		
 	
+<!--  
 		<aon:div id="discapacidadPanel" rendered="#{contractContrata.params.disabilityData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
@@ -151,57 +151,59 @@
 	
 	
 		<aon:div id="contratoRelevoPanel" rendered="#{contractContrata.params.reliefData}">
+			<aon:panel style="width: 100%;">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.sepe_contrata_contract_contratoRelevo_data}" />
+				</f:facet>
 				<aon:panel style="width: 100%;">
 					<f:facet name="header">
-						<aon:outputText value="#{bundle.sepe_contrata_contract_contratoRelevo_data}" />
+						<aon:outputText value="#{bundle.sepe_contrata_contract_relief_employee_data}" />
 					</f:facet>
-					<aon:panel style="width: 100%;">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.sepe_contrata_contract_relief_employee_data}" />
-						</f:facet>
-						<aon:panelGrid columns="2" style="width: 100%;">
-							<aon:outputLabel for="reliefName" value="#{bundle.aon_name}" />
-							<aon:inputText id="reliefName"
-								required="#{transformContrata.params.reliefData}"
-								value="#{transformContrata.params.reliefPerson.name}" />
-							<aon:outputLabel for="reliefFirstSurname" value="#{bundle.payroll_mod145_perceptor10}" />
-							<aon:inputText id="reliefFirstSurname"
-								required="#{transformContrata.params.reliefData}"
-								value="#{transformContrata.params.reliefPerson.firstSurname}" />
-							<aon:outputLabel for="reliefSecondSurname" value="#{bundle.registry_person_secondSurname}" />
-							<aon:inputText id="reliefSecondSurname"
-								value="#{transformContrata.params.reliefPerson.secondSurname}" />
-						</aon:panelGrid>
-					</aon:panel>
+					<aon:panelGrid columns="2" style="width: 100%;">
+						<aon:outputLabel for="reliefName" value="#{bundle.aon_name}" />
+						<aon:inputText id="reliefName"
+							required="#{transformContrata.params.reliefData}"
+							value="#{transformContrata.params.reliefPerson.name}" />
+						<aon:outputLabel for="reliefFirstSurname" value="#{bundle.payroll_mod145_perceptor10}" />
+						<aon:inputText id="reliefFirstSurname"
+							required="#{transformContrata.params.reliefData}"
+							value="#{transformContrata.params.reliefPerson.firstSurname}" />
+						<aon:outputLabel for="reliefSecondSurname" value="#{bundle.registry_person_secondSurname}" />
+						<aon:inputText id="reliefSecondSurname"
+							value="#{transformContrata.params.reliefPerson.secondSurname}" />
+					</aon:panelGrid>
 				</aon:panel>
-			</aon:div>
-	
-	
-			<aon:outputLabel for="basicCopySignatureType" 
+			</aon:panel>
+		</aon:div>
+-->
+
+		<aon:panelGrid columns="2"
+			styleClass="aon-width-all"
+			columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even aon-width-auto">
+			
+			<aon:outputLabel for="basicCopySignatureType-transform" 
 				value="#{bundle.sepe_contrata_contract_basicCopySignatureType}" />
-			<aon:selectOneMenu id="basicCopySignatureType"
+			<aon:selectOneMenu id="basicCopySignatureType-transform"
 				required="true"
 				value="#{transformContrata.params.tipoFirmaCopiaBasica}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contrataCollections.TERFIRCBCodeList}" />
 			</aon:selectOneMenu>
 		
-			<aon:outputLabel for="basicCopyComments" 
+			<aon:outputLabel for="basicCopyComments-transform" 
 				value="#{bundle.sepe_contrata_contract_basicCopyComments}" />
-			<aon:inputTextarea id="basicCopyComments"
+			<aon:inputTextarea id="basicCopyComments-transform"
 				value="#{transformContrata.params.textoCopiaBasica}"
 				cols="120" rows="5"/>
 	
-	
-			<aon:outputLabel for="enterpriseFreeUse" 
+			<aon:outputLabel for="enterpriseFreeUse-transform" 
 				value="#{bundle.sepe_contrata_usoLibreEmpresa}" />
-			<aon:inputText id="enterpriseFreeUse"
+			<aon:inputText id="enterpriseFreeUse-transform"
 				value="#{transformContrata.params.usoLibreEmpresa}" maxlength="30" size="55" >
 				<f:validateLength maximum="30" />
 			</aon:inputText>
-		
-		
-		
+			
+		</aon:panelGrid>
 		
 	</aon:panel>
 		

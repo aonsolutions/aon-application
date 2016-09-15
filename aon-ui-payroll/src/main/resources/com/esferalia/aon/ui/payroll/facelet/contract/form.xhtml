@@ -151,6 +151,12 @@
 												
 												<br />
 												
+												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/form_otherData.xhtml" >
+													<ui:param name="controller" value="#{transformContrata}" />
+												</ui:include>
+												
+												<br />
+												
 												<aon:panelCollapsible expanded="false" label="Datos contrato inicial" ajaxSingle="#{true}">
 													<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formSepe.xhtml" />
 													<!--  
