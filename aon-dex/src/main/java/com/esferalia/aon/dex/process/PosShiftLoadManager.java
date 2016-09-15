@@ -160,7 +160,7 @@ public class PosShiftLoadManager extends CommonLoadManager implements IDataLoadC
 			double diff = CommonUtil.round(obtainFinanceAmount(finances) - obtainDetailAmount(details));
 			if (diff != 0) {
 				if (Math.abs(diff) == 0.01) {
-					for (int i=1; i<=25; i++) {
+					for (int i=1; i<=50; i++) {
 						InvoiceDetail invoiceDetail = details.get(details.size() - 1);
 						if (invoiceDetail.getDiscountExpression().getDiscounts()[0] == 0) {
 							invoiceDetail.setPrice(invoiceDetail.getPrice() + (diff / 100));
