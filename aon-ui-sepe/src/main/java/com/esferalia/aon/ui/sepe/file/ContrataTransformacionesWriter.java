@@ -303,10 +303,13 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @return
 	 */
 	private DATOSCOMUNICACOPIABASICATYPE createDatosComunicacionCopiaBasica(ContrataTransformacionesParams params) {
-		DATOSCOMUNICACOPIABASICATYPE datos = factory.createDATOSCOMUNICACOPIABASICATYPE();
-		datos.setDOMICCENTROTRABAJO(getContract().getWorkPlace().getAddress().getFullAddress());
-		datos.setTEXTOCOPIABASICA(params.getTextoCopiaBasica());
-		datos.setTIPOFIRMA(params.getTipoFirmaCopiaBasica()!=null?params.getTipoFirmaCopiaBasica().getCode():null);
+		DATOSCOMUNICACOPIABASICATYPE datos = null;
+		if(params.getTipoFirmaCopiaBasica()!=null){
+			datos = factory.createDATOSCOMUNICACOPIABASICATYPE();
+			datos.setDOMICCENTROTRABAJO(getContract().getWorkPlace().getAddress().getFullAddress());
+			datos.setTEXTOCOPIABASICA(params.getTextoCopiaBasica());
+			datos.setTIPOFIRMA(params.getTipoFirmaCopiaBasica()!=null?params.getTipoFirmaCopiaBasica().getCode():null);
+		}
 		return datos;
 	}
 	
