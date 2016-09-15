@@ -318,10 +318,16 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 					"Room as R " +
 				"WHERE PRRD.projectReservationRoom.id = " + reservationRoom.getId() +
 				" AND PRRD.assetActivity.id = AA.id" +
+				" AND AA.date BETWEEN :start AND :end" +
 				" AND AA.asset.id = R.asset.id";
 		Query query = session.createQuery(hqlQuery);
+		query.setDate("start", startDate);
+		query.setDate("end", endDate);
 		for (Object obj : query.list()) {
 			roomDetailItemIds.add((Item)obj);
+		}
+		if (!roomDetailItemIds.contains(reservationRoom.getItem())) {
+			roomDetailItemIds.add(reservationRoom.getItem());
 		}
 		return roomDetailItemIds;
 	}

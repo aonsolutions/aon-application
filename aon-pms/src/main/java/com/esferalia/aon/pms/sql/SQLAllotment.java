@@ -61,6 +61,7 @@ public class SQLAllotment implements ISQLConstants {
 	public static String SELECT_ALLOTMENT_RATE_BOOKING =
 			"SELECT B.stay_date AS " + STAY_DATE + ", COUNT(DISTINCT B.id) AS " + ROOMS +
 			" FROM booking AS B, project_reservation_room AS PRR" +
+			" LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room = PRR.id" +
 			" WHERE B.domain = ?" +
 			" AND B.hotel = ?" + 
 			" AND B.stay_date BETWEEN ? AND ?" +
@@ -68,8 +69,24 @@ public class SQLAllotment implements ISQLConstants {
 			" AND B.project_reservation_room = PRR.id" +
 			" AND PRR.allotment_rate_code = ?" +
 			" AND PRR.item = ?" +
+			" AND PRRD.id IS NULL" +
 			" GROUP BY B.stay_date" +
-			" UNION " +
+			" UNION ALL " +
+			" SELECT B.stay_date AS " + STAY_DATE + ", COUNT(DISTINCT B.id) AS " + ROOMS +
+			" FROM booking AS B, project_reservation_room AS PRR, project_reservation_room_detail AS PRRD, asset_activity AS AA, room AS R" +
+			" WHERE B.domain = ?" +
+			" AND B.hotel = ?" + 
+			" AND B.stay_date BETWEEN ? AND ?" +
+			" AND B.stay_type IN (0,2)" +
+			" AND B.project_reservation_room = PRR.id" +
+			" AND PRR.allotment_rate_code = ?" +
+			" AND PRRD.project_reservation_room = PRR.id" +
+			" AND AA.id = PRRD.asset_activity" +
+			" AND AA.date = B.stay_date" +
+			" AND R.asset = AA.asset" +
+			" AND R.item = ?" +
+			" GROUP BY B.stay_date" +
+			" UNION ALL " +
 			" SELECT AA.date AS " + STAY_DATE + ", COUNT(*) AS " + ROOMS +
 			" FROM asset_activity AS AA, room AS R" +
 			" WHERE R.domain = ?" +
@@ -197,9 +214,15 @@ public class SQLAllotment implements ISQLConstants {
 				SQLUtils.setInt(allotmentBookingStmt, 6, item.getId());
 				SQLUtils.setInt(allotmentBookingStmt, 7, DomainManager.getCurrentDomain());
 				SQLUtils.setInt(allotmentBookingStmt, 8, hotel.getId());
-				SQLUtils.setInt(allotmentBookingStmt, 9, item.getId());
-				SQLUtils.setDate(allotmentBookingStmt, 10, fromDate);
-				SQLUtils.setDate(allotmentBookingStmt, 11, toDate);
+				SQLUtils.setDate(allotmentBookingStmt, 9, fromDate);
+				SQLUtils.setDate(allotmentBookingStmt, 10, toDate);
+				SQLUtils.setString(allotmentBookingStmt, 11, rateCode);
+				SQLUtils.setInt(allotmentBookingStmt, 12, item.getId());
+				SQLUtils.setInt(allotmentBookingStmt, 13, DomainManager.getCurrentDomain());
+				SQLUtils.setInt(allotmentBookingStmt, 14, hotel.getId());
+				SQLUtils.setInt(allotmentBookingStmt, 15, item.getId());
+				SQLUtils.setDate(allotmentBookingStmt, 16, fromDate);
+				SQLUtils.setDate(allotmentBookingStmt, 17, toDate);
 				allotmentBookingRs = allotmentBookingStmt.executeQuery();
 				while (allotmentBookingRs.next()) {
 					Date stayDate = allotmentBookingRs.getDate(STAY_DATE);

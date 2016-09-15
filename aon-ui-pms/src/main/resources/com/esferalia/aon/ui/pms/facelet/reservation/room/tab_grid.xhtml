@@ -125,7 +125,7 @@
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
-					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-width-120, aon-noborder aon-width-auto">
+					<aon:panelGrid columns="1" columnClasses="aon-noborder aon-width-auto">
 						<aon:div>
 							<aon:outputLabel value="#{bundle.aon_date}:" styleClass="aon-margin-right"/>
 							<aon:outputText value="#{roomDetail.assetActivity.date}" styleClass="aon-italic">
@@ -133,19 +133,19 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 						</aon:div>
-						<aon:div rendered="#{roomDetail.room.item.id != roomDetail.projectReservationRoom.item.id}">
-							<aon:outputLabel value="#{bundle.aon_type}:" styleClass="aon-margin-right" />
-							<aon:outputText value="#{roomDetail.room.item.product.code} - #{roomDetail.room.item.product.name}" styleClass="aon-italic" />
-							<aon:outputText value="&#160;" />
-						</aon:div>
 					</aon:panelGrid>
 				</aon:column>
 
 				<aon:column colspan="#{(allotmentRateCode == null) ? '5' : '6'}" styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
-					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-width-130, aon-noborder aon-width-auto">
+					<aon:panelGrid columns="3" columnClasses="aon-noborder aon-width-130, aon-noborder aon-width-250, aon-noborder aon-width-auto">
 						<aon:div>
 							<aon:outputLabel value="#{bundle.pms_room}:" styleClass="aon-margin-right" />
 							<aon:outputText value="#{roomDetail.assetActivity.asset.name}" styleClass="aon-italic" />
+						</aon:div>
+						<aon:div rendered="#{roomDetail.room.item.id != roomDetail.projectReservationRoom.item.id}">
+							<aon:outputLabel value="#{bundle.aon_type}:" styleClass="aon-margin-right" />
+							<aon:outputText value="#{roomDetail.room.item.product.code} - #{roomDetail.room.item.product.name}" styleClass="aon-italic" />
+							<aon:outputText value="&#160;" />
 						</aon:div>
 						<aon:div rendered="#{roomDetail.room.hotel.id != reservation.to.hotel.id}">
 							<aon:outputLabel value="#{bundle.aon_module_hotel}:" styleClass="aon-margin-right" />
