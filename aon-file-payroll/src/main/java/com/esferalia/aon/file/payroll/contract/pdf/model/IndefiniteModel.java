@@ -610,7 +610,6 @@ public class IndefiniteModel extends AbstractContractModel {
 			} else if(modelOption == ModelOption.INDEFINITE_OPT17){
 				setPdfFieldValue(PdfFieldIndefinite.MAIN_OPT17_CHECK.getValue(),"true");
 				setPdfFieldValue(PdfFieldIndefinite.OPT17_OPTION_CHECK.getValue(),"true");
-				String subsidized = map.get(ContextVariable.SUBSIDIZED.getName());
 				if(code == ContractCode.C109 || code == ContractCode.C139 | code == ContractCode.C189){
 					if(code == ContractCode.C139){
 						setPdfFieldValue(PdfFieldIndefinite.OPT17_FULL_TIME.getValue(),"true");
@@ -621,11 +620,14 @@ public class IndefiniteModel extends AbstractContractModel {
 					} else if(code == ContractCode.C189){
 						setPdfFieldValue(PdfFieldIndefinite.OPT17_FULL_TIME.getValue(),"true");
 						setPdfFieldValue(PdfFieldIndefinite.OPT17_TC2_189.getValue(),"true");
-					} 
-					if( Boolean.parseBoolean(subsidized) ){
-						setPdfFieldValue(PdfFieldIndefinite.OPT17_FULL_TIME_QUOTE_BONUS_YES.getValue(),"true");
-					} else {
-						setPdfFieldValue(PdfFieldIndefinite.OPT17_FULL_TIME_QUOTE_BONUS_NO.getValue(),"true");
+					}
+					String key = getContractInfoMap(contract).get(PdfFieldIndefinite.OPT17_FULL_TIME_QUOTE_BONUS.toString());
+					if(StringUtils.isNotBlank(key)){
+						if(PdfFieldIndefinite.OPT17_FULL_TIME_QUOTE_BONUS_YES.toString().equals(key)){
+							setPdfFieldValue(PdfFieldIndefinite.OPT17_FULL_TIME_QUOTE_BONUS_YES.getValue(), "true");
+						} else if(PdfFieldIndefinite.OPT17_FULL_TIME_QUOTE_BONUS_NO.toString().equals(key)){
+							setPdfFieldValue(PdfFieldIndefinite.OPT17_FULL_TIME_QUOTE_BONUS_NO.getValue(), "true");
+						}
 					}
 				} else if(code == ContractCode.C209 || code == ContractCode.C239 || code == ContractCode.C289){
 					if(code == ContractCode.C239){
@@ -637,11 +639,14 @@ public class IndefiniteModel extends AbstractContractModel {
 					} else if(code == ContractCode.C289){
 						setPdfFieldValue(PdfFieldIndefinite.OPT17_PARTIALLY_TIME.getValue(),"true");
 						setPdfFieldValue(PdfFieldIndefinite.OPT17_TC2_289.getValue(),"true");
-					} 
-					if( Boolean.parseBoolean(subsidized) ){
-						setPdfFieldValue(PdfFieldIndefinite.OPT17_PARTIALLY_TIME_QUOTE_BONUS_YES.getValue(),"true");
-					} else {
-						setPdfFieldValue(PdfFieldIndefinite.OPT17_PARTIALLY_TIME_QUOTE_BONUS_NO.getValue(),"true");
+					}
+					String key = getContractInfoMap(contract).get(PdfFieldIndefinite.OPT17_PARTIALLY_TIME_QUOTE_BONUS.toString());
+					if(StringUtils.isNotBlank(key)){
+						if(PdfFieldIndefinite.OPT17_PARTIALLY_TIME_QUOTE_BONUS_YES.toString().equals(key)){
+							setPdfFieldValue(PdfFieldIndefinite.OPT17_PARTIALLY_TIME_QUOTE_BONUS_YES.getValue(), "true");
+						} else if(PdfFieldIndefinite.OPT17_PARTIALLY_TIME_QUOTE_BONUS_NO.toString().equals(key)){
+							setPdfFieldValue(PdfFieldIndefinite.OPT17_PARTIALLY_TIME_QUOTE_BONUS_NO.getValue(), "true");
+						}
 					}
 				} else if(code == ContractCode.C309 || code == ContractCode.C339 || code == ContractCode.C389){
 					if(code == ContractCode.C339){
@@ -654,10 +659,13 @@ public class IndefiniteModel extends AbstractContractModel {
 						setPdfFieldValue(PdfFieldIndefinite.OPT17_DISCONTINUOUS_TIME.getValue(),"true");
 						setPdfFieldValue(PdfFieldIndefinite.OPT17_TC2_389.getValue(),"true");
 					}
-					if( Boolean.parseBoolean(subsidized) ){
-						setPdfFieldValue(PdfFieldIndefinite.OPT17_DISCONTINUOUS_TIME_QUOTE_BONUS_YES.getValue(),"true");
-					} else {
-						setPdfFieldValue(PdfFieldIndefinite.OPT17_DISCONTINUOUS_TIME_QUOTE_BONUS_NO.getValue(),"true");
+					String key = getContractInfoMap(contract).get(PdfFieldIndefinite.OPT17_DISCONT_TIME_QUOTE_BONUS.toString());
+					if(StringUtils.isNotBlank(key)){
+						if(PdfFieldIndefinite.OPT17_DISCONT_TIME_QUOTE_BONUS_YES.toString().equals(key)){
+							setPdfFieldValue(PdfFieldIndefinite.OPT17_DISCONT_TIME_QUOTE_BONUS_YES.getValue(), "true");
+						} else if(PdfFieldIndefinite.OPT17_DISCONT_TIME_QUOTE_BONUS_NO.toString().equals(key)){
+							setPdfFieldValue(PdfFieldIndefinite.OPT17_DISCONT_TIME_QUOTE_BONUS_NO.getValue(), "true");
+						}
 					}
 				}
 				
