@@ -23,6 +23,7 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.contrata.TEJINDIS;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.file.ContrataReader;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
@@ -106,6 +107,20 @@ public class ContrataTransformacionesHandler implements IContrataHandler, Serial
 			// do nothing ...
 		}
 		return null;
+	}
+	
+	public Boolean getShowDatosBonificacionPanel(){
+		// TODO: create data input panel in view
+		return getContractCode()==ContractCode.C109 || getContractCode()==ContractCode.C139
+				|| getContractCode()==ContractCode.C209 || getContractCode()==ContractCode.C239
+				|| getContractCode()==ContractCode.C309 || getContractCode()==ContractCode.C339;
+	}
+
+	// //////////////////////////////////////
+	// checks datos especificos contrato
+	// //////////////////////////////////////
+	public Boolean getShowColectivoBonificacion() {
+		return true;
 	}
 		
 }

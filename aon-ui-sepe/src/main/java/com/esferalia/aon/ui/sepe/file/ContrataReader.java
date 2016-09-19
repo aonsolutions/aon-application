@@ -1191,12 +1191,17 @@ public class ContrataReader {
 	
 	private void completeDatosBonificacion(
 			com.esferalia.aon.sepe.api.contrata.transformaciones.DATOSBONIFICACIONTYPE datosbonificacion, ContrataTransformacionesParams params) {
-		// TODO 
-		
-		if(datosbonificacion != null){
+		params.setDatosBonificacionData(false);
+		if(datosbonificacion != null
+			&& (datosbonificacion.getACOGIDOMATERNIDADEXCEDENCIA() != null
+			|| datosbonificacion.getCOLECTIVODISCAPACITADOS() != null
+			|| datosbonificacion.getCODIGOCOLECTIVOBONIF() != null)){
+			params.setDatosBonificacionData(true);
+			// TODO 
 //			datosbonificacion.getACOGIDOMATERNIDADEXCEDENCIA()
-//			datosbonificacion.getCODIGOCOLECTIVOBONIF()
+			// TODO 
 //			datosbonificacion.getCOLECTIVODISCAPACITADOS()
+			params.setColectivoBonificacion(TELCOLBO.getEnumByValue(datosbonificacion.getCODIGOCOLECTIVOBONIF()));
 		}
 	}
 
