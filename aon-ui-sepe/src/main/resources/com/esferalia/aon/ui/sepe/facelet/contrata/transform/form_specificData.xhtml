@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<aon:div id="specificOptionsDiv-transform">
+
+		<aon:panel style="width: 100%;" id="specificOptionsPanel-transform">
+	
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.sepe_contrata_contract_specific_data}" />
+			</f:facet>
+			
+			<aon:panelGrid columns="6" style="width: 100%;">
+				
+				<aon:selectBooleanCheckbox id="datosBonificacion-transform" rendered="#{transformContrata.handler.showDatosBonificacionPanel}"
+					value="#{transformContrata.params.datosBonificacionData}">
+					<a4j:support event="onclick" ajaxSingle="true"
+						reRender="specificOptionsDiv-transform"/>
+				</aon:selectBooleanCheckbox>
+				<aon:outputLabel for="datosBonificacionPanel-transform" rendered="#{transformContrata.handler.showDatosBonificacionPanel}"
+					value="#{bundle.sepe_contrata_transform_datosBonificacionPanel_data}" />
+									
+			</aon:panelGrid>
+		</aon:panel>	
+	
+				
+		<aon:div id="datosBonificacionPanel-transform" rendered="#{transformContrata.params.datosBonificacionData}">
+			<aon:panel style="width: 100%;">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.sepe_contrata_transform_datosBonificacionPanel_data}" />
+				</f:facet>
+				<!--
+				TODO: ACOGIDO_MATERNIDAD_EXCEDENCIA
+				-->
+				<!--
+				TODO: COLECTIVO_DISCAPACITADOS
+				-->
+				<aon:if test="#{transformContrata.handler.showColectivoBonificacion}">
+					<aon:panel style="width: 100%;">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.sepe_contrata_contract_bonus}" />
+						</f:facet>
+						<aon:panelGrid columns="2" style="width: 100%;">
+								<aon:outputLabel for="bonus_collective-transform"
+									value="#{bundle.sepe_contrata_contract_bonus_collective}" />
+								<aon:selectOneMenu id="bonus_collective-transform"
+									value="#{transformContrata.params.colectivoBonificacion}" >
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{contrataCollections.TELCOLBOCodeList}" />
+								</aon:selectOneMenu>
+						</aon:panelGrid>
+					</aon:panel>
+				</aon:if>
+			</aon:panel>
+		</aon:div>
+		
+	</aon:div>
+		
+</ui:composition>

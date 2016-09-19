@@ -117,7 +117,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 		type.setDATOSCONTRATO(createDatosContrato(params));
 		type.setDATOSGENERALESTRANSFORMACION(createDatosGeneralesTransformacion(params));
 		type.setDATOSMEDIDASFOMENTO(createDatosMedidasFomento(params));
-		type.setDATOSBONIFICACION(createDatosBonificacion(null));
+		type.setDATOSBONIFICACION(createDatosBonificacion(params));
 		type.setDATOSADICIONALESTRANSFORMACION(createDatosAdicionalesTransformacion(params));
 		type.setDATOSANEXOCONTRATORELEVO(createDatosAnexoContratoRelevo(params));
 		type.setDATOSCOMUNICACOPIABASICA(createDatosComunicacionCopiaBasica(params));
@@ -448,7 +448,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @return
 	 */
 	private DATOSUSOLIBREEMPRESATYPE createDatosUsoLibreEmpresa(ContrataTransformacionesParams params) {
-		if(params.getUsoLibreEmpresa()!=null){
+		if(StringUtils.isNotBlank(params.getUsoLibreEmpresa())){
 			DATOSUSOLIBREEMPRESATYPE datos = factory.createDATOSUSOLIBREEMPRESATYPE();
 			datos.setUSOLIBREEMPRESA(params.getUsoLibreEmpresa());
 			return datos;
@@ -704,11 +704,14 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 */
 	private DATOSBONIFICACIONTYPE createDatosBonificacion(ContrataTransformacionesParams params) {
 		DATOSBONIFICACIONTYPE datos = null;
-		// TODO createDatosBonificacion
-		if(false){
+		if(params.isDatosBonificacionData()){
 			datos = factory.createDATOSBONIFICACIONTYPE();
-			datos.setCODIGOCOLECTIVOBONIF("00");
+			if(params.getColectivoBonificacion()!=null){
+				datos.setCODIGOCOLECTIVOBONIF(params.getColectivoBonificacion().getCode());
+			}
+			// TODO setACOGIDOMATERNIDADEXCEDENCIA
 			datos.setACOGIDOMATERNIDADEXCEDENCIA(null);
+			// TODO setCOLECTIVODISCAPACITADOS
 			datos.setCOLECTIVODISCAPACITADOS(null);
 		}
 		return datos;

@@ -592,7 +592,7 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 	
 	public FICHEROTRANSFORMACIONES obtainFicheroTrasformaciones(byte[] data) throws IOException, JAXBException, SAXException, ParserConfigurationException {
 		ContrataResponseReader reader = new ContrataResponseReader();
-		reader.readContratoFile(new ByteArrayInputStream(data));
+		reader.readTrasformacionFile(new ByteArrayInputStream(data));
 		return reader.getFicheroTransformaciones();
 	}
 
