@@ -149,6 +149,7 @@
 		<module>aon-ui-sepe</module>
 
 		<!-- GWT MODULES -->
+		<module>aon-gwt-aio</module>
 		<module>aon-gwt-common</module>
 		<module>aon-gwt-viewer</module>
 		<module>aon-gwt-visualization</module>

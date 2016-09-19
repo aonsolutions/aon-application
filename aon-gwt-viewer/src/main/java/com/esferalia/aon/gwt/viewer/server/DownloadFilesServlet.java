@@ -19,7 +19,8 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 @WebServlet(name = "DownloadViewer", urlPatterns = { 
-		"/aon_gwt_document/gwt_download_viewer/*" 
+		"/aon_gwt_aio/gwt_download_viewer/*"
+		,"/aon_gwt_document/gwt_download_viewer/*" 
 		,"/aon_gwt_deposit/gwt_download_viewer/*" 
 		,"/aon_gwt_fiscal/gwt_download_viewer/*" })
 public class DownloadFilesServlet extends HttpServlet {

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.issues.client;
 
+import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -24,8 +25,10 @@ public class ConfigurationPanel extends Composite {
     private static final String ONE = "1";
     private static final String TWO = "2";
     
-    public ConfigurationPanel() {
-        initWidget(binder.createAndBindUi(this));
+    Incidence incidence;
+    public ConfigurationPanel(Incidence incidence) {
+    	this.incidence = incidence;
+    	initWidget(binder.createAndBindUi(this));
         tabs.setSelected("0");
         tabs.addIronSelectHandler(new IronSelectEventHandler() {
 			
@@ -37,7 +40,7 @@ public class ConfigurationPanel extends Composite {
 						for(Integer i = 0; i < tabContent.getWidgetCount(); i++)
 							tabContent.remove(i);
 					}
-					tabContent.add(new TagPanel());
+					tabContent.add(new TagPanel(incidence));
 				} else if(tabs.getSelected().equals(ONE)
 					|| tabs.getSelected() == ONE){
 					

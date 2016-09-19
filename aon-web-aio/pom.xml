@@ -284,6 +284,13 @@
 		<version>${project.version}</version>
 		<scope>runtime</scope>
 	</dependency>
+	
+	 <dependency>
+		<groupId>com.esferalia.aon</groupId>
+		<artifactId>aon.gwt.aio</artifactId>
+		<version>${project.version}</version>
+		<scope>runtime</scope>
+	</dependency>
  
     <dependency>
       <groupId>com.code.aon</groupId>

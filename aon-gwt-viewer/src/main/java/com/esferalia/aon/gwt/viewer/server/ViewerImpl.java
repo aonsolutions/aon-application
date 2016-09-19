@@ -54,7 +54,8 @@ import com.sun.pdfview.PDFPage;
  */
 @SuppressWarnings("serial")
 @WebServlet(name = "Viewer Servlet", urlPatterns = {
-		"/aon_gwt_document/Viewer"
+		"/aon_gwt_aio/Viewer"
+		,"/aon_gwt_document/Viewer"
 		, "/aon_gwt_deposit/Viewer"
 		, "/aon_gwt_fiscal/Viewer"
 		, "/aon_gwt_template/Viewer"})

@@ -8,8 +8,6 @@ import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
 import com.esferalia.aon.gwt.issues.shared.AonData;
 import com.google.gwt.core.client.EntryPoint;
@@ -26,7 +24,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
-import com.vaadin.polymer.iron.IronListElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 
 public class Issues implements EntryPoint {
@@ -72,8 +69,8 @@ public class Issues implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList(
-				IronIconsElement.SRC,
-				IronListElement.SRC));
+				IronIconsElement.SRC
+				));
 		
 		Polymer.whenReady(o -> {
 			startApplication();
@@ -82,11 +79,8 @@ public class Issues implements EntryPoint {
 	}
 	
 	private void startApplication() {
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css().ensureInjected();
 		
-
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
@@ -178,7 +172,7 @@ public class Issues implements EntryPoint {
 			protected void onMenuButtonClick() {
 				// TODO
 				if(dockLayoutPanel.getWidgetSize(configurationPanel) == 0){
-					configurationPanel.add(new ConfigurationPanel());
+					configurationPanel.add(new ConfigurationPanel(incidence));
 					dockLayoutPanel.setWidgetSize(configurationPanel, 350);
 				}
 				else {

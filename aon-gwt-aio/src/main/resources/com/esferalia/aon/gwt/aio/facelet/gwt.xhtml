@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+
+	<meta name="gwt:property" content="locale=es_ES" />
+
+	<meta name="viewport"
+       content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+
+	<aon:valueParam name="entryPoint" default="documents" />
+	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
+	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
+
+	<aon:if test="#{gwt.entryPoint != entryPoint }">
+		<aon:form id="entryPointForm" style="display:none">
+			<aon:inputText id="gwtEntryPointText" value="#{gwt.entryPoint}" />
+			<aon:commandButton id="gwtEntryPointButton" reRender="entryPointForm" />
+			<script type="text/javascript">
+           	//<![CDATA[
+				#{rich:element('gwtEntryPointText')}.value = '#{entryPoint}';	
+				#{rich:element('gwtEntryPointButton')}.click();	
+           	//]]>
+			</script>
+		</aon:form>
+	</aon:if>
+
+	<style>
+	body {
+		margin: 0;
+	}
+	</style>
+
+	<ui:include
+		src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
+
+	<ui:include src="/facelet/homepage/menu.xhtml" />
+
+
+	<script type="text/javascript">
+        <![CDATA[
+        var search = "/#{module}.nocache.js";
+        var scripts = document.getElementsByTagName("script");
+        for (var i = 0; i < scripts.length; ++i) {
+                var script = scripts[i];
+                if (script.src != null && script.src.indexOf(search) != -1) {
+                        var parent = script.parentNode;
+                        parent.removeChild(script);
+                        break;
+                }
+        }
+        
+        function getCurrentDomain() {
+        	return #{gwtDomain};
+        }
+        function getCurrentDomainName() {
+        	return "#{gwtDomainName}"
+        }
+        ]]>
+    </script>
+
+    <script src="#{module}/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+	<script type="text/javascript"
+		src="#{module}/#{module}.nocache.js?entryPoint=#{entryPoint}" />
+
+	<div id="rootPanel"
+		style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0;">
+	</div>
+
+
+
+
+	<script type="text/javascript">
+		//<![CDATA[ 
+				#{module}.onInjectionDone('#{module}');
+		//]]>
+	</script>
+</ui:composition>

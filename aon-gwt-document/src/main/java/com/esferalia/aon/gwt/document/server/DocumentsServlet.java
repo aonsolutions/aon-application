@@ -909,7 +909,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		} else{
 			fileInfo = setmd5(domain, fileInfo);
 			String md5 =fileInfo.getMd5();
-			if(l.contains("aon_gwt_document")){
+			if(l.contains("aon_gwt_document") || l.contains("aon_gwt_aio")){
 				Integer pos = l.lastIndexOf("/");
 				Integer pos2 = l.substring(0, pos).lastIndexOf("/");
 				l = l.substring(0,pos2);
@@ -988,7 +988,7 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 		else{
 			doc = setmd5(domain, doc);
 			String md5 =doc.getMd5();
-			if(l.contains("aon_gwt_document")){
+			if(l.contains("aon_gwt_document") || l.contains("aon_gwt_aio")){
 				Integer pos = l.lastIndexOf("/");
 				Integer pos2 = l.substring(0, pos).lastIndexOf("/");
 				l = l.substring(0,pos2);

@@ -12,65 +12,23 @@
 	<description>AON GWT ISSUES</description>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>gwt-maven-plugin</artifactId>
-				<version>2.8.0-beta1</version>
-				<configuration>
-					<skipTests>true</skipTests>
-					<includes>**/GWT*.java</includes>
-					<deploy>${project.build.directory}/extra</deploy>
-					<extra>${project.build.directory}/extra</extra>
-					<module>com.esferalia.aon.gwt.issues.Issues</module>
-					<webappDirectory>${project.build.outputDirectory}</webappDirectory>
-					<compileSourcesArtifacts>
-						<compileSourcesArtifact>com.esferalia.aon:aon.gwt.common</compileSourcesArtifact>
-						<compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
-						<compileSourcesArtifact>com.esferalia.aon:aon.gwt.api</compileSourcesArtifact>
-					</compileSourcesArtifacts>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>test</goal>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.google.code.maven-replacer-plugin</groupId>
-				<artifactId>replacer</artifactId>
-				<version>1.5.3</version>
-				<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>replace</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<basedir>${project.basedir}/target/classes</basedir>
-					<includes>
-						<include>**/gwt/clean/clean.css</include>
-					</includes>
-					<regexFlags>
-						<regexFlag>MULTILINE</regexFlag>
-						<regexFlag>CASE_INSENSITIVE</regexFlag>
-					</regexFlags>
-					<replacements>
-						<replacement>
-							<token>^([a-z: \t,]*)\{$</token>
-							<value>/** $1 */
-								.disabled-by-aon {</value>
-						</replacement>
-					</replacements>
-				</configuration>
-			</plugin>
-		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/client/**</include>
+					<include>**/shared/**</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/client/**</include>
+					<include>**/facelet/**</include>
+					<include>**/*.gwt.xml</include>
+				</includes>
+			</resource>
+		</resources>
 	</build>
 
 	<dependencies>
@@ -90,13 +48,6 @@
 			<classifier>sources</classifier>
 		</dependency>
 		
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.oauth2</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-		</dependency>
-	
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.occam</artifactId>
@@ -139,6 +90,13 @@
 			<version>2.8.0-beta1</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-dev</artifactId>
+			<version>2.8.0-beta1</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -156,27 +114,4 @@
 		</dependency>
 		
 	</dependencies>
-	<profiles>
-		<profile>
-			<id>dev</id>
-			<activation>
-				<property>
-					<name>gwt.working</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>gwt-maven-plugin</artifactId>
-						<configuration>
-							<draftCompile>true</draftCompile>
-							<module>com.esferalia.aon.gwt.issues.WorkingIssues</module>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>

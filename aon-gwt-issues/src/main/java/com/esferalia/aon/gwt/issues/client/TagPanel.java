@@ -3,31 +3,26 @@ package com.esferalia.aon.gwt.issues.client;
 import com.esferalia.aon.gwt.api.client.AonUrlApi;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
-import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
-import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.vaadin.polymer.iron.widget.IronCollapse;
 import com.vaadin.polymer.iron.widget.IronSelector;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
+import com.vaadin.polymer.paper.widget.PaperItem;
 
 public class TagPanel extends Composite {
 	
@@ -54,11 +49,7 @@ public class TagPanel extends Composite {
     @UiField IronSelector prioritySelector;
     @UiField IronSelector typeSelector;
     @UiField IronSelector tagSelector;
-    
-    @UiField PaperIconButton priorityButton;
-    @UiField PaperIconButton typeButton;
-    @UiField PaperIconButton tagButton;
-    
+        
     private static Binder binder = GWT.create(Binder.class);
     
     public static native String getCurrentDomainName()
@@ -71,51 +62,156 @@ public class TagPanel extends Composite {
 		return $wnd.getCurrentDomain();
 	}-*/; 
 	
-    public TagPanel() {
-       initWidget(binder.createAndBindUi(this));
-        	
-       heading1.addClickHandler(new ClickHandler() {
-		
-    	   @Override
-    	   public void onClick(ClickEvent event) {
-    		   collapse1.toggle();
-    	   }
-       });
-       
-       heading2.addClickHandler(new ClickHandler() {
-   		
-    	   @Override
-    	   public void onClick(ClickEvent event) {
-    		   collapse2.toggle();
-    	   }
-       });
-       
-       heading3.addClickHandler(new ClickHandler() {
-      		
-    	   @Override
-    	   public void onClick(ClickEvent event) {
-    		   collapse3.toggle();
-    	   }
-       });
-      // getTagList();
+	Incidence incidence;
+	
+    public TagPanel(Incidence incidence) {
+    	this.incidence = incidence;
+    	initWidget(binder.createAndBindUi(this));
+    	
+        createPriority();
+        createType();
+        createTag();
     }
     
-    @UiHandler("typeButton")
-	void onClicktypeButton(ClickEvent event){		
+    private void createPriority() {
+        incidence.getPriorities(new AsyncCallback<JSON<JsLabel>>() {
+
+			@Override
+			public void onSuccess(JSON<JsLabel> result) {
+				for(JsLabel label : result.getData().toLinkedList()){
+					PaperItem item = new PaperItem();
+					item.add(new Label(label.getName()));
+					item.setStyle("min-height: 30px;");	
+					prioritySelector.add(item);
+				}				
+				PaperIconButton pib = new PaperIconButton();
+				pib.setIcon("add");
+				pib.setStyle("min-height: 30px;");
+				pib.getElement().getStyle().setLeft(300, Unit.PX);
+				pib.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						onClickPriorityButton(event);
+					}
+				});
+				prioritySelector.add(pib);
+
+				heading1.addClickHandler(new ClickHandler() {
+			   	
+					@Override
+			    	public void onClick(ClickEvent event) {
+			    		collapse1.toggle();
+			    	}
+				});
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+    
+    private void createType() {
+        incidence.getTypes(new AsyncCallback<JSON<JsLabel>>() {
+
+			@Override
+			public void onSuccess(JSON<JsLabel> result) {
+				for(JsLabel label : result.getData().toLinkedList()){
+					PaperItem item = new PaperItem();
+					item.add(new Label(label.getName()));
+					item.setStyle("min-height: 30px;");	
+					typeSelector.add(item);
+				}			
+				PaperIconButton pib = new PaperIconButton();
+				pib.setIcon("add");
+				pib.setStyle("min-height: 30px;");
+				pib.getElement().getStyle().setLeft(300, Unit.PX);
+				pib.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						onClickTypeButton(event);
+					}
+				});
+				typeSelector.add(pib);
+				
+				heading2.addClickHandler(new ClickHandler() {
+				   		
+			    	   @Override
+			    	   public void onClick(ClickEvent event) {
+			    		   collapse2.toggle();
+			    	   }
+			    });
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+   
+    private void createTag() {
+    	 incidence.getLabels(new AsyncCallback<JSON<JsLabel>>() {
+
+ 			@Override
+ 			public void onSuccess(JSON<JsLabel> result) {
+ 				for(JsLabel label : result.getData().toLinkedList()){
+ 					PaperItem item = new PaperItem();
+ 					item.add(new Label(label.getName()));
+ 					item.setStyle("min-height: 30px;");	
+ 					tagSelector.add(item);
+ 				}			
+ 				PaperIconButton pib = new PaperIconButton();
+ 				pib.setIcon("add");
+ 				pib.setStyle("min-height: 30px;");
+ 				pib.getElement().getStyle().setLeft(300, Unit.PX);
+ 				pib.addClickHandler(new ClickHandler() {
+ 					
+ 					@Override
+ 					public void onClick(ClickEvent event) {
+ 						onClickTagButton(event);
+ 					}
+ 				});
+ 				tagSelector.add(pib);
+ 				
+ 				heading3.addClickHandler(new ClickHandler() {
+ 				   		
+ 			    	   @Override
+ 			    	   public void onClick(ClickEvent event) {
+ 			    		   collapse3.toggle();
+ 			    	   }
+ 			    });
+ 			}
+ 			
+ 			@Override
+ 			public void onFailure(Throwable caught) {}
+ 		});
+	}
+    
+	void onClickTypeButton(ClickEvent event){		
 		PaperInput pi = new PaperInput();
 		pi.setLabel("Tipo");
 		AonDialog dialog =  new AonDialog("Nuevo Tipo",pi){
 			@Override protected void onCancel() {}
 			@Override protected void onAccept() {
 				PaperInput pi = (PaperInput) content.getWidget(0);
-				// TODO TRATARLO!
+				incidence.createType("{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+					
+					@Override
+					public void onSuccess(JsLabel result) {
+						typeSelector.removeFromParent();
+						typeSelector = new IronSelector();
+						collapse2.add(typeSelector);
+						createType();
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});		
 			}
 		};
 		panel.add(dialog);
 		dialog.open();	
 	}
     
-    @UiHandler("priorityButton")
 	void onClickPriorityButton(ClickEvent event){		
 		PaperInput pi = new PaperInput();
 		pi.setLabel("Prioridad");
@@ -123,14 +219,24 @@ public class TagPanel extends Composite {
 			@Override protected void onCancel() {}
 			@Override protected void onAccept() {
 				PaperInput pi = (PaperInput) content.getWidget(0);
-				// TODO TRATARLO!
+				incidence.createPriority("{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+					
+					@Override
+					public void onSuccess(JsLabel result) {
+						prioritySelector.removeFromParent();
+						prioritySelector = new IronSelector();
+						collapse1.add(prioritySelector);
+						createPriority();
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});			
 			}
 		};
 		panel.add(dialog);
 		dialog.open();	
 	}
     
-    @UiHandler("tagButton")
 	void onClickTagButton(ClickEvent event){	
 		PaperInput pi = new PaperInput();
 		pi.setLabel("Etiqueta");
@@ -138,6 +244,18 @@ public class TagPanel extends Composite {
 			@Override protected void onCancel() {}
 			@Override protected void onAccept() {
 				PaperInput pi = (PaperInput) content.getWidget(0);
+				incidence.createLabel("{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+					
+					@Override
+					public void onSuccess(JsLabel result) {
+						tagSelector.removeFromParent();
+						tagSelector = new IronSelector();
+						collapse3.add(tagSelector);
+						createTag();					
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
 				// TODO TRATARLO!
 			}
 		};
@@ -145,6 +263,18 @@ public class TagPanel extends Composite {
 		dialog.open();
 	}
     
+	void onClickRemovePriorityButton(ClickEvent event) {
+		
+	}
+	
+	void onClickRemoveTypeButton(ClickEvent event) {
+		
+	}
+	
+	void onClickRemoveTagButton(ClickEvent event) {
+		
+	}
+	
     protected void getTagList() {
 		//Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);
 		String str = USER_NAME + getCurrentDomainName();

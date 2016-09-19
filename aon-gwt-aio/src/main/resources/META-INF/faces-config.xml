@@ -7,10 +7,17 @@
 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>gwt_documentsianos</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/document/facelet/documents.xhtml</to-view-id>
+			<from-outcome>gwt_documents</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/documents.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_issues</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/aio/facelet/issues.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 </faces-config>
 		

@@ -5,7 +5,7 @@
 	<!-- =================== Notice ================ -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>gwt_issues</from-outcome>
+			<from-outcome>gwt_issuesianos</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/issues/facelet/gwt.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>

@@ -30,7 +30,8 @@ import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @WebServlet(name = "PrintFiles", urlPatterns = {
-		"/aon_gwt_document/gwt_print/*"
+		"/aon_gwt_aio/gwt_print/*"
+		,"/aon_gwt_document/gwt_print/*"
 		, "/aon_gwt_deposit/gwt_print/*"
 		, "/aon_gwt_fiscal/gwt_print/*"})
 public class PdfPrintServlet extends HttpServlet{

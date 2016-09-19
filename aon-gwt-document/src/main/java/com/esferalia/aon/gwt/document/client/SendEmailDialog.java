@@ -195,7 +195,7 @@ public abstract class SendEmailDialog extends CustomDialogB  {
 		MultiUploader mupload = new MultiUploader();
 		
 		mupload.setAutoSubmit(true);
-        mupload.setServletPath( url + "/gwt_multiple_upload");
+        mupload.setServletPath( url + "/gwt_document_multiple_upload");
         
         mupload.setMaximumFiles(5);
 

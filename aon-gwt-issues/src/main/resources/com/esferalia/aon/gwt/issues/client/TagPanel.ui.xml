@@ -35,34 +35,22 @@
 		<g:Button ui:field="heading1" addStyleNames="{style.heading}">Prioridad</g:Button>
 		<i:IronCollapse ui:field="collapse1">
 			<i:IronSelector ui:field="prioritySelector" multi="true">
-            	<p:PaperItem style="min-height: 30px !important;">Inbox</p:PaperItem>
-            	<p:PaperItem style="min-height: 30px !important;">Starred</p:PaperItem>
-        	    <p:PaperItem style="min-height: 30px !important;">Sent mail</p:PaperItem>
-    	        <p:PaperItem style="min-height: 30px !important;">Drafts</p:PaperItem>
-    	        <p:PaperIconButton ui:field="priorityButton" icon="add" style="left:300px;min-height: 30px !important;"></p:PaperIconButton>
-	        </i:IronSelector>
+        
+            </i:IronSelector>
         </i:IronCollapse>
         
         <g:Button ui:field="heading2" addStyleNames="{style.heading}">Tipo</g:Button>
 		<i:IronCollapse ui:field="collapse2">
 			<i:IronSelector ui:field="typeSelector" multi="true">
-            	<p:PaperItem style="min-height: 30px !important;">Inbox</p:PaperItem>
-            	<p:PaperItem style="min-height: 30px !important;">Starred</p:PaperItem>
-        	    <p:PaperItem style="min-height: 30px !important;">Sent mail</p:PaperItem>
-    	        <p:PaperItem style="min-height: 30px !important;">Drafts</p:PaperItem>
-    	        <p:PaperIconButton ui:field="typeButton"  icon="add" style="left:300px;min-height: 30px !important;"></p:PaperIconButton>
-	        </i:IronSelector>
+           
+            </i:IronSelector>
         </i:IronCollapse>
         
         <g:Button ui:field="heading3" addStyleNames="{style.heading}">Etiquetas</g:Button>
 		<i:IronCollapse ui:field="collapse3">
 			<i:IronSelector ui:field="tagSelector" multi="true">
-            	<p:PaperItem style="min-height: 30px !important;">Inbox</p:PaperItem>
-            	<p:PaperItem style="min-height: 30px !important;">Starred</p:PaperItem>
-        	    <p:PaperItem style="min-height: 30px !important;">Sent mail</p:PaperItem>
-    	        <p:PaperItem style="min-height: 30px !important;">Drafts</p:PaperItem>
-    	        <p:PaperIconButton ui:field="tagButton" icon="add" style="left:300px;min-height: 30px !important;"></p:PaperIconButton>
-	        </i:IronSelector>
+            	
+            </i:IronSelector>
         </i:IronCollapse>
         
         </g:HTMLPanel>

@@ -241,7 +241,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
         MultiUploader mupload = new MultiUploader();
 		mupload.setFileInputPrefix(getWindowCode());
 		mupload.setAutoSubmit(true);
-        mupload.setServletPath( dialog.getBaseUrl() + "/gwt_multiple_upload");
+        mupload.setServletPath( dialog.getBaseUrl() + "/gwt_document_multiple_upload");
         mupload.setMaximumFiles(5);
         mupload.setTitle("multipleUploadFormElement");
 		mupload.addOnFinishUploadHandler(new OnFinishUploaderHandler() {
@@ -1614,10 +1614,10 @@ public abstract class DocumentsDialog extends CustomDialogB {
        		 upload = up;
        	}
        	upload.setAutoSubmit(true);
-        upload.setServletPath(url + "/gwt_upload");
+        upload.setServletPath(url + "/gwt_document_upload");
         
         upload.getForm().getWidget().getElement().getChild(1).removeFromParent();
-        upload.getForm().setAction(url + "/gwt_upload");
+        upload.getForm().setAction(url + "/gwt_document_upload");
         upload.getForm().setEncoding(FormPanel.ENCODING_MULTIPART);
         upload.getForm().setMethod(FormPanel.METHOD_POST);
         upload.setTitle("uploadFormElement");

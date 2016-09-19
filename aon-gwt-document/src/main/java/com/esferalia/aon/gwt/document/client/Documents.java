@@ -12,8 +12,6 @@ import java.util.Vector;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.css.AonResources;
-import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.document.client.css.AonGwtDocumentResources;
 import com.esferalia.aon.gwt.document.shared.Category;
 import com.esferalia.aon.gwt.document.shared.CategoryList;
@@ -749,11 +747,9 @@ public class Documents extends Composite implements EntryPoint {
 				return null;
 			}
 		});
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
+	
 		GWT.<AonGwtDocumentResources> create(AonGwtDocumentResources.class).css().ensureInjected();
 		boolean silent = Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT));
-		
 		if ( ! silent ){
 			JsFileInfo.addOnBeforeUnloadHandler(this);
 			
@@ -989,7 +985,6 @@ public class Documents extends Composite implements EntryPoint {
 		showMorePager = new ShowMorePager((CustomDataGrid<FileInfo>) dataGrid);
 	
 		// Inject rich styles.
-	
 		Widget ui = binder.createAndBindUi(this);
 		
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
@@ -1006,7 +1001,6 @@ public class Documents extends Composite implements EntryPoint {
 			
 		}, MouseOverEvent.getType());
 		root.add(ui);
-		
 		allFilesPaper.addClickHandler(new ClickHandler() {
 			@Override public void onClick(ClickEvent event) {
 				allFilesClickAction();
@@ -2166,7 +2160,7 @@ public class Documents extends Composite implements EntryPoint {
             	MultiUploader mupload = new MultiUploader();
         		num = 0;
         		mupload.setAutoSubmit(true);
-                mupload.setServletPath( url + "/gwt_multiple_upload");
+                mupload.setServletPath( url + "/gwt_document_multiple_upload");
                 
                 mupload.setMaximumFiles(5);
                 mupload.setFileInputPrefix(getWindowCode());
@@ -2773,7 +2767,7 @@ public class Documents extends Composite implements EntryPoint {
 		if(!object.getIsGdocs()){
 			String driveId="";
 			if(object.getDriveId()!=null)driveId= object.getDriveId();
-			String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_download/"
+			String fileDownloadURL = GWT.getModuleBaseURL()+ "/gwt_document_download/"
                 	+ "?file_id=" + Integer.toString(object.getFileId())
                 	+ "&drive_id=" +URL.encode(driveId)
                 	+ "&mimetype=" +object.getMimetype()

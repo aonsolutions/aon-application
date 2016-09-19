@@ -246,21 +246,33 @@ public class ReposServlet extends HttpServlet{
 					if(pathInfo.length > 4){
 						// UPDATE LABEL
 					} else {
-						// NEW LABEL
+						json.getString("name");
+						Tag tag = new Tag().setName(json.getString("name"))
+								.setDomain(domain.getId()).setType(TagType.TASK_LABEL.value());
+						Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);
+						object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
 					}
 					break;
 				case "types":
 					if(pathInfo.length > 4){
 						// UPDATE TYPE
 					} else {
-						// NEW TYPE
+						json.getString("name");
+						Tag tag = new Tag().setName(json.getString("name"))
+								.setDomain(domain.getId()).setType(TagType.TASK_TYPE.value());
+						Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);
+						object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
 					}
 					break;
 				case "priorities":
 					if(pathInfo.length > 4){
 						// UPDATE PRIORITY
 					} else {
-						// NEW PRIORITY
+						json.getString("name");
+						Tag tag = new Tag().setName(json.getString("name"))
+								.setDomain(domain.getId()).setType(TagType.TASK_PRIORITY.value());
+						Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);
+						object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
 					}
 					break;
 				default:
