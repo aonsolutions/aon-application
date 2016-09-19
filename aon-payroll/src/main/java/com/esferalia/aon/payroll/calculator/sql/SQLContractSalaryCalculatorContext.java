@@ -193,6 +193,7 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
@@ -3762,6 +3763,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				.compareTo(ExpressionScope.AGREEMENT) >= 0)
 			return;
 
+		if (isUndefined(implicit))
+			return;
+
 		if (isSystem(name, expr))
 			return;
 
@@ -3973,6 +3977,27 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			cccExpressionContexts = new LRUCache<CCCContextKey, ExpressionContext>(CACHE_SIZE,
 					new SQLSystemExpressionContextFactory(connection, this.startDate, this.getEnd(), order));
 		return cccExpressionContexts;
+	}
+	
+	protected boolean isUndefined (ITimedVariable<?> var) {
+		try {
+			var.getValue(var.getPeriod());
+		} catch ( ExpressionExceptionWrapper wrapper){
+			try {
+				throw wrapper.getCause();
+			} catch ( DeferredExpressionException deferred){
+				try {
+					deferred.eval( contractExpressionContext, Object.class);
+				} catch ( UndefinedVariablesException e){
+					return true;
+				} catch (ExpressionException e) {
+					// TODO: return true ? Really it's undefined
+				}
+			} catch (Throwable e) { 
+				// TODO: return true ? Really it's undefined
+			} 
+		}
+		return false;
 	}
 	// ------------------------------------------------------------------------
 
