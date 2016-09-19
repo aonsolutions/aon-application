@@ -59,13 +59,17 @@ import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
+import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -770,6 +774,9 @@ public class SalaryDraftBuilder
 			ITimedVariable<?> implicit) {
 		
 		ContextVariable var = ContextVariable.getVariableByName(name);
+		
+		
+		
 		if ( var != null ) {
 			
 			String description = null; 
@@ -821,7 +828,7 @@ public class SalaryDraftBuilder
 		} catch ( Throwable e){
 			salaryDraft.addWarning(String.format(
 					"La variable del sistema '%s' esta redefinida"
-					));
+					, name ));
 		}
 			
 	}
@@ -1172,7 +1179,6 @@ public class SalaryDraftBuilder
 						ContextVariable.OCCUPATIONAL_DISEASE_DAYS));
 
 	}
-	
 	
 
 }

@@ -53,6 +53,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.DeferredExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -536,6 +537,8 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 						.getScope().compareTo(ExpressionScope.AGREEMENT) >= 0)
 			return;
 		
+		if ( isUndefined(implicit))
+			return;
 		
 		if ( isSystem(name, expr) ) 
 			return ;
@@ -543,6 +546,28 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		
 		getListener().onRedefinedImplicit(name, redefined.get(0), implicit);
 	}
+
+	protected boolean isUndefined (ITimedVariable<?> var) {
+		try {
+			var.getValue(var.getPeriod());
+		} catch ( ExpressionExceptionWrapper wrapper){
+			try {
+				throw wrapper.getCause();
+			} catch ( DeferredExpressionException deferred){
+				try {
+					deferred.eval( getExpressionContext(), Object.class);
+				} catch ( UndefinedVariablesException e){
+					return true;
+				} catch (ExpressionException e) {
+					// TODO: return true ? Really it's undefined
+				}
+			} catch (Throwable e) { 
+				// TODO: return true ? Really it's undefined
+			} 
+		}
+		return false;
+	}
+
 	// ------------------------------------------------------------------------
 
 	private static Date resetTime(Date date) {
