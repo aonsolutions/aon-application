@@ -244,9 +244,11 @@ public class ReposServlet extends HttpServlet{
 					break;
 				case "labels":
 					if(pathInfo.length > 4){
-						// UPDATE LABEL
+						Tag tag= DBConsults.getTag(domain.getName(), domain.getId(), userName, pathInfo[4], TagType.TASK_LABEL);
+						tag.setName(json.getString("name"));
+						AON.updateTag(domainName, domain.getId(), userName, tag);
+						object = new Label().setId(tag.getId()).setName(tag.getName()).toJSON();
 					} else {
-						json.getString("name");
 						Tag tag = new Tag().setName(json.getString("name"))
 								.setDomain(domain.getId()).setType(TagType.TASK_LABEL.value());
 						Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);
@@ -255,9 +257,11 @@ public class ReposServlet extends HttpServlet{
 					break;
 				case "types":
 					if(pathInfo.length > 4){
-						// UPDATE TYPE
+						Tag tag= DBConsults.getTag(domain.getName(), domain.getId(), userName, pathInfo[4], TagType.TASK_TYPE);
+						tag.setName(json.getString("name"));
+						AON.updateTag(domainName, domain.getId(), userName, tag);
+						object = new Label().setId(tag.getId()).setName(tag.getName()).toJSON();
 					} else {
-						json.getString("name");
 						Tag tag = new Tag().setName(json.getString("name"))
 								.setDomain(domain.getId()).setType(TagType.TASK_TYPE.value());
 						Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);
@@ -266,9 +270,11 @@ public class ReposServlet extends HttpServlet{
 					break;
 				case "priorities":
 					if(pathInfo.length > 4){
-						// UPDATE PRIORITY
+						Tag tag= DBConsults.getTag(domain.getName(), domain.getId(), userName, pathInfo[4], TagType.TASK_PRIORITY);
+						tag.setName(json.getString("name"));
+						AON.updateTag(domainName, domain.getId(), userName, tag);
+						object = new Label().setId(tag.getId()).setName(tag.getName()).toJSON();
 					} else {
-						json.getString("name");
 						Tag tag = new Tag().setName(json.getString("name"))
 								.setDomain(domain.getId()).setType(TagType.TASK_PRIORITY.value());
 						Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);

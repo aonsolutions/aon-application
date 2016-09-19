@@ -9,6 +9,10 @@ import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -82,6 +86,48 @@ public class TagPanel extends Composite {
 					PaperItem item = new PaperItem();
 					item.add(new Label(label.getName()));
 					item.setStyle("min-height: 30px;");	
+					
+					PaperIconButton edit = new PaperIconButton();
+					edit.setIcon("create");
+					edit.setStyle("min-height: 30px;position:absolute;right:40px;");
+					edit.addClickHandler(new ClickHandler() {
+						@Override public void onClick(ClickEvent event) {
+							onClickEditPriorityButton(event, label);
+						}
+					});
+					item.add(edit);
+					edit.setVisible(false);
+					
+					PaperIconButton del = new PaperIconButton();
+					del.setIcon("delete");
+					del.setStyle("min-height: 30px;position:absolute;right:0px;");
+					del.getElement().getStyle().setLeft(300, Unit.PX);
+					del.addClickHandler(new ClickHandler() {
+						@Override public void onClick(ClickEvent event) {
+							onClickRemovePriorityButton(event, label);
+						}
+					});
+					del.setVisible(false);
+					item.add(del);
+					
+					item.addDomHandler(new MouseOverHandler() {
+						
+						@Override
+						public void onMouseOver(MouseOverEvent event) {
+							edit.setVisible(true);
+							del.setVisible(true);
+						}
+					}, MouseOverEvent.getType());
+					
+					item.addDomHandler(new MouseOutHandler() {
+						
+						@Override
+						public void onMouseOut(MouseOutEvent event) {
+							edit.setVisible(false);
+							del.setVisible(false);
+						}
+					}, MouseOutEvent.getType());
+					
 					prioritySelector.add(item);
 				}				
 				PaperIconButton pib = new PaperIconButton();
@@ -120,6 +166,48 @@ public class TagPanel extends Composite {
 					PaperItem item = new PaperItem();
 					item.add(new Label(label.getName()));
 					item.setStyle("min-height: 30px;");	
+					
+					PaperIconButton edit = new PaperIconButton();
+					edit.setIcon("create");
+					edit.setStyle("min-height: 30px;position:absolute;right:40px;");
+					edit.addClickHandler(new ClickHandler() {
+						@Override public void onClick(ClickEvent event) {
+							onClickEditTypeButton(event, label);
+						}
+					});
+					edit.setVisible(false);
+					item.add(edit);
+					
+					PaperIconButton del = new PaperIconButton();
+					del.setIcon("delete");
+					del.setStyle("min-height: 30px;position:absolute;right:0px;");
+					del.getElement().getStyle().setLeft(300, Unit.PX);
+					del.addClickHandler(new ClickHandler() {
+						@Override public void onClick(ClickEvent event) {
+							onClickRemoveTypeButton(event, label);
+						}
+					});
+					del.setVisible(false);
+					item.add(del);
+					
+					item.addDomHandler(new MouseOverHandler() {
+						
+						@Override
+						public void onMouseOver(MouseOverEvent event) {
+							edit.setVisible(true);
+							del.setVisible(true);
+						}
+					}, MouseOverEvent.getType());
+					
+					item.addDomHandler(new MouseOutHandler() {
+						
+						@Override
+						public void onMouseOut(MouseOutEvent event) {
+							edit.setVisible(false);
+							del.setVisible(false);
+						}
+					}, MouseOutEvent.getType());
+					
 					typeSelector.add(item);
 				}			
 				PaperIconButton pib = new PaperIconButton();
@@ -158,6 +246,47 @@ public class TagPanel extends Composite {
  					PaperItem item = new PaperItem();
  					item.add(new Label(label.getName()));
  					item.setStyle("min-height: 30px;");	
+
+					PaperIconButton edit = new PaperIconButton();
+					edit.setIcon("create");
+					edit.setStyle("min-height: 30px;position:absolute;right:40px;");
+					edit.addClickHandler(new ClickHandler() {
+						@Override public void onClick(ClickEvent event) {
+							onClickEditTagButton(event, label);
+						}
+					});
+					edit.setVisible(false);
+					item.add(edit);
+ 					
+					PaperIconButton del = new PaperIconButton();
+					del.setIcon("delete");
+					del.setStyle("min-height: 30px;position:absolute;right:0px;");
+					del.addClickHandler(new ClickHandler() {
+						@Override public void onClick(ClickEvent event) {
+							onClickRemoveTagButton(event, label);
+						}
+					});
+					del.setVisible(false);
+					item.add(del);
+					
+					item.addDomHandler(new MouseOverHandler() {
+						
+						@Override
+						public void onMouseOver(MouseOverEvent event) {
+							edit.setVisible(true);
+							del.setVisible(true);
+						}
+					}, MouseOverEvent.getType());
+					
+					item.addDomHandler(new MouseOutHandler() {
+						
+						@Override
+						public void onMouseOut(MouseOutEvent event) {
+							edit.setVisible(false);
+							del.setVisible(false);
+						}
+					}, MouseOutEvent.getType());
+					
  					tagSelector.add(item);
  				}			
  				PaperIconButton pib = new PaperIconButton();
@@ -263,18 +392,123 @@ public class TagPanel extends Composite {
 		dialog.open();
 	}
     
-	void onClickRemovePriorityButton(ClickEvent event) {
-		
+	void onClickRemovePriorityButton(ClickEvent event, JsLabel label) {
+		incidence.deletePriority(label, new AsyncCallback<JsLabel>() {
+			
+			@Override public void onSuccess(JsLabel result) {
+				prioritySelector.removeFromParent();
+				prioritySelector = new IronSelector();
+				collapse1.add(prioritySelector);
+				createPriority();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
-	void onClickRemoveTypeButton(ClickEvent event) {
-		
+	void onClickRemoveTypeButton(ClickEvent event, JsLabel label) {
+		incidence.deleteType(label, new AsyncCallback<JsLabel>() {
+			
+			@Override public void onSuccess(JsLabel result) {
+				typeSelector.removeFromParent();
+				typeSelector = new IronSelector();
+				collapse2.add(typeSelector);
+				createType();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
-	void onClickRemoveTagButton(ClickEvent event) {
-		
+	void onClickRemoveTagButton(ClickEvent event, JsLabel label) {
+		incidence.deleteLabel(label, new AsyncCallback<JsLabel>() {
+			
+			@Override public void onSuccess(JsLabel result) {
+				tagSelector.removeFromParent();
+				tagSelector = new IronSelector();
+				collapse3.add(tagSelector);
+				createTag();		
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
+	void onClickEditPriorityButton(ClickEvent event, JsLabel label) {
+		PaperInput pi = new PaperInput();
+		pi.setLabel("Prioridad");
+		AonDialog dialog =  new AonDialog("Editar Prioridad",pi){
+			@Override protected void onCancel() {}
+			@Override protected void onAccept() {
+				PaperInput pi = (PaperInput) content.getWidget(0);
+				incidence.updatePriority(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+					
+					@Override
+					public void onSuccess(JsLabel result) {
+						prioritySelector.removeFromParent();
+						prioritySelector = new IronSelector();
+						collapse1.add(prioritySelector);
+						createPriority();					
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		};
+		panel.add(dialog);
+		dialog.open();	
+	}
+	
+	void onClickEditTypeButton(ClickEvent event, JsLabel label) {
+		PaperInput pi = new PaperInput();
+		pi.setLabel("Tipo");
+		AonDialog dialog =  new AonDialog("Editar Tipo",pi){
+			@Override protected void onCancel() {}
+			@Override protected void onAccept() {
+				PaperInput pi = (PaperInput) content.getWidget(0);
+				incidence.updateType(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+					
+					@Override
+					public void onSuccess(JsLabel result) {
+						typeSelector.removeFromParent();
+						typeSelector = new IronSelector();
+						collapse2.add(typeSelector);
+						createType();					
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		};
+		panel.add(dialog);
+		dialog.open();	
+	}
+	
+	void onClickEditTagButton(ClickEvent event, JsLabel label) {
+		PaperInput pi = new PaperInput();
+		pi.setLabel("Etiqueta");
+		AonDialog dialog =  new AonDialog("Editar Etiqueta",pi){
+			@Override protected void onCancel() {}
+			@Override protected void onAccept() {
+				PaperInput pi = (PaperInput) content.getWidget(0);
+				incidence.updateLabel(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
+					
+					@Override
+					public void onSuccess(JsLabel result) {
+						tagSelector.removeFromParent();
+						tagSelector = new IronSelector();
+						collapse3.add(tagSelector);
+						createTag();					
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
+			}
+		};
+		panel.add(dialog);
+		dialog.open();	
+	}
+
     protected void getTagList() {
 		//Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);
 		String str = USER_NAME + getCurrentDomainName();

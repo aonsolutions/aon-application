@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
@@ -28,5 +29,10 @@ public class DBConsults {
 	public static Integer getTagId(String domainName, Integer domainId, String login, String name, TagType tagType){
 		return AON.getTag(domainName, domainId, login, f-> f.getNameProperty().eq(name).and(f.getDomainProperty().eq(domainId))
 				.and(f.getTypeProperty().eq(tagType.value()))).getId();
+	}
+	
+	public static Tag getTag(String domainName, Integer domainId, String login, String name, TagType tagType){
+		return AON.getTag(domainName, domainId, login, f-> f.getNameProperty().eq(name).and(f.getDomainProperty().eq(domainId))
+				.and(f.getTypeProperty().eq(tagType.value())));
 	}
 }

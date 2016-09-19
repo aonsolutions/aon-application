@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 @SuppressWarnings("serial")
@@ -78,19 +79,20 @@ public class DeleteReposServlet extends HttpServlet{
 					}
 					break;
 				case "labels":
-					if(pathInfo.length > 4){
-						// DELETE LABEL
-					}
+					Tag tag = DBConsults.getTag(domain.getName(), domain.getId(), userName, pathInfo[4], TagType.TASK_LABEL);
+					AON.deleteTag(domain.getName(), domain.getId(), userName, tag); 
+					object = new JSONObject("{}");
 					break;
 				case "types":
-					if(pathInfo.length > 4){
-						// DELETE TYPE
-					}
+					Tag tag2 = DBConsults.getTag(domain.getName(), domain.getId(), userName, pathInfo[4], TagType.TASK_TYPE);
+					AON.deleteTag(domain.getName(), domain.getId(), userName, tag2); 
+					object = new JSONObject("{}");					
 					break;
 				case "priorities":
-					if(pathInfo.length > 4){
-						// DELETE PRIORITY
-					}
+					Tag tag3 = DBConsults.getTag(domain.getName(), domain.getId(), userName, pathInfo[4], TagType.TASK_PRIORITY);
+					AON.deleteTaskTag(domain.getName(), domain.getId(), userName, f -> f.getTagProperty().eq(tag3.getId()));
+					AON.deleteTag(domain.getName(), domain.getId(), userName, tag3); 
+					object = new JSONObject("{}");				
 					break;
 				default:
 					break;

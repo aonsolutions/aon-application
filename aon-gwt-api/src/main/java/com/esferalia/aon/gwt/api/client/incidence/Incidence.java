@@ -170,7 +170,7 @@ public class Incidence extends Methods{
 	}	
 	
 	public void deleteLabel(JsLabel label, AsyncCallback<JsLabel> callback){
-		delete(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels/"
+		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/labels/"
 				+ label.getName(), "{}", callback);
 	}
 	
@@ -202,7 +202,7 @@ public class Incidence extends Methods{
 	}	
 	
 	public void deleteType(JsLabel label, AsyncCallback<JsLabel> callback){
-		delete(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types/"
+		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/types/"
 				+ label.getName(), "{}", callback);
 	}
 	
@@ -234,7 +234,7 @@ public class Incidence extends Methods{
 	}	
 	
 	public void deletePriority(JsLabel label, AsyncCallback<JsLabel> callback){
-		delete(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities/"
+		post(url + "delete/repos/"+getOrganizationName()+"/"+getRepositoryName()+"/priorities/"
 				+ label.getName(), "{}", callback);
 	}
 	
