@@ -62,6 +62,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	final String CONTRATA_TRANSFORMACIONES_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.transformaciones";
 	
 	private final String ZERO_VALUE = "0";
+	private final String BLANK_1 = " ";
 	
 	private Contract contract;;
 	
@@ -532,7 +533,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 		if(params.getCno()==null || params.getCno().getId()==null){
 			AonUtil.addErrorMessage("El trabajador no tiene definido el código de ocupacion (CNO).");
 		} else {
-			datos.setCODIGOOCUPACION(completeLength(params.getCno().getCode(), 8, ZERO_VALUE, true));
+			datos.setCODIGOOCUPACION(completeLength(params.getCno().getCode(), 8, BLANK_1, true));
 		}
 		datos.setNACIONALIDADCT(completeLength(getContract().getWorkPlace().getAddress().getRegistry().getNationality().getIsoNum(),3,ZERO_VALUE,false));
 //		datos.setMUNICIPIOCT(completeLength(getContract().getWorkPlace().getAddress().getGeozone().getCode(),5,ZERO_VALUE,false));
