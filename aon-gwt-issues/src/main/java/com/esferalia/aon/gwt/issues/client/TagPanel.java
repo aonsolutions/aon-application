@@ -1,11 +1,9 @@
 package com.esferalia.aon.gwt.issues.client;
 
-import com.esferalia.aon.gwt.api.client.AonUrlApi;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -21,7 +19,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TreeItem;
 import com.vaadin.polymer.iron.widget.IronCollapse;
 import com.vaadin.polymer.iron.widget.IronSelector;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
@@ -29,12 +26,6 @@ import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperItem;
 
 public class TagPanel extends Composite {
-	
-	protected static String USER_NAME = "admin"; //"aibanez91";
-	protected static String ORG_NAME = "aonPrueba"; //"aonsolutions";
-	protected static String REPO_NAME = "aonPrueba"; //"aon-application";
-	protected static String ACCESS_TOKEN = "d8aa641723e106b5d7c2d79d3cad963e0eb6e92d";
-	protected static String DESCRIPTION = "Repositorio de prueba para metodos de TEST";
 
     interface Binder extends UiBinder<ScrollPanel , TagPanel> {
     	
@@ -55,16 +46,6 @@ public class TagPanel extends Composite {
     @UiField IronSelector tagSelector;
         
     private static Binder binder = GWT.create(Binder.class);
-    
-    public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/; 
 	
 	Incidence incidence;
 	
@@ -261,6 +242,7 @@ public class TagPanel extends Composite {
 					PaperIconButton del = new PaperIconButton();
 					del.setIcon("delete");
 					del.setStyle("min-height: 30px;position:absolute;right:0px;");
+					del.getElement().getStyle().setLeft(300, Unit.PX);
 					del.addClickHandler(new ClickHandler() {
 						@Override public void onClick(ClickEvent event) {
 							onClickRemoveTagButton(event, label);
@@ -385,7 +367,6 @@ public class TagPanel extends Composite {
 					
 					@Override public void onFailure(Throwable caught) {}
 				});
-				// TODO TRATARLO!
 			}
 		};
 		panel.add(dialog);
@@ -509,31 +490,4 @@ public class TagPanel extends Composite {
 		dialog.open();	
 	}
 
-    protected void getTagList() {
-		//Incidence i = new Incidence(AonUrlApi.GITHUB, ACCESS_TOKEN, USER_NAME, ORG_NAME, REPO_NAME);
-		String str = USER_NAME + getCurrentDomainName();
-		String md5 = "aaaaa";//Md5Utils.getMd5Digest(str.getBytes()).toString();
-		Incidence i = new Incidence(AonUrlApi.AONTEST, md5, USER_NAME, USER_NAME, getCurrentDomainName());
-		i.getLabels(new AsyncCallback<JSON<JsLabel>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsLabel> result) {
-				for(Integer i = 0; i < result.getData().length(); i++){
-					TreeItem ti = new TreeItem();
-					ti.setText(result.getData().get(i).getName());
-					ti.getElement().getStyle().setBackgroundColor("#"+result.getData().get(i).getColor());
-					ti.getElement().getStyle().setPadding(3, Unit.PX);
-					ti.getElement().getStyle().setColor("white");
-					ti.getElement().getStyle().setMarginBottom(5, Unit.PX);
-					ti.getElement().getStyle().setMarginTop(5, Unit.PX);
-					ti.getElement().getStyle().setMarginRight(100, Unit.PX);
-					ti.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-					//issueTreeItem.addItem(ti);
-				}
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
-	}
 }

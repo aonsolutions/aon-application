@@ -16,7 +16,6 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -35,12 +34,7 @@ public class Issues implements EntryPoint {
 
 	final IIssuesAsync serv = GWT.create(IIssues.class);
 	
-	//protected static String USER_NAME = "admin";//"aibanez91";
 	private static final String HTTP = "http://";
-	protected static String ORG_NAME = "aonPrueba"; //"aonsolutions";
-	protected static String REPO_NAME = "aonPrueba"; //"aon-application";
-	protected static String ACCESS_TOKEN = "d8aa641723e106b5d7c2d79d3cad963e0eb6e92d";
-	protected static String DESCRIPTION = "Repositorio de prueba para metodos de TEST";
 
 	@UiField HTMLPanel searchContent;
 	@UiField HTMLPanel content;
@@ -85,13 +79,13 @@ public class Issues implements EntryPoint {
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
 		me = this;
-		serv.getAonData(getCurrentDomainName(), new AsyncCallback<AonData>() {
+		serv.getAonData(getCurrentDomainName(), getCurrentDomain(), new AsyncCallback<AonData>() {
 			
 			@Override
 			public void onSuccess(AonData result) {
 				aonData = result;
-				incidence = new Incidence(HTTP+getCurrentDomainName()+"/", result.getMd5(),
-						result.getLoggedUser(), result.getLoggedUser(), getCurrentDomainName());
+				incidence = new Incidence(HTTP+result.getDomain().getName()+"/", result.getMd5(),
+						result.getLoggedUser(), result.getLoggedUser(), result.getDomain().getName());
 				createAonToolbar();
 				createFilterPanel(new FilterPanel(me));
 				createIssueList(issueFilter = new IssueFilter());
@@ -111,7 +105,7 @@ public class Issues implements EntryPoint {
 			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {			
-				IssueList issueList = new IssueList(me, result.getData());
+				IssueList issueList = new IssueList(me, incidence, result.getData());
 				content.add(issueList);
 				createAddDialog();
 			}
@@ -170,7 +164,6 @@ public class Issues implements EntryPoint {
 			
 			@Override
 			protected void onMenuButtonClick() {
-				// TODO
 				if(dockLayoutPanel.getWidgetSize(configurationPanel) == 0){
 					configurationPanel.add(new ConfigurationPanel(incidence));
 					dockLayoutPanel.setWidgetSize(configurationPanel, 350);
@@ -205,11 +198,7 @@ public class Issues implements EntryPoint {
 		PaperInput pi2 = new PaperInput();
 		pi2.setLabel("Remitente");
 		v.add(pi2);
-		
-		PaperInput pi3 = new PaperInput();
-		pi3.setLabel("Fecha de Vencimiento");
-		v.add(pi3);
-		
+
 		PaperInput pi4 = new PaperInput();
 		pi4.setLabel("Descripcion");
 		v.add(pi4);
@@ -220,11 +209,10 @@ public class Issues implements EntryPoint {
 				VerticalPanel vp = (VerticalPanel) content.getWidget(0);
 				PaperInput pi = (PaperInput) vp.getWidget(0);
 				PaperInput pi2 = (PaperInput) vp.getWidget(1);
-				PaperInput pi3 = (PaperInput) vp.getWidget(2);
-				PaperInput pi4 = (PaperInput) vp.getWidget(3);
+				PaperInput pi4 = (PaperInput) vp.getWidget(2);
 				
 				String r= "{\"title\":\""+ pi.getValue() +"\",\"body\":\""+ pi4.getValue()+" \",\"assignee\":\" \",\"labels\":[],"
-						+ "\"enterprise\":\""+ pi2.getValue() +"\", \"due_date\":\""+ pi3.getValue() +"\"}";
+						+ "\"enterprise\":\""+ pi2.getValue() +"\", \"due_date\":\""+ "31/12/2100" +"\"}";
 					
 				incidence.createOrgIssue(r, new AsyncCallback<JsIssue>() {
 					
@@ -234,7 +222,7 @@ public class Issues implements EntryPoint {
 						AonToolbar t = (AonToolbar)toolbar.getWidget(0);
 						t.setVisibleRefreshButton(false);
 						contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-						contentDockLayoutPanel.add(new IssuePanel(me,result));
+						contentDockLayoutPanel.add(new IssuePanel(me, incidence, result));
 						dockLayoutPanel.add(contentDockLayoutPanel);
 					}
 					@Override

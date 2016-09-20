@@ -7,6 +7,6 @@ public interface IIssuesAsync {
 
 	void getLoggedUser(AsyncCallback<String> callback);
 
-	void getAonData(String domainName, AsyncCallback<AonData> callback);
+	void getAonData(String domainName, Integer domainId, AsyncCallback<AonData> callback);
 	
 }

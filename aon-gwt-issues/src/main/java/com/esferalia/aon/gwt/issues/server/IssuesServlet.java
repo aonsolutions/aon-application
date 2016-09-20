@@ -7,6 +7,8 @@ import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.issues.client.IIssues;
 import com.esferalia.aon.gwt.issues.shared.AonData;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
 
 
 public class IssuesServlet extends AonRemoteServiceServlet implements IIssues{
@@ -22,9 +24,11 @@ public class IssuesServlet extends AonRemoteServiceServlet implements IIssues{
 		return AonServletUtils.getLoggedUser();
 	}
 	
-	public AonData getAonData(String domainName){
+	public AonData getAonData(String domainName, Integer domainId){
+		Domain domain = AON.getDomain(domainName, domainId, getLoggedUser());
 		return new AonData().setLoggedUser(getLoggedUser())
-				.setMd5(getMd5(getLoggedUser()+domainName));
+				.setMd5(getMd5(getLoggedUser()+domain.getName()))
+				.setDomain(domain);
 	}
 	
 	public String getMd5(String str){

@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.issues.client;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
+import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -31,8 +32,8 @@ public class IssueList extends Composite {
     Integer top = 0;
     Issues parent;
     AonJsArray<JsIssue> issues;
-    
-    public IssueList(Issues parent, AonJsArray<JsIssue> issues) {    
+        
+    public IssueList(Issues parent, Incidence incidence, AonJsArray<JsIssue> issues) {    
         initWidget(binder.createAndBindUi(this));
         this.parent = parent;
         issueList.setItems(issues);
@@ -61,7 +62,7 @@ public class IssueList extends Composite {
 			   	AonToolbar t = (AonToolbar)parent.toolbar.getWidget(0);
 			   	t.setVisibleRefreshButton(false);
 			   	parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-				parent.contentDockLayoutPanel.add(new IssuePanel(parent,issue));
+				parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue));
 				parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);				
 			}
 		});

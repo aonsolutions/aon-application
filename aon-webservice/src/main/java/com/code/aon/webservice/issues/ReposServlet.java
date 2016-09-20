@@ -129,7 +129,7 @@ public class ReposServlet extends HttpServlet{
 				JSONObject json = new JSONObject(s);
 				
 				Object object = new Object();
-				com.esferalia.aon.occam.api.model.security.User user = AON.getUser(domain.getName(), domain.getId(), userName);
+				com.esferalia.aon.occam.api.model.security.User user = DBConsults.getUser(domain.getName(), domain.getId(), userName);
 				switch (pathInfo[3]) {
 				case "issues":
 					if(pathInfo.length > 4){

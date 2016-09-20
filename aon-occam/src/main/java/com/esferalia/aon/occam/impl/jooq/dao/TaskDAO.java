@@ -192,9 +192,9 @@ public class TaskDAO {
 	}
 
 	public static Integer createTask(AONContext ctx, Task task) {
-		return ctx.getDslContext().insertInto(TASK, TASK.ACTIVITY_TYPE, TASK.COMMENTS, TASK.DESCRIPTION, TASK.DOMAIN, TASK.DUE_DATE, TASK.END_DATE, TASK.GTASK_ID, TASK.GTASKLIST_ID,TASK.NUMBER,
+		return ctx.getDslContext().insertInto(TASK, TASK.ACTIVITY_TYPE, TASK.COMMENTS, TASK.DESCRIPTION, TASK.DOMAIN, TASK.DUE_DATE, TASK.END_DATE, TASK.GTASK_ID, TASK.GTASKLIST_ID,TASK.NUMBER, TASK.USER,
 				TASK.PERCENT, TASK.PRIORITY, TASK.PROJECT, TASK.REGISTRY, TASK.REPEAT_PERIOD, TASK.SENDER, TASK.SOURCE, TASK.START_DATE, TASK.STATUS, TASK.TASK_HOLDER, TASK.UPDATE_DATE, TASK.WORKGROUP)
-			.values(task.getActivityType(),task.getComments(), task.getDescription(), task.getDomain(), AonDateUtils.toSql(task.getDueDate()), AonDateUtils.toSql(task.getEndDate()), task.getGtaskId(), task.getGtasklistId(), task.getNumber(),
+			.values(task.getActivityType(),task.getComments(), task.getDescription(), task.getDomain(), AonDateUtils.toSql(task.getDueDate()), AonDateUtils.toSql(task.getEndDate()), task.getGtaskId(), task.getGtasklistId(), task.getNumber(), task.getUser(),
 				task.getPercent(), task.getPriority(), task.getProject(), task.getRegistry(), task.getRepeatPeriod(), task.getSender(), task.getSource(), AonDateUtils.toSql(task.getStartDate()), task.getStatus(), task.getTaskHolder(), AonDateUtils.toSql(task.getUpdateDate()), task.getWorkgroup())
 			.returning(TASK.ID).fetchOne().getId();
 	}

@@ -9,6 +9,6 @@ public interface IIssues extends RemoteService{
 
 	public String getLoggedUser();
 	
-	public AonData getAonData(String domainName);
+	public AonData getAonData(String domainName, Integer domainId);
 
 }

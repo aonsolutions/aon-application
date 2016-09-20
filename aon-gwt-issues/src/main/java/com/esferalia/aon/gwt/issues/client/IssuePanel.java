@@ -97,28 +97,12 @@ public class IssuePanel extends Composite{
 	
 	JsIssue issue;
 	
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-	
-	public String getUrl(){
-		return "http://" + getCurrentDomainName() + "/";
-	}
-	
 	private Incidence incidence; 
 	
-	public IssuePanel(Issues parent, JsIssue issue) {
+	public IssuePanel(Issues parent, Incidence incidence, JsIssue issue) {
 		initWidget(binder.createAndBindUi(this));		
 	
-		incidence = new Incidence(HTTP+getCurrentDomainName()+"/", parent.aonData.getMd5(),
-				parent.aonData.getLoggedUser(), parent.aonData.getLoggedUser(), getCurrentDomainName());
-
+		this.incidence = incidence;
 		this.parent = parent;
 		this.issue = issue;
 		userDeleteButton.setSize("22px", "22px");
