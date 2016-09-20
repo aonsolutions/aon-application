@@ -498,7 +498,13 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 					
 					status += "<br /> ";
 					status += "<div style='border-bottom:1px solid black;background-color:"+bgColor+"; width:100%; padding:5px;'>";
-					status += trasformacion.getDATOSCONTRATO().getIDENTIFICADORPFISICA().substring(1) + " - ";
+					if(trasformacion.getDATOSCONTRATO().getCLAVECONTRATO()!=null){
+						status += trasformacion.getDATOSCONTRATO().getCLAVECONTRATO() + " - ";
+					} else if(trasformacion.getDATOSCONTRATO().getIDENTIFICADORPFISICA()!=null){
+						status += trasformacion.getDATOSCONTRATO().getIDENTIFICADORPFISICA().substring(1) + " - ";
+					} else {
+						status += "SIN CODIGO - ";
+					}
 //					status += trasformacion.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getPRIMERAPELLIDO();
 //					if(StringUtils.isNotBlank(trasformacion.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO())){
 //						status += " ";
