@@ -35,8 +35,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
@@ -225,8 +225,13 @@ public class AccountingImpl implements IAccounting {
 	}
 
 	@Override
+	public AccountingInvoice getAccountingInvoice(AONContext ctx, Integer accountEntry) {
+		return AccountingInvoiceDAO.getAccountingInvoice(ctx, accountEntry);
+	}
+
+	@Override
 	public AccountingInvoice initializeInvoice(AONContext ctx, InvoiceType type, Integer registry, Date issueDate) {
-		return InvoiceDAO.initializeInvoice(ctx, type, registry , issueDate);
+		return AccountingInvoiceDAO.initializeInvoice(ctx, type, registry , issueDate);
 	}
 
 	// 					      BALANCE

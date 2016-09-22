@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting.invoice;
+package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
 import java.util.LinkedList;
 
@@ -6,7 +6,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
-import com.esferalia.aon.gwt.fiscal.client.accounting.invoice.InvoicePanel.IInvoicePanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel.IInvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
@@ -24,6 +24,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -46,6 +47,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	private Label adjAccountLabel;
 	private Label inputVatLabel;
 	private Label outputVatLabel;
+	private Label withholdingLabel;
 	
 	
 	private class InvestAssetListBox extends ListBox {
@@ -81,9 +83,13 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		setStyleName(AON.AON_CSS.aonScrollArea());
 		addStyleName(AON.AON_CSS.aonWidthAll());
 		
-		this.callback = callback;
+		setCallback(callback);
 		container = new FlowPanel();
 		add(container);
+	}
+	
+	public void setCallback(IInvoicePanelCallback invoiceCallback) {
+		this.callback = invoiceCallback;
 	}
 
 	public void setSuggestedAccounts(LinkedList<Account> suggestedAccounts) {
@@ -175,6 +181,11 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		tab.setWidget(row, col, outputVatLabel);
 		tab.getCellFormatter().setWidth(row, col, "1%");
 		++col;
+		withholdingLabel = new Label("IRPF");
+		withholdingLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		tab.setWidget(row, col, withholdingLabel);
+		tab.getCellFormatter().setWidth(row, col, "1%");
+		++col;
 
 		label = new Label();
 		tab.setWidget(row, col, label);
@@ -194,18 +205,19 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			public void onClick(ClickEvent event) {
 				int idx = callback.getInvoice().getVats().size() - 1;
 				InvoiceVAT last = callback.getInvoice().getVats().get( idx );
-				InvoiceVAT vat = new InvoiceVAT();
-				vat.setExpAccountId(last.getExpAccountId());
-				vat.setExpAccountCode(last.getExpAccountCode());
-				vat.setExpAccountDescription(last.getExpAccountDescription());
-				vat.setPercentage(last.getPercentage());
-				vat.setSurcharge(last.getSurcharge());
-				vat.setInputAccountId(last.getInputAccountId());
-				vat.setInputAccountCode(last.getInputAccountCode());
-				vat.setInputAccountDescription(last.getInputAccountDescription());
-				vat.setOutputAccountId(last.getOutputAccountId());
-				vat.setOutputAccountCode(last.getOutputAccountCode());
-				vat.setOutputAccountDescription(last.getOutputAccountDescription());
+				InvoiceVAT vat = new InvoiceVAT()
+					.setExpAccountId(last.getExpAccountId())
+					.setExpAccountCode(last.getExpAccountCode())
+					.setExpAccountDescription(last.getExpAccountDescription())
+					.setPercentage(last.getPercentage())
+					.setSurcharge(last.getSurcharge())
+					.setWithholding(last.isWithholding())
+					.setInputAccountId(last.getInputAccountId())
+					.setInputAccountCode(last.getInputAccountCode())
+					.setInputAccountDescription(last.getInputAccountDescription())
+					.setOutputAccountId(last.getOutputAccountId())
+					.setOutputAccountCode(last.getOutputAccountCode())
+					.setOutputAccountDescription(last.getOutputAccountDescription());
 				callback.getInvoice().addVat( vat );
 				addRow(vat, true);
 			}
@@ -253,6 +265,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		private final DoubleBox surchargeQuota = new DoubleBox(8);
 		private final AccountBox inputVatAccount = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain(), false);
 		private final AccountBox outputVatAccount = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain(), false);
+		private final CheckBox withholding  = new CheckBox();
 		private final InvestAssetListBox investAsset = new InvestAssetListBox(); 
 		private final DoubleBox dedPercent = new DoubleBox(6);
 		private final DoubleBox dedQuota = new DoubleBox(8);
@@ -299,6 +312,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 
 			vatPercent.setStyleName(AON.AON_CSS.aonInputText());
 			vatPercent.addStyleName(AON.AON_CSS.aonTextRight());
+			vatPercent.addStyleName(AON.AON_CSS.aonWidth40());
 			vatPercent.setValue(vat.getPercentage());
 			vatPercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
@@ -385,6 +399,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			
 			dedPercent.setStyleName(AON.AON_CSS.aonInputText());
 			dedPercent.addStyleName(AON.AON_CSS.aonTextRight());
+			dedPercent.addStyleName(AON.AON_CSS.aonWidth50());
 			dedPercent.setValue(vat.getDeductiblePercent());
 			dedPercent.setVisible(callback.isInvestAssetsAvailable());
 			dedPercentLabel.setVisible(callback.isInvestAssetsAvailable());
@@ -471,7 +486,21 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			});
 			tab.setWidget(currentRow, col, outputVatAccount);
 			++col;
-
+			
+			withholding.setValue(vat.isWithholding());
+			withholding.setVisible(callback.getInvoice().isWithholding());
+			withholdingLabel.setVisible(callback.getInvoice().isWithholding());
+			withholding.addClickHandler( new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					vat.setWithholding(withholding.getValue());
+					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
+				}
+			});
+			tab.setWidget(currentRow, col, withholding);
+			++col;
+			
 			tab.setWidget(currentRow, col, new Label());
 			tab.getCellFormatter().setWidth(currentRow, col, "auto");
 			++col;
@@ -507,6 +536,10 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		public void enableOutputVat(boolean enabled) {
 			outputVatAccount.setVisible(enabled);
 			outputVatLabel.setVisible(enabled);
+		}
+		public void enableWithholding(boolean enabled) {
+			withholding.setVisible(enabled);
+			withholdingLabel.setVisible(enabled);
 		}
 
 		public void invoiceTotalChanged(InvoiceVAT vat,Double total) {
@@ -549,13 +582,17 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			rows.get(0).invoiceTotalChanged(callback.getInvoice().getVats().get(0),total);
 		}
 	}
-
+	public void withholdingChanged() {
+		for (InvoicePanelRow row : rows) {
+			row.enableWithholding(callback.getInvoice().isWithholding());
+		}
+	}
+	
 	public void transactionChanged() {
 		for (InvoicePanelRow row : rows) {
 			row.enableInputVat(callback.getInvoice().isInputVatEnabled());
 			row.enableOutputVat(callback.getInvoice().isOutputVatEnabled());
 		}
-		
 	}
 
 	@Override

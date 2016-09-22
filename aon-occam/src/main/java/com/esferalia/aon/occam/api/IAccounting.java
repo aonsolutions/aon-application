@@ -54,6 +54,7 @@ public interface IAccounting {
 	public List<Integer> insertSalaryEntries(String domainName, int domain,String user,
 			Date from, Date to, String concept, Integer registryBank);
 	public AccountingInvoice initializeInvoice(AONContext ctx, InvoiceType type, Integer registry, Date issueDate);
+	public AccountingInvoice getAccountingInvoice(AONContext ctx, Integer accountEntry);
 	
 	// 			BALANCE
 	public LinkedHashMap<String, AccountBalance> 

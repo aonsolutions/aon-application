@@ -2,13 +2,20 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
 	xmlns:aon="urn:import:com.esferalia.aon.gwt.common.client.widget"
-	xmlns:accInvoice="urn:import:com.esferalia.aon.gwt.fiscal.client.accounting.invoice"
-	xmlns:acc="urn:import:com.esferalia.aon.gwt.fiscal.client.accounting">
+	xmlns:acc="urn:import:com.esferalia.aon.gwt.fiscal.client.accounting"
+	xmlns:accInvoice="urn:import:com.esferalia.aon.gwt.fiscal.client.accounting.wizard"
+	xmlns:accPanel='urn:import:com.esferalia.aon.gwt.fiscal.client.accounting.panel'>
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<g:SplitLayoutPanel styleName="{aonResources.css.aonScrollArea}">
+		<g:south size="200">
+			<accPanel:SessionLog ui:field="workingLog"/>
+		</g:south>
+		<g:east size="450">
+			<accInvoice:InvoiceExtraPanel ui:field="extraPanel"/>
+		</g:east>
 		<g:center>
 			<g:ScrollPanel styleName="{aonResources.css.aonWizardPanel}">
 				<g:FlowPanel styleName="{aonResources.css.aonFlexContainer} {aonResources.css.aonPadding2Top}">
@@ -41,13 +48,16 @@
 									<g:ListBox ui:field="withholdingTaxs"/>
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="withholdingBase" visibleLength="12"/>
+									<aon:DoubleBox ui:field="withholdingBase" visibleLength="12" 
+										styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5} {aonResources.css.aonWidth80}"/>
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="withholdingPercent" visibleLength="6" maxLength="6"/>
+									<aon:DoubleBox ui:field="withholdingPercent" visibleLength="6" maxLength="6"
+										styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5} {aonResources.css.aonWidth40}"/>
 								</td>
 								<td>
-									<aon:DoubleBox ui:field="withholdingQuota" visibleLength="12"/>
+									<aon:DoubleBox ui:field="withholdingQuota" visibleLength="12"
+										styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5} {aonResources.css.aonWidth80}"/>
 								</td>
 								<td>
 									<aon:AccountBox ui:field="withholdingAccount" tabIndex="500000"/>
@@ -62,8 +72,5 @@
 				</g:FlowPanel> 
 			</g:ScrollPanel>
 		</g:center>	
-		<g:east size="450">
-			<accInvoice:InvoiceExtraPanel ui:field="extraPanel"/>
-		</g:east>
 	</g:SplitLayoutPanel>
 </ui:UiBinder>

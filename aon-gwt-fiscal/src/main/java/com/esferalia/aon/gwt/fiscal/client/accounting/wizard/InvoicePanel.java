@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting.invoice;
+package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
@@ -11,7 +11,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.type.IAccountEntryType;
+import com.esferalia.aon.gwt.fiscal.client.accounting.panel.SessionLog;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
@@ -21,7 +21,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
-import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -38,13 +38,11 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RequiresResize;
-import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class InvoicePanel extends ResizeComposite implements RequiresResize {
+public class InvoicePanel extends WizardContentBase {
 	
 	static FiscalServiceAsync fiscalService;
 	
@@ -103,130 +101,87 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	@UiField(provided=true)
 	InvoiceExtraPanel extraPanel;
 
+	@UiField
+	SessionLog workingLog;
 	
 	private AccountingInvoice invoice;
 	private InvoicePanelVisitor invoicePanelVisitor;
 	private IAccountEntryModuleCallback callback;
+	
 	
 	public InvoicePanel(final IAccountEntryModuleCallback callback) {
 		this.callback = callback;
 		
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
-
+		
+		invoicePanelVisitor = new InvoicePanelVisitor();
+		
 		registryBox = new AccountingRegistryBox(AccountEntryModule.getCurrentDomainName()
 				, AccountEntryModule.getCurrentDomain(), true);
 		withholdingAccount = new AccountBox(AccountEntryModule.getCurrentDomainName()
 				, AccountEntryModule.getCurrentDomain(), false);
-		IInvoicePanelCallback invoiceCallback = new IInvoicePanelCallback() {
-			
-			@Override
-			public void onLog(AccountEntry entry) {
-				callback.onLog(entry);
-			}
-			
-			@Override
-			public void onLog(AccountEntry[] entries) {
-				callback.onLog(entries);
-			}
-
-			@Override
-			public void onAccountSelected(Account account) {
-				callback.onAccountSelected(account);
-			}
-			
-			@Override
-			public AonConfiguration getConfiguration() {
-				return callback.getConfiguration();
-			}
-			
-			@Override
-			public IAccountEntryType getAccountEntryType() {
-				return callback.getAccountEntryType();
-			}
-			
-			@Override
-			public void onError(String msg) {
-				callback.onError(msg);
-			}
-
-			@Override
-			public AccountingInvoice getInvoice() {
-				return invoice;
-			}
-
-			@Override
-			public void transactionChanged() {
-				vatPanel.transactionChanged();
-				_paintEntry();
-			}
-
-			@Override
-			public void withholdingChanged() {
-				enableWithholdingIfNeeded();
-				_paintEntry();
-			}
-
-			@Override
-			public void surchargeChanged() {
-				enableSurchargeIfNeeded();
-				_paintEntry();
-			}
-			@Override
-			public void invoiceTotalChanged() {
-				invoiceTotal.setValue(invoice.getTotalInvoice());
-			}
-			@Override
-			public void enableInvoiceTotal(boolean enable) {
-				invoiceTotal.setEnabled(enable);
-			}
-
-			@Override
-			public void setFocusOnRegistry() {
-				registryBox.setFocus(true);
-			}
-
-			@Override
-			public void paintEntry() {
-				_paintEntry();
-			}
-
-			@Override
-			public boolean isInvestAssetsAvailable() {
-				return !invoice.isSales() 
-					&& !invoice.isSurcharge()
-					&& invoice.isOutputVatEnabled() != invoice.isInputVatEnabled()
-					&& callback.getConfiguration().isInvestAssetsAvailable();
-				
-			}
-
-		};
+		
+		InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
 		vatPanel = new InvoiceVATPanel( invoiceCallback );
 		extraPanel = new InvoiceExtraPanel( invoiceCallback );
-		
-		Widget ui = DATA_BINDER.createAndBindUi(this);
+
+		Widget ui = DATA_BINDER.createAndBindUi(InvoicePanel.this);
 		initWidget(ui);
 		number.addStyleName(AON.AON_CSS.aonMarginRight5());
-		
-		invoice = new AccountingInvoice();
 		invoiceDataPanel.setVisible(false);
-		enableWithholdingIfNeeded();
 		withholdingPanel.setVisible(false);
-		withholdingBase.setEnabled(false);
-		withholdingQuota.setEnabled(false);
-		fillSalesSeries();
-		fillWithholdingTaxs();
-		invoicePanelVisitor = new InvoicePanelVisitor();
 	}
 	
+	public void setInvoice(AccountingInvoice invoice) {
+		this.invoice = invoice;
+	}
+	
+	@Override
+	public void select(AccountEntry entry) {
+		fiscalService.getAccountingInvoice(
+				 AccountEntryModule.getCurrentDomainName()
+				,AccountEntryModule.getCurrentDomain()
+				,entry.getId()
+				, new AsyncCallback<AccountingInvoice>() {
+					
+					@Override
+					public void onSuccess(AccountingInvoice result) {
+						setInvoice(result);
+						paint();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onError(caught.getMessage());
+					}
+				});
+	}
+
+	@Override
+	public void paint() {
+		if (invoice != null) {
+			fillSalesSeries();
+			fillWithholdingTaxs();
+			extraPanel.paint();
+			vatPanel.paint();
+			// #TODO 
+			enableWithholdingIfNeeded();
+			// -----
+			_paintEntry();
+		}
+	}
+
 	private void enableWithholdingIfNeeded() {
 		withholdingPanel.setVisible(extraPanel.isWithholding());
 		if (extraPanel.isWithholding()) populateWithholding();
 		withholdingLabel.setVisible(extraPanel.isWithholding());
 		withholdingTaxs.setVisible(extraPanel.isWithholding());
 		withholdingBase.setVisible(extraPanel.isWithholding());
+		withholdingBase.setReadOnly(true);
 		withholdingPercent.setVisible(extraPanel.isWithholding());
 		withholdingQuota.setVisible(extraPanel.isWithholding());
+		withholdingQuota.setReadOnly(true);
 		withholdingAccount.setVisible(extraPanel.isWithholding());
 		withholdingType.setVisible(extraPanel.isWithholding());
 	}
@@ -265,52 +220,47 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 
 	@UiHandler("registryBox")
 	public void onSelectRegistry(SelectionEvent<AccountingRegistry> event) {
-		final AccountingRegistry ar = event.getSelectedItem();
-		fiscalService.initializeInvoice(
-			 AccountEntryModule.getCurrentDomainName()
-			,AccountEntryModule.getCurrentDomain()
-			,ar.getType().getInvoiceType()
-			,ar.getId()
-			,callback.getAccountEntryType().getAccountEntry().getEntryDate()
-			, new AsyncCallback<AccountingInvoice>() {
-				
-				@Override
-				public void onSuccess(AccountingInvoice result) {
-					invoice = result;
-					extraPanel.invoiceChanged( result );
-					
-					Account account = new Account();
-					account.setId(ar.getAccountId());
-					account.setCode(ar.getAccountCode());
-					account.setDescription(ar.getAccountDescription());
-					callback.onAccountSelected(account);
-					
-					vatPanel.setSuggestedAccounts(invoice.getSuggestedAccounts());
-					invoice.getRegistry().getType().visit(invoice.getRegistry(),invoicePanelVisitor);
-					onChangeWithholdingTaxs(null);
-					vatPanel.paint();
-					
-					withholdingPanel.setVisible(invoice.isWithholding());
-					if (invoice.isWithholding()) {
-						populateWithholding();
-					}
-					_paintEntry();
-				}
-				
-				@Override
-				public void onFailure(Throwable caught) {
-					callback.onError(caught.getMessage());
-				}
-			});
+		initializeInvoice(event.getSelectedItem());
 	}
 	
+	private void initializeInvoice(final AccountingRegistry ar) {
+		fiscalService.initializeInvoice(
+				 AccountEntryModule.getCurrentDomainName()
+				,AccountEntryModule.getCurrentDomain()
+				,ar.getType().getInvoiceType()
+				,ar.getId()
+				,getAccountEntry().getEntryDate()
+				, new AsyncCallback<AccountingInvoice>() {
+					
+					@Override
+					public void onSuccess(AccountingInvoice result) {
+						invoice = result;
+//						extraPanel.invoiceChanged( result );
+						
+						Account account = new Account();
+						account.setId(ar.getAccountId());
+						account.setCode(ar.getAccountCode());
+						account.setDescription(ar.getAccountDescription());
+						callback.onBalance(account);
+						
+						vatPanel.setSuggestedAccounts(invoice.getSuggestedAccounts());
+						invoice.getRegistry().getType().visit(invoice.getRegistry(),invoicePanelVisitor);
+						paint();
+						extraPanel.invoiceChanged(result);
+						onChangeWithholdingTaxs(null);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onError(caught.getMessage());
+					}
+				});
+	}
+
 	private void populateWithholding() {
-		invoice.getWithholdingData().setBase( invoice.getTotalTaxableBase() );
-		withholdingBase.setValue( invoice.getTotalTaxableBase() );
+		invoice.refreshWithholdingData();
+		withholdingBase.setValue( invoice.getWithholdingData().getBase());
 		withholdingPercent.setValue( invoice.getWithholdingData().getPercentage() );
-		invoice.getWithholdingData().setQuota(
-				AonMathUtils.round(invoice.getWithholdingData().getBase() 
-				* invoice.getWithholdingData().getPercentage() / 100));
 		withholdingQuota.setValue( invoice.getWithholdingData().getQuota() );
 		withholdingType.setValue(invoice.getWithholdingData().getWithholdingType());
 		withholdingAccount.setValue(invoice.getWithholdingData().getAccountId()
@@ -362,7 +312,7 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 			number.setVisible(false);
 			referenceCode.setVisible(true);
 			referenceCode.setFocus(true);
-			withholdingType.setVisible(extraPanel.isWithholding());
+			withholdingType.setVisible(reg.isWithholding());
 		}
 
 		@Override
@@ -386,20 +336,22 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	public void onValueChangeInvoiceTotal(ValueChangeEvent<Double> event) {
 		if (invoiceTotal.getValue() == null) invoiceTotal.setValue(0.0, false);
 		vatPanel.invoiceTotalChanged(invoiceTotal.getValue());
+		_paintEntry();
 	}
 	@UiHandler("vatPanel")
-	public void onValueChangeAccountVatPanel(ValueChangeEvent<InvoiceVAT> event) {
+	public void onValueChangeVatPanel(ValueChangeEvent<InvoiceVAT> event) {
 		if (invoice.isWithholding()) populateWithholding();
 		_paintEntry();
 	}
 	@UiHandler("vatPanel")
 	public void onSelectionAccountVatPanel(SelectionEvent<Account> event) {
-		callback.onAccountSelected(event.getSelectedItem());
+		callback.onBalance(event.getSelectedItem());
+		_paintEntry();
 	}
 	
 	private void _paintEntry() {
-		AccountEntry[] entries = InvoiceRecorder.recordInvoice(callback.getAccountEntryType().getAccountEntry(),invoice);
-		callback.onLog(entries);
+		AccountEntry[] entries = InvoiceRecorder.recordInvoice( getAccountEntry(),invoice);
+		onLog(entries);
 	}
 	
 	@UiHandler("registryBox")
@@ -418,12 +370,118 @@ public class InvoicePanel extends ResizeComposite implements RequiresResize {
 	@UiHandler("withholdingAccount")
 	public void onSelectionWithholdingAccount(SelectionEvent<Account> event) {
 		invoice.setWithholdingAccount( event.getSelectedItem() );
-		callback.onAccountSelected(event.getSelectedItem());
+		callback.onBalance(event.getSelectedItem());
 		_paintEntry();
 	}
 
 	public void setFocus(boolean b) {
 		registryBox.setFocus(b);
 	}
+
+	public void onLog(AccountEntry entry) {
+		workingLog.clear();
+		workingLog.add(entry);			
+	}
+	
+	public void onLog(AccountEntry[] entries) {
+		workingLog.clear();
+		for (AccountEntry entry : entries) {
+			workingLog.add(entry,"PREVISUALIAZACI\u00D3N");			
+		}
+	}
+	
+	@Override
+	public AccountEntryType getAccountEntryType() {
+		return (invoice != null && invoice.getRegistry() != null && invoice.getRegistry().getType() != null)
+				?invoice.getRegistry().getType().getAccountEntryType()
+				:null;
+	}
+	
+	private class InvoicePanelCallback implements IInvoicePanelCallback {
+		
+		@Override
+		public void onBalance(Account account) {
+			callback.onBalance(account);
+		}
+		
+		@Override
+		public AonConfiguration getConfiguration() {
+			return callback.getConfiguration();
+		}
+		
+		@Override
+		public void onError(String msg) {
+			callback.onError(msg);
+		}
+		
+		@Override
+		public AccountingInvoice getInvoice() {
+			return invoice;
+		}
+
+		@Override
+		public void transactionChanged() {
+			vatPanel.transactionChanged();
+			_paintEntry();
+		}
+
+		@Override
+		public void withholdingChanged() {
+			vatPanel.withholdingChanged();
+			enableWithholdingIfNeeded();
+			_paintEntry();
+		}
+
+		@Override
+		public void surchargeChanged() {
+			enableSurchargeIfNeeded();
+			_paintEntry();
+		}
+		@Override
+		public void invoiceTotalChanged() {
+			invoiceTotal.setValue(invoice.getTotalInvoice());
+		}
+		@Override
+		public void enableInvoiceTotal(boolean enable) {
+			invoiceTotal.setEnabled(enable);
+		}
+
+		@Override
+		public void setFocusOnRegistry() {
+			registryBox.setFocus(true);
+		}
+
+		@Override
+		public void paintEntry() {
+			_paintEntry();
+		}
+
+		@Override
+		public boolean isInvestAssetsAvailable() {
+			return !invoice.isSales() 
+				&& !invoice.isSurcharge()
+				&& invoice.isOutputVatEnabled() != invoice.isInputVatEnabled()
+				&& callback.getConfiguration().isInvestAssetsAvailable();
+			
+		}
+
+		@Override
+		public IWizardContent getWizardContent() {
+			return callback.getWizardContent();
+		}
+
+		@Override
+		public void onRefreshId() {
+			callback.onRefreshId();
+			
+		}
+
+		@Override
+		public void onStatement(Integer accountId) {
+			callback.onStatement(accountId);
+		}
+
+	};
+	
 	
 }

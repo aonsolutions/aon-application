@@ -253,6 +253,8 @@ public interface FiscalServiceAsync {
 			AsyncCallback<Void> callback);
 	void initializeInvoice(String domainName, int domain, InvoiceType type, Integer registry,
 			Date issueDate,AsyncCallback<AccountingInvoice> callback);
+	void getAccountingInvoice(String domainName, int domain, Integer accountEntry,
+			AsyncCallback<AccountingInvoice> callback);
 
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	void getAccountStatement(String domainName, int domain, 
@@ -267,6 +269,7 @@ public interface FiscalServiceAsync {
 	void getMod111Attach(String domainName, Mod111 mod111, AsyncCallback<Attach> callback);
 	void getMod115Attach(String domainName, Mod115 mod115, AsyncCallback<Attach> callback);
 	void getMod123Attach(String domainName, Mod123 mod123, AsyncCallback<Attach> callback);
+
 
 
 }

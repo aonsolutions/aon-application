@@ -73,6 +73,15 @@ public class AccountingInvoice implements Serializable {
 		return this;
 	}
 	
+	
+	public void refreshWithholdingData() {
+		double wb = 0.0; 
+		for (InvoiceVAT vat : getVats()) {
+			wb = wb + (vat.isWithholding()?vat.getBase():0.0);
+		}
+		setWithholdingBase(AonMathUtils.round(wb));
+	}
+
 	public double getTotalTaxableBase() {
 		if (getVats() == null) return 0.0;
 		double tb = 0.0; 

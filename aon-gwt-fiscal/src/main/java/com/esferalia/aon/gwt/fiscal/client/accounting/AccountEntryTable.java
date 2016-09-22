@@ -6,7 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
-import com.esferalia.aon.gwt.fiscal.client.accounting.type.IAccountEntryType;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.IWizardContent;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -43,7 +43,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Focusable
  , HasSelectionHandlers<Account>, HasValueChangeHandlers<AccountEntryDetail> {
 	
-	private IAccountEntryType entry;
+	private IWizardContent wizardContent;
 	private Label sumDebit;
 	private Label sumCredit;
 	private ExpressionResolver resolver;
@@ -83,8 +83,8 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		}
 	}
 	
-	public AccountEntryTable(IAccountEntryType entry ) {
-		this.entry = entry;
+	public AccountEntryTable(IWizardContent wizardContent) {
+		this.wizardContent = wizardContent;
 		sumDebit = new Label();
 		sumDebit.setStyleName(AON.AON_CSS.aonBold());
 		sumCredit = new Label();
@@ -134,7 +134,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	private double getSumDif(boolean fillWidget) {
 		double sumD = 0.0;
 		double sumC = 0.0;
-		for (AccountEntryDetail aed : entry.getDetails()) {
+		for (AccountEntryDetail aed : wizardContent.getAccountEntry().getDetails()) {
 			if (!aed.isDeleted()) {
 				sumD = AonMathUtils.sum(sumD, aed.getDebit());	
 				sumC = AonMathUtils.sum(sumC, aed.getCredit());
@@ -154,18 +154,18 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	}
 	
 	private void paintDetails() {
-		if ( entry.getDetails().isEmpty() ) {
-			entry.getDetails().add(new AccountEntryDetail());
+		if ( wizardContent.getAccountEntry().getDetails().isEmpty() ) {
+			wizardContent.getAccountEntry().getDetails().add(new AccountEntryDetail());
 		}
 		int row = 1;
-		for (AccountEntryDetail aed : entry.getDetails()) {
+		for (AccountEntryDetail aed : wizardContent.getAccountEntry().getDetails()) {
 			paintRow(row,aed);
 			++row;
 		}
 	}
 
 	private void paintRow(int row, final AccountEntryDetail aed) {
-		if (entry.isUpdatable()) {
+		if (wizardContent.isUpdatable()) {
 			if (aed.isDeleted()) {
 				paintDeletedRow(row, aed);		
 			} else {
@@ -313,7 +313,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 									cb.setValue(event.getValue());
 								}
 							}
-							for (AccountEntryDetail aed : entry.getDetails() ) {
+							for (AccountEntryDetail aed : wizardContent.getAccountEntry().getDetails() ) {
 								aed.setConcept(event.getValue());
 							}
 							debitBox.setFocus(true);
@@ -368,6 +368,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 						aed.setCredit(d);
 						creditBox.setValue(d);
 					}
+					refreshTotals();
 					balancingAccountBox.setFocus(true);
 					ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 				}
@@ -418,6 +419,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 						creditBox.setValue(0.0,true);
 						aed.setCredit(0.0);
 					}
+					refreshTotals();
 					balancingAccountBox.setFocus(true);
 					ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 				}
@@ -458,7 +460,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 									db.setValue(event.getValue());
 								}
 							}
-							for (AccountEntryDetail aed : entry.getDetails() ) {
+							for (AccountEntryDetail aed : wizardContent.getAccountEntry().getDetails() ) {
 								aed.setDocumentNumber(event.getValue());
 							}
 							AccountEntryTable.this.setFocus(true);
@@ -479,7 +481,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 			@Override
 			public void onClick(ClickEvent event) {
 				if (aed.getId() == null) {
-					entry.getDetails().remove(aed);
+					wizardContent.getAccountEntry().getDetails().remove(aed);
 					removeRow(curRow);
 					removeRow(getRowCount() - 1);
 					paintFooter();
@@ -495,14 +497,14 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	}
 
 	private boolean canAddLine() {
-		if (!entry.isUpdatable()) return false; 
-		if (entry.getDetails() == null || entry.getDetails().isEmpty()) return false;
-		if (entry.getSize() == 1) return true;
+		if (!wizardContent.isUpdatable()) return false; 
+		if (wizardContent.getAccountEntry().getDetails() == null || wizardContent.getAccountEntry().getDetails().isEmpty()) return false;
+		if (wizardContent.getAccountEntry().getDetailsSize() == 1) return true;
 		return AonMathUtils.isNotZero( getSumDif(false) );
 	}
 
 	private void paintAddButton() {
-		if ( entry.isUpdatable()) {
+		if ( wizardContent.isUpdatable()) {
 			final Button addButton = new Button();
 			addButton.setAccessKey( 'L' );
 			addButton.setStyleName(AON.AON_CSS.aonIconReset());
@@ -535,13 +537,13 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	}
 
 	private void addLine() {
-		AccountEntryDetail aed = entry.getLast();
+		AccountEntryDetail aed = wizardContent.getAccountEntry().getLastDetail();
 		AccountEntryDetail newDetail = new AccountEntryDetail();
 		if (aed != null) {
 			newDetail.setConcept(aed.getConcept());
 			newDetail.setDocumentNumber(aed.getDocumentNumber());
 	
-			if ( entry.getSize() == 1) {
+			if ( wizardContent.getAccountEntry().getDetailsSize() == 1) {
 				newDetail.setAccount(aed.getBalancingAccount());
 				newDetail.setAccountCode(aed.getBalancingAccountCode());
 				newDetail.setAccountDescription(aed.getBalancingAccountDescription());
@@ -563,10 +565,10 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 			newDetail.setCredit(0);
 		}
 		
-		entry.getDetails().add(newDetail);
+		wizardContent.getAccountEntry().getDetails().add(newDetail);
 		paintRow( (getRowCount() - 1), newDetail);
 		paintFooter();
-		if (entry.isUpdatable()) {
+		if (wizardContent.isUpdatable()) {
 			paintAddButton();
 		}
 	}
@@ -590,7 +592,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 
 	@Override
 	public void setFocus(boolean focused) {
-		if (entry.isUpdatable()) {
+		if (wizardContent.isUpdatable()) {
 			AccountBox ab = (AccountBox) getWidget( getRowCount() - 2, COLS.ACC.ordinal());
 			ab.setFocus(true);
 		}

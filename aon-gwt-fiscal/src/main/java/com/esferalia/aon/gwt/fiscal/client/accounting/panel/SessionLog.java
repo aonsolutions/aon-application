@@ -41,7 +41,7 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 		FlowPanel panel = new FlowPanel("pre");
 		panel.setStyleName(AON.AON_CSS.aonClickableBlock());		
 		panel.addStyleName(AON.AON_CSS.aonFixedFont());
-		panel.addStyleName(AON.AON_CSS.aonMarginBottom());
+		panel.addStyleName(AON.AON_CSS.aonFontMedium());
 		
 		// ------------------------------------- CABECERA DEL ASIENTO
 		Label header = new Label(AonStringUtils.center( toString(cloned, status),160));

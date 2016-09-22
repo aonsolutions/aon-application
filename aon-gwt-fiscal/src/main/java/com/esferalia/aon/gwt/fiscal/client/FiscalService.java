@@ -247,6 +247,7 @@ public interface FiscalService extends RemoteService {
 	LinkedList<AccountEntry> getSalaryAccountEntries(String domainName,int domain, Date from, Date to) throws AonCoreException;
 	void deleteAccountEntry(String domainName,int domain, Integer id) throws AonCoreException;
 	AccountingInvoice initializeInvoice(String domainName,int domain,InvoiceType type, Integer registry, Date issueDate) throws AonCoreException; 
+	AccountingInvoice getAccountingInvoice(String domainName, int domain, Integer accountEntry) throws AonCoreException;
 	
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	AccountStatementReport getAccountStatement(String domainName,int domain, AccountStatementParams params) throws AonCoreException;	
@@ -255,5 +256,7 @@ public interface FiscalService extends RemoteService {
 	Attach getMod111Attach(String domainName, Mod111 mod111);
 	Attach getMod115Attach(String domainName, Mod115 mod115);
 	Attach getMod123Attach(String domainName, Mod123 mod123);
+
+	
 
 }

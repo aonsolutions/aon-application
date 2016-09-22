@@ -17,6 +17,7 @@ public class InvoiceVAT implements Serializable {
 	private Integer investAsset;
 	private double deductiblePercent;
 	private double deductibleQuota;
+	private boolean withholding;
 	private Integer outputAccountId;
 	private String outputAccountCode;
 	private String outputAccountDescription;
@@ -93,6 +94,15 @@ public class InvoiceVAT implements Serializable {
 		this.deductibleQuota = deductibleQuota;
 		return this;
 	}
+	
+	public boolean isWithholding() {
+		return withholding;
+	}
+	public InvoiceVAT setWithholding(boolean withholding) {
+		this.withholding = withholding;
+		return this;
+	}
+	
 	public Integer getInvestAsset() {
 		return investAsset;
 	}

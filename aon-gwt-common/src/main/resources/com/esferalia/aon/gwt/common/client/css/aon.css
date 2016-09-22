@@ -1806,7 +1806,7 @@ input:disabled+label {
 	width: 400px;
 }
 .aon-wizard-panel{
-    background-color: #fff2d2;
+    background-color: #e6f2ff;
     border: 1px solid black;
     margin-left: 1.5em;
     margin-bottom: 5px;
@@ -1833,7 +1833,7 @@ input:disabled+label {
     font-weight: bold;
 }
 .aon-wizard-panel-east{
-    background-color: #fff2d2;
+    background-color: #e6f2ff;
     border: 1px solid black;
     margin-right: 1em;	
     margin-bottom: 5px;

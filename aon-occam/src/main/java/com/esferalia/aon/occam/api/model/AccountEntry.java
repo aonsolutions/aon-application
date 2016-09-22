@@ -65,6 +65,10 @@ public class AccountEntry implements Serializable, HasAudit {
 		this.periodStatus = periodStatus;
 		return this;
 	}
+	public boolean isPeriodActive() {
+		return (getPeriodStatus() == null || getPeriodStatus().isActive());
+	}
+	
 	public Integer getDomain() {
 		return this.domain;
 	}
@@ -90,6 +94,10 @@ public class AccountEntry implements Serializable, HasAudit {
 		this.setDirty( isDirty()?true:AonUtils.notEquals(this.entryType , entryType) );
 		this.entryType = entryType;
 		return this;
+	}
+	
+	public boolean isManual() {
+		return getEntryType() == null || getEntryType().isManual();
 	}
 
 	public Integer getJournal() {
@@ -142,6 +150,27 @@ public class AccountEntry implements Serializable, HasAudit {
 		return this;
 	}
 	
+	public int getDetailsSize() {
+		int i = 0;
+		for (AccountEntryDetail aed : getDetails()) {
+			i = i + (aed.isDeleted() ? 0 : 1);
+		}
+		return i;
+	}
+	
+	public AccountEntryDetail getLastDetail() {
+		AccountEntryDetail aed = null;
+		if (!getDetails().isEmpty()) {
+			for (int i = (getDetails().size() - 1); i >= 0; i--) {
+				aed = getDetails().get(i);
+				if (!aed.isDeleted()) {
+					break;
+				}
+			}
+		}
+		return aed;
+	}
+
 	// ---------------------------------------------------------- DIRTY
 	public boolean isDirty() {
 		return dirty?dirty:areDetailsDirty();

@@ -275,4 +275,15 @@ public class ACCOUNTING {
 		}
 	}
 	
+	public static AccountingInvoice getAccountingInvoice(String domainName, int domain, String user,
+			 Integer accountEntry) {
+			AONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domain, user);
+				return getAccounting().getAccountingInvoice(ctx, accountEntry);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
 }

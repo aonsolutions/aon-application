@@ -45,7 +45,7 @@
 		
 		<g:center>
 			<g:DockLayoutPanel ui:field="centerDockLayoutPanel">
-				<g:north size="50">
+				<g:north size="60">
 					<g:HTMLPanel ui:field="entryHeader" styleName="{aonResources.css.aonScrollArea}">
 						<table class="{aonResources.css.aonPanelGrid} {aonResources.css.aonWidthAll}">
 							<tr>
@@ -80,21 +80,24 @@
 								</td>
 							</tr>
 						</table>
-						<g:FlowPanel styleName="{aonResources.css.aonTextRight}">
-							<g:InlineLabel ui:field="statusMsg"/>
-						</g:FlowPanel>
+						<g:HorizontalPanel styleName="{aonResources.css.aonWidthAll}">
+							<g:SimplePanel ui:field="errorsContainer"/>
+							<g:FlowPanel styleName="{aonResources.css.aonTextRight}">
+								<g:InlineLabel ui:field="statusMsg"/>
+							</g:FlowPanel>
+						</g:HorizontalPanel>
 					</g:HTMLPanel> 
 				</g:north>	
 				<g:center>
 					<g:SplitLayoutPanel ui:field="splitLayoutPanel">
-						<g:north size="0">
+						<g:center>
 							<g:SimpleLayoutPanel ui:field="wizardPanel" />
-						</g:north>
-							
+						</g:center>
+<!-- 							
 						<g:center>
 							<g:ScrollPanel ui:field="tableContainer" styleName="{aonResources.css.aonScrollArea}"/>  
 						</g:center>
-						
+ -->						
 						<g:south size="30">
 							<aon:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}">
 								<g:TabLayoutPanel ui:field="tabLayout" barHeight="26" barUnit="PX" width="100%">

@@ -1,7 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting.type;
-
-import java.util.Date;
-import java.util.LinkedList;
+package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
@@ -9,15 +6,22 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.occam.api.model.AccountEntry;
-import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.RequiresResize;
+import com.google.gwt.user.client.ui.ResizeComposite;
 
-public abstract class AccountEntryBase implements IAccountEntryType {
+public abstract class WizardContentBase extends ResizeComposite implements RequiresResize, IWizardContent {
 
 	static FiscalServiceAsync fiscalService;
-	
+	private AccountEntry ae;
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																
+//	public WizardContentBase(AccountEntry entry) {
+//		super();
+//		setAccountEntry(entry);
+//	}
+
 	private static FiscalServiceAsync getFiscalService() {
 		if (fiscalService == null) {
 			FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
@@ -32,73 +36,18 @@ public abstract class AccountEntryBase implements IAccountEntryType {
 		return AccountEntryModule.getCurrentDomain();
 	}
 
-	private AccountEntry ae;
-
-	public AccountEntryBase() {
-		Date date = ae != null ? ae.getEntryDate() : new Date();
-		setAccountEntry(new AccountEntry()
-			.setDomain(getDomain())
-			.setEntryDate(date)
-			.setConfidential(false)
-			.setEntryType(getAccountEntryType())
-			.setDirty(false));
-	}
-
-
-	@Override
-	public abstract AccountEntryType getAccountEntryType();
-
 	@Override
 	public AccountEntry getAccountEntry() {
 		return this.ae;
 	}
-
 	@Override
 	public void setAccountEntry(AccountEntry ae) {
 		this.ae = ae;
 	}
-
-	@Override
-	public boolean isPeriodActive() {
-		return (ae.getPeriodStatus() == null || ae.getPeriodStatus().isActive());
-	}
-
-	@Override
-	public LinkedList<AccountEntryDetail> getDetails() {
-		return this.ae.getDetails();
-	}
-
-	@Override
-	public int getSize() {
-		int i = 0;
-		for (AccountEntryDetail aed : getDetails()) {
-			i = i + (aed.isDeleted() ? 0 : 1);
-		}
-		return i;
-	}
-
-	@Override
-	public AccountEntryDetail getLast() {
-		AccountEntryDetail aed = null;
-		if (!getDetails().isEmpty()) {
-			for (int i = (getDetails().size() - 1); i >= 0; i--) {
-				aed = getDetails().get(i);
-				if (!aed.isDeleted()) {
-					break;
-				}
-			}
-		}
-		return aed;
-	}
-
-	@Override
-	public boolean isManual() {
-		return getAccountEntry().getEntryType().isManual();
-	}
 	
 	@Override
-	public boolean isUpdatable() {
-		return (isPeriodActive() && isManual());
+	public void select(AccountEntry entry) {
+		setAccountEntry(entry);
 	}
 	
 	@Override
@@ -147,19 +96,6 @@ public abstract class AccountEntryBase implements IAccountEntryType {
 	}
 
 	@Override
-	public boolean isNew() {
-		return getAccountEntry() == null || getAccountEntry().getId() == null;
-	}
-
-	@Override
-	public boolean isDirty() {
-		if (getAccountEntry().getId() == null && getAccountEntry().getDetails().size() == 0) {
-			return false;
-		}
-		return getAccountEntry().isDirty();
-	}
-
-	@Override
 	public void get(Integer id, final AsyncCallback<AccountEntry> callback) {
 		getFiscalService().getAccountEntry(getDomainName(), getDomain(), id,
 				new AsyncCallbackWrapper<AccountEntry>(callback) {
@@ -176,4 +112,25 @@ public abstract class AccountEntryBase implements IAccountEntryType {
 					}
 				});
 	}
+
+	@Override
+	public boolean isNew() {
+		return getAccountEntry() == null || getAccountEntry().getId() == null;
+	}
+
+	@Override
+	public boolean isUpdatable() {
+		return (getAccountEntry() == null || (getAccountEntry().isPeriodActive() && getAccountEntry().isManual()));
+	}
+
+	@Override
+	public boolean isDirty() {
+		if (getAccountEntry().getId() == null || getAccountEntry().getDetails().size() == 0) {
+			return false;
+		}
+		return getAccountEntry().isDirty();
+	}
+
+	@Override
+	public abstract AccountEntryType getAccountEntryType();
 }

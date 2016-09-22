@@ -54,7 +54,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod123.Model123ScriptProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
@@ -974,6 +973,12 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	public AccountingInvoice initializeInvoice(String domainName, int domain, InvoiceType type, Integer registry, Date issueDate)
 			throws AonCoreException {
 		return ACCOUNTING.initializeInvoice(domainName, domain, this.getUserLogin(), type, registry, issueDate);
+	}
+
+	@Override
+	public AccountingInvoice getAccountingInvoice(String domainName, int domain, Integer accountEntry)
+			throws AonCoreException {
+		return ACCOUNTING.getAccountingInvoice(domainName, domain, this.getUserLogin(), accountEntry);
 	}
 
 	@Override

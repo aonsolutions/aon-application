@@ -16,6 +16,7 @@ public class AccountEntryPrinter {
 		FlowPanel panel = new FlowPanel("pre");
 		panel.setStyleName(AON.AON_CSS.aonClickableBlock());		
 		panel.addStyleName(AON.AON_CSS.aonFixedFont());
+		panel.addStyleName(AON.AON_CSS.aonFontMedium());
 		panel.addStyleName(AON.AON_CSS.aonMarginBottom());
 		
 		// ------------------------------------- CABECERA DEL ASIENTO
