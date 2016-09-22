@@ -227,6 +227,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 	public void onAddSerialNumber(ActionEvent event) {
 		if (StringUtils.isNotBlank(getSerialNumber())) {
 			SerializableBreakdown breakdown = new SerializableBreakdown();
+			breakdown.setLotable(getSerializableItem().getProduct().isLotable());
 			breakdown.setSerialNumber(getSerialNumber());
 			breakdown.setSerialDate(getSerialDate());
 			breakdown.setQuantity(getSerializableQuantity());
@@ -407,17 +408,27 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		proposalController.onLoad(event, purchaseDetail.getProposalDetail().getProposal().getId(), "purchase_form", null);
 	}
 
+
 	public static class SerializableBreakdown implements Serializable {
 		
 		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 		
+		private boolean lotable;
 		private String serialNumber;
 		private Date serialDate;
 		private double quantity;
 
 		public SerializableBreakdown() {
-			serialNumber = "";
-			quantity = 0;
+			setLotable(false);
+			setSerialNumber("");
+			setQuantity(0);
+		}
+
+		public boolean isLotable() {
+			return lotable;
+		}
+		public void setLotable(boolean lotable) {
+			this.lotable = lotable;
 		}
 
 		public String getSerialNumber() {
@@ -442,11 +453,15 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		}
 
 		public String getLabel() {
-			NumberFormat numberFormat = new DecimalFormat(AonUtil.getMessage(QUANTITY_PATTERN));
-			DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN));
-			String label = "(" + numberFormat.format(quantity) + ") #" + getSerialNumber();
-			if (serialDate != null) {
-				label += " [" + dateFormat.format(serialDate) + "]";
+			String label = "";
+			if (isLotable()) {
+				NumberFormat numberFormat = new DecimalFormat(AonUtil.getMessage(QUANTITY_PATTERN));
+				label += "(" + numberFormat.format(getQuantity()) + ") ";
+			}
+			label += "#" + getSerialNumber();
+			if (getSerialDate() != null) {
+				DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN));
+				label += " [" + dateFormat.format(getSerialDate()) + "]";
 			}
 			return label;
 		}

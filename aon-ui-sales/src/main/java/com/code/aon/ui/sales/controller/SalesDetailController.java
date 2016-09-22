@@ -1,9 +1,12 @@
 package com.code.aon.ui.sales.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.QUANTITY_PATTERN;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -15,6 +18,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
@@ -51,10 +55,13 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	private boolean longDescription;
 	private SalesDetail salesDetail;
 	private boolean showSerialNumberWindow;
+	private boolean createSerialNumbers;
 	private Item serializableItem;
 	private double serializableQuantity;
+	private String serialNumber;
+	private Date serialDate;
 	private List<SelectItem> serialNumbers;
-	private Item[] selectedItems;
+	private String[] selectedBreakdown;
 
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
@@ -103,6 +110,14 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		this.showSerialNumberWindow = value;
 	}
 
+	public boolean isCreateSerialNumbers() {
+		return createSerialNumbers;
+	}
+
+	public void setCreateSerialNumbers(boolean value) {
+		this.createSerialNumbers = value;
+	}
+
 	public Item getSerializableItem() {
 		return serializableItem;
 	}
@@ -119,6 +134,22 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		this.serializableQuantity = serializableQuantity;
 	}
 
+	public String getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(String serialNumber) {
+		this.serialNumber = serialNumber;
+	}
+
+	public Date getSerialDate() {
+		return serialDate;
+	}
+
+	public void setSerialDate(Date serialDate) {
+		this.serialDate = serialDate;
+	}
+
 	public List<SelectItem> getSerialNumbers() {
 		return serialNumbers;
 	}
@@ -127,12 +158,12 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		this.serialNumbers = serialNumbers;
 	}
 
-	public Item[] getSelectedItems() {
-		return selectedItems;
+	public String[] getSelectedBreakdown() {
+		return selectedBreakdown;
 	}
 
-	public void setSelectedItems(Item[] selectedItems) {
-		this.selectedItems = selectedItems;
+	public void setSelectedBreakdown(String[] selectedBreakdown) {
+		this.selectedBreakdown = selectedBreakdown;
 	}
 
 	public boolean isPending() throws ManagerBeanException {
@@ -206,8 +237,10 @@ public class SalesDetailController extends LinesController implements ISalesCons
 			setSalesDetail(salesDetail);
 			setSerializableItem(salesDetail.getItem());
 			setSerializableQuantity(salesDetail.getItem().getProduct().isLotable() ? salesDetail.getQuantity() : 1);
+			setSerialNumber(null);
+			setSerialDate(null);
 			setSerialNumbers(obtainItemSerialNumbers(salesDetail.getItem().getProduct()));
-			setSelectedItems(null);
+			setSelectedBreakdown(null);
 		} else {
 			setShowSerialNumberWindow(false);
 		}
@@ -223,19 +256,48 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		criteria.addNotEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), StringUtils.EMPTY);
 		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
 		for (ITransferObject ito : itemBean.getList(criteria)) {
-			Item item = (Item)ito;
-			items.add(new SelectItem(item, getItemSerialLabel(item.getSerialNumber(), item.getSerialDate())));
+			SerializableBreakdown breakdown = new SerializableBreakdown((Item)ito);
+			breakdown.setQuantity(getSerializableQuantity());
+			items.add(new SelectItem(breakdown, breakdown.getLabel()));
 		}
 		return items;
 	}
 
-	private String getItemSerialLabel(String serialNumber, Date serialDate) {
-		DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN));
-		String label = "#" + serialNumber;
-		if (serialDate != null) {
-			label += " [" + dateFormat.format(serialDate) + "]";
+	public void onChangeSerialQuantity(ActionEvent event) {
+		for (SelectItem selectItem : getSerialNumbers()) {
+			if (ArrayUtils.contains(getSelectedBreakdown(), selectItem.getLabel())) {
+				SerializableBreakdown breakdown = (SerializableBreakdown)selectItem.getValue();
+				int index = ArrayUtils.indexOf(getSelectedBreakdown(), breakdown.getLabel());
+				breakdown.setQuantity(getSerializableQuantity());
+				selectItem.setLabel(breakdown.getLabel());
+				setSelectedBreakdown((String[])ArrayUtils.add(getSelectedBreakdown(), index, breakdown.getLabel()));
+			}
 		}
-		return label;
+	}
+
+	public void onAddSerialNumber(ActionEvent event) {
+		if (StringUtils.isNotBlank(getSerialNumber())) {
+			SerializableBreakdown breakdown = new SerializableBreakdown();
+			breakdown.setLotable(getSerializableItem().getProduct().isLotable());
+			breakdown.setSerialNumber(getSerialNumber());
+			breakdown.setSerialDate(getSerialDate());
+			breakdown.setQuantity(getSerializableQuantity());
+			getSerialNumbers().add(new SelectItem(breakdown, breakdown.getLabel()));
+			setSerialNumber(null);
+		}
+	}
+
+	public void onRemoveSerialNumber(ActionEvent event) {
+		for (String breakdownLabel : getSelectedBreakdown()) {
+			for (SelectItem selectItem : getSerialNumbers()) {
+				SerializableBreakdown breakdown = (SerializableBreakdown)selectItem.getValue();
+				if (breakdown.getLabel().equals(breakdownLabel)) {
+					getSerialNumbers().remove(selectItem);
+					break;
+				}
+			}
+		}
+		setSelectedBreakdown(null);
 	}
 
 	public void onAssignSerialNumber(ActionEvent event) throws ManagerBeanException {
@@ -270,7 +332,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 
 	private void assignSerialNumber(SalesDetail salesDetail) throws ManagerBeanException {
 		int line = salesDetail.getLine();
-		double quantity = CommonUtil.round(getSelectedItems().length * getSerializableQuantity(), 3);
+		double quantity = getSelectedBreakdownQuantity();
 		if (salesDetail.getQuantity() > quantity) {
 			salesDetail.setQuantity(CommonUtil.round(salesDetail.getQuantity() - quantity, 3));
 			getManagerBean().restoreNullSubPOJOs(salesDetail);
@@ -281,25 +343,65 @@ public class SalesDetailController extends LinesController implements ISalesCons
 			--line;
 		}
 
-		for (Item item : getSelectedItems()) {
-			if (item != null) {
-				SalesDetail newSalesDetail = new SalesDetail();
-				newSalesDetail.setSales(salesDetail.getSales());
-				newSalesDetail.setLine(++line);
-				newSalesDetail.setItem(item);
-				newSalesDetail.setDescription(salesDetail.getDescription() + " #" + item.getSerialNumber());
-				newSalesDetail.setQuantity(getSerializableQuantity());
-				newSalesDetail.setPrice(salesDetail.getPrice());
-				newSalesDetail.setDiscountExpression(salesDetail.getDiscountExpression());
-				newSalesDetail.setTaxes(salesDetail.getTaxes());
-				newSalesDetail.setStatus(SalesDetailStatus.PENDING);
-				newSalesDetail.setOfferDetail(salesDetail.getOfferDetail());
-				newSalesDetail.setDelivered(0);
-				getManagerBean().restoreNullSubPOJOs(newSalesDetail);
-				getManagerBean().insert(newSalesDetail);
+		for (SelectItem selectItem : getSerialNumbers()) {
+			if (ArrayUtils.contains(getSelectedBreakdown(), selectItem.getLabel())) {
+				SerializableBreakdown breakdown = (SerializableBreakdown)selectItem.getValue();
+				Item item = breakdown.getItem();
+				if (item == null) {
+					IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getSerializableItem().getProduct().getId());
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER), breakdown.getSerialNumber());
+					List<ITransferObject> itemList = itemBean.getList(criteria);
+					if (!itemList.isEmpty()) {
+						item = (Item)itemList.get(0);
+					} else {
+						item = new Item();
+						Product product = (Product)HibernateUtil.getSession(HibernateUtil.getSessionFactoryName()).merge(getSerializableItem().getProduct());
+						item.setProduct(product);
+						item.setDescription(getSerializableItem().getDescription());
+						item.setSerialNumber(breakdown.getSerialNumber());
+						item.setSerialDate(breakdown.getSerialDate());
+						item.setPrice(getSerializableItem().getPrice());
+						item.setProfitPercent(getSerializableItem().getProfitPercent());
+						item.setPurchasePrice(getSerializableItem().getPurchasePrice());
+						item.setStatus(ProductStatus.ACTIVE);
+						itemBean.restoreNullSubPOJOs(item);
+						item = (Item)itemBean.insert(item);
+					}
+				}
+
+				if (item != null) {
+					SalesDetail newSalesDetail = new SalesDetail();
+					newSalesDetail.setSales(salesDetail.getSales());
+					newSalesDetail.setLine(++line);
+					newSalesDetail.setItem(item);
+					newSalesDetail.setDescription(salesDetail.getDescription() + " #" + item.getSerialNumber());
+					newSalesDetail.setQuantity(breakdown.getQuantity());
+					newSalesDetail.setPrice(salesDetail.getPrice());
+					newSalesDetail.setDiscountExpression(salesDetail.getDiscountExpression());
+					newSalesDetail.setTaxes(salesDetail.getTaxes());
+					newSalesDetail.setStatus(SalesDetailStatus.PENDING);
+					newSalesDetail.setOfferDetail(salesDetail.getOfferDetail());
+					newSalesDetail.setDelivered(0);
+					getManagerBean().restoreNullSubPOJOs(newSalesDetail);
+					getManagerBean().insert(newSalesDetail);
+				}
 			}
 		}
 	}
+
+	private double getSelectedBreakdownQuantity() {
+		double quantity = 0;
+		for (SelectItem selectItem : getSerialNumbers()) {
+			if (ArrayUtils.contains(getSelectedBreakdown(), selectItem.getLabel())) {
+				SerializableBreakdown breakdown = (SerializableBreakdown)selectItem.getValue();
+				quantity = CommonUtil.round(quantity + breakdown.getQuantity(), 3);
+			}
+		}
+		return quantity;
+	}
+
 
 	public double getAmount() {
 		return getPriceStrategy().getBasePrice((ICalculable)this.getTo());
@@ -385,6 +487,95 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		salesController.refresh(event);
 
 		onSearch(event);
+	}
+
+
+	public static class SerializableBreakdown implements Serializable {
+		
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		private Item item;
+		private boolean lotable;
+		private String serialNumber;
+		private Date serialDate;
+		private double quantity;
+
+		public SerializableBreakdown() {
+			setItem(null);
+			setLotable(false);
+			setSerialNumber("");
+			setQuantity(0);
+		}
+
+		public SerializableBreakdown(Item item) {
+			setItem(item);
+			setLotable(item.getProduct().isLotable());
+			setSerialNumber(item.getSerialNumber());
+			setSerialDate(item.getSerialDate());
+			setQuantity(0);
+		}
+
+		public Item getItem() {
+			return item;
+		}
+		public void setItem(Item item) {
+			this.item = item;
+		}
+
+		public boolean isLotable() {
+			return lotable;
+		}
+		public void setLotable(boolean lotable) {
+			this.lotable = lotable;
+		}
+
+		public String getSerialNumber() {
+			return serialNumber;
+		}
+		public void setSerialNumber(String serialNumber) {
+			this.serialNumber = serialNumber;
+		}
+
+		public Date getSerialDate() {
+			return serialDate;
+		}
+		public void setSerialDate(Date serialDate) {
+			this.serialDate = serialDate;
+		}
+
+		public double getQuantity() {
+			return quantity;
+		}
+		public void setQuantity(double quantity) {
+			this.quantity = quantity;
+		}
+
+		public String getLabel() {
+			String label = (getItem()==null) ? "+" : "";
+			if (isLotable()) {
+				NumberFormat numberFormat = new DecimalFormat(AonUtil.getMessage(QUANTITY_PATTERN));
+				label += "(" + numberFormat.format(getQuantity()) + ") ";
+			}
+			label += "#" + getSerialNumber();
+			if (getSerialDate() != null) {
+				DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(DATE_PATTERN));
+				label += " [" + dateFormat.format(getSerialDate()) + "]";
+			}
+			return label;
+		}
+
+		@Override
+		public String toString() {
+			return getLabel();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) return false;
+			final SerializableBreakdown o = (SerializableBreakdown)obj;
+			return o.getSerialNumber().equals(getSerialNumber()) && o.getQuantity() == getQuantity();
+		}
+
 	}
 
 }

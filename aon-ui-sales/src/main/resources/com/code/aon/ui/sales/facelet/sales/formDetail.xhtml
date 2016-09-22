@@ -77,6 +77,8 @@
 					reRender="showSerialNumberWindow" ajaxSingle="true">
 					<f:setPropertyActionListener target="#{salesDetail.showSerialNumberWindow}"
 						value="#{true}" />
+					<f:setPropertyActionListener target="#{controller.createSerialNumbers}"
+						value="#{false}" />
 				</aon:commandLink>
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 					<ui:param name="lookupBean" value="#{saleItemLookup}" />
