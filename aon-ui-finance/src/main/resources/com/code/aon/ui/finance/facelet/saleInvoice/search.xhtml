@@ -5,10 +5,25 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<ui:include src="/com/code/aon/ui/finance/facelet/invoice/searchInvoice.xhtml">
+	<ui:decorate template="/com/code/aon/ui/finance/facelet/invoice/searchInvoice.xhtml">
 		<ui:param name="toolbarTitle" value="#{bundle.finance_sale_invoice_management_module}" />
 		<ui:param name="controller" value="#{saleInvoice}" />
 		<ui:param name="searchController" value="#{saleInvoiceSearch}" />
-	</ui:include>
+		
+		<ui:define name="additionalToolbarContent">
+			<aon:if test="#{company.ediSupportEnabled}">
+				<aon:commandButton id="import-Popup"
+					value="#{bundle.aon_import}"
+					title="#{bundle.aon_import}"
+					styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+					actionListener="#{controller.udapaImporter.onImportFileShow}"
+					action="saleInvoice_form">
+					<f:setPropertyActionListener target="#{controller.udapaImporter.showImportFileWindow}"
+						value="#{true}" />
+				</aon:commandButton>
+			</aon:if>
+		</ui:define>
+		
+	</ui:decorate>
 
 </ui:composition>
