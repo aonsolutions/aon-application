@@ -50,6 +50,7 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
+import com.code.aon.ui.finance.file.edi.EdiInvoiceImporterHandler;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sign.controller.SignerController;
@@ -69,6 +70,8 @@ public class SaleInvoiceController extends InvoiceController {
 	private DeliveryTransferManager deliveryTransferManager;
 	private boolean showDeliveryTransferWindow;
 	private boolean showDeliveryFilterWindow;
+	
+	private EdiInvoiceImporterHandler udapaImporter;
 	
 	public SaleInvoiceController() {
 		setInvoiceAddressControllerName(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -108,6 +111,13 @@ public class SaleInvoiceController extends InvoiceController {
 
 	public void setShowDeliveryFilterWindow(boolean showDeliveryFilterWindow) {
 		this.showDeliveryFilterWindow = showDeliveryFilterWindow;
+	}
+	
+	public EdiInvoiceImporterHandler getUdapaImporter() {
+		if(udapaImporter==null){
+			udapaImporter = new EdiInvoiceImporterHandler(this);
+		}
+		return udapaImporter;
 	}
 
 	@Override
