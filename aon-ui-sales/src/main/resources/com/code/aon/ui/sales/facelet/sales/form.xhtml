@@ -479,7 +479,9 @@
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalDelivery.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalPurchase.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalInvoice.xhtml" />
-		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalSerialNumber.xhtml" />
+		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalSerialNumber.xhtml">
+			<ui:param name="controller" value="#{salesDetail}" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalShipment.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalImport.xhtml" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
