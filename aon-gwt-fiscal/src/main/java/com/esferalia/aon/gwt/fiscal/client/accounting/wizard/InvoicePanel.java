@@ -116,21 +116,24 @@ public class InvoicePanel extends WizardContentBase {
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		
 		invoicePanelVisitor = new InvoicePanelVisitor();
+		InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
 		
 		registryBox = new AccountingRegistryBox(AccountEntryModule.getCurrentDomainName()
 				, AccountEntryModule.getCurrentDomain(), true);
 		withholdingAccount = new AccountBox(AccountEntryModule.getCurrentDomainName()
 				, AccountEntryModule.getCurrentDomain(), false);
-		
-		InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
 		vatPanel = new InvoiceVATPanel( invoiceCallback );
 		extraPanel = new InvoiceExtraPanel( invoiceCallback );
-
+		
 		Widget ui = DATA_BINDER.createAndBindUi(InvoicePanel.this);
 		initWidget(ui);
 		number.addStyleName(AON.AON_CSS.aonMarginRight5());
 		invoiceDataPanel.setVisible(false);
 		withholdingPanel.setVisible(false);
+	}
+	
+	@Override
+	public void reset() {
 	}
 	
 	public void setInvoice(AccountingInvoice invoice) {

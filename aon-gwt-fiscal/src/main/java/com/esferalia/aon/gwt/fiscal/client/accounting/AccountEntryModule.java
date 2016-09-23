@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -230,6 +231,29 @@ public class AccountEntryModule extends MainEntryPoint {
 					@Override
 					public void onSuccess(AonConfiguration result) {
 						configuration = result;
+						
+						if (configuration.getPeriods() != null && !configuration.getPeriods().isEmpty()) {
+							period.fill(configuration.getPeriods());
+						} else {
+							invalidateModule(AON.MSG.noActiveAccountPeriod());
+						}
+
+						if (configuration.getActivities() != null 
+						 && !configuration.getActivities().isEmpty() 
+						 && activity.getItemCount() == 0) {
+							activity.setVisible(true);
+							activity.addItem("-- Todas --", (String) null);
+							activity.setSelectedIndex(0);
+							int i = 1;
+							for (EnterpriseActivity ea : configuration.getActivities()) {
+								activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
+								if (ea.isPrincipal()) activity.setSelectedIndex(i);
+								i++;
+							}
+						} else {
+							activity.setVisible(false);
+						}
+
 						reset();
 					}
 
@@ -612,46 +636,42 @@ public class AccountEntryModule extends MainEntryPoint {
 	private void reset() {
 		confidential.setVisible(configuration.getUser().hasConfidentialityRole());
 		journalPanel.setUser(configuration.getUser());
-		if (configuration.getPeriods() != null && !configuration.getPeriods().isEmpty()) {
-			period.fill(configuration.getPeriods());
-			AccountEntry ae =  new AccountEntry()
-						.setEntryType(AccountEntryType.MANUAL)
-						.setDomain(getCurrentDomain())
-						.setConfidential(false)
-						.setDirty(false);
+		final MutableInt first = new MutableInt(0);
+		AccountEntry ae =  null;
+		if (this.wizardContent == null) {
+			first.setValue(1);
 			setWizardContent(new Manual(this.callback));
-			this.wizardContent.setAccountEntry(ae);
-			this.wizardContent.paint();
-			if (entryDate.getValue() != null) {
-				this.wizardContent.getAccountEntry().setEntryDate(entryDate.getValue());
-			}
-			if (configuration.getActivities() != null && !configuration.getActivities().isEmpty()) {
-				activity.setVisible(true);
-				activity.addItem("-- Todas --", (String) null);
-				activity.setSelectedIndex(0);
-				int i = 1;
-				for (EnterpriseActivity ea : configuration.getActivities()) {
-					activity.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
-					if (ea.isPrincipal()) activity.setSelectedIndex(i);
-					i++;
-				}
-			} else {
-				activity.setVisible(false);
-			}
-			
-			this.wizardContent.getAccountEntry().setPeriod(AonNumberUtils.toInteger(period.getSelectedValue()));
-			this.wizardContent.getAccountEntry().setDirty(false);
-			syncCurrent();
-			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-				public void execute() {
+			ae =  new AccountEntry()
+					.setPeriod(AonNumberUtils.toInteger(period.getSelectedValue()))
+					.setEntryType(this.wizardContent.getAccountEntryType())
+					.setDomain(getCurrentDomain())
+					.setConfidential(false)
+					.setEntryDate(new Date())
+					.setDirty(false);
+		} else {
+			ae =  new AccountEntry()
+					.setPeriod(this.wizardContent.getAccountEntry().getPeriod())
+					.setEntryType(this.wizardContent.getAccountEntry().getEntryType())
+					.setDomain(getCurrentDomain())
+					.setConfidential(this.wizardContent.getAccountEntry().isConfidential())
+					.setEntryDate(this.wizardContent.getAccountEntry().getEntryDate())
+					.setDirty(false);
+		}
+		
+		this.wizardContent.setAccountEntry(ae);
+		this.wizardContent.paint();
+		syncCurrent();
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			public void execute() {
+				if (first.getValue() == 0) {
+					wizardContent.setFocus(true);
+				} else {
 					entryDate.setFocus(true);
 					entryDate.hideDatePicker();
 					entryDate.getTextBox().selectAll();
 				}
-			});
-		} else {
-			invalidateModule(AON.MSG.noActiveAccountPeriod());
-		}
+			}
+		});
 	}
 
 	private void addToSessionLog(AccountEntry entry) {

@@ -17,12 +17,38 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class Manual extends WizardContentBase {
 	
+	private IAccountEntryModuleCallback callback;
 	private ScrollPanel tableContainer;
 	private VerticalPanel tableInnerContainer;
 	private AccountEntryTable table;
 	
 	public Manual(final IAccountEntryModuleCallback callback) {
+		this.callback = callback;
 		tableContainer = new ScrollPanel();
+		initWidget(tableContainer);
+	}
+	
+	@Override
+	public void paint() {
+		reset();
+		table.paintTable();
+		tableInnerContainer.add(table);
+		tableContainer.setWidget(tableInnerContainer);
+	}
+	
+	@Override
+	public AccountEntryType getAccountEntryType() {
+		return AccountEntryType.MANUAL;
+	}
+
+	@Override
+	public void setFocus(boolean b) {
+		table.setFocus(b);
+	}
+
+	@Override
+	public void reset() {
+		
 		tableContainer.setStyleName(AON.AON_CSS.aonScrollArea());
 		tableInnerContainer = new VerticalPanel();
 		tableInnerContainer.addStyleName(AON.AON_CSS.aonWidthAll());
@@ -50,24 +76,6 @@ public class Manual extends WizardContentBase {
 				callback.onRefreshId();
 			}
 		});
-		initWidget(tableContainer);
-	}
-	
-	@Override
-	public void paint() {
-		table.paintTable();
-		tableInnerContainer.add(table);
-		tableContainer.add(tableInnerContainer);
-	}
-	
-	@Override
-	public AccountEntryType getAccountEntryType() {
-		return AccountEntryType.MANUAL;
-	}
-
-	@Override
-	public void setFocus(boolean b) {
-		// nothing
 	}
 	
 }

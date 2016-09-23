@@ -14,6 +14,7 @@ public interface IWizardContent extends IsWidget {
 	public AccountEntry getAccountEntry();
 	public void setAccountEntry(AccountEntry accountEntry);
 	public void paint();
+	public void reset();
 	
 	public boolean isUpdatable();
 	public boolean isNew();
