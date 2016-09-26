@@ -24,8 +24,12 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
+import com.vaadin.polymer.paper.PaperDialogElement;
+import com.vaadin.polymer.paper.PaperInputElement;
+import com.vaadin.polymer.paper.PaperTextareaElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperTextarea;
+import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
 import com.vaadin.polymer.vaadin.widget.VaadinComboBox;
 
 public class Issues implements EntryPoint {
@@ -67,7 +71,11 @@ public class Issues implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList(
-				IronIconsElement.SRC
+				IronIconsElement.SRC,
+				PaperInputElement.SRC,
+				PaperTextareaElement.SRC,
+				PaperDialogElement.SRC,
+				VaadinComboBoxElement.SRC
 				));
 		
 		Polymer.whenReady(o -> {
