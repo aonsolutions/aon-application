@@ -3633,7 +3633,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			@Override
 			public Double getValue(Period p) {
 				return Arrays.stream(WEEK_DAYS).collect(Collectors.summingDouble(
-						(var -> getCurrentBindings().get(var, obj -> ((Number) obj).doubleValue(), -1.00))));
+						(var -> getCurrentBindings().get(var, obj -> ((Number) obj).doubleValue(), 0.00))));
 			}
 
 		}
