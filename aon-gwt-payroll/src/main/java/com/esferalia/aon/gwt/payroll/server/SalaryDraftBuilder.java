@@ -775,6 +775,10 @@ public class SalaryDraftBuilder
 		
 		ContextVariable var = ContextVariable.getVariableByName(name);
 		
+		String restoreButton = String.format(Locale.ENGLISH
+		,"Pulse el bot\u00F3n para restaurar el valor del sistema <button class='aon-icon aon-button-goto' onclick='javascript:addDraftVariable(\"%1$s\",\"SISTEMA(\\x27%1$s\\x27)\");javascript:calculate();'></button>"
+		, name
+		);
 		
 		
 		if ( var != null ) {
@@ -789,21 +793,21 @@ public class SalaryDraftBuilder
 			if ( AonStringUtils.isNotBlank(description) ) {
 				try {
 					salaryDraft.addWarning(String.format(
-							"%s con valor %.2f esta redefinida con el valor %.2f",
+							"%s con valor %.2f esta redefinida con el valor %.2f." + restoreButton,
 							description, 
 							((Number)implicit.getValue(implicit.getPeriod())).doubleValue(),
 							((Number)redefined.getValue(redefined.getPeriod())).doubleValue()
 							));
 				} catch ( ClassCastException e){
 					salaryDraft.addWarning(String.format(
-							"%s con valor '%s' esta redefinida con el valor '%s'",
+							"%s con valor '%s' esta redefinida con el valor '%s'." + restoreButton,
 							description, 
 							implicit.getValue(implicit.getPeriod()),
 							redefined.getValue(redefined.getPeriod())
 							));
 				} catch ( Throwable e){
 					salaryDraft.addWarning(String.format(
-							"%s esta redefinida ",
+							"%s esta redefinida." + restoreButton,
 							description
 							));
 				}
@@ -813,21 +817,21 @@ public class SalaryDraftBuilder
 		
 		try {
 			salaryDraft.addWarning(String.format(
-					"La variable del sistema '%s' con valor %.2f esta redefinida con el valor %.2f",
+					"La variable del sistema '%s' con valor %.2f esta redefinida con el valor %.2f." + restoreButton,
 					name, 
 					((Number)implicit.getValue(implicit.getPeriod())).doubleValue(),
 					((Number)redefined.getValue(redefined.getPeriod())).doubleValue()
 					));
 		} catch ( ClassCastException e ){
 			salaryDraft.addWarning(String.format(
-					"La variable del sistema '%s' con valor '%s' esta redefinida con el valor '%s'",
+					"La variable del sistema '%s' con valor '%s' esta redefinida con el valor '%s'." + restoreButton,
 					name, 
 					implicit.getValue(implicit.getPeriod()),
 					redefined.getValue(redefined.getPeriod())
 					));
 		} catch ( Throwable e){
 			salaryDraft.addWarning(String.format(
-					"La variable del sistema '%s' esta redefinida"
+					"La variable del sistema '%s' esta redefinida."  + restoreButton
 					, name ));
 		}
 			
@@ -851,7 +855,27 @@ public class SalaryDraftBuilder
 		
 		return IListener.super.onConstantParameter(func, constant, ctx);
 	}
+	
+	@Override
+	public void onMistakenPartialFactor(double monthHours, double workedHours, double factor) {
+		salaryDraft.addWarning(
+				String.format(
+				"Mes incompleto, el coeficente de parcialidad <span style='color:orange;'>%1$.2f</span>"
+				+" no coincide con el coeficiente informado <span style='color:orange;'>%4$.2f</span>. </br>"
+				+ "Ha trabajado <span style='color:orange;'>%3$.2f</span> horas sobre un total de "
+				+"<span style='color:orange;'>%2$.2f</span>, asi que el coeficiente real es %3$.2f / %2$.2f = <span style='color:orange;'>%1$.2f</span></br>" 
+				+ "Si desea mantener el coeficiente original <span style='color:orange;'>%4$.2f</span> "
+				, workedHours / monthHours
+				, monthHours
+				, workedHours
+				, factor) 
+				+ String.format(Locale.ENGLISH
+				,"pulse el bot\u00F3n <button class='aon-icon aon-button-goto' onclick='javascript:addDraftVariable(\"COEFICIENTE_PARCIALIDAD\",\"%f\");javascript:calculate();'></button>"
+				,factor)
+				);
 
+	}
+	
 	@Override
 	public void onRemove(IContractBonus contractBonus) {
 		Bonus draftBonus = newBonus(contractBonus);

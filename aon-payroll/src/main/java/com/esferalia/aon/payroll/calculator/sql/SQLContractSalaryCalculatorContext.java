@@ -3333,11 +3333,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 								double agreementWeekHours = getCurrentBindings().get(AGREEMENT_HOURS,
 										obj -> ((Number) obj).doubleValue(), DEFAULT_AGRREEMENT_HOURS);
 
+								double weekHours = getCurrentBindings().get(WEEK_HOURS,
+										obj -> ((Number) obj).doubleValue(), DEFAULT_AGRREEMENT_HOURS);
+								
+								double wholeFactor = weekHours / agreementWeekHours;
+
 								if (isWholeMonth(p) /* && false */ ) {
-									double weekHours = getCurrentBindings().get(WEEK_HOURS,
-											obj -> ((Number) obj).doubleValue(), DEFAULT_AGRREEMENT_HOURS);
-									return weekHours / agreementWeekHours;
+									return wholeFactor;
 								} else {
+									
 									ICalendar calendar = getCalendar();
 									double agreementDayHours = agreementWeekHours / getWeekDaysOf(DayType.WORKING_DAY);
 
@@ -3363,8 +3367,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 													|| calendar.getDayType(day) == DayType.WORKING_DAY
 															? agreementDayHours : 0.00;
 									});
+									
 
-									return hours[1] == 0.00 ? 0.00 : (hours[0] / hours[1]);
+									double incompleteFactor = hours[1] == 0.00 ? 0.00 : (hours[0] / hours[1]);
+									
+									if ( incompleteFactor != wholeFactor ) 
+										onMistakenPartialFactor(hours[1], hours[0], wholeFactor);								
+
+									return incompleteFactor;
 								}
 							}
 
@@ -3623,7 +3633,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			@Override
 			public Double getValue(Period p) {
 				return Arrays.stream(WEEK_DAYS).collect(Collectors.summingDouble(
-						(var -> getCurrentBindings().get(var, obj -> ((Number) obj).doubleValue(), 0.00))));
+						(var -> getCurrentBindings().get(var, obj -> ((Number) obj).doubleValue(), -1.00))));
 			}
 
 		}
@@ -3790,6 +3800,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			return;
 
 		listener.onRedefinedImplicit(name, redefined, implicit);
+	}
+
+	protected void onMistakenPartialFactor(double monthHours, double workedHours, double factor) {
+		if (listener == null)
+			return;
+
+		listener.onMistakenPartialFactor(monthHours, workedHours, factor);
 	}
 
 	protected void onContractLeaveLoaded(ResultSet rs, ExpressionContext ctx) throws SQLException {

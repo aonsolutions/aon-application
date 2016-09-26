@@ -28,6 +28,9 @@ public class AonConstants {
 	public static DismissalType DEFINITE_END = DismissalType.DEFINITE_END;
 	@Variable(ContextVariable.CONDITIONS_CHANGE)
 	public static DismissalType CONDITIONS_CHANGE = DismissalType.CONDITIONS_CHANGE;
+
+	@Variable(ContextVariable.NON_WORKING)
+	public static Double NON_WORKING = -1.00;
 	
 	
 	// ------------------------------------------------------------------------

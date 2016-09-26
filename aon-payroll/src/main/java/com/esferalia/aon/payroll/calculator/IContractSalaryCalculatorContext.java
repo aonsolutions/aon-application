@@ -31,6 +31,9 @@ public interface IContractSalaryCalculatorContext extends
 		default <T> T onConstantParameter(String func, T constant, ExpressionContext ctx) {
 			return constant;
 		}
+
+		default void onMistakenPartialFactor(double monthHours, double workedHours, double factor) {
+		}
 	}
 
 	public IListener getListener();
