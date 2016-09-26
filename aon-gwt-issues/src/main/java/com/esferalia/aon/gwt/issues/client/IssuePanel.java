@@ -332,10 +332,13 @@ public class IssuePanel extends Composite{
 		});
 		editButton.setVisible(userLogged.getText().equals(issue.getUser().getLogin()));
 		FlexTable flexTable = new FlexTable();
-		flexTable.setWidget(0, 0, getHeadDescriptionLabel(issue, days));
-		flexTable.setWidget(0, 1, editButton);
-		flexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
-		flexTable.setWidget(1, 0, textArea);
+
+		flexTable.getFlexCellFormatter().setColSpan(0, 0, 2);
+		flexTable.setWidget(0, 0, getHeadNotificationLabel(issue));
+		flexTable.setWidget(1, 0, getHeadDescriptionLabel(issue, days));
+		flexTable.setWidget(1, 1, editButton);
+		flexTable.getFlexCellFormatter().setColSpan(2, 0, 2);
+		flexTable.setWidget(2, 0, textArea);
 		historialVPanel.add(flexTable);
 	}
 	
@@ -430,6 +433,18 @@ public class IssuePanel extends Composite{
 		//if (AonStringUtils.isNotBlank(comment.getCompany()))
 		//	sb.append( " ( " + comment.getCompany() + " )");
 
+		Label label = new Label();
+		label.setText(sb.toString());
+		label.setStyleName(AON.AON_BOLD);
+		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+		return label;
+	}
+	
+	private Label getHeadNotificationLabel(JsIssue issue) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("NOTIFICADA por ");
+		sb.append(issue.getEnterprise().getLogin());
+		
 		Label label = new Label();
 		label.setText(sb.toString());
 		label.setStyleName(AON.AON_BOLD);

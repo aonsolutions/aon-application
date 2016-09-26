@@ -227,13 +227,15 @@ public class ReposServlet extends HttpServlet{
 							} else if(json.opt("body") != null){
 								Task task = DB.getTask(domain, userName, taskId);
 								DB.updateTaskDescription(domain, userName, task.setComments(json.getString("body")));
-								object = new Issue(task, user, new Registry(), new LinkedList<Label>(), new Label(), new Label(), 0, domain, userName, new Workgroup()).toJSON();
+								Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
+								object = new Issue(task, user, new Registry(), new LinkedList<Label>(), new Label(), new Label(), 0, domain, userName, new Workgroup(), enterprise).toJSON();
 							}
 							// TODO  UPDATE ISSUE / TASK	
 						}
 					} else { // CREATE NEW TASK / ISSUE
 						Integer num = AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) != null ?
 								AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) : 0;
+						Registry registry = AON.getRegistry(domain.getName(), domain.getId(), userName, json.getString("enterprise"));
 						Task task = new Task()
 							.setDescription(json.getString("title"))
 							.setComments(json.getString("body"))
@@ -244,11 +246,11 @@ public class ReposServlet extends HttpServlet{
 							.setDueDate(Calendar.getInstance().getTime())// TODO 
 							.setStatus(TaskStatus.OPEN.value())
 							.setUser(user.getId())
-							//.setEnterpriseRegistry(json.getInt("enterprise")) // TODO
+							.setRegistry(registry.getId()) // TODO
 							;
 						
 						Task t = AON.createTask(domain.getName(), domain.getId(), userName, task);
-						object = new Issue(t, user, new Registry(), new LinkedList<Label>(), new Label(), new Label(), 0, domain, userName, new Workgroup()).toJSON();
+						object = new Issue(t, user, new Registry(), new LinkedList<Label>(), new Label(), new Label(), 0, domain, userName, new Workgroup(), registry).toJSON();
 					}
 					break;
 				case "labels":
@@ -366,6 +368,7 @@ public class ReposServlet extends HttpServlet{
 	private JSONObject getIssueJSON(Domain domain, String userName, String taskNumber) {
 		Task task = DB.getTaskWithNumber(domain, userName, Integer.valueOf(taskNumber));
 		Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getTaskHolder());
+		Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 		Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
 		com.esferalia.aon.occam.api.model.security.User creator = AON.getUser(domain.getId(), domain.getName(), userName, task.getUser());
 		Stream<Tag> label = AON.getTaskLabelStream(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId())); 
@@ -377,12 +380,13 @@ public class ReposServlet extends HttpServlet{
 				.findFirst().orElse(new Label());
 		Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 		
-		Issue issue = new Issue(task, creator, assignee, labels, type, priority, comments, domain, userName, workgroup);		
+		Issue issue = new Issue(task, creator, assignee, labels, type, priority, comments, domain, userName, workgroup, enterprise);		
 		return issue.toJSON();
 	}
 	
 	private JSONObject getIssueJSON(Domain domain, String userName, Task task) {
 		Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getTaskHolder());
+		Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 		Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
 		com.esferalia.aon.occam.api.model.security.User creator = AON.getUser(domain.getId(), domain.getName(), userName, task.getUser());
 		LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId())); 
@@ -393,7 +397,7 @@ public class ReposServlet extends HttpServlet{
 		Label priority = label.stream().filter(l -> l.getType() == TagType.TASK_PRIORITY.value()).map(new TagToLabelFiller(domain, userName))
 				.findFirst().orElse(new Label());
 		Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
-		Issue issue = new Issue(task, creator, assignee, labels, type, priority, comments, domain, userName, workgroup);		
+		Issue issue = new Issue(task, creator, assignee, labels, type, priority, comments, domain, userName, workgroup, enterprise);		
 		return issue.toJSON();
 	}
 	
@@ -403,6 +407,7 @@ public class ReposServlet extends HttpServlet{
 		JSONArray array = new JSONArray();
 		for (Task task : taskList) {
 			Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getTaskHolder());
+			Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 			Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
 			com.esferalia.aon.occam.api.model.security.User creator = AON.getUser(domain.getId(), domain.getName(), userName, task.getUser());
 			LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId()));
@@ -413,7 +418,7 @@ public class ReposServlet extends HttpServlet{
 			Label priority = label.stream().filter(l -> l.getType() == TagType.TASK_PRIORITY.value()).map(new TagToLabelFiller(domain, userName))
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
-			JSONObject json = new Issue(task, creator, assignee, labels, type, priority, comments, domain, userName, workgroup).toJSON();
+			JSONObject json = new Issue(task, creator, assignee, labels, type, priority, comments, domain, userName, workgroup, enterprise).toJSON();
 			array.put(json);
 		}
 		System.out.println(array.toString());

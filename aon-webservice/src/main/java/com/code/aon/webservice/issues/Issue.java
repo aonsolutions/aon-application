@@ -37,12 +37,14 @@ public class Issue {
 	
 	private User workgroup;
 	
+	private User enterprise; 
+	
 	public Issue() {
 	
 	}
 	
 	public Issue(Task task, com.esferalia.aon.occam.api.model.security.User creator, Registry assignee, LinkedList<Label> labels,
-			Label type, Label priority, Integer comments, Domain domain, String userName, Workgroup workgroup) {
+			Label type, Label priority, Integer comments, Domain domain, String userName, Workgroup workgroup, Registry enterprise) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		String url = "http://"+domain.getName();//+"/aon-aio/";
 		this.id = task.getId();
@@ -58,13 +60,14 @@ public class Issue {
 		this.closedAt = task.getEndDate() != null ? dateFormat.format(task.getEndDate()) : "";
 		this.createdAt = dateFormat.format(task.getStartDate());
 		this.updatedAt = task.getUpdateDate() != null ? dateFormat.format(task.getUpdateDate()): "";
-		this.assignee = new User().setId(task.getRegistry()).setLogin(assignee.getName());
-		this.user = new User().setId(task.getTaskHolder()).setLogin(creator.getName());
+		this.assignee = new User().setId(assignee.getId()).setLogin(assignee.getName());
+		this.user = new User().setId(creator.getId()).setLogin(creator.getName());
 		this.labels = labels;
 		this.comments = comments;
 		this.type = type;
 		this.priority = priority;
 		this.workgroup = new User().setId(workgroup.getId()).setLogin(workgroup.getDescription());
+		this.enterprise = new User().setId(enterprise.getId()).setLogin(enterprise.getName());
 	}
 	
 	public Integer getId() {
@@ -210,6 +213,15 @@ public class Issue {
 		return this;
 	}
 
+	public User getEnterprise() {
+		return enterprise;
+	}
+
+	public Issue setEnterprise(User enterprise) {
+		this.enterprise = enterprise;
+		return this;
+	}
+
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		//if(getNumber() == null) return json;
@@ -238,6 +250,7 @@ public class Issue {
 		json.put("priority", getPriority().toJSON());
 		
 		json.put("workgroup",getWorkgroup().toJSON());
+		json.put("enterprise", getEnterprise().toJSON());
 				
 		return json;
 	}	

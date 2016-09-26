@@ -94,6 +94,7 @@ public class JsIssue extends JavaScriptObject{
 		return this.workgroup;
 	}-*/;
 	
-	
-
+	public final native JsUser getEnterprise() /*-{
+		return this.enterprise;
+	}-*/;
 }
