@@ -13,7 +13,7 @@
 		<ui:define name="additionalToolbarContent">
 			<aon:if test="#{company.ediSupportEnabled}">
 				<aon:commandButton id="import-Popup"
-					value="#{bundle.aon_import}"
+					value="#{bundle.aon_import} #{bundle.aon_edi}"
 					title="#{bundle.aon_import}"
 					styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 					actionListener="#{controller.udapaImporter.onImportFileShow}"

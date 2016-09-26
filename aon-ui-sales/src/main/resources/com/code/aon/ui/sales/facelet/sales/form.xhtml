@@ -20,7 +20,7 @@
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{!sales.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!sales.pending or sales.inDelivery}" />
-					<ui:param name="showMoreMenu" value="#{true}" />
+					<ui:param name="showMoreMenu" value="#{!sales.nevv}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:commandButton value="&#160;" id="email"
 							title="#{bundle.webmail_send_email}"
@@ -37,6 +37,17 @@
 							<f:param name="reportKey" value="sales" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
+						<aon:if test="#{company.ediSupportEnabled}">
+							<aon:commandButton id="import-Popup"
+								value="#{bundle.aon_import} #{bundle.aon_edi}"
+								styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+								actionListener="#{sales.udapaImporter.onImportFileShow}"
+								ajaxSingle="#{true}"
+								action="sales_form">
+								<f:setPropertyActionListener target="#{sales.udapaImporter.showImportFileWindow}"
+									value="#{true}" />
+							</aon:commandButton>
+						</aon:if>
 					</ui:define>
 					<ui:define name="moreMenuContent">
 						<aon:if test="#{aonRole.warehouseOperator}">
@@ -97,16 +108,6 @@
 							<f:setPropertyActionListener target="#{sales.showShipmentWindow}"
 								value="#{true}" />
 						</aon:menuItem>
-						<aon:if test="#{company.ediSupportEnabled}">
-							<aon:menuItem id="import-Popup"
-								value="#{bundle.aon_import} #{bundle.aon_edi}"
-								iconClass="aon-icon-file-entrance"
-								actionListener="#{sales.udapaImporter.onImportFileShow}"
-								action="sales_form">
-								<f:setPropertyActionListener target="#{sales.udapaImporter.showImportFileWindow}"
-									value="#{true}" />
-							</aon:menuItem>
-						</aon:if>
 						<ui:include
 							src="/com/code/aon/ui/common/facelet/auditable/menuContent.xhtml" />
 					</ui:define>
