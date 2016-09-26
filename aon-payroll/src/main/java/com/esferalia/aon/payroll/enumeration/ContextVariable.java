@@ -246,6 +246,8 @@ public enum ContextVariable implements IResourceable{
 	WORK_COMPLETE("FIN_OBRA", VariableType.UNKNOWN),
 	TEMP_COMPLETE("FIN_TEMPORAL", VariableType.UNKNOWN),
 	CONDITIONS_CHANGE("CAMBIO_CONDICIONES", VariableType.UNKNOWN),
+
+	NON_WORKING("NO_LABORABLE", VariableType.UNKNOWN),
 	
 //	PREST_IT("PREST_IT", VariableType.DOUBLE),
 	DIRECT_PAY("PAGO_DIRECTO", VariableType.BOOLEAN),

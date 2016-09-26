@@ -33,6 +33,7 @@ import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.ContractPayment;
+import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
@@ -70,6 +71,7 @@ import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
 public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorContext>
 		extends DelegateSQLContractSalaryCalculatorContext<T> {
+
 
 	static class DraftPayment extends ContractPayment {
 
@@ -259,16 +261,71 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		}
 	}
 
-	private SalaryDraft draft;
+	class DelegateListener implements IListener {
+		
+		private IListener listener;
+		
+		
+		
+		public DelegateListener(IListener listener) {
+			super();
+			this.listener = listener;
+		}
+		
+		public IListener getListener() {
+			return listener;
+		}
 
-	private IListener listener;
+		public void setListener(IListener listener) {
+			this.listener = listener;
+		}
+		
+		
+		@Override
+		public void onIrpf(IrpfOutcome irpfOutcome) {
+			if ( listener != null )
+				listener.onIrpf(irpfOutcome);
+		}
+
+		public <U> U onConstantParameter(String func, U constant, ExpressionContext ctx) {
+			if ( listener == null )
+				return constant;
+			return listener.onConstantParameter(func, constant, ctx);
+		}
+
+		@Override
+		public void onMistakenPartialFactor(double monthHours, double workedHours, double factor) {
+			if ( listener != null )
+				listener.onMistakenPartialFactor(monthHours, workedHours, factor);
+		}
+
+		@Override
+		public void onUndefinedData(IExpression expression, String variableName, String message, Date start,
+				Date end) {
+			if ( listener != null )
+				listener.onUndefinedData(expression, variableName, message, start, end);
+		}
+
+		@Override
+		public void onRedefinedImplicit(String name, ITimedVariable<?> redefined, ITimedVariable<?> implicit) {
+			if ( listener != null && !hasDraftVariable(name, redefined) )
+				listener.onRedefinedImplicit(name, redefined, implicit);
+		}
+	}
+	
+	private SalaryDraft draft;
+	private DelegateListener delegateListener;
+
 
 	public SalaryDraftCalculatorContext(SalaryDraft draft, T ctx)
 			throws ExpressionException {
 		super(ctx);
 		this.draft = draft;
-
+		ctx.setListener(this.delegateListener = new DelegateListener(ctx.getListener()));
 	}
+	
+	
+	
 
 	@Override
 	public boolean next() throws SQLException, ExpressionException {
@@ -276,8 +333,19 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			loadDraftContext(ctx);
 			loadDraftLeaves(ctx);
 		});
+		
+	}
+	
+	@Override
+	public IListener getListener() {
+		return delegateListener.getListener();
 	}
 
+	@Override
+	public void setListener(IListener listener) {
+		delegateListener.setListener(listener);
+	}
+	
 	protected void loadDraftContext(ExpressionContext exprCtx)
 			throws ExpressionException {
 
@@ -544,7 +612,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 			return ;
 		
 		
-		getListener().onRedefinedImplicit(name, redefined.get(0), implicit);
+		delegateListener.onRedefinedImplicit(name, redefined.get(0), implicit);
 	}
 
 	protected boolean isUndefined (ITimedVariable<?> var) {
@@ -565,6 +633,13 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 				// TODO: return true ? Really it's undefined
 			} 
 		}
+		return false;
+	}
+	
+	protected boolean hasDraftVariable(String name, ITimedVariable<?> sqlVar) {
+		for ( Variable draftVar: draft.getDraftContext() ) 
+			if ( name.equals(draftVar.getName() ) && sqlVar.getPeriod().contains(new Period(draftVar.getStartDate(), draftVar.getEndDate())))
+					return true;
 		return false;
 	}
 

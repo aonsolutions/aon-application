@@ -56,6 +56,7 @@ import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.O
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.RowLabelStyle;
 import com.esferalia.aon.gwt.visualization.client.visualizations.TimeLineChart.Options.Timeline;
 import com.esferalia.aon.gwt.visualization.client.visualizations.Tooltip;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -137,6 +138,7 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
@@ -145,7 +147,7 @@ import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.events.OnMouseOverHandler;
 
 public class SalaryDraft extends ResizeComposite
-		implements CalculateCallback, SalarySelect.Listener, UndoManager.Listener {
+		implements CalculateCallback, SalarySelect.Listener, UndoManager.Listener{
 
 	public static final String CUSTOM = "CUSTOM";
 	public static final String ONLY_THIS_MONTH = "ONLY_THIS_MONTH";
@@ -429,6 +431,98 @@ public class SalaryDraft extends ResizeComposite
 			TextBox textBox = new ExpressionBox();
 			textBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 			return textBox;
+		}
+
+	}
+	
+	static class AllFocusSuggestBox extends SuggestBox implements HasAllFocusHandlers{
+		
+		public AllFocusSuggestBox() {
+			super();
+		}
+
+		public AllFocusSuggestBox(SuggestOracle oracle) {
+			super(oracle);
+		}
+
+		public AllFocusSuggestBox(SuggestOracle oracle, ValueBoxBase<String> box) {
+			super(oracle, box);
+		}
+
+		@Override
+		public HandlerRegistration addBlurHandler(BlurHandler handler) {
+			return getValueBox().addBlurHandler(handler);
+		}
+
+		@Override
+		public HandlerRegistration addFocusHandler(FocusHandler handler) {
+			return getValueBox().addFocusHandler(handler);
+		}
+
+		
+	}
+
+	static class WorkHoursEditorFactory implements VariableEditorFactory<AllFocusSuggestBox> {
+		
+		private String names [];
+		
+		public WorkHoursEditorFactory(String ...names) {
+			this.names = names;
+		}
+
+		@Override
+		public boolean accept(Variable variable) {
+			
+			for ( String name : names )
+				if ( name.equals(variable.getName()))
+					return true;
+			
+			return false;
+		}
+
+		@Override
+		public AllFocusSuggestBox create(Variable variable) {
+			
+			ExpressionBox textBox = new ExpressionBox();
+			textBox.setMaxLength(EXPRESSION_MAX_LENGTH);
+			
+			MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
+			oracle.add("NO_LABORABLE");
+			
+			
+			return new AllFocusSuggestBox(oracle, textBox){
+				
+				@Override
+				public void setValue(String value) {
+					setText(value);
+				}
+
+				@Override
+				public void setText(String text) {
+					if ( text == null ) {
+						text = "NO_LABORABLE";
+						super.setText(text);
+						return;
+					}
+					
+					Double d = null ;
+					try {
+							d = Double.parseDouble(text);
+					} catch ( NullPointerException | NumberFormatException ne){
+						try {
+							d = SalaryDraft.parse(text);
+						} catch ( NullPointerException | NumberFormatException n3){
+						}
+					}
+
+					if ( AonNumberUtils.equals(d, -1.00))
+						text = "NO_LABORABLE";
+					
+					super.setText(text);
+				}
+				
+			};
+			
 		}
 
 	}
@@ -2058,7 +2152,7 @@ public class SalaryDraft extends ResizeComposite
 		initEventsStyles(style);
 		initSalaryDb();
 		initDatesListBox();
-
+		export2JS(this);
 	}
 
 	public void setSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
@@ -2126,6 +2220,7 @@ public class SalaryDraft extends ResizeComposite
 				public void execute() {
 					autoSave = !autoSave;
 					autoSaveMenuItem.setStyleName("aon-MenuItemCheckYes", autoSave);
+					morePopup.hide();
 				}
 			});
 			autoSaveMenuItem.setStyleName("aon-MenuItemCheckYes", autoSave);
@@ -2138,6 +2233,7 @@ public class SalaryDraft extends ResizeComposite
 					dummies = !dummies;
 					dummiesMenuItem.setStyleName("aon-MenuItemCheckYes", dummies);
 					SalaryDraft.this.calculate();
+					morePopup.hide();
 				}
 			});
 			dummiesMenuItem.setStyleName("aon-MenuItemCheckYes", dummies);
@@ -4820,6 +4916,26 @@ public class SalaryDraft extends ResizeComposite
 
 		return null;
 	}
+	
+	public void addDraftVariable(String name , String expression ) { 
+		StringVariable var = new StringVariable
+		.Builder()
+		.setName(name)
+		.setImplicit(true)
+		.setScope(Scope.SALARY)
+		.setExpression(expression)
+		.create();		
+		salaryDraftObject.addDraftVariable(var);
+	}
+	
+	private native void export2JS(SalaryDraft salaryDraft) /*-{
+		$wnd.calculate = $entry(function() {
+			salaryDraft.@com.esferalia.aon.gwt.payroll.client.SalaryDraft::calculate()();
+		});
+		$wnd.addDraftVariable = $entry( function(name, expr) {
+			salaryDraft.@com.esferalia.aon.gwt.payroll.client.SalaryDraft::addDraftVariable(Ljava/lang/String;Ljava/lang/String;)(name,expr);
+		});
+	}-*/;
 
 	// ------------------------------------------------------- Static 'Library'
 	static boolean skipVariable(String name) {
@@ -4960,14 +5076,23 @@ public class SalaryDraft extends ResizeComposite
 
 	// @formatter:off
 	private final static VariableEditorFactory VARIABLE_EDITOR_FACTORIES[] = { new MonthDaysEditorFactory("DIAS_MES"),
-			new DaysEditorFactory("DIAS_PAGA"), new DaysEditorFactory("DIAS_NOMINA"),
+			new DaysEditorFactory("DIAS_PAGA"), 
+			new DaysEditorFactory("DIAS_NOMINA"),
 			new DateEditorFactory("FECHA_PREAVISO"),
 			new EnumNameListBoxFactory<Employee.Occupation>("OCUPACION", Employee.Occupation.class),
 			new DismissalFactory("CAUSA_INDEMNIZACION"),
 			new StringsListBoxFactory("GRUPO_COTIZACION",
 					new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" }),
 			new StringsListBoxFactory("TC2", Employee.TC2.getCodes(), Employee.TC2.getDescriptions()),
-			new BooleanEditorFactory(), new DefaultEditorFactory() };
+			new WorkHoursEditorFactory(	"HORAS_LUNES", 
+										"HORAS_MARTES", 
+										"HORAS_MIERCOLES", 
+										"HORAS_JUEVES", 
+										"HORAS_VIERNES",
+										"HORAS_SABADO",
+										"HORAS_DOMINGO"),
+			new BooleanEditorFactory(), 
+			new DefaultEditorFactory() };
 
 	// @formatter:on
 
@@ -5080,4 +5205,6 @@ public class SalaryDraft extends ResizeComposite
 				return true; // Already at context
 		return false;
 	}
+	
+	
 }
