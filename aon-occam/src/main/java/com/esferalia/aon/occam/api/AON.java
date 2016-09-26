@@ -2415,14 +2415,8 @@ public class AON {
 	}
 	
 	public static LinkedList<Task> getTaskList(String domainName, Integer domainId, String login, TaskFilter filter, IssueFilter issueFilter){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskStream(ctx, filter, issueFilter)
-				.collect(Collectors.toCollection(LinkedList::new));
-		} finally {
-			if(ctx != null) ctx.close();
-		}
+		return getTaskStream(domainName, domainId, login, filter, issueFilter)
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static Stream<Tag> getTaskLabelStream(String domainName, Integer domainId, String login, TaskTagFilter filter){
@@ -2436,14 +2430,8 @@ public class AON {
 	}
 	
 	public static LinkedList<Tag> getTaskLabelList(String domainName, Integer domainId, String login, TaskTagFilter filter){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskLabelStream(ctx, filter)
-				.collect(Collectors.toCollection(LinkedList::new));
-		} finally {
-			if(ctx != null) ctx.close();
-		}
+		return getTaskLabelStream(domainName, domainId, login, filter)
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static Integer getLastTaskNumber(String domainName, Integer domainId, String login) {
@@ -2486,6 +2474,16 @@ public class AON {
 		}
 	}
 	
+	public static void updateTaskDescription(String domainName, Integer domainId, String login, Task task){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getTask().updateTaskStatus(ctx, task);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	//-------------------- TASK COMMENT
 	
 	public static Integer getCommentsCount(String domainName, Integer domainId, String login, Integer taskId) {
@@ -2509,14 +2507,8 @@ public class AON {
 	}
 	
 	public static LinkedList<TaskComment> getTaskCommentList(String domainName, Integer domainId, String login, Integer taskId) {
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskCommentStream(ctx, taskId)
+		return getTaskCommentStream(domainName, domainId, login, taskId)
 				.collect(Collectors.toCollection(LinkedList::new));
-		} finally {
-			if(ctx != null) ctx.close();
-		}
 	}
 	
 	public static TaskComment getTaskComment(String domainName, Integer domainId, String login, Integer taskCommentId) {
@@ -2539,11 +2531,11 @@ public class AON {
 		}
 	}
 	
-	public static TaskComment updateTaskComment(String domainName, Integer domainId, String login, TaskComment taskComment, Integer taskCommentId) {
+	public static TaskComment updateTaskComment(String domainName, Integer domainId, String login, TaskComment taskComment) {
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().updateTaskComment(ctx, taskComment, taskCommentId);
+			return getTask().updateTaskComment(ctx, taskComment);
 		} finally {
 			if(ctx != null) ctx.close();
 		}
@@ -2613,14 +2605,8 @@ public class AON {
 	}
 	
 	public static LinkedList<Registry> getTaskMemberList(String domainName, Integer domainId, String login, String filter){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskMemberStream(ctx, filter)
-				.collect(Collectors.toCollection(LinkedList::new));
-		} finally {
-			if(ctx != null) ctx.close();
-		}
+		return getTaskMemberStream(domainName, domainId, login, filter)
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static Workgroup getWorkgroup(String domainName, Integer domainId, String login, Integer wId){
@@ -2644,14 +2630,8 @@ public class AON {
 	}
 	
 	public static LinkedList<Workgroup> getTaskWorkgroupList(String domainName, Integer domainId, String login, String filter){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskWorkgroupStream(ctx, filter)
-				.collect(Collectors.toCollection(LinkedList::new));
-		} finally {
-			if(ctx != null) ctx.close();
-		}
+		return getTaskWorkgroupStream(domainName, domainId, login, filter)
+			.collect(Collectors.toCollection(LinkedList::new));	
 	}
 	
 	public static void deleteTypeTaskTag(String domainName, Integer domainId, String login, Integer taskId) {
@@ -2699,6 +2679,17 @@ public class AON {
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getTask().deleteTaskTag(ctx, filter);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Registry> getTaskRegistries(String domainName, Integer domainId, String login){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskRegistryStream(ctx)
+				.collect(Collectors.toCollection(LinkedList::new));
 		} finally {
 			if(ctx != null) ctx.close();
 		}

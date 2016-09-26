@@ -11,7 +11,19 @@
 
 <ui:with type="com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources"
 		field="issuesResources"></ui:with>
-		
+<ui:style>
+
+	@external .vaadin-combo-box-overlay;
+	@external .vaadin-combo-box;
+
+	.vaadin-combo-box-overlay{
+		z-index: 1000 !important;
+	}	
+
+	.vaadin-combo-box{
+		z-index: 1000 !important;
+	}	
+</ui:style>
 <g:DockLayoutPanel ui:field="dockLayoutPanel">
 	<g:north size="40">
 		<g:HTMLPanel ui:field="toolbar" />

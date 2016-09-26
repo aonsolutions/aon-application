@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.issues.client;
 import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -39,10 +38,8 @@ public class FilterPanel extends Composite {
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER){
-					getIssues().issueFilter.setTitle(titleFilter.getText());
-					getIssues().updateIssueList(getIssues().issueFilter, false);
-				}
+				getIssues().issueFilter.setTitle(titleFilter.getText());
+				getIssues().updateIssueList(getIssues().issueFilter, false);
 			}
 		});
     }

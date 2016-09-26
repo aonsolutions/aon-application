@@ -26,16 +26,18 @@ public interface ITask {
 	public Integer createTask(AONContext ctx, Task task);
 	public void updateTaskStatus(AONContext ctx, Task task);
 	public void updateTaskUser(AONContext ctx, Task task);
+	public void updateTaskDescription(AONContext ctx, Task task);
 
 	
 	public TaskComment getTaskComment(AONContext ctx, Integer taskCommentId);
 	public TaskComment createTaskComment(AONContext ctx, TaskComment taskComment, Integer taskId);
-	public TaskComment updateTaskComment(AONContext ctx, TaskComment taskComment, Integer taskCommentId);
+	public TaskComment updateTaskComment(AONContext ctx, TaskComment taskComment);
 	public TaskEvent getTaskEvent(AONContext ctx, Integer taskEventId);
 	public TaskEvent createTaskEvent(AONContext ctx, TaskEvent taskEvent, Integer taskId);
 	public TaskEvent updateTaskEvent(AONContext ctx, TaskEvent taskEvent, Integer taskEventId);
 	
 	public Stream<Registry> getTaskMemberStream(AONContext ctx, String filter);
+	public Stream<Registry> getTaskRegistryStream(AONContext ctx);
 	public Stream<Workgroup> getTaskWorkgroupStream(AONContext ctx, String filter);
 	
 	
@@ -45,4 +47,6 @@ public interface ITask {
 
 	
 	public Workgroup getWorkgroup(AONContext ctx, Integer wId); 
+	
+
 }

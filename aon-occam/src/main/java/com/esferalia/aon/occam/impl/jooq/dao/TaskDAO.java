@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
@@ -206,6 +207,13 @@ public class TaskDAO {
 			.where(TASK.ID.eq(task.getId())).execute();
 	}
 	
+	public static void updateTaskDescription(AONContext ctx, Task task) {
+		ctx.getDslContext().update(TASK)
+			.set(TASK.COMMENTS, task.getComments())
+			.where(TASK.ID.eq(task.getId())).execute();
+	}
+	
+	
 	public static void updateTaskUser(AONContext ctx, Task task) {
 		ctx.getDslContext().update(TASK)			
 			.set(TASK.TASK_HOLDER, task.getTaskHolder())
@@ -228,13 +236,12 @@ public class TaskDAO {
 		return taskComment.setId(id);	
 	}
 
-	public static TaskComment updateTaskComment(AONContext ctx, TaskComment taskComment, Integer taskCommentId) {
-		ctx.getDslContext().update(TASK_COMMENT)
+	public static TaskComment updateTaskComment(AONContext ctx, TaskComment taskComment) {
+		return ctx.getDslContext().update(TASK_COMMENT)
 			.set(TASK_COMMENT.COMMENT, taskComment.getComment())
 			.set(TASK_COMMENT.UPDATE_DATE, AonDateUtils.toSql(taskComment.getUpdateDate()))
-		.where(TASK_COMMENT.ID.eq(taskCommentId))
-		.execute();
-		return taskComment;
+		.where(TASK_COMMENT.ID.eq(taskComment.getId()))
+		.returning().fetch().stream().map(new FullTaskCommentFiller(ctx)).findFirst().orElse(new TaskComment());
 	}
 
 	public static TaskEvent getTaskEvent(AONContext ctx, Integer taskEventId) {
@@ -262,6 +269,12 @@ public class TaskDAO {
 	public static Stream<Registry> getTaskMemberStream(AONContext ctx, String filter){
 		return ctx.getDslContext().select().from(REGISTRY).join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(REGISTRY.ID))
 			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(REGISTRY.NAME.like(filter))
+			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
+	}
+	
+	public static Stream<Registry> getTaskRegistryStream(AONContext ctx){
+		return ctx.getDslContext().select().from(REGISTRY).join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
+			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(CUSTOMER.STATUS.eq((byte) 0))
 			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
 	}
 	

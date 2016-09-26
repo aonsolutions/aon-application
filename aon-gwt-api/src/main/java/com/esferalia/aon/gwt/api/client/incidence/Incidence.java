@@ -121,6 +121,7 @@ public class Incidence extends Methods{
 		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues"
 				+ (filter.getState() != null ? "?state=" + filter.getState() : "?state=all")
 				+ (filter.getMilestone() != null ? "&milestone=" + filter.getMilestone() : "")
+				+ (filter.getTitle() != null ? "&title=" + filter.getTitle() : "")
 				+ (filter.getAssignee() != null ? "&asignee=" + filter.getAssignee() : "")
 				+ (filter.getCreator() != null ? "&creator=" + filter.getCreator() : "")
 				+ (filter.getMentioned() != null ? "&mentioned=" + filter.getMentioned() : "")
@@ -301,12 +302,12 @@ public class Incidence extends Methods{
 	
 	public void updateComment(JsIssue issue, JsComment comment, String requestData, AsyncCallback<JsComment> callback){
 		post(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/issues/"
-				+ "comments/" + comment.getId(), requestData, callback);
+				+ issue.getNumber() + "/comments/" + comment.getId(), requestData, callback);
 	}
 	
 	//-------------------- REGISTRIES
 	
-	public void getRegistries(AsyncCallback<JSON<JsRegistry>> callback){
+	public void getRegistries(AsyncCallback<JSON<JsUser>> callback){
 		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/registries",callback);
 	}
 	

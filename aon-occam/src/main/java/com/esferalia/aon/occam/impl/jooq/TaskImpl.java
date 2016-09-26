@@ -74,6 +74,11 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
+	public void updateTaskDescription(AONContext ctx, Task task) {
+		 ctx.getDslContext().transaction(configuration -> TaskDAO.updateTaskDescription(ctx, task));
+	}
+	
+	@Override
 	public void updateTaskUser(AONContext ctx, Task task) {
 		 ctx.getDslContext().transaction(configuration -> TaskDAO.updateTaskUser(ctx, task));
 	}
@@ -91,9 +96,9 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
-	public TaskComment updateTaskComment(AONContext ctx, TaskComment taskComment, Integer taskCommentId) {
+	public TaskComment updateTaskComment(AONContext ctx, TaskComment taskComment) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.updateTaskComment(ctx, taskComment, taskCommentId));	
+				configuration -> TaskDAO.updateTaskComment(ctx, taskComment));	
 	}
 
 	@Override
@@ -118,6 +123,13 @@ public class TaskImpl implements ITask {
 	public Stream<Registry> getTaskMemberStream(AONContext ctx, String filter){
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.getTaskMemberStream(ctx, filter));	
+
+	}
+	
+	@Override
+	public Stream<Registry> getTaskRegistryStream(AONContext ctx){
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.getTaskRegistryStream(ctx));	
 
 	}
 	

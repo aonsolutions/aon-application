@@ -44,7 +44,7 @@ public class IssueList extends Composite {
 				Integer offsetHeight = issueList.getElement().getOffsetHeight();
 				Integer physicalSize = issueList.getElement().getScrollHeight();
 				Integer maxScrollPosition = physicalSize - offsetHeight;
-				if(scrollTop > maxScrollPosition){
+				if(scrollTop > maxScrollPosition && parent.more){
 					parent.issueFilter.setPage(parent.issueFilter.getPage()+1);
 					parent.updateIssueList(parent.issueFilter, true);		
 					top = scrollTop;

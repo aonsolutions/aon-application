@@ -35,7 +35,7 @@
 				<span class="">Asunto:</span>
 			</td>
 			<td style="width:200px">
-				<g:TextBox ui:field="titleFilter" styleName="aon-textBox"/>
+				<g:TextBox ui:field="titleFilter" styleName="{issuesResources.css.aonSearchBoxIssues}"/>
 			</td>
 			<td>
 				<p:PaperButton ui:field="openButton"><i:IronIcon icon="error-outline"/>Abiertas</p:PaperButton>

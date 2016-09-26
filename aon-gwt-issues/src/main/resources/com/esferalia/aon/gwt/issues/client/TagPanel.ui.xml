@@ -30,8 +30,7 @@
         }
     </ui:style>
 
-	<g:ScrollPanel>
-		<g:HTMLPanel ui:field="panel">
+	<g:HTMLPanel ui:field="panel">
 		<g:Button ui:field="heading1" addStyleNames="{style.heading}">Prioridad</g:Button>
 		<i:IronCollapse ui:field="collapse1">
 			<i:IronSelector ui:field="prioritySelector" multi="true">
@@ -53,6 +52,6 @@
             </i:IronSelector>
         </i:IronCollapse>
         
-        </g:HTMLPanel>
-	</g:ScrollPanel>
+    </g:HTMLPanel>
+
 </ui:UiBinder>

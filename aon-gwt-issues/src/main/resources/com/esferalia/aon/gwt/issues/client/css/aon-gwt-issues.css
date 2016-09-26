@@ -43,3 +43,12 @@
     .dialog-issues{
    		 border:1px solid #bbb !important;
     }
+    
+    .aon-search-box-issues{
+    	width: 90%;
+    	margin-left: 5px;
+    	padding: 3px 3px 3px 3px;
+    	border: solid 1px #dedede;
+    	font-size: 16px;
+    	height: 16px;
+	}

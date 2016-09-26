@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.vaadin.polymer.iron.widget.IronCollapse;
 import com.vaadin.polymer.iron.widget.IronSelector;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
@@ -27,9 +26,10 @@ import com.vaadin.polymer.paper.widget.PaperItem;
 
 public class TagPanel extends Composite {
 
-    interface Binder extends UiBinder<ScrollPanel , TagPanel> {
+    interface Binder extends UiBinder<HTMLPanel , TagPanel> {
     	
     }
+    
     @UiField HTMLPanel panel;
     
     @UiField Button heading1;
@@ -52,13 +52,14 @@ public class TagPanel extends Composite {
     public TagPanel(Incidence incidence) {
     	this.incidence = incidence;
     	initWidget(binder.createAndBindUi(this));
-    	
+   			
+
         createPriority();
         createType();
         createTag();
     }
     
-    private void createPriority() {
+    private void loadPriority(){
         incidence.getPriorities(new AsyncCallback<JSON<JsLabel>>() {
 
 			@Override
@@ -124,21 +125,26 @@ public class TagPanel extends Composite {
 				});
 				prioritySelector.add(pib);
 
-				heading1.addClickHandler(new ClickHandler() {
-			   	
-					@Override
-			    	public void onClick(ClickEvent event) {
-			    		collapse1.toggle();
-			    	}
-				});
+				
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {}
 		});
+    }
+
+    private void createPriority() {
+    	loadPriority();
+        heading1.addClickHandler(new ClickHandler() {
+		   	
+			@Override
+	    	public void onClick(ClickEvent event) {
+	    		collapse1.toggle();
+	    	}
+		});
 	}
     
-    private void createType() {
+    private void loadType(){
         incidence.getTypes(new AsyncCallback<JSON<JsLabel>>() {
 
 			@Override
@@ -204,29 +210,33 @@ public class TagPanel extends Composite {
 				});
 				typeSelector.add(pib);
 				
-				heading2.addClickHandler(new ClickHandler() {
-				   		
-			    	   @Override
-			    	   public void onClick(ClickEvent event) {
-			    		   collapse2.toggle();
-			    	   }
-			    });
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {}
 		});
-	}
+    }
+    
+    private void createType() {
+    	loadType();
+		heading2.addClickHandler(new ClickHandler() {
+	   	
+	    	   @Override
+	    	   public void onClick(ClickEvent event) {
+	    		   collapse2.toggle();
+	    	   }
+	    });
+    }
    
-    private void createTag() {
-    	 incidence.getLabels(new AsyncCallback<JSON<JsLabel>>() {
+    private void loadTag(){
+   	 incidence.getLabels(new AsyncCallback<JSON<JsLabel>>() {
 
- 			@Override
- 			public void onSuccess(JSON<JsLabel> result) {
- 				for(JsLabel label : result.getData().toLinkedList()){
- 					PaperItem item = new PaperItem();
- 					item.add(new Label(label.getName()));
- 					item.setStyle("min-height: 30px;");	
+			@Override
+			public void onSuccess(JSON<JsLabel> result) {
+				for(JsLabel label : result.getData().toLinkedList()){
+					PaperItem item = new PaperItem();
+					item.add(new Label(label.getName()));
+					item.setStyle("min-height: 30px;");	
 
 					PaperIconButton edit = new PaperIconButton();
 					edit.setIcon("create");
@@ -238,7 +248,7 @@ public class TagPanel extends Composite {
 					});
 					edit.setVisible(false);
 					item.add(edit);
- 					
+					
 					PaperIconButton del = new PaperIconButton();
 					del.setIcon("delete");
 					del.setStyle("min-height: 30px;position:absolute;right:0px;");
@@ -269,34 +279,38 @@ public class TagPanel extends Composite {
 						}
 					}, MouseOutEvent.getType());
 					
- 					tagSelector.add(item);
- 				}			
- 				PaperIconButton pib = new PaperIconButton();
- 				pib.setIcon("add");
- 				pib.setStyle("min-height: 30px;");
- 				pib.getElement().getStyle().setLeft(300, Unit.PX);
- 				pib.addClickHandler(new ClickHandler() {
- 					
- 					@Override
- 					public void onClick(ClickEvent event) {
- 						onClickTagButton(event);
- 					}
- 				});
- 				tagSelector.add(pib);
- 				
- 				heading3.addClickHandler(new ClickHandler() {
- 				   		
- 			    	   @Override
- 			    	   public void onClick(ClickEvent event) {
- 			    		   collapse3.toggle();
- 			    	   }
- 			    });
- 			}
- 			
- 			@Override
- 			public void onFailure(Throwable caught) {}
- 		});
-	}
+					tagSelector.add(item);
+				}			
+				PaperIconButton pib = new PaperIconButton();
+				pib.setIcon("add");
+				pib.setStyle("min-height: 30px;");
+				pib.getElement().getStyle().setLeft(300, Unit.PX);
+				pib.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						onClickTagButton(event);
+					}
+				});
+				tagSelector.add(pib);
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+    }
+    
+    private void createTag() {
+    	loadTag();
+		heading3.addClickHandler(new ClickHandler() {
+			   		
+	    	   @Override
+	    	   public void onClick(ClickEvent event) {
+	    		   collapse3.toggle();
+	    	   }
+	    });
+    }
     
 	void onClickTypeButton(ClickEvent event){		
 		PaperInput pi = new PaperInput();
@@ -312,7 +326,7 @@ public class TagPanel extends Composite {
 						typeSelector.removeFromParent();
 						typeSelector = new IronSelector();
 						collapse2.add(typeSelector);
-						createType();
+						loadType();
 					}
 					
 					@Override public void onFailure(Throwable caught) {}
@@ -337,7 +351,7 @@ public class TagPanel extends Composite {
 						prioritySelector.removeFromParent();
 						prioritySelector = new IronSelector();
 						collapse1.add(prioritySelector);
-						createPriority();
+						loadPriority();
 					}
 					
 					@Override public void onFailure(Throwable caught) {}
@@ -362,7 +376,7 @@ public class TagPanel extends Composite {
 						tagSelector.removeFromParent();
 						tagSelector = new IronSelector();
 						collapse3.add(tagSelector);
-						createTag();					
+						loadTag();					
 					}
 					
 					@Override public void onFailure(Throwable caught) {}
@@ -380,7 +394,7 @@ public class TagPanel extends Composite {
 				prioritySelector.removeFromParent();
 				prioritySelector = new IronSelector();
 				collapse1.add(prioritySelector);
-				createPriority();
+				loadPriority();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -394,7 +408,7 @@ public class TagPanel extends Composite {
 				typeSelector.removeFromParent();
 				typeSelector = new IronSelector();
 				collapse2.add(typeSelector);
-				createType();
+				loadType();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -408,7 +422,7 @@ public class TagPanel extends Composite {
 				tagSelector.removeFromParent();
 				tagSelector = new IronSelector();
 				collapse3.add(tagSelector);
-				createTag();		
+				loadTag();		
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -429,7 +443,7 @@ public class TagPanel extends Composite {
 						prioritySelector.removeFromParent();
 						prioritySelector = new IronSelector();
 						collapse1.add(prioritySelector);
-						createPriority();					
+						loadPriority();					
 					}
 					
 					@Override public void onFailure(Throwable caught) {}
@@ -454,7 +468,7 @@ public class TagPanel extends Composite {
 						typeSelector.removeFromParent();
 						typeSelector = new IronSelector();
 						collapse2.add(typeSelector);
-						createType();					
+						loadType();					
 					}
 					
 					@Override public void onFailure(Throwable caught) {}
@@ -479,7 +493,7 @@ public class TagPanel extends Composite {
 						tagSelector.removeFromParent();
 						tagSelector = new IronSelector();
 						collapse3.add(tagSelector);
-						createTag();					
+						loadTag();					
 					}
 					
 					@Override public void onFailure(Throwable caught) {}

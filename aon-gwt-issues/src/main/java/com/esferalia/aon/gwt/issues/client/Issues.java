@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
+import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
 import com.esferalia.aon.gwt.issues.shared.AonData;
@@ -24,6 +25,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
+import com.vaadin.polymer.paper.widget.PaperTextarea;
+import com.vaadin.polymer.vaadin.widget.VaadinComboBox;
 
 public class Issues implements EntryPoint {
 	
@@ -47,6 +50,7 @@ public class Issues implements EntryPoint {
 	IssueFilter issueFilter;
 	Issues me;
 	AonData aonData;
+	Boolean more = true;
 	
 	private Incidence incidence;
 	
@@ -107,7 +111,10 @@ public class Issues implements EntryPoint {
 			public void onSuccess(JSON<JsIssue> result) {			
 				IssueList issueList = new IssueList(me, incidence, result.getData());
 				content.add(issueList);
-				createAddDialog();
+				//createAddDialog();
+				PaperInput p = new PaperInput();
+				VaadinComboBox vcb = new VaadinComboBox();
+				PaperTextarea pt = new PaperTextarea();
 			}
 			
 			@Override
@@ -132,13 +139,15 @@ public class Issues implements EntryPoint {
 			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {
+				more = result.getData().length()==30;
 				AonJsArray<JsIssue> array = JavaScriptObject.createArray().cast();
-				if(filter.getTitle() != null && !filter.getTitle().isEmpty()){
+				/*if(filter.getTitle() != null && !filter.getTitle().isEmpty()){
 					for(Integer i = 0; i < result.getData().length(); i++){
 						if(result.getData().get(i).getTitle().contains(filter.getTitle()))
 							array.push(result.getData().get(i));
 					}
-				} else array = result.getData();
+				} else*/
+				 array = result.getData();
 				
 				if(showMore) showMoreupdateIssueList(array);
 				else updateIssueList(array);				
@@ -180,26 +189,44 @@ public class Issues implements EntryPoint {
 			
 			@Override
 			protected void onAddButtonClick() {
-				AonDialog dialog = createAddDialog();
-				toolbar.add(dialog);
-				dialog.open();
+				incidence.getRegistries(new AsyncCallback<JSON<JsUser>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsUser> result) {
+						AonDialog dialog = createAddDialog(result);
+						toolbar.add(dialog);
+						dialog.open();
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
 			}
 		}.setVisibleEditButton(false).setVisibleDeleteButton(false)
 		.setVisibleMoreOptionButton(false));
 	}
 	
-	private AonDialog createAddDialog(){
+	private AonDialog createAddDialog(JSON<JsUser> registries){	
+		String arr= "[";
+		for(Integer i = 0; i < registries.getData().length(); i++){
+			if(i > 0) arr = arr + " , ";
+ 			arr = arr + "\""+ registries.getData().get(i).getLogin()+"\"";
+		}
+		arr = arr + "]";
+		
 		VerticalPanel v = new VerticalPanel();
 		PaperInput pi = new PaperInput();
 		pi.setLabel("Titulo");
 		pi.setList("as");
 		v.add(pi);
 		
+		VaadinComboBox vcb = new VaadinComboBox(); 
+		vcb.setLabel("Remitente");
+		vcb.setItems(arr);
 		PaperInput pi2 = new PaperInput();
 		pi2.setLabel("Remitente");
-		v.add(pi2);
+		v.add(vcb);
 
-		PaperInput pi4 = new PaperInput();
+		PaperTextarea pi4 = new PaperTextarea();
 		pi4.setLabel("Descripcion");
 		v.add(pi4);
 		
@@ -208,8 +235,8 @@ public class Issues implements EntryPoint {
 			@Override protected void onAccept() {
 				VerticalPanel vp = (VerticalPanel) content.getWidget(0);
 				PaperInput pi = (PaperInput) vp.getWidget(0);
-				PaperInput pi2 = (PaperInput) vp.getWidget(1);
-				PaperInput pi4 = (PaperInput) vp.getWidget(2);
+				VaadinComboBox pi2 = (VaadinComboBox) vp.getWidget(1);
+				PaperTextarea pi4 = (PaperTextarea) vp.getWidget(2);
 				
 				String r= "{\"title\":\""+ pi.getValue() +"\",\"body\":\""+ pi4.getValue()+" \",\"assignee\":\" \",\"labels\":[],"
 						+ "\"enterprise\":\""+ pi2.getValue() +"\", \"due_date\":\""+ "31/12/2100" +"\"}";

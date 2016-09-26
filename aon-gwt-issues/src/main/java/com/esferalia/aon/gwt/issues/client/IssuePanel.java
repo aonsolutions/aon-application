@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
+import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
 import com.esferalia.aon.gwt.api.client.incidence.JsComment;
 import com.esferalia.aon.gwt.api.client.incidence.JsEvent;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
@@ -87,8 +88,6 @@ public class IssuePanel extends Composite{
 	@UiField PaperIconButton priorityDeleteButton;
 	@UiField PaperIconButton typeDeleteButton;
 	@UiField PaperIconButton workgroupDeleteButton;
-
-	private static final String HTTP = "http://";
 
 	Issues parent;
 	private DateTimeFormat dateFormat = DateTimeFormat.getFormat("dd/MM/yyyy");
@@ -447,6 +446,8 @@ public class IssuePanel extends Composite{
 		parent.contentDockLayoutPanel.addNorth(parent.searchContent, 85);
 		parent.contentDockLayoutPanel.add(parent.content);
 		parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);
+		parent.issueFilter = new IssueFilter();
+		parent.updateIssueList(parent.issueFilter, false);
 	}
 	
 	private void onEditCommentButtonClick(final TextArea textArea,
@@ -683,36 +684,46 @@ public class IssuePanel extends Composite{
 					protected void onSelect(JavaScriptObject item) {
 						HorizontalPanel hp = new HorizontalPanel();
 						JsLabel label = (JsLabel) item;
-						Label l = new Label(label.getName());
-						l.setStyleName(AON.AON_CSS.tagStyle());
-						l.addStyleName(AON.AON_CSS.tagNotice());
-						hp.add(l);
-						PaperIconButton pib = new PaperIconButton();
-						pib.setIcon("close");
-						pib.setStyle("padding:3px !important;");
-						pib.setSize("22px", "22px");
-						pib.setTitle(labelsVPanel.getWidgetCount()+"");
-						pib.addClickHandler(new ClickHandler() {
+						Boolean bool = true;
+						for(Integer i = 0; i < labelsVPanel.getWidgetCount(); i++){
+							HorizontalPanel hh = (HorizontalPanel) labelsVPanel.getWidget(i);
+							Label ll = (Label) hh.getWidget(0);
+							if(ll.getText().equals(label.getName()))
+								bool = false;
 							
-							@Override
-							public void onClick(ClickEvent event) {
-								incidence.deleteLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
-									@Override public void onFailure(Throwable caught) {}
-									@Override public void onSuccess(JsLabel result) {
-										Integer index = Integer.parseInt(pib.getTitle());
-										labelsVPanel.remove(index);
-									}
-								});
-							}
-						});
-						hp.add(pib);
-						labelsVPanel.add(hp);
-						hide();
-						// TODO UPDATE - CREATE
-						incidence.addLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
-							@Override public void onFailure(Throwable caught) {}
-							@Override public void onSuccess(JsLabel result) {}
-						});
+						}
+						if(bool){
+							Label l = new Label(label.getName());
+							l.setStyleName(AON.AON_CSS.tagStyle());
+							l.addStyleName(AON.AON_CSS.tagNotice());
+							hp.add(l);
+							PaperIconButton pib = new PaperIconButton();
+							pib.setIcon("close");
+							pib.setStyle("padding:3px !important;");
+							pib.setSize("22px", "22px");
+							pib.setTitle(labelsVPanel.getWidgetCount()+"");
+							pib.addClickHandler(new ClickHandler() {
+							
+								@Override
+								public void onClick(ClickEvent event) {
+									incidence.deleteLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+										@Override public void onFailure(Throwable caught) {}
+										@Override public void onSuccess(JsLabel result) {
+											Integer index = Integer.parseInt(pib.getTitle());
+											labelsVPanel.remove(index);
+										}
+									});
+								}
+							});
+							hp.add(pib);
+							labelsVPanel.add(hp);
+							hide();
+							// TODO UPDATE - CREATE
+							incidence.addLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+								@Override public void onFailure(Throwable caught) {}
+								@Override public void onSuccess(JsLabel result) {}
+							});
+						} else hide();
 					}
 					
 					@Override
