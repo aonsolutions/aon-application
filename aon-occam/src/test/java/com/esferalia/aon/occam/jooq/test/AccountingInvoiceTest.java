@@ -12,7 +12,9 @@ import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 
 
@@ -33,7 +35,7 @@ public class AccountingInvoiceTest {
 	
 	@Test
 	public void testInvoices() throws IOException {
-		Integer accountEntry = 2282565;
+		Integer accountEntry = 2282957;
 		AccountingInvoice ai = AccountingInvoiceDAO.getAccountingInvoice(ctx,accountEntry);
 		AccountingRegistry ar = ai.getRegistry();
 		Invoice invoice = ai.getInvoice();
@@ -101,6 +103,32 @@ public class AccountingInvoiceTest {
 		System.out.println("withholdingFarmer ...: " + ar.isWithholdingFarmer());
 		System.out.println("vatAccrualPayment ...: " + ar.isVatAccrualPayment());
 		System.out.println("transaction ...: " + ar.getTransaction());
+		
+		for (InvoiceVAT vat : ai.getVats()) {
+			System.out.println("vatDeductionType ...: " + vat.getVatDeductionType());
+			System.out.println("base ...: " + vat.getBase());
+			System.out.println("percentage ...: " + vat.getPercentage());
+			System.out.println("quota ...: " + vat.getQuota());
+			System.out.println("surcharge ...: " + vat.getSurcharge());
+			System.out.println("surchargeQuota ...: " + vat.getSurchargeQuota());
+			System.out.println("investAsset ...: " + vat.getInvestAsset());
+			System.out.println("deductiblePercent ...: " + vat.getDeductiblePercent());
+			System.out.println("deductibleQuota ...: " + vat.getDeductibleQuota());
+			System.out.println("withholding ...: " + vat.isWithholding());
+			System.out.println("outputAccountId ...: " + vat.getOutputAccountId());
+			System.out.println("outputAccountCode ...: " + vat.getOutputAccountCode());
+			System.out.println("outputAccountDescription ...: " + vat.getOutputAccountDescription());
+			System.out.println("inputAccountId ...: " + vat.getInputAccountId());
+			System.out.println("inputAccountCode ...: " + vat.getInputAccountCode());
+			System.out.println("inputAccountDescription ...: " + vat.getInputAccountDescription());
+			System.out.println("adjAccountId ...: " + vat.getAdjAccountId());
+			System.out.println("adjAccountCode ...: " + vat.getAdjAccountCode());
+			System.out.println("adjAccountDescription ...: " + vat.getAdjAccountDescription());
+			System.out.println("expAccountId ...: " + vat.getExpAccountId());
+			System.out.println("expAccountCode ...: " + vat.getExpAccountCode());
+			System.out.println("expAccountDescription ...: " + vat.getExpAccountDescription());
+			
+		}
 		
 	}
 		

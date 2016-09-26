@@ -26,8 +26,6 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class InvoiceExtraPanel extends ScrollPanel  {
 	
-	private IInvoicePanelCallback callback;
-	
 	private AccountingRegistryVisitor accountingRegistryVisitor;
 	
 	FlowPanel flexContainer;
@@ -48,31 +46,27 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 	CheckBox withholdingFarmer;
 	CheckBox vatAccrualPayment;
 	
-	public InvoiceExtraPanel(IInvoicePanelCallback callback) {
-		setCallback(callback);
+	public InvoiceExtraPanel() {
 		accountingRegistryVisitor = new AccountingRegistryVisitor();
 		setStyleName(AON.AON_CSS.aonWizardPanelEast());
 		flexContainer = new  FlowPanel();
 		flexContainer.setStyleName(AON.AON_CSS.aonFlexContainer());
 		add(flexContainer);
 	}
-	public void setCallback(IInvoicePanelCallback invoiceCallback) {
-		this.callback = invoiceCallback;
-	}
 	
-	void paint() {
-		paintLabel();
-		paintDocument();
-		paintName();
-		paintDate();
-		paintTransaction();
-		paintChecks1();
-		paintChecks2();
-		paintChecks3();
+	void paint(final IInvoicePanelCallback callback) {
+		paintLabel(callback);
+		paintDocument(callback);
+		paintName(callback);
+		paintDate(callback);
+		paintTransaction(callback);
+		paintChecks1(callback);
+		paintChecks2(callback);
+		paintChecks3(callback);
 			
 	}
 
-	private void paintLabel() {
+	private void paintLabel(final IInvoicePanelCallback callback) {
 		flexContainer.clear();
 		eastPanelInner = new  FlowPanel();
 		eastPanelInner.setStyleName(AON.AON_CSS.aonWizardPanelInner());
@@ -86,7 +80,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		flexContainer.add(eastPanelInner);
 	}
 	
-	private void paintDocument() {
+	private void paintDocument(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
 		InlineLabel label = new InlineLabel(AON.MSG.document());
@@ -121,7 +115,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		flexContainer.add(panel);
 	}
 
-	private void paintName() {
+	private void paintName(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
 		InlineLabel label = new InlineLabel(AON.MSG.name());
@@ -138,7 +132,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		flexContainer.add(panel);		
 	}
 
-	private void paintDate() {
+	private void paintDate(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
 		InlineLabel label = new InlineLabel(AON.MSG.taxDate());
@@ -152,7 +146,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		flexContainer.add(panel);		
 	}
 		
-	private void paintTransaction() {
+	private void paintTransaction(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
 		InlineLabel label = new InlineLabel(AON.MSG.transaction());
@@ -174,7 +168,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		flexContainer.add(panel);		
 	}
 	
-	private void paintChecks1() {
+	private void paintChecks1(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
 		
@@ -204,7 +198,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		flexContainer.add(panel);
 	}
 
-	private void paintChecks2() {
+	private void paintChecks2(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
 		
@@ -231,7 +225,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		flexContainer.add(panel);
 	}
 
-	private void paintChecks3() {
+	private void paintChecks3(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
 		
@@ -277,7 +271,6 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		rName.setValue(invoice.getRegistry().getName());
 		surcharge.setValue(invoice.isSurcharge());
 		withholding.setValue(invoice.isWithholding());
-		callback.withholdingChanged();
 		withholdingFarmer.setValue(invoice.isWithholdingFarmer());
 		vatAccrualPayment.setValue(invoice.isVatAccrualPayment());
 		transactionBox.setValue(invoice.getTransaction());

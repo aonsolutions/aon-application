@@ -68,6 +68,7 @@ public class AccountingInvoice implements Serializable {
 		getVats().add(vat);
 		return this;
 	}
+	
 	public AccountingInvoice setVats(LinkedList<InvoiceVAT> vats) {
 		this.vats = vats;
 		return this;

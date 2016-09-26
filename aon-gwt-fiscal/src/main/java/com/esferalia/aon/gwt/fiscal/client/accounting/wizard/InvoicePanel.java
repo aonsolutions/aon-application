@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.finance.IAccountingInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -105,17 +106,15 @@ public class InvoicePanel extends WizardContentBase {
 	SessionLog workingLog;
 	
 	private AccountingInvoice invoice;
-	private InvoicePanelVisitor invoicePanelVisitor;
-	private IAccountEntryModuleCallback callback;
-	
+	private InvoicePanelRegistryVisitor invoicePanelRegistryVisitor;
 	
 	public InvoicePanel(final IAccountEntryModuleCallback callback) {
-		this.callback = callback;
+		setCallback(callback);
 		
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		
-		invoicePanelVisitor = new InvoicePanelVisitor();
+		invoicePanelRegistryVisitor = new InvoicePanelRegistryVisitor();
 		InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
 		
 		registryBox = new AccountingRegistryBox(AccountEntryModule.getCurrentDomainName()
@@ -123,7 +122,7 @@ public class InvoicePanel extends WizardContentBase {
 		withholdingAccount = new AccountBox(AccountEntryModule.getCurrentDomainName()
 				, AccountEntryModule.getCurrentDomain(), false);
 		vatPanel = new InvoiceVATPanel( invoiceCallback );
-		extraPanel = new InvoiceExtraPanel( invoiceCallback );
+		extraPanel = new InvoiceExtraPanel(  );
 		
 		Widget ui = DATA_BINDER.createAndBindUi(InvoicePanel.this);
 		initWidget(ui);
@@ -142,6 +141,7 @@ public class InvoicePanel extends WizardContentBase {
 	
 	@Override
 	public void select(AccountEntry entry) {
+		this.ae = entry;
 		fiscalService.getAccountingInvoice(
 				 AccountEntryModule.getCurrentDomainName()
 				,AccountEntryModule.getCurrentDomain()
@@ -151,9 +151,9 @@ public class InvoicePanel extends WizardContentBase {
 					@Override
 					public void onSuccess(AccountingInvoice result) {
 						setInvoice(result);
-						paint();
+						populate(result);
 					}
-					
+
 					@Override
 					public void onFailure(Throwable caught) {
 						callback.onError(caught.getMessage());
@@ -161,12 +161,19 @@ public class InvoicePanel extends WizardContentBase {
 				});
 	}
 
-	@Override
-	public void paint() {
+	private void populate(AccountingInvoice invoice) {
+		paint();
+		registryBox.setValue(invoice.getRegistry());
+		invoice.getInvoice().getType().visit(invoice,new InvoicePanelVisitor());
+		extraPanel.invoiceChanged(invoice);
+	}
+
+	private void paint() {
 		if (invoice != null) {
+			InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
 			fillSalesSeries();
 			fillWithholdingTaxs();
-			extraPanel.paint();
+			extraPanel.paint(invoiceCallback);
 			vatPanel.paint();
 			// #TODO 
 			enableWithholdingIfNeeded();
@@ -247,7 +254,7 @@ public class InvoicePanel extends WizardContentBase {
 						callback.onBalance(account);
 						
 						vatPanel.setSuggestedAccounts(invoice.getSuggestedAccounts());
-						invoice.getRegistry().getType().visit(invoice.getRegistry(),invoicePanelVisitor);
+						invoice.getRegistry().getType().visit(invoice.getRegistry(),invoicePanelRegistryVisitor);
 						paint();
 						extraPanel.invoiceChanged(result);
 						onChangeWithholdingTaxs(null);
@@ -289,42 +296,81 @@ public class InvoicePanel extends WizardContentBase {
 			}
 		}
 	}
+	private class InvoicePanelVisitor implements IAccountingInvoiceTypeVisitor {
 
-	private class InvoicePanelVisitor implements IAccountingRegistryTypeVisitor {
+		@Override
+		public void visitPurchase(AccountingInvoice invoice) {
+			populatePurchaseInvoice(invoice);
+		}
+
+		@Override
+		public void visitSales(AccountingInvoice invoice) {
+			populateSalesInvoice(invoice);
+		}
+
+		@Override
+		public void visitExpenses(AccountingInvoice invoice) {
+			populateExpensesInvoice(invoice);
+		}
+
+		@Override
+		public void visitUndeductible(AccountingInvoice invoice) {
+			populateExpensesInvoice(invoice);
+		}
+		
+	}
+
+	private void populateSalesInvoice(AccountingInvoice invoice) {
+		 for (int i = 0; i < series.getItemCount(); i++) {
+			if (AonStringUtils.equals(invoice.getInvoice().getSeries(), series.getValue(i))) {
+				series.setSelectedIndex(i);
+			}
+		}
+		number.setValue(invoice.getInvoice().getNumber());
+		invoiceDataPanel.setVisible(true);
+		series.setVisible(true);
+		number.setVisible(true);
+		referenceCode.setVisible(false);
+		series.setFocus(true);
+		invoiceTotal.setValue(invoice.getInvoice().getTotal());
+		populateWithholding();
+	}
+	private void populatePurchaseInvoice(AccountingInvoice invoice) {
+		invoiceDataPanel.setVisible(true);
+		series.setVisible(false);
+		number.setVisible(false);
+		referenceCode.setValue(invoice.getInvoice().getReferenceCode());
+		referenceCode.setVisible(true);
+		referenceCode.setFocus(true);
+		invoiceTotal.setValue(invoice.getTotalInvoice());
+		populateWithholding();
+	}
+	private void populateExpensesInvoice(AccountingInvoice invoice) {
+		invoiceDataPanel.setVisible(true);
+		series.setVisible(false);
+		number.setVisible(false);
+		referenceCode.setValue(invoice.getInvoice().getReferenceCode());
+		referenceCode.setVisible(true);
+		referenceCode.setFocus(true);
+		invoiceTotal.setValue(invoice.getTotalInvoice());
+		populateWithholding();
+	}
+
+	private class InvoicePanelRegistryVisitor implements IAccountingRegistryTypeVisitor {
 
 		@Override
 		public void visitCustomer(AccountingRegistry reg) {
-			for (int i = 0; i < series.getItemCount(); i++) {
-				if (AonStringUtils.equals(invoice.getInvoice().getSeries(), series.getValue(i))) {
-					series.setSelectedIndex(i);
-				}
-			}
-			number.setValue(invoice.getInvoice().getNumber());
-			invoiceDataPanel.setVisible(true);
-			series.setVisible(true);
-			number.setVisible(true);
-			referenceCode.setVisible(false);
-			series.setFocus(true);
-			invoice.getInvoice().setReferenceCode(null);
+			populateSalesInvoice(invoice);
 		}
 
 		@Override
 		public void visitCreditor(AccountingRegistry reg) {
-			invoiceDataPanel.setVisible(true);
-			series.setVisible(false);
-			number.setVisible(false);
-			referenceCode.setVisible(true);
-			referenceCode.setFocus(true);
-			withholdingType.setVisible(reg.isWithholding());
+			populatePurchaseInvoice(invoice);
 		}
 
 		@Override
 		public void visitSupplier(AccountingRegistry reg) {
-			invoiceDataPanel.setVisible(true);
-			series.setVisible(false);
-			number.setVisible(false);
-			referenceCode.setVisible(true);
-			referenceCode.setFocus(true);
+			populateExpensesInvoice(invoice);
 		}
 		
 	}

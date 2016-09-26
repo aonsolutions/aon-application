@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryTable;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.google.gwt.event.dom.client.ErrorEvent;
@@ -17,19 +18,23 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class Manual extends WizardContentBase {
 	
-	private IAccountEntryModuleCallback callback;
 	private ScrollPanel tableContainer;
 	private VerticalPanel tableInnerContainer;
 	private AccountEntryTable table;
 	
 	public Manual(final IAccountEntryModuleCallback callback) {
-		this.callback = callback;
+		setCallback(callback);
 		tableContainer = new ScrollPanel();
 		initWidget(tableContainer);
 	}
 	
 	@Override
-	public void paint() {
+	public void select(AccountEntry entry) {
+		this.ae = entry;
+		paint();
+	}
+	
+	private void paint() {
 		reset();
 		table.paintTable();
 		tableInnerContainer.add(table);

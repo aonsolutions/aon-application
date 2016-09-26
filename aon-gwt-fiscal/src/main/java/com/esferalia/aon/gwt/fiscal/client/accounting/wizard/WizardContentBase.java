@@ -5,6 +5,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.google.gwt.core.client.GWT;
@@ -15,13 +16,9 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 public abstract class WizardContentBase extends ResizeComposite implements RequiresResize, IWizardContent {
 
 	static FiscalServiceAsync fiscalService;
-	private AccountEntry ae;
+	protected AccountEntry ae;
+	protected IAccountEntryModuleCallback callback;
 																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																
-//	public WizardContentBase(AccountEntry entry) {
-//		super();
-//		setAccountEntry(entry);
-//	}
-
 	private static FiscalServiceAsync getFiscalService() {
 		if (fiscalService == null) {
 			FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
@@ -35,19 +32,18 @@ public abstract class WizardContentBase extends ResizeComposite implements Requi
 	private static int getDomain() {
 		return AccountEntryModule.getCurrentDomain();
 	}
+	
+	public IAccountEntryModuleCallback getCallback() {
+		return callback;
+	}
+
+	public void setCallback(IAccountEntryModuleCallback callback) {
+		this.callback = callback;
+	}
 
 	@Override
 	public AccountEntry getAccountEntry() {
 		return this.ae;
-	}
-	@Override
-	public void setAccountEntry(AccountEntry ae) {
-		this.ae = ae;
-	}
-	
-	@Override
-	public void select(AccountEntry entry) {
-		setAccountEntry(entry);
 	}
 	
 	@Override
@@ -125,7 +121,7 @@ public abstract class WizardContentBase extends ResizeComposite implements Requi
 
 	@Override
 	public boolean isDirty() {
-		if (getAccountEntry().getId() == null || getAccountEntry().getDetails().size() == 0) {
+		if (getAccountEntry() == null || getAccountEntry().getId() == null || getAccountEntry().getDetails().size() == 0) {
 			return false;
 		}
 		return getAccountEntry().isDirty();

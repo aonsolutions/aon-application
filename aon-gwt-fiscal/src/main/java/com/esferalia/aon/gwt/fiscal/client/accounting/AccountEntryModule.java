@@ -657,9 +657,7 @@ public class AccountEntryModule extends MainEntryPoint {
 					.setEntryDate(this.wizardContent.getAccountEntry().getEntryDate())
 					.setDirty(false);
 		}
-		
-		this.wizardContent.setAccountEntry(ae);
-		this.wizardContent.paint();
+		this.wizardContent.select(ae);
 		syncCurrent();
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
@@ -696,8 +694,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		} else {
 			setWizardContent(new Manual(callback));
 		}
-		this.wizardContent.setAccountEntry(ae);
-		this.wizardContent.paint();
+		this.wizardContent.select(ae);
 		this.wizardContent.setFocus(true);
 	}
 	
@@ -711,9 +708,8 @@ public class AccountEntryModule extends MainEntryPoint {
 		if (content == null) {
 			content = new Manual(callback);
 		}
-		this.wizardContent.setAccountEntry(entry);
 		setWizardContent(content);
-		this.wizardContent.paint();
+		this.wizardContent.select(entry);
 		syncCurrent();
 	}
 	

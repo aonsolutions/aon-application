@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -53,7 +54,6 @@ public class AccountingInvoiceDAO {
 						.findFirst()
 						.orElse(null);
 				ai.setRegistry(reg);
-				ai.setVats(new LinkedList<InvoiceVAT>());
 				ctx.getDslContext()
 					.select(
 							INVOICE_DETAIL.ID,
@@ -75,6 +75,7 @@ public class AccountingInvoiceDAO {
 					.stream()
 					.forEach( det -> {
 						final Integer invoideDetailId = det.getValue(INVOICE_DETAIL.ID);
+						final LinkedList<InvoiceVAT> vats = new LinkedList<InvoiceVAT>();
 						ctx.getDslContext()
 						.select( 
 								INVOICE_TAX.INVOICE_DETAIL,
@@ -93,25 +94,42 @@ public class AccountingInvoiceDAO {
 								VAT_ACCOUNT.DESCRIPTION 
 								) 
 						.from( INVOICE_TAX )
-						.join( INVOICE_TAX_ACCOUNT ).on(INVOICE_TAX_ACCOUNT.INVOICE_TAX.equal(INVOICE_TAX.ID))
-						.join( VAT_ACCOUNT ).on( INVOICE_TAX_ACCOUNT.ACCOUNT.eq(VAT_ACCOUNT.ID))
+						.leftOuterJoin( INVOICE_TAX_ACCOUNT ).on(INVOICE_TAX_ACCOUNT.INVOICE_TAX.equal(INVOICE_TAX.ID))
+						.leftOuterJoin( VAT_ACCOUNT ).on( INVOICE_TAX_ACCOUNT.ACCOUNT.eq(VAT_ACCOUNT.ID))
 						.where(INVOICE_TAX.INVOICE_DETAIL.eq(invoideDetailId))
 						.fetch()
 						.stream()
 						.forEach( tax -> {
-							ai.addVat( new InvoiceVAT()
-								.setVatDeductionType(AonEnumUtils.enumValue(VatDeductionType.class,tax.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
-								.setBase(tax.getValue(INVOICE_TAX.BASE))
-								.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
-								.setQuota(tax.getValue(INVOICE_TAX.QUOTA))
-								.setSurcharge(tax.getValue(INVOICE_TAX.SURCHARGE))
-								.setSurchargeQuota(tax.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
-								.setInvestAsset(det.getValue(INVOICE_DETAIL.INVEST_ASSET))
-								.setDeductiblePercent(tax.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT))
-								.setDeductibleQuota(tax.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA))
-								.setExpAccountId(det.getValue(EXP_ACCOUNT.ID))
-								.setExpAccountCode(det.getValue(EXP_ACCOUNT.CODE))
-								.setExpAccountDescription(det.getValue(EXP_ACCOUNT.DESCRIPTION))
+							boolean withholding = tax.getValue(INVOICE_TAX.TAX_TYPE) == TaxType.RETENTION.ordinal();
+							if (vats.size() == 0) {
+								vats.add(new InvoiceVAT()
+										.setVatDeductionType(AonEnumUtils.enumValue(VatDeductionType.class,tax.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
+										.setBase(tax.getValue(INVOICE_TAX.BASE))
+										.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
+										.setQuota(tax.getValue(INVOICE_TAX.QUOTA))
+										.setSurcharge(tax.getValue(INVOICE_TAX.SURCHARGE))
+										.setSurchargeQuota(tax.getValue(INVOICE_TAX.SURCHARGE_QUOTA))
+										.setInvestAsset(det.getValue(INVOICE_DETAIL.INVEST_ASSET))
+										.setWithholding(withholding)
+										.setDeductiblePercent(tax.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT))
+										.setDeductibleQuota(tax.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA))
+										.setExpAccountId(det.getValue(EXP_ACCOUNT.ID))
+										.setExpAccountCode(det.getValue(EXP_ACCOUNT.CODE))
+										.setExpAccountDescription(det.getValue(EXP_ACCOUNT.DESCRIPTION))
+									);
+							}
+							if (withholding) {
+								if (ai.getWithholdingData() == null) {
+									ai.setWithholdingData( new InvoiceWithholding());
+								}
+								InvoiceWithholding wd = ai.getWithholdingData();
+								wd.setBase(tax.getValue(INVOICE_TAX.BASE))
+									.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
+									.setQuota(tax.getValue(INVOICE_TAX.QUOTA))
+									.setAccountId(tax.getValue(VAT_ACCOUNT.ID))
+									.setAccountCode(tax.getValue(VAT_ACCOUNT.CODE))
+									.setAccountDescription(tax.getValue(VAT_ACCOUNT.DESCRIPTION));
+							}
 //							.setoutputAccountId
 //							.setoutputAccountCode
 //							.setoutputAccountDescription
@@ -121,9 +139,13 @@ public class AccountingInvoiceDAO {
 //							.setadjAccountId
 //							.setadjAccountCode
 //							.setadjAccountDescription
-									);
-						});
-					});
+						}
+						);
+						if (!vats.isEmpty()) {
+							ai.addVat(vats.get(0));
+						}
+					}
+					);
 				return ai;
 			}
 		}
