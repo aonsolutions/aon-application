@@ -55,6 +55,9 @@ public class UdapaInvoiceReader {
 		String currentLine;
 		
 		while((currentLine = reader.readLine()) != null) {
+			// trick for make compatible this kind of invoice
+			currentLine = currentLine.replaceFirst("^E", "S");
+				
 			if(currentLine.startsWith(SINCC)){
 				sincc.parse(currentLine);
 			} else if(currentLine.startsWith(SINCT)){

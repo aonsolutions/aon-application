@@ -66,6 +66,15 @@
 								actionListener="#{saleInvoice.onExportEdiFile}"
 								styleClass="aon-finding-toolbar-item aon-icon-file-download">
 							</aon:htmlCommandLink>
+							<aon:commandButton id="saleInvoice-ediImport"
+								value="#{bundle.aon_import} #{bundle.aon_edi}"
+								styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+								actionListener="#{saleInvoice.udapaImporter.onImportFileShow}"
+								ajaxSingle="#{true}"
+								action="salesInvoice_form">
+								<f:setPropertyActionListener target="#{saleInvoice.udapaImporter.showImportFileWindow}"
+									value="#{true}" />
+							</aon:commandButton>
 						</aon:if>
 					</ui:define>
 					<ui:define name="moreMenuContent">
@@ -187,17 +196,6 @@
 								reRender="showFiscalInformationWindow">
 								<f:setPropertyActionListener target="#{saleInvoice.showFiscalInformationWindow}"
 									value="#{true}" />							
-							</aon:menuItem>
-						</aon:if>
-						
-						<aon:if test="#{company.ediSupportEnabled}">
-							<aon:menuItem id="import-Popup"
-								value="#{bundle.aon_import} #{bundle.aon_edi}"
-								iconClass="aon-icon-file-entrance"
-								actionListener="#{saleInvoice.udapaImporter.onImportFileShow}"
-								action="salesInvoice_form">
-								<f:setPropertyActionListener target="#{saleInvoice.udapaImporter.showImportFileWindow}"
-									value="#{true}" />
 							</aon:menuItem>
 						</aon:if>
 								
