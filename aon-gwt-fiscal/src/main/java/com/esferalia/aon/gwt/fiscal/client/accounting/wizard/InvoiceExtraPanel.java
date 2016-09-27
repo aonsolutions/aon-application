@@ -55,6 +55,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 	}
 	
 	void paint(final IInvoicePanelCallback callback) {
+		flexContainer.clear();
 		paintLabel(callback);
 		paintDocument(callback);
 		paintName(callback);
@@ -67,7 +68,6 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 	}
 
 	private void paintLabel(final IInvoicePanelCallback callback) {
-		flexContainer.clear();
 		eastPanelInner = new  FlowPanel();
 		eastPanelInner.setStyleName(AON.AON_CSS.aonWizardPanelInner());
 		eastPanelInner.setVisible(false);
@@ -262,20 +262,23 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 
 	public void invoiceChanged(AccountingInvoice invoice) {
 		AccountingRegistry ar = invoice.getRegistry();
-		invoiceTypeLabel.setText( AON.MSG.accountEntryType( ar.getType().getAccountEntryType() ));
-		eastPanelInner.setVisible(true);
-		
-		rDocumentType.setValue(invoice.getRegistry().getDocumentType());
-		rDocumentCountry.setValue(invoice.getRegistry().getDocumentCountry());
-		rDocument.setValue(invoice.getRegistry().getDocument());
-		rName.setValue(invoice.getRegistry().getName());
-		surcharge.setValue(invoice.isSurcharge());
-		withholding.setValue(invoice.isWithholding());
-		withholdingFarmer.setValue(invoice.isWithholdingFarmer());
-		vatAccrualPayment.setValue(invoice.isVatAccrualPayment());
-		transactionBox.setValue(invoice.getTransaction());
-		taxDate.setValue(invoice.getInvoice().getIssueDate());
-		invoice.getRegistry().getType().visit(invoice.getRegistry(),accountingRegistryVisitor);
+		if (ar == null || ar.getId() == null) {
+			flexContainer.clear();
+		} else {
+			invoiceTypeLabel.setText( AON.MSG.accountEntryType( ar.getType().getAccountEntryType() ));
+			eastPanelInner.setVisible(true);
+			rDocumentType.setValue(ar.getDocumentType());
+			rDocumentCountry.setValue(ar.getDocumentCountry());
+			rDocument.setValue(ar.getDocument());
+			rName.setValue(ar.getName());
+			surcharge.setValue(invoice.isSurcharge());
+			withholding.setValue(invoice.isWithholding());
+			withholdingFarmer.setValue(invoice.isWithholdingFarmer());
+			vatAccrualPayment.setValue(invoice.isVatAccrualPayment());
+			transactionBox.setValue(invoice.getTransaction());
+			taxDate.setValue(invoice.getInvoice().getIssueDate());
+			ar.getType().visit(invoice.getRegistry(),accountingRegistryVisitor);
+		}
 	}
 	
 	

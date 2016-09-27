@@ -159,6 +159,13 @@ public class InvoicePanel extends WizardContentBase {
 							callback.onError(caught.getMessage());
 						}
 					});
+		} else {
+			setInvoice(new AccountingInvoice());
+			invoiceDataPanel.setVisible(false);
+			withholdingPanel.setVisible(false);
+			registryBox.setValue(new AccountingRegistry());
+			vatPanel.setVisible(false);
+			extraPanel.invoiceChanged(invoice);
 		}
 	}
 
@@ -172,6 +179,8 @@ public class InvoicePanel extends WizardContentBase {
 
 	private void paint() {
 		if (invoice != null) {
+			vatPanel.setVisible(true);
+			extraPanel.setVisible(true);
 			InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
 			fillSalesSeries();
 			fillWithholdingTaxs();
@@ -238,8 +247,8 @@ public class InvoicePanel extends WizardContentBase {
 		fiscalService.initializeInvoice(
 				 AccountEntryModule.getCurrentDomainName()
 				,AccountEntryModule.getCurrentDomain()
-				,ar.getType().getInvoiceType()
-				,ar.getId()
+				,ar != null ? ar.getType().getInvoiceType() : null
+				,ar != null ? ar.getId() : null
 				,getAccountEntry().getEntryDate()
 				, new AsyncCallback<AccountingInvoice>() {
 					

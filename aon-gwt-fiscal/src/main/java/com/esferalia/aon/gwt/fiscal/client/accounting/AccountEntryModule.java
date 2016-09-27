@@ -494,6 +494,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override
 			public void onAccept() {
 				reset();
+				syncCurrent();
 				wizardContent.setFocus(true);
 			}
 		});

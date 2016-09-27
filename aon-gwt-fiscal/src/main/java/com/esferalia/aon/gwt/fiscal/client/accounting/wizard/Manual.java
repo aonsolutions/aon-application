@@ -31,10 +31,6 @@ public class Manual extends WizardContentBase {
 	@Override
 	public void select(AccountEntry entry) {
 		this.ae = entry;
-		paint();
-	}
-	
-	private void paint() {
 		reset();
 		table.paintTable();
 		tableInnerContainer.add(table);
