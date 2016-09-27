@@ -142,30 +142,32 @@ public class InvoicePanel extends WizardContentBase {
 	@Override
 	public void select(AccountEntry entry) {
 		this.ae = entry;
-		fiscalService.getAccountingInvoice(
-				 AccountEntryModule.getCurrentDomainName()
-				,AccountEntryModule.getCurrentDomain()
-				,entry.getId()
-				, new AsyncCallback<AccountingInvoice>() {
-					
-					@Override
-					public void onSuccess(AccountingInvoice result) {
-						setInvoice(result);
-						populate(result);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						callback.onError(caught.getMessage());
-					}
-				});
+		if (this.ae.getId() != null) {
+			fiscalService.getAccountingInvoice(
+					AccountEntryModule.getCurrentDomainName()
+					,AccountEntryModule.getCurrentDomain()
+					,entry.getId()
+					, new AsyncCallback<AccountingInvoice>() {
+						
+						@Override
+						public void onSuccess(AccountingInvoice result) {
+							populate(result);
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught.getMessage());
+						}
+					});
+		}
 	}
 
-	private void populate(AccountingInvoice invoice) {
+	private void populate(AccountingInvoice result) {
+		setInvoice(result);
 		paint();
 		registryBox.setValue(invoice.getRegistry());
-		invoice.getInvoice().getType().visit(invoice,new InvoicePanelVisitor());
 		extraPanel.invoiceChanged(invoice);
+		invoice.getInvoice().getType().visit(invoice,new InvoicePanelVisitor());
 	}
 
 	private void paint() {
@@ -183,17 +185,16 @@ public class InvoicePanel extends WizardContentBase {
 	}
 
 	private void enableWithholdingIfNeeded() {
-		withholdingPanel.setVisible(extraPanel.isWithholding());
-		if (extraPanel.isWithholding()) populateWithholding();
-		withholdingLabel.setVisible(extraPanel.isWithholding());
-		withholdingTaxs.setVisible(extraPanel.isWithholding());
-		withholdingBase.setVisible(extraPanel.isWithholding());
+		withholdingPanel.setVisible(invoice.isWithholding());
+		withholdingLabel.setVisible(invoice.isWithholding());
+		withholdingTaxs.setVisible(invoice.isWithholding());
+		withholdingBase.setVisible(invoice.isWithholding());
 		withholdingBase.setReadOnly(true);
-		withholdingPercent.setVisible(extraPanel.isWithholding());
-		withholdingQuota.setVisible(extraPanel.isWithholding());
+		withholdingPercent.setVisible(invoice.isWithholding());
+		withholdingQuota.setVisible(invoice.isWithholding());
 		withholdingQuota.setReadOnly(true);
-		withholdingAccount.setVisible(extraPanel.isWithholding());
-		withholdingType.setVisible(extraPanel.isWithholding());
+		withholdingAccount.setVisible(invoice.isWithholding());
+		withholdingType.setVisible(invoice.isWithholding());
 	}
 	private void enableSurchargeIfNeeded() {
 		vatPanel.surchargeChanged(extraPanel.isSurcharge());
@@ -245,8 +246,6 @@ public class InvoicePanel extends WizardContentBase {
 					@Override
 					public void onSuccess(AccountingInvoice result) {
 						invoice = result;
-//						extraPanel.invoiceChanged( result );
-						
 						Account account = new Account();
 						account.setId(ar.getAccountId());
 						account.setCode(ar.getAccountCode());
@@ -254,10 +253,9 @@ public class InvoicePanel extends WizardContentBase {
 						callback.onBalance(account);
 						
 						vatPanel.setSuggestedAccounts(invoice.getSuggestedAccounts());
-						invoice.getRegistry().getType().visit(invoice.getRegistry(),invoicePanelRegistryVisitor);
 						paint();
 						extraPanel.invoiceChanged(result);
-						onChangeWithholdingTaxs(null);
+						invoice.getRegistry().getType().visit(invoice.getRegistry(),invoicePanelRegistryVisitor);
 					}
 					
 					@Override
@@ -276,6 +274,7 @@ public class InvoicePanel extends WizardContentBase {
 		withholdingAccount.setValue(invoice.getWithholdingData().getAccountId()
 				,invoice.getWithholdingData().getAccountCode()
 				,invoice.getWithholdingData().getAccountDescription());
+		enableWithholdingIfNeeded();
 	}
 
 	@UiHandler("withholdingTaxs")
