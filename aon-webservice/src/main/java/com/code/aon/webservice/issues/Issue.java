@@ -60,7 +60,7 @@ public class Issue {
 		SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
 
 		
-		String url = "http://"+domain.getName();//+"/aon-aio/";
+		String url = "http://"+domain.getName()+"/";//+"/aon-aio/";
 		this.id = task.getId();
 		this.title = task.getDescription();
 		this.url = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber();
