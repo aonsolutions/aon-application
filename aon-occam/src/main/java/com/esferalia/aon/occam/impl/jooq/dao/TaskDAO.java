@@ -10,7 +10,7 @@ import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -44,7 +44,6 @@ import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
-import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class TaskDAO {
 	
@@ -75,8 +74,8 @@ public class TaskDAO {
 		@Override public Property<Integer> getActivityTypeProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.ACTIVITY_TYPE);}
 		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(TASK.COMMENTS);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(TASK.DESCRIPTION);}
-		@Override public Property<Date> getDueDateProperty() {return new FilterDAO.PropertyDAO<Date>(TASK.DUE_DATE);}
-		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<Date>(TASK.END_DATE);}
+		@Override public Property<Timestamp> getDueDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.DUE_DATE);}
+		@Override public Property<Timestamp> getEndDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.END_DATE);}
 		@Override public Property<String> getGtaskIdProperty() {return new FilterDAO.PropertyDAO<String>(TASK.GTASK_ID);}
 		@Override public Property<String> getGtasklisIdProperty() {return new FilterDAO.PropertyDAO<String>(TASK.GTASKLIST_ID);}
 		@Override public Property<Byte> getPercentProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.PERCENT);}
@@ -86,7 +85,7 @@ public class TaskDAO {
 		@Override public Property<Byte> getRepeatPeriodProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.REPEAT_PERIOD);}
 		@Override public Property<Integer> getSenderProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.SENDER);}
 		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.SOURCE);}
-		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<Date>(TASK.START_DATE);}
+		@Override public Property<Timestamp> getStartDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.START_DATE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.STATUS);}
 		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.TASK_HOLDER);}
 		@Override public Property<Integer> getWorkgroupProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.WORKGROUP);}
@@ -170,13 +169,13 @@ public class TaskDAO {
 		if(issueFilter.getSince() != null && !issueFilter.getSince().equals("")){}
 		
 		// sort    created | updated | comments
-		TableField<TaskRecord, Date> sort = TASK.START_DATE; 
+		TableField<TaskRecord, Timestamp> sort = TASK.START_DATE; 
  		if(issueFilter.getSort() != null && !issueFilter.getSort().equals("updated")){
  			//**** sort = TASK.UPDATE_DATE;
 		}
  		
 		// direction
- 		SortField<Date> sortDir = sort.desc();
+ 		SortField<Timestamp> sortDir = sort.desc();
 		if(issueFilter.getDirection() != null && !issueFilter.getDirection().equals("asc")){
 			sortDir = sort.asc();
 		}
@@ -195,15 +194,15 @@ public class TaskDAO {
 	public static Integer createTask(AONContext ctx, Task task) {
 		return ctx.getDslContext().insertInto(TASK, TASK.ACTIVITY_TYPE, TASK.COMMENTS, TASK.DESCRIPTION, TASK.DOMAIN, TASK.DUE_DATE, TASK.END_DATE, TASK.GTASK_ID, TASK.GTASKLIST_ID,TASK.NUMBER, TASK.USER,
 				TASK.PERCENT, TASK.PRIORITY, TASK.PROJECT, TASK.REGISTRY, TASK.REPEAT_PERIOD, TASK.SENDER, TASK.SOURCE, TASK.START_DATE, TASK.STATUS, TASK.TASK_HOLDER, TASK.UPDATE_DATE, TASK.WORKGROUP)
-			.values(task.getActivityType(),task.getComments(), task.getDescription(), task.getDomain(), AonDateUtils.toSql(task.getDueDate()), AonDateUtils.toSql(task.getEndDate()), task.getGtaskId(), task.getGtasklistId(), task.getNumber(), task.getUser(),
-				task.getPercent(), task.getPriority(), task.getProject(), task.getRegistry(), task.getRepeatPeriod(), task.getSender(), task.getSource(), AonDateUtils.toSql(task.getStartDate()), task.getStatus(), task.getTaskHolder(), AonDateUtils.toSql(task.getUpdateDate()), task.getWorkgroup())
+			.values(task.getActivityType(),task.getComments(), task.getDescription(), task.getDomain(), task.toTimestamp(task.getDueDate()), task.toTimestamp(task.getEndDate()), task.getGtaskId(), task.getGtasklistId(), task.getNumber(), task.getUser(),
+				task.getPercent(), task.getPriority(), task.getProject(), task.getRegistry(), task.getRepeatPeriod(), task.getSender(), task.getSource(), task.toTimestamp(task.getStartDate()), task.getStatus(), task.getTaskHolder(), task.toTimestamp(task.getUpdateDate()), task.getWorkgroup())
 			.returning(TASK.ID).fetchOne().getId();
 	}
 	
 	public static void updateTaskStatus(AONContext ctx, Task task) {
 		ctx.getDslContext().update(TASK)
 			.set(TASK.STATUS, task.getStatus())
-			.set(TASK.END_DATE, AonDateUtils.toSql(task.getEndDate()))
+			.set(TASK.END_DATE,task.toTimestamp(task.getEndDate()))
 			.where(TASK.ID.eq(task.getId())).execute();
 	}
 	
@@ -231,7 +230,7 @@ public class TaskDAO {
 
 	public static TaskComment createTaskComment(AONContext ctx, TaskComment taskComment, Integer taskId) {
 		Integer id = ctx.getDslContext().insertInto(TASK_COMMENT, TASK_COMMENT.COMMENT, TASK_COMMENT.CREATE_DATE, TASK_COMMENT.DOMAIN, TASK_COMMENT.USER, TASK_COMMENT.TASK, TASK_COMMENT.UPDATE_DATE)
-			.values(taskComment.getComment(), AonDateUtils.toSql(taskComment.getCreateDate()), taskComment.getDomain(), taskComment.getUser().getId(), taskComment.getTask(), AonDateUtils.toSql(taskComment.getUpdateDate()))
+			.values(taskComment.getComment(), taskComment.toTimestamp(taskComment.getCreateDate()), taskComment.getDomain(), taskComment.getUser().getId(), taskComment.getTask(), taskComment.toTimestamp(taskComment.getUpdateDate()))
 			.returning(TASK_COMMENT.ID).fetchOne().getId();
 		return taskComment.setId(id);	
 	}
@@ -239,7 +238,7 @@ public class TaskDAO {
 	public static TaskComment updateTaskComment(AONContext ctx, TaskComment taskComment) {
 		return ctx.getDslContext().update(TASK_COMMENT)
 			.set(TASK_COMMENT.COMMENT, taskComment.getComment())
-			.set(TASK_COMMENT.UPDATE_DATE, AonDateUtils.toSql(taskComment.getUpdateDate()))
+			.set(TASK_COMMENT.UPDATE_DATE, taskComment.toTimestamp(taskComment.getUpdateDate()))
 		.where(TASK_COMMENT.ID.eq(taskComment.getId()))
 		.returning().fetch().stream().map(new FullTaskCommentFiller(ctx)).findFirst().orElse(new TaskComment());
 	}
@@ -253,7 +252,7 @@ public class TaskDAO {
 
 	public static TaskEvent createTaskEvent(AONContext ctx, TaskEvent taskEvent, Integer taskId) {
 		Integer id = ctx.getDslContext().insertInto(TASK_EVENT, TASK_EVENT.EVENT, TASK_EVENT.CREATE_DATE, TASK_EVENT.DOMAIN, TASK_EVENT.USER, TASK_EVENT.TASK)
-				.values(taskEvent.getEvent(), AonDateUtils.toSql(taskEvent.getCreateDate()), taskEvent.getDomain(), taskEvent.getUser().getId(), taskEvent.getTask())
+				.values(taskEvent.getEvent(), taskEvent.toTimestamp(taskEvent.getCreateDate()), taskEvent.getDomain(), taskEvent.getUser().getId(), taskEvent.getTask())
 				.returning(TASK_EVENT.ID).fetchOne().getId();
 		return taskEvent.setId(id);
 	}

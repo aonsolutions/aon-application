@@ -403,7 +403,7 @@ public class IssuePanel extends Composite{
 		sb.append(comment.getUser().getLogin());
 		sb.append(" el ");
 		sb.append(dateFormat.format(createdAt));
-		sb.append(" ");
+		sb.append(" a las ");
 		sb.append(hourFormat.format(createdAt));
 		sb.append(" (hace " + days
 				+ ((days == 1) ? " d\u00EDa)" : " d\u00EDas)"));
@@ -425,7 +425,7 @@ public class IssuePanel extends Composite{
 		sb.append(comment.getUser().getLogin());
 		sb.append(" el ");
 		sb.append(dateFormat.format(createdAt));
-		sb.append(" ");
+		sb.append(" a las ");
 		sb.append(hourFormat.format(createdAt));
 		sb.append(" (hace " + days
 				+ ((days == 1) ? " d\u00EDa)" : " d\u00EDas)"));

@@ -408,8 +408,8 @@ public interface Properties {
 		Property<String> getCommentsProperty();
 		Property<String> getDescriptionProperty();
 		Property<Integer> getDomainProperty();
-		Property<Date> getDueDateProperty();
-		Property<Date> getEndDateProperty();
+		Property<Timestamp> getDueDateProperty();
+		Property<Timestamp> getEndDateProperty();
 		Property<String> getGtaskIdProperty();
 		Property<String> getGtasklisIdProperty();
 		Property<Integer> getIdProperty();
@@ -420,7 +420,7 @@ public interface Properties {
 		Property<Byte> getRepeatPeriodProperty();
 		Property<Integer> getSenderProperty();
 		Property<Byte> getSourceProperty();
-		Property<Date> getStartDateProperty();
+		Property<Timestamp> getStartDateProperty();
 		Property<Byte> getStatusProperty();
 		Property<Integer> getTaskHolderProperty();
 		Property<Integer> getWorkgroupProperty();

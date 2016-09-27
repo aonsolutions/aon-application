@@ -25,9 +25,19 @@ public class Issue {
 	private Integer number;
 	private String state;
 	private String body;
+	
 	private String closedAt;
+	private String closedAtDate;
+	private String closedAtHour;
+	
 	private String createdAt;
+	private String createdAtDate;
+	private String createdAtHour;
+	
 	private String updatedAt;
+	private String updatedAtDate;
+	private String updatedAtHour;
+	
 	private User assignee;
 	private User user;
 	private LinkedList<Label> labels;
@@ -45,7 +55,11 @@ public class Issue {
 	
 	public Issue(Task task, com.esferalia.aon.occam.api.model.security.User creator, Registry assignee, LinkedList<Label> labels,
 			Label type, Label priority, Integer comments, Domain domain, String userName, Workgroup workgroup, Registry enterprise) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
+
+		
 		String url = "http://"+domain.getName();//+"/aon-aio/";
 		this.id = task.getId();
 		this.title = task.getDescription();
@@ -57,9 +71,15 @@ public class Issue {
 		this.eventsUrl = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/events";
 		this.state = TaskStatus.values()[task.getStatus()].getName();
 		this.body = task.getComments();
-		this.closedAt = task.getEndDate() != null ? dateFormat.format(task.getEndDate()) : "";
-		this.createdAt = dateFormat.format(task.getStartDate());
-		this.updatedAt = task.getUpdateDate() != null ? dateFormat.format(task.getUpdateDate()): "";
+		this.closedAt = task.getEndDate() != null ? dateTimeFormat.format(task.getEndDate()) : "";
+		this.closedAtDate = task.getEndDate() != null ? dateFormat.format(task.getEndDate()) : "";
+		this.closedAtHour = task.getEndDate() != null ? hourFormat.format(task.getEndDate()) : "";
+		this.createdAt = dateTimeFormat.format(task.getStartDate());
+		this.createdAtDate = dateFormat.format(task.getStartDate());
+		this.createdAtHour = hourFormat.format(task.getStartDate());
+		this.updatedAt = task.getUpdateDate() != null ? dateTimeFormat.format(task.getUpdateDate()): "";
+		this.updatedAtDate = task.getUpdateDate() != null ? dateFormat.format(task.getUpdateDate()): "";
+		this.updatedAtHour = task.getUpdateDate() != null ? hourFormat.format(task.getUpdateDate()): "";
 		this.assignee = new User().setId(assignee.getId()).setLogin(assignee.getName());
 		this.user = new User().setId(creator.getId()).setLogin(creator.getName());
 		this.labels = labels;
@@ -222,6 +242,60 @@ public class Issue {
 		return this;
 	}
 
+	public String getClosedAtDate() {
+		return closedAtDate;
+	}
+
+	public Issue setClosedAtDate(String closedAtDate) {
+		this.closedAtDate = closedAtDate;
+		return this;
+	}
+
+	public String getClosedAtHour() {
+		return closedAtHour;
+	}
+
+	public Issue setClosedAtHour(String closedAtHour) {
+		this.closedAtHour = closedAtHour;
+		return this;
+	}
+
+	public String getCreatedAtDate() {
+		return createdAtDate;
+	}
+
+	public Issue setCreatedAtDate(String createdAtDate) {
+		this.createdAtDate = createdAtDate;
+		return this;
+	}
+
+	public String getCreatedAtHour() {
+		return createdAtHour;
+	}
+
+	public Issue setCreatedAtHour(String createdAtHour) {
+		this.createdAtHour = createdAtHour;
+		return this;
+	}
+
+	public String getUpdatedAtDate() {
+		return updatedAtDate;
+	}
+
+	public Issue setUpdatedAtDate(String updatedAtDate) {
+		this.updatedAtDate = updatedAtDate;
+		return this;
+	}
+
+	public String getUpdatedAtHour() {
+		return updatedAtHour;
+	}
+
+	public Issue setUpdatedAtHour(String updatedAtHour) {
+		this.updatedAtHour = updatedAtHour;
+		return this;
+	}
+
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		//if(getNumber() == null) return json;
@@ -236,8 +310,14 @@ public class Issue {
 		json.put("state", getState());
 		json.put("body", getBody());
 		json.put("closed_at", getClosedAt());
+		json.put("closed_at_date", getClosedAtDate());
+		json.put("closed_at_hour", getClosedAtHour());
 		json.put("created_at", getCreatedAt());
+		json.put("created_at_date", getCreatedAtDate());
+		json.put("created_at_hour", getCreatedAtHour());
 		json.put("updated_at", getUpdatedAt());
+		json.put("updated_at_date", getUpdatedAtDate());
+		json.put("updated_at_hour", getUpdatedAtHour());
 		json.put("assignee", getAssignee().toJSON());		
 		json.put("user", getUser().toJSON());
 

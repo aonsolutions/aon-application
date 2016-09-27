@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api.model.task;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.security.User;
@@ -78,5 +79,7 @@ public class TaskComment {
 		return this;
 	}
 	
-	
+	public Timestamp toTimestamp(Date date) {
+		return date != null ? new Timestamp(date.getTime()) : null;
+	}
 }

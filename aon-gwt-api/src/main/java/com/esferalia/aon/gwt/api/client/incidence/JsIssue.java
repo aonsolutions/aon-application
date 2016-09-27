@@ -56,12 +56,36 @@ public class JsIssue extends JavaScriptObject{
 		return this.closed_at;
 	}-*/;
 	
+	public final native String getClosedAtDate() /*-{
+		return this.closed_at_date;
+	}-*/;
+
+	public final native String getClosedAtHour() /*-{
+		return this.closed_at_hour;
+	}-*/;
+
 	public final native String getCreatedAt() /*-{
 		return this.created_at;
 	}-*/;
 	
+	public final native String getCreatedAtDate() /*-{
+		return this.created_at_date;
+	}-*/;
+	
+	public final native String getCreatedAtHour() /*-{
+		return this.created_at_hour;
+	}-*/;
+	
 	public final native String getUpdatedAt() /*-{
 		return this.updated_at;
+	}-*/;
+	
+	public final native String getUpdatedAtDate() /*-{
+		return this.updated_at_date;
+	}-*/;
+	
+	public final native String getUpdatedAtHour() /*-{
+		return this.updated_at_hour;
 	}-*/;
 	
 	public final native JsUser getAssignee() /*-{

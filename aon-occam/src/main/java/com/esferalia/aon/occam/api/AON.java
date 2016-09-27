@@ -2478,7 +2478,7 @@ public class AON {
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getTask().updateTaskStatus(ctx, task);
+			getTask().updateTaskDescription(ctx, task);
 		} finally {
 			if(ctx != null) ctx.close();
 		}

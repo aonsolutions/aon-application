@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @SuppressWarnings("serial")
@@ -244,5 +245,7 @@ public class Task  implements Serializable{
 		return this;
 	}
 	
-	
+	public Timestamp toTimestamp(Date date) {
+		return date != null ? new Timestamp(date.getTime()) : null;
+	}
 }
