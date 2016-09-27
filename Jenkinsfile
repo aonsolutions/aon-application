@@ -69,7 +69,7 @@ node {
       // Mark the RPMs deploy 'stage'....
       stage "Publish HotFix ${pom.version}"
 
-      sh "${mvnHome}/bin/mvn  -B clean"
+      //sh "${mvnHome}/bin/mvn  -B clean"
 
       sh "git commit -a -m 'Hotfix ${pom.version}'"
    
