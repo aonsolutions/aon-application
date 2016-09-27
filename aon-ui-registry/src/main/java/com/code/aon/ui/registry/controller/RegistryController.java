@@ -80,6 +80,7 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.RegistrySegment;
+import com.code.aon.registry.RegistrySeller;
 import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
@@ -349,6 +350,8 @@ public class RegistryController extends BasicController {
 		String masterTable = table.name();
 		String scopeJoin = " INNER JOIN scope scp ON c.scope = scp.id";
 		String accountJoin = " LEFT OUTER JOIN account acc ON c.account = acc.id";
+		String sellerJoin = " LEFT OUTER JOIN rseller rsl ON rsl.registry = r.id"
+				+" LEFT OUTER JOIN seller sl ON rsl.seller = sl.registry";
 		return " FROM " + masterTable +" c"
 			+" INNER JOIN registry r ON r.id = c.registry"
 			+ (!"com.code.aon.seller.Seller".equals(getPojo())?scopeJoin:"")
@@ -362,6 +365,7 @@ public class RegistryController extends BasicController {
 			+" LEFT OUTER JOIN rsegment rs ON rs.registry = r.id"
 			+" LEFT OUTER JOIN segment s ON rs.segment = s.id"
 			+" LEFT OUTER JOIN rattach cd ON cd.registry = r.id"
+			+(!"com.code.aon.seller.Seller".equals(getPojo())?sellerJoin:"")
 			+" LEFT OUTER JOIN category cdc ON cd.category = cdc.id";
 	}
 
@@ -425,6 +429,10 @@ public class RegistryController extends BasicController {
 		tableMapping.put(mappingPrefix + ".registry.addresses.geozone", "gz");
 		tableMapping.put(mappingPrefix + ".registry.payMethods", "rpm");
 		tableMapping.put(mappingPrefix + ".registry.payMethods.payment", "pm");
+		if(!"com.code.aon.seller.Seller".equals(getPojo())){
+			tableMapping.put(mappingPrefix + ".sellers", "rsl");
+			tableMapping.put(mappingPrefix + ".sellers.seller", "sl");
+		}
 		tableMapping.put(mappingPrefix + ".documents", "cd");
 		tableMapping.put(mappingPrefix + ".documents.category", "cdc");
 		tableMapping.put(mappingPrefix + ".account", "acc");
@@ -442,6 +450,15 @@ public class RegistryController extends BasicController {
 		pojoMapping.put(mappingPrefix + ".registry.addresses.geozone", GeoZone.class);
 		pojoMapping.put(mappingPrefix + ".registry.payMethods", RegistryPayMethod.class);
 		pojoMapping.put(mappingPrefix + ".registry.payMethods.payment", PayMethod.class);
+		if(!"com.code.aon.seller.Seller".equals(getPojo())){
+			pojoMapping.put(mappingPrefix + ".sellers", RegistrySeller.class);
+			try {
+				pojoMapping.put(mappingPrefix + ".sellers.seller", Class.forName("com.code.aon.seller.Seller"));
+			} catch (ClassNotFoundException e) {
+				String msg = "Unable to map pojo: com.code.aon.seller.Seller";
+				LOGGER.error(msg, e);
+			}
+		}
 		pojoMapping.put(mappingPrefix + ".documents", RegistryAttachment.class);
 		pojoMapping.put(mappingPrefix + ".documents.category", Category.class);
 		pojoMapping.put(mappingPrefix + ".account", Account.class);
