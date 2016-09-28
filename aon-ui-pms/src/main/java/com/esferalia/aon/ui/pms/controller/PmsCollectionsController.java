@@ -228,6 +228,7 @@ public class PmsCollectionsController implements Serializable {
 		IManagerBean allotmentBean = BeanManager.getManagerBean(Allotment.class);
 		Criteria criteria = new Criteria();
 		criteria.addNotNullExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_ID));
+		criteria.addEqualExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_ACTIVE), Boolean.TRUE);
 		criteria.addEqualExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_CUSTOMER_SCOPE_ID));
 		criteria.addOrder(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_DESCRIPTION));
@@ -244,9 +245,26 @@ public class PmsCollectionsController implements Serializable {
 		IManagerBean allotmentBean = BeanManager.getManagerBean(Allotment.class);
 		Criteria criteria = new Criteria();
 		criteria.addNotNullExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_ID));
+		criteria.addEqualExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_ACTIVE), Boolean.TRUE);
 		criteria.addEqualExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_CUSTOMER_SCOPE_ID));
 		return allotmentBean.getCount(criteria);
+	}
+
+	public List<SelectItem> getAllotmentRateCodes() throws ManagerBeanException {
+		List<SelectItem> rateCodes = new LinkedList<SelectItem>();
+		IManagerBean allotmentBean = BeanManager.getManagerBean(Allotment.class);
+		Criteria criteria = new Criteria();
+		criteria.addNotNullExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_RATE_CODE));
+		criteria.addEqualExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_ACTIVE), Boolean.TRUE);
+		criteria.addOrder(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_RATE_CODE));
+		Projection projection = Projection.group(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_RATE_CODE));
+		for (Object obj : allotmentBean.getList(new ProjectionList(projection), criteria)) {
+			String rateCode = (String)obj;
+			SelectItem rateCodeItem = new SelectItem(rateCode, rateCode);
+			rateCodes.add(rateCodeItem);
+		}
+		return rateCodes;
 	}
 
 	public List<SelectItem> getSellers() throws ManagerBeanException {

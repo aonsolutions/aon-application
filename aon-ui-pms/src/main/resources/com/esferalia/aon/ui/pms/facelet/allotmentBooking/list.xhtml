@@ -72,10 +72,10 @@
 									<aon:outputText value="#{bundle.aon_potential}" />
 								</rich:column>
 
-								<c:forEach items="#{allotmentBooking.agencyList}" var="agency">
-									<rich:column colspan="#{allotmentBooking.agencyBreakdownMap[agency].breakdownsSize}">
+								<c:forEach items="#{allotmentBooking.holderList}" var="holder">
+									<rich:column colspan="#{allotmentBooking.holderBreakdownMap[holder].breakdownsSize}">
 										<aon:outputText style="color:blue; font-size:0.8em;"
-											value="#{agency}">
+											value="#{holder}">
 											<aon:abbreviateConverter maxWidth="25" />
 										</aon:outputText>
 									</rich:column>
@@ -157,45 +157,45 @@
 								value="#{to.roomFreePotential}" />
 						</aon:column>				
 
-						<c:forEach items="#{allotmentBooking.agencyList}" var="agency" varStatus="agencyIdx" begin="0" step="1">
+						<c:forEach items="#{allotmentBooking.holderList}" var="holder" varStatus="holderIdx" begin="0" step="1">
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
-								style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
+								style="#{holderIdx.even ? 'background-color:#f2f2f2;' : ''}">
  								<f:facet name="header">
 									<aon:outputText value="#{bundle.pms_allotment}" />
 								</f:facet>
-								<aon:outputText value="#{to.agencyBookingMap[agency].roomAllotment}" />
+								<aon:outputText value="#{to.holderBookingMap[holder].roomAllotment}" />
 							</aon:column>				
 
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
-								style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
+								style="#{holderIdx.even ? 'background-color:#f2f2f2;' : ''}">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.report_occupation_abbrv}" />
 								</f:facet>
-								<aon:outputText value="#{to.agencyBookingMap[agency].roomBusy}"
-									style="#{(to.agencyBookingMap[agency].roomAllotment > to.agencyBookingMap[agency].roomBusy) ? ('') : ('color:forestgreen;')}" />
+								<aon:outputText value="#{to.holderBookingMap[holder].roomBusy}"
+									style="#{(to.holderBookingMap[holder].roomAllotment > to.holderBookingMap[holder].roomBusy) ? ('') : ('color:forestgreen;')}" />
 							</aon:column>				
 
 							<aon:if test="#{allotmentBooking.breakdownType != null}">
-								<c:forEach items="#{allotmentBooking.agencyBreakdownMap[agency].breakdowns}" var="agencyBreakdown" begin="0" step="1">
+								<c:forEach items="#{allotmentBooking.holderBreakdownMap[holder].breakdowns}" var="holderBreakdown" begin="0" step="1">
 									<aon:column styleClass="aon-editDataTable-numberColumn aon-width-10"
-										style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
+										style="#{holderIdx.even ? 'background-color:#f2f2f2;' : ''}">
 										<f:facet name="header">
 											<aon:outputText style="color:slateblue; font-size:0.9em;"
-												value="#{agencyBreakdown}" />
+												value="#{holderBreakdown}" />
 										</f:facet>
 										<aon:outputText style="color:slateblue; font-size:0.9em;"
-											value="#{to.agencyBookingMap[agency].occupationBreakdownMap[agencyBreakdown]}" />
+											value="#{to.holderBookingMap[holder].occupationBreakdownMap[holderBreakdown]}" />
 									</aon:column>
 								</c:forEach>
 							</aon:if>
 
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
-								style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
+								style="#{holderIdx.even ? 'background-color:#f2f2f2;' : ''}">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.pms_availability_abbrv}" />
 								</f:facet>
-								<aon:outputText value="#{to.agencyBookingMap[agency].roomAvailable}"
-									style="#{(to.roomFreePotential >= 0 or to.agencyBookingMap[agency].roomAvailable == 0) ? ('') : ('color:red;')}" />
+								<aon:outputText value="#{to.holderBookingMap[holder].roomAvailable}"
+									style="#{(to.roomFreePotential >= 0 or to.holderBookingMap[holder].roomAvailable == 0) ? ('') : ('color:red;')}" />
 							</aon:column>				
 
 						</c:forEach>
