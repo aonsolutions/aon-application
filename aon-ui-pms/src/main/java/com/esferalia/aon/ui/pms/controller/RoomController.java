@@ -201,7 +201,7 @@ public class RoomController extends BasicController {
     private void sendInventoryData(Hotel hotel, List<Item> inventoryItems, Date startDate, Date endDate) {
     	InventoryManager manager = new InventoryManager();
 		for (Item item : inventoryItems) {
-			manager.processInventoryQuery(null, hotel, item, startDate, endDate);
+			manager.processInventoryQuery(hotel, item, null, startDate, endDate);
 		}
     }
 
