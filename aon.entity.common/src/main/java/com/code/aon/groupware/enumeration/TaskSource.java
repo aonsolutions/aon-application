@@ -9,7 +9,8 @@ public enum TaskSource implements IResourceable {
 
 	MANUAL,
 	ASSIGNED,
-	PROCESS;
+	PROCESS,
+	CAU;
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_task_source_";
 

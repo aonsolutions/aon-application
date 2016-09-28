@@ -60,7 +60,8 @@ public class Issue {
 		SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
 
 		
-		String url = "http://"+domain.getName()+"/";//+"/aon-aio/";
+		String url = "http://"+domain.getName()+ "/";
+		//url = url + "aon-aio/";
 		this.id = task.getId();
 		this.title = task.getDescription();
 		this.url = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber();
@@ -69,7 +70,7 @@ public class Issue {
 		this.labelsUrl = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/labels";
 		this.commentsUrl = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/comments";
 		this.eventsUrl = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber() + "/events";
-		this.state = TaskStatus.values()[task.getStatus()].getName();
+		this.state = TaskStatus.values()[task.getStatus()].getGwtName();
 		this.body = task.getComments();
 		this.closedAt = task.getEndDate() != null ? dateTimeFormat.format(task.getEndDate()) : "";
 		this.closedAtDate = task.getEndDate() != null ? dateFormat.format(task.getEndDate()) : "";

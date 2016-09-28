@@ -27,7 +27,7 @@ public class IssueList extends Composite {
     private static Binder binder = GWT.create(Binder.class);
 
     @UiField IronList issueList;
-     PaperButton issueButton;
+    PaperButton issueButton;
     
     Integer top = 0;
     Issues parent;
@@ -51,19 +51,20 @@ public class IssueList extends Composite {
 				}
 			}
 		}, ScrollEvent.getType());
-        
-        
+
         issueList.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				JsIssue issue = issueList.getSelectedItem().cast();
-			   	parent.contentDockLayoutPanel.removeFromParent();
-			   	AonToolbar t = (AonToolbar)parent.toolbar.getWidget(0);
-			   	t.setVisibleRefreshButton(false);
-			   	parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-				parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue));
-				parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);				
+				if(issue != null){
+					parent.contentDockLayoutPanel.removeFromParent();
+					AonToolbar t = (AonToolbar)parent.toolbar.getWidget(0);
+					t.setVisibleRefreshButton(false);
+					parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+					parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue));
+					parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);				
+				}
 			}
 		});
     }

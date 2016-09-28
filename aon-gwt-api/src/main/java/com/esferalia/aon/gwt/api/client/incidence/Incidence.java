@@ -311,6 +311,10 @@ public class Incidence extends Methods{
 		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/registries",callback);
 	}
 	
+	public void getRegistries(String value, AsyncCallback<JSON<JsUser>> callback){
+		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/registries?filter=" + value,callback);
+	}
+	
 	//---------------------- Métodos Get & Set
 	
 	public String getUrl() {

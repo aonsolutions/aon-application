@@ -18,10 +18,12 @@
 
 	.vaadin-combo-box-overlay{
 		z-index: 1000 !important;
+		max-height:300px !important;
 	}	
 
 	.vaadin-combo-box{
 		z-index: 1000 !important;
+		max-height:300px !important;
 	}	
 </ui:style>
 <g:DockLayoutPanel ui:field="dockLayoutPanel">

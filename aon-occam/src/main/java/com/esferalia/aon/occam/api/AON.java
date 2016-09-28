@@ -2684,15 +2684,34 @@ public class AON {
 		}
 	}
 	
-	public static LinkedList<Registry> getTaskRegistries(String domainName, Integer domainId, String login){
+	public static Stream<Registry> getTaskRegistryStream(String domainName, Integer domainId, String login){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskRegistryStream(ctx)
-				.collect(Collectors.toCollection(LinkedList::new));
+			return getTask().getTaskRegistryStream(ctx);
 		} finally {
 			if(ctx != null) ctx.close();
 		}
+	}
+	
+	public static LinkedList<Registry> getTaskRegistryList(String domainName, Integer domainId, String login){
+		return getTaskRegistryStream(domainName, domainId, login)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Stream<Registry> getFilterRegistryStream(String domainName, Integer domainId, String login, String filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getFilterRegistryStream(ctx, filter);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static LinkedList<Registry> getFilterRegistryList(String domainName, Integer domainId, String login, String filter){
+		return getFilterRegistryStream(domainName, domainId, login, filter)
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 }

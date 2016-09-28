@@ -40,6 +40,7 @@ public interface ITask {
 	public Stream<Registry> getTaskRegistryStream(AONContext ctx);
 	public Stream<Workgroup> getTaskWorkgroupStream(AONContext ctx, String filter);
 	
+	public Stream<Registry> getFilterRegistryStream(AONContext ctx, String filter);
 	
 	public void deleteTaskTag(AONContext ctx, Integer taskId, TagType tagType);
 	public void createTaskTag(AONContext ctx, TaskTag taskTag);

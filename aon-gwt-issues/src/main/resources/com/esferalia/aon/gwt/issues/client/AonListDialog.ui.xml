@@ -8,7 +8,8 @@
 	
 
 	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
-	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'>
+	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'
+	xmlns:v='urn:import:com.vaadin.polymer.vaadin.widget'>
 
 
 	<ui:with type="com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources"
@@ -18,78 +19,18 @@
 	<ui:style>
 
 		@external .gwt-PopupPanel;
-		
+
 		.gwt-PopupPanel {
 			margin: 0px !important;
-			border: 1px solid #DDDDDD !important;
+			border: 1px solid #EEE !important;
 			padding: 4px 0px !important;
-			box-shadow: 2px 2px 5px 1px #EBEBEF !important;
 			width:200px;
-			height:300px;	
 		}
 	</ui:style>
 	
 
-<g:HTMLPanel addStyleNames="iron-list-issue"> 
+<g:HTMLPanel ui:field="panel">
 
-	<style is="custom-style">
-			
-            .iron-list-issue iron-list {
-            	top:40px;
-                background-color:#fff;
-                padding-bottom: 0px;
-                margin:10px;
-                border-top: 1px solid #ddd;
-            }
-            .iron-list-issue .item {
-        		padding: 5px;
-        		background-color: white;
-        		border: 1px solid #ddd;
-       	 		border-top:0px;
-       	 		cursor:pointer;
-            }
-            
-            .iron-list-issue .pad {
-            	padding-left: 30px;
-                display: inline-block;
-                @apply(--layout-flex);
-                @apply(--layout-vertical);
-            }
-            .iron-list-issue .primary {
-                font-size: 16px;
-                font-weight: bold;
-            }
-            .iron-list-issue .secondary {
-                font-size: 14px;
-            }
-            .iron-list-issue .dim {
-                color: gray;
-            }
-            .text-box-issue {
-            	margin:10px;
-            	border: 1px solid #ddd;
-            	height: 20px;
-			    width: 178px;
-            }
-    </style>
-    <g:TextBox ui:field="textBox" styleName="text-box-issue"> </g:TextBox>
-       <i:IronList ui:field="list" as="item" addStyleNames="fit" selectionEnabled="true">
-            <template>
-                <div>
-                    <div class="item">          	
-                        <div class="pad">
-                            <div class="primary">
-                                <template is="dom-if" if="[[item.name]]">
-                            		[[item.name]]           
-                           		</template>
-                            	<template is="dom-if" if="[[!item.name]]">
-                            		[[item.login]]                           
-								</template>
-                            </div>
-                        </div>
-                    </div>
-        		</div>
-        	</template>
-  		</i:IronList>
-  	</g:HTMLPanel>
+</g:HTMLPanel>
+
 </ui:UiBinder>

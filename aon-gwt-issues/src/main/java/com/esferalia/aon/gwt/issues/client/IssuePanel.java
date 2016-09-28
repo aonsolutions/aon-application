@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.issues.client;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -100,7 +99,6 @@ public class IssuePanel extends Composite{
 	
 	public IssuePanel(Issues parent, Incidence incidence, JsIssue issue) {
 		initWidget(binder.createAndBindUi(this));		
-	
 		this.incidence = incidence;
 		this.parent = parent;
 		this.issue = issue;
@@ -253,7 +251,6 @@ public class IssuePanel extends Composite{
 			return getHistorialLogHeader(issue.getState(), issue.getUser().getLogin(), 
 					dateTimeFormat.parse(issue.getCreatedAt()));
 		} else {
-			Collections.sort(events, (e1,e2) -> e1.getCreatedAt().compareTo(e2.getCreatedAt()));
 			DisclosurePanel logPanel = new DisclosurePanel();
 			logPanel.setAnimationEnabled(true);
 			Label icon = new Label();
@@ -514,7 +511,6 @@ public class IssuePanel extends Composite{
 		button.addStyleName(AON.AON_ICON_EDIT_ADD);
 		
 		String request = "{\"body\":\""+ textArea.getText() +"\"}";
-		
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
@@ -530,7 +526,6 @@ public class IssuePanel extends Composite{
 	@UiHandler("commentButton")
 	void onClickCommentButton(ClickEvent event){
 		String request = "{\"body\":\""+ commentTextArea.getText() +"\"}";
-	
 		incidence.newComment(issue, request, new AsyncCallback<JsComment>() {
 			
 			@Override public void onSuccess(JsComment result) {
@@ -551,7 +546,6 @@ public class IssuePanel extends Composite{
 	@UiHandler("closedButton")
 	void onClickClosedButton(ClickEvent event){
 		String request = "{\"state\":\"closed\"}";
-	
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
@@ -571,7 +565,6 @@ public class IssuePanel extends Composite{
 	@UiHandler("reopenButton")
 	void onClickReopenButton(ClickEvent event){
 		String request = "{\"state\":\"open\"}";
-		
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
@@ -594,7 +587,7 @@ public class IssuePanel extends Composite{
 			
 			@Override
 			public void onSuccess(JSON<JsLabel> result) {
-				AonListDialog dialog = new AonListDialog(result.getData(), null) {
+				AonListDialog dialog = new AonListDialog(result.getData(), null,"Tipo") {
 
 					@Override
 					protected void onSelect(JavaScriptObject item) {
@@ -606,18 +599,6 @@ public class IssuePanel extends Composite{
 						incidence.addType2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
 							@Override public void onFailure(Throwable caught) {}
 							@Override public void onSuccess(JsLabel result) {}
-						});
-					}
-
-					@Override
-					protected void onFilter(String filter) {
-						incidence.getTypes(filter, new AsyncCallback<JSON<JsLabel>>() {
-							@Override
-							public void onSuccess(JSON<JsLabel> result) { 
-								updateLabels(result.getData());
-							}
-							
-							@Override public void onFailure(Throwable caught) {}
 						});
 					}
 				};
@@ -639,12 +620,12 @@ public class IssuePanel extends Composite{
 	}
 	
 	@UiHandler("priorityButton")
-	void onClickPriorityButton(ClickEvent event){				
+	void onClickPriorityButton(ClickEvent event){	
 		incidence.getPriorities(new AsyncCallback<JSON<JsLabel>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsLabel> result) {
-				AonListDialog dialog = new AonListDialog(result.getData(), null) {
+				AonListDialog dialog = new AonListDialog(result.getData(), null,"Prioridad") {
 
 					@Override
 					protected void onSelect(JavaScriptObject item) {
@@ -656,18 +637,6 @@ public class IssuePanel extends Composite{
 						incidence.addPriority2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
 							@Override public void onFailure(Throwable caught) {}
 							@Override public void onSuccess(JsLabel result) {}
-						});
-					}
-					
-					@Override
-					protected void onFilter(String filter) {
-						incidence.getPriorities(filter, new AsyncCallback<JSON<JsLabel>>() {
-							@Override
-							public void onSuccess(JSON<JsLabel> result) { 
-								updateLabels(result.getData());
-							}
-							
-							@Override public void onFailure(Throwable caught) {}
 						});
 					}
 				};
@@ -688,12 +657,12 @@ public class IssuePanel extends Composite{
 	}
 	
 	@UiHandler("tagButton")
-	void onClickTagButton(ClickEvent event){				
+	void onClickTagButton(ClickEvent event){	
 		incidence.getLabels(new AsyncCallback<JSON<JsLabel>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsLabel> result) {
-				AonListDialog dialog = new AonListDialog(result.getData(), null) {
+				AonListDialog dialog = new AonListDialog(result.getData(), null, "Etiqueta") {
 
 					@Override
 					protected void onSelect(JavaScriptObject item) {
@@ -740,18 +709,6 @@ public class IssuePanel extends Composite{
 							});
 						} else hide();
 					}
-					
-					@Override
-					protected void onFilter(String filter) {
-						incidence.getPriorities(filter, new AsyncCallback<JSON<JsLabel>>() {
-							@Override
-							public void onSuccess(JSON<JsLabel> result) { 
-								updateLabels(result.getData());
-							}
-							
-							@Override public void onFailure(Throwable caught) {}
-						});
-					}
 				};
 				int left = tagButton.getAbsoluteLeft();
 				int top = tagButton.getAbsoluteTop()
@@ -775,8 +732,7 @@ public class IssuePanel extends Composite{
 			
 			@Override
 			public void onSuccess(JSON<JsUser> result) {
-				
-				AonListDialog dialog = new AonListDialog(null, result.getData()) {
+				AonListDialog dialog = new AonListDialog(null, result.getData(), "Grupo de Trabajo") {
 
 					@Override
 					protected void onSelect(JavaScriptObject item) {
@@ -789,18 +745,6 @@ public class IssuePanel extends Composite{
 							@Override public void onSuccess(JsUser result) {}
 						});
 						hide();
-					}
-					
-					@Override
-					protected void onFilter(String filter) {
-						incidence.getWorkgroups(filter, new AsyncCallback<JSON<JsUser>>() {
-							@Override
-							public void onSuccess(JSON<JsUser> result) { 
-								updateUsers(result.getData());
-							}
-							
-							@Override public void onFailure(Throwable caught) {}
-						});
 					}
 				};
 				int left = workgroupButton.getAbsoluteLeft();
@@ -825,12 +769,12 @@ public class IssuePanel extends Composite{
 			
 			@Override
 			public void onSuccess(JSON<JsUser> result) {
-				AonListDialog dialog = new AonListDialog(null, result.getData()) {
+				
+				AonListDialog dialog = new AonListDialog(null, result.getData(), "Operario") {
 
 					@Override
 					protected void onSelect(JavaScriptObject item) {
 						JsUser jsUser = (JsUser) item;
-						
 						userLabel.setText(jsUser.getLogin());
 						userDeleteButton.setVisible(true);
 						// TODO UPDATE - CREATE
@@ -840,18 +784,6 @@ public class IssuePanel extends Composite{
 						});
 						hide();
 
-					}
-					
-					@Override
-					protected void onFilter(String filter) {
-						incidence.getUsers(filter, new AsyncCallback<JSON<JsUser>>() {
-							@Override
-							public void onSuccess(JSON<JsUser> result) { 
-								updateUsers(result.getData());
-							}
-							
-							@Override public void onFailure(Throwable caught) {}
-						});
 					}
 				};
 				

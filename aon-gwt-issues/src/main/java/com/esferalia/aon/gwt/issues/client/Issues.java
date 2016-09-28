@@ -24,7 +24,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
+import com.vaadin.polymer.iron.IronListElement;
 import com.vaadin.polymer.paper.PaperDialogElement;
+import com.vaadin.polymer.paper.PaperIconButtonElement;
 import com.vaadin.polymer.paper.PaperInputElement;
 import com.vaadin.polymer.paper.PaperTextareaElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
@@ -75,8 +77,11 @@ public class Issues implements EntryPoint {
 				PaperInputElement.SRC,
 				PaperTextareaElement.SRC,
 				PaperDialogElement.SRC,
-				VaadinComboBoxElement.SRC
-				));
+				VaadinComboBoxElement.SRC,
+				PaperIconButtonElement.SRC,
+				IronListElement.SRC
+				
+		));
 		
 		Polymer.whenReady(o -> {
 			startApplication();
@@ -120,9 +125,7 @@ public class Issues implements EntryPoint {
 				IssueList issueList = new IssueList(me, incidence, result.getData());
 				content.add(issueList);
 				//createAddDialog();
-				PaperInput p = new PaperInput();
-				VaadinComboBox vcb = new VaadinComboBox();
-				PaperTextarea pt = new PaperTextarea();
+
 			}
 			
 			@Override
@@ -214,6 +217,7 @@ public class Issues implements EntryPoint {
 	}
 	
 	private AonDialog createAddDialog(JSON<JsUser> registries){	
+		
 		String arr= "[";
 		for(Integer i = 0; i < registries.getData().length(); i++){
 			if(i > 0) arr = arr + " , ";
@@ -230,8 +234,42 @@ public class Issues implements EntryPoint {
 		VaadinComboBox vcb = new VaadinComboBox(); 
 		vcb.setLabel("Remitente");
 		vcb.setItems(arr);
-		PaperInput pi2 = new PaperInput();
-		pi2.setLabel("Remitente");
+		/*vcb.addDomHandler(new KeyUpHandler() {	
+			@Override
+			public void onKeyUp(KeyUpEvent event) {		
+				Window.alert(vcb.getWidgetCount() + "");
+				
+				Window.alert(vcb.getPolymerElement().getTextContent());
+				
+				Window.alert(vcb.getPolymerElement().toString());
+				
+				Window.alert(vcb.getValidatorType());
+				Window.alert(vcb.getKeyBindings().toString());
+				char ch = (char) event.getNativeKeyCode();
+				vcb.setValue(vcb.getValue() + ch );	
+				Window.alert(vcb.getValue());
+				if(vcb.getValue().length()> 2){
+					incidence.getRegistries(vcb.getValue(), new AsyncCallback<JSON<JsUser>>() {
+						
+						@Override
+						public void onSuccess(JSON<JsUser> result) {
+							String arr= "[";
+							for(Integer i = 0; i < result.getData().length(); i++){
+								if(i > 0) arr = arr + " , ";
+					 			arr = arr + "\""+ result.getData().get(i).getLogin()+"\"";
+							}
+							arr = arr + "]";
+							vcb.setItems(arr);
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+				} else {
+					vcb.setItems("[]");
+				}
+			}
+		}, KeyUpEvent.getType());
+*/
 		v.add(vcb);
 
 		PaperTextarea pi4 = new PaperTextarea();

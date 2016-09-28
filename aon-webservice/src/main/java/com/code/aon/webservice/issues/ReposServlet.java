@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
+import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.AonUrlApi;
@@ -90,7 +91,8 @@ public class ReposServlet extends HttpServlet{
 						object = getAllLabelsJSON(domain, userName, TagType.TASK_PRIORITY, filter);
 						break;
 					case "registries": // ALL REGISTRIES
-						object = getAllRegistriesJSON(domain, userName);
+						if(!filter.equals("")) object = getFilterRegistriesJSON(domain, userName, filter);
+						else object = getAllRegistriesJSON(domain, userName);
 						break;
 					default:
 						break;
@@ -211,13 +213,13 @@ public class ReposServlet extends HttpServlet{
 							if(json.opt("state") != null) {
 								Task task = DB.getTask(domain, userName, taskId);
 								if(json.get("state").equals("open")){
-									task = task.setStatus(TaskStatus.OPEN.value()).setEndDate(null).setId(taskId);
+									task = task.setStatus(TaskStatus.PENDING.value()).setEndDate(null).setId(taskId);
 									TaskEvent taskEvent = new TaskEvent().setCreateDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
 										.setEvent("reopened").setTask(taskId).setUser(user);
 									AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, taskId);
 								}
 								if(json.get("state").equals("closed")){
-									task = task.setStatus(TaskStatus.CLOSED.value()).setEndDate(Calendar.getInstance().getTime()).setId(taskId);
+									task = task.setStatus(TaskStatus.FINISHED.value()).setEndDate(Calendar.getInstance().getTime()).setId(taskId);
 									TaskEvent taskEvent = new TaskEvent().setCreateDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
 											.setEvent("closed").setTask(taskId).setUser(user);
 									AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, taskId);
@@ -244,9 +246,12 @@ public class ReposServlet extends HttpServlet{
 							.setStartDate(Calendar.getInstance().getTime())
 							.setUpdateDate(Calendar.getInstance().getTime())
 							.setDueDate(Calendar.getInstance().getTime())// TODO 
-							.setStatus(TaskStatus.OPEN.value())
+							.setStatus(TaskStatus.PENDING.value())
 							.setUser(user.getId())
 							.setRegistry(registry.getId()) // TODO
+							.setPercent((byte) 0) 
+							.setPriority((byte) 0) //TODO 
+							.setSource(TaskSource.MANUAL.value())
 							;
 						
 						Task t = AON.createTask(domain.getName(), domain.getId(), userName, task);
@@ -348,10 +353,17 @@ public class ReposServlet extends HttpServlet{
 		return array;
 	}
 	
-	private JSONArray getAllRegistriesJSON(Domain domain, String userName) {
-		LinkedList<Registry> list = AON.getTaskRegistries(domain.getName(), domain.getId(), userName);
+	private JSONArray getAllRegistriesJSON(Domain domain, String userName) {		
+		Stream<Registry> str = AON.getTaskRegistryStream(domain.getName(), domain.getId(), userName);
 		JSONArray array = new JSONArray();
-		list.stream().map(new RegistryToUserFiller()).forEach(l->array.put(l.toJSON()));
+		str.map(new RegistryToUserFiller()).forEach(l->array.put(l.toJSON()));
+		return array;
+	}
+	
+	private JSONArray getFilterRegistriesJSON(Domain domain, String userName, String filter) {		
+		Stream<Registry> str = AON.getFilterRegistryStream(domain.getName(), domain.getId(), userName, filter);
+		JSONArray array = new JSONArray();
+		str.map(new RegistryToUserFiller()).forEach(l -> array.put(l.toJSON()));
 		return array;
 	}
 	

@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskComment.TASK_COMMENT;
@@ -139,10 +140,10 @@ public class TaskDAO {
 	public static Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter){
 		// state 
 		Condition c;
-		if(issueFilter.getState().equals("open")) c = TASK.STATUS.eq(TaskStatus.OPEN.value());
-		else if(issueFilter.getState().equals("closed")) c = TASK.STATUS.eq(TaskStatus.CLOSED.value());
-		else c = TASK.STATUS.eq(TaskStatus.OPEN.value()).or(TASK.STATUS.eq(TaskStatus.CLOSED.value()));
-		
+		if(issueFilter.getState().equals("open")) c = TASK.STATUS.eq(TaskStatus.PENDING.value())
+												.or(TASK.STATUS.eq(TaskStatus.IN_PROGRESS.value()));
+		else if(issueFilter.getState().equals("closed")) c = TASK.STATUS.eq(TaskStatus.FINISHED.value());
+		else c = TASK.STATUS.ne(TaskStatus.DELETED.value());
 		// assignee
 		if(issueFilter.getAssignee() != null && !issueFilter.getAssignee().equals(""))
 			c = c.and(TASK.REGISTRY.eq(1)); // TODO 
@@ -274,6 +275,15 @@ public class TaskDAO {
 	public static Stream<Registry> getTaskRegistryStream(AONContext ctx){
 		return ctx.getDslContext().select().from(REGISTRY).join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
 			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(CUSTOMER.STATUS.eq((byte) 0))
+			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
+	}
+	
+	public static Stream<Registry> getFilterRegistryStream(AONContext ctx, String filter){
+		return ctx.getDslContext().select()
+				.from(REGISTRY).join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
+							.join(RMEDIA).on(RMEDIA.REGISTRY.eq(REGISTRY.ID))
+			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(CUSTOMER.STATUS.eq((byte) 0))
+				.and(REGISTRY.NAME.contains(filter).or(REGISTRY.ALIAS.contains(filter)).or(RMEDIA.VALUE.eq(filter)).or(REGISTRY.DOCUMENT.contains(filter)))
 			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
 	}
 	

@@ -129,8 +129,7 @@ public class TaskImpl implements ITask {
 	@Override
 	public Stream<Registry> getTaskRegistryStream(AONContext ctx){
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskRegistryStream(ctx));	
-
+			configuration -> TaskDAO.getTaskRegistryStream(ctx));	
 	}
 	
 	@Override
@@ -158,5 +157,11 @@ public class TaskImpl implements ITask {
 	@Override
 	public void deleteTaskTag(AONContext ctx, TaskTagFilter filter) {
 		ctx.getDslContext().transaction(configuration -> TaskDAO.deleteTaskTag(ctx, filter));		
+	}
+
+	@Override
+	public Stream<Registry> getFilterRegistryStream(AONContext ctx, String filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.getFilterRegistryStream(ctx, filter));	
 	}
 }
