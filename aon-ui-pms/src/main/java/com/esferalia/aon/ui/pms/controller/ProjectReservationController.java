@@ -721,13 +721,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
-    private void sendInventoryData(ProjectReservation reservation, List<Item> inventoryItems) throws ManagerBeanException {
-    	InventoryManager manager = new InventoryManager();
-		for (Item item : inventoryItems) {
-	    	manager.processInventoryQuery(reservation.getHotel(), item, reservation.getAllotmentRateCode(), reservation.getStartDate(), reservation.getEndDate());
-		}
-    }
-
 	private Integer obtainCancelPenaltyDays(ProjectReservation reservation, boolean noShow) throws ManagerBeanException {
 		Integer penaltyDays = null;
 		if (noShow) {
@@ -740,6 +733,13 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 		return penaltyDays;
 	}
+
+    private void sendInventoryData(ProjectReservation reservation, List<Item> inventoryItems) throws ManagerBeanException {
+    	InventoryManager manager = new InventoryManager();
+		for (Item item : inventoryItems) {
+	    	manager.processInventoryQuery(reservation.getHotel(), item, reservation.getAllotmentRateCode(), reservation.getStartDate(), reservation.getEndDate());
+		}
+    }
 
 	private void sendAgencyNoShowEmail(ProjectReservation reservation) throws ManagerBeanException {
 		String agencyEmail = getReservationUtils().obtainAgencyAdministrativeEmail(reservation.getAgency());

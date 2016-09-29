@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +27,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
@@ -36,7 +38,7 @@ import com.esferalia.aon.pms.reservation.InventoryManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ProjectReservationRoomController extends LinesController {
-	
+
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean showRoomDetailWindow;
@@ -110,7 +112,7 @@ public class ProjectReservationRoomController extends LinesController {
 
 				Date startDate = reservationRoom.getProjectReservation().getStartDate();
 				Date endDate = reservationRoom.getProjectReservation().getEndDate();
-				Date date = new Date();
+				Date date = DateUtils.truncate(new Date(), Calendar.DATE);
 				if (reservationRoom.getRoomNumber() == null || date.compareTo(startDate) < 0 || date.compareTo(endDate) > 0) {
 					date = null;
 				}
@@ -148,9 +150,8 @@ public class ProjectReservationRoomController extends LinesController {
 		if (reservationRoom.getRoomNumber() == null) {
 	    	reservationUtils.insertProjectReservationRoomDetails(reservationRoom, availableRoom, getLinkedServices());
 	    	if (!availableRoom.getItem().getId().equals(reservationRoom.getItem().getId())) {
-	        	InventoryManager manager = new InventoryManager();
-	        	manager.processInventoryQuery(reservationRoom);
-	        	manager.processInventoryQuery(reservationRoom, availableRoom.getHotel(), availableRoom.getItem());
+	        	sendInventoryData(reservationRoom, null, null, null, null);
+	        	sendInventoryData(reservationRoom, availableRoom.getHotel(), availableRoom.getItem(), null, null);
 	    	}
 		} else {
 			RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
@@ -159,11 +160,12 @@ public class ProjectReservationRoomController extends LinesController {
 			List<Item> inventoryItems = reservationUtils.getProjectReservationRoomDetailItems(reservationRoom, startDate, endDate);
 			reservationUtils.updateProjectReservationRoomDetails(reservationRoom, startDate, endDate, availableRoom);
 	    	if (inventoryItems.size() > 1 || (inventoryItems.size() == 1 && !availableRoom.getItem().getId().equals(inventoryItems.get(0).getId()))) {
-	        	InventoryManager manager = new InventoryManager();
 	        	for (Item roomItem : inventoryItems) {
-		        	manager.processInventoryQuery(reservationRoom, reservationRoom.getHotel(), roomItem, startDate, DateUtils.addDays(endDate, -1));
+		        	sendInventoryData(reservationRoom, reservationRoom.getHotel(), roomItem, startDate, endDate);
 	        	}
-	        	manager.processInventoryQuery(reservationRoom, availableRoom.getHotel(), availableRoom.getItem(), startDate, DateUtils.addDays(endDate, -1));
+	        	if (!availableRoom.getHotel().getId().equals(reservationRoom.getHotel().getId()) || !inventoryItems.contains(availableRoom.getItem())) {
+		        	sendInventoryData(reservationRoom, availableRoom.getHotel(), availableRoom.getItem(), startDate, endDate);
+	        	}
 	    	}
 		}
 		reservationRoom.setRoomNumber(availableRoom.getAsset().getName());
@@ -180,18 +182,25 @@ public class ProjectReservationRoomController extends LinesController {
 		List<Item> inventoryItems = reservationUtils.getProjectReservationRoomDetailItems(reservationRoom);
     	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false, null);
     	if (inventoryItems.size() > 1 || (inventoryItems.size() == 1 && !reservationRoom.getItem().getId().equals(inventoryItems.get(0).getId()))) {
-	    	InventoryManager manager = new InventoryManager();
 	    	for (Item roomItem : inventoryItems) {
-		    	if (!roomItem.getId().equals(reservationRoom.getItem().getId())) {
-		        	manager.processInventoryQuery(reservationRoom, reservationRoom.getHotel(), roomItem);
-		    	}
+	        	sendInventoryData(reservationRoom, reservationRoom.getHotel(), roomItem, null, null);
 	    	}
-	    	manager.processInventoryQuery(reservationRoom);
     	}
 
     	IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
     	reservationServiceController.onSearch(event);
 	}
+
+    private void sendInventoryData(ProjectReservationRoom reservationRoom, Hotel hotel, Item item, Date startDate, Date endDate) {
+    	InventoryManager manager = new InventoryManager();
+    	if (startDate != null && endDate != null) {
+        	manager.processInventoryQuery(reservationRoom, hotel, item, startDate, DateUtils.addDays(endDate, -1));
+    	} else if (hotel != null && item != null) {
+        	manager.processInventoryQuery(reservationRoom, hotel, item);
+    	} else {
+        	manager.processInventoryQuery(reservationRoom);
+    	}
+    }
 
 	public void onRemoveReservationRoom(ActionEvent event) throws ManagerBeanException {
 		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getTo();
