@@ -43,7 +43,11 @@ public class ConfigurationPanel extends Composite {
 					tabContent.add(new TagPanel(incidence));
 				} else if(tabs.getSelected().equals(ONE)
 					|| tabs.getSelected() == ONE){
-					
+					if(tabContent.getWidgetCount()> 0){
+						for(Integer i = 0; i < tabContent.getWidgetCount(); i++)
+							tabContent.remove(i);
+					}
+					tabContent.add(new NotificationPanel(incidence));
 					
 				} else if(tabs.getSelected().equals(TWO)
 						|| tabs.getSelected() == TWO){

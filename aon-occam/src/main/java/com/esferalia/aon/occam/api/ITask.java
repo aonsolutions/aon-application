@@ -27,6 +27,7 @@ public interface ITask {
 	public void updateTaskStatus(AONContext ctx, Task task);
 	public void updateTaskUser(AONContext ctx, Task task);
 	public void updateTaskDescription(AONContext ctx, Task task);
+	public void updateTaskPriority(AONContext ctx, Task task);
 
 	
 	public TaskComment getTaskComment(AONContext ctx, Integer taskCommentId);

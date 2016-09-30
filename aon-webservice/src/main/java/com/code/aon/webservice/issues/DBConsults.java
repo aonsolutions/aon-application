@@ -1,9 +1,11 @@
 package com.code.aon.webservice.issues;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -17,6 +19,10 @@ public class DBConsults {
 	
 	public LinkedList<Task> getTaskList(Domain domain, String login, IssueFilter filter){
 		return AON.getTaskList(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()), filter);
+	}
+	
+	public Stream<Task> getTaskStream(Domain domain, String login, IssueFilter filter){
+		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()), filter);
 	}
 	
 	public Task getTask(Domain domain, String login, Integer id){
@@ -48,4 +54,18 @@ public class DBConsults {
 	public void updateTaskDescription(Domain domain, String login, Task task){
 		AON.updateTaskDescription(domain.getName(), domain.getId(),login, task);
 	}
+	
+	public void updateTaskPriority(Domain domain, String login, Task task){
+		AON.updateTaskPriority(domain.getName(), domain.getId(),login, task);
+	}
+	
+	public void deleteTaskTag(Domain domain, String login, TaskTagFilter filter){
+		AON.deleteTaskTag(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public void deleteTag(Domain domain, String login, Tag tag){
+		AON.deleteTag(domain.getName(), domain.getId(), login, tag); 
+	}
+	
+	
 }

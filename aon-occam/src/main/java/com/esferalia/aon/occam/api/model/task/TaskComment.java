@@ -1,18 +1,21 @@
 package com.esferalia.aon.occam.api.model.task;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.security.User;
+@SuppressWarnings("serial")
+public class TaskComment implements Serializable{
+	
+	private String comment;
+	private Integer domain;
+	private Integer id;
+	private Integer task;
 
-public class TaskComment {
-	String comment;
-	Date createDate;
-	Integer domain;
-	Integer id;
-	User user;
-	Integer task;
-	Date updateDate;
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;
 	
 	public TaskComment() {}
 
@@ -22,15 +25,6 @@ public class TaskComment {
 
 	public TaskComment setComment(String comment) {
 		this.comment = comment;
-		return this;
-	}
-
-	public Date getCreateDate() {
-		return createDate;
-	}
-
-	public TaskComment setCreateDate(Date createDate) {
-		this.createDate = createDate;
 		return this;
 	}
 
@@ -52,15 +46,6 @@ public class TaskComment {
 		return this;
 	}
 
-	public User getUser() {
-		return user;
-	}
-
-	public TaskComment setUser(User user) {
-		this.user = user;
-		return this;
-	}
-
 	public Integer getTask() {
 		return task;
 	}
@@ -70,12 +55,39 @@ public class TaskComment {
 		return this;
 	}
 
-	public Date getUpdateDate() {
-		return updateDate;
+	public String getCreationUser() {
+		return creationUser;
 	}
 
-	public TaskComment setUpdateDate(Date updateDate) {
-		this.updateDate = updateDate;
+	public TaskComment setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public TaskComment setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+
+	public String getModificationUser() {
+		return modificationUser;
+	}
+
+	public TaskComment setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public TaskComment setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 		return this;
 	}
 	

@@ -30,14 +30,7 @@
         }
     </ui:style>
 
-	<g:HTMLPanel ui:field="panel">
-		<g:Button ui:field="heading1" addStyleNames="{style.heading}">Prioridad</g:Button>
-		<i:IronCollapse ui:field="collapse1">
-			<i:IronSelector ui:field="prioritySelector" multi="true">
-        
-            </i:IronSelector>
-        </i:IronCollapse>
-        
+	<g:HTMLPanel ui:field="panel">        
         <g:Button ui:field="heading2" addStyleNames="{style.heading}">Tipo</g:Button>
 		<i:IronCollapse ui:field="collapse2">
 			<i:IronSelector ui:field="typeSelector" multi="true">

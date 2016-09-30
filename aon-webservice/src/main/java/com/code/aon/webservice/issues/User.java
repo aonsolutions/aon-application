@@ -10,9 +10,13 @@ public class User {
 	
 	public User() {}
 
+	public User(String userName){
+		setLogin(userName);
+	}
+	
 	public User(com.esferalia.aon.occam.api.model.security.User u) {
-		this.setId(u.getId());
-		this.setLogin(u.getName());
+		setId(u.getId());
+		setLogin(u.getName());
 	}
 	
 	public Integer getId() {

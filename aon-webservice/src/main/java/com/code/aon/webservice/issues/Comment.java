@@ -26,9 +26,9 @@ public class Comment {
 		this.id = taskComment.getId();
 		this.url = "";
 		this.body = taskComment.getComment();
-		this.user = new User(taskComment.getUser());
-		this.createdAt = dateFormat.format(taskComment.getCreateDate());
-		this.updatedAt = dateFormat.format(taskComment.getUpdateDate());
+		this.user = new User(taskComment.getCreationUser());
+		this.createdAt = dateFormat.format(taskComment.getCreationDate());
+		this.updatedAt = dateFormat.format(taskComment.getModificationDate());
 	}	
 	
 	public Integer getId() {

@@ -2484,6 +2484,16 @@ public class AON {
 		}
 	}
 	
+	public static void updateTaskPriority(String domainName, Integer domainId, String login, Task task){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getTask().updateTaskPriority(ctx, task);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	//-------------------- TASK COMMENT
 	
 	public static Integer getCommentsCount(String domainName, Integer domainId, String login, Integer taskId) {

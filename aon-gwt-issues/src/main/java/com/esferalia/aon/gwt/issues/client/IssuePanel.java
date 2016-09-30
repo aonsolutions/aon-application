@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.issues.client;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
@@ -17,7 +18,6 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
@@ -41,6 +41,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -49,6 +50,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
+import com.vaadin.polymer.vaadin.widget.VaadinComboBox;
+import com.vaadin.polymer.vaadin.widget.event.ValueChangedEvent;
+import com.vaadin.polymer.vaadin.widget.event.ValueChangedEventHandler;
 
 
 public class IssuePanel extends Composite{
@@ -84,7 +88,6 @@ public class IssuePanel extends Composite{
 	
 	@UiField PaperIconButton returnButton;
 	@UiField PaperIconButton userDeleteButton;
-	@UiField PaperIconButton priorityDeleteButton;
 	@UiField PaperIconButton typeDeleteButton;
 	@UiField PaperIconButton workgroupDeleteButton;
 
@@ -96,14 +99,13 @@ public class IssuePanel extends Composite{
 	JsIssue issue;
 	
 	private Incidence incidence; 
-	
+
 	public IssuePanel(Issues parent, Incidence incidence, JsIssue issue) {
 		initWidget(binder.createAndBindUi(this));		
 		this.incidence = incidence;
 		this.parent = parent;
 		this.issue = issue;
 		userDeleteButton.setSize("22px", "22px");
-		priorityDeleteButton.setSize("22px", "22px");
 		typeDeleteButton.setSize("22px", "22px");
 		workgroupDeleteButton.setSize("22px", "22px");
 		if(issue.getState().equals("open")){
@@ -114,16 +116,16 @@ public class IssuePanel extends Composite{
 			reopenButton.setVisible(true);
 		}
 
-		VerticalPanel vp = new VerticalPanel();
-		vp.setSpacing(10);
-		initHeader(vp, issue);
+		initHeader(issue);
 		initLabels(issue);
 		initComments(issue);
 	}
 	
 	
 	
-	private void initHeader(VerticalPanel vp, JsIssue issue) {
+	private void initHeader(JsIssue issue) {
+		VerticalPanel vp = new VerticalPanel();
+		vp.setSpacing(10);
 		vp.add(getTitleLabel(issue.getTitle(), issue.getNumber()));
 		incidence.getEvents(issue.getEventsUrl(), new AsyncCallback<JSON<JsEvent>>() {
 			@Override
@@ -151,7 +153,7 @@ public class IssuePanel extends Composite{
 		typeLabel.setText(issue.getType().getName());
 		if(issue.getType().getName().equals(notAssign)) {typeDeleteButton.setVisible(false);}
 		priorityLabel.setText(issue.getPriority().getName());
-		if(issue.getPriority().getName().equals(notAssign)) {priorityDeleteButton.setVisible(false);}
+		
 		for (JsLabel label : issue.getLabels().toLinkedList()){
 			HorizontalPanel hp = new HorizontalPanel();
 			Label l = new Label(label.getName());
@@ -551,9 +553,7 @@ public class IssuePanel extends Composite{
 			@Override
 			public void onSuccess(JsIssue result) {
 				headerPanel.getWidget().removeFromParent();
-				VerticalPanel vp = new VerticalPanel();
-				vp.setSpacing(10);
-				initHeader(vp, result);
+				initHeader(result);
 				closedButton.setVisible(false);
 				reopenButton.setVisible(true);
 			}
@@ -570,9 +570,7 @@ public class IssuePanel extends Composite{
 			@Override
 			public void onSuccess(JsIssue result) {
 				headerPanel.getWidget().removeFromParent();
-				VerticalPanel vp = new VerticalPanel();
-				vp.setSpacing(10);
-				initHeader(vp, result);
+				initHeader(result);
 				closedButton.setVisible(true);
 				reopenButton.setVisible(false);
 			}
@@ -583,26 +581,33 @@ public class IssuePanel extends Composite{
 	
 	@UiHandler("typeButton")
 	void onClickTypeButton(ClickEvent event){	
-		incidence.getTypes( new AsyncCallback<JSON<JsLabel>>() {
+		incidence.getTypes(new AsyncCallback<JSON<JsLabel>>() {
 			
-			@Override
-			public void onSuccess(JSON<JsLabel> result) {
-				AonListDialog dialog = new AonListDialog(result.getData(), null,"Tipo") {
-
+			@Override public void onSuccess(JSON<JsLabel> result) {
+				AonJsArray<JsLabel> labels = result.getData();
+				PopupPanel popup = new PopupPanel();
+				VaadinComboBox vcb = new VaadinComboBox();
+				vcb.setItems(getLabelArray(labels));
+				vcb.setLabel("Tipo");
+				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+					
 					@Override
-					protected void onSelect(JavaScriptObject item) {
-						JsLabel label = (JsLabel) item;
-						typeLabel.setText(label.getName());
-						typeDeleteButton.setVisible(true);
-						hide();
-						// TODO UPDATE - CREATE
-						incidence.addType2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
-							@Override public void onFailure(Throwable caught) {}
-							@Override public void onSuccess(JsLabel result) {}
-						});
+					public void onValueChanged(ValueChangedEvent event) {
+						if(labels != null)
+							for(Integer i = 0; i < labels.length(); i++)
+								if(labels.get(i).getName().equals(vcb.getValue())) {
+									JsLabel jsLabel = labels.get(i);
+									typeLabel.setText(jsLabel.getName());
+									typeDeleteButton.setVisible(true);
+									incidence.addType2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+										@Override public void onFailure(Throwable caught) {}
+										@Override public void onSuccess(JsLabel result) {}
+									});
+									popup.hide();
+								}	
 					}
-				};
-				
+				});
+				popup.add(vcb);
 				int left = typeButton.getAbsoluteLeft();
 				int top = typeButton.getAbsoluteTop()
 						+ typeButton.getOffsetHeight();
@@ -610,36 +615,46 @@ public class IssuePanel extends Composite{
 				if(left > width - 200){
 					left = left - 200;
 				}
-				dialog.setAutoHideEnabled(true);
-				dialog.setPopupPosition(left, top);
-				dialog.show();
+				popup.setAutoHideEnabled(true);
+				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.setPopupPosition(left, top);
+				popup.show();
+				vcb.toggle();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
-		});
+		});	
 	}
 	
 	@UiHandler("priorityButton")
 	void onClickPriorityButton(ClickEvent event){	
+		
 		incidence.getPriorities(new AsyncCallback<JSON<JsLabel>>() {
 			
-			@Override
-			public void onSuccess(JSON<JsLabel> result) {
-				AonListDialog dialog = new AonListDialog(result.getData(), null,"Prioridad") {
-
+			@Override public void onSuccess(JSON<JsLabel> result) {
+				AonJsArray<JsLabel> labels = result.getData();
+				PopupPanel popup = new PopupPanel();
+				VaadinComboBox vcb = new VaadinComboBox();
+				vcb.setItems(getLabelArray(labels));
+				vcb.setLabel("Prioridad");
+				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+					
 					@Override
-					protected void onSelect(JavaScriptObject item) {
-						JsLabel label = (JsLabel) item;
-						priorityLabel.setText(label.getName());
-						priorityDeleteButton.setVisible(true);
-						hide();
-						// TODO UPDATE - CREATE
-						incidence.addPriority2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
-							@Override public void onFailure(Throwable caught) {}
-							@Override public void onSuccess(JsLabel result) {}
-						});
+					public void onValueChanged(ValueChangedEvent event) {
+						if(labels != null)
+							for(Integer i = 0; i < labels.length(); i++)
+								if(labels.get(i).getName().equals(vcb.getValue())) {
+									JsLabel jsLabel = labels.get(i);
+									priorityLabel.setText(jsLabel.getName());
+									incidence.addPriority2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+										@Override public void onFailure(Throwable caught) {}
+										@Override public void onSuccess(JsLabel result) {}
+									});
+									popup.hide();
+								}	
 					}
-				};
+				});
+				popup.add(vcb);
 				int left = priorityButton.getAbsoluteLeft();
 				int top = priorityButton.getAbsoluteTop()
 						+ priorityButton.getOffsetHeight();
@@ -647,9 +662,11 @@ public class IssuePanel extends Composite{
 				if(left > width - 200){
 					left = left - 200;
 				}
-				dialog.setAutoHideEnabled(true);
-				dialog.setPopupPosition(left, top);
-				dialog.show();
+				popup.setAutoHideEnabled(true);
+				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.setPopupPosition(left, top);
+				popup.show();
+				vcb.toggle();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -660,56 +677,64 @@ public class IssuePanel extends Composite{
 	void onClickTagButton(ClickEvent event){	
 		incidence.getLabels(new AsyncCallback<JSON<JsLabel>>() {
 			
-			@Override
-			public void onSuccess(JSON<JsLabel> result) {
-				AonListDialog dialog = new AonListDialog(result.getData(), null, "Etiqueta") {
-
+			@Override public void onSuccess(JSON<JsLabel> result) {
+				AonJsArray<JsLabel> labels = result.getData();
+				PopupPanel popup = new PopupPanel();
+				VaadinComboBox vcb = new VaadinComboBox();
+				vcb.setItems(getLabelArray(labels));
+				vcb.setLabel("Etiqueta");
+				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+					
 					@Override
-					protected void onSelect(JavaScriptObject item) {
-						HorizontalPanel hp = new HorizontalPanel();
-						JsLabel label = (JsLabel) item;
-						Boolean bool = true;
-						for(Integer i = 0; i < labelsVPanel.getWidgetCount(); i++){
-							HorizontalPanel hh = (HorizontalPanel) labelsVPanel.getWidget(i);
-							Label ll = (Label) hh.getWidget(0);
-							if(ll.getText().equals(label.getName()))
-								bool = false;
-							
-						}
-						if(bool){
-							Label l = new Label(label.getName());
-							l.setStyleName(AON.AON_CSS.tagStyle());
-							l.addStyleName(AON.AON_CSS.tagNotice());
-							hp.add(l);
-							PaperIconButton pib = new PaperIconButton();
-							pib.setIcon("close");
-							pib.setStyle("padding:3px !important;");
-							pib.setSize("22px", "22px");
-							pib.setTitle(labelsVPanel.getWidgetCount()+"");
-							pib.addClickHandler(new ClickHandler() {
-							
-								@Override
-								public void onClick(ClickEvent event) {
-									incidence.deleteLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
-										@Override public void onFailure(Throwable caught) {}
-										@Override public void onSuccess(JsLabel result) {
-											Integer index = Integer.parseInt(pib.getTitle());
-											labelsVPanel.remove(index);
-										}
-									});
-								}
-							});
-							hp.add(pib);
-							labelsVPanel.add(hp);
-							hide();
-							// TODO UPDATE - CREATE
-							incidence.addLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
-								@Override public void onFailure(Throwable caught) {}
-								@Override public void onSuccess(JsLabel result) {}
-							});
-						} else hide();
+					public void onValueChanged(ValueChangedEvent event) {
+						if(labels != null)
+							for(Integer i = 0; i < labels.length(); i++)
+								if(labels.get(i).getName().equals(vcb.getValue())) {
+									HorizontalPanel hp = new HorizontalPanel();
+									JsLabel jsLabel = labels.get(i);
+									Boolean bool = true;
+									for(Integer j = 0; j < labelsVPanel.getWidgetCount(); j++){
+										HorizontalPanel hh = (HorizontalPanel) labelsVPanel.getWidget(j);
+										Label ll = (Label) hh.getWidget(0);
+										if(ll.getText().equals(jsLabel.getName()))
+											bool = false;
+										
+									}
+									if(bool){
+										Label l = new Label(jsLabel.getName());
+										l.setStyleName(AON.AON_CSS.tagStyle());
+										l.addStyleName(AON.AON_CSS.tagNotice());
+										hp.add(l);
+										PaperIconButton pib = new PaperIconButton();
+										pib.setIcon("close");
+										pib.setStyle("padding:3px !important;");
+										pib.setSize("22px", "22px");
+										pib.setTitle(labelsVPanel.getWidgetCount()+"");
+										pib.addClickHandler(new ClickHandler() {
+										
+											@Override
+											public void onClick(ClickEvent event) {
+												incidence.deleteLabel2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+													@Override public void onFailure(Throwable caught) {}
+													@Override public void onSuccess(JsLabel result) {
+														Integer index = Integer.parseInt(pib.getTitle());
+														labelsVPanel.remove(index);
+													}
+												});
+											}
+										});
+										hp.add(pib);
+										labelsVPanel.add(hp);
+										incidence.addLabel2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+											@Override public void onFailure(Throwable caught) {}
+											@Override public void onSuccess(JsLabel result) {}
+										});
+										popup.hide();
+									} else popup.hide();
+								}	
 					}
-				};
+				});
+				popup.add(vcb);
 				int left = tagButton.getAbsoluteLeft();
 				int top = tagButton.getAbsoluteTop()
 						+ tagButton.getOffsetHeight();
@@ -717,36 +742,46 @@ public class IssuePanel extends Composite{
 				if(left > width - 200){
 					left = left - 200;
 				}
-				dialog.setAutoHideEnabled(true);
-				dialog.setPopupPosition(left, top);
-				dialog.show();
+				popup.setAutoHideEnabled(true);
+				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.setPopupPosition(left, top);
+				popup.show();
+				vcb.toggle();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
-		});
+		});	
 	}
 	
 	@UiHandler("workgroupButton")
-	void onClickWorkgroupButton(ClickEvent event){		
+	void onClickWorkgroupButton(ClickEvent event){	
 		incidence.getWorkgroups(new AsyncCallback<JSON<JsUser>>() {
 			
-			@Override
-			public void onSuccess(JSON<JsUser> result) {
-				AonListDialog dialog = new AonListDialog(null, result.getData(), "Grupo de Trabajo") {
-
+			@Override public void onSuccess(JSON<JsUser> result) {
+				AonJsArray<JsUser> users = result.getData();
+				PopupPanel popup = new PopupPanel();
+				VaadinComboBox vcb = new VaadinComboBox();
+				vcb.setItems(getUserArray(users));
+				vcb.setLabel("Grupo de Trabajo");
+				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+					
 					@Override
-					protected void onSelect(JavaScriptObject item) {
-						JsUser jsUser = (JsUser) item;
-						workgroupLabel.setText(jsUser.getLogin());
-						workgroupDeleteButton.setVisible(true);
-						// TODO UPDATE - CREATE
-						incidence.addWorkgroup2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
-							@Override public void onFailure(Throwable caught) {}
-							@Override public void onSuccess(JsUser result) {}
-						});
-						hide();
+					public void onValueChanged(ValueChangedEvent event) {
+						if(users != null)
+							for(Integer i = 0; i < users.length(); i++)
+								if(users.get(i).getLogin().equals(vcb.getValue())) {
+									JsUser jsUser = users.get(i);
+									workgroupLabel.setText(jsUser.getLogin());
+									workgroupDeleteButton.setVisible(true);
+									incidence.addWorkgroup2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
+										@Override public void onFailure(Throwable caught) {}
+										@Override public void onSuccess(JsUser result) {}
+									});
+									popup.hide();
+								}	
 					}
-				};
+				});
+				popup.add(vcb);
 				int left = workgroupButton.getAbsoluteLeft();
 				int top = workgroupButton.getAbsoluteTop()
 						+ workgroupButton.getOffsetHeight();
@@ -754,39 +789,47 @@ public class IssuePanel extends Composite{
 				if(left > width - 200){
 					left = left - 200;
 				}
-				dialog.setAutoHideEnabled(true);
-				dialog.setPopupPosition(left, top);
-				dialog.show();
+				popup.setAutoHideEnabled(true);
+				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.setPopupPosition(left, top);
+				popup.show();
+				vcb.toggle();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
 	}
-	
+
 	@UiHandler("userButton")
-	void onClickUserButton(ClickEvent event){		
+	void onClickUserButton(ClickEvent event){	
 		incidence.getUsers(new AsyncCallback<JSON<JsUser>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsUser> result) {
-				
-				AonListDialog dialog = new AonListDialog(null, result.getData(), "Operario") {
-
+				AonJsArray<JsUser> users = result.getData();
+				PopupPanel popup = new PopupPanel();
+				VaadinComboBox vcb = new VaadinComboBox();
+				vcb.setItems(getUserArray(users));
+				vcb.setLabel("Operario");
+				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+					
 					@Override
-					protected void onSelect(JavaScriptObject item) {
-						JsUser jsUser = (JsUser) item;
-						userLabel.setText(jsUser.getLogin());
-						userDeleteButton.setVisible(true);
-						// TODO UPDATE - CREATE
-						incidence.addUser2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
-							@Override public void onFailure(Throwable caught) {}
-							@Override public void onSuccess(JsUser result) {}
-						});
-						hide();
-
+					public void onValueChanged(ValueChangedEvent event) {
+						if(users != null)
+							for(Integer i = 0; i < users.length(); i++)
+								if(users.get(i).getLogin().equals(vcb.getValue())) {
+									JsUser jsUser = users.get(i);
+									userLabel.setText(jsUser.getLogin());
+									userDeleteButton.setVisible(true);
+									incidence.addUser2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
+										@Override public void onFailure(Throwable caught) {}
+										@Override public void onSuccess(JsUser result) {}
+									});
+									popup.hide();
+								}	
 					}
-				};
-				
+				});
+				popup.add(vcb);
 				int left = userButton.getAbsoluteLeft();
 				int top = userButton.getAbsoluteTop()
 						+ userButton.getOffsetHeight();
@@ -794,9 +837,13 @@ public class IssuePanel extends Composite{
 				if(left > width - 200){
 					left = left - 200;
 				}
-				dialog.setAutoHideEnabled(true);
-				dialog.setPopupPosition(left, top);
-				dialog.show();
+				popup.setAutoHideEnabled(true);
+				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.setPopupPosition(left, top);
+				popup.show();
+				vcb.toggle();
+			
+
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -821,17 +868,6 @@ public class IssuePanel extends Composite{
 			@Override public void onSuccess(JsLabel result) {
 				typeLabel.setText("Sin Asignar");
 				typeDeleteButton.setVisible(false);
-			}
-		});
-	}
-	
-	@UiHandler("priorityDeleteButton")
-	void onClickPriorityDeleteButton(ClickEvent event){		
-		incidence.deletePriority2Issue(issue.getNumber(), new AsyncCallback<JsLabel>() {
-			@Override public void onFailure(Throwable caught) {}
-			@Override public void onSuccess(JsLabel result) {
-				priorityLabel.setText("Sin Asignar");
-				priorityDeleteButton.setVisible(false);
 			}
 		});
 	}
@@ -861,6 +897,27 @@ public class IssuePanel extends Composite{
 	private void closeFootPanel() {
 		dockLayoutPanel.setWidgetSize(footPanel, 30);
 		dockLayoutPanel.animate(500);
+	}
+	
+	
+	private String getLabelArray(AonJsArray<JsLabel> labels) {
+		String arr= "[";
+		if(labels != null)
+			for(Integer i = 0; i < labels.length(); i++){
+				if(i > 0) arr = arr + " , ";
+				arr = arr + "\""+ labels.get(i).getName()+"\"";
+		}
+		return arr + "]";
+	}
+	
+	private String getUserArray(AonJsArray<JsUser> users) {
+		String arr= "[";
+		if(users != null)
+			for(Integer i = 0; i < users.length(); i++){
+				if(i > 0) arr = arr + " , ";
+				arr = arr + "\""+ users.get(i).getLogin()+"\"";
+		}
+		return arr + "]";
 	}
 	
 }

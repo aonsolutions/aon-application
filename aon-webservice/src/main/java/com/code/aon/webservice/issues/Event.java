@@ -25,8 +25,8 @@ public class Event {
 		this.id = taskEvent.getId();
 		this.url = "";
 		this.event = taskEvent.getEvent();
-		this.createdAt = dateFormat.format(taskEvent.getCreateDate());
-		this.user = new User(taskEvent.getUser());
+		this.createdAt = dateFormat.format(taskEvent.getCreationDate());
+		this.user = new User(taskEvent.getCreationUser());
 	}
 	
 	public Integer getId() {

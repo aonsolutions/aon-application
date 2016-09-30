@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
+import com.esferalia.aon.occam.api.model.type.Priority;
 
 
 public class Issue {
@@ -53,8 +54,8 @@ public class Issue {
 	
 	}
 	
-	public Issue(Task task, com.esferalia.aon.occam.api.model.security.User creator, Registry assignee, LinkedList<Label> labels,
-			Label type, Label priority, Integer comments, Domain domain, String userName, Workgroup workgroup, Registry enterprise) {
+	public Issue(Task task, Registry assignee, LinkedList<Label> labels,
+			Label type, Integer comments, Domain domain, String userName, Workgroup workgroup, Registry enterprise) {
 		SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
@@ -78,15 +79,16 @@ public class Issue {
 		this.createdAt = dateTimeFormat.format(task.getStartDate());
 		this.createdAtDate = dateFormat.format(task.getStartDate());
 		this.createdAtHour = hourFormat.format(task.getStartDate());
-		this.updatedAt = task.getUpdateDate() != null ? dateTimeFormat.format(task.getUpdateDate()): "";
-		this.updatedAtDate = task.getUpdateDate() != null ? dateFormat.format(task.getUpdateDate()): "";
-		this.updatedAtHour = task.getUpdateDate() != null ? hourFormat.format(task.getUpdateDate()): "";
+		this.updatedAt = task.getModificationDate() != null ? dateTimeFormat.format(task.getModificationDate()): "";
+		this.updatedAtDate = task.getModificationDate() != null ? dateFormat.format(task.getModificationDate()): "";
+		this.updatedAtHour = task.getModificationDate() != null ? hourFormat.format(task.getModificationDate()): "";
 		this.assignee = new User().setId(assignee.getId()).setLogin(assignee.getName());
-		this.user = new User().setId(creator.getId()).setLogin(creator.getName());
+		this.user = new User().setLogin(task.getCreationUser());
 		this.labels = labels;
 		this.comments = comments;
 		this.type = type;
-		this.priority = priority;
+		Priority p = Priority.values()[task.getPriority()];
+		this.priority = new Label().setId(p.ordinal()).setName(p.getName());
 		this.workgroup = new User().setId(workgroup.getId()).setLogin(workgroup.getDescription());
 		this.enterprise = new User().setId(enterprise.getId()).setLogin(enterprise.getName());
 	}

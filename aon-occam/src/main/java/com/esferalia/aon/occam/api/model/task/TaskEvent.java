@@ -1,17 +1,21 @@
 package com.esferalia.aon.occam.api.model.task;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.security.User;
+@SuppressWarnings("serial")
+public class TaskEvent implements Serializable{
 
-public class TaskEvent {
-	String event;
-	Date createDate;
-	Integer domain;
-	Integer id;
-	User user;
-	Integer task;
+	private String event;
+	private Integer domain;
+	private Integer id;
+	private Integer task;
+	
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;
 	
 	public TaskEvent() {}
 
@@ -21,15 +25,6 @@ public class TaskEvent {
 
 	public TaskEvent setEvent(String event) {
 		this.event = event;
-		return this;
-	}
-
-	public Date getCreateDate() {
-		return createDate;
-	}
-
-	public TaskEvent setCreateDate(Date createDate) {
-		this.createDate = createDate;
 		return this;
 	}
 
@@ -51,15 +46,6 @@ public class TaskEvent {
 		return this;
 	}
 
-	public User getUser() {
-		return user;
-	}
-
-	public TaskEvent setUser(User user) {
-		this.user = user;
-		return this;
-	}
-
 	public Integer getTask() {
 		return task;
 	}
@@ -69,6 +55,42 @@ public class TaskEvent {
 		return this;
 	}
 	
+	public String getCreationUser() {
+		return creationUser;
+	}
+
+	public TaskEvent setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public TaskEvent setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+
+	public String getModificationUser() {
+		return modificationUser;
+	}
+
+	public TaskEvent setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public TaskEvent setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
+		return this;
+	}
+
 	public Timestamp toTimestamp(Date date) {
 		return date != null ? new Timestamp(date.getTime()) : null;
 	}

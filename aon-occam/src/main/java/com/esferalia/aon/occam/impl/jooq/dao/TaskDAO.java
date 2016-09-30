@@ -28,7 +28,6 @@ import com.esferalia.aon.jooq.tables.records.TaskCommentRecord;
 import com.esferalia.aon.jooq.tables.records.TaskEventRecord;
 import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
@@ -120,7 +119,7 @@ public class TaskDAO {
 			.from(TASK_COMMENT)
 			.where(TASK_COMMENT.TASK.eq(taskId))
 			.orderBy(TASK_COMMENT.ID.desc())
-			.fetchInto(TASK_COMMENT).stream().map(new FullTaskCommentFiller(ctx));
+			.fetchInto(TASK_COMMENT).stream().map(new FullTaskCommentFiller());
 	}
 	
 	public static Stream<TaskEvent> getTaskEventStream(AONContext ctx, Integer taskId){
@@ -129,7 +128,7 @@ public class TaskDAO {
 			.from(TASK_EVENT)
 			.where(TASK_EVENT.TASK.eq(taskId))
 			.orderBy(TASK_EVENT.ID.desc())
-			.fetchInto(TASK_EVENT).stream().map(new FullTaskEventFiller(ctx));
+			.fetchInto(TASK_EVENT).stream().map(new FullTaskEventFiller());
 	}
 
 	public static Stream<Tag> getTaskLabelStream(AONContext ctx, TaskTagFilter filter){
@@ -152,13 +151,13 @@ public class TaskDAO {
 		if(issueFilter.getCreator() != null && !issueFilter.getCreator().equals(""))
 			c = c.and(TASK.TASK_HOLDER.eq(1)); // TODO
 		
-		// labels
+		/*/ labels
 		if(issueFilter.getLabels() != null && !issueFilter.getLabels().equals("")){
 			String[] labels = issueFilter.getLabels().split(",");
 			for (String label : labels){
 				//c = c.and(TAG.NAME.eq(label));
 			}
-		}
+		}*/
 		
 		// mentioned
 		if(issueFilter.getMentioned() != null && !issueFilter.getMentioned().equals("")){}
@@ -193,10 +192,12 @@ public class TaskDAO {
 	}
 
 	public static Integer createTask(AONContext ctx, Task task) {
-		return ctx.getDslContext().insertInto(TASK, TASK.ACTIVITY_TYPE, TASK.COMMENTS, TASK.DESCRIPTION, TASK.DOMAIN, TASK.DUE_DATE, TASK.END_DATE, TASK.GTASK_ID, TASK.GTASKLIST_ID,TASK.NUMBER, TASK.USER,
-				TASK.PERCENT, TASK.PRIORITY, TASK.PROJECT, TASK.REGISTRY, TASK.REPEAT_PERIOD, TASK.SENDER, TASK.SOURCE, TASK.START_DATE, TASK.STATUS, TASK.TASK_HOLDER, TASK.UPDATE_DATE, TASK.WORKGROUP)
-			.values(task.getActivityType(),task.getComments(), task.getDescription(), task.getDomain(), task.toTimestamp(task.getDueDate()), task.toTimestamp(task.getEndDate()), task.getGtaskId(), task.getGtasklistId(), task.getNumber(), task.getUser(),
-				task.getPercent(), task.getPriority(), task.getProject(), task.getRegistry(), task.getRepeatPeriod(), task.getSender(), task.getSource(), task.toTimestamp(task.getStartDate()), task.getStatus(), task.getTaskHolder(), task.toTimestamp(task.getUpdateDate()), task.getWorkgroup())
+		return ctx.getDslContext().insertInto(TASK, TASK.ACTIVITY_TYPE, TASK.COMMENTS, TASK.DESCRIPTION, TASK.DOMAIN, TASK.DUE_DATE, TASK.END_DATE, TASK.GTASK_ID, TASK.GTASKLIST_ID,TASK.NUMBER,
+				TASK.PERCENT, TASK.PRIORITY, TASK.PROJECT, TASK.REGISTRY, TASK.REPEAT_PERIOD, TASK.SENDER, TASK.SOURCE, TASK.START_DATE, TASK.STATUS, TASK.TASK_HOLDER, TASK.MODIFICATION_DATE, TASK.WORKGROUP,
+				TASK.CREATION_USER, TASK.CREATION_DATE, TASK.MODIFICATION_USER)
+			.values(task.getActivityType(),task.getComments(), task.getDescription(), task.getDomain(), task.toTimestamp(task.getDueDate()), task.toTimestamp(task.getEndDate()), task.getGtaskId(), task.getGtasklistId(), task.getNumber(),
+				task.getPercent(), task.getPriority(), task.getProject(), task.getRegistry(), task.getRepeatPeriod(), task.getSender(), task.getSource(), task.toTimestamp(task.getStartDate()), task.getStatus(), task.getTaskHolder(), task.toTimestamp(task.getModificationDate()), task.getWorkgroup(),
+				task.getCreationUser(), task.toTimestamp(task.getCreationDate()), task.getModificationUser())
 			.returning(TASK.ID).fetchOne().getId();
 	}
 	
@@ -204,20 +205,32 @@ public class TaskDAO {
 		ctx.getDslContext().update(TASK)
 			.set(TASK.STATUS, task.getStatus())
 			.set(TASK.END_DATE,task.toTimestamp(task.getEndDate()))
+			.set(TASK.MODIFICATION_USER, task.getModificationUser())
+			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
 			.where(TASK.ID.eq(task.getId())).execute();
 	}
 	
 	public static void updateTaskDescription(AONContext ctx, Task task) {
 		ctx.getDslContext().update(TASK)
 			.set(TASK.COMMENTS, task.getComments())
+			.set(TASK.MODIFICATION_USER, task.getModificationUser())
+			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
 			.where(TASK.ID.eq(task.getId())).execute();
 	}
 	
+	public static void updateTaskPriority(AONContext ctx, Task task) {
+		ctx.getDslContext().update(TASK)
+			.set(TASK.PRIORITY, task.getPriority())
+			.set(TASK.MODIFICATION_USER, task.getModificationUser())
+			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
+			.where(TASK.ID.eq(task.getId())).execute();
+	}
 	
 	public static void updateTaskUser(AONContext ctx, Task task) {
 		ctx.getDslContext().update(TASK)			
 			.set(TASK.TASK_HOLDER, task.getTaskHolder())
-			.set(TASK.USER,  task.getUser())
+			.set(TASK.MODIFICATION_USER, task.getModificationUser())
+			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
 			.set(TASK.WORKGROUP, task.getWorkgroup())
 			.where(TASK.ID.eq(task.getId())).execute();
 	}
@@ -226,12 +239,14 @@ public class TaskDAO {
 		return ctx.getDslContext().select()
 			.from(TASK_COMMENT)
 			.where(TASK_COMMENT.ID.eq(taskCommentId))
-			.fetchInto(TASK_COMMENT).stream().map(new FullTaskCommentFiller(ctx)).findFirst().orElse(new TaskComment());
+			.fetchInto(TASK_COMMENT).stream().map(new FullTaskCommentFiller()).findFirst().orElse(new TaskComment());
 	}
 
 	public static TaskComment createTaskComment(AONContext ctx, TaskComment taskComment, Integer taskId) {
-		Integer id = ctx.getDslContext().insertInto(TASK_COMMENT, TASK_COMMENT.COMMENT, TASK_COMMENT.CREATE_DATE, TASK_COMMENT.DOMAIN, TASK_COMMENT.USER, TASK_COMMENT.TASK, TASK_COMMENT.UPDATE_DATE)
-			.values(taskComment.getComment(), taskComment.toTimestamp(taskComment.getCreateDate()), taskComment.getDomain(), taskComment.getUser().getId(), taskComment.getTask(), taskComment.toTimestamp(taskComment.getUpdateDate()))
+		Integer id = ctx.getDslContext().insertInto(TASK_COMMENT, TASK_COMMENT.COMMENT, TASK_COMMENT.CREATION_DATE, TASK_COMMENT.DOMAIN, TASK_COMMENT.TASK, TASK_COMMENT.MODIFICATION_DATE,
+				TASK_COMMENT.CREATION_USER, TASK_COMMENT.MODIFICATION_USER)
+			.values(taskComment.getComment(), taskComment.toTimestamp(taskComment.getCreationDate()), taskComment.getDomain(), taskComment.getTask(), taskComment.toTimestamp(taskComment.getModificationDate()),
+					taskComment.getCreationUser(), taskComment.getModificationUser())
 			.returning(TASK_COMMENT.ID).fetchOne().getId();
 		return taskComment.setId(id);	
 	}
@@ -239,21 +254,24 @@ public class TaskDAO {
 	public static TaskComment updateTaskComment(AONContext ctx, TaskComment taskComment) {
 		return ctx.getDslContext().update(TASK_COMMENT)
 			.set(TASK_COMMENT.COMMENT, taskComment.getComment())
-			.set(TASK_COMMENT.UPDATE_DATE, taskComment.toTimestamp(taskComment.getUpdateDate()))
+			.set(TASK_COMMENT.MODIFICATION_USER, taskComment.getModificationUser())
+			.set(TASK_COMMENT.MODIFICATION_DATE, taskComment.toTimestamp(taskComment.getModificationDate()))
 		.where(TASK_COMMENT.ID.eq(taskComment.getId()))
-		.returning().fetch().stream().map(new FullTaskCommentFiller(ctx)).findFirst().orElse(new TaskComment());
+		.returning().fetch().stream().map(new FullTaskCommentFiller()).findFirst().orElse(new TaskComment());
 	}
 
 	public static TaskEvent getTaskEvent(AONContext ctx, Integer taskEventId) {
 		return ctx.getDslContext().select()
 				.from(TASK_EVENT)
 				.where(TASK_EVENT.ID.eq(taskEventId))
-				.fetchInto(TASK_EVENT).stream().map(new FullTaskEventFiller(ctx)).findFirst().orElse(new TaskEvent());
+				.fetchInto(TASK_EVENT).stream().map(new FullTaskEventFiller()).findFirst().orElse(new TaskEvent());
 	}
 
 	public static TaskEvent createTaskEvent(AONContext ctx, TaskEvent taskEvent, Integer taskId) {
-		Integer id = ctx.getDslContext().insertInto(TASK_EVENT, TASK_EVENT.EVENT, TASK_EVENT.CREATE_DATE, TASK_EVENT.DOMAIN, TASK_EVENT.USER, TASK_EVENT.TASK)
-				.values(taskEvent.getEvent(), taskEvent.toTimestamp(taskEvent.getCreateDate()), taskEvent.getDomain(), taskEvent.getUser().getId(), taskEvent.getTask())
+		Integer id = ctx.getDslContext().insertInto(TASK_EVENT, TASK_EVENT.EVENT, TASK_EVENT.CREATION_DATE, TASK_EVENT.DOMAIN, TASK_EVENT.TASK,
+				TASK_EVENT.CREATION_USER, TASK_EVENT.MODIFICATION_USER, TASK_EVENT.MODIFICATION_DATE)
+				.values(taskEvent.getEvent(), taskEvent.toTimestamp(taskEvent.getCreationDate()), taskEvent.getDomain(), taskEvent.getTask(),
+						taskEvent.getCreationUser(), taskEvent.getModificationUser(), taskEvent.toTimestamp(taskEvent.getModificationDate()))
 				.returning(TASK_EVENT.ID).fetchOne().getId();
 		return taskEvent.setId(id);
 	}
@@ -261,6 +279,8 @@ public class TaskDAO {
 	public static TaskEvent updateTaskEvent(AONContext ctx, TaskEvent taskEvent, Integer taskEventId) {
 		ctx.getDslContext().update(TASK_EVENT)
 			.set(TASK_EVENT.EVENT, taskEvent.getEvent())
+			.set(TASK_EVENT.MODIFICATION_USER, taskEvent.getModificationUser())
+			.set(TASK_EVENT.MODIFICATION_DATE, taskEvent.toTimestamp(taskEvent.getModificationDate()))
 			.where(TASK_EVENT.ID.eq(taskEventId))
 		.execute();
 		return taskEvent;
@@ -336,8 +356,10 @@ public class TaskDAO {
 					.setTaskHolder(r.getTaskHolder())
 					.setWorkgroup(r.getWorkgroup())
 					.setNumber(r.getNumber())
-					.setUpdateDate(r.getUpdateDate())
-					.setUser(r.getUser());
+					.setCreationUser(r.getCreationUser())
+					.setCreationDate(r.getCreationDate())
+					.setModificationUser(r.getModificationUser())
+					.setModificationDate(r.getModificationDate());
 		}
 	}
 	
@@ -374,37 +396,30 @@ public class TaskDAO {
 	}
 	
 	private static class FullTaskCommentFiller implements Function<TaskCommentRecord, TaskComment> {
-		AONContext ctx;
-		public FullTaskCommentFiller(AONContext ctx) {
-			this.ctx = ctx;
-		}
-		
 		@Override
 		public TaskComment apply(TaskCommentRecord r) {
 			return new TaskComment().setId(r.getId())
 					.setDomain(r.getDomain())
 					.setComment(r.getComment())
-					.setCreateDate(r.getCreateDate())
-					.setUser(AON.getUser(ctx.getDomainId(), ctx.getDomainName(), ctx.getUser(), r.getUser()))
 					.setTask(r.getTask())
-					.setUpdateDate(r.getUpdateDate());		
+					.setCreationUser(r.getCreationUser())
+					.setCreationDate(r.getCreationDate())
+					.setModificationUser(r.getModificationUser())
+					.setModificationDate(r.getModificationDate());		
 		}
 	}
 	
 	private static class FullTaskEventFiller implements Function<TaskEventRecord, TaskEvent> {
-		AONContext ctx;
-		public FullTaskEventFiller(AONContext ctx) {
-			this.ctx = ctx;
-		}
-		
 		@Override
 		public TaskEvent apply(TaskEventRecord r) {
 			return new TaskEvent().setId(r.getId())
 					.setDomain(r.getDomain())
 					.setEvent(r.getEvent())
-					.setCreateDate(r.getCreateDate())
-					.setUser(AON.getUser(ctx.getDomainId(), ctx.getDomainName(), ctx.getUser(), r.getUser()))
-					.setTask(r.getTask());
+					.setTask(r.getTask())
+					.setCreationUser(r.getCreationUser())
+					.setCreationDate(r.getCreationDate())
+					.setModificationUser(r.getModificationUser())
+					.setModificationDate(r.getModificationDate());
 		}
 	}
 }

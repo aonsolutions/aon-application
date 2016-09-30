@@ -79,6 +79,11 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
+	public void updateTaskPriority(AONContext ctx, Task task) {
+		 ctx.getDslContext().transaction(configuration -> TaskDAO.updateTaskPriority(ctx, task));
+	}
+	
+	@Override
 	public void updateTaskUser(AONContext ctx, Task task) {
 		 ctx.getDslContext().transaction(configuration -> TaskDAO.updateTaskUser(ctx, task));
 	}

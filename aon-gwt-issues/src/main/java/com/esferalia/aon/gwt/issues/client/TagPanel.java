@@ -32,16 +32,12 @@ public class TagPanel extends Composite {
     
     @UiField HTMLPanel panel;
     
-    @UiField Button heading1;
-    @UiField IronCollapse collapse1;
-    
     @UiField Button heading2;
     @UiField IronCollapse collapse2;
     
     @UiField Button heading3;
     @UiField IronCollapse collapse3;
    
-    @UiField IronSelector prioritySelector;
     @UiField IronSelector typeSelector;
     @UiField IronSelector tagSelector;
         
@@ -54,95 +50,9 @@ public class TagPanel extends Composite {
     	initWidget(binder.createAndBindUi(this));
    			
 
-        createPriority();
         createType();
         createTag();
     }
-    
-    private void loadPriority(){
-        incidence.getPriorities(new AsyncCallback<JSON<JsLabel>>() {
-
-			@Override
-			public void onSuccess(JSON<JsLabel> result) {
-				for(JsLabel label : result.getData().toLinkedList()){
-					PaperItem item = new PaperItem();
-					item.add(new Label(label.getName()));
-					item.setStyle("min-height: 30px;");	
-					
-					PaperIconButton edit = new PaperIconButton();
-					edit.setIcon("create");
-					edit.setStyle("min-height: 30px;position:absolute;right:40px;");
-					edit.addClickHandler(new ClickHandler() {
-						@Override public void onClick(ClickEvent event) {
-							onClickEditPriorityButton(event, label);
-						}
-					});
-					item.add(edit);
-					edit.setVisible(false);
-					
-					PaperIconButton del = new PaperIconButton();
-					del.setIcon("delete");
-					del.setStyle("min-height: 30px;position:absolute;right:0px;");
-					del.getElement().getStyle().setLeft(300, Unit.PX);
-					del.addClickHandler(new ClickHandler() {
-						@Override public void onClick(ClickEvent event) {
-							onClickRemovePriorityButton(event, label);
-						}
-					});
-					del.setVisible(false);
-					item.add(del);
-					
-					item.addDomHandler(new MouseOverHandler() {
-						
-						@Override
-						public void onMouseOver(MouseOverEvent event) {
-							edit.setVisible(true);
-							del.setVisible(true);
-						}
-					}, MouseOverEvent.getType());
-					
-					item.addDomHandler(new MouseOutHandler() {
-						
-						@Override
-						public void onMouseOut(MouseOutEvent event) {
-							edit.setVisible(false);
-							del.setVisible(false);
-						}
-					}, MouseOutEvent.getType());
-					
-					prioritySelector.add(item);
-				}				
-				PaperIconButton pib = new PaperIconButton();
-				pib.setIcon("add");
-				pib.setStyle("min-height: 30px;");
-				pib.getElement().getStyle().setLeft(300, Unit.PX);
-				pib.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						onClickPriorityButton(event);
-					}
-				});
-				prioritySelector.add(pib);
-
-				
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
-    }
-
-    private void createPriority() {
-    	loadPriority();
-        heading1.addClickHandler(new ClickHandler() {
-		   	
-			@Override
-	    	public void onClick(ClickEvent event) {
-	    		collapse1.toggle();
-	    	}
-		});
-	}
     
     private void loadType(){
         incidence.getTypes(new AsyncCallback<JSON<JsLabel>>() {
@@ -209,7 +119,7 @@ public class TagPanel extends Composite {
 					}
 				});
 				typeSelector.add(pib);
-				
+				collapse2.toggle();
 			}
 			
 			@Override
@@ -293,7 +203,7 @@ public class TagPanel extends Composite {
 					}
 				});
 				tagSelector.add(pib);
-				
+				collapse3.toggle();
 			}
 			
 			@Override
@@ -337,30 +247,7 @@ public class TagPanel extends Composite {
 		dialog.open();	
 	}
     
-	void onClickPriorityButton(ClickEvent event){		
-		PaperInput pi = new PaperInput();
-		pi.setLabel("Prioridad");
-		AonDialog dialog = new AonDialog("Nueva Prioridad",pi){
-			@Override protected void onCancel() {}
-			@Override protected void onAccept() {
-				PaperInput pi = (PaperInput) content.getWidget(0);
-				incidence.createPriority("{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
-					
-					@Override
-					public void onSuccess(JsLabel result) {
-						prioritySelector.removeFromParent();
-						prioritySelector = new IronSelector();
-						collapse1.add(prioritySelector);
-						loadPriority();
-					}
-					
-					@Override public void onFailure(Throwable caught) {}
-				});			
-			}
-		};
-		panel.add(dialog);
-		dialog.open();	
-	}
+	
     
 	void onClickTagButton(ClickEvent event){	
 		PaperInput pi = new PaperInput();
@@ -385,20 +272,6 @@ public class TagPanel extends Composite {
 		};
 		panel.add(dialog);
 		dialog.open();
-	}
-    
-	void onClickRemovePriorityButton(ClickEvent event, JsLabel label) {
-		incidence.deletePriority(label, new AsyncCallback<JsLabel>() {
-			
-			@Override public void onSuccess(JsLabel result) {
-				prioritySelector.removeFromParent();
-				prioritySelector = new IronSelector();
-				collapse1.add(prioritySelector);
-				loadPriority();
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});
 	}
 	
 	void onClickRemoveTypeButton(ClickEvent event, JsLabel label) {
@@ -427,31 +300,6 @@ public class TagPanel extends Composite {
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
-	}
-	
-	void onClickEditPriorityButton(ClickEvent event, JsLabel label) {
-		PaperInput pi = new PaperInput();
-		pi.setLabel("Prioridad");
-		AonDialog dialog =  new AonDialog("Editar Prioridad",pi){
-			@Override protected void onCancel() {}
-			@Override protected void onAccept() {
-				PaperInput pi = (PaperInput) content.getWidget(0);
-				incidence.updatePriority(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
-					
-					@Override
-					public void onSuccess(JsLabel result) {
-						prioritySelector.removeFromParent();
-						prioritySelector = new IronSelector();
-						collapse1.add(prioritySelector);
-						loadPriority();					
-					}
-					
-					@Override public void onFailure(Throwable caught) {}
-				});
-			}
-		};
-		panel.add(dialog);
-		dialog.open();	
 	}
 	
 	void onClickEditTypeButton(ClickEvent event, JsLabel label) {

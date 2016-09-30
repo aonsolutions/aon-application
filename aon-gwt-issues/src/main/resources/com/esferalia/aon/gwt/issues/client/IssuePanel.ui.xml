@@ -18,6 +18,19 @@
 
 	<ui:with type="com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources"
 		field="issuesResources"></ui:with>
+	
+	<ui:style>
+
+		@external .gwt-PopupPanel;
+
+		.gwt-PopupPanel {
+			margin: 0px !important;
+			border: 1px solid #EEE !important;
+			padding: 4px 0px !important;
+			width:200px;
+		}
+	</ui:style>
+	
 	<g:SplitLayoutPanel ui:field="dockLayoutPanel">
 		<g:center>		    
 			<g:ScrollPanel>
@@ -95,7 +108,6 @@
 											<g:HorizontalPanel>
 												<g:Label ui:field="priorityLabel"
 												styleName="{aonResources.css.tagStyle} {aonResources.css.tagPriority}" />
-												<p:PaperIconButton ui:field="priorityDeleteButton" icon="close" style="padding:3px !important;"/>
 											</g:HorizontalPanel>
 										</g:VerticalPanel>
 									</g:FlowPanel>

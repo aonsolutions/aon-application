@@ -21,7 +21,6 @@ public class Task  implements Serializable{
 	private Byte source; 
 	private Integer project; 
 	private Integer registry; 
-	private Integer user;
 	private Integer activityType; 
 	private Integer sender; 
 	private String comments; 
@@ -30,7 +29,11 @@ public class Task  implements Serializable{
 	private String gtasklistId; 
 	
 	private Integer number;
-	private Date updateDate;
+	
+	private String creationUser;
+	private Date creationDate;
+	private String modificationUser;
+	private Date modificationDate;
 	
 	
 	
@@ -227,21 +230,39 @@ public class Task  implements Serializable{
 		return this;
 	}
 	
-	public Date getUpdateDate() {
-		return updateDate;
+	public String getCreationUser() {
+		return creationUser;
 	}
 
-	public Task setUpdateDate(Date updateDate) {
-		this.updateDate = updateDate;
+	public Task setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
 		return this;
 	}
 	
-	public Integer getUser() {
-		return user;
+	public Date getCreationDate() {
+		return creationDate;
 	}
 
-	public Task setUser(Integer user) {
-		this.user = user;
+	public Task setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	
+	public String getModificationUser() {
+		return modificationUser;
+	}
+
+	public Task setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
+	
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public Task setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 		return this;
 	}
 	

@@ -78,19 +78,15 @@ public class DeleteReposServlet extends HttpServlet{
 					break;
 				case "labels":
 					Tag tag = DB.getTag(domain, userName, pathInfo[4], TagType.TASK_LABEL);
-					AON.deleteTag(domain.getName(), domain.getId(), userName, tag); 
+					DB.deleteTaskTag(domain, userName, f-> f.getTagProperty().eq(tag.getId()));
+					DB.deleteTag(domain, userName, tag);
 					object = new JSONObject("{}");
 					break;
 				case "types":
 					Tag tag2 = DB.getTag(domain, userName, pathInfo[4], TagType.TASK_TYPE);
-					AON.deleteTag(domain.getName(), domain.getId(), userName, tag2); 
+					DB.deleteTaskTag(domain, userName, f-> f.getTagProperty().eq(tag2.getId()));
+					DB.deleteTag(domain, userName, tag2);
 					object = new JSONObject("{}");					
-					break;
-				case "priorities":
-					Tag tag3 = DB.getTag(domain, userName, pathInfo[4], TagType.TASK_PRIORITY);
-					AON.deleteTaskTag(domain.getName(), domain.getId(), userName, f -> f.getTagProperty().eq(tag3.getId()));
-					AON.deleteTag(domain.getName(), domain.getId(), userName, tag3); 
-					object = new JSONObject("{}");				
 					break;
 				default:
 					break;
