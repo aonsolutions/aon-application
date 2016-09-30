@@ -37,6 +37,7 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
+			<param id="showComments" value="#{customerSearch.isShowComments}" />
 		</params>
 	</report>
 	

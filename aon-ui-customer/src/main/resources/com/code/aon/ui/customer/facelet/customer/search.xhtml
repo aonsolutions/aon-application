@@ -3,8 +3,18 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
-	<aon:set var="#{customer.showAlumnData}" value="#{false}" />
-	
-	<ui:include src="/com/code/aon/ui/customer/facelet/customer/searchEx.xhtml" />
+	<ui:decorate template="/com/code/aon/ui/customer/facelet/customer/searchEx.xhtml" >
+		<ui:define name="moreSearchBasicContent">
+			<aon:if test="#{customer.showAlumnData}">
+				<aon:outputText value="&#160;" />
+				<aon:div>
+					<aon:selectBooleanCheckbox id="customer_showComments"
+						value="#{customerSearch.showComments}"/>
+					<aon:outputLabel for="customer_showComments"
+						value="#{bundle.aon_see} #{bundle.aon_remark}" />
+				</aon:div>
+			</aon:if>
+		</ui:define>
+	</ui:decorate>
 	
 </ui:composition>

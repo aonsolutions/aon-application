@@ -2,11 +2,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-
-	<aon:set var="#{customer.showAlumnData}" value="#{false}" />
+	
+	<aon:if test="#{customer.showAlumnData}">
+		<aon:methodParam name="searchActionListener" value="#{customer.onAlumnEditSearch}" type="actionListener" />
+	</aon:if>
 	
 	<ui:decorate template="/com/code/aon/ui/customer/facelet/customer/formEx.xhtml" >
-
 		<ui:define name="formToolbarContent">
 			<ui:include src="/com/code/aon/ui/customer/facelet/customer/formToolbar.xhtml" />
 		</ui:define>

@@ -25,7 +25,10 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.customer.controller.CustomerController;
+import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.registry.controller.RegistryObservationController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AlumnPrinter implements ICollectionProvider{
@@ -48,6 +51,7 @@ public class AlumnPrinter implements ICollectionProvider{
 				reportAlumn.setCellular(obtainCellular(alumn.getRegistry()));
 				reportAlumn.setCourseCode(obtainCourseCode(alumn.getRegistry()));
 				reportAlumn.setBirthDate(obtainBirthDate(alumn.getRegistry()));
+				reportAlumn.setObservation(getObservation(alumn.getRegistry()));
 				reportAlumnList.add(reportAlumn);
 			}
 			return reportAlumnList;
@@ -130,6 +134,16 @@ public class AlumnPrinter implements ICollectionProvider{
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining birthDate of alumn with id= " + registry.getId(), e);
+		}
+		return null;
+	}
+	
+	private RegistryNote getObservation(Registry registry){
+		RegistryObservationController controller = (RegistryObservationController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_OBSERVATION_CONTROLLER_NAME);
+		try {
+			return controller.getRegistryObservation(registry);
+		} catch (ManagerBeanException e) {
+			// nada
 		}
 		return null;
 	}

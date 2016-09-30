@@ -20,6 +20,7 @@ import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.registry.controller.RegistryObservationController;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -76,6 +77,19 @@ public class CustomerController extends CustomerListController implements ICusto
 
 	public boolean isEdiSupportEnabled() {
 		return StringUtils.isNotBlank(AppParamUtil.getValue(AppParam.EDI_SUPPORT));
+	}
+	
+	public String getRowCustomerComments(){
+		RegistryObservationController controller = (RegistryObservationController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_OBSERVATION_CONTROLLER_NAME);
+		try {
+			if(this.getModel().isRowAvailable()){
+				Customer customer = (Customer) this.getModel().getRowData();
+				return controller.getRegistryObservation(customer.getRegistry()).getComments();
+			}
+		} catch (ManagerBeanException e) {
+			// nada
+		}
+		return null;
 	}
 
 	public void onAccountSynchronize(ActionEvent event) {
@@ -135,18 +149,15 @@ public class CustomerController extends CustomerListController implements ICusto
 		super.accept(event);
 	}
 	
-	@Override
-	public String listAction() {
-		if(isShowAlumnData()){
-			return super.listAction().replace(this.getBeanName(), "alumn");
-		}
-		return super.listAction();
-	}
-
     public String getReportTitle(){
     	return AonUtil.getMessage(CUSTOMER_REPORT);
 	}
-
+    
+    public void onAlumnEditSearch(ActionEvent event){
+    	super.onEditSearch(event);
+    	setShowAlumnData(true);
+    }
+    
 	public void onCustomerHistory(ActionEvent e){
 		RegistryStatEngineController controller =(RegistryStatEngineController)AonUtil.getRegisteredBean("registryStat");
 		controller.setRegistry(((Customer)this.getTo()).getRegistry());

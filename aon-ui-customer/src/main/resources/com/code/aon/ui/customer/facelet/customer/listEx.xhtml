@@ -70,8 +70,8 @@
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{customer}" />
 					<ui:define name="columns">
-					
 						<ui:include src="/com/code/aon/ui/customer/facelet/customer/listExtended.xhtml" />
+						<ui:insert name="moreColumns"/>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>

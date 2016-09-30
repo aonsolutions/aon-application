@@ -7,7 +7,9 @@ import static com.code.aon.ui.common.ICommonMessages.BANK;
 import static com.code.aon.ui.common.ICommonMessages.BANK_ACCOUNT;
 import static com.code.aon.ui.common.ICommonMessages.BLOCKED;
 import static com.code.aon.ui.common.ICommonMessages.CELLULAR;
+import static com.code.aon.ui.common.ICommonMessages.COMMENT;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_NAME;
+import static com.code.aon.ui.common.ICommonMessages.DATE;
 import static com.code.aon.ui.common.ICommonMessages.DOCUMENT;
 import static com.code.aon.ui.common.ICommonMessages.ENTITY;
 import static com.code.aon.ui.common.ICommonMessages.FAX;
@@ -68,6 +70,7 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.geozone.GeoZone;
+import com.code.aon.person.Person;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.project.Project;
 import com.code.aon.project.ProjectActivity;
@@ -78,11 +81,13 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.RegistrySegment;
 import com.code.aon.registry.RegistrySeller;
 import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.DocumentType;
+import com.code.aon.registry.enumeration.NoteType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.poi.ReportExporter;
@@ -352,6 +357,8 @@ public class RegistryController extends BasicController {
 		String accountJoin = " LEFT OUTER JOIN account acc ON c.account = acc.id";
 		String sellerJoin = " LEFT OUTER JOIN rseller rsl ON rsl.registry = r.id"
 				+" LEFT OUTER JOIN seller sl ON rsl.seller = sl.registry";
+		String personJoin = " INNER JOIN person p ON c.registry = p.registry";
+		String rnoteJoin = " INNER JOIN rnote rn ON c.registry = rn.registry AND rn.note_type = "+NoteType.OBSERVATION.ordinal();
 		return " FROM " + masterTable +" c"
 			+" INNER JOIN registry r ON r.id = c.registry"
 			+ (!"com.code.aon.seller.Seller".equals(getPojo())?scopeJoin:"")
@@ -366,6 +373,8 @@ public class RegistryController extends BasicController {
 			+" LEFT OUTER JOIN segment s ON rs.segment = s.id"
 			+" LEFT OUTER JOIN rattach cd ON cd.registry = r.id"
 			+(!"com.code.aon.seller.Seller".equals(getPojo())?sellerJoin:"")
+			+ ("com.code.aon.customer.Customer".equals(getPojo())?personJoin:"")
+			+ ("com.code.aon.customer.Customer".equals(getPojo())?rnoteJoin:"")
 			+" LEFT OUTER JOIN category cdc ON cd.category = cdc.id";
 	}
 
@@ -413,6 +422,8 @@ public class RegistryController extends BasicController {
 		+",rpm.days_to_first_pymnt `" + AonUtil.getMessage(REGISTRY_DAYS_TO_FIRST_PAYMENT) + "`"
 		+",rpm.days_between_pymnts `" + AonUtil.getMessage(REGISTRY_DAYS_BETWEEN_PAYMENTS) + "`"
 		+",rpm.pymnt_days `" + AonUtil.getMessage(REGISTRY_PAYMENT_DAYS) + "`"
+		+("com.code.aon.customer.Customer".equals(getPojo())?",p.birth_date `" + AonUtil.getMessage(DATE) + "`":"")
+		+("com.code.aon.customer.Customer".equals(getPojo())?",rn.comments `" + AonUtil.getMessage(COMMENT) + "`":"")
 		;
 	}
 
@@ -436,6 +447,10 @@ public class RegistryController extends BasicController {
 		tableMapping.put(mappingPrefix + ".documents", "cd");
 		tableMapping.put(mappingPrefix + ".documents.category", "cdc");
 		tableMapping.put(mappingPrefix + ".account", "acc");
+		if("com.code.aon.customer.Customer".equals(getPojo())){
+			tableMapping.put(mappingPrefix + ".person", "p");
+			tableMapping.put(mappingPrefix + ".rnote", "rnp");
+		}
 		tableMapping.put("Project", "project");
 		tableMapping.put("ProjectActivity", "project_activity");
 		
@@ -462,6 +477,10 @@ public class RegistryController extends BasicController {
 		pojoMapping.put(mappingPrefix + ".documents", RegistryAttachment.class);
 		pojoMapping.put(mappingPrefix + ".documents.category", Category.class);
 		pojoMapping.put(mappingPrefix + ".account", Account.class);
+		if("com.code.aon.customer.Customer".equals(getPojo())){
+			pojoMapping.put(mappingPrefix + ".person", Person.class);
+			pojoMapping.put(mappingPrefix + ".rnote", RegistryNote.class);
+		}
 		pojoMapping.put("Project", Project.class);
 		pojoMapping.put("ProjectActivity", ProjectActivity.class);
 

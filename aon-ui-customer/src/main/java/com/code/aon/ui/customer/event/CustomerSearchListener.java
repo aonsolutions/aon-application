@@ -18,6 +18,7 @@ public class CustomerSearchListener extends RegistryPayMethodSearchListener {
 
 	private CustomerStatus[] customerStatuses;
 	private Item item;
+	private boolean showComments;
 	
 	public CustomerStatus[] getCustomerStatuses() {
 		return customerStatuses;
@@ -35,11 +36,20 @@ public class CustomerSearchListener extends RegistryPayMethodSearchListener {
 		this.item = registryItem;
 	}	
 	
+	public boolean isShowComments() {
+		return showComments;
+	}
+
+	public void setShowComments(boolean showComments) {
+		this.showComments = showComments;
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		CustomerStatus[] defaultCustomerStatus = {CustomerStatus.ACTIVE};
 		setCustomerStatuses(defaultCustomerStatus);
-		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());		
+		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+		setShowComments(false);
 		super.init();
 	}
 	
