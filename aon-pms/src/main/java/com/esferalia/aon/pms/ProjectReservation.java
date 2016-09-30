@@ -61,6 +61,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectReservation.class.getName());
 	private boolean forceCalculateTotals;
 	private boolean forceRefreshBooking;
+	private boolean forceInventoryControl;
 	private boolean refreshRooms;
 	private boolean skipDirtyControl;
 	private double vatPercent;
@@ -81,6 +82,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		setStatus(ReservationStatus.ACTIVE);
 		setForceCalculateTotals(false);
 		setForceRefreshBooking(false);
+		setForceInventoryControl(false);
 		setSkipDirtyControl(false);
 	}
 
@@ -98,6 +100,14 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setForceRefreshBooking(boolean forceRefreshBooking) {
 		this.forceRefreshBooking = forceRefreshBooking;
+	}
+
+	@Transient
+	public boolean isForceInventoryControl() {
+		return forceInventoryControl;
+	}
+	public void setForceInventoryControl(boolean forceInventoryControl) {
+		this.forceInventoryControl = forceInventoryControl;
 	}
 
 	@Transient

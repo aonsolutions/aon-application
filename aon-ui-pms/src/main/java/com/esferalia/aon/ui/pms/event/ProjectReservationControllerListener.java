@@ -108,6 +108,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		validateReservation(reservation);
 		reservation.setStartTime(controller.obtainStartTime());
 		reservation.setEndTime(controller.obtainEndTime());
+		reservation.setForceInventoryControl(true);
 	}
 
 	@Override

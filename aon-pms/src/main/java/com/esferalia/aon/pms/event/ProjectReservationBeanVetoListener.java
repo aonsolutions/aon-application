@@ -49,7 +49,10 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
     	try {
     		reservationUtils.fillProject(to);
     		calculateReservationTotals(reservationUtils, to);
-    		checkInventoryChanges(to);
+    		if (to.isForceInventoryControl()) {
+        		checkInventoryChanges(to);
+        		to.setForceInventoryControl(false);
+    		}
     		if (!to.isForceRefreshBooking()) {
         		to.setForceRefreshBooking(to.isEarlyCheckOut() || to.isCancelled() || to.isNoShow());
         	}

@@ -167,6 +167,8 @@ public class DivertReceptionController extends BasicController {
 	
 	public void onAcceptDivert(ActionEvent event) throws ManagerBeanException{
 		try {
+			changeReservationHotel();
+
 			RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
 			Date startDate = roomAvailability.getFilterParams().getViewerStartDate();
 			Date endDate = roomAvailability.getFilterParams().getViewerEndDate();
@@ -197,7 +199,6 @@ public class DivertReceptionController extends BasicController {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-		changeReservationHotel();
 		updateStatus((ProjectReservationDivert) getTo(), ReservationDivertStatus.ACCEPTED);
 	}
 
