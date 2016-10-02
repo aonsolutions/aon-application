@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
@@ -29,12 +30,14 @@ import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Identity;
 import org.jooq.InsertSetMoreStep;
+import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record4;
 import org.jooq.Record7;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
+import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
@@ -43,6 +46,7 @@ import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.jooq.tables.AgreementExtra;
+import com.esferalia.aon.jooq.tables.AppParam;
 import com.esferalia.aon.jooq.tables.Contract;
 import com.esferalia.aon.jooq.tables.EnterpriseData;
 import com.esferalia.aon.jooq.tables.records.AgreementDataRecord;
@@ -53,6 +57,7 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
@@ -296,10 +301,27 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 	public static List<Agreement> getAgreements(DSLContext dslContext,
 			int offset, int limit, Integer... domains) throws SQLException {
-
+		
+		
 		// @formatter:off
 		Result<AgreementRecord> result = dslContext.select().from(AGREEMENT)
 				.where(AGREEMENT.DOMAIN.in(domains))
+
+				.or(AGREEMENT.ID.in(
+						dslContext
+						.select(DSL.cast(APP_PARAM.VALUE, Integer.class))
+						.from(APP_PARAM)
+						.where(APP_PARAM.DOMAIN.in(domains))
+						.and(APP_PARAM.NAME.eq("PAY_SYSTEM_AGREEMENT"))
+				))
+				.or(AGREEMENT.ID.in(
+						dslContext
+						.select(DSL.cast(APP_PARAM.VALUE, Integer.class))
+						.from(APP_PARAM)
+						.where(APP_PARAM.DOMAIN.equal(0))
+						.and(APP_PARAM.NAME.eq("PAY_SYSTEM_AGREEMENT"))
+				))
+				
 				.orderBy(AGREEMENT.DESCRIPTION).fetchInto(AGREEMENT);
 		// @formatter:on
 
@@ -981,6 +1003,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			Integer domainId, Integer paymentId, Integer conceptId,
 			Payment payment) throws SQLException {
 
+		
 		Payment.Type type = payment.getType();
 
 		// @formatter:off
@@ -989,10 +1012,9 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.set(PAYMENT_CONCEPT.ID, conceptId)
 				.set(PAYMENT_CONCEPT.DOMAIN, domainId)
 				.set(PAYMENT_CONCEPT.TYPE, (byte) type.ordinal())
-				.set(PAYMENT_CONCEPT.CODE,
-						String.format("__%d", Math.abs(paymentId)))
 				.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression())
 				.set(PAYMENT_CONCEPT.DESCRIPTION, payment.getDescription())
+				.set(PAYMENT_CONCEPT.CODE,getConceptCode(paymentId,payment))
 				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION,
 						payment.getIrpfExpression())
 				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION,
@@ -1012,6 +1034,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.set(PAYMENT_CONCEPT.TYPE, (byte) type.ordinal())
 				.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression())
 				.set(PAYMENT_CONCEPT.DESCRIPTION, payment.getDescription())
+				.set(PAYMENT_CONCEPT.CODE,getConceptCode(payment.getConceptId(),payment))
 				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION,
 						payment.getIrpfExpression())
 				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION,
@@ -1047,6 +1070,14 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		} catch (ParseException e) {
 			return null;
 		}
+	}
+	
+	private static String getConceptCode(Integer paymentId, Payment payment) {
+		if ( AonStringUtils.isNotBlank(payment.getName()))
+			return payment.getName();
+		
+		return String.format("__%d", Math.abs(paymentId));
+
 	}
 
 }

@@ -1407,6 +1407,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			
 			CategoryDraft categoryDraft = new CategoryDraft();
 			categoryDraft.setId(agreement.getId());
+			categoryDraft.setDomain(agreement.getDomain());
 			categoryDraft.setLevelId(category.getLevelId());
 			categoryDraft.setDescription(agreement.getDescription());
 			categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());

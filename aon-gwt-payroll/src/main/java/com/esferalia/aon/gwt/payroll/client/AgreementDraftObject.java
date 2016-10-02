@@ -248,6 +248,10 @@ public class AgreementDraftObject {
 		return NumberUtils.equals(draftDomain, payment.getDomain());
 	}
 
+	public boolean isSystem() {
+		return NumberUtils.equals(0, agreementDraft.getDomain());
+	}
+
 	public Level newLevel() {
 		Level level = new Level();
 		level.setId(--nextDraftLevelId);
@@ -752,6 +756,7 @@ public class AgreementDraftObject {
 		return categories;
 	}
 	
+	
 	// -------------------------------------------------------------------------
 	private static Variable getVariable(String name, List<Variable> list) {
 		for (Variable var : list)
@@ -856,6 +861,7 @@ public class AgreementDraftObject {
 				add("MUJER");
 				add("MAYOR_65");
 
+
 				// DIAS
 				add("DIAS_AÑO");
 				add("DIAS_MES");
@@ -897,6 +903,7 @@ public class AgreementDraftObject {
 				add("SEMANAS_PAGA");
 
 				// HORAS
+				add("HORAS");
 				add("HORAS_SEMANA");
 				add("HORAS_NOMINA");
 				add("HORAS_LUNES");
@@ -939,7 +946,9 @@ public class AgreementDraftObject {
 				add("INGRESO_AC_EMPRESA");
 
 			}
-		}.contains(var);
+		}.contains(var) 
+		|| var.startsWith("DIAS")
+		;
 	}
 
 	private static Set<String> getImplicitVariables() {

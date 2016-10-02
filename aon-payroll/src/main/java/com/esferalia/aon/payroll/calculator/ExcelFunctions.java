@@ -184,6 +184,12 @@ public class ExcelFunctions {
 		return Math.sqrt(number);
 	}
 
+	@Variable(ContextVariable.ROUND)
+	public static final Double round(double number, int precision) {
+		double factor = Math.pow(10, precision);
+		return Math.round(number*factor) / factor;
+	}
+
 	// ------------------------------------------
 	//
 	// ------------------------------------------

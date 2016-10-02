@@ -218,6 +218,15 @@ public class EmployeesServiceHelper {
 				draft.getId(), draft.getStartDate(), draft.getEndDate(), domainId, parentDomainId);
 		SalaryTable allSalaryTable = new SalaryTable(dbSalaryTable);
 		allSalaryTable.putAll(draft.getDraftSalaryTable());
+		
+		for ( Variable var: allSalaryTable.getAllVariables() ) {
+			String expression = 
+			getUserScript(var.getExpression());
+			Set<String> exprVariables =
+			ExpressionContext.getVariableSet(
+					expression);				
+			variables.addAll(exprVariables);
+		}
 
 		draft.setLevels(allLevels);
 		draft.setExtras(allExtras);

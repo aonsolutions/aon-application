@@ -421,7 +421,7 @@ public class MainTrash extends MainEntryPoint implements
 		else {
 			agreementDraft.setAgreementDraftObject(agreementDraftObject);
 		}
-		agreementDraft.disableEdition();
+		agreementDraft.setReadOnly(true);
 	}
 
 	@Override

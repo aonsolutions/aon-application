@@ -214,6 +214,7 @@ public enum ContextVariable implements IResourceable{
 	MONTH("MES", VariableType.INTEGER ),
 	YEAR("AÑO", VariableType.INTEGER ),
 	DAY("DIA", VariableType.INTEGER ),
+	ROUND("ROUND", VariableType.DOUBLE ),
 
 	// AON's
 	MIN("MIN", VariableType.UNKNOWN ),

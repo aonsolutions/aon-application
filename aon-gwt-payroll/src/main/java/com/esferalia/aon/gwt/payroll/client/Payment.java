@@ -374,7 +374,7 @@ public class Payment extends ResizeComposite {
 	public void setConcept(com.esferalia.aon.gwt.payroll.shared.Payment concept) {
 		this.concept = concept;
 		// From now ypu can't edit concept
-		conceptSuggestBox.setEnabled(concept == null);
+		conceptSuggestBox.setEnabled(concept == null || concept.getId() < 0);
 		onChangeConcept();
 	}
 

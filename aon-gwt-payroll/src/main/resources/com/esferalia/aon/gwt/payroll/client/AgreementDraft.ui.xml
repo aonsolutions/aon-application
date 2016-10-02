@@ -131,6 +131,29 @@
 		.monthListBox-old {
 			
 		}
+		
+		button[disabled],
+		.gwt-ListBox[disabled] {
+			visibility:hidden;
+		}
+
+		.gwt-TextBox[readonly],
+		.gwt-SuggestBox[readonly]
+		{
+			border-color:transparent;
+    		color: inherit !important;
+    		background-color: transparent;
+		}
+		
+		.gwt-TextBox[readonly]:focus{
+			background-color: inherit;
+		}
+		
+		 
+		 @external gwt-TextBox;
+		 @external gwt-ListBox;
+		 @external gwt-SuggestBox;
+		 
 
 	</ui:style>
 
@@ -144,7 +167,7 @@
 
 				<g:FlowPanel>
 
-					<g:FlowPanel styleName="aon-finding-title-toolbar">
+					<g:FlowPanel styleName="aon-finding-title-toolbar agreement-toolbar">
 						<g:HorizontalPanel>
 							<g:HTMLPanel styleName="aon-finding-title">
 								<g:HTMLPanel styleName="aon-finding-title-internal">
@@ -163,7 +186,7 @@
 									<g:Button ui:field='deleteButton'
 										styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"
 										enabled="false" />
-									<g:ListBox ui:field='datesListBox'>
+									<g:ListBox ui:field='datesListBox' styleName="gwt-ListBox dates-list-box" >
 										<g:item value="{ALWAYS}">Para todo</g:item>
 										<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
 										<g:item value="{ONLY_THIS_YEAR}">S&oacute;lo este a&ntilde;o</g:item>
@@ -183,7 +206,7 @@
 							</g:HorizontalPanel>
 						</g:HorizontalPanel>
 					</g:FlowPanel>
-					<g:FlowPanel styleName="aon-finding-title-toolbar">
+					<g:FlowPanel styleName="aon-finding-title-toolbar edit-toolbar">
 						<g:HorizontalPanel>
 							<g:HTMLPanel styleName="aon-finding-title">
 								<g:HTMLPanel styleName="aon-finding-title-internal">
@@ -234,7 +257,7 @@
 
 							<g:ScrollPanel ui:field="salaryTableScrollPane">
 								<g:FlexTable ui:field="salaryTable"
-									styleName="aon-dataTable {style.edit-cells}" />
+									styleName="aon-dataTable {style.edit-cells} " />
 							</g:ScrollPanel>
 
 							<g:HTML styleName="{style.vertical-space}" />

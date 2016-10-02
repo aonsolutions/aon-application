@@ -11,6 +11,9 @@ import com.google.gwt.user.client.ui.Tree;
 public interface Images extends ClientBundle, Tree.Resources {
 
 
+	@Source("aon-icon-logo.png")
+	ImageResource logo();
+
 	ImageResource aet();
 
 	ImageResource draft();

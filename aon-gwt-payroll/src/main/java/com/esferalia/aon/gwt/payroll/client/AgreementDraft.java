@@ -32,14 +32,10 @@ import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
-import com.esferalia.aon.gwt.payroll.client.SalaryDraft.MyStyle;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
-import com.esferalia.aon.gwt.payroll.shared.HasBonus;
-import com.esferalia.aon.gwt.payroll.shared.HasDeduction;
-import com.esferalia.aon.gwt.payroll.shared.HasPayment;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.LevelComparator;
@@ -121,8 +117,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
-public class AgreementDraft extends ResizeComposite implements
-		CalculateCallback {
+public class AgreementDraft extends ResizeComposite implements CalculateCallback {
 
 	static int SALARY_TABLE_COLS = 8;
 	static int SALARY_TABLE_LINES = 7;
@@ -134,8 +129,7 @@ public class AgreementDraft extends ResizeComposite implements
 	public static final String ONLY_THIS_MONTH = "ONLY_THIS_MONTH";
 	public static final String FROM_THIS_MONTH = "FROM_THIS_MONTH";
 
-	static class TypeListBox<T extends Enum<?> & HasDescription> extends
-			ListBox {
+	static class TypeListBox<T extends Enum<?> & HasDescription> extends ListBox {
 
 		private Class<T> type;
 
@@ -181,8 +175,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 	}
 
-	private static abstract class SuccessCalculateCallback implements
-			CalculateCallback {
+	private static abstract class SuccessCalculateCallback implements CalculateCallback {
 		@Override
 		public void onCalculateFailure(Throwable throwable) {
 			// Nothing
@@ -200,6 +193,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 		@ClassName("text-error")
 		String textError();
+
 	}
 
 	interface Binder extends UiBinder<Widget, AgreementDraft> {
@@ -220,7 +214,9 @@ public class AgreementDraft extends ResizeComposite implements
 
 	private class ExtraEditor {
 		Extra extra;
-
+		
+		Button deleteButton;
+		List<Button> buttons;
 		ListBox paymentListBox;
 		ValueBox<Date> endDateBox;
 		ValueBox<Date> startDateBox;
@@ -244,22 +240,39 @@ public class AgreementDraft extends ResizeComposite implements
 						ExtraEditor.this.registration.removeHandler();
 				}
 			});
+			this.buttons = new LinkedList<Button>();
 		}
 
-		void setDeleteButton(HasClickHandlers button) {
-			button.addClickHandler(new ClickHandler() {
+		void setReadOnly(boolean readOnly) {
+			if ( this.deleteButton != null )
+				this.deleteButton.setEnabled(!readOnly);
+			if ( this.endDateBox != null )
+				this.endDateBox.setReadOnly(readOnly);
+			if ( this.startDateBox != null )
+				this.startDateBox.setReadOnly(readOnly);
+			if ( this.issueDateBox != null )
+				this.issueDateBox.setReadOnly(readOnly);
+			if ( paymentListBox != null ) 
+				AgreementDraft.this.setReadOnly(paymentListBox, readOnly);
+			for ( Button button: buttons )
+				button.setEnabled(!readOnly);
+		}
+
+		void setDeleteButton(Button button) {
+			this.deleteButton = button;
+			this.deleteButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
 					extra.setIssueDate("REMOVE()");
-					AgreementDraft.this.agreementDraftObject
-							.addDraftExtra(extra);
+					AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
 					;
 					AgreementDraft.this.calculate();
 				}
 			});
 		}
 
-		void setButtonFor(HasClickHandlers button, final ValueBox<Date> valueBox) {
+		void setButtonFor(Button button, final ValueBox<Date> valueBox) {
+			buttons.add(button);
 			button.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -272,8 +285,7 @@ public class AgreementDraft extends ResizeComposite implements
 							.addValueChangeHandler(new ValueChangeHandler<Date>() {
 
 								@Override
-								public void onValueChange(
-										ValueChangeEvent<Date> event) {
+								public void onValueChange(ValueChangeEvent<Date> event) {
 									valueBox.setValue(event.getValue(), true);
 									ExtraEditor.this.popup.hide();
 								}
@@ -291,13 +303,11 @@ public class AgreementDraft extends ResizeComposite implements
 				public void onValueChange(ValueChangeEvent<Date> event) {
 					Date startDate = event.getValue();
 					if (startDate != null)
-						extra.setStartDate(AgreementDraft.this
-								.formatExtraDate(startDate));
+						extra.setStartDate(AgreementDraft.this.formatExtraDate(startDate));
 					else
 						extra.setStartDate(startDateBox.getText());
 
-					AgreementDraft.this.agreementDraftObject
-							.addDraftExtra(extra);
+					AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
 					AgreementDraft.this.calculate(getEndDateCallback());
 
 				}
@@ -312,13 +322,11 @@ public class AgreementDraft extends ResizeComposite implements
 				public void onValueChange(ValueChangeEvent<Date> event) {
 					Date endDate = event.getValue();
 					if (endDate != null)
-						extra.setEndDate(AgreementDraft.this
-								.formatExtraDate(endDate));
+						extra.setEndDate(AgreementDraft.this.formatExtraDate(endDate));
 					else
 						extra.setEndDate(endDateBox.getText());
 
-					AgreementDraft.this.agreementDraftObject
-							.addDraftExtra(extra);
+					AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
 					AgreementDraft.this.calculate(getIssueDateCallback());
 				}
 			});
@@ -332,15 +340,12 @@ public class AgreementDraft extends ResizeComposite implements
 				public void onValueChange(ValueChangeEvent<Date> event) {
 					Date issueDate = event.getValue();
 					if (issueDate != null)
-						extra.setIssueDate(AgreementDraft.this
-								.formatExtraDate(issueDate));
+						extra.setIssueDate(AgreementDraft.this.formatExtraDate(issueDate));
 					else
 						extra.setIssueDate(issueDateBox.getText());
 
-					extra.setIssueDate(AgreementDraft.this
-							.formatExtraDate(issueDate));
-					AgreementDraft.this.agreementDraftObject
-							.addDraftExtra(extra);
+					extra.setIssueDate(AgreementDraft.this.formatExtraDate(issueDate));
+					AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
 					AgreementDraft.this.calculate(getPaymentListBoxCallback());
 				}
 			});
@@ -352,10 +357,8 @@ public class AgreementDraft extends ResizeComposite implements
 				@Override
 				public void onChange(ChangeEvent event) {
 					String value = listBox.getValue(listBox.getSelectedIndex());
-					extra.setPaymentId(value == null ? null : Integer
-							.valueOf(value));
-					AgreementDraft.this.agreementDraftObject
-							.addDraftExtra(extra);
+					extra.setPaymentId(value == null ? null : Integer.valueOf(value));
+					AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
 					AgreementDraft.this.calculate();
 				}
 			});
@@ -413,10 +416,12 @@ public class AgreementDraft extends ResizeComposite implements
 
 	static interface IFocusableEditor {
 		void setFocus();
+		void setReadOnly(boolean readOnly);
 	}
 
 	protected class LevelEditor implements IFocusableEditor {
 		Level level;
+		Button deleteButton;
 		TextBox descriptionTextBox;
 
 		public LevelEditor(Level level) {
@@ -425,17 +430,14 @@ public class AgreementDraft extends ResizeComposite implements
 
 		void setDescriptionTextBox(TextBox textBox) {
 			this.descriptionTextBox = textBox;
-			this.descriptionTextBox
-					.addValueChangeHandler(new ValueChangeHandler<String>() {
-						@Override
-						public void onValueChange(ValueChangeEvent<String> event) {
-							level.setDescription(event.getValue());
-							AgreementDraft.this.agreementDraftObject
-									.addDraftLevel(level);
-							AgreementDraft.this
-									.calculate(getNextFocusCallback());
-						}
-					});
+			this.descriptionTextBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					level.setDescription(event.getValue());
+					AgreementDraft.this.agreementDraftObject.addDraftLevel(level);
+					AgreementDraft.this.calculate(getNextFocusCallback());
+				}
+			});
 			this.descriptionTextBox.addBlurHandler(new BlurHandler() {
 
 				@Override
@@ -447,22 +449,31 @@ public class AgreementDraft extends ResizeComposite implements
 			});
 		}
 
-		void setDeleteButton(HasClickHandlers button) {
+		void setDeleteButton(Button button) {
+			this.deleteButton = button;
 			button.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
 					level.setDescription("REMOVE()");
-					AgreementDraft.this.agreementDraftObject
-							.addDraftLevel(level);
+					AgreementDraft.this.agreementDraftObject.addDraftLevel(level);
 					AgreementDraft.this.calculate();
 				}
 			});
 		}
 
 		// ---------------------------------------------------- FocusableEditor
+		
 		@Override
 		public void setFocus() {
 			this.descriptionTextBox.setFocus(true);
+		}
+		
+		@Override
+		public void setReadOnly(boolean readOnly) {
+			if ( this.deleteButton != null )
+				this.deleteButton.setEnabled(!readOnly);
+			if ( this.descriptionTextBox != null)
+				this.descriptionTextBox.setReadOnly(readOnly);
 		}
 
 		CalculateCallback getNextFocusCallback() {
@@ -470,8 +481,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 				private int levelId = level.getId();
 
-				private int currentIndex = AgreementDraft.this
-						.getSalaryTableEditorIndexOf(LevelEditor.this);
+				private int currentIndex = AgreementDraft.this.getSalaryTableEditorIndexOf(LevelEditor.this);
 
 				@Override
 				public void onCalculateSucces(AgreementDraftObject object) {
@@ -494,18 +504,15 @@ public class AgreementDraft extends ResizeComposite implements
 
 		void setCategoriesTextBox(TextBox textBox) {
 			this.categoriesTextBox = textBox;
-			this.categoriesTextBox
-					.addValueChangeHandler(new ValueChangeHandler<String>() {
-						@Override
-						public void onValueChange(ValueChangeEvent<String> event) {
-							String text = event.getValue();
-							AgreementDraft.this.agreementDraftObject
-									.addDraftCategories(level, text);
-							// TODO: really need to go server side.
-							AgreementDraft.this
-									.calculate(getNextFocusCallback());
-						}
-					});
+			this.categoriesTextBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					String text = event.getValue();
+					AgreementDraft.this.agreementDraftObject.addDraftCategories(level, text);
+					// TODO: really need to go server side.
+					AgreementDraft.this.calculate(getNextFocusCallback());
+				}
+			});
 			this.categoriesTextBox.addBlurHandler(new BlurHandler() {
 
 				@Override
@@ -527,10 +534,15 @@ public class AgreementDraft extends ResizeComposite implements
 			this.categoriesTextBox.setFocus(true);
 		}
 
+		@Override
+		public void setReadOnly(boolean readOnly) {
+			if ( this.categoriesTextBox != null)
+				this.categoriesTextBox.setReadOnly(readOnly);
+		}
+
 		CalculateCallback getNextFocusCallback() {
 			return new SuccessCalculateCallback() {
-				private int currentIndex = AgreementDraft.this
-						.getSalaryTableEditorIndexOf(CategoriesEditor.this);
+				private int currentIndex = AgreementDraft.this.getSalaryTableEditorIndexOf(CategoriesEditor.this);
 
 				@Override
 				public void onCalculateSucces(AgreementDraftObject object) {
@@ -590,26 +602,23 @@ public class AgreementDraft extends ResizeComposite implements
 					reset.schedule(100);
 				}
 			});
-			expressionBox
-					.addValueChangeHandler(new ValueChangeHandler<String>() {
-						@Override
-						public void onValueChange(ValueChangeEvent<String> event) {
-							reset.cancel();
+			expressionBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					reset.cancel();
 
-							String value = event.getValue();
+					String value = event.getValue();
 
-							if (!StringUtils.isBlank(value)) {
-								value = "REMOVE()";
-							}
+					if (!StringUtils.isBlank(value)) {
+						value = "REMOVE()";
+					}
 
-							var.setExpression(event.getValue());
-							// TODO: Check syntax????
-							AgreementDraft.this.agreementDraftObject
-									.addDraftVariable(level, var);
-							AgreementDraft.this
-									.calculate(getNextFocusCallback());
-						}
-					});
+					var.setExpression(event.getValue());
+					// TODO: Check syntax????
+					AgreementDraft.this.agreementDraftObject.addDraftVariable(level, var);
+					AgreementDraft.this.calculate(getNextFocusCallback());
+				}
+			});
 		}
 
 		// ---------------------------------------------------- FocusableEditor
@@ -617,11 +626,16 @@ public class AgreementDraft extends ResizeComposite implements
 		public void setFocus() {
 			this.expressionBox.setFocus(true);
 		}
-
+		
+		@Override
+		public void setReadOnly(boolean readOnly) {
+			if ( this.expressionBox != null )
+				this.expressionBox.setReadOnly(readOnly);
+		}
+		
 		CalculateCallback getNextFocusCallback() {
 			return new SuccessCalculateCallback() {
-				private int currentIndex = AgreementDraft.this
-						.getSalaryTableEditorIndexOf(VariableEditor.this);
+				private int currentIndex = AgreementDraft.this.getSalaryTableEditorIndexOf(VariableEditor.this);
 
 				@Override
 				public void onCalculateSucces(AgreementDraftObject object) {
@@ -635,6 +649,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 	private class PaymentEditor {
 		Payment payment;
+		Button deleteButton;
 		TextBox expressionBox;
 		ValueBoxBase<String> descriptionBox;
 		TypeListBox<Payment.Type> typeListBox;
@@ -656,8 +671,22 @@ public class AgreementDraft extends ResizeComposite implements
 		// --------------------------------------------------------------------
 		//
 		// --------------------------------------------------------------------
+		
+		void setReadOnly(boolean readOnly) {
+			if ( this.deleteButton != null )
+				this.deleteButton.setEnabled(!readOnly);
+			if ( this.expressionBox != null )
+				this.expressionBox.setReadOnly(readOnly);
+			if ( this.descriptionBox != null )
+				descriptionBox.setReadOnly(readOnly);
+			if ( this.typeListBox != null )
+				AgreementDraft.this.setReadOnly(typeListBox, readOnly);
+			if ( this.salaryTypeListBox != null )
+				AgreementDraft.this.setReadOnly(salaryTypeListBox, readOnly);
+			
+		}
 
-		void setEditButton(HasClickHandlers button) {
+		void setEditButton(Button button) {
 
 			class EditHandler implements ClickHandler, PaymentDialog.Callback {
 				@Override
@@ -665,6 +694,7 @@ public class AgreementDraft extends ResizeComposite implements
 					PaymentDialog dialog = new PaymentDialog();
 					dialog.setNumberFormat(AON.CURRENCY_FORMAT);
 					dialog.setConcept(PaymentEditor.this.getConcept());
+					dialog.setName(payment.getName()); // Not if ???
 					dialog.setContextProvider(AgreementDraft.this.contextProvider);
 					dialog.setMonth(payment.getMonth());
 					dialog.setType(payment.getType());
@@ -674,6 +704,7 @@ public class AgreementDraft extends ResizeComposite implements
 					dialog.setIrpfExpression(payment.getIrpfExpression());
 					dialog.setQuoteExpression(payment.getQuoteExpression());
 					dialog.setEnabledMonthListBox(!isExtraPayment(payment));
+					
 
 					dialog.center();
 					dialog.show(this);
@@ -684,6 +715,7 @@ public class AgreementDraft extends ResizeComposite implements
 				// ------------------------------------------------------------
 				@Override
 				public void onAccept(PaymentDialog dialog) {
+					payment.setName(dialog.getName());
 					payment.setType(dialog.getType());
 					payment.setMonth(dialog.getMonth());
 					payment.setDescription(dialog.getDescription());
@@ -691,8 +723,7 @@ public class AgreementDraft extends ResizeComposite implements
 					payment.setIrpfExpression(dialog.getIrpfExpression());
 					payment.setQuoteExpression(dialog.getQuoteExpression());
 
-					AgreementDraft.this.agreementDraftObject
-							.addDraftPayment(payment);
+					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
 					AgreementDraft.this.calculate();
 				}
 
@@ -701,13 +732,13 @@ public class AgreementDraft extends ResizeComposite implements
 			button.addClickHandler(new EditHandler());
 		}
 
-		void setDeleteButton(HasClickHandlers button) {
-			button.addClickHandler(new ClickHandler() {
+		void setDeleteButton(Button button) {
+			this.deleteButton = button;
+			this.deleteButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					payment.setExpression(isRemove(payment) ? "PARENT()" :"REMOVE()");
-					AgreementDraft.this.agreementDraftObject
-							.addDraftPayment(payment);
+					payment.setExpression(isRemove(payment) ? "PARENT()" : "REMOVE()");
+					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
 					AgreementDraft.this.calculate();
 				}
 			});
@@ -719,12 +750,9 @@ public class AgreementDraft extends ResizeComposite implements
 
 				@Override
 				public void onChange(ChangeEvent event) {
-					payment.setType(PaymentEditor.this.typeListBox
-							.getSelected());
-					AgreementDraft.this.agreementDraftObject
-							.addDraftPayment(payment);
-					AgreementDraft.this
-							.calculate(getDescriptionFocusCallback());
+					payment.setType(PaymentEditor.this.typeListBox.getSelected());
+					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+					AgreementDraft.this.calculate(getDescriptionFocusCallback());
 				}
 			});
 		}
@@ -734,18 +762,15 @@ public class AgreementDraft extends ResizeComposite implements
 			this.salaryTypeListBox.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					payment.setSalaryType(PaymentEditor.this.salaryTypeListBox
-							.getSelected());
-					AgreementDraft.this.agreementDraftObject
-							.addDraftPayment(payment);
+					payment.setSalaryType(PaymentEditor.this.salaryTypeListBox.getSelected());
+					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
 					AgreementDraft.this.calculate(getSalaryTypeFocusCallback());
 				}
 			});
 			this.salaryTypeListBox.addBlurHandler(new BlurHandler() {
 				@Override
 				public void onBlur(BlurEvent event) {
-					PaymentEditor editor = getNextPaymentEditorFor(payment
-							.getId());
+					PaymentEditor editor = getNextPaymentEditorFor(payment.getId());
 					if (editor != null) {
 						editor.typeListBox.setFocus(true);
 					}
@@ -770,93 +795,76 @@ public class AgreementDraft extends ResizeComposite implements
 					AgreementDraft.this.fxButton.setEnabled(false);
 				}
 			});
-			this.expressionBox
-					.addValueChangeHandler(new ValueChangeHandler<String>() {
-						@Override
-						public void onValueChange(ValueChangeEvent<String> event) {
-							payment.setExpression(event.getValue());
-							AgreementDraft.this.agreementDraftObject
-									.addDraftPayment(payment);
-							AgreementDraft.this
-									.calculate(getSalaryTypeFocusCallback());
-						}
-					});
+			this.expressionBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					payment.setExpression(event.getValue());
+					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+					AgreementDraft.this.calculate(getSalaryTypeFocusCallback());
+				}
+			});
 		}
 
 		void setDescriptionTextBox(TextBox textBox) {
 			this.descriptionBox = textBox;
-			this.descriptionBox
-					.addValueChangeHandler(new ValueChangeHandler<String>() {
-						@Override
-						public void onValueChange(ValueChangeEvent<String> event) {
-							payment.setDescription(event.getValue());
-							AgreementDraft.this.agreementDraftObject
-									.addDraftPayment(payment);
-							AgreementDraft.this
-									.calculate(getExpressionFocusCallback());
+			this.descriptionBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					payment.setDescription(event.getValue());
+					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+					AgreementDraft.this.calculate(getExpressionFocusCallback());
 
-						}
-					});
+				}
+			});
 		}
 
 		void setDescriptionSuggestBox(final SuggestBox suggestBox) {
-			
-			suggestBox
-					.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 
-						@Override
-						public void onSelection(SelectionEvent<Suggestion> event) {
+			suggestBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 
-							Suggestion suggestion = event.getSelectedItem();
-							Payment concept = getPayment(suggestion
-									.getReplacementString());
-							if (concept == null)
-								return;
-							
-							payment.setType(concept.getType());
-							payment.setName(concept.getName());
-							payment.setConceptId(concept.getId());
-							payment.setDescription(concept.getDescription());
-							payment.setIrpfExpression(concept
-									.getIrpfExpression());
-							payment.setQuoteExpression(concept
-									.getQuoteExpression());
-
-							if (concept.getExpression() != null) {
-								payment.setExpression(concept.getExpression());
-								AgreementDraft.this.agreementDraftObject
-										.addDraftPayment(payment);
-								AgreementDraft.this
-										.calculate(getExpressionFocusCallback());
-							} else {
-								typeListBox.setSelected(payment.getType());
-								expressionBox.setFocus(true);
-							}
-
-						}
-					});
-			this.descriptionBox = suggestBox.getValueBox();
-			this.descriptionBox
-			.addBlurHandler(new BlurHandler() {
-				
 				@Override
-				public void onBlur(BlurEvent event) {
-					if (((DefaultSuggestionDisplay) suggestBox
-							.getSuggestionDisplay())
-							.isSuggestionListShowing())
+				public void onSelection(SelectionEvent<Suggestion> event) {
+
+					Suggestion suggestion = event.getSelectedItem();
+					Payment concept = getPayment(suggestion.getReplacementString());
+					if (concept == null)
 						return;
-					String description = PaymentEditor.this.descriptionBox.getValue();
-					if ( StringUtils.isBlank(description))
-						return;
-					
-					payment.setDescription(description);
-					AgreementDraft.this.agreementDraftObject
-							.addDraftPayment(payment);
-					AgreementDraft.this
-							.calculate(getExpressionFocusCallback());
+
+					payment.setType(concept.getType());
+					payment.setName(concept.getName());
+					payment.setConceptId(concept.getId());
+					payment.setDescription(concept.getDescription());
+					payment.setIrpfExpression(concept.getIrpfExpression());
+					payment.setQuoteExpression(concept.getQuoteExpression());
+
+					if (concept.getExpression() != null) {
+						payment.setExpression(concept.getExpression());
+						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+						AgreementDraft.this.calculate(getExpressionFocusCallback());
+					} else {
+						typeListBox.setSelected(payment.getType());
+						expressionBox.setFocus(true);
+					}
 
 				}
-			});	
+			});
+			this.descriptionBox = suggestBox.getValueBox();
+			this.descriptionBox.addBlurHandler(new BlurHandler() {
+
+				@Override
+				public void onBlur(BlurEvent event) {
+					if (((DefaultSuggestionDisplay) suggestBox.getSuggestionDisplay()).isSuggestionListShowing())
+						return;
+					String description = PaymentEditor.this.descriptionBox.getValue();
+					if (StringUtils.isBlank(description))
+						return;
+
+					payment.setDescription(description);
+					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+					AgreementDraft.this.calculate(getExpressionFocusCallback());
+
+				}
+			});
 		}
 
 		CalculateCallback getSalaryTypeFocusCallback() {
@@ -900,8 +908,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 	}
 
-	private class PaymentSuggestionDisplay extends
-			AbstractItemSuggestionDisplay<Payment> {
+	private class PaymentSuggestionDisplay extends AbstractItemSuggestionDisplay<Payment> {
 
 		@Override
 		Payment getItem(String replacementString) {
@@ -918,8 +925,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 		@Override
 		public boolean isEditable(String name) {
-			for (Payment payment : AgreementDraft.this.agreementDraftObject
-					.getPayments())
+			for (Payment payment : AgreementDraft.this.agreementDraftObject.getPayments())
 				if (StringUtils.equals(payment.getName(), name))
 					return false;
 			return true;
@@ -927,15 +933,12 @@ public class AgreementDraft extends ResizeComposite implements
 
 		@Override
 		public void getContext(AsyncCallback<ContextDescriptor> callback) {
-			AgreementDraft.this.agreementDraftObject.getContext(
-					AgreementDraft.this.fxLevel, callback);
+			AgreementDraft.this.agreementDraftObject.getContext(AgreementDraft.this.fxLevel, callback);
 		}
 
 		@Override
-		public void eval(String expression, List<Variable> vars,
-				AsyncCallback<List<Result>> callback) {
-			AgreementDraft.this.agreementDraftObject.eval(expression,
-					AgreementDraft.this.fxLevel, vars, callback);
+		public void eval(String expression, List<Variable> vars, AsyncCallback<List<Result>> callback) {
+			AgreementDraft.this.agreementDraftObject.eval(expression, AgreementDraft.this.fxLevel, vars, callback);
 		}
 
 	}
@@ -957,6 +960,9 @@ public class AgreementDraft extends ResizeComposite implements
 
 	@UiField
 	Button acceptButton;
+
+	@UiField
+	Button deleteButton;
 
 	@UiField
 	ListBox datesListBox;
@@ -1066,9 +1072,8 @@ public class AgreementDraft extends ResizeComposite implements
 		}
 		super.onResize();
 	}
-		
-	public void setAgreementDraftObject(
-			AgreementDraftObject agreementDraftObject) {
+
+	public void setAgreementDraftObject(AgreementDraftObject agreementDraftObject) {
 		if (this.agreementDraftObject != null) {
 			agreementDraftObject.removeListener(undoListener);
 		}
@@ -1091,11 +1096,10 @@ public class AgreementDraft extends ResizeComposite implements
 	@Override
 	public void onCalculateSucces(AgreementDraftObject object) {
 
-		draftMonthListBox.setHighLightMonths(agreementDraftObject
-				.getDatesWithChanges());
+		draftMonthListBox.setHighLightMonths(agreementDraftObject.getDatesWithChanges());
 		draftMonthListBox.setSelectedMonth(agreementDraftObject.getStartDate());
 		syncDatesListBox();
-
+		
 		loadAvailablePayments();
 
 		setDescription();
@@ -1115,13 +1119,16 @@ public class AgreementDraft extends ResizeComposite implements
 		SortedSet<Payment> extraPayments = getAvailableExtraPayments();
 		extraEditors.clear();
 		extraEditors.addAll(dumpExtras(extraPayments));
-		extraEditors.add(insertNewExtraRow(extrasTable.getRowCount(),
-				extraPayments));
+		extraEditors.add(insertNewExtraRow(extrasTable.getRowCount(), extraPayments));
 
 		clearEventsTable();
 		dumpEvents();
 		loadContentAssistManager();
+		
+		setReadOnly(object.isSystem() && !object.isMine() );
+
 	}
+
 
 	// ------------------------------------------
 	// Handlers
@@ -1167,19 +1174,19 @@ public class AgreementDraft extends ResizeComposite implements
 
 	@UiHandler("fxButton")
 	void onFxClicked(MouseDownEvent event) {
-		FxDialog fxDialog = new FxDialog(contextProvider){
+		FxDialog fxDialog = new FxDialog(contextProvider) {
 			@Override
 			void onAcceptButtonClick(ClickEvent event) {
 				super.onAcceptButtonClick(event);
-				fxhasValue.setValue(getExpression(),true);
-				((Focusable)fxhasValue).setFocus(true);
+				fxhasValue.setValue(getExpression(), true);
+				((Focusable) fxhasValue).setFocus(true);
 			}
 		};
-		
+
 		fxDialog.setExpression(fxhasValue.getValue());
 		fxDialog.center();
 		fxDialog.show();
-		
+
 	}
 
 	@UiHandler("undoAllButton")
@@ -1253,8 +1260,28 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	// ------------------------------------------------------------------------
-	//
-	// ------------------------------------------------------------------------
+
+
+	public void setReadOnly(boolean readOnly) {
+		
+		
+		for ( IFocusableEditor editor: salaryTableEditors)
+			editor.setReadOnly(readOnly);
+		for ( PaymentEditor editor: paymentEditors)
+			editor.setReadOnly(readOnly);
+		for ( ExtraEditor editor: extraEditors)
+			editor.setReadOnly(readOnly);
+		
+		fxButton.setEnabled(!readOnly);
+		undoButton.setEnabled(!readOnly);
+		redoButton.setEnabled(!readOnly);
+		undoAllButton.setEnabled(!readOnly);
+		acceptButton.setEnabled(!readOnly);
+		deleteButton.setEnabled(!readOnly);
+		datesListBox.setEnabled(!readOnly);
+		
+		descriptionTextBox.setReadOnly(readOnly);
+	}
 
 	public AgreementDraftObject getAgreementDraftObject() {
 		return agreementDraftObject;
@@ -1279,6 +1306,7 @@ public class AgreementDraft extends ResizeComposite implements
 	private void calculate() {
 		agreementDraftObject.calculate(this);
 	}
+	
 
 	private void calculate(final CalculateCallback cb) {
 
@@ -1301,19 +1329,19 @@ public class AgreementDraft extends ResizeComposite implements
 		agreementDraftObject.calculate(compositeCb);
 	}
 
-	private void reloadSalaryTable(){
+	private void reloadSalaryTable() {
 		clearSalaryTable();
 		salaryTableEditors.clear();
 		salaryTableEditors.addAll(dumpSalaryTable());
 		salaryTableEditors.add(insertNewLevelRow(salaryTable.getRowCount()));
 		initSalaryTableFrozenColsAndRows();
 	}
-	
+
 	private void setDescription() {
 		// TODO: When null it will be desirable warn user.
 		String description = this.agreementDraftObject.getDescription();
 		descriptionTextBox.setText(description == null ? "" : description);
-		descriptionTextBox.setEnabled(isMine());
+		// descriptionTextBox.setEnabled(isEditable());
 
 	}
 
@@ -1324,7 +1352,7 @@ public class AgreementDraft extends ResizeComposite implements
 			dumpEvent(row++, event);
 		}
 		eventsTableSpace.setVisible(eventsTable.getRowCount() > 0);
-	}	
+	}
 
 	private List<ExtraEditor> dumpExtras(SortedSet<Payment> payments) {
 
@@ -1367,8 +1395,7 @@ public class AgreementDraft extends ResizeComposite implements
 		SortedSet<String> variables = new TreeSet<String>();
 		variables.addAll(agreementDraftObject.getVariables());
 
-		Set<String> changedVariables = agreementDraftObject
-				.getChangedVariables();
+		Set<String> changedVariables = agreementDraftObject.getChangedVariables();
 
 		// fill table head
 
@@ -1436,8 +1463,7 @@ public class AgreementDraft extends ResizeComposite implements
 		for (Level level : levels) {
 			col = 1;
 			for (String var : variables) {
-				Variable variable = agreementDraftObject
-						.getVariable(level, var);
+				Variable variable = agreementDraftObject.getVariable(level, var);
 				VariableEditor variableEditor;
 				if (variable != null) {
 					variableEditor = dumpVariable(row, col, level, variable);
@@ -1456,8 +1482,8 @@ public class AgreementDraft extends ResizeComposite implements
 
 			int index = ((row - 1) * cols) + col;
 
-			CategoriesEditor categoriesEditor = dumpCategories(row, col++,
-					level, agreementDraftObject.getCategories(level));
+			CategoriesEditor categoriesEditor = dumpCategories(row, col++, level,
+					agreementDraftObject.getCategories(level));
 
 			editors.set(index, categoriesEditor);
 			categoriesEditor.hide(level.getId() == 0);
@@ -1474,10 +1500,8 @@ public class AgreementDraft extends ResizeComposite implements
 			salaryTable.setWidget(row, col++, deleteButton);
 
 			if (isDraftLevel(level)) {
-				salaryTable.getRowFormatter().addStyleName(row,
-						AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
-				salaryTable.getRowFormatter().addStyleName(row - 1,
-						AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
+				salaryTable.getRowFormatter().addStyleName(row, AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
+				salaryTable.getRowFormatter().addStyleName(row - 1, AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
 			}
 
 			row++;
@@ -1491,8 +1515,7 @@ public class AgreementDraft extends ResizeComposite implements
 		// input with size 5
 		offsetWidth += offsetWidth * 1.5 * (SALARY_TABLE_COLS - 1);
 
-		offsetWidth += cellFormatter.getElement(0,
-				salaryTable.getCellCount(0) - 1).getOffsetWidth();
+		offsetWidth += cellFormatter.getElement(0, salaryTable.getCellCount(0) - 1).getOffsetWidth();
 
 		salaryTableScrollPane.setWidth(offsetWidth + "px");
 
@@ -1503,18 +1526,14 @@ public class AgreementDraft extends ResizeComposite implements
 
 		// Set max heigth...
 		int offsetHeight = 1;
-		offsetHeight += salaryTable.getCellFormatter().getElement(1, 0)
-				.getOffsetHeight()
-				* SALARY_TABLE_LINES;
+		offsetHeight += salaryTable.getCellFormatter().getElement(1, 0).getOffsetHeight() * SALARY_TABLE_LINES;
 		salaryTableScrollPane.setHeight(offsetHeight + "px");
 
 		salaryTableHead = getFreezeTableHead(salaryTable);
 		salaryTableUpperLeftCorner = getFreezeTableUpperLeftCorner(salaryTable);
-		salaryTableUpperRightCorner = getFreezeTableUpperRightCorner(
-				salaryTable, salaryTableScrollPane);
+		salaryTableUpperRightCorner = getFreezeTableUpperRightCorner(salaryTable, salaryTableScrollPane);
 		salaryTableFirstColumn = getFreezeTableFirstCol(salaryTable);
-		salaryTableLastColumn = getFreezeTableLastCol(salaryTable,
-				salaryTableScrollPane);
+		salaryTableLastColumn = getFreezeTableLastCol(salaryTable, salaryTableScrollPane);
 
 		Element scroller = salaryTableScrollPane.getElement();
 		DOM.appendChild(scroller, salaryTableHead);
@@ -1529,17 +1548,13 @@ public class AgreementDraft extends ResizeComposite implements
 			public void execute() {
 
 				int width = salaryTableScrollPane.getElement().getClientWidth();
-				int height = salaryTableScrollPane.getElement()
-						.getClientHeight();
+				int height = salaryTableScrollPane.getElement().getClientHeight();
 
 				toFixedPosition(salaryTableUpperLeftCorner, width, height);
 				toFixedPosition(salaryTableUpperRightCorner, width, height);
-				toFixedPosition(salaryTableHead, width
-						- salaryTableUpperLeftCorner.getOffsetWidth(), height);
-				toFixedPosition(salaryTableFirstColumn, width, height
-						- salaryTableUpperLeftCorner.getOffsetHeight());
-				toFixedPosition(salaryTableLastColumn, width, height
-						- salaryTableUpperLeftCorner.getOffsetHeight());
+				toFixedPosition(salaryTableHead, width - salaryTableUpperLeftCorner.getOffsetWidth(), height);
+				toFixedPosition(salaryTableFirstColumn, width, height - salaryTableUpperLeftCorner.getOffsetHeight());
+				toFixedPosition(salaryTableLastColumn, width, height - salaryTableUpperLeftCorner.getOffsetHeight());
 				moveSalaryTableFrozenColsAndRows();
 				ensureChangesVisible();
 			}
@@ -1548,30 +1563,27 @@ public class AgreementDraft extends ResizeComposite implements
 
 	private void loadAvailablePayments() {
 		availablePaymens.clear();
-		agreementDraftObject
-				.getPaymentConcepts(new AsyncCallback<List<Payment>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
+		agreementDraftObject.getPaymentConcepts(new AsyncCallback<List<Payment>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
 
-					}
+			}
 
-					@Override
-					public void onSuccess(List<Payment> result) {
-						availablePaymens.addAll(result);
-						paymentDescriptionOracle.clear();
-						for (Payment payment : availablePaymens) {
-							paymentDescriptionOracle
-									.add(getSuggestionString(payment));
-						}
-					}
-				});
+			@Override
+			public void onSuccess(List<Payment> result) {
+				availablePaymens.addAll(result);
+				paymentDescriptionOracle.clear();
+				for (Payment payment : availablePaymens) {
+					paymentDescriptionOracle.add(getSuggestionString(payment));
+				}
+			}
+		});
 	}
 
 	private Payment getPayment(String suggestionString) {
 		for (Payment payment : availablePaymens) {
-			if (StringUtils.equals(suggestionString,
-					getSuggestionString(payment)))
+			if (StringUtils.equals(suggestionString, getSuggestionString(payment)))
 				return payment;
 		}
 		return null;
@@ -1595,30 +1607,23 @@ public class AgreementDraft extends ResizeComposite implements
 			text = text.replaceAll(" \\([^\\)]*\\)", "");
 			if (ALWAYS.equals(value)) {
 				alwaysIndex = i;
-				DateTimeFormat format = DateTimeFormat
-						.getFormat(PredefinedFormat.YEAR_MONTH_NUM_DAY);
+				DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.YEAR_MONTH_NUM_DAY);
 				Date alwaysDate = getFirstDateWithChanges();
-				datesListBox.setItemText(i,
-						text + " ( " + format.format(alwaysDate) + "... )");
+				datesListBox.setItemText(i, text + " ( " + format.format(alwaysDate) + "... )");
 				if (alwaysDate.equals(draftStartDate) && draftEndDate == null) {
 					datesListBox.setSelectedIndex(i);
 				}
 
 			} else if (ONLY_THIS_YEAR.equals(value)) {
-				DateTimeFormat format = DateTimeFormat
-						.getFormat(PredefinedFormat.YEAR);
-				datesListBox.setItemText(i,
-						text + " ( " + format.format(startDate) + " )");
-				if (DateUtils.isFirstDayOfYear(draftStartDate)
-						&& DateUtils.isLastDayOfYear(draftEndDate)) {
+				DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.YEAR);
+				datesListBox.setItemText(i, text + " ( " + format.format(startDate) + " )");
+				if (DateUtils.isFirstDayOfYear(draftStartDate) && DateUtils.isLastDayOfYear(draftEndDate)) {
 					datesListBox.setSelectedIndex(i);
 				}
 
 			} else if (FROM_THIS_MONTH.equals(value)) {
-				DateTimeFormat format = DateTimeFormat
-						.getFormat(PredefinedFormat.YEAR_MONTH_NUM);
-				datesListBox.setItemText(i,
-						text + " ( " + format.format(startDate) + "... )");
+				DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.YEAR_MONTH_NUM);
+				datesListBox.setItemText(i, text + " ( " + format.format(startDate) + "... )");
 				if (draftStartDate.equals(startDate) && draftEndDate == null) {
 					datesListBox.setSelectedIndex(i);
 				}
@@ -1646,6 +1651,7 @@ public class AgreementDraft extends ResizeComposite implements
 		}
 		return DateUtils.copyDateOnly(firstDateWithChanges);
 	}
+
 
 	// ------------------------------------------------------------------------
 	//
@@ -1684,8 +1690,7 @@ public class AgreementDraft extends ResizeComposite implements
 			paymentsTable.removeRow(i);
 	}
 
-	private VariableEditor dumpVariable(int row, int col, Level level,
-			Variable var) {
+	private VariableEditor dumpVariable(int row, int col, Level level, Variable var) {
 
 		TextBox expressionTextBox = new ExpressionBox();
 		expressionTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
@@ -1695,8 +1700,7 @@ public class AgreementDraft extends ResizeComposite implements
 		expressionTextBox.getElement().getStyle().setWidth(96, Unit.PCT);
 
 		Object value = var.getValue();
-		String expression = value == null ? var.getExpression() : value
-				.toString();
+		String expression = value == null ? var.getExpression() : value.toString();
 
 		expressionTextBox.setText(expression);
 
@@ -1706,11 +1710,9 @@ public class AgreementDraft extends ResizeComposite implements
 		variableEditor.setExpressionTextBox(expressionTextBox);
 
 		if (isDraftVariable(level, var)) {
-			salaryTable.getCellFormatter().addStyleName(row, col,
-					AON.AON_DATA_TABLE_CELL_HIGHLIGHT);
+			salaryTable.getCellFormatter().addStyleName(row, col, AON.AON_DATA_TABLE_CELL_HIGHLIGHT);
 			if (row > 0)
-				salaryTable.getCellFormatter().addStyleName(row - 1, col,
-						AON.AON_DATA_TABLE_CELL_HIGHLIGHT_TOP);
+				salaryTable.getCellFormatter().addStyleName(row - 1, col, AON.AON_DATA_TABLE_CELL_HIGHLIGHT_TOP);
 			expressionTextBox.addStyleName(AON.AON_ICON_CHANGED);
 		}
 
@@ -1718,15 +1720,13 @@ public class AgreementDraft extends ResizeComposite implements
 			expressionTextBox.setTitle(expression);
 			expressionTextBox.removeStyleName(AON.AON_ICON_CHANGED);
 			expressionTextBox.addStyleName(AON.AON_ICON_EXCEPTION);
-			expressionTextBox.getElement().getStyle()
-					.setTextIndent(17, Unit.PX);
+			expressionTextBox.getElement().getStyle().setTextIndent(17, Unit.PX);
 		}
 
 		return variableEditor;
 	}
 
-	private VariableEditor dumpUndefVariable(int row, int col, Level level,
-			String name) {
+	private VariableEditor dumpUndefVariable(int row, int col, Level level, String name) {
 
 		TextBox expressionTextBox = new ExpressionBox();
 		expressionTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
@@ -1745,8 +1745,7 @@ public class AgreementDraft extends ResizeComposite implements
 		return variableEditor;
 	}
 
-	private CategoriesEditor dumpCategories(int row, int col, Level level,
-			Set<String> categories) {
+	private CategoriesEditor dumpCategories(int row, int col, Level level, Set<String> categories) {
 
 		String text = null;
 		TextBox categoriesTextBox = new TextBox();
@@ -1759,17 +1758,14 @@ public class AgreementDraft extends ResizeComposite implements
 		if (StringUtils.isBlank(text)) {
 			categoriesTextBox.addStyleName(AON.AON_ICON_WARN);
 			categoriesTextBox.addStyleName(AON.AON_PADDING_LEFT);
-			categoriesTextBox
-					.setTitle("Defina al menos una categoria."
-							+ " Recuerde que los empleados se asocian a categorias no a niveles retributivos.");
+			categoriesTextBox.setTitle("Defina al menos una categoria."
+					+ " Recuerde que los empleados se asocian a categorias no a niveles retributivos.");
 		}
 
 		if (isDraftCategories(level)) {
-			salaryTable.getCellFormatter().addStyleName(row, col,
-					AON.AON_DATA_TABLE_CELL_HIGHLIGHT);
+			salaryTable.getCellFormatter().addStyleName(row, col, AON.AON_DATA_TABLE_CELL_HIGHLIGHT);
 			if (row > 0)
-				salaryTable.getCellFormatter().addStyleName(row - 1, col,
-						AON.AON_DATA_TABLE_CELL_HIGHLIGHT_TOP);
+				salaryTable.getCellFormatter().addStyleName(row - 1, col, AON.AON_DATA_TABLE_CELL_HIGHLIGHT_TOP);
 			if (!StringUtils.isBlank(text)) {
 				categoriesTextBox.addStyleName(AON.AON_ICON_CHANGED);
 				categoriesTextBox.addStyleName(AON.AON_PADDING_LEFT);
@@ -1777,8 +1773,7 @@ public class AgreementDraft extends ResizeComposite implements
 		}
 
 		categoriesTextBox.getElement().getStyle().setWidth(98, Unit.PCT);
-		categoriesTextBox.getElement().getStyle()
-				.setProperty("minWidth", VARIABLE_TEXTBOX_SIZE * 2, Unit.EM);
+		categoriesTextBox.getElement().getStyle().setProperty("minWidth", VARIABLE_TEXTBOX_SIZE * 2, Unit.EM);
 		salaryTable.setWidget(row, col, categoriesTextBox);
 
 		CategoriesEditor categoriesEditor = new CategoriesEditor(level);
@@ -1797,13 +1792,20 @@ public class AgreementDraft extends ResizeComposite implements
 		int col;
 		int cols = salaryTable.getCellCount(row - 1);
 		for (col = 1; col < cols - 2; col++)
-			salaryTable.setWidget(row, col,
-					newHiddenTextBox(VARIABLE_TEXTBOX_SIZE));
+			salaryTable.setWidget(row, col, newHiddenTextBox(VARIABLE_TEXTBOX_SIZE));
 
 		for (; col < cols; col++)
 			salaryTable.insertCell(row, col);
 
-		LevelEditor editor = new LevelEditor(agreementDraftObject.newLevel());
+		LevelEditor editor = new LevelEditor(agreementDraftObject.newLevel()){
+			@Override
+			public void setReadOnly(boolean readOnly) {
+				if ( this.deleteButton != null )
+					this.deleteButton.setVisible(!readOnly);
+				if ( this.descriptionTextBox != null)
+					this.descriptionTextBox.setVisible(!readOnly);
+			}
+		};
 		editor.setDescriptionTextBox(descriptionTextBox);
 
 		return editor;
@@ -1833,8 +1835,7 @@ public class AgreementDraft extends ResizeComposite implements
 			eventsTable.getCellFormatter().addStyleName(row, col, "aon-panelGrid-odd");
 	}
 
-	private ExtraEditor dumpExtra(Extra extra, int row,
-			SortedSet<Payment> availablePayments) {
+	private ExtraEditor dumpExtra(Extra extra, int row, SortedSet<Payment> availablePayments) {
 
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
@@ -1847,30 +1848,25 @@ public class AgreementDraft extends ResizeComposite implements
 			Date startDate = parseExtraDate(extra.getStartDate());
 			startDateBox.setValue(startDate);
 		} catch (EmptyStringException e) {
-			startDateBox
-					.setTitle("Es necesario introducir una fecha inicial de devengo.");
+			startDateBox.setTitle("Es necesario introducir una fecha inicial de devengo.");
 		} catch (DateTimeFormatException e) {
-			startDateBox.setTitle("La fecha inicial de devengo '"
-					+ extra.getStartDate() + "' no es correcta.");
+			startDateBox.setTitle("La fecha inicial de devengo '" + extra.getStartDate() + "' no es correcta.");
 			startDateBox.addStyleName(AON.AON_ICON_EXCEPTION);
 			startDateBox.setText(extra.getStartDate());
 		}
 		Button startButton = new Button();
 
-		extrasTable.setWidget(row, 1,
-				newExtraDatePanel(startDateBox, startButton));
+		extrasTable.setWidget(row, 1, newExtraDatePanel(startDateBox, startButton));
 
 		ValueBox<Date> endDateBox = newDateBox();
 		try {
 			Date endDate = parseExtraDate(extra.getEndDate());
 			endDateBox.setValue(endDate);
 		} catch (EmptyStringException e) {
-			endDateBox
-					.setTitle("Es necesario introducir una fecha final de devengo.");
+			endDateBox.setTitle("Es necesario introducir una fecha final de devengo.");
 			endDateBox.addStyleName(AON.AON_ICON_EXCEPTION);
 		} catch (DateTimeFormatException e) {
-			endDateBox.setTitle("La fecha final de devengo '"
-					+ extra.getEndDate() + "' no es correcta.");
+			endDateBox.setTitle("La fecha final de devengo '" + extra.getEndDate() + "' no es correcta.");
 			endDateBox.addStyleName(AON.AON_ICON_EXCEPTION);
 		}
 		Button endButton = new Button();
@@ -1882,32 +1878,27 @@ public class AgreementDraft extends ResizeComposite implements
 			Date issueDate = parseExtraDate(extra.getIssueDate());
 			issueDateBox.setValue(issueDate);
 		} catch (EmptyStringException e) {
-			issueDateBox
-					.setTitle("Es necesario introducir una fecha de cobro.");
+			issueDateBox.setTitle("Es necesario introducir una fecha de cobro.");
 			issueDateBox.addStyleName(AON.AON_ICON_EXCEPTION);
 		} catch (DateTimeFormatException e) {
-			issueDateBox.setTitle("La fecha de cobro '" + extra.getIssueDate()
-					+ "' no es correcta.");
+			issueDateBox.setTitle("La fecha de cobro '" + extra.getIssueDate() + "' no es correcta.");
 			issueDateBox.addStyleName(AON.AON_ICON_EXCEPTION);
 		}
 		Button issueButton = new Button();
 
-		extrasTable.setWidget(row, 3,
-				newExtraDatePanel(issueDateBox, issueButton));
+		extrasTable.setWidget(row, 3, newExtraDatePanel(issueDateBox, issueButton));
 
 		ListBox paymentListBox = new ListBox();
 		paymentListBox.addItem("-", (String) null);
 
 		Payment extraPayment = getExtraPayment(extra);
 		if (extraPayment != null) {
-			paymentListBox.addItem(extraPayment.getDescription(),
-					String.valueOf(extraPayment.getId()));
+			paymentListBox.addItem(extraPayment.getDescription(), String.valueOf(extraPayment.getId()));
 			paymentListBox.setSelectedIndex(1);
 		}
 
 		for (Payment payment : availablePayments) {
-			paymentListBox.addItem(payment.getDescription(),
-					String.valueOf(payment.getId()));
+			paymentListBox.addItem(payment.getDescription(), String.valueOf(payment.getId()));
 		}
 
 		paymentListBox.addStyleName(AON.AON_WIDTH_ALL);
@@ -1932,10 +1923,8 @@ public class AgreementDraft extends ResizeComposite implements
 		editor.setDeleteButton(deleteButton);
 
 		if (isDraftExtra(extra)) {
-			extrasTable.getRowFormatter().addStyleName(row,
-					AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
-			extrasTable.getRowFormatter().addStyleName(row - 1,
-					AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
+			extrasTable.getRowFormatter().addStyleName(row, AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
+			extrasTable.getRowFormatter().addStyleName(row - 1, AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
 		}
 
 		return editor;
@@ -1948,12 +1937,10 @@ public class AgreementDraft extends ResizeComposite implements
 		Button editButton = new Button();
 		editButton.setStyleName(getIconRowStyle(payment));
 		editButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		
 
 		paymentsTable.setWidget(row, 0, editButton);
 
-		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(
-				Payment.Type.class, 10);
+		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(Payment.Type.class, 10);
 		paymentTypeListBox.setSelected(payment.getType());
 		paymentsTable.setWidget(row, 1, paymentTypeListBox);
 
@@ -1971,8 +1958,7 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.setWidget(row, 3, expressionBox);
 		contentAssistManager.addValueBox(expressionBox);
 
-		TypeListBox<Salary.Type> salaryTypeListBox = new TypeListBox<Salary.Type>(
-				Salary.Type.class, 8);
+		TypeListBox<Salary.Type> salaryTypeListBox = new TypeListBox<Salary.Type>(Salary.Type.class, 8);
 		salaryTypeListBox.setSelected(payment.getSalaryType());
 		paymentsTable.setWidget(row, 4, salaryTypeListBox);
 
@@ -1980,8 +1966,7 @@ public class AgreementDraft extends ResizeComposite implements
 		deleteButton.setStyleName(AON.AON_ICON_DELETE);
 		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		paymentsTable.setWidget(row, 5, deleteButton);
-		paymentsTable.getCellFormatter().addStyleName(row, 5,
-				AON.AON_TEXT_RIGHT);
+		paymentsTable.getCellFormatter().addStyleName(row, 5, AON.AON_TEXT_RIGHT);
 		formatPaymentRow(row);
 
 		PaymentEditor paymentEditor = new PaymentEditor(payment);
@@ -1993,17 +1978,15 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentEditor.setPaymentTypeListBox(paymentTypeListBox);
 
 		if (isDraftPayment(payment)) {
-			paymentsTable.getRowFormatter().addStyleName(row,
-					AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
-			paymentsTable.getRowFormatter().addStyleName(row - 1,
-					AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
+			paymentsTable.getRowFormatter().addStyleName(row, AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
+			paymentsTable.getRowFormatter().addStyleName(row - 1, AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
 		}
 
-		if ( isError(payment))
+		if (isError(payment))
 			addStyle(paymentsTable, row, style.textError());
-		else if ( isWarn(payment))
+		else if (isWarn(payment))
 			addStyle(paymentsTable, row, style.textWarn());
-		else if ( isRemove(payment))
+		else if (isRemove(payment))
 			addStyle(paymentsTable, row, style.textWarn());
 
 		return paymentEditor;
@@ -2016,14 +1999,12 @@ public class AgreementDraft extends ResizeComposite implements
 		newButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		extrasTable.setWidget(row, 0, newButton);
 
-		DateTimeFormat yearMonthNumDayFormat = DateTimeFormat
-				.getFormat("d/M/y");
+		DateTimeFormat yearMonthNumDayFormat = DateTimeFormat.getFormat("d/M/y");
 
 		ValueBox<Date> startDateBox = newDateBox();
 		Button startButton = new Button();
 
-		extrasTable.setWidget(row, 1,
-				newExtraDatePanel(startDateBox, startButton));
+		extrasTable.setWidget(row, 1, newExtraDatePanel(startDateBox, startButton));
 
 		ValueBox<Date> endDateBox = newDateBox();
 		Button endButton = new Button();
@@ -2032,13 +2013,11 @@ public class AgreementDraft extends ResizeComposite implements
 
 		ValueBox<Date> issueDateBox = newDateBox();
 		Button issueButton = new Button();
-		extrasTable.setWidget(row, 3,
-				newExtraDatePanel(issueDateBox, issueButton));
+		extrasTable.setWidget(row, 3, newExtraDatePanel(issueDateBox, issueButton));
 
 		ListBox paymentListBox = new ListBox();
 		for (Payment payment : payments) {
-			paymentListBox.addItem(payment.getDescription(),
-					String.valueOf(payment.getId()));
+			paymentListBox.addItem(payment.getDescription(), String.valueOf(payment.getId()));
 		}
 		paymentListBox.addStyleName(AON.AON_WIDTH_ALL);
 		extrasTable.setWidget(row, 4, paymentListBox);
@@ -2047,8 +2026,22 @@ public class AgreementDraft extends ResizeComposite implements
 
 		formatExtraRow(row);
 
-		ExtraEditor editor = new ExtraEditor(
-				agreementDraftObject.newDraftExtra());
+		ExtraEditor editor = new ExtraEditor(agreementDraftObject.newDraftExtra()){
+			void setReadOnly(boolean readOnly) {
+				if ( this.deleteButton != null )
+					this.deleteButton.setVisible(!readOnly);
+				if ( this.endDateBox != null )
+					this.endDateBox.setVisible(!readOnly);
+				if ( this.startDateBox != null )
+					this.startDateBox.setVisible(!readOnly);
+				if ( this.issueDateBox != null )
+					this.issueDateBox.setVisible(!readOnly);
+				if ( paymentListBox != null ) 
+					this.paymentListBox.setVisible(!readOnly);
+				for ( Button button: buttons )
+					button.setVisible(!readOnly);
+			}
+		};
 
 		editor.setEndDateBox(endDateBox);
 		editor.setButtonFor(endButton, endDateBox);
@@ -2057,6 +2050,7 @@ public class AgreementDraft extends ResizeComposite implements
 		editor.setIssueDateBox(issueDateBox);
 		editor.setButtonFor(issueButton, issueDateBox);
 		editor.setPaymentListBox(paymentListBox);
+
 
 		return editor;
 	}
@@ -2069,15 +2063,13 @@ public class AgreementDraft extends ResizeComposite implements
 		newButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		paymentsTable.setWidget(row, 0, newButton);
 
-		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(
-				Payment.Type.class, 10);
+		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(Payment.Type.class, 10);
 		paymentTypeListBox.setSelected(Payment.Type.DEFAULT);
 		paymentsTable.setWidget(row, 1, paymentTypeListBox);
 
 		TextBox descriptionBox = new TextBox();
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
-		SuggestBox descriptionSuggest = new SuggestBox(
-				paymentDescriptionOracle, descriptionBox,
+		SuggestBox descriptionSuggest = new SuggestBox(paymentDescriptionOracle, descriptionBox,
 				paymentSuggestionDisplay);
 		descriptionSuggest.setAutoSelectEnabled(false);
 		descriptionSuggest.getElement().getStyle().setWidth(98, Unit.PCT);
@@ -2089,8 +2081,7 @@ public class AgreementDraft extends ResizeComposite implements
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
 		paymentsTable.setWidget(row, 3, expressionBox);
 
-		TypeListBox<Salary.Type> salaryTypeListBox = new TypeListBox<Salary.Type>(
-				Salary.Type.class, 8);
+		TypeListBox<Salary.Type> salaryTypeListBox = new TypeListBox<Salary.Type>(Salary.Type.class, 8);
 		salaryTypeListBox.setSelected(Salary.Type.SALARY);
 		paymentsTable.setWidget(row, 4, salaryTypeListBox);
 
@@ -2104,7 +2095,21 @@ public class AgreementDraft extends ResizeComposite implements
 		payment.setType(Payment.Type.DEFAULT);
 		payment.setSalaryType(Salary.Type.SALARY);
 
-		PaymentEditor paymentEditor = new PaymentEditor(payment);
+		PaymentEditor paymentEditor = new PaymentEditor(payment){
+			@Override
+			void setReadOnly(boolean readOnly) {
+				if ( this.deleteButton != null )
+					this.deleteButton.setVisible(!readOnly);
+				if ( this.expressionBox != null )
+					this.expressionBox.setVisible(!readOnly);
+				if ( this.descriptionBox != null )
+					this.descriptionBox.setVisible(!readOnly);
+				if ( this.typeListBox != null )
+					this.typeListBox.setVisible(!readOnly);
+				if ( this.salaryTypeListBox != null )
+					this.salaryTypeListBox.setVisible(!readOnly);
+			}
+		};
 		paymentEditor.setEditButton(newButton);
 		paymentEditor.setExpressionTextBox(expressionBox);
 		paymentEditor.setSalaryTypeListBox(salaryTypeListBox);
@@ -2117,61 +2122,44 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private void formatExtraRow(int row) {
-		extrasTable.getCellFormatter().getElement(row, 0).getStyle()
-				.setPropertyPx("borderRightWidth", 0);
-		extrasTable.getCellFormatter().getElement(row, 1).getStyle()
-				.setPropertyPx("borderLeftWidth", 0);
-		extrasTable.getCellFormatter().getElement(row, 4).getStyle()
-				.setPropertyPx("borderRightWidth", 0);
+		extrasTable.getCellFormatter().getElement(row, 0).getStyle().setPropertyPx("borderRightWidth", 0);
+		extrasTable.getCellFormatter().getElement(row, 1).getStyle().setPropertyPx("borderLeftWidth", 0);
+		extrasTable.getCellFormatter().getElement(row, 4).getStyle().setPropertyPx("borderRightWidth", 0);
 		if (extrasTable.getCellCount(row) > 5)
-			extrasTable.getCellFormatter().getElement(row, 5).getStyle()
-					.setPropertyPx("borderLeftWidth", 0);
+			extrasTable.getCellFormatter().getElement(row, 5).getStyle().setPropertyPx("borderLeftWidth", 0);
 
-		extrasTable.getRowFormatter().addStyleName(
-				row,
-				row % 2 == 0 ? AON.AON_DATA_TABLE_ROW_ODD
-						: AON.AON_DATA_TABLE_ROW_EVEN);
+		extrasTable.getRowFormatter().addStyleName(row,
+				row % 2 == 0 ? AON.AON_DATA_TABLE_ROW_ODD : AON.AON_DATA_TABLE_ROW_EVEN);
 	}
 
 	private void formatPaymentRow(int row) {
-		paymentsTable.getCellFormatter().getElement(row, 0).getStyle()
-				.setPropertyPx("borderRightWidth", 0);
-		paymentsTable.getCellFormatter().getElement(row, 1).getStyle()
-				.setPropertyPx("borderLeftWidth", 0);
-		paymentsTable.getCellFormatter().getElement(row, 4).getStyle()
-				.setPropertyPx("borderRightWidth", 0);
+		paymentsTable.getCellFormatter().getElement(row, 0).getStyle().setPropertyPx("borderRightWidth", 0);
+		paymentsTable.getCellFormatter().getElement(row, 1).getStyle().setPropertyPx("borderLeftWidth", 0);
+		paymentsTable.getCellFormatter().getElement(row, 4).getStyle().setPropertyPx("borderRightWidth", 0);
 		if (paymentsTable.getCellCount(row) > 5)
-			paymentsTable.getCellFormatter().getElement(row, 5).getStyle()
-					.setPropertyPx("borderLeftWidth", 0);
+			paymentsTable.getCellFormatter().getElement(row, 5).getStyle().setPropertyPx("borderLeftWidth", 0);
 
-		paymentsTable.getRowFormatter().addStyleName(
-				row,
-				row % 2 == 0 ? AON.AON_DATA_TABLE_ROW_ODD
-						: AON.AON_DATA_TABLE_ROW_EVEN);
+		paymentsTable.getRowFormatter().addStyleName(row,
+				row % 2 == 0 ? AON.AON_DATA_TABLE_ROW_ODD : AON.AON_DATA_TABLE_ROW_EVEN);
 	}
 
 	private void initExtrasTable() {
 
 		extrasTable.setText(0, 0, "INICIO");
 		extrasTable.getFlexCellFormatter().setColSpan(0, 0, 2);
-		extrasTable.getCellFormatter().addStyleName(0, 0,
-				AON.AON_INPUT_REQUIRED);
+		extrasTable.getCellFormatter().addStyleName(0, 0, AON.AON_INPUT_REQUIRED);
 		extrasTable.setText(0, 1, "FIN");
-		extrasTable.getCellFormatter().addStyleName(0, 1,
-				AON.AON_INPUT_REQUIRED);
+		extrasTable.getCellFormatter().addStyleName(0, 1, AON.AON_INPUT_REQUIRED);
 		extrasTable.setText(0, 2, "COBRO");
-		extrasTable.getCellFormatter().addStyleName(0, 2,
-				AON.AON_INPUT_REQUIRED);
+		extrasTable.getCellFormatter().addStyleName(0, 2, AON.AON_INPUT_REQUIRED);
 		extrasTable.setText(0, 3, "CONCEPTO");
 		extrasTable.getFlexCellFormatter().setColSpan(0, 3, 2);
 		// endDateBox.addStyleName(AON.AON_INPUT_REQUIRED);
 
-		extrasTable.getRowFormatter().addStyleName(0,
-				AON.AON_DATA_TABLE_ROW_ODD);
+		extrasTable.getRowFormatter().addStyleName(0, AON.AON_DATA_TABLE_ROW_ODD);
 		for (int i = 0; i < extrasTable.getCellCount(0); i++) {
 			extrasTable.getCellFormatter().addStyleName(0, i, AON.AON_BOLD);
-			extrasTable.getCellFormatter().addStyleName(0, i,
-					AON.AON_TEXT_CENTER);
+			extrasTable.getCellFormatter().addStyleName(0, i, AON.AON_TEXT_CENTER);
 		}
 
 		extrasTable.getColumnFormatter().setWidth(0, "2%");
@@ -2192,12 +2180,10 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.setText(0, 3, "RECIBO");
 		paymentsTable.getFlexCellFormatter().setColSpan(0, 3, 2);
 
-		paymentsTable.getRowFormatter().addStyleName(0,
-				AON.AON_DATA_TABLE_ROW_ODD);
+		paymentsTable.getRowFormatter().addStyleName(0, AON.AON_DATA_TABLE_ROW_ODD);
 		for (int i = 0; i < paymentsTable.getCellCount(0); i++) {
 			paymentsTable.getCellFormatter().addStyleName(0, i, AON.AON_BOLD);
-			paymentsTable.getCellFormatter().addStyleName(0, i,
-					AON.AON_TEXT_CENTER);
+			paymentsTable.getCellFormatter().addStyleName(0, i, AON.AON_TEXT_CENTER);
 		}
 
 		paymentsTable.getColumnFormatter().setWidth(0, "2%");
@@ -2209,7 +2195,6 @@ public class AgreementDraft extends ResizeComposite implements
 
 	}
 
-
 	private void initEventsStyles(MyStyle myStyle) {
 		eventStyles = new HashMap<Event.Type, String[]>();
 		eventStyles.put(Event.Type.INFO, new String[] { "", "" });
@@ -2218,25 +2203,23 @@ public class AgreementDraft extends ResizeComposite implements
 		eventStyles.put(Event.Type.WARNING, new String[] { AON.AON_ICON_WARN, myStyle.textWarn() });
 	}
 
-	//@formatter:off
+	// @formatter:off
 	// ======================================
 	// | NIVEL | SALARIO_BASE | PAGA_EXTRA |.
 	// ======================================
-	// | 	   |   ###.###,00 | ###.###,00 |.
+	// | | ###.###,00 | ###.###,00 |.
 	// --------------------------------------
-	// |   01  |   ###.###,00 | ###.###,00 |.
+	// | 01 | ###.###,00 | ###.###,00 |.
 	// --------------------------------------
-	// |   02  |   ###.###,00 | ###.###,00 |.
+	// | 02 | ###.###,00 | ###.###,00 |.
 	// --------------------------------------
-	//@formatter:on
+	// @formatter:on
 	private void moveSalaryTableFrozenColsAndRows() {
 		int verticalScroll = salaryTableScrollPane.getVerticalScrollPosition();
-		int horizontalScroll = salaryTableScrollPane
-				.getHorizontalScrollPosition();
+		int horizontalScroll = salaryTableScrollPane.getHorizontalScrollPosition();
 
-		int clientWidth = Math.min(salaryTableScrollPane.getElement()
-				.getClientWidth(), draftScrollPane.getElement()
-				.getClientWidth());
+		int clientWidth = Math.min(salaryTableScrollPane.getElement().getClientWidth(),
+				draftScrollPane.getElement().getClientWidth());
 		int clientHeight = salaryTableScrollPane.getElement().getClientHeight();
 
 		int top = salaryTableScrollPane.getAbsoluteTop();
@@ -2247,34 +2230,26 @@ public class AgreementDraft extends ResizeComposite implements
 
 		salaryTableUpperLeftCorner.getStyle().setTop(top, Unit.PX);
 		salaryTableUpperLeftCorner.getStyle().setLeft(left, Unit.PX);
-		setClip(salaryTableUpperLeftCorner.getStyle(), clipTop,
-				salaryTableUpperLeftCorner.getOffsetWidth(),
+		setClip(salaryTableUpperLeftCorner.getStyle(), clipTop, salaryTableUpperLeftCorner.getOffsetWidth(),
 				salaryTableUpperLeftCorner.getOffsetHeight(), clipLeft);
 
 		salaryTableUpperRightCorner.getStyle().setTop(top, Unit.PX);
-		left = salaryTableScrollPane.getAbsoluteLeft() + clientWidth
-				- salaryTableUpperRightCorner.getOffsetWidth()
+		left = salaryTableScrollPane.getAbsoluteLeft() + clientWidth - salaryTableUpperRightCorner.getOffsetWidth()
 				+ draftScrollPane.getHorizontalScrollPosition();
 		salaryTableUpperRightCorner.getStyle().setLeft(left + 1, Unit.PX);
-		setClip(salaryTableUpperRightCorner.getStyle(), clipTop,
-				salaryTableUpperRightCorner.getOffsetWidth(),
+		setClip(salaryTableUpperRightCorner.getStyle(), clipTop, salaryTableUpperRightCorner.getOffsetWidth(),
 				salaryTableUpperRightCorner.getOffsetHeight(), 0);
 
-		left = salaryTableScrollPane.getAbsoluteLeft()
-				+ salaryTableUpperLeftCorner.getOffsetWidth()
-				- horizontalScroll;
+		left = salaryTableScrollPane.getAbsoluteLeft() + salaryTableUpperLeftCorner.getOffsetWidth() - horizontalScroll;
 		salaryTableHead.getStyle().setTop(top, Unit.PX);
 		salaryTableHead.getStyle().setLeft(left - 1, Unit.PX);
 
 		clipLeft = horizontalScroll + 1 + (clipLeft > 0 ? clipLeft : 0);
-		int clipRight = horizontalScroll + clientWidth
-				- salaryTableUpperLeftCorner.getOffsetWidth() + 1;
-		setClip(salaryTableHead.getStyle(), clipTop, clipRight, clientHeight,
-				clipLeft);
+		int clipRight = horizontalScroll + clientWidth - salaryTableUpperLeftCorner.getOffsetWidth() + 1;
+		setClip(salaryTableHead.getStyle(), clipTop, clipRight, clientHeight, clipLeft);
 
 		left = salaryTableScrollPane.getAbsoluteLeft();
-		top = salaryTableScrollPane.getAbsoluteTop()
-				+ salaryTableUpperLeftCorner.getOffsetHeight() - verticalScroll;
+		top = salaryTableScrollPane.getAbsoluteTop() + salaryTableUpperLeftCorner.getOffsetHeight() - verticalScroll;
 		salaryTableFirstColumn.getStyle().setLeft(left, Unit.PX);
 		salaryTableFirstColumn.getStyle().setTop(top - 1, Unit.PX);
 
@@ -2283,19 +2258,14 @@ public class AgreementDraft extends ResizeComposite implements
 			clipTop += draftScrollPane.getAbsoluteTop() - top - clipTop;
 
 		clipLeft = draftScrollPane.getAbsoluteLeft() - left;
-		int clipBottom = verticalScroll
-				+ (clientHeight - salaryTableUpperLeftCorner.getOffsetHeight())
-				+ 1;
-		setClip(salaryTableFirstColumn.getStyle(), clipTop, clientWidth,
-				clipBottom, clipLeft);
+		int clipBottom = verticalScroll + (clientHeight - salaryTableUpperLeftCorner.getOffsetHeight()) + 1;
+		setClip(salaryTableFirstColumn.getStyle(), clipTop, clientWidth, clipBottom, clipLeft);
 
 		salaryTableLastColumn.getStyle().setTop(top - 1, Unit.PX);
-		left = salaryTableScrollPane.getAbsoluteLeft() + clientWidth
-				- salaryTableLastColumn.getOffsetWidth()
+		left = salaryTableScrollPane.getAbsoluteLeft() + clientWidth - salaryTableLastColumn.getOffsetWidth()
 				+ draftScrollPane.getHorizontalScrollPosition();
 		salaryTableLastColumn.getStyle().setLeft(left + 1, Unit.PX);
-		setClip(salaryTableLastColumn.getStyle(), clipTop, clientWidth,
-				clipBottom, 0 /**/);
+		setClip(salaryTableLastColumn.getStyle(), clipTop, clientWidth, clipBottom, 0 /**/);
 
 	}
 
@@ -2307,17 +2277,13 @@ public class AgreementDraft extends ResizeComposite implements
 	private void ensureChangesVisible() {
 		// shows first level changed row.
 		if (!changedLevelsRows.isEmpty()) {
-			ensureVisibleTopImpl(
-					salaryTableScrollPane.getElement(),
-					salaryTable.getRowFormatter().getElement(
-							changedLevelsRows.get(0)));
+			ensureVisibleTopImpl(salaryTableScrollPane.getElement(),
+					salaryTable.getRowFormatter().getElement(changedLevelsRows.get(0)));
 		}
 		// shows first variable changed column.
 		if (!changedVariablesCols.isEmpty()) {
-			ensureVisibleLeftImpl(
-					salaryTableScrollPane.getElement(),
-					salaryTable.getCellFormatter().getElement(0,
-							changedVariablesCols.get(0)));
+			ensureVisibleLeftImpl(salaryTableScrollPane.getElement(),
+					salaryTable.getCellFormatter().getElement(0, changedVariablesCols.get(0)));
 		}
 	}
 
@@ -2345,8 +2311,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 		SortedSet<Payment> payments = new TreeSet<Payment>(new ItemComparator());
 		for (Payment payment : agreementDraftObject.getPayments())
-			if (payment.getSalaryType() == Salary.Type.EXTRA
-					&& !extraIds.contains(payment.getId()))
+			if (payment.getSalaryType() == Salary.Type.EXTRA && !extraIds.contains(payment.getId()))
 				payments.add(payment);
 
 		return payments;
@@ -2355,16 +2320,14 @@ public class AgreementDraft extends ResizeComposite implements
 	private boolean isExtraPayment(Payment payment) {
 
 		for (Extra extra : agreementDraftObject.getExtras())
-			if (extra.getPaymentId() != null
-					&& extra.getPaymentId().equals(payment.getId()))
+			if (extra.getPaymentId() != null && extra.getPaymentId().equals(payment.getId()))
 				return true;
 
 		return false;
 	}
 
 	private Date parseExtraDate(String text) {
-		return parseExtraDate(text,
-				CalendarUtil.copyDate(agreementDraftObject.getStartDate()));
+		return parseExtraDate(text, CalendarUtil.copyDate(agreementDraftObject.getStartDate()));
 	}
 
 	private String formatExtraDate(Date extraDate) {
@@ -2402,8 +2365,7 @@ public class AgreementDraft extends ResizeComposite implements
 		try {
 			start += format.parse(text, start, date);
 		} catch (Throwable t) {
-			throw new DateTimeFormatException("'" + text + "/" + start
-					+ "' it's not a valid extra date");
+			throw new DateTimeFormatException("'" + text + "/" + start + "' it's not a valid extra date");
 		}
 
 		while (++start < text.length() && Character.isSpace(text.charAt(start)))
@@ -2419,37 +2381,34 @@ public class AgreementDraft extends ResizeComposite implements
 			int years = Integer.valueOf(text.substring(start, end + 1));
 			return DateUtils.addYears2Date(date, years);
 		} catch (Throwable t) {
-			throw new DateTimeFormatException("'" + text + "/" + start
-					+ "' it's not a valid extra date");
+			throw new DateTimeFormatException("'" + text + "/" + start + "' it's not a valid extra date");
 		}
 	}
-	
+
 	protected static Date getReferenceDate(String text, Date date) {
 		if (text == null)
 			throw new EmptyStringException();
-		
+
 		text = text.trim();
-		
+
 		int start = -1;
-		
+
 		// Skip d/M
 		while (++start < text.length() && !Character.isSpace(text.charAt(start)))
 			;
-		while (Character.isSpace(text.charAt(start)) && ++start < text.length() )
+		while (Character.isSpace(text.charAt(start)) && ++start < text.length())
 			;
-		
-		if ( start == text.length() )
+
+		if (start == text.length())
 			return date;
-		
+
 		try {
 			int years = Integer.valueOf(text.substring(start));
 			return DateUtils.addYears2Date(date, -1 * years);
 		} catch (Throwable t) {
-			throw new DateTimeFormatException("'" + text + "/" + start
-					+ "' it's not a valid extra date");
+			throw new DateTimeFormatException("'" + text + "/" + start + "' it's not a valid extra date");
 		}
-		
-		
+
 	}
 
 	private boolean isMine() {
@@ -2489,30 +2448,28 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private com.esferalia.aon.gwt.payroll.shared.Event.Type getEventType(Payment payment) {
-		for(Event event : agreementDraftObject.getEvents() )
-			if ( event instanceof PaymentEvent ) 
-				if (((PaymentEvent) event).getPayment().equals(payment)) 
-					return ((PaymentEvent)event).getType();
+		for (Event event : agreementDraftObject.getEvents())
+			if (event instanceof PaymentEvent)
+				if (((PaymentEvent) event).getPayment().equals(payment))
+					return ((PaymentEvent) event).getType();
 		return null;
 	}
 
-
 	private String getIconRowStyle(Extra extra) {
-		return isDraftExtra(extra) ? AON.AON_ICON_ROW_SELECTOR_CHANGED
-				: AON.AON_ICON_ROW_SELECTOR;
+		return isDraftExtra(extra) ? AON.AON_ICON_ROW_SELECTOR_CHANGED : AON.AON_ICON_ROW_SELECTOR;
 	}
 
 	private String getIconRowStyle(Payment payment) {
-		if ( isWarn(payment))
-			return AON.AON_ICON_WARN ;
-		if ( isError(payment))
-			return AON.AON_ICON_ERROR ;
-		if ( isRemove(payment))
-			return AON.AON_ICON_WARN ;
-		if ( isDraftPayment(payment) )
+		if (isWarn(payment))
+			return AON.AON_ICON_WARN;
+		if (isError(payment))
+			return AON.AON_ICON_ERROR;
+		if (isRemove(payment))
+			return AON.AON_ICON_WARN;
+		if (isDraftPayment(payment))
 			return AON.AON_ICON_ROW_SELECTOR_CHANGED;
-		if ( isNotMine(payment)) {
-			return AON.AON_ICON_ROW_SELECTOR_PARENT ;
+		if (isNotMine(payment)) {
+			return AON.AON_ICON_ROW_SELECTOR_PARENT;
 		}
 		return AON.AON_ICON_ROW_SELECTOR;
 	}
@@ -2529,8 +2486,7 @@ public class AgreementDraft extends ResizeComposite implements
 		Element clone = DOM.clone(tr, true);
 
 		com.google.gwt.dom.client.Element td = tr.getFirstChildElement();
-		com.google.gwt.dom.client.Element cloneTd = clone
-				.getFirstChildElement();
+		com.google.gwt.dom.client.Element cloneTd = clone.getFirstChildElement();
 
 		while (td != null) {
 			int offsetWidth = td.getOffsetWidth();
@@ -2552,8 +2508,7 @@ public class AgreementDraft extends ResizeComposite implements
 			th.getChild(i).removeFromParent();
 		}
 
-		int width = flexTable.getCellFormatter().getElement(0, 0)
-				.getOffsetWidth();
+		int width = flexTable.getCellFormatter().getElement(0, 0).getOffsetWidth();
 
 		Element table = DOM.createTable();
 		Element tbody = DOM.createTBody();
@@ -2569,8 +2524,7 @@ public class AgreementDraft extends ResizeComposite implements
 		return table;
 	}
 
-	private static Element getFreezeTableUpperRightCorner(FlexTable flexTable,
-			ScrollPanel scrollPane) {
+	private static Element getFreezeTableUpperRightCorner(FlexTable flexTable, ScrollPanel scrollPane) {
 
 		Element th = cloneTR(flexTable.getRowFormatter().getElement(0));
 
@@ -2593,8 +2547,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 		}
 
-		int width = flexTable.getCellFormatter()
-				.getElement(0, flexTable.getCellCount(0) - 1).getOffsetWidth();
+		int width = flexTable.getCellFormatter().getElement(0, flexTable.getCellCount(0) - 1).getOffsetWidth();
 
 		int left = scrollPane.getElement().getClientWidth() - width;
 
@@ -2616,16 +2569,14 @@ public class AgreementDraft extends ResizeComposite implements
 	private static Element getFreezeTableHead(FlexTable flexTable) {
 		Element th = cloneTR(flexTable.getRowFormatter().getElement(0));
 
-		int left = flexTable.getCellFormatter().getElement(0, 0)
-				.getOffsetWidth();
+		int left = flexTable.getCellFormatter().getElement(0, 0).getOffsetWidth();
 
 		// removes first cell, this belongs to corner.
 		th.getFirstChildElement().removeFromParent();
 
 		int width = 0;
 		for (int col = 1; col < flexTable.getCellCount(0); col++)
-			width += flexTable.getCellFormatter().getElement(0, col)
-					.getOffsetWidth();
+			width += flexTable.getCellFormatter().getElement(0, col).getOffsetWidth();
 
 		Element table = DOM.createTable();
 		Element tbody = DOM.createTBody();
@@ -2644,20 +2595,17 @@ public class AgreementDraft extends ResizeComposite implements
 
 	private static Element getFreezeTableFirstCol(FlexTable flexTable) {
 		Element table = getFreezeTableCol(flexTable, 0);
-		int width = flexTable.getCellFormatter().getElement(0, 0)
-				.getOffsetWidth();
+		int width = flexTable.getCellFormatter().getElement(0, 0).getOffsetWidth();
 		table.getStyle().setWidth(width + 2, Unit.PX);
 
 		return table;
 	}
 
-	private static Element getFreezeTableLastCol(FlexTable flexTable,
-			ScrollPanel scrollPanel) {
+	private static Element getFreezeTableLastCol(FlexTable flexTable, ScrollPanel scrollPanel) {
 		int col = flexTable.getCellCount(0) - 1;
 		Element table = getFreezeTableCol(flexTable, col);
 
-		int width = flexTable.getCellFormatter().getElement(0, col)
-				.getOffsetWidth();
+		int width = flexTable.getCellFormatter().getElement(0, col).getOffsetWidth();
 		int left = scrollPanel.getElement().getClientWidth() - width;
 		table.getStyle().setLeft(left - 1, Unit.PX);
 
@@ -2671,8 +2619,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 		for (int row = 1; row < flexTable.getRowCount(); row++) {
 			Element tr = DOM.createTR();
-			tr.setClassName(flexTable.getRowFormatter().getElement(row)
-					.getClassName());
+			tr.setClassName(flexTable.getRowFormatter().getElement(row).getClassName());
 
 			Element td = flexTable.getCellFormatter().getElement(row, col);
 
@@ -2700,10 +2647,8 @@ public class AgreementDraft extends ResizeComposite implements
 			DOM.appendChild(tbody, tr);
 		}
 
-		int width = flexTable.getCellFormatter().getElement(0, col)
-				.getOffsetWidth();
-		int height = flexTable.getCellFormatter().getElement(0, col)
-				.getOffsetHeight();
+		int width = flexTable.getCellFormatter().getElement(0, col).getOffsetWidth();
+		int height = flexTable.getCellFormatter().getElement(0, col).getOffsetHeight();
 
 		DOM.appendChild(table, tbody);
 		table.getStyle().setPosition(Position.ABSOLUTE);
@@ -2725,22 +2670,18 @@ public class AgreementDraft extends ResizeComposite implements
 		style.setLeft(left, Unit.PX);
 
 		// rect(<top>, <right>, <bottom>, <left>)
-		style.setProperty("clip", "rect(0px," + width + "px," + height
-				+ "px,0px)");
+		style.setProperty("clip", "rect(0px," + width + "px," + height + "px,0px)");
 		setClip(style, 0, width, height, 0);
 
 	}
 
-	private static void setClip(Style style, int top, int right, int bottom,
-			int left) {
-		style.setProperty("clip", "rect(" + top + "px," + right + "px,"
-				+ bottom + "px, " + left + "px)");
+	private static void setClip(Style style, int top, int right, int bottom, int left) {
+		style.setProperty("clip", "rect(" + top + "px," + right + "px," + bottom + "px, " + left + "px)");
 	}
 
 	private static String getSuggestionString(Payment payment) {
 		String description = payment.getDescription();
-		StringBuffer suggestion = StringUtils.isEmpty(description)  ? 
-				new StringBuffer():new  StringBuffer(description);
+		StringBuffer suggestion = StringUtils.isEmpty(description) ? new StringBuffer() : new StringBuffer(description);
 		if (!StringUtils.isEmpty(payment.getName()))
 			suggestion.append(" (").append(payment.getName()).append(")");
 		return suggestion.toString();
@@ -2748,8 +2689,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 	private static int getRealOffsetTop(Element scroll, Element e) {
 		int realOffsetTop = 0;
-		for (com.google.gwt.dom.client.Element item = e; item != scroll; item = item
-				.getOffsetParent())
+		for (com.google.gwt.dom.client.Element item = e; item != scroll; item = item.getOffsetParent())
 			realOffsetTop += item.getOffsetTop();
 
 		return realOffsetTop;
@@ -2757,21 +2697,18 @@ public class AgreementDraft extends ResizeComposite implements
 
 	private static int getRealOffsetLeft(Element scroll, Element e) {
 		int realOffsetLeft = 0;
-		for (com.google.gwt.dom.client.Element item = e; item != scroll; item = item
-				.getOffsetParent())
+		for (com.google.gwt.dom.client.Element item = e; item != scroll; item = item.getOffsetParent())
 			realOffsetLeft += item.getOffsetLeft();
 
 		return realOffsetLeft;
 	}
 
 	private static void ensureVisibleTopImpl(Element scroll, Element e) {
-		scroll.setScrollTop(getRealOffsetTop(scroll, e)
-				- scroll.getOffsetHeight() / 2);
+		scroll.setScrollTop(getRealOffsetTop(scroll, e) - scroll.getOffsetHeight() / 2);
 	}
 
 	private static void ensureVisibleLeftImpl(Element scroll, Element e) {
-		scroll.setScrollLeft(getRealOffsetLeft(scroll, e)
-				- scroll.getOffsetWidth() / 2);
+		scroll.setScrollLeft(getRealOffsetLeft(scroll, e) - scroll.getOffsetWidth() / 2);
 	}
 
 	/*
@@ -2799,8 +2736,7 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private ExtraEditor getNextExtraEditorFor(int id) {
-		for (Iterator<ExtraEditor> iterator = extraEditors.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<ExtraEditor> iterator = extraEditors.iterator(); iterator.hasNext();) {
 			ExtraEditor editor = iterator.next();
 			if (id == editor.extra.getId())
 				return iterator.hasNext() ? iterator.next() : null;
@@ -2817,8 +2753,7 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private PaymentEditor getNextPaymentEditorFor(int id) {
-		for (Iterator<PaymentEditor> iterator = paymentEditors.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<PaymentEditor> iterator = paymentEditors.iterator(); iterator.hasNext();) {
 			PaymentEditor editor = iterator.next();
 			if (id == editor.payment.getId())
 				return iterator.hasNext() ? iterator.next() : null;
@@ -2827,11 +2762,9 @@ public class AgreementDraft extends ResizeComposite implements
 		return null;
 	}
 
-	private IFocusableEditor getNextSalaryTableEditorIndexOf(
-			IFocusableEditor editor) {
+	private IFocusableEditor getNextSalaryTableEditorIndexOf(IFocusableEditor editor) {
 		int index = salaryTableEditors.indexOf(editor) + 1;
-		return index < salaryTableEditors.size() ? salaryTableEditors
-				.get(index) : null;
+		return index < salaryTableEditors.size() ? salaryTableEditors.get(index) : null;
 	}
 
 	private int getSalaryTableEditorIndexOf(IFocusableEditor editor) {
@@ -2858,8 +2791,7 @@ public class AgreementDraft extends ResizeComposite implements
 			LevelEditor editor = (LevelEditor) salaryTableEditors.get(index);
 			if (editor.level.getId() == id) {
 				int next = index + 1;
-				return salaryTableEditors.size() > next ? salaryTableEditors
-						.get(next) : null;
+				return salaryTableEditors.size() > next ? salaryTableEditors.get(next) : null;
 			}
 		}
 		return null;
@@ -2904,8 +2836,7 @@ public class AgreementDraft extends ResizeComposite implements
 					}
 				}
 			}
-			levelListBox.addItem(buffer.toString(),
-					Integer.toString(level.getId()));
+			levelListBox.addItem(buffer.toString(), Integer.toString(level.getId()));
 		}
 
 	}
@@ -2921,23 +2852,18 @@ public class AgreementDraft extends ResizeComposite implements
 			return;
 
 		for (int zoom = MIN_ZOOM; zoom < DEFAULT_ZOOM; zoom += ZOOM_STEP)
-			zoomListBox.addItem(PERCENT_FORMAT.format((double) zoom / 100),
-					Integer.toString(zoom));
+			zoomListBox.addItem(PERCENT_FORMAT.format((double) zoom / 100), Integer.toString(zoom));
 
-		zoomListBox.addItem(PERCENT_FORMAT.format((double) DEFAULT_ZOOM / 100),
-				Integer.toString(DEFAULT_ZOOM));
+		zoomListBox.addItem(PERCENT_FORMAT.format((double) DEFAULT_ZOOM / 100), Integer.toString(DEFAULT_ZOOM));
 		zoomListBox.setSelectedIndex(zoomListBox.getItemCount() - 1);
 
 		for (int zoom = DEFAULT_ZOOM + ZOOM_STEP; zoom <= MAX_ZOOM; zoom += ZOOM_STEP)
-			zoomListBox.addItem(PERCENT_FORMAT.format((double) zoom / 100),
-					Integer.toString(zoom));
+			zoomListBox.addItem(PERCENT_FORMAT.format((double) zoom / 100), Integer.toString(zoom));
 	}
 
 	private void initPreviewMonthListBox() {
-		previewMonthListBox.setHighLightMonths(agreementDraftObject
-				.getDatesWithChanges());
-		previewMonthListBox.setSelectedMonth(agreementDraftObject
-				.getStartDate());
+		previewMonthListBox.setHighLightMonths(agreementDraftObject.getDatesWithChanges());
+		previewMonthListBox.setSelectedMonth(agreementDraftObject.getStartDate());
 
 	}
 
@@ -2954,26 +2880,24 @@ public class AgreementDraft extends ResizeComposite implements
 		Type type = getType();
 		int levelId = getLevelId();
 
-		agreementDraftObject.preview(levelId, type, zoom,
-				new AsyncCallback<String>() {
+		agreementDraftObject.preview(levelId, type, zoom, new AsyncCallback<String>() {
 
-					@Override
-					public void onSuccess(String html) {
-						printPreviewHTML.setHTML(html);
-					}
+			@Override
+			public void onSuccess(String html) {
+				printPreviewHTML.setHTML(html);
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Almost auto-generated method stub
-						printPreviewHTML.setText(caught.getMessage());
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Almost auto-generated method stub
+				printPreviewHTML.setText(caught.getMessage());
 
-					}
-				});
+			}
+		});
 
 	}
 
-	private static DateTimeFormat YEAR_MONTH_NUM_DAY_FORMAT = DateTimeFormat
-			.getFormat("d/M/y");
+	private static DateTimeFormat YEAR_MONTH_NUM_DAY_FORMAT = DateTimeFormat.getFormat("d/M/y");
 	private static DateTimeFormatRenderer YEAR_MONTH_NUM_DAY_RENDERER = new DateTimeFormatRenderer(
 			YEAR_MONTH_NUM_DAY_FORMAT);
 	private static Parser<Date> YEAR_MONTH_NUM_DAY_PARSER = new Parser<Date>() {
@@ -2986,13 +2910,13 @@ public class AgreementDraft extends ResizeComposite implements
 
 		};
 	};
-	
+
 	private static class DateBox extends ValueBox<Date> {
 
 		public DateBox(Renderer<Date> renderer, Parser<Date> parser) {
 			super(Document.get().createTextInputElement(), renderer, parser);
 		}
-		
+
 	}
 
 	private Panel newExtraDatePanel(ValueBox<Date> dateBox, Button button) {
@@ -3014,8 +2938,8 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private ValueBox<Date> newDateBox() {
-//		return ValueBox.wrap(Document.get().createTextInputElement(),
-//				YEAR_MONTH_NUM_DAY_RENDERER, YEAR_MONTH_NUM_DAY_PARSER);
+		// return ValueBox.wrap(Document.get().createTextInputElement(),
+		// YEAR_MONTH_NUM_DAY_RENDERER, YEAR_MONTH_NUM_DAY_PARSER);
 		return new DateBox(YEAR_MONTH_NUM_DAY_RENDERER, YEAR_MONTH_NUM_DAY_PARSER);
 	}
 
@@ -3087,8 +3011,7 @@ public class AgreementDraft extends ResizeComposite implements
 				MenuBar menuBar = new MenuBar(true);
 
 				for (String var : agreementDraftObject.getVariables())
-					menuBar.addItem(var, new HideVariableCommad(var, popup))
-							.addStyleName("aon-MenuItemCheckYes");
+					menuBar.addItem(var, new HideVariableCommad(var, popup)).addStyleName("aon-MenuItemCheckYes");
 
 				for (String var : agreementDraftObject.getHiddenVariables())
 					menuBar.addItem(var, new ShowVariableCommad(var, popup));
@@ -3098,8 +3021,7 @@ public class AgreementDraft extends ResizeComposite implements
 				popup.setAutoHideEnabled(true);
 
 				final int left = viewButton.getAbsoluteLeft();
-				final int top = viewButton.getAbsoluteTop()
-						+ viewButton.getOffsetHeight();
+				final int top = viewButton.getAbsoluteTop() + viewButton.getOffsetHeight();
 				popup.setPopupPositionAndShow(new PositionCallback() {
 					@Override
 					public void setPosition(int offsetWidth, int offsetHeight) {
@@ -3110,42 +3032,51 @@ public class AgreementDraft extends ResizeComposite implements
 		});
 		return viewButton;
 	}
+
+
+
+	private boolean isEditable() {
+		return agreementDraftObject.isMine() || !agreementDraftObject.isSystem();
+	}
+	
+	private void setReadOnly ( ListBox listBox, boolean readOnly ){
+		if ( !readOnly )
+			return;
+		
+		FlexTable table = (FlexTable)listBox.getParent();
+		
+		for ( int row = 0; row < table.getRowCount(); row++ ){
+			for ( int col = 0; col < table.getCellCount(row); col++ ){
+				if ( listBox == table.getWidget(row, col) ){
+					TextBox textBox = new TextBox();
+					textBox.setText(listBox.getSelectedItemText());
+					textBox.setReadOnly(readOnly);
+					
+					String styleName = listBox.getStyleName();
+					String gwtListBox = listBox.getStylePrimaryName();
+					styleName = styleName.replace(gwtListBox, "");
+					if ( styleName.trim().length() > 0 )
+						textBox.addStyleName(styleName);
+					
+					table.setWidget(row, col, textBox);
+					
+					return;
+				}
+			}
+		}
+		
+	}
 	
 	// ------------------------------------------------------------------------
 
-	private static <T extends Item<?>> boolean  isRemove(T item) {
+	private static <T extends Item<?>> boolean isRemove(T item) {
 		return StringUtils.equalsIgnoreCase("REMOVE()", item.getExpression());
 	}
 
-	private static void addStyle(FlexTable table, int row , String style) {
+	private static void addStyle(FlexTable table, int row, String style) {
 		CellFormatter fomatter = table.getCellFormatter();
 		for (int col = 0; col < table.getCellCount(row); col++)
 			fomatter.addStyleName(row, col, style);
 	}
-	
-	public void disableEdition() {
-		disable(false, deckPanel);
-		disable(false, draftScrollPane);
-		disable(false, printPreviewPanel);
-		disable(false, salaryTable);
-		disable(false, paymentsTable);
-		disable(false, extrasTable);
-	}
-	
-	private void disable(boolean enable, Widget widget) {
-		
-		if(widget instanceof HasWidgets) {
-			Iterator<Widget> iterator = ((HasWidgets)widget).iterator();
-			while(iterator.hasNext()) {
-				Widget next = iterator.next();
-				disable(enable, next);
-				if(next instanceof FocusWidget) {					
-					((FocusWidget) next).setEnabled(false);
-				}
-				if(next instanceof TextBox) {					
-					((TextBox) next).setReadOnly(true);
-				}
-			}
-		}
-	}
+
 }

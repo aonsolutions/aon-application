@@ -46,6 +46,14 @@ public class PaymentDialog extends CustomDialog {
 	public void setMonth(Short month) {
 		payment.setMonth(month);
 	}
+	
+	public String getName() {
+		return payment.getName();
+	}
+
+	public void setName(String name) {
+		payment.setName(name);
+	}
 
 	public String getPaymentExpression() {
 		return payment.getExpression();
@@ -119,6 +127,8 @@ public class PaymentDialog extends CustomDialog {
 		this.cb = cb;
 		super.show();
 	}
+	
+	
 	
 	// ------------------------------------------------------------------------
 	//

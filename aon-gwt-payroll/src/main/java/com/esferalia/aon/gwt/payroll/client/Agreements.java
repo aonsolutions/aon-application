@@ -190,7 +190,8 @@ public class Agreements extends ResizeComposite implements
 		}
 
 		List<ImageResource> marks = new ArrayList<ImageResource>();
-		if (NumberUtils.notEquals(domain, agreement.getDomain()))
+		if (NumberUtils.notEquals(0, agreement.getDomain()) 
+				&& NumberUtils.notEquals(domain, agreement.getDomain()) )
 			marks.add(IMAGES.parent());
 
 		TreeItem treeItem = new TreeItem(AgreementsTree.imageItemSafeHtml(description,

@@ -391,6 +391,8 @@ public class JooqEmployees {
 
 			Agreement agreement = new Agreement();
 			agreement.setId(record.getValue(AGREEMENT.ID));
+			agreement.setDomain(record
+					.getValue(AGREEMENT.DOMAIN));
 			agreement.setDescription(record
 					.getValue(AGREEMENT.DESCRIPTION));
 

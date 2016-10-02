@@ -58,7 +58,7 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 
 	private static final ImageResource RESOURCES[][][] = {
 			{ { IMAGES.agreement(), IMAGES.agreement_warn() },
-					{ IMAGES.agreement_error(), IMAGES.agreement_error() } },
+				{ IMAGES.agreement_error(), IMAGES.agreement_error() } },
 			{
 					{ IMAGES.agreement_changed(),
 							IMAGES.agreement_changed_warn() },
@@ -240,7 +240,9 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 	}
 	
 	public static ImageResource getImageResource(Agreement agreement) {
-		return RESOURCES[0][0][agreement.hasLevelsWithoutCategories() ? 1 : 0];
+		return agreement.getDomain() == 0 ?
+				IMAGES.logo() :
+				RESOURCES[0][0][agreement.hasLevelsWithoutCategories() ? 1 : 0];
 	}
 
 	public static class OverlayImagesImpl {
