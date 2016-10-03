@@ -1848,6 +1848,7 @@ public class Mod131DAO extends FiscalModelDAO {
 				FiscalActivityDAO.getActivities(ctx, mod.getDomain())
 				.filter( fa -> fa.getYear() == mod.getYear() )
 				.map( new Mod131ActivityFiller() )
+				.filter( act -> act != null )
 				.peek( act -> act
 						.setYear(mod.getYear())
 						.setPeriod(mod.getPeriod())
