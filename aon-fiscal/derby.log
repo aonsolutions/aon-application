@@ -1,10 +1,10 @@
 ----------------------------------------------------------------
-Mon Mar 07 17:51:45 CET 2016:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.9.1.0 - (1344872): instance a816c00e-0153-51fd-dd90-0000071e3d38 
+Mon Oct 03 16:23:52 CEST 2016:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.9.1.0 - (1344872): instance a816c00e-0157-8aed-f0a9-000007445140 
 on database directory classpath:aeat/Modulos in READ ONLY mode with class loader sun.misc.Launcher$AppClassLoader@4e0e2f2a 
 Loaded from file:/home/ecastellano/.m2/repository/org/apache/derby/derby/10.9.1.0/derby-10.9.1.0.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.8.0_72-b16
+java.runtime.version=1.8.0_102-b14
 user.dir=/home/ecastellano/workspace/aon.parent/aon-fiscal
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''

@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
+import com.esferalia.aon.payroll.calculator.Main;
 
 public class Modules implements Serializable {
 	
@@ -329,4 +330,29 @@ public class Modules implements Serializable {
 		throw new IllegalArgumentException("Ejercicio no soportado");
 	}
 	
+	public static void main(String[] args) throws AonException {
+		Modules modules = new Modules();
+		for (Sector sector : modules.getSectors(false)) {
+			for (Epigrafe epi: modules.getEpigrafes(sector.getId())) {
+				
+				if ("972.2".equals(epi.getCode())) {
+					System.out.println(  
+						" - " + sector.getVatPercent() 
+						+" - " + sector.getCuotamin()
+						+" - " + sector.getMaxPerson()
+						+" - " + sector.getMaxImport()
+					
+	);
+					System.out.println( "SECTOR ..: " + epi.getSector() );
+					for (Mod mod: modules.getIRPFMods(epi)) {
+						System.out.println( "IRPF: " + mod.getId() );	
+					}
+					for (Mod mod: modules.getIVAMods(epi)) {
+						System.out.println( "IVA : " + mod.getId() );	
+					}
+				}
+			}
+		}
+		
+	}
 }
