@@ -5,11 +5,11 @@ import static com.code.aon.ui.common.ICommonMessages.ADDRESS;
 import static com.code.aon.ui.common.ICommonMessages.ALIAS;
 import static com.code.aon.ui.common.ICommonMessages.BANK;
 import static com.code.aon.ui.common.ICommonMessages.BANK_ACCOUNT;
+import static com.code.aon.ui.common.ICommonMessages.BIRTH_DATE;
 import static com.code.aon.ui.common.ICommonMessages.BLOCKED;
 import static com.code.aon.ui.common.ICommonMessages.CELLULAR;
 import static com.code.aon.ui.common.ICommonMessages.COMMENT;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_NAME;
-import static com.code.aon.ui.common.ICommonMessages.DATE;
 import static com.code.aon.ui.common.ICommonMessages.DOCUMENT;
 import static com.code.aon.ui.common.ICommonMessages.ENTITY;
 import static com.code.aon.ui.common.ICommonMessages.FAX;
@@ -357,8 +357,8 @@ public class RegistryController extends BasicController {
 		String accountJoin = " LEFT OUTER JOIN account acc ON c.account = acc.id";
 		String sellerJoin = " LEFT OUTER JOIN rseller rsl ON rsl.registry = r.id"
 				+" LEFT OUTER JOIN seller sl ON rsl.seller = sl.registry";
-		String personJoin = " INNER JOIN person p ON c.registry = p.registry";
-		String rnoteJoin = " INNER JOIN rnote rn ON c.registry = rn.registry AND rn.note_type = "+NoteType.OBSERVATION.ordinal();
+		String personJoin = " LEFT OUTER JOIN person p ON c.registry = p.registry";
+		String rnoteJoin = " LEFT OUTER JOIN rnote rn ON c.registry = rn.registry AND rn.note_type = "+NoteType.OBSERVATION.ordinal();
 		return " FROM " + masterTable +" c"
 			+" INNER JOIN registry r ON r.id = c.registry"
 			+ (!"com.code.aon.seller.Seller".equals(getPojo())?scopeJoin:"")
@@ -422,7 +422,7 @@ public class RegistryController extends BasicController {
 		+",rpm.days_to_first_pymnt `" + AonUtil.getMessage(REGISTRY_DAYS_TO_FIRST_PAYMENT) + "`"
 		+",rpm.days_between_pymnts `" + AonUtil.getMessage(REGISTRY_DAYS_BETWEEN_PAYMENTS) + "`"
 		+",rpm.pymnt_days `" + AonUtil.getMessage(REGISTRY_PAYMENT_DAYS) + "`"
-		+("com.code.aon.customer.Customer".equals(getPojo())?",p.birth_date `" + AonUtil.getMessage(DATE) + "`":"")
+		+("com.code.aon.customer.Customer".equals(getPojo())?",p.birth_date `" + AonUtil.getMessage(BIRTH_DATE) + "`":"")
 		+("com.code.aon.customer.Customer".equals(getPojo())?",rn.comments `" + AonUtil.getMessage(COMMENT) + "`":"")
 		;
 	}
