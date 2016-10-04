@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 
 public interface IOffice {
 
@@ -72,5 +73,6 @@ public interface IOffice {
 	
 	public NotificationInfo getNotificationInfo(AONContext ctx);
 	public void insertNotificationInfo(AONContext ctx, NotificationInfo notificationInfo);
+	public void insertNotificationInfo(AONContext ctx, String data, AppParam appParam);
 
 }

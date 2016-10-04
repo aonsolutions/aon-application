@@ -315,6 +315,20 @@ public class Incidence extends Methods{
 		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/registries?filter=" + value,callback);
 	}
 	
+	//-------------------- NOTIFICATIONS
+	
+	public void getNotificationInfo(AsyncCallback<JSON<JsNotify>> callback){
+		get(url + "notification/"+ getOrganizationName() + "/" + getRepositoryName(), callback);
+	}	
+	
+	public void updateNotificationInfo(String requestData){
+		post(url + "notification/"+ getOrganizationName() + "/" + getRepositoryName() + "/configuration", requestData);
+	}
+
+	public void sendNotification(JsIssue issue, String requestData){
+		post(url + "notification/"+ getOrganizationName() + "/" + getRepositoryName(), requestData);
+	}
+		
 	//---------------------- Métodos Get & Set
 	
 	public String getUrl() {

@@ -45,6 +45,12 @@ public class SecurityImpl implements ISecurity {
 		}
 		
 		@Override
+		public Signature getSignature(AONContext ctx, SignatureFilter filter) {
+			return ctx.getDslContext().transactionResult(
+					Configuration -> SecurityDAO.getSignature(ctx, filter));
+		}
+		
+		@Override
 		public LinkedList<Signature> getSignatureList(AONContext ctx, SignatureFilter filter) {
 			return ctx.getDslContext().transactionResult(
 					Configuration -> SecurityDAO.getSignatureList(ctx, filter));

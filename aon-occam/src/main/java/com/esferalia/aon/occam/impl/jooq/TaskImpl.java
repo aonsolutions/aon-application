@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ITask;
+import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Task;
@@ -95,6 +96,12 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
+	public TaskComment getLastTaskComment(AONContext ctx, Integer taskId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.getLastTaskComment(ctx, taskId));	
+	}
+	
+	@Override
 	public TaskComment createTaskComment(AONContext ctx, TaskComment taskComment, Integer taskId) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.createTaskComment(ctx, taskComment, taskId));	
@@ -110,6 +117,18 @@ public class TaskImpl implements ITask {
 	public TaskEvent getTaskEvent(AONContext ctx, Integer taskEventId) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.getTaskEvent(ctx, taskEventId));	
+	}
+	
+	@Override
+	public TaskEvent getLastTaskEvent(AONContext ctx, Integer taskId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.getLastTaskEvent(ctx, taskId));	
+	}
+	
+	@Override
+	public TaskEvent getTaskEvent(AONContext ctx, TaskEventFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.getTaskEvent(ctx, filter));	
 	}
 
 	@Override

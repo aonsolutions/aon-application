@@ -10,19 +10,21 @@ import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
+import com.esferalia.aon.occam.api.model.task.TaskComment;
+import com.esferalia.aon.occam.api.model.task.TaskEvent;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 public class DBConsults {
+	
 	public static DBConsults getInstance() {
 		return new DBConsults();
 	}
 	
-	public LinkedList<Task> getTaskList(Domain domain, String login, IssueFilter filter){
-		return AON.getTaskList(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()), filter);
-	}
+	//-------------------- TASK
 	
-	public Stream<Task> getTaskStream(Domain domain, String login, IssueFilter filter){
-		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()), filter);
+	public Integer getTaskId(Domain domain, String login, Integer number){
+		return AON.getTask(domain.getName(), domain.getId(), login, f-> f.getNumberProperty().eq(number).and(f.getDomainProperty().eq(domain.getId()))).getId();
 	}
 	
 	public Task getTask(Domain domain, String login, Integer id){
@@ -33,9 +35,23 @@ public class DBConsults {
 		return AON.getTask(domain.getName(), domain.getId(), login, f-> f.getNumberProperty().eq(number).and(f.getDomainProperty().eq(domain.getId())));
 	}
 	
-	public Integer getTaskId(Domain domain, String login, Integer number){
-		return AON.getTask(domain.getName(), domain.getId(), login, f-> f.getNumberProperty().eq(number).and(f.getDomainProperty().eq(domain.getId()))).getId();
+	public Stream<Task> getTaskStream(Domain domain, String login, IssueFilter filter){
+		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()), filter);
 	}
+	
+	public LinkedList<Task> getTaskList(Domain domain, String login, IssueFilter filter){
+		return AON.getTaskList(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()), filter);
+	}
+	
+	public void updateTaskDescription(Domain domain, String login, Task task){
+		AON.updateTaskDescription(domain.getName(), domain.getId(),login, task);
+	}
+	
+	public void updateTaskPriority(Domain domain, String login, Task task){
+		AON.updateTaskPriority(domain.getName(), domain.getId(),login, task);
+	}
+	
+	//-------------------- TAG
 
 	public Integer getTagId(Domain domain, String login, String name, TagType tagType){
 		return AON.getTag(domain.getName(), domain.getId(), login, f-> f.getNameProperty().eq(name).and(f.getDomainProperty().eq(domain.getId()))
@@ -47,25 +63,63 @@ public class DBConsults {
 				.and(f.getTypeProperty().eq(tagType.value())));
 	}
 	
-	public User getUser(Domain domain, String login){
-		return AON.getUser(domain.getName(), domain.getId(), login);
+	public void deleteTag(Domain domain, String login, Tag tag){
+		AON.deleteTag(domain.getName(), domain.getId(), login, tag); 
 	}
 	
-	public void updateTaskDescription(Domain domain, String login, Task task){
-		AON.updateTaskDescription(domain.getName(), domain.getId(),login, task);
-	}
-	
-	public void updateTaskPriority(Domain domain, String login, Task task){
-		AON.updateTaskPriority(domain.getName(), domain.getId(),login, task);
-	}
-	
+	//-------------------- TASK_TAG
+
 	public void deleteTaskTag(Domain domain, String login, TaskTagFilter filter){
 		AON.deleteTaskTag(domain.getName(), domain.getId(), login, filter);
 	}
 	
-	public void deleteTag(Domain domain, String login, Tag tag){
-		AON.deleteTag(domain.getName(), domain.getId(), login, tag); 
+	//-------------------- USER
+	
+	public User getUser(Domain domain, String login){
+		return AON.getUser(domain.getName(), domain.getId(), login);
 	}
+	
+	//-------------------- TASK_EVENT
+
+	public TaskEvent getLastTaskEvent(Domain domain, String login, Integer taskId){
+		return AON.getLastTaskEvent(domain.getName(), domain.getId(), login, taskId);
+	}
+	
+	public TaskEvent getTaskEvent(Domain domain, String login, Integer taskEventId){
+		return AON.getTaskEvent(domain.getName(), domain.getId(), login, taskEventId);
+	}
+	
+	public Stream<TaskEvent> getTaskEventStream(Domain domain, String login, Integer taskId){
+		return AON.getTaskEventStream(domain.getName(), domain.getId(), login, taskId);
+	}
+	
+	public LinkedList<TaskEvent> getTaskEventList(Domain domain, String login, Integer taskId){
+		return AON.getTaskEventList(domain.getName(), domain.getId(), login, taskId);
+	}
+	
+	//-------------------- TASK_COMMENT
+
+	public TaskComment getLastTaskComment(Domain domain, String login, Integer taskId){
+		return AON.getLastTaskComment(domain.getName(), domain.getId(), login, taskId);
+	}
+	
+	public Stream<TaskComment> getTaskCommentStream(Domain domain, String login, Integer taskId){
+		return AON.getTaskCommentStream(domain.getName(), domain.getId(), login, taskId);
+	}
+	
+	public LinkedList<TaskComment> getTaskCommentList(Domain domain, String login, Integer taskId){
+		return AON.getTaskCommentList(domain.getName(), domain.getId(), login, taskId);
+	}
+
+	//-------------------- NOTIFICATION INFO
+	
+	public void  insertNotificationInfo(Domain domain, String login, String data, AppParam appParam){
+		AON.insertNotificationInfo(domain.getName(), domain.getId(), login, data, appParam);
+	}
+
+
+	
+	
 	
 	
 }

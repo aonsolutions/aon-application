@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
@@ -119,6 +120,7 @@ public class IssuePanel extends Composite{
 		initHeader(issue);
 		initLabels(issue);
 		initComments(issue);
+		initSendButton();
 	}
 	
 	
@@ -534,6 +536,7 @@ public class IssuePanel extends Composite{
 				commentTextArea.setText("");
 				printComment(result);
 				commentButton.setEnabled(false);
+				parent.sendNotification(issue, NotificationType.NEW_INFO);
 			}
 			@Override public void onFailure(Throwable caught) {}
 		});
@@ -556,6 +559,7 @@ public class IssuePanel extends Composite{
 				initHeader(result);
 				closedButton.setVisible(false);
 				reopenButton.setVisible(true);
+				parent.sendNotification(issue, NotificationType.CLOSE);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -573,6 +577,7 @@ public class IssuePanel extends Composite{
 				initHeader(result);
 				closedButton.setVisible(true);
 				reopenButton.setVisible(false);
+				parent.sendNotification(issue, NotificationType.REOPEN);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -920,4 +925,17 @@ public class IssuePanel extends Composite{
 		return arr + "]";
 	}
 	
+	//----------------------- SEND NOTIFICATION 
+	
+	private void initSendButton(){
+		sendButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				parent.sendNotification(issue, NotificationType.MANUAL);
+			}
+		});
+	}
+	
+
 }

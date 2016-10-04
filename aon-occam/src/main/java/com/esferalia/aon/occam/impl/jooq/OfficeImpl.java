@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO2;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
@@ -190,6 +191,12 @@ public class OfficeImpl implements IOffice {
 	public void insertNotificationInfo(AONContext ctx, NotificationInfo notificationInfo) {
 		ctx.getDslContext().transaction(configuration -> 
 				AonHubDAO.insertNotificationInfo(ctx, notificationInfo));	
+	}
+	
+	@Override
+	public void insertNotificationInfo(AONContext ctx, String data, AppParam appParam) {
+		ctx.getDslContext().transaction(configuration -> 
+				AonHubDAO.insertNotificationInfo(ctx, data, appParam));	
 	}
 	
 

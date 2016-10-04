@@ -104,8 +104,6 @@ public interface IDocumentAsync {
 
 	void copyLink(FileInfo doc, String l, AsyncCallback<String> callback);
 
-	void selectedMenu(Domain domain, AsyncCallback<Void> callback);
-
 	void clearOuts(String dialogCode, AsyncCallback<Void> callback);
 
 	void getAttachList(Vector<FileInfo> fileInfoList, AsyncCallback<LinkedList<Attach>> callback);

@@ -30,11 +30,10 @@ public class SelectedMenuController implements Serializable {
 	private static final String ON_MENU_RESET = "onMenuReset";
 	
 	private String lastMenuAction;
-	
-	private boolean document;
-	
+		
 	public void onMenuReset( ActionEvent event ) {
-		setLastMenuAction(null);
+		if(!getLastMenuAction().equals("gwt_issues") && !getLastMenuAction().equals("gwt_issues2"))
+			setLastMenuAction(null);
 	}
 
 	private String getLastMenuAction() {
@@ -93,9 +92,11 @@ public class SelectedMenuController implements Serializable {
 			return getLastMenuAction().equals("gwt_documents");
 		else return false;
 	}
-
-	public void setDocument(boolean document) {
-		this.document = document;
+	
+	public boolean isIssues() {
+		if(getLastMenuAction()!=null)
+			return getLastMenuAction().equals("gwt_issues");
+		else return false;
 	}
 	
 }

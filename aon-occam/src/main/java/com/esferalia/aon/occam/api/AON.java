@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
@@ -560,6 +561,18 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getSignature(ctx, signatureId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Signature getSignature(String domainName, Integer domainId,
+			String login, SignatureFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getSignature(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -1326,6 +1339,17 @@ public class AON {
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getOffice().insertNotificationInfo(ctx, notificationInfo);
+		} finally{
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static void insertNotificationInfo(String domainName, Integer domainId, String login,
+			String data, AppParam appParam){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getOffice().insertNotificationInfo(ctx, data, appParam);
 		} finally{
 			if(ctx != null) ctx.close();
 		}
@@ -2506,6 +2530,17 @@ public class AON {
 		}
 	}
 	
+	public static TaskComment getLastTaskComment(String domainName, Integer domainId, String login, Integer taskId) {
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getLastTaskComment(ctx, taskId);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	
 	public static Stream<TaskComment> getTaskCommentStream(String domainName, Integer domainId, String login, Integer taskId) {
 		AONContext ctx = null;
 		try{
@@ -2558,6 +2593,26 @@ public class AON {
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getTask().getTaskEvent(ctx, taskEventId);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static TaskEvent getTaskEvent(String domainName, Integer domainId, String login, TaskEventFilter filter) {
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskEvent(ctx, filter);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static TaskEvent getLastTaskEvent(String domainName, Integer domainId, String login, Integer taskId) {
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getLastTaskEvent(ctx, taskId);
 		} finally {
 			if(ctx != null) ctx.close();
 		}

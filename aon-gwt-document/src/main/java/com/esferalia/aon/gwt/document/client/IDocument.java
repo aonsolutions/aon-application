@@ -102,8 +102,6 @@ public interface IDocument extends RemoteService{
 	public Vector<FileInfo> insertFileMultiple(Domain domain, String dialogCode, FileInfo fi);
 	
 	public String copyLink(FileInfo doc,String l);
-		
-	public void selectedMenu(Domain domain);
 	
 	public void clearOuts(String dialogCode);
 	

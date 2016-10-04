@@ -107,6 +107,15 @@ public class Methods {
 		xhr.send(requestData);
 	}
 	
+	protected <T extends JavaScriptObject> void post(String url, String requestData) {
+		String requestUrl = makeRequestUrl(url);
+
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open(HTTP_POST, requestUrl);
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhr.send(requestData);
+	}
+	
 	protected <T extends JavaScriptObject> void post2(String url, String request,
 			AsyncCallback<T> callback) {
 

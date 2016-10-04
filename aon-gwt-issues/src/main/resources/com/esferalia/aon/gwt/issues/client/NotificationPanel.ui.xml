@@ -42,6 +42,7 @@
 </ui:style>
 
 <g:HTMLPanel>
+    <g:ScrollPanel>
     <g:VerticalPanel> 
     	<v:VaadinComboBox ui:field="emailComboBox" addStyleNames="{style.comboBox}"></v:VaadinComboBox>
     	<p:PaperToggleButton ui:field="logoToggle" addStyleNames="{style.toggle}">
@@ -56,8 +57,20 @@
 		</p:PaperToggleButton>
 		<p:PaperInput ui:field="bccInput" addStyleNames="{style.comboBox}"></p:PaperInput>
 		<v:VaadinComboBox ui:field="modeComboBox" addStyleNames="{style.comboBox}"></v:VaadinComboBox>
-		
+		<p:PaperToggleButton ui:field="notifyOpenToggle" addStyleNames="{style.toggle}">
+			Notificar al abrir
+		</p:PaperToggleButton>
+		<p:PaperToggleButton ui:field="notifyCloseToggle" addStyleNames="{style.comboBox}">
+		    Notificar al cerrar 
+		</p:PaperToggleButton>
+		<p:PaperToggleButton ui:field="notifyReopenToggle" addStyleNames="{style.comboBox}">
+		    Notificar al re-abrir 
+		</p:PaperToggleButton>
+		<p:PaperToggleButton ui:field="notifyCommentToggle" addStyleNames="{style.comboBox}">
+		    Notificar al comentar 
+		</p:PaperToggleButton>
 	</g:VerticalPanel>
+	</g:ScrollPanel>
 </g:HTMLPanel>
 
 </ui:UiBinder>

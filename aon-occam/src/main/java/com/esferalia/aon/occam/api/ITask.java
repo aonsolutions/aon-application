@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Task;
@@ -31,9 +32,13 @@ public interface ITask {
 
 	
 	public TaskComment getTaskComment(AONContext ctx, Integer taskCommentId);
+	public TaskComment getLastTaskComment(AONContext ctx, Integer taskId);
+
 	public TaskComment createTaskComment(AONContext ctx, TaskComment taskComment, Integer taskId);
 	public TaskComment updateTaskComment(AONContext ctx, TaskComment taskComment);
 	public TaskEvent getTaskEvent(AONContext ctx, Integer taskEventId);
+	public TaskEvent getLastTaskEvent(AONContext ctx, Integer taskId);
+	public TaskEvent getTaskEvent(AONContext ctx,TaskEventFilter filter);
 	public TaskEvent createTaskEvent(AONContext ctx, TaskEvent taskEvent, Integer taskId);
 	public TaskEvent updateTaskEvent(AONContext ctx, TaskEvent taskEvent, Integer taskEventId);
 	

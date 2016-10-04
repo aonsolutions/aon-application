@@ -86,7 +86,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -129,7 +128,7 @@ import gwtupload.client.MultiUploader;
 import gwtupload.client.SingleUploader;
 
 
-public class Documents extends Composite implements EntryPoint {
+public class Documents implements EntryPoint {
 	
 	private static final String SILENT = "silent";
 	private static final int DEFAULT_ZOOM = 130;
@@ -750,13 +749,9 @@ public class Documents extends Composite implements EntryPoint {
 	
 		GWT.<AonGwtDocumentResources> create(AonGwtDocumentResources.class).css().ensureInjected();
 		boolean silent = Boolean.parseBoolean(getParameter(GWT.getModuleName(), SILENT));
-		if ( ! silent ){
-			JsFileInfo.addOnBeforeUnloadHandler(this);
-			
+		if ( ! silent ){			
 			stack1 = new StackLayoutPanel(Unit.EM);
 			prueba2 = new HorizontalPanel();
-			exportReload(this);
-			exportPopup(this);
 		}
 		else {
 			// Inject rich styles
@@ -4180,56 +4175,10 @@ public class Documents extends Composite implements EntryPoint {
     	}
 	}-*/;
 	
-	public void reload(){
-		pop = new PopupPanel();
-		pop.setStyleName("aon-outputConnectionStatus-start");
-		pop.setPopupPosition(25, 5);
-		pop.show();
-		idoc.getAllFiles(getDomain(),new AsyncCallback<Document>() {
-			
-			@Override
-			public void onSuccess(Document result) {
-				reset();
-				pop.hide();		
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				String head = "com.esferalia.aon.gwt.document.client.Documents"
-						+ " - reload() - getAllFiles";
-				print(head, caught.getMessage());
-			}
-		});	
+	public void remove() {
+		splitLayoutPanel.removeFromParent();
 	}
 
-	public static native void exportReload(Documents thiz) /*-{
-    	$wnd.reloadDocumental = function() {
-    		thiz.@com.esferalia.aon.gwt.document.client.Documents::reload(*)();
-    	}
-	}-*/;
-	
-	public void popup(){}
-
-	public static native void exportPopup(Documents thiz) /*-{
-    	$wnd.popup = function() {
-    		thiz.@com.esferalia.aon.gwt.document.client.Documents::popup(*)();
-    	}
-	}-*/;
-	
-	public void selectedMenu(){
-		idoc.selectedMenu(getDomain(), new AsyncCallback<Void>() {
-			@Override
-			public void onSuccess(Void result) {}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				String head = "com.esferalia.aon.gwt.document.client.Documents"
-						+ " - selectedMenu() - selectedMenu";
-				print(head, caught.getMessage());
-			}
-		});
-	}
-	
 	
 	private Domain getDomain(){
 		return new Domain().setId(getCurrentDomain()).setName(getCurrentDomainName());

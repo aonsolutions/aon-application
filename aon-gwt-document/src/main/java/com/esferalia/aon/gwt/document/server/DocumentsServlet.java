@@ -14,11 +14,9 @@ import java.sql.Date;
 import java.text.Collator;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 import java.util.function.Function;
@@ -39,8 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.util.AonFile;
-import com.code.aon.faces.controller.IRichConstants;
-import com.code.aon.faces.controller.SelectedMenuController;
 import com.code.aon.google.apis.DriveFile;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.google.apis.GmailUtils;
@@ -109,7 +105,6 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 	public static Boolean serviconvenios;
 	public static byte[] out;
 	Boolean confidential;
-	Map<Integer, SelectedMenuController> smc = new HashMap<Integer, SelectedMenuController>();
 	
 	public static Boolean getServiconvenios() {
 		return serviconvenios;
@@ -160,7 +155,6 @@ public class DocumentsServlet extends AonRemoteServiceServlet implements IDocume
 			Vector<Boolean> v = new Vector<Boolean>();
 			Init init = new Init();
 			init.setDomainId(domain.getId());
-			smc.put(domain.getId(),(SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME));		
 			confidential = AonUtil.getRoleManager().isConfidentiality();
 			Boolean documentManager = AonUtil.getRoleManager().isDocumentManager();
 			v.add(documentManager);
@@ -1467,11 +1461,6 @@ public Vector<FileInfo> insertFileMultiple(Domain domain, String dialogCode, Fil
 	public Boolean isParent(Domain domain, Integer parent){
 		Integer par = DBConsults.getDomainParent(domain, getUser());
 		return par != null && par == parent;
-	}
-	
-	public void selectedMenu(Domain domain){
-		System.out.println(smc.size());
-		smc.get(domain.getId()).setLastMenuAction(null);
 	}
 	
 	public LinkedList<Attach>  getAttachList(Vector<FileInfo> fileInfoList){

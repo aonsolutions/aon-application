@@ -119,7 +119,8 @@ public class TagPanel extends Composite {
 					}
 				});
 				typeSelector.add(pib);
-				collapse2.toggle();
+				if(!collapse2.getOpened())
+					collapse2.toggle();
 			}
 			
 			@Override
@@ -203,7 +204,8 @@ public class TagPanel extends Composite {
 					}
 				});
 				tagSelector.add(pib);
-				collapse3.toggle();
+				if(!collapse3.getOpened())
+					collapse3.toggle();
 			}
 			
 			@Override

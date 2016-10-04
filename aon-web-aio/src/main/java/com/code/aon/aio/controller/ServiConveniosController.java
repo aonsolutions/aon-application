@@ -35,4 +35,9 @@ public class ServiConveniosController implements Serializable {
 		setServiConvenios(false);
 	}
 	
+	public void onIssues(ActionEvent event){
+		SelectedMenuController smc = (SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME);
+		smc.setLastMenuAction("gwt_issues");
+	}
+	
 }

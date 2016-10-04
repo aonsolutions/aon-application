@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
 import com.esferalia.aon.gwt.issues.shared.AonData;
+import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -297,6 +298,7 @@ public class Issues implements EntryPoint {
 						contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
 						contentDockLayoutPanel.add(new IssuePanel(me, incidence, result));
 						dockLayoutPanel.add(contentDockLayoutPanel);
+						sendNotification(result, NotificationType.OPEN);
 					}
 					@Override
 					public void onFailure(Throwable caught) {}
@@ -305,4 +307,12 @@ public class Issues implements EntryPoint {
 		};
 	}
 	
+	public void sendNotification(JsIssue issue, NotificationType notificationType) {
+		String r= "{\"notification_type\":\""+notificationType.value() +"\"}";
+		incidence.sendNotification(issue, r);
+	}
+
+	public void remove(){
+		dockLayoutPanel.removeFromParent();
+	}
 }

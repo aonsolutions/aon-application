@@ -30,8 +30,10 @@ import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
+import com.esferalia.aon.occam.api.model.Properties.TaskEventProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
 import com.esferalia.aon.occam.api.model.Task;
@@ -49,6 +51,7 @@ public class TaskDAO {
 	
 	private static final TaskPropertiesDAO TASK_PROPERTIES = new TaskPropertiesDAO();
 	private static final TaskTagPropertiesDAO TASK_TAG_PROPERTIES = new TaskTagPropertiesDAO();
+	private static final TaskEventPropertiesDAO TASK_EVENT_PROPERTIES = new TaskEventPropertiesDAO();
 
 	protected static class TaskTagPropertiesDAO implements TaskTagProperties {
 		protected Condition[] getConditions(TaskTagFilter filter) {
@@ -61,6 +64,22 @@ public class TaskDAO {
 		@Override public Property<Integer> getTagProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_TAG.TAG);}
 		@Override public Property<Integer> getTaskProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_TAG.TASK);}
 		
+	}
+	
+	protected static class TaskEventPropertiesDAO implements TaskEventProperties {
+		protected Condition[] getConditions(TaskEventFilter filter) {	
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_EVENT.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_EVENT.DOMAIN);}
+		@Override public Property<Integer> getTaskProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_EVENT.TASK);}
+		@Override public Property<String> getEventProperty() {return new FilterDAO.PropertyDAO<String>(TASK_EVENT.EVENT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK_EVENT.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK_EVENT.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK_EVENT.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK_EVENT.MODIFICATION_DATE);}
 	}
 	
 	protected static class TaskPropertiesDAO implements TaskProperties {
@@ -241,6 +260,13 @@ public class TaskDAO {
 			.where(TASK_COMMENT.ID.eq(taskCommentId))
 			.fetchInto(TASK_COMMENT).stream().map(new FullTaskCommentFiller()).findFirst().orElse(new TaskComment());
 	}
+	
+	public static TaskComment getLastTaskComment(AONContext ctx, Integer taskId) {
+		return ctx.getDslContext().select()
+				.from(TASK_COMMENT)
+				.where(TASK_COMMENT.TASK.eq(taskId)).orderBy(TASK_COMMENT.ID.desc()).limit(1)
+				.fetchInto(TASK_COMMENT).stream().map(new FullTaskCommentFiller()).findFirst().orElse(new TaskComment());
+	}
 
 	public static TaskComment createTaskComment(AONContext ctx, TaskComment taskComment, Integer taskId) {
 		Integer id = ctx.getDslContext().insertInto(TASK_COMMENT, TASK_COMMENT.COMMENT, TASK_COMMENT.CREATION_DATE, TASK_COMMENT.DOMAIN, TASK_COMMENT.TASK, TASK_COMMENT.MODIFICATION_DATE,
@@ -264,6 +290,20 @@ public class TaskDAO {
 		return ctx.getDslContext().select()
 				.from(TASK_EVENT)
 				.where(TASK_EVENT.ID.eq(taskEventId))
+				.fetchInto(TASK_EVENT).stream().map(new FullTaskEventFiller()).findFirst().orElse(new TaskEvent());
+	}
+	
+	public static TaskEvent getLastTaskEvent(AONContext ctx, Integer taskId) {
+		return ctx.getDslContext().select()
+				.from(TASK_EVENT)
+				.where(TASK_EVENT.TASK.eq(taskId)).orderBy(TASK_EVENT.ID.desc()).limit(1)
+				.fetchInto(TASK_EVENT).stream().map(new FullTaskEventFiller()).findFirst().orElse(new TaskEvent());
+	}
+	
+	public static TaskEvent getTaskEvent(AONContext ctx, TaskEventFilter filter) {
+		return ctx.getDslContext().select()
+				.from(TASK_EVENT)
+				.where(TASK_EVENT_PROPERTIES.getConditions(filter))
 				.fetchInto(TASK_EVENT).stream().map(new FullTaskEventFiller()).findFirst().orElse(new TaskEvent());
 	}
 

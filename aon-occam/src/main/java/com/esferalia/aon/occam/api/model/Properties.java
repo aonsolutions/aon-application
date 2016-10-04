@@ -438,18 +438,21 @@ public interface Properties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getTaskProperty();
-		Property<Integer> getRegistryProperty();
 		Property<String> getCommentProperty();
-		Property<Date> getCreateDateProperty();
-		Property<Date> getUpdateteDateProperty();	
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Timestamp> getModificationDateProperty();	
 	}
 	
 	public interface TaskEventProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<Integer> getTaskProperty();
-		Property<Integer> getRegistryProperty();
 		Property<String> getEventProperty();
-		Property<Date> getCreateDateProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
 	}
 }

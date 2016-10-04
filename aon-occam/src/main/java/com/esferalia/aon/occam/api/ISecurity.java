@@ -19,6 +19,7 @@ public interface ISecurity {
 	
 	// SIGNATURE
 	public Signature getSignature(AONContext ctx, Integer signatureId);
+	public Signature getSignature(AONContext ctx, SignatureFilter filter);
 	public LinkedList<Signature> getSignatureList(AONContext ctx, SignatureFilter filter);
 
 	// MAIL ACCOUNT

@@ -316,6 +316,12 @@ public class SecurityDAO {
 				.stream().map(new FullSignatureFiller()).findFirst().orElse(new Signature());
 	}
 	
+	public static Signature getSignature(AONContext ctx, SignatureFilter filter){
+		return ctx.getDslContext().select().from(SIGNATURE)
+				.where(SIGNATURE_PROPERTIES.getConditions(filter)).limit(1).fetchInto(SIGNATURE)
+				.stream().map(new FullSignatureFiller()).findFirst().orElse(new Signature());
+	}
+	
 	public static LinkedList<Signature> getSignatureList(AONContext ctx, SignatureFilter filter){
 		return ctx.getDslContext().select().from(SIGNATURE)
 				.where(SIGNATURE_PROPERTIES.getConditions(filter)).fetchInto(SIGNATURE)
