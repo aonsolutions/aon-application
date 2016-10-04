@@ -303,8 +303,8 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	}
 
 	public List<Item> getProjectReservationRoomDetailItems(ProjectReservationRoom reservationRoom) throws ManagerBeanException {
-		Date startDate = reservationRoom.getProjectReservation().getStartDate();
-		return getProjectReservationRoomDetailItems(reservationRoom, startDate, reservationRoom.getProjectReservation().getEndDate());
+		ProjectReservation reservation = reservationRoom.getProjectReservation();
+		return getProjectReservationRoomDetailItems(reservationRoom, reservation.getStartDate(), reservation.getEndDate());
 	}
 
 	public List<Item> getProjectReservationRoomDetailItems(ProjectReservationRoom reservationRoom, Date startDate, Date endDate) throws ManagerBeanException {
@@ -334,6 +334,14 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	}
 
 	public List<Item> getProjectReservationRoomDetailItems(ProjectReservation reservation) throws ManagerBeanException {
+		return getProjectReservationRoomDetailItems(reservation, reservation.getStartDate());
+	}
+
+	public List<Item> getProjectReservationRoomDetailItems(ProjectReservation reservation, Date startDate) throws ManagerBeanException {
+		return getProjectReservationRoomDetailItems(reservation, startDate, reservation.getEndDate());
+	}
+
+	public List<Item> getProjectReservationRoomDetailItems(ProjectReservation reservation, Date startDate, Date endDate) throws ManagerBeanException {
 		List<Item> roomDetailItemIds = new LinkedList<Item>();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
 		Session session = HibernateUtil.getSession(sessionFactoryName);
@@ -346,8 +354,11 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 				" WHERE PRRD.projectReservationRoom.id = PRR.id" +
 				" AND PRR.projectReservation.id = " + reservation.getId() +
 				" AND PRRD.assetActivity.id = AA.id" +
+				" AND AA.date BETWEEN :start AND :end" +
 				" AND AA.asset.id = R.asset.id";
 		Query query = session.createQuery(hqlQuery);
+		query.setDate("start", startDate);
+		query.setDate("end", endDate);
 		for (Object obj : query.list()) {
 			if (!roomDetailItemIds.contains((Item)obj)) {
 				roomDetailItemIds.add((Item)obj);

@@ -42,6 +42,7 @@ import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.util.FinanceUtil;
+import com.code.aon.product.Item;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -60,6 +61,7 @@ import com.esferalia.aon.pms.invoicing.PenalizationInvoicing;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.invoicing.TotalSummaryTo;
+import com.esferalia.aon.pms.reservation.InventoryManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class EarlyCheckOutController implements IPmsConstants, Serializable {
@@ -603,7 +605,9 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 						penalizationInvoicing.agencyCheckOutInvoice(getReservationInvoiceTo(), getReservation());
 			    	}
 
-			    	getReservationUtils().releaseProjectReservationResources(getReservation(), true, getEarlyCheckOutDate());
+					List<Item> inventoryItems = getReservationUtils().getProjectReservationRoomDetailItems(getReservation(), getEarlyCheckOutDate());
+					getReservationUtils().releaseProjectReservationResources(getReservation(), true, getEarlyCheckOutDate());
+					sendInventoryData(getReservation(), inventoryItems, getEarlyCheckOutDate(), DateUtils.addDays(reservation.getEndDate(), -1));
 
 			    	if ((getReservation().isAgencyHolder() && getEarlyCheckOutPenaltyDays() >= 0) || (isPayCheckOut() && getReservationFinances().size() > 0)) {
 						ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
@@ -751,6 +755,13 @@ public class EarlyCheckOutController implements IPmsConstants, Serializable {
 		}
 		return false;
 	}
+
+    private void sendInventoryData(ProjectReservation reservation, List<Item> inventoryItems, Date startDate, Date endDate) throws ManagerBeanException {
+    	InventoryManager manager = new InventoryManager();
+		for (Item item : inventoryItems) {
+	    	manager.processInventoryQuery(reservation.getHotel(), item, reservation.getAllotmentRateCode(), startDate, endDate);
+		}
+    }
 
 	private String obtainHotelInvoiceSeries() throws ManagerBeanException {
 		List<SelectItem> seriesList = getHotelInvoiceSeries();

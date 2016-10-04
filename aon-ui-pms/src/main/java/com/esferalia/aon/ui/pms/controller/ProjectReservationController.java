@@ -708,7 +708,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		accept(event);
 
 		if (StringUtils.isEmpty(reservation.getCrsCode())) {
-			sendInventoryData(reservation, inventoryItems);
+			sendInventoryData(reservation, inventoryItems, reservation.getStartDate(), DateUtils.addDays(reservation.getEndDate(), -1));
 		}
 
 		IController reservationRoomController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
@@ -734,10 +734,10 @@ public class ProjectReservationController extends BasicController implements IPm
 		return penaltyDays;
 	}
 
-    private void sendInventoryData(ProjectReservation reservation, List<Item> inventoryItems) throws ManagerBeanException {
+    private void sendInventoryData(ProjectReservation reservation, List<Item> inventoryItems, Date startDate, Date endDate) throws ManagerBeanException {
     	InventoryManager manager = new InventoryManager();
 		for (Item item : inventoryItems) {
-	    	manager.processInventoryQuery(reservation.getHotel(), item, reservation.getAllotmentRateCode(), reservation.getStartDate(), reservation.getEndDate());
+	    	manager.processInventoryQuery(reservation.getHotel(), item, reservation.getAllotmentRateCode(), startDate, endDate);
 		}
     }
 
