@@ -32,7 +32,7 @@ public class SelectedMenuController implements Serializable {
 	private String lastMenuAction;
 		
 	public void onMenuReset( ActionEvent event ) {
-		if(!getLastMenuAction().equals("gwt_issues") && !getLastMenuAction().equals("gwt_issues2"))
+		if(!checkIssues(event.getComponent().getId()))
 			setLastMenuAction(null);
 	}
 
@@ -99,4 +99,23 @@ public class SelectedMenuController implements Serializable {
 		else return false;
 	}
 	
+	public boolean checkIssues(String id){
+		if(getLastMenuAction().equals("gwt_issues")){
+			switch (id) {
+			case "pendingAlarms": return false;
+			case "home": return false;
+			case "menu-quickIssue": return false;
+			case "alarm": return false;
+			case "favorites": return false;
+			case "advancedMode": return false;
+			case "config_userProfile": return false;
+			case "changePassword": return false;
+			case "webmap": return false;
+			case "spanishLanguage": return false;
+			case "englishLanguage": return false;
+			default: return true;	
+			}
+		}	
+		return false;
+	}
 }
