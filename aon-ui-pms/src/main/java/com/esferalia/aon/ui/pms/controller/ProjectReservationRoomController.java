@@ -161,10 +161,10 @@ public class ProjectReservationRoomController extends LinesController {
 			reservationUtils.updateProjectReservationRoomDetails(reservationRoom, startDate, endDate, availableRoom);
 	    	if (inventoryItems.size() > 1 || (inventoryItems.size() == 1 && !availableRoom.getItem().getId().equals(inventoryItems.get(0).getId()))) {
 	        	for (Item roomItem : inventoryItems) {
-		        	sendInventoryData(reservationRoom, reservationRoom.getHotel(), roomItem, startDate, endDate);
+		        	sendInventoryData(reservationRoom, reservationRoom.getHotel(), roomItem, startDate, DateUtils.addDays(endDate, -1));
 	        	}
 	        	if (!availableRoom.getHotel().getId().equals(reservationRoom.getHotel().getId()) || !inventoryItems.contains(availableRoom.getItem())) {
-		        	sendInventoryData(reservationRoom, availableRoom.getHotel(), availableRoom.getItem(), startDate, endDate);
+		        	sendInventoryData(reservationRoom, availableRoom.getHotel(), availableRoom.getItem(), startDate, DateUtils.addDays(endDate, -1));
 	        	}
 	    	}
 		}
@@ -194,7 +194,7 @@ public class ProjectReservationRoomController extends LinesController {
     private void sendInventoryData(ProjectReservationRoom reservationRoom, Hotel hotel, Item item, Date startDate, Date endDate) {
     	InventoryManager manager = new InventoryManager();
     	if (startDate != null && endDate != null) {
-        	manager.processInventoryQuery(reservationRoom, hotel, item, startDate, DateUtils.addDays(endDate, -1));
+        	manager.processInventoryQuery(reservationRoom, hotel, item, startDate, endDate);
     	} else if (hotel != null && item != null) {
         	manager.processInventoryQuery(reservationRoom, hotel, item);
     	} else {
