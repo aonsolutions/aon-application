@@ -8,8 +8,6 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<aon:div styleClass="aon-portlet aon-width-half" style="display: inline-block;">
-		<ui:include
-			src="/com/esferalia/aon/gwt/document/facelet/silent_documents.xhtml" />
 		<script type="text/javascript"
 			src="https://www.google.com/jsapi?callback=__gwt_AjaxLoader_onLoad"></script>
 		<script type="text/javascript">
@@ -78,11 +76,10 @@
 						-->
 						<c:set var="count" value="0" scope="page" />						
         				<c:forEach var="recent" items="#{dashboard.recentsFiles}" >
-        				
-    						data.addRow(['&lt;div style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{recent.date != null ? recent.date : "&amp;nbsp;"  } &lt;/div&gt;',
-							            "&lt;div style=\"cursor:pointer; text-align:left; \" onclick=\"preview(${count},recentsFiles)\" &gt; &lt;span class=\"#{recent.icon}\" style=\"padding-left: 20px;\" &gt;  &lt;/span&gt;#{recent.name} &lt;/div&gt;",
-						             	'&lt;div style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{( empty recent.category ) ? "&amp;nbsp;"  : recent.category }&lt;/div&gt;',
-						             	'&lt;div style="cursor:pointer;" onclick="preview(${count},recentsFiles)" &gt; #{( empty recent.sizeString ) ? "&amp;nbsp;" : recent.sizeString }&lt;/div&gt;']);
+    						data.addRow(['&lt;div style="cursor:pointer;"  &gt; #{recent.date != null ? recent.date : "&amp;nbsp;"  } &lt;/div&gt;',
+							            "&lt;div style=\"cursor:pointer; text-align:left; \" &gt; &lt;span class=\"#{recent.icon}\" style=\"padding-left: 20px;\" &gt;  &lt;/span&gt;#{recent.name} &lt;/div&gt;",
+						             	'&lt;div style="cursor:pointer;"  &gt; #{( empty recent.category ) ? "&amp;nbsp;"  : recent.category }&lt;/div&gt;',
+						             	'&lt;div style="cursor:pointer;"  &gt; #{( empty recent.sizeString ) ? "&amp;nbsp;" : recent.sizeString }&lt;/div&gt;']);
         					<c:set var="count" value="${count + 1}" scope="page"/>
 						</c:forEach>
 						
