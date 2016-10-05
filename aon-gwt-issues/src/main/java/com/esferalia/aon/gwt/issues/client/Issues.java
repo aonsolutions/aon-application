@@ -29,7 +29,9 @@ import com.vaadin.polymer.iron.IronListElement;
 import com.vaadin.polymer.paper.PaperDialogElement;
 import com.vaadin.polymer.paper.PaperIconButtonElement;
 import com.vaadin.polymer.paper.PaperInputElement;
+import com.vaadin.polymer.paper.PaperSliderElement;
 import com.vaadin.polymer.paper.PaperTextareaElement;
+import com.vaadin.polymer.paper.PaperToggleButtonElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperTextarea;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
@@ -80,8 +82,9 @@ public class Issues implements EntryPoint {
 				PaperDialogElement.SRC,
 				VaadinComboBoxElement.SRC,
 				PaperIconButtonElement.SRC,
-				IronListElement.SRC
-				
+				IronListElement.SRC,
+				PaperToggleButtonElement.SRC,
+				PaperSliderElement.SRC
 		));
 		
 		Polymer.whenReady(o -> {
@@ -308,7 +311,8 @@ public class Issues implements EntryPoint {
 	}
 	
 	public void sendNotification(JsIssue issue, NotificationType notificationType) {
-		String r= "{\"notification_type\":\""+notificationType.value() +"\"}";
+		String r= "{\"notification_type\":\""+notificationType.value() +"\","
+				+ "\"number\":\""+ issue.getNumber() +"\",}";
 		incidence.sendNotification(issue, r);
 	}
 

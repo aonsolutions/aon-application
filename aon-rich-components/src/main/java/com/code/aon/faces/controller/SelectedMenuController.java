@@ -100,7 +100,7 @@ public class SelectedMenuController implements Serializable {
 	}
 	
 	public boolean checkIssues(String id){
-		if(getLastMenuAction().equals("gwt_issues")){
+		if(getLastMenuAction() != null && getLastMenuAction().equals("gwt_issues")){
 			switch (id) {
 			case "pendingAlarms": return false;
 			case "home": return false;

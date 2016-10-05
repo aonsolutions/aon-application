@@ -48,6 +48,7 @@
     	<p:PaperToggleButton ui:field="logoToggle" addStyleNames="{style.toggle}">
     	     Incluir logo en la cabecera 
     	</p:PaperToggleButton>
+    	<p:PaperSlider ui:field="logoSlider" pin="true" max="100"></p:PaperSlider>
 		<v:VaadinComboBox ui:field="signComboBox" addStyleNames="{style.comboBox}"></v:VaadinComboBox>
 		<p:PaperToggleButton ui:field="commentHistoryToggle" addStyleNames="{style.toggle}">
 		     Incluir historial completo de comentarios 

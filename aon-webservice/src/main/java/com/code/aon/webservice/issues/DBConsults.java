@@ -5,6 +5,8 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -117,9 +119,24 @@ public class DBConsults {
 		AON.insertNotificationInfo(domain.getName(), domain.getId(), login, data, appParam);
 	}
 
-
+	public LinkedList<MailAccount> getMailAccountList(Domain domain, String login) {		
+		return AON.getMailAccountList(domain.getName(), domain.getId(), login, 
+				f -> (f.getUserIdProperty().isNull()).and(f.getDomainProperty().eq(domain.getId())));
+	}
 	
+	public MailAccount getMailAccount(Domain domain, String login, Integer mailAccountId) {
+		return AON.getMailAccount(domain.getName(), domain.getId(), login, 
+				f -> f.getIdProperty().eq(mailAccountId));
+	}
 	
+	public  String getSignature(Domain domain, String login, Integer signatureId){
+		return AON.getSignature(domain.getName(), domain.getId(), login, signatureId).getSignature();
+	}
+	
+	public  LinkedList<Signature> getSignatureList(Domain domain, String login){
+		return AON.getSignatureList(domain.getName(), domain.getId(), login,
+				f -> f.getUserIdProperty().isNull().and(f.getDomainProperty().eq(domain.getId())));
+	}
 	
 	
 }

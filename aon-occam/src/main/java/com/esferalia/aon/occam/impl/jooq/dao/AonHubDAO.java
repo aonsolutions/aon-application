@@ -1088,7 +1088,7 @@ public class AonHubDAO {
 				.setBcc(bcc.isNotEmpty() ? bcc.get(0).getValue() : "")
 				.setMode(mode.isNotEmpty() ?  Integer.parseInt(mode.get(0).getValue()): 1)
 				.setIsLogo(logo.isNotEmpty() ? logo.get(0).getValue().substring(0,1).equals("1"): true)
-				.setLogoPercentage(logo.isNotEmpty() ? Integer.parseInt(logo.get(0).getValue().substring(1)): 20);
+				.setLogoPercentage(logo.isNotEmpty() && logo.get(0).getId() != null ? Integer.parseInt(logo.get(0).getValue().substring(1)): 20);
 	}
 	
 	public static void insertNotificationInfo(AONContext ctx, String data, AppParam appParam){

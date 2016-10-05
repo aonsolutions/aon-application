@@ -24,6 +24,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,6 +37,7 @@ import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.task.NotificationMode;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -59,7 +61,9 @@ public class NotificationServlet extends HttpServlet{
 			Object object = new Object();
 						
 			NotificationInfo notificationInfo = AON.getNotificationInfo(domain.getName(), domain.getId(), userName);
-			object = notificationInfo2JSON(notificationInfo);
+			LinkedList<MailAccount> mailAccountList = DB.getMailAccountList(domain, userName);
+			LinkedList<Signature> signatureList = DB.getSignatureList(domain, userName);
+			object = notificationInfo2JSON(notificationInfo, mailAccountList, signatureList);
 				
 			String js = req.getParameter("callback");
 			if(js != null){
@@ -98,9 +102,9 @@ public class NotificationServlet extends HttpServlet{
 				updateNotificationInfo(domain, userName, json);
 			}
 		} else {
-			Integer number = 1;
+			Integer number = json.getInt("number");
+			NotificationType notificationType = NotificationType.values()[json.getInt("notification_type")];
 			Task task = DB.getTaskWithNumber(domain, userName, number);
-			NotificationType notificationType = NotificationType.OPEN;
 			NotificationInfo ni = buildNotificationInfo(domain, userName, task, notificationType);
 			LinkedList<NotificationInfo> list = buildNotificationInfoList(domain, userName, task, notificationType);
 			sendNotification(domain, userName, ni, list, notificationType);
@@ -160,10 +164,10 @@ public class NotificationServlet extends HttpServlet{
 			String status = "<b>ABIERTA</b>";
 			if((st.getNotificationType() != null && st.getNotificationType().equals(NotificationType.CLOSE))
 					|| type.equals(NotificationType.CLOSE)) 
-				status = "<b>CERRADA</b> el <b>"+ format.format(st.getDate()) +"</b>" ;
+				status = "<b>CERRADA</b> el <b>"+ format.format(notificationInfo.getDate()) +"</b>" ;
 			if((st.getNotificationType() != null && st.getNotificationType().equals(NotificationType.REOPEN)) 
 					|| type.equals(NotificationType.REOPEN))
-				status = "<b>REABIERTA</b> el <b>"+ format.format(st.getDate()) +"</b>" ;
+				status = "<b>REABIERTA</b> el <b>"+ format.format(notificationInfo.getDate()) +"</b>" ;
 				// title
 			msg = msg +"<p></p><table style='border: 1px solid #E5E5E5;table-layout: fixed;width: 100%;min-width: 625px;border-collapse: collapse;' cellpadding='0'><tbody>"
 					+"<tr><td style=\"background-color: #F6F6F6;color: #222;border: 1px solid #CCC;font-family: Arial,sans-serif; padding: 5px 21px 5px 21px;vertical-align: top;\">"
@@ -263,7 +267,7 @@ public class NotificationServlet extends HttpServlet{
 	
 	protected void sendPostHttpClient(String domainName, JSONObject json) {
 		try{
-			String url = "http://"+domainName+"/send_email/";
+			String url = "http://"+domainName+ "/send_email/";
 			System.out.println(url);
 			HttpClientBuilder base = HttpClientBuilder.create();
 			HttpClient client = base.build();
@@ -306,7 +310,9 @@ public class NotificationServlet extends HttpServlet{
 		NotificationInfo notificationInfo = new NotificationInfo().setTitle(task.getDescription())
 				.setNoticeId(task.getNumber())
 				.setCompanyName(enterprise.getName())
-				.setCreateDate(task.getStartDate());
+				.setCreateDate(task.getStartDate())
+				.setDate(task.getStartDate())
+				.setUserName(task.getCreationUser());
 		if(notificationType.equals(NotificationType.REOPEN) || notificationType.equals(NotificationType.CLOSE)){
 			TaskEvent taskEvent = DB.getLastTaskEvent(domain, login, task.getId());
 			notificationInfo.setUserName(taskEvent.getCreationUser())
@@ -329,8 +335,11 @@ public class NotificationServlet extends HttpServlet{
 		} else if(notificationType.equals(NotificationType.NEW_INFO)){
 			if(list2 != null && !list2.isEmpty()) list2.remove(0);
 		}
-			
+		
 		list1.addAll(list2);		
+		NotificationInfo open = new NotificationInfo().setDate(task.getStartDate()).setUserName(task.getCreationUser())
+				.setNotificationType(NotificationType.OPEN);
+		list1.add(open);
 		return list1;
 	}
 	
@@ -400,13 +409,14 @@ public class NotificationServlet extends HttpServlet{
 			if(json.getString("mode").equals("Estado de pruebas")) mode = "1";
 			else if(json.getString("mode").equals("Entorno de producción REAL")) mode = "2";
 			DB.insertNotificationInfo(domain, login, mode, AppParam.NOTICE_NOTIFICATION_MODE);
-		} else if(json.opt("logo") != null){
+		} else if(json.opt("logo") != null && json.opt("logo_percentage") != null){
 			String logo = json.getString("logo").equals("true")? "1": "0";
+			logo = logo + json.getString("logo_percentage");
 			DB.insertNotificationInfo(domain, login, logo, AppParam.NOTICE_NOTIFICATION_LOGO);
 		} else if(json.opt("commentHistory") != null && json.opt("statusHistory") != null){
 			String comment = json.getString("commentHistory").equals("true")? "1": "0";
 			String status = json.getString("statusHistory").equals("true")? "1": "0";
-			DB.insertNotificationInfo(domain, login, comment+status, AppParam.NOTICE_NOTIFICATION_AUTO);
+			DB.insertNotificationInfo(domain, login, comment+status, AppParam.NOTICE_NOTIFICATION_HISTORY);
 		} else if(json.opt("notifyOpen") != null && json.opt("notifyClose") != null 
 				&& json.opt("notifyReopen") != null && json.opt("notifyComment") != null){
 			String open = json.getString("notifyOpen").equals("true")? "1": "0";
@@ -423,7 +433,7 @@ public class NotificationServlet extends HttpServlet{
 	
 		@Override
 		public NotificationInfo apply(TaskEvent r) {
-			NotificationType nt = r.getEvent().equals("reopen") ? NotificationType.REOPEN : NotificationType.CLOSE;
+			NotificationType nt = r.getEvent().equals("reopened") ? NotificationType.REOPEN : NotificationType.CLOSE;
 			return new NotificationInfo()
 					.setNotificationType(nt)
 					.setDate(r.getCreationDate())
@@ -443,10 +453,13 @@ public class NotificationServlet extends HttpServlet{
 		}
 	}
 
-	private JSONObject notificationInfo2JSON(NotificationInfo notificationInfo){
+	private JSONArray notificationInfo2JSON(NotificationInfo notificationInfo, LinkedList<MailAccount> mailAccountList, LinkedList<Signature> signatureList){
 		JSONObject json = new JSONObject();
+		
 		json.put("mail", notificationInfo.getMailAccount() != null && notificationInfo.getMailAccount().getName() != null ? notificationInfo.getMailAccount().getName() : "");
+		json.put("sign", notificationInfo.getSignature() != null && notificationInfo.getSignature().getName() != null ? notificationInfo.getSignature().getName() : "");
 		json.put("logo", notificationInfo.getIsLogo() ? "1" : "0");
+		json.put("logo_percentage", notificationInfo.getLogoPercentage() != null ? notificationInfo.getLogoPercentage() : 20);
 		json.put("open", notificationInfo.getNotifyOpen() ? "1" : "0");
 		json.put("close", notificationInfo.getNotifyClose() ? "1" : "0");
 		json.put("reopen", notificationInfo.getNotifyReopen() ? "1" : "0");
@@ -454,9 +467,48 @@ public class NotificationServlet extends HttpServlet{
 		json.put("comment_history", notificationInfo.getCommentsHistory() ? "1" : "0");
 		json.put("status_history", notificationInfo.getStatusHistory() ? "1" : "0");
 		json.put("bcc", notificationInfo.getBcc() != null ? notificationInfo.getBcc() : "");
-		json.put("mode", notificationInfo.getMode());
-		return json;
+		json.put("mode", NotificationMode.values()[notificationInfo.getMode()].getName());
+		json.put("mail_account_list", mailAccountList2JSON(mailAccountList));
+		json.put("signature_list", signatureList2JSON(signatureList));
+		json.put("mode_list", modeList2JSON());
+		JSONArray array = new JSONArray();
+		array.put(json);
+		return array;
 	}
+	
+	private JSONArray mailAccountList2JSON(LinkedList<MailAccount> mailAccountList){
+		JSONArray array = new JSONArray();
+		mailAccountList.stream().forEach(ma -> {
+			JSONObject json = new JSONObject();
+			json.put("id",ma.getId());
+			json.put("name", ma.getName());
+			array.put(json);
+		});
+		return array;		
+	}	
+	
+	private JSONArray signatureList2JSON(LinkedList<Signature> signatureList){
+		JSONArray array = new JSONArray();
+		signatureList.stream().forEach(s -> {
+			JSONObject json = new JSONObject();
+			json.put("id",s.getId());
+			json.put("name", s.getName());
+			array.put(json);
+		});
+		return array;		
+	}	
+	
+	private JSONArray modeList2JSON(){
+		JSONArray array = new JSONArray();
+		for (NotificationMode mode : NotificationMode.values()) {
+			JSONObject json = new JSONObject();
+			json.put("id", mode.value());
+			json.put("name", mode.getName());
+			array.put(json);			
+		}
+		return array;		
+	}	
+	
 	
 	private String getMd5(String str){
 		MessageDigest md = null;
