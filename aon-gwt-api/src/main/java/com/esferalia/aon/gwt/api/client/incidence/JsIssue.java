@@ -121,4 +121,18 @@ public class JsIssue extends JavaScriptObject{
 	public final native JsUser getEnterprise() /*-{
 		return this.enterprise;
 	}-*/;
+	
+
+	public final native Boolean isClosed() /*-{
+		return this.is_closed;
+	}-*/;
+
+	public final native Boolean isOpen() /*-{
+		return this.is_open;
+	}-*/;
+
+	public final native Boolean isDeleted() /*-{
+		return this.is_deleted;
+	}-*/;
+
 }

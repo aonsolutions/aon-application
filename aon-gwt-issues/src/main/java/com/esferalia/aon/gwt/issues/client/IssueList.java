@@ -57,7 +57,7 @@ public class IssueList extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				JsIssue issue = issueList.getSelectedItem().cast();
-				if(issue != null){
+				if(issue != null && !issue.isDeleted()){
 					parent.contentDockLayoutPanel.removeFromParent();
 					AonToolbar t = (AonToolbar)parent.toolbar.getWidget(0);
 					t.setVisibleRefreshButton(false);

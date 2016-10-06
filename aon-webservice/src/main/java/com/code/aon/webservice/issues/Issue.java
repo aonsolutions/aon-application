@@ -298,7 +298,20 @@ public class Issue {
 		this.updatedAtHour = updatedAtHour;
 		return this;
 	}
+	
+	public Boolean isClosed() {
+		return getState().equals(TaskStatus.FINISHED.getGwtName());
+	}
+	
+	public Boolean isOpen() {
+		return getState().equals(TaskStatus.IN_PROGRESS.getGwtName())
+			|| getState().equals(TaskStatus.PENDING.getGwtName());
+	}
 
+	public Boolean isDeleted() {
+		return getState().equals(TaskStatus.DELETED.getGwtName());
+	}
+	
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		//if(getNumber() == null) return json;
@@ -335,6 +348,10 @@ public class Issue {
 		json.put("workgroup",getWorkgroup().toJSON());
 		json.put("enterprise", getEnterprise().toJSON());
 				
+		json.put("is_deleted", isDeleted());
+		json.put("is_open", isOpen());
+		json.put("is_closed", isClosed());
+		
 		return json;
 	}	
 }

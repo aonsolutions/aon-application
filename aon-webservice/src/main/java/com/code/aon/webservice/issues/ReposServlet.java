@@ -434,6 +434,8 @@ public class ReposServlet extends HttpServlet{
 				.setSince(req.getParameter("since"))
 				.setSort(req.getParameter("sort"))
 				.setState(req.getParameter("state"))
+				.setPriority(req.getParameter("priority"))
+				.setType(req.getParameter("type"))
 				.setPerPage(Integer.parseInt(req.getParameter("per_page")))
 				.setPage(Integer.parseInt(req.getParameter("page")));
 	}

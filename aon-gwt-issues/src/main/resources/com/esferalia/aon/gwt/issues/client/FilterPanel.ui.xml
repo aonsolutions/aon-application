@@ -9,42 +9,92 @@
 
 	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
 	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'>
-	
+    	
 <ui:with type="com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources"
 		field="issuesResources"></ui:with>
 
+<ui:style>
+	
+		@external .gwt-PopupPanel;
+
+		.gwt-PopupPanel {
+			margin: 0px !important;
+			border: 1px solid #EEE !important;
+			padding: 4px 0px !important;
+			width:200px;
+		}    
+
+</ui:style>
+
 <g:HTMLPanel  styleName="aon-panelGrid-search {issuesResources.css.aonPanelGridSearchIssues}" >
-	<div class="aon-panelGrid-search-info {issuesResources.css.aonPanelGridSearchInfoIssues}">							
+   	<div class="aon-panelGrid-search-info {issuesResources.css.aonPanelGridSearchInfoIssues}">							
 		<g:HorizontalPanel styleName="aon-width-all">
 			<g:HTMLPanel>
 				<span class="aon-panelGrid-search-info-internal" style="position: relative;top: 2px;">Filtrar:</span>						
-			</g:HTMLPanel>
-			<g:HTMLPanel>
-				<a style="font-size:10px;font-weight:bold;float:right;"
-						onclick="" href="#">
-					<span class="aon-outputText">
-				 	 	<g:Button ui:field="cleanButton" text="Limpiar Filtro" styleName="aon-editDataTable-button aon-icon-rubber"/>						    		
-					</span>
-				</a>
-			</g:HTMLPanel>
+			</g:HTMLPanel>			
 		</g:HorizontalPanel>					
 	</div>
-	<table class="aon-panelGrid">
-		<tr>
-			<td style="padding-left: 10px;">
-				<span class="">Asunto:</span>
-			</td>
-			<td style="width:200px">
-				<g:TextBox ui:field="titleFilter" styleName="{issuesResources.css.aonSearchBoxIssues}"/>
-			</td>
-			<td>
-				<p:PaperButton ui:field="openButton"><i:IronIcon icon="error-outline"/>Abiertas</p:PaperButton>
-			</td>
-			<td>
-				<p:PaperButton ui:field="closeButton"><i:IronIcon icon="check"/>Cerradas</p:PaperButton>	
-			</td>
-		</tr>
-	</table>
+    
+    <g:HorizontalPanel styleName="aon-width-all">
+        
+        <g:HorizontalPanel>
+       		<g:TextBox ui:field="titleFilter" styleName="{issuesResources.css.aonSearchBoxIssues}"/>
+        
+        	<p:PaperButton ui:field="openButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}" >
+				<i:IronIcon icon="error-outline" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+				<g:InlineLabel text="Abierta" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+			</p:PaperButton>
+		
+        	<p:PaperButton ui:field="closeButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
+			    <i:IronIcon icon="check" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+			    <g:InlineLabel text="Cerrada" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+			</p:PaperButton>	
+		
+    	    <p:PaperButton ui:field="removeButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
+			    <i:IronIcon icon="remove-circle" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+			    <g:InlineLabel text="Borrada" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+			</p:PaperButton>	
+        </g:HorizontalPanel>
+    
+        <g:HorizontalPanel horizontalAlignment="right">
+        	<p:PaperButton ui:field="priorityButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
+			    <g:InlineLabel text="Prioridad" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+        	    <i:IronIcon icon="arrow-drop-down" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+			</p:PaperButton>
+		
+        	<p:PaperButton ui:field="tagButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
+			    <g:InlineLabel text="Etiqueta" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+        	    <i:IronIcon icon="arrow-drop-down" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+			</p:PaperButton>	
+		
+        	<p:PaperButton ui:field="typeButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
+			    <g:InlineLabel text="Tipo" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+        	    <i:IronIcon icon="arrow-drop-down" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+			</p:PaperButton>	
+		
+        	<p:PaperButton ui:field="creatorButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
+			    <g:InlineLabel text="Creador" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+           		<i:IronIcon icon="arrow-drop-down" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+			</p:PaperButton>	
+		
+			<p:PaperButton ui:field="assignedButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
+			    <g:InlineLabel text="Asignado" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+        	    <i:IronIcon icon="arrow-drop-down" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+			</p:PaperButton>
+			
+			<p:PaperButton ui:field="enterpriseButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
+			    <g:InlineLabel text="Empresa" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+        	    <i:IronIcon icon="arrow-drop-down" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+			</p:PaperButton>	
+			
+			<p:PaperButton ui:field="orderButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
+			    <g:InlineLabel text="Orden" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+        	    <i:IronIcon icon="arrow-drop-down" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+			</p:PaperButton>	
+		</g:HorizontalPanel>
+		
+	</g:HorizontalPanel>
+    
 </g:HTMLPanel>
 
 </ui:UiBinder>

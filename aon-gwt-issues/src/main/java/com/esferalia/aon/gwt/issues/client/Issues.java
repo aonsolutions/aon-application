@@ -108,7 +108,7 @@ public class Issues implements EntryPoint {
 				incidence = new Incidence(HTTP+result.getDomain().getName()+"/", result.getMd5(),
 						result.getLoggedUser(), result.getLoggedUser(), result.getDomain().getName());
 				createAonToolbar();
-				createFilterPanel(new FilterPanel(me));
+				createFilterPanel(new FilterPanel(me, incidence));
 				createIssueList(issueFilter = new IssueFilter());
 			}
 			
@@ -122,6 +122,7 @@ public class Issues implements EntryPoint {
 	}
 	
 	protected void createIssueList(IssueFilter filter) {
+		filter.setState("open");
 		incidence.getOrgIssues(filter, new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
@@ -181,6 +182,11 @@ public class Issues implements EntryPoint {
 			@Override
 			protected void onRefreshButtonClick() {
 				issueFilter = new IssueFilter();
+				issueFilter.setState("open");
+				
+				FilterPanel fp = (FilterPanel) searchContent.getWidget(0);
+				fp.initialize();
+				
 				updateIssueList(issueFilter, false);
 			}
 			

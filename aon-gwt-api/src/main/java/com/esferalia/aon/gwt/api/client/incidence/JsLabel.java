@@ -7,7 +7,7 @@ public class JsLabel extends JavaScriptObject {
 	protected JsLabel() {}
 	
 	public final native String getId() /*-{
-		return this.url;
+		return this.id;
 	}-*/;
 	
 	public final native String getUrl() /*-{

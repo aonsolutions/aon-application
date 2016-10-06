@@ -13,6 +13,9 @@ public class IssueFilter {
 	String direction;
 	String since;
 	
+	String priority;
+	String type;
+	
 	Integer page = 1;
 	Integer perPage = 30;
 	
@@ -105,6 +108,26 @@ public class IssueFilter {
 		this.perPage = perPage;
 		return this;
 	}
+
+	public String getPriority() {
+		return priority;
+	}
+
+	public IssueFilter setPriority(String priority) {
+		this.priority = priority;
+		return this;
+	}
+	
+	public String getType() {
+		return type;
+	}
+
+	public IssueFilter setType(String type) {
+		this.type = type;
+		return this;
+	}
+	
+	
 	
 	
 }

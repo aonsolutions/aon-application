@@ -31,4 +31,14 @@ public interface AonGwtIssuesCSS extends CssResource{
 	
 	@ClassName("aon-search-box-issues")
 	String aonSearchBoxIssues();
+
+	@ClassName("aon-paper-button-filter-issues")
+	String aonPaperButtonFilterIssues();
+	
+	@ClassName("aon-iron-icon-filter-issues")
+	String aonIronIconFilterIssues();
+	
+	@ClassName("aon-inline-label-filter-issues")
+	String aonInlineLabelFilterIssues();
+
 }

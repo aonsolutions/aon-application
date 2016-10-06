@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
+import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 public class TaskDAO {
@@ -158,25 +159,30 @@ public class TaskDAO {
 	public static Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter){
 		// state 
 		Condition c;
+		Boolean tagBool = false;
+		
 		if(issueFilter.getState().equals("open")) c = TASK.STATUS.eq(TaskStatus.PENDING.value())
 												.or(TASK.STATUS.eq(TaskStatus.IN_PROGRESS.value()));
 		else if(issueFilter.getState().equals("closed")) c = TASK.STATUS.eq(TaskStatus.FINISHED.value());
+		else if(issueFilter.getState().equals("deleted")) c = TASK.STATUS.eq(TaskStatus.DELETED.value());
 		else c = TASK.STATUS.ne(TaskStatus.DELETED.value());
 		// assignee
 		if(issueFilter.getAssignee() != null && !issueFilter.getAssignee().equals(""))
-			c = c.and(TASK.REGISTRY.eq(1)); // TODO 
+			c = c.and(TASK.TASK_HOLDER.eq(Integer.parseInt(issueFilter.getAssignee())));
 
 		// creator
 		if(issueFilter.getCreator() != null && !issueFilter.getCreator().equals(""))
-			c = c.and(TASK.TASK_HOLDER.eq(1)); // TODO
+			c = c.and(TASK.CREATION_USER.eq(issueFilter.getCreator())); 
 		
-		/*/ labels
+		// labels
 		if(issueFilter.getLabels() != null && !issueFilter.getLabels().equals("")){
-			String[] labels = issueFilter.getLabels().split(",");
+			tagBool = true;
+			c = c.and(TASK_TAG.TAG.eq(Integer.parseInt(issueFilter.getLabels())));	
+			/*String[] labels = issueFilter.getLabels().split(",");
 			for (String label : labels){
 				//c = c.and(TAG.NAME.eq(label));
-			}
-		}*/
+			}*/
+		}
 		
 		// mentioned
 		if(issueFilter.getMentioned() != null && !issueFilter.getMentioned().equals("")){}
@@ -201,8 +207,25 @@ public class TaskDAO {
 		
 		// title
 		if(issueFilter.getTitle() != null && !issueFilter.getTitle().equals(""))
-			c = c.and(TASK.DESCRIPTION.contains(issueFilter.getTitle()));			
+			c = c.and(TASK.DESCRIPTION.contains(issueFilter.getTitle()))
+				.or(TASK.COMMENTS.contains(issueFilter.getTitle()));	
 		
+		if(issueFilter.getType() != null && !issueFilter.getType().equals("")){
+			tagBool = true;
+			c = c.and(TASK_TAG.TAG.eq(Integer.parseInt(issueFilter.getType())));	
+		}
+		
+		//priority
+		if(issueFilter.getPriority() != null && !issueFilter.getPriority().equals(""))
+			c = c.and(TASK.PRIORITY.eq(Priority.valueNameOf(issueFilter.getPriority()).value()));
+						
+		if(tagBool){
+			return ctx.getDslContext().selectDistinct().from(TASK).join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(c).and(TASK.NUMBER.isNotNull()).orderBy(sortDir)
+					.limit(issueFilter.getPerPage())
+					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
+					.fetchInto(TASK).stream().map(new FullTaskFiller());
+		}
 		return ctx.getDslContext().select().from(TASK) 
 				.where(TASK_PROPERTIES.getConditions(filter)).and(c).and(TASK.NUMBER.isNotNull()).orderBy(sortDir)
 				.limit(issueFilter.getPerPage())

@@ -5,13 +5,16 @@ public class IssueFilter {
 	
 	String milestone;
 	String state;
-	String assignee;
+	Integer assignee;
 	String creator;
 	String mentioned;
 	String labels;
 	String sort;
 	String direction;
 	String since;
+	
+	String type;
+	String priority;
 	
 	Integer page = 1;
 	Integer perPage = 30;
@@ -35,10 +38,10 @@ public class IssueFilter {
 		this.state = state;
 		return this;
 	}
-	public String getAssignee() {
+	public Integer getAssignee() {
 		return assignee;
 	}
-	public IssueFilter setAssignee(String assignee) {
+	public IssueFilter setAssignee(Integer assignee) {
 		this.assignee = assignee;
 		return this;
 	}
@@ -102,6 +105,23 @@ public class IssueFilter {
 	public void setPerPage(Integer perPage) {
 		this.perPage = perPage;
 	}
+
+	public String getPriority() {
+		return priority;
+	}
+
+	public IssueFilter setPriority(String priority) {
+		this.priority = priority;
+		return this;
+	}
 	
+	public String getType() {
+		return type;
+	}
+
+	public IssueFilter setType(String type) {
+		this.type = type;
+		return this;
+	}
 	
 }

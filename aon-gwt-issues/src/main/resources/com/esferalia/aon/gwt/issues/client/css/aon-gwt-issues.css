@@ -46,9 +46,26 @@
     
     .aon-search-box-issues{
     	width: 90%;
-    	margin-left: 5px;
+    	margin-left: 10px;
+    	margin-top: 10px;
     	padding: 3px 3px 3px 3px;
     	border: solid 1px #dedede;
     	font-size: 16px;
     	height: 16px;
 	}
+	
+	.aon-paper-button-filter-issues{
+		padding-top:13px;
+	}
+	
+	.aon-iron-icon-filter-issues{
+		width:16px !important;
+		height:16px !important;
+	}
+	
+	.aon-inline-label-filter-issues{
+		font-size:10.5px;
+	}
+	
+	
+	
