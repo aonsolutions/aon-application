@@ -2147,7 +2147,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				}
 			}
 
-		}, -0.00 * liquid, 2.00 * liquid, liquid);
+		}, -2.00 * liquid, 2.00 * liquid, liquid);
 
 		SQLContractSalaryCalculatorContext.this.liquids.put(liquid, result);
 
@@ -2181,7 +2181,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				}
 			}
 
-		}, -0.00 * payment, 10.0 * payment, payment);
+		}, -10.00 * payment, 10.0 * payment, payment);
 
 		SQLContractSalaryCalculatorContext.this.payments.put(payment, result);
 
