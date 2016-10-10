@@ -22,7 +22,6 @@ import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -264,11 +263,11 @@ public class ACCOUNTING {
 
 
 	public static AccountingInvoice initializeInvoice(String domainName, int domain, String user,
-		 InvoiceType type, Integer registry, Date issueDate) {
+			AccountEntry entry,AccountingRegistry registry) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getAccounting().initializeInvoice(ctx, type, registry, issueDate);
+			return getAccounting().initializeInvoice(ctx, entry, registry);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -277,13 +276,25 @@ public class ACCOUNTING {
 	
 	public static AccountingInvoice getAccountingInvoice(String domainName, int domain, String user,
 			 Integer accountEntry) {
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domain, user);
-				return getAccounting().getAccountingInvoice(ctx, accountEntry);
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().getAccountingInvoice(ctx, accountEntry);
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
+	}
+
+
+	public static AccountingInvoice save(String domainName, int domain, String user, AccountingInvoice invoice) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().save(ctx, invoice);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 }

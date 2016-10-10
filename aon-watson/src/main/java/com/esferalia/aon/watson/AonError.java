@@ -3,11 +3,10 @@ package com.esferalia.aon.watson;
 import java.io.Serializable;
 import java.text.MessageFormat;
 
-
 public enum AonError implements Serializable{
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
-	// Í --> \u00CD í --> \u00ED
+	// Í --> \u00CD í --> \u00ED  
 	// Ó --> \u00D3 ó --> \u00F3
 	// Ú --> \u00DA ú --> \u00FA
 	// Ñ --> \u00D1 ñ --> \u00F1
@@ -27,11 +26,11 @@ public enum AonError implements Serializable{
 	,EMPTY_ENTERPRISE("No se ha indicado una empresa.")
 	,EMPTY_DATE_FROM("No se ha indicado una fecha 'desde'.")
 	,EMPTY_DATE_TO("No se ha indicado una fecha 'hasta'.")
-	,EMPTY_DOMAIN("El dominio es un dato obligatorio, no puede estar vacio")
-	,EMPTY_YEAR("El ejercicio es un dato obligatorio, no puede estar vacio")
+	,EMPTY_DOMAIN("El dominio es un dato obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_YEAR("El ejercicio es un dato obligatorio, no puede estar vac\u00EDo")
 	,INVALID_YEAR("El ejercicio debe tener un valor real")
-	,EMPTY_PERIOD("El periodo es un dato obligatorio, no puede estar vacio")
-	,EMPTY_EPIGRAPH("El ep\u00EDgrafe es un dato obligatorio, no puede estar vacio")
+	,EMPTY_PERIOD("El periodo es un dato obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_EPIGRAPH("El ep\u00EDgrafe es un dato obligatorio, no puede estar vac\u00EDo")
 	,INVALID_LENGTH("La longitud del dato \"{0}\" no puede superar los {1} car\u00E1cteres")
 	
 	// -----------------------------------------------------------
@@ -46,23 +45,23 @@ public enum AonError implements Serializable{
 	// -----------------------------------------------------------
 	
 	// -------------------------------------------- -------ACCOUNT
-	,ACCOUNT_EMPTY_CODE("La cuenta contable es un dato obligatorio, no puede estar vacio.")
-	,ACCOUNT_EMPTY_DESCRIPTION("La descripción de la cuenta contable es un dato obligatorio, no puede estar vacio.")
+	,ACCOUNT_EMPTY_CODE("La cuenta contable es un dato obligatorio, no puede estar vac\u00EDo.")
+	,ACCOUNT_EMPTY_DESCRIPTION("La descripción de la cuenta contable es un dato obligatorio, no puede estar vac\u00EDo.")
 	,ACCOUNT_INVALID_LENGTH("La longitud de la cuenta {0} es incorrecta, debe tener una longitud de 1, 2, 3, 4 ó 9 caracteres. ")
 	,ACCOUNT_DUPLICATED_CODE("No se puede crear la cuenta ({0}) porque ya existe una con el mismo código ({1})")
 	
 	// -------------------------------------------- ACCOUNT_PERIOD
-	,ACCOUNT_PERIOD_EMPTY_INITIATION_DATE("La fecha de inicio del ejercicio es un dato obligatorio, no puede estar vacio.")
-	,ACCOUNT_PERIOD_EMPTY_DEADLINE("La fecha fin del ejercicio es un dato obligatorio, no puede estar vacio.")
+	,ACCOUNT_PERIOD_EMPTY_INITIATION_DATE("La fecha de inicio del ejercicio es un dato obligatorio, no puede estar vac\u00EDo.")
+	,ACCOUNT_PERIOD_EMPTY_DEADLINE("La fecha fin del ejercicio es un dato obligatorio, no puede estar vac\u00EDo.")
 	,ACCOUNT_PERIOD_WRONG_RANGE("La fecha de inicio debe ser anterior a la fecha fin.")
 	,ACCOUNT_PERIOD_START_OVERLAP("Solape con la fecha de inicio y el periodo {0}")
 	,ACCOUNT_PERIOD_END_OVERLAP("Solape con la fecha fin y el periodo {0}")
 	,ACCOUNT_PERIOD_UNKOWN_FOR_DATE("No se encuentra un ejercicio contable para la fecha {0,date,dd/MM/yyyy}")
 	// --------------------------------------------- ACCOUNT_ENTRY
 	,ACCOUNT_ENTRY_WRONG_DOMAIN("El ejercicio del asiento no existe o no es v\u00E1lido para el dominio ({0}).")
-	,ACCOUNT_ENTRY_EMPTY_DATE("La fecha del asiento es un dato obligatorio, no puede estar vacia")
-	,ACCOUNT_ENTRY_EMPTY_PERIOD("El ejercicio del asiento es un dato obligatorio, no puede estar vacio")
-	,ACCOUNT_ENTRY_EMPTY_TYPE("El tipo de asiento es un dato obligatorio, no puede estar vacio.")
+	,ACCOUNT_ENTRY_EMPTY_DATE("La fecha del asiento es un dato obligatorio, no puede estar vac\u00EDa")
+	,ACCOUNT_ENTRY_EMPTY_PERIOD("El ejercicio del asiento es un dato obligatorio, no puede estar vac\u00EDo")
+	,ACCOUNT_ENTRY_EMPTY_TYPE("El tipo de asiento es un dato obligatorio, no puede estar vac\u00EDo.")
 	,ACCOUNT_ENTRY_EMPTY_DETAILS("No se puede grabar un asiento contable sin l\u00EDneas.")
 	,ACCOUNT_ENTRY_NO_SETTLED("No se puede grabar un asiento contable descuadrado.")
 	,ACCOUNT_ENTRY_DATE_IN_PERIOD("La Fecha del Asiento no est\u00E1 dentro del periodo asignado al ejercicio {0}")
@@ -70,8 +69,8 @@ public enum AonError implements Serializable{
 	,ACCOUNT_ENTRY_PERIOD_OPERATING("No se permite la introducci\u00F3n, modificaci\u00F3n o borrado de asientos en el ejercicio {0}, porque ya se ha realizado el asiento de explotaci\u00F3n.")
 	,ACCOUNT_ENTRY_PERIOD_CLOSING("No se permite la introducci\u00F3n, modificaci\u00F3n  o borrado de asientos en el ejercicio {0} porque ya se ha realizado el asiento de cierre.")
 	,ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE("No se permite el borrado de asientos autom\u00E1ticos.")
-	,ACCOUNT_ENTRY_EMPTY_CONCEPT("El concepto del apunte es un dato obligatorio, no puede estar vacio.")
-	,ACCOUNT_ENTRY_EMPTY_ACCOUNT("La cuenta contable del apunte es un dato obligatorio, no puede estar vacio. (LINEA={0,number},CONCEPTO={1},DEBE={2,number},HABER={3,number})")
+	,ACCOUNT_ENTRY_EMPTY_CONCEPT("El concepto del apunte es un dato obligatorio, no puede estar vac\u00EDo.")
+	,ACCOUNT_ENTRY_EMPTY_ACCOUNT("La cuenta contable del apunte es un dato obligatorio, no puede estar vac\u00EDo. (LINEA={0,number},CONCEPTO={1},DEBE={2,number},HABER={3,number})")
 	,ACCOUNT_ENTRY_ACCOUNT_NOT_FOUND("Cuenta contable no encontrada en el dominio del asiento. (ID={0}, [{1} - {2}])")
 	,ACCOUNT_ENTRY_ACCOUNT_INVALID_LENGTH("La cuenta contable debe ser de \u00FAltimo nivel (9 d\u00EDgitos). (ID={0}, [{1} - {2}])")
 	,ACCOUNT_ENTRY_ACCOUNT_INACTIVE("La cuenta contable est\u00E1 desactivada. (ID={0}, [{1} - {2}])")
@@ -90,10 +89,10 @@ public enum AonError implements Serializable{
 	// --------------------------------------------- PRODUCT
 	,DUPLICATE_PRODUCT_CODE("Ya existe un Producto con el mismo C\u00F3digo {0}.")
 	,DUPLICATE_PRODUCT_CODE_DOMAIN("Ya existe un Producto con el mismo C\u00F3digo en el Dominio: {0}.")
-	,EMPTY_PRODUCT_CODE("El C\u00F3digo del Producto es un dato obligatorio, no puede estar vacio.")
-	,EMPTY_PRODUCT_NAME("El Nombre del Producto es un dato obligatorio, no puede estar vacio.")
-	,EMPTY_PRODUCT("El Producto es un dato obligatorio, no puede estar vacio.")
-	,EMPTY_TAG("La Etiqueta es un dato obligatorio, no puede estar vacio.")
+	,EMPTY_PRODUCT_CODE("El C\u00F3digo del Producto es un dato obligatorio, no puede estar vac\u00EDo.")
+	,EMPTY_PRODUCT_NAME("El Nombre del Producto es un dato obligatorio, no puede estar vac\u00EDo.")
+	,EMPTY_PRODUCT("El Producto es un dato obligatorio, no puede estar vac\u00EDo.")
+	,EMPTY_TAG("La Etiqueta es un dato obligatorio, no puede estar vac\u00EDo.")
 	,EXIST_PRODUCT("El Producto no existe en el mismo dominio.")
 	,EXIST_TAG("La etiqueta no existe en el mismo dominio.")
 	,DUPLICATE_PRODUCT_TAG("Ya existe un Producto con la misma etiqueta {0}.")
@@ -101,8 +100,19 @@ public enum AonError implements Serializable{
 	,DUPLICATE_BARCODE_DOMAIN("Ya existe un Producto con el mismo C\u00F3digo de Barras en el Dominio {0}.")
 	,DUPLICATE_DETAILS("Ya existe el Detalle {0}.")
 	,DUPLICATE_SERIAL_NUMBER("Ya existe el n\u00FAmero de serie {0}.")
-	,EMPTY_WORKPLACE("El Lugar de trabajo es un dato obligatorio, no puede estar vacio")
+	,EMPTY_WORKPLACE("El Lugar de trabajo es un dato obligatorio, no puede estar vac\u00EDo")
 
+	// --------------------------------------------- INVOICE
+	,INVOICE_EMPTY_DATE("La fecha de la factura es un dato obligatorio, no puede estar vac\u00EDa")
+	,INVOICE_EMPTY_TAX_DATE("La fecha I.V.A. de la factura es un dato obligatorio, no puede estar vac\u00EDa")
+	,INVOICE_EMPTY_TYPE("El tipo de la factura es un dato obligatorio, no puede estar vac\u00EDa")
+	,INVOICE_EMPTY_REGISTRY("El titular de la factura es un dato obligatorio, no puede estar vac\u00EDa")
+	,INVOICE_EMPTY_SCOPE("El \u00E1mbito de la factura es un dato obligatorio, no puede estar vac\u00EDa")
+	,INVOICE_DUPLICATED_SERIES_NUMBER("Ya existe una factura con esa Serie/N\u00FAmero.")
+	,INVOICE_OPERATIONS_DEADLINE("La fecha de la factura rebasa la fecha l\u00EDmite de operaciones indicada en la configuraci\u00F3n de empresa. ")
+	,INVOICE_FIVE_YEARS("El a\u00F1o de la factura no es v\u00E1lido, es anterior cinco a\u00F1os al actual") 
+	,INVOICE_EMPTY_SOURCE("No se ha indicado un origen (INVOICE_DETAIL.SOURCE) en la l\u00EDnea de factura (Error interno)")
+	
 	// --------------------------------------------- FINANCE
 	,FINANCE_AMOUNT_ZERO("El importe del vencimiento no puede ser cero.")	
 	,FINANCE_EMPTY_SCOPE("No es posible encontrar un \u00E1mbito v\u00E1lido para el vencimiento.")

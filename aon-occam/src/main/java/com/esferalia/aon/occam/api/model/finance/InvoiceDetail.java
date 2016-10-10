@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -14,10 +15,14 @@ public class InvoiceDetail implements Serializable {
 	private int domain;
 	
 	private Invoice invoice;
+	private Integer investAsset;
+	private Integer project;
+	private String projectName;
 	private Seller seller;
-	private String project;
-	private String warehouse;
-	private String workPlace;
+	private Integer warehouse;
+	private String warehouseName;
+	private Integer workPlace;
+	private String workPlaceName;
 	private Item item;
 	private short line;
 	private String description;
@@ -29,6 +34,10 @@ public class InvoiceDetail implements Serializable {
 	private double taxableBase;
 	private double taxes;
 	private boolean prepayment;
+	
+	private Integer account;
+	
+	private LinkedList<InvoiceTax> invoiceTaxes;
 	
 	public Integer getId() {
 		return id;
@@ -51,6 +60,27 @@ public class InvoiceDetail implements Serializable {
 		this.invoice = invoice;
 		return this;
 	}
+	public Integer getInvestAsset() {
+		return investAsset;
+	}
+	public InvoiceDetail setInvestAsset(Integer investAsset) {
+		this.investAsset = investAsset;
+		return this;
+	}
+	public Integer getProject() {
+		return project;
+	}
+	public InvoiceDetail setProject(Integer project) {
+		this.project = project;
+		return this;
+	}
+	public String getProjectName() {
+		return projectName;
+	}
+	public InvoiceDetail setProjectName(String projectName) {
+		this.projectName = projectName;
+		return this;
+	}
 	public Seller getSeller() {
 		return seller;
 	}
@@ -58,25 +88,32 @@ public class InvoiceDetail implements Serializable {
 		this.seller = seller;
 		return this;
 	}
-	public String getProject() {
-		return project;
-	}
-	public InvoiceDetail setProject(String project) {
-		this.project = project;
-		return this;
-	}
-	public String getWarehouse() {
+	public Integer getWarehouse() {
 		return warehouse;
 	}
-	public InvoiceDetail setWarehouse(String warehouse) {
+	public InvoiceDetail setWarehouse(Integer warehouse) {
 		this.warehouse = warehouse;
 		return this;
 	}
-	public String getWorkPlace() {
+	public String getWarehouseName() {
+		return warehouseName;
+	}
+	public InvoiceDetail setWarehouseName(String warehouseName) {
+		this.warehouseName = warehouseName;
+		return this;
+	}
+	public Integer getWorkPlace() {
 		return workPlace;
 	}
-	public InvoiceDetail setWorkPlace(String workPlace) {
+	public InvoiceDetail setWorkPlace(Integer workPlace) {
 		this.workPlace = workPlace;
+		return this;
+	}
+	public String getWorkPlaceName() {
+		return workPlaceName;
+	}
+	public InvoiceDetail setWorkPlaceName(String workPlaceName) {
+		this.workPlaceName = workPlaceName;
 		return this;
 	}
 	public Item getItem() {
@@ -157,4 +194,26 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 
+	public LinkedList<InvoiceTax> getInvoiceTaxes() {
+		return invoiceTaxes;
+	}
+	public InvoiceDetail setInvoiceTaxes(LinkedList<InvoiceTax> invoiceTaxes) {
+		this.invoiceTaxes = invoiceTaxes;
+		return this;
+	}
+	public InvoiceDetail addInvoiceTax(InvoiceTax invoiceTax) {
+		if (getInvoiceTaxes() == null) {
+			setInvoiceTaxes(new LinkedList<InvoiceTax>());
+		}
+		getInvoiceTaxes().add(invoiceTax);
+		return this;
+	}
+	
+	public Integer getAccount() {
+		return account;
+	}
+	public InvoiceDetail setAccount(Integer account) {
+		this.account = account;
+		return this;
+	}
 }

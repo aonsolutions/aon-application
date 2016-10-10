@@ -104,7 +104,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		
 		paintHeader();
 		paintRows();
-		paintAddButton();
+		paintButtons();
 	}
 
 	private void paintHeader() {
@@ -193,10 +193,10 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		++col;
 	}
 	
-	private void paintAddButton() {
+	private void paintButtons() {
 		FlowPanel panel = new FlowPanel();
+
 		Button addButton = new Button();
-		
 		addButton.setAccessKey( 'L' );
 		addButton.setStyleName(AON.AON_CSS.aonIconReset());
 		addButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
@@ -223,6 +223,21 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			}
 		});
 		panel.add(addButton);
+		
+		Button saveButton = new Button();
+		saveButton.setTitle( AON.MSG.saveAction() );
+		saveButton.setAccessKey( 'L' );
+		saveButton.setStyleName(AON.AON_CSS.aonIconSave());
+		saveButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		saveButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+		saveButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.save(event);
+			}
+		});
+		panel.add(saveButton);
+		
 		container.add(panel);
 	}
 	
@@ -543,12 +558,16 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		}
 
 		public void invoiceTotalChanged(InvoiceVAT vat,Double total) {
-			double coef = (1 + (vatPercent.getValue() / 100));
-			if (callback.getInvoice().isSurcharge()) {
-				if (surchargePercent.getValue() == null) surchargePercent.setValue(0.0, false);
-				coef = coef + (surchargePercent.getValue()/100);
+			double vatPerc = vatPercent.getValue();
+			double surchargePerc = 0.0;
+			double withHoldingPerc = 0.0;
+			if (callback.getInvoice().isWithholding()) {
+				withHoldingPerc = callback.getInvoice().getWithholdingData().getPercentage();
 			}
-			double tb = total / coef; 
+			if (callback.getInvoice().isSurcharge()) {
+				surchargePerc = surchargePercent.getValue(); 	
+			}
+			double tb = (total * 100) / (100 + vatPerc + surchargePerc - withHoldingPerc);
 			taxableBase.setValue(tb,true);
 			calculate(vat);
 		}

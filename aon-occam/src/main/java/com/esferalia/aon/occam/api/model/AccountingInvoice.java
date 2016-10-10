@@ -11,16 +11,28 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
-public class AccountingInvoice implements Serializable {
+public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	
 	private static final long serialVersionUID = -4435280253306756102L;
 	
+	private AccountEntry accountEntry;
 	private Invoice invoice;
 	private AccountingRegistry registry;
 
 	private InvoiceWithholding withholdingData;
 	private LinkedList<Account> suggestedAccounts;
 	private LinkedList<InvoiceVAT> vats;
+	
+	private LinkedList<AccountEntry> accountEntries;
+	
+	@Override
+	public AccountEntry getAccountEntry() {
+		return accountEntry;
+	}
+	@Override
+	public void setAccountEntry(AccountEntry accountEntry) {
+		this.accountEntry = accountEntry;
+	}
 	
 	public Invoice getInvoice() {
 		return invoice;
@@ -48,6 +60,14 @@ public class AccountingInvoice implements Serializable {
 	}
 	public AccountingInvoice setWithholdingData(InvoiceWithholding withholdingData) {
 		this.withholdingData = withholdingData;
+		return this;
+	}
+	
+	public LinkedList<AccountEntry> getAccountEntries() {
+		return accountEntries;
+	}
+	public AccountingInvoice setAccountEntries(LinkedList<AccountEntry> accountEntries) {
+		this.accountEntries = accountEntries;
 		return this;
 	}
 	
@@ -92,19 +112,30 @@ public class AccountingInvoice implements Serializable {
 		return AonMathUtils.round(tb);
 	}
 	
-	public double getTotalInvoice() {
-		// En el caso de las intracomunitarias o ISP, ambos IVAS están 
-		// habilitados, pero no deben ir al total factura.
-		if (isInputVatEnabled() != isOutputVatEnabled()) {
-			if (getVats() == null) return 0.0;
-			double total = 0.0; 
+	public void calculateInvoiceTotals() {
+		double t = 0.0;
+		double vt = 0.0;
+		double rt = 0.0;
+		double tb = 0.0;
+		if (getVats() != null) {
 			for (InvoiceVAT vat : getVats()) {
-				total = total + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota();
+				t = t + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota();
+				tb = tb + vat.getBase();
+				if (isInputVatEnabled() != isOutputVatEnabled()) {
+					vt = vt + (vat.getQuota() + vat.getSurchargeQuota());
+				}
 			}
-			total = total - (getWithholdingData()==null?0.0:getWithholdingData().getQuota());
-			return AonMathUtils.round(total);
+			rt = (getWithholdingData()==null?0.0:getWithholdingData().getQuota());
+			t = t - rt;
 		}
-		return getTotalTaxableBase();
+		getInvoice().setTotal(t);
+		getInvoice().setVatQuota(vt);
+		getInvoice().setRetentionQuota(rt);
+		getInvoice().setTaxableBase(tb);
+	}
+	
+	public double getTotalInvoice() {
+		return getInvoice().getTotal();
 	}
 	
 	public boolean isNational() {

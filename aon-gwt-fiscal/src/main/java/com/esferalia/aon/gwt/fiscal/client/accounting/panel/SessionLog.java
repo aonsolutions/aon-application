@@ -19,6 +19,12 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 
 public class SessionLog extends ScrollPanel implements HasSelectionHandlers<AccountEntry>{
+	
+	private static String PREVIEW = "PREVISUALIAZACI\u00D3N"; 
+	private static String SUSPENDED = "APARCADO"; 
+	private static String DELETED = "BORRADO"; 
+	private static String SAVED = "GUARDADO"; 
+	
 	FlowPanel root;	
 	public SessionLog() {
 		addStyleName(AON.AON_CSS.aonScrollArea());
@@ -30,11 +36,44 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 	public void clear( ) {
 		root.clear();
 	}
-	public void add( final AccountEntry entry) {
-		add(entry,"APARCADO");
+	
+	public void addPreview( final AccountEntry entry) {
+		add(entry,PREVIEW);
+	}
+	public void addPreview( final AccountEntry[] entries) {
+		for (AccountEntry entry : entries) {
+			add(entry,PREVIEW);
+		}
+	}
+
+	public void addDeleted( final AccountEntry entry) {
+		add(entry,DELETED);
+	}
+	public void addDeleted( final AccountEntry[] entries) {
+		for (AccountEntry entry : entries) {
+			add(entry,DELETED);
+		}
+	}
+
+	public void addSaved( final AccountEntry entry) {
+		add(entry,SAVED);
+	}
+	public void addSaved( final AccountEntry[] entries) {
+		for (AccountEntry entry : entries) {
+			add(entry,SAVED);
+		}
+	}
+
+	public void addSuspended( final AccountEntry entry) {
+		add(entry,SUSPENDED);
+	}
+	public void addSuspended( final AccountEntry[] entries) {
+		for (AccountEntry entry : entries) {
+			add(entry,SUSPENDED);
+		}
 	}
 	
-	public void add( final AccountEntry entry, String status) {
+	private void add( final AccountEntry entry, String status) {
 		final AccountEntry cloned = AccountEntry.clone(entry);
 		final FocusPanel entryPanel = new FocusPanel();
 		entryPanel.setTabIndex(Integer.MAX_VALUE);
@@ -106,15 +145,17 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 			buf.append(AON.MSG.auditBy(entry.getCreationUser(), entry.getCreationDate()));
 			buf.append(AonStringUtils.SPACE);
 		}
-		if (entry.getId() == null) {
-			buf.append(status);	
-		} else {
-			if (entry.getId() < 0) {
-				buf.append("BORRADO");	
-			} else {
-				buf.append("GUARDADO");
-			}
-		}
+//		if (AonStringUtils.isBlank(status)) {
+//			if (entry.getId() == null) {
+				buf.append(status);	
+//			} else {
+//				if (entry.getId() < 0) {
+//					buf.append(DELETED);	
+//				} else {
+//					buf.append(SAVED);
+//				}
+//			}
+//		}
 		buf.append(AonStringUtils.CLOSE_BRACKET);
 		return buf.toString();
 	}

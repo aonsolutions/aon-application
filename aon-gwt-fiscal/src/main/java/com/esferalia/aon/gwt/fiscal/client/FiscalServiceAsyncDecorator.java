@@ -38,8 +38,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
@@ -1261,10 +1261,10 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	}
 
 	@Override
-	public void initializeInvoice(String domainName, int domain,InvoiceType type, Integer registry, 
-			Date issueDate,AsyncCallback<AccountingInvoice> callback) {
+	public void initializeInvoice(String domainName, int domain,AccountEntry entry,  
+			AccountingRegistry registry,AsyncCallback<AccountingInvoice> callback) {
 		AON.start();
-		fsa.initializeInvoice(domainName, domain, type, registry, issueDate,
+		fsa.initializeInvoice(domainName, domain, entry, registry,
 				new AsyncCallbackWrapper<AccountingInvoice>(callback));
 	}
 	
@@ -1273,6 +1273,14 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 			AsyncCallback<AccountingInvoice> callback) {
 		AON.start();
 		fsa.getAccountingInvoice(domainName, domain, accountEntry,
+				new AsyncCallbackWrapper<AccountingInvoice>(callback));
+	}
+
+	@Override
+	public void save(String domainName, int domain, AccountingInvoice invoice,
+			AsyncCallback<AccountingInvoice> callback) {
+		AON.start();
+		fsa.save(domainName, domain, invoice,
 				new AsyncCallbackWrapper<AccountingInvoice>(callback));
 	}
 

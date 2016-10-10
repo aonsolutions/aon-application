@@ -36,8 +36,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
@@ -246,8 +246,9 @@ public interface FiscalService extends RemoteService {
 	LinkedList<AccountEntry> insertSalaryAccountEntries(String domainName,int domain, Date from, Date to,String concept,Integer registryBank) throws AonCoreException;
 	LinkedList<AccountEntry> getSalaryAccountEntries(String domainName,int domain, Date from, Date to) throws AonCoreException;
 	void deleteAccountEntry(String domainName,int domain, Integer id) throws AonCoreException;
-	AccountingInvoice initializeInvoice(String domainName,int domain,InvoiceType type, Integer registry, Date issueDate) throws AonCoreException; 
+	AccountingInvoice initializeInvoice(String domainName,int domain,AccountEntry entry, AccountingRegistry registry) throws AonCoreException; 
 	AccountingInvoice getAccountingInvoice(String domainName, int domain, Integer accountEntry) throws AonCoreException;
+	AccountingInvoice save(String currentDomainName, int currentDomain, AccountingInvoice invoice) throws AonCoreException;
 	
 	// --------------------------------------------------------------- ACCOUNT STATEMENT
 	AccountStatementReport getAccountStatement(String domainName,int domain, AccountStatementParams params) throws AonCoreException;	
@@ -256,6 +257,7 @@ public interface FiscalService extends RemoteService {
 	Attach getMod111Attach(String domainName, Mod111 mod111);
 	Attach getMod115Attach(String domainName, Mod115 mod115);
 	Attach getMod123Attach(String domainName, Mod123 mod123);
+
 
 	
 

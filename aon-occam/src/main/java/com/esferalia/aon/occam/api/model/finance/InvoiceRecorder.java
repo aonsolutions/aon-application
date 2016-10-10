@@ -231,7 +231,8 @@ public class InvoiceRecorder {
 	
 
 	
-	public static AccountEntry[] recordInvoice(AccountEntry ae, AccountingInvoice invoice) {
+	public static AccountEntry[] recordInvoice(AccountingInvoice invoice) {
+		AccountEntry ae = invoice.getAccountEntry();
 		LinkedHashMap<Integer,AccountEntryDetail> map = new LinkedHashMap<Integer, AccountEntryDetail>();
 		AccountEntryDetailType.visit(invoice,map);	
 		ae.setDetails(new LinkedList<AccountEntryDetail>());

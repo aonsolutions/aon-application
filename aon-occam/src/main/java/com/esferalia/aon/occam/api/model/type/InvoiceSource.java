@@ -15,4 +15,8 @@ public enum InvoiceSource implements Serializable {
     ,OFFER				/** OFFER. Facturacion de un presupuesto */
     ,RESERVATION		/** RESERVATION. Facturacion de una reserva PMS */
     ;
+
+	public byte value() {
+		return (byte) ordinal();
+	}
 }

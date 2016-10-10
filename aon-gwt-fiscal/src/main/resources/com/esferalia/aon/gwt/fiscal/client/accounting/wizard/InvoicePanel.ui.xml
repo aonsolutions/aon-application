@@ -36,6 +36,7 @@
 							<aon:DoubleBox ui:field="invoiceTotal" visibleLength="12" 
 								styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5}"/>
 						</g:FlowPanel>
+						<g:Button ui:field="fastSave" styleName="{aonResources.css.aonIconSave} {aonResources.css.aonIconCommandButton} {aonResources.css.aonMarginLeft}"/>
 					</g:FlowPanel>
 					<accInvoice:InvoiceVATPanel ui:field="vatPanel"/>
 					<g:HTMLPanel ui:field="withholdingPanel" styleName="{aonResources.css.aonWizardPanelInner}">

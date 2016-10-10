@@ -54,6 +54,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod123.Model123ScriptProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
@@ -62,7 +63,6 @@ import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
@@ -970,15 +970,23 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	}
 
 	@Override
-	public AccountingInvoice initializeInvoice(String domainName, int domain, InvoiceType type, Integer registry, Date issueDate)
+	public AccountingInvoice initializeInvoice(String domainName, int domain, 
+			AccountEntry entry, AccountingRegistry registry)
 			throws AonCoreException {
-		return ACCOUNTING.initializeInvoice(domainName, domain, this.getUserLogin(), type, registry, issueDate);
+		return ACCOUNTING.initializeInvoice(domainName, domain, this.getUserLogin(), 
+				entry , registry);
 	}
 
 	@Override
 	public AccountingInvoice getAccountingInvoice(String domainName, int domain, Integer accountEntry)
 			throws AonCoreException {
 		return ACCOUNTING.getAccountingInvoice(domainName, domain, this.getUserLogin(), accountEntry);
+	}
+	
+	@Override
+	public AccountingInvoice save(String domainName, int domain, AccountingInvoice invoice)
+			throws AonCoreException {
+		return ACCOUNTING.save(domainName, domain, this.getUserLogin(), invoice);
 	}
 
 	@Override

@@ -301,4 +301,11 @@ public enum Country implements Serializable {
 			return null;
 		}
 	}
+	public static String safeIso2 ( Country country ) {
+		if (country == null) {
+			return null;
+		}
+		return country.getIso2(); 
+	}
+	
 }	

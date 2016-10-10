@@ -8,30 +8,39 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
+import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountingInvoiceDAO {
 	
 	private static final com.esferalia.aon.jooq.tables.Account EXP_ACCOUNT = ACCOUNT.as("EXP_ACCOUNT");
 	private static final com.esferalia.aon.jooq.tables.Account VAT_ACCOUNT = ACCOUNT.as("VAT_ACCOUNT");
+	private static String DETAIL_MSG = "Fra. n\u00AA: {0} del {1,date,dd/MM/yyyy} ";
 	
 	public static AccountingInvoice getAccountingInvoice(final AONContext ctx, final Integer accountEntry) {
 		Integer invoiceId = ctx.getDslContext()
@@ -48,6 +57,7 @@ public class AccountingInvoiceDAO {
 			Invoice invoice = InvoiceDAO.getInvoice(ctx, invoiceId);
 			if (invoice != null) {
 				final AccountingInvoice ai = new AccountingInvoice();
+				ai.setAccountEntry(AccountEntryDAO.getAccountEntry(ctx, accountEntry));
 				ai.setInvoice(invoice);
 				AccountingRegistry reg =  RegistryDAO.getAccountingRegistries(ctx
 						, filter -> filter.getIdProperty().eq(invoice.getRegistry()))
@@ -152,6 +162,22 @@ public class AccountingInvoiceDAO {
 		return null;
 	}
 	
+	public static AccountingInvoice initializeInvoice(final AONContext ctx, final AccountEntry entry, AccountingRegistry registry) {
+		if (entry == null) {
+			throw new AonCoreException("No se pudo inicializar, no hay apunte base");
+		}
+		if (registry == null) {
+			throw new AonCoreException("No se pudo encontrar al titular de factura \"" + registry + "\"");
+		}
+		if (registry.getType() == null) {
+			throw new AonCoreException("No se puede inicializar una factura sin tipo");
+		}
+		AccountingInvoice invoice = initializeInvoice(ctx, registry.getType().getInvoiceType(), registry.getId(), entry.getEntryDate());
+		invoice.setAccountEntry(entry);
+		return invoice;
+	}
+			
+	
 	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry,
 			final Date issueDate) {
 		AccountingRegistry reg =  RegistryDAO.getAccountingRegistries(ctx
@@ -171,6 +197,8 @@ public class AccountingInvoiceDAO {
 		AccountingInvoice ai = new AccountingInvoice()
 				.setRegistry(reg)
 				.setInvoice(new Invoice()
+					.setDomain(ctx.getDomainId())
+					.setRegistry(registry)
 					.setRecorded(false)
 					.setRectificationType(RectificationType.NONE)
 					.setConfidential(false)
@@ -286,16 +314,25 @@ public class AccountingInvoiceDAO {
 			this.config = config;
 		}
 		
-		@Override
-		public void visitCustomer(AccountingRegistry reg) {
-			invoice.setSurcharge(reg.isSurcharge());
-			invoice.setWithholding(reg.isWithholding() && config.getCompany().isWithholding());
-			invoice.setWithholdingFarmer(false);
+		private void visitCommon(AccountingRegistry reg) {
+			invoice.setScope(new Scope().setId( reg.getScope() ));
+			invoice.setRegistryDocumentType(reg.getDocumentType());
+			invoice.setRegistryDocumentCountry(reg.getDocumentCountry());
+			invoice.setRegistryDocument(reg.getDocument());
+			invoice.setRegistryName(reg.getName());
 			invoice.setVatAccrualPayment(invoice.isNational()
 					&& !invoice.getIssueDate().before(InvoiceDAO.VAT_ACCRUAL_START_DATE)
 					&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
+		}
+
+		@Override
+		public void visitCustomer(AccountingRegistry reg) {
+			visitCommon(reg);
+			invoice.setSurcharge(reg.isSurcharge());
+			invoice.setWithholding(reg.isWithholding() && config.getCompany().isWithholding());
+			invoice.setWithholdingFarmer(false);
 			invoice.setSeries(config.getDefaultInvoiceSeries());
-			invoice.setNumber( InvoiceDAO.getNextNumber(ctx, invoice.getType(), invoice.getSeries()));
+			invoice.setNumber( InvoiceDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries()));
 		}
 
 		@Override
@@ -303,9 +340,7 @@ public class AccountingInvoiceDAO {
 			invoice.setSurcharge(reg.isSurcharge() && config.getCompany().isSurcharge());
 			invoice.setWithholding(reg.isWithholding());
 			invoice.setWithholdingFarmer(reg.isWithholdingFarmer());
-			invoice.setVatAccrualPayment(invoice.isNational()
-					&& !invoice.getIssueDate().before(InvoiceDAO.VAT_ACCRUAL_START_DATE)
-					&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
+			visitCommon(reg);
 		}
 
 		@Override
@@ -313,9 +348,100 @@ public class AccountingInvoiceDAO {
 			invoice.setSurcharge(false);
 			invoice.setWithholding(reg.isWithholding());
 			invoice.setWithholdingFarmer(reg.isWithholdingFarmer());
-			invoice.setVatAccrualPayment(invoice.isNational()
-					&& !invoice.getIssueDate().before(InvoiceDAO.VAT_ACCRUAL_START_DATE)
-					&& ( config.getCompany().isVatAccrualPayment() || reg.isVatAccrualPayment()));
+			visitCommon(reg);
 		}
+	}
+
+
+	public static AccountingInvoice save(AONContext ctx, AonConfiguration config, AccountingInvoice accInvoice) {
+		Invoice invoice  = accInvoice.getInvoice();
+		invoice.setRecorded(true);
+		generateDetails(ctx,config,accInvoice);
+		Integer invoiceId = InvoiceDAO.insert(ctx, config, invoice);
+		insertAccountLinks(ctx, invoice);
+		LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
+		AccountEntry[] array = InvoiceRecorder.recordInvoice(accInvoice);
+		for (AccountEntry entry : array) {
+			Integer entryId = AccountEntryDAO.save(ctx, entry);
+			insertLink( ctx, invoice.getDomain(), entryId, invoiceId );
+			entries.add( AccountEntryDAO.getAccountEntry(ctx, entryId) );
+		}
+		accInvoice.setAccountEntries(entries);
+		return accInvoice;
+	}
+
+	private static void insertAccountLinks(AONContext ctx, Invoice invoice) {
+		for (InvoiceDetail detail : invoice.getDetails() ) {
+			ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
+				.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, detail.getDomain())
+				.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, detail.getId())
+				.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccount())
+				.execute();
+			for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
+				ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
+					.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
+					.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
+					.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount())
+					.execute();
+			}
+		}
+	}
+
+	private static void generateDetails(AONContext ctx, AonConfiguration config, AccountingInvoice accInvoice) {
+		short line = 1;
+		LinkedList<InvoiceDetail> details = new LinkedList<InvoiceDetail>();
+		for (InvoiceVAT vat :  accInvoice.getVats()) {
+			InvoiceDetail detail = new InvoiceDetail()
+					.setDomain(accInvoice.getInvoice().getDomain())
+					.setInvoice(accInvoice.getInvoice())
+					.setInvestAsset(vat.getInvestAsset())
+					// ----------------------- TODO
+					.setWorkPlace( config.getWorkplaces().get(0).getId())
+					// -------------------------------------------
+					.setLine(line)
+					.setDescription(MessageFormat.format(DETAIL_MSG
+						, accInvoice.getInvoice().getReferenceCode()
+						, accInvoice.getInvoice().getIssueDate()))
+					.setQuantity(1)
+					.setPrice(vat.getBase())
+					.setDiscountExpression("0.0")
+					.setSource(InvoiceSource.ACCOUNT)
+					.setTaxableBase(vat.getBase())
+					.setAccount(vat.getExpAccountId())
+					.addInvoiceTax(new InvoiceTax()
+						.setTaxType(TaxType.VAT)
+						.setBase(vat.getBase())
+						.setPercentage(vat.getPercentage())
+						.setQuota(vat.getQuota())
+						.setSurcharge(vat.getSurcharge())
+						.setSurchargeQuota(vat.getSurchargeQuota())
+						.setVatDeductionType(vat.getVatDeductionType())
+						.setDeductiblePercent(vat.getDeductiblePercent())
+						.setDeductibleQuota(vat.getDeductibleQuota())
+						// TODO Se deben grabar las dos cuentas!!
+						.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId() )
+						// --------------------------------------
+					);
+					if (vat.isWithholding() && accInvoice.isWithholding()) {
+						detail.addInvoiceTax(new InvoiceTax()
+							.setTaxType(TaxType.RETENTION)
+							.setBase(vat.getBase())
+							.setPercentage(accInvoice.getWithholdingData().getPercentage())
+							.setQuota(AonMathUtils.round( vat.getBase() * accInvoice.getWithholdingData().getPercentage() / 100 ))
+							.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType()))
+							.setAccount(accInvoice.getWithholdingData().getAccountId());
+					};
+			details.add( detail );
+			line++;
+		}
+		accInvoice.getInvoice().setDetails(details);
+	}
+
+	private static void insertLink(AONContext ctx, Integer domain, Integer entryId, Integer invoiceId) {
+		ctx.getDslContext().insertInto(ACCOUNT_ENTRY_INVOICE)
+			.set(ACCOUNT_ENTRY_INVOICE.DOMAIN,domain)
+			.set(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY, entryId)
+			.set(ACCOUNT_ENTRY_INVOICE.INVOICE, invoiceId)
+			.execute();
 	}
 }

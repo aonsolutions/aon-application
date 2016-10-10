@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,11 +15,15 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AppParamDAO {
-
+	
+	private static final String DATE_PATTERN = "dd/MM/yyyy";
+	private static final String[] DATE_PATTERNS = new String[]{DATE_PATTERN}; 
+	
 	private static Logger LOGGER = Logger
 			.getLogger(AppParamDAO.class.getName());
 
@@ -89,6 +95,17 @@ public class AppParamDAO {
 	public static int fetchIntValue(AONContext ctx, AppParam param) {
 		ApplicationParameter ap = fetchOne(ctx, param);
 		return ap == null ? 0 : AonNumberUtils.toint( ap.getValue()); 
+	}
+	public static Date fetchDateValue(AONContext ctx, AppParam param) {
+		ApplicationParameter ap = fetchOne(ctx, param);
+		if ( ap != null && AonStringUtils.isNotBlank(ap.getValue())) {
+			try {
+				return AonDateUtils.parseDateStrictly(ap.getValue(), DATE_PATTERNS);
+			} catch ( ParseException e ) {
+				ctx.log().error( e.getMessage() );
+			}
+		}
+		return null;
 	}
 	
 	public static ApplicationParameter fetchOne(AONContext ctx, AppParam param) {

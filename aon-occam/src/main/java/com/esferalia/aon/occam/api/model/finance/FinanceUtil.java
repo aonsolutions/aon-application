@@ -6,7 +6,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FinanceUtil {
 
-
 	public static String getDocumentNumber(InvoiceType type, String series, Integer number) {
 		String documentNumber = ((InvoiceType.SALES == type) ? "E" : (InvoiceType.UNDEDUCTIBLE == type) ? "G" : "R") + "-";
 		if (!AonStringUtils.isEmpty(series)) {

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -29,6 +30,7 @@ public class AonConfiguration implements Serializable {
 	private Account defaultChargedRetAccount;
 	private Account defaultPaidRetAccount;
 	private Account vatNegativeAdjustAccount;
+	private Date	operationsDeadline;
 
 	public Company getCompany() {
 		return company;
@@ -73,6 +75,18 @@ public class AonConfiguration implements Serializable {
 		this.enterpriseActivities = enterpriseActivities;
 		return this;
 	}
+	public boolean hasActivities() {
+		return this.enterpriseActivities != null && this.enterpriseActivities.size() > 0;
+	}
+	public EnterpriseActivity getMainActivity() {
+		if (hasActivities()) {
+			for (EnterpriseActivity act : this.enterpriseActivities) {
+				if (act.isPrincipal()) return act;
+			}
+		}
+		return null;
+	}
+	
 	
 	public LinkedList<InvestAsset> getInvestAssets() {
 		return investAsset;
@@ -195,6 +209,14 @@ public class AonConfiguration implements Serializable {
 		return this;
 	}
 
-	
+	public Date getOperationsDeadline() {
+		return operationsDeadline;
+	}
 
+	public AonConfiguration setOperationsDeadline(Date operationsDeadline) {
+		this.operationsDeadline = operationsDeadline;
+		return this;
+	}
+
+	
 }

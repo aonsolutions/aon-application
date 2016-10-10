@@ -27,6 +27,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -35,6 +36,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -57,7 +59,6 @@ public class InvoicePanel extends WizardContentBase {
 		void enableInvoiceTotal(boolean enable);
 		void paintEntry();
 		void setFocusOnRegistry();
-		
 	}
 
 	interface InvoicePanelDataBinder extends UiBinder<Widget, InvoicePanel> {}
@@ -78,6 +79,8 @@ public class InvoicePanel extends WizardContentBase {
 	TextBox referenceCode;
 	@UiField
 	DoubleBox invoiceTotal;
+	@UiField
+	Button fastSave;
 	
 	@UiField(provided=true)
 	InvoiceVATPanel vatPanel;
@@ -133,6 +136,7 @@ public class InvoicePanel extends WizardContentBase {
 	
 	@Override
 	public void reset() {
+		
 	}
 	
 	public void setInvoice(AccountingInvoice invoice) {
@@ -160,7 +164,10 @@ public class InvoicePanel extends WizardContentBase {
 						}
 					});
 		} else {
-			setInvoice(new AccountingInvoice());
+			AccountingInvoice i = new AccountingInvoice();
+			i.setAccountEntry(getAccountEntry());
+			setInvoice(i);
+			workingLog.clear();
 			invoiceDataPanel.setVisible(false);
 			withholdingPanel.setVisible(false);
 			registryBox.setValue(new AccountingRegistry());
@@ -240,16 +247,14 @@ public class InvoicePanel extends WizardContentBase {
 
 	@UiHandler("registryBox")
 	public void onSelectRegistry(SelectionEvent<AccountingRegistry> event) {
-		initializeInvoice(event.getSelectedItem());
+		initializeInvoice(invoice.getAccountEntry(), event.getSelectedItem());
 	}
 	
-	private void initializeInvoice(final AccountingRegistry ar) {
+	private void initializeInvoice(final AccountEntry entry,final AccountingRegistry ar) {
 		fiscalService.initializeInvoice(
 				 AccountEntryModule.getCurrentDomainName()
 				,AccountEntryModule.getCurrentDomain()
-				,ar != null ? ar.getType().getInvoiceType() : null
-				,ar != null ? ar.getId() : null
-				,getAccountEntry().getEntryDate()
+				,entry,ar
 				, new AsyncCallback<AccountingInvoice>() {
 					
 					@Override
@@ -329,7 +334,8 @@ public class InvoicePanel extends WizardContentBase {
 	}
 
 	private void populateSalesInvoice(AccountingInvoice invoice) {
-		 for (int i = 0; i < series.getItemCount(); i++) {
+		invoice.getAccountEntry().setEntryType(AccountEntryType.SALES_INVOICE);
+		for (int i = 0; i < series.getItemCount(); i++) {
 			if (AonStringUtils.equals(invoice.getInvoice().getSeries(), series.getValue(i))) {
 				series.setSelectedIndex(i);
 			}
@@ -344,6 +350,7 @@ public class InvoicePanel extends WizardContentBase {
 		populateWithholding();
 	}
 	private void populatePurchaseInvoice(AccountingInvoice invoice) {
+		invoice.getAccountEntry().setEntryType(AccountEntryType.PURCHASE_INVOICE);
 		invoiceDataPanel.setVisible(true);
 		series.setVisible(false);
 		number.setVisible(false);
@@ -354,6 +361,7 @@ public class InvoicePanel extends WizardContentBase {
 		populateWithholding();
 	}
 	private void populateExpensesInvoice(AccountingInvoice invoice) {
+		invoice.getAccountEntry().setEntryType(AccountEntryType.EXPENSE_INVOICE);
 		invoiceDataPanel.setVisible(true);
 		series.setVisible(false);
 		number.setVisible(false);
@@ -369,16 +377,19 @@ public class InvoicePanel extends WizardContentBase {
 		@Override
 		public void visitCustomer(AccountingRegistry reg) {
 			populateSalesInvoice(invoice);
+			fastSave.setVisible(false);
 		}
 
 		@Override
 		public void visitCreditor(AccountingRegistry reg) {
-			populatePurchaseInvoice(invoice);
+			populateExpensesInvoice(invoice);
+			fastSave.setVisible(false);
 		}
 
 		@Override
 		public void visitSupplier(AccountingRegistry reg) {
-			populateExpensesInvoice(invoice);
+			populatePurchaseInvoice(invoice);
+			fastSave.setVisible(false);
 		}
 		
 	}
@@ -394,7 +405,16 @@ public class InvoicePanel extends WizardContentBase {
 		if (invoiceTotal.getValue() == null) invoiceTotal.setValue(0.0, false);
 		vatPanel.invoiceTotalChanged(invoiceTotal.getValue());
 		_paintEntry();
+		if (invoiceTotal.getValue() == null || invoiceTotal.getValue() != 0) {
+			fastSave.setVisible(true);
+			fastSave.setFocus(true);
+		}
 	}
+	@UiHandler("fastSave")
+	public void onFastSave(ClickEvent event) {
+		callback.save(event);
+	}
+	
 	@UiHandler("vatPanel")
 	public void onValueChangeVatPanel(ValueChangeEvent<InvoiceVAT> event) {
 		if (invoice.isWithholding()) populateWithholding();
@@ -407,7 +427,7 @@ public class InvoicePanel extends WizardContentBase {
 	}
 	
 	private void _paintEntry() {
-		AccountEntry[] entries = InvoiceRecorder.recordInvoice( getAccountEntry(),invoice);
+		AccountEntry[] entries = InvoiceRecorder.recordInvoice(invoice);
 		onLog(entries);
 	}
 	
@@ -437,13 +457,13 @@ public class InvoicePanel extends WizardContentBase {
 
 	public void onLog(AccountEntry entry) {
 		workingLog.clear();
-		workingLog.add(entry);			
+		workingLog.addPreview(entry);			
 	}
 	
 	public void onLog(AccountEntry[] entries) {
 		workingLog.clear();
 		for (AccountEntry entry : entries) {
-			workingLog.add(entry,"PREVISUALIAZACI\u00D3N");			
+			workingLog.addPreview(entry);			
 		}
 	}
 	
@@ -452,6 +472,29 @@ public class InvoicePanel extends WizardContentBase {
 		return (invoice != null && invoice.getRegistry() != null && invoice.getRegistry().getType() != null)
 				?invoice.getRegistry().getType().getAccountEntryType()
 				:null;
+	}
+	
+	@Override
+	public void save(final AsyncCallback<AccountEntry[]> callback) {
+		
+		fiscalService.save(AccountEntryModule.getCurrentDomainName()
+				,AccountEntryModule.getCurrentDomain()
+				, invoice, new AsyncCallback<AccountingInvoice>() {
+
+			@Override
+			public void onSuccess(AccountingInvoice result) {
+				invoice = result;
+				int entriesSize = invoice.getAccountEntries().size();
+				AccountEntry[] entries = new AccountEntry[entriesSize];  
+				callback.onSuccess(invoice.getAccountEntries().toArray(entries));
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onFailure(caught);
+			}
+
+		});
 	}
 	
 	private class InvoicePanelCallback implements IInvoicePanelCallback {
@@ -496,6 +539,7 @@ public class InvoicePanel extends WizardContentBase {
 		}
 		@Override
 		public void invoiceTotalChanged() {
+			invoice.calculateInvoiceTotals();
 			invoiceTotal.setValue(invoice.getTotalInvoice());
 		}
 		@Override
@@ -536,6 +580,11 @@ public class InvoicePanel extends WizardContentBase {
 		@Override
 		public void onStatement(Integer accountId) {
 			callback.onStatement(accountId);
+		}
+
+		@Override
+		public void save(ClickEvent event) {
+			callback.save(event);
 		}
 
 	};

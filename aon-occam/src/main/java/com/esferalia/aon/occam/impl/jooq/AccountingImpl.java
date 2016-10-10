@@ -30,13 +30,13 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
@@ -230,8 +230,18 @@ public class AccountingImpl implements IAccounting {
 	}
 
 	@Override
-	public AccountingInvoice initializeInvoice(AONContext ctx, InvoiceType type, Integer registry, Date issueDate) {
-		return AccountingInvoiceDAO.initializeInvoice(ctx, type, registry , issueDate);
+	public AccountingInvoice initializeInvoice(AONContext ctx, AccountEntry entry, AccountingRegistry registry) {
+		return AccountingInvoiceDAO.initializeInvoice(ctx , entry, registry);
+	}
+
+	@Override
+	public AccountingInvoice save(final AONContext ctx, AccountingInvoice invoice) {
+		final Date atDate = (invoice.getInvoice() == null? null : invoice.getInvoice().getIssueDate());
+		return ctx.getDslContext().transactionResult(
+			configuration -> AccountingInvoiceDAO.save(ctx
+				, ConfigurationDAO.getConfiguration(ctx, atDate)
+				, invoice)
+		 );		
 	}
 
 	// 					      BALANCE

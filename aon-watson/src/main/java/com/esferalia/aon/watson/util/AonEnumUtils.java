@@ -3,6 +3,13 @@ package com.esferalia.aon.watson.util;
 
 public class AonEnumUtils {
 	
+	public static Byte getByte(Boolean bool) {
+		return (bool == null) ? null : (byte) (bool ? 1 : 0); 
+	}
+	
+	public static Byte getByte(Enum<?> enume) {
+		return (enume == null) ? null : (byte) enume.ordinal();
+	}
 	
 	public static <T extends Enum<?>, N extends Number> T enumValue(Class<T> clazz, N n){
 		if ( n == null )

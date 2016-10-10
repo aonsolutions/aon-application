@@ -77,7 +77,7 @@ public class InvoiceFormatter {
 					+ AonStringUtils.rightPad(AonStringUtils.substring(AonStringUtils.trimToEmpty( det.getInvoice().getScope().getDescription()),0,5),6)
 					+ AonStringUtils.rightPad(AonStringUtils.abbreviate( (det.getSeller()!=null?det.getSeller().getRegistryName():AonStringUtils.SPACE) ,14),15)
 					+ AonStringUtils.SPACE
-					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(det.getWorkPlace() ,14),15)
+					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(det.getWorkPlaceName() ,14),15)
 					+ AonStringUtils.rightPad(AonStringUtils.abbreviate(
 							AonStringUtils.removeTabsAndNewLine( det.getDescription() )
 							 

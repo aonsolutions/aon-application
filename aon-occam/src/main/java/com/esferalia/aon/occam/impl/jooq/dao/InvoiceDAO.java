@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
@@ -34,8 +35,12 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
+import com.esferalia.aon.jooq.tables.records.InvoiceDetailRecord;
+import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
+import com.esferalia.aon.jooq.tables.records.InvoiceTaxRecord;
 import com.esferalia.aon.jooq.tables.records.InvoicingGroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.InvoicingGroupProperties;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -43,6 +48,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -54,6 +60,8 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
+import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -185,6 +193,9 @@ public class InvoiceDAO {
 				,INVOICE_DETAIL.DISCOUNT_EXPR
 				,INVOICE_DETAIL.TAXABLE_BASE
 				,INVOICE_DETAIL.SELLER
+				,INVOICE_DETAIL.PROJECT
+				,INVOICE_DETAIL.WAREHOUSE
+				,INVOICE_DETAIL.WORKPLACE
 				,SELLER_ALIAS.NAME
 				,WORKPLACE.DESCRIPTION
 				,WAREHOUSE.NAME
@@ -336,7 +347,8 @@ public class InvoiceDAO {
 					.setAddressZIP(record.getValue(RADDRESS.ZIP))
 					.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
 				)
-				.setProject( record.getValue( PROJECT.NAME ))
+				.setProject( record.getValue( INVOICE_DETAIL.PROJECT ))
+				.setProjectName( record.getValue( PROJECT.NAME ))
 				.setLine(record.getValue( INVOICE_DETAIL.LINE ))
 				.setDescription(record.getValue( INVOICE_DETAIL.DESCRIPTION ))
 				.setQuantity(record.getValue(INVOICE_DETAIL.QUANTITY))
@@ -362,8 +374,10 @@ public class InvoiceDAO {
 					: new Seller()
 					.setId( record.getValue(INVOICE_DETAIL.SELLER) )
 					.setRegistryName( record.getValue(SELLER_ALIAS.NAME) ))
-				.setWorkPlace(record.getValue(WORKPLACE.DESCRIPTION))
-				.setWarehouse(record.getValue(WAREHOUSE.NAME));
+				.setWorkPlace(record.getValue(INVOICE_DETAIL.WORKPLACE))
+				.setWorkPlaceName(record.getValue(WORKPLACE.DESCRIPTION))
+				.setWarehouse(record.getValue(INVOICE_DETAIL.WAREHOUSE))
+				.setWarehouseName(record.getValue(WAREHOUSE.NAME));
 		}
 		
 	}
@@ -606,12 +620,12 @@ public class InvoiceDAO {
 		}
 	}
 
-	public static int getNextNumber(AONContext ctx, InvoiceType type, String series ) {
+	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
 		Integer next = ctx.getDslContext()
 			.select( DSL.max(INVOICE.NUMBER))
 			.from(INVOICE)
 			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
-			.and(INVOICE.TYPE.eq(type.value()))
+			.and(INVOICE.TYPE.in(types))
 			.and( AonStringUtils.isBlank(series)
 					?INVOICE.SERIES.isNull()
 					:INVOICE.SERIES.eq(series))
@@ -624,6 +638,123 @@ public class InvoiceDAO {
 			.orElse(0);
 		return ++next;
 	}
+
+	public static Integer insert(AONContext ctx, AonConfiguration config, Invoice invoice) {
+		ctx.checkWrite();
+		InvoiceValidation.validateInvoice(ctx, config, invoice);
+		InvoiceAutoComplete.completeInvoice(ctx, config, invoice);
+		InvoiceRecord record = ctx.getDslContext()
+			.insertInto(INVOICE)
+			.set(INVOICE.DOMAIN, invoice.getDomain() )
+			.set(INVOICE.ACTIVITY, invoice.getActivity() )
+			.set(INVOICE.INVEST_ASSET, invoice.getInvestAsset() )
+			.set(INVOICE.PROJECT, invoice.getProject() )
+			.set(INVOICE.SERIES, invoice.getSeries() )
+			.set(INVOICE.NUMBER, invoice.getNumber() )
+			.set(INVOICE.REFERENCE_CODE, invoice.getReferenceCode() )
+			.set(INVOICE.REGISTRY, invoice.getRegistry() )
+			.set(INVOICE.RDOCUMENT, invoice.getRegistryDocument() )
+			.set(INVOICE.RDOCUMENT_TYPE, AonEnumUtils.getByte( invoice.getRegistryDocumentType()) )
+			.set(INVOICE.RDOCUMENT_COUNTRY, Country.safeIso2( invoice.getRegistryDocumentCountry()))
+			.set(INVOICE.RNAME, invoice.getRegistryName() )
+			.set(INVOICE.RADDRESS, invoice.getRegistryAddress() )
+			.set(INVOICE.ISSUE_DATE, AonDateUtils.toSql( invoice.getIssueDate()) )
+			.set(INVOICE.TAX_DATE, AonDateUtils.toSql(invoice.getTaxDate()) )
+			.set(INVOICE.SECURITY_LEVEL, AonEnumUtils.getByte( invoice.isConfidential() ) )
+			.set(INVOICE.STATUS, AonEnumUtils.getByte( invoice.isRecorded() ) )
+			.set(INVOICE.TYPE, AonEnumUtils.getByte( invoice.getType() ) )
+			.set(INVOICE.SURCHARGE, AonEnumUtils.getByte( invoice.isSurcharge() ))
+			.set(INVOICE.WITHHOLDING, AonEnumUtils.getByte( invoice.isWithholding() ))
+			.set(INVOICE.WITHHOLDING_FARMER, AonEnumUtils.getByte( invoice.isWithholdingFarmer() ))
+			.set(INVOICE.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte( invoice.isVatAccrualPayment() ))
+			.set(INVOICE.INVESTMENT, AonEnumUtils.getByte( invoice.isInvestment() ) )
+			.set(INVOICE.TRANSACTION, AonEnumUtils.getByte( invoice.getTransaction() ) )
+			.set(INVOICE.SCOPE, invoice.getScope().getId() )
+			.set(INVOICE.SERVICE, AonEnumUtils.getByte(  invoice.isService() ) )
+			.set(INVOICE.RECTIFICATION_TYPE, AonEnumUtils.getByte( invoice.getRectificationType()) )
+			.set(INVOICE.RECTIFICATION_INVOICE, invoice.getRectificationInvoice() )
+			.set(INVOICE.ADVANCE, AonEnumUtils.getByte( invoice.isAdvance()) )
+			.set(INVOICE.SIGNED, AonEnumUtils.getByte( invoice.isSigned()) )
+			.set(INVOICE.TAXABLE_BASE, invoice.getTaxableBase() )
+			.set(INVOICE.VAT_QUOTA, invoice.getVatQuota() )
+			.set(INVOICE.RETENTION_QUOTA, invoice.getRetentionQuota() )
+			.set(INVOICE.TOTAL, invoice.getTotal() )
+			.set(INVOICE.POS_SHIFT, invoice.getPosShift() )
+			.set(INVOICE.SELLER, invoice.getSeller() )
+			.set(INVOICE.COMMENTS, invoice.getComments() )
+			.set(INVOICE.REMARKS, invoice.getRemarks() )
+			.set(INVOICE.CREATION_USER, invoice.getCreationUser() )
+			.set(INVOICE.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.returning(INVOICE.ID)
+			.fetchOne();
+		invoice.setId(record.getValue(INVOICE.ID));
+		ctx.log().info("INSERT INVOICE invoice: " + invoice.getId());
+		insertDetails(ctx, config, invoice);
+		return record.getValue(INVOICE.ID); 
+	}
+	
+	private static void insertDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {
+		for (InvoiceDetail detail : invoice.getDetails()) {
+			InvoiceDetailRecord record = ctx.getDslContext()
+				.insertInto(INVOICE_DETAIL)
+				.set(INVOICE_DETAIL.DOMAIN,invoice.getDomain())
+				.set(INVOICE_DETAIL.INVOICE,invoice.getId())
+				.set(INVOICE_DETAIL.INVEST_ASSET,detail.getInvestAsset())
+				.set(INVOICE_DETAIL.PROJECT,detail.getProject())
+				.set(INVOICE_DETAIL.LINE,detail.getLine())
+				.set(INVOICE_DETAIL.ITEM,detail.getItem()==null?null : detail.getItem().getId())
+				.set(INVOICE_DETAIL.DESCRIPTION,detail.getDescription())
+				.set(INVOICE_DETAIL.QUANTITY,detail.getQuantity())
+				.set(INVOICE_DETAIL.PRICE,detail.getPrice())
+				.set(INVOICE_DETAIL.DISCOUNT_EXPR,detail.getDiscountExpression())
+				.set(INVOICE_DETAIL.SOURCE,detail.getSource().value() )
+				.set(INVOICE_DETAIL.SOURCE_ID,detail.getSourceId())
+				.set(INVOICE_DETAIL.TAXABLE_BASE,detail.getTaxableBase())
+				.set(INVOICE_DETAIL.TAXES,detail.getTaxes())
+				.set(INVOICE_DETAIL.PREPAYMENT, AonEnumUtils.getByte( detail.isPrepayment() )) 
+				.set(INVOICE_DETAIL.SELLER,detail.getSeller() == null ? null : detail.getSeller().getId() )
+				.set(INVOICE_DETAIL.WORKPLACE,detail.getWorkPlace() )
+				.set(INVOICE_DETAIL.WAREHOUSE,detail.getWarehouse())
+				.set(INVOICE_DETAIL.CREATION_USER,ctx.getUser())
+				.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.returning(INVOICE_DETAIL.ID)
+				.fetchOne();
+			detail.setId(record.getValue(INVOICE_DETAIL.ID));
+			ctx.log().info("\tINSERT INVOICE_DETAIL detalles invoice: " + detail.getId());
+			insertInvoiceTaxes(ctx,detail);
+		}
+	}
+	
+	private static void insertInvoiceTaxes(AONContext ctx, InvoiceDetail detail) {
+		for (InvoiceTax tax : detail.getInvoiceTaxes()) {
+			InvoiceTaxRecord record =  ctx.getDslContext()
+				.insertInto(INVOICE_TAX)
+				.set(INVOICE_TAX.DOMAIN,detail.getDomain())
+				.set(INVOICE_TAX.INVOICE_DETAIL,detail.getId())
+				.set(INVOICE_TAX.TAX_TYPE, tax.getTaxType().value())
+				.set(INVOICE_TAX.BASE,tax.getBase())
+				.set(INVOICE_TAX.PERCENTAGE,tax.getPercentage())
+				.set(INVOICE_TAX.QUOTA,tax.getQuota())
+				.set(INVOICE_TAX.SURCHARGE,tax.getSurcharge())
+				.set(INVOICE_TAX.SURCHARGE_QUOTA,tax.getSurchargeQuota())
+				.set(INVOICE_TAX.VAT_DEDUCTION_TYPE,tax.getVatDeductionType() == null? null : tax.getVatDeductionType().value())
+				.set(INVOICE_TAX.WITHHOLDING_TYPE,tax.getWithholdingType() == null ? null : tax.getWithholdingType().value())
+				.set(INVOICE_TAX.DEDUCTIBLE_PERCENT,tax.getDeductiblePercent())
+				.set(INVOICE_TAX.DEDUCTIBLE_QUOTA ,tax.getDeductibleQuota())
+				.returning(INVOICE_TAX.ID)
+				.fetchOne();
+			tax.setId(record.getValue(INVOICE_TAX.ID));
+			ctx.log().info("\t\tINSERT INVOICE_TAX tax: " + tax.getTaxType());
+		}
+	}
+	
 	
 	
 }
+
+
+
+
+
+
+

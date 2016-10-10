@@ -36,9 +36,16 @@ public class ConfigurationDAO {
 				.setInvestAsset( CompanyDAO.getInvestAssets(ctx,ctx.getDomainId(),atDate)
 						.collect(Collectors.toCollection(LinkedList::new)))
 				.setWorkplaces( WorkplaceDAO.getWorkplaceList(ctx, 
-						p -> p.getDomainProperty().eq(ctx.getDomainId())
-						.and(p.getActiveProperty().eq( (byte) 1 ))
-						.and(p.getScopeProperty().in( SecurityDAO.getUserScopes(ctx) ))))
+						p -> {
+							Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
+							return (userScopes == null) 
+								? p.getDomainProperty().eq(ctx.getDomainId())
+									.and(p.getActiveProperty().eq( (byte) 1 ))
+								: p.getDomainProperty().eq(ctx.getDomainId())
+									.and(p.getActiveProperty().eq( (byte) 1 ))
+									.and(p.getScopeProperty().in( userScopes ));
+						}
+						))
 				.setVatTaxes( TaxDAO.getVatTaxs(ctx,atDate).collect(Collectors.toCollection(LinkedList::new)))
 				.setDefaultVatPercent(defaultVatPercent == 0
 					?null
@@ -55,6 +62,7 @@ public class ConfigurationDAO {
 				.setDefaultChargedRetAccount( getAccount(ctx, AppParam.ACC_DEFAULT_CHARGED_RET_ACC) )
 				.setDefaultPaidRetAccount( getAccount(ctx, AppParam.ACC_DEFAULT_PAID_RET_ACC) )
 				.setVatNegativeAdjustAccount( getAccount(ctx, AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC) )
+				.setOperationsDeadline( AppParamDAO.fetchDateValue(ctx, AppParam.ACC_OPERATIONS_DEADLINE))
 		;
 		return conf;
 	}

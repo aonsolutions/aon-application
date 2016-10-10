@@ -18,6 +18,7 @@ public class InvoiceVAT implements Serializable {
 	private double deductiblePercent;
 	private double deductibleQuota;
 	private boolean withholding;
+	
 	private Integer outputAccountId;
 	private String outputAccountCode;
 	private String outputAccountDescription;

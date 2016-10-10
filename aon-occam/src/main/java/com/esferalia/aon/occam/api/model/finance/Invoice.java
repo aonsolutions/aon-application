@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -56,16 +57,23 @@ public class Invoice implements Serializable, HasAudit {
 	private boolean investment;
 	private boolean service;
 	private boolean advance;
+	private boolean signed;
 	private double taxableBase;
 	private double vatQuota;
 	private double retentionQuota;
 	private double total;
+	private Integer posShift;
+	private Integer seller;
+	
+	private String comments;
+	private String remarks;
 
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
 
+	private LinkedList<InvoiceDetail> details;
 	
 	public Integer getId() {
 		return id;
@@ -333,6 +341,13 @@ public class Invoice implements Serializable, HasAudit {
 		this.advance = advance;
 		return this;
 	}
+	public boolean isSigned() {
+		return signed;
+	}
+	public Invoice setSigned(boolean signed) {
+		this.signed = signed;
+		return this;
+	}
 	public double getTaxableBase() {
 		return taxableBase;
 	}
@@ -361,6 +376,20 @@ public class Invoice implements Serializable, HasAudit {
 		this.total = total;
 		return this;
 	}
+	public Integer getSeller() {
+		return seller;
+	}
+	public Invoice setSeller(Integer seller) {
+		this.seller = seller;
+		return this;
+	}
+	public Integer getPosShift() {
+		return posShift;
+	}
+	public Invoice setPosShift(Integer posShift) {
+		this.posShift = posShift;
+		return this;
+	}
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
@@ -379,6 +408,22 @@ public class Invoice implements Serializable, HasAudit {
 		return FinanceUtil.getDocumentNumber(type, series, number);
 	}
 	
+	public String getComments() {
+		return comments;
+	}
+	public Invoice setComments(String comments) {
+		this.comments = comments;
+		return this;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+	public Invoice setRemarks(String remarks) {
+		this.remarks = remarks;
+		return this;
+	}
+
 	// ---------------------------------------------------------- AUDIT
 	@Override
 	public String getCreationUser() {
@@ -413,6 +458,13 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
+	public LinkedList<InvoiceDetail> getDetails() {
+		return details;
+	}
+	public Invoice setDetails(LinkedList<InvoiceDetail> details) {
+		this.details = details;
+		return this;
+	}
 
 	// ---------------------------------------------------------- UTIL
 	public boolean isNational() {
@@ -432,6 +484,9 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public boolean isExpenses() {
 		return getType() == InvoiceType.EXPENSES;
+	}
+	public boolean isUndeductible() {
+		return getType() == InvoiceType.UNDEDUCTIBLE;
 	}
 	
 	public boolean isOutputVatEnabled() {

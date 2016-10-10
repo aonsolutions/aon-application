@@ -7,13 +7,14 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 
-public abstract class WizardContentBase extends ResizeComposite implements RequiresResize, IWizardContent {
+public abstract class WizardContentBase extends ResizeComposite implements RequiresResize, IWizardContent, IAccountEntryWrapper {
 
 	static FiscalServiceAsync fiscalService;
 	protected AccountEntry ae;
@@ -42,18 +43,28 @@ public abstract class WizardContentBase extends ResizeComposite implements Requi
 	}
 
 	@Override
-	public AccountEntry getAccountEntry() {
-		return this.ae;
+	public IAccountEntryWrapper getAccountEntryWrapper() {
+		return this;
 	}
 	
 	@Override
-	public void save(final AsyncCallback<AccountEntry> callback) {
-		getFiscalService().save(getDomainName(), getDomain(), ae, new AsyncCallbackWrapper<AccountEntry>(callback) {
+	public AccountEntry getAccountEntry() {
+		return this.ae;
+	}
+	@Override
+	public void setAccountEntry(AccountEntry entry) {
+		this.ae = entry;
+	}
+	
+	@Override
+	public void save(final AsyncCallback<AccountEntry[]> callback) {
+		getFiscalService().save(getDomainName(), getDomain(), ae, new AsyncCallback<AccountEntry>() {
 
 			@Override
 			public void onSuccess(AccountEntry result) {
 				ae = result;
-				callback.onSuccess(result);
+				AccountEntry[] entries = new AccountEntry[]{result}; 	
+				callback.onSuccess(entries);
 			}
 
 			@Override
