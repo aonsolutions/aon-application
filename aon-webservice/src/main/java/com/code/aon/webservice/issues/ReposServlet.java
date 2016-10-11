@@ -3,6 +3,7 @@ package com.code.aon.webservice.issues;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -49,7 +50,6 @@ public class ReposServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("GET METHOD");
 		String accessToken = req.getParameter("access_token");
-		
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[1];
 		String domainName = pathInfo[2]; 
@@ -116,203 +116,208 @@ public class ReposServlet extends HttpServlet{
 		}
 	}
 	
+	
+	public String checkString(String str){
+		return new String(str.getBytes(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8") );
+	}
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("POST METHOD");
-		//String serverName = req.getServerName();
 		
-		//if(AonUrlApi.AON.getUrl().contains(serverName)){
-			String[] pathInfo = req.getPathInfo().split("/");
-			String userName = pathInfo[1];
-			String domainName = pathInfo[2]; 
+		String[] pathInfo = req.getPathInfo().split("/");
+		String userName = pathInfo[1];
+		String domainName = pathInfo[2]; 
 			
-			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
-			if(pathInfo.length > 3){
-				String line = "";
-				String s = "";
-				while((line = req.getReader().readLine()) != null)
-					s = s + " " + line;
-				System.out.println(s);
-				if(s == null || s.equals("")) s = "{}";
-				JSONObject json = new JSONObject(s);
+		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
+		if(pathInfo.length > 3){
+			String line = "";
+			String s = "";
+			while((line = req.getReader().readLine()) != null)
+				s = s + " " + line;
+			System.out.println(s);
+			s = checkString(s);
+			System.out.println(s);
+			if(s == null || s.equals("")) s = "{}";
+			JSONObject json = new JSONObject(s);
 				
-				Object object = new Object();
-				switch (pathInfo[3]) {
-				case "issues":
-					if(pathInfo.length > 4){
-						if(pathInfo.length > 5){
-							if(pathInfo[5].equalsIgnoreCase("labels")){
-								if(pathInfo.length > 6){
-									Integer taskId = DB.getTaskId(domain, userName, Integer.parseInt(pathInfo[4]));
-									Integer tagId = DB.getTagId(domain, userName, pathInfo[6], TagType.TASK_LABEL);
-									TaskTag taskTag = new TaskTag().setDomain(domain.getId()).setTask(taskId).setTag(tagId);
-									AON.createTaskTag(domain.getName(), domain.getId(), userName, taskTag);
-								}
-							} else if(pathInfo[5].equalsIgnoreCase("comments")){
-								if(pathInfo.length > 6){
-									TaskComment tc = AON.getTaskComment(domain.getName(), domain.getId(), userName, Integer.parseInt(pathInfo[6]))
-											.setComment(json.getString("body")).setModificationDate(Calendar.getInstance().getTime())
-											.setModificationUser(userName);
-									AON.updateTaskComment(domain.getName(), domain.getId(), userName, tc);
-									object = new Comment(tc).toJSON();
-								} else {
-									Task task = AON.getTask(domain.getName(), domain.getId(), userName,
-										f -> f.getNumberProperty().eq(Integer.parseInt(pathInfo[4])).and(f.getDomainProperty().eq(domain.getId())));
-									TaskComment tc = new TaskComment().setComment(json.getString("body"))
-											.setModificationDate(Calendar.getInstance().getTime())
-											.setCreationDate(Calendar.getInstance().getTime())
-											.setDomain(domain.getId())
-											.setTask(task.getId())
-											.setCreationUser(userName)
-											.setModificationUser(userName);
-									TaskComment tc2 = AON.createTaskComment(domain.getName(), domain.getId(), userName, tc, Integer.parseInt(pathInfo[4]));	
-									object = new Comment(tc2).toJSON();
-								}
-							} else if(pathInfo[5].equalsIgnoreCase("events")){
-								if(pathInfo.length > 6){
-									TaskEvent te = new TaskEvent().setEvent(json.getString("body")).setModificationUser(userName)
-											.setModificationDate(Calendar.getInstance().getTime());
-									AON.updateTaskEvent(domain.getName(), domain.getId(), userName, te, Integer.parseInt(pathInfo[6]));
-									object = new Event(te).toJSON();
-								} else {
-									TaskEvent te = new TaskEvent().setEvent(json.getString("event"))
-											.setCreationDate(Calendar.getInstance().getTime())
-											.setModificationDate(Calendar.getInstance().getTime())
-											.setDomain(domain.getId())
-											.setTask(Integer.parseInt(pathInfo[4]))
-											.setCreationUser(userName)
-											.setModificationUser(userName);
-									TaskEvent te2 = AON.createTaskEvent(domain.getName(), domain.getId(), userName, te, Integer.parseInt(pathInfo[4]));	
-									object = new Event(te2).toJSON();
-
-								}
-							} else if(pathInfo[5].equalsIgnoreCase("type")){
-								if(pathInfo.length > 6){
-									Integer taskId = DB.getTaskId(domain, userName, Integer.parseInt(pathInfo[4]));
-									AON.deleteTypeTaskTag(domain.getName(), domain.getId(), userName, taskId);
-									Integer tagId = DB.getTagId(domain, userName, pathInfo[6], TagType.TASK_TYPE);
-									TaskTag taskTag = new TaskTag().setDomain(domain.getId()).setTask(taskId).setTag(tagId);
-									AON.createTaskTag(domain.getName(), domain.getId(), userName, taskTag);
-								} 						
-							} else if(pathInfo[5].equalsIgnoreCase("priority")){
-								if(pathInfo.length > 6){
-									Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
-											.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime());	
-									DB.updateTaskPriority(domain, userName,task.setPriority(Priority.valueNameOf(pathInfo[6]).value()));
-								}
-							} else if(pathInfo[5].equalsIgnoreCase("user")){
-								if(pathInfo.length > 6){
-									Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
-											.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime());
-									AON.updateTaskUser(domain.getName(), domain.getId(), userName, task.setTaskHolder(Integer.parseInt(pathInfo[6])));
-								} 
-							} else if(pathInfo[5].equalsIgnoreCase("workgroup")){
-								if(pathInfo.length > 6){
-									Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
-											.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime());
-									AON.updateTaskUser(domain.getName(), domain.getId(), userName, task.setWorkgroup(Integer.parseInt(pathInfo[6])));
-								}
+			new String(json.getString("title").getBytes(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8") );
+				
+			Object object = new Object();
+			switch (pathInfo[3]) {
+			case "issues":
+				if(pathInfo.length > 4){
+					if(pathInfo.length > 5){
+						if(pathInfo[5].equalsIgnoreCase("labels")){
+							if(pathInfo.length > 6){
+								Integer taskId = DB.getTaskId(domain, userName, Integer.parseInt(pathInfo[4]));
+								Integer tagId = DB.getTagId(domain, userName, pathInfo[6], TagType.TASK_LABEL);
+								TaskTag taskTag = new TaskTag().setDomain(domain.getId()).setTask(taskId).setTag(tagId);
+								AON.createTaskTag(domain.getName(), domain.getId(), userName, taskTag);
 							}
-						} else{ // UPDATE TASK / ISSUE
-							Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
-									.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime());
-							if(json.opt("state") != null) {
-								if(json.get("state").equals("open")){
-									task = task.setStatus(TaskStatus.PENDING.value()).setEndDate(null).setId(task.getId())
-											.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
-									TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
-										.setEvent("reopened").setTask(task.getId()).setCreationUser(userName);
-									AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
-								}
-								if(json.get("state").equals("closed")){
-									task = task.setStatus(TaskStatus.FINISHED.value()).setEndDate(Calendar.getInstance().getTime()).setId(task.getId())
-											.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
-									TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
-											.setEvent("closed").setTask(task.getId()).setCreationUser(userName);
-									AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
-								}
-								if(json.get("state").equals("deleted")){
-									task = task.setStatus(TaskStatus.DELETED.value()).setEndDate(null).setId(task.getId())
-											.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
-									TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
-											.setEvent("deleted").setTask(task.getId()).setCreationUser(userName);
-									AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
-								}
-								AON.updateTaskStatus(domain.getName(), domain.getId(), userName, task );								
-								object = getIssueJSON(domain, userName, task);
-							} else if(json.opt("body") != null){
-								task.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
-								DB.updateTaskDescription(domain, userName, task.setComments(json.getString("body")));
-								Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
-								object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise).toJSON();
-							}	
+						} else if(pathInfo[5].equalsIgnoreCase("comments")){
+							if(pathInfo.length > 6){
+								TaskComment tc = AON.getTaskComment(domain.getName(), domain.getId(), userName, Integer.parseInt(pathInfo[6]))
+										.setComment(json.getString("body")).setModificationDate(Calendar.getInstance().getTime())
+										.setModificationUser(userName);
+								AON.updateTaskComment(domain.getName(), domain.getId(), userName, tc);
+								object = new Comment(tc).toJSON();
+							} else {
+								Task task = AON.getTask(domain.getName(), domain.getId(), userName,
+									f -> f.getNumberProperty().eq(Integer.parseInt(pathInfo[4])).and(f.getDomainProperty().eq(domain.getId())));
+								TaskComment tc = new TaskComment().setComment(json.getString("body"))
+										.setModificationDate(Calendar.getInstance().getTime())
+										.setCreationDate(Calendar.getInstance().getTime())
+										.setDomain(domain.getId())
+										.setTask(task.getId())
+										.setCreationUser(userName)
+										.setModificationUser(userName);
+								TaskComment tc2 = AON.createTaskComment(domain.getName(), domain.getId(), userName, tc, Integer.parseInt(pathInfo[4]));	
+								object = new Comment(tc2).toJSON();
+							}
+						} else if(pathInfo[5].equalsIgnoreCase("events")){
+							if(pathInfo.length > 6){
+								TaskEvent te = new TaskEvent().setEvent(json.getString("body")).setModificationUser(userName)
+										.setModificationDate(Calendar.getInstance().getTime());
+								AON.updateTaskEvent(domain.getName(), domain.getId(), userName, te, Integer.parseInt(pathInfo[6]));
+								object = new Event(te).toJSON();
+							} else {
+								TaskEvent te = new TaskEvent().setEvent(json.getString("event"))
+										.setCreationDate(Calendar.getInstance().getTime())
+										.setModificationDate(Calendar.getInstance().getTime())
+										.setDomain(domain.getId())
+										.setTask(Integer.parseInt(pathInfo[4]))
+										.setCreationUser(userName)
+										.setModificationUser(userName);
+								TaskEvent te2 = AON.createTaskEvent(domain.getName(), domain.getId(), userName, te, Integer.parseInt(pathInfo[4]));	
+								object = new Event(te2).toJSON();
+							}
+						} else if(pathInfo[5].equalsIgnoreCase("type")){
+							if(pathInfo.length > 6){
+								Integer taskId = DB.getTaskId(domain, userName, Integer.parseInt(pathInfo[4]));
+								AON.deleteTypeTaskTag(domain.getName(), domain.getId(), userName, taskId);
+								Integer tagId = DB.getTagId(domain, userName, pathInfo[6], TagType.TASK_TYPE);
+								TaskTag taskTag = new TaskTag().setDomain(domain.getId()).setTask(taskId).setTag(tagId);
+								AON.createTaskTag(domain.getName(), domain.getId(), userName, taskTag);
+							} 						
+						} else if(pathInfo[5].equalsIgnoreCase("priority")){
+							if(pathInfo.length > 6){
+								Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
+										.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime());	
+								DB.updateTaskPriority(domain, userName,task.setPriority(Priority.valueNameOf(pathInfo[6]).value()));
+							}
+						} else if(pathInfo[5].equalsIgnoreCase("user")){
+							if(pathInfo.length > 6){
+								Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
+										.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime());
+								AON.updateTaskUser(domain.getName(), domain.getId(), userName, task.setTaskHolder(Integer.parseInt(pathInfo[6])));
+							} 
+						} else if(pathInfo[5].equalsIgnoreCase("workgroup")){
+							if(pathInfo.length > 6){
+								Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
+										.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime());
+								AON.updateTaskUser(domain.getName(), domain.getId(), userName, task.setWorkgroup(Integer.parseInt(pathInfo[6])));
+							}
 						}
-					} else { // CREATE NEW TASK / ISSUE
-						Integer num = AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) != null ?
-								AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) : 0;
-						Registry registry = AON.getRegistry(domain.getName(), domain.getId(), userName, json.getString("enterprise"));
-						Task task = new Task()
-							.setDescription(json.getString("title"))
-							.setComments(json.getString("body"))
-							.setDomain(domain.getId())
-							.setNumber(num + 1)
-							.setStartDate(Calendar.getInstance().getTime())
-							.setDueDate(Calendar.getInstance().getTime())// TODO 
-							.setStatus(TaskStatus.PENDING.value())
-							.setRegistry(registry.getId()) // TODO
-							.setPercent((byte) 0) 
-							.setPriority((byte) 0) //TODO 
-							.setSource(TaskSource.MANUAL.value())
-							.setCreationUser(userName)
-							.setCreationDate(Calendar.getInstance().getTime())
-							.setModificationUser(userName)
-							.setModificationDate(Calendar.getInstance().getTime());
-						
-						Task t = AON.createTask(domain.getName(), domain.getId(), userName, task);
-						object = new Issue(t, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), registry).toJSON();
+					} else{ // UPDATE TASK / ISSUE
+						Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
+								.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime());
+						if(json.opt("state") != null) {
+							if(json.get("state").equals("open")){
+								task = task.setStatus(TaskStatus.PENDING.value()).setEndDate(null).setId(task.getId())
+										.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
+								TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
+									.setEvent("reopened").setTask(task.getId()).setCreationUser(userName);
+								AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
+							}
+							if(json.get("state").equals("closed")){
+								task = task.setStatus(TaskStatus.FINISHED.value()).setEndDate(Calendar.getInstance().getTime()).setId(task.getId())
+										.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
+								TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
+										.setEvent("closed").setTask(task.getId()).setCreationUser(userName);
+								AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
+							}
+							if(json.get("state").equals("deleted")){
+								task = task.setStatus(TaskStatus.DELETED.value()).setEndDate(null).setId(task.getId())
+										.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
+								TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
+										.setEvent("deleted").setTask(task.getId()).setCreationUser(userName);
+								AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
+							}
+							AON.updateTaskStatus(domain.getName(), domain.getId(), userName, task );								
+							object = getIssueJSON(domain, userName, task);
+						} else if(json.opt("body") != null){
+							task.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
+							DB.updateTaskDescription(domain, userName, task.setComments(json.getString("body")));
+							Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
+							object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise).toJSON();
+						}	
 					}
-					break;
-				case "labels":
-					if(pathInfo.length > 4){	
-						Tag tag= DB.getTag(domain, userName, pathInfo[4], TagType.TASK_LABEL);
-						tag.setName(json.getString("name"));
-						AON.updateTag(domainName, domain.getId(), userName, tag);
-						object = new Label().setId(tag.getId()).setName(tag.getName()).toJSON();
-					} else {
-						Random rnd = new Random();		
-						Tag tag = new Tag().setName(json.getString("name"))
-								.setDomain(domain.getId()).setType(TagType.TASK_LABEL.value())
-								.setColor(TagColor.values()[rnd.nextInt(9)].getColor());
-						Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);
-						object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
-					}
-					break;
-				case "types":
-					if(pathInfo.length > 4){
-						Tag tag= DB.getTag(domain, userName, pathInfo[4], TagType.TASK_TYPE);
-						tag.setName(json.getString("name"));
-						AON.updateTag(domainName, domain.getId(), userName, tag);
-						object = new Label().setId(tag.getId()).setName(tag.getName()).toJSON();
-					} else {
-						Random rnd = new Random();		
-						Tag tag = new Tag().setName(json.getString("name"))
-								.setDomain(domain.getId()).setType(TagType.TASK_TYPE.value())
-								.setColor(TagColor.values()[rnd.nextInt(9)].getColor());
-						Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);
-						object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
-					}
-					break;
-				default:
-					break;
+				} else { // CREATE NEW TASK / ISSUE
+					Integer num = AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) != null ?
+							AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) : 0;
+					Registry registry = AON.getRegistry(domain.getName(), domain.getId(), userName, json.getString("enterprise"));
+					Task task = new Task()
+						.setDescription(json.getString("title"))
+						.setComments(json.getString("body"))
+						.setDomain(domain.getId())
+						.setNumber(num + 1)
+						.setStartDate(Calendar.getInstance().getTime())
+						.setDueDate(Calendar.getInstance().getTime())// TODO 
+						.setStatus(TaskStatus.PENDING.value())
+						.setRegistry(registry.getId()) // TODO
+						.setPercent((byte) 0) 
+						.setPriority((byte) 0) //TODO 
+						.setSource(TaskSource.MANUAL.value())
+						.setCreationUser(userName)
+						.setCreationDate(Calendar.getInstance().getTime())
+						.setModificationUser(userName)
+						.setModificationDate(Calendar.getInstance().getTime());
+					
+					Task t = AON.createTask(domain.getName(), domain.getId(), userName, task);
+					object = new Issue(t, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), registry).toJSON();
 				}
-				
-				resp.setContentType("application/json;charset=UTF-8");
-				addCorsHeader(resp);
-				PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
-				os.println(object.toString());
-				os.flush();
+				break;
+			case "labels":
+				if(pathInfo.length > 4){	
+					Tag tag= DB.getTag(domain, userName, pathInfo[4], TagType.TASK_LABEL);
+					tag.setName(json.getString("name"));
+					AON.updateTag(domainName, domain.getId(), userName, tag);
+					object = new Label().setId(tag.getId()).setName(tag.getName()).toJSON();
+				} else {
+					Random rnd = new Random();		
+					Tag tag = new Tag().setName(json.getString("name"))
+						.setDomain(domain.getId()).setType(TagType.TASK_LABEL.value())
+						.setColor(TagColor.values()[rnd.nextInt(9)].getColor());
+					Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);
+					object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
+				}
+				break;
+			case "types":
+				if(pathInfo.length > 4){
+					Tag tag= DB.getTag(domain, userName, pathInfo[4], TagType.TASK_TYPE);
+					tag.setName(json.getString("name"));
+					AON.updateTag(domainName, domain.getId(), userName, tag);
+					object = new Label().setId(tag.getId()).setName(tag.getName()).toJSON();
+				} else {
+					Random rnd = new Random();		
+					Tag tag = new Tag().setName(json.getString("name"))
+							.setDomain(domain.getId()).setType(TagType.TASK_TYPE.value())
+							.setColor(TagColor.values()[rnd.nextInt(9)].getColor());
+					Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);
+					object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
+				}
+				break;
+			default:
+				break;
 			}
-		//}
+				
+			resp.setContentType("application/json;charset=UTF-8");
+			addCorsHeader(resp);
+			PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
+			os.println(object.toString());
+			os.flush();
+		}
 	}
 	
     private void addCorsHeader(HttpServletResponse response){
