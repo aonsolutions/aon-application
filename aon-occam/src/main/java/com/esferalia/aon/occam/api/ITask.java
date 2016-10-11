@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 public interface ITask {
 	public Task getTask(AONContext ctx, TaskFilter filter);
 	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter);
+	public Integer[] getTaskCount(AONContext ctx, TaskFilter filter, IssueFilter issueFilter);
 	public Stream<Tag> getTaskLabelStream(AONContext ctx, TaskTagFilter filter);
 	public Integer getCommentsCount(AONContext ctx, Integer taskId);
 	public Stream<TaskComment> getTaskCommentStream(AONContext ctx, Integer taskId);

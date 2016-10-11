@@ -32,6 +32,12 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
+	public Integer[] getTaskCount(AONContext ctx, TaskFilter filter, IssueFilter issueFilter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.getTaskCount(ctx, filter, issueFilter));
+	}
+	
+	@Override
 	public Stream<Tag> getTaskLabelStream(AONContext ctx, TaskTagFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.getTaskLabelStream(ctx, filter));

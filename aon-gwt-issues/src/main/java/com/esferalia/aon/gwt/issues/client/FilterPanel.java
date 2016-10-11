@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
+import com.esferalia.aon.gwt.api.client.incidence.JsSize;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesCSS;
@@ -19,6 +20,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.vaadin.polymer.paper.widget.PaperButton;
@@ -39,8 +41,14 @@ public class FilterPanel extends Composite {
     Issues issues;
 
     @UiField PaperButton openButton;
+    @UiField InlineLabel openLabel;
+    
     @UiField PaperButton closeButton;
+    @UiField InlineLabel closeLabel;
+    
     @UiField PaperButton removeButton;
+    @UiField InlineLabel removeLabel;
+    
     @UiField PaperButton priorityButton;
     @UiField PaperButton tagButton;
     @UiField PaperButton typeButton;
@@ -58,7 +66,6 @@ public class FilterPanel extends Composite {
     	this.incidence = incidence;
 
     	initWidget(binder.createAndBindUi(this));       
-  
     	openButton.setNoink(true);
     	openButton.addStyleName(AON.AON_CSS.aonBold());
     	closeButton.setNoink(true);
@@ -285,6 +292,131 @@ public class FilterPanel extends Composite {
 		});
 	}
 	
+	@UiHandler("creatorButton")
+	void creatorButtonClick(ClickEvent event){
+		incidence.getApplicationUsers(new AsyncCallback<JSON<JsUser>>() {
+			
+			@Override public void onSuccess(JSON<JsUser> result) {
+				AonJsArray<JsUser> users = result.getData();
+				PopupPanel popup = new PopupPanel();
+				VaadinComboBox vcb = new VaadinComboBox();
+				vcb.setItems(getUserArray(users));
+				vcb.setLabel("Creador");
+				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+					
+					@Override
+					public void onValueChanged(ValueChangedEvent event) {
+						if(users != null)
+							for(Integer i = 0; i < users.length(); i++)
+								if(users.get(i).getLogin().equals(vcb.getValue())) {
+									JsUser jsUser = users.get(i);
+									creatorButton.setTitle(jsUser.getLogin());
+									getIssues().issueFilter.setCreator(jsUser.getLogin());
+									getIssues().updateIssueList(issues.issueFilter, false);
+								}	
+						popup.hide();
+					}
+				});
+				popup.add(vcb);
+				int left = creatorButton.getAbsoluteLeft();
+				int top = creatorButton.getAbsoluteTop()
+						+ creatorButton.getOffsetHeight();
+				Integer width = Window.getClientWidth();
+				if(left > width - 200){
+					left = left - 200;
+				}
+				popup.setAutoHideEnabled(true);
+				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.setPopupPosition(left, top);
+				popup.show();
+				vcb.toggle();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}	
+	
+	@UiHandler("enterpriseButton")
+	void enterpriseButtonClick(ClickEvent event){
+		incidence.getRegistries(new AsyncCallback<JSON<JsUser>>() {
+			
+			@Override public void onSuccess(JSON<JsUser> result) {
+				AonJsArray<JsUser> users = result.getData();
+				PopupPanel popup = new PopupPanel();
+				VaadinComboBox vcb = new VaadinComboBox();
+				vcb.setItems(getUserArray(users));
+				vcb.setLabel("Empresa");
+				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+					
+					@Override
+					public void onValueChanged(ValueChangedEvent event) {
+						if(users != null)
+							for(Integer i = 0; i < users.length(); i++)
+								if(users.get(i).getLogin().equals(vcb.getValue())) {
+									JsUser jsUser = users.get(i);
+									enterpriseButton.setTitle(jsUser.getLogin());
+									getIssues().issueFilter.setEnterprise(jsUser.getId());
+									getIssues().updateIssueList(issues.issueFilter, false);
+								}	
+						popup.hide();
+					}
+				});
+				popup.add(vcb);
+				int left = enterpriseButton.getAbsoluteLeft();
+				int top = enterpriseButton.getAbsoluteTop()
+						+ enterpriseButton.getOffsetHeight();
+				Integer width = Window.getClientWidth();
+				if(left > width - 200){
+					left = left - 200;
+				}
+				popup.setAutoHideEnabled(true);
+				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.setPopupPosition(left, top);
+				popup.show();
+				vcb.toggle();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}	
+	
+	@UiHandler("orderButton")
+	void orderButtonClick(ClickEvent event){		
+		PopupPanel popup = new PopupPanel();
+		VaadinComboBox vcb = new VaadinComboBox();
+		vcb.setItems("[\"Creados - Recientes\", \"Creados - Antiguos\", \"Modificados - Recientes\", \"Modificados - Antiguos\"]");
+		vcb.setLabel("Orden");
+		vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+			
+			@Override
+			public void onValueChanged(ValueChangedEvent event) {
+				if(vcb.getValue().contains("Antiguos")) 
+					getIssues().issueFilter.setDirection("asc");
+				else getIssues().issueFilter.setDirection("desc");
+				
+				if(vcb.getValue().contains("Modificados")) 
+					getIssues().issueFilter.setSort("updated");
+				else getIssues().issueFilter.setSort("created");
+				
+				orderButton.setTitle(vcb.getValue());
+				getIssues().updateIssueList(issues.issueFilter, false);	
+				popup.hide();
+			}
+		});
+		popup.add(vcb);
+		int left = orderButton.getAbsoluteLeft();
+		int top = orderButton.getAbsoluteTop()
+				+ orderButton.getOffsetHeight();
+		Integer width = Window.getClientWidth();
+		if(left > width - 200){
+			left = left - 200;
+		}
+		popup.setAutoHideEnabled(true);
+		popup.addAutoHidePartner(vcb.getElementById("overlay"));
+		popup.setPopupPosition(left, top);
+		popup.show();
+		vcb.toggle();
+	}		
 
 	private String getLabelArray(AonJsArray<JsLabel> labels) {
 		String arr= "[";
@@ -308,6 +440,12 @@ public class FilterPanel extends Composite {
 	
 	public Issues getIssues() {
 		return issues;
+	}
+	
+	public void setButtonsLabels(JsSize s) {
+		openLabel.setText(s.getOpen() + " Abierta");
+		closeLabel.setText(s.getClosed() + " Cerrada");
+		removeLabel.setText(s.getDeleted() + " Borrada");
 	}
 	
 	public void initialize() {

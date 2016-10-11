@@ -156,78 +156,180 @@ public class TaskDAO {
 			.where(TASK_TAG_PROPERTIES.getConditions(filter)).fetchInto(TAG).stream().map(new FullTagFiller());
 	}
 	
-	public static Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter){
-		// state 
+	
+	private static Condition getIssueFilterCondition(IssueFilter issueFilter) {
 		Condition c;
-		Boolean tagBool = false;
-		
+		//state
 		if(issueFilter.getState().equals("open")) c = TASK.STATUS.eq(TaskStatus.PENDING.value())
-												.or(TASK.STATUS.eq(TaskStatus.IN_PROGRESS.value()));
+				.or(TASK.STATUS.eq(TaskStatus.IN_PROGRESS.value()));
 		else if(issueFilter.getState().equals("closed")) c = TASK.STATUS.eq(TaskStatus.FINISHED.value());
 		else if(issueFilter.getState().equals("deleted")) c = TASK.STATUS.eq(TaskStatus.DELETED.value());
 		else c = TASK.STATUS.ne(TaskStatus.DELETED.value());
+
 		// assignee
 		if(issueFilter.getAssignee() != null && !issueFilter.getAssignee().equals(""))
 			c = c.and(TASK.TASK_HOLDER.eq(Integer.parseInt(issueFilter.getAssignee())));
 
+		// enterprise
+		if(issueFilter.getEnterprise() != null && !issueFilter.getEnterprise().equals(""))
+		c = c.and(TASK.REGISTRY.eq(Integer.parseInt(issueFilter.getEnterprise())));
+
 		// creator
 		if(issueFilter.getCreator() != null && !issueFilter.getCreator().equals(""))
 			c = c.and(TASK.CREATION_USER.eq(issueFilter.getCreator())); 
-		
+				
 		// labels
-		if(issueFilter.getLabels() != null && !issueFilter.getLabels().equals("")){
-			tagBool = true;
+		if(issueFilter.getLabels() != null && !issueFilter.getLabels().equals(""))
 			c = c.and(TASK_TAG.TAG.eq(Integer.parseInt(issueFilter.getLabels())));	
-			/*String[] labels = issueFilter.getLabels().split(",");
-			for (String label : labels){
-				//c = c.and(TAG.NAME.eq(label));
-			}*/
-		}
-		
+				
 		// mentioned
 		if(issueFilter.getMentioned() != null && !issueFilter.getMentioned().equals("")){}
-		
+				
 		// milestone
 		if(issueFilter.getMilestone() != null && !issueFilter.getMilestone().equals("")){}
-		
+				
 		// since
 		if(issueFilter.getSince() != null && !issueFilter.getSince().equals("")){}
-		
-		// sort    created | updated | comments
-		TableField<TaskRecord, Timestamp> sort = TASK.START_DATE; 
- 		if(issueFilter.getSort() != null && !issueFilter.getSort().equals("updated")){
- 			//**** sort = TASK.UPDATE_DATE;
-		}
- 		
-		// direction
- 		SortField<Timestamp> sortDir = sort.desc();
-		if(issueFilter.getDirection() != null && !issueFilter.getDirection().equals("asc")){
-			sortDir = sort.asc();
-		}
-		
+				
 		// title
 		if(issueFilter.getTitle() != null && !issueFilter.getTitle().equals(""))
-			c = c.and(TASK.DESCRIPTION.contains(issueFilter.getTitle()))
-				.or(TASK.COMMENTS.contains(issueFilter.getTitle()));	
-		
-		if(issueFilter.getType() != null && !issueFilter.getType().equals("")){
-			tagBool = true;
+			c = c.and(TASK.DESCRIPTION.contains(issueFilter.getTitle())
+				.or(TASK.COMMENTS.contains(issueFilter.getTitle()))
+				.or(TASK_COMMENT.COMMENT.contains(issueFilter.getTitle())));	
+				
+		// type
+		if(issueFilter.getType() != null && !issueFilter.getType().equals(""))
 			c = c.and(TASK_TAG.TAG.eq(Integer.parseInt(issueFilter.getType())));	
-		}
-		
-		//priority
+				
+		// priority
 		if(issueFilter.getPriority() != null && !issueFilter.getPriority().equals(""))
 			c = c.and(TASK.PRIORITY.eq(Priority.valueNameOf(issueFilter.getPriority()).value()));
-						
+		return c;
+	}
+	
+	private static SortField<Timestamp> getIssueFilterSortField(IssueFilter issueFilter) {
+		// sort    created | updated | comments
+		TableField<TaskRecord, Timestamp> sort = TASK.START_DATE; 
+		if(issueFilter.getSort() != null && issueFilter.getSort().equals("updated"))
+			sort = TASK.MODIFICATION_DATE;
+		 		
+		// direction
+		SortField<Timestamp> sortDir = sort.desc();
+		if(issueFilter.getDirection() != null && issueFilter.getDirection().equals("asc"))
+			sortDir = sort.asc();
+		return sortDir;
+	}
+	
+	//[open, close, delete]
+	public static Integer[] getTaskCount(AONContext ctx, TaskFilter filter, IssueFilter issueFilter){
+		Boolean tagBool = (issueFilter.getLabels() != null && !issueFilter.getLabels().equals(""))
+				|| (issueFilter.getType() != null && !issueFilter.getType().equals(""));
+		Boolean commentBool = issueFilter.getTitle() != null && !issueFilter.getTitle().equals("");
+		
+		Condition openCondition = getIssueFilterCondition(issueFilter.setState("open")); 
+		Condition closedCondition = getIssueFilterCondition(issueFilter.setState("closed")); 
+		Condition deletedCondition = getIssueFilterCondition(issueFilter.setState("deleted")); 
+		
+		if(tagBool && commentBool){
+			Integer open = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(openCondition).and(TASK.NUMBER.isNotNull())
+					.fetch().size();
+			
+			Integer close = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(closedCondition).and(TASK.NUMBER.isNotNull())
+					.fetch().size();
+			
+			Integer delete = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(deletedCondition).and(TASK.NUMBER.isNotNull())
+					.fetch().size();
+			return new Integer[]{open,close,delete};
+		} else if(tagBool){
+			Integer open = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(openCondition).and(TASK.NUMBER.isNotNull())
+					.fetch().size();
+			
+			Integer close = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(closedCondition).and(TASK.NUMBER.isNotNull())
+					.fetch().size();
+			
+			Integer delete = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(deletedCondition).and(TASK.NUMBER.isNotNull())
+					.fetch().size();
+			return new Integer[]{open,close,delete};
+		} else if(commentBool){
+			Integer open = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(openCondition).and(TASK.NUMBER.isNotNull())
+					.fetch().size();
+			
+			Integer close = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(closedCondition).and(TASK.NUMBER.isNotNull())
+					.fetch().size();
+			
+			Integer delete = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(deletedCondition).and(TASK.NUMBER.isNotNull())
+					.fetch().size();
+			return new Integer[]{open,close,delete};
+		} 
+		
+		Integer open = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+				.where(TASK_PROPERTIES.getConditions(filter)).and(openCondition).and(TASK.NUMBER.isNotNull())
+				.fetch().size();
+		
+		Integer close = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+				.where(TASK_PROPERTIES.getConditions(filter)).and(closedCondition).and(TASK.NUMBER.isNotNull())
+				.fetch().size();
+		
+		Integer delete = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
+				.where(TASK_PROPERTIES.getConditions(filter)).and(deletedCondition).and(TASK.NUMBER.isNotNull())
+				.fetch().size();
+		return new Integer[]{open,close,delete};
+	}
+	
+	public static Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter){
+		Boolean tagBool = (issueFilter.getLabels() != null && !issueFilter.getLabels().equals(""))
+				|| (issueFilter.getType() != null && !issueFilter.getType().equals(""));
+		Boolean commentBool = issueFilter.getTitle() != null && !issueFilter.getTitle().equals("");
+		
+		Condition condition = getIssueFilterCondition(issueFilter); 
+		SortField<Timestamp> sort = getIssueFilterSortField(issueFilter);
+		
+		/// TODO task_comment usar left outer join!! 
+		if(tagBool && commentBool){
+			return ctx.getDslContext().selectDistinct().from(TASK).join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
+									.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull()).orderBy(sort)
+					.limit(issueFilter.getPerPage())
+					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
+					.fetchInto(TASK).stream().map(new FullTaskFiller());
+		}
+		if(commentBool){
+			return ctx.getDslContext().selectDistinct().from(TASK).leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
+					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull()).orderBy(sort)
+					.limit(issueFilter.getPerPage())
+					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
+					.fetchInto(TASK).stream().map(new FullTaskFiller());
+		}
 		if(tagBool){
 			return ctx.getDslContext().selectDistinct().from(TASK).join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
-					.where(TASK_PROPERTIES.getConditions(filter)).and(c).and(TASK.NUMBER.isNotNull()).orderBy(sortDir)
+					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull()).orderBy(sort)
 					.limit(issueFilter.getPerPage())
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
 					.fetchInto(TASK).stream().map(new FullTaskFiller());
 		}
 		return ctx.getDslContext().select().from(TASK) 
-				.where(TASK_PROPERTIES.getConditions(filter)).and(c).and(TASK.NUMBER.isNotNull()).orderBy(sortDir)
+				.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull()).orderBy(sort)
 				.limit(issueFilter.getPerPage())
 				.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
 				.fetchInto(TASK).stream().map(new FullTaskFiller());

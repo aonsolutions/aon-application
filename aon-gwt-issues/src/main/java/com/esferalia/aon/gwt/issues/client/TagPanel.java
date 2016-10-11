@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.vaadin.polymer.iron.widget.IronCollapse;
+import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.iron.widget.IronSelector;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
@@ -61,6 +62,12 @@ public class TagPanel extends Composite {
 			public void onSuccess(JSON<JsLabel> result) {
 				for(JsLabel label : result.getData().toLinkedList()){
 					PaperItem item = new PaperItem();
+					
+					IronIcon ii = new IronIcon();
+					ii.setIcon("label");
+					ii.getElement().getStyle().setColor("#"+label.getColor());
+					item.add(ii);
+					
 					item.add(new Label(label.getName()));
 					item.setStyle("min-height: 30px;");	
 					
@@ -146,8 +153,16 @@ public class TagPanel extends Composite {
 			public void onSuccess(JSON<JsLabel> result) {
 				for(JsLabel label : result.getData().toLinkedList()){
 					PaperItem item = new PaperItem();
+					
+					IronIcon ii = new IronIcon();
+					ii.setIcon("label");
+					ii.getElement().getStyle().setColor("#"+label.getColor());
+					item.add(ii);
+					
 					item.add(new Label(label.getName()));
 					item.setStyle("min-height: 30px;");	
+
+
 
 					PaperIconButton edit = new PaperIconButton();
 					edit.setIcon("create");

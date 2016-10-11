@@ -41,4 +41,13 @@ public interface AonGwtIssuesCSS extends CssResource{
 	@ClassName("aon-inline-label-filter-issues")
 	String aonInlineLabelFilterIssues();
 
+	@ClassName("tag-notice-issues")
+	String tagNoticeIssues();
+	
+	@ClassName("tag-priority-issues")
+	String tagPriorityIssues();
+	
+	@ClassName("tag-type-issues")
+	String tagTypeIssues();
+
 }

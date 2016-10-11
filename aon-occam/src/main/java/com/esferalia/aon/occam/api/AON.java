@@ -2438,6 +2438,16 @@ public class AON {
 		}
 	}
 	
+	public static Integer[] getTaskCount(String domainName, Integer domainId, String login, TaskFilter filter,  IssueFilter issueFilter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskCount(ctx, filter, issueFilter);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	public static LinkedList<Task> getTaskList(String domainName, Integer domainId, String login, TaskFilter filter, IssueFilter issueFilter){
 		return getTaskStream(domainName, domainId, login, filter, issueFilter)
 			.collect(Collectors.toCollection(LinkedList::new));

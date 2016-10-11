@@ -260,6 +260,11 @@ public class Incidence extends Methods{
 		//GITHUB get(url.getUrl() + "orgs/"+getOrganizationName()+ "/members",callback);
 	}	
 	
+	public void getApplicationUsers(AsyncCallback<JSON<JsUser>> callback){
+		get(url + "orgs/"+getOrganizationName()+"/"+getRepositoryName()+ "/app_users",callback);
+		//GITHUB get(url.getUrl() + "orgs/"+getOrganizationName()+ "/members",callback);
+	}	
+	
 	public void getUsers(String filter, AsyncCallback<JSON<JsUser>> callback){
 		get(url + "orgs/"+getOrganizationName()+"/"+getRepositoryName()+"/members?filter=" + filter,callback);
 		//GITHUB get(url.getUrl() + "orgs/"+getOrganizationName()+"/members?filter=" + filter,callback);

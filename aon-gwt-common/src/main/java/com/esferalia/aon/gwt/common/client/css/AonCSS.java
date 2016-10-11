@@ -354,6 +354,18 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-border-none")
 	String aonBorderNone();
 
+	@ClassName("aon-noborder-top")
+	String aonNoborderTop();
+	
+	@ClassName("aon-noborder-bottom")
+	String aonNoborderBottom();
+	
+	@ClassName("aon-noborder-right")
+	String aonNoborderRight();
+	
+	@ClassName("aon-noborder-left")
+	String aonNoborderLeft();
+	
 	@ClassName("aon-border-top")
 	String aonBorderTop();
 

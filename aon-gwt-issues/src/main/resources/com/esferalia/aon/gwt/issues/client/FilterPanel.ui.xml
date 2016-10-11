@@ -42,17 +42,17 @@
         
         	<p:PaperButton ui:field="openButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}" >
 				<i:IronIcon icon="error-outline" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-				<g:InlineLabel text="Abierta" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+				<g:InlineLabel ui:field="openLabel" text="Abierta" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 			</p:PaperButton>
 		
         	<p:PaperButton ui:field="closeButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
 			    <i:IronIcon icon="check" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-			    <g:InlineLabel text="Cerrada" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+			    <g:InlineLabel ui:field="closeLabel" text="Cerrada" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 			</p:PaperButton>	
 		
     	    <p:PaperButton ui:field="removeButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
 			    <i:IronIcon icon="remove-circle" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-			    <g:InlineLabel text="Borrada" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+			    <g:InlineLabel ui:field="removeLabel" text="Borrada" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 			</p:PaperButton>	
         </g:HorizontalPanel>
     

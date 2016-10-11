@@ -88,7 +88,7 @@ public class Issue {
 		this.comments = comments;
 		this.type = type;
 		Priority p = Priority.values()[task.getPriority()];
-		this.priority = new Label().setId(p.ordinal()).setName(p.getName());
+		this.priority = new Label().setId(p.ordinal()).setName(p.getName()).setColor(p.getColor().getColor());
 		this.workgroup = new User().setId(workgroup.getId()).setLogin(workgroup.getDescription());
 		this.enterprise = new User().setId(enterprise.getId()).setLogin(enterprise.getName());
 	}

@@ -129,8 +129,9 @@ public class Issues implements EntryPoint {
 			public void onSuccess(JSON<JsIssue> result) {			
 				IssueList issueList = new IssueList(me, incidence, result.getData());
 				content.add(issueList);
-				//createAddDialog();
-
+				
+				FilterPanel fp = (FilterPanel) searchContent.getWidget(0);	
+				fp.setButtonsLabels(result.getMeta());
 			}
 			
 			@Override
@@ -166,8 +167,11 @@ public class Issues implements EntryPoint {
 				 array = result.getData();
 				
 				if(showMore) showMoreupdateIssueList(array);
-				else updateIssueList(array);				
+				else updateIssueList(array);	
 				
+				FilterPanel fp = (FilterPanel) searchContent.getWidget(0);	
+				fp.setButtonsLabels(result.getMeta());
+		
 			}
 			
 			@Override

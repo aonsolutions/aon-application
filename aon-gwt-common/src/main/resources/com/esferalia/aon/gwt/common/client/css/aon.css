@@ -455,6 +455,22 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	border-bottom-color: #DDD !important;
 }
 
+.aon-noborder-bottom {
+	border-bottom: 0px;
+}
+
+.aon-noborder-top {
+	border-top: 0px;
+}
+
+.aon-noborder-right {
+	border-right: 0px;
+}
+
+.aon-noborder-left {
+	border-left: 0px;
+}
+
 .aon-border-bottom {
 	border-bottom: solid #999 1px;
 }

@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,6 +29,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
+import com.esferalia.aon.occam.api.model.task.TagColor;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
@@ -47,72 +49,71 @@ public class ReposServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("GET METHOD");
 		String accessToken = req.getParameter("access_token");
-		//String serverName = req.getServerName();
 		
-		//if(AonUrlApi.AONTEST.getUrl().contains(serverName)){
-			String[] pathInfo = req.getPathInfo().split("/");
-			String userName = pathInfo[1];
-			String domainName = pathInfo[2]; 
+		String[] pathInfo = req.getPathInfo().split("/");
+		String userName = pathInfo[1];
+		String domainName = pathInfo[2]; 
 			
-			String md5 = getMd5(userName+domainName);
-			if(accessToken.equals(md5)){
-				String filter = req.getParameter("filter") != null ? req.getParameter("filter") : "";
-				Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
-				if(pathInfo.length > 3){
-					Object object = new Object();
-					switch (pathInfo[3]) {
-					case "issues":
-						if(pathInfo.length > 4){
-							if(pathInfo.length > 5){
-								if(pathInfo[5].equalsIgnoreCase("labels")){ // LABELS
-									object = getLabelsJSON(domain, userName, pathInfo[4]);
-								} else if(pathInfo[5].equalsIgnoreCase("comments")){ // COMMENTS
-									object = getCommentsJSON(domain, userName, pathInfo[4]);
-								} else if(pathInfo[5].equalsIgnoreCase("events")){ // EVENTS
-									object = getEventsJSON(domain, userName, pathInfo[4]);
-								} else if(pathInfo[5].equalsIgnoreCase("type")){ // TYPE
-									object = getTypeJSON(domain, userName, pathInfo[4]);
-								} else if(pathInfo[5].equalsIgnoreCase("priority")){ // PRIORITY
-									object = getPriorityJSON(domain, userName, pathInfo[4]);
-								}
-							} else{ // TASK / ISSUE
-								object = getIssueJSON(domain, userName, pathInfo[4]);
+		String md5 = getMd5(userName+domainName);
+		if(accessToken.equals(md5)){
+			String filter = req.getParameter("filter") != null ? req.getParameter("filter") : "";
+			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
+			if(pathInfo.length > 3){
+				Object object = new Object();
+				JSONObject meta = new JSONObject();
+				switch (pathInfo[3]) {
+				case "issues":
+					if(pathInfo.length > 4){
+						if(pathInfo.length > 5){
+							if(pathInfo[5].equalsIgnoreCase("labels")){ // LABELS
+								object = getLabelsJSON(domain, userName, pathInfo[4]);
+							} else if(pathInfo[5].equalsIgnoreCase("comments")){ // COMMENTS
+								object = getCommentsJSON(domain, userName, pathInfo[4]);
+							} else if(pathInfo[5].equalsIgnoreCase("events")){ // EVENTS
+								object = getEventsJSON(domain, userName, pathInfo[4]);
+							} else if(pathInfo[5].equalsIgnoreCase("type")){ // TYPE
+								object = getTypeJSON(domain, userName, pathInfo[4]);
+							} else if(pathInfo[5].equalsIgnoreCase("priority")){ // PRIORITY
+								object = getPriorityJSON(domain, userName, pathInfo[4]);
 							}
-						}else{ // TASKS / ISSUES
-							object = getIssuesJSON(domain, userName, getFilter(req));
+						} else{ // TASK / ISSUE
+							object = getIssueJSON(domain, userName, pathInfo[4]);
 						}
-						break;
-					case "labels": // ALL LABELS
-						object = getAllLabelsJSON(domain, userName, TagType.TASK_LABEL, filter);
-						break;
-					case "types": // ALL TYPES
-						object = getAllLabelsJSON(domain, userName, TagType.TASK_TYPE, filter);
-						break;
-					case "priorities": // ALL PRIORITIES
-						object = getAllPrioritiesJSON(domain, userName);
-						break;
-					case "registries": // ALL REGISTRIES
-						if(!filter.equals("")) object = getFilterRegistriesJSON(domain, userName, filter);
-						else object = getAllRegistriesJSON(domain, userName);
-						break;
-					default:
-						break;
+					}else{ // TASKS / ISSUES
+						object = getIssuesJSON(domain, userName, getFilter(req));
+						meta = getSizeJSON(domain, userName, getFilter(req));
 					}
-					String js = req.getParameter("callback");
-					if(js != null){
-						resp.setContentType("application/javascript; charset=utf-8");     
-						PrintWriter out = resp.getWriter();
-						out.print(js + "({" +"\"meta\":{}, \"data\":" + object +"});");
-						out.flush();
-					} else {
-						resp.setContentType("application/json");     
-						PrintWriter out = resp.getWriter();
-						out.print(object);
-						out.flush();
-					}
+					break;
+				case "labels": // ALL LABELS
+					object = getAllLabelsJSON(domain, userName, TagType.TASK_LABEL, filter);
+					break;
+				case "types": // ALL TYPES
+					object = getAllLabelsJSON(domain, userName, TagType.TASK_TYPE, filter);
+					break;
+				case "priorities": // ALL PRIORITIES
+					object = getAllPrioritiesJSON(domain, userName);
+					break;
+				case "registries": // ALL REGISTRIES
+					if(!filter.equals("")) object = getFilterRegistriesJSON(domain, userName, filter);
+					else object = getAllRegistriesJSON(domain, userName);
+					break;
+				default:
+					break;
+				}
+				String js = req.getParameter("callback");
+				if(js != null){
+					resp.setContentType("application/javascript; charset=utf-8");     
+					PrintWriter out = resp.getWriter();
+					out.print(js + "({" +"\"meta\":"+ meta +", \"data\":" + object +"});");
+					out.flush();
+				} else {
+					resp.setContentType("application/json");     
+					PrintWriter out = resp.getWriter();
+					out.print(object);
+					out.flush();
 				}
 			}
-		//}
+		}
 	}
 	
 	@Override
@@ -217,25 +218,34 @@ public class ReposServlet extends HttpServlet{
 									.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime());
 							if(json.opt("state") != null) {
 								if(json.get("state").equals("open")){
-									task = task.setStatus(TaskStatus.PENDING.value()).setEndDate(null).setId(task.getId());
+									task = task.setStatus(TaskStatus.PENDING.value()).setEndDate(null).setId(task.getId())
+											.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
 									TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
 										.setEvent("reopened").setTask(task.getId()).setCreationUser(userName);
 									AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
 								}
 								if(json.get("state").equals("closed")){
-									task = task.setStatus(TaskStatus.FINISHED.value()).setEndDate(Calendar.getInstance().getTime()).setId(task.getId());
+									task = task.setStatus(TaskStatus.FINISHED.value()).setEndDate(Calendar.getInstance().getTime()).setId(task.getId())
+											.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
 									TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
 											.setEvent("closed").setTask(task.getId()).setCreationUser(userName);
+									AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
+								}
+								if(json.get("state").equals("deleted")){
+									task = task.setStatus(TaskStatus.DELETED.value()).setEndDate(null).setId(task.getId())
+											.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
+									TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
+											.setEvent("deleted").setTask(task.getId()).setCreationUser(userName);
 									AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
 								}
 								AON.updateTaskStatus(domain.getName(), domain.getId(), userName, task );								
 								object = getIssueJSON(domain, userName, task);
 							} else if(json.opt("body") != null){
+								task.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
 								DB.updateTaskDescription(domain, userName, task.setComments(json.getString("body")));
 								Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 								object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise).toJSON();
-							}
-							// TODO  UPDATE ISSUE / TASK	
+							}	
 						}
 					} else { // CREATE NEW TASK / ISSUE
 						Integer num = AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) != null ?
@@ -263,14 +273,16 @@ public class ReposServlet extends HttpServlet{
 					}
 					break;
 				case "labels":
-					if(pathInfo.length > 4){
+					if(pathInfo.length > 4){	
 						Tag tag= DB.getTag(domain, userName, pathInfo[4], TagType.TASK_LABEL);
 						tag.setName(json.getString("name"));
 						AON.updateTag(domainName, domain.getId(), userName, tag);
 						object = new Label().setId(tag.getId()).setName(tag.getName()).toJSON();
 					} else {
+						Random rnd = new Random();		
 						Tag tag = new Tag().setName(json.getString("name"))
-								.setDomain(domain.getId()).setType(TagType.TASK_LABEL.value());
+								.setDomain(domain.getId()).setType(TagType.TASK_LABEL.value())
+								.setColor(TagColor.values()[rnd.nextInt(9)].getColor());
 						Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);
 						object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
 					}
@@ -282,8 +294,10 @@ public class ReposServlet extends HttpServlet{
 						AON.updateTag(domainName, domain.getId(), userName, tag);
 						object = new Label().setId(tag.getId()).setName(tag.getName()).toJSON();
 					} else {
+						Random rnd = new Random();		
 						Tag tag = new Tag().setName(json.getString("name"))
-								.setDomain(domain.getId()).setType(TagType.TASK_TYPE.value());
+								.setDomain(domain.getId()).setType(TagType.TASK_TYPE.value())
+								.setColor(TagColor.values()[rnd.nextInt(9)].getColor());
 						Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);
 						object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
 					}
@@ -310,9 +324,10 @@ public class ReposServlet extends HttpServlet{
 	
 	private JSONArray getLabelsJSON(Domain domain, String userName, String taskNumber) {
 		Integer taskId = DB.getTaskId(domain, userName, Integer.parseInt(taskNumber));
-		Stream<Tag> st = AON.getTaskLabelStream(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(taskId));
 		JSONArray array = new JSONArray();
-		st.filter(t -> t.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName)).forEach(r -> array.put(r.toJSON()));
+		AON.getTaskLabelStream(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(taskId))
+			.filter(t -> t.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
+			.forEach(r -> array.put(r.toJSON()));
 		return array;
 	}
 	
@@ -325,7 +340,7 @@ public class ReposServlet extends HttpServlet{
 	private JSONObject getPriorityJSON(Domain domain, String userName, String taskNumber) {
 		Task task = DB.getTask(domain, userName, Integer.parseInt(taskNumber));
 		Priority p = Priority.values()[task.getPriority()];
-		return new Label().setId(p.ordinal()).setName(p.getName()).toJSON();
+		return new Label().setId(p.ordinal()).setName(p.getName()).setColor(p.getColor().getColor()).toJSON();
 	}
 	
 	private JSONArray getCommentsJSON(Domain domain, String userName, String taskNumber) {
@@ -370,7 +385,7 @@ public class ReposServlet extends HttpServlet{
 	private JSONArray getAllPrioritiesJSON(Domain domain, String userName) {
 		JSONArray array = new JSONArray();
 		for (Priority p : Priority.values())
-			array.put(new Label().setId(p.ordinal()).setName(p.getName())
+			array.put(new Label().setId(p.ordinal()).setName(p.getName()).setColor(p.getColor().getColor())
 			.setUrl(AonUrlApi.AONTEST.getUrl() + "repos/" + userName + "/" + domain.getName() + "/labels/" + p.getName()).toJSON());  
 		return array;
 	}
@@ -421,6 +436,14 @@ public class ReposServlet extends HttpServlet{
 		});
 		return array;
 	}
+	private JSONObject getSizeJSON(Domain domain, String userName, IssueFilter filter) {
+		Integer[] i = AON.getTaskCount(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId()), filter);
+		JSONObject json = new JSONObject();
+		json.put("open", i[0]);
+		json.put("closed", i[1]);
+		json.put("deleted", i[2]);
+		return json;
+	}
 	
 	private IssueFilter getFilter(HttpServletRequest req){
 		return new IssueFilter()
@@ -436,6 +459,7 @@ public class ReposServlet extends HttpServlet{
 				.setState(req.getParameter("state"))
 				.setPriority(req.getParameter("priority"))
 				.setType(req.getParameter("type"))
+				.setEnterprise(req.getParameter("enterprise"))
 				.setPerPage(Integer.parseInt(req.getParameter("per_page")))
 				.setPage(Integer.parseInt(req.getParameter("page")));
 	}

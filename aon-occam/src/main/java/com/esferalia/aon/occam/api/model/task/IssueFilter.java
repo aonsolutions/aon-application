@@ -15,6 +15,7 @@ public class IssueFilter {
 	
 	String priority;
 	String type;
+	String enterprise;
 	
 	Integer page = 1;
 	Integer perPage = 30;
@@ -127,6 +128,14 @@ public class IssueFilter {
 		return this;
 	}
 	
+	public String getEnterprise() {
+		return enterprise;
+	}
+
+	public IssueFilter setEnterprise(String enterprise) {
+		this.enterprise = enterprise;
+		return this;
+	}
 	
 	
 	

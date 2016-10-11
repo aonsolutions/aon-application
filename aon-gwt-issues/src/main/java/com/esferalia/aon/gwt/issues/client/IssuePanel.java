@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
-import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
 import com.esferalia.aon.gwt.api.client.incidence.JsComment;
 import com.esferalia.aon.gwt.api.client.incidence.JsEvent;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
@@ -16,17 +15,16 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesCSS;
+import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -38,8 +36,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -50,6 +48,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.vaadin.polymer.iron.widget.IronIcon;
+import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.vaadin.widget.VaadinComboBox;
 import com.vaadin.polymer.vaadin.widget.event.ValueChangedEvent;
@@ -62,6 +61,8 @@ public class IssuePanel extends Composite{
 	
 	private static Binder binder = GWT.create(Binder.class);
 
+	public static final AonGwtIssuesCSS CSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
+	
 	@UiField SimplePanel headerPanel;
 	//@UiField VerticalPanel headerVPanel;
 	@UiField Label userLogged;
@@ -72,11 +73,12 @@ public class IssuePanel extends Composite{
 	@UiField Label userLabel;
 	@UiField VerticalPanel usersVPanel;
 	@UiField FlowPanel historialVPanel;
-	@UiField Button sendButton;
-	@UiField Button duplicatedButton;
-	@UiField Button closedButton;
-	@UiField Button reopenButton;
-	@UiField Button commentButton;
+	@UiField PaperIconButton sendButton;
+	@UiField PaperIconButton removeIssueButton;
+	@UiField PaperButton duplicatedButton;
+	@UiField PaperButton closedButton;
+	@UiField PaperButton reopenButton;
+	@UiField PaperButton commentButton;
 	@UiField TextArea commentTextArea;
 	@UiField Button typeButton;
 	@UiField Button priorityButton;
@@ -153,14 +155,20 @@ public class IssuePanel extends Composite{
 	private void initLabels(JsIssue issue){
 		String notAssign = "Sin Asignar";
 		typeLabel.setText(issue.getType().getName());
+		if(issue.getType().getColor() != null && !issue.getType().getColor().equals(""))
+			typeLabel.getElement().getStyle().setBackgroundColor("#"+issue.getType().getColor());
 		if(issue.getType().getName().equals(notAssign)) {typeDeleteButton.setVisible(false);}
 		priorityLabel.setText(issue.getPriority().getName());
-		
+		if(issue.getPriority().getColor() != null && !issue.getPriority().getColor().equals(""))
+			priorityLabel.getElement().getStyle().setBackgroundColor("#"+issue.getPriority().getColor());
+
 		for (JsLabel label : issue.getLabels().toLinkedList()){
 			HorizontalPanel hp = new HorizontalPanel();
 			Label l = new Label(label.getName());
 			l.setStyleName(AON.AON_CSS.tagStyle());
-			l.addStyleName(AON.AON_CSS.tagNotice());
+			l.addStyleName(CSS.tagNoticeIssues());
+			if(label.getColor() != null && !label.getColor().equals(""))
+				l.getElement().getStyle().setBackgroundColor("#"+label.getColor());
 			hp.add(l);
 			PaperIconButton pib = new PaperIconButton();
 			pib.setIcon("close");
@@ -193,6 +201,7 @@ public class IssuePanel extends Composite{
 	
 	private void initComments(JsIssue issue){
 		userLogged.setText(issue.getUser().getLogin());
+		printNotification(issue);
 		printDescription(issue);
 		if(issue.getComments()>0){
 			incidence.getComments(issue.getCommentsUrl(), new AsyncCallback<JSON<JsComment>>() {
@@ -309,77 +318,99 @@ public class IssuePanel extends Composite{
 		return new HorizontalPanel();
 	}
 	
+	private void printNotification(JsIssue issue){
+		historialVPanel.add(getHeadNotificationLabel(issue));
+	}
+	
 	private void printDescription(JsIssue issue) {
+		 
+		 
 		int days = getDaysBefore(dateTimeFormat.parse(issue.getCreatedAt()));
-		final Button editButton = new Button();
-		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
-		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
-		editButton.addStyleName(AON.AON_CSS.editButton());
+		
+		PaperIconButton editButton = new PaperIconButton();
+		editButton.setIcon("create");
 		editButton.setTitle("Editar descripci\u00f3n");
-		editButton.setVisible(AonStringUtils.equals(
-				userLogged.getText(), issue.getUser().getLogin()));
+		editButton.setVisible(AonStringUtils.equals(userLogged.getText(), issue.getUser().getLogin()));
+		
 		final TextArea textArea = getTextArea(issue.getBody());
+		textArea.addStyleName(AON.AON_CSS.aonNoborderTop());
 		textArea.setName(String.valueOf(issue.getId()));
 		editButton.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-
-				if (editButton.getStyleName().contains(AON.AON_ICON_EDIT_ADD))
-					onEditCommentButtonClick(textArea, editButton);
-				else
-					onAcceptEditDescriptionButtonClick(textArea, editButton);
+				if(editButton.getIcon().equals("create")){
+					editButton.setIcon("save");
+					onEditCommentButtonClick(textArea);
+				} else {
+					editButton.setIcon("create");
+					onAcceptEditDescriptionButtonClick(textArea);
+				}
 			}
 		});
 		editButton.setVisible(userLogged.getText().equals(issue.getUser().getLogin()));
-		FlexTable flexTable = new FlexTable();
-
-		flexTable.getFlexCellFormatter().setColSpan(0, 0, 2);
-		flexTable.setWidget(0, 0, getHeadNotificationLabel(issue));
-		flexTable.setWidget(1, 0, getHeadDescriptionLabel(issue, days));
-		flexTable.setWidget(1, 1, editButton);
-		flexTable.getFlexCellFormatter().setColSpan(2, 0, 2);
-		flexTable.setWidget(2, 0, textArea);
-		historialVPanel.add(flexTable);
+		
+		VerticalPanel vp = new VerticalPanel();
+		vp.setWidth("100%");
+		vp.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.setWidth("100%");
+		hp.getElement().getStyle().setBorderWidth(1, Unit.PX);
+		hp.getElement().getStyle().setBorderColor("#999");
+		hp.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+		hp.getElement().getStyle().setBackgroundColor("#ddd");
+		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		hp.add(getHeadDescriptionLabel(issue, days));
+		hp.add(editButton);
+		vp.add(hp);
+		vp.add(textArea);
+		historialVPanel.add(vp);
 	}
 	
 	private void printComment(JsComment comment) {
 		int days = getDaysBefore(dateTimeFormat.parse(comment.getCreatedAt()));
 
-		final Button editButton = new Button();
-		editButton.setStyleName(AON.AON_ICON_EDIT_ADD);
-		editButton.addStyleName(AON.AON_ICON_CMD_BUTTON);
-		editButton.addStyleName(AON.AON_CSS.editButton());
+		PaperIconButton editButton = new PaperIconButton();
+		editButton.setIcon("create");
+		editButton.setTitle("Editar descripci\u00f3n");
+		editButton.setVisible(AonStringUtils.equals(userLogged.getText(), issue.getUser().getLogin()));
 		editButton.setTitle("Editar comentario");
-		editButton.setVisible(AonStringUtils.equals(
-				userLogged.getText(), comment.getUser().getLogin()));
 
 		final TextArea textArea = getTextArea(comment.getBody());
-
+		textArea.addStyleName(AON.AON_CSS.aonNoborderTop());
 		textArea.setName(String.valueOf(comment.getId()));
 
 		editButton.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-
-				if (editButton.getStyleName().contains(AON.AON_ICON_EDIT_ADD))
-					onEditCommentButtonClick(textArea, editButton);
-				else
-					onAcceptEditCommentButtonClick(comment, textArea, editButton);
+				if(editButton.getIcon().equals("create")){
+					editButton.setIcon("save");
+					onEditCommentButtonClick(textArea);
+				} else {
+					editButton.setIcon("create");
+					onAcceptEditCommentButtonClick(comment, textArea);
+				}
 			}
 		});
 
-		editButton.setVisible(AonStringUtils.equals(
-				userLogged.getText(), comment.getUser().getLogin()));
+		editButton.setVisible(AonStringUtils.equals(userLogged.getText(), comment.getUser().getLogin()));
 
-		FlexTable flexTable = new FlexTable();
-		flexTable.setWidget(0, 0, getHeadCommentLabel(comment, days));
-		flexTable.setWidget(0, 1, editButton);
-		flexTable.getFlexCellFormatter().setColSpan(1, 0, 2);
-		flexTable.setWidget(1, 0, textArea);
-
-		historialVPanel.add(flexTable);
+		VerticalPanel vp = new VerticalPanel();
+		vp.setWidth("100%");
+		vp.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.setWidth("100%");
+		hp.getElement().getStyle().setBorderWidth(1, Unit.PX);
+		hp.getElement().getStyle().setBorderColor("#999");
+		hp.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+		hp.getElement().getStyle().setBackgroundColor("#ddd");
+		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		hp.add(getHeadCommentLabel(comment, days));
+		hp.add(editButton);
+		vp.add(hp);
+		vp.add(textArea);
+		historialVPanel.add(vp);
 	}
 	
 	private int getDaysBefore(Date date) {
@@ -415,7 +446,7 @@ public class IssuePanel extends Composite{
 		Label label = new Label();
 		label.setText(sb.toString());
 		label.setStyleName(AON.AON_BOLD);
-		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+		label.getElement().getStyle().setPaddingLeft(10, Unit.PX);
 		return label;
 	}
 	
@@ -437,7 +468,7 @@ public class IssuePanel extends Composite{
 		Label label = new Label();
 		label.setText(sb.toString());
 		label.setStyleName(AON.AON_BOLD);
-		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+		label.getElement().getStyle().setPaddingLeft(10, Unit.PX);
 		return label;
 	}
 	
@@ -449,7 +480,7 @@ public class IssuePanel extends Composite{
 		Label label = new Label();
 		label.setText(sb.toString());
 		label.setStyleName(AON.AON_BOLD);
-		label.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+		label.getElement().getStyle().setPaddingBottom(10, Unit.PX);;
 		return label;
 	}
 	
@@ -462,40 +493,16 @@ public class IssuePanel extends Composite{
 		parent.contentDockLayoutPanel.addNorth(parent.searchContent, 85);
 		parent.contentDockLayoutPanel.add(parent.content);
 		parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);
-		parent.issueFilter = new IssueFilter();
 		parent.updateIssueList(parent.issueFilter, false);
 	}
 	
-	private void onEditCommentButtonClick(final TextArea textArea,
-			final Button button) {
-		button.removeStyleName(AON.AON_ICON_EDIT_ADD);
-		button.addStyleName(AON.AON_ICON_ACCEPT);
+	private void onEditCommentButtonClick(final TextArea textArea) {
 		textArea.setReadOnly(false);
 		textArea.setFocus(true);
 		textArea.selectAll();
-
-		textArea.addKeyDownHandler(new KeyDownHandler() {
-
-			@Override
-			public void onKeyDown(KeyDownEvent event) {
-				int keyCode = event.getNativeKeyCode();
-				if (keyCode == KeyCodes.KEY_ESCAPE)
-					onCancelEditComment(textArea, button);
-			}
-		});
 	}
 	
-	private void onCancelEditComment(TextArea textArea, Button button) {
-		button.removeStyleName(AON.AON_ICON_ACCEPT);
-		button.addStyleName(AON.AON_ICON_EDIT_ADD);
-		textArea.setReadOnly(true);
-		textArea.setFocus(false);
-	}
-	
-	private void onAcceptEditCommentButtonClick(JsComment comment, final TextArea textArea,
-			final Button button) {
-		button.removeStyleName(AON.AON_ICON_ACCEPT);
-		button.addStyleName(AON.AON_ICON_EDIT_ADD);
+	private void onAcceptEditCommentButtonClick(JsComment comment, final TextArea textArea) {
 		String request = "{\"body\":\""+ textArea.getText() +"\"}";
 
 		incidence.updateComment(issue, comment, request, new AsyncCallback<JsComment>() {
@@ -509,11 +516,7 @@ public class IssuePanel extends Composite{
 		});
 	}
 	
-	private void onAcceptEditDescriptionButtonClick(final TextArea textArea,
-			final Button button) {
-		button.removeStyleName(AON.AON_ICON_ACCEPT);
-		button.addStyleName(AON.AON_ICON_EDIT_ADD);
-		
+	private void onAcceptEditDescriptionButtonClick(final TextArea textArea) {
 		String request = "{\"body\":\""+ textArea.getText() +"\"}";
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
@@ -535,7 +538,7 @@ public class IssuePanel extends Composite{
 			@Override public void onSuccess(JsComment result) {
 				commentTextArea.setText("");
 				printComment(result);
-				commentButton.setEnabled(false);
+				commentButton.setDisabled(true);
 				parent.sendNotification(issue, NotificationType.NEW_INFO);
 			}
 			@Override public void onFailure(Throwable caught) {}
@@ -545,7 +548,7 @@ public class IssuePanel extends Composite{
 	@UiHandler("commentTextArea")
 	void onKeyUpEvent(KeyUpEvent event) {
 		String value = commentTextArea.getValue().trim();
-		commentButton.setEnabled(!value.isEmpty());
+		commentButton.setDisabled(value.isEmpty());
 	}
 	
 	@UiHandler("closedButton")
@@ -560,6 +563,27 @@ public class IssuePanel extends Composite{
 				closedButton.setVisible(false);
 				reopenButton.setVisible(true);
 				parent.sendNotification(issue, NotificationType.CLOSE);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	@UiHandler("removeIssueButton")
+	void onClickRemoveIssueButton(ClickEvent event){
+		String request = "{\"state\":\"deleted\"}";
+		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
+			
+			@Override
+			public void onSuccess(JsIssue result) {
+				parent.contentDockLayoutPanel.removeFromParent();
+				AonToolbar t = (AonToolbar)parent.toolbar.getWidget(0);
+				t.setVisibleRefreshButton(true);
+				parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+				parent.contentDockLayoutPanel.addNorth(parent.searchContent, 85);
+				parent.contentDockLayoutPanel.add(parent.content);
+				parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);
+				parent.updateIssueList(parent.issueFilter, false);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -603,6 +627,8 @@ public class IssuePanel extends Composite{
 								if(labels.get(i).getName().equals(vcb.getValue())) {
 									JsLabel jsLabel = labels.get(i);
 									typeLabel.setText(jsLabel.getName());
+									if(jsLabel.getColor() != null && !jsLabel.getColor().equals(""))
+										typeLabel.getElement().getStyle().setBackgroundColor("#"+jsLabel.getColor());
 									typeDeleteButton.setVisible(true);
 									incidence.addType2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
 										@Override public void onFailure(Throwable caught) {}
@@ -651,6 +677,8 @@ public class IssuePanel extends Composite{
 								if(labels.get(i).getName().equals(vcb.getValue())) {
 									JsLabel jsLabel = labels.get(i);
 									priorityLabel.setText(jsLabel.getName());
+									if(jsLabel.getColor() != null && !jsLabel.getColor().equals(""))
+										priorityLabel.getElement().getStyle().setBackgroundColor("#"+jsLabel.getColor());
 									incidence.addPriority2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
 										@Override public void onFailure(Throwable caught) {}
 										@Override public void onSuccess(JsLabel result) {}
@@ -703,12 +731,14 @@ public class IssuePanel extends Composite{
 										Label ll = (Label) hh.getWidget(0);
 										if(ll.getText().equals(jsLabel.getName()))
 											bool = false;
-										
 									}
 									if(bool){
 										Label l = new Label(jsLabel.getName());
 										l.setStyleName(AON.AON_CSS.tagStyle());
-										l.addStyleName(AON.AON_CSS.tagNotice());
+										l.addStyleName(CSS.tagNoticeIssues());
+										if(jsLabel.getColor() != null && !jsLabel.getColor().equals(""))
+											l.getElement().getStyle().setBackgroundColor("#"+jsLabel.getColor());
+
 										hp.add(l);
 										PaperIconButton pib = new PaperIconButton();
 										pib.setIcon("close");
@@ -936,6 +966,5 @@ public class IssuePanel extends Composite{
 			}
 		});
 	}
-	
 
 }

@@ -46,8 +46,10 @@
 											spacing="10" /-->
 									</g:SimplePanel>
 									<g:FlowPanel ui:field="historialVPanel" />
-									<g:TextArea visibleLines="5" characterWidth="10"
-										styleName="{aonResources.css.textAreaStyle}" ui:field="commentTextArea" />
+									
+                					<g:TextArea visibleLines="5" characterWidth="10"
+												styleName="{aonResources.css.textAreaStyle}" ui:field="commentTextArea" />
+                					
 									<g:Grid width="100%" height="100%">
 										<g:row>
 											<g:customCell>
@@ -59,20 +61,18 @@
 															styleName="{aonResources.css.aonColorGreen}" />
 													</div>
 													<div>
-														<g:Button ui:field="sendButton"
-															styleName="aon-icon-mailForward aon-icon-commandButton edit-button"
-															title="{msg.sendNotificacion}" />
+													    <p:PaperIconButton ui:field="sendButton" icon="mail" title="{msg.sendNotificacion}" />
+														<p:PaperIconButton ui:field="removeIssueButton" icon="delete" title="Borrar tarea" />
 													</div>
 												</g:HTMLPanel>
 											</g:customCell>
 											<g:customCell>
 												<g:HTMLPanel height="100%" width="100%">
 													<div class="{issuesResources.css.buttonsIssues}">
-														<g:Button ui:field="duplicatedButton" text="{msg.duplicated}" visible="false" />
-														<g:Button ui:field="closedButton" text="{msg.close}" />
-														<g:Button ui:field="reopenButton" text="Abrir"/>
-														<g:Button ui:field="commentButton" text="{msg.comment}"
-															enabled="false" />
+														<p:PaperButton ui:field="duplicatedButton" visible="false" />
+														<p:PaperButton ui:field="closedButton" raised="true" style="background-color:#f44336;color:#fff;"> Cerrar </p:PaperButton>
+														<p:PaperButton ui:field="reopenButton" raised="true" style="background-color:#4caf50;color:#fff;"> Abrir </p:PaperButton>
+														<p:PaperButton ui:field="commentButton" disabled="true" raised="true"> Comentar </p:PaperButton>
 													</div>
 												</g:HTMLPanel>
 											</g:customCell>
@@ -92,7 +92,7 @@
 											</g:HorizontalPanel>
 											<g:HorizontalPanel>
 												<g:Label ui:field="typeLabel"
-													styleName="{aonResources.css.tagStyle} {aonResources.css.tagType}" />
+													styleName="{aonResources.css.tagStyle} {issuesResources.css.tagTypeIssues}" />
 												<p:PaperIconButton ui:field="typeDeleteButton" icon="close" style="padding:3px !important;"/>
 											</g:HorizontalPanel>
 										</g:VerticalPanel>
@@ -107,7 +107,7 @@
 											</g:HorizontalPanel>
 											<g:HorizontalPanel>
 												<g:Label ui:field="priorityLabel"
-												styleName="{aonResources.css.tagStyle} {aonResources.css.tagPriority}" />
+												styleName="{aonResources.css.tagStyle} {issuesResources.css.tagPriorityIssues}" />
 											</g:HorizontalPanel>
 										</g:VerticalPanel>
 									</g:FlowPanel>
@@ -133,7 +133,7 @@
 											</g:HorizontalPanel>
 											<g:HorizontalPanel>
 												<g:Label ui:field="workgroupLabel"
-													styleName="{aonResources.css.tagStyle} {aonResources.css.tagPriority}" />
+													styleName="{aonResources.css.tagStyle} {issuesResources.css.tagPriorityIssues}" />
 												<p:PaperIconButton ui:field="workgroupDeleteButton" icon="close" style="padding:3px !important;"/>
 											</g:HorizontalPanel>										
 										</g:VerticalPanel>
@@ -150,7 +150,7 @@
 											</g:HorizontalPanel>
 											<g:HorizontalPanel>
 												<g:Label ui:field="userLabel"
-													styleName="{aonResources.css.tagStyle} {aonResources.css.tagNotice}" />		
+													styleName="{aonResources.css.tagStyle} {issuesResources.css.tagNoticeIssues}" />		
 												<p:PaperIconButton ui:field="userDeleteButton" icon="close" style="padding:3px !important;"/>
 											</g:HorizontalPanel>
 										</g:VerticalPanel>

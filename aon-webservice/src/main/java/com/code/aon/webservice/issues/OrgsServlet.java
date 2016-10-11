@@ -28,47 +28,44 @@ public class OrgsServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("GET METHOD");
 		String accessToken = req.getParameter("access_token");
-		String serverName = req.getServerName();
 		
-		//if(AonUrlApi.AONTEST.getUrl().contains(serverName)){
-			String[] pathInfo = req.getPathInfo().split("/");
-			String userName = pathInfo[1];
-			String domainName = pathInfo[2]; 
+		String[] pathInfo = req.getPathInfo().split("/");
+		String userName = pathInfo[1];
+		String domainName = pathInfo[2]; 
 			
-			String md5 = getMd5(userName+domainName);
-			if(accessToken.equals(md5)){
-				String filter = req.getParameter("filter") != null ? req.getParameter("filter") : "";
-				Domain domain = AON.getDomain(domainName, 1, userName, f-> f.getNameProperty().eq(domainName));
-				if(pathInfo.length > 3){
-					Object object = new Object();
-					switch (pathInfo[3]) {
-					case "members": // ALL MEMBERS
-						object = getAllUsersJSON(domain, userName, filter);
-						break;
-					case "workgroups": // ALL MEMBERS
-						object = getAllWorkgroupsJSON(domain, userName, filter);
-						break;
-
-					default:
-						break;
-					}
-					String js = req.getParameter("callback");
-					if(js != null){
-						resp.setContentType("application/javascript; charset=utf-8");     
-						PrintWriter out = resp.getWriter();
-						out.print(js + "({" +"\"meta\":{}, \"data\":" + object +"});");
-						out.flush();
-					} else {
-						resp.setContentType("application/json");     
-						PrintWriter out = resp.getWriter();
-						out.print(object);
-						out.flush();
-					}
-					
+		String md5 = getMd5(userName+domainName);
+		if(accessToken.equals(md5)){
+			String filter = req.getParameter("filter") != null ? req.getParameter("filter") : "";
+			Domain domain = AON.getDomain(domainName, 1, userName, f-> f.getNameProperty().eq(domainName));
+			if(pathInfo.length > 3){
+				Object object = new Object();
+				switch (pathInfo[3]) {
+				case "members": // ALL MEMBERS
+					object = getAllUsersJSON(domain, userName, filter);
+					break;
+				case "workgroups": // ALL WORKGROUPS
+					object = getAllWorkgroupsJSON(domain, userName, filter);
+					break;
+				case "app_users": // ALL  APP USERS
+					object = getAllAppUsersJSON(domain, userName);
+					break;
+				default:
+					break;
 				}
-
+				String js = req.getParameter("callback");
+				if(js != null){
+					resp.setContentType("application/javascript; charset=utf-8");     
+					PrintWriter out = resp.getWriter();
+					out.print(js + "({" +"\"meta\":{}, \"data\":" + object +"});");
+					out.flush();
+				} else {
+					resp.setContentType("application/json");     
+					PrintWriter out = resp.getWriter();
+					out.print(object);
+					out.flush();
+				}				
 			}
-		//}
+		}
 	}
 	
 	@Override
@@ -95,6 +92,14 @@ public class OrgsServlet extends HttpServlet{
 
 		return array;
 	}
+
+	private JSONArray getAllAppUsersJSON(Domain domain, String userName) {
+		JSONArray array = new JSONArray();		
+		Stream<User> userList = AON.getUsers(domain.getId(), domain.getName(), userName).stream().map(new UserToUserFiller());
+		userList.forEach(l->array.put(l.toJSON()));
+		return array;
+	}
+	
 	
 	private static class RegistryToUserFiller implements Function<Registry, User> {
 		
@@ -103,6 +108,16 @@ public class OrgsServlet extends HttpServlet{
 			return new User()
 					.setId(r.getId())
 					.setLogin(r.getName());  
+		}
+	}
+	
+	private static class UserToUserFiller implements Function<com.esferalia.aon.occam.api.model.security.User , User> {
+		
+		@Override
+		public User apply(com.esferalia.aon.occam.api.model.security.User r) {
+			return new User()
+					.setId(r.getId())
+					.setLogin(r.getLogin());  
 		}
 	}
 
