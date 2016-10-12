@@ -132,7 +132,7 @@ eu-west-1
 EOF
 
 APP=${1:-AON-SNAPSHOT-APP}
-GROUP=${1:-AON-NET-GROUP}
+GROUP=${2:-AON-NET-GROUP}
 
 aws deploy push --application-name ${APP} --s3-location s3://aon-solutions/${APP,,}-${VERSION}-${BUILD_ID}.zip --source ${temp_dir}
 
