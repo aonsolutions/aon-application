@@ -63,10 +63,13 @@ import com.esferalia.aon.payroll.tgss.creta.IndentXMLStreamWriter;
 import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.tgss.creta.jaxb.Dato;
 import net.aonsolutions.tgss.creta.jaxb.DatoSolicitado;
+import net.aonsolutions.tgss.creta.jaxb.Fecha;
+import net.aonsolutions.tgss.creta.jaxb.FechaHoraRecaudacion;
 import net.aonsolutions.tgss.creta.jaxb.Liquidacion;
 import net.aonsolutions.tgss.creta.jaxb.Periodo;
 import net.aonsolutions.tgss.creta.jaxb.Trabajador;
@@ -270,7 +273,8 @@ public class CretaServlet extends HttpServlet
 		os.println("<body>");
 		os.println("<script>");
 		
-		
+		Date fromDate = AonDateUtils.getLastDayOfMonth(AonDateUtils.add(new Date(), Calendar.MONTH, -3));
+				
 		//@formatter:off
 		__onTrabajadoresYTramos(os, 
 				Stream.concat(
@@ -280,7 +284,9 @@ public class CretaServlet extends HttpServlet
 					.map(optional -> optional.get())
 					.peek(t -> {saveTrabajadoresYTramos(req, t);}),
 					findTrabajadoresYTramos(req)
-				),
+				)
+				.filter(t -> t.getLiquidacion() != null)
+				.filter(t -> toDate(t.getLiquidacion().getFechaHoraRecaudacion()).after(fromDate)),
 				Stream.concat(
 					req.getParts().stream()
 					.map(part -> unmarshall(net.aonsolutions.tgss.creta.jaxb.respuesta.Respuesta.class, part))
@@ -289,6 +295,8 @@ public class CretaServlet extends HttpServlet
 					.peek(r -> {saveRespuesta(req, r);}),
 					findRespuestas(req)
 				)
+				.filter(r -> r.getLiquidacion() != null && r.getLiquidacion().size() > 0 )
+				.filter(r -> toDate(r.getLiquidacion().get(0).getFechaHoraRecaudacion()).after(fromDate))
 		);
 		//@formatter:on
 		
@@ -467,7 +475,7 @@ public class CretaServlet extends HttpServlet
 		InputStream is = new ByteArrayInputStream(bytes);
 		try {
 			return Optional.of(Utils.unmarshal(clazz, is));
-		} catch (JAXBException e) {
+		} catch (Throwable t) {
 			return Optional.empty();
 		} finally {
 			try {
@@ -1105,5 +1113,23 @@ public class CretaServlet extends HttpServlet
 		
 	}
 	
-	
+	private static <F extends net.aonsolutions.tgss.creta.jaxb.Fecha> Date toDate(net.aonsolutions.tgss.creta.jaxb.FechaHoraRecaudacion<F> fechaHoraRecaudacion){
+		
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		//Hora hora = fechaHoraRecaudacion.getHoraRecaudacion();
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+
+		Fecha fecha = fechaHoraRecaudacion.getFechaRecaudacion();
+		calendar.set(Calendar.DATE, Integer.parseInt(fecha.getDia()));
+		calendar.set(Calendar.MONTH, Integer.parseInt(fecha.getMes())-1);
+		calendar.set(Calendar.YEAR, Integer.parseInt(fecha.getAnho()));
+
+		return calendar.getTime();
+		
+	}
 }
