@@ -14,7 +14,9 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.calc.Aeat2015Mod202Calculator;
+import com.esferalia.aon.occam.server.fiscal.calc.Aeat20162Mod202Calculator;
 import com.esferalia.aon.occam.server.fiscal.calc.Aeat2016Mod202Calculator;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -54,7 +56,9 @@ public class Mod202DAO extends FiscalModelDAO {
 	public static Mod202 calculateMod202(AONContext ctx, Mod202 mod202) {
 		return  mod202.getYear()<2016
 					?Aeat2015Mod202Calculator.calculate(ctx, mod202)
-					:Aeat2016Mod202Calculator.calculate(ctx, mod202);
+					:(mod202.getYear()==2016 && mod202.getPeriod() == Period.T1) 
+						?Aeat2016Mod202Calculator.calculate(ctx, mod202)
+						:Aeat20162Mod202Calculator.calculate(ctx, mod202);
 	}
 
 	public static Mod202 initializeMod202(AONContext ctx,Mod202 mod202) {

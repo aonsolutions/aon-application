@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.type.Period;
 
 
 public class Mod202Writer {
@@ -17,11 +18,20 @@ public class Mod202Writer {
 				item.getFiller().fill(writer, mod202);
 			}
 		} else {
-			for (Aeat2016Record1 item : Aeat2016Record1.values()) {
-				item.getFiller().fill(writer, mod202);
-			}
-			for (Aeat2016Record2 item : Aeat2016Record2.values()) {
-				item.getFiller().fill(writer, mod202);
+			if (mod202.getYear() == 2016 && mod202.getPeriod() == Period.T1) {
+				for (Aeat2016Record1 item : Aeat2016Record1.values()) {
+					item.getFiller().fill(writer, mod202);
+				}
+				for (Aeat2016Record2 item : Aeat2016Record2.values()) {
+					item.getFiller().fill(writer, mod202);
+				}
+			} else {
+				for (Aeat20162Record1 item : Aeat20162Record1.values()) {
+					item.getFiller().fill(writer, mod202);
+				}
+				for (Aeat20162Record2 item : Aeat20162Record2.values()) {
+					item.getFiller().fill(writer, mod202);
+				}
 			}
 		}
 		writer.flush();

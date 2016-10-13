@@ -409,6 +409,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 	public class NewContextMenu extends ContextMenu {
 		
 		public NewContextMenu() {
+			addNewMod2022016_2();
 			addNewMod2002015();
 			addNewMod2022016();
 			addSeparator();
@@ -420,6 +421,41 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		
 		public void addItem(FiscalModelType model, String text, ScheduledCommand cmd) {
 			super.addItem(model.getValue(), text, cmd);
+		}
+
+		protected NewContextMenu addNewMod2022016_2() {
+			addItem(FiscalModelType.M202 
+					,AON.MSG.newSomething( AON.MSG.fiscalModelType( FiscalModelType.M202 ) + " - 2016" )  
+					, new ScheduledCommand() {
+						
+						@Override
+						public void execute() {
+							Mod202 mod202 = new Mod202();
+							mod202.setDomain(getEnterprise().getDomain());
+							mod202.setYear(2016);
+							mod202.setModel(FiscalModelType.M202);
+							mod202.setPeriod(Period.T2);
+							FiscalTree.FISCAL_SERVICE.initializeMod202(FiscalTree.getCurrentDomainName()
+			        		, getEnterprise().getDomain(), mod202
+			        		, new AsyncCallback<Mod202>() {
+			
+								@Override
+								public void onSuccess(Mod202 mod202) {
+									TreeNode<Mod202> node = TreeNodeFiscalModelTypes.MODEL_202.getInstance().render(
+										getFiscalModelsNode(mod202.getYear()).getModelNode(mod202.getYear(),mod202.getModel())
+										, mod202);
+									getFiscalModelsNode(mod202.getYear()).setState(true);
+									tree.setSelectedItem(node);
+								}
+			
+								@Override
+								public void onFailure(Throwable caught) {
+									Window.alert(caught.getMessage());
+								}
+							});
+						}
+					});
+			return this; 
 		}
 
 		protected NewContextMenu addNewMod202() {
@@ -459,7 +495,7 @@ public class FiscalTree extends MainEntryPoint implements OptionsToolbar.Listene
 		
 		protected NewContextMenu addNewMod2022016() {
 			addItem(FiscalModelType.M202 
-					,AON.MSG.newSomething( AON.MSG.fiscalModelType( FiscalModelType.M202 ) + " - 2016" )  
+					,AON.MSG.newSomething( AON.MSG.fiscalModelType( FiscalModelType.M202 ) + " - 2016 - 1P" )  
 					, new ScheduledCommand() {
 						
 						@Override

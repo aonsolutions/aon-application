@@ -53,6 +53,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Model202Form extends ResizeComposite implements IFiscalTreeContent<Mod202>{
@@ -78,6 +79,10 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 	private static Mod202Key[] additionalDataKeys2016 = new Mod202Key[]{
 			Mod202Key.X01,Mod202Key.X02,Mod202Key.X03,Mod202Key.X04,Mod202Key.X05,
 			Mod202Key.X06,Mod202Key.X07,Mod202Key.X08,Mod202Key.X09,Mod202Key.X00};
+	private static Mod202Key[] additionalDataKeys2016_2 = new Mod202Key[]{
+			Mod202Key.X01,Mod202Key.X02,Mod202Key.X03,Mod202Key.X04,Mod202Key.X05,
+			Mod202Key.X06,Mod202Key.X07,Mod202Key.X08,Mod202Key.X09,Mod202Key.X11,
+			Mod202Key.X10,Mod202Key.X00};
 	
 	private static Mod202Key[] computeADataKeys = new Mod202Key[]{
 		Mod202Key.C01,Mod202Key.C02,Mod202Key.C03};
@@ -102,6 +107,9 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 	private static Mod202Key[] computeB21DataKeys2016 = new Mod202Key[]{
 			Mod202Key.C26,Mod202Key.C27,Mod202Key.C28,Mod202Key.C29,Mod202Key.C30 
 			,Mod202Key.C31,Mod202Key.C32,Mod202Key.C34};
+	private static Mod202Key[] computeB21DataKeys2016_2 = new Mod202Key[]{
+			Mod202Key.C26,Mod202Key.C27,Mod202Key.C28,Mod202Key.C29,Mod202Key.C30 
+			,Mod202Key.C31,Mod202Key.C32,Mod202Key.C33,Mod202Key.C34};
 
 	private EnumMap<Mod202Key, CheckBox> checks = new EnumMap<Mod202Key, CheckBox>(Mod202Key.class);
 	private EnumMap<Mod202Key, DoubleBox> inputs = new EnumMap<Mod202Key, DoubleBox>(Mod202Key.class);	
@@ -204,9 +212,6 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		formFlowPanel.add(domainNameHidden);
 		formContainer.add(diskForm);
 
-		period.addItem("1P",Integer.toString( Period.T1.ordinal() ));
-		period.addItem("2P",Integer.toString( Period.T2.ordinal() ));
-		period.addItem("3P",Integer.toString( Period.T3.ordinal() ));
 	}
 	
 	@Override
@@ -241,9 +246,25 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 	private void populate(Mod202 m202) {
 		changeDisplayStyleName = false;
 		this.mod202 = m202;
+//		if (m202.getYear() == 2016) {
+//			if (m202.getPeriod() == Period.T1) {
+//				period.addItem("1P",Integer.toString( Period.T1.ordinal() ));
+//				period.setItemSelected(0,true);
+//			} else {
+//				period.addItem("2P",Integer.toString( Period.T2.ordinal() ));
+//				period.addItem("3P",Integer.toString( Period.T3.ordinal() ));
+//				if (m202.getPeriod() == Period.T2) period.setItemSelected(0,true);
+//				if (m202.getPeriod() == Period.T3) period.setItemSelected(1,true);
+//			}
+//		} else {
+			period.addItem("1P",Integer.toString( Period.T1.ordinal() ));
+			period.addItem("2P",Integer.toString( Period.T2.ordinal() ));
+			period.addItem("3P",Integer.toString( Period.T3.ordinal() ));
+			period.setItemSelected(mod202.getPeriod().ordinal() - Period.T1.ordinal(),true);
+//		}
 
 		year.setText( Integer.toString( mod202.getYear() ));
-		period.setItemSelected(mod202.getPeriod().ordinal() - Period.T1.ordinal(),true);
+		
 
 		enableToolbarItems();
 		
@@ -337,7 +358,11 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		table.setWidget(row, 0, new Label( AON.MSG.additionalData() ));
 		table.getFlexCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonFiscalModelDataTableTitle());
 		table.getFlexCellFormatter().setColSpan(row, 0, 4);
-		Mod202Key[] keys = mod202.getYear()<2016?additionalDataKeys2015:additionalDataKeys2016;
+		Mod202Key[] keys = mod202.getYear()<2016
+				?(additionalDataKeys2015)
+				:(mod202.getYear()==2016 && mod202.getPeriod()==Period.T1
+					?additionalDataKeys2016
+					:additionalDataKeys2016_2);
 		for (Mod202Key key : keys) {
 			row++;
 			if (key == Mod202Key.X08) {
@@ -383,6 +408,37 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 					}
 				});
 				table.setWidget(row, 0, p);
+			} else if (key == Mod202Key.X11) {
+				VerticalPanel vp = new VerticalPanel();
+				vp.setStyleName(AON.AON_CSS.aonWidthAll());
+				CheckBox checkBox = new CheckBox(key.getDescription());
+				checkBox.setValue(mod202.getAmount(key)==1);
+				checkBox.setEnabled(isEnabled(key));
+				checkBox.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						calculate();
+					}
+				});
+				checks.put(key, checkBox);
+				vp.add(checkBox);
+				Label label1 = new Label("1) Tiene resultados positivos consecuencia "
+						+ "de operaciones de aumento de capital o fondos propios por "
+						+ "compensaci\u00F3n de cr\u00E9ditos que no se integren en la base "
+						+ "imponible por aplicaci\u00F3n del apartado 2 del art\u00EDculo 17 de la LIS");
+				label1.setStyleName(AON.AON_CSS.aonMarginLeft());
+				vp.add(label1);
+				Label label2 = new Label("2) Se trata de una entidad parcialmente "
+						+ "exenta a la que resulta de aplicaci\u00F3n el r\u00E9gimen fiscal "
+						+ "especial establecido en el Cap\u00EDtulo XIV del t\u00EDtulo VII");
+				label2.setStyleName(AON.AON_CSS.aonMarginLeft());
+				vp.add(label2);
+				Label label3 = new Label("3) Se trata de una entidad a la que resulte "
+						+ "de aplicaci\u00F3n la bonificaci\u00F3n del art. 34 de la LIS");
+				label3.setStyleName(AON.AON_CSS.aonMarginLeft());
+				vp.add(label3);
+				table.setWidget(row, 0, vp);
+				
 			} else if (key == Mod202Key.X00) {
 				FlowPanel p = new FlowPanel();
 				InlineLabel l = new InlineLabel( key.getDescription() );
@@ -645,7 +701,11 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		table.getFlexCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonFiscalModelDataTableData());
 		table.setWidget(row, 2, getInputPanel(Mod202Key.C52));
 		table.getFlexCellFormatter().setStyleName(row, 2, AON.AON_CSS.aonFiscalModelDataTableData());
-		Mod202Key[] keys = mod202.getYear()<2016?computeB21DataKeys2015:computeB21DataKeys2016;
+		Mod202Key[] keys = mod202.getYear()<2016
+				?computeB21DataKeys2015
+				:(mod202.getYear()==2016 && mod202.getPeriod() == Period.T1)
+					?computeB21DataKeys2016
+					:computeB21DataKeys2016_2;
 		for (Mod202Key key : keys) {
 			row++;
 			table.setWidget(row, 0, new Label( key.getDescription()));
@@ -677,8 +737,8 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 		 || key == Mod202Key.C21 || key == Mod202Key.C22 
 		 || key == Mod202Key.C23 || key == Mod202Key.C24 
 		 || key == Mod202Key.C25 || key == Mod202Key.C26 
-		 || key == Mod202Key.C32 || key == Mod202Key.C33 
-		 || key == Mod202Key.C34
+		 || key == Mod202Key.C32 || key == Mod202Key.C34
+		 || (key == Mod202Key.C33 && mod202.getYear() < 2016)
 				);
 		doubleBox.setEnabled(isEnabled(key));
 		doubleBox.addChangeHandler(new ChangeHandler() {
@@ -734,7 +794,9 @@ public class Model202Form extends ResizeComposite implements IFiscalTreeContent<
 	}
 
 	private void prepareForSend() {
+		
 		mod202.setPeriod( Period.values()[ period.getSelectedIndex() + Period.T1.ordinal() ] );
+		
 		mod202.setCnae( cnae.getValue() );
 		mod202.setInitialDate(this.initialDate.getValue());
 		

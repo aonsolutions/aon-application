@@ -18,6 +18,7 @@ public enum Mod202Key implements IFiscalModelKey{
 	,X08("202-X08",0,"Tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso")
 	,X09("202-X09",0,"Importe neto de la cifra de negocios")
 	,X10("202-X10",0,"Entidades en las que al menos el 85% de ingresos del periodo impositivo")
+	,X11("202-X11",0,"Marque esta casilla si concurre ALGUNA de las siguientes circunstancias:")
 	,X00("202-X00",0,"Modalidad de c\u00E1lculo")
 	
 	,C01("202-C01", 1,"Base del pago fraccionado")
@@ -67,7 +68,7 @@ public enum Mod202Key implements IFiscalModelKey{
 	,C30("202-C30",30,"Pagos fraccionados de periodos anteriores en Territorio Com\u00FAn") 
 	,C31("202-C31",31,"Resultado de la declaraci\u00F3n anterior (exclusivamente si \u00E9sta es complementaria)") 
 	,C32("202-C32",32,"Resultado")
-	,C33("202-C33",33,"M\u00EDnimo a ingresar (s\u00F3lo para empresas con CN igual o superior a 20 millones euros)") 
+	,C33("202-C33",33,"M\u00EDnimo a ingresar (s\u00F3lo para empresas con CN igual o superior a 10 millones euros)")
 	,C34("202-C34",34,"Cantidad a ingresar")
 	
 	,A01("202-A01",0,"Comunicaci\u00F3n de datos adicionales a la declaraci\u00F3n")
