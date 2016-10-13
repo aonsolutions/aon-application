@@ -140,9 +140,7 @@ public class ReposServlet extends HttpServlet{
 			System.out.println(s);
 			if(s == null || s.equals("")) s = "{}";
 			JSONObject json = new JSONObject(s);
-				
-			new String(json.getString("title").getBytes(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8") );
-				
+							
 			Object object = new Object();
 			switch (pathInfo[3]) {
 			case "issues":
