@@ -24,7 +24,7 @@ public enum Aeat20162Record1 implements Serializable,IMod202Record{
 	,C10((writer,mod202) -> writer.append(AonFiscalFileUtils.year(mod202.getYear())))
 	,C11((writer,mod202) -> writer.append(AonFiscalFileUtils.getMod202Period(mod202.getPeriod()))) 
 	,C12((writer,mod202) -> writer.append(AonFiscalFileUtils.text(mod202.getDescription(Mod202Key.P02),8)))
-	,C13((writer,mod202) -> writer.append(AonFiscalFileUtils.unsigned(mod202.getAmount(Mod202Key.P01),4)))
+	,C13((writer,mod202) -> writer.append(AonFiscalFileUtils.text(AonStringUtils.remove(mod202.getCnae(), "."),4)))
 	,C14((writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X01))))
 	,C15((writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X02))))
 	,C16((writer,mod202) -> writer.append(AonFiscalFileUtils.mark(mod202.getAmount(Mod202Key.X03))))
