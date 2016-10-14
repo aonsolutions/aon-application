@@ -196,6 +196,7 @@ public class AccountingInvoiceDAO {
 		final AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, issueDate);
 		AccountingInvoice ai = new AccountingInvoice()
 				.setRegistry(reg)
+				.setWorkplace(config.getWorkplaces().get(0).getId())
 				.setInvoice(new Invoice()
 					.setDomain(ctx.getDomainId())
 					.setRegistry(registry)
@@ -395,9 +396,7 @@ public class AccountingInvoiceDAO {
 					.setDomain(accInvoice.getInvoice().getDomain())
 					.setInvoice(accInvoice.getInvoice())
 					.setInvestAsset(vat.getInvestAsset())
-					// ----------------------- TODO
-					.setWorkPlace( config.getWorkplaces().get(0).getId())
-					// -------------------------------------------
+					.setWorkPlace( accInvoice.getWorkplace())
 					.setLine(line)
 					.setDescription(MessageFormat.format(DETAIL_MSG
 						, accInvoice.getInvoice().getReferenceCode()

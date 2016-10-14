@@ -18,6 +18,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private AccountEntry accountEntry;
 	private Invoice invoice;
 	private AccountingRegistry registry;
+	private Integer workplace;
 
 	private InvoiceWithholding withholdingData;
 	private LinkedList<Account> suggestedAccounts;
@@ -50,7 +51,13 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		this.registry = registry;
 		return this;
 	}
-
+	public Integer getWorkplace() {
+		return workplace;
+	}
+	public AccountingInvoice setWorkplace(Integer workplace) {
+		this.workplace = workplace;
+		return this;
+	}
 	public InvoiceTransactionType getTransaction() {
 		return invoice != null?invoice.getTransaction():null;
 	}

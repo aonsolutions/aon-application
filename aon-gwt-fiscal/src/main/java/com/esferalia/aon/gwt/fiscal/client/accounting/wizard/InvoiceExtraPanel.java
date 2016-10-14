@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Country2ListBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
@@ -8,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.DocumentTypeListBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel.IInvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -21,6 +24,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
@@ -57,6 +61,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 	void paint(final IInvoicePanelCallback callback) {
 		flexContainer.clear();
 		paintLabel(callback);
+		paintWorkplace(callback);
 		paintDocument(callback);
 		paintName(callback);
 		paintDate(callback);
@@ -65,6 +70,34 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		paintChecks2(callback);
 		paintChecks3(callback);
 			
+	}
+
+	private void paintWorkplace(final IInvoicePanelCallback callback) {
+		
+		final LinkedList<Workplace> list = callback.getConfiguration().getWorkplaces();
+		if (list != null && list.size() > 1) {
+			FlowPanel panel = new  FlowPanel();
+			panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
+			InlineLabel label = new InlineLabel(AON.MSG.workplace());
+			label.setStyleName(AON.AON_CSS.aonInnerLabel());
+			label.addStyleName(AON.AON_CSS.aonWidth70());
+			panel.add(label);
+			final ListBox workplaces = new ListBox();
+			workplaces.setStyleName(AON.AON_CSS.aonMarginRight5());
+			for (Workplace workplace : list ) {
+				workplaces.addItem(workplace.getDescription());
+			}
+			workplaces.addChangeHandler(new ChangeHandler() {
+				@Override
+				public void onChange(ChangeEvent event) {
+					Integer workplaceId = list.get(workplaces.getSelectedIndex()).getId();
+					callback.getInvoice().setWorkplace(workplaceId);
+				}
+			});
+			panel.add(workplaces);
+			flexContainer.add(panel);
+		}
+		
 	}
 
 	private void paintLabel(final IInvoicePanelCallback callback) {
@@ -83,6 +116,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 	private void paintDocument(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
 		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
+		
 		InlineLabel label = new InlineLabel(AON.MSG.document());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		label.addStyleName(AON.AON_CSS.aonWidth70());

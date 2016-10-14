@@ -585,6 +585,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Descripci\u00F3n")
 	String description();
 
+	@DefaultMessage("Centro de trabajo")
+	String workplace();
+
 	@DefaultMessage("Tel\u00E9fono")
 	String phone();
 	
