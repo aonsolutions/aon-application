@@ -247,6 +247,9 @@ public interface FiscalServiceAsync {
 	void insertSalaryAccountEntries(String domainName, int domain, Date from,
 			Date to, String concept, Integer registryBank,
 			AsyncCallback<LinkedList<AccountEntry>> callback);
+	void previewSalaryAccountEntries(String domainName, int domain, Date from,
+			Date to, String concept, Integer registryBank,
+			AsyncCallback<LinkedList<AccountEntry>> callback);
 	void getSalaryAccountEntries(String domainName, int domain,Date from, Date to,
 			AsyncCallback<LinkedList<AccountEntry>> callback);
 	void deleteAccountEntry(String domainName, int domain, Integer id,

@@ -26,6 +26,8 @@
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbar}">
 						<g:HTMLPanel styleName="{aonResources.css.aonFindingToolbarItemGroup}">
+							<g:Button ui:field="preview" text="{msg.preview}" 
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconAudit}" />
 							<g:Button ui:field="accept" text="{msg.accept}" 
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconSave}" />
 						</g:HTMLPanel>

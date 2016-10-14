@@ -58,7 +58,7 @@ public class SalaryDAO {
 
 	// TODO ARRRGGGGGHHH!!!
 	private static final Byte DEDUCTION_ADVANCE = 7;
-	private static final Byte DEDUCTION_IN_KIND = 8;
+	// private static final Byte DEDUCTION_IN_KIND = 8;
 	private static final Byte DEDUCTION_TYPE_OTHER = 9;
 
 	// --------------------
@@ -106,11 +106,16 @@ public class SalaryDAO {
 						.asField());
 		// DEDUCCIONES EN ESPECIE
 		Field<BigDecimal> inKindDeductions = 
-				DSL.sum(DSL.select(salaryDeductionAmountSum)
-						.from(SALARY_DEDUCTION)
-						.where(SALARY_DEDUCTION.SALARY.equal(SALARY.ID))
-						.and(SALARY_DEDUCTION.TYPE.equal(DEDUCTION_IN_KIND))
+				DSL.sum(DSL.select(salaryPaymentAmountSum)
+						.from(SALARY_PAYMENT)
+						.where(SALARY_PAYMENT.SALARY.equal(SALARY.ID))
+						.and(SALARY_PAYMENT.TYPE.between((byte) 13, (byte) 26))
 						.asField());
+//				DSL.sum(DSL.select(salaryDeductionAmountSum)
+//						.from(SALARY_DEDUCTION)
+//						.where(SALARY_DEDUCTION.SALARY.equal(SALARY.ID))
+//						.and(SALARY_DEDUCTION.TYPE.equal(DEDUCTION_IN_KIND))
+//						.asField());
 		// DEDUCCIONES de ANTICIPOS
 		Field<BigDecimal> advanceDeductions = 
 				DSL.sum(DSL.select(salaryDeductionAmountSum)

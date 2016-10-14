@@ -50,6 +50,8 @@ public interface IAccounting {
 	public Integer save(AONContext ctx,AccountEntry ae);
 	public void delete(AONContext ctx,Integer id);
 	public AccountEntry getAccountEntry(AONContext ctx,SalaryAccountEntry sae) throws AonCoreException;
+	public LinkedList<AccountEntry> previewSalaryEntries(String domainName, int domain,String user,
+			Date from, Date to, String concept, Integer registryBank);
 	public List<Integer> insertSalaryEntries(String domainName, int domain,String user,
 			Date from, Date to, String concept, Integer registryBank);
 	public AccountingInvoice initializeInvoice(AONContext ctx, AccountEntry entry, AccountingRegistry registry);

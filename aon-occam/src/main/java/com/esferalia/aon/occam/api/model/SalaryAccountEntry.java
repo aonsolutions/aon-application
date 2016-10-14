@@ -202,7 +202,7 @@ public class SalaryAccountEntry implements Serializable {
 				, null 
 				)
 		,DED_IN_KIND (
-				AppParam.ACC_SALARY_DED_IK_ACC
+				AppParam.ACC_DEFAULT_SALARY_IK_ACC
 				, new IFillAccountEntryAmountVisitor() {
 					@Override
 					public void visit(AccountEntryDetail aed,

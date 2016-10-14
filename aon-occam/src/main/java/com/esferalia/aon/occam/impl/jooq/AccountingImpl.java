@@ -189,8 +189,15 @@ public class AccountingImpl implements IAccounting {
 						if (line.getType() != null && line.getType().getParam() != null) {
 							ApplicationParameter param = AON.fetchApplicationParameter(ctx, line.getType().getParam());
 							if (param != null && AonStringUtils.isNotBlank(param.getValue())) {
-								Integer account = AonNumberUtils.toInteger(param.getValue()); 
-								aed.setAccount( account );
+								Integer accountId = AonNumberUtils.toInteger(param.getValue());
+								Account account = AccountDAO.get(ctx, accountId);
+								if (account == null) {
+									throw new AonCoreException(AonError.ACCOUNT_ENTRY_SALARY_NO_ACCOUNT.format(line.getType(),line.getAmount(),line.getType().getParam() )
+											+ " Id: " + accountId);		
+								}
+								aed.setAccount( account.getId() );
+								aed.setAccountCode(account.getCode());
+								aed.setAccountDescription(account.getDescription());
 							}
 						}
 						if (aed.getAccount() == null)
@@ -204,6 +211,25 @@ public class AccountingImpl implements IAccounting {
 		return ae;
 	}
 	
+	@Override
+	public LinkedList<AccountEntry> previewSalaryEntries(String domainName, int domain, String user,
+			Date from, Date to, String concept, Integer registryBank) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			final AONContext ctxDup = ctx;	
+			Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
+			return ctx.getDslContext().transactionResult( configuration ->
+				SalaryDAO.getSalaryEntries(ctxDup, company.getId(),from, to ,concept, registryBank)
+					.map( sae -> getAccountEntry(ctxDup, sae))
+					.collect(Collectors.toCollection(LinkedList::new))
+			 );		
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	@Override
 	public List<Integer> insertSalaryEntries(String domainName, int domain, String user,
 			Date from, Date to, String concept, Integer registryBank) {

@@ -75,6 +75,8 @@ public class SalaryEntryModule extends MainEntryPoint {
 	ListBox banks;
 	
 	@UiField
+	Button preview;
+	@UiField
 	Button accept;
 	
 	@UiField
@@ -138,6 +140,10 @@ public class SalaryEntryModule extends MainEntryPoint {
 	void onDateChange(ValueChangeEvent<Date> event) {
 		if (validDates() ) {
 			checkPeriodEntries(false);
+		} else {
+			if (msgContainer.getWidget() != null) {
+				msgContainer.remove(msgContainer.getWidget());
+			}
 		}
 	}
 	
@@ -188,54 +194,89 @@ public class SalaryEntryModule extends MainEntryPoint {
 			}
 		});
 	}
-
-	@UiHandler("accept")
-	void onAccept(ClickEvent event) {
-		if (Window.confirm( AON.MSG.generateAccountEntry())) {
-			errors = new FlowPanel();
-			if (fromDate.getValue() == null) {
-				addError("Fecha inicio erronea");
-			}
-			if (toDate.getValue() == null) {
-				addError("Fecha fin erronea");
-			}
-			if (fromDate.getValue() != null && toDate.getValue() != null) {
-				if (toDate.getValue().before(fromDate.getValue())) {
-					addError("Rango de fechas incorrecto");
+	
+	@UiHandler("preview")
+	void onPreview(ClickEvent event) {
+		if (validParameters()) {
+			Integer rbank = AonNumberUtils.toInteger(banks.getSelectedValue());
+			fiscalService.previewSalaryAccountEntries(getCurrentDomainName(), getCurrentDomain(), 
+					fromDate.getValue(), toDate.getValue(), 
+					concept.getText(), rbank
+					, new AsyncCallback<LinkedList<AccountEntry>>() {
+				
+				@Override
+				public void onSuccess(LinkedList<AccountEntry> result) {
+					showPreview(new Label( AON.MSG.preview() ), result, false);
+				}
+				@Override
+				public void onFailure(Throwable caught) {
+					addError(caught.getMessage());
+					splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+					resultsPanel.setWidget(errors);
 				}
 				
+			});
+		}
+	}
+
+	private boolean validParameters() {
+		boolean noError = true;
+		errors = new FlowPanel();
+		if (fromDate.getValue() == null) {
+			addError("Fecha inicio erronea");
+			noError = false;
+		}
+		if (toDate.getValue() == null) {
+			addError("Fecha fin erronea");
+			noError = false;
+		}
+		if (fromDate.getValue() != null && toDate.getValue() != null) {
+			if (toDate.getValue().before(fromDate.getValue())) {
+				addError("Rango de fechas incorrecto");
+				noError = false;
 			}
+		}
+		if (!noError) {
 			if (errors.getWidgetCount() > 0) {
 				splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
 				resultsPanel.setWidget(errors);
 			}
-			Integer rbank = AonNumberUtils.toInteger(banks.getSelectedValue());
-			fiscalService.insertSalaryAccountEntries(getCurrentDomainName(), getCurrentDomain(), 
-					fromDate.getValue(), toDate.getValue(), 
-					concept.getText(), rbank
-					, new AsyncCallback<LinkedList<AccountEntry>>() {
+		}
+		return noError;
+	}
 
-						@Override
-						public void onSuccess(LinkedList<AccountEntry> result) {
-							if (msgContainer.getWidget() != null) {
-								msgContainer.remove(msgContainer.getWidget());
+	@UiHandler("accept")
+	void onAccept(ClickEvent event) {
+		if (Window.confirm( AON.MSG.generateAccountEntry())) {
+			if (validParameters()) {
+				Integer rbank = AonNumberUtils.toInteger(banks.getSelectedValue());
+				fiscalService.insertSalaryAccountEntries(getCurrentDomainName(), getCurrentDomain(), 
+						fromDate.getValue(), toDate.getValue(), 
+						concept.getText(), rbank
+						, new AsyncCallback<LinkedList<AccountEntry>>() {
+	
+							@Override
+							public void onSuccess(LinkedList<AccountEntry> result) {
+								if (msgContainer.getWidget() != null) {
+									msgContainer.remove(msgContainer.getWidget());
+								}
+								fromDate.setValue(null);
+								toDate.setValue(null);
+								validDates();
+								String msg = (result == null || result.isEmpty())
+										?AON.MSG.noGeneratedAccountEntries()
+										:AON.MSG.generatedAccountEntries();
+								showPreview(new Label( msg ), result, false);
 							}
-							fromDate.setValue(null);
-							toDate.setValue(null);
-							validDates();
-							String msg = (result == null || result.isEmpty())
-									?AON.MSG.noGeneratedAccountEntries()
-									:AON.MSG.generatedAccountEntries();
-							showPreview(new Label( msg ), result, false);
-						}
-						@Override
-						public void onFailure(Throwable caught) {
-							addError(caught.getMessage());
-							splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
-							resultsPanel.setWidget(errors);
-						}
-
-					});
+							@Override
+							public void onFailure(Throwable caught) {
+								addError(caught.getMessage());
+								splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+								resultsPanel.setWidget(errors);
+							}
+	
+						});
+			}
 		}
 	}
 	

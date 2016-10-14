@@ -1001,6 +1001,15 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 						.and(p.getDomainProperty().eq(domain) )
 				, 0, 100);
 	}
+
+	@Override
+	public LinkedList<AccountEntry> previewSalaryAccountEntries(
+			String domainName, int domain, Date from, Date to, String concept,
+			Integer registryBank) {
+		return ACCOUNTING.previewSalaryEntries(domainName, domain,
+				this.getUserLogin() , from, to, concept, registryBank);
+	}
+
 	@Override
 	public AccountStatementReport getAccountStatement(String domainName,
 			int domain, AccountStatementParams params) throws AonCoreException {
