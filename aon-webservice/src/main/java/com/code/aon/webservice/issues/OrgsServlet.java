@@ -36,12 +36,13 @@ public class OrgsServlet extends HttpServlet{
 		String md5 = getMd5(userName+domainName);
 		if(accessToken.equals(md5)){
 			String filter = req.getParameter("filter") != null ? req.getParameter("filter") : "";
+			Integer workgroupId = req.getParameter("w") != null ? Integer.parseInt(req.getParameter("w")):-1; 
 			Domain domain = AON.getDomain(domainName, 1, userName, f-> f.getNameProperty().eq(domainName));
 			if(pathInfo.length > 3){
 				Object object = new Object();
 				switch (pathInfo[3]) {
 				case "members": // ALL MEMBERS
-					object = getAllUsersJSON(domain, userName, filter);
+					object = getAllUsersJSON(domain, userName, filter, workgroupId);
 					break;
 				case "workgroups": // ALL WORKGROUPS
 					object = getAllWorkgroupsJSON(domain, userName, filter);
@@ -75,12 +76,14 @@ public class OrgsServlet extends HttpServlet{
 	}
 	
 	
-	private JSONArray getAllUsersJSON(Domain domain, String userName, final String filter) {
+	private JSONArray getAllUsersJSON(Domain domain, String userName, final String filter, Integer workgroupId) {
 		JSONArray array = new JSONArray();
-		Stream<User> userList = AON.getTaskMemberStream(domain.getName(), domain.getId(), userName,"%" + filter + "%")
+		Stream<User> userList;
+		if(workgroupId != -1) userList = AON.getTaskMemberWStream(domain.getName(), domain.getId(), userName, "%" + filter + "%",
+				workgroupId).map(new RegistryToUserFiller());
+		else userList = AON.getTaskMemberStream(domain.getName(), domain.getId(), userName,"%" + filter + "%")
 				.map(new RegistryToUserFiller());
 		userList.forEach(l->array.put(l.toJSON()));
-		
 		return array;
 	}
 	

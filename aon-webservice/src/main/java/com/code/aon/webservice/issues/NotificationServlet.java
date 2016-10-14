@@ -2,6 +2,7 @@ package com.code.aon.webservice.issues;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -94,6 +95,8 @@ public class NotificationServlet extends HttpServlet{
 		while((line = req.getReader().readLine()) != null)
 			s = s + " " + line;
 		System.out.println(s);
+		s = checkString(s);
+		System.out.println(s);
 		if(s == null || s.equals("")) s = "{}";
 		JSONObject json = new JSONObject(s);
 		
@@ -107,7 +110,7 @@ public class NotificationServlet extends HttpServlet{
 			Task task = DB.getTaskWithNumber(domain, userName, number);
 			NotificationInfo ni = buildNotificationInfo(domain, userName, task, notificationType);
 			LinkedList<NotificationInfo> list = buildNotificationInfoList(domain, userName, task, notificationType);
-			sendNotification(domain, userName, ni, list, notificationType);
+			sendNotification(domain, userName, ni, list, notificationType,"", null);
 		}
 	}
 	
@@ -121,7 +124,7 @@ public class NotificationServlet extends HttpServlet{
 	
 	private String msg; 
 	public void sendNotification(Domain domain, String login, NotificationInfo notificationInfo,
-			LinkedList<NotificationInfo> list, NotificationType type){
+			LinkedList<NotificationInfo> list, NotificationType type, String closeUrl, Integer assignee){
 		NotificationInfo ni = getNotificationInfo(domain, login);
 		Boolean isManual = type.equals(NotificationType.MANUAL);
 		String typeTitle = "";
@@ -130,8 +133,8 @@ public class NotificationServlet extends HttpServlet{
 			if(!ni.getNotifyOpen()) return;
 			typeTitle = OPEN[0];
 			typeDescription = OPEN[1];
-		} else if(type.equals(NotificationType.NEW_INFO)){
-			if(!ni.getNotifyComment()) return;
+		} else if(type.equals(NotificationType.NEW_INFO) || type.equals(NotificationType.ASSIGNEE)){
+			if(!ni.getNotifyComment() && !ni.getNotifyAssignee()) return;
 			typeTitle = NEW_INFO[0];
 			typeDescription = NEW_INFO[1];
 		} else if(type.equals(NotificationType.REOPEN)){
@@ -228,7 +231,15 @@ public class NotificationServlet extends HttpServlet{
 				msg = msg + getMessage(n, t, d);
 			}
 			
-
+			if(type.equals(NotificationType.ASSIGNEE)){
+				msg = msg + "<br>"
+						+ "<a href=\""+ closeUrl +"\" style=\"text-decoration: none;color:#fff;\">"
+							+ "<div style=\"color:#fff;background-color:#4d90fe;padding: 15px;font-weight: bold;width: 90px;\">"
+								+ "Cerrar Tarea"
+							+ "</div>"
+						+ "</a>";
+			}
+		
 			if(ni.getSignature() != null && ni.getSignature().getSignature() != null
 					&& ni.getSignature().getSignature() != "")
 				msg = msg+ "<p></p>"+ ni.getSignature().getSignature();
@@ -242,7 +253,7 @@ public class NotificationServlet extends HttpServlet{
 				+ "</div></div>";
 		
 			Boolean bool = ni.getMode().equals(1);
-			sendEmail(domain, login, ni.getMailAccount().getId(), getToEmails(domain, login, notificationInfo.getCompanyName(),bool), ni.getBcc(), title + " #" + notificationInfo.getNoticeId(), msg);
+			sendEmail(domain, login, ni.getMailAccount().getId(), getToEmails(domain, login, notificationInfo.getCompanyName(),bool, assignee), ni.getBcc(), title + " #" + notificationInfo.getNoticeId(), msg);
 		}
 	}
 	
@@ -267,7 +278,7 @@ public class NotificationServlet extends HttpServlet{
 	
 	protected void sendPostHttpClient(String domainName, JSONObject json) {
 		try{
-			String url = "http://"+domainName+ "/send_email/";
+			String url = "http://"+domainName+ "/aon-aio/send_email/";
 			System.out.println(url);
 			HttpClientBuilder base = HttpClientBuilder.create();
 			HttpClient client = base.build();
@@ -381,10 +392,14 @@ public class NotificationServlet extends HttpServlet{
 		return AON.getCompanyForDomain(domain.getName(), domain.getId(), login).getName();
 	}
 	
-	private String getToEmails(Domain domain, String login, String name, Boolean send){
+	private String getToEmails(Domain domain, String login, String name, Boolean send, Integer assignee){
 		if(send) return ""; 
-		Registry r = AON.getRegistry(domain.getName(), domain.getId(), login, name);
-
+		
+		Registry r;
+		if(assignee != null){
+			r = new Registry().setId(assignee);
+		} else r = AON.getRegistry(domain.getName(), domain.getId(), login, name);
+		
 		LinkedList<RegistryMedia> l = AON.getRMediaList(domain.getName(), domain.getId(), login,
 				f -> f.getRegistryProperty().eq(r.getId()).and(f.getMediaProperty().eq((byte)4)));
 		
@@ -399,7 +414,7 @@ public class NotificationServlet extends HttpServlet{
 
 	private void updateNotificationInfo(Domain domain, String login, JSONObject json) {
 		if(json.opt("email") != null){
-			MailAccount ma = AON.getMailAccount(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(json.getString("email"))));
+			MailAccount ma = AON.getMailAccount(domain.getName(), domain.getId(), login, f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))).and(f.getNameProperty().eq(json.getString("email"))));
 			DB.insertNotificationInfo(domain, login, ma.getId().toString(), AppParam.NOTICE_NOTIFICATION_MAIL);
 		} else if(json.opt("sign") != null){
 			Signature sign = AON.getSignature(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(json.getString("sign"))));
@@ -509,6 +524,10 @@ public class NotificationServlet extends HttpServlet{
 		return array;		
 	}	
 	
+	
+	public String checkString(String str){
+		return new String(str.getBytes(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8") );
+	}
 	
 	private String getMd5(String str){
 		MessageDigest md = null;

@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskComment.TASK_COMMENT;
 import static com.esferalia.aon.jooq.tables.TaskEvent.TASK_EVENT;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
+import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
@@ -454,6 +455,14 @@ public class TaskDAO {
 	public static Stream<Registry> getTaskMemberStream(AONContext ctx, String filter){
 		return ctx.getDslContext().select().from(REGISTRY).join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(REGISTRY.ID))
 			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(REGISTRY.NAME.like(filter))
+			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
+	}
+	
+	public static Stream<Registry> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId){
+		return ctx.getDslContext().select().from(REGISTRY).join(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(REGISTRY.ID))
+				.join(TASK_HOLDER_WORKGROUP).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
+			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(REGISTRY.NAME.like(filter))
+				.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId))
 			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
 	}
 	

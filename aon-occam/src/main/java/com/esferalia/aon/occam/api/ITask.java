@@ -55,6 +55,7 @@ public interface ITask {
 
 	
 	public Workgroup getWorkgroup(AONContext ctx, Integer wId); 
+	public Stream<Registry> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId);
 	
 
 }

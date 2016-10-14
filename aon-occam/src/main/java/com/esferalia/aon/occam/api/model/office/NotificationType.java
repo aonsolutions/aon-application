@@ -9,7 +9,8 @@ public enum NotificationType implements Serializable{
 	CLOSE,
 	REOPEN,
 	TAG,
-	MANUAL;
+	MANUAL,
+	ASSIGNEE;
 	
 	public byte value() {
 		return (byte) this.ordinal();

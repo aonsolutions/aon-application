@@ -27,6 +27,8 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.office.NotificationInfo;
+import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
@@ -209,6 +211,7 @@ public class ReposServlet extends HttpServlet{
 								Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
 										.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime());
 								AON.updateTaskUser(domain.getName(), domain.getId(), userName, task.setTaskHolder(Integer.parseInt(pathInfo[6])));
+								sendAssigneeNotification(domain, userName, task, Integer.parseInt(pathInfo[6]));
 							} 
 						} else if(pathInfo[5].equalsIgnoreCase("workgroup")){
 							if(pathInfo.length > 6){
@@ -465,6 +468,18 @@ public class ReposServlet extends HttpServlet{
 				.setEnterprise(req.getParameter("enterprise"))
 				.setPerPage(Integer.parseInt(req.getParameter("per_page")))
 				.setPage(Integer.parseInt(req.getParameter("page")));
+	}
+	
+	private void sendAssigneeNotification(Domain domain, String login, Task task, Integer taskHolderId) {
+		// get taskHolder email!!!
+		Registry r = AON.getRegistry(domain.getName(), domain.getId(), login, taskHolderId);
+		String thName =  r.getAlias() != null && !r.getAlias().equals("") ? r.getAlias() : r.getName();
+		NotificationServlet NS = new NotificationServlet();
+		NotificationInfo ni = NS.buildNotificationInfo(domain, login, task, NotificationType.ASSIGNEE);
+		ni.setNotifyAssignee(true);
+		LinkedList<NotificationInfo> list = NS.buildNotificationInfoList(domain, login, task, NotificationType.ASSIGNEE);
+ 		String url = "http://"+domain.getName()+ "/aon-aio" + "/emailFunction/"+ thName + "/" + domain.getName() + "/close/" + task.getId();
+		NS.sendNotification(domain, login, ni, list, NotificationType.ASSIGNEE, url, r.getId());
 	}
 	
 	private static class TagToLabelFiller implements Function<Tag, Label> {

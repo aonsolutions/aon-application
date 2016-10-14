@@ -5,9 +5,9 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
-import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -71,6 +71,10 @@ public class DBConsults {
 	
 	//-------------------- TASK_TAG
 
+	public Stream<Tag> getTaskLabelStream(Domain domain, String login, TaskTagFilter filter){
+		return AON.getTaskLabelStream(domain.getName(), domain.getId(), login, filter);
+	}
+	
 	public void deleteTaskTag(Domain domain, String login, TaskTagFilter filter){
 		AON.deleteTaskTag(domain.getName(), domain.getId(), login, filter);
 	}
@@ -121,7 +125,8 @@ public class DBConsults {
 
 	public LinkedList<MailAccount> getMailAccountList(Domain domain, String login) {		
 		return AON.getMailAccountList(domain.getName(), domain.getId(), login, 
-				f -> (f.getUserIdProperty().isNull()).and(f.getDomainProperty().eq(domain.getId())));
+				f -> (f.getUserIdProperty().isNull())
+				.and(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))));
 	}
 	
 	public MailAccount getMailAccount(Domain domain, String login, Integer mailAccountId) {

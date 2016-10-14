@@ -153,7 +153,12 @@ public class TaskImpl implements ITask {
 	public Stream<Registry> getTaskMemberStream(AONContext ctx, String filter){
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.getTaskMemberStream(ctx, filter));	
-
+	}
+	
+	@Override
+	public Stream<Registry> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId){
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.getTaskMemberWStream(ctx, filter,workgroupId));	
 	}
 	
 	@Override

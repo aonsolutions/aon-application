@@ -2668,6 +2668,17 @@ public class AON {
 			if(ctx != null) ctx.close();
 		}
 	}
+
+	public static Stream<Registry> getTaskMemberWStream(String domainName, Integer domainId, String login, String filter, Integer workgroupId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskMemberWStream(ctx, filter, workgroupId);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	
 	public static Stream<Registry> getTaskMemberStream(String domainName, Integer domainId, String login, String filter){
 		AONContext ctx = null;

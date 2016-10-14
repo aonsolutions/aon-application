@@ -18,6 +18,7 @@ public class NotificationInfo implements Serializable{
 	private Boolean notifyClose = false;
 	private Boolean notifyReopen = false;
 	private Boolean notifyComment = false;
+	private Boolean notifyAssignee = false;
 
 	private Boolean commentsHistory = false;
 	private Boolean statusHistory = false;
@@ -177,6 +178,13 @@ public class NotificationInfo implements Serializable{
 	}
 	public NotificationInfo setNotifyComment(Boolean notifyComment) {
 		this.notifyComment = notifyComment;
+		return this;
+	}
+	public Boolean getNotifyAssignee() {
+		return notifyAssignee;
+	}
+	public NotificationInfo setNotifyAssignee(Boolean notifyAssignee) {
+		this.notifyAssignee = notifyAssignee;
 		return this;
 	}
 	public Boolean getCommentsHistory() {

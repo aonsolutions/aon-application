@@ -100,6 +100,7 @@ public class IssuePanel extends Composite{
 	private DateTimeFormat hourFormat = DateTimeFormat.getFormat("HH:mm");
 	
 	JsIssue issue;
+	JsUser workgroup;
 	
 	private Incidence incidence; 
 
@@ -108,6 +109,7 @@ public class IssuePanel extends Composite{
 		this.incidence = incidence;
 		this.parent = parent;
 		this.issue = issue;
+		this.workgroup = issue.getWorkgroup();
 		userDeleteButton.setSize("22px", "22px");
 		typeDeleteButton.setSize("22px", "22px");
 		workgroupDeleteButton.setSize("22px", "22px");
@@ -184,7 +186,6 @@ public class IssuePanel extends Composite{
 						@Override public void onSuccess(JsLabel result) {
 							Integer index = Integer.parseInt(pib.getTitle());
 							labelsVPanel.remove(index);
-							
 						}
 					});
 				}
@@ -806,6 +807,7 @@ public class IssuePanel extends Composite{
 							for(Integer i = 0; i < users.length(); i++)
 								if(users.get(i).getLogin().equals(vcb.getValue())) {
 									JsUser jsUser = users.get(i);
+									workgroup = jsUser;
 									workgroupLabel.setText(jsUser.getLogin());
 									workgroupDeleteButton.setVisible(true);
 									incidence.addWorkgroup2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
@@ -837,7 +839,7 @@ public class IssuePanel extends Composite{
 
 	@UiHandler("userButton")
 	void onClickUserButton(ClickEvent event){	
-		incidence.getUsers(new AsyncCallback<JSON<JsUser>>() {
+		incidence.getUsers(workgroup,new AsyncCallback<JSON<JsUser>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsUser> result) {
@@ -908,10 +910,11 @@ public class IssuePanel extends Composite{
 	}
 	
 	@UiHandler("workgroupDeleteButton")
-	void onClickWorkgroupDeleteButton(ClickEvent event){		
+	void onClickWorkgroupDeleteButton(ClickEvent event){	
 		incidence.deleteWorkgroup2Issue(issue.getNumber(), new AsyncCallback<JsUser>() {
 			@Override public void onFailure(Throwable caught) {}
 			@Override public void onSuccess(JsUser result) {
+				workgroup = null;
 				workgroupLabel.setText("Sin Asignar");
 				workgroupDeleteButton.setVisible(false);
 			}
