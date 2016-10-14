@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Task;
+import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
@@ -21,6 +22,14 @@ public class DBConsults {
 	
 	public static DBConsults getInstance() {
 		return new DBConsults();
+	}
+	
+	public Domain getDomain(String domainName, String login){
+		return AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));
+	}
+	
+	public Domain getDomain(Domain domain, String login){
+		return AON.getDomain(domain.getName(), domain.getId(), login);
 	}
 	
 	//-------------------- TASK
@@ -119,14 +128,20 @@ public class DBConsults {
 
 	//-------------------- NOTIFICATION INFO
 	
+	public NotificationInfo getNotificationInfo(Domain domain, String login){
+		return AON.getNotificationInfo(domain.getName(), domain.getId(), login);
+	}
+	
 	public void  insertNotificationInfo(Domain domain, String login, String data, AppParam appParam){
 		AON.insertNotificationInfo(domain.getName(), domain.getId(), login, data, appParam);
 	}
 
 	public LinkedList<MailAccount> getMailAccountList(Domain domain, String login) {		
-		return AON.getMailAccountList(domain.getName(), domain.getId(), login, 
-				f -> (f.getUserIdProperty().isNull())
+		if(domain.isEnableHeredity())
+			return AON.getMailAccountList(domain.getName(), domain.getId(), login, f -> (f.getUserIdProperty().isNull())
 				.and(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))));
+		else return AON.getMailAccountList(domain.getName(), domain.getId(), login, f -> (f.getUserIdProperty().isNull())
+				.and(f.getDomainProperty().eq(domain.getId())));
 	}
 	
 	public MailAccount getMailAccount(Domain domain, String login, Integer mailAccountId) {

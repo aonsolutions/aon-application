@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 
 @WebServlet(name = "NotificationGwtServlet2", urlPatterns = { "/notification/*" })
 public class NotificationServlet extends HttpServlet{
+	
 	private static final DBConsults DB = DBConsults.getInstance();
 
 	@Override
@@ -57,11 +58,10 @@ public class NotificationServlet extends HttpServlet{
 			
 		String md5 = getMd5(userName+domainName);
 		if(accessToken.equals(md5)){
-			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
-			
+			Domain domain = DB.getDomain(domainName, userName);			
 			Object object = new Object();
 						
-			NotificationInfo notificationInfo = AON.getNotificationInfo(domain.getName(), domain.getId(), userName);
+			NotificationInfo notificationInfo = DB.getNotificationInfo(domain, userName);
 			LinkedList<MailAccount> mailAccountList = DB.getMailAccountList(domain, userName);
 			LinkedList<Signature> signatureList = DB.getSignatureList(domain, userName);
 			object = notificationInfo2JSON(notificationInfo, mailAccountList, signatureList);
@@ -88,8 +88,8 @@ public class NotificationServlet extends HttpServlet{
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[1];
 		String domainName = pathInfo[2]; 
-		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
-		
+		Domain domain = DB.getDomain(domainName, userName);
+
 		String line = "";
 		String s = "";
 		while((line = req.getReader().readLine()) != null)
@@ -149,8 +149,8 @@ public class NotificationServlet extends HttpServlet{
 
 		if((!ni.getMode().equals(0)) || isManual){
 			String title = notificationInfo.getTitle();		
-			Domain dom =  AON.getDomain(domain.getName(), domain.getId(), login);
-			
+			Domain dom = DB.getDomain(domain, login);
+
 			msg = 	"<div style='margin-left: -30px;'>"
 					+"<div style='margin: 7px 15px 14px 30px;line-height: 18px;font-size: 13px;box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);'>"
 					;
@@ -278,7 +278,7 @@ public class NotificationServlet extends HttpServlet{
 	
 	protected void sendPostHttpClient(String domainName, JSONObject json) {
 		try{
-			String url = "http://"+domainName+ "/aon-aio/send_email/";
+			String url = "http://"+domainName+ "/send_email/";
 			System.out.println(url);
 			HttpClientBuilder base = HttpClientBuilder.create();
 			HttpClient client = base.build();
