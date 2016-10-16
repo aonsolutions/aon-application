@@ -99,80 +99,60 @@
 
 							<aon:if test="#{!contract.internship}" >
 							
-								<aon:if test="#{!contract.transformedContract and !contract.extendedContract}">
-									<aon:panelTab id="contractContrataData" label="#{bundle.sepe_contrata_contract_specific_data}"
-										actionListener="#{contractContrata.onContrataDataShow}" >
-											<aon:div style="width:920px;">
-												<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formOccupation.xhtml" />
-												<br />
-												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" >
-													<ui:param name="controller" value="#{contractContrata}" />
-												</ui:include>
-												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_specificData.xhtml" />
-											</aon:div>		
-									</aon:panelTab>
-								</aon:if>
-	
-								<aon:if test="#{!contract.transformedContract and contract.extendedContract}">
-									<aon:panelTab id="extensionContrataData" label="#{bundle.sepe_contrata_contract_specific_data}"
-										actionListener="#{extensionContrata.onContrataDataShow}" >
-										<aon:actionListener method="#{extensionContrata.onContrataDataShow}" />
-										<aon:actionListener method="#{contractContrata.onContrataDataShow}" />
+								<aon:panelTab id="contract-contrataData" label="#{bundle.sepe_contrata_contract_specific_data}"
+									actionListener="#{contract.onContractSepeShow}" >
+									<aon:if test="#{not empty contractContrata.handler}">
+										<aon:div style="width:920px;">
+											<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formOccupation.xhtml" />
+											<br />
+											<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" >
+												<ui:param name="controller" value="#{contractContrata}" />
+											</ui:include>
+											<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_specificData.xhtml" />
+										</aon:div>		
+									</aon:if>
+								</aon:panelTab>
+								<aon:if test="#{contract.extendedContract}">
+									<aon:panelTab id="extension-contrataData" label="Datos Prórroga"
+										actionListener="#{contract.onExtension1SepeShow}" >
+										<aon:if test="#{not empty extensionContrata.handler}">
 											<aon:div style="width:920px;">
 												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/extension/form_content.xhtml" >
 													<ui:param name="controller" value="#{extensionContrata}" />
 												</ui:include>
-												
-												<br />
-												
-												<aon:panelCollapsible expanded="false" label="Datos contrato inicial" ajaxSingle="#{true}">
-													<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formSepe.xhtml" />
-													<!--  
-													-->
-													<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formOccupation.xhtml" />
-													<br />
-													<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" >
-														<ui:param name="controller" value="#{contractContrata}" />
-													</ui:include>
-													<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_specificData.xhtml" />
-												</aon:panelCollapsible>
 											</aon:div>
+										</aon:if>
 									</aon:panelTab>
 								</aon:if>
-	
+								<aon:if test="#{contract.extendedContract and contract.extensionCount>1}">
+									<aon:panelTab id="extension2-contrataData" label="Datos 2ª Prórroga"
+										actionListener="#{contract.onExtension2SepeShow}" >
+										<aon:if test="#{not empty extensionContrata.handler}">
+											<aon:div style="width:920px;">
+												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/extension/form_content.xhtml" >
+													<ui:param name="controller" value="#{extensionContrata}" />
+													<ui:param name="suffix" value="#{contract.extensionCount}" />
+												</ui:include>
+											</aon:div>
+										</aon:if>
+									</aon:panelTab>
+								</aon:if>
 								<aon:if test="#{contract.transformedContract}">
-									<aon:panelTab id="transformContrataData" label="#{bundle.sepe_contrata_contract_specific_data}"
-										actionListener="#{transformContrata.onContrataDataShow}" >
-										<aon:actionListener method="#{contractContrata.onContrataDataShow}" />
+									<aon:panelTab id="transform-contrataData" label="Datos Transformación"
+										actionListener="#{contract.onTransformSepeShow}" >
+										<aon:if test="#{not empty transformContrata.handler}">
 											<aon:div style="width:920px;">
 												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/form_content.xhtml" >
 													<ui:param name="controller" value="#{transformContrata}" />
 												</ui:include>
-												
 												<br />
-												
 												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/form_otherData.xhtml" >
 													<ui:param name="controller" value="#{transformContrata}" />
 												</ui:include>
-												
 												<br />
-												
 												<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/form_specificData.xhtml" />
-												
-												<br />
-												
-												<aon:panelCollapsible expanded="false" label="Datos contrato inicial" ajaxSingle="#{true}">
-													<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formSepe.xhtml" />
-													<!--  
-													-->
-													<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formOccupation.xhtml" />
-													<br />
-													<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" >
-														<ui:param name="controller" value="#{contractContrata}" />
-													</ui:include>
-													<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_specificData.xhtml" />
-												</aon:panelCollapsible>
 											</aon:div>
+										</aon:if>
 									</aon:panelTab>
 								</aon:if>
 		
@@ -197,10 +177,15 @@
 							
 						</aon:if>
 
-						<aon:panelTab id="attachData"  
-							label="#{bundle.aon_documents}">
+						<aon:panelTab id="attachData" label="#{bundle.aon_documents}">
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/grid.xhtml" />
 						</aon:panelTab>
+
+						<aon:if test="#{sepeAppParams.developmentMode or aonRole.sysAdmin}">
+							<aon:panelTab id="contractInfo" label="INFO">
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contractInfo/grid_full.xhtml" />
+							</aon:panelTab>
+						</aon:if>
 						
 					</aon:panelTabSet>
 					
@@ -239,17 +224,20 @@
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/modalTransform.xhtml" >
 			<ui:param name="reRender" value="contractForm" />
 		</ui:include>
-		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >
-			<ui:param name="controller" value="#{contractContrata}" />
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/contrata/modalCommunication.xhtml" >
+			<ui:param name="controller" value="#{contract}" />
+			<aon:if test="#{contract.transformedContract}">
+				<ui:param name="contrata" value="#{transformContrata}" />
+			</aon:if>
+			<aon:if test="#{contract.extendedContract}">
+				<ui:param name="contrata" value="#{extensionContrata}" />
+			</aon:if>
+			<aon:if test="#{!contract.transformedContract and !contract.extendedContract}">
+				<ui:param name="contrata" value="#{contractContrata}" />
+			</aon:if>
 		</ui:include>
-		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >
-			<ui:param name="controller" value="#{extensionContrata}" />
-		</ui:include>
-		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >
-			<ui:param name="controller" value="#{transformContrata}" />
-		</ui:include>
-		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalCommunication.xhtml" >
-			<ui:param name="controller" value="#{contractCertificados}" />
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/certificados/modalCommunication.xhtml" >
+			<ui:param name="controller" value="#{contract}" />
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enumLookup/modalSearch.xhtml" />
 		

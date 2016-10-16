@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +21,7 @@ import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -70,7 +72,20 @@ public class ContrataTransformacionesHandler implements IContrataHandler, Serial
 	public void initialize(Contract contract){
 		SEPEUtils utils = SEPEUtils.getInstance();
 		this.contract = contract;
-		this.contractCode = ContractCode.getContractCodeByValue( utils.getContractDataMap(this.contract).get(ContextVariable.TC2.getName()) );
+		try {
+			List<ITransferObject> list = utils.getContractData(contract, null, null, ContextVariable.TC2.getName(), false);
+			list = list.stream().map(to -> ((ContractData)to))
+					.filter(cd -> cd.getExpression().matches(".\\d\\d[9]."))
+					.sorted((cd1, cd2) -> cd1.getStartDate().compareTo(cd2.getStartDate()))
+					.collect(Collectors.toList());
+			if(list!=null && !list.isEmpty()){
+				String codeTransform = ((ContractData)list.get(list.size()-1)).getExpression();
+				codeTransform = codeTransform.replaceAll("\"", "");
+				this.contractCode = ContractCode.getContractCodeByValue( codeTransform );
+			}
+		} catch (ManagerBeanException e) {
+			// do nothing ...
+		}
 		getParams().setFechaInicio(contract.getStartDate());
 		getParams().setSourceStartDate(contract.getSeniorityDate());
 //		getParams().setFechaTerminoReal(fechaTerminoReal);

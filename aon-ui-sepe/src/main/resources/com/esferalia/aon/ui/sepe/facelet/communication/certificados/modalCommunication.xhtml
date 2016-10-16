@@ -36,7 +36,7 @@
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
 
-								<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalToolbar.xhtml" />
+								<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/certificados/modalToolbar.xhtml" />
 
 								<aon:panel rendered="#{contractCertificados.readOnly}">
 									<aon:outputText style="padding-left:18px;"
@@ -67,10 +67,12 @@
 					</aon:div>
 				</aon:form>
 				
-				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalLogin.xhtml" >
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalLogin.xhtml" >
 					<ui:param name="controller" value="#{contractCertificados}" />
+					<ui:param name="suffix" value="certificados" />
+					<ui:param name="reRender" value="showCertificadosCommunicationWindow" />
 				</ui:include>
-				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalGeneration.xhtml" >
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/certificados/modalGeneration.xhtml" >
 					<ui:param name="controller" value="#{contractCertificados}" />
 				</ui:include>
 				

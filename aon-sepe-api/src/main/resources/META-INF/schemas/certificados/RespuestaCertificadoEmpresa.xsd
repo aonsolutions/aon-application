@@ -21,7 +21,9 @@
 						</xsd:complexContent>
 					</xsd:complexType>
 				</xsd:element>
-				<xsd:element name="Huella_Digital"/>
+				<!-- xsd:element name="Huella_Digital"/-->
+				<!-- MODIFIED BY AON SOLUTIONS -->
+				<xsd:element name="Huella_Digital" type="xsd:string"/>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -33,13 +35,17 @@
 			<xsd:element name="Cuenta_cotizacion" maxOccurs="unbounded">
 				<xsd:complexType>
 					<xsd:sequence>
-						<xsd:element name="CCC"/>
+						<!-- xsd:element name="CCC"/-->
+						<!-- MODIFIED BY AON SOLUTIONS -->
+						<xsd:element name="CCC" type="xsd:string"/>
 						<xsd:element name="Errores_General" type="ERRORTYPE" minOccurs="0"/>
 						<xsd:element name="Datos_Trabajador" minOccurs="0" maxOccurs="unbounded">
 							<xsd:complexType>
 								<xsd:sequence>
 									<xsd:element name="DNI_NIE" type="xsd:string"/>
-									<xsd:element name="Error" maxOccurs="unbounded"/>
+									<!-- xsd:element name="Error" maxOccurs="unbounded"/-->
+									<!-- MODIFIED BY AON SOLUTIONS -->
+									<xsd:element name="Error" type="xsd:string" maxOccurs="unbounded"/>
 								</xsd:sequence>
 							</xsd:complexType>
 						</xsd:element>

@@ -35,24 +35,23 @@
 						<aon:outputLabel for="Certifica2Batch_date-From" styleClass="aon-form-date-label aon-margin-right"
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="Certifica2Batch_date-From"
-							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+							value="#{certifica2BatchSearch.startDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					
 						<aon:outputLabel for="Certifica2Batch_date-To" styleClass="aon-form-date-label aon-margin-right"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="Certifica2Batch_date-To"
-							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+							value="#{certifica2BatchSearch.endDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 					
 					<aon:outputLabel for="Certifica2Batch_status" value="#{bundle.aon_status}" />
-					<aon:selectOneMenu id="Certifica2Batch_status" converter="aon.EnumConverter"
+					<aon:selectManyCheckbox id="Certifica2Batch_status" 
 						value="#{certifica2BatchSearch.fileStatus}" >
-						<f:selectItem itemLabel=" - " value="#{null}" />
 						<f:selectItems value="#{payrollCollections.fileStatus}" />
-					</aon:selectOneMenu>
+					</aon:selectManyCheckbox>
 										
 				</ui:define>
 			</ui:decorate>

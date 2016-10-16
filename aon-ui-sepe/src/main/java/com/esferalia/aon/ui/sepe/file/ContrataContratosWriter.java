@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -12,6 +14,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.util.CommonUtil;
@@ -21,6 +24,7 @@ import com.code.aon.registry.enumeration.DocumentType;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -121,7 +125,20 @@ public class ContrataContratosWriter implements IContrataWriter{
 	
 	public IContratoType createFile(IContratoType contratoType, ContrataContratoParams params) throws ManagerBeanException{
 		writeContratosMainData(contratoType, params);
-		String code = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
+		SEPEUtils utils = SEPEUtils.getInstance();
+		String code = "";
+		try {
+			List<ITransferObject> list = utils.getContractData(contract, null, null, ContextVariable.TC2.getName(), false);
+			list = list.stream().map(to -> ((ContractData)to))
+					.filter(cd -> cd.getExpression().matches(".\\d\\d[^9]."))
+					.sorted((cd1, cd2) -> cd1.getStartDate().compareTo(cd2.getStartDate()))
+					.collect(Collectors.toList());
+			code = ((ContractData)list.get(list.size()-1)).getExpression();
+			code = code.replaceAll("\"", "");
+		} catch (ManagerBeanException e) {
+			// do nothing ...
+		}
+		
 		if (code.equals(ContractCode.C100.getValue())) {
 			return createContract100(contratoType, params);
 		} else if (code.equals(ContractCode.C130.getValue())) {

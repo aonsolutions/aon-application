@@ -9,9 +9,9 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showExcludeEmployeeWindow">
-		<aon:if test="#{certifica2Batch.showExcludeEmployeeWindow}">
+		<aon:if test="#{contractCertificados.showExcludeEmployeeWindow}">
 			<rich:modalPanel id="excludeEmployeeModalPanel" minHeight="250" minWidth="350" 
-				rendered="#{certifica2Batch.showExcludeEmployeeWindow}"
+				rendered="#{contractCertificados.showExcludeEmployeeWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -29,7 +29,7 @@
 										<aon:outputText styleClass="aon-bold" 
 											value="No existen datos de cotización para:" />
 
-										<c:forEach var="detail" items="#{certifica2Batch.excludeEmployeeList}">
+										<c:forEach var="detail" items="#{contractCertificados.excludeEmployeeList}">
 											<br />
 											<aon:outputText value="#{detail.contract.person.fullName}" />
 										</c:forEach>
@@ -46,11 +46,11 @@
 										<aon:commandButton id="excludeEmployee-accept"
 											styleClass="aon-commandButton"
 											value="#{bundle.aon_confirm}"
-											actionListener="#{certifica2Batch.onContinueExcludingEmployees}">
+											actionListener="#{contractCertificados.onContinueExcludingEmployees}">
 											<rich:componentControl for="excludeEmployeeModalPanel"
 												event="onclick" operation="hide"/>																					
 											<f:setPropertyActionListener
-												target="#{certifica2Batch.showExcludeEmployeeWindow}"
+												target="#{contractCertificados.showExcludeEmployeeWindow}"
 												value="#{false}" />
 										</aon:commandButton>
 
@@ -59,7 +59,7 @@
 											value="#{bundle.aon_cancel}" 
 											reRender="showExcludeEmployeeWindow" immediate="true">
 											<f:setPropertyActionListener
-												target="#{certifica2Batch.showExcludeEmployeeWindow}"
+												target="#{contractCertificados.showExcludeEmployeeWindow}"
 												value="#{false}" />
 										</aon:commandButton>
 									</aon:panelGrid>

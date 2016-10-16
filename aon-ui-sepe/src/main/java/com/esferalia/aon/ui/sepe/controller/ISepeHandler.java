@@ -1,9 +1,6 @@
 package com.esferalia.aon.ui.sepe.controller;
 
-import java.util.List;
-
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 
 import com.code.aon.common.IAttachment;
 import com.esferalia.aon.ui.sepe.utils.ISepeCommunicator;
@@ -11,14 +8,11 @@ import com.esferalia.aon.ui.sepe.utils.ISepeCommunicator;
 public interface ISepeHandler {
 	
 	boolean isNevv();
-
 	Boolean isBatchView();
-
 	boolean isNewBatch();
+	boolean isReadOnly();
 	
 	ISepeCommunicator getCommunicator();
-
-	List<SelectItem> getPendingBatchList();
 
 	String getCommunicationLogContent();
 	
@@ -27,8 +21,6 @@ public interface ISepeHandler {
 	IAttachment getResponseFile();
 	
 	boolean isShowLoginWindow();
-	boolean isShowBatchWindow();
-	boolean isShowCommunicationWindow();
 	boolean isCommunicationIdReceived();
 	boolean isCommunicationResponseReceived();
 	boolean isCommunicationAccepted();

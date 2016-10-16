@@ -3,6 +3,9 @@ package com.esferalia.aon.ui.sepe.utils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -16,6 +19,7 @@ import org.xml.sax.SAXException;
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.payroll.enumeration.contrata.TERRORES;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
@@ -29,6 +33,7 @@ import com.esferalia.aon.sepe.api.contrata.transformaciones.RESPUESTATRANSFORMAC
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.SepeAppParamsController;
 import com.esferalia.aon.ui.sepe.file.ContrataResponseReader;
+import com.esferalia.aon.ui.sepe.utils.SEPEConnectionProvider.CertificadosCommunicationError;
 
 
 public class ContrataCommunicator implements ISepeCommunicator, Serializable {
@@ -207,8 +212,8 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 					}
 					return false;
 				}
-			} catch (IOException e) {
 			} catch (Throwable th) {
+				LOGGER.error(th.getMessage());
 			}
 		}
 		return false;
@@ -216,49 +221,71 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 	
 	@Override
 	public String obtainCommunicationNumber(byte[] data) {
-		String id = new String(data); 
-		if( StringUtils.isNotBlank(id) ){
-			id = id.replaceAll("\n", "");
-			id = StringUtils.removeStart(id, "<?xml version='1.0' encoding='ISO-8859-1'?>");
-			id = StringUtils.removeStart(id, "<COMUNICACION>");
-			id = StringUtils.removeEnd(id, "</COMUNICACION>");
-			if(id.contains("<NUM_ENVIO>")){
-				id = StringUtils.removeStart(id, "<NUM_ENVIO>");
-				id = StringUtils.removeEnd(id, "</NUM_ENVIO>");
-			} else {
-				id = StringUtils.removeStart(id, "<ERROR>");
-				id = StringUtils.removeEnd(id, "</ERROR>");
+		String _data = new String(data);
+		_data = _data.replaceAll("\r|\n|\t", "");
+		String code = "";
+		if( StringUtils.isNotBlank(_data) ){
+			if(_data.matches(".*<NUM_ENVIO>.+</NUM_ENVIO>.*")){
+				code += _data.replaceAll(".*<NUM_ENVIO>(.*)</NUM_ENVIO>.*", "$1");
 			}
-			return id;
+			if(_data.matches(".*<ERROR>.+</ERROR>.*")){
+				code += "<br/>";
+				code += _data.replaceAll(".*<ERROR>(.*)</ERROR>.*", "$1");
+				try {
+					code += " - " + CertificadosCommunicationError.valueOf(code).getDescription();
+				} catch (Exception e) {
+					code += " - error no reconocido";
+				}
+			}
+			return code;
 		}
 		return null;
 	}
 	
 	@Override
-	public String obtainCommunicationStatus(byte[] data) {
+	public String obtainCommunicationStatus(byte[] data, Contract contract) {
 		if(getContrataFileType()==ContrataFileType.CONTRACT){
-			return obtainContractCommunicationStatus(data);
+			return obtainContractCommunicationStatus(data, contract);
 		} else if(getContrataFileType()==ContrataFileType.EXTENSION){
-			return obtainExtensionCommunicationStatus(data);
+			return obtainExtensionCommunicationStatus(data, contract);
 		} else if(getContrataFileType()==ContrataFileType.TRANSFORMATION){
-			return obtainTrasformationCommunicationStatus(data);
+			return obtainTrasformationCommunicationStatus(data, contract);
 		}
 		return null;
 	}
 	
-	public String obtainContractCommunicationStatus(byte[] data) {
+	private boolean isContractResponse(IContratoType contrato, Contract contract) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); 
+		String ccc = contrato.getDATOSEMPRESA().getCODIGOCUENTACOTIZACION();
+		Date startDate;
+		try {
+			startDate = sdf.parse(contrato.getDATOSGENERALESCONTRATO().getFECHAINICIO());
+		} catch (ParseException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		String document = contrato.getDATOSTRABAJADOR().getIDENTIFICADORPFISICA();
+		document = document.substring(1, document.length());
+		return ccc.equals(contract.getActivity().getType().getCode() + contract.getEnterpriseCCC().getCcc())
+				&& startDate.equals(contract.getStartDate())
+				&& document.equals(contract.getPerson().getRegistry().getDocument());
+	}
+	
+	public String obtainContractCommunicationStatus(byte[] data, Contract contract) {
 		String status = "";
 		status += "<br /> ";
 		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
 		if(data!=null){
 			String errorMsg = new String(data);
+			errorMsg = errorMsg.replaceAll("[\\r\\n\\t]", "");
 //			fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
-			if(errorMsg.contains("<COMUNICACION>") && errorMsg.contains("<ERROR>")){
-				errorMsg = StringUtils.removeStart(errorMsg, "<?xml version='1.0' encoding='ISO-8859-1'?>");
-				errorMsg = StringUtils.removeStart(errorMsg, "<COMUNICACION>");
-				errorMsg = StringUtils.removeEnd(errorMsg, "</COMUNICACION>");
-				errorMsg = StringUtils.removeStart(errorMsg, "<ERROR>");
-				errorMsg = StringUtils.removeEnd(errorMsg, "</ERROR>");
+			if(errorMsg.matches(".*<ERROR>.*</ERROR>.*")){
+				errorMsg = errorMsg.replaceAll(".*<ERROR>(.*)</ERROR>.*", "$1");
+				try {
+					errorMsg += " - " + CertificadosCommunicationError.valueOf(errorMsg).getDescription();
+				} catch (Exception e) {
+					errorMsg += " - error no reconocido";
+				}
 				return status + errorMsg;
 			}
 //			fichero si procesado: si se obtiene el fichero con los datos procesados
@@ -269,70 +296,65 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 				status += "NUMERO PROCESADOS:    " + contratos.getNUMEROPROCESADOS();
 				status += "<br /> ";
 
-				for(Object o: contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150()){
-					IContratoType contrato = obtainContratoType(o);
-					RESPUESTACONTRATOTYPE respuestaContratos = obtainRespuestaContrato(o);
+				for(Object obj: contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150()){
+					IContratoType contrato = obtainContratoType(obj);
+					RESPUESTACONTRATOTYPE respuestaContratos = obtainRespuestaContrato(obj);
 					
-					String bgColor = null;
-					
-					if(StringUtils.equals(respuestaContratos.getRESULTADO(),"ACEPTADO")){
-						bgColor = "#E0F8E0";
-					} else if(StringUtils.equals(respuestaContratos.getRESULTADO(),"ACEPTADO CON ERRORES")){
-						bgColor = "#F6E3CE";
-					} else if(StringUtils.equals(respuestaContratos.getRESULTADO(),"RECHAZADO")){
-						bgColor = "#F8E0E0";
-					} else {
-						bgColor = "#E4E4E4";
-					}
-					
-					status += "<br /> ";
-					status += "<div style='border-bottom:1px solid black;background-color:"+bgColor+"; width:100%; padding:5px;'>";
-					status += contrato.getDATOSTRABAJADOR().getIDENTIFICADORPFISICA().substring(1) + " - ";
-					status += contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getPRIMERAPELLIDO();
-					if(StringUtils.isNotBlank(contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO())){
-						status += " ";
-						status += contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO();
-					}
-					status += ", ";
-					status += contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getNOMBRE();
-					if(!StringUtils.equals(respuestaContratos.getRESULTADO(),"RECHAZADO")){
-						status += " - <b>CONTRATO ACEPTADO</b>";
-						status += " (" + respuestaContratos.getIDCONTRATO() + ")";
-					} else {
-						status += " - <b>CONTRATO RECHAZADO</b>";
-					}
-					status += "</div>";
-					
-//					status += "FECHA ALTA:         " + respuestaContratos.getFECHAALTA();
-//					status += "<br /> ";
-//					status += "FECHA COMUNICACION: " + respuestaContratos.getFECHACOMUNICACION();
-//					status += "<br /> ";
-//					status += "ID CONTRATO:        " + respuestaContratos.getIDCONTRATO();
-//					status += "<br /> ";
-//					status += "LEY BONIF:          " + respuestaContratos.getLEYBONIF();
-//					status += "<br /> ";
-//					status += "LEY DEDUCCION:      " + respuestaContratos.getLEYDEDUCCION();
-//					status += "<br /> ";
-//					status += "LEY FOMENTO:        " + respuestaContratos.getLEYFOMENTO();
-//					status += "<br /> ";
-//					status += "LEY REDUCCION:      " + respuestaContratos.getLEYREDUCCION();
-//					status += "<br /> ";
-//					status += "OBLIG B:            " + respuestaContratos.getOBLIGCB();
-//					status += "<br /> ";
-//					status += "RESULTADO:          " + respuestaContratos.getRESULTADO();
-//					status += "<br /> ";
-//					status += "USUARIO:            " + respuestaContratos.getUSUARIO();
-//					status += "<br /> ";
+					if(contract==null || isContractResponse(contrato, contract)){
+						String bgColor = null;
+						if(StringUtils.equals(respuestaContratos.getRESULTADO(),"ACEPTADO")){
+							bgColor = BGCOLOR_PROCESSED;
+						} else if(StringUtils.equals(respuestaContratos.getRESULTADO(),"ACEPTADO CON ERRORES")){
+							bgColor = BGCOLOR_PROCESSED_PARTIALLY;
+						} else if(StringUtils.equals(respuestaContratos.getRESULTADO(),"RECHAZADO")){
+							bgColor = BGCOLOR_REFUSED;
+						} else {
+							bgColor = BGCOLOR_OTHER;
+						}
 						
-
-					if(!StringUtils.equals(respuestaContratos.getRESULTADO(),"ACEPTADO")){
-						List<String> errores = respuestaContratos.getERRORES().getERROR();
-						if(!errores.isEmpty()){
-							status += "<div style='border-bottom:1px solid black; width:100%; padding:3px;'><b>ERRORES</b> (";
-							status += respuestaContratos.getERRORES().getERROR().size()+")</div>";
-							for(String error: respuestaContratos.getERRORES().getERROR()){
-								status += "ERROR: " + error + " - " + TERRORES.getEnumByValue(error).getDescription();
-								status += "<br /> ";
+						status += "<br /> ";
+						status += "<div style='border-bottom:1px solid black;background-color:"+bgColor+"; width:100%; padding:5px;'>";
+						status += contrato.getDATOSTRABAJADOR().getIDENTIFICADORPFISICA().substring(1) + " - ";
+						status += contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getPRIMERAPELLIDO();
+						if(StringUtils.isNotBlank(contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO())){
+							status += " ";
+							status += contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO();
+						}
+						status += ", ";
+						status += contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getNOMBRE();
+						if(StringUtils.equals(respuestaContratos.getRESULTADO(),"ACEPTADO")){
+							status += " - <b>CONTRATO ACEPTADO</b>";
+							status += " (" + respuestaContratos.getIDCONTRATO() + ")";
+						} else if(StringUtils.equals(respuestaContratos.getRESULTADO(),"ACEPTADO CON ERRORES")){
+							status += " - <b>CONTRATO ACEPTADO CON ERRORES</b>";
+							status += " (" + respuestaContratos.getIDCONTRATO() + ")";
+						} else if(StringUtils.equals(respuestaContratos.getRESULTADO(),"RECHAZADO")){
+							status += " - <b>CONTRATO RECHAZADO</b>";
+						} else {
+							status += " - <b>ESTADO ILEGIBLE</b>";
+						}
+						status += "</div>";
+						
+//						status += "FECHA ALTA:         " + respuestaContratos.getFECHAALTA() + "<br /> ";
+//						status += "FECHA COMUNICACION: " + respuestaContratos.getFECHACOMUNICACION() + "<br /> ";
+//						status += "ID CONTRATO:        " + respuestaContratos.getIDCONTRATO() + "<br /> ";
+//						status += "LEY BONIF:          " + respuestaContratos.getLEYBONIF() + "<br /> ";
+//						status += "LEY DEDUCCION:      " + respuestaContratos.getLEYDEDUCCION() + "<br /> ";
+//						status += "LEY FOMENTO:        " + respuestaContratos.getLEYFOMENTO() + "<br /> ";
+//						status += "LEY REDUCCION:      " + respuestaContratos.getLEYREDUCCION() + "<br /> ";
+//						status += "OBLIG B:            " + respuestaContratos.getOBLIGCB() + "<br /> ";
+//						status += "RESULTADO:          " + respuestaContratos.getRESULTADO() + "<br /> ";
+//						status += "USUARIO:            " + respuestaContratos.getUSUARIO() + "<br /> ";
+						
+						if(!StringUtils.equals(respuestaContratos.getRESULTADO(),"ACEPTADO")){
+							List<String> errores = respuestaContratos.getERRORES().getERROR();
+							if(!errores.isEmpty()){
+								status += "<div style='border-bottom:1px solid black; width:100%; padding:3px;'><b>ERRORES</b> (";
+								status += respuestaContratos.getERRORES().getERROR().size()+")</div>";
+								for(String error: respuestaContratos.getERRORES().getERROR()){
+									status += "ERROR: " + error + " - " + TERRORES.getEnumByValue(error).getDescription();
+									status += "<br /> ";
+								}
 							}
 						}
 					}
@@ -351,19 +373,22 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 		}
 		return status;
 	}
-	public String obtainExtensionCommunicationStatus(byte[] data) {
+	
+	public String obtainExtensionCommunicationStatus(byte[] data, Contract contract) {
 		String status = "";
 		status += "<br /> ";
 		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
 		if(data!=null){
 			String errorMsg = new String(data);
+			errorMsg = errorMsg.replaceAll("[\\r\\n\\t]", "");
 //			fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
-			if(errorMsg.contains("<COMUNICACION>") && errorMsg.contains("<ERROR>")){
-				errorMsg = StringUtils.removeStart(errorMsg, "<?xml version='1.0' encoding='ISO-8859-1'?>");
-				errorMsg = StringUtils.removeStart(errorMsg, "<COMUNICACION>");
-				errorMsg = StringUtils.removeEnd(errorMsg, "</COMUNICACION>");
-				errorMsg = StringUtils.removeStart(errorMsg, "<ERROR>");
-				errorMsg = StringUtils.removeEnd(errorMsg, "</ERROR>");
+			if(errorMsg.matches(".*<ERROR>.*</ERROR>.*")){
+				errorMsg = errorMsg.replaceAll(".*<ERROR>(.*)</ERROR>.*", "$1");
+				try {
+					errorMsg += " - " + CertificadosCommunicationError.valueOf(errorMsg).getDescription();
+				} catch (Exception e) {
+					errorMsg += " - error no reconocido";
+				}
 				return status + errorMsg;
 			}
 //			fichero si procesado: si se obtiene el fichero con los datos procesados
@@ -375,60 +400,33 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 				status += "<br /> ";
 				
 				for(Object o: prorroga.getPRORROGASPROCESADAS().getENVIO()){
-//					IContratoType contrato = obtainContratoType(o);
 					RESPUESTAPRORROGATYPE respuestaProrroga = obtainRespuestaProrroga(o);
 					
 					String bgColor = null;
-					
 					if(StringUtils.equals(respuestaProrroga.getRESULTADO(),"ACEPTADO")){
-						bgColor = "#E0F8E0";
+						bgColor = BGCOLOR_PROCESSED;
 					} else if(StringUtils.equals(respuestaProrroga.getRESULTADO(),"ACEPTADO CON ERRORES")){
-						bgColor = "#F6E3CE";
+						bgColor = BGCOLOR_PROCESSED_PARTIALLY;
 					} else if(StringUtils.equals(respuestaProrroga.getRESULTADO(),"RECHAZADO")){
-						bgColor = "#F8E0E0";
+						bgColor = BGCOLOR_REFUSED;
 					} else {
-						bgColor = "#E4E4E4";
+						bgColor = BGCOLOR_OTHER;
 					}
 					
 					status += "<br /> ";
 					status += "<div style='border-bottom:1px solid black;background-color:"+bgColor+"; width:100%; padding:5px;'>";
-//					status += prorroga.getDATOSTRABAJADOR().getIDENTIFICADORPFISICA().substring(1) + " - ";
-//					status += prorroga.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getPRIMERAPELLIDO();
-//					if(StringUtils.isNotBlank(contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO())){
-//						status += " ";
-//						status += contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO();
-//					}
-//					status += ", ";
-//					status += contrato.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getNOMBRE();
-					if(!StringUtils.equals(respuestaProrroga.getRESULTADO(),"RECHAZADO")){
+					if(StringUtils.equals(respuestaProrroga.getRESULTADO(),"ACEPTADO")){
 						status += " - <b>PRORROGA ACEPTADA</b>";
 						status += " (" + respuestaProrroga.getNUMEROPRORROGA() + ")";
-					} else {
+					} else if(StringUtils.equals(respuestaProrroga.getRESULTADO(),"ACEPTADO CON ERRORES")){
+						status += " - <b>PRORROGA ACEPTADA CON ERRORES</b>";
+						status += " (" + respuestaProrroga.getNUMEROPRORROGA() + ")";
+					} else if(StringUtils.equals(respuestaProrroga.getRESULTADO(),"RECHAZADO")){
 						status += " - <b>PRORROGA RECHAZADA</b>";
+					} else {
+						status += " - <b>ESTADO ILEGIBLE</b>";
 					}
 					status += "</div>";
-					
-//					status += "FECHA ALTA:         " + respuestaContratos.getFECHAALTA();
-//					status += "<br /> ";
-//					status += "FECHA COMUNICACION: " + respuestaContratos.getFECHACOMUNICACION();
-//					status += "<br /> ";
-//					status += "ID CONTRATO:        " + respuestaContratos.getIDCONTRATO();
-//					status += "<br /> ";
-//					status += "LEY BONIF:          " + respuestaContratos.getLEYBONIF();
-//					status += "<br /> ";
-//					status += "LEY DEDUCCION:      " + respuestaContratos.getLEYDEDUCCION();
-//					status += "<br /> ";
-//					status += "LEY FOMENTO:        " + respuestaContratos.getLEYFOMENTO();
-//					status += "<br /> ";
-//					status += "LEY REDUCCION:      " + respuestaContratos.getLEYREDUCCION();
-//					status += "<br /> ";
-//					status += "OBLIG B:            " + respuestaContratos.getOBLIGCB();
-//					status += "<br /> ";
-//					status += "RESULTADO:          " + respuestaContratos.getRESULTADO();
-//					status += "<br /> ";
-//					status += "USUARIO:            " + respuestaContratos.getUSUARIO();
-//					status += "<br /> ";
-					
 					
 					if(!StringUtils.equals(respuestaProrroga.getRESULTADO(),"ACEPTADO")){
 						List<String> errores = respuestaProrroga.getERRORES().getERROR();
@@ -457,19 +455,21 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 		return status;
 	}
 	
-	public String obtainTrasformationCommunicationStatus(byte[] data) {
+	public String obtainTrasformationCommunicationStatus(byte[] data, Contract contract) {
 		String status = "";
 		status += "<br /> ";
 		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
 		if(data!=null){
 			String errorMsg = new String(data);
+			errorMsg = errorMsg.replaceAll("[\\r\\n\\t]", "");
 //			fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
-			if(errorMsg.contains("<COMUNICACION>") && errorMsg.contains("<ERROR>")){
-				errorMsg = StringUtils.removeStart(errorMsg, "<?xml version='1.0' encoding='ISO-8859-1'?>");
-				errorMsg = StringUtils.removeStart(errorMsg, "<COMUNICACION>");
-				errorMsg = StringUtils.removeEnd(errorMsg, "</COMUNICACION>");
-				errorMsg = StringUtils.removeStart(errorMsg, "<ERROR>");
-				errorMsg = StringUtils.removeEnd(errorMsg, "</ERROR>");
+			if(errorMsg.matches(".*<ERROR>.*</ERROR>.*")){
+				errorMsg = errorMsg.replaceAll(".*<ERROR>(.*)</ERROR>.*", "$1");
+				try {
+					errorMsg += " - " + CertificadosCommunicationError.valueOf(errorMsg).getDescription();
+				} catch (Exception e) {
+					errorMsg += " - error no reconocido";
+				}
 				return status + errorMsg;
 			}
 //			fichero si procesado: si se obtiene el fichero con los datos procesados
@@ -487,13 +487,13 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 					String bgColor = null;
 					
 					if(StringUtils.equals(respuestaTrasformaciones.getRESULTADO(),"ACEPTADO")){
-						bgColor = "#E0F8E0";
+						bgColor = BGCOLOR_PROCESSED;
 					} else if(StringUtils.equals(respuestaTrasformaciones.getRESULTADO(),"ACEPTADO CON ERRORES")){
-						bgColor = "#F6E3CE";
+						bgColor = BGCOLOR_PROCESSED_PARTIALLY;
 					} else if(StringUtils.equals(respuestaTrasformaciones.getRESULTADO(),"RECHAZADO")){
-						bgColor = "#F8E0E0";
+						bgColor = BGCOLOR_REFUSED;
 					} else {
-						bgColor = "#E4E4E4";
+						bgColor = BGCOLOR_OTHER;
 					}
 					
 					status += "<br /> ";
@@ -505,43 +505,18 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 					} else {
 						status += "SIN CODIGO - ";
 					}
-//					status += trasformacion.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getPRIMERAPELLIDO();
-//					if(StringUtils.isNotBlank(trasformacion.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO())){
-//						status += " ";
-//						status += trasformacion.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getSEGUNDOAPELLIDO();
-//					}
-//					status += ", ";
-//					status += trasformacion.getDATOSTRABAJADOR().getNOMBREAPELLIDOS().getNOMBRE();
-					if(!StringUtils.equals(respuestaTrasformaciones.getRESULTADO(),"RECHAZADO")){
+					if(StringUtils.equals(respuestaTrasformaciones.getRESULTADO(),"ACEPTADO")){
 						status += " - <b>TRASFORMACION ACEPTADA</b>";
 						status += " (" + respuestaTrasformaciones.getNUMTRANSFORMACION() + ")";
-					} else {
+					} else if(StringUtils.equals(respuestaTrasformaciones.getRESULTADO(),"ACEPTADO CON ERRORES")){
+						status += " - <b>TRASFORMACION ACEPTADA CON ERRORES</b>";
+						status += " (" + respuestaTrasformaciones.getNUMTRANSFORMACION() + ")";
+					} else if(StringUtils.equals(respuestaTrasformaciones.getRESULTADO(),"RECHAZADO")){
 						status += " - <b>TRASFORMACION RECHAZADA</b>";
+					} else {
 					}
 					status += "</div>";
 					
-//					status += "FECHA ALTA:         " + respuestaContratos.getFECHAALTA();
-//					status += "<br /> ";
-//					status += "FECHA COMUNICACION: " + respuestaContratos.getFECHACOMUNICACION();
-//					status += "<br /> ";
-//					status += "ID CONTRATO:        " + respuestaContratos.getIDCONTRATO();
-//					status += "<br /> ";
-//					status += "LEY BONIF:          " + respuestaContratos.getLEYBONIF();
-//					status += "<br /> ";
-//					status += "LEY DEDUCCION:      " + respuestaContratos.getLEYDEDUCCION();
-//					status += "<br /> ";
-//					status += "LEY FOMENTO:        " + respuestaContratos.getLEYFOMENTO();
-//					status += "<br /> ";
-//					status += "LEY REDUCCION:      " + respuestaContratos.getLEYREDUCCION();
-//					status += "<br /> ";
-//					status += "OBLIG B:            " + respuestaContratos.getOBLIGCB();
-//					status += "<br /> ";
-//					status += "RESULTADO:          " + respuestaContratos.getRESULTADO();
-//					status += "<br /> ";
-//					status += "USUARIO:            " + respuestaContratos.getUSUARIO();
-//					status += "<br /> ";
-						
-
 					if(!StringUtils.equals(respuestaTrasformaciones.getRESULTADO(),"ACEPTADO")){
 						List<String> errores = respuestaTrasformaciones.getERRORES().getERROR();
 						if(!errores.isEmpty()){

@@ -47,6 +47,7 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
+import com.esferalia.aon.ui.sepe.controller.ContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
@@ -60,6 +61,8 @@ public class ContrataBatchController extends BasicController {
 	private FileOutput fileOutput;
 	private boolean recorded;
 	private ContrataBatchNewWizard newBatchWizard;
+	
+	private boolean showCommunicationWindow;
 	
 	public ContrataBatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
@@ -88,6 +91,14 @@ public class ContrataBatchController extends BasicController {
 		this.recorded = recorded;
 	}
 	
+	public boolean isShowCommunicationWindow() {
+		return showCommunicationWindow;
+	}
+
+	public void setShowCommunicationWindow(boolean showCommunicationWindow) {
+		this.showCommunicationWindow = showCommunicationWindow;
+	}
+
 	public String getRowContractCode(){
 		try {
 			BatchDetailController detailController = (BatchDetailController)FormUtil.getController(ISepeConstants.CONTRATA_BATCH_DETAIL_CONTROLLER_NAME);
@@ -180,6 +191,40 @@ public class ContrataBatchController extends BasicController {
 		ContrataListController listController = (ContrataListController) FormUtil.getController(ISepeConstants.CONTRATA_LIST_CONTROLLER_NAME);
 		listController.init();
 		listController.onSearch(event);
+	}
+	
+	public void onSepeShow(ActionEvent event){
+		ContrataController contrataController = null;
+		ContrataBatch batch = (ContrataBatch) this.getTo();
+		switch (batch.getType()) {
+		case CONTRACT:
+			contrataController = (ContrataController) AonUtil
+					.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+			break;
+		case EXTENSION:
+			contrataController = (ContrataController) AonUtil
+					.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+			break;
+		case TRANSFORMATION:
+			contrataController = (ContrataController) AonUtil
+					.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+			break;
+		case INDEFINITE_CALL:
+		case BASIC_COPY:
+		case GROUP_CONTRACT:
+		case ADDITIONAL_HOURS:
+		case OFFICE_CONTRACT:
+		case LEARNING_ANNEX:
+		case CORRECTION_CONTRACT:
+		case CORRECTION_EXTENSION:
+		case CORRECTION_TRANSFORMATION:
+		case CORRECTION_INDEFINITE_CALL:
+		case CORRECTION_ADDITIONAL_HOURS:
+		default:
+			break;
+		}
+		contrataController.initialize((ContrataBatch) this.getTo());
+		contrataController.onContrataDataShow(event);
 	}
 	
 	public void onCreateDisk(ActionEvent event) {

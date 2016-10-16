@@ -233,6 +233,24 @@ public final class SEPEConnectionProvider {
 		return processCertificadosQuery(isSslEnv, isTestEnv, _idComunicacion, _UsuarioConectado, _UsuarioPrincipal, _Password, IDIOMA, COMUNIDAD);
 	}
 	
+	public enum CertificadosCommunicationError {
+		DEX0023("Error del sistema."),
+		DEX0204("El fichero no está completado de forma correcta. Se acompaña de una descripción técnica del error que se ha producido al validar el fichero."),
+		DEX0206("El identificador del fichero no existe."),
+		DEX0207("Alguno de los datos de la autenticación Contrat@ es erróneo o está incompleto."),
+		DEX0208("No se puede recuperar el fichero de respuesta."),
+		DEX0209("El identificador del fichero corresponde a un envío no realizado a través del servicio web."),
+		DEX0210("El usuario conectado no está registrado en la aplicación. Debe acceder a Certific@2 y proporcionar sus datos de contacto."),
+		DEX0211("El acceso a la aplicación se encuentra deshabilitado temporalmente.");
+		private String description;
+		public String getDescription(){
+			return description;
+		}
+		private CertificadosCommunicationError(String description) {
+			this.description = description;
+		}
+	}
+	
 	// ******************************
 	// VALIDATION
 	// ******************************

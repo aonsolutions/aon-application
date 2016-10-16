@@ -21,19 +21,28 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{contrataBatch}" />
 				<ui:define name="searchContent">
+				
+					<aon:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{contrataBatchSearch.enterprise}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="skipGoToButton" value="#{true}" />
+						</ui:include>
+					</aon:if>
+				
 					<aon:outputLabel value="#{bundle.aon_date}" />
 					<aon:div>
 						<aon:outputLabel for="ContrataBatch_date-From" styleClass="aon-form-date-label aon-margin-right"
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="ContrataBatch_date-From"
-							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+							value="#{contrataBatchSearch.startDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					
 						<aon:outputLabel for="ContrataBatch_date-To" styleClass="aon-form-date-label aon-margin-right"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="ContrataBatch_date-To"
-							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+							value="#{contrataBatchSearch.endDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
@@ -46,11 +55,10 @@
 					</aon:selectOneMenu>
 					
 					<aon:outputLabel for="ContrataBatch_status" value="#{bundle.aon_status}" />
-					<aon:selectOneMenu id="ContrataBatch_status" converter="aon.EnumConverter"
-						valueChangeListener="#{controller.addEqualExpression}" >
-						<f:selectItem itemLabel=" - " value="#{null}" />
+					<aon:selectManyCheckbox id="ContrataBatch_status" 
+						value="#{contrataBatchSearch.fileStatus}" >
 						<f:selectItems value="#{payrollCollections.fileStatus}" />
-					</aon:selectOneMenu>
+					</aon:selectManyCheckbox>
 					
 				</ui:define>
 			</ui:decorate>

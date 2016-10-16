@@ -50,7 +50,7 @@
 				
 				<aon:commandButton id="sepe-dataQuery"
 					value="#{bundle.sepe_status_check}"
-					disabled="#{!contractCertificados.communicationIdReceived or controller.readOnly}"
+					disabled="#{!contractCertificados.communicationIdReceived or contractCertificados.readOnly}"
 					reRender="showCertificadosCommunicationWindow,#{(contractCertificados.batch.id!=null)?(''):('contractForm')}"
 					actionListener="#{contractCertificados.onSepeDataQuery}"
 					onclick="Richfaces.showModalPanel('waitProccess')" 

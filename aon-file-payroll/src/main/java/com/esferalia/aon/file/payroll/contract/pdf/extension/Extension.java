@@ -22,7 +22,6 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.payroll.contract.pdf.PdfFieldPractice;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
@@ -276,11 +275,17 @@ public class Extension extends AbstractContractExtension {
 			getPdfFieldsMap().get(PE191_EXTENSION_START_DATE).setValue(dateFormatter.format(prorrogaParams.getFechaInicio()));
 			getPdfFieldsMap().get(PE191_EXTENSION_END_DATE).setValue(dateFormatter.format(prorrogaParams.getFechaFin()));
 			Integer extensionDurationInMonths = getMonthsBetweenDates(prorrogaParams.getFechaInicio(), prorrogaParams.getFechaFin());
+			if(extensionDurationInMonths==null){
+				extensionDurationInMonths = 0;
+			}
 			getPdfFieldsMap().get(PE191_EXTENSION_MONTH_COUNT).setValue(extensionDurationInMonths.toString());
 			
 			getPdfFieldsMap().get(PE191_CONTRACT_START_DATE).setValue(dateFormatter.format(contract.getStartDate()));
 			Integer contractDurationInMonths = getMonthsBetweenDates(contratoParams.getStartDate(), contratoParams.getEndDate());
-			getPdfFieldsMap().get(PE191_CONTRACT_MONTH_COUNT).setValue(contractDurationInMonths!=null?contractDurationInMonths.toString():null);
+			if(contractDurationInMonths==null){
+				contractDurationInMonths = 0;
+			}
+			getPdfFieldsMap().get(PE191_CONTRACT_MONTH_COUNT).setValue(contractDurationInMonths.toString());
 			
 			getPdfFieldsMap().get(PE191_SEPE_TOWN).setValue(contract.getWorkPlace().getAddress().getCity());
 			getPdfFieldsMap().get(PE191_CONTRACT_REGULATION_DATE).setValue(dateFormatter.format(contract.getStartDate()));
@@ -288,7 +293,7 @@ public class Extension extends AbstractContractExtension {
 			getPdfFieldsMap().get(PE191_CONTRACT_SEPE_ID).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()));
 			
 			Integer totalDurationInMonths = contractDurationInMonths + extensionDurationInMonths;
-			getPdfFieldsMap().get(PE191_TOTAL_DURATION1).setValue(totalDurationInMonths!=null?totalDurationInMonths.toString():null);
+			getPdfFieldsMap().get(PE191_TOTAL_DURATION1).setValue(totalDurationInMonths.toString());
 			getPdfFieldsMap().get(PE191_TOTAL_DURATION2).setValue("meses");
 			
 			getPdfFieldsMap().get(PE191_SIGN_TOWN).setValue(contract.getWorkPlace().getAddress().getCity());
@@ -351,8 +356,8 @@ public class Extension extends AbstractContractExtension {
 		IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.EXTENSION_DOC);
-		return bean.getCount(criteria)+1;
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_EXTENSION_FILE);
+		return bean.getCount(criteria);
 	}
 
 	private Integer getMonthsBetweenDates(Date startDate, Date endDate) {

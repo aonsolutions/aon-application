@@ -16,7 +16,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
-public class Certifica2BatchSearchListener extends ControllerSearchListener {
+public class ContrataBatchSearchListener extends ControllerSearchListener {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
@@ -60,7 +60,7 @@ public class Certifica2BatchSearchListener extends ControllerSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
-		setStartDate(DateUtils.addDays(new Date(), -1));
+		setStartDate(DateUtils.addDays(new Date(), -10));
 		setEnterprise((Enterprise) BeanManager.getManagerBean(Enterprise.class).createNewTo());
 		FileStatus[] defaultFileStatus = {FileStatus.GENERATED, FileStatus.PENDING, FileStatus.DENIED};
 		setFileStatus(defaultFileStatus);
@@ -70,26 +70,23 @@ public class Certifica2BatchSearchListener extends ControllerSearchListener {
 	protected void completeCriteria(Criteria criteria)
 			throws ManagerBeanException, ExpressionException {
 		super.completeCriteria(criteria);
-		SEPEUtils.getInstance().completeChildDomainCriteria(criteria, "Certifica2Batch.domain", false);
+		SEPEUtils.getInstance().completeChildDomainCriteria(criteria, "ContrataBatch.domain", false);
 		if(getStartDate()!=null){
-			setStartDate(DateUtils.setHours(getStartDate(), 0));
-			setStartDate(DateUtils.setMinutes(getStartDate(), 0));
-			setStartDate(DateUtils.setSeconds(getStartDate(), 0));
-			String alias = getController().resolveAlias(IEntityAlias.CERTIFICA2BATCH_DATE);
+			setStartDate(DateUtils.setHours(getStartDate(), 23));
+			setStartDate(DateUtils.setMinutes(getStartDate(), 59));
+			setStartDate(DateUtils.setSeconds(getStartDate(), 59));
+			String alias = getController().resolveAlias(IEntityAlias.CONTRATA_BATCH_DATE);
 			getController().getCriteria().addGreaterThanOrEqualExpression(alias, getStartDate());
 		}
 		if(getEndDate()!=null){
 			setEndDate(DateUtils.setHours(getEndDate(), 23));
 			setEndDate(DateUtils.setMinutes(getEndDate(), 59));
 			setEndDate(DateUtils.setSeconds(getEndDate(), 59));
-			String alias = getController().resolveAlias(IEntityAlias.CERTIFICA2BATCH_DATE);
+			String alias = getController().resolveAlias(IEntityAlias.CONTRATA_BATCH_DATE);
 			getController().getCriteria().addLessThanOrEqualExpression(alias, getEndDate());
 		}
-		if(getEnterprise()!=null && getEnterprise().getId()!=null){
-			criteria.addEqualExpression(getFieldName(IEntityAlias.CERTIFICA2BATCH_ENTERPRISE_ID), getEnterprise().getId());
-		}
 		if (!ArrayUtils.isEmpty(getFileStatus())) {
-			String status = getController().resolveAlias(IEntityAlias.CERTIFICA2BATCH_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.CONTRATA_BATCH_STATUS);
 			addEnumToCriteria(criteria, status, getFileStatus());
 		}
 	}

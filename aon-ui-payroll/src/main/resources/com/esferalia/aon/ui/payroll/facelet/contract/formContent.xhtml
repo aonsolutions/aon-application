@@ -141,7 +141,18 @@
 		<aon:outputText value="&#160;" 
 			rendered="#{contract.extendedContract}" />
 		<aon:div rendered="#{contract.extendedContract}">
-			<aon:outputText value="Contrato prorrogado" />
+			<aon:outputText value="Contrato prorrogado (1)" />
+			<aon:commandButton value="&#160;" title="Eliminar prórroga"
+				rendered="#{contract.extensionCount eq 1}"
+				styleClass="aon-finding-toolbar-item aon-icon-rubber aon-finding-toolbar-item-no-border aon-margin-left"
+				actionListener="#{contract.onUndoContractExtension}" 
+				reRender="contractForm" ajaxSingle="true" />
+		</aon:div>
+
+		<aon:outputText value="&#160;" 
+			rendered="#{contract.extensionCount gt 1}" />
+		<aon:div rendered="#{contract.extensionCount gt 1}">
+			<aon:outputText value="Contrato prorrogado (2)" />
 			<aon:commandButton value="&#160;" title="Eliminar prórroga"
 				styleClass="aon-finding-toolbar-item aon-icon-rubber aon-finding-toolbar-item-no-border aon-margin-left"
 				actionListener="#{contract.onUndoContractExtension}" 

@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showGenerationWindow">
+		<aon:if test="#{contractCertificados.showGenerationWindow}">
+			<rich:modalPanel id="generationModalPanel" minHeight="40"
+				minWidth="200" rendered="#{contractCertificados.showGenerationWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.sepe_certificados}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showGenerationWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{contractCertificados.showGenerationWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="generationForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+
+								<aon:div style="width:99%">
+									<aon:panelGrid columns="1" style="width: 100%;" styleClass="aon-panelGrid-formatting"
+										columnClasses="aon-panelGrid-even aon-text-center aon-noborder">
+										
+										<aon:outputText value="&#160;" />
+
+										<aon:outputText styleClass="aon-bold" 
+											value="#{bundle.sepe_certificados_generate_enterprise_certificate}" />
+										
+										<aon:outputText value="&#160;" />
+										
+										<rich:inplaceSelect id="suspensionCause"
+											required="#{true}" 
+										 	value="#{contractCertificados.suspensionCause}"
+										 	listHeight="300px" listWidth="300px"
+										 	style="background-color: #CEE3F6; margin-left: 10px; width:300px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
+											defaultLabel="#{bundle.sepe_certificados_suspensionCause_select}" >
+											<f:selectItems value="#{sepeCollections.suspensionCauses}" />
+										</rich:inplaceSelect>
+										
+										<aon:outputText value="&#160;" />
+
+										<aon:commandButton id="confirm-accept"
+											styleClass="aon-commandButton"
+											value="#{bundle.aon_accept}"
+											actionListener="#{contractCertificados.onCertificadosAccept}"
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+	 										oncomplete="Richfaces.hideModalPanel('waitProccess')">
+											<aon:actionHotKey key="return" />
+											<rich:componentControl for="generationModalPanel"
+												event="onclick" operation="hide"/>																					
+										</aon:commandButton>
+										
+									</aon:panelGrid>
+								</aon:div>
+									
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+				
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

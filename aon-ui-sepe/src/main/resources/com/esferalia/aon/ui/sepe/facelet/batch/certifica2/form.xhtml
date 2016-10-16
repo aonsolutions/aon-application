@@ -23,37 +23,13 @@
 			<ui:define name="moreToolbarContent" >
 				<aon:commandButton id="certificados-batch-communication"
 					value="#{bundle.sepe_certificados}"
-					rendered="#{controller.recorded}" ajaxSingle="true"
+					ajaxSingle="true"
 					reRender="showCertificadosCommunicationWindow"
 					actionListener="#{certifica2Batch.onInitCertificados}"
 					styleClass="aon-finding-toolbar-item aon-icon-sepe-certificados" >
 					<f:setPropertyActionListener
-						target="#{contractCertificados.showCommunicationWindow}" value="#{true}" />
+						target="#{controller.showCommunicationWindow}" value="#{true}" />
 				</aon:commandButton>
-				
-				<!--  
-				<aon:commandButton id="certificados-print" 
-					action="contractPdfEdition_form" ajaxSingle="true"
-					rendered="#{controller.recorded}"
-					value="Contrato"
-					title="Edicion manual del documento del contrato"
-					styleClass="aon-finding-toolbar-item aon-icon-sepe-certificados" >
-					<f:setPropertyActionListener
-						target="#{contractPdf.documentType}" value="#{contractPdf.contractPdfType}" />
-					<f:setPropertyActionListener
-						target="#{contractPdf.backAction}" value="certifica2_form" />
-					<aon:actionListener method="#{contractPdf.onContractDocumentShow}" />
-				</aon:commandButton>
-				
-				<aon:htmlCommandLink id="download-pdf" target="_blank" 
-					title="Descargar certificado"
-					rendered="#{controller.recorded}"
-					styleClass="aon-finding-toolbar-item aon-icon-pdf"
-					actionListener="#{controller.onDownloadFile}">
-					<aon:outputText value="#{bundle.webmail_download}" />
-				</aon:htmlCommandLink>
-				-->
-				
 			</ui:define>
 			
 			<ui:define name="batchContent" >
@@ -107,7 +83,7 @@
 				<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 				<aon:lookupButtonPopup lookup="#{personLookup}" />
 				
-				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/modalExcludeEmployees.xhtml" />
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/certificados/modalExcludeEmployees.xhtml" />
 				
 				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/modalSearch.xhtml">
 					<ui:param name="controller" value="#{certifica2List}" />
@@ -115,8 +91,8 @@
 				</ui:include>
 				
 				<!-- SEPE ONLINE COMMUNICATION -->
-				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalCommunication.xhtml" >
-					<ui:param name="controller" value="#{contractCertificados}" />
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/certificados/modalCommunication.xhtml" >
+					<ui:param name="controller" value="#{certifica2Batch}" />
 					<ui:param name="skipBatchButton" value="#{true}" />
 					<ui:param name="skipDownloadButton" value="#{true}" />
 				</ui:include>

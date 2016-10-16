@@ -155,7 +155,7 @@ public class ContractInfoController extends BasicController {
 		}
 		super.initializeModel();
 	}
-
+	
 	private ContractInfo obtainDomainField(IContractFieldName fn) {
 		String suffix = "";
 		if(fn instanceof PdfFieldIndefinite){
@@ -286,13 +286,18 @@ public class ContractInfoController extends BasicController {
 			contractInfo.setStartDate(contract.getStartDate());
 			contractInfo.setEndDate(contract.getEndDate());
 			contractInfo.setName(fieldName.toString());
-			contractInfo.setExpression(completeDefault?obtainFieldValue(fieldName.toString()):null);
+			if(completeDefault){
+				String expression = obtainFieldValue(fieldName.toString(), DomainManager.getCurrentDomain());
+				if(expression==null){
+					expression = obtainFieldValue(fieldName.toString(), DomainManager.getDomainProvider().getParentDomain());
+				}
+				contractInfo.setExpression(expression);
+			}
 		}
 		return contractInfo;
 	}
 	
-	private String obtainFieldValue(String name) {
-		
+	private String obtainFieldValue(String name, Integer domain) {
 		ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		String contractModel = controller.getParams().getContractModelOption().getPdfModel();
 		if(StringUtils.isNotBlank(contractModel)){
@@ -306,32 +311,24 @@ public class ContractInfoController extends BasicController {
 			} else if(PracticeModel.MODEL_NAME.equals(contractModel)){
 				suffix = "P_";
 			}
-			
 			Connection conn = null;
 			PreparedStatement ps = null;
 			ResultSet rs = null;
 			try {
 				conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 				String select = "SELECT expression FROM contract_info WHERE contract is null" +
-						" AND domain = " + DomainManager.getCurrentDomain() +
+						" AND domain = " + domain +
 						" AND name = '" + suffix + name + "';";
 				ps = conn.prepareStatement(select);
 				rs = ps.executeQuery();
-				if (rs.next()) return rs.getString(1);
-				select = "SELECT expression FROM contract_info WHERE contract is null" +
-						" AND domain = " + DomainManager.getDomainProvider().getParentDomain() +
-						" AND name = '" + suffix + name + "';";
-				ps = conn.prepareStatement(select);
-				rs = ps.executeQuery();
-				if (rs.next()) return rs.getString(1);
-				
+				if (rs.next())
+					return rs.getString(1);				
 			} catch (Exception e) {
-				// nothing to do
+				LOGGER.error(e.getMessage());
 			} finally {
 				DatabaseUtil.closeQuietly(ps);
 				DatabaseUtil.closeQuietly(conn);
 			}
-			
 		}
 		return null;
 	}

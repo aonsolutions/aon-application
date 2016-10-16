@@ -3,9 +3,13 @@ package com.esferalia.aon.ui.sepe.utils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -13,22 +17,25 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.certificados.Terrores;
-import com.esferalia.aon.payroll.enumeration.contrata.TERRORES;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.CUENTACOTIZACIONTYPE;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.EMPRESATYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RESPUESTACERTIFICADOEMPRESATYPE.CuentaCotizacion;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RESPUESTACERTIFICADOEMPRESATYPE.CuentaCotizacion.DatosTrabajador;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RESPUESTACERTIFICADOEMPRESATYPE.CuentaCotizacion.DescripcionResultado;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RespuestaCertificadoEmpresa;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RespuestaCertificadoEmpresa.Resultado;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.TRABAJADORTYPE;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.SepeAppParamsController;
 import com.esferalia.aon.ui.sepe.file.CertificadosResponseReader;
+import com.esferalia.aon.ui.sepe.utils.SEPEConnectionProvider.CertificadosCommunicationError;
 
 
 public class CertificadosCommunicator implements ISepeCommunicator, Serializable {
@@ -205,8 +212,8 @@ public class CertificadosCommunicator implements ISepeCommunicator, Serializable
 						return true;
 					}
 				}
-			} catch (IOException e) {
 			} catch (Throwable th) {
+				LOGGER.error(th.getMessage());
 			}
 		}
 		return false;
@@ -214,45 +221,63 @@ public class CertificadosCommunicator implements ISepeCommunicator, Serializable
 	
 	@Override
 	public String obtainCommunicationNumber(byte[] data) {
-		String id = new String(data); 
-		if( StringUtils.isNotBlank(id) ){
-			id = id.replaceAll("\n", "");
-			id = StringUtils.removeStart(id, "<?xml version='1.0' encoding='ISO-8859-1'?>");
-			id = StringUtils.removeStart(id, "<COMUNICACION>");
-			id = StringUtils.removeEnd(id, "</COMUNICACION>");
-			if(id.contains("<DESC_ERROR>")){
-				id = StringUtils.remove(id, "<DESC_ERROR>");
-				id = StringUtils.remove(id, "</DESC_ERROR>");
+		String _data = new String(data);
+		_data = _data.replaceAll("\r|\n|\t", "");
+		String code = "";
+		if( StringUtils.isNotBlank(_data) ){
+			if(_data.matches(".*<NUM_ENVIO>.+</NUM_ENVIO>.*")){
+				code += _data.replaceAll(".*<NUM_ENVIO>(.*)</NUM_ENVIO>.*", "$1");
 			}
-			if(id.contains("<NUM_ENVIO>")){
-				id = StringUtils.remove(id, "<COD_ERROR>");
-				id = StringUtils.remove(id, "</COD_ERROR>");
-				id = StringUtils.removeStart(id, "<NUM_ENVIO>");
-				id = StringUtils.removeEnd(id, "</NUM_ENVIO>");
-			} else {
-				id = StringUtils.removeStart(id, "<COD_ERROR>");
-				id = StringUtils.removeEnd(id, "</COD_ERROR>");
+			if(_data.matches(".*<COD_ERROR>.+</COD_ERROR>.*")){
+				code += "<br/>";
+				code += _data.replaceAll(".*<COD_ERROR>(.*)</COD_ERROR>.*", "$1");
+				try {
+					code += " - " + CertificadosCommunicationError.valueOf(code).getDescription();
+				} catch (Exception e) {
+					code += " - error no reconocido";
+				}
 			}
-			return id;
+			if(_data.matches(".*<DESC_ERROR>.+</DESC_ERROR>.*")){
+				code += _data.replaceAll(".*<DESC_ERROR>(.*)</DESC_ERROR>.*", "$1");
+			}
+			return code;
 		}
 		return null;
 	}
 	
+	private boolean isContractResponse(EMPRESATYPE empresaType, TRABAJADORTYPE trabajadorType, Contract contract) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); 
+		String ccc = empresaType.getCCC();
+		Date startDate;
+		try {
+			startDate = sdf.parse(trabajadorType.getFechaAltaEmpresa());
+		} catch (ParseException e) {
+			LOGGER.error(e.getMessage());
+			return false;
+		}
+		String document = trabajadorType.getDNINIE();
+		return ccc.equals(contract.getActivity().getType().getCode() + contract.getEnterpriseCCC().getCcc())
+				&& startDate.equals(contract.getStartDate())
+				&& document.equals(contract.getPerson().getRegistry().getDocument());
+	}
+	
 	@Override
-	public String obtainCommunicationStatus(byte[] data) {
+	public String obtainCommunicationStatus(byte[] data, Contract contract) {
 		String status = "";
 		status += "<br /> ";
 		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
 		if(data!=null){
-//			TODO fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
-//			if(errorMsg.contains("<COMUNICACION>") && errorMsg.contains("<ERROR>")){
-//				errorMsg = StringUtils.removeStart(errorMsg, "<?xml version='1.0' encoding='ISO-8859-1'?>");
-//				errorMsg = StringUtils.removeStart(errorMsg, "<COMUNICACION>");
-//				errorMsg = StringUtils.removeEnd(errorMsg, "</COMUNICACION>");
-//				errorMsg = StringUtils.removeStart(errorMsg, "<ERROR>");
-//				errorMsg = StringUtils.removeEnd(errorMsg, "</ERROR>");
-//				return status + errorMsg;
-//			}
+			String errorMsg = new String(data);
+//			fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
+			if(errorMsg.matches(".*<COMUNICACION>.*<ERROR>.*</ERROR>.*</COMUNICACION>.*")){
+				errorMsg = errorMsg.replaceAll(".*<ERROR>(.*)</ERROR>.*", "$1");
+				try {
+					errorMsg += " - " + CertificadosCommunicationError.valueOf(errorMsg).getDescription();
+				} catch (Exception e) {
+					errorMsg += " - error no reconocido";
+				}
+				return status + errorMsg;
+			}
 //			fichero si procesado: si se obtiene el fichero con los datos procesados
 			try {
 				String validation = new String(data);
@@ -260,50 +285,31 @@ public class CertificadosCommunicator implements ISepeCommunicator, Serializable
 				validation = StringUtils.substring(validation, 0, StringUtils.indexOf(validation, "</Respuesta_Certificado_empresa>"));
 				validation += "</Respuesta_Certificado_empresa>";
 				data = validation.getBytes();
-				RespuestaCertificadoEmpresa certificado = obtainFicheroCertificado(data);
+				RespuestaCertificadoEmpresa respuestaCertificado = obtainFicheroCertificado(data);
 			
-				for(CuentaCotizacion cuentaCotizacion: certificado.getResultado().getCuentaCotizacion()){
-					
+				for(CuentaCotizacion cuentaCotizacion: respuestaCertificado.getResultado().getCuentaCotizacion()){
+					String ccc = cuentaCotizacion.getCCC();
 					String bgColor = null;
-					
-					if(cuentaCotizacion.getDescripcionResultado()==DescripcionResultado.PROCESADO){
-						bgColor = "#E0F8E0";
-					} else if(cuentaCotizacion.getDescripcionResultado()==DescripcionResultado.PROCESADO_PARCIALMENTE){
-						bgColor = "#F6E3CE";
-					} else if(cuentaCotizacion.getDescripcionResultado()==DescripcionResultado.RECHAZADO){
-						bgColor = "#F8E0E0";
-					} else {
-						bgColor = "#E4E4E4";
+					if(contract==null){
+						if(cuentaCotizacion.getDescripcionResultado()==DescripcionResultado.PROCESADO){
+							bgColor = BGCOLOR_PROCESSED;
+						} else if(cuentaCotizacion.getDescripcionResultado()==DescripcionResultado.PROCESADO_PARCIALMENTE){
+							bgColor = BGCOLOR_PROCESSED_PARTIALLY;
+						} else if(cuentaCotizacion.getDescripcionResultado()==DescripcionResultado.RECHAZADO){
+							bgColor = BGCOLOR_REFUSED;
+						} else {
+							bgColor = BGCOLOR_OTHER;
+						}
+						
+						status += "CCC:      " + cuentaCotizacion.getCCC();
+						status += "<br /> ";
+						status += "RESULTADO:           " + cuentaCotizacion.getDescripcionResultado();
+						status += "<br /> ";
+						status += "TRAB. PROCESADOS:    " + cuentaCotizacion.getNumTrabajadoresProcesados();
+						status += "<br /> ";
+						status += "TOTAL TRABAJADORES:  " + cuentaCotizacion.getNumTrabajadoresTotal();
+						status += "<br /> ";
 					}
-					
-					status += "<br /> ";
-					status += "<div style='border-bottom:1px solid black;background-color:"+bgColor+"; width:100%; padding:5px;'><b>";
-					String ccc = ((Element) cuentaCotizacion.getCCC()).getFirstChild().getNodeValue();
-					status += "CCC:                 " + ccc;
-					status += "</b>";
-					
-					if(cuentaCotizacion.getDescripcionResultado()==DescripcionResultado.PROCESADO){
-						status += " - <b>CERTIFICADO ACEPTADO</b>";
-					} else {
-						status += " - <b>DERTIFICADO RECHAZADO</b>";
-					}
-					
-					
-					status += "</div>";
-					
-//					status += "RESULTADO:           " + cuentaCotizacion.getDescripcionResultado();
-//					status += "<br /> ";
-//					status += "TRAB: PROCESADOS:    " + cuentaCotizacion.getNumTrabajadoresProcesados();
-//					status += "<br /> ";
-//					status += "TOTAL TRABAJADORES:  " + cuentaCotizacion.getNumTrabajadoresTotal();
-//					status += "<br /> ";
-					
-//					System.out.println("CCC:                 " + cuentaCotizacion.getCCC());
-//					System.out.println("RESULTADO:           " + cuentaCotizacion.getDescripcionResultado());
-//					System.out.println("TRAB: PROCESADOS:    " + cuentaCotizacion.getNumTrabajadoresProcesados());
-//					System.out.println("TOTAL TRABAJADORES:  " + cuentaCotizacion.getNumTrabajadoresTotal());
-//					System.out.println("ERRORES GENERALES:   ");
-
 					
 					if(cuentaCotizacion.getErroresGeneral()!=null 
 							&& cuentaCotizacion.getErroresGeneral().getError()!=null 
@@ -315,16 +321,47 @@ public class CertificadosCommunicator implements ISepeCommunicator, Serializable
 						}
 					}
 					
+					for(CUENTACOTIZACIONTYPE cuentaCotizacionType: respuestaCertificado.getCertificadoEmpresa().getCuentaCotizacion()){
+						if(cuentaCotizacionType.getDatosEmpresa().getCCC().equals(ccc)){
+							for(TRABAJADORTYPE trabajadorType: cuentaCotizacionType.getDatosTrabajador()){
+								if(contract==null || isContractResponse(cuentaCotizacionType.getDatosEmpresa(), trabajadorType, contract)){
+									
+									List<DatosTrabajador> trabajadorErrorList = cuentaCotizacion.getDatosTrabajador().stream()
+											.filter(o -> o.getDNINIE().equals(trabajadorType.getDNINIE()))
+											.collect(Collectors.toList());
+									
+									bgColor = trabajadorErrorList==null || trabajadorErrorList.isEmpty()?BGCOLOR_PROCESSED:BGCOLOR_REFUSED;
+									status += "<br /> ";
+									status += "<div style='border-bottom:1px solid black;background-color:"+bgColor+"; width:100%; padding:5px;'><b>";
+									status += trabajadorType.getApellido1() + " ";
+									status += trabajadorType.getApellido2() + ", ";
+									status += trabajadorType.getNombre();
+									status += " ("+trabajadorType.getDNINIE() + ")";
+									status += "</b>";
+									status += " - ";
+									status += "<b> CERTIFICADO ";
+									status += trabajadorErrorList==null || trabajadorErrorList.isEmpty()?DescripcionResultado.PROCESADO:DescripcionResultado.RECHAZADO;
+									status += "</b>";
+									status += "</div>";
+									if(trabajadorErrorList!=null && !trabajadorErrorList.isEmpty()){
+										DatosTrabajador trabajador = trabajadorErrorList.get(0);
+										if(!trabajador.getError().isEmpty()){
+											status += "<div style='border-bottom:1px solid black; width:100%; padding:3px;'><b>ERRORES</b> (";
+											status += trabajador.getError().size()+")</div>";
+											for(Object error: trabajador.getError()){
+												status += "ERROR: " + error + " - " + Terrores.getEnumByValue(error.toString()).getDescription();
+												status += "<br /> ";
+											}
+										}
+									}
+								}
+							}
+						}
+					}
 				}
-				
-			} catch (IOException e) {
-				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
-				status += msg;
-				status += e.getMessage();
-				status += "<br /> ";
 			} catch (Throwable th) {
-				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
-				status += msg;
+				status += "No se ha podido obtener los datos del estado de las comunicaciones.";
+				status += "<br /> ";
 				status += th.getMessage();
 				status += "<br /> ";
 			}

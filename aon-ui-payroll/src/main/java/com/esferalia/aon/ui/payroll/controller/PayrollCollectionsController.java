@@ -503,10 +503,8 @@ public class PayrollCollectionsController implements Serializable {
 		if (fileStatus == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			fileStatus = new LinkedList<SelectItem>();
-			FileStatus[] estados = FileStatus.values();
-			for (FileStatus c : estados) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, name);
+			for (FileStatus status : FileStatus.values()) {
+				SelectItem item = new SelectItem(status, status.getName(locale));
 				fileStatus.add(item);
 			}
 		}

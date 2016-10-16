@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
@@ -16,10 +17,12 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.IAttachment;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.contrata.TBONVFOR;
@@ -71,7 +74,20 @@ public class ContrataContratosHandler implements IContrataHandler, Serializable 
 	public void initialize(Contract contract){
 		SEPEUtils utils = SEPEUtils.getInstance();
 		this.contract = contract;
-		this.contractCode = ContractCode.getContractCodeByValue( utils.getContractDataMap(getContract()).get(ContextVariable.TC2.getName()) );
+		try {
+			List<ITransferObject> list = utils.getContractData(contract, null, null, ContextVariable.TC2.getName(), false);
+			list = list.stream().map(to -> ((ContractData)to))
+					.filter(cd -> cd.getExpression().matches(".\\d\\d[^9]."))
+					.sorted((cd1, cd2) -> cd1.getStartDate().compareTo(cd2.getStartDate()))
+					.collect(Collectors.toList());
+			if(list!=null && !list.isEmpty()){
+				String code = ((ContractData)list.get(list.size()-1)).getExpression();
+				code  = code.replaceAll("\"", "");
+				this.contractCode = ContractCode.getContractCodeByValue( code );
+			}
+		} catch (ManagerBeanException e) {
+			// do nothing ...
+		}
 	}
 	
 	@Override

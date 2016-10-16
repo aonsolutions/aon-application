@@ -1,10 +1,5 @@
 package com.esferalia.aon.ui.sepe.controller.batch;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,18 +13,13 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
-import org.apache.commons.io.IOUtils;
-import org.xml.sax.SAXException;
-
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.file.format.output.FileOutput;
@@ -44,53 +34,23 @@ import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchAttachment;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SepeBatchAttachment;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
 import com.esferalia.aon.ui.sepe.controller.CertificadosController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
-import com.esferalia.aon.ui.sepe.file.CertificadosWriter;
-import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class Certifica2BatchController extends BasicController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	private CertificadosWriter certificadosWriter;
 	private FileOutput fileOutput;
 	private boolean recorded;
 	private Certifica2BatchNewWizard newBatchWizard;
 	
-	private List<Certifica2BatchDetail> excludeEmployeeList;
-	private boolean showExcludeEmployeeWindow;
+	private boolean showCommunicationWindow;
 	
-	public List<Certifica2BatchDetail> getExcludeEmployeeList() {
-		if(excludeEmployeeList==null){
-			excludeEmployeeList = new LinkedList<Certifica2BatchDetail>();
-		}
-		return excludeEmployeeList;
-	}
-
-	public void setExcludeEmployeeList( List<Certifica2BatchDetail> excludeEmployeeList) {
-		this.excludeEmployeeList = excludeEmployeeList;
-	}
-
-	public boolean isShowExcludeEmployeeWindow() {
-		return showExcludeEmployeeWindow;
-	}
-
-	public void setShowExcludeEmployeeWindow(boolean showExcludeEmployeeWindow) {
-		this.showExcludeEmployeeWindow = showExcludeEmployeeWindow;
-	}
-	
-	private CertificadosWriter getCertificadosWriter() {
-		if (certificadosWriter == null) {
-			certificadosWriter = new CertificadosWriter();
-		}
-		return certificadosWriter;
-	}
 	
 	public Certifica2BatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
@@ -117,6 +77,14 @@ public class Certifica2BatchController extends BasicController {
 
 	public void setRecorded(boolean recorded) {
 		this.recorded = recorded;
+	}
+	
+	public boolean isShowCommunicationWindow() {
+		return showCommunicationWindow;
+	}
+
+	public void setShowCommunicationWindow(boolean showCommunicationWindow) {
+		this.showCommunicationWindow = showCommunicationWindow;
 	}
 
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -235,53 +203,9 @@ public class Certifica2BatchController extends BasicController {
 	}
 
 	public void onCreateDisk(ActionEvent event) {
-		try {
-			List<ITransferObject> detailList = getCertifica2DetailList((Certifica2Batch) this.getTo());
-			checkEmployeeSalaries(detailList);
-			if(!getExcludeEmployeeList().isEmpty()){
-				setShowExcludeEmployeeWindow(true);
-			} else {
-				Certifica2Batch batch = (Certifica2Batch)getTo();
-				File file = getCertificadosWriter().createFile(batch, detailList);
-				
-//				validateCertificadosFile(file);
-				
-//				if (file != null) {
-//					batch.setOutcomeFile(IOUtils.toByteArray(new FileInputStream(file)));
-//					batch.setOutcomeFileDate(new Date());
-//					batch.setStatus(FileStatus.GENERATED);
-//					super.accept(null);
-//				}
-				
-				IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
-				if (file != null) {
-					FileInputStream in = new FileInputStream(file);
-					byte[] data = IOUtils.toByteArray(in);
-					Certifica2BatchAttachment attach;
-					attach = new Certifica2BatchAttachment();
-					attach.setCertifica2Batch((Certifica2Batch) getTo());
-					attach.setDomain(((Certifica2Batch) getTo()).getDomain());
-					attach.setMimeType(MimeType.MIME_XML);
-					attach.setDescription(getCertificadosWriter().getFileName());
-					attach.setSize(null);
-					attach.setAttachmentType(SepeBatchAttachmentType.GENERATED_FILE);
-					attach.setScope(null);
-					attach.setData(data);
-					attach.setAttachDate(new Date());
-					attach = (Certifica2BatchAttachment) bean.insertOrUpdate(attach);
-					setRecorded(true);
-					changeBatchStatus(FileStatus.GENERATED);
-					Certifica2BatchAttachController controller = (Certifica2BatchAttachController) FormUtil.getController("certifica2BatchAttach");
-					controller.initializeModel();
-				}
-			}
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("error on generateCertifica2File ["+e.getMessage()+"]");
-		} catch (FileNotFoundException e) {
-			AonUtil.addErrorMessage("error on generateCertifica2File ["+e.getMessage()+"]");
-		} catch (IOException e) {
-			AonUtil.addErrorMessage("error on generateCertifica2File ["+e.getMessage()+"]");
-		}
+		CertificadosController certificados = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
+		certificados.initialize((Certifica2Batch) this.getTo());
+		certificados.onCertificadosAccept(event);
 	}
 	
 	public void onRemoveFile(ActionEvent event) throws ManagerBeanException{
@@ -298,53 +222,8 @@ public class Certifica2BatchController extends BasicController {
 			this.getManagerBean().update(batch);
 		}
 	}
-	
-	private void validateCertificadosFile(File file) {
-		try {
-			InputStream is = new FileInputStream(file);
-			String schema = null;
-			schema = SEPEFileUtils.CERTIFICADOS_SCHEMA_FILE_NAME;
-			SEPEFileUtils.validateCertificadosXmlPattern(is, schema);
-		} catch (SAXException saxe) {
-			String msg = "Error de validación de Certific@2: ausencia de datos o formato no correcto";
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(saxe.getMessage() );
-		} catch (IOException ioe) {
-			String msg = "Error de I/O al validar los datos";
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(ioe.getMessage() );
-		} catch (Exception e) {
-			String msg = "Error general al validar los datos";
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(e.getMessage() );
-		}
-	}
 
-	private void checkEmployeeSalaries(List<ITransferObject> detailList) throws ManagerBeanException {
-		excludeEmployeeList = null;
-		SEPEUtils utils = SEPEUtils.getInstance();
-		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-		Criteria criteria = null;
-		for(ITransferObject to: detailList){
-			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
-			criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), detail.getContract().getId());
-			utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SALARY_DOMAIN));
-			if(bean.getCount(criteria)<=0){
-				getExcludeEmployeeList().add(detail);
-			}
-		}
-	}
 	
-	public void onContinueExcludingEmployees(ActionEvent event) throws ManagerBeanException{
-		IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
-		for(Certifica2BatchDetail detail: getExcludeEmployeeList()){
-			bean.remove(detail);
-		}
-		loadDetails();
-		onCreateDisk(event);
-	}
-
 	public void changeBatchStatus(FileStatus status) {
 		Certifica2Batch b = (Certifica2Batch) getTo();
 		if(b != null){
@@ -354,23 +233,15 @@ public class Certifica2BatchController extends BasicController {
 	}
 
 	private void checkDiskCreated() throws ManagerBeanException {
-//		IManagerBean bean = BeanManager.getManagerBean(SepeBatchAttachment.class);
-//		Criteria criteria = new Criteria();
-//		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), ((Certifica2Batch)this.getTo()).getId());
-//		SEPEUtils.getInstance().completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_DOMAIN));
-//		if(bean.getCount(criteria)>0){
-//			setRecorded(true);
-//		} else {
-//			setRecorded(false);
-//		}
 		Certifica2BatchAttachment attach = obtainGeneratedFile();
 		setRecorded(attach!=null);
 	}
 	
 	private Certifica2BatchAttachment obtainGeneratedFile() throws ManagerBeanException {
+		Certifica2Batch batch = (Certifica2Batch)this.getTo();
 		IManagerBean bean = BeanManager.getManagerBean(SepeBatchAttachment.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), ((Certifica2Batch)this.getTo()).getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), batch.getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), SepeBatchAttachmentType.GENERATED_FILE);
 		SEPEUtils.getInstance().completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_DOMAIN));
 		if(bean.getCount(criteria)>0){
@@ -379,30 +250,10 @@ public class Certifica2BatchController extends BasicController {
 		return null;
 	}
 	
-	private List<ITransferObject> getCertifica2DetailList(Certifica2Batch batch) {
-		try {
-			SEPEUtils utils = SEPEUtils.getInstance();
-			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DETAIL_CERTIFICA2BATCH_ID), batch.getId());
-			utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DETAIL_DOMAIN));
-			criteria.addOrder("Certifica2BatchDetail.contract.enterpriseCCC.activity.type");
-			criteria.addOrder("Certifica2BatchDetail.contract.enterpriseCCC.ccc");
-			criteria.addOrder("Certifica2BatchDetail.contract.person.registry.document");
-			return bean.getList(criteria);
-		} catch (ManagerBeanException e) {
-			throw new AbortProcessingException("No se ha podido obtener la relación de empleados");
-		}
-	}
-	
-	
 	public void onInitCertificados(ActionEvent event){
 		Certifica2Batch batch =  (Certifica2Batch) this.getTo();
-		if(batch.getStatus() == FileStatus.GENERATED){
-//			validateCertificadosFile(file);
-			CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
-			certificadosController.initialize(batch);
-		}
+		CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
+		certificadosController.initialize(batch);
 	}
 	
 	/*

@@ -3,7 +3,8 @@ package com.esferalia.aon.ui.sepe.file;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 import javax.xml.bind.JAXBContext;
@@ -13,6 +14,7 @@ import javax.xml.bind.Marshaller;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
@@ -21,6 +23,7 @@ import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
 import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
@@ -80,9 +83,14 @@ public class ContrataWriter implements IContrataWriter{
 		}
 
 		SEPEUtils utils = SEPEUtils.getInstance();
-		Map<String, String> map = utils.getContractDataMap(contract);
 		
-		String code = map.get(ContextVariable.TC2.getName());
+		List<ITransferObject> list = utils.getContractData(contract, null, null, ContextVariable.TC2.getName(), false);
+		list = list.stream().map(to -> ((ContractData)to))
+			.sorted((cd1, cd2) -> cd1.getStartDate().compareTo(cd2.getStartDate()))
+			.collect(Collectors.toList());
+		
+		String code = ((ContractData)list.get(0)).getExpression().replaceAll("\"", "");
+		String codeTransform = list.size()>1?((ContractData)list.get(list.size()-1)).getExpression().replaceAll("\"", ""):"";
 
 		if( StringUtils.isBlank(code) ) {
 			String msg = "Contrato no reconocido";
@@ -105,7 +113,7 @@ public class ContrataWriter implements IContrataWriter{
 			modelPath = writer.CONTRATA_CONTRATOS_MODEL_PATH;
 		} else if( isTransformacionFile() ) {
 			ContrataTransformacionesWriter writer = new ContrataTransformacionesWriter(contract); 
-			ITransformacionType transformacionType = writer.createFile(factory.createTransformacionesType(code), (ContrataTransformacionesParams) params);
+			ITransformacionType transformacionType = writer.createFile(factory.createTransformacionesType(codeTransform), (ContrataTransformacionesParams) params);
 			transformaciones = writer.getFactory().createTRANSFORMACIONES();
 			transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().add(transformacionType);
 			modelPath = writer.CONTRATA_TRANSFORMACIONES_MODEL_PATH;

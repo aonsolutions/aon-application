@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -24,6 +25,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -88,7 +90,19 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	}
 	
 	public ITransformacionType createFile(ITransformacionType transformacionType, ContrataTransformacionesParams params) throws ManagerBeanException{
-		String code = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
+		SEPEUtils utils = SEPEUtils.getInstance();
+		String code = "";
+		try {
+			List<ITransferObject> list = utils.getContractData(contract, null, null, ContextVariable.TC2.getName(), false);
+			list = list.stream().map(to -> ((ContractData)to))
+					.filter(cd -> cd.getExpression().matches(".\\d\\d[9]."))
+					.sorted((cd1, cd2) -> cd1.getStartDate().compareTo(cd2.getStartDate()))
+					.collect(Collectors.toList());
+			code = ((ContractData)list.get(list.size()-1)).getExpression();
+			code = code.replaceAll("\"", "");
+		} catch (ManagerBeanException e) {
+			// do nothing ...
+		}
 		if (code.equals(ContractCode.C109.getValue())) {
 			return createTransformacion109(transformacionType, params);
 		} else if (code.equals(ContractCode.C139.getValue())) {

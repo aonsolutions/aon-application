@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+		
+		<ui:param name="innerToolbar" value="true" />
+		<ui:param name="showTitle" value="false" />
+		<ui:param name="showDescription" value="false" />
+		<ui:param name="toolbarID" value="toolbar-#{controller.contrataModelName}-#{suffix}" />
+		
+		<ui:define name="toolbarContent">
+			
+			<!--  
+			<aon:if test="#{!skipBatchButton}">
+				<aon:commandButton id="batch-file-#{controller.contrataModelName}"
+					value="#{bundle.sepe_contrata_batch}"
+					rendered="#{!controller.communicationIdReceived}"
+					styleClass="aon-finding-toolbar-item aon-icon-newFolder" >
+					<f:setPropertyActionListener
+						target="#{controller.showBatchWindow}" value="#{true}" />
+				</aon:commandButton>
+			</aon:if>
+			-->
+				
+			<aon:commandButton id="sepe-communication-#{toolbarID}"
+				value="#{bundle.sepe_communicate}"
+				disabled="#{controller.communicationAccepted or controller.readOnly}"
+				reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
+				actionListener="#{controller.onSendSepeFile}"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+ 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
+				styleClass="aon-finding-toolbar-item aon-icon-commit" />
+			
+			<aon:commandButton id="sepe-dataQuery-#{toolbarID}"
+				value="#{bundle.sepe_status_check}"
+				disabled="#{!controller.communicationAccepted or controller.readOnly}"
+				reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
+				actionListener="#{controller.onSepeDataQuery}"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+ 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
+				styleClass="aon-finding-toolbar-item aon-icon-update" />
+					
+			<aon:if test="#{!controller.readOnly}">
+				<aon:if test="#{!skipDownloadButton}">
+					<aon:dropDownMenu value="#{bundle.aon_more2}"
+					 	style="display:inline-block;font-size:0.8em;margin-right:4px;" >
+			            <f:facet name="label">
+							<aon:panelGroup>
+								<aon:outputText value="#{bundle.aon_more2}" /> 
+								<aon:graphicImage style="vertical-align:middle;"
+			                     	value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
+							</aon:panelGroup>
+			            </f:facet>			
+						<aon:menuItem id="sepe-process-restart-#{toolbarID}"
+							value="Reiniciar proceso"
+							rendered="#{(controller.communicationIdReceived and not controller.communicationAccepted) or (controller.communicationResponseReceived and not controller.communicationFinished)}"
+							actionListener="#{controller.onRemoveSepeFiles}"
+							reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
+							iconClass="aon-icon-refresh" 
+							/>
+						<aon:menuItem id="sepe-result-process-#{toolbarID}"
+							value="Procesar resultado"
+							rendered="#{controller.communicationResponseReceived}"
+							actionListener="#{controller.onProcessSepeResult}"
+							reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
+							iconClass="aon-icon-refresh" 
+							/>
+						<aon:menuItem iconClass="aon-icon-mail-save">
+							<aon:htmlCommandLink id="sepeXmldownload-#{toolbarID}" 
+								value="XML" target="_blank"
+								actionListener="#{controller.onDownloadSepeXml}" />
+			     		</aon:menuItem>
+					</aon:dropDownMenu>			
+				</aon:if>
+			</aon:if>
+			
+		</ui:define>
+		
+	</ui:decorate>	
+								
+</ui:composition>

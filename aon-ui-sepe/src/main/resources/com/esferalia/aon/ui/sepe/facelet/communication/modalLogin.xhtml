@@ -8,9 +8,9 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="showContrataLoginWindow">
+	<aon:panelGroup id="showLoginWindow-#{suffix}">
 		<aon:if test="#{controller.showLoginWindow}">
-			<rich:modalPanel id="contrataLoginModalPanel" minHeight="180"
+			<rich:modalPanel id="loginModalPanel" minHeight="180"
 				minWidth="450" rendered="#{controller.showLoginWindow}"
 				showWhenRendered="true" zindex="91">
 				<f:facet name="header">
@@ -22,7 +22,7 @@
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							reRender="showContrataLoginWindow" immediate="true">
+							reRender="showLoginWindow-#{suffix}" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{controller.showLoginWindow}"
@@ -30,45 +30,45 @@
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="contrataLoginForm">
+				<aon:form id="loginForm">
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
-									<aon:commandButton id="contrataCommunicationLogin-accept"
+									<aon:commandButton id="communicationLogin-accept"
 										value="#{bundle.aon_accept}"
-										reRender="showContrataCommunicationWindow-#{controller.contrataModelName},#{(controller.batch.id!=null)?(''):('contractForm')}"
+										reRender="#{reRender},#{(controller.batch.id!=null)?(''):('contractForm')}"
 										rendered="#{controller.communicator.dataCommunication}"
 										actionListener="#{controller.onSendSepeFile}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										onclick="Richfaces.showModalPanel('waitProccess')" 
 		     							oncomplete="Richfaces.hideModalPanel('waitProccess')">
 		     							<aon:actionHotKey key="return" />
-										<rich:componentControl for="contrataLoginModalPanel"
+										<rich:componentControl for="loginModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
 											target="#{controller.showLoginWindow}"
 											value="#{false}" />
 									</aon:commandButton>
-									<aon:commandButton id="contrataQueryLogin-accept"
+									<aon:commandButton id="queryLogin-accept"
 										value="#{bundle.aon_accept}"
-										reRender="showContrataCommunicationWindow-#{controller.contrataModelName},#{(controller.batch.id!=null)?(''):('contractForm')}"
+										reRender="#{reRender},#{(controller.batch.id!=null)?(''):('contractForm')}"
 										rendered="#{controller.communicator.dataQuery}"
 										actionListener="#{controller.onSepeDataQuery}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										onclick="Richfaces.showModalPanel('waitProccess')" 
 		     							oncomplete="Richfaces.hideModalPanel('waitProccess')">
 		     							<aon:actionHotKey key="return" />
-										<rich:componentControl for="contrataLoginModalPanel"
+										<rich:componentControl for="loginModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
 											target="#{controller.showLoginWindow}"
 											value="#{false}" />
 									</aon:commandButton>
-									<aon:commandButton id="contrataLogin-cancel"
+									<aon:commandButton id="login-cancel"
 										value="#{bundle.aon_cancel}"
-										reRender="showContrataLoginWindow"
+										reRender="showLoginWindow-#{suffix}"
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										<f:setPropertyActionListener
@@ -88,23 +88,23 @@
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
 										
 										<aon:panelGroup>
-											<aon:outputLabel for="contrata_user" 
+											<aon:outputLabel for="sepe_user" 
 												value="#{bundle.sepe_login_user}" />
 											<br />
 											<aon:outputText value="#{bundle.sepe_login_user2}" />
 										</aon:panelGroup>	
-										<aon:inputText id="contrata_user" 
+										<aon:inputText id="sepe_user" 
 											required="#{true}" style="width: 100%;" 
 											value="#{controller.communicator.user}" />
 										
-										<aon:outputLabel for="contrata_passwd" 
+										<aon:outputLabel for="sepe_passwd" 
 											value="#{bundle.sepe_login_passwd}" />
 										<aon:div id="passwd-div">
-											<aon:inputSecret id="contrata_passwd" 
+											<aon:inputSecret id="sepe_passwd" 
 												required="#{true}" style="width: 100%;"
 												rendered="#{!controller.communicator.passwdVisible}"
 												value="#{controller.communicator.passwd}" />	
-											<aon:inputText id="contrata_passwd-visible" 
+											<aon:inputText id="sepe_passwd-visible" 
 												required="#{true}" style="width: 100%;"
 												rendered="#{controller.communicator.passwdVisible}"
 												value="#{controller.communicator.passwd}" />
@@ -113,9 +113,9 @@
 									</aon:panelGrid>
 
 									<aon:div style="padding-top: 5px;">
-										<aon:selectBooleanCheckbox id="contrataLogin_remember"
+										<aon:selectBooleanCheckbox id="sepeLogin_remember"
 											value="#{controller.communicator.loginRemember}" />
-										<aon:outputLabel for="contrataLogin_remember"
+										<aon:outputLabel for="sepeLogin_remember"
 											styleClass="aon-italic" 
 											value="#{bundle.sepe_login_contrataLoginRemember}" />
 									</aon:div>

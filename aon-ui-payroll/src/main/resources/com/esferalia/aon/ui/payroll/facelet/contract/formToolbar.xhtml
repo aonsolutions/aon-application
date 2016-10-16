@@ -150,7 +150,6 @@
 			<aon:menuItem id="document-extension" 
 				value="Prorrogar"
 				rendered="#{contract.extensibleContract}"
-				disabled="#{empty contract.to.endDate}"
 				reRender="showExtensionContrataWindow"
 				actionListener="#{contract.onContrataExtensionShow}"
 				iconClass="aon-icon-attach-file" >
@@ -160,7 +159,6 @@
 			<aon:menuItem id="document-transform" 
 				value="Transformar a ind."
 				rendered="#{contract.transformableContract}"
-				
 				reRender="showTransformContrataWindow"
 				actionListener="#{contract.onContrataTransformShow}"
 				iconClass="aon-icon-copy" >
@@ -173,35 +171,14 @@
 			
 			<aon:menuItem id="contractContrata-communication-log"
 				value="#{bundle.aon_module_contrata}"
-				disabled="#{contractContrata.nevv}"
-				rendered="#{!contract.extendedContract and !contract.transformedContract}" ajaxSingle="true"
-				reRender="showContrataCommunicationWindow-#{contractContrata.contrataModelName}"
-				actionListener="#{contractContrata.onContrataCommunicatioShow}"
+				ajaxSingle="true"
+				reRender="showContrataCommunicationWindow"
+				actionListener="#{contract.onSepeCommunicationShow}"
 				iconClass="aon-icon-sepe-contrata" >
 				<f:setPropertyActionListener
-					target="#{contractContrata.showCommunicationWindow}" value="#{true}" />
+					target="#{contract.showCommunicationWindow}" value="#{true}" />
 			</aon:menuItem>
 			
-			<aon:menuItem id="extensionContrata-communication-log"
-				value="#{bundle.aon_module_contrata} (P)"
-				rendered="#{contract.extendedContract and !contract.transformedContract}" ajaxSingle="true"
-				reRender="showContrataCommunicationWindow-#{extensionContrata.contrataModelName}"
-				actionListener="#{contract.onExtensionCommunicationShow}"
-				iconClass="aon-icon-sepe-contrata" >
-				<f:setPropertyActionListener
-					target="#{extensionContrata.showCommunicationWindow}" value="#{true}" />
-			</aon:menuItem>
-			
-			<aon:menuItem id="transforContrata-communication-log"
-				value="#{bundle.aon_module_contrata} (T)"
-				rendered="#{contract.transformedContract}" ajaxSingle="true"
-				reRender="showContrataCommunicationWindow-#{transformContrata.contrataModelName}"
-				actionListener="#{transformContrata.onContrataDataShow}"
-				iconClass="aon-icon-sepe-contrata" >
-				<f:setPropertyActionListener
-					target="#{transformContrata.showCommunicationWindow}" value="#{true}" />
-			</aon:menuItem>
-
 			<aon:if test="#{actionDenied.moduleEnabled['payroll']}">
 				<aon:menuItem id="certificados-communication-log"
 					value="#{bundle.sepe_certificados}"
@@ -211,7 +188,7 @@
 					actionListener="#{contract.onCertificadosCommunicationShow}"
 					iconClass="aon-icon-sepe-certificados" >
 					<f:setPropertyActionListener
-						target="#{contractCertificados.showCommunicationWindow}" value="#{true}" />
+						target="#{contract.showCommunicationWindow}" value="#{true}" />
 				</aon:menuItem>
 			</aon:if>
 </aon:if>			

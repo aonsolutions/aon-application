@@ -22,7 +22,6 @@ import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.SepeBatchAttachment;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
-import com.esferalia.aon.ui.sepe.controller.CertificadosController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.batch.Certifica2BatchController;
 import com.esferalia.aon.ui.sepe.controller.batch.Certifica2ListController;
@@ -67,11 +66,6 @@ public class Certifica2BatchControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		Certifica2BatchController controller = (Certifica2BatchController) this.getController();
 		controller.onInit(null);
-		Certifica2Batch batch = (Certifica2Batch) controller.getTo();
-		if(batch.getStatus() == FileStatus.GENERATED){
-			CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
-			certificadosController.initialize(batch);
-		}
 	}
 	
 	@Override

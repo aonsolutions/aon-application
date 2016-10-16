@@ -40,7 +40,6 @@ import com.esferalia.aon.ui.payroll.controller.contract.ContractClauseController
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
-import com.esferalia.aon.ui.sepe.controller.CertificadosController;
 import com.esferalia.aon.ui.sepe.controller.ContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 
@@ -124,7 +123,6 @@ public class ContractControllerListener extends ControllerAdapter{
 			String msg = "Error loading contract agreement";
 			LOGGER.error(msg);
 		}
-			
 		
 		try {
 			controller.getContractUtils().loadContractData((Contract) controller.getTo(), controller.getParams());
@@ -135,25 +133,6 @@ public class ContractControllerListener extends ControllerAdapter{
 			LOGGER.error(msg);
 		}
 
-		ContrataController contrataController = null;
-		if(controller.isTransformedContract()){
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
-			contrataController.initialize((Contract) controller.getTo());
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-			contrataController.initialize((Contract) controller.getTo());
-		} else if(!controller.isTransformedContract() && controller.isExtendedContract()){
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
-			contrataController.initialize((Contract) controller.getTo());
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-			contrataController.initialize((Contract) controller.getTo());
-		} else {
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-			contrataController.initialize((Contract) controller.getTo());
-		}
-		
-		CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
-		certificadosController.initialize((Contract) controller.getTo());
-		
 	}
 
 	@Override
@@ -209,9 +188,6 @@ public class ContractControllerListener extends ControllerAdapter{
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Error saving contract status");
 		}
-		
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-		contrataController.initialize((Contract) controller.getTo());
 	}
 	
 	@Override
@@ -247,10 +223,8 @@ public class ContractControllerListener extends ControllerAdapter{
 			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 		}
 		
-		if(contrataController.isUpdateRequired()){
-			contrataController.getHandler().initialize((Contract) this.getController().getTo());
-			contrataController.onContrataAccept(null);
-		}
+		contrataController.getHandler().initialize((Contract) this.getController().getTo());
+		contrataController.onContrataAccept(null);
 	}
 	
 	private void updateContractDocumentFields() {

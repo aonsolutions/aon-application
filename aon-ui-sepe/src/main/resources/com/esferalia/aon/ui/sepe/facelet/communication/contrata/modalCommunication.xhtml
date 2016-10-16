@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showContrataCommunicationWindow">
+		<aon:if test="#{controller.showCommunicationWindow and not empty contrata.handler}">
+			<rich:modalPanel id="contrataCommunicationModalPanel" minHeight="500"
+				minWidth="800" rendered="#{controller.showCommunicationWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.sepe_contrata}:&#160;" />
+						<aon:outputText value="#{bundle.sepe_communication_status}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showContrataCommunicationWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{controller.showCommunicationWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="sepeContrataCommunicationForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+
+								<aon:if test="#{contrata.communicationAvailable}">
+									<aon:panel rendered="#{contrata.readOnly}">
+										<aon:outputText style="padding-left:18px;"
+											styleClass="aon-icon-warning aon-bold"
+											value="VISTA DE SOLO LECTURA" />
+										<br/>
+										<aon:outputText style="padding-left:18px;"
+											styleClass="aon-bold"
+											value="El contrato esta remesado" />
+										<br/>
+										<aon:outputText style="padding-left:18px;"
+											styleClass="aon-bold"
+											value="Fecha Notificacion: " />
+										<aon:outputText styleClass="aon-bold"
+											value="#{contrata.batch.date}" />
+									</aon:panel>
+									<aon:div style="width:99%">
+										<aon:if test="#{empty contrata.contract}">
+											<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/contrata/modalCommunication_tabContent.xhtml" >
+												<ui:param name="controller" value="#{contrata}" />
+											</ui:include>
+										</aon:if>
+										<aon:if test="#{not empty contrata.contract}">
+											<aon:if
+												test="#{!controller.extendedContract and !controller.transformedContract}">
+												<ui:include
+													src="/com/esferalia/aon/ui/sepe/facelet/communication/contrata/modalCommunication_tabContent.xhtml">
+													<ui:param name="controller" value="#{contrata}" />
+												</ui:include>
+											</aon:if>
+											<aon:if
+												test="#{controller.extendedContract or controller.transformedContract}">
+												<aon:panelTabSet id="contrataContract-panelTab"
+													switchType="ajax" immediate="true">
+													<aon:if test="#{contract.transformedContract}">
+														<aon:panelTab id="contrataTransform-tab"
+															label="Transformacion"
+															actionListener="#{contract.onTransformSepeShow}">
+															<ui:include
+																src="/com/esferalia/aon/ui/sepe/facelet/communication/contrata/modalCommunication_tabContent.xhtml">
+																<ui:param name="controller" value="#{transformContrata}" />
+															</ui:include>
+														</aon:panelTab>
+													</aon:if>
+													<aon:if
+														test="#{contract.extendedContract and contract.extensionCount>1}">
+														<aon:panelTab id="contrataExtension2-tab" label="2ª Prorroga"
+															actionListener="#{contract.onExtension2SepeShow}">
+															<ui:include
+																src="/com/esferalia/aon/ui/sepe/facelet/communication/contrata/modalCommunication_tabContent.xhtml">
+																<ui:param name="controller" value="#{extensionContrata}" />
+																<ui:param name="suffix" value="#{contract.extensionCount}" />
+															</ui:include>
+														</aon:panelTab>
+													</aon:if>
+													<aon:if test="#{contract.extendedContract}">
+														<aon:panelTab id="contrataExtension-tab" label="1ª Prorroga"
+															actionListener="#{contract.onExtension1SepeShow}">
+															<ui:include
+																src="/com/esferalia/aon/ui/sepe/facelet/communication/contrata/modalCommunication_tabContent.xhtml">
+																<ui:param name="controller" value="#{extensionContrata}" />
+															</ui:include>
+														</aon:panelTab>
+													</aon:if>
+													<aon:panelTab id="contrataContract-tab" label="Contrato"
+														actionListener="#{contract.onContractSepeShow}">
+														<ui:include
+															src="/com/esferalia/aon/ui/sepe/facelet/communication/contrata/modalCommunication_tabContent.xhtml">
+															<ui:param name="controller" value="#{contractContrata}" />
+														</ui:include>
+													</aon:panelTab>
+												</aon:panelTabSet>
+											</aon:if>
+										</aon:if>
+									</aon:div>
+								</aon:if>
+								
+								<aon:if test="#{!contrata.communicationAvailable}">
+									<aon:outputText style="color:red;padding-left:18px;" styleClass="aon-icon-wrong"
+										value="Tipo de contrato sin implementación para comunicaciones con Contrat@." />
+								</aon:if>
+								
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+				
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalLogin.xhtml" >
+					<ui:param name="controller" value="#{contrata}" />
+					<ui:param name="suffix" value="contrata" />
+					<ui:param name="reRender" value="showContrataCommunicationWindow" />
+				</ui:include>
+				
+			</rich:modalPanel>
+		</aon:if>
+	</aon:panelGroup>
+
+</ui:composition>

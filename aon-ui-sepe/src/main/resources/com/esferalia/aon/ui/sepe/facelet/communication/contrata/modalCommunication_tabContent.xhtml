@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/contrata/modalToolbar.xhtml" />
+	<aon:div rendered="#{controller.communicationIdReceived or controller.communicationResponseReceived}">
+		<aon:outputText escape="#{false}" 
+			value="#{controller.communicationLogContent}" />
+	</aon:div>
+<!--  
+	<div style='background-color:#E4E4E4; width:98%; padding:5px;'><b>Datos comunicados al SEPE</b></div>
+	<aon:div rendered="#{controller.communicationIdReceived}">
+		<aon:outputText escape="#{false}" 
+			value="#{controller.communicationLogContent}" />
+	</aon:div>
+	<aon:div rendered="#{!controller.communicationIdReceived}">
+		<aon:commandButton id="sepe-communication-#{controller.contrataModelName}"
+			value="#{bundle.sepe_communicate}"
+			disabled="#{controller.communicationAccepted or controller.readOnly}"
+			reRender="showContrataCommunicationWindow-#{controller.contrataModelName},#{(controller.batch.id!=null)?(''):('contractForm')}"
+			actionListener="#{controller.onSendSepeFile}"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+			oncomplete="Richfaces.hideModalPanel('waitProccess')"
+			styleClass="aon-finding-toolbar-item aon-icon-commit" />
+	</aon:div>
+	<div style='background-color:#E4E4E4; width:98%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>
+	<aon:div rendered="#{controller.communicationResponseReceived}">
+		<aon:outputText escape="#{false}" 
+			value="#{controller.communicationLogContent}" />
+	</aon:div>
+	<aon:div rendered="#{!controller.communicationResponseReceived}">
+		<aon:commandButton id="sepe-dataQuery-#{controller.contrataModelName}"
+			value="#{bundle.sepe_status_check}"
+			disabled="#{!controller.communicationAccepted or controller.readOnly}"
+			reRender="showContrataCommunicationWindow-#{controller.contrataModelName},#{(controller.batch.id!=null)?(''):('contractForm')}"
+			actionListener="#{controller.onSepeDataQuery}"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+			oncomplete="Richfaces.hideModalPanel('waitProccess')"
+			styleClass="aon-finding-toolbar-item aon-icon-update" />
+	</aon:div>
+-->
+
+</ui:composition>
