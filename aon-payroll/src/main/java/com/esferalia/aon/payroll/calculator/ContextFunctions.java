@@ -31,6 +31,7 @@ import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.HideException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
@@ -80,6 +81,10 @@ public class ContextFunctions {
 	public static enum Guaranteed {
 		BR, NET, RAW;
 
+	}
+
+	public static void hide() throws HideException {
+		throw new HideException();
 	}
 
 	public static void remove() throws RemoveException {
@@ -444,6 +449,25 @@ public class ContextFunctions {
 		}
 	}
 
+	private static void loadHideFunction(ExpressionContext context, Date startDate, Date endDate)
+			throws ExpressionException {
+		try {
+			Method remove = ContextFunctions.class.getMethod("hide");
+
+			MethodStub removeStub = new MethodStub(remove);
+
+			context.setVariable(ContextVariable.HIDE, removeStub, startDate, endDate);
+
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 	private static void loadRemoveFunction(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
 		try {
@@ -610,6 +634,7 @@ public class ContextFunctions {
 		loadWarnFunction(context, startDate, endDate);
 		loadMonthsFunction(context, startDate, endDate);
 		loadIsDefFunction(context, startDate, endDate);
+		loadHideFunction(context, startDate, endDate);
 		loadRemoveFunction(context, startDate, endDate);
 		loadExcessFunction(context, startDate, endDate);
 		loadSeniorityFunction(context, startDate, endDate);

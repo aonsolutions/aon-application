@@ -61,6 +61,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionException
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.HideException;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -975,6 +976,8 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 					onInvalidData(contractBonus, e.getMessage(), e.getVariables());
 				} catch (CheckException e) {
 					onCheckError(contractBonus, e.getMessage());
+				} catch (HideException e) {
+					// Hide, do nothing
 				} catch (RemoveException | RemoveVariableError e) {
 					onRemove(contractBonus);
 				} catch (CompileException e) {
@@ -1184,6 +1187,8 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 			// quoteCalculator.quote(contractPayment, paymentStart,
 			// paymentEnd, total);
 
+		} catch (HideException e) {
+			addResult(expressionContext, name, start, end, 0.00);
 		} catch (RemoveException e) {
 			onRemove(contractPayment);
 			addResult(expressionContext, name, start, end, 0.00);
