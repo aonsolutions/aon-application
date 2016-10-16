@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.71-SNAPSHOT</version>
+		<version>8.71</version>
 	</parent>
 	<artifactId>aon.aeat.mipf</artifactId>
 	<packaging>rpm</packaging>
@@ -17,7 +17,7 @@
 	<scm>
 		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon.aeat.mipf</developerConnection>
 		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon.aeat.mipf</connection>
-	  <tag>HEAD</tag>
+	  <tag>8.71.x</tag>
   </scm>
 	<build>
 		<finalName>aon-aio</finalName>
