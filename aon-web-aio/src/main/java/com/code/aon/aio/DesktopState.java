@@ -146,7 +146,7 @@ public class DesktopState implements Serializable {
 		}
 		if (! adc.isDeniedModule(Module.PAYROLL.getName()) ) {
 			categories = (String[]) ArrayUtils.add(categories, IAuditConstants.PAYROLL_CATEGORY);
-			groups = (String[]) ArrayUtils.addAll(groups, new String[]{IAuditConstants.GROUP_PAYROLL_CONTRATA_MAIN});
+			groups = (String[]) ArrayUtils.addAll(groups, new String[]{IAuditConstants.GROUP_PAYROLL_CONTRATA_MAIN, IAuditConstants.GROUP_CONFIGURATION_UTILITIES});
 		}
 		adc.getManager().enableOnly(categories, groups, IAuditConstants.MAIL_ACCOUNT_ACTION, IAuditConstants.SIGNATURE_ACTION);
 	}
