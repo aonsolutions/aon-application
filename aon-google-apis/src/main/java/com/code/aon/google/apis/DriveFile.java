@@ -8,13 +8,14 @@ public class DriveFile implements Serializable {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private String url, description,mimetype,id;
+	private String url, description,mimetype,id, name;
 	
 	
 	public DriveFile(String id,String url, String description, String mimetype) {
 		this.id=id;
 		this.url = url;
 		this.description = description;
+		this.name = description.length()> 15 ? description.substring(0,15) + "..." : description;
 		this.mimetype = mimetype;
 		
 	}
@@ -32,6 +33,14 @@ public class DriveFile implements Serializable {
 	
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public String getMimetype(){
