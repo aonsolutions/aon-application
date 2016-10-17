@@ -43,6 +43,7 @@ public interface IAuditConstants {
 	String GROUP_DOCUMENT = "group_documental";
 	String GROUP_DOCUMENT_UTILITIES = "group_documental_utilities";
 	String GROUP_PAYROLL_CONTRATA_MAIN = "group_payroll_contrata_general";
+	String GROUP_CONFIGURATION_UTILITIES = "group_configuration_utilities";
 	
 	String MAIL_ACCOUNT_ACTION = "mailAccount_list-enterprise";	
 	String SIGNATURE_ACTION = "signature_list-enterprise";
