@@ -51,7 +51,7 @@ public class SolicitudCalculosBuilder extends AbstractLiquidacionBuilder<Solicit
 		Periodo periodoPresentacion = newPeriodo();
 		periodoPresentacion.setAnho(String.format("%d",anhoPresentacion));
 		periodoPresentacion.setMes(String.format("%02d",mesPresentacion.getValue()));
-		liquidacion.setPeriodoDesde(periodoPresentacion);
+		liquidacion.setPeriodoPresentacion(periodoPresentacion);
 		
 		if ( indicadorCalculosDesglosados )
 			liquidacion.setIndicadorCalculosDesglosados("S");
@@ -77,9 +77,10 @@ public class SolicitudCalculosBuilder extends AbstractLiquidacionBuilder<Solicit
 	}
 	
 
-	public void setIndicadorCalculosDesglosados(
+	public SolicitudCalculosBuilder setIndicadorCalculosDesglosados(
 			boolean indicadorCalculosDesglosados) {
 		this.indicadorCalculosDesglosados = indicadorCalculosDesglosados;
+		return this;
 	}
 
 }
