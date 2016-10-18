@@ -7,6 +7,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
 import com.code.aon.account.Account;
@@ -17,6 +19,7 @@ import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
+import com.code.aon.registry.RegistryNote;
 import com.code.aon.ui.common.controller.IAuditableController;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
@@ -27,6 +30,9 @@ import com.code.aon.ui.util.AonUtil;
 public class CustomerController extends CustomerListController implements ICustomerConstants, IAuditableController {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private final static Logger LOGGER = LoggerFactory
+			.getLogger(CustomerController.class);
 	
     private boolean showAlumnData;
     private boolean showAlumnUpdateConfirmWindow;
@@ -84,10 +90,13 @@ public class CustomerController extends CustomerListController implements ICusto
 		try {
 			if(this.getModel().isRowAvailable()){
 				Customer customer = (Customer) this.getModel().getRowData();
-				return controller.getRegistryObservation(customer.getRegistry()).getComments();
+				RegistryNote rObservation = controller.getRegistryObservation(customer.getRegistry());
+				if(rObservation!=null){
+					return rObservation.getComments();
+				}
 			}
 		} catch (ManagerBeanException e) {
-			// nada
+			LOGGER.error(e.getMessage());
 		}
 		return null;
 	}
