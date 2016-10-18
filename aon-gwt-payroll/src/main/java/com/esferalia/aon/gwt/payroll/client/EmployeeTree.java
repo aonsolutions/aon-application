@@ -619,10 +619,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		private String getFileName(int month, int year, String tipo,
 				Collection<CCC> cccs) {
-
-			StringBuffer buffer = new StringBuffer();
-
-			buffer.append(file.getFilename());
+			
+			
+		     StringBuffer buffer = new StringBuffer();
+			
+		     
+		     buffer.append(cleanDiacritics(file.getFilename()));
+			
 			for (CCC ccc : cccs) {
 				buffer.append('-');
 				buffer.append("0111");
@@ -2343,6 +2346,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		Activity activity = workplace.getActivity();
 		return activity.getDescription() + "," + ccc.getCode();
 	}
+	
+	private static native String cleanDiacritics(String str) /*-{
+		return str.normalize('NFD').replace(/[\u0300-\u036f]/g,"");
+	}-*/;
 	
 	
 

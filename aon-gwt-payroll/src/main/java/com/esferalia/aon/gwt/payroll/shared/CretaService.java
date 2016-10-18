@@ -103,7 +103,7 @@ public interface CretaService {
 		SOLICITUD_CONFIRMACION {
 			@Override
 			public String getFilename() {
-				return "SLD-Fichero de Solicitud de Confirmaci\u00FAn";
+				return "SLD-Fichero de Solicitud de Confirmaci\u00F3n";
 			}
 
 			@Override
