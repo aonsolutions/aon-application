@@ -45,4 +45,15 @@ public class SummaryMonthly extends Summary {
 			
 		}
 	}
+	
+	@Override
+	public boolean isEmpty() {
+		boolean empty = true;
+		for (int i = 0; i < months.length; i++) {
+			if (getMonths()[i] != 0) {
+				empty = false;
+			};
+		}
+		return super.isEmpty() && empty;
+	}
 }
