@@ -109,7 +109,10 @@ public class AFIWriter implements Serializable {
 		eti.setFichero(formatter.format(date));
 		
 		eti.setIdentificador(AFI+WINSUITE_VERSION);
-		String authorizationKey = getAuthorizationKey();
+		String authorizationKey = getAuthorizationKey(DomainManager.getCurrentDomain());
+		if(StringUtils.isBlank(authorizationKey)){
+			authorizationKey = getAuthorizationKey(DomainManager.getDomainProvider().getParentDomain());
+		}
 		if(StringUtils.isNotBlank(authorizationKey)){
 			eti.setClave(StringUtils.leftPad(authorizationKey, 8, '0'));
 		} else {
@@ -415,29 +418,19 @@ public class AFIWriter implements Serializable {
 		return false;
 	}
 	
-	private String getAuthorizationKey() {
+	private String getAuthorizationKey(Integer domain) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			String select = "SELECT value FROM app_param";
-			select += " WHERE domain = " + DomainManager.getCurrentDomain();
+			select += " WHERE domain = " + domain;
 			select += " AND name = '" + AppParam.PAY_authorization_key_PAY.getValue() + "';";
 			
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();
 			if(rs.next()){
 				return rs.getString(1);
-			} else {
-				select = "SELECT value FROM app_param";
-				select += " WHERE domain = " + DomainManager.getDomainProvider().getParentDomain();
-				select += " AND name = '" + AppParam.PAY_authorization_key_PAY.getValue() + "';";
-				
-				ps = conn.prepareStatement(select);
-				rs = ps.executeQuery();
-				if(rs.next()){
-					return rs.getString(1);
-				}
 			}
 		} catch (AonConnectionException e) {
 			// return null
