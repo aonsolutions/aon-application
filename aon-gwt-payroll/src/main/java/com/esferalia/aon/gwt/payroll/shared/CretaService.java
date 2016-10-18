@@ -32,7 +32,8 @@ public interface CretaService {
 		IBAN, 
 		TITULAR, 
 		DOCUMENTO, 
-		TIPO_DOCUMENTO
+		TIPO_DOCUMENTO,
+		CALCULOS_DESGLOSADOS
 	}
 
 	public static enum File {

@@ -246,7 +246,9 @@ public class CretaServlet extends HttpServlet
 		String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
 		String hastaAnho = req.getParameter(CretaService.Parameter.HASTA_ANHO.name());
 		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
-		Calculo.generate(autorizado,desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, cccs, resp.getOutputStream());
+		boolean claculosDesglosados = AonStringUtils.equalsIgnoreCase("on",
+				req.getParameter(CretaService.Parameter.CALCULOS_DESGLOSADOS.name()));
+		Calculo.generate(autorizado,desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, claculosDesglosados, cccs, resp.getOutputStream());
 	}
 
 	@Override

@@ -554,7 +554,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				final int toMonth, final int toYear,
 				final int ctrlMonth, final int ctrlYear,
 				final String tipo, final Collection<CCC> cccs,
-				final boolean basesMesAnterior) {
+				final boolean basesMesAnterior,
+				final boolean calcsDetailed) {
 			StringBuffer requestDataBuffer = new StringBuffer();
 
 			requestDataBuffer.append("&" + Parameter.TIPO + "=" + tipo);
@@ -574,6 +575,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			if (basesMesAnterior)
 				requestDataBuffer.append(
 						"&" + Parameter.ACEPTAR_BASES_ANTERIORES + "=on");
+
+			if (calcsDetailed)
+				requestDataBuffer.append(
+						"&" + Parameter.CALCULOS_DESGLOSADOS + "=on");
 
 			// Send request to server and catch any errors.
 
@@ -848,8 +853,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			long autorizado = dialog.getAuthorized();
 			Set<CCC> ccs = dialog.getSelectedData();
 			boolean basesMesAnterior = dialog.previousBases();
+			boolean calcsDetailed = dialog.calcsDetailed();
 
-			send(autorizado, desdeMes, desdeAnyo, hastaMes, hastaAnyo, ctrlMes, ctrlAnyo, tipo, ccs, basesMesAnterior);
+			send(autorizado, desdeMes, desdeAnyo, hastaMes, hastaAnyo, ctrlMes, ctrlAnyo, tipo, ccs, basesMesAnterior, calcsDetailed);
 
 			return true;
 		}
@@ -888,6 +894,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				@Override
 				public void visitSolicitudCalculos(Void t, Void l)
 						throws RuntimeException {
+					dialog.setVisibleCalcsDetailed(true);
 				}
 
 				@Override

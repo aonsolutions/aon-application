@@ -130,10 +130,16 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 	Element previousBasesTR;
 
 	@UiField
+	Element calcsDetailedTR;
+
+	@UiField
 	ListBox typeListBox;
 	
 	@UiField
 	CheckBox previousBasesCheckBox;
+
+	@UiField
+	CheckBox calcsDetailedCheckBox;
 
 	private Callback callback;
 	
@@ -147,6 +153,8 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		
 		setVisiblePreviousBases(false);
 		
+		setVisibleCalcsDetailed(false);
+
 		// Full CCC.
 		Column<CCC, String> fullNameColumn = new Column<CCC, String>(
 				new TextCell()) {
@@ -357,6 +365,10 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		return previousBasesCheckBox.getValue();
 	}
 	
+	public boolean calcsDetailed(){
+		return calcsDetailedCheckBox.getValue();
+	}
+
 	public String getDescription(CCC ccc) {
 		return ccc.getCode();
 	}
@@ -386,6 +398,9 @@ public class CretaRequestDialog extends SelectDialog<CCC> {
 		setVisible(visible, previousBasesTR);
 	}
 	
+	protected void setVisibleCalcsDetailed(boolean visible){
+		setVisible(visible, calcsDetailedTR);
+	}
 	
 	protected void setVisible(boolean visible, Element el){
 		if ( visible )

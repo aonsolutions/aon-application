@@ -12,6 +12,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
@@ -36,6 +37,10 @@ public class Calculo {
 		Option ccc =  Borrador.getCCCOption();
 		Option authorized =  Borrador.getAuthorizedOption();
 		Option type =  Borrador.getTypeOption(tipo);
+		Option calcDetailed = OptionBuilder
+				.withLongOpt("calc-detailed")
+				.withDescription("Results detailed by each employee and each  period")
+				.create();
 		
 		Options options = new Options()
 		.addOption(authorized)
@@ -63,8 +68,9 @@ public class Calculo {
 			tipo = cmd.getOptionValue(type.getLongOpt(), tipo);
 			String cccs [] = cmd.getOptionValues(ccc.getLongOpt());
 			String autorizado = cmd.getOptionValue(authorized.getLongOpt());
-			
-			generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, cccs, System.out);
+			boolean calculosDesglosados = cmd.hasOption(calcDetailed.getLongOpt());
+
+			generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, calculosDesglosados, cccs, System.out);
 			
 		} catch (ParseException e) {
 			// oops, something went wrong
@@ -80,19 +86,21 @@ public class Calculo {
 	
 	public static void generate(String autorizado, String desdeMes, String desdeAnho,
 			String hastaMes, String hastaAnho,
-			String tipo, String cccs[], OutputStream os) throws JAXBException {
+			String tipo, boolean calculosDesglosados, String cccs[], OutputStream os) throws JAXBException {
 
 		int authorized = Integer.parseInt(autorizado);
 		Month fromMonth = Month.of(Integer.parseInt(desdeMes));
 		int fromYear = Integer.parseInt(desdeAnho);
 		Month toMonth = Month.of(Integer.parseInt(hastaMes));
 		int toYear = Integer.parseInt(hastaAnho);
+		Month showMonth = toMonth == Month.DECEMBER ? Month.JANUARY: Month.values()[toMonth.ordinal()+1];
+		int showYear = showMonth == Month.JANUARY ? toYear + 1: toYear;
 
-		generate(authorized, fromMonth, fromYear, toMonth, toYear, tipo, cccs, os);
+		generate(authorized, fromMonth, fromYear, toMonth, toYear, showMonth, showYear, tipo, calculosDesglosados, cccs, os);
 	}
 
 	public static void generate(int autorizado, Month desdeMes, int desdeAnho,Month hastaMes, int hastaAnho,
-			String tipo, String cccs[], OutputStream os) throws JAXBException {
+			Month presentacionMes, int presentacionAnho, String tipo, boolean calculosDesglosados, String cccs[], OutputStream os) throws JAXBException {
 
 		SolicitudCalculosBuilder builder = 
 				new SolicitudCalculosBuilder()
@@ -106,8 +114,9 @@ public class Calculo {
 			.setAnhoDesde(desdeAnho)
 			.setMesHasta(hastaMes)
 			.setAnhoHasta(hastaAnho)
-			.setMesPresentacion(hastaMes) 
-			.setAnhoPresentacion(hastaAnho)
+			.setMesPresentacion(presentacionMes) 
+			.setAnhoPresentacion(presentacionAnho)
+			.setIndicadorCalculosDesglosados(calculosDesglosados)
 			.addLiquidacion()
 			;
 		}

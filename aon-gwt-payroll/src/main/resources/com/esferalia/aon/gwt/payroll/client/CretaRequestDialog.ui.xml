@@ -148,6 +148,14 @@
 					<g:CheckBox  name="{ACEPTAR_BASES_ANTERIORES.name}" ui:field="previousBasesCheckBox" checked="false"/>
 				</td>
 			</tr>
+			<tr ui:field="calcsDetailedTR"  >
+				<td class="{style.label}">
+					<g:Label text="Calculos Desglosados" />
+				</td>
+				<td class="{style.field}" >
+					<g:CheckBox  name="{CALCULOS_DESGLOSADOS.name}" ui:field="calcsDetailedCheckBox" checked="false"/>
+				</td>
+			</tr>
 			<tr>
 				<td class="{style.field}" colspan="2">&nbsp;</td>
 			</tr>
