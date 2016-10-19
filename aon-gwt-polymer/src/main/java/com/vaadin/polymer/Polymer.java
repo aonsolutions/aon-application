@@ -15,7 +15,6 @@ import com.vaadin.polymer.Polymer.PolymerRoot.Base;
 import com.vaadin.polymer.elemental.Function;
 import com.vaadin.polymer.elemental.HTMLElement;
 
-import jsinterop.annotations.JsType;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class Polymer {
@@ -23,10 +22,10 @@ public abstract class Polymer {
     private static PolymerRoot Polymer;
     public static Base Base;
 
-    @JsType(isNative=true, name="Polymer")
+    @jsinterop.annotations.JsType(isNative=true, name="Polymer")
     public interface PolymerRoot {
 
-        @JsType(isNative=true, namespace="Polymer")
+        @jsinterop.annotations.JsType(isNative=true, namespace="Polymer")
         public interface Base {
             /**
              * Returns the first node in this element’s local DOM that matches selector.
