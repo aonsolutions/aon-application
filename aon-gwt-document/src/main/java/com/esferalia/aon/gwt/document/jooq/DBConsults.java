@@ -30,7 +30,6 @@ import org.jooq.Result;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.document.shared.Category;
-import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Contact;
 import com.esferalia.aon.gwt.document.shared.ContactList;
 import com.esferalia.aon.gwt.document.shared.Document;
@@ -712,18 +711,16 @@ public class DBConsults {
 	}
 	}
 	
-	public static CategoryList getCategoryList(Domain domain, User user){
+	public static LinkedList<Category> getCategoryList(Domain domain, User user){
 		AONContext ctx = null;
 		try {
-			CategoryList cl = new CategoryList();
-			
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
 			Result<Record2<String, Integer>> category = ctx.getDslContext().select(CATEGORY.NAME,CATEGORY.ID)
 					.from(CATEGORY).join(DOMAIN)
 					.on(CATEGORY.DOMAIN.eq(DOMAIN.ID))
 					.where(DOMAIN.NAME.eq(domain.getName()).and(CATEGORY.TYPE.eq((byte)0))).orderBy(CATEGORY.NAME).fetch();
-			Vector<Category> vector = new Vector<Category>();
+			LinkedList<Category> list = new LinkedList<Category>();
 			for (Record2<String, Integer> record : category) {
 				Category c = new Category();
 				if (record.value1() != null)
@@ -732,7 +729,7 @@ public class DBConsults {
 					c.setId(record.value2());
 				c.setIsParent(false);
 				c.setIsSon(false);
-				vector.add(c);
+				list.add(c);
 			}
 						
 			Result<Record2<String, Integer>> categoryParent = ctx.getDslContext().select(CATEGORY.NAME,CATEGORY.ID)
@@ -747,23 +744,20 @@ public class DBConsults {
 					c.setId(record.value2());
 				c.setIsParent(true);
 				c.setIsSon(false);
-				long i = vector.stream().filter(cat -> cat.getName().equals(c.getName())).count();
-				if(i==0) vector.add(c);
+				long i = list.stream().filter(cat -> cat.getName().equals(c.getName())).count();
+				if(i==0) list.add(c);
 			}
 			
-			cl.setList(vector);
-			return cl;
+			return list;
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
 
-	public static CategoryList getCategoryListSon(Domain domain, User user) {
+	public static LinkedList<Category> getCategoryListSon(Domain domain, User user) {
 		AONContext ctx = null;
 		try {
-			CategoryList cl = new CategoryList();
-			
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin());
 			
 			Result<Record3<String, Integer, String>> categorySon = ctx.getDslContext().select(CATEGORY.NAME,CATEGORY.ID,DOMAIN.NAME)
@@ -772,7 +766,7 @@ public class DBConsults {
 				.where(DOMAIN.PARENT.eq(ctx.getDslContext().select(DOMAIN.ID)
 						.from(DOMAIN)
 						.where(DOMAIN.NAME.eq(domain.getName()))).and(CATEGORY.TYPE.eq((byte)0))).orderBy(CATEGORY.NAME).fetch();
-			Vector<Category> vector = new Vector<Category>();
+			LinkedList<Category> list = new LinkedList<Category>();
 			for (Record3<String, Integer, String> record : categorySon) {
 				Category c = new Category();
 				if (record.value1() != null)
@@ -783,11 +777,10 @@ public class DBConsults {
 				c.setIsSon(true);
 				if(record.value3() !=null) 
 					c.setDomain(record.value3());
-				long i = vector.stream().filter(cat -> cat.getName().equals(c.getName())).count();
-				if(i==0) vector.add(c);			
+				long i = list.stream().filter(cat -> cat.getName().equals(c.getName())).count();
+				if(i==0) list.add(c);			
 			}
-			cl.setList(vector);
-			return cl;
+			return list;
 		} finally {
 			if (ctx != null)
 			ctx.close();

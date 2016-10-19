@@ -218,7 +218,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 				lb2.addItem(Character.toString((char)9660)+t.getName());
 			else lb2.addItem(t.getName());
 		}
-		for (Category c : lists2.getCategoryList().getList()) {
+		for (Category c : lists2.getCategoryList()) {
 			if(c.getIsParent())
 				lb1.addItem(Character.toString((char)9650)+c.getName());
 			else if(c.getIsSon())
@@ -336,7 +336,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 				son1=true;
 				ListBox auxlb = (ListBox) grid.getWidget(5, 1);
 				removeFilter(auxlb);
-				for (Category c : lists2.getCategoryListSon().getList()) {
+				for (Category c : lists2.getCategoryListSon()) {
 					if(c.getDomain().equals(string2)){
 						auxlb.addItem(Character.toString((char)9660)+c.getName());
 						grid.setWidget(5, 1, auxlb);
@@ -525,7 +525,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 					lb2.addItem(Character.toString((char)9660)+t.getName());
 			}
 		}
-		for (Category c : lists2.getCategoryList().getList()) {
+		for (Category c : lists2.getCategoryList()) {
 			if(c.getIsParent())
 				lb1.addItem(Character.toString((char)9650)+c.getName());
 			else if(c.getIsSon())
@@ -533,7 +533,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			else lb1.addItem(c.getName());
 		}
 		if(dialog.getSon()){
-			for(Category c : lists2.getCategoryListSon().getList()){
+			for(Category c : lists2.getCategoryListSon()){
 				if(c.getDomain().equals(dialog.getFileInfo().getDomain()))
 					lb1.addItem(Character.toString((char)9660)+c.getName());
 			}
@@ -778,7 +778,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 			for(Tag t : lists2.getTagListDomainZero().getList()){
 				lb2.addItem(t.getName());
 			}
-			for(Category c : lists2.getCategoryListDomainZero().getList()){
+			for(Category c : lists2.getCategoryListDomainZero()){
 				lb1.addItem(c.getName());
 			}
 		}
@@ -796,7 +796,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 						lb2.addItem(Character.toString((char)9660)+t.getName());
 				}
 			}
-			for (Category c : lists2.getCategoryList().getList()) {
+			for (Category c : lists2.getCategoryList()) {
 				if(c.getIsParent())
 					lb1.addItem(Character.toString((char)9650)+c.getName());
 				else if(c.getIsSon())
@@ -804,7 +804,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 				else lb1.addItem(c.getName());
 			}
 			if(dialog.getSon()){
-				for(Category c : lists2.getCategoryListSon().getList()){
+				for(Category c : lists2.getCategoryListSon()){
 					if(c.getDomain().equals(dialog.getSearchDomain()))
 						lb1.addItem(Character.toString((char)9660)+c.getName());
 				}
@@ -838,7 +838,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 					son1 = true;
 					ListBox auxlb = (ListBox) grid.getWidget(4, 1);
 					removeFilter(auxlb);
-					for (Category c : lists2.getCategoryListSon().getList()) {
+					for (Category c : lists2.getCategoryListSon()) {
 						if(c.getDomain().equals(string2)){
 							auxlb.addItem(Character.toString((char)9660)+c.getName());
 							grid.setWidget(4, 1, auxlb);
@@ -1375,12 +1375,12 @@ public abstract class DocumentsDialog extends CustomDialogB {
 				ListBox lb2 = new ListBox();
 				lb2.addItem("-");
 				if(isServiconvenios){
-					for(Category category : lists2.getCategoryListDomainZero().getList()){
+					for(Category category : lists2.getCategoryListDomainZero()){
 						lb2.addItem(category.getName());
 					}
 				}
 				else{
-					for (Category category : lists2.getCategoryList().getList()) {
+					for (Category category : lists2.getCategoryList()) {
 						if(category.getIsParent())
 							lb2.addItem(Character.toString((char)9650)+category.getName());
 						else if(category.getIsSon())
@@ -1391,7 +1391,7 @@ public abstract class DocumentsDialog extends CustomDialogB {
 				
 				//TODO				
 				if(son1){
-					for(Category category : lists2.getCategoryListSon().getList()){
+					for(Category category : lists2.getCategoryListSon()){
 						if(category.getDomain().equals(domainSon)){
 							lb2.addItem(Character.toString((char)9660)+category.getName());
 						}

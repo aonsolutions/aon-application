@@ -1,11 +1,13 @@
 package com.esferalia.aon.gwt.document.shared;
 
+import java.util.LinkedList;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Lists implements IsSerializable{
-	CategoryList categoryListDomainZero = new CategoryList();
-	CategoryList categoryList = new CategoryList();
-	CategoryList categoryListSon = new CategoryList();
+	LinkedList<Category> categoryListDomainZero = new LinkedList<Category>();
+	LinkedList<Category> categoryList = new LinkedList<Category>();
+	LinkedList<Category> categoryListSon = new LinkedList<Category>();
 	TagList tagListDomainZero = new TagList();
 	TagList tagList = new TagList();
 	TagList tagListSon = new TagList();
@@ -15,10 +17,10 @@ public class Lists implements IsSerializable{
 		
 	}
 	
-	public CategoryList getCategoryList() {
+	public LinkedList<Category> getCategoryList() {
 		return categoryList;
 	}
-	public void setCategoryList(CategoryList categoryList) {
+	public void setCategoryList(LinkedList<Category> categoryList) {
 		this.categoryList = categoryList;
 	}
 	public TagList getTagList() {
@@ -34,11 +36,11 @@ public class Lists implements IsSerializable{
 		this.scopeList = scopeList;
 	}
 
-	public CategoryList getCategoryListSon() {
+	public LinkedList<Category> getCategoryListSon() {
 		return categoryListSon;
 	}
 
-	public void setCategoryListSon(CategoryList categoryListSon) {
+	public void setCategoryListSon(LinkedList<Category> categoryListSon) {
 		this.categoryListSon = categoryListSon;
 	}
 
@@ -58,11 +60,11 @@ public class Lists implements IsSerializable{
 		this.scopeListSon = scopeListSon;
 	}
 
-	public CategoryList getCategoryListDomainZero() {
+	public LinkedList<Category> getCategoryListDomainZero() {
 		return categoryListDomainZero;
 	}
 
-	public void setCategoryListDomainZero(CategoryList categoryListDomainZero) {
+	public void setCategoryListDomainZero(LinkedList<Category> categoryListDomainZero) {
 		this.categoryListDomainZero = categoryListDomainZero;
 	}
 

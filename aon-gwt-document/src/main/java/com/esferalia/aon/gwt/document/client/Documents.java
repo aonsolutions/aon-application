@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.document.client.css.AonGwtDocumentResources;
 import com.esferalia.aon.gwt.document.shared.Category;
-import com.esferalia.aon.gwt.document.shared.CategoryList;
 import com.esferalia.aon.gwt.document.shared.Dialog;
 import com.esferalia.aon.gwt.document.shared.DisclosureImages;
 import com.esferalia.aon.gwt.document.shared.Document;
@@ -767,7 +766,7 @@ public class Documents implements EntryPoint {
 
 		/** CATEGORIES **/
 		VerticalPanel vcat =  new VerticalPanel();
-		for(Category c : lists.getCategoryList().getList()){
+		for(Category c : lists.getCategoryList()){
 			
 			cAux= c;
 			Button b =new Button(c.getName()); 
@@ -1154,7 +1153,7 @@ public class Documents implements EntryPoint {
             		}
             		// Categoria - Category
             		ListBox lb1 = (ListBox)grid.getWidget(4, 1);
-            		for (Category c : lists.getCategoryList().getList()) {
+            		for (Category c : lists.getCategoryList()) {
             			String s1 = lb1.getItemText(lb1.getSelectedIndex());
             			if(s1.substring(0, 1).equals(Character.toString((char)9650)) || s1.substring(0, 1).equals(Character.toString((char)9660)) )
             				s1 = s1.substring(1);
@@ -1618,7 +1617,7 @@ public class Documents implements EntryPoint {
                 
             	fi.setCategory(-1);
             	ListBox lb1 = (ListBox)grid.getWidget(5-auxNum, 1);
-            	for (Category c : lists.getCategoryList().getList()) {
+            	for (Category c : lists.getCategoryList()) {
             		String s1 = lb1.getItemText(lb1.getSelectedIndex());
             		if(s1.substring(0, 1).equals(Character.toString((char)9650)))
             			s1 = s1.substring(1);
@@ -1626,7 +1625,7 @@ public class Documents implements EntryPoint {
 						fi.setCategory(c.getId());
 					}
 				}
-            	for (Category c : lists.getCategoryListSon().getList()) {
+            	for (Category c : lists.getCategoryListSon()) {
             		String s1 = lb1.getItemText(lb1.getSelectedIndex());
 					if(s1.substring(0, 1).equals(Character.toString((char)9660))){
 						s1= s1.substring(1);
@@ -1895,7 +1894,7 @@ public class Documents implements EntryPoint {
             	String categoryString="";
             	fi.setCategory(-1);
             	ListBox lb1 = (ListBox)grid.getWidget(5-auxNum, 1);
-            	for (Category c : lists.getCategoryList().getList()) {
+            	for (Category c : lists.getCategoryList()) {
             		String s1 = lb1.getItemText(lb1.getSelectedIndex());
             		if(s1.substring(0, 1).equals(Character.toString((char)9650)))
             			s1 = s1.substring(1);
@@ -1905,7 +1904,7 @@ public class Documents implements EntryPoint {
 						fi.setCategory(c.getId());
 					}
 				}
-            	for (Category c : lists.getCategoryListSon().getList()) {
+            	for (Category c : lists.getCategoryListSon()) {
             		String s1 = lb1.getItemText(lb1.getSelectedIndex());
 					if(s1.substring(0, 1).equals(Character.toString((char)9660))){
 						s1= s1.substring(1);
@@ -2366,7 +2365,7 @@ public class Documents implements EntryPoint {
 	
 	private void newFilterCat(String domain){
 		VerticalPanel v = (VerticalPanel) dpanel.getContent();
-		for(Category c : lists.getCategoryListSon().getList()){
+		for(Category c : lists.getCategoryListSon()){
 			if(c.getDomain().equals(domain)){
 				catname = c.getName();
 				Button b =new Button(Character.toString((char)9660)+c.getName()); 
@@ -3610,7 +3609,7 @@ public class Documents implements EntryPoint {
 					idoc.newCategory(getDomain(), catname,new AsyncCallback<Category>() {
 						@Override
 						public void onSuccess(Category result) {
-							lists.getCategoryList().getList().add(result);
+							lists.getCategoryList().add(result);
 							VerticalPanel v = (VerticalPanel) dpanel.getContent();
 							catAux = result;
 							Button b =new Button(catname); 
@@ -3921,9 +3920,9 @@ public class Documents implements EntryPoint {
 		popup.setGlassEnabled(true);
 		popup.show();
 	}
-	 Vector<Category> catList = new Vector<Category>();
+	 LinkedList<Category> catList = new LinkedList<Category>();
 	 private void removeCategory(Category category) {
-		 catList = lists.getCategoryList().getList();
+		 catList = lists.getCategoryList();
 		 Dialog d = new Dialog("delete2", "Borrar Etiqueta", "Cancelar", true, "Borrar", true,false);
 		 d.setCat(category);
 		 d.setIsNextButton(false);
@@ -3939,23 +3938,19 @@ public class Documents implements EntryPoint {
 			@Override
 			protected void onAccept() {
 				hide();
-				Vector<Category> v = new Vector<Category>();
-				for(Integer i = 0; i< lists.getCategoryList().getList().size();i++){
-					if(!lists.getCategoryList().getList().get(i).getName().equals(oldName))
-						v.add(lists.getCategoryList().getList().get(i));
+				LinkedList<Category> v = new LinkedList<Category>();
+				for(Integer i = 0; i< lists.getCategoryList().size();i++){
+					if(!lists.getCategoryList().get(i).getName().equals(oldName))
+						v.add(lists.getCategoryList().get(i));
 				}
-				CategoryList categoryList = new CategoryList();
-				categoryList.setList(v);
-				lists.setCategoryList(categoryList);
+				lists.setCategoryList(v);
 
-				v = new Vector<Category>();
-				for(Integer i = 0; i< lists.getCategoryListSon().getList().size();i++){
-					if(!lists.getCategoryListSon().getList().get(i).getName().equals(oldName))
-						v.add(lists.getCategoryListSon().getList().get(i));
+				v = new LinkedList<Category>();
+				for(Integer i = 0; i< lists.getCategoryListSon().size();i++){
+					if(!lists.getCategoryListSon().get(i).getName().equals(oldName))
+						v.add(lists.getCategoryListSon().get(i));
 				}
-				categoryList = new CategoryList();
-				categoryList.setList(v);
-				lists.setCategoryListSon(categoryList);
+				lists.setCategoryListSon(v);
 
 				idoc.deleteCategory(getDomain(), cat.getId(),new AsyncCallback<Void>() {
 							
