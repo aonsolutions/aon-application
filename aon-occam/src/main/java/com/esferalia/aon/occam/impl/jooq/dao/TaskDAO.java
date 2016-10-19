@@ -13,6 +13,7 @@ import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -206,6 +207,16 @@ public class TaskDAO {
 		// priority
 		if(issueFilter.getPriority() != null && !issueFilter.getPriority().equals(""))
 			c = c.and(TASK.PRIORITY.eq(Priority.valueNameOf(issueFilter.getPriority()).value()));
+
+		// date_diff
+		if(issueFilter.getDateDiff() != null && !issueFilter.getDateDiff().equals("")){
+			Calendar cal = Calendar.getInstance();
+			System.out.println(new Timestamp(cal.getTimeInMillis()));
+			cal.add(Calendar.DAY_OF_WEEK, - (Integer.parseInt(issueFilter.getDateDiff())));
+			System.out.println(new Timestamp(cal.getTimeInMillis()));
+			Timestamp as = new Timestamp(cal.getTimeInMillis());
+			c = c.and(TASK.START_DATE.greaterOrEqual(as));
+		}
 		return c;
 	}
 	
@@ -478,7 +489,7 @@ public class TaskDAO {
 				.from(REGISTRY).join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
 							.join(RMEDIA).on(RMEDIA.REGISTRY.eq(REGISTRY.ID))
 			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(CUSTOMER.STATUS.eq((byte) 0))
-				.and(REGISTRY.NAME.contains(filter).or(REGISTRY.ALIAS.contains(filter)).or(RMEDIA.VALUE.eq(filter)).or(REGISTRY.DOCUMENT.contains(filter)))
+				.and(REGISTRY.NAME.contains(filter).or(REGISTRY.ALIAS.contains(filter)).or(RMEDIA.VALUE.contains(filter)).or(REGISTRY.DOCUMENT.contains(filter)))
 			.fetch().stream().map(new TaskFilterRegistryFiller());
 	}
 	

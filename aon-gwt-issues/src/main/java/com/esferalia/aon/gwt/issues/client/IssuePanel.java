@@ -352,7 +352,7 @@ public class IssuePanel extends Composite{
 		editButton.setVisible(userLogged.getText().equals(issue.getUser().getLogin()));
 		
 		VerticalPanel vp = new VerticalPanel();
-		vp.setWidth("100%");
+		vp.setWidth("600px");
 		vp.getElement().getStyle().setPaddingBottom(10, Unit.PX);
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.setWidth("100%");
@@ -398,7 +398,7 @@ public class IssuePanel extends Composite{
 		editButton.setVisible(AonStringUtils.equals(userLogged.getText(), comment.getUser().getLogin()));
 
 		VerticalPanel vp = new VerticalPanel();
-		vp.setWidth("100%");
+		vp.setWidth("600px");
 		vp.getElement().getStyle().setPaddingBottom(10, Unit.PX);
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.setWidth("100%");

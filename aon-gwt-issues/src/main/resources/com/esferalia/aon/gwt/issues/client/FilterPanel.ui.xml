@@ -91,6 +91,10 @@
 			    <g:InlineLabel text="Orden" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
         	    <i:IronIcon icon="arrow-drop-down" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 			</p:PaperButton>	
+			<p:PaperButton ui:field="dateButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}">
+			    <g:InlineLabel text="Fecha" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+        	    <i:IronIcon icon="arrow-drop-down" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+			</p:PaperButton>	
 		</g:HorizontalPanel>
 		
 	</g:HorizontalPanel>

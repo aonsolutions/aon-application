@@ -18,6 +18,8 @@ public class IssueFilter {
 	
 	Integer enterprise;
 	
+	Integer dateDiff;
+	
 	Integer page = 1;
 	Integer perPage = 30;
 	
@@ -135,6 +137,14 @@ public class IssueFilter {
 		return this;
 	}
 	
+	public Integer getDateDiff(){
+		return dateDiff;
+	}
+	
+	public IssueFilter setDateDiff(Integer dateDiff){
+		this.dateDiff = dateDiff;
+		return this;	
+	}
 	
 	
 }

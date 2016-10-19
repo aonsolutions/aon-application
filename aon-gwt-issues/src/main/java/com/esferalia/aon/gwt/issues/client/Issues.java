@@ -243,11 +243,7 @@ public class Issues implements EntryPoint {
 	
 	private AonDialog createAddDialog(JSON<JsUser> registries){	
 		VerticalPanel v = new VerticalPanel();
-		PaperInput pi = new PaperInput();
-		pi.setLabel("Titulo");
-		pi.setList("as");
-		v.add(pi);
-		
+
 		AonComboBox acb = new AonComboBox();
 		acb.setLabel("Remitente");
 		acb.setItemLabelPath("login");
@@ -269,8 +265,12 @@ public class Issues implements EntryPoint {
 				});
 			}
 		}, KeyUpEvent.getType());
-		
 		v.add(acb);
+		
+		PaperInput pi = new PaperInput();
+		pi.setLabel("Titulo");
+		pi.setList("as");
+		v.add(pi);
 		
 		PaperTextarea pi4 = new PaperTextarea();
 		pi4.setLabel("Descripcion");

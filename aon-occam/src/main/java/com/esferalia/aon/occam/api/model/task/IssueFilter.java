@@ -17,6 +17,8 @@ public class IssueFilter {
 	String type;
 	String enterprise;
 	
+	String dateDiff;
+	
 	Integer page = 1;
 	Integer perPage = 30;
 	
@@ -134,6 +136,15 @@ public class IssueFilter {
 
 	public IssueFilter setEnterprise(String enterprise) {
 		this.enterprise = enterprise;
+		return this;
+	}
+	
+	public String getDateDiff() {
+		return dateDiff;
+	}
+
+	public IssueFilter setDateDiff(String dateDiff) {
+		this.dateDiff = dateDiff;
 		return this;
 	}
 	

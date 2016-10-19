@@ -56,6 +56,7 @@ public class FilterPanel extends Composite {
     @UiField PaperButton assignedButton;
     @UiField PaperButton enterpriseButton;
     @UiField PaperButton orderButton;
+    @UiField PaperButton dateButton;
     @UiField TextBox titleFilter;
     
     Incidence incidence;
@@ -407,6 +408,44 @@ public class FilterPanel extends Composite {
 		int left = orderButton.getAbsoluteLeft();
 		int top = orderButton.getAbsoluteTop()
 				+ orderButton.getOffsetHeight();
+		Integer width = Window.getClientWidth();
+		if(left > width - 200){
+			left = left - 200;
+		}
+		popup.setAutoHideEnabled(true);
+		popup.addAutoHidePartner(vcb.getElementById("overlay"));
+		popup.setPopupPosition(left, top);
+		popup.show();
+		vcb.toggle();
+	}		
+	
+	@UiHandler("dateButton")
+	void dateButtonClick(ClickEvent event){		
+		PopupPanel popup = new PopupPanel();
+		VaadinComboBox vcb = new VaadinComboBox();
+		vcb.setItems("[\"Hoy\", \"Ayer\", \"Hace 1 semana\", \"Hace 1 mes\"]");
+		vcb.setLabel("Fecha");
+		vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+			
+			@Override
+			public void onValueChanged(ValueChangedEvent event) {
+				if(vcb.getValue().contains("Hoy")) 
+					getIssues().issueFilter.setDateDiff(1);
+				else if(vcb.getValue().contains("Ayer")) 
+					getIssues().issueFilter.setDateDiff(2);
+				else if(vcb.getValue().contains("Hace 1 semana")) 
+					getIssues().issueFilter.setDateDiff(7);
+				else getIssues().issueFilter.setDateDiff(30);
+				
+				dateButton.setTitle(vcb.getValue());
+				getIssues().updateIssueList(issues.issueFilter, false);	
+				popup.hide();
+			}
+		});
+		popup.add(vcb);
+		int left = dateButton.getAbsoluteLeft();
+		int top = dateButton.getAbsoluteTop()
+				+ dateButton.getOffsetHeight();
 		Integer width = Window.getClientWidth();
 		if(left > width - 200){
 			left = left - 200;

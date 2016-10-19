@@ -60,11 +60,21 @@ public class Issue {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
 
+		String title = "";
+		String[] str = task.getDescription().split(" ");
+		for(Integer i = 0; i < str.length; i++){
+			String s = str[i];
+			while(s.length()>30){
+				title = title + s.substring(0, 29)+ " ";
+				s = s.substring(30);
+			}
+			title = title +  s + " ";
+		}
 		
 		String url = "http://"+domain.getName()+ "/";
 		//url = url + "aon-aio/";
 		this.id = task.getId();
-		this.title = task.getDescription();
+		this.title = title;
 		this.url = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber();
 		this.repositoryUrl = url + "repos/" + userName + "/" + domain.getName();
 		this.number =  task.getNumber();

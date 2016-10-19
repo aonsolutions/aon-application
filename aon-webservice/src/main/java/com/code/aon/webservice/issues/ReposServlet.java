@@ -467,7 +467,8 @@ public class ReposServlet extends HttpServlet{
 				.setType(req.getParameter("type"))
 				.setEnterprise(req.getParameter("enterprise"))
 				.setPerPage(Integer.parseInt(req.getParameter("per_page")))
-				.setPage(Integer.parseInt(req.getParameter("page")));
+				.setPage(Integer.parseInt(req.getParameter("page")))
+				.setDateDiff(req.getParameter("date_diff"));
 	}
 	
 	private void sendAssigneeNotification(Domain domain, String login, Task task, Integer taskHolderId) {
