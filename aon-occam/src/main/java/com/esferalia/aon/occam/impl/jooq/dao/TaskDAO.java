@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Record2;
 import org.jooq.SortField;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
@@ -473,12 +474,12 @@ public class TaskDAO {
 	}
 	
 	public static Stream<Registry> getFilterRegistryStream(AONContext ctx, String filter){
-		return ctx.getDslContext().select()
+		return ctx.getDslContext().selectDistinct(REGISTRY.ID, REGISTRY.NAME)
 				.from(REGISTRY).join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
 							.join(RMEDIA).on(RMEDIA.REGISTRY.eq(REGISTRY.ID))
 			.where(REGISTRY.DOMAIN.eq(ctx.getDomainId())).and(CUSTOMER.STATUS.eq((byte) 0))
 				.and(REGISTRY.NAME.contains(filter).or(REGISTRY.ALIAS.contains(filter)).or(RMEDIA.VALUE.eq(filter)).or(REGISTRY.DOCUMENT.contains(filter)))
-			.fetchInto(REGISTRY).stream().map(new TaskRegistryFiller());
+			.fetch().stream().map(new TaskFilterRegistryFiller());
 	}
 	
 	public static Stream<Workgroup> getTaskWorkgroupStream(AONContext ctx, String filter){
@@ -545,6 +546,15 @@ public class TaskDAO {
 					.setAlias(r.getAlias())
 					.setName(r.getName())
 					.setType(r.getType());
+		}
+	}
+	
+	private static class TaskFilterRegistryFiller implements Function<Record2<Integer, String>, Registry> {
+		@Override
+		public Registry apply(Record2<Integer, String> r) {
+			return new Registry()
+					.setId(r.getValue(REGISTRY.ID))
+					.setName(r.getValue(REGISTRY.NAME));
 		}
 	}
 	

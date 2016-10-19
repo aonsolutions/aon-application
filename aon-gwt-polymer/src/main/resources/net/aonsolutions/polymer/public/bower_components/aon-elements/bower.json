@@ -1,0 +1,31 @@
+{
+  "name": "aon-elements",
+  "version": "0.0.4",
+  "homepage": "https://github.com/aibanez91/aon-elements",
+  "authors": [
+    "aibanez"
+  ],
+  "description": "Aon elements.",
+  "keywords": [
+    "web-components",
+    "polymer",
+    "aon",
+    "element-collection"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/aibanez91/aon-elements.git"
+  },
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+ 	"aon-combo-box": "aibanez91/aon-combo-box"
+  },
+  "main": "aon-elements.html"
+}

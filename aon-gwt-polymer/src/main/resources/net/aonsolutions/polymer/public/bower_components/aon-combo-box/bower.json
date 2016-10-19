@@ -1,0 +1,18 @@
+{
+  "name": "aon-combo-box",
+  "version": "1.0.0",
+  "description": "Aon Combo Box",
+  "keywords": [
+    "web-components",
+    "web-component",
+    "polymer",
+    "Vaadin",
+    "Aon",
+    "combo-box"
+  ],
+  "main": "aon-combo-box.html",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/aibanez91/aon-combo-box"
+  }
+}

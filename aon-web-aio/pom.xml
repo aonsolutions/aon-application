@@ -291,6 +291,13 @@
 		<version>${project.version}</version>
 		<scope>runtime</scope>
 	</dependency>
+	
+	<dependency>
+		<groupId>net.aonsolutions.polymer</groupId>
+		<artifactId>aon.gwt.polymer</artifactId>
+		<version>${project.version}</version>
+		<scope>runtime</scope>
+	</dependency>
  
     <dependency>
       <groupId>com.code.aon</groupId>

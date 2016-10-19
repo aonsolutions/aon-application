@@ -16,6 +16,8 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -35,7 +37,7 @@ import com.vaadin.polymer.paper.PaperToggleButtonElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperTextarea;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
-import com.vaadin.polymer.vaadin.widget.VaadinComboBox;
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class Issues implements EntryPoint {
 	
@@ -218,8 +220,17 @@ public class Issues implements EntryPoint {
 					
 					@Override
 					public void onSuccess(JSON<JsUser> result) {
-						AonDialog dialog = createAddDialog(result);
-						toolbar.add(dialog);
+						AonDialog dialog;
+						if(toolbar.getWidgetCount() > 1){
+							dialog = (AonDialog) toolbar.getWidget(1);
+							VerticalPanel vp = (VerticalPanel) dialog.content.getWidget(0);
+							PaperInput pi = (PaperInput) vp.getWidget(0);pi.setValue("");
+							AonComboBox acb = (AonComboBox) vp.getWidget(1);acb.setValue("");
+							PaperTextarea ptt = (PaperTextarea) vp.getWidget(2);ptt.setValue("");
+						}else {
+							dialog = createAddDialog(result);
+							toolbar.add(dialog);
+						}
 						dialog.open();
 					}
 					
@@ -231,61 +242,36 @@ public class Issues implements EntryPoint {
 	}
 	
 	private AonDialog createAddDialog(JSON<JsUser> registries){	
-		
-		String arr= "[";
-		for(Integer i = 0; i < registries.getData().length(); i++){
-			if(i > 0) arr = arr + " , ";
- 			arr = arr + "\""+ registries.getData().get(i).getLogin()+"\"";
-		}
-		arr = arr + "]";
-		
 		VerticalPanel v = new VerticalPanel();
 		PaperInput pi = new PaperInput();
 		pi.setLabel("Titulo");
 		pi.setList("as");
 		v.add(pi);
 		
-		VaadinComboBox vcb = new VaadinComboBox(); 
-		vcb.setLabel("Remitente");
-		vcb.setItems(arr);
-		/*vcb.addDomHandler(new KeyUpHandler() {	
+		AonComboBox acb = new AonComboBox();
+		acb.setLabel("Remitente");
+		acb.setItemLabelPath("login");
+		acb.setItemLabelPath("login");	
+		acb.setItems(registries.getData());
+		acb.setFilterEnable(false);
+		acb.addDomHandler(new KeyUpHandler() {
+			
 			@Override
-			public void onKeyUp(KeyUpEvent event) {		
-				Window.alert(vcb.getWidgetCount() + "");
-				
-				Window.alert(vcb.getPolymerElement().getTextContent());
-				
-				Window.alert(vcb.getPolymerElement().toString());
-				
-				Window.alert(vcb.getValidatorType());
-				Window.alert(vcb.getKeyBindings().toString());
-				char ch = (char) event.getNativeKeyCode();
-				vcb.setValue(vcb.getValue() + ch );	
-				Window.alert(vcb.getValue());
-				if(vcb.getValue().length()> 2){
-					incidence.getRegistries(vcb.getValue(), new AsyncCallback<JSON<JsUser>>() {
-						
-						@Override
-						public void onSuccess(JSON<JsUser> result) {
-							String arr= "[";
-							for(Integer i = 0; i < result.getData().length(); i++){
-								if(i > 0) arr = arr + " , ";
-					 			arr = arr + "\""+ result.getData().get(i).getLogin()+"\"";
-							}
-							arr = arr + "]";
-							vcb.setItems(arr);
-						}
-						
-						@Override public void onFailure(Throwable caught) {}
-					});
-				} else {
-					vcb.setItems("[]");
-				}
+			public void onKeyUp(KeyUpEvent event) {
+				incidence.getRegistries(acb.getInputElementValue(),new AsyncCallback<JSON<JsUser>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsUser> result) {
+						acb.setItems(result.getData());
+					}
+					
+					@Override public void onFailure(Throwable caught) {}
+				});
 			}
 		}, KeyUpEvent.getType());
-*/
-		v.add(vcb);
-
+		
+		v.add(acb);
+		
 		PaperTextarea pi4 = new PaperTextarea();
 		pi4.setLabel("Descripcion");
 		v.add(pi4);
@@ -295,11 +281,12 @@ public class Issues implements EntryPoint {
 			@Override protected void onAccept() {
 				VerticalPanel vp = (VerticalPanel) content.getWidget(0);
 				PaperInput pi = (PaperInput) vp.getWidget(0);
-				VaadinComboBox pi2 = (VaadinComboBox) vp.getWidget(1);
+
+				AonComboBox acb = (AonComboBox) vp.getWidget(1);
 				PaperTextarea pi4 = (PaperTextarea) vp.getWidget(2);
 				
 				String r= "{\"title\":\""+ pi.getValue() +"\",\"body\":\""+ pi4.getValue()+" \",\"assignee\":\" \",\"labels\":[],"
-						+ "\"enterprise\":\""+ pi2.getValue() +"\", \"due_date\":\""+ "31/12/2100" +"\"}";
+						+ "\"enterprise\":\""+ acb.getInputElementValue() +"\", \"due_date\":\""+ "31/12/2100" +"\"}";
 					
 				incidence.createOrgIssue(r, new AsyncCallback<JsIssue>() {
 					

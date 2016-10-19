@@ -9,6 +9,9 @@
 	<inherits name="com.esferalia.aon.occam.api.Occam" />
 	<inherits name="com.esferalia.aon.gwt.api.Api" />
 	<inherits name="com.vaadin.polymer.Elements"/>
+	
+	<inherits name="net.aonsolutions.polymer.Elements"/>
+	
 	<!-- Spanish language, independent of country -->
 	<extend-property name="locale" values="es" />
 
