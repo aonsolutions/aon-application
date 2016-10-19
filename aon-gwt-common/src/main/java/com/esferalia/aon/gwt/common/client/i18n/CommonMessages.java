@@ -3061,4 +3061,7 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("D\u00EDas")
 	String days();
+
+	@DefaultMessage("Nueva Cuenta")
+	String newAccount();
 }

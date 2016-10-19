@@ -329,6 +329,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-margin-bottom")
 	String aonMarginBottom();
+	
+	@ClassName("aon-margin-bottom5")
+	String aonMarginBottom5();
 
 	@ClassName("aon-bold")
 	String aonBold();

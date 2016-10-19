@@ -6,11 +6,13 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.AccountPanel.AccountPanelCallback;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonValidationUtil;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -19,8 +21,10 @@ import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.dom.client.HasAllKeyHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -28,6 +32,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -52,13 +57,14 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	
 	private static final int MIN_CHARACTERS = 3;
 	private static final int MAX_CHARACTERS = 8;
+	protected static final int KEY_PLUS = 171;
 
 	private CommonServiceAsync commonService;
 
 	private Integer id;
 	private String description;
 	
-	private FlowPanel rooPanel; 
+	private FlowPanel rootPanel; 
 	private SuggestBox account;
 	private TextBox accountTextBox;
 	private InlineLabel descriptionLabel;
@@ -182,18 +188,12 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 		accountTextBox.setStyleName(AON.AON_CSS.aonInputText());
 		accountTextBox.setVisibleLength(9);
 		accountTextBox.setMaxLength(9);
+		
 		descriptionLabel = new InlineLabel();
 		descriptionLabel.addStyleName(AON.AON_CSS.aonMarginLeft() );
 		descriptionLabel.addStyleName(AON.AON_CSS.aonFontSmall());
 		descriptionLabel.setVisible(showDescription);
 		
-		accountTextBox.addBlurHandler( new BlurHandler() {
-			@Override
-			public void onBlur(BlurEvent event) {
-				autoComplete(account.getValue());
-			}
-		});
-			
 		account.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
@@ -202,11 +202,30 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 			}
 		});
 		
-		rooPanel = new FlowPanel();
-		rooPanel.addStyleName(AON.AON_CSS.aonNowrap() );
-		rooPanel.add(account);
-		rooPanel.add(descriptionLabel);
-		initWidget(rooPanel);
+		accountTextBox.addBlurHandler( new BlurHandler() {
+			@Override
+			public void onBlur(BlurEvent event) {
+				autoComplete(account.getValue());
+			}
+		});
+			
+		accountTextBox.addKeyUpHandler( new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if ((event.isControlKeyDown() && event.getNativeKeyCode() == KeyCodes.KEY_F3)
+						|| event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS
+						|| event.getNativeKeyCode() == KEY_PLUS) {
+					showAccountDialog();
+				}
+			}
+		});
+		
+		rootPanel = new FlowPanel();
+		rootPanel.addStyleName(AON.AON_CSS.aonNowrap() );
+		rootPanel.add(account);
+		rootPanel.add(descriptionLabel);
+		initWidget(rootPanel);
 	}
 	
 	private void autoComplete(String value) {
@@ -394,4 +413,35 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 		accountTextBox.setEnabled(enabled);
 	}
 	
+	private void showAccountDialog() {
+		final CustomDialog dialog = new CustomDialog();
+		dialog.setCaption(AON.MSG.account());
+		final AccountPanel accountPanel = new AccountPanel( domainName, domain, new AccountPanelCallback() {
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+				accountTextBox.setValue(AonStringUtils.remove(accountTextBox.getValue(), AonStringUtils.PLUS),false);
+				accountTextBox.selectAll();
+				accountTextBox.setFocus(true);
+			}
+			
+			@Override
+			public void onAccept(Account result) {
+				dialog.hide();
+				accountTextBox.setValue(result.getCode(),false);
+				select(result);
+			}
+		});
+		
+		dialog.add( accountPanel );
+		dialog.center();
+		dialog.show();
+		
+		Scheduler.get().scheduleDeferred(new Command() {
+	        public void execute() {
+	        	accountPanel.setFocus(true);
+	        }
+	    });		
+	}
 }

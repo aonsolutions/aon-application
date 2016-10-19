@@ -14,6 +14,8 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.impl.jooq.validation.AccountAutoComplete;
+import com.esferalia.aon.occam.impl.jooq.validation.AccountValidation;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class AccountDAO {
@@ -91,10 +93,11 @@ public class AccountDAO {
 			.orElse(null);
 	}
 
-	public static Integer insert(AONContext ctx, Account account) {
+	public static Account insert(AONContext ctx, Account account) {
 		ctx.checkWrite();
-//		AccountValidation.validate(ctx, account);
-		return ctx.getDslContext()
+		AccountValidation.validate(ctx, account);
+		AccountAutoComplete.complete(ctx, account);
+		Integer id = ctx.getDslContext()
 			.insertInto(ACCOUNT)
 			.set(ACCOUNT.DOMAIN,account.getDomain())
 			.set(ACCOUNT.CODE,account.getCode())
@@ -106,7 +109,8 @@ public class AccountDAO {
 			.set(ACCOUNT.COST_CENTER,account.getCostCenter())
 			.returning(ACCOUNT.ID)
 			.fetchOne()
-			.getValue(ACCOUNT.ID); 
+			.getValue(ACCOUNT.ID);
+		return get(ctx, id);
 	}
 
 }

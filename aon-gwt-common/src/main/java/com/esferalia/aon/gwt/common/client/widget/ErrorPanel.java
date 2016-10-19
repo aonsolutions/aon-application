@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.accounting;
+package com.esferalia.aon.gwt.common.client.widget;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.event.dom.client.ClickEvent;

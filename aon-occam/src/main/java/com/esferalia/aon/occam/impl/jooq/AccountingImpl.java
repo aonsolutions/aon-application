@@ -66,7 +66,11 @@ public class AccountingImpl implements IAccounting {
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter) {
 		return AccountDAO.getAccounts(ctx, filter);
 	}
-	
+	@Override
+	public Account insert(AONContext ctx, Account account) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountDAO.insert(ctx, account));
+	}
 
 	// --------- ACCOUNT PERIOD ------------------------------------------
 	@Override

@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.shared.AonSQLException;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Account;
@@ -18,6 +17,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.CreditorStatus;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
@@ -37,37 +37,37 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 	// -------------------------------------------------------------- SECURITY
 	@Override
 	public User getCurrentUser(String domainName, int domain)
-			throws AonSQLException {
+			throws AonCoreException {
 		return AON.getUser(domainName,domain,AonServletUtils.getLoggedUser()); 		
 	}
 	// -------------------------------------------------------------- ENTERPRISE
 	@Override
 	public LinkedList<Enterprise> getParentEnterprises(String domainName, int domain,
-			String query) throws AonSQLException {
+			String query) throws AonCoreException {
 		return AON.getParentEnterprises(domainName, domain,AonServletUtils.getLoggedUser(), query);		
 	}
 
 	@Override
 	public Enterprise getEnterprise(String domainName, int domain, int id)
-			throws AonSQLException {
+			throws AonCoreException {
 		return AON.getEnterprise(domainName, domain,AonServletUtils.getLoggedUser(), id);
 	}
 
 	@Override
 	public LinkedList<CompanyBank> getCompanyBanks(String domainName,
-			int domain, int enterprise) throws AonSQLException {
+			int domain, int enterprise) throws AonCoreException {
 		return AON.getCompanyBanks(domainName, domain,AonServletUtils.getLoggedUser(), enterprise);
 	}
 
 	@Override
 	public LinkedList<CompanyBank> getCompanyBanks(String domainName,
-			int domain) throws AonSQLException {
+			int domain) throws AonCoreException {
 		return AON.getCompanyBanks(domainName, domain,AonServletUtils.getLoggedUser());
 	}
 
 	@Override
 	public LinkedList<Account> getAccounts(String domainName, int domain,
-			String query) throws AonSQLException {
+			String query) throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
 		 	?((AonStringUtils.isNumeric(query)? AonStringUtils.EMPTY:AonStringUtils.PERCENT) 
 		 			+ query 
@@ -82,13 +82,18 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 	}
 
 	@Override
-	public Account getAccount(String domainName, int domain,String code) throws AonSQLException {
+	public Account getAccount(String domainName, int domain,String code) throws AonCoreException {
 		return ACCOUNTING.getAccount(domainName, domain,AonServletUtils.getLoggedUser(), code);
 	}
 	
+	@Override
+	public Account insert(String domainName, int domain, Account account) throws AonCoreException {
+		return ACCOUNTING.insert(domainName, domain,AonServletUtils.getLoggedUser(), account);
+	}
+
 	// -------------------------------------------------------------- CREDITOR
 	@Override
-	public LinkedList<Creditor> getBasicCreditors(String domainName, int domain, String query) throws AonSQLException {
+	public LinkedList<Creditor> getBasicCreditors(String domainName, int domain, String query) throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
 			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
 				:(query);
@@ -101,7 +106,7 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 	}
 	@Override
 	public LinkedList<AccountingRegistry> getAccountingRegistries(String domainName, int domain, String query)
-			throws AonSQLException {
+			throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
 			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
 				:(query);

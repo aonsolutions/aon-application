@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.ErrorPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -501,7 +502,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			public void onAccept() {
 				reset();
 				syncCurrent();
-				wizardContent.setFocus(true);
+				entryDate.setFocus(true);
 			}
 		});
 	}

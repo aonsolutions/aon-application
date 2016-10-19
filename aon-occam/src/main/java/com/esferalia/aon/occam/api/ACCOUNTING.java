@@ -304,4 +304,16 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
+
+
+	public static Account insert(String domainName, int domain, String user, Account account) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().insert(ctx, account);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 }

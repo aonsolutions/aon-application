@@ -356,6 +356,9 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 .aon-margin-bottom {
 	margin-bottom: 1em;
 }
+.aon-margin-bottom5 {
+	margin-bottom: 5px;
+}
 
 .aon-margin-right {
 	margin-right: 1em;

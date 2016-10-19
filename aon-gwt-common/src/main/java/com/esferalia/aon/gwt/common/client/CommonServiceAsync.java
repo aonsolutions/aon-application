@@ -45,6 +45,9 @@ public interface CommonServiceAsync {
 	void getAccounts(String domainName, int domain, String query,
 			AsyncCallback<LinkedList<Account>> callback);
 
+	void insert(String domainName, int domain, Account account,
+			AsyncCallback<Account> callback);
+
 	// -------------------------------------------------------------- CREDITOR
 	void getBasicCreditors(String domainName, int domain, String query, 
 			AsyncCallback<LinkedList<Creditor>> callback);
