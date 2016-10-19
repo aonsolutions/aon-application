@@ -26,7 +26,8 @@
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.api</compileSourcesArtifact>  
 					  <compileSourcesArtifact>com.esferalia.aon:aon.occam</compileSourcesArtifact>
 					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.issues</compileSourcesArtifact>  
-					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.document</compileSourcesArtifact>  
+					  <compileSourcesArtifact>com.esferalia.aon:aon.gwt.document</compileSourcesArtifact>
+					  <compileSourcesArtifact>net.aonsolutions.polymer:aon.gwt.polymer</compileSourcesArtifact>  
 					</compileSourcesArtifacts>
 				</configuration>
 				<executions>
