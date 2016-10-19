@@ -301,9 +301,15 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				@Override
 				public void onSelection(SelectionEvent<Account> event) {
 					Account a = event.getSelectedItem();
-					vat.setExpAccountId(a.getId());
-					vat.setExpAccountCode(a.getCode());
-					vat.setExpAccountDescription(a.getDescription());
+					if (a != null) {
+						vat.setExpAccountId(a.getId());
+						vat.setExpAccountCode(a.getCode());
+						vat.setExpAccountDescription(a.getDescription());
+					} else {
+						vat.setExpAccountId(null);
+						vat.setExpAccountCode(null);
+						vat.setExpAccountDescription(null);
+					}
 					SelectionEvent.<Account>fire(InvoiceVATPanel.this, a);
 				}
 			});
@@ -456,9 +462,15 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				@Override
 				public void onSelection(SelectionEvent<Account> event) {
 					Account a = event.getSelectedItem();
-					vat.setAdjAccountId(a.getId());
-					vat.setAdjAccountCode(a.getCode());
-					vat.setAdjAccountDescription(a.getDescription());
+					if (a != null) {
+						vat.setAdjAccountId(a.getId());
+						vat.setAdjAccountCode(a.getCode());
+						vat.setAdjAccountDescription(a.getDescription());
+					} else {
+						vat.setAdjAccountId(null);
+						vat.setAdjAccountCode(null);
+						vat.setAdjAccountDescription(null);
+					}
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
@@ -493,9 +505,15 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				@Override
 				public void onSelection(SelectionEvent<Account> event) {
 					Account a = event.getSelectedItem();
-					vat.setOutputAccountId(a.getId());
-					vat.setOutputAccountCode(a.getCode());
-					vat.setOutputAccountDescription(a.getDescription());
+					if (a!=null) {
+						vat.setOutputAccountId(a.getId());
+						vat.setOutputAccountCode(a.getCode());
+						vat.setOutputAccountDescription(a.getDescription());
+					} else {
+						vat.setOutputAccountId(null);
+						vat.setOutputAccountCode(null);
+						vat.setOutputAccountDescription(null);
+					}
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});

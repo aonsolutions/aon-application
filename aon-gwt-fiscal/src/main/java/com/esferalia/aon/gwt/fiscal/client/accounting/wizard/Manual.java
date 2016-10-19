@@ -67,7 +67,7 @@ public class Manual extends WizardContentBase {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
 				Account account = event.getSelectedItem();
-				callback.onBalance(account);
+				if (account != null) callback.onBalance(account);
 			}
 		});
 		table.addValueChangeHandler(new ValueChangeHandler<AccountEntryDetail>() {

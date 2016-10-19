@@ -31,6 +31,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -276,9 +277,15 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		detailAccountBox.addSelectionHandler( new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
-				aed.setAccount(event.getSelectedItem().getId());
-				aed.setAccountCode(event.getSelectedItem().getCode());
-				aed.setAccountDescription(event.getSelectedItem().getDescription());
+				if (event.getSelectedItem() != null) {
+					aed.setAccount(event.getSelectedItem().getId());
+					aed.setAccountCode(event.getSelectedItem().getCode());
+					aed.setAccountDescription(event.getSelectedItem().getDescription());
+				} else {
+					aed.setAccount(null);
+					aed.setAccountCode(null);
+					aed.setAccountDescription(null);
+				}
 				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 				conceptBox.setFocus(true);		
 			}
@@ -286,7 +293,9 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		detailAccountBox.addSelectionHandler( new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
-				SelectionEvent.<Account>fire(AccountEntryTable.this, event.getSelectedItem());	
+				if (event.getSelectedItem() != null) {
+					SelectionEvent.<Account>fire(AccountEntryTable.this, event.getSelectedItem());
+				}
 			}
 		});
 		// ----------------------------------------------------------- [CONCEPT]
@@ -429,11 +438,24 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		balancingAccountBox.addSelectionHandler( new SelectionHandler<Account>() {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
-				aed.setBalancingAccount(event.getSelectedItem().getId());
-				aed.setBalancingAccountCode(event.getSelectedItem().getCode());
-				aed.setBalancingAccountDescription(event.getSelectedItem().getDescription());
+				if (event.getSelectedItem() != null) {
+					aed.setBalancingAccount(event.getSelectedItem().getId());
+					aed.setBalancingAccountCode(event.getSelectedItem().getCode());
+					aed.setBalancingAccountDescription(event.getSelectedItem().getDescription());
+				} else {
+					aed.setBalancingAccount(null);
+					aed.setBalancingAccountCode(null);
+					aed.setBalancingAccountDescription(null);
+				}
 				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
-				SelectionEvent.<Account>fire(AccountEntryTable.this, event.getSelectedItem());
+			}
+		});
+		balancingAccountBox.addSelectionHandler( new SelectionHandler<Account>() {
+			@Override
+			public void onSelection(SelectionEvent<Account> event) {
+				if (event.getSelectedItem() != null) {
+					SelectionEvent.<Account>fire(AccountEntryTable.this, event.getSelectedItem());
+				}
 			}
 		});
 		// --------------------------------------------------- [DOCUMENT NUMBER]

@@ -237,9 +237,9 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 			account.setValue(c,false);
 			select(c);
 		} else {
-			if (id == null && !((DefaultSuggestionDisplay) account.getSuggestionDisplay()).isSuggestionListShowing()) {
+//			if (id == null && !((DefaultSuggestionDisplay) account.getSuggestionDisplay()).isSuggestionListShowing()) {
 				select(value);
-			}
+//			}
 		}
 	}
 	private void select(String accountCode) {
@@ -248,6 +248,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 				// No es obligatorio y lo han dejado vacio, por lo que 
 				// hay que borrar lo que haya de antes.
 				reset();
+				SelectionEvent.fire(AccountBox.this, null );
 			} else {
 				accountTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
 				commonService.getAccount(AccountBox.this.domainName,AccountBox.this.domain
@@ -258,6 +259,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 							select( result );
 						} else {
 							reset();
+							SelectionEvent.fire(AccountBox.this, null );
 							accountTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
 							descriptionLabel.setText(AON.MSG.accountNotFound());
 							descriptionLabel.addStyleName(AON.AON_CSS.aonColorRed());
@@ -277,7 +279,8 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 			}
 		} else {
 			reset();
-			accountTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );	
+			accountTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
+			SelectionEvent.fire(AccountBox.this, null );
 		}
 		
 	}
