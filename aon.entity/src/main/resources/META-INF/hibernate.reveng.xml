@@ -1324,6 +1324,7 @@
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="status" type="com.code.aon.purchase.enumeration.PurchaseDetailStatus" />
 		<column name="line" type="java.lang.Integer" />
+		<column name="source" type="com.code.aon.purchase.enumeration.PurchaseSource"/>
 	</table>
 	
 	<table name="question">
