@@ -53,6 +53,8 @@ public class EdiInvoiceImporterHandler implements Serializable {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(EdiInvoiceImporterHandler.class);
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
+	
+	private final String SERIE_NUMBER_PATTERN = "^(\\w*)[\\W]?(\\d+)$";
 
 	private IController controller;
 	private AonFile aonFile;
@@ -128,6 +130,16 @@ public class EdiInvoiceImporterHandler implements Serializable {
 						"Cliente detectado con el codigo de punto de entrega "
 								+ customerInvoiceCode);
 
+				if(sincc.getNumeroDeFactura()!=null){
+					String serie = null;
+					String number = null;
+					if(sincc.getNumeroDeFactura().matches(SERIE_NUMBER_PATTERN)){
+						serie = sincc.getNumeroDeFactura().replaceAll(SERIE_NUMBER_PATTERN, "$1");
+						number = sincc.getNumeroDeFactura().replaceAll(SERIE_NUMBER_PATTERN, "$2");
+					}
+					invoice.setSeries(serie);
+					invoice.setNumber(Integer.parseInt(number));
+				}
 				invoice.setType(InvoiceType.SALES);
 				invoice.setRegistry(customer.getRegistry());
 				invoice.setScope(customer.getScope());
