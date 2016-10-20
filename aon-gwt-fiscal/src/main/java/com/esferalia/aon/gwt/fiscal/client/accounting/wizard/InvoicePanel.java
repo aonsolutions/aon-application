@@ -260,6 +260,7 @@ public class InvoicePanel extends WizardContentBase {
 					@Override
 					public void onSuccess(AccountingInvoice result) {
 						invoice = result;
+						invoiceTotal.setEnabled(true);
 						Account account = new Account();
 						account.setId(ar.getAccountId());
 						account.setCode(ar.getAccountCode());

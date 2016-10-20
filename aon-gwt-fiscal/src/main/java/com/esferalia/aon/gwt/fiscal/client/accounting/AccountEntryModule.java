@@ -201,7 +201,6 @@ public class AccountEntryModule extends MainEntryPoint {
 	SimplePanel errorsContainer;
 	ErrorPanel errors;
 
-	SessionLog workingLog;
 	boolean minimizedByUser;
 	
 	
@@ -462,6 +461,12 @@ public class AccountEntryModule extends MainEntryPoint {
 			public void onSuccess(AccountEntry[] result) {
 				sessionLog.addSaved(result);
 				reset();
+				
+				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+					public void execute() {
+						tabLayout.selectTab(SESSION_LOG_TAB);					}
+				});
+
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 					public void execute() {
 						entryDate.setFocus(true);

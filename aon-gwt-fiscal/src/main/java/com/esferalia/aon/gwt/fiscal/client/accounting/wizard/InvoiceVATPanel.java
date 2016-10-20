@@ -441,7 +441,10 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
-					vat.setDeductiblePercent( event.getValue() );
+					Double p = event.getValue();
+					if (p > 100) p = 100.0;
+					if (p < 0) p = 0.0;
+					vat.setDeductiblePercent( p );
 					calculate(vat);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
@@ -468,7 +471,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 
 			adjAccount.setValue(vat.getAdjAccountId(),vat.getAdjAccountCode()
 					,vat.getAdjAccountDescription(),true);
-			adjAccount.setVisible(callback.isInvestAssetsAvailable()  && vat.getInvestAsset() != null);
+			adjAccount.setVisible(callback.isInvestAssetsAvailable()  && vat.getInvestAsset() != null && vat.getDeductiblePercent() != 100);
 			adjAccountLabel.setVisible(callback.isInvestAssetsAvailable()  && otherLineWithInvestAssests);
 			adjAccount.addSelectionHandler( new SelectionHandler<Account>() {
 				
