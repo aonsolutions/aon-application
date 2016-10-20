@@ -217,7 +217,10 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 					.setInputAccountDescription(last.getInputAccountDescription())
 					.setOutputAccountId(last.getOutputAccountId())
 					.setOutputAccountCode(last.getOutputAccountCode())
-					.setOutputAccountDescription(last.getOutputAccountDescription());
+					.setOutputAccountDescription(last.getOutputAccountDescription())
+					.setAdjAccountId(last.getAdjAccountId())
+					.setAdjAccountCode(last.getAdjAccountCode())
+					.setAdjAccountDescription(last.getAdjAccountDescription());
 				callback.getInvoice().addVat( vat );
 				addRow(vat, true);
 			}
@@ -288,6 +291,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		
 		private InvoicePanelRow(final InvoiceVAT vat, FlexTable tab, boolean focus) {
 			int currentRow = tab.getRowCount();
+			final boolean otherLineWithInvestAssests = callback.isInvestAssetsAvailable() && isOtherLineWithInvestAssests(currentRow);
 			int col = 0;
 			expAccount.setValue(vat.getExpAccountId(),vat.getExpAccountCode(),vat.getExpAccountDescription(),true);
 			if (vat.getExpAccountId() != null) {
@@ -411,9 +415,18 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 						vat.setDeductiblePercent(investAsset.getValue().getPercent());
 					}
 					dedPercent.setValue(vat.getDeductiblePercent(),false);
+					
+					dedPercent.setVisible(investAsset.getValue() != null);
+					dedQuota.setVisible(investAsset.getValue() != null);
+					adjAccount.setVisible(investAsset.getValue() != null);
+					dedPercentLabel.setVisible(investAsset.getValue() != null || otherLineWithInvestAssests);
+					dedQuotaLabel.setVisible(investAsset.getValue() != null || otherLineWithInvestAssests);
+					adjAccountLabel.setVisible(investAsset.getValue() != null || otherLineWithInvestAssests);
+					
 					calculate(vat);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
+
 			});
 			tab.setWidget(currentRow, col, investAsset);
 			++col;
@@ -422,8 +435,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			dedPercent.addStyleName(AON.AON_CSS.aonTextRight());
 			dedPercent.addStyleName(AON.AON_CSS.aonWidth50());
 			dedPercent.setValue(vat.getDeductiblePercent());
-			dedPercent.setVisible(callback.isInvestAssetsAvailable());
-			dedPercentLabel.setVisible(callback.isInvestAssetsAvailable());
+			dedPercent.setVisible(callback.isInvestAssetsAvailable() && vat.getInvestAsset() != null);
+			dedPercentLabel.setVisible(callback.isInvestAssetsAvailable()  && otherLineWithInvestAssests);
 			dedPercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
@@ -439,8 +452,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			dedQuota.setStyleName(AON.AON_CSS.aonInputText());
 			dedQuota.addStyleName(AON.AON_CSS.aonTextRight());
 			dedQuota.setValue(vat.getDeductibleQuota());
-			dedQuota.setVisible(callback.isInvestAssetsAvailable());
-			dedQuotaLabel.setVisible(callback.isInvestAssetsAvailable());
+			dedQuota.setVisible(callback.isInvestAssetsAvailable()  && vat.getInvestAsset() != null);
+			dedQuotaLabel.setVisible(callback.isInvestAssetsAvailable()  && otherLineWithInvestAssests);
 			dedQuota.addValueChangeHandler(new ValueChangeHandler<Double>() {
 				
 				@Override
@@ -455,8 +468,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 
 			adjAccount.setValue(vat.getAdjAccountId(),vat.getAdjAccountCode()
 					,vat.getAdjAccountDescription(),true);
-			adjAccount.setVisible(callback.isInvestAssetsAvailable());
-			adjAccountLabel.setVisible(callback.isInvestAssetsAvailable());
+			adjAccount.setVisible(callback.isInvestAssetsAvailable()  && vat.getInvestAsset() != null);
+			adjAccountLabel.setVisible(callback.isInvestAssetsAvailable()  && otherLineWithInvestAssests);
 			adjAccount.addSelectionHandler( new SelectionHandler<Account>() {
 				
 				@Override
@@ -541,6 +554,15 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				taxableBase.setFocus(true);
 				taxableBase.selectAll();
 			}
+		}
+
+		private boolean isOtherLineWithInvestAssests(int i) {
+			int x = 0;
+			for (InvoicePanelRow row : rows) {
+				if (i!=x && row.investAsset.getValue() != null) return true;
+				++x;
+			}
+			return false;
 		}
 
 		public void enableSurcharge(boolean enabled) {
