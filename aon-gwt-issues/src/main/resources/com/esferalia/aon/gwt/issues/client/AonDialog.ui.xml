@@ -24,7 +24,7 @@
     	</div>
     	<div class="buttons">
         	<p:PaperButton ui:field="cancel" attributes="dialog-dismiss">Cancel</p:PaperButton>
-            <p:PaperButton ui:field="accept" attributes="dialog-confirm autofocus">OK</p:PaperButton>
+            <p:PaperButton ui:field="accept" attributes="dialog-confirm">OK</p:PaperButton>
         </div>
     </p:PaperDialog>
 

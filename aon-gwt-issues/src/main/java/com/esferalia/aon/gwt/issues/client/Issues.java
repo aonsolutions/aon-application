@@ -28,6 +28,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.iron.IronListElement;
+import com.vaadin.polymer.iron.widget.event.IronOverlayOpenedEvent;
+import com.vaadin.polymer.iron.widget.event.IronOverlayOpenedEventHandler;
 import com.vaadin.polymer.paper.PaperDialogElement;
 import com.vaadin.polymer.paper.PaperIconButtonElement;
 import com.vaadin.polymer.paper.PaperInputElement;
@@ -37,6 +39,8 @@ import com.vaadin.polymer.paper.PaperToggleButtonElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperTextarea;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
+
+import net.aonsolutions.polymer.aon.AonComboBoxElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class Issues implements EntryPoint {
@@ -83,6 +87,7 @@ public class Issues implements EntryPoint {
 				PaperTextareaElement.SRC,
 				PaperDialogElement.SRC,
 				VaadinComboBoxElement.SRC,
+				AonComboBoxElement.SRC,
 				PaperIconButtonElement.SRC,
 				IronListElement.SRC,
 				PaperToggleButtonElement.SRC,
@@ -173,7 +178,6 @@ public class Issues implements EntryPoint {
 				
 				FilterPanel fp = (FilterPanel) searchContent.getWidget(0);	
 				fp.setButtonsLabels(result.getMeta());
-		
 			}
 			
 			@Override
@@ -216,39 +220,35 @@ public class Issues implements EntryPoint {
 			
 			@Override
 			protected void onAddButtonClick() {
-				incidence.getRegistries(new AsyncCallback<JSON<JsUser>>() {
-					
+				AonDialog dialog;
+				
+				if(toolbar.getWidgetCount() > 1) toolbar.remove(1);
+				dialog = createAddDialog();
+				toolbar.add(dialog);
+				dialog.dialog.addIronOverlayOpenedHandler(new IronOverlayOpenedEventHandler() {
+							
 					@Override
-					public void onSuccess(JSON<JsUser> result) {
-						AonDialog dialog;
-						if(toolbar.getWidgetCount() > 1){
-							dialog = (AonDialog) toolbar.getWidget(1);
-							VerticalPanel vp = (VerticalPanel) dialog.content.getWidget(0);
-							PaperInput pi = (PaperInput) vp.getWidget(0);pi.setValue("");
-							AonComboBox acb = (AonComboBox) vp.getWidget(1);acb.setValue("");
-							PaperTextarea ptt = (PaperTextarea) vp.getWidget(2);ptt.setValue("");
-						}else {
-							dialog = createAddDialog(result);
-							toolbar.add(dialog);
-						}
-						dialog.open();
+					public void onIronOverlayOpened(IronOverlayOpenedEvent event) {
+						dialog.center();
+						VerticalPanel vp = (VerticalPanel) dialog.content.getWidget(0);	
+						AonComboBox acb = (AonComboBox) vp.getWidget(0);
+						acb.open();
 					}
-					
-					@Override public void onFailure(Throwable caught) {}
 				});
+				dialog.open();
+				
 			}
 		}.setVisibleEditButton(false).setVisibleDeleteButton(false)
 		.setVisibleMoreOptionButton(false));
 	}
 	
-	private AonDialog createAddDialog(JSON<JsUser> registries){	
+	private AonDialog createAddDialog(){	
 		VerticalPanel v = new VerticalPanel();
 
 		AonComboBox acb = new AonComboBox();
 		acb.setLabel("Remitente");
 		acb.setItemLabelPath("login");
 		acb.setItemLabelPath("login");	
-		acb.setItems(registries.getData());
 		acb.setFilterEnable(false);
 		acb.addDomHandler(new KeyUpHandler() {
 			
@@ -279,10 +279,9 @@ public class Issues implements EntryPoint {
 		return new AonDialog("Nueva Incidencia",v){
 			@Override protected void onCancel() {}
 			@Override protected void onAccept() {
-				VerticalPanel vp = (VerticalPanel) content.getWidget(0);
-				PaperInput pi = (PaperInput) vp.getWidget(0);
-
-				AonComboBox acb = (AonComboBox) vp.getWidget(1);
+				VerticalPanel vp = (VerticalPanel) content.getWidget(0);	
+				AonComboBox acb = (AonComboBox) vp.getWidget(0);
+				PaperInput pi = (PaperInput) vp.getWidget(1);
 				PaperTextarea pi4 = (PaperTextarea) vp.getWidget(2);
 				
 				String r= "{\"title\":\""+ pi.getValue() +"\",\"body\":\""+ pi4.getValue()+" \",\"assignee\":\" \",\"labels\":[],"

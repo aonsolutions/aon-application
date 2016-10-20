@@ -48,6 +48,14 @@ public abstract class AonDialog  extends Composite {
 		dialog.open();
 	}
 	
+	public void center(){
+		dialog.center();
+	}
+	
+	public void notifyResize(){
+		dialog.notifyResize();
+	}
+	
 	@UiHandler("accept")
 	void acceptClick(ClickEvent event) {
     	onAccept();
