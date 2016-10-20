@@ -512,6 +512,9 @@
 					default="#{sales.udapaImporter.onImportFileHide}" type="actionListener" />
 			</ui:include>
 		</aon:if>
+		<ui:include src="/com/code/aon/ui/product/facelet/product/item/modalPackage.xhtml">
+			<ui:param name="controller" value="#{salesDetail}" />
+		</ui:include>
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml">
 			<ui:param name="addWaitProcessPoll" value="#{true}" />
 		</ui:include>

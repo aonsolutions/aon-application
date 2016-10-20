@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.65.0
+# Version: 8.72.1
 # Created by: girazu
-# Creation Date: 29/08/2016 15:00
+# Creation Date: 20/10/2016 10:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -763,6 +763,21 @@ CREATE TABLE `department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos';
 
 #
+# Structure for the `tag` table : 
+#
+
+CREATE TABLE `tag` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Etiqueta',
+  `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Etiqueta',
+  `color` varchar(24) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Color de la Etiqueta',
+  PRIMARY KEY (`id`),
+  KEY `IDX_TAG_DOMAIN` (`domain`),
+  CONSTRAINT `FK_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Etiquetas';
+
+#
 # Structure for the `brand` table : 
 #
 
@@ -869,21 +884,6 @@ CREATE TABLE `product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Productos';
 
 #
-# Structure for the `tag` table : 
-#
-
-CREATE TABLE `tag` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Etiqueta',
-  `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Etiqueta',
-  `color` varchar(24) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Color de la Etiqueta',
-  PRIMARY KEY (`id`),
-  KEY `IDX_TAG_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Etiquetas';
-
-#
 # Structure for the `item` table : 
 #
 
@@ -910,6 +910,7 @@ CREATE TABLE `item` (
   `pack_units_tag` int(4) DEFAULT NULL COMMENT 'Identificador de la Etiqueta de unidad de envase',
   `pack_measurement` double DEFAULT '0' COMMENT 'Medida envasada',
   `pack_measurement_tag` int(4) DEFAULT NULL COMMENT 'Identificador de la Etiqueta de unidad de medida',
+  `stock_unit_tag` int(4) DEFAULT NULL COMMENT 'Identificador de la Etiqueta de unidad de Stock',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -921,11 +922,13 @@ CREATE TABLE `item` (
   KEY `IDX_ITEM_TAG_PACK_FORMAT` (`pack_format_tag`),
   KEY `IDX_ITEM_TAG_PACK_MEASUREMENT` (`pack_measurement_tag`),
   KEY `IDX_ITEM_TAG_PACK_UNITS` (`pack_units_tag`),
+  KEY `IDX_ITEM_TAG_STOCK_UNIT` (`stock_unit_tag`),
   CONSTRAINT `FK_ITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ITEM_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`),
   CONSTRAINT `FK_ITEM_TAG_PACK_FORMAT` FOREIGN KEY (`pack_format_tag`) REFERENCES `tag` (`id`),
   CONSTRAINT `FK_ITEM_TAG_PACK_MEASUREMENT` FOREIGN KEY (`pack_measurement_tag`) REFERENCES `tag` (`id`),
-  CONSTRAINT `FK_ITEM_TAG_PACK_UNITS` FOREIGN KEY (`pack_units_tag`) REFERENCES `tag` (`id`)
+  CONSTRAINT `FK_ITEM_TAG_PACK_UNITS` FOREIGN KEY (`pack_units_tag`) REFERENCES `tag` (`id`),
+  CONSTRAINT `FK_ITEM_TAG_STOCK_UNIT` FOREIGN KEY (`stock_unit_tag`) REFERENCES `tag` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos';
 
 #
@@ -3703,10 +3706,9 @@ CREATE TABLE `task` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `number` int(4) DEFAULT NULL COMMENT 'Numero de la Tarea',
   `description` varchar(128) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Tarea',
-  `start_date` date NOT NULL COMMENT 'Fecha de inicio de la Tarea',
-  `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion de la Tarea',
-  `due_date` date NOT NULL COMMENT 'Fecha de vencimiento de la Tarea',
-  `update_date` date DEFAULT NULL COMMENT 'Fecha de modificacion de la Tarea',
+  `start_date` datetime NOT NULL COMMENT 'Fecha de inicio de la Tarea',
+  `end_date` datetime DEFAULT NULL COMMENT 'Fecha de finalizacion de la Tarea',
+  `due_date` datetime DEFAULT NULL COMMENT 'Fecha de vencimiento de la Tarea',
   `priority` tinyint(2) DEFAULT '0' COMMENT 'Prioridad de la Tarea',
   `status` tinyint(2) DEFAULT '0' COMMENT 'Estado de la Tarea',
   `percent` tinyint(2) DEFAULT '0' COMMENT 'Porcentaje de realizacion de la Tarea',
@@ -3721,6 +3723,10 @@ CREATE TABLE `task` (
   `repeat_period` tinyint(2) DEFAULT '0' COMMENT 'Periodo de repeticion de la Tarea',
   `gtask_id` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL,
   `gtasklist_id` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion de la Tarea',
   PRIMARY KEY (`id`),
   KEY `IDX_TASK_ACTIVITY_TYPE` (`activity_type`),
   KEY `IDX_TASK_PROJECT` (`project`),
@@ -5311,6 +5317,8 @@ CREATE TABLE `purchase_detail` (
   `discount_expr` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descuentos del Detalle de Pedido',
   `taxes` double(15,3) DEFAULT '0.000' COMMENT 'Tasas del Detalle de Pedido',
   `status` tinyint(2) DEFAULT NULL COMMENT 'Estado del Detalle de Pedido',
+  `source` tinyint(2) DEFAULT '0' COMMENT 'Origen del Detalle de la Compra',
+  `source_id` int(4) DEFAULT NULL COMMENT 'Identificador del Origen del Detalle de la Compra',
   `proposal_detail` int(4) DEFAULT NULL COMMENT 'Identificador del Detalle de Solicitud',
   `delivered` double DEFAULT '0' COMMENT 'Cantidad entregada del Detalle de Pedido',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
@@ -7855,17 +7863,16 @@ CREATE TABLE `task_comment` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `task` int(4) NOT NULL COMMENT 'Identificador de la tarea',
-  `registry` int(4) NOT NULL COMMENT 'Identificador de registry',
   `comment` text COLLATE latin1_spanish_ci COMMENT 'Comentario de la Tarea',
-  `create_date` date NOT NULL COMMENT 'Fecha de creacion',
-  `update_date` date DEFAULT NULL COMMENT 'Fecha de modificacion',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_TASK_COMMENT_DOMAIN` (`domain`),
   KEY `IDX_TASK_COMMENT_TASK` (`task`),
-  KEY `IDX_TASK_COMMENT_REGISTRY` (`registry`),
   CONSTRAINT `FK_TASK_COMMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_TASK_COMMENT_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`),
-  CONSTRAINT `FK_TASK_COMMENT_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+  CONSTRAINT `FK_TASK_COMMENT_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas y Comentarios';
 
 #
@@ -7876,16 +7883,16 @@ CREATE TABLE `task_event` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `task` int(4) NOT NULL COMMENT 'Identificador de la tarea',
-  `registry` int(4) NOT NULL COMMENT 'Identificador de registry',
   `event` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Evento de la Tarea',
-  `create_date` date NOT NULL COMMENT 'Fecha de creacion',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_TASK_EVENT_DOMAIN` (`domain`),
   KEY `IDX_TASK_EVENT_TASK` (`task`),
-  KEY `IDX_TASK_EVENT_REGISTRY` (`registry`),
   CONSTRAINT `FK_TASK_EVENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_TASK_EVENT_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`),
-  CONSTRAINT `FK_TASK_EVENT_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+  CONSTRAINT `FK_TASK_EVENT_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Tareas y Eventos';
 
 #
@@ -8191,7 +8198,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.65.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.72.1');
 
 COMMIT;
 

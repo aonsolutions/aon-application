@@ -82,12 +82,23 @@
 		<aon:outputLabel for="InvoiceDetail_quantity" value="#{bundle.aon_quantity}" />
 		<aon:panelGrid id="InvoiceDetail_quantity-Grid" columns="5" 
 			columnClasses="aon-width-110,aon-width-40,aon-width-70,aon-width-40,aon-width-70 aon-text-right">
-			<aon:inputText id="InvoiceDetail_quantity"
-				value="#{detailController.to.quantity}"
-				disabled="#{detailController.to.item.id == null}"
-				valueChangeListener="#{detailController.onQuantityChanged}"
-				reRender="InvoiceDetail_quantity-Grid,InvoiceDetail_price-Grid,InvoiceDetail_discount-Grid,InvoiceDetail_amount-Grid" ajaxSingle="true"
-				required="true" size="5" focus="InvoiceDetail_price" />
+			<aon:panelGroup styleClass="aon-vertical-align-top">
+				<aon:inputText id="InvoiceDetail_quantity"
+					value="#{detailController.to.quantity}"
+					disabled="#{detailController.to.item.id == null}"
+					valueChangeListener="#{detailController.onQuantityChanged}"
+					reRender="InvoiceDetail_quantity-Grid,InvoiceDetail_price-Grid,InvoiceDetail_discount-Grid,InvoiceDetail_amount-Grid" ajaxSingle="true"
+					required="true" size="5" focus="InvoiceDetail_price" />
+				<aon:commandLink id="InvoiceDetail_quantity-packaged" immediate="true"
+					styleClass="aon-icon-package" style="margin-left: 5px; padding-right: 12px;"
+					value="&#160;" title="#{bundle.aon_to_specify} #{bundle.product_packaged}"
+					rendered="#{detailController.to.item.product.packaged}"
+					actionListener="#{detailController.onItemPackageShow}"
+					reRender="showItemPackageWindow">
+					<f:setPropertyActionListener target="#{detailController.showItemPackageWindow}"
+						value="#{true}" />
+				</aon:commandLink>
+			</aon:panelGroup>
 			<aon:div rendered="#{invoiceController.to.surcharge and detailController.to.item.id != null and !detailController.to.item.product.prepayment}">
 				<aon:outputText styleClass="aon-italic" 
 					value="#{bundle.aon_surcharge}" />

@@ -916,6 +916,9 @@
 		<foreign-key constraint-name="FK_ITEM_TAG_PACK_MEASUREMENT">
 			<many-to-one property="packMeasurementTag" />
 		</foreign-key>
+		<foreign-key constraint-name="FK_ITEM_TAG_STOCK_UNIT">
+			<many-to-one property="stockUnitTag" />
+		</foreign-key>
 	</table>
 		
 	<table name="item_addinfo" class="com.esferalia.aon.entity.master.ItemAddInfo" />

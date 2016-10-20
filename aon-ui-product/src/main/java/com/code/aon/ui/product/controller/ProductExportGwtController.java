@@ -221,7 +221,6 @@ public class ProductExportGwtController extends AuditableSearchController {
 		List<Integer> l = getTagsIds();
 		String s ="";
 		for (Integer i=0; i<l.size(); i++) {
-			System.out.println(l.get(i));
 			s = s+"$"+l.get(i);
 		}
 		ProductExportGwtController.tagsStr = s;

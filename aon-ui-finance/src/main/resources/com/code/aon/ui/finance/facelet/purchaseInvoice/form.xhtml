@@ -319,5 +319,8 @@
 			<ui:param name="bankAccountController" value="#{purchaseInvoiceFinance.accountHelper}" />
 			<ui:param name="modalReRender" value="financeContainer" />
 		</ui:include>
+		<ui:include src="/com/code/aon/ui/product/facelet/product/item/modalPackage.xhtml">
+			<ui:param name="controller" value="#{purchaseInvoiceDetail}" />
+		</ui:include>
 	</ui:define>
 </ui:composition>

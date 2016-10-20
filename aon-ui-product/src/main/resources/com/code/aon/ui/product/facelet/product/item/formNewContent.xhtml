@@ -64,7 +64,7 @@
 	<aon:if test="#{configCollections.packingTypeTagsCount > 0}">
 		<aon:outputLabel for="#{controller.pojoShortName}_packFormatTag"
 			value="#{bundle.aon_format}" />
-		<aon:div>
+		<aon:panelGrid columns="3" columnClasses="aon-width-120,aon-width-100,aon-width-auto">
 			<aon:selectOneMenu id="#{controller.pojoShortName}_packFormatTag" 
 				value="#{itemTo.packFormatTag}" 
 				required="#{itemTo.product.packaged}"
@@ -75,48 +75,63 @@
 
 			<aon:if test="#{itemTo.product.packaged}">
 				<aon:outputLabel for="#{controller.pojoShortName}_packUnits"
-					styleClass="aon-margin-left aon-margin-right aon-italic"
-					value="#{bundle.aon_units}" />
-				<aon:inputText id="#{controller.pojoShortName}_packUnits" 
-					value="#{itemTo.packUnits}" size="1" maxlength="3"
-					disabled="#{fieldDisabled}"
-					required="#{true}"
-					ajaxSingle="true" />
-
+					styleClass="aon-italic"
+					value="#{bundle.aon_units_abrv} / #{bundle.product_package}" />
 				<aon:outputLabel for="#{controller.pojoShortName}_packUnitsTag"
-					styleClass="aon-margin-left aon-margin-right aon-italic"
+					rendered="false"
 					value="#{bundle.product_package}" />
-				<aon:selectOneMenu id="#{controller.pojoShortName}_packUnitsTag" 
-					value="#{itemTo.packUnitsTag}" 
-					required="true"
-					ajaxSingle="true">
-					<f:selectItem itemLabel="-" value="#{null}" />
-					<f:selectItems value="#{configCollections.packingTypeTags}" />
-				</aon:selectOneMenu>
+
+				<aon:div>
+					<aon:inputText id="#{controller.pojoShortName}_packUnits" 
+						value="#{itemTo.packUnits}" size="2" maxlength="3"
+						disabled="#{fieldDisabled}"
+						required="true"
+						ajaxSingle="true" />
+					<aon:selectOneMenu id="#{controller.pojoShortName}_packUnitsTag" 
+						value="#{itemTo.packUnitsTag}" 
+						required="true"
+						ajaxSingle="true">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{configCollections.packingTypeTags}" />
+					</aon:selectOneMenu>
+				</aon:div>
 			</aon:if>
-		</aon:div>
+		</aon:panelGrid>
 
 		<aon:if test="#{itemTo.product.packaged}">
-			<aon:outputLabel for="#{controller.pojoShortName}_packMeasurement"
-				value="#{bundle.aon_measurement}" />
-			<aon:div>
-				<aon:inputText id="#{controller.pojoShortName}_packMeasurement" 
-					value="#{itemTo.packMeasurement}" size="3" maxlength="5"
-					disabled="#{fieldDisabled}"
-					required="#{true}"
-					ajaxSingle="true" />
-
-				<aon:outputLabel for="#{controller.pojoShortName}_packMeasurementTag"
-					styleClass="aon-margin-left aon-margin-right aon-italic"
-					value="#{bundle.aon_measurement_unit}" />
-				<aon:selectOneMenu id="#{controller.pojoShortName}_packMeasurementTag" 
-					value="#{itemTo.packMeasurementTag}" 
+			<aon:outputLabel for="#{controller.pojoShortName}_stockUnitTag"
+				value="#{bundle.aon_unit_abrv}#{bundle.product_stock}" />
+			<aon:panelGrid columns="3" columnClasses="aon-width-120,aon-width-100,aon-width-auto">
+				<aon:selectOneMenu id="#{controller.pojoShortName}_stockUnitTag" 
+					value="#{itemTo.stockUnitTag}" 
 					required="true"
 					ajaxSingle="true">
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{configCollections.packingTypeTags}" />
 				</aon:selectOneMenu>
-			</aon:div>
+
+				<aon:outputLabel for="#{controller.pojoShortName}_packMeasurement"
+					styleClass="aon-italic"
+					value="#{bundle.aon_measurement}" />
+				<aon:outputLabel for="#{controller.pojoShortName}_packMeasurementTag"
+					rendered="false"
+					value="#{bundle.aon_measurement_unit}" />
+
+				<aon:div>
+					<aon:inputText id="#{controller.pojoShortName}_packMeasurement" 
+						value="#{itemTo.packMeasurement}" size="2" maxlength="5"
+						disabled="#{fieldDisabled}"
+						required="true"
+						ajaxSingle="true" />
+					<aon:selectOneMenu id="#{controller.pojoShortName}_packMeasurementTag" 
+						value="#{itemTo.packMeasurementTag}" 
+						required="true"
+						ajaxSingle="true">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{configCollections.packingTypeTags}" />
+					</aon:selectOneMenu>
+				</aon:div>
+			</aon:panelGrid>
 		</aon:if>
 	</aon:if>
 
@@ -130,7 +145,8 @@
 			converter="aon.TrimStringConverter" />
 	</aon:if>
 
-	<aon:outputLabel for="#{controller.pojoShortName}_description" value="#{bundle.aon_description}" />
+	<aon:outputLabel for="#{controller.pojoShortName}_description" 
+		value="#{bundle.aon_description}" />
 	<aon:inputTextarea id="#{controller.pojoShortName}_description"
 		value="#{itemTo.description}" cols="50" rows="4"
 		ajaxSingle="true" />

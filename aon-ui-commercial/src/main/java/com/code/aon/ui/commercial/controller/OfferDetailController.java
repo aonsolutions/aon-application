@@ -33,23 +33,24 @@ public class OfferDetailController extends LinesController implements ICommercia
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private boolean longDescription;
-
 	private IPriceStrategy priceStrategy;
+	private boolean longDescription;
+	private boolean showSerialNumberWindow;
+	private boolean showItemPackageWindow;
 	
+	public IPriceStrategy getPriceStrategy(){
+		if(priceStrategy == null){
+			priceStrategy = PriceStrategyFactory.getPriceStrategy();
+		}
+		return priceStrategy;
+	}
+
 	public boolean isLongDescription() {
 		return longDescription;
 	}
 
 	public void setLongDescription(boolean longDescription) {
 		this.longDescription = longDescription;
-	}
-
-	public IPriceStrategy getPriceStrategy(){
-		if(priceStrategy == null){
-			priceStrategy = PriceStrategyFactory.getPriceStrategy();
-		}
-		return priceStrategy;
 	}
 
 	public void onLongDescription(ActionEvent event) {
@@ -66,6 +67,22 @@ public class OfferDetailController extends LinesController implements ICommercia
 
 	public void onShortDescription(ActionEvent event) {
 		setLongDescription(false);
+	}
+
+	public boolean isShowSerialNumberWindow() {
+		return showSerialNumberWindow;
+	}
+
+	public void setShowSerialNumberWindow(boolean value) {
+		this.showSerialNumberWindow = value;
+	}
+
+	public boolean isShowItemPackageWindow() {
+		return showItemPackageWindow;
+	}
+
+	public void setShowItemPackageWindow(boolean value) {
+		this.showItemPackageWindow = value;
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
@@ -92,6 +109,16 @@ public class OfferDetailController extends LinesController implements ICommercia
 				offerDetail.setPrice(getPriceStrategy().getUnitPrice(offerDetail, offer.getIssueDate(), offer.getTarget()));
 			}
 		}
+	}
+
+	public void onItemPackageShow(ActionEvent event) {
+		OfferDetail offerDetail = (OfferDetail)getTo();
+		offerDetail.getItem().initializePackQuantities(offerDetail.getQuantity());
+	}
+
+	public void onAssignItemPackage(ActionEvent event) {
+		OfferDetail offerDetail = (OfferDetail)getTo();
+		offerDetail.setQuantity(offerDetail.getItem().getPackStockQuantity());
 	}
 
 	public double getAmount() {

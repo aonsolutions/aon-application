@@ -41,11 +41,45 @@ import com.esferalia.aon.entity.master.ItemDB;
 public class Item extends ItemDB implements IPriceable, IAuditable {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
+
+	private double packFormatQuantity;
+	private double packUnitsQuantity;
+	private double packMeasurementQuantity;
+
     private Set<RegistryItem> customers = new HashSet<RegistryItem>();
     private Set<RegistryItem> suppliers = new HashSet<RegistryItem>();
     private Set<ItemAddInfo> addInfos = new HashSet<ItemAddInfo>();
     private Set<ItemComposition> compositions = new HashSet<ItemComposition>();
+
+    @Transient
+    public double getPackFormatQuantity() {
+    	return packFormatQuantity;
+    }
+	public void setPackFormatQuantity(double packFormatQuantity) {
+		this.packFormatQuantity = CommonUtil.round(packFormatQuantity, 3);
+		this.packUnitsQuantity = CommonUtil.round(packFormatQuantity * getPackUnits());
+		this.packMeasurementQuantity = CommonUtil.round(packFormatQuantity * getPackUnits() * getPackMeasurement());
+	}
+
+    @Transient
+    public double getPackUnitsQuantity() {
+    	return packUnitsQuantity;
+    }
+	public void setPackUnitsQuantity(double packUnitsQuantity) {
+		this.packUnitsQuantity = CommonUtil.round(packUnitsQuantity, 3);
+		this.packFormatQuantity = CommonUtil.round(packUnitsQuantity / getPackUnits());
+		this.packMeasurementQuantity = CommonUtil.round(packUnitsQuantity * getPackMeasurement());
+	}
+
+    @Transient
+    public double getPackMeasurementQuantity() {
+    	return packMeasurementQuantity;
+    }
+	public void setPackMeasurementQuantity(double packMeasurementQuantity) {
+		this.packMeasurementQuantity = CommonUtil.round(packMeasurementQuantity, 3);
+		this.packUnitsQuantity = CommonUtil.round(packMeasurementQuantity / getPackMeasurement());
+		this.packFormatQuantity = CommonUtil.round(packMeasurementQuantity / getPackMeasurement() / getPackUnits());
+	}
 
 	@OneToMany(mappedBy = "item", cascade={CascadeType.REMOVE})
 	@Where(clause = "type=1")
@@ -243,6 +277,39 @@ public class Item extends ItemDB implements IPriceable, IAuditable {
     		}
     	}
     	return wildCard;
+    }
+
+    @Transient
+	public void initializePackQuantities(double stockQuantity) {
+    	if (getProduct().isPackaged() && getStockUnitTag() != null) {
+    		if (getPackFormatTag() != null && getStockUnitTag().equals(getPackFormatTag())) {
+    			packFormatQuantity = stockQuantity;
+    			packUnitsQuantity = CommonUtil.round(stockQuantity * getPackUnits());
+    			packMeasurementQuantity = CommonUtil.round(stockQuantity * getPackUnits() * getPackMeasurement());
+    		} else if (getPackUnitsTag() != null && getStockUnitTag().equals(getPackUnitsTag())) {
+    			packFormatQuantity = CommonUtil.round(stockQuantity / getPackUnits());
+    			packUnitsQuantity = stockQuantity;
+    			packMeasurementQuantity = CommonUtil.round(stockQuantity * getPackMeasurement());
+    		} else if (getPackMeasurementTag() != null && getStockUnitTag().equals(getPackMeasurementTag())) {
+    			packFormatQuantity = CommonUtil.round(stockQuantity / (getPackUnits() * getPackMeasurement()));
+    			packUnitsQuantity = CommonUtil.round(stockQuantity / getPackMeasurement());
+    			packMeasurementQuantity = stockQuantity;
+    		}
+    	}
+    }
+
+    @Transient
+	public double getPackStockQuantity() {
+    	if (getProduct().isPackaged() && getStockUnitTag() != null) {
+    		if (getPackFormatTag() != null && getStockUnitTag().equals(getPackFormatTag())) {
+    			return getPackFormatQuantity(); 
+    		} else if (getPackUnitsTag() != null && getStockUnitTag().equals(getPackUnitsTag())) {
+    			return getPackUnitsQuantity();
+    		} else if (getPackMeasurementTag() != null && getStockUnitTag().equals(getPackMeasurementTag())) {
+    			return getPackMeasurementQuantity();
+    		}
+    	}
+    	return 0;
     }
 
 }

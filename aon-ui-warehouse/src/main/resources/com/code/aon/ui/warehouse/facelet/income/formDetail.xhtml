@@ -76,7 +76,7 @@
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<ui:param name="lookupDisabled" value="#{!controller.editable}" />
 					<ui:param name="lookupReRender" 
-						value="incomeDetailItemEdit,IncomeDetail_quantity,IncomeDetail_price,IncomeDetail_discount,IncomeDetail_amount" />
+						value="incomeDetailItemEdit,incomeDetailQuantityEdit,IncomeDetail_price,IncomeDetail_discount,IncomeDetail_amount" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{incomeDetail.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
@@ -117,7 +117,7 @@
 							<ui:param name="lookupSuffix" value="-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
 							<ui:param name="lookupReRender" 
-								value="incomeDetailItemNew,IncomeDetail_quantity-New,IncomeDetail_price-New,IncomeDetail_discount-New,
+								value="incomeDetailItemNew,incomeDetailQuantityNew,IncomeDetail_price-New,IncomeDetail_discount-New,
 										IncomeDetail_amount-New" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{incomeDetail.onItemChanged}" type="lookupChangeListener" />
@@ -157,16 +157,38 @@
 					rendered="#{formList or !controller.modelEditable}">
 					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 				</aon:outputText>
-				<aon:inputText id="IncomeDetail_quantity" 
-					value="#{controller.to.quantity}" rendered="#{formEdit and controller.editable}"
-					reRender="IncomeDetail_amount" 
-					required="true" size="5" />
+				<aon:panelGroup id="incomeDetailQuantityEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit and controller.editable}">
+					<aon:inputText id="IncomeDetail_quantity" 
+						value="#{controller.to.quantity}" rendered="#{formEdit and controller.editable}"
+						reRender="IncomeDetail_amount" 
+						required="true" size="4" />
+					<aon:commandLink id="IncomeDetail_quantity-packaged"
+						styleClass="aon-finding-toolbar-item aon-noborder aon-icon-package"
+						value="&#160;" title="#{bundle.aon_to_specify} #{bundle.product_packaged}"
+						rendered="#{controller.to.item.product.packaged}"
+						actionListener="#{controller.onItemPackageShow}"
+						reRender="showItemPackageWindow">
+						<f:setPropertyActionListener target="#{incomeDetail.showItemPackageWindow}"
+							value="#{true}" />
+					</aon:commandLink>
+				</aon:panelGroup>
 				<f:facet name="footer">
-					<aon:div style="text-align:right;">
-						<aon:inputText id="IncomeDetail_quantity-New" 
-							value="#{controller.to.quantity}" rendered="#{formNew}" 
-							reRender="IncomeDetail_amount-New" 
-							required="true" size="5" />
+					<aon:div styleClass="aon-text-right">
+						<aon:panelGroup id="incomeDetailQuantityNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
+							<aon:inputText id="IncomeDetail_quantity-New" 
+								value="#{controller.to.quantity}" rendered="#{formNew}" 
+								reRender="IncomeDetail_amount-New" 
+								required="true" size="4" />
+							<aon:commandLink id="IncomeDetail_quantity-packaged-New"
+								styleClass="aon-finding-toolbar-item aon-noborder aon-icon-package"
+								value="&#160;" title="#{bundle.aon_to_specify} #{bundle.product_packaged}"
+								rendered="#{controller.to.item.product.packaged}"
+								actionListener="#{controller.onItemPackageShow}"
+								reRender="showItemPackageWindow">
+								<f:setPropertyActionListener target="#{incomeDetail.showItemPackageWindow}"
+									value="#{true}" />
+							</aon:commandLink>
+						</aon:panelGroup>
 						<aon:outputText id="Income_totalDetailQuantity" 
 							value="#{income.totalDetailQuantity}" rendered="#{!formNew}">
 							<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />

@@ -90,7 +90,7 @@
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<ui:param name="lookupDisabled" value="#{(itemLookupDisabled)?(itemLookupDisabled):(!controller.to.pending)}" />
 					<ui:param name="lookupReRender" 
-						value="purchaseDetailItemEdit,PurchaseDetail_quantity,PurchaseDetail_price,PurchaseDetail_discount,PurchaseDetail_amount" />
+						value="purchaseDetailItemEdit,,purchaseDetailQuantityEdit,PurchaseDetail_price,PurchaseDetail_discount,PurchaseDetail_amount" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{controller.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
@@ -129,7 +129,7 @@
 							<ui:param name="lookupSuffix" value="-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
 							<ui:param name="lookupReRender" 
-								value="purchaseDetailItemNew,PurchaseDetail_quantity-New,PurchaseDetail_price-New,PurchaseDetail_discount-New,
+								value="purchaseDetailItemNew,purchaseDetailQuantityNew,PurchaseDetail_price-New,PurchaseDetail_discount-New,
 										PurchaseDetail_amount-New" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{controller.onItemChanged}" type="lookupChangeListener" />
@@ -169,21 +169,41 @@
 					rendered="#{formList}">
 					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 				</aon:outputText>
-				<aon:inputText id="PurchaseDetail_quantity" 
-					value="#{controller.to.quantity}" rendered="#{formEdit}"
-					reRender="PurchaseDetail_pendingQuantity,PurchaseDetail_amount" 
-					required="true" size="5" />
+				<aon:panelGroup id="purchaseDetailQuantityEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
+					<aon:inputText id="PurchaseDetail_quantity" 
+						value="#{controller.to.quantity}" rendered="#{formEdit}"
+						reRender="PurchaseDetail_pendingQuantity,PurchaseDetail_amount" 
+						required="true" size="4" />
+					<aon:commandLink id="PurchaseDetail_quantity-packaged"
+						styleClass="aon-finding-toolbar-item aon-noborder aon-icon-package"
+						value="&#160;" title="#{bundle.aon_to_specify} #{bundle.product_packaged}"
+						rendered="#{controller.to.item.product.packaged}"
+						actionListener="#{controller.onItemPackageShow}"
+						reRender="showItemPackageWindow">
+						<f:setPropertyActionListener target="#{purchaseDetail.showItemPackageWindow}"
+							value="#{true}" />
+					</aon:commandLink>
+				</aon:panelGroup>
 				<f:facet name="footer">
-					<aon:div style="text-align:right;">
+					<aon:panelGroup id="purchaseDetailQuantityNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 						<aon:inputText id="PurchaseDetail_quantity-New" 
 							value="#{controller.to.quantity}" rendered="#{formNew}" 
 							reRender="PurchaseDetail_amount-New" 
-							required="true" size="5" />
+							required="true" size="4" />
+						<aon:commandLink id="PurchaseDetail_quantity-packaged-New"
+							styleClass="aon-finding-toolbar-item aon-noborder aon-icon-package"
+							value="&#160;" title="#{bundle.aon_to_specify} #{bundle.product_packaged}"
+							rendered="#{controller.to.item.product.packaged}"
+							actionListener="#{controller.onItemPackageShow}"
+							reRender="showItemPackageWindow">
+							<f:setPropertyActionListener target="#{purchaseDetail.showItemPackageWindow}"
+								value="#{true}" />
+						</aon:commandLink>
 						<aon:outputText id="Purchase_totalDetailQuantity" 
 							value="#{purchase.totalDetailQuantity}" rendered="#{!formNew}">
 							<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 						</aon:outputText>
-					</aon:div>
+					</aon:panelGroup>
 				</f:facet>
 			</aon:column>
 	

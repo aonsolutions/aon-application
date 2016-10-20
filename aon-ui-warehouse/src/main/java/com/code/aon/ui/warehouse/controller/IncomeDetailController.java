@@ -24,6 +24,7 @@ public class IncomeDetailController extends LinesController implements IWarehous
 	
 	private IPriceStrategy priceStrategy;
 	private boolean longDescription;
+	private boolean showItemPackageWindow;
 	private IncomeDetail incomeDetail;
 	
 	public IPriceStrategy getPriceStrategy(){
@@ -55,6 +56,14 @@ public class IncomeDetailController extends LinesController implements IWarehous
 
 	public void onShortDescription(ActionEvent event) {
 		setLongDescription(false);
+	}
+
+	public boolean isShowItemPackageWindow() {
+		return showItemPackageWindow;
+	}
+
+	public void setShowItemPackageWindow(boolean value) {
+		this.showItemPackageWindow = value;
 	}
 
 	public IncomeDetail getIncomeDetail() {
@@ -111,6 +120,16 @@ public class IncomeDetailController extends LinesController implements IWarehous
 			incomeDetail.setPrice(getPriceStrategy().getUnitPurchasePrice(incomeDetail, income.getIssueTime(), income.getSupplier()));
 		}
 	}	
+
+	public void onItemPackageShow(ActionEvent event) {
+		IncomeDetail incomeDetail = (IncomeDetail)getTo();
+		incomeDetail.getItem().initializePackQuantities(incomeDetail.getQuantity());
+	}
+
+	public void onAssignItemPackage(ActionEvent event) {
+		IncomeDetail incomeDetail = (IncomeDetail)getTo();
+		incomeDetail.setQuantity(incomeDetail.getItem().getPackStockQuantity());
+	}
 
 	public double getAmount() {
 		return getPriceStrategy().getBasePrice((ICalculable)this.getTo());

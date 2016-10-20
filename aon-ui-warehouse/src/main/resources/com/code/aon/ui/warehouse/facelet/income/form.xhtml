@@ -417,5 +417,8 @@
 			<ui:param name="bankAccountController" value="#{income.accountHelper}" />
 			<ui:param name="modalReRender" value="payMethodDiv" />
 		</ui:include>		
+		<ui:include src="/com/code/aon/ui/product/facelet/product/item/modalPackage.xhtml">
+			<ui:param name="controller" value="#{incomeDetail}" />
+		</ui:include>
  	</ui:define>
 </ui:composition>

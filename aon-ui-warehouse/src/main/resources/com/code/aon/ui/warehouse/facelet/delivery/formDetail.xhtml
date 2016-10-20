@@ -82,7 +82,7 @@
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<ui:param name="lookupDisabled" value="#{!controller.editable}" />
 					<ui:param name="lookupReRender" 
-						value="deliveryDetailItemEdit,DeliveryDetail_quantity,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount" />
+						value="deliveryDetailItemEdit,deliveryDetailQuantityEdit,DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{deliveryDetail.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
@@ -137,7 +137,7 @@
 							<ui:param name="lookupSuffix" value="-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
 							<ui:param name="lookupReRender" 
-								value="deliveryDetailItemNew,DeliveryDetail_quantity-New,DeliveryDetail_price-New,DeliveryDetail_discount-New,
+								value="deliveryDetailItemNew,deliveryDetailQuantityNew,DeliveryDetail_price-New,DeliveryDetail_discount-New,
 										DeliveryDetail_amount-New" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{deliveryDetail.onItemChanged}" type="lookupChangeListener" />
@@ -194,18 +194,40 @@
 					rendered="#{formList or !controller.modelEditable}">
 					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 				</aon:outputText>
-				<aon:inputText id="DeliveryDetail_quantity" 
-					value="#{controller.to.quantity}" rendered="#{formEdit and controller.editable}"
-					valueChangeListener="#{controller.onQuantityChanged}" 
-					reRender="DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount" 
-					required="true" size="5" focus="DeliveryDetail_price" />
+				<aon:panelGroup id="deliveryDetailQuantityEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit and controller.editable}">
+					<aon:inputText id="DeliveryDetail_quantity" 
+						value="#{controller.to.quantity}" rendered="#{formEdit and controller.editable}"
+						valueChangeListener="#{controller.onQuantityChanged}" 
+						reRender="DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount" 
+						required="true" size="4" focus="DeliveryDetail_price" />
+					<aon:commandLink id="DeliveryDetail_quantity-packaged"
+						styleClass="aon-finding-toolbar-item aon-noborder aon-icon-package"
+						value="&#160;" title="#{bundle.aon_to_specify} #{bundle.product_packaged}"
+						rendered="#{controller.to.item.product.packaged}"
+						actionListener="#{controller.onItemPackageShow}"
+						reRender="showItemPackageWindow">
+						<f:setPropertyActionListener target="#{deliveryDetail.showItemPackageWindow}"
+							value="#{true}" />
+					</aon:commandLink>
+				</aon:panelGroup>
 				<f:facet name="footer">
-					<aon:div style="text-align:right;">
-						<aon:inputText id="DeliveryDetail_quantity-New" 
-							value="#{controller.to.quantity}" rendered="#{formNew}" 
-							valueChangeListener="#{controller.onQuantityChanged}" 
-							reRender="DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New" 
-							required="true" size="5" focus="DeliveryDetail_price-New" />
+					<aon:div styleClass="aon-text-right">
+						<aon:panelGroup id="deliveryDetailQuantityNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
+							<aon:inputText id="DeliveryDetail_quantity-New" 
+								value="#{controller.to.quantity}" rendered="#{formNew}" 
+								valueChangeListener="#{controller.onQuantityChanged}" 
+								reRender="DeliveryDetail_price-New,DeliveryDetail_discount-New,DeliveryDetail_amount-New" 
+								required="true" size="4" focus="DeliveryDetail_price-New" />
+							<aon:commandLink id="DeliveryDetail_quantity-packaged-New"
+								styleClass="aon-finding-toolbar-item aon-noborder aon-icon-package"
+								value="&#160;" title="#{bundle.aon_to_specify} #{bundle.product_packaged}"
+								rendered="#{controller.to.item.product.packaged}"
+								actionListener="#{controller.onItemPackageShow}"
+								reRender="showItemPackageWindow">
+								<f:setPropertyActionListener target="#{deliveryDetail.showItemPackageWindow}"
+									value="#{true}" />
+							</aon:commandLink>
+						</aon:panelGroup>
 						<aon:outputText id="Delivery_totalDetailQuantity" 
 							value="#{delivery.totalDetailQuantity}" rendered="#{!formNew}">
 							<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />

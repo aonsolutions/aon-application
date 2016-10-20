@@ -71,7 +71,13 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
 		}
     }
     
-    @Override
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+    	ProductController controller = (ProductController)event.getController();
+		validateStockUnits(controller.getItem());
+	}
+
+	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
     	ProductController controller = (ProductController)event.getController();
 		try {
@@ -119,6 +125,16 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
 		return (ProductSearchListener) AonUtil.getRegisteredBean(PRODUCT_SEARCH_CONTROLLER_NAME);
 	}
 	
+	private void validateStockUnits(Item item) throws ControllerListenerException {
+		Tag formatTag = item.getPackFormatTag();
+		Tag unitsTag = item.getPackUnitsTag();
+		Tag measurementTag = item.getPackMeasurementTag();
+		Tag stockUnitTag = item.getStockUnitTag();
+		if (item.getProduct().isPackaged() && !(stockUnitTag.equals(formatTag) || stockUnitTag.equals(unitsTag) || stockUnitTag.equals(measurementTag))) {
+			throw new ControllerListenerException("La Ud.Stock tiene que ser " + formatTag.getName() + ", " + unitsTag.getName() + " o " + measurementTag.getName());
+		}
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List<ProductTag> getProductTags(Product product) throws ManagerBeanException {
 		IManagerBean productTagBean = BeanManager.getManagerBean(ProductTag.class);

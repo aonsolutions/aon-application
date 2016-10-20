@@ -86,7 +86,7 @@
 								<ui:param name="lookupInputOnFocus" value="InvoiceDetail_description" />
 								<ui:param name="lookupRendered" value="#{formEdit}" />
 								<ui:param name="lookupReRender" 
-									value="invoiceDetailItemEdit,InvoiceDetail_quantity,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount" />
+									value="invoiceDetailItemEdit,invoiceDetailQuantityEdit,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount" />
 								<aon:methodParam name="lookupChangeListener"
 									value="#{controller.onItemChanged}" type="lookupChangeListener" />
 							</ui:include>
@@ -126,7 +126,7 @@
 										<ui:param name="lookupSuffix" value="-New" />
 										<ui:param name="lookupRendered" value="#{formNew}" />
 										<ui:param name="lookupReRender" 
-											value="invoiceDetailItemNew,InvoiceDetail_quantity-New,InvoiceDetail_price-New,InvoiceDetail_discount-New,
+											value="invoiceDetailItemNew,invoiceDetailQuantityNew,InvoiceDetail_price-New,InvoiceDetail_discount-New,
 													InvoiceDetail_amount_data" />
 										<aon:methodParam name="lookupChangeListener"
 											value="#{controller.onItemChanged}" type="lookupChangeListener" />
@@ -167,20 +167,43 @@
 								rendered="#{formList}">
 								<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 							</aon:outputText>
-							<aon:inputText id="InvoiceDetail_quantity"
-								value="#{controller.to.quantity}" rendered="#{formEdit}"
-								disabled="#{controller.increaseDetail}"
-								valueChangeListener="#{controller.onQuantityChanged}"
-								ajaxSingle="true" reRender="InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
-								required="true" size="5" focus="InvoiceDetail_price" />
+							<aon:panelGroup id="invoiceDetailQuantityEdit" styleClass="aon-nowrap aon-vertical-align-top" 
+								rendered="#{formEdit and !controller.increaseDetail}">
+								<aon:inputText id="InvoiceDetail_quantity"
+									value="#{controller.to.quantity}" rendered="#{formEdit}"
+									disabled="#{controller.increaseDetail}"
+									valueChangeListener="#{controller.onQuantityChanged}"
+									ajaxSingle="true" reRender="InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
+									required="true" size="4" focus="InvoiceDetail_price" />
+								<aon:commandLink id="InvoiceDetail_quantity-packaged"
+									styleClass="aon-finding-toolbar-item aon-noborder aon-icon-package"
+									value="&#160;" title="#{bundle.aon_to_specify} #{bundle.product_packaged}"
+									rendered="#{controller.to.item.product.packaged}"
+									actionListener="#{controller.onItemPackageShow}"
+									reRender="showItemPackageWindow">
+									<f:setPropertyActionListener target="#{controller.showItemPackageWindow}"
+										value="#{true}" />
+								</aon:commandLink>
+							</aon:panelGroup>
 							<f:facet name="footer">
-								<aon:div style="text-align:right;">
-									<aon:inputText id="InvoiceDetail_quantity-New"
-										value="#{controller.to.quantity}" rendered="#{formNew}"
-										disabled="#{controller.increaseDetail}"
-										valueChangeListener="#{controller.onQuantityChanged}"
-										ajaxSingle="true" reRender="InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
-										required="true" size="5" focus="InvoiceDetail_price-New" />
+								<aon:div styleClass="aon-text-right">
+									<aon:panelGroup id="invoiceDetailQuantityNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
+										<aon:inputText id="InvoiceDetail_quantity-New"
+											value="#{controller.to.quantity}" rendered="#{formNew}"
+											disabled="#{controller.increaseDetail}"
+											valueChangeListener="#{controller.onQuantityChanged}"
+											ajaxSingle="true" reRender="InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
+											required="true" size="4" focus="InvoiceDetail_price-New" />
+										<aon:commandLink id="InvoiceDetail_quantity-packaged-New"
+											styleClass="aon-finding-toolbar-item aon-noborder aon-icon-package"
+											value="&#160;" title="#{bundle.aon_to_specify} #{bundle.product_packaged}"
+											rendered="#{controller.to.item.product.packaged}"
+											actionListener="#{controller.onItemPackageShow}"
+											reRender="showItemPackageWindow">
+											<f:setPropertyActionListener target="#{controller.showItemPackageWindow}"
+												value="#{true}" />
+										</aon:commandLink>
+									</aon:panelGroup>
 									<aon:outputText id="Invoice_totalQuantity" 
 										value="#{invoiceController.toInvoiceTotalQuantity}" rendered="#{!formNew}">
 										<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />

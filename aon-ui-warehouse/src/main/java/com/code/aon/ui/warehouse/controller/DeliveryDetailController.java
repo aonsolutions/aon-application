@@ -33,6 +33,7 @@ public class DeliveryDetailController extends LinesController implements IWareho
 	private IPriceStrategy priceStrategy;
 	private boolean stockWarning;
 	private boolean longDescription;
+	private boolean showItemPackageWindow;
 	
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
@@ -55,6 +56,14 @@ public class DeliveryDetailController extends LinesController implements IWareho
 
 	public void setLongDescription(boolean longDescription) {
 		this.longDescription = longDescription;
+	}
+
+	public boolean isShowItemPackageWindow() {
+		return showItemPackageWindow;
+	}
+
+	public void setShowItemPackageWindow(boolean value) {
+		this.showItemPackageWindow = value;
 	}
 
 	public void onLongDescription(ActionEvent event) {
@@ -162,6 +171,16 @@ public class DeliveryDetailController extends LinesController implements IWareho
 		if (!stockWarning) {
 			onAccept(event);
 		}
+	}
+
+	public void onItemPackageShow(ActionEvent event) {
+		DeliveryDetail deliveryDetail = (DeliveryDetail)getTo();
+		deliveryDetail.getItem().initializePackQuantities(deliveryDetail.getQuantity());
+	}
+
+	public void onAssignItemPackage(ActionEvent event) {
+		DeliveryDetail deliveryDetail = (DeliveryDetail)getTo();
+		deliveryDetail.setQuantity(deliveryDetail.getItem().getPackStockQuantity());
 	}
 
 	public double getAmount() {

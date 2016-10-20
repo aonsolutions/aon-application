@@ -74,7 +74,7 @@
 					<ui:param name="lookupInputOnFocus" value="OfferDetail_description" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<ui:param name="lookupReRender" 
-						value="offerDetailItemEdit,OfferDetail_quantity,OfferDetail_price,OfferDetail_discount,OfferDetail_amount" />
+						value="offerDetailItemEdit,offerDetailQuantityEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount" />
 				</ui:include>						
 				<aon:panelGroup id="offerDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<aon:if test="#{aonConfiguration.bean.product.showAlternatives}">
@@ -120,7 +120,7 @@
 							<ui:param name="lookupInputOnFocus" value="OfferDetail_description-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
 							<ui:param name="lookupReRender" 
-								value="offerDetailItemNew,OfferDetail_quantity-New,OfferDetail_price-New,OfferDetail_discount-New,
+								value="offerDetailItemNew,offerDetailQuantityNew,OfferDetail_price-New,OfferDetail_discount-New,
 										OfferDetail_amount-New" />
 						</ui:include>						
 						<aon:panelGroup id="offerDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
@@ -173,17 +173,39 @@
 					rendered="#{formList and to.item != null and to.item.id != null}">
 					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 				</aon:outputText>
-				<aon:inputText id="OfferDetail_quantity" 
-					value="#{controller.to.quantity}" rendered="#{formEdit}"
-					valueChangeListener="#{controller.onQuantityChanged}" 
-					reRender="OfferDetail_price,OfferDetail_discount,OfferDetail_amount" 
-					required="true" size="5" focus="OfferDetail_price" />
-				<f:facet name="footer">
-					<aon:inputText id="OfferDetail_quantity-New" 
-						value="#{controller.to.quantity}" rendered="#{formNew}"
+				<aon:panelGroup id="offerDetailQuantityEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
+					<aon:inputText id="OfferDetail_quantity" 
+						value="#{controller.to.quantity}" rendered="#{formEdit}"
 						valueChangeListener="#{controller.onQuantityChanged}" 
-						reRender="OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New" 
-						required="true" size="5" focus="OfferDetail_price-New" />
+						reRender="OfferDetail_price,OfferDetail_discount,OfferDetail_amount" 
+						required="true" size="4" focus="OfferDetail_price" />
+					<aon:commandLink id="OfferDetail_quantity-packaged"
+						styleClass="aon-finding-toolbar-item aon-noborder aon-icon-package"
+						value="&#160;" title="#{bundle.aon_to_specify} #{bundle.product_packaged}"
+						rendered="#{controller.to.item.product.packaged}"
+						actionListener="#{controller.onItemPackageShow}"
+						reRender="showItemPackageWindow">
+						<f:setPropertyActionListener target="#{offerDetail.showItemPackageWindow}"
+							value="#{true}" />
+					</aon:commandLink>
+				</aon:panelGroup>
+				<f:facet name="footer">
+					<aon:panelGroup id="offerDetailQuantityNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
+						<aon:inputText id="OfferDetail_quantity-New" 
+							value="#{controller.to.quantity}" rendered="#{formNew}"
+							valueChangeListener="#{controller.onQuantityChanged}" 
+							reRender="OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New" 
+							required="true" size="4" focus="OfferDetail_price-New" />
+						<aon:commandLink id="OfferDetail_quantity-packaged-New"
+							styleClass="aon-finding-toolbar-item aon-noborder aon-icon-package"
+							value="&#160;" title="#{bundle.aon_to_specify} #{bundle.product_packaged}"
+							rendered="#{controller.to.item.product.packaged}"
+							actionListener="#{controller.onItemPackageShow}"
+							reRender="showItemPackageWindow">
+							<f:setPropertyActionListener target="#{offerDetail.showItemPackageWindow}"
+								value="#{true}" />
+						</aon:commandLink>
+					</aon:panelGroup>
 				</f:facet>
 			</aon:column>
 	

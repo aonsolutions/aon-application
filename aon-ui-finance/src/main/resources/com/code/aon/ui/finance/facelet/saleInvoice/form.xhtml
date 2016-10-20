@@ -341,6 +341,9 @@
 			<ui:param name="bankAccountController" value="#{saleInvoiceFinance.accountHelper}" />
 			<ui:param name="modalReRender" value="financeContainer" />
 		</ui:include>				
+		<ui:include src="/com/code/aon/ui/product/facelet/product/item/modalPackage.xhtml">
+			<ui:param name="controller" value="#{saleInvoiceDetail}" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/modalImport.xhtml" />
 		<aon:if test="#{company.ediSupportEnabled}">
 			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >

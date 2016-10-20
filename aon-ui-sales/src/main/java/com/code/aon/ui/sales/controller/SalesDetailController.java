@@ -62,6 +62,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	private Date serialDate;
 	private List<SelectItem> serialNumbers;
 	private String[] selectedBreakdown;
+	private boolean showItemPackageWindow;
 
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
@@ -164,6 +165,14 @@ public class SalesDetailController extends LinesController implements ISalesCons
 
 	public void setSelectedBreakdown(String[] selectedBreakdown) {
 		this.selectedBreakdown = selectedBreakdown;
+	}
+
+	public boolean isShowItemPackageWindow() {
+		return showItemPackageWindow;
+	}
+
+	public void setShowItemPackageWindow(boolean value) {
+		this.showItemPackageWindow = value;
 	}
 
 	public boolean isPending() throws ManagerBeanException {
@@ -402,6 +411,15 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		return quantity;
 	}
 
+	public void onItemPackageShow(ActionEvent event) {
+		SalesDetail salesDetail = (SalesDetail)getTo();
+		salesDetail.getItem().initializePackQuantities(salesDetail.getQuantity());
+	}
+
+	public void onAssignItemPackage(ActionEvent event) {
+		SalesDetail salesDetail = (SalesDetail)getTo();
+		salesDetail.setQuantity(salesDetail.getItem().getPackStockQuantity());
+	}
 
 	public double getAmount() {
 		return getPriceStrategy().getBasePrice((ICalculable)this.getTo());

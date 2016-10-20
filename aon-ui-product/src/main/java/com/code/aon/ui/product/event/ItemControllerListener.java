@@ -4,6 +4,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tag;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.enumeration.ProductStatus;
@@ -59,6 +60,7 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 			}
 			ItemController.clearBarcode(item);
 			ProductController.updateVat(item.getProduct());
+			validateStockUnits(item);
 
 			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 			productBean.restoreNullSubPOJOs(item.getProduct());
@@ -75,6 +77,7 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 				item.setStatus(ProductStatus.ACTIVE);
 			}
 			ItemController.clearBarcode(item);
+			validateStockUnits(item);
 
 			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 			productBean.restoreNullSubPOJOs(item.getProduct());
@@ -109,5 +112,15 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
-	
+
+	private void validateStockUnits(Item item) throws ControllerListenerException {
+		Tag formatTag = item.getPackFormatTag();
+		Tag unitsTag = item.getPackUnitsTag();
+		Tag measurementTag = item.getPackMeasurementTag();
+		Tag stockUnitTag = item.getStockUnitTag();
+		if (item.getProduct().isPackaged() && !(stockUnitTag.equals(formatTag) || stockUnitTag.equals(unitsTag) || stockUnitTag.equals(measurementTag))) {
+			throw new ControllerListenerException("La Ud.Stock tiene que ser " + formatTag.getName() + ", " + unitsTag.getName() + " o " + measurementTag.getName());
+		}
+	}
+
 }

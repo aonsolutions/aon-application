@@ -51,6 +51,7 @@ public class InvoiceDetailController extends LinesController implements IFinance
 	
 	private IPriceStrategy priceStrategy;
 	private boolean longDescription;
+	private boolean showItemPackageWindow;
 	private InvoiceDetail invoiceDetail;
 	private String sourceViewer;
 
@@ -83,6 +84,14 @@ public class InvoiceDetailController extends LinesController implements IFinance
 
 	public void onShortDescription(ActionEvent event) {
 		setLongDescription(false);
+	}
+
+	public boolean isShowItemPackageWindow() {
+		return showItemPackageWindow;
+	}
+
+	public void setShowItemPackageWindow(boolean value) {
+		this.showItemPackageWindow = value;
 	}
 
 	public InvoiceDetail getInvoiceDetail() {
@@ -140,6 +149,16 @@ public class InvoiceDetailController extends LinesController implements IFinance
 			return item != null && item.getId() != null && item.getProduct().getType() == ProductType.INCREASE;
 		}
 		return false;
+	}
+
+	public void onItemPackageShow(ActionEvent event) {
+		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
+		invoiceDetail.getItem().initializePackQuantities(invoiceDetail.getQuantity());
+	}
+
+	public void onAssignItemPackage(ActionEvent event) {
+		InvoiceDetail invoiceDetail = (InvoiceDetail)getTo();
+		invoiceDetail.setQuantity(invoiceDetail.getItem().getPackStockQuantity());
 	}
 
 	public double getTaxableBase() {

@@ -62,6 +62,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 	private Date serialDate;
 	private List<SelectItem> serialNumbers;
 	private String[] selectedBreakdown;
+	private boolean showItemPackageWindow;
 
 	public IPriceStrategy getPriceStrategy() {
 		if(priceStrategy == null){
@@ -156,6 +157,14 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 
 	public void setSelectedBreakdown(String[] selectedBreakdown) {
 		this.selectedBreakdown = selectedBreakdown;
+	}
+
+	public boolean isShowItemPackageWindow() {
+		return showItemPackageWindow;
+	}
+
+	public void setShowItemPackageWindow(boolean value) {
+		this.showItemPackageWindow = value;
 	}
 
 	public void onPurchaseDetailProjectShow(ActionEvent event) throws ManagerBeanException {
@@ -339,6 +348,16 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 				getManagerBean().insert(newPurchaseDetail);
 			}
 		}
+	}
+
+	public void onItemPackageShow(ActionEvent event) {
+		PurchaseDetail purchaseDetail = (PurchaseDetail)getTo();
+		purchaseDetail.getItem().initializePackQuantities(purchaseDetail.getQuantity());
+	}
+
+	public void onAssignItemPackage(ActionEvent event) {
+		PurchaseDetail purchaseDetail = (PurchaseDetail)getTo();
+		purchaseDetail.setQuantity(purchaseDetail.getItem().getPackStockQuantity());
 	}
 
 	public double getAmount() {
