@@ -1,9 +1,7 @@
 package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
-import java.util.LinkedList;
 
-import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;

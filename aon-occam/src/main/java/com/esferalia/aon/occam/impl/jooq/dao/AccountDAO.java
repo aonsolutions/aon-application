@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -9,6 +8,7 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Record;
 
+import com.esferalia.aon.jooq.tables.records.AccountRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountFilter;
@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountValidation;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountDAO {
 	private static final AccountPropertiesDAO ACCOUNT_PROPERTIES = new AccountPropertiesDAO();
@@ -52,18 +53,20 @@ public class AccountDAO {
 			.setCostCenter(record.getValue(ACCOUNT.COST_CENTER));
 		}
 	}
-	
-	
+
+	private static Stream<AccountRecord> getAccountStream(AONContext ctx, AccountFilter filter) {
+		return ctx.getDslContext()
+				.selectFrom(ACCOUNT)
+				.where(ACCOUNT_PROPERTIES.getConditions(filter))
+				.and(ACCOUNT.ENTRYENABLED.eq((byte) 1))
+				.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+				.orderBy(ACCOUNT.CODE)
+				.fetch()
+				.stream();
+	}
 	public static Stream<Account> getAccounts(AONContext ctx, AccountFilter filter) {
 		ctx.checkRead();
-		return ctx.getDslContext()
-			.selectFrom(ACCOUNT)
-			.where(ACCOUNT_PROPERTIES.getConditions(filter))
-			.and(ACCOUNT.ENTRYENABLED.eq((byte) 1))
-			.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-			.orderBy(ACCOUNT.CODE)
-			.fetch()
-			.stream()
+		return getAccountStream(ctx, filter)
 			.map(new FullAccountFiller());			
 	}
 	public static Account get(AONContext ctx, Integer accountId) {
@@ -80,12 +83,14 @@ public class AccountDAO {
 		return ctx.getDslContext() 
 			.selectFrom(ACCOUNT)
 			.where(condition)
-			.and(ACCOUNT.DOMAIN.eq(ctx.getDomainId())
-				.or(ACCOUNT.DOMAIN.eq(ctx.getDslContext()
-					.select(DOMAIN.PARENT)
-					.from(DOMAIN)
-					.where(DOMAIN.ID.eq(ctx.getDomainId()))
-					.and(DOMAIN.ENABLEHEREDITY.eq((byte)1)))))
+			.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+//			.and(ACCOUNT.DOMAIN.eq(ctx.getDomainId())
+//				.or(ACCOUNT.DOMAIN.eq(ctx.getDslContext()
+//					.select(DOMAIN.PARENT)
+//					.from(DOMAIN)
+//					.where(DOMAIN.ID.eq(ctx.getDomainId()))
+//					.and(DOMAIN.ENABLEHEREDITY.eq((byte)1)))))
+//			.orderBy(ACCOUNT.CODE)
 			.fetch()
 			.stream()
 			.map(new FullAccountFiller())
@@ -113,6 +118,40 @@ public class AccountDAO {
 		return get(ctx, id);
 	}
 
+	public static String getNextAccountCode(AONContext ctx, String prefix) {
+		Account last = ctx.getDslContext()
+			.selectFrom(ACCOUNT)
+			.where(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+			.and(ACCOUNT.ENTRYENABLED.eq((byte) 1))
+			.and(ACCOUNT.CODE.like(fillprefix(prefix)))
+			.orderBy(ACCOUNT.CODE.desc())
+			.limit(1)
+			.fetch()
+			.stream()
+			.map(new FullAccountFiller())
+			.findFirst()
+			.orElse(null);
+		if (last != null){
+			return new Long(Long.parseLong(last.getCode()) + 1).toString();
+		}
+		return zerofill(prefix); 
+	}
+	
+	private static String fillprefix(String prefix) {
+		String string = AonStringUtils.EMPTY;
+		for(int i=0; i< 9 - (prefix.length());i++){
+			string = string + AonStringUtils.UNDERSCORE;
+		}
+		return prefix + string;
+	}
+
+	private static String zerofill(String prefix) {
+		String string = AonStringUtils.ONE;
+		for(int i=0;i< 9 - (prefix.length() + 1); i++){
+			string = AonStringUtils.ZERO + string;
+		}
+		return prefix + string;
+	}
 }
 
 

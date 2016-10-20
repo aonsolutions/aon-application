@@ -7,21 +7,21 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 public enum AccountingRegistryType implements Serializable {
 	
-	SUPPLIER (InvoiceType.PURCHASE, AccountEntryType.PURCHASE_INVOICE
+	SUPPLIER (InvoiceType.PURCHASE, AccountEntryType.PURCHASE_INVOICE, "400"
 		,new IAccountingRegistryTypeVisitorWalker() {
 			@Override
 			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
 				visitor.visitSupplier(reg);
 			}
 		})
-	,CUSTOMER (InvoiceType.SALES, AccountEntryType.SALES_INVOICE
+	,CUSTOMER (InvoiceType.SALES, AccountEntryType.SALES_INVOICE, "430"
 		, new IAccountingRegistryTypeVisitorWalker() {
 			@Override
 			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
 				visitor.visitCustomer(reg);
 			}
 		})
-	,CREDITOR (InvoiceType.EXPENSES, AccountEntryType.EXPENSE_INVOICE
+	,CREDITOR (InvoiceType.EXPENSES, AccountEntryType.EXPENSE_INVOICE, "410"
 		, new IAccountingRegistryTypeVisitorWalker() {
 			@Override
 			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
@@ -37,16 +37,20 @@ public enum AccountingRegistryType implements Serializable {
 	
 	private InvoiceType invoiceType;
 	private AccountEntryType accountEntryType;
+	private String accountPrefix;
 	private IAccountingRegistryTypeVisitorWalker walker;
 	
-	private AccountingRegistryType(InvoiceType invoiceType, AccountEntryType accountEntryType
+	private AccountingRegistryType(InvoiceType invoiceType, AccountEntryType accountEntryType, String accountPrefix
 			,IAccountingRegistryTypeVisitorWalker walker) {
 		this.invoiceType = invoiceType;
-		this.accountEntryType = accountEntryType; 
+		this.accountEntryType = accountEntryType;
+		this.accountPrefix = accountPrefix;  
 		this.walker = walker;
 	}
 	
-	
+	public String getAccountPrefix() {
+		return accountPrefix;
+	}
 	public InvoiceType getInvoiceType() {
 		return invoiceType;
 	}

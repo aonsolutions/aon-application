@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.panel;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryPrinter;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -145,17 +146,7 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 			buf.append(AON.MSG.auditBy(entry.getCreationUser(), entry.getCreationDate()));
 			buf.append(AonStringUtils.SPACE);
 		}
-//		if (AonStringUtils.isBlank(status)) {
-//			if (entry.getId() == null) {
-				buf.append(status);	
-//			} else {
-//				if (entry.getId() < 0) {
-//					buf.append(DELETED);	
-//				} else {
-//					buf.append(SAVED);
-//				}
-//			}
-//		}
+			buf.append(status);	
 		buf.append(AonStringUtils.CLOSE_BRACKET);
 		return buf.toString();
 	}
@@ -175,15 +166,7 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 	}
 
 	private String toString(String ac,String ad,String c,double deb,double cre,String bc,String dn) {
-		StringBuffer buf = new StringBuffer();
-		buf.append(AonStringUtils.rightPad(AonStringUtils.defaultString(ac),10));
-		buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.defaultString(ad), 39), 40));
-		buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate( AonStringUtils.defaultString(c), 32), 33));
-		buf.append(AonStringUtils.leftPad(AON.FMT.format(deb),17));		
-		buf.append(AonStringUtils.leftPad(AON.FMT.format(cre),17));
-		buf.append(AonStringUtils.center(AonStringUtils.defaultString(bc),11));
-		buf.append(AonStringUtils.rightPad(AonStringUtils.defaultString(dn), 33));
-		return buf.toString();
+		return AccountEntryPrinter.toString(ac, ad, c, deb, cre, bc, dn);
 	}
 
 	@Override

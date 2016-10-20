@@ -44,6 +44,9 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -232,6 +235,17 @@ public class AccountEntryModule extends MainEntryPoint {
 		});
 		accept.setAccessKey('G');
 		reset.setAccessKey('N');
+		
+		entryDate.getTextBox().addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+		            wizardContent.setFocus(true);
+		        }
+			}
+		});
+		
 		commonService.getAonConfiguration(getCurrentDomainName(),
 				getCurrentDomain(),
 				new AsyncCallback<AonConfiguration>() {
@@ -448,6 +462,13 @@ public class AccountEntryModule extends MainEntryPoint {
 			public void onSuccess(AccountEntry[] result) {
 				sessionLog.addSaved(result);
 				reset();
+				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+					public void execute() {
+						entryDate.setFocus(true);
+						entryDate.hideDatePicker();
+						entryDate.getTextBox().selectAll();
+					}
+				});
 			}
 
 			@Override
@@ -502,7 +523,13 @@ public class AccountEntryModule extends MainEntryPoint {
 			public void onAccept() {
 				reset();
 				syncCurrent();
-				entryDate.setFocus(true);
+				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+					public void execute() {
+						entryDate.setFocus(true);
+						entryDate.hideDatePicker();
+						entryDate.getTextBox().selectAll();
+					}
+				});
 			}
 		});
 	}

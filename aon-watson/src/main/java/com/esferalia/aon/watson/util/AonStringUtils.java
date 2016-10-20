@@ -139,6 +139,7 @@ public class AonStringUtils {
 	public static final String ASTERISK = "*";
 	public static final String COLON = ":";
 	public static final String HYPHEN = "-";
+	public static final String UNDERSCORE = "_";
 	public static final String QUESTION = "?";
 	public static final String BACKSLASH = "\\";
 	public static final String SLASH = "/";

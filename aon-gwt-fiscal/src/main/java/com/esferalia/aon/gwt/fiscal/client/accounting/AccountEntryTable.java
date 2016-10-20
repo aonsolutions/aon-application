@@ -31,7 +31,6 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -287,7 +286,6 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 					aed.setAccountDescription(null);
 				}
 				ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
-				conceptBox.setFocus(true);		
 			}
 		});
 		detailAccountBox.addSelectionHandler( new SelectionHandler<Account>() {

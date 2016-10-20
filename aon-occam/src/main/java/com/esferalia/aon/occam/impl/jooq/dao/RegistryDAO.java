@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -215,6 +216,36 @@ public class RegistryDAO {
 					.setVatAccrualPayment( AonEnumUtils.getBoolean(rec.getValue(VAP_FIELD)))
 					);			
 		
+	}
+
+	public static void updateCreditorAccount(AONContext ctx, Integer registry, Integer account) {
+		ctx.getDslContext().update(CREDITOR)
+			.set(CREDITOR.ACCOUNT,account)
+			.set(CREDITOR.MODIFICATION_USER,ctx.getUser())
+			.set(CREDITOR.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.where(CREDITOR.REGISTRY.eq(registry))
+			.execute();
+		ctx.log().info("ACCOUNT " + account + " LINKED TO CREDITOR " + registry);
+	}
+
+	public static void updateCustomerAccount(AONContext ctx, Integer registry, Integer account) {
+		ctx.getDslContext().update(CUSTOMER)
+		.set(CUSTOMER.ACCOUNT,account)
+		.set(CUSTOMER.MODIFICATION_USER,ctx.getUser())
+		.set(CUSTOMER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+		.where(CUSTOMER.REGISTRY.eq(registry))
+		.execute();
+	ctx.log().info("ACCOUNT " + account + " LINKED TO CUSTOMER " + registry);
+	}
+
+	public static void updateSupplierAccount(AONContext ctx, Integer registry, Integer account) {
+		ctx.getDslContext().update(SUPPLIER)
+		.set(SUPPLIER.ACCOUNT,account)
+		.set(SUPPLIER.MODIFICATION_USER,ctx.getUser())
+		.set(SUPPLIER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+		.where(SUPPLIER.REGISTRY.eq(registry))
+		.execute();
+	ctx.log().info("ACCOUNT " + account + " LINKED TO SUPPLIER " + registry);
 	}
 	
 }

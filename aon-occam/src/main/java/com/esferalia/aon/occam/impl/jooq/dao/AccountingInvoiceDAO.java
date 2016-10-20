@@ -357,6 +357,7 @@ public class AccountingInvoiceDAO {
 	public static AccountingInvoice save(AONContext ctx, AonConfiguration config, AccountingInvoice accInvoice) {
 		Invoice invoice  = accInvoice.getInvoice();
 		invoice.setRecorded(true);
+		checkRegistryAccount(ctx,accInvoice);
 		generateDetails(ctx,config,accInvoice);
 		Integer invoiceId = InvoiceDAO.insert(ctx, config, invoice);
 		insertAccountLinks(ctx, invoice);
@@ -369,6 +370,47 @@ public class AccountingInvoiceDAO {
 		}
 		accInvoice.setAccountEntries(entries);
 		return accInvoice;
+	}
+
+	private static void checkRegistryAccount(final AONContext ctx, AccountingInvoice accInvoice) {
+		if (accInvoice.getRegistry().getAccountId() == null) {
+			accInvoice.getRegistry().getType().visit(accInvoice.getRegistry(),  new IAccountingRegistryTypeVisitor() {
+				@Override
+				public void visitSupplier(AccountingRegistry reg) {
+					Account account = createAccountAndFill(reg);
+					RegistryDAO.updateSupplierAccount(ctx,reg.getId(),account.getId());
+				}
+				
+				@Override
+				public void visitCustomer(AccountingRegistry reg) {
+					Account account = createAccountAndFill(reg);
+					RegistryDAO.updateCustomerAccount(ctx,reg.getId(),account.getId());
+				}
+				
+				@Override
+				public void visitCreditor(AccountingRegistry reg) {
+					Account account = createAccountAndFill(reg);
+					RegistryDAO.updateCreditorAccount(ctx,reg.getId(),account.getId());
+				}
+				
+				private Account createAccountAndFill(AccountingRegistry reg) {
+					String code = AccountDAO.getNextAccountCode(ctx, reg.getType().getAccountPrefix());
+					Account account = new Account()
+						.setDomain(ctx.getDomainId())
+						.setCode(code)
+						.setDescription(accInvoice.getRegistry().getName())
+						.setAlias(accInvoice.getRegistry().getAlias())
+						.setActive(true)
+						;
+					account = AccountDAO.insert(ctx, account);
+					reg.setAccountId(account.getId());
+					reg.setAccountCode(account.getCode());
+					reg.setAccountDescription(account.getDescription());		
+					return account;
+					
+				}
+			});
+		}
 	}
 
 	private static void insertAccountLinks(AONContext ctx, Invoice invoice) {
