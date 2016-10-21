@@ -1,7 +1,5 @@
 package com.esferalia.aon.htmlunit;
 
-import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
-
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
