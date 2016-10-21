@@ -126,9 +126,9 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
-	public TaskEvent getLastTaskEvent(AONContext ctx, Integer taskId) {
+	public TaskEvent getLastTaskEvent(AONContext ctx, TaskEventFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getLastTaskEvent(ctx, taskId));	
+				configuration -> TaskDAO.getLastTaskEvent(ctx, filter));	
 	}
 	
 	@Override

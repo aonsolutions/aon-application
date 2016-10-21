@@ -33,7 +33,7 @@
 		<p:PaperTabs ui:field="tabs">
 			<paper-tab>Etiquetas</paper-tab>
        	    <paper-tab>Notificaciones</paper-tab>
-       	   	<paper-tab>FAQs</paper-tab>
+       	   	<paper-tab>Configuracion</paper-tab>
     	</p:PaperTabs>
         	
         <g:HTMLPanel ui:field="tabContent"/>	

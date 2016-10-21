@@ -239,10 +239,21 @@ public class ReposServlet extends HttpServlet{
 								AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
 							}
 							if(json.get("state").equals("deleted")){
-								task = task.setStatus(TaskStatus.DELETED.value()).setEndDate(null).setId(task.getId())
+								task = task.setStatus(TaskStatus.DELETED.value()).setId(task.getId())
 										.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
 								TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
 										.setEvent("deleted").setTask(task.getId()).setCreationUser(userName);
+								AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
+							}
+							if(json.get("state").equals("restore")){
+								Integer taskId = task.getId();
+								TaskEvent te = DB.getLastTaskEvent(domain, userName, f -> f.getTaskProperty().eq(taskId)
+										.and(f.getEventProperty().ne("restore")).and(f.getEventProperty().ne("deleted")));
+								TaskStatus status = te.getEvent() != null && te.getEvent().equals("closed") ? TaskStatus.FINISHED : TaskStatus.PENDING;
+								task = task.setStatus(status.value()).setId(task.getId())
+										.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
+								TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
+										.setEvent("restore").setTask(task.getId()).setCreationUser(userName);
 								AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
 							}
 							AON.updateTaskStatus(domain.getName(), domain.getId(), userName, task );								

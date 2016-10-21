@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
@@ -97,7 +98,11 @@ public class DBConsults {
 	//-------------------- TASK_EVENT
 
 	public TaskEvent getLastTaskEvent(Domain domain, String login, Integer taskId){
-		return AON.getLastTaskEvent(domain.getName(), domain.getId(), login, taskId);
+		return AON.getLastTaskEvent(domain.getName(), domain.getId(), login, f -> f.getTaskProperty().eq(taskId));
+	}
+	
+	public TaskEvent getLastTaskEvent(Domain domain, String login, TaskEventFilter filter){
+		return AON.getLastTaskEvent(domain.getName(), domain.getId(), login, filter);
 	}
 	
 	public TaskEvent getTaskEvent(Domain domain, String login, Integer taskEventId){

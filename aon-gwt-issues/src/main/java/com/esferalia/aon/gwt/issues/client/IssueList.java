@@ -11,9 +11,11 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.vaadin.polymer.iron.widget.IronList;
 import com.vaadin.polymer.paper.widget.PaperButton;
 
@@ -64,6 +66,31 @@ public class IssueList extends Composite {
 					parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
 					parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue));
 					parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);				
+				} else if(issue.isDeleted()){
+					AonDialog d = new AonDialog("Restaurar Tarea",new Label("Est\u00e1s seguro de restaurar la tarea #" + issue.getNumber()) ) {
+						
+						@Override
+						protected void onCancel() {
+							parent.toolbar.remove(1);
+						}
+						
+						@Override
+						protected void onAccept() {
+							String request = "{\"state\":\""+ "restore" +"\"}";
+							incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
+								
+								@Override
+								public void onSuccess(JsIssue result) {
+									parent.updateIssueList(parent.issueFilter, false);
+									parent.toolbar.remove(1);	
+								}
+								
+								@Override public void onFailure(Throwable caught) {}
+							});
+						}
+					};
+					parent.toolbar.add(d);
+					d.open();
 				}
 			}
 		});

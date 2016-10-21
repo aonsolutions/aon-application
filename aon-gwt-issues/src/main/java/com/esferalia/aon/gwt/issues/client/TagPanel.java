@@ -322,6 +322,7 @@ public class TagPanel extends Composite {
 	void onClickEditTypeButton(ClickEvent event, JsLabel label) {
 		PaperInput pi = new PaperInput();
 		pi.setLabel("Tipo");
+		pi.setValue(label.getName());
 		AonDialog dialog =  new AonDialog("Editar Tipo",pi){
 			@Override protected void onCancel() {}
 			@Override protected void onAccept() {
@@ -347,6 +348,7 @@ public class TagPanel extends Composite {
 	void onClickEditTagButton(ClickEvent event, JsLabel label) {
 		PaperInput pi = new PaperInput();
 		pi.setLabel("Etiqueta");
+		pi.setValue(label.getName());
 		AonDialog dialog =  new AonDialog("Editar Etiqueta",pi){
 			@Override protected void onCancel() {}
 			@Override protected void onAccept() {

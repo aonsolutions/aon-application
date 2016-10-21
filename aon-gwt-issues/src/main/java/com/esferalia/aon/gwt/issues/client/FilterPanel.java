@@ -20,6 +20,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -40,6 +41,16 @@ public class FilterPanel extends Composite {
 
     Issues issues;
 
+    @UiField HorizontalPanel filterHorizontal;
+    @UiField InlineLabel priorityLabel;
+    @UiField InlineLabel tagLabel;
+    @UiField InlineLabel typeLabel;
+    @UiField InlineLabel creatorLabel;
+    @UiField InlineLabel assignedLabel;
+    @UiField InlineLabel enterpriseLabel;
+    @UiField InlineLabel orderLabel;
+    @UiField InlineLabel dateLabel;
+    
     @UiField PaperButton openButton;
     @UiField InlineLabel openLabel;
     
@@ -136,6 +147,7 @@ public class FilterPanel extends Composite {
 								if(labels.get(i).getName().equals(vcb.getValue())) {
 									JsLabel jsLabel = labels.get(i);
 									priorityButton.setTitle(jsLabel.getName());
+									priorityLabel.setText("Prioridad:"+jsLabel.getName()+"; ");
 									getIssues().issueFilter.setPriority(jsLabel.getName());
 									getIssues().updateIssueList(issues.issueFilter, false);
 								}	
@@ -180,6 +192,7 @@ public class FilterPanel extends Composite {
 								if(labels.get(i).getName().equals(vcb.getValue())) {
 									JsLabel jsLabel = labels.get(i);
 									typeButton.setTitle(jsLabel.getName());
+									typeLabel.setText("Tipo:"+jsLabel.getName()+"; ");
 									getIssues().issueFilter.setType(jsLabel.getId());
 									getIssues().updateIssueList(issues.issueFilter, false);
 								}	
@@ -224,6 +237,7 @@ public class FilterPanel extends Composite {
 								if(labels.get(i).getName().equals(vcb.getValue())) {
 									JsLabel jsLabel = labels.get(i);
 									tagButton.setTitle(jsLabel.getName());
+									tagLabel.setText("Etiqueta:"+jsLabel.getName()+"; ");
 									getIssues().issueFilter.setLabels(jsLabel.getId());
 									getIssues().updateIssueList(issues.issueFilter, false);
 								}	
@@ -268,6 +282,7 @@ public class FilterPanel extends Composite {
 								if(users.get(i).getLogin().equals(vcb.getValue())) {
 									JsUser jsLabel = users.get(i);
 									assignedButton.setTitle(jsLabel.getLogin());
+									assignedLabel.setText("Asignado:"+jsLabel.getLogin()+"; ");
 									getIssues().issueFilter.setAssignee(jsLabel.getId());
 									getIssues().updateIssueList(issues.issueFilter, false);
 								}	
@@ -312,7 +327,8 @@ public class FilterPanel extends Composite {
 								if(users.get(i).getLogin().equals(vcb.getValue())) {
 									JsUser jsUser = users.get(i);
 									creatorButton.setTitle(jsUser.getLogin());
-									getIssues().issueFilter.setCreator(jsUser.getLogin());
+									creatorLabel.setText("Creador:"+jsUser.getLogin());
+									getIssues().issueFilter.setCreator(jsUser.getLogin()+"; ");
 									getIssues().updateIssueList(issues.issueFilter, false);
 								}	
 						popup.hide();
@@ -356,6 +372,7 @@ public class FilterPanel extends Composite {
 								if(users.get(i).getLogin().equals(vcb.getValue())) {
 									JsUser jsUser = users.get(i);
 									enterpriseButton.setTitle(jsUser.getLogin());
+									enterpriseLabel.setText("Empresa:"+jsUser.getLogin()+"; ");
 									getIssues().issueFilter.setEnterprise(jsUser.getId());
 									getIssues().updateIssueList(issues.issueFilter, false);
 								}	
@@ -400,6 +417,7 @@ public class FilterPanel extends Composite {
 				else getIssues().issueFilter.setSort("created");
 				
 				orderButton.setTitle(vcb.getValue());
+				orderLabel.setText("Orden:"+vcb.getValue()+"; ");
 				getIssues().updateIssueList(issues.issueFilter, false);	
 				popup.hide();
 			}
@@ -438,6 +456,7 @@ public class FilterPanel extends Composite {
 				else getIssues().issueFilter.setDateDiff(30);
 				
 				dateButton.setTitle(vcb.getValue());
+				dateLabel.setText("Fecha:"+vcb.getValue()+"; ");
 				getIssues().updateIssueList(issues.issueFilter, false);	
 				popup.hide();
 			}
@@ -488,17 +507,23 @@ public class FilterPanel extends Composite {
 	}
 	
 	public void initialize() {
+		for(Integer i = 1; i < filterHorizontal.getWidgetCount(); i++)
+			filterHorizontal.remove(i);
+			
     	openButton.addStyleName(AON.AON_CSS.aonBold());
     	closeButton.removeStyleName(AON.AON_CSS.aonBold());
     	removeButton.removeStyleName(AON.AON_CSS.aonBold());
     	
-    	priorityButton.setTitle("");
-    	tagButton.setTitle("");
-    	typeButton.setTitle("");
-    	creatorButton.setTitle("");
-    	assignedButton.setTitle("");
-    	enterpriseButton.setTitle("");
-    	orderButton.setTitle("");
+    	priorityButton.setTitle("");priorityLabel.setText("");
+    	tagButton.setTitle("");tagLabel.setText("");
+    	typeButton.setTitle("");typeLabel.setText("");
+    	creatorButton.setTitle("");creatorLabel.setText("");
+    	assignedButton.setTitle("");assignedLabel.setText("");
+    	enterpriseButton.setTitle("");enterpriseLabel.setText("");
+    	orderButton.setTitle("");orderLabel.setText("");
+    	dateButton.setTitle("");dateLabel.setText("");
+    	
+    	titleFilter.setValue("");
 	}
 
 }

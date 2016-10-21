@@ -431,10 +431,10 @@ public class TaskDAO {
 				.fetchInto(TASK_EVENT).stream().map(new FullTaskEventFiller()).findFirst().orElse(new TaskEvent());
 	}
 	
-	public static TaskEvent getLastTaskEvent(AONContext ctx, Integer taskId) {
+	public static TaskEvent getLastTaskEvent(AONContext ctx, TaskEventFilter filter) {
 		return ctx.getDslContext().select()
 				.from(TASK_EVENT)
-				.where(TASK_EVENT.TASK.eq(taskId)).orderBy(TASK_EVENT.ID.desc()).limit(1)
+				.where(TASK_EVENT_PROPERTIES.getConditions(filter)).orderBy(TASK_EVENT.ID.desc()).limit(1)
 				.fetchInto(TASK_EVENT).stream().map(new FullTaskEventFiller()).findFirst().orElse(new TaskEvent());
 	}
 	

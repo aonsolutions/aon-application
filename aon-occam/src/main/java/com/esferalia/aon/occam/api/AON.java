@@ -2618,11 +2618,11 @@ public class AON {
 		}
 	}
 	
-	public static TaskEvent getLastTaskEvent(String domainName, Integer domainId, String login, Integer taskId) {
+	public static TaskEvent getLastTaskEvent(String domainName, Integer domainId, String login, TaskEventFilter filter) {
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getLastTaskEvent(ctx, taskId);
+			return getTask().getLastTaskEvent(ctx, filter);
 		} finally {
 			if(ctx != null) ctx.close();
 		}

@@ -187,7 +187,7 @@ public class Issues implements EntryPoint {
 	
 	
 	private void createAonToolbar(){
-		toolbar.add(new AonToolbar() {
+		toolbar.add(new AonToolbar("Tareas") {
 			
 			@Override
 			protected void onRefreshButtonClick() {
@@ -220,10 +220,7 @@ public class Issues implements EntryPoint {
 			
 			@Override
 			protected void onAddButtonClick() {
-				AonDialog dialog;
-				
-				if(toolbar.getWidgetCount() > 1) toolbar.remove(1);
-				dialog = createAddDialog();
+				AonDialog dialog = createAddDialog();
 				toolbar.add(dialog);
 				dialog.dialog.addIronOverlayOpenedHandler(new IronOverlayOpenedEventHandler() {
 							
@@ -277,7 +274,9 @@ public class Issues implements EntryPoint {
 		v.add(pi4);
 		
 		return new AonDialog("Nueva Incidencia",v){
-			@Override protected void onCancel() {}
+			@Override protected void onCancel() {
+				toolbar.remove(1);
+			}
 			@Override protected void onAccept() {
 				VerticalPanel vp = (VerticalPanel) content.getWidget(0);	
 				AonComboBox acb = (AonComboBox) vp.getWidget(0);
@@ -302,6 +301,7 @@ public class Issues implements EntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {}
 				});
+				toolbar.remove(1);
 			}
 		};
 	}
