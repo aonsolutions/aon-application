@@ -137,20 +137,29 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	class AgreementContextMenu extends ContextMenu {
 		
 		private Agreement agreementCopy = null;		
+		private MenuItem newItem = null;
 		private MenuItem copyItem = null;
 		private MenuItem moveItem = null;
+		private MenuItem deleteItem = null;
 		
 		public AgreementContextMenu() {
 			
-			addItem("Nuevo", new NewAgreementCommand(), 
+			newItem = addItem("Nuevo", new NewAgreementCommand(), 
 					AON.AON_ICON_RESET, AON.AON_ICON_CMD_BUTTON);
+			newItem.ensureDebugId("newItem");
 			addSeparator();
+			
 			copyItem = addItem("Copiar", new CopyAgreementCommand(), 
 					AON.AON_ICON_COPY, AON.AON_ICON_CMD_BUTTON);
-			addItem("Eliminar", new DeleteAgreementCommand(), 
+			copyItem.ensureDebugId("copyItem");
+			
+			deleteItem = addItem("Eliminar", new DeleteAgreementCommand(), 
 					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);			
+			deleteItem.ensureDebugId("deleteItem");
+			
 			moveItem = addItem("Mover a..", new MoveAgreementCommand(), 
 					AON.AON_ICON_MOVE_UP, AON.AON_ICON_CMD_BUTTON);
+			moveItem.ensureDebugId("moveItem");
 			moveItem.setTitle("Mover convenio al dominio padre");
 			moveItem.setVisible(false);
 
@@ -177,6 +186,10 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		
 		public void setVisibleMoveItem(boolean visible) {
 			this.moveItem.setVisible(visible);
+		}
+
+		public void setVisibleDeleteItem(boolean visible) {
+			this.deleteItem.setVisible(visible);
 		}
 	}
 
@@ -328,6 +341,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		else {
 			agreementDraft.setAgreementDraftObject(agreementDraftObject);
 		}
+		
+		agreements.toolbar.setVisibleDraftButton(isEditable(agreementDraftObject));
+		
 	}
 	
 	public void addEditionOptions(EditionListener listener) {
@@ -368,6 +384,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		NativeEvent nativeEvent = event.getNativeEvent();
 		contextMenu.setPopupPosition(nativeEvent.getClientX(), 
 				nativeEvent.getClientY());
+		contextMenu.setVisibleDeleteItem(isEditable(agreementDraft.agreementDraftObject));
 		contextMenu.show();
 	}
 
@@ -435,5 +452,10 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			}
 		});
 	}	
+	
+
+	private static boolean isEditable(AgreementDraftObject agreementDraftObject) {
+		return agreementDraftObject.isMine() || !agreementDraftObject.isSystem();		
+	}
 
 }
