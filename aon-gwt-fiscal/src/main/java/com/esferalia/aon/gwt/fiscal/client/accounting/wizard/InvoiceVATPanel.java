@@ -276,7 +276,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 
 	private class InvoicePanelRow {
 		private final AccountBox expAccount = new AccountBox(AccountEntryModule.getCurrentDomainName(), AccountEntryModule.getCurrentDomain(), false);
-		private final DoubleBox taxableBase = new DoubleBox(8);
+		private final DoubleBox taxableBase = new DoubleBox(12,4);
 		private final DoubleBox vatPercent = new DoubleBox(6);
 		private final DoubleBox vatQuota = new DoubleBox(8);
 		private final DoubleBox surchargePercent = new DoubleBox(6);
@@ -544,6 +544,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				@Override
 				public void onClick(ClickEvent event) {
 					vat.setWithholding(withholding.getValue());
+					calculate(vat);
 					ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 				}
 			});
@@ -610,12 +611,15 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			if (callback.getInvoice().isSurcharge()) {
 				surchargePerc = surchargePercent.getValue(); 	
 			}
-			double tb = (total * 100) / (100 + vatPerc + surchargePerc - withHoldingPerc);
+			double tb = (callback.getInvoice().isInputVatEnabled() != callback.getInvoice().isOutputVatEnabled()) 
+					? ((total * 100) / (100 + vatPerc + surchargePerc - withHoldingPerc))
+					: total;
 			taxableBase.setValue(tb,true);
 			calculate(vat);
 		}
 		
 		private void calculate(InvoiceVAT vat) {
+			
 			vat.setQuota(AonMathUtils.round(vat.getBase() * vat.getPercentage() / 100 ));
 			vat.setSurchargeQuota( callback.getInvoice().isSurcharge()
 					?AonMathUtils.round(vat.getBase() * vat.getSurcharge() / 100 )
@@ -661,5 +665,4 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	public HandlerRegistration addSelectionHandler(SelectionHandler<Account> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
-	
 }

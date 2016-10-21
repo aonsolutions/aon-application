@@ -34,7 +34,6 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonEnumUtils;
-import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountingInvoiceDAO {
 	
@@ -207,6 +206,8 @@ public class AccountingInvoiceDAO {
 					.setTaxDate(issueDate)
 					.setType(reg.getType().getInvoiceType())
 					.setTransaction(reg.getTransaction())
+					.setService( reg.getType().getInvoiceType() == InvoiceType.EXPENSES 
+							  || reg.getType().getInvoiceType() == InvoiceType.UNDEDUCTIBLE)
 					.setSeries(null)
 					.setNumber(0)
 					.setReferenceCode(null));
@@ -468,9 +469,9 @@ public class AccountingInvoiceDAO {
 							.setTaxType(TaxType.RETENTION)
 							.setBase(vat.getBase())
 							.setPercentage(accInvoice.getWithholdingData().getPercentage())
-							.setQuota(AonMathUtils.round( vat.getBase() * accInvoice.getWithholdingData().getPercentage() / 100 ))
-							.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType()))
-							.setAccount(accInvoice.getWithholdingData().getAccountId());
+							.setQuota(accInvoice.getWithholdingData().getQuota())
+							.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType())
+							.setAccount(accInvoice.getWithholdingData().getAccountId()));
 					};
 			details.add( detail );
 			line++;

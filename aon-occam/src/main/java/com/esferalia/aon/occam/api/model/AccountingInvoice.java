@@ -107,7 +107,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		for (InvoiceVAT vat : getVats()) {
 			wb = wb + (vat.isWithholding()?vat.getBase():0.0);
 		}
-		setWithholdingBase(AonMathUtils.round(wb));
+		setWithholdingBase(wb);
 	}
 
 	public double getTotalTaxableBase() {
@@ -124,14 +124,19 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		double vt = 0.0;
 		double rt = 0.0;
 		double tb = 0.0;
+		double wb = 0.0; 
 		if (getVats() != null) {
 			for (InvoiceVAT vat : getVats()) {
-				t = t + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota();
 				tb = tb + vat.getBase();
 				if (isInputVatEnabled() != isOutputVatEnabled()) {
+					t = t + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota();
 					vt = vt + (vat.getQuota() + vat.getSurchargeQuota());
+				} else {
+					t = t + vat.getBase();
 				}
+				wb = wb + (vat.isWithholding()?vat.getBase():0.0);
 			}
+			setWithholdingBase(wb);
 			rt = (getWithholdingData()==null?0.0:getWithholdingData().getQuota());
 			t = t - rt;
 		}
@@ -179,6 +184,9 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 
 	public boolean isVatAccrualPayment() {
 		return invoice != null && invoice.isVatAccrualPayment();
+	}
+	public boolean isService() {
+		return invoice != null && invoice.isService();
 	}
 
 	public boolean isInputVatEnabled() {

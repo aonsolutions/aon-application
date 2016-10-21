@@ -91,7 +91,7 @@ public class InvoicePanel extends WizardContentBase {
 	HTMLPanel withholdingPanel;
 	@UiField
 	ListBox withholdingTaxs;
-	@UiField
+	@UiField(provided=true)
 	DoubleBox withholdingBase;
 	@UiField
 	DoubleBox withholdingPercent;
@@ -122,6 +122,7 @@ public class InvoicePanel extends WizardContentBase {
 		
 		registryBox = new AccountingRegistryBox(AccountEntryModule.getCurrentDomainName()
 				, AccountEntryModule.getCurrentDomain(), true);
+		withholdingBase = new DoubleBox(12,4);
 		withholdingAccount = new AccountBox(AccountEntryModule.getCurrentDomainName()
 				, AccountEntryModule.getCurrentDomain(), false);
 		vatPanel = new InvoiceVATPanel( invoiceCallback );
@@ -227,10 +228,13 @@ public class InvoicePanel extends WizardContentBase {
 	}
 
 	private void fillWithholdingTaxs() {
-		withholdingTaxs.setWidth("100px");
-		if (callback.getConfiguration().getWithholdingTaxes() != null && callback.getConfiguration().getWithholdingTaxes().size() > 0) {
-			for (Tax tax : callback.getConfiguration().getWithholdingTaxes()) {
-				withholdingTaxs.addItem(tax.getName(),AonNumberUtils.toString( tax.getId()));
+		if (withholdingTaxs.getItemCount() == 0) {
+			withholdingTaxs.setWidth("100px");
+			withholdingTaxs.addItem("--------","-1");
+			if (callback.getConfiguration().getWithholdingTaxes() != null && callback.getConfiguration().getWithholdingTaxes().size() > 0) {
+				for (Tax tax : callback.getConfiguration().getWithholdingTaxes()) {
+					withholdingTaxs.addItem(tax.getName(),AonNumberUtils.toString( tax.getId()));
+				}
 			}
 		}
 	}
@@ -296,7 +300,7 @@ public class InvoicePanel extends WizardContentBase {
 	public void onChangeWithholdingTaxs(ChangeEvent event) {
 		for (Tax tax : callback.getConfiguration().getWithholdingTaxes()) {
 			if ( AonNumberUtils.toInteger( withholdingTaxs.getSelectedValue()).equals(tax.getId())  ) {
-				withholdingPercent.setValue(tax.getPercentage(), true);
+				
 				Account taxAccount = invoice.isSales()
 						?tax.getSalesAccount()
 						:tax.getPurchaseAccount();
@@ -305,8 +309,21 @@ public class InvoicePanel extends WizardContentBase {
 						?callback.getConfiguration().getDefaultChargedRetAccount()
 						:callback.getConfiguration().getDefaultPaidRetAccount();
 				}
-				withholdingType.setValue(tax.getWithholdingType());
-				withholdingAccount.setAccount(taxAccount);
+				invoice.getWithholdingData().setPercentage(tax.getPercentage());
+				invoice.getWithholdingData().setWithholdingType(tax.getWithholdingType());
+				if (taxAccount != null) {
+					invoice.getWithholdingData().setAccountId(taxAccount.getId());
+					invoice.getWithholdingData().setAccountCode(taxAccount.getCode());
+					invoice.getWithholdingData().setAccountDescription(taxAccount.getDescription());
+					callback.onBalance(taxAccount);
+				} else {
+					invoice.getWithholdingData().setAccountId(null);
+					invoice.getWithholdingData().setAccountCode(null);
+					invoice.getWithholdingData().setAccountDescription(null);
+				}
+				invoice.calculateInvoiceTotals();
+				populateWithholding();
+				_paintEntry();
 			}
 		}
 	}
@@ -438,9 +455,25 @@ public class InvoicePanel extends WizardContentBase {
             extraPanel.setFocus();
         }
 	}
+	
+	@UiHandler("withholdingBase")
+	public void onValueChangeWithholdingBase(ValueChangeEvent<Double> event) {
+		invoice.setWithholdingBase( event.getValue() );
+		invoice.calculateInvoiceTotals();
+		populateWithholding();
+		_paintEntry();
+	}
 	@UiHandler("withholdingPercent")
 	public void onValueChangeWithholdingPercent(ValueChangeEvent<Double> event) {
 		invoice.setWithholdingPercent( event.getValue() );
+		invoice.calculateInvoiceTotals();
+		populateWithholding();
+		_paintEntry();
+	}
+	@UiHandler("withholdingQuota")
+	public void onValueChangeWithholdingQuota(ValueChangeEvent<Double> event) {
+		invoice.setWithholdingQuota( event.getValue() );
+		invoice.calculateInvoiceTotals();
 		populateWithholding();
 		_paintEntry();
 	}
@@ -523,6 +556,7 @@ public class InvoicePanel extends WizardContentBase {
 		@Override
 		public void transactionChanged() {
 			vatPanel.transactionChanged();
+			invoice.calculateInvoiceTotals();
 			_paintEntry();
 		}
 

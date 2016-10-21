@@ -210,6 +210,13 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		service.setTabIndex(Integer.MAX_VALUE);
 		service.setStyleName(AON.AON_CSS.aonInline());
 		service.addStyleName(AON.AON_CSS.aonWidth150());
+		service.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				callback.getInvoice().getInvoice().setService(service.getValue());
+			}
+		});
 		service.addKeyUpHandler(new KeyUpHandler() {
 			
 			@Override
@@ -226,6 +233,13 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		investment.setTabIndex(Integer.MAX_VALUE);
 		investment.setStyleName(AON.AON_CSS.aonInline());
 		investment.addStyleName(AON.AON_CSS.aonWidthAuto());
+		investment.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				callback.getInvoice().getInvoice().setInvestment(investment.getValue());
+			}
+		});
 		panel.add(investment);
 		
 		
@@ -254,6 +268,13 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		vatAccrualPayment.setTabIndex(Integer.MAX_VALUE);
 		vatAccrualPayment.setStyleName(AON.AON_CSS.aonInline());
 		vatAccrualPayment.addStyleName(AON.AON_CSS.aonWidthAuto());
+		vatAccrualPayment.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				callback.getInvoice().getInvoice().setVatAccrualPayment(vatAccrualPayment.getValue());
+			}
+		});
 		panel.add(vatAccrualPayment);
 		
 		flexContainer.add(panel);
@@ -281,6 +302,14 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		withholdingFarmer.setTabIndex(Integer.MAX_VALUE);
 		withholdingFarmer.setStyleName(AON.AON_CSS.aonInline());
 		withholdingFarmer.addStyleName(AON.AON_CSS.aonWidthAuto());
+		withholdingFarmer.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				callback.getInvoice().getInvoice().setWithholdingFarmer(withholdingFarmer.getValue());
+				callback.withholdingChanged();
+			}
+		});
 		panel.add(withholdingFarmer);
 		
 		flexContainer.add(panel);
@@ -309,6 +338,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 			withholding.setValue(invoice.isWithholding());
 			withholdingFarmer.setValue(invoice.isWithholdingFarmer());
 			vatAccrualPayment.setValue(invoice.isVatAccrualPayment());
+			service.setValue(invoice.isService());
 			transactionBox.setValue(invoice.getTransaction());
 			taxDate.setValue(invoice.getInvoice().getIssueDate());
 			ar.getType().visit(invoice.getRegistry(),accountingRegistryVisitor);

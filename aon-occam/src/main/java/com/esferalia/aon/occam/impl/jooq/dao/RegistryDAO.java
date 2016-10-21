@@ -29,9 +29,12 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.CreditorStatus;
+import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class RegistryDAO {
@@ -158,6 +161,7 @@ public class RegistryDAO {
 						)
 					.from(SUPPLIER)
 					.where(SUPPLIER.DOMAIN.eq(ctx.getDomainId())
+					.and(SUPPLIER.STATUS.ne(SupplierStatus.INACTIVE.value()))
 					.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),SUPPLIER.SCOPE)))
 				.unionAll(
 				ctx.getDslContext().select(CUS_TYPE.as(TYP_FIELD)
@@ -172,6 +176,7 @@ public class RegistryDAO {
 						)
 					.from(CUSTOMER)
 					.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId())
+					.and(CUSTOMER.STATUS.ne(CustomerStatus.INACTIVE.value()))
 					.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),CUSTOMER.SCOPE))))
 				.unionAll(
 				ctx.getDslContext().select(CRE_TYPE.as(TYP_FIELD)
@@ -186,6 +191,7 @@ public class RegistryDAO {
 						)
 					.from(CREDITOR)
 					.where(CREDITOR.DOMAIN.eq(ctx.getDomainId())
+					.and(CREDITOR.STATUS.ne(CreditorStatus.INACTIVE.value()))
 					.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),CREDITOR.SCOPE))))
 				.asTable(AR)
 				)
