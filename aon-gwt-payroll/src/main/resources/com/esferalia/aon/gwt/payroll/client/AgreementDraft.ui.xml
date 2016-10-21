@@ -134,6 +134,7 @@
 		
 		button[disabled],
 		.gwt-ListBox[disabled] {
+			display:none;
 			visibility:hidden;
 		}
 
@@ -161,8 +162,8 @@
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.Constants.*" />
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.AgreementDraft.*" />
 
-	<g:DeckLayoutPanel ui:field="deckPanel">
-		<g:DockLayoutPanel unit="PX" ui:field="draftPanel">
+	<g:DeckLayoutPanel debugId='deckPanel' ui:field='deckPanel'>
+		<g:DockLayoutPanel unit="PX" debugId='draftPanel' ui:field='draftPanel'>
 			<g:north size="72">
 
 				<g:FlowPanel>
@@ -181,24 +182,24 @@
 							</g:HTMLPanel>
 							<g:HorizontalPanel styleName="aon-finding-toolbar">
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-									<g:Button ui:field='acceptButton'
+									<g:Button debugId='acceptButton' ui:field='acceptButton'
 										styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
-									<g:Button ui:field='deleteButton'
+									<g:Button debugId='deleteButton' ui:field='deleteButton'
 										styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"
 										enabled="false" />
-									<g:ListBox ui:field='datesListBox' styleName="gwt-ListBox dates-list-box" >
+									<g:ListBox debugId='datesListBox' ui:field='datesListBox' styleName="gwt-ListBox dates-list-box" >
 										<g:item value="{ALWAYS}">Para todo</g:item>
 										<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
 										<g:item value="{ONLY_THIS_YEAR}">S&oacute;lo este a&ntilde;o</g:item>
 									</g:ListBox>
-									<g:CheckBox ui:field='changesCheck'
+									<g:CheckBox debugId='changesCheck' ui:field='changesCheck'
 										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 										text="Cambios" checked="true" visible="false" />
-									<aon:MonthListBox ui:field="draftMonthListBox"
+									<aon:MonthListBox debugId='draftMonthListBox' ui:field='draftMonthListBox'
 										oldStyles="{style.monthListBox-old}" monthStyles="{style.monthListBox-item}"
 										highLightStyles="aon-bold aon-black aon-icon-month-changed {style.monthListBox-item}" />
 
-									<g:Button ui:field='printPreviewButton'
+									<g:Button debugId='printPreviewButton' ui:field='printPreviewButton'
 										styleName='aon-finding-toolbar-item {res.css.aonIconPdfPreview}'
 										text="Vista Preliminar" />
 
@@ -220,13 +221,13 @@
 							</g:HTMLPanel>
 							<g:HorizontalPanel styleName="aon-finding-toolbar">
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-									<g:Button ui:field="fxButton"
+									<g:Button debugId='fxButton' ui:field='fxButton'
 										styleName='aon-finding-toolbar-item {res.css.aonIconFx}' enabled="false" />
-									<g:Button ui:field="undoAllButton"
+									<g:Button debugId='undoAllButton' ui:field='undoAllButton'
 										styleName='aon-finding-toolbar-item {res.css.aonIconUndoAll}' />
-									<g:Button ui:field="undoButton"
+									<g:Button debugId='undoButton' ui:field='undoButton'
 										styleName='aon-finding-toolbar-item {res.css.aonIconUndo}' enabled="false" visible="false"/>
-									<g:Button ui:field='redoButton'
+									<g:Button debugId='redoButton' ui:field='redoButton'
 										styleName="aon-finding-toolbar-item {res.css.aonIconRedo}" enabled="false" visible="false"/>
 								</g:HTMLPanel>
 							</g:HorizontalPanel>
@@ -237,7 +238,7 @@
 
 			</g:north>
 			<g:center>
-				<g:ScrollPanel styleName="{style.editor}" ui:field="draftScrollPane">
+				<g:ScrollPanel styleName="{style.editor}" debugId='draftScrollPane' ui:field='draftScrollPane'>
 					<g:VerticalPanel styleName="{style.document}">
 						<g:VerticalPanel width="auto">
 
@@ -248,28 +249,28 @@
 										</g:Label>
 									</g:customCell>
 									<g:customCell styleName="{style.field}">
-										<g:TextBox width="100%" ui:field="descriptionTextBox" maxLength="{DESCRIPTION_MAX_LENGTH}"/>
+										<g:TextBox width="100%" debugId='descriptionTextBox' ui:field='descriptionTextBox' maxLength="{DESCRIPTION_MAX_LENGTH}"/>
 									</g:customCell>
 								</g:row>
 							</g:Grid>
 
 							<g:HTML styleName="{style.vertical-space}" />
 
-							<g:ScrollPanel ui:field="salaryTableScrollPane">
-								<g:FlexTable ui:field="salaryTable"
+							<g:ScrollPanel debugId='salaryTableScrollPane' ui:field='salaryTableScrollPane'>
+								<g:FlexTable debugId='salaryTable' ui:field='salaryTable'
 									styleName="aon-dataTable {style.edit-cells} " />
 							</g:ScrollPanel>
 
 							<g:HTML styleName="{style.vertical-space}" />
 
-							<g:FlexTable ui:field="eventsTable" styleName="aon-dataTable" />
-							<g:HTML ui:field="eventsTableSpace" styleName="{style.vertical-space}"
+							<g:FlexTable debugId='eventsTable' ui:field='eventsTable' styleName="aon-dataTable" />
+							<g:HTML debugId='eventsTableSpace' ui:field='eventsTableSpace' styleName="{style.vertical-space}"
 								visible="false" />
-							<g:FlexTable ui:field="paymentsTable"
+							<g:FlexTable debugId='paymentsTable' ui:field='paymentsTable'
 								styleName="aon-dataTable {style.edit-rows}" />
 							<g:HTML styleName="{style.vertical-space}" />
 
-							<g:FlexTable ui:field="extrasTable"
+							<g:FlexTable debugId='extrasTable' ui:field='extrasTable'
 								styleName="aon-dataTable {style.edit-rows}" />
 							<g:HTML styleName="{style.vertical-space}" />
 
@@ -278,7 +279,7 @@
 				</g:ScrollPanel>
 			</g:center>
 		</g:DockLayoutPanel>
-		<g:DockLayoutPanel unit="PX" ui:field="printPreviewPanel">
+		<g:DockLayoutPanel unit="PX" debugId='printPreviewPanel' ui:field='printPreviewPanel'>
 			<g:north size="72">
 
 				<g:FlowPanel>
@@ -298,15 +299,15 @@
 							<g:HorizontalPanel styleName="aon-finding-toolbar">
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 
-									<g:ListBox ui:field="typeListBox" />
-									<aon:MonthListBox ui:field="previewMonthListBox"
+									<g:ListBox debugId='typeListBox' ui:field='typeListBox' />
+									<aon:MonthListBox debugId='previewMonthListBox' ui:field='previewMonthListBox'
 										oldStyles="{style.monthListBox-old}" monthStyles="{style.monthListBox-item}"
 										highLightStyles="aon-bold aon-black aon-icon-month-changed {style.monthListBox-item}" />
 										
-									<g:ListBox ui:field="levelListBox" />
+									<g:ListBox debugId='levelListBox' ui:field='levelListBox' />
 
-									<g:ListBox ui:field="zoomListBox" />
-									<g:Button ui:field='closePreviewButton'
+									<g:ListBox debugId='zoomListBox' ui:field='zoomListBox' />
+									<g:Button debugId='closePreviewButton' ui:field='closePreviewButton'
 										styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
 
 								</g:HTMLPanel>
@@ -319,7 +320,7 @@
 			<g:center>
 				<g:ScrollPanel styleName="{style.editor}">
 					<g:VerticalPanel styleName="{style.document}">
-						<g:HTML styleName="reset" ui:field='printPreviewHTML'
+						<g:HTML styleName="reset" debugId='printPreviewHTML' ui:field='printPreviewHTML'
 							wordWrap='true' />
 					</g:VerticalPanel>
 				</g:ScrollPanel>

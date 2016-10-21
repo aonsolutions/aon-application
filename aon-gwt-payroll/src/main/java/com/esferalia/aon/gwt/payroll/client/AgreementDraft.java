@@ -50,6 +50,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.InputElement;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -63,7 +65,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -90,13 +91,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -465,6 +464,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		@Override
 		public void setFocus() {
+			if ( descriptionTextBox.isReadOnly() ) return;
 			this.descriptionTextBox.setFocus(true);
 		}
 		
@@ -562,6 +562,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		String color;
 		TextBox expressionBox;
+		
 
 		Timer reset = new Timer() {
 			@Override
@@ -586,6 +587,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			expressionBox.addFocusHandler(new FocusHandler() {
 				@Override
 				public void onFocus(FocusEvent event) {
+					
+					if ( expressionBox.isReadOnly() ) return;
+					
 					expressionBox.setText(var.getExpression());
 					AgreementDraft.this.fxButton.setEnabled(true);
 					AgreementDraft.this.fxLevel = level.getId();
@@ -597,6 +601,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			expressionBox.addBlurHandler(new BlurHandler() {
 				@Override
 				public void onBlur(BlurEvent event) {
+					
+					if ( expressionBox.isReadOnly() ) return;
+					
 					AgreementDraft.this.fxButton.setEnabled(false);
 					expressionBox.getElement().getStyle().setColor(color);
 					reset.schedule(100);
@@ -605,6 +612,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			expressionBox.addValueChangeHandler(new ValueChangeHandler<String>() {
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
+					
+					if ( expressionBox.isReadOnly() ) return;
+					
 					reset.cancel();
 
 					String value = event.getValue();
@@ -1281,6 +1291,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		datesListBox.setEnabled(!readOnly);
 		
 		descriptionTextBox.setReadOnly(readOnly);
+
+		setReadOnly(salaryTableFirstColumn, readOnly);
 	}
 
 	public AgreementDraftObject getAgreementDraftObject() {
@@ -1426,7 +1438,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		Set<Level> changedLevels = agreementDraftObject.getChangedLevels();
 
-		int cols = variables.size() + 2;
+		int cols = variables.size() + 3;
 		int size = levels.size() * cols;
 		List<IFocusableEditor> editors = new ArrayList<IFocusableEditor>(size);
 		for (int i = 0; i < size; i++)
@@ -1492,12 +1504,16 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			deleteButton.setStyleName(AON.AON_ICON_DELETE);
 			deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 
-			LevelEditor editor = new LevelEditor(level);
-			editor.setDeleteButton(deleteButton);
+			LevelEditor deleteEditor = new LevelEditor(level);
+			deleteEditor.setDeleteButton(deleteButton);
+			
 
 			hide(deleteButton, level.getId() == 0);
 
+			index = ((row - 1) * cols) + col;
+			editors.set(index, deleteEditor);
 			salaryTable.setWidget(row, col++, deleteButton);
+
 
 			if (isDraftLevel(level)) {
 				salaryTable.getRowFormatter().addStyleName(row, AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
@@ -3067,6 +3083,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 	}
 	
+	
 	// ------------------------------------------------------------------------
 
 	private static <T extends Item<?>> boolean isRemove(T item) {
@@ -3079,4 +3096,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			fomatter.addStyleName(row, col, style);
 	}
 
+	private static void setReadOnly(Element el, boolean readOnly) {
+		NodeList<com.google.gwt.dom.client.Element> inputs = el.getElementsByTagName(InputElement.TAG);
+		for ( int i = 0; i < inputs.getLength(); i++) {
+			((InputElement)inputs.getItem(i)).setReadOnly(readOnly);
+		}
+		
+	}
 }

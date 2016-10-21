@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -194,15 +195,17 @@ public class Agreements extends ResizeComposite implements
 				&& NumberUtils.notEquals(domain, agreement.getDomain()) )
 			marks.add(IMAGES.parent());
 
-		TreeItem treeItem = new TreeItem(AgreementsTree.imageItemSafeHtml(description,
+		TreeItem agreementTreeItem = new TreeItem(AgreementsTree.imageItemSafeHtml(description,
 				AgreementsTree.getImageResource(agreement),
 				marks.toArray(new ImageResource[marks.size()])));
 
-		treeItem.setUserObject(agreement);
+		agreementTreeItem.setUserObject(agreement);
 
-		agreementsTree.getTree().addItem(treeItem);
+		agreementsTree.getTree().addItem(agreementTreeItem);
+		
+		agreementTreeItem.ensureDebugId(getId(agreement));
 
-		return treeItem;
+		return agreementTreeItem;
 	}
 
 
@@ -291,6 +294,15 @@ public class Agreements extends ResizeComposite implements
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
+	private static String getId(Agreement agreement) {
+		return agreement.getDescription()
+				.toLowerCase()
+				.replaceAll("\\s+", "_")
+				;
+	}
+
 	
 	
 

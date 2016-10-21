@@ -36,7 +36,7 @@
 					
 					<g:DockLayoutPanel>
 						<g:center>
-							<aon:Agreements ui:field='agreements' />	
+							<aon:Agreements debugId="agreements" ui:field='agreements' />	
 						</g:center>
 					</g:DockLayoutPanel>					
 				</g:stack>
@@ -46,7 +46,7 @@
 		</g:west>
 		<g:center>
 			<g:SimpleLayoutPanel>
-				<aon:AgreementDraft ui:field="agreementDraft" />
+				<aon:AgreementDraft debugId="agreementDraft" ui:field="agreementDraft" />
 			</g:SimpleLayoutPanel>
 		</g:center>
 
