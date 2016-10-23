@@ -12,29 +12,29 @@
 	}
 	</ui:style>
 
-	<g:FlowPanel styleName="gwt-MenuBar-horizontal" ui:field="buttonBar">
+	<g:FlowPanel styleName="gwt-MenuBar-horizontal" debugId='buttonBar' ui:field='buttonBar'>
 		<g:HTMLPanel styleName="{style.legend-icon}">
 
-			<g:Button styleName="gwt-MenuItem aon-icon-view" ui:field="viewButton" />
+			<g:Button styleName="gwt-MenuItem aon-icon-view" debugId='viewButton' ui:field='viewButton' />
 
-			<g:Button ui:field='pasteButton'
+			<g:Button debugId='pasteButton' ui:field='pasteButton'
 				styleName='aon-editDataTable-button aon-icon-paste {style.newButton}'
 				title="Pegar (Ctrl+V)" />
 
-			<g:Button ui:field='copyButton'
+			<g:Button debugId='copyButton' ui:field='copyButton'
 				styleName='aon-editDataTable-button aon-icon-copy {style.newButton}'
 				title="Copiar (Ctrl+C)" />
 
-			<g:Button ui:field='draftButton'
+			<g:Button debugId='draftButton' ui:field='draftButton'
 				styleName='aon-editDataTable-button aon-icon-draft {style.newButton}'
 				title="Enviar a la papelera" />
 
-			<g:Button ui:field='newButton'
+			<g:Button debugId='newButton' ui:field='newButton'
 				styleName='aon-editDataTable-button aon-icon-reset {style.newButton}'
 				title="Nuevo" />
 
 			<g:Button styleName="gwt-MenuItem aon-icon-collpaseAll"
-				ui:field="collapseAllButton" />
+				debugId='collapseAllButton' ui:field='collapseAllButton' />
 
 		</g:HTMLPanel>
 	</g:FlowPanel>
