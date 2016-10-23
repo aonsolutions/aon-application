@@ -33,7 +33,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 public class MainAgreementTest {
 	
 
-	public static final String INTEGRATION_PAYROLL_URL = "integration.test.general.payroll.url";
+	public static final String INTEGRATION_PAYROLL_URL = "integration.test.payroll.url";
 	public static final String AON_PAYROLL_MENU_FORM = "aonContent:payrollMenu";
 
 	private static WebClient webClient;
