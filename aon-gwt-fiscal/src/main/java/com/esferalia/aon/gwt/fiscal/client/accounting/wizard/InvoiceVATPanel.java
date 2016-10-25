@@ -555,8 +555,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			tab.getCellFormatter().setWidth(currentRow, col, "auto");
 			++col;
 			if (focus) {
-				taxableBase.setFocus(true);
-				taxableBase.selectAll();
+				expAccount.setFocus(true);
 			}
 		}
 

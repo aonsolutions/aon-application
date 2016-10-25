@@ -76,6 +76,7 @@ public class AccountBalancePanel extends DockLayoutPanel implements HasSelection
 		add(scrollCenter);
 	}
 	public void add( final AccountEntry entry) {
+		clearBalances();
 		for (AccountEntryDetail detail : entry.getDetails()) {
 			Account account = new Account()
 				.setId(detail.getAccount())
@@ -92,6 +93,10 @@ public class AccountBalancePanel extends DockLayoutPanel implements HasSelection
 			panel.setStyleName(AON.AON_CSS.aonFixedFont());
 			panel.addStyleName(AON.AON_CSS.aonFontMedium());
 			panel.addStyleName(AON.AON_CSS.aonMarginBottom());
+			panel.addStyleName( (center.getWidgetCount() % 2 == 0)
+						?AON.AON_CSS.aonOddBackground()
+						:AON.AON_CSS.aonEvenBackground()
+					);
 			final InlineLabel acc = new InlineLabel(AonStringUtils.SPACE
 					+AonStringUtils.rightPad(AonStringUtils.defaultString(account.getCode()),10)
 					+AonStringUtils.rightPad(AonStringUtils.abbreviate(
@@ -191,6 +196,7 @@ public class AccountBalancePanel extends DockLayoutPanel implements HasSelection
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 	public void clearBalances() {
+		accounts.clear();
 		center.clear();
 	}
 }

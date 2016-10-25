@@ -62,10 +62,10 @@
 										styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5} {aonResources.css.aonWidth80}"/>
 								</td>
 								<td>
-									<aon:AccountBox ui:field="withholdingAccount" tabIndex="500000"/>
+									<aon:AccountBox ui:field="withholdingAccount"/>
 								</td>
 								<td>
-									<aon:WithholdingTypeListBox ui:field="withholdingType" tabIndex="500000"/>
+									<aon:WithholdingTypeListBox ui:field="withholdingType"/>
 								</td>
 							</tr>
 							

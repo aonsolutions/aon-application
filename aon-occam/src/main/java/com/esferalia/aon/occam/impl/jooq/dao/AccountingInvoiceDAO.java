@@ -8,7 +8,6 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
@@ -41,7 +40,6 @@ public class AccountingInvoiceDAO {
 	
 	private static final com.esferalia.aon.jooq.tables.Account EXP_ACCOUNT = ACCOUNT.as("EXP_ACCOUNT");
 	private static final com.esferalia.aon.jooq.tables.Account VAT_ACCOUNT = ACCOUNT.as("VAT_ACCOUNT");
-	private static String DETAIL_MSG = "Fra. n\u00AA: {0} del {1,date,dd/MM/yyyy} ";
 	
 	public static AccountingInvoice getAccountingInvoice(final AONContext ctx, final Integer accountEntry) {
 		final AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, null);
@@ -472,9 +470,7 @@ public class AccountingInvoiceDAO {
 					.setInvestAsset(vat.getInvestAsset())
 					.setWorkPlace( accInvoice.getWorkplace())
 					.setLine(line)
-					.setDescription(MessageFormat.format(DETAIL_MSG
-						, accInvoice.getInvoice().getReferenceCode()
-						, accInvoice.getInvoice().getIssueDate()))
+					.setDescription(null)
 					.setQuantity(1)
 					.setPrice(vat.getBase())
 					.setDiscountExpression("0.0")

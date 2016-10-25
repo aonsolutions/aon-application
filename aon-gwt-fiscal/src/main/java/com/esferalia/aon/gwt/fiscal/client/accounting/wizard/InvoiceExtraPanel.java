@@ -104,6 +104,15 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 					callback.getInvoice().setWorkplace(workplaceId);
 				}
 			});
+			workplaces.addKeyUpHandler(new KeyUpHandler() {
+				
+				@Override
+				public void onKeyUp(KeyUpEvent event) {
+					if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+						callback.setFocusOnRegistry();
+			        }
+				}
+			});
 			
 		}
 		
@@ -134,11 +143,29 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		rDocumentType = new DocumentTypeListBox();
 		rDocumentType.setTabIndex(Integer.MAX_VALUE);
 		rDocumentType.setStyleName(AON.AON_CSS.aonMarginRight5());
+		rDocumentType.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					callback.setFocusOnRegistry();
+		        }
+			}
+		});
 		panel.add(rDocumentType);
 		
 		rDocumentCountry = new Country2ListBox();
 		rDocumentCountry.setTabIndex(Integer.MAX_VALUE);
 		rDocumentCountry.setStyleName(AON.AON_CSS.aonMarginRight5());
+		rDocumentCountry.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					callback.setFocusOnRegistry();
+		        }
+			}
+		});
 		panel.add(rDocumentCountry);
 		
 		rDocument = new DocumentTextBox();
@@ -149,7 +176,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					service.setFocus(true);
+					callback.setFocusOnRegistry();
 		        }
 			}
 		});
@@ -171,6 +198,15 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		rName.setTabIndex(Integer.MAX_VALUE);
 		rName.setVisibleLength(30);
 		rName.setMaxLength(40);
+		rName.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					callback.setFocusOnRegistry();
+		        }
+			}
+		});
 		panel.add(rName);
 		flexContainer.add(panel);		
 	}
@@ -185,6 +221,16 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		
 		taxDate = new DateBoxEx();
 		taxDate.setTabIndex(Integer.MAX_VALUE);
+		taxDate.getTextBox().addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					taxDate.hideDatePicker();
+					callback.setFocusOnRegistry();
+		        }
+			}
+		});
 		panel.add(taxDate);
 		flexContainer.add(panel);		
 	}
@@ -205,6 +251,15 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 			public void onChange(ChangeEvent event) {
 				callback.getInvoice().getInvoice().setTransaction(transactionBox.getValue());
 				callback.transactionChanged();
+			}
+		});
+		transactionBox.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					callback.setFocusOnRegistry();
+		        }
 			}
 		});
 		panel.add(transactionBox);
@@ -249,6 +304,15 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 				callback.getInvoice().getInvoice().setInvestment(investment.getValue());
 			}
 		});
+		investment.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					callback.setFocusOnRegistry();
+		        }
+			}
+		});
 		panel.add(investment);
 		
 		
@@ -271,6 +335,15 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 				callback.surchargeChanged();
 			}
 		});
+		surcharge.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					callback.setFocusOnRegistry();
+		        }
+			}
+		});
 		panel.add(surcharge);
 		
 		vatAccrualPayment = new CheckBox(AON.MSG.vatAccrualPayment());
@@ -282,6 +355,15 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				callback.getInvoice().getInvoice().setVatAccrualPayment(vatAccrualPayment.getValue());
+			}
+		});
+		vatAccrualPayment.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					callback.setFocusOnRegistry();
+		        }
 			}
 		});
 		panel.add(vatAccrualPayment);
@@ -305,6 +387,15 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 				callback.withholdingChanged();
 			}
 		});
+		withholding.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					callback.setFocusOnRegistry();
+		        }
+			}
+		});
 		panel.add(withholding);
 		
 		withholdingFarmer = new CheckBox(AON.MSG.withholdingFarmer());
@@ -317,6 +408,15 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				callback.getInvoice().getInvoice().setWithholdingFarmer(withholdingFarmer.getValue());
 				callback.withholdingChanged();
+			}
+		});
+		withholdingFarmer.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					callback.setFocusOnRegistry();
+		        }
 			}
 		});
 		panel.add(withholdingFarmer);

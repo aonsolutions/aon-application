@@ -434,6 +434,8 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 				dialog.hide();
 				accountTextBox.setValue(result.getCode(),false);
 				select(result);
+				accountTextBox.selectAll();
+				accountTextBox.setFocus(true);
 			}
 		});
 		

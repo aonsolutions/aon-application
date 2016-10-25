@@ -21,6 +21,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.OutputStream;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -56,6 +57,7 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -70,6 +72,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceDAO {
 	
+	private static String DETAIL_MSG = "Fra. n\u00AA: {0} del {1,date,dd/MM/yyyy} ";
 	static final Date VAT_ACCRUAL_START_DATE = AonDateUtils.getDate(2014, 0, 1);
 	
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
@@ -706,7 +709,10 @@ public class InvoiceDAO {
 				.set(INVOICE_DETAIL.PROJECT,detail.getProject())
 				.set(INVOICE_DETAIL.LINE,detail.getLine())
 				.set(INVOICE_DETAIL.ITEM,detail.getItem()==null?null : detail.getItem().getId())
-				.set(INVOICE_DETAIL.DESCRIPTION,detail.getDescription())
+				.set(INVOICE_DETAIL.DESCRIPTION,
+						(AonStringUtils.isBlank(detail.getDescription()) && detail.getSource() == InvoiceSource.ACCOUNT)
+							?MessageFormat.format(DETAIL_MSG, invoice.getReferenceCode(), invoice.getIssueDate())
+							:detail.getDescription())
 				.set(INVOICE_DETAIL.QUANTITY,detail.getQuantity())
 				.set(INVOICE_DETAIL.PRICE,detail.getPrice())
 				.set(INVOICE_DETAIL.DISCOUNT_EXPR,detail.getDiscountExpression())

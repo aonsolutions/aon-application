@@ -98,9 +98,12 @@ public class AccountEntryModule extends MainEntryPoint {
 		
 		void onRefreshId();
 		void onBalance(Account account);
+		void onBalance(AccountEntry entry);
 		void onStatement(Integer accountId);
 		void onError(String msg);
 		void save(ClickEvent event);
+
+		
 		
 	}
 	
@@ -126,6 +129,16 @@ public class AccountEntryModule extends MainEntryPoint {
 			openFootPanelIfNeeded();
 			Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
 			balancePanel.add(account, from, entryDate.getValue());			
+		}
+
+		@Override
+		public void onBalance(AccountEntry entry) {
+			if (entry.getDetails() != null 
+				&& !entry.getDetails().isEmpty() 
+				&& entry.getDetails().get(0).getAccount() != null) {
+				openFootPanelIfNeeded();
+				balancePanel.add(entry);			
+			}
 		}
 
 		@Override
@@ -236,12 +249,14 @@ public class AccountEntryModule extends MainEntryPoint {
 		});
 		accept.setAccessKey('G');
 		reset.setAccessKey('N');
+		remove.setAccessKey('B');
 		
 		entryDate.getTextBox().addKeyUpHandler(new KeyUpHandler() {
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					entryDate.hideDatePicker();
 		            wizardContent.setFocus(true);
 		        }
 			}
@@ -398,7 +413,6 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 
 	private void syncCurrent() {
-		balancePanel.clearBalances();
 		// Populate header values
 		period.select(wizardContent.getAccountEntryWrapper().getAccountEntry().getPeriod());
 		period.setEnabled(wizardContent.isUpdatable());
@@ -412,7 +426,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		statusMsg.setText(AonStringUtils.EMPTY);
 		statusMsg.removeStyleName(AON.AON_CSS.aonInfoMessage());
 		
-		remove.setEnabled(!wizardContent.isUpdatable() && wizardContent.isUpdatable());
+		remove.setEnabled(!wizardContent.isNew() && wizardContent.isUpdatable());
 		accept.setEnabled(wizardContent.isUpdatable());
 		
 		if (!wizardContent.isUpdatable()) {
@@ -608,10 +622,10 @@ public class AccountEntryModule extends MainEntryPoint {
 			sessionLog.addSuspended(wizardContent.getAccountEntryWrapper().getAccountEntry());
 		}
 		selectWizardContent( entry );
-		balancePanel.add(entry);
 	}
 	
 	private void selectEntry(final Integer id,final AccountEntry entry) {
+		balancePanel.clearBalances();
 		final PopupPanel waitPopup = new PopupPanel(false, true);
 		Label label = new Label(AON.MSG.processing());
 		label.addStyleName(AON.AON_CSS.aonTimer());
@@ -676,6 +690,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	// ---------------------------------------------------------------- ACTION
 	private void reset() {
+		balancePanel.clearBalances();
 		confidential.setVisible(configuration.getUser().hasConfidentialityRole());
 		journalPanel.setUser(configuration.getUser());
 		final MutableInt first = new MutableInt(0);
@@ -714,13 +729,6 @@ public class AccountEntryModule extends MainEntryPoint {
 		});
 	}
 
-//	private void addToSessionLog(AccountEntry entry) {
-//		sessionLog.add(entry);
-//	}
-//	private void addToSessionLog(AccountEntry[] entries) {
-//		sessionLog.add(entries);
-//	}
-
 	private void showFullStatement(Integer selectedItem) {
 		tabLayout.selectTab(STATEMENT_TAB);
 		Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
@@ -748,9 +756,11 @@ public class AccountEntryModule extends MainEntryPoint {
 		if (entry.getEntryType() == AccountEntryType.SALES_INVOICE
 		 || entry.getEntryType() == AccountEntryType.PURCHASE_INVOICE
 		 || entry.getEntryType() == AccountEntryType.EXPENSE_INVOICE) {
+			invoice.setValue(true,false);
 			content = new InvoicePanel(callback);
 		}
 		if (content == null) {
+			invoice.setValue(false,false);
 			content = new Manual(callback);
 		}
 		setWizardContent(content);

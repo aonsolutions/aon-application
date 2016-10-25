@@ -145,7 +145,7 @@ public class InvoicePanel extends WizardContentBase {
 	}
 	
 	@Override
-	public void select(AccountEntry entry) {
+	public void select(final AccountEntry entry) {
 		this.ae = entry;
 		if (this.ae.getId() != null) {
 			fiscalService.getAccountingInvoice(
@@ -157,6 +157,7 @@ public class InvoicePanel extends WizardContentBase {
 						@Override
 						public void onSuccess(AccountingInvoice result) {
 							populate(result);
+							callback.onBalance(entry);
 						}
 						
 						@Override
@@ -174,6 +175,7 @@ public class InvoicePanel extends WizardContentBase {
 			registryBox.setValue(new AccountingRegistry());
 			vatPanel.setVisible(false);
 			extraPanel.invoiceChanged(invoice);
+			callback.onBalance(entry);
 		}
 	}
 
@@ -449,7 +451,7 @@ public class InvoicePanel extends WizardContentBase {
 		onLog(entries);
 	}
 	
-	@UiHandler("registryBox")
+	@UiHandler({"registryBox", "series" , "number", "referenceCode"})
 	public void onKeyUp(KeyUpEvent event) {
 		if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
             extraPanel.setFocus();
@@ -544,7 +546,10 @@ public class InvoicePanel extends WizardContentBase {
 		public void onBalance(Account account) {
 			callback.onBalance(account);
 		}
-		
+		@Override
+		public void onBalance(AccountEntry entry) {
+			callback.onBalance(entry);
+		}
 		@Override
 		public AonConfiguration getConfiguration() {
 			return callback.getConfiguration();

@@ -35,6 +35,7 @@ public class Manual extends WizardContentBase {
 		table.paintTable();
 		tableInnerContainer.add(table);
 		tableContainer.setWidget(tableInnerContainer);
+		callback.onBalance(entry);
 	}
 	
 	@Override
