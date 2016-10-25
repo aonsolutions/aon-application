@@ -3,7 +3,7 @@ package com.code.aon.ui.purchase.controller;
 import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.INVOICE_DELIVERY;
 import static com.code.aon.ui.common.ICommonMessages.LINE;
-import static com.code.aon.ui.common.ICommonMessages.PURCHASE;
+import static com.code.aon.ui.common.ICommonMessages.PURCHASE_MODULE;
 import static com.code.aon.ui.common.ICommonMessages.QUANTITY_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.SALES_ORDER;
 import static com.code.aon.ui.common.ICommonMessages.TRANSFERED_TO;
@@ -510,7 +510,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 			PurchaseDetail sourcePurchaseDetail = (PurchaseDetail) purchaseDetailBean.get(purchaseDetail.getSourceId());
 			info.append("<aon:div>");
-			info.append(AonUtil.getMessage(PURCHASE));
+			info.append(AonUtil.getMessage(PURCHASE_MODULE));
 			info.append(" ");
 			info.append(sourcePurchaseDetail.getPurchase().getReferenceCode());
 			info.append(" - ");
