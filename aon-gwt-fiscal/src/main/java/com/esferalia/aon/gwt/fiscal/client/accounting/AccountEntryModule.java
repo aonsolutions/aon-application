@@ -75,10 +75,11 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AccountEntryModule extends MainEntryPoint {
-	final static int SESSION_LOG_TAB = 0;
-	final static int BALANCES_TAB = 1;
-	final static int STATEMENT_TAB = 2;
-	final static int JOURNAL_TAB = 3;
+	final static int ERROR_LOG_TAB = 0;
+	final static int SESSION_LOG_TAB = 1;
+	final static int BALANCES_TAB = 2;
+	final static int STATEMENT_TAB = 3;
+	final static int JOURNAL_TAB = 4;
 
 	static FiscalServiceAsync fiscalService;
 	static CommonServiceAsync commonService;
@@ -134,7 +135,8 @@ public class AccountEntryModule extends MainEntryPoint {
 
 		@Override
 		public void onError(String msg) {
-			errors.showError(msg);
+			showError(msg);
+			
 		}
 
 		@Override
@@ -286,7 +288,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	protected void invalidateModule(String msg) {
 		errors = new ErrorPanel();
-		errors.showError(msg);
+		showError(msg);
 		errorsContainer.setWidget(errors);
 		entryHeader.setVisible(false);
 		search.setVisible(false);
@@ -361,7 +363,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	private void checkDate() {
 		if (period.isOutOfRange(entryDate.getValue())) {
 			periodErrorShown = true;
-			errors.showError(AON.MSG.accountEntryOutOfRange());
+			showError(AON.MSG.accountEntryOutOfRange());
 		} else {
 			if (periodErrorShown) {
 				periodErrorShown = false;
@@ -410,7 +412,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		statusMsg.setText(AonStringUtils.EMPTY);
 		statusMsg.removeStyleName(AON.AON_CSS.aonInfoMessage());
 		
-		remove.setEnabled(wizardContent.isUpdatable());
+		remove.setEnabled(!wizardContent.isUpdatable() && wizardContent.isUpdatable());
 		accept.setEnabled(wizardContent.isUpdatable());
 		
 		if (!wizardContent.isUpdatable()) {
@@ -479,7 +481,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override
 			public void onFailure(Throwable caught) {
 				accept.setEnabled(true);
-				errors.showError(caught);
+				showError(caught.getMessage());
 			}
 		});
 	}
@@ -568,7 +570,7 @@ public class AccountEntryModule extends MainEntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {
 						remove.setEnabled(true);
-						errors.showError(caught);
+						showError(caught.getMessage());
 					}
 				});
 			}
@@ -648,7 +650,7 @@ public class AccountEntryModule extends MainEntryPoint {
 											}
 										});
 									} else {
-										errors.showError("Asiento no encontrado");		
+										showError("Asiento no encontrado");
 									}
 								}
 								waitPopup.hide();
@@ -656,7 +658,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 							@Override
 							public void onFailure(Throwable caught) {
-								errors.showError(caught);
+								showError(caught.getMessage());
 								waitPopup.hide();
 							}
 						});
@@ -761,4 +763,32 @@ public class AccountEntryModule extends MainEntryPoint {
 		wizardPanel.setWidget(this.wizardContent);
 	}
 
+	private void showError(String msg) {
+		errors.showError(msg);
+		if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
+			splitLayoutPanel.setWidgetSize(footPanel,
+					Window.getClientHeight() / 2);
+			splitLayoutPanel.animate(500, new AnimationCallback() {
+
+				@Override
+				public void onLayout(Layer layer, double progress) {
+				}
+
+				@Override
+				public void onAnimationComplete() {
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+						public void execute() {
+							tabLayout.selectTab(ERROR_LOG_TAB);
+						}
+					});
+				}
+			});
+		} else {
+			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+				public void execute() {
+					tabLayout.selectTab(ERROR_LOG_TAB);
+				}
+			});
+		}
+	}
 }

@@ -506,7 +506,7 @@ public class InvoicePanel extends WizardContentBase {
 	}
 	@Override
 	public boolean isUpdatable() {
-		return super.isUpdatable() && getAccountEntry().isInvoice();
+		return isNew() ||  (super.isUpdatable() && getAccountEntry().isInvoice());
 	}
 	@Override
 	public AccountEntryType getAccountEntryType() {

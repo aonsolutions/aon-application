@@ -446,6 +446,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Error")
 	String error();
 
+	@DefaultMessage("Problemas")
+	String problems();
+
 	@DefaultMessage("Aviso")
 	String warning();
 
