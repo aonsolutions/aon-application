@@ -127,7 +127,7 @@ public abstract class WizardContentBase extends ResizeComposite implements Requi
 
 	@Override
 	public boolean isUpdatable() {
-		return (getAccountEntry() == null || (getAccountEntry().isPeriodActive() && getAccountEntry().isManual()));
+		return (getAccountEntry() == null || (getAccountEntry().isPeriodActive()));
 	}
 
 	@Override

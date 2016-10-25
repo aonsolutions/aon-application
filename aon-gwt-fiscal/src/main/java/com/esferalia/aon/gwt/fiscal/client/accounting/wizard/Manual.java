@@ -46,7 +46,12 @@ public class Manual extends WizardContentBase {
 	public void setFocus(boolean b) {
 		table.setFocus(b);
 	}
-
+	
+	@Override
+	public boolean isUpdatable() {
+		return super.isUpdatable() && getAccountEntry().isManual();
+	}
+	
 	@Override
 	public void reset() {
 		

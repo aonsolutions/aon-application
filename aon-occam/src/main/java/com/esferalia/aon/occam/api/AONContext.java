@@ -198,7 +198,6 @@ public class AONContext {
 				@Override
 				public void warn(String msg) {
 					System.out.println(MessageFormat.format(WAR,new Date(),AONContext.this.domainId,msg));
-					System.out.println(WAR + msg);
 				}
 
 				@Override

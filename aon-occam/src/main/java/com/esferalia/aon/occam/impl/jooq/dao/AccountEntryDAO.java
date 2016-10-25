@@ -3,9 +3,14 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
+import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -34,7 +39,7 @@ import com.esferalia.aon.jooq.tables.records.AccountEntryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
-import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountEntryTypeVisitorAdapter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
@@ -315,29 +320,10 @@ public class AccountEntryDAO {
 
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
-		Integer accountPeriodId = null;
-		AccountEntryType type = null;
-		Record record = ctx.getDslContext()
-			.select(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ACCOUNT_ENTRY.ENTRY_TYPE,ACCOUNT_PERIOD.STATUS)
-			.from(ACCOUNT_ENTRY)
-			.join(ACCOUNT_PERIOD).on(ACCOUNT_PERIOD.ID.eq(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
-			.where(ACCOUNT_ENTRY.ID.eq(id))
-			.fetchOne();
-		if (record == null) return;
-		
-		AccountPeriodStatus status = AccountPeriodStatus.values()[record.getValue(ACCOUNT_PERIOD.STATUS)];
-		accountPeriodId = record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD);
-		if (status == null || !status.isActive()) {
-			if (status == AccountPeriodStatus.INACTIVE)
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_INACTIVE.format(accountPeriodId));
-			if (status == AccountPeriodStatus.OPERATING)
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING.format(accountPeriodId));
-			if (status == AccountPeriodStatus.CLOSED)
-				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING.format(accountPeriodId));
-		}
-		type = AccountEntryType.values()[record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)];
-		
-		beforeRemove(type,id);
+		AccountEntry entry = getAccountEntry(ctx, id);
+		if (entry == null) throw new AonCoreException(AonError.ACCOUNT_ENTRY_NOT_FOUND.getMessage());;
+		AccountEntryValidation.validateRemove(ctx, entry);
+		beforeRemove(ctx,entry);
 		// Se borran las lineas
 		int count = ctx.getDslContext()
 			.delete(ACCOUNT_ENTRY_DETAIL)
@@ -350,69 +336,150 @@ public class AccountEntryDAO {
 			.where(ACCOUNT_ENTRY.ID.equal(id))
 			.execute();
 		ctx.log().info("DELETE ACCOUNT_ENTRY asiento: " + id);
-		afterRemove(ctx, type, accountPeriodId);
+		afterRemove(ctx, entry);
 	}
 
-	private static void beforeRemove(AccountEntryType type, Integer id) {
-		if (!type.isManual()) {
-			throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
-		} else {
+	private static void beforeRemove(final AONContext ctx,final AccountEntry entry) {
+		entry.getEntryType().visit(entry, new AccountEntryTypeVisitorAdapter() {
 			
-		}
-	}
+			@Override
+			public void visitReturnedPayment(AccountEntry entry) {
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
+			}
+			
+			@Override
+			public void visitReturnedCollection(AccountEntry entry) {
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
+			}
+			
+			@Override
+			public void visitPayment(AccountEntry entry) {
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
+			}
+			
+			@Override
+			public void visitLeasingFee(AccountEntry entry) {
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
+			}
+			
+			@Override
+			public void visitLeasing(AccountEntry entry) {
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
+			}
+			
+			@Override
+			public void visitInvestmentInvoice(AccountEntry entry) {
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
+			}
+			
+			@Override
+			public void visitCollection(AccountEntry entry) {
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
+			}
+			
+			@Override
+			public void visitAmortization(AccountEntry entry) {
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage());
+			}
+			@Override
+			public void visitExpenseInvoice(AccountEntry entry) {
+				removeInvoice(entry);
+			}
+			@Override
+			public void visitSalesInvoice(AccountEntry entry) {
+				removeInvoice(entry);
+			}
+			@Override
+			public void visitPurchaseInvoice(AccountEntry entry) {
+				removeInvoice(entry);
+			}
 
-	private static void afterRemove(AONContext ctx,AccountEntryType removed, Integer periodId) {
-		/*
-		 * Gestión del estado del ejercicio.
-		 *  
-		 * Al borrar un apunte de apertura, cierre o explotación se 
-		 * comprueba si existen los correspondientes
-		 * apuntes para poner el estado del ejercicio correspondiente.
-		 */
-		if (removed == AccountEntryType.OPENING
-			|| removed == AccountEntryType.OPERATING
-			|| removed == AccountEntryType.CLOSING) {
-
-			AccountPeriod period = AccountPeriodDAO.fetchOne(ctx, periodId);
-			if (removed == AccountEntryType.OPENING) {
-				if (!AccountEntryDAO.existsAnyEntry(ctx, period.getId(),AccountEntryType.OPENING)) {
-					// Si después de borrar apertura, existe otro apertura, se mantiene 
-					// el estado (o se modifica si era errroneo).
-					period.setStatus( AccountPeriodStatus.OPENING );
-				} else {
-					// Si después de borrar apertura, no existe otro apertura, se activa.
-					period.setStatus( AccountPeriodStatus.ACTIVE );
-				}
-			} else if (removed == AccountEntryType.CLOSING ) {
-				if (AccountEntryDAO.existsAnyEntry(ctx, period.getId(),AccountEntryType.CLOSING)) {
-					// Si después de borrar cierre, existe otro cierre, se
-					// mantiene el estado.
-					period.setStatus( AccountPeriodStatus.CLOSED );
-				} else if (AccountEntryDAO.existsAnyEntry(ctx, period.getId(),AccountEntryType.OPERATING)) {
-					// Si después de borrar cierre, existe explotación.
-					period.setStatus( AccountPeriodStatus.OPERATING );
-				} else if (AccountEntryDAO.existsAnyEntry(ctx, period.getId(),AccountEntryType.OPENING)) {
-					// Si después de borrar cierre, no existe explotación y sí apertura.
-					period.setStatus( AccountPeriodStatus.OPENING );
-				} else {
-					// Si después de borrar cierre, no existe explotación ni apertura. Se activa.
-					period.setStatus( AccountPeriodStatus.ACTIVE );
-				}
-			} else if (removed == AccountEntryType.OPERATING) {
-				if (AccountEntryDAO.existsAnyEntry(ctx, period.getId(),AccountEntryType.OPERATING)) {
-					// Si después de borrar explotación, existe otro
-					// explotación, se mantiene el estado.
-					period.setStatus(AccountPeriodStatus.OPERATING);
-				} else if (AccountEntryDAO.existsAnyEntry(ctx, period.getId(),AccountEntryType.OPENING)) {
-					// Si después de borrar explotación, existe apertura.
-					period.setStatus(AccountPeriodStatus.OPENING);
-				} else {
-					// Si después de borrar cierre, no existe apertura.
-					period.setStatus(AccountPeriodStatus.ACTIVE);
+			private void removeInvoice(AccountEntry entry) {
+				Integer invoiceId = ctx.getDslContext()
+						.select( ACCOUNT_ENTRY_INVOICE.INVOICE )
+						.from( ACCOUNT_ENTRY_INVOICE )
+						.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.eq(entry.getId()))
+						.and(ACCOUNT_ENTRY_INVOICE.DOMAIN.eq(ctx.getDomainId()))
+						.fetch()
+						.stream()
+						.mapToInt(rec -> rec.getValue(ACCOUNT_ENTRY_INVOICE.INVOICE))
+						.findFirst()
+						.orElse( Integer.MIN_VALUE );
+				if (invoiceId != null && invoiceId != Integer.MIN_VALUE) {
+					int count = ctx.getDslContext()
+						.delete(ACCOUNT_ENTRY_INVOICE)
+						.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(entry.getId()))
+						.execute();
+					ctx.log().info("DELETE ACCOUNT_ENTRY_INVOICE ("+count+" filas.)");
+					count = ctx.getDslContext()
+							.delete(INVOICE_DETAIL_ACCOUNT)
+							.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.in( 
+								ctx.getDslContext().select(INVOICE_DETAIL.ID)
+										.from(INVOICE_DETAIL)
+										.where(INVOICE_DETAIL.INVOICE.equal(invoiceId))))
+							.execute();
+					ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT ("+count+" filas.)");
+					count = ctx.getDslContext()
+						.delete(INVOICE_TAX_ACCOUNT)
+						.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.in( 
+							ctx.getDslContext().select(INVOICE_TAX.ID)
+									.from(INVOICE_TAX)
+									.join(INVOICE_DETAIL).on(INVOICE_DETAIL.ID.eq(INVOICE_TAX.INVOICE_DETAIL))
+									.where(INVOICE_DETAIL.INVOICE.eq(invoiceId))))
+						.execute();
+					ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+count+" filas.)");
+					InvoiceDAO.delete(ctx, invoiceId);
 				}
 			}
-			AccountPeriodDAO.update(ctx,period);
-		}
+		});	
+	}
+
+	private static void afterRemove(final AONContext ctx,final AccountEntry entry) {
+		entry.getEntryType().visit(entry, new AccountEntryTypeVisitorAdapter() {
+			
+			@Override
+			public void visitOpening(AccountEntry entry) {
+				if (!AccountEntryDAO.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.OPENING)) {
+					// Si después de borrar apertura, existe otro apertura, se mantiene 
+					// el estado (o se modifica si era errroneo).
+					AccountPeriodDAO.open(ctx,entry.getPeriod());
+				} else {
+					// Si después de borrar apertura, no existe otro apertura, se activa.
+					AccountPeriodDAO.active(ctx,entry.getPeriod());
+				}
+			}
+			
+			@Override
+			public void visitClosing(AccountEntry entry) {
+				if (AccountEntryDAO.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.CLOSING)) {
+					// Si después de borrar cierre, existe otro cierre, se mantiene el estado.
+					AccountPeriodDAO.close(ctx,entry.getPeriod());
+				} else if (AccountEntryDAO.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.OPERATING)) {
+					// Si después de borrar cierre, existe explotación.
+					AccountPeriodDAO.operating(ctx,entry.getPeriod());
+				} else if (AccountEntryDAO.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.OPENING)) {
+					// Si después de borrar cierre, no existe explotación y sí apertura.
+					AccountPeriodDAO.open(ctx,entry.getPeriod());
+				} else {
+					// Si después de borrar cierre, no existe explotación ni apertura. Se activa.
+					AccountPeriodDAO.active(ctx,entry.getPeriod());
+				}
+			}
+			
+			@Override
+			public void visitOperating(AccountEntry entry) {
+				if (AccountEntryDAO.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.OPERATING)) {
+					// Si después de borrar explotación, existe otro explotación, se mantiene el estado.
+					AccountPeriodDAO.operating(ctx,entry.getPeriod());
+				} else if (AccountEntryDAO.existsAnyEntry(ctx, entry.getPeriod(),AccountEntryType.OPENING)) {
+					// Si después de borrar explotación, existe apertura.
+					AccountPeriodDAO.open(ctx,entry.getPeriod());
+				} else {
+					// Si después de borrar cierre, no existe apertura.
+					AccountPeriodDAO.active(ctx,entry.getPeriod());
+				}
+			}
+		});
 	}
 
 	public static boolean existsAnyEntry(AONContext ctx, Integer period, AccountEntryType accountEntryType) {

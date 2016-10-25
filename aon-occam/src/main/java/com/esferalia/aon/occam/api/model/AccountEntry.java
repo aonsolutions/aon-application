@@ -99,6 +99,9 @@ public class AccountEntry implements Serializable, HasAudit {
 	public boolean isManual() {
 		return getEntryType() == null || getEntryType().isManual();
 	}
+	public boolean isInvoice() {
+		return getEntryType() == null || getEntryType().isInvoice();
+	}
 
 	public Integer getJournal() {
 		return this.journal;

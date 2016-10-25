@@ -134,7 +134,7 @@ public class InvoiceValidation {
 	 */
 	public static BiConsumer<InvoiceDetail,AonConfigurationContext> EMPTY_WORKPLACE = (det,ctx) -> {
 		if (det.getWorkPlace() == null ) {
-			throw new AonCoreException(AonError.INVOICE_EMPTY_SOURCE.getMessage());
+			throw new AonCoreException(AonError.INVOICE_EMPTY_WORKPLACE.getMessage());
 		}
 	};
 

@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -84,18 +85,26 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 			panel.add(label);
 			final ListBox workplaces = new ListBox();
 			workplaces.setStyleName(AON.AON_CSS.aonMarginRight5());
+			panel.add(workplaces);
+			flexContainer.add(panel);
+			
+			int i = 0;
+			workplaces.addItem("----------", (String) null);
 			for (Workplace workplace : list ) {
-				workplaces.addItem(workplace.getDescription());
+				i++;
+				workplaces.addItem(workplace.getDescription(), AonNumberUtils.toString(workplace.getId()));
+				if (AonNumberUtils.equals(callback.getInvoice().getWorkplace(), workplace.getId())) {
+					workplaces.setSelectedIndex(i);
+				}
 			}
 			workplaces.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					Integer workplaceId = list.get(workplaces.getSelectedIndex()).getId();
+					Integer workplaceId = AonNumberUtils.toInteger(workplaces.getSelectedValue());
 					callback.getInvoice().setWorkplace(workplaceId);
 				}
 			});
-			panel.add(workplaces);
-			flexContainer.add(panel);
+			
 		}
 		
 	}
@@ -160,7 +169,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		rName = new TextBox();
 		rName.setStyleName(AON.AON_CSS.aonInputText());
 		rName.setTabIndex(Integer.MAX_VALUE);
-		rName.setVisibleLength(40);
+		rName.setVisibleLength(30);
 		rName.setMaxLength(40);
 		panel.add(rName);
 		flexContainer.add(panel);		

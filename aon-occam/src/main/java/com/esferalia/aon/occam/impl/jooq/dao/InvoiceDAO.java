@@ -60,6 +60,8 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -695,6 +697,7 @@ public class InvoiceDAO {
 	
 	private static void insertDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		for (InvoiceDetail detail : invoice.getDetails()) {
+			InvoiceValidation.validateDetail(ctx, config, detail);
 			InvoiceDetailRecord record = ctx.getDslContext()
 				.insertInto(INVOICE_DETAIL)
 				.set(INVOICE_DETAIL.DOMAIN,invoice.getDomain())
@@ -737,8 +740,12 @@ public class InvoiceDAO {
 				.set(INVOICE_TAX.QUOTA,tax.getQuota())
 				.set(INVOICE_TAX.SURCHARGE,tax.getSurcharge())
 				.set(INVOICE_TAX.SURCHARGE_QUOTA,tax.getSurchargeQuota())
-				.set(INVOICE_TAX.VAT_DEDUCTION_TYPE,tax.getVatDeductionType() == null? null : tax.getVatDeductionType().value())
-				.set(INVOICE_TAX.WITHHOLDING_TYPE,tax.getWithholdingType() == null ? null : tax.getWithholdingType().value())
+				.set(INVOICE_TAX.VAT_DEDUCTION_TYPE,tax.getVatDeductionType() == null
+						? VatDeductionType.WITH_RIGHT.value() 
+						: tax.getVatDeductionType().value())
+				.set(INVOICE_TAX.WITHHOLDING_TYPE,tax.getWithholdingType() == null 
+						? WithholdingType.PROFESSIONAL.value() 
+						: tax.getWithholdingType().value())
 				.set(INVOICE_TAX.DEDUCTIBLE_PERCENT,tax.getDeductiblePercent())
 				.set(INVOICE_TAX.DEDUCTIBLE_QUOTA ,tax.getDeductibleQuota())
 				.returning(INVOICE_TAX.ID)
@@ -749,6 +756,30 @@ public class InvoiceDAO {
 	}
 	
 	
+	public static void delete(AONContext ctx, Integer id) {
+		ctx.checkWrite();
+		// Se borran los inpouestos
+		int count = ctx.getDslContext()
+			.delete(INVOICE_TAX)
+			.where(INVOICE_TAX.INVOICE_DETAIL.in( 
+				ctx.getDslContext().select(INVOICE_DETAIL.ID)
+					.from(INVOICE_DETAIL)
+					.where(INVOICE_DETAIL.INVOICE.equal(id)) ))
+			.execute();
+		ctx.log().info("DELETE INVOICE_DETAIL detalles de la factura: " + id + " ("+count+" filas)");
+		// Se borran las lineas
+		count = ctx.getDslContext()
+			.delete(INVOICE_DETAIL)
+			.where(INVOICE_DETAIL.INVOICE.equal(id))
+			.execute();
+		ctx.log().info("DELETE INVOICE_DETAIL detalles de la factura: " + id + " ("+count+" filas)");
+		// Se borra la cabecera
+		ctx.getDslContext()
+			.delete(INVOICE)
+			.where(INVOICE.ID.equal(id))
+			.execute();
+		ctx.log().info("DELETE INVOICE factura: " + id);
+	}
 	
 }
 

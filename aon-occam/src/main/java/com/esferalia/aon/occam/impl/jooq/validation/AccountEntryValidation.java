@@ -199,4 +199,25 @@ public class AccountEntryValidation {
 			.accept(detail, ctx);
 	}
 
+
+	/**
+	 * La cuenta contable del apunte es un dato obligatorio.
+	 */
+	public static BiConsumer<AccountEntry,AONContext> PERIOD_DELETION_ENABLED = (entry,ctx) -> {
+		if (entry.getPeriodStatus() == null || !entry.getPeriodStatus().isActive()) {
+			if (entry.getPeriodStatus() == AccountPeriodStatus.INACTIVE)
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_INACTIVE.format(entry.getPeriodName()));
+			if (entry.getPeriodStatus() == AccountPeriodStatus.OPERATING)
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_OPERATING.format(entry.getPeriodName()));
+			if (entry.getPeriodStatus() == AccountPeriodStatus.CLOSED)
+				throw new AonCoreException(AonError.ACCOUNT_ENTRY_PERIOD_CLOSING.format(entry.getPeriodName()));
+		}
+	};
+
+	public static void validateRemove(AONContext ctx, AccountEntry entry) {
+		PERIOD_DELETION_ENABLED
+			.accept(entry, ctx);
+		
+	}
+
 }

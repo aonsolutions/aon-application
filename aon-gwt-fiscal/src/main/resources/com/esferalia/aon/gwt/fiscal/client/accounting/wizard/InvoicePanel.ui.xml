@@ -13,7 +13,7 @@
 		<g:south size="200">
 			<accPanel:SessionLog ui:field="workingLog"/>
 		</g:south>
-		<g:east size="450">
+		<g:east size="400">
 			<accInvoice:InvoiceExtraPanel ui:field="extraPanel"/>
 		</g:east>
 		<g:center>
@@ -31,12 +31,13 @@
 						<aon:IntegerBox ui:field="number" visibleLength="8" maxLength="8"/>
 						<g:TextBox ui:field="referenceCode" styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5}" 
 							visibleLength="15" maxLength="32"/>
-						<g:FlowPanel styleName="{aonResources.css.aonWidth300}">
+						<g:FlowPanel styleName="{aonResources.css.aonWidth200}">
 							<g:Label text="{msg.invoiceTotal}" styleName="{aonResources.css.aonInnerLabel}"/>	
 							<aon:DoubleBox ui:field="invoiceTotal" visibleLength="12" 
 								styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5}"/>
 						</g:FlowPanel>
-						<g:Button ui:field="fastSave" styleName="{aonResources.css.aonIconSave} {aonResources.css.aonIconCommandButton} {aonResources.css.aonMarginLeft}"/>
+						<g:Button ui:field="fastSave" text="{msg.saveAction}"  
+							styleName="{aonResources.css.aonIconSave} {aonResources.css.aonIconCommandButton} {aonResources.css.aonMarginLeft}"/>
 					</g:FlowPanel>
 					<accInvoice:InvoiceVATPanel ui:field="vatPanel"/>
 					<g:HTMLPanel ui:field="withholdingPanel" styleName="{aonResources.css.aonWizardPanelInner}">

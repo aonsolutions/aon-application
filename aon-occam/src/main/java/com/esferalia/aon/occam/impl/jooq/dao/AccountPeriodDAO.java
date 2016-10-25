@@ -199,4 +199,26 @@ public class AccountPeriodDAO {
 			.findFirst()
 			.orElse( AonDateUtils.toSql(AonDateUtils.getYearLastDay(new Date())));
 	}
+	private static void updateStatus(AONContext ctx, Integer period, AccountPeriodStatus status) {
+		ctx.checkWrite();
+		ctx.getDslContext().update(ACCOUNT_PERIOD)
+			.set(ACCOUNT_PERIOD.STATUS, status.getValue() )
+			.where(ACCOUNT_PERIOD.ID.equal(period))
+			.execute();
+	}
+	public static void open(AONContext ctx, Integer period) {
+		updateStatus(ctx, period, AccountPeriodStatus.OPENING);
+	}
+	public static void close(AONContext ctx, Integer period) {
+		updateStatus(ctx, period, AccountPeriodStatus.CLOSED);
+	}
+	public static void operating(AONContext ctx, Integer period) {
+		updateStatus(ctx, period, AccountPeriodStatus.OPERATING);
+	}
+	public static void inactive(AONContext ctx, Integer period) {
+		updateStatus(ctx, period, AccountPeriodStatus.INACTIVE);
+	}
+	public static void active(AONContext ctx, Integer period) {
+		updateStatus(ctx, period, AccountPeriodStatus.ACTIVE);
+	}
 }

@@ -2003,7 +2003,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Aplicar retenci\u00F3n")
 	String withholding();
 	
-	@DefaultMessage("R\u00E9gimen agricultura, ganader\u00EDa y pesca.")
+	@DefaultMessage("R\u00E9gimen agri., gan. y pesca.")
 	String withholdingFarmer();
 	
 	@DefaultMessage("R\u00E9gimen de criterio de caja")

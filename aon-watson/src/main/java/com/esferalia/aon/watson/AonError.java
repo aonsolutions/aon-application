@@ -73,6 +73,9 @@ public enum AonError implements Serializable{
 	,ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE("No se permite el borrado de asientos autom\u00E1ticos.")
 	,ACCOUNT_ENTRY_EMPTY_CONCEPT("El concepto del apunte es un dato obligatorio, no puede estar vac\u00EDo.")
 	,ACCOUNT_ENTRY_EMPTY_ACCOUNT("La cuenta contable del apunte es un dato obligatorio, no puede estar vac\u00EDo. (LINEA={0,number},CONCEPTO={1},DEBE={2,number},HABER={3,number})")
+	,ACCOUNT_ENTRY_NO_EXP_ACCOUNT("La cuenta contable de explotaci\u00F3nn es un dato obligatorio, no puede estar vac\u00EDa.")
+	,ACCOUNT_ENTRY_NO_TAX_ACCOUNT("La cuenta contable de IVA / IRPF es un dato obligatorio, no puede estar vac\u00EDa.")
+	,ACCOUNT_ENTRY_NOT_FOUND("Asiento contable no encontrado.")
 	,ACCOUNT_ENTRY_ACCOUNT_NOT_FOUND("Cuenta contable no encontrada en el dominio del asiento. (ID={0}, [{1} - {2}])")
 	,ACCOUNT_ENTRY_ACCOUNT_INVALID_LENGTH("La cuenta contable debe ser de \u00FAltimo nivel (9 d\u00EDgitos). (ID={0}, [{1} - {2}])")
 	,ACCOUNT_ENTRY_ACCOUNT_INACTIVE("La cuenta contable est\u00E1 desactivada. (ID={0}, [{1} - {2}])")
@@ -114,6 +117,7 @@ public enum AonError implements Serializable{
 	,INVOICE_OPERATIONS_DEADLINE("La fecha de la factura rebasa la fecha l\u00EDmite de operaciones indicada en la configuraci\u00F3n de empresa. ")
 	,INVOICE_FIVE_YEARS("El a\u00F1o de la factura no es v\u00E1lido, es anterior cinco a\u00F1os al actual") 
 	,INVOICE_EMPTY_SOURCE("No se ha indicado un origen (INVOICE_DETAIL.SOURCE) en la l\u00EDnea de factura (Error interno)")
+	,INVOICE_EMPTY_WORKPLACE("No se ha indicado un centro de trabajo en la l\u00EDnea de factura.")
 	
 	// --------------------------------------------- FINANCE
 	,FINANCE_AMOUNT_ZERO("El importe del vencimiento no puede ser cero.")	

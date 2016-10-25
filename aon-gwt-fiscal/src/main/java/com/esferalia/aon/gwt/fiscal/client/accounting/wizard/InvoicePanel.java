@@ -484,7 +484,11 @@ public class InvoicePanel extends WizardContentBase {
 		callback.onBalance(event.getSelectedItem());
 		_paintEntry();
 	}
-
+	@UiHandler("withholdingType")
+	public void onChangeWithholdingType(ChangeEvent event) {
+		invoice.setWithholdingType( withholdingType.getValue() );
+	}
+	
 	public void setFocus(boolean b) {
 		registryBox.setFocus(b);
 	}
@@ -500,7 +504,10 @@ public class InvoicePanel extends WizardContentBase {
 			workingLog.addPreview(entry);			
 		}
 	}
-	
+	@Override
+	public boolean isUpdatable() {
+		return super.isUpdatable() && getAccountEntry().isInvoice();
+	}
 	@Override
 	public AccountEntryType getAccountEntryType() {
 		return (invoice != null && invoice.getRegistry() != null && invoice.getRegistry().getType() != null)
