@@ -745,6 +745,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		if (invoice.getValue()) {
 			setWizardContent(new InvoicePanel(callback));
 		} else {
+			ae.setEntryType(AccountEntryType.MANUAL);
 			setWizardContent(new Manual(callback));
 		}
 		this.wizardContent.select(ae);
@@ -761,6 +762,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		}
 		if (content == null) {
 			invoice.setValue(false,false);
+			entry.setEntryType(AccountEntryType.MANUAL);
 			content = new Manual(callback);
 		}
 		setWizardContent(content);
