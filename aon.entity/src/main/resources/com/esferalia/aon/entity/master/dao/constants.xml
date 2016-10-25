@@ -447,8 +447,8 @@
 		<hibernate names="bankAccount,bankAlias,bic,comments,daysBetweenPayments,daysToFirstPayment,discountExpression,documentType,domain,emailCommunication,id,issueDate,number,numberOfPayments,payMethod.id,paymentDays,project.id,registryAddress,registryAddress.id,remarks,scope&lt;id,securityLevel,series,shippingAlternativeAddress,shippingAlternativeAddress2,shippingAlternativeCity,shippingAlternativePhone,shippingAlternativeRecipient,shippingAlternativeZip,shippingContact,shippingPeriod,status,supplier.id,workPlace.id,warehouse,warehouse.id" />
   	</bean>
 	<bean class="com.code.aon.purchase.PurchaseDetail" sqlName="purchase_detail">
-  		<alias 	names="domain,delivered,description,discountExpression,id,item_id,item_product_serializable,item_serialNumber,line,price,project_id,proposalDetail_id,purchase_id,quantity,status,taxes" />
-		<hibernate names="domain,delivered,description,discountExpression,id,item.id,item.product.serializable,item.serialNumber,line,price,project.id,proposalDetail.id,purchase.id,quantity,status,taxes" />
+  		<alias 	names="domain,delivered,description,discountExpression,id,item_id,item_product_serializable,item_serialNumber,line,price,project_id,proposalDetail_id,purchase_id,quantity,status,source,sourceId,taxes" />
+		<hibernate names="domain,delivered,description,discountExpression,id,item.id,item.product.serializable,item.serialNumber,line,price,project.id,proposalDetail.id,purchase.id,quantity,status,source,sourceId,taxes" />
   	</bean>
 
 	<!-- ** AON REGISTRY  **************************************************** -->
