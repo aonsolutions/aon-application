@@ -31,6 +31,7 @@ import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.purchase.enumeration.PurchaseDocumentType;
+import com.code.aon.purchase.enumeration.PurchaseSource;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -60,6 +61,7 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseGeneratorManager.class.getName());
 	
+	private boolean nevv;
 	private boolean customerShippingAddress;
 	private List<TempPurchaseDetail> tempPurchaseDetail;
 	private Sales sales;
@@ -72,7 +74,7 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 	}
 
 	public boolean isNevv() {
-		return false;
+		return nevv;
 	}
 	
 	public String getMassiveDiscountExpr() {
@@ -84,7 +86,7 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 	}
 
 	public boolean isGenerated() {
-		return sales.isPurchaseGenerated();
+		return !isNevv();
 	}
 	
 	public TempPurchaseDetail getTo() {
@@ -114,6 +116,7 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 
 	public PurchaseGeneratorManager(Sales sales) {
 		this.sales = sales;
+		this.nevv = true;
 		try {
 			buildTempList(obtainSalesDetail(sales));
 			setModel(new SerializableListDataModel(getTempPurchaseDetail()));
@@ -274,6 +277,7 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 	}
 	
 	private void afterPurchasesCreate(List<Purchase> purchaseList) {
+		nevv = false;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Sales.class);
 			sales.setPurchaseGenerated(true);
@@ -391,6 +395,8 @@ public class PurchaseGeneratorManager extends DataScrollerState {
 		detail.setLine(salesDetail.getLine());
 		detail.setDescription(salesDetail.getDescription());
 		detail.setStatus(PurchaseDetailStatus.PENDING);
+		detail.setSource(PurchaseSource.SALES);
+		detail.setSourceId(salesDetail.getId());
 		if(!readOnly){
 			detail.setProject(null); 
 			detail.setProposalDetail(null);

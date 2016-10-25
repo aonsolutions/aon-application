@@ -506,6 +506,7 @@ public interface ICommonMessages {
 	String PURCHASE_EMAIL_SUBJECT = "purchase_email_subject";
 	String PURCHASE_EMAIL_BODY_HEADER = "purchase_email_body_header";
 	String PURCHASE_EMAIL_BODY = "purchase_email_body";
+	String PURCHASE_MODULE= "purchase_module";
 	String PURCHASE_RETURN_OVER_MSG = "purchase_return_over";
 	String PURCHASE_RETURNED_IN_MSG = "purchase_returned_in";	
 	String PURCHASE_WITHOUT_EMAIL = "purchase_without_email";
@@ -541,6 +542,8 @@ public interface ICommonMessages {
 	String SALES_EMAIL_BODY = "sales_email_body";
 	String SALES_PURCHASE_REFERENCE = "sales_purchase_reference";
 	String SALES_TO_PURCHASE = "sales_to_purchase";
+	String SALES_ORDER = "sales_sales";
+	String SALES_RETURNED_IN_MSG = "sales_returned_in";
 	
 	String SMS_MESSAGE_SIZE_ONE = "sms_message_size_one";
 	String SMS_MESSAGE_SIZE_MANY = "sms_message_size_many";
@@ -583,6 +586,7 @@ public interface ICommonMessages {
 	String STOCK_BY_ITEM_VALUED_KEY = "warehouse_stock_by_item_valued_module";
 	String WAREHOUSE_INVENTORY_CLOSE_ERROR = "warehouse_inventory_close_error";
 	String WAREHOUSE_INVENTORY_DATE_ERROR = "warehouse_inventory_date_error";
+	String WAREHOUSE_MANUFACTURING_ORDER = "warehouse_manufacturing_order";
 	String WAREHOUSE_QUANTITY_POSITIVE = "warehouse_quantity_postive";
 	String WAREHOUSE_QUANTITY_SERIALIZABLE = "warehouse_quantity_serializable";
 	

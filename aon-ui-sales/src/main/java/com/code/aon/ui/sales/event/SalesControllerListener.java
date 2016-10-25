@@ -6,10 +6,12 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.sales.Sales;
+import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
@@ -21,6 +23,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.sales.controller.ISalesConstants;
 import com.code.aon.ui.sales.controller.SalesController;
+import com.code.aon.ui.sales.util.SalesUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.carrier.Carrier;
 
@@ -92,6 +95,22 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 			emptyShippingAlternativeAddress((Sales)controller.getTo());
 		}
 		controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
+	}
+	
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		SalesController controller = (SalesController) event.getController();
+		Sales sales = (Sales) controller.getTo();
+		SalesUtils utils = new SalesUtils();
+		for(ITransferObject to: sales.getDetailList()){
+			SalesDetail detail = (SalesDetail) to;
+			if (utils.isManufactureDone(detail)) {
+				throw new ControllerListenerException(
+						detail.getDescription() + ": " +
+						"No se puede borrar, el producto está en elaboración.");
+			}
+		}
 	}
 
 	@Override

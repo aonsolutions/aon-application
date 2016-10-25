@@ -80,6 +80,10 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 		this.manufacturingOrderManager = manufacturingOrderManager;
 	}
 	
+	protected String getLinkBackAction(){
+		return MANUFACTURING_ORDER_FORM_NAME;
+	}
+	
 	public IControllerListener getProductFilter() {
 		if ( this.productFilter == null ) {
 			this.productFilter = new ProductFilter();

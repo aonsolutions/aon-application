@@ -213,8 +213,8 @@
 										<rich:spacer />
 											
 										<aon:panel id="compositeDataContainer"
-											rendered="#{!manufacturingOrderDetail.manufacturingOrderManager.selectedDetail.detail.item.wildCard and 
-												manufacturingOrderDetail.manufacturingOrderManager.compositeModel.rowCount > 0}">
+											rendered="#{!manufacturingOrderDetail.manufacturingOrderManager.selectedDetail.detail.item.wildCard and
+												not empty manufacturingOrderDetail.manufacturingOrderManager.selectedDetail}">
 											<f:facet name="header">
 												<aon:outputText value="#{bundle.product_composition}" />
 											</f:facet>
@@ -264,6 +264,8 @@
 												</aon:column>
 												
 											</aon:dataTable>
+											<aon:dataScroller for="compositeData" showNote="true" pageSize="10"
+												rowCount="#{manufacturingOrderDetail.manufacturingOrderManager.compositeModel.rowCount}" />
 										</aon:panel>
 									</aon:div>
 									

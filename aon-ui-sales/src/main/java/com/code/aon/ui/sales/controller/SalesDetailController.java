@@ -35,6 +35,7 @@ import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
@@ -43,6 +44,7 @@ import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.sales.util.SalesUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -213,7 +215,25 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	private boolean isEditable(SalesDetail salesDetail) throws ManagerBeanException {
 		return salesDetail.getOfferDetail() == null || salesDetail.getOfferDetail().getId() == null;
 	}
-
+	
+	public boolean isManufactured() throws ManagerBeanException {
+		SalesUtils utils = new SalesUtils();
+		if(this.getModel().isRowAvailable()) {
+			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
+			return utils.isManufactureDone(salesDetail);
+		}
+		return false;
+	}
+	
+	public boolean isPurchased() throws ManagerBeanException {
+		SalesUtils utils = new SalesUtils();
+		if(this.getModel().isRowAvailable()) {
+			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
+			return utils.isPurchased(salesDetail);
+		}
+		return false;
+	}
+	
 	public void onItemChanged(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
@@ -479,6 +499,58 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		}
 		return info.toString();
 	}
+	
+	public String getLineManufactureInfo() throws ManagerBeanException {
+		StringBuffer info = new StringBuffer(64);
+		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.QUANTITY_PATTERN));
+		
+		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
+		SalesUtils utils = new SalesUtils();
+		PurchaseDetail purchaseDetail = utils.getTargetManufactureDetail(salesDetail);
+		if(purchaseDetail!=null && purchaseDetail.getId()!=null){
+			info.append(AonUtil.getMessage(ICommonMessages.WAREHOUSE_MANUFACTURING_ORDER));
+			info.append(' ');
+			info.append(purchaseDetail.getPurchase().getReferenceCode());
+			info.append(" - ");
+			info.append(AonUtil.getMessage(ICommonMessages.LINE));
+			info.append(' ');
+			info.append(purchaseDetail.getLine());
+			if (salesDetail.getQuantity() > purchaseDetail.getQuantity()) {
+				info.append(" (");
+				info.append(formatter.format(purchaseDetail.getQuantity()));
+				info.append(' ');
+				info.append(AonUtil.getMessage(ICommonMessages.UNITS));
+				info.append(')');
+			}
+		}
+		return info.toString();
+	}
+	
+	public String getLinePurchaseInfo() throws ManagerBeanException {
+		StringBuffer info = new StringBuffer(64);
+		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.QUANTITY_PATTERN));
+		
+		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
+		SalesUtils utils = new SalesUtils();
+		PurchaseDetail purchaseDetail = utils.getTargetPurchaseDetail(salesDetail);
+		if(purchaseDetail!=null && purchaseDetail.getId()!=null){
+			info.append(AonUtil.getMessage(ICommonMessages.PURCHASE_MODULE));
+			info.append(' ');
+			info.append(purchaseDetail.getPurchase().getReferenceCode());
+			info.append(" - ");
+			info.append(AonUtil.getMessage(ICommonMessages.LINE));
+			info.append(' ');
+			info.append(purchaseDetail.getLine());
+			if (salesDetail.getQuantity() > purchaseDetail.getQuantity()) {
+				info.append(" (");
+				info.append(formatter.format(purchaseDetail.getQuantity()));
+				info.append(' ');
+				info.append(AonUtil.getMessage(ICommonMessages.UNITS));
+				info.append(')');
+			}
+		}
+		return info.toString();
+	}
 
 	public void onLoadOffer(ActionEvent event) throws ManagerBeanException {
 		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
@@ -507,6 +579,31 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		onSearch(event);
 	}
 
+	public void onLoadManufacturingOrder(ActionEvent event) throws ManagerBeanException {
+		if(this.getModel().isRowAvailable()){
+			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
+			SalesUtils utils = new SalesUtils();
+			PurchaseDetail purchaseDetail = utils.getTargetManufactureDetail(salesDetail);
+			if(purchaseDetail!=null && purchaseDetail.getId()!=null){
+				BasicController sourceController = (BasicController)AonUtil.getRegisteredBean("manufacturingOrder");
+				loadSourceLink(event, sourceController, purchaseDetail.getPurchase().getId());
+			}
+		}
+	}
+	public void onLoadPurchase(ActionEvent event) throws ManagerBeanException {
+		if(this.getModel().isRowAvailable()){
+			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
+			SalesUtils utils = new SalesUtils();
+			PurchaseDetail purchaseDetail = utils.getTargetPurchaseDetail(salesDetail);
+			if(purchaseDetail!=null && purchaseDetail.getId()!=null){
+				BasicController sourceController = (BasicController)AonUtil.getRegisteredBean("purchase");
+				loadSourceLink(event, sourceController, purchaseDetail.getPurchase().getId());
+			}
+		}
+	}
+	private void loadSourceLink(ActionEvent event, BasicController sourceController, Integer targetId) throws ManagerBeanException {
+		sourceController.onLoad(event, targetId, SALES_FORM_NAME, SALES_DETAIL_CONTROLLER_NAME + ".onBackSales");
+	}
 
 	public static class SerializableBreakdown implements Serializable {
 		

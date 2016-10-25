@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.management;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
+import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 
 public class PurchaseDetail implements Serializable {
 
@@ -24,6 +25,8 @@ public class PurchaseDetail implements Serializable {
 	private double taxes;
 	private PurchaseDetailStatus status;
 	private Integer proposalDetail;
+	private PurchaseSourceType source;
+	private Integer sourceId;
 	private double delivered;
 	public Integer getId() {
 		return id;
@@ -108,6 +111,18 @@ public class PurchaseDetail implements Serializable {
 	}
 	public void setDelivered(double delivered) {
 		this.delivered = delivered;
+	}
+	public PurchaseSourceType getSource() {
+		return source;
+	}
+	public void setSource(PurchaseSourceType source) {
+		this.source = source;
+	}
+	public Integer getSourceId() {
+		return sourceId;
+	}
+	public void setSourceId(Integer sourceId) {
+		this.sourceId = sourceId;
 	}
 	
 }

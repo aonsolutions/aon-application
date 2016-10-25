@@ -14,6 +14,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.sales.controller.SalesDetailController;
+import com.code.aon.ui.sales.util.SalesUtils;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class SalesDetailControllerListener extends ControllerAdapter {
@@ -50,6 +51,16 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 		SalesDetail salesDetail = (SalesDetail)event.getController().getTo();
 		checkQuantities(sales, salesDetail);
 		checkSerializable(salesDetail);
+	}
+	
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		SalesDetail salesDetail = (SalesDetail)event.getController().getTo();
+		SalesUtils utils = new SalesUtils();
+		if(utils.isManufactureDone(salesDetail)){
+			throw new ControllerListenerException("No se puede borrar, el producto está en elaboración.");
+		}
 	}
 	
 	@Override

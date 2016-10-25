@@ -3,7 +3,9 @@ package com.code.aon.ui.purchase.controller;
 import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.INVOICE_DELIVERY;
 import static com.code.aon.ui.common.ICommonMessages.LINE;
+import static com.code.aon.ui.common.ICommonMessages.PURCHASE;
 import static com.code.aon.ui.common.ICommonMessages.QUANTITY_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.SALES_ORDER;
 import static com.code.aon.ui.common.ICommonMessages.TRANSFERED_TO;
 import static com.code.aon.ui.common.ICommonMessages.UNITS;
 
@@ -40,7 +42,9 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
+import com.code.aon.purchase.enumeration.PurchaseSource;
 import com.code.aon.ql.Criteria;
+import com.code.aon.sales.SalesDetail;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
@@ -166,6 +170,74 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 	public void setShowItemPackageWindow(boolean value) {
 		this.showItemPackageWindow = value;
 	}
+	
+	protected String getLinkBackAction(){
+		return PURCHASE_FORM_NAME;
+	}
+	
+	public boolean isPurchaseSource() throws ManagerBeanException {
+		if(this.getModel().isRowAvailable()){
+			PurchaseDetail detail = (PurchaseDetail) this.getModel().getRowData();
+			if(detail!=null){
+				return detail.getSourceId()!=null && detail.getSource()==PurchaseSource.PURCHASE;
+			}
+		}
+		return false;
+	}
+
+	public boolean isSalesSource() throws ManagerBeanException {
+		if(this.getModel().isRowAvailable()){
+			PurchaseDetail detail = (PurchaseDetail) this.getModel().getRowData();
+			if(detail!=null){
+				return detail.getSourceId()!=null && detail.getSource()==PurchaseSource.SALES;
+			}
+		}
+		return false;
+	}
+
+	public boolean isProposalSource() throws ManagerBeanException {
+		if(this.getModel().isRowAvailable()){
+			PurchaseDetail detail = (PurchaseDetail) this.getModel().getRowData();
+			if(detail!=null){
+				return detail.getSourceId()!=null && detail.getSource()==PurchaseSource.PROPOSAL;
+			}
+		}
+		return false;
+	}
+	
+	public void onLoadPurchase(ActionEvent event) throws ManagerBeanException {
+		if(this.getModel().isRowAvailable()){
+			PurchaseDetail detail = (PurchaseDetail) this.getModel().getRowData();
+			IManagerBean detailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+			Purchase purchase = ((PurchaseDetail) detailBean.get(detail.getSourceId())).getPurchase();
+			BasicController controller = (BasicController)AonUtil.getRegisteredBean(PURCHASE_CONTROLLER_NAME);
+			controller.onLoad(event, purchase.getId(), getLinkBackAction(), null);
+		}
+	}
+
+	public void onLoadSales(ActionEvent event) throws ManagerBeanException {
+		if(this.getModel().isRowAvailable()){
+			PurchaseDetail purchaseDetail = (PurchaseDetail) this.getModel().getRowData();
+			if(purchaseDetail.getSource()==PurchaseSource.SALES){
+				IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+				SalesDetail salesDetail = (SalesDetail) salesDetailBean.get(purchaseDetail.getSourceId());
+				Integer id = salesDetail.getSales().getId();
+				BasicController controller = (BasicController)AonUtil.getRegisteredBean(SALES_CONTROLLER_NAME);
+				controller.onLoad(event, id, getLinkBackAction(), null);
+			}
+		}
+	}
+	
+//	TODO
+//	public void onLoadProposal(ActionEvent event) throws ManagerBeanException {
+//		if(this.getModel().isRowAvailable()){
+//			PurchaseDetail detail = (PurchaseDetail) this.getModel().getRowData();
+//			IManagerBean detailBean = BeanManager.getManagerBean(ProposalDetail.class);
+//			Proposal proposal = ((ProposalDetail) detailBean.get(detail.getSourceId())).getProposal();
+//			BasicController controller = (BasicController)AonUtil.getRegisteredBean(PROPOSAL_CONTROLLER_NAME);
+//			controller.onLoad(event, proposal.getId(), getLinkBackAction(), null);
+//		}
+//	}
 
 	public void onPurchaseDetailProjectShow(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
@@ -392,6 +464,62 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 			if (purchaseDetail.getQuantity() > incomeDetail.getQuantity()) {
 				info.append(" (");
 				info.append(formatter.format(incomeDetail.getQuantity()));
+				info.append(" ");
+				info.append(AonUtil.getMessage(UNITS));
+				info.append(")");
+			}
+			info.append("</aon:div>");
+		}
+		return info.toString();
+	}
+	
+	public String getLineSalesInfo() throws ManagerBeanException {
+		StringBuffer info = new StringBuffer(64);
+		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(QUANTITY_PATTERN));
+		
+		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
+		if(purchaseDetail.getSourceId()!=null && purchaseDetail.getSource()==PurchaseSource.SALES){
+			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+			SalesDetail salesDetail = (SalesDetail) salesDetailBean.get(purchaseDetail.getSourceId());
+			info.append("<aon:div>");
+			info.append(AonUtil.getMessage(SALES_ORDER));
+			info.append(" ");
+			info.append(salesDetail.getSales().getReferenceCode());
+			info.append(" - ");
+			info.append(AonUtil.getMessage(LINE));
+			info.append(" ");
+			info.append(salesDetail.getLine());
+			if (purchaseDetail.getQuantity() > salesDetail.getQuantity()) {
+				info.append(" (");
+				info.append(formatter.format(salesDetail.getQuantity()));
+				info.append(" ");
+				info.append(AonUtil.getMessage(UNITS));
+				info.append(")");
+			}
+			info.append("</aon:div>");
+		}
+		return info.toString();
+	}
+	
+	public String getLinePurchaseInfo() throws ManagerBeanException {
+		StringBuffer info = new StringBuffer(64);
+		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(QUANTITY_PATTERN));
+		
+		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
+		if(purchaseDetail.getSourceId()!=null && purchaseDetail.getSource()==PurchaseSource.PURCHASE){
+			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+			PurchaseDetail sourcePurchaseDetail = (PurchaseDetail) purchaseDetailBean.get(purchaseDetail.getSourceId());
+			info.append("<aon:div>");
+			info.append(AonUtil.getMessage(PURCHASE));
+			info.append(" ");
+			info.append(sourcePurchaseDetail.getPurchase().getReferenceCode());
+			info.append(" - ");
+			info.append(AonUtil.getMessage(LINE));
+			info.append(" ");
+			info.append(sourcePurchaseDetail.getLine());
+			if (sourcePurchaseDetail.getQuantity() > sourcePurchaseDetail.getQuantity()) {
+				info.append(" (");
+				info.append(formatter.format(sourcePurchaseDetail.getQuantity()));
 				info.append(" ");
 				info.append(AonUtil.getMessage(UNITS));
 				info.append(")");

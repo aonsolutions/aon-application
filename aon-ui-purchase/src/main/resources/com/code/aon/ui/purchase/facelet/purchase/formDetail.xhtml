@@ -288,6 +288,27 @@
 				<f:facet name="header">
 					<aon:outputLabel value="INFO" />
 				</f:facet>
+				<aon:commandLink id="purchaseDetailSalesLink" immediate="true"
+					styleClass="aon-button-goto"
+					style="padding-right: 20px;" 
+					value="&#160;" title="#{bundle.aon_go}" 
+					rendered="#{controller.salesSource}"
+					actionListener="#{controller.onLoadSales}"
+					action="sales_form"
+					reRender="aonContent">
+					<rich:toolTip value="#{controller.lineSalesInfo}" />
+				</aon:commandLink>
+				<aon:commandLink id="purchaseDetailPurchaseLink" immediate="true"
+					styleClass="aon-button-goto"
+					style="padding-right: 20px;" 
+					value="&#160;" title="#{bundle.aon_go}" 
+					rendered="#{controller.purchaseSource}"
+					actionListener="#{controller.onLoadPurchase}"
+					action="purchase_form"
+					reRender="aonContent">
+					<rich:toolTip value="#{controller.linePurchaseInfo}" />
+				</aon:commandLink>
+				
 				<c:if test="#{!skipIncomeLink}">
 					<aon:commandLink id="purchaseDetailIncomeLink" immediate="true"
 						styleClass="#{controller.settled ? 'aon-icon-predetermine' : 'aon-icon-predetermine2'}"

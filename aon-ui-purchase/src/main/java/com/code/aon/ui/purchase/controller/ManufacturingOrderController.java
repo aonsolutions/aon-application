@@ -2,6 +2,7 @@ package com.code.aon.ui.purchase.controller;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -11,11 +12,12 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.product.Item;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.Sales;
-import com.code.aon.sales.bridge.SalesTransferManager;
+import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -100,6 +102,29 @@ public class ManufacturingOrderController extends PurchaseController {
 		list.forEach(to -> {idList.add(((PurchaseDetail)to).getItem().getId());});
 		ItemTagPrintController itemTagController = (ItemTagPrintController) FormUtil.getController(IItemConstants.ITEM_TAG_PRINT_CONTROLLER_NAME);
 		itemTagController.onItemTagPrintShow(event, idList);
+	}
+	
+	
+	public static class SalesTransferManager extends com.code.aon.sales.bridge.SalesTransferManager {
+		private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+		
+		@Override
+		protected List<ITransferObject> obtainSalesDetailList(Sales sales) {
+			return super.obtainSalesDetailList(sales).stream()
+					.map(to -> (SalesDetail)to)
+					.filter(detail -> isValidManufactureItem(detail.getItem()))
+					.collect(Collectors.toList());
+		}
+
+		public boolean isValidManufactureItem(Item item){
+			try {
+				return item.getProduct().isManufactured()
+						&& item.getItemCompositionList().size()>0;
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+			return false;
+		}
 	}
 	
 }

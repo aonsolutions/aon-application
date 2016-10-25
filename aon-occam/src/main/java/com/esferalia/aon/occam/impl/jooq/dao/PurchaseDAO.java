@@ -110,7 +110,8 @@ public class PurchaseDAO {
 						PURCHASE_DETAIL.PRICE, PURCHASE_DETAIL.DISCOUNT_EXPR,
 						PURCHASE_DETAIL.TAXES, PURCHASE_DETAIL.STATUS,
 						PURCHASE_DETAIL.PROPOSAL_DETAIL,
-						PURCHASE_DETAIL.DELIVERED,
+						PURCHASE_DETAIL.DELIVERED, PURCHASE_DETAIL.SOURCE,
+						PURCHASE_DETAIL.SOURCE_ID,
 						PURCHASE_DETAIL.CREATION_USER,
 						PURCHASE_DETAIL.CREATION_DATE,
 						PURCHASE_DETAIL.MODIFICATION_USER,
@@ -122,6 +123,7 @@ public class PurchaseDAO {
 						detail.getDiscountExpression(), detail.getTaxes(),
 						(byte) detail.getStatus().ordinal(),
 						detail.getProposalDetail(), detail.getDelivered(),
+						detail.getSource().value(), detail.getSourceId(),
 						ctx.getUser(), creationDate, ctx.getUser(),
 						modificationDate).execute();
 	}

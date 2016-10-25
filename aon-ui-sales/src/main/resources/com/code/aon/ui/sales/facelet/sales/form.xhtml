@@ -75,7 +75,7 @@
 						<aon:menuItem id="purchaseGeneration"
 							value="#{bundle.sales_to_purchase}"
 							immediate="#{true}" 
-							rendered="#{sales.pending and !sales.inDelivery and !sales.to.purchaseGenerated and salesDetail.model.rowCount > 0}"
+							rendered="#{sales.pending and !sales.inDelivery and salesDetail.model.rowCount > 0}"
 							iconClass="aon-icon-transfer"
 							actionListener="#{sales.onPurchaseGenerationShow}"
 							reRender="showPurchaseWindow">

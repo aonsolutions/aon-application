@@ -13,6 +13,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.project.Project;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
+import com.code.aon.purchase.enumeration.PurchaseSource;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.sales.SalesDetail;
@@ -66,6 +67,8 @@ public class PurchaseManager {
 		purchaseDetail.setQuantity(salesDetail.getTransfered());
 		purchaseDetail.setPrice(salesDetail.getPrice());
 		purchaseDetail.setDiscountExpression(salesDetail.getDiscountExpression());
+		purchaseDetail.setSource(PurchaseSource.SALES);
+		purchaseDetail.setSourceId(salesDetail.getId());
 		purchaseDetailBean.restoreNullSubPOJOs(purchaseDetail);
 		purchaseDetail = (PurchaseDetail)purchaseDetailBean.insert(purchaseDetail);
 

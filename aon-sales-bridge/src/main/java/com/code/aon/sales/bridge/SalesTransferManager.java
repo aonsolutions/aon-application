@@ -104,7 +104,7 @@ public class SalesTransferManager implements Serializable {
 		setDetailModel(null);
 	}
 
-	private List<ITransferObject> obtainSalesDetailList(Sales sales) {
+	protected List<ITransferObject> obtainSalesDetailList(Sales sales) {
 		List<ITransferObject> detailList = new LinkedList<ITransferObject>();
 		try {
 			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);

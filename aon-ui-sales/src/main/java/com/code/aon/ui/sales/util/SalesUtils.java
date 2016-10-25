@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -34,6 +35,9 @@ import com.code.aon.pool.AonConnectionException;
 import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.Project;
+import com.code.aon.purchase.PurchaseDetail;
+import com.code.aon.purchase.enumeration.PurchaseDocumentType;
+import com.code.aon.purchase.enumeration.PurchaseSource;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.sales.Sales;
@@ -47,6 +51,7 @@ import com.esferalia.aon.carrier.Carrier;
 import com.esferalia.aon.carrier.enumeration.ShipmentPeriod;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.PurchaseDAO;
 
@@ -259,7 +264,7 @@ public class SalesUtils {
 		p.setProject(sales.getProject() != null ? sales
 				.getProject().getId() : null);
 		p.setSeries(sales.getSeries());
-		p.setPurchaseReference(null);
+		p.setPurchaseReference(sales.getPurchaseReference());
 		p.setAddress(null);
 		p.setDiscountExpr(sales.getDiscountExpression() != null ? sales
 				.getDiscountExpression().getDiscountExpr()
@@ -300,9 +305,11 @@ public class SalesUtils {
 	}
 	
 	public void createPurchaseLines(AONContext ctx,
-			List<ITransferObject> list, Integer purchaseId) {
+			List<ITransferObject> list, Integer purchaseId) throws ManagerBeanException {
 		list.stream()
 				.map(to -> (SalesDetail) to)
+				.filter(detail -> detail.getItem().getProduct().isManufactured()
+						&& !isManufactureDone(detail))
 				.forEach(
 						detail -> {
 							com.esferalia.aon.occam.api.model.management.PurchaseDetail pd = new com.esferalia.aon.occam.api.model.management.PurchaseDetail(); 
@@ -319,8 +326,58 @@ public class SalesUtils {
 							pd.setStatus(com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus.valueOf(detail.getStatus().name()));
 							pd.setProposalDetail(null);
 							pd.setDelivered(detail.getDelivered());
+							pd.setSource(PurchaseSourceType.SALES);
+							pd.setSourceId(detail.getId());
 							PurchaseDAO.insertPurchaseDetail(ctx, pd);
 						});
+	}
+	
+	public boolean isManufactureDone(SalesDetail detail) {
+		try {
+			PurchaseDetail purchaseDetail = getTargetManufactureDetail(detail);
+			return purchaseDetail!=null && purchaseDetail.getId()!=null;
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean isPurchased(SalesDetail detail) {
+		try {
+			PurchaseDetail purchaseDetail = getTargetPurchaseDetail(detail);
+			return purchaseDetail!=null && purchaseDetail.getId()!=null;
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public PurchaseDetail getTargetManufactureDetail(SalesDetail detail) throws ManagerBeanException {
+		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_SOURCE), PurchaseSource.SALES);
+		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_SOURCE_ID), detail.getId());
+		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_DOCUMENT_TYPE), PurchaseDocumentType.MANUFACTURE);
+		criteria.addOrder(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_ID), false);
+		Iterator<?> iterator = purchaseDetailBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			return (PurchaseDetail)iterator.next();
+		}
+		return null;
+	}
+	
+	public PurchaseDetail getTargetPurchaseDetail(SalesDetail detail) throws ManagerBeanException {
+		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_SOURCE), PurchaseSource.SALES);
+		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_SOURCE_ID), detail.getId());
+		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_DOCUMENT_TYPE), PurchaseDocumentType.NORMAL);
+		criteria.addOrder(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_ID), false);
+		Iterator<?> iterator = purchaseDetailBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			return (PurchaseDetail)iterator.next();
+		}
+		return null;
 	}
 	
 }

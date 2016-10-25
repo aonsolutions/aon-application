@@ -342,6 +342,26 @@
 					reRender="aonContent">
 					<rich:toolTip value="#{controller.lineStatusInfo}" />
 				</aon:commandLink>
+				<aon:commandLink id="salesDetailManufacturingOrderLink" immediate="true"
+					styleClass="aon-button-goto"
+					style="padding-right: 20px;" 
+					value="&#160;" title="#{bundle.aon_go}" 
+					rendered="#{controller.manufactured}"
+					actionListener="#{controller.onLoadManufacturingOrder}"
+					action="manufacturingOrder_form"
+					reRender="aonContent">
+					<rich:toolTip value="#{controller.lineManufactureInfo}" />
+				</aon:commandLink>
+				<aon:commandLink id="salesDetailPurchaseLink" immediate="true"
+					styleClass="aon-button-goto"
+					style="padding-right: 20px;" 
+					value="&#160;" title="#{bundle.aon_go}" 
+					rendered="#{controller.purchased}"
+					actionListener="#{controller.onLoadPurchase}"
+					action="purchase_form"
+					reRender="aonContent">
+					<rich:toolTip value="#{controller.linePurchaseInfo}" />
+				</aon:commandLink>
 			</aon:column>
 		</ui:define>
 	</ui:decorate>

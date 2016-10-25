@@ -1,6 +1,7 @@
 package com.code.aon.ui.sales.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.ITEM_SERIALIZABLE_REQUIRED_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.SALES_RETURNED_IN_MSG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.util.Date;
@@ -860,9 +861,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	
 	private void markSourceSalesAsReturned(String referenceCode) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Sales.class);
-		// TODO
-//		String comments = AonUtil.getMessage(PURCHASE_RETURNED_IN_MSG, referenceCode);
-		String comments = AonUtil.getMessage("sales_returned_in", referenceCode);
+		String comments = AonUtil.getMessage(SALES_RETURNED_IN_MSG, referenceCode);
 		comments += StringUtils.isBlank(returnSourceSales.getComments())?"":returnSourceSales.getComments();
 		returnSourceSales.setComments(comments);
 		bean.restoreNullSubPOJOs(returnSourceSales);
@@ -913,20 +912,29 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 		Sales sales = (Sales) this.getTo();
 		
 		SalesUtils utils = new SalesUtils();
-		utils.createManufacturingOrder(sales);
-		
-		CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		String ediSupport = company.getEdiSupport();
-		
-		if (ediSupport!=null && ediSupport.equals("seresnet_udapa")) {
-			LOGGER.info(" *** UDAPA INGENET ENABLED ***");
-			try {
-				IngenetSalesManager.getInstance().createSales(
-						AonUtil.getDomainName(), AonUtil.getRemoteUser(), sales);
-				AonUtil.addInfoMessage("Traspasado correctamente a INGENET");
-			} catch (Exception e) {
-				AonUtil.addErrorMessage(e.getMessage());
-				LOGGER.error(e.getMessage());
+		long manufacturableCount = sales.getDetailList().stream()
+			.map(to -> (SalesDetail)to)
+			.filter(detail -> detail.getItem().getProduct().isManufactured() 
+					&& !utils.isManufactureDone(detail))
+			.count();
+		if(manufacturableCount<=0){
+			AonUtil.addErrorMessage("No hay ninguna elaboración pendiente");
+			throw new AbortProcessingException("No hay ninguna elaboración pendiente");
+		} else {
+			utils.createManufacturingOrder(sales);
+			
+			CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			String ediSupport = company.getEdiSupport();
+			if (ediSupport!=null && ediSupport.equals("seresnet_udapa")) {
+				LOGGER.info(" *** UDAPA INGENET ENABLED ***");
+				try {
+					IngenetSalesManager.getInstance().createSales(
+							AonUtil.getDomainName(), AonUtil.getRemoteUser(), sales);
+					AonUtil.addInfoMessage("Traspasado correctamente a INGENET");
+				} catch (Exception e) {
+					AonUtil.addErrorMessage(e.getMessage());
+					LOGGER.error(e.getMessage());
+				}
 			}
 		}
 	}
