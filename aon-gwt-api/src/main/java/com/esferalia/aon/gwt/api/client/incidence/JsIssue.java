@@ -16,6 +16,10 @@ public class JsIssue extends JavaScriptObject{
 		return this.id;
 	}-*/;
 	
+	public final native int getParent() /*-{
+		return this.parent;
+	}-*/;
+	
 	public final native String getTitle() /*-{
 		return this.title;
 	}-*/;
@@ -134,5 +138,18 @@ public class JsIssue extends JavaScriptObject{
 	public final native Boolean isDeleted() /*-{
 		return this.is_deleted;
 	}-*/;
+	
+	public final native Boolean isDuplicate() /*-{
+		return this.is_duplicate;
+	}-*/;
+	
+	public final native Boolean isPrincipalDuplicate() /*-{
+		return this.is_principal_duplicate;
+	}-*/;
+
+	
+	public final native String getColor() /*-{
+	return this.color;
+}-*/;
 
 }

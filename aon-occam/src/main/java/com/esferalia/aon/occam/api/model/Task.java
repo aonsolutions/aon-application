@@ -29,6 +29,7 @@ public class Task  implements Serializable{
 	private String gtasklistId; 
 	
 	private Integer number;
+	private Integer parent;
 	
 	private String creationUser;
 	private Date creationDate;
@@ -263,6 +264,15 @@ public class Task  implements Serializable{
 
 	public Task setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
+	}
+	
+	public Integer getParent() {
+		return parent;
+	}
+
+	public Task setParent(Integer parent) {
+		this.parent = parent;
 		return this;
 	}
 	

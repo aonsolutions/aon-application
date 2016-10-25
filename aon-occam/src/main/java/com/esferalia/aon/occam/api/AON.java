@@ -2438,6 +2438,16 @@ public class AON {
 		}
 	}
 	
+	public static Stream<Task> getDuplicateTaskStream(String domainName, Integer domainId, String login, Integer parent){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getDuplicateTaskStream(ctx, parent);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	public static Integer[] getTaskCount(String domainName, Integer domainId, String login, TaskFilter filter,  IssueFilter issueFilter){
 		AONContext ctx = null;
 		try{
@@ -2503,6 +2513,16 @@ public class AON {
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			getTask().updateTaskStatus(ctx, task);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static void updateTaskParent(String domainName, Integer domainId, String login, Task task){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getTask().updateTaskParent(ctx, task);
 		} finally {
 			if(ctx != null) ctx.close();
 		}

@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
@@ -36,7 +37,8 @@ public class DBConsults {
 	//-------------------- TASK
 	
 	public Integer getTaskId(Domain domain, String login, Integer number){
-		return AON.getTask(domain.getName(), domain.getId(), login, f-> f.getNumberProperty().eq(number).and(f.getDomainProperty().eq(domain.getId()))).getId();
+		return AON.getTask(domain.getName(), domain.getId(), login, f-> f.getNumberProperty().eq(number)
+				.and(f.getDomainProperty().eq(domain.getId()))).getId();
 	}
 	
 	public Task getTask(Domain domain, String login, Integer id){
@@ -44,11 +46,25 @@ public class DBConsults {
 	}
 	
 	public Task getTaskWithNumber(Domain domain, String login, Integer number){
-		return AON.getTask(domain.getName(), domain.getId(), login, f-> f.getNumberProperty().eq(number).and(f.getDomainProperty().eq(domain.getId())));
+		return AON.getTask(domain.getName(), domain.getId(), login, f-> f.getNumberProperty().eq(number)
+				.and(f.getDomainProperty().eq(domain.getId())));
 	}
 	
 	public Stream<Task> getTaskStream(Domain domain, String login, IssueFilter filter){
 		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()), filter);
+	}
+	
+	public Stream<Task> getTaskStream(Domain domain, String login, IssueFilter filter, TaskFilter f){
+		return AON.getTaskStream(domain.getName(), domain.getId(), login, f, filter);
+	}
+	
+	public Stream<Task> getLightTaskStream(Domain domain, String login, IssueFilter filter, Integer act){
+		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId())
+				.and(f.getIdProperty().ne(act)), filter);
+	}
+
+	public Stream<Task> getDuplicateTaskStream(Domain domain, String login, Integer parent){
+		return AON.getDuplicateTaskStream(domain.getName(), domain.getId(), login, parent);
 	}
 	
 	public LinkedList<Task> getTaskList(Domain domain, String login, IssueFilter filter){

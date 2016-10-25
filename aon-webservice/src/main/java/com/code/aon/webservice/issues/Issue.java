@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.type.Priority;
 public class Issue {
 	
 	private Integer id;
+	private Integer parent;
 	private String title;
 	private String url;
 	private String repositoryUrl;
@@ -50,6 +51,8 @@ public class Issue {
 	
 	private User enterprise; 
 	
+	private String color;
+	
 	public Issue() {
 	
 	}
@@ -59,22 +62,12 @@ public class Issue {
 		SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
-
-		String title = "";
-		String[] str = task.getDescription().split(" ");
-		for(Integer i = 0; i < str.length; i++){
-			String s = str[i];
-			while(s.length()>30){
-				title = title + s.substring(0, 29)+ " ";
-				s = s.substring(30);
-			}
-			title = title +  s + " ";
-		}
 		
 		String url = "http://"+domain.getName()+ "/";
 		//url = url + "aon-aio/";
 		this.id = task.getId();
-		this.title = title;
+		this.parent = task.getParent();
+		this.title = Utils.getShortString(task.getDescription());
 		this.url = url + "repos/" + userName + "/" + domain.getName() + "/issues/"+task.getNumber();
 		this.repositoryUrl = url + "repos/" + userName + "/" + domain.getName();
 		this.number =  task.getNumber();
@@ -101,6 +94,7 @@ public class Issue {
 		this.priority = new Label().setId(p.ordinal()).setName(p.getName()).setColor(p.getColor().getColor());
 		this.workgroup = new User().setId(workgroup.getId()).setLogin(workgroup.getDescription());
 		this.enterprise = new User().setId(enterprise.getId()).setLogin(enterprise.getName());
+		setColor(Utils.getStatusColor(task));
 	}
 	
 	public Integer getId() {
@@ -110,6 +104,15 @@ public class Issue {
 		this.id = id;
 		return this;
 	}
+	
+	public Integer getParent() {
+		return parent;
+	}
+	public Issue setParent(Integer parent) {
+		this.parent = parent;
+		return this;
+	}
+	
 	public String getTitle() {
 		return title;
 	}
@@ -322,10 +325,28 @@ public class Issue {
 		return getState().equals(TaskStatus.DELETED.getGwtName());
 	}
 	
+	public Boolean isDuplicate() {
+		return getParent() != null && !getParent().equals(getId());
+	}
+	
+	public Boolean isPrincipalDuplicate() {
+		return getParent() != null && getParent().equals(getId());
+	}
+	
+	public String getColor(){
+		return color;
+	}
+	
+	public Issue setColor(String color){
+		this.color = color;
+		return this;
+	}
+	
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		//if(getNumber() == null) return json;
 		json.put("id", getId());
+		json.put("parent", getParent());
 		json.put("title", getTitle());
 		json.put("url", getUrl());
 		json.put("repository_url", getRepositoryUrl());
@@ -361,7 +382,9 @@ public class Issue {
 		json.put("is_deleted", isDeleted());
 		json.put("is_open", isOpen());
 		json.put("is_closed", isClosed());
-		
+		json.put("is_duplicate", isDuplicate());
+		json.put("is_principal_duplicate", isPrincipalDuplicate());
+		json.put("color", getColor());
 		return json;
 	}	
 }

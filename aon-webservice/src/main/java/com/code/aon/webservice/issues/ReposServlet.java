@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -56,7 +54,7 @@ public class ReposServlet extends HttpServlet{
 		String userName = pathInfo[1];
 		String domainName = pathInfo[2]; 
 			
-		String md5 = getMd5(userName+domainName);
+		String md5 = Utils.getMd5(userName+domainName);
 		if(accessToken.equals(md5)){
 			String filter = req.getParameter("filter") != null ? req.getParameter("filter") : "";
 			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
@@ -64,23 +62,33 @@ public class ReposServlet extends HttpServlet{
 				Object object = new Object();
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
+				case "duplicates":
+					if(pathInfo.length > 4){
+						object = getDuplicateIssuesJSON(domain, userName, pathInfo[4]);
+					}
+					break;
+				case "issues_light":
+					if(pathInfo.length > 4){
+						IssueFilter is = new IssueFilter();
+						is.setState("all").setPage(1).setPerPage(20);
+						object = getLightIssuesJSON(domain, userName,is, pathInfo[4]);				
+					}
+					break;
 				case "issues":
 					if(pathInfo.length > 4){
 						if(pathInfo.length > 5){
-							if(pathInfo[5].equalsIgnoreCase("labels")){ // LABELS
+							if(pathInfo[5].equalsIgnoreCase("labels")) // LABELS
 								object = getLabelsJSON(domain, userName, pathInfo[4]);
-							} else if(pathInfo[5].equalsIgnoreCase("comments")){ // COMMENTS
+							else if(pathInfo[5].equalsIgnoreCase("comments")) // COMMENTS
 								object = getCommentsJSON(domain, userName, pathInfo[4]);
-							} else if(pathInfo[5].equalsIgnoreCase("events")){ // EVENTS
+							else if(pathInfo[5].equalsIgnoreCase("events")) // EVENTS
 								object = getEventsJSON(domain, userName, pathInfo[4]);
-							} else if(pathInfo[5].equalsIgnoreCase("type")){ // TYPE
+							else if(pathInfo[5].equalsIgnoreCase("type")) // TYPE
 								object = getTypeJSON(domain, userName, pathInfo[4]);
-							} else if(pathInfo[5].equalsIgnoreCase("priority")){ // PRIORITY
-								object = getPriorityJSON(domain, userName, pathInfo[4]);
-							}
-						} else{ // TASK / ISSUE
-							object = getIssueJSON(domain, userName, pathInfo[4]);
-						}
+							else if(pathInfo[5].equalsIgnoreCase("priority")) // PRIORITY
+								object = getPriorityJSON(domain, userName, pathInfo[4]);	
+						} else // TASK / ISSUE
+							object = getIssueJSON(domain, userName, DB.getTask(domain, userName, Integer.parseInt(pathInfo[4])));
 					}else{ // TASKS / ISSUES
 						object = getIssuesJSON(domain, userName, getFilter(req));
 						meta = getSizeJSON(domain, userName, getFilter(req));
@@ -223,10 +231,11 @@ public class ReposServlet extends HttpServlet{
 					} else{ // UPDATE TASK / ISSUE
 						Task task = DB.getTaskWithNumber(domain, userName, Integer.parseInt(pathInfo[4]))
 								.setModificationUser(userName).setModificationDate(Calendar.getInstance().getTime());
+						
 						if(json.opt("state") != null) {
 							if(json.get("state").equals("open")){
 								task = task.setStatus(TaskStatus.PENDING.value()).setEndDate(null).setId(task.getId())
-										.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
+									.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
 								TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
 									.setEvent("reopened").setTask(task.getId()).setCreationUser(userName);
 								AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
@@ -263,7 +272,18 @@ public class ReposServlet extends HttpServlet{
 							DB.updateTaskDescription(domain, userName, task.setComments(json.getString("body")));
 							Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 							object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise).toJSON();
-						}	
+						} else if(json.opt("duplicate") != null){
+							String d = json.getString("duplicate");
+							if(!d.equals("liberate")){
+								Integer parentId = Integer.parseInt(d); 
+								updateTaskDuplicate(domain, userName, new Task().setId(parentId), parentId);
+								task = updateTaskDuplicate(domain, userName, task, parentId);
+								object = getDuplicateIssueJSON(domain, userName, task);
+							} else if(d.equals("liberate")) {
+								task = updateTaskLiberate(domain, userName, task);
+								object = getIssueJSON(domain, userName, task);								
+							}
+						}
 					}
 				} else { // CREATE NEW TASK / ISSUE
 					Integer num = AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) != null ?
@@ -330,6 +350,26 @@ public class ReposServlet extends HttpServlet{
 			os.println(object.toString());
 			os.flush();
 		}
+	}
+
+	private Task updateTaskDuplicate(Domain domain, String userName, Task task, Integer parentId){
+		task.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName)
+			.setParent(parentId);
+		TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
+			.setEvent("duplicate").setTask(task.getId()).setCreationUser(userName);
+		AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
+		AON.updateTaskParent(domain.getName(), domain.getId(), userName, task);
+		return task;
+	}
+	
+	private Task updateTaskLiberate(Domain domain, String userName, Task task){
+		task.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName)
+			.setParent(null);
+		TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
+				.setEvent("liberate").setTask(task.getId()).setCreationUser(userName);
+		AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
+		AON.updateTaskParent(domain.getName(), domain.getId(), userName, task);
+		return task;
 	}
 	
     private void addCorsHeader(HttpServletResponse response){
@@ -407,26 +447,27 @@ public class ReposServlet extends HttpServlet{
 		return array;
 	}
 	
-	private JSONObject getIssueJSON(Domain domain, String userName, String taskNumber) {
-		Task task = DB.getTaskWithNumber(domain, userName, Integer.valueOf(taskNumber));
+	private JSONObject getIssueJSON(Domain domain, String userName, Task task) {
 		Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getTaskHolder());
 		Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 		Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
-		Stream<Tag> label = AON.getTaskLabelStream(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId())); 
-		LinkedList<Label> labels = label.filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
+		LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId())); 
+		LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
 				.collect(Collectors.toCollection(LinkedList::new)); 
-		Label type = label.filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
+		Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
 				.findFirst().orElse(new Label());
 		Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 		Issue issue = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise);		
 		return issue.toJSON();
 	}
 	
-	private JSONObject getIssueJSON(Domain domain, String userName, Task task) {
-		Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getTaskHolder());
+	private JSONObject getDuplicateIssueJSON(Domain domain, String userName, Task task) {
+		Task padre = DB.getTask(domain, userName, task.getParent());
+		task.setPriority(padre.getPriority());
+		Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, padre.getTaskHolder());
 		Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
-		Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
-		LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId())); 
+		Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, padre.getWorkgroup());
+		LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(padre.getId())); 
 		LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
 				.collect(Collectors.toCollection(LinkedList::new)); 
 		Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
@@ -453,6 +494,42 @@ public class ReposServlet extends HttpServlet{
 		});
 		return array;
 	}
+	
+	private JSONArray getLightIssuesJSON(Domain domain, String userName, IssueFilter filter, String act) {
+		JSONArray array = new JSONArray();
+		DB.getLightTaskStream(domain, userName, filter, Integer.parseInt(act)).forEach(task -> {
+			JSONObject json = new JSONObject();
+			json.put("id", task.getId());
+			json.put("state", TaskStatus.values()[task.getStatus()].getGwtName());
+			json.put("number", task.getNumber());
+			json.put("title", Utils.getShortString(task.getDescription()));
+			json.put("parent", task.getParent());
+			json.put("color", Utils.getStatusColor(task));
+			array.put(json);
+		});
+		return array;
+	}
+	
+	private JSONArray getDuplicateIssuesJSON(Domain domain, String userName, String parent) {
+		Task padre = DB.getTask(domain, userName, Integer.parseInt(parent));
+		JSONArray array = new JSONArray();
+		DB.getDuplicateTaskStream(domain, userName, Integer.parseInt(parent)).forEach(task -> {
+			task.setPriority(padre.getPriority());
+			Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, padre.getTaskHolder());
+			Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
+			Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, padre.getWorkgroup());
+			LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(padre.getId()));
+			LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
+					.collect(Collectors.toCollection(LinkedList::new)); 
+			Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
+					.findFirst().orElse(new Label());
+			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
+			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise).toJSON();
+			array.put(json);
+		});
+		return array;
+	}
+	
 	private JSONObject getSizeJSON(Domain domain, String userName, IssueFilter filter) {
 		Integer[] i = AON.getTaskCount(domain.getName(), domain.getId(), userName, f -> f.getDomainProperty().eq(domain.getId()), filter);
 		JSONObject json = new JSONObject();
@@ -565,23 +642,4 @@ public class ReposServlet extends HttpServlet{
 		}
 	}
 	
-	
-	private String getMd5(String str){
-		MessageDigest md = null;
-		try {
-			md = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-        md.update(str.getBytes());
-        byte byteData[] = md.digest();
-
-        //convert the byte to hex format method 1
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < byteData.length; i++) {
-        	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-        }
-        
-        return sb.toString();
-	}
 }

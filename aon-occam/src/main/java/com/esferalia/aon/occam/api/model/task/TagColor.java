@@ -5,7 +5,7 @@ import java.io.Serializable;
 public enum TagColor implements Serializable{
 
 	RED("B60205"),
-	ORANGE("D93F0B"),
+	ORANGE("FF704D"),
 	YELLOW("FBCA04"),
 	GREEN("0E8A16"),
 	BLUE1("006B75"),

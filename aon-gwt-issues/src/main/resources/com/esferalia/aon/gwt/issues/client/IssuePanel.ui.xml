@@ -36,7 +36,7 @@
 			<g:ScrollPanel>
 				<g:HTMLPanel height="100%" width="100%">
 				    <p:PaperIconButton ui:field="returnButton" icon="arrow-back" style="position:fixed;" />
-				    
+				    <p:PaperIconButton ui:field="principalButton" icon="home" style="margin-left:30px;position:fixed;" />
 					<table width="100%" class="{issuesResources.css.tableIssues}">
 						<tr>
 							<td width="70%" class="{issuesResources.css.tableIssues}">
@@ -69,7 +69,8 @@
 											<g:customCell>
 												<g:HTMLPanel height="100%" width="100%">
 													<div class="{issuesResources.css.buttonsIssues}">
-														<p:PaperButton ui:field="duplicatedButton" visible="false" />
+														<p:PaperButton ui:field="duplicatedButton" visible="true" style="background-color:#3f51b5;color:#fff;"> Duplicar </p:PaperButton>
+														<p:PaperButton ui:field="desduplicatedButton" visible="true" style="background-color:#3f51b5;color:#fff;"> Liberar </p:PaperButton>
 														<p:PaperButton ui:field="closedButton" raised="true" style="background-color:#f44336;color:#fff;"> Cerrar </p:PaperButton>
 														<p:PaperButton ui:field="reopenButton" raised="true" style="background-color:#4caf50;color:#fff;"> Abrir </p:PaperButton>
 														<p:PaperButton ui:field="commentButton" disabled="true" raised="true"> Comentar </p:PaperButton>
@@ -177,6 +178,7 @@
 						</g:customHeader>
 						<aon:ResultsPanel ui:field="resultsPanel" />
 					</g:tab>
+					
 					<g:tab>
 						<g:customHeader>
 							<g:Label
@@ -185,6 +187,15 @@
 						</g:customHeader>
 						<g:ScrollPanel ui:field="informationPanel"
 							styleName="{aonResources.css.aonTextCenter}" />
+					</g:tab>
+					
+					<g:tab>
+						<g:customHeader>
+							<g:Label
+								styleName="{aonResources.css.aonIconInfo} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"
+								text="Duplicados" />
+						</g:customHeader>
+						<g:ScrollPanel ui:field="duplicatePanel" />
 					</g:tab>
 				</g:TabLayoutPanel>
 			</aon:MinimizePanel>

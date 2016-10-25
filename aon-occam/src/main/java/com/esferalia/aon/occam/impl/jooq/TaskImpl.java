@@ -32,6 +32,12 @@ public class TaskImpl implements ITask {
 	}
 	
 	@Override
+	public Stream<Task> getDuplicateTaskStream(AONContext ctx, Integer parent) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.getDuplicateTaskStream(ctx, parent));
+	}
+	
+	@Override
 	public Integer[] getTaskCount(AONContext ctx, TaskFilter filter, IssueFilter issueFilter) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.getTaskCount(ctx, filter, issueFilter));
@@ -78,6 +84,11 @@ public class TaskImpl implements ITask {
 	@Override
 	public void updateTaskStatus(AONContext ctx, Task task) {
 		 ctx.getDslContext().transaction(configuration -> TaskDAO.updateTaskStatus(ctx, task));
+	}
+	
+	@Override
+	public void updateTaskParent(AONContext ctx, Task task) {
+		 ctx.getDslContext().transaction(configuration -> TaskDAO.updateTaskParent(ctx, task));
 	}
 	
 	@Override

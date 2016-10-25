@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 public interface ITask {
 	public Task getTask(AONContext ctx, TaskFilter filter);
 	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter);
+	public Stream<Task> getDuplicateTaskStream(AONContext ctx, Integer parent);
 	public Integer[] getTaskCount(AONContext ctx, TaskFilter filter, IssueFilter issueFilter);
 	public Stream<Tag> getTaskLabelStream(AONContext ctx, TaskTagFilter filter);
 	public Integer getCommentsCount(AONContext ctx, Integer taskId);
@@ -27,6 +28,7 @@ public interface ITask {
 	
 	public Integer createTask(AONContext ctx, Task task);
 	public void updateTaskStatus(AONContext ctx, Task task);
+	public void updateTaskParent(AONContext ctx, Task task);
 	public void updateTaskUser(AONContext ctx, Task task);
 	public void updateTaskDescription(AONContext ctx, Task task);
 	public void updateTaskPriority(AONContext ctx, Task task);

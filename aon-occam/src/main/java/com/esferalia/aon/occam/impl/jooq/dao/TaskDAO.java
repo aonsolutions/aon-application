@@ -113,6 +113,11 @@ public class TaskDAO {
 		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.TASK_HOLDER);}
 		@Override public Property<Integer> getWorkgroupProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.WORKGROUP);}
 		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.NUMBER);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.MODIFICATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.CREATION_DATE);}
+		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.PARENT);}
 	}
 	
 	public static Task getTask(AONContext ctx, TaskFilter filter){
@@ -310,6 +315,11 @@ public class TaskDAO {
 		return new Integer[]{open,close,delete};
 	}
 	
+	public static Stream<Task> getDuplicateTaskStream(AONContext ctx, Integer parent){
+		return ctx.getDslContext().select().from(TASK).where(TASK.PARENT.eq(parent)).fetchInto(TASK)
+				.stream().map(new FullTaskFiller());
+	}
+	
 	public static Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter){
 		Boolean tagBool = (issueFilter.getLabels() != null && !issueFilter.getLabels().equals(""))
 				|| (issueFilter.getType() != null && !issueFilter.getType().equals(""));
@@ -322,27 +332,35 @@ public class TaskDAO {
 		if(tagBool && commentBool){
 			return ctx.getDslContext().selectDistinct().from(TASK).join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 									.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
-					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull()).orderBy(sort)
+					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
+					.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID)))
+					.orderBy(sort)
 					.limit(issueFilter.getPerPage())
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
 					.fetchInto(TASK).stream().map(new FullTaskFiller());
 		}
 		if(commentBool){
 			return ctx.getDslContext().selectDistinct().from(TASK).leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
-					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull()).orderBy(sort)
+					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
+					.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID)))
+					.orderBy(sort)
 					.limit(issueFilter.getPerPage())
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
 					.fetchInto(TASK).stream().map(new FullTaskFiller());
 		}
 		if(tagBool){
 			return ctx.getDslContext().selectDistinct().from(TASK).join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
-					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull()).orderBy(sort)
+					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
+					.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID)))
+					.orderBy(sort)
 					.limit(issueFilter.getPerPage())
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
 					.fetchInto(TASK).stream().map(new FullTaskFiller());
 		}
 		return ctx.getDslContext().select().from(TASK) 
-				.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull()).orderBy(sort)
+				.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
+				.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID)))
+				.orderBy(sort)
 				.limit(issueFilter.getPerPage())
 				.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
 				.fetchInto(TASK).stream().map(new FullTaskFiller());
@@ -362,6 +380,14 @@ public class TaskDAO {
 		ctx.getDslContext().update(TASK)
 			.set(TASK.STATUS, task.getStatus())
 			.set(TASK.END_DATE,task.toTimestamp(task.getEndDate()))
+			.set(TASK.MODIFICATION_USER, task.getModificationUser())
+			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
+			.where(TASK.ID.eq(task.getId())).execute();
+	}
+	
+	public static void updateTaskParent(AONContext ctx, Task task) {
+		ctx.getDslContext().update(TASK)
+			.set(TASK.PARENT, task.getParent())
 			.set(TASK.MODIFICATION_USER, task.getModificationUser())
 			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
 			.where(TASK.ID.eq(task.getId())).execute();
@@ -545,7 +571,8 @@ public class TaskDAO {
 					.setCreationUser(r.getCreationUser())
 					.setCreationDate(r.getCreationDate())
 					.setModificationUser(r.getModificationUser())
-					.setModificationDate(r.getModificationDate());
+					.setModificationDate(r.getModificationDate())
+					.setParent(r.getParent());
 		}
 	}
 	

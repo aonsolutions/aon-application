@@ -425,6 +425,11 @@ public interface Properties {
 		Property<Integer> getTaskHolderProperty();
 		Property<Integer> getWorkgroupProperty();
 		Property<Integer> getNumberProperty();
+		Property<String> getModificationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<Integer> getParentProperty();
 	}
 	
 	public interface TaskTagProperties{

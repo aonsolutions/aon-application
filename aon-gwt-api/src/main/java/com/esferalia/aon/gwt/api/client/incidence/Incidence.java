@@ -10,6 +10,7 @@ public class Incidence extends Methods{
 	String url;
 	String userName;
 	String repositoryName;
+	String domainName;
 	String organizationName;
 	
 	public Incidence(AonUrlApi url, String accessToken) {
@@ -21,6 +22,7 @@ public class Incidence extends Methods{
 		this.url = url.getUrl(); //+ "aon-aio/";
 		this.userName = userName;
 		this.repositoryName = repositoryName;
+		this.domainName = repositoryName;
 		this.organizationName = organizationName;
 		this.accessToken = accesToken;
 	}
@@ -29,6 +31,7 @@ public class Incidence extends Methods{
 		this.url = url; //+ "aon-aio/";
 		this.userName = userName;
 		this.repositoryName = repositoryName;
+		this.domainName = repositoryName;
 		this.organizationName = organizationName;
 		this.accessToken = accesToken;
 	}
@@ -143,6 +146,30 @@ public class Incidence extends Methods{
 				+ (filter.getSince()!= null ? "&since=" + filter.getSince() : "")
 				+ "&page="+ filter.getPage()+ "&per_page="+ filter.getPerPage()
 				, callback);
+	}
+	
+	public void getLightIssues(Integer id, IssueFilter filter, AsyncCallback<JSON<JsIssue>> callback){
+		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/issues_light/" + id
+				+ (filter.getState() != null ? "?state=" + filter.getState() : "?state=all")
+				+ (filter.getMilestone() != null ? "&milestone=" + filter.getMilestone() : "")
+				+ (filter.getTitle() != null ? "&title=" + filter.getTitle() : "")
+				+ (filter.getAssignee() != null ? "&asignee=" + filter.getAssignee() : "")
+				+ (filter.getCreator() != null ? "&creator=" + filter.getCreator() : "")
+				+ (filter.getMentioned() != null ? "&mentioned=" + filter.getMentioned() : "")
+				+ (filter.getLabels() != null ? "&labels=" + filter.getLabels() : "")
+				+ (filter.getSort() != null ? "&sort=" + filter.getSort() : "")
+				+ (filter.getDirection() != null ? "&direction=" + filter.getDirection() : "")
+				+ (filter.getPriority() != null ? "&priority=" + filter.getPriority() : "")
+				+ (filter.getDateDiff() != null ? "&date_diff=" + filter.getDateDiff() : "")
+				+ (filter.getEnterprise() != null ? "&enterprise=" + filter.getEnterprise() : "")
+				+ (filter.getType() != null ? "&type=" + filter.getType() : "")
+				+ (filter.getSince()!= null ? "&since=" + filter.getSince() : "")
+				+ "&page="+ filter.getPage()+ "&per_page="+ filter.getPerPage()
+				, callback);
+	}
+	
+	public void getDuplicateIssues(Integer parent, AsyncCallback<JSON<JsIssue>> callback){
+		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/duplicates/"+parent, callback);
 	}
 	
 	public void createUserIssue(String requestData,	AsyncCallback<JsIssue> callback) {
@@ -353,6 +380,16 @@ public class Incidence extends Methods{
 		post(url + "notification/"+ getOrganizationName() + "/" + getRepositoryName(), requestData);
 	}
 		
+	//-------------------- TASK
+	/**
+	 * 
+	 * @param callback
+	 */
+	public void getTask(Integer id, AsyncCallback<JSON<JsIssue>> callback){
+		get(url + "repos/" + getUserName() + "/" + getDomainName() + "/issues/" + id, callback);
+	}
+	
+	
 	//---------------------- Métodos Get & Set
 	
 	public String getUrl() {
@@ -387,6 +424,11 @@ public class Incidence extends Methods{
 		this.organizationName = organizationName;
 	}
 	
-	
-	
+	public String getDomainName() {
+		return domainName;
+	}
+
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
 }

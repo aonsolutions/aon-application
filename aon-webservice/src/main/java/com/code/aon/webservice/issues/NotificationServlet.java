@@ -2,9 +2,6 @@ package com.code.aon.webservice.issues;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -56,7 +53,7 @@ public class NotificationServlet extends HttpServlet{
 		String userName = pathInfo[1];
 		String domainName = pathInfo[2]; 
 			
-		String md5 = getMd5(userName+domainName);
+		String md5 = Utils.getMd5(userName+domainName);
 		if(accessToken.equals(md5)){
 			Domain domain = DB.getDomain(domainName, userName);			
 			Object object = new Object();
@@ -95,7 +92,7 @@ public class NotificationServlet extends HttpServlet{
 		while((line = req.getReader().readLine()) != null)
 			s = s + " " + line;
 		System.out.println(s);
-		s = checkString(s);
+		s = Utils.checkString(s);
 		System.out.println(s);
 		if(s == null || s.equals("")) s = "{}";
 		JSONObject json = new JSONObject(s);
@@ -524,27 +521,4 @@ public class NotificationServlet extends HttpServlet{
 		return array;		
 	}	
 	
-	
-	public String checkString(String str){
-		return new String(str.getBytes(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8") );
-	}
-	
-	private String getMd5(String str){
-		MessageDigest md = null;
-		try {
-			md = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-        md.update(str.getBytes());
-        byte byteData[] = md.digest();
-
-        //convert the byte to hex format method 1
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < byteData.length; i++) {
-        	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-        }
-        
-        return sb.toString();
-	}
 }

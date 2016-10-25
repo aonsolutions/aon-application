@@ -2,8 +2,6 @@ package com.code.aon.webservice.issues;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -33,7 +31,7 @@ public class OrgsServlet extends HttpServlet{
 		String userName = pathInfo[1];
 		String domainName = pathInfo[2]; 
 			
-		String md5 = getMd5(userName+domainName);
+		String md5 = Utils.getMd5(userName+domainName);
 		if(accessToken.equals(md5)){
 			String filter = req.getParameter("filter") != null ? req.getParameter("filter") : "";
 			Integer workgroupId = req.getParameter("w") != null ? Integer.parseInt(req.getParameter("w")):-1; 
@@ -132,24 +130,5 @@ public class OrgsServlet extends HttpServlet{
 					.setId(r.getId())
 					.setLogin(r.getDescription());  
 		}
-	}
-	
-	private String getMd5(String str){
-		MessageDigest md = null;
-		try {
-			md = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-        md.update(str.getBytes());
-        byte byteData[] = md.digest();
-
-        //convert the byte to hex format method 1
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < byteData.length; i++) {
-        	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-        }
-        
-        return sb.toString();
 	}
 }

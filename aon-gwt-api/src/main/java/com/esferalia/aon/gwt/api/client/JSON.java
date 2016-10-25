@@ -9,6 +9,8 @@ public class JSON<T extends JavaScriptObject> extends JavaScriptObject {
 		
 	public final native AonJsArray<T> getData() /*-{ return this.data; }-*/;
 
+	public final native T getBData() /*-{ return this.data; }-*/;
+
 	public final native JsSize getMeta() /*-{ return this.meta; }-*/;
 
 }

@@ -54,18 +54,7 @@
             <template>
                 <div>
                     <div class="item">
-                    	<template is="dom-if" if="[[item.is_open]]">
-                    		<iron-icon style="color:green;position:absolute;" icon="error-outline"/>
-                    	</template>
-                    	
-                    	<template is="dom-if" if="[[item.is_closed]]">
-                    		<iron-icon style="color:red;position:absolute;" icon="error-outline"/>
-                    	</template>
-                    	
-                    	<template is="dom-if" if="[[item.is_deleted]]">
-                    		<iron-icon style="color:gray;position:absolute;" icon="error-outline"/>
-                    	</template>
-                    	
+                    	<iron-icon style="color:[[item.color]];position:absolute;" icon="error-outline"/>
                         <div class="pad">
                             <div class="primary">
                            		[[item.title]]

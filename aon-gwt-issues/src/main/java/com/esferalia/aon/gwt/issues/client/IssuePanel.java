@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
+import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
 import com.esferalia.aon.gwt.api.client.incidence.JsComment;
 import com.esferalia.aon.gwt.api.client.incidence.JsEvent;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
@@ -41,8 +42,10 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -64,7 +67,6 @@ public class IssuePanel extends Composite{
 	public static final AonGwtIssuesCSS CSS = GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css();
 	
 	@UiField SimplePanel headerPanel;
-	//@UiField VerticalPanel headerVPanel;
 	@UiField Label userLogged;
 	@UiField Label typeLabel;
 	@UiField Label priorityLabel;
@@ -76,6 +78,7 @@ public class IssuePanel extends Composite{
 	@UiField PaperIconButton sendButton;
 	@UiField PaperIconButton removeIssueButton;
 	@UiField PaperButton duplicatedButton;
+	@UiField PaperButton desduplicatedButton;
 	@UiField PaperButton closedButton;
 	@UiField PaperButton reopenButton;
 	@UiField PaperButton commentButton;
@@ -86,10 +89,13 @@ public class IssuePanel extends Composite{
 	@UiField Button workgroupButton;	
 	@UiField Button userButton;
 
+	@UiField TabLayoutPanel tabLayout;
 	@UiField SplitLayoutPanel dockLayoutPanel;
 	@UiField MinimizePanel footPanel;
+	@UiField ScrollPanel duplicatePanel;
 	
 	@UiField PaperIconButton returnButton;
+	@UiField PaperIconButton principalButton;
 	@UiField PaperIconButton userDeleteButton;
 	@UiField PaperIconButton typeDeleteButton;
 	@UiField PaperIconButton workgroupDeleteButton;
@@ -113,6 +119,7 @@ public class IssuePanel extends Composite{
 		userDeleteButton.setSize("22px", "22px");
 		typeDeleteButton.setSize("22px", "22px");
 		workgroupDeleteButton.setSize("22px", "22px");
+
 		if(issue.getState().equals("open")){
 			closedButton.setVisible(true);
 			reopenButton.setVisible(false);
@@ -120,46 +127,103 @@ public class IssuePanel extends Composite{
 			closedButton.setVisible(false);
 			reopenButton.setVisible(true);
 		}
+		if(issue.isPrincipalDuplicate()){
+			commentButton.setVisible(true);
+			duplicatedButton.setVisible(false);
+			desduplicatedButton.setVisible(false);
+			principalButton.setVisible(false);
+			removeIssueButton.setVisible(false);
+		}else if(issue.isDuplicate()){
+			commentButton.setVisible(false);
+			closedButton.setVisible(false);
+			reopenButton.setVisible(false);
+			duplicatedButton.setVisible(false);
+			desduplicatedButton.setVisible(true);
+			principalButton.setVisible(true);
+			removeIssueButton.setVisible(false);
+			
+			typeButton.setVisible(false);
+			priorityButton.setVisible(false);
+			tagButton.setVisible(false);
+			workgroupButton.setVisible(false);
+			userButton.setVisible(false);
+		} else {
+			commentButton.setVisible(true);
+			duplicatedButton.setVisible(true);
+			desduplicatedButton.setVisible(false);
+			principalButton.setVisible(false);
+			removeIssueButton.setVisible(true);
+		}
 
 		initHeader(issue);
 		initLabels(issue);
 		initComments(issue);
 		initSendButton();
+		
+		if(issue.isPrincipalDuplicate() || issue.isDuplicate()){
+			tabLayout.getTabWidget(2).setVisible(true);
+			initDuplicates(issue);
+		} else {
+			tabLayout.getTabWidget(2).setVisible(false);
+		}
 	}
 	
 	
-	
-	private void initHeader(JsIssue issue) {
-		VerticalPanel vp = new VerticalPanel();
-		vp.setSpacing(10);
-		vp.add(getTitleLabel(issue.getTitle(), issue.getNumber()));
-		incidence.getEvents(issue.getEventsUrl(), new AsyncCallback<JSON<JsEvent>>() {
+	private void initDuplicates(JsIssue issue){
+		incidence.getDuplicateIssues(issue.getParent(), new  AsyncCallback<JSON<JsIssue>>() {
 			@Override
-			public void onSuccess(JSON<JsEvent> result) {
-				/* TODO PARA CUANDO SE PUEDA COMPILAR STREAM CON GWT 2.8 anObject
-				Stream<JsEvent> eventStream = result.getData().toLinkedList().stream().filter(e -> 
-					e.getEvent().equals("reopened") || e.getEvent().equals("closed"));
-				headerVPanel.add(getStatusPanel(issue, eventStream));
-				*/
-				LinkedList<JsEvent> list = new LinkedList<JsEvent>();
-				for (JsEvent e : result.getData().toLinkedList()) 
-					if(e.getEvent().equals("reopened") || e.getEvent().equals("closed"))
-						list.add(e);
-				vp.add(getStatusPanel(vp, issue, list));
-				vp.add(getCompanyPanel(issue));
-				headerPanel.add(vp);
+			public void onSuccess(JSON<JsIssue> result) {				
+				IssueSelector is = new IssueSelector();
+				is.getList().setItems(result.getData());
+				is.getList().addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						JsIssue  jsIssue = is.getSelectedItem().cast();
+						parent.contentDockLayoutPanel.removeFromParent();
+						parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+						parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, jsIssue));
+						parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);	
+					}
+				});
+				duplicatePanel.add(is);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
 	}
+	private void initHeader(JsIssue issue) {
+		VerticalPanel vp = new VerticalPanel();
+		vp.setSpacing(10);
+		vp.add(getTitleLabel(issue.getTitle(), issue.getNumber()));
+		if(!issue.isDuplicate()){
+			incidence.getEvents(issue.getEventsUrl(), new AsyncCallback<JSON<JsEvent>>() {
+				@Override
+				public void onSuccess(JSON<JsEvent> result) {
+					LinkedList<JsEvent> list = new LinkedList<JsEvent>();
+					for (JsEvent e : result.getData().toLinkedList()) 
+						if(e.getEvent().equals("reopened") || e.getEvent().equals("closed"))
+							list.add(e);
+					vp.add(getStatusPanel(vp, issue, list));
+					vp.add(getCompanyPanel(issue));
+					headerPanel.add(vp);
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		} else headerPanel.add(vp);
+	}
 	
 	private void initLabels(JsIssue issue){
 		String notAssign = "Sin Asignar";
 		typeLabel.setText(issue.getType().getName());
+		typeDeleteButton.setVisible(!issue.isDuplicate());
 		if(issue.getType().getColor() != null && !issue.getType().getColor().equals(""))
 			typeLabel.getElement().getStyle().setBackgroundColor("#"+issue.getType().getColor());
-		if(issue.getType().getName().equals(notAssign)) {typeDeleteButton.setVisible(false);}
+		if(issue.getType().getName().equals(notAssign)) {
+			typeDeleteButton.setVisible(false);
+			typeLabel.getElement().getStyle().setBackgroundColor("#ddd");
+		}
 		priorityLabel.setText(issue.getPriority().getName());
 		if(issue.getPriority().getColor() != null && !issue.getPriority().getColor().equals(""))
 			priorityLabel.getElement().getStyle().setBackgroundColor("#"+issue.getPriority().getColor());
@@ -190,13 +254,23 @@ public class IssuePanel extends Composite{
 					});
 				}
 			});
+			pib.setVisible(!issue.isDuplicate());
 			hp.add(pib);
 			labelsVPanel.add(hp);
 		}
 		workgroupLabel.setText(issue.getWorkgroup().getLogin());
-		if(issue.getWorkgroup().getLogin().equals(notAssign)) {workgroupDeleteButton.setVisible(false);}
+		workgroupDeleteButton.setVisible(!issue.isDuplicate());
+		if(issue.getWorkgroup().getLogin().equals(notAssign)) {
+			workgroupDeleteButton.setVisible(false);
+			workgroupLabel.getElement().getStyle().setBackgroundColor("#ddd");
+		}
 		userLabel.setText(issue.getAssignee().getLogin());
-		if(issue.getAssignee().getLogin().equals(notAssign)) {userDeleteButton.setVisible(false);}
+		userDeleteButton.setVisible(!issue.isDuplicate());
+		if(issue.getAssignee().getLogin().equals(notAssign)) {
+			userDeleteButton.setVisible(false);
+			userLabel.getElement().getStyle().setBackgroundColor("#ddd");
+		}
+
 	}
 	
 	
@@ -216,6 +290,8 @@ public class IssuePanel extends Composite{
 				@Override public void onFailure(Throwable caught) {}
 			});
 		}
+		if(issue.isDuplicate()) commentTextArea.setVisible(false);
+		else commentTextArea.setVisible(true);
 	}
 	
 	private Label getTitleLabel(String title, Integer id) {
@@ -232,38 +308,19 @@ public class IssuePanel extends Composite{
 		return titleLabel;
 	}
 	
-	private String getStateStyle(String state){
+	private String getStateStyle(String state, Boolean dup){
+		if(dup && (state.equals("open") || state.equals("reopened"))) 
+			return "color:blue;position:absolute;";
 		if(state.equals("open")) return "color:green;position:absolute;";
 		if(state.equals("closed")) return "color:red;position:absolute;";
-		if(state.equals("reopened")) return "color:blue;position:absolute;";
+		if(state.equals("reopened")) return "color:green;position:absolute;";
 		return "position:absolute;";		
 	}
 	
-	/* TODO PARA CUANDO SE PUEDA COMPILAR STREAM CON GWT 2.8 anObject
-	private Widget getStatusPanel(JsIssue issue, Stream<JsEvent> events) {
-		if(events.count() > 0){
-			//TODO ORDENAR LISTA POR FECHA DE MAS CERCANO A MAS LEJANO
-			//TODO DISCLOSURE CON OPEN.. AL FINAL
-		} else {
-			HorizontalPanel h = new HorizontalPanel();
-			IronIcon icon = new IronIcon();
-			icon.setIcon("error-outline");
-			icon.setStyle(getStateStyle(issue.getState()));
-			h.add(icon);
-			String state = issue.getState() + " por " + "USER" + "el" ;//+ dateFormat.format(issue.getcre) 
-			h.add(new Label(state));
-			issue.getState();
-			//TODO  open ....
-		}
-		return new HorizontalPanel();
-	}
-	*/
-	
-	// TODO FUNCION TEMPORAL!!
 	private Widget getStatusPanel(VerticalPanel headerVPanel, JsIssue issue, LinkedList<JsEvent> events) {
 		if(events.isEmpty()){
 			return getHistorialLogHeader(issue.getState(), issue.getUser().getLogin(), 
-					dateTimeFormat.parse(issue.getCreatedAt()));
+					dateTimeFormat.parse(issue.getCreatedAt()), issue.isPrincipalDuplicate());
 		} else {
 			DisclosurePanel logPanel = new DisclosurePanel();
 			logPanel.setAnimationEnabled(true);
@@ -271,32 +328,33 @@ public class IssuePanel extends Composite{
 			icon.setStyleName(AON.AON_CSS.aonIconView());
 			JsEvent event = events.get(0);
 			HorizontalPanel hp = getHistorialLogHeader(event.getEvent(), event.getUser().getLogin(), 
-					dateTimeFormat.parse(event.getCreatedAt()));
+					dateTimeFormat.parse(event.getCreatedAt()), issue.isPrincipalDuplicate());
 			hp.insert(icon, 0);
 			logPanel.setHeader(hp);
 			VerticalPanel vp = new VerticalPanel();
 			for (Integer i = 1; i < events.size(); i++) {
 				vp.add(getHistorialLogHeader(events.get(i).getEvent(), events.get(i).getUser().getLogin(),
-						dateTimeFormat.parse(events.get(i).getCreatedAt())));
+						dateTimeFormat.parse(events.get(i).getCreatedAt()), false));
 			}
 			vp.add(getHistorialLogHeader("open", issue.getUser().getLogin(), 
-					dateTimeFormat.parse(issue.getCreatedAt())));
+					dateTimeFormat.parse(issue.getCreatedAt()), false));
 			logPanel.setContent(vp);
 			headerVPanel.add(logPanel);
 		}
 		return new HorizontalPanel();
 	}
 	
-	private HorizontalPanel getHistorialLogHeader(String state, String user, Date date) {
+	private HorizontalPanel getHistorialLogHeader(String state, String user, Date date, Boolean dup) {
 		HorizontalPanel hPanel = new HorizontalPanel();
 		hPanel.setSpacing(5);
 		
 		IronIcon icon = new IronIcon();
 		icon.setIcon("error-outline");
-		icon.setStyle(getStateStyle(state));
+		icon.setStyle(getStateStyle(state, dup));
 		hPanel.add(icon);
-
+		
 		Label stateLabel = new Label(state + " por ");
+		if(dup) stateLabel.setText(" (DUPLICADO) " + state + " por ");
 		stateLabel.getElement().getStyle().setPaddingLeft(20, Unit.PX);
 		stateLabel.getElement().getStyle().setPaddingTop(5, Unit.PX);
 		hPanel.add(stateLabel);
@@ -330,9 +388,7 @@ public class IssuePanel extends Composite{
 		
 		PaperIconButton editButton = new PaperIconButton();
 		editButton.setIcon("create");
-		editButton.setTitle("Editar descripci\u00f3n");
-		editButton.setVisible(AonStringUtils.equals(userLogged.getText(), issue.getUser().getLogin()));
-		
+		editButton.setTitle("Editar descripci\u00f3n");		
 		final TextArea textArea = getTextArea(issue.getBody());
 		textArea.addStyleName(AON.AON_CSS.aonNoborderTop());
 		textArea.setName(String.valueOf(issue.getId()));
@@ -349,7 +405,11 @@ public class IssuePanel extends Composite{
 				}
 			}
 		});
-		editButton.setVisible(userLogged.getText().equals(issue.getUser().getLogin()));
+		editButton.setVisible(!issue.isDuplicate() && userLogged.getText().equals(issue.getUser().getLogin()));
+
+		PaperIconButton lockButton = new PaperIconButton();
+		lockButton.setIcon("lock");
+		lockButton.setVisible(issue.isDuplicate() || !userLogged.getText().equals(issue.getUser().getLogin()));
 		
 		VerticalPanel vp = new VerticalPanel();
 		vp.setWidth("600px");
@@ -363,6 +423,7 @@ public class IssuePanel extends Composite{
 		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		hp.add(getHeadDescriptionLabel(issue, days));
 		hp.add(editButton);
+		hp.add(lockButton);
 		vp.add(hp);
 		vp.add(textArea);
 		historialVPanel.add(vp);
@@ -374,7 +435,6 @@ public class IssuePanel extends Composite{
 		PaperIconButton editButton = new PaperIconButton();
 		editButton.setIcon("create");
 		editButton.setTitle("Editar descripci\u00f3n");
-		editButton.setVisible(AonStringUtils.equals(userLogged.getText(), issue.getUser().getLogin()));
 		editButton.setTitle("Editar comentario");
 
 		final TextArea textArea = getTextArea(comment.getBody());
@@ -395,8 +455,12 @@ public class IssuePanel extends Composite{
 			}
 		});
 
-		editButton.setVisible(AonStringUtils.equals(userLogged.getText(), comment.getUser().getLogin()));
-
+		editButton.setVisible(!issue.isDuplicate() && AonStringUtils.equals(userLogged.getText(), comment.getUser().getLogin()));
+		
+		PaperIconButton lockButton = new PaperIconButton();
+		lockButton.setIcon("lock");
+		lockButton.setVisible(issue.isDuplicate() || !userLogged.getText().equals(issue.getUser().getLogin()));
+		
 		VerticalPanel vp = new VerticalPanel();
 		vp.setWidth("600px");
 		vp.getElement().getStyle().setPaddingBottom(10, Unit.PX);
@@ -409,6 +473,7 @@ public class IssuePanel extends Composite{
 		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		hp.add(getHeadCommentLabel(comment, days));
 		hp.add(editButton);
+		hp.add(lockButton);
 		vp.add(hp);
 		vp.add(textArea);
 		historialVPanel.add(vp);
@@ -809,6 +874,7 @@ public class IssuePanel extends Composite{
 									JsUser jsUser = users.get(i);
 									workgroup = jsUser;
 									workgroupLabel.setText(jsUser.getLogin());
+									workgroupLabel.getElement().getStyle().setBackgroundColor("#ff704d");
 									workgroupDeleteButton.setVisible(true);
 									incidence.addWorkgroup2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
 										@Override public void onFailure(Throwable caught) {}
@@ -857,6 +923,7 @@ public class IssuePanel extends Composite{
 								if(users.get(i).getLogin().equals(vcb.getValue())) {
 									JsUser jsUser = users.get(i);
 									userLabel.setText(jsUser.getLogin());
+									userLabel.getElement().getStyle().setBackgroundColor("#a30c51");
 									userDeleteButton.setVisible(true);
 									incidence.addUser2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
 										@Override public void onFailure(Throwable caught) {}
@@ -893,6 +960,7 @@ public class IssuePanel extends Composite{
 			@Override public void onFailure(Throwable caught) {}
 			@Override public void onSuccess(JsUser result) {
 				userLabel.setText("Sin Asignar");
+				userLabel.getElement().getStyle().setBackgroundColor("#ddd");
 				userDeleteButton.setVisible(false);
 			}
 		});
@@ -904,22 +972,104 @@ public class IssuePanel extends Composite{
 			@Override public void onFailure(Throwable caught) {}
 			@Override public void onSuccess(JsLabel result) {
 				typeLabel.setText("Sin Asignar");
+				typeLabel.getElement().getStyle().setBackgroundColor("#ddd");
 				typeDeleteButton.setVisible(false);
 			}
 		});
 	}
 	
-	@UiHandler("workgroupDeleteButton")
 	void onClickWorkgroupDeleteButton(ClickEvent event){	
 		incidence.deleteWorkgroup2Issue(issue.getNumber(), new AsyncCallback<JsUser>() {
 			@Override public void onFailure(Throwable caught) {}
 			@Override public void onSuccess(JsUser result) {
 				workgroup = null;
 				workgroupLabel.setText("Sin Asignar");
+				workgroupLabel.getElement().getStyle().setBackgroundColor("#ddd");
 				workgroupDeleteButton.setVisible(false);
 			}
 		});
 	}
+	
+	
+	@UiHandler("duplicatedButton")
+	void onClickDuplicatedButton(ClickEvent event){
+		
+		incidence.getLightIssues(issue.getId() ,new IssueFilter(), new AsyncCallback<JSON<JsIssue>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsIssue> result) {
+				
+				IssueSelector is = new IssueSelector(result.getData());
+				is.setHeight("500px");
+				is.setWidth("500px");
+				AonDialog dialog = new AonDialog("Asignar a ", is) {
+					
+					@Override
+					protected void onCancel() {}
+					
+					@Override
+					protected void onAccept() {
+						JsIssue pIssue = is.getSelectedItem();
+						String request = "{\"duplicate\":"+pIssue.getId()+"}";
+						incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
+							
+							@Override
+							public void onSuccess(JsIssue result) {	
+								parent.contentDockLayoutPanel.removeFromParent();
+								parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+								parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, result));
+								parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);		
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});
+					}
+				};
+				parent.toolbar.add(dialog);
+				dialog.open();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	@UiHandler("desduplicatedButton")
+	void onClickDesduplicatedButton(ClickEvent event){
+		String request = "{\"duplicate\":\"liberate\"}";
+		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
+			
+			@Override
+			public void onSuccess(JsIssue result) {	
+				parent.contentDockLayoutPanel.removeFromParent();
+				parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+				parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, result));
+				parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);		
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
+	@UiHandler("principalButton")
+	void onClickPrincipalButton(ClickEvent event){
+		Integer parentId = issue.getParent();
+		incidence.getTask(parentId, new AsyncCallback<JSON<JsIssue>>() {
+	
+			@Override 
+			public void onSuccess(JSON<JsIssue> result) {
+				JsIssue issue = result.getBData();
+
+				parent.contentDockLayoutPanel.removeFromParent();
+				parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+				parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue));
+				parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);	
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
 	
 	@UiHandler("footPanel")
 	void onFootMinimize(MinimizeEvent event) {
