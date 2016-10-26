@@ -20,4 +20,10 @@ public class FinanceServiceImpl extends AonRemoteServiceServlet implements Finan
 			throws AonCoreException {
 		return AON.getInvoiceSeries(domainName, domainId, this.getUserLogin(), from, to, taxDate );
 	}
+
+	@Override
+	public Integer getInvoiceNextNumber(String domainName, Integer domainId, Byte[] types, String series)
+			throws AonCoreException {
+		return AON.getInvoiceNextNumber(domainName, domainId, this.getUserLogin(), types, series);
+	}
 }

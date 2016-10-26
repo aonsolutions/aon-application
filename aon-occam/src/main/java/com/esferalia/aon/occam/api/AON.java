@@ -829,6 +829,7 @@ public class AON {
 	// ********************************************
 	// ********************************* FINANCE **
 	// ********************************************
+	
 	public static Stream<InvoiceDetail> getInvoiceDetails(String domainName,
 			Integer domainId, String login, InvoiceFilter filter) {
 		AONContext ctx = null;
@@ -948,6 +949,19 @@ public class AON {
 		}
 	}
 
+	public static Integer getInvoiceNextNumber(
+			String domainName, Integer domainId, String login,
+			Byte[] types, String series) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().getInvoiceNextNumber(ctx, types,series);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	// ********************************************
 	// ****************************** MANAGEMENT **
 	// ********************************************

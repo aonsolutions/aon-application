@@ -14,9 +14,9 @@ import com.esferalia.aon.occam.api.model.product.Item;
 public interface IFinance {
 	
 	
-	// 	***********************************************
-	// 	**************************** INVOICE DETAIL ***
-	// 	***********************************************
+	// 	****************************************
+	// 	**************************** INVOICE ***
+	// 	****************************************
 
 	Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx,InvoiceFilter filter);
 	InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId);
@@ -25,6 +25,7 @@ public interface IFinance {
 	LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(AONContext ctx, Item item, Date startDate, Integer workplaceId, Integer warehouseId, Date date);
 	LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId);
 	LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date);
+	Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series);
 
 	// 	***********************************************
 	// 	*************************** INVOICING GROUP ***

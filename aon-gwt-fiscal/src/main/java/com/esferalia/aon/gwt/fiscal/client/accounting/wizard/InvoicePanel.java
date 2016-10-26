@@ -6,6 +6,9 @@ import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.WithholdingTypeListBox;
+import com.esferalia.aon.gwt.fiscal.client.FinanceService;
+import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
@@ -48,6 +51,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class InvoicePanel extends WizardContentBase {
 	
 	static FiscalServiceAsync fiscalService;
+	static FinanceServiceAsync financeService;
 	
 	public static interface IInvoicePanelCallback extends IAccountEntryModuleCallback{
 		AccountingInvoice getInvoice();
@@ -116,7 +120,10 @@ public class InvoicePanel extends WizardContentBase {
 		
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
-		
+
+		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
+		financeService = new FinanceServiceAsyncDecorator(financeServiceRaw);
+
 		invoicePanelRegistryVisitor = new InvoicePanelRegistryVisitor();
 		InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
 		
@@ -243,8 +250,27 @@ public class InvoicePanel extends WizardContentBase {
 	@UiHandler("series")
 	public void onSelectSeries(ChangeEvent event) {
 		invoice.getInvoice().setSeries(series.getSelectedValue());
-		_paintEntry();
+		financeService.getInvoiceNextNumber(
+				 AccountEntryModule.getCurrentDomainName()
+				,AccountEntryModule.getCurrentDomain()
+				,new Byte[]{invoice.getInvoice().getType().value()}
+				 , series.getSelectedValue()
+				, new AsyncCallback<Integer>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onError(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Integer result) {
+						number.setValue(result,false,true);
+						invoice.getInvoice().setNumber(result);
+						_paintEntry();
+					}
+				});
 	}
+	
 	@UiHandler("number")
 	public void onValueChangeEvent(ValueChangeEvent<Integer> event) {
 		invoice.getInvoice().setNumber(number.getValue());

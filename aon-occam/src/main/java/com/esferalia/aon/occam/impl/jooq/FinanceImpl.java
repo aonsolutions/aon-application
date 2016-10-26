@@ -55,6 +55,10 @@ public class FinanceImpl implements IFinance {
 		return InvoiceDAO.getInvoiceDetailListUntilDate(ctx, item, workplaceId, warehouseId, date);
 	}
 	
+	@Override
+	public Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series) {
+		return InvoiceDAO.getNextNumber(ctx, types, series);
+	}
 	// ------------------------------------- INVOICING GROUP
 	
 	@Override

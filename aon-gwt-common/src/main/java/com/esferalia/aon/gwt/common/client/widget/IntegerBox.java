@@ -10,10 +10,12 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.ValueBox;
 
 public class IntegerBox extends ValueBox<Integer> {
 
+	private static final int CHANGE_DISPLAY_MILLIS = 4000;
 	private static final int VISIBLE_LENGTH = 10;
 	private static final int MAX_LENGTH = 10;
 
@@ -65,4 +67,19 @@ public class IntegerBox extends ValueBox<Integer> {
 	public void setValue(Byte value) {
 		super.setValue(value==null?null:value.intValue());
 	}
+	
+	public void setValue(Integer value, boolean fireEvents, boolean shouldDisplayChange) {
+		setValue(value, fireEvents);
+		if (shouldDisplayChange) {
+			addStyleName(AON.AON_CSS.aonValueChanged());
+			if (CHANGE_DISPLAY_MILLIS > 0)
+				new Timer() {
+					@Override
+					public void run() {
+						removeStyleName(AON.AON_CSS.aonValueChanged());
+					}
+				}.schedule(CHANGE_DISPLAY_MILLIS);
+		}
+	}
+	
 }

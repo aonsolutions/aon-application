@@ -25,4 +25,11 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 		fsa.getInvoiceSeries(domainName,domainId, from, to, taxDate, new AsyncCallbackWrapper<LinkedList<InvoiceSeries>>(callback));
 	}
 
+	@Override
+	public void getInvoiceNextNumber(String domainName, Integer domainId, Byte[] types, String series,
+			AsyncCallback<Integer> callback) {
+		AON.start();
+		fsa.getInvoiceNextNumber(domainName,domainId, types, series, new AsyncCallbackWrapper<Integer>(callback));
+	}
+
 }

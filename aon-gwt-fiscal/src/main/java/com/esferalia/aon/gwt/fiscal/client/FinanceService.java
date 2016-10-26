@@ -13,5 +13,8 @@ public interface FinanceService extends RemoteService {
 	
 	// --------------------------------------------------------------- INVOICE SERIES
 	LinkedList<InvoiceSeries> getInvoiceSeries(String domainName, int domainId, Date from, Date to, boolean taxDate) throws AonCoreException;
+	
+	
+	Integer getInvoiceNextNumber(String domainName, Integer domainId, Byte[] types, String series) throws AonCoreException;
 
 }

@@ -10,6 +10,9 @@ public interface FinanceServiceAsync {
 
 	// --------------------------------------------------------------- INVOICE SERIES
 	void getInvoiceSeries(String domainName, int domainId, Date from, Date to, boolean taxDate,AsyncCallback<LinkedList<InvoiceSeries>> callback );
+
+	void getInvoiceNextNumber(String domainName, Integer domainId, Byte[] types, String series,
+			AsyncCallback<Integer> callback);
 	
 
 }
