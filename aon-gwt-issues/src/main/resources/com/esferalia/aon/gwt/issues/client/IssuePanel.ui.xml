@@ -39,7 +39,7 @@
 				    <p:PaperIconButton ui:field="principalButton" icon="home" style="margin-left:30px;position:fixed;" />
 					<table width="100%" class="{issuesResources.css.tableIssues}">
 						<tr>
-							<td width="70%" class="{issuesResources.css.tableIssues}">
+							<td width="80%" class="{issuesResources.css.tableIssues}">
 								<g:VerticalPanel styleName="{issuesResources.css.scrollpanelOptionsIssues}">
 									<g:SimplePanel ui:field="headerPanel">
 										<!-- g:VerticalPanel ui:field="headerVPanel"
@@ -187,15 +187,6 @@
 						</g:customHeader>
 						<g:ScrollPanel ui:field="informationPanel"
 							styleName="{aonResources.css.aonTextCenter}" />
-					</g:tab>
-					
-					<g:tab>
-						<g:customHeader>
-							<g:Label
-								styleName="{aonResources.css.aonIconInfo} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"
-								text="Duplicados" />
-						</g:customHeader>
-						<g:ScrollPanel ui:field="duplicatePanel" />
 					</g:tab>
 				</g:TabLayoutPanel>
 			</aon:MinimizePanel>

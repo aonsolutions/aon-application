@@ -92,7 +92,6 @@ public class IssuePanel extends Composite{
 	@UiField TabLayoutPanel tabLayout;
 	@UiField SplitLayoutPanel dockLayoutPanel;
 	@UiField MinimizePanel footPanel;
-	@UiField ScrollPanel duplicatePanel;
 	
 	@UiField PaperIconButton returnButton;
 	@UiField PaperIconButton principalButton;
@@ -161,15 +160,12 @@ public class IssuePanel extends Composite{
 		initSendButton();
 		
 		if(issue.isPrincipalDuplicate() || issue.isDuplicate()){
-			tabLayout.getTabWidget(2).setVisible(true);
 			initDuplicates(issue);
-		} else {
-			tabLayout.getTabWidget(2).setVisible(false);
 		}
 	}
 	
 	
-	private void initDuplicates(JsIssue issue){
+	private void initDuplicates(JsIssue issue){		
 		incidence.getDuplicateIssues(issue.getParent(), new  AsyncCallback<JSON<JsIssue>>() {
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {				
@@ -186,7 +182,16 @@ public class IssuePanel extends Composite{
 						parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);	
 					}
 				});
-				duplicatePanel.add(is);
+				
+				Label label = new Label("Duplicados");
+				label.addStyleName(AON.AON_CSS.aonIconInfo());
+				label.addStyleName(AON.AON_CSS.aonPaddingRight());
+				label.addStyleName(AON.AON_CSS.aonPaddingLeft20());
+				ScrollPanel sp = new ScrollPanel();
+				sp.add(is);
+				tabLayout.add(sp, label);
+				openFootPanel();
+				tabLayout.selectTab(2);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -205,7 +210,6 @@ public class IssuePanel extends Composite{
 						if(e.getEvent().equals("reopened") || e.getEvent().equals("closed"))
 							list.add(e);
 					vp.add(getStatusPanel(vp, issue, list));
-					vp.add(getCompanyPanel(issue));
 					headerPanel.add(vp);
 				}
 				
@@ -370,11 +374,6 @@ public class IssuePanel extends Composite{
 		hPanel.add(dateLabel);
 
 		return hPanel;
-	}
-	
-	private Widget getCompanyPanel(JsIssue issue) {
-		// TODO Notificada por: XXXXX el YYYYYY a las ZZZZZZ
-		return new HorizontalPanel();
 	}
 	
 	private void printNotification(JsIssue issue){
@@ -1078,7 +1077,11 @@ public class IssuePanel extends Composite{
 	
 	@UiHandler("footPanel")
 	void onFootMaximize(MaximizeEvent event) {
-		dockLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
+		openFootPanel();
+	}
+	
+	private void openFootPanel() {
+		dockLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 3);
 		dockLayoutPanel.animate(500);
 	}
 	
