@@ -14,7 +14,6 @@ import com.esferalia.aon.gwt.issues.shared.AonData;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -66,7 +65,7 @@ public class Issues implements EntryPoint {
 	Issues me;
 	AonData aonData;
 	Boolean more = true;
-	
+
 	private Incidence incidence;
 	
 	public static native String getCurrentDomainName()
@@ -158,30 +157,18 @@ public class Issues implements EntryPoint {
 
 	protected void updateIssueList(IssueFilter filter, Boolean showMore) {
 		if(!showMore) filter.setPage(1);
-		
 		incidence.getOrgIssues(filter, new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {
-				more = result.getData().length()==30;
-				AonJsArray<JsIssue> array = JavaScriptObject.createArray().cast();
-				/*if(filter.getTitle() != null && !filter.getTitle().isEmpty()){
-					for(Integer i = 0; i < result.getData().length(); i++){
-						if(result.getData().get(i).getTitle().contains(filter.getTitle()))
-							array.push(result.getData().get(i));
-					}
-				} else*/
-				 array = result.getData();
-				
-				if(showMore) showMoreupdateIssueList(array);
-				else updateIssueList(array);	
-				
+				more = result.getData().length()==30;				
+				if(showMore) showMoreupdateIssueList(result.getData());
+				else updateIssueList(result.getData());	
 				FilterPanel fp = (FilterPanel) searchContent.getWidget(0);	
 				fp.setButtonsLabels(result.getMeta());
 			}
 			
-			@Override
-			public void onFailure(Throwable arg0) {	}
+			@Override public void onFailure(Throwable arg0) {	}
 		});
 	} 
 	
@@ -195,7 +182,7 @@ public class Issues implements EntryPoint {
 				issueFilter.setState("open");
 				
 				FilterPanel fp = (FilterPanel) searchContent.getWidget(0);
-				fp.initialize();
+				fp.initialize(false);
 				
 				updateIssueList(issueFilter, false);
 			}
@@ -205,7 +192,7 @@ public class Issues implements EntryPoint {
 			@Override
 			protected void onMenuButtonClick() {
 				if(dockLayoutPanel.getWidgetSize(configurationPanel) == 0){
-					configurationPanel.add(new ConfigurationPanel(incidence));
+					configurationPanel.add(new ConfigurationPanel(me, incidence));
 					dockLayoutPanel.setWidgetSize(configurationPanel, 350);
 				}
 				else {

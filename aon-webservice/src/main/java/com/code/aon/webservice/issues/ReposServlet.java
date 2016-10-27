@@ -295,20 +295,23 @@ public class ReposServlet extends HttpServlet{
 						
 					}
 				} else { // CREATE NEW TASK / ISSUE
+					Boolean faq = json.opt("state") != null && json.get("state").equals("faq");
 					Integer num = AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) != null ?
 							AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) : 0;
-					Registry registry = AON.getRegistry(domain.getName(), domain.getId(), userName, json.getString("enterprise"));
+						
+					Registry registry = new Registry();
+					if(!faq) registry = AON.getRegistry(domain.getName(), domain.getId(), userName, json.getString("enterprise"));
 					Task task = new Task()
 						.setDescription(json.getString("title"))
 						.setComments(json.getString("body"))
 						.setDomain(domain.getId())
 						.setNumber(num + 1)
 						.setStartDate(Calendar.getInstance().getTime())
-						.setDueDate(Calendar.getInstance().getTime())// TODO 
-						.setStatus(TaskStatus.PENDING.value())
-						.setRegistry(registry.getId()) // TODO
+						.setDueDate(Calendar.getInstance().getTime())
+						.setStatus(!faq ? TaskStatus.PENDING.value() : TaskStatus.FAQ.value())
+						.setRegistry(!faq ? registry.getId() : null) 
 						.setPercent((byte) 0) 
-						.setPriority((byte) 0) //TODO 
+						.setPriority((byte) 0)
 						.setSource(TaskSource.MANUAL.value())
 						.setCreationUser(userName)
 						.setCreationDate(Calendar.getInstance().getTime())

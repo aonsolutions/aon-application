@@ -174,6 +174,7 @@ public class TaskDAO {
 			c = TASK.STATUS.eq(TaskStatus.FINISHED.value())
 				.or(TASK.STATUS.eq(TaskStatus.FAQ.value()).and(TASK.PARENT.isNotNull()));
 		else if(issueFilter.getState().equals("deleted")) c = TASK.STATUS.eq(TaskStatus.DELETED.value());
+		else if(issueFilter.getState().equals("faq")) c = TASK.STATUS.eq(TaskStatus.FAQ.value()).and(TASK.PARENT.isNull());
 		else c = TASK.STATUS.ne(TaskStatus.DELETED.value()).and(TASK.STATUS.ne(TaskStatus.FAQ.value()));
 
 		// assignee
@@ -340,12 +341,14 @@ public class TaskDAO {
 		SortField<Timestamp> sort = getIssueFilterSortField(issueFilter);
 		
 		/// TODO task_comment usar left outer join!! 
+		Condition extra = TASK.PARENT.isNull();		 
+		if(!issueFilter.getState().equals("faq")) extra = extra.or(TASK.PARENT.eq(TASK.ID))
+					.or(TASK.PARENT.isNotNull().and(TASK.STATUS.eq(TaskStatus.FAQ.value())));
 		if(tagBool && commentBool){
 			return ctx.getDslContext().selectDistinct().from(TASK).join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 									.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
-					.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID))
-							.or(TASK.PARENT.isNotNull().and(TASK.STATUS.eq(TaskStatus.FAQ.value()))))
+					.and(extra)
 					.orderBy(sort)
 					.limit(issueFilter.getPerPage())
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
@@ -354,8 +357,7 @@ public class TaskDAO {
 		if(commentBool){
 			return ctx.getDslContext().selectDistinct().from(TASK).leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
-					.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID))
-							.or(TASK.PARENT.isNotNull().and(TASK.STATUS.eq(TaskStatus.FAQ.value()))))
+					.and(extra)
 					.orderBy(sort)
 					.limit(issueFilter.getPerPage())
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
@@ -364,8 +366,7 @@ public class TaskDAO {
 		if(tagBool){
 			return ctx.getDslContext().selectDistinct().from(TASK).join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
-					.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID))
-							.or(TASK.PARENT.isNotNull().and(TASK.STATUS.eq(TaskStatus.FAQ.value()))))
+					.and(extra)
 					.orderBy(sort)
 					.limit(issueFilter.getPerPage())
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
@@ -373,8 +374,7 @@ public class TaskDAO {
 		}
 		return ctx.getDslContext().select().from(TASK) 
 				.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
-				.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID))
-						.or(TASK.PARENT.isNotNull().and(TASK.STATUS.eq(TaskStatus.FAQ.value()))))
+				.and(extra)
 				.orderBy(sort)
 				.limit(issueFilter.getPerPage())
 				.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))

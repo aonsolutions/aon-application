@@ -73,7 +73,6 @@ public class FilterPanel extends Composite {
     Incidence incidence;
     
     public FilterPanel(Issues issues, Incidence incidence) {
-
     	this.issues = issues;
     	this.incidence = incidence;
 
@@ -89,7 +88,6 @@ public class FilterPanel extends Composite {
     	assignedButton.setNoink(true);
     	enterpriseButton.setNoink(true);
     	orderButton.setNoink(true);
-    	
     	
     	titleFilter.addKeyUpHandler(new KeyUpHandler() {
 			
@@ -327,8 +325,8 @@ public class FilterPanel extends Composite {
 								if(users.get(i).getLogin().equals(vcb.getValue())) {
 									JsUser jsUser = users.get(i);
 									creatorButton.setTitle(jsUser.getLogin());
-									creatorLabel.setText("Creador:"+jsUser.getLogin());
-									getIssues().issueFilter.setCreator(jsUser.getLogin()+"; ");
+									creatorLabel.setText("Creador:"+jsUser.getLogin()+"; ");
+									getIssues().issueFilter.setCreator(jsUser.getLogin());
 									getIssues().updateIssueList(issues.issueFilter, false);
 								}	
 						popup.hide();
@@ -506,7 +504,7 @@ public class FilterPanel extends Composite {
 		removeLabel.setText(s.getDeleted() + " Borrada");
 	}
 	
-	public void initialize() {
+	public void initialize(Boolean faq) {
 		for(Integer i = 1; i < filterHorizontal.getWidgetCount(); i++)
 			filterHorizontal.remove(i);
 			
@@ -524,6 +522,22 @@ public class FilterPanel extends Composite {
     	dateButton.setTitle("");dateLabel.setText("");
     	
     	titleFilter.setValue("");
+    	
+    	if(faq){
+    		openButton.setVisible(false);
+    		closeButton.setVisible(false);
+    		removeButton.setVisible(false);
+    		priorityButton.setVisible(false);
+    		assignedButton.setVisible(false);
+    		enterpriseButton.setVisible(false);
+    	} else {
+    		openButton.setVisible(true);
+			closeButton.setVisible(true);
+			removeButton.setVisible(true);
+			priorityButton.setVisible(true);
+			assignedButton.setVisible(true);
+			enterpriseButton.setVisible(true);
+    	}
 	}
 
 }

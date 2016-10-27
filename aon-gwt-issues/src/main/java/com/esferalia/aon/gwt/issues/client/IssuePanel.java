@@ -1109,7 +1109,7 @@ public class IssuePanel extends Composite{
 	
 	@UiHandler("faqButton")
 	void onClickFaqButton(ClickEvent event){
-		incidence.getFaqIssues(issue.getId() ,new IssueFilter(), new AsyncCallback<JSON<JsIssue>>() {
+		incidence.getFaqIssues(new IssueFilter(), new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {

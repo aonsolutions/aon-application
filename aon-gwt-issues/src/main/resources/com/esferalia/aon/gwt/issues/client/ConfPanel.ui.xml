@@ -8,6 +8,8 @@
 	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
 	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'
 >
+<ui:with type="com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources"
+		field="issuesResources"></ui:with>
 
  <ui:style>
   		.heading {
@@ -30,8 +32,13 @@
         }
     </ui:style>
 
-	<g:HTMLPanel ui:field="panel">        
-        <g:Button ui:field="gitHeading" addStyleNames="{style.heading}">GitHub</g:Button>
+	<g:HTMLPanel ui:field="panel"> 
+	    <g:HorizontalPanel>       
+	    	<p:PaperButton ui:field="faqButton" noink="true" styleName="{issuesResources.css.faqConfigurationButtonIssues}">FAQs</p:PaperButton>
+	    	<p:PaperIconButton ui:field="newFaqButton" icon="add" ></p:PaperIconButton>
+        </g:HorizontalPanel>
+
+	    <g:Button ui:field="gitHeading" addStyleNames="{style.heading}">GitHub</g:Button>
 		<i:IronCollapse ui:field="gitCollapse">
 	
         </i:IronCollapse>

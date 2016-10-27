@@ -20,13 +20,15 @@ public class ConfigurationPanel extends Composite {
     
     @UiField HTMLPanel tabContent;
     @UiField PaperTabs tabs;
-    
+
     private static final String ZERO = "0";
     private static final String ONE = "1";
     private static final String TWO = "2";
     
     Incidence incidence;
-    public ConfigurationPanel(Incidence incidence) {
+    Issues issues;
+    public ConfigurationPanel(Issues issues, Incidence incidence) {
+    	this.issues = issues;
     	this.incidence = incidence;
     	initWidget(binder.createAndBindUi(this));
         tabs.setSelected("0");
@@ -51,7 +53,11 @@ public class ConfigurationPanel extends Composite {
 					
 				} else if(tabs.getSelected().equals(TWO)
 						|| tabs.getSelected() == TWO){
-					
+					if(tabContent.getWidgetCount()> 0){
+						for(Integer i = 0; i < tabContent.getWidgetCount(); i++)
+							tabContent.remove(i);
+					}
+					tabContent.add(new ConfPanel(issues, incidence));
 				}
 			}
 		});

@@ -49,5 +49,8 @@ public interface AonGwtIssuesCSS extends CssResource{
 	
 	@ClassName("tag-type-issues")
 	String tagTypeIssues();
+	
+	@ClassName("faq-configuration-button-issues")
+	String faqConfigurationButtonIssues();
 
 }
