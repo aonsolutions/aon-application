@@ -35,8 +35,7 @@
 					<ui:param name="idRequired" value="#{true}" />
 					<ui:param name="lookupInputOnFocus" value="WarehouseTransferDetail_quantity" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
-					<ui:param name="lookupControllerListener" 
-						value="#{warehouseTransferDetail.itemFilter}" />										
+					<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
 				</ui:include>
 				<f:facet name="footer">
 					<aon:div>
@@ -48,8 +47,7 @@
 							<ui:param name="lookupInputOnFocus" value="WarehouseTransferDetail_quantity-New" />
 							<ui:param name="lookupSuffix" value="-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
-							<ui:param name="lookupControllerListener" 
-								value="#{warehouseTransferDetail.itemFilter}" />										
+							<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
 						</ui:include>
 					</aon:div>
 				</f:facet>

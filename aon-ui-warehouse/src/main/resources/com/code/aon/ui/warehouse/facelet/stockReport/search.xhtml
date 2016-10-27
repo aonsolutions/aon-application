@@ -35,6 +35,7 @@
 						<ui:param name="lookupTo" value="#{stockReport.item}" />
 						<ui:param name="skipNewButton" value="#{true}" />
 						<ui:param name="skipSearchButton" value="#{false}" />
+						<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
 					</ui:include>
 
 					<aon:outputLabel for="Stock_quantity" value="#{bundle.aon_quantity}" />

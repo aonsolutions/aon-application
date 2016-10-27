@@ -75,6 +75,7 @@
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<ui:param name="lookupReRender" 
 						value="offerDetailItemEdit,offerDetailQuantityEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount" />
+					<ui:param name="lookupControllerListener" value="#{itemLookupWildCardListener}" />
 				</ui:include>						
 				<aon:panelGroup id="offerDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<aon:if test="#{aonConfiguration.bean.product.showAlternatives}">
@@ -122,6 +123,7 @@
 							<ui:param name="lookupReRender" 
 								value="offerDetailItemNew,offerDetailQuantityNew,OfferDetail_price-New,OfferDetail_discount-New,
 										OfferDetail_amount-New" />
+							<ui:param name="lookupControllerListener" value="#{itemLookupWildCardListener}" />
 						</ui:include>						
 						<aon:panelGroup id="offerDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 							<aon:if test="#{aonConfiguration.bean.product.showAlternatives}">

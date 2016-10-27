@@ -48,6 +48,7 @@
 					<ui:param name="lookupInputOnFocus" value="ProposalDetail_quantity" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<ui:param name="lookupControllerListener" value="#{proposal.warehouseItemFilter}" />
+					<ui:param name="lookupControllerListener" value="#{itemLookupWildCardListener}" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{proposalDetail.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>		
@@ -64,6 +65,7 @@
 						<ui:param name="lookupInputOnFocus" value="ProposalDetail_quantity-New" />
 						<ui:param name="lookupRendered" value="#{formNew}" />
 						<ui:param name="lookupControllerListener" value="#{proposal.warehouseItemFilter}" />
+						<ui:param name="lookupControllerListener" value="#{itemLookupWildCardListener}" />
 						<aon:methodParam name="lookupChangeListener"
 							value="#{proposalDetail.onItemChanged}" type="lookupChangeListener" />
 					</ui:include>		

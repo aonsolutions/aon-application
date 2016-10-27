@@ -42,6 +42,7 @@
 		<ui:param name="lookupBean" value="#{allItemLookup}" />
 		<ui:param name="lookupTo" value="#{warehouseTransferSearch.item}" />
 		<ui:param name="skipNewButton" value="#{true}" />
+		<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
 	</ui:include>
 
 	<aon:outputLabel for="WarehouseTransfer_details_quantity"

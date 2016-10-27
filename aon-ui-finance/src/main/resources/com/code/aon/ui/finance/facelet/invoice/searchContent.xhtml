@@ -94,6 +94,7 @@
 						<ui:param name="lookupBean" value="#{(searchController.sales) ? saleItemLookup : purchaseItemLookup}" />
 						<ui:param name="lookupTo" value="#{searchController.item}" />
 						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
 					</ui:include>
 				</aon:if>
 

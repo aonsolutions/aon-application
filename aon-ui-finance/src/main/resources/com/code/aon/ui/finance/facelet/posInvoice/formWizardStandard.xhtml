@@ -22,6 +22,7 @@
 			<ui:param name="lookupInputSuggestSize" value="40" />
 			<ui:param name="lookupInputOnFocus" value="PosDetail-save" />
 			<ui:param name="lookupReRender"	value="PosInvoiceDetailWizard" />
+			<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
 			<aon:methodParam name="lookupChangeListener"
 				value="#{detailController.onItemChanged}" type="lookupChangeListener" />
 		</ui:include>

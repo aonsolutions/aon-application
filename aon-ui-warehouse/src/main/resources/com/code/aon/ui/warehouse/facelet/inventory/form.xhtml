@@ -150,8 +150,6 @@
 					<ui:param name="focusOnAdd" value="Item_id-New" />
 					<ui:param name="focusOnSelect" value="Item_id" />
 					
-					
-					
 					<ui:define name="beginFormListContent">
 						<aon:commandLink id="#{dataTableId}-selectButton"
 							styleClass="aon-table-row-link" value="&#160;"
@@ -199,6 +197,7 @@
 										InventoryDetail_cost-New,InventoryDetail_costAmount-New" />
 									<ui:param name="lookupControllerListener"
 										value="#{controller.itemFilter}" />										
+									<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
 									<aon:methodParam name="lookupChangeListener"
 										value="#{controller.onItemChanged}" type="lookupChangeListener" />										
 								</ui:include>

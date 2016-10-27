@@ -91,6 +91,7 @@
 					<ui:param name="lookupDisabled" value="#{!controller.editable or !controller.to.pending}" />
 					<ui:param name="lookupReRender" 
 						value="salesDetailItemEdit,salesDetailQuantityEdit,SalesDetail_price,SalesDetail_discount,SalesDetail_amount" />
+					<ui:param name="lookupControllerListener" value="#{itemLookupWildCardListener}" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{salesDetail.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
@@ -146,6 +147,7 @@
 							<ui:param name="lookupReRender" 
 								value="salesDetailItemNew,salesDetailQuantityNew,SalesDetail_price-New,SalesDetail_discount-New,
 										SalesDetail_amount-New" />
+							<ui:param name="lookupControllerListener" value="#{itemLookupWildCardListener}" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{salesDetail.onItemChanged}" type="lookupChangeListener" />
 						</ui:include>

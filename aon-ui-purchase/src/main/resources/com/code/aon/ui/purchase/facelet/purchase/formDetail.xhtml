@@ -88,9 +88,10 @@
 					<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
 					<ui:param name="lookupInputOnFocus" value="PurchaseDetail_description" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
-					<ui:param name="lookupDisabled" value="#{(itemLookupDisabled)?(itemLookupDisabled):(!controller.to.pending)}" />
+					<ui:param name="lookupDisabled" value="#{!controller.to.pending or itemLookupDisabled}" />
 					<ui:param name="lookupReRender" 
-						value="purchaseDetailItemEdit,,purchaseDetailQuantityEdit,PurchaseDetail_price,PurchaseDetail_discount,PurchaseDetail_amount" />
+						value="purchaseDetailItemEdit,purchaseDetailQuantityEdit,PurchaseDetail_price,PurchaseDetail_discount,PurchaseDetail_amount" />
+					<ui:param name="lookupControllerListener" value="#{itemLookupWildCardListener}" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{controller.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
@@ -131,6 +132,7 @@
 							<ui:param name="lookupReRender" 
 								value="purchaseDetailItemNew,purchaseDetailQuantityNew,PurchaseDetail_price-New,PurchaseDetail_discount-New,
 										PurchaseDetail_amount-New" />
+							<ui:param name="lookupControllerListener" value="#{itemLookupWildCardListener}" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{controller.onItemChanged}" type="lookupChangeListener" />
 						</ui:include>

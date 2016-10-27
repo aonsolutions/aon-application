@@ -1059,8 +1059,8 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{itemSearch}</value>
-				<value>#{itemLookupControllerListener}</value>			
-				<value>#{itemControllerListener}</value>			
+				<value>#{itemLookupControllerListener}</value>
+				<value>#{itemControllerListener}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>
@@ -1115,8 +1115,8 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{itemSearch}</value>
-				<value>#{itemLookupControllerListener}</value>			
-				<value>#{itemControllerListener}</value>			
+				<value>#{itemLookupControllerListener}</value>
+				<value>#{itemControllerListener}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>
@@ -1171,8 +1171,8 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{itemSearch}</value>
-				<value>#{itemLookupControllerListener}</value>			
-				<value>#{itemControllerListener}</value>			
+				<value>#{itemLookupControllerListener}</value>
+				<value>#{itemControllerListener}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>
@@ -1181,6 +1181,22 @@
 		<managed-bean-name>itemLookupControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.product.event.ItemLookupControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>itemLookupWildCardListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.event.ItemLookupWildCardListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>itemLookupNoWildCardListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.event.ItemLookupNoWildCardListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>

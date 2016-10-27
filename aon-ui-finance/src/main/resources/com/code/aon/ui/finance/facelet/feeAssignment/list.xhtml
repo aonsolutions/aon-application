@@ -44,6 +44,7 @@
 							<ui:param name="lookupInputSuggestSize" value="55" />
 							<ui:param name="lookupInputOnFocus" value="CustomerFee_description" />
 							<ui:param name="lookupReRender" value="customerFeeItemDescription,CustomerFee_price,CustomerFee_discount" />
+							<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{feeAssignment.onItemChanged}" type="lookupChangeListener" />
 						</ui:include>

@@ -23,6 +23,7 @@
 					<ui:param name="lookupBean" value="#{purchaseItemLookup}" />
 					<ui:param name="lookupTo" value="#{searchController.item}" />
 					<ui:param name="skipNewButton" value="#{true}" />
+					<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
 				</ui:include>
 
 				<aon:if test="#{aonConfiguration.bean.product.showBarcode}">
