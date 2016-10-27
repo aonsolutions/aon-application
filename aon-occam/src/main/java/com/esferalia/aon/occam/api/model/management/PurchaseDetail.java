@@ -14,7 +14,8 @@ public class PurchaseDetail implements Serializable {
 	private static final long serialVersionUID = -4155547176182716960L;
 	private Integer id;
 	private int domain;
-	private int purchase;
+	private int purchaseId;
+	private Purchase purchase;
 	private Integer project;
 	private int item;
 	private Integer line;
@@ -40,10 +41,16 @@ public class PurchaseDetail implements Serializable {
 	public void setDomain(int domain) {
 		this.domain = domain;
 	}
-	public int getPurchase() {
+	public int getPurchaseId() {
+		return purchaseId;
+	}
+	public void setPurchaseId(int purchaseId) {
+		this.purchaseId = purchaseId;
+	}
+	public Purchase getPurchase() {
 		return purchase;
 	}
-	public void setPurchase(int purchase) {
+	public void setPurchase(Purchase purchase) {
 		this.purchase = purchase;
 	}
 	public Integer getProject() {

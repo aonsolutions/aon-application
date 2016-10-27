@@ -75,7 +75,15 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 
 		controller.setLongDescription(salesDetail.getDescription().length() > 64);
 	}
-
+	
+	@Override
+	public void afterModelInitialized(ControllerEvent event)
+			throws ControllerListenerException {
+		SalesDetailController controller = (SalesDetailController)event.getController();
+		controller.loadPurchaseDetailMap();
+		controller.loadManufacturingDetailMap();
+	}
+	
 	private	Integer calculateNextLine(Sales sales) throws ManagerBeanException {
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 		Criteria criteria = new Criteria();

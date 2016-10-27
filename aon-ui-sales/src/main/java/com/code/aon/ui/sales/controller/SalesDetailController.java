@@ -9,9 +9,11 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -65,6 +67,9 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	private List<SelectItem> serialNumbers;
 	private String[] selectedBreakdown;
 	private boolean showItemPackageWindow;
+	
+	private Map<Integer, PurchaseDetail> purchaseDetailMap = new HashMap<>();
+	private Map<Integer, PurchaseDetail> manufactureDetailMap = new HashMap<>();
 
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
@@ -217,21 +222,37 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	}
 	
 	public boolean isManufactured() throws ManagerBeanException {
-		SalesUtils utils = new SalesUtils();
 		if(this.getModel().isRowAvailable()) {
 			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
-			return utils.isManufactureDone(salesDetail);
+			return manufactureDetailMap.containsKey(salesDetail.getId());
 		}
 		return false;
 	}
 	
 	public boolean isPurchased() throws ManagerBeanException {
-		SalesUtils utils = new SalesUtils();
 		if(this.getModel().isRowAvailable()) {
 			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
-			return utils.isPurchased(salesDetail);
+			return purchaseDetailMap.containsKey(salesDetail.getId());
 		}
 		return false;
+	}
+	
+	public void loadPurchaseDetailMap() {
+		purchaseDetailMap = new HashMap<>();
+		if(this.getMasterController().getTo()!=null){
+			Sales sales = (Sales) this.getMasterController().getTo();
+			SalesUtils utils = new SalesUtils();
+			purchaseDetailMap = utils.getTargetPurchaseDetailMap(sales);
+		}
+	}
+	
+	public void loadManufacturingDetailMap(){
+		manufactureDetailMap = new HashMap<>();
+		if(this.getMasterController().getTo()!=null){
+			Sales sales = (Sales) this.getMasterController().getTo();
+			SalesUtils utils = new SalesUtils();
+			manufactureDetailMap = utils.getTargetManufactureDetailMap(sales);
+		}
 	}
 	
 	public void onItemChanged(LookupChangeEvent event) {
@@ -505,8 +526,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.QUANTITY_PATTERN));
 		
 		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
-		SalesUtils utils = new SalesUtils();
-		PurchaseDetail purchaseDetail = utils.getTargetManufactureDetail(salesDetail);
+		PurchaseDetail purchaseDetail = manufactureDetailMap.get(salesDetail.getId());
 		if(purchaseDetail!=null && purchaseDetail.getId()!=null){
 			info.append(AonUtil.getMessage(ICommonMessages.WAREHOUSE_MANUFACTURING_ORDER));
 			info.append(' ');
@@ -531,8 +551,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.QUANTITY_PATTERN));
 		
 		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
-		SalesUtils utils = new SalesUtils();
-		PurchaseDetail purchaseDetail = utils.getTargetPurchaseDetail(salesDetail);
+		PurchaseDetail purchaseDetail = purchaseDetailMap.get(salesDetail.getId());
 		if(purchaseDetail!=null && purchaseDetail.getId()!=null){
 			info.append(AonUtil.getMessage(ICommonMessages.PURCHASE_MODULE));
 			info.append(' ');
@@ -582,8 +601,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	public void onLoadManufacturingOrder(ActionEvent event) throws ManagerBeanException {
 		if(this.getModel().isRowAvailable()){
 			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
-			SalesUtils utils = new SalesUtils();
-			PurchaseDetail purchaseDetail = utils.getTargetManufactureDetail(salesDetail);
+			PurchaseDetail purchaseDetail = manufactureDetailMap.get(salesDetail.getId());
 			if(purchaseDetail!=null && purchaseDetail.getId()!=null){
 				BasicController sourceController = (BasicController)AonUtil.getRegisteredBean("manufacturingOrder");
 				loadSourceLink(event, sourceController, purchaseDetail.getPurchase().getId());
@@ -593,8 +611,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	public void onLoadPurchase(ActionEvent event) throws ManagerBeanException {
 		if(this.getModel().isRowAvailable()){
 			SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
-			SalesUtils utils = new SalesUtils();
-			PurchaseDetail purchaseDetail = utils.getTargetPurchaseDetail(salesDetail);
+			PurchaseDetail purchaseDetail = purchaseDetailMap.get(salesDetail.getId());
 			if(purchaseDetail!=null && purchaseDetail.getId()!=null){
 				BasicController sourceController = (BasicController)AonUtil.getRegisteredBean("purchase");
 				loadSourceLink(event, sourceController, purchaseDetail.getPurchase().getId());

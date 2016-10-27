@@ -6,8 +6,9 @@ import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 
@@ -35,9 +36,8 @@ import com.code.aon.pool.AonConnectionException;
 import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.Project;
+import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
-import com.code.aon.purchase.enumeration.PurchaseDocumentType;
-import com.code.aon.purchase.enumeration.PurchaseSource;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.sales.Sales;
@@ -314,7 +314,7 @@ public class SalesUtils {
 						detail -> {
 							com.esferalia.aon.occam.api.model.management.PurchaseDetail pd = new com.esferalia.aon.occam.api.model.management.PurchaseDetail(); 
 							pd.setDomain(detail.getDomain());
-							pd.setPurchase(purchaseId);
+							pd.setPurchaseId(purchaseId);
 							pd.setProject(null);
 							pd.setLine(detail.getLine());
 							pd.setItem(detail.getItem().getId());
@@ -333,51 +333,37 @@ public class SalesUtils {
 	}
 	
 	public boolean isManufactureDone(SalesDetail detail) {
-		try {
-			PurchaseDetail purchaseDetail = getTargetManufactureDetail(detail);
-			return purchaseDetail!=null && purchaseDetail.getId()!=null;
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
-		return false;
+		AONContext ctx = AONContext
+				.getAONContext(AonUtil.getDomainName(), detail.getDomain(), AonUtil.getRemoteUser());
+		com.esferalia.aon.occam.api.model.management.PurchaseDetail pd = PurchaseDAO.getTargetManufactureDetail(ctx, detail.getId());
+		return pd !=null && pd.getId()!=null;
 	}
 	
-	public boolean isPurchased(SalesDetail detail) {
-		try {
-			PurchaseDetail purchaseDetail = getTargetPurchaseDetail(detail);
-			return purchaseDetail!=null && purchaseDetail.getId()!=null;
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
-		return false;
+	public Map<Integer, PurchaseDetail> getTargetPurchaseDetailMap(Sales sales) {
+		AONContext ctx = AONContext
+				.getAONContext(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser());
+		return fillPurchaseDetailMap(ctx, PurchaseDAO.getTargetPurchaseDetails(ctx, sales.getId()));
 	}
 	
-	public PurchaseDetail getTargetManufactureDetail(SalesDetail detail) throws ManagerBeanException {
-		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_SOURCE), PurchaseSource.SALES);
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_SOURCE_ID), detail.getId());
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_DOCUMENT_TYPE), PurchaseDocumentType.MANUFACTURE);
-		criteria.addOrder(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_ID), false);
-		Iterator<?> iterator = purchaseDetailBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			return (PurchaseDetail)iterator.next();
-		}
-		return null;
+	public Map<Integer, PurchaseDetail> getTargetManufactureDetailMap(Sales sales) {
+		AONContext ctx = AONContext
+				.getAONContext(AonUtil.getDomainName(), sales.getDomain(), AonUtil.getRemoteUser());
+		return fillPurchaseDetailMap(ctx, PurchaseDAO.getTargetManufactureDetails(ctx, sales.getId()));
 	}
 	
-	public PurchaseDetail getTargetPurchaseDetail(SalesDetail detail) throws ManagerBeanException {
-		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_SOURCE), PurchaseSource.SALES);
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_SOURCE_ID), detail.getId());
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_DOCUMENT_TYPE), PurchaseDocumentType.NORMAL);
-		criteria.addOrder(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_ID), false);
-		Iterator<?> iterator = purchaseDetailBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			return (PurchaseDetail)iterator.next();
-		}
-		return null;
+	private Map<Integer, PurchaseDetail> fillPurchaseDetailMap(AONContext ctx, List<com.esferalia.aon.occam.api.model.management.PurchaseDetail> list) {
+		Map<Integer, PurchaseDetail> map = new HashMap<>(); 
+		list.forEach(o -> {
+			PurchaseDetail detail = new PurchaseDetail();
+			detail.setPurchase(new Purchase());
+			detail.getPurchase().setId(o.getPurchaseId());
+			detail.getPurchase().setSeries(o.getPurchase().getSeries());
+			detail.getPurchase().setNumber(o.getPurchase().getNumber());
+			detail.setId(o.getId());
+			detail.setLine(o.getLine());
+			detail.setQuantity(o.getQuantity());
+			map.put(o.getSourceId(), detail);
+		});		
+		return map;
 	}
-	
 }

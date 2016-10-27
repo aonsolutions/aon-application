@@ -3,22 +3,110 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
+import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.jooq.Condition;
 import org.jooq.Record1;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.records.PurchaseDetailRecord;
+import com.esferalia.aon.jooq.tables.records.PurchaseRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetailFilter;
+import com.esferalia.aon.occam.api.model.management.PurchaseDetailProperties;
+import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
+import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
+import com.esferalia.aon.occam.api.model.type.PurchaseStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseType;
 
 
 public class PurchaseDAO {
 	
+	private static final PurchaseDetailPropertiesDAO PURCHASE_DETAIL_PROPERTIES = new PurchaseDetailPropertiesDAO();
+	
+	protected static class PurchaseDetailPropertiesDAO implements PurchaseDetailProperties {
+		protected Condition[] getConditions(PurchaseDetailFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.DOMAIN);}
+		@Override public Property<Integer> getPurchaseProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.PURCHASE);}
+		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.PROJECT);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.ITEM);}
+		@Override public Property<Short> getLineProperty() {return new FilterDAO.PropertyDAO<Short>(PURCHASE_DETAIL.LINE);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(PURCHASE_DETAIL.DESCRIPTION);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(PURCHASE_DETAIL.QUANTITY);}
+		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<Double>(PURCHASE_DETAIL.PRICE);}
+		@Override public Property<String> getDiscountExpressionProperty() {return new FilterDAO.PropertyDAO<String>(PURCHASE_DETAIL.DISCOUNT_EXPR);}
+		@Override public Property<Double> getTaxesProperty() {return new FilterDAO.PropertyDAO<Double>(PURCHASE_DETAIL.TAXES);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(PURCHASE_DETAIL.STATUS);}
+		@Override public Property<Integer> getProposalDetailProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.PROPOSAL_DETAIL);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(PURCHASE_DETAIL.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PURCHASE_DETAIL.SOURCE_ID);}
+		@Override public Property<Double> getDeliveredProperty() {return new FilterDAO.PropertyDAO<Double>(PURCHASE_DETAIL.DELIVERED);}
+	}
+	
+	public static Purchase getPurchase(AONContext ctx, Integer id){
+		return ctx.getDslContext().select().from(PURCHASE).where(PURCHASE.ID.eq(id)).limit(1).fetchInto(PURCHASE)
+			.stream().map(new FullPurchaseFiller()).findFirst().orElse(new Purchase());
+	}
+	
+	public static PurchaseDetail getPurchaseDetail(AONContext ctx, PurchaseDetailFilter filter){
+		return ctx.getDslContext().select().from(PURCHASE_DETAIL).where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter))
+				.limit(1).fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx)).findFirst().orElse(new PurchaseDetail());
+	}
+	
+	public static PurchaseDetail getTargetManufactureDetail(AONContext ctx, Integer salesDetailId){
+		return ctx.getDslContext().select().from(PURCHASE_DETAIL).leftOuterJoin(PURCHASE).onKey()
+				.where(PURCHASE_DETAIL.SOURCE.eq(PurchaseSourceType.SALES.value()))
+				.and(PURCHASE_DETAIL.SOURCE_ID.eq(salesDetailId))
+				.and(PURCHASE.DOCUMENT_TYPE.eq(PurchaseType.MANUFACTURE.value()))
+				.orderBy(PURCHASE_DETAIL.ID.desc())
+				.limit(1).fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx)).findFirst().orElse(new PurchaseDetail());
+	}
+	
+	public static PurchaseDetail getTargetPurchaseDetail(AONContext ctx, Integer salesDetailId){
+		return ctx.getDslContext().select().from(PURCHASE_DETAIL).leftOuterJoin(PURCHASE).onKey()
+				.where(PURCHASE_DETAIL.SOURCE.eq(PurchaseSourceType.SALES.value()))
+				.and(PURCHASE_DETAIL.SOURCE_ID.eq(salesDetailId))
+				.and(PURCHASE.DOCUMENT_TYPE.eq(PurchaseType.NORMAL.value()))
+				.orderBy(PURCHASE_DETAIL.ID.desc())
+				.limit(1).fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx)).findFirst().orElse(new PurchaseDetail());
+	}
+	
+	public static List<PurchaseDetail> getTargetManufactureDetails(AONContext ctx, Integer salesId){
+		return ctx.getDslContext().select().from(PURCHASE_DETAIL)
+					.leftOuterJoin(PURCHASE).onKey()
+					.leftOuterJoin(SALES_DETAIL).on(PURCHASE_DETAIL.SOURCE_ID.eq(SALES_DETAIL.ID))
+				.where(PURCHASE_DETAIL.SOURCE.eq(PurchaseSourceType.SALES.value()))
+					.and(SALES_DETAIL.SALES.eq(salesId))
+					.and(PURCHASE.DOCUMENT_TYPE.eq(PurchaseType.MANUFACTURE.value()))
+				.fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx))
+				.collect(Collectors.toList());
+	}
+	
+	public static List<PurchaseDetail> getTargetPurchaseDetails(AONContext ctx, Integer salesId){
+		return ctx.getDslContext().select().from(PURCHASE_DETAIL)
+				.leftOuterJoin(PURCHASE).onKey()
+				.leftOuterJoin(SALES_DETAIL).on(PURCHASE_DETAIL.SOURCE_ID.eq(SALES_DETAIL.ID))
+				.where(PURCHASE_DETAIL.SOURCE.eq(PurchaseSourceType.SALES.value()))
+				.and(SALES_DETAIL.ID.eq(salesId))
+				.and(PURCHASE.DOCUMENT_TYPE.eq(PurchaseType.NORMAL.value()))
+				.fetchInto(PURCHASE_DETAIL).stream().map(new FullPurchaseDetailFiller(ctx))
+				.collect(Collectors.toList());
+	}
 
 	public static int insertManufacturePurchase(AONContext ctx, Purchase purchase){
 		Integer enterpriseId = obtainEnterpriseId(ctx, purchase.getDomain());
@@ -116,7 +204,7 @@ public class PurchaseDAO {
 						PURCHASE_DETAIL.CREATION_DATE,
 						PURCHASE_DETAIL.MODIFICATION_USER,
 						PURCHASE_DETAIL.MODIFICATION_DATE)
-				.values(detail.getDomain(), detail.getPurchase(),
+				.values(detail.getDomain(), detail.getPurchaseId(),
 						detail.getProject(), detail.getLine().shortValue(),
 						detail.getItem(), detail.getDescription(),
 						detail.getQuantity(), detail.getPrice(),
@@ -168,5 +256,77 @@ public class PurchaseDAO {
 				.fetchAny().value1();
 	}
 	
+
 	
+	private static class FullPurchaseFiller implements Function<PurchaseRecord, Purchase> {
+		@Override
+		public Purchase apply(PurchaseRecord r) {
+			Purchase purchase = new Purchase();
+			purchase.setId(r.getId());
+			purchase.setDomain(r.getDomain());
+			purchase.setProject(r.getProject());
+			purchase.setSupplier(r.getSupplier());
+			purchase.setSeries(r.getSeries());
+			purchase.setNumber(r.getNumber());
+			purchase.setPurchaseReference(r.getPurchaseReference());
+			purchase.setAddress(r.getAddress());
+			purchase.setDiscountExpr(r.getDiscountExpr());
+			purchase.setIssueDate(r.getIssueDate());
+			purchase.setPayMethod(r.getPayMethod());
+			purchase.setDocumentType(PurchaseType.values()[r.getDocumentType()]);
+			purchase.setSecurityLevel(r.getSecurityLevel());
+			purchase.setStatus(PurchaseStatus.values()[r.getStatus()]);
+			purchase.setComments(r.getComments());
+			purchase.setRemarks(r.getRemarks());
+			purchase.setWorkplace(r.getWorkplace());
+			purchase.setWarehouse(r.getWarehouse());
+			purchase.setScope(r.getScope());
+			purchase.setNumberOfPymnts(r.getNumberOfPymnts());
+			purchase.setDaysToFirstPymnt(r.getDaysToFirstPymnt());
+			purchase.setDaysBetweenPymnts(r.getDaysBetweenPymnts());
+			purchase.setPymntDays(r.getPymntDays());
+			purchase.setBankAccount(r.getBankAccount());
+			purchase.setBankAlias(r.getBankAlias());
+			purchase.setBic(r.getBic());
+			purchase.setEmailCommunication(r.getEmailCommunication()==1);
+			purchase.setCarrier(r.getCarrier());
+			purchase.setShippingAlternativeAddress(r.getShippingAlternativeAddress());
+			purchase.setShippingAlternativeAddress2(r.getShippingAlternativeAddress2());
+			purchase.setShippingAlternativeZip(r.getShippingAlternativeZip());
+			purchase.setShippingAlternativeCity(r.getShippingAlternativeCity());
+			purchase.setShippingAlternativePhone(r.getShippingAlternativePhone());
+			purchase.setShippingAlternativeRecipient(r.getShippingAlternativeRecipient());
+			purchase.setShippingContact(r.getShippingContact());
+			purchase.setShippingPeriod(r.getShippingPeriod()!=null?r.getShippingPeriod().intValue():null);
+			return purchase;
+		}
+	}
+	
+	private static class FullPurchaseDetailFiller implements Function<PurchaseDetailRecord, PurchaseDetail> {
+		AONContext ctx;
+		public FullPurchaseDetailFiller(AONContext ctx) {
+			this.ctx = ctx;
+		}
+		@Override
+		public PurchaseDetail apply(PurchaseDetailRecord r) {
+			PurchaseDetail detail = new PurchaseDetail();
+			detail.setId(r.getId());
+			detail.setDomain(r.getDomain());
+			detail.setPurchaseId(r.getPurchase());
+			detail.setPurchase(getPurchase(ctx, r.getPurchase()));
+			detail.setItem(r.getItem());
+			detail.setLine(r.getLine().intValue());
+			detail.setDescription(r.getDescription());
+			detail.setQuantity(r.getQuantity());
+			detail.setPrice(r.getPrice());
+			detail.setDiscountExpression(r.getDiscountExpr());
+			detail.setTaxes(r.getTaxes());
+			detail.setStatus(PurchaseDetailStatus.values()[r.getStatus()]);
+			detail.setProposalDetail(r.getProposalDetail());
+			detail.setSource(PurchaseSourceType.values()[r.getSource()]);
+			detail.setSourceId(r.getSourceId());
+			detail.setDelivered(r.getDelivered());
+			return detail;
+		}
+	}
 }
