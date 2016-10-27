@@ -155,11 +155,11 @@ public class IngenetSalesManager {
 	}
 	
 	private Integer obtainItemId(AONContext ctx, Integer domainId, Integer productId, Item item){
-		return ProductDAO.getItem(ctx, 
+		return ProductDAO.getItemId(ctx, 
 				p -> p.getDomainProperty().eq(domainId)
 				.and(p.getProductProperty().eq(productId))
 				.and(item.getDetail()!=null?p.getDetailProperty().eq(item.getDetail()):p.getDetailProperty().isNull())
-				).getId();
+				);
 	}
 	
 	private void createSalesLines(AONContext ctx, Integer salesId, List<ITransferObject> list) {
@@ -173,11 +173,7 @@ public class IngenetSalesManager {
 							Item item = detail.getItem();
 							Integer itemId = null;
 							if(itemId==null){
-								itemId = ProductDAO.getItem(ctx, 
-										p -> p.getDomainProperty().eq(domainId)
-										.and(p.getProductProperty().eq(item.getProduct().getId()))
-										.and(item.getDetail()!=null?p.getDetailProperty().eq(item.getDetail()):p.getDetailProperty().isNull())
-										).getId();
+								itemId = obtainItemId(ctx, domainId, item.getProduct().getId(), item);
 							}
 							createSalesDetail(ctx, domainId, salesId, itemId, detail);
 						});
@@ -344,11 +340,7 @@ public class IngenetSalesManager {
 	private void createCompositionItems(AONContext ctx, int domainId, int itemId, List<ItemComposition> list) {
 		list.stream().forEach(ic -> {
 			createItem(ctx, domainId, ic.getItem().getProduct().getId(), ic.getItem());
-			Integer compositionItemId = ProductDAO.getItem(ctx, 
-					p -> p.getDomainProperty().eq(domainId)
-					.and(p.getProductProperty().eq(ic.getItem().getProduct().getId()))
-					.and(ic.getItem().getDetail()!=null?p.getDetailProperty().eq(ic.getItem().getDetail()):p.getDetailProperty().isNull())
-					).getId();
+			Integer compositionItemId = obtainItemId(ctx, domainId, ic.getItem().getProduct().getId(), ic.getItem());
 			com.esferalia.aon.occam.api.model.product.ItemComposition itemComposition = new com.esferalia.aon.occam.api.model.product.ItemComposition();
 			itemComposition.setDomain(domainId);
 			itemComposition.setItemId(itemId);

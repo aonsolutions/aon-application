@@ -517,6 +517,12 @@ public class ProductDAO {
 		return ctx.getDslContext().select().from(ITEM).where(ITEM_PROPERTIES.getConditions(filter)).limit(1).fetchInto(ITEM)
 				.stream().map(new FullItemFiller(ctx)).findFirst().orElse(new Item());
 	}
+
+	public static Integer getItemId(AONContext ctx, ItemFilter filter) {
+		return ctx.getDslContext().select(ITEM.ID).from(ITEM)
+				.where(ITEM_PROPERTIES.getConditions(filter)).limit(1)
+				.fetchOne().value1();
+	}
 	
 	public static LinkedList<Item> getItemList(AONContext ctx, ItemFilter filter){
 		return ctx.getDslContext().select().from(ITEM).where(ITEM_PROPERTIES.getConditions(filter)).fetchInto(ITEM)

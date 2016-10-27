@@ -922,6 +922,8 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			throw new AbortProcessingException("No hay ninguna elaboración pendiente");
 		} else {
 			utils.createManufacturingOrder(sales);
+			SalesDetailController detailController = (SalesDetailController) AonUtil.getRegisteredBean(SALES_DETAIL_CONTROLLER_NAME);
+			detailController.loadManufacturingDetailMap();
 			
 			CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 			String ediSupport = company.getEdiSupport();
@@ -932,6 +934,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 							AonUtil.getDomainName(), AonUtil.getRemoteUser(), sales);
 					AonUtil.addInfoMessage("Traspasado correctamente a INGENET");
 				} catch (Exception e) {
+					AonUtil.addErrorMessage("No se ha podido traspasar a Ingenet");
 					AonUtil.addErrorMessage(e.getMessage());
 					LOGGER.error(e.getMessage());
 				}
