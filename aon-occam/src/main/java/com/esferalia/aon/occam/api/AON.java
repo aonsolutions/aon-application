@@ -2432,11 +2432,31 @@ public class AON {
 	
 	//-------------------- TASK
 	
+	public static Boolean isTaskParent(String domainName, Integer domainId, String login, Integer parentId){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().isTaskParent(ctx, parentId);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	public static Task getTask(String domainName, Integer domainId, String login, TaskFilter filter){
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getTask().getTask(ctx, filter);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+
+	public static Stream<Task> getTaskStream(String domainName, Integer domainId, String login, TaskFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskStream(ctx, filter);
 		} finally {
 			if(ctx != null) ctx.close();
 		}

@@ -52,13 +52,15 @@ public class Issue {
 	private User enterprise; 
 	
 	private String color;
+	private Boolean principal = false;
+	
 	
 	public Issue() {
 	
 	}
 	
-	public Issue(Task task, Registry assignee, LinkedList<Label> labels,
-			Label type, Integer comments, Domain domain, String userName, Workgroup workgroup, Registry enterprise) {
+	public Issue(Task task, Registry assignee, LinkedList<Label> labels, Label type, Integer comments,
+			Domain domain, String userName, Workgroup workgroup, Registry enterprise, Boolean principal) {
 		SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
@@ -94,6 +96,7 @@ public class Issue {
 		this.priority = new Label().setId(p.ordinal()).setName(p.getName()).setColor(p.getColor().getColor());
 		this.workgroup = new User().setId(workgroup.getId()).setLogin(workgroup.getDescription());
 		this.enterprise = new User().setId(enterprise.getId()).setLogin(enterprise.getName());
+		this.principal = principal;
 		setColor(Utils.getStatusColor(task));
 	}
 	
@@ -325,12 +328,24 @@ public class Issue {
 		return getState().equals(TaskStatus.DELETED.getGwtName());
 	}
 	
+	public Boolean isFaq() {
+		return getState().equals(TaskStatus.FAQ.getGwtName()) 
+				&& getParent() == null;
+	}
+	
+	public Boolean isFaqItem() {
+		return getState().equals(TaskStatus.FAQ.getGwtName())
+				&& getParent() != null;
+	}
+	
 	public Boolean isDuplicate() {
-		return getParent() != null && !getParent().equals(getId());
+		return getParent() != null && !getParent().equals(getId())
+				&& !getState().equals(TaskStatus.FAQ.getGwtName());
 	}
 	
 	public Boolean isPrincipalDuplicate() {
-		return getParent() != null && getParent().equals(getId());
+		return (getParent() != null && getParent().equals(getId()))
+				|| principal;
 	}
 	
 	public String getColor(){
@@ -384,6 +399,8 @@ public class Issue {
 		json.put("is_closed", isClosed());
 		json.put("is_duplicate", isDuplicate());
 		json.put("is_principal_duplicate", isPrincipalDuplicate());
+		json.put("is_faq", isFaq());
+		json.put("is_faq_item", isFaqItem());
 		json.put("color", getColor());
 		return json;
 	}	

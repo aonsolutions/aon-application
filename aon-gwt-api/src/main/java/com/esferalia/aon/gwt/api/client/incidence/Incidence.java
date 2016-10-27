@@ -168,6 +168,10 @@ public class Incidence extends Methods{
 				, callback);
 	}
 	
+	public void getFaqIssues(Integer id, IssueFilter filter, AsyncCallback<JSON<JsIssue>> callback){
+		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/faqs/", callback);
+	}
+	
 	public void getDuplicateIssues(Integer parent, AsyncCallback<JSON<JsIssue>> callback){
 		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/duplicates/"+parent, callback);
 	}

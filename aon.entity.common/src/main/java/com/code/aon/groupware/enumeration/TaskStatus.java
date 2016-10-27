@@ -10,7 +10,8 @@ public enum TaskStatus implements IResourceable {
 	DELETED,
 	PENDING,
 	IN_PROGRESS,
-	FINISHED;
+	FINISHED,
+	FAQ;
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_task_status_";
 	

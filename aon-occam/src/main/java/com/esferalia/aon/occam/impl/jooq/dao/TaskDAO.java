@@ -170,9 +170,11 @@ public class TaskDAO {
 		//state
 		if(issueFilter.getState().equals("open")) c = TASK.STATUS.eq(TaskStatus.PENDING.value())
 				.or(TASK.STATUS.eq(TaskStatus.IN_PROGRESS.value()));
-		else if(issueFilter.getState().equals("closed")) c = TASK.STATUS.eq(TaskStatus.FINISHED.value());
+		else if(issueFilter.getState().equals("closed")) 
+			c = TASK.STATUS.eq(TaskStatus.FINISHED.value())
+				.or(TASK.STATUS.eq(TaskStatus.FAQ.value()).and(TASK.PARENT.isNotNull()));
 		else if(issueFilter.getState().equals("deleted")) c = TASK.STATUS.eq(TaskStatus.DELETED.value());
-		else c = TASK.STATUS.ne(TaskStatus.DELETED.value());
+		else c = TASK.STATUS.ne(TaskStatus.DELETED.value()).and(TASK.STATUS.ne(TaskStatus.FAQ.value()));
 
 		// assignee
 		if(issueFilter.getAssignee() != null && !issueFilter.getAssignee().equals(""))
@@ -320,6 +322,15 @@ public class TaskDAO {
 				.stream().map(new FullTaskFiller());
 	}
 	
+	public static Boolean isTaskParent(AONContext ctx, Integer parentId){
+		return ctx.getDslContext().selectCount().from(TASK).where(TASK.PARENT.eq(parentId)).fetchOne(0, int.class) > 0;
+	}
+	
+	public static Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter){
+		return ctx.getDslContext().selectDistinct().from(TASK).where(TASK_PROPERTIES.getConditions(filter))
+				.fetchInto(TASK).stream().map(new FullTaskFiller());
+	}
+	
 	public static Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter){
 		Boolean tagBool = (issueFilter.getLabels() != null && !issueFilter.getLabels().equals(""))
 				|| (issueFilter.getType() != null && !issueFilter.getType().equals(""));
@@ -333,7 +344,8 @@ public class TaskDAO {
 			return ctx.getDslContext().selectDistinct().from(TASK).join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 									.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
-					.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID)))
+					.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID))
+							.or(TASK.PARENT.isNotNull().and(TASK.STATUS.eq(TaskStatus.FAQ.value()))))
 					.orderBy(sort)
 					.limit(issueFilter.getPerPage())
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
@@ -342,7 +354,8 @@ public class TaskDAO {
 		if(commentBool){
 			return ctx.getDslContext().selectDistinct().from(TASK).leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
-					.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID)))
+					.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID))
+							.or(TASK.PARENT.isNotNull().and(TASK.STATUS.eq(TaskStatus.FAQ.value()))))
 					.orderBy(sort)
 					.limit(issueFilter.getPerPage())
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
@@ -351,7 +364,8 @@ public class TaskDAO {
 		if(tagBool){
 			return ctx.getDslContext().selectDistinct().from(TASK).join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
-					.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID)))
+					.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID))
+							.or(TASK.PARENT.isNotNull().and(TASK.STATUS.eq(TaskStatus.FAQ.value()))))
 					.orderBy(sort)
 					.limit(issueFilter.getPerPage())
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
@@ -359,7 +373,8 @@ public class TaskDAO {
 		}
 		return ctx.getDslContext().select().from(TASK) 
 				.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
-				.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID)))
+				.and(TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID))
+						.or(TASK.PARENT.isNotNull().and(TASK.STATUS.eq(TaskStatus.FAQ.value()))))
 				.orderBy(sort)
 				.limit(issueFilter.getPerPage())
 				.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))

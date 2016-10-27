@@ -19,12 +19,23 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO;
 
 public class TaskImpl implements ITask {
-
+	
+	@Override
+	public Boolean isTaskParent(AONContext ctx, Integer parentId) {
+		return ctx.getDslContext().transactionResult(configuration -> TaskDAO.isTaskParent(ctx, parentId));
+	}
+	
 	@Override
 	public Task getTask(AONContext ctx, TaskFilter filter) {
 		return TaskDAO.getTask(ctx, filter);
 	}
 
+	@Override
+	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> TaskDAO.getTaskStream(ctx, filter));
+	}
+	
 	@Override
 	public Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter) {
 		return 	ctx.getDslContext().transactionResult(

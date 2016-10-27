@@ -58,6 +58,8 @@ public class Utils {
 		}
 		else if(taskStatus.equals(TaskStatus.FINISHED))
 			return "red";
+		else if(taskStatus.equals(TaskStatus.FAQ))
+			return "purple";
 		return "black";
 	}
 }

@@ -149,7 +149,15 @@ public class JsIssue extends JavaScriptObject{
 
 	
 	public final native String getColor() /*-{
-	return this.color;
-}-*/;
+		return this.color;
+	}-*/;
+
+	public final native Boolean isFaq() /*-{
+		return this.is_faq;
+	}-*/;
+
+	public final native Boolean isFaqItem() /*-{
+		return this.is_faq_item;
+	}-*/;
 
 }

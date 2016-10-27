@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
+import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
@@ -54,6 +55,11 @@ public class DBConsults {
 		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()), filter);
 	}
 	
+	public Stream<Task> getFaqTaskStream(Domain domain, String login){
+		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId())
+				.and(f.getStatusProperty().eq(TaskStatus.FAQ.value())).and(f.getParentProperty().isNull()));
+	}
+	
 	public Stream<Task> getTaskStream(Domain domain, String login, IssueFilter filter, TaskFilter f){
 		return AON.getTaskStream(domain.getName(), domain.getId(), login, f, filter);
 	}
@@ -77,6 +83,14 @@ public class DBConsults {
 	
 	public void updateTaskPriority(Domain domain, String login, Task task){
 		AON.updateTaskPriority(domain.getName(), domain.getId(),login, task);
+	}
+	
+	public Boolean isPrincipal(Domain domain, String login, Task task){
+		if(task.getParent() != null && task.getParent().equals(task.getId()))
+			return true;
+		if(task.getParent() != null && !task.getId().equals(task.getParent()))
+			return AON.isTaskParent(domain.getName(), domain.getId(), login, task.getId());
+		return false;
 	}
 	
 	//-------------------- TAG

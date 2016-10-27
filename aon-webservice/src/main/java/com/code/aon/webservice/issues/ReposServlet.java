@@ -3,7 +3,6 @@ package com.code.aon.webservice.issues;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -49,12 +48,13 @@ public class ReposServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("GET METHOD");
+		
 		String accessToken = req.getParameter("access_token");
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[1];
 		String domainName = pathInfo[2]; 
-			
 		String md5 = Utils.getMd5(userName+domainName);
+		
 		if(accessToken.equals(md5)){
 			String filter = req.getParameter("filter") != null ? req.getParameter("filter") : "";
 			Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
@@ -62,6 +62,9 @@ public class ReposServlet extends HttpServlet{
 				Object object = new Object();
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
+				case "faqs":
+					object = getFaqIssuesJSON(domain, userName);
+					break;
 				case "duplicates":
 					if(pathInfo.length > 4){
 						object = getDuplicateIssuesJSON(domain, userName, pathInfo[4]);
@@ -126,11 +129,6 @@ public class ReposServlet extends HttpServlet{
 		}
 	}
 	
-	
-	public String checkString(String str){
-		return new String(str.getBytes(Charset.forName("ISO-8859-1")), Charset.forName("UTF-8") );
-	}
-	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("POST METHOD");
@@ -146,7 +144,7 @@ public class ReposServlet extends HttpServlet{
 			while((line = req.getReader().readLine()) != null)
 				s = s + " " + line;
 			System.out.println(s);
-			s = checkString(s);
+			s = Utils.checkString(s);
 			System.out.println(s);
 			if(s == null || s.equals("")) s = "{}";
 			JSONObject json = new JSONObject(s);
@@ -235,7 +233,11 @@ public class ReposServlet extends HttpServlet{
 						if(json.opt("state") != null) {
 							if(json.get("state").equals("open")){
 								task = task.setStatus(TaskStatus.PENDING.value()).setEndDate(null).setId(task.getId())
-									.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
+										.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
+								if(!DB.isPrincipal(domain, userName, task))
+									task.setParent(null);
+								else task.setParent(task.getId());
+								AON.updateTaskParent(domain.getName(), domain.getId(), userName, task);
 								TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
 									.setEvent("reopened").setTask(task.getId()).setCreationUser(userName);
 								AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
@@ -271,7 +273,8 @@ public class ReposServlet extends HttpServlet{
 							task.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName);
 							DB.updateTaskDescription(domain, userName, task.setComments(json.getString("body")));
 							Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
-							object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise).toJSON();
+							Boolean principal = DB.isPrincipal(domain, userName, task);
+							object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise, principal).toJSON();
 						} else if(json.opt("duplicate") != null){
 							String d = json.getString("duplicate");
 							if(!d.equals("liberate")){
@@ -283,7 +286,13 @@ public class ReposServlet extends HttpServlet{
 								task = updateTaskLiberate(domain, userName, task);
 								object = getIssueJSON(domain, userName, task);								
 							}
+						} else if(json.opt("faq") != null){
+							String d = json.getString("faq");	
+							Integer parentId = Integer.parseInt(d);
+							task = updateTaskFaq(domain, userName, task, parentId);
+							object = getDuplicateIssueJSON(domain, userName, task);
 						}
+						
 					}
 				} else { // CREATE NEW TASK / ISSUE
 					Integer num = AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) != null ?
@@ -307,7 +316,8 @@ public class ReposServlet extends HttpServlet{
 						.setModificationDate(Calendar.getInstance().getTime());
 					
 					Task t = AON.createTask(domain.getName(), domain.getId(), userName, task);
-					object = new Issue(t, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), registry).toJSON();
+					Boolean principal = DB.isPrincipal(domain, userName, task);
+					object = new Issue(t, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), registry, principal).toJSON();
 				}
 				break;
 			case "labels":
@@ -359,6 +369,17 @@ public class ReposServlet extends HttpServlet{
 			.setEvent("duplicate").setTask(task.getId()).setCreationUser(userName);
 		AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
 		AON.updateTaskParent(domain.getName(), domain.getId(), userName, task);
+		return task;
+	}
+	
+	private Task updateTaskFaq(Domain domain, String userName, Task task, Integer parentId){
+		task.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName)
+			.setParent(parentId).setStatus(TaskStatus.FAQ.value());
+		TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
+			.setEvent("closed").setTask(task.getId()).setCreationUser(userName);
+		AON.createTaskEvent(domain.getName(), domain.getId(), userName, taskEvent, task.getId());
+		AON.updateTaskParent(domain.getName(), domain.getId(), userName, task);
+		AON.updateTaskStatus(domain.getName(), domain.getId(), userName, task);
 		return task;
 	}
 	
@@ -457,7 +478,8 @@ public class ReposServlet extends HttpServlet{
 		Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
 				.findFirst().orElse(new Label());
 		Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
-		Issue issue = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise);		
+		Boolean principal = DB.isPrincipal(domain, userName, task);
+		Issue issue = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal);		
 		return issue.toJSON();
 	}
 	
@@ -473,7 +495,8 @@ public class ReposServlet extends HttpServlet{
 		Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
 				.findFirst().orElse(new Label());
 		Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
-		Issue issue = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise);		
+		Boolean principal = DB.isPrincipal(domain, userName, task);
+		Issue issue = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal);		
 		return issue.toJSON();
 	}
 	
@@ -489,7 +512,24 @@ public class ReposServlet extends HttpServlet{
 			Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
-			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise).toJSON();
+			Boolean principal = DB.isPrincipal(domain, userName, task);
+			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal).toJSON();
+			array.put(json);
+		});
+		return array;
+	}
+	
+	private JSONArray getFaqIssuesJSON(Domain domain, String userName) {
+		JSONArray array = new JSONArray();
+		DB.getFaqTaskStream(domain, userName).forEach(task -> {
+			LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId()));
+			LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
+					.collect(Collectors.toCollection(LinkedList::new)); 
+			Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
+					.findFirst().orElse(new Label());
+			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
+			Boolean principal = DB.isPrincipal(domain, userName, task);
+			JSONObject json = new Issue(task, new Registry(), labels, type, comments, domain, userName, new Workgroup(), new Registry(), principal).toJSON();
 			array.put(json);
 		});
 		return array;
@@ -524,7 +564,8 @@ public class ReposServlet extends HttpServlet{
 			Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
-			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise).toJSON();
+			Boolean principal = DB.isPrincipal(domain, userName, task);
+			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal).toJSON();
 			array.put(json);
 		});
 		return array;
