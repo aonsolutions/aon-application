@@ -946,6 +946,17 @@
       <build>
         <pluginManagement>
           <plugins>
+            <plugin>
+              <artifactId>maven-war-plugin</artifactId>
+              <configuration>
+                <packagingExcludes>
+                WEB-INF/lib/c3p0*.jar,
+                WEB-INF/lib/aon.jaas*.jar,
+                WEB-INF/lib/aon.pool*.jar,
+                WEB-INF/lib/qz-print*.jar,
+                </packagingExcludes>
+              </configuration>
+            </plugin>
             <!-- Para construir el RPM -->
             <plugin>
               <groupId>org.codehaus.mojo</groupId>
