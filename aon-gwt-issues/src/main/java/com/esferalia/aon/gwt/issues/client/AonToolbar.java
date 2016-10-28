@@ -21,6 +21,7 @@ public abstract class AonToolbar extends Composite {
     @UiField Label  title;
         
     @UiField PaperIconButton menuButton;
+    @UiField PaperIconButton infoButton;
     @UiField PaperIconButton refreshButton;
     @UiField PaperIconButton addButton;
     @UiField PaperIconButton editButton;
@@ -126,5 +127,19 @@ public abstract class AonToolbar extends Composite {
     @UiHandler("moreOptionButton")
   	void moreOptionButtonClick(ClickEvent event) {
       	onMoreOptionButtonClick();
+    }
+    
+    // ----------- INFO BUTTON
+    
+	protected abstract void onInfoButtonClick();
+
+    public AonToolbar setVisibleInfoButton(Boolean isVisible){
+    	moreOptionButton.setVisible(isVisible);
+    	return this;
+    }
+
+    @UiHandler("infoButton")
+  	void infoButtonClick(ClickEvent event) {
+      	onInfoButtonClick();
     }
 }

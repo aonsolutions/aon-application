@@ -84,8 +84,8 @@ public class TagPanel extends Composite {
 					
 					PaperIconButton del = new PaperIconButton();
 					del.setIcon("delete");
-					del.setStyle("min-height: 30px;position:absolute;right:0px;");
-					del.getElement().getStyle().setLeft(300, Unit.PX);
+					del.setStyle("min-height: 30px;position:absolute;right:10px;");
+					del.getElement().getStyle().setLeft(290, Unit.PX);
 					del.addClickHandler(new ClickHandler() {
 						@Override public void onClick(ClickEvent event) {
 							onClickRemoveTypeButton(event, label);
@@ -117,7 +117,7 @@ public class TagPanel extends Composite {
 				PaperIconButton pib = new PaperIconButton();
 				pib.setIcon("add");
 				pib.setStyle("min-height: 30px;");
-				pib.getElement().getStyle().setLeft(300, Unit.PX);
+				pib.getElement().getStyle().setLeft(290, Unit.PX);
 				pib.addClickHandler(new ClickHandler() {
 					
 					@Override
@@ -177,8 +177,8 @@ public class TagPanel extends Composite {
 					
 					PaperIconButton del = new PaperIconButton();
 					del.setIcon("delete");
-					del.setStyle("min-height: 30px;position:absolute;right:0px;");
-					del.getElement().getStyle().setLeft(300, Unit.PX);
+					del.setStyle("min-height: 30px;position:absolute;right:10px;");
+					del.getElement().getStyle().setLeft(290, Unit.PX);
 					del.addClickHandler(new ClickHandler() {
 						@Override public void onClick(ClickEvent event) {
 							onClickRemoveTagButton(event, label);
@@ -210,7 +210,7 @@ public class TagPanel extends Composite {
 				PaperIconButton pib = new PaperIconButton();
 				pib.setIcon("add");
 				pib.setStyle("min-height: 30px;");
-				pib.getElement().getStyle().setLeft(300, Unit.PX);
+				pib.getElement().getStyle().setLeft(290, Unit.PX);
 				pib.addClickHandler(new ClickHandler() {
 					
 					@Override

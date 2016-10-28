@@ -63,7 +63,7 @@ public class ReposServlet extends HttpServlet{
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
 				case "faqs":
-					object = getFaqIssuesJSON(domain, userName);
+					object = getFaqIssuesJSON(domain, userName, getFilter(req));
 					break;
 				case "duplicates":
 					if(pathInfo.length > 4){
@@ -72,9 +72,7 @@ public class ReposServlet extends HttpServlet{
 					break;
 				case "issues_light":
 					if(pathInfo.length > 4){
-						IssueFilter is = new IssueFilter();
-						is.setState("all").setPage(1).setPerPage(20);
-						object = getLightIssuesJSON(domain, userName,is, pathInfo[4]);				
+						object = getLightIssuesJSON(domain, userName,getFilter(req), pathInfo[4]);				
 					}
 					break;
 				case "issues":
@@ -522,9 +520,9 @@ public class ReposServlet extends HttpServlet{
 		return array;
 	}
 	
-	private JSONArray getFaqIssuesJSON(Domain domain, String userName) {
+	private JSONArray getFaqIssuesJSON(Domain domain, String userName, IssueFilter filter) {
 		JSONArray array = new JSONArray();
-		DB.getFaqTaskStream(domain, userName).forEach(task -> {
+		DB.getFaqTaskStream(domain, userName, filter).forEach(task -> {
 			LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId()));
 			LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
 					.collect(Collectors.toCollection(LinkedList::new)); 

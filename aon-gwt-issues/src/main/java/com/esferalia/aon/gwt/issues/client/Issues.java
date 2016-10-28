@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.issues.shared.AonData;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -22,11 +23,14 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.iron.IronListElement;
+import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.iron.widget.event.IronOverlayOpenedEvent;
 import com.vaadin.polymer.iron.widget.event.IronOverlayOpenedEventHandler;
 import com.vaadin.polymer.paper.PaperDialogElement;
@@ -220,10 +224,44 @@ public class Issues implements EntryPoint {
 					}
 				});
 				dialog.open();
-				
+			}
+
+			@Override
+			protected void onInfoButtonClick() {
+				VerticalPanel vp = new VerticalPanel();
+				vp.add(getInfoPanel("green", "Abierto"));
+				vp.add(getInfoPanel("purple", "Re-abierto"));
+				vp.add(getInfoPanel("black", "Cerrado"));
+				vp.add(getInfoPanel("gray", "Borrado"));
+				vp.add(getInfoPanel("red", "Duplicado"));
+				vp.add(getInfoPanel("blue", "FAQ"));
+				vp.setWidth("200px");
+				AonDialog dialog = new AonDialog("Informaci\u00f3n", vp) {
+					
+					@Override protected void onCancel() {}
+					
+					@Override protected void onAccept() {}
+				};
+				dialog.cancel.setVisible(false);
+				toolbar.add(dialog);
+				dialog.open();
 			}
 		}.setVisibleEditButton(false).setVisibleDeleteButton(false)
 		.setVisibleMoreOptionButton(false));
+	}
+	
+	private HorizontalPanel getInfoPanel(String color, String text){
+		HorizontalPanel hp = new HorizontalPanel();
+		IronIcon ii = new IronIcon();
+		ii.setIcon("error-outline");
+		ii.setStyle("color:"+color+";");
+		Label label = new Label(text);
+		label.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+		label.getElement().getStyle().setPaddingTop(5, Unit.PX);
+		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		hp.add(ii);
+		hp.add(label);
+		return hp;
 	}
 	
 	private AonDialog createAddDialog(){	

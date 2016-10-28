@@ -250,70 +250,83 @@ public class TaskDAO {
 		Condition openCondition = getIssueFilterCondition(issueFilter.setState("open")); 
 		Condition closedCondition = getIssueFilterCondition(issueFilter.setState("closed")); 
 		Condition deletedCondition = getIssueFilterCondition(issueFilter.setState("deleted")); 
-		
+		Condition extra = TASK.PARENT.isNull().or(TASK.PARENT.eq(TASK.ID))
+					.or(TASK.PARENT.isNotNull().and(TASK.STATUS.eq(TaskStatus.FAQ.value())));
 		if(tagBool && commentBool){
 			Integer open = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
 						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(openCondition).and(TASK.NUMBER.isNotNull())
+					.and(extra)
 					.fetch().size();
 			
 			Integer close = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
 						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(closedCondition).and(TASK.NUMBER.isNotNull())
+					.and(extra)
 					.fetch().size();
 			
 			Integer delete = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
 						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(deletedCondition).and(TASK.NUMBER.isNotNull())
+					.and(extra)
 					.fetch().size();
 			return new Integer[]{open,close,delete};
 		} else if(tagBool){
 			Integer open = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
 						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(openCondition).and(TASK.NUMBER.isNotNull())
+					.and(extra)
 					.fetch().size();
 			
 			Integer close = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
 						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(closedCondition).and(TASK.NUMBER.isNotNull())
+					.and(extra)
 					.fetch().size();
 			
 			Integer delete = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
 						.join(TASK_TAG).on(TASK_TAG.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(deletedCondition).and(TASK.NUMBER.isNotNull())
+					.and(extra)
 					.fetch().size();
 			return new Integer[]{open,close,delete};
 		} else if(commentBool){
 			Integer open = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
 						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(openCondition).and(TASK.NUMBER.isNotNull())
+					.and(extra)
 					.fetch().size();
 			
 			Integer close = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
 						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(closedCondition).and(TASK.NUMBER.isNotNull())
+					.and(extra)
 					.fetch().size();
 			
 			Integer delete = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
 						.leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(deletedCondition).and(TASK.NUMBER.isNotNull())
+					.and(extra)
 					.fetch().size();
 			return new Integer[]{open,close,delete};
 		} 
 		
 		Integer open = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
 				.where(TASK_PROPERTIES.getConditions(filter)).and(openCondition).and(TASK.NUMBER.isNotNull())
+				.and(extra)
 				.fetch().size();
 		
 		Integer close = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
 				.where(TASK_PROPERTIES.getConditions(filter)).and(closedCondition).and(TASK.NUMBER.isNotNull())
+				.and(extra)
 				.fetch().size();
 		
 		Integer delete = ctx.getDslContext().selectDistinct(TASK.ID).from(TASK)
 				.where(TASK_PROPERTIES.getConditions(filter)).and(deletedCondition).and(TASK.NUMBER.isNotNull())
+				.and(extra)
 				.fetch().size();
 		return new Integer[]{open,close,delete};
 	}

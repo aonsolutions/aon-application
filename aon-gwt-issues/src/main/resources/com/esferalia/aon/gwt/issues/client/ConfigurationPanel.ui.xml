@@ -16,30 +16,23 @@
 </ui:style>
 
 <g:HTMLPanel addStyleNames="paper-tabs">
-    <style is="custom-style">
-        paper-tabs{
-        	background: #f2f2f2
-        }
-        		
-        paper-tabs ::shadow #selectionBar {
-       		background:#2e9afe
-       	}
-       	     .header-panel-sample .content {
-                height: 2000px;
+   		<style is="custom-style">
+        	paper-tabs{
+        		background: #f2f2f2
+        	}
+        			
+       		paper-tabs ::shadow #selectionBar {
+       			background:#2e9afe
+       		}
+       	    .header-panel-sample .content {
+               	height: 2000px;
             }
-    </style>
-    
-    <template is="dom-bind">
+    	</style>
 		<p:PaperTabs ui:field="tabs">
 			<paper-tab>Etiquetas</paper-tab>
-       	    <paper-tab>Notificaciones</paper-tab>
-       	   	<paper-tab>Configuracion</paper-tab>
+       	   	<paper-tab>Notificaciones</paper-tab>
+       		<paper-tab>Configuracion</paper-tab>
     	</p:PaperTabs>
-        	
-        <g:HTMLPanel ui:field="tabContent"/>	
-    </template>
-   
-		
-</g:HTMLPanel>
-
+    	<g:HTMLPanel ui:field="tabContent"/>
+	</g:HTMLPanel>	
 </ui:UiBinder>

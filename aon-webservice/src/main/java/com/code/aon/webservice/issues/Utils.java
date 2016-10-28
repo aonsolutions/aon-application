@@ -53,13 +53,13 @@ public class Utils {
 			return "gray";
 		else if(taskStatus.equals(TaskStatus.IN_PROGRESS)
 				|| taskStatus.equals(TaskStatus.PENDING)){
-			if(task.getParent() != null) return "blue";
+			if(task.getParent() != null) return "red";
 			else return "green";
 		}
 		else if(taskStatus.equals(TaskStatus.FINISHED))
-			return "red";
+			return "black";
 		else if(taskStatus.equals(TaskStatus.FAQ))
-			return "purple";
+			return "blue";
 		return "black";
 	}
 }

@@ -385,12 +385,12 @@ public class IssuePanel extends Composite{
 	}
 	
 	private String getStateStyle(String state, Boolean dup, Boolean faq){
-		if(faq) return "color:purple;position:absolute;";
+		if(faq) return "color:blue;position:absolute;";
 		if(dup && (state.equals("open") || state.equals("reopened"))) 
-			return "color:blue;position:absolute;";
+			return "color:red;position:absolute;";
 		if(state.equals("open")) return "color:green;position:absolute;";
-		if(state.equals("closed")) return "color:red;position:absolute;";
-		if(state.equals("reopened")) return "color:green;position:absolute;";
+		if(state.equals("closed")) return "color:black;position:absolute;";
+		if(state.equals("reopened")) return "color:purple;position:absolute;";
 		return "position:absolute;";		
 	}
 	
@@ -736,11 +736,12 @@ public class IssuePanel extends Composite{
 			
 			@Override
 			public void onSuccess(JsIssue result) {
-				headerPanel.getWidget().removeFromParent();
-				initHeader(result);
-				closedButton.setVisible(true);
-				reopenButton.setVisible(false);
 				parent.sendNotification(issue, NotificationType.REOPEN);
+
+				parent.contentDockLayoutPanel.removeFromParent();
+				parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+				parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, result));
+				parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);		
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -1063,18 +1064,19 @@ public class IssuePanel extends Composite{
 		});
 	}
 	
-	
+	Boolean more;
 	@UiHandler("duplicatedButton")
 	void onClickDuplicatedButton(ClickEvent event){
-		
-		incidence.getLightIssues(issue.getId() ,new IssueFilter(), new AsyncCallback<JSON<JsIssue>>() {
+		IssueFilter issueFilter = new IssueFilter();
+		issueFilter.setPage(1);issueFilter.setPerPage(30);
+		incidence.getLightIssues(issue.getId() ,issueFilter, new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {
-				
-				IssueSelector is = new IssueSelector(result.getData());
+				IssueSelector is = new IssueSelector(incidence, issue, issueFilter, "dup", result.getData());
 				is.setHeight("400px");
 				is.setWidth("500px");
+
 				AonDialog dialog = new AonDialog("Asignar a ", is) {
 					
 					@Override
@@ -1106,15 +1108,18 @@ public class IssuePanel extends Composite{
 			public void onFailure(Throwable caught) {}
 		});
 	}
+
 	
 	@UiHandler("faqButton")
 	void onClickFaqButton(ClickEvent event){
-		incidence.getFaqIssues(new IssueFilter(), new AsyncCallback<JSON<JsIssue>>() {
+		IssueFilter issueFilter = new IssueFilter();
+		issueFilter.setState("faq");
+		issueFilter.setPage(1);issueFilter.setPerPage(30);
+		incidence.getFaqIssues(issueFilter, new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsIssue> result) {
-				
-				IssueSelector is = new IssueSelector(result.getData());
+				IssueSelector is = new IssueSelector(incidence, issue, issueFilter,"faq", result.getData());
 				is.setHeight("400px");
 				is.setWidth("500px");
 				AonDialog dialog = new AonDialog("Asignar a ", is) {

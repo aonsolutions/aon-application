@@ -55,9 +55,9 @@ public class DBConsults {
 		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()), filter);
 	}
 	
-	public Stream<Task> getFaqTaskStream(Domain domain, String login){
+	public Stream<Task> getFaqTaskStream(Domain domain, String login,IssueFilter filter){
 		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId())
-				.and(f.getStatusProperty().eq(TaskStatus.FAQ.value())).and(f.getParentProperty().isNull()));
+				.and(f.getStatusProperty().eq(TaskStatus.FAQ.value())).and(f.getParentProperty().isNull()), filter);
 	}
 	
 	public Stream<Task> getTaskStream(Domain domain, String login, IssueFilter filter, TaskFilter f){

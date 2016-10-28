@@ -32,6 +32,9 @@ public class ConfPanel extends Composite {
     @UiField PaperIconButton newFaqButton;
     @UiField Button gitHeading;
     @UiField IronCollapse gitCollapse;
+    @UiField PaperInput gitUsername;
+    @UiField PaperInput gitRepository;
+    @UiField PaperInput gitToken;
     
     private static Binder binder = GWT.create(Binder.class);
 	
@@ -44,7 +47,7 @@ public class ConfPanel extends Composite {
     	initWidget(binder.createAndBindUi(this));
     	
     	initFaqOptions();	
-    	
+    	initGitOptions();
     }
     
     
@@ -71,6 +74,28 @@ public class ConfPanel extends Composite {
 			}
 		});
 	}
+
+    private void initGitOptions(){
+		if(!gitCollapse.getOpened())
+			gitCollapse.toggle();
+		
+    	gitUsername.setLabel("Nombre de usuario");
+    	gitUsername.setStyle("padding-left:20px;padding-right:20px;");
+    	
+    	gitRepository.setLabel("Repositorio");
+    	gitRepository.setStyle("padding-left:20px;padding-right:20px;");
+    	
+    	gitToken.setLabel("Token");
+    	gitToken.setStyle("padding-left:20px;padding-right:20px;");
+    	
+    	gitHeading.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				gitCollapse.toggle();
+			}
+		});
+    }
     
     private AonDialog createAddDialog(){	
 		VerticalPanel v = new VerticalPanel();
