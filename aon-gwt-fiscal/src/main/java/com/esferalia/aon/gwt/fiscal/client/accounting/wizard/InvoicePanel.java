@@ -127,8 +127,11 @@ public class InvoicePanel extends WizardContentBase {
 		invoicePanelRegistryVisitor = new InvoicePanelRegistryVisitor();
 		InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
 		
-		registryBox = new AccountingRegistryBox(AccountEntryModule.getCurrentDomainName()
-				, AccountEntryModule.getCurrentDomain(), true);
+		registryBox = new AccountingRegistryBox(
+			AccountEntryModule.getCurrentDomainName()
+			,AccountEntryModule.getCurrentDomain()
+			,callback.getConfiguration()
+			,true);
 		withholdingBase = new DoubleBox(12,4);
 		withholdingAccount = new AccountBox(AccountEntryModule.getCurrentDomainName()
 				, AccountEntryModule.getCurrentDomain(), false);
@@ -658,6 +661,14 @@ public class InvoicePanel extends WizardContentBase {
 		@Override
 		public void save(ClickEvent event) {
 			callback.save(event);
+		}
+		@Override
+		public String getDomainName() {
+			return callback.getDomainName();
+		}
+		@Override
+		public int getDomainId() {
+			return callback.getDomainId();
 		}
 
 	};

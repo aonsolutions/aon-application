@@ -6,12 +6,15 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryPanel.AccountingRegistryPanelCallback;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonValidationUtil;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -19,8 +22,10 @@ import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.dom.client.HasAllKeyHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -28,6 +33,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -116,10 +122,10 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 	}
 	
 	public AccountingRegistryBox(final String domainName, final int domain) {
-		this(domainName,domain,true);
+		this(domainName,domain,null,true);
 	}
 	
-	public AccountingRegistryBox(final String domainName, final int domain, boolean showDescription) {
+	public AccountingRegistryBox(final String domainName, final int domain, final AonConfiguration config, boolean showDescription) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
@@ -174,6 +180,15 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 				select( selected.getAccountingRegistry() );
 			}
 		});
+		accountingRegistry.addKeyUpHandler( new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.isControlKeyDown() && event.getNativeKeyCode() == KeyCodes.KEY_F3) {
+					showDialog(domainName,domain,config);
+				}
+			}
+		});
 		
 		rooPanel = new FlowPanel();
 		rooPanel.setStyleName(AON.AON_CSS.aonNowrap() );
@@ -190,22 +205,25 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 		descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		SelectionEvent.fire(AccountingRegistryBox.this, accountingRegistry );
 	}
-	
-	public void setValue(AccountingRegistry accountingRegistry) {
+	public void setValue(AccountingRegistry accountingRegistry, boolean fireEvents) {
 		if (accountingRegistry != null && accountingRegistry.getId() != null) {
-			id = accountingRegistry.getId();	
+			id = accountingRegistry.getId();
 			accountingRegistryTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-			accountingRegistryTextBox.setValue(accountingRegistry.getAccountCode());
+			accountingRegistryTextBox.setValue(accountingRegistry.getAccountCode(),fireEvents);
 			description = accountingRegistry.getName();
 			descriptionLabel.setText(description);
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		} else {
-			id = null;	
+			id = null;
 			accountingRegistryTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
-			accountingRegistryTextBox.setValue(null);
+			accountingRegistryTextBox.setValue(null,fireEvents);
 			descriptionLabel.setText(null);
 			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		}
+	}
+	
+	public void setValue(AccountingRegistry accountingRegistry) {
+		setValue(accountingRegistry,true);
 	}
 
 	private void reset() {
@@ -358,4 +376,41 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 		accountingRegistry.setEnabled(enabled);
 	}
 	
+	private void showDialog(final String domainName, final int domain, final AonConfiguration config) {
+		final CustomDialog dialog = new CustomDialog();
+		dialog.setCaption(AON.MSG.titular());
+		final AccountingRegistryPanel accountPanel = new AccountingRegistryPanel( domainName, domain
+				, id
+				,config, new AccountingRegistryPanelCallback() {
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+				setFocus(true);
+			}
+			
+			@Override
+			public void onAccept(AccountingRegistry registry) {
+				dialog.hide();
+				setValue(registry,false);
+				select(registry);
+			}
+
+			@Override
+			public void setFocus(boolean b) {
+				AccountingRegistryBox.this.setFocus(b);
+			}
+		});
+		
+		dialog.add( accountPanel );
+		dialog.center();
+		dialog.show();
+		
+		Scheduler.get().scheduleDeferred(new Command() {
+	        public void execute() {
+	        	accountPanel.setFocus(true);
+	        }
+	    });		
+	}
 }
+   

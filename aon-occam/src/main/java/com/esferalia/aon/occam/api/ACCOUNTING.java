@@ -36,6 +36,18 @@ public class ACCOUNTING {
 	// ********************************************
 	// ********************* ACCOUNTING REGISTRY **
 	// ********************************************
+	public static AccountingRegistry insert(String domainName,
+			int domainId, String login, AccountingRegistry reg) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getAccounting().insert(ctx, reg);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+		
+	}
 
 	public static Stream<AccountingRegistry> getAccountingRegistries(String domainName,
 			int domainId, String login, AccountingRegistryFilter filter) {

@@ -4,7 +4,9 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Category.CATEGORY;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.sql.Timestamp;
@@ -27,15 +29,20 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CreditorStatus;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class RegistryDAO {
 	
@@ -225,6 +232,7 @@ public class RegistryDAO {
 	}
 
 	public static void updateCreditorAccount(AONContext ctx, Integer registry, Integer account) {
+		ctx.checkWrite();
 		ctx.getDslContext().update(CREDITOR)
 			.set(CREDITOR.ACCOUNT,account)
 			.set(CREDITOR.MODIFICATION_USER,ctx.getUser())
@@ -235,6 +243,7 @@ public class RegistryDAO {
 	}
 
 	public static void updateCustomerAccount(AONContext ctx, Integer registry, Integer account) {
+		ctx.checkWrite();
 		ctx.getDslContext().update(CUSTOMER)
 		.set(CUSTOMER.ACCOUNT,account)
 		.set(CUSTOMER.MODIFICATION_USER,ctx.getUser())
@@ -254,4 +263,169 @@ public class RegistryDAO {
 	ctx.log().info("ACCOUNT " + account + " LINKED TO SUPPLIER " + registry);
 	}
 	
+	public static AccountingRegistry insert(AONContext ctx, AccountingRegistry reg) {
+		if (reg == null) throw new AonCoreException("No se puede grabar. Es nulo. (Error Interno)");
+		if (reg.getType() == null) throw new AonCoreException("No se puede determinar el tipo. Es nulo. (Error Interno)");
+		ctx.checkWrite();
+		final Integer registryId = insert(ctx, new Registry()
+				.setId(reg.getDomain())
+				.setDomain(reg.getDomain())
+				.setDocument(reg.getDocument())
+				.setDocumentCountry(reg.getDocumentCountry())
+				.setDocumentType(reg.getDocumentType())
+				.setName(reg.getName())
+				.setAlias(reg.getAlias())
+				.setNationality(reg.getNationality())
+				.setSecurityLevel(SecurityLevel.OFFICIAL)
+				.setType(AonEnumUtils.getByte( AonDocumentUtil.isEntity(reg.getDocument())))
+				);
+		reg.setId(registryId);
+		ctx.getDslContext().insertInto(RADDRESS)
+			.set(RADDRESS.DOMAIN,reg.getDomain())
+			.set(RADDRESS.REGISTRY, registryId)
+			.set(RADDRESS.TYPE, (byte) 0)
+			.set(RADDRESS.STREET_TYPE,reg.getAddressStreetType()==null?null:reg.getAddressStreetType().getAeatCode())
+			.set(RADDRESS.ADDRESS,reg.getAddress())
+			.set(RADDRESS.NUMBER,reg.getAddressNumber())
+			.set(RADDRESS.ZIP,reg.getAddressZIP())
+			.set(RADDRESS.CITY,reg.getAddressTown())
+			.set(RADDRESS.GEOZONE,reg.getGeozone())
+			.execute();
+		if (!AonStringUtils.isBlank(reg.getPhone())) {
+			ctx.getDslContext().insertInto(RMEDIA)
+				.set(RMEDIA.DOMAIN,reg.getDomain())
+				.set(RMEDIA.REGISTRY, registryId)
+				.set(RMEDIA.MEDIA, MediaType.FIXED_PHONE.value())
+				.set(RMEDIA.VALUE,reg.getPhone())
+				.set(RMEDIA.COMMENT,reg.getPhoneComments())
+				.set(RMEDIA.ADMINISTRATIVE,AonEnumUtils.getByte(true))
+				.set(RMEDIA.COMMERCIAL,AonEnumUtils.getByte(true))
+				.set(RMEDIA.TECHNICAL,AonEnumUtils.getByte(true))
+				.execute();
+		}
+		if (!AonStringUtils.isBlank(reg.getCellular())) {
+			ctx.getDslContext().insertInto(RMEDIA)
+				.set(RMEDIA.DOMAIN,reg.getDomain())
+				.set(RMEDIA.REGISTRY, registryId)
+				.set(RMEDIA.MEDIA, MediaType.CELLULAR.value())
+				.set(RMEDIA.VALUE,reg.getCellular())
+				.set(RMEDIA.COMMENT,reg.getCellularComments())
+				.set(RMEDIA.ADMINISTRATIVE,AonEnumUtils.getByte(true))
+				.set(RMEDIA.COMMERCIAL,AonEnumUtils.getByte(true))
+				.set(RMEDIA.TECHNICAL,AonEnumUtils.getByte(true))
+				.execute();
+		}
+		if (!AonStringUtils.isBlank(reg.getFax())) {
+			ctx.getDslContext().insertInto(RMEDIA)
+				.set(RMEDIA.DOMAIN,reg.getDomain())
+				.set(RMEDIA.REGISTRY, registryId)
+				.set(RMEDIA.MEDIA, MediaType.FAX.value())
+				.set(RMEDIA.VALUE,reg.getFax())
+				.set(RMEDIA.COMMENT,reg.getFaxComments())
+				.set(RMEDIA.ADMINISTRATIVE,AonEnumUtils.getByte(true))
+				.set(RMEDIA.COMMERCIAL,AonEnumUtils.getByte(true))
+				.set(RMEDIA.TECHNICAL,AonEnumUtils.getByte(true))
+				.execute();
+		}
+		if (!AonStringUtils.isBlank(reg.getEmail())) {
+			ctx.getDslContext().insertInto(RMEDIA)
+				.set(RMEDIA.DOMAIN,reg.getDomain())
+				.set(RMEDIA.REGISTRY, registryId)
+				.set(RMEDIA.MEDIA, MediaType.EMAIL.value())
+				.set(RMEDIA.VALUE,reg.getEmail())
+				.set(RMEDIA.ADMINISTRATIVE,AonEnumUtils.getByte(true))
+				.set(RMEDIA.COMMERCIAL,AonEnumUtils.getByte(true))
+				.set(RMEDIA.TECHNICAL,AonEnumUtils.getByte(true))
+				.execute();
+		}
+		if (!AonStringUtils.isBlank(reg.getWeb())) {
+			ctx.getDslContext().insertInto(RMEDIA)
+				.set(RMEDIA.DOMAIN,reg.getDomain())
+				.set(RMEDIA.REGISTRY, registryId)
+				.set(RMEDIA.MEDIA, MediaType.WEB.value())
+				.set(RMEDIA.VALUE,reg.getWeb())
+				.set(RMEDIA.ADMINISTRATIVE,AonEnumUtils.getByte(true))
+				.set(RMEDIA.COMMERCIAL,AonEnumUtils.getByte(true))
+				.set(RMEDIA.TECHNICAL,AonEnumUtils.getByte(true))
+				.execute();
+		}
+		reg.getType().visit(reg, new IAccountingRegistryTypeVisitor() {
+			
+			@Override
+			public void visitSupplier(AccountingRegistry reg) {
+				ctx.getDslContext().insertInto(SUPPLIER)
+					.set(SUPPLIER.REGISTRY, registryId)
+					.set(SUPPLIER.DOMAIN,reg.getDomain())
+					.set(SUPPLIER.WITHHOLDING, AonEnumUtils.getByte(reg.isWithholding()))
+					.set(SUPPLIER.WITHHOLDING_FARMER, AonEnumUtils.getByte(reg.isWithholdingFarmer()))
+					.set(SUPPLIER.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte(reg.isVatAccrualPayment()))
+					.set(SUPPLIER.TRANSACTION, reg.getTransaction() == null 
+						? InvoiceTransactionType.NATIONAL.value() 
+						: reg.getTransaction().value() )
+					.set(SUPPLIER.STATUS, SupplierStatus.ACTIVE.value() )
+					.set(SUPPLIER.SCOPE, reg.getScope() )
+					.set(SUPPLIER.ACCOUNT, reg.getAccountId() )
+					.set(SUPPLIER.CREATION_USER, ctx.getUser() )
+					.set(SUPPLIER.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+					.execute();
+			}
+			
+			@Override
+			public void visitCustomer(AccountingRegistry reg) {
+				ctx.getDslContext().insertInto(CUSTOMER)
+					.set(CUSTOMER.REGISTRY, registryId)
+					.set(CUSTOMER.DOMAIN,reg.getDomain())
+					.set(CUSTOMER.SURCHARGE, AonEnumUtils.getByte(reg.isSurcharge()))
+					.set(CUSTOMER.WITHHOLDING, AonEnumUtils.getByte(reg.isWithholding()))
+					.set(CUSTOMER.TRANSACTION, reg.getTransaction() == null 
+						? InvoiceTransactionType.NATIONAL.value() 
+						: reg.getTransaction().value() )
+					.set(CUSTOMER.STATUS, CustomerStatus.ACTIVE.value() )
+					.set(CUSTOMER.SCOPE, reg.getScope() )
+					.set(CUSTOMER.ACCOUNT, reg.getAccountId() )
+					.set(CUSTOMER.CREATION_USER, ctx.getUser() )
+					.set(CUSTOMER.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+					.execute();
+			}
+			
+			@Override
+			public void visitCreditor(AccountingRegistry reg) {
+				ctx.getDslContext().insertInto(CREDITOR)
+				.set(CREDITOR.REGISTRY, registryId)
+				.set(CREDITOR.DOMAIN,reg.getDomain())
+				.set(CREDITOR.WITHHOLDING, AonEnumUtils.getByte(reg.isWithholding()))
+				.set(CREDITOR.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte(reg.isVatAccrualPayment()))
+				.set(CREDITOR.TRANSACTION, reg.getTransaction() == null 
+					? InvoiceTransactionType.NATIONAL.value() 
+					: reg.getTransaction().value() )
+				.set(CREDITOR.STATUS, CreditorStatus.ACTIVE.value() )
+				.set(CREDITOR.SCOPE, reg.getScope() )
+				.set(CREDITOR.ACCOUNT, reg.getAccountId() )
+				.set(CREDITOR.CREATION_USER, ctx.getUser() )
+				.set(CREDITOR.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.execute();
+			}
+		}); 
+		return reg;
+	}
+
+	private static Integer insert(AONContext ctx, Registry reg) {
+		ctx.checkWrite();
+		return ctx.getDslContext().insertInto(REGISTRY)
+			.set(REGISTRY.DOMAIN,reg.getDomain())
+			.set(REGISTRY.DOCUMENT,reg.getDocument())
+			.set(REGISTRY.DOCUMENT_TYPE,reg.getDocumentType()==null?null:reg.getDocumentType().value())
+			.set(REGISTRY.DOCUMENT_COUNTRY,reg.getDocumentCountry()==null?null:reg.getDocumentCountry().getIso2())
+			.set(REGISTRY.NAME,reg.getName())
+			.set(REGISTRY.ALIAS,reg.getAlias())
+			.set(REGISTRY.TYPE,reg.getType())
+			.set(REGISTRY.NATIONALITY,reg.getNationality()==null?null:reg.getNationality().getIso2())
+			.set(REGISTRY.SECURITY_LEVEL,(reg.isConfidential()
+					?SecurityLevel.CONFIDENTIAL.value()
+					:SecurityLevel.OFFICIAL.value()))
+			.returning(REGISTRY.ID)
+			.fetchOne()
+			.getValue(REGISTRY.ID);
+	}
+
 }

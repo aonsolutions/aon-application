@@ -47,6 +47,8 @@ public class ConfigurationDAO {
 						}
 						))
 				.setVatTaxes( TaxDAO.getVatTaxs(ctx,atDate).collect(Collectors.toCollection(LinkedList::new)))
+				.setGeozones( GeoZoneDAO.getGeoZones(ctx, null).collect(Collectors.toCollection(LinkedList::new)))
+				.setAvailableScopes(SecurityDAO.getAvailableScopes (ctx))
 				.setDefaultVatPercent(defaultVatPercent == 0
 					?null
 					:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultVatPercent)))

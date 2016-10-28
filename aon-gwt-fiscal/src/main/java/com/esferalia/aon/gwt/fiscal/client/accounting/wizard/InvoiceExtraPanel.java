@@ -3,12 +3,14 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.Country2ListBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTypeListBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel.IInvoicePanelCallback;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -19,6 +21,8 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -70,7 +74,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		paintChecks1(callback);
 		paintChecks2(callback);
 		paintChecks3(callback);
-			
+		paintPayment(callback);
 	}
 
 	private void paintWorkplace(final IInvoicePanelCallback callback) {
@@ -422,6 +426,81 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		panel.add(withholdingFarmer);
 		
 		flexContainer.add(panel);
+	}
+
+	private void paintPayment(final IInvoicePanelCallback callback) {
+		FlowPanel payPanel = new  FlowPanel();
+		payPanel.setStyleName(AON.AON_CSS.aonMargin());
+		payPanel.addStyleName(AON.AON_CSS.aonPadding());
+		payPanel.addStyleName(AON.AON_CSS.aonBorderTop());
+		payPanel.addStyleName(AON.AON_CSS.aonBorderBottom());
+		
+		FlowPanel panel1 = new  FlowPanel();
+		panel1.setStyleName(AON.AON_CSS.aonWizardPanelInner());
+		InlineLabel label1 = new InlineLabel(AON.MSG.dueDate());
+		label1.setStyleName(AON.AON_CSS.aonInnerLabel());
+		label1.addStyleName(AON.AON_CSS.aonWidth120());
+		panel1.add(label1);
+		
+		final DateBoxEx payDate = new DateBoxEx();
+		payDate.setValue(callback.getInvoice().getPayDate());
+		payDate.setTabIndex(Integer.MAX_VALUE);
+		payDate.getTextBox().addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					payDate.hideDatePicker();
+					callback.setFocusOnRegistry();
+		        }
+			}
+		});
+		panel1.add(payDate);
+		payPanel.add(panel1);
+
+		FlowPanel panel0 = new  FlowPanel();
+		panel0.setStyleName(AON.AON_CSS.aonWizardPanelInner());
+
+		InlineLabel label0 = new InlineLabel(AON.MSG.account());
+		label0.setStyleName(AON.AON_CSS.aonInnerLabel());
+		label0.addStyleName(AON.AON_CSS.aonWidth120());
+		panel0.add(label0);
+		final AccountBox payAccount = new AccountBox(callback.getDomainName(),callback.getDomainId() );
+		payAccount.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					callback.setFocusOnRegistry();
+		        }
+			}
+		});
+		payAccount.addSelectionHandler(new SelectionHandler<Account>() {
+			@Override
+			public void onSelection(SelectionEvent<Account> event) {
+				callback.onBalance(event.getSelectedItem());
+			}
+		});
+		payAccount.addSelectionHandler(new SelectionHandler<Account>() {
+			@Override
+			public void onSelection(SelectionEvent<Account> event) {
+				if (event.getSelectedItem() != null) {
+					callback.getInvoice().setPayAccountId(event.getSelectedItem().getId());
+					callback.getInvoice().setPayAccountCode(event.getSelectedItem().getCode());
+					callback.getInvoice().setPayAccountDescription(event.getSelectedItem().getDescription());
+					callback.paintEntry();
+				} else {
+					callback.getInvoice().setPayAccountId(null);
+					callback.getInvoice().setPayAccountCode(null);
+					callback.getInvoice().setPayAccountDescription(null);
+					callback.paintEntry();
+				}
+			}
+		});
+		panel0.add(payAccount);
+		payPanel.add(panel0);
+
+		flexContainer.add(payPanel);		
 	}
 
 	public boolean isWithholding() {

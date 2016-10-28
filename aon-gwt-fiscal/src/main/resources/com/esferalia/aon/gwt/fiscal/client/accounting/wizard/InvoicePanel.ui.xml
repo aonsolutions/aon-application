@@ -10,7 +10,7 @@
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<g:SplitLayoutPanel styleName="{aonResources.css.aonScrollArea}">
-		<g:south size="200">
+		<g:south size="150">
 			<accPanel:SessionLog ui:field="workingLog"/>
 		</g:south>
 		<g:east size="400">

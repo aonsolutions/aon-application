@@ -111,12 +111,22 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 				new AsyncCallbackWrapper<LinkedList<Creditor>>(callback));
 	}
 
+	// -------------------------------------------------------------- REGISTRY
 	@Override
 	public void getAccountingRegistries(String domainName, int domain, String query,
 			AsyncCallback<LinkedList<AccountingRegistry>> callback) {
 		AON.start();
 		serviceAsync.getAccountingRegistries(domainName, domain, query,   
 				new AsyncCallbackWrapper<LinkedList<AccountingRegistry>>(callback));
+	}
+
+	@Override
+	public void insert(String domainName, int domain, AccountingRegistry reg,
+			AsyncCallback<AccountingRegistry> callback) {
+		AON.start();
+		serviceAsync.insert(domainName, domain, reg,   
+				new AsyncCallbackWrapper<AccountingRegistry>(callback));
+		
 	}
 
 

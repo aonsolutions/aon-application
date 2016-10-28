@@ -217,6 +217,7 @@ public class AccountingInvoiceDAO {
 		AccountingInvoice ai = new AccountingInvoice()
 				.setRegistry(reg)
 				.setWorkplace(config.getWorkplaces().get(0).getId())
+				.setPayDate(issueDate)
 				.setInvoice(new Invoice()
 					.setDomain(ctx.getDomainId())
 					.setRegistry(registry)

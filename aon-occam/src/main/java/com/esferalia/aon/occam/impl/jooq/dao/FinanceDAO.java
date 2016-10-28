@@ -9,7 +9,9 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -35,7 +37,19 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class FinanceDAO {
 	
-	// ------------------------------------------------------------- LECTURA
+	// ------------------------------------------------------------- PAY_METHOD
+	public static LinkedList<PayMethod>  getPayMethods(AONContext ctx) {
+		return ctx.getDslContext()
+				.selectFrom(PAY_METHOD)
+				.where(PAY_METHOD.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+				.orderBy(PAY_METHOD.NAME)
+				.fetch()
+				.stream()
+				.map( new FullPayMethodFiller())
+				.collect(Collectors.toCollection(LinkedList::new))
+				;
+	}
+	// ------------------------------------------------------------- FINANCE
 	public static Finance getFinance(AONContext ctx,Integer id) {
 		return fetch(ctx,p -> p.getDomainProperty().eq(ctx.getDomainId())
 				   	.and(p.getIdProperty().eq(id)), 0, 1)

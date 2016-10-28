@@ -7,25 +7,25 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 public enum AccountingRegistryType implements Serializable {
 	
-	SUPPLIER (InvoiceType.PURCHASE, AccountEntryType.PURCHASE_INVOICE, "400"
+	CREDITOR ("Acreedor",InvoiceType.EXPENSES, AccountEntryType.EXPENSE_INVOICE, "410"
+			, new IAccountingRegistryTypeVisitorWalker() {
+				@Override
+				public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
+					visitor.visitCreditor(reg);
+				}
+			})
+	,SUPPLIER ("Proveedor",InvoiceType.PURCHASE, AccountEntryType.PURCHASE_INVOICE, "400"
 		,new IAccountingRegistryTypeVisitorWalker() {
 			@Override
 			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
 				visitor.visitSupplier(reg);
 			}
 		})
-	,CUSTOMER (InvoiceType.SALES, AccountEntryType.SALES_INVOICE, "430"
+	,CUSTOMER ("Cliente",InvoiceType.SALES, AccountEntryType.SALES_INVOICE, "430"
 		, new IAccountingRegistryTypeVisitorWalker() {
 			@Override
 			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
 				visitor.visitCustomer(reg);
-			}
-		})
-	,CREDITOR (InvoiceType.EXPENSES, AccountEntryType.EXPENSE_INVOICE, "410"
-		, new IAccountingRegistryTypeVisitorWalker() {
-			@Override
-			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
-				visitor.visitCreditor(reg);
 			}
 		})
 	;
@@ -34,20 +34,23 @@ public enum AccountingRegistryType implements Serializable {
 		void visit( AccountingRegistry reg, IAccountingRegistryTypeVisitor visitor);
 	}
 	
-	
+	private String description;
 	private InvoiceType invoiceType;
 	private AccountEntryType accountEntryType;
 	private String accountPrefix;
 	private IAccountingRegistryTypeVisitorWalker walker;
 	
-	private AccountingRegistryType(InvoiceType invoiceType, AccountEntryType accountEntryType, String accountPrefix
-			,IAccountingRegistryTypeVisitorWalker walker) {
+	private AccountingRegistryType(String description,InvoiceType invoiceType, AccountEntryType accountEntryType
+			, String accountPrefix,IAccountingRegistryTypeVisitorWalker walker) {
+		this.description = description;
 		this.invoiceType = invoiceType;
 		this.accountEntryType = accountEntryType;
 		this.accountPrefix = accountPrefix;  
 		this.walker = walker;
 	}
-	
+	public String getDescription() {
+		return description;
+	}
 	public String getAccountPrefix() {
 		return accountPrefix;
 	}

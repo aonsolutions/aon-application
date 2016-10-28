@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceRecorder {
@@ -15,8 +16,89 @@ public class InvoiceRecorder {
 	private static interface IVisitor {
 		void visit( AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map);
 	}
+	private static enum FinanceEntryDetailType implements Serializable {
+		 CUSTOMER( new IVisitor() {
+			@Override
+			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
+				if (invoice.getRegistry().getType() == AccountingRegistryType.CUSTOMER) {
+					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
+					if (detail == null) {
+						String code = invoice.getRegistry().getAccountCode();
+						if (AonStringUtils.isBlank(code)) code = AccountingRegistryType.CUSTOMER.getAccountPrefix() + "??????";
+						String description = invoice.getRegistry().getAccountDescription();
+						if (AonStringUtils.isBlank(description)) description = invoice.getRegistry().getName();
+						detail = new AccountEntryDetail()
+							.setAccount(invoice.getRegistry().getAccountId())
+							.setAccountCode(code)
+							.setAccountDescription(description);
+						map.put(invoice.getRegistry().getAccountId(),detail);
+					}
+					detail.setCredit(invoice.getTotalInvoice());
+					
+					AccountEntryDetail payDetail = map.get(invoice.getPayAccountId());
+					if (payDetail == null) {
+						String description = invoice.getPayAccountDescription();
+						if (AonStringUtils.isBlank(description)) description = "COBRO FACTURA";
+						payDetail = new AccountEntryDetail()
+							.setAccount(invoice.getPayAccountId())
+							.setAccountCode(invoice.getPayAccountCode())
+							.setAccountDescription(description);
+						map.put(invoice.getPayAccountId(),payDetail);
+					}
+					payDetail.setDebit(invoice.getTotalInvoice());
+				}
+			}
+	 	})
+		,SUPPLIER_CREDITOR( new IVisitor() {
+			@Override
+			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
+				if (invoice.getRegistry().getType() == AccountingRegistryType.SUPPLIER 
+					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR) {
+					
+					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
+					if (detail == null) {
+						String code = invoice.getRegistry().getAccountCode();
+						if (AonStringUtils.isBlank(code)) code = invoice.getRegistry().getType().getAccountPrefix() + "??????";
+						String description = invoice.getRegistry().getAccountDescription();
+						if (AonStringUtils.isBlank(description)) description = invoice.getRegistry().getName();
+						detail = new AccountEntryDetail()
+							.setAccount(invoice.getRegistry().getAccountId())
+							.setAccountCode(code)
+							.setAccountDescription(description);
+						map.put(invoice.getRegistry().getAccountId(),detail);
+					}
+					detail.setDebit(invoice.getTotalInvoice());
+					
+					AccountEntryDetail payDetail = map.get(invoice.getPayAccountId());
+					if (payDetail == null) {
+						String description = invoice.getPayAccountDescription();
+						if (AonStringUtils.isBlank(description)) description = "PAGO FACTURA";
+						payDetail = new AccountEntryDetail()
+							.setAccount(invoice.getPayAccountId())
+							.setAccountCode(invoice.getPayAccountCode())
+							.setAccountDescription(description);
+						map.put(invoice.getPayAccountId(),payDetail);
+					}
+					payDetail.setCredit(invoice.getTotalInvoice());
+					
+				}
+			}
+	 	})
+	 
+		;
+		private IVisitor visitor;
+		private FinanceEntryDetailType(IVisitor visitor) {
+			this.visitor = visitor;
+		}
+		
+		private static void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map ) {
+			for (FinanceEntryDetailType t : FinanceEntryDetailType.values()) {
+				t.visitor.visit(invoice, map);
+			}
+		}
+	}
 
-	private static enum AccountEntryDetailType implements Serializable {
+	private static enum InvoiceEntryDetailType implements Serializable {
 		 CUSTOMER( new IVisitor() {
 
 			@Override
@@ -226,12 +308,12 @@ public class InvoiceRecorder {
 		;
 		
 		private IVisitor visitor;
-		private AccountEntryDetailType(IVisitor visitor) {
+		private InvoiceEntryDetailType(IVisitor visitor) {
 			this.visitor = visitor;
 		}
 		
 		private static void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map ) {
-			for (AccountEntryDetailType t : AccountEntryDetailType.values()) {
+			for (InvoiceEntryDetailType t : InvoiceEntryDetailType.values()) {
 				t.visitor.visit(invoice, map);
 			}
 		}
@@ -242,7 +324,7 @@ public class InvoiceRecorder {
 	public static AccountEntry[] recordInvoice(AccountingInvoice invoice) {
 		AccountEntry ae = invoice.getAccountEntry();
 		LinkedHashMap<Integer,AccountEntryDetail> map = new LinkedHashMap<Integer, AccountEntryDetail>();
-		AccountEntryDetailType.visit(invoice,map);	
+		InvoiceEntryDetailType.visit(invoice,map);	
 		ae.setDetails(new LinkedList<AccountEntryDetail>());
 		ae.getDetails().addAll(map.values());
 		
@@ -252,14 +334,36 @@ public class InvoiceRecorder {
 		String document = FinanceUtil.getDocumentNumber(invoice.getInvoice().getType()
 				, invoice.getInvoice().getSeries()
 				, invoice.getInvoice().getNumber());
+		String concept = invoice.isSales()
+				?"N/Fra: "+document
+				:"S/Fra: "+ (AonStringUtils.isBlank( invoice.getInvoice().getReferenceCode())
+					?"????????"
+					:invoice.getInvoice().getReferenceCode());
 		for (AccountEntryDetail detail : ae.getDetails()) {
-			detail.setConcept(invoice.isSales()
-					?"N/Fra: "+document
-					:"S/Fra: "+ (AonStringUtils.isBlank( invoice.getInvoice().getReferenceCode())
-						?"????????"
-						:invoice.getInvoice().getReferenceCode()));
+			detail.setConcept(concept);
 			detail.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ));
 			detail.setDocumentNumber(document);
+		}
+		if (invoice.getPayAccountId() != null) {
+			AccountEntry payEntry = AccountEntry
+					.clone(ae)
+					.setEntryType(AccountEntryType.PAYMENT);
+			LinkedHashMap<Integer,AccountEntryDetail> payMap = new LinkedHashMap<Integer, AccountEntryDetail>();
+			FinanceEntryDetailType.visit(invoice,payMap);	
+			payEntry.setDetails(new LinkedList<AccountEntryDetail>());
+			payEntry.getDetails().addAll(payMap.values());
+
+			String payConcept = invoice.isSales()
+					?"Cobro Fra: "+document
+					:"Pago Fra: "+ (AonStringUtils.isBlank( invoice.getInvoice().getReferenceCode())
+						?"????????"
+						:invoice.getInvoice().getReferenceCode());
+			for (AccountEntryDetail detail : payEntry.getDetails()) {
+				detail.setConcept(payConcept);
+				detail.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ));
+				detail.setDocumentNumber(document);
+			}			
+			return new AccountEntry[]{payEntry,ae};
 		}
 		return new AccountEntry[]{ae};
 	}

@@ -93,6 +93,8 @@ public class AccountEntryModule extends MainEntryPoint {
 	
 	public static interface IAccountEntryModuleCallback {
 		AonConfiguration getConfiguration();
+		String getDomainName();
+		int getDomainId();
 		
 		IWizardContent getWizardContent();
 		
@@ -113,7 +115,14 @@ public class AccountEntryModule extends MainEntryPoint {
 		public AonConfiguration getConfiguration() {
 			return configuration;
 		}
-
+		@Override
+		public String getDomainName() {
+			return getCurrentDomainName();
+		};
+		@Override
+		public int getDomainId() {
+			return getCurrentDomain();
+		};
 		@Override
 		public IWizardContent getWizardContent() {
 			return wizardContent;

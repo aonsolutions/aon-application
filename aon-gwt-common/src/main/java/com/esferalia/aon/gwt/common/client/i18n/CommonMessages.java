@@ -566,7 +566,14 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Alias / Nombre comercial")
 	String alias();
+	
+	@DefaultMessage("Nacionalidad")
+	String nationality();
 
+	@DefaultMessage("\u00C1mbito")
+	String scope();
+
+	
 	@DefaultMessage("Nombre, raz\u00F3n social o denominaci\u00F3n")
 	String nameCompanyName();
 
@@ -591,9 +598,21 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Centro de trabajo")
 	String workplace();
 
+	@DefaultMessage("Forma de pago")
+	String payMethod();
+
+	@DefaultMessage("Fecha de Vto.")
+	String dueDate();
+
+	@DefaultMessage("Contabilizar pago")
+	String payAccount();
+
 	@DefaultMessage("Tel\u00E9fono")
 	String phone();
 	
+	@DefaultMessage("M\u00F3vil")
+	String cellular();
+
 	@DefaultMessage("Fax")
 	String fax();
 	
@@ -2056,6 +2075,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Titular")
 	String titular();
+
+	@DefaultMessage("Tipo de titular")
+	String titularType();
 	
 	@DefaultMessage("Presupuestos")
 	String offers();
@@ -3067,4 +3089,6 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Nueva Cuenta")
 	String newAccount();
+
+
 }

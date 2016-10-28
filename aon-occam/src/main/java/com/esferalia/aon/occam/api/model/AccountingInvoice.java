@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -19,6 +20,11 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private Invoice invoice;
 	private AccountingRegistry registry;
 	private Integer workplace;
+	
+	private Integer payAccountId;
+	private String payAccountCode;
+	private String payAccountDescription;
+	private Date payDate;
 
 	private InvoiceWithholding withholdingData;
 	private LinkedList<Account> suggestedAccounts;
@@ -233,6 +239,36 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	
 	public InvoiceVAT getFirstVat() {
 		return getVats().get(0);
+	}
+	
+	public Date getPayDate() {
+		return payDate;
+	}
+	public AccountingInvoice setPayDate(Date payDate) {
+		this.payDate = payDate;
+		return this;
+	}
+	
+	public Integer getPayAccountId() {
+		return payAccountId;
+	}
+	public AccountingInvoice setPayAccountId(Integer payAccountId) {
+		this.payAccountId = payAccountId;
+		return this;
+	}
+	public String getPayAccountCode() {
+		return payAccountCode;
+	}
+	public AccountingInvoice setPayAccountCode(String payAccountCode) {
+		this.payAccountCode = payAccountCode;
+		return this;
+	}
+	public String getPayAccountDescription() {
+		return payAccountDescription;
+	}
+	public AccountingInvoice setPayAccountDescription(String payAccountDescription) {
+		this.payAccountDescription = payAccountDescription;
+		return this;
 	}
 	
 	

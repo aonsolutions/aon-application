@@ -74,7 +74,6 @@ public class AccountDAO {
 		return get(ctx, condition);
 	}
 	public static Account get(AONContext ctx, String code) {
-		System.out.println( "Account Search ...: " + code);
 		Condition condition = ACCOUNT.CODE.equal(code);
 		return get(ctx, condition);
 	}

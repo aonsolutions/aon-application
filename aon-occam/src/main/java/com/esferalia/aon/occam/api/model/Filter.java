@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
+import com.esferalia.aon.occam.api.model.Properties.GeoZoneProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductCategoryProperties;
@@ -158,5 +159,10 @@ public interface Filter {
 	@FunctionalInterface
 	public interface TaskEventFilter{
 		Filter filter(TaskEventProperties properties);
+	}
+
+	@FunctionalInterface
+	public interface GeoZoneFilter{
+		Filter filter(GeoZoneProperties properties);
 	}
 }

@@ -26,6 +26,8 @@ import com.esferalia.aon.watson.error.AonCoreException;
 public interface IAccounting {
 	//		  	REGISTRY
 	public Stream<AccountingRegistry> getAccountingRegistries(AONContext ctx, AccountingRegistryFilter filter);
+	public AccountingRegistry insert(AONContext ctx, AccountingRegistry reg);
+	
 	// 			ACCOUNT
 	public Account getAccount(AONContext ctx,Integer accountId);		
 	public Account getAccount(AONContext ctx,String code);

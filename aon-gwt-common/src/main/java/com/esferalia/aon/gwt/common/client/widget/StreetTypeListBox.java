@@ -17,4 +17,9 @@ public class StreetTypeListBox extends ListBox {
 	public void setValue( StreetType type) {
 		setSelectedIndex(type==null?0:type.ordinal()+1);
 	}
+	
+	public StreetType getValue() {
+		return getSelectedIndex()==0?null:StreetType.values()[getSelectedIndex()-1];
+	}
 }
+

@@ -57,6 +57,7 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SecurityDAO {
+	
 	private static final SignaturePropertiesDAO SIGNATURE_PROPERTIES = new SignaturePropertiesDAO();
 	protected static class SignaturePropertiesDAO implements SignatureProperties {
 		protected Condition[] getConditions(SignatureFilter filter) {
@@ -293,7 +294,29 @@ public class SecurityDAO {
 		// Si ha llegado aqui es un error.
 		throw new IllegalAccessError("Usario sin permisos.");
 	}
-	
+	public static LinkedList<Scope> getAvailableScopes (AONContext ctx) {
+		return ctx.getDslContext()
+			.select()
+			.from(SCOPE)
+			.where(getUserScopesCondition(ctx,SCOPE.ID))
+			.and(SCOPE.DOMAIN.in(getInheritanceDomainIds(ctx)))
+			.fetchInto(SCOPE)
+			.stream()
+			.map(new FullScopeFiller())
+			.collect(Collectors.toCollection(LinkedList::new))
+			;
+	}
+	public static LinkedList<Scope> getDomainScopes(AONContext ctx) {
+		return ctx.getDslContext()
+			.select()
+			.from(SCOPE)
+			.where(SCOPE.DOMAIN.eq(ctx.getDomainId()))
+			.fetchInto(SCOPE)
+			.stream()
+			.map(new FullScopeFiller())
+			.collect(Collectors.toCollection(LinkedList::new))
+			;
+	}
 	public static Scope getScope(AONContext ctx, Integer scopeId){
 		return ctx.getDslContext().select().from(SCOPE)
 				.where(SCOPE.ID.eq(scopeId)).limit(1).fetchInto(SCOPE)

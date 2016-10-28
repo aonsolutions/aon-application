@@ -118,5 +118,10 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 					 .or(p.getAccountDescriptionProperty().like(q))
 				).collect(Collectors.toCollection(LinkedList::new));
 	}
+	
+	@Override
+	public AccountingRegistry insert(String domainName, int domain, AccountingRegistry reg) throws AonCoreException {
+		return ACCOUNTING.insert(domainName, domain,AonServletUtils.getLoggedUser(), reg);
+	}
 
 }

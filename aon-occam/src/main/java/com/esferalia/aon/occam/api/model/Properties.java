@@ -460,4 +460,13 @@ public interface Properties {
 		Property<String> getModificationUserProperty();
 		Property<Timestamp> getModificationDateProperty();
 	}
+
+	public interface GeoZoneProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getCodeProperty();
+		Property<String> getNameProperty();
+		Property<Byte> getSystemProperty();
+	}
+
 }
