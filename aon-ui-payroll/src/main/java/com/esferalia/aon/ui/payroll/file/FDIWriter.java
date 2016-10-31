@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
@@ -35,6 +36,7 @@ import com.esferalia.aon.file.payroll.fdi.data.ODP;
 import com.esferalia.aon.file.payroll.fdi.data.TRA;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.DischargeCause;
@@ -44,6 +46,8 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.ss.T34;
 import com.esferalia.aon.payroll.enumeration.ss.T35;
 import com.esferalia.aon.payroll.enumeration.ss.T36;
+import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
@@ -313,19 +317,17 @@ public class FDIWriter implements Serializable {
 		DEC dec = new DEC();
 		// TODO DAR SOPORTE A LA OBTENCION DE LAS BASES Y DIAS COTIZADOS
 		String code = getContractCode(detail.getContractLeave().getContract()).getValue();
+		Double baseReg = getBaseReg(detail);
+		if(baseReg==null){
+			baseReg = 0.0;
+			AonUtil.addErrorMessage("No se ha encontrado la base reguladora de " 
+					+ detail.getContractLeave().getContract().getPerson().getFullName());
+		}
 		if(code.startsWith("1") || code.startsWith("4")){
-			if(detail.getContractLeave().getType()==LeaveType.OCCUPATIONAL_DISEASE){
-				dec.setBaseCotizacion( detail.getContractLeave().getDailyCgpBase() * 30 );
-			} else {
-				dec.setBaseCotizacion( detail.getContractLeave().getDailyCgcBase() * 30 );
-			}
+			dec.setBaseCotizacion( baseReg * 30 );
 			dec.setDiasCotizados( 30 );
 		} else {
-			if(detail.getContractLeave().getType()==LeaveType.OCCUPATIONAL_DISEASE){
-				dec.setSumaBasesCotizacion( detail.getContractLeave().getDailyCgpBase() * 30 );
-			} else {
-				dec.setSumaBasesCotizacion( detail.getContractLeave().getDailyCgcBase() * 30 );
-			}
+			dec.setSumaBasesCotizacion( baseReg * 30 );
 			dec.setSumaDiasCotizados( 30 );
 		}
 		dec.setCotizacionAnteriorHorasExtras(0.0);
@@ -344,6 +346,39 @@ public class FDIWriter implements Serializable {
 	private ContractCode getContractCode(Contract contract) {
 		String tc2 = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.TC2.getName());
 		return ContractCode.getContractCodeByValue(tc2);
+	}
+	
+	private Double getBaseReg(ContractLeaveDetail detail) {
+		Double base = null;
+		if(detail.getContractLeave().getType()==LeaveType.OCCUPATIONAL_DISEASE){
+			base = detail.getContractLeave().getDailyCgpBase();
+		} else {
+			base = detail.getContractLeave().getDailyCgcBase();
+		}
+		try {
+			if(base==null){
+				ISalary salary = PayrollUtils.getInstance().getSalary(detail.getContractLeave().getContract(), detail.getDate(), detail.getDate());
+				if(salary!=null){
+					Date start = DateUtils.setDays(detail.getDate(), 1);
+					Date end = DateUtils.addMonths(detail.getDate(), 1);
+					end = DateUtils.setDays(end, 1);
+					end = DateUtils.addDays(end, -1);
+					List<SalaryData> list = SEPEUtils.getInstance()
+							.getSalaryDataList(salary, start, end,
+									ContextVariable.REGULATORY_BASE.getName());
+					if(list!=null && !list.isEmpty()){
+						base = Double.valueOf(list.get(0).getExpression());
+					}
+				} else {
+					AonUtil.addErrorMessage("No hay nomina de la que obtener la base reguladora de " 
+							+ detail.getContractLeave().getContract().getPerson().getFullName());
+				}
+			}
+		} catch (Exception e) {
+			AonUtil.addErrorMessage("ERROR al obtener la base reguladora de " 
+					+ detail.getContractLeave().getContract().getPerson().getFullName());
+		}
+		return base;
 	}
 	
 	private String getAuthorizationKey(Integer domain) {
