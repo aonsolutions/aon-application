@@ -22,6 +22,7 @@ import org.jooq.Condition;
 import org.jooq.InsertValuesStep21;
 import org.jooq.InsertValuesStep3;
 import org.jooq.InsertValuesStepN;
+import org.jooq.Record1;
 import org.jooq.Record20;
 import org.jooq.Record21;
 import org.jooq.Record3;
@@ -519,9 +520,10 @@ public class ProductDAO {
 	}
 
 	public static Integer getItemId(AONContext ctx, ItemFilter filter) {
-		return ctx.getDslContext().select(ITEM.ID).from(ITEM)
+		Record1<Integer> record = ctx.getDslContext().select(ITEM.ID).from(ITEM)
 				.where(ITEM_PROPERTIES.getConditions(filter)).limit(1)
-				.fetchOne().value1();
+				.fetchOne();
+		return record!=null && record.size()>0?record.value1():null;
 	}
 	
 	public static LinkedList<Item> getItemList(AONContext ctx, ItemFilter filter){

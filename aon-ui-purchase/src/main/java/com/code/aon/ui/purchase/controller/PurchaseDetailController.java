@@ -416,6 +416,8 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 				newPurchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
 				newPurchaseDetail.setProposalDetail(purchaseDetail.getProposalDetail());
 				newPurchaseDetail.setDelivered(0);
+				newPurchaseDetail.setSource(purchaseDetail.getSource());
+				newPurchaseDetail.setSourceId(purchaseDetail.getSourceId());
 				getManagerBean().restoreNullSubPOJOs(newPurchaseDetail);
 				getManagerBean().insert(newPurchaseDetail);
 			}
