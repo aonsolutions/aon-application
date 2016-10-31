@@ -81,6 +81,10 @@ public class DBConsults {
 		AON.updateTaskDescription(domain.getName(), domain.getId(),login, task);
 	}
 	
+	public void updateTaskTitle(Domain domain, String login, Task task){
+		AON.updateTaskTitle(domain.getName(), domain.getId(),login, task);
+	}
+	
 	public void updateTaskPriority(Domain domain, String login, Task task){
 		AON.updateTaskPriority(domain.getName(), domain.getId(),login, task);
 	}

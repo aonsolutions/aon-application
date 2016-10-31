@@ -53,6 +53,7 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
+import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.vaadin.widget.VaadinComboBox;
 import com.vaadin.polymer.vaadin.widget.event.ValueChangedEvent;
 import com.vaadin.polymer.vaadin.widget.event.ValueChangedEventHandler;
@@ -272,7 +273,38 @@ public class IssuePanel extends Composite{
 	private void initHeader(JsIssue issue) {
 		VerticalPanel vp = new VerticalPanel();
 		vp.setSpacing(10);
-		vp.add(getTitleLabel(issue.getTitle(), issue.getNumber()));
+		Label title = getTitleLabel(issue.getTitle(), issue.getNumber());
+		title.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				PaperInput pi = new PaperInput();
+				pi.setLabel("T\u00edtulo");
+				pi.setValue(issue.getTitle());
+				AonDialog dialog = new AonDialog("Editar T\u00edtulo", pi) {
+					
+					@Override protected void onCancel() {}
+				
+					@Override
+					protected void onAccept() {					
+						String request = "{\"title\":\""+ pi.getValue() +"\"}";
+						incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
+							
+							@Override
+							public void onSuccess(JsIssue result) {
+								PaperInput pi = (PaperInput) content.getWidget(0);
+								Label l = (Label) vp.getWidget(0);
+								l.setText(pi.getValue()+ " #"+issue.getNumber());
+							}
+							
+							@Override public void onFailure(Throwable caught) {}
+						});					}
+				};
+				parent.toolbar.add(dialog);
+				dialog.open();
+			}
+		});
+		vp.add(title);
 		if(!issue.isDuplicate()){
 			incidence.getEvents(issue.getEventsUrl(), new AsyncCallback<JSON<JsEvent>>() {
 				@Override

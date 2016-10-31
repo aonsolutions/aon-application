@@ -60,7 +60,7 @@ public class IssueSelector extends Composite {
 				Integer offsetHeight = issueSelector.getElement().getOffsetHeight();
 				Integer physicalSize = issueSelector.getElement().getScrollHeight();
 				Integer maxScrollPosition = physicalSize - offsetHeight;
-				if(scrollTop > maxScrollPosition && more){
+				if(scrollTop >= maxScrollPosition && more){
 					iff.setPage(iff.getPage()+1);
 					if(type.equals("dup")) updatelIssueSelectorDup(iff, true);
 					else if(type.equals("faq")) updatelIssueSelectorFaq(iff, true);

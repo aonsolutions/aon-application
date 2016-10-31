@@ -289,6 +289,13 @@ public class ReposServlet extends HttpServlet{
 							Integer parentId = Integer.parseInt(d);
 							task = updateTaskFaq(domain, userName, task, parentId);
 							object = getDuplicateIssueJSON(domain, userName, task);
+						} else if(json.opt("title") != null){
+							task.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(userName)
+								.setDescription(json.getString("title"));
+							DB.updateTaskTitle(domain, userName, task.setComments(json.getString("title")));
+							Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
+							Boolean principal = DB.isPrincipal(domain, userName, task);
+							object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise, principal).toJSON();
 						}
 						
 					}

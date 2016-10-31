@@ -420,6 +420,14 @@ public class TaskDAO {
 			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
 			.where(TASK.ID.eq(task.getId())).execute();
 	}
+
+	public static void updateTaskTitle(AONContext ctx, Task task) {
+		ctx.getDslContext().update(TASK)
+			.set(TASK.DESCRIPTION, task.getComments())
+			.set(TASK.MODIFICATION_USER, task.getModificationUser())
+			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
+			.where(TASK.ID.eq(task.getId())).execute();
+	}
 	
 	public static void updateTaskDescription(AONContext ctx, Task task) {
 		ctx.getDslContext().update(TASK)

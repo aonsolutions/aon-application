@@ -2572,6 +2572,16 @@ public class AON {
 		}
 	}
 	
+	public static void updateTaskTitle(String domainName, Integer domainId, String login, Task task){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getTask().updateTaskTitle(ctx, task);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
 	public static void updateTaskPriority(String domainName, Integer domainId, String login, Task task){
 		AONContext ctx = null;
 		try{
