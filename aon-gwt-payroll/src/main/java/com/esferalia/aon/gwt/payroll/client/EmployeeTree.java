@@ -1143,9 +1143,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void setWorkplace(final Workplace workplace) {
 			AsyncEmployeeProvider employeeProvider = new AsyncEmployeeProvider() {
 
+				
 				@Override
-				Date getEndDate() {
-					return calcDialog.getEndDate();
+				Date getStartDate() {
+					return calcDialog.getStartDate();
 				}
 
 				@Override
@@ -1429,9 +1430,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	abstract class AsyncEmployeeProvider extends AsyncDataProvider<Employee> {
 
-		abstract Date getEndDate();
+		abstract Date getStartDate();
 
 		abstract Workplace getWorkplace();
+		
 
 		/**
 		 * {@link #onRangeChanged(HasData)} is called when the table requests a
@@ -1445,7 +1447,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			// Query the data asynchronously (RPC call).
 			getServiceAsync().getEmployees(
 					getWorkplace().getId(), 
-					EmployeeTree.this.employees.getFromDate(),
+					getStartDate(),
 					EmployeeTree.this.employees.getNamePattern(),
 					range.getStart(), 
 					range.getLength(),

@@ -136,7 +136,7 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 	@UiHandler("monthListBox")
 	void onMonthChanged(ChangeEvent event) {
 		// refresh range
-		selectDataGrid.setVisibleRange(0, PAGE_SIZE);
+		selectDataGrid.setVisibleRangeAndClearData(new Range(0, PAGE_SIZE), true);
 	}
 
 	@UiHandler("typeListBox")
