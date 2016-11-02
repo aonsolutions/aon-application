@@ -360,8 +360,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				
-				SalesDetail salesDetail = (SalesDetail)HibernateUtil.getSession(sessionName).merge(getSalesDetail()); 
-				assignSerialNumber(salesDetail);
+				assignSerialNumber(getSalesDetail());
 				onSearch(event);
 				
 				HibernateUtil.commitTransaction(sessionName);
