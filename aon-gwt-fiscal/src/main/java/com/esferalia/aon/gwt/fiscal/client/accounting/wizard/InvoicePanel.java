@@ -531,8 +531,8 @@ public class InvoicePanel extends WizardContentBase {
 	
 	public void onLog(AccountEntry[] entries) {
 		workingLog.clear();
-		for (AccountEntry entry : entries) {
-			workingLog.addPreview(entry);			
+		for (int i = (entries.length - 1); i>=0; i--) {
+			workingLog.addPreview(entries[i]);
 		}
 	}
 	@Override

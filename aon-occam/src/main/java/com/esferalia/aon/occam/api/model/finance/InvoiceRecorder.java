@@ -363,7 +363,7 @@ public class InvoiceRecorder {
 				detail.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ));
 				detail.setDocumentNumber(document);
 			}			
-			return new AccountEntry[]{payEntry,ae};
+			return new AccountEntry[]{ae,payEntry};
 		}
 		return new AccountEntry[]{ae};
 	}
