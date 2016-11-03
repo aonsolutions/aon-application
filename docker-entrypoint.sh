@@ -38,12 +38,19 @@ EOF
         cat << EOF > $TOMCAT_BINDIR/setenv.sh
 CATALINA_OPTS="-Duser.language=es -Duser.country=ES -Djava.security.auth.login.config=$TOMCAT_CONFDIR/login.config"
 EOF
+	echo
+	echo	   __ _  ___  _ __
+	echo	  / _` |/ _ \| '_ \
+	echo	 | (_| | (_) | | | |
+	echo	  \__,_|\___/|_| |_|
+	echo
+	echo
 
 	echo
 	echo -e "Using DB_HOST:\t\t$DB_HOST"
 	echo -e "Using DB_PORT:\t\t$DB_PORT"
 	echo -e "Using DB_USER:\t\t$DB_USER" 
-	echo -e "Using DB_PASSWD:\t$DB_PASSWD"
+#	echo -e "Using DB_PASSWD:\t$DB_PASSWD"
 	echo
 	echo 'AON init process complete; ready for start up.'
 	echo
