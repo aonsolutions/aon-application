@@ -644,7 +644,7 @@ public class InvoiceDAO {
 		return ++next;
 	}
 
-	public static Integer insert(AONContext ctx, AonConfiguration config, Invoice invoice) {
+	public static Invoice insert(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		ctx.checkWrite();
 		InvoiceValidation.validateInvoice(ctx, config, invoice);
 		InvoiceAutoComplete.completeInvoice(ctx, config, invoice);
@@ -695,7 +695,7 @@ public class InvoiceDAO {
 		invoice.setId(record.getValue(INVOICE.ID));
 		ctx.log().info("INSERT INVOICE invoice: " + invoice.getId());
 		insertDetails(ctx, config, invoice);
-		return record.getValue(INVOICE.ID); 
+		return invoice; 
 	}
 	
 	private static void insertDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {

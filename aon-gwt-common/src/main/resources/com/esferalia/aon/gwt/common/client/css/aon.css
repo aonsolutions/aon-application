@@ -9,6 +9,10 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	}
 }
 
+input[type="checkbox"] + label:focus {
+	background-color: #FBEDB6;
+}
+
 .aon-Selector {
 	margin: 0px;
 	color: #4B4B4B;

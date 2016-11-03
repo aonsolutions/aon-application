@@ -17,28 +17,61 @@
 			<accInvoice:InvoiceExtraPanel ui:field="extraPanel"/>
 		</g:east>
 		<g:center>
+			<g:SimpleLayoutPanel styleName="{aonResources.css.aonWizardPanel}">
+				<g:DockLayoutPanel styleName="{aonResources.css.aonFlexContainer} {aonResources.css.aonPadding2Top}">
+					<g:north size="50">
+						<g:FlowPanel>
+							<g:FlexTable ui:field="regTable"/>
+							<g:FlexTable ui:field="flexTable"/>
+						</g:FlowPanel>
+					</g:north>
+					<g:center>
+						<g:ScrollPanel>
+							<g:FlowPanel>
+								<accInvoice:InvoiceVATPanel ui:field="vatPanel"/>
+								<g:HTMLPanel ui:field="withholdingPanel" styleName="{aonResources.css.aonWizardPanelInner}">
+									<table>
+										<tr>
+											<td>
+												<g:Label ui:field="withholdingLabel" text="I.R.P.F." styleName="{aonResources.css.aonInnerLabel}"/>
+											</td>
+											<td>
+												<g:ListBox ui:field="withholdingTaxs"/>
+											</td>
+											<td>
+												<aon:DoubleBox ui:field="withholdingBase" visibleLength="12" 
+													styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5} {aonResources.css.aonWidth80}"/>
+											</td>
+											<td>
+												<aon:DoubleBox ui:field="withholdingPercent" visibleLength="6" maxLength="6"
+													styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5} {aonResources.css.aonWidth40}"/>
+											</td>
+											<td>
+												<aon:DoubleBox ui:field="withholdingQuota" visibleLength="12"
+													styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5} {aonResources.css.aonWidth80}"/>
+											</td>
+											<td>
+												<aon:AccountBox ui:field="withholdingAccount"/>
+											</td>
+											<td>
+												<aon:WithholdingTypeListBox ui:field="withholdingType"/>
+											</td>
+										</tr>
+									</table>
+								</g:HTMLPanel>
+							</g:FlowPanel>
+						</g:ScrollPanel>
+					</g:center>
+					<g:south size="50">
+						<g:FlexTable ui:field="payTable"/>
+					</g:south>
+				</g:DockLayoutPanel>
+			</g:SimpleLayoutPanel>
+<!-- 		
 			<g:ScrollPanel styleName="{aonResources.css.aonWizardPanel}">
 				<g:FlowPanel styleName="{aonResources.css.aonFlexContainer} {aonResources.css.aonPadding2Top}">
-					<g:FlowPanel styleName="{aonResources.css.aonWizardPanelInner} {aonResources.css.aonMarginBottom}">
-						<g:Label text="{msg.titular}" styleName="{aonResources.css.aonInnerLabel}  {aonResources.css.aonWidth110}"/>
-						<aon:AccountingRegistryBox ui:field="registryBox"/>
-					</g:FlowPanel>
-					
-					<g:FlowPanel ui:field="invoiceDataPanel" 
-						styleName="{aonResources.css.aonWizardPanelInner} {aonResources.css.aonMarginBottom}">
-						<g:Label text="{msg.invoiceNumber}" styleName="{aonResources.css.aonInnerLabel} {aonResources.css.aonWidth110}"/>
-						<g:ListBox ui:field="series" styleName="{aonResources.css.aonMarginRight5}"/>
-						<aon:IntegerBox ui:field="number" visibleLength="8" maxLength="8"/>
-						<g:TextBox ui:field="referenceCode" styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5}" 
-							visibleLength="15" maxLength="32"/>
-						<g:FlowPanel styleName="{aonResources.css.aonWidth200}">
-							<g:Label text="{msg.invoiceTotal}" styleName="{aonResources.css.aonInnerLabel}"/>	
-							<aon:DoubleBox ui:field="invoiceTotal" visibleLength="12" 
-								styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5}"/>
-						</g:FlowPanel>
-						<g:Button ui:field="fastSave" text="{msg.saveAction}"  
-							styleName="{aonResources.css.aonIconSave} {aonResources.css.aonIconCommandButton} {aonResources.css.aonMarginLeft}"/>
-					</g:FlowPanel>
+					<g:FlexTable ui:field="regTable"/>
+					<g:FlexTable ui:field="flexTable"/>
 					<accInvoice:InvoiceVATPanel ui:field="vatPanel"/>
 					<g:HTMLPanel ui:field="withholdingPanel" styleName="{aonResources.css.aonWizardPanelInner}">
 						<table>
@@ -68,11 +101,13 @@
 									<aon:WithholdingTypeListBox ui:field="withholdingType"/>
 								</td>
 							</tr>
-							
 						</table>
 					</g:HTMLPanel>
+					<g:FlexTable ui:field="payTable"/>
 				</g:FlowPanel> 
 			</g:ScrollPanel>
+ -->
+ 			
 		</g:center>	
 	</g:SplitLayoutPanel>
 </ui:UiBinder>

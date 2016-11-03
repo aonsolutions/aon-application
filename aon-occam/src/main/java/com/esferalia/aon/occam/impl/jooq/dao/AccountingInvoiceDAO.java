@@ -1,13 +1,16 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
+import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
@@ -17,15 +20,21 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.IAccountEntryTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.FinanceStatus;
+import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -34,6 +43,7 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class AccountingInvoiceDAO {
@@ -377,7 +387,7 @@ public class AccountingInvoiceDAO {
 	}
 
 
-	public static AccountingInvoice save(AONContext ctx, AonConfiguration config, AccountingInvoice accInvoice) {
+	public static AccountingInvoice save(final AONContext ctx, AonConfiguration config, final AccountingInvoice accInvoice) {
 		if (accInvoice.getAccountEntry().getId() != null) {
 			AccountEntryDAO.delete(ctx, accInvoice.getAccountEntry().getId());
 			accInvoice.getAccountEntry().setId( null );
@@ -386,19 +396,98 @@ public class AccountingInvoiceDAO {
 		invoice.setRecorded(true);
 		checkRegistryAccount(ctx,accInvoice);
 		generateDetails(ctx,config,accInvoice);
-		Integer invoiceId = InvoiceDAO.insert(ctx, config, invoice);
+		InvoiceDAO.insert(ctx, config, invoice);
 		insertAccountLinks(ctx, invoice);
 		LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
 		AccountEntry[] array = InvoiceRecorder.recordInvoice(accInvoice);
 		for (AccountEntry entry : array) {
-			Integer entryId = AccountEntryDAO.save(ctx, entry);
-			insertLink( ctx, invoice.getDomain(), entryId, invoiceId );
+			final Integer entryId = AccountEntryDAO.save(ctx, entry);
+			entry.getEntryType().visit(entry, new IAccountEntryTypeVisitor() {
+				@Override public void visitTax(AccountEntry entry) {}
+				@Override public void visitStockVariation(AccountEntry entry) {}
+				@Override public void visitSocialInsuranceAdjust(AccountEntry entry) {}
+				@Override public void visitSocialInsurance(AccountEntry entry) {}
+				@Override public void visitSalary(AccountEntry entry) {}
+				@Override public void visitReturnedPayment(AccountEntry entry) {}
+				@Override public void visitReturnedCollection(AccountEntry entry) {}
+				
+				@Override
+				public void visitSalesInvoice(AccountEntry entry) {
+					insertLink( ctx, invoice.getDomain(), entryId, invoice.getId());
+				}
+
+				@Override
+				public void visitPurchaseInvoice(AccountEntry entry) {
+					insertLink( ctx, invoice.getDomain(), entryId, invoice.getId() );
+				}
+				@Override 
+				public void visitExpenseInvoice(AccountEntry entry) {
+					insertLink( ctx, invoice.getDomain(), entryId, invoice.getId());
+				}
+				
+				@Override
+				public void visitPayment(AccountEntry entry) {
+					saveFinance(ctx, invoice.getDomain(), entryId, invoice.getId(), accInvoice );
+				}
+				
+				@Override public void visitOperating(AccountEntry entry) {}
+				@Override public void visitOpening(AccountEntry entry) {}
+				@Override public void visitManual(AccountEntry entry) {}
+				@Override public void visitLoanFee(AccountEntry entry) {}
+				@Override public void visitLoan(AccountEntry entry) {}
+				@Override public void visitLeasingFee(AccountEntry entry) {}
+				@Override public void visitLeasing(AccountEntry entry) {}
+				@Override public void visitInvestmentInvoice(AccountEntry entry) {}
+				@Override public void visitExpenses(AccountEntry entry) {}
+				@Override public void visitCollection(AccountEntry entry) {}
+				@Override public void visitClosing(AccountEntry entry) {}
+				@Override public void visitAmortization(AccountEntry entry) {}
+			});
 			entries.add( AccountEntryDAO.getAccountEntry(ctx, entryId) );
 		}
 		accInvoice.setAccountEntries(entries);
 		return accInvoice;
 	}
 
+	private static void saveFinance(AONContext ctx, int domain, Integer entryId, Integer invoiceId, AccountingInvoice accInvoice) {
+		Invoice invoice = accInvoice.getInvoice();
+		Integer financeId = FinanceDAO.insert(ctx, new Finance()
+				.setDomain(ctx.getDomainId())
+				.setInvoice(new Invoice().setId(invoiceId))
+				.setPayment(!invoice.isSales())
+				.setPayMethod(new PayMethod().setId(accInvoice.getPayMethod()))
+				.setRegistry(new Registry().setId(invoice.getRegistry()))
+				.setRegistryDocument(invoice.getRegistryDocument())
+				.setRegistryDocumentType(invoice.getRegistryDocumentType())
+				.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry())
+				.setRegistryName(invoice.getRegistryName())
+				.setScope(invoice.getScope())
+				.setAmount(invoice.getTotal())
+				.setDueDate(accInvoice.getPayDate())
+				.setFinanceStatus(FinanceStatus.PAID)
+				.setSecurityLevel(invoice.getSecurityLevel())
+				.setConcept(invoice.getDocumentNumber())
+			);
+		Integer financTrackingId = ctx.getDslContext().insertInto(FINANCE_TRACKING)
+			.set(FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
+			.set(FINANCE_TRACKING.FINANCE, financeId )
+			.set(FINANCE_TRACKING.TRACKING_DATE, AonDateUtils.toSql(accInvoice.getPayDate()))
+			.set(FINANCE_TRACKING.TYPE,FinanceTrackingType.PAID.value())
+			.set(FINANCE_TRACKING.AMOUNT, invoice.getTotal())
+			.set(FINANCE_TRACKING.RECORDED, AonEnumUtils.getByte(true))
+			.set(FINANCE_TRACKING.DESCRIPTION, "Asiento: " + entryId)
+			.set(FINANCE_TRACKING.CREATION_USER,ctx.getUser())
+			.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.returning(FINANCE_TRACKING.ID)
+			.fetchOne()
+			.getValue(FINANCE_TRACKING.ID);
+		ctx.getDslContext().insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
+			.set(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
+			.set(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY, entryId )
+			.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING, financTrackingId )
+			.execute();
+	}
+	
 	private static void checkRegistryAccount(final AONContext ctx, AccountingInvoice accInvoice) {
 		if (accInvoice.getRegistry().getAccountId() == null) {
 			accInvoice.getRegistry().getType().visit(accInvoice.getRegistry(),  new IAccountingRegistryTypeVisitor() {

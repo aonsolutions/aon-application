@@ -3090,5 +3090,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Nueva Cuenta")
 	String newAccount();
 
+	@DefaultMessage("Contabilizar pago")
+	String recordPayment();	
 
 }

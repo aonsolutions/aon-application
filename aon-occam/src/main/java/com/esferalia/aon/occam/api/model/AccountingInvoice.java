@@ -21,6 +21,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private AccountingRegistry registry;
 	private Integer workplace;
 	
+	private Integer payMethod;
 	private Integer payAccountId;
 	private String payAccountCode;
 	private String payAccountDescription;
@@ -248,7 +249,13 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		this.payDate = payDate;
 		return this;
 	}
-	
+	public Integer getPayMethod() {
+		return payMethod;
+	}
+	public AccountingInvoice setPayMethod(Integer payMethod) {
+		this.payMethod = payMethod;
+		return this;
+	}
 	public Integer getPayAccountId() {
 		return payAccountId;
 	}

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -22,6 +23,7 @@ public class AonConfiguration implements Serializable {
 	private LinkedList<Tax> vatTaxes;
 	private LinkedList<GeoZone> geozones;
 	private LinkedList<Scope> availableScopes;
+	private LinkedList<PayMethod> payMethods;
 	private Tax defaultVatPercent;
 	private LinkedList<Tax> withholdingTaxes;
 	private Tax defaultWithholdingPercent;
@@ -120,6 +122,13 @@ public class AonConfiguration implements Serializable {
 	}
 	public AonConfiguration setGeozones(LinkedList<GeoZone> geozones) {
 		this.geozones = geozones;
+		return this;
+	}
+	public LinkedList<PayMethod> getPayMethods() {
+		return payMethods;
+	}
+	public AonConfiguration setPayMethods(LinkedList<PayMethod> payMethods) {
+		this.payMethods = payMethods;
 		return this;
 	}
 	public LinkedList<Scope> getAvailableScopes() {

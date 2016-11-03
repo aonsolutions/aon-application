@@ -80,8 +80,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	}
 	
 	public InvoiceVATPanel(IInvoicePanelCallback callback) {
-		setStyleName(AON.AON_CSS.aonScrollArea());
-		addStyleName(AON.AON_CSS.aonWidthAll());
+		setStyleName(AON.AON_CSS.aonWidthAll());
+		addStyleName(AON.AON_CSS.aonBlockCenter());
 		
 		setCallback(callback);
 		container = new FlowPanel();
@@ -115,36 +115,42 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
 		tab.getCellFormatter().setWidth(row, col, "1%");
+		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		++col;
 		label = new Label(AON.MSG.taxableBaseAbr());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
 		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		++col;
 		label = new Label("% IVA");
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
 		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		++col;
 		label = new Label(AON.MSG.vatQuota());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
 		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		++col;
 		reLabel = new Label("% RE");
 		reLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, reLabel);
 		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		++col;
 		reQuotaLabel = new Label(AON.MSG.surchargeQuota());
 		reQuotaLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, reQuotaLabel);
 		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		++col;
 		
 		investAssetLabel = new Label(AON.MSG.actInvestAsset());
@@ -152,44 +158,52 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		tab.setWidget(row, col, investAssetLabel);
 		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		++col;
 		dedPercentLabel = new Label(AON.MSG.dedPercent());
 		dedPercentLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, dedPercentLabel);
 		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		++col;
 		dedQuotaLabel = new Label(AON.MSG.dedQuota());
 		dedQuotaLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, dedQuotaLabel);
 		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		++col;
 		adjAccountLabel = new Label(AON.MSG.adjAccount());
 		adjAccountLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, adjAccountLabel);
 		tab.getCellFormatter().setWidth(row, col, "1%");
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		++col;
 		inputVatLabel = new Label(AON.MSG.inputVatAccount());
 		inputVatLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, inputVatLabel);
 		tab.getCellFormatter().setWidth(row, col, "1%");
+		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		++col;
 		outputVatLabel = new Label(AON.MSG.outputVatAccount());
 		outputVatLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, outputVatLabel);
 		tab.getCellFormatter().setWidth(row, col, "1%");
+		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		++col;
 		withholdingLabel = new Label("IRPF");
 		withholdingLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, withholdingLabel);
 		tab.getCellFormatter().setWidth(row, col, "1%");
+		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBorderBottom());		
 		++col;
 
 		label = new Label();
 		tab.setWidget(row, col, label);
 		tab.getCellFormatter().setWidth(row, col, "auto");
+		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBorderBottom());
 		++col;
 	}
 	
@@ -200,6 +214,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		addButton.setAccessKey( 'L' );
 		addButton.setStyleName(AON.AON_CSS.aonIconReset());
 		addButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		addButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		addButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -233,6 +248,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		saveButton.setStyleName(AON.AON_CSS.aonIconSave());
 		saveButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
 		saveButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+		saveButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		saveButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
