@@ -14,7 +14,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,6 +27,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
@@ -138,7 +138,7 @@ public class UdapaDeliveryHandler implements Serializable {
 		try {
 			ingenetDeliveries = IngenetDeliveryManager.getInstance().obtainUnreadDeliveries(
 					AonUtil.getDomainName(), AonUtil.getRemoteUser());
-			setModel(new ListDataModel(new ArrayList<Integer>(ingenetDeliveries.keySet())));
+			setModel(new SerializableListDataModel(new ArrayList<Integer>(ingenetDeliveries.keySet())));
 			this.checks.clear();
 			ingenetDeliveries.keySet().forEach(id -> {this.checks.add(id);});
 			this.setShowIngenetWindow(true);
