@@ -87,7 +87,6 @@
 								<ui:param name="lookupRendered" value="#{formEdit}" />
 								<ui:param name="lookupReRender" 
 									value="invoiceDetailItemEdit,invoiceDetailQuantityEdit,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount" />
-								<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
 								<aon:methodParam name="lookupChangeListener"
 									value="#{controller.onItemChanged}" type="lookupChangeListener" />
 							</ui:include>
@@ -129,7 +128,6 @@
 										<ui:param name="lookupReRender" 
 											value="invoiceDetailItemNew,invoiceDetailQuantityNew,InvoiceDetail_price-New,InvoiceDetail_discount-New,
 													InvoiceDetail_amount_data" />
-										<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
 										<aon:methodParam name="lookupChangeListener"
 											value="#{controller.onItemChanged}" type="lookupChangeListener" />
 									</ui:include>

@@ -21,7 +21,6 @@
 				<ui:param name="skipSuggestText" value="#{detailController.to.item != null and detailController.to.item.id != null}" />
 				<ui:param name="lookupInputOnFocus" value="InvoiceDetail_description" />
 				<ui:param name="lookupReRender"	value="#{formName}" />
-				<ui:param name="lookupControllerListener" value="#{itemLookupNoWildCardListener}" />
 				<aon:methodParam name="lookupChangeListener"
 					value="#{detailController.onItemChanged}" type="lookupChangeListener" />
 			</ui:include>
