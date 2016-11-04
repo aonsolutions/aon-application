@@ -115,17 +115,6 @@
 									title="#{bundle.sales_to_pending}"
 									immediate="true" rendered="#{manufacturingOrder.closed}"
 									styleClass="aon-icon-commandButton aon-icon-refresh aon-margin-left" />
-								
-								<aon:commandButton id="close" value="&#160;"
-									title="#{bundle.sales_to_close}"
-									immediate="true" rendered="#{manufacturingOrder.pending and manufacturingOrderDetail.model.rowCount > 0}"
-									styleClass="aon-icon-commandButton aon-icon-point-red" 
-									actionListener="#{manufacturingOrderDetail.onFullCloseShow}" 
-									reRender="showLineCloseWindow">
-										<f:setPropertyActionListener target="#{manufacturingOrderDetail.showLineCloseWindow}"
-											value="#{true}" />
-								</aon:commandButton>
-									
 									
 								<aon:commandButton id="block" value="&#160;"
 									actionListener="#{manufacturingOrder.onBlock}"
@@ -259,22 +248,13 @@
 								<ui:param name="itemLookupDisabled" value="#{true}" />
 								<ui:param name="lookupControllerListener" value="#{manufacturingOrderDetail.productFilter}" />
 								<ui:define name="afterInfoColumnContent">
-									<aon:commandLink id="manufacturedWarehouseTransferLink" immediate="true"
-										styleClass="aon-icon-plus-blue"
+									<aon:commandLink id="manufacturedIncomeLink" immediate="true"
+										styleClass="aon-icon-predetermine"
 										style="padding-right: 20px;" 
-										value="&#160;" title="#{bundle.aon_link_transfer} #{bundle.aon_of} #{bundle.product_manufactured_product}" 
+										value="&#160;" title="#{bundle.aon_closed}. #{bundle.aon_go}."
 										rendered="#{!manufacturingOrderDetail.pending}" 
-										actionListener="#{manufacturingOrderDetail.onLoadManufacturedTransfer}"
-										action="warehouseTransfer_form"
-										reRender="aonContent">
-									</aon:commandLink>
-									<aon:commandLink id="compositionWarehouseTransferLink" immediate="true"
-										styleClass="aon-icon-minus-grey"
-										style="padding-right: 20px;" 
-										value="&#160;" title="#{bundle.aon_link_transfer} #{bundle.aon_of} #{bundle.product_composition}" 
-										rendered="#{!manufacturingOrderDetail.pending}" 
-										actionListener="#{manufacturingOrderDetail.onLoadCompositionTransfer}"
-										action="warehouseTransfer_form"
+										actionListener="#{manufacturingOrderDetail.onLoadManufacturedIncome}"
+										action="income_form"
 										reRender="aonContent">
 									</aon:commandLink>
 									<aon:commandButton id="purchaseDetailCloseButton" value="&#160;"

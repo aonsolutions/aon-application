@@ -44,9 +44,9 @@ import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
-import com.code.aon.warehouse.WarehouseTransfer;
-import com.code.aon.warehouse.WarehouseTransferDetail;
-import com.code.aon.warehouse.enumeration.WarehouseTransferSource;
+import com.code.aon.ui.warehouse.util.WarehouseUtil;
+import com.code.aon.warehouse.Income;
+import com.code.aon.warehouse.IncomeDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ManufacturingOrderDetailController extends PurchaseDetailController {
@@ -117,13 +117,18 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 	public void onLineCloseShow(ActionEvent event){
 		setManufacturingOrderManager(null);
 		try {
-			List<TransferPurchaseDetail> list = new LinkedList<TransferPurchaseDetail>();
-			PurchaseDetail detail = (PurchaseDetail) this.getModel().getRowData();
-			list.add( loadTransfer(detail) );
-			getManufacturingOrderManager().init(list);
-			getManufacturingOrderManager().getDetailModel().setRowIndex(0);
-			getManufacturingOrderManager().setUniqueDetailSelected(true);
-			onSelectCloseDetail(null);
+			if(this.getModel().isRowAvailable()){
+				int rowIndex = this.getModel().getRowIndex();
+				this.initializeModel();
+				this.getModel().setRowIndex(rowIndex);
+				PurchaseDetail detail = (PurchaseDetail) this.getModel().getRowData();
+				List<TransferPurchaseDetail> list = new LinkedList<TransferPurchaseDetail>();
+				list.add( loadTransfer(detail) );
+				getManufacturingOrderManager().init(list);
+				getManufacturingOrderManager().getDetailModel().setRowIndex(0);
+				getManufacturingOrderManager().setUniqueDetailSelected(true);
+				onSelectCloseDetail(null);
+			}
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -180,33 +185,19 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 		}
 	}
 	
-	public void onLoadManufacturedTransfer(ActionEvent event) throws ManagerBeanException {
-		loadCompositionTransfer(event, false);
-	}
-	
-	public void onLoadCompositionTransfer(ActionEvent event) throws ManagerBeanException {
-		loadCompositionTransfer(event, true);
-	}
-	
-	private void loadCompositionTransfer(ActionEvent event, boolean searchSourceWarehouse) throws ManagerBeanException {
+	public void onLoadManufacturedIncome(ActionEvent event) throws ManagerBeanException {
 		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
-		IManagerBean bean = BeanManager.getManagerBean(WarehouseTransfer.class);
+		IManagerBean bean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
-		if(searchSourceWarehouse){
-			criteria.addNullExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_TARGET_WAREHOUSE));
-		} else {
-			criteria.addNullExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_SOURCE_WAREHOUSE));
-		}
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_SOURCE), WarehouseTransferSource.MANUFACTURING_ORDER);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WAREHOUSE_TRANSFER_SOURCE_ID), purchaseDetail.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INCOME_DETAIL_PURCHASE_DETAIL_ID), purchaseDetail.getId());
 		Iterator<?> iterator = bean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
-			WarehouseTransfer transfer = (WarehouseTransfer) iterator.next();
-			BasicController wtController = (BasicController)AonUtil.getRegisteredBean(IWarehouseConstants.WAREHOUSE_TRANSFER_CONTROLLER_NAME);
-			wtController.onLoad(event, transfer.getId(), MANUFACTURING_ORDER_FORM_NAME, null);
+			IncomeDetail incomeDetail = (IncomeDetail) iterator.next();
+			BasicController incomeController = (BasicController)AonUtil.getRegisteredBean(IWarehouseConstants.INCOME_CONTROLLER_NAME);
+			incomeController.onLoad(event, incomeDetail.getIncome().getId(), MANUFACTURING_ORDER_FORM_NAME, null);
 		} else {
-			AonUtil.addErrorMessage("Traspaso no encontrado.");
-			throw new AbortProcessingException("Traspaso no encontrado.");
+			AonUtil.addErrorMessage("Albarán no encontrado.");
+			throw new AbortProcessingException("Albarán no encontrado.");
 		}
 	}
 	
@@ -221,8 +212,7 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 					}
 					if(isCloseable(transfer.getDetail())){
 						closeDetailLine(transfer);
-						createManufacturedTransfer(transfer);
-						createCompositionTransfer(transfer.getDetail(), transfer.getCompositionList());
+						createManufactureIncome(transfer);
 					}
 				}
 				
@@ -231,6 +221,8 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 				}
 				
 				this.initializeModel();
+			} else {
+				AonUtil.addErrorMessage("No se ha definido el almacén");
 			}
 			
 		} catch (ManagerBeanException e) {
@@ -258,53 +250,14 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 		bean.update(detail);
 	}
 
-	private void createManufacturedTransfer(TransferPurchaseDetail transferPurchaseDetail) throws ManagerBeanException {
-		WarehouseTransfer transfer = new WarehouseTransfer();
-		transfer.setSeries(getManufacturingOrderManager().getSeries());
-		int number = getManufacturingOrderManager().getNumber();
-		if(getManufacturingOrderManager().getNumber()==0){
-			number = getManufacturingOrderManager().obtainMaxNumber(getManufacturingOrderManager().getSeries());	
-		}
-		transfer.setNumber(number);
-		transfer.setIssueTime(getManufacturingOrderManager().getIssueTime());
-		transfer.setComments(null);
-		transfer.setSource(WarehouseTransferSource.MANUFACTURING_ORDER);
-		transfer.setSourceId(transferPurchaseDetail.getDetail().getId());
-		transfer.setSourceWarehouse(null);
-		transfer.setTargetWarehouse(transferPurchaseDetail.getDetail().getPurchase().getWarehouse());
-		transfer = (WarehouseTransfer) BeanManager.getManagerBean(WarehouseTransfer.class).insert(transfer);
-		
-		WarehouseTransferDetail transferDetail = new WarehouseTransferDetail();
-		transferDetail.setWarehouseTransfer(transfer);
-		transferDetail.setItem(transferPurchaseDetail.getDetail().getItem());
-		transferDetail.setQuantity(transferPurchaseDetail.getTotalQuantity());
-		BeanManager.getManagerBean(WarehouseTransferDetail.class).insert(transferDetail);
-	}
-
-	
-	private void createCompositionTransfer(PurchaseDetail detail, List<TransferConposition> compositionList) throws ManagerBeanException {
-		WarehouseTransfer transfer = new WarehouseTransfer();
-		transfer.setSeries(getManufacturingOrderManager().getSeries());
-		int number = getManufacturingOrderManager().getNumber();
-		if(getManufacturingOrderManager().getNumber()==0){
-			number = getManufacturingOrderManager().obtainMaxNumber(getManufacturingOrderManager().getSeries());	
-		}
-		transfer.setNumber(number);
-		transfer.setIssueTime(getManufacturingOrderManager().getIssueTime());
-		transfer.setComments(null);
-		transfer.setSource(WarehouseTransferSource.MANUFACTURING_ORDER);
-		transfer.setSourceId(detail.getId());
-		transfer.setSourceWarehouse(detail.getPurchase().getWarehouse());
-		transfer.setTargetWarehouse(null);
-		transfer = (WarehouseTransfer) BeanManager.getManagerBean(WarehouseTransfer.class).insert(transfer);
-		
-		for(TransferConposition tc: compositionList){
-			WarehouseTransferDetail transferDetail = new WarehouseTransferDetail();
-			transferDetail.setWarehouseTransfer(transfer);
-			transferDetail.setItem(tc.getComposition().getCompositionItem());
-			transferDetail.setQuantity(tc.getTotalQuantity());
-			
-			BeanManager.getManagerBean(WarehouseTransferDetail.class).insert(transferDetail);
+	private void createManufactureIncome(TransferPurchaseDetail transferPurchaseDetail)
+			throws ManagerBeanException {
+		WarehouseUtil util = new WarehouseUtil();
+		Income income = util.createIncome(transferPurchaseDetail.getDetail().getPurchase());
+		PurchaseDetail purchaseDetail = transferPurchaseDetail.getDetail();
+		util.createIncomeDetail(purchaseDetail, income, transferPurchaseDetail.getTotalQuantity());
+		for(TransferConposition tc: transferPurchaseDetail.getCompositionList()){
+			util.createIncomeDetail(purchaseDetail.getPurchase().getWarehouse(), income, tc.getComposition(), tc.getTotalQuantity());
 		}
 	}
 	
