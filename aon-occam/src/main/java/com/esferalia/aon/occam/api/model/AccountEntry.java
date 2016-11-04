@@ -20,8 +20,10 @@ public class AccountEntry implements Serializable, HasAudit {
 	private Integer domain;
 	private Date entryDate;
 	private AccountEntryType entryType;
+	private Integer activity;
 	private Integer journal;
 	private SecurityLevel securityLevel;
+	
 	private String comments;
 	
 	private String creationUser;
@@ -95,7 +97,14 @@ public class AccountEntry implements Serializable, HasAudit {
 		this.entryType = entryType;
 		return this;
 	}
-	
+	public Integer getActivity() {
+		return activity;
+	}
+	public AccountEntry setActivity(Integer activity) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.activity,activity) );
+		this.activity = activity;
+		return this;
+	}
 	public boolean isManual() {
 		return getEntryType() == null || getEntryType().isManual();
 	}

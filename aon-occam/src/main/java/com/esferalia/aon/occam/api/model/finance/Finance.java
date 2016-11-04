@@ -17,7 +17,7 @@ public class Finance implements Serializable, HasAudit {
 
 	private Integer id;
 	private Invoice invoice;
-	private PayMethod payMethod;
+	private Integer payMethod;
 	private Registry registry;
 	private Scope scope;
 	private Integer domain;
@@ -66,11 +66,11 @@ public class Finance implements Serializable, HasAudit {
 		return this;
 	}
 
-	public PayMethod getPayMethod() {
+	public Integer getPayMethod() {
 		return payMethod;
 	}
 
-	public Finance setPayMethod(PayMethod payMethod) {
+	public Finance setPayMethod(Integer payMethod) {
 		this.payMethod = payMethod;
 		return this;
 	}

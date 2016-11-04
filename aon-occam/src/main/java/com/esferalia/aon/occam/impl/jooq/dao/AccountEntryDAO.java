@@ -80,7 +80,7 @@ public class AccountEntryDAO {
 			.select(ACCOUNT_ENTRY.ID,ACCOUNT_ENTRY.DOMAIN,ACCOUNT_ENTRY.ACCOUNT_PERIOD
 					,ACCOUNT_PERIOD.NAME,ACCOUNT_PERIOD.STATUS,ACCOUNT_ENTRY.ENTRY_DATE
 					,ACCOUNT_ENTRY.ENTRY_TYPE,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY.SECURITY_LEVEL
-					,ACCOUNT_ENTRY.COMMENTS
+					,ACCOUNT_ENTRY.ACTIVITY,ACCOUNT_ENTRY.COMMENTS
 					,ACCOUNT_ENTRY.CREATION_USER,ACCOUNT_ENTRY.CREATION_DATE
 					,ACCOUNT_ENTRY.MODIFICATION_USER,ACCOUNT_ENTRY.MODIFICATION_DATE)
 				.from(ACCOUNT_ENTRY)
@@ -155,6 +155,7 @@ public class AccountEntryDAO {
 				.set(ACCOUNT_ENTRY.ENTRY_DATE,AonDateUtils.toSql(ae.getEntryDate()))
 				.set(ACCOUNT_ENTRY.ENTRY_TYPE, AonEnumUtils.getByte(ae.getEntryType())) 
 				.set(ACCOUNT_ENTRY.JOURNAL, ae.getJournal())
+				.set(ACCOUNT_ENTRY.ACTIVITY, ae.getActivity())
 				.set(ACCOUNT_ENTRY.SECURITY_LEVEL,  (byte) (ae.isConfidential()?1:0) )
 				.set(ACCOUNT_ENTRY.COMMENTS,ae.getComments())
 				.set(ACCOUNT_ENTRY.CREATION_USER,ctx.getUser())
@@ -205,6 +206,7 @@ public class AccountEntryDAO {
 			.set(ACCOUNT_ENTRY.ENTRY_DATE,AonDateUtils.toSql(ae.getEntryDate()))
 			.set(ACCOUNT_ENTRY.ENTRY_TYPE, AonEnumUtils.getByte(ae.getEntryType())) 
 			.set(ACCOUNT_ENTRY.JOURNAL,ae.getJournal())
+			.set(ACCOUNT_ENTRY.ACTIVITY, ae.getActivity())
 			.set(ACCOUNT_ENTRY.SECURITY_LEVEL, AonEnumUtils.getByte(ae.getSecurityLevel()))
 			.set(ACCOUNT_ENTRY.COMMENTS,ae.getComments())
 			.set(ACCOUNT_ENTRY.MODIFICATION_USER,ctx.getUser())
@@ -558,6 +560,7 @@ public class AccountEntryDAO {
 				.setDomain( record.getValue(ACCOUNT_ENTRY.DOMAIN))
 				.setEntryDate( record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
 				.setEntryType( AccountEntryType.values()[record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)])
+				.setActivity( record.getValue(ACCOUNT_ENTRY.ACTIVITY))
 				.setJournal( record.getValue(ACCOUNT_ENTRY.JOURNAL))
 				.setSecurityLevel(SecurityLevel.values()[record.getValue(ACCOUNT_ENTRY.SECURITY_LEVEL)])
 				.setComments( record.getValue(ACCOUNT_ENTRY.COMMENTS))

@@ -28,7 +28,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
-import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -455,7 +454,7 @@ public class AccountingInvoiceDAO {
 				.setDomain(ctx.getDomainId())
 				.setInvoice(new Invoice().setId(invoiceId))
 				.setPayment(!invoice.isSales())
-				.setPayMethod(new PayMethod().setId(accInvoice.getPayMethod()))
+				.setPayMethod(accInvoice.getPayMethod())
 				.setRegistry(new Registry().setId(invoice.getRegistry()))
 				.setRegistryDocument(invoice.getRegistryDocument())
 				.setRegistryDocumentType(invoice.getRegistryDocumentType())

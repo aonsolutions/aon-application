@@ -284,11 +284,9 @@ public class AccountEntryModule extends MainEntryPoint {
 							invalidateModule(AON.MSG.noActiveAccountPeriod());
 						}
 
-						if (configuration.getActivities() != null 
-						 && !configuration.getActivities().isEmpty() 
-						 && activity.getItemCount() == 0) {
+						if (configuration.hasActivities() && activity.getItemCount() == 0) {
 							activity.setVisible(true);
-							activity.addItem("-- Todas --", (String) null);
+							activity.addItem("-- Todas --", "");
 							activity.setSelectedIndex(0);
 							int i = 1;
 							for (EnterpriseActivity ea : configuration.getActivities()) {
@@ -377,6 +375,13 @@ public class AccountEntryModule extends MainEntryPoint {
 		checkDate();
 		refreshIdLabel();
 	}
+	
+	@UiHandler("activity")
+	void onChangeActivity(ChangeEvent event) {
+		Integer act = AonNumberUtils.toInteger(activity.getSelectedValue());
+		this.wizardContent.getAccountEntryWrapper().getAccountEntry().setActivity(act);
+		refreshIdLabel();
+	}
 
 	@UiHandler("confidential")
 	void onChangeConfidential(ClickEvent event) {
@@ -432,6 +437,18 @@ public class AccountEntryModule extends MainEntryPoint {
 		journal.setText(AonMathUtils.toInt(wizardContent.getAccountEntryWrapper().getAccountEntry()
 				.getJournal()) == 0 ? AonStringUtils.EMPTY : AON.MSG.journal()
 				+ AonStringUtils.SPACE + wizardContent.getAccountEntryWrapper().getAccountEntry().getJournal());
+		if (configuration.hasActivities()) {
+			int i = 0;
+			for (; i < activity.getItemCount(); i++) {
+				if (AonNumberUtils.toInteger(activity.getValue(i)) == wizardContent.getAccountEntryWrapper().getAccountEntry().getActivity()) {
+					activity.setSelectedIndex(i);
+					break;
+				}
+			}
+			if (i == activity.getItemCount()) {
+				activity.setSelectedIndex(0);
+			}
+		}
 		statusMsg.setText(AonStringUtils.EMPTY);
 		statusMsg.removeStyleName(AON.AON_CSS.aonInfoMessage());
 		
@@ -707,12 +724,14 @@ public class AccountEntryModule extends MainEntryPoint {
 		if (this.wizardContent == null) {
 			first.setValue(1);
 			setWizardContent(new Manual(this.callback));
+			EnterpriseActivity ea = configuration.getMainActivity();
 			ae =  new AccountEntry()
 					.setPeriod(AonNumberUtils.toInteger(period.getSelectedValue()))
 					.setEntryType(this.wizardContent.getAccountEntryType())
 					.setDomain(getCurrentDomain())
 					.setConfidential(false)
 					.setEntryDate(new Date())
+					.setActivity(ea==null?null:ea.getId())
 					.setDirty(false);
 		} else {
 			ae =  new AccountEntry()
@@ -721,6 +740,7 @@ public class AccountEntryModule extends MainEntryPoint {
 					.setDomain(getCurrentDomain())
 					.setConfidential(this.wizardContent.getAccountEntryWrapper().getAccountEntry().isConfidential())
 					.setEntryDate(this.wizardContent.getAccountEntryWrapper().getAccountEntry().getEntryDate())
+					.setActivity(this.wizardContent.getAccountEntryWrapper().getAccountEntry().getActivity())
 					.setDirty(false);
 		}
 		this.wizardContent.select(ae);
