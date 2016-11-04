@@ -9,13 +9,17 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.polymer.iron.widget.IronList;
 import com.vaadin.polymer.paper.widget.PaperButton;
 
@@ -39,6 +43,9 @@ public class IssueList extends Composite {
         initWidget(binder.createAndBindUi(this));
         this.parent = parent;
         issueList.setItems(issues);
+
+        autoHeight(issueList, 260);
+        
         issueList.addDomHandler(new ScrollHandler() {
 			@Override
 			public void onScroll(ScrollEvent event) {
@@ -67,12 +74,9 @@ public class IssueList extends Composite {
 					parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue));
 					parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);				
 				} else if(issue.isDeleted()){
-					AonDialog d = new AonDialog("Restaurar Tarea",new Label("Est\u00e1s seguro de restaurar la tarea #" + issue.getNumber()) ) {
+					AonDialog2 d = new AonDialog2("Restaurar Tarea",new Label("Est\u00e1s seguro de restaurar la tarea #" + issue.getNumber()) ) {
 						
-						@Override
-						protected void onCancel() {
-							parent.toolbar.remove(1);
-						}
+						@Override protected void onCancel() {hide();}
 						
 						@Override
 						protected void onAccept() {
@@ -82,15 +86,15 @@ public class IssueList extends Composite {
 								@Override
 								public void onSuccess(JsIssue result) {
 									parent.updateIssueList(parent.issueFilter, false);
-									parent.toolbar.remove(1);	
 								}
 								
 								@Override public void onFailure(Throwable caught) {}
 							});
+							hide();
 						}
 					};
-					parent.toolbar.add(d);
-					d.open();
+					d.getElement().getStyle().setWidth(255, Unit.PX);
+					d.center();
 				}
 			}
 		});
@@ -111,4 +115,14 @@ public class IssueList extends Composite {
  	}-*/;
    
 
+   public void autoHeight(Widget widget, Integer value){
+	   widget.getElement().getStyle().setHeight(Window.getClientHeight() - value, Unit.PX);
+	   Window.addResizeHandler(new ResizeHandler() {
+			
+			@Override
+			public void onResize(ResizeEvent event) {
+				widget.getElement().getStyle().setHeight(Window.getClientHeight() - value, Unit.PX);
+			}
+		});
+   }
 }

@@ -2,14 +2,15 @@
 <!DOCTYPE html [
     <!ENTITY nbsp "&#160;"> 
 ]>
-<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:doc='urn:import:com.esferalia.aon.gwt.issues.client'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:b="http://java.sun.com/jstl/core"
-	
-
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+     xmlns:doc='urn:import:com.esferalia.aon.gwt.issues.client'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client" 
+	xmlns:b="http://java.sun.com/jstl/core"
 	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
 	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'
-	xmlns:v='urn:import:com.vaadin.polymer.vaadin.widget'
+	xmlns:v='urn:import:net.aonsolutions.polymer.aon.widget'
 >
 
 <ui:style>
@@ -44,12 +45,12 @@
 <g:HTMLPanel>
     <g:ScrollPanel>
     <g:VerticalPanel> 
-    	<v:VaadinComboBox ui:field="emailComboBox" addStyleNames="{style.comboBox}"></v:VaadinComboBox>
+    	<v:AonComboBox ui:field="emailComboBox" addStyleNames="{style.comboBox}"></v:AonComboBox>
     	<p:PaperToggleButton ui:field="logoToggle" addStyleNames="{style.toggle}">
     	     Incluir logo en la cabecera 
     	</p:PaperToggleButton>
     	<p:PaperSlider ui:field="logoSlider" pin="true" max="100"></p:PaperSlider>
-		<v:VaadinComboBox ui:field="signComboBox" addStyleNames="{style.comboBox}"></v:VaadinComboBox>
+		<v:AonComboBox ui:field="signComboBox" addStyleNames="{style.comboBox}"></v:AonComboBox>
 		<p:PaperToggleButton ui:field="commentHistoryToggle" addStyleNames="{style.toggle}">
 		     Incluir historial completo de comentarios 
 		</p:PaperToggleButton>
@@ -57,7 +58,7 @@
 		     Incluir historial completo de estados 
 		</p:PaperToggleButton>
 		<p:PaperInput ui:field="bccInput" addStyleNames="{style.comboBox}"></p:PaperInput>
-		<v:VaadinComboBox ui:field="modeComboBox" addStyleNames="{style.comboBox}"></v:VaadinComboBox>
+		<v:AonComboBox ui:field="modeComboBox" addStyleNames="{style.comboBox}"></v:AonComboBox>
 		<p:PaperToggleButton ui:field="notifyOpenToggle" addStyleNames="{style.toggle}">
 			Notificar al abrir
 		</p:PaperToggleButton>

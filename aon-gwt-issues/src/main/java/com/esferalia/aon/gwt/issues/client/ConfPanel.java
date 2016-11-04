@@ -68,9 +68,8 @@ public class ConfPanel extends Composite {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				AonDialog dialog = createAddDialog();
-				issues.toolbar.add(dialog);
-				dialog.open();
+				AonDialog2 dialog = createAddDialog();
+				dialog.center();
 			}
 		});
 	}
@@ -97,7 +96,7 @@ public class ConfPanel extends Composite {
 		});
     }
     
-    private AonDialog createAddDialog(){	
+    private AonDialog2 createAddDialog(){	
 		VerticalPanel v = new VerticalPanel();
 		
 		PaperInput pi = new PaperInput();
@@ -108,10 +107,8 @@ public class ConfPanel extends Composite {
 		pi2.setLabel("Descripcion");
 		v.add(pi2);
 		
-		return new AonDialog("Nueva Incidencia",v){
-			@Override protected void onCancel() {
-				issues.toolbar.remove(1);
-			}
+		return new AonDialog2("Nueva Incidencia",v){
+			@Override protected void onCancel() {hide();}
 			@Override protected void onAccept() {
 				VerticalPanel vp = (VerticalPanel) content.getWidget(0);	
 				PaperInput pi = (PaperInput) vp.getWidget(0);
@@ -134,7 +131,7 @@ public class ConfPanel extends Composite {
 					@Override
 					public void onFailure(Throwable caught) {}
 				});
-				issues.toolbar.remove(1);
+				hide();
 			}
 		};
 	}

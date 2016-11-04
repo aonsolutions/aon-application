@@ -17,6 +17,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.vaadin.polymer.iron.widget.IronCollapse;
 import com.vaadin.polymer.iron.widget.IronIcon;
@@ -61,30 +62,30 @@ public class TagPanel extends Composite {
 			@Override
 			public void onSuccess(JSON<JsLabel> result) {
 				for(JsLabel label : result.getData().toLinkedList()){
+					HorizontalPanel hp = new HorizontalPanel();
 					PaperItem item = new PaperItem();
 					
 					IronIcon ii = new IronIcon();
 					ii.setIcon("label");
 					ii.getElement().getStyle().setColor("#"+label.getColor());
-					item.add(ii);
 					
+					item.add(ii);
 					item.add(new Label(label.getName()));
 					item.setStyle("min-height: 30px;");	
 					
 					PaperIconButton edit = new PaperIconButton();
 					edit.setIcon("create");
-					edit.setStyle("min-height: 30px;position:absolute;right:40px;");
+					edit.setStyle("min-height: 30px;position:absolute;right:40px;padding-top:0px;");
 					edit.addClickHandler(new ClickHandler() {
 						@Override public void onClick(ClickEvent event) {
 							onClickEditTypeButton(event, label);
 						}
 					});
 					edit.setVisible(false);
-					item.add(edit);
 					
 					PaperIconButton del = new PaperIconButton();
 					del.setIcon("delete");
-					del.setStyle("min-height: 30px;position:absolute;right:10px;");
+					del.setStyle("min-height: 30px;position:absolute;right:10px;padding-top:0px;");
 					del.getElement().getStyle().setLeft(290, Unit.PX);
 					del.addClickHandler(new ClickHandler() {
 						@Override public void onClick(ClickEvent event) {
@@ -92,9 +93,12 @@ public class TagPanel extends Composite {
 						}
 					});
 					del.setVisible(false);
-					item.add(del);
 					
-					item.addDomHandler(new MouseOverHandler() {
+					hp.add(item);
+					hp.add(edit);
+					hp.add(del);
+					hp.setWidth("100%");
+					hp.addDomHandler(new MouseOverHandler() {
 						
 						@Override
 						public void onMouseOver(MouseOverEvent event) {
@@ -103,7 +107,7 @@ public class TagPanel extends Composite {
 						}
 					}, MouseOverEvent.getType());
 					
-					item.addDomHandler(new MouseOutHandler() {
+					hp.addDomHandler(new MouseOutHandler() {
 						
 						@Override
 						public void onMouseOut(MouseOutEvent event) {
@@ -111,8 +115,7 @@ public class TagPanel extends Composite {
 							del.setVisible(false);
 						}
 					}, MouseOutEvent.getType());
-					
-					typeSelector.add(item);
+					typeSelector.add(hp);
 				}			
 				PaperIconButton pib = new PaperIconButton();
 				pib.setIcon("add");
@@ -152,6 +155,7 @@ public class TagPanel extends Composite {
 			@Override
 			public void onSuccess(JSON<JsLabel> result) {
 				for(JsLabel label : result.getData().toLinkedList()){
+					HorizontalPanel hp = new HorizontalPanel();
 					PaperItem item = new PaperItem();
 					
 					IronIcon ii = new IronIcon();
@@ -166,18 +170,17 @@ public class TagPanel extends Composite {
 
 					PaperIconButton edit = new PaperIconButton();
 					edit.setIcon("create");
-					edit.setStyle("min-height: 30px;position:absolute;right:40px;");
+					edit.setStyle("min-height: 30px;position:absolute;right:40px;padding-top:0px;");
 					edit.addClickHandler(new ClickHandler() {
 						@Override public void onClick(ClickEvent event) {
 							onClickEditTagButton(event, label);
 						}
 					});
 					edit.setVisible(false);
-					item.add(edit);
 					
 					PaperIconButton del = new PaperIconButton();
 					del.setIcon("delete");
-					del.setStyle("min-height: 30px;position:absolute;right:10px;");
+					del.setStyle("min-height: 30px;position:absolute;right:10px;padding-top:0px;");
 					del.getElement().getStyle().setLeft(290, Unit.PX);
 					del.addClickHandler(new ClickHandler() {
 						@Override public void onClick(ClickEvent event) {
@@ -185,9 +188,13 @@ public class TagPanel extends Composite {
 						}
 					});
 					del.setVisible(false);
-					item.add(del);
 					
-					item.addDomHandler(new MouseOverHandler() {
+					hp.add(item);
+					hp.add(edit);
+					hp.add(del);
+					hp.setWidth("100%");
+					
+					hp.addDomHandler(new MouseOverHandler() {
 						
 						@Override
 						public void onMouseOver(MouseOverEvent event) {
@@ -196,7 +203,7 @@ public class TagPanel extends Composite {
 						}
 					}, MouseOverEvent.getType());
 					
-					item.addDomHandler(new MouseOutHandler() {
+					hp.addDomHandler(new MouseOutHandler() {
 						
 						@Override
 						public void onMouseOut(MouseOutEvent event) {
@@ -204,8 +211,8 @@ public class TagPanel extends Composite {
 							del.setVisible(false);
 						}
 					}, MouseOutEvent.getType());
-					
-					tagSelector.add(item);
+
+					tagSelector.add(hp);
 				}			
 				PaperIconButton pib = new PaperIconButton();
 				pib.setIcon("add");
@@ -242,8 +249,8 @@ public class TagPanel extends Composite {
 	void onClickTypeButton(ClickEvent event){		
 		PaperInput pi = new PaperInput();
 		pi.setLabel("Tipo");
-		AonDialog dialog =  new AonDialog("Nuevo Tipo",pi){
-			@Override protected void onCancel() {}
+		AonDialog2 dialog =  new AonDialog2("Nuevo Tipo",pi){
+			@Override protected void onCancel() {hide();}
 			@Override protected void onAccept() {
 				PaperInput pi = (PaperInput) content.getWidget(0);
 				incidence.createType("{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
@@ -258,10 +265,10 @@ public class TagPanel extends Composite {
 					
 					@Override public void onFailure(Throwable caught) {}
 				});		
+				hide();
 			}
 		};
-		panel.add(dialog);
-		dialog.open();	
+		dialog.center();	
 	}
     
 	
@@ -269,8 +276,8 @@ public class TagPanel extends Composite {
 	void onClickTagButton(ClickEvent event){	
 		PaperInput pi = new PaperInput();
 		pi.setLabel("Etiqueta");
-		AonDialog dialog =  new AonDialog("Nueva Etiqueta",pi){
-			@Override protected void onCancel() {}
+		AonDialog2 dialog =  new AonDialog2("Nueva Etiqueta",pi){
+			@Override protected void onCancel() {hide();}
 			@Override protected void onAccept() {
 				PaperInput pi = (PaperInput) content.getWidget(0);
 				incidence.createLabel("{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
@@ -285,10 +292,10 @@ public class TagPanel extends Composite {
 					
 					@Override public void onFailure(Throwable caught) {}
 				});
+				hide();
 			}
 		};
-		panel.add(dialog);
-		dialog.open();
+		dialog.center();
 	}
 	
 	void onClickRemoveTypeButton(ClickEvent event, JsLabel label) {
@@ -323,8 +330,8 @@ public class TagPanel extends Composite {
 		PaperInput pi = new PaperInput();
 		pi.setLabel("Tipo");
 		pi.setValue(label.getName());
-		AonDialog dialog =  new AonDialog("Editar Tipo",pi){
-			@Override protected void onCancel() {}
+		AonDialog2 dialog =  new AonDialog2("Editar Tipo",pi){
+			@Override protected void onCancel() {hide();}
 			@Override protected void onAccept() {
 				PaperInput pi = (PaperInput) content.getWidget(0);
 				incidence.updateType(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
@@ -339,18 +346,18 @@ public class TagPanel extends Composite {
 					
 					@Override public void onFailure(Throwable caught) {}
 				});
+				hide();
 			}
 		};
-		panel.add(dialog);
-		dialog.open();	
+		dialog.center();	
 	}
 	
 	void onClickEditTagButton(ClickEvent event, JsLabel label) {
 		PaperInput pi = new PaperInput();
 		pi.setLabel("Etiqueta");
 		pi.setValue(label.getName());
-		AonDialog dialog =  new AonDialog("Editar Etiqueta",pi){
-			@Override protected void onCancel() {}
+		AonDialog2 dialog =  new AonDialog2("Editar Etiqueta",pi){
+			@Override protected void onCancel() {hide();}
 			@Override protected void onAccept() {
 				PaperInput pi = (PaperInput) content.getWidget(0);
 				incidence.updateLabel(label, "{\"name\":\""+ pi.getValue() +"\"}", new AsyncCallback<JsLabel>() {
@@ -365,10 +372,10 @@ public class TagPanel extends Composite {
 					
 					@Override public void onFailure(Throwable caught) {}
 				});
+				hide();
 			}
 		};
-		panel.add(dialog);
-		dialog.open();	
+		dialog.center();	
 	}
 
 }

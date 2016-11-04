@@ -23,6 +23,7 @@ public class ConfigurationPanel extends Composite {
     
     private static Binder binder = GWT.create(Binder.class);
     
+    @UiField HTMLPanel panel;
     @UiField HTMLPanel tabContent;
     @UiField PaperTabs tabs;
 
@@ -36,71 +37,35 @@ public class ConfigurationPanel extends Composite {
     	this.issues = issues;
     	this.incidence = incidence;
     	initWidget(binder.createAndBindUi(this));
-    
     	tabs.setSelected("0");
         tabs.addIronSelectHandler(new IronSelectEventHandler() {
 			
 			@Override
 			public void onIronSelect(IronSelectEvent event) {
-				if(tabs.getSelected().equals(ZERO)
-					|| tabs.getSelected() == ZERO){
-					if(tabContent.getWidgetCount()> 0){
-						for(Integer i = 0; i < tabContent.getWidgetCount(); i++)
-							tabContent.remove(i);
-					}
-					ScrollPanel sp = new ScrollPanel();
-					Integer h = Window.getClientHeight() -190;
-					sp.getElement().getStyle().setHeight(h, Unit.PX);
-			    	Window.addResizeHandler(new ResizeHandler() {
-						
-						@Override
-						public void onResize(ResizeEvent event) {
-							Integer h = Window.getClientHeight() -190;
-							sp.getElement().getStyle().setHeight(h, Unit.PX);
-						}
-					});
-					sp.add(new TagPanel(incidence));
-					tabContent.add(sp);
-				} else if(tabs.getSelected().equals(ONE)
-					|| tabs.getSelected() == ONE){
-					if(tabContent.getWidgetCount()> 0){
-						for(Integer i = 0; i < tabContent.getWidgetCount(); i++)
-							tabContent.remove(i);
-					}
-					ScrollPanel sp = new ScrollPanel();
-					Integer h = Window.getClientHeight() -190;
-					sp.getElement().getStyle().setHeight(h, Unit.PX);
-			    	Window.addResizeHandler(new ResizeHandler() {
-						
-						@Override
-						public void onResize(ResizeEvent event) {
-							Integer h = Window.getClientHeight() -190;
-							sp.getElement().getStyle().setHeight(h, Unit.PX);
-						}
-					});
-					sp.add(new NotificationPanel(incidence));
-					tabContent.add(sp);
+				for(Integer i = 0; i < tabContent.getWidgetCount(); i++)
+					tabContent.remove(i);
+				ScrollPanel sp = new ScrollPanel();
+				Integer h = Window.getClientHeight() -190;
+				sp.getElement().getStyle().setHeight(h, Unit.PX);
+		    	Window.addResizeHandler(new ResizeHandler() {
 					
-				} else if(tabs.getSelected().equals(TWO)
-						|| tabs.getSelected() == TWO){
-					if(tabContent.getWidgetCount()> 0){
-						for(Integer i = 0; i < tabContent.getWidgetCount(); i++)
-							tabContent.remove(i);
+					@Override
+					public void onResize(ResizeEvent event) {
+						Integer h = Window.getClientHeight() -190;
+						sp.getElement().getStyle().setHeight(h, Unit.PX);
 					}
-					ScrollPanel sp = new ScrollPanel();
-					Integer h = Window.getClientHeight() -190;
-					sp.getElement().getStyle().setHeight(h, Unit.PX);
-			    	Window.addResizeHandler(new ResizeHandler() {
-						
-						@Override
-						public void onResize(ResizeEvent event) {
-							Integer h = Window.getClientHeight() -190;
-							sp.getElement().getStyle().setHeight(h, Unit.PX);
-						}
-					});
+				});
+				if(tabs.getSelected().toString().equals(ZERO)
+					|| tabs.getSelected().toString() == ZERO){
+					sp.add(new TagPanel(incidence));
+				} else if(tabs.getSelected().toString().equals(ONE)
+					|| tabs.getSelected().toString() == ONE){
+					sp.add(new NotificationPanel(incidence));					
+				} else if(tabs.getSelected().toString().equals(TWO)
+						|| tabs.getSelected().toString() == TWO){
 					sp.add(new ConfPanel(issues, incidence));
-					tabContent.add(sp);
 				}
+				tabContent.add(sp);
 			}
 		});
                 

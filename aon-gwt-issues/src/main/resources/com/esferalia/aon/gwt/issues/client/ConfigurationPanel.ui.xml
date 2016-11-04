@@ -15,7 +15,7 @@
 	
 </ui:style>
 
-<g:HTMLPanel addStyleNames="paper-tabs">
+<g:HTMLPanel ui:field="panel" addStyleNames="paper-tabs">
    		<style is="custom-style">
         	paper-tabs{
         		background: #f2f2f2

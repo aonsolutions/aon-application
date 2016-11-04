@@ -320,6 +320,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-margin-left5")
 	String aonMarginLeft5();
+	
+	@ClassName("aon-margin-left20")
+	String aonMarginLeft20();
 
 	@ClassName("aon-margin-right")
 	String aonMarginRight();
@@ -327,6 +330,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-margin-right5")
 	String aonMarginRight5();
 
+	@ClassName("aon-margin-right20")
+	String aonMarginRight20();
+	
 	@ClassName("aon-margin-bottom")
 	String aonMarginBottom();
 	
@@ -1090,5 +1096,8 @@ public interface AonCSS extends CssResource {
 		
 	@ClassName("custom-dialog-close")
 	String customDialogClose();
+
+	@ClassName("aon-dialog-box-shadow")
+	String aonDialogBoxShadow();
 
 }

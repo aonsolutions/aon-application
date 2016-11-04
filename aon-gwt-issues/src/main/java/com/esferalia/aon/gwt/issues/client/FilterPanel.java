@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.incidence.JsSize;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.common.client.AON;
@@ -25,9 +26,8 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.vaadin.polymer.paper.widget.PaperButton;
-import com.vaadin.polymer.vaadin.widget.VaadinComboBox;
-import com.vaadin.polymer.vaadin.widget.event.ValueChangedEvent;
-import com.vaadin.polymer.vaadin.widget.event.ValueChangedEventHandler;
+
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class FilterPanel extends Composite {
 	
@@ -133,26 +133,24 @@ public class FilterPanel extends Composite {
 			@Override public void onSuccess(JSON<JsLabel> result) {
 				AonJsArray<JsLabel> labels = result.getData();
 				PopupPanel popup = new PopupPanel();
-				VaadinComboBox vcb = new VaadinComboBox();
-				vcb.setItems(getLabelArray(labels));
-				vcb.setLabel("Prioridad");
-				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+				AonComboBox acb = new AonComboBox();
+				acb.setLabel("Prioridad");
+				acb.setItemLabelPath("name");
+				acb.setItems(labels);
+				
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
 					@Override
-					public void onValueChanged(ValueChangedEvent event) {
-						if(labels != null)
-							for(Integer i = 0; i < labels.length(); i++)
-								if(labels.get(i).getName().equals(vcb.getValue())) {
-									JsLabel jsLabel = labels.get(i);
-									priorityButton.setTitle(jsLabel.getName());
-									priorityLabel.setText("Prioridad:"+jsLabel.getName()+"; ");
-									getIssues().issueFilter.setPriority(jsLabel.getName());
-									getIssues().updateIssueList(issues.issueFilter, false);
-								}	
-						popup.hide();
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						JsLabel jsLabel = acb.getSelectedItem().cast();
+						priorityButton.setTitle(jsLabel.getName());
+						priorityLabel.setText("Prioridad:"+jsLabel.getName()+"; ");
+						getIssues().issueFilter.setPriority(jsLabel.getName());
+						getIssues().updateIssueList(issues.issueFilter, false);
+						popup.hide();						
 					}
 				});
-				popup.add(vcb);
+				popup.add(acb);
 				int left = priorityButton.getAbsoluteLeft();
 				int top = priorityButton.getAbsoluteTop()
 						+ priorityButton.getOffsetHeight();
@@ -161,10 +159,10 @@ public class FilterPanel extends Composite {
 					left = left - 200;
 				}
 				popup.setAutoHideEnabled(true);
-				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
 				popup.setPopupPosition(left, top);
 				popup.show();
-				vcb.toggle();
+				acb.open();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -178,26 +176,24 @@ public class FilterPanel extends Composite {
 			@Override public void onSuccess(JSON<JsLabel> result) {
 				AonJsArray<JsLabel> labels = result.getData();
 				PopupPanel popup = new PopupPanel();
-				VaadinComboBox vcb = new VaadinComboBox();
-				vcb.setItems(getLabelArray(labels));
-				vcb.setLabel("Tipo");
-				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+				AonComboBox acb = new AonComboBox();
+				acb.setLabel("Tipo");
+				acb.setItemLabelPath("name");
+				acb.setItems(labels);
+				
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
 					@Override
-					public void onValueChanged(ValueChangedEvent event) {
-						if(labels != null)
-							for(Integer i = 0; i < labels.length(); i++)
-								if(labels.get(i).getName().equals(vcb.getValue())) {
-									JsLabel jsLabel = labels.get(i);
-									typeButton.setTitle(jsLabel.getName());
-									typeLabel.setText("Tipo:"+jsLabel.getName()+"; ");
-									getIssues().issueFilter.setType(jsLabel.getId());
-									getIssues().updateIssueList(issues.issueFilter, false);
-								}	
-						popup.hide();
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						JsLabel jsLabel = acb.getSelectedItem().cast();
+						typeButton.setTitle(jsLabel.getName());
+						typeLabel.setText("Tipo:"+jsLabel.getName()+"; ");
+						getIssues().issueFilter.setType(jsLabel.getId());
+						getIssues().updateIssueList(issues.issueFilter, false);
+						popup.hide();											
 					}
 				});
-				popup.add(vcb);
+				popup.add(acb);
 				int left = typeButton.getAbsoluteLeft();
 				int top = typeButton.getAbsoluteTop()
 						+ typeButton.getOffsetHeight();
@@ -206,10 +202,10 @@ public class FilterPanel extends Composite {
 					left = left - 200;
 				}
 				popup.setAutoHideEnabled(true);
-				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
 				popup.setPopupPosition(left, top);
 				popup.show();
-				vcb.toggle();
+				acb.open();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -223,26 +219,23 @@ public class FilterPanel extends Composite {
 			@Override public void onSuccess(JSON<JsLabel> result) {
 				AonJsArray<JsLabel> labels = result.getData();
 				PopupPanel popup = new PopupPanel();
-				VaadinComboBox vcb = new VaadinComboBox();
-				vcb.setItems(getLabelArray(labels));
-				vcb.setLabel("Etiqueta");
-				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+				AonComboBox acb = new AonComboBox();
+				acb.setItems(labels);
+				acb.setItemLabelPath("name");
+				acb.setLabel("Etiqueta");
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
 					@Override
-					public void onValueChanged(ValueChangedEvent event) {
-						if(labels != null)
-							for(Integer i = 0; i < labels.length(); i++)
-								if(labels.get(i).getName().equals(vcb.getValue())) {
-									JsLabel jsLabel = labels.get(i);
-									tagButton.setTitle(jsLabel.getName());
-									tagLabel.setText("Etiqueta:"+jsLabel.getName()+"; ");
-									getIssues().issueFilter.setLabels(jsLabel.getId());
-									getIssues().updateIssueList(issues.issueFilter, false);
-								}	
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						JsLabel jsLabel = acb.getSelectedItem().cast();
+						tagButton.setTitle(jsLabel.getName());
+						tagLabel.setText("Etiqueta:"+jsLabel.getName()+"; ");
+						getIssues().issueFilter.setLabels(jsLabel.getId());
+						getIssues().updateIssueList(issues.issueFilter, false);	
 						popup.hide();
 					}
 				});
-				popup.add(vcb);
+				popup.add(acb);
 				int left = tagButton.getAbsoluteLeft();
 				int top = tagButton.getAbsoluteTop()
 						+ tagButton.getOffsetHeight();
@@ -251,10 +244,10 @@ public class FilterPanel extends Composite {
 					left = left - 200;
 				}
 				popup.setAutoHideEnabled(true);
-				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
 				popup.setPopupPosition(left, top);
 				popup.show();
-				vcb.toggle();
+				acb.open();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -268,26 +261,23 @@ public class FilterPanel extends Composite {
 			@Override public void onSuccess(JSON<JsUser> result) {
 				AonJsArray<JsUser> users = result.getData();
 				PopupPanel popup = new PopupPanel();
-				VaadinComboBox vcb = new VaadinComboBox();
-				vcb.setItems(getUserArray(users));
-				vcb.setLabel("Asignado");
-				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+				AonComboBox acb = new AonComboBox();
+				acb.setItems(users);
+				acb.setItemLabelPath("login");
+				acb.setLabel("Asignado");
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
 					@Override
-					public void onValueChanged(ValueChangedEvent event) {
-						if(users != null)
-							for(Integer i = 0; i < users.length(); i++)
-								if(users.get(i).getLogin().equals(vcb.getValue())) {
-									JsUser jsLabel = users.get(i);
-									assignedButton.setTitle(jsLabel.getLogin());
-									assignedLabel.setText("Asignado:"+jsLabel.getLogin()+"; ");
-									getIssues().issueFilter.setAssignee(jsLabel.getId());
-									getIssues().updateIssueList(issues.issueFilter, false);
-								}	
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						JsUser jsLabel = acb.getSelectedItem().cast();
+						assignedButton.setTitle(jsLabel.getLogin());
+						assignedLabel.setText("Asignado:"+jsLabel.getLogin()+"; ");
+						getIssues().issueFilter.setAssignee(jsLabel.getId());
+						getIssues().updateIssueList(issues.issueFilter, false);
 						popup.hide();
 					}
 				});
-				popup.add(vcb);
+				popup.add(acb);
 				int left = assignedButton.getAbsoluteLeft();
 				int top = assignedButton.getAbsoluteTop()
 						+ assignedButton.getOffsetHeight();
@@ -296,10 +286,10 @@ public class FilterPanel extends Composite {
 					left = left - 200;
 				}
 				popup.setAutoHideEnabled(true);
-				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
 				popup.setPopupPosition(left, top);
 				popup.show();
-				vcb.toggle();
+				acb.open();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -313,26 +303,23 @@ public class FilterPanel extends Composite {
 			@Override public void onSuccess(JSON<JsUser> result) {
 				AonJsArray<JsUser> users = result.getData();
 				PopupPanel popup = new PopupPanel();
-				VaadinComboBox vcb = new VaadinComboBox();
-				vcb.setItems(getUserArray(users));
-				vcb.setLabel("Creador");
-				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+				AonComboBox acb = new AonComboBox();
+				acb.setItems(users);
+				acb.setItemLabelPath("login");
+				acb.setLabel("Creador");
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
 					@Override
-					public void onValueChanged(ValueChangedEvent event) {
-						if(users != null)
-							for(Integer i = 0; i < users.length(); i++)
-								if(users.get(i).getLogin().equals(vcb.getValue())) {
-									JsUser jsUser = users.get(i);
-									creatorButton.setTitle(jsUser.getLogin());
-									creatorLabel.setText("Creador:"+jsUser.getLogin()+"; ");
-									getIssues().issueFilter.setCreator(jsUser.getLogin());
-									getIssues().updateIssueList(issues.issueFilter, false);
-								}	
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						JsUser jsUser = acb.getSelectedItem().cast();
+						creatorButton.setTitle(jsUser.getLogin());
+						creatorLabel.setText("Creador:"+jsUser.getLogin()+"; ");
+						getIssues().issueFilter.setCreator(jsUser.getLogin());
+						getIssues().updateIssueList(issues.issueFilter, false);	
 						popup.hide();
 					}
 				});
-				popup.add(vcb);
+				popup.add(acb);
 				int left = creatorButton.getAbsoluteLeft();
 				int top = creatorButton.getAbsoluteTop()
 						+ creatorButton.getOffsetHeight();
@@ -341,10 +328,10 @@ public class FilterPanel extends Composite {
 					left = left - 200;
 				}
 				popup.setAutoHideEnabled(true);
-				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
 				popup.setPopupPosition(left, top);
 				popup.show();
-				vcb.toggle();
+				acb.open();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -358,26 +345,23 @@ public class FilterPanel extends Composite {
 			@Override public void onSuccess(JSON<JsUser> result) {
 				AonJsArray<JsUser> users = result.getData();
 				PopupPanel popup = new PopupPanel();
-				VaadinComboBox vcb = new VaadinComboBox();
-				vcb.setItems(getUserArray(users));
-				vcb.setLabel("Empresa");
-				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+				AonComboBox acb = new AonComboBox();
+				acb.setItems(users);
+				acb.setItemLabelPath("login");
+				acb.setLabel("Empresa");
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
 					@Override
-					public void onValueChanged(ValueChangedEvent event) {
-						if(users != null)
-							for(Integer i = 0; i < users.length(); i++)
-								if(users.get(i).getLogin().equals(vcb.getValue())) {
-									JsUser jsUser = users.get(i);
-									enterpriseButton.setTitle(jsUser.getLogin());
-									enterpriseLabel.setText("Empresa:"+jsUser.getLogin()+"; ");
-									getIssues().issueFilter.setEnterprise(jsUser.getId());
-									getIssues().updateIssueList(issues.issueFilter, false);
-								}	
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						JsUser jsUser = acb.getSelectedItem().cast();
+						enterpriseButton.setTitle(jsUser.getLogin());
+						enterpriseLabel.setText("Empresa:"+jsUser.getLogin()+"; ");
+						getIssues().issueFilter.setEnterprise(jsUser.getId());
+						getIssues().updateIssueList(issues.issueFilter, false);
 						popup.hide();
 					}
 				});
-				popup.add(vcb);
+				popup.add(acb);
 				int left = enterpriseButton.getAbsoluteLeft();
 				int top = enterpriseButton.getAbsoluteTop()
 						+ enterpriseButton.getOffsetHeight();
@@ -386,10 +370,10 @@ public class FilterPanel extends Composite {
 					left = left - 200;
 				}
 				popup.setAutoHideEnabled(true);
-				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
 				popup.setPopupPosition(left, top);
 				popup.show();
-				vcb.toggle();
+				acb.open();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -397,101 +381,103 @@ public class FilterPanel extends Composite {
 	}	
 	
 	@UiHandler("orderButton")
-	void orderButtonClick(ClickEvent event){		
-		PopupPanel popup = new PopupPanel();
-		VaadinComboBox vcb = new VaadinComboBox();
-		vcb.setItems("[\"Creados - Recientes\", \"Creados - Antiguos\", \"Modificados - Recientes\", \"Modificados - Antiguos\"]");
-		vcb.setLabel("Orden");
-		vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+	void orderButtonClick(ClickEvent event){
+		incidence.getOrderOptions(new AsyncCallback<JSON<JsObject>>() {
 			
-			@Override
-			public void onValueChanged(ValueChangedEvent event) {
-				if(vcb.getValue().contains("Antiguos")) 
-					getIssues().issueFilter.setDirection("asc");
-				else getIssues().issueFilter.setDirection("desc");
+			@Override public void onSuccess(JSON<JsObject> result) {
+				AonJsArray<JsObject> items = result.getData();
+				PopupPanel popup = new PopupPanel();
+				AonComboBox acb = new AonComboBox();
+				acb.setLabel("Orden");
+				acb.setItemLabelPath("name");
+				acb.setItems(items);
 				
-				if(vcb.getValue().contains("Modificados")) 
-					getIssues().issueFilter.setSort("updated");
-				else getIssues().issueFilter.setSort("created");
-				
-				orderButton.setTitle(vcb.getValue());
-				orderLabel.setText("Orden:"+vcb.getValue()+"; ");
-				getIssues().updateIssueList(issues.issueFilter, false);	
-				popup.hide();
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
+					
+					@Override
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						JsObject jsObject = acb.getSelectedItem().cast();								
+						if(jsObject.getName().contains("Antiguos")) 
+							getIssues().issueFilter.setDirection("asc");
+						else getIssues().issueFilter.setDirection("desc");
+						
+						if(jsObject.getName().contains("Modificados")) 
+							getIssues().issueFilter.setSort("updated");
+						else getIssues().issueFilter.setSort("created");
+						
+						orderButton.setTitle(jsObject.getName());
+						orderLabel.setText("Orden:"+jsObject.getName()+"; ");
+						getIssues().updateIssueList(issues.issueFilter, false);	
+						popup.hide();					
+					}
+				});
+				popup.add(acb);
+				int left = orderButton.getAbsoluteLeft();
+				int top = orderButton.getAbsoluteTop()
+						+ orderButton.getOffsetHeight();
+				Integer width = Window.getClientWidth();
+				if(left > width - 200){
+					left = left - 200;
+				}
+				popup.setAutoHideEnabled(true);
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
+				popup.setPopupPosition(left, top);
+				popup.show();
+				acb.open();
 			}
-		});
-		popup.add(vcb);
-		int left = orderButton.getAbsoluteLeft();
-		int top = orderButton.getAbsoluteTop()
-				+ orderButton.getOffsetHeight();
-		Integer width = Window.getClientWidth();
-		if(left > width - 200){
-			left = left - 200;
-		}
-		popup.setAutoHideEnabled(true);
-		popup.addAutoHidePartner(vcb.getElementById("overlay"));
-		popup.setPopupPosition(left, top);
-		popup.show();
-		vcb.toggle();
-	}		
-	
-	@UiHandler("dateButton")
-	void dateButtonClick(ClickEvent event){		
-		PopupPanel popup = new PopupPanel();
-		VaadinComboBox vcb = new VaadinComboBox();
-		vcb.setItems("[\"Hoy\", \"Ayer\", \"Hace 1 semana\", \"Hace 1 mes\"]");
-		vcb.setLabel("Fecha");
-		vcb.addValueChangedHandler(new ValueChangedEventHandler() {
 			
-			@Override
-			public void onValueChanged(ValueChangedEvent event) {
-				if(vcb.getValue().contains("Hoy")) 
-					getIssues().issueFilter.setDateDiff(1);
-				else if(vcb.getValue().contains("Ayer")) 
-					getIssues().issueFilter.setDateDiff(2);
-				else if(vcb.getValue().contains("Hace 1 semana")) 
-					getIssues().issueFilter.setDateDiff(7);
-				else getIssues().issueFilter.setDateDiff(30);
-				
-				dateButton.setTitle(vcb.getValue());
-				dateLabel.setText("Fecha:"+vcb.getValue()+"; ");
-				getIssues().updateIssueList(issues.issueFilter, false);	
-				popup.hide();
-			}
+			@Override public void onFailure(Throwable caught) {}
 		});
-		popup.add(vcb);
-		int left = dateButton.getAbsoluteLeft();
-		int top = dateButton.getAbsoluteTop()
-				+ dateButton.getOffsetHeight();
-		Integer width = Window.getClientWidth();
-		if(left > width - 200){
-			left = left - 200;
-		}
-		popup.setAutoHideEnabled(true);
-		popup.addAutoHidePartner(vcb.getElementById("overlay"));
-		popup.setPopupPosition(left, top);
-		popup.show();
-		vcb.toggle();
-	}		
-
-	private String getLabelArray(AonJsArray<JsLabel> labels) {
-		String arr= "[";
-		if(labels != null)
-			for(Integer i = 0; i < labels.length(); i++){
-				if(i > 0) arr = arr + " , ";
-				arr = arr + "\""+ labels.get(i).getName()+"\"";
-		}
-		return arr + "]";
 	}
 	
-	private String getUserArray(AonJsArray<JsUser> users) {
-		String arr= "[";
-		if(users != null)
-			for(Integer i = 0; i < users.length(); i++){
-				if(i > 0) arr = arr + " , ";
-				arr = arr + "\""+ users.get(i).getLogin()+"\"";
-		}
-		return arr + "]";
+	@UiHandler("dateButton")
+	void dateButtonClick(ClickEvent event){
+		incidence.getDateOptions(new AsyncCallback<JSON<JsObject>>() {
+			
+			@Override public void onSuccess(JSON<JsObject> result) {
+				AonJsArray<JsObject> items = result.getData();
+				PopupPanel popup = new PopupPanel();
+				AonComboBox acb = new AonComboBox();
+				acb.setLabel("Fecha");
+				acb.setItemLabelPath("name");
+				acb.setItems(items);
+				
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
+					
+					@Override
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						JsObject jsObject = acb.getSelectedItem().cast();								
+						if(jsObject.getName().contains("Hoy")) 
+							getIssues().issueFilter.setDateDiff(1);
+						else if(jsObject.getName().contains("Ayer")) 
+							getIssues().issueFilter.setDateDiff(2);
+						else if(jsObject.getName().contains("Hace 1 semana")) 
+							getIssues().issueFilter.setDateDiff(7);
+						else getIssues().issueFilter.setDateDiff(30);
+						
+						dateButton.setTitle(jsObject.getName());
+						dateLabel.setText("Fecha:"+jsObject.getName()+"; ");
+						getIssues().updateIssueList(issues.issueFilter, false);	
+						popup.hide();					
+					}
+				});
+				popup.add(acb);
+				int left = dateButton.getAbsoluteLeft();
+				int top = dateButton.getAbsoluteTop()
+						+ dateButton.getOffsetHeight();
+				Integer width = Window.getClientWidth();
+				if(left > width - 200){
+					left = left - 200;
+				}
+				popup.setAutoHideEnabled(true);
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
+				popup.setPopupPosition(left, top);
+				popup.show();
+				acb.open();
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
 	}
 	
 	public Issues getIssues() {

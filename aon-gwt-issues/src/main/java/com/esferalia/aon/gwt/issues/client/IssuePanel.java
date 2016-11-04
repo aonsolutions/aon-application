@@ -54,9 +54,8 @@ import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
-import com.vaadin.polymer.vaadin.widget.VaadinComboBox;
-import com.vaadin.polymer.vaadin.widget.event.ValueChangedEvent;
-import com.vaadin.polymer.vaadin.widget.event.ValueChangedEventHandler;
+
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 
 public class IssuePanel extends Composite{
@@ -281,9 +280,9 @@ public class IssuePanel extends Composite{
 				PaperInput pi = new PaperInput();
 				pi.setLabel("T\u00edtulo");
 				pi.setValue(issue.getTitle());
-				AonDialog dialog = new AonDialog("Editar T\u00edtulo", pi) {
+				AonDialog2 dialog = new AonDialog2("Editar T\u00edtulo", pi) {
 					
-					@Override protected void onCancel() {}
+					@Override protected void onCancel() {hide();}
 				
 					@Override
 					protected void onAccept() {					
@@ -298,10 +297,11 @@ public class IssuePanel extends Composite{
 							}
 							
 							@Override public void onFailure(Throwable caught) {}
-						});					}
+						});	
+						hide();
+					}
 				};
-				parent.toolbar.add(dialog);
-				dialog.open();
+				dialog.center();
 			}
 		});
 		vp.add(title);
@@ -787,30 +787,27 @@ public class IssuePanel extends Composite{
 			@Override public void onSuccess(JSON<JsLabel> result) {
 				AonJsArray<JsLabel> labels = result.getData();
 				PopupPanel popup = new PopupPanel();
-				VaadinComboBox vcb = new VaadinComboBox();
-				vcb.setItems(getLabelArray(labels));
-				vcb.setLabel("Tipo");
-				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+				AonComboBox acb = new AonComboBox();
+				acb.setItems(labels);
+				acb.setItemLabelPath("name");
+				acb.setLabel("Tipo");
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
 					@Override
-					public void onValueChanged(ValueChangedEvent event) {
-						if(labels != null)
-							for(Integer i = 0; i < labels.length(); i++)
-								if(labels.get(i).getName().equals(vcb.getValue())) {
-									JsLabel jsLabel = labels.get(i);
-									typeLabel.setText(jsLabel.getName());
-									if(jsLabel.getColor() != null && !jsLabel.getColor().equals(""))
-										typeLabel.getElement().getStyle().setBackgroundColor("#"+jsLabel.getColor());
-									typeDeleteButton.setVisible(true);
-									incidence.addType2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
-										@Override public void onFailure(Throwable caught) {}
-										@Override public void onSuccess(JsLabel result) {}
-									});
-									popup.hide();
-								}	
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						JsLabel jsLabel = acb.getSelectedItem().cast();
+						typeLabel.setText(jsLabel.getName());
+						if(jsLabel.getColor() != null && !jsLabel.getColor().equals(""))
+							typeLabel.getElement().getStyle().setBackgroundColor("#"+jsLabel.getColor());
+						typeDeleteButton.setVisible(true);
+						incidence.addType2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+							@Override public void onFailure(Throwable caught) {}
+							@Override public void onSuccess(JsLabel result) {}
+						});
+						popup.hide();
 					}
 				});
-				popup.add(vcb);
+				popup.add(acb);
 				int left = typeButton.getAbsoluteLeft();
 				int top = typeButton.getAbsoluteTop()
 						+ typeButton.getOffsetHeight();
@@ -819,10 +816,10 @@ public class IssuePanel extends Composite{
 					left = left - 200;
 				}
 				popup.setAutoHideEnabled(true);
-				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
 				popup.setPopupPosition(left, top);
 				popup.show();
-				vcb.toggle();
+				acb.open();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -837,29 +834,27 @@ public class IssuePanel extends Composite{
 			@Override public void onSuccess(JSON<JsLabel> result) {
 				AonJsArray<JsLabel> labels = result.getData();
 				PopupPanel popup = new PopupPanel();
-				VaadinComboBox vcb = new VaadinComboBox();
-				vcb.setItems(getLabelArray(labels));
-				vcb.setLabel("Prioridad");
-				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+				AonComboBox acb = new AonComboBox();
+				acb.setItems(labels);
+				acb.setItemLabelPath("name");
+				acb.setLabel("Prioridad");
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
 					@Override
-					public void onValueChanged(ValueChangedEvent event) {
-						if(labels != null)
-							for(Integer i = 0; i < labels.length(); i++)
-								if(labels.get(i).getName().equals(vcb.getValue())) {
-									JsLabel jsLabel = labels.get(i);
-									priorityLabel.setText(jsLabel.getName());
-									if(jsLabel.getColor() != null && !jsLabel.getColor().equals(""))
-										priorityLabel.getElement().getStyle().setBackgroundColor("#"+jsLabel.getColor());
-									incidence.addPriority2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
-										@Override public void onFailure(Throwable caught) {}
-										@Override public void onSuccess(JsLabel result) {}
-									});
-									popup.hide();
-								}	
-					}
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						JsLabel jsLabel = acb.getSelectedItem().cast();
+						priorityLabel.setText(jsLabel.getName());
+						if(jsLabel.getColor() != null && !jsLabel.getColor().equals(""))
+							priorityLabel.getElement().getStyle().setBackgroundColor("#"+jsLabel.getColor());
+						incidence.addPriority2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+							@Override public void onFailure(Throwable caught) {}
+							@Override public void onSuccess(JsLabel result) {}
+						});
+						popup.hide();	
+					}	
 				});
-				popup.add(vcb);
+				
+				popup.add(acb);
 				int left = priorityButton.getAbsoluteLeft();
 				int top = priorityButton.getAbsoluteTop()
 						+ priorityButton.getOffsetHeight();
@@ -868,10 +863,10 @@ public class IssuePanel extends Composite{
 					left = left - 200;
 				}
 				popup.setAutoHideEnabled(true);
-				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
 				popup.setPopupPosition(left, top);
 				popup.show();
-				vcb.toggle();
+				acb.open();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -885,63 +880,61 @@ public class IssuePanel extends Composite{
 			@Override public void onSuccess(JSON<JsLabel> result) {
 				AonJsArray<JsLabel> labels = result.getData();
 				PopupPanel popup = new PopupPanel();
-				VaadinComboBox vcb = new VaadinComboBox();
-				vcb.setItems(getLabelArray(labels));
-				vcb.setLabel("Etiqueta");
-				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+				AonComboBox acb = new AonComboBox();
+				acb.setItems(labels);
+				acb.setItemLabelPath("name");
+				acb.setLabel("Etiqueta");
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
 					@Override
-					public void onValueChanged(ValueChangedEvent event) {
-						if(labels != null)
-							for(Integer i = 0; i < labels.length(); i++)
-								if(labels.get(i).getName().equals(vcb.getValue())) {
-									HorizontalPanel hp = new HorizontalPanel();
-									JsLabel jsLabel = labels.get(i);
-									Boolean bool = true;
-									for(Integer j = 0; j < labelsVPanel.getWidgetCount(); j++){
-										HorizontalPanel hh = (HorizontalPanel) labelsVPanel.getWidget(j);
-										Label ll = (Label) hh.getWidget(0);
-										if(ll.getText().equals(jsLabel.getName()))
-											bool = false;
-									}
-									if(bool){
-										Label l = new Label(jsLabel.getName());
-										l.setStyleName(AON.AON_CSS.tagStyle());
-										l.addStyleName(CSS.tagNoticeIssues());
-										if(jsLabel.getColor() != null && !jsLabel.getColor().equals(""))
-											l.getElement().getStyle().setBackgroundColor("#"+jsLabel.getColor());
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						HorizontalPanel hp = new HorizontalPanel();
+						JsLabel jsLabel = acb.getSelectedItem().cast();
+						Boolean bool = true;
+						for(Integer j = 0; j < labelsVPanel.getWidgetCount(); j++){
+							HorizontalPanel hh = (HorizontalPanel) labelsVPanel.getWidget(j);
+							Label ll = (Label) hh.getWidget(0);
+							if(ll.getText().equals(jsLabel.getName()))
+								bool = false;
+						}
+						if(bool){
+							Label l = new Label(jsLabel.getName());
+							l.setStyleName(AON.AON_CSS.tagStyle());
+							l.addStyleName(CSS.tagNoticeIssues());
+							if(jsLabel.getColor() != null && !jsLabel.getColor().equals(""))
+								l.getElement().getStyle().setBackgroundColor("#"+jsLabel.getColor());
 
-										hp.add(l);
-										PaperIconButton pib = new PaperIconButton();
-										pib.setIcon("close");
-										pib.setStyle("padding:3px !important;");
-										pib.setSize("22px", "22px");
-										pib.setTitle(labelsVPanel.getWidgetCount()+"");
-										pib.addClickHandler(new ClickHandler() {
-										
-											@Override
-											public void onClick(ClickEvent event) {
-												incidence.deleteLabel2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
-													@Override public void onFailure(Throwable caught) {}
-													@Override public void onSuccess(JsLabel result) {
-														Integer index = Integer.parseInt(pib.getTitle());
-														labelsVPanel.remove(index);
-													}
-												});
-											}
-										});
-										hp.add(pib);
-										labelsVPanel.add(hp);
-										incidence.addLabel2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
-											@Override public void onFailure(Throwable caught) {}
-											@Override public void onSuccess(JsLabel result) {}
-										});
-										popup.hide();
-									} else popup.hide();
-								}	
-					}
+							hp.add(l);	
+							PaperIconButton pib = new PaperIconButton();
+							pib.setIcon("close");
+							pib.setStyle("padding:3px !important;");
+							pib.setSize("22px", "22px");
+							pib.setTitle(labelsVPanel.getWidgetCount()+"");
+							pib.addClickHandler(new ClickHandler() {
+								
+								@Override
+								public void onClick(ClickEvent event) {
+									incidence.deleteLabel2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+										@Override public void onFailure(Throwable caught) {}
+										@Override public void onSuccess(JsLabel result) {
+											Integer index = Integer.parseInt(pib.getTitle());
+											labelsVPanel.remove(index);
+										}
+									});
+								}
+							});
+						
+							hp.add(pib);
+							labelsVPanel.add(hp);
+							incidence.addLabel2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
+								@Override public void onFailure(Throwable caught) {}
+								@Override public void onSuccess(JsLabel result) {}
+							});
+							popup.hide();
+						} else popup.hide();
+					}				
 				});
-				popup.add(vcb);
+				popup.add(acb);
 				int left = tagButton.getAbsoluteLeft();
 				int top = tagButton.getAbsoluteTop()
 						+ tagButton.getOffsetHeight();
@@ -950,10 +943,10 @@ public class IssuePanel extends Composite{
 					left = left - 200;
 				}
 				popup.setAutoHideEnabled(true);
-				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
 				popup.setPopupPosition(left, top);
 				popup.show();
-				vcb.toggle();
+				acb.open();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -967,30 +960,27 @@ public class IssuePanel extends Composite{
 			@Override public void onSuccess(JSON<JsUser> result) {
 				AonJsArray<JsUser> users = result.getData();
 				PopupPanel popup = new PopupPanel();
-				VaadinComboBox vcb = new VaadinComboBox();
-				vcb.setItems(getUserArray(users));
-				vcb.setLabel("Grupo de Trabajo");
-				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+				AonComboBox acb = new AonComboBox();
+				acb.setItems(users);
+				acb.setItemLabelPath("login");
+				acb.setLabel("Grupo de Trabajo");
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
 					@Override
-					public void onValueChanged(ValueChangedEvent event) {
-						if(users != null)
-							for(Integer i = 0; i < users.length(); i++)
-								if(users.get(i).getLogin().equals(vcb.getValue())) {
-									JsUser jsUser = users.get(i);
-									workgroup = jsUser;
-									workgroupLabel.setText(jsUser.getLogin());
-									workgroupLabel.getElement().getStyle().setBackgroundColor("#ff704d");
-									workgroupDeleteButton.setVisible(true);
-									incidence.addWorkgroup2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
-										@Override public void onFailure(Throwable caught) {}
-										@Override public void onSuccess(JsUser result) {}
-									});
-									popup.hide();
-								}	
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						JsUser jsUser = acb.getSelectedItem().cast();
+						workgroup = jsUser;
+						workgroupLabel.setText(jsUser.getLogin());
+						workgroupLabel.getElement().getStyle().setBackgroundColor("#ff704d");
+						workgroupDeleteButton.setVisible(true);
+						incidence.addWorkgroup2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
+							@Override public void onFailure(Throwable caught) {}
+							@Override public void onSuccess(JsUser result) {}
+						});
+						popup.hide();					
 					}
 				});
-				popup.add(vcb);
+				popup.add(acb);
 				int left = workgroupButton.getAbsoluteLeft();
 				int top = workgroupButton.getAbsoluteTop()
 						+ workgroupButton.getOffsetHeight();
@@ -999,10 +989,10 @@ public class IssuePanel extends Composite{
 					left = left - 200;
 				}
 				popup.setAutoHideEnabled(true);
-				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
 				popup.setPopupPosition(left, top);
 				popup.show();
-				vcb.toggle();
+				acb.open();
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -1017,29 +1007,26 @@ public class IssuePanel extends Composite{
 			public void onSuccess(JSON<JsUser> result) {
 				AonJsArray<JsUser> users = result.getData();
 				PopupPanel popup = new PopupPanel();
-				VaadinComboBox vcb = new VaadinComboBox();
-				vcb.setItems(getUserArray(users));
-				vcb.setLabel("Operario");
-				vcb.addValueChangedHandler(new ValueChangedEventHandler() {
+				AonComboBox acb = new AonComboBox();
+				acb.setItemLabelPath("login");
+				acb.setItems(users);
+				acb.setLabel("Operario");
+				acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 					
 					@Override
-					public void onValueChanged(ValueChangedEvent event) {
-						if(users != null)
-							for(Integer i = 0; i < users.length(); i++)
-								if(users.get(i).getLogin().equals(vcb.getValue())) {
-									JsUser jsUser = users.get(i);
-									userLabel.setText(jsUser.getLogin());
-									userLabel.getElement().getStyle().setBackgroundColor("#a30c51");
-									userDeleteButton.setVisible(true);
-									incidence.addUser2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
-										@Override public void onFailure(Throwable caught) {}
-										@Override public void onSuccess(JsUser result) {}
-									});
-									popup.hide();
-								}	
+					public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
+						JsUser jsUser = acb.getSelectedItem().cast();
+						userLabel.setText(jsUser.getLogin());
+						userLabel.getElement().getStyle().setBackgroundColor("#a30c51");
+						userDeleteButton.setVisible(true);
+						incidence.addUser2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
+							@Override public void onFailure(Throwable caught) {}
+							@Override public void onSuccess(JsUser result) {}
+						});
+						popup.hide();
 					}
 				});
-				popup.add(vcb);
+				popup.add(acb);
 				int left = userButton.getAbsoluteLeft();
 				int top = userButton.getAbsoluteTop()
 						+ userButton.getOffsetHeight();
@@ -1048,10 +1035,10 @@ public class IssuePanel extends Composite{
 					left = left - 200;
 				}
 				popup.setAutoHideEnabled(true);
-				popup.addAutoHidePartner(vcb.getElementById("overlay"));
+				popup.addAutoHidePartner(acb.getElementById("overlay"));
 				popup.setPopupPosition(left, top);
 				popup.show();
-				vcb.toggle();
+				acb.open();
 			
 
 			}
@@ -1084,6 +1071,7 @@ public class IssuePanel extends Composite{
 		});
 	}
 	
+	@UiHandler("workgroupDeleteButton")
 	void onClickWorkgroupDeleteButton(ClickEvent event){	
 		incidence.deleteWorkgroup2Issue(issue.getNumber(), new AsyncCallback<JsUser>() {
 			@Override public void onFailure(Throwable caught) {}
@@ -1109,10 +1097,9 @@ public class IssuePanel extends Composite{
 				is.setHeight("400px");
 				is.setWidth("500px");
 
-				AonDialog dialog = new AonDialog("Asignar a ", is) {
+				AonDialog2 dialog = new AonDialog2("Asignar a ", is) {
 					
-					@Override
-					protected void onCancel() {}
+					@Override protected void onCancel() {hide();}
 					
 					@Override
 					protected void onAccept() {
@@ -1130,10 +1117,10 @@ public class IssuePanel extends Composite{
 							
 							@Override public void onFailure(Throwable caught) {}
 						});
+						hide();
 					}
 				};
-				parent.toolbar.add(dialog);
-				dialog.open();
+				dialog.center();
 			}
 			
 			@Override
@@ -1154,10 +1141,9 @@ public class IssuePanel extends Composite{
 				IssueSelector is = new IssueSelector(incidence, issue, issueFilter,"faq", result.getData());
 				is.setHeight("400px");
 				is.setWidth("500px");
-				AonDialog dialog = new AonDialog("Asignar a ", is) {
+				AonDialog2 dialog = new AonDialog2("Asignar a ", is) {
 					
-					@Override
-					protected void onCancel() {}
+					@Override protected void onCancel() {hide();}
 					
 					@Override
 					protected void onAccept() {
@@ -1175,10 +1161,10 @@ public class IssuePanel extends Composite{
 							
 							@Override public void onFailure(Throwable caught) {}
 						});
+						hide();
 					}
 				};
-				parent.toolbar.add(dialog);
-				dialog.open();
+				dialog.center();
 			}
 			
 			@Override
@@ -1241,27 +1227,6 @@ public class IssuePanel extends Composite{
 	private void closeFootPanel() {
 		dockLayoutPanel.setWidgetSize(footPanel, 30);
 		dockLayoutPanel.animate(500);
-	}
-	
-	
-	private String getLabelArray(AonJsArray<JsLabel> labels) {
-		String arr= "[";
-		if(labels != null)
-			for(Integer i = 0; i < labels.length(); i++){
-				if(i > 0) arr = arr + " , ";
-				arr = arr + "\""+ labels.get(i).getName()+"\"";
-		}
-		return arr + "]";
-	}
-	
-	private String getUserArray(AonJsArray<JsUser> users) {
-		String arr= "[";
-		if(users != null)
-			for(Integer i = 0; i < users.length(); i++){
-				if(i > 0) arr = arr + " , ";
-				arr = arr + "\""+ users.get(i).getLogin()+"\"";
-		}
-		return arr + "]";
 	}
 	
 	//----------------------- SEND NOTIFICATION 

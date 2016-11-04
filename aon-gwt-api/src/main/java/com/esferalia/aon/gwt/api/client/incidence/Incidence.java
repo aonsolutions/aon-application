@@ -410,6 +410,16 @@ public class Incidence extends Methods{
 	}
 	
 	
+	// FILTER OPTIONS.. 
+	
+	public void getOrderOptions(AsyncCallback<JSON<JsObject>> callback){
+		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/order_options",callback);
+	}
+	
+	public void getDateOptions(AsyncCallback<JSON<JsObject>> callback){
+		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/date_options",callback);
+	}
+	
 	//---------------------- Métodos Get & Set
 	
 	public String getUrl() {

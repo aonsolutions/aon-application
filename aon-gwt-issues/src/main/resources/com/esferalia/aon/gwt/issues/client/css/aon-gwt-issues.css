@@ -93,6 +93,27 @@
     	font-family: 'Roboto', 'Noto', sans-serif;
 	    font-size: 16px;
     }
+    
+    
+    
+    .buttons-popup-issues {
+		position: relative;
+    	padding: 8px 8px 8px 24px;
+    	margin: 0;
+    	color: #3f51b5;
+    	display: -ms-flexbox;
+    	display: -webkit-flex;
+    	display: flex;
+    	-ms-flex-direction: row;
+    	-webkit-flex-direction: row;
+    	flex-direction: row;
+    	-ms-flex-pack: end;
+    	-webkit-justify-content: flex-end;
+    	justify-content: flex-end;
+    }
+    
+    
+	
 	
 	
 	

@@ -356,6 +356,9 @@ input[type="checkbox"] + label:focus {
 .aon-margin-left5 {
 	margin-left: 5px;
 }
+.aon-margin-left20 {
+	margin-left: 20px;
+}
 
 .aon-margin-bottom {
 	margin-bottom: 1em;
@@ -369,6 +372,9 @@ input[type="checkbox"] + label:focus {
 }
 .aon-margin-right5 {
 	margin-right: 5px;
+}
+.aon-margin-right20 {
+	margin-right: 20px;
 }
 
 .aon-bold {
@@ -2762,4 +2768,8 @@ right
 		position: absolute;
 		right: 3px;
 		top: 3px;
+	}
+	
+	.aon-dialog-box-shadow {
+		box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4);
 	}

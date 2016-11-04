@@ -31,8 +31,6 @@ import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.iron.IronListElement;
 import com.vaadin.polymer.iron.widget.IronIcon;
-import com.vaadin.polymer.iron.widget.event.IronOverlayOpenedEvent;
-import com.vaadin.polymer.iron.widget.event.IronOverlayOpenedEventHandler;
 import com.vaadin.polymer.paper.PaperDialogElement;
 import com.vaadin.polymer.paper.PaperIconButtonElement;
 import com.vaadin.polymer.paper.PaperInputElement;
@@ -56,7 +54,7 @@ public class Issues implements EntryPoint {
 	final IIssuesAsync serv = GWT.create(IIssues.class);
 	
 	private static final String HTTP = "http://";
-
+	
 	@UiField HTMLPanel searchContent;
 	@UiField HTMLPanel content;
 	@UiField HTMLPanel issueContent;
@@ -136,7 +134,7 @@ public class Issues implements EntryPoint {
 		incidence.getOrgIssues(filter, new AsyncCallback<JSON<JsIssue>>() {
 			
 			@Override
-			public void onSuccess(JSON<JsIssue> result) {			
+			public void onSuccess(JSON<JsIssue> result) {	
 				IssueList issueList = new IssueList(me, incidence, result.getData());
 				content.add(issueList);
 				
@@ -211,8 +209,13 @@ public class Issues implements EntryPoint {
 			
 			@Override
 			protected void onAddButtonClick() {
-				AonDialog dialog = createAddDialog();
-				toolbar.add(dialog);
+				AonDialog2 dialog = createAddDialog();
+				VerticalPanel vp = (VerticalPanel) dialog.content.getWidget(0);	
+				AonComboBox acb = (AonComboBox) vp.getWidget(0);
+				dialog.addAutoHidePartner(acb.getElementById("overlay"));
+				dialog.getElement().getStyle().setWidth(310, Unit.PX);
+				dialog.center();
+				/*toolbar.add(dialog);
 				dialog.dialog.addIronOverlayOpenedHandler(new IronOverlayOpenedEventHandler() {
 							
 					@Override
@@ -224,6 +227,7 @@ public class Issues implements EntryPoint {
 					}
 				});
 				dialog.open();
+				*/
 			}
 
 			@Override
@@ -236,15 +240,14 @@ public class Issues implements EntryPoint {
 				vp.add(getInfoPanel("red", "Duplicado"));
 				vp.add(getInfoPanel("blue", "FAQ"));
 				vp.setWidth("200px");
-				AonDialog dialog = new AonDialog("Informaci\u00f3n", vp) {
+				AonDialog2 dialog = new AonDialog2("Informaci\u00f3n", vp) {
 					
-					@Override protected void onCancel() {}
+					@Override protected void onCancel() {hide();}
 					
-					@Override protected void onAccept() {}
+					@Override protected void onAccept() {hide();}
 				};
 				dialog.cancel.setVisible(false);
-				toolbar.add(dialog);
-				dialog.open();
+				dialog.center();
 			}
 		}.setVisibleEditButton(false).setVisibleDeleteButton(false)
 		.setVisibleMoreOptionButton(false));
@@ -264,13 +267,12 @@ public class Issues implements EntryPoint {
 		return hp;
 	}
 	
-	private AonDialog createAddDialog(){	
+	private AonDialog2 createAddDialog(){	
 		VerticalPanel v = new VerticalPanel();
 
 		AonComboBox acb = new AonComboBox();
 		acb.setLabel("Remitente");
 		acb.setItemLabelPath("login");
-		acb.setItemLabelPath("login");	
 		acb.setFilterEnable(false);
 		acb.addDomHandler(new KeyUpHandler() {
 			
@@ -297,11 +299,9 @@ public class Issues implements EntryPoint {
 		PaperTextarea pi4 = new PaperTextarea();
 		pi4.setLabel("Descripcion");
 		v.add(pi4);
-		
-		return new AonDialog("Nueva Incidencia",v){
-			@Override protected void onCancel() {
-				toolbar.remove(1);
-			}
+		v.setWidth("270px");
+		return new AonDialog2("Nueva Incidencia",v){
+			@Override protected void onCancel() {hide();}
 			@Override protected void onAccept() {
 				VerticalPanel vp = (VerticalPanel) content.getWidget(0);	
 				AonComboBox acb = (AonComboBox) vp.getWidget(0);
@@ -326,7 +326,7 @@ public class Issues implements EntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {}
 				});
-				toolbar.remove(1);
+				hide();
 			}
 		};
 	}

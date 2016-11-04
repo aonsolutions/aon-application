@@ -108,6 +108,12 @@ public class ReposServlet extends HttpServlet{
 					if(!filter.equals("")) object = getFilterRegistriesJSON(domain, userName, filter);
 					else object = getAllRegistriesJSON(domain, userName);
 					break;
+				case "order_options": // ORDER OPTIONS
+					object = getOrderOptionsJSON();
+					break;
+				case "date_options": // DATE OPTIONS
+					object = getDateOptionsJSON();
+					break;
 				default:
 					break;
 				}
@@ -618,6 +624,48 @@ public class ReposServlet extends HttpServlet{
 		LinkedList<NotificationInfo> list = NS.buildNotificationInfoList(domain, login, task, NotificationType.ASSIGNEE);
  		String url = "http://"+domain.getName()+ "/aon-aio" + "/emailFunction/"+ thName + "/" + domain.getName() + "/close/" + task.getId();
 		NS.sendNotification(domain, login, ni, list, NotificationType.ASSIGNEE, url, r.getId());
+	}
+	
+	private JSONArray getDateOptionsJSON(){
+		JSONArray array = new JSONArray();
+		JSONObject json1 = new JSONObject();
+		JSONObject json2 = new JSONObject();
+		JSONObject json3 = new JSONObject();
+		JSONObject json4 = new JSONObject();					
+		json1.put("id", "0");
+		json1.put("name", "Hoy");
+		json2.put("id", "1");
+		json2.put("name", "Ayer");
+		json3.put("id", "2");
+		json3.put("name", "Hace 1 semana");
+		json4.put("id", "3");
+		json4.put("name", "Hace 1 mes");
+		array.put(json1);
+		array.put(json2);
+		array.put(json3);
+		array.put(json4);
+		return array;
+	}
+	
+	private JSONArray getOrderOptionsJSON(){
+		JSONArray array = new JSONArray();
+		JSONObject json1 = new JSONObject();
+		JSONObject json2 = new JSONObject();
+		JSONObject json3 = new JSONObject();
+		JSONObject json4 = new JSONObject();					
+		json1.put("id", "0");
+		json1.put("name", "Creados - Recientes");
+		json2.put("id", "1");
+		json2.put("name", "Creados - Antiguos");
+		json3.put("id", "2");
+		json3.put("name", "Modificados - Recientes");
+		json4.put("id", "3");
+		json4.put("name", "Modificados - Antiguos");
+		array.put(json1);
+		array.put(json2);
+		array.put(json3);
+		array.put(json4);
+		return array;
 	}
 	
 	private static class TagToLabelFiller implements Function<Tag, Label> {

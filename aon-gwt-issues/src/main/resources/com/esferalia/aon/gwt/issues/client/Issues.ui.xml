@@ -28,7 +28,7 @@
 </ui:style>
 <g:DockLayoutPanel ui:field="dockLayoutPanel">
 	<g:north size="40">
-		<g:HTMLPanel ui:field="toolbar" />
+		<g:HTMLPanel ui:field="toolbar"></g:HTMLPanel>
 	</g:north>
 	<g:west size="0">
 		<g:HTMLPanel styleName="{issuesResources.css.aonConfigurationPanelIssues}" ui:field="configurationPanel"/>

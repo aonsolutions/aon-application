@@ -14,9 +14,8 @@ import com.vaadin.polymer.paper.widget.PaperSlider;
 import com.vaadin.polymer.paper.widget.PaperToggleButton;
 import com.vaadin.polymer.paper.widget.event.ChangeEvent;
 import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
-import com.vaadin.polymer.vaadin.widget.VaadinComboBox;
-import com.vaadin.polymer.vaadin.widget.event.ValueChangedEvent;
-import com.vaadin.polymer.vaadin.widget.event.ValueChangedEventHandler;
+
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class NotificationPanel extends Composite {
 	
@@ -26,9 +25,9 @@ public class NotificationPanel extends Composite {
     
     private static Binder binder = GWT.create(Binder.class);
     
-    @UiField VaadinComboBox emailComboBox;
-    @UiField VaadinComboBox signComboBox;
-    @UiField VaadinComboBox modeComboBox;
+    @UiField AonComboBox emailComboBox;
+    @UiField AonComboBox signComboBox;
+    @UiField AonComboBox modeComboBox;
     @UiField PaperToggleButton logoToggle;
     @UiField PaperToggleButton commentHistoryToggle;
     @UiField PaperToggleButton statusHistoryToggle;
@@ -62,66 +61,49 @@ public class NotificationPanel extends Composite {
     }
     
     private void initEmailComboBox(JsNotify notify) {
-		String arr= "[";
-		for(Integer i = 0; i < notify.getMailAccountList().length(); i++){
-			if(i > 0) arr = arr + " , ";
- 			arr = arr + "\""+ notify.getMailAccountList().get(i).getName()+"\"";
-		}
-		arr = arr + "]";
-    	
-    	//get emails incidence ....
     	emailComboBox.setLabel("Cuenta de Correo");
-    	emailComboBox.setItems(arr);
+    	emailComboBox.setWidth("300px");
+    	emailComboBox.setItemLabelPath("name");
+    	emailComboBox.setItems(notify.getMailAccountList());
     	emailComboBox.setValue(notify.getMail());
-    	emailComboBox.addValueChangedHandler(new ValueChangedEventHandler() {
+    	emailComboBox.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 			
 			@Override
-			public void onValueChanged(ValueChangedEvent event) {
+			public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
 				String r= "{\"email\":\""+emailComboBox.getValue() +"\"}";
-				incidence.updateNotificationInfo(r);
+				incidence.updateNotificationInfo(r);				
 			}
 		});
 	}
     
     private void initSignComboBox(JsNotify notify) {
-		String arr= "[";
-		for(Integer i = 0; i < notify.getSignatureList().length(); i++){
-			if(i > 0) arr = arr + " , ";
- 			arr = arr + "\""+ notify.getSignatureList().get(i).getName()+"\"";
-		}
-		arr = arr + "]";
-
-		//get emails incidence ....
     	signComboBox.setLabel("Firma de Correo");
-    	signComboBox.setItems(arr);
+    	signComboBox.setWidth("300px");
+    	signComboBox.setItemLabelPath("name");
+    	signComboBox.setItems(notify.getSignatureList());
     	signComboBox.setValue(notify.getSign());
-    	signComboBox.addValueChangedHandler(new ValueChangedEventHandler() {
+    	signComboBox.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 			
 			@Override
-			public void onValueChanged(ValueChangedEvent event) {
+			public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
 				String r= "{\"sign\":\""+signComboBox.getValue() +"\"}";
-				incidence.updateNotificationInfo(r);
+				incidence.updateNotificationInfo(r);				
 			}
 		});
 	}
     
     private void initModeComboBox(JsNotify notify) {
-		String arr= "[";
-		for(Integer i = 0; i < notify.getModeList().length(); i++){
-			if(i > 0) arr = arr + " , ";
- 			arr = arr + "\""+ notify.getModeList().get(i).getName()+"\"";
-		}
-		arr = arr + "]";
-    	//get emails incidence ....
     	modeComboBox.setLabel("Modo");
-    	modeComboBox.setItems(arr);
+    	modeComboBox.setWidth("300px");
+    	modeComboBox.setItemLabelPath("name");
+    	modeComboBox.setItems(notify.getModeList());
     	modeComboBox.setValue(notify.getMode());
-    	modeComboBox.addValueChangedHandler(new ValueChangedEventHandler() {
+    	modeComboBox.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
 			
 			@Override
-			public void onValueChanged(ValueChangedEvent event) {
+			public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
 				String r= "{\"mode\":\""+modeComboBox.getValue() +"\"}";
-				incidence.updateNotificationInfo(r);
+				incidence.updateNotificationInfo(r);				
 			}
 		});
     }
@@ -140,7 +122,8 @@ public class NotificationPanel extends Composite {
 		});
     
         commentHistoryToggle.setChecked(notify.getCommentHistory().equals("1"));
-    	commentHistoryToggle.addChangeHandler(new ChangeEventHandler() {
+    	commentHistoryToggle.setWidth("300px");
+        commentHistoryToggle.addChangeHandler(new ChangeEventHandler() {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -149,6 +132,7 @@ public class NotificationPanel extends Composite {
 		});
     	
         statusHistoryToggle.setChecked(notify.getStatusHistory().equals("1"));
+        statusHistoryToggle.setWidth("300px");
         statusHistoryToggle.addChangeHandler(new ChangeEventHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -195,6 +179,7 @@ public class NotificationPanel extends Composite {
     
     private void initBccInput(JsNotify notify) {
         bccInput.setLabel("Incluir en BCC"); 
+        bccInput.setWidth("300px");
         bccInput.setValue(notify.getBcc());
         bccInput.addChangeHandler(new ChangeEventHandler() {
 			

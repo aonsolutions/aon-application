@@ -53,4 +53,7 @@ public interface AonGwtIssuesCSS extends CssResource{
 	@ClassName("faq-configuration-button-issues")
 	String faqConfigurationButtonIssues();
 
+	@ClassName("buttons-popup-issues")
+	String buttonsPopupIssues();
+
 }
