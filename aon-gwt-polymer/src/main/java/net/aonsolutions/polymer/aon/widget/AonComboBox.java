@@ -50,7 +50,7 @@ public class AonComboBox extends PolymerWidget {
         try {
             return (AonComboBoxElement) getElement();
         } catch (ClassCastException e) {
-            jsinteropError();
+            //jsinteropError();
             return null;
         }
     }

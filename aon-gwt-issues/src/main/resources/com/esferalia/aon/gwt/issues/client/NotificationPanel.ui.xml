@@ -9,8 +9,7 @@
 	xmlns:c="urn:import:com.google.gwt.user.cellview.client" 
 	xmlns:b="http://java.sun.com/jstl/core"
 	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
-	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'
-	xmlns:v='urn:import:net.aonsolutions.polymer.aon.widget'
+	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'						
 >
 
 <ui:style>
@@ -27,12 +26,12 @@
     	font-weight: 400;
     	line-height: 24px;
     }
-
+	
 	.comboBox{
 		padding-left: 20px;
 		padding-right: 20px;
 	}	
-
+	
 	.toggle{
 		padding-left: 20px;
 		padding-right: 20px;
@@ -45,20 +44,20 @@
 <g:HTMLPanel>
     <g:ScrollPanel>
     <g:VerticalPanel> 
-    	<v:AonComboBox ui:field="emailComboBox" addStyleNames="{style.comboBox}"></v:AonComboBox>
+        <g:HTMLPanel ui:field="emailPanel"></g:HTMLPanel>
     	<p:PaperToggleButton ui:field="logoToggle" addStyleNames="{style.toggle}">
     	     Incluir logo en la cabecera 
     	</p:PaperToggleButton>
     	<p:PaperSlider ui:field="logoSlider" pin="true" max="100"></p:PaperSlider>
-		<v:AonComboBox ui:field="signComboBox" addStyleNames="{style.comboBox}"></v:AonComboBox>
-		<p:PaperToggleButton ui:field="commentHistoryToggle" addStyleNames="{style.toggle}">
+		<g:HTMLPanel ui:field="signPanel"></g:HTMLPanel>
+    	<p:PaperToggleButton ui:field="commentHistoryToggle" addStyleNames="{style.toggle}">
 		     Incluir historial completo de comentarios 
 		</p:PaperToggleButton>
 		<p:PaperToggleButton ui:field="statusHistoryToggle" addStyleNames="{style.comboBox}">
 		     Incluir historial completo de estados 
 		</p:PaperToggleButton>
 		<p:PaperInput ui:field="bccInput" addStyleNames="{style.comboBox}"></p:PaperInput>
-		<v:AonComboBox ui:field="modeComboBox" addStyleNames="{style.comboBox}"></v:AonComboBox>
+		<g:HTMLPanel ui:field="modePanel"></g:HTMLPanel>
 		<p:PaperToggleButton ui:field="notifyOpenToggle" addStyleNames="{style.toggle}">
 			Notificar al abrir
 		</p:PaperToggleButton>

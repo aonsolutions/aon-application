@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.JsNotify;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -24,10 +25,9 @@ public class NotificationPanel extends Composite {
     }
     
     private static Binder binder = GWT.create(Binder.class);
-    
-    @UiField AonComboBox emailComboBox;
-    @UiField AonComboBox signComboBox;
-    @UiField AonComboBox modeComboBox;
+    @UiField HTMLPanel emailPanel;
+    @UiField HTMLPanel signPanel;
+    @UiField HTMLPanel modePanel;
     @UiField PaperToggleButton logoToggle;
     @UiField PaperToggleButton commentHistoryToggle;
     @UiField PaperToggleButton statusHistoryToggle;
@@ -46,7 +46,7 @@ public class NotificationPanel extends Composite {
 			
 			@Override
 			public void onSuccess(JSON<JsNotify> result) {
-				JsNotify notify = result.getData().get(0);
+				JsNotify notify = result.getData().get(0);		
 				initEmailComboBox(notify);
 				initSignComboBox(notify);
 				initModeComboBox(notify);
@@ -61,8 +61,11 @@ public class NotificationPanel extends Composite {
     }
     
     private void initEmailComboBox(JsNotify notify) {
+    	AonComboBox emailComboBox = new AonComboBox();
     	emailComboBox.setLabel("Cuenta de Correo");
     	emailComboBox.setWidth("300px");
+    	emailComboBox.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+    	emailComboBox.getElement().getStyle().setPaddingRight(20, Unit.PX);
     	emailComboBox.setItemLabelPath("name");
     	emailComboBox.setItems(notify.getMailAccountList());
     	emailComboBox.setValue(notify.getMail());
@@ -74,11 +77,15 @@ public class NotificationPanel extends Composite {
 				incidence.updateNotificationInfo(r);				
 			}
 		});
+    	emailPanel.add(emailComboBox);
 	}
     
     private void initSignComboBox(JsNotify notify) {
+    	AonComboBox signComboBox = new AonComboBox();
     	signComboBox.setLabel("Firma de Correo");
     	signComboBox.setWidth("300px");
+    	signComboBox.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+    	signComboBox.getElement().getStyle().setPaddingRight(20, Unit.PX);
     	signComboBox.setItemLabelPath("name");
     	signComboBox.setItems(notify.getSignatureList());
     	signComboBox.setValue(notify.getSign());
@@ -90,11 +97,15 @@ public class NotificationPanel extends Composite {
 				incidence.updateNotificationInfo(r);				
 			}
 		});
+    	signPanel.add(signComboBox);
 	}
     
     private void initModeComboBox(JsNotify notify) {
+    	AonComboBox modeComboBox = new AonComboBox();
     	modeComboBox.setLabel("Modo");
     	modeComboBox.setWidth("300px");
+    	modeComboBox.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+    	modeComboBox.getElement().getStyle().setPaddingRight(20, Unit.PX);
     	modeComboBox.setItemLabelPath("name");
     	modeComboBox.setItems(notify.getModeList());
     	modeComboBox.setValue(notify.getMode());
@@ -106,6 +117,7 @@ public class NotificationPanel extends Composite {
 				incidence.updateNotificationInfo(r);				
 			}
 		});
+    	modePanel.add(modeComboBox);
     }
     
     private void initToggles(JsNotify notify){
