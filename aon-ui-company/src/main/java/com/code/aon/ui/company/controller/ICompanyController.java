@@ -46,6 +46,9 @@ public interface ICompanyController extends IController {
 
 	boolean isPrintProductCode();
 	void setPrintProductCode(boolean printProductCode);
+	
+	boolean isPrintProductTaxType();
+	void setPrintProductTaxType(boolean printProductTaxType);
 
 	boolean isPrintReferenceCode();
 	void setPrintReferenceCode(boolean printReferenceCode);
@@ -96,6 +99,7 @@ public interface ICompanyController extends IController {
 	boolean obtainPrintReferenceCode() throws ManagerBeanException;
 	boolean obtainPrintProject() throws ManagerBeanException;
 	boolean obtainPrintProductCode() throws ManagerBeanException;
+	boolean obtainPrintProductTaxType() throws ManagerBeanException;
 	ReportPrintOption obtainPrintName() throws ManagerBeanException;
 	ReportPrintOption obtainPrintNif() throws ManagerBeanException;
 	ReportPrintOption obtainPrintAddress() throws ManagerBeanException;
