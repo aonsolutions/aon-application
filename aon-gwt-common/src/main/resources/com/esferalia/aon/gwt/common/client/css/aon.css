@@ -9,7 +9,7 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	}
 }
 
-input[type="checkbox"] + label:focus {
+input[type="checkbox"]:focus + label {
 	background-color: #FBEDB6;
 }
 
@@ -1835,7 +1835,7 @@ input:disabled+label {
 	width: 400px;
 }
 .aon-wizard-panel{
-    background-color: #e6f2ff;
+    background-color: #cceeff;
     border: 1px solid black;
     margin-left: 1.5em;
     margin-bottom: 5px;
@@ -1862,7 +1862,7 @@ input:disabled+label {
     font-weight: bold;
 }
 .aon-wizard-panel-east{
-    background-color: #e6f2ff;
+    background-color: #cceeff;
     border: 1px solid black;
     margin-right: 1em;	
     margin-bottom: 5px;

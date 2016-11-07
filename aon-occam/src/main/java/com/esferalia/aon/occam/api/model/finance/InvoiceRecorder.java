@@ -16,10 +16,13 @@ public class InvoiceRecorder {
 	private static interface IVisitor {
 		void visit( AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map);
 	}
+	private static interface IFinanceVisitor {
+		void visit( AccountingInvoice invoice, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map);
+	}
 	private static enum FinanceEntryDetailType implements Serializable {
-		 CUSTOMER( new IVisitor() {
+		 CUSTOMER( new IFinanceVisitor() {
 			@Override
-			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
+			public void visit(AccountingInvoice invoice, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map) {
 				if (invoice.getRegistry().getType() == AccountingRegistryType.CUSTOMER) {
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
@@ -35,23 +38,23 @@ public class InvoiceRecorder {
 					}
 					detail.setCredit(invoice.getTotalInvoice());
 					
-					AccountEntryDetail payDetail = map.get(invoice.getPayAccountId());
+					AccountEntryDetail payDetail = map.get(finance.getPayAccountId());
 					if (payDetail == null) {
-						String description = invoice.getPayAccountDescription();
+						String description = finance.getPayAccountDescription();
 						if (AonStringUtils.isBlank(description)) description = "COBRO FACTURA";
 						payDetail = new AccountEntryDetail()
-							.setAccount(invoice.getPayAccountId())
-							.setAccountCode(invoice.getPayAccountCode())
+							.setAccount(finance.getPayAccountId())
+							.setAccountCode(finance.getPayAccountCode())
 							.setAccountDescription(description);
-						map.put(invoice.getPayAccountId(),payDetail);
+						map.put(finance.getPayAccountId(),payDetail);
 					}
 					payDetail.setDebit(invoice.getTotalInvoice());
 				}
 			}
 	 	})
-		,SUPPLIER_CREDITOR( new IVisitor() {
+		,SUPPLIER_CREDITOR( new IFinanceVisitor() {
 			@Override
-			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
+			public void visit(AccountingInvoice invoice, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map) {
 				if (invoice.getRegistry().getType() == AccountingRegistryType.SUPPLIER 
 					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR) {
 					
@@ -69,15 +72,15 @@ public class InvoiceRecorder {
 					}
 					detail.setDebit(invoice.getTotalInvoice());
 					
-					AccountEntryDetail payDetail = map.get(invoice.getPayAccountId());
+					AccountEntryDetail payDetail = map.get(finance.getPayAccountId());
 					if (payDetail == null) {
-						String description = invoice.getPayAccountDescription();
+						String description = finance.getPayAccountDescription();
 						if (AonStringUtils.isBlank(description)) description = "PAGO FACTURA";
 						payDetail = new AccountEntryDetail()
-							.setAccount(invoice.getPayAccountId())
-							.setAccountCode(invoice.getPayAccountCode())
+							.setAccount(finance.getPayAccountId())
+							.setAccountCode(finance.getPayAccountCode())
 							.setAccountDescription(description);
-						map.put(invoice.getPayAccountId(),payDetail);
+						map.put(finance.getPayAccountId(),payDetail);
 					}
 					payDetail.setCredit(invoice.getTotalInvoice());
 					
@@ -86,14 +89,14 @@ public class InvoiceRecorder {
 	 	})
 	 
 		;
-		private IVisitor visitor;
-		private FinanceEntryDetailType(IVisitor visitor) {
+		private IFinanceVisitor visitor;
+		private FinanceEntryDetailType(IFinanceVisitor visitor) {
 			this.visitor = visitor;
 		}
 		
-		private static void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map ) {
+		private static void visit(AccountingInvoice invoice, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map ) {
 			for (FinanceEntryDetailType t : FinanceEntryDetailType.values()) {
-				t.visitor.visit(invoice, map);
+				t.visitor.visit(invoice, finance, map);
 			}
 		}
 	}
@@ -344,26 +347,32 @@ public class InvoiceRecorder {
 			detail.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ));
 			detail.setDocumentNumber(document);
 		}
-		if (invoice.getPayAccountId() != null) {
-			AccountEntry payEntry = AccountEntry
-					.clone(ae)
-					.setEntryType(AccountEntryType.PAYMENT);
-			LinkedHashMap<Integer,AccountEntryDetail> payMap = new LinkedHashMap<Integer, AccountEntryDetail>();
-			FinanceEntryDetailType.visit(invoice,payMap);	
-			payEntry.setDetails(new LinkedList<AccountEntryDetail>());
-			payEntry.getDetails().addAll(payMap.values());
-
-			String payConcept = invoice.isSales()
-					?"Cobro Fra: "+document
-					:"Pago Fra: "+ (AonStringUtils.isBlank( invoice.getInvoice().getReferenceCode())
-						?"????????"
-						:invoice.getInvoice().getReferenceCode());
-			for (AccountEntryDetail detail : payEntry.getDetails()) {
-				detail.setConcept(payConcept);
-				detail.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ));
-				detail.setDocumentNumber(document);
-			}			
-			return new AccountEntry[]{ae,payEntry};
+		if (invoice.hasFinance()) {
+			LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
+			entries.add(ae);
+			for (Finance finance : invoice.getFinances()) {
+				AccountEntry payEntry = AccountEntry
+						.clone(ae)
+						.setEntryDate(finance.getDueDate())
+						.setEntryType(AccountEntryType.PAYMENT);
+				LinkedHashMap<Integer,AccountEntryDetail> payMap = new LinkedHashMap<Integer, AccountEntryDetail>();
+				FinanceEntryDetailType.visit(invoice,finance,payMap);	
+				payEntry.setDetails(new LinkedList<AccountEntryDetail>());
+				payEntry.getDetails().addAll(payMap.values());
+				
+				String payConcept = invoice.isSales()
+						?"Cobro Fra: "+document
+								:"Pago Fra: "+ (AonStringUtils.isBlank( invoice.getInvoice().getReferenceCode())
+										?"????????"
+												:invoice.getInvoice().getReferenceCode());
+				for (AccountEntryDetail detail : payEntry.getDetails()) {
+					detail.setConcept(payConcept);
+					detail.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ));
+					detail.setDocumentNumber(document);
+				}
+				entries.add(payEntry);
+			}
+			return entries.toArray(new AccountEntry[entries.size()]);
 		}
 		return new AccountEntry[]{ae};
 	}

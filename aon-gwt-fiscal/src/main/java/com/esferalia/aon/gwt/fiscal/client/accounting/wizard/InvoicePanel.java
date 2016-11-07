@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
@@ -20,6 +22,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.IAccountingInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
@@ -330,7 +333,13 @@ public class InvoicePanel extends WizardContentBase {
 			public void onClick(ClickEvent event) {
 				payTable.setVisible(payAccountCheck.getValue());
 				if (payAccountCheck.getValue()) {
-					payDate.setValue(invoice.getPayDate());
+					Finance finance = new Finance()
+						.setAmount(invoice.getInvoice().getTotal())
+						.setDueDate(invoice.getInvoice().getIssueDate());
+					LinkedList<Finance> finances = new  LinkedList<Finance>();
+					finances.add(finance);
+					invoice.setFinances(finances);
+					payDate.setValue(invoice.getInvoice().getIssueDate());
 					payDate.setFocus(true);
 					payDate.hideDatePicker();
 				}
@@ -375,7 +384,7 @@ public class InvoicePanel extends WizardContentBase {
 				
 				@Override
 				public void onChange(ChangeEvent event) {
-					invoice.setPayMethod(AonNumberUtils.toInteger(payMethodList.getSelectedValue()));
+					invoice.getFinances().get(0).setPayMethod(AonNumberUtils.toInteger(payMethodList.getSelectedValue()));
 				}
 			});
 			payTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonWidth150());			
@@ -400,13 +409,13 @@ public class InvoicePanel extends WizardContentBase {
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
 				if (event.getSelectedItem() != null) {
-					invoice.setPayAccountId(event.getSelectedItem().getId());
-					invoice.setPayAccountCode(event.getSelectedItem().getCode());
-					invoice.setPayAccountDescription(event.getSelectedItem().getDescription());
+					invoice.getFinances().get(0).setPayAccountId(event.getSelectedItem().getId());
+					invoice.getFinances().get(0).setPayAccountCode(event.getSelectedItem().getCode());
+					invoice.getFinances().get(0).setPayAccountDescription(event.getSelectedItem().getDescription());
 				} else {
-					invoice.setPayAccountId(null);
-					invoice.setPayAccountCode(null);
-					invoice.setPayAccountDescription(null);
+					invoice.getFinances().get(0).setPayAccountId(null);
+					invoice.getFinances().get(0).setPayAccountCode(null);
+					invoice.getFinances().get(0).setPayAccountDescription(null);
 				}
 				_paintEntry();
 			}

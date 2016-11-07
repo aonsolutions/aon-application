@@ -99,6 +99,23 @@ public class InvoiceValidation {
 	};
 
 	/**
+	 * En facturas recibidas, el Domain/Registry/Numero Referencia no puede estar duplicado
+	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> DUPLICATED_REFERENCE_CODE = (inv,ctx) -> {
+		if (!inv.isSales()) {
+			if (ctx.getContext().getDslContext().fetchExists( 
+					ctx.getContext().getDslContext().selectOne()
+					.from(INVOICE)
+					.where(INVOICE.DOMAIN.eq(inv.getDomain()))
+					.and(INVOICE.REGISTRY.eq(inv.getRegistry()))
+					.and(INVOICE.REFERENCE_CODE.eq(inv.getReferenceCode()))
+					.and(INVOICE.TYPE.eq(inv.getType().value())))) {
+				throw new AonCoreException(AonError.INVOICE_DUPLICATED_REFERENCE_CODE.getMessage());
+			}
+		}
+	};
+
+	/**
 	 * Si se ha indicado una fecha de límte de operaciones en los parámetros de la 
 	 * empresa, debe ser anterior a la fecha de factura.
 	 * 
@@ -146,6 +163,7 @@ public class InvoiceValidation {
 			.andThen(EMPTY_INVOICE_REGISTRY)
 			.andThen(EMPTY_INVOICE_SCOPE)
 			.andThen(DUPLICATED_SERIES_NUMBER)
+			.andThen(DUPLICATED_REFERENCE_CODE)
 			.andThen(OPERATIONS_DEADLINE)
 			.andThen(CHECK_FIVE_YEARS)
 			.accept(inv, new AonConfigurationContext(ctx,config));

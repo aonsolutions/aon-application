@@ -81,7 +81,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	
 	public InvoiceVATPanel(IInvoicePanelCallback callback) {
 		setStyleName(AON.AON_CSS.aonWidthAll());
-		addStyleName(AON.AON_CSS.aonBlockCenter());
+		//addStyleName(AON.AON_CSS.aonBlockCenter());
 		
 		setCallback(callback);
 		container = new FlowPanel();
@@ -100,6 +100,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		container.clear();
 		tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonWidthAll());
+		tab.addStyleName(AON.AON_CSS.aonMarginTop());
 		container.add(tab);
 		
 		paintHeader();
@@ -114,102 +115,91 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		Label label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
-		tab.getCellFormatter().setWidth(row, col, "1%");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		decorateHeader(row, col, "1%");
 		++col;
 		label = new Label(AON.MSG.taxableBaseAbr());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
-		tab.getCellFormatter().setWidth(row, col, "1%");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		decorateHeader(row, col, "1%");
 		++col;
 		label = new Label("% IVA");
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
-		tab.getCellFormatter().setWidth(row, col, "1%");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		decorateHeader(row, col, "1%");
 		++col;
 		label = new Label(AON.MSG.vatQuota());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
-		tab.getCellFormatter().setWidth(row, col, "1%");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		decorateHeader(row, col, "1%");
 		++col;
 		reLabel = new Label("% RE");
 		reLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, reLabel);
-		tab.getCellFormatter().setWidth(row, col, "1%");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		decorateHeader(row, col, "1%");
 		++col;
 		reQuotaLabel = new Label(AON.MSG.surchargeQuota());
 		reQuotaLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, reQuotaLabel);
-		tab.getCellFormatter().setWidth(row, col, "1%");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		decorateHeader(row, col, "1%");
 		++col;
 		
 		investAssetLabel = new Label(AON.MSG.actInvestAsset());
 		investAssetLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, investAssetLabel);
-		tab.getCellFormatter().setWidth(row, col, "1%");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		decorateHeader(row, col, "1%");
 		++col;
 		dedPercentLabel = new Label(AON.MSG.dedPercent());
 		dedPercentLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, dedPercentLabel);
-		tab.getCellFormatter().setWidth(row, col, "1%");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		decorateHeader(row, col, "1%");
 		++col;
 		dedQuotaLabel = new Label(AON.MSG.dedQuota());
 		dedQuotaLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, dedQuotaLabel);
-		tab.getCellFormatter().setWidth(row, col, "1%");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		decorateHeader(row, col, "1%");
 		++col;
 		adjAccountLabel = new Label(AON.MSG.adjAccount());
 		adjAccountLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, adjAccountLabel);
-		tab.getCellFormatter().setWidth(row, col, "1%");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		decorateHeader(row, col, "1%");
 		++col;
 		inputVatLabel = new Label(AON.MSG.inputVatAccount());
 		inputVatLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, inputVatLabel);
-		tab.getCellFormatter().setWidth(row, col, "1%");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		decorateHeader(row, col, "1%");
 		++col;
 		outputVatLabel = new Label(AON.MSG.outputVatAccount());
 		outputVatLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, outputVatLabel);
-		tab.getCellFormatter().setWidth(row, col, "1%");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		decorateHeader(row, col, "1%");
 		++col;
 		withholdingLabel = new Label("IRPF");
 		withholdingLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, withholdingLabel);
-		tab.getCellFormatter().setWidth(row, col, "1%");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBorderBottom());		
+		decorateHeader(row, col, "1%");
 		++col;
 
 		label = new Label();
 		tab.setWidget(row, col, label);
-		tab.getCellFormatter().setWidth(row, col, "auto");
-		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		decorateHeader(row, col, "auto");
 		++col;
 	}
 	
+	private void decorateHeader(int row, int col, String width) {
+		tab.getCellFormatter().setWidth(row, col, width);
+		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderTop());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
+	}
+
 	private void paintButtons() {
 		FlowPanel panel = new FlowPanel();
-
+		panel.setStyleName(AON.AON_CSS.aonBorderTop());
+		panel.addStyleName(AON.AON_CSS.aonPadding2Top());
+		
 		Button addButton = new Button();
 		addButton.setAccessKey( 'L' );
 		addButton.setStyleName(AON.AON_CSS.aonIconReset());

@@ -29,7 +29,7 @@
 						<g:ScrollPanel>
 							<g:FlowPanel>
 								<accInvoice:InvoiceVATPanel ui:field="vatPanel"/>
-								<g:HTMLPanel ui:field="withholdingPanel" styleName="{aonResources.css.aonWizardPanelInner}">
+								<g:HTMLPanel ui:field="withholdingPanel" styleName="{aonResources.css.aonWidthAll}">
 									<table>
 										<tr>
 											<td>
@@ -67,47 +67,6 @@
 					</g:south>
 				</g:DockLayoutPanel>
 			</g:SimpleLayoutPanel>
-<!-- 		
-			<g:ScrollPanel styleName="{aonResources.css.aonWizardPanel}">
-				<g:FlowPanel styleName="{aonResources.css.aonFlexContainer} {aonResources.css.aonPadding2Top}">
-					<g:FlexTable ui:field="regTable"/>
-					<g:FlexTable ui:field="flexTable"/>
-					<accInvoice:InvoiceVATPanel ui:field="vatPanel"/>
-					<g:HTMLPanel ui:field="withholdingPanel" styleName="{aonResources.css.aonWizardPanelInner}">
-						<table>
-							<tr>
-								<td>
-									<g:Label ui:field="withholdingLabel" text="I.R.P.F." styleName="{aonResources.css.aonInnerLabel}"/>
-								</td>
-								<td>
-									<g:ListBox ui:field="withholdingTaxs"/>
-								</td>
-								<td>
-									<aon:DoubleBox ui:field="withholdingBase" visibleLength="12" 
-										styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5} {aonResources.css.aonWidth80}"/>
-								</td>
-								<td>
-									<aon:DoubleBox ui:field="withholdingPercent" visibleLength="6" maxLength="6"
-										styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5} {aonResources.css.aonWidth40}"/>
-								</td>
-								<td>
-									<aon:DoubleBox ui:field="withholdingQuota" visibleLength="12"
-										styleName="{aonResources.css.aonInputText} {aonResources.css.aonMarginRight5} {aonResources.css.aonWidth80}"/>
-								</td>
-								<td>
-									<aon:AccountBox ui:field="withholdingAccount"/>
-								</td>
-								<td>
-									<aon:WithholdingTypeListBox ui:field="withholdingType"/>
-								</td>
-							</tr>
-						</table>
-					</g:HTMLPanel>
-					<g:FlexTable ui:field="payTable"/>
-				</g:FlowPanel> 
-			</g:ScrollPanel>
- -->
- 			
 		</g:center>	
 	</g:SplitLayoutPanel>
 </ui:UiBinder>

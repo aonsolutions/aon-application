@@ -114,6 +114,7 @@ public enum AonError implements Serializable{
 	,INVOICE_EMPTY_REGISTRY("El titular de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_SCOPE("El \u00E1mbito de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_DUPLICATED_SERIES_NUMBER("Ya existe una factura con esa Serie/N\u00FAmero.")
+	,INVOICE_DUPLICATED_REFERENCE_CODE("Ya existe una factura del titular con ese N\u00FAmero de referencia.")
 	,INVOICE_OPERATIONS_DEADLINE("La fecha de la factura rebasa la fecha l\u00EDmite de operaciones indicada en la configuraci\u00F3n de empresa. ")
 	,INVOICE_FIVE_YEARS("El a\u00F1o de la factura no es v\u00E1lido, es anterior cinco a\u00F1os al actual") 
 	,INVOICE_EMPTY_SOURCE("No se ha indicado un origen (INVOICE_DETAIL.SOURCE) en la l\u00EDnea de factura (Error interno)")
