@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.72.1
+# Version: 8.75.0
 # Created by: girazu
-# Creation Date: 20/10/2016 10:50
+# Creation Date: 08/11/2016 18:35
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -763,21 +763,6 @@ CREATE TABLE `department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos';
 
 #
-# Structure for the `tag` table : 
-#
-
-CREATE TABLE `tag` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Etiqueta',
-  `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Etiqueta',
-  `color` varchar(24) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Color de la Etiqueta',
-  PRIMARY KEY (`id`),
-  KEY `IDX_TAG_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Etiquetas';
-
-#
 # Structure for the `brand` table : 
 #
 
@@ -882,6 +867,21 @@ CREATE TABLE `product` (
   CONSTRAINT `FK_PRODUCT_TAX_RETENTION` FOREIGN KEY (`retention`) REFERENCES `tax` (`id`),
   CONSTRAINT `FK_PRODUCT_TAX_VAT` FOREIGN KEY (`vat`) REFERENCES `tax` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Productos';
+
+#
+# Structure for the `tag` table : 
+#
+
+CREATE TABLE `tag` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Etiqueta',
+  `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Tipo de Etiqueta',
+  `color` varchar(24) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Color de la Etiqueta',
+  PRIMARY KEY (`id`),
+  KEY `IDX_TAG_DOMAIN` (`domain`),
+  CONSTRAINT `FK_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Etiquetas';
 
 #
 # Structure for the `item` table : 
@@ -2176,7 +2176,9 @@ CREATE TABLE `project_reservation` (
   `credit_card_expiration_month` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mes de expiracion de la tarjeta de credito',
   `credit_card_expiration_year` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Año de expiracion de la tarjeta de credito',
   `credit_card_cvv` varchar(24) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de seguridad de la tarjeta de credito',
+  `token` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Token de preautorizacion de cobro',
   `penalty_days` int(4) DEFAULT NULL COMMENT 'Dias de penalizacion',
+  `penalty_amount` double(15,2) DEFAULT '0.00' COMMENT 'Importe de penalizacion',
   `tourist_tax_free` tinyint(2) DEFAULT NULL COMMENT 'Tipo de exencion de la Tasa turistica',
   `check_status` tinyint(2) NOT NULL COMMENT 'Estado de registro en el Hotel',
   `status` tinyint(2) NOT NULL COMMENT 'Estado de la Reserva',
@@ -3723,6 +3725,7 @@ CREATE TABLE `task` (
   `repeat_period` tinyint(2) DEFAULT '0' COMMENT 'Periodo de repeticion de la Tarea',
   `gtask_id` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL,
   `gtasklist_id` varchar(100) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `parent` int(4) DEFAULT NULL COMMENT 'Task parent',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -8198,7 +8201,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.72.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.75.0');
 
 COMMIT;
 
