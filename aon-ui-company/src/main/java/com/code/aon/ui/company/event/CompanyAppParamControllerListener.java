@@ -12,7 +12,7 @@ import static com.code.aon.common.enumeration.AppParam.APP_PRINT_LOGO_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NAME_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NIF_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_CODE_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_TAX_TYPE_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_VAT_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PROJECT_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_REFERENCE_CODE_PARAM;
@@ -58,7 +58,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 			companyController.setPrintReferenceCode(companyController.obtainPrintReferenceCode());
 			companyController.setPrintProject(companyController.obtainPrintProject());
 			companyController.setPrintProductCode(companyController.obtainPrintProductCode());
-			companyController.setPrintProductTaxType(companyController.obtainPrintProductTaxType());
+			companyController.setPrintProductVatPercent(companyController.obtainPrintProductVatPercent());
 			companyController.setPrintName(companyController.obtainPrintName());
 			companyController.setPrintNif(companyController.obtainPrintNif());
 			companyController.setPrintAddress(companyController.obtainPrintAddress());
@@ -129,7 +129,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		AppParamUtil.insertParameter(APP_PRINT_REFERENCE_CODE_PARAM, companyController.isPrintReferenceCode());
 		AppParamUtil.insertParameter(APP_PRINT_PROJECT_PARAM, companyController.isPrintProject());
 		AppParamUtil.insertParameter(APP_PRINT_PRODUCT_CODE_PARAM, companyController.isPrintProductCode());
-		AppParamUtil.insertParameter(APP_PRINT_PRODUCT_TAX_TYPE_PARAM, companyController.isPrintProductTaxType());
+		AppParamUtil.insertParameter(APP_PRINT_PRODUCT_VAT_PARAM, companyController.isPrintProductVatPercent());
 		updateParam(APP_PRINT_NAME_PARAM, companyController.getPrintName());
 		updateParam(APP_PRINT_NIF_PARAM, companyController.getPrintNif());
 		updateParam(APP_PRINT_ADDRESS_PARAM, companyController.getPrintAddress());

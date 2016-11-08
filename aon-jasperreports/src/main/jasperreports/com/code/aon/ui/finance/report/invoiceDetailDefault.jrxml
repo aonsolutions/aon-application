@@ -9,7 +9,7 @@
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<scriptlet name="InvoiceScriptlet" class="com.code.aon.ui.finance.util.print.InvoiceDetailReportScriptlet"/>
-	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>	
+	<parameter name="companyController" class="com.code.aon.ui.company.controller.CompanyController"/>
 	<parameter name="printDiscountPriceApplied" class="java.lang.Boolean"/>
 	<parameter name="isIncreaseType" class="java.lang.Boolean"/>
 	<field name="id" class="java.lang.Integer"/>

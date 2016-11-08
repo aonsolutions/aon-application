@@ -8,15 +8,6 @@
 	xmlns:a4j="http://richfaces.org/a4j" >
 
 	<aon:if test="#{aonConfiguration.bean.company.showSaleInvoiceReportParams}">
-		<aon:outputLabel for="Company_print_productCode"
-			value="#{bundle.company_print_productCode}" />
-		<aon:selectBooleanCheckbox id="Company_print_productCode"
-			value="#{company.printProductCode}" />
-
-		<aon:outputLabel for="Company_print_productTaxType"
-			value="#{bundle.company_print_productTaxType}" />
-		<aon:selectBooleanCheckbox id="Company_print_productTaxType"
-			value="#{company.printProductTaxType}" />
 			
 		<aon:outputLabel for="Company_print_referenceCode"
 			value="#{bundle.company_print_referenceCode}" />

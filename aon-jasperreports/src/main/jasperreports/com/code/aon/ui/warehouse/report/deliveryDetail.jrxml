@@ -9,6 +9,7 @@
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<scriptlet name="ProductScriptlet" class="com.code.aon.ui.product.util.print.ProductReportScriptlet"/>
+	<scriptlet name="ProductLinesScriptlet" class="com.code.aon.ui.company.util.ReportProductLinesScriptlet"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 	<parameter name="valuated" class="java.lang.Boolean"/>
 	<field name="price" class="java.lang.Double"/>
@@ -18,6 +19,10 @@
 	<field name="description" class="java.lang.String"/>
 	<field name="salesDetail" class="com.code.aon.sales.SalesDetail"/>
 	<field name="delivery" class="com.code.aon.warehouse.Delivery"/>
+	<variable name="lineDescription" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
 	<group name="salesDetailGroup">
 		<groupExpression><![CDATA[$F{salesDetail}.getSales().getId()]]></groupExpression>
 		<groupHeader>
@@ -181,7 +186,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{lineDescription}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00##" isBlankWhenNull="false">
 				<reportElement uuid="71edb253-2075-4f16-a534-2496e4463823" key="textField-7" x="377" y="0" width="59" height="12">

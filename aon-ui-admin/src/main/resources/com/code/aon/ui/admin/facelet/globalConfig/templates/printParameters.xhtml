@@ -29,9 +29,14 @@
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.admin_global_general_data}" />
 				</f:facet>
-				<aon:panelGrid columns="2" style="width:350px">
-					<ui:include src="/com/code/aon/ui/company/facelet/company/printParams_general.xhtml" />
-				</aon:panelGrid>
+				<h:panelGrid columns="2" columnClasses="aon-vertical-align-top, aon-vertical-align-top">
+					<aon:panelGrid columns="2" style="width:350px">
+						<ui:include src="/com/code/aon/ui/company/facelet/company/printParams_general1.xhtml" />
+					</aon:panelGrid>
+					<aon:panelGrid columns="2" style="width:350px">
+						<ui:include src="/com/code/aon/ui/company/facelet/company/printParams_general2.xhtml" />
+					</aon:panelGrid>
+				</h:panelGrid>
 			</aon:panel>
 			
 			<aon:panel id="SaleInvoice-params-panel">

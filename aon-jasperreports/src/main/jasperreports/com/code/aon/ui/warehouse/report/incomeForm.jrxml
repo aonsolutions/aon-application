@@ -22,7 +22,7 @@
 			<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
 		</variable>
 	</subDataset>
-	<subDataset name="detail" uuid="4481b810-ea47-4684-8aab-533ab1963e88">
+	<subDataset name="detail" scriptletClass="com.code.aon.ui.company.util.ReportProductLinesScriptlet" uuid="4481b810-ea47-4684-8aab-533ab1963e88">
 		<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
 		<field name="price" class="java.lang.Double"/>
 		<field name="quantity" class="java.lang.Double"/>
@@ -30,6 +30,10 @@
 		<field name="item" class="com.code.aon.product.Item"/>
 		<field name="description" class="java.lang.String"/>
 		<field name="itemSupplierCode" class="java.lang.String"/>
+		<variable name="lineDescription" class="java.lang.String" resetType="None">
+			<variableExpression><![CDATA[]]></variableExpression>
+			<initialValueExpression><![CDATA[]]></initialValueExpression>
+		</variable>
 	</subDataset>
 	<scriptlet name="reportScriptlet" class="com.code.aon.ui.company.util.ReportScriptlet"/>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
@@ -1382,7 +1386,7 @@ new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpress
 								<textElement verticalAlignment="Middle">
 									<font size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$V{lineDescription}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

@@ -14,7 +14,7 @@ import static com.code.aon.common.enumeration.AppParam.APP_PRINT_LOGO_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NAME_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_NIF_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_CODE_PARAM;
-import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_TAX_TYPE_PARAM;
+import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PRODUCT_VAT_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_RECORD_DATA_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_PROJECT_PARAM;
 import static com.code.aon.common.enumeration.AppParam.APP_PRINT_REFERENCE_CODE_PARAM;
@@ -146,7 +146,7 @@ public class CompanyParentController extends BasicController implements ICompany
 
 	private boolean printProductCode;
 	
-	private boolean printProductTaxType;
+	private boolean printProductVatPercent;
 	
 	private boolean printReferenceCode;
 	
@@ -827,12 +827,12 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.printProductCode = printProductCode;
 	}
 	
-	public boolean isPrintProductTaxType() {
-		return printProductTaxType;
+	public boolean isPrintProductVatPercent() {
+		return printProductVatPercent;
 	}
 	
-	public void setPrintProductTaxType(boolean printProductTaxType) {
-		this.printProductTaxType = printProductTaxType;
+	public void setPrintProductVatPercent(boolean printProductVatPercent) {
+		this.printProductVatPercent = printProductVatPercent;
 	}
 
 	public boolean isPrintReferenceCode() {
@@ -1037,8 +1037,8 @@ public class CompanyParentController extends BasicController implements ICompany
 		return AppParamUtil.getValueAsBoolean(APP_PRINT_PRODUCT_CODE_PARAM);
 	}
 	
-	public boolean obtainPrintProductTaxType() throws ManagerBeanException {
-		return AppParamUtil.getValueAsBoolean(APP_PRINT_PRODUCT_TAX_TYPE_PARAM);
+	public boolean obtainPrintProductVatPercent() throws ManagerBeanException {
+		return AppParamUtil.getValueAsBoolean(APP_PRINT_PRODUCT_VAT_PARAM);
 	}
 	
 	public ReportPrintOption obtainPrintName() throws ManagerBeanException {
