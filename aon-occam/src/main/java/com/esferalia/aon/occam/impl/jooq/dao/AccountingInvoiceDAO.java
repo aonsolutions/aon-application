@@ -258,8 +258,8 @@ public class AccountingInvoiceDAO {
 			}
 			if (withholdingAccount == null) {
 				withholdingAccount = ai.isSales()
-					?config.getDefaultChargedRetAccount()
-					:config.getDefaultPaidRetAccount(); 
+					?config.getDefaultPaidRetAccount()
+					:config.getDefaultChargedRetAccount(); 
 			}
 			if (withholdingAccount != null) {
 				ai.getWithholdingData().setAccountId(withholdingAccount.getId());
