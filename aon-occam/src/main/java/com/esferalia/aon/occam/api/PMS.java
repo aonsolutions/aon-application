@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.pms.HotelEmailCatchment;
@@ -121,6 +123,21 @@ public class PMS {
 			if(ctx != null)
 				ctx.close();
 		}
+	}
+	
+	public static Stream<Integer> getFailPreauthorizationProjectIdStream(String domainName, Integer domainId, String login) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getPMS().getFailPreauthorizationProjectIdStream(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<Integer> getFailPreauthorizationProjectIdList(String domainName, Integer domainId, String login) {
+		return getFailPreauthorizationProjectIdStream(domainName, domainId, login).collect(Collectors.toCollection(LinkedList::new));				
 	}
 	
 }

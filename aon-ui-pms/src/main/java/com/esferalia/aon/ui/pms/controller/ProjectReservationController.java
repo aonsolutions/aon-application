@@ -83,6 +83,7 @@ import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.db.MailAccount;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.PMS;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
@@ -96,8 +97,8 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.invoicing.AdvanceInvoiceTo;
 import com.esferalia.aon.pms.invoicing.AdvanceInvoicing;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
-import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
+import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.reservation.InventoryManager;
 import com.esferalia.aon.pms.reservation.ReservationRequestManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
@@ -404,10 +405,32 @@ public class ProjectReservationController extends BasicController implements IPm
 		this.showNotifyWindow = showNotifyWindow;
 	}
 
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		super.onEditSearch(event);
+		getReservationPermission().setFailPreauthorization(false);
+	}
+	
+	public void onEditFailPreauthorizationSearch(ActionEvent event) throws ManagerBeanException {
+		super.onEditSearch(event);
+		LinkedList<Integer> projectIdList = PMS.getFailPreauthorizationProjectIdList("test.grupoplayasol.com", 1, "admin");
+		getCriteria().addInExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), projectIdList);
+		getReservationPermission().setFailPreauthorization(true);
+	}
+	
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
 		onSearch(event);
+		getReservationPermission().setFailPreauthorization(false);
+	}
+	
+	public void onFailPreauthorizationLoad(ActionEvent event) throws ManagerBeanException {
+		onEditSearch(event);
+		LinkedList<Integer> projectIdList = PMS.getFailPreauthorizationProjectIdList("test.grupoplayasol.com", 1, "admin");
+		getCriteria().addInExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), projectIdList);
+		onSearch(event);
+		getReservationPermission().setFailPreauthorization(true);
 	}
 
 	@Override

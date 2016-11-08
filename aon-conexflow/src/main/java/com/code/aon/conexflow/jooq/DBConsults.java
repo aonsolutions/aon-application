@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.xml.bind.JAXBException;
 
@@ -42,6 +43,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -242,6 +244,22 @@ public class DBConsults {
 		if(id == null) AON.insert(domain.getName(), domain.getId(), "", attach);
 	}
 	
+	public static void insertCheckConexFlowOperation(Domain domain, byte[] xmlFile, Integer project, String op, Boolean ok){
+		String desc = ok ? "CONEXFLOW-CHECK-" : "CONEXFLOW-CHECK-NO-";
+		Integer id = AON.getAttach(domain.getName(), domain.getId(), "", f -> f.getAttachModuleProperty().eq(project)
+				.and(f.getDescriptionProperty().eq("CONEXFLOW-CHECK-"+op).or(f.getDescriptionProperty().eq("CONEXFLOW-CHECK-NO-"+op)))
+				, AttachType.PROJECT).getId();
+		Date currentDate = new Date(Calendar.getInstance().getTime().getTime());	
+		Attach attach = Attach.projectAttach(project, domain, MimeType.XML, desc + op, xmlFile, true, currentDate, null);
+		if(id != null ){
+			attach.setId(id);AON.update(domain.getName(), domain.getId(), "", attach);
+			if(op.equals(ConexFlowConstant.CREATE_TOKEN_OP)){
+				deletePreuthorization(domain, project);
+			}
+		}
+		if(id == null) AON.insert(domain.getName(), domain.getId(), "", attach);
+	}
+	
 	//-------------------- DELETES
 	
 	public static void deletePreuthorization(Domain domain, Integer projectId) {
@@ -289,7 +307,6 @@ public class DBConsults {
 	 */
 	public static Connection getConnection(String domain){
 		try {
-			
 			Connection connection= DatabaseUtil.getConnection(domain);
 			return connection;
 		} catch (AonConnectionException e) {
@@ -342,6 +359,10 @@ public class DBConsults {
 		return result.value1();
 	}
 	
+	public static String getProjectName(Domain domain, String login, Integer projectId){
+		return AON.getProject(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(projectId)).getName();
+	}
+	
 	public static String getHotelCode(AONContext ctx, Integer hotelId){
 		Record1<String> result = ctx.getDslContext().select(HOTEL.CODE).from(HOTEL).where(HOTEL.ID.eq(hotelId)).limit(1).fetchOne();
 		return result.value1();
@@ -362,6 +383,16 @@ public class DBConsults {
 	public static com.esferalia.aon.occam.api.model.project.ProjectReservation getProjectReservation(Domain domain, User user, Integer projectId){
 		return AON.getProjectReservation(domain.getName(), domain.getId(), user.getLogin(), projectId);
 	}
+	
+	public static Stream<com.esferalia.aon.occam.api.model.project.ProjectReservation> getProjectReservationStream(Domain domain, String login, ProjectReservationFilter filter){
+		return AON.getProjectReservationStream(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static Boolean hasCheckOp(Domain domain, String login,Integer projectId, String op){
+		return AON.getAttachStream(domain.getName(), domain.getId(), login, f -> f.getDescriptionProperty().like("%CONEXFLOW-CHECK%"+op)
+			.and(f.getAttachModuleProperty().eq(projectId)), AttachType.PROJECT).count() > 0;
+	}
+	
 	
 	public static ProjectReservation newProjectReservation(AONContext ctx, ProjectReservationRecord pr){
 		ProjectReservation reservation = new ProjectReservation();

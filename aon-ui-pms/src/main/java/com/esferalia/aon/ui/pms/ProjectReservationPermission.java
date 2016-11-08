@@ -426,4 +426,15 @@ public class ProjectReservationPermission implements Serializable {
 		return roleAllowed && reservation.isActive() && isMyScope() && reservation.getAdvancedAmount() == 0;
 	}
 
+	/*************************** RESERVATION FAIL PREAUTHORIZATION *******************************/
+	
+	boolean failPreauthorization = false;
+
+	public boolean isFailPreauthorization(){
+		return failPreauthorization;
+	}
+	
+	public void setFailPreauthorization(boolean fp){
+		this.failPreauthorization = fp;
+	}
 }

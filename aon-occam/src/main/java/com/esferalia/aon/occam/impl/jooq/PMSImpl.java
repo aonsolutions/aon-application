@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IPMS;
@@ -77,5 +78,9 @@ public class PMSImpl implements IPMS {
 		ctx.getDslContext().transaction(configuration -> PMSDAO.updateHHGProjectAttach(ctx, attach));
 	}
 	
-	
+	@Override
+	public Stream<Integer> getFailPreauthorizationProjectIdStream(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			PMSDAO.getFailPreauthorizationProjectIdStream(ctx));
+	}
 }

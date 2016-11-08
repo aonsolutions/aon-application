@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -284,6 +285,11 @@ public class PMSDAO {
 			.set(PROJECT_ATTACH.DESCRIPTION, attach.getDescription())
 			.where(PROJECT_ATTACH.ID.eq(attach.getId()))
 			.execute();
+	}
+	
+	public static Stream<Integer> getFailPreauthorizationProjectIdStream(AONContext ctx){
+		return ctx.getDslContext().select(PROJECT_ATTACH.PROJECT).from(PROJECT_ATTACH)
+				.where(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-CHECK-NO-P")).fetch().stream().map(f -> f.value1());
 	}
 
 	private static class HotelGuestByCountryFiller implements Function<Record3<String, String, Integer>, HotelGuestByCountry> {

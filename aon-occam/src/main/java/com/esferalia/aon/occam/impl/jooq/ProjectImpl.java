@@ -1,10 +1,12 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IProject;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO;
@@ -37,6 +39,12 @@ public class ProjectImpl implements IProject{
 	public ProjectReservation getProjectReservation(AONContext ctx, Integer productId) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> ProjectDAO.getProjectReservation(ctx, productId));
+	}
+	
+	@Override
+	public Stream<ProjectReservation> getProjectReservationStream(AONContext ctx, ProjectReservationFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> ProjectDAO.getProjectReservationStream(ctx, filter));
 	}
 	
 	

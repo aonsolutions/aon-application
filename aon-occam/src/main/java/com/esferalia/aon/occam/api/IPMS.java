@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.pms.HotelEmailCatchment;
@@ -28,4 +29,8 @@ public interface IPMS {
 	public LinkedList<ProjectReservationServiceDetail> getHHGReservationServicesDetail(AONContext ctx, Integer service);
 	public HashMap<Integer, Attach> getHHGProjectAttach(AONContext ctx);
 	public void updateHHGProjectAttach(AONContext ctx, Attach attach);
+
+	//***** FAIL PREAUTHORIZATION *****//
+	public Stream<Integer> getFailPreauthorizationProjectIdStream(AONContext ctx);
+
 }

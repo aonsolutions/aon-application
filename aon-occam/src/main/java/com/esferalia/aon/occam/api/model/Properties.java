@@ -468,5 +468,55 @@ public interface Properties {
 		Property<String> getNameProperty();
 		Property<Byte> getSystemProperty();
 	}
+	
+	public interface ProjectReservationProperties{
+		Property<Integer> getProjectProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getHotelProperty();
+		Property<Integer> getHotelReservationProperty();
+		Property<String> getCodeProperty();
+		Property<Date> getStartDateProperty();
+		Property<Timestamp> getStartTimeProperty();
+		Property<Date> getEndDateProperty();
+		Property<Timestamp> getEndTimeProperty();
+		Property<Integer> getSellerProperty();
+		Property<Integer> getAgencyProperty();
+		Property<Double> getAgencyCommissionPercentProperty();
+		Property<Double> getAgencyCommissionAmountProperty();
+		Property<Byte> getAgencyRebateProperty();
+		Property<Integer> getCompanyProperty();
+		Property<Double> getDiscountPercentProperty();
+		Property<Double> getDiscountAmountProperty();
+		Property<Byte> getBookingHolderProperty();
+		Property<Double> getTaxableBaseProperty();
+		Property<Double> getVatQuotaProperty();
+		Property<Double> getOtherTaxQuotaProperty();
+		Property<Double> getTotalProperty();
+		Property<String> getCommentsProperty();
+		Property<String> getRemarksProperty();
+		Property<Byte> getSourceProperty();
+		Property<String> getCrsCodeProperty();
+		Property<Double> getAdvanceProperty();
+		Property<Byte> getAdvanceInvoicedProperty();
+		Property<Byte> getEarlyCheckOutProperty();
+		Property<Byte> getPrepayProperty();
+		Property<String> getBankTransactionProperty();
+		Property<String> getCreditCardHolderProperty();
+		Property<String> getCreditCardNumberProperty();
+		Property<String> getCreditCardExpirationMonthProperty();
+		Property<String> getCreditCardExpirationYearProperty();
+		Property<String> getCreditCardCvvProperty();
+		Property<Integer> getCreditPenaltyDaysProperty();	
+		Property<Byte> getTouristTaxFreeProperty();
+		Property<Byte> getCheckStatusProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getModificationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
+		Property<String> getCancellationUserProperty();
+		Property<Timestamp> getCancellationDateProperty();
+		Property<String> getTokenProperty();
+		Property<Double> getPenaltyProperty();
+	}
 
 }
