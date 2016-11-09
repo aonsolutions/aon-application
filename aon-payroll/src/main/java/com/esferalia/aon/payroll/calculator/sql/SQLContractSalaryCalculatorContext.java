@@ -2937,7 +2937,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return ("123".indexOf(tc2.charAt(0)) != -1);
 	}
 
-	private boolean isFullTime() {
+	private boolean isFullTime(Period p) {
 		String tc2 = getCurrentBindings().get(TC2, obj -> obj.toString());
 		if (tc2 == null) {
 			throw new ExpressionExceptionWrapper(new UndefinedVariablesException(TC2.getName()));
@@ -3148,10 +3148,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			}
 		});
 
-		this.implicitExpressionContext.putVariable(FULL_TIME, new LazyTimedConstant<Boolean>() {
+		this.implicitExpressionContext.putVariable(FULL_TIME, new ActiveTimedVariable<Boolean>() {
 			@Override
-			public Boolean create() {
-				return isFullTime();
+			public Boolean getValue(Period period) {
+				return isFullTime(period);
 			}
 		});
 
@@ -3311,10 +3311,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		loadWeekHoursContextVariable(ctx);
 
 		List<Period> contract = getMonths(contractStartDate, contractEndDate);
+		
 		List<Period> weekHours = ctx.getPeriods(WEEK_HOURS);
+		List<Period> contractHours = new ArrayList<Period>();
+		contractHours.addAll(Period.sub(contract, weekHours));
+		contractHours.addAll(weekHours);
+		
 		List<Period> agreeementHours = ctx.getPeriods(AGREEMENT_HOURS);
 
-		List<Period> intersects = Period.intersect(weekHours, agreeementHours);
+		List<Period> intersects = Period.intersect(contractHours, agreeementHours);
 		intersects = Period.intersect(intersects, contract);
 
 		for (Period period : intersects) {
@@ -3329,7 +3334,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					@Override
 					public Double getValue(Period p) {
 						try {
-							if (!isFullTime()) {
+							if ( getVariable(FULL_TIME, p, Boolean.class) != Boolean.TRUE /*!isFullTime()*/) {
 								double agreementWeekHours = getCurrentBindings().get(AGREEMENT_HOURS,
 										obj -> ((Number) obj).doubleValue(), DEFAULT_AGRREEMENT_HOURS);
 
@@ -3521,7 +3526,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				public Double getValue(Period p) {
 					double workDays = getWorkDays(ctx, p);
 					try {
-						if (!isFullTime()) {
+						if ( getVariable(FULL_TIME, p, Boolean.class) != Boolean.TRUE /*!isFullTime()*/) {
 							return workDays * getCurrentBindings().get(PARTIAL_FACTOR,
 									obj -> ((Number) obj).doubleValue(), 1.00);
 						}
