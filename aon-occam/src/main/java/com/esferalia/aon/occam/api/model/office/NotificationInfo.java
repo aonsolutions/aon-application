@@ -39,6 +39,8 @@ public class NotificationInfo implements Serializable{
 	private String companyName;
 	private String state;
 	
+	private String description;
+	
 	public LinkedList<MailAccount> getMailAccountList() {
 		return mailAccountList;
 	}
@@ -209,8 +211,13 @@ public class NotificationInfo implements Serializable{
 		return this;
 	}
 	
+	public String getDescription(){
+		return description;
+	}
 	
-	
-	
+	public NotificationInfo setDescription(String description){
+		this.description = description;
+		return this;
+	}
 	
 }

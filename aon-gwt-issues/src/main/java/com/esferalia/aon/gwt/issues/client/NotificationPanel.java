@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.issues.client;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.JsNotify;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -68,13 +69,14 @@ public class NotificationPanel extends Composite {
     	emailComboBox.getElement().getStyle().setPaddingRight(20, Unit.PX);
     	emailComboBox.setItemLabelPath("name");
     	emailComboBox.setItems(notify.getMailAccountList());
-    	emailComboBox.setValue(notify.getMail());
-    	emailComboBox.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
+    	emailComboBox.setInputElementValue(notify.getMail());
+    	emailComboBox.addSelectedItemChangedHandler(new net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler() {
 			
 			@Override
-			public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
-				String r= "{\"email\":\""+emailComboBox.getValue() +"\"}";
-				incidence.updateNotificationInfo(r);				
+			public void onSelectedItemChanged(net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEvent event) {
+				JsObject js = emailComboBox.getSelectedItem().cast();	
+				String r= "{\"email\":\""+ js.getName() +"\"}";
+				incidence.updateNotificationInfo(r);	
 			}
 		});
     	emailPanel.add(emailComboBox);
@@ -88,13 +90,14 @@ public class NotificationPanel extends Composite {
     	signComboBox.getElement().getStyle().setPaddingRight(20, Unit.PX);
     	signComboBox.setItemLabelPath("name");
     	signComboBox.setItems(notify.getSignatureList());
-    	signComboBox.setValue(notify.getSign());
-    	signComboBox.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
+    	signComboBox.setInputElementValue(notify.getSign());
+    	signComboBox.addSelectedItemChangedHandler(new net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler() {
 			
 			@Override
-			public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
-				String r= "{\"sign\":\""+signComboBox.getValue() +"\"}";
-				incidence.updateNotificationInfo(r);				
+			public void onSelectedItemChanged(net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEvent event) {
+				JsObject js = signComboBox.getSelectedItem().cast();	
+				String r= "{\"sign\":\""+ js.getName() +"\"}";
+				incidence.updateNotificationInfo(r);	
 			}
 		});
     	signPanel.add(signComboBox);
@@ -108,17 +111,18 @@ public class NotificationPanel extends Composite {
     	modeComboBox.getElement().getStyle().setPaddingRight(20, Unit.PX);
     	modeComboBox.setItemLabelPath("name");
     	modeComboBox.setItems(notify.getModeList());
-    	modeComboBox.setValue(notify.getMode());
-    	modeComboBox.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
+    	modeComboBox.setInputElementValue(notify.getMode());
+    	modeComboBox.addSelectedItemChangedHandler(new net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEventHandler() {
 			
 			@Override
-			public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
-				String r= "{\"mode\":\""+modeComboBox.getValue() +"\"}";
-				incidence.updateNotificationInfo(r);				
+			public void onSelectedItemChanged(net.aonsolutions.polymer.aon.widget.event.SelectedItemChangedEvent event) {
+				JsObject js = modeComboBox.getSelectedItem().cast();	
+				String r= "{\"mode\":\""+ js.getName() +"\"}";
+				incidence.updateNotificationInfo(r);	
 			}
 		});
     	modePanel.add(modeComboBox);
-    }
+   	}
     
     private void initToggles(JsNotify notify){
         logoToggle.setChecked(notify.getLogo().equals("1"));

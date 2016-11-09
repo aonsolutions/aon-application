@@ -117,6 +117,7 @@ public class NotificationServlet extends HttpServlet{
 	private static final String[] NEW_INFO = new String[]{"INFORMACION ADICIONAL ","incluida "};
 	private static final String[] CLOSE = new String[]{"INCIDENCIA CERRADA ",""};
 	private static final String[] REOPEN = new String[]{"INCIDENCIA REABIERTA ",""};
+	private static final String[] DESCRIPTION = new String[]{"INFORMACION ","descrita"};
 
 	
 	private String msg; 
@@ -209,6 +210,11 @@ public class NotificationServlet extends HttpServlet{
 							msg = msg + getMessage(n, t, d);
 					}
 				});
+				if(notificationInfo.getDescription() != null && !notificationInfo.getDescription().equals("")
+						&& ni.getCommentsHistory()){
+					notificationInfo.setDate(notificationInfo.getCreateDate());
+					msg = msg + getMessage(notificationInfo, DESCRIPTION[0], DESCRIPTION[1]);
+				}
 			}else if(isManual){
 				NotificationInfo n = list.stream().sorted((n1,n2) -> n2.getDate().compareTo(n1.getDate())).findFirst().orElse(new NotificationInfo());
 				String t ="";String d = "";
@@ -306,6 +312,10 @@ public class NotificationServlet extends HttpServlet{
 		if(n.getBody() != null && !n.getBody().equals("")) // comentario.
 			msg = msg + "<tr><td style='padding-right: 10px;min-width: 48px;white-space: nowrap;padding-bottom: 6px;color: #999;padding-left: 0px;padding-top: 2px;vertical-align: top;'>Comentario</td>"
 					+ "<td style='padding-left: 0px;padding-top: 2px;vertical-align: top;'>"+n.getBody()+"</td></tr>";
+		if(n.getDescription() != null && !n.getDescription().equals("")
+				&& action.equals(DESCRIPTION[0]))  // DESCRIPTION.
+			msg = msg + "<tr><td style='padding-right: 10px;min-width: 48px;white-space: nowrap;padding-bottom: 6px;color: #999;padding-left: 0px;padding-top: 2px;vertical-align: top;'>Descripcion</td>"
+					+ "<td style='padding-left: 0px;padding-top: 2px;vertical-align: top;'>"+n.getDescription()+"</td></tr>";
 		
 		msg = msg + "</tbody></table></td>"
 				+"</tr></tbody></table>";
@@ -320,7 +330,8 @@ public class NotificationServlet extends HttpServlet{
 				.setCompanyName(enterprise.getName())
 				.setCreateDate(task.getStartDate())
 				.setDate(task.getStartDate())
-				.setUserName(task.getCreationUser());
+				.setUserName(task.getCreationUser())
+				.setDescription(task.getComments());
 		if(notificationType.equals(NotificationType.REOPEN) || notificationType.equals(NotificationType.CLOSE)){
 			TaskEvent taskEvent = DB.getLastTaskEvent(domain, login, task.getId());
 			notificationInfo.setUserName(taskEvent.getCreationUser())
