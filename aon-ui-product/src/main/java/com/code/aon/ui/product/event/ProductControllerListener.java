@@ -12,6 +12,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tag;
+import com.code.aon.finance.CustomerFee;
+import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductTag;
@@ -26,6 +28,8 @@ import com.code.aon.ui.product.controller.IItemConstants;
 import com.code.aon.ui.product.controller.ItemController;
 import com.code.aon.ui.product.controller.ProductController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.warehouse.DeliveryDetail;
+import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Stock;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -93,7 +97,21 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
             throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
-    
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		try {
+			Product product = (Product)event.getController().getTo();
+			if (product.isSerializable() && !checkSerializable(product)) {
+				product.setSerializable(false);
+				product.setLotable(false);
+	            throw new ControllerListenerException("El Producto esta siendo utilizado en Facturas, Albaranes o Cuotas.");
+			}
+		} catch (ManagerBeanException e) {
+            throw new ControllerListenerException(e.getMessage(), e);
+		}
+	}
+
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		try {
@@ -177,6 +195,40 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
 			}
 		}
 	}		
+
+	private boolean checkSerializable(Product product) throws ManagerBeanException {
+		Product productDB = (Product)BeanManager.getManagerBean(Product.class).get(product.getId());
+		if (!productDB.isSerializable()) {
+			IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(customerFeeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_ITEM_PRODUCT_ID), product.getId());
+			if (customerFeeBean.getCount(criteria) != 0) {
+				return false;
+			}
+			
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_ID), product.getId());
+			if (invoiceDetailBean.getCount(criteria) != 0) {
+				return false;
+			}
+			
+			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_ITEM_PRODUCT_ID), product.getId());
+			if (incomeDetailBean.getCount(criteria) != 0) {
+				return false;
+			}
+			
+			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_ITEM_PRODUCT_ID), product.getId());
+			if (deliveryDetailBean.getCount(criteria) != 0) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	private void removeStocks(Product product) throws ManagerBeanException {
 		IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
