@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.event;
 
+import static com.code.aon.ui.common.ICommonMessages.CONFIG_INVALID_BILLING_DATE;
+import static com.code.aon.ui.common.ICommonMessages.CONFIG_INVALID_END_DATE;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -107,17 +110,17 @@ public class CustomerFeeControllerListener extends ControllerAdapter {
 	}
 
 	private void validateFeeDates(CustomerFee customerFee) throws ControllerListenerException {
-		if(customerFee.getFinalDate() != null){
-			if(customerFee.getFinalDate().before(customerFee.getInitialDate())){
-				throw new ControllerListenerException("Final Date can't be earlier than Initial Date");
+		if (customerFee.getFinalDate() != null) {
+			if (customerFee.getFinalDate().before(customerFee.getInitialDate())) {
+				throw new ControllerListenerException(AonUtil.getMessage(CONFIG_INVALID_END_DATE));
 			}
 		}
 
 		Calendar initialCalendar = new GregorianCalendar();
 		initialCalendar.setTime(customerFee.getInitialDate());
 		initialCalendar.set(Calendar.DAY_OF_MONTH, 1);
-		if(customerFee.getBillingDate().before(initialCalendar.getTime())){
-			throw new ControllerListenerException("Billing Date can't be earlier than Initial Date");
+		if (customerFee.getBillingDate().before(initialCalendar.getTime())) {
+			throw new ControllerListenerException(AonUtil.getMessage(CONFIG_INVALID_BILLING_DATE));
 		}
 	}
 

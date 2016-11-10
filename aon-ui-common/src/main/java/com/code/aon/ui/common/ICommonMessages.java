@@ -288,6 +288,7 @@ public interface ICommonMessages {
 	String CONFIG_INCORRECT_BANK_ACCOUNT = "config_incorrect_bank_account";
 	String CONFIG_INVALID_START_DATE = "config_invalid_startDate";
 	String CONFIG_INVALID_END_DATE = "config_invalid_endDate";
+	String CONFIG_INVALID_BILLING_DATE = "config_invalid_billingDate";
 	String CONFIG_DATE_OVERLAP = "config_date_overlap";
 	
 	String INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY = "customer_invalid_invoicing_group_detail_child";
