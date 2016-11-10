@@ -23,7 +23,7 @@ public class WarehouseUtil extends CompanyEmailUtil {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	public Income createIncome(Purchase purchase) throws ManagerBeanException {
+	public Income createIncome(Purchase purchase, String referenceCode) throws ManagerBeanException {
 		Income income = new Income();
 		income.setPayMethod(null);
 		income.setProject(purchase.getProject());
@@ -31,7 +31,7 @@ public class WarehouseUtil extends CompanyEmailUtil {
 		income.setRegistryAddress(purchase.getRegistryAddress());
 		income.setScope(purchase.getScope());
 		income.setSupplier(purchase.getSupplier());
-		income.setReferenceCode(purchase.getReferenceCode());
+		income.setReferenceCode(referenceCode);
 		income.setIssueTime(purchase.getIssueDate());
 		income.setSecurityLevel(purchase.getSecurityLevel());
 		income.setStatus(IncomeStatus.PENDING);
