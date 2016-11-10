@@ -949,7 +949,7 @@ public class CretaServlet extends HttpServlet
 
 		attach.setData(data);
 		attach.setMimeType(MimeType.XML);
-		attach.setType((short) type.ordinal());
+		attach.setType((byte) type.ordinal());
 		attach.setDparentId(Integer.toString(data.length));
 		attach.setDomain(new Domain().setId(domainId).setName(domainName));
 
