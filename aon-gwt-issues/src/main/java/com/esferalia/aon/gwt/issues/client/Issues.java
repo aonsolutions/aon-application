@@ -54,6 +54,7 @@ public class Issues implements EntryPoint {
 	final IIssuesAsync serv = GWT.create(IIssues.class);
 	
 	private static final String HTTP = "http://";
+	private static final String HTTPS = "https://";
 	
 	@UiField HTMLPanel searchContent;
 	@UiField HTMLPanel content;
@@ -113,7 +114,8 @@ public class Issues implements EntryPoint {
 			@Override
 			public void onSuccess(AonData result) {
 				aonData = result;
-				incidence = new Incidence(HTTP+result.getDomain().getName()+"/", result.getMd5(),
+				String h = GWT.getModuleBaseURL().contains("https") ? HTTPS : HTTP; 
+				incidence = new Incidence(h+result.getDomain().getName()+"/", result.getMd5(),
 						result.getLoggedUser(), result.getLoggedUser(), result.getDomain().getName());
 				createAonToolbar();
 				createFilterPanel(new FilterPanel(me, incidence));
@@ -283,6 +285,8 @@ public class Issues implements EntryPoint {
 					@Override
 					public void onSuccess(JSON<JsUser> result) {
 						acb.setItems(result.getData());
+						if(!acb.getOpened())
+							acb.open();
 					}
 					
 					@Override public void onFailure(Throwable caught) {}
