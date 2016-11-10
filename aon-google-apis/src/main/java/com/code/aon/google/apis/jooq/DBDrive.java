@@ -3,8 +3,6 @@ package com.code.aon.google.apis.jooq;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.DomainGserviceaccount.DOMAIN_GSERVICEACCOUNT;
 import static com.esferalia.aon.jooq.tables.Iattach.IATTACH;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
@@ -29,7 +27,6 @@ import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Record1;
 import org.jooq.Record4;
-import org.jooq.Record5;
 import org.jooq.Record6;
 import org.jooq.Result;
 
@@ -55,7 +52,9 @@ public class DBDrive {
 		return AON.getAttachList(domain.getName(), domain.getId(), user.getLogin(),
 				f -> f.getDriveIdProperty().isNull()
 				.and(f.getDataProperty().isNotNull())
-				.and(f.getIdProperty().gt(firstId)),
+				.and(f.getIdProperty().gt(firstId))
+				.and(f.getMimeTypeProperty().isNotNull())
+				.and(f.getTypeProperty().isNotNull()),
 				attachType, aqp).stream().map(new AttachToFileInfo())
 				.collect(Collectors.toCollection(Vector::new));
 	}
@@ -81,6 +80,7 @@ public class DBDrive {
 					.from(RATTACH)
 					.where(RATTACH.DOMAIN.eq(domain.getId()))
 							.and(RATTACH.DRIVE_ID.isNull()).and(RATTACH.DATA.isNotNull()).and(condition)
+							.and(RATTACH.MIMETYPE.isNotNull()).and(RATTACH.TYPE.isNotNull())
 							//.and(RATTACH.TYPE.ne((byte)0)).and(RATTACH.TYPE.ne((byte)15)).and(RATTACH.TYPE.ne((byte)17))
 							.and(RATTACH.ID.greaterThan(firstId))
 							.orderBy(RATTACH.ID)
@@ -256,49 +256,6 @@ public class DBDrive {
 			return attachs;
 		}
 	
-		public static Vector<FileInfo> getRAttachFilesInDrive(Domain domain,Vector<FileInfo> attachs){
-			AONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
-				
-				Result<Record5<Integer, Byte, String, Byte, String>> RAttach = ctx.getDslContext()
-						.select(RATTACH.ID,
-								RATTACH.MIMETYPE,
-								RATTACH.DESCRIPTION,
-								RATTACH.TYPE,RATTACH.DRIVE_ID)
-						.from(RATTACH)
-						.join(DOMAIN)
-						.on(RATTACH.DOMAIN.eq(DOMAIN.ID))
-						.join(DOMAIN_GSERVICEACCOUNT)
-						.on(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(DOMAIN.ID).or(
-								DOMAIN.PARENT.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN)))
-						.where(DOMAIN.NAME
-								.eq(domain.getName())
-								.or(DOMAIN.PARENT.in(ctx.getDslContext().select(DOMAIN.ID)
-										.from(DOMAIN).where(DOMAIN.NAME.eq(domain.getName())))))
-						.and(RATTACH.DATA.isNull())
-						.fetch();
-				
-				for (Record5<Integer, Byte, String, Byte, String> record5 : RAttach) {
-					FileInfo fileInfo = new FileInfo();
-					fileInfo.setAonType("registry");
-					fileInfo.setAttachType(AttachType.REGISTRY);
-					fileInfo.setFileId(record5.value1());
-					fileInfo.setMimetype(record5.value2());
-					fileInfo.setTitle(record5.value3());
-					fileInfo.setType(record5.value4());
-					fileInfo.setCategory(-2);
-					fileInfo.setDriveId(record5.value5());
-					attachs.add(fileInfo);
-				}
-				return attachs;
-				
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
-		}
-		
 		public static void insertBlobRAttach(byte[] bs,Domain domain,String driveId, Integer id){
 			AONContext ctx = null;
 			try {
