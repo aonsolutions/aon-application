@@ -65,13 +65,13 @@
 			</aon:inputTextarea>
 			<aon:commandLink id="InvoiceDetail_description_short" immediate="true"
 				value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
-				styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
+				styleClass="aon-icon-edit-end-simple aon-vertical-align-top" style="margin-left: 5px; padding-right: 12px;"
 				rendered="#{detailController.longDescription and detailController.to.item.product.code != null}"
 				actionListener="#{detailController.onShortDescription}" 
 				reRender="invoiceDetailItemDescription" ajaxSingle="true" />
 			<aon:commandLink id="InvoiceDetail_description_long" immediate="true"
 				value="&#160;" title="#{bundle.aon_edit}"
-				styleClass="aon-icon-edit-add-simple" style="margin-left: 5px; padding-right: 12px;"
+				styleClass="aon-icon-edit-add-simple aon-vertical-align-top" style="margin-left: 5px; padding-right: 12px;"
 				rendered="#{!detailController.longDescription and detailController.to.item.product.code != null}"
 				actionListener="#{detailController.onLongDescription}"
 				reRender="invoiceDetailItemDescription" ajaxSingle="true" />
