@@ -55,6 +55,7 @@ public class Item implements Serializable {
 	private Tag packUnitsTag;
  	private Double packMeasurement;
 	private Tag packMeasurementTag;
+	private Tag stockUnitTag;
 	
 	public Integer getId() { 
 		return id;
@@ -342,6 +343,14 @@ public class Item implements Serializable {
 	}
 	public Item setPackMeasurementTag(Tag packMeasurementTag) {
 		this.packMeasurementTag = packMeasurementTag;
+		return this;
+	}
+	
+	public @NotNull Tag getStockUnitTag() {
+		return stockUnitTag != null ? stockUnitTag : new Tag();
+	}
+	public Item setStockUnitTag(Tag stockUnitTag) {
+		this.stockUnitTag = stockUnitTag;
 		return this;
 	}
 	

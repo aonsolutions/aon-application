@@ -123,6 +123,7 @@ public class ProductDAO {
 		@Override public Property<Integer> getPackUnitsTagProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PACK_UNITS_TAG);}
 		@Override public Property<Double> getPackMeasurementProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM.PACK_MEASUREMENT);}
 		@Override public Property<Integer> getPackMeasurementTagProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PACK_MEASUREMENT_TAG);}
+		@Override public Property<Integer> getStockUnitTagProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.STOCK_UNIT_TAG);}
 		
 	}
 	
@@ -574,6 +575,18 @@ public class ProductDAO {
 		return null;
 	}
 	
+	public static void insert(AONContext ctx, Item i) {
+		ProductValidation.validateItem(ctx, i);
+		ctx.checkWrite();
+		ctx.getDslContext()
+			.insertInto(ITEM, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE,
+					ITEM.PACK_FORMAT_TAG, ITEM.PACK_UNITS, ITEM.PACK_UNITS_TAG, ITEM.PACK_MEASUREMENT, ITEM.PACK_MEASUREMENT_TAG)
+			.values(i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), i.getSerialNumber()
+					, i.getSerialDate(), i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(), i.getModificationDate(),
+					i.getPackFormatTag().getId(), i.getPackUnits(), i.getPackUnitsTag().getId(), i.getPackMeasurement(), i.getPackMeasurementTag().getId())
+			.execute();
+	}
+	
 	public static void insertItem(AONContext ctx, Item i) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
@@ -838,6 +851,7 @@ public class ProductDAO {
 					.setPackMeasurementTag(TagDAO.getTag(ctx, r.getPackMeasurementTag()))
 					.setPackUnits(r.getPackUnits().doubleValue())
 					.setPackUnitsTag(TagDAO.getTag(ctx, r.getPackUnitsTag()))
+					.setStockUnitTag(TagDAO.getTag(ctx, r.getStockUnitTag()))
 					.setPrice(r.getPrice())
 					.setProduct(getProduct(ctx, r.getProduct()))
 					.setProductId(r.getProduct())

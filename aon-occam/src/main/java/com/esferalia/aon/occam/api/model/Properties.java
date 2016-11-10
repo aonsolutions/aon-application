@@ -195,6 +195,7 @@ public interface Properties {
 		Property<Integer> getPackUnitsTagProperty();
 		Property<Double> getPackMeasurementProperty();
 		Property<Integer> getPackMeasurementTagProperty();
+		Property<Integer> getStockUnitTagProperty();
 	}
 	
 	public interface DomainProperties {
