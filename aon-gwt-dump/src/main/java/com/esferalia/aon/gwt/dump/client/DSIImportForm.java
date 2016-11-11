@@ -16,7 +16,6 @@ import com.esferalia.aon.gwt.dump.shared.DSIImportService;
 import com.esferalia.aon.gwt.dump.shared.Domain;
 import com.esferalia.aon.gwt.dump.shared.Progress;
 import com.esferalia.aon.gwt.dump.shared.Task;
-import com.gargoylesoftware.htmlunit.javascript.host.MouseEvent;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
