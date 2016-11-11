@@ -46,7 +46,6 @@
 		<module>aon-ui-dbutils</module>
 		<module>aon-ui-db-manager</module>
 		<module>aon-master-jooq</module>
-		<module>aon-dsi</module>
 
 		<!-- CORE  -->
 		<module>aon-watson</module>
@@ -536,7 +535,6 @@
 					<doUpdate>false</doUpdate>
                                 </configuration>
 			</plugin>
-
 
 		</plugins>
 	</build>

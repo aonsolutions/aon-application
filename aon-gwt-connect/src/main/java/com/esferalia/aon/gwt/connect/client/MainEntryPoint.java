@@ -17,11 +17,8 @@ public class MainEntryPoint implements EntryPoint {
 		String entryPoint = getParameter(GWT.getModuleName(), 
 				Constants.ENTRY_POINT_PARAM);		
 		
-		if (entryPoint.equalsIgnoreCase(Constants.DSI_IMPORT_ENTRY_POINT)) {
-			DSIImportForm dsiImportForm = new DSIImportForm();
-			dsiImportForm.onModuleLoad();
 		
-		} else if (entryPoint.equalsIgnoreCase(Constants.BOE_IMPORT_ENTRY_POINT)) {
+		if (entryPoint.equalsIgnoreCase(Constants.BOE_IMPORT_ENTRY_POINT)) {
 			BOEImportForm boeImportForm = new BOEImportForm();
 			boeImportForm.onModuleLoad();
 		}

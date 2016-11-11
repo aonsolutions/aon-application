@@ -4,13 +4,6 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
 			
-	<!-- =================== Import DSI Files ======================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>dsi_import_form</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/connect/facelet/dsi/import_form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
 
 	<!-- =================== Import BOE Files  ======================== -->
 	<navigation-rule>
