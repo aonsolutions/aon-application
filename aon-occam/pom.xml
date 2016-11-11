@@ -72,7 +72,7 @@
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
-			<version>3.5.2</version>
+			<version>3.8.4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
