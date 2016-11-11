@@ -75,6 +75,7 @@
 		<module>aon-oauth2</module>
 		<module>aon-hhg-webservice</module>
 		<module>aon-webservice</module>
+		<module>aon-dump</module>
 
 		<!-- ENTITY -->
 		<module>aon-carrier</module>
@@ -163,6 +164,7 @@
 		<module>aon-gwt-stat</module>
 		<module>aon-gwt-api</module>
 		<module>aon-gwt-issues</module>
+		<module>aon-gwt-dump</module>
 
 		<!-- GENERATED -->
 		<module>aon-audabridge-api</module>
