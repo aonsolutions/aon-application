@@ -1,0 +1,118 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+
+	<ui:Style>
+	.form {
+	}
+	
+	.deckPanel{
+		height: 106px;
+		width: 410px;
+		position: relative;
+	}
+	
+	.label {
+		margin-top: 10px;
+		text-align: center;
+	}
+	
+	.labeltop {
+		margin-top: 10x;
+		font-weight: bold;
+		padding: 1px 0.5em;
+		vertical-align: top;
+		white-space: nowrap;
+		background-color: #F2F2F2;
+	}
+	
+	.field {
+		padding: 1px 0.5em;
+	}
+	
+	.buttons {
+		padding-top: 10px;
+		text-align: right;
+		margin-right: 10px;
+	}
+	
+	.info {
+		float: left;
+    	margin-top: 15px;
+	}
+	
+	.warn {
+		
+	}
+	
+	.error {
+		
+	}
+	
+	.messages {
+		padding-left: 0.5em;
+		padding-bottom: 10px;
+	}
+	
+	.form textarea {
+		resize: none;
+	}
+	
+	@sprite .successIcon{
+		gwt-image: 'success';
+		float: left;
+		padding-right: 10px;
+	}
+	
+	@sprite .trashIcon{
+		gwt-image: 'trash';
+		float: left;
+		padding-right: 10px;
+	}
+	
+	</ui:Style>
+	
+	<ui:image field='success' src='success.png'/>
+	<ui:image field='trash' src='trash.png'/>
+	
+	<g:DeckPanel ui:field="deckPanel" styleName="{style.deckPanel}">
+		<g:HTMLPanel ui:field="information" styleName="{style.form}">
+			<div class="{style.messages}">
+				<div class='{style.successIcon}' />
+				<g:Label styleName="{style.info}" ui:field="informationLabel">Informacion:</g:Label>
+			</div>
+			<g:Grid width="100%">
+				<g:row>
+					<g:customCell >
+						<g:Label styleName="{style.label}" ui:field="informationText"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+			<div class="{style.buttons}">
+				<g:Button ui:field="acceptInfoButton">Aceptar</g:Button>
+			</div>
+		</g:HTMLPanel>
+		
+		<g:HTMLPanel ui:field="delete" styleName="{style.form}">
+			<div class="{style.messages}">
+				<div class='{style.trashIcon}' />
+				<g:Label styleName="{style.info}" ui:field="trashLabel">Informacion:</g:Label>
+			</div>
+			<g:Grid width="100%">
+				<g:row>
+					<g:customCell styleName="{style.label}">
+						<g:Label ui:field="trashText"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+			<div class="{style.buttons}">
+				<g:Button ui:field="accepTrashButton">Aceptar</g:Button>
+			</div>
+		</g:HTMLPanel>
+	</g:DeckPanel>
+	
+</ui:UiBinder>
+
+                

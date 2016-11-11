@@ -1,0 +1,75 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'
+	xmlns:dump='urn:import:com.esferalia.aon.gwt.dump.client'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client' 
+	xmlns:s="urn:import:com.esferalia.aon.gwt.dump.shared" 
+	xmlns:c="urn:import:com.esferalia.aon.gwt.common.client" 
+	xmlns:b="urn:import:com.hxtt.b" 
+	xmlns:a="urn:import:bsh.org.objectweb.asm" 
+	xmlns:collect="urn:import:com.google.common.collect">
+
+	<ui:style>
+	.options-scroll-panel>div {
+		height: 99%;
+	}
+
+	.simple-marginBottom {
+		margin-bottom: 5px;
+	}
+	
+	.simple-marginLeft {
+		margin-left: 5px;
+	}
+	
+	.simple-marginTop{
+		margin-top: 5px;
+	}
+	
+	.simple-progressWith {
+		width: 99%;
+	}
+	
+	.simple-iconMargin{
+		margin-right: 25px;
+	}
+	
+	.simple-iconStyle{
+		border: none;
+		height: 19px;
+		float: right;		
+	}
+	
+	.simple-iconCancelStyle{
+		border: none;
+		margin-right: 5px;
+		height: 16px;
+		float: right;	
+	}
+	
+	</ui:style>
+
+	<g:DockLayoutPanel>
+		<g:north size="90" >
+			<g:VerticalPanel styleName="aon-width-all {style.simple-marginLeft}">
+				<g:VerticalPanel styleName="aon-width-all {style.simple-marginLeft}">
+					<g:HTMLPanel>
+						<g:Button ui:field="eraseInfoButton" styleName="aon-icon-delete {style.simple-iconMargin} {style.simple-iconStyle}"/>
+						<g:Button ui:field="cancelDownload" styleName="aon-icon-task-stop {style.simple-iconCancelStyle}"/>
+						<g:Button ui:field="eraseDownload" styleName="aon-icon-draft {style.simple-iconCancelStyle}"/>
+					</g:HTMLPanel>
+				</g:VerticalPanel>
+				<g:Label ui:field="progressTab" styleName="aon-outputLabel {style.simple-marginTop} {style.simple-marginBottom}">Proceso descarga: 0 %</g:Label>
+				<dump:Progress ui:field="progressBar" max="100" progress="0" styleName="{style.simple-progressWith} {style.simple-marginBottom}"></dump:Progress>
+				<g:Label styleName="aon-outputLabel {style.simple-marginTop}">Información descarga:</g:Label>
+			</g:VerticalPanel>
+		</g:north>
+		<g:center>
+			<g:ScrollPanel ui:field="scrollInfo" styleName="aon-scroll-area {style.options-scroll-panel}">
+				<g:FlexTable ui:field="infoTab"></g:FlexTable>
+			</g:ScrollPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder>
