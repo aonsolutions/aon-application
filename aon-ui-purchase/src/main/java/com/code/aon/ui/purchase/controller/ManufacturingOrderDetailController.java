@@ -253,7 +253,9 @@ public class ManufacturingOrderDetailController extends PurchaseDetailController
 	private void createManufactureIncome(TransferPurchaseDetail transferPurchaseDetail)
 			throws ManagerBeanException {
 		WarehouseUtil util = new WarehouseUtil();
-		String referenceCode = transferPurchaseDetail.getDetail().getPurchase()+"-"+transferPurchaseDetail.getDetail().getLine();
+		String referenceCode = transferPurchaseDetail.getDetail().getPurchase().getReferenceCode();
+		referenceCode += "-";
+		referenceCode += transferPurchaseDetail.getDetail().getLine();
 		Income income = util.createIncome(transferPurchaseDetail.getDetail().getPurchase(), referenceCode);
 		PurchaseDetail purchaseDetail = transferPurchaseDetail.getDetail();
 		util.createIncomeDetail(purchaseDetail, income, transferPurchaseDetail.getTotalQuantity());
