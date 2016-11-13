@@ -288,6 +288,13 @@
 												<aon:outputText value="Plantillas - Carga de Datos" />
 											</aon:commandLink>
 									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_DomainDump"
+											action="aon_dump_form"
+											title="Descarga de Empresas">
+											<aon:outputText value="Descarga de Empresas" />
+										</aon:commandLink>
+									</aon:div>
 									<aon:if
 										test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
 										<aon:div styleClass="aon-direct-access-list-element">
@@ -304,13 +311,6 @@
 											</aon:commandLink>
 										</aon:div>
 
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="gwt_DomainDump"
-												action="aon_dump_form"
-												title="Descarga de Empresas">
-												<aon:outputText value="Descarga de Empresas" />
-											</aon:commandLink>
-										</aon:div>
  
  										<aon:if test="#{aonRole.accountingOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
