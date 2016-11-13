@@ -33,6 +33,8 @@ import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.code.aon.pool.ConnectionInfo;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.ui.config.util.UserUtils;
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
@@ -192,8 +194,10 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			cb = new CommentsPrintCallbackDump(outZip, cb);
 
 			try {
+                                ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
+                                String database = ci.getDomainDatabase(domain);
 				aonDump.findDomainInTables(aonDump.connection, aonDump.dslContext, cb, "localhost",
-						"sig-grupo-esferalia", domain);
+						database, domain);
 			} catch (CancelException e) {
 				// Window.alert("DESCARGA CANCELADA");
 				System.out.println("DESCARGA CANCELADA");
@@ -212,7 +216,8 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 
 		} catch (IOException e) {
 			e.printStackTrace();
-
+		} catch (AonConnectionException e ) {
+			e.printStackTrace();
 		}
 
 	}

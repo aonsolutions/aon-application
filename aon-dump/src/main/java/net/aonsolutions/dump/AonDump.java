@@ -103,6 +103,8 @@ public class AonDump {
 		
 		downloadTableReferenceDomain(DOMAIN, DOMAIN.getReferences(), idsMap, cb, false, (DSL.field("id")).equal(idDomain));
 
+		idsMap.createTableName(Scope.SCOPE.getName());
+		idsMap.setTableName(Scope.SCOPE.getName());
 		downloadTableReferenceDomain(Scope.SCOPE, Scope.SCOPE.getReferences(), idsMap, cb, false, (DSL.field("domain")).equal(idDomain));
 		
 		cb.accept("SET FOREIGN_KEY_CHECKS=1;");

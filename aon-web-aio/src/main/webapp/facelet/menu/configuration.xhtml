@@ -60,7 +60,7 @@
 											value="#{bundle.admin_global_configuration}" />
 									</aon:div>
 								</aon:if>
-								<aon:if test="#{aonRole.admin}">
+								<aon:if test="#{aonRole.admin or aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="dump" action="backup_form"
 											actionListener="#{backup.onInit}"
