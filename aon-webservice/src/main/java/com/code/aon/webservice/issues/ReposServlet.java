@@ -45,10 +45,13 @@ public class ReposServlet extends HttpServlet{
 	
 	private static final DBConsults DB = DBConsults.getInstance();
 	
+	String h = "http://";
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("GET METHOD");
-		
+		if(req.getServerPort() == 80) h = "http://";
+		else if(req.getServerPort() == 443) h = "https://";
 		String accessToken = req.getParameter("access_token");
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[1];
@@ -136,7 +139,8 @@ public class ReposServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("POST METHOD");
-		
+		if(req.getServerPort() == 80) h = "http://";
+		else if(req.getServerPort() == 443) h = "https://";
 		String[] pathInfo = req.getPathInfo().split("/");
 		String userName = pathInfo[1];
 		String domainName = pathInfo[2]; 
@@ -278,7 +282,7 @@ public class ReposServlet extends HttpServlet{
 							DB.updateTaskDescription(domain, userName, task.setComments(json.getString("body")));
 							Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 							Boolean principal = DB.isPrincipal(domain, userName, task);
-							object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise, principal).toJSON();
+							object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise, principal, h).toJSON();
 						} else if(json.opt("duplicate") != null){
 							String d = json.getString("duplicate");
 							if(!d.equals("liberate")){
@@ -301,7 +305,7 @@ public class ReposServlet extends HttpServlet{
 							DB.updateTaskTitle(domain, userName, task.setComments(json.getString("title")));
 							Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 							Boolean principal = DB.isPrincipal(domain, userName, task);
-							object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise, principal).toJSON();
+							object = new Issue(task, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), enterprise, principal, h).toJSON();
 						}
 						
 					}
@@ -331,7 +335,7 @@ public class ReposServlet extends HttpServlet{
 					
 					Task t = AON.createTask(domain.getName(), domain.getId(), userName, task);
 					Boolean principal = DB.isPrincipal(domain, userName, task);
-					object = new Issue(t, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), registry, principal).toJSON();
+					object = new Issue(t, new Registry(), new LinkedList<Label>(), new Label(), 0, domain, userName, new Workgroup(), registry, principal, h).toJSON();
 				}
 				break;
 			case "labels":
@@ -493,7 +497,7 @@ public class ReposServlet extends HttpServlet{
 				.findFirst().orElse(new Label());
 		Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 		Boolean principal = DB.isPrincipal(domain, userName, task);
-		Issue issue = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal);		
+		Issue issue = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, h);		
 		return issue.toJSON();
 	}
 	
@@ -510,7 +514,7 @@ public class ReposServlet extends HttpServlet{
 				.findFirst().orElse(new Label());
 		Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 		Boolean principal = DB.isPrincipal(domain, userName, task);
-		Issue issue = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal);		
+		Issue issue = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, h);		
 		return issue.toJSON();
 	}
 	
@@ -527,7 +531,7 @@ public class ReposServlet extends HttpServlet{
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 			Boolean principal = DB.isPrincipal(domain, userName, task);
-			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal).toJSON();
+			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, h).toJSON();
 			array.put(json);
 		});
 		return array;
@@ -543,7 +547,7 @@ public class ReposServlet extends HttpServlet{
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 			Boolean principal = DB.isPrincipal(domain, userName, task);
-			JSONObject json = new Issue(task, new Registry(), labels, type, comments, domain, userName, new Workgroup(), new Registry(), principal).toJSON();
+			JSONObject json = new Issue(task, new Registry(), labels, type, comments, domain, userName, new Workgroup(), new Registry(), principal, h).toJSON();
 			array.put(json);
 		});
 		return array;
@@ -579,7 +583,7 @@ public class ReposServlet extends HttpServlet{
 					.findFirst().orElse(new Label());
 			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
 			Boolean principal = DB.isPrincipal(domain, userName, task);
-			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal).toJSON();
+			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, h).toJSON();
 			array.put(json);
 		});
 		return array;
