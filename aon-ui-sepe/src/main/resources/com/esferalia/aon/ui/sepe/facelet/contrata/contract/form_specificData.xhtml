@@ -20,6 +20,7 @@
 					
 				<aon:selectBooleanCheckbox id="datosProgramaEmpleo"  
 					rendered="#{contractContrata.handler.showDatosProgramaEmpleoPanel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.employmentProgramData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv"/>
@@ -30,6 +31,7 @@
 					
 				<aon:selectBooleanCheckbox id="ettData"  
 					rendered="#{contractContrata.handler.showEttPanel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.ettData}">
 					<a4j:support event="onclick" ajaxSingle="true" 
 						reRender="specificOptionsDiv"/>
@@ -37,7 +39,9 @@
 				<aon:outputLabel for="ettData" rendered="#{contractContrata.handler.showEttPanel}"
 					value="#{bundle.sepe_contrata_contract_ett_data}" />
 					
-				<aon:selectBooleanCheckbox id="contratoRelevo" rendered="#{contractContrata.handler.showContratoRelevoPanel}"
+				<aon:selectBooleanCheckbox id="contratoRelevo" 
+					rendered="#{contractContrata.handler.showContratoRelevoPanel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.reliefData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv"/>
@@ -45,7 +49,9 @@
 				<aon:outputLabel for="contratoRelevo" rendered="#{contractContrata.handler.showContratoRelevoPanel}"
 					value="#{bundle.sepe_contrata_contract_contratoRelevo_data}" />
 					
-				<aon:selectBooleanCheckbox id="datosOfertaTrabajo" rendered="#{contractContrata.handler.showDatosOfertaTrabajoPanel}"
+				<aon:selectBooleanCheckbox id="datosOfertaTrabajo" 
+					rendered="#{contractContrata.handler.showDatosOfertaTrabajoPanel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.offerData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv"/>
@@ -53,7 +59,9 @@
 				<aon:outputLabel for="datosOfertaTrabajo" rendered="#{contractContrata.handler.showDatosOfertaTrabajoPanel}"
 					value="#{bundle.sepe_contrata_contract_datosOfertaTrabajo_data}" />
 					
-				<aon:selectBooleanCheckbox id="escuelasTaller" rendered="#{contractContrata.handler.showEscuelasTallerPanel}"
+				<aon:selectBooleanCheckbox id="escuelasTaller" 
+					rendered="#{contractContrata.handler.showEscuelasTallerPanel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.schoolWorkshopData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv"/>
@@ -61,7 +69,9 @@
 				<aon:outputLabel for="escuelasTaller" rendered="#{contractContrata.handler.showEscuelasTallerPanel}"
 					value="#{bundle.sepe_contrata_contract_escuelasTaller_data}" />
 					
-				<aon:selectBooleanCheckbox id="discapacidad" rendered="#{contractContrata.handler.showDiscapacidadPanel}"
+				<aon:selectBooleanCheckbox id="discapacidad" 
+					rendered="#{contractContrata.handler.showDiscapacidadPanel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.disabilityData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv"/>
@@ -69,7 +79,9 @@
 				<aon:outputLabel for="discapacidad" rendered="#{contractContrata.handler.showDiscapacidadPanel}"
 					value="#{bundle.payroll_mod145_perceptor18}" />
 
-				<aon:selectBooleanCheckbox id="apoyoEmprendedores" rendered="#{contractContrata.handler.showApoyoEmprendedoresPanel}"
+				<aon:selectBooleanCheckbox id="apoyoEmprendedores" 
+					rendered="#{contractContrata.handler.showApoyoEmprendedoresPanel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.apoyoEmprendedoresData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv"/>
@@ -77,7 +89,9 @@
 				<aon:outputLabel for="apoyoEmprendedores" rendered="#{contractContrata.handler.showApoyoEmprendedoresPanel}"
 					value="#{bundle.sepe_contrata_contract_apoyoEmprendedores_data}" />
 					
-				<aon:selectBooleanCheckbox id="mayores52" rendered="#{contractContrata.handler.showMayor52Panel}"
+				<aon:selectBooleanCheckbox id="mayores52" 
+					rendered="#{contractContrata.handler.showMayor52Panel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.olderThan52Data}"> 
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv"/>
@@ -85,7 +99,9 @@
 				<aon:outputLabel for="mayores52" rendered="#{contractContrata.handler.showMayor52Panel}"
 					value="#{bundle.sepe_contrata_contract_mayores52_data}" />
 					
-				<aon:selectBooleanCheckbox id="anexoGestionColectiva" rendered="#{contractContrata.handler.showAnexoGestionColectivaPanel}"
+				<aon:selectBooleanCheckbox id="anexoGestionColectiva" 
+					rendered="#{contractContrata.handler.showAnexoGestionColectivaPanel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.annexData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv"/>
@@ -93,7 +109,9 @@
 				<aon:outputLabel for="anexoGestionColectiva" rendered="#{contractContrata.handler.showAnexoGestionColectivaPanel}"
 					value="#{bundle.sepe_contrata_contract_anexoGestionColectiva_data}" />
 					
-				<aon:selectBooleanCheckbox id="campainas" rendered="#{contractContrata.handler.showCampainasPanel}"
+				<aon:selectBooleanCheckbox id="campainas" 
+					rendered="#{contractContrata.handler.showCampainasPanel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.canpaignData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv"/>
@@ -101,7 +119,9 @@
 				<aon:outputLabel for="campainas" rendered="#{contractContrata.handler.showCampainasPanel}"
 					value="#{bundle.marketing_campaign_module}" />
 					
-				<aon:selectBooleanCheckbox id="causaInterinidad" rendered="#{contractContrata.handler.showCausaInterinidadPanel}"
+				<aon:selectBooleanCheckbox id="causaInterinidad" 
+					rendered="#{contractContrata.handler.showCausaInterinidadPanel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.interimData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv"/>
@@ -109,7 +129,9 @@
 				<aon:outputLabel for="causaInterinidad" rendered="#{contractContrata.handler.showCausaInterinidadPanel}"
 					value="#{bundle.sepe_contrata_contract_causaInterinidad_data}" />
 					
-				<aon:selectBooleanCheckbox id="investigacion" rendered="#{contractContrata.handler.showInvestigacionPanel}"
+				<aon:selectBooleanCheckbox id="investigacion" 
+					rendered="#{contractContrata.handler.showInvestigacionPanel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.researchData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv"/>
@@ -117,7 +139,9 @@
 				<aon:outputLabel for="investigacion" rendered="#{contractContrata.handler.showInvestigacionPanel}"
 					value="#{bundle.sepe_contrata_contract_investigacion_data}" />
 					
-				<aon:selectBooleanCheckbox id="reduccionCuotas" rendered="#{contractContrata.handler.showReduccionCuotasPanel}"
+				<aon:selectBooleanCheckbox id="reduccionCuotas" 
+					rendered="#{contractContrata.handler.showReduccionCuotasPanel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.reductionData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv"/>
@@ -125,7 +149,9 @@
 				<aon:outputLabel for="reduccionCuotas" rendered="#{contractContrata.handler.showReduccionCuotasPanel}"
 					value="#{bundle.sepe_contrata_contract_reduccionCuotas_data}" />
 					
-				<aon:selectBooleanCheckbox id="medidasFomento" rendered="#{contractContrata.handler.showMedidasFomentoPanel}"
+				<aon:selectBooleanCheckbox id="medidasFomento" 
+					rendered="#{contractContrata.handler.showMedidasFomentoPanel}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.medidasFomentoData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv"/>
@@ -145,6 +171,7 @@
 					<aon:outputLabel for="employmentProgram" 
 						value="#{bundle.sepe_contrata_contract_employmentProgram}" />
 					<aon:selectOneMenu id="employmentProgram"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.codigoProgramaEmpleo}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contrataCollections.TETPGMEMCodeList}" />
@@ -162,16 +189,19 @@
 				<aon:outputLabel for="ettCif" 
 					value="#{bundle.aon_company_document}" />
 				<aon:inputText id="ettCif"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.ettCif}" />
 			
 				<aon:outputLabel for="ettName" 
 					value="#{bundle.aon_company_name}" />
 				<aon:inputText id="ettName"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.ettName}" />
 				
 				<aon:outputText value="&#160;" />
 				<aon:div>
 					<aon:selectBooleanCheckbox id="ettContractTemplate"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.ettContractTemplate}"/>
 					<aon:outputLabel for="ettContractTemplate"
 						value="#{bundle.sepe_contrata_contract_ettContractTemplate}" />
@@ -180,6 +210,7 @@
 				<aon:outputText value="&#160;" />
 				<aon:div>
 					<aon:selectBooleanCheckbox id="ettForeignEnterprise"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.ettForeignEnterprise}"/>
 					<aon:outputLabel for="ettForeignEnterprise"
 						value="#{bundle.sepe_contrata_contract_ettForeignEnterprise}" />
@@ -198,6 +229,7 @@
 					value="#{bundle.sepe_contrata_contract_relief_employee_type}" />
 				<aon:selectOneMenu id="reliefEmployeeType"
 					required="#{contractContrata.params.reliefData}"
+					disabled="#{contractContrata.readOnly}"
 					value="#{contractContrata.params.tipoTrabajadorRelevo}" >
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{contrataCollections.TEYTRELECodeList}" />
@@ -211,13 +243,16 @@
 					<aon:outputLabel for="reliefName" value="#{bundle.aon_name}" />
 					<aon:inputText id="reliefName"
 						required="#{contractContrata.params.reliefData}"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.reliefPerson.name}" />
 					<aon:outputLabel for="reliefFirstSurname" value="#{bundle.payroll_mod145_perceptor10}" />
 					<aon:inputText id="reliefFirstSurname"
 						required="#{contractContrata.params.reliefData}"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.reliefPerson.firstSurname}" />
 					<aon:outputLabel for="reliefSecondSurname" value="#{bundle.registry_person_secondSurname}" />
 					<aon:inputText id="reliefSecondSurname"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.reliefPerson.secondSurname}" />
 				</aon:panelGrid>
 			</aon:panel>
@@ -233,6 +268,7 @@
 					<aon:outputLabel for="offer"
 						value="#{bundle.sepe_contrata_contract_offer}" />
 					<aon:inputText id="offer"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.offer}" />
 				</aon:panelGrid>
 			</aon:panel>
@@ -247,6 +283,7 @@
 					<aon:outputLabel for="schoolWorkshop" 
 						value="#{bundle.sepe_contrata_contract_schoolWorkshop}" />
 					<aon:selectOneMenu id="schoolWorkshop"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.codigoEtCoTe}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contrataCollections.TESCETCOCodeList}" />
@@ -264,6 +301,7 @@
 					<aon:outputLabel for="disability_code"
 						value="#{bundle.sepe_contrata_contract_disability_code}" />
 					<aon:selectOneMenu id="disability_code"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.indDiscapacidad}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contrataCollections.TEJINDISCodeList}" />
@@ -286,6 +324,7 @@
 								<aon:outputLabel for="bonus_collective"
 									value="#{bundle.sepe_contrata_contract_bonus_collective}" />
 								<aon:selectOneMenu id="bonus_collective"
+									disabled="#{contractContrata.readOnly}"
 									value="#{contractContrata.params.colectivoBonificacion}" >
 									<f:selectItem itemLabel="-" value="#{null}" />
 									<f:selectItems value="#{contrataCollections.TELCOLBOCodeList}" />
@@ -298,6 +337,7 @@
 						<aon:outputText value="&#160;" />
 						<aon:div>
 							<aon:selectBooleanCheckbox id="ind_emplead_autonomo"
+								disabled="#{contractContrata.readOnly}"
 								value="#{contractContrata.params.indEmpleadAutonomo}"/>
 							<aon:outputLabel for="ind_emplead_autonomo"
 								value="#{bundle.sepe_contrata_contract_ind_emplead_autonomo}" />
@@ -316,6 +356,7 @@
 					<aon:outputLabel for="otherLaws" 
 						value="#{bundle.sepe_contrata_contract_otherLaws}" />
 					<aon:selectOneMenu id="otherLaws"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.otrasLegislaciones}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contrataCollections.THYDISLECodeList}" />
@@ -333,6 +374,7 @@
 					<aon:outputLabel for="employmentCharacter"
 						value="#{bundle.sepe_contrata_contract_employment_character}" />
 					<aon:selectOneRadio id="employmentCharacter" layout="inline"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.employmentCharacter}" >
 						<f:selectItem itemLabel="#{bundle.sepe_contrata_contract_anex_estable}" itemValue="E" />
 						<f:selectItem itemLabel="#{bundle.sepe_contrata_contract_anex_seasonal}" itemValue="T" />
@@ -341,6 +383,7 @@
 					<aon:outputLabel for="anexEmploymentYear"
 						value="#{bundle.sepe_contrata_contract_anexEmploymentYear}" />
 					<aon:inputText id="anexEmploymentYear" size="5" maxlength="4"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.anexEmploymentYear}" >
 						<f:validateLength maximum="4" />
 					</aon:inputText>
@@ -357,6 +400,7 @@
 					<aon:outputLabel for="campaignGeozone"
 						value="#{bundle.sepe_contrata_cc_aa}" />
 					<aon:inputText id="campaignGeozone" size="3" maxlength="2"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.campaignGeozone}" >
 						<f:validateLength maximum="2" />
 					</aon:inputText>
@@ -364,6 +408,7 @@
 					<aon:outputLabel for="campaign"
 						value="#{bundle.sepe_contrata_contract_campaign}" />
 					<aon:inputText id="campaign" size="4" maxlength="3"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.campaign}" >
 						<f:validateLength maximum="3" />
 					</aon:inputText>
@@ -371,6 +416,7 @@
 					<aon:outputLabel for="campaignYear"
 						value="#{bundle.aon_year}" />
 					<aon:inputText id="campaignYear" size="5" maxlength="4"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.campaignYear}" >
 						<f:validateLength maximum="4" />
 					</aon:inputText>
@@ -388,6 +434,7 @@
 						value="#{bundle.sepe_contrata_contract_causaInterinidad_data}" />
 					<aon:selectOneMenu id="interimCause"
 						required="#{true}"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.causaInterinidad}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contrataCollections.TEIINTERCodeList}" />
@@ -405,6 +452,7 @@
 					<aon:outputLabel for="researchEmployer"
 						value="#{bundle.sepe_contrata_contract_research_employer}" />
 					<aon:selectOneMenu id="researchEmployer"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.indEmpleador}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contrataCollections.TEWEINVECodeList}" />
@@ -413,6 +461,7 @@
 					<aon:outputLabel for="researchEmployee"
 						value="#{bundle.sepe_contrata_contract_research_employee}" />
 					<aon:selectOneMenu id="researchEmployee"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.indTrabajador}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contrataCollections.TEXTINVECodeList}" />
@@ -421,6 +470,7 @@
 					<aon:outputText value="&#160;" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="researchFormation"
+							disabled="#{contractContrata.readOnly}"
 							value="#{contractContrata.params.indRd632006}"/>
 						<aon:outputLabel for="researchFormation"
 							value="#{bundle.sepe_contrata_contract_research_formation}" />
@@ -438,6 +488,7 @@
 					<aon:outputLabel for="reductionCollective"
 						value="#{bundle.sepe_contrata_contract_reduction_collective}" />
 					<aon:selectOneMenu id="reductionCollective"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.codigoColectivoReduccion}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contrataCollections.TQOCOLRECodeList}" />
@@ -446,6 +497,7 @@
 					<aon:outputLabel for="reductionPercent"
 						value="#{bundle.sepe_contrata_contract_reduction_percent}" />
 					<aon:selectOneRadio id="reductionPercent" layout="pageDirection"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.porcentajeReduccion}" >
 						<f:selectItem itemLabel="#{bundle.sepe_contrata_contract_reduction_gt_250}" itemValue="75" />
 						<f:selectItem itemLabel="#{bundle.sepe_contrata_contract_reduction_lt_250}" itemValue="100" />
@@ -456,6 +508,7 @@
 						value="#{bundle.sepe_contrata_contract_reduction_journal_percent}" />
 					<aon:div>
 						<aon:inputText id="reductionJournalPercent" size="6" maxLenght="5"
+							disabled="#{contractContrata.readOnly}"
 							value="#{contractContrata.params.porcentajeJornadaReduccion}" >
 							<f:validateDoubleRange minimum="50.00" maximum="75.00" />
 						</aon:inputText>
@@ -477,11 +530,13 @@
 					<aon:outputLabel for="indCosteDespido"
 						value="#{bundle.sepe_contrata_contract_indCosteDespido}" />
 					<aon:selectBooleanCheckbox id="indCosteDespido"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.indCosteDespido}"/>
 					
 					<aon:outputLabel for="codigoColectivoDespido"
 						value="#{bundle.sepe_contrata_contract_codigoColectivoDespido}" />
 					<aon:selectOneMenu id="codigoColectivoDespido"
+						disabled="#{contractContrata.readOnly}"
 						value="#{contractContrata.params.codigoColectivoDespido}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contrataCollections.TEOCOLDECodeList}" />
