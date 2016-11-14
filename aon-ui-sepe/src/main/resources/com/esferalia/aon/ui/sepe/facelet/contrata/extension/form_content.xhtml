@@ -14,6 +14,7 @@
 			value="#{bundle.aon_start_date}" />
 		<aon:selectInputDate id="extensionContrata_fechaInicio#{suffix}"
 			required="#{true}" 
+			disabled="#{extensionContrata.readOnly}"
 			value="#{extensionContrata.params.fechaInicio}" 
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
@@ -21,21 +22,24 @@
 		<aon:outputLabel for="extensionContrata_fechaFin#{suffix}" 
 			value="#{bundle.aon_end_date}" />
 		<aon:selectInputDate id="extensionContrata_fechaFin#{suffix}" 
-			required="#{true}" 
+			required="#{true}"
+			disabled="#{extensionContrata.readOnly}" 
 			value="#{extensionContrata.params.fechaFin}" 
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 			
 		<aon:outputLabel for="extensionContrata_indicadorConvCol#{suffix}" 
-			rendered="#{extensionContrata.handler.indicadorConvCol}" 
+			rendered="#{extensionContrata.handler.indicadorConvCol}"
 			value="#{bundle.sepe_contrata_extension_indicadorConvCol}" />
 		<aon:selectBooleanCheckbox id="extensionContrata_indicadorConvCol#{suffix}" 
 			rendered="#{extensionContrata.handler.indicadorConvCol}" 
+			disabled="#{extensionContrata.readOnly}" 
 			value="#{extensionContrata.params.indicadorConvCol}" />
 
 		<aon:outputLabel for="extensionContrata_indicadorDiscontinuidad#{suffix}" 
 			value="#{bundle.sepe_contrata_extension_indicadorDiscontinuidad}" />
 		<aon:selectBooleanCheckbox id="extensionContrata_indicadorDiscontinuidad#{suffix}" 
+			disabled="#{extensionContrata.readOnly}"
 			value="#{extensionContrata.params.indicadorDiscontinuidad}" />
 
 		<aon:outputLabel for="extensionContrata_indEmpresaAappUniversidad#{suffix}" 
@@ -43,6 +47,7 @@
 			value="#{bundle.sepe_contrata_extension_indEmpresaAappUniversidad}" />
 		<aon:selectBooleanCheckbox id="extensionContrata_indEmpresaAappUniversidad#{suffix}" 
 			rendered="#{extensionContrata.handler.indEmpresaAappUniversidad}" 
+			disabled="#{extensionContrata.readOnly}"
 			value="#{extensionContrata.params.indEmpresaAappUniversidad}" />
 
 		<aon:outputLabel for="extensionContrata_indPeriodoAutorizaDuracion#{suffix}" 
@@ -50,6 +55,7 @@
 			value="#{bundle.sepe_contrata_extension_indPeriodoAutorizaDuracion}" />
 		<aon:selectBooleanCheckbox id="extensionContrata_indPeriodoAutorizaDuracion#{suffix}" 
 			rendered="#{extensionContrata.handler.indPeriodoAutorizaDuracion}" 
+			disabled="#{extensionContrata.readOnly}"
 			value="#{extensionContrata.params.indPeriodoAutorizaDuracion}" />
 			
 		<aon:outputLabel for="extensionContrata_formationDuration#{suffix}" 
@@ -60,10 +66,12 @@
 			<aon:outputLabel for="extensionContrata_formationHours#{suffix}" styleClass="aon-italic aon-margin-right"
 				value="#{bundle.sepe_hours}:" />
 			<aon:inputText id="extensionContrata_formationHours#{suffix}" size="4" maxlength="4"
+				disabled="#{extensionContrata.readOnly}"
 				value="#{extensionContrata.params.horasFormacion}" />
 			<aon:outputLabel for="extensionContrata_formationMinutes#{suffix}" styleClass="aon-italic aon-margin-left aon-margin-right"
 				value="#{bundle.sepe_minutes}:" />
 			<aon:inputText id="extensionContrata_formationMinutes#{suffix}" size="2" maxlength="2"
+				disabled="#{extensionContrata.readOnly}"
 				value="#{extensionContrata.params.minutosFormacion}" />
 		</aon:div>
 	
@@ -72,11 +80,13 @@
 			value="#{bundle.sepe_contrata_extension_indDuracInferior}" />
 		<aon:selectBooleanCheckbox id="extensionContrata_indDuracInferior#{suffix}" 
 			rendered="#{extensionContrata.handler.indDuracInferior}" 
+			disabled="#{extensionContrata.readOnly}"
 			value="#{extensionContrata.params.indDuracInferior}" />
 		
 		<aon:outputLabel for="extensionContrata_usoLibreEmpresa#{suffix}" 
 			value="#{bundle.sepe_contrata_usoLibreEmpresa}" />
 		<aon:inputText id="extensionContrata_usoLibreEmpresa#{suffix}" size="30" maxlength="30"
+			disabled="#{extensionContrata.readOnly}"
 			value="#{extensionContrata.params.usoLibreEmpresa}" />
 			
 	</aon:panelGrid>

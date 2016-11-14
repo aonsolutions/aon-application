@@ -1281,6 +1281,7 @@ public class ContractUtils implements Serializable {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId() );
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), name );
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), false );
 			List<ITransferObject> list = bean.getList(criteria);
 			if( !list.isEmpty() ){
 				return (ContractData) list.get(0);
@@ -1297,6 +1298,7 @@ public class ContractUtils implements Serializable {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId() );
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), name );
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE), false );
 			List<ITransferObject> list = bean.getList(criteria);
 			if( !list.isEmpty() ){
 				return (ContractInfo) list.get(0);

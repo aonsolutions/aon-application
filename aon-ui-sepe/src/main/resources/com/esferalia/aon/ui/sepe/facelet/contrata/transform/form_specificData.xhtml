@@ -18,7 +18,9 @@
 			
 			<aon:panelGrid columns="6" style="width: 100%;">
 				
-				<aon:selectBooleanCheckbox id="datosBonificacion-transform" rendered="#{transformContrata.handler.showDatosBonificacionPanel}"
+				<aon:selectBooleanCheckbox id="datosBonificacion-transform" 
+					rendered="#{transformContrata.handler.showDatosBonificacionPanel}"
+					disabled="#{extensionContrata.readOnly}"
 					value="#{transformContrata.params.datosBonificacionData}">
 					<a4j:support event="onclick" ajaxSingle="true"
 						reRender="specificOptionsDiv-transform"/>
@@ -50,6 +52,7 @@
 								<aon:outputLabel for="bonus_collective-transform"
 									value="#{bundle.sepe_contrata_contract_bonus_collective}" />
 								<aon:selectOneMenu id="bonus_collective-transform"
+									disabled="#{extensionContrata.readOnly}"
 									value="#{transformContrata.params.colectivoBonificacion}" >
 									<f:selectItem itemLabel="-" value="#{null}" />
 									<f:selectItems value="#{contrataCollections.TELCOLBOCodeList}" />

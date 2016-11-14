@@ -1107,12 +1107,14 @@ public class ContractController extends BasicController {
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize((Contract) this.getTo());
 		contrataController.onContrataDataShow(event);
+		contrataController.setReadOnly(this.isExtendedContract() || this.isTransformedContract());
 	}
 	public void onExtension1SepeShow(ActionEvent event){
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 		contrataController.setExtensionNumber(1);
 		contrataController.initialize((Contract) this.getTo());
 		contrataController.onContrataDataShow(event);
+		contrataController.setReadOnly(this.getExtensionCount()>1);
 	}
 	public void onExtension2SepeShow(ActionEvent event){
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
@@ -1162,9 +1164,11 @@ public class ContractController extends BasicController {
 	
 	public void onTransformContract(ActionEvent event){
 		Contract contract = (Contract)this.getTo();
+		Map<String, ContractData> sourceContractDataMap = SEPEUtils.getInstance().getContractDataMap(contract, contract.getStartDate(), null);
+		
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 		if(contrataController.getGeneratedFile()==null || contrataController.getGeneratedFile().getData()==null){
-			contrataController.getHandler().initialize(contract);
+			contrataController.initialize(contract);
 			contrataController.onContrataDataShow(event);
 			contrataController.onContrataAccept(event);
 		}
@@ -1214,6 +1218,20 @@ public class ContractController extends BasicController {
 			LOGGER.error(msg);
 			throw new AbortProcessingException(msg);
 		}
+		
+		// datos contrato origen
+		for(ContractData data: sourceContractDataMap.values()){
+			try {
+				getContractUtils().insertContractData(contract, 
+						data.getName(), data.getExpression(), 
+						data.getStartDate(), data.getEndDate());
+			} catch (Exception e) {
+				String msg = "("+data.getName()+") No se ha podido guardar del contrato origen. (" +e.getMessage() + ")"; 
+				AonUtil.addErrorMessage(msg);
+				LOGGER.error(msg);
+			}
+		}
+		
 		// datos basicos necesarios
 		getParams().setContractCode(params.getTransformCode());
 		getParams().setSuspensionCause(null);

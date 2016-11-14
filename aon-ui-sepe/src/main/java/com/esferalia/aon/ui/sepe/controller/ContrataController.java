@@ -250,6 +250,9 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 	public boolean isReadOnly() {
 		return readOnly;
 	}
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
 	
 	
 	public String getContrataModelName(){
@@ -368,7 +371,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 				setGeneratedFile(list.get(0));
 			}
 		}
-		this.readOnly = obtainBatchContractCount(contract)>1;
+//		this.readOnly = obtainBatchContractCount(contract)>1;
 	}
 	
 	public void onContrataDataShow(ActionEvent event) {

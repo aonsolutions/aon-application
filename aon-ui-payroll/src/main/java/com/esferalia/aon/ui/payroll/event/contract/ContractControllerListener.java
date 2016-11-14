@@ -132,7 +132,18 @@ public class ContractControllerListener extends ControllerAdapter{
 			String msg = "Error loading contract data";
 			LOGGER.error(msg);
 		}
-
+		
+		ContrataController contrataController = null;
+		if(controller.isTransformedContract()){
+			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+		} else if(!controller.isTransformedContract() && controller.isExtendedContract()){
+			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+		} else {
+			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		}
+		
+		contrataController.initialize((Contract) this.getController().getTo());
+		
 	}
 
 	@Override
@@ -223,8 +234,11 @@ public class ContractControllerListener extends ControllerAdapter{
 			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 		}
 		
-		contrataController.getHandler().initialize((Contract) this.getController().getTo());
 		contrataController.onContrataAccept(null);
+//		if(contrataController.getHandler()!=null){
+//			contrataController.getHandler().initialize((Contract) this.getController().getTo());
+//			contrataController.onContrataAccept(null);
+//		}
 	}
 	
 	private void updateContractDocumentFields() {

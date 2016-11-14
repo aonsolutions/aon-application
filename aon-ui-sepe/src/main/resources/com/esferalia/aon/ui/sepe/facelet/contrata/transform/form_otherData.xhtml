@@ -14,169 +14,6 @@
 			<aon:outputText value="#{bundle.sepe_contrata_contract_other_data}" />
 		</f:facet>
 
-<!--  
-		<aon:panelGrid columns="2" id="otherDataPanel"
-			styleClass="aon-width-all"
-			columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even aon-width-auto">
-		
-			
-			<aon:outputLabel for="workingDayType" 
-				rendered="#{transformContrata.handler.showTipoJornada}"
-				value="#{bundle.sepe_contrata_contract_working_day_type}" />
-			<aon:selectOneMenu id="workingDayType"
-				required="true"
-				disabled="#{!transformContrata.handler.availableTipoJornada}"
-				rendered="#{transformContrata.handler.showTipoJornada}"
-				value="#{transformContrata.params.tipoJornada}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{contrataCollections.TEQPTIEMCodeList}" />
-			</aon:selectOneMenu>
-			
-			<aon:outputLabel 
-				rendered="#{transformContrata.handler.showHorasMinutosJornada}"
-				value="#{bundle.sepe_contrata_contract_working_day_duration}" />
-			<aon:div rendered="#{transformContrata.handler.showHorasMinutosJornada}">
-				<aon:outputLabel for="workingDayHours" styleClass="aon-italic aon-margin-right"
-					value="#{bundle.sepe_hours}:" />
-				<aon:inputText id="workingDayHours" size="4" maxlength="4"
-					value="#{transformContrata.params.horasJornada}"/>
-				<aon:outputLabel for="workingDayMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{bundle.sepe_minutes}:" />
-				<aon:inputText id="workingDayMinutes" size="2" maxlength="2"
-					value="#{transformContrata.params.minutosJornada}"/>
-			</aon:div>
-		
-			<aon:outputLabel 
-				rendered="#{transformContrata.handler.showHorasMinutosConvenio}"
-				value="#{bundle.sepe_contrata_contract_agreement_hours}" />
-			<aon:div rendered="#{transformContrata.handler.showHorasMinutosConvenio}">
-				<aon:outputLabel for="agreementHours" styleClass="aon-italic aon-margin-right"
-					value="#{bundle.sepe_hours}:" />
-				<aon:inputText id="agreementHours" size="4" maxlength="4"
-					value="#{transformContrata.params.horasConvenio}"/>
-				<aon:outputLabel for="agreementMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{bundle.sepe_minutes}:" />
-				<aon:inputText id="agreementMinutes" size="2" maxlength="2"
-					value="#{transformContrata.params.minutosConvenio}"/>
-			</aon:div>
-		</aon:panelGrid>
-			
-		<aon:panelGrid columns="2" id="otherDataPanel2"
-			styleClass="aon-width-all aon-margin-top"
-			columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even aon-width-auto">
-			
-			<aon:outputText 
-				rendered="#{transformContrata.handler.showFijoDiscontinuoPeriodico}"
-				value="&#160;" />
-			<aon:div rendered="#{transformContrata.handler.showFijoDiscontinuoPeriodico}">
-				<aon:selectBooleanCheckbox id="periodicallyDiscontinuous" 
-					value="#{transformContrata.params.fijoDiscontinuoPeriodico}" />
-				<aon:outputLabel for="periodicallyDiscontinuous"
-					value="#{bundle.sepe_contrata_contract_periodically_discontinuous}" />
-			</aon:div>
-
-		</aon:panelGrid>
--->		
-		
-<!--  
-		<aon:div id="medidasFomentoPanel" rendered="#{contractContrata.params.medidasFomentoData}">
-			<aon:panel style="width: 100%;">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.sepe_contrata_contract_medidasFomento_data}" />
-				</f:facet>
-				<aon:panelGrid columns="2" style="width: 100%;">
-			
-					<aon:outputLabel for="indCosteDespido"
-						value="#{bundle.sepe_contrata_contract_indCosteDespido}" />
-					<aon:selectBooleanCheckbox id="indCosteDespido"
-						value="#{transformContrata.params.indCosteDespido}"/>
-					
-					<aon:outputLabel for="codigoColectivoDespido"
-						value="#{bundle.sepe_contrata_contract_codigoColectivoDespido}" />
-					<aon:selectOneMenu id="codigoColectivoDespido"
-						value="#{transformContrata.params.codigoColectivoDespido}" >
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{contrataCollections.TEOCOLDECodeList}" />
-					</aon:selectOneMenu>
-								
-				</aon:panelGrid>
-			</aon:panel>
-		</aon:div>
--->
-		
-<!--  
-	<xsd:complexType name="DATOS_BONIFICACIONTYPE">
-			<xsd:element name="ACOGIDO_MATERNIDAD_EXCEDENCIA" minOccurs="0">
-			<xsd:element name="COLECTIVO_DISCAPACITADOS" minOccurs="0">
-			<xsd:element name="CODIGO_COLECTIVO_BONIF" minOccurs="0">
-	</xsd:element>xsd:complexType>
--->		
-	
-<!--  
-		<aon:div id="discapacidadPanel" rendered="#{contractContrata.params.disabilityData}">
-			<aon:panel style="width: 100%;">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.payroll_mod145_perceptor18}" />
-				</f:facet>
-				<aon:panelGrid columns="2" style="width: 100%;">
-					<aon:outputLabel for="disability_code"
-						value="#{bundle.sepe_contrata_contract_disability_code}" />
-					<aon:selectOneMenu id="disability_code"
-						value="#{contractContrata.params.indDiscapacidad}" >
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{contrataCollections.TEJINDISCodeList}" />
-					</aon:selectOneMenu>
-				</aon:panelGrid>
-			</aon:panel>
-		</aon:div>
-		
-		<aon:div id="reduccionCuotasPanel" rendered="#{contractContrata.params.reductionData}">
-			<aon:panel style="width: 100%;">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.sepe_contrata_contract_reduccionCuotas_data}" />
-				</f:facet>
-				<aon:panelGrid columns="2" style="width: 100%;">
-	
-					<aon:outputLabel for="reductionCollective"
-						value="#{bundle.sepe_contrata_contract_reduction_collective}" />
-					<aon:selectOneMenu id="reductionCollective"
-						value="#{transformContrata.params.codigoColectivoReduccion}" >
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{contrataCollections.TQOCOLRECodeList}" />
-					</aon:selectOneMenu>
-					
-				</aon:panelGrid>
-			</aon:panel>
-		</aon:div>
-	
-	
-		<aon:div id="contratoRelevoPanel" rendered="#{contractContrata.params.reliefData}">
-			<aon:panel style="width: 100%;">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.sepe_contrata_contract_contratoRelevo_data}" />
-				</f:facet>
-				<aon:panel style="width: 100%;">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.sepe_contrata_contract_relief_employee_data}" />
-					</f:facet>
-					<aon:panelGrid columns="2" style="width: 100%;">
-						<aon:outputLabel for="reliefName" value="#{bundle.aon_name}" />
-						<aon:inputText id="reliefName"
-							required="#{transformContrata.params.reliefData}"
-							value="#{transformContrata.params.reliefPerson.name}" />
-						<aon:outputLabel for="reliefFirstSurname" value="#{bundle.payroll_mod145_perceptor10}" />
-						<aon:inputText id="reliefFirstSurname"
-							required="#{transformContrata.params.reliefData}"
-							value="#{transformContrata.params.reliefPerson.firstSurname}" />
-						<aon:outputLabel for="reliefSecondSurname" value="#{bundle.registry_person_secondSurname}" />
-						<aon:inputText id="reliefSecondSurname"
-							value="#{transformContrata.params.reliefPerson.secondSurname}" />
-					</aon:panelGrid>
-				</aon:panel>
-			</aon:panel>
-		</aon:div>
--->
-
 		<aon:panelGrid columns="2"
 			styleClass="aon-width-all"
 			columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even aon-width-auto">
@@ -185,6 +22,7 @@
 				value="#{bundle.sepe_contrata_contract_basicCopySignatureType}" />
 			<aon:selectOneMenu id="basicCopySignatureType-transform"
 				required="true"
+				disabled="#{extensionContrata.readOnly}"
 				value="#{transformContrata.params.tipoFirmaCopiaBasica}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contrataCollections.TERFIRCBCodeList}" />
@@ -193,12 +31,14 @@
 			<aon:outputLabel for="basicCopyComments-transform" 
 				value="#{bundle.sepe_contrata_contract_basicCopyComments}" />
 			<aon:inputTextarea id="basicCopyComments-transform"
+				disabled="#{extensionContrata.readOnly}"
 				value="#{transformContrata.params.textoCopiaBasica}"
 				cols="120" rows="5"/>
 	
 			<aon:outputLabel for="enterpriseFreeUse-transform" 
 				value="#{bundle.sepe_contrata_usoLibreEmpresa}" />
 			<aon:inputText id="enterpriseFreeUse-transform"
+				disabled="#{extensionContrata.readOnly}"
 				value="#{transformContrata.params.usoLibreEmpresa}" maxlength="30" size="55" >
 				<f:validateLength maximum="30" />
 			</aon:inputText>

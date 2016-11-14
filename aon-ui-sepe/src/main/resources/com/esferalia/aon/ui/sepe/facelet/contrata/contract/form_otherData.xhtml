@@ -22,8 +22,9 @@
 				rendered="#{controller.handler.showNivelFormativo}" 
 				value="#{bundle.sepe_contrata_contract_nivel_formativo}" />
 			<aon:selectOneMenu id="nivelFormativo"
-				rendered="#{controller.handler.showNivelFormativo}" 
+				rendered="#{controller.handler.showNivelFormativo}"
 				required="true" 
+				disabled="#{controller.readOnly}" 
 				value="#{controller.params.nivelFormativo}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contrataCollections.TBONVFORCodeList}" />
@@ -36,6 +37,7 @@
 			<aon:selectOneMenu id="titulacionAcademica"
 				rendered="#{controller.handler.showTitulacionAcademica}" 
 				required="#{controller.handler.titulacionAcademicaRequired}" 
+				disabled="#{controller.readOnly}" 
 				value="#{controller.params.titulacionAcademica}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{controller.handler.qualificationsNames}" />
@@ -45,7 +47,8 @@
 				rendered="#{controller.handler.showCertificadoProfesionalidad}"
 				value="#{bundle.sepe_contrata_contract_certificado_profesionalidad}" />
 			<aon:selectBooleanCheckbox id="certificadoProfesionalidad" 
-				required="#{controller.handler.certificadoProfesionalidadRequired}"  
+				required="#{controller.handler.certificadoProfesionalidadRequired}"
+				disabled="#{controller.readOnly}"  
 				rendered="#{controller.handler.showCertificadoProfesionalidad}"
 				value="#{controller.params.indCertifProfesionalidad}" />
 					
@@ -53,6 +56,7 @@
 				value="#{bundle.sepe_contrata_contract_basicCopySignatureType}" />
 			<aon:selectOneMenu id="basicCopySignatureType"
 				required="true"
+				disabled="#{controller.readOnly}"
 				value="#{controller.params.tipoFirmaCopiaBasica}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contrataCollections.TERFIRCBCodeList}" />
@@ -61,12 +65,14 @@
 			<aon:outputLabel for="basicCopyComments" 
 				value="#{bundle.sepe_contrata_contract_basicCopyComments}" />
 			<aon:inputTextarea id="basicCopyComments"
+				disabled="#{controller.readOnly}"
 				value="#{controller.params.textoCopiaBasica}"
 				cols="120" rows="5"/>
 						
 			<aon:outputLabel for="enterpriseFreeUse" 
 				value="#{bundle.sepe_contrata_usoLibreEmpresa}" />
 			<aon:inputText id="enterpriseFreeUse"
+				disabled="#{controller.readOnly}"
 				value="#{controller.params.usoLibreEmpresa}" maxlength="30" size="55" >
 				<f:validateLength maximum="30" />
 			</aon:inputText>
@@ -77,7 +83,7 @@
 					value="#{bundle.sepe_contrata_contract_working_day_type}" />
 				<aon:selectOneMenu id="workingDayType"
 					required="true"
-					disabled="#{!controller.handler.availableTipoJornada}"
+					disabled="#{!controller.handler.availableTipoJornada or controller.readOnly}"
 					rendered="#{controller.handler.showTipoJornada}"
 					value="#{controller.params.tipoJornada}" >
 					<f:selectItem itemLabel="-" value="#{null}" />
@@ -91,10 +97,12 @@
 					<aon:outputLabel for="workingDayHours" styleClass="aon-italic aon-margin-right"
 						value="#{bundle.sepe_hours}:" />
 					<aon:inputText id="workingDayHours" size="4" maxlength="4"
+						disabled="#{controller.readOnly}"
 						value="#{controller.params.horasJornada}"/>
 					<aon:outputLabel for="workingDayMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
 						value="#{bundle.sepe_minutes}:" />
 					<aon:inputText id="workingDayMinutes" size="2" maxlength="2"
+						disabled="#{controller.readOnly}"
 						value="#{controller.params.minutosJornada}"/>
 				</aon:div>
 			</aon:if>
@@ -106,10 +114,12 @@
 				<aon:outputLabel for="agreementHours" styleClass="aon-italic aon-margin-right"
 					value="#{bundle.sepe_hours}:" />
 				<aon:inputText id="agreementHours" size="4" maxlength="4"
+					disabled="#{controller.readOnly}"
 					value="#{controller.params.horasConvenio}"/>
 				<aon:outputLabel for="agreementMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
 					value="#{bundle.sepe_minutes}:" />
 				<aon:inputText id="agreementMinutes" size="2" maxlength="2"
+					disabled="#{controller.readOnly}"
 					value="#{controller.params.minutosConvenio}"/>
 			</aon:div>
 		</aon:panelGrid>
@@ -123,6 +133,7 @@
 				value="#{bundle.sepe_contrata_contract_formation_received}" />
 			<aon:selectOneRadio id="formationReceived"
 				rendered="#{controller.handler.showIndicFormacionTeorica}"
+				disabled="#{controller.readOnly}"
 				value="#{controller.params.indicFormacionTeorica}" >
 				<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="S" />
 				<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="N" />
@@ -137,14 +148,14 @@
 				<aon:outputLabel for="formationHours" styleClass="aon-italic aon-margin-right"
 					value="#{bundle.sepe_hours}:" />
 				<aon:inputText id="formationHours" size="4" maxlength="4"
-					disabled="#{controller.params.indicFormacionTeorica=='S'}" 
+					disabled="#{controller.params.indicFormacionTeorica=='S' or controller.readOnly}" 
 					value="#{controller.params.horasFormacion}">
 					<a4j:support event="onblur" reRender="formationWorkingDaysPercent, otherDataPanel2" />
 				</aon:inputText>
 				<aon:outputLabel for="formationMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
 					value="#{bundle.sepe_minutes}:" />
 				<aon:inputText id="formationMinutes" size="2" maxlength="2"
-					disabled="#{controller.params.indicFormacionTeorica=='S'}" 
+					disabled="#{controller.params.indicFormacionTeorica=='S' or controller.readOnly}" 
 					value="#{controller.params.minutosFormacion}">
 					<a4j:support event="onblur" reRender="formationWorkingDaysPercent, otherDataPanel2" />
 				</aon:inputText>
@@ -162,6 +173,7 @@
 				value="#{bundle.sepe_contrata_contract_age_collective}" />
 			<aon:selectOneMenu id="ageCollective"
 				rendered="#{controller.handler.showColectivoEdad}"
+				disabled="#{controller.readOnly}"
 				value="#{controller.params.colectivoEdad}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contrataCollections.THPCOLFOCodeList}" />
@@ -172,6 +184,7 @@
 				value="#{bundle.sepe_contrata_contract_retirement_percent}" />
 			<aon:inputText id="retirementPercent" size="6" maxLenght="5"
 				rendered="#{controller.handler.showPorcentajeJubilacionParcial}"
+				disabled="#{controller.readOnly}"
 				value="#{controller.params.porcentajeJubilacionParcial}">
 				<f:validateDoubleRange minimum="25.00" maximum="85.00" />
 			</aon:inputText>
@@ -180,7 +193,8 @@
 				rendered="#{controller.handler.showFijoDiscontinuoPeriodico}"
 				value="&#160;" />
 			<aon:div rendered="#{controller.handler.showFijoDiscontinuoPeriodico}">
-				<aon:selectBooleanCheckbox id="periodicallyDiscontinuous" 
+				<aon:selectBooleanCheckbox id="periodicallyDiscontinuous"
+					disabled="#{controller.readOnly}" 
 					value="#{controller.params.fijoDiscontinuoPeriodico}" />
 				<aon:outputLabel for="periodicallyDiscontinuous"
 					value="#{bundle.sepe_contrata_contract_periodically_discontinuous}" />
