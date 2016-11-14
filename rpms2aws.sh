@@ -72,7 +72,8 @@ EOF
 
 cat << EOF > scripts/start_server
 #!/bin/bash
-service tomcat8 restart
+pgrep -f catalina && pkill -9 -f catalina;
+service tomcat8 start;
 EOF
 
 cat << EOF > scripts/cleanup
