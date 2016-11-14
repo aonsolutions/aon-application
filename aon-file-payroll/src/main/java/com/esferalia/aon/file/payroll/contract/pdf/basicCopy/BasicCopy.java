@@ -139,8 +139,11 @@ public class BasicCopy extends AbstractContractBasicCopy {
 				}
 			} else if(code.getValue().startsWith("2") || code.getValue().startsWith("5") || isPartialTimeDiscontinuous){
 				if(contrata!=null){
-					String horasJornada = contrata.getHorasJornada();
-					if(horasJornada!=null){
+					String horasJornada = null;
+					if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString()))){
+						horasJornada = getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString());				
+					}
+					if(horasJornada==null){
 						horasJornada = String.valueOf(Integer.parseInt(contrata.getHorasJornada()));
 						horasJornada += " HORA" + (Integer.parseInt(contrata.getHorasJornada())==1?"":"S");
 						if(contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_A){
@@ -156,17 +159,14 @@ public class BasicCopy extends AbstractContractBasicCopy {
 							horasJornada += " SEMANAL";
 							horasJornada += Integer.parseInt(contrata.getHorasJornada())==1?"":"ES";
 						}
-					} else if(weekHours!=null){
-						horasJornada = "";
-						if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString()))){
-							horasJornada += getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString());				
-							if(!StringUtils.containsIgnoreCase(horasJornada,"HORAS")){
-								horasJornada = " HORAS";
-							}
-						}
 					}
-					horasJornada += " (" + getContractInfoMap(contract).get(PdfFieldTemporary.FULL_TIME_START_TIME.toString()) + " - ";
-					horasJornada += getContractInfoMap(contract).get(PdfFieldTemporary.FULL_TIME_END_TIME.toString()) + ")";
+					String fullTimeStart = getContractInfoMap(contract).get(PdfFieldTemporary.FULL_TIME_START_TIME.toString());
+					String fullTimeEnd = getContractInfoMap(contract).get(PdfFieldTemporary.FULL_TIME_END_TIME.toString());
+					if(fullTimeStart!=null || fullTimeEnd!=null){
+						horasJornada += " (" + (fullTimeStart!=null?fullTimeStart:"");
+						horasJornada += fullTimeStart!=null && fullTimeEnd!=null?" - ":"";
+						horasJornada += (fullTimeEnd!=null?fullTimeEnd:"") + ")";
+					}
 					getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue(horasJornada);
 				}
 			}
