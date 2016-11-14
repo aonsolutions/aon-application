@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -56,6 +57,14 @@ public class FinanceDAO {
 		.findFirst().orElse(null);
 	}
 	
+	// ------------------------------------------------------------- FINANCE
+	public static LinkedList<Finance> getInvoiceFinances(AONContext ctx,Integer invoice) {
+		return fetch(ctx,p -> 
+				p.getDomainProperty().eq(ctx.getDomainId())
+				.and(p.getInvoiceProperty().eq(invoice)), 0, 100)
+		.collect(Collectors.toCollection(LinkedList::new));
+	}
+
 	public static Stream<Finance> fetch(AONContext ctx
 			, FinanceFilter filter
 			, int offset
@@ -65,9 +74,11 @@ public class FinanceDAO {
 			.select(FINANCE.fields())
 			.select(REGISTRY.fields())
 			.select(PAY_METHOD.fields())
+			.select(SCOPE.fields())
 			.select(INVOICE.fields())
 				.from(FINANCE)
 				.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
+				.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
 				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
 				.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
 				.where(FINANCE_PROPERTIES.getConditions(filter))
@@ -287,5 +298,12 @@ public class FinanceDAO {
 		}
 
 			
+	}
+	public static void deleteAllPendingFinances(AONContext ctx, Integer invoiceId) {
+		ctx.checkWrite();
+		LinkedList<Finance>  finances = getInvoiceFinances(ctx, invoiceId);
+		for (Finance finance : finances ) {
+			delete(ctx, finance.getId());
+		}
 	}
 }

@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IContentAttchCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -19,7 +20,12 @@ public abstract class WizardContentBase extends ResizeComposite implements Requi
 	static FiscalServiceAsync fiscalService;
 	protected AccountEntry ae;
 	protected IAccountEntryModuleCallback callback;
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																
+	
+	public static interface ISelectionCallback {
+		void onSucces();
+		void onFailure();
+	}
+	
 	private static FiscalServiceAsync getFiscalService() {
 		if (fiscalService == null) {
 			FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
@@ -132,12 +138,18 @@ public abstract class WizardContentBase extends ResizeComposite implements Requi
 
 	@Override
 	public boolean isDirty() {
-		if (getAccountEntry() == null || getAccountEntry().getId() == null || getAccountEntry().getDetails().size() == 0) {
-			return false;
-		}
+//		if (getAccountEntry() == null || getAccountEntry().getId() == null || getAccountEntry().getDetails().size() == 0) {
+//			return false;
+//		}
 		return getAccountEntry().isDirty();
 	}
 
 	@Override
+	public void attach(IContentAttchCallback contentCbk) {
+		callback.attach(this,contentCbk);
+	}
+	
+	@Override
 	public abstract AccountEntryType getAccountEntryType();
+	
 }

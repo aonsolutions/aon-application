@@ -49,6 +49,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	private Label outputVatLabel;
 	private Label withholdingLabel;
 	
+	private Button addButton;
+	private Button saveButton;	
 	
 	private class InvestAssetListBox extends ListBox {
 		private InvestAssetListBox() {
@@ -200,7 +202,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		panel.setStyleName(AON.AON_CSS.aonBorderTop());
 		panel.addStyleName(AON.AON_CSS.aonPadding2Top());
 		
-		Button addButton = new Button();
+		addButton = new Button();
 		addButton.setAccessKey( 'L' );
 		addButton.setStyleName(AON.AON_CSS.aonIconReset());
 		addButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
@@ -232,7 +234,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		});
 		panel.add(addButton);
 		
-		Button saveButton = new Button();
+		saveButton = new Button();
 		saveButton.setTitle( AON.MSG.saveAction() );
 		saveButton.setAccessKey( 'L' );
 		saveButton.setStyleName(AON.AON_CSS.aonIconSave());
@@ -669,5 +671,10 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	@Override
 	public HandlerRegistration addSelectionHandler(SelectionHandler<Account> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
+	}
+
+	public void enableElements(boolean canRemove, boolean canEdit) {
+		addButton.setVisible(canEdit);
+		saveButton.setVisible(canEdit);
 	}
 }

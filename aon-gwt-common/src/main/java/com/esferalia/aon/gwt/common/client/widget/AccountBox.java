@@ -186,7 +186,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 		suggestionDisplay =  new AccountSuggestionDisplay();
 		account = new SuggestBox(oracle,accountTextBox,suggestionDisplay);
 		accountTextBox.setStyleName(AON.AON_CSS.aonInputText());
-		accountTextBox.setVisibleLength(9);
+		accountTextBox.setVisibleLength(8);
 		accountTextBox.setMaxLength(9);
 		
 		descriptionLabel = new InlineLabel();
@@ -223,6 +223,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 		
 		rootPanel = new FlowPanel();
 		rootPanel.addStyleName(AON.AON_CSS.aonNowrap() );
+		rootPanel.addStyleName(AON.AON_CSS.aonInline() );
 		rootPanel.add(account);
 		rootPanel.add(descriptionLabel);
 		initWidget(rootPanel);

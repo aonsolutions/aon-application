@@ -347,7 +347,7 @@ public class InvoiceRecorder {
 			detail.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ));
 			detail.setDocumentNumber(document);
 		}
-		if (invoice.hasFinance()) {
+		if (invoice.hasFinances() && invoice.isFinanceRecordable()) {
 			LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
 			entries.add(ae);
 			for (Finance finance : invoice.getFinances()) {

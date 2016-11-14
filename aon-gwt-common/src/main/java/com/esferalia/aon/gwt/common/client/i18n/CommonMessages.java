@@ -604,8 +604,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fecha de Vto.")
 	String dueDate();
 
-	@DefaultMessage("Contabilizar pago")
-	String payAccount();
+//	@DefaultMessage("Contabilizar pago")
+//	String payAccount();
 
 	@DefaultMessage("Tel\u00E9fono")
 	String phone();
@@ -684,6 +684,9 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Base Imp.")
 	String taxableBaseAbr();
+
+	@DefaultMessage("Cuota")
+	String quota();
 
 	@DefaultMessage("% Ded.")
 	String dedPercent();
@@ -2013,6 +2016,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fecha de emisi\u00F3n")
 	String issueDate();
 	
+	@DefaultMessage("I.R.P.F.")
+	String irpf();
+	
 	@DefaultMessage("Recargo equivalencia")
 	String surcharge();
 
@@ -3091,6 +3097,15 @@ public interface CommonMessages extends Messages {
 	String newAccount();
 
 	@DefaultMessage("Contabilizar pago")
-	String recordPayment();	
+	String recordPayment();
+	
+	@DefaultMessage("Contabilizar")
+	String record();
+
+	@DefaultMessage("Vencimiento")
+	String finance();
+
+	@DefaultMessage("Vto.")
+	String financeAbbr();
 
 }

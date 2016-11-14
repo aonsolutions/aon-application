@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.ListBox;
 public class WithholdingTypeListBox extends ListBox {
 	
 	public WithholdingTypeListBox() {
-		setWidth("120px");
+		setWidth("100px");
 		addItem("","------");
 		for (WithholdingType d : WithholdingType.values()) {
 			addItem(d.getDescription());	

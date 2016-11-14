@@ -23,6 +23,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	
 
 	private LinkedList<Finance> finances;
+	private boolean financeRecordable;
 	
 //	private Integer payMethod;
 //	private Integer payAccountId;
@@ -73,6 +74,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 
 	public InvoiceWithholding getWithholdingData() {
+		ensureWithholdingData();
 		return withholdingData;
 	}
 	public AccountingInvoice setWithholdingData(InvoiceWithholding withholdingData) {
@@ -112,14 +114,6 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	
 	
-	public void refreshWithholdingData() {
-		double wb = 0.0; 
-		for (InvoiceVAT vat : getVats()) {
-			wb = wb + (vat.isWithholding()?vat.getBase():0.0);
-		}
-		setWithholdingBase(wb);
-	}
-
 	public double getTotalTaxableBase() {
 		if (getVats() == null) return 0.0;
 		double tb = 0.0; 
@@ -144,10 +138,10 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 				} else {
 					t = t + vat.getBase();
 				}
-				wb = wb + (vat.isWithholding()?vat.getBase():0.0);
+				wb = wb + ((isWithholding() && vat.isWithholding())?vat.getBase():0.0);
 			}
 			setWithholdingBase(wb);
-			rt = (getWithholdingData()==null?0.0:getWithholdingData().getQuota());
+			rt = getWithholdingData().getQuota();
 			t = t - rt;
 		}
 		getInvoice().setTotal(t);
@@ -207,37 +201,27 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	
 	public void setWithholdingAccount(Account acc) {
-		if (getWithholdingData() == null) {
-			setWithholdingData( new InvoiceWithholding() );
-		}
+		ensureWithholdingData();
 		getWithholdingData().setAccountId(acc.getId())
 			.setAccountCode(acc.getCode())
 			.setAccountDescription(acc.getDescription());
 	}	
 	public void setWithholdingBase(Double base) {
-		if (getWithholdingData() == null) {
-			setWithholdingData( new InvoiceWithholding() );
-		}
+		ensureWithholdingData();
 		getWithholdingData().setBase(base);
 		getWithholdingData().setQuota(AonMathUtils.round(base * getWithholdingData().getPercentage() / 100));
 	}
 	public void setWithholdingPercent(Double percent) {
-		if (getWithholdingData() == null) {
-			setWithholdingData( new InvoiceWithholding() );
-		}
+		ensureWithholdingData();
 		getWithholdingData().setPercentage(percent);
 		getWithholdingData().setQuota(AonMathUtils.round(getWithholdingData().getBase() * percent / 100));
 	}
 	public void setWithholdingQuota(Double quota) {
-		if (getWithholdingData() == null) {
-			setWithholdingData( new InvoiceWithholding() );
-		}
+		ensureWithholdingData();
 		getWithholdingData().setQuota(quota);
 	}
 	public void setWithholdingType(WithholdingType type) {
-		if (getWithholdingData() == null) {
-			setWithholdingData( new InvoiceWithholding() );
-		}
+		ensureWithholdingData();
 		getWithholdingData().setWithholdingType(type);
 	}
 	
@@ -252,44 +236,20 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		this.finances = finances;
 		return this;
 	}
-	public boolean hasFinance() {
+	public boolean hasFinances() {
 		return getFinances() != null && !getFinances().isEmpty(); 
 	}
-	
-//	public Date getPayDate() {
-//		return payDate;
-//	}
-//	public AccountingInvoice setPayDate(Date payDate) {
-//		this.payDate = payDate;
-//		return this;
-//	}
-//	public Integer getPayMethod() {
-//		return payMethod;
-//	}
-//	public AccountingInvoice setPayMethod(Integer payMethod) {
-//		this.payMethod = payMethod;
-//		return this;
-//	}
-//	public Integer getPayAccountId() {
-//		return payAccountId;
-//	}
-//	public AccountingInvoice setPayAccountId(Integer payAccountId) {
-//		this.payAccountId = payAccountId;
-//		return this;
-//	}
-//	public String getPayAccountCode() {
-//		return payAccountCode;
-//	}
-//	public AccountingInvoice setPayAccountCode(String payAccountCode) {
-//		this.payAccountCode = payAccountCode;
-//		return this;
-//	}
-//	public String getPayAccountDescription() {
-//		return payAccountDescription;
-//	}
-//	public AccountingInvoice setPayAccountDescription(String payAccountDescription) {
-//		this.payAccountDescription = payAccountDescription;
-//		return this;
-//	}
+	public boolean isFinanceRecordable() {
+		return financeRecordable;
+	}
+	public AccountingInvoice setFinanceRecordable(boolean financeRecordable) {
+		this.financeRecordable = financeRecordable;
+		return this;
+	}
+	private void ensureWithholdingData() {
+		if (this.withholdingData == null) {
+			setWithholdingData( new InvoiceWithholding() );
+		}
+	}
 	
 }

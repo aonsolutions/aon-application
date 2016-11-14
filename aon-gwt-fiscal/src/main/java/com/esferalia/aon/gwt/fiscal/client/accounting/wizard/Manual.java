@@ -29,13 +29,14 @@ public class Manual extends WizardContentBase {
 	}
 	
 	@Override
-	public void select(AccountEntry entry) {
+	public void select(AccountEntry entry,ISelectionCallback cbk) {
 		this.ae = entry;
 		reset();
 		table.paintTable();
 		tableInnerContainer.add(table);
 		tableContainer.setWidget(tableInnerContainer);
 		callback.onBalance(entry);
+		if (cbk != null) cbk.onSucces();
 	}
 	
 	@Override
@@ -85,4 +86,7 @@ public class Manual extends WizardContentBase {
 		});
 	}
 	
+	public void enableElements(boolean canRemove, boolean canEdit) {
+		
+	};
 }

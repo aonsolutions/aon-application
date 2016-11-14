@@ -315,6 +315,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-margin-top")
 	String aonMarginTop();
 
+	@ClassName("aon-margin-top5")
+	String aonMarginTop5();
+
 	@ClassName("aon-margin-left")
 	String aonMarginLeft();
 
@@ -395,6 +398,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-background-disabled")
 	String aonBackgroundDisabled();
+
+	@ClassName("aon-background-white")
+	String aonBackgroundWhite();
 
 	@ClassName("aon-fixed-font")
 	String aonFixedFont();

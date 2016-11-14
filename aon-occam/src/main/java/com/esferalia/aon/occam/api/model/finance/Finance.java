@@ -246,7 +246,6 @@ public class Finance implements Serializable, HasAudit {
 		return FinanceStatus.PENDING == getFinanceStatus();
 	}
 	
-
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}

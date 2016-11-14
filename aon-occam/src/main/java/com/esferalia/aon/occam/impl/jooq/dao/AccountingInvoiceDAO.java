@@ -184,7 +184,8 @@ public class AccountingInvoiceDAO {
 							ai.addVat(vats.get(0));
 						}
 					}
-					);
+				);
+				ai.setFinances(FinanceDAO.getInvoiceFinances(ctx, invoiceId));
 				return ai;
 			}
 		}
@@ -240,7 +241,10 @@ public class AccountingInvoiceDAO {
 							  || reg.getType().getInvoiceType() == InvoiceType.UNDEDUCTIBLE)
 					.setSeries(null)
 					.setNumber(0)
-					.setReferenceCode(null));
+					.setReferenceCode(null))
+				.setFinances(new LinkedList<Finance>());
+		ai.getFinances().add(new Finance()
+				.setDueDate(issueDate));
 		reg.getType().visit(reg, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), config));
 		ai.setSuggestedAccounts(getSuggestedAccounts(ctx,ai.getRegistry().getId()));
 		ai.addVat(createNewInvoiceVAT(ai, config));
@@ -398,6 +402,7 @@ public class AccountingInvoiceDAO {
 		insertAccountLinks(ctx, invoice);
 		LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
 		AccountEntry[] array = InvoiceRecorder.recordInvoice(accInvoice);
+		saveFinance(ctx, accInvoice);
 		for (AccountEntry entry : array) {
 			final Integer entryId = AccountEntryDAO.save(ctx, entry);
 			entry.getEntryType().visit(entry, new IAccountEntryTypeVisitor() {
@@ -425,7 +430,7 @@ public class AccountingInvoiceDAO {
 				
 				@Override
 				public void visitPayment(AccountEntry entry) {
-					saveFinance(ctx, invoice.getDomain(), entryId, invoice.getId(), accInvoice );
+					recordFinance(ctx, entryId, accInvoice.getFinances().get(0),accInvoice);
 				}
 				
 				@Override public void visitOperating(AccountEntry entry) {}
@@ -447,50 +452,49 @@ public class AccountingInvoiceDAO {
 		return accInvoice;
 	}
 
-	private static void saveFinance(AONContext ctx, int domain, Integer entryId, Integer invoiceId, AccountingInvoice accInvoice) {
+	private static void saveFinance(AONContext ctx, AccountingInvoice accInvoice) {
 		Invoice invoice = accInvoice.getInvoice();
 		for (Finance finance : accInvoice.getFinances() ) {
-			finance.setInvoice(new Invoice().setId(invoiceId))
+			finance.setInvoice(new Invoice().setId(accInvoice.getInvoice().getId()))
 				.setDomain(ctx.getDomainId())
-				.setInvoice(new Invoice().setId(invoiceId))
+				.setInvoice(new Invoice().setId(accInvoice.getInvoice().getId()))
 				.setRegistry(new Registry().setId(invoice.getRegistry()))
 				.setRegistryDocument(invoice.getRegistryDocument())
 				.setRegistryDocumentType(invoice.getRegistryDocumentType())
 				.setRegistryDocumentCountry(invoice.getRegistryDocumentCountry())
 				.setRegistryName(invoice.getRegistryName())
 				.setScope(invoice.getScope())
-				.setFinanceStatus(FinanceStatus.PAID)
+				.setFinanceStatus(accInvoice.isFinanceRecordable()?FinanceStatus.PAID:FinanceStatus.PENDING)
 				.setSecurityLevel(invoice.getSecurityLevel())
 				.setConcept(invoice.getDocumentNumber())
+				.setAmount(invoice.getTotal())
 				;
 			Integer financeId = FinanceDAO.insert(ctx, finance);
-			Integer financTrackingId = ctx.getDslContext().insertInto(FINANCE_TRACKING)
-					.set(FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
-					.set(FINANCE_TRACKING.FINANCE, financeId )
-					.set(FINANCE_TRACKING.TRACKING_DATE, AonDateUtils.toSql(finance.getDueDate()))
-					.set(FINANCE_TRACKING.TYPE,FinanceTrackingType.PAID.value())
-					.set(FINANCE_TRACKING.AMOUNT, invoice.getTotal())
-					.set(FINANCE_TRACKING.RECORDED, AonEnumUtils.getByte(true))
-					.set(FINANCE_TRACKING.DESCRIPTION, "Asiento: " + entryId)
-					.set(FINANCE_TRACKING.CREATION_USER,ctx.getUser())
-					.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
-					.returning(FINANCE_TRACKING.ID)
-					.fetchOne()
-					.getValue(FINANCE_TRACKING.ID);
-				ctx.getDslContext().insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
-					.set(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
-					.set(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY, entryId )
-					.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING, financTrackingId )
-					.execute();
+			finance.setId(financeId);
 		}
-//		Integer financeId = FinanceDAO.insert(ctx, new Finance()
-//				.setPayment(!invoice.isSales())
-//				.setPayMethod(accInvoice.getPayMethod())
-//				.setAmount(invoice.getTotal())
-//				.setDueDate(accInvoice.getPayDate())
-//			);
 	}
 	
+	private static void recordFinance(AONContext ctx, Integer entryId, Finance finance, AccountingInvoice accInvoice) {
+		Integer financTrackingId = ctx.getDslContext().insertInto(FINANCE_TRACKING)
+				.set(FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
+				.set(FINANCE_TRACKING.FINANCE, finance.getId() )
+				.set(FINANCE_TRACKING.TRACKING_DATE, AonDateUtils.toSql(finance.getDueDate()))
+				.set(FINANCE_TRACKING.TYPE,FinanceTrackingType.PAID.value())
+				.set(FINANCE_TRACKING.AMOUNT, finance.getAmount())
+				.set(FINANCE_TRACKING.RECORDED, AonEnumUtils.getByte(true))
+				.set(FINANCE_TRACKING.DESCRIPTION, "Asiento: " + entryId)
+				.set(FINANCE_TRACKING.CREATION_USER,ctx.getUser())
+				.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.returning(FINANCE_TRACKING.ID)
+				.fetchOne()
+				.getValue(FINANCE_TRACKING.ID);
+		ctx.getDslContext().insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
+		.set(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
+		.set(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY, entryId )
+		.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING, financTrackingId )
+		.execute();
+	}
+
 	private static void checkRegistryAccount(final AONContext ctx, AccountingInvoice accInvoice) {
 		if (accInvoice.getRegistry().getAccountId() == null) {
 			accInvoice.getRegistry().getType().visit(accInvoice.getRegistry(),  new IAccountingRegistryTypeVisitor() {

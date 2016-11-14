@@ -4,6 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryPrinter;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
+import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -66,11 +67,13 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 	}
 
 	public void addSuspended( final AccountEntry entry) {
-		add(entry,SUSPENDED);
+		if (entry.getEntryType() == AccountEntryType.MANUAL)
+			add(entry,SUSPENDED);
 	}
 	public void addSuspended( final AccountEntry[] entries) {
 		for (AccountEntry entry : entries) {
-			add(entry,SUSPENDED);
+			if (entry.getEntryType() == AccountEntryType.MANUAL)
+				add(entry,SUSPENDED);
 		}
 	}
 	
