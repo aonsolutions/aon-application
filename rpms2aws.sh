@@ -72,7 +72,7 @@ EOF
 
 cat << EOF > scripts/start_server
 #!/bin/bash
-service tomcat8 start
+service tomcat8 restart
 EOF
 
 cat << EOF > scripts/cleanup
