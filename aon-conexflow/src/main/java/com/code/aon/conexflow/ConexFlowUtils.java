@@ -28,7 +28,7 @@ public class ConexFlowUtils {
 	protected static final String VOUCHER = "voucher";
 	//******************* Card Payment
 
-	public static Query getConexFlowCardPaymentQuery(String empresa, String centro, String tpv, String token, Double amount, String cliente, String cvv) {
+	public static Query getConexFlowCardPaymentQuery(ConexFlowConnection connection, String token, Double amount, String cliente, String cvv) {
 		Integer eur = amount.intValue();
 		Double cent = (amount - eur.doubleValue()) * 100;
 		Long c = Math.round(cent);
@@ -38,9 +38,9 @@ public class ConexFlowUtils {
 		
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.SALE_OP);
-		query.setEmpresa(leftZeros(8, empresa));
-		query.setCentro(leftZeros(4, centro));
-		query.setTpv(leftZeros(4, tpv));
+		query.setEmpresa(leftZeros(8, connection.getEmpresa().toString()));
+		query.setCentro(leftZeros(4, connection.getCentro().toString()));
+		query.setTpv(leftZeros(4, connection.getTpv().toString()));
 		query.setFecha(getCurrentDate());
 		query.setHora(getCurrentTime());
 		query.setSoporte("K");
@@ -134,7 +134,7 @@ public class ConexFlowUtils {
 	}
 	//******************* Preauthorization Payment
 	
-	public static Query getConexFlowPreauthorizationPaymentQuery(String empresa, String centro, String tpv, String cliente, String token, Double amount) {
+	public static Query getConexFlowPreauthorizationPaymentQuery(ConexFlowConnection connection, String cliente, String token, Double amount) {
 		Integer eur = amount.intValue();
 		Double cent = (amount - eur.doubleValue()) * 100;
 		Long c = Math.round(cent);
@@ -142,9 +142,9 @@ public class ConexFlowUtils {
 		
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.PREAUTHORIZATION_OP);
-		query.setEmpresa(leftZeros(8, empresa));
-		query.setCentro(leftZeros(4, centro));
-		query.setTpv(leftZeros(4, tpv));
+		query.setEmpresa(leftZeros(8, connection.getEmpresa().toString()));
+		query.setCentro(leftZeros(4, connection.getCentro().toString()));
+		query.setTpv(leftZeros(4, connection.getTpv().toString()));
 		query.setFecha(getCurrentDate());
 		query.setHora(getCurrentTime());
 		query.setSoporte("K");
@@ -242,7 +242,7 @@ public class ConexFlowUtils {
 	
 	//******************* Refund
 	
-	public static Query getConexFlowRefundQuery(String empresa, String centro, String tpv, String token, String amount, String cliente) {
+	public static Query getConexFlowRefundQuery(ConexFlowConnection connection, String token, String amount, String cliente) {
 		Double d = Double.parseDouble(amount);
 		Integer eur = d.intValue();
 		Double cent = (d - eur.doubleValue()) * 100;
@@ -251,9 +251,9 @@ public class ConexFlowUtils {
 		
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.REFUND_OP);
-		query.setEmpresa(leftZeros(8, empresa));
-		query.setCentro(leftZeros(4, centro));
-		query.setTpv(leftZeros(4, tpv));
+		query.setEmpresa(leftZeros(8, connection.getEmpresa().toString()));
+		query.setCentro(leftZeros(4, connection.getCentro().toString()));
+		query.setTpv(leftZeros(4, connection.getTpv().toString()));
 		query.setFecha(getCurrentDate());
 		query.setHora(getCurrentTime());
 		query.setOperador("");
@@ -354,7 +354,7 @@ public class ConexFlowUtils {
 	
 	//******************* Cancelation
 	
-	public static Query getConexFlowCancelationQuery(String empresa, String centro, String tpv, String cancelOperation, Double amount, Double amountOriginal, String autorizacion, String cliente, String operacionId, String fechaOriginal) {
+	public static Query getConexFlowCancelationQuery(ConexFlowConnection connection, String cancelOperation, Double amount, Double amountOriginal, String autorizacion, String cliente, String operacionId, String fechaOriginal) {
 		Double importeAux = amount * 100;
 		Integer importe = importeAux.intValue();
 		
@@ -363,9 +363,9 @@ public class ConexFlowUtils {
 		
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.CANCELATION_OP);
-		query.setEmpresa(leftZeros(8, empresa));
-		query.setCentro(leftZeros(4, centro));
-		query.setTpv(leftZeros(4, tpv));
+		query.setEmpresa(leftZeros(8, connection.getEmpresa().toString()));
+		query.setCentro(leftZeros(4, connection.getCentro().toString()));
+		query.setTpv(leftZeros(4, connection.getTpv().toString()));
 		query.setFecha(getCurrentDate());
 		query.setHora(getCurrentTime());
 		query.setOperacionOriginal(cancelOperation);
@@ -378,8 +378,8 @@ public class ConexFlowUtils {
 		query.setInfoAdicionalEntrada("");
 		query.setCF_ReplyURL("");
 		query.setObservaciones("");
-		query.setCentroOriginal(leftZeros(4, centro));
-		query.setTpvOriginal(leftZeros(4, tpv));
+		query.setCentroOriginal(leftZeros(4, connection.getCentro().toString()));
+		query.setTpvOriginal(leftZeros(4, connection.getTpv().toString()));
 		query.setFechaOriginal(fechaOriginal);
 		query.setIdOperacionOriginal(operacionId);
 		
@@ -426,7 +426,7 @@ public class ConexFlowUtils {
 	
 	//******************* Confirm Preauthorization
 	
-	public static Query getConexFlowConfirmPreauthorizationQuery(String empresa, String centro, String tpv, String cliente, String token, Double amount, Double amountOriginal, String fechaCad, String autorizacion, String fechaOriginal, String operacionId) {
+	public static Query getConexFlowConfirmPreauthorizationQuery(ConexFlowConnection connection, String cliente, String token, Double amount, Double amountOriginal, String fechaCad, String autorizacion, String fechaOriginal, String operacionId) {
 		Double importeAux = amount * 100;
 		Integer importe = importeAux.intValue();
 		
@@ -438,9 +438,9 @@ public class ConexFlowUtils {
 		
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP);
-		query.setEmpresa(leftZeros(8, empresa));
-		query.setCentro(leftZeros(4, centro));
-		query.setTpv(leftZeros(4, tpv));
+		query.setEmpresa(leftZeros(8, connection.getEmpresa().toString()));
+		query.setCentro(leftZeros(4, connection.getCentro().toString()));
+		query.setTpv(leftZeros(4, connection.getTpv().toString()));
 		query.setFecha(getCurrentDate());
 		query.setHora(getCurrentTime());
 		query.setDocumento(token);
@@ -453,8 +453,8 @@ public class ConexFlowUtils {
 		query.setInfoAdicionalEntrada("");
 		query.setCF_ReplyURL("");
 		query.setObservaciones("");
-		query.setCentroOriginal(leftZeros(4, centro));
-		query.setTpvOriginal(leftZeros(4, tpv));
+		query.setCentroOriginal(leftZeros(4, connection.getEmpresa().toString()));
+		query.setTpvOriginal(leftZeros(4, connection.getTpv().toString()));
 		query.setFechaOriginal(fechaOriginal);
 		query.setIdOperacionOriginal(operacionId);
 		
@@ -630,12 +630,12 @@ public class ConexFlowUtils {
 	
 	//******************* Create Token
 	
-	public static Query getConexFlowCreateTokenQuery(String creditCardNumber, String empresa, String centro, String tpv, String fechaCad, String cliente) {
+	public static Query getConexFlowCreateTokenQuery(String creditCardNumber, ConexFlowConnection connection, String fechaCad, String cliente) {
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.CREATE_TOKEN_OP);
-		query.setEmpresa(leftZeros(8, empresa));
-		query.setCentro(leftZeros(4, centro));
-		query.setTpv(leftZeros(4, tpv));
+		query.setEmpresa(leftZeros(8, connection.getEmpresa().toString()));
+		query.setCentro(leftZeros(4, connection.getCentro().toString()));
+		query.setTpv(leftZeros(4, connection.getTpv().toString()));
 		query.setFecha(getCurrentDate());
 		query.setHora(getCurrentTime());
 		query.setDocumento(creditCardNumber);
@@ -708,12 +708,12 @@ public class ConexFlowUtils {
 	
 	//******************* Validate Card Number Check Digit
 	
-	public static Query getConexFlowValidateCardQuery(String creditCardNumber, String empresa, String centro, String tpv, String client) {
+	public static Query getConexFlowValidateCardQuery(String creditCardNumber, ConexFlowConnection connection, String client) {
 		Query query = new Query();
 		query.setOperacion(ConexFlowConstant.VALIDATE_CARD_OP);
-		query.setEmpresa(leftZeros(8, empresa));
-		query.setCentro(leftZeros(4, centro));
-		query.setTpv(leftZeros(4, tpv));
+		query.setEmpresa(leftZeros(8, connection.getEmpresa().toString()));
+		query.setCentro(leftZeros(4, connection.getCentro().toString()));
+		query.setTpv(leftZeros(4, connection.getTpv().toString()));
 		query.setFecha(getCurrentDate());
 		query.setHora(getCurrentTime());
 		query.setDocumento(creditCardNumber);

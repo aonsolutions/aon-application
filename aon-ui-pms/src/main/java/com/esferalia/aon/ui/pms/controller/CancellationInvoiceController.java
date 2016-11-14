@@ -2,6 +2,8 @@ package com.esferalia.aon.ui.pms.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -156,6 +158,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 				cancellationInvoiceTo.setPosShift(PosUtils.getUserPosShift());
 	
 				CancellationInvoicing cancellationInvoicing = new CancellationInvoicing();
+				//int count = cancellationInvoicing.invoice(cancellationInvoiceTo, invoiceConexflow(getCheckedReservations()));
 				int count = cancellationInvoicing.invoice(cancellationInvoiceTo, getCheckedReservations());
 	
 				clearCheckedReservations();
@@ -167,6 +170,49 @@ public class CancellationInvoiceController extends BasicController implements IP
 			String msg = "Se produjo un error al generar las Facturas de Cancelacion. [" + ex.getMessage() + "]";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, ex);
+		}
+	}
+	
+	public LinkedList<Integer> invoiceConexflow(List<Integer> reservations) throws ManagerBeanException {
+		try {
+			LinkedList<Integer> list = new LinkedList<Integer>();
+			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+			for (Integer reservationId : reservations) {
+				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
+				Double amount = reservation.getPenaltyAmount();
+				if(amount == null || amount <= 0.01){
+					ReservationUtils reservationUtils = new ReservationUtils(getDomain(reservation).getId());
+					amount = reservationUtils.obtainCancellationPenaltyPrice(reservation);
+				}
+				String token = reservation.getToken();
+				ConexFlow conexFlow = null;
+				ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
+				ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation),
+						AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+				if(cf == null || Double.parseDouble(cf.getRespuesta().getImporte()) == 0.01
+						|| Double.parseDouble(cf.getRespuesta().getImporte()) < amount)
+					cf = DBConsults.getConexFlowLastOperation(getDomain(reservation),
+							AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
+				if(cf != null && Double.parseDouble(cf.getRespuesta().getImporte()) >= amount){
+					Query confirmPreQ = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection, reservation.getCustomer().getId().toString(),
+							token, amount, Double.parseDouble(cf.getRespuesta().getImporte()), cf.getRespuesta().getFecha(),
+							cf.getRespuesta().getAutorizacion(),cf.getRespuesta().getFechaOriginal(), cf.getRespuesta().getOperacion());
+					conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, confirmPreQ, reservation.getId(), getDomain(reservation), false);
+					if(conexFlow.getRespuesta().getResultado().equals("000")){
+						list.add(reservationId);
+					}
+				}
+				if(cf == null || (conexFlow != null && !conexFlow.getRespuesta().getResultado().equals("000"))) {
+					Query saleQ = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, amount,
+							reservation.getCustomer().getId().toString(),reservation.getCreditCardCvv());
+					ConexFlow conexFlow2 = ConexFlowPost.execute(connection,ConexFlowConstant.SALE_OP, saleQ, reservation.getId(), getDomain(reservation), false);
+					if(conexFlow2.getRespuesta().getResultado().equals("000"))
+						list.add(reservationId);
+				}
+			}
+			return list;
+		} catch (Exception e) {
+			throw new ManagerBeanException(e.getMessage(),e);
 		}
 	}
 	
@@ -397,8 +443,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 					if(cf2 != null){
 						Double importeOriginal = Double.parseDouble(cf2.getRespuesta().getImporte());
 						Query confirmPreauthorizationQuery = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(
-								connection.getEmpresa().toString(),connection.getCentro().toString()
-								, connection.getTpv().toString(), reservation.getCustomer().getId().toString(), cf1.getRespuesta().getToken()
+								connection, reservation.getCustomer().getId().toString(), cf1.getRespuesta().getToken()
 								, getPreauthorizationAmount(), importeOriginal, cf1.getRespuesta().getCF_ExpirationDate(), cf2.getRespuesta().getAutorizacion()
 								, cf2.getRespuesta().getFecha(), cf2.getRespuesta().getIdOperacion());
 						
@@ -414,8 +459,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 					}
 					if(cf2 == null || !resultOk){
 						Query cardPaymentQuery = ConexFlowUtils.getConexFlowCardPaymentQuery(
-							connection.getEmpresa().toString(), connection.getCentro().toString()
-							, connection.getTpv().toString(),  cf1.getRespuesta().getToken()
+							connection,  cf1.getRespuesta().getToken()
 							, getPreauthorizationAmount(), reservation.getCustomer().getId().toString(), reservation.getCreditCardCvv());
 				
 						ConexFlow conexFlowCardPayment =  ConexFlowPost.execute(connection, ConexFlowConstant.SALE_OP, cardPaymentQuery, reservation.getId(), domain, false);

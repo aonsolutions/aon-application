@@ -74,8 +74,7 @@ public class Operation {
 			}else if(confirmPreauthorization){
 				ConexFlow createToken = DBConsults.getConexFlowLastOperation(getDomain(reservation), "admin", reservation.getProject().getId(), ConexFlowConstant.CREATE_TOKEN_OP);
 				ConexFlow preauthorization = DBConsults.getConexFlowLastOperation(getDomain(reservation), "admin", reservation.getProject().getId(),ConexFlowConstant.PREAUTHORIZATION_OP);
-				query = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection.getEmpresa().toString(), connection.getCentro().toString(), 
-						connection.getTpv().toString(), reservation.getCustomer().getId().toString(), createToken.getRespuesta().getToken(),
+				query = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection, reservation.getCustomer().getId().toString(), createToken.getRespuesta().getToken(),
 						Double.parseDouble(preauthorization.getRespuesta().getImporte()), Double.parseDouble(preauthorization.getRespuesta().getImporte()), 
 						preauthorization.getRespuesta().getCF_ExpirationDate(), preauthorization.getRespuesta().getAutorizacion(), 
 						preauthorization.getRespuesta().getFecha(), preauthorization.getRespuesta().getIdOperacion());
@@ -87,8 +86,7 @@ public class Operation {
 				//TODO
 			}else if(createToken){
 				query = ConexFlowUtils.getConexFlowCreateTokenQuery(reservation.getCreditCardNumber()
-						, connection.getEmpresa().toString(), connection.getCentro().toString(), connection.getTpv().toString()
-						, reservation.getHrCreditCardExpirationMonth() + reservation.getHrCreditCardExpirationYear()
+						, connection, reservation.getHrCreditCardExpirationMonth() + reservation.getHrCreditCardExpirationYear()
 						, reservation.getCustomer().getId().toString());
 				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CREATE_TOKEN_OP, query, reservation.getId(), getDomain(reservation), false);
 				System.out.println(conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".");
@@ -96,8 +94,7 @@ public class Operation {
 				//TODO
 			}else if(validateCardNumber){
 				query = ConexFlowUtils.getConexFlowValidateCardQuery(reservation.getCreditCardNumber(), 
-						connection.getEmpresa().toString(), connection.getCentro().toString(), connection.getTpv().toString(),
-						reservation.getCustomer().getId().toString());
+						connection,	reservation.getCustomer().getId().toString());
 				conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.VALIDATE_CARD_OP, query, reservation.getId(), getDomain(reservation), false);
 				System.out.println(conexFlow.getRespuesta().getResultado() + ": " + conexFlow.getRespuesta().getDesResultado() + ".");
 			}else if(transactionInformation){

@@ -108,7 +108,7 @@ public class ConexFlowPost implements  Serializable {
 					}
 				}
 			}else{
-				DBConsults.insertCheckConexFlowOperation(domain, xmlFile, project,"CHECK-"+op, conexFlow.getRespuesta().getResultado().equals(RESULT_OK));
+				DBConsults.insertCheckConexFlowOperation(domain, xmlFile, project, op, conexFlow.getRespuesta().getResultado().equals(RESULT_OK));
 			}
 			
 			return conexFlow;			

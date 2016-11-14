@@ -91,8 +91,7 @@ public class Preauthorization {
 						String token = cf.getRespuesta().getToken();
 					
 						
-						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection.getEmpresa().toString()
-							, connection.getCentro().toString(), connection.getTpv().toString()
+						Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
 							, customer.toString(), token, amount);
 						ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query, pr.getProject(), domain, false);
 						if (!conexFlow.getRespuesta().getResultado().equals("000"))
@@ -114,8 +113,7 @@ public class Preauthorization {
 			f -> f.getStartDateProperty().ge(currentDate).and(f.getTokenProperty().isNotNull())); 
 		stream.forEach(r -> {
 			if(!DBConsults.hasCheckOp(domain, login, r.getProject(), ConexFlowConstant.PREAUTHORIZATION_OP)){
-				Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection.getEmpresa().toString()
-					, connection.getCentro().toString(), connection.getTpv().toString()
+				Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
 					, r.getHotelReservation().toString(), r.getToken(), 0.01);
 				ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query
 					, r.getProject(), domain, true);
@@ -129,7 +127,7 @@ public class Preauthorization {
 		});
 	}
 	
-	public static void preathorizationPenalty(Domain domain, String login){
+	public static void preauthorizationPenalty(Domain domain, String login){
 		Calendar calendar = Calendar.getInstance();
 		Date currentDate = new Date(calendar.getTime().getTime());
 		calendar.add(Calendar.DAY_OF_YEAR, 7); // TODO  X DIAS ( en principio APP-PARAM.DIAS-A-ENTRADA-RESERVA)
@@ -140,9 +138,17 @@ public class Preauthorization {
 			f -> f.getStartDateProperty().ge(currentDate).and(f.getStartDateProperty().le(date))
 			.and(f.getTokenProperty().isNotNull()));  // TODO + ACTIVAS / BLOQUEADAS!
 		stream.forEach(r -> {
-			Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection.getEmpresa().toString()
-				, connection.getCentro().toString(), connection.getTpv().toString()
-				, r.getHotelReservation().toString(), r.getToken(), r.getPenalty());
+			Double amount = r.getPenaltyAmount();
+			if(amount == null || amount <= 0.01){
+				ReservationUtils reservationUtils = new ReservationUtils(domain.getId());
+				try {
+					amount = reservationUtils.obtainCancellationPenaltyPrice(DBConsults.newProjectReservation(domain,r));
+				} catch (ManagerBeanException e) {
+					e.printStackTrace();
+				}
+			}
+			Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
+				, r.getHotelReservation().toString(), r.getToken(), amount);
 			ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query
 				, r.getProject(), domain, true);
 			String msg = "";
@@ -156,35 +162,48 @@ public class Preauthorization {
 	}
 	
 	public static void main(String[] args) throws AonConnectionException{
-		
 		if (!parse(args))
 			return;
-		
+
 		List<String> domainList = new ArrayList<String>();
 		if (domains == null || domains.length == 0 || domains[0].equals("ALL")) 	
 			domainList = getDomains();
 		else domainList = Arrays.asList(domains);
-
-		for(String domainName : domainList){
+		
+		if(penalty || p001){
+			String domainName = domainList.get(0);
+			Domain domain = null;
 			AONContext ctx = null;
 			try {
 				ctx = new AONContext(DBConsults.getConnection(domainName));
-				ConexFlowHibernateConnectionProvider.setDomain(domainName);
-				Domain domain = DBConsults.getDomain(ctx, domainName);
-				View.domain(domainName);
-				List<String> hotelList = new ArrayList<String>(); 
-				if(hotels == null || hotels.length == 0 || hotels[0].equals("ALL"))
-					hotelList = getHotels(ctx, domain);
-				else hotelList = Arrays.asList(hotels);
-			
-				for(String hotel : hotelList){
-					if(DBConsults.estaHotel(ctx,domain, hotel)){
-						View.hotel(hotel);
-						preauthorization(ctx, domain, hotel);
-					}
-				}
+				domain = DBConsults.getDomain(ctx, domainName);
 			}finally{
 				if(ctx != null) ctx.close();
+			}
+			if(p001) preauthorization001(domain, "system");
+			if(penalty) preauthorizationPenalty(domain, "system");
+		} else {
+			for(String domainName : domainList){
+				AONContext ctx = null;
+				try {
+					ctx = new AONContext(DBConsults.getConnection(domainName));
+					ConexFlowHibernateConnectionProvider.setDomain(domainName);
+					Domain domain = DBConsults.getDomain(ctx, domainName);
+					View.domain(domainName);
+					List<String> hotelList = new ArrayList<String>(); 
+					if(hotels == null || hotels.length == 0 || hotels[0].equals("ALL"))
+						hotelList = getHotels(ctx, domain);
+					else hotelList = Arrays.asList(hotels);
+				
+					for(String hotel : hotelList){
+						if(DBConsults.estaHotel(ctx,domain, hotel)){
+							View.hotel(hotel);
+							preauthorization(ctx, domain, hotel);
+						}
+					}
+				}finally{
+					if(ctx != null) ctx.close();
+				}
 			}
 		}
 	}
@@ -192,6 +211,9 @@ public class Preauthorization {
 	private static String domains[];
 	private static String hotels[];
 	private static boolean dryRun;
+	
+	private static boolean penalty;
+	private static boolean p001;
 	
 	private static boolean parse(String args[]) {
 
@@ -224,15 +246,28 @@ public class Preauthorization {
 		
 		OptionBuilder.isRequired(false);
 		OptionBuilder.hasArg(false);
-		OptionBuilder
-				.withDescription("perform a trial run with no changes made");
+		OptionBuilder.withDescription("perform a trial run with no changes made");
 		OptionBuilder.withLongOpt("dry-run");
 		Option dryOption = OptionBuilder.create('n');
+		
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(false);
+		OptionBuilder.withDescription("");
+		OptionBuilder.withLongOpt("penalty");
+		Option penaltyOption = OptionBuilder.create("penalty");
+		
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(false);
+		OptionBuilder.withDescription("perform a trial run with no changes made");
+		OptionBuilder.withLongOpt("001");
+		Option p001Option = OptionBuilder.create("001");
 
 		options.addOption(helpOption);
 		options.addOption(domainOption);
 		options.addOption(hotelOption);
 		options.addOption(dryOption);
+		options.addOption(penaltyOption);
+		options.addOption(p001Option);
 
 
 		try {
@@ -246,6 +281,10 @@ public class Preauthorization {
 			dryRun = line.hasOption(dryOption.getOpt());
 			if (dryRun)
 				LOGGER.info("DryRun ON: Perform a trial run with no changes made.");
+
+			penalty = line.hasOption(penaltyOption.getOpt());
+		
+			p001 = line.hasOption(p001Option.getOpt());
 			
 			domains = line.getOptionValues(domainOption.getOpt());
 			if (domains == null)

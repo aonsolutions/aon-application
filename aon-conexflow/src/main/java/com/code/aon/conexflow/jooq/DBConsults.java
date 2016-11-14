@@ -41,6 +41,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.PMS;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
@@ -384,6 +385,10 @@ public class DBConsults {
 		return AON.getProjectReservation(domain.getName(), domain.getId(), user.getLogin(), projectId);
 	}
 	
+	public static com.esferalia.aon.occam.api.model.project.ProjectReservation getProjectReservation(Domain domain, User user, ProjectReservationFilter filter){
+		return AON.getProjectReservation(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
 	public static Stream<com.esferalia.aon.occam.api.model.project.ProjectReservation> getProjectReservationStream(Domain domain, String login, ProjectReservationFilter filter){
 		return AON.getProjectReservationStream(domain.getName(), domain.getId(), login, filter);
 	}
@@ -393,6 +398,9 @@ public class DBConsults {
 			.and(f.getAttachModuleProperty().eq(projectId)), AttachType.PROJECT).count() > 0;
 	}
 	
+	public static void updateToken(Domain domain, String login, Integer projectId, String token){
+		PMS.updateToken(domain.getName(), domain.getId(), token, projectId, token);
+	}
 	
 	public static ProjectReservation newProjectReservation(AONContext ctx, ProjectReservationRecord pr){
 		ProjectReservation reservation = new ProjectReservation();
@@ -416,6 +424,36 @@ public class DBConsults {
 		reservation.setPenaltyDays(pr.getPenaltyDays());
 		reservation.setDomain(pr.getDomain());
 		return reservation;
+	}
+	
+	public static ProjectReservation newProjectReservation(Domain domain, com.esferalia.aon.occam.api.model.project.ProjectReservation pr){
+		AONContext ctx = null;
+		try {
+			ctx = new AONContext(DBConsults.getConnection(domain.getName()));
+			ProjectReservation reservation = new ProjectReservation();
+			reservation.setId(pr.getProject());
+			reservation.setAdvance(pr.getAdvance());
+			reservation.setAdvancedAmount(pr.getAdvance());
+			reservation.setAdvanceInvoiced(pr.getAdvanceInvoiced() == 0);
+			Customer customer = new Customer();
+			customer.setId(pr.getAgency());
+			Registry reg = new Registry();
+			reg.setId(pr.getAgency());
+			customer.setRegistry(reg);
+			reservation.setAgency(customer);
+			reservation.setBookingHolder(BookingHolder.values()[pr.getBookingHolder()]);
+			Hotel hotel = new Hotel();
+			hotel.setId(pr.getHotel());
+			hotel.setCode(getHotelCode(ctx, pr.getHotel()));
+			reservation.setHotel(hotel);
+			reservation.setStartDate(pr.getStartDate());
+			reservation.setEndDate(pr.getEndDate());
+			reservation.setPenaltyDays(pr.getPenaltyDays());
+			reservation.setDomain(domain.getId());
+			return reservation;
+		}finally{
+			if(ctx != null) ctx.close();
+		}
 	}
 	
 	private static String getCryptoKey(com.esferalia.aon.occam.api.model.project.ProjectReservation reservation) {
