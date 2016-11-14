@@ -301,6 +301,18 @@ public class AON {
 		}
 	}
 
+	public static LinkedList<Domain> getDriveDomainList(String domainName,
+			Integer domainId, String login) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getDriveDomainList(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static LinkedList<Domain> getDomainList(String domainName,
 			Integer domainId, String login, DomainFilter filter) {
 		AONContext ctx = null;
@@ -327,6 +339,18 @@ public class AON {
 		}
 	}
 
+	public static DomainGserviceaccount getGeneralDomainGserviceaccount(
+			String domainName, Integer domainId, String login) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().getGeneralDomainGserviceaccount(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static DomainGserviceaccount getDomainGserviceaccount(
 			String domainName, Integer domainId, String login) {
 		AONContext ctx = null;
@@ -1978,15 +2002,21 @@ public class AON {
 
 	public static ProjectReservation getProjectReservation(String domainName,
 			Integer domainId, String login, Integer projectId) {
+		return getProjectReservation(domainName, domainId, login, f -> f.getProjectProperty().eq(projectId));
+	}
+	
+	public static ProjectReservation getProjectReservation(String domainName,
+			Integer domainId, String login, ProjectReservationFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProject().getProjectReservation(ctx, projectId);
+			return getProject().getProjectReservation(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
 	}
+	
 	
 	public static Stream<ProjectReservation> getProjectReservationStream(String domainName,
 			Integer domainId, String login, ProjectReservationFilter filter) {

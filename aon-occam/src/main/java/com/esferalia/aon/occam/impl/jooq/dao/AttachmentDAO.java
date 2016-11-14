@@ -19,7 +19,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Record1;
 import org.jooq.Record7;
+import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.jooq.tables.records.ContractAttachRecord;
 import com.esferalia.aon.jooq.tables.records.IattachRecord;
@@ -35,6 +37,7 @@ import com.esferalia.aon.occam.api.model.AttachFilter;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 
@@ -590,7 +593,66 @@ public class AttachmentDAO {
 	public static void deleteRegistryAttachTag(AONContext ctx, Integer rattachId){
 		ctx.getDslContext().delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(rattachId)).execute();
 	}
-
+	
+	//------------------ DRIVE DOMAIN ID LIST
+	
+	public static SelectConditionStep<Record1<Integer>> rattachDomainList(AONContext ctx){
+		return ctx.getDslContext().select(RATTACH.DOMAIN)
+			.from(RATTACH)
+			.where(RATTACH.DATA.isNotNull())
+				.and(RATTACH.TYPE.notIn(
+					RegistryAttachmentType.LOGO.value(),
+					RegistryAttachmentType.AON_TEMPLATES.value(),
+					RegistryAttachmentType.D2_DEPOSIT.value(),
+					RegistryAttachmentType.DOMAIN_BOOK_HISTORY.value(),
+					RegistryAttachmentType.ECOMMERCE_PRODUCT_TEMPLATES.value(),
+					RegistryAttachmentType.CRETA_RESPUESTA.value(),
+					RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS.value()
+				));
+	}
+	
+	public static SelectConditionStep<Record1<Integer>> projectAttachDomainList(AONContext ctx){
+		return ctx.getDslContext().select(PROJECT_ATTACH.DOMAIN)
+			.from(PROJECT_ATTACH)
+			.where(PROJECT_ATTACH.DATA.isNotNull());
+	}
+	
+	public static SelectConditionStep<Record1<Integer>> invoiceAttachDomainList(AONContext ctx){
+		return ctx.getDslContext().select(INVOICE_ATTACH.DOMAIN)
+			.from(INVOICE_ATTACH)
+			.where(INVOICE_ATTACH.DATA.isNotNull());
+	}
+	
+	public static SelectConditionStep<Record1<Integer>> contractAttachDomainList(AONContext ctx){
+		return ctx.getDslContext().select(CONTRACT_ATTACH.DOMAIN)
+			.from(CONTRACT_ATTACH)
+			.where(CONTRACT_ATTACH.DATA.isNotNull());
+	}
+	
+	public static SelectConditionStep<Record1<Integer>> iattachDomainList(AONContext ctx){
+		return ctx.getDslContext().select(IATTACH.DOMAIN)
+			.from(IATTACH)
+			.where(IATTACH.DATA.isNotNull());
+	}
+	
+	public static SelectConditionStep<Record1<Integer>> offerAttachDomainList(AONContext ctx){
+		return ctx.getDslContext().select(OFFER_ATTACH.DOMAIN)
+			.from(OFFER_ATTACH)
+			.where(OFFER_ATTACH.DATA.isNotNull());
+	}
+	
+	public static SelectConditionStep<Record1<Integer>> payrollAttachDomainList(AONContext ctx){
+		return ctx.getDslContext().select(PAYROLL_BATCH_ATTACH.DOMAIN)
+			.from(PAYROLL_BATCH_ATTACH)
+			.where(PAYROLL_BATCH_ATTACH.DATA.isNotNull());
+	}
+	
+	public static SelectConditionStep<Record1<Integer>> sepeAttachDomainList(AONContext ctx){
+		return ctx.getDslContext().select(SEPE_BATCH_ATTACH.DOMAIN)
+			.from(SEPE_BATCH_ATTACH)
+			.where(SEPE_BATCH_ATTACH.DATA.isNotNull());
+	}
+	
 	private static class FullRattachFiller implements Function<RattachRecord, Attach> {
 		AONContext ctx;
 		public FullRattachFiller(AONContext ctx) {

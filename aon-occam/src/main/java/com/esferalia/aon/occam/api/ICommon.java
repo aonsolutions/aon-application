@@ -67,6 +67,8 @@ public interface ICommon {
 	// DOMAIN
 	// --------------------------------------------
 	
+	public LinkedList<Domain> getDriveDomainList(AONContext ctx);
+	
 	public Domain getDomain(AONContext ctx, Integer domainId);
 	public Domain getDomain(AONContext ctx, DomainFilter filter);
 	public LinkedList<Domain> getDomainList(AONContext ctx, DomainFilter filter);
@@ -74,7 +76,9 @@ public interface ICommon {
 	public Domain insertDomain(AONContext ctx, Integer parentDomain,
 			String document, String name, List<String> messages);
 	
+
 	public DomainGserviceaccount getDomainGserviceaccount(AONContext ctx);
+	public DomainGserviceaccount getGeneralDomainGserviceaccount(AONContext ctx);
 	public HashMap<Integer, DomainGserviceaccount> getDomainGserviceaccountMap(AONContext ctx, Integer parent);
 	public LinkedList<DomainGserviceaccount> getDomainGserviceaccountList(AONContext ctx);
 	public DomainGserviceaccount getDomainGserviceaccount(AONContext ctx, DomainGserviceaccountFilter filter);

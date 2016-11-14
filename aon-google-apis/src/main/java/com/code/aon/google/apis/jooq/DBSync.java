@@ -3,6 +3,7 @@ package com.code.aon.google.apis.jooq;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.code.aon.dbutils.DatabaseUtil;
@@ -30,6 +31,24 @@ public class DBSync {
 		ConnectionInfo connectionInfo = ConnectionInfo
 				.getDefaultConnectionInfo();
 		return  connectionInfo.getDomainMap();
+	}
+	
+	public static List<String> getSchemas() throws AonConnectionException {
+		ConnectionInfo connectionInfo = ConnectionInfo
+				.getDefaultConnectionInfo();
+		return  connectionInfo.getSchemas();
+	}
+	
+	public static List<String> getSchemaDomains(String schema) throws AonConnectionException {
+		ConnectionInfo connectionInfo = ConnectionInfo
+				.getDefaultConnectionInfo();
+		return  connectionInfo.getSchemaDomains(schema);
+	}
+	
+	public static String getSchemaFirstDomain(String schema) throws AonConnectionException {
+		ConnectionInfo connectionInfo = ConnectionInfo
+				.getDefaultConnectionInfo();
+		return  connectionInfo.getSchemaFirstDomain(schema);
 	}
 	
 	public static Map<String, String> initializeDomains(){

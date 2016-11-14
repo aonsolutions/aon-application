@@ -213,6 +213,32 @@ public class ConnectionInfo {
 		}	
 	}
 	
+	public String getSchemaFirstDomain(String schema) throws AonConnectionException{
+		Connection c = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			c = getMetadataConnection();
+			String select = "SELECT name FROM `" + schema + "`.domain limit 1";
+			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
+					ResultSet.CONCUR_READ_ONLY);
+			rs = ps.executeQuery();
+			String s = "";
+			if (rs.next()) {
+				s = rs.getString(1);
+				
+			}
+			return s;
+		} catch (SQLException e) {
+			throw new AonConnectionException(e.getMessage(),e);
+		} finally {
+			closeQuietly(rs);
+			closeQuietly(ps);
+			closeQuietly(c);
+		}	
+	}
+	
 	public Map<String, String> getDomains() throws AonConnectionException {
 		Connection c = null;
 		PreparedStatement ps = null;

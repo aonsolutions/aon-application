@@ -36,9 +36,9 @@ public class ProjectImpl implements IProject{
 	// ------------------------------------- PROJECT RESERVATION
 	
 	@Override
-	public ProjectReservation getProjectReservation(AONContext ctx, Integer productId) {
+	public ProjectReservation getProjectReservation(AONContext ctx, ProjectReservationFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> ProjectDAO.getProjectReservation(ctx, productId));
+				configuration -> ProjectDAO.getProjectReservation(ctx, filter));
 	}
 	
 	@Override

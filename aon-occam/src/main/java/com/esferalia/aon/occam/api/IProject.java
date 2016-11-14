@@ -14,7 +14,7 @@ public interface IProject {
 	public LinkedList<Project> getProjectList(AONContext ctx, ProjectFilter filter);
 	public Integer insertProject(AONContext ctx, Project project);
 	
-	public ProjectReservation getProjectReservation(AONContext ctx, Integer projectId);
+	public ProjectReservation getProjectReservation(AONContext ctx, ProjectReservationFilter filter);
 	public Stream<ProjectReservation> getProjectReservationStream(AONContext ctx, ProjectReservationFilter filter);
 
 }

@@ -32,5 +32,7 @@ public interface IPMS {
 
 	//***** FAIL PREAUTHORIZATION *****//
 	public Stream<Integer> getFailPreauthorizationProjectIdStream(AONContext ctx);
+	
+	public void updateToken(AONContext ctx, Integer projectId, String token);
 
 }

@@ -99,8 +99,8 @@ public class ProjectDAO {
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PROJECT_RESERVATION.MODIFICATION_DATE);}
 		@Override public Property<String> getCancellationUserProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CANCELLATION_USER);}
 		@Override public Property<Timestamp> getCancellationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PROJECT_RESERVATION.CANCELLATION_DATE);}
-		@Override public Property<String> getTokenProperty() {return null;}// TODO new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.TOKEN);}
-		@Override public Property<Double> getPenaltyProperty() {return null;}// TODO new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.PENALTY);}
+		@Override public Property<String> getTokenProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.TOKEN);}
+		@Override public Property<Double> getPenaltyAmountProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.PENALTY_AMOUNT);}
 	}
 	
 	public static Project getProject(AONContext ctx, ProjectFilter filter){
@@ -116,9 +116,9 @@ public class ProjectDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static ProjectReservation getProjectReservation(AONContext ctx, Integer projectId){	
+	public static ProjectReservation getProjectReservation(AONContext ctx, ProjectReservationFilter filter){	
 		return ctx.getDslContext()
-				.select().from(PROJECT_RESERVATION).where(PROJECT_RESERVATION.PROJECT.eq(projectId))
+				.select().from(PROJECT_RESERVATION).where(PROJECT_RESERVATION_PROPERTIES.getConditions(filter))
 				.limit(1).fetchInto(PROJECT_RESERVATION).stream().map(new FullProjectReservationFiller())
 				.findFirst().orElse(null);
 	}
@@ -187,9 +187,9 @@ public class ProjectDAO {
 					.setStatus(r.getStatus())
 					.setTaxableBase(r.getTaxableBase())
 					.setTotal(r.getTotal())
-					.setVatQuota(r.getVatQuota());
-		// TODO		.setToken(r.getToken())
-		// TODO		.setPenalty(r.getPenalty());
+					.setVatQuota(r.getVatQuota())
+					.setToken(r.getToken())
+					.setPenaltyAmount(r.getPenaltyAmount());
 		}
 
 	}

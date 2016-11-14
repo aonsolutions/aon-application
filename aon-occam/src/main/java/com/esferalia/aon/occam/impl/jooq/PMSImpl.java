@@ -83,4 +83,11 @@ public class PMSImpl implements IPMS {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			PMSDAO.getFailPreauthorizationProjectIdStream(ctx));
 	}
+
+	@Override
+	public void updateToken(AONContext ctx, Integer projectId, String token) {
+		ctx.getDslContext().transaction(configuration -> PMSDAO.updateToken(ctx, projectId, token));
+	}
+	
+	
 }

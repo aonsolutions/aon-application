@@ -54,7 +54,7 @@ public class ProjectReservation implements Serializable{
 	Double vatQuota;
 	
 	String token;
-	Double penalty;
+	Double penaltyAmount;
 	
 	public Double getAdvance() {
 		return advance;
@@ -380,11 +380,11 @@ public class ProjectReservation implements Serializable{
 		return this;
 	}
 	
-	public Double getPenalty() {
-		return penalty;
+	public Double getPenaltyAmount() {
+		return penaltyAmount;
 	}
-	public ProjectReservation setPenalty(Double penalty) {
-		this.penalty = penalty;
+	public ProjectReservation setPenaltyAmount(Double penaltyAmount) {
+		this.penaltyAmount = penaltyAmount;
 		return this;
 	}
 	

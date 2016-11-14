@@ -4,10 +4,9 @@ import static org.apache.commons.cli.HelpFormatter.DEFAULT_SYNTAX_PREFIX;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Vector;
 
@@ -53,129 +52,132 @@ public class SynchronizeFiles2 {
 		return map;
 	}
 	
-	private static void synchronizeSF(Domain domain) throws  IOException, GeneralSecurityException{
-		DomainGserviceaccount g = DBConsults.getServiceAccount(domain, getUser());
+	private static Drive getDriveConnection(String domainName, Integer domainId)throws  IOException, GeneralSecurityException{
+		DomainGserviceaccount g = DBConsults.getGeneralServiceAccount(domainName, domainId);
+		Drive drive = null;
 		if(g.getClientId() == null)
-			LOGGER.info("No service account found for domain: '{}'", domain.getName());
+			LOGGER.info("No service account found ");
 		else{
-			Drive drive = null;
 			try {
 				drive = DriveUtils.serviceInitialize(g);
 			} catch (IOException e1) {
 				LOGGER.error("I/O Error connecting to Drive: {}",
-						e1.getMessage());
+					e1.getMessage());
 				throw e1;
 			} catch (GeneralSecurityException e1) {
 				LOGGER.error("Security Error connecting to Drive: {}",
-						e1.getMessage());
+					e1.getMessage());
 				throw e1;			
 			}
-			LOGGER.info("Connected to Drive: {}, {}.", domain.getName(),g.getEmailAddress());
-			
-			HashMap<String, String> map = new HashMap<String, String>();
-			Vector<RegistryAttachmentType> rats = new Vector<RegistryAttachmentType>();
-			for (String s : types) {
-				try {
-					RegistryAttachmentType rat = Enum.valueOf(RegistryAttachmentType.class, s);
-					rats.add(rat);
-					map.put("registry", "registry");
-				} catch (IllegalArgumentException e) {
-					map.put(s, s);
-				}
+			LOGGER.info("Connected to Drive: {}", g.getEmailAddress());
+		}
+		return drive;
+	}
+	
+	private static void synchronizeSF(Domain domain, Drive drive) throws  IOException, GeneralSecurityException{
+		LOGGER.error("domain: {}", domain.getName());
+		HashMap<String, String> map = new HashMap<String, String>();
+		Vector<RegistryAttachmentType> rats = new Vector<RegistryAttachmentType>();
+		for (String s : types) {
+			try {
+				RegistryAttachmentType rat = Enum.valueOf(RegistryAttachmentType.class, s);
+				rats.add(rat);
+				map.put("registry", "registry");
+			} catch (IllegalArgumentException e) {
+				map.put(s, s);
 			}
+		}
 		
-			if (map.containsKey("registry")) {
-				Integer size = 10;
-				Integer firstId = 0;
-				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getRegistryAttachLimit(domain, getUser(), rats, firstId);
-					System.out.println(v.size());
-					if(v.size() != 0) sync(drive, domain, v);
-					if (numero >= num) return;
-					size = v.size();
-					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
-				}
+		if (map.containsKey("registry")) {
+			Integer size = 10;
+			Integer firstId = 0;
+			while(size == 10){
+				Vector<FileInfo> v = DBDrive.getRegistryAttachLimit(domain, getUser(), rats, firstId);
+				if(v.size() != 0) sync(drive, domain, v);
+				if (numero >= num) return;
+				size = v.size();
+				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 			}
-			if (map.containsKey("contract")){
-				Integer size = 10;
-				Integer firstId = 0;
-				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.CONTRACT, firstId);
-					if(v.size() != 0) sync(drive, domain, v);
-					if (numero >= num) return;
-					size = v.size();
-					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
-				}
+		}
+		if (map.containsKey("contract")){
+			Integer size = 10;
+			Integer firstId = 0;
+			while(size == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.CONTRACT, firstId);
+				if(v.size() != 0) sync(drive, domain, v);
+				if (numero >= num) return;
+				size = v.size();
+				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 			}
-			if (map.containsKey("item")){
-				Integer size = 10;
-				Integer firstId = 0;
-				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.ITEM, firstId);
-					if(v.size() != 0) sync(drive, domain, v);
-					if (numero >= num) return;
-					size = v.size();
-					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
-				}
+		}
+		if (map.containsKey("item")){
+			Integer size = 10;
+			Integer firstId = 0;
+			while(size == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.ITEM, firstId);
+				if(v.size() != 0) sync(drive, domain, v);
+				if (numero >= num) return;
+				size = v.size();
+				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 			}
-			if (map.containsKey("invoice")){
-				Integer size = 10;
-				Integer firstId = 0;
-				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.INVOICE, firstId);
-					if(v.size() != 0) sync(drive, domain, v);
-					if (numero >= num) return;
-					size = v.size();
-					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
-				}
+		}
+		if (map.containsKey("invoice")){
+			Integer size = 10;
+			Integer firstId = 0;
+			while(size == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.INVOICE, firstId);
+				if(v.size() != 0) sync(drive, domain, v);
+				if (numero >= num) return;
+				size = v.size();
+				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 			}
-			if (map.containsKey("offer")){
-				Integer size = 10;
-				Integer firstId = 0;
-				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.OFFER, firstId);
-					if(v.size() != 0) sync(drive, domain, v);
-					if (numero >= num) return;
-					size = v.size();
-					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
-				}
-			}	
-			if (map.containsKey("payroll")){
-				Integer size = 10;
-				Integer firstId = 0;
-				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PAYROLL, firstId);
-					if(v.size() != 0) sync(drive, domain, v);
-					if (numero >= num) return;
-					size = v.size();
-					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
-				}
+		}
+		if (map.containsKey("offer")){
+			Integer size = 10;
+			Integer firstId = 0;
+			while(size == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.OFFER, firstId);
+				if(v.size() != 0) sync(drive, domain, v);
+				if (numero >= num) return;
+				size = v.size();
+				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 			}
-			if (map.containsKey("project")){
-				Integer size = 10;
-				Integer firstId = 0;
-				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PROJECT, firstId);
-					if(v.size() != 0) sync(drive, domain, v);
-					if (numero >= num) return;
-					size = v.size();
-					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
-				}
+		}	
+		if (map.containsKey("payroll")){
+			Integer size = 10;
+			Integer firstId = 0;
+			while(size == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PAYROLL, firstId);
+				if(v.size() != 0) sync(drive, domain, v);
+				if (numero >= num) return;
+				size = v.size();
+				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 			}
-			if (map.containsKey("sepe")){
-				Integer size = 10;
-				Integer firstId = 0;
-				while(size == 10){
-					Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.SEPE, firstId);
-					if(v.size() != 0) sync(drive, domain, v);
-					if (numero >= num) return;
-					size = v.size();
-					if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
-				}
+		}
+		if (map.containsKey("project")){
+			Integer size = 10;
+			Integer firstId = 0;
+			while(size == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.PROJECT, firstId);
+				if(v.size() != 0) sync(drive, domain, v);
+				if (numero >= num) return;
+				size = v.size();
+				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 			}
-			if(numero == 0){
-				LOGGER.info("No documents/files found for domain: '{}'", domain.getName());
+		}
+		if (map.containsKey("sepe")){
+			Integer size = 10;
+			Integer firstId = 0;
+			while(size == 10){
+				Vector<FileInfo> v = DBDrive.getAttachLimit(domain, getUser(), AttachType.SEPE, firstId);
+				if(v.size() != 0) sync(drive, domain, v);
+				if (numero >= num) return;
+				size = v.size();
+				if(v.size() != 0) firstId = v.get(v.size()-1).getFileId();
 			}
+		}
+		if(numero == 0){
+			LOGGER.info("No documents/files found for domain: '{}'", domain.getName());
 		}
 	}
 
@@ -190,34 +192,21 @@ public class SynchronizeFiles2 {
 		});
 	}
 	
-	public static void synchronizeSF(Map<String, Integer> domainMap) throws IOException, GeneralSecurityException{
-		// Obtiene todos los dominios de la BD.
-		Map<String, String> domains = DBSync.initializeDomains();
-		
-		// Ordena los dominios por orden alfabetico.
-		List<String> list = new ArrayList<String>(domains.keySet());
-		Collections.sort(list, (String s1, String s2) -> s1.compareTo(s2));
-		
-		// Recorre todos los dominios de la BD.
-		for (String domainName : list){
-			Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getLogin());
-			synchronizeSF(domain);
-		}
-	}	
-	
 	public static void main(String[] args) throws AonConnectionException, IOException, GeneralSecurityException{
 
 		if (!parse(args))
 			return;
 		if(types[0].equals("all")){
-			types[0] = "registry";
-			types[1] = "contract";
-			types[2] = "item";
-			types[3] = "invoice";
-			types[4] = "offer";
-			types[5] = "payroll";
-			types[6] = "project";
-			types[7] = "sepe";
+			String t[] = new String[8];
+			t[0] = "registry";
+			t[1] = "contract";
+			t[2] = "item";
+			t[3] = "invoice";
+			t[4] = "offer";
+			t[5] = "payroll";
+			t[6] = "project";
+			t[7] = "sepe";
+			types = t;
 		}
 		
 		DriveUtils.types = types;
@@ -226,11 +215,25 @@ public class SynchronizeFiles2 {
 		
 		Map<String, Integer> domainMap = initializeDomainMap();
 		if (domains == null || domains.length == 0 || domains[0].equals("ALL")) {
-			synchronizeSF(domainMap);
+			for (String schema : DBSync.getSchemas()) {
+				String domainName = DBSync.getSchemaFirstDomain(schema);
+				if(domainName != null && !domainName.equals("")){
+					Drive drive = getDriveConnection(domainName, domainMap.get(domainName));
+					if(drive != null){
+						LinkedList<Domain> list = DBConsults.getDriveDomainList(domainName, domainMap.get(domainName));
+						Collections.sort(list, (Domain s1, Domain s2) -> s1.getName().compareTo(s2.getName()));
+						for (Domain domain : list)
+							synchronizeSF(domain, drive);
+					}
+				}
+			}
 		} else {
 			for (String domainName : domains) {
-				Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getLogin()); 
-				synchronizeSF(domain);
+				Drive drive = getDriveConnection(domainName, domainMap.get(domainName));
+				if(drive != null){
+					Domain domain = AON.getDomain(domainName, domainMap.get(domainName), getLogin()); 
+					synchronizeSF(domain, drive);
+				}
 			}
 		}
 	}

@@ -38,6 +38,10 @@ import com.esferalia.aon.occam.api.model.security.User;
 
 public class DBConsults {
 	
+	public static LinkedList<Domain> getDriveDomainList(String domainName, Integer domainId){
+		return AON.getDriveDomainList(domainName, domainId, "");
+	}
+	
 	public static Domain getDomain(String domainName, Integer domainId){
 		return AON.getDomain(domainName, domainId, "");
 	}
@@ -60,6 +64,10 @@ public class DBConsults {
 	
 	public static DomainGserviceaccount getServiceAccount(String domainName, Integer domainId){
 		return AON.getDomainGserviceaccount(domainName, domainId, "");
+	}
+	
+	public static DomainGserviceaccount getGeneralServiceAccount(String domainName, Integer domainId){
+		return AON.getGeneralDomainGserviceaccount(domainName, domainId, "");
 	}
 	
 	public static DomainGserviceaccount getServiceAccount(Domain domain, User user){

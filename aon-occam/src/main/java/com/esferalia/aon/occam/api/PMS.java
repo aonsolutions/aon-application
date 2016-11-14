@@ -140,4 +140,15 @@ public class PMS {
 		return getFailPreauthorizationProjectIdStream(domainName, domainId, login).collect(Collectors.toCollection(LinkedList::new));				
 	}
 	
+	public static void updateToken(String domainName, Integer domainId, String login, Integer projectId, String token){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getPMS().updateToken(ctx, projectId, token);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}		
+	}
+	
 }

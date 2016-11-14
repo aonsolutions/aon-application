@@ -49,6 +49,15 @@ public class DBDrive {
 		AttachQueryProperties aqp = new AttachQueryProperties()
 				.setLimit(10)
 				.setOrderby("id");
+		if(attachType.equals(AttachType.OFFER) || attachType.equals(AttachType.PROJECT)){
+			return AON.getAttachList(domain.getName(), domain.getId(), user.getLogin(),
+					f -> f.getDriveIdProperty().isNull()
+					.and(f.getDataProperty().isNotNull())
+					.and(f.getIdProperty().gt(firstId))
+					.and(f.getMimeTypeProperty().isNotNull()),
+					attachType, aqp).stream().map(new AttachToFileInfo())
+					.collect(Collectors.toCollection(Vector::new));
+		}
 		return AON.getAttachList(domain.getName(), domain.getId(), user.getLogin(),
 				f -> f.getDriveIdProperty().isNull()
 				.and(f.getDataProperty().isNotNull())
@@ -220,7 +229,7 @@ public class DBDrive {
 			fileInfo.setData(a.getData());
 			fileInfo.setDate(a.getDate());
 			fileInfo.setDriveId(a.getDriveId());
-			fileInfo.setType(a.getType());
+			fileInfo.setType(a.getType() != null ? a.getType() : 0);
 			fileInfo.setTitle(a.getDescription());
 			fileInfo.setMimetype(a.getMimeType().value());
 			fileInfo.setFileId(a.getId());

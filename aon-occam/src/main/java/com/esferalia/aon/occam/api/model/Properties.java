@@ -517,7 +517,7 @@ public interface Properties {
 		Property<String> getCancellationUserProperty();
 		Property<Timestamp> getCancellationDateProperty();
 		Property<String> getTokenProperty();
-		Property<Double> getPenaltyProperty();
+		Property<Double> getPenaltyAmountProperty();
 	}
 
 }

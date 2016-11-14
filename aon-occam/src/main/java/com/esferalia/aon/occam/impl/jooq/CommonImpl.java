@@ -137,9 +137,21 @@ public class CommonImpl implements ICommon {
 	}
 
 	@Override
+	public LinkedList<Domain> getDriveDomainList(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DomainDAO.getDriveDomainList(ctx));
+	}
+	
+	@Override
 	public DomainGserviceaccount getDomainGserviceaccount(AONContext ctx) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> DomainDAO.getDomainGserviceaccount(ctx));
+	}
+	
+	@Override
+	public DomainGserviceaccount getGeneralDomainGserviceaccount(AONContext ctx) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> DomainDAO.getGeneralDomainGserviceaccount(ctx));
 	}
 	
 	@Override
@@ -216,4 +228,5 @@ public class CommonImpl implements ICommon {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaxDAO.getTax(ctx, filter));
 	}
+
 }

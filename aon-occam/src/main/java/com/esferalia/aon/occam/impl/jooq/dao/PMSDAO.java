@@ -292,6 +292,14 @@ public class PMSDAO {
 				.where(PROJECT_ATTACH.DESCRIPTION.eq("CONEXFLOW-CHECK-NO-P")).fetch().stream().map(f -> f.value1());
 	}
 
+	public static void updateToken(AONContext ctx, Integer projectId, String token){
+		ctx.getDslContext().update(PROJECT_RESERVATION)
+		.set(PROJECT_RESERVATION.TOKEN, token)
+		.where(PROJECT_RESERVATION.PROJECT.eq(projectId))
+		.execute();
+	}
+	
+	
 	private static class HotelGuestByCountryFiller implements Function<Record3<String, String, Integer>, HotelGuestByCountry> {
 	
 		@Override

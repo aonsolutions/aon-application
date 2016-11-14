@@ -99,6 +99,21 @@ public class DomainDAO {
 			.fetchInto(DOMAIN).stream().map(new FullDomainFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	
+
+	public static LinkedList<Domain> getDriveDomainList(AONContext ctx){
+		return ctx.getDslContext().select().from(DOMAIN)
+				.where(DOMAIN.ID.in(AttachmentDAO.rattachDomainList(ctx)))
+				.or(DOMAIN.ID.in(AttachmentDAO.iattachDomainList(ctx)))
+				.or(DOMAIN.ID.in(AttachmentDAO.projectAttachDomainList(ctx)))
+				.or(DOMAIN.ID.in(AttachmentDAO.invoiceAttachDomainList(ctx)))
+				.or(DOMAIN.ID.in(AttachmentDAO.payrollAttachDomainList(ctx)))
+				.or(DOMAIN.ID.in(AttachmentDAO.sepeAttachDomainList(ctx)))
+				.or(DOMAIN.ID.in(AttachmentDAO.offerAttachDomainList(ctx)))
+				.or(DOMAIN.ID.in(AttachmentDAO.contractAttachDomainList(ctx)))
+			.fetchInto(DOMAIN).stream().map(new FullDomainFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	public static Domain insertDomain(AONContext ctx, Integer parentDomain,
 			String document, String name, List<String> messages) {
 
@@ -221,6 +236,34 @@ public class DomainDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	public static DomainGserviceaccount getGeneralDomainGserviceaccount(AONContext ctx){
+		Result<Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String>> dataDefault = ctx.getDslContext()
+				.select(DOMAIN_GSERVICEACCOUNT.CLIENT_ID, DOMAIN_GSERVICEACCOUNT.CLIENT_SECRET
+						, DOMAIN.NAME , DOMAIN_GSERVICEACCOUNT.DOMAIN
+						, DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS, DOMAIN_GSERVICEACCOUNT.LIMIT
+						, DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY
+						, DOMAIN_GSERVICEACCOUNT.SIZE, DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT)
+				.from(DOMAIN_GSERVICEACCOUNT).join(DOMAIN).on(DOMAIN.ID.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN))
+				.where(DOMAIN.TYPE.eq((byte) 5))
+				.fetch();
+		
+		DomainGserviceaccount dgserviceaccount = new DomainGserviceaccount();
+
+		for(Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String> r : dataDefault){
+			dgserviceaccount = new DomainGserviceaccount()
+				.setClientId(r.getValue(DOMAIN_GSERVICEACCOUNT.CLIENT_ID))
+				.setClientSecret(r.getValue(DOMAIN_GSERVICEACCOUNT.CLIENT_SECRET))
+				.setDomain(AON.getDomain(r.getValue(DOMAIN.NAME), r.getValue(DOMAIN_GSERVICEACCOUNT.DOMAIN), ctx.getUser()))
+				.setEmailAddress(r.getValue(DOMAIN_GSERVICEACCOUNT.EMAIL_ADDRESS))
+				.setGoogleAccount(r.getValue(DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT))
+				.setLimit(r.getValue(DOMAIN_GSERVICEACCOUNT.LIMIT))
+				.setPrivateKey(r.getValue(DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY))
+				.setPublicKey(r.getValue(DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY))
+				.setSize(r.getValue(DOMAIN_GSERVICEACCOUNT.SIZE));	
+		}
+		return dgserviceaccount;
+	}
+	
 	public static DomainGserviceaccount getDomainGserviceaccount(AONContext ctx){
 		Result<Record10<String, byte[], String, Integer, String, Double, byte[], String, Double, String>> data = ctx.getDslContext()
 						.select(DOMAIN_GSERVICEACCOUNT.CLIENT_ID, DOMAIN_GSERVICEACCOUNT.CLIENT_SECRET
@@ -249,7 +292,7 @@ public class DomainDAO {
 								, DOMAIN_GSERVICEACCOUNT.PRIVATE_KEY, DOMAIN_GSERVICEACCOUNT.PUBLIC_KEY
 								, DOMAIN_GSERVICEACCOUNT.SIZE, DOMAIN_GSERVICEACCOUNT.GOOGLE_ACCOUNT)
 						.from(DOMAIN_GSERVICEACCOUNT).join(DOMAIN).on(DOMAIN.ID.eq(DOMAIN_GSERVICEACCOUNT.DOMAIN))
-						.where(DOMAIN_GSERVICEACCOUNT.DOMAIN.eq(0))
+						.where(DOMAIN.TYPE.eq((byte) 5))
 						.fetch();
 				
 				
