@@ -158,7 +158,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		cleanSystemPayments(aonContext);
 		addSSRegimePayment(aonContext, SSRegimeType.GENERAL,
 				getFirstDayOfYear(getToday()), PaymentType.CRA_0004,
-				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00",
+				"TRACE('DIAS_MATERNIDAD=%f\r\n',DIAS_MATERNIDAD);0.00",
 				"DIAS_MATERNIDAD * BASE_REGULADORA", "0.00");
 		//@formatter:off
 		@SuppressWarnings("serial")
@@ -235,7 +235,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		cleanSystemPayments(aonContext);
 		addSSRegimePayment(aonContext, SSRegimeType.GENERAL,
 				getFirstDayOfYear(getToday()), PaymentType.CRA_0004,
-				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00",
+				"TRACE('DIAS_MATERNIDAD=%f\r\n',DIAS_MATERNIDAD);0.00",
 				"DIAS_MATERNIDAD * BASE_REGULADORA", 
 				"TRACE('BASE_REGULADORA=%f\r\n',BASE_REGULADORA);0.00");
 		//@formatter:off
@@ -314,7 +314,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		cleanSystemPayments(aonContext);
 		addSSRegimePayment(aonContext, SSRegimeType.GENERAL,
 				getFirstDayOfYear(getToday()), PaymentType.CRA_0004,
-				"TRACE('DIAS_MATERNIDAD=%d\r\n',DIAS_MATERNIDAD);0.00",
+				"TRACE('DIAS_MATERNIDAD=%f\r\n',DIAS_MATERNIDAD);0.00",
 				"DIAS_MATERNIDAD * BASE_REGULADORA", "0.00");
 		//@formatter:off
 		@SuppressWarnings("serial")
