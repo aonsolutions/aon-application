@@ -161,6 +161,8 @@ public enum ContextVariable implements IResourceable{
 	PARTIAL_FACTOR("COEFICIENTE_PARCIALIDAD", VariableType.STRING, false),
 	ERE_FACTOR("COEFICIENTE_ERE", VariableType.INTEGER, false),
 	STRIKE_FACTOR("COEFICIENTE_HUELGA", VariableType.INTEGER, false),
+	PATERNITY_FACTOR("COEFICIENTE_PATERNIDAD", VariableType.DOUBLE, false),
+	MATERNITY_FACTOR("COEFICIENTE_MATERNIDAD", VariableType.DOUBLE, false),
 
 	// Bajas, Incapacidad Temporal
 	ERE("ERE", VariableType.BOOLEAN),

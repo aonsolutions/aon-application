@@ -304,29 +304,19 @@ public class ContractLeaveLoader {
 
 			@Override
 			public Void visitMaternity(LeaveType leaveType) {
-				exprCtx.setVariable(ContextVariable.MATERNITY_DAYS, leaveDays,
-						start, end);
-				exprCtx.putVariable(QUOTE_DAYS, 
-						new QuoteDays(exprCtx, start, end));
-				
+				visit(ContextVariable.MATERNITY_FACTOR, ContextVariable.MATERNITY_DAYS);
 				return null;
 			}
 
 			@Override
 			public Void visitPaternity(LeaveType leaveType) {
-				exprCtx.setVariable(ContextVariable.PATERNITY_DAYS, leaveDays,
-						start, end);
-				exprCtx.putVariable(QUOTE_DAYS, 
-						new QuoteDays(exprCtx, start, end));
+				visit(ContextVariable.PATERNITY_FACTOR, ContextVariable.PATERNITY_DAYS);
 				return null;
 			}
 
 			@Override
 			public Void visitPregnacyRisk(LeaveType leaveType) {
-				exprCtx.setVariable(ContextVariable.MATERNITY_DAYS, leaveDays,
-						start, end);
-				exprCtx.putVariable(QUOTE_DAYS, 
-						new QuoteDays(exprCtx, start, end));
+				visit(ContextVariable.MATERNITY_FACTOR, ContextVariable.MATERNITY_DAYS);
 				return null;
 			}
 
@@ -339,6 +329,67 @@ public class ContractLeaveLoader {
 			@Override
 			public Void visitNonOcupationalDisease(LeaveType leaveType) {
 				return this.visitCommonDisease(leaveType);
+			}
+			
+			
+			private void visit(ContextVariable factorVariable, ContextVariable daysVariable) {
+				List<ITimedVariable<Number>> factors = exprCtx.getVariables(factorVariable, start, end);
+				List<Period> periods = new ArrayList<Period>();
+
+				for ( ITimedVariable<Number> factor: factors ) {
+					
+					Period period = factor.getPeriod();
+					Number number = factor.getValue(period);
+					
+					if ( number == null )
+						continue;
+					Double value = number.doubleValue();
+					if ( value < 0.00 || value >= 1.00 )
+						continue;
+					exprCtx.putVariable(daysVariable, 
+							new ITimedVariable<Double>() {
+
+								@Override
+								public Period getPeriod() {
+									return period;
+								}
+
+								@Override
+								public Double getValue(Period period) {
+									ExpressionContext.getCurrentBindings()
+									.get(factorVariable, value -> value, 1.00);
+									return leaveDays * value;
+								}
+							});
+					
+					exprCtx.setVariable(ContextVariable.WORKED_DAYS, 
+							leaveDays * (1.00 - value) ,
+							period.getStart(), 
+							period.getEnd());
+					
+					periods.add(period);
+				}
+				
+				for ( Period period : Period.sub(new Period(start,end), periods) ){
+					exprCtx.putVariable(daysVariable, 
+							new ITimedVariable<Double>() {
+
+								@Override
+								public Period getPeriod() {
+									return period;
+								}
+
+								@Override
+								public Double getValue(Period period) {
+									ExpressionContext.getCurrentBindings()
+									.get(factorVariable, value -> 1.00, 1.00);
+									return leaveDays * 1.00;
+								}
+							});
+				}
+
+				exprCtx.putVariable(QUOTE_DAYS, 
+						new QuoteDays(exprCtx, start, end));
 			}
 
 		});

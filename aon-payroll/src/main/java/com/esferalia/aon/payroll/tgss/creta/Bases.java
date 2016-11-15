@@ -606,6 +606,11 @@ public class Bases {
 				put("603", "Base de Accidentes de Trabajo en situación de IT");
 				put("613", "Base de Accidentes de Trabajo en situación de IT");
 				put("663", "Compensación IT AT y EP");
+				
+				put("535", "Base de contingencias comunes Maternidad Tiempo Parcial");
+				put("635", "Base AT Maternidad Tiempo Parcial");
+				put("634", "Base AT Maternidad Tiempo Parcial");
+				
 			}
 		};
 
@@ -1166,6 +1171,7 @@ public class Bases {
 	private static Map<String, CretaData> CONTEXT_VARIABLE_MAP = new HashMap<String, CretaData>() {
 		{
 			put("500", new MandatoryCCretaData(CGC_BASE.getName()));
+			put("535", new MandatoryCCretaData(CGC_BASE.getName()));
 
 			put("501", new OptionalCCretaData(STRUCTURAL_OVERTIME_BASE.getName()));
 			put("502", new OptionalCCretaData(
@@ -1174,6 +1180,8 @@ public class Bases {
 
 			put("601", new MandatoryCCretaData(CGP_BASE.getName()));
 			put("611", new MandatoryCCretaData(CGP_BASE.getName()));
+			put("635", new MandatoryCCretaData(CGP_BASE.getName()));
+			put("634", new MandatoryCCretaData(CGP_BASE.getName()));
 
 			put("663", new MandatoryCCretaData(ContextVariable.PREST_IT));
 

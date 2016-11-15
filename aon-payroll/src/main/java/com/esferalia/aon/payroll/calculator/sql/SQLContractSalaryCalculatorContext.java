@@ -37,12 +37,14 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MALE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT_VARIABLE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
@@ -172,6 +174,8 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
+import com.esferalia.aon.payroll.sql.AbstractSQL;
+import com.esferalia.aon.payroll.sql.AbstractSQL.ContractData;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
@@ -355,11 +359,25 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	public static final String CLEAVE_SQL_PARENT_DAYS = "dias";
 
-	private static final String CLEAVE_SQL = "SELECT * ," + "( SELECT sum(DATEDIFF(end_date,start_date)+1)"
-			+ " FROM contract_leave AS parent" + " WHERE ( parent.id=contract_leave.parent"
-			+ "  OR parent=contract_leave.parent )" + " AND parent.start_date < contract_leave.start_date )" + " AS "
-			+ CLEAVE_SQL_PARENT_DAYS + " FROM contract_leave" + " WHERE contract = ? " + "AND start_date <= ? "
-			+ " AND ( end_date IS NULL " + " OR end_date >= ? )";
+	private static final String CLEAVE_SQL = 
+			"SELECT contract_leave.* ," 
+				+ "( SELECT sum(DATEDIFF(end_date,start_date)+1)"
+				+ " FROM contract_leave AS parent" 
+				+ " WHERE ( parent.id=contract_leave.parent"
+				+ " OR parent=contract_leave.parent )" 
+				+ " AND parent.start_date < contract_leave.start_date )" 
+				+ " AS "+ CLEAVE_SQL_PARENT_DAYS 
+				+ ", contract_data.* "
+			+ " FROM contract_leave" 
+			+ " LEFT JOIN contract_data ON ( "
+				+ " contract_leave.contract = contract_data.contract "
+				+ " AND contract_data.name IN ('" + PATERNITY_FACTOR + "','" +MATERNITY_FACTOR+ "')"
+				+ " AND ( contract_leave.end_date  IS NULL OR contract_data.start_date <= contract_leave.end_date )"
+				+ " AND ( contract_data.end_date IS NULL OR contract_data.end_date >= contract_leave.start_date ) "
+				+ ")"
+			+ " WHERE contract_leave.contract = ? " 
+			+ " AND contract_leave.start_date <= ? "
+			+ " AND ( contract_leave.end_date IS NULL " + " OR contract_leave.end_date >= ? )";
 
 	private static final int CACHE_SIZE = 25;
 
@@ -3852,6 +3870,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			rs = cleaveStmt.executeQuery();
 			leaveLoader.clear();
 			while (rs.next()) {
+				loadLeaveFactor(rs, ctx);
 				leaveLoader.loadContractLeave(rs, ctx);
 				onContractLeaveLoaded(rs, ctx);
 			}
@@ -3861,6 +3880,31 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				rs.close();
 			}
 		}
+	}
+	
+	private void loadLeaveFactor(ResultSet rs, ExpressionContext ctx)
+			throws SQLException{
+		
+		String name = rs.getString(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.NAME);
+		if ( name == null )
+			return;
+		
+		String expression = rs.getString(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.EXPRESSION); 
+		
+		ExpressionImpl expr = new ExpressionImpl();
+		expr.setName(name);
+		expr.setExpression(expression);
+		expr.setScope(ExpressionScope.CONTRACT);
+		Date dataStart = rs.getDate(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.START_DATE);
+		Date dataEnd = rs.getDate(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.END_DATE);
+		Date start = Period.max(dataStart, startDate);
+		Date end = Period.min(dataEnd, endDate);
+
+		try {
+			ctx.addExpression(expr, start, end);
+		} catch (ExpressionException e) {
+			e.printStackTrace();
+		} 
 	}
 
 	private void initSystemCosts() throws SQLException {
