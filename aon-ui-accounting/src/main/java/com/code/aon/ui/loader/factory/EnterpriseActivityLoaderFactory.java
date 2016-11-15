@@ -28,7 +28,8 @@ import com.esferalia.aon.payroll.EnterpriseActivity;
 public class EnterpriseActivityLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	
 	private static final Column[] SUPPORTED_COLUMNS = {
-		 new Column(ACT,"descripcion"	,2,64	,true	,null)             // Descripción
+		 new Column(ACT,"codigo"		,2,3	,true	,null)             // Código (solo enlace en el fichero de carga)
+		,new Column(ACT,"descripcion"	,2,64	,true	,null)             // Descripción
 		,new Column(ACT,"principal"		,0,1	,true	,new int[] {0,1})  // Principal
 		,new Column(ACT,"iaeSeccion"	,2,1	,false	,null)             // IAE - Sección
 		,new Column(ACT,"iaeEpigrafe"	,2,8	,false	,null)             // IAE - Epígrafe

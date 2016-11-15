@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class LoadedEnterpriseActivity implements ILoadedPojo{
 
+	private String codigo;
 	private String descripcion;	
 	private Integer principal;
 	
@@ -16,7 +17,15 @@ public class LoadedEnterpriseActivity implements ILoadedPojo{
 	
 	@Override
 	public String getIdentifier() {
-		return null; 
+		return getCodigo(); 
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 
 	public String getDescripcion() {

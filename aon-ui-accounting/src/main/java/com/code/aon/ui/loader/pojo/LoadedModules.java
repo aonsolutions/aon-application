@@ -11,6 +11,7 @@ public class LoadedModules implements ILoadedPojo{
 	private Double maxPersonas;
 	private Double maxImporte;
 	private Double porcentaje;
+	private String codigoActividad;
 	
 	@Override
 	public String getIdentifier() {
@@ -83,6 +84,14 @@ public class LoadedModules implements ILoadedPojo{
 
 	public void setPorcentaje(Double porcentaje) {
 		this.porcentaje = porcentaje;
+	}
+
+	public String getCodigoActividad() {
+		return codigoActividad;
+	}
+
+	public void setCodigoActividad(String codigoActividad) {
+		this.codigoActividad = codigoActividad;
 	}
 
 	

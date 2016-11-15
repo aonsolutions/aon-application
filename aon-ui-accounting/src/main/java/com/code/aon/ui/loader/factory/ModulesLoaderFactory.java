@@ -16,6 +16,7 @@ import com.code.aon.ui.loader.ILoaderFactory;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
 import com.code.aon.ui.loader.pojo.LoadedModules;
+import com.esferalia.aon.payroll.EnterpriseActivity;
 
 public class ModulesLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	
@@ -28,16 +29,17 @@ public class ModulesLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(MOC,"maxPersonas" ,1,17	,true	,null)  // Valor máximo personas
 		,new Column(MOC,"maxImporte"  ,1,17	,true	,null)  // Valor máximo importe
 		,new Column(MOC,"porcentaje"  ,1,17	,true 	,null)  // Porcentaje IVA aplicable
+		,new Column(MOC,"codigoActividad",2,3,true	,null)  // Código actividad
 	};
 	
-	//private ILoaderEngine engine;
+	private ILoaderEngine engine;
 	private Map<String, Column[]> columns;
 
 	public ModulesLoaderFactory() {
 	}
 	
 	public ModulesLoaderFactory(ILoaderEngine engine) {
-		//this.engine = engine;
+		this.engine = engine;
 	}
 
 	public Map<String, Column[]> getColumns() {
@@ -88,6 +90,13 @@ public class ModulesLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		fa.setMaxPerson(loaded.getMaxPersonas());
 		fa.setMaxImport(loaded.getMaxImporte());
 		fa.setVatPercent(loaded.getPorcentaje());
+		
+		EnterpriseActivity activity = (EnterpriseActivity) engine.getAonEntity(ILoaderFactory.ACT, loaded.getCodigoActividad());
+		if (activity  == null) {
+			throw new AonException("La actividad con codigo " + loaded.getCodigoActividad() + " no existe.");
+		}
+	
+		fa.setActivity(activity);
 		
 		fa = (FiscalActivity) bean.insert(fa);
 		return fa.getId();
