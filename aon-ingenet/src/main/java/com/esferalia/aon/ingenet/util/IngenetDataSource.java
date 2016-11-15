@@ -21,7 +21,7 @@ public class IngenetDataSource {
 
 	private static final String CONFIGURATION_PATH = "/etc/aon-aio/";
 	private static final String POOL_PROPERTIES =  ".pool-properties";
-	private static final String DEFAULT_POOL_PROPERTIES = CONFIGURATION_PATH + "ingenet" + POOL_PROPERTIES;
+	private static final String DEFAULT_POOL_PROPERTIES = CONFIGURATION_PATH + "default" + POOL_PROPERTIES;
 
 	private static final Object INSTANCE_MONITOR = new Object();
 	private static final Object INIT_POOL_MONITOR = new Object();
