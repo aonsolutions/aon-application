@@ -57,6 +57,9 @@
                     	<iron-icon style="color:[[item.color]];position:absolute;" icon="error-outline"/>
                         <div class="pad">
                             <div class="primary">
+                           		<span>[</span> 
+                           			[[item.enterprise.login]]
+                           		<span>]</span> 
                            		[[item.title]]
 								<template is="dom-repeat" items="[[item.labels]]" as="label"> 
 									<span style="background-color: #[[label.color]];color: white;
