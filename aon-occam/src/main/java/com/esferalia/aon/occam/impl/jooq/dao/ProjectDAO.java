@@ -101,6 +101,7 @@ public class ProjectDAO {
 		@Override public Property<Timestamp> getCancellationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PROJECT_RESERVATION.CANCELLATION_DATE);}
 		@Override public Property<String> getTokenProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.TOKEN);}
 		@Override public Property<Double> getPenaltyAmountProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.PENALTY_AMOUNT);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.STATUS);}
 	}
 	
 	public static Project getProject(AONContext ctx, ProjectFilter filter){

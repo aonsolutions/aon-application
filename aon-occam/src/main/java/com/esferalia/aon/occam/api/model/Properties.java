@@ -518,6 +518,7 @@ public interface Properties {
 		Property<Timestamp> getCancellationDateProperty();
 		Property<String> getTokenProperty();
 		Property<Double> getPenaltyAmountProperty();
+		Property<Byte> getStatusProperty();
 	}
 
 }

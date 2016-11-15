@@ -2017,19 +2017,31 @@ public class ProjectReservationController extends BasicController implements IPm
 			, importe, cf.getRespuesta().getAutorizacion()
 			, cf.getRespuesta().getRefClient(), cf.getRespuesta().getIdOperacion(), cf.getRespuesta().getFecha());
 	
-		ConexFlow cf2 = ConexFlowPost.execute(connection, ConexFlowConstant.CANCELATION_OP, query, reservation.getId(), getDomain(reservation), true);
+		ConexFlowPost.execute(connection, ConexFlowConstant.CANCELATION_OP, query, reservation.getId(), getDomain(reservation), true);
 
 	}
 	
 	private void checkPreauthorization(ProjectReservation reservation){
-		// TODO METER ESTO EN EL ONCANCEL!!!
 		ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
 		Boolean bool = DBConsults.hasCheckOp(getDomain(reservation), UserUtils.getInstance().getLoggedUser().getLogin(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
 		if(bool) cancelCheckPreauthorization(reservation, connection);
 		Query query = ConexFlowUtils.getConexFlowPreauthorizationPaymentQuery(connection
-				, reservation.getHotelReservation().getId().toString(), reservation.getToken(),reservation.getPenaltyAmount()); 
- 		ConexFlow conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query
+				, reservation.getHotelReservation().getId().toString(), reservation.getToken(), getPenaltyAmount(reservation)); 
+ 		ConexFlowPost.execute(connection,ConexFlowConstant.PREAUTHORIZATION_OP, query
 				, reservation.getId(), getDomain(reservation), true);
+	}
+	
+	private Double getPenaltyAmount(ProjectReservation reservation){
+		Double amount = reservation.getPenaltyAmount();
+		if(amount == null || amount <= 0.01){
+			ReservationUtils reservationUtils = new ReservationUtils(reservation.getDomain());
+			try {
+				amount = reservationUtils.obtainCancellationPenaltyPrice(reservation);
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+		}
+		return amount;
 	}
 
 	

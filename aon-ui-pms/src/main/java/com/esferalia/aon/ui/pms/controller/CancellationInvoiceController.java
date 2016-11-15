@@ -158,8 +158,7 @@ public class CancellationInvoiceController extends BasicController implements IP
 				cancellationInvoiceTo.setPosShift(PosUtils.getUserPosShift());
 	
 				CancellationInvoicing cancellationInvoicing = new CancellationInvoicing();
-				//int count = cancellationInvoicing.invoice(cancellationInvoiceTo, invoiceConexflow(getCheckedReservations()));
-				int count = cancellationInvoicing.invoice(cancellationInvoiceTo, getCheckedReservations());
+				int count = cancellationInvoicing.invoice(cancellationInvoiceTo, invoiceConexflow(getCheckedReservations()));
 	
 				clearCheckedReservations();
 				onSearch(event);
@@ -179,37 +178,39 @@ public class CancellationInvoiceController extends BasicController implements IP
 			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 			for (Integer reservationId : reservations) {
 				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
-				Double amount = reservation.getPenaltyAmount();
-				if(amount == null || amount <= 0.01){
-					ReservationUtils reservationUtils = new ReservationUtils(getDomain(reservation).getId());
-					amount = reservationUtils.obtainCancellationPenaltyPrice(reservation);
-				}
 				String token = reservation.getToken();
-				ConexFlow conexFlow = null;
-				ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
-				ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation),
+				if(token != null){
+					Double amount = reservation.getPenaltyAmount();
+					if(amount == null || amount <= 0.01){
+						ReservationUtils reservationUtils = new ReservationUtils(getDomain(reservation).getId());
+						amount = reservationUtils.obtainCancellationPenaltyPrice(reservation);
+					}
+					ConexFlow conexFlow = null;
+					ConexFlowConnection connection = DBConsults.getConection(getDomain(reservation));
+					ConexFlow cf = DBConsults.getConexFlowLastOperation(getDomain(reservation),
 						AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
-				if(cf == null || Double.parseDouble(cf.getRespuesta().getImporte()) == 0.01
-						|| Double.parseDouble(cf.getRespuesta().getImporte()) < amount)
-					cf = DBConsults.getConexFlowLastOperation(getDomain(reservation),
+					if(cf == null || Double.parseDouble(cf.getRespuesta().getImporte()) == 0.01
+							|| Double.parseDouble(cf.getRespuesta().getImporte()) < amount)
+						cf = DBConsults.getConexFlowLastOperation(getDomain(reservation),
 							AonUtil.getRemoteUser(), reservation.getId(), ConexFlowConstant.PREAUTHORIZATION_OP);
-				if(cf != null && Double.parseDouble(cf.getRespuesta().getImporte()) >= amount){
-					Query confirmPreQ = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection, reservation.getCustomer().getId().toString(),
+					if(cf != null && Double.parseDouble(cf.getRespuesta().getImporte()) >= amount){
+						Query confirmPreQ = ConexFlowUtils.getConexFlowConfirmPreauthorizationQuery(connection, reservation.getCustomer().getId().toString(),
 							token, amount, Double.parseDouble(cf.getRespuesta().getImporte()), cf.getRespuesta().getFecha(),
 							cf.getRespuesta().getAutorizacion(),cf.getRespuesta().getFechaOriginal(), cf.getRespuesta().getOperacion());
-					conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, confirmPreQ, reservation.getId(), getDomain(reservation), false);
-					if(conexFlow.getRespuesta().getResultado().equals("000")){
-						list.add(reservationId);
+						conexFlow = ConexFlowPost.execute(connection,ConexFlowConstant.CONFIRM_PREAUTHORIZATION_OP, confirmPreQ, reservation.getId(), getDomain(reservation), false);
+						if(conexFlow.getRespuesta().getResultado().equals("000")){
+							list.add(reservationId);
+						}
 					}
-				}
-				if(cf == null || (conexFlow != null && !conexFlow.getRespuesta().getResultado().equals("000"))) {
-					Query saleQ = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, amount,
+					if(cf == null || (conexFlow != null && !conexFlow.getRespuesta().getResultado().equals("000"))) {
+						Query saleQ = ConexFlowUtils.getConexFlowCardPaymentQuery(connection, token, amount,
 							reservation.getCustomer().getId().toString(),reservation.getCreditCardCvv());
-					ConexFlow conexFlow2 = ConexFlowPost.execute(connection,ConexFlowConstant.SALE_OP, saleQ, reservation.getId(), getDomain(reservation), false);
-					if(conexFlow2.getRespuesta().getResultado().equals("000"))
-						list.add(reservationId);
-				}
-			}
+						ConexFlow conexFlow2 = ConexFlowPost.execute(connection,ConexFlowConstant.SALE_OP, saleQ, reservation.getId(), getDomain(reservation), false);
+						if(conexFlow2.getRespuesta().getResultado().equals("000"))
+							list.add(reservationId);
+					}
+				} else list.add(reservationId);
+			}	
 			return list;
 		} catch (Exception e) {
 			throw new ManagerBeanException(e.getMessage(),e);

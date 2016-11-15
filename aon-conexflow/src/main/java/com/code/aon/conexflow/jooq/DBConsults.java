@@ -62,7 +62,7 @@ public class DBConsults {
 	public static String getEnterpriseId(Domain domain) {
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 			return  ctx.getDslContext()
 			.select(ENTERPRISE.REGISTRY)
 			.from(ENTERPRISE)
@@ -77,7 +77,7 @@ public class DBConsults {
 		//TODO COGER LA ULTIMA OPERACION CONEXFLOW (POR FECHA) DE PROJECT_ATTACH
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 			Record1<byte[]> data = ctx.getDslContext().select(PROJECT_ATTACH.DATA)
 				.from(PROJECT_ATTACH)
 				.where(PROJECT_ATTACH.PROJECT.eq(project))
@@ -136,7 +136,7 @@ public class DBConsults {
 	public static Boolean getConexFlowLastOperationBool(Domain domain, Integer project, String op){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 			Record1<Integer> data = ctx.getDslContext().select(PROJECT_ATTACH.ID)
 				.from(PROJECT_ATTACH)
 				.where(PROJECT_ATTACH.PROJECT.eq(project))
@@ -154,7 +154,7 @@ public class DBConsults {
 		//TODO COGER LA ULTIMA OPERACION CONEXFLOW (POR FECHA) DE PROJECT_ATTACH
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
 			Record1<Integer> data = ctx.getDslContext().select(PROJECT_ATTACH.ID)
 				.from(PROJECT_ATTACH)
 				.where(PROJECT_ATTACH.PROJECT.eq(project))
@@ -174,7 +174,7 @@ public class DBConsults {
 	public static ConexFlowConnection getConection(Domain domain){
 		AONContext ctx = null;
 		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId());
+			ctx = AONContext.getAONContext(domain.getName(), domain.getId(),"");
 			ApplicationParameter server = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_PARAM);
 			ApplicationParameter serverAck = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_SERVER_ACK_PARAM);
 			ApplicationParameter user = AppParamDAO.fetchOne(ctx, AppParam.PMS_CONEXFLOW_USER);
@@ -361,7 +361,7 @@ public class DBConsults {
 	}
 	
 	public static String getProjectName(Domain domain, String login, Integer projectId){
-		return AON.getProject(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(projectId)).getName();
+		return AON.getProject(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(projectId)).getName();
 	}
 	
 	public static String getHotelCode(AONContext ctx, Integer hotelId){

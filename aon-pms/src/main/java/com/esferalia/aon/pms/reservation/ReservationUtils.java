@@ -1453,10 +1453,10 @@ public class ReservationUtils implements IReservationConstants, Serializable {
 	}
 
 	public double obtainCancellationPenaltyPrice(ProjectReservation reservation) throws ManagerBeanException {
-		int days = (reservation.getPenaltyDays() != null) ? reservation.getPenaltyDays() : obtainCancellationPenaltyDays(reservation, reservation.getStartDate());
-		if (days < 0) {
+		Integer days = (reservation.getPenaltyDays() != null) ? reservation.getPenaltyDays() : obtainCancellationPenaltyDays(reservation, reservation.getStartDate());
+		if (days != null && days < 0) {
 			return reservation.getCancellationPenaltyPrice(reservation.getStartDate(), reservation.getEndDate());
-		} else if (days > 0) {
+		} else if (days != null &&  days > 0) {
 			return reservation.getCancellationPenaltyPrice(reservation.getStartDate(), DateUtils.addDays(reservation.getStartDate(), days-1));
 		} 
 		return 0;
