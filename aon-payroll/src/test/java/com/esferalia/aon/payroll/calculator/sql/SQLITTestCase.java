@@ -1,19 +1,24 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
@@ -32,6 +37,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -42,17 +48,21 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -2023,6 +2033,239 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testPaternityIT() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
+				new HashMap<String,String>(){
+			{
+				put(CGC_BASE_MIN.getName(), "(1000.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
+			}
+		});
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfMonth(getToday()),
+				Collections.emptyMap(),
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"0.00"
+							}, 
+				new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		PaymentConceptRecord maternity = addConcept(aonContext, ContextVariable.MATERNITY.getName());
+		addPayment(aonContext, contract, maternity, "DIAS_PATERNIDAD * 0", "DIAS_PATERNIDAD * BASE_REGULADORA");
+		
+		Date startITDate = getToday() ;
+		addIT(aonContext, contract, LeaveType.PATERNITY, startITDate,
+				null, 100.00);
+
 	
+		Date startDate = add(getFirstDayOfMonth(getToday()),MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+		
+		Assert.assertEquals(0.00, salary.getTotalPayment());
+		Assert.assertEquals(0.00, salary.getTotalLiquid());
+		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00, salary.getCommonBase());
+		
+		
+		startDate = getFirstDayOfMonth(getToday());
+		endDate = getLastDayOfMonth(startDate);
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder(){
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				if ( payment.getName().equals(ContextVariable.MATERNITY.getName()) )
+					Assert.assertTrue(context.containsKey(ContextVariable.PATERNITY_FACTOR.getName()));
+			}
+			
+		});
+		salary = calculator.calculate(ctx);
+
+		int monthDays = get(endDate, Calendar.DATE) ;
+		int workedDays = get(startITDate, Calendar.DATE) -1;
+		Assert.assertEquals(1750.00 * workedDays / monthDays, salary.getTotalPayment());
+		Assert.assertEquals(1750.00 * workedDays / monthDays + (monthDays - workedDays ) * 100.00, salary.getCommonBase(), DELTA);
+	}
+
+	@Test
+	public void testPaternityITI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
+				new HashMap<String,String>(){
+			{
+				put(CGC_BASE_MIN.getName(), "(1000.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
+			}
+		});
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"}, 
+				new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		PaymentConceptRecord maternity = addConcept(aonContext, ContextVariable.MATERNITY.getName());
+		addPayment(aonContext, contract, maternity, "DIAS_PATERNIDAD * 0" , "DIAS_PATERNIDAD * BASE_REGULADORA");
+		
+		Date startITDate = getToday();
+		addIT(aonContext, contract, LeaveType.PATERNITY, startITDate,
+				null, 100.00);
+		addData(aonContext, contract, startITDate,
+				null,ContextVariable.PATERNITY_FACTOR.getName(), "0.5");
+
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()),MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		Assert.assertEquals(1750.00 * 1/2, salary.getTotalPayment());
+		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00 * 0.50 + 1750.00 * 1/2 , salary.getCommonBase());
+		
+		// Cret@ 
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculator = new ContractSalaryCalculator<Salary>();
+
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()))
+				.forEach(s -> {
+
+					// 535 Base de contingencias comunes.
+					List<ContextData> datas = s.getContextData()
+							.get(CGC_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00 * 0.5,
+							Double.parseDouble(datas.get(0).getExpression()));
+
+					// 635 o 634 Base de Accidentes de Trabajo.
+					datas = s.getContextData().get(CGP_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00 * 0.5,
+							Double.parseDouble(datas.get(0).getExpression()));
+
+					datas = s.getContextData()
+							.get(MATERNITY_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					Assert.assertEquals(100.00 * get(endDate, DAY_OF_MONTH) * 0.5,
+							Double.parseDouble(datas.get(0).getExpression()));
+				});
+		;
+
+		// Cret@ 
+		ctx = getContractSalaryCalculatorContext(
+				connection, 
+				getFirstDayOfMonth(startITDate), 
+				getLastDayOfMonth(startITDate), 
+				getLastDayOfMonth(startITDate), 
+				contract);
+		calculator = new ContractSalaryCalculator<Salary>();
+
+		jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId())
+						.and(props.getStartDateProperty().eq(getFirstDayOfMonth(startITDate)))
+						)
+				.forEach(s -> {
+					Date start  =getFirstDayOfMonth(startITDate);
+					Date end  =getLastDayOfMonth(startITDate);
+					int monthDays = get(end, DAY_OF_MONTH);
+					int workDays = get(startITDate, DAY_OF_MONTH)-1;
+					int itDays = monthDays - workDays;
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = s.getContextData()
+							.get(CGC_BASE.getName());
+					Assert.assertEquals(2, datas.size());
+					
+					Assert.assertEquals(start, datas.get(0).getStartDate());
+					Assert.assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00 * workDays / monthDays,
+							Double.parseDouble(datas.get(0).getExpression()));
+
+					Assert.assertEquals(startITDate, datas.get(1).getStartDate());
+					Assert.assertEquals(end, datas.get(1).getEndDate());
+					Assert.assertEquals(1750.00 * itDays / monthDays * 0.5,
+							Double.parseDouble(datas.get(1).getExpression()));
+					
+
+					// 601 o 611 Base de Accidentes de Trabajo.
+					datas = s.getContextData().get(CGP_BASE.getName());
+					Assert.assertEquals(2, datas.size());
+					Assert.assertEquals(2, datas.size());
+					
+					Assert.assertEquals(start, datas.get(0).getStartDate());
+					Assert.assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
+					Assert.assertEquals(1750.00 * workDays / monthDays,
+							Double.parseDouble(datas.get(0).getExpression()));
+
+					Assert.assertEquals(startITDate, datas.get(1).getStartDate());
+					Assert.assertEquals(end, datas.get(1).getEndDate());
+					Assert.assertEquals(1750.00 * itDays / monthDays * 0.5,
+							Double.parseDouble(datas.get(1).getExpression()));
+
+					datas = s.getContextData()
+							.get(MATERNITY_BASE.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(startITDate, datas.get(0).getStartDate());
+					Assert.assertEquals(end, datas.get(0).getEndDate());
+					Assert.assertEquals(100.00 * itDays * 0.5,
+							Double.parseDouble(datas.get(0).getExpression()));
+				});
+		;
+	}
+
 	
 }
