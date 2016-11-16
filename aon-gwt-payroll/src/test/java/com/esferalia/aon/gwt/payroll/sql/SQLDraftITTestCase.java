@@ -29,9 +29,11 @@ import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLITTestCase;
@@ -121,7 +123,14 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 		ISQLContractSalaryCalculatorContext ctx = EmployeesServiceHelper.getSalaryCalculatorContext(connection,
 				draft, null);
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
-
+		calculator.setListener(new ContractSalaryCalculator.Listener(){
+			@Override
+			public void onCheckError(IContractPayment payment, String message) {
+				Assert.fail(message);
+				super.onCheckError(payment, message);
+			}
+			
+		});
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 
@@ -131,7 +140,7 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 		// Cret@ 
 		ctx = EmployeesServiceHelper.getSalaryCalculatorContext(connection,
 				draft, null);
-		calculator = new ContractSalaryCalculator<Salary>();
+		calculator = new ContractSalaryCalculator.ContractSalaryCalculator4Dummies<Salary>();
 
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
 		calculator.setSalaryBuilder(jooqSalaryBuilder);

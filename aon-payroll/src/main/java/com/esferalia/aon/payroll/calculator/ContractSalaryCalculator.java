@@ -1089,7 +1089,13 @@ public class ContractSalaryCalculator<T extends ISalary> implements ISalaryCalcu
 
 		String name = contractPayment.getName();
 
-		List<Period> leavePeriods = expressionContext.getPeriods(LEAVE_DAYS);
+		List<Period> leavePeriods = new ArrayList<Period>(); 
+		
+		for ( Period p : expressionContext.getPeriods(LEAVE_DAYS))
+			if ( expressionContext.getVariable(WORKED_DAYS, p.getStart(), p.getEnd()) == null)
+				leavePeriods.add(p);
+		
+		
 
 		try {
 			List<ITimedResult<Double>> results = expressionContext.eval(contractPayment.getExpression(), paymentStart,
