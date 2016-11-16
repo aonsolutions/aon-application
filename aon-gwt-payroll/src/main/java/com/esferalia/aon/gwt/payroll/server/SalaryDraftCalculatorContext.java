@@ -37,7 +37,6 @@ import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContractLeaveLoader.Leave;
-import com.esferalia.aon.payroll.calculator.DelegateContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.DelegateSQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
 import com.esferalia.aon.payroll.calculator.HierarchyIterator;
@@ -45,8 +44,9 @@ import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.NextHook;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -56,18 +56,15 @@ import com.esferalia.aon.salary.expression.DeferredExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.DeferredExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
-import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
-import com.esferalia.aon.salary.expression.LazyExpressionVariable;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorContext>
 		extends DelegateSQLContractSalaryCalculatorContext<T> {
@@ -329,11 +326,25 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 
 	@Override
 	public boolean next() throws SQLException, ExpressionException {
-		return ctx.next(ctx -> {
-			loadDraftContext(ctx);
-			loadDraftLeaves(ctx);
-		});
 		
+//		return ctx.next(ctx -> {
+//			loadDraftContext(ctx);
+//			loadDraftLeaves(ctx);
+//		});
+		
+		return ctx.next( new NextHook() {
+			
+			@Override
+			public void beforeLoadLeaves(ExpressionContext ctx) throws ExpressionException {
+				loadLeaveFactors(ctx);
+			}
+			
+			@Override
+			public void beforeLoadDaysContextVariables(ExpressionContext ctx) throws ExpressionException {
+				loadDraftContext(ctx);
+				loadDraftLeaves(ctx);
+			}
+		});
 	}
 	
 	@Override
@@ -409,6 +420,31 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		}
 	}
 
+	private void loadLeaveFactors(ExpressionContext exprCtx)
+			throws ExpressionException {
+
+		Date ctxStartDate = resetTime(ctx.getStartDate());
+		Date ctxEndDate = resetTime(ctx.getEndDate());
+
+		List<Variable> draftData = draft.getDraftContext();
+		draftData.stream()
+		.filter(v-> v.getName().equals(ContextVariable.PATERNITY_FACTOR.getName() ) 
+				|| v.getName().equals(ContextVariable.MATERNITY_FACTOR.getName())
+				)
+		.forEach(v -> {
+			Date varStartDate = resetTime(v.getStartDate());
+			Date varEndDate = resetTime(v.getEndDate());
+			Date startDate = Period.max(ctxStartDate, varStartDate);
+			Date endDate = Period.min(ctxEndDate, varEndDate);
+			try {
+				addVariable(v, startDate, endDate, exprCtx);
+			} catch (ExpressionException e) {
+				// TODO Auto-generated catch block
+			}
+		});
+		
+	}
+
 	private void loadContractLeave(Integer id, Date start, Date end, long days,
 			LeaveType type, ITDataPerson dataPerson, ExpressionContext exprCtx)
 			throws ExpressionException {
@@ -467,6 +503,8 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		return new DraftHierarchyBonus(getDraftBonuses().iterator(), 
 				super.getContractBonus().iterator());
 	}
+	
+	
 
 	protected SalaryDraft getDraft() {
 		return draft;
@@ -642,6 +680,8 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 					return true;
 		return false;
 	}
+	
+	
 
 	// ------------------------------------------------------------------------
 

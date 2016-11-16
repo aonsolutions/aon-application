@@ -397,6 +397,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	};
 
 	public static interface NextHook {
+		default void beforeLoadLeaves(ExpressionContext ctx) throws ExpressionException{};
 		void beforeLoadDaysContextVariables(ExpressionContext ctx) throws ExpressionException;
 	}
 
@@ -3297,6 +3298,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		loadExpression(this.contractExpressionContext, REDEFINE, "def(x,v){ SELF.redefined(x,v)};", this.startDate,
 				this.getEnd());
 
+		hook.beforeLoadLeaves(contractExpressionContext);
+
 		loadContractLeave(this.contractExpressionContext);
 		loadContractData(this.contractExpressionContext);
 		loadPersonData(this.contractExpressionContext);
@@ -3847,6 +3850,31 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	}
 
+	protected void loadLeaveFactor(ResultSet rs, ExpressionContext ctx)
+			throws SQLException{
+		
+		String name = rs.getString(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.NAME);
+		if ( name == null )
+			return;
+		
+		String expression = rs.getString(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.EXPRESSION); 
+		
+		ExpressionImpl expr = new ExpressionImpl();
+		expr.setName(name);
+		expr.setExpression(expression);
+		expr.setScope(ExpressionScope.CONTRACT);
+		Date dataStart = rs.getDate(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.START_DATE);
+		Date dataEnd = rs.getDate(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.END_DATE);
+		Date start = Period.max(dataStart, startDate);
+		Date end = Period.min(dataEnd, endDate);
+
+		try {
+			ctx.addExpression(expr, start, end);
+		} catch (ExpressionException e) {
+			e.printStackTrace();
+		} 
+	}
+
 	private void loadPersonData(ExpressionContext ctx) throws SQLException {
 
 		ctx.setVariable(MALE, Gender.MALE.ordinal(), contractStartDate, contractEndDate);
@@ -3882,30 +3910,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 	
-	private void loadLeaveFactor(ResultSet rs, ExpressionContext ctx)
-			throws SQLException{
-		
-		String name = rs.getString(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.NAME);
-		if ( name == null )
-			return;
-		
-		String expression = rs.getString(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.EXPRESSION); 
-		
-		ExpressionImpl expr = new ExpressionImpl();
-		expr.setName(name);
-		expr.setExpression(expression);
-		expr.setScope(ExpressionScope.CONTRACT);
-		Date dataStart = rs.getDate(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.START_DATE);
-		Date dataEnd = rs.getDate(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.END_DATE);
-		Date start = Period.max(dataStart, startDate);
-		Date end = Period.min(dataEnd, endDate);
-
-		try {
-			ctx.addExpression(expr, start, end);
-		} catch (ExpressionException e) {
-			e.printStackTrace();
-		} 
-	}
 
 	private void initSystemCosts() throws SQLException {
 		ResultSet rs = null;
