@@ -199,6 +199,12 @@ public class OfficeImpl implements IOffice {
 				AonHubDAO.insertNotificationInfo(ctx, data, appParam));	
 	}
 	
+	@Override
+	public void OLDTONEW(AONContext ctx, Integer domainId) {
+		ctx.getDslContext().transaction(configuration -> 
+				AonHubDAO.OLD2NEW(ctx, domainId));
+	}
+	
 
 	
 }

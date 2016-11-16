@@ -1054,6 +1054,8 @@ public class AON {
 	// ****************************** GWT-OFFICE **
 	// ********************************************
 
+	// TODO
+	
 	public static User getUser(Integer domainId, String domainName,
 			String userName, Integer userId) {
 		AONContext ctx = null;
@@ -1289,6 +1291,17 @@ public class AON {
 		}
 	}
 	
+	public static Registry getRegistryFD(String domainName, Integer domainId, String login, String name){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRegistry(ctx, domainId, name);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static Registry getRegistry(String domainName, Integer domainId, String login, Integer id){
 		AONContext ctx = null;
 		try {
@@ -1393,7 +1406,9 @@ public class AON {
 			if(ctx != null) ctx.close();
 		}
 	}
-
+	 // TODO 
+	
+	
 	// ********************************************
 	// ****************************** GROUPWARE **
 	// ********************************************
@@ -2906,5 +2921,15 @@ public class AON {
 		return getFilterRegistryStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
+	
+	
+	public static void OLDTONEW(String domainName, Integer domainId, String login){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getOffice().OLDTONEW(ctx, domainId);
+		} finally {
+			if(ctx != null) ctx.close();
+		}	}
 	
 }

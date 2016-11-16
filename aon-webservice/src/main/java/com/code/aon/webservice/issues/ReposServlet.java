@@ -315,7 +315,7 @@ public class ReposServlet extends HttpServlet{
 							AON.getLastTaskNumber(domain.getName(), domain.getId(),userName) : 0;
 						
 					Registry registry = new Registry();
-					if(!faq) registry = AON.getRegistry(domain.getName(), domain.getId(), userName, json.getString("enterprise"));
+					if(!faq) registry = AON.getRegistryFD(domain.getName(), domain.getId(), userName, json.getString("enterprise"));
 					Task task = new Task()
 						.setDescription(json.getString("title"))
 						.setComments(json.getString("body"))

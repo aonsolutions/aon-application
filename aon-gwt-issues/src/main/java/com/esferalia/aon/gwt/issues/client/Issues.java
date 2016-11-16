@@ -21,6 +21,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -182,6 +183,20 @@ public class Issues implements EntryPoint {
 	
 	private void createAonToolbar(){
 		toolbar.add(new AonToolbar("Tareas") {
+			
+			@Override protected void onTemporalButtonClick() {
+				
+				serv.OLDTONEW(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getLoggedUser(), new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void arg0) {
+						Window.alert("OLDTONEW EJECUTADO CORRECTAMENTE, ACTUALIZA LA PÁGINA!");
+					}
+					
+					@Override public void onFailure(Throwable arg0) {}
+				});
+			}
+
 			
 			@Override
 			protected void onRefreshButtonClick() {

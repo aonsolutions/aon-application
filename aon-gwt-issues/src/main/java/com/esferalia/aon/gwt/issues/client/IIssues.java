@@ -11,4 +11,5 @@ public interface IIssues extends RemoteService{
 	
 	public AonData getAonData(String domainName, Integer domainId);
 
+	public void OLDTONEW(String domainName, Integer domainId, String login);
 }

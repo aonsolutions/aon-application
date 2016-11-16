@@ -8,15 +8,23 @@ import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
+import static com.esferalia.aon.jooq.tables.Task.TASK;
+import static com.esferalia.aon.jooq.tables.TaskComment.TASK_COMMENT;
+import static com.esferalia.aon.jooq.tables.TaskEvent.TASK_EVENT;
+import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
+import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Cursor;
@@ -29,8 +37,12 @@ import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.jooq.tables.records.AppParamRecord;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
+import com.esferalia.aon.jooq.tables.records.NoticeTagRecord;
+import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
+import com.esferalia.aon.jooq.tables.records.TaskHolderRecord;
+import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
@@ -42,6 +54,9 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.task.TagColor;
+import com.esferalia.aon.occam.api.model.task.TaskSource;
+import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
@@ -49,7 +64,196 @@ import com.esferalia.aon.occam.api.model.type.NoticeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
 public class AonHubDAO {
+	// TODO
+	
+	public static void OLD2NEW(AONContext ctx, Integer domainId){
+		LinkedList<NoticeRecord> list = getNotices(ctx, domainId);
+		updateTaskNumber(ctx, domainId, list.size());
+		for(Integer i = 0; i < list.size(); i++){
+			NoticeRecord n = list.get(i);
+			TaskRecord task = new TaskRecord();
+			task.setDescription(n.getSubject());
+			task.setCreationDate(n.getDate());
+			task.setStartDate(n.getDate());
+			task.setCreationUser(getUserName(ctx, n.getSender()));
+			task.setDomain(domainId);
+			task.setNumber(i + 1);
+			task.setRegistry(getEnterprise(ctx, domainId, n.getCompany()).getId());
+			task.setTaskHolder(getTaskHolder(ctx, n.getRecipient()).getRegistry());
+			Integer taskId = insertTask(ctx, task);
+			getNoticeTags(ctx, n.getId()).forEach(t -> { // ORDENADOS POR FECHA (DE VIEJO A NUEVO)
+				TagRecord tag = getTag(ctx, t.getTag());
+				if(tag.getType().equals(TagType.OFFICE_NOTICE.value())){
+					TagRecord tag2 = getTag(ctx, tag.getName(), domainId, TagType.TASK_LABEL);
+					if(tag2.getId() != null){
+						insertTaskTag(ctx, domainId, taskId, tag2.getId());
+					} else {
+						Random rnd = new Random();
+						Integer tagId = insertTag(ctx, domainId, tag.getName(), TagColor.values()[rnd.nextInt(9)], TagType.TASK_LABEL);
+						insertTaskTag(ctx, domainId, taskId, tagId);
+					}
+				} else if(tag.getType().equals(TagType.OFFICE_TYPE.value())){
+					TagRecord tag2 = getTag(ctx, tag.getName(), domainId, TagType.TASK_TYPE);
+					if(tag2.getId() != null){
+						insertTaskTag(ctx, domainId, taskId, tag2.getId());
+					} else {
+						Random rnd = new Random();
+						Integer tagId = insertTag(ctx, domainId, tag.getName(), TagColor.values()[rnd.nextInt(9)], TagType.TASK_TYPE);
+						insertTaskTag(ctx, domainId, taskId, tagId);
+					}
+				} else if(tag.getType().equals(TagType.OFFICE_STATUS.value())){
+					insertTaskEvent(ctx, domainId, taskId,tag.getName(), t);
+					if(t.getEndDate() == null)
+						updateTaskStatus(ctx, taskId, tag.getName(),t);
+				}
+			});
+		
+			LinkedList<NoticeRecord> commentList = getNoticeComments(ctx, n.getId());
+			for(Integer j = 0 ; j < commentList.size(); j++){
+				NoticeRecord c = commentList.get(j);
+				if(j == 0){
+					updateTaskComment(ctx, task.getId(), c);
+				} else {
+					insertTaskComment(ctx, domainId, c, taskId);
+				}
+			}
+		}
+	}
+	
+	public static LinkedList<NoticeRecord> getNotices(AONContext ctx, Integer domainId){
+		 return ctx.getDslContext()
+				 .select()
+				 .from(NOTICE)
+				 .where(NOTICE.NOTICE_.isNull()).and(NOTICE.DOMAIN.eq(domainId))
+				 .fetchInto(NOTICE).stream().collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<NoticeRecord> getNoticeComments(AONContext ctx, Integer id){
+		 return ctx.getDslContext()
+				 .select()
+				 .from(NOTICE)
+				 .where(NOTICE.NOTICE_.eq(id))
+				 .fetchInto(NOTICE).stream().collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Stream<NoticeTagRecord> getNoticeTags(AONContext ctx, Integer id){
+		 return ctx.getDslContext()
+				 .select()
+				 .from(NOTICE_TAG)
+				 .where(NOTICE_TAG.NOTICE.eq(id))
+				 .fetchInto(NOTICE_TAG).stream();
+	}
+	
+	public static TagRecord getTag(AONContext ctx, Integer id){
+		return ctx.getDslContext()
+				.select()
+				.from(TAG)
+				.where(TAG.ID.eq(id))
+				.fetchInto(TAG).stream().findFirst().orElse(new TagRecord());
+	}
+	
+	public static TagRecord getTag(AONContext ctx, String name, Integer domainId, TagType tagType){
+		return ctx.getDslContext()
+				.select()
+				.from(TAG)
+				.where(TAG.NAME.eq(name))
+					.and(TAG.TYPE.eq(tagType.value()))
+					.and(TAG.DOMAIN.eq(domainId))
+				.fetchInto(TAG).stream().findFirst().orElse(new TagRecord());
+	}
+	
+	public static String getUserName(AONContext ctx, Integer id){
+		return ctx.getDslContext().select(USER.LOGIN)
+				.from(USER)
+				.where(USER.ID.eq(id))
+				.fetch().get(0).getValue(USER.LOGIN);
+	}
+	
+	public static RegistryRecord getEnterprise(AONContext ctx, Integer domainId, String company){
+		return ctx.getDslContext().select()
+				.from(REGISTRY)
+				.where(REGISTRY.NAME.eq(company))
+				.and(REGISTRY.DOMAIN.eq(domainId))
+				.fetchInto(REGISTRY).stream().findFirst().orElse(new RegistryRecord());
+	}
+	
+	public static void updateTaskNumber(AONContext ctx, Integer domainId, Integer number) {
+		ctx.getDslContext().update(TASK).set(TASK.NUMBER, TASK.NUMBER.add(number))
+		.where(TASK.DOMAIN.eq(domainId)).execute();
+	}
+	
+	public static void updateTaskStatus(AONContext ctx, Integer taskId, String status, NoticeTagRecord ntr) {
+		if(status.equals("OPEN") || status.equals("REOPEN")){
+			ctx.getDslContext().update(TASK).set(TASK.STATUS, TaskStatus.PENDING.value())
+			.set(TASK.MODIFICATION_DATE, ntr.getStartDate())
+			.set(TASK.MODIFICATION_USER, getUserName(ctx, ntr.getUser()))
+			.where(TASK.ID.eq(taskId)).execute();			
+		}
+		else {
+			ctx.getDslContext().update(TASK).set(TASK.STATUS, TaskStatus.FINISHED.value())
+			.set(TASK.END_DATE, ntr.getStartDate())
+			.set(TASK.MODIFICATION_DATE, ntr.getStartDate())
+			.set(TASK.MODIFICATION_USER, getUserName(ctx, ntr.getUser()))
+			.where(TASK.ID.eq(taskId)).execute();
+		}
+	}
+	
+	public static void updateTaskComment(AONContext ctx, Integer taskId, NoticeRecord c){
+		ctx.getDslContext().update(TASK).set(TASK.COMMENTS, c.getSubject())
+			.set(TASK.MODIFICATION_DATE, c.getDate())
+			.set(TASK.MODIFICATION_USER, getUserName(ctx, c.getSender())).execute();
+	}
+	
+	public static Integer insertTask(AONContext ctx, TaskRecord task){
+		return ctx.getDslContext().insertInto(TASK, TASK.DESCRIPTION, TASK.CREATION_DATE, TASK.CREATION_USER, TASK.START_DATE, TASK.DOMAIN, 
+						TASK.NUMBER, TASK.REGISTRY, TASK.TASK_HOLDER, TASK.DUE_DATE, TASK.PERCENT, TASK.PRIORITY, TASK.SOURCE,
+						TASK.MODIFICATION_DATE, TASK.MODIFICATION_USER, TASK.STATUS)
+				.values(task.getDescription(), task.getCreationDate(), task.getCreationUser(), task.getStartDate(), task.getDomain(), task.getNumber(),
+						task.getRegistry(), task.getTaskHolder(), new Timestamp(Calendar.getInstance().getTime().getTime()), (byte) 0, (byte) 0,
+						TaskSource.MANUAL.value(), task.getCreationDate(), task.getCreationUser(), TaskStatus.PENDING.value())
+				.returning(TASK.ID).fetchOne().getId();
+	}
+	
+	public static void insertTaskEvent(AONContext ctx,Integer domainId, Integer taskId,  String tagName, NoticeTagRecord ntr){
+		String event = "";
+		if(!tagName.equals("OPEN")) {
+			if(tagName.equals("REOPEN")) event = "reopened";
+			else event = "closed";
+			ctx.getDslContext().insertInto(TASK_EVENT,TASK_EVENT.CREATION_DATE, TASK_EVENT.CREATION_USER, TASK_EVENT.DOMAIN
+						,TASK_EVENT.EVENT, TASK_EVENT.MODIFICATION_DATE, TASK_EVENT.MODIFICATION_USER, TASK_EVENT.TASK)
+						.values(ntr.getStartDate(), getUserName(ctx, ntr.getUser()), domainId, 
+							event, ntr.getStartDate(), getUserName(ctx, ntr.getUser()), taskId)
+						.execute();
+		}
+	}
+	
+	public static Integer insertTaskTag(AONContext ctx, Integer domainId, Integer taskId, Integer tagId){
+		return ctx.getDslContext().insertInto(TASK_TAG, TASK_TAG.DOMAIN, TASK_TAG.TAG, TASK_TAG.TASK)
+						.values(domainId, tagId, taskId)
+						.returning(TAG.ID).fetchOne().getId();
+	}
 
+	public static Integer insertTag(AONContext ctx, Integer domainId, String name, TagColor color, TagType type){
+		return ctx.getDslContext().insertInto(TAG,TAG.COLOR, TAG.DOMAIN, TAG.NAME, TAG.TYPE)
+						.values(color.getColor(), domainId, name, type.value())
+						.returning(TAG.ID).fetchOne().getId();
+	}
+	
+	public static void insertTaskComment(AONContext ctx, Integer domainId, NoticeRecord c, Integer taskId){
+		ctx.getDslContext().insertInto(TASK_COMMENT, TASK_COMMENT.COMMENT, TASK_COMMENT.CREATION_DATE, TASK_COMMENT.CREATION_USER,
+				TASK_COMMENT.DOMAIN, TASK_COMMENT.MODIFICATION_DATE, TASK_COMMENT.MODIFICATION_USER, TASK_COMMENT.TASK)
+					.values(c.getSubject(), c.getDate(), getUserName(ctx, c.getSender()), domainId, c.getDate(), getUserName(ctx, c.getSender()), taskId)
+					.execute();
+	}
+	
+	
+	public static TaskHolderRecord getTaskHolder(AONContext ctx, Integer userId) {
+		return ctx.getDslContext().select(TASK_HOLDER.REGISTRY).from(TASK_HOLDER).where(TASK_HOLDER.USER_ID.eq(userId)).fetchInto(TASK_HOLDER)
+				.stream().findFirst().orElse(new TaskHolderRecord());
+	}
+	
+	// TODO
+	
 	private static SimpleDateFormat sdf = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 

@@ -9,4 +9,5 @@ public interface IIssuesAsync {
 
 	void getAonData(String domainName, Integer domainId, AsyncCallback<AonData> callback);
 	
+	void OLDTONEW(String domainName, Integer domainId, String login, AsyncCallback<Void> callback);
 }

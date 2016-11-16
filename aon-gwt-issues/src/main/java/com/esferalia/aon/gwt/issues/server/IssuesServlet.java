@@ -47,4 +47,8 @@ public class IssuesServlet extends AonRemoteServiceServlet implements IIssues{
 	    }       
         return sb.toString();
 	}
+	
+	public void OLDTONEW(String domainName, Integer domainId, String login){
+		AON.OLDTONEW(domainName, domainId, login);
+	}
 }

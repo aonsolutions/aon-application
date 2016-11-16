@@ -103,6 +103,12 @@ public class RegistryDAO {
 			.stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
 	}
 	
+	public static Registry getRegistry(AONContext ctx, Integer domainId, String name){
+		return ctx.getDslContext().select().from(REGISTRY).where(REGISTRY.NAME.eq(name))
+				.and(REGISTRY.DOMAIN.eq(domainId)).fetchInto(REGISTRY)
+			.stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
+	}
+	
 	public static Registry getRegistry(AONContext ctx, Integer id){
 		return ctx.getDslContext().select().from(REGISTRY).where(REGISTRY.ID.eq(id)).fetchInto(REGISTRY)
 			.stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
