@@ -39,6 +39,7 @@ import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.file.seres.util.writer.udapa.UdapaDeliveryWriter;
 import com.esferalia.aon.ingenet.IngenetDeliveryManager;
+import com.esferalia.aon.ingenet.SourceSalesNotFoundException;
 
 public class UdapaDeliveryHandler implements Serializable {
 	
@@ -149,35 +150,49 @@ public class UdapaDeliveryHandler implements Serializable {
 	}
 	
 	public void confirmIngenetDeliveries(ActionEvent event) {
-		
+
 		LogPanelController logPanel = LogPanelController.getInstance();
 		logPanel.reset();
-		
+
 		try {
 			// copy delivery to AON
-			Warehouse warehouse = getWarehouse() != null && getWarehouse().getId() != null ? getWarehouse()
-					: ((Warehouse) getWarehouses().get(0).getValue());  
-			
+			Warehouse warehouse = getWarehouse() != null
+					&& getWarehouse().getId() != null ? getWarehouse()
+					: ((Warehouse) getWarehouses().get(0).getValue());
+
 			getLogPanel().info("Inicio del proceso de importacion");
-			
-			for(int idx=0; idx<checks.size();idx++){
+
+			for (int idx = 0; idx < checks.size(); idx++) {
 				Integer ingenetDeliveryId = checks.get(idx);
-				com.esferalia.aon.occam.api.model.warehouse.Delivery aonDelivery = IngenetDeliveryManager.getInstance().createAonDelivery(
-						AonUtil.getDomainName(), 
-						AonUtil.getRemoteUser(),
-						DomainManager.getCurrentDomain(),
-						ingenetDeliveryId,
-						warehouse.getWorkPlace().getId(),
-						warehouse.getId());
-				if(aonDelivery==null || aonDelivery.getId()==null){
-					throw new AbortProcessingException("No se ha podido crear el albaran " + ingenetDeliveryId);
+				try {
+					com.esferalia.aon.occam.api.model.warehouse.Delivery aonDelivery = IngenetDeliveryManager
+							.getInstance().createAonDelivery(
+									AonUtil.getDomainName(),
+									AonUtil.getRemoteUser(),
+									DomainManager.getCurrentDomain(),
+									ingenetDeliveryId,
+									warehouse.getWorkPlace().getId(),
+									warehouse.getId());
+					if (aonDelivery == null || aonDelivery.getId() == null) {
+						throw new AbortProcessingException(
+								"No se ha podido crear el albaran "
+										+ ingenetDeliveryId);
+					}
+					getLogPanel()
+							.info("Albaran "
+									+ (aonDelivery.getSeries() != null ? aonDelivery
+											.getSeries() : "") + "/"
+									+ aonDelivery.getNumber()
+									+ " creado correctamente");
+				} catch (SourceSalesNotFoundException e) {
+					getLogPanel().error(e.getMessage());
 				}
-				getLogPanel().info("Albaran " + (aonDelivery.getSeries()!=null?aonDelivery.getSeries():"") + "/" + aonDelivery.getNumber() + " creado correctamente");
 			}
-			
-			getLogPanel().info("Albaranes importados correctamente desde INGENET");
+
+			getLogPanel().info(
+					"Proceso de importacion desde INGENET finalizado.");
 		} catch (Exception e) {
-			getLogPanel().info("NO SE HA PODIDO PROCESAR EL TRASPASO");
+			getLogPanel().info("NO SE PUEDE CONTINUAR CON EL TRASPASO");
 			getLogPanel().error(e.getMessage());
 		}
 		getLogPanel().info("Proceso finalizado.");
@@ -189,40 +204,48 @@ public class UdapaDeliveryHandler implements Serializable {
 		OutputStream out = null;
 		try {
 			Delivery delivery = (Delivery) controller.getTo();
-			CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
-			String customerEdiCode = ediSupport.getEdiCodes(delivery.getCustomer().getRegistry(), delivery.getRegistryAddress()).get(CustomerEdiSupportController.ALBARANES);
-			CompanyController company = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			CustomerEdiSupportController ediSupport = (CustomerEdiSupportController) AonUtil
+					.getRegisteredBean(ICustomerConstants.CUSTOMER_EDI_SUPPORT_CONTROLLER_NAME);
+			String customerEdiCode = ediSupport.getEdiCodes(
+					delivery.getCustomer().getRegistry(),
+					delivery.getRegistryAddress()).get(
+					CustomerEdiSupportController.ALBARANES);
+			CompanyController company = (CompanyController) AonUtil
+					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 			String companyEdiCode = company.getEdiCompanyCode();
-			
+
 			// writer file
 			UdapaDeliveryWriter writer = new UdapaDeliveryWriter();
-			output = writer.createFile(delivery, companyEdiCode, customerEdiCode);
-		
+			output = writer.createFile(delivery, companyEdiCode,
+					customerEdiCode);
+
 			// download file
-        	String name = "albaran";
-    		String number = delivery.getReferenceCode();
-    		byte[] data = output.getContent();
-        	int size = data.length;
+			String name = "albaran";
+			String number = delivery.getReferenceCode();
+			byte[] data = output.getContent();
+			int size = data.length;
 			response = DownloadUtil.getResponse();
-    		out = DownloadUtil.initDownload(response, name+"."+number, null, size);
-        	InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
-        	IOUtils.copy( fileIn, out );
-        	IOUtils.closeQuietly(fileIn);
-        } catch (IOException e) {
-        	LOGGER.error(e.getMessage());
-        	throw new AbortProcessingException(e.getMessage(), e);
-        } catch (Throwable e) {
+			out = DownloadUtil.initDownload(response, name + "." + number,
+					null, size);
+			InputStream fileIn = new BufferedInputStream(
+					new ByteArrayInputStream(data));
+			IOUtils.copy(fileIn, out);
+			IOUtils.closeQuietly(fileIn);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (Throwable e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
 			DownloadUtil.finishDownload(response, out);
 		}
 	}
-	
-	private LogPanelController getLogPanel(){
+
+	private LogPanelController getLogPanel() {
 		return LogPanelController.getInstance();
 	}
-	
+
 	public void onLogPanelFinish(ActionEvent event) {
 		getLogPanel().finish();
 		controller.onSearch(event);

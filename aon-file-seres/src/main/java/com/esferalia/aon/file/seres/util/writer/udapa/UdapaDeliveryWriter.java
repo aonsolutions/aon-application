@@ -8,11 +8,24 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.customer.Customer;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.product.Item;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryItem;
+import com.code.aon.registry.enumeration.RegistryItemStatus;
+import com.code.aon.registry.enumeration.RegistryMode;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.seres.udapa.UdapaDelivery;
 import com.esferalia.aon.file.seres.udapa.delivery.data.SEH1B;
 import com.esferalia.aon.file.seres.udapa.delivery.data.SEH1C;
@@ -22,14 +35,19 @@ import com.esferalia.aon.file.seres.udapa.delivery.data.SEH1L;
 import com.esferalia.aon.file.seres.udapa.delivery.data.SEH1P;
 
 public class UdapaDeliveryWriter {
-	
+
+	private final static Logger LOGGER = LoggerFactory
+			.getLogger(UdapaDeliveryWriter.class);
+
 	public static final String CHARSET_ENCODING = "ISO-8859-1";
-	
+
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-	
-	
-	public FileOutput createFile(Delivery delivery, String companyEdiCode, String customerEdiCode) throws FileNotFoundException, UnsupportedEncodingException {
-		SEH1C seh1c = createSEH1CRecord( delivery, companyEdiCode, customerEdiCode );
+
+	public FileOutput createFile(Delivery delivery, String companyEdiCode,
+			String customerEdiCode) throws FileNotFoundException,
+			UnsupportedEncodingException {
+		SEH1C seh1c = createSEH1CRecord(delivery, companyEdiCode,
+				customerEdiCode);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
 		FileFiller filler = new UdapaDelivery(seh1c, writer);
@@ -38,17 +56,20 @@ public class UdapaDeliveryWriter {
 		output.setContent(outputStream.toString().getBytes(CHARSET_ENCODING));
 		return output;
 	}
-	
-	private SEH1C createSEH1CRecord( Delivery delivery, String companyEdiCode, String customerEdiCode ) {
+
+	private SEH1C createSEH1CRecord(Delivery delivery, String companyEdiCode,
+			String customerEdiCode) {
 		// TODO Auto-generated method stub
 		SEH1C seh1c = new SEH1C();
-		
-		seh1c.setTipoAvisoDeExpedicion_351_35E_(SEH1C.V1001T.AVISO_DE_EXPEDICIO_351.getValue());
+
+		seh1c.setTipoAvisoDeExpedicion_351_35E_(SEH1C.V1001T.AVISO_DE_EXPEDICIO_351
+				.getValue());
 		seh1c.setNumeroAvisoDeExpedicion(delivery.getReferenceCode());
 		seh1c.setCodigoEmisor_MS_(companyEdiCode);
 		seh1c.setCodigoReceptor_MR_(customerEdiCode);
 		seh1c.setFuncionDelMensaje(SEH1C.V1225F.ORIGINA_9.getValue());
-		seh1c.setFechaDelDocumento_137__102_203_(dateFormat.format(delivery.getDate()));
+		seh1c.setFechaDelDocumento_137__102_203_(dateFormat.format(delivery
+				.getDate()));
 		seh1c.setFechaEsperadaDeEntrega_17__102_203_(null);
 		seh1c.setCalificadorFechaEntrega_2_11_PER_358_359__(null);
 		seh1c.setFechaDeServicio1(null);
@@ -73,13 +94,14 @@ public class UdapaDeliveryWriter {
 		seh1c.setCodigoTransportista(delivery.getDriverDocument());
 		seh1c.setNombreTransportista(delivery.getDriver());
 		seh1c.setMatriculaDelVehiculo(delivery.getNumberPlate());
-		
+
 		seh1c.seh1dList = createSEH1DList(delivery);
 		seh1c.seh1pList = createSEH1PList(delivery);
-		seh1c.seh1lList = createSEH1LList(delivery, companyEdiCode, customerEdiCode);
+		seh1c.seh1lList = createSEH1LList(delivery, companyEdiCode,
+				customerEdiCode);
 		seh1c.seh1gList = createSEH1GList(delivery);
 		seh1c.seh1bList = createSEH1BList(delivery);
-		
+
 		return seh1c;
 	}
 
@@ -95,11 +117,14 @@ public class UdapaDeliveryWriter {
 		return list;
 	}
 
-	private List<SEH1L> createSEH1LList(Delivery delivery, String companyEdiCode, String customerEdiCode) {
+	private List<SEH1L> createSEH1LList(Delivery delivery,
+			String companyEdiCode, String customerEdiCode) {
 		List<SEH1L> list = new ArrayList<>();
-		delivery.getDetailList().forEach(to -> {
-			list.add( createSEH1LRecord((DeliveryDetail)to, companyEdiCode, customerEdiCode) );
-		});
+		delivery.getDetailList().forEach(
+				to -> {
+					list.add(createSEH1LRecord((DeliveryDetail) to,
+							companyEdiCode, customerEdiCode));
+				});
 		return list;
 	}
 
@@ -115,7 +140,6 @@ public class UdapaDeliveryWriter {
 		return list;
 	}
 
-	
 	private SEH1D createSEH1DRecord(DeliveryDetail detail) {
 		// TODO Auto-generated method stub
 		SEH1D record = new SEH1D();
@@ -201,9 +225,13 @@ public class UdapaDeliveryWriter {
 		return record;
 	}
 
-	private SEH1L createSEH1LRecord(DeliveryDetail detail, String companyEdiCode, String customerEdiCode) {
+	private SEH1L createSEH1LRecord(DeliveryDetail detail,
+			String companyEdiCode, String customerEdiCode) {
 		Item item = detail.getItem();
-		String tipoAvisoDeExpedicion = SEH1C.V1001T.AVISO_DE_EXPEDICIO_351.getValue();
+		Customer customer = detail.getDelivery().getCustomer();
+		String productCustomerCode = obtainProductCustomerCode(item, customer);
+		String tipoAvisoDeExpedicion = SEH1C.V1001T.AVISO_DE_EXPEDICIO_351
+				.getValue();
 		SEH1L record = new SEH1L();
 		record.setTipoAvisoDeExpedicion_351_35E_(tipoAvisoDeExpedicion);
 		record.setNumeroAvisoDeExpedicion("");
@@ -215,7 +243,7 @@ public class UdapaDeliveryWriter {
 		record.setCodigoDeArticuloEAN_13ODUN_14(item.getBarcode());
 		record.setDescripcionDelArticulo(item.getProduct().getName());
 		record.setTipoArticuloEAN_CU_DU_(null);
-		record.setCodigoInternoArticuloParaElProveedor_SA_(item.getProduct().getCode());
+		record.setCodigoInternoArticuloParaElProveedor_SA_(productCustomerCode);
 		record.setVariablePromocional_PV_(null);
 		record.setCodigoDUN_14_ADU_(null);
 		record.setCodigoACU(null);
@@ -284,6 +312,32 @@ public class UdapaDeliveryWriter {
 		record.setFechaDeEnvasadoOEmpaquetado(null);
 		return record;
 	}
-	
-	
+
+	private String obtainProductCustomerCode(Item item, Customer customer) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(RegistryItem.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(
+					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_ITEM_ID),
+					item.getId());
+			criteria.addEqualExpression(
+					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_REGISTRY_ID),
+					customer.getId());
+			criteria.addEqualExpression(
+					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_STATUS),
+					RegistryItemStatus.ACTIVE);
+			criteria.addEqualExpression(
+					bean.getFieldName(IEntityAlias.REGISTRY_ITEM_TYPE),
+					RegistryMode.CUSTOMER);
+			criteria.addOrder(bean
+					.getFieldName(IEntityAlias.REGISTRY_ITEM_PRIORITY));
+			List<ITransferObject> list = bean.getList(criteria);
+			if (list != null && !list.isEmpty())
+				return ((RegistryItem) list.get(0)).getCode();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return "";
+	}
+
 }
