@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.issues.client;
+package com.esferalia.aon.gwt.common.client.polymer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -51,7 +51,7 @@ public abstract class AonToolbar extends Composite {
 	protected abstract void onTemporalButtonClick();
 
     public AonToolbar setVisibleTemporalButton(Boolean isVisible){
-    	menuButton.setVisible(isVisible);
+    	temporalButton.setVisible(isVisible);
     	return this;
     }
 
@@ -149,7 +149,7 @@ public abstract class AonToolbar extends Composite {
 	protected abstract void onInfoButtonClick();
 
     public AonToolbar setVisibleInfoButton(Boolean isVisible){
-    	moreOptionButton.setVisible(isVisible);
+    	infoButton.setVisible(isVisible);
     	return this;
     }
 

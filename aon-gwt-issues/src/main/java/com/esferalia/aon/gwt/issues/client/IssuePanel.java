@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -702,7 +703,9 @@ public class IssuePanel extends Composite{
 	
 	@UiHandler("commentButton")
 	void onClickCommentButton(ClickEvent event){
-		String request = "{\"body\":\""+ commentTextArea.getText() +"\"}";
+		String str = checkString(commentTextArea.getText());
+
+		String request = "{\"body\":\""+ str +"\"}";
 		incidence.newComment(issue, request, new AsyncCallback<JsComment>() {
 			
 			@Override public void onSuccess(JsComment result) {
@@ -1239,6 +1242,17 @@ public class IssuePanel extends Composite{
 				parent.sendNotification(issue, NotificationType.MANUAL);
 			}
 		});
+	}
+	
+	private String checkString(String str) {
+		String[] array = str.split("\"");
+		String s = array[0];
+		for(Integer i = 1; i < array.length; i++){
+			s = s + "\\\"" + array[i];
+		}
+		if(str.substring(str.length()-1).equals("\""))
+			s = s + "\\\"";
+		return s;
 	}
 
 }

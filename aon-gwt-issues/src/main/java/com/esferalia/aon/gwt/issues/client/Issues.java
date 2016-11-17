@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
 import com.esferalia.aon.gwt.issues.shared.AonData;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
