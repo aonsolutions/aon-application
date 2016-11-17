@@ -541,19 +541,22 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	private void insertVariables() {
 		for (String name : variables.varsSet() ) {
 			for ( ITimedVariable<?> variable : variables.getVariables(name)){
-				
-				Object value = variable.getValue(variable.getPeriod());
-				String expression = String.valueOf(value);
-	
-				InsertSetStep<SalaryDataRecord> insertData = insertMoreData == null ? dslContext.insertInto(SALARY_DATA)
-						: insertMoreData.newRecord();
-	
-				insertMoreData = insertData.set(SALARY_DATA.DOMAIN, this.domainId)
-						.set(SALARY_DATA.SALARY, this.salaryId)
-						.set(SALARY_DATA.NAME, name)
-						.set(SALARY_DATA.EXPRESSION, expression)
-						.set(SALARY_DATA.START_DATE, toSqlDate(variable.getPeriod().getStart()))
-						.set(SALARY_DATA.END_DATE, toSqlDate(variable.getPeriod().getEnd()));
+				try {
+					Object value = variable.getValue(variable.getPeriod());
+					String expression = String.valueOf(value);
+		
+					InsertSetStep<SalaryDataRecord> insertData = insertMoreData == null ? dslContext.insertInto(SALARY_DATA)
+							: insertMoreData.newRecord();
+		
+					insertMoreData = insertData.set(SALARY_DATA.DOMAIN, this.domainId)
+							.set(SALARY_DATA.SALARY, this.salaryId)
+							.set(SALARY_DATA.NAME, name)
+							.set(SALARY_DATA.EXPRESSION, expression)
+							.set(SALARY_DATA.START_DATE, toSqlDate(variable.getPeriod().getStart()))
+							.set(SALARY_DATA.END_DATE, toSqlDate(variable.getPeriod().getEnd()));
+				} catch ( Throwable t ){
+					//TODO: 
+				}
 			}
 
 		}
