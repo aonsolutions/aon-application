@@ -2938,10 +2938,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						new ExpressionImpl().setName(getDayHours(day).getName()).setScope(ExpressionScope.SYSTEM), null,
 						day.getTime(), day.getTime(), getDayHours(day).getName()));
 
-		return p.daysStream().filter(
-				day -> contractExpressionContext.containsVariable(getDayHours(day), day.getTime(), day.getTime()))
-				.collect(Collectors.summingDouble(day -> contractExpressionContext
-						.readVariable(getDayHours(day), day.getTime(), day.getTime(), Number.class).doubleValue()));
+		return p.daysStream()
+				.map(day -> contractExpressionContext.getVariable(getDayHours(day), day.getTime(), day.getTime(), Number.class))
+				.filter(hours -> hours != null && hours.doubleValue() > 0.00 )
+				.collect(Collectors.summingDouble(hours -> hours.doubleValue()))
+				;
+			
+				
 	}
 
 	private double getSalaryHours(Period p) {
@@ -3588,10 +3591,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				public Double getValue(Period p) {
 
 					return p.daysStream()
-							.filter(day -> ctx.containsVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(),
-									day.getTime()))
-							.collect(Collectors.summingDouble(day -> ctx.readVariable(DAYS.get(day.get(DAY_OF_WEEK)),
-									day.getTime(), day.getTime(), Number.class).doubleValue()));
+							.map(day -> ctx.getVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(),
+									day.getTime(), Number.class))
+							.filter(hours -> hours != null && hours.doubleValue() > 0.00 )
+							.collect(Collectors.summingDouble(hours -> hours.doubleValue()));
 				}
 
 			};
