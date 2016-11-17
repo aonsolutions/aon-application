@@ -850,9 +850,14 @@ public abstract class AbstractSQLTestCase {
 
 	public static final PaymentConceptRecord addConcept(AONContext aonContext, String code) {
 		DomainRecord domain = newDomain(aonContext);
-		return aonContext.getDslContext().insertInto(PAYMENT_CONCEPT).set(PAYMENT_CONCEPT.DOMAIN, domain.getId())
-				.set(PAYMENT_CONCEPT.CODE, code).set(PAYMENT_CONCEPT.TYPE, (byte) PaymentType.CRA_0001.ordinal())
-				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P").set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P").returning()
+		return aonContext.getDslContext()
+				.insertInto(PAYMENT_CONCEPT)
+				.set(PAYMENT_CONCEPT.DOMAIN, domain.getId())
+				.set(PAYMENT_CONCEPT.CODE, code)
+				.set(PAYMENT_CONCEPT.TYPE, (byte) PaymentType.CRA_0001.ordinal())
+				.set(PAYMENT_CONCEPT.DESCRIPTION, code)
+				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
+				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P").returning()
 				.fetchOne();
 
 	}
