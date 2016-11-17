@@ -22,6 +22,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_O
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C200;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
@@ -69,7 +70,10 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
@@ -77,7 +81,7 @@ import junit.framework.Assert;
 
 public class SQLITTestCase extends AbstractSQLTestCase {
 
-	private static final double DELTA = 0.000001;
+	private static final double DELTA = 0.004;
 	
 	
 	@Test
@@ -2078,7 +2082,18 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				connection, startDate, endDate, endDate, contract);
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 
-		calculator.setSalaryBuilder(new SalaryBuilder());
+		calculator.setSalaryBuilder(new SalaryBuilder(){
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				ITimedVariable<?> factor = context.get(ContextVariable.PATERNITY_FACTOR.getName() );
+				if ( factor == null )
+					return;
+				Assert.assertEquals(ExpressionScope.CONTRACT,((IExpressionVariable<?>) factor).getExpression().getScope());
+			}
+		});
 		Salary salary = calculator.calculate(ctx);
 		
 		Assert.assertEquals(0.00, salary.getTotalPayment());
@@ -2174,7 +2189,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				props -> props.getContractProperty().eq(contract.getId()))
 				.forEach(s -> {
 
-					// 535 Base de contingencias comunes.
+					// 500 Base de contingencias comunes.
 					List<ContextData> datas = s.getContextData()
 							.get(CGC_BASE.getName());
 					Assert.assertEquals(1, datas.size());
@@ -2198,6 +2213,19 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					Assert.assertEquals(endDate, datas.get(0).getEndDate());
 					Assert.assertEquals(100.00 * get(endDate, DAY_OF_MONTH) * 0.5,
 							Double.parseDouble(datas.get(0).getExpression()));
+
+					datas = s.getContextData()
+							.get(WORKED_HOURS.getName());
+					Assert.assertEquals(1, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(endDate, datas.get(0).getEndDate());
+					long workDays = new Period(startDate, endDate).daysStream()
+					.filter(day -> day.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY)
+					.filter(day -> day.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY)
+					.count();
+					Assert.assertEquals(workDays * 8 * 0.5,
+							Double.parseDouble(datas.get(0).getExpression()));
+					
 				});
 		;
 
@@ -2263,9 +2291,83 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 					Assert.assertEquals(end, datas.get(0).getEndDate());
 					Assert.assertEquals(100.00 * itDays * 0.5,
 							Double.parseDouble(datas.get(0).getExpression()));
+
+					datas = s.getContextData()
+							.get(WORKED_HOURS.getName());
+					Assert.assertEquals(2, datas.size());
+					Assert.assertEquals(start, datas.get(0).getStartDate());
+					Assert.assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
+
+					Assert.assertEquals(startITDate, datas.get(1).getStartDate());
+					Assert.assertEquals(end, datas.get(1).getEndDate());
+					long workingDays = new Period(datas.get(1).getStartDate(), datas.get(1).getEndDate())
+					.daysStream()
+					.filter(day -> day.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY)
+					.filter(day -> day.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY)
+					.count();
+					Assert.assertEquals(workingDays * 8 * 0.5,
+							Double.parseDouble(datas.get(1).getExpression()));
 				});
 		;
 	}
 
+	@Test
+	public void testPaternityIT30() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
+				new HashMap<String,String>(){
+			{
+				put(CGC_BASE_MIN.getName(), "(1000.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
+			}
+		});
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+					{
+						put(MONTH_DAYS.getName(), "30");
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"}, 
+				new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		PaymentConceptRecord maternity = addConcept(aonContext, ContextVariable.MATERNITY.getName());
+		addPayment(aonContext, contract, maternity, "DIAS_PATERNIDAD * 0" , "DIAS_COTIZADOS * COEFICIENTE_PATERNIDAD * BASE_REGULADORA");
+		
+		Date startITDate = add(getFirstDayOfYear(getToday()), DAY_OF_MONTH,9);
+		addIT(aonContext, contract, LeaveType.PATERNITY, startITDate,
+				null, 1750.00/30);
+		addData(aonContext, contract, startITDate,
+				null,ContextVariable.PATERNITY_FACTOR.getName(), "0.5");
+
+		
+		Date startDate =getFirstDayOfMonth(startITDate);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		Assert.assertEquals(1750.00 * 9 / 30 + 1750.00 * 21 / 30 * 0.5 , salary.getTotalPayment());
+		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		//Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00 * 0.50 + 1750.00 * 1/2 , salary.getCommonBase());
+		
+		
+	}
 	
 }

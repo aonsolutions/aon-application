@@ -3868,12 +3868,50 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Date start = Period.max(dataStart, startDate);
 		Date end = Period.min(dataEnd, endDate);
 
+
+		Date leaveStart = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.START_DATE);
+		Date leaveEnd = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.END_DATE);
+
 		try {
-			ctx.addExpression(expr, start, end);
+			List<ITimedResult<Number>> factors = ctx.addExpression(expr, start, end, Number.class);
+			
+			for ( ITimedResult<Number> factor: factors ) {
+				Period period = factor.getPeriod();
+				
+				double workDayHours  = getWorkDayHours(ctx, period.getStart(), period.getEnd());
+
+				double fullWorkedHours = period.daysStream()
+				.filter(day -> getDayType(day) == DayType.WORKING_DAY)
+				.collect(Collectors.summingDouble(day -> workDayHours ))
+				;
+				
+				ctx.setVariable(ContextVariable.WORKED_HOURS, 
+						fullWorkedHours * factor.getValue().doubleValue(), 
+						Period.max(leaveStart, period.getStart()), 
+						Period.min(leaveEnd, period.getEnd()));
+			}
+			
+			
+
 		} catch (ExpressionException e) {
 			e.printStackTrace();
 		} 
+		
+		
 	}
+	
+	private DayType getDayType ( Calendar day ) {
+		ICalendar calendar = getCalendar();
+		return calendar.getDayType(day);
+	}
+	
+	private double getWorkDayHours( ExpressionContext ctx, Date start, Date end) {
+		double weekWorkDays = getWeekDaysOf(DayType.WORKING_DAY);
+		Number agreementWeekHours = ctx.containsVariable(AGREEMENT_HOURS,start,end) ? 
+				ctx.getVariable(AGREEMENT_HOURS,start,end, Number.class) : DEFAULT_AGRREEMENT_HOURS;
+		return agreementWeekHours.doubleValue() / weekWorkDays;
+	}
+	
 
 	private void loadPersonData(ExpressionContext ctx) throws SQLException {
 

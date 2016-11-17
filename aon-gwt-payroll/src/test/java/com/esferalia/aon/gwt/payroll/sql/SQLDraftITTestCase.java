@@ -16,6 +16,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -34,6 +35,7 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLITTestCase;
@@ -41,6 +43,10 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpressionVariable;
+import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.payment.IPayment;
 
 import junit.framework.Assert;
 
@@ -122,6 +128,17 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 
 		ISQLContractSalaryCalculatorContext ctx = EmployeesServiceHelper.getSalaryCalculatorContext(connection,
 				draft, null);
+		ctx.setListener( new IListener() {
+			
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+			}
+			
+			@Override
+			public void onRedefinedImplicit(String name, ITimedVariable<?> redefined, ITimedVariable<?> implicit) {
+				Assert.fail(name);
+			}
+		});
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 		calculator.setListener(new ContractSalaryCalculator.Listener(){
 			@Override
@@ -130,8 +147,21 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 				super.onCheckError(payment, message);
 			}
 			
+			
+			
 		});
-		calculator.setSalaryBuilder(new SalaryBuilder());
+		calculator.setSalaryBuilder(new SalaryBuilder(){
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				ITimedVariable<?> factor = context.get(ContextVariable.PATERNITY_FACTOR.getName() );
+				if ( factor == null )
+					return;
+				Assert.assertEquals(ExpressionScope.SALARY,((IExpressionVariable<?>) factor).getExpression().getScope());
+			}
+		});
 		Salary salary = calculator.calculate(ctx);
 
 		Assert.assertEquals(1750.00 * 1/2, salary.getTotalPayment());
