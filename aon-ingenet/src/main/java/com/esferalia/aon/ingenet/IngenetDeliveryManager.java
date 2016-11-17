@@ -73,12 +73,14 @@ public class IngenetDeliveryManager {
 	
 	public Delivery createAonDelivery(String domainName, String user,
 			Integer currentDomainId, Integer ingenetDeliveryId,
-			Integer workplaceId, Integer warehouseId) {
+			Integer workplaceId, Integer warehouseId) throws SourceSalesNotFoundException {
+		
 		AONContext ctx = AONContext.getAONContext(domainName, currentDomainId,
 				user);
 
 		List<DeliveryDetail> detailList = obtainIngenetDeliveryDetailList(
 				domainName, user, ingenetDeliveryId);
+		
 		Integer ingenetSalesDetailId = detailList.stream()
 				.filter(d -> d.getSalesDetail() != null).findFirst()
 				.orElse(new DeliveryDetail()).getSalesDetail();
@@ -88,6 +90,13 @@ public class IngenetDeliveryManager {
 				ingenetSalesDetail.getSales());
 		Sales aonSales = SalesDAO.getSales(ctx, ingenetSales.getSeries(),
 				ingenetSales.getNumber());
+		
+		if (aonSales == null | aonSales.getId() == null) {
+			throw new SourceSalesNotFoundException(
+					"Imposible realizar el traspaso. No existe el pedido "
+							+ ingenetSales.getSeries() + "/"
+							+ ingenetSales.getNumber());
+		}
 		
 		try {
 			ctx.transaction(new TransactionalRunnable() {
@@ -114,7 +123,7 @@ public class IngenetDeliveryManager {
 		return aonDelivery;
 	}
 	
-	public void createAonDeliveryDetails(AONContext ctx,
+	private void createAonDeliveryDetails(AONContext ctx,
 			Integer ingenetDeliveryId, Integer aonDeliveryId,
 			Integer warehouseId, List<DeliveryDetail> detailList, Sales aonSales) {
 		createDeliveryDetails(ctx, ingenetDeliveryId, aonDeliveryId,
@@ -152,8 +161,7 @@ public class IngenetDeliveryManager {
 					ctx.getUser(), detail.getItem().getId());
 			SalesDetail aonSalesDetail = null;
 			Item item = null;
-			if (ingenetItem.getSerialNumber() == null
-					&& ingenetItem.getSerialDate() == null) {
+			if (isPackageItem(ingenetItem)) {
 				item = obtainAonItem(ctx.getDomainName(), ctx.getUser(),
 						ctx.getDomainId(), ingenetItem.getProduct().getCode());
 			} else {
@@ -195,6 +203,11 @@ public class IngenetDeliveryManager {
 
 	}
 	
+	private boolean isPackageItem(Item item) {
+		return item != null && item.getSerialNumber() == null
+				&& item.getSerialDate() == null;
+	}
+
 	private String obtainDeliveryDetailDescription(Item item, double quantity) {
 		if (item.getSerialNumber() != null && item.getSerialDate() != null) {
 			Tag itemPackMeasurementTag = item.getPackMeasurementTag();
@@ -203,8 +216,9 @@ public class IngenetDeliveryManager {
 			Double itemPackMeasurement = item.getPackMeasurement();
 			Double itemPackUnits = item.getPackUnits();
 			return String
-					.format("%1$s \n\t- %2$.2f %3$s de %4$.2f %5$s \n\t- %6$.2f %7$s de %8$.2f %9$s",
+					.format("%1$s \n\t- LOTE: %2$s \n\t- %3$.2f %4$s de %5$.2f %6$s \n\t- %7$.2f %8$s de %9$.2f %10$s",
 							item.getProduct().getName(),
+							item.getSerialNumber(),
 							(quantity / itemPackMeasurement),
 							itemPackingTag.getName(), itemPackMeasurement,
 							itemPackMeasurementTag.getName(), (quantity
