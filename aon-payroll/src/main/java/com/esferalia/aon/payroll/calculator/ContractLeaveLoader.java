@@ -21,6 +21,7 @@ import com.esferalia.aon.payroll.enumeration.LeaveTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
@@ -357,21 +358,51 @@ public class ContractLeaveLoader {
 
 								@Override
 								public Double getValue(Period period) {
+									
 									ExpressionContext.getCurrentBindings()
 									.get(factorVariable, value -> value, 1.00);
+									
 									return leaveDays * value;
 								}
 							});
 					
-					exprCtx.setVariable(ContextVariable.WORKED_DAYS, 
-							leaveDays * (1.00 - value) ,
-							period.getStart(), 
-							period.getEnd());
+					exprCtx.putVariable(ContextVariable.WORKED_DAYS, 
+							new ITimedVariable<Double>() {
+
+								@Override
+								public Period getPeriod() {
+									return period;
+								}
+
+								@Override
+								public Double getValue(Period period) {
+									
+									ExpressionContext.getCurrentBindings()
+									.get(factorVariable, value -> value, 1.00);
+									
+									return getQuoteDays(exprCtx, period) * (1.00 - value);
+								}
+							});
+//					exprCtx.setVariable(ContextVariable.WORKED_DAYS, 
+//							leaveDays * (1.00 - value) ,
+//							period.getStart(), 
+//							period.getEnd());
 					
 					periods.add(period);
 				}
 				
 				for ( Period period : Period.sub(new Period(start,end), periods) ){
+					ExpressionImpl factorExpression = new ExpressionImpl();
+					factorExpression.setName(factorVariable.getName());
+					factorExpression.setScope(ExpressionScope.CONTRACT);
+					factorExpression.setExpression("1.00");
+					try {
+						exprCtx.addExpression(factorExpression, 
+								period.getStart(), 
+								period.getEnd());
+					} catch (ExpressionException e) {
+					}
+					
 					exprCtx.putVariable(daysVariable, 
 							new ITimedVariable<Double>() {
 
