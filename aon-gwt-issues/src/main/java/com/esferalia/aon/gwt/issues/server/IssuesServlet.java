@@ -49,6 +49,13 @@ public class IssuesServlet extends AonRemoteServiceServlet implements IIssues{
 	}
 	
 	public void OLDTONEW(String domainName, Integer domainId, String login){
+		System.out.println("START OLD TO NEW");
+		System.out.println("DOMAIN-NAME:" + domainName);
+		System.out.println("DOMAIN-ID:" + domainId);
+		System.out.println("LOGIN:" + login);
+		
 		AON.OLDTONEW(domainName, domainId, login);
+		
+		System.out.println("END OLD TO NEW");
 	}
 }

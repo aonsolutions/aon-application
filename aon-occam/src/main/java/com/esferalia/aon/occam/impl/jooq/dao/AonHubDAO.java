@@ -67,10 +67,15 @@ public class AonHubDAO {
 	// TODO
 	
 	public static void OLD2NEW(AONContext ctx, Integer domainId){
+		System.out.println("DATABASE PROCCES");
 		LinkedList<NoticeRecord> list = getNotices(ctx, domainId);
+		System.out.println("number of notices:" + list.size());
+		
 		updateTaskNumber(ctx, domainId, list.size());
+
 		for(Integer i = 0; i < list.size(); i++){
 			NoticeRecord n = list.get(i);
+			System.out.println("Notice " + n.getId() );
 			TaskRecord task = new TaskRecord();
 			task.setDescription(n.getSubject());
 			task.setCreationDate(n.getDate());
@@ -81,6 +86,7 @@ public class AonHubDAO {
 			task.setRegistry(getEnterprise(ctx, domainId, n.getCompany()).getId());
 			task.setTaskHolder(getTaskHolder(ctx, n.getRecipient()).getRegistry());
 			Integer taskId = insertTask(ctx, task);
+			System.out.println("INSERT TASK " + taskId );
 			getNoticeTags(ctx, n.getId()).forEach(t -> { // ORDENADOS POR FECHA (DE VIEJO A NUEVO)
 				TagRecord tag = getTag(ctx, t.getTag());
 				if(tag.getType().equals(TagType.OFFICE_NOTICE.value())){
