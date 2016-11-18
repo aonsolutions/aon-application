@@ -3879,19 +3879,22 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			List<ITimedResult<Number>> factors = ctx.addExpression(expr, start, end, Number.class);
 			
 			for ( ITimedResult<Number> factor: factors ) {
-				Period period = factor.getPeriod();
+				Period period = new Period(
+						Period.max(leaveStart, factor.getPeriod().getStart()), 
+						Period.min(leaveEnd, factor.getPeriod().getEnd()));
 				
 				double workDayHours  = getWorkDayHours(ctx, period.getStart(), period.getEnd());
-
-				double fullWorkedHours = period.daysStream()
+				
+				double fullWorkedHours = period
+				.daysStream()
 				.filter(day -> getDayType(day) == DayType.WORKING_DAY)
 				.collect(Collectors.summingDouble(day -> workDayHours ))
 				;
 				
 				ctx.setVariable(ContextVariable.WORKED_HOURS, 
 						fullWorkedHours * factor.getValue().doubleValue(), 
-						Period.max(leaveStart, period.getStart()), 
-						Period.min(leaveEnd, period.getEnd()));
+						period.getStart(), 
+						period.getEnd());
 			}
 			
 			

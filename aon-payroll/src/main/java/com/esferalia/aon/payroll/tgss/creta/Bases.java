@@ -1055,8 +1055,9 @@ public class Bases {
 			}
 
 			if (!found)
-				throw new UnMatchedVariableException(variable,
-						datas.get(0));
+				throw new NoSuchVariableException(variable);
+//				throw new UnMatchedVariableException(variable,
+//						datas.get(0));
 
 			return ret;
 		}
