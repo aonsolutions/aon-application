@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -230,6 +231,14 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 		        }
 			}
 		});
+		taxDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				callback.getInvoice().getInvoice().setTaxDate(event.getValue());
+			}
+		});
+		
 		panel.add(taxDate);
 		flexContainer.add(panel);		
 	}

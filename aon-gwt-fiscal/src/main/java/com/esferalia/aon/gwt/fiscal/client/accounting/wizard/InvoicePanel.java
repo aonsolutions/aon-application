@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
+import java.util.Date;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
@@ -564,6 +566,16 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 		payTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
 		payTable.getCellFormatter().setWidth(row, col, "1%");
 		payTable.setWidget(row, col, payDate);
+		payDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				getWrapper().getFinances().get(0).setDueDate(event.getValue());
+				getWrapper().getAccountEntry().setDirty(true);
+				getCallback().getModule().refreshIdLabel();
+				_paintEntry();
+			}
+		});
 		col++;
 
 		payStatusLabel  = new InlineLabel(AON.MSG.date());
