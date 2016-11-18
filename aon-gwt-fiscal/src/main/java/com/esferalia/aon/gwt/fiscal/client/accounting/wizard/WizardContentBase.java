@@ -9,16 +9,14 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccoun
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IContentAttchCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
-import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 
-public abstract class WizardContentBase extends ResizeComposite implements RequiresResize, IWizardContent, IAccountEntryWrapper {
+public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends ResizeComposite implements RequiresResize, IWizardContent {
 
 	static FiscalServiceAsync fiscalService;
-	protected AccountEntry ae;
 	protected IAccountEntryModuleCallback callback;
 	
 	public static interface ISelectionCallback {
@@ -26,7 +24,7 @@ public abstract class WizardContentBase extends ResizeComposite implements Requi
 		void onFailure();
 	}
 	
-	private static FiscalServiceAsync getFiscalService() {
+	protected static FiscalServiceAsync getFiscalService() {
 		if (fiscalService == null) {
 			FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 			fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
@@ -48,27 +46,21 @@ public abstract class WizardContentBase extends ResizeComposite implements Requi
 		this.callback = callback;
 	}
 
-	@Override
-	public IAccountEntryWrapper getAccountEntryWrapper() {
-		return this;
-	}
-	
-	@Override
 	public AccountEntry getAccountEntry() {
-		return this.ae;
+		return getWrapper().getAccountEntry();
 	}
-	@Override
 	public void setAccountEntry(AccountEntry entry) {
-		this.ae = entry;
+		getWrapper().setAccountEntry(entry);
 	}
 	
 	@Override
 	public void save(final AsyncCallback<AccountEntry[]> callback) {
-		getFiscalService().save(getDomainName(), getDomain(), ae, new AsyncCallback<AccountEntry>() {
+		getFiscalService().save(getDomainName(), getDomain(), getWrapper().getAccountEntry()
+			, new AsyncCallback<AccountEntry>() {
 
 			@Override
 			public void onSuccess(AccountEntry result) {
-				ae = result;
+				getWrapper().setAccountEntry(result);
 				AccountEntry[] entries = new AccountEntry[]{result}; 	
 				callback.onSuccess(entries);
 			}
@@ -88,8 +80,9 @@ public abstract class WizardContentBase extends ResizeComposite implements Requi
 		// por lo que hay borrarlo de BD. En caso contrario, se borrar la
 		// pantalla.
 		// Es lo mismo que un reset().
-		if (ae.getId() != null) {
-			getFiscalService().deleteAccountEntry(getDomainName(), getDomain(), ae.getId(),
+		if (getWrapper().getAccountEntry().getId() != null) {
+			getFiscalService().deleteAccountEntry(getDomainName(), getDomain()
+					, getWrapper().getAccountEntry().getId(),
 					new AsyncCallbackWrapper<Void>(callback) {
 
 						@Override
@@ -108,48 +101,47 @@ public abstract class WizardContentBase extends ResizeComposite implements Requi
 		}
 	}
 
-	@Override
-	public void get(Integer id, final AsyncCallback<AccountEntry> callback) {
-		getFiscalService().getAccountEntry(getDomainName(), getDomain(), id,
-				new AsyncCallbackWrapper<AccountEntry>(callback) {
+//	@Override
+//	public void get(Integer id, final AsyncCallback<AccountEntry> callback) {
+//		getFiscalService().getAccountEntry(getDomainName(), getDomain(), id,
+//				new AsyncCallbackWrapper<AccountEntry>(callback) {
+//
+//					@Override
+//					public void onSuccess(AccountEntry result) {
+//						getWrapper().setAccountEntry(result);
+//						callback.onSuccess(result);
+//					}
+//
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						callback.onFailure(caught);
+//					}
+//				});
+//	}
 
-					@Override
-					public void onSuccess(AccountEntry result) {
-						ae = result;
-						callback.onSuccess(result);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						callback.onFailure(caught);
-					}
-				});
-	}
-
-	@Override
-	public boolean isNew() {
-		return getAccountEntry() == null || getAccountEntry().getId() == null;
-	}
 
 	@Override
 	public boolean isUpdatable() {
 		return (getAccountEntry() == null || (getAccountEntry().isPeriodActive()));
 	}
 
+	
 	@Override
-	public boolean isDirty() {
-//		if (getAccountEntry() == null || getAccountEntry().getId() == null || getAccountEntry().getDetails().size() == 0) {
-//			return false;
-//		}
-		return getAccountEntry().isDirty();
+	public AccountEntry getMainEntry() {
+		return getAccountEntry();
 	}
 
 	@Override
 	public void attach(IContentAttchCallback contentCbk) {
-		callback.attach(this,contentCbk);
+		getCallback().getModule().setWizardContent(this, contentCbk);
 	}
 	
 	@Override
-	public abstract AccountEntryType getAccountEntryType();
+	public IAccountEntryWrapper getEntryWrapper() {
+		return getWrapper();
+	}
+	
+	public abstract T getWrapper();
+	public abstract void setWrapper(T t);
 	
 }

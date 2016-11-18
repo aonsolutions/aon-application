@@ -74,7 +74,7 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 
 	private void paintWorkplace(final IInvoicePanelCallback callback) {
 		
-		final LinkedList<Workplace> list = callback.getConfiguration().getWorkplaces();
+		final LinkedList<Workplace> list = callback.getModule().getConfiguration().getWorkplaces();
 		if (list != null && list.size() > 1) {
 			FlowPanel panel = new  FlowPanel();
 			panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());

@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
@@ -266,9 +268,21 @@ public class AccountingImpl implements IAccounting {
 	}
 
 	@Override
-	public AccountingInvoice initializeInvoice(AONContext ctx, AccountEntry entry, AccountingRegistry registry) {
-		return AccountingInvoiceDAO.initializeInvoice(ctx , entry, registry);
+	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Date issueDate) {
+		if (issueDate == null) {
+			throw new AonCoreException("No se puede inicializar una factura sin fecha");
+		}
+		if (registry == null) {
+			throw new AonCoreException("No se pudo encontrar al titular de factura \"" + registry + "\"");
+		}
+		if (registry.getType() == null) {
+			throw new AonCoreException("No se puede inicializar una factura sin tipo");
+		}
+		return AccountingInvoiceDAO.initializeInvoice(ctx, registry.getType().getInvoiceType(), registry.getId(), issueDate);
 	}
+	
+	
+	
 
 	@Override
 	public AccountingInvoice save(final AONContext ctx, AccountingInvoice invoice) {
@@ -278,6 +292,18 @@ public class AccountingImpl implements IAccounting {
 				, ConfigurationDAO.getConfiguration(ctx, atDate)
 				, invoice)
 		 );		
+	}
+
+	@Override
+	public IAccountEntryWrapper getAccountEntryWrapper(AONContext ctx, Integer accountEntry) {
+		AccountEntry entry = getAccountEntry(ctx, accountEntry);
+		if (entry != null) {
+			if (entry.isInvoice()) {
+				return getAccountingInvoice(ctx, accountEntry);
+			}
+			return  new AccountEntryWrapper(entry);
+		}
+		return null;
 	}
 
 	// 					      BALANCE

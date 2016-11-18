@@ -192,20 +192,20 @@ public class AccountingInvoiceDAO {
 		return null;
 	}
 	
-	public static AccountingInvoice initializeInvoice(final AONContext ctx, final AccountEntry entry, AccountingRegistry registry) {
-		if (entry == null) {
-			throw new AonCoreException("No se pudo inicializar, no hay apunte base");
-		}
-		if (registry == null) {
-			throw new AonCoreException("No se pudo encontrar al titular de factura \"" + registry + "\"");
-		}
-		if (registry.getType() == null) {
-			throw new AonCoreException("No se puede inicializar una factura sin tipo");
-		}
-		AccountingInvoice invoice = initializeInvoice(ctx, registry.getType().getInvoiceType(), registry.getId(), entry.getEntryDate());
-		invoice.setAccountEntry(entry);
-		return invoice;
-	}
+//	public static AccountingInvoice initializeInvoice(final AONContext ctx, final AccountEntry entry, AccountingRegistry registry) {
+//		if (entry == null) {
+//			throw new AonCoreException("No se pudo inicializar, no hay apunte base");
+//		}
+//		if (registry == null) {
+//			throw new AonCoreException("No se pudo encontrar al titular de factura \"" + registry + "\"");
+//		}
+//		if (registry.getType() == null) {
+//			throw new AonCoreException("No se puede inicializar una factura sin tipo");
+//		}
+//		AccountingInvoice invoice = initializeInvoice(ctx, registry.getType().getInvoiceType(), registry.getId(), entry.getEntryDate());
+//		invoice.setAccountEntry(entry);
+//		return invoice;
+//	}
 			
 	
 	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry,
@@ -244,11 +244,11 @@ public class AccountingInvoiceDAO {
 					.setReferenceCode(null))
 				.setFinances(new LinkedList<Finance>());
 		ai.getFinances().add(new Finance()
-				.setDueDate(issueDate));
+				.setDueDate(issueDate)
+				.setFinanceStatus(FinanceStatus.PENDING));
 		reg.getType().visit(reg, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), config));
 		ai.setSuggestedAccounts(getSuggestedAccounts(ctx,ai.getRegistry().getId()));
 		ai.addVat(createNewInvoiceVAT(ai, config));
-
 		/// RETENCIÓN
 		if (ai.isWithholding()) {
 			ai.setWithholdingData(new InvoiceWithholding());

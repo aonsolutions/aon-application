@@ -230,6 +230,9 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 
 	public LinkedList<Finance> getFinances() {
+		if (finances == null) {
+			finances = new LinkedList<Finance>();
+		}
 		return finances;
 	}
 	public AccountingInvoice setFinances(LinkedList<Finance> finances) {
@@ -251,5 +254,4 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 			setWithholdingData( new InvoiceWithholding() );
 		}
 	}
-	
 }

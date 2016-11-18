@@ -134,7 +134,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	private double getSumDif(boolean fillWidget) {
 		double sumD = 0.0;
 		double sumC = 0.0;
-		for (AccountEntryDetail aed : wizardContent.getAccountEntryWrapper().getAccountEntry().getDetails()) {
+		for (AccountEntryDetail aed : wizardContent.getMainEntry().getDetails()) {
 			if (!aed.isDeleted()) {
 				sumD = AonMathUtils.sum(sumD, aed.getDebit());	
 				sumC = AonMathUtils.sum(sumC, aed.getCredit());
@@ -154,11 +154,11 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	}
 	
 	private void paintDetails() {
-		if ( wizardContent.getAccountEntryWrapper().getAccountEntry().getDetails().isEmpty() ) {
-			wizardContent.getAccountEntryWrapper().getAccountEntry().getDetails().add(new AccountEntryDetail());
+		if ( wizardContent.getMainEntry().getDetails().isEmpty() ) {
+			wizardContent.getMainEntry().getDetails().add(new AccountEntryDetail());
 		}
 		int row = 1;
-		for (AccountEntryDetail aed : wizardContent.getAccountEntryWrapper().getAccountEntry().getDetails()) {
+		for (AccountEntryDetail aed : wizardContent.getMainEntry().getDetails()) {
 			paintRow(row,aed);
 			++row;
 		}
@@ -320,7 +320,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 									cb.setValue(event.getValue());
 								}
 							}
-							for (AccountEntryDetail aed : wizardContent.getAccountEntryWrapper().getAccountEntry().getDetails() ) {
+							for (AccountEntryDetail aed : wizardContent.getMainEntry().getDetails() ) {
 								aed.setConcept(event.getValue());
 							}
 							debitBox.setFocus(true);
@@ -480,7 +480,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 									db.setValue(event.getValue());
 								}
 							}
-							for (AccountEntryDetail aed : wizardContent.getAccountEntryWrapper().getAccountEntry().getDetails() ) {
+							for (AccountEntryDetail aed : wizardContent.getMainEntry().getDetails() ) {
 								aed.setDocumentNumber(event.getValue());
 							}
 							AccountEntryTable.this.setFocus(true);
@@ -501,7 +501,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 			@Override
 			public void onClick(ClickEvent event) {
 				if (aed.getId() == null) {
-					wizardContent.getAccountEntryWrapper().getAccountEntry().getDetails().remove(aed);
+					wizardContent.getMainEntry().getDetails().remove(aed);
 					removeRow(curRow);
 					removeRow(getRowCount() - 1);
 					paintFooter();
@@ -518,8 +518,8 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 
 	private boolean canAddLine() {
 		if (!wizardContent.isUpdatable()) return false; 
-		if (wizardContent.getAccountEntryWrapper().getAccountEntry().getDetails() == null || wizardContent.getAccountEntryWrapper().getAccountEntry().getDetails().isEmpty()) return false;
-		if (wizardContent.getAccountEntryWrapper().getAccountEntry().getDetailsSize() == 1) return true;
+		if (wizardContent.getMainEntry().getDetails() == null || wizardContent.getMainEntry().getDetails().isEmpty()) return false;
+		if (wizardContent.getMainEntry().getDetailsSize() == 1) return true;
 		return AonMathUtils.isNotZero( getSumDif(false) );
 	}
 
@@ -557,13 +557,13 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	}
 
 	private void addLine() {
-		AccountEntryDetail aed = wizardContent.getAccountEntryWrapper().getAccountEntry().getLastDetail();
+		AccountEntryDetail aed = wizardContent.getMainEntry().getLastDetail();
 		AccountEntryDetail newDetail = new AccountEntryDetail();
 		if (aed != null) {
 			newDetail.setConcept(aed.getConcept());
 			newDetail.setDocumentNumber(aed.getDocumentNumber());
 	
-			if ( wizardContent.getAccountEntryWrapper().getAccountEntry().getDetailsSize() == 1) {
+			if ( wizardContent.getMainEntry().getDetailsSize() == 1) {
 				newDetail.setAccount(aed.getBalancingAccount());
 				newDetail.setAccountCode(aed.getBalancingAccountCode());
 				newDetail.setAccountDescription(aed.getBalancingAccountDescription());
@@ -585,7 +585,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 			newDetail.setCredit(0);
 		}
 		
-		wizardContent.getAccountEntryWrapper().getAccountEntry().getDetails().add(newDetail);
+		wizardContent.getMainEntry().getDetails().add(newDetail);
 		paintRow( (getRowCount() - 1), newDetail);
 		paintFooter();
 		if (wizardContent.isUpdatable()) {

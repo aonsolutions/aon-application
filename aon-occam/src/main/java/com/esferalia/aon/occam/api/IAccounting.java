@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryAccountEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
@@ -57,10 +58,11 @@ public interface IAccounting {
 			Date from, Date to, String concept, Integer registryBank);
 	public List<Integer> insertSalaryEntries(String domainName, int domain,String user,
 			Date from, Date to, String concept, Integer registryBank);
-	public AccountingInvoice initializeInvoice(AONContext ctx, AccountEntry entry, AccountingRegistry registry);
 	public AccountingInvoice getAccountingInvoice(AONContext ctx, Integer accountEntry);
 	public AccountingInvoice save(AONContext ctx, AccountingInvoice invoice);
-	
+	public IAccountEntryWrapper getAccountEntryWrapper(AONContext ctx, Integer accountEntry);
+	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Date issueDate);
+		
 	// 			BALANCE
 	public LinkedHashMap<String, AccountBalance> 
 		getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException;

@@ -325,7 +325,7 @@ public class InvoiceRecorder {
 
 	
 	public static AccountEntry[] recordInvoice(AccountingInvoice invoice) {
-		AccountEntry ae = invoice.getAccountEntry();
+		AccountEntry ae = AccountEntry.clone(invoice.getAccountEntry());
 		LinkedHashMap<Integer,AccountEntryDetail> map = new LinkedHashMap<Integer, AccountEntryDetail>();
 		InvoiceEntryDetailType.visit(invoice,map);	
 		ae.setDetails(new LinkedList<AccountEntryDetail>());
@@ -343,9 +343,9 @@ public class InvoiceRecorder {
 					?"????????"
 					:invoice.getInvoice().getReferenceCode());
 		for (AccountEntryDetail detail : ae.getDetails()) {
-			detail.setConcept(concept);
-			detail.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ));
-			detail.setDocumentNumber(document);
+			detail.setConcept(concept)
+				.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ))
+				.setDocumentNumber(document);
 		}
 		if (invoice.hasFinances() && invoice.isFinanceRecordable()) {
 			LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
@@ -366,9 +366,9 @@ public class InvoiceRecorder {
 										?"????????"
 												:invoice.getInvoice().getReferenceCode());
 				for (AccountEntryDetail detail : payEntry.getDetails()) {
-					detail.setConcept(payConcept);
-					detail.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ));
-					detail.setDocumentNumber(document);
+					detail.setConcept(payConcept)
+						.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ))
+						.setDocumentNumber(document);
 				}
 				entries.add(payEntry);
 			}

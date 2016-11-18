@@ -254,7 +254,7 @@ public interface FiscalServiceAsync {
 			AsyncCallback<LinkedList<AccountEntry>> callback);
 	void deleteAccountEntry(String domainName, int domain, Integer id,
 			AsyncCallback<Void> callback);
-	void initializeInvoice(String domainName, int domain, AccountEntry entry, AccountingRegistry registry,
+	void initializeInvoice(String domainName, int domain,AccountingRegistry registry, Date issueDate,
 			AsyncCallback<AccountingInvoice> callback);
 	void getAccountingInvoice(String domainName, int domain, Integer accountEntry,
 			AsyncCallback<AccountingInvoice> callback);
@@ -274,8 +274,5 @@ public interface FiscalServiceAsync {
 	void getMod111Attach(String domainName, Mod111 mod111, AsyncCallback<Attach> callback);
 	void getMod115Attach(String domainName, Mod115 mod115, AsyncCallback<Attach> callback);
 	void getMod123Attach(String domainName, Mod123 mod123, AsyncCallback<Attach> callback);
-
-
-
-
+	
 }

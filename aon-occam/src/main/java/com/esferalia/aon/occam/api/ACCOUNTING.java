@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryFilter;
@@ -282,11 +283,11 @@ public class ACCOUNTING {
 
 
 	public static AccountingInvoice initializeInvoice(String domainName, int domain, String user,
-			AccountEntry entry,AccountingRegistry registry) {
+			AccountingRegistry registry,Date issueDate) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getAccounting().initializeInvoice(ctx, entry, registry);
+			return getAccounting().initializeInvoice(ctx, registry, issueDate);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -323,6 +324,18 @@ public class ACCOUNTING {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().insert(ctx, account);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static IAccountEntryWrapper getAccountEntryWrapper(String domainName, int domain, String user,
+			Integer accountEntry) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().getAccountEntryWrapper(ctx, accountEntry);
 		} finally {
 			if (ctx != null)
 				ctx.close();

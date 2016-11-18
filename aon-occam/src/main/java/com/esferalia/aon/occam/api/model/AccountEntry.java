@@ -231,7 +231,7 @@ public class AccountEntry implements Serializable, HasAudit {
 		this.modificationDate = modificationDate;
 		return this;
 	}
-
+	
 	public static AccountEntry clone(AccountEntry ori) {
 		LinkedList<AccountEntryDetail> details = ori.details == null
 				?null
@@ -259,5 +259,4 @@ public class AccountEntry implements Serializable, HasAudit {
 			.setDetails(details);
 		
 	}
-
 }

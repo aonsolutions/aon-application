@@ -113,7 +113,7 @@ public class AccountStatementPanel extends DockLayoutPanel implements HasSelecti
 						filter.addClickHandler(new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent event) {
-								if (!dateTo.getValue().before(result.getFrom())) {
+								if (!dateTo.getValue().before(dateFrom.getValue())) {
 									AccountStatementPanel.this.show(
 											new AccountStatementParams()
 											.setAccount( result.getAccount().getId())

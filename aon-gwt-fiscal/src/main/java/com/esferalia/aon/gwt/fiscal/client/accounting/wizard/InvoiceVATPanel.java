@@ -57,7 +57,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			setWidth("90px");
 			addItem("------",(String) null);
 			if (callback.isInvestAssetsAvailable()) {
-				for (InvestAsset asset : callback.getConfiguration().getInvestAssets()) {
+				for (InvestAsset asset : callback.getModule().getConfiguration().getInvestAssets()) {
 					addItem(asset.getDescription(),AonNumberUtils.toString(asset.getId()));
 				}
 			}
@@ -65,13 +65,13 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		
 		private InvestAsset getValue() {
 			if (getSelectedIndex() == 0) return null;
-			return callback.getConfiguration().getInvestAssets().get(getSelectedIndex() -1 );
+			return callback.getModule().getConfiguration().getInvestAssets().get(getSelectedIndex() -1 );
 		}
 
 		public void setValue(Integer investAsset) {
 			if (investAsset == null) setSelectedIndex(0);
 			int i = 1;
-			for (InvestAsset asset : callback.getConfiguration().getInvestAssets()) {
+			for (InvestAsset asset : callback.getModule().getConfiguration().getInvestAssets()) {
 				if (AonNumberUtils.equals(asset.getId(),investAsset)) {
 					setSelectedIndex(i);		
 				}
@@ -104,7 +104,6 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		tab.setStyleName(AON.AON_CSS.aonWidthAll());
 		tab.addStyleName(AON.AON_CSS.aonMarginTop());
 		container.add(tab);
-		
 		paintHeader();
 		paintRows();
 		paintButtons();
@@ -244,7 +243,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		saveButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				callback.save(event);
+				callback.getModule().onAccept(event);
 			}
 		});
 		panel.add(saveButton);
@@ -302,13 +301,13 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			final boolean otherLineWithInvestAssests = callback.isInvestAssetsAvailable() && isOtherLineWithInvestAssests(currentRow);
 			int col = 0;
 			expAccount.setValue(vat.getExpAccountId(),vat.getExpAccountCode(),vat.getExpAccountDescription(),true);
-			if (vat.getExpAccountId() != null) {
-				SelectionEvent.<Account>fire(InvoiceVATPanel.this, 
-						new Account()
-							.setId(vat.getExpAccountId())
-							.setCode(vat.getExpAccountCode())
-							.setDescription(vat.getExpAccountDescription()) );
-			}
+//			if (vat.getExpAccountId() != null) {
+//				SelectionEvent.<Account>fire(InvoiceVATPanel.this, 
+//						new Account()
+//							.setId(vat.getExpAccountId())
+//							.setCode(vat.getExpAccountCode())
+//							.setDescription(vat.getExpAccountDescription()) );
+//			}
 			expAccount.addSelectionHandler( new SelectionHandler<Account>() {
 				@Override
 				public void onSelection(SelectionEvent<Account> event) {
@@ -327,7 +326,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			});
 			tab.setWidget(currentRow, col, expAccount);
 			++col;
-
+			
 			taxableBase.setStyleName(AON.AON_CSS.aonInputText());
 			taxableBase.addStyleName(AON.AON_CSS.aonTextRight());
 			taxableBase.setValue(vat.getBase());
@@ -390,7 +389,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			});
 			tab.setWidget(currentRow, col, surchargePercent);
 			++col;
-			
+
 			surchargeQuota.setStyleName(AON.AON_CSS.aonInputText());
 			surchargeQuota.addStyleName(AON.AON_CSS.aonTextRight());
 			surchargeQuota.setValue(vat.getSurchargeQuota());
@@ -438,7 +437,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			});
 			tab.setWidget(currentRow, col, investAsset);
 			++col;
-			
+
 			dedPercent.setStyleName(AON.AON_CSS.aonInputText());
 			dedPercent.addStyleName(AON.AON_CSS.aonTextRight());
 			dedPercent.addStyleName(AON.AON_CSS.aonWidth50());
@@ -501,7 +500,8 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			tab.setWidget(currentRow, col, adjAccount);
 			++col;
 
-			
+
+
 			inputVatAccount.setValue(vat.getInputAccountId(),vat.getInputAccountCode()
 					,vat.getInputAccountDescription(),true);
 			inputVatAccount.setVisible(callback.getInvoice().isInputVatEnabled());

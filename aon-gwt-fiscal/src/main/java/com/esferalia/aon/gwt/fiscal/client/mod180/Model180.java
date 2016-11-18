@@ -400,7 +400,7 @@ public class Model180 extends MainEntryPoint {
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		cleanErrorMessage();
-		fiscalService.initializeMod180(getCurrentDomainName(),getCurrentDomain(), 2015,
+		fiscalService.initializeMod180(getCurrentDomainName(),getCurrentDomain(), 2016,
 				new AsyncCallback<Mod180>() {
 					@Override
 					public void onSuccess(Mod180 m180) {

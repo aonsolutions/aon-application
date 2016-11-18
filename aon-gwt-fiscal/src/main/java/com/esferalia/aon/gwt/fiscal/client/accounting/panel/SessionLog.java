@@ -4,7 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryPrinter;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
-import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -20,7 +20,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 
-public class SessionLog extends ScrollPanel implements HasSelectionHandlers<AccountEntry>{
+public class SessionLog extends ScrollPanel 
+		implements HasSelectionHandlers<IAccountEntryWrapper> {
 	
 	private static String PREVIEW = "PREVISUALIAZACI\u00D3N"; 
 	private static String SUSPENDED = "APARCADO"; 
@@ -39,46 +40,44 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 		root.clear();
 	}
 	
-	public void addPreview( final AccountEntry entry) {
-		add(entry,PREVIEW);
+	public void addPreview( final IAccountEntryWrapper wrapper) {
+		add(wrapper,PREVIEW);
 	}
-	public void addPreview( final AccountEntry[] entries) {
-		for (AccountEntry entry : entries) {
-			add(entry,PREVIEW);
+	public void addPreview( final IAccountEntryWrapper[] wrappers) {
+		for (IAccountEntryWrapper wrapper : wrappers) {
+			add(wrapper,PREVIEW);
 		}
 	}
 
-	public void addDeleted( final AccountEntry entry) {
-		add(entry,DELETED);
+	public void addDeleted( final IAccountEntryWrapper wrapper) {
+		add(wrapper,DELETED);
 	}
-	public void addDeleted( final AccountEntry[] entries) {
-		for (AccountEntry entry : entries) {
-			add(entry,DELETED);
+	public void addDeleted( final IAccountEntryWrapper[] wrappers) {
+		for (IAccountEntryWrapper wrapper : wrappers) {
+			add(wrapper,DELETED);
 		}
 	}
 
-	public void addSaved( final AccountEntry entry) {
-		add(entry,SAVED);
+	public void addSaved( final IAccountEntryWrapper wrapper) {
+		add(wrapper,SAVED);
 	}
-	public void addSaved( final AccountEntry[] entries) {
-		for (AccountEntry entry : entries) {
-			add(entry,SAVED);
+	public void addSaved( final IAccountEntryWrapper[] wrappers) {
+		for (IAccountEntryWrapper wrapper : wrappers) {
+			add(wrapper,SAVED);
 		}
 	}
 
-	public void addSuspended( final AccountEntry entry) {
-		if (entry.getEntryType() == AccountEntryType.MANUAL)
-			add(entry,SUSPENDED);
+	public void addSuspended( final IAccountEntryWrapper wrapper) {
+		add(wrapper,SUSPENDED);
 	}
-	public void addSuspended( final AccountEntry[] entries) {
-		for (AccountEntry entry : entries) {
-			if (entry.getEntryType() == AccountEntryType.MANUAL)
-				add(entry,SUSPENDED);
+	public void addSuspended( final IAccountEntryWrapper[] wrappers) {
+		for (IAccountEntryWrapper wrapper : wrappers) {
+			add(wrapper,SUSPENDED);
 		}
 	}
 	
-	private void add( final AccountEntry entry, String status) {
-		final AccountEntry cloned = AccountEntry.clone(entry);
+	private void add( final IAccountEntryWrapper wrapper, String status) {
+		final AccountEntry entry = wrapper.getAccountEntry();
 		final FocusPanel entryPanel = new FocusPanel();
 		entryPanel.setTabIndex(Integer.MAX_VALUE);
 		FlowPanel panel = new FlowPanel("pre");
@@ -87,7 +86,7 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 		panel.addStyleName(AON.AON_CSS.aonFontMedium());
 		
 		// ------------------------------------- CABECERA DEL ASIENTO
-		Label header = new Label(AonStringUtils.center( toString(cloned, status),160));
+		Label header = new Label(AonStringUtils.center( toString(entry, status),160));
 		header.setStyleName(AON.AON_CSS.aonBold());
 		header.addStyleName(AON.AON_CSS.aonTextUnderline());
 		panel.add(header);
@@ -95,7 +94,7 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 		// ------------------------------------------------- APUNTES		
 		double sumD = 0.0;
 		double sumC = 0.0;
-		for (AccountEntryDetail aed : cloned.getDetails()) {
+		for (AccountEntryDetail aed : entry.getDetails()) {
 			panel.add(new Label(toString(aed)));
 			sumD = AonMathUtils.sum(sumD, aed.getDebit());	
 			sumC = AonMathUtils.sum(sumC, aed.getCredit());
@@ -112,17 +111,17 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				 SelectionEvent.<AccountEntry>fire(SessionLog.this, cloned);
+				 SelectionEvent.<IAccountEntryWrapper>fire(SessionLog.this, wrapper);
 			}
 		});
 		root.insert(entryPanel,0);
 		entryPanel.addStyleName(AON.AON_CSS.aonValueChanged());
-			new Timer() {
-				@Override
-				public void run() {
-					entryPanel.removeStyleName(AON.AON_CSS.aonValueChanged());
-				}
-			}.schedule(500);
+		new Timer() {
+			@Override
+			public void run() {
+				entryPanel.removeStyleName(AON.AON_CSS.aonValueChanged());
+			}
+		}.schedule(500);
 		scrollToTop();
 	}
 	
@@ -173,7 +172,7 @@ public class SessionLog extends ScrollPanel implements HasSelectionHandlers<Acco
 	}
 
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<AccountEntry> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<IAccountEntryWrapper> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 }

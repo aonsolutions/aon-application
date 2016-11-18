@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting;
 
 import java.util.Date;
+import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -33,9 +34,12 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryTypeVisitorAdapter;
+import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatementParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -66,9 +70,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -93,86 +95,14 @@ public class AccountEntryModule extends MainEntryPoint {
 	private static final AccountEntryModuleBinder BINDER = GWT
 			.create(AccountEntryModuleBinder.class);
 	
-	public static interface IAccountEntryModuleCallback {
-		void attach(IWizardContent content,IContentAttchCallback wizardCbk);
-		
-		AonConfiguration getConfiguration();
-		String getDomainName();
-		int getDomainId();
-		
-		IWizardContent getWizardContent();
-		
-		void onRefreshId();
-		void onBalance(Account account);
-		void onBalance(AccountEntry entry);
-		void onStatement(Integer accountId);
-		void onError(String msg);
-		void save(ClickEvent event);
-		
-
-		
-		
+	public interface IAccountEntryModuleCallback {
+		AccountEntryModule getModule();
 	}
 	
-	private final IAccountEntryModuleCallback callback = new IAccountEntryModuleCallback() {
-		
+	private IAccountEntryModuleCallback moduleCallback = new IAccountEntryModuleCallback() {
 		@Override
-		public AonConfiguration getConfiguration() {
-			return configuration;
-		}
-		@Override
-		public String getDomainName() {
-			return getCurrentDomainName();
-		};
-		@Override
-		public int getDomainId() {
-			return getCurrentDomain();
-		};
-		@Override
-		public IWizardContent getWizardContent() {
-			return wizardContent;
-		}
-
-		@Override
-		public void onRefreshId() {
-			refreshIdLabel();
-		}
-		
-		@Override
-		public void onBalance(Account account) {
-			openFootPanelIfNeeded();
-			Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
-			balancePanel.add(account, from, entryDate.getValue());			
-		}
-
-		@Override
-		public void onBalance(AccountEntry entry) {
-			if (entry.getDetails() != null 
-				&& !entry.getDetails().isEmpty() 
-				&& entry.getDetails().get(0).getAccount() != null) {
-				openFootPanelIfNeeded();
-				balancePanel.add(entry);			
-			}
-		}
-
-		@Override
-		public void onStatement(Integer accountId) {
-			showFullStatement(accountId);
-		};
-
-		@Override
-		public void onError(String msg) {
-			showError(msg);
-			
-		}
-
-		@Override
-		public void save(ClickEvent event) {
-			onAccept(event);
-		}
-		@Override
-		public void attach(IWizardContent content,IContentAttchCallback cbk) {
-			setWizardContent(content,cbk);
+		public AccountEntryModule getModule() {
+			return AccountEntryModule.this;
 		}
 	};
 
@@ -250,6 +180,12 @@ public class AccountEntryModule extends MainEntryPoint {
 		splitLayoutPanel = new SplitLayoutPanel(4);
 		journalPanel = new JournalPanel(getCurrentDomainName(), getCurrentDomain());
 
+//		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
+//			public void onUncaughtException(Throwable e) {
+//				showError("ERROR INESPERADO! [" + e.getMessage() + "]");
+//			}
+//		});
+		        
 		Widget ui = BINDER.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		confidential.setTabIndex(Integer.MAX_VALUE - 1);
@@ -305,7 +241,9 @@ public class AccountEntryModule extends MainEntryPoint {
 						} else {
 							activity.setVisible(false);
 						}
-
+						confidential.setVisible(configuration.getUser().hasConfidentialityRole());
+						journalPanel.setUser(configuration.getUser());
+						
 						reset();
 					}
 
@@ -371,7 +309,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	
 	@UiHandler("entryDate")
 	void onChangeEntryDate(ValueChangeEvent<Date> event) {
-		this.wizardContent.getAccountEntryWrapper().getAccountEntry().setEntryDate(event.getValue());
+		this.wizardContent.getMainEntry().setEntryDate(event.getValue());
 		checkDate();
 		refreshIdLabel();
 	}
@@ -379,7 +317,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	@UiHandler("period")
 	void onChangeAccountPeriod(ChangeEvent event) {
 		Integer ap = AonNumberUtils.toInteger(period.getSelectedValue());
-		this.wizardContent.getAccountEntryWrapper().getAccountEntry().setPeriod(ap);
+		this.wizardContent.getMainEntry().setPeriod(ap);
 		checkDate();
 		refreshIdLabel();
 	}
@@ -387,13 +325,13 @@ public class AccountEntryModule extends MainEntryPoint {
 	@UiHandler("activity")
 	void onChangeActivity(ChangeEvent event) {
 		Integer act = AonNumberUtils.toInteger(activity.getSelectedValue());
-		this.wizardContent.getAccountEntryWrapper().getAccountEntry().setActivity(act);
+		this.wizardContent.getMainEntry().setActivity(act);
 		refreshIdLabel();
 	}
 
 	@UiHandler("confidential")
 	void onChangeConfidential(ClickEvent event) {
-		this.wizardContent.getAccountEntryWrapper().getAccountEntry().setConfidential(confidential.getValue());
+		this.wizardContent.getMainEntry().setConfidential(confidential.getValue());
 		refreshIdLabel();
 	}
 
@@ -420,13 +358,13 @@ public class AccountEntryModule extends MainEntryPoint {
 		comment.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				wizardContent.getAccountEntryWrapper().getAccountEntry().setComments(event.getValue());
+				wizardContent.getMainEntry().setComments(event.getValue());
 				styleCommentsButton();
 				refreshIdLabel();
 				toast.hide();
 			}
 		});
-		comment.setText(wizardContent.getAccountEntryWrapper().getAccountEntry().getComments());
+		comment.setText(wizardContent.getMainEntry().getComments());
 		comment.setWidth("90%");
 		comment.setHeight("5em");
 		commentPanel.add(comment);
@@ -434,22 +372,29 @@ public class AccountEntryModule extends MainEntryPoint {
 		toast.show(AON.MSG.comments(), commentPanel);
 	}
 
+	public boolean isNew() {
+		return wizardContent.getMainEntry() == null || wizardContent.getMainEntry().getId() == null;
+	}
+	public boolean isDirty() {
+		return wizardContent.getMainEntry().isDirty();
+	}
+	
 	private void syncCurrent() {
-		boolean canRemove = (!wizardContent.isNew() && wizardContent.isUpdatable());
-		boolean canEdit = wizardContent.isNew() || canRemove;
+		boolean canRemove = (!isNew() && wizardContent.isUpdatable());
+		boolean canEdit = isNew() || canRemove;
 		
 		// Populate header values
-		period.select(wizardContent.getAccountEntryWrapper().getAccountEntry().getPeriod());
-		entryDate.setValue(wizardContent.getAccountEntryWrapper().getAccountEntry().getEntryDate());
-		confidential.setValue(wizardContent.getAccountEntryWrapper().getAccountEntry().isConfidential());
-		journal.setText(AonMathUtils.toInt(wizardContent.getAccountEntryWrapper().getAccountEntry()
+		period.select(wizardContent.getMainEntry().getPeriod());
+		entryDate.setValue(wizardContent.getMainEntry().getEntryDate());
+		confidential.setValue(wizardContent.getMainEntry().isConfidential());
+		journal.setText(AonMathUtils.toInt(wizardContent.getMainEntry()
 				.getJournal()) == 0 ? AonStringUtils.EMPTY : AON.MSG.journal()
-				+ AonStringUtils.SPACE + wizardContent.getAccountEntryWrapper().getAccountEntry().getJournal());
+				+ AonStringUtils.SPACE + wizardContent.getMainEntry().getJournal());
 		if (configuration.hasActivities()) {
 			activity.setEnabled(canEdit);
 			int i = 0;
 			for (; i < activity.getItemCount(); i++) {
-				if (AonNumberUtils.toInteger(activity.getValue(i)) == wizardContent.getAccountEntryWrapper().getAccountEntry().getActivity()) {
+				if (AonNumberUtils.toInteger(activity.getValue(i)) == wizardContent.getMainEntry().getActivity()) {
 					activity.setSelectedIndex(i);
 					break;
 				}
@@ -462,10 +407,10 @@ public class AccountEntryModule extends MainEntryPoint {
 		statusMsg.removeStyleName(AON.AON_CSS.aonInfoMessage());
 		if (!canEdit) {
 			statusMsg.addStyleName(AON.AON_CSS.aonInfoMessage());
-			if (!wizardContent.getAccountEntryWrapper().getAccountEntry().isPeriodActive()) {
+			if (!wizardContent.getMainEntry().isPeriodActive()) {
 				statusMsg.setText(
 						AON.MSG.periodStatusWarning(
-								AON.MSG.accountPeriodStatus(wizardContent.getAccountEntryWrapper().getAccountEntry().getPeriodStatus())));
+								AON.MSG.accountPeriodStatus(wizardContent.getMainEntry().getPeriodStatus())));
 			} else {
 				statusMsg.setText(AON.MSG.automaticEntryWarning());
 				
@@ -473,7 +418,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		}
 		refreshIdLabel();
 		
-		wizardContent.enableElements(canRemove,canEdit);
+		wizardContent.manageWidgets(canRemove,canEdit);
 
 		// Enable/Disable header values
 		period.setEnabled(canEdit);
@@ -488,13 +433,11 @@ public class AccountEntryModule extends MainEntryPoint {
 		errorsContainer.setWidget(errors);
 	}
 
-	private void refreshIdLabel() {
-		id.setText((wizardContent.isNew() 
-				? "[NUEVO]" 
-				: ("(" + wizardContent.getAccountEntryWrapper().getAccountEntry().getId() + ") "))
-				+ (wizardContent.getAccountEntryWrapper().getAccountEntry().isDirty()?AonStringUtils.ASTERISK:AonStringUtils.EMPTY)
-				);
-		if (wizardContent.getAccountEntryWrapper().getAccountEntry().isDirty()) {
+	public void refreshIdLabel() { 
+		id.setText(
+			(isNew()? "[NUEVO]": ("(" + wizardContent.getMainEntry().getId() + ") "))
+			+ (!isNew() && wizardContent.getMainEntry().isDirty()?AonStringUtils.ASTERISK:AonStringUtils.EMPTY));
+		if (wizardContent.getMainEntry().isDirty()) {
 			id.addStyleName(AON.AON_CSS.aonColorRed());
 		} else {
 			id.removeStyleName(AON.AON_CSS.aonColorRed());
@@ -502,7 +445,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	}
 
 	private void styleCommentsButton() {
-		if (AonStringUtils.isEmpty(wizardContent.getAccountEntryWrapper().getAccountEntry().getComments())) {
+		if (AonStringUtils.isEmpty(wizardContent.getMainEntry().getComments())) {
 			commentsButton.addStyleName(AON.AON_CSS.aonIconComment());
 			commentsButton.removeStyleName(AON.AON_CSS.aonIconCommentRed());
 		} else {
@@ -518,7 +461,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 			@Override
 			public void onSuccess(AccountEntry[] result) {
-				sessionLog.addSaved(result);
+				sessionLog.addSaved(AccountEntryModule.getWrapperArray(result));
 				reset();
 				
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
@@ -614,10 +557,10 @@ public class AccountEntryModule extends MainEntryPoint {
 
 					@Override
 					public void onSuccess(Void result) {
-						if (wizardContent.getAccountEntryWrapper().getAccountEntry().getId() != null) {
-							wizardContent.getAccountEntryWrapper().getAccountEntry().setId(
-									wizardContent.getAccountEntryWrapper().getAccountEntry().getId() * -1);
-							sessionLog.addDeleted(wizardContent.getAccountEntryWrapper().getAccountEntry());
+						if (wizardContent.getMainEntry().getId() != null) {
+							wizardContent.getMainEntry().setId(
+									wizardContent.getMainEntry().getId() * -1);
+							sessionLog.addDeleted(wizardContent.getEntryWrapper());
 						}
 						remove.setEnabled(true);
 						reset();
@@ -636,89 +579,92 @@ public class AccountEntryModule extends MainEntryPoint {
 	@UiHandler("audit")
 	public void onAudit(ClickEvent event) {
 		AuditDialog dialog = new AuditDialog();
-		dialog.show(wizardContent.getAccountEntryWrapper().getAccountEntry());
+		dialog.show(wizardContent.getMainEntry());
 	}
 
 	@UiHandler("sessionLog")
-	public void onSelectJournal(SelectionEvent<AccountEntry> event) {
-		final AccountEntry entry = event.getSelectedItem();
-		selectEntry(entry.getId(),entry);
+	public void onSelectJournal(SelectionEvent<IAccountEntryWrapper> event) {
+		final AccountEntry entry = event.getSelectedItem().getAccountEntry();
+		selectEntry(entry.getId(),event.getSelectedItem());
 	}
 
 	@UiHandler("journalPanel")
 	public void onSelectJournalPanel(SelectionEvent<AccountEntry> event) {
 		final AccountEntry entry = event.getSelectedItem();
-		selectEntry(entry.getId(),entry);
+		selectEntry(entry.getId());
 	}
 	@UiHandler("statementPanel")
 	public void onSelectStatement(SelectionEvent<Integer> event) {
-		selectEntry(event.getSelectedItem(),null);
+		selectEntry(event.getSelectedItem());
 	}
 	
-	private void selectEntry(final Integer id,final AccountEntry entry) {
-		if (wizardContent.isDirty()) {
-			sessionLog.addSuspended(wizardContent.getAccountEntryWrapper().getAccountEntry());
+	private void selectEntry(final Integer id) {
+		if (id != null) {
+			fiscalService.getAccountEntry(getCurrentDomainName(),
+				getCurrentDomain(), id ,
+				new AsyncCallback<AccountEntry>() {
+					@Override
+					public void onSuccess(AccountEntry result) {
+						if (result != null) {
+							selectEntry(id , new AccountEntryWrapper(result) );
+						} else {
+							showError("Asiento no encontrado");
+						}
+					}
+					@Override
+					public void onFailure(Throwable caught) {
+						showError(caught.getMessage());
+					}
+				});
+		} else {
+			showError("Asiento no encontrado");
+		}
+	}
+	
+	private void selectEntry(final Integer id,final IAccountEntryWrapper wrp) {
+		boolean newAndEmpty = false;
+		if (!isDirty() ) {
+			newAndEmpty = wrp.getAccountEntry().getId() == null &&
+					(wrp.getAccountEntry().getDetails() == null
+					|| wrp.getAccountEntry().getDetails().size() == 0
+					|| (wrp.getAccountEntry().getDetails().size() == 1
+					&& wrp.getAccountEntry().getDetails().get(0).getAccount() == null
+					&& wrp.getAccountEntry().getDetails().get(0).getDebit() == 0
+					&& wrp.getAccountEntry().getDetails().get(0).getCredit() == 0)				
+							);
+		}
+		if (isDirty() && !newAndEmpty) { 
+			sessionLog.addSuspended(wizardContent.getEntryWrapper());
 		}
 		balancePanel.clearBalances();
-		final PopupPanel waitPopup = new PopupPanel(false, true);
-		Label label = new Label(AON.MSG.processing());
-		label.addStyleName(AON.AON_CSS.aonTimer());
-		waitPopup.add(label);
-		waitPopup.setGlassEnabled(true);
-		waitPopup.setAnimationEnabled(true);
-		waitPopup.center();
-		try {
-			if (id != null) {
-				fiscalService.getAccountEntry(getCurrentDomainName(),
-						getCurrentDomain(), id ,
-						new AsyncCallback<AccountEntry>() {
-							@Override
-							public void onSuccess(AccountEntry result) {
-								if (result != null) {
-									selectWizardContent( result );
-								} else {
-									if (entry != null) {
-										ConfirmDialog cd = new ConfirmDialog();
-										cd.confirm(AON.MSG.recoverEntry(),
-												new ConfirmDialogCallback() {
-											
-											@Override
-											public void onCancel() {
-											}
-											
-											@Override
-											public void onAccept() {
-												AccountEntry cloned = AccountEntry.clone(entry);
-												cloned.setId(null);
-												cloned.setJournal(null);
-												for (AccountEntryDetail aed : cloned.getDetails()) {
-													aed.setId(null);
-												}
-												selectWizardContent( cloned );
-											}
-										});
-									} else {
-										showError("Asiento no encontrado");
-									}
-								}
-								waitPopup.hide();
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								showError(caught.getMessage());
-								waitPopup.hide();
-							}
-						});
-			} else {
-				selectWizardContent( entry );
-			}
-		} finally {
-			if (waitPopup.isShowing()) 
-				waitPopup.hide();
-		}
+		selectWizardContent(id,wrp); 
 	}
 	
+	public void recoverDeletedEntry(final IAccountEntryWrapper wrp) {
+		if (wrp.getAccountEntry().getEntryType() != AccountEntryType.MANUAL) {
+			showError("No se puede recuperar un asiento borrado");
+		} else {
+			ConfirmDialog cd = new ConfirmDialog();
+			cd.confirm(AON.MSG.recoverEntry(),
+					new ConfirmDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+				}
+				
+				@Override
+				public void onAccept() {
+					wrp.getAccountEntry().setId(null);
+					wrp.getAccountEntry().setJournal(null);
+					for (AccountEntryDetail aed : wrp.getAccountEntry().getDetails()) {
+						aed.setId(null);
+					}
+					selectWizardContent(null, wrp);
+				}
+			});
+		}
+	}
+
 	@UiHandler("balancePanel")
 	public void onSelectBalance(SelectionEvent<Integer> event) {
 		showFullStatement(event.getSelectedItem());
@@ -727,33 +673,8 @@ public class AccountEntryModule extends MainEntryPoint {
 	// ---------------------------------------------------------------- ACTION
 	private void reset() {
 		balancePanel.clearBalances();
-		confidential.setVisible(configuration.getUser().hasConfidentialityRole());
-		journalPanel.setUser(configuration.getUser());
 		final MutableInt first = new MutableInt(0);
-		AccountEntry ae =  null;
-		if (this.wizardContent == null) {
-			first.setValue(1);
-			new Manual(this.callback).attach(null);
-			EnterpriseActivity ea = configuration.getMainActivity();
-			ae =  new AccountEntry()
-					.setPeriod(AonNumberUtils.toInteger(period.getSelectedValue()))
-					.setEntryType(this.wizardContent.getAccountEntryType())
-					.setDomain(getCurrentDomain())
-					.setConfidential(false)
-					.setEntryDate(new Date())
-					.setActivity(ea==null?null:ea.getId())
-					.setDirty(false);
-		} else {
-			ae =  new AccountEntry()
-					.setPeriod(this.wizardContent.getAccountEntryWrapper().getAccountEntry().getPeriod())
-					.setEntryType(this.wizardContent.getAccountEntryWrapper().getAccountEntry().getEntryType())
-					.setDomain(getCurrentDomain())
-					.setConfidential(this.wizardContent.getAccountEntryWrapper().getAccountEntry().isConfidential())
-					.setEntryDate(this.wizardContent.getAccountEntryWrapper().getAccountEntry().getEntryDate())
-					.setActivity(this.wizardContent.getAccountEntryWrapper().getAccountEntry().getActivity())
-					.setDirty(false);
-		}
-		this.wizardContent.select(ae, new ISelectionCallback() {
+		ISelectionCallback selectionCallback = new ISelectionCallback() {
 			
 			@Override
 			public void onSucces() {
@@ -774,8 +695,34 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override
 			public void onFailure() {
 			}
-		});
+			
+		}; 
+		if (this.wizardContent == null) {
+			first.setValue(1);
+			Manual manual = new Manual(moduleCallback);
+			manual.attach(null);
+			// manual.select(null,manual.create(null),null, selectionCallback );
+			manual.reset( getModuleEntry(), selectionCallback  );
+			this.wizardContent = manual;	
+		} else {
+			AccountEntry base = this.wizardContent.getMainEntry();
+			this.wizardContent.reset( base, selectionCallback  );
+		}
 		
+	}
+
+	private AccountEntry getModuleEntry() {
+		EnterpriseActivity ea = getConfiguration().getMainActivity();
+		Integer activity = (ea==null?null:ea.getId());
+		AccountPeriod period = getConfiguration().getDefaultAccountPeriod();
+		Integer periodId = (period == null? null : period.getId());
+		return new AccountEntry()
+			.setPeriod(periodId)
+			.setDomain(AccountEntryModule.getCurrentDomain())
+			.setConfidential(false)
+			.setEntryDate(new Date())
+			.setActivity(activity)
+			.setDirty(false);
 	}
 
 	private void showFullStatement(Integer selectedItem) {
@@ -790,11 +737,11 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	@UiHandler("invoice")
 	public void onClickInvoice(ClickEvent event) {
-		final AccountEntry ae = this.wizardContent.getAccountEntryWrapper().getAccountEntry();
+		final IAccountEntryWrapper wrp = this.wizardContent.getEntryWrapper();
 		IContentAttchCallback cbk = new IContentAttchCallback() {
 			@Override
 			public void onAttach() {
-				AccountEntryModule.this.wizardContent.select(ae,new ISelectionCallback() {
+				AccountEntryModule.this.wizardContent.reset(wrp.getAccountEntry(),new ISelectionCallback() {
 					
 					@Override
 					public void onSucces() {
@@ -812,10 +759,11 @@ public class AccountEntryModule extends MainEntryPoint {
 		if (invoice.getValue()) {
 			// No se llama a selectWizardContent, porque es una factura 
 			// nueva y todavía no sabemos el tipo que tiene. 
-			setWizardContent(new InvoicePanel(callback),cbk);
+			// setWizardContent(new InvoicePanel(callback),cbk);
+			new InvoicePanel(moduleCallback).attach(cbk);
 		} else {
-			ae.setEntryType(AccountEntryType.MANUAL);
-			selectWizardContent(ae);
+			wrp.getAccountEntry().setEntryType(AccountEntryType.MANUAL);
+			selectWizardContent(wrp.getAccountEntry().getId(),wrp);
 		}
 	}
 	
@@ -823,11 +771,11 @@ public class AccountEntryModule extends MainEntryPoint {
 		void onAttach();
 	}
 	
-	private void selectWizardContent( final AccountEntry entry ) {
+	private void selectWizardContent( final Integer id, final IAccountEntryWrapper wrp) {
 		final IContentAttchCallback wizardCbk = new IContentAttchCallback() {
 			@Override
 			public void onAttach() {
-				AccountEntryModule.this.wizardContent.select(entry, new ISelectionCallback() {
+				AccountEntryModule.this.wizardContent.select(id,wrp,new ISelectionCallback() {
 					
 					@Override
 					public void onSucces() {
@@ -842,28 +790,28 @@ public class AccountEntryModule extends MainEntryPoint {
 			}
 		};
 		
-		entry.getEntryType().visit(entry, new  AccountEntryTypeVisitorAdapter() {
+		wrp.getAccountEntry().getEntryType().visit(null, new  AccountEntryTypeVisitorAdapter() {
 			@Override
 			public void visitExpenseInvoice(AccountEntry entry) {
 				invoice.setValue(true,false);
-				new InvoicePanel(callback).attach(wizardCbk);
+				new InvoicePanel(moduleCallback).attach(wizardCbk);
 			}
 			@Override
 			public void visitSalesInvoice(AccountEntry entry) {
 				invoice.setValue(true,false);
-				new InvoicePanel(callback).attach(wizardCbk);
+				new InvoicePanel(moduleCallback).attach(wizardCbk);
 			}
 			@Override
 			public void visitPurchaseInvoice(AccountEntry entry) {
 				invoice.setValue(true,false);
-				new InvoicePanel(callback).attach(wizardCbk);
+				new InvoicePanel(moduleCallback).attach(wizardCbk);
 			}
 			@Override
 			public void visitManual(AccountEntry entry) {visitManual();}
 			
 			private void visitManual() {
 				invoice.setValue(false,false);
-				new Manual(callback).attach(wizardCbk);
+				new Manual(moduleCallback).attach(wizardCbk);
 			}
 			
 			@Override public void visitOpening(AccountEntry entry) {visitManual();}
@@ -890,7 +838,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			
 	}
 	
-	private void setWizardContent(IWizardContent content,IContentAttchCallback cbk) {
+	public void setWizardContent(IWizardContent content,IContentAttchCallback cbk) {
 		this.wizardContent = content;
 		wizardPanel.setWidget(this.wizardContent);
 		if (cbk != null) cbk.onAttach();
@@ -924,4 +872,43 @@ public class AccountEntryModule extends MainEntryPoint {
 			});
 		}
 	}
+	
+	public static AccountEntryWrapper[] getWrapperArray(AccountEntry[] entries ) {
+		LinkedList<AccountEntryWrapper> list = new LinkedList<AccountEntryWrapper>();
+		for (AccountEntry entry : entries) {
+			list.add(new AccountEntryWrapper(entry));
+		}
+		return list.toArray(new AccountEntryWrapper[list.size()]);
+	}
+	
+	public void onBalance(Account account) {
+		openFootPanelIfNeeded();
+		Date from = DateUtils.getFirstDayOfYear(entryDate.getValue());
+		balancePanel.add(account, from, entryDate.getValue());			
+	}
+	public void onBalance(AccountEntry entry) {
+		if (entry.getDetails() != null 
+			&& !entry.getDetails().isEmpty() 
+			&& entry.getDetails().get(0).getAccount() != null) {
+			openFootPanelIfNeeded();
+			balancePanel.add(entry);			
+		}
+	}
+	public void onBalance(IAccountEntryWrapper wrp) {
+		onBalance(wrp.getAccountEntry());
+	}
+	public void onStatement(Integer accountId) {
+		showFullStatement(accountId);
+	};
+	public void onError(String msg) {
+		showError(msg);
+	}
+	public AonConfiguration getConfiguration() {
+		return configuration;
+	}
+
+	public Date getEntryDate() {
+		return entryDate.getValue();
+	}
+
 }

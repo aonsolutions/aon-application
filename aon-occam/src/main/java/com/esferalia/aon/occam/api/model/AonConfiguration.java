@@ -57,10 +57,15 @@ public class AonConfiguration implements Serializable {
 	public LinkedList<AccountPeriod> getPeriods() {
 		return periods;
 	}
-
 	public AonConfiguration setPeriods(LinkedList<AccountPeriod> periods) {
 		this.periods = periods;
 		return this;
+	}
+	public AccountPeriod getDefaultAccountPeriod() {
+		for (AccountPeriod period : periods) {
+			if (period.isDefaultPeriod()) return period; 
+		}
+		return null;
 	}
 
 	public LinkedList<String> getInvoiceSalesSeries() {
