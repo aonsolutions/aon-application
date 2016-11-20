@@ -3,14 +3,14 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.76-SNAPSHOT</version>
+		<version>8.76</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.gwt.codemirror</artifactId>
 
 	<packaging>jar</packaging>
-	<version>8.76-SNAPSHOT</version>
+	<version>8.76</version>
 	<description>AON GWT CODEMIRROR</description>
 	<name>AON GWT CODEMIRROR</name>
 
