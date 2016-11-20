@@ -55,6 +55,9 @@ node {
    
       // Create RPMs repository
       sh "ssh dev.esferalia.net 'createrepo /var/www/rpms/aon-solutions'"
+
+      def branch = tag.replace(".x", ".X")
+      //sh "echo yes | ${mvnHome}/bin/mvn release:branch -DbranchName=${branch}  -DreleaseVersion=${mavenRelease['releaseVersion']} -DupdateBranchVersions=true -DupdateWorkingCopyVersions=false "
    }
    else {
       // Mark the code build 'stage'....
