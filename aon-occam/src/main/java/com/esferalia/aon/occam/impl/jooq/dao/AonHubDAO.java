@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.NoticeTag.NOTICE_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
+import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.LinkedList;
@@ -26,6 +27,7 @@ import com.esferalia.aon.jooq.tables.records.AppParamRecord;
 import com.esferalia.aon.jooq.tables.records.NoticeRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.TagRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
@@ -42,7 +44,79 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class AonHubDAO {
+// TODO
+	public static void solutionIssuesDescription(AONContext ctx, Integer domainId){
+		AON.getTaskStream(ctx.getDomainName(), domainId, ctx.getUser(),
+				f -> f.getCommentsProperty().eq("Quiere saber lo que se envía desde la aplicación, sobre todo las facturas de venta."))
+		.forEach(task -> {
+			LinkedList<NoticeRecord> notices = getNoticesA(ctx, domainId, task.getDescription());
 
+			for(NoticeRecord n : notices){
+				if(n.getDate().equals(task.getStartDate())){
+					LinkedList<NoticeRecord> commentList = getNoticeComments(ctx, n.getId());
+					if(commentList.size() > 0){
+						for(Integer j = 0 ; j < commentList.size(); j++){
+							NoticeRecord c = commentList.get(j);
+							if(j == 0){
+								updateTaskComment(ctx, task.getId(), c);
+							} 
+						}
+					} else updateTaskComment(ctx, task.getId(), "");
+					
+				}
+			}
+			
+		});
+		System.out.println("FIN");
+	}
+	
+	public static LinkedList<NoticeRecord> getNoticeComments(AONContext ctx, Integer id){
+		 return ctx.getDslContext()
+				 .select()
+				 .from(NOTICE)
+				 .where(NOTICE.NOTICE_.eq(id))
+				 .fetchInto(NOTICE).stream().collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<NoticeRecord> getNotices(AONContext ctx, Integer domainId){
+		 return ctx.getDslContext()
+				 .select()
+				 .from(NOTICE)
+				 .where(NOTICE.NOTICE_.isNull()).and(NOTICE.DOMAIN.eq(domainId))
+				 .fetchInto(NOTICE).stream().collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<NoticeRecord> getNoticesA(AONContext ctx, Integer domainId, String desc){
+		 return ctx.getDslContext()
+				 .select()
+				 .from(NOTICE)
+				 .where(NOTICE.NOTICE_.isNull()).and(NOTICE.DOMAIN.eq(domainId))
+				 .and(NOTICE.SUBJECT.eq(desc))
+				 .fetchInto(NOTICE).stream().collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static void updateTaskComment(AONContext ctx, Integer taskId, NoticeRecord c){
+		ctx.getDslContext().update(TASK).set(TASK.COMMENTS, c.getSubject())
+			.set(TASK.MODIFICATION_DATE, c.getDate())
+			.set(TASK.MODIFICATION_USER, getUserName(ctx, c.getSender()))
+			.where(TASK.ID.eq(taskId))
+			.execute();
+	}
+	
+	public static void updateTaskComment(AONContext ctx, Integer taskId, String c){
+		ctx.getDslContext().update(TASK).set(TASK.COMMENTS, c)
+			.where(TASK.ID.eq(taskId))
+			.execute();
+	}
+	
+	public static String getUserName(AONContext ctx, Integer id){
+		return id != null ? ctx.getDslContext().select(USER.LOGIN)
+				.from(USER)
+				.where(USER.ID.eq(id))
+				.fetch().get(0).getValue(USER.LOGIN) : "";
+	}
+	
+// TODO
 	
 	public static Tag insertTag(AONContext ctx, Tag tag) {
 		TagRecord tagRecord = ctx.getDslContext()

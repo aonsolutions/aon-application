@@ -36,6 +36,9 @@ public class Incidence extends Methods{
 		this.accessToken = accesToken;
 	}
 	
+	public void solutions() {
+		post(url + "repos/" + getUserName() + "/" + getRepositoryName() + "/solutions","");
+	}
 	
 	//-------------------- ORGANIZATIONS
 	
@@ -190,6 +193,10 @@ public class Incidence extends Methods{
 	
 	public void getDuplicateIssues(Integer parent, AsyncCallback<JSON<JsIssue>> callback){
 		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/duplicates/"+parent, callback);
+	}
+
+	public void getEnterpriseIssues(Integer enterprise, AsyncCallback<JSON<JsIssue>> callback){
+		get(url + "repos/" + getOrganizationName() + "/" + getRepositoryName() + "/enterprise/"+enterprise, callback);
 	}
 	
 	public void createUserIssue(String requestData,	AsyncCallback<JsIssue> callback) {

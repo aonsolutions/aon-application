@@ -73,6 +73,10 @@ public class DBConsults {
 		return AON.getDuplicateTaskStream(domain.getName(), domain.getId(), login, parent);
 	}
 	
+	public Stream<Task> getEnterpriseTaskStream(Domain domain, String login, Integer enterprise){
+		return AON.getTaskStream(domain.getName(), domain.getId(), login, f -> f.getRegistryProperty().eq(enterprise));
+	}
+	
 	public LinkedList<Task> getTaskList(Domain domain, String login, IssueFilter filter){
 		return AON.getTaskList(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()), filter);
 	}

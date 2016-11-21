@@ -368,7 +368,9 @@ public class TaskDAO {
 					.fetchInto(TASK).stream().map(new FullTaskFiller());
 		}
 		if(commentBool){
-			return ctx.getDslContext().selectDistinct().from(TASK).leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
+			return ctx.getDslContext().selectDistinct(
+						TASK.COMMENTS, TASK.CREATION_DATE, TASK.CREATION_USER, TASK.DESCRIPTION, TASK.DOMAIN, TASK.END_DATE, TASK.WORKGROUP,TASK.ID, TASK.MODIFICATION_DATE, TASK.MODIFICATION_USER, TASK.NUMBER, TASK.PARENT, TASK.PRIORITY, TASK.PROJECT, TASK.DUE_DATE, TASK.GTASK_ID, TASK.GTASKLIST_ID, TASK.PERCENT, TASK.REGISTRY, TASK.REPEAT_PERIOD, TASK.SENDER, TASK.SOURCE, TASK.START_DATE, TASK.STATUS, TASK.TASK_HOLDER					
+					).from(TASK).leftOuterJoin(TASK_COMMENT).on(TASK_COMMENT.TASK.eq(TASK.ID))
 					.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
 					.and(extra)
 					.orderBy(sort)
@@ -385,7 +387,7 @@ public class TaskDAO {
 					.offset(issueFilter.getPerPage() * (issueFilter.getPage() - 1))
 					.fetchInto(TASK).stream().map(new FullTaskFiller());
 		}
-		return ctx.getDslContext().select().from(TASK) 
+		return ctx.getDslContext().selectDistinct().from(TASK) 
 				.where(TASK_PROPERTIES.getConditions(filter)).and(condition).and(TASK.NUMBER.isNotNull())
 				.and(extra)
 				.orderBy(sort)

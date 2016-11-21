@@ -73,6 +73,11 @@ public class ReposServlet extends HttpServlet{
 						object = getDuplicateIssuesJSON(domain, userName, pathInfo[4]);
 					}
 					break;
+				case "enterprise":
+					if(pathInfo.length > 4){
+						object = getEnterpriseIssuesJSON(domain, userName, pathInfo[4]);
+					}
+					break;
 				case "issues_light":
 					if(pathInfo.length > 4){
 						object = getLightIssuesJSON(domain, userName,getFilter(req), pathInfo[4]);				
@@ -159,6 +164,10 @@ public class ReposServlet extends HttpServlet{
 							
 			Object object = new Object();
 			switch (pathInfo[3]) {
+			case "solutions":
+				System.out.println("SOLUTION");
+				AON.solutionIssuesDescription(domain.getName(), domain.getId(), "");
+				break;
 			case "issues":
 				if(pathInfo.length > 4){
 					if(pathInfo.length > 5){
@@ -577,6 +586,26 @@ public class ReposServlet extends HttpServlet{
 			Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
 			Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, padre.getWorkgroup());
 			LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(padre.getId()));
+			LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
+					.collect(Collectors.toCollection(LinkedList::new)); 
+			Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))
+					.findFirst().orElse(new Label());
+			Integer comments = AON.getCommentsCount(domain.getName(), domain.getId(), userName, task.getId());
+			Boolean principal = DB.isPrincipal(domain, userName, task);
+			JSONObject json = new Issue(task, assignee, labels, type, comments, domain, userName, workgroup, enterprise, principal, h).toJSON();
+			array.put(json);
+		});
+		return array;
+	}
+	
+	private JSONArray getEnterpriseIssuesJSON(Domain domain, String userName, String e) {
+		JSONArray array = new JSONArray();
+		DB.getEnterpriseTaskStream(domain, userName, Integer.parseInt(e)).forEach(task -> {
+			task.setPriority(task.getPriority());
+			Registry assignee = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getTaskHolder());
+			Registry enterprise = AON.getRegistry(domain.getName(), domain.getId(), userName, task.getRegistry());
+			Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, task.getWorkgroup());
+			LinkedList<Tag> label = AON.getTaskLabelList(domain.getName(), domain.getId(), userName, f->f.getTaskProperty().eq(task.getId()));
 			LinkedList<Label> labels = label.stream().filter(l -> l.getType() == TagType.TASK_LABEL.value()).map(new TagToLabelFiller(domain, userName))
 					.collect(Collectors.toCollection(LinkedList::new)); 
 			Label type = label.stream().filter(l -> l.getType() == TagType.TASK_TYPE.value()).map(new TagToLabelFiller(domain, userName))

@@ -203,7 +203,11 @@ public class Issues implements EntryPoint {
 				}		
 			}
 			
-			@Override protected void onEditButtonClick() {}
+			@Override protected void onEditButtonClick() {
+				
+				incidence.solutions();
+				
+			}
 			
 			@Override protected void onDeleteButtonClick() {}
 			
@@ -236,7 +240,7 @@ public class Issues implements EntryPoint {
 				dialog.cancel.setVisible(false);
 				dialog.center();
 			}
-		}.setVisibleEditButton(false).setVisibleDeleteButton(false)
+		}.setVisibleEditButton(true).setVisibleDeleteButton(false)
 		.setVisibleMoreOptionButton(false));
 	}
 	
