@@ -160,7 +160,6 @@
 		<module>aon-gwt-fiscal</module>
 		<module>aon-gwt-document</module>
 		<module>aon-gwt-template</module>
-		<module>aon-gwt-office</module>
 		<module>aon-gwt-stat</module>
 		<module>aon-gwt-api</module>
 		<module>aon-gwt-issues</module>

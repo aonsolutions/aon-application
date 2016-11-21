@@ -91,18 +91,6 @@
 		<url-pattern>/TirantConnectionServlet/*</url-pattern>
 	</servlet-mapping>
 
-	<!-- AonHub Notices Servlet -->
-	<servlet>
-		<servlet-name>AonHub Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.office.server.AonHubServiceImpl</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>AonHub Servlet</servlet-name>
-		<url-pattern>/aon_gwt_office/office</url-pattern>
-	</servlet-mapping>
-
-
-
 	<!-- RSS Servlet -->
 	<servlet>
 		<servlet-name>RSSServlet</servlet-name>
@@ -149,10 +137,6 @@
 	<servlet-mapping>
 		<servlet-name>Resource Servlet</servlet-name>
 		<url-pattern>/aon_gwt_deposit/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_office/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Resource Servlet</servlet-name>
@@ -468,10 +452,6 @@
 	<servlet-mapping>
 		<servlet-name>Common Servlet</servlet-name>
 		<url-pattern>/aon_gwt_fiscal/Common</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Common Servlet</servlet-name>
-		<url-pattern>/aon_gwt_office/Common</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
