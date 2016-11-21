@@ -47,7 +47,7 @@ public class AonHubDAO {
 // TODO
 	public static void solutionIssuesDescription(AONContext ctx, Integer domainId){
 		AON.getTaskStream(ctx.getDomainName(), domainId, ctx.getUser(),
-				f -> f.getCommentsProperty().eq("Quiere saber lo que se envía desde la aplicación, sobre todo las facturas de venta."))
+				f -> f.getCommentsProperty().like("%Quería saber el formato de importación.%"))
 		.forEach(task -> {
 			LinkedList<NoticeRecord> notices = getNoticesA(ctx, domainId, task.getDescription());
 
