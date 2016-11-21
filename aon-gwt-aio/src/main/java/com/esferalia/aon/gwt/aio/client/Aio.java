@@ -5,8 +5,10 @@ import static com.esferalia.aon.gwt.common.client.AONEntryPoint.getParameter;
 import com.esferalia.aon.gwt.aio.shared.Modules;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.document.client.Documents;
+import com.esferalia.aon.gwt.document.client.nuevo.Documental;
 import com.esferalia.aon.gwt.issues.client.Issues;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -19,19 +21,41 @@ public class Aio implements EntryPoint {
 	
 	private Issues issues;
 	private Documents documents;
+	private Documental documental;
 
+	public static native String getCurrentDomainName()
+	/*-{
+		return $wnd.getCurrentDomainName();
+	}-*/;
+
+	public static native int getCurrentDomain()
+	/*-{
+		return $wnd.getCurrentDomain();
+	}-*/;
+	
 	@Override
 	public void onModuleLoad() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 		
 		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
+		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), new AsyncCallback<AonData>() {
+			
+			@Override public void onSuccess(AonData result) {
+				selection(entryPoint, result);
+			}
+			
+			@Override public void onFailure(Throwable arg0) {}
+		});
 		
+	}
+	
+	private void selection(String entryPoint, AonData aonData) {
 		switch (entryPoint) {
 		case Modules.ISSUES:
 			JsAio.addOnBeforeUnloadHandler(this);
 			JsAio.addOnReloadHandler(this);
-			issues = new Issues();
+			issues = new Issues(aonData);
 			issues.onModuleLoad();
 			break;
 		case Modules.DOCUMENT:
@@ -39,6 +63,9 @@ public class Aio implements EntryPoint {
 			JsAio.addOnReloadHandler(this);
 			documents = new Documents();
 			documents.onModuleLoad();
+			// NUEVO DOCUMENTAL CON POLYMEROS
+			//documental = new Documental(aonData);
+			//documental.onModuleLoad();
 			break;
 		default:
 			break;

@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.issues.shared;
+package com.esferalia.aon.gwt.common.shared;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.google.gwt.user.client.rpc.IsSerializable;

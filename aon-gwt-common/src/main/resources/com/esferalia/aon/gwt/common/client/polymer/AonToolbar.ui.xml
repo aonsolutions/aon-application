@@ -24,7 +24,6 @@
 			style="border-top: 0px;">
        	<p:PaperIconButton ui:field="menuButton" icon="menu"/>
        	<g:Label ui:field="title" styleName="title" text="Toolbar"/>
-        <p:PaperIconButton ui:field="temporalButton" icon="pets"/>
       	<p:PaperIconButton ui:field="infoButton" icon="info-outline"/>
       	<p:PaperIconButton ui:field="refreshButton" icon="refresh"/>
        	<p:PaperIconButton ui:field="addButton" icon="add" />

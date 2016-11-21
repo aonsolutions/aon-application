@@ -10,8 +10,8 @@ import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
-import com.esferalia.aon.gwt.issues.shared.AonData;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -22,7 +22,6 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -55,8 +54,6 @@ public class Issues implements EntryPoint {
 
 	}
 	private static final Binder binder = GWT.create(Binder.class);
-
-	final IIssuesAsync serv = GWT.create(IIssues.class);
 	
 	private static final String HTTP = "http://";
 	private static final String HTTPS = "https://";
@@ -71,9 +68,9 @@ public class Issues implements EntryPoint {
 	
 	IssueFilter issueFilter;
 	Issues me;
-	AonData aonData;
 	Boolean more = true;
 
+	private AonData aonData;
 	private Incidence incidence;
 	
 	public static native String getCurrentDomainName()
@@ -85,6 +82,10 @@ public class Issues implements EntryPoint {
 	/*-{
 		return $wnd.getCurrentDomain();
 	}-*/;
+	
+	public Issues(AonData aonData) {
+		this.aonData = aonData;
+	}
 	
 	@Override
 	public void onModuleLoad() {
@@ -114,22 +115,14 @@ public class Issues implements EntryPoint {
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
 		me = this;
-		serv.getAonData(getCurrentDomainName(), getCurrentDomain(), new AsyncCallback<AonData>() {
 			
-			@Override
-			public void onSuccess(AonData result) {
-				aonData = result;
-				String h = GWT.getModuleBaseURL().contains("https") ? HTTPS : HTTP; 
-				incidence = new Incidence(h+result.getDomain().getName()+"/", result.getMd5(),
-						result.getLoggedUser(), result.getLoggedUser(), result.getDomain().getName());
-				createAonToolbar();
-				createFilterPanel(new FilterPanel(me, incidence));
-				createIssueList(issueFilter = new IssueFilter());
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {}
-		});
+		String h = GWT.getModuleBaseURL().contains("https") ? HTTPS : HTTP; 
+		incidence = new Incidence(h + aonData.getDomain().getName()+"/", aonData.getMd5(),
+				aonData.getLoggedUser(), aonData.getLoggedUser(), aonData.getDomain().getName());
+		
+		createAonToolbar();
+		createFilterPanel(new FilterPanel(me, incidence));
+		createIssueList(issueFilter = new IssueFilter());
 	}
 
 	protected void createFilterPanel(FilterPanel filterPanel){
@@ -185,20 +178,6 @@ public class Issues implements EntryPoint {
 	private void createAonToolbar(){
 		toolbar.add(new AonToolbar("Tareas") {
 			
-			@Override protected void onTemporalButtonClick() {
-				
-				serv.OLDTONEW(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getLoggedUser(), new AsyncCallback<Void>() {
-					
-					@Override
-					public void onSuccess(Void arg0) {
-						Window.alert("OLDTONEW EJECUTADO CORRECTAMENTE, ACTUALIZA LA PÁGINA!");
-					}
-					
-					@Override public void onFailure(Throwable arg0) {}
-				});
-			}
-
-			
 			@Override
 			protected void onRefreshButtonClick() {
 				issueFilter = new IssueFilter();
@@ -236,19 +215,6 @@ public class Issues implements EntryPoint {
 				dialog.addAutoHidePartner(acb.getElementById("overlay"));
 				dialog.getElement().getStyle().setWidth(310, Unit.PX);
 				dialog.center();
-				/*toolbar.add(dialog);
-				dialog.dialog.addIronOverlayOpenedHandler(new IronOverlayOpenedEventHandler() {
-							
-					@Override
-					public void onIronOverlayOpened(IronOverlayOpenedEvent event) {
-						dialog.center();
-						VerticalPanel vp = (VerticalPanel) dialog.content.getWidget(0);	
-						AonComboBox acb = (AonComboBox) vp.getWidget(0);
-						acb.open();
-					}
-				});
-				dialog.open();
-				*/
 			}
 
 			@Override

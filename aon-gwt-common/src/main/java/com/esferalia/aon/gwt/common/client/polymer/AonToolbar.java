@@ -20,7 +20,6 @@ public abstract class AonToolbar extends Composite {
 
     @UiField Label  title;
  
-    @UiField PaperIconButton temporalButton;
     @UiField PaperIconButton menuButton;
     @UiField PaperIconButton infoButton;
     @UiField PaperIconButton refreshButton;
@@ -44,20 +43,6 @@ public abstract class AonToolbar extends Composite {
     
     public void setTitle(String title){
     	this.title.setText(title);
-    }
-
-    // ----------- TEMPORAL BUTTON    
-    
-	protected abstract void onTemporalButtonClick();
-
-    public AonToolbar setVisibleTemporalButton(Boolean isVisible){
-    	temporalButton.setVisible(isVisible);
-    	return this;
-    }
-
-    @UiHandler("temporalButton")
-	void temporalButtonClick(ClickEvent event) {
-    	onTemporalButtonClick();
     }
     
     // ----------- MENU BUTTON    

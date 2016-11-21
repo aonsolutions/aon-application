@@ -2922,14 +2922,4 @@ public class AON {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	
-	public static void OLDTONEW(String domainName, Integer domainId, String login){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getOffice().OLDTONEW(ctx, domainId);
-		} finally {
-			if(ctx != null) ctx.close();
-		}	}
-	
 }
