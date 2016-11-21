@@ -69,7 +69,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.OfferFilter;
 import com.esferalia.aon.occam.api.model.office.Notice;
-import com.esferalia.aon.occam.api.model.office.NoticeFilter;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
@@ -1078,123 +1077,6 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	public static List<Notice> getNotices(Integer domainId, String domainName, String userName, NoticeFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getNotices(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static int getSelectedCount(Integer domainId, String domainName, String userName, NoticeFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getSelectedCount(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Notice createComment(Integer domainId, String domainName,
-			String userName, Integer noticeHeadId, Notice comment) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().createComment(ctx, noticeHeadId, comment);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Notice editComment(Integer domainId, String domainName,
-			String userName, Integer commentId, String body) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().editComment(ctx, commentId, body);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Notice addNewNotice(Integer domainId, String domainName,
-			String userName, Notice notice) throws Exception {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().addNewNotice(ctx, notice);
-
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static Notice getIssueById(Integer domainId, String domainName, String userName, int number) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getIssueById(ctx, number);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Notice editNotice(Integer domainId, String domainName,
-			String userName, Notice notice) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().editNotice(ctx, notice);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static Notice createDuplicatedNotice(Integer domainId, String domainName, String userName, int noticeId) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().createNewDuplicated(ctx, noticeId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static Notice addDuplicateNotice(Integer domainId, String domainName, 
-			String userName, Notice childNotice, int noticeParentId){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().addDuplicateNotice(ctx, childNotice, noticeParentId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Notice changeNoticeStatus(Integer domainId, String domainName,
-			String userName, Notice notice) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().changeNoticeStatus(ctx, notice);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
 
 	public static Tag addNewTag(Integer domainId, String domainName,
 			String userName, Tag tag) {
@@ -1307,68 +1189,6 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getRegistry().getRegistry(ctx, id);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static List<RegistryMedia> getRMedias(Integer domainId,
-			String domainName, String userName) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getRMedias(ctx);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static Notice assigneeTo(Integer domainId,
-			String domainName, String userName, int noticeId, int userId) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().assigneeTo(ctx, noticeId, userId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Notice addLabelsToAnIssue(Integer domainId, String domainName,
-			String userName, Integer issueId, List<Tag> tagList) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().addLabelsToAnIssue(ctx, issueId, tagList);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static boolean removeLabelFromIssue(Integer domainId,
-			String domainName, String userName, Integer issueId, Tag tag) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().removeLabelFromIssue(ctx, issueId, tag);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Notice replaceLabelFromIssue(Integer domainId,
-			String domainName, String userName, Integer issueId,
-			List<Tag> addLabels, List<Tag> deletedTags) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().replaceLabelsForIssue(ctx, issueId, addLabels,
-					deletedTags);
 		} finally {
 			if (ctx != null)
 				ctx.close();
