@@ -373,17 +373,6 @@
 		<url-pattern>/aon_gwt_template/gwt_marketplace</url-pattern>
 	</servlet-mapping>
 
-	<!-- Aon GWT Issues -->
-
-	<servlet>
-		<servlet-name>IssueGwtServlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.issues.server.IssuesServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>IssueGwtServlet</servlet-name>
-		<url-pattern>/aon_gwt_aio/gwt_issue</url-pattern>
-	</servlet-mapping>
-
 	<!-- Aon GWT Document -->
 
 	<servlet>

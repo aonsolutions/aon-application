@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.document.client.Documents;
-import com.esferalia.aon.gwt.document.client.nuevo.Documental;
 import com.esferalia.aon.gwt.issues.client.Issues;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -21,7 +20,7 @@ public class Aio implements EntryPoint {
 	
 	private Issues issues;
 	private Documents documents;
-	private Documental documental;
+	//private Documental documental;
 
 	public static native String getCurrentDomainName()
 	/*-{
