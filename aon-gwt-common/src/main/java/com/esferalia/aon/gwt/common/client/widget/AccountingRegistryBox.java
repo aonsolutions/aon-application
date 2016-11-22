@@ -198,6 +198,11 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 		initWidget(rooPanel);
 	}
 	
+	public void set(AccountingRegistry accountingRegistry) {
+		accountingRegistryTextBox.setText(accountingRegistry.getAccountCode());
+		select(accountingRegistry);
+	}
+	
 	private void select(AccountingRegistry accountingRegistry) {
 		accountingRegistryTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
 		id = accountingRegistry.getId();
@@ -205,6 +210,7 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 		descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
 		SelectionEvent.fire(AccountingRegistryBox.this, accountingRegistry );
 	}
+	
 	public void setValue(AccountingRegistry accountingRegistry, boolean fireEvents) {
 		if (accountingRegistry != null && accountingRegistry.getId() != null) {
 			id = accountingRegistry.getId();

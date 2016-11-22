@@ -388,6 +388,46 @@ public class AccountingInvoiceDAO {
 		}
 	}
 
+	private static class InvoiceDuplicator implements IAccountingRegistryTypeVisitor {
+		private AONContext ctx;
+		private Invoice invoice;
+		
+		private InvoiceDuplicator(AONContext ctx,Invoice invoice) {
+			this.ctx = ctx;
+			this.invoice = invoice;
+		}
+		
+		private void visitCommon(AccountingRegistry reg) {
+			invoice.setId( null );
+			if (invoice.getDetails() != null) {
+				for (InvoiceDetail detail : invoice.getDetails() ) {
+					detail.setId( null );
+				}
+			}
+		}
+
+		@Override
+		public void visitCustomer(AccountingRegistry reg) {
+			visitCommon(reg);
+			invoice.setNumber( InvoiceDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries()));
+		}
+
+		@Override
+		public void visitSupplier(AccountingRegistry reg) {
+			invoice.setSeries(null);
+			invoice.setNumber(0);
+			invoice.setReferenceCode(null);
+			visitCommon(reg);
+		}
+
+		@Override
+		public void visitCreditor(AccountingRegistry reg) {
+			invoice.setSeries(null);
+			invoice.setNumber(0);
+			invoice.setReferenceCode(null);
+			visitCommon(reg);
+		}
+	}
 
 	public static AccountingInvoice save(final AONContext ctx, AonConfiguration config, final AccountingInvoice accInvoice) {
 		if (accInvoice.getAccountEntry().getId() != null) {
@@ -609,5 +649,33 @@ public class AccountingInvoiceDAO {
 			.set(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY, entryId)
 			.set(ACCOUNT_ENTRY_INVOICE.INVOICE, invoiceId)
 			.execute();
+	}
+
+	public static AccountingInvoice duplicateLastAccountingInvoice(AONContext ctx, Integer registryId) {
+		Integer accountEntryId = ctx.getDslContext()
+			.select( ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY )
+			.from( INVOICE )
+			.innerJoin(ACCOUNT_ENTRY_INVOICE).on(ACCOUNT_ENTRY_INVOICE.INVOICE.eq(INVOICE.ID))
+			.where(INVOICE.REGISTRY.eq(registryId))
+			.and(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+			.orderBy(INVOICE.ISSUE_DATE.desc())
+			.limit(1)
+			.fetch()
+			.stream()
+			.map( rec -> rec.getValue(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY))
+			.findFirst()
+			.orElse(null)
+			;
+		AccountingInvoice ai = (accountEntryId == null?null: getAccountingInvoice(ctx, accountEntryId));
+		if (ai != null) {
+			ai.setAccountEntry(null);
+			AccountingRegistry reg = ai.getRegistry(); 
+			reg.getType().visit(reg, new  InvoiceDuplicator(ctx, ai.getInvoice()));
+			for (Finance finance : ai.getFinances()) {
+				finance.setId(null);
+				finance.setFinanceStatus(FinanceStatus.PENDING);
+			}
+		}
+		return ai;
 	}
 }

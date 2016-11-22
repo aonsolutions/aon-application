@@ -1294,6 +1294,14 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 				new AsyncCallbackWrapper<AccountingInvoice>(callback));
 	}
 
+	@Override
+	public void getRegistryLastAccountingInvoice(String currentDomainName, int currentDomain, Integer registryId,
+			AsyncCallback<AccountingInvoice> callback) {
+		AON.start();
+		fsa.getRegistryLastAccountingInvoice(currentDomainName,currentDomain, registryId,
+				new AsyncCallbackWrapper<AccountingInvoice>(callback));
+	}
+
 	// --------------------------------------------------------------- ACCOUNT
 	// STATEMENT
 	@Override

@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.jooq.test;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Date;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -11,11 +12,16 @@ import org.junit.Test;
 import com.code.aon.pool.AonConnectionException;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
+import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
-import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
+import com.esferalia.aon.watson.server.AonRandomStringUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 
 public class AccountingInvoiceTest {
@@ -34,12 +40,30 @@ public class AccountingInvoiceTest {
 	}
 	
 	@Test
-	public void testInvoices() throws IOException {
-		Integer accountEntry = 2282957;
-		AccountingInvoice ai = AccountingInvoiceDAO.getAccountingInvoice(ctx,accountEntry);
+	public void test1() throws IOException {
+		Integer registryId = 609337;
+		AccountingInvoice ai = AccountingInvoiceDAO.initializeInvoice(ctx, InvoiceType.EXPENSES, registryId, new Date());
+		print(ai);
+		for ( int i = 0 ; i < 100000 ; i++ ) {
+			double d = AonNumberUtils.todouble( AonRandomStringUtils.randomNumeric(7));
+			d = AonMathUtils.round(d / 100);
+			InvoiceCalculator.reverseCalculate(ai, d);
+			double total = AonMathUtils.round(ai.getInvoice().getTaxableBase() + ai.getInvoice().getVatQuota() -  ai.getInvoice().getRetentionQuota());
+			boolean equals = AonNumberUtils.equals(ai.getTotalInvoice(), total);
+			if (!equals) {
+				System.out.println(i + ".- " + "("+d+") "+ai.getTotalInvoice() +" == "+ total + " --> " + equals);
+			}
+		}
+	}
+	
+	private void print( AccountingInvoice ai ) throws IOException {	
 		AccountingRegistry ar = ai.getRegistry();
 		Invoice invoice = ai.getInvoice();
+		InvoiceWithholding withholding = ai.getWithholdingData(); 
 		
+		System.out.println();
+		System.out.println("*****************************************************");
+		System.out.println("*****************************************************");
 		System.out.println("id ... " + invoice.getId());
 		System.out.println("domain ... " + invoice.getDomain());
 		System.out.println("activity ... " + invoice.getActivity());
@@ -104,6 +128,9 @@ public class AccountingInvoiceTest {
 		System.out.println("vatAccrualPayment ...: " + ar.isVatAccrualPayment());
 		System.out.println("transaction ...: " + ar.getTransaction());
 		
+		System.out.println("...............................................");
+		System.out.println("...............................................");
+
 		for (InvoiceVAT vat : ai.getVats()) {
 			System.out.println("vatDeductionType ...: " + vat.getVatDeductionType());
 			System.out.println("base ...: " + vat.getBase());
@@ -129,12 +156,21 @@ public class AccountingInvoiceTest {
 			System.out.println("expAccountDescription ...: " + vat.getExpAccountDescription());
 			
 		}
-		
+		System.out.println("...............................................");
+		System.out.println("...............................................");
+		System.out.println("withholdingType ...: " + withholding.getWithholdingType());
+		System.out.println("base ...: " + withholding.getBase());
+		System.out.println("percentage ...: " + withholding.getPercentage());
+		System.out.println("quota ...: " + withholding.getQuota());
+		System.out.println("accountId ...: " + withholding.getAccountId());
+		System.out.println("accountCode ...: " + withholding.getAccountCode());
+		System.out.println("accountDescription ...: " + withholding.getAccountDescription());
 	}
 		
 	@AfterClass
 	public static void afterClass() {
 		ctx.finalize();
 	}
+
 	
 }

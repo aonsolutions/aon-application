@@ -62,7 +62,8 @@ public interface IAccounting {
 	public AccountingInvoice save(AONContext ctx, AccountingInvoice invoice);
 	public IAccountEntryWrapper getAccountEntryWrapper(AONContext ctx, Integer accountEntry);
 	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Date issueDate);
-		
+	public AccountingInvoice getRegistryLastAccountingInvoice(AONContext ctx, Integer registryId);
+	
 	// 			BALANCE
 	public LinkedHashMap<String, AccountBalance> 
 		getAccountBalances(AONContext ctx,AccMiningParameters params) throws AonCoreException;
@@ -72,5 +73,6 @@ public interface IAccounting {
 			throws AonCoreException;
 	public Stream<AccountStatement> getAccountStatement(AONContext ctx, AccountStatementParams params)
 			throws AonCoreException;
+	
 	
 }

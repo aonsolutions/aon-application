@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
-import com.esferalia.aon.watson.util.AonMathUtils;
+//import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	
@@ -114,41 +114,41 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	
 	
-	public double getTotalTaxableBase() {
-		if (getVats() == null) return 0.0;
-		double tb = 0.0; 
-		for (InvoiceVAT vat : getVats()) {
-			tb = tb + vat.getBase();
-		}
-		return AonMathUtils.round(tb);
-	}
+//	public double getTotalTaxableBase() {
+//		if (getVats() == null) return 0.0;
+//		double tb = 0.0; 
+//		for (InvoiceVAT vat : getVats()) {
+//			tb = tb + vat.getBase();
+//		}
+//		return AonMathUtils.round(tb);
+//	}
 	
-	public void calculateInvoiceTotals() {
-		double t = 0.0;
-		double vt = 0.0;
-		double rt = 0.0;
-		double tb = 0.0;
-		double wb = 0.0; 
-		if (getVats() != null) {
-			for (InvoiceVAT vat : getVats()) {
-				tb = tb + vat.getBase();
-				if (isInputVatEnabled() != isOutputVatEnabled()) {
-					t = t + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota();
-					vt = vt + (vat.getQuota() + vat.getSurchargeQuota());
-				} else {
-					t = t + vat.getBase();
-				}
-				wb = wb + ((isWithholding() && vat.isWithholding())?vat.getBase():0.0);
-			}
-			setWithholdingBase(wb);
-			rt = getWithholdingData().getQuota();
-			t = t - rt;
-		}
-		getInvoice().setTotal(t);
-		getInvoice().setVatQuota(vt);
-		getInvoice().setRetentionQuota(rt);
-		getInvoice().setTaxableBase(tb);
-	}
+//	public void calculateInvoiceTotals() {
+//		double t = 0.0;
+//		double vt = 0.0;
+//		double rt = 0.0;
+//		double tb = 0.0;
+//		double wb = 0.0; 
+//		if (getVats() != null) {
+//			for (InvoiceVAT vat : getVats()) {
+//				tb = tb + vat.getBase();
+//				if (isInputVatEnabled() != isOutputVatEnabled()) {
+//					t = t + vat.getBase() + vat.getQuota() + vat.getSurchargeQuota();
+//					vt = vt + (vat.getQuota() + vat.getSurchargeQuota());
+//				} else {
+//					t = t + vat.getBase();
+//				}
+//				wb = wb + ((isWithholding() && vat.isWithholding())?vat.getBase():0.0);
+//			}
+//			setWithholdingBase(wb);
+//			rt = getWithholdingData().getQuota();
+//			t = t - rt;
+//		}
+//		getInvoice().setTotal(t);
+//		getInvoice().setVatQuota(vt);
+//		getInvoice().setRetentionQuota(rt);
+//		getInvoice().setTaxableBase(tb);
+//	}
 	
 	public double getTotalInvoice() {
 		return getInvoice().getTotal();
@@ -199,6 +199,9 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	public boolean isOutputVatEnabled() {
 		return invoice != null && invoice.isOutputVatEnabled();
 	}
+	public boolean isVatEnabled() {
+		return (isInputVatEnabled() != isOutputVatEnabled());
+	}
 	
 	public void setWithholdingAccount(Account acc) {
 		ensureWithholdingData();
@@ -209,12 +212,12 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	public void setWithholdingBase(Double base) {
 		ensureWithholdingData();
 		getWithholdingData().setBase(base);
-		getWithholdingData().setQuota(AonMathUtils.round(base * getWithholdingData().getPercentage() / 100));
+		//getWithholdingData().setQuota(AonMathUtils.round(base * getWithholdingData().getPercentage() / 100));
 	}
 	public void setWithholdingPercent(Double percent) {
 		ensureWithholdingData();
 		getWithholdingData().setPercentage(percent);
-		getWithholdingData().setQuota(AonMathUtils.round(getWithholdingData().getBase() * percent / 100));
+		//getWithholdingData().setQuota(AonMathUtils.round(getWithholdingData().getBase() * percent / 100));
 	}
 	public void setWithholdingQuota(Double quota) {
 		ensureWithholdingData();
@@ -254,4 +257,6 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 			setWithholdingData( new InvoiceWithholding() );
 		}
 	}
+	
+	
 }

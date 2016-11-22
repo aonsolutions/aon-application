@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.PayMethodListBox;
-import com.esferalia.aon.gwt.common.client.widget.WithholdingTypeListBox;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
@@ -20,11 +19,12 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.IAccountingInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
-import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -65,19 +65,23 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 	public static interface IInvoicePanelCallback extends IAccountEntryModuleCallback{
 		AccountingInvoice getInvoice();
 		boolean isInvestAssetsAvailable();
-		void transactionChanged();
-		void withholdingChanged();
-		void surchargeChanged();
-		void invoiceTotalChanged();
-		void enableInvoiceTotal(boolean enable);
 		void paintEntry();
 		void setFocusOnRegistry();
+		void enableInvoiceTotal(boolean enable);
+		
+//		void transactionChanged();
+//		void withholdingChanged();
+//		void surchargeChanged();
+//		void withholdingFarmerChanged();
+//		void invoiceTotalChanged();
 	}
+	private AccountingRegistry lastRegistry;
 
 	private FlexTable regTable;
 	private FlexTable flexTable;
 	private InvoiceVATPanel vatPanel;
-	private FlexTable withholdingTable;
+	private InvoiceWithholdingPanel withholdingPanel;
+	
 	private FlexTable payTable;
 	private InvoiceExtraPanel extraPanel;
 	private SessionLog workingLog;
@@ -92,13 +96,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 	private AccountBox payAccount; 		
 	private PayMethodListBox payMethodList;
 	private InlineLabel payStatusLabel; 
-
-	private ListBox withholdingTaxs;
-	private DoubleBox withholdingBase;
-	private DoubleBox withholdingPercent;
-	private DoubleBox withholdingQuota;
-	private WithholdingTypeListBox withholdingType;
-	private AccountBox withholdingAccount;
 
 	
 	private final KeyUpHandler f9KeyHandler = new KeyUpHandler() {
@@ -128,7 +125,20 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 		workingLog = new SessionLog();
 		rootPanel.addSouth(workingLog, 150);
 		extraPanel = new InvoiceExtraPanel(  );
-		rootPanel.addEast(extraPanel, 400);
+		extraPanel.addValueChangeHandler(new ValueChangeHandler<Void>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Void> event) {
+				vatPanel.extraInfoChanged();
+				withholdingPanel.setVisible(getWrapper().isWithholding());
+				withholdingPanel.setValue(getWrapper().getWithholdingData());
+				//if (getWrapper().isWithholding()) populateWithholding();
+				invoiceTotal.setValue(getWrapper().getInvoice().getTotal(),false);
+				_paintEntry();
+				getWrapper().getAccountEntry().setDirty(true);
+				getCallback().getModule().refreshIdLabel();
+			}
+		});
+		rootPanel.addEast(extraPanel, 380);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
 		centerPanel.setStyleName(AON.AON_CSS.aonWizardPanel());
 		DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.PX);
@@ -143,8 +153,27 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 
 		createPayTable();
 		dockPanel.addSouth(payTable, 28);
-		createWithholdingPanel();
-		dockPanel.addSouth(withholdingTable, 28);
+		withholdingPanel = new InvoiceWithholdingPanel( invoiceCallback );
+		withholdingPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceWithholding>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<InvoiceWithholding> event) {
+				InvoiceCalculator.calculate(getWrapper());
+				invoiceTotal.setValue(getWrapper().getInvoice().getTotal(),false);
+				_paintEntry();
+				getWrapper().getAccountEntry().setDirty(true);
+				getCallback().getModule().refreshIdLabel();
+			}
+		});
+		withholdingPanel.addSelectionHandler(new SelectionHandler<Account>() {
+			@Override
+			public void onSelection(SelectionEvent<Account> event) {
+				getCallback().getModule().onBalance(event.getSelectedItem());
+				_paintEntry();
+				getWrapper().getAccountEntry().setDirty(true);
+				getCallback().getModule().refreshIdLabel();
+			}
+		});
+		dockPanel.addSouth(withholdingPanel, 28);
 
 		SimpleLayoutPanel vatContainerPanel = new SimpleLayoutPanel();
 		ScrollPanel vatContainer = new ScrollPanel();
@@ -152,7 +181,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 		vatPanel.addValueChangeHandler(new ValueChangeHandler<InvoiceVAT>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<InvoiceVAT> event) {
-				if (getWrapper().isWithholding()) populateWithholding();
+				InvoiceCalculator.calculate(getWrapper());
+				withholdingPanel.setValue(getWrapper().getWithholdingData());
+				invoiceTotal.setValue(getWrapper().getInvoice().getTotal(),false);
 				_paintEntry();
 				getWrapper().getAccountEntry().setDirty(true);
 				getCallback().getModule().refreshIdLabel();
@@ -163,6 +194,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 			public void onSelection(SelectionEvent<Account> event) {
 				getCallback().getModule().onBalance(event.getSelectedItem());
 				_paintEntry();
+				getWrapper().getAccountEntry().setDirty(true);
+				getCallback().getModule().refreshIdLabel();
 			}
 		});
 		vatContainer.setWidget(vatPanel);
@@ -200,8 +233,19 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 				,AccountEntryModule.getCurrentDomain()
 				,getCallback().getModule().getConfiguration()
 				,true);
-
-		registryBox.addKeyUpHandler(f9KeyHandler);
+		registryBox.addKeyUpHandler( new KeyUpHandler() {
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					if ( registryBox.getId() == null) {
+						if (lastRegistry != null) {
+							registryBox.set(lastRegistry);	
+						}
+					} else {
+						extraPanel.setFocus();
+					}
+				}
+			}
+		});
 		registryBox.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
 			@Override
 			public void onSelection(SelectionEvent<AccountingRegistry> event) {
@@ -328,11 +372,33 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 		flexTable.setWidget(row, 2, label0);
 		
 		invoiceTotal = new DoubleBox();
+		invoiceTotal.addKeyUpHandler( new KeyUpHandler() {
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
+					repeatLastInvoice( new ISelectionCallback() {
+
+						@Override
+						public void onSucces() {
+							fastSave.setFocus(true);
+						}
+
+						@Override
+						public void onFailure() {
+						}
+						
+					});
+				}
+			}
+		});
 		invoiceTotal.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
 				if (invoiceTotal.getValue() == null) invoiceTotal.setValue(0.0, false);
-				vatPanel.invoiceTotalChanged(invoiceTotal.getValue());
+				if (getWrapper().getVats() != null &&  getWrapper().getVats().size() == 1) {
+					InvoiceCalculator.reverseCalculate(getWrapper(),invoiceTotal.getValue());
+					vatPanel.populateFirstVat();
+					withholdingPanel.setValue( getWrapper().getWithholdingData() );
+				}
 				_paintEntry();
 				getWrapper().getAccountEntry().setDirty(true);
 				getCallback().getModule().refreshIdLabel();
@@ -358,182 +424,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 
 		row++;
 		
-	}
-	private void createWithholdingPanel() {
-		withholdingTable = new FlexTable();
-		withholdingTable.setVisible(false);
-		withholdingTable.setStyleName(AON.AON_CSS.aonBorderTop());
-		withholdingTable.addStyleName(AON.AON_CSS.aonWidthAll());
-		
-		int row = 0;
-		int col = 0;
-		
-		InlineLabel lbl0 = new InlineLabel(AON.MSG.irpf());
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonFontMedium());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonWidth50());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBackgroundWhite());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
-		withholdingTable.setWidget(row, col, lbl0);
-		col++;
-		
-		if (getCallback().getModule().getConfiguration().getWithholdingTaxes() != null 
-			&& getCallback().getModule().getConfiguration().getWithholdingTaxes().size() > 0) {
-			withholdingTaxs = new ListBox();
-			withholdingTaxs.addStyleName(AON.AON_CSS.aonMarginLeft5());
-			withholdingTaxs.setWidth("100px");
-			withholdingTaxs.addItem("--------","-1");
-			for (Tax tax : getCallback().getModule().getConfiguration().getWithholdingTaxes()) {
-				withholdingTaxs.addItem(tax.getName(),AonNumberUtils.toString( tax.getId()));
-			}
-			withholdingTaxs.addChangeHandler(new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					for (Tax tax : getCallback().getModule().getConfiguration().getWithholdingTaxes()) {
-						if ( AonNumberUtils.toInteger( withholdingTaxs.getSelectedValue()).equals(tax.getId())  ) {
-							
-							Account taxAccount = getWrapper().isSales()
-									?tax.getSalesAccount()
-									:tax.getPurchaseAccount();
-							if (taxAccount == null) {
-								taxAccount = getWrapper().isSales()
-									?getCallback().getModule().getConfiguration().getDefaultChargedRetAccount()
-									:getCallback().getModule().getConfiguration().getDefaultPaidRetAccount();
-							}
-							getWrapper().getWithholdingData().setPercentage(tax.getPercentage());
-							getWrapper().getWithholdingData().setWithholdingType(tax.getWithholdingType());
-							if (taxAccount != null) {
-								getWrapper().getWithholdingData().setAccountId(taxAccount.getId());
-								getWrapper().getWithholdingData().setAccountCode(taxAccount.getCode());
-								getWrapper().getWithholdingData().setAccountDescription(taxAccount.getDescription());
-								getCallback().getModule().onBalance(taxAccount);
-							} else {
-								getWrapper().getWithholdingData().setAccountId(null);
-								getWrapper().getWithholdingData().setAccountCode(null);
-								getWrapper().getWithholdingData().setAccountDescription(null);
-							}
-							getWrapper().calculateInvoiceTotals();
-							populateWithholding();
-							_paintEntry();
-							getWrapper().getAccountEntry().setDirty(true);
-							getCallback().getModule().refreshIdLabel();
-						}
-					}
-				}
-			});
-			withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
-			withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-			withholdingTable.setWidget(row, col, withholdingTaxs);
-			col++;
-		}
-		
-		InlineLabel lbl1 = new InlineLabel(AON.MSG.taxableBaseAbr());
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBold());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, lbl1);
-		col++;
-		
-		withholdingBase = new DoubleBox(8,4);
-		withholdingTable.setWidget(row, col, withholdingBase);
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		col++;
-		
-		InlineLabel lbl2 = new InlineLabel(AonStringUtils.PERCENT);
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBold());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, lbl2);
-		col++;
-		
-		withholdingPercent = new DoubleBox(6,2);
-		withholdingPercent.setVisibleLength(3);
-		withholdingPercent.addStyleName(AON.AON_CSS.aonMarginLeft5());
-		withholdingPercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getWrapper().setWithholdingPercent( event.getValue() );
-				getWrapper().calculateInvoiceTotals();
-				populateWithholding();
-				_paintEntry();
-				getWrapper().getAccountEntry().setDirty(true);
-				getCallback().getModule().refreshIdLabel();
-			}
-		});
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, withholdingPercent);
-		col++;
-
-		InlineLabel lbl3 = new InlineLabel(AON.MSG.quota());
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBold());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, lbl3);
-		col++;
-		
-		withholdingQuota = new DoubleBox(8,2);
-		withholdingQuota.setReadOnly(true);
-		withholdingQuota.setVisibleLength(5);
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, withholdingQuota);
-		col++;
-		
-		InlineLabel lbl4 = new InlineLabel(AON.MSG.accountAbr());
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBold());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, lbl4);
-		col++;
-		
-		withholdingAccount = new AccountBox(AccountEntryModule.getCurrentDomainName()
-				, AccountEntryModule.getCurrentDomain(), false);
-		withholdingAccount.addSelectionHandler(new SelectionHandler<Account>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setWithholdingAccount( event.getSelectedItem() );
-				getCallback().getModule().onBalance(event.getSelectedItem());
-				_paintEntry();
-				getWrapper().getAccountEntry().setDirty(true);
-				getCallback().getModule().refreshIdLabel();
-			}
-		});
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, withholdingAccount);
-		col++;
-
-		InlineLabel lbl5 = new InlineLabel(AON.MSG.type());
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonBold());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontSmall());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().setWidth(row, col, "1%");
-		withholdingTable.setWidget(row, col, lbl5);
-		col++;
-		
-		withholdingType = new WithholdingTypeListBox();
-		withholdingType.addStyleName(AON.AON_CSS.aonMarginLeft5());
-		withholdingType.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				getWrapper().setWithholdingType( withholdingType.getValue() );
-				getWrapper().getAccountEntry().setDirty(true);
-				getCallback().getModule().refreshIdLabel();
-			}
-		});
-		withholdingTable.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonNowrap());
-		withholdingTable.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonWidthAuto());
-		withholdingTable.setWidget(row, col, withholdingType);
-		col++;
 	}
 
 	private void createPayTable() {
@@ -700,7 +590,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 					registryBox.setValue(new AccountingRegistry());
 					flexTable.setVisible(false);
 					payTable.setVisible(false);
-					withholdingTable.setVisible(false);
+					withholdingPanel.setVisible(false);
 					vatPanel.setVisible(false);
 					extraPanel.invoiceChanged(getWrapper());
 				}
@@ -728,13 +618,16 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 			fillSalesSeries();
 			extraPanel.paint(invoiceCallback);
 			vatPanel.paint();
+			if ( getWrapper().isWithholding() ) {
+				withholdingPanel.paint();
+			}
 			_paintEntry();
 		}
 	}
 
-	private void enableSurchargeIfNeeded() {
-		vatPanel.surchargeChanged(extraPanel.isSurcharge());
-	}
+//	private void enableSurchargeIfNeeded() {
+//		vatPanel.surchargeChanged(extraPanel.isSurcharge());
+//	}
 	
 	private void fillSalesSeries() {
 		if (getCallback().getModule().getConfiguration().getInvoiceSalesSeries() != null 
@@ -747,16 +640,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 		}
 	}
 	
-	private void populateWithholding() {
-		withholdingBase.setValue( getWrapper().getWithholdingData().getBase(),false);
-		withholdingPercent.setValue( getWrapper().getWithholdingData().getPercentage(),false);
-		withholdingQuota.setValue( getWrapper().getWithholdingData().getQuota(),false);
-		withholdingType.setValue(getWrapper().getWithholdingData().getWithholdingType());
-		withholdingAccount.setValue(getWrapper().getWithholdingData().getAccountId()
-				,getWrapper().getWithholdingData().getAccountCode()
-				,getWrapper().getWithholdingData().getAccountDescription(),false);
-	}
-
 	private class InvoicePanelVisitor implements IAccountingInvoiceTypeVisitor {
 
 		@Override
@@ -796,8 +679,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 		referenceCode.setVisible(false);
 		series.setFocus(true);
 		invoiceTotal.setValue(invoice.getInvoice().getTotal());
-		withholdingTable.setVisible(invoice.isWithholding());
-		populateWithholding();
+		withholdingPanel.setVisible(invoice.isWithholding());
+		withholdingPanel.setValue( invoice.getWithholdingData() );
 		populatePayment(invoice);
 	}
 	private void populatePurchaseInvoice(AccountingInvoice invoice) {
@@ -810,8 +693,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 		referenceCode.setVisible(true);
 		referenceCode.setFocus(true);
 		invoiceTotal.setValue(invoice.getTotalInvoice());
-		withholdingTable.setVisible(invoice.isWithholding());
-		populateWithholding();
+		withholdingPanel.setVisible(invoice.isWithholding());
+		withholdingPanel.setValue( invoice.getWithholdingData() );
 		populatePayment(invoice);
 	}
 	private void populateExpensesInvoice(AccountingInvoice invoice) {
@@ -824,8 +707,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 		referenceCode.setVisible(true);
 		referenceCode.setFocus(true);
 		invoiceTotal.setValue(invoice.getTotalInvoice());
-		withholdingTable.setVisible(invoice.isWithholding());		
-		populateWithholding();
+		withholdingPanel.setVisible(invoice.isWithholding());		
+		withholdingPanel.setValue( invoice.getWithholdingData() );
 		populatePayment(invoice);
 	}
 
@@ -904,13 +787,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 		return paidFinances;
 	}
 
-//	@Override
-//	public AccountEntryType getAccountEntryType() {
-//		return (invoice != null && invoice.getRegistry() != null && invoice.getRegistry().getType() != null)
-//				?invoice.getRegistry().getType().getAccountEntryType()
-//				:null;
-//	}
-	
 	@Override
 	public void save(final AsyncCallback<AccountEntry[]> callback) {
 		
@@ -921,6 +797,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 			@Override
 			public void onSuccess(AccountingInvoice result) {
 				setWrapper(result);
+				lastRegistry = result.getRegistry();
 				int entriesSize = getWrapper().getAccountEntries().size();
 				AccountEntry[] entries = new AccountEntry[entriesSize];  
 				callback.onSuccess(getWrapper().getAccountEntries().toArray(entries));
@@ -953,50 +830,53 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 				&& getCallback().getModule().getConfiguration().isInvestAssetsAvailable();
 			
 		}
-		@Override
-		public void transactionChanged() {
-			vatPanel.transactionChanged();
-			getWrapper().calculateInvoiceTotals();
-			_paintEntry();
-			getWrapper().getAccountEntry().setDirty(true);
-			getCallback().getModule().refreshIdLabel();
-		}
-
-		@Override
-		public void withholdingChanged() {
-			vatPanel.withholdingChanged();
-			withholdingTable.setVisible(getWrapper().isWithholding());
-			_paintEntry();
-			getWrapper().getAccountEntry().setDirty(true);
-			getCallback().getModule().refreshIdLabel();
-		}
-
-		@Override
-		public void surchargeChanged() {
-			enableSurchargeIfNeeded();
-			_paintEntry();
-			getWrapper().getAccountEntry().setDirty(true);
-			getCallback().getModule().refreshIdLabel();
-		}
-		@Override
-		public void invoiceTotalChanged() {
-			getWrapper().calculateInvoiceTotals();
-			invoiceTotal.setValue(getWrapper().getTotalInvoice());
-			getWrapper().getAccountEntry().setDirty(true);
-			getCallback().getModule().refreshIdLabel();
-		}
+//		@Override
+//		public void transactionChanged() {
+//			vatPanel.transactionChanged();
+//			InvoiceCalculator.calculate(getWrapper());
+//			paintEntry();
+//		}
+//
+//		@Override
+//		public void withholdingChanged() {
+//			vatPanel.withholdingChanged();
+//			withholdingTable.setVisible(getWrapper().isWithholding());
+//			paintEntry();
+//		}
+//
+//		@Override
+//		public void surchargeChanged() {
+//			enableSurchargeIfNeeded();
+//			paintEntry();
+//		}
+//		
+//		@Override
+//		public void withholdingFarmerChanged() {
+//			InvoiceCalculator.calculate(getWrapper());
+//			populateWithholding();
+//			paintEntry();
+//		}
+//		
+//		@Override
+//		public void invoiceTotalChanged() {
+//			InvoiceCalculator.calculate(getWrapper());
+//			paintEntry();
+//		}
+//		
 		@Override
 		public void enableInvoiceTotal(boolean enable) {
 			invoiceTotal.setEnabled(enable);
 		}
-
 		@Override
 		public void setFocusOnRegistry() {
 			registryBox.setFocus(true);
 		}
+		
 		@Override
 		public void paintEntry() {
 			_paintEntry();
+			getWrapper().getAccountEntry().setDirty(true);
+			getCallback().getModule().refreshIdLabel();
 		}
 
 	};
@@ -1005,6 +885,33 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 	public void manageWidgets(boolean canRemove, boolean canEdit) {
 		fastSave.setVisible(canEdit);
 		vatPanel.enableElements(canRemove,canEdit);		
+	}
+	
+	private void repeatLastInvoice(final ISelectionCallback cbk) {
+		Integer registryId = getWrapper().getRegistry().getId();
+		getFiscalService().getRegistryLastAccountingInvoice(AccountEntryModule.getCurrentDomainName()
+				,AccountEntryModule.getCurrentDomain(), registryId
+				,new AsyncCallback<AccountingInvoice>() {
+						@Override
+						public void onSuccess(AccountingInvoice result) {
+							result.setAccountEntry(getWrapper().getAccountEntry());
+							result.getInvoice().setIssueDate(getCallback().getModule().getEntryDate());
+							result.getInvoice().setTaxDate(getCallback().getModule().getEntryDate());
+							if (!result.getInvoice().isSales()) {
+								result.getInvoice().setReferenceCode(referenceCode.getValue());
+							}
+							populate(result);
+							getCallback().getModule().onBalance(getWrapper().getAccountEntry());
+							if (cbk != null) {
+								cbk.onSucces();
+							}							
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							getCallback().getModule().onError("No se ha encontrado ninguna factura");
+						}
+					});
 	}
 
 }

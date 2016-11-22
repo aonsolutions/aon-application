@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.DocumentTypeListBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel.IInvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
@@ -20,8 +21,10 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -30,7 +33,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class InvoiceExtraPanel extends ScrollPanel  {
+public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHandlers<Void> {
 	
 	private AccountingRegistryVisitor accountingRegistryVisitor;
 	
@@ -258,7 +261,9 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 			@Override
 			public void onChange(ChangeEvent event) {
 				callback.getInvoice().getInvoice().setTransaction(transactionBox.getValue());
-				callback.transactionChanged();
+				InvoiceCalculator.calculate(callback.getInvoice());
+				ValueChangeEvent.fire(InvoiceExtraPanel.this, null );
+				// callback.transactionChanged();
 			}
 		});
 		transactionBox.addKeyUpHandler(new KeyUpHandler() {
@@ -340,7 +345,9 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				callback.getInvoice().getInvoice().setSurcharge(surcharge.getValue());
-				callback.surchargeChanged();
+				InvoiceCalculator.calculate(callback.getInvoice());
+				ValueChangeEvent.fire(InvoiceExtraPanel.this, null );
+				//callback.surchargeChanged();
 			}
 		});
 		surcharge.addKeyUpHandler(new KeyUpHandler() {
@@ -392,7 +399,9 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				callback.getInvoice().getInvoice().setWithholding(withholding.getValue());
-				callback.withholdingChanged();
+				InvoiceCalculator.calculate(callback.getInvoice());
+				ValueChangeEvent.fire(InvoiceExtraPanel.this, null );
+				//callback.withholdingChanged();
 			}
 		});
 		withholding.addKeyUpHandler(new KeyUpHandler() {
@@ -415,7 +424,9 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				callback.getInvoice().getInvoice().setWithholdingFarmer(withholdingFarmer.getValue());
-				callback.withholdingChanged();
+				InvoiceCalculator.calculate(callback.getInvoice());
+				ValueChangeEvent.fire(InvoiceExtraPanel.this, null );
+				//callback.withholdingFarmerChanged();
 			}
 		});
 		withholdingFarmer.addKeyUpHandler(new KeyUpHandler() {
@@ -485,6 +496,11 @@ public class InvoiceExtraPanel extends ScrollPanel  {
 
 	public void setFocus() {
 		rDocument.setFocus(true);		
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Void> handler) {
+		return super.addHandler(handler, ValueChangeEvent.getType());
 	}
 
 	

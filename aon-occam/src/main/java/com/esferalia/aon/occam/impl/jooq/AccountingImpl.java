@@ -266,6 +266,10 @@ public class AccountingImpl implements IAccounting {
 	public AccountingInvoice getAccountingInvoice(AONContext ctx, Integer accountEntry) {
 		return AccountingInvoiceDAO.getAccountingInvoice(ctx, accountEntry);
 	}
+	@Override
+	public AccountingInvoice getRegistryLastAccountingInvoice(AONContext ctx, Integer registryId) {
+		return AccountingInvoiceDAO.duplicateLastAccountingInvoice(ctx, registryId);
+	}
 
 	@Override
 	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Date issueDate) {

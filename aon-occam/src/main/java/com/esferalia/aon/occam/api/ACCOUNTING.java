@@ -341,4 +341,17 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
+
+
+	public static AccountingInvoice getRegistryLastAccountingInvoice(String domainName, int domain, String userLogin,
+			Integer registryId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, userLogin);
+			return getAccounting().getRegistryLastAccountingInvoice(ctx, registryId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 }
