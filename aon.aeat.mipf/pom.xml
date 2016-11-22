@@ -17,7 +17,7 @@
 	<scm>
 		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon.aeat.mipf</developerConnection>
 		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon.aeat.mipf</connection>
-	  <tag></tag>
+	  <tag>8.76.X</tag>
   </scm>
 	<build>
 		<finalName>aon-aio</finalName>
