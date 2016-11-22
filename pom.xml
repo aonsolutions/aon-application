@@ -204,7 +204,7 @@
 	<scm>
 		<connection>scm:git:https://github.com/aonsolutions/aon-application.git</connection>
 		<url>https://github.com/aonsolutions/aon-application</url>
-	  <tag>HEAD</tag>
+	  <tag></tag>
   </scm>
 
 	<organization>
