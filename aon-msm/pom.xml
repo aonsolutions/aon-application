@@ -16,7 +16,7 @@
 	<scm>
 		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-solutions-release</developerConnection>
 		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-solutions-release</connection>
-	  <tag>8.76.X</tag>
+	  <tag></tag>
   </scm>
 	<build>
 		<plugins>
