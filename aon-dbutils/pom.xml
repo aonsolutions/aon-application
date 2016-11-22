@@ -13,7 +13,7 @@
     <scm>
             <connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-dbutils</connection>
             <developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-dbutils</developerConnection>
-      <tag></tag>
+      <tag>8.76.X</tag>
   </scm>
 
 	<dependencies>
