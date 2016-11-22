@@ -13,7 +13,7 @@
 	<scm>
 		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-master</developerConnection>
 		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-master</connection>
-	  <tag>8.76.X</tag>
+	  <tag></tag>
   </scm>
 
 

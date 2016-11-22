@@ -15,7 +15,7 @@
 	<scm>
 		<developerConnection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-maven-plugin</developerConnection>
 		<connection>scm:svn:http://dev.esferalia.net/repos/aon-application/trunk/aon-maven-plugin</connection>
-	  <tag>8.76.X</tag>
+	  <tag></tag>
   </scm>
 
 
