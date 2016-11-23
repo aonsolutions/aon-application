@@ -29,6 +29,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.lang.String.format;
+import static java.util.Calendar.DATE;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
 
@@ -72,6 +73,7 @@ import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.payment.IPayment;
@@ -82,6 +84,47 @@ import junit.framework.Assert;
 public class SQLITTestCase extends AbstractSQLTestCase {
 
 	private static final double DELTA = 0.004;
+	
+	@Test
+	public void testInicioIT() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		List<ITimedResult<java.util.Date>> results = ctx.getExpressionContext().eval(ContextVariable.IT_START.getName(), startDate, endDate, java.util.Date.class);
+		Assert.assertEquals(1, results.size());
+		Assert.assertEquals(startITDate, results.get(0).getValue());
+		
+		for ( int i = 1; i < 12 ; i++ ) {
+			startDate = AonDateUtils.add(getFirstDayOfMonth(getToday()), MONTH,i);
+			endDate = getLastDayOfMonth(startDate);
+			ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			results = ctx.getExpressionContext().eval(ContextVariable.IT_START.getName(), startDate, endDate, java.util.Date.class);
+			System.out.println(startDate + " : " + startITDate + ", " + results.get(0).getValue());
+			Assert.assertEquals(1, results.size());
+			Assert.assertEquals(startITDate, results.get(0).getValue());
+		}
+	}
 	
 	
 	@Test

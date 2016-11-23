@@ -8,6 +8,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
+import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.lang.String.format;
@@ -38,6 +39,7 @@ import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class SQLBRTestCase extends AbstractSQLTestCase {
 
@@ -178,7 +180,14 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 						this.issue = "01/07";
 					}
 				}, });
-		ContractRecord contract = newContract(aonContext, 
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				},
 				new String[] {
 				"( P_1 + P_2 ) * 0.10",
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
@@ -192,7 +201,9 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				//+"TRACE('DIAS_ENFERMEDAD_COMUN = %d \r\n',DIAS_ENFERMEDAD_COMUN);"
 				+"TRACE('%1$td/%1$tm/%1$tY \r\n',INICIO_IT);"
 				+"0.00", 
-				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
+				//"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA"
+				"DIAS_COTIZADOS * BASE_REGULADORA"
+				);
 		//@formatter:on
 
 		Date startITDate = getToday();
@@ -211,7 +222,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		ISalary salary = calculator.calculate(ctx);
 
-		int monthDays = get(endDate, DAY_OF_MONTH);
+		int monthDays = 30 ;//get(endDate, DAY_OF_MONTH);
 		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00 * 1.10
 				* (monthDays - 1) / monthDays, salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(format("%s :", CGC_BASE), (1750.00 * 1.10)
@@ -220,8 +231,8 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		startDate = getFirstDayOfMonth(add(getToday(), MONTH, 1));
 		endDate = getLastDayOfMonth(startDate);
 
-		monthDays = get(endDate, DAY_OF_MONTH);
-		int leaveOffset = (int) (Math.random() * monthDays);
+		monthDays = 30; //get(endDate, DAY_OF_MONTH);
+		int leaveOffset = (int) (Math.random() * get(endDate, DAY_OF_MONTH));
 		startITDate = add(endDate, Calendar.DAY_OF_MONTH, (-1) * leaveOffset);
 		endITDate = null;
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
@@ -231,8 +242,9 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				endDate, endDate, contract);
 
 		salary = calculator.calculate(ctx);
+		int workDays = get(endDate, DAY_OF_MONTH) - (leaveOffset + 1);
 		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00 * 1.10
-				* (monthDays - (leaveOffset + 1)) / monthDays,
+				* (workDays) / monthDays,
 				salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(format("%s :", CGC_BASE), (1750.00 * 1.10)
 				* (1 + 1.00 / 12 + 1.00 / 12), salary.getCommonBase(), DELTA);
@@ -545,6 +557,12 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 					}
 				}, });
 		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				},
 				new String[] {
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
@@ -552,13 +570,15 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				new String[] {
 				}, category);
 		addPayment(aonContext, contract,
-				"GTZDO( P_0 + P_1,1,365)", 
+				"GTZDO( P_0 + P_1,1,365*2)", 
 				"0.00");
 		PaymentConceptRecord prestIT = addConcept(aonContext, "PREST_IT");
 		addPayment(aonContext, contract, prestIT ,
 				"TRACE('DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA=%f\r\n',BASE_REGULADORA * DIAS_ENFERMEDAD_COMUN); "
 				+"0.00", 
-				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
+//				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA"
+				"DIAS_COTIZADOS * BASE_REGULADORA"
+				);
 		//@formatter:on
 
 		Date startITDate = getToday();
@@ -601,6 +621,8 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 			ctx = getContractSalaryCalculatorContext(connection, startDate,
 					endDate, endDate, contract);
 			salary = calculator.calculate(ctx);
+			System.out.println(startDate + "," + salary.getTotalPayment());
+			
 			Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00,
 					salary.getTotalPayment(), DELTA);
 			Assert.assertEquals(format("%s :", CGC_BASE), 1750.00,
@@ -634,7 +656,14 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 						this.issue = "01/07";
 					}
 				}, });
+		@SuppressWarnings("serial")
 		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				},
 				new String[] {
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
@@ -648,7 +677,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract, prestIT,
 				"TRACE('DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA=%f\r\n',BASE_REGULADORA * DIAS_ENFERMEDAD_COMUN); "
 				+"0.00", 
-				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
+				"DIAS_COTIZADOS * BASE_REGULADORA");
 		//@formatter:on
 
 		Date startITDate = getToday();
@@ -706,7 +735,14 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 						this.issue = "01/07";
 					}
 				}, });
+		@SuppressWarnings("serial")
 		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				},
 				new String[] {
 				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
 				"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
@@ -720,7 +756,8 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		addPayment(aonContext, contract, prestIT,
 				"TRACE('DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA=%f\r\n',BASE_REGULADORA * DIAS_ENFERMEDAD_COMUN); "
 				+"0.00", 
-				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
+				"DIAS_COTIZADOS * BASE_REGULADORA"
+				);
 		//@formatter:on
 
 		Date startITDate = getToday();

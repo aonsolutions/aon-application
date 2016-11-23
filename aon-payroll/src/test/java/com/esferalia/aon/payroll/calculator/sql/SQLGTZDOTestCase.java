@@ -6,6 +6,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
@@ -2480,7 +2481,11 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 
 		ContractRecord contract = newContract(aonContext,  
 				AonDateUtils.getFirstDayOfYear(getToday()),
-				Collections.emptyMap()
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
 				, new String[] { 
 						}
 				, new String[] {
@@ -2630,7 +2635,11 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 
 		ContractRecord contract = newContract(aonContext,  
 				AonDateUtils.getFirstDayOfYear(getToday()),
-				Collections.emptyMap()
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
 				, new String[] { 
 						}
 				, new String[] {
@@ -2742,21 +2751,20 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 	private static void addPrestIts(AONContext aonContext, ContractRecord contract) {
 		PaymentConceptRecord prestIT = addConcept(aonContext, "PREST_IT");
 		addPayment(aonContext, contract, prestIT 
-				,"0.00"
-//				,"TRACE('BR = %f\r\n', BASE_REGULADORA);0.00"
-				,String.format("BASE_REGULADORA * 1.00 * %s_1_3",  COMMON_DISEASE_DAYS)
+				,String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS)
+				,String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				);
 		addPayment(aonContext, contract, prestIT 
 				,String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS)
-				,String.format("BASE_REGULADORA * 1.00 * %s_4_15",  COMMON_DISEASE_DAYS)
+				,String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				);
 		addPayment(aonContext, contract, prestIT 
 				,String.format("BASE_REGULADORA * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS)
-				,String.format("BASE_REGULADORA * 1.00 * %s_16_20",  COMMON_DISEASE_DAYS)
+				,String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				);
 		addPayment(aonContext, contract, prestIT 
 				,String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS)
-				,String.format("BASE_REGULADORA * 1.00 * %s_21",  COMMON_DISEASE_DAYS)
+				,String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
 				);
 	}
 

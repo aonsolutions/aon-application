@@ -50,7 +50,7 @@ public class SQLContractLeaveLoader extends ContractLeaveLoader{
 				.getObject(ContractLeaveColumns.DAILY_REG_BASE);
 
 		Integer id = rs.getInt(ContractLeaveColumns.ID);
-		loadContractLeave(id, start, end, parentDays, type,
+		loadContractLeave(id, leaveStart, end, parentDays, type,
 				(Double) dailyRegBase, exprCtx);
 	}
 

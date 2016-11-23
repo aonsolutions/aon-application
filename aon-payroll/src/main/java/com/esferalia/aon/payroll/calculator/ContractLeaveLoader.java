@@ -238,7 +238,7 @@ public class ContractLeaveLoader {
 					}
 
 					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(leaveStart);
+					calendar.setTime(start);
 					calendar.add(Calendar.DATE,
 							(int) (range.start - 1 - parentDays));
 					Date rangeStart = Period.max(calendar.getTime(), start);
@@ -278,7 +278,7 @@ public class ContractLeaveLoader {
 					}
 
 					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(leaveStart);
+					calendar.setTime(start);
 					calendar.add(Calendar.DATE,
 							(int) (range.start - 1 - parentDays));
 					Date rangeStart = Period.max(calendar.getTime(), start);
