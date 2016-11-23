@@ -633,8 +633,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					// Adds 'BASE_REGULADORA' variable for guaranteed period
 					exprCtx.setVariable(IT_START, leaveStart, guarenteeStart, guarenteeEnd);
+					
 					int guaranteedDays = (int) getGuaranteedDays(exprCtx,
-							new Period(Period.max(guarenteeStart, leaveStart), guarenteeEnd));
+							new Period(Period.max(guarenteeStart, startDate), guarenteeEnd));
 					exprCtx.setVariable(GUARANTEED_DAYS, guaranteedDays, guarenteeStart, guarenteeEnd);
 
 					ExpressionImpl exp = new ExpressionImpl();
