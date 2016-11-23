@@ -49,21 +49,11 @@ public class DBDrive {
 		AttachQueryProperties aqp = new AttachQueryProperties()
 				.setLimit(10)
 				.setOrderby("id");
-		if(attachType.equals(AttachType.OFFER) || attachType.equals(AttachType.PROJECT)){
-			return AON.getAttachList(domain.getName(), domain.getId(), user.getLogin(),
-					f -> f.getDriveIdProperty().isNull()
-					.and(f.getDataProperty().isNotNull())
-					.and(f.getIdProperty().gt(firstId))
-					.and(f.getMimeTypeProperty().isNotNull()),
-					attachType, aqp).stream().map(new AttachToFileInfo())
-					.collect(Collectors.toCollection(Vector::new));
-		}
 		return AON.getAttachList(domain.getName(), domain.getId(), user.getLogin(),
 				f -> f.getDriveIdProperty().isNull()
 				.and(f.getDataProperty().isNotNull())
 				.and(f.getIdProperty().gt(firstId))
-				.and(f.getMimeTypeProperty().isNotNull())
-				.and(f.getTypeProperty().isNotNull()),
+				.and(f.getMimeTypeProperty().isNotNull()),
 				attachType, aqp).stream().map(new AttachToFileInfo())
 				.collect(Collectors.toCollection(Vector::new));
 	}
@@ -89,7 +79,7 @@ public class DBDrive {
 					.from(RATTACH)
 					.where(RATTACH.DOMAIN.eq(domain.getId()))
 							.and(RATTACH.DRIVE_ID.isNull()).and(RATTACH.DATA.isNotNull()).and(condition)
-							.and(RATTACH.MIMETYPE.isNotNull()).and(RATTACH.TYPE.isNotNull())
+							.and(RATTACH.MIMETYPE.isNotNull())//.and(RATTACH.TYPE.isNotNull())
 							//.and(RATTACH.TYPE.ne((byte)0)).and(RATTACH.TYPE.ne((byte)15)).and(RATTACH.TYPE.ne((byte)17))
 							.and(RATTACH.ID.greaterThan(firstId))
 							.orderBy(RATTACH.ID)

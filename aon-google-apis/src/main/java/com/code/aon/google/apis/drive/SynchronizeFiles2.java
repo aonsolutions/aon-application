@@ -75,7 +75,7 @@ public class SynchronizeFiles2 {
 	}
 	
 	private static void synchronizeSF(Domain domain, Drive drive) throws  IOException, GeneralSecurityException{
-		LOGGER.error("domain: {}", domain.getName());
+		LOGGER.info("domain: {}", domain.getName());
 		HashMap<String, String> map = new HashMap<String, String>();
 		Vector<RegistryAttachmentType> rats = new Vector<RegistryAttachmentType>();
 		for (String s : types) {
