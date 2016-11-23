@@ -74,6 +74,17 @@ public class ACCOUNTING {
 		return getAccounting().getAccount(ctx, code);
 	}
 
+	public static Account getAccount(String domainName, int domainId, String login, Integer id ) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getAccount(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static Account getAccount(String domainName, int domainId, String login, String code) {
 		AONContext ctx = null;
 		try {
@@ -98,6 +109,18 @@ public class ACCOUNTING {
 
 	}
 
+
+	public static String getAccountNextCode(String domainName, int domain, String login, String prefix) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, login);
+			return getAccounting().getAccountNextCode(ctx, prefix);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	// ----------------------------- ACCOUNT PERIOD
 	public static AccountPeriod fetchPeriod(AONContext ctx, Date date) {
 		return getAccounting().fetchPeriod(ctx, date);
@@ -319,11 +342,11 @@ public class ACCOUNTING {
 	}
 
 
-	public static Account insert(String domainName, int domain, String user, Account account) {
+	public static Account save(String domainName, int domain, String user, Account account) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getAccounting().insert(ctx, account);
+			return getAccounting().save(ctx, account);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -354,4 +377,5 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
+
 }

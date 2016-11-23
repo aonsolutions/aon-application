@@ -82,13 +82,21 @@ public class CommonServiceImpl extends AonRemoteServiceServlet implements Common
 	}
 
 	@Override
+	public Account getAccount(String domainName, int domain,Integer id) throws AonCoreException {
+		return ACCOUNTING.getAccount(domainName, domain,AonServletUtils.getLoggedUser(), id);
+	}
+	@Override
 	public Account getAccount(String domainName, int domain,String code) throws AonCoreException {
 		return ACCOUNTING.getAccount(domainName, domain,AonServletUtils.getLoggedUser(), code);
 	}
 	
 	@Override
-	public Account insert(String domainName, int domain, Account account) throws AonCoreException {
-		return ACCOUNTING.insert(domainName, domain,AonServletUtils.getLoggedUser(), account);
+	public Account save(String domainName, int domain, Account account) throws AonCoreException {
+		return ACCOUNTING.save(domainName, domain,AonServletUtils.getLoggedUser(), account);
+	}
+	@Override
+	public String getAccountNextCode(String domainName, int domain, String prefix) {
+		return ACCOUNTING.getAccountNextCode(domainName, domain,AonServletUtils.getLoggedUser(), prefix);
 	}
 
 	// -------------------------------------------------------------- CREDITOR

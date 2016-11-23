@@ -35,16 +35,19 @@ public interface CommonService extends RemoteService {
 	LinkedList<CompanyBank> getCompanyBanks(String domainName,int domain,int enterprise) throws AonCoreException;
 	
 	// -------------------------------------------------------------- ACCOUNT
+	Account getAccount(String domainName,int domain,Integer id) throws AonCoreException;
 	Account getAccount(String domainName,int domain,String code) throws AonCoreException;
 	LinkedList<Account> getAccounts(String domainName,int domain,String query) throws AonCoreException;
-	Account insert(String domainName, int domain, Account account) throws AonCoreException;
-
+	Account save(String domainName, int domain, Account account) throws AonCoreException;
+	String getAccountNextCode(String domainName, int domain, String prefix);
+	
 	// -------------------------------------------------------------- CREDITOR
 	LinkedList<Creditor> getBasicCreditors(String domainName,int domain,String query) throws AonCoreException;
 	
 	// -------------------------------------------------------------- REGISTRY
 	LinkedList<AccountingRegistry> getAccountingRegistries(String domainName,int domain,String query) throws AonCoreException;
 	AccountingRegistry insert(String domainName,int domain,AccountingRegistry reg) throws AonCoreException;
+	
 
 	
 

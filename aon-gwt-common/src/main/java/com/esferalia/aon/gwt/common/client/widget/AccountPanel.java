@@ -5,6 +5,7 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -28,16 +29,42 @@ public class AccountPanel extends SimplePanel implements Focusable {
 	}
 
 	static CommonServiceAsync commonService;
+	
+	private static void initializeCommonService() {
+		if (commonService == null) {
+			CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
+		}
+	}
 
 	private TextBox codeBox; 
 	
 	public AccountPanel(final String domainName,final int domain, final AccountPanelCallback callback) {
-		
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
-		
+		initializeCommonService();
+		show(domainName,domain, new Account(),callback);
+	}
+	
+	public AccountPanel(final String domainName,final int domain, Integer id, final AccountPanelCallback callback) {
+		initializeCommonService();
+		commonService.getAccount(domainName, domain, id, new AsyncCallback<Account>() {
+			
+			@Override
+			public void onSuccess(Account result) {
+				if (result == null) result = new Account();
+				show(domainName,domain, result,callback);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				show(domainName,domain, new Account(),callback);
+			}
+		});
+	}
+	
+	public void show(final String domainName,final int domain, final Account account, final AccountPanelCallback callback) {
 		setWidth("500px");
 		setHeight("200px");
+		
 		
 		FlowPanel rootPanel = new FlowPanel();
 		
@@ -60,20 +87,48 @@ public class AccountPanel extends SimplePanel implements Focusable {
 		FlexTable table = new FlexTable();
 		table.setStyleName(AON.AON_CSS.aonPanelGrid());
 		table.addStyleName(AON.AON_CSS.aonWidthAll());
-				
+
+		final TextBox descriptionBox = new TextBox();		
+		
 		table.setWidget(0,0,new InlineLabel(AON.MSG.account()));
 		table.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridOdd());
 		codeBox = new TextBox();
+		codeBox.setValue(account.getCode());
 		codeBox.setVisibleLength(9);
 		codeBox.setMaxLength(9);
+		codeBox.setEnabled(account.getId()==null);
 		codeBox.setStyleName(AON.AON_CSS.aonInputText());
 		codeBox.addKeyUpHandler( keyUpHandler);
+		codeBox.addKeyUpHandler(  new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == 222) {
+					String prefix = codeBox.getValue();
+					prefix = AonStringUtils.remove(prefix, '?');
+					commonService.getAccountNextCode(domainName, domain, prefix, new AsyncCallback<String>() {
+
+						@Override
+						public void onSuccess(String result) {
+							codeBox.setValue(result);
+							descriptionBox.selectAll();
+							descriptionBox.setFocus(true);
+						}
+						@Override
+						public void onFailure(Throwable caught) {
+							errorPanel.showError(caught.getMessage());
+							codeBox.setFocus(true);
+						}
+					});
+				}
+			}
+		});
 		table.setWidget(0,1,codeBox);
 		table.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
 		
 		table.setWidget(1,0,new InlineLabel(AON.MSG.description()));
 		table.getCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonPanelGridOdd());
-		final TextBox descriptionBox = new TextBox();
+		descriptionBox.setValue(account.getDescription());
 		descriptionBox.setVisibleLength(35);
 		descriptionBox.setMaxLength(128);
 		descriptionBox.setStyleName(AON.AON_CSS.aonInputText());
@@ -84,6 +139,7 @@ public class AccountPanel extends SimplePanel implements Focusable {
 		table.setWidget(2,0,new InlineLabel(AON.MSG.alias()));
 		table.getCellFormatter().setStyleName(2, 0, AON.AON_CSS.aonPanelGridOdd());
 		final TextBox aliasBox = new TextBox();
+		aliasBox.setValue(account.getAlias());
 		aliasBox.setVisibleLength(25);
 		aliasBox.setMaxLength(32);
 		aliasBox.setStyleName(AON.AON_CSS.aonInputText());
@@ -93,7 +149,7 @@ public class AccountPanel extends SimplePanel implements Focusable {
 		tablePanel.add( table );
 		rootPanel.add( tablePanel );
 		
-    	FlowPanel buttons = new FlowPanel();
+		FlowPanel buttons = new FlowPanel();
     	buttons.setStyleName(AON.AON_CSS.aonTextCenter());
     	
     	final Button okButton = new Button();
@@ -105,30 +161,30 @@ public class AccountPanel extends SimplePanel implements Focusable {
 			@Override
 			public void onClick(ClickEvent event) {
 				okButton.setEnabled(false);
-				Account account = new Account()
-						.setCode(codeBox.getValue())
-						.setDomain(domain)
-						.setDescription(descriptionBox.getValue())
-						.setAlias(aliasBox.getValue())
-						.setEntryEnabled(true)
-						.setActive(true)
-						;
-					commonService.insert(domainName, domain, account, new AsyncCallback<Account>() {
+				account.setCode(codeBox.getValue());
+				account.setDescription(descriptionBox.getValue());
+				account.setAlias(aliasBox.getValue());
+				if (account.getId() == null) {
+					account.setDomain(domain);
+					account.setEntryEnabled(true);
+					account.setActive(true);
+				}
+				commonService.save(domainName, domain, account, new AsyncCallback<Account>() {
 
-						@Override
-						public void onSuccess(Account result) {
-							callback.onAccept(result);
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							errorPanel.showError(caught.getMessage());
-							okButton.setEnabled(true);
-							codeBox.setFocus(true);
-						}
-					});
+					@Override
+					public void onSuccess(Account result) {
+						callback.onAccept(result);
+					}
+					@Override
+					public void onFailure(Throwable caught) {
+						errorPanel.showError(caught.getMessage());
+						okButton.setEnabled(true);
+						codeBox.setFocus(true);
+					}
+				});
 			}
 		});
+    	
     	buttons.add(okButton);
     	
     	final Button cancelButton = new Button();

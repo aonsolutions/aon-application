@@ -420,7 +420,7 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	private void showAccountDialog() {
 		final CustomDialog dialog = new CustomDialog();
 		dialog.setCaption(AON.MSG.account());
-		final AccountPanel accountPanel = new AccountPanel( domainName, domain, new AccountPanelCallback() {
+		final AccountPanel accountPanel = new AccountPanel( domainName, domain, getId(), new AccountPanelCallback() {
 			
 			@Override
 			public void onCancel() {

@@ -39,14 +39,11 @@ public interface CommonServiceAsync {
 			AsyncCallback<LinkedList<CompanyBank>> callback);
 
 	// ---------------------------------- ACCOUNT
-	void getAccount(String domainName, int domain, String code,
-			AsyncCallback<Account> callback);
-
-	void getAccounts(String domainName, int domain, String query,
-			AsyncCallback<LinkedList<Account>> callback);
-
-	void insert(String domainName, int domain, Account account,
-			AsyncCallback<Account> callback);
+	void getAccount(String domainName, int domain, String code,AsyncCallback<Account> callback);
+	void getAccount(String domainName, int domain, Integer id,AsyncCallback<Account> callback);
+	void getAccounts(String domainName, int domain, String query,AsyncCallback<LinkedList<Account>> callback);
+	void save(String domainName, int domain, Account account,AsyncCallback<Account> callback);
+	void getAccountNextCode(String domainName, int domain, String prefix, AsyncCallback<String> asyncCallback);
 
 	// -------------------------------------------------------------- CREDITOR
 	void getBasicCreditors(String domainName, int domain, String query, 
@@ -56,6 +53,7 @@ public interface CommonServiceAsync {
 	void getAccountingRegistries(String domainName, int domain, String query,
 			AsyncCallback<LinkedList<AccountingRegistry>> asyncCallback);
 	void insert(String domainName, int domain, AccountingRegistry reg, AsyncCallback<AccountingRegistry> callback);
+	
 
 
 

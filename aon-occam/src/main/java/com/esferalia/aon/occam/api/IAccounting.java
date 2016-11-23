@@ -33,7 +33,8 @@ public interface IAccounting {
 	public Account getAccount(AONContext ctx,Integer accountId);		
 	public Account getAccount(AONContext ctx,String code);
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter);
-	public Account insert(AONContext ctx, Account account);
+	public Account save(AONContext ctx, Account account);
+	public String getAccountNextCode(AONContext ctx, String prefix);
 
 	// 			ACCOUNT PERIOD
 	public LinkedList<AccountPeriod> getDomainPeriods(AONContext ctx);

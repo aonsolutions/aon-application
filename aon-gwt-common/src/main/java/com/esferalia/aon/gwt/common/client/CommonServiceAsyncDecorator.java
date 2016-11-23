@@ -80,13 +80,21 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 
 	// -------------------------------------------------------------- ACCOUNT
 	@Override
+	public void getAccount(String domainName, int domain, Integer id,
+			AsyncCallback<Account> callback) {
+		AON.start();
+		serviceAsync.getAccount(domainName, domain, id,   
+				new AsyncCallbackWrapper<Account>(callback));
+	}
+	
+	@Override
 	public void getAccount(String domainName, int domain, String code,
 			AsyncCallback<Account> callback) {
 		AON.start();
 		serviceAsync.getAccount(domainName, domain, code,   
 				new AsyncCallbackWrapper<Account>(callback));
 	}
-	
+
 	@Override
 	public void getAccounts(String domainName, int domain, String query,
 			AsyncCallback<LinkedList<Account>> callback) {
@@ -96,10 +104,17 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
-	public void insert(String domainName, int domain, Account account, AsyncCallback<Account> callback) {
+	public void save(String domainName, int domain, Account account, AsyncCallback<Account> callback) {
 		AON.start();
-		serviceAsync.insert(domainName, domain, account,   
+		serviceAsync.save(domainName, domain, account,   
 				new AsyncCallbackWrapper<Account>(callback));
+	}
+	@Override
+	public void getAccountNextCode(String domainName, int domain, String prefix,
+			AsyncCallback<String> callback) {
+		AON.start();
+		serviceAsync.getAccountNextCode(domainName, domain, prefix,   
+				new AsyncCallbackWrapper<String>(callback));
 	}
 
 	// -------------------------------------------------------------- CREDITOR
@@ -128,6 +143,7 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 				new AsyncCallbackWrapper<AccountingRegistry>(callback));
 		
 	}
+
 
 
 }

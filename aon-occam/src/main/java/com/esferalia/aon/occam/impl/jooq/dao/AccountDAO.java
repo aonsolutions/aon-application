@@ -96,7 +96,13 @@ public class AccountDAO {
 			.findFirst()
 			.orElse(null);
 	}
-
+	public static Account save(AONContext ctx, Account account) {
+		if (account.getId() == null) {
+			return insert(ctx, account);
+		} 
+		return update(ctx, account);
+	}
+	
 	public static Account insert(AONContext ctx, Account account) {
 		ctx.checkWrite();
 		AccountValidation.validate(ctx, account);
@@ -115,6 +121,25 @@ public class AccountDAO {
 			.fetchOne()
 			.getValue(ACCOUNT.ID);
 		return get(ctx, id);
+	}
+	
+	public static Account update(AONContext ctx, Account account) {
+		ctx.checkWrite();
+		AccountValidation.validate(ctx, account);
+		AccountAutoComplete.complete(ctx, account);
+		ctx.getDslContext()
+			.update(ACCOUNT)
+			.set(ACCOUNT.DOMAIN,account.getDomain())
+			.set(ACCOUNT.CODE,account.getCode())
+			.set(ACCOUNT.DESCRIPTION,account.getDescription())
+			.set(ACCOUNT.ALIAS,account.getAlias())
+			.set(ACCOUNT.ENTRYENABLED, AonEnumUtils.getByte(account.isEntryEnabled()))
+			.set(ACCOUNT.LEVEL,account.getLevel())
+			.set(ACCOUNT.ACTIVE, AonEnumUtils.getByte(account.isActive()))
+			.set(ACCOUNT.COST_CENTER,account.getCostCenter())
+			.where(ACCOUNT.ID.eq(account.getId()))
+			.execute();
+		return account;
 	}
 
 	public static String getNextAccountCode(AONContext ctx, String prefix) {
