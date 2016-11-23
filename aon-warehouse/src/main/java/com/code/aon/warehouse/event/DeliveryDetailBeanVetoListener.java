@@ -1,5 +1,7 @@
 package com.code.aon.warehouse.event;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
@@ -17,8 +19,14 @@ public class DeliveryDetailBeanVetoListener extends ManagerBeanVetoListenerAdapt
 		setDefaultValues(deliveryDetail);
 	}
 
+	@Override
+	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		DeliveryDetail deliveryDetail = (DeliveryDetail) evt.getTo();
+		setDefaultValues(deliveryDetail);
+	}
+
 	private void setDefaultValues(DeliveryDetail deliveryDetail) {
-		if (deliveryDetail.getDiscountExpression() == null || deliveryDetail.getDiscountExpression().getDiscountExpr() == null) {
+		if (deliveryDetail.getDiscountExpression() == null || StringUtils.isBlank(deliveryDetail.getDiscountExpression().getDiscountExpr())) {
 			deliveryDetail.setDiscountExpression(new DiscountExpression("0.0"));
 		}
 	}

@@ -15,6 +15,9 @@
 	
 	<bean description="Listener para controlar valores en target">
 		<pojo>com.code.aon.commercial.Target</pojo>
+		<listeners>
+	        <listener>com.code.aon.commercial.event.TargetBeanListener</listener>
+		</listeners>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.commercial.event.TargetBeanVetoListener</vetoListener>
 		</vetoListeners>
@@ -32,6 +35,9 @@
 		<listeners>
 	        <listener>com.code.aon.commercial.event.OfferDetailBeanListener</listener>
 		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.commercial.event.OfferDetailBeanVetoListener</vetoListener>
+		</vetoListeners>
 	</bean>
 	
 	<bean description="">

@@ -2,6 +2,8 @@ package com.code.aon.sales.event;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
@@ -27,11 +29,12 @@ public class SalesBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Sales sales = (Sales) evt.getTo();
+		setDefaultValues(sales);
 		checkSales(sales);
 	}
 
 	private void setDefaultValues(Sales sales) {
-		if (sales.getDiscountExpression() == null || sales.getDiscountExpression().getDiscountExpr() == null) {
+		if (sales.getDiscountExpression() == null || StringUtils.isBlank(sales.getDiscountExpression().getDiscountExpr())) {
 			sales.setDiscountExpression(new DiscountExpression("0.0"));
 		}
 		if (sales.getDocumentType() == null) {

@@ -2,6 +2,8 @@ package com.code.aon.commercial.event;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
@@ -27,11 +29,12 @@ public class OfferBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Offer offer = (Offer) evt.getTo();
+		setDefaultValues(offer);
 		checkOffer(offer);
 	}
 
 	private void setDefaultValues(Offer offer) {
-		if (offer.getDiscountExpression() == null || offer.getDiscountExpression().getDiscountExpr() == null) {
+		if (offer.getDiscountExpression() == null || StringUtils.isBlank(offer.getDiscountExpression().getDiscountExpr())) {
 			offer.setDiscountExpression(new DiscountExpression("0.0"));
 		}
 		if (offer.getType() == null) {

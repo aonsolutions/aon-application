@@ -1,5 +1,7 @@
 package com.code.aon.purchase.event;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
@@ -22,11 +24,12 @@ public class PurchaseDetailBeanVetoListener extends ManagerBeanVetoListenerAdapt
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		PurchaseDetail purchaseDetail = (PurchaseDetail) evt.getTo();
+		setDefaultValues(purchaseDetail);
 		checkPurchaseDetail(purchaseDetail);
 	}
 
 	private void setDefaultValues(PurchaseDetail purchaseDetail) {
-		if (purchaseDetail.getDiscountExpression() == null || purchaseDetail.getDiscountExpression().getDiscountExpr() == null) {
+		if (purchaseDetail.getDiscountExpression() == null || StringUtils.isBlank(purchaseDetail.getDiscountExpression().getDiscountExpr())) {
 			purchaseDetail.setDiscountExpression(new DiscountExpression("0.0"));
 		}
 		if (purchaseDetail.getStatus() == null) {

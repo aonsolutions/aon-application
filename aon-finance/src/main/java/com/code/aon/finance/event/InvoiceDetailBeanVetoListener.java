@@ -1,5 +1,6 @@
 package com.code.aon.finance.event;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,7 @@ import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.product.enumeration.ProductType;
+import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -31,6 +33,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
+		setDefaultValues(invoiceDetail);
 		checkLimitDate(invoiceDetail.getInvoice());
 		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
 			invoiceDetail.setPrepayment(invoiceDetail.getItem().getProduct().getType() == ProductType.PREPAYMENT);
@@ -47,6 +50,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
+		setDefaultValues(invoiceDetail);
 		checkLimitDate(invoiceDetail.getInvoice());
 		if (invoiceDetail.isUpdateEnabled() && invoiceDetail.getItem() != null) {
 			invoiceDetail.setPrepayment(invoiceDetail.getItem().getProduct().getType() == ProductType.PREPAYMENT);
@@ -66,6 +70,12 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 			removeInvoiceTax(invoiceDetail);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
+		}
+	}
+
+	private void setDefaultValues(InvoiceDetail invoiceDetail) {
+		if (invoiceDetail.getDiscountExpression() == null || StringUtils.isBlank(invoiceDetail.getDiscountExpression().getDiscountExpr())) {
+			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 		}
 	}
 
