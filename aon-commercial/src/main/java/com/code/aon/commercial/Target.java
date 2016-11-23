@@ -35,6 +35,8 @@ public class Target extends TargetDB implements IRegistry, ITaxInfo, IScopable, 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
 	private boolean customer;
+	private boolean skipUpdateCustomer;
+
 	private Set<RegistryItem> items = new HashSet<RegistryItem>();
 	private Set<RegistrySeller> sellers = new HashSet<RegistrySeller>();
 	private Set<ProjectCommercial> projects = new HashSet<ProjectCommercial>();
@@ -46,15 +48,23 @@ public class Target extends TargetDB implements IRegistry, ITaxInfo, IScopable, 
     	setTransaction(InvoiceTransactionType.NATIONAL);
     	setStatus(TargetStatus.ACTIVE);
     	setAdvertising(Advertising.ALLOWED);
+    	setSkipUpdateCustomer(false);
 	}
 
 	@Formula("(select COUNT(*) from customer c where registry = c.registry)")
 	public boolean isCustomer() {
 		return customer;
 	}
-
 	public void setCustomer(boolean customer) {
 		this.customer = customer;
+	}
+		
+	@Transient
+	public boolean isSkipUpdateCustomer() {
+		return skipUpdateCustomer;
+	}
+	public void setSkipUpdateCustomer(boolean skipUpdateCustomer) {
+		this.skipUpdateCustomer = skipUpdateCustomer;
 	}
 		
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})	

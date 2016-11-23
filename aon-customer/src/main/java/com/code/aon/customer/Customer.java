@@ -34,7 +34,9 @@ public class Customer extends CustomerDB implements IRegistry, ITaxInfo, IScopab
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-    private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
+	private boolean skipUpdateTarget;
+
+	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 	private Set<RegistryItem> items = new HashSet<RegistryItem>();
 	private Set<RegistrySeller> sellers = new HashSet<RegistrySeller>();
 	private Set<RegistryProfile> profiles = new HashSet<RegistryProfile>();    
@@ -46,7 +48,16 @@ public class Customer extends CustomerDB implements IRegistry, ITaxInfo, IScopab
     	setProjectGrouped(true);
     	setDeliveryGrouped(true);
     	setDeliveryValuated(true);
+    	setSkipUpdateTarget(false);
     }
+
+	@Transient
+	public boolean isSkipUpdateTarget() {
+		return skipUpdateTarget;
+	}
+	public void setSkipUpdateTarget(boolean skipUpdateCustomer) {
+		this.skipUpdateTarget = skipUpdateCustomer;
+	}
 
     @OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
 	public Set<RegistryAttachment> getDocuments() {
