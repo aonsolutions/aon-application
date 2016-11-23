@@ -53,7 +53,10 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	private User user;
 	
 	final private int limit = 20;
+	
 	final private MutableInt offset = new MutableInt(0);
+	final private MutableInt moreData = new MutableInt(0);
+	final private MutableInt searchEnabled = new MutableInt( 0 ); 
 
 	private SimpleLayoutPanel northPanel;
 	private ScrollPanel centerPanel;
@@ -72,7 +75,6 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	private TextBox document;
 	private Button filter;
 	
-	final private MutableInt searchEnabled = new MutableInt( 0 ); 
 	
 	private int lastScrollPos = 0;
 	
@@ -135,6 +137,16 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	public void enableSearch() {
 		searchEnabled.setValue(0);
 	}
+	public boolean isMoreData() {
+		return (moreData.getValue() == 0 );
+	}
+	public void disableMoreData() {
+		moreData.setValue(-1);
+	}
+	public void enableMoreData() {
+		moreData.setValue(0);
+	}
+	
 
 	private void fillNorthPanel() {
 		fromDate = new DateBoxEx();
@@ -155,6 +167,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		filter.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				enableMoreData();
 				search();
 			}
 		});
@@ -248,6 +261,7 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+					enableMoreData();
 					search();
 				}
 			}
@@ -291,6 +305,8 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 	}
 	
 	private void search(final int ofs) {
+		if (!isMoreData()) return; 
+		
 		AccountEntryParams params = new AccountEntryParams()
 			.setDomain(AccountEntryModule.getCurrentDomain())
 			.setFrom(fromDate.getValue())
@@ -323,11 +339,13 @@ public class JournalPanel extends DockLayoutPanel implements Focusable, HasSelec
 		
 							}
 							offset.setValue(ofs + result.size());
+							enableMoreData();
 						} else {
 							FlowPanel line = new FlowPanel();
 							InlineLabel label = new InlineLabel(AON.MSG.noData());
 							line.add(label);
 							container.add(line);
+							disableMoreData();
 						}
 						enableSearch();
 					}
