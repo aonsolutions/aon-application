@@ -86,8 +86,19 @@
 										</aon:if>
 										
 										<aon:if test="#{contractPdf.modelOption==null and !contractPdf.generationAvailable}">
-											<aon:div style="margin-top: 15px; padding: 5px; color: blue; border: 1px blue solid; text-align: center;">
+											<aon:div style="margin-top: 10px; padding: 5px; color: blue; border: 1px blue solid; text-align: center;">
 												<aon:outputText value="Modelo de contrato no seleccionado" />
+											</aon:div>
+											<aon:div style="margin-top: 5px; text-align: center;">
+												<aon:commandButton value="#{bundle.aon_check}" 
+													reRender="showDocumentGenerationWindow, contractForm" >
+													<f:setPropertyActionListener
+														target="#{contract.selectedTab}" 
+														value="documentOtherData" />
+													<f:setPropertyActionListener
+														target="#{contractPdf.showDocumentGenerationWindow}"
+														value="#{false}" />
+												</aon:commandButton>
 											</aon:div>
 										</aon:if>
 										

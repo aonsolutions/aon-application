@@ -25,6 +25,7 @@ import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
@@ -38,31 +39,13 @@ public class ContrataWriter implements IContrataWriter{
 
 	private Contract contract;
 	private String fileName;
-	private boolean contratoFile;
-	private boolean transformacionFile;
-	private boolean prorrogaFile;
+	private ContrataFileType fileType;
 	
-	public ContrataWriter(Contract contract) {
+	public ContrataWriter(Contract contract, ContrataFileType fileType) {
 		this.contract = contract;
+		this.fileType = fileType;
 	}
-	public boolean isContratoFile() {
-		return contratoFile;
-	}
-	public void setContratoFile(boolean contratoFile) {
-		this.contratoFile = contratoFile;
-	}
-	public boolean isTransformacionFile() {
-		return transformacionFile;
-	}
-	public void setTransformacionFile(boolean transformacionFile) {
-		this.transformacionFile = transformacionFile;
-	}
-	public boolean isProrrogaFile() {
-		return prorrogaFile;
-	}
-	public void setProrrogaFile(boolean prorrogaFile) {
-		this.prorrogaFile = prorrogaFile;
-	}
+	
 	public String getFileName() {
 		return fileName; 
 	}
@@ -76,8 +59,13 @@ public class ContrataWriter implements IContrataWriter{
 
 	@Override
 	public File createFile(IContrataParams params) throws ManagerBeanException, IOException{
-		if(getContract()==null){
+		if(contract==null){
 			String msg = "El contrato no se ha cargado correctamente.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if(fileType==null){
+			String msg = "El tipo de documento no se ha cargado correctamente.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -105,19 +93,19 @@ public class ContrataWriter implements IContrataWriter{
 		PRORROGAS prorrogas = null;
 		String modelPath = null;
 		ContrataFactory factory = new ContrataFactory();
-		if( isContratoFile() ){
+		if( fileType == ContrataFileType.CONTRACT ){
 			ContrataContratosWriter writer = new ContrataContratosWriter(contract);
 			IContratoType contratoType = writer.createFile(factory.createContratoModel(code), (ContrataContratoParams) params);
 			contratos = writer.getFactory().createCONTRATOS();
 			contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().add(contratoType);
 			modelPath = writer.CONTRATA_CONTRATOS_MODEL_PATH;
-		} else if( isTransformacionFile() ) {
+		} else if( fileType == ContrataFileType.TRANSFORMATION ){
 			ContrataTransformacionesWriter writer = new ContrataTransformacionesWriter(contract); 
 			ITransformacionType transformacionType = writer.createFile(factory.createTransformacionesType(codeTransform), (ContrataTransformacionesParams) params);
 			transformaciones = writer.getFactory().createTRANSFORMACIONES();
 			transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().add(transformacionType);
 			modelPath = writer.CONTRATA_TRANSFORMACIONES_MODEL_PATH;
-		} else if( isProrrogaFile() ) {
+		} else if( fileType == ContrataFileType.EXTENSION ){
 			ContrataProrrogasWriter writer = new ContrataProrrogasWriter(contract); 
 			PRORROGATIPOTYPE prorrogaType = writer.createProrroga(factory.createProrrogasType(code), (ContrataProrrogaParams) params);
 			prorrogas = writer.getFactory().createPRORROGAS();
@@ -135,11 +123,11 @@ public class ContrataWriter implements IContrataWriter{
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			marshaller.setProperty(Marshaller.JAXB_ENCODING, SEPEFileUtils.XML_FILE_ENCODING);
 			File file = File.createTempFile("aon-temp", ".XML"); 
-			if( contratoFile ){
+			if( fileType == ContrataFileType.CONTRACT ){
 				marshaller.marshal( contratos, file );
-			} else if( transformacionFile ) {
+			} else if( fileType == ContrataFileType.TRANSFORMATION ){
 				marshaller.marshal( transformaciones, file );
-			} else if( prorrogaFile ) {
+			} else if( fileType == ContrataFileType.EXTENSION ){
 				marshaller.marshal( prorrogas, file );
 			}
 			return file;
@@ -157,18 +145,6 @@ public class ContrataWriter implements IContrataWriter{
 	 * ***************************************
 	 * ***************************************
 	 */
-//	private Map<String, String> contractDataMap;
-	
-//	protected Map<String, String> getContractDataMap(Contract contract) {
-//		if(contractDataMap==null){
-//			SEPEUtils utils = new SEPEUtils();
-//			contractDataMap = utils.getContractDataMap(contract);
-//		}
-//		return contractDataMap;
-//	}
-//	protected Map<String, String> getContractDataMap() {
-//		return contractDataMap;
-//	}
 	
 	private String getFormatedDate(Date date){
 		String pattern = "yyyyMMdd";

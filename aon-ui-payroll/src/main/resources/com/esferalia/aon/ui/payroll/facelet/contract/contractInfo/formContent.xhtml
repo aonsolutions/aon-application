@@ -13,19 +13,20 @@
 				<f:facet name="header">
 					<aon:outputText value="Seleccione la modalidad del contrato para poder introducir los datos" />
 				</f:facet>
-				<aon:panelGrid columns="2">
+				<aon:div style="display: inline-block;">
 					<aon:selectOneMenu value="#{contract.params.contractModelOption}"
 						valueChangeListener="#{contract.onChangeModel}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contract.contractModel}" />
 					</aon:selectOneMenu>
-					<aon:commandButton value="#{bundle.aon_accept}"
-						reRender="contractModelFields"
-						actionListener="#{controller.onSaveContractModel}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept aon-noborder">
-						<aon:actionListener method="#{controller.onLoadContractFields}" />
-					</aon:commandButton>
-				</aon:panelGrid>
+					<aon:div styleClass="aon-margin-top aon-text-right">
+						<aon:commandButton value="continuar"
+							reRender="contractModelFields"
+							actionListener="#{controller.onSaveContractModel}">
+							<aon:actionListener method="#{controller.onLoadContractFields}" />
+						</aon:commandButton>
+					</aon:div>
+				</aon:div>
 			</aon:panel>
 		</aon:if>
 		

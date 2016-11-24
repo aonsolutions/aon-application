@@ -74,14 +74,53 @@ public final class SEPEConnectionProvider {
 				datos = isSslEnv?service.getSWComunicacionDatosSsl():service.getSWComunicacionDatos();
 			}
 			String result = null;
-			if(fileType==ContrataFileType.CONTRACT){
+			switch (fileType) {
+			case CONTRACT:
 				result = datos.servicioContratos(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
-			} else if(fileType==ContrataFileType.EXTENSION){
+				break;
+			case EXTENSION:
 				result = datos.servicioProrrogas(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
-			} else if(fileType==ContrataFileType.TRANSFORMATION){
+				break;
+			case TRANSFORMATION:
 				result = datos.servicioTransformacionIndefinido(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
-			}
-			LOGGER.info("INFO SEPE (Contrat@) - RESPUESTA RESULTANTE DE LA COMUNICACION CON EL S.E.P.E. :  \n" + result);
+				break;
+			case INDEFINITE_CALL:
+				result = datos.servicioLlamamientoFijoDiscontinuo(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+				break;
+			case BASIC_COPY:
+				result = datos.servicioCopiaBasica(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+				break;
+			case GROUP_CONTRACT:
+				result = datos.servicioContratoGrupo(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+				break;
+			case ADDITIONAL_HOURS:
+				result = datos.servicioHorasComplementarias(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+				break;
+			case OFFICE_CONTRACT:
+				result = datos.servicioInclusionContratoOE(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+				break;
+			case LEARNING_ANNEX:
+				// XXX: service not implemented
+				break;
+			case CORRECTION_CONTRACT:
+				result = datos.servicioCorreccionContrato(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+				break;
+			case CORRECTION_EXTENSION:
+				result = datos.servicioCorreccionProrroga(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+				break;
+			case CORRECTION_TRANSFORMATION:
+				result = datos.servicioCorreccionTransformacion(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+				break;
+			case CORRECTION_INDEFINITE_CALL:
+				result = datos.servicioCorreccionLlamamiento(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+				break;
+			case CORRECTION_ADDITIONAL_HOURS:
+				result = datos.servicioCorreccionHorasComplementarias(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+				break;
+			default:
+				break;
+			}			
+			LOGGER.debug("INFO SEPE (Contrat@) - RESPUESTA RESULTANTE DE LA COMUNICACION CON EL S.E.P.E. :  \n" + result);
 			return result;
 		} finally{
 			restoreSslSystemProperies();
@@ -121,7 +160,7 @@ public final class SEPEConnectionProvider {
 				datos = isSslEnv?service.getSWConsultaDatosSsl():service.getSWConsultaDatos();
 			}
 			String result = datos.servicioConsulta(communicationId, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
-			LOGGER.info("INFO SEPE (Contrat@) - RESPUESTA RESULTANTE DE LA CONSULTA AL S.E.P.E. :  \n" + result);
+			LOGGER.debug("INFO SEPE (Contrat@) - RESPUESTA RESULTANTE DE LA CONSULTA AL S.E.P.E. :  \n" + result);
 			return result;
 		} finally{
 			restoreSslSystemProperies();
@@ -168,7 +207,7 @@ public final class SEPEConnectionProvider {
 				datos = isSslEnv?service.getServicioWebEntradaSsl():service.getServicioWebEntrada();
 			}
 			String result = datos.ejecuta(_UsuarioConectado, _UsuarioPrincipal, _Password, _Xml, IDIOMA, COMUNIDAD);
-			LOGGER.info("INFO SEPE (Certific@2) - RESPUESTA RESULTANTE DE LA COMUNICACION CON EL S.E.P.E. :  \n" + result);
+			LOGGER.debug("INFO SEPE (Certific@2) - RESPUESTA RESULTANTE DE LA COMUNICACION CON EL S.E.P.E. :  \n" + result);
 			return result;
 		} finally{
 			restoreSslSystemProperies();
@@ -222,7 +261,7 @@ public final class SEPEConnectionProvider {
 				datos = isSslEnv?service.getServicioWebConsultaSsl():service.getServicioWebConsulta();
 			}
 			String result = datos.ejecuta(_UsuarioConectado, _UsuarioPrincipal, _Password, _idComunicacion, _Idioma, _Comunidad);
-			LOGGER.info("INFO SEPE (Certific@2) - RESPUESTA RESULTANTE DE LA CONSULTA AL S.E.P.E. :  \n" + result);
+			LOGGER.debug("INFO SEPE (Certific@2) - RESPUESTA RESULTANTE DE LA CONSULTA AL S.E.P.E. :  \n" + result);
 			return result;
 		} finally{
 			restoreSslSystemProperies();
@@ -233,20 +272,56 @@ public final class SEPEConnectionProvider {
 		return processCertificadosQuery(isSslEnv, isTestEnv, _idComunicacion, _UsuarioConectado, _UsuarioPrincipal, _Password, IDIOMA, COMUNIDAD);
 	}
 	
-	public enum CertificadosCommunicationError {
+	public enum SEPECommunicationError {
+		/**
+		 * Error del sistema.
+		 */
 		DEX0023("Error del sistema."),
-		DEX0204("El fichero no está completado de forma correcta. Se acompaña de una descripción técnica del error que se ha producido al validar el fichero."),
+		/**
+		 * El fichero no está completado de forma correcta. Se acompaña de una
+		 * descripción técnica del error que se ha producido al validar el
+		 * fichero.
+		 */
+		DEX0204(
+				"El fichero no está completado de forma correcta. Se acompaña de una descripción técnica del error que se ha producido al validar el fichero."),
+		/**
+		 * El identificador del fichero no existe.
+		 */
 		DEX0206("El identificador del fichero no existe."),
-		DEX0207("Alguno de los datos de la autenticación Contrat@ es erróneo o está incompleto."),
+		/**
+		 * Alguno de los datos de la autenticación Contrat@ es erróneo o está
+		 * incompleto.
+		 */
+		DEX0207(
+				"Alguno de los datos de la autenticación Contrat@ es erróneo o está incompleto."),
+		/**
+		 * No se puede recuperar el fichero de respuesta.
+		 */
 		DEX0208("No se puede recuperar el fichero de respuesta."),
-		DEX0209("El identificador del fichero corresponde a un envío no realizado a través del servicio web."),
-		DEX0210("El usuario conectado no está registrado en la aplicación. Debe acceder a Certific@2 y proporcionar sus datos de contacto."),
-		DEX0211("El acceso a la aplicación se encuentra deshabilitado temporalmente.");
+		/**
+		 * El identificador del fichero corresponde a un envío no realizado a
+		 * través del servicio web.
+		 */
+		DEX0209(
+				"El identificador del fichero corresponde a un envío no realizado a través del servicio web."),
+		/**
+		 * El usuario conectado no está registrado en la aplicación. Debe
+		 * acceder a Certific@2 y proporcionar sus datos de contacto.
+		 */
+		DEX0210(
+				"El usuario conectado no está registrado en la aplicación. Debe acceder a Certific@2 y proporcionar sus datos de contacto."),
+		/**
+		 * El acceso a la aplicación se encuentra deshabilitado temporalmente.
+		 */
+		DEX0211(
+				"El acceso a la aplicación se encuentra deshabilitado temporalmente.");
 		private String description;
-		public String getDescription(){
+
+		public String getDescription() {
 			return description;
 		}
-		private CertificadosCommunicationError(String description) {
+
+		private SEPECommunicationError(String description) {
 			this.description = description;
 		}
 	}
@@ -272,13 +347,13 @@ public final class SEPEConnectionProvider {
 		try {
 			String result = processCertificadosCommunication(ssl, test, "<?xml>", certifica2User, mainUser, certifica2Password);
 			result = result.replaceAll("\n", "");
-			if(StringUtils.contains(result, "DEX0023")
-					|| StringUtils.contains(result, "DEX0207")
-					|| StringUtils.contains(result, "DEX0210")
-					|| StringUtils.contains(result, "DEX0211")){
+			if(StringUtils.contains(result, SEPECommunicationError.DEX0023.toString())
+					|| StringUtils.contains(result, SEPECommunicationError.DEX0207.toString())
+					|| StringUtils.contains(result, SEPECommunicationError.DEX0210.toString())
+					|| StringUtils.contains(result, SEPECommunicationError.DEX0211.toString())){
 				return false;
 			}
-			return StringUtils.contains(result, "DEX0204") || Terrores.getEnumByValue(result)!=null;
+			return StringUtils.contains(result, SEPECommunicationError.DEX0204.toString()) || Terrores.getEnumByValue(result)!=null;
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage());
 			AonUtil.addErrorMessage(th.getMessage());
@@ -361,7 +436,7 @@ public final class SEPEConnectionProvider {
 			}
 		} catch (IOException e) {
 			String msg = "No se ha podido generar el certificado de autoridad para la comunicacion a traves de ssl";
-			LOGGER.info(msg);
+			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		} finally {

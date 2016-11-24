@@ -113,7 +113,9 @@ import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.ui.sepe.controller.CertificadosController;
-import com.esferalia.aon.ui.sepe.controller.ContrataController;
+import com.esferalia.aon.ui.sepe.controller.ContrataContratosController;
+import com.esferalia.aon.ui.sepe.controller.ContrataProrrogasController;
+import com.esferalia.aon.ui.sepe.controller.ContrataTransformacionesController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
@@ -1104,32 +1106,35 @@ public class ContractController extends BasicController {
 		}
 	}
 	public void onContractSepeShow(ActionEvent event){
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		ContrataContratosController contrataController = (ContrataContratosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize((Contract) this.getTo());
 		contrataController.onContrataDataShow(event);
 		contrataController.setReadOnly(this.isExtendedContract() || this.isTransformedContract());
 	}
 	public void onExtension1SepeShow(ActionEvent event){
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+		ContrataProrrogasController contrataController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 		contrataController.setExtensionNumber(1);
 		contrataController.initialize((Contract) this.getTo());
 		contrataController.onContrataDataShow(event);
-		contrataController.setReadOnly(this.getExtensionCount()>1);
+		contrataController.setReadOnly(this.getExtensionCount()>1 || this.isTransformedContract());
 	}
 	public void onExtension2SepeShow(ActionEvent event){
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+		ContrataProrrogasController contrataController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 		contrataController.setExtensionNumber(2);
 		contrataController.initialize((Contract) this.getTo());
 		contrataController.onContrataDataShow(event);
+		contrataController.setReadOnly(this.getExtensionCount()>2 || this.isTransformedContract());
 	}
 	public void onTransformSepeShow(ActionEvent event){
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+		ContrataTransformacionesController contrataController = (ContrataTransformacionesController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize((Contract) this.getTo());
 		contrataController.onContrataDataShow(event);
+//		TODO: readOnly param for Contrata transformation view 
+		contrataController.setReadOnly(false);
 	}
 	
 	public void onContrataExtensionShow(ActionEvent event){
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+		ContrataProrrogasController contrataController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 		contrataController.setExtensionNumber(getExtensionCount()+1);
 		contrataController.initialize((Contract) this.getTo());
 		Date endDate = ((Contract) this.getTo()).getEndDate();
@@ -1143,7 +1148,7 @@ public class ContractController extends BasicController {
 	}
 
 	public void onContrataTransformShow(ActionEvent event){
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+		ContrataTransformacionesController contrataController = (ContrataTransformacionesController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize((Contract) this.getTo());
 		Date endDate = ((Contract) this.getTo()).getEndDate();
 		if(endDate==null){
@@ -1155,7 +1160,7 @@ public class ContractController extends BasicController {
 	}
 	
 	public void onExtendContract(ActionEvent event){
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+		ContrataProrrogasController contrataController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 		contrataController.onContrataAccept(event);
 		Contract contract = (Contract) this.getTo();
 		contract.setEndDate(((ContrataProrrogaParams)contrataController.getHandler().getParams()).getFechaFin());
@@ -1166,19 +1171,20 @@ public class ContractController extends BasicController {
 		Contract contract = (Contract)this.getTo();
 		Map<String, ContractData> sourceContractDataMap = SEPEUtils.getInstance().getContractDataMap(contract, contract.getStartDate(), null);
 		
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		ContrataContratosController contrataController = (ContrataContratosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		ContrataContratoParams sourceContractParams = (ContrataContratoParams) contrataController.getParams();
 		if(contrataController.getGeneratedFile()==null || contrataController.getGeneratedFile().getData()==null){
 			contrataController.initialize(contract);
 			contrataController.onContrataDataShow(event);
 			contrataController.onContrataAccept(event);
 		}
 		
-		ContrataController contrataTransformController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
-		ContrataTransformacionesParams params = (ContrataTransformacionesParams) contrataTransformController.getParams();
+		ContrataTransformacionesController contrataTransformController = (ContrataTransformacionesController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+		ContrataTransformacionesParams transformParams = (ContrataTransformacionesParams) contrataTransformController.getParams();
 		
 		// cerrar el contrato actual
 		try {
-			contract.setEndDate(DateUtils.addDays(params.getFechaInicio(), -1));
+			contract.setEndDate(DateUtils.addDays(transformParams.getFechaInicio(), -1));
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
 			bean.restoreNullSubPOJOs(contract);
 			bean.update(contract);
@@ -1202,7 +1208,7 @@ public class ContractController extends BasicController {
 			newContract.setCalendar(contract.getCalendar());
 			newContract.setDescription(contract.getDescription());
 			newContract.setSeniorityDate(contract.getSeniorityDate());
-			newContract.setStartDate(params.getFechaInicio());
+			newContract.setStartDate(transformParams.getFechaInicio());
 			newContract.setEndDate(null);
 			newContract.setModel(null);
 			newContract.setRegimeType(contract.getRegimeType());
@@ -1233,7 +1239,8 @@ public class ContractController extends BasicController {
 		}
 		
 		// datos basicos necesarios
-		getParams().setContractCode(params.getTransformCode());
+		getParams().setContractCode(transformParams.getTransformCode());
+		getParams().setCno(sourceContractParams.getCno());
 		getParams().setSuspensionCause(null);
 		getParams().setCollectivePeculiarityQuote(null);
 		getContractUtils().insertContractData(contract, getParams());
@@ -1256,7 +1263,7 @@ public class ContractController extends BasicController {
 			
 			this.onLoad(event, contract.getId(), null, null);
 		} catch (ManagerBeanException e) {
-			String msg = "No se ha cargar el contrato transformado. (" +e.getMessage() + ")"; 
+			String msg = "No se ha podido cargar el contrato transformado. (" +e.getMessage() + ")"; 
 			AonUtil.addErrorMessage(msg);
 			LOGGER.error(msg);
 			throw new AbortProcessingException(msg);
@@ -1264,13 +1271,13 @@ public class ContractController extends BasicController {
 	}
 	
 	public void onUndoContractExtension(ActionEvent event){
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
-		contrataController.setExtensionNumber(getExtensionCount());
-		contrataController.initialize((Contract) this.getTo());
+		ContrataProrrogasController contrataProrrogasController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+		contrataProrrogasController.setExtensionNumber(getExtensionCount());
+		contrataProrrogasController.initialize((Contract) this.getTo());
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-			if(contrataController.getGeneratedFile()!=null && contrataController.getGeneratedFile().getId()!=null){
-				bean.remove(contrataController.getGeneratedFile().getId());
+			if(contrataProrrogasController.getGeneratedFile()!=null && contrataProrrogasController.getGeneratedFile().getId()!=null){
+				bean.remove(contrataProrrogasController.getGeneratedFile().getId());
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible borrar los datos de la prorroga (ficheros SEPE). (" +e.getMessage() + ")";
@@ -1295,16 +1302,16 @@ public class ContractController extends BasicController {
 		Contract contract = (Contract) this.getTo();
 		Date endDate = null;
 		if(getExtensionCount()>0){
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
-			contrataController.setExtensionNumber(getExtensionCount());
-			contrataController.initialize(contract);
-			contrataController.onContrataDataShow(null);
-			endDate = ((ContrataProrrogaParams)contrataController.getParams()).getFechaFin();
+			contrataProrrogasController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+			contrataProrrogasController.setExtensionNumber(getExtensionCount());
+			contrataProrrogasController.initialize(contract);
+			contrataProrrogasController.onContrataDataShow(null);
+			endDate = ((ContrataProrrogaParams)contrataProrrogasController.getParams()).getFechaFin();
 		} else {
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-			contrataController.initialize(contract);
-			contrataController.onContrataDataShow(null);
-			endDate = ((ContrataContratoParams)contrataController.getParams()).getEndDate();
+			ContrataContratosController contrataContratosController = (ContrataContratosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+			contrataContratosController.initialize(contract);
+			contrataContratosController.onContrataDataShow(null);
+			endDate = ((ContrataContratoParams)contrataContratosController.getParams()).getEndDate();
 		}
 		contract.setEndDate(endDate);
 		this.accept(event);

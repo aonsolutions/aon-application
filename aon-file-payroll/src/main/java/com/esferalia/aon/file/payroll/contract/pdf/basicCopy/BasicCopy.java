@@ -15,12 +15,10 @@ import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.file.payroll.contract.pdf.PdfFieldIndefinite;
 import com.esferalia.aon.file.payroll.contract.pdf.PdfFieldTemporary;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
-import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.contrata.TEQPTIEM;
 import com.lowagie.text.pdf.PdfReader;
 
 
@@ -41,10 +39,6 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			PdfReader reader = new PdfReader(getContractBasicCopyUrl(documentName+".pdf"));
 			readPdfFields(reader);
 
-			ContrataContratoParams contrata = null;
-			if(contrataParams!=null && contrataParams.size()>0){
-				contrata = (ContrataContratoParams) contrataParams.get(0);
-			}
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();
 			
 			/* 
@@ -76,6 +70,7 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			} catch (NullPointerException npe) {
 				// do nothing
 			}
+			
 			/*
 			 * Employee fields
 			 */
@@ -90,10 +85,7 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			
 			if(code!=null){
 				setPdfFieldValue(BasicCopyField.CONTRACT_TYPE.getValue(), code.getName(getLocale()));
-			}	
-//			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()))){
-//				setPdfFieldValue(BasicCopyField.CONTRACT_TYPE.getValue(), getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
-//			}
+			}
 			
 			if(code.getValue().startsWith("1") || code.getValue().startsWith("2")){
 				setPdfFieldValue(BasicCopyField.CONTRACT_TOTAL_DURATION.getValue(),"INDEFINIDO");
@@ -123,53 +115,26 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			String weekHours = getContractDataMap(contract).get(ContextVariable.WEEK_HOURS.toString());
 			boolean isFullTimeDiscontinuous = code.getValue().startsWith("3") && StringUtils.isBlank(weekHours);
 			boolean isPartialTimeDiscontinuous = code.getValue().startsWith("3") && StringUtils.isNotBlank(weekHours);
+			
+			String jornada = "", journalHours = "", journalStart = "", journalEnd = "";
 			if(code.getValue().startsWith("1") || code.getValue().startsWith("4") || isFullTimeDiscontinuous){
-				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_START_TIME.toString()))
-					&& StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_END_TIME.toString()))){
-					String journalPeriod = "";
-					if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString()))){
-						journalPeriod += getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString());				
-						if(!StringUtils.containsIgnoreCase(journalPeriod,"HORAS")){
-							journalPeriod += " HORAS";
-						}
-					}
-					journalPeriod += " (" + getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_START_TIME.toString()) + " - ";
-					journalPeriod += getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_END_TIME.toString()) + ")";
-					getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue(journalPeriod);
-				}
+				journalHours = getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString());
+				journalStart = getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_START_TIME.toString());
+				journalEnd = getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_END_TIME.toString());
 			} else if(code.getValue().startsWith("2") || code.getValue().startsWith("5") || isPartialTimeDiscontinuous){
-				if(contrata!=null){
-					String horasJornada = null;
-					if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString()))){
-						horasJornada = getContractInfoMap(contract).get(PdfFieldIndefinite.FULL_TIME_WEEK_HOURS.toString());				
-					}
-					if(horasJornada==null){
-						horasJornada = String.valueOf(Integer.parseInt(contrata.getHorasJornada()));
-						horasJornada += " HORA" + (Integer.parseInt(contrata.getHorasJornada())==1?"":"S");
-						if(contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_A){
-							horasJornada += " ANUAL";
-							horasJornada += Integer.parseInt(contrata.getHorasJornada())==1?"":"ES";
-						} else if (contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_D){
-							horasJornada += " DIARIA";
-							horasJornada += Integer.parseInt(contrata.getHorasJornada())==1?"":"S";
-						} else if (contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_M){
-							horasJornada += " MENSUAL";
-							horasJornada += Integer.parseInt(contrata.getHorasJornada())==1?"":"ES";
-						} else if (contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_S){
-							horasJornada += " SEMANAL";
-							horasJornada += Integer.parseInt(contrata.getHorasJornada())==1?"":"ES";
-						}
-					}
-					String fullTimeStart = getContractInfoMap(contract).get(PdfFieldTemporary.FULL_TIME_START_TIME.toString());
-					String fullTimeEnd = getContractInfoMap(contract).get(PdfFieldTemporary.FULL_TIME_END_TIME.toString());
-					if(fullTimeStart!=null || fullTimeEnd!=null){
-						horasJornada += " (" + (fullTimeStart!=null?fullTimeStart:"");
-						horasJornada += fullTimeStart!=null && fullTimeEnd!=null?" - ":"";
-						horasJornada += (fullTimeEnd!=null?fullTimeEnd:"") + ")";
-					}
-					getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue(horasJornada);
-				}
+				journalHours = getContractInfoMap(contract).get(PdfFieldTemporary.FULL_TIME_WEEK_HOURS.toString());
+				journalStart = getContractInfoMap(contract).get(PdfFieldTemporary.FULL_TIME_START_TIME.toString());
+				journalEnd = getContractInfoMap(contract).get(PdfFieldTemporary.FULL_TIME_END_TIME.toString());
 			}
+			if(journalHours!=null){
+				jornada += journalHours;				
+			}
+			if(journalStart!=null || journalEnd!=null){
+				jornada += " (" + (journalStart!=null?journalStart:"");
+				jornada += journalStart!=null && journalEnd!=null?" - ":"";
+				jornada += (journalEnd!=null?journalEnd:"") + ")";
+			}
+			getPdfFieldsMap().get(BasicCopyField.CONTRACT_JOURNAL.getValue()).setValue(jornada);
 			
 		} catch (IOException e) {
 			// do nothing

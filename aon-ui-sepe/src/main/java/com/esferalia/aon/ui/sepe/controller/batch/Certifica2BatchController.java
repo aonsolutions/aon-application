@@ -13,6 +13,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -44,6 +47,8 @@ import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 public class Certifica2BatchController extends BasicController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(Certifica2BatchController.class);
 
 	private FileOutput fileOutput;
 	private boolean recorded;
@@ -251,6 +256,15 @@ public class Certifica2BatchController extends BasicController {
 	}
 	
 	public void onInitCertificados(ActionEvent event){
+		try {
+			checkDiskCreated();
+			if(!isRecorded()){
+				onCreateDisk(event);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
+		
 		Certifica2Batch batch =  (Certifica2Batch) this.getTo();
 		CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
 		certificadosController.initialize(batch);

@@ -197,7 +197,7 @@ public class AFIWriter implements Serializable {
 		4 Entidad u Organismo de las Admones.Públicas
 		*/
 		rzs.setTipoAlfabeticoEmpresario("1");
-		rzs.setRazonSocial(enterprise.getRegistry().getName());
+		rzs.setRazonSocial(FileUtils.obtainUtf(enterprise.getRegistry().getName()));
 		return rzs;
 	}
 	
@@ -228,9 +228,9 @@ public class AFIWriter implements Serializable {
 	
 	private AYN createAYNRecord(Contract contract) {
 		AYN ayn = new AYN();
-		String ap1 = contract.getPerson().getFirstSurname();
-		String ap2 = contract.getPerson().getSecondSurname();
-		String n = contract.getPerson().getName();
+		String ap1 = FileUtils.obtainUtf(contract.getPerson().getFirstSurname());
+		String ap2 = FileUtils.obtainUtf(contract.getPerson().getSecondSurname());
+		String n = FileUtils.obtainUtf(contract.getPerson().getName());
 		ayn.setApellido1(ap1!=null?ap1:WHITESPACE_20);
 		ayn.setApellido2(ap2!=null?ap2:WHITESPACE_20);
 		ayn.setNombre(n!=null?n:WHITESPACE_15);

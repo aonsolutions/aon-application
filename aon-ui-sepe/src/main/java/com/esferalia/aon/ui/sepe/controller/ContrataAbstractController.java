@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -16,8 +15,6 @@ import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -47,9 +44,6 @@ import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
-import com.esferalia.aon.payroll.ContractInfo;
-import com.esferalia.aon.payroll.ContractInfo.ContractSepeStatus;
-import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.ContrataBatch;
 import com.esferalia.aon.payroll.ContrataBatchAttachment;
 import com.esferalia.aon.payroll.ContrataBatchDetail;
@@ -59,26 +53,17 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
-import com.esferalia.aon.sepe.api.contrata.contratos.FICHEROCONTRATOS;
-import com.esferalia.aon.sepe.api.contrata.contratos.RESPUESTACONTRATOTYPE;
-import com.esferalia.aon.ui.sepe.controller.handler.ContrataContratosHandler;
-import com.esferalia.aon.ui.sepe.controller.handler.ContrataProrrogasHandler;
-import com.esferalia.aon.ui.sepe.controller.handler.ContrataTransformacionesHandler;
 import com.esferalia.aon.ui.sepe.controller.handler.IContrataHandler;
 import com.esferalia.aon.ui.sepe.file.ContrataWriter;
 import com.esferalia.aon.ui.sepe.utils.ContrataCommunicator;
 import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 
-@Deprecated
-public class ContrataController implements IContrataHandler, ISepeHandler, Serializable {
+
+public abstract class ContrataAbstractController implements IContrataController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ContrataController.class.getName());
-	
-	private boolean contratoFile;
-	private boolean prorrogaFile;
-	private boolean transformacionFile;
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContrataAbstractController.class.getName());
 	
 	private boolean showLoginWindow;
 	private boolean enabledContrataEdition;
@@ -117,34 +102,10 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 	public boolean isEnabledContrataEdition() {
 		return enabledContrataEdition;
 	}
-	public boolean isContratoFile() {
-		return contratoFile;
-	}
-	public void setContratoFile(boolean contratoFile) {
-		this.contratoFile = contratoFile;
-	}
-	public boolean isTransformacionFile() {
-		return transformacionFile;
-	}
-	public void setTransformacionFile(boolean transformacionFile) {
-		this.transformacionFile = transformacionFile;
-	}
-	public boolean isProrrogaFile() {
-		return prorrogaFile;
-	}
-	public void setProrrogaFile(boolean prorrogaFile) {
-		this.prorrogaFile = prorrogaFile;
-	}
-	public ContrataFileType getContrataFileType(){
-		if(isContratoFile()){
-			return ContrataFileType.CONTRACT;
-		} else if(isProrrogaFile()){
-			return ContrataFileType.EXTENSION;
-		} else if(isTransformacionFile()){
-			return ContrataFileType.TRANSFORMATION;
-		}
-		return null;
-	}
+	
+	public abstract ContrataFileType getContrataFileType();
+	
+	
 	public void setEnabledContrataEdition(boolean enabledContrataEdition) {
 		this.enabledContrataEdition = enabledContrataEdition;
 	}
@@ -255,18 +216,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 	}
 	
 	
-	public String getContrataModelName(){
-		if(isContratoFile()){
-			return "contract";
-		} else if(isProrrogaFile()){
-			return "extension";
-		} else if(isTransformacionFile()){
-			return "transform";
-		} else if(getBatch()!=null){
-			return "batch";
-		}
-		return null;
-	}
+	public abstract String getContrataModelName();
 	
 	@Override
 	public boolean isNevv(){
@@ -319,13 +269,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 		batch = null;
 		newBatch = false;
 		readOnly = false;
-		if(isContratoFile()){
-			setHandler( new ContrataContratosHandler() );
-		} else if(isProrrogaFile()){
-			setHandler( new ContrataProrrogasHandler() );
-		} else if(isTransformacionFile()){
-			setHandler( new ContrataTransformacionesHandler() );
-		}
+		initHandler();
 	}
 	
 	public void initialize(ContrataBatch batch){
@@ -353,26 +297,12 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 			initialize(batch);
 		}
 		getHandler().initialize(contract);
-		if(isContratoFile()){
-			List<IAttachment> list = obtainContractContrataList();
-			if(list==null || list.isEmpty()){
-				onContrataAccept(null);
-				list = obtainContractContrataList();
-			}
-			setGeneratedFile(list.get(0));
-		} else if(isProrrogaFile()){
-			List<IAttachment> list = obtainContractExtensionList();
-			if(list!=null && !list.isEmpty() && list.size()>=getExtensionNumber()){
-				setGeneratedFile(list.get(getExtensionNumber()-1));
-			}
-		} else if(isTransformacionFile()){
-			List<IAttachment> list = obtainContractTransformList();
-			if(list!=null && !list.isEmpty()){
-				setGeneratedFile(list.get(0));
-			}
-		}
+		initContract();
 //		this.readOnly = obtainBatchContractCount(contract)>1;
 	}
+	
+	protected abstract void initContract();
+	protected abstract void initHandler();
 	
 	public void onContrataDataShow(ActionEvent event) {
 		setEnabledContrataEdition(true);
@@ -459,45 +389,13 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 		}
 	}
 
-	private void beforeContrataAccept() throws ManagerBeanException {
-		if( isNevv() && (isProrrogaFile() || isTransformacionFile()) ){
-			
-			IManagerBean bean;
-			try {
-				bean = BeanManager.getManagerBean(ContractInfo.class);
-			} catch (ManagerBeanException e) {
-				String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
-				throw new AbortProcessingException(msg,e);
-			}
-			ContractInfo info;
-			info = new ContractInfo();
-			info.setContract( getContract() );
-			info.setStartDate( getContract().getStartDate() );
-			info.setEndDate( getContract().getEndDate() );
-			if(isContratoFile()){
-				info.setName( ContractVariable.SEPE_CONTRACT.getValue() );
-			} else if(isProrrogaFile()){
-				info.setName( ContractVariable.SEPE_EXTENSION.getValue() );
-			} else if(isTransformacionFile()){
-				info.setName( ContractVariable.SEPE_TRANSFORM.getValue() );
-			}
-			info.setExpression( ContractSepeStatus.PENDING.getValue() );
-			bean.insert(info);
-		}
-	}
+	protected abstract void beforeContrataAccept() throws ManagerBeanException;
 	
 	public boolean validateContrataData() {
 		if(getContract()!=null && getBatch()==null){
 			InputStream is = new ByteArrayInputStream(getGeneratedFile().getData());
 			String contractCode = getHandler().getContractCode().getValue();
-			String schema = null;
-			if( isContratoFile() ){
-				schema = SEPEFileUtils.CONTRATOS_SCHEMA_FILE_NAME;
-			} else if( isTransformacionFile() ) {
-				schema = SEPEFileUtils.TRANSFORMACIONES_SCHEMA_FILE_NAME;
-			} else if( isProrrogaFile() ) {
-				schema = SEPEFileUtils.PRORROGAS_SCHEMA_FILE_NAME;
-			}
+			String schema = getSchemaFileName();
 			try {
 				SEPEFileUtils.validateContrataXmlPattern(is, schema, contractCode);
 			} catch (SAXException saxe) {
@@ -519,6 +417,8 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 		}
 		return true;
 	}
+	
+	protected abstract String getSchemaFileName();
 	
 	@Override
 	public void onResetBatch(ActionEvent event) {
@@ -592,14 +492,14 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 				.groupBy(CONTRATA_BATCH.ID)
 				.orderBy(CONTRATA_BATCH.DATE.desc());
 	}
-	private Integer obtainBatchContractCount(Contract contract){
-		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser());
-		Result<Record3<Integer, Timestamp, Integer>> result = getBatchSelect(ctx, contract).fetch();
-		if(result.size()>0){
-			return result.get(0).value3();
-		}
-		return 0;
-	}
+//	private Integer obtainBatchContractCount(Contract contract){
+//		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser());
+//		Result<Record3<Integer, Timestamp, Integer>> result = getBatchSelect(ctx, contract).fetch();
+//		if(result.size()>0){
+//			return result.get(0).value3();
+//		}
+//		return 0;
+//	}
 	private ContrataBatch obtainBatch(Contract contract){
 		AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), AonUtil.getRemoteUser());
 		Result<Record3<Integer, Timestamp, Integer>> result = getBatchSelect(ctx, contract).fetch();
@@ -615,16 +515,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 		return null;
 	}
 	
-	private List<IAttachment> obtainContractContrataList(){
-		return obtainContrataList(ContractAttachmentType.SEPE_CONTRACT_FILE);
-	}
-	private List<IAttachment> obtainContractExtensionList(){
-		return obtainContrataList(ContractAttachmentType.SEPE_EXTENSION_FILE);
-	}
-	private List<IAttachment> obtainContractTransformList(){
-		return obtainContrataList(ContractAttachmentType.SEPE_TRANSFORM_FILE);
-	}
-	private List<IAttachment> obtainContrataList(ContractAttachmentType type){
+	protected List<IAttachment> obtainContrataList(ContractAttachmentType type){
 		try {
 			if(getContract()!=null && getContract().getId()!=null){
 				IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
@@ -638,7 +529,6 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 				}
 			}
 		} catch (ManagerBeanException e) {
-			// NOTHING TO DO
 			String msg = "No se ha podido obtener el fichero " + type.getName(AonUtil.getCurrentLocale());
 			AonUtil.addErrorMessage(msg);
 			LOGGER.error("Error obtaining contrat@ contract attach");
@@ -659,7 +549,6 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 				}
 			}
 		} catch (ManagerBeanException e) {
-			// NOTHING TO DO
 			String msg = "No se ha podido obtener el fichero " + type.getName(AonUtil.getCurrentLocale());
 			AonUtil.addErrorMessage(msg);
 			LOGGER.error("Error obtaining contrat@ batch attach");
@@ -668,12 +557,8 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 	}
 	
 	private void generateContractContrataFile(Contract contract) throws ManagerBeanException{
-//		ContrataWriter writer = new ContrataWriter(contract);
-//		writer.setContratoFile(isContratoFile());
-//		writer.setProrrogaFile(isProrrogaFile());
-//		writer.setTransformacionFile(isTransformacionFile());
 		ContrataWriter writer = new ContrataWriter(contract, getContrataFileType());
-		
+	
 		try {
 			File file = writer.createFile(getParams());
 			FileInputStream fis = new FileInputStream(file);
@@ -683,16 +568,11 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 			attach.setContract(contract);
 			attach.setData(fileContent);
 			attach.setAttachDate(new Date());
-			if(isContratoFile()){
-				attach.setAttachmentType(ContractAttachmentType.SEPE_CONTRACT_FILE);
-				attach.setDescription("CONTRATO - Contrat@");
-			} else if(isProrrogaFile()){
-				attach.setAttachmentType(ContractAttachmentType.SEPE_EXTENSION_FILE);
-				attach.setDescription("PRORROGA - Contrat@");
-			} else if(isTransformacionFile()){
-				attach.setAttachmentType(ContractAttachmentType.SEPE_TRANSFORM_FILE);
-				attach.setDescription("TRANSFORMACION - Contrat@");
-			}
+			attach.setAttachmentType(getAttachmentType());
+			attach.setDescription(getAttachmentType().toString()
+					.replaceAll("SEPE", "")
+					.replaceAll("FILE", "")
+					.replaceAll("_", "") + " - Contrat@");
 			attach.setMimeType(MimeType.MIME_XML);
 			fis.close();
 		} catch(IOException e) {
@@ -704,6 +584,8 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 		} 
 	}
 	
+	protected abstract ContractAttachmentType getAttachmentType();
+
 	@Override
 	public void onSendSepeFile(ActionEvent event){
 		if( validateContrataData() ){
@@ -777,64 +659,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler, Seria
 		processSepeResult(new String(getResponseFile().getData()));
 	}
 	
-	private void processSepeResult(String result) {
-		
-		final String ACCEPTED 				= "ACEPTADO";
-		final String ACCEPTED_WITH_ERRORS 	= "ACEPTADO CON ERRORES";
-		final String REJECTED 				= "RECHAZADO";
-		final String WRONG_CONTRACT_ID 		= "E0000000000000";
-		
-		if(result!=null && (result.contains(ACCEPTED) || result.contains(ACCEPTED_WITH_ERRORS)) && !result.contains(REJECTED)){
-			try {
-				getCommunicator().setContrataFileType(getContrataFileType());
-				FICHEROCONTRATOS contratos = getCommunicator().obtainFicheroContratos(result.getBytes());
-				for(Object o: contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150()){
-					RESPUESTACONTRATOTYPE respuestaContratos = getCommunicator().obtainRespuestaContrato(o);
-					try {
-						if(!respuestaContratos.getIDCONTRATO().equals(WRONG_CONTRACT_ID)){
-							Contract contract = isBatchView()?obtainContract(respuestaContratos):getContract();
-							IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
-							ContractInfo info = new ContractInfo();
-							info.setContract(contract);
-							info.setStartDate(contract.getStartDate());
-							info.setEndDate(contract.getEndDate());
-							info.setName( ContractVariable.SEPE_CONTRACT_ID.getValue() );
-							info.setExpression("\"" + respuestaContratos.getIDCONTRATO() + "\"");
-							bean.insert(info);
-						}
-					} catch (ManagerBeanException e) {
-						String msg = "Error al grabar el ID de contrato obtenido del SEPE. (" +e.getMessage() + ")";
-						AonUtil.addErrorMessage(msg);
-					}
-				}
-			} catch (IOException e) {
-				String msg = "No se han podido procesar los datos de respuesta de Contrat@";
-				LOGGER.error(msg, e);
-				AonUtil.addErrorMessage(msg);
-				AonUtil.addErrorMessage(e.getMessage());
-			} catch (JAXBException e) {
-				String msg = "No se han podido procesar los datos de respuesta de Contrat@";
-				LOGGER.error(msg, e);
-				AonUtil.addErrorMessage(msg);
-				AonUtil.addErrorMessage(e.getMessage());
-			} catch (SAXException e) {
-				String msg = "No se han podido procesar los datos de respuesta de Contrat@";
-				LOGGER.error(msg, e);
-				AonUtil.addErrorMessage(msg);
-				AonUtil.addErrorMessage(e.getMessage());
-			} catch (ParserConfigurationException e) {
-				String msg = "No se han podido procesar los datos de respuesta de Contrat@";
-				LOGGER.error(msg, e);
-				AonUtil.addErrorMessage(msg);
-				AonUtil.addErrorMessage(e.getMessage());
-			}
-		}
-	}
-	
-	private Contract obtainContract(RESPUESTACONTRATOTYPE respuestaContratos) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	protected abstract void processSepeResult(String result);
 	
 	@Override
 	public String getCommunicationLogContent() {

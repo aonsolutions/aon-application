@@ -47,38 +47,36 @@
  				oncomplete="Richfaces.hideModalPanel('waitProccess')"
 				styleClass="aon-finding-toolbar-item aon-icon-update" />
 					
-			<aon:if test="#{!controller.readOnly}">
-				<aon:if test="#{!skipDownloadButton}">
-					<aon:dropDownMenu value="#{bundle.aon_more2}"
-					 	style="display:inline-block;font-size:0.8em;margin-right:4px;" >
-			            <f:facet name="label">
-							<aon:panelGroup>
-								<aon:outputText value="#{bundle.aon_more2}" /> 
-								<aon:graphicImage style="vertical-align:middle;"
-			                     	value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
-							</aon:panelGroup>
-			            </f:facet>			
-						<aon:menuItem id="sepe-process-restart-#{toolbarID}"
-							value="Reiniciar proceso"
-							rendered="#{(controller.communicationIdReceived and not controller.communicationAccepted) or (controller.communicationResponseReceived and not controller.communicationFinished)}"
-							actionListener="#{controller.onRemoveSepeFiles}"
-							reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
-							iconClass="aon-icon-refresh" 
-							/>
-						<aon:menuItem id="sepe-result-process-#{toolbarID}"
-							value="Procesar resultado"
-							rendered="#{controller.communicationResponseReceived}"
-							actionListener="#{controller.onProcessSepeResult}"
-							reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
-							iconClass="aon-icon-refresh" 
-							/>
+			<aon:if test="#{!controller.readOnly and (controller.communicationIdReceived or controller.communicationResponseReceived)}">
+				<aon:dropDownMenu value="#{bundle.aon_more2}"
+				 	style="display:inline-block;font-size:0.8em;margin-right:4px;" >
+		            <f:facet name="label">
+						<aon:panelGroup>
+							<aon:outputText value="#{bundle.aon_more2}" /> 
+							<aon:graphicImage style="vertical-align:middle;"
+		                     	value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
+						</aon:panelGroup>
+		            </f:facet>			
+					<aon:menuItem id="sepe-process-restart-#{toolbarID}"
+						value="Reiniciar proceso"
+						rendered="#{not controller.communicationAccepted or not controller.communicationFinished}"
+						actionListener="#{controller.onRemoveSepeFiles}"
+						reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
+						iconClass="aon-icon-refresh" />
+					<aon:menuItem id="sepe-result-process-#{toolbarID}"
+						value="Procesar resultado"
+						rendered="#{controller.communicationResponseReceived}"
+						actionListener="#{controller.onProcessSepeResult}"
+						reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
+						iconClass="aon-icon-refresh" />
+					<aon:if test="#{!skipDownloadButton}">
 						<aon:menuItem iconClass="aon-icon-mail-save">
 							<aon:htmlCommandLink id="sepeXmldownload-#{toolbarID}" 
 								value="XML" target="_blank"
 								actionListener="#{controller.onDownloadSepeXml}" />
 			     		</aon:menuItem>
-					</aon:dropDownMenu>			
-				</aon:if>
+					</aon:if>
+				</aon:dropDownMenu>			
 			</aon:if>
 			
 		</ui:define>

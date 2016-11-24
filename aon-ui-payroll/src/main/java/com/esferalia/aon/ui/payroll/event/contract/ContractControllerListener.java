@@ -40,7 +40,10 @@ import com.esferalia.aon.ui.payroll.controller.contract.ContractClauseController
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
-import com.esferalia.aon.ui.sepe.controller.ContrataController;
+import com.esferalia.aon.ui.sepe.controller.ContrataContratosController;
+import com.esferalia.aon.ui.sepe.controller.ContrataProrrogasController;
+import com.esferalia.aon.ui.sepe.controller.ContrataTransformacionesController;
+import com.esferalia.aon.ui.sepe.controller.IContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 
 public class ContractControllerListener extends ControllerAdapter{
@@ -133,13 +136,13 @@ public class ContractControllerListener extends ControllerAdapter{
 			LOGGER.error(msg);
 		}
 		
-		ContrataController contrataController = null;
+		IContrataController contrataController = null;
 		if(controller.isTransformedContract()){
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+			contrataController = (ContrataTransformacionesController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 		} else if(!controller.isTransformedContract() && controller.isExtendedContract()){
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+			contrataController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 		} else {
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+			contrataController = (ContrataContratosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 		}
 		
 		contrataController.initialize((Contract) this.getController().getTo());
@@ -223,15 +226,15 @@ public class ContractControllerListener extends ControllerAdapter{
 	}
 	
 	private void updateContrataData() {
-		ContrataController contrataController = null;
+		IContrataController contrataController = null;
 		ContractController controller = (ContractController) this.getController();
 		
 		if(controller.isTransformedContract()){
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+			contrataController = (ContrataTransformacionesController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 		} else if(!controller.isTransformedContract() && controller.isExtendedContract()){
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+			contrataController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 		} else {
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+			contrataController = (ContrataContratosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 		}
 		
 		contrataController.onContrataAccept(null);

@@ -33,7 +33,7 @@ import com.esferalia.aon.sepe.api.contrata.transformaciones.RESPUESTATRANSFORMAC
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.SepeAppParamsController;
 import com.esferalia.aon.ui.sepe.file.ContrataResponseReader;
-import com.esferalia.aon.ui.sepe.utils.SEPEConnectionProvider.CertificadosCommunicationError;
+import com.esferalia.aon.ui.sepe.utils.SEPEConnectionProvider.SEPECommunicationError;
 
 
 public class ContrataCommunicator implements ISepeCommunicator, Serializable {
@@ -229,12 +229,21 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 				code += _data.replaceAll(".*<NUM_ENVIO>(.*)</NUM_ENVIO>.*", "$1");
 			}
 			if(_data.matches(".*<ERROR>.+</ERROR>.*")){
-				code += "<br/>";
 				code += _data.replaceAll(".*<ERROR>(.*)</ERROR>.*", "$1");
-				try {
-					code += " - " + CertificadosCommunicationError.valueOf(code).getDescription();
-				} catch (Exception e) {
-					code += " - error no reconocido";
+				if(code!=null && code.startsWith("DEX")){
+					try {
+						code = "<br/>" + code + " - " + SEPECommunicationError.valueOf(code).getDescription();
+					} catch (Exception e) {
+						return code + "(error no reconicido)";
+					}
+				} else {
+					code = "<p><b>RESPUESTA OBTENIDA DE SEPE: </b>" + code + "</p>";
+					if(getUser()==null){
+						searchContrataLogin();
+					}
+					if(getUser()==null || !getUser().matches("[0-9A-Z]\\d{7}[0-9A-Z]")){
+						code += "<p><b>Revise y valide el usuario y contraseña del servicio de Contrat@</b></p>";
+					}
 				}
 			}
 			return code;
@@ -281,12 +290,14 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 //			fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
 			if(errorMsg.matches(".*<ERROR>.*</ERROR>.*")){
 				errorMsg = errorMsg.replaceAll(".*<ERROR>(.*)</ERROR>.*", "$1");
-				try {
-					errorMsg += " - " + CertificadosCommunicationError.valueOf(errorMsg).getDescription();
-				} catch (Exception e) {
-					errorMsg += " - error no reconocido";
+				if(TERRORES.getEnumByValue(errorMsg)==null){
+					try {
+						errorMsg += " - " + SEPECommunicationError.valueOf(errorMsg).getDescription();
+					} catch (Exception e) {
+						errorMsg = "<p><b>RESPUESTA OBTENIDA DE SEPE: </b>" + errorMsg + "</p>";
+					}
+					return status + errorMsg;
 				}
-				return status + errorMsg;
 			}
 //			fichero si procesado: si se obtiene el fichero con los datos procesados
 			try {
@@ -384,12 +395,14 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 //			fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
 			if(errorMsg.matches(".*<ERROR>.*</ERROR>.*")){
 				errorMsg = errorMsg.replaceAll(".*<ERROR>(.*)</ERROR>.*", "$1");
-				try {
-					errorMsg += " - " + CertificadosCommunicationError.valueOf(errorMsg).getDescription();
-				} catch (Exception e) {
-					errorMsg += " - error no reconocido";
+				if(TERRORES.getEnumByValue(errorMsg)==null){
+					try {
+						errorMsg += " - " + SEPECommunicationError.valueOf(errorMsg).getDescription();
+					} catch (Exception e) {
+						errorMsg = "<p><b>RESPUESTA OBTENIDA DE SEPE: </b>" + errorMsg + "</p>";
+					}
+					return status + errorMsg;
 				}
-				return status + errorMsg;
 			}
 //			fichero si procesado: si se obtiene el fichero con los datos procesados
 			try {
@@ -465,12 +478,14 @@ public class ContrataCommunicator implements ISepeCommunicator, Serializable {
 //			fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
 			if(errorMsg.matches(".*<ERROR>.*</ERROR>.*")){
 				errorMsg = errorMsg.replaceAll(".*<ERROR>(.*)</ERROR>.*", "$1");
-				try {
-					errorMsg += " - " + CertificadosCommunicationError.valueOf(errorMsg).getDescription();
-				} catch (Exception e) {
-					errorMsg += " - error no reconocido";
+				if(TERRORES.getEnumByValue(errorMsg)==null){
+					try {
+						errorMsg += " - " + SEPECommunicationError.valueOf(errorMsg).getDescription();
+					} catch (Exception e) {
+						errorMsg = "<p><b>RESPUESTA OBTENIDA DE SEPE: </b>" + errorMsg + "</p>";
+					}
+					return status + errorMsg;
 				}
-				return status + errorMsg;
 			}
 //			fichero si procesado: si se obtiene el fichero con los datos procesados
 			try {

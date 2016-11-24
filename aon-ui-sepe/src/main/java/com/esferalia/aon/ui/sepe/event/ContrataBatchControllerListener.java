@@ -11,7 +11,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.ContrataBatch;
 import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
-import com.esferalia.aon.ui.sepe.controller.ContrataController;
+import com.esferalia.aon.ui.sepe.controller.ContrataContratosController;
+import com.esferalia.aon.ui.sepe.controller.ContrataProrrogasController;
+import com.esferalia.aon.ui.sepe.controller.ContrataTransformacionesController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.batch.ContrataBatchController;
 import com.esferalia.aon.ui.sepe.controller.batch.ContrataListController;
@@ -54,13 +56,13 @@ public class ContrataBatchControllerListener extends ControllerAdapter {
 		ContrataBatch batch = (ContrataBatch) controller.getTo();
 		if(batch.getStatus() == FileStatus.GENERATED){
 			if(batch.getType()==ContrataFileType.CONTRACT){
-				ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+				ContrataContratosController contrataController = (ContrataContratosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 				contrataController.initialize(batch);
 			} else if(batch.getType()==ContrataFileType.EXTENSION){
-				ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+				ContrataProrrogasController contrataController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 				contrataController.initialize(batch);
 			} else if(batch.getType()==ContrataFileType.TRANSFORMATION){
-				ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+				ContrataTransformacionesController contrataController = (ContrataTransformacionesController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 				contrataController.initialize(batch);
 			}
 		}

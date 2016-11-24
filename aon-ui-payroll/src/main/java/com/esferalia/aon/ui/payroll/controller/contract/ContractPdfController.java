@@ -70,7 +70,10 @@ import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollEmailUtil;
 import com.esferalia.aon.ui.payroll.utils.PdfUtils;
 import com.esferalia.aon.ui.sepe.controller.CertificadosCollectionsController;
-import com.esferalia.aon.ui.sepe.controller.ContrataController;
+import com.esferalia.aon.ui.sepe.controller.ContrataContratosController;
+import com.esferalia.aon.ui.sepe.controller.ContrataProrrogasController;
+import com.esferalia.aon.ui.sepe.controller.ContrataTransformacionesController;
+import com.esferalia.aon.ui.sepe.controller.IContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.file.CertificadosWriter;
 
@@ -397,10 +400,10 @@ public class ContractPdfController implements Serializable {
 		}
 		
 		setContrataParams(new LinkedList<IContrataParams>());
-		ContrataController contrataController = null;
+		IContrataController contrataController = null;
 		
 		// load initial contract contrata data
-		contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		contrataController = (ContrataContratosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize(getContract());
 		contrataController.onContrataDataShow(null);
 		if(contrataController.getGeneratedFile()!=null && (contrataController.getGeneratedFile().getSize()>0)){
@@ -408,7 +411,7 @@ public class ContractPdfController implements Serializable {
 		}
 		
 		if(getDocumentType()==ContractAttachmentType.EXTENSION_DOC_DRAFT){
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+			contrataController = (ContrataProrrogasController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 			contrataController.initialize(getContract());
 			contrataController.onContrataDataShow(null);
 			getContrataParams().add(contrataController.getHandler().getParams());
@@ -428,7 +431,7 @@ public class ContractPdfController implements Serializable {
 		}
 		
 		if(code!=null && isTransformedContract(code) && getDocumentType()==getContractPdfType()){
-			contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+			contrataController = (ContrataTransformacionesController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 			contrataController.initialize(getContract());
 			contrataController.onContrataDataShow(null);
 			getContrataParams().add(contrataController.getHandler().getParams());

@@ -27,34 +27,40 @@
 	<!-- ************ CONTRACT XML EDITION - CONTRATA ************** -->
 	<managed-bean>
 		<managed-bean-name>contractContrata</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.sepe.controller.ContrataController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.controller.ContrataContratosController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<!--  
 		<managed-property>
 			<property-name>contratoFile</property-name>
 			<value>true</value>
 		</managed-property>
+		-->
 	</managed-bean>
 
 	<!-- ************ EXTENSION XML EDITION - CONTRATA ************** -->
 	<managed-bean>
 		<managed-bean-name>extensionContrata</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.sepe.controller.ContrataController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.controller.ContrataProrrogasController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<!--  
 		<managed-property>
 			<property-name>prorrogaFile</property-name>
 			<value>true</value>
 		</managed-property>
+		-->
 	</managed-bean>
 
-	<!-- ************ EXTENSION XML EDITION - CONTRATA ************** -->
+	<!-- ************ TRANSFORM XML EDITION - CONTRATA ************** -->
 	<managed-bean>
 		<managed-bean-name>transformContrata</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.sepe.controller.ContrataController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.controller.ContrataTransformacionesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<!--  
 		<managed-property>
 			<property-name>transformacionFile</property-name>
 			<value>true</value>
 		</managed-property>
+		-->
 	</managed-bean>
 
 	<!-- ************ CERTIFICADOS - COMMUNICATION ************** -->

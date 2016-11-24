@@ -484,21 +484,25 @@ public class ContractInfoController extends BasicController {
 		IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
 		ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		Contract contract = (Contract) controller.getTo();
-		try {
-			if(controller.getParams().getContractModelOption()!=null){
-				ContractInfo info = new ContractInfo();
-				info.setContract(contract);
-				info.setStartDate(contract.getStartDate());
-				info.setEndDate(contract.getEndDate());
-				info.setName( ContractVariable.CONTRACT_MODEL_OPTION.getValue() );
-				info.setExpression("\"" + controller.getParams().getContractModelOption() + "\"");
-				bean.insert(info);
+		if(controller.getParams().getContractModelOption()!=null){
+			try {
+				if(controller.getParams().getContractModelOption()!=null){
+					ContractInfo info = new ContractInfo();
+					info.setContract(contract);
+					info.setStartDate(contract.getStartDate());
+					info.setEndDate(contract.getEndDate());
+					info.setName( ContractVariable.CONTRACT_MODEL_OPTION.getValue() );
+					info.setExpression("\"" + controller.getParams().getContractModelOption() + "\"");
+					bean.insert(info);
+				}
+				loadContractFields(contract, false);
+				saveContractFields(contractFieldList);
+			} catch (ManagerBeanException e) {
+				String msg = "Error al grabar el modelo del contrato. (" +e.getMessage() + ")";
+				AonUtil.addErrorMessage(msg);
 			}
-			loadContractFields(contract, false);
-			saveContractFields(contractFieldList);
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el modelo del contrato. (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
+		} else {
+			AonUtil.addErrorMessage("Modalidad de contrato no seleccionada.");
 		}
 	}
 	

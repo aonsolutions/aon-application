@@ -177,15 +177,18 @@
 							
 						</aon:if>
 
-						<aon:panelTab id="attachData" label="#{bundle.aon_documents}">
+						<aon:panelTab id="attachData" label="#{bundle.aon_documents}"
+							actionListener="#{contractAttach.onSearch}" ajaxSingle="#{true}">
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/grid.xhtml" />
 						</aon:panelTab>
 
 						<aon:if test="#{sepeAppParams.developmentMode or aonRole.sysAdmin}">
-							<aon:panelTab id="contractInfo" label="INFO">
+							<aon:panelTab id="contractInfo" label="#INFO#"
+								actionListener="#{contractInfo.onSearch}" ajaxSingle="#{true}">
 								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contractInfo/grid_full.xhtml" />
 							</aon:panelTab>
-							<aon:panelTab id="contractData" label="DATA">
+							<aon:panelTab id="contractData" label="#DATA#"
+								actionListener="#{contractData.onSearch}" ajaxSingle="#{true}">
 								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contractData/grid_full.xhtml" />
 							</aon:panelTab>
 						</aon:if>

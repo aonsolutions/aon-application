@@ -11,6 +11,7 @@ import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.registry.RegistryAddress;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
@@ -318,6 +319,7 @@ public class IndefiniteModel extends AbstractContractModel {
 				weekHours += NumberUtils.isNumber(friday)?new Double(friday):0.0;
 				weekHours += NumberUtils.isNumber(saturday)?new Double(saturday):0.0;
 				weekHours += NumberUtils.isNumber(sunday)?new Double(sunday):0.0;
+				weekHours = CommonUtil.round(weekHours);
 			}
 			boolean isFullTimeDiscontinuous = code.getValue().startsWith("3") && weekHours>0;
 			boolean isPartialTimeDiscontinuous = code.getValue().startsWith("3") && weekHours>0;

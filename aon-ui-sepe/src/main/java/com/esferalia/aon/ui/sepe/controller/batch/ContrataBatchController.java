@@ -47,7 +47,10 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
-import com.esferalia.aon.ui.sepe.controller.ContrataController;
+import com.esferalia.aon.ui.sepe.controller.ContrataContratosController;
+import com.esferalia.aon.ui.sepe.controller.ContrataProrrogasController;
+import com.esferalia.aon.ui.sepe.controller.ContrataTransformacionesController;
+import com.esferalia.aon.ui.sepe.controller.IContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
@@ -194,19 +197,28 @@ public class ContrataBatchController extends BasicController {
 	}
 	
 	public void onSepeShow(ActionEvent event){
-		ContrataController contrataController = null;
+		try {
+			checkDiskCreated();
+			if(!isRecorded()){
+				onCreateDisk(event);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage());
+		}
+		
+		IContrataController contrataController = null;
 		ContrataBatch batch = (ContrataBatch) this.getTo();
 		switch (batch.getType()) {
 		case CONTRACT:
-			contrataController = (ContrataController) AonUtil
+			contrataController = (ContrataContratosController) AonUtil
 					.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 			break;
 		case EXTENSION:
-			contrataController = (ContrataController) AonUtil
+			contrataController = (ContrataProrrogasController) AonUtil
 					.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 			break;
 		case TRANSFORMATION:
-			contrataController = (ContrataController) AonUtil
+			contrataController = (ContrataTransformacionesController) AonUtil
 					.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 			break;
 		case INDEFINITE_CALL:

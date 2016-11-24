@@ -16,6 +16,7 @@
 				<ui:param name="toolbarTitle" value="#{toolbarTitle}" />
 				<ui:param name="controller" value="#{controller}" />
 				<ui:define name="beforeSpinToolbarContent">
+					<!--  
 					<aon:commandButton id="create-button" value="#{bundle.payroll_create_disk}"
 						rendered="#{!controller.nevv and !controller.recorded and controllerDetail.model.rowCount > 0}"
 						reRender="batchForm, #{createButtonReRender}"
@@ -23,6 +24,7 @@
 						actionListener="#{controller.onCreateDisk}"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+					-->
 					<ui:insert name="moreToolbarContent" />
 				</ui:define>		
 			</ui:decorate>
