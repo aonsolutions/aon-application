@@ -378,7 +378,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 					repeatLastInvoice( new ISelectionCallback() {
 
 						@Override
-						public void onSucces() {
+						public void onSuccess() {
 							fastSave.setFocus(true);
 						}
 
@@ -570,7 +570,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 							populate(result);
 							getCallback().getModule().onBalance(getWrapper().getAccountEntry());
 							if (cbk != null) {
-								cbk.onSucces();
+								cbk.onSuccess();
 							}
 						}
 						
@@ -594,7 +594,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 					vatPanel.setVisible(false);
 					extraPanel.invoiceChanged(getWrapper());
 				}
-				if (cbk != null) cbk.onSucces();
+				if (cbk != null) cbk.onSuccess();
 			} else {
 				getCallback().getModule().onError("[ERROR INTERNO] No hay que seleccionar.");
 			}
@@ -903,7 +903,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 							populate(result);
 							getCallback().getModule().onBalance(getWrapper().getAccountEntry());
 							if (cbk != null) {
-								cbk.onSucces();
+								cbk.onSuccess();
 							}							
 						}
 						

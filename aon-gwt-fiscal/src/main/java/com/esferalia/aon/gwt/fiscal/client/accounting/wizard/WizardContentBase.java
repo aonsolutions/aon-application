@@ -6,7 +6,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IContentAttchCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IContentAttachCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.google.gwt.core.client.GWT;
@@ -20,7 +20,7 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 	protected IAccountEntryModuleCallback callback;
 	
 	public static interface ISelectionCallback {
-		void onSucces();
+		void onSuccess();
 		void onFailure();
 	}
 	
@@ -132,7 +132,7 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 	}
 
 	@Override
-	public void attach(IContentAttchCallback contentCbk) {
+	public void attach(IContentAttachCallback contentCbk) {
 		getCallback().getModule().setWizardContent(this, contentCbk);
 	}
 	

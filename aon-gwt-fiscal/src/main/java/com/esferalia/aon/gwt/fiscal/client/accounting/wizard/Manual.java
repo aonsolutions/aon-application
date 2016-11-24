@@ -83,7 +83,7 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 		tableInnerContainer.add(table);
 		tableContainer.setWidget(tableInnerContainer);
 		getCallback().getModule().onBalance(getWrapper());
-		if (cbk != null) cbk.onSucces();
+		if (cbk != null) cbk.onSuccess();
 	}
 
 	@Override
@@ -100,7 +100,6 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	public void reset(AccountEntry base, ISelectionCallback cbk) {
 		AccountEntryWrapper wrapper = create(base);
 		select(wrapper, cbk);
-		if (cbk != null) cbk.onSucces();
 	}
 
 	private AccountEntryWrapper create(AccountEntry base) {

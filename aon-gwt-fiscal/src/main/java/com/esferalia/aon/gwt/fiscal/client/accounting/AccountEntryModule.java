@@ -180,11 +180,11 @@ public class AccountEntryModule extends MainEntryPoint {
 		splitLayoutPanel = new SplitLayoutPanel(4);
 		journalPanel = new JournalPanel(getCurrentDomainName(), getCurrentDomain());
 
-//		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
-//			public void onUncaughtException(Throwable e) {
-//				showError("ERROR INESPERADO! [" + e.getMessage() + "]");
-//			}
-//		});
+		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
+			public void onUncaughtException(Throwable e) {
+				showError("ERROR INESPERADO! [" + e.getMessage() + "]");
+			}
+		});
 		        
 		Widget ui = BINDER.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
@@ -670,6 +670,39 @@ public class AccountEntryModule extends MainEntryPoint {
 		showFullStatement(event.getSelectedItem());
 	}
 
+	@UiHandler("invoice")
+	public void onClickInvoice(ClickEvent event) {
+		final IAccountEntryWrapper wrp = this.wizardContent.getEntryWrapper();
+		IContentAttachCallback cbk = new IContentAttachCallback() {
+			@Override
+			public void onAttach() {
+				AccountEntryModule.this.wizardContent.reset(wrp.getAccountEntry(),new ISelectionCallback() {
+					
+					@Override
+					public void onSuccess() {
+						AccountEntryModule.this.wizardContent.setFocus(true);
+					}
+					
+					@Override
+					public void onFailure() {
+						invalidateModule("Error inesperado");
+					}
+				});
+				
+			}
+		};
+		if (invoice.getValue()) {
+			// No se llama a selectWizardContent, porque es una factura 
+			// nueva y todavía no sabemos el tipo que tiene. 
+			// setWizardContent(new InvoicePanel(callback),cbk);
+			new InvoicePanel(moduleCallback).attach(cbk);
+		} else {
+			new Manual(moduleCallback).attach(cbk);
+//			wrp.getAccountEntry().setEntryType(AccountEntryType.MANUAL);
+//			selectWizardContent(wrp.getAccountEntry().getId(),wrp);
+		}
+	}
+	
 	// ---------------------------------------------------------------- ACTION
 	private void reset() {
 		balancePanel.clearBalances();
@@ -677,7 +710,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		ISelectionCallback selectionCallback = new ISelectionCallback() {
 			
 			@Override
-			public void onSucces() {
+			public void onSuccess() {
 				syncCurrent();
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 					public void execute() {
@@ -735,50 +768,18 @@ public class AccountEntryModule extends MainEntryPoint {
 				.setToDate(entryDate.getValue()));
 	}
 
-	@UiHandler("invoice")
-	public void onClickInvoice(ClickEvent event) {
-		final IAccountEntryWrapper wrp = this.wizardContent.getEntryWrapper();
-		IContentAttchCallback cbk = new IContentAttchCallback() {
-			@Override
-			public void onAttach() {
-				AccountEntryModule.this.wizardContent.reset(wrp.getAccountEntry(),new ISelectionCallback() {
-					
-					@Override
-					public void onSucces() {
-						AccountEntryModule.this.wizardContent.setFocus(true);
-					}
-					
-					@Override
-					public void onFailure() {
-						invalidateModule("Error inesperado");
-					}
-				});
-				
-			}
-		};
-		if (invoice.getValue()) {
-			// No se llama a selectWizardContent, porque es una factura 
-			// nueva y todavía no sabemos el tipo que tiene. 
-			// setWizardContent(new InvoicePanel(callback),cbk);
-			new InvoicePanel(moduleCallback).attach(cbk);
-		} else {
-			wrp.getAccountEntry().setEntryType(AccountEntryType.MANUAL);
-			selectWizardContent(wrp.getAccountEntry().getId(),wrp);
-		}
-	}
-	
-	public static interface IContentAttchCallback {
+	public static interface IContentAttachCallback {
 		void onAttach();
 	}
 	
 	private void selectWizardContent( final Integer id, final IAccountEntryWrapper wrp) {
-		final IContentAttchCallback wizardCbk = new IContentAttchCallback() {
+		final IContentAttachCallback wizardCbk = new IContentAttachCallback() {
 			@Override
 			public void onAttach() {
 				AccountEntryModule.this.wizardContent.select(id,wrp,new ISelectionCallback() {
 					
 					@Override
-					public void onSucces() {
+					public void onSuccess() {
 						syncCurrent();
 					}
 					
@@ -806,14 +807,14 @@ public class AccountEntryModule extends MainEntryPoint {
 				invoice.setValue(true,false);
 				new InvoicePanel(moduleCallback).attach(wizardCbk);
 			}
-			@Override
-			public void visitManual(AccountEntry entry) {visitManual();}
+			
 			
 			private void visitManual() {
 				invoice.setValue(false,false);
 				new Manual(moduleCallback).attach(wizardCbk);
 			}
 			
+			@Override public void visitManual(AccountEntry entry) {visitManual();}
 			@Override public void visitOpening(AccountEntry entry) {visitManual();}
 			@Override public void visitClosing(AccountEntry entry) {visitManual();}
 			@Override public void visitOperating(AccountEntry entry) {visitManual();}
@@ -838,7 +839,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			
 	}
 	
-	public void setWizardContent(IWizardContent content,IContentAttchCallback cbk) {
+	public void setWizardContent(IWizardContent content,IContentAttachCallback cbk) {
 		this.wizardContent = content;
 		wizardPanel.setWidget(this.wizardContent);
 		if (cbk != null) cbk.onAttach();
