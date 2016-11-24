@@ -8,4 +8,5 @@ public interface ICalendar {
 	
 	DayType getDayType(Calendar day);
 
+	DayType getWeekDayType(int weekDay);
 }

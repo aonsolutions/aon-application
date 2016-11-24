@@ -51,6 +51,11 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 			return week[day.get(Calendar.DAY_OF_WEEK)-1];
 		}
 		
+		@Override
+		public DayType getWeekDayType(int weekDay) {
+			return week[weekDay-1];
+		}
+		
 		protected void add ( Date day, DayType type ) {
 			days.put(day, type);
 		}

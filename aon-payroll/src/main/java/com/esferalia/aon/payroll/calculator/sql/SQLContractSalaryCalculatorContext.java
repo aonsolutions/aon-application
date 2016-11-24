@@ -2710,12 +2710,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		ICalendar calendar = getCalendar();
 
-		Calendar day = Calendar.getInstance();
-		day.setTime(contractStartDate);
-		for (int i = 0; i < 7; ++i) {
-			if (dayType == calendar.getDayType(day))
+		for (int i = Calendar.SUNDAY; i <= Calendar.SATURDAY; ++i) {
+			if (dayType == calendar.getWeekDayType(i))
 				days++;
-			day.add(Calendar.DAY_OF_WEEK, 1);
 		}
 
 		return days;
