@@ -40,10 +40,12 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -58,7 +60,9 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
 
-public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
+public class InvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice> {
+	
+	static final String BACKGROUND_COLOR = "#dfecdf";
 	
 	static FinanceServiceAsync financeService;
 	
@@ -68,13 +72,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 		void paintEntry();
 		void setFocusOnRegistry();
 		void enableInvoiceTotal(boolean enable);
-		
-//		void transactionChanged();
-//		void withholdingChanged();
-//		void surchargeChanged();
-//		void withholdingFarmerChanged();
-//		void invoiceTotalChanged();
 	}
+	
 	private AccountingRegistry lastRegistry;
 
 	private FlexTable regTable;
@@ -138,9 +137,17 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 				getCallback().getModule().refreshIdLabel();
 			}
 		});
+		extraPanel.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<AccountingInvoice> event) {
+				SelectionEvent.<AccountingInvoice>fire( InvoicePanel.this, event.getSelectedItem());
+			}
+		});
 		rootPanel.addEast(extraPanel, 380);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
-		centerPanel.setStyleName(AON.AON_CSS.aonWizardPanel());
+		centerPanel.setStyleName(AON.AON_CSS.aonInvoicePanel());
+		centerPanel.getElement().getStyle().setBackgroundColor(InvoicePanel.BACKGROUND_COLOR);
 		DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.PX);
 		dockPanel.setStyleName(AON.AON_CSS.aonFlexContainer());
 		dockPanel.addStyleName(AON.AON_CSS.aonPadding2Top());
@@ -567,11 +574,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 				,new AsyncCallback<AccountingInvoice>() {
 						@Override
 						public void onSuccess(AccountingInvoice result) {
-							populate(result);
-							getCallback().getModule().onBalance(getWrapper().getAccountEntry());
-							if (cbk != null) {
-								cbk.onSuccess();
-							}
+							select(result,cbk);
 						}
 						
 						@Override
@@ -583,8 +586,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 			if (wrp != null) {
 				AccountingInvoice ai = (AccountingInvoice) wrp;
 				if (ai.getInvoice() != null) {
-					populate((AccountingInvoice) wrp);
-					getCallback().getModule().onBalance(getWrapper());
+					select(getWrapper(),cbk);
 				} else {
 					setWrapper(ai);
 					registryBox.setValue(new AccountingRegistry());
@@ -593,8 +595,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 					withholdingPanel.setVisible(false);
 					vatPanel.setVisible(false);
 					extraPanel.invoiceChanged(getWrapper());
+					if (cbk != null) cbk.onSuccess();
 				}
-				if (cbk != null) cbk.onSuccess();
 			} else {
 				getCallback().getModule().onError("[ERROR INTERNO] No hay que seleccionar.");
 			}
@@ -602,6 +604,14 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 		
 	}		
 
+	public void select(AccountingInvoice result,final ISelectionCallback cbk) {
+		populate(result);
+		getCallback().getModule().onBalance(getWrapper().getAccountEntry());
+		if (cbk != null) {
+			cbk.onSuccess();
+		}
+	}
+	
 	private void populate(AccountingInvoice result) {
 		setWrapper(result);
 		paint();
@@ -624,10 +634,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 			_paintEntry();
 		}
 	}
-
-//	private void enableSurchargeIfNeeded() {
-//		vatPanel.surchargeChanged(extraPanel.isSurcharge());
-//	}
 	
 	private void fillSalesSeries() {
 		if (getCallback().getModule().getConfiguration().getInvoiceSalesSeries() != null 
@@ -830,39 +836,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 				&& getCallback().getModule().getConfiguration().isInvestAssetsAvailable();
 			
 		}
-//		@Override
-//		public void transactionChanged() {
-//			vatPanel.transactionChanged();
-//			InvoiceCalculator.calculate(getWrapper());
-//			paintEntry();
-//		}
-//
-//		@Override
-//		public void withholdingChanged() {
-//			vatPanel.withholdingChanged();
-//			withholdingTable.setVisible(getWrapper().isWithholding());
-//			paintEntry();
-//		}
-//
-//		@Override
-//		public void surchargeChanged() {
-//			enableSurchargeIfNeeded();
-//			paintEntry();
-//		}
-//		
-//		@Override
-//		public void withholdingFarmerChanged() {
-//			InvoiceCalculator.calculate(getWrapper());
-//			populateWithholding();
-//			paintEntry();
-//		}
-//		
-//		@Override
-//		public void invoiceTotalChanged() {
-//			InvoiceCalculator.calculate(getWrapper());
-//			paintEntry();
-//		}
-//		
 		@Override
 		public void enableInvoiceTotal(boolean enable) {
 			invoiceTotal.setEnabled(enable);
@@ -912,6 +885,11 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> {
 							getCallback().getModule().onError("No se ha encontrado ninguna factura");
 						}
 					});
+	}
+
+	@Override
+	public HandlerRegistration addSelectionHandler(SelectionHandler<AccountingInvoice> handler) {
+		return super.addHandler(handler, SelectionEvent.getType());
 	}
 
 }

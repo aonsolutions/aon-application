@@ -815,21 +815,6 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-fiscal-enterprise-suggest")
 	String aonFiscalEnterpriseSuggest();
 
-	@ClassName("aon-wizard-panel")
-	String aonWizardPanel();
-
-	@ClassName("aon-wizard-panel-inner")
-	String aonWizardPanelInner();
-	
-	@ClassName("aon-wizard-panel-border-bottom")
-	String aonWizardPanelBorderBottom();
-
-	@ClassName("aon-wizard-panel-east")
-	String aonWizardPanelEast();
-	
-	@ClassName("aon-wizard-label")
-	String aonWizardLabel();
-
 	@ClassName("aon-panelGrid-search")
 	String aonPanelGridSearch();
 
@@ -1109,4 +1094,20 @@ public interface AonCSS extends CssResource {
 	
 	@ClassName("aon-configuration-panel")
 	String aonConfigurationPanel();
+	
+	@ClassName("aon-invoice-panel")
+	String aonInvoicePanel();
+
+	@ClassName("aon-invoice-panel-inner")
+	String aonInvoicePanelInner();
+	
+	@ClassName("aon-invoice-panel-border-bottom")
+	String aonInvoicePanelBorderBottom();
+
+	@ClassName("aon-invoice-panel-east")
+	String aonInvoicePanelEast();
+	
+	@ClassName("aon-invoice-label")
+	String aonInvoiceLabel();
+	
 }

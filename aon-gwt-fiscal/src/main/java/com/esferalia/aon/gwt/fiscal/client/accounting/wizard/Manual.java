@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	
+	private static final String BACKGROUND_COLOR = "#fff7cc";
 	private ScrollPanel tableContainer;
 	private VerticalPanel tableInnerContainer;
 	private AccountEntryTable table;
@@ -118,6 +119,7 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 		tableInnerContainer.addStyleName(AON.AON_CSS.aonWidthAll());
 		
 		table = new AccountEntryTable(this);
+		table.getElement().getStyle().setBackgroundColor(BACKGROUND_COLOR);
 		table.addErrorHandler(new ErrorHandler() {
 
 			@Override

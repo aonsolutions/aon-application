@@ -1285,6 +1285,15 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		fsa.getAccountingInvoice(domainName, domain, accountEntry,
 				new AsyncCallbackWrapper<AccountingInvoice>(callback));
 	}
+	
+	@Override
+	public void getAccountingInvoiceFromInvoice(String domainName, int domain, Integer invoiceId,
+			AsyncCallback<AccountingInvoice> callback) {
+		AON.start();
+		fsa.getAccountingInvoiceFromInvoice(domainName, domain, invoiceId,
+				new AsyncCallbackWrapper<AccountingInvoice>(callback));
+	}
+	
 
 	@Override
 	public void save(String domainName, int domain, AccountingInvoice invoice,
@@ -1342,5 +1351,6 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		// TODO Apéndice de método generado automáticamente
 		fsa.getMod123Attach(domainName, mod123, callback);
 	}
+
 
 }

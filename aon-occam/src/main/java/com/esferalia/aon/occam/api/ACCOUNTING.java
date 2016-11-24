@@ -329,6 +329,17 @@ public class ACCOUNTING {
 		}
 	}
 
+	public static AccountingInvoice getAccountingInvoiceFromInvoice(String domainName, int domain, String user,
+			 Integer invoiceId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().getAccountingInvoiceFromInvoice(ctx, invoiceId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 
 	public static AccountingInvoice save(String domainName, int domain, String user, AccountingInvoice invoice) {
 		AONContext ctx = null;

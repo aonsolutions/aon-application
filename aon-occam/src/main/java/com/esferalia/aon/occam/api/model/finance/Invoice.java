@@ -159,6 +159,13 @@ public class Invoice implements Serializable, HasAudit {
 		this.rectificationType = rectificationType;
 		return this;
 	}
+	public boolean isRectified() {
+		return (getRectificationType() == RectificationType.RECTIFIED);
+	}
+	public boolean isRectifier() {
+		return (getRectificationType() == RectificationType.NORMAL_RECTIFIER 
+			|| getRectificationType() == RectificationType.SPECIAL_RECTIFIER);
+	}
 	public Integer getRectificationInvoice() {
 		return rectificationInvoice;
 	}

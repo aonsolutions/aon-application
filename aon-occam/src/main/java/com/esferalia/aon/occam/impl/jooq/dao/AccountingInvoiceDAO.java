@@ -50,6 +50,23 @@ public class AccountingInvoiceDAO {
 	private static final com.esferalia.aon.jooq.tables.Account EXP_ACCOUNT = ACCOUNT.as("EXP_ACCOUNT");
 	private static final com.esferalia.aon.jooq.tables.Account VAT_ACCOUNT = ACCOUNT.as("VAT_ACCOUNT");
 	
+	public static AccountingInvoice getAccountingInvoiceFromInvoice(final AONContext ctx, final Integer invoiceId) {
+		Integer entryId = ctx.getDslContext()
+				.select( ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY)
+				.from( ACCOUNT_ENTRY_INVOICE )
+				.where(ACCOUNT_ENTRY_INVOICE.INVOICE .eq(invoiceId))
+				.and(ACCOUNT_ENTRY_INVOICE.DOMAIN.eq(ctx.getDomainId()))
+				.fetch()
+				.stream()
+				.mapToInt(rec -> rec.getValue(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY))
+				.findFirst()
+				.orElse( Integer.MIN_VALUE );
+		if (entryId != null && entryId != Integer.MIN_VALUE) {
+			return getAccountingInvoice(ctx, entryId);
+		}
+		return null;
+	}
+	
 	public static AccountingInvoice getAccountingInvoice(final AONContext ctx, final Integer accountEntry) {
 		final AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, null);
 		Integer invoiceId = ctx.getDslContext()

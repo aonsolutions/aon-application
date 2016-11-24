@@ -9,6 +9,11 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTypeListBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
+import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoicePanel.IInvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
@@ -16,15 +21,22 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -33,9 +45,20 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHandlers<Void> {
+public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHandlers<Void>,HasSelectionHandlers<AccountingInvoice> {
 	
 	private AccountingRegistryVisitor accountingRegistryVisitor;
+	
+	static FiscalServiceAsync fiscalService;
+	protected IAccountEntryModuleCallback callback;
+	
+	protected static FiscalServiceAsync getFiscalService() {
+		if (fiscalService == null) {
+			FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
+			fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		}
+		return fiscalService;
+	}
 	
 	FlowPanel flexContainer;
 	
@@ -57,7 +80,8 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 	
 	public InvoiceExtraPanel() {
 		accountingRegistryVisitor = new AccountingRegistryVisitor();
-		setStyleName(AON.AON_CSS.aonWizardPanelEast());
+		setStyleName(AON.AON_CSS.aonInvoicePanelEast());
+		getElement().getStyle().setBackgroundColor(InvoicePanel.BACKGROUND_COLOR);
 		flexContainer = new  FlowPanel();
 		flexContainer.setStyleName(AON.AON_CSS.aonFlexContainer());
 		add(flexContainer);
@@ -76,12 +100,13 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		paintChecks3(callback);
 	}
 
+
 	private void paintWorkplace(final IInvoicePanelCallback callback) {
 		
 		final LinkedList<Workplace> list = callback.getModule().getConfiguration().getWorkplaces();
 		if (list != null && list.size() > 1) {
 			FlowPanel panel = new  FlowPanel();
-			panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
+			panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 			InlineLabel label = new InlineLabel(AON.MSG.workplace());
 			label.setStyleName(AON.AON_CSS.aonInnerLabel());
 			label.addStyleName(AON.AON_CSS.aonWidth70());
@@ -123,20 +148,64 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 
 	private void paintLabel(final IInvoicePanelCallback callback) {
 		eastPanelInner = new  FlowPanel();
-		eastPanelInner.setStyleName(AON.AON_CSS.aonWizardPanelInner());
+		eastPanelInner.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
+		eastPanelInner.addStyleName(AON.AON_CSS.aonNowrap());
 		eastPanelInner.setVisible(false);
 		invoiceTypeLabel = new InlineLabel();
 		invoiceTypeLabel.setStyleName(AON.AON_CSS.aonWidthAll());
 		invoiceTypeLabel.addStyleName(AON.AON_CSS.aonMarginAuto());
-		invoiceTypeLabel.addStyleName(AON.AON_CSS.aonWizardLabel());
+		invoiceTypeLabel.addStyleName(AON.AON_CSS.aonInvoiceLabel());
 		invoiceTypeLabel.addStyleName(AON.AON_CSS.aonTextCenter());
 		eastPanelInner.add(invoiceTypeLabel);
+		
+		Label rectLabel = new Label();
+		rectLabel.setStyleName(AON.AON_CSS.aonBold());
+		rectLabel.addStyleName(AON.AON_CSS.aonColorRed());
+		rectLabel.addStyleName(AON.AON_CSS.aonFontSmall());
+		rectLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
+		rectLabel.addStyleName(AON.AON_CSS.aonCursorPointer());
+		rectLabel.addStyleName(AON.AON_CSS.aonTextUnderline());
+		if (callback.getInvoice().getInvoice().isRectifier()) {
+			rectLabel.setText("Factura rectificativa");
+		}
+		if (callback.getInvoice().getInvoice().isRectified()) {
+			rectLabel.setText( "Factura rectificada");
+		}
+		rectLabel.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				getFiscalService().getAccountingInvoiceFromInvoice(AccountEntryModule.getCurrentDomainName()
+						,AccountEntryModule.getCurrentDomain()
+						,callback.getInvoice().getInvoice().getRectificationInvoice()
+						,new AsyncCallback<AccountingInvoice>() {
+							
+							@Override
+							public void onSuccess(AccountingInvoice result) {
+								if (result != null) {
+									SelectionEvent.<AccountingInvoice>fire( InvoiceExtraPanel.this, result);
+								} else {
+									callback.getModule().onError("No se ha encontrado la factura.");	
+								}
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								callback.getModule().onError(caught.getMessage());
+							}
+						});								
+			}
+		});
+		eastPanelInner.add(rectLabel);
+		
+		
+		
 		flexContainer.add(eastPanelInner);
 	}
 	
 	private void paintDocument(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
+		panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 		
 		InlineLabel label = new InlineLabel(AON.MSG.document());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
@@ -190,7 +259,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 
 	private void paintName(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
+		panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 		InlineLabel label = new InlineLabel(AON.MSG.name());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		label.addStyleName(AON.AON_CSS.aonWidth70());
@@ -216,7 +285,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 
 	private void paintDate(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
+		panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 		InlineLabel label = new InlineLabel(AON.MSG.taxDate());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		label.addStyleName(AON.AON_CSS.aonWidth70());
@@ -248,7 +317,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 		
 	private void paintTransaction(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
+		panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 		InlineLabel label = new InlineLabel(AON.MSG.transaction());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		label.addStyleName(AON.AON_CSS.aonWidth70());
@@ -281,7 +350,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 	
 	private void paintChecks1(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
+		panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 		
 		service = new CheckBox(AON.MSG.service());
 		service.setTabIndex(Integer.MAX_VALUE);
@@ -334,7 +403,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 
 	private void paintChecks2(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
+		panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 		
 		surcharge = new CheckBox(AON.MSG.surcharge());
 		surcharge.setTabIndex(Integer.MAX_VALUE);
@@ -388,7 +457,7 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 
 	private void paintChecks3(final IInvoicePanelCallback callback) {
 		FlowPanel panel = new  FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonWizardPanelInner());
+		panel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 		
 		withholding = new CheckBox(AON.MSG.withholding());
 		withholding.setTabIndex(Integer.MAX_VALUE);
@@ -501,6 +570,10 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Void> handler) {
 		return super.addHandler(handler, ValueChangeEvent.getType());
+	}
+	@Override
+	public HandlerRegistration addSelectionHandler(SelectionHandler<AccountingInvoice> handler) {
+		return super.addHandler(handler, SelectionEvent.getType());
 	}
 
 	

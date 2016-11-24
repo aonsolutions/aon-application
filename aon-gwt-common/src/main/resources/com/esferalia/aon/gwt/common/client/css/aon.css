@@ -1840,14 +1840,15 @@ input:disabled+label {
 	padding: 2px 5px;
 	width: 400px;
 }
-.aon-wizard-panel{
+.aon-invoice-panel{
     background-color: #cceeff;
     border: 1px solid black;
     margin-left: 1.5em;
     margin-bottom: 5px;
+    min-height: 200px;
 }
 
-.aon-wizard-panel-inner{
+.aon-invoice-panel-inner{
 	display: flex;
 	align-items: flex-start;
 	width: 100%;
@@ -1855,23 +1856,24 @@ input:disabled+label {
     padding-left: 10px;
     padding-right: 10px;
 }
-.aon-wizard-panel-border-bottom {
+.aon-invoice-panel-border-bottom {
 	border-bottom-style: solid;
 	border-bottom-width: 1px;
 	border-bottom-color: white;
 }
 
-.aon-wizard-label{
+.aon-invoice-label{
     padding-left: 10px;
     padding-right: 10px;
     font-size: 1.5em;
     font-weight: bold;
 }
-.aon-wizard-panel-east{
+.aon-invoice-panel-east{
     background-color: #cceeff;
     border: 1px solid black;
     margin-right: 1em;	
     margin-bottom: 5px;
+    min-height: 200px;
 }
 
 .aon-panelGrid-search {

@@ -99,7 +99,7 @@
 										<g:customHeader>
 											<g:Label
 												styleName="{aonResources.css.aonIconError} {aonResources.css.aonPaddingRight}"  
-												text="{msg.problems}" />
+												text="{msg.notifications}" />
 										</g:customHeader>
 										<g:SimplePanel ui:field="errorsContainer"/>										
 									</g:tab>
