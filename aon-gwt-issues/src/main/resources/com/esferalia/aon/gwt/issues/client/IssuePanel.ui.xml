@@ -29,6 +29,10 @@
 			padding: 4px 0px !important;
 			width:200px;
 		}
+
+		.jeje{
+			height:30px;
+		}
 	</ui:style>
 	
 	<g:SplitLayoutPanel ui:field="dockLayoutPanel">
@@ -171,24 +175,84 @@
 				styleName="{aonResources.css.aonSelector}">
 				<g:TabLayoutPanel ui:field="tabLayout" barHeight="26"
 					barUnit="PX" width="100%">
-					<g:tab>
-						<g:customHeader>
-							<g:Label
-								styleName="{aonResources.css.aonIconJournalLog} {aonResources.css.aonPaddingRight}"
-								text="Contacto" />
+
+				    <g:tab >
+						<g:customHeader styleName="{style.jeje}">
+						    <g:HTMLPanel>
+								<i:IronIcon icon="check-box" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+								<g:InlineLabel text="Tareas" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+							</g:HTMLPanel>
 						</g:customHeader>
-						<aon:ResultsPanel ui:field="resultsPanel" />
-					</g:tab>
-					
-					<g:tab>
-						<g:customHeader>
-							<g:Label
-								styleName="{aonResources.css.aonIconInfo} {aonResources.css.aonPaddingRight} {aonResources.css.aonPaddingLeft20}"
-								text="Facturas" />
-						</g:customHeader>
-						<g:ScrollPanel ui:field="informationPanel"
+						<g:ScrollPanel ui:field="taskPanel"
 							styleName="{aonResources.css.aonTextCenter}" />
 					</g:tab>
+				    
+				   	<g:tab >
+						<g:customHeader styleName="{style.jeje}">
+							<g:HTMLPanel>
+								<i:IronIcon icon="account-box" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+								<g:InlineLabel text="Contacto" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+							</g:HTMLPanel>
+						</g:customHeader>
+						<g:ScrollPanel ui:field="rmediaPanel"
+							styleName="{aonResources.css.aonTextCenter}" />
+					</g:tab>
+					
+				   	<g:tab >
+						<g:customHeader styleName="{style.jeje}">
+							<g:HTMLPanel>
+						   		<i:IronIcon icon="announcement" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+						   		<g:InlineLabel text="Avisos" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+							</g:HTMLPanel>
+						</g:customHeader>
+						<g:ScrollPanel ui:field="rnotesPanel"
+							styleName="{aonResources.css.aonTextCenter}" />
+					</g:tab>
+					
+				   	<g:tab >
+						<g:customHeader styleName="{style.jeje}">
+							<g:HTMLPanel>
+								<i:IronIcon icon="receipt" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+								<g:InlineLabel text="Facturas" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+							</g:HTMLPanel>
+						</g:customHeader>
+						<g:ScrollPanel ui:field="invoicePanel"
+							styleName="{aonResources.css.aonTextCenter}" />
+					</g:tab>
+					
+				   	<g:tab >
+						<g:customHeader styleName="{style.jeje}">
+							<g:HTMLPanel>
+								<i:IronIcon icon="event" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+								<g:InlineLabel text="Cuotas" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+							</g:HTMLPanel>	
+						</g:customHeader>
+						<g:ScrollPanel ui:field="feePanel"
+							styleName="{aonResources.css.aonTextCenter}" />
+					</g:tab>
+				   	
+					<g:tab >
+						<g:customHeader styleName="{style.jeje}"> 
+							<g:HTMLPanel>
+								<i:IronIcon icon="done-all" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+								<g:InlineLabel text="Duplicados" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+							</g:HTMLPanel>
+						</g:customHeader>
+						<g:ScrollPanel ui:field="duplicatePanel"
+							styleName="{aonResources.css.aonTextCenter}" />
+					</g:tab>
+					
+					<g:tab >
+						<g:customHeader styleName="{style.jeje}">
+							<g:HTMLPanel>
+								<i:IronIcon icon="help" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+								<g:InlineLabel text="FAQs" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+							</g:HTMLPanel>	
+						</g:customHeader>
+						<g:ScrollPanel ui:field="faqsPanel"
+							styleName="{aonResources.css.aonTextCenter}" />
+					</g:tab>
+				   
 				</g:TabLayoutPanel>
 			</aon:MinimizePanel>
 		</g:south>

@@ -12,6 +12,8 @@ import com.esferalia.aon.gwt.api.client.incidence.JsEvent;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
+import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
+import com.esferalia.aon.gwt.api.client.registry.JsRnote;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
@@ -19,6 +21,7 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
+import com.esferalia.aon.gwt.issues.client.south.RmediaList;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -101,6 +104,14 @@ public class IssuePanel extends Composite{
 	@UiField PaperIconButton typeDeleteButton;
 	@UiField PaperIconButton workgroupDeleteButton;
 
+	@UiField ScrollPanel taskPanel;
+	@UiField ScrollPanel duplicatePanel;
+	@UiField ScrollPanel faqsPanel;
+	@UiField ScrollPanel feePanel;
+	@UiField ScrollPanel rmediaPanel;
+	@UiField ScrollPanel rnotesPanel;
+	@UiField ScrollPanel invoicePanel;
+	
 	Issues parent;
 	private DateTimeFormat dateFormat = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -193,83 +204,107 @@ public class IssuePanel extends Composite{
 		initComments(issue);
 		initSendButton();
 		
-		if(issue.isPrincipalDuplicate() || issue.isDuplicate()){
-			initDuplicates(issue);
-		}
+		initSouthInfo(issue);
 		
+		
+	}
+	private void initSouthInfo(JsIssue issue){	
+		String nothing = "NO HAY DATOS RELACIONADOS A ESTA TAREA";
+		
+		// AVISOS
+		incidence.getEnterpriseIssues(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsIssue>>() {
+			@Override
+			public void onSuccess(JSON<JsIssue> result) {
+				if(result.getData().length() > 0)
+					taskPanel.add(getSouthContent(result));
+				else taskPanel.add(new Label(nothing)); 
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		
+		// CONTACTO
+		incidence.getEnterpriseRmediaList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsRmedia>>() {
+			@Override
+			public void onSuccess(JSON<JsRmedia> result) {
+				if(result.getData().length() > 0){
+					Window.alert(result.getData().get(0).getValue());
+					RmediaList rml = new RmediaList();
+					rml.getList().setItems(result.getData());
+					rmediaPanel.add(rml);
+				}
+				else rmediaPanel.add(new Label(nothing)); 
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		
+		// AVISOS
+		incidence.getEnterpriseRnoteList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsRnote>>() {
+			@Override
+			public void onSuccess(JSON<JsRnote> result) {
+				
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+		
+		// DUPLICADOS
+		if(issue.isPrincipalDuplicate() || issue.isDuplicate()){
+			Integer id = issue.getParent();
+			if(issue.isFaqItem() && issue.isPrincipalDuplicate())
+				id = issue.getId();
+			incidence.getDuplicateIssues(id, new  AsyncCallback<JSON<JsIssue>>() {
+				@Override
+				public void onSuccess(JSON<JsIssue> result) {				
+					duplicatePanel.add(getSouthContent(result));
+					openFootPanel();
+					tabLayout.selectTab(5);
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		} else duplicatePanel.add(new Label(nothing));  
+		
+		// FAQS
 		if(issue.isFaq()){
-			initFaqs(issue);
-		}
+			incidence.getDuplicateIssues(issue.getId(), new  AsyncCallback<JSON<JsIssue>>() {
+				@Override
+				public void onSuccess(JSON<JsIssue> result) {				
+					faqsPanel.add(getSouthContent(result));
+					openFootPanel();
+					tabLayout.selectTab(6);
+				}
+				
+				@Override public void onFailure(Throwable caught) {}
+			});
+		} else faqsPanel.add(new Label(nothing));
+		
+		rnotesPanel.add(new Label(nothing));
+		invoicePanel.add(new Label(nothing));
+		feePanel.add(new Label(nothing));
+		
+	}
+
+	private IssueSelector getSouthContent(JSON<JsIssue> result){
+		IssueSelector is = new IssueSelector();
+		is.getList().setItems(result.getData());
+		is.getList().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				JsIssue  jsIssue = is.getSelectedItem().cast();
+				parent.contentDockLayoutPanel.removeFromParent();
+				parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+				parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, jsIssue));
+				parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);	
+			}
+		});
+	//	ScrollPanel sp = new ScrollPanel();
+	//	sp.add(is);
+		return is;
 	}
 	
-	private void initFaqs(JsIssue issue){		
-		incidence.getDuplicateIssues(issue.getId(), new  AsyncCallback<JSON<JsIssue>>() {
-			@Override
-			public void onSuccess(JSON<JsIssue> result) {				
-				IssueSelector is = new IssueSelector();
-				is.getList().setItems(result.getData());
-				is.getList().addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						JsIssue  jsIssue = is.getSelectedItem().cast();
-						parent.contentDockLayoutPanel.removeFromParent();
-						parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-						parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, jsIssue));
-						parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);	
-					}
-				});
-				
-				Label label = new Label("FAQs");
-				label.addStyleName(AON.AON_CSS.aonIconInfo());
-				label.addStyleName(AON.AON_CSS.aonPaddingRight());
-				label.addStyleName(AON.AON_CSS.aonPaddingLeft20());
-				ScrollPanel sp = new ScrollPanel();
-				sp.add(is);
-				tabLayout.add(sp, label);
-				openFootPanel();
-				tabLayout.selectTab(2);
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});
-	}
-	
-	private void initDuplicates(JsIssue issue){		
-		Integer id = issue.getParent();
-		if(issue.isFaqItem() && issue.isPrincipalDuplicate())
-			id = issue.getId();
-		incidence.getDuplicateIssues(id, new  AsyncCallback<JSON<JsIssue>>() {
-			@Override
-			public void onSuccess(JSON<JsIssue> result) {				
-				IssueSelector is = new IssueSelector();
-				is.getList().setItems(result.getData());
-				is.getList().addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						JsIssue  jsIssue = is.getSelectedItem().cast();
-						parent.contentDockLayoutPanel.removeFromParent();
-						parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-						parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, jsIssue));
-						parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);	
-					}
-				});
-				
-				Label label = new Label("Duplicados");
-				label.addStyleName(AON.AON_CSS.aonIconInfo());
-				label.addStyleName(AON.AON_CSS.aonPaddingRight());
-				label.addStyleName(AON.AON_CSS.aonPaddingLeft20());
-				ScrollPanel sp = new ScrollPanel();
-				sp.add(is);
-				tabLayout.add(sp, label);
-				openFootPanel();
-				tabLayout.selectTab(2);
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});
-	}
 	private void initHeader(JsIssue issue) {
 		VerticalPanel vp = new VerticalPanel();
 		vp.setSpacing(10);
@@ -674,7 +709,7 @@ public class IssuePanel extends Composite{
 	}
 	
 	private void onAcceptEditCommentButtonClick(JsComment comment, final TextArea textArea) {
-		String request = "{\"body\":\""+ textArea.getText() +"\"}";
+		String request = "{\"body\":\""+ checkString(textArea.getText()) +"\"}";
 
 		incidence.updateComment(issue, comment, request, new AsyncCallback<JsComment>() {
 			@Override
@@ -688,7 +723,7 @@ public class IssuePanel extends Composite{
 	}
 	
 	private void onAcceptEditDescriptionButtonClick(final TextArea textArea) {
-		String request = "{\"body\":\""+ textArea.getText() +"\"}";
+		String request = "{\"body\":\""+ checkString(textArea.getText()) +"\"}";
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override

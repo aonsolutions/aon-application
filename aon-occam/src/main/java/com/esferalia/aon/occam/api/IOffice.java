@@ -38,7 +38,4 @@ public interface IOffice {
 	public void insertNotificationInfo(AONContext ctx, NotificationInfo notificationInfo);
 	public void insertNotificationInfo(AONContext ctx, String data, AppParam appParam);
 
-	
-	
-	public void getSolutionIssuesDescription(AONContext ctx, Integer domainId);
 }

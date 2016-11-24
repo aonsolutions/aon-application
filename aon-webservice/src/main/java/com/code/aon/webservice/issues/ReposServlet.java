@@ -164,10 +164,6 @@ public class ReposServlet extends HttpServlet{
 							
 			Object object = new Object();
 			switch (pathInfo[3]) {
-			case "solutions":
-				System.out.println("SOLUTION");
-				AON.solutionIssuesDescription(domain.getName(), domain.getId(), "");
-				break;
 			case "issues":
 				if(pathInfo.length > 4){
 					if(pathInfo.length > 5){

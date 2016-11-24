@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.api.client;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -21,5 +22,9 @@ public class AonJsArray<T extends JavaScriptObject> extends JsArray<T>{
 			linkedList.add(this.get(index));
 		}
 		return linkedList;
+	}
+	
+	public final Stream<T> stream(){
+		return toLinkedList().stream();
 	}
 }

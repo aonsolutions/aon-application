@@ -31,12 +31,14 @@ import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
+import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
@@ -61,6 +63,7 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachQueryProperties;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
@@ -84,6 +87,7 @@ import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -108,7 +112,6 @@ import com.esferalia.aon.occam.impl.jooq.AgreementImpl;
 import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CommercialImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
-import com.esferalia.aon.occam.impl.jooq.FeeImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
@@ -166,10 +169,6 @@ public class AON {
 
 	private static IProduct getProduct() {
 		return new ProductImpl();
-	}
-
-	private static IFee getFee() {
-		return new FeeImpl();
 	}
 
 	private static IOffice getOffice() {
@@ -854,6 +853,27 @@ public class AON {
 	// ********************************* FINANCE **
 	// ********************************************
 	
+	public static Stream<Invoice> getInvoiceStream(String domainName, Integer domainId, String login, InvoiceFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().getInvoiceStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static LinkedList<Invoice> getInvoiceList(String domainName, Integer domainId, String login, InvoiceFilter filter){
+		return getInvoiceStream(domainName, domainId, login, filter)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Invoice getInvoice(String domainName, Integer domainId, String login, InvoiceFilter filter){
+		return getInvoiceStream(domainName, domainId, login, filter)
+			.findFirst().orElse(new Invoice());
+	}
+	
 	public static Stream<InvoiceDetail> getInvoiceDetails(String domainName,
 			Integer domainId, String login, InvoiceFilter filter) {
 		AONContext ctx = null;
@@ -1028,25 +1048,46 @@ public class AON {
 	// ********************************************
 	// ************************************* FEE **
 	// ********************************************
+	
+	public static Stream<Fee> getFeeStream(String domainName, Integer domainId, String login, FeeFilter filter){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().getFeeStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Fee getFee(String domainName, Integer domainId, String login, FeeFilter filter){
+		return getFeeStream(domainName, domainId, login, filter)
+			.findFirst().orElse(new Fee());
+	}
+	
+	public static LinkedList<Fee> getFeeList(String domainName, Integer domainId, String login, FeeFilter filter){
+		return getFeeStream(domainName, domainId, login, filter)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
 
 	public static void insertFee(AONContext ctx, Fee f) {
-		getFee().insertFee(ctx, f);
+		getFinance().insertFee(ctx, f);
 	}
 
 	public static void insertFee(AONContext ctx, Stream<Fee> fs) {
-		getFee().insertFee(ctx, fs);
+		getFinance().insertFee(ctx, fs);
 	}
 
 	public static void updateFee(AONContext ctx, Fee f) {
-		getFee().updateFee(ctx, f);
+		getFinance().updateFee(ctx, f);
 	}
 
 	public static void deleteFee(AONContext ctx, Fee f) {
-		getFee().deleteFee(ctx, f);
+		getFinance().deleteFee(ctx, f);
 	}
 
 	public static void deleteFee(AONContext ctx, Stream<Fee> fs) {
-		getFee().deleteFee(ctx, fs);
+		getFinance().deleteFee(ctx, fs);
 	}
 
 	// ********************************************
@@ -1149,19 +1190,7 @@ public class AON {
 				ctx.close();
 		}
 	}
-
-	public static LinkedList<RegistryMedia> getRMediaList(String domainName, Integer domainId, String login,
-			RegistryMediaFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getOffice().getRMediaList(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
+		
 	public static Registry getRegistry(String domainName, Integer domainId, String login, String name){
 		AONContext ctx = null;
 		try {
@@ -2030,6 +2059,59 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	// ------------------------------------- RMEDIA
+	
+	public static Stream<RegistryMedia> getRMediaStream(String domainName, Integer domainId, String login,
+			RegistryMediaFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRMediaStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+		
+	public static RegistryMedia getRMedia(String domainName, Integer domainId, String login,
+			RegistryMediaFilter filter) {
+		return getRMediaStream(domainName, domainId, login, filter)
+			.findFirst().orElse(new RegistryMedia());
+	}
+		
+	public static LinkedList<RegistryMedia> getRMediaList(String domainName, Integer domainId, String login,
+			RegistryMediaFilter filter) {
+		return getRMediaStream(domainName, domainId, login, filter)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	// ------------------------------------- RNOTE
+	
+	public static Stream<RegistryNote> getRNoteStream(String domainName, Integer domainId, String login,
+			RegistryNoteFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRNoteStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+		
+	public static RegistryNote getRNote(String domainName, Integer domainId, String login,
+			RegistryNoteFilter filter) {
+		return getRNoteStream(domainName, domainId, login, filter)
+			.findFirst().orElse(new RegistryNote());
+	}
+		
+	public static LinkedList<RegistryNote> getRNoteList(String domainName, Integer domainId, String login,
+			RegistryNoteFilter filter) {
+		return getRNoteStream(domainName, domainId, login, filter)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+
 
 	// ********************************************
 	// ******************************** CREDITOR **
@@ -2740,17 +2822,6 @@ public class AON {
 	public static LinkedList<Registry> getFilterRegistryList(String domainName, Integer domainId, String login, String filter){
 		return getFilterRegistryStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static void solutionIssuesDescription(String domainName, Integer domainId, String login) {
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			 getOffice().getSolutionIssuesDescription(ctx, domainId);
-		} finally {
-			if(ctx != null) ctx.close();
-		}
-
 	}
 	
 }

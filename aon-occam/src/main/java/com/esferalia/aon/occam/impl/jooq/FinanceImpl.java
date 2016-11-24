@@ -6,16 +6,28 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFinance;
+import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
+import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 
 public class FinanceImpl implements IFinance {
 
+	// ------------------------------------- INVOICE
+	
+	@Override
+	public Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceDAO.getInvoiceStream(ctx, filter));
+	}
+	
 	// ------------------------------------- INVOICE DETAIL
 	
 	@Override
@@ -70,6 +82,49 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate) {
 		return InvoiceDAO.getInvoiceSeries(ctx, from, to, taxDate);
+	}
+	
+	// ------------------------------------- FEE
+	
+	@Override
+	public Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getFeeStream(ctx, filter));
+	}
+	
+	@Override
+	public void insertFee(AONContext ctx, Fee f) {
+		ctx.getDslContext().transaction(configuration -> {
+			FeeDAO.insert(ctx, f);
+		} );		
+	}
+
+	@Override
+	public void insertFee(AONContext ctx, Stream<Fee> fs) {
+		ctx.getDslContext().transaction(configuration -> {
+			FeeDAO.insert(ctx, fs);
+		} );			
+	}
+
+	@Override
+	public void updateFee(AONContext ctx, Fee f) {
+		ctx.getDslContext().transaction(configuration -> {
+			FeeDAO.update(ctx, f);
+		} );			
+	}
+
+	@Override
+	public void deleteFee(AONContext ctx, Fee f) {
+		ctx.getDslContext().transaction(configuration -> {
+			FeeDAO.delete(ctx, f);
+		} );			
+	}
+
+	@Override
+	public void deleteFee(AONContext ctx, Stream<Fee> fs) {
+		ctx.getDslContext().transaction(configuration -> {
+			FeeDAO.delete(ctx, fs);
+		} );			
 	}
 
 }

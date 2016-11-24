@@ -123,6 +123,11 @@ public class InvoiceDAO {
 
 	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
 	
+	public static Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
+		return ctx.getDslContext().select().from(INVOICE).where(INVOICE_PROPERTIES.getConditions(filter))
+			.fetchInto(INVOICE).stream().map(new FullInvoiceFiller());
+	}
+	
 	public static Invoice getInvoice(AONContext ctx, Integer id) {
 		ctx.checkRead();
 		return ctx.getDslContext()

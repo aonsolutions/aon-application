@@ -136,6 +136,27 @@ public interface Properties {
 		Property<Integer> getWorkplaceProperty();			
 	}
 	
+	public interface FeeProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getProjectProperty();
+		Property<Integer> getCustomerProperty();
+		Property<Short> getLineProperty();
+		Property<Integer> getItemProperty();
+		Property<String> getDescriptionProperty();
+		Property<Double> getQuantityProperty();
+		Property<Double> getPriceProperty();
+		Property<String> getDiscountExprProperty();
+		Property<Date> getInitialDateProperty();
+		Property<Date> getFinalDateProperty();
+		Property<Date> getBillingDateProperty();
+		Property<Short> getPeriodProperty();
+		Property<Byte> getSecurityLevelProperty();
+		Property<Integer> getInvoicingGroupProperty();
+		Property<Integer> getSellerProperty();
+		Property<Integer> getWorkplaceProperty();
+	}
+	
 	public interface DepartmentProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
@@ -364,6 +385,17 @@ public interface Properties {
 		Property<Byte> getCommercialProperty();
 		Property<Byte> getTechnicalProperty();
 		Property<Integer> getRaddressProperty();
+	}
+	
+	public interface RegistryNoteProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<String> getDescriptionProperty();
+		Property<Date> getNoteDateProperty();
+		Property<String> getCommentsProperty();
+		Property<Byte> getNoteTypeProperty();
+		Property<Byte> getSecurityLevelProperty();
 	}
 	
 	public interface StockProperties{

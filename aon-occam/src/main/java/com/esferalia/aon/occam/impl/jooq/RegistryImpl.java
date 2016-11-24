@@ -5,10 +5,14 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IRegistry;
+import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 
@@ -55,6 +59,22 @@ public class RegistryImpl implements IRegistry{
 	public Registry getRegistry(AONContext ctx, Integer id) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getRegistry(ctx, id));
+	}
+	
+	// ------------------------------------- RMEDIA
+
+	@Override
+	public Stream<RegistryMedia> getRMediaStream(AONContext ctx, RegistryMediaFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getRMediaStream(ctx, filter));
+	}
+
+	// ------------------------------------- RNOTE
+	
+	@Override
+	public Stream<RegistryNote> getRNoteStream(AONContext ctx, RegistryNoteFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getRNoteStream(ctx, filter));
 	}
 	
 	

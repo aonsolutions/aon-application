@@ -7,8 +7,10 @@ import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
+import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -22,8 +24,14 @@ import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.CategoryRecord;
+import com.esferalia.aon.jooq.tables.records.RmediaRecord;
+import com.esferalia.aon.jooq.tables.records.RnoteRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
+import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
+import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryFilter;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryProperties;
@@ -31,6 +39,8 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CreditorStatus;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
@@ -433,5 +443,89 @@ public class RegistryDAO {
 			.fetchOne()
 			.getValue(REGISTRY.ID);
 	}
+	
+	// ------------------------------------- RMEDIA
+	
+	private static final RMediaPropertiesDAO RMEDIA_PROPERTIES = new RMediaPropertiesDAO();
+	private static class RMediaPropertiesDAO implements RegistryMediaProperties {
+		private Condition[] getConditions(RegistryMediaFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RMEDIA.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RMEDIA.DOMAIN);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(RMEDIA.REGISTRY);}
+		@Override public Property<Byte> getMediaProperty() {return new FilterDAO.PropertyDAO<Byte>(RMEDIA.MEDIA);}
+		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<String>(RMEDIA.VALUE);}
+		@Override public Property<String> getCommentProperty() {return new FilterDAO.PropertyDAO<String>(RMEDIA.COMMENT);}
+		@Override public Property<Byte> getAdministrativeProperty() {return new FilterDAO.PropertyDAO<Byte>(RMEDIA.ADMINISTRATIVE);}
+		@Override public Property<Byte> getCommercialProperty() {return new FilterDAO.PropertyDAO<Byte>(RMEDIA.COMMERCIAL);}
+		@Override public Property<Byte> getTechnicalProperty() {return new FilterDAO.PropertyDAO<Byte>(RMEDIA.TECHNICAL);}
+		@Override public Property<Integer> getRaddressProperty() {return new FilterDAO.PropertyDAO<Integer>(RMEDIA.RADDRESS);}
+	}
+	
+	public static Stream<RegistryMedia> getRMediaStream(AONContext ctx, RegistryMediaFilter filter){
+		return ctx.getDslContext().select().from(RMEDIA).where(RMEDIA_PROPERTIES.getConditions(filter))
+				.fetchInto(RMEDIA).stream().map(new RMediaFiller());
+	}
+	
+	public static class RMediaFiller  implements Function<RmediaRecord,RegistryMedia> {
 
+		@Override
+		public RegistryMedia apply(RmediaRecord r) {
+			return new RegistryMedia()
+					.setId(r.getId())
+					.setDomain(r.getDomain())
+					.setComment(r.getComment())
+					.setMedia(r.getMedia())
+					.setRegistry(new Registry().setId(r.getRegistry()))
+					.setAdministrative(r.getAdministrative())
+					.setCommercial(r.getCommercial())
+					.setTechnical(r.getTechnical())
+					.setRaddress(r.getRaddress())
+					.setValue(r.getValue());
+		}
+	}
+	
+	// ------------------------------------- RNOTE
+	
+	private static final RNotePropertiesDAO RNOTE_PROPERTIES = new RNotePropertiesDAO();
+	private static class RNotePropertiesDAO implements RegistryNoteProperties {
+		private Condition[] getConditions(RegistryNoteFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RNOTE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RNOTE.DOMAIN);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(RNOTE.REGISTRY);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(RNOTE.DESCRIPTION);}
+		@Override public Property<Date> getNoteDateProperty() {return new FilterDAO.PropertyDAO<Date>(RNOTE.NOTE_DATE);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(RNOTE.COMMENTS);}
+		@Override public Property<Byte> getNoteTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RNOTE.NOTE_TYPE);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(RNOTE.SECURITY_LEVEL);}
+	}
+	
+	public static Stream<RegistryNote> getRNoteStream(AONContext ctx, RegistryNoteFilter filter){
+		return ctx.getDslContext().select().from(RNOTE).where(RNOTE_PROPERTIES.getConditions(filter))
+				.fetchInto(RNOTE).stream().map(new RNoteFiller());
+	}
+	
+	public static class RNoteFiller  implements Function<RnoteRecord,RegistryNote> {
+
+		@Override
+		public RegistryNote apply(RnoteRecord r) {
+			return new RegistryNote()
+					.setId(r.getId())
+					.setDomain(r.getDomain())
+					.setComments(r.getComments())
+					.setDescription(r.getDescription())
+					.setNoteDate(r.getNoteDate())
+					.setNoteType(r.getNoteType())
+					.setRegistry(r.getRegistry())
+					.setSecurityLevel(r.getSecurityLevel());
+		}
+	}
+	
 }

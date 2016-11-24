@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
+import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Properties.GeoZoneProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
@@ -13,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Properties.ProductCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectReservationProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
+import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
 import com.esferalia.aon.occam.api.model.Properties.SeriesProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
 import com.esferalia.aon.occam.api.model.Properties.StockProperties;
@@ -50,6 +52,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface WarehouseFilter{
 		Filter filter(WarehouseProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface FeeFilter{
+		Filter filter(FeeProperties properties);
 	}
 	
 	@FunctionalInterface
@@ -120,6 +127,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface RegistryMediaFilter{
 		Filter filter(RegistryMediaProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface RegistryNoteFilter{
+		Filter filter(RegistryNoteProperties properties);
 	}
 	
 	@FunctionalInterface

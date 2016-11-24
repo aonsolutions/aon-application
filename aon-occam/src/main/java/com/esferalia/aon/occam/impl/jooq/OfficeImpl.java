@@ -18,12 +18,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 
 public class OfficeImpl implements IOffice {
 	
-	@Override
-	public void getSolutionIssuesDescription(AONContext ctx, Integer domainId) {
-		ctx.getDslContext().transaction(configuration -> 
-			AonHubDAO.solutionIssuesDescription(ctx, domainId));	
-	}
-	
 	// ----------------------------------------------------- SELECTS
 	@Override
 	public User getUser(AONContext ctx, Integer id) {

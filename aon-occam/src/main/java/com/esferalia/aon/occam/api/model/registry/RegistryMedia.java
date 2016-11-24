@@ -15,6 +15,10 @@ public class RegistryMedia implements Serializable {
 	private byte media;
 	private String value;
 	private String comment;
+	private Byte administrative;
+	private Byte commercial;
+	private Byte technical;
+	private Integer raddress;
 	
 	public RegistryMedia() {
 	
@@ -68,6 +72,42 @@ public class RegistryMedia implements Serializable {
 	}
 	public String getComment() {
 		return comment;
+	}
+
+	public Byte getAdministrative() {
+		return administrative;
+	}
+
+	public RegistryMedia setAdministrative(Byte administrative) {
+		this.administrative = administrative;
+		return this;
+	}
+
+	public Byte getCommercial() {
+		return commercial;
+	}
+
+	public RegistryMedia setCommercial(Byte commercial) {
+		this.commercial = commercial;
+		return this;
+	}
+
+	public Byte getTechnical() {
+		return technical;
+	}
+
+	public RegistryMedia setTechnical(Byte technical) {
+		this.technical = technical;
+		return this;
+	}
+	
+	public Integer getRaddress() {
+		return raddress;
+	}
+
+	public RegistryMedia setRaddress(Integer raddress) {
+		this.raddress = raddress;
+		return this;
 	}
 	
 

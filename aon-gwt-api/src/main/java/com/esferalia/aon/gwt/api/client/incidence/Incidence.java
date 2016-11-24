@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.api.client.incidence;
 import com.esferalia.aon.gwt.api.client.AonUrlApi;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
+import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
+import com.esferalia.aon.gwt.api.client.registry.JsRnote;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Incidence extends Methods{
@@ -391,6 +393,14 @@ public class Incidence extends Methods{
 	
 	public void getRegistries(String value, AsyncCallback<JSON<JsUser>> callback){
 		get(url + "repos/"+getOrganizationName()+"/"+getRepositoryName()+"/registries?filter=" + value,callback);
+	}
+	
+	public void getEnterpriseRmediaList(Integer enterprise, AsyncCallback<JSON<JsRmedia>> callback){
+		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/rmedia/registry/"+enterprise, callback);
+	}
+	
+	public void getEnterpriseRnoteList(Integer enterprise, AsyncCallback<JSON<JsRnote>> callback){
+		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/rnote/registry/"+enterprise, callback);
 	}
 	
 	//-------------------- NOTIFICATIONS

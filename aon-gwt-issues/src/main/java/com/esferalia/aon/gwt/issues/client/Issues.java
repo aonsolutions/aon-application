@@ -203,11 +203,7 @@ public class Issues implements EntryPoint {
 				}		
 			}
 			
-			@Override protected void onEditButtonClick() {
-				
-				incidence.solutions();
-				
-			}
+			@Override protected void onEditButtonClick() {}
 			
 			@Override protected void onDeleteButtonClick() {}
 			
@@ -240,7 +236,7 @@ public class Issues implements EntryPoint {
 				dialog.cancel.setVisible(false);
 				dialog.center();
 			}
-		}.setVisibleEditButton(true).setVisibleDeleteButton(false)
+		}.setVisibleEditButton(false).setVisibleDeleteButton(false)
 		.setVisibleMoreOptionButton(false));
 	}
 	
@@ -322,7 +318,7 @@ public class Issues implements EntryPoint {
 				PaperInput pi = (PaperInput) vp.getWidget(1);
 				PaperTextarea pi4 = (PaperTextarea) vp.getWidget(2);
 				
-				String r= "{\"title\":\""+ pi.getValue() +"\",\"body\":\""+ pi4.getValue()+" \",\"assignee\":\" \",\"labels\":[],"
+				String r= "{\"title\":\""+ pi.getValue() +"\",\"body\":\""+ checkString(pi4.getValue()) +" \",\"assignee\":\" \",\"labels\":[],"
 						+ "\"enterprise\":\""+ acb.getInputElementValue() +"\", \"due_date\":\""+ "31/12/2100" +"\"}";
 					
 				incidence.createOrgIssue(r, new AsyncCallback<JsIssue>() {
@@ -401,4 +397,15 @@ public class Issues implements EntryPoint {
 	        return false;
 	    }
 	  }
+	
+	private String checkString(String str) {
+		String[] array = str.split("\"");
+		String s = array[0];
+		for(Integer i = 1; i < array.length; i++){
+			s = s + "\\\"" + array[i];
+		}
+		if(str.substring(str.length()-1).equals("\""))
+			s = s + "\\\"";
+		return s;
+	}
 }

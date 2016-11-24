@@ -5,21 +5,85 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.sql.Date;
 import java.util.Vector;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.jooq.InsertValuesStep1;
+import org.jooq.Condition;
 import org.jooq.InsertValuesStep17;
-import org.jooq.Record1;
 import org.jooq.Record17;
 
+import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.jooq.tables.records.ProductRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
 
 
 
 public class FeeDAO {
+	
+	private static final FeePropertiesDAO FEE_PROPERTIES = new FeePropertiesDAO();
+	private static class FeePropertiesDAO implements FeeProperties {
+		private Condition[] getConditions(FeeFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.DOMAIN);}
+		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.CUSTOMER);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(CUSTOMER_FEE.DESCRIPTION);}
+		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.PROJECT);}
+		@Override public Property<Short> getLineProperty() {return new FilterDAO.PropertyDAO<Short>(CUSTOMER_FEE.LINE);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.ITEM);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(CUSTOMER_FEE.QUANTITY);}
+		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<Double>(CUSTOMER_FEE.PRICE);}
+		@Override public Property<String> getDiscountExprProperty() {return new FilterDAO.PropertyDAO<String>(CUSTOMER_FEE.DISCOUNT_EXPR);}
+		@Override public Property<Date> getInitialDateProperty() {return new FilterDAO.PropertyDAO<Date>(CUSTOMER_FEE.INITIAL_DATE);}
+		@Override public Property<Date> getFinalDateProperty() {return new FilterDAO.PropertyDAO<Date>(CUSTOMER_FEE.FINAL_DATE);}
+		@Override public Property<Date> getBillingDateProperty() {return new FilterDAO.PropertyDAO<Date>(CUSTOMER_FEE.BILLING_DATE);}
+		@Override public Property<Short> getPeriodProperty() {return new FilterDAO.PropertyDAO<Short>(CUSTOMER_FEE.PERIOD);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER_FEE.SECURITY_LEVEL);}
+		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.INVOICING_GROUP);}
+		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.SELLER);}
+		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.WORKPLACE);}
+
+	}
+	
+	public static Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter){
+		return ctx.getDslContext().select().from(CUSTOMER_FEE).where(FEE_PROPERTIES.getConditions(filter))
+			.fetchInto(CUSTOMER_FEE).stream().map(new FeeFiller());
+	}
+	
+	public static class FeeFiller  implements Function<CustomerFeeRecord, Fee> {
+
+		@Override
+		public Fee apply(CustomerFeeRecord r) {
+			return new Fee()
+					.setId(r.getId())
+					.setDomain(r.getDomain())
+					.setDescription(r.getDescription())
+					.setSecurityLevel(r.getSecurityLevel())
+					.setBillingDate(r.getBillingDate())
+					.setBillingGroup(r.getInvoicingGroup())
+					.setCustomer(r.getCustomer())
+					.setSecurityLevel(r.getSecurityLevel())
+					.setDiscountExpr(r.getDiscountExpr())
+					.setStartDate(r.getInitialDate())
+					.setEndDate(r.getFinalDate())
+					.setItemId(r.getItem())
+					.setLine(r.getLine())
+					.setPeriod(r.getPeriod())
+					.setPrice(r.getPrice())
+					.setProjectId(r.getProject())
+					.setQuantity(r.getQuantity())
+					.setSellerId(r.getSeller())
+					.setWorkplaceId(r.getWorkplace());
+		}
+	}
 
 	public static Fee getFee(AONContext ctx, Integer id){
 		ctx.checkRead();
