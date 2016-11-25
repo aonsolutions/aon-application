@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.api.client.incidence;
 import com.esferalia.aon.gwt.api.client.AonUrlApi;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
+import com.esferalia.aon.gwt.api.client.finance.JsFee;
+import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.registry.JsRnote;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -401,6 +403,16 @@ public class Incidence extends Methods{
 	
 	public void getEnterpriseRnoteList(Integer enterprise, AsyncCallback<JSON<JsRnote>> callback){
 		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/rnote/registry/"+enterprise, callback);
+	}
+	
+	//-------------------- FINANCE
+	
+	public void getEnterpriseInvoiceList(Integer enterprise, AsyncCallback<JSON<JsInvoice>> callback){
+		get(url + "finance/" + getDomainName() + "/" + getUserName() + "/invoice/registry/"+enterprise, callback);
+	}
+	
+	public void getEnterpriseFeeList(Integer enterprise, AsyncCallback<JSON<JsFee>> callback){
+		get(url + "finance/" + getDomainName() + "/" + getUserName() + "/fee/customer/"+enterprise, callback);
 	}
 	
 	//-------------------- NOTIFICATIONS

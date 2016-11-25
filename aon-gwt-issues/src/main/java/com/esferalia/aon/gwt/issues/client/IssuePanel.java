@@ -5,6 +5,8 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.finance.JsFee;
+import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
 import com.esferalia.aon.gwt.api.client.incidence.JsComment;
@@ -21,7 +23,10 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
+import com.esferalia.aon.gwt.issues.client.south.FeeList;
+import com.esferalia.aon.gwt.issues.client.south.InvoiceList;
 import com.esferalia.aon.gwt.issues.client.south.RmediaList;
+import com.esferalia.aon.gwt.issues.client.south.RnoteList;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -31,6 +36,8 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -210,43 +217,100 @@ public class IssuePanel extends Composite{
 	}
 	private void initSouthInfo(JsIssue issue){	
 		String nothing = "NO HAY DATOS RELACIONADOS A ESTA TAREA";
-		
-		// AVISOS
-		incidence.getEnterpriseIssues(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsIssue>>() {
-			@Override
-			public void onSuccess(JSON<JsIssue> result) {
-				if(result.getData().length() > 0)
-					taskPanel.add(getSouthContent(result));
-				else taskPanel.add(new Label(nothing)); 
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});
-		
 		// CONTACTO
 		incidence.getEnterpriseRmediaList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsRmedia>>() {
 			@Override
 			public void onSuccess(JSON<JsRmedia> result) {
 				if(result.getData().length() > 0){
-					Window.alert(result.getData().get(0).getValue());
 					RmediaList rml = new RmediaList();
+					rml.setHeight(result.getData().length()*24+"px");
 					rml.getList().setItems(result.getData());
 					rmediaPanel.add(rml);
-				}
-				else rmediaPanel.add(new Label(nothing)); 
+				} else rmediaPanel.add(new Label(nothing)); 
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
 		});
 		
-		// AVISOS
-		incidence.getEnterpriseRnoteList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsRnote>>() {
-			@Override
-			public void onSuccess(JSON<JsRnote> result) {
-				
-			}
+		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
 			
-			@Override public void onFailure(Throwable caught) {}
+			@Override
+			public void onSelection(SelectionEvent<Integer> arg0) {
+				Integer value  = arg0.getSelectedItem();
+				if(value == 0){
+					// CONTACTO
+					incidence.getEnterpriseRmediaList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsRmedia>>() {
+						@Override
+						public void onSuccess(JSON<JsRmedia> result) {
+							if(result.getData().length() > 0){
+								RmediaList rml = new RmediaList();
+								rml.setHeight(result.getData().length()*24+"px");
+								rml.getList().setItems(result.getData());
+								rmediaPanel.add(rml);
+							} else rmediaPanel.add(new Label(nothing)); 
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+				} else if(value == 1){
+					// TAREAS
+					incidence.getEnterpriseIssues(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsIssue>>() {
+						@Override
+						public void onSuccess(JSON<JsIssue> result) {
+							IssueSelector tis = getSouthContent(result);
+							tis.setHeight(result.getData().length()*24+"px");
+							if(result.getData().length() > 0)
+								taskPanel.add(tis);
+							else taskPanel.add(new Label(nothing)); 
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+				} else if(value == 2){
+					// AVISOS
+					incidence.getEnterpriseRnoteList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsRnote>>() {
+						@Override
+						public void onSuccess(JSON<JsRnote> result) {
+							if(result.getData().length() > 0){
+								RnoteList rnl = new RnoteList();
+								rnl.setHeight(result.getData().length()*24+"px");
+								rnl.getList().setItems(result.getData());
+								rnotesPanel.add(rnl);
+							} else rnotesPanel.add(new Label(nothing)); 
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+				} else if(value == 3){
+					incidence.getEnterpriseInvoiceList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsInvoice>>() {
+						@Override
+						public void onSuccess(JSON<JsInvoice> result) {
+							if(result.getData().length() > 0){
+								InvoiceList il = new InvoiceList();
+								il.setHeight(result.getData().length()*24+"px");
+								il.getList().setItems(result.getData());
+								invoicePanel.add(il);
+							} else invoicePanel.add(new Label(nothing)); 
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});
+				} else if(value == 4){
+					incidence.getEnterpriseFeeList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsFee>>() {
+						@Override
+						public void onSuccess(JSON<JsFee> result) {
+							if(result.getData().length() > 0){
+								FeeList fl = new FeeList();
+								fl.setHeight(result.getData().length()*24+"px");
+								fl.getList().setItems(result.getData());
+								feePanel.add(fl);
+							} else feePanel.add(new Label(nothing));
+						}
+						
+						@Override public void onFailure(Throwable caught) {}
+					});				
+				}
+			}
 		});
 		
 		// DUPLICADOS
@@ -256,22 +320,26 @@ public class IssuePanel extends Composite{
 				id = issue.getId();
 			incidence.getDuplicateIssues(id, new  AsyncCallback<JSON<JsIssue>>() {
 				@Override
-				public void onSuccess(JSON<JsIssue> result) {				
-					duplicatePanel.add(getSouthContent(result));
+				public void onSuccess(JSON<JsIssue> result) {
+					IssueSelector dis = getSouthContent(result);
+					dis.setHeight(result.getData().length()*24+"px");
+					duplicatePanel.add(dis);
 					openFootPanel();
 					tabLayout.selectTab(5);
 				}
 				
 				@Override public void onFailure(Throwable caught) {}
 			});
-		} else duplicatePanel.add(new Label(nothing));  
+		} else duplicatePanel.add(new Label(nothing));
 		
 		// FAQS
 		if(issue.isFaq()){
 			incidence.getDuplicateIssues(issue.getId(), new  AsyncCallback<JSON<JsIssue>>() {
 				@Override
-				public void onSuccess(JSON<JsIssue> result) {				
-					faqsPanel.add(getSouthContent(result));
+				public void onSuccess(JSON<JsIssue> result) {
+					IssueSelector fis = getSouthContent(result);
+					fis.setHeight(result.getData().length()*24+"px");
+					faqsPanel.add(fis);
 					openFootPanel();
 					tabLayout.selectTab(6);
 				}
@@ -280,9 +348,7 @@ public class IssuePanel extends Composite{
 			});
 		} else faqsPanel.add(new Label(nothing));
 		
-		rnotesPanel.add(new Label(nothing));
-		invoicePanel.add(new Label(nothing));
-		feePanel.add(new Label(nothing));
+
 		
 	}
 

@@ -332,8 +332,8 @@ public class TaskDAO {
 	}
 	
 	public static Stream<Task> getDuplicateTaskStream(AONContext ctx, Integer parent){
-		return ctx.getDslContext().select().from(TASK).where(TASK.PARENT.eq(parent)).fetchInto(TASK)
-				.stream().map(new FullTaskFiller());
+		return ctx.getDslContext().select().from(TASK).where(TASK.PARENT.eq(parent))
+			.orderBy(TASK.NUMBER.desc()).fetchInto(TASK).stream().map(new FullTaskFiller());
 	}
 	
 	public static Boolean isTaskParent(AONContext ctx, Integer parentId){
@@ -342,7 +342,7 @@ public class TaskDAO {
 	
 	public static Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter){
 		return ctx.getDslContext().selectDistinct().from(TASK).where(TASK_PROPERTIES.getConditions(filter))
-				.fetchInto(TASK).stream().map(new FullTaskFiller());
+				.orderBy(TASK.NUMBER.desc()).fetchInto(TASK).stream().map(new FullTaskFiller());
 	}
 	
 	public static Stream<Task> getTaskStream(AONContext ctx, TaskFilter filter, IssueFilter issueFilter){

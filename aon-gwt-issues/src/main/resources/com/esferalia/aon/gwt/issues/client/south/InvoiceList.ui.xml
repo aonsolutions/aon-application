@@ -15,30 +15,30 @@
 
 
 </ui:style>
-<g:HTMLPanel addStyleNames="rnote-list-issue"> 
+<g:HTMLPanel addStyleNames="invoice-list-issue"> 
 
 	<style is="custom-style">
 					
-            .rnote-list-issue iron-list {
+            .invoice-list-issue iron-list {
                 padding-bottom: 0px;
             }
-            .rnote-list-issue .item {
+            .invoice-list-issue .item {
        	 		border:0px;
        	 		cursor:pointer;
        	 		text-align:left;
             }
 
-            .rnote-list-issue .pad {
+            .invoice-list-issue .pad {
             	padding-left: 30px;
             }
 
     </style>
-       <i:IronList ui:field="rnoteList" as="item" selectionEnabled="true">
+       <i:IronList ui:field="invoiceList" as="item" selectionEnabled="true">
             <template>
                 <div>
                     <div class="item">
-                    	<iron-icon icon="speaker-notes"/> 
-                    	[[item.note_date]] - [[item.description]] - [[item.comments]] 
+                    	<iron-icon  icon="receipt"/> 
+                    	[[item.reference_code]] 
 					</div>
                	</div>
         	</template>

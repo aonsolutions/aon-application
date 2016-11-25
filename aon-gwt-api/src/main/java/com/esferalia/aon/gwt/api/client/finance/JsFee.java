@@ -20,7 +20,7 @@ public class JsFee extends JavaScriptObject {
 	}-*/;
 	
 	public final native String getDescription() /*-{
-		return this.reference_code;
+		return this.description;
 	}-*/;
 
 }

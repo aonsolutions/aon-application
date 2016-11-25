@@ -178,17 +178,6 @@
 
 				    <g:tab >
 						<g:customHeader styleName="{style.jeje}">
-						    <g:HTMLPanel>
-								<i:IronIcon icon="check-box" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-								<g:InlineLabel text="Tareas" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
-							</g:HTMLPanel>
-						</g:customHeader>
-						<g:ScrollPanel ui:field="taskPanel"
-							styleName="{aonResources.css.aonTextCenter}" />
-					</g:tab>
-				    
-				   	<g:tab >
-						<g:customHeader styleName="{style.jeje}">
 							<g:HTMLPanel>
 								<i:IronIcon icon="account-box" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 								<g:InlineLabel text="Contacto" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
@@ -197,6 +186,17 @@
 						<g:ScrollPanel ui:field="rmediaPanel"
 							styleName="{aonResources.css.aonTextCenter}" />
 					</g:tab>
+				    
+				    <g:tab >
+						<g:customHeader styleName="{style.jeje}">
+						    <g:HTMLPanel>
+								<i:IronIcon icon="check-box" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
+								<g:InlineLabel text="Tareas" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+							</g:HTMLPanel>
+						</g:customHeader>
+						<g:ScrollPanel ui:field="taskPanel"
+							styleName="{aonResources.css.aonTextCenter}" />
+					</g:tab>			
 					
 				   	<g:tab >
 						<g:customHeader styleName="{style.jeje}">

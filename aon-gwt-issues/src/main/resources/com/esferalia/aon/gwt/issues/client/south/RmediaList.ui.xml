@@ -25,6 +25,7 @@
             .duplicate-list-issue .item {
        	 		border:0px;
        	 		cursor:pointer;
+       	 		text-align:left;
             }
 
             .duplicate-list-issue .pad {
@@ -36,7 +37,7 @@
             <template>
                 <div>
                     <div class="item">
-                    	<iron-icons  icon="[[item.icon]]"/> 
+                    	<iron-icon  icon="[[item.icon]]"/> 
                     	[[item.value]] 
 					</div>
                	</div>

@@ -25,6 +25,7 @@
             .duplicate-list-issue .item {
        	 		border:0px;
        	 		cursor:pointer;
+       	 		text-align:left;
             }
 
             .duplicate-list-issue .pad {

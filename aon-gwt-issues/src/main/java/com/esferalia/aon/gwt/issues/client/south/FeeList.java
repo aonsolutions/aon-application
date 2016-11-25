@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.issues.client.south;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
-import com.esferalia.aon.gwt.api.client.registry.JsRnote;
+import com.esferalia.aon.gwt.api.client.finance.JsFee;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -10,43 +10,44 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.vaadin.polymer.iron.widget.IronList;
 
 
-public class RnoteList extends Composite {
+public class FeeList extends Composite {
 	
-    interface Binder extends UiBinder<HTMLPanel, RnoteList> {
+    interface Binder extends UiBinder<HTMLPanel, FeeList> {
     	
     }
     
     private static Binder binder = GWT.create(Binder.class);
 
-    @UiField IronList rnoteList;
-        
-    public RnoteList() {   
+    @UiField IronList feeList;    
+
+    public FeeList() {   
         initWidget(binder.createAndBindUi(this));
     }
     
-    public RnoteList(AonJsArray<JsRnote> issues) {   
+    public FeeList(AonJsArray<JsFee> items) {   
         initWidget(binder.createAndBindUi(this));
-        rnoteList.setItems(issues);
+        feeList.setItems(items);
     }
 	
-    public JsRnote getSelectedItem(){
-    	return rnoteList.getSelectedItem().cast();
+    public JsFee getSelectedItem(){
+    	return feeList.getSelectedItem().cast();
     }
     
-    public AonJsArray<JsRnote> getItems(){
-    	return rnoteList.getItems().cast();
+    public AonJsArray<JsFee> getItems(){
+    	return feeList.getItems().cast();
     }
 
 
     public void setHeight(String height){
-    	rnoteList.setHeight(height);
+    	feeList.setHeight(height);
     }
     
     public void setWidth(String width){
-    	rnoteList.setWidth(width);
+    	feeList.setWidth(width);
     }
     
     public IronList getList(){
-    	return rnoteList;
+    	return feeList;
     }
+    
 }

@@ -125,7 +125,7 @@ public class InvoiceDAO {
 	
 	public static Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
 		return ctx.getDslContext().select().from(INVOICE).where(INVOICE_PROPERTIES.getConditions(filter))
-			.fetchInto(INVOICE).stream().map(new FullInvoiceFiller());
+			.fetchInto(INVOICE).stream().map(new InvoiceFiller());
 	}
 	
 	public static Invoice getInvoice(AONContext ctx, Integer id) {
@@ -319,6 +319,47 @@ public class InvoiceDAO {
 				.setVatQuota(record.getValue(INVOICE.VAT_QUOTA))	
 				.setRetentionQuota(record.getValue(INVOICE.RETENTION_QUOTA))	
 				.setTotal(record.getValue(INVOICE.TOTAL))	
+				;
+		}
+		
+	}
+	
+	public static class InvoiceFiller  implements Function<InvoiceRecord,Invoice> {
+
+		@Override
+		public Invoice apply(InvoiceRecord r) {
+			return new Invoice()
+				.setId(r.getId())
+				.setDomain(r.getDomain())
+				.setType(AonEnumUtils.enumValue(InvoiceType.class,r.getType()))
+				.setSeries(r.getSeries())
+				.setNumber(r.getNumber())
+				.setReferenceCode(r.getReferenceCode())
+				.setIssueDate(r.getIssueDate())
+				.setTaxDate(r.getTaxDate())
+				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,r.getSecurityLevel()))
+				.setRegistry(r.getRegistry())
+				.setRegistryDocument(r.getRdocument())
+				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,r.getRdocumentType()))
+				.setRegistryDocumentCountry(Country.safeValueOf(r.getRdocumentCountry()))
+				.setRegistryName(r.getRname())
+				.setScope(new Scope().setId(r.getScope()))
+				.setActivity(r.getActivity())	
+				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,r.getRectificationType()))	
+				.setRectificationInvoice(r.getRectificationInvoice())	
+				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class,r.getTransaction()))
+				.setRecorded(r.getStatus() == 1 )	
+				.setSurcharge(r.getSurcharge() == 1 )	
+				.setWithholding(r.getWithholding() == 1 )	
+				.setWithholdingFarmer(r.getWithholdingFarmer() == 1 )	
+				.setVatAccrualPayment(r.getVatAccrualPayment() == 1 )	
+				.setInvestment(r.getInvestment() == 1 )	
+				.setService(r.getService() == 1 )	
+				.setAdvance(r.getAdvance() == 1 )	
+				.setTaxableBase(r.getTaxableBase())	
+				.setVatQuota(r.getVatQuota())	
+				.setRetentionQuota(r.getRetentionQuota())	
+				.setTotal(r.getTotal())	
 				;
 		}
 		

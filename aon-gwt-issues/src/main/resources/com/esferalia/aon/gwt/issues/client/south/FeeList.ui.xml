@@ -1,4 +1,3 @@
-
 <!DOCTYPE html [
     <!ENTITY nbsp "&#160;"> 
 ]>
@@ -15,30 +14,30 @@
 
 
 </ui:style>
-<g:HTMLPanel addStyleNames="rnote-list-issue"> 
+<g:HTMLPanel addStyleNames="fee-list-issue"> 
 
 	<style is="custom-style">
 					
-            .rnote-list-issue iron-list {
+            .fee-list-issue iron-list {
                 padding-bottom: 0px;
             }
-            .rnote-list-issue .item {
+            .fee-list-issue .item {
        	 		border:0px;
        	 		cursor:pointer;
        	 		text-align:left;
             }
 
-            .rnote-list-issue .pad {
+            .fee-list-issue .pad {
             	padding-left: 30px;
             }
 
     </style>
-       <i:IronList ui:field="rnoteList" as="item" selectionEnabled="true">
+       <i:IronList ui:field="feeList" as="item" selectionEnabled="true">
             <template>
                 <div>
                     <div class="item">
-                    	<iron-icon icon="speaker-notes"/> 
-                    	[[item.note_date]] - [[item.description]] - [[item.comments]] 
+                    	<iron-icon  icon="event"/> 
+                    	[[item.description]] 
 					</div>
                	</div>
         	</template>
