@@ -64,6 +64,7 @@
 								title="#{bundle.webmail_download}"
 								disabled="#{empty saleInvoice.to.registryAddress.id}"
 								actionListener="#{saleInvoice.onExportEdiFile}"
+								onclick="if (#{empty saleInvoice.to.registryAddress.id}){ alert('No se puede continuar sin cumplimentar la direccion.'); return false;}"
 								styleClass="aon-finding-toolbar-item aon-icon-file-download">
 							</aon:htmlCommandLink>
 							<aon:commandButton id="saleInvoice-ediImport"

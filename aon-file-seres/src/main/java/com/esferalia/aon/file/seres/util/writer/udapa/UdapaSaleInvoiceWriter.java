@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Finance;
@@ -174,8 +175,9 @@ public class UdapaSaleInvoiceWriter {
 			String companyEdiCode, String customerEdiMainCode) {
 		List<SINCL> list = new ArrayList<>();
 		detailList.forEach(detail -> {
-			list.add(createSINCLRecord(detail, detailList.indexOf(detail),
-					companyEdiCode, customerEdiMainCode));
+			int lineNumber = detailList.indexOf(detail) + 1;
+			list.add(createSINCLRecord(detail, lineNumber, companyEdiCode,
+					customerEdiMainCode));
 		});
 		return list;
 	}
@@ -198,8 +200,8 @@ public class UdapaSaleInvoiceWriter {
 		for (InvoiceDetail detail : detailList) {
 			detail.getTaxBreakDowns().forEach(
 					tax -> {
-						list.add(createSINCIRecord(tax,
-								detailList.indexOf(detail), invoice,
+						int lineNumber = detailList.indexOf(detail) + 1;
+						list.add(createSINCIRecord(tax, lineNumber, invoice,
 								companyEdiCode, customerEdiMainCode));
 					});
 		}
@@ -282,7 +284,8 @@ public class UdapaSaleInvoiceWriter {
 		sincl.setUnidadDeMedidaDelPrecio(null);
 		sincl.setCalificadorIVA_IGIG(SINCL.F5153I.IV_VAT.getValue());
 		sincl.setPorcentajeImpuestoIVA_IGIG(detail.getVatPercent());
-		sincl.setImporteImpuestoIVA_IGIG(detail.getVatQuota());
+		sincl.setImporteImpuestoIVA_IGIG(CommonUtil.round(
+				detail.getTaxableBase() * detail.getVatPercent() / 100, 3));
 		sincl.setPorcentajeRecargoDeEquivalencia(detail.getRetentionPercent());
 		sincl.setImporteRecargoDeEquivalencia(detail.getSurchargeQuota());
 		sincl.setCalificadorOtroTipoDeImpuesto(null);
@@ -318,8 +321,8 @@ public class UdapaSaleInvoiceWriter {
 		sinci.setCalificadorTipoDeImpuesto(SINCI.F5153T.IV_VAT.getValue());
 		sinci.setBaseImponible(tax.getBase());
 		sinci.setPorcentajeTipoDeImpuesto(tax.getTaxPercent());
-		sinci.setImporteTipoDeImpuesto(tax.getBase() * tax.getTaxPercent()
-				/ 100);
+		sinci.setImporteTipoDeImpuesto(CommonUtil.round(
+				tax.getBase() * tax.getTaxPercent() / 100, 3));
 		return sinci;
 	}
 
