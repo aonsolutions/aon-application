@@ -797,7 +797,7 @@ public class FacturaeWriter {
 		installment.setPaymentMeans( paymentMeans.getValue() );			
 		if ( finance.getBankAccount() != null ) {
 			AccountType account = new AccountType();
-			account.setIBAN( finance.getBankAccount().toString() );
+			account.setIBAN( finance.getBankAccount().getIban() );
 			if ( paymentMeans != PaymentMeans.TRANSFERENCIA ) {
 				installment.setAccountToBeDebited(account);
 			} else {
