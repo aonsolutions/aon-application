@@ -60,7 +60,7 @@ public class SEPA34_14XmlWriter {
 		
 		Orderer orderer = master.getOrderer();
 		orderer.setId(SEPA34_14XmlWriter.createId(company, fBatch, false));		
-		orderer.setDocument(company.getDocument()+"001");
+		orderer.setDocument(company.getDocument() + fBatch.getRegistryBank().getSufix());
 		Address address = getAddress(company.getDefaultAddress());
 		orderer.setSEPAAddress(address);
 
