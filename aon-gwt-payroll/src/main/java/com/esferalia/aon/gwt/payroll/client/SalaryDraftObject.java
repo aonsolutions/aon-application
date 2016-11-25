@@ -975,7 +975,8 @@ public class SalaryDraftObject implements IContextProvider {
 
 	private static void setDraftType(SalaryDraft draft) {
 		for ( Payment p : draft.getDraftPayments() )
-			p.setSalaryType(draft.getType());
+			if ( p.getSalaryType() == null)
+				p.setSalaryType(draft.getType());
 		for ( Deduction d : draft.getDraftDeductions() )
 			setDeductionType(d, draft.getType());
 		for ( Deduction d : draft.getDraftEmbargos() )

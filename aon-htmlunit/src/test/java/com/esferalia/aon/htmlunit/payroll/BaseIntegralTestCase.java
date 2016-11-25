@@ -220,6 +220,7 @@ public abstract class BaseIntegralTestCase {
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
 	}
 
+
 	protected static void wait4Text(String id, String text) throws InterruptedException {
 		wait4(htmlPage,
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
@@ -241,6 +242,11 @@ public abstract class BaseIntegralTestCase {
 		Assert.assertEquals(text, el.getTextContent());
 	}
 
+	protected static void assertText(String id, double value) throws ParseException {
+		HtmlElement el = getElementById(id);
+		Assert.assertEquals(value, NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(el.getTextContent()).doubleValue(), 0.04 );
+	}
+
 	protected static void assertValue(String id, String value) throws ParseException {
 		HtmlInput input = getElementById(id);
 		Assert.assertEquals(value, input.getValueAttribute());
@@ -251,9 +257,16 @@ public abstract class BaseIntegralTestCase {
 		Assert.assertEquals(value, NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(input.getValueAttribute()).doubleValue(), 0.04);
 	}
 
-	protected static void open(String id) throws IndexOutOfBoundsException, IOException {
-		((HtmlImage)((HtmlTable)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id).getFirstChild()).getRow(0).getCell(0).getFirstChild()).click();
+	protected static double getValue(String id) throws ParseException {
+		HtmlInput input = getElementById(id);
+		return NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(input.getValueAttribute()).doubleValue();
+	}
+
+	protected static DomElement open(String id) throws IndexOutOfBoundsException, IOException {
+		DomElement idElement =  htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id);
+		((HtmlImage)((HtmlTable)idElement.getFirstChild()).getRow(0).getCell(0).getFirstChild()).click();
 		LOGGER.warning("Cick on: " + htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id + "-content").getTextContent());
+		return idElement;
 	}
 
 	protected static void close(String id) throws IndexOutOfBoundsException, IOException {

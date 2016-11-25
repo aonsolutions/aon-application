@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 
@@ -272,12 +273,33 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 1067.40  + 1067.40 / 6 );
 		extra(issueDate, endDate);
 		assertValue("totalPaymentsLabel", 1067.40/6 * 5  + (1067.40*20/30)/6);
+		
+		draft("MATERNIDAD, COMPLETA");
+		calculate(Calendar.FEBRUARY);
+		double cgcBase = getValue("cgcBaseLabel");
+		calculate(Calendar.MARCH);
+		assertValue("cgcBaseLabel", cgcBase );
+		// Here start I.T
+		calculate(Calendar.APRIL);
+		assertValue("cgcBaseLabel", cgcBase );
+		calculate(Calendar.MAY);
+		assertValue("cgcBaseLabel", cgcBase );
+		calculate(Calendar.JUNE);
+		assertValue("cgcBaseLabel", cgcBase );
 
-//		draft("GARANTIZADOS, SIN I.Ts");
-//
-//		draft("MATERNIDAD, ");
-//
-//		draft("PATERNIDAD, ");
+
+		draft("MATERNIDAD, PARCIAL");
+		calculate(Calendar.NOVEMBER);
+		cgcBase = getValue("cgcBaseLabel");
+		calculate(Calendar.DECEMBER);
+		assertValue("cgcBaseLabel", cgcBase );
+
+		draft("PATERNIDAD, PARCIAL");
+		calculate(Calendar.NOVEMBER);
+		cgcBase = getValue("cgcBaseLabel");
+		calculate(Calendar.DECEMBER);
+		assertValue("cgcBaseLabel", cgcBase );
+
 	}
 
 	@Test
@@ -375,7 +397,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", "");
 		assertValue("totalPaymentsLabel", 1067.40/6 + (1067.40*29/30)/6);
 
-		draft("EXTRA, DEVENGO FUERA");
+		draft("EXTRA, REDEFINIDAS");
+		calculate(Calendar.JANUARY);
+		assertText("prorationBaseLabel", 1027.65 / 12.00 * 2.00 );
+		calculate(Calendar.MAY);
+		assertText("prorationBaseLabel", 1027.65 / 12.00 * 2.00 );
+		
 	}
 
 	@Test

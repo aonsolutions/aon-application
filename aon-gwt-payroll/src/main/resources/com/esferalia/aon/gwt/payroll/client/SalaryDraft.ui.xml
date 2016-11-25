@@ -398,7 +398,7 @@
 													TOTAL</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ValueInlineHTML
-														changeDisplayStyleName="{style.value-changed}" ui:field="remunerationLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
+														changeDisplayStyleName="{style.value-changed}" debugId="remunerationLabel" ui:field="remunerationLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbRemunerationLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -409,7 +409,7 @@
 												<g:Label styleName="{style.cell-label}">PRORRATA PAGAS</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ValueInlineHTML
-														changeDisplayStyleName="{style.value-changed}" ui:field="prorationBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
+														changeDisplayStyleName="{style.value-changed}" debugId="prorationBaseLabel" ui:field="prorationBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbProrationBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -440,7 +440,7 @@
 												<g:Label styleName="{style.cell-label}">BASE H.E.</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
 													<e:ValueInlineHTML
-														changeDisplayStyleName="{style.value-changed}" ui:field="hExtraBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
+														changeDisplayStyleName="{style.value-changed}" debugId="hExtraBaseLabel" ui:field="hExtraBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbHExtraBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
