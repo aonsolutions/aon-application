@@ -405,6 +405,10 @@ public class Incidence extends Methods{
 		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/rnote/registry/"+enterprise, callback);
 	}
 	
+	public void getEnterpriseGeneralList(Integer enterprise, AsyncCallback<JSON<JsGeneral>> callback){
+		get(url + "registry/" + getDomainName() + "/" + getUserName() + "/general/registry/"+enterprise, callback);
+	}
+	
 	//-------------------- FINANCE
 	
 	public void getEnterpriseInvoiceList(Integer enterprise, AsyncCallback<JSON<JsInvoice>> callback){

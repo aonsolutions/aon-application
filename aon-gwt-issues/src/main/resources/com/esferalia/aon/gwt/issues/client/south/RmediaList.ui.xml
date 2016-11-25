@@ -33,12 +33,31 @@
             }
 
     </style>
+       <div class="item">
+       		<iron-icon  icon="room"/> 
+           	<g:InlineLabel text="Direccion: "> </g:InlineLabel>
+           	<g:InlineLabel ui:field="dir"> </g:InlineLabel>
+           	
+       </div>
+       
+       <div class="item">
+       		<iron-icon  icon="work"/> 
+           	<g:InlineLabel text="Comercial: "> </g:InlineLabel>
+           	<g:InlineLabel ui:field="comercial"> </g:InlineLabel>
+       </div>
+       
+       <div class="item">
+       		<iron-icon  icon="view-module"/> 
+           	<g:InlineLabel text="Segmentacion: "> </g:InlineLabel>
+           	<g:InlineLabel ui:field="seg"> </g:InlineLabel>
+       </div>
+       
        <i:IronList ui:field="rmediaList" as="item" selectionEnabled="true">
             <template>
                 <div>
                     <div class="item">
                     	<iron-icon  icon="[[item.icon]]"/> 
-                    	[[item.value]] 
+                    	[[item.value]] - [[item.comment]]
 					</div>
                	</div>
         	</template>

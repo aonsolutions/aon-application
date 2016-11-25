@@ -11,10 +11,10 @@ import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
 import com.esferalia.aon.gwt.api.client.incidence.JsComment;
 import com.esferalia.aon.gwt.api.client.incidence.JsEvent;
+import com.esferalia.aon.gwt.api.client.incidence.JsGeneral;
 import com.esferalia.aon.gwt.api.client.incidence.JsIssue;
 import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
-import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.registry.JsRnote;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
@@ -111,11 +111,11 @@ public class IssuePanel extends Composite{
 	@UiField PaperIconButton typeDeleteButton;
 	@UiField PaperIconButton workgroupDeleteButton;
 
+	@UiField ScrollPanel generalPanel;
 	@UiField ScrollPanel taskPanel;
 	@UiField ScrollPanel duplicatePanel;
 	@UiField ScrollPanel faqsPanel;
 	@UiField ScrollPanel feePanel;
-	@UiField ScrollPanel rmediaPanel;
 	@UiField ScrollPanel rnotesPanel;
 	@UiField ScrollPanel invoicePanel;
 	
@@ -217,16 +217,18 @@ public class IssuePanel extends Composite{
 	}
 	private void initSouthInfo(JsIssue issue){	
 		String nothing = "NO HAY DATOS RELACIONADOS A ESTA TAREA";
+
 		// CONTACTO
-		incidence.getEnterpriseRmediaList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsRmedia>>() {
+		incidence.getEnterpriseGeneralList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsGeneral>>() {
 			@Override
-			public void onSuccess(JSON<JsRmedia> result) {
-				if(result.getData().length() > 0){
-					RmediaList rml = new RmediaList();
-					rml.setHeight(result.getData().length()*24+"px");
-					rml.getList().setItems(result.getData());
-					rmediaPanel.add(rml);
-				} else rmediaPanel.add(new Label(nothing)); 
+			public void onSuccess(JSON<JsGeneral> result) {
+				RmediaList rml = new RmediaList();
+				rml.setCommercial(result.getBData().getCommercial());
+				rml.setDirection(result.getBData().getDirection());
+				rml.setSegmentation(result.getBData().getSegmentation());
+				rml.setHeight(result.getBData().getRmedia().length()*24+"px");
+				rml.getList().setItems(result.getBData().getRmedia());
+				generalPanel.add(rml);
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -238,20 +240,7 @@ public class IssuePanel extends Composite{
 			public void onSelection(SelectionEvent<Integer> arg0) {
 				Integer value  = arg0.getSelectedItem();
 				if(value == 0){
-					// CONTACTO
-					incidence.getEnterpriseRmediaList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsRmedia>>() {
-						@Override
-						public void onSuccess(JSON<JsRmedia> result) {
-							if(result.getData().length() > 0){
-								RmediaList rml = new RmediaList();
-								rml.setHeight(result.getData().length()*24+"px");
-								rml.getList().setItems(result.getData());
-								rmediaPanel.add(rml);
-							} else rmediaPanel.add(new Label(nothing)); 
-						}
-						
-						@Override public void onFailure(Throwable caught) {}
-					});
+					
 				} else if(value == 1){
 					// TAREAS
 					incidence.getEnterpriseIssues(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsIssue>>() {

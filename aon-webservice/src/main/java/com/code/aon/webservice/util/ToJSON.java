@@ -1,5 +1,6 @@
 package com.code.aon.webservice.util;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -11,6 +12,15 @@ public class ToJSON {
 	
 	public ToJSON() {
 	
+	}
+	
+	public static JSONObject generalToJSON(String direction, String commercial, String segmentation, JSONArray rmedia){
+		JSONObject json = new JSONObject();
+		json.put("direction", direction);
+		json.put("commercial", commercial);
+		json.put("segmentation", segmentation);
+		json.put("rmedia", rmedia);
+		return json;
 	}
 	
 	public static JSONObject rmediaToJSON(RegistryMedia rmedia) {

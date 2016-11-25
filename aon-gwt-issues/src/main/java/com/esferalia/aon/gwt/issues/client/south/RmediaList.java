@@ -7,6 +7,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.vaadin.polymer.iron.widget.IronList;
 
 
@@ -19,7 +20,10 @@ public class RmediaList extends Composite {
     private static Binder binder = GWT.create(Binder.class);
 
     @UiField IronList rmediaList;    
-
+    @UiField InlineLabel dir;
+    @UiField InlineLabel comercial;
+    @UiField InlineLabel seg;
+    
     public RmediaList() {   
         initWidget(binder.createAndBindUi(this));
     }
@@ -48,6 +52,18 @@ public class RmediaList extends Composite {
     
     public IronList getList(){
     	return rmediaList;
+    }
+    
+    public void setDirection(String direction){
+    	dir.setText(direction);
+    }
+    
+    public void setCommercial(String commercial){
+    	comercial.setText(commercial);
+    }
+    
+    public void setSegmentation(String segmentation){
+    	seg.setText(segmentation);
     }
     
 }

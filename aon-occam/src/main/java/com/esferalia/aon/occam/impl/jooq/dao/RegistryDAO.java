@@ -8,6 +8,9 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
+import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
+import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
+import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.sql.Date;
@@ -24,8 +27,11 @@ import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.CategoryRecord;
+import com.esferalia.aon.jooq.tables.records.RaddressRecord;
+import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RnoteRecord;
+import com.esferalia.aon.jooq.tables.records.SegmentRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
@@ -38,9 +44,12 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.Segment;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CreditorStatus;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
@@ -528,4 +537,68 @@ public class RegistryDAO {
 		}
 	}
 	
+	public static Stream<Segment> getRSegmentStream(AONContext ctx, Integer registryId){
+		return ctx.getDslContext().select().from(RSEGMENT)
+				.join(SEGMENT).on(RSEGMENT.SEGMENT.eq(SEGMENT.ID))
+				.where(RSEGMENT.REGISTRY.eq(registryId))
+				.fetchInto(SEGMENT).stream().map(new SegmentFiller());
+	}
+
+	public static class SegmentFiller  implements Function<SegmentRecord,Segment> {
+
+		@Override
+		public Segment apply(SegmentRecord r) {
+			return new Segment()
+					.setId(r.getId())
+					.setDomain(r.getDomain())
+					.setName(r.getName());
+		}
+	}
+	
+	public static Stream<Seller> getRSellerStream(AONContext ctx, Integer registryId){
+		return ctx.getDslContext().select().from(RSELLER)
+				.join(REGISTRY).on(RSELLER.SELLER.eq(REGISTRY.ID))
+				.where(RSELLER.REGISTRY.eq(registryId))
+				.fetchInto(REGISTRY).stream().map(new SellerFiller());
+	}
+	
+	public static class SellerFiller  implements Function<RegistryRecord,Seller> {
+
+		@Override
+		public Seller apply(RegistryRecord r) {
+			return new Seller()
+					.setId(r.getId())
+					.setDomain(r.getDomain())
+					.setRegistryName(r.getName());
+		}
+	}
+	
+	public static Stream<RAddress> getRAddressStream(AONContext ctx, Integer registryId){
+		return ctx.getDslContext().select().from(RADDRESS)
+				.where(RADDRESS.REGISTRY.eq(registryId))
+				.fetchInto(RADDRESS).stream().map(new RAddressFiller());
+	}
+
+	public static class RAddressFiller  implements Function<RaddressRecord, RAddress> {
+
+		@Override
+		public RAddress apply(RaddressRecord r) {
+			return new RAddress()
+					.setId(r.getId())
+					.setDomain(r.getDomain())
+					.setAddress(r.getAddress())
+					.setAddress2(r.getAddress2())
+					.setAddress3(r.getAddress3())
+					.setAlias(r.getAlias())
+					.setCity(r.getCity())
+					.setGeozone(r.getGeozone())
+					.setMunicipality_code(r.getMunicipalityCode())
+					.setNumber(r.getNumber())
+					.setRecipient(r.getRecipient())
+					.setRegistry(r.getRegistry())
+					.setStreet_type(r.getStreetType())
+					.setType(r.getType())
+					.setZip(r.getZip());
+		}
+	}
 }

@@ -10,9 +10,12 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.Segment;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 
@@ -75,6 +78,24 @@ public class RegistryImpl implements IRegistry{
 	public Stream<RegistryNote> getRNoteStream(AONContext ctx, RegistryNoteFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryDAO.getRNoteStream(ctx, filter));
+	}
+
+	@Override
+	public Stream<Segment> getRSegmentStream(AONContext ctx, Integer registryId) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getRSegmentStream(ctx, registryId));
+	}
+
+	@Override
+	public Stream<Seller> getRSellerStream(AONContext ctx, Integer registryId) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getRSellerStream(ctx, registryId));
+	}
+
+	@Override
+	public Stream<RAddress> getRAddressStream(AONContext ctx, Integer registryId) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryDAO.getRAddressStream(ctx, registryId));
 	}
 	
 	

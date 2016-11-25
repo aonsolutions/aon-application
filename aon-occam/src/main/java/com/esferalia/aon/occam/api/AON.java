@@ -85,9 +85,11 @@ import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -2113,6 +2115,49 @@ public class AON {
 	}
 
 
+	public static Stream<Segment> getRSegmentStream(String domainName, Integer domainId, String login,
+			Integer registryId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRSegmentStream(ctx, registryId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}		
+	}
+	
+	public static Stream<Seller> getRSellerStream(String domainName, Integer domainId, String login,
+			Integer registryId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRSellerStream(ctx, registryId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}		
+	}
+	
+	public static Stream<RAddress> getRAddressStream(String domainName, Integer domainId, String login,
+			Integer registryId){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getRAddressStream(ctx, registryId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}		
+	}
+	
+	public static RAddress getRAddres(String domainName, Integer domainId, String login,
+			Integer registryId){
+		return getRAddressStream(domainName, domainId, login, registryId)
+				.findFirst().orElse(new RAddress());
+	}
+	
+	
 	// ********************************************
 	// ******************************** CREDITOR **
 	// ********************************************

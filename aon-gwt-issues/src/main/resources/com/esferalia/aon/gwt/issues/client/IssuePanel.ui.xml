@@ -180,10 +180,10 @@
 						<g:customHeader styleName="{style.jeje}">
 							<g:HTMLPanel>
 								<i:IronIcon icon="account-box" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-								<g:InlineLabel text="Contacto" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+								<g:InlineLabel text="Información General" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 							</g:HTMLPanel>
 						</g:customHeader>
-						<g:ScrollPanel ui:field="rmediaPanel"
+						<g:ScrollPanel ui:field="generalPanel"
 							styleName="{aonResources.css.aonTextCenter}" />
 					</g:tab>
 				    

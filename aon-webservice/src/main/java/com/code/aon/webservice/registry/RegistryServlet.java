@@ -16,6 +16,7 @@ import com.code.aon.webservice.issues.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "RegistryServlet", urlPatterns = { "/registry/*" })
@@ -41,6 +42,15 @@ public class RegistryServlet extends HttpServlet{
 				JSONObject meta = new JSONObject();
 				switch (pathInfo[3]) {
 				case "registry": // REGISTRY
+					break;
+				case "general":
+					if(pathInfo.length > 4){
+						if (pathInfo[4].equals("registry")) {
+							if(pathInfo.length > 5)
+								// LISTA DE RMEDIA CON REGISTRY X
+								object = getGeneralList(domain, userName, Integer.parseInt(pathInfo[5]));
+						} 
+					}
 					break;
 				case "rmedia": // RMEDIA
 					if(pathInfo.length > 4){
@@ -97,6 +107,23 @@ public class RegistryServlet extends HttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("POST METHOD");
 	}
+	
+	private String segmentation;
+	private String commercial;
+	private JSONObject getGeneralList(Domain domain, String login, Integer registryId){
+		RAddress ra = AON.getRAddres(domain.getName(), domain.getId(), login, registryId);
+		String direction = n(ra.getStreet_type()) + " " + n(ra.getAddress()) + " " + n(ra.getNumber())+ " " + n(ra.getAddress2())
+			+ " " +n(ra.getAddress3()) + " " + n(ra.getZip()) + " " + n(ra.getCity());
+		commercial = "";
+		segmentation = "";
+		AON.getRSegmentStream(domain.getName(), domain.getId(), login, registryId)
+		.forEach(s -> {segmentation = segmentation + " - " + s.getName();});
+
+		AON.getRSellerStream(domain.getName(), domain.getId(), login, registryId)
+		.forEach(s -> {commercial = commercial + " - " + s.getRegistryName();});
+		
+		return ToJSON.generalToJSON(direction, commercial, segmentation, getRmediaList(domain, login, registryId));
+	}
 
     private JSONArray getRmediaList(Domain domain, String login){
     	JSONArray array = new JSONArray();
@@ -140,5 +167,10 @@ public class RegistryServlet extends HttpServlet{
     private JSONObject getRnote(Domain domain, String login, Integer id){
     	return ToJSON.rnoteToJSON(AON.getRNote(domain.getName(),
     			domain.getId(), login,f -> f.getIdProperty().eq(id)));
+    }
+    
+    private String n(String str){
+    	if(str != null) return str;
+    	else return "";
     }
 }
