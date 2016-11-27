@@ -255,12 +255,12 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 					Assert.assertEquals(start, datas.get(0).getStartDate());
 					Assert.assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
 					Assert.assertEquals(1750.00 * workDays / monthDays,
-							Double.parseDouble(datas.get(0).getExpression()));
+							Double.parseDouble(datas.get(0).getExpression()),DELTA);
 
 					Assert.assertEquals(startITDate, datas.get(1).getStartDate());
 					Assert.assertEquals(end, datas.get(1).getEndDate());
 					Assert.assertEquals(1750.00 * itDays / monthDays * 0.5,
-							Double.parseDouble(datas.get(1).getExpression()));
+							Double.parseDouble(datas.get(1).getExpression()), DELTA);
 
 					datas = s.getContextData()
 							.get(MATERNITY_BASE.getName());
@@ -268,7 +268,7 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 					Assert.assertEquals(startITDate, datas.get(0).getStartDate());
 					Assert.assertEquals(end, datas.get(0).getEndDate());
 					Assert.assertEquals(100.00 * itDays * 0.5,
-							Double.parseDouble(datas.get(0).getExpression()));
+							Double.parseDouble(datas.get(0).getExpression()),DELTA);
 				});
 		;
 	}
