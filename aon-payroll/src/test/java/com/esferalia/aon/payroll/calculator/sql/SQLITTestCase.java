@@ -83,7 +83,7 @@ import junit.framework.Assert;
 
 public class SQLITTestCase extends AbstractSQLTestCase {
 
-	private static final double DELTA = 0.004;
+	protected static final double DELTA = 0.004;
 	
 	@Test
 	public void testInicioIT() throws ExpressionException, SQLException,

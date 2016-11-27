@@ -239,7 +239,7 @@ public class SQLDraftITTestCase extends SQLITTestCase {
 					Assert.assertEquals(start, datas.get(0).getStartDate());
 					Assert.assertEquals(add(startITDate, DAY_OF_MONTH, -1), datas.get(0).getEndDate());
 					Assert.assertEquals(1750.00 * workDays / monthDays,
-							Double.parseDouble(datas.get(0).getExpression()));
+							Double.parseDouble(datas.get(0).getExpression()),DELTA);
 
 					Assert.assertEquals(startITDate, datas.get(1).getStartDate());
 					Assert.assertEquals(end, datas.get(1).getEndDate());
