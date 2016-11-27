@@ -27,6 +27,8 @@ node {
    
       def tag = pom.version.replace("-SNAPSHOT", ".x")
 
+      def branch = pom.version.replace("-SNAPSHOT", ".X")
+
       def releaseVersion = pom.version.replace("-SNAPSHOT", "")
   
       def developmentVersion = pom.version.replace("-SNAPSHOT", "-SNAPSHOT")
@@ -38,7 +40,8 @@ node {
                 [$class: 'StringParameterDefinition', defaultValue: 'j3nk1ns', description: 'SCM Username', name: 'username'], 
                 [$class: 'PasswordParameterDefinition', defaultValue: 'aon945121010', description: 'SCM Password', name: 'password'], 
                 [$class: 'StringParameterDefinition', defaultValue: '[maven-release-plugin]', description: 'SCM Comment Prefix', name: 'scmCommentPrefix'], 
-                [$class: 'StringParameterDefinition', defaultValue: "${tag}", description: 'SCM Tag', name: 'tag']
+                [$class: 'StringParameterDefinition', defaultValue: "${tag}", description: 'SCM Tag', name: 'tag'],
+                [$class: 'StringParameterDefinition', defaultValue: "${branch}", description: 'SCM Branch', name: 'branch'],
       ]
 
 
@@ -56,8 +59,18 @@ node {
       // Create RPMs repository
       sh "ssh dev.esferalia.net 'createrepo /var/www/rpms/aon-solutions'"
 
-      def branch = tag.replace(".x", ".X")
-      //sh "echo yes | ${mvnHome}/bin/mvn release:branch -DbranchName=${branch}  -DreleaseVersion=${mavenRelease['releaseVersion']} -DupdateBranchVersions=true -DupdateWorkingCopyVersions=false "
+      
+      // Create release branch for future HotFixes
+      sh "mv rpms2aws.hotfix rpms2aws.sh"
+      sh "mv Jenkinsfile.hotfix Jenkinsfile"
+      // Checking out to release tag
+      sh "git checkout ${mavenRelease['tag']}"
+      // Create release branch
+      sh "git checkout -b ${mavenRelease['branch']}"
+      sh "git commit -a -m 'For build hotfixes'"
+      sh "git push https://${mavenRelease['username']}:${mavenRelease['password']}@github.com/aonsolutions/aon-application.git ${mavenRelease['branch']}"
+
+
    }
    else {
       // Mark the code build 'stage'....
