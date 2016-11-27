@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showExtensionContrataWindow">
-		<aon:if test="#{extensionContrata.showExtensionContrataWindow}">
+		<aon:if test="#{extensionContrata.showContrataWindow}">
 			<rich:modalPanel id="extensionContrataModalPanel" minHeight="350"
 				minWidth="650" showWhenRendered="true" >
 				<f:facet name="header">
@@ -24,7 +24,7 @@
 							reRender="showExtensionContrataWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{extensionContrata.showExtensionContrataWindow}"
+								target="#{extensionContrata.showContrataWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -41,7 +41,7 @@
 											actionListener="#{contract.onExtendContract}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept">
 											<f:setPropertyActionListener
-												target="#{extensionContrata.showExtensionContrataWindow}"
+												target="#{extensionContrata.showContrataWindow}"
 												value="#{false}" />
 										</aon:commandButton>
 										<aon:commandButton id="extensionContrataCancel"
@@ -49,7 +49,7 @@
 											reRender="showExtensionContrataWindow"
 											styleClass="aon-finding-toolbar-item aon-icon-cancel">
 											<f:setPropertyActionListener
-												target="#{extensionContrata.showExtensionContrataWindow}"
+												target="#{extensionContrata.showContrataWindow}"
 												value="#{false}" />
 										</aon:commandButton>
 									</aon:div>

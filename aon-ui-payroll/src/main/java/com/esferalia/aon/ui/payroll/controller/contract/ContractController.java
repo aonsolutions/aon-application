@@ -1230,7 +1230,7 @@ public class ContractController extends BasicController {
 			try {
 				getContractUtils().insertContractData(contract, 
 						data.getName(), data.getExpression(), 
-						data.getStartDate(), data.getEndDate());
+						data.getStartDate(), DateUtils.addDays(transformParams.getFechaInicio(), -1));
 			} catch (Exception e) {
 				String msg = "("+data.getName()+") No se ha podido guardar del contrato origen. (" +e.getMessage() + ")"; 
 				AonUtil.addErrorMessage(msg);
@@ -1259,6 +1259,7 @@ public class ContractController extends BasicController {
 			
 			contrataTransformController.getHandler().initialize(contract);
 			contrataTransformController.onContrataDataShow(event);
+			((ContrataTransformacionesParams)contrataTransformController.getParams()).setCno(sourceContractParams.getCno());
 			contrataTransformController.onContrataAccept(event);
 			
 			this.onLoad(event, contract.getId(), null, null);

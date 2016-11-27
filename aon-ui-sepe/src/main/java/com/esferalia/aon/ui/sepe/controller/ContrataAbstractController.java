@@ -68,8 +68,7 @@ public abstract class ContrataAbstractController implements IContrataController 
 	private boolean showLoginWindow;
 	private boolean enabledContrataEdition;
 	
-	private boolean showExtensionContrataWindow;
-	private boolean showTransformContrataWindow;
+	private boolean showContrataWindow;
 	
 	private boolean newBatch;
 	private boolean readOnly;
@@ -84,31 +83,32 @@ public abstract class ContrataAbstractController implements IContrataController 
 
 	private ContrataBatch batch;
 
-	private Integer extensionNumber;
 	
 
-	public boolean isShowTransformContrataWindow() {
-		return showTransformContrataWindow;
-	}
-	public void setShowTransformContrataWindow(boolean showTransformContrataWindow) {
-		this.showTransformContrataWindow = showTransformContrataWindow;
-	}
-	public boolean isShowExtensionContrataWindow() {
-		return showExtensionContrataWindow;
-	}
-	public void setShowExtensionContrataWindow(boolean showExtensionContrataWindow) {
-		this.showExtensionContrataWindow = showExtensionContrataWindow;
-	}
+	public abstract ContrataFileType getContrataFileType();
+	public abstract String getContrataModelName();
+	protected abstract void initContrataFile();
+	protected abstract void initHandler();
+	protected abstract void beforeContrataAccept() throws ManagerBeanException;
+	protected abstract String getSchemaFileName();
+	protected abstract ContractAttachmentType getAttachmentType();	
+	protected abstract void processSepeResult(String result);
+	
+
 	public boolean isEnabledContrataEdition() {
 		return enabledContrataEdition;
 	}
-	
-	public abstract ContrataFileType getContrataFileType();
-	
-	
 	public void setEnabledContrataEdition(boolean enabledContrataEdition) {
 		this.enabledContrataEdition = enabledContrataEdition;
 	}
+
+	public boolean isShowContrataWindow() {
+		return showContrataWindow;
+	}
+	public void setShowContrataWindow(boolean showContrataWindow) {
+		this.showContrataWindow = showContrataWindow;
+	}
+	
 	
 	@Override
 	public boolean isShowLoginWindow() {
@@ -180,16 +180,6 @@ public abstract class ContrataAbstractController implements IContrataController 
 		this.responseFile = responseFile;
 	}
 	
-	public Integer getExtensionNumber() {
-		if(extensionNumber==null){
-			extensionNumber = 1;
-		}
-		return extensionNumber;
-	}
-	public void setExtensionNumber(Integer extensionNumber) {
-		this.extensionNumber = extensionNumber;
-	}
-	
 	@Override
 	public IContrataParams getParams() {
 		return getHandler().getParams();
@@ -215,8 +205,6 @@ public abstract class ContrataAbstractController implements IContrataController 
 		this.readOnly = readOnly;
 	}
 	
-	
-	public abstract String getContrataModelName();
 	
 	@Override
 	public boolean isNevv(){
@@ -295,14 +283,12 @@ public abstract class ContrataAbstractController implements IContrataController 
 		ContrataBatch batch = obtainBatch(contract);
 		if(batch != null){
 			initialize(batch);
+			setGeneratedFile(null);
 		}
 		getHandler().initialize(contract);
-		initContract();
-//		this.readOnly = obtainBatchContractCount(contract)>1;
+		initContrataFile();
 	}
 	
-	protected abstract void initContract();
-	protected abstract void initHandler();
 	
 	public void onContrataDataShow(ActionEvent event) {
 		setEnabledContrataEdition(true);
@@ -389,7 +375,6 @@ public abstract class ContrataAbstractController implements IContrataController 
 		}
 	}
 
-	protected abstract void beforeContrataAccept() throws ManagerBeanException;
 	
 	public boolean validateContrataData() {
 		if(getContract()!=null && getBatch()==null){
@@ -418,7 +403,7 @@ public abstract class ContrataAbstractController implements IContrataController 
 		return true;
 	}
 	
-	protected abstract String getSchemaFileName();
+	
 	
 	@Override
 	public void onResetBatch(ActionEvent event) {
@@ -584,7 +569,7 @@ public abstract class ContrataAbstractController implements IContrataController 
 		} 
 	}
 	
-	protected abstract ContractAttachmentType getAttachmentType();
+	
 
 	@Override
 	public void onSendSepeFile(ActionEvent event){
@@ -659,7 +644,7 @@ public abstract class ContrataAbstractController implements IContrataController 
 		processSepeResult(new String(getResponseFile().getData()));
 	}
 	
-	protected abstract void processSepeResult(String result);
+	
 	
 	@Override
 	public String getCommunicationLogContent() {

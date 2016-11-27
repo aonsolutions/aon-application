@@ -48,7 +48,7 @@ public class ContrataTransformacionesController extends ContrataAbstractControll
 	}
 
 	@Override
-	protected void initContract() {
+	protected void initContrataFile() {
 		List<IAttachment> list = obtainContrataList(ContractAttachmentType.SEPE_TRANSFORM_FILE);
 		if(list!=null && !list.isEmpty()){
 			setGeneratedFile(list.get(0));

@@ -56,7 +56,7 @@ public class ContrataContratosController extends ContrataAbstractController impl
 	}
 
 	@Override
-	protected void initContract() {
+	protected void initContrataFile() {
 		List<IAttachment> list = obtainContrataList(ContractAttachmentType.SEPE_CONTRACT_FILE);
 		if(list==null || list.isEmpty()){
 			onContrataAccept(null);

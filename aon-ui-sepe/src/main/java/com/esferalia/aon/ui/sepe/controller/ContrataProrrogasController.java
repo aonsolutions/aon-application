@@ -26,6 +26,18 @@ public class ContrataProrrogasController extends ContrataAbstractController impl
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContrataProrrogasController.class.getName());
+	
+	private Integer extensionNumber;
+	
+	public Integer getExtensionNumber() {
+		if(extensionNumber==null){
+			extensionNumber = 1;
+		}
+		return extensionNumber;
+	}
+	public void setExtensionNumber(Integer extensionNumber) {
+		this.extensionNumber = extensionNumber;
+	}
 
 	@Override
 	public ContrataFileType getContrataFileType() {
@@ -48,7 +60,7 @@ public class ContrataProrrogasController extends ContrataAbstractController impl
 	}
 
 	@Override
-	protected void initContract() {
+	protected void initContrataFile() {
 		List<IAttachment> list = obtainContrataList(ContractAttachmentType.SEPE_EXTENSION_FILE);
 		if(list!=null && !list.isEmpty() && list.size()>=getExtensionNumber()){
 			setGeneratedFile(list.get(getExtensionNumber()-1));

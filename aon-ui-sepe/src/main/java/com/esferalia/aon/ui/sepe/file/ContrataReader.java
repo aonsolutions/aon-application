@@ -936,7 +936,7 @@ public class ContrataReader {
 		try {
 			params.setFechaInicio(formatter.parse(datos.getFECHAINICIO()));
 			params.setFechaFin(formatter.parse(datos.getFECHAFIN()));
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			// nada
 		}
 		if(StringUtils.isNotBlank(datos.getINDICADORCONVCOL())){
