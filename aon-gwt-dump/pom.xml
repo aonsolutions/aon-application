@@ -77,11 +77,6 @@
 		<version>3.1.0</version>
 		<scope>provided</scope>
 	</dependency>
-	<!--dependency>
-		<groupId>com.esferalia.aon</groupId>
-		<artifactId>aon.dsi</artifactId>
-		<version>${project.version}</version>
-	</dependency-->
 	<dependency>
 		<groupId>com.google.gwt</groupId>
 		<artifactId>gwt-servlet</artifactId>

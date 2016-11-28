@@ -180,7 +180,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			File file = File.createTempFile("dumpSQL", ".zip");
 			FileOutputStream fos = new FileOutputStream(file);
 			zos = new ZipOutputStream(fos);
-			zos.putNextEntry(new ZipEntry("sql_html"));
+			zos.putNextEntry(new ZipEntry("dump.sql"));
 			outZip = new PrintStream(zos, true, "UTF-8");
 
 			CallbackDump cb;
@@ -242,7 +242,7 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			preparedStatement = aonDump.connection.prepareStatement(insertAttach);
 			preparedStatement.setInt(1, idDomain);
 			preparedStatement.setInt(2, registryDomain);
-			preparedStatement.setString(3, "Dump Domain");
+			preparedStatement.setString(3, "DumpDomain.zip");
 			preparedStatement.setBlob(4, is);
 			preparedStatement.execute();
 
@@ -372,7 +372,8 @@ public class ConnectServiceImpl extends AonRemoteServiceServlet implements Conne
 			// Establish context
 			dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
-			Result<Record2<Integer, String>> result = dslContext.select(TASK.ID, TASK.DESCRIPTION).from(TASK)
+			Result<Record2<Integer, String>> result = 
+					dslContext.select(TASK.ID, TASK.DESCRIPTION).from(TASK)
 					.where(TASK.CREATION_USER.equal(idUser).and(TASK.ID.greaterThan(0))).fetch();
 
 			result.forEach(

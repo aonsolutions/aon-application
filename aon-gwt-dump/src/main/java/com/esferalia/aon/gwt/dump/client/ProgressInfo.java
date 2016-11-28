@@ -96,6 +96,7 @@ public class ProgressInfo extends Composite {
 			public void onSuccess(Boolean result) {
 				if (result) {
 					progressTab.setText("Proceso descarga: cancelando descarga.");
+					MessageBoxDialog.showTrashDialog("Descarga cancelada.");
 				} else
 					Window.alert("No se ha podido cancelar");
 			}
@@ -116,9 +117,7 @@ public class ProgressInfo extends Composite {
 			@Override
 			public void onSuccess(Boolean result) {
 				if (result){
-					MessageBoxDialog msg = new MessageBoxDialog();
-					msg.createTrashDialog("Tarea eliminada.");
-					msg.center();
+					MessageBoxDialog.showTrashDialog("Tarea eliminada.");
 				}
 			}
 		});		

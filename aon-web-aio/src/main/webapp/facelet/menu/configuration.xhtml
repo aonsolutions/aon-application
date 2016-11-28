@@ -62,10 +62,17 @@
 								</aon:if>
 								<aon:if test="#{aonRole.admin or aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_DomainDump"
+											action="aon_dump_form"
+											title="Descarga de Empresas">
+											<aon:outputText value="Descarga de Empresas" />
+										</aon:commandLink>
+									</aon:div>
+									<!--aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="dump" action="backup_form"
 											actionListener="#{backup.onInit}"
 											value="#{bundle.admin_backup}" />
-									</aon:div>
+									</aon:div-->
 								</aon:if>
 								<aon:if
 									test="#{actionDenied.moduleEnabled['hotel'] and aonRole.purchaseOperator}">
@@ -287,13 +294,6 @@
 													action="gwt_templates" title="#{bundle.aon_templates}">
 												<aon:outputText value="Plantillas - Carga de Datos" />
 											</aon:commandLink>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_DomainDump"
-											action="aon_dump_form"
-											title="Descarga de Empresas">
-											<aon:outputText value="Descarga de Empresas" />
-										</aon:commandLink>
 									</aon:div>
 									<aon:if
 										test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">

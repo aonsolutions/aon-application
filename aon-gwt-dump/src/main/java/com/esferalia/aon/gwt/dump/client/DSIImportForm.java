@@ -34,6 +34,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.Navigator;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -119,14 +120,26 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 					if (result.getPercent() < 100)
 						Scheduler.get().scheduleFixedPeriod(ProcessCommand.this, 7000);
 					else {
-						if (result.getStatus() == 0) {
-							setProgressText("Proceso descarga: descarga cancelada.");
-							setProgress(0);
-							setBackgroundColor("red");
-						} else if (result.getStatus() == 3) {
-							setProgressText("Proceso descarga: descarga finalizada.");
-							setProgress(0);
-							setBackgroundColor("green");
+						if (Navegation.isFireFoxBrowser() || Navegation.isIEBrowser()){
+							if (result.getStatus() == 0) {
+								setProgressText("Proceso descarga: descarga cancelada.");
+								setProgress(0);
+								setBackgroundColor("red");
+							} else if (result.getStatus() == 3) {
+								setProgressText("Proceso descarga: descarga finalizada.");
+								setProgress(0);
+								setBackgroundColor("green");
+							}
+						}else if (Navegation.isChromeBrowser() || Navegation.isSafariBrowser()){
+							if (result.getStatus() == 0) {
+								setProgressText("Proceso descarga: descarga cancelada.");
+								setProgress(100);
+								setBackgroundColor("red");
+							} else if (result.getStatus() == 3) {
+								setProgressText("Proceso descarga: descarga finalizada.");
+								setProgress(100);
+								setBackgroundColor("green");
+							}
 						}
 					}
 				}
@@ -291,10 +304,11 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 			}
 		});
 
+		
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-
+		
 		this.nombreEmpresa.getElement().setPropertyString("placeholder", "Nuevo Nombre Empresa");
 		this.nombreUsuario.getElement().setPropertyString("placeholder", "Nombre Usuario");
 		this.nuevaContrasena.getElement().setPropertyString("placeholder", "Nueva Password");

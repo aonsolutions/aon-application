@@ -25,12 +25,18 @@ public class MessageBoxDialog extends CustomDialog {
 	
 	@UiField
 	Button accepTrashButton;
+	
+	@UiField
+	Button accepFailButton;
 
 	@UiField
 	Label informationText;
 	
 	@UiField
 	Label trashText;
+	
+	@UiField
+	Label failText;
 	
 	@UiField
 	HTMLPanel information;
@@ -54,6 +60,11 @@ public class MessageBoxDialog extends CustomDialog {
 		trashText.setText(text);
 	}
 	
+	public void createFailDialog(String text){
+		this.deckPanel.showWidget(2);
+		failText.setText(text);
+	}
+	
 	@UiHandler("acceptInfoButton")
 	void onClickInfoButton(ClickEvent event) {
 		hide();
@@ -63,12 +74,41 @@ public class MessageBoxDialog extends CustomDialog {
 	void onClickTrashButton(ClickEvent event) {
 		hide();
 	}
+	
+	@UiHandler("accepFailButton")
+	void onClickFailButton(ClickEvent event) {
+		hide();
+	}
 	 
 	
 	public static MessageBoxDialog showInfoDialog(String msg) {
 		final MessageBoxDialog messageBoxDialog = new MessageBoxDialog();
 		messageBoxDialog.createInfoDialog(msg);
 		messageBoxDialog.setModal(true);
+		setPositionCenter(messageBoxDialog);
+		
+		return messageBoxDialog;
+	}
+	
+	public static MessageBoxDialog showTrashDialog(String msg) {
+		final MessageBoxDialog messageBoxDialog = new MessageBoxDialog();
+		messageBoxDialog.createTrashDialog(msg);
+		messageBoxDialog.setModal(true);
+		setPositionCenter(messageBoxDialog);
+		
+		return messageBoxDialog;
+	}
+	
+	public static MessageBoxDialog showFailDialog(String msg) {
+		final MessageBoxDialog messageBoxDialog = new MessageBoxDialog();
+		messageBoxDialog.createFailDialog(msg);
+		messageBoxDialog.setModal(true);
+		setPositionCenter(messageBoxDialog);
+		
+		return messageBoxDialog;
+	}
+
+	private static void setPositionCenter( final MessageBoxDialog messageBoxDialog) {
 		messageBoxDialog.setPopupPositionAndShow(new PositionCallback() {
 			@Override
 			public void setPosition(int offsetWidth, int offsetHeight) {
@@ -78,7 +118,6 @@ public class MessageBoxDialog extends CustomDialog {
 						(Window.getClientHeight() - offsetHeight )/2);
 				
 			}
-		});
-		return messageBoxDialog;
+		});	
 	}
 }

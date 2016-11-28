@@ -7,7 +7,6 @@
 	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client' 
 	xmlns:s="urn:import:com.esferalia.aon.gwt.dump.shared" 
 	xmlns:c="urn:import:com.esferalia.aon.gwt.common.client" 
-	xmlns:b="urn:import:com.hxtt.b" 
 	xmlns:a="urn:import:bsh.org.objectweb.asm" 
 	xmlns:collect="urn:import:com.google.common.collect">
 

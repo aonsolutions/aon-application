@@ -71,11 +71,18 @@
 		float: left;
 		padding-right: 10px;
 	}
+
+	@sprite .failIcon{
+		gwt-image: 'fail';
+		float: left;
+		padding-right: 10px;
+	}
 	
 	</ui:Style>
 	
 	<ui:image field='success' src='success.png'/>
 	<ui:image field='trash' src='trash.png'/>
+	<ui:image field='fail' src='fail.png'/>
 	
 	<g:DeckPanel ui:field="deckPanel" styleName="{style.deckPanel}">
 		<g:HTMLPanel ui:field="information" styleName="{style.form}">
@@ -111,6 +118,25 @@
 				<g:Button ui:field="accepTrashButton">Aceptar</g:Button>
 			</div>
 		</g:HTMLPanel>
+
+		<g:HTMLPanel ui:field="cancel" styleName="{style.form}">
+			<div class="{style.messages}">
+				<div class='{style.failIcon}' />
+				<g:Label styleName="{style.info}" ui:field="failLabel">Informacion:</g:Label>
+			</div>
+			<g:Grid width="100%">
+				<g:row>
+					<g:customCell styleName="{style.label}">
+						<g:Label ui:field="failText"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+			<div class="{style.buttons}">
+				<g:Button ui:field="accepFailButton">Aceptar</g:Button>
+			</div>
+		</g:HTMLPanel>
+		
+				
 	</g:DeckPanel>
 	
 </ui:UiBinder>
