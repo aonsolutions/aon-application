@@ -194,6 +194,7 @@ public class UdapaDeliveryHandler implements Serializable {
 		} catch (Exception e) {
 			getLogPanel().info("NO SE PUEDE CONTINUAR CON EL TRASPASO");
 			getLogPanel().error(e.getMessage());
+			getLogPanel().error(e.getCause().getMessage());
 		}
 		getLogPanel().info("Proceso finalizado.");
 	}

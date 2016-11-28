@@ -125,7 +125,8 @@ public class IngenetDeliveryManager {
 	
 	private void createAonDeliveryDetails(AONContext ctx,
 			Integer ingenetDeliveryId, Integer aonDeliveryId,
-			Integer warehouseId, List<DeliveryDetail> detailList, Sales aonSales) {
+			Integer warehouseId, List<DeliveryDetail> detailList, Sales aonSales)
+			throws SourceSalesNotFoundException {
 		createDeliveryDetails(ctx, ingenetDeliveryId, aonDeliveryId,
 				warehouseId, detailList, aonSales);
 	}
@@ -152,7 +153,8 @@ public class IngenetDeliveryManager {
 	
 	private void createDeliveryDetails(AONContext ctx,
 			Integer ingenetDeliveryId, Integer aonDeliveryId,
-			Integer warehouseId, List<DeliveryDetail> detailList, Sales aonSales) {
+			Integer warehouseId, List<DeliveryDetail> detailList, Sales aonSales)
+			throws SourceSalesNotFoundException {
 
 		for (int idx = 0; idx < detailList.size(); idx++) {
 			DeliveryDetail detail = detailList.get(idx);
@@ -173,7 +175,11 @@ public class IngenetDeliveryManager {
 						ingenetItem.getSerialDate());
 			}
 
-			if (item != null && item.getId() != null) {
+			if (item == null || item.getId() == null) {
+				throw new SourceSalesNotFoundException(
+						"No se puede traspasar la linea. No existe el producto con codigo "
+								+ ingenetItem.getProduct().getCode());
+			} else {
 				detail.setId(null);
 				detail.setDomain(ctx.getDomainId());
 				detail.setDelivery(new Delivery().setId(aonDeliveryId));
@@ -198,6 +204,7 @@ public class IngenetDeliveryManager {
 							+ detail.getQuantity());
 					SalesDAO.updateSalesDetail(ctx, aonSalesDetail);
 				}
+
 			}
 		}
 
@@ -293,11 +300,19 @@ public class IngenetDeliveryManager {
 			Integer currentDomainId, String productCode) {
 		AONContext ctx = AONContext.getAONContext(domainName, currentDomainId,
 				user);
-		Product product = ProductDAO.getProduct(ctx, productCode);
-		return ProductDAO.getItem(
-				ctx,
-				o -> o.getProductProperty().eq(product.getId())
-						.and(o.getDomainProperty().eq(currentDomainId)));
+		Product product = ProductDAO
+				.getProductStream(
+						ctx,
+						o -> o.getCodeProperty().eq(productCode)
+								.and(o.getDomainProperty().eq(currentDomainId)))
+				.findFirst().orElse(null);
+		if(product!=null && product.getId()!=null){
+			return ProductDAO.getItem(
+					ctx,
+					o -> o.getProductProperty().eq(product.getId())
+					.and(o.getDomainProperty().eq(currentDomainId)));
+		}
+		return null;
 	}
 
 	private SalesDetail obtainAonSalesDetail(String domainName, String user,

@@ -422,9 +422,9 @@
 		<aon:if test="#{company.ediSupportEnabled}">
 			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
 				<ui:param name="logPanelTitle" value="#{bundle.aon_import} #{bundle.registry_stat_delivery} INGENET" />
-				<ui:param name="closeButtonReRender" value="deliveryForm" />
+				<ui:param name="closeButtonReRender" value="aonContent" />
 				<aon:methodParam name="closeButtonAction" value="delivery_list" />
-				<aon:valueParam name="pollInterval" value="3000" />
+				<aon:valueParam name="pollInterval" value="2000" />
 				<aon:methodParam name="closeLogPanelAtionListener"
 					default="#{delivery.udapaDeliveryHandler.onLogPanelFinish}" type="actionListener" />
 			</ui:include>
