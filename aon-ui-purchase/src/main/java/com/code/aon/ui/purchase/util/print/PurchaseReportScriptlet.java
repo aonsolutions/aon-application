@@ -21,6 +21,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemAddInfo;
 import com.code.aon.product.Product;
@@ -82,7 +83,15 @@ public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Seria
 			for(Attach attach: getTemplates(product.getBaseItem())){
 				if(attach!=null){
 					EcommerceProduct ecommerceProduct = null;
-					ecommerceProduct = readXml(attach.getData());
+					byte[] data = null;
+					if (attach.getDriveId() != null) {
+						data = DriveUtils.getByteFile(AonUtil.getDomainName(),
+								DomainManager.getCurrentDomain(), UserUtils.getInstance()
+								.getLoggedUser().getLogin(), attach.getDriveId(), attach.getId());
+					} else {
+						data = attach.getData();
+					}
+					ecommerceProduct = readXml(data);
 					// line below is for jasperreport print only
 					ecommerceProduct.getTemplate().setEcommerce(attach.getDescription());
 					ecommerceProduct.setProduct(new EcommerceProduct.Product());
@@ -109,8 +118,7 @@ public class PurchaseReportScriptlet extends JRDefaultScriptlet implements Seria
 				AonUtil.getDomainName(),
 				DomainManager.getCurrentDomain(),
 				UserUtils.getInstance().getLoggedUser().getLogin(),
-				filter -> filter.getTypeProperty().eq(AttachmentType.ECOMMERCE_PRODUCT.value())
-//					.and(sellerId != null ? filter.getAttachModuleProperty().eq(id): filter.getAttachModuleProperty().isNotNull()), 
+				filter -> filter.getTypeProperty().eq(AttachmentType.ECOMMERCE_PRODUCT.value()) 
 					.and(filter.getAttachModuleProperty().eq(item.getId())), 
 				AttachType.ITEM);
 		return list;
