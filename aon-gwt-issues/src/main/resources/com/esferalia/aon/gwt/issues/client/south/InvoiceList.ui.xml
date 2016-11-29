@@ -13,35 +13,10 @@
 <ui:style>
 
 
-
 </ui:style>
-<g:HTMLPanel addStyleNames="invoice-list-issue"> 
-
-	<style is="custom-style">
-					
-            .invoice-list-issue iron-list {
-                padding-bottom: 0px;
-            }
-            .invoice-list-issue .item {
-       	 		border:0px;
-       	 		cursor:pointer;
-       	 		text-align:left;
-            }
-
-            .invoice-list-issue .pad {
-            	padding-left: 30px;
-            }
-
-    </style>
-       <i:IronList ui:field="invoiceList" as="item" selectionEnabled="true">
-            <template>
-                <div>
-                    <div class="item">
-                    	<iron-icon  icon="receipt"/> 
-                    	[[item.date]] - [[item.code]] - [[item.description]] - [[item.total]] 
-					</div>
-               	</div>
-        	</template>
-  		</i:IronList>
-  	</g:HTMLPanel>
+<g:HTMLPanel > 
+    <g:VerticalPanel ui:field="vertical">
+        
+    </g:VerticalPanel>
+</g:HTMLPanel>
 </ui:UiBinder>

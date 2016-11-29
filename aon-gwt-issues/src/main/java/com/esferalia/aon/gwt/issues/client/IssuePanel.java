@@ -275,9 +275,8 @@ public class IssuePanel extends Composite{
 						@Override
 						public void onSuccess(JSON<JsBoughtProduct> result) {
 							if(result.getData().length() > 0){
-								InvoiceList il = new InvoiceList();
+								InvoiceList il = new InvoiceList(result.getData());
 								il.setHeight(result.getData().length()*24+"px");
-								il.getList().setItems(result.getData());
 								invoicePanel.add(il);
 							} else invoicePanel.add(new Label(nothing)); 
 						}

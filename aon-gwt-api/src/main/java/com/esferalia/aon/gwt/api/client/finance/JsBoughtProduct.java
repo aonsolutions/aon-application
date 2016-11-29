@@ -33,7 +33,7 @@ public class JsBoughtProduct extends JavaScriptObject {
 	}-*/;
 
 	public final native Double getDate() /*-{
-		return this.creation_date;
+		return this.date;
 	}-*/;
 	
 	public final native Double getCode() /*-{

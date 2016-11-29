@@ -98,7 +98,7 @@ public class InvoiceDAO {
 		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PRODUCT);}
 		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_DETAIL.ITEM);}
 		@Override public Property<Integer> getProductCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PCATEGORY.ID);}
-			
+		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}	
 	}
 	
 	private static final InvoicingGroupPropertiesDAO INVOICING_GROUP_PROPERTIES = new InvoicingGroupPropertiesDAO();
@@ -160,6 +160,21 @@ public class InvoiceDAO {
 			.orderBy(INVOICE.ISSUE_DATE.desc())
 			.fetch();
 	}
+	
+	private static Result<Record> getOldBoughtProductInvoices(AONContext ctx, InvoiceFilter filter) {
+		ctx.checkRead();
+		return ctx.getDslContext()
+			.select()
+			.from(INVOICE)
+			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+			.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(INVOICE_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.orderBy(INVOICE.ISSUE_DATE.desc())
+			.fetch();
+	}
+	
 	
 	private static Result<Record> getFullInvoices(AONContext ctx, InvoiceFilter filter) {
 		ctx.checkRead();
@@ -278,6 +293,12 @@ public class InvoiceDAO {
 	
 	public static Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter) {
 		return getBoughtProductInvoices(ctx, filter)
+			.stream()
+			.map(new BoughtProductInvoiceDetailFiller());
+	}
+	
+	public static Stream<InvoiceDetail> getOldBoughtProductStream(AONContext ctx, InvoiceFilter filter) {
+		return getOldBoughtProductInvoices(ctx, filter)
 			.stream()
 			.map(new BoughtProductInvoiceDetailFiller());
 	}
