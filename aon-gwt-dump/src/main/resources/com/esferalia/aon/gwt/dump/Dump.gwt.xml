@@ -3,6 +3,8 @@
 	<inherits name='com.google.gwt.user.User' />
 
 	<inherits name="com.google.gwt.i18n.I18N" />
+	
+	<inherits name="com.vaadin.polymer.Elements"/>
 
 	<inherits name='com.esferalia.aon.gwt.common.Common' />
 	<inherits name="com.esferalia.aon.occam.api.Occam" />

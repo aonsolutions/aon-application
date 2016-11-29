@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.polymer.paper.widget.PaperProgress;
 
 public class ProgressInfo extends Composite {
 
@@ -57,7 +58,10 @@ public class ProgressInfo extends Composite {
 		GWT.<AonResources>create(AonResources.class).css().ensureInjected();
 
 		initWidget(binder.createAndBindUi(this));
-
+	
+		
+		
+		
 		this.eraseDownload.setTitle("Eliminar Descarga");
 		this.cancelDownload.setTitle("Cancelar Descarga");
 		this.eraseInfoButton.setTitle("Limpiar Pantalla");
