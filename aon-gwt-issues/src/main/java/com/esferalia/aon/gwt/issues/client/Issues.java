@@ -17,7 +17,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -284,7 +283,7 @@ public class Issues implements EntryPoint {
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				if(!isNotAlpKey(event.getNativeEvent().getKeyCode())){
+				if(!Utils.isNotAlpKey(event.getNativeEvent().getKeyCode())){
 					incidence.getRegistries(acb.getInputElementValue(),new AsyncCallback<JSON<JsUser>>() {
 					
 						@Override
@@ -318,7 +317,7 @@ public class Issues implements EntryPoint {
 				PaperInput pi = (PaperInput) vp.getWidget(1);
 				PaperTextarea pi4 = (PaperTextarea) vp.getWidget(2);
 				
-				String r= "{\"title\":\""+ pi.getValue() +"\",\"body\":\""+ checkString(pi4.getValue()) +" \",\"assignee\":\" \",\"labels\":[],"
+				String r= "{\"title\":\""+ pi.getValue() +"\",\"body\":\""+ Utils.checkString(pi4.getValue()) +" \",\"assignee\":\" \",\"labels\":[],"
 						+ "\"enterprise\":\""+ acb.getInputElementValue() +"\", \"due_date\":\""+ "31/12/2100" +"\"}";
 					
 				incidence.createOrgIssue(r, new AsyncCallback<JsIssue>() {
@@ -349,63 +348,5 @@ public class Issues implements EntryPoint {
 
 	public void remove(){
 		dockLayoutPanel.removeFromParent();
-	}
-	
-	
-	public static boolean isNotAlpKey(int code) {
-	    switch (code) {
-	      case KeyCodes.KEY_ALT:
-	      case KeyCodes.KEY_CAPS_LOCK:
-	      case KeyCodes.KEY_CONTEXT_MENU:
-	      case KeyCodes.KEY_CTRL:
-	      case KeyCodes.KEY_DOWN:
-	      case KeyCodes.KEY_END:
-	      case KeyCodes.KEY_ENTER:
-	      case KeyCodes.KEY_ESCAPE:
-	      case KeyCodes.KEY_F1:
-	      case KeyCodes.KEY_F2:
-	      case KeyCodes.KEY_F3:
-	      case KeyCodes.KEY_F4:
-	      case KeyCodes.KEY_F5:
-	      case KeyCodes.KEY_F6:
-	      case KeyCodes.KEY_F7:
-	      case KeyCodes.KEY_F8:
-	      case KeyCodes.KEY_F9:
-	      case KeyCodes.KEY_F10:
-	      case KeyCodes.KEY_F11:
-	      case KeyCodes.KEY_F12:
-	      case KeyCodes.KEY_FIRST_MEDIA_KEY:
-	      case KeyCodes.KEY_HOME:
-	      case KeyCodes.KEY_INSERT:
-	      case KeyCodes.KEY_LAST_MEDIA_KEY:
-	      case KeyCodes.KEY_LEFT:
-	      case KeyCodes.KEY_MAC_ENTER:
-	      case KeyCodes.KEY_MAC_FF_META:
-	      case KeyCodes.KEY_NUMLOCK:
-	      case KeyCodes.KEY_PAGEDOWN:
-	      case KeyCodes.KEY_PAGEUP:
-	      case KeyCodes.KEY_PAUSE:
-	      case KeyCodes.KEY_PRINT_SCREEN:
-	      case KeyCodes.KEY_RIGHT:
-	      case KeyCodes.KEY_SCROLL_LOCK:
-	      case KeyCodes.KEY_SHIFT:
-	      case KeyCodes.KEY_SPACE:
-	      case KeyCodes.KEY_TAB:
-	      case KeyCodes.KEY_UP:
-	        return true;
-	      default:
-	        return false;
-	    }
-	  }
-	
-	private String checkString(String str) {
-		String[] array = str.split("\"");
-		String s = array[0];
-		for(Integer i = 1; i < array.length; i++){
-			s = s + "\\\"" + array[i];
-		}
-		if(str.substring(str.length()-1).equals("\""))
-			s = s + "\\\"";
-		return s;
 	}
 }

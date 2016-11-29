@@ -764,7 +764,7 @@ public class IssuePanel extends Composite{
 	}
 	
 	private void onAcceptEditCommentButtonClick(JsComment comment, final TextArea textArea) {
-		String request = "{\"body\":\""+ checkString(textArea.getText()) +"\"}";
+		String request = "{\"body\":\""+ Utils.checkString(textArea.getText()) +"\"}";
 
 		incidence.updateComment(issue, comment, request, new AsyncCallback<JsComment>() {
 			@Override
@@ -778,7 +778,7 @@ public class IssuePanel extends Composite{
 	}
 	
 	private void onAcceptEditDescriptionButtonClick(final TextArea textArea) {
-		String request = "{\"body\":\""+ checkString(textArea.getText()) +"\"}";
+		String request = "{\"body\":\""+ Utils.checkString(textArea.getText()) +"\"}";
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
@@ -793,7 +793,7 @@ public class IssuePanel extends Composite{
 	
 	@UiHandler("commentButton")
 	void onClickCommentButton(ClickEvent event){
-		String str = checkString(commentTextArea.getText());
+		String str = Utils.checkString(commentTextArea.getText());
 
 		String request = "{\"body\":\""+ str +"\"}";
 		incidence.newComment(issue, request, new AsyncCallback<JsComment>() {
@@ -1332,17 +1332,6 @@ public class IssuePanel extends Composite{
 				parent.sendNotification(issue, NotificationType.MANUAL);
 			}
 		});
-	}
-	
-	private String checkString(String str) {
-		String[] array = str.split("\"");
-		String s = array[0];
-		for(Integer i = 1; i < array.length; i++){
-			s = s + "\\\"" + array[i];
-		}
-		if(str.substring(str.length()-1).equals("\""))
-			s = s + "\\\"";
-		return s;
 	}
 
 }
