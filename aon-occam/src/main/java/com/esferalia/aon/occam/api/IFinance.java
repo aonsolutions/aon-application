@@ -31,6 +31,8 @@ public interface IFinance {
 	LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId, Date date);
 	Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series);
 
+	Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter);
+	
 	// 	***********************************************
 	// 	*************************** INVOICING GROUP ***
 	// 	***********************************************

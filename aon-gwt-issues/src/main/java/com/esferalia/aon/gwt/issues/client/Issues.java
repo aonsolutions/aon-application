@@ -176,7 +176,7 @@ public class Issues implements EntryPoint {
 	
 	
 	private void createAonToolbar(){
-		toolbar.add(new AonToolbar("Tareas") {
+		toolbar.add(new AonToolbar("Call Center") {
 			
 			@Override
 			protected void onRefreshButtonClick() {

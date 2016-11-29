@@ -5,8 +5,8 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
+import com.esferalia.aon.gwt.api.client.finance.JsBoughtProduct;
 import com.esferalia.aon.gwt.api.client.finance.JsFee;
-import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
 import com.esferalia.aon.gwt.api.client.incidence.IssueFilter;
 import com.esferalia.aon.gwt.api.client.incidence.JsComment;
@@ -271,9 +271,9 @@ public class IssuePanel extends Composite{
 						@Override public void onFailure(Throwable caught) {}
 					});
 				} else if(value == 3){
-					incidence.getEnterpriseInvoiceList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsInvoice>>() {
+					incidence.getEnterpriseBoughtProductList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsBoughtProduct>>() {
 						@Override
-						public void onSuccess(JSON<JsInvoice> result) {
+						public void onSuccess(JSON<JsBoughtProduct> result) {
 							if(result.getData().length() > 0){
 								InvoiceList il = new InvoiceList();
 								il.setHeight(result.getData().length()*24+"px");

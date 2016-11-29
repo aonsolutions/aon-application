@@ -65,6 +65,14 @@ public class FinanceServlet extends HttpServlet{
 						getFeeList(domain, userName);
 					}
 					break;
+				case "bought_product": // INVOICE
+					if(pathInfo.length > 4){
+						if (pathInfo[4].equals("registry")) {
+							if(pathInfo.length > 5) // LISTA DE INVOICE CON REGISTRY X
+								object = getBoughtProductList(domain, userName, Integer.parseInt(pathInfo[5]));
+						}
+					}
+					break;
 				default:
 					break;
 				}
@@ -131,5 +139,13 @@ public class FinanceServlet extends HttpServlet{
     private JSONObject getFee(Domain domain, String login, Integer id){
     	return ToJSON.feeToJSON(AON.getFee(domain.getName(),
     			domain.getId(), login, f -> f.getIdProperty().eq(id)));
+    }
+    
+    private JSONArray getBoughtProductList(Domain domain, String login, Integer registryId){
+    	JSONArray array = new JSONArray();
+    	AON.getBoughtProductStream(domain.getName(), domain.getId(), login,
+    			f -> f.getRegistryProperty().eq(registryId))
+    		.forEach(id -> array.put(ToJSON.boughtProductToJSON(id)));
+    	return array;
     }
 }

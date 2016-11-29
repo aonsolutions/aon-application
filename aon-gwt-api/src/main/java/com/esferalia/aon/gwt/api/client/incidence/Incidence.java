@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.api.client.incidence;
 import com.esferalia.aon.gwt.api.client.AonUrlApi;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.Methods;
+import com.esferalia.aon.gwt.api.client.finance.JsBoughtProduct;
 import com.esferalia.aon.gwt.api.client.finance.JsFee;
 import com.esferalia.aon.gwt.api.client.finance.JsInvoice;
 import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
@@ -418,7 +419,10 @@ public class Incidence extends Methods{
 	public void getEnterpriseFeeList(Integer enterprise, AsyncCallback<JSON<JsFee>> callback){
 		get(url + "finance/" + getDomainName() + "/" + getUserName() + "/fee/customer/"+enterprise, callback);
 	}
-	
+
+	public void getEnterpriseBoughtProductList(Integer enterprise, AsyncCallback<JSON<JsBoughtProduct>> callback){
+		get(url + "finance/" + getDomainName() + "/" + getUserName() + "/bought_product/registry/"+enterprise, callback);
+	}
 	//-------------------- NOTIFICATIONS
 	
 	public void getNotificationInfo(AsyncCallback<JSON<JsNotify>> callback){

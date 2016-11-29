@@ -1008,6 +1008,19 @@ public class AON {
 		}
 	}
 	
+	public static Stream<InvoiceDetail> getBoughtProductStream(String domainName,
+			Integer domainId, String login, InvoiceFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().getBoughtProductStream(ctx, filter);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	
 	// ********************************************
 	// ****************************** MANAGEMENT **
 	// ********************************************

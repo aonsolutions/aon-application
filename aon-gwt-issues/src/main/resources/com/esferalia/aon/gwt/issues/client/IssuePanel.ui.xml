@@ -213,7 +213,7 @@
 						<g:customHeader styleName="{style.jeje}">
 							<g:HTMLPanel>
 								<i:IronIcon icon="receipt" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-								<g:InlineLabel text="Facturas" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+								<g:InlineLabel text="Productos Comprados" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 							</g:HTMLPanel>
 						</g:customHeader>
 						<g:ScrollPanel ui:field="invoicePanel"

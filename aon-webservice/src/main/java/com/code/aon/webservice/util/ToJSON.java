@@ -5,8 +5,10 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class ToJSON {
 	
@@ -69,6 +71,18 @@ public class ToJSON {
 		json.put("description", fee.getDescription());
 		return json;
 	}
-	
 
+	public static JSONObject boughtProductToJSON(InvoiceDetail id) {
+		JSONObject json = new JSONObject();
+		json.put("id", id.getId());
+		json.put("domain", id.getDomain());
+		json.put("description", id.getDescription());
+		json.put("quantity", id.getQuantity());
+		json.put("price", id.getPrice());
+		json.put("discount", Double.parseDouble(id.getDiscountExpression()));
+		json.put("date", id.getInvoice().getIssueDate());
+		json.put("code", id.getItem().getCode());
+		json.put("total", AonMathUtils.round(id.getQuantity()*id.getPrice() * ((Double.parseDouble(id.getDiscountExpression())/100) + 1)));
+		return json;
+	}
 }

@@ -124,8 +124,12 @@ public class InvoiceDAO {
 	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
 	
 	public static Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
-		return ctx.getDslContext().select().from(INVOICE).where(INVOICE_PROPERTIES.getConditions(filter))
-			.fetchInto(INVOICE).stream().map(new InvoiceFiller());
+		return ctx.getDslContext()
+				.select()
+				.from(INVOICE)
+				.join(SCOPE).on(SCOPE.ID.eq(INVOICE.SCOPE))
+				.where(INVOICE_PROPERTIES.getConditions(filter))
+			.fetch().stream().map(new FullInvoiceFiller());
 	}
 	
 	public static Invoice getInvoice(AONContext ctx, Integer id) {
@@ -141,6 +145,22 @@ public class InvoiceDAO {
 				.findFirst()
 				.orElse(null);
 	}
+	
+	private static Result<Record> getBoughtProductInvoices(AONContext ctx, InvoiceFilter filter) {
+		ctx.checkRead();
+		return ctx.getDslContext()
+			.select()
+			.from(INVOICE)
+			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+			.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
+			.leftOuterJoin(ITEM).on(ITEM.ID.equal(INVOICE_DETAIL.ITEM))
+			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.groupBy(PRODUCT.CODE)
+			.orderBy(INVOICE.ISSUE_DATE.desc())
+			.fetch();
+	}
+	
 	private static Result<Record> getFullInvoices(AONContext ctx, InvoiceFilter filter) {
 		ctx.checkRead();
 
@@ -256,6 +276,12 @@ public class InvoiceDAO {
 			.map(new FullInvoiceDetailFiller());
 	}
 	
+	public static Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter) {
+		return getBoughtProductInvoices(ctx, filter)
+			.stream()
+			.map(new BoughtProductInvoiceDetailFiller());
+	}
+	
 	public static class MinimalInvoiceFiller  implements Function<Record,Invoice> {
 
 		@Override
@@ -323,48 +349,7 @@ public class InvoiceDAO {
 		}
 		
 	}
-	
-	public static class InvoiceFiller  implements Function<InvoiceRecord,Invoice> {
 
-		@Override
-		public Invoice apply(InvoiceRecord r) {
-			return new Invoice()
-				.setId(r.getId())
-				.setDomain(r.getDomain())
-				.setType(AonEnumUtils.enumValue(InvoiceType.class,r.getType()))
-				.setSeries(r.getSeries())
-				.setNumber(r.getNumber())
-				.setReferenceCode(r.getReferenceCode())
-				.setIssueDate(r.getIssueDate())
-				.setTaxDate(r.getTaxDate())
-				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,r.getSecurityLevel()))
-				.setRegistry(r.getRegistry())
-				.setRegistryDocument(r.getRdocument())
-				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,r.getRdocumentType()))
-				.setRegistryDocumentCountry(Country.safeValueOf(r.getRdocumentCountry()))
-				.setRegistryName(r.getRname())
-				.setScope(new Scope().setId(r.getScope()))
-				.setActivity(r.getActivity())	
-				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,r.getRectificationType()))	
-				.setRectificationInvoice(r.getRectificationInvoice())	
-				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class,r.getTransaction()))
-				.setRecorded(r.getStatus() == 1 )	
-				.setSurcharge(r.getSurcharge() == 1 )	
-				.setWithholding(r.getWithholding() == 1 )	
-				.setWithholdingFarmer(r.getWithholdingFarmer() == 1 )	
-				.setVatAccrualPayment(r.getVatAccrualPayment() == 1 )	
-				.setInvestment(r.getInvestment() == 1 )	
-				.setService(r.getService() == 1 )	
-				.setAdvance(r.getAdvance() == 1 )	
-				.setTaxableBase(r.getTaxableBase())	
-				.setVatQuota(r.getVatQuota())	
-				.setRetentionQuota(r.getRetentionQuota())	
-				.setTotal(r.getTotal())	
-				;
-		}
-		
-	}
-	
 	private static class FullInvoiceDetailFiller  implements Function<Record,InvoiceDetail> {
 
 		@Override
@@ -431,6 +416,30 @@ public class InvoiceDAO {
 				.setWarehouseName(record.getValue(WAREHOUSE.NAME));
 		}
 		
+	}
+	
+	private static class BoughtProductInvoiceDetailFiller  implements Function<Record,InvoiceDetail> {
+
+		@Override
+		public InvoiceDetail apply(Record record) {
+			return new InvoiceDetail()
+				.setInvoice(new Invoice()
+					.setId(record.getValue(INVOICE.ID))
+					.setIssueDate(record.getValue(INVOICE.ISSUE_DATE)))
+				.setProject( record.getValue( INVOICE_DETAIL.PROJECT ))
+				.setItem((record.getValue(INVOICE_DETAIL.ITEM) == null)
+					? null
+					: new Item()
+						.setId(record.getValue(INVOICE_DETAIL.ITEM))
+						.setCode(record.getValue( PRODUCT.CODE )))	
+				.setLine(record.getValue( INVOICE_DETAIL.LINE ))
+				.setDescription(record.getValue( INVOICE_DETAIL.DESCRIPTION ))
+				.setQuantity(record.getValue(INVOICE_DETAIL.QUANTITY))
+				.setPrice(record.getValue(INVOICE_DETAIL.PRICE))
+				.setDiscountExpression(record.getValue(INVOICE_DETAIL.DISCOUNT_EXPR))
+				.setTaxableBase(record.getValue(INVOICE_DETAIL.TAXABLE_BASE))
+				;
+		}
 	}
 	
 	public static InvoiceDetail getLastInvoiceDetail(AONContext ctx, Item item, Integer workplaceId, Integer warehouseId){
