@@ -5,7 +5,8 @@ public enum TaskSource {
 	MANUAL,
 	ASSIGNED,
 	PROCESS,
-	CAU;
+	CAU,
+	GITHUB;
 
 	public String getName() {
     	return this.toString().toLowerCase();

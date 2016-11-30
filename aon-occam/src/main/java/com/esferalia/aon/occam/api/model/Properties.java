@@ -453,6 +453,7 @@ public interface Properties {
 		Property<Byte> getRepeatPeriodProperty();
 		Property<Integer> getSenderProperty();
 		Property<Byte> getSourceProperty();
+		Property<Integer> getSourceIdProperty();
 		Property<Timestamp> getStartDateProperty();
 		Property<Byte> getStatusProperty();
 		Property<Integer> getTaskHolderProperty();
@@ -477,6 +478,8 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<Integer> getTaskProperty();
 		Property<String> getCommentProperty();
+		Property<Integer> getSourceProperty();
+		Property<Integer> getSourceIdProperty();
 		Property<String> getCreationUserProperty();
 		Property<Timestamp> getCreationDateProperty();
 		Property<String> getModificationUserProperty();

@@ -50,6 +50,18 @@ public class TagDAO {
 			.execute();
 	}
 	
+	public static Tag insertTag(AONContext ctx, Tag tag) {
+		TagRecord tagRecord = ctx.getDslContext()
+				.insertInto(TAG)
+				.set(TAG.DOMAIN, ctx.getDomainId())
+				.set(TAG.NAME, tag.getName())
+				.set(TAG.TYPE, tag.getType())
+				.set(TAG.COLOR, (tag.getColor() != null) ? tag.getColor() : null)
+				.returning()
+				.fetchOne();
+		return new FullTagFiller().apply(tagRecord);
+	}
+	
 	public static void deleteTag(AONContext ctx, Tag tag){
 		ctx.getDslContext().delete(TAG).where(TAG.ID.eq(tag.getId())).execute();
 	}

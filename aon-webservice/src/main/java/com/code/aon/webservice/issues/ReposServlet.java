@@ -354,7 +354,7 @@ public class ReposServlet extends HttpServlet{
 					Tag tag = new Tag().setName(json.getString("name"))
 						.setDomain(domain.getId()).setType(TagType.TASK_LABEL.value())
 						.setColor(TagColor.values()[rnd.nextInt(9)].getColor());
-					Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);
+					Tag t = AON.insertTag(domain.getName(), domain.getId(), userName, tag);
 					object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
 				}
 				break;
@@ -369,7 +369,7 @@ public class ReposServlet extends HttpServlet{
 					Tag tag = new Tag().setName(json.getString("name"))
 							.setDomain(domain.getId()).setType(TagType.TASK_TYPE.value())
 							.setColor(TagColor.values()[rnd.nextInt(9)].getColor());
-					Tag t = AON.addNewTag(domain.getId(), domain.getName(), userName, tag);
+					Tag t = AON.insertTag(domain.getName(), domain.getId(),userName, tag);
 					object = new Label().setId(t.getId()).setName(t.getName()).toJSON();
 				}
 				break;

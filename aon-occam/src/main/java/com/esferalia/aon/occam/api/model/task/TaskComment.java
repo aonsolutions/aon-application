@@ -11,6 +11,9 @@ public class TaskComment implements Serializable{
 	private Integer domain;
 	private Integer id;
 	private Integer task;
+	
+	private Integer source;
+	private Integer sourceId;
 
 	private String creationUser;
 	private Date creationDate;
@@ -52,6 +55,24 @@ public class TaskComment implements Serializable{
 
 	public TaskComment setTask(Integer task) {
 		this.task = task;
+		return this;
+	}
+
+	public Integer getSource() {
+		return source;
+	}
+
+	public TaskComment setSource(Integer source) {
+		this.source = source;
+		return this;
+	}
+
+	public Integer getSourceId() {
+		return sourceId;
+	}
+
+	public TaskComment setSourceId(Integer sourceId) {
+		this.sourceId = sourceId;
 		return this;
 	}
 

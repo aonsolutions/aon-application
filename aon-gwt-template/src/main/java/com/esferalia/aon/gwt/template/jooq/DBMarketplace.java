@@ -205,7 +205,7 @@ public class DBMarketplace {
 	}
 	
 	public static Tag insertMarketplaceTag(Domain domain, User user, Tag tag){
-		return AON.addNewTag(domain.getId(), domain.getName(), user.getLogin(), tag);
+		return AON.insertTag(domain.getName(), domain.getId(), user.getLogin(), tag);
 	}
 	
 	public static void deleteMarketplaceTag(Domain domain, User user, Tag tag){

@@ -1447,7 +1447,7 @@ public class TemplatesServlet extends AonRemoteServiceServlet implements ITempla
 				for(String s : strings){
 					ProductTag pt = tags.stream().filter(t -> t.getTag().getName().equals(s)).findFirst().orElse(null);
 					if(pt == null){
-						Tag tag = AON.addNewTag(domain.getId(), domain.getName(), getUser().getLogin(),
+						Tag tag = AON.insertTag(domain.getName(), domain.getId(), getUser().getLogin(),
 							new Tag().setDomain(domain.getId()).setName(s).setType(TagType.PRODUCT.value()));
 						pt = new ProductTag().setTag(tag);
 					}

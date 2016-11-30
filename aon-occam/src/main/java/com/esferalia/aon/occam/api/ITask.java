@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
@@ -26,7 +27,7 @@ public interface ITask {
 	public Integer[] getTaskCount(AONContext ctx, TaskFilter filter, IssueFilter issueFilter);
 	public Stream<Tag> getTaskLabelStream(AONContext ctx, TaskTagFilter filter);
 	public Integer getCommentsCount(AONContext ctx, Integer taskId);
-	public Stream<TaskComment> getTaskCommentStream(AONContext ctx, Integer taskId);
+	public Stream<TaskComment> getTaskCommentStream(AONContext ctx, TaskCommentFilter filter);
 	public Stream<TaskEvent> getTaskEventStream(AONContext ctx, Integer taskId);
 	public Integer getLastTaskNumber(AONContext ctx);
 	
@@ -38,8 +39,6 @@ public interface ITask {
 	public void updateTaskDescription(AONContext ctx, Task task);
 	public void updateTaskPriority(AONContext ctx, Task task);
 
-	
-	public TaskComment getTaskComment(AONContext ctx, Integer taskCommentId);
 	public TaskComment getLastTaskComment(AONContext ctx, Integer taskId);
 
 	public TaskComment createTaskComment(AONContext ctx, TaskComment taskComment, Integer taskId);
@@ -60,6 +59,7 @@ public interface ITask {
 	public void createTaskTag(AONContext ctx, TaskTag taskTag);
 	public void deleteTaskTag(AONContext ctx, TaskTagFilter filter);
 
+	public void deleteTaskComment(AONContext ctx, TaskCommentFilter filter);
 	
 	public Workgroup getWorkgroup(AONContext ctx, Integer wId); 
 	public Stream<Registry> getTaskMemberWStream(AONContext ctx, String filter, Integer workgroupId);

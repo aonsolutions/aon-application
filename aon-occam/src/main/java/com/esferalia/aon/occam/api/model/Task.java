@@ -19,6 +19,7 @@ public class Task  implements Serializable{
 	private Integer taskHolder; 
 	private Integer workgroup; 
 	private Byte source; 
+	private Integer sourceId;
 	private Integer project; 
 	private Integer registry; 
 	private Integer activityType; 
@@ -147,6 +148,15 @@ public class Task  implements Serializable{
 
 	public Task setSource(Byte source) {
 		this.source = source;
+		return this;
+	}
+	
+	public Integer getSourceId() {
+		return sourceId;
+	}
+
+	public Task setSourceId(Integer sourceId) {
+		this.sourceId = sourceId;
 		return this;
 	}
 

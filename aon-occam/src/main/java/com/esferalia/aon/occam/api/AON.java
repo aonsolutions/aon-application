@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.Filter.StockFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
@@ -1140,18 +1141,6 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);			
 			return getOffice().getUsers(ctx);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Tag addNewTag(Integer domainId, String domainName,
-			String userName, Tag tag) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().addNewTag(ctx, tag);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2435,6 +2424,18 @@ public class AON {
 			if(ctx != null) ctx.close();
 		}
 	}
+	
+	public static Tag insertTag(String domainName, Integer domainId, String login, Tag tag) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getCommon().insertTag(ctx, tag);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+
+	}
 
 	public static void updateTag(String domainName, Integer domainId, String login,
 			Tag tag) {
@@ -2624,6 +2625,24 @@ public class AON {
 	
 	//-------------------- TASK COMMENT
 	
+	public static Stream<TaskComment> getTaskCommentStream(String domainName, Integer domainId, String login, TaskCommentFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getTask().getTaskCommentStream(ctx, filter);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static TaskComment getTaskComment(String domainName, Integer domainId, String login, TaskCommentFilter filter){
+		return getTaskCommentStream(domainName, domainId, login, filter).findFirst().orElse(new TaskComment());
+	}
+	
+	public static LinkedList<TaskComment> getTaskCommentList(String domainName, Integer domainId, String login, TaskCommentFilter filter){
+		return getTaskCommentStream(domainName, domainId, login, filter).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	public static Integer getCommentsCount(String domainName, Integer domainId, String login, Integer taskId) {
 		AONContext ctx = null;
 		try{
@@ -2644,15 +2663,8 @@ public class AON {
 		}
 	}
 	
-	
 	public static Stream<TaskComment> getTaskCommentStream(String domainName, Integer domainId, String login, Integer taskId) {
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskCommentStream(ctx, taskId);
-		} finally {
-			if(ctx != null) ctx.close();
-		}
+		return getTaskCommentStream(domainName, domainId, login, f -> f.getTaskProperty().eq(taskId));
 	}
 	
 	public static LinkedList<TaskComment> getTaskCommentList(String domainName, Integer domainId, String login, Integer taskId) {
@@ -2661,13 +2673,8 @@ public class AON {
 	}
 	
 	public static TaskComment getTaskComment(String domainName, Integer domainId, String login, Integer taskCommentId) {
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getTask().getTaskComment(ctx, taskCommentId);
-		} finally {
-			if(ctx != null) ctx.close();
-		}
+		return getTaskCommentStream(domainName, domainId, login, f -> f.getIdProperty().eq(taskCommentId))
+			.findFirst().orElse(new TaskComment());
 	}
 	
 	public static TaskComment createTaskComment(String domainName, Integer domainId, String login, TaskComment taskComment, Integer taskId) {
@@ -2685,6 +2692,16 @@ public class AON {
 		try{
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getTask().updateTaskComment(ctx, taskComment);
+		} finally {
+			if(ctx != null) ctx.close();
+		}
+	}
+	
+	public static void deleteTaskComment(String domainName, Integer domainId, String login, TaskCommentFilter filter){
+		AONContext ctx = null;
+		try{
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getTask().deleteTaskComment(ctx, filter);
 		} finally {
 			if(ctx != null) ctx.close();
 		}
@@ -2787,6 +2804,11 @@ public class AON {
 	public static LinkedList<Registry> getTaskMemberList(String domainName, Integer domainId, String login, String filter){
 		return getTaskMemberStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Registry getTaskMember(String domainName, Integer domainId, String login, String filter){
+		return getTaskMemberStream(domainName, domainId, login, filter)
+			.findFirst().orElse(new Registry());
 	}
 	
 	public static Workgroup getWorkgroup(String domainName, Integer domainId, String login, Integer wId){

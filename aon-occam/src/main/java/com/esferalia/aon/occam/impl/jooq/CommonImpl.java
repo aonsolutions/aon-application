@@ -208,6 +208,12 @@ public class CommonImpl implements ICommon {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TagDAO.getTagStream(ctx, filter));
 	}
+
+	@Override
+	public Tag insertTag(AONContext ctx, Tag tag){
+		return ctx.getDslContext().transactionResult(configuration -> 
+		 	TagDAO.insertTag(ctx, tag));
+	}
 	
 	@Override
 	public void updateTag(AONContext ctx, Tag tag){

@@ -32,14 +32,6 @@ public class OfficeImpl implements IOffice {
 				conf -> AonHubDAO.fillUsersFromNotices(ctx, parentID));
 	}
 	
-	// ----------------------------------------------------- INSERTS
-
-	@Override
-	public Tag addNewTag(AONContext ctx, Tag tag)
-			throws IllegalArgumentException {
-		return ctx.getDslContext().transactionResult(
-				conf -> AonHubDAO.insertTag(ctx, tag));
-	}
 
 	// ----------------------------------------------------- DELETES
 

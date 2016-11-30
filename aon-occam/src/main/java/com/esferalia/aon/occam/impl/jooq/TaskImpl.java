@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ITask;
+import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
@@ -65,12 +66,11 @@ public class TaskImpl implements ITask {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.getCommentsCount(ctx, taskId));
 	}
-
+	
 	@Override
-	public Stream<TaskComment> getTaskCommentStream(AONContext ctx, Integer taskId) {
+	public Stream<TaskComment> getTaskCommentStream(AONContext ctx, TaskCommentFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskCommentStream(ctx, taskId));
-
+				configuration -> TaskDAO.getTaskCommentStream(ctx, filter));
 	}
 	
 	@Override
@@ -120,12 +120,6 @@ public class TaskImpl implements ITask {
 	@Override
 	public void updateTaskUser(AONContext ctx, Task task) {
 		 ctx.getDslContext().transaction(configuration -> TaskDAO.updateTaskUser(ctx, task));
-	}
-	
-	@Override
-	public TaskComment getTaskComment(AONContext ctx, Integer taskCommentId) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> TaskDAO.getTaskComment(ctx, taskCommentId));	
 	}
 
 	@Override
@@ -225,5 +219,11 @@ public class TaskImpl implements ITask {
 	public Stream<Registry> getFilterRegistryStream(AONContext ctx, String filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskDAO.getFilterRegistryStream(ctx, filter));	
+	}
+
+	@Override
+	public void deleteTaskComment(AONContext ctx, TaskCommentFilter filter) {
+		ctx.getDslContext().transaction(configuration -> 
+				TaskDAO.deleteTaskComment(ctx, filter));
 	}
 }

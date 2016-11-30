@@ -33,9 +33,11 @@ import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
+import com.esferalia.aon.occam.api.model.Properties.TaskCommentProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskEventProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
@@ -56,6 +58,8 @@ public class TaskDAO {
 	private static final TaskPropertiesDAO TASK_PROPERTIES = new TaskPropertiesDAO();
 	private static final TaskTagPropertiesDAO TASK_TAG_PROPERTIES = new TaskTagPropertiesDAO();
 	private static final TaskEventPropertiesDAO TASK_EVENT_PROPERTIES = new TaskEventPropertiesDAO();
+	private static final TaskCommentPropertiesDAO TASK_COMMENT_PROPERTIES = new TaskCommentPropertiesDAO();
+
 
 	protected static class TaskTagPropertiesDAO implements TaskTagProperties {
 		protected Condition[] getConditions(TaskTagFilter filter) {
@@ -86,6 +90,24 @@ public class TaskDAO {
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK_EVENT.MODIFICATION_DATE);}
 	}
 	
+	protected static class TaskCommentPropertiesDAO implements TaskCommentProperties {
+		protected Condition[] getConditions(TaskCommentFilter filter) {	
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_COMMENT.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_COMMENT.DOMAIN);}
+		@Override public Property<Integer> getTaskProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_COMMENT.TASK);}
+		@Override public Property<String> getCommentProperty() {return new FilterDAO.PropertyDAO<String>(TASK_COMMENT.COMMENT);}
+		@Override public Property<Integer> getSourceProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_COMMENT.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_COMMENT.SOURCE_ID);}		
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK_COMMENT.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK_COMMENT.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK_COMMENT.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK_COMMENT.MODIFICATION_DATE);}
+	}
+	
 	protected static class TaskPropertiesDAO implements TaskProperties {
 		protected Condition[] getConditions(TaskFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -108,6 +130,7 @@ public class TaskDAO {
 		@Override public Property<Byte> getRepeatPeriodProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.REPEAT_PERIOD);}
 		@Override public Property<Integer> getSenderProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.SENDER);}
 		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.SOURCE_ID);}
 		@Override public Property<Timestamp> getStartDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.START_DATE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.STATUS);}
 		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.TASK_HOLDER);}
@@ -141,15 +164,20 @@ public class TaskDAO {
 			.fetchOne().value1();
 	}
 	
-	public static Stream<TaskComment> getTaskCommentStream(AONContext ctx, Integer taskId){
+	public static Stream<TaskComment> getTaskCommentStream(AONContext ctx, TaskCommentFilter filter){
 		return ctx.getDslContext()
 			.select()
 			.from(TASK_COMMENT)
-			.where(TASK_COMMENT.TASK.eq(taskId))
+			.where(TASK_COMMENT_PROPERTIES.getConditions(filter))
 			.orderBy(TASK_COMMENT.ID.desc())
 			.fetchInto(TASK_COMMENT).stream().map(new FullTaskCommentFiller());
 	}
 	
+	public static void deleteTaskComment(AONContext ctx, TaskCommentFilter filter){
+		ctx.getDslContext().delete(TASK_COMMENT)
+			.where(TASK_COMMENT_PROPERTIES.getConditions(filter))
+			.execute();				
+	}
 	public static Stream<TaskEvent> getTaskEventStream(AONContext ctx, Integer taskId){
 		return ctx.getDslContext()
 			.select()
@@ -454,13 +482,6 @@ public class TaskDAO {
 			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
 			.set(TASK.WORKGROUP, task.getWorkgroup())
 			.where(TASK.ID.eq(task.getId())).execute();
-	}
-	
-	public static TaskComment getTaskComment(AONContext ctx, Integer taskCommentId) {
-		return ctx.getDslContext().select()
-			.from(TASK_COMMENT)
-			.where(TASK_COMMENT.ID.eq(taskCommentId))
-			.fetchInto(TASK_COMMENT).stream().map(new FullTaskCommentFiller()).findFirst().orElse(new TaskComment());
 	}
 	
 	public static TaskComment getLastTaskComment(AONContext ctx, Integer taskId) {
