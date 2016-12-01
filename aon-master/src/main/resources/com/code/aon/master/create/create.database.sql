@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 8.75.0
+# Version: 8.78.2
 # Created by: girazu
-# Creation Date: 08/11/2016 18:35
+# Creation Date: 01/12/2016 13:00
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3717,7 +3717,7 @@ CREATE TABLE `task` (
   `task_holder` int(4) DEFAULT NULL COMMENT 'Identificador del Usuario asociado a la Tarea',
   `workgroup` int(4) DEFAULT NULL COMMENT 'Identificador del Grupo de Trabajo asociado a la Tarea',
   `source` tinyint(2) DEFAULT NULL COMMENT 'Origen de la Tarea',
-  `source_id` int DEFAULT NULL COMMENT 'Identificador del source',
+  `source_id` int(4) DEFAULT NULL COMMENT 'Identificador del source',
   `project` int(4) DEFAULT NULL COMMENT 'Identificador del Expediente',
   `registry` int(4) DEFAULT NULL,
   `activity_type` int(4) DEFAULT NULL COMMENT 'Identificador de la Actividad',
@@ -7868,8 +7868,8 @@ CREATE TABLE `task_comment` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `task` int(4) NOT NULL COMMENT 'Identificador de la tarea',
   `comment` text COLLATE latin1_spanish_ci COMMENT 'Comentario de la Tarea',
-  `source` int DEFAULT NULL COMMENT 'Origen del comentario',
-  `source_id` int DEFAULT NULL COMMENT 'Identificador del origen',
+  `source` int(4) DEFAULT NULL COMMENT 'Origen del comentario',
+  `source_id` int(4) DEFAULT NULL COMMENT 'Identificador del origen',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
@@ -8204,7 +8204,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('8.75.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('8.78.2');
 
 COMMIT;
 
