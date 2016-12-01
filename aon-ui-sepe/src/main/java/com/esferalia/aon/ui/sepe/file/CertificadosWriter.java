@@ -203,11 +203,11 @@ public class CertificadosWriter implements Serializable {
 			if (dirStaff.isShareHolder()){
 				cargo = "Socio";
 			} else if (dirStaff.isRepresentative()){
+				cargo = "Apoderado";
+			} else if (dirStaff.isDirector()){
 				cargo = "Administrador";
 			} else if (dirStaff.isRepresentativeLabor()){
 				cargo = "Representante Laboral";
-			} else if (dirStaff.isDirector()){
-				cargo = "Apoderado";
 			}
 			o.setCIFNIF(dirStaff.getDocument());
 			o.setNombre(createNombreSimpleType(nombre));
