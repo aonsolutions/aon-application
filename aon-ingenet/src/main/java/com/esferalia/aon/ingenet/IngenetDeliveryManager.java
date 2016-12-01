@@ -187,8 +187,7 @@ public class IngenetDeliveryManager {
 				detail.setSalesDetail(aonSalesDetail != null ? aonSalesDetail
 						.getId() : null);
 				detail.setItem(item);
-				detail.setDescription(obtainDeliveryDetailDescription(item,
-						detail.getQuantity()));
+				detail.setDescription(item.getProduct().getName());
 				detail.setDiscountExpression(aonSalesDetail != null ? aonSalesDetail
 						.getDiscountExpression() : "0");
 				detail.setLine(Integer.valueOf(idx + 1).shortValue());
@@ -213,27 +212,6 @@ public class IngenetDeliveryManager {
 	private boolean isPackageItem(Item item) {
 		return item != null && item.getSerialNumber() == null
 				&& item.getSerialDate() == null;
-	}
-
-	private String obtainDeliveryDetailDescription(Item item, double quantity) {
-		if (item.getSerialNumber() != null && item.getSerialDate() != null) {
-			Tag itemPackMeasurementTag = item.getPackMeasurementTag();
-			Tag itemPackingTag = item.getPackUnitsTag();
-			Tag itemPackFormatTag = item.getPackFormatTag();
-			Double itemPackMeasurement = item.getPackMeasurement();
-			Double itemPackUnits = item.getPackUnits();
-			return String
-					.format("%1$s \n\t- LOTE: %2$s \n\t- %3$.2f %4$s de %5$.2f %6$s \n\t- %7$.2f %8$s de %9$.2f %10$s",
-							item.getProduct().getName(),
-							item.getSerialNumber(),
-							(quantity / itemPackMeasurement),
-							itemPackingTag.getName(), itemPackMeasurement,
-							itemPackMeasurementTag.getName(), (quantity
-									/ itemPackMeasurement / itemPackUnits),
-							itemPackFormatTag.getName(), itemPackUnits,
-							itemPackingTag.getName());
-		}
-		return item.getProduct().getName();
 	}
 
 	private Item createNewItem(AONContext ctx, int domainId, Integer itemId,
