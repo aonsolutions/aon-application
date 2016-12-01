@@ -92,7 +92,8 @@ public class GithubServlet extends HttpServlet{
 	private void assigned(Domain domain, String login, JSONObject issue, JSONObject assignee) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("id"))))
+				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getDomainProperty().eq(domain.getId())))
 			.setModificationUser(login).setModificationDate(Calendar.getInstance().getTime());
 		Registry user = AON.getTaskMember(domain.getName(), domain.getId(), login, assignee.getString("login"));
 		if(user.getId() != null)
@@ -102,7 +103,8 @@ public class GithubServlet extends HttpServlet{
 	private void unassigned(Domain domain, String login, JSONObject issue, JSONObject assignee) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("id"))))
+				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getDomainProperty().eq(domain.getId())))
 			.setModificationUser(login).setModificationDate(Calendar.getInstance().getTime());
 		Registry user = AON.getTaskMember(domain.getName(), domain.getId(), login, assignee.getString("login"));
 		if(user.getId() != null && user.getId().equals(task.getTaskHolder()))
@@ -125,7 +127,7 @@ public class GithubServlet extends HttpServlet{
 			.setPercent((byte) 0) 
 			.setPriority((byte) 0)
 			.setSource(TaskSource.GITHUB.value())
-			.setSourceId(issue.getInt("id"))
+			.setSourceId(issue.getInt("number"))
 			.setCreationUser(login)
 			.setCreationDate(Calendar.getInstance().getTime())
 			.setModificationUser(login)
@@ -138,7 +140,8 @@ public class GithubServlet extends HttpServlet{
 	private void reopened(Domain domain, String login, JSONObject issue) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("id"))));
+				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getDomainProperty().eq(domain.getId())));
 		task = task.setStatus(TaskStatus.PENDING.value()).setEndDate(null).setId(task.getId())
 				.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(login);
 		if(!DB.isPrincipal(domain, login, task))
@@ -154,7 +157,8 @@ public class GithubServlet extends HttpServlet{
 	private void closed(Domain domain, String login, JSONObject issue) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("id"))));
+				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getDomainProperty().eq(domain.getId())));
 		task = task.setStatus(TaskStatus.FINISHED.value()).setEndDate(Calendar.getInstance().getTime()).setId(task.getId())
 				.setModificationDate(Calendar.getInstance().getTime()).setModificationUser(login);
 		TaskEvent taskEvent = new TaskEvent().setCreationDate(Calendar.getInstance().getTime()).setDomain(domain.getId())
@@ -165,7 +169,8 @@ public class GithubServlet extends HttpServlet{
 	private void created(Domain domain, String login, JSONObject issue, JSONObject comment) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("id"))));
+				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getDomainProperty().eq(domain.getId())));
 		
 		TaskComment tc = new TaskComment().setComment(comment.getString("body"))
 				.setModificationDate(Calendar.getInstance().getTime())
@@ -180,13 +185,15 @@ public class GithubServlet extends HttpServlet{
 	private void deleted(Domain domain, String login, JSONObject issue, JSONObject comment) {
 		AON.deleteTaskComment(domain.getName(), domain.getId(), login, 
 			f -> f.getSourceProperty().eq(TaskSource.GITHUB.ordinal())
-			.and(f.getSourceIdProperty().eq(comment.getInt("id"))));
+			.and(f.getSourceIdProperty().eq(comment.getInt("id")))
+			.and(f.getDomainProperty().eq(domain.getId())));
 	}
 	
 	private void edited(Domain domain, String login, JSONObject issue, JSONObject comment) {
 		TaskComment tc = AON.getTaskComment(domain.getName(), domain.getId(), login,
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.ordinal())
-				.and(f.getSourceIdProperty().eq(comment.getInt("id"))))
+				.and(f.getSourceIdProperty().eq(comment.getInt("id")))
+				.and(f.getDomainProperty().eq(domain.getId())))
 			.setComment(comment.getString("body")).setModificationDate(Calendar.getInstance().getTime())
 			.setModificationUser(login);
 		AON.updateTaskComment(domain.getName(), domain.getId(), login, tc);
@@ -195,7 +202,8 @@ public class GithubServlet extends HttpServlet{
 	private void labeled(Domain domain, String login, JSONObject issue, JSONObject label) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("id"))));
+				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getDomainProperty().eq(domain.getId())));
 		Tag tag = AON.getTag(domain.getName(), domain.getId(), login, 
 				f -> f.getTypeProperty().eq(TagType.TASK_LABEL.value())
 				.and(f.getDomainProperty().eq(domain.getId()))
@@ -214,7 +222,8 @@ public class GithubServlet extends HttpServlet{
 	private void unlabeled(Domain domain, String login, JSONObject issue, JSONObject label) {
 		Task task = AON.getTask(domain.getName(), domain.getId(), login, 
 				f -> f.getSourceProperty().eq(TaskSource.GITHUB.value())
-				.and(f.getSourceIdProperty().eq(issue.getInt("id"))));
+				.and(f.getSourceIdProperty().eq(issue.getInt("number")))
+				.and(f.getDomainProperty().eq(domain.getId())));
 		Tag tag = AON.getTag(domain.getName(), domain.getId(), login, 
 				f -> f.getTypeProperty().eq(TagType.TASK_LABEL.value())
 				.and(f.getDomainProperty().eq(domain.getId()))

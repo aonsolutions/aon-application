@@ -22,5 +22,25 @@ public class JsFee extends JavaScriptObject {
 	public final native String getDescription() /*-{
 		return this.description;
 	}-*/;
+	
+	public final native String getStartDate() /*-{
+		return this.start_date;
+	}-*/;
+	
+	public final native String getEndDate() /*-{
+		return this.end_date;
+	}-*/;
+	
+	public final native String getBillingMonth() /*-{
+		return this.billing_month;
+	}-*/;
+	
+	public final native String getBillingYear() /*-{
+		return this.billing_year;
+	}-*/;
+	
+	public final native String getPeriod() /*-{
+		return this.period;
+	}-*/;
 
 }

@@ -232,10 +232,14 @@ public class TaskDAO {
 				
 		// title
 		if(issueFilter.getTitle() != null && !issueFilter.getTitle().equals(""))
-			c = c.and(TASK.DESCRIPTION.contains(issueFilter.getTitle())
-				.or(TASK.COMMENTS.contains(issueFilter.getTitle()))
-				.or(TASK_COMMENT.COMMENT.contains(issueFilter.getTitle())));	
-				
+			if(isNumeric(issueFilter.getTitle()))
+				c = c.and(TASK.DESCRIPTION.contains(issueFilter.getTitle())
+					.or(TASK.COMMENTS.contains(issueFilter.getTitle()))
+					.or(TASK.NUMBER.eq(Integer.parseInt(issueFilter.getTitle())))
+					.or(TASK_COMMENT.COMMENT.contains(issueFilter.getTitle())));	
+			else c = c.and(TASK.DESCRIPTION.contains(issueFilter.getTitle())
+					.or(TASK.COMMENTS.contains(issueFilter.getTitle()))
+					.or(TASK_COMMENT.COMMENT.contains(issueFilter.getTitle())));
 		// type
 		if(issueFilter.getType() != null && !issueFilter.getType().equals(""))
 			c = c.and(TASK_TAG.TAG.eq(Integer.parseInt(issueFilter.getType())));	
@@ -701,6 +705,15 @@ public class TaskDAO {
 					.setCreationDate(r.getCreationDate())
 					.setModificationUser(r.getModificationUser())
 					.setModificationDate(r.getModificationDate());
+		}
+	}
+	
+	private static boolean isNumeric(String cadena){
+		try {
+			Integer.parseInt(cadena);
+			return true;
+		} catch (NumberFormatException nfe){
+			return false;
 		}
 	}
 }

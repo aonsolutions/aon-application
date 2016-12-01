@@ -1022,11 +1022,11 @@ public class AON {
 	}
 	
 	public static Stream<InvoiceDetail> getOldBoughtProductStream(String domainName,
-			Integer domainId, String login, InvoiceFilter filter) {
+			Integer domainId, String login, Integer id,InvoiceFilter filter) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getFinance().getOldBoughtProductStream(ctx, filter);
+			return getFinance().getOldBoughtProductStream(ctx, id, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();

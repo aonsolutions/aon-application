@@ -40,6 +40,7 @@ import com.vaadin.polymer.paper.PaperTextareaElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperTextarea;
+import com.vaadin.polymer.paper.widget.PaperToggleButton;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
 
 import net.aonsolutions.polymer.aon.AonComboBoxElement;
@@ -308,6 +309,12 @@ public class Issues implements EntryPoint {
 		PaperTextarea pi4 = new PaperTextarea();
 		pi4.setLabel("Descripcion");
 		v.add(pi4);
+		
+		PaperToggleButton ptb = new PaperToggleButton();
+		ptb.add(new Label("GitHub"));
+		ptb.setVisible(false);
+		v.add(ptb);
+		
 		v.setWidth("270px");
 		return new AonDialog2("Nueva Incidencia",v){
 			@Override protected void onCancel() {hide();}
@@ -316,25 +323,29 @@ public class Issues implements EntryPoint {
 				AonComboBox acb = (AonComboBox) vp.getWidget(0);
 				PaperInput pi = (PaperInput) vp.getWidget(1);
 				PaperTextarea pi4 = (PaperTextarea) vp.getWidget(2);
-				
-				String r= "{\"title\":\""+ pi.getValue() +"\",\"body\":\""+ Utils.checkString(pi4.getValue()) +" \",\"assignee\":\" \",\"labels\":[],"
+				PaperToggleButton ptb = (PaperToggleButton) vp.getWidget(3);
+				if(ptb.getChecked()) {
+					// TODO GITHUB!!!
+				} else {
+					String r= "{\"title\":\""+ pi.getValue() +"\",\"body\":\""+ Utils.checkString(pi4.getValue()) +" \",\"assignee\":\" \",\"labels\":[],"
 						+ "\"enterprise\":\""+ acb.getInputElementValue() +"\", \"due_date\":\""+ "31/12/2100" +"\"}";
+		
+					incidence.createOrgIssue(r, new AsyncCallback<JsIssue>() {
 					
-				incidence.createOrgIssue(r, new AsyncCallback<JsIssue>() {
-					
-					@Override
-					public void onSuccess(JsIssue result) {
-						contentDockLayoutPanel.removeFromParent();
-						AonToolbar t = (AonToolbar)toolbar.getWidget(0);
-						t.setVisibleRefreshButton(false);
-						contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-						contentDockLayoutPanel.add(new IssuePanel(me, incidence, result));
-						dockLayoutPanel.add(contentDockLayoutPanel);
-						sendNotification(result, NotificationType.OPEN);
-					}
-					@Override
-					public void onFailure(Throwable caught) {}
-				});
+						@Override
+						public void onSuccess(JsIssue result) {
+							contentDockLayoutPanel.removeFromParent();
+							AonToolbar t = (AonToolbar)toolbar.getWidget(0);
+							t.setVisibleRefreshButton(false);
+							contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+							contentDockLayoutPanel.add(new IssuePanel(me, incidence, result, -1));
+							dockLayoutPanel.add(contentDockLayoutPanel);
+							sendNotification(result, NotificationType.OPEN);
+						}
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+				}
 				hide();
 			}
 		};

@@ -3,6 +3,7 @@ package com.code.aon.webservice.issues;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
@@ -61,5 +62,9 @@ public class Utils {
 		else if(taskStatus.equals(TaskStatus.FAQ))
 			return "blue";
 		return "black";
+	}
+	
+	public static int getDaysBefore(Date date) {
+        return (int)( (new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 	}
 }

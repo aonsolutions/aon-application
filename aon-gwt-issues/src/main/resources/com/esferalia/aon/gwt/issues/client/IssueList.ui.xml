@@ -68,7 +68,7 @@
 									</span>
 								</template>                                
                             </div>
-                            <div class="secondary"> #[[item.number]] creado el [[item.created_at_date]] a las [[item.created_at_hour]] por [[item.user.login]]</div>
+                            <div class="secondary"> #[[item.number]] creado por [[item.user.login]] el [[item.created_at_date]] a las [[item.created_at_hour]] [[item.days]] </div>
                         </div>
                         
                     </div>

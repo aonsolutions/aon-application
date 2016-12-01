@@ -23,10 +23,11 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
-import com.esferalia.aon.gwt.issues.client.south.FeeList;
-import com.esferalia.aon.gwt.issues.client.south.InvoiceList;
-import com.esferalia.aon.gwt.issues.client.south.RmediaList;
-import com.esferalia.aon.gwt.issues.client.south.RnoteList;
+import com.esferalia.aon.gwt.issues.client.south.FeeSouthPanel;
+import com.esferalia.aon.gwt.issues.client.south.GeneralInfoSouthPanel;
+import com.esferalia.aon.gwt.issues.client.south.NoteSouthPanel;
+import com.esferalia.aon.gwt.issues.client.south.SalesSouthPanel;
+import com.esferalia.aon.gwt.issues.client.south.TaskSouthPanel;
 import com.esferalia.aon.occam.api.model.office.NotificationType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -129,7 +130,7 @@ public class IssuePanel extends Composite{
 	
 	private Incidence incidence; 
 
-	public IssuePanel(Issues parent, Incidence incidence, JsIssue issue) {
+	public IssuePanel(Issues parent, Incidence incidence, JsIssue issue, Integer south) {
 		initWidget(binder.createAndBindUi(this));		
 		this.incidence = incidence;
 		this.parent = parent;
@@ -212,7 +213,10 @@ public class IssuePanel extends Composite{
 		initSendButton();
 		
 		initSouthInfo(issue);
-		
+		if(south != -1){
+			openFootPanel();
+			tabLayout.selectTab(south);
+		}
 		
 	}
 	private void initSouthInfo(JsIssue issue){	
@@ -222,13 +226,7 @@ public class IssuePanel extends Composite{
 		incidence.getEnterpriseGeneralList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsGeneral>>() {
 			@Override
 			public void onSuccess(JSON<JsGeneral> result) {
-				RmediaList rml = new RmediaList();
-				rml.setCommercial(result.getBData().getCommercial());
-				rml.setDirection(result.getBData().getDirection());
-				rml.setSegmentation(result.getBData().getSegmentation());
-				rml.setHeight(result.getBData().getRmedia().length()*24+"px");
-				rml.getList().setItems(result.getBData().getRmedia());
-				generalPanel.add(rml);
+				generalPanel.add(new GeneralInfoSouthPanel(result.getOneData()));
 			}
 			
 			@Override public void onFailure(Throwable caught) {}
@@ -240,32 +238,33 @@ public class IssuePanel extends Composite{
 			public void onSelection(SelectionEvent<Integer> arg0) {
 				Integer value  = arg0.getSelectedItem();
 				if(value == 0){
-					
+					openFootPanel();
 				} else if(value == 1){
-					// TAREAS
+					// AVISOS
 					incidence.getEnterpriseIssues(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsIssue>>() {
 						@Override
 						public void onSuccess(JSON<JsIssue> result) {
-							IssueSelector tis = getSouthContent(result);
-							tis.setHeight(result.getData().length()*24+"px");
-							if(result.getData().length() > 0)
-								taskPanel.add(tis);
-							else taskPanel.add(new Label(nothing)); 
+							taskPanel.add(new TaskSouthPanel(result.getData()) {
+								@Override 
+								protected void onIssueClick(JsIssue issue) {
+									parent.contentDockLayoutPanel.removeFromParent();
+									parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+									parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue, tabLayout.getSelectedIndex()));
+									parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);	
+								}
+							});
+							openFootPanel();
 						}
 						
 						@Override public void onFailure(Throwable caught) {}
 					});
 				} else if(value == 2){
-					// AVISOS
+					// NOTAS
 					incidence.getEnterpriseRnoteList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsRnote>>() {
 						@Override
 						public void onSuccess(JSON<JsRnote> result) {
-							if(result.getData().length() > 0){
-								RnoteList rnl = new RnoteList();
-								rnl.setHeight(result.getData().length()*24+"px");
-								rnl.getList().setItems(result.getData());
-								rnotesPanel.add(rnl);
-							} else rnotesPanel.add(new Label(nothing)); 
+							rnotesPanel.add(new NoteSouthPanel(result.getData()));
+							openFootPanel();
 						}
 						
 						@Override public void onFailure(Throwable caught) {}
@@ -274,11 +273,8 @@ public class IssuePanel extends Composite{
 					incidence.getEnterpriseBoughtProductList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsBoughtProduct>>() {
 						@Override
 						public void onSuccess(JSON<JsBoughtProduct> result) {
-							if(result.getData().length() > 0){
-								InvoiceList il = new InvoiceList(result.getData());
-								il.setHeight(result.getData().length()*24+"px");
-								invoicePanel.add(il);
-							} else invoicePanel.add(new Label(nothing)); 
+							invoicePanel.add(new SalesSouthPanel(result.getData()));
+							openFootPanel();
 						}
 						
 						@Override public void onFailure(Throwable caught) {}
@@ -287,16 +283,16 @@ public class IssuePanel extends Composite{
 					incidence.getEnterpriseFeeList(issue.getEnterprise().getId(), new  AsyncCallback<JSON<JsFee>>() {
 						@Override
 						public void onSuccess(JSON<JsFee> result) {
-							if(result.getData().length() > 0){
-								FeeList fl = new FeeList();
-								fl.setHeight(result.getData().length()*24+"px");
-								fl.getList().setItems(result.getData());
-								feePanel.add(fl);
-							} else feePanel.add(new Label(nothing));
+							feePanel.add(new FeeSouthPanel(result.getData()));
+							openFootPanel();
 						}
 						
 						@Override public void onFailure(Throwable caught) {}
 					});				
+				} else if(value == 5){
+					openFootPanel();
+				} else if(value == 6){
+					openFootPanel();
 				}
 			}
 		});
@@ -309,9 +305,15 @@ public class IssuePanel extends Composite{
 			incidence.getDuplicateIssues(id, new  AsyncCallback<JSON<JsIssue>>() {
 				@Override
 				public void onSuccess(JSON<JsIssue> result) {
-					IssueSelector dis = getSouthContent(result);
-					dis.setHeight(result.getData().length()*24+"px");
-					duplicatePanel.add(dis);
+					duplicatePanel.add(new TaskSouthPanel(result.getData()) {
+						@Override
+						protected void onIssueClick(JsIssue issue) {
+							parent.contentDockLayoutPanel.removeFromParent();
+							parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+							parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue, tabLayout.getSelectedIndex()));
+							parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);	
+						}
+					});
 					openFootPanel();
 					tabLayout.selectTab(5);
 				}
@@ -325,9 +327,15 @@ public class IssuePanel extends Composite{
 			incidence.getDuplicateIssues(issue.getId(), new  AsyncCallback<JSON<JsIssue>>() {
 				@Override
 				public void onSuccess(JSON<JsIssue> result) {
-					IssueSelector fis = getSouthContent(result);
-					fis.setHeight(result.getData().length()*24+"px");
-					faqsPanel.add(fis);
+					faqsPanel.add(new TaskSouthPanel(result.getData()) {
+						@Override
+						protected void onIssueClick(JsIssue issue) {
+							parent.contentDockLayoutPanel.removeFromParent();
+							parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
+							parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue, tabLayout.getSelectedIndex()));
+							parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);	
+						}
+					});
 					openFootPanel();
 					tabLayout.selectTab(6);
 				}
@@ -335,28 +343,6 @@ public class IssuePanel extends Composite{
 				@Override public void onFailure(Throwable caught) {}
 			});
 		} else faqsPanel.add(new Label(nothing));
-		
-
-		
-	}
-
-	private IssueSelector getSouthContent(JSON<JsIssue> result){
-		IssueSelector is = new IssueSelector();
-		is.getList().setItems(result.getData());
-		is.getList().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				JsIssue  jsIssue = is.getSelectedItem().cast();
-				parent.contentDockLayoutPanel.removeFromParent();
-				parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-				parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, jsIssue));
-				parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);	
-			}
-		});
-	//	ScrollPanel sp = new ScrollPanel();
-	//	sp.add(is);
-		return is;
 	}
 	
 	private void initHeader(JsIssue issue) {
@@ -377,6 +363,7 @@ public class IssuePanel extends Composite{
 					@Override
 					protected void onAccept() {					
 						String request = "{\"title\":\""+ pi.getValue() +"\"}";
+						// TODO GITHUB!!!
 						incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 							
 							@Override
@@ -443,6 +430,7 @@ public class IssuePanel extends Composite{
 				
 				@Override
 				public void onClick(ClickEvent event) {
+					// TODO GITHUB!!!
 					incidence.deleteLabel2Issue(label.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
 						@Override public void onFailure(Throwable caught) {}
 						@Override public void onSuccess(JsLabel result) {
@@ -764,7 +752,7 @@ public class IssuePanel extends Composite{
 	
 	private void onAcceptEditCommentButtonClick(JsComment comment, final TextArea textArea) {
 		String request = "{\"body\":\""+ Utils.checkString(textArea.getText()) +"\"}";
-
+		// TODO GITHUB!!!
 		incidence.updateComment(issue, comment, request, new AsyncCallback<JsComment>() {
 			@Override
 			public void onSuccess(JsComment result) {
@@ -778,6 +766,7 @@ public class IssuePanel extends Composite{
 	
 	private void onAcceptEditDescriptionButtonClick(final TextArea textArea) {
 		String request = "{\"body\":\""+ Utils.checkString(textArea.getText()) +"\"}";
+		// TODO GITHUB!!!
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
@@ -795,6 +784,7 @@ public class IssuePanel extends Composite{
 		String str = Utils.checkString(commentTextArea.getText());
 
 		String request = "{\"body\":\""+ str +"\"}";
+		// TODO GITHUB!!!
 		incidence.newComment(issue, request, new AsyncCallback<JsComment>() {
 			
 			@Override public void onSuccess(JsComment result) {
@@ -816,6 +806,7 @@ public class IssuePanel extends Composite{
 	@UiHandler("closedButton")
 	void onClickClosedButton(ClickEvent event){
 		String request = "{\"state\":\"closed\"}";
+		// TODO GITHUB!!!
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
@@ -835,6 +826,7 @@ public class IssuePanel extends Composite{
 	@UiHandler("removeIssueButton")
 	void onClickRemoveIssueButton(ClickEvent event){
 		String request = "{\"state\":\"deleted\"}";
+		// TODO GITHUB!!!
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
@@ -856,6 +848,7 @@ public class IssuePanel extends Composite{
 	@UiHandler("reopenButton")
 	void onClickReopenButton(ClickEvent event){
 		String request = "{\"state\":\"open\"}";
+		// TODO GITHUB!!!
 		incidence.updateOrgIssue(issue, request, new AsyncCallback<JsIssue>() {
 			
 			@Override
@@ -864,7 +857,7 @@ public class IssuePanel extends Composite{
 
 				parent.contentDockLayoutPanel.removeFromParent();
 				parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-				parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, result));
+				parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, result, tabLayout.getSelectedIndex()));
 				parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);		
 			}
 			
@@ -1006,6 +999,7 @@ public class IssuePanel extends Composite{
 								
 								@Override
 								public void onClick(ClickEvent event) {
+									// TODO GITHUB!!!
 									incidence.deleteLabel2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
 										@Override public void onFailure(Throwable caught) {}
 										@Override public void onSuccess(JsLabel result) {
@@ -1018,6 +1012,7 @@ public class IssuePanel extends Composite{
 						
 							hp.add(pib);
 							labelsVPanel.add(hp);
+							// TODO GITHUB!!!
 							incidence.addLabel2Issue(jsLabel.getName(), issue.getNumber(), new AsyncCallback<JsLabel>() {
 								@Override public void onFailure(Throwable caught) {}
 								@Override public void onSuccess(JsLabel result) {}
@@ -1111,6 +1106,7 @@ public class IssuePanel extends Composite{
 						userLabel.setText(jsUser.getLogin());
 						userLabel.getElement().getStyle().setBackgroundColor("#a30c51");
 						userDeleteButton.setVisible(true);
+						// TODO GITHUB!!!
 						incidence.addUser2Issue(jsUser.getId(), issue.getNumber(), new AsyncCallback<JsUser>() {
 							@Override public void onFailure(Throwable caught) {}
 							@Override public void onSuccess(JsUser result) {}
@@ -1141,6 +1137,7 @@ public class IssuePanel extends Composite{
 	
 	@UiHandler("userDeleteButton")
 	void onClickUserDeleteButton(ClickEvent event){		
+		// TODO GITHUB!!!
 		incidence.deleteUser2Issue(issue.getNumber(), new AsyncCallback<JsUser>() {
 			@Override public void onFailure(Throwable caught) {}
 			@Override public void onSuccess(JsUser result) {
@@ -1203,7 +1200,7 @@ public class IssuePanel extends Composite{
 							public void onSuccess(JsIssue result) {	
 								parent.contentDockLayoutPanel.removeFromParent();
 								parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-								parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, result));
+								parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, result, tabLayout.getSelectedIndex()));
 								parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);		
 							}
 							
@@ -1247,7 +1244,7 @@ public class IssuePanel extends Composite{
 							public void onSuccess(JsIssue result) {	
 								parent.contentDockLayoutPanel.removeFromParent();
 								parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-								parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, result));
+								parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, result, tabLayout.getSelectedIndex()));
 								parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);		
 							}
 							
@@ -1273,7 +1270,7 @@ public class IssuePanel extends Composite{
 			public void onSuccess(JsIssue result) {	
 				parent.contentDockLayoutPanel.removeFromParent();
 				parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-				parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, result));
+				parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, result, tabLayout.getSelectedIndex()));
 				parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);		
 			}
 			
@@ -1288,11 +1285,11 @@ public class IssuePanel extends Composite{
 	
 			@Override 
 			public void onSuccess(JSON<JsIssue> result) {
-				JsIssue issue = result.getBData();
+				JsIssue issue = result.getOneData();
 
 				parent.contentDockLayoutPanel.removeFromParent();
 				parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-				parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue));
+				parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue, tabLayout.getSelectedIndex()));
 				parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);	
 			}
 			

@@ -126,7 +126,7 @@ public class ConfPanel extends Composite {
 						AonToolbar t = (AonToolbar) issues.toolbar.getWidget(0);
 						t.setVisibleRefreshButton(false);
 						issues.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-						issues.contentDockLayoutPanel.add(new IssuePanel(issues, incidence, result));
+						issues.contentDockLayoutPanel.add(new IssuePanel(issues, incidence, result, -1));
 						issues.dockLayoutPanel.add(issues.contentDockLayoutPanel);
 					}
 					@Override

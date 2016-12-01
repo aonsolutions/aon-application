@@ -54,6 +54,7 @@ public class Issue {
 	private String color;
 	private Boolean principal = false;
 	
+	private String days;
 	
 	public Issue() {
 	
@@ -97,6 +98,8 @@ public class Issue {
 		this.workgroup = new User().setId(workgroup.getId()).setLogin(workgroup.getDescription());
 		this.enterprise = new User().setId(enterprise.getId()).setLogin(enterprise.getName());
 		this.principal = principal;
+		Integer day = Utils.getDaysBefore(task.getStartDate());
+		this.days = "(hace " + day+ ((day == 1) ? " d\u00EDa)" : " d\u00EDas)");
 		setColor(Utils.getStatusColor(task));
 	}
 	
@@ -402,6 +405,7 @@ public class Issue {
 		json.put("is_faq", isFaq());
 		json.put("is_faq_item", isFaqItem());
 		json.put("color", getColor());
+		json.put("days", days);
 		return json;
 	}	
 }

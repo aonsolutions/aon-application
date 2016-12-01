@@ -149,19 +149,28 @@ public class InvoiceDAO {
 	private static Result<Record> getBoughtProductInvoices(AONContext ctx, InvoiceFilter filter) {
 		ctx.checkRead();
 		return ctx.getDslContext()
-			.select()
-			.from(INVOICE)
-			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-			.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
-			.leftOuterJoin(ITEM).on(ITEM.ID.equal(INVOICE_DETAIL.ITEM))
-			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
-			.where(INVOICE_PROPERTIES.getConditions(filter))
-			.groupBy(PRODUCT.CODE)
-			.orderBy(INVOICE.ISSUE_DATE.desc())
+				.select()
+				.from(INVOICE)
+				.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+				.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
+				.leftOuterJoin(ITEM).on(ITEM.ID.equal(INVOICE_DETAIL.ITEM))
+				.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+			.where(INVOICE_DETAIL.ID.in(
+					ctx.getDslContext()
+					.select(DSL.max(INVOICE_DETAIL.ID))
+					.from(INVOICE)
+					.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+					.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
+					.leftOuterJoin(ITEM).on(ITEM.ID.equal(INVOICE_DETAIL.ITEM))
+					.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+					.where(INVOICE_PROPERTIES.getConditions(filter))
+					.groupBy(PRODUCT.CODE)
+					.orderBy(INVOICE.ISSUE_DATE.desc())
+			))	
 			.fetch();
 	}
 	
-	private static Result<Record> getOldBoughtProductInvoices(AONContext ctx, InvoiceFilter filter) {
+	private static Result<Record> getOldBoughtProductInvoices(AONContext ctx, Integer id, InvoiceFilter filter) {
 		ctx.checkRead();
 		return ctx.getDslContext()
 			.select()
@@ -171,6 +180,7 @@ public class InvoiceDAO {
 			.leftOuterJoin(ITEM).on(ITEM.ID.equal(INVOICE_DETAIL.ITEM))
 			.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
 			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.and(INVOICE_DETAIL.ID.ne(id))
 			.orderBy(INVOICE.ISSUE_DATE.desc())
 			.fetch();
 	}
@@ -297,8 +307,8 @@ public class InvoiceDAO {
 			.map(new BoughtProductInvoiceDetailFiller());
 	}
 	
-	public static Stream<InvoiceDetail> getOldBoughtProductStream(AONContext ctx, InvoiceFilter filter) {
-		return getOldBoughtProductInvoices(ctx, filter)
+	public static Stream<InvoiceDetail> getOldBoughtProductStream(AONContext ctx, Integer id, InvoiceFilter filter) {
+		return getOldBoughtProductInvoices(ctx, id, filter)
 			.stream()
 			.map(new BoughtProductInvoiceDetailFiller());
 	}
@@ -444,9 +454,11 @@ public class InvoiceDAO {
 		@Override
 		public InvoiceDetail apply(Record record) {
 			return new InvoiceDetail()
+				.setId(record.getValue(INVOICE_DETAIL.ID))
 				.setInvoice(new Invoice()
 					.setId(record.getValue(INVOICE.ID))
-					.setIssueDate(record.getValue(INVOICE.ISSUE_DATE)))
+					.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
+					.setRegistry(record.getValue(INVOICE.REGISTRY)))
 				.setProject( record.getValue( INVOICE_DETAIL.PROJECT ))
 				.setItem((record.getValue(INVOICE_DETAIL.ITEM) == null)
 					? null

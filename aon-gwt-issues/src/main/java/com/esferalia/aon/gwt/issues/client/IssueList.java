@@ -72,7 +72,7 @@ public class IssueList extends Composite {
 					AonToolbar t = (AonToolbar)parent.toolbar.getWidget(0);
 					t.setVisibleRefreshButton(false);
 					parent.contentDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-					parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue));
+					parent.contentDockLayoutPanel.add(new IssuePanel(parent, incidence, issue, -1));
 					parent.dockLayoutPanel.add(parent.contentDockLayoutPanel);				
 				} else if(issue.isDeleted()){
 					AonDialog2 d = new AonDialog2("Restaurar Tarea",new Label("Est\u00e1s seguro de restaurar la tarea #" + issue.getNumber()) ) {

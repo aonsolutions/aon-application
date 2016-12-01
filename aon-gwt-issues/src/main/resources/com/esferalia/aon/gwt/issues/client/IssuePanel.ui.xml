@@ -191,7 +191,7 @@
 						<g:customHeader styleName="{style.jeje}">
 						    <g:HTMLPanel>
 								<i:IronIcon icon="check-box" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-								<g:InlineLabel text="Tareas" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+								<g:InlineLabel text="Avisos" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 							</g:HTMLPanel>
 						</g:customHeader>
 						<g:ScrollPanel ui:field="taskPanel"
@@ -202,7 +202,7 @@
 						<g:customHeader styleName="{style.jeje}">
 							<g:HTMLPanel>
 						   		<i:IronIcon icon="announcement" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-						   		<g:InlineLabel text="Avisos" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+						   		<g:InlineLabel text="Notas" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 							</g:HTMLPanel>
 						</g:customHeader>
 						<g:ScrollPanel ui:field="rnotesPanel"
@@ -213,7 +213,7 @@
 						<g:customHeader styleName="{style.jeje}">
 							<g:HTMLPanel>
 								<i:IronIcon icon="receipt" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
-								<g:InlineLabel text="Productos Comprados" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
+								<g:InlineLabel text="Ventas" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />
 							</g:HTMLPanel>
 						</g:customHeader>
 						<g:ScrollPanel ui:field="invoicePanel"

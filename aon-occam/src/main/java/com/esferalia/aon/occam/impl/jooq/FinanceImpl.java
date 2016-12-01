@@ -134,9 +134,9 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
-	public Stream<InvoiceDetail> getOldBoughtProductStream(AONContext ctx, InvoiceFilter filter) {
+	public Stream<InvoiceDetail> getOldBoughtProductStream(AONContext ctx, Integer id, InvoiceFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration
-				-> InvoiceDAO.getOldBoughtProductStream(ctx, filter));
+				-> InvoiceDAO.getOldBoughtProductStream(ctx, id, filter));
 	}
 
 }

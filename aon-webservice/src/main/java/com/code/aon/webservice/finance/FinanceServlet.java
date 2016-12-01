@@ -149,13 +149,10 @@ public class FinanceServlet extends HttpServlet{
     			JSONObject json = ToJSON.boughtProductToJSON(id);
     			JSONArray ar = new JSONArray();
     			if(id.getItem().getCode() != null)
-    				AON.getOldBoughtProductStream(domain.getName(), domain.getId(), login,
+    				AON.getOldBoughtProductStream(domain.getName(), domain.getId(), login, id.getId(),
     						f2-> f2.getProductCodeProperty().eq(id.getItem().getCode())
-    						.and(f2.getRegistryProperty().eq(registryId)))
-    					.forEach(id2 -> {
-    						if(id.getId() != id2.getId())	
-    							ar .put(ToJSON.boughtProductToJSON(id2));	
-    					});
+    						.and(f2.getRegistryProperty().eq(id.getInvoice().getRegistry())))
+    					.forEach(id2 -> ar .put(ToJSON.boughtProductToJSON(id2)));
     			json.put("array", ar);
     			array.put(json);
     		});

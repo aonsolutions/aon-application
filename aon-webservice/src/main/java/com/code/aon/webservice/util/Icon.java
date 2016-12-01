@@ -11,9 +11,9 @@ public class Icon {
 			return "settings-phone";//communication:call
 		if(media.equals(MediaType.FAX.value()))
 			return "print";
-		if(media.equals(MediaType.EMAIL))
+		if(media.equals(MediaType.EMAIL.value()))
 			return "mail";
-		if(media.equals(MediaType.WEB))
+		if(media.equals(MediaType.WEB.value()))
 			return "http";//av:web
 		return "";
 	}

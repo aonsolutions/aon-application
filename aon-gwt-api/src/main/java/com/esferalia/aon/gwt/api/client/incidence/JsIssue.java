@@ -159,5 +159,9 @@ public class JsIssue extends JavaScriptObject{
 	public final native Boolean isFaqItem() /*-{
 		return this.is_faq_item;
 	}-*/;
+	
+	public final native String getDays() /*-{
+		return this.days;
+	}-*/;
 
 }
